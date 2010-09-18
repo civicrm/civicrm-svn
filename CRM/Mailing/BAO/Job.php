@@ -104,7 +104,7 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 	$i = 0;
 
 	if ($job->fetch()) {
-			// still use job level lock for each child job
+        // still use job level lock for each child job
         $lockName = "civimail.job.{$job->id}";
 
 			$lock = new CRM_Core_Lock( $lockName );
@@ -228,7 +228,7 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
             AND j.status <> 'Complete'";
             $params = array( 1 => array( $job->id, 'Integer' ) );
             
-			$anyChildLefte = CRM_Core_DAO::singleValueQuery($child_job_sql, $params);
+			$anyChildLeft = CRM_Core_DAO::singleValueQuery($child_job_sql, $params);
 
 			// all of the child jobs are complete, update
 			// the parent job as well as the mailing status
@@ -285,7 +285,7 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 				 
 
 		$job->query($query);
-			
+
 		// For reach of the "Parent Jobs" we find, we split them into 
 		// X Number of child jobs
 		while ($job->fetch()) {
@@ -331,11 +331,11 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
 
 		// create one child job if the mailing size is less than the offset
 		// probably use a CRM_Mailing_DAO_Job( );
-		if($receipent_count <= $offset) {
+		if($recipient_count <= $offset) {
             CRM_Core_DAO::executeQuery( $sql, $params );
 		} else {
 			// Creating 'child jobs'
-			for($i = 0; $i< $receipent_count; $i=$i+$offset) {
+			for($i = 0; $i< $recipient_count; $i=$i+$offset) {
                 $params[6][0] = $i;
                 $params[7][0] = $offset;
                 CRM_Core_DAO::executeQuery( $sql, $params );
