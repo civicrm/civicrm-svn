@@ -107,7 +107,7 @@
   <item>
      <path>civicrm/admin/contribute/add</path>
      <title>New Contribution Page</title>
-     <page_callback>CRM_Contribute_Page_ContributionPage</page_callback>
+     <page_callback>CRM_Contribute_Controller_ContributionPage</page_callback>
      <path_arguments>action=add</path_arguments>
   </item>
   <item>
