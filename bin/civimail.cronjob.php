@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.2                                                |
+ | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -35,9 +35,14 @@
  * this script using a web url or from the command line
  */
 
-function processQueue( ) {
+function processQueue($batch_size) {
     require_once 'CRM/Mailing/BAO/Job.php';
-    CRM_Mailing_BAO_Job::runJobs();
+	// Split up the parent jobs into multiple child jobs
+	CRM_Mailing_BAO_Job::runJobs_pre($batch_size);
+	CRM_Mailing_BAO_Job::runJobs();
+	CRM_Mailing_BAO_Job::runJobs_post();
+
+	echo 'goodbye';
 }
 
 function run( ) {
@@ -58,12 +63,16 @@ function run( ) {
     require_once 'CRM/Utils/System.php';
     CRM_Utils_System::loadBootStrap(  );
 
+	// Chang is here: use the batch query variable to set the limit for
+	// Mailing processing
+	$batch_size = (is_numeric($_GET['batch'])) ? $_GET['batch'] : 10000;
+	
     // we now use DB locks on a per job basis
-    processQueue( );
+    processQueue(batch_size);
 }
 
 // you can run this program either from an apache command, or from the cli
-if ( php_sapi_name() == "cli" ) {
+if (isset($argv)) {
   require_once ("bin/cli.php");
   $cli=new civicrm_cli ();
   //if it doesn't die, it's authenticated 
