@@ -24,7 +24,7 @@ UPDATE civicrm_option_group
 
 -- CRM-6835
 ALTER TABLE civicrm_mailing_job ADD COLUMN `job_type` varchar(255) default NULL;
-ALTER TABLE civicrm_mailing_job ADD COLUMN `parent_id` int(20) default NULL;
+ALTER TABLE civicrm_mailing_job ADD COLUMN `parent_id` unsigned int(10) default NULL;
 ALTER TABLE civicrm_mailing_job ADD COLUMN `job_offset` int(20) default 0;
 ALTER TABLE civicrm_mailing_job ADD COLUMN `job_limit` int(20) default 0;
-ALTER TABLE civicrm_mailing_job ADD CONSTRAINT parent_id FOREIGN KEY (parent_id) REFERENCES (id);
+ALTER TABLE civicrm_mailing_job ADD CONSTRAINT parent_id FOREIGN KEY (parent_id) REFERENCES civicrm_mailing_job (id);

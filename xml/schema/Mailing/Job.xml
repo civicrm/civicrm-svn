@@ -63,7 +63,7 @@
   </field>
   <field>
       <name>parent_id</name>
-      <type>int</type>
+      <type>int unsigned</type>
       <comment>Parent job id</comment>
       <default>NULL</default>
       <add>3.3</add>
