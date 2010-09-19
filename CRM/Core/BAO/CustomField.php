@@ -1782,14 +1782,14 @@ SELECT label, value
 SELECT     f.id
 FROM       civicrm_custom_field f
 INNER JOIN civicrm_custom_group g ON f.custom_group_id = g.id
-WHERE      f.label = %1
-AND        g.title = %2
+WHERE      ( f.label = %1 OR f.name  = %1 )
+AND        ( g.title = %2 OR g.title = %2 )
 ";
         } else {
             $sql = "
 SELECT     f.id
 FROM       civicrm_custom_field f
-WHERE      f.label = %1
+WHERE      ( f.label = %1 OR f.name = %1 )
 ";
         }
 
