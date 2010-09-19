@@ -4,14 +4,14 @@
   <class>CampaignGroup</class>
   <name>civicrm_campaign_group</name>
   <comment>Campaign Group Details.</comment>
-  <add>3.2</add>
+  <add>3.3</add>
   
   <field>
     <name>id</name>
     <type>int unsigned</type>
     <required>true</required>
     <comment>Campaign Group id.</comment>
-    <add>3.2</add>
+    <add>3.3</add>
   </field>
   <primaryKey>
     <name>id</name>
@@ -23,13 +23,13 @@
     <type>int unsigned</type>
     <required>true</required>
     <comment>Foreign key to the activity Campaign.</comment>
-    <add>3.2</add>
+    <add>3.3</add>
   </field>
   <foreignKey>
     <name>campaign_id</name>
     <table>civicrm_campaign</table>
     <key>id</key>
-    <add>3.2</add>
+    <add>3.3</add>
     <onDelete>CASCADE</onDelete>
   </foreignKey>
 
@@ -47,7 +47,7 @@
     <length>64</length> 
     <default>NULL</default>
     <comment>Name of table where item being referenced is stored.</comment>
-    <add>3.2</add>
+    <add>3.3</add>
   </field>
 
   <field>
@@ -55,6 +55,6 @@
     <type>int unsigned</type>
     <default>NULL</default>
     <comment>Entity id of referenced table.</comment>
-    <add>3.2</add>
+    <add>3.3</add>
   </field>
 </table>

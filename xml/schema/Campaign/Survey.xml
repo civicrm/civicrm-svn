@@ -11,7 +11,7 @@
     <type>int unsigned</type>
     <required>true</required>
     <comment>Survey id.</comment>
-    <add>3.2</add>
+    <add>3.3</add>
   </field>
   <primaryKey>
     <name>id</name>
@@ -26,7 +26,7 @@
       <required>true</required>
       <comment>Title of the Survey.</comment>
       <import>true</import>
-      <add>3.2</add>
+      <add>3.3</add>
   </field>
 
   <field>
@@ -34,13 +34,13 @@
     <type>int unsigned</type>
     <default>NULL</default>     
     <comment>Foreign key to the Campaign.</comment>
-    <add>3.2</add>
+    <add>3.3</add>
   </field>
   <foreignKey>
     <name>campaign_id</name>
     <table>civicrm_campaign</table>
     <key>id</key>
-    <add>3.2</add>
+    <add>3.3</add>
     <onDelete>SET NULL</onDelete>
   </foreignKey>
   
@@ -51,12 +51,12 @@
     <default>NULL</default>                
     <comment>Implicit FK to civicrm_option_value where option_group = activity_type</comment> 
     <import>true</import>
-    <add>3.2</add> 
+    <add>3.3</add> 
   </field>
   <index>
     <name>UI_activity_type_id</name>
     <fieldName>activity_type_id</fieldName>
-    <add>3.2</add>
+    <add>3.3</add>
   </index>
 
   <field>
@@ -66,7 +66,7 @@
     <htmlType>textarea</htmlType>
     <rows>20</rows>
     <cols>80</cols>
-    <add>3.2</add>
+    <add>3.3</add>
   </field>
   
   <field>
@@ -76,7 +76,7 @@
     <htmlType>textarea</htmlType>
     <rows>20</rows>
     <cols>80</cols>
-    <add>3.2</add>
+    <add>3.3</add>
   </field>
 
   <field>
@@ -84,7 +84,7 @@
     <type>int unsigned</type>
     <default>NULL</default>
     <comment>Number of days for recurrence of release.</comment>
-    <add>3.2</add>
+    <add>3.3</add>
   </field>
   
   <field> 
@@ -93,7 +93,7 @@
     <type>int unsigned</type> 
     <default>NULL</default>
     <comment>Maximum number of contacts to allow for survey.</comment> 
-    <add>3.2</add>
+    <add>3.3</add>
   </field>
   
   <field> 
@@ -102,7 +102,7 @@
     <type>int unsigned</type> 
     <default>NULL</default>
     <comment>Default number of contacts to allow for survey.</comment> 
-    <add>3.2</add>
+    <add>3.3</add>
   </field>
   
   <field> 
@@ -110,7 +110,7 @@
     <type>boolean</type>
     <default>1</default>                
     <comment>Is this survey enabled or disabled/cancelled?</comment> 
-    <add>3.2</add> 
+    <add>3.3</add> 
   </field>
   
   <field> 
@@ -118,20 +118,20 @@
     <type>boolean</type>
     <default>0</default>                
     <comment>Is this default survey?</comment> 
-    <add>3.2</add> 
+    <add>3.3</add> 
   </field> 
   
   <field>
     <name>created_id</name>
     <type>int unsigned</type>
     <comment>FK to civicrm_contact, who created this Survey.</comment>
-    <add>3.2</add>
+    <add>3.3</add>
   </field>
   <foreignKey>
       <name>created_id</name>
       <table>civicrm_contact</table>
       <key>id</key>
-      <add>3.2</add>
+      <add>3.3</add>
       <onDelete>SET NULL</onDelete>
   </foreignKey>
   
@@ -140,20 +140,20 @@
     <type>datetime</type>
     <title>Campaign Created Date</title>
     <comment>Date and time that Survey was created.</comment>
-    <add>3.2</add>
+    <add>3.3</add>
   </field>
   
   <field>
     <name>last_modified_id</name>
     <type>int unsigned</type>
     <comment>FK to civicrm_contact, who recently edited this Survey.</comment>
-    <add>3.2</add>
+    <add>3.3</add>
   </field>
   <foreignKey>
     <name>last_modified_id</name>
     <table>civicrm_contact</table>
     <key>id</key>
-    <add>3.2</add>
+    <add>3.3</add>
     <onDelete>SET NULL</onDelete>
   </foreignKey>
   
@@ -161,7 +161,7 @@
     <name>last_modified_date</name>
     <type>datetime</type>
     <comment>Date and time that Survey was edited last time.</comment>
-    <add>3.2</add>
+    <add>3.3</add>
   </field>
 
   <field>
@@ -169,6 +169,6 @@
     <type>int unsigned</type>
     <default>NULL</default>
     <comment>Used to store option group id.</comment>
-    <add>3.2</add>
+    <add>3.3</add>
   </field>
 </table>
