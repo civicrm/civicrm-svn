@@ -62,7 +62,7 @@
        <name>grouping</name>
        <title>Option Grouping Name</title>
        <type>varchar</type>
-       <length>64</length>
+       <length>255</length>
        <comment>Use to sort and/or set display properties for sub-set(s) of options within an option group. EXAMPLE: Use for college_interest field, to differentiate partners from non-partners.</comment>
        <add>1.5</add>
   </field>

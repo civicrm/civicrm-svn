@@ -222,6 +222,9 @@ class CRM_Report_Form extends CRM_Core_Form {
         $this->_id = $this->get( 'instanceId' );
         if ( !$this->_id ) {
             $this->_id  = CRM_Report_Utils_Report::getInstanceID( );
+	     if ( !$this->_id ) {
+	         $this->_id  = CRM_Report_Utils_Report::getInstanceIDForPath( );
+	     }
         }
 
         // set qfkey so that pager picks it up and use it in the "Next > Last >>" links, 

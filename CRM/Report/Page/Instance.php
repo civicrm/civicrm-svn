@@ -52,6 +52,9 @@ class CRM_Report_Page_Instance extends CRM_Core_Page
      */
     function run() {
         $instanceId   = CRM_Report_Utils_Report::getInstanceID( );
+	 if ( ! $instanceId ) {
+	     $instanceId = CRM_Report_Utils_Report::getInstanceIDForPath( );
+	 }
         $action       = CRM_Utils_Request::retrieve( 'action', 'String', $this );
         $optionVal    = CRM_Report_Utils_Report::getValueFromUrl( $instanceId );
         $reportUrl    = CRM_Utils_System::url('civicrm/report/list', "reset=1");
