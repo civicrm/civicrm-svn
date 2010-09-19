@@ -21,3 +21,10 @@ VALUES
 UPDATE civicrm_option_group 
    SET is_reserved = 0
  WHERE civicrm_option_group.name = 'encounter_medium';
+
+-- CRM-6835
+ALTER TABLE civicrm_mailing_job ADD COLUMN `job_type` varchar(255) default NULL;
+ALTER TABLE civicrm_mailing_job ADD COLUMN `parent_id` int(20) default NULL;
+ALTER TABLE civicrm_mailing_job ADD COLUMN `job_offset` int(20) default 0;
+ALTER TABLE civicrm_mailing_job ADD COLUMN `job_limit` int(20) default 0;
+ALTER TABLE civicrm_mailing_job ADD CONSTRAINT parent_id FOREIGN KEY (parent_id) REFERENCES (id);
