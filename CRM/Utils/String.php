@@ -67,7 +67,7 @@ class CRM_Utils_String {
      * @static
      */
     static function titleToVar( $title, $maxLength = 31 ) {
-        $variable = self::munge( $title );
+        $variable = self::munge( $title, '_', $maxLength );
       
         require_once "CRM/Utils/Rule.php";
         if ( CRM_Utils_Rule::title( $variable, $maxLength ) ) {

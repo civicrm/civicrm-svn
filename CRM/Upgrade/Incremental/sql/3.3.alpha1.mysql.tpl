@@ -21,3 +21,8 @@ VALUES
 UPDATE civicrm_option_group 
    SET is_reserved = 0
  WHERE civicrm_option_group.name = 'encounter_medium';
+
+-- CRM-6846
+ALTER TABLE civicrm_custom_field
+  ADD name varchar(255) collate utf8_unicode_ci default NULL;
+

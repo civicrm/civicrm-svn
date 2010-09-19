@@ -32,6 +32,13 @@
        <onDelete>CASCADE</onDelete>
   </foreignKey>
   <field>
+     <name>name</name>
+     <type>varchar</type>
+     <length>64</length>
+     <comment>Variable name/programmatic handle for this group.</comment>
+     <add>3.3</add>
+  </field>
+  <field>
      <name>label</name>
      <type>varchar</type>
      <length>255</length>
