@@ -65,35 +65,35 @@ CREATE TABLE `civicrm_survey` (
  ADD `result` varchar(255) unsigned DEFAULT NULL COMMENT 'Currently being used to store result for survey activity, FK to option value.';
 
 INSERT INTO civicrm_option_group
-       	(`name`, `description`, `is_reserved`, `is_active`)
+       	(`name`, {localize field='description'}description{/localize}, `is_active`)
 VALUES
-	('campaign_type'                 , '{ts escape="sql"}Campaign Type{/ts}'                      , 0, 1),
-   	('campaign_status'               , '{ts escape="sql"}Campaign Status{/ts}'                    , 0, 1);
+	('campaign_type'    , {localize}'Campaign Type'{/localize}     , 1 ),
+   	('campaign_status'  , {localize}'Campaign Status'{/localize}   , 1 );
+
+--insert values for Compaign Types, Campaign Status and Activity types.
    
 SELECT @option_group_id_campaignType   := max(id) from civicrm_option_group where name = 'campaign_type';
 SELECT @option_group_id_campaignStatus := max(id) from civicrm_option_group where name = 'campaign_status';
 SELECT @option_group_id_act            := max(id) from civicrm_option_group where name = 'activity_type';
-
 SELECT @campaignCompId                 := max(id) FROM civicrm_component where name    = 'CiviCampaign';
+SELECT @max_campaign_act_val           := MAX(ROUND(value)) from civicrm_option_value where option_group_id = @option_group_id_act;
+SELECT @max_campaign_act_wt            := MAX(ROUND(weight)) from civicrm_option_value where option_group_id = @option_group_id_act;
 
 INSERT INTO 
-   `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
+   `civicrm_option_value` (`option_group_id`, {localize field='label'}label{/localize}, `value`, `name`, `weight`, `is_active`, `component_id` ) 
 VALUES
---Compaign Types
-  (@option_group_id_campaignType, '{ts escape="sql"}Direct Mail{/ts}', 1, 'Direct Mail',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
-  (@option_group_id_campaignType, '{ts escape="sql"}Referral Program{/ts}', 2, 'Referral Program',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
-  (@option_group_id_campaignType, '{ts escape="sql"}Voter Engagement{/ts}', 3, 'Voter Engagement',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_campaignType, '{localize}Direct Mail{/localize}',     1, 'Direct Mail',       1,   1, NULL ),
+  (@option_group_id_campaignType, '{localize}Referral Program{localize}', 2, 'Referral Program',  2,   1, NULL ),
+  (@option_group_id_campaignType, '{localize}Voter Engagement{localize}', 3, 'Voter Engagement',  3,   1, NULL ),
 
---Campaign Status
-  (@option_group_id_campaignStatus, '{ts escape="sql"}Planned{/ts}', 1, 'Planned',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL), 
-  (@option_group_id_campaignStatus, '{ts escape="sql"}In Progress{/ts}', 2, 'In Progress',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
-  (@option_group_id_campaignStatus, '{ts escape="sql"}Completed{/ts}', 3, 'Completed',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
-  (@option_group_id_campaignStatus, '{ts escape="sql"}Cancelled{/ts}', 4, 'Cancelled',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_campaignStatus, '{localize}Planned{localize}',        1, 'Planned',           1,   1, NULL ), 
+  (@option_group_id_campaignStatus, '{localize}In Progress{localize}',    2, 'In Progress',       2,   1, NULL ),
+  (@option_group_id_campaignStatus, '{localize}Completed{localize}',      3, 'Completed',         3,   1, NULL ),
+  (@option_group_id_campaignStatus, '{localize}Cancelled{localize}',      4, 'Cancelled',         4,   1, NULL ),
 
-   (@option_group_id_act, '{ts escape="sql"}Survey{/ts}', 27, 'Survey', NULL,0, 0, 27, '', 0, 1, 1, @campaignCompId, NULL),
-   (@option_group_id_act, '{ts escape="sql"}Canvass{/ts}', 28, 'Canvass', NULL,0, 0, 28, '', 0, 1, 1, @campaignCompId, NULL),
-   (@option_group_id_act, '{ts escape="sql"}PhoneBank{/ts}', 29, 'PhoneBank', NULL,0, 0, 29, '', 0, 1, 1, @campaignCompId, NULL),
-   (@option_group_id_act, '{ts escape="sql"}WalkList{/ts}', 30, 'WalkList', NULL,0, 0, 30, '', 0, 1, 1, @campaignCompId, NULL);
-   (@option_group_id_act, '{ts escape="sql"}Petition{/ts}', 31, 'Petition', NULL,0, 0, 30, '', 0, 1, 1, @campaignCompId, NULL);
-
+  (@option_group_id_act, '{localize}Survey{localize}',                   (SELECT @max_campaign_act_val := @max_campaign_act_val + 1 ), 'Survey',           (SELECT @max_campaign_act_wt := @max_campaign_act_wt + 1 ),   1, @campaignCompId ),
+  (@option_group_id_act, '{localize}Canvass{localize}',                  (SELECT @max_campaign_act_val := @max_campaign_act_val + 1 ), 'Canvass',          (SELECT @max_campaign_act_wt := @max_campaign_act_wt + 1 ),   1, @campaignCompId ),
+  (@option_group_id_act, '{localize}PhoneBank{localize}',                (SELECT @max_campaign_act_val := @max_campaign_act_val + 1 ), 'PhoneBank',        (SELECT @max_campaign_act_wt := @max_campaign_act_wt + 1 ),   1, @campaignCompId ),
+  (@option_group_id_act, '{localize}WalkList{localize}',                 (SELECT @max_campaign_act_val := @max_campaign_act_val + 1 ), 'WalkList',         (SELECT @max_campaign_act_wt := @max_campaign_act_wt + 1 ),   1, @campaignCompId ),
+  (@option_group_id_act, '{localize}Petition{localize}',                 (SELECT @max_campaign_act_val := @max_campaign_act_val + 1 ), 'Petition',         (SELECT @max_campaign_act_wt := @max_campaign_act_wt + 1 ),   1, @campaignCompId );
 
