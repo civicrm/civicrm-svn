@@ -160,7 +160,7 @@ class CRM_Report_Form_Contact_Detail extends CRM_Report_Form {
                                         ),
                                  'event_id'                  => array( 'default' => true),
                                  'participant_status_id'     => array( 'name'       => 'status_id',
-                                                                       'title'   => ts(' Participant Status'),
+                                                                       'title'   => ts('Participant Status'),
                                                                        'default' => true ),
                                  'role_id'                   => array( 'title'   => ts('Role'),
                                                                        'default' => true ),
