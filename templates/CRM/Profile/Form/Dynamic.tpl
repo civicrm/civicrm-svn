@@ -58,6 +58,7 @@
                       <div class="messages help">{$groupHelpPost}</div>
                    {/if}
                    {if $mode neq 8 && $mode neq 4}
+                        </div><!-- end form-layout-compressed-div -->
                       </fieldset>
                       </div>
                    {/if}
@@ -164,7 +165,7 @@
             {/if}
         {/if}{* end of main if field name if *}        
     {/foreach}
-    </div> {* closing main form layout div when all the fields are built*}
+    </div><!-- end form-layout-compressed for last profile --> {* closing main form layout div when all the fields are built*}
     
     
     {if $isCaptcha && ( $mode eq 8 || $mode eq 4 || $mode eq 1 ) }
