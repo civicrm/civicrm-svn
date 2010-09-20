@@ -418,18 +418,22 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
                    'rm'                 => 2,
                    'currency_code'      => $params['currencyID'],
                    'invoice'            => $params['invoiceID'] ,
+                   'lc'                 => substr( $config->lcMessages, -2 ),
+                   'charset'            => function_exists('mb_internal_encoding')? mb_internal_encoding() : 'UTF-8',
                    'custom'             => CRM_Utils_Array::value( 'accountingCode',
                                                                    $params ) );
 
         // add name and address if available, CRM-3130
-        $otherVars = array( 'first_name'     => 'first_name',
-                            'last_name'      => 'last_name',
-                            'street_address' => 'address1',
-                            'city'           => 'city',
-                            'state_province' => 'state',
-                            'postal_code'    => 'zip',
-                            'email'          => 'email' );
-
+        $otherVars = array( 'first_name'         => 'first_name',
+                            'last_name'          => 'last_name',
+                            'street_address'     => 'address1',
+                            'country'            => 'country',
+                            'preferred_language' => 'lc',
+                            'city'               => 'city',
+                            'state_province'     => 'state',
+                            'postal_code'        => 'zip',
+                            'email'              => 'email' );
+      
         foreach ( array_keys( $params ) as $p ) {
             // get the base name without the location type suffixed to it
             $parts = explode( '-', $p );
@@ -440,6 +444,10 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
                     if ( $name == 'state_province' ) {
                         $stateName = CRM_Core_PseudoConstant::stateProvinceAbbreviation( $value );
                         $value     = $stateName;
+                    }
+                    if ( $name == 'country' ) {
+                        $countryName = CRM_Core_PseudoConstant::countryIsoCode( $value );
+                        $value       = $countryName;
                     }
                     // ensure value is not an array
                     // CRM-4174
