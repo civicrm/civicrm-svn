@@ -101,7 +101,7 @@ class CRM_Dedupe_BAO_Rule extends CRM_Dedupe_DAO_Rule
             break;
         default:
             // custom data tables
-            if (preg_match('/^civicrm_value_/', $this->rule_table)) {
+            if (preg_match('/^civicrm_value_/', $this->rule_table) || preg_match('/^custom_value_/', $this->rule_table)) {
                 $id = 'entity_id';
             } else {
                 CRM_Core_Error::fatal("Unsupported rule_table for civicrm_dedupe_rule.id of {$this->id}");
