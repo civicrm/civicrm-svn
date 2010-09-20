@@ -557,7 +557,7 @@ function _civicrm_validate_formatted_contact(&$params)
     }
     
     /* Validate custom data fields */
-    if (is_array($params['custom'])) {
+    if ( array_key_exists( 'custom', $params ) && is_array($params['custom']) ) {
         foreach ($params['custom'] as $key => $custom) {
             if (is_array($custom)) {
                 $valid = CRM_Core_BAO_CustomValue::typecheck(

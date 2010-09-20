@@ -110,8 +110,9 @@ class CRM_Mailing_Event_BAO_Unsubscribe extends CRM_Mailing_Event_DAO_Unsubscrib
     public static function &unsub_from_mailing($job_id, $queue_id, $hash, $return = false) {
         /* First make sure there's a matching queue event */
         $q =& CRM_Mailing_Event_BAO_Queue::verify($job_id, $queue_id, $hash);
+        $success = null;
         if (! $q) {
-            return null;
+            return $success;
         }
         
         $contact_id = $q->contact_id;

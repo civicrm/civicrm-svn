@@ -68,8 +68,10 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
         /* First make sure there's a matching queue event */
         $q =& CRM_Mailing_Event_BAO_Queue::verify($job_id, $queue_id, $hash);
 
+        $success = null;
+
         if (! $q) {
-            return null;
+            return $success;
         }
 
         $mailing = new CRM_Mailing_BAO_Mailing();
@@ -91,7 +93,7 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
         $re->save();
 
         if (! $mailing->forward_replies || empty($mailing->replyto_email)) {
-            return null;
+            return $success;
         }
         
         return $mailing;

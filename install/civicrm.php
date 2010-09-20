@@ -214,10 +214,19 @@ function civicrm_cms_base( ) {
 
     $baseURL = $_SERVER['SCRIPT_NAME'];
 
-    for ( $i = 1; $i <= $numPrevious; $i++ ) {
-        $baseURL = dirname( $baseURL );
+    if ( $installType == 'drupal' ) {
+        //don't assume 6 dir levels, as civicrm 
+        //may or may not be in sites/all/modules/
+        //lets allow to install in custom dir. CRM-6840
+        global $cmsPath;
+        $crmDirLevels = str_replace( $cmsPath,      '', $_SERVER['SCRIPT_FILENAME'] );
+        $baseURL      = str_replace( $crmDirLevels, '', $baseURL );
+    } else { 
+        for ( $i = 1; $i <= $numPrevious; $i++ ) {
+            $baseURL = dirname( $baseURL );
+        }
     }
-
+    
     // remove the last directory separator string from the directory
     if ( substr( $baseURL, -1, 1 ) == DIRECTORY_SEPARATOR ) {
         $baseURL = substr( $baseURL, 0, -1 );
