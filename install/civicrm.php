@@ -219,8 +219,8 @@ function civicrm_cms_base( ) {
         //may or may not be in sites/all/modules/
         //lets allow to install in custom dir. CRM-6840
         global $cmsPath;
-        $crmDirLevels = str_replace( $cmsPath,      '', $_SERVER['SCRIPT_FILENAME'] );
-        $baseURL      = str_replace( $crmDirLevels, '', $baseURL );
+        $crmDirLevels = str_replace( $cmsPath,      '', str_replace( '\\', '/', $_SERVER['SCRIPT_FILENAME'] ) );
+        $baseURL      = str_replace( $crmDirLevels, '', str_replace( '\\', '/', $baseURL ) );
     } else { 
         for ( $i = 1; $i <= $numPrevious; $i++ ) {
             $baseURL = dirname( $baseURL );
