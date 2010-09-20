@@ -35,7 +35,7 @@
  *
  */
 
- require_once 'CRM/Core/Config.php';
+require_once 'CRM/Core/Config.php';
 
 class CRM_Core_Extensions
 {
@@ -55,12 +55,8 @@ class CRM_Core_Extensions
     public $extensions = null;
 
     function __construct( ) {
-        
         if( is_null( $this->extensions )) {
             $this->extensions = $this->discover();
-            if( is_null($this->extensions) ) {
-                CRM_Core_Error::fatal( 'Cannot retrieve option group for extensions (' . self::OPTION_GROUP_NAME . '). Make sure the upgrade process was correct.' );
-            }                        
         }
     }
 
@@ -78,51 +74,109 @@ class CRM_Core_Extensions
      * @return null
      * @access public
      * @static
-     */                   
+     */
     public function discover() {
         $extensions = array();
-        $local = $this->_discoverLocal();
-        $this->_getRegisteredExtensions();
-        CRM_Core_Error::debug( $local );
+
+        // get enabled extensions from the database
+        $extensions['enabled'] = $this->_discoverEnabled();
+
+        // get installed extensions
+        $extensions['local'] = $this->_discoverInstalled();
+
+        // get uploaded extensions
+        $extensions['uploaded'] = $this->_discoverUploaded();
+
+        CRM_Core_Error::debug( $extensions );
+
         return $extensions;
     }
 
 
+    private function _discoverUploaded() {
 
-    private function _getRegisteredExtensions() {
-        $groupParams = array( 'id' => CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', self::OPTION_GROUP_NAME) );
+        $uploaded = array();
 
-        CRM_Core_Error::debug( 'registered', $groupParams);
-        $extensions = array();
-        require_once 'CRM/Core/OptionValue.php';
-        CRM_Core_OptionValue::getValues( $groupParams, $extensions );
+        $config = CRM_Core_Config::singleton( );
+        $d = $config->extensionsDir . DIRECTORY_SEPARATOR . 'temp';
+        $e = scandir( $d );
+        foreach( $e as $dc => $name ) {
+            $dir = $d . DIRECTORY_SEPARATOR . $name;
+            $infoFile = $dir . DIRECTORY_SEPARATOR . self::EXT_INFO_FILENAME;
+            if( is_dir( $dir ) && file_exists( $infoFile ) ) {
+                $t = $this->_buildExtensionRecord( $dir );
+                $attr = $t['info']->attributes();
+                CRM_Core_Error::debug('s', $attr);
+                $uploaded[(string) $attr->type][$name] = $t;
+            }
+//            if( function_exists( 'zip_open' ) {
+//                if( is_file( $p ) && zip_open( $p ) ) {
+//                    do {
+//                        $f = zip_read($p);
+//                    } while ($f && zip_entry_name($f) != self::EXT_INFO_FILENAME);
+//                    zip_entry_open($p, $f, "r");
+//                    $nfoFile = zip_entry_read($f, zip_entry_filesize($f));
+//                    $nfo = $this->_parseInfoFile( $nfoFile );
+//                    $uploaded[$name] = $nfo;
+//                }
+//            }
+        }
 
-//        CRM_Core_Error::debug( 'registered', $extensions);
+        return $uploaded;
         
-        $groupParams = array( 'name' => self::OPTION_GROUP_NAME );
-        $optionValue = CRM_Core_OptionValue::getRows($groupParams, null, 'component_id,weight');        
     }
 
-    private function _discoverLocal() {
+
+    private function _discoverEnabled() {
+        require_once 'CRM/Core/OptionGroup.php';
+        $ov =  CRM_Core_OptionGroup::values( self::OPTION_GROUP_NAME, false, false, false, null, 'grouping' );
+        $enabled = array();
+
+        $config = CRM_Core_Config::singleton( );
+        $d = $config->extensionsDir;
+        foreach( $ov as $name => $type ) {
+            $dir = $d . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $name;
+            $infoFile = $dir . DIRECTORY_SEPARATOR . self::EXT_INFO_FILENAME;
+            if( is_dir( $dir ) && file_exists( $infoFile ) && in_array( $type, $this->allowedExtTypes ) ) {
+                $enabled[$type][$name] = $this->_buildExtensionRecord( $dir );
+            }
+        }
+        return $enabled;
+    }
+
+    private function _discoverInstalled() {
         $local = array();
+
+        $config = CRM_Core_Config::singleton( );
+        $d = $config->extensionsDir;
 
         // we expect extension type directories on the top level
         foreach( $this->allowedExtTypes as $dc => $extType ) {
-            $extTypePath = self::EXT_DIR . DIRECTORY_SEPARATOR . $extType;
+            $extTypePath = $d . DIRECTORY_SEPARATOR . $extType;
             if( file_exists( $extTypePath ) ) {
                 $e = scandir( $extTypePath );
                 foreach( $e as $dc => $name ) {
-                    $extPath = $extTypePath . DIRECTORY_SEPARATOR . $name;
-                    $infoFile = $extPath . DIRECTORY_SEPARATOR . self::EXT_INFO_FILENAME;
-                    if( is_dir( $extPath ) && file_exists( $infoFile ) && $this->_validateInfoFile()) {
-                        $local[$extType][$name]['path'] =  $extPath;
-                        $local[$extType][$name]['valid'] = $this->_validateExtension();
-                        $local[$extType][$name]['info'] = $this->_parseInfoFile( $infoFile );
+                    $dir = $extTypePath . DIRECTORY_SEPARATOR . $name;
+                    $infoFile = $dir . DIRECTORY_SEPARATOR . self::EXT_INFO_FILENAME;
+                    if( is_dir( $dir ) && file_exists( $infoFile ) ) {
+                        $local[$extType][$name] = $this->_buildExtensionRecord( $dir );
                     }
                 }
             }
         }
         return $local;
+        
+    }
+
+
+    private function _buildExtensionRecord( $dir ) {
+        $infoFile = $dir . DIRECTORY_SEPARATOR . self::EXT_INFO_FILENAME;
+        if( file_exists( $infoFile ) && $this->_validateInfoFile()) {
+            $rec['path'] =  $dir;
+            $rec['valid'] = $this->_validateExtension();
+            $rec['info'] = $this->_parseInfoFile( $infoFile );
+            return $rec;                
+        }
     }
 
 
@@ -141,9 +195,4 @@ class CRM_Core_Extensions
     }
 
 }
-
-
-$i = new CRM_Core_Extensions();
-
-$i->discover();
 

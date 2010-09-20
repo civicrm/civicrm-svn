@@ -59,6 +59,12 @@
                     <span class="description">{ts}Path where site specific PHP code files are stored if any. This directory is searched first if set.{/ts}</span>
                 </td>    
             </tr>
+            <tr class="crm-path-form-block-extensionsDir">  
+                <td class="label">{$form.extensionsDir.label}</td>
+                <td>{$form.extensionsDir.html|crmReplace:class:'huge40'}<br />
+                    <span class="description">{ts}Path where CiviCRM extensions are stored..{/ts}</span>
+                </td>    
+            </tr>
         </table>
    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>

@@ -632,8 +632,8 @@ VALUES
   (@option_group_id_grantTyp, '{ts escape="sql"}Impunity{/ts}'           , 4, 'Impunity'          , NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, @domainID, NULL),
 
 -- default CiviCRM Extensions
-  (@option_group_id_extensions, '{ts escape="sql"}Activity Search{/ts}'    , 1, 'Activity Search'    , NULL, 0, 1,    1, NULL, 0, 0, 1, NULL, @domainID, NULL),
-  (@option_group_id_extensions, '{ts escape="sql"}Multi Value Search{/ts}' , 2, 'Multi Value Search' , NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, @domainID, NULL);
+  (@option_group_id_extensions, '{ts escape="sql"}Activity Search{/ts}'    , 'activity', 'Activity Search'    , NULL, 'search', 1,    1, NULL, 0, 0, 1, NULL, @domainID, NULL),
+  (@option_group_id_extensions, '{ts escape="sql"}Multi Value Search{/ts}' , 'multivalue', 'Multi Value Search' , NULL, 'search', NULL, 2, NULL, 0, 0, 1, NULL, @domainID, NULL);
 
 -- CRM-6138
 {include file='languages.tpl'}

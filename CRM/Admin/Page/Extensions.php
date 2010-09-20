@@ -66,8 +66,6 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
         $ext = new CRM_Core_Extensions();
         $extensions = $ext->getExtensions();
 
-
-
 //        CRM_Utils_System::setTitle(ts('CiviCRM Extensions');
             
     }
@@ -142,16 +140,6 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
      */
     function browse()
     {
-        require_once 'CRM/Core/OptionValue.php';
-        
-
-        $returnURL = CRM_Utils_System::url( "civicrm/admin/options/extensions",
-                                            "reset=1" );
-        $filter    = "option_group_id = 35";
-        require_once 'CRM/Utils/Weight.php';
-        CRM_Utils_Weight::addOrder( $optionValue, 'CRM_Core_DAO_OptionValue',
-                                    'id', $returnURL, $filter );
-        $this->assign('rows', $optionValue);
     }
     
     /**
