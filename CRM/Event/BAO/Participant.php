@@ -1421,7 +1421,7 @@ UPDATE  civicrm_participant
     static function isPrimaryParticipant( $participantId ) {
 
         $participant = new CRM_Event_DAO_Participant( );
-        $participant->register_by_id = $participantId;
+        $participant->registered_by_id = $participantId;
         
         if ($participant->find( true)) {
             return true;
