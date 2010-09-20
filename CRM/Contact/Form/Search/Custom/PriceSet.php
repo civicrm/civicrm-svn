@@ -119,21 +119,17 @@ SELECT c.id as contact_id,
        v.id as option_value_id, 
        l.qty
 FROM   civicrm_contact c,
-       civicrm_contribution o,
        civicrm_participant  p,
-       civicrm_participant_payment pp,
        civicrm_line_item    l,
        civicrm_option_group g,
        civicrm_option_value v
-WHERE  c.id = o.contact_id
-AND    c.id = p.contact_id
+WHERE  c.id = p.contact_id
 AND    p.event_id = {$this->_eventID}
-AND    pp.contribution_id = o.id
-AND    pp.participant_id  = p.id
 AND    p.id = l.entity_id
 AND    l.option_group_id = g.id
 AND    v.option_group_id = g.id
 AND    v.label = l.label
+AND    l.entity_table ='civicrm_participant'
 ORDER BY c.id, v.id;
 ";
 
