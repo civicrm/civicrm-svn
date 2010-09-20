@@ -55,8 +55,10 @@ class CRM_Mailing_Event_BAO_Bounce extends CRM_Mailing_Event_DAO_Bounce {
         $q =& CRM_Mailing_Event_BAO_Queue::verify($params['job_id'],
                                                   $params['event_queue_id'],
                                                   $params['hash']);
+        $success = null;
+
         if (! $q) {
-            return null;
+            return $success;
         }
 
         require_once 'CRM/Core/Transaction.php';
@@ -74,6 +76,7 @@ class CRM_Mailing_Event_BAO_Bounce extends CRM_Mailing_Event_DAO_Bounce {
              
         $bounce->copyValues($params);
         $bounce->save();
+        $success = true;
 
         $bounceTable    = CRM_Mailing_Event_BAO_Bounce::getTableName();
         $bounceType     = CRM_Mailing_DAO_BounceType::getTableName();
@@ -111,6 +114,8 @@ class CRM_Mailing_Event_BAO_Bounce extends CRM_Mailing_Event_DAO_Bounce {
             }
         }
         $transaction->commit( );
+
+        return $success;
     }
 
     /**
