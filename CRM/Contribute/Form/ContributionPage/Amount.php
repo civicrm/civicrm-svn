@@ -301,13 +301,11 @@ class CRM_Contribute_Form_ContributionPage_Amount extends CRM_Contribute_Form_Co
             if ( CRM_Utils_Array::value( 'amount_block_is_active', $fields ) ) {
                 if ( !CRM_Utils_Array::value( 'is_allow_other_amount', $fields ) &&
                      !$priceSetId ) {
-                    //get the values and labels of amount block
-                    $labels  = CRM_Utils_Array::value( 'label'  , $fields );
+                    //get the values of amount block
                     $values  = CRM_Utils_Array::value( 'value'  , $fields );
                     $isSetRow = false;
                     for ( $i = 1; $i < self::NUM_OPTION; $i++ ) {
-                        if ( ( isset( $values[$i] ) && ( strlen( trim( $values[$i] ) ) > 0 ) ) &&
-                             ( CRM_Utils_Array::value( $i, $labels ) ) ) { 
+                        if ( ( isset( $values[$i] ) && ( strlen( trim( $values[$i] ) ) > 0 ) ) ) { 
                             $isSetRow = true;
                         }
                     }
