@@ -383,13 +383,15 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
                 // if no parent present and the group doesn't already have any parents, 
                 // make sure site group goes as parent
                 $params['parents'] = array( $domainGroupID => 1 );
-            } else if ( !is_array($params['parents']) ) {
+            } else if ( array_key_exists( 'parents', $params ) && !is_array($params['parents']) ) {
                 $params['parents'] = array( $params['parents'] => 1 );
             }
 
-            foreach ( $params['parents'] as $parentId => $dnc ) {
-                if ( $parentId && !CRM_Contact_BAO_GroupNesting::isParentChild( $parentId, $group->id ) ) {
-                    CRM_Contact_BAO_GroupNesting::add( $parentId, $group->id );
+            if ( !empty($params['parents']) ) {
+                foreach ( $params['parents'] as $parentId => $dnc ) {
+                    if ( $parentId && !CRM_Contact_BAO_GroupNesting::isParentChild( $parentId, $group->id ) ) {
+                        CRM_Contact_BAO_GroupNesting::add( $parentId, $group->id );
+                    }
                 }
             }
 
