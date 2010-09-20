@@ -882,7 +882,6 @@ class CRM_Profile_Form extends CRM_Core_Form
             $ufGroupName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $this->_gid, 'name' );
             if ( $ufGroupName ) {
                 $templateFile = "CRM/Profile/Form/{$ufGroupName}/{$this->_name}.tpl";
-                $template =& CRM_Core_Form::getTemplate( );
                 if ( $template->template_exists( $templateFile ) ) {
                     return $templateFile;
                 }

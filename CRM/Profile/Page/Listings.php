@@ -380,7 +380,6 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
             $ufGroupName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $this->_gid, 'name' );
             if ( $ufGroupName ) {
                 $templateFile = "CRM/Profile/Page/{$ufGroupName}/Listings.tpl";
-                $template =& CRM_Core_Form::getTemplate( );
                 if ( $template->template_exists( $templateFile ) ) {
                     return $templateFile;
                 }
