@@ -26,7 +26,7 @@
 {if $id and $action eq 2}
     {include file="CRM/Contribute/Page/ContributionPageEdit.tpl"}
 {else}
-    {capture assign=newPageURL}{crmURL q='action=add&reset=1'}{/capture}
+    {capture assign=newPageURL}{crmURL p='civicrm/admin/contribute/add' q='action=add&reset=1'}{/capture}
     <div id="help">
     	 {ts}CiviContribute allows you to create and maintain any number of Online Contribution Pages. You can create different pages for different programs or campaigns - and customize text, amounts, types of information collected from contributors, etc.{/ts} {help id="id-intro"}
     </div>
