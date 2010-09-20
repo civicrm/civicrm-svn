@@ -402,16 +402,23 @@ WHERE 	a.source_record_id = " . $surveyId . "
 		
 		$replyTo = "do-not-reply@$emailDomain";
 
+		// set additional general message template params (custom tokens to use in email msg templates)
+		// tokens then available in msg template as {$petition.title}, etc		
+		$petitionTokens['title'] = $petitionInfo['title'];
+		$petitionTokens['petitionId'] = $params['sid'];	
+		$tplParams['petition'] = $petitionTokens;
+				
 		switch ($sendEmailMode) {
-			case CRM_Campaign_Form_Petition_Signature::EMAIL_THANK:
+			case CRM_Campaign_Form_Petition_Signature::EMAIL_THANK:	
+			
 				require_once 'CRM/Core/BAO/MessageTemplates.php';
 				if ($params['email-Primary']) {
-					self::sendTemplate(
+					CRM_Core_BAO_MessageTemplates::sendTemplate(
 						array(
 							'groupName' => 'msg_tpl_workflow_petition',
 							'valueName' => 'petition_sign',
 							'contactId' => $params['contactId'],
-							'tplParams' => array(),
+							'tplParams' => $tplParams,
 							'from'    => "\"{$domainEmailName}\" <{$domainEmailAddress}>",
 							'toName'  => $toName,
 							'toEmail' => $params['email-Primary'],
@@ -420,10 +427,8 @@ WHERE 	a.source_record_id = " . $surveyId . "
 							'petitionTitle' => $petitionInfo['title'],
 						)
 					);
-				}			
-				
+				}							
     			break;
-    			
     			
 			case CRM_Campaign_Form_Petition_Signature::EMAIL_CONFIRM:
 				// create mailing event subscription record for this contact
@@ -450,15 +455,19 @@ WHERE 	a.source_record_id = " . $surveyId . "
 				$confirmUrl = CRM_Utils_System::url( 'civicrm/petition/confirm',
 											  "reset=1&cid={$se->contact_id}&sid={$se->id}&h={$se->hash}&a={$params['activityId']}&p={$params['sid']}",
 											  true );
+
+				// set email specific message template params and assign to tplParams
+				$petitionTokens['confirmUrl'] = $confirmUrl;
+				$tplParams['petition'] = $petitionTokens;		
 						
 				require_once 'CRM/Core/BAO/MessageTemplates.php';
-				if ($params['email-Primary']) {
-					self::sendTemplate(
+				if ($params['email-Primary']) {					
+					CRM_Core_BAO_MessageTemplates::sendTemplate(
 						array(
 							'groupName' => 'msg_tpl_workflow_petition',
 							'valueName' => 'petition_confirmation_needed',
 							'contactId' => $params['contactId'],
-							'tplParams' => array(),
+							'tplParams' => $tplParams,
 							'from'    => "\"{$domainEmailName}\" <{$domainEmailAddress}>",
 							'toName'  => $toName,
 							'toEmail' => $params['email-Primary'],
@@ -467,178 +476,11 @@ WHERE 	a.source_record_id = " . $surveyId . "
 							'petitionTitle' => $petitionInfo['title'],
 							'confirmUrl' => $confirmUrl, 
 						)
-					);
-				}		
-				
+					);					
+				}						
     			break;    			
     	}
 	}
-
-    /**
-     * Send an email from the specified template based on an array of params
-     *
-     * @param array $params  a string-keyed array of function params, see function body for details
-     *
-     * @return array  of four parameters: a boolean whether the email was sent, and the subject, text and HTML templates
-     */
-    static function sendTemplate($params)
-    {
-        $defaults = array(
-            'groupName'   => null,    // option group name of the template
-            'valueName'   => null,    // option value name of the template
-            'contactId'   => null,    // contact id if contact tokens are to be replaced
-            'tplParams'   => array(), // additional template params (other than the ones already set in the template singleton)
-            'from'        => null,    // the From: header
-            'toName'      => null,    // the recipient’s name
-            'toEmail'     => null,    // the recipient’s email - mail is sent only if set
-            'cc'          => null,    // the Cc: header
-            'bcc'         => null,    // the Bcc: header
-            'replyTo'     => null,    // the Reply-To: header
-            'attachments' => null,    // email attachments
-            'isTest'      => false,   // whether this is a test email (and hence should include the test banner)
-        );
-        $params = array_merge($defaults, $params);
-
-        if (!$params['groupName'] or !$params['valueName']) {
-            CRM_Core_Error::fatal(ts("Message template's option group and/or option value missing."));
-        }
-
-        // fetch the three elements from the db based on option_group and option_value names
-        $query = 'SELECT msg_subject subject, msg_text text, msg_html html
-                  FROM civicrm_msg_template mt
-                  JOIN civicrm_option_value ov ON workflow_id = ov.id
-                  JOIN civicrm_option_group og ON ov.option_group_id = og.id
-                  WHERE og.name = %1 AND ov.name = %2 AND mt.is_default = 1';
-        $sqlParams = array(1 => array($params['groupName'], 'String'), 2 => array($params['valueName'], 'String'));
-        $dao = CRM_Core_DAO::executeQuery($query, $sqlParams);
-        $dao->fetch();
-
-        if (!$dao->N) {
-            CRM_Core_Error::fatal(ts('No such message template: option group %1, option value %2.', array(1 => $params['groupName'], 2 => $params['valueName'])));
-        }
-
-        $subject = $dao->subject;
-        $text    = $dao->text;
-        $html    = $dao->html;
-        $dao->free( );
-
-        // add the test banner (if requested)
-        if ($params['isTest']) {
-            $query = "SELECT msg_subject subject, msg_text text, msg_html html
-                      FROM civicrm_msg_template mt
-                      JOIN civicrm_option_value ov ON workflow_id = ov.id
-                      JOIN civicrm_option_group og ON ov.option_group_id = og.id
-                      WHERE og.name = 'msg_tpl_workflow_meta' AND ov.name = 'test_preview' AND mt.is_default = 1";
-            $testDao = CRM_Core_DAO::executeQuery($query);
-            $testDao->fetch();
-
-            $subject = $testDao->subject . $subject;
-            $text    = $testDao->text    . $text;
-            $html    = preg_replace('/<body(.*)$/im', "<body\\1\n{$testDao->html}", $html);
-            $testDao->free( );
-        }
-
-        // replace tokens in the three elements (in subject as if it was the text body)
-        require_once 'CRM/Utils/Token.php';
-        require_once 'CRM/Core/BAO/Domain.php';
-        require_once 'api/v2/Contact.php';
-        require_once 'CRM/Mailing/BAO/Mailing.php';
-
-        $domain = CRM_Core_BAO_Domain::getDomain();
-        if ($params['contactId']) {
-            $contactParams = array('contact_id' => $params['contactId']);
-            $contact =& civicrm_contact_get($contactParams);
-        }
-
-        $mailing = new CRM_Mailing_BAO_Mailing;
-        $mailing->body_text = $text;
-        $mailing->body_html = $html;
-        $tokens = $mailing->getTokens();
-
-        $subject = CRM_Utils_Token::replaceDomainTokens($subject, $domain, true, $tokens['text'], true);
-        $text    = CRM_Utils_Token::replaceDomainTokens($text,    $domain, true, $tokens['text'], true);
-        $html    = CRM_Utils_Token::replaceDomainTokens($html,    $domain, true, $tokens['html'], true);
-        if ($params['contactId']) {
-            $subject = CRM_Utils_Token::replaceContactTokens($subject, $contact, false, $tokens['text'], false, true);
-            $text    = CRM_Utils_Token::replaceContactTokens($text,    $contact, false, $tokens['text'], false, true);
-            $html    = CRM_Utils_Token::replaceContactTokens($html,    $contact, false, $tokens['html'], false, true);
-        }
-        if ($params['petitionId']) {
-            $subject = self::replacePetitionTokens($subject, $params['petitionTitle'], $params['confirmUrl'], $params['petitionId']);
-            $text    = self::replacePetitionTokens($text,    $params['petitionTitle'], $params['confirmUrl'], $params['petitionId']);
-            $html    = self::replacePetitionTokens($html,    $params['petitionTitle'], $params['confirmUrl'], $params['petitionId']);
-        }
-        
-        // strip whitespace from ends and turn into a single line
-        $subject = "{strip}$subject{/strip}";
-
-        // parse the three elements with Smarty
-        require_once 'CRM/Core/Smarty/resources/String.php';
-        civicrm_smarty_register_string_resource();
-        $smarty = CRM_Core_Smarty::singleton();
-        foreach ($params['tplParams'] as $name => $value) {
-            $smarty->assign($name, $value);
-        }
-        foreach (array('subject', 'text', 'html') as $elem) {
-            $$elem = $smarty->fetch("string:{$$elem}");
-        }
-
-        // send the template, honouring the target user’s preferences (if any)
-        $sent = false;
-
-        // create the params array
-        $params['subject'] = $subject;
-        $params['text'   ] = $text;
-        $params['html'   ] = $html;
-
-        if ($params['toEmail']) {
-            $contactParams = array('email' => $params['toEmail']);
-            $contact =& civicrm_contact_get($contactParams);
-            $prefs = array_pop($contact);
-
-            if ( isset($prefs['preferred_mail_format']) and $prefs['preferred_mail_format'] == 'HTML' ) {
-                $params['text'] = null;
-            }
-
-            if ( isset($prefs['preferred_mail_format']) and $prefs['preferred_mail_format'] == 'Text' ) {
-                $params['html'] = null;
-            }
-
-            require_once 'CRM/Utils/Mail.php';
-            $sent = CRM_Utils_Mail::send( $params );
-        }
-
-        return array($sent, $subject, $text, $html);
-    }
-
-
-    /**
-     * Replace petition-specific-tokens
-     * 
-     * @param string $str           The string with tokens to be replaced
-     * @param string $title         The petition title
-     * @param string $confirmUrl	Confirmation url for email verification
-     * @return str		            The processed string
-     * @access public
-     * @static
-     */
-    public static function &replacePetitionTokens($str, $title, $confirmUrl, $petitionId) 
-    {
-    	require_once 'CRM/Utils/Token.php';
-    	
-    	if (CRM_Utils_Token::token_match('petition', 'title', $str)) {
-            CRM_Utils_Token::token_replace('petition', 'title', $title, $str);
-        }
-        
-        if (CRM_Utils_Token::token_match('petition', 'confirmUrl', $str)) {
-            CRM_Utils_Token::token_replace('petition', 'confirmUrl', $confirmUrl, $str);
-        }
-
-        if (CRM_Utils_Token::token_match('petition', 'petitionId', $str)) {
-            CRM_Utils_Token::token_replace('petition', 'petitionId', $petitionId, $str);
-        }
-        return $str;
-    }
 
 
 
