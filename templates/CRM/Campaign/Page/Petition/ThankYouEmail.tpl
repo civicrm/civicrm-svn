@@ -40,7 +40,7 @@ and modify to fit your specific configuration.
 		// there will be a 'content_field_petitionid' table in the Drupal database
 		// that stores field_petitionid_value against nid (node id)
 		
-		$result = db_query("SELECT * FROM content_field_petitionid WHERE field_petitionid_value = " . $surveyId);
+		$result = db_query("SELECT * FROM content_type_petition WHERE field_petitionid_value = " . $surveyId);
 		
 		global $base_url;
 		$petition = array();
@@ -79,14 +79,14 @@ Please help us and let your friends, colleagues and followers know about our cam
 Like it on Facebook or tweet it on Twitter.</p>
 <div class="socialnetwork">
 <a href="http://www.facebook.com/plugins/like.php?href={$node.url}&layout=standard&show_faces=true&width=225&action=like&colorscheme=light&height=80">
-	<img src="{$base_url}/sites/all/modules/civicrm/templates/CRM/Campaign/Page/Petition/images/fblike.png" title="Facebook Like Button">
+	<img src="{$base_url}/sites/all/modules/civicrm/i/fblike.png" title="Facebook Like Button">
 </a>
 &nbsp;
 &nbsp;
 &nbsp;
 &nbsp;
 <a href="http://twitter.com/share?text=Sign this, I did: {$node.title}&url={$node.url}">
-	<img src="{$base_url}/sites/all/modules/civicrm/templates/CRM/Campaign/Page/Petition/images/tweet.png" title="Tweet Button"">
+	<img src="{$base_url}/sites/all/modules/civicrm/i/tweet.png" title="Tweet Button"">
 </a>		
 </div>
 
