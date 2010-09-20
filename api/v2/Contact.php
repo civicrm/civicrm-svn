@@ -473,6 +473,30 @@ function civicrm_contact_check_params( &$params, $dupeCheck = true, $dupeErrorAr
             return civicrm_create_error( "Found matching contacts: $ids", $ids );
         }
     }
+
+    //check for organisations with same name
+    if ( CRM_Utils_Array::value( 'current_employer', $params ) ) {
+        $organizationParams = array();
+        $organizationParams['organization_name'] = $params['current_employer'];
+        
+        require_once 'CRM/Dedupe/Finder.php';
+        $dedupParams = CRM_Dedupe_Finder::formatParams($organizationParams, 'Organization');
+        
+        $dedupParams['check_permission'] = false;            
+        $dupeIds = CRM_Dedupe_Finder::dupesByParams($dedupParams, 'Organization', 'Fuzzy');
+        
+        // check for mismatch employer name and id
+        if ( CRM_Utils_Array::value( 'employer_id', $params )
+             && !in_array( $params['employer_id'] ,$dupeIds ) ) {
+            return civicrm_create_error('Employer name and Employer id Mismatch');
+        }
+        
+        // show error if multiple organisation with same name exist
+        if ( !CRM_Utils_Array::value( 'employer_id', $params )
+             && (count($dupeIds) > 1) ) {
+            return civicrm_create_error('Found more than one Organisation with same Name.');
+        }
+    }
     
     return null;
 }

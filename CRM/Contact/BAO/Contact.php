@@ -195,16 +195,19 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
         }
 
         if ( $contact->contact_type == 'Individual' &&
-             array_key_exists( 'current_employer', $params ) ) {
+             (array_key_exists( 'current_employer', $params ) || 
+              array_key_exists( 'employer_id', $params )) ) {
             // create current employer
-            if ( $params['current_employer'] ) {
-                require_once 'CRM/Contact/BAO/Contact/Utils.php';
+            require_once 'CRM/Contact/BAO/Contact/Utils.php';
+            if ( $params['employer_id']  ) {
+                CRM_Contact_BAO_Contact_Utils::createCurrentEmployerRelationship( $contact->id, 
+                                                                                  $params['employer_id'] );
+            } elseif ( $params['current_employer'] ) {
                 CRM_Contact_BAO_Contact_Utils::createCurrentEmployerRelationship( $contact->id, 
                                                                                   $params['current_employer'] );
             } else {
                 //unset if employer id exits
                 if ( $employerId = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $contact->id, 'employer_id' ) ) {
-                    require_once 'CRM/Contact/BAO/Contact/Utils.php';
                     CRM_Contact_BAO_Contact_Utils::clearCurrentEmployer( $contact->id, $employerId );
                 }
             }

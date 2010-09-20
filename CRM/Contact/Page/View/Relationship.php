@@ -80,10 +80,12 @@ class CRM_Contact_Page_View_Relationship extends CRM_Core_Page
         $relType = $viewRelationship[$this->_id]['civicrm_relationship_type_id'];        
         $this->assign( 'viewRelationship', $viewRelationship );        
 
+        $employerId = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $this->_contactId, 'employer_id' );
         $this->assign( 'isCurrentEmployer', false );
-        if ( $viewRelationship[$this->_id]['employer_id'] ) {
+        if ( $viewRelationship[$this->_id]['employer_id'] == $this->_contactId ) {
             $this->assign( 'isCurrentEmployer', true);
-        } else if ( $relType == 4 && CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $this->_contactId, 'employer_id' ) ) {
+        } else if ( $relType == 4 && 
+                    ( $viewRelationship[$this->_id]['cid'] == $employerId ) ) {
             // make sure we are viewing employee of relationship
             $this->assign( 'isCurrentEmployer', true);
         }
