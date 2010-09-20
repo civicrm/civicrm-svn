@@ -752,20 +752,18 @@ WHERE id={$id}; ";
         $relativePath = null;
         $config = CRM_Core_Config::singleton( );
         if ( $config->userFramework == 'Joomla' ) {
-            $userFrameworkBaseURL = trim( str_replace( DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR, 
-                                                       '',
-                                                       $config->userFrameworkBaseURL ) );
-            $customFileUploadDirectory = strstr( $absolutePath, DIRECTORY_SEPARATOR.'media' );
-            $relativePath = $userFrameworkBaseURL . $customFileUploadDirectory;     
+            $userFrameworkBaseURL = trim( str_replace( '/administrator/', '', $config->userFrameworkBaseURL ) );
+            $customFileUploadDirectory = strstr( str_replace('\\', '/', $absolutePath), '/media' );
+            $relativePath = $userFrameworkBaseURL . $customFileUploadDirectory;
         } else if ( $config->userFramework == 'Drupal' ) {   
             require_once 'CRM/Utils/System/Drupal.php';
             $rootPath = CRM_Utils_System_Drupal::cmsRootPath( );
-            $relativePath = str_replace( $rootPath . DIRECTORY_SEPARATOR, 
-                                         $config->userFrameworkBaseURL, 
-                                         $absolutePath );
+            $relativePath = str_replace( "$rootPath/",
+                                         $config->userFrameworkBaseURL,
+                                         str_replace('\\', '/', $absolutePath ) );
         } else if ( $config->userFramework == 'Standalone' ) {
             $absolutePathStr = strstr( $absolutePath, 'files');
-            $relativePath = $config->userFrameworkBaseURL . $absolutePathStr;
+            $relativePath = $config->userFrameworkBaseURL . str_replace('\\', '/', $absolutePathStr );
         }
         
         return $relativePath;
