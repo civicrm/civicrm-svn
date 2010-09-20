@@ -127,6 +127,8 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
             require_once 'CRM/Core/Config.php';
             $config = CRM_Core_Config::singleton();
             $participantBAO->fee_currency = $config->defaultCurrency;
+        } else {
+            $participantBAO->fee_currency = '';
         }
         
         $participantBAO->save();
