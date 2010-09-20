@@ -688,4 +688,21 @@ class CRM_Utils_Hook {
                 '::invoke( 5, $type, $data, $mainId, $otherId, $tables , \'civicrm_merge\' );' );
 
     }
+
+    /**
+     * This hook provides a way to override the default privacy behavior for notes.
+     * @param array $note (reference) Associative array of values for this note
+     *
+     * @access public
+     */
+    static function notePrivacy( &$noteValues ) {
+        $config =& CRM_Core_Config::singleton( );
+        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
+        $null =& CRM_Core_DAO::$_nullObject;
+
+        return
+            eval( 'return ' .
+                $config->userHookClass .
+                '::invoke( 1, $noteValues, $null, $null, $null, $null, \'civicrm_notePrivacy\' );' );
+    }
 }

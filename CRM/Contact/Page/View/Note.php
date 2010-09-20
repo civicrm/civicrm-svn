@@ -63,9 +63,14 @@ class CRM_Contact_Page_View_Note extends CRM_Core_Page
         if ( $note->find( true ) ) {
             $values = array( );
             CRM_Core_DAO::storeValues( $note, $values );
+            $values['privacy'] = CRM_Core_OptionGroup::optionLabel( 'note_privacy', $values['privacy'] );
             $this->assign( 'note', $values );
         }
        
+        $comments = CRM_Core_BAO_Note::getNoteTree( $values['id'], 1 );
+        if ( ! empty( $comments ) ) {
+            $this->assign( 'comments', $comments );
+        }
     }
 
     /**
@@ -96,22 +101,31 @@ class CRM_Contact_Page_View_Note extends CRM_Core_Page
         
         $note->find( );
         while ( $note->fetch( ) ) {
-          
-            $values[$note->id] = array( );
-            CRM_Core_DAO::storeValues( $note, $values[$note->id] );
-            $values[$note->id]['action'] = CRM_Core_Action::formLink( $links,
-                                                                      $action,
-                                                                      array( 'id'  => $note->id,
-                                                                             'cid' => $this->_contactId ) );
-            $contact =  new CRM_Contact_DAO_Contact( );
-            $contact->id = $note->contact_id;
-            $contact->find();
-            $contact->fetch();
-            $values[$note->id]['createdBy'] = $contact->display_name;
-            
+            if ( ! CRM_Core_BAO_Note::getNotePrivacyHidden( $note ) ) {
+                CRM_Core_DAO::storeValues( $note, $values[$note->id] );
+
+                $values[$note->id]['action'] = CRM_Core_Action::formLink( $links,
+                                                                          $action,
+                                                                          array( 'id'  => $note->id,
+                                                                                 'cid' => $this->_contactId ) );
+                $contact =  new CRM_Contact_DAO_Contact( );
+                $contact->id = $note->contact_id;
+                $contact->find( );
+                $contact->fetch( );
+                $values[$note->id]['createdBy'] = $contact->display_name;
+                $values[$note->id]['comment_count'] = CRM_Core_BAO_Note::getChildCount( $note->id );
+            }
         }
-       
+
         $this->assign( 'notes', $values );
+
+        $commentLinks = self::commentLinks( );
+        $action = array_sum( array_keys( $commentLinks ) ) & $mask;
+        $commentAction = CRM_Core_Action::formLink( $commentLinks,
+                                      $action,
+                                      array(  ) );
+        $this->assign( 'commentAction', $commentAction );
+
     }
 
     /**
@@ -146,6 +160,12 @@ class CRM_Contact_Page_View_Note extends CRM_Core_Page
 
     function preProcess() {
         $this->_id        = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
+        
+        require_once 'CRM/Core/BAO/Note.php';
+        if ( $this->_id && CRM_Core_BAO_Note::getNotePrivacyHidden( $this->_id ) ) {
+            CRM_Core_Error::statusBounce( ts( 'You do not have access to this note.' ) );
+        }
+
         $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
         $this->assign( 'contactId', $this->_contactId );
 
@@ -218,19 +238,50 @@ class CRM_Contact_Page_View_Note extends CRM_Core_Page
                                                                     'qs'    => 'action=update&reset=1&cid=%%cid%%&id=%%id%%&selectedChild=note',
                                                                     'title' => ts('Edit Note')
                                                                     ),
+                                  CRM_Core_Action::ADD     => array(
+                                                                    'name'  => ts('Comment'),
+                                                                    'url'   => 'civicrm/contact/view/note',
+                                                                    'qs'    => 'action=add&reset=1&cid=%%cid%%&parentId=%%id%%&selectedChild=note',
+                                                                    'title' => ts('Add Comment')
+                                                                    ),
                                   CRM_Core_Action::DELETE  => array(
                                                                     'name'  => ts('Delete'),
                                                                     'url'   => 'civicrm/contact/view/note',
                                                                     'qs'    => 'action=delete&reset=1&cid=%%cid%%&id=%%id%%&selectedChild=note',
-                                                                    'extra' => 'onclick = "if (confirm(\'' . $deleteExtra . '\') ) this.href+=\'&amp;confirmed=1\'; else return false;"',                                                                    
+                                                                    'extra' => 'onclick = "if (confirm(\'' . $deleteExtra . '\') ) this.href+=\'&amp;confirmed=1\'; else return false;"',
                                                                     'title' => ts('Delete Note')
                                                                     ),
                                   );
         }
         return self::$_links;
     }
-                                  
 
+    /**
+     * Get action links for comments
+     *
+     * @return array (reference) of action links
+     * @static
+     */
+    static function &commentLinks( )
+    {
+        $deleteExtra = ts( 'Are you sure you want to delete this comment?' );
+        $links = array(
+                              CRM_Core_Action::UPDATE  => array(
+                                                                'name'  => ts('Edit'),
+                                                                'url'   => 'civicrm/contact/view/note',
+                                                                'qs'    => 'action=update&reset=1&cid={cid}&id={id}&selectedChild=note',
+                                                                'title' => ts('Edit Comment')
+                                                                ),
+                              CRM_Core_Action::DELETE  => array(
+                                                                'name'  => ts('Delete'),
+                                                                'url'   => 'civicrm/contact/view/note',
+                                                                'qs'    => 'action=delete&reset=1&cid={cid}&id={id}&selectedChild=note',
+                                                                'extra' => 'onclick = "if (confirm(\'' . $deleteExtra . '\') ) this.href+=\'&amp;confirmed=1\'; else return false;"',
+                                                                'title' => ts('Delete Comment')
+                                                                ),
+                              );
+        return $links;
+    }
 }
 
 

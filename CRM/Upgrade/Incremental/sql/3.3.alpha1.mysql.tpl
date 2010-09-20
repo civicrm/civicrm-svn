@@ -26,3 +26,6 @@ UPDATE civicrm_option_group
 ALTER TABLE civicrm_custom_field
   ADD name varchar(255) collate utf8_unicode_ci default NULL;
 
+-- CRM-6814
+ALTER TABLE `civicrm_note` 
+  ADD `privacy` INT( 10 ) NOT NULL COMMENT 'Foreign Key to Note Privacy Level (which is an option value pair and hence an implicit FK)';

@@ -388,7 +388,8 @@ class CRM_Core_Permission {
                       'administer Tagsets'                => ts( 'administer Tagsets' ),
                       'administer reserved tags'          => ts( 'administer reserved tags' ),
                       'administer dedupe rules'           => ts( 'administer dedupe rules' ),
-                      'merge duplicate contacts'          => ts( 'merge duplicate contacts' )
+                      'merge duplicate contacts'          => ts( 'merge duplicate contacts' ),
+                      'view all notes'                    => ts( 'view all notes' )
                       );
 
             if ( defined( 'CIVICRM_MULTISITE' ) && CIVICRM_MULTISITE ) {

@@ -184,3 +184,28 @@ function &civicrm_note_get( &$params ) {
     return $note;
 }
 
+/**
+ * Get all descendents of given note
+ * @param array $params Associative array; only required 'id' parameter is used
+ * @return array Nested associative array beginning with direct children of given note.
+ */
+ function &civicrm_note_tree_get( &$params ) {
+
+     if ( empty( $params ) ) {
+        return civicrm_create_error( ts( 'No input parameters present' ) );
+    }
+
+    if ( ! is_array( $params ) ) {
+        return civicrm_create_error( ts( 'Input parameters is not an array' ) );
+    }
+
+    if ( ! isset( $params['id'] ) ) {
+        return civicrm_create_error( 'Required parameter ("id") missing.' );
+    }
+
+    if ( !is_numeric( $params['id'] ) ) {
+        return civicrm_create_error( ts ( "Invalid note ID" ) );
+    }
+
+    return CRM_Core_BAO_Note::getNoteTree( $params['id'], $params['max_depth'], $params['snippet'] );
+}

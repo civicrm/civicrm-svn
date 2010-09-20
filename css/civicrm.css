@@ -2389,7 +2389,7 @@ span.icon {
     color:#333;
 }
 
-.light-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_888888_256x240.png")}
+.light-icon, .ui-widget-content .light-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_888888_256x240.png")}
 .dark-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_222222_256x240.png")}
 .red-icon {background-image:url("../i/icons/jquery-ui-8A1F11.png")}
 .blue-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_2e83ff_256x240.png")}

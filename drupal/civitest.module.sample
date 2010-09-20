@@ -1216,3 +1216,31 @@ function civitest_civicrm_merge ( $type, &$data, $mainId = NULL, $otherId = NULL
     
     }
 }
+
+/**
+ * This hook provides a way to override the default privacy behavior for notes.
+ * $node['privacy'] is an integer, by default either 0 meaning no privacy, or 1
+ * meaning the note is displayed to author only.  
+ * @param array $note (reference) Associative array of values for this note
+ */
+function civitest_civicrm_notePrivacy (&$note) {
+
+    /* CiviCRM will check for existence of $note['notePrivacy_hidden'].
+     *
+     * If this value is not set, CiviCRM will show or display the note
+     * based on the default, which is to count a note as private if it has
+     * any non-zero value in $note['privacy'], and then to display private
+     * notes only to the note author.
+     *
+     * If this value is set, CiviCRM will hide the note if the value is
+     * TRUE, and display the note if the value is FALSE.
+     */
+
+    if ($note['privacy']) {
+        if ($my_business_rules_say_so) {
+            $note['notePrivacy_hidden'] = TRUE;
+        } else {
+            $note['notePrivacy_hidden'] = FALSE;
+        }
+    }
+}
