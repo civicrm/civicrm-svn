@@ -86,11 +86,12 @@ and modify to fit your specific configuration.
 	<h2>Help spread the word about "{$node.title}"</h2>
 	Please help us and let your friends, colleagues and followers know about our campaign.
 	<h3>Do you use Facebook or Twitter ?</h3>
-	<p>Like it on Facebook or tweet it on Twitter.</p>
+
 	<div class="socialnetwork">
 	{if $noscript}	
-		<a href="http://www.facebook.com/plugins/like.php?href={$node.url}">
-			<img src="{$base_url}/sites/all/modules/civicrm/i/fblike.png" width="52px" height="23px" title="Facebook Like Button">
+		<p>Share it on Facebook or tweet it on Twitter.</p>
+		<a href="http://www.facebook.com/sharer.php?u={$node.url}&amp;t={$node.title}">
+			<img src="{$base_url}/sites/all/modules/civicrm/i/fbshare.png" width="70px" height="28px" title="Facebook Share Button">
 		</a>
 		&nbsp;
 		&nbsp;
@@ -100,6 +101,7 @@ and modify to fit your specific configuration.
 			<img src="{$base_url}/sites/all/modules/civicrm/i/tweet.png" width="55px" height="20px"  title="Tweet Button"">
 		</a>		  
 	{else}	  
+		<p>Like it on Facebook or tweet it on Twitter.</p>	
 		<fb:like href="{$node.url}"></fb:like>
 		<script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>
 		<a href="http://twitter.com/share?url={$node.url}&text=Sign this, I did: {$node.title}" class="twitter-share-button" title="tweet about this petition">Tweet</a>
