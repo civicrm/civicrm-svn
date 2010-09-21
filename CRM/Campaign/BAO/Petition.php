@@ -145,7 +145,7 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
 SELECT count(civicrm_address.country_id) as total,
     IFNULL(country_id,'') as country_id,IFNULL(iso_code,'') as country_iso, IFNULL(civicrm_country.name,'') as country
  FROM  	civicrm_activity a, civicrm_survey, civicrm_contact
-  LEFT JOIN civicrm_address ON civicrm_address.contact_id = civicrm_contact.id  
+  LEFT JOIN civicrm_address ON civicrm_address.contact_id = civicrm_contact.id AND civicrm_address.is_primary = 1 
   LEFT JOIN civicrm_country ON civicrm_address.country_id = civicrm_country.id
 WHERE 
   a.source_contact_id = civicrm_contact.id AND
@@ -253,7 +253,7 @@ SELECT 	a.id,
     IFNULL(state_province_id,'') AS state_province_id,
     IFNULL(country_id,'') as country_id,IFNULL(iso_code,'') as country_iso, IFNULL(civicrm_country.name,'') as country
  FROM  	civicrm_activity a, civicrm_survey, civicrm_contact
-  LEFT JOIN civicrm_address ON civicrm_address.contact_id = civicrm_contact.id  
+  LEFT JOIN civicrm_address ON civicrm_address.contact_id = civicrm_contact.id  AND civicrm_address.is_primary = 1 
   LEFT JOIN civicrm_country ON civicrm_address.country_id = civicrm_country.id
 WHERE 
   a.source_contact_id = civicrm_contact.id AND
