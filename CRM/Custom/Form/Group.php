@@ -125,7 +125,18 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
     static function formRule( $fields, $files, $self) 
     {
         $errors = array();
-
+        
+        //validate group title as well as name.
+        $title  = $fields['title'];
+        $name   = CRM_Utils_String::munge( $title, '_', 64 );
+        $query  = 'select count(*) from civicrm_custom_group where ( name like %1 OR title like %2 ) and id != %3';
+        $grpCnt = CRM_Core_DAO::singleValueQuery( $query, array( 1 => array( $name,           'String'  ),
+                                                                 2 => array( $title,          'String'  ),
+                                                                 3 => array( (int)$self->_id, 'Integer' ) ) );
+        if ( $grpCnt ) {
+            $errors['title'] = ts( 'Custom group \'%1\' already exists in Database.', array( 1 => $title ) );
+        }
+        
         if ( CRM_Utils_Array::value(1, $fields['extends']) ) {
             if ( !$self->_isGroupEmpty ) {
                 $updates = array_diff($self->_subtypes, array_intersect($self->_subtypes, $fields['extends'][1]));
@@ -204,10 +215,6 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
         
         //title
         $this->add('text', 'title', ts('Set Name'), $attributes['title'], true);
-        $this->addRule( 'title',
-                        ts( 'Name already exists in Database.' ),
-                        'objectExists',
-                        array( 'CRM_Core_DAO_CustomGroup', $this->_id, 'title' ) );   
         
         //Fix for code alignment, CRM-3058
         require_once "CRM/Contribute/PseudoConstant.php";

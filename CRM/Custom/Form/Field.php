@@ -468,26 +468,31 @@ class CRM_Custom_Form_Field extends CRM_Core_Form
         $default = CRM_Utils_Array::value( 'default_value', $fields );
         
         $errors  = array( );
-
+        
+        //validate field label as well as name.
+        $title  = $fields['label'];
+        $name   = CRM_Utils_String::munge( $title, '_', 64 ); 
+        $query  = 'select count(*) from civicrm_custom_field where ( name like %1 OR label like %2 ) and id != %3';
+        $fldCnt = CRM_Core_DAO::singleValueQuery( $query, array( 1 => array( $name,           'String'  ),
+                                                                 2 => array( $title,          'String'  ),
+                                                                 3 => array( (int)$self->_id, 'Integer' ) ) );
+        if ( $fldCnt ) {
+            $errors['label'] = ts( 'Custom field \'%1\' already exists in Database.', array( 1 => $title ) );
+        }
+        
+        //checks the given custom field name doesnot start with digit
+        if ( ! empty( $title ) ) {
+            $asciiValue = ord($title{0});//gives the ascii value
+            if($asciiValue>=48 && $asciiValue<=57) {
+                $errors['label'] = ts("Field's Name should not start with digit");
+            } 
+        }
+        
         // ensure that the label is not 'id'
-        if ( strtolower($fields['label']) == 'id' ) {
+        if ( strtolower( $title ) == 'id' ) {
             $errors['label'] = ts( "You cannot use 'id' as a field label." );
         }
         
-        $customField = new CRM_Core_DAO_CustomField( );
-        $customField->custom_group_id = $self->_gid;
-        $customField->label           = $fields['label'];
-        
-        $dupeLabel = false;
-        if ( $customField->find( true ) &&
-             $self->_id != $customField->id ) {
-            $dupeLabel = true;
-        }
-        
-        if ( $dupeLabel ) {
-            $errors['label'] = ts('Name already exists in Database.');
-        }
-
         if ( ! isset($fields['data_type'][0]) || !isset($fields['data_type'][1]) ) {
             $errors['_qf_default'] = ts('Please enter valid - Data and Input Field Type.');
         }
@@ -746,15 +751,6 @@ AND    option_group_id = %2";
                 }
             }
             $_showHide->addToTemplate();
-        }
-        
-        //checks the given custom field name doesnot start with digit
-        $title = $fields['label']; 
-        if ( ! empty( $title ) ) {
-            $asciiValue = ord($title{0});//gives the ascii value
-            if($asciiValue>=48 && $asciiValue<=57) {
-                $errors['label'] = ts("Field's Name should not start with digit");
-            } 
         }
         
         // we can not set require and view at the same time.
