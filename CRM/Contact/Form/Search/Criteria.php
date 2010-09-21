@@ -333,11 +333,11 @@ class CRM_Contact_Form_Search_Criteria {
         }
         $form->addGroup($genderOptions, 'gender', ts('Gender'));
          
-        $form->addDate( 'birth_date_low', ts('Birth Dates - From'), false, array( 'formatType' => 'searchDate') );
-        $form->addDate( 'birth_date_high', ts('To'), false, array( 'formatType' => 'searchDate') );
+        $form->addDate( 'birth_date_low', ts('Birth Dates - From'), false, array( 'formatType' => 'birth') );
+        $form->addDate( 'birth_date_high', ts('To'), false, array( 'formatType' => 'birth') );
 
-        $form->addDate( 'deceased_date_low', ts('Deceased Dates - From'), false, array( 'formatType' => 'searchDate') );
-        $form->addDate( 'deceased_date_high', ts('To'), false, array( 'formatType' => 'searchDate') );
+        $form->addDate( 'deceased_date_low', ts('Deceased Dates - From'), false, array( 'formatType' => 'birth') );
+        $form->addDate( 'deceased_date_high', ts('To'), false, array( 'formatType' => 'birth') );
     }
     
     static function notes( &$form ) {
