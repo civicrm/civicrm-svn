@@ -36,7 +36,7 @@
 
 require_once 'CRM/Contact/Form/Search/Interface.php';
 
-class Extension_Search_ActivitySearch
+class Extension_Search_Org_CiviCRM_Activity
 implements CRM_Contact_Form_Search_Interface {
 
     protected $_formValues;
@@ -142,7 +142,7 @@ implements CRM_Contact_Form_Search_Interface {
      * Define the smarty template used to layout the search form and results listings.
      */
     function templateFile( ) {
-        return 'CRM/Contact/Form/Search/Custom/ActivitySearch.tpl';
+        return 'ActivitySearch.tpl';
     }
        
     /**

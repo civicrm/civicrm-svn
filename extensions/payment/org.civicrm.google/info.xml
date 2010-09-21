@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+ <extension key="org.civicrm.google" type="payment">
+  <callback>Google</callback>
+  <name>Google Checkout</name>
+  <description>Google Checkout Payment Processor</description>
+  <url>http://civicrm.org</url>
+  <license>AGPL</license>
+  <maintainer>CiviCRM Core Team &lt;noreply@civicrm.org&gt;</maintainer>
+  <releaseDate>2010-09-01</releaseDate>
+  <version>1.0</version>
+  <develStage>stable</develStage>
+  <compatibility><ver>3.3</ver></compatibility>
+  <comments>For support, please contact project team on the forums. (http://forum.civicrm.org)</comments>
+</extension>

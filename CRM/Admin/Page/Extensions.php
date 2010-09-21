@@ -51,6 +51,8 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
      */
     static $_links = null;
 
+    static $_extensions = null;
+
     /**
      * Obtains the group name from url and sets the title.
      *
@@ -64,9 +66,9 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
         require_once 'CRM/Core/Extensions.php';
 
         $ext = new CRM_Core_Extensions();
-        $extensions = $ext->getExtensions();
+        self::$_extensions = $ext->getExtensions();
 
-//        CRM_Utils_System::setTitle(ts('CiviCRM Extensions');
+        CRM_Utils_System::setTitle(ts('CiviCRM Extensions'));
             
     }
 
@@ -140,6 +142,75 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
      */
     function browse()
     {
+
+        require_once 'CRM/Core/DAO/OptionValue.php';
+        $dao = new CRM_Core_DAO_OptionValue();
+        
+        $dao->option_group_id = '50';
+
+        require_once 'CRM/Core/OptionGroup.php';
+        if ( in_array($this->_gName, CRM_Core_OptionGroup::$_domainIDGroups) ) {
+            $dao->domain_id = CRM_Core_Config::domainID( );
+        }
+
+        $dao->orderBy('name');
+        $dao->find();
+
+        $optionValue = array();
+        while ($dao->fetch()) {
+            $optionValue[$dao->id] = array();
+            CRM_Core_DAO::storeValues( $dao, $optionValue[$dao->id]);
+            // form all action links
+            $action = array_sum(array_keys($this->links()));
+            if( $dao->is_default ) {
+                $optionValue[$dao->id]['default_value'] = '[x]';
+            }
+            //do not show default option for email/postal greeting and addressee, CRM-4575
+            if ( ! in_array($this->_gName, array('email_greeting', 'postal_greeting', 'addressee') ) ) {
+                $this->assign( 'showIsDefault', true );
+            }
+            // update enable/disable links depending on if it is is_reserved or is_active
+            if ($dao->is_reserved) {
+                $action = CRM_Core_Action::UPDATE;
+            } else {
+                if ($dao->is_active) {
+                    $action -= CRM_Core_Action::ENABLE;
+                } else {
+                    $action -= CRM_Core_Action::DISABLE;
+                }
+            }
+
+            $optionValue[$dao->id]['action'] = CRM_Core_Action::formLink(self::links(), $action, 
+                                                                         array('id' => $dao->id,'gid' => $this->_gid ));
+                                                                         
+            $optionValue[ $optionValue[$dao->id]['value']  ] = $optionValue[$dao->id];
+            unset($optionValue[$dao->id]);
+                                                                         
+        }
+
+
+
+//        CRM_Core_Error::debug( $optionValue );
+
+        $rows = $optionValue;
+
+        foreach( self::$_extensions as $status => $types ) {
+            if( $status === 'local' ) {
+                foreach( $types as $type => $exts ) {
+                    foreach( $exts as $name => $i ) {
+                        $rows[$name]['label'] = (string) $i['info']->name;
+                        $rows[$name]['name'] = $name;
+                        $rows[$name]['grouping'] = $type;
+                    }
+                }
+            }
+        }
+
+
+//        CRM_Core_Error::debug('newrows', $rows );
+        
+        $this->assign('rows', $rows);
+
     }
     
     /**

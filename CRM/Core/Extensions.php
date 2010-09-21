@@ -78,16 +78,38 @@ class CRM_Core_Extensions
     public function discover() {
         $extensions = array();
 
-        // get enabled extensions from the database
-        $extensions['enabled'] = $this->_discoverEnabled();
+        // get uploaded extensions
+        $extensions['uploaded'] = $this->_discoverUploaded();
 
         // get installed extensions
         $extensions['local'] = $this->_discoverInstalled();
 
-        // get uploaded extensions
-        $extensions['uploaded'] = $this->_discoverUploaded();
+        // if uploaded contains locally installed extensions (temp not cleaned up), ignore them
+        foreach( $extensions['uploaded'] as $type => $extList ) {
+            foreach( $extList as $name => $dc ) {
+                if( array_key_exists( $name, $extensions['local'][$type] ) ) {
+                    $extensions['uploaded'][$type][$name]['local'] = TRUE;
+                } else {
+                    $extensions['uploaded'][$type][$name]['local'] = FALSE;
+                }
+            }
+        }
 
-        CRM_Core_Error::debug( $extensions );
+        // get enabled extensions from the database
+        $extensions['enabled'] = $this->_discoverEnabled();
+
+        // if local contains enabled extensions (temp not cleaned up), ignore them
+        foreach( $extensions['local'] as $type => $extList ) {
+            foreach( $extList as $name => $dc ) {
+                if( $extensions['enabled'][$type] && array_key_exists( $name, $extensions['enabled'][$type] ) ) {
+                    $extensions['local'][$type][$name] ['enabled'] = TRUE;
+                } else {
+                    $extensions['local'][$type][$name] ['enabled'] = FALSE;
+                }
+            }
+        }
+
+//        CRM_Core_Error::debug( $extensions );
 
         return $extensions;
     }
@@ -106,7 +128,6 @@ class CRM_Core_Extensions
             if( is_dir( $dir ) && file_exists( $infoFile ) ) {
                 $t = $this->_buildExtensionRecord( $dir );
                 $attr = $t['info']->attributes();
-                CRM_Core_Error::debug('s', $attr);
                 $uploaded[(string) $attr->type][$name] = $t;
             }
 //            if( function_exists( 'zip_open' ) {

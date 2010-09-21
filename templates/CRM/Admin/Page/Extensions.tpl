@@ -36,7 +36,7 @@
 {if $rows}
 {if $action ne 1 and $action ne 2}
     <div class="action-link">
-        <a href="{crmURL q="group="|cat:$gName|cat:"&action=add&reset=1"}" id="new"|cat:$GName class="button"><span><div class="icon add-icon"></div>{ts}Reload extensions{/ts}</span></a>
+        <a href="{crmURL q="group="|cat:$gName|cat:"&action=add&reset=1"}" id="new"|cat:$GName class="button"><span><div class="icon add-icon"></div>{ts}Refresh{/ts}</span></a>
     </div>
 {/if}
 <div id="extensions">
@@ -50,6 +50,7 @@
               <th>{ts}Extension name{/ts}</th>
               <th id="nosort">{ts}Description{/ts}</th>
               <th>{ts}Enabled?{/ts}</th>
+              <th>{ts}Type{/ts}</th>
               <th class="hiddenElement"></th>
               <th></th>
             </tr>
@@ -60,7 +61,9 @@
 	      <td class="crm-admin-options-label">{$row.label}</td>
 	      <td class="crm-admin-options-description">{$row.description}</td>	
 	      <td class="crm-admin-options-is_active" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+	      <td class="crm-admin-options-description">{$row.grouping}</td>
 	      <td class="order hiddenElement">{$row.weight}</td>
+              <td>{$row.action|replace:'xx':$row.id}</td>
         </tr>
         {/foreach}
         </tbody>
@@ -69,7 +72,7 @@
 
         {if $action ne 1 and $action ne 2}
             <div class="action-link">
-                <a href="{crmURL q="group="|cat:$gName|cat:"&action=add&reset=1"}" id="new"|cat:$GName class="button"><span><div class="icon add-icon"></div>{ts}Reload extensions{/ts}</span></a>
+                <a href="{crmURL q="group="|cat:$gName|cat:"&action=add&reset=1"}" id="new"|cat:$GName class="button"><span><div class="icon add-icon"></div>{ts}Refresh{/ts}</span></a>
             </div>
         {/if}
 </div>
