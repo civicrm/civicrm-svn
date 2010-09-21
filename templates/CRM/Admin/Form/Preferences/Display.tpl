@@ -38,24 +38,20 @@
             </tr>
 	{/if}
 	{if $form.contact_edit_options.html}        		       
-	        <tr class="crm-preferences-display-form-block-contact_edit_options">
+	       <tr class="crm-preferences-display-form-block-contact_edit_options">
                <td class="label">{$form.contact_edit_options.label}</td>
-               <td>{$form.contact_edit_options.html}</td>
+               <td><div style="width:40%">
+	           <ul id="contactEditSortable">
+	           {foreach from=$contactEditOptions item="title" key="opId"}
+		     <li id="preference-{$opId}-contactedit" class="crm-accordion-header">{$form.contact_edit_options.$opId.html}</li>
+		   {/foreach}
+		   </ul>
+	           </div>
+	       </td>
             </tr>
             <tr class="crm-preferences-display-form-block-description">
                <td>&nbsp;</td>
                <td class="description">{ts}Select the sections that should be included when adding or editing a contact record. EXAMPLE: If your organization does not record Gender and Birth Date for individuals, then simplify the form by un-checking this option.{/ts}</td>
-            </tr>
-	{/if}
-
-	{if $contactEditOptions}
-	 <tr class="crm-preferences-display-form-block-contact_edit_preferences">
-               <td class="label">{ts}Editing Contact Preference{/ts}</td>
-               <td>{include file="CRM/Admin/Form/Preferences/ContactEdit.tpl"}</td>
-         </tr>
-	 <tr class="crm-preferences-display-form-block-description">
-               <td>&nbsp;</td>
-               <td class="description">{ts}Reorder the sections that should be respect on contact edit form..{/ts}</td>
             </tr>
 	{/if}
 
@@ -114,4 +110,27 @@
           </table>
 	{/if}
     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
-   </div>
+</div>
+{if $contactEditOptions}
+{literal}
+<script type="text/javascript" >
+    var params = new Array();
+    cj(function( ) {
+	cj("#contactEditSortable").sortable({
+			placeholder: 'ui-state-highlight',
+			update: getSorting
+		});
+		cj("#sortable").disableSelection();
+    });
+ 
+    function getSorting(e, ui) {
+        var items = cj("#contactEditSortable li");
+        for( var x=0; x<items.length; x++ ) {
+            var idState = items[x].id.split('-');
+            params[x+1] = idState[1];    
+        }
+        cj('#contact_edit_prefences').val( params.toString( ) );
+    }
+</script>
+{/literal}
+{/if}

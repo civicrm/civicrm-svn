@@ -89,7 +89,7 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
         $this->addElement('textarea','sort_name_format',    ts('Individual Sort Name Format'));
                 
         require_once 'CRM/Core/OptionGroup.php';
-        $editOptions = CRM_Core_OptionGroup::values( 'contact_edit_options', false, false, false, "AND v.name!= 'Notes' AND v.filter = 0", 'label' );
+        $editOptions = CRM_Core_OptionGroup::values( 'contact_edit_options', false, false, false );
         $this->assign( 'contactEditOptions', $editOptions );
         
         $this->addElement('hidden','contact_edit_prefences', null, array('id'=> 'contact_edit_prefences') );
