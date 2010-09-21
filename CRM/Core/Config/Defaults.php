@@ -167,9 +167,11 @@ class CRM_Core_Config_Defaults
                 // the system for a loop on lobo's macosx box
                 // or in modules
                 global $civicrm_root;
-                $civicrmDirName = trim(basename($civicrm_root));
-                $defaults['userFrameworkResourceURL'] = $baseURL . "sites/all/modules/$civicrmDirName/";
-
+                require_once "CRM/Utils/System/Drupal.php";
+                $cmsPath = CRM_Utils_System_Drupal::cmsRootPath( );
+                $defaults['userFrameworkResourceURL'] = $baseURL . str_replace( "$cmsPath/", '',  
+                                                                                str_replace('\\', '/', $civicrm_root ) );
+                
                 if ( strpos( $civicrm_root,
                              DIRECTORY_SEPARATOR . 'sites' .
                              DIRECTORY_SEPARATOR . 'all'   .
@@ -183,6 +185,8 @@ class CRM_Core_Config_Defaults
                         $siteName = substr( $civicrm_root,
                                             $startPos + 7,
                                             $endPos - $startPos - 7 );
+                        
+                        $civicrmDirName = trim(basename($civicrm_root));
                         $defaults['userFrameworkResourceURL'] = $baseURL . "sites/$siteName/modules/$civicrmDirName/";
                         if ( ! isset( $defaults['imageUploadURL'] ) ) {
                             $defaults['imageUploadURL'] = $baseURL . "sites/$siteName/files/civicrm/persist/contribute/";

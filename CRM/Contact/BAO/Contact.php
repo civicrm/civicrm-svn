@@ -195,16 +195,19 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
         }
 
         if ( $contact->contact_type == 'Individual' &&
-             array_key_exists( 'current_employer', $params ) ) {
+             (array_key_exists( 'current_employer', $params ) || 
+              array_key_exists( 'employer_id', $params )) ) {
             // create current employer
-            if ( $params['current_employer'] ) {
-                require_once 'CRM/Contact/BAO/Contact/Utils.php';
+            require_once 'CRM/Contact/BAO/Contact/Utils.php';
+            if ( $params['employer_id']  ) {
+                CRM_Contact_BAO_Contact_Utils::createCurrentEmployerRelationship( $contact->id, 
+                                                                                  $params['employer_id'] );
+            } elseif ( $params['current_employer'] ) {
                 CRM_Contact_BAO_Contact_Utils::createCurrentEmployerRelationship( $contact->id, 
                                                                                   $params['current_employer'] );
             } else {
                 //unset if employer id exits
                 if ( $employerId = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $contact->id, 'employer_id' ) ) {
-                    require_once 'CRM/Contact/BAO/Contact/Utils.php';
                     CRM_Contact_BAO_Contact_Utils::clearCurrentEmployer( $contact->id, $employerId );
                 }
             }
@@ -749,20 +752,18 @@ WHERE id={$id}; ";
         $relativePath = null;
         $config = CRM_Core_Config::singleton( );
         if ( $config->userFramework == 'Joomla' ) {
-            $userFrameworkBaseURL = trim( str_replace( DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR, 
-                                                       '',
-                                                       $config->userFrameworkBaseURL ) );
-            $customFileUploadDirectory = strstr( $absolutePath, DIRECTORY_SEPARATOR.'media' );
-            $relativePath = $userFrameworkBaseURL . $customFileUploadDirectory;     
+            $userFrameworkBaseURL = trim( str_replace( '/administrator/', '', $config->userFrameworkBaseURL ) );
+            $customFileUploadDirectory = strstr( str_replace('\\', '/', $absolutePath), '/media' );
+            $relativePath = $userFrameworkBaseURL . $customFileUploadDirectory;
         } else if ( $config->userFramework == 'Drupal' ) {   
             require_once 'CRM/Utils/System/Drupal.php';
             $rootPath = CRM_Utils_System_Drupal::cmsRootPath( );
-            $relativePath = str_replace( $rootPath . DIRECTORY_SEPARATOR, 
-                                         $config->userFrameworkBaseURL, 
-                                         $absolutePath );
+            $relativePath = str_replace( "$rootPath/",
+                                         $config->userFrameworkBaseURL,
+                                         str_replace('\\', '/', $absolutePath ) );
         } else if ( $config->userFramework == 'Standalone' ) {
             $absolutePathStr = strstr( $absolutePath, 'files');
-            $relativePath = $config->userFrameworkBaseURL . $absolutePathStr;
+            $relativePath = $config->userFrameworkBaseURL . str_replace('\\', '/', $absolutePathStr );
         }
         
         return $relativePath;

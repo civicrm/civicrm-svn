@@ -28,10 +28,7 @@
         {if call_user_func(array('CRM_Core_Permission','giveMeAllACLs'))}
         <li id="crm-qsearch" class="menumain">
             <form action="{crmURL p='civicrm/contact/search/basic' h=0 }" name="search_block" id="id_search_block" method="post" onsubmit="getSearchURLValue( );">
-            	<div>
-                <input type="text" class="form-text" id="sort_name_navigation" name="sort_name" style="width: 12em;"/>
-                <input type="hidden" id="sort_contact_id" value="" />
-                <input type="submit" value="{ts}Go{/ts}" name="_qf_Basic_refresh" class="form-submit default" style="display: none;"/>
+            	<div id="quickSearch">
             	</div>
             </form>
         </li>
@@ -42,6 +39,17 @@
 
 {literal}
 <script type="text/javascript">
+cj( document ).ready( function( ) {
+   if ( cj.browser.msie ) {
+     cj( '#quickSearch' ).append( '<input type="submit" value="Go" name="_qf_Basic_refresh" class="form-submit default"/>' );
+     cj( '#quickSearch' ).append( '<input type="text" class="form-text" id="sort_name_navigation" name="sort_name" style="width: 12em; margin-left: -45px;"/>' );
+     cj( '#quickSearch' ).append( '<input type="text" id="sort_contact_id" style="display: none"/>' );
+   } else {
+     cj( '#quickSearch').append( '<input type="text" class="form-text" id="sort_name_navigation" name="sort_name" style="width: 12em;"/> ');
+     cj( '#quickSearch').append( '<input type="hidden" id="sort_contact_id" value="" /> ');
+     cj( '#quickSearch').append( '<input type="submit" value="{ts}Go{/ts}" name="_qf_Basic_refresh" class="form-submit default" style="display: none;"/> ');
+   }
+});
 function getSearchURLValue( )
 {
     var contactId =  cj( '#sort_contact_id' ).val();

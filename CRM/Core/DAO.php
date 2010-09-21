@@ -877,7 +877,7 @@ FROM   civicrm_domain
     }
 
     /**
-     * execute a query and get the singleton result
+     * execute a query and get the single result
      *
      * @param string $query query to be executed 
      * 
