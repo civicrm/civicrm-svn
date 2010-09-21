@@ -78,6 +78,7 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
 	        
 			$activityParams = array ( 'source_contact_id'  => $params['contactId'],
 			                          'source_record_id'   => $params['sid'],
+                    'subject'   => $surveyInfo['title'],
 									  'activity_type_id'   => $surveyInfo['activity_type_id'],
 									  'activity_date_time' => date("YmdHis"), 
 									  'status_id'          => $params['statusId'] );
