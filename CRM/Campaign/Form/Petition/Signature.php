@@ -496,7 +496,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 			switch ($this->_sendEmailMode) {
 				case self::EMAIL_THANK:			
 					// mark the signature activity as completed and set confirmed cookie
-					$this->bao->confirmSignature($result->id,$this->contactId,$this->_surveyId);
+					$this->bao->confirmSignature($result->id,$this->_contactId,$this->_surveyId);
 					break;
 				
 				case self::EMAIL_CONFIRM:
