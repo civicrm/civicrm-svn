@@ -48,8 +48,64 @@ class CRM_Upgrade_Incremental_php_ThreeThree {
             CRM_Utils_System_Drupal::updateCategories( );
         }
         
+        // CRM-6846
+        // insert name column for custom field table.
+        // make sure name for custom field, group and 
+        // profile should be unique and properly munged.
+        $colQuery = 'ALTER TABLE `civicrm_custom_field` ADD `name` VARCHAR( 64 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL AFTER `custom_group_id` ';
+        CRM_Core_DAO::executeQuery( $colQuery );
+        
+        require_once 'CRM/Utils/String.php';
+        require_once 'CRM/Core/DAO/CustomField.php';
+        $customFldCntQuery = 'select count(*) from civicrm_custom_field where name like %1 and id != %2';
+        $customField = new CRM_Core_DAO_CustomField( );
+        $customField->selectAdd( );
+        $customField->selectAdd( 'id, label' );
+        $customField->find( );
+        while ( $customField->fetch( ) ) {
+            $name   = CRM_Utils_String::munge( $customField->label, '_', 64 );
+            $fldCnt = CRM_Core_DAO::singleValueQuery( $customFldCntQuery,
+                                                      array( 1 => array( $name,            'String'  ),
+                                                             2 => array( $customField->id, 'Integer' ) ) );
+            if ( $fldCnt ) $name = CRM_Utils_String::munge( "{$name}_" . rand( ), '_', 64 );
+            CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_CustomField', $customField->id, 'name', $name );
+        }
+        $customField->free( );
+        
+        require_once 'CRM/Core/DAO/CustomGroup.php';
+        $customGrpCntQuery = 'select count(*) from civicrm_custom_group where name like %1 and id != %2';
+        $customGroup = new CRM_Core_DAO_CustomGroup( );
+        $customGroup->selectAdd( );
+        $customGroup->selectAdd( 'id, title' );
+        $customGroup->find( );
+        while ( $customGroup->fetch( ) ) {
+            $name   = CRM_Utils_String::munge( $customGroup->title, '_', 64 );
+            $grpCnt = CRM_Core_DAO::singleValueQuery( $customGrpCntQuery,
+                                                      array( 1 => array( $name,            'String'  ),
+                                                             2 => array( $customGroup->id, 'Integer' ) ) );
+            if ( $grpCnt ) $name = CRM_Utils_String::munge( "{$name}_" . rand( ), '_', 64 );
+            CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_CustomGroup', $customGroup->id, 'name', $name );
+        }
+        $customGroup->free( );
+        
+        require_once 'CRM/Core/DAO/UFGroup.php';
+        $ufGrpCntQuery = 'select count(*) from civicrm_uf_group where name like %1 and id != %2';
+        $ufGroup = new CRM_Core_DAO_UFGroup( );
+        $ufGroup->selectAdd( );
+        $ufGroup->selectAdd( 'id, title' );
+        $ufGroup->find( );
+        while ( $ufGroup->fetch( ) ) {
+            $name     = CRM_Utils_String::munge( $ufGroup->title, '_', 64 );
+            $ufGrpCnt = CRM_Core_DAO::singleValueQuery( $ufGrpCntQuery,
+                                                        array( 1 => array( $name,            'String'  ),
+                                                               2 => array( $ufGroup->id, 'Integer' ) ) );
+            if ( $ufGrpCnt ) $name = CRM_Utils_String::munge( "{$name}_" . rand( ), '_', 64 );
+            CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_UFGroup', $ufGroup->id, 'name', $name );
+        }
+        $ufGroup->free( );
+        
         $upgrade =& new CRM_Upgrade_Form( );
         $upgrade->processSQL( $rev );
     }
-
+    
 }
