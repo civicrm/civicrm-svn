@@ -50,7 +50,6 @@
       <name>name</name>
       <type>varchar</type>
       <length>255</length>
-      <required>true</required>
       <comment>when combined with report_id/template uniquely identifies the instance</comment>
       <add>3.2</add>
   </field>
@@ -58,7 +57,6 @@
       <name>args</name>
       <type>varchar</type>
       <length>255</length>
-      <required>true</required>
       <comment>arguments that are passed in the url when invoking the instance</comment>
       <add>3.2</add>
   </field>
