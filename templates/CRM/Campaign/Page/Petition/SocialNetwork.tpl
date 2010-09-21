@@ -65,23 +65,46 @@ and modify to fit your specific configuration.
 			
 		return array_merge ((array)$petition_node,(array)$data);
 	}
-			
+
+	global $base_url;
+	$this->assign('base_url', $base_url);	
+	$email = $this->get_template_vars('email');
+	$noscript = $this->get_template_vars('noscript');
 	$petition_id = $this->get_template_vars('petition_id');
 	$node = getPetitionDrupalNodeData($petition_id);
 	$this->assign_by_ref('node', $node);
+	
 {/php}
 
 {if $node.nid}
-<!-- Social Networking -->
-<h2>Help spread the word about "{$node.title}"</h2>
-Please help us and let your friends, colleagues and followers know about our campaign.
-<h3>Do you use Facebook or Twitter ?</h3>
-<p>Like it on Facebook or tweet it on Twitter.</p>
-<div class="socialnetwork">
-  <fb:like href="{$node.url}"></fb:like>
-  <script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>
-  <a href="http://twitter.com/share?text=Sign this, I did: {$node.title}&url={$node.url}" class="twitter-share-button" title="tweet about this petition">Tweet</a>
-</div>
-<h3>Do you have a website for your organisation or yourself?</h3>
-You can write a story about it, don't forget to add the link to <a href="{$node.url}">{$node.url}</a>
+	{* print additional thank you email text from Drupal petition node if there is a cck text field 'email' *}
+	{if $email}
+		<br />{$node.field_email.0.value}
+	{/if}
+
+	<!-- Social Networking -->
+	<h2>Help spread the word about "{$node.title}"</h2>
+	Please help us and let your friends, colleagues and followers know about our campaign.
+	<h3>Do you use Facebook or Twitter ?</h3>
+	<p>Like it on Facebook or tweet it on Twitter.</p>
+	<div class="socialnetwork">
+	{if $noscript}	
+		<a href="http://www.facebook.com/plugins/like.php?href={$node.url}">
+			<img src="{$base_url}/sites/all/modules/civicrm/i/fblike.png" width="52px" height="23px" title="Facebook Like Button">
+		</a>
+		&nbsp;
+		&nbsp;
+		&nbsp;
+		&nbsp;
+		<a href="http://twitter.com/share?url={$node.url}&amp;text=Sign this, I did: {$node.title}">
+			<img src="{$base_url}/sites/all/modules/civicrm/i/tweet.png" width="55px" height="20px"  title="Tweet Button"">
+		</a>		  
+	{else}	  
+		<fb:like href="{$node.url}"></fb:like>
+		<script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>
+		<a href="http://twitter.com/share?url={$node.url}&text=Sign this, I did: {$node.title}" class="twitter-share-button" title="tweet about this petition">Tweet</a>
+	{/if}
+	</div>
+	<h3>Do you have a website for your organisation or yourself?</h3>
+	You can write a story about it - don't forget to add the link to <a href="{$node.url}">{$node.url}.</a>
 {/if}
