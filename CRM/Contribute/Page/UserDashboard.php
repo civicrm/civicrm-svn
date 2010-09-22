@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -45,7 +46,7 @@ class CRM_Contribute_Page_UserDashboard extends CRM_Contact_Page_View_UserDashBo
     */
     function listContribution( ) 
     {
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_Search', ts('Contributions'), null );
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_Search', ts('Contributions'), null );
         $controller->setEmbedded( true );
         $controller->reset( );
         $controller->set( 'limit', 12 ); 
@@ -61,19 +62,6 @@ class CRM_Contribute_Page_UserDashboard extends CRM_Contact_Page_View_UserDashBo
         $params =  CRM_Contribute_BAO_Contribution::getHonorContacts( $this->_contactId );
 
         if ( !empty($params) ) {
-            foreach($params as $ids => $honorId){
-                $contributionId =
-                    CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_Contribution',
-                                                 $honorId['honorId'],
-                                                 'id',
-                                                 'contact_id' );
-                $subType =
-                    CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionType',
-                                                 $honorId['type'],
-                                                 'id',
-                                                 'name' );
-            }
-            
             // assign vars to templates
             $this->assign('honorRows', $params);
             $this->assign('honor', true);
@@ -82,12 +70,12 @@ class CRM_Contribute_Page_UserDashboard extends CRM_Contact_Page_View_UserDashBo
         require_once 'CRM/Contribute/Form/ContributionBase.php';
         require_once 'CRM/Contribute/BAO/ContributionRecur.php';
 
-        $recur             =& new CRM_Contribute_DAO_ContributionRecur( );
+        $recur             = new CRM_Contribute_DAO_ContributionRecur( );
         $recur->contact_id = $this->_contactId;
         $recur->is_test    = 0;
         $recur->find( );
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         $recurStatus = CRM_Contribute_PseudoConstant::contributionStatus( );
 
@@ -103,7 +91,8 @@ class CRM_Contribute_Page_UserDashboard extends CRM_Contact_Page_View_UserDashBo
                 continue;
             }
 
-            $paymentObject =& CRM_Core_Payment::singleton( $mode, 'Contribute', $paymentProcessor );
+            // note that we are passing a CRM_Core_Page object ($this) as if it were a form here:
+            $paymentObject =& CRM_Core_Payment::singleton( $mode, 'Contribute', $paymentProcessor, $this );
             
             _civicrm_object_to_array($recur, $values);
             $values['cancelSubscriptionUrl'] = $paymentObject->cancelSubscriptionURL( );

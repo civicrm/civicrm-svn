@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -40,8 +41,8 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
     
       
     protected $_charts = array( ''         => 'Tabular',
-                                'barGraph' => 'Bar Graph',
-                                'pieGraph' => 'Pie Graph'
+                                'barChart' => 'Bar Chart',
+                                'pieChart' => 'Pie Chart'
                                 );
 
     protected $lifeTime_from  = null;
@@ -50,8 +51,7 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
     function __construct( ) {
         $yearsInPast      = 8;
         $yearsInFuture    = 2;
-        $dateParts        = implode( CRM_Core_DAO::VALUE_SEPARATOR, array( 'Y') );
-        $date             = CRM_Core_SelectValues::date('custom', $yearsInPast, $yearsInFuture, $dateParts ) ;        
+        $date             = CRM_Core_SelectValues::date( 'custom', null, $yearsInPast, $yearsInFuture ) ;        
         $count            = $date['maxYear'];
         while ( $date['minYear'] <= $count )  {
             $optionYear[ $date['minYear'] ] = $date['minYear'];
@@ -130,9 +130,10 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
                                           // 'type'    => CRM_Utils_Type::T_INT + CRM_Utils_Type::T_BOOLEAN,
                                           'options' => $optionYear,
                                           'default' => date('Y') ,
-                                          'clause'  => "contribution.contact_id NOT IN
-(SELECT distinct cont.id FROM civicrm_contact cont, civicrm_contribution contri
- WHERE  cont.id = contri.contact_id AND YEAR (contri.receive_date) >= \$value)"
+                                          'clause'  => "contribution_civireport.contact_id NOT IN
+(SELECT distinct contri.contact_id FROM civicrm_contribution contri 
+ WHERE   YEAR(contri.receive_date) =  \$value AND contri.is_test = 0) AND contribution_civireport.contact_id IN (SELECT distinct contri.contact_id FROM civicrm_contribution contri 
+ WHERE   YEAR(contri.receive_date) =  (\$value-1) AND contri.is_test = 0) "
                                           ), 
                                    'contribution_status_id'         => 
                                    array( 'operatorType' => CRM_Report_Form::OP_MULTISELECT,
@@ -142,16 +143,19 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
                            ) ,
                                     
                    'civicrm_group' => 
-                   array( 'dao'    => 'CRM_Contact_DAO_Group',
+                   array( 'dao'    => 'CRM_Contact_DAO_GroupContact',
                           'alias'  => 'cgroup',
                           'filters' =>             
                           array( 'gid' => 
-                                 array( 'name'         => 'id',
+                                 array( 'name'         => 'group_id',
                                         'title'        => ts( 'Group' ),
                                         'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-                                        'options'      => CRM_Core_PseudoConstant::staticGroup( ) ), ), ),
+                                        'group'        => true,
+                                        'options'      => CRM_Core_PseudoConstant::group( ) ), ), ),
+
                    );
         
+        $this->_tagFilter = true;
         parent::__construct( );
         
     }
@@ -176,28 +180,22 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
                          CRM_Utils_Array::value( $fieldName, $this->_params['fields'] ) ) {                        
                         if( $fieldName == 'total_amount') {                            
                             $select[ ]         = "SUM({$field['dbAlias']}) as {$tableName}_{$fieldName}"; 
-                            $selectLifeTime[ ] = "SUM({$field['dbAlias']}) as {$tableName}_{$fieldName}";  
                                                      
                             $this->_columnHeaders[ "{$previous_year}"   ][ 'type' ]  = $field[ 'type' ];
                             $this->_columnHeaders[ "{$previous_year}"   ][ 'title']  = $previous_year;
-                            
-                            $this->_columnHeaders[ "{$current_year}"    ][ 'type' ]  = $field[ 'type' ];
-                            $this->_columnHeaders[ "{$current_year}"    ][ 'title']  = $current_year;
                             
                             $this->_columnHeaders[ "civicrm_life_time_total"    ][ 'type' ]  = $field[ 'type' ] ;
                             $this->_columnHeaders[ "civicrm_life_time_total"    ][ 'title']  = 'LifeTime' ;;
                             
                         } else if ( $fieldName == 'receive_date' ) {                                                        
                             $select[ ] = " Year ( {$field[ 'dbAlias' ]} ) as {$tableName}_{$fieldName} ";                             
-                        } else if ( $fieldName  == 'contact_id' ) { 
-                            $select[ ] = "{$field['dbAlias']} as {$tableName}_{$fieldName}"; 
-                            $selectLifeTime[ ]  = "{$field['dbAlias']} as {$tableName }_{$fieldName} "; 
                         } else {                             
                             $select[ ]          = "{$field['dbAlias']} as {$tableName }_{$fieldName} ";
                             $this->_columnHeaders[ "{$tableName}_{$fieldName}" ][ 'type'  ] = $field[ 'type'  ];
                             $this->_columnHeaders[ "{$tableName}_{$fieldName}" ][ 'title' ] = $field[ 'title' ];
                             
                         }
+                        
                         if ( CRM_Utils_Array::value( 'no_display', $field ) ) {
                             $this->_columnHeaders["{$tableName}_{$fieldName}"][ 'no_display' ] = true;
                         }                    
@@ -206,49 +204,33 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
             }
         }
         
-       // ksort( $this->_columnHeaders );
         $this->_select          = "SELECT  " . implode( ', ', $select ) . " ";       
-        $this->_selectLifeTime  = "SELECT " . implode( ', ', $selectLifeTime ) . " "; 
         
     }
     
 
-    function from( $year = null, $yearColumn = false ) {
-        if ( ! $year ) {
-            $year = $this->_params['yid_value'];
-        }
-        
-        $yearClause  = $yearColumn ? "AND YEAR({$this->_aliases['civicrm_contribution']}.receive_date) IN ( {$this->_params['yid_value']} - 1 )" : '';
-
-        $yearClause .= " AND YEAR({$this->_aliases['civicrm_contribution']}.receive_date) < $year";
-
-
-
-          
+    function from( ) {
+      
         $this->_from = "
         FROM  civicrm_contribution  {$this->_aliases['civicrm_contribution']}
               INNER JOIN civicrm_contact {$this->_aliases['civicrm_contact']} 
-                      ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_contribution']}.contact_id $yearClause 
-
+                      ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_contribution']}.contact_id
+              {$this->_aclFrom}
               LEFT  JOIN civicrm_email  {$this->_aliases['civicrm_email']} 
                       ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_email']}.contact_id AND
                          {$this->_aliases['civicrm_email']}.is_primary = 1 
               LEFT  JOIN civicrm_phone  {$this->_aliases['civicrm_phone']} 
                       ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_phone']}.contact_id AND
-                         {$this->_aliases['civicrm_phone']}.is_primary = 1 
-
-              LEFT  JOIN civicrm_group_contact  group_contact 
-                      ON {$this->_aliases['civicrm_contact']}.id = group_contact.contact_id  AND group_contact.status='Added'
-
-              LEFT  JOIN civicrm_group  {$this->_aliases['civicrm_group']} 
-                      ON group_contact.group_id = {$this->_aliases['civicrm_group']}.id " ;
-                
+                         {$this->_aliases['civicrm_phone']}.is_primary = 1 ";
     }
     
-    function where( $IN = NULL ) {
+    function where( ) {
         $this->_where = "";  
+        $this->_statusClause = "";
         $clauses = array( );
-        
+        $current_year    =  $this->_params['yid_value'] ;
+        $previous_year   = $current_year - 1; 
+       
         foreach ( $this->_columns as $tableName => $table ) {
             if ( array_key_exists( 'filters' , $table) ) {
                 foreach ( $table['filters'] as $fieldName => $field ) {
@@ -259,7 +241,7 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
                         $to       = CRM_Utils_Array::value(  "{$fieldName}_to"      , $this->_params );
                         
                         if ( $relative || $from || $to ) {
-                            $clause = $this->dateClause( $field['name'], $relative, $from, $to );
+                            $clause = $this->dateClause( $field['name'], $relative, $from, $to, $field['type'] );
                         }
                     } else {
                         $op = CRM_Utils_Array::value( "{$fieldName}_op", $this->_params );
@@ -270,6 +252,9 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
                                                     CRM_Utils_Array::value( "{$fieldName}_value", $this->_params ),
                                                     CRM_Utils_Array::value( "{$fieldName}_min"  , $this->_params ),
                                                     CRM_Utils_Array::value( "{$fieldName}_max"  , $this->_params ) );
+                            if ( $fieldName == 'contribution_status_id' && !empty( $clause ) ) {
+                                $this->_statusClause = " AND ". $clause;
+                            }
                         }
                     }
                     
@@ -279,118 +264,108 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
                 }
             }
         }
-        if ( $IN ) {
-            $clauses[] = "contribution.contact_id IN ({$IN}) ";
+ 
+        if ( empty( $clauses ) ) {
+            $this->_where = "WHERE {$this->_aliases['civicrm_contribution']}.is_test = 0 ";
+        } else {
+            $this->_where = "WHERE {$this->_aliases['civicrm_contribution']}.is_test = 0  AND " . implode( ' AND ', $clauses );
         }
         
-        if ( empty( $clauses ) ) {
-            $this->_where = "WHERE ( 1 ) ";
-        } else {
-            $this->_where = "WHERE " . implode( ' AND ', $clauses );
-        }
+        if ( $this->_aclWhere ) {
+            $this->_where .= " AND {$this->_aclWhere} ";
+        }    
+
     }
     
     
-    function groupBy( $receiveDate = false ) {
-        $this->_groupBy = $receiveDate ? "Group BY Year(contribution.receive_date), contribution.contact_id" : 
-            "Group BY contribution.contact_id";  
+    function groupBy( ) {
+        $this->_groupBy = "Group BY  {$this->_aliases['civicrm_contribution']}.contact_id, Year({$this->_aliases['civicrm_contribution']}.receive_date) WITH ROLLUP"; 
         $this->assign( 'chartSupported', true );
     }
 
     function statistics( &$rows ) {
         $statistics = parent::statistics( $rows );
-        
-        if ( $this->lifeTime_from && $this->lifeTime_where ) {
+        if( !empty($rows) ) {
             $select = "
-                    SELECT 
-                         SUM(contribution.total_amount ) as amount ";
+                      SELECT 
+                            SUM({$this->_aliases['civicrm_contribution']}.total_amount ) as amount ";
             
-            $sql    = "{$select} {$this->lifeTime_from } {$this->lifeTime_where}";
-            $dao    = CRM_Core_DAO::executeQuery( $sql );
+            $sql = "{$select} {$this->_from } {$this->_where}";
+            $dao = CRM_Core_DAO::executeQuery( $sql );
             if ( $dao->fetch( ) ) {
                 $statistics['counts']['amount'] = array( 'value' => $dao->amount,
                                                          'title' => 'Total LifeTime',
                                                          'type'  => CRM_Utils_Type::T_MONEY );
             }
         }
+        
         return $statistics;
     }
     
     function postProcess( ) {
         
         // get ready with post process params
-        $this->beginPostProcess( );        
-        $this->select ( );
-        $this->from   ( null, true );
-        $this->where  ( ); 
-        $this->groupBy( true );   
-        $this->limit( );  
-        
-        
-        $sql   = "{$this->_select} {$this->_from} {$this->_where} {$this->_groupBy}{$this->_limit}"; 
-        $dao   = CRM_Core_DAO::executeQuery( $sql );       
-        $rows  = array( );
-        $count = 0;
-        $IN    = '';
-        $this->setPager( );
-        $this->assign ( 'columnHeaders', $this->_columnHeaders );
-      
-        while ( $dao->fetch( ) ) {
+        $this->beginPostProcess( );       
 
-            $row        = array( );         
-            $contact_id = $dao->civicrm_contribution_contact_id;            
-            $year       = $dao->civicrm_contribution_receive_date;   
-            $display[ $contact_id ]['civicrm_contribution_contact_id']  =  $contact_id;
-            $display[ $contact_id ][ $year ]                            =  $dao->civicrm_contribution_total_amount ;            
-            $display[ $contact_id ]['civicrm_contact_display_name']     =  $dao->civicrm_contact_display_name;
-            if ( isset( $dao->civicrm_email_email ) ) {
-                $display[ $contact_id ]['civicrm_email_email']          =  $dao->civicrm_email_email ;
+        // get the acl clauses built before we assemble the query
+        $this->buildACLClause( $this->_aliases['civicrm_contact'] );
+        $this->select ( );
+        $this->from   ( );
+        $this->where  ( ); 
+        $this->groupBy( );
+          
+        $rows = $contactIds = array( );
+        if( !CRM_Utils_Array::value( 'charts', $this->_params ) ) {  
+            $this->limit( );
+            $getContacts = "SELECT SQL_CALC_FOUND_ROWS {$this->_aliases['civicrm_contact']}.id as cid {$this->_from} {$this->_where}  GROUP BY {$this->_aliases['civicrm_contact']}.id {$this->_limit}";
+            
+            $dao  = CRM_Core_DAO::executeQuery( $getContacts );
+            
+            while( $dao->fetch( ) ) {
+                $contactIds[] =  $dao->cid;
             }
-            if ( isset( $dao->civicrm_phone_phone ) ) {
-                $display[ $contact_id ]['civicrm_phone_phone']          =  $dao->civicrm_phone_phone ;
-            }
-            $IN .= "{$contact_id},";
+            $dao->free( );
+            $this->setPager( );
+            
         }
- 
-        $IN = substr( $IN, 0 ,-1 ) ;
-        $dao->free( );        
-        
-        if ( !empty($display) ) {
-            //Build LifeTime Query
-            $this->from   ( );
-            $this->where  ( $IN );
-            $this->groupBy( false );       
+
+        if ( !empty($contactIds) || CRM_Utils_Array::value( 'charts', $this->_params ) ) {
+            if ( CRM_Utils_Array::value( 'charts', $this->_params ) ) {  
+                $sql = "{$this->_select} {$this->_from} {$this->_where} {$this->_groupBy}";
+
+            } else {
+                $sql = "{$this->_select} {$this->_from} WHERE {$this->_aliases['civicrm_contact']}.id IN (".implode( ',', $contactIds ).") AND {$this->_aliases['civicrm_contribution']}.is_test = 0 {$this->_statusClause} {$this->_groupBy} ";
+            }
             
-            $sqlLifeTime  = "{$this->_select} {$this->_from} {$this->_where} {$this->_groupBy} ";             
-            //use from and where clauses of LifeTime for Statistics
-            $this->lifeTime_from  = $this->_from;
-            $this->lifeTime_where = $this->_where;
-            
-            $current_year = $this->_params['yid_value'] ; 
-            $dao_lifeTime = CRM_Core_DAO::executeQuery( $sqlLifeTime );      
-            
-            while ( $dao_lifeTime->fetch( ) ) {
+            $dao  = CRM_Core_DAO::executeQuery( $sql );
+            $current_year    =  $this->_params['yid_value'] ;
+            $previous_year   = $current_year - 1;    
+
+            while ( $dao->fetch( ) ) {
                 
-                $contact_id                                                 = $dao_lifeTime->civicrm_contribution_contact_id;         
-                $display[ $contact_id ]['civicrm_life_time_total']          = $dao_lifeTime->civicrm_contribution_total_amount;
-            }
+                if( !$dao->civicrm_contribution_contact_id ) {
+                    continue;
+                }
+                
+                $row = array();
+                foreach ( $this->_columnHeaders as $key => $value ) {
+                    if ( property_exists( $dao, $key ) ) {
+                        $rows[$dao->civicrm_contribution_contact_id][$key] = $dao->$key;
+                    }
+                }
+                
+                if ( $dao->civicrm_contribution_receive_date ) {
+                    if ( $dao->civicrm_contribution_receive_date == $previous_year ) {
+                        $rows[$dao->civicrm_contribution_contact_id][$dao->civicrm_contribution_receive_date] = $dao->civicrm_contribution_total_amount;
+                    }
+                } else {
+                    $rows[$dao->civicrm_contribution_contact_id]['civicrm_life_time_total'] = $dao->civicrm_contribution_total_amount;          
+                }
+            }  
+            $dao->free( );
             
-            $dao_lifeTime->free( );   
-            
-            if( ! empty($display) ) {
-                foreach( $display as $key => $value ) {                
-                    $row = array( );  
-                    foreach ( $this->_columnHeaders as $column_key => $column_value ) {
-                        if ( CRM_Utils_Array::value( $column_key, $value ) ) {
-                            $row[ $column_key ] = $value [ $column_key ];
-                        }
-                    } 
-                    
-                    $rows [ ]  = $row;
-                }     
-            }
         }
-        // format result set. 
+        
         $this->formatDisplay( $rows, false );
         
         // assign variables to templates
@@ -411,24 +386,26 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
         $current_year             = $this->_params['yid_value'];
         $previous_year            = $current_year - 1 ;
         $interval[$previous_year] = $previous_year ;
-        $interval['life_time']    = 'life_time' ; 
+        $interval['life_time']    = 'Life Time' ; 
         
         foreach ( $rows as $key => $row ) {
             $display['life_time']                   =  CRM_Utils_Array::value('life_time', $display) + $row[ 'civicrm_life_time_total' ];           
             $display[ $previous_year ]              =  CRM_Utils_Array::value($previous_year, $display) + $row [ $previous_year ];                    
         }
-        
+
+        $config  = CRM_Core_Config::Singleton();
         $graphRows['value'] = $display;
-        $chartInfo          = array( 'legend' => 'Lybunt Report',
-                                     'xname'  => 'Amount',
-                                     'yname'  => 'Year'
+        $chartInfo          = array( 'legend' => ts('Lybunt Report'),
+                                     'xname'  => ts('Year'),
+                                     'yname'  => ts('Amount (%1)', array(1 => $config->defaultCurrency))
                                      );
-        if($this->_params['charts']) {
-            $graphs = CRM_Utils_PChart::reportChart( $graphRows, $this->_params['charts'] , $interval , $chartInfo );
-            $this->assign( 'graphFilePath', $graphs['0']['file_name'] );
-            $this->_graphPath =  $graphs['0']['file_name'];
-        }        
-    } 
+        if ( $this->_params['charts'] ) {
+            // build chart.
+            require_once 'CRM/Utils/OpenFlashChart.php';
+            CRM_Utils_OpenFlashChart::reportChart( $graphRows, $this->_params['charts'], $interval, $chartInfo );
+            $this->assign( 'chartType', $this->_params['charts'] );
+        }
+    }
  
     function alterDisplay( &$rows ) {
         foreach ( $rows as $rowNum => $row ) {

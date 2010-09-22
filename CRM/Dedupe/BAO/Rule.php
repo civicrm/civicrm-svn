@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -126,6 +127,7 @@ class CRM_Dedupe_BAO_Rule extends CRM_Dedupe_DAO_Rule
             }
             if ($this->rule_length) {
                 $where[] = "SUBSTR({$this->rule_field}, 1, {$this->rule_length}) = SUBSTR('$str', 1, {$this->rule_length})";
+                $where[] = "{$this->rule_field} IS NOT NULL";
             } else {
                 $where[] = "{$this->rule_field} = '$str'";
             }
@@ -140,6 +142,7 @@ class CRM_Dedupe_BAO_Rule extends CRM_Dedupe_DAO_Rule
         // finish building WHERE, also limit the results if requested
         if (!$this->params) {
             $where[] = "t1.$id < t2.$id";
+            $where[] = "t1.{$this->rule_field} IS NOT NULL";
         }
         if ($this->contactIds) {
             $cids = array();
@@ -166,13 +169,13 @@ class CRM_Dedupe_BAO_Rule extends CRM_Dedupe_DAO_Rule
     function dedupeRuleFields( $params)
     {
         require_once 'CRM/Dedupe/BAO/RuleGroup.php';
-        $rgBao =& new CRM_Dedupe_BAO_RuleGroup();
+        $rgBao = new CRM_Dedupe_BAO_RuleGroup();
         $rgBao->level = $params['level'];
         $rgBao->contact_type = $params['contact_type'];
         $rgBao->is_default = 1;
         $rgBao->find(true);
         
-        $ruleBao =& new CRM_Dedupe_BAO_Rule();
+        $ruleBao = new CRM_Dedupe_BAO_Rule();
         $ruleBao->dedupe_rule_group_id = $rgBao->id;
         $ruleBao->find();
         $ruleFields = array();

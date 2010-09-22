@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -59,7 +60,7 @@ class CRM_Core_BAO_CustomOption {
     static function retrieve( &$params, &$defaults )
     {
         require_once 'CRM/Core/DAO/OptionValue.php';
-        $customOption =& new CRM_Core_DAO_OptionValue( );
+        $customOption = new CRM_Core_DAO_OptionValue( );
         $customOption->copyValues( $params );
         if ( $customOption->find( true ) ) {
             CRM_Core_DAO::storeValues( $customOption, $defaults );
@@ -94,7 +95,7 @@ class CRM_Core_BAO_CustomOption {
         }
 
         require_once 'CRM/Core/DAO/OptionValue.php';
-        $dao =& new CRM_Core_DAO_OptionValue();
+        $dao = new CRM_Core_DAO_OptionValue();
         $dao->option_group_id = $optionGroupID;
         if ( ! $inactiveNeeded ) {
             $dao->is_active = 1;
@@ -115,46 +116,47 @@ class CRM_Core_BAO_CustomOption {
         return $options;
     }
 
-    static function getOptionLabel($fieldId, $value, $fieldType = null, $dataType = null, $entityTable = 'civicrm_custom_field')
+    static function getOptionLabel($fieldId, $value, $htmlType = null, $dataType = null )
     {
-        switch ($fieldType) {
+        if ( ! $fieldId ) {
+            return null;
+        }
 
-        case null:
+        if ( ! $htmlType || ! $dataType ) {
+            $sql = "
+SELECT html_type, data_type
+FROM   civicrm_custom_field
+WHERE  id = %1
+";
+            $params = array( 1 => array( $fieldId, 'Integer' ) );
+            $dao = CRM_Core_DAO::executeQuery( $sql, $params );
+            if ( $dao->fetch( ) ) {
+                $htmlType = $dao->html_type;
+                $dataType  = $dao->data_type;
+            } else {
+                CRM_Core_Error::fatal( );
+            }
+        }
+
+        $options = null;
+        switch ($htmlType) {
         case 'CheckBox':
         case 'Multi-Select':
         case 'AdvMulti-Select':
-        case 'Radio':
         case 'Select':
-            $options =& self::valuesByID( $fieldId );
-            $label   =  CRM_Utils_Array::value( $value, $options );
-            break;
-            
-        case 'Multi-Select Country':
-        case 'Select Country':
-            $label =& CRM_Core_PseudoConstant::country($value);
-            break;
-
-        case 'Select Date':
-            $label = CRM_Utils_Date::customFormat($value);
-            break;
-        case 'Multi-Select State/Province':
-        case 'Select State/Province':
-            $label = CRM_Core_PseudoConstant::stateProvince($value);
-            break;
-
-        default:
-            $label = $value;
-            break;
-
+        case 'Radio':
+        case 'Autocomplete-Select':
+            if ( !in_array( $dataType, array( 'Boolean', 'ContactReference' ) ) ) {
+                $options =& self::valuesByID( $fieldId );
+            }
         }
 
-        if ( $dataType == 'Boolean' ) {
-            $label = $value ? ts('Yes') : ts('No');
-        }
-
-        return $label;
+        require_once 'CRM/Core/BAO/CustomField.php';
+        return CRM_Core_BAO_CustomField::getDisplayValueCommon( $value,
+                                                                $options,
+                                                                $htmlType,
+                                                                $dataType );
     }
-
 
     /**
      * Function to delete Option
@@ -202,7 +204,7 @@ WHERE  id = %1";
 
     static function updateCustomValues($params) 
     {
-        $optionDAO =& new CRM_Core_DAO_OptionValue();
+        $optionDAO = new CRM_Core_DAO_OptionValue();
         $optionDAO->id = $params['optionId'];
         $optionDAO->find( true );
         $oldValue = $optionDAO->value;

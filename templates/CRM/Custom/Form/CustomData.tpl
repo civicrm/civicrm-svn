@@ -1,108 +1,73 @@
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
 {* Custom Data form*}
-{foreach from=$groupTree item=cd_edit key=group_id}
-<div id="{$cd_edit.name}_show_{$cgCount}" class="section-hidden section-hidden-border">
-	<a href="#" onclick="hide('{$cd_edit.name}_show_{$cgCount}'); show('{$cd_edit.name}_{$cgCount}'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a><label>{ts}{$cd_edit.title}{/ts}</label><br />
-</div>
-
-<div id="{$cd_edit.name}_{$cgCount}" class="form-item">
-	<fieldset><legend><a href="#" onclick="hide('{$cd_edit.name}_{$cgCount}'); show('{$cd_edit.name}_show_{$cgCount}'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}{$cd_edit.title}{/ts}</legend>
-
-		{if $cd_edit.help_pre}<div class="messages help">{$cd_edit.help_pre}</div>{/if}
-		<dl>
-			{foreach from=$cd_edit.fields item=element key=field_id}
-			{assign var="element_name" value=$element.element_name}
-			{if $element.is_view eq 0}{* fix for CRM-3510 *}
-                        {if $element.help_pre}
-                            <dt></dt><dd class="html-adjust description">{$element.help_pre}</dd>
-			{/if}
-			{if $element.options_per_line != 0 }
-
-			<dt>{$form.$element_name.label}</dt>
-			<dd class="html-adjust">
-				{assign var="count" value="1"}
-				<table class="form-layout-compressed" style="margin-top: -0.5em;">
-					<tr>
-						{* sort by fails for option per line. Added a variable to iterate through the element array*}
-						{assign var="index" value="1"}
-						{foreach name=outer key=key item=item from=$form.$element_name}
-						{if $index < 10}
-						{assign var="index" value=`$index+1`}
-						{else}
-						<td class="labels font-light">{$form.$element_name.$key.html}</td>
-						{if $count == $element.options_per_line}
-					</tr>
-					<tr>
-						{assign var="count" value="1"}
-						{else}
-						{assign var="count" value=`$count+1`}
-						{/if}
-						{/if}
-						{/foreach}
-                        {if $element.html_type eq 'Radio'}
-                        <td>			            
-	                      &nbsp;&nbsp;(&nbsp;<a href="#" title="unselect" onclick="unselectRadio('{$element_name}', '{$form.formName}'); return false;" >{ts}unselect{/ts}</a>&nbsp;) 
-                        </td>
-				        {/if}
-					</tr>
-                </table>
-			</dd>
-			{if $element.help_post}
-			<dt></dt><dd class="html-adjust description">{$element.help_post}</dd>
-			{/if}
-			{else}
-    			<dt>{$form.$element_name.label}</dt>
-    			<dd class="html-adjust">{$form.$element_name.html}
-    				{if $element.html_type eq 'Radio'}
-    				    &nbsp;&nbsp;(&nbsp;<a href="#" title="unselect" onclick="unselectRadio('{$element_name}', '{$form.formName}'); return false;" >{ts}unselect{/ts}</a>&nbsp;) 
-    				{elseif $element.data_type eq 'File'}
-                        {if $element.element_value.data}
-                        <span class="html-adjust"><br />
-                            &nbsp;{ts}Attached File{/ts}: &nbsp;
-                            {if $element.element_value.displayURL }
-                                <a href="javascript:popUp('{$element.element_value.displayURL}')" ><img src="{$element.element_value.displayURL}" height = "100" width="100"></a>
-                            {else}
-                                <a href="{$element.element_value.fileURL}">{$element.element_value.fileName}</a>
-                            {/if}
-                            {if $element.element_value.deleteURL }
-                                <br />
-                            {$element.element_value.deleteURL}
-                            {/if}	
-                        </span>  
-                        {/if} 
-    				{elseif $element.data_type eq 'Date' && $element.skip_calendar NEQ true } 
-                        {if $element.skip_ampm NEQ true }
-                            {include file="CRM/common/calendar/desc.tpl" trigger=trigger_$element_name doTime=1}
-                            {include file="CRM/common/calendar/body.tpl" dateVar=$element_name startDate=$currentYear-$element.start_date_years endDate=$currentYear+$element.end_date_years doTime=1 trigger=trigger_$element_name}
-                        {else}
-                            {include file="CRM/common/calendar/desc.tpl" trigger=trigger_$element_name}
-                            {include file="CRM/common/calendar/body.tpl" dateVar=$element_name startDate=$currentYear-$element.start_date_years endDate=$currentYear+$element.end_date_years doTime=1 trigger=trigger_$element_name ampm=1}
-                        {/if} 
-                    {elseif $element.html_type eq 'Autocomplete-Select'}
-                        {include file="CRM/Custom/Form/AutoComplete.tpl"}
-    				{/if}
-    			</dd>                
-    			{if $element.help_post}
-    			    <dt>&nbsp;</dt><dd class="html-adjust description">{$element.help_post}</dd>
-    			{/if}
-			{/if}
-			{/if}
-			{/foreach}
-		</dl>
-		<div class="spacer"></div>
-		{if $cd_edit.help_post}<div class="messages help">{$cd_edit.help_post}</div>{/if}
-
-	</fieldset>
-    {if $cd_edit.is_multiple and ( ( $cd_edit.max_multiple eq '' )  or ( $cd_edit.max_multiple > 0 and $cd_edit.max_multiple >= $cgCount ) ) }
-        <div id="add-more-link-{$cgCount}"><a href="javascript:buildCustomData('{$cd_edit.extends}','{$cd_edit.extends_entity_column_id}', '{$cd_edit.extends_entity_column_value}', {$cgCount}, {$group_id}, true );">{ts 1=$cd_edit.title}Add another %1 record{/ts}</a></div>	
+{if $formEdit}
+    {if $cd_edit.help_pre}
+        <div class="messages help">{$cd_edit.help_pre}</div>
     {/if}
-</div>
-<div id="custom_group_{$group_id}_{$cgCount}"></div>
-
-<script type="text/javascript">
-{if $cd_edit.collapse_display eq 0 }
-	hide("{$cd_edit.name}_show_{$cgCount}"); show("{$cd_edit.name}_{$cgCount}");
+    <table class="form-layout-compressed">
+        {foreach from=$cd_edit.fields item=element key=field_id}
+           {include file="CRM/Custom/Form/CustomField.tpl"}
+        {/foreach}
+    </table>
+    <div class="spacer"></div>
+    {if $cd_edit.help_post}<div class="messages help">{$cd_edit.help_post}</div>{/if}
+    {if $cd_edit.is_multiple and ( ( $cd_edit.max_multiple eq '' )  or ( $cd_edit.max_multiple > 0 and $cd_edit.max_multiple >= $cgCount ) ) }
+        <div id="add-more-link-{$cgCount}"><a href="javascript:buildCustomData('{$cd_edit.extends}',{if $cd_edit.subtype}'{$cd_edit.subtype}'{else}'{$cd_edit.extends_entity_column_id}'{/if}, '', {$cgCount}, {$group_id}, true );">{ts 1=$cd_edit.title}Add another %1 record{/ts}</a></div>	
+    {/if}
 {else}
-	show("{$cd_edit.name}_show_{$cgCount}"); hide("{$cd_edit.name}_{$cgCount}");
-{/if}
-</script>
+{foreach from=$groupTree item=cd_edit key=group_id name=custom_sets}    
+ <div id="{$cd_edit.name}" class="crm-accordion-wrapper crm-accordion_title-accordion {if $cd_edit.collapse_display}crm-accordion-closed{else}crm-accordion-open{/if}">
+  <div class="crm-accordion-header">
+   <div class="icon crm-accordion-pointer"></div>
+    {$cd_edit.title}
+   </div><!-- /.crm-accordion-header -->
+  <div id="{$cd_edit.name}" class="crm-accordion-body">
+            {if $cd_edit.help_pre}
+                <div class="messages help">{$cd_edit.help_pre}</div>
+            {/if}
+            <table class="form-layout-compressed">
+                {foreach from=$cd_edit.fields item=element key=field_id}
+                   {include file="CRM/Custom/Form/CustomField.tpl"}
+                {/foreach}
+            </table>
+	    <div class="spacer"></div>
+            {if $cd_edit.help_post}<div class="messages help">{$cd_edit.help_post}</div>{/if}
+   </div><!-- /.crm-accordion-body -->
+  </div><!-- /.crm-accordion-wrapper -->
+        {if $cd_edit.is_multiple and ( ( $cd_edit.max_multiple eq '' )  or ( $cd_edit.max_multiple > 0 and $cd_edit.max_multiple >= $cgCount ) ) }
+            <div id="add-more-link-{$cgCount}"><a href="javascript:buildCustomData('{$cd_edit.extends}',{if $cd_edit.subtype}'{$cd_edit.subtype}'{else}'{$cd_edit.extends_entity_column_id}'{/if}, '', {$cgCount}, {$group_id}, true );">{ts 1=$cd_edit.title}Add another %1 record{/ts}</a></div>	
+        {/if}
+    <div id="custom_group_{$group_id}_{$cgCount}"></div>
 {/foreach}
+    <script type="text/javascript">
+    {literal}
+        cj(function() {
+           cj().crmaccordions(); 
+        });        
+    {/literal}
+    </script>
+{/if}

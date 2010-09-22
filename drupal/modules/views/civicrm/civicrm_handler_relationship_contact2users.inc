@@ -1,4 +1,27 @@
 <?php
+/*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*/
 
 /**
  * Field handler to provide relationship to Drupal User ID
@@ -12,32 +35,14 @@ class civicrm_handler_relationship_contact2users extends views_handler_relations
    */
   function query() {
    
-    // If the base table is 'civicrm_contact',
-    // the left table is civicrm_contact
-    if ($this->view->base_table == 'civicrm_contact') {
-       // Figure out what base table this relationship brings to the party.
-       $join = new views_join();
-       $join->definition = array(
-         'left_table' => 'civicrm_contact',
-         'left_field' => 'id',
-         'table' => 'civicrm_uf_match',
-         'field' => 'contact_id',
-       );
-    }
-    // If the base table is NOT 'civicrm_contact',
-    // the left table is civicrm_uf_match    
-    else 
-    {
-       // Figure out what base table this relationship brings to the party.
-       $join = new views_join();
-       $join->definition = array(
-         'table' => 'civicrm_contact',
-         'field' => 'id',
-         'left_table' => 'civicrm_uf_match',
-         'left_field' => 'contact_id',
-       );
-    }
-   
+    $join = new views_join();
+    $join->definition = array(
+      'left_table' => 'civicrm_contact',
+      'left_field' => 'id',
+      'table' => 'civicrm_uf_match',
+      'field' => 'contact_id',
+    );
+
     if (!empty($this->options['required'])) {
       $join->definition['type'] = 'INNER';
     }

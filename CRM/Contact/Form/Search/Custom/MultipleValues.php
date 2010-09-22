@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -190,8 +191,11 @@ contact_a.sort_name    as sort_name,
         foreach ( $this->_options as $fieldID => $values ) {
             $customVal = $valueSeparatedArray = array();
             if ( in_array( $values['attributes']['html_type'],
-                           array( 'Radio', 'Select' ) ) ) {
-                if ( $row["custom_{$fieldID}"] &&
+                           array( 'Radio', 'Select', 'Autocomplete-Select' ) ) ) {
+                if ( $values['attributes']['data_type'] == 'ContactReference' && $row["custom_{$fieldID}"] ) {
+                    $row["custom_{$fieldID}"] =
+                        CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', (int)$row["custom_{$fieldID}"], 'display_name' );
+                } else if ( $row["custom_{$fieldID}"] &&
                      array_key_exists( $row["custom_{$fieldID}"],
                                        $values ) ) {
                     $row["custom_{$fieldID}"] = $values[$row["custom_{$fieldID}"]];

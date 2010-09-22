@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -175,16 +176,19 @@ contribution2_total_amount_count, contribution2_total_amount_sum',
                           array( 'contribution_source' => null ), ),
 
                    'civicrm_group' => 
-                   array( 'dao'    => 'CRM_Contact_DAO_Group',
+                   array( 'dao'    => 'CRM_Contact_DAO_GroupContact',
                           'alias'  => 'cgroup',
                           'filters' =>             
                           array( 'gid' => 
-                                 array( 'name'    => 'id',
-                                        'title'   => ts( 'Group' ),
+                                 array( 'name'         => 'group_id',
+                                        'title'        => ts( 'Group' ),
                                         'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-                                        'options' => CRM_Core_PseudoConstant::staticGroup( ) ), ), ),
+                                        'group'        => true,
+                                        'options'      => CRM_Core_PseudoConstant::group( ) ), ), ),
+  
                    );
 
+        $this->_tagFilter = true;
         parent::__construct( );
     }
 
@@ -302,32 +306,28 @@ SUM(contribution2_total_amount_sum)   as contribution2_total_amount_sum';
         if ( $fromTable == 'civicrm_contact' ) {
             $contriCol  = "contact_id";
             $from .= "
-LEFT JOIN civicrm_address address ON contact.id = address.contact_id
-LEFT JOIN civicrm_email   email    
-       ON contact.id = email.contact_id AND email.is_primary = 1
-LEFT JOIN civicrm_phone   phone    
-       ON contact.id = phone.contact_id AND phone.is_primary = 1
-LEFT JOIN civicrm_group_contact  group_contact 
-       ON contact.id = group_contact.contact_id  AND group_contact.status='Added'
-LEFT JOIN civicrm_group  cgroup 
-       ON group_contact.group_id = cgroup.id
-";
+LEFT JOIN civicrm_address {$this->_aliases['civicrm_address']} ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_address']}.contact_id
+LEFT JOIN civicrm_email   {$this->_aliases['civicrm_email']}    
+       ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_email']}.contact_id AND {$this->_aliases['civicrm_email']}.is_primary = 1
+LEFT JOIN civicrm_phone   {$this->_aliases['civicrm_phone']}    
+       ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_phone']}.contact_id AND {$this->_aliases['civicrm_phone']}.is_primary = 1";
+            
         } else if ( $fromTable == 'civicrm_contribution_type' ) {
             $contriCol  = "contribution_type_id";
         } else if ( $fromTable == 'civicrm_contribution' ) {
             $contriCol  = $fromCol;
         } else if ( $fromTable == 'civicrm_address' ) {
             $from .= "
-INNER JOIN civicrm_contact contact ON address.contact_id = contact.id";
-            $fromAlias = "contact";
+INNER JOIN civicrm_contact {$this->_aliases['civicrm_contact']} ON {$this->_aliases['civicrm_address']}.contact_id = {$this->_aliases['civicrm_contact']}.id";
+            $fromAlias = $this->_aliases['civicrm_contact'];
             $fromCol   = "id";
             $contriCol = "contact_id";
         }
 
         $IN =  implode("," , $this->_params['contribution_status_id_value']);
        
-        $contriStatus1 = ( $IN != NULL ) ?" AND {$this->_aliases['civicrm_contribution']}1.contribution_status_id IN ( {$IN} ) " : " ";
-        $contriStatus2 = ( $IN != NULL ) ?" AND {$this->_aliases['civicrm_contribution']}2.contribution_status_id IN ( {$IN} ) " : " ";
+        $contriStatus1 = ( $IN != NULL ) ?" AND contribution1.contribution_status_id IN ( {$IN} ) " : " ";
+        $contriStatus2 = ( $IN != NULL ) ?" AND contribution2.contribution_status_id IN ( {$IN} ) " : " ";
         $this->_from = "
 FROM $from
 
@@ -335,8 +335,8 @@ LEFT  JOIN (
    SELECT contribution1.$contriCol, 
           sum( contribution1.total_amount ) AS contribution1_total_amount_sum, 
           count( * ) AS contribution1_total_amount_count
-   FROM   civicrm_contribution {$this->_aliases['civicrm_contribution']}1
-   WHERE  ( $receive_date1 ) $contriStatus1
+   FROM   civicrm_contribution contribution1
+   WHERE  ( $receive_date1 ) $contriStatus1 AND contribution1.is_test = 0
    GROUP BY contribution1.$contriCol
 ) contribution1 ON $fromAlias.$fromCol = contribution1.$contriCol
 
@@ -344,8 +344,8 @@ LEFT  JOIN (
    SELECT contribution2.$contriCol, 
           sum( contribution2.total_amount ) AS contribution2_total_amount_sum, 
           count( * ) AS contribution2_total_amount_count
-   FROM   civicrm_contribution {$this->_aliases['civicrm_contribution']}2
-   WHERE  ( $receive_date2 ) $contriStatus2
+   FROM   civicrm_contribution contribution2
+   WHERE  ( $receive_date2 ) $contriStatus2 AND contribution2.is_test = 0
    GROUP BY contribution2.$contriCol
 ) contribution2 ON $fromAlias.$fromCol = contribution2.$contriCol
 ";
@@ -369,14 +369,15 @@ LEFT  JOIN (
                                                     CRM_Utils_Array::value( "{$fieldName}_max", $this->_params ) );
                         }
                     }
-                    
-                    if ( ! empty( $clause ) && $fieldName != 'contribution_status_id' ) {
-                        $clauses[] = $clause;
+                    if ( ! empty( $clause ) ) {
+                        if ( ! empty( $clause ) && $fieldName != 'contribution_status_id' ) {
+                            $clauses[] = $clause;
+                        }
                     }
                 }
             }
         }
-
+        
         if ( empty( $clauses ) ) {
             $this->_where = "WHERE ( 1 ) ";
         } else {
@@ -437,7 +438,7 @@ LEFT  JOIN (
             }
         }
         
-        if ( !empty( $fields['gid_value'] ) ) {
+        if ( !empty( $fields['gid_value'] ) && CRM_Utils_Array::value( 'group_bys', $fields ) ) {
             if ( !array_key_exists( 'id', $fields['group_bys'] ) ) {
                 $errors['gid_value'] = ts("Filter with Group only allow with group by Contact");
             }
@@ -606,9 +607,9 @@ LEFT  JOIN (
 
         foreach ( $rows as $rowNum => $row ) {
             // handle country
-            if ( array_key_exists('address_country_id', $row) ) {
-                if ( $value = $row['address_country_id'] ) {
-                    $rows[$rowNum]['address_country_id'] = CRM_Core_PseudoConstant::country( $value, false );
+            if ( array_key_exists('address_civireport_country_id', $row) ) {
+                if ( $value = $row['address_civireport_country_id'] ) {
+                    $rows[$rowNum]['address_civireport_country_id'] = CRM_Core_PseudoConstant::country( $value, false );
                     
                     $url = CRM_Report_Utils_Report::getNextUrl( 'contribute/detail',
                                                   "reset=1&force=1&" . 
@@ -617,16 +618,16 @@ LEFT  JOIN (
                                                                 $this->_absoluteUrl, $this->_id );
                                                   
 		                                      
-                    $rows[$rowNum]['address_country_id_link' ] = $url;
-                    $rows[$rowNum]['address_country_id_hover'] = ts("View contributions for this Country.");
+                    $rows[$rowNum]['address_civireport_country_id_link' ] = $url;
+                    $rows[$rowNum]['address_civireport_country_id_hover'] = ts("View contributions for this Country.");
                 }
                 $entryFound = true;
             }
 
             // handle state province
-            if ( array_key_exists('address_state_province_id', $row) ) {
-                if ( $value = $row['address_state_province_id'] ) {
-                    $rows[$rowNum]['address_state_province_id'] = 
+            if ( array_key_exists('address_civireport_state_province_id', $row) ) {
+                if ( $value = $row['address_civireport_state_province_id'] ) {
+                    $rows[$rowNum]['address_civireport_state_province_id'] = 
                         CRM_Core_PseudoConstant::stateProvince( $value, false );
 
                     $url = CRM_Report_Utils_Report::getNextUrl( 'contribute/detail',
@@ -634,36 +635,21 @@ LEFT  JOIN (
                                                   "state_province_id_op=in&state_province_id_value={$value}&" .
                                                   "$dateUrl",
                                                                 $this->_absoluteUrl, $this->_id );
-                    $rows[$rowNum]['address_state_province_id_link' ] = $url;
-                    $rows[$rowNum]['address_state_province_id_hover'] = 
+                    $rows[$rowNum]['address_civireport_state_province_id_link' ] = $url;
+                    $rows[$rowNum]['address_civireport_state_province_id_hover'] = 
                         ts("View repeatDetails for this state.");
-                }
-                $entryFound = true;
-            }
-            
-            // link contribution type
-            if ( array_key_exists('contribution_type_name', $row) ) {
-                if ( $value = $row['contribution_type_name'] ) {
-                    $url = CRM_Report_Utils_Report::getNextUrl( 'contribute/repeatDetail',
-                                                  "reset=1&force=1&" . 
-                                                  "contribution_type_op=has&contribution_type_value={$value}&" .
-                                                  "$dateUrl",
-                                                  $this->_absoluteUrl, $this->_id );
-                    $rows[$rowNum]['contribution_type_name_link' ] = $url;
-                    $rows[$rowNum]['contribution_type_name_hover'] = 
-                        ts("View repeatDetails for this Contribution type.");
                 }
                 $entryFound = true;
             }
 
             // convert display name to links
-            if ( array_key_exists('contact_display_name', $row) && 
-                 array_key_exists('contact_id', $row) ) {
+            if ( array_key_exists('contact_civireport_display_name', $row) && 
+                 array_key_exists('contact_civireport_id', $row) ) {
                 $url = CRM_Report_Utils_Report::getNextUrl( 'contribute/detail', 
-                                              'reset=1&force=1&id_op=eq&id_value=' . $row['contact_id'],
-                                              $this->_absoluteUrl, $this->_id );
-                $rows[$rowNum]['contact_display_name_link' ] = $url;
-                $rows[$rowNum]['contact_display_name_hover'] = 
+                                                            'reset=1&force=1&id_op=eq&id_value=' . $row['contact_civireport_id'],
+                                                            $this->_absoluteUrl, $this->_id );
+                $rows[$rowNum]['contact_civireport_display_name_link' ] = $url;
+                $rows[$rowNum]['contact_civireport_display_name_hover'] = 
                     ts("View Contribution details for this contact");
                 $entryFound = true;
             }

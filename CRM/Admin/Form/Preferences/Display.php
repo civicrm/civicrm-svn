@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -46,10 +47,10 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
         CRM_Utils_System::setTitle(ts('Settings - Site Preferences'));
         // add all the checkboxes
         $this->_cbs = array(
-                            'contact_view_options'    => ts( 'Viewing Contacts'   ),
-                            'contact_edit_options'    => ts( 'Editing Contacts'   ),
-                            'advanced_search_options' => ts( 'Contact Search'),
-                            'user_dashboard_options'  => ts( 'Contact Dashboard' ),
+                            'contact_view_options'    => ts( 'Viewing Contacts'  ),
+                            'contact_edit_options'    => ts( 'Editing Contacts'  ),
+                            'advanced_search_options' => ts( 'Contact Search'    ),
+                            'user_dashboard_options'  => ts( 'Contact Dashboard' )
                             );
     }
 
@@ -59,6 +60,17 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
         parent::cbsDefaultValues( $defaults );
         if ( $this->_config->editor_id ) {
             $defaults['wysiwyg_editor'] = $this->_config->editor_id ;
+        }
+        if ( empty( $this->_config->display_name_format ) ) {
+            $defaults['display_name_format'] = "{contact.individual_prefix}{ }{contact.first_name}{ }{contact.last_name}{ }{contact.individual_suffix}";
+        } else {
+            $defaults['display_name_format'] = $this->_config->display_name_format;
+        }
+
+        if ( empty( $this->_config->sort_name_format ) ) {
+            $defaults['sort_name_format'] = "{contact.last_name}{, }{contact.first_name}";
+        } else {
+            $defaults['sort_name_format'] = $this->_config->sort_name_format;
         }
         return $defaults;
     }
@@ -73,6 +85,15 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
     {
         $this->addElement( 'select', 'wysiwyg_editor', ts('WYSIWYG Editor'), 
                            array( '' => ts( 'Textarea' ) ) + CRM_Core_PseudoConstant::wysiwygEditor( ),null );
+        $this->addElement('textarea','display_name_format', ts('Individual Display Name Format'));  
+        $this->addElement('textarea','sort_name_format',    ts('Individual Sort Name Format'));
+                
+        require_once 'CRM/Core/OptionGroup.php';
+        $editOptions = CRM_Core_OptionGroup::values( 'contact_edit_options', false, false, false );
+        $this->assign( 'contactEditOptions', $editOptions );
+        
+        $this->addElement('hidden','contact_edit_prefences', null, array('id'=> 'contact_edit_prefences') );
+
         parent::buildQuickForm( );
     }
 
@@ -90,10 +111,25 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
         }
 
         $this->_params = $this->controller->exportValues( $this->_name );
+        
+        if ( CRM_Utils_Array::value( 'contact_edit_prefences', $this->_params ) ) {
+            $preferenceWeights = explode( ',' , $this->_params['contact_edit_prefences'] );
+            foreach( $preferenceWeights as $key => $val ) {
+                if ( !$val ) {
+                    unset($preferenceWeights[$key]);
+                }
+            }
+            require_once 'CRM/Core/BAO/OptionValue.php';
+            $opGroupId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup' , 'contact_edit_options', 'id', 'name' );
+            CRM_Core_BAO_OptionValue::updateOptionWeights( $opGroupId, array_flip($preferenceWeights) );
+        }
+        
         $this->_config->editor_id = $this->_params['wysiwyg_editor'];
+        $this->_config->display_name_format = $this->_params['display_name_format'];
+        $this->_config->sort_name_format    = $this->_params['sort_name_format'];
 
         // set default editor to session if changed
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $session->set( 'defaultWysiwygEditor', $this->_params['wysiwyg_editor'] );
         
         parent::postProcess( );

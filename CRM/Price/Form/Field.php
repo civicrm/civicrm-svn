@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -39,13 +40,13 @@ require_once 'CRM/Core/ShowHideBlocks.php';
 /**
  * form to process actions on the field aspect of Price
  */
-class CRM_Price_Form_Field extends CRM_Core_Form {
+class CRM_Price_Form_Field extends CRM_Core_Form
+{
 
     /**
      * Constants for number of options for data types of multiple option.
      */
     const NUM_OPTION = 11;
-
 
     /**
      * the custom set id saved to the session for an update
@@ -73,11 +74,15 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
      */
     public function preProcess()
     {
-        require_once 'CRM/Core/BAO/PriceField.php';
+        require_once 'CRM/Price/BAO/Field.php';
         
         $this->_sid = CRM_Utils_Request::retrieve('sid', 'Positive', $this);
         $this->_fid = CRM_Utils_Request::retrieve('fid' , 'Positive', $this);
-
+        $url = CRM_Utils_System::url( 'civicrm/admin/price/field', "reset=1&action=browse&sid={$this->_sid}");
+        $breadCrumb     = array( array('title' => ts('Price Set Fields'),
+                                       'url'   => $url) );
+        CRM_Utils_System::appendBreadCrumb( $breadCrumb );        
+        
     }
 
     /**
@@ -97,7 +102,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
         if (isset($this->_fid)) {
             $params = array('id' => $this->_fid);
             $this->assign('id',$this->_fid);
-            CRM_Core_BAO_PriceField::retrieve($params, $defaults);
+            CRM_Price_BAO_Field::retrieve($params, $defaults);
             $this->_sid = $defaults['price_set_id'];
 
             // if text, retrieve price
@@ -109,7 +114,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
                 
                 // fix the display of the monetary value, CRM-4038
                 require_once 'CRM/Utils/Money.php';
-                $defaults['price'] = CRM_Utils_Money::format( $optionValues['name'][1], null, '%a' );
+                $defaults['price'] = CRM_Utils_Money::format( $optionValues['value'][1], null, '%a' );
             }
         } else {
             $defaults['is_active'] = 1;
@@ -122,7 +127,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
         if ($this->_action & CRM_Core_Action::ADD) {
             require_once 'CRM/Utils/Weight.php';
             $fieldValues = array('price_set_id' => $this->_sid);
-            $defaults['weight'] = CRM_Utils_Weight::getDefaultWeight('CRM_Core_DAO_PriceField', $fieldValues);
+            $defaults['weight'] = CRM_Utils_Weight::getDefaultWeight('CRM_Price_DAO_Field', $fieldValues);
             $defaults['options_per_line'] = 1;
             $defaults['is_display_amounts'] = 1;
         }
@@ -144,19 +149,28 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
         $this->applyFilter('__ALL__', 'trim');
         
         // label
-        $this->add('text', 'label', ts('Field Label'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_PriceField', 'label'), true);
+        $this->add('text', 'label', ts('Field Label'), CRM_Core_DAO::getAttribute('CRM_Price_DAO_Field', 'label'), true);
         
         // html_type
         $javascript = 'onchange="option_html_type(this.form)";';
 
-        require_once 'CRM/Core/BAO/PriceField.php';
-        $htmlTypes = CRM_Core_BAO_PriceField::htmlTypes( );
+        require_once 'CRM/Price/BAO/Field.php';
+        $htmlTypes = CRM_Price_BAO_Field::htmlTypes( );
         
         $sel = $this->add('select', 'html_type', ts('Input Field Type'), 
                           $htmlTypes, true, $javascript );
         
+        // Text box for Participant Count for a field
+        $extendComponentId = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $this->_sid, 'extends', 'id' );
+        require_once 'CRM/Core/Component.php';
+        if( $extendComponentId == CRM_Core_Component::getComponentID( 'CiviEvent' ) ) {
+            $this->add('text', 'count', ts('Participant Count'), CRM_Core_DAO::getAttribute('CRM_Price_DAO_Field', 'count') );
+            $this->addRule('count', ts('Participant Count should be a positive number') , 'positiveInteger');
+        }
+        
         // price (for text inputs)
         $this->add( 'text', 'price', ts('Price') );
+        $this->registerRule( 'price', 'callback', 'money', 'CRM_Utils_Rule' );
         $this->addRule( 'price', ts('must be a monetary value'), 'money' );
         
         if ($this->_action == CRM_Core_Action::UPDATE) {
@@ -164,7 +178,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
         }
 
         // form fields of Custom Option rows
-        $_showHide =& new CRM_Core_ShowHideBlocks('','');
+        $_showHide = new CRM_Core_ShowHideBlocks('','');
         $attributes = CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_OptionValue' );
         $labelAttribute  = $attributes['label' ];
         $nameAttribute   = $attributes['name'  ];
@@ -183,9 +197,6 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
             }
             // label
             $this->add('text','option_label['.$i.']', ts('Label'), $labelAttribute);
-            
-            // the above value is used by query, so the value has to be have a rule
-            $this->addRule( 'option_label['.$i.']', ts('Please enter a valid value for this field. You may use a - z, A - Z, 1 - 9, spaces and underline ( _ ) characters. The length of the variable string should be less than 31 characters'), 'qfVariable');
             
             // name
             $this->add('text', 'option_name['.$i.']', ts('Name'), $nameAttribute);
@@ -212,7 +223,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
         $this->add('checkbox', 'is_display_amounts', ts('Display Amount?') );
 
         // weight
-        $this->add('text', 'weight', ts('Order'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_PriceField', 'weight'), true);
+        $this->add('text', 'weight', ts('Order'), CRM_Core_DAO::getAttribute('CRM_Price_DAO_Field', 'weight'), true);
         $this->addRule('weight', ts('is a numeric field') , 'numeric');
 
         // checkbox / radio options per line
@@ -221,7 +232,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
 
         // help post, mask, attributes, javascript ?
         $this->add('textarea', 'help_post', ts('Field Help'), 
-                   CRM_Core_DAO::getAttribute('CRM_Core_DAO_PriceField', 'help_post'));        
+                   CRM_Core_DAO::getAttribute('CRM_Price_DAO_Field', 'help_post'));        
 
         // active_on
         $date_options = array(
@@ -253,6 +264,9 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
                                        'name'      => ts('Cancel')),
                                 )
                           );
+        // is public?
+        require_once 'CRM/Core/PseudoConstant.php';
+        $this->add( 'select', 'visibility_id', ts('Visibility'), CRM_Core_PseudoConstant::visibility( ) );
 
         // add a form rule to check default value
         $this->addFormRule( array( 'CRM_Price_Form_Field', 'formRule' ),$this );
@@ -278,7 +292,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
      * @static
      * @access public
      */
-    static function formRule( &$fields, &$files, &$form ) {
+    static function formRule( $fields, $files, $form ) {
         
         // all option fields are of type "money"
         $errors = array( );
@@ -288,15 +302,11 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
          *  Incomplete row checking is also required.
          */
         if ( ( $form->_action & CRM_Core_Action::ADD || $form->_action & CRM_Core_Action::UPDATE ) &&
-             $fields['html_type'] == 'Text' ) {
-            if( $fields['price'] ==  NULL ) {
-                $errors['price'] =   ts( 'Price is a required field' );
-            } else if ( $fields['price'] <=  0 ) {
-                $errors['price'] =   ts( 'Price must greater than zero (0).' );
-            }
+             $fields['html_type'] == 'Text' && $fields['price'] ==  NULL ) {
+            $errors['price'] = ts( 'Price is a required field' );
         }
         //avoid the same price field label in Within PriceSet
-        $priceFieldLabel = new CRM_Core_DAO_PriceField();
+        $priceFieldLabel = new CRM_Price_DAO_Field();
         $priceFieldLabel->label        = $fields['label'] ;
         $priceFieldLabel->price_set_id = $form->_sid;
 
@@ -308,7 +318,11 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
         if ( $dupeLabel ) {
             $errors['label'] = ts('Name already exists in Database.');
         }
-
+        
+        if ( ( is_numeric( CRM_Utils_Array::value( 'count', $fields ) ) && CRM_Utils_Array::value( 'count', $fields ) == 0 ) ) {
+            $errors['count'] = ts('Participant Count must be greater than zero.');
+        }
+        
         if ( $form->_action & CRM_Core_Action::ADD ) {
             
             if( $fields['html_type'] != 'Text' ) {
@@ -368,7 +382,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
                 }
             }
           
-            $_showHide = & new CRM_Core_ShowHideBlocks('','');
+            $_showHide = new CRM_Core_ShowHideBlocks('','');
             
             // do not process if no option rows were submitted
             if ( empty( $fields['option_name'] ) && empty( $fields['option_label'] ) ) {
@@ -480,6 +494,8 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
         $params['is_active']          = CRM_Utils_Array::value( 'is_active', $params, false );
         $params['active_on']          = CRM_Utils_Date::format( CRM_Utils_Array::value( 'active_on', $params ) );
         $params['expire_on']          = CRM_Utils_Date::format( CRM_Utils_Array::value( 'expire_on', $params ) );
+        $params['visibility_id']      = CRM_Utils_Array::value( 'visibility_id', $params, false );
+        $params['count']              = CRM_Utils_Array::value( 'count', $params, false );
         
         // need the FKEY - price set id
         $params['price_set_id'] = $this->_sid;
@@ -489,11 +505,15 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
             $fieldValues = array( 'price_set_id' => $this->_sid );
             $oldWeight   = null;
             if ( $this->_fid ) {
-                $oldWeight = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_PriceField', $this->_fid, 'weight', 'id' );
+                $oldWeight = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Field', $this->_fid, 'weight', 'id' );
             }
             $params['weight'] = 
-                CRM_Utils_Weight::updateOtherWeights( 'CRM_Core_DAO_PriceField', $oldWeight, $params['weight'], $fieldValues );
+                CRM_Utils_Weight::updateOtherWeights( 'CRM_Price_DAO_Field', $oldWeight, $params['weight'], $fieldValues );
         }
+        
+        // make value <=> name consistency.
+        if ( isset( $params['option_name'] ) ) $params['option_value'] = $params['option_name'];
+        $params['is_enter_qty'] = CRM_Utils_Array::value( 'is_enter_qty', $params, false );
         
         if ( $params['html_type'] == 'Text' ) {
             // if html type is Text, force is_enter_qty on
@@ -505,19 +525,6 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
             $params['option_label'] = array( 1 => $params['label'] );
             $params['option_weight'] = array( 1 => $params['weight'] );
             $params['is_active']    = array( 1 => 1 );
-        } else {
-            $params['is_enter_qty'] = CRM_Utils_Array::value( 'is_enter_qty', $params, false );
-
-            if ($this->_action & CRM_Core_Action::ADD) {
-                // fix option_value
-                $value = 1;
-                $params['option_value'] = array( );
-                if ( isset( $params['option_name'] ) ) {
-                    foreach ( $params['option_name'] as $key => $dontCare ) {
-                        $params['option_value'][$key] = $value++;
-                    }
-                }
-            }
         }
         
         $ids = array( );
@@ -526,13 +533,13 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
             $ids['id'] = $this->_fid;
         }
         
-        $priceField = CRM_Core_BAO_PriceField::create( $params, $ids );
+        $priceField = CRM_Price_BAO_Field::create( $params, $ids );
         
         if( ! is_a( $priceField, 'CRM_Core_Error' ) ) {
             CRM_Core_Session::setStatus(ts('Price Field \'%1\' has been saved.', array(1 => $priceField->label)));
         }
         $buttonName = $this->controller->getButtonName( );
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         if ( $buttonName == $this->getButtonName( 'next', 'new' ) ) {
             CRM_Core_Session::setStatus(ts(' You can add another price set field.'));
             $session->replaceUserContext(CRM_Utils_System::url('civicrm/admin/price/field', 'reset=1&action=add&sid=' . $this->_sid));

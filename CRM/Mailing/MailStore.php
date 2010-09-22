@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -49,6 +50,7 @@ class CRM_Mailing_MailStore
     function getStore($name = null)
     {
         $dao = new CRM_Core_DAO_MailSettings;
+        $dao->domain_id =  CRM_Core_Config::domainID( );
         $name ? $dao->name = $name : $dao->is_default = 1;
         if (!$dao->find(true)) throw new Exception("Could not find entry named $name in civicrm_mail_settings");
 
@@ -115,6 +117,9 @@ class CRM_Mailing_MailStore
         }
         $mails = array();
         $parser = new ezcMailParser;
+        //set property text attachment as file CRM-5408
+        $parser->options->parseTextAttachmentsAsFiles = true;
+
         foreach ($set->getMessageNumbers() as $nr) {
             if ($this->_debug) print "retrieving message $nr\n";
             $single = $parser->parseMail($this->_transport->fetchByMessageNr($nr));
@@ -131,7 +136,7 @@ class CRM_Mailing_MailStore
      */
     function maildir($name)
     {
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         $dir = $config->customFileUploadDir . DIRECTORY_SEPARATOR . $name;
         foreach (array('cur', 'new', 'tmp') as $sub) {
             if (!file_exists($dir . DIRECTORY_SEPARATOR . $sub)) {

@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -65,7 +66,6 @@ class CRM_UF_Page_Group extends CRM_Core_Page
         // check if variable _actionsLinks is populated
         if ( ! self::$_actionLinks ) {
             // helper variable for nicer formatting
-            $disableExtra = ts('Are you sure you want to disable this CiviCRM Profile?');
             $copyExtra = ts('Are you sure you want to make a copy of this Profile?');
             self::$_actionLinks = array(
                                         CRM_Core_Action::BROWSE  => array(
@@ -86,17 +86,23 @@ class CRM_UF_Page_Group extends CRM_Core_Page
                                                                           'qs'    => 'action=preview&id=%%id%%&field=0&context=group',
                                                                           'title' => ts('Edit CiviCRM Profile Group') 
                                                                           ),
+                                        CRM_Core_Action::ADD     => array(
+                                                                          'name'  => ts('Use Profile-Create Mode'),
+                                                                          'url'   => 'civicrm/profile/create',
+                                                                          'qs'    => 'gid=%%id%%&reset=1',
+                                                                          'title' => ts('Use Profile-Create Mode'),
+                                                                          ),
                                         CRM_Core_Action::DISABLE => array(
                                                                           'name'  => ts('Disable'),
-                                                                          'url'   => 'civicrm/admin/uf/group',
-                                                                          'qs'    => 'action=disable&id=%%id%%',
-                                                                          'title' => ts('Disable CiviCRM Profile Group')
+                                                                          'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Core_BAO_UFGroup' . '\',\'' . 'enable-disable' . '\' );"',
+                                                                          'ref'   => 'disable-action',
+                                                                          'title' => ts('Disable CiviCRM Profile Group') 
                                                                           ),
                                         CRM_Core_Action::ENABLE  => array(
                                                                           'name'  => ts('Enable'),
-                                                                          'url'   => 'civicrm/admin/uf/group',
-                                                                          'qs'    => 'action=enable&id=%%id%%',
-                                                                          'title' => ts('Enable CiviCRM Profile Group'),
+                                                                          'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Core_BAO_UFGroup' . '\',\'' . 'disable-enable' . '\' );"',
+                                                                          'ref'   => 'enable-action',
+                                                                          'title' => ts('Enable CiviCRM Profile Group') 
                                                                           ),
                                         CRM_Core_Action::DELETE  => array(
                                                                           'name'  => ts('Delete'),
@@ -105,10 +111,10 @@ class CRM_UF_Page_Group extends CRM_Core_Page
                                                                           'title' => ts('Delete CiviCRM Profile Group'),
                                                                           ),
                                         CRM_Core_Action::PROFILE  => array(
-                                                                           'name'  => ts('Standalone Form'),
+                                                                           'name'  => ts('HTML Form Snippet'),
                                                                            'url'   => 'civicrm/admin/uf/group',
                                                                            'qs'    => 'action=profile&gid=%%id%%',
-                                                                           'title' => ts('Standalone Form for Profile Group'),
+                                                                           'title' => ts('HTML Form Snippet for this Profile'),
                                                                            ),
                                         CRM_Core_Action::COPY     => array(
                                                                            'name'  => ts('Copy Profile'),
@@ -158,7 +164,8 @@ class CRM_UF_Page_Group extends CRM_Core_Page
                 require_once 'CRM/Utils/System.php';
                 CRM_Utils_System::updateCategories( );
             } else if ( $action & CRM_Core_Action::PROFILE ) { 
-                $this->profile( ); 
+                $this->profile( );
+                CRM_Utils_System::setTitle(ts('%1 - HTML Form Snippet', array(1 => $this->_title)));
             } else if ( $action & CRM_Core_Action::PREVIEW ) { 
                 $this->preview( $id, $action ); 
             } else if ( $action & CRM_Core_Action::COPY ) {
@@ -195,7 +202,7 @@ class CRM_UF_Page_Group extends CRM_Core_Page
      */
     function profile( ) 
     {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         
         // reassign resource base to be the full url, CRM-4660
         $config->resourceBase = $config->userFrameworkResourceURL;
@@ -203,19 +210,19 @@ class CRM_UF_Page_Group extends CRM_Core_Page
 
         $gid = CRM_Utils_Request::retrieve('gid', 'Positive',
                                            $this, false, 0, 'GET');
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Profile_Form_Edit', ts('Create'), CRM_Core_Action::ADD,
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Profile_Form_Edit', ts('Create'), CRM_Core_Action::ADD,
                                                        false, false, true ); 
         $controller->reset( );
         $controller->process( ); 
         $controller->set('gid', $gid);
         $controller->setEmbedded( true ); 
         $controller->run( ); 
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         $template->assign( 'gid', $gid );
         $template->assign( 'tplFile', 'CRM/Profile/Form/Edit.tpl' );
         $profile  =  trim( $template->fetch( 'CRM/Form/default.tpl' ) ); 
         // not sure how to circumvent our own navigation system to generate the right form url
-        $profile = str_replace( 'civicrm/admin/uf/group', 'civicrm/profile/edit&amp;gid='.$gid.'&amp;reset=1', $profile );
+        $profile = str_replace( 'civicrm/admin/uf/group', 'civicrm/profile/create&amp;gid='.$gid.'&amp;reset=1', $profile );
 
         // FIXME: (CRM-3587) hack to make standalone profile in joomla work
         // without administrator login 
@@ -223,10 +230,14 @@ class CRM_UF_Page_Group extends CRM_Core_Page
             $profile = str_replace( '/administrator/index2.php', '/index.php', $profile );
         }
 
+        // add jquery files
+        $profile = CRM_Utils_String::addJqueryFiles( $profile );
+        
         $this->assign( 'profile', htmlentities( $profile ) );
         //get the title of uf group
         if ($gid) {
             $title = CRM_Core_BAO_UFGroup::getTitle($gid);
+            $this->_title = $title;
         } else {
             $title = 'Profile Form';
         }
@@ -247,7 +258,7 @@ class CRM_UF_Page_Group extends CRM_Core_Page
     function edit($id, $action)
     {
         // create a simple controller for editing uf data
-        $controller =& new CRM_Core_Controller_Simple('CRM_UF_Form_Group', ts('CiviCRM Profile Group'), $action);
+        $controller = new CRM_Core_Controller_Simple('CRM_UF_Form_Group', ts('CiviCRM Profile Group'), $action);
         $this->setContext( $id, $action );
         $controller->set('id', $id);
         $controller->setEmbedded(true);
@@ -272,6 +283,10 @@ class CRM_UF_Page_Group extends CRM_Core_Page
         if (empty($allUFGroups)) {
             return;
         }
+
+        require_once 'CRM/Utils/Hook.php';
+        $ufGroups = CRM_Core_PseudoConstant::ufGroup( );
+        CRM_Utils_Hook::aclGroup( CRM_Core_Permission::ADMIN, null, 'civicrm_uf_group', $ufGroups, $allUFGroups );
 
         foreach ($allUFGroups as $id => $value) {
             $ufGroup[$id] = array();
@@ -298,6 +313,11 @@ class CRM_UF_Page_Group extends CRM_Core_Page
                 $action -= CRM_Core_Action::DELETE;
             }
             
+            // drop Create, Edit and View mode links if profile group_type is Contribution, Membership, or Participant
+            if ( $value['group_type'] == 'Contribution' || $value['group_type'] == 'Membership' || $value['group_type'] == 'Participant' ) {
+                $action -= CRM_Core_Action::ADD;
+            }
+            
             $ufGroup[$id]['action'] = CRM_Core_Action::formLink(self::actionLinks(), $action, 
                                                                 array('id' => $id));
             //get the "Used For" from uf_join
@@ -317,7 +337,7 @@ class CRM_UF_Page_Group extends CRM_Core_Page
      */
     function preview( $id, $action ) 
     {
-      $controller =& new CRM_Core_Controller_Simple('CRM_UF_Form_Preview', ts('CiviCRM Profile Group Preview'),null);   
+      $controller = new CRM_Core_Controller_Simple('CRM_UF_Form_Preview', ts('CiviCRM Profile Group Preview'),null);   
       $this->setContext( $id, $action );
       $controller->set('id', $id);
       $controller->setEmbedded(true);
@@ -337,6 +357,12 @@ class CRM_UF_Page_Group extends CRM_Core_Page
         switch ( $context ) {
         case 'group':
             $url = CRM_Utils_System::url( 'civicrm/admin/uf/group', 'reset=1&action=browse' );
+
+            // as there is no argument after group in the url, and the context is different, 
+            // breadcrumb doesn't get set. And therefore setting it here -
+            $breadCrumb = array(array('title' => ts('CiviCRM Profile'),
+                                      'url'   => CRM_Utils_System::url(CRM_Utils_System::currentPath(), 'reset=1')));
+            CRM_Utils_System::appendBreadCrumb( $breadCrumb );
             break;
         case 'field' :
             $url = CRM_Utils_System::url( 'civicrm/admin/uf/group/field',
@@ -344,7 +370,7 @@ class CRM_UF_Page_Group extends CRM_Core_Page
             break;
         }
         
-        $session =& CRM_Core_Session::singleton( ); 
+        $session = CRM_Core_Session::singleton( ); 
         $session->pushUserContext( $url );
     }
 }

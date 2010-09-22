@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -31,7 +32,7 @@
  * @package CiviCRM_APIv2
  * @subpackage API_Membership
  * 
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * @version $Id$
  *
  */
@@ -55,9 +56,12 @@ function civicrm_membership_type_create(&$params)
 {
     _civicrm_initialize();
     if ( ! is_array($params) ) {
-        return civicrm_create_error('Params is not an array.');
+        return civicrm_create_error('Params need to be of type array!');
     }
-    
+    if( empty($params) ) {
+        return civicrm_create_error( 'No input parameters present' );
+    }
+
     if ( ! isset( $params['name'] ) ||
          ! isset( $params['duration_unit'] ) ||
          ! isset( $params['duration_interval'] ) ) {
@@ -104,9 +108,11 @@ function civicrm_membership_type_get(&$params)
     _civicrm_initialize();
 
     if ( ! is_array($params) ) {
-        return civicrm_create_error('Params is not an array.');
+        return civicrm_create_error('Params need to be of type array!');
     }
-    
+   if( empty($params) ) {
+        return civicrm_create_error( 'No input parameters present' );
+    } 
     require_once 'CRM/Member/BAO/MembershipType.php';
     $membershipTypeBAO = new CRM_Member_BAO_MembershipType();
     
@@ -144,15 +150,17 @@ function civicrm_membership_type_get(&$params)
  */
 function &civicrm_membership_type_update( &$params ) {
     if ( !is_array( $params ) ) {
-        return civicrm_create_error( 'Params is not an array' );
+        return civicrm_create_error( 'Params need to be of type array!' );
     }
-    
+    if( empty($params) ) {
+        return civicrm_create_error( 'No input parameters present' );
+    }
     if ( !isset($params['id']) ) {
         return civicrm_create_error( 'Required parameter missing' );
     }
     
     require_once 'CRM/Member/BAO/MembershipType.php';
-    $membershipTypeBAO =& new CRM_Member_BAO_MembershipType( );
+    $membershipTypeBAO = new CRM_Member_BAO_MembershipType( );
     $membershipTypeBAO->id = $params['id'];
     if ($membershipTypeBAO->find(true)) {
         $fields = $membershipTypeBAO->fields( );
@@ -183,9 +191,11 @@ function &civicrm_membership_type_update( &$params ) {
  */
 function civicrm_membership_type_delete( &$params ) {
     if ( !is_array( $params ) ) {
-        return civicrm_create_error( 'Params is not an array' );
+        return civicrm_create_error( 'Params need to be of type array!' );
     }
-    
+    if( empty($params) ) {
+        return civicrm_create_error( 'No input parameters present' );
+    }
     if ( ! CRM_Utils_Array::value( 'id', $params ) ) {
         return civicrm_create_error( 'Invalid or no value for membershipTypeID' );
     }

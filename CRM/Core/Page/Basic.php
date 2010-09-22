@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -147,7 +148,7 @@ abstract class CRM_Core_Page_Basic extends CRM_Core_Page {
         // what action do we want to perform ? (store it for smarty too.. :) 
      
         $this->_action = CRM_Utils_Request::retrieve( 'action', 'String',
-                                               $this, false, 'browse' );
+                                                      $this, false, 'browse' );
         $this->assign( 'action', $this->_action );
 
         // get 'id' if present
@@ -168,9 +169,10 @@ abstract class CRM_Core_Page_Basic extends CRM_Core_Page {
                CRM_Core_Action::UPDATE |
                CRM_Core_Action::DELETE ) ) {
             $this->edit($this->_action, $id);                               // use edit form for view, add or update or delete
-        } 
-        // finally browse (list) the page
-        $this->browse(null, $sort);
+        } else {
+            // if no action or browse 
+            $this->browse(null, $sort);
+        }
 
         return parent::run();
     }
@@ -201,7 +203,7 @@ abstract class CRM_Core_Page_Basic extends CRM_Core_Page {
             $action -= CRM_Core_Action::ENABLE;
         }
         
-        eval( '$object =& new ' . $this->getBAOName( ) . '( );' );
+        eval( '$object = new ' . $this->getBAOName( ) . '( );' );
         
         $values = array();
         
@@ -242,7 +244,7 @@ abstract class CRM_Core_Page_Basic extends CRM_Core_Page {
                     CRM_Contact_DAO_RelationshipType::addDisplayEnums($values[$object->id]);
                     
                     // populate action links
-                    self::action( $object, $action, $values[$object->id], $links, $permission );
+                    $this->action( $object, $action, $values[$object->id], $links, $permission );
                     
                     if ( isset( $object->mapping_type_id ) ) {
                         require_once 'CRM/Core/PseudoConstant.php';
@@ -250,9 +252,9 @@ abstract class CRM_Core_Page_Basic extends CRM_Core_Page {
                         $values[$object->id]['mapping_type'] = $mappintTypes[$object->mapping_type_id];
                     }
                 }
-                $this->assign( 'rows', $values );
             }
         }
+        $this->assign( 'rows', $values );
     }
     
     /**
@@ -269,32 +271,49 @@ abstract class CRM_Core_Page_Basic extends CRM_Core_Page {
      * @return void
      * @access private
      */
-    function action( &$object, $action, &$values, &$links, $permission ) {
+    function action( &$object, $action, &$values, &$links, $permission, $forceAction = false ) {
         $values['class'] = '';
         $newAction = $action;
-        if ( array_key_exists( 'is_reserved', $object ) && $object->is_reserved ) {
-            $values['class'] = 'reserved';
-            // check if object is relationship type
-            if ( get_class( $object ) != 'CRM_Contact_BAO_RelationshipType' ) {
-                $newAction = 0;
-                $values['action'] = '';
-                return;
-            } else {
-                $newAction = CRM_Core_Action::UPDATE;
+        $hasDelete = $hasDisable = true;
+        
+        if ( in_array( $values['name'] , array( 'encounter_medium', 'case_type', 'case_status' ) ) ) {
+            static $caseCount = null; 
+            require_once 'CRM/Case/BAO/Case.php';
+            if ( !isset( $caseCount ) ) {
+                $caseCount = CRM_Case_BAO_Case::caseCount( null, false );
             }
-        } else {
-            if ( array_key_exists( 'is_active', $object ) ) {
-                if ( $object->is_active ) {
-                    $newAction += CRM_Core_Action::DISABLE;
+            if ( $caseCount > 0 ) {
+                $hasDelete = $hasDisable = false;
+            }
+        }
+
+        if ( !$forceAction ) {
+            if ( array_key_exists( 'is_reserved', $object ) && $object->is_reserved ) {
+                $values['class'] = 'reserved';
+                // check if object is relationship type
+                if ( get_class( $object ) == 'CRM_Contact_BAO_RelationshipType' ) {
+                    $newAction = CRM_Core_Action::VIEW + CRM_Core_Action::UPDATE;
                 } else {
-                    $newAction += CRM_Core_Action::ENABLE;
+                    $newAction = 0;
+                    $values['action'] = '';
+                    return;
+                }
+            } else {
+                if ( array_key_exists( 'is_active', $object ) ) {
+                    if ( $object->is_active ) {
+                        if ( $hasDisable ) {
+                            $newAction += CRM_Core_Action::DISABLE;
+                        }
+                    } else {
+                        $newAction += CRM_Core_Action::ENABLE;
+                    }
                 }
             }
         }
         
         //CRM-4418, handling edit and delete separately.
         $permissions = array( $permission ); 
-        if ( $permission == CRM_Core_Permission::EDIT ) {
+        if ( $hasDelete && ( $permission == CRM_Core_Permission::EDIT ) ) {
             //previously delete was subset of edit 
             //so for consistency lets grant delete also.
             $permissions[] = CRM_Core_Permission::DELETE;
@@ -315,11 +334,11 @@ abstract class CRM_Core_Page_Basic extends CRM_Core_Page {
      */
     function edit( $mode, $id = null , $imageUpload = false , $pushUserContext = true) 
     {
-        $controller =& new CRM_Core_Controller_Simple( $this->editForm( ), $this->editName( ), $mode , $imageUpload );
+        $controller = new CRM_Core_Controller_Simple( $this->editForm( ), $this->editName( ), $mode , $imageUpload );
 
        // set the userContext stack
         if( $pushUserContext ) {
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             $session->pushUserContext( CRM_Utils_System::url( $this->userContext( $mode ), $this->userContextParams( $mode ) ) );
         }
         if ($id !== null) {

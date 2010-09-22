@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -131,12 +132,7 @@ class CRM_UF_Form_Group extends CRM_Core_Form
         // title
         $this->add('text', 'title', ts('Profile Name'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_UFGroup', 'title'), true);
         
-        if ( isset ($ufgroupId ) ){
-            if( !( $this->_action & CRM_Core_Action::UPDATE ) ) {
-                $this->addRule( 'title', ts('Profile Title is already exist in Database.'), 'objectExists', 
-                                array( 'CRM_Core_DAO_UFGroup', $ufgroupId, 'title' ) );
-            }
-        }
+        
         //add checkboxes
         $uf_group_type = array();
         $UFGroupType = CRM_Core_SelectValues::ufGroupTypes( );
@@ -161,13 +157,13 @@ class CRM_UF_Form_Group extends CRM_Core_Form
         
         foreach ( $paneNames as $name => $type ) {
             if ( $this->_id ) {
-                $dojoUrlParams = "&reset=1&action=update&id={$this->_id}&snippet=4&formType={$type}";  
+                $dataURL = "&reset=1&action=update&id={$this->_id}&snippet=4&formType={$type}";  
             } else {
-                $dojoUrlParams = "&reset=1&action=add&snippet=4&formType={$type}";
+                $dataURL = "&reset=1&action=add&snippet=4&formType={$type}";
             }
             
             $allPanes[$name] = array( 'url'  => CRM_Utils_System::url( 'civicrm/admin/uf/group/setting',
-                                                                       $dojoUrlParams ),
+                                                                       $dataURL ),
                                       'open' => 'false',
                                       'id'   => $type,
                                       );
@@ -190,6 +186,8 @@ class CRM_UF_Form_Group extends CRM_Core_Form
             $this->freeze();
             $this->addElement('button', 'done', ts('Done'), array('onclick' => "location.href='civicrm/admin/uf/group?reset=1&action=browse'"));
         }
+        
+        $this->addFormRule( array( 'CRM_UF_Form_Group', 'formRule' ), $this ); 
     }
 
     /**
@@ -203,7 +201,7 @@ class CRM_UF_Form_Group extends CRM_Core_Form
     {
         $defaults = array();
         require_once 'CRM/Core/ShowHideBlocks.php';
-        $showHide =& new CRM_Core_ShowHideBlocks( );
+        $showHide = new CRM_Core_ShowHideBlocks( );
 
         if ($this->_action == CRM_Core_Action::ADD) {
             $defaults['weight'] = CRM_Utils_Weight::getDefaultWeight('CRM_Core_DAO_UFJoin');
@@ -244,7 +242,7 @@ class CRM_UF_Form_Group extends CRM_Core_Form
             $showAdvanced = 0;
             $advFields = array('group', 'post_URL', 'cancel_URL',
                                'add_captcha', 'is_map', 'is_uf_link', 'is_edit_link',
-                               'is_update_dupe', 'is_cms_user');
+                               'is_update_dupe', 'is_cms_user', 'is_proximity_search');
             foreach($advFields as $key) {
                 if ( !empty($defaults[$key]) ) {
                     $showAdvanced = 1;
@@ -257,6 +255,7 @@ class CRM_UF_Form_Group extends CRM_Core_Form
             $defaults['is_active'     ] = 1;
             $defaults['is_map'        ] = 0;
             $defaults['is_update_dupe'] = 0;
+            $defaults['is_proximity_search'] = 0;
             $defaults['uf_group_type[Profile]'] = 1;
             
         }
@@ -268,6 +267,37 @@ class CRM_UF_Form_Group extends CRM_Core_Form
         return $defaults;
     }
 
+
+
+    /**
+     * global form rule
+     *
+     * @param array $fields  the input form values
+     * @param array $files   the uploaded files if any
+     * @param array $self    current form object.
+     *
+     * @return true if no errors, else array of errors
+     * @access public
+     * @static
+     */
+    static function formRule( $fields, $files, $self ) 
+    {
+        $errors = array();
+        
+        //validate profile title as well as name.
+        $title  = $fields['title'];
+        $name   = CRM_Utils_String::munge( $title, '_', 64 );
+        $query  = 'select count(*) from civicrm_uf_group where ( name like %1 OR title like %2 ) and id != %3';
+        $pCnt   = CRM_Core_DAO::singleValueQuery( $query, array( 1 => array( $name,           'String'  ),
+                                                                 2 => array( $title,          'String'  ),
+                                                                 3 => array( (int)$self->_id, 'Integer' ) ) );
+        if ( $pCnt ) {
+            $errors['title'] = ts( 'Profile \'%1\' already exists in Database.', array( 1 => $title ) );
+        }
+        
+        return empty($errors) ? true : $errors;
+    }
+    
     /**
      * Process the form
      *
@@ -278,9 +308,6 @@ class CRM_UF_Form_Group extends CRM_Core_Form
     {
         if( $this->_action & CRM_Core_Action::DELETE ) {
             $title = CRM_Core_BAO_UFGroup::getTitle($this->_id);        
-            $ufJoinID = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFJoin', $this->_id, 'id', 'uf_group_id' );
-            $wt = CRM_Utils_Weight::delWeight( 'CRM_Core_DAO_UFJoin', $ufJoinID );
-            
             CRM_Core_BAO_UFGroup::del($this->_id);
             CRM_Core_Session::setStatus(ts("Your CiviCRM Profile '%1' has been deleted.", array(1 => $title)));
         } else if( $this->_action & CRM_Core_Action::DISABLE ) {
@@ -300,19 +327,21 @@ class CRM_UF_Form_Group extends CRM_Core_Form
 
             if ( $this->_action & ( CRM_Core_Action::UPDATE) ) {
                 $ids['ufgroup'] = $this->_id;
-            
-                $oldWeight = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFJoin', $this->_id, 'weight', 'uf_group_id' );
-                $params['weight'] = 
-                    CRM_Utils_Weight::updateOtherWeights('CRM_Core_DAO_UFJoin', $oldWeight, $params['weight']);
+                // CRM-5284
+                // lets skip trying to mess around with profile weights and allow the user to do as needed.
+            } else if ( $this->_action & CRM_Core_Action::ADD ) {
+                $session = CRM_Core_Session::singleton( );
+                $params['created_id']   = $session->get( 'userID' );
+                $params['created_date'] = date('YmdHis');
             }
-
+            
             // create uf group
             $ufGroup = CRM_Core_BAO_UFGroup::add($params, $ids);
 
             if ( CRM_Utils_Array::value( 'is_active', $params ) ) {
                 //make entry in uf join table
                 CRM_Core_BAO_UFGroup::createUFJoin($params, $ufGroup->id);
-            } else {
+            } else if ( $this->_id ) {
                 // this profile has been set to inactive, delete all corresponding UF Join's
                 $ufJoinParams = array('uf_group_id' => $this->_id);
                 CRM_Core_BAO_UFGroup::delUFJoin($ufJoinParams);
@@ -324,7 +353,7 @@ class CRM_UF_Form_Group extends CRM_Core_Form
                 $url = CRM_Utils_System::url( 'civicrm/admin/uf/group/field', 'reset=1&action=add&gid=' . $ufGroup->id);
                 CRM_Core_Session::setStatus(ts('Your CiviCRM Profile \'%1\' has been added. You can add fields to this profile now.',
                                                array(1 => $ufGroup->title)));
-                $session =& CRM_Core_Session::singleton( );
+                $session = CRM_Core_Session::singleton( );
                 $session->replaceUserContext($url);
             }
         }

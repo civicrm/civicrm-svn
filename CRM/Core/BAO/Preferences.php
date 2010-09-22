@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -45,9 +46,10 @@ class CRM_Core_BAO_Preferences extends CRM_Core_DAO_Preferences {
 
     static private $_mailingPref  = null;
 
-    static function &systemObject( ) {
+    static function systemObject( ) {
         if ( ! self::$_systemObject ) {
-            self::$_systemObject =& new CRM_Core_DAO_Preferences( );
+            self::$_systemObject = new CRM_Core_DAO_Preferences( );
+            self::$_systemObject->domain_id  = CRM_Core_Config::domainID( );
             self::$_systemObject->is_domain  = true;
             self::$_systemObject->contact_id = null;
             self::$_systemObject->find( true );
@@ -55,9 +57,10 @@ class CRM_Core_BAO_Preferences extends CRM_Core_DAO_Preferences {
         return self::$_systemObject;
     }
 
-    static function &mailingPreferences( ) {
+    static function mailingPreferences( ) {
         if ( ! self::$_mailingPref ) {
-            $mailingPref =& new CRM_Core_DAO_Preferences( );
+            $mailingPref = new CRM_Core_DAO_Preferences( );
+            $mailingPref->domain_id  = CRM_Core_Config::domainID( );
             $mailingPref->is_domain  = true;
             $mailingPref->contact_id = null;
             $mailingPref->find( true );
@@ -69,13 +72,14 @@ class CRM_Core_BAO_Preferences extends CRM_Core_DAO_Preferences {
     }
 
 
-    static function &userObject( $userID = null ) {
+    static function userObject( $userID = null ) {
         if ( ! self::$_userObject ) {
             if ( ! $userID ) {
-                $session =& CRM_Core_Session::singleton( );
+                $session = CRM_Core_Session::singleton( );
                 $userID  =  $session->get( 'userID' );
             }
-            self::$_userObject =& new CRM_Core_DAO_Preferences( );
+            self::$_userObject = new CRM_Core_DAO_Preferences( );
+            self::$_userObject->domain_id  = CRM_Core_Config::domainID( );
             self::$_userObject->is_domain  = false;
             self::$_userObject->contact_id = $userID;
             self::$_userObject->find( true );
@@ -139,7 +143,7 @@ class CRM_Core_BAO_Preferences extends CRM_Core_DAO_Preferences {
         $optionValue = $object->$name;
         require_once 'CRM/Core/OptionGroup.php';
         $groupValues = CRM_Core_OptionGroup::values( $name, false, false, $localize, $condition, $returnField );
-        
+
         //enabled name => label require for new contact edit form, CRM-4605
         if ( $returnNameANDLabels ) {
             $names = $labels = $nameAndLabels = array( );
@@ -157,16 +161,17 @@ class CRM_Core_BAO_Preferences extends CRM_Core_DAO_Preferences {
             $returnValues[$gv] = 0;
         }
         
-        if ( ! empty( $optionValue ) ) { 
+        if ( $optionValue && !empty( $groupValues ) ) {
             require_once 'CRM/Core/BAO/CustomOption.php';
             $dbValues = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR,
-                                 substr( $optionValue, 1, -1 ) );
-            if ( ! empty( $dbValues ) ) {
-                foreach ( $dbValues as $key => $val ) {
-                    if ( CRM_Utils_Array::value( $val, $groupValues) ) {
-                        $returnValues[$groupValues[$val]] = 1;
+                                 substr( $optionValue, 1, -1 ) ); 
+            
+            if ( !empty( $dbValues ) ) { 
+                foreach ( $groupValues as $key => $val ) { 
+                    if ( in_array( $key, $dbValues ) ) {
+                        $returnValues[$val] = 1;
                         if ( $returnNameANDLabels ) {
-                            $nameAndLabels[$names[$val]] = $labels[$val];
+                            $nameAndLabels[$names[$key]] = $labels[$key]; 
                         }
                     }
                 }
@@ -175,7 +180,43 @@ class CRM_Core_BAO_Preferences extends CRM_Core_DAO_Preferences {
         
         return ( $returnNameANDLabels ) ? $nameAndLabels : $returnValues;
     }
-    
+
+    static function setValue( $name, $value, $system = true, $userID = null, $keyField = 'name' ) {
+        if ( $system ) {
+            $object = self::systemObject( );
+        } else {
+            $object = self::userObject( $userID );
+        }
+
+        if ( empty( $value ) ) {
+            $object->$name = 'NULL';
+        } else if ( is_array( $value ) ) {
+            require_once 'CRM/Core/OptionGroup.php';
+            $groupValues = CRM_Core_OptionGroup::values( $name, false, false, false, null, $keyField );
+            
+            $cbValues = array( );
+            foreach ( $groupValues as $key => $val ) {
+                if ( CRM_Utils_Array::value( $val, $value ) ) {
+                    $cbValues[$key] = 1;
+                }
+            }
+
+            if ( ! empty( $cbValues ) ) {
+                $object->$name = 
+                    CRM_Core_BAO_CustomOption::VALUE_SEPERATOR .
+                    implode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR,
+                             array_keys( $cbValues ) ) .
+                    CRM_Core_BAO_CustomOption::VALUE_SEPERATOR;
+            } else {
+                $object->$name = 'NULL';
+            }
+        } else {
+            $object->$name = $value;
+        }
+
+        $object->save( );
+    }
+
 }
 
 

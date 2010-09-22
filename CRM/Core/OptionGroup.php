@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -36,6 +37,14 @@
 class CRM_Core_OptionGroup 
 {
     static $_values = array( );
+
+    /*
+     * $_domainIDGroups array maintains the list of option groups for whom 
+     * domainID is to be considered.
+     *
+     */
+    static $_domainIDGroups = array( 'from_email_address', 
+                                     'grant_type' );
 
     static function &valuesCommon( $dao, $flip = false, $grouping = false,
                                    $localize = false, $valueColumnName = 'label' ) 
@@ -66,31 +75,60 @@ class CRM_Core_OptionGroup
 
     static function &values( $name, $flip = false, $grouping = false,
                              $localize = false, $condition = null,
-                             $valueColumnName = 'label' ) 
+                             $valueColumnName = 'label', $onlyActive = true ) 
     {
+        $cacheKey = "CRM_OG_{$name}_{$flip}_{$grouping}_{$localize}_{$condition}_{$valueColumnName}_{$onlyActive}";
+        $cache =& CRM_Utils_Cache::singleton( );
+        $var = $cache->get( $cacheKey );
+        if ( $var ) {
+            return $var;
+        }
+        
         $query = "
 SELECT  v.{$valueColumnName} as {$valueColumnName} ,v.value as value, v.grouping as grouping
 FROM   civicrm_option_value v,
        civicrm_option_group g
 WHERE  v.option_group_id = g.id
   AND  g.name            = %1
-  AND  v.is_active       = 1 
   AND  g.is_active       = 1 ";
         
+        if ( $onlyActive ) {
+            $query .= " AND  v.is_active = 1 ";
+        }
+        if ( in_array( $name, self::$_domainIDGroups ) ) {
+            $query .= " AND v.domain_id = " . CRM_Core_Config::domainID( );
+        }
+
         if ( $condition ) {
             $query .= $condition;
         } 
         
-        $query .= "  ORDER BY v.weight"; 
+        $query .= "  ORDER BY v.weight";
 
         $p = array( 1 => array( $name, 'String' ) );
         $dao =& CRM_Core_DAO::executeQuery( $query, $p );
         
-        return self::valuesCommon( $dao, $flip, $grouping, $localize, $valueColumnName );
+        $var =& self::valuesCommon( $dao, $flip, $grouping, $localize, $valueColumnName );
+        $cache->set( $cacheKey, $var );
+
+        // call option value hook
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::optionValues( $var, $name );
+
+        return $var;
     }
 
     static function &valuesByID( $id, $flip = false, $grouping = false, $localize = false, $valueColumnName = 'label' ) 
     {
+        $cacheKey = "CRM_OG_ID_{$id}_{$flip}_{$grouping}_{$localize}_{$valueColumnName}";
+
+        $cache =& CRM_Utils_Cache::singleton( );
+        $var = $cache->get( $cacheKey );
+        if ( $var ) {
+            return $var;
+        }
+        
+
         $query = "
 SELECT  v.{$valueColumnName} as {$valueColumnName} ,v.value as value, v.grouping as grouping
 FROM   civicrm_option_value v,
@@ -104,7 +142,10 @@ WHERE  v.option_group_id = g.id
         $p = array( 1 => array( $id, 'Integer' ) );
         $dao =& CRM_Core_DAO::executeQuery( $query, $p );
            
-        return self::valuesCommon( $dao, $flip, $grouping, $localize, $valueColumnName );
+        $var =& self::valuesCommon( $dao, $flip, $grouping, $localize, $valueColumnName );
+        $cache->set( $cacheKey, $var );
+
+        return $var;
     }
     
     /**

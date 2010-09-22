@@ -1,9 +1,36 @@
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
 {if $previewField }
 {capture assign=infoMessage}<strong>{ts}Profile Field Preview{/ts}</strong>{/capture}
 {else}
 {capture assign=infoMessage}<strong>{ts}Profile Preview{/ts}</strong>{/capture}
 {/if}
 {include file="CRM/common/info.tpl"}
+<div class="crm-form-block">
+
 {if ! empty( $fields )}
 {if $viewOnly }
 {* wrap in crm-container div so crm styles are used *}
@@ -25,7 +52,7 @@
            {/if}
         {/if}   
        {if $mode ne 8}
-            <fieldset><legend>{$field.groupTitle}</legend>
+            <h3>{$field.groupTitle}</h3>
        {/if}
         {assign var=fieldset  value=`$field.groupTitle`}
         {assign var=groupHelpPost  value=`$field.groupHelpPost`}
@@ -61,7 +88,7 @@
           {/foreach}
         </table>
 	{if $field.html_type eq 'Radio' and $form.formName eq 'Preview'}
-            &nbsp;&nbsp;(&nbsp;<a href="#" title="unselect" onclick="unselectRadio('{$n}', '{$form.formName}'); return false;">{ts}unselect{/ts}</a>&nbsp;)
+           <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$n}', '{$form.formName}'); return false;">{ts}clear{/ts}</a>)</span>
 	{/if}
         {/strip}
         </td>
@@ -69,60 +96,31 @@
 	{else}
         <tr><td class="label">{$form.$n.label}</td>
 	<td>
-           {if $n|substr:0:3 eq 'im-'}
-             {assign var="provider" value=$n|cat:"-provider_id"}
-             {$form.$provider.html}&nbsp;
-           {/if}
-	{if $n eq 'group' && $form.group}
-		<table id="selector" class="selector" style="width:auto;">
-		<tr><td>{$form.$n.html}{* quickform add closing </td> </tr>*}
-		</table>
-    {elseif $n eq 'email_greeting'}
-          <table class="form-layout-compressed">
-             <tr>
-                <td>{$form.$n.html|crmReplace:class:big}</td>
-                <td id='emailCustomGreeting'>
-                   {$form.email_greeting_custom.label}&nbsp;&nbsp;&nbsp;
-                   {$form.email_greeting_custom.html|crmReplace:class:big}
-                </td>
-             </tr>
-          </table>
-    {elseif $n eq 'postal_greeting'}
-          <table class="form-layout-compressed">
-             <tr>
-                <td>{$form.$n.html|crmReplace:class:big}</td>
-                <td id='postalCustomGreeting'>
-                   {$form.postal_greeting_custom.label}&nbsp;&nbsp;&nbsp;
-                   {$form.postal_greeting_custom.html|crmReplace:class:big}
-                </td>
-             </tr>
-          </table>   
-    {elseif $n eq 'addressee'}
-          <table class="form-layout-compressed">
-             <tr>
-                <td>{$form.$n.html|crmReplace:class:big}</td>
-                <td id='addresseeCustom'>
-                   {$form.addressee_custom.label}&nbsp;&nbsp;&nbsp;
-                   {$form.addressee_custom.html|crmReplace:class:big}
-                </td>
-             </tr>
-          </table>       
-	{else}
-	   {$form.$n.html}
-	   {if $field.is_view eq 0}
-	       {if ( $field.html_type eq 'Radio' or  $n eq 'gender') and $form.formName eq 'Preview'}
-               	   &nbsp;&nbsp;(&nbsp;<a href="#" title="unselect" onclick="unselectRadio('{$n}', '{$form.formName}'); return false;">{ts}unselect{/ts}</a>&nbsp;)
-	       {elseif $field.data_type eq 'Date' AND $element.skip_calendar NEQ true } 
-            <span>
-			    {include file="CRM/common/calendar/desc.tpl" trigger="$form.$n.name"}
-		    	{include file="CRM/common/calendar/body.tpl" dateVar=$form.$n.name startDate=1905 endDate=2010 doTime=1  trigger="$form.$n.name"}
-		   </span>
-	       {elseif $field.html_type eq 'Autocomplete-Select'}
-                {include file="CRM/Custom/Form/AutoComplete.tpl" element_name = $n }
-		   {/if}
+        {if $n eq 'group' && $form.group || ( $n eq 'tag' && $form.tag )}
+           {include file="CRM/Contact/Form/Edit/TagsAndGroups.tpl" type=$n}
+        {elseif $n eq 'email_greeting' or  $n eq 'postal_greeting' or $n eq 'addressee'}
+               {include file="CRM/Profile/Form/GreetingType.tpl"}  
+        {elseif ( $field.data_type eq 'Date' AND $element.skip_calendar NEQ true ) or
+                ( $n eq 'birth_date' ) or ( $n eq 'deceased_date' ) or ( $field.name eq 'activity_date_time' )  } 
+               {include file="CRM/common/jcalendar.tpl" elementName=$form.$n.name}
+        {else}
+            {if $n|substr:0:4 eq 'url-'}
+                 {assign var="websiteType" value=$n|cat:"-website_type_id"}
+                 {$form.$websiteType.html}&nbsp;
+            {elseif $n|substr:0:3 eq 'im-'}
+               {assign var="provider" value=$n|cat:"-provider_id"}
+               {$form.$provider.html}&nbsp;
+            {/if}
+            {$form.$n.html}
+            {if $field.is_view eq 0}
+               {if ( $field.html_type eq 'Radio' or  $n eq 'gender') and $form.formName eq 'Preview'}
+                       <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$n}', '{$form.formName}'); return false;">{ts}clear{/ts}</a>)</span>
+               {elseif $field.html_type eq 'Autocomplete-Select'}
+                       {include file="CRM/Custom/Form/AutoComplete.tpl" element_name = $n }
+                {/if}
+            {/if}
 	   {/if}
-	{/if}
-        </td>
+    </td>
 	{/if}
         {* Show explanatory text for field if not in 'view' mode *}
         {if $field.help_post && $action neq 4}
@@ -133,7 +131,7 @@
     {if $addCAPTCHA }
         {include file='CRM/common/ReCAPTCHA.tpl'}
     {/if}   
-    </table></fieldset>
+    </table>
     {if $field.groupHelpPost}
     <div class="messages help">{$field.groupHelpPost}</div>
     {/if}
@@ -146,57 +144,7 @@
 {/if} {* fields array is not empty *}
 
 
-<div class=" horizontal-center "> 
-	{$form.buttons.html}
+<div class="crm-submit-buttons"> 
+	{include file="CRM/common/formButtons.tpl"}
 </div>
-{if $form.email_greeting or $form.postal_greeting or $form.addressee}
-  {literal}
-    <script type="text/javascript">
-      window.onload = function() {
-        showEmailGreeting();
-        showPostalGreeting();
-        showAddressee();
-      }
-    </script>
-  {/literal}
-{/if}
-{literal}
-<script type="text/javascript">
-  function showEmailGreeting() {
-      if( document.getElementById("email_greeting").value == 4 ) {
-           show('emailCustomGreeting');                   
-      } else {
-           hide('emailCustomGreeting');      
-      }     
-  }
-  function showPostalGreeting() {
-      if( document.getElementById("postal_greeting").value == 4 ) {
-           show('postalCustomGreeting');                   
-      } else {
-           hide('postalCustomGreeting');      
-      }     
-  }
-  function showAddressee() {
-      if( document.getElementById("addressee").value == 4 ) {
-           show('addresseeCustom');                   
-      } else {
-           hide('addresseeCustom');      
-      }     
-  }
-cj(document).ready(function(){ 
-	cj('#selector tr:even').addClass('odd-row ');
-	cj('#selector tr:odd ').addClass('even-row');
-
-    // Initialise the table
-    cj("#table-1").tableDnD();
-    
-    cj("#table-5 tr").hover(function() {
-        cj(this.cells[0]).addClass('showDragHandle');
-    }, function() {
-        cj(this.cells[0]).removeClass('showDragHandle');
-    });
-    
-});
-</script>
-{/literal}
-
+</div>

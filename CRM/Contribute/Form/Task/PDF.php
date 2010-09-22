@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  *
  */
 
@@ -87,9 +88,15 @@ AND    {$this->_componentClause}";
         parent::setContactIDs( );
         $this->assign( 'single', $this->_single );
         
-        $breadCrumb = array ( array('title' => ts('Search Results'),
-                                    'url'   => CRM_Utils_System::url( 'civicrm/contribute/search'
-                                                                      )) );
+        $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
+        require_once 'CRM/Utils/Rule.php';
+        $urlParams = 'force=1';
+        if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
+        
+        $url = CRM_Utils_System::url( 'civicrm/contribute/search', $urlParams );
+        $breadCrumb = array ( array( 'url'   => $url,
+                                     'title' => ts('Search Results') ) );
+        
         CRM_Utils_System::appendBreadCrumb( $breadCrumb );
         CRM_Utils_System::setTitle( ts('Print Contribution Receipts') );
     }
@@ -102,9 +109,12 @@ AND    {$this->_componentClause}";
      */
     public function buildQuickForm()
     {
+        
+        $this->addElement( 'radio', 'output', null, ts('PDF Receipts'), 'pdf_receipt' );
+        $this->addElement( 'radio', 'output', null, ts('Email Receipts'), 'email_receipt' ); 
         $this->addButtons( array(
                                  array ( 'type'      => 'next',
-                                         'name'      => ts('Download Receipt(s)'),
+                                         'name'      => ts('Process Receipt(s)'),
                                          'isDefault' => true   ),
                                  array ( 'type'      => 'back',
                                          'name'      => ts('Cancel') ),
@@ -129,8 +139,15 @@ AND    {$this->_componentClause}";
         $baseIPN = new CRM_Core_Payment_BaseIPN( );
 
         $message  =  array( );
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
 
+        $params = $this->controller->exportValues( $this->_name );
+        
+        $createPdf = false;
+        if ( $params['output'] == "pdf_receipt" ) {
+            $createPdf = true;
+        }
+        
         foreach ( $details as $contribID => $detail ) {
             $input = $ids = $objects = array( );
             
@@ -163,19 +180,27 @@ AND    {$this->_componentClause}";
             // CRM_Core_Error::debug('input',$input);
             
             $values = array( );
-            $mail = $baseIPN->sendMail( $input, $ids, $objects, $values, false, true );
-            $mail = str_replace( "\n\n", "<p>", $mail );
-            $mail = str_replace( "\n", "<br/>", $mail );
+            $mail = $baseIPN->sendMail( $input, $ids, $objects, $values, false, $createPdf );
+            
+            if ( !$mail['html'] ) {
+                $mail = str_replace( "\n\n", "<p>", $mail );
+                $mail = str_replace( "\n", "<br/>", $mail );
+            }
 
             $message[] = $mail;
 
             // reset template values before processing next transactions
             $template->clearTemplateVars( );
         }
-        
-        require_once 'CRM/Utils/PDF/Utils.php';
-        CRM_Utils_PDF_Utils::domlib( $message, "civicrmContributionReceipt.pdf" );
-        exit( );
+        if ( $createPdf ) {
+            require_once 'CRM/Utils/PDF/Utils.php';
+            CRM_Utils_PDF_Utils::domlib( $message, 'civicrmContributionReceipt.pdf' );
+            CRM_Utils_System::civiExit( );
+        } else {
+            $status = array( '', ts('Your mail has been sent.') );
+            CRM_Core_Session::setStatus( $status );
+        }
+
     }
 
 }

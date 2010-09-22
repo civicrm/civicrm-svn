@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -87,7 +88,7 @@ SELECT acl_id
 
     static function store( $id, &$cache ) {
         foreach ( $cache as $aclID => $data ) {
-            $dao =& new CRM_ACL_DAO_Cache( );
+            $dao = new CRM_ACL_DAO_Cache( );
             if ( $id ) {
                 $dao->contact_id = $id;
             }
@@ -114,21 +115,32 @@ WHERE contact_id = %1
     }
 
     static function updateEntry( $id ) {
-        self::delete( $id );
+        // rebuilds civicrm_acl_cache
+        self::deleteEntry( $id );
         self::build( $id );
+
+        // rebuilds civicrm_acl_contact_cache
+        require_once "CRM/Contact/BAO/Contact/Permission.php";
+        CRM_Contact_BAO_Contact_Permission::cache( $id, CRM_Core_Permission::VIEW, true );
     }
 
     // deletes all the cache entries
     static function resetCache( ) {
+        // reset any static caching
         self::$_cache = null;
 
-        $query = "
-DELETE     c 
-FROM       civicrm_acl_cache c
-INNER JOIN civicrm_acl       a ON c.acl_id = a.id
+        // reset any db caching
+        $config  =& CRM_Core_Config::singleton( );
+        $smartGroupCacheTimeout = 
+            isset( $config->smartGroupCacheTimeout ) && 
+            is_numeric(  $config->smartGroupCacheTimeout ) ? $config->smartGroupCacheTimeout : 0;
+        $query  = "
+DELETE FROM civicrm_acl_cache 
+WHERE  modified_date IS NULL OR (TIMESTAMPDIFF(MINUTE, modified_date, NOW()) >= $smartGroupCacheTimeout)
 ";
+        CRM_Core_DAO::singleValueQuery( $query );
 
-        $dao =& CRM_Core_DAO::executeQuery( $query );
+        CRM_Core_DAO::singleValueQuery( "TRUNCATE TABLE civicrm_acl_contact_cache" );
     }
 
 }

@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -93,7 +94,52 @@ class CRM_Contribute_Page_PCP extends CRM_Core_Page_Basic
         }
         return self::$_links;
     }
+    
+    /**
+     * Run the page.
+     *
+     * This method is called after the page is created. It checks for the  
+     * type of action and executes that action.
+     * Finally it calls the parent's run method.
+     *
+     * @param
+     * @return void
+     * @access public
+     */
+    function run()
+    {
+        // get the requested action
+        $action = CRM_Utils_Request::retrieve('action', 'String',
+                                              $this, false,
+                                              'browse');
+        
+        if ( $action & CRM_Core_Action::ENABLE ) { 
+            $id = CRM_Utils_Request::retrieve( 'id', 'Positive', $this, false );
+            require_once "CRM/Contribute/BAO/PCP.php";
+            CRM_Contribute_BAO_PCP::setIsActive( $id, 1 );
+        } elseif ( $action & CRM_Core_Action::DISABLE) {
+            $id = CRM_Utils_Request::retrieve( 'id', 'Positive', $this, false );
+            require_once "CRM/Contribute/BAO/PCP.php";
+            CRM_Contribute_BAO_PCP::setIsActive( $id, 0 );
+        } elseif ( $action & CRM_Core_Action::DELETE) {
+            $id = CRM_Utils_Request::retrieve( 'id', 'Positive', $this, false );
+            $session = CRM_Core_Session::singleton();
+            $session->pushUserContext( CRM_Utils_System::url( CRM_Utils_System::currentPath( ), 'reset=1&action=browse' ) );
+            $controller = new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_PCP_PCP',
+                                                           'Personal Campaign Page',
+                                                           CRM_Core_Action::DELETE );
+            //$this->setContext( $id, $action );
+            $controller->set('id', $id);
+            $controller->process( );
+            return $controller->run( );
+        }
 
+        // finally browse
+        $this->browse();
+
+        // parent run 
+        parent::run();
+    }
 
     /**
      * Browse all custom data groups.
@@ -140,6 +186,8 @@ class CRM_Contribute_Page_PCP extends CRM_Core_Page_Basic
             }
         }
 
+        $approvedId = CRM_Core_OptionGroup::getValue( 'pcp_status', 'Approved', 'name' );
+
         //check for delete CRM-4418
         require_once 'CRM/Core/Permission.php'; 
         $allowToDelete = CRM_Core_Permission::check( 'delete in CiviContribute' );
@@ -149,7 +197,7 @@ class CRM_Contribute_Page_PCP extends CRM_Core_Page_Basic
         $params['3'] = array( $this->_sortByCharacter . '%', 'String' );        
 
         $query = "
-        SELECT cp.id as id, contact_id , status_id, cp.title as title, contribution_page_id, start_date, end_date
+        SELECT cp.id as id, contact_id , status_id, cp.title as title, contribution_page_id, start_date, end_date, cp.is_active as active
         FROM civicrm_pcp cp, civicrm_contribution_page cpp
         WHERE cp.contribution_page_id = cpp.id $title". $this->get('whereClause') .
         " ORDER BY status_id";
@@ -166,6 +214,12 @@ class CRM_Contribute_Page_PCP extends CRM_Core_Page_Basic
             require_once 'CRM/Contact/BAO/Contact.php';
             $contact = CRM_Contact_BAO_Contact::getDisplayAndImage( $dao->contact_id);
             
+            $class = '';
+            
+            if ( $dao->status_id != $approvedId || $dao->active != 1 ) {
+                $class = "disabled";
+            }
+
             switch ( $dao->status_id ) {
                 
             case 2:                   
@@ -191,6 +245,7 @@ class CRM_Contribute_Page_PCP extends CRM_Core_Page_Basic
             $pcpSummary[$dao->id]['contribution_page_title'] = $contribution_page[$dao->contribution_page_id];
             $pcpSummary[$dao->id]['action']                  = CRM_Core_Action::formLink(self::links(), $action, 
                                                                                          array('id' => $dao->id));
+            $pcpSummary[$dao->id]['class']                   = $class;
         }
 
         $this->search( );   
@@ -238,28 +293,7 @@ class CRM_Contribute_Page_PCP extends CRM_Core_Page_Basic
     {
         return ts('Personal Campaign Page');
     }
-    /**
-     * return class name of delete form
-     *
-     * @return string
-     * @access public
-     */
-    function deleteForm( ) 
-    {
-        return 'CRM_Contribute_Form_PCP_Delete';
-    }
-    
-    /**
-     * return name of delete form
-     *
-     * @return string
-     * @access public
-     */
-    function deleteName( ) 
-    {
-        return ts('Delete Personal Campaign Page');
-    }
-    
+        
     /**
      * Get user context.
      *

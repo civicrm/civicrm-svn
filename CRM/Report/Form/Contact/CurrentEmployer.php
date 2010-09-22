@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -96,7 +97,8 @@ class CRM_Report_Form_Contact_CurrentEmployer extends CRM_Report_Form {
                          'filters'   =>  
                          array( 'start_date' => 
                                 array( 'title'      => ts( 'Employee Since' ),
-                                       'operatorType' => CRM_Report_Form::OP_DATE ),),
+                                       'operatorType' => CRM_Report_Form::OP_DATE,
+                                       'type'         => CRM_Utils_Type::T_DATE ),),
                          ),
                   
                   'civicrm_email'   =>
@@ -136,13 +138,15 @@ class CRM_Report_Form_Contact_CurrentEmployer extends CRM_Report_Form {
                          'alias'  => 'cgroup',
                          'filters'=>             
                          array( 'gid' => 
-                                array( 'name'    => 'id',
-                                       'title'   => ts( 'Group' ),
-                                       'type'    => CRM_Utils_Type::T_INT + CRM_Utils_Type::T_ENUM,
-                                       'options' => CRM_Core_PseudoConstant::staticGroup( ) ), ), 
+                                array( 'name'         => 'group_id',
+                                       'title'        => ts( 'Group' ),
+                                       'group'        => true,
+                                       'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+                                       'options'      => CRM_Core_PseudoConstant::staticGroup( ) ), ), 
                          ),
-                  
                   );
+
+        $this->_tagFilter = true;
         parent::__construct( );
     }
     
@@ -150,10 +154,6 @@ class CRM_Report_Form_Contact_CurrentEmployer extends CRM_Report_Form {
         parent::preProcess( );
     }
     
-    function setDefaultValues( ) {
-        return parent::setDefaultValues( );
-    }
-
     function select( ) {
         
         $select = $this->_columnHeaders = array( );
@@ -177,11 +177,12 @@ class CRM_Report_Form_Contact_CurrentEmployer extends CRM_Report_Form {
 
     function from( ) {
         $this->_from = "
-FROM civicrm_contact {$this->_aliases['civicrm_contact']}
+FROM civicrm_contact {$this->_aliases['civicrm_contact']} 
 
      LEFT JOIN civicrm_contact {$this->_aliases['civicrm_employer']}
           ON {$this->_aliases['civicrm_employer']}.id={$this->_aliases['civicrm_contact']}.employer_id
- 
+
+     {$this->_aclFrom}
      LEFT JOIN civicrm_relationship {$this->_aliases['civicrm_relationship']}
           ON ( {$this->_aliases['civicrm_relationship']}.contact_id_a={$this->_aliases['civicrm_contact']}.id 
               AND {$this->_aliases['civicrm_relationship']}.contact_id_b={$this->_aliases['civicrm_contact']}.employer_id 
@@ -192,13 +193,7 @@ FROM civicrm_contact {$this->_aliases['civicrm_contact']}
  
      LEFT JOIN  civicrm_email {$this->_aliases['civicrm_email']} 
           ON ({$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_email']}.contact_id 
-             AND {$this->_aliases['civicrm_email']}.is_primary = 1)
-
-     LEFT  JOIN civicrm_group_contact group_contact 
-          ON {$this->_aliases['civicrm_contact']}.id = group_contact.contact_id              AND group_contact.status='Added'
-
-     LEFT  JOIN civicrm_group {$this->_aliases['civicrm_group']} 
-          ON group_contact.group_id = {$this->_aliases['civicrm_group']}.id ";
+             AND {$this->_aliases['civicrm_email']}.is_primary = 1) ";
  
     }
 
@@ -214,7 +209,7 @@ FROM civicrm_contact {$this->_aliases['civicrm_contact']}
                         $from     = CRM_Utils_Array::value( "{$fieldName}_from"    , $this->_params );
                         $to       = CRM_Utils_Array::value( "{$fieldName}_to"      , $this->_params );
                         
-                        $clause = $this->dateClause( $field['name'], $relative, $from, $to );
+                        $clause = $this->dateClause( $field['name'], $relative, $from, $to, $field['type'] );
                     } else {
                         $op = CRM_Utils_Array::value( "{$fieldName}_op", $this->_params );
                         if ( $op ) {
@@ -228,7 +223,7 @@ FROM civicrm_contact {$this->_aliases['civicrm_contact']}
                     }
                     
                     if ( ! empty( $clause ) ) {
-                        $clauses[] = $clause;
+                        $clauses[$fieldName] = $clause;
                     }
                 }
             }
@@ -239,6 +234,10 @@ FROM civicrm_contact {$this->_aliases['civicrm_contact']}
         } else {
             $this->_where = "WHERE ({$this->_aliases['civicrm_contact']}.employer_id!='null') AND " . implode( ' AND ', $clauses );
         }
+
+        if ( $this->_aclWhere ) {
+            $this->_where .= " AND {$this->_aclWhere} ";
+        }  
     }
     
     function groupBy( ) {
@@ -248,6 +247,8 @@ FROM civicrm_contact {$this->_aliases['civicrm_contact']}
     }
     
     function postProcess( ) {
+        // get the acl clauses built before we assemble the query
+        $this->buildACLClause( array( $this->_aliases['civicrm_contact'], $this->_aliases['civicrm_employer'] ) );
         parent::postProcess();
     }
     
@@ -268,7 +269,7 @@ FROM civicrm_contact {$this->_aliases['civicrm_contact']}
                 $entryFound = true;
             }
             
-            if ( !empty($this->_noRepeats) ) {
+            if ( !empty($this->_noRepeats) && $this->_outputMode != 'csv' ) {
                 // not repeat contact display names if it matches with the one 
                 // in previous row
                 

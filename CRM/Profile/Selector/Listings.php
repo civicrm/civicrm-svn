@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -174,11 +175,13 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
                                                                  false, $this->_gid );
         $this->_customFields =& $customFields;
         
-        $returnProperties =& CRM_Contact_BAO_Contact::makeHierReturnProperties( $this->_fields );
-        $returnProperties['contact_type'] = 1;
-        $returnProperties['sort_name'   ] = 1;
-        $queryParams =& CRM_Contact_BAO_Query::convertFormValues( $this->_params, 1 );
-        $this->_query   =& new CRM_Contact_BAO_Query( $queryParams, $returnProperties, $this->_fields );
+        $returnProperties =& CRM_Contact_BAO_Contact::makeHierReturnProperties( $this->_fields );        
+        $returnProperties['contact_type']     = 1;
+        $returnProperties['contact_sub_type'] = 1;
+        $returnProperties['sort_name'   ]     = 1;
+            
+        $queryParams =& CRM_Contact_BAO_Query::convertFormValues( $this->_params, 1 );            
+        $this->_query   = new CRM_Contact_BAO_Query( $queryParams, $returnProperties, $this->_fields );
         $this->_options =& $this->_query->_options;
     }//end of constructor
 
@@ -190,17 +193,24 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
      * @access public
      *
      */
-    static function &links( $map = false, $editLink = false, $ufLink = false )
+    static function &links( $map = false, $editLink = false, $ufLink = false, $gid = null )
     {
         if ( ! self::$_links ) {
-            self::$_links = array( 
-                                  CRM_Core_Action::VIEW   => array(
-                                                                   'name'  => ts('View'),
-                                                                   'url'   => 'civicrm/profile/view',
-                                                                   'qs'    => 'reset=1&id=%%id%%&gid=%%gid%%',
-                                                                   'title' => ts('View Profile Details'),
-                                                                   ),
-                                  ); 
+            self::$_links = array( );
+            
+            $viewPermission = true;
+            if ( $gid ) {
+                $viewPermission = CRM_Core_Permission::ufGroupValid( $gid, CRM_Core_Permission::VIEW );
+            }
+             
+            if ( $viewPermission ) {
+                self::$_links[CRM_Core_Action::VIEW] = array(
+                                                             'name'  => ts('View'),
+                                                             'url'   => 'civicrm/profile/view',
+                                                             'qs'    => 'reset=1&id=%%id%%&gid=%%gid%%',
+                                                             'title' => ts('View Profile Details'),
+                                                             );
+            }
 
             if ( $editLink ) {
                 self::$_links[CRM_Core_Action::UPDATE] = array(
@@ -215,7 +225,7 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
                 self::$_links[CRM_Core_Action::PROFILE] = array(
                                                                 'name'  => ts('Website Profile'),
                                                                 'url'   => 'user/%%ufID%%',
-                                                                'qs'    => null,
+                                                                'qs'    => ' ',
                                                                 'title' => ts('View Website Profile'),
                                                                 );
             }
@@ -227,11 +237,6 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
                                                             'qs'    => 'reset=1&cid=%%id%%&gid=%%gid%%',
                                                             'title' => ts('Map'),
                                                             );
-            }
-
-            if ( CRM_Core_Permission::access( 'Kabissa', false ) ) {
-                require_once 'CRM/Kabissa/BAO/Kabissa.php';
-                CRM_Kabissa_BAO_Kabissa::buildProfileSearchRowLinks( self::$_links );
             }
         }
         return self::$_links;
@@ -267,6 +272,7 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
     function &getColumnHeaders($action = null, $output = null) 
     {
         static $skipFields = array( 'group', 'tag' );
+        $multipleFields = array( 'url' );
         $direction = CRM_Utils_Sort::ASCENDING;
         $empty = true;
         if ( ! isset( self::$_columnHeaders ) ) {
@@ -290,27 +296,32 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
                         $fieldName = CRM_Utils_Array::value( 0, $value );
                         $lType     = CRM_Utils_Array::value( 1, $value );
                         $type      = CRM_Utils_Array::value( 2, $value );
-                       
-                        if ( $lType == 'Primary' ) {
-                            $locationTypeName = 1;
-                        } else {
-                            $locationTypeName = $locationTypes[$lType];
-                        }
                         
-                        if ( in_array( $fieldName, array( 'phone', 'im', 'email' ) ) ) {
-                            if ( $type ) {
-                                $name = "`$locationTypeName-$fieldName-$type`";
+                        if ( !in_array( $fieldName, $multipleFields ) ) {
+                            if ( $lType == 'Primary' ) {
+                                $locationTypeName = 1;
+                            } else {
+                                $locationTypeName = $locationTypes[$lType];
+                            }
+                        
+                            if ( in_array( $fieldName, array( 'phone', 'im', 'email' ) ) ) {
+                                if ( $type ) {
+                                    $name = "`$locationTypeName-$fieldName-$type`";
+                                } else {
+                                    $name = "`$locationTypeName-$fieldName`";
+                                }
                             } else {
                                 $name = "`$locationTypeName-$fieldName`";
                             }
                         } else {
-                            $name = "`$locationTypeName-$fieldName`";
+                            $name = "website-{$lType}-{$fieldName}";
                         }
                     }
 
                     self::$_columnHeaders[] = array( 'name'     => $field['title'],
                                                      'sort'     => $name,
                                                      'direction' => $direction );
+
                     $direction = CRM_Utils_Sort::DONTCARE;
                     $empty = false;
                 }
@@ -363,6 +374,7 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
      */
     function &getRows($action, $offset, $rowCount, $sort, $output = null) {
         
+        $multipleFields = array( 'url' );
         //$sort object processing for location fields
         if( $sort ) {
             $vars = $sort->_vars;
@@ -370,14 +382,19 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
             foreach ($vars as $key => $field) {
                 $field = $vars[$key];
                 $fieldArray = explode('-' , $field['name']);
-                if( is_numeric(CRM_Utils_Array::value('1',$fieldArray)) ) {
-                    $locationType = & new CRM_Core_DAO_LocationType();
-                    $locationType->id = $fieldArray[1];
-                    $locationType->find(true);
-                    if ($fieldArray[0] == 'email' || $fieldArray[0] == 'im' || $fieldArray[0] == 'phone') {
-                        $field['name'] = "`".$locationType->name."-".$fieldArray[0]."-1`";
+                $fieldType = CRM_Utils_Array::value('2',$fieldArray);
+                if ( is_numeric(CRM_Utils_Array::value('1',$fieldArray) ) ) {
+                    if ( !in_array( $fieldType, $multipleFields ) ) {
+                        $locationType = & new CRM_Core_DAO_LocationType();
+                        $locationType->id = $fieldArray[1];
+                        $locationType->find(true);
+                        if ($fieldArray[0] == 'email' || $fieldArray[0] == 'im' || $fieldArray[0] == 'phone') {
+                            $field['name'] = "`".$locationType->name."-".$fieldArray[0]."-1`";
+                        } else {
+                            $field['name'] = "`".$locationType->name."-".$fieldArray[0]."`";
+                        }
                     } else {
-                        $field['name'] = "`".$locationType->name."-".$fieldArray[0]."`";
+                        $field['name'] = "`website-".$fieldArray[1]. "-{$fieldType}`";
                     }
                 }
                 $varArray[$key] = $field;
@@ -399,19 +416,19 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
         $mask = CRM_Core_Action::mask( array( CRM_Core_Permission::getPermission( ) ) );
         if ( $editLink && ( $mask & CRM_Core_Permission::EDIT ) ) {
             // do not allow edit for anon users in joomla frontend, CRM-4668
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             if ( ! $config->userFrameworkFrontend ) {
                 $this->_editLink = true;
             }
         }
-        $links =& self::links( $this->_map, $this->_editLink, $this->_linkToUF );
+        $links =& self::links( $this->_map, $this->_editLink, $this->_linkToUF, $this->_gid );
         
         require_once 'CRM/Core/PseudoConstant.php';
         $locationTypes = CRM_Core_PseudoConstant::locationType( );
 
         $names = array( );
         static $skipFields = array( 'group', 'tag' );
-
+        
         foreach ( $this->_fields as $key => $field ) {
             if (  CRM_Utils_Array::value( 'in_selector', $field ) && 
                  ! in_array( $key, $skipFields ) ) { 
@@ -420,27 +437,32 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
                     $fieldName = CRM_Utils_Array::value( 0, $value );
                     $id        = CRM_Utils_Array::value( 1, $value );
                     $type      = CRM_Utils_Array::value( 2, $value );
-                    $locationTypeName = null;
-                    if ( is_numeric( $id ) ) {
-                        $locationTypeName = CRM_Utils_Array::value( $id, $locationTypes );
-                    } else {
-                        if ( $id == 'Primary' ) {
-                            $locationTypeName = 1;
+                    
+                    if ( !in_array( $fieldName, $multipleFields ) ) {
+                        $locationTypeName = null;
+                        if ( is_numeric( $id ) ) {
+                            $locationTypeName = CRM_Utils_Array::value( $id, $locationTypes );
+                        } else {
+                            if ( $id == 'Primary' ) {
+                                $locationTypeName = 1;
+                            }
                         }
-                    }
 
-                    if ( ! $locationTypeName ) {
-                        continue;
-                    }
-                    $locationTypeName = str_replace( ' ', '_', $locationTypeName );
-                    if ( in_array( $fieldName, array( 'phone', 'im', 'email' ) ) ) { 
-                        if ( $type ) {
-                            $names[] = "{$locationTypeName}-{$fieldName}-{$type}";
+                        if ( ! $locationTypeName ) {
+                            continue;
+                        }
+                        $locationTypeName = str_replace( ' ', '_', $locationTypeName );
+                        if ( in_array( $fieldName, array( 'phone', 'im', 'email' ) ) ) { 
+                            if ( $type ) {
+                                $names[] = "{$locationTypeName}-{$fieldName}-{$type}";
+                            } else {
+                                $names[] = "{$locationTypeName}-{$fieldName}";
+                            }
                         } else {
                             $names[] = "{$locationTypeName}-{$fieldName}";
                         }
                     } else {
-                        $names[] = "{$locationTypeName}-{$fieldName}";
+                        $names[] = "website-{$id}-{$fieldName}";
                     }
                 } else if ( $field['name'] == 'id' ) {
                     $names[] = 'contact_id';
@@ -457,15 +479,14 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
             require_once 'CRM/Quest/BAO/Student.php';
             $multipleSelectFields = CRM_Quest_BAO_Student::$multipleSelectFields;
         }
-        if ( CRM_Core_Permission::access( 'Kabissa', false ) ) {
-            require_once 'CRM/Kabissa/BAO/Kabissa.php';
-            $accessKabissa = true;
-        }
 
         if ( $this->_linkToUF ) {
             require_once 'api/UFGroup.php';
         }
-
+        
+        $imProviders  = CRM_Core_PseudoConstant::IMProvider( );
+        $websiteTypes = CRM_Core_PseudoConstant::websiteType( );
+        $languages    = CRM_Core_PseudoConstant::languages( );
         require_once 'CRM/Contact/BAO/Contact/Utils.php';
         while ($result->fetch()) {
             if (isset($result->country)) {
@@ -475,7 +496,10 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
             }
             $row = array( );
             $empty = true;
-            $row[] = CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_type );
+            $row[] = CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_sub_type ? 
+                                                              $result->contact_sub_type : $result->contact_type,
+                                                              false,
+                                                              $result->contact_id );
             if ( $result->sort_name ) {
                 $row['sort_name'] = $result->sort_name;
                 $empty            = false;
@@ -483,16 +507,22 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
                 continue;
             }
            
-            foreach ( $names as $name ) {
+            foreach ( $names as $name ) {                
                 if ( $cfID = CRM_Core_BAO_CustomField::getKeyID($name)) {
                     $row[] = CRM_Core_BAO_CustomField::getDisplayValue( $result->$name,
                                                                         $cfID,
                                                                         $this->_options,
                                                                         $result->contact_id );
-                } else if ( $name == 'home_URL' &&
+                } else if ( substr( $name, -4 ) == '-url' &&
                             ! empty( $result->$name ) ) {
                     $url = CRM_Utils_System::fixURL( $result->$name );
-                    $row[] = "<a href=\"$url\">{$result->$name}</a>";
+                    $typeId   = substr( $name, 0, -4 ) ."-website_type_id";
+                    $typeName = $websiteTypes[$result->$typeId];
+                    if ( $typeName ) { 
+                        $row[] = "<a href=\"$url\">{$result->$name} (${typeName})</a>";
+                    }
+                } else if ( $name == 'preferred_language' ) {
+                    $row[] = $languages[$result->$name];
                 }  else if ( $multipleSelectFields &&
                              array_key_exists($name, $multipleSelectFields ) ) { 
                     //fix to display student checkboxes
@@ -508,23 +538,25 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
                     }
                     CRM_Core_OptionGroup::lookupValues( $paramsNew, $name, false );
                     $row[] = $paramsNew[$key]; 
-                } else if ( strpos($name, '-im-')) {
+                } else if ( strpos($name, '-im')) {
                     if ( !empty($result->$name) ) {
-                        $imProviders  = CRM_Core_PseudoConstant::IMProvider( );
                         $providerId   = $name."-provider_id";
                         $providerName = $imProviders[$result->$providerId];
                         $row[] = $result->$name . " ({$providerName})";
                     } else {
                         $row[] = '';
                     }
-                } elseif ( (substr( $name, 0, 8 ) == 'kabissa_') && $accessKabissa ) {
-                    $row[] = CRM_Kabissa_BAO_Kabissa::profileSelectorListing($name, $result, false);
+                } elseif ( in_array($name, array('addressee', 'email_greeting', 'postal_greeting')) ) {
+                    $dname = $name . '_display';
+                    $row[] = $result->$dname;
+                } elseif ( in_array($name, array('birth_date', 'deceased_date') ) ) {
+                    $row[] = CRM_Utils_Date::customFormat( $result->$name );
                 } elseif ( isset($result->$name ) ){
                     $row[] = $result->$name;
                 } else {
                     $row[] = '';
                 }
-            
+
                 if ( ! empty( $result->$name ) ) {
                     $empty = false;
                 }

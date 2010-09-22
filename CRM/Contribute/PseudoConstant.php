@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,16 +29,19 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
 
+require_once 'CRM/Core/OptionGroup.php';
+
 /**
- * This class holds all the Pseudo constants that are specific to Mass mailing. This avoids
+ * This class holds all the Pseudo constants that are specific to Contributions. This avoids
  * polluting the core class and isolates the mass mailer class
  */
-class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
+class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant 
+{
 
     /**
      * contribution types
@@ -140,19 +144,16 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
      * @return array - array reference of all payment instruments if any
      * @static
      */
-
-    public static function &paymentInstrument( )
+    public static function &paymentInstrument( $columnName = 'label' )
     {
-        require_once 'CRM/Core/OptionGroup.php';
-        $paymentInstrument = CRM_Core_OptionGroup::values('payment_instrument');
-        if ( ! $paymentInstrument ) {
-            $paymentInstrument = array( );
-
+        if ( !isset( self::$paymentInstrument[$columnName] ) ) {
+            self::$paymentInstrument[$columnName] = CRM_Core_OptionGroup::values( 'payment_instrument', 
+                                                                                  false, false, false, null, $columnName );
         }
-        return $paymentInstrument;
+        
+        return self::$paymentInstrument[$columnName];
     }
-
-
+    
     /**
      * Get all the valid accepted credit cards
      *               
@@ -163,7 +164,6 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
     public static function &creditCard( ) 
     {
         $acceptCreditCard = array( );    
-        require_once 'CRM/Core/OptionGroup.php';
         $creditCard = CRM_Core_OptionGroup::values('accept_creditcard');
         
         if  ( ! $creditCard ) {
@@ -186,7 +186,7 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
     public static function products( $pageID = null ) {
         $products = array();
         require_once 'CRM/Contribute/DAO/Product.php';
-        $dao = & new CRM_Contribute_DAO_Product();
+        $dao = new CRM_Contribute_DAO_Product();
         $dao->is_active = 1;
         $dao->orderBy( 'id' );
         $dao->find( );
@@ -196,7 +196,7 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
         }
         if ( $pageID ) {
             require_once 'CRM/Contribute/DAO/Premium.php';
-            $dao =& new CRM_Contribute_DAO_Premium();
+            $dao = new CRM_Contribute_DAO_Premium();
             $dao->entity_table = 'civicrm_contribution_page';
             $dao->entity_id = $pageID; 
             $dao->find(true);
@@ -205,7 +205,7 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
             $productID = array();  
             
             require_once 'CRM/Contribute/DAO/PremiumsProduct.php';
-            $dao =& new CRM_Contribute_DAO_PremiumsProduct();
+            $dao = new CRM_Contribute_DAO_PremiumsProduct();
             $dao->premiums_id = $premiumID;
             $dao->find();
             while ($dao->fetch()) {
@@ -232,17 +232,17 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
      * @return array - array reference of all contribution statuses
      * @static
      */
-    public static function &contributionStatus( $id = null )
+    public static function &contributionStatus( $id = null, $columnName = 'label' )
     {
-        if ( ! isset( self::$contributionStatus ) ) {
-            require_once "CRM/Core/OptionGroup.php";
-            self::$contributionStatus = CRM_Core_OptionGroup::values("contribution_status");
+        $cacheKey = $columnName;
+        if ( ! isset( self::$contributionStatus[$cacheKey] ) ) {
+            self::$contributionStatus[$cacheKey] = CRM_Core_OptionGroup::values( 'contribution_status', 
+                                                                                 false, false, false, null, $columnName );
         }
-        if ($id) {
-            $result = CRM_Utils_Array::value( $id, self::$contributionStatus );
-            return $result;
-        }
-        return self::$contributionStatus;
+        $result = self::$contributionStatus[$cacheKey];
+        if ( $id ) $result = CRM_Utils_Array::value( $id, $result );
+        
+        return $result;
     }
 
     /**
@@ -256,7 +256,6 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
     {
         self::$pcpStatus = array();
         if ( ! self::$pcpStatus ) {
-            require_once "CRM/Core/OptionGroup.php";
             self::$pcpStatus = CRM_Core_OptionGroup::values("pcp_status");
         }
         return self::$pcpStatus;

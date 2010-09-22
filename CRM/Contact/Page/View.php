@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -90,8 +91,15 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
      */
     function preProcess( )
     {
+        // process url params
         $this->_id = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
         $this->assign( 'id', $this->_id );
+        
+        $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+        //validate the qfKey
+        require_once 'CRM/Utils/Rule.php';
+        if ( !CRM_Utils_Rule::qfKey( $qfKey ) ) $qfKey = null;
+        $this->assign( 'searchKey', $qfKey );
         
         // retrieve the group contact id, so that we can get contact id
         $gcid = CRM_Utils_Request::retrieve( 'gcid', 'Positive', $this );
@@ -113,40 +121,32 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         CRM_Utils_System::appendBreadCrumb( array( array( 'title' => ts('Search Results'),
                                                           'url'   => self::getSearchURL( ) ) ) );
 
+        if ( $image_URL  = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $this->_contactId , 'image_URL') ) {
+            list( $imageWidth, $imageHeight ) = getimagesize( $image_URL );
+            list( $imageThumbWidth, $imageThumbHeight ) = CRM_Contact_BAO_Contact::getThumbSize( $imageWidth, $imageHeight );
+            $this->assign( "imageWidth", $imageWidth );
+            $this->assign( "imageHeight", $imageHeight );
+            $this->assign( "imageThumbWidth", $imageThumbWidth );
+            $this->assign( "imageThumbHeight", $imageThumbHeight );
+            $this->assign( "imageURL", $image_URL );  
+        }
+        
         // also store in session for future use
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $session->set( 'view.id', $this->_contactId );
 
-        $this->_action = CRM_Utils_Request::retrieve('action', 'String',
-                                                     $this, false, 'browse');
+        $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'browse');
         $this->assign( 'action', $this->_action);
 
-        // check for permissions
-        $this->_permission = null;
-
-        // automatically grant permissin for users on their own record. makes 
-        // things easier in dashboard
-        require_once 'CRM/Contact/BAO/Contact/Permission.php';
-        if ( $session->get( 'userID' ) == $this->_contactId ) {
-            $this->assign( 'permission', 'edit' );
-            $this->_permission = CRM_Core_Permission::EDIT;
-        } else if ( CRM_Contact_BAO_Contact_Permission::allow( $this->_contactId, CRM_Core_Permission::EDIT ) ) {
-            $this->assign( 'permission', 'edit' );
-            $this->_permission = CRM_Core_Permission::EDIT;            
-        } else if ( CRM_Contact_BAO_Contact_Permission::allow( $this->_contactId, CRM_Core_Permission::VIEW ) ) {
-            $this->assign( 'permission', 'view' );
-            $this->_permission = CRM_Core_Permission::VIEW;
-        } else {
-            $session->pushUserContext( CRM_Utils_System::url('civicrm', 'reset=1' ) );
-            CRM_Core_Error::statusBounce( ts('You do not have the necessary permission to view this contact.') );
-        }
-
-        $this->getContactDetails();
-
-        $contactImage = $this->get( 'contactImage' );
-        $displayName  = $this->get( 'displayName'  );
-        $contactType  = $this->get( 'contactType' );
+        // check logged in url permission
+        self::checkUserPermission( $this );
+        
+        list( $displayName, $contactImage, 
+              $contactType, $contactSubtype, $contactImageUrl ) = self::getContactDetails( $this->_contactId );
         $this->assign( 'displayName', $displayName );
+        
+        $this->set( 'contactType',    $contactType );
+        $this->set( 'contactSubtype', $contactSubtype );
 
         // see if other modules want to add a link activtity bar
         require_once 'CRM/Utils/Hook.php';
@@ -154,38 +154,57 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         if ( is_array( $hookLinks ) ) {
             $this->assign( 'hookLinks', $hookLinks );
         }
-
-        CRM_Utils_System::setTitle( $displayName, $contactImage . ' ' . $displayName );
+        
+        // add to recently viewed block
+        $isDeleted = (bool) CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $this->_contactId, 'is_deleted');
         CRM_Utils_Recent::add( $displayName,
-                               CRM_Utils_System::url( 'civicrm/contact/view', 'reset=1&cid=' . $this->_contactId ),
+                               CRM_Utils_System::url('civicrm/contact/view', "reset=1&cid={$this->_contactId}"),
                                $this->_contactId,
                                $contactType,
                                $this->_contactId,
-                               $displayName );
-        
-        //display OtherActivity link 
-        $otherAct = CRM_Core_PseudoConstant::activityType(false);
-        $activityNum = count($otherAct);
-        $this->assign('showOtherActivityLink',$activityNum);
-        
-        $config =& CRM_Core_Config::singleton( );
-        
+                               $displayName,
+                               $contactImageUrl,
+                               $contactSubtype,
+                               $isDeleted
+                             );
+        $this->assign('isDeleted', $isDeleted);
+
+        // set page title
+        self::setTitle( $this->_contactId, $isDeleted ); 
+                
+        $config = CRM_Core_Config::singleton( );
         require_once 'CRM/Core/BAO/UFMatch.php';
         if ( $uid = CRM_Core_BAO_UFMatch::getUFId( $this->_contactId ) ) {
             if ($config->userFramework == 'Drupal') {
-                $url = CRM_Utils_System::url( 'user/' . $uid );
+                $userRecordUrl = CRM_Utils_System::url( 'user/' . $uid );
             } else if ( $config->userFramework == 'Joomla' ) {
-                $url = $config->userFrameworkBaseURL . 'index2.php?option=com_users&task=editA&hidemainmenu=1&id=' . $uid;
+                $userRecordUrl = $config->userFrameworkBaseURL . 
+                    'index2.php?option=com_users&view=user&task=edit&cid[]=' . $uid;
             } else {
-                $url = null;
+                $userRecordUrl = null;
             }
-            $this->assign( 'url', $url );
+            $this->assign( 'userRecordUrl', $userRecordUrl );
+            $this->assign( 'userRecordId' , $uid );
         }
     
         if ( CRM_Core_Permission::check( 'access Contact Dashboard' ) ) {
             $dashboardURL = CRM_Utils_System::url( 'civicrm/user',
                                                    "reset=1&id={$this->_contactId}" );
             $this->assign( 'dashboardURL', $dashboardURL );
+        }
+        
+        if ( defined( 'CIVICRM_MULTISITE' ) && 
+             CIVICRM_MULTISITE              && 
+             $contactType == 'Organization' &&
+             CRM_Core_Permission::check( 'administer Multiple Organizations' ) ) {
+            require_once 'CRM/Contact/BAO/GroupOrganization.php';
+            //check is any relationship between the organization and groups
+            $groupOrg = CRM_Contact_BAO_GroupOrganization::hasGroupAssociated( $this->_contactId );
+            if ( $groupOrg ) {
+                $groupOrganizationUrl = CRM_Utils_System::url( 'civicrm/group',
+                                                               "reset=1&oid={$this->_contactId}" ); 
+                $this->assign( 'groupOrganizationUrl', $groupOrganizationUrl );
+            }
         }
     }
 
@@ -196,31 +215,108 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
      * @return void
      * @access public
      */
-    function getContactDetails()
-    {
-        $displayName = $this->get( 'displayName' );
-             
-        list( $displayName, $contactImage, $contactType ) = CRM_Contact_BAO_Contact::getDisplayAndImage( $this->_contactId, true );
-
-        $this->set( 'displayName' , $displayName );
-        $this->set( 'contactImage', $contactImage );
-        $this->set( 'contactType', $contactType );
+    function getContactDetails( $contactId ) {
+        return list( $displayName, 
+                     $contactImage, 
+                     $contactType, 
+                     $contactSubtype, 
+                     $contactImageUrl ) = CRM_Contact_BAO_Contact::getDisplayAndImage( $contactId,
+                                                                                       true,
+                                                                                       true );
     }
-
+    
     function getSearchURL( ) {
-        $session =& CRM_Core_Session::singleton();
-
-        $isAdvanced = $session->get('isAdvanced');
-        if ( $isAdvanced == '1' ) {
-            return CRM_Utils_System::url( 'civicrm/contact/search/advanced', 'force=1' );
-        } else if ( $isAdvanced == '2' ) {
-            return CRM_Utils_System::url( 'civicrm/contact/search/builder', 'force=1' );
-        } else if ( $isAdvanced == '3' ) {
-            return CRM_Utils_System::url( 'civicrm/contact/search/custom', 'force=1' );
+        $qfKey   = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+        $context = CRM_Utils_Request::retrieve( 'context', 'String', $this, false, 'search' );
+        $this->assign( 'context',  $context );
+        
+        //validate the qfKey
+        require_once 'CRM/Utils/Rule.php';
+        if ( !CRM_Utils_Rule::qfKey( $qfKey ) ) $qfKey = null;
+        
+        $urlString = null;
+        $urlParams = 'force=1';
+        
+        switch ( $context ) {
+        case 'custom' :
+        case 'fulltext' :
+            $urlString = 'civicrm/contact/search/custom';
+            break;
+            
+        case 'advanced' :
+            $urlString = 'civicrm/contact/search/advanced';
+            break;
+            
+        case 'builder' :
+            $urlString = 'civicrm/contact/search/builder';
+            break;
+            
+        case 'basic' :
+            $urlString = 'civicrm/contact/search/basic';
+            break;
+            
+        case 'search':
+            $urlString = 'civicrm/contact/search';
+            break;
+            
+        case 'smog' :
+        case 'amtg' :    
+            $urlString = 'civicrm/group/search';
+            break;
         }
-        return CRM_Utils_System::url( 'civicrm/contact/search/basic', 'force=1' );
+        if ( $qfKey ) $urlParams .= "&qfKey=$qfKey";
+        if ( !$urlString ) $urlString = 'civicrm/contact/search/basic';
+        
+        return CRM_Utils_System::url( $urlString, $urlParams );
     }
+    
+    static function checkUserPermission( $page ) {
+        // check for permissions
+        $page->_permission = null;
 
+        // automatically grant permissin for users on their own record. makes 
+        // things easier in dashboard
+        $session = CRM_Core_Session::singleton( );
+        
+        require_once 'CRM/Contact/BAO/Contact/Permission.php';
+        if ( $session->get( 'userID' ) == $page->_contactId ) {
+            $page->assign( 'permission', 'edit' );
+            $page->_permission = CRM_Core_Permission::EDIT;
+        // deleted contacts’ stuff should be (at best) only viewable
+        } elseif (CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $page->_contactId, 'is_deleted') and CRM_Core_Permission::check('access deleted contacts')) {
+            $page->assign('permission', 'view');
+            $page->_permission = CRM_Core_Permission::VIEW;
+        } else if ( CRM_Contact_BAO_Contact_Permission::allow( $page->_contactId, CRM_Core_Permission::EDIT ) ) {
+            $page->assign( 'permission', 'edit' );
+            $page->_permission = CRM_Core_Permission::EDIT;            
+        } else if ( CRM_Contact_BAO_Contact_Permission::allow( $page->_contactId, CRM_Core_Permission::VIEW ) ) {
+            $page->assign( 'permission', 'view' );
+            $page->_permission = CRM_Core_Permission::VIEW;
+        } else {
+            $session->pushUserContext( CRM_Utils_System::url('civicrm', 'reset=1' ) );
+            CRM_Core_Error::statusBounce( ts('You do not have the necessary permission to view this contact.') );
+        }
+    }
+    
+    function setTitle( $contactId, $isDeleted = false ) 
+    {
+        static $contactDetails;
+        $displayName = $contactImage = null;
+        if ( !isset( $contactDetails[$contactId] ) ) {
+            list( $displayName, $contactImage ) = self::getContactDetails( $contactId );
+            $contactDetails[$contactId] = array( 'displayName'  => $displayName,
+                                                 'contactImage' => $contactImage );
+        } else {
+            $displayName  = $contactDetails[$contactId]['displayName'];
+            $contactImage = $contactDetails[$contactId]['contactImage']; 
+        }
+        
+        // set page title
+        $title = "{$contactImage} {$displayName}";
+        if ( $isDeleted ) {
+            $title = "<del>{$title}</del>";
+        }
+        CRM_Utils_System::setTitle( $displayName, $title );
+    }
+    
 }
-
-

@@ -1,15 +1,15 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -17,7 +17,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -29,7 +30,7 @@
  *
  * @package CiviCRM_APIv2
  * @subpackage API_Constant
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * @version $Id$
  *
  */
@@ -88,15 +89,22 @@ require_once 'api/v2/utils.php';
  *    <li>wysiwygEditor</li>
  *  </ul>
  */
-function civicrm_constant_get( $name ) {
+function civicrm_constant_get($name, $params = array()) 
+{
     require_once 'CRM/Core/PseudoConstant.php';
-
-    if ( method_exists( 'CRM_Core_PseudoConstant', $name ) ) {
-        eval( '$values =& CRM_Core_PseudoConstant::' . $name . '( );' );
+    $className = 'CRM_Core_PseudoConstant';
+    $callable  = "$className::$name";
+     
+    if (is_callable($callable)) {
+        if (empty($params)) {
+            $values = call_user_func( array( $className, $name ) );
+        } else {
+            $values = call_user_func_array( array( $className, $name ), $params );
+        }
         return $values;
-    } else {
-        return civicrm_create_error( ts( 'Unknown civicrm constant' ) ); 
     }
+
+    return civicrm_create_error(ts('Unknown civicrm constant or method not callable'));
 }
 
 

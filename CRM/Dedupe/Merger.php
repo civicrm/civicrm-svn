@@ -1,15 +1,15 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -17,7 +17,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -27,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -36,13 +37,13 @@ class CRM_Dedupe_Merger
 {
     // FIXME: this should be auto-generated from the schema
     static $validFields = array(
-        'birth_date', 'contact_source', 'contact_type', 'custom_greeting', 
+        'addressee', 'addressee_custom', 'birth_date', 'contact_source', 'contact_type',
         'deceased_date', 'do_not_email', 'do_not_mail', 'do_not_sms', 'do_not_phone', 
-        'do_not_trade', 'external_identifier', 'first_name', 'gender', 
-        'greeting_type', 'home_URL', 'household_name', 'image_URL', 
+        'do_not_trade', 'external_identifier', 'email_greeting', 'email_greeting_custom', 'first_name', 'gender', 
+        'home_URL', 'household_name', 'image_URL', 
         'individual_prefix', 'individual_suffix', 'is_deceased', 'is_opt_out', 
         'job_title', 'last_name', 'legal_identifier', 'legal_name', 
-        'middle_name', 'nick_name', 'organization_name', 
+        'middle_name', 'nick_name', 'organization_name', 'postal_greeting', 'postal_greeting_custom', 
         'preferred_communication_method', 'preferred_mail_format', 'sic_code'
     );
 
@@ -56,18 +57,28 @@ class CRM_Dedupe_Merger
             $relTables = array(
                 'rel_table_contributions' => array(
                     'title'  => ts('Contributions'),
-                    'tables' => array('civicrm_contribution', 'civicrm_contribution_recur'),
+                    'tables' => array('civicrm_contribution', 'civicrm_contribution_recur', 'civicrm_contribution_soft'),
                     'url'    => CRM_Utils_System::url('civicrm/contact/view', 'reset=1&force=1&cid=$cid&selectedChild=contribute'),
+                ),
+                'rel_table_contribution_page' => array(
+                    'title'  => ts('Contribution Pages'),
+                    'tables' => array('civicrm_contribution_page'),
+                    'url'    => CRM_Utils_System::url('civicrm/admin/contribute', 'reset=1&cid=$cid'),
                 ),
                 'rel_table_memberships' => array(
                     'title'  => ts('Memberships'),
                     'tables' => array('civicrm_membership', 'civicrm_membership_log', 'civicrm_membership_type'),
                     'url'    => CRM_Utils_System::url('civicrm/contact/view', 'reset=1&force=1&cid=$cid&selectedChild=member'),
                 ),
-                'rel_table_events' => array(
-                    'title'  => ts('Events'),
+                'rel_table_participants' => array(
+                    'title'  => ts('Participants'),
                     'tables' => array('civicrm_participant'),
                     'url'    => CRM_Utils_System::url('civicrm/contact/view', 'reset=1&force=1&cid=$cid&selectedChild=participant'),
+                ),
+                'rel_table_events' => array(
+                    'title'  => ts('Events'),
+                    'tables' => array('civicrm_event'),
+                    'url'    => CRM_Utils_System::url('civicrm/event/manage', 'reset=1&cid=$cid'),
                 ),
                 'rel_table_activities' => array(
                     'title'  => ts('Activities'),
@@ -79,6 +90,16 @@ class CRM_Dedupe_Merger
                     'tables' => array('civicrm_relationship'),
                     'url'    => CRM_Utils_System::url('civicrm/contact/view', 'reset=1&force=1&cid=$cid&selectedChild=rel'),
                 ),
+                'rel_table_custom_groups' => array(
+                    'title'  => ts('Custom Groups'),
+                    'tables' => array('civicrm_custom_group'),
+                    'url'    => CRM_Utils_System::url('civicrm/admin/custom/group', 'reset=1'),
+                ),    
+                'rel_table_uf_groups' => array(
+                    'title'  => ts('Profiles'),
+                    'tables' => array('civicrm_uf_group'),
+                    'url'    => CRM_Utils_System::url('civicrm/admin/uf/group', 'reset=1'),
+                ),    
                 'rel_table_groups' => array(
                     'title'  => ts('Groups'),
                     'tables' => array('civicrm_group_contact'),
@@ -94,14 +115,32 @@ class CRM_Dedupe_Merger
                     'tables' => array('civicrm_entity_tag'),
                     'url'    => CRM_Utils_System::url('civicrm/contact/view', 'reset=1&force=1&cid=$cid&selectedChild=tag'),
                 ),
+                'rel_table_mailings' => array(
+                    'title'  => ts('Mailings'),
+                    'tables' => array('civicrm_mailing', 'civicrm_mailing_event_queue', 'civicrm_mailing_event_subscribe' ),
+                    'url'    => CRM_Utils_System::url('civicrm/mailing', 'reset=1&force=1&cid=$cid'),
+                ),
                 'rel_table_cases' => array(
                     'title'  => ts('Cases'),
                     'tables' => array('civicrm_case_contact'),
-                    // note civicrm_activity is automatically included
-                    // when cases is checked on
                     'url'    => CRM_Utils_System::url('civicrm/contact/view', 'reset=1&force=1&cid=$cid&selectedChild=case'),
+                ),
+                'rel_table_pcp' => array(
+                    'title'  => ts('PCPs'),
+                    'tables' => array('civicrm_pcp'),
+                    'url'    => CRM_Utils_System::url('civicrm/contribute/pcp/manage', 'reset=1'),
+                ),
+
+                'rel_table_pledges' => array(
+                    'title'  => ts('Pledges'),
+                    'tables' => array('civicrm_pledge', 'civicrm_pledge_payment' ),
+                    'url'    => CRM_Utils_System::url('civicrm/contact/view', 'reset=1&force=1&cid=$cid&selectedChild=pledge'),
                 )
             );
+
+            // Allow hook_civicrm_merge() to adjust $relTables
+            CRM_Utils_Hook::merge( 'relTables', $relTables);
+
         }
         return $relTables;
     }
@@ -158,12 +197,17 @@ class CRM_Dedupe_Merger
                 'civicrm_case_contact'            => array('contact_id'),
                 'civicrm_contact'                 => array('primary_contact_id'),
                 'civicrm_contribution'            => array('contact_id', 'honor_contact_id'),
+                'civicrm_contribution_page'       => array('created_id'),
                 'civicrm_contribution_recur'      => array('contact_id'),
-                'civicrm_entity_tag'              => array('contact_id'),
+                'civicrm_contribution_soft'       => array('contact_id'),
+                'civicrm_custom_group'            => array('created_id'),
+                'civicrm_entity_tag'              => array('entity_id'),
+                'civicrm_event'                   => array('created_id'),
                 'civicrm_grant'                   => array('contact_id'),
                 'civicrm_group_contact'           => array('contact_id'),
                 'civicrm_group_organization'      => array('organization_id'),
                 'civicrm_log'                     => array('modified_id'),
+                'civicrm_mailing'                 => array('created_id', 'scheduled_id'),
                 'civicrm_mailing_event_queue'     => array('contact_id'),
                 'civicrm_mailing_event_subscribe' => array('contact_id'),
                 'civicrm_membership'              => array('contact_id'),
@@ -171,11 +215,17 @@ class CRM_Dedupe_Merger
                 'civicrm_membership_type'         => array('member_of_contact_id'),
                 'civicrm_note'                    => array('contact_id'),
                 'civicrm_participant'             => array('contact_id'),
+                'civicrm_pcp'                     => array('contact_id'),
                 'civicrm_preferences'             => array('contact_id'),
                 'civicrm_relationship'            => array('contact_id_a', 'contact_id_b'),
                 'civicrm_subscription_history'    => array('contact_id'),
                 'civicrm_uf_match'                => array('contact_id'),
+                'civicrm_uf_group'                => array('created_id'),
+                'civicrm_pledge'                  => array('contact_id'),
             );
+
+            // Allow hook_civicrm_merge() to adjust $cidRefs
+            CRM_Utils_Hook::merge( 'cidRefs', $cidRefs);
         }
         return $cidRefs;
     }
@@ -200,18 +250,96 @@ class CRM_Dedupe_Merger
                 'civicrm_task'             => array('owner_entity_table'       => 'owner_entity_id'),
                 'civicrm_task_status'      => array('responsible_entity_table' => 'responsible_entity_id', 'target_entity_table' => 'target_entity_id'),
             );
+
+            // Allow hook_civicrm_merge() to adjust $eidRefs
+            CRM_Utils_Hook::merge( 'eidRefs', $eidRefs);
         }
         return $eidRefs;
     }
-
+    
+    /**
+     * return custom processing tables.
+     */
+    static function &cpTables( )
+    {
+        static $tables;
+        if ( !$tables ) {
+            $tables = array( 'civicrm_case_contact' => array( 'path'     => 'CRM_Case_BAO_Case',
+                                                              'function' => 'mergeCases' ) );
+        }
+        
+        return $tables;
+    }
+    
+    /**
+     * return payment related table.
+     */
+    static function &paymentTables( )
+    {
+        static $tables;
+        if ( !$tables ) {
+            $tables = array( 'civicrm_pledge', 'civicrm_membership', 'civicrm_participant' );
+        }
+        
+        return $tables;
+    }
+    
+    /**
+     * return payment update Query.
+     */
+    static function paymentSql( $tableName, $mainContactId, $otherContactId )
+    {
+        $sqls = array( );
+        if ( !$tableName || !$mainContactId || !$otherContactId ) {
+            return $sqls;
+        }
+        
+        $paymentTables = self::paymentTables( );
+        if ( !in_array( $tableName, $paymentTables ) ) {
+            return $sqls; 
+        }
+        
+        switch ( $tableName ) {
+        case 'civicrm_pledge' :
+            $sqls[] = "
+    UPDATE  IGNORE  civicrm_contribution contribution
+INNER JOIN  civicrm_pledge_payment payment ON ( payment.contribution_id = contribution.id )
+INNER JOIN  civicrm_pledge pledge ON ( pledge.id = payment.pledge_id )                                               
+       SET  contribution.contact_id = $mainContactId
+     WHERE  pledge.contact_id = $otherContactId";
+            break;
+        case 'civicrm_membership' :
+            $sqls[] = "
+    UPDATE  IGNORE  civicrm_contribution contribution
+INNER JOIN  civicrm_membership_payment payment ON ( payment.contribution_id = contribution.id )
+INNER JOIN  civicrm_membership membership ON ( membership.id = payment.membership_id )      
+       SET  contribution.contact_id = $mainContactId
+     WHERE  membership.contact_id = $otherContactId";
+            break;
+        case 'civicrm_participant' :
+            $sqls[] = "
+    UPDATE  IGNORE  civicrm_contribution contribution
+INNER JOIN  civicrm_participant_payment payment ON ( payment.contribution_id = contribution.id )
+INNER JOIN  civicrm_participant participant ON ( participant.id = payment.participant_id )      
+       SET  contribution.contact_id = $mainContactId
+     WHERE  participant.contact_id = $otherContactId";
+            break;
+        }
+        
+        return $sqls;
+    }
+    
     /**
      * Based on the provided two contact_ids and a set of tables, move the 
      * belongings of the other contact to the main one.
      */
     function moveContactBelongings($mainId, $otherId, $tables = false)
     {
-        $cidRefs =& self::cidRefs();
-        $eidRefs =& self::eidRefs();
+        $cidRefs       = self::cidRefs( );
+        $eidRefs       = self::eidRefs( );
+        $cpTables      = self::cpTables( );
+        $paymentTables = self::paymentTables( );
+        
         $affected = array_merge(array_keys($cidRefs), array_keys($eidRefs));
         if ($tables !== false) {
             // if there are specific tables, sanitize the list
@@ -231,9 +359,27 @@ class CRM_Dedupe_Merger
                 
         // use UPDATE IGNORE + DELETE query pair to skip on situations when 
         // there's a UNIQUE restriction on ($field, some_other_field) pair
+        $sqls = array( );
         foreach ($affected as $table) {
+            //here we require custom processing.
+            if ( array_key_exists( $table, $cpTables ) ) {
+                $path  = CRM_Utils_Array::value( 'path',     $cpTables[$table] );
+                $fName = CRM_Utils_Array::value( 'function', $cpTables[$table] );
+                if ( $path && $fName ) {
+                    require_once( str_replace('_', DIRECTORY_SEPARATOR, $path ) . ".php" );
+                    eval( "$path::$fName( $mainId, null, $otherId );");
+                }
+                continue;
+            }
+            
             if (isset($cidRefs[$table])) {
                 foreach ($cidRefs[$table] as $field) {
+                    // carry related contributions CRM-5359
+                    if ( in_array( $table, $paymentTables ) ) {
+                        $paymentSqls = self::paymentSql( $table, $mainId, $otherId ); 
+                        $sqls = array_merge( $sqls, $paymentSqls ); 
+                    }
+                    
                     $sqls[] = "UPDATE IGNORE $table SET $field = $mainId WHERE $field = $otherId";
                     $sqls[] = "DELETE FROM $table WHERE $field = $otherId";
                 }
@@ -246,12 +392,17 @@ class CRM_Dedupe_Merger
             }
         }
 
+        // CRM-6184: if we’re moving relationships, update civicrm_contact.employer_id
+        if (is_array($tables) and in_array('civicrm_relationship', $tables)) {
+            $sqls[] = "UPDATE IGNORE civicrm_contact SET employer_id = $mainId WHERE employer_id = $otherId";
+        }
+
+        // Allow hook_civicrm_merge() to add SQL statements for the merge operation.
+        CRM_Utils_Hook::merge( 'sqls', $sqls, $mainId, $otherId, $tables);
+        
         // call the SQL queries in one transaction
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
-        if ( ! isset( $sqls ) ) {
-            $sqls = array( );
-        }
         foreach ($sqls as $sql) {
             CRM_Core_DAO::executeQuery( $sql,
                                         CRM_Core_DAO::$_nullArray,
@@ -274,7 +425,7 @@ class CRM_Dedupe_Merger
         }
         $main  =& civicrm_contact_get($mainParams);
         $other =& civicrm_contact_get($otherParams);
-
+        
         //CRM-4524
         $main  = reset( $main );
         $other = reset( $other );
@@ -293,7 +444,7 @@ class CRM_Dedupe_Merger
         require_once 'CRM/Core/BAO/CustomValueTable.php';
         $mainEvs  =& CRM_Core_BAO_CustomValueTable::getEntityValues($mainId);
         $otherEvs =& CRM_Core_BAO_CustomValueTable::getEntityValues($otherId);
-        $keys = array_keys($mainEvs) + array_keys($otherEvs);
+        $keys = array_unique(array_merge(array_keys($mainEvs), array_keys($otherEvs)));
         foreach ($keys as $key) {
             if ($mainEvs[$key] != $otherEvs[$key]) $diffs['custom'][] = $key;
         }

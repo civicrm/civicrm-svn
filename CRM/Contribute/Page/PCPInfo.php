@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -55,8 +56,8 @@ class CRM_Contribute_Page_PCPInfo extends CRM_Core_Page
      */
     function run()
     {
-        $session =& CRM_Core_Session::singleton( );
-        $config =& CRM_Core_Config::singleton( );
+        $session = CRM_Core_Session::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $permissionCheck = false;
         $statusMessage = '';
         if ( $config->userFramework != 'Joomla') {
@@ -81,17 +82,15 @@ class CRM_Contribute_Page_PCPInfo extends CRM_Core_Page
 
         require_once 'CRM/Contribute/PseudoConstant.php';
         require_once 'CRM/Core/OptionGroup.php';
-        $pcpStatus     = CRM_Contribute_PseudoConstant::pcpStatus( );
-        $approvedId    = CRM_Core_OptionGroup::getValue( 'pcp_status', 'Approved', 'name' );        
+        $pcpStatus  = CRM_Contribute_PseudoConstant::pcpStatus( );
+        $approvedId = CRM_Core_OptionGroup::getValue( 'pcp_status', 'Approved', 'name' );        
         
         // check if PCP is created by anonymous user
-        $anonymousPCP  = CRM_Utils_Request::retrieve( 'ap', 'Boolean', $this );
+        $anonymousPCP = CRM_Utils_Request::retrieve( 'ap', 'Boolean', $this );
         if ( $anonymousPCP ) {
             $loginUrl = $config->userFrameworkBaseURL;
             
-            switch ( ucfirst($config->userFramework) ) 
-            {
-            
+            switch ( ucfirst($config->userFramework) ) {
             case 'Joomla' : 
                 $loginUrl  = str_replace( 'administrator/', '', $loginUrl );
                 $loginUrl .= 'index.php?option=com_user&view=login';
@@ -159,7 +158,8 @@ class CRM_Contribute_Page_PCPInfo extends CRM_Core_Page
             $blockId = array_pop( $blockValues );
             $replace = array( 'id'    => $this->_id,
                               'block' => $blockId['id'] );
-            if ( !CRM_Utils_Array::value( 'is_tellfriend_enabled', $blockId ) || CRM_Utils_Array::value( 'status_id', $pcpInfo )!= $approvedId ){
+            if ( !CRM_Utils_Array::value( 'is_tellfriend_enabled', $blockId ) || 
+                 CRM_Utils_Array::value( 'status_id', $pcpInfo )!= $approvedId ) {
                 unset($link['all'][CRM_Core_Action::DETACH]);   
             }
             
@@ -168,30 +168,17 @@ class CRM_Contribute_Page_PCPInfo extends CRM_Core_Page
             $this->assign( 'replace', $replace     );
         }
         
-        $query="
-SELECT cc.id, cs.pcp_roll_nickname, cc.total_amount
-FROM civicrm_contribution cc LEFT JOIN civicrm_contribution_soft cs on cc.id = cs.contribution_id
-WHERE cs.pcp_id = $this->_id 
-AND cs.pcp_display_in_roll = 1 
-AND contribution_status_id =1 
-AND is_test = 0";
-        $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
-        $honor = array();
+        $honor = CRM_Contribute_BAO_PCP::honorRoll( $this->_id );
         
-        while( $dao->fetch() ) {
-            $honor[$dao->id]['nickname'] = ucwords($dao->pcp_roll_nickname);
-            $honor[$dao->id]['total_amount'] = $dao->total_amount;
-        }
-           
-        if( $file_id = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_EntityFile', $this->_id , 'file_id', 'entity_id') ) {
-            $image = '<img align="right" style="margin: 10px;" src="'.CRM_Utils_System::url( 'civicrm/file', 
+        if ( $file_id = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_EntityFile', $this->_id , 'file_id', 'entity_id') ) {
+            $image = '<img src="'.CRM_Utils_System::url( 'civicrm/file', 
                                                          "reset=1&id=$file_id&eid={$this->_id}" ) . '" />';
             $this->assign('image', $image);
         }
 
         $totalAmount = CRM_Contribute_BAO_PCP::thermoMeter( $this->_id );
-        $achieved = round($totalAmount/$pcpInfo['goal_amount'] *100, 2);
-
+        $achieved    = round($totalAmount/$pcpInfo['goal_amount'] *100, 2);
+        
 
         if ( $linkText = CRM_Contribute_BAO_PCP::getPcpBlockStatus( $pcpInfo['contribution_page_id'] ) ) {
             $linkTextUrl = CRM_Utils_System::url( 'civicrm/contribute/campaign',
@@ -234,7 +221,7 @@ AND is_test = 0";
             $this->assign( 'contributionText', $contributionText );
             
             // we always generate urls for the front end in joomla
-            if ( $action ==  CRM_Core_Action::PREVIEW ) {
+            if ( $action == CRM_Core_Action::PREVIEW ) {
                 $url    = CRM_Utils_System::url( 'civicrm/contribute/transact',
                                                  "id={$pcpInfo['contribution_page_id']}&pcpId={$this->_id}&reset=1&action=preview",
                                                  true, null, true,
@@ -250,8 +237,8 @@ AND is_test = 0";
         
         // we do not want to display recently viewed items, so turn off
         $this->assign('displayRecent' , false );
-
-        $single = false;
+        
+        $single = $permission = false;
         switch ( $action ) {
         case CRM_Core_Action::BROWSE:
             $subForm = 'PCPAccount';
@@ -265,11 +252,18 @@ AND is_test = 0";
             $single  = true;
             break;
         }
-        
-        if ( $single ){
+
+        $userID = $session->get('userID');
+        //make sure the user has "administer CiviCRM" permission 
+        //OR has created the PCP
+        if ( CRM_Core_Permission::check( 'administer CiviCRM' ) ||
+             ( $userID && (CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_PCP', $this->_id , 'contact_id') ==  $userID ) ) ) {
+            $permission = true;
+        }
+        if ( $single && $permission ) {
             require_once 'CRM/Core/Controller/Simple.php';
-            $controller =& new CRM_Core_Controller_Simple( $form, $subForm, $action); 
-            $controller->set('id', $this->_id); 
+            $controller = new CRM_Core_Controller_Simple( $form, $subForm, $action); 
+            $controller->set('id', $this->_id);
             $controller->set('single', true );
             $controller->process(); 
             return $controller->run();

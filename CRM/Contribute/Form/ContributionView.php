@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -52,7 +53,9 @@ class CRM_Contribute_Form_ContributionView extends CRM_Core_Form
         $id     = $this->get( 'id' );
         $values = $ids = array( ); 
         $params = array( 'id' => $id ); 
-        
+        $context = CRM_Utils_Request::retrieve('context', 'String', $this );
+        $this->assign('context', $context );
+
         require_once 'CRM/Contribute/BAO/Contribution.php';
         CRM_Contribute_BAO_Contribution::getValues( $params, $values, $ids );            
 
@@ -85,13 +88,13 @@ class CRM_Contribute_Form_ContributionView extends CRM_Core_Form
             }
         }
 
-        $groupTree =& CRM_Core_BAO_CustomGroup::getTree( 'Contribution', $this, $this->get( 'id' ),0,$values['contribution_type_id'] );
+        $groupTree =& CRM_Core_BAO_CustomGroup::getTree( 'Contribution', $this, $id, 0,$values['contribution_type_id'] );
 		CRM_Core_BAO_CustomGroup::buildCustomDataView( $this, $groupTree );
         
         $premiumId = null;
         if ( $id ) {
             require_once 'CRM/Contribute/DAO/ContributionProduct.php';
-            $dao = & new CRM_Contribute_DAO_ContributionProduct();
+            $dao = new CRM_Contribute_DAO_ContributionProduct();
             $dao->contribution_id = $id;
             if ( $dao->find(true) ) {
                $premiumId = $dao->id;
@@ -101,7 +104,7 @@ class CRM_Contribute_Form_ContributionView extends CRM_Core_Form
         
         if ( $premiumId ) {
             require_once 'CRM/Contribute/DAO/Product.php';
-            $productDAO = & new CRM_Contribute_DAO_Product();
+            $productDAO = new CRM_Contribute_DAO_Product();
             $productDAO->id  = $productID;
             $productDAO->find(true);
            
@@ -124,15 +127,48 @@ class CRM_Contribute_Form_ContributionView extends CRM_Core_Form
        
         //get soft credit record if exists.
         if( $softContribution = CRM_Contribute_BAO_Contribution::getSoftContribution( $softParams ) ) {
-            $softContribution['softCreditToName']   = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $softContribution['soft_credit_to'], 'display_name' );
+            
+            $softContribution['softCreditToName']   = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', 
+                                                                                   $softContribution['soft_credit_to'], 'display_name' );
             //hack to avoid dispalyName conflict 
             //for viewing softcredit record.
-            $softContribution['displayName']   =   CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $values['contact_id'], 'display_name' );
+            $softContribution['displayName']   =   CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', 
+                                                                                $values['contact_id'], 'display_name' );
             $values = array_merge( $values, $softContribution );
         } 
         
+        require_once 'CRM/Price/BAO/Set.php';
+        $lineItems = array( );
+        if ( $id && CRM_Price_BAO_Set::getFor( 'civicrm_contribution', $id ) ) {
+            require_once 'CRM/Price/BAO/LineItem.php';
+            $lineItems[] = CRM_Price_BAO_LineItem::getLineItems( $id, 'contribution' );
+        }
+        $this->assign( 'lineItem', empty( $lineItems ) ? false : $lineItems );
+        $values['totalAmount'] = $values['total_amount'];
+        
 		// assign values to the template
         $this->assign( $values ); 
+        
+        // add viewed contribution to recent items list
+        require_once 'CRM/Utils/Recent.php';
+        require_once 'CRM/Utils/Money.php';
+        require_once 'CRM/Contact/BAO/Contact.php';
+        $url = CRM_Utils_System::url( 'civicrm/contact/view/contribution', 
+                                      "action=view&reset=1&id={$values['id']}&cid={$values['contact_id']}&context=home" );
+                                      
+        $displayName = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $values['contact_id'], 'display_name' );
+        $this->assign( 'displayName', $displayName );
+        
+        $title = $displayName . 
+            ' - (' . CRM_Utils_Money::format( $values['total_amount'] ) . ' ' . 
+            ' - ' . $values['contribution_type'] . ')';
+        
+        CRM_Utils_Recent::add( $title,
+                               $url,
+                               $values['id'],
+                               'Contribution',
+                               $values['contact_id'],
+                               null );
     }
 
     /**

@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -54,7 +55,7 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
         $defaults = array();
         if ( isset($this->_id ) ) {
             require_once 'CRM/Member/DAO/MembershipBlock.php';
-            $dao =& new CRM_Member_DAO_MembershipBlock();
+            $dao = new CRM_Member_DAO_MembershipBlock();
             $dao->entity_table = 'civicrm_contribution_page';
             $dao->entity_id = $this->_id; 
             $dao->find(true);
@@ -74,7 +75,9 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
         // Set Display Minimum Fee default to true if we are adding a new membership block
         if ( ! isset( $defaults['id'] ) ) {
             $defaults['display_min_fee'] = 1;
-        }     
+        } else {
+            $this->assign('membershipBlockId', $defaults['id']);
+        }
         return $defaults;
     }
     
@@ -119,7 +122,7 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
             $this->addFormRule(array('CRM_Member_Form_MembershipBlock', 'formRule') , $this->_id);
         }
 
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $single = $session->get('singleForm');
         if ( $single ) {
             $this->addButtons(array(
@@ -146,10 +149,18 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
      * @access public
      * @static
      */
-    public function formRule(&$params, &$files, $contributionPageId = null ) 
+    static function formRule( $params, $files, $contributionPageId = null ) 
     {
         $errors = array( );
         if ( CRM_Utils_Array::value( 'is_active', $params ) ) {
+            
+            // don't allow price set w/ membership signup, CRM-5095 
+            require_once 'CRM/Price/BAO/Set.php';
+            if ( $contributionPageId && CRM_Price_BAO_Set::getFor( 'civicrm_contribution_page', $contributionPageId ) ) {
+                $errors['is_active'] = ts( 'You cannot enable both Membership Signup and Price Set on the same online contribution page.' );  
+                return $errors;
+            }
+            
             if ( !  isset ( $params['membership_type'] ) ||
                  ( ! is_array( $params['membership_type'] ) ) ) {
                 $errors['membership_type'] = ts( 'Please select at least one Membership Type to include in the Membership section of this page.' );
@@ -163,7 +174,7 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
             //for CRM-1302
             //if Membership status is not present, then display an error message
             require_once 'CRM/Member/BAO/MembershipStatus.php';
-            $dao =& new CRM_Member_BAO_MembershipStatus();
+            $dao = new CRM_Member_BAO_MembershipStatus();
             if ( ! $dao->find( ) ) {
                 $errors['_qf_default'] = ts( 'Add status rules, before configuring membership' );
             }    
@@ -200,7 +211,7 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
         if ( $params['membership_type'] ) {
             // we do this in case the user has hit the forward/back button
             require_once 'CRM/Member/DAO/MembershipBlock.php';
-            $dao =& new CRM_Member_DAO_MembershipBlock();
+            $dao = new CRM_Member_DAO_MembershipBlock();
             $dao->entity_table = 'civicrm_contribution_page';
             $dao->entity_id = $this->_id; 
             $dao->find(true);
@@ -227,7 +238,7 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
             $params['entity_table']                  = 'civicrm_contribution_page';
             $params['entity_id']                     =  $this->_id;
             
-            $dao =& new CRM_Member_DAO_MembershipBlock();
+            $dao = new CRM_Member_DAO_MembershipBlock();
             $dao->copyValues($params);
             $dao->save();
         }

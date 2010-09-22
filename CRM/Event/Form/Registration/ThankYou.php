@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -29,7 +30,7 @@
  *
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -52,12 +53,14 @@ class CRM_Event_Form_Registration_ThankYou extends CRM_Event_Form_Registration
         parent::preProcess( );
         $this->_params      = $this->get( 'params' );
         $this->_lineItem    = $this->get( 'lineItem' );
+        $this->_part        = $this->get( 'part' );
         $this->_totalAmount = $this->get( 'totalAmount' );
         $this->_receiveDate = $this->get( 'receiveDate' );
         $this->_trxnId      = $this->get( 'trxnId' );
         $finalAmount = $this->get( 'finalAmount' );
         $this->assign('finalAmount',  $finalAmount); 
         $participantInfo = $this->get( 'participantInfo' );
+        $this->assign('part', $this->_part);
         $this->assign( 'participantInfo', $participantInfo ); 
         $customGroup = $this->get('customProfile');
         $this->assign( 'customProfile',$customGroup );
@@ -120,13 +123,20 @@ class CRM_Event_Form_Registration_ThankYou extends CRM_Event_Form_Registration
         foreach ($fields as $name => $dontCare ) {
             if ( isset($this->_params[0][$name]) ) {
                 $defaults[$name] = $this->_params[0][$name];
-                if ( $name == 'greeting_type' ) { 
-                    if ( $defaults['greeting_type'] ==  $this->_greetingTypeValue ) {
-                        $defaults['custom_greeting'] = $this->_params[0]['custom_greeting'];
+                if ( substr( $name, 0, 7 ) == 'custom_' ) {
+                    $timeField = "{$name}_time";
+                    if ( isset( $this->_params[0][ $timeField ] ) ) {
+                        $defaults[ $timeField ] = $this->_params[0][ $timeField ];
                     }
+                } else if ( in_array($name, array('addressee', 'email_greeting', 'postal_greeting'))
+                            && CRM_Utils_Array::value($name.'_custom', $this->_params[0]) ) { 
+                    $defaults[$name.'_custom'] = $this->_params[0][$name.'_custom'];
                 }
             }
         }
+       
+        $this->_submitValues = array_merge( $this->_submitValues, $defaults );
+              
         $this->setDefaults( $defaults );
 
         require_once 'CRM/Friend/BAO/Friend.php';
@@ -160,6 +170,24 @@ class CRM_Event_Form_Registration_ThankYou extends CRM_Event_Form_Registration
         }
         $this->assign( 'isOnWaitlist', $isOnWaitlist );
         $this->assign( 'isRequireApproval', $isRequireApproval );
+        
+        
+        // Assign Participant Count to Lineitem Table
+        if ( $this->_priceSetId ) {
+            $query = "SELECT count from civicrm_price_field where price_set_id = %1 ";
+            $params = array( 1 => array( $this->_priceSetId, 'Integer' ));
+            $dao = CRM_Core_DAO::executeQuery( $query, $params );
+            $participantCount = array();
+            while ( $dao->fetch() ) {
+                if ( ! empty( $dao->count ) ){
+                    $participantCount[] = $dao->count;
+                } 
+            }
+            
+            if ( !empty( $participantCount ) ) {
+                $this->assign( 'participantCount', $participantCount );
+            }
+        }
         
         // can we blow away the session now to prevent hackery
         $this->controller->reset( );

@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -49,30 +50,28 @@ class CRM_Contact_Form_Edit_Address
      * @access public
      * @static
      */
-    static function buildQuickForm( &$form ) 
+    static function buildQuickForm( &$form, $addressBlockCount = null ) 
     {
-        //, &$location, $locationId, $countryDefault = null
-        
-        $blockId    = ( $form->get( 'Address_Block_Count' ) ) ? $form->get( 'Address_Block_Count' ) : 1;
-        $maxBlocks  = ( $form->get( 'maxLocationBlocks'   ) ) ? $form->get( 'maxLocationBlocks'   ) : 1;
-        $addMoreAddress = false;
-        if ( $maxBlocks >=  $blockId + 1 ) {
-            $addMoreAddress = true;
-        }
-        $form->assign( 'addMoreAddress', $addMoreAddress ); 
-        
-        // only add hidden element when processing first block 
-        // for remaining blocks we'll calculate at run time w/ jQuery. 
-        if ( $blockId == 1 ) {
-            $form->addElement( 'hidden', 'hidden_Address_Instances', $blockId, array( 'id' => 'hidden_Address_Instances' ) );
+
+        // passing this via the session is AWFUL. we need to fix this
+        if ( ! $addressBlockCount ) {
+            $blockId = ( $form->get( 'Address_Block_Count' ) ) ? $form->get( 'Address_Block_Count' ) : 1;
+        } else {
+            $blockId = $addressBlockCount;
         }
         
+        $config = CRM_Core_Config::singleton( );
+        $countryDefault = $config->defaultContactCountry;
+        
+        $form->applyFilter('__ALL__','trim');
+   
+        $js = array( 'onChange' => 'checkLocation( this.id );');
         $form->addElement('select',
                           "address[$blockId][location_type_id]",
                           ts( 'Location Type' ),
-                          array( '' => ts( '- select -' ) ) + CRM_Core_PseudoConstant::locationType( ) );
+                          array( '' => ts( '- select -' ) ) + CRM_Core_PseudoConstant::locationType( ), $js );
         
-        $js = array( 'id' => "Address_".$blockId."_IsPrimary", 'onClick' => 'singleSelect( "Address",'. $blockId . ', "IsPrimary" );');
+        $js = array( 'id' => "Address_".$blockId."_IsPrimary", 'onClick' => 'singleSelect( this.id );');
         $form->addElement(
                           'checkbox', 
                           "address[$blockId][is_primary]", 
@@ -80,7 +79,7 @@ class CRM_Contact_Form_Edit_Address
                           ts('Primary location for this contact'), 
                           $js );
         
-        $js = array( 'id' => "Address_".$blockId."_IsBilling", 'onClick' => 'singleSelect( "Address",'. $blockId . ', "IsBilling" );');
+        $js = array( 'id' => "Address_".$blockId."_IsBilling", 'onClick' => 'singleSelect( this.id );');
         $form->addElement(
                           'checkbox', 
                           "address[$blockId][is_billing]", 
@@ -90,11 +89,6 @@ class CRM_Contact_Form_Edit_Address
         
         require_once 'CRM/Core/BAO/Preferences.php';
         $addressOptions = CRM_Core_BAO_Preferences::valueOptions( 'address_options', true, null, true );
-        
-        $config =& CRM_Core_Config::singleton( );
-        if ( $countryDefault == null ) {
-            $countryDefault = $config->defaultContactCountry;
-        }
         $attributes = CRM_Core_DAO::getAttribute('CRM_Core_DAO_Address');
         
         $elements = array( 
@@ -109,7 +103,10 @@ class CRM_Contact_Form_Edit_Address
                           'state_province_id'      => array( ts('State / Province')  ,  $attributes['state_province_id'],null ),
                           'country_id'             => array( ts('Country')           ,  $attributes['country_id'], null ), 
                           'geo_code_1'             => array( ts('Latitude') ,  array( 'size' => 9, 'maxlength' => 10 ), null ),
-                          'geo_code_2'             => array( ts('Longitude'),  array( 'size' => 9, 'maxlength' => 10 ), null )
+                          'geo_code_2'             => array( ts('Longitude'),  array( 'size' => 9, 'maxlength' => 10 ), null ),
+                          'street_number'          => array( ts('Street Number')       , $attributes['street_number'], null ),
+                          'street_name'            => array( ts('Street Name')         , $attributes['street_name'], null ),
+                          'street_unit'            => array( ts('Apt/Unit/Suite')         , $attributes['street_unit'], null )
                           );
 
         $stateCountryMap = array( );
@@ -118,7 +115,14 @@ class CRM_Contact_Form_Edit_Address
 
             $nameWithoutID = strpos( $name, '_id' ) !== false ? substr( $name, 0, -3 ) : $name;
             if ( ! CRM_Utils_Array::value( $nameWithoutID, $addressOptions ) ) {
-                continue;
+                $continue = true;
+                if ( in_array( $nameWithoutID, array('street_number', 'street_name', 'street_unit' ) ) &&
+                     CRM_Utils_Array::value( 'street_address_parsing', $addressOptions ) ) {
+                    $continue = false;
+                }
+                if ( $continue ) {
+                    continue;
+                }
             }
             
             if ( ! $attributes ) {
@@ -133,11 +137,11 @@ class CRM_Contact_Form_Edit_Address
             if ( ! $select ) {
                 if ( $name == 'country_id' || $name == 'state_province_id' ) {
                     if ( $name == 'country_id' ) {
-                        $stateCountryMap[$locationId]['country'] = "address_{$blockId}_{$name}";
+                        $stateCountryMap[$blockId]['country'] = "address_{$blockId}_{$name}";
                         $selectOptions = array('' => ts('- select -')) + 
                             CRM_Core_PseudoConstant::country( );
                     } else {
-                        $stateCountryMap[$locationId]['state_province'] = "address_{$blockId}_{$name}";
+                        $stateCountryMap[$blockId]['state_province'] = "address_{$blockId}_{$name}";
                         if ( $countryDefault ) {
                             $selectOptions = array('' => ts('- select -')) +
                                 CRM_Core_PseudoConstant::stateProvinceForCountry( $countryDefault );
@@ -168,7 +172,53 @@ class CRM_Contact_Form_Edit_Address
         }
         
         require_once 'CRM/Core/BAO/Address.php';
+        require_once 'CRM/Core/BAO/CustomGroup.php';
         CRM_Core_BAO_Address::addStateCountryMap( $stateCountryMap );
+
+        $entityId = null;
+        if ( !empty( $form->_values['address'] ) ) {
+            $entityId = $form->_values['address'][$blockId]['id'];
+        }
+        // Process any address custom data -
+        $groupTree = CRM_Core_BAO_CustomGroup::getTree( 'Address',
+                                                        $form,
+                                                        $entityId );
+        if ( isset($groupTree) && is_array($groupTree) ) {
+            // use simplified formatted groupTree
+            $groupTree = CRM_Core_BAO_CustomGroup::formatGroupTree( $groupTree, 1, $form );
+
+            // make sure custom fields are added /w element-name in the format - 'address[$blockId][custom-X]'
+            foreach ( $groupTree as $id => $group ) { 
+                foreach ( $group['fields'] as $fldId => $field ) {
+                    $groupTree[$id]['fields'][$fldId]['element_custom_name'] = $field['element_name'];
+                    $groupTree[$id]['fields'][$fldId]['element_name'] = 
+                        "address[$blockId][{$field['element_name']}]";
+                }
+            }
+            $defaults = array( );
+            CRM_Core_BAO_CustomGroup::setDefaults( $groupTree, $defaults );
+            // For some of the custom fields like checkboxes, the defaults doesn't populate 
+            // in proper format due to the different element-name format - 'address[$blockId][custom-X]'.
+            // Below eval() fixes this issue.
+            $address = array();
+            foreach ( $defaults as $key => $val ) {
+                eval("\${$key} = " . (!is_array($val) ? "'{$val}'" : var_export($val, true)) . ";");
+            }
+            $defaults = array( 'address' => $address );
+            $form->setDefaults( $defaults );
+
+            // we setting the prefix to 'dnc_' below, so that we don't overwrite smarty's grouptree var. 
+            // And we can't set it to 'address_' because we want to set it in a slightly different format.
+            CRM_Core_BAO_CustomGroup::buildQuickForm( $form, $groupTree, false, 1, "dnc_" );
+
+            $template  =& CRM_Core_Smarty::singleton( );
+            $tplGroupTree = $template->get_template_vars( 'address_groupTree' );
+            $tplGroupTree = empty($tplGroupTree) ? array() : $tplGroupTree;
+
+            $form->assign( "address_groupTree", $tplGroupTree + array( $blockId => $groupTree ) );
+            $form->assign( "dnc_groupTree", null ); // unset the temp smarty var that got created
+        }
+        // address custom data processing ends ..
     }
     
     /**
@@ -182,7 +232,7 @@ class CRM_Contact_Form_Edit_Address
      * @access public
      * @static
      */
-    static function formRule( &$fields, &$errors )
+    static function formRule( $fields, $errors )
     {
         // check for state/county match if not report error to user.
         if ( is_array( $fields['address'] ) ) {
@@ -211,7 +261,7 @@ class CRM_Contact_Form_Edit_Address
                 
                 //do check for mismatch countries 
                 if ( $stateProvinceId && $countryId ) {
-                    $stateProvinceDAO =& new CRM_Core_DAO_StateProvince();
+                    $stateProvinceDAO = new CRM_Core_DAO_StateProvince();
                     $stateProvinceDAO->id = $stateProvinceId;
                     $stateProvinceDAO->find(true);
                     if ( $stateProvinceDAO->country_id != $countryId ) {
@@ -226,7 +276,7 @@ class CRM_Contact_Form_Edit_Address
                 
                 //state county validation
                 if ( $stateProvinceId && $countyId ) {
-                    $countyDAO =& new CRM_Core_DAO_County();
+                    $countyDAO = new CRM_Core_DAO_County();
                     $countyDAO->id = $countyId;
                     $countyDAO->find(true);
                     
@@ -245,11 +295,17 @@ class CRM_Contact_Form_Edit_Address
                                     $countryDefaultValue ) {
         $countryID = null;
         if ( isset( $form->_elementIndex[$countryElementName] ) ) {
-            $countryValue = $form->getElementValue( $countryElementName );
-            if ( $countryValue ) {
-                $countryID = $countryValue[0];
-            } else {
+            //get the country id to load states -
+            //first check for submitted value,
+            //then check for user passed value.
+            //finally check for element default val.
+            $submittedVal = $form->getSubmitValue( $countryElementName );
+            if ( $submittedVal ) {
+                $countryID = $submittedVal;
+            } else if ( $countryDefaultValue ) {
                 $countryID = $countryDefaultValue;
+            } else {
+                $countryID = CRM_Utils_Array::value( 0, $form->getElementValue( $countryElementName ) );
             }
         }
         

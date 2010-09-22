@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  *
  */
 
@@ -140,7 +141,7 @@ AND    co.id IN ( $contribIDs )";
         $this->_rows   = array( );
         $attributes    = CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_Contribution' );
         $defaults      = array( );
-        $now           = date( "Y-m-d" );
+        $now           = date( "m/d/Y" );
         $paidByOptions = array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::paymentInstrument( );
         
         while ( $dao->fetch( ) ) {
@@ -161,9 +162,8 @@ AND    co.id IN ( $contribIDs )";
             $this->addRule( "fee_amount_{$row['contribution_id']}", ts('Please enter a valid amount.'), 'money');
             $defaults["fee_amount_{$row['contribution_id']}"] = 0.0;
 
-            $row['trxn_date'] =& $this->addElement('date', "trxn_date_{$row['contribution_id']}",
-                                                   ts('Receipt Date'), CRM_Core_SelectValues::date('activityDate')); 
-            $this->addRule("trxn_date_{$row['contribution_id']}", ts('Select a valid date.'), 'qfDate');
+            $row['trxn_date'] =& $this->addDate( "trxn_date_{$row['contribution_id']}", false, 
+                                                ts('Receipt Date'), array('formatType' => 'activityDate') ); 
             $defaults["trxn_date_{$row['contribution_id']}"] = $now;
 
             $this->add( "text", "check_number_{$row['contribution_id']}", ts('Check Number') );
@@ -199,7 +199,7 @@ AND    co.id IN ( $contribIDs )";
      * @static
      * @access public
      */
-    static function formRule( &$fields ) 
+    static function formRule( $fields ) 
     {
         $seen = $errors = array( );
         foreach ( $fields as $name => $value ) {
@@ -229,7 +229,7 @@ AND    co.id IN ( $contribIDs )";
      * @access public
      * @return None
      */
-    public function postProcess() {
+    public function postProcess() {    
         $params = $this->controller->exportValues( $this->_name );
         $statusID = $params['contribution_status_id'];
 
@@ -243,7 +243,7 @@ AND    co.id IN ( $contribIDs )";
         $contribIDs = implode( ',', $this->_contributionIds );
         $details = self::getDetails( $contribIDs );
 
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
 
         // for each contribution id, we just call the baseIPN stuff 
         foreach ( $this->_rows as $row ) {
@@ -294,7 +294,7 @@ AND    co.id IN ( $contribIDs )";
             } else {
                 $input['trxn_id'] = $contribution->invoice_id;
             }
-            $input['trxn_date'] = CRM_Utils_Date::format( $params["trxn_date_{$row['contribution_id']}"] );
+            $input['trxn_date'] = CRM_Utils_Date::processDate( $params["trxn_date_{$row['contribution_id']}"] );
 
             $baseIPN->completeTransaction( $input, $ids, $objects, $transaction, false );
 

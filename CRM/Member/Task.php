@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -71,14 +72,27 @@ class CRM_Member_Task {
      * @static
      * @access public
      */
-    static function &tasks()
+    static function &tasks( )
     {
-        if (!(self::$_tasks)) {
+        if ( !( self::$_tasks ) ) {
             self::$_tasks = array(
-                                  3  => ts( 'Export Members' ),
-                                  1  => ts( 'Delete Members' ),
-                                  4  => ts( 'Send Email to Contacts' ),
-                                  5  => ts( 'Batch Update Members Via Profile' ),
+                                  1 => array( 'title'  => ts( 'Delete Members' ),
+                                              'class'  => 'CRM_Member_Form_Task_Delete',
+                                              'result' => false ),
+                                  2 => array( 'title'  => ts( 'Print Memberships' ),
+                                              'class'  => 'CRM_Member_Form_Task_Print',
+                                              'result' => false ),
+                                  3 => array( 'title'  => ts( 'Export Members' ),
+                                              'class'  => array( 'CRM_Export_Form_Select',
+                                                                 'CRM_Export_Form_Map' ),
+                                              'result' => false ),
+                                  4 => array( 'title'  => ts( 'Send Email to Contacts' ),
+                                              'class'  => 'CRM_Member_Form_Task_Email',            
+                                              'result' => true ),
+                                  5 => array( 'title'  => ts( 'Batch Update Members Via Profile' ),
+                                              'class'  => array( 'CRM_Member_Form_Task_PickProfile',
+                                                                 'CRM_Member_Form_Task_Batch'),       
+                                              'result' => true ),
                                   );
             
             //CRM-4418, check for delete 
@@ -86,10 +100,33 @@ class CRM_Member_Task {
                 unset( self::$_tasks[1] );
             }
         }
-        asort(self::$_tasks); 
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::searchTasks( 'membership', self::$_tasks );
+        asort( self::$_tasks );
         return self::$_tasks;
     }
-
+    
+    /**
+     * These tasks are the core set of task titles
+     * on members
+     *
+     * @return array the set of task titles 
+     * @static
+     * @access public
+     */
+    static function &taskTitles()
+    {
+        self::tasks( );
+        $titles = array( );
+        foreach ( self::$_tasks as $id => $value ) {
+            // skip Print Membership task
+            if ( $id != 2 ) {
+                $titles[$id] = $value['title'];
+            }
+        }      
+        return $titles;
+    }
+    
     /**
      * show tasks selectively based on the permission level
      * of the user
@@ -101,21 +138,42 @@ class CRM_Member_Task {
      */
     static function &permissionedTaskTitles( $permission ) 
     {
-        $allTasks = self::tasks( );
+        $tasks = array( );
         if ( ( $permission == CRM_Core_Permission::EDIT ) 
              || CRM_Core_Permission::check( 'edit memberships' ) ) {
-            return $allTasks; 
+            $tasks = self::taskTitles( );
         } else {
             $tasks = array( 
-                           3  => self::$_tasks[3],
-                           4  => self::$_tasks[4]
+                           3  => self::$_tasks[3]['title'],
+                           4  => self::$_tasks[4]['title'],
                            );
             //CRM-4418,
             if ( CRM_Core_Permission::check( 'delete in CiviMember' ) ) {
-                $tasks[1] = self::$_tasks[1]; 
+                $tasks[1] = self::$_tasks[1]['title']; 
             }
-            return $tasks;
         }
+        return $tasks;
+    }
+    
+    /**
+     * These tasks are the core set of tasks that the user can perform
+     * on members
+     *
+     * @param int $value
+     *
+     * @return array the set of tasks for a group of members
+     * @static
+     * @access public
+     */
+    static function getTask( $value ) 
+    {
+        self::tasks( );
+        if ( ! $value  || ! CRM_Utils_Array::value( $value, self::$_tasks ) ) {
+            // make the print task by default
+            $value = 2; 
+        }
+        return array( self::$_tasks[$value]['class' ],
+                      self::$_tasks[$value]['result'] );
     }
 }
 

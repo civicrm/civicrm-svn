@@ -45,7 +45,7 @@ class CRM_Core_Payment_PayJunction extends CRM_Core_Payment
        
        $this->_mode             = $mode;
        $this->_paymentProcessor = $paymentProcessor;
-       $this->_processorName    = 'PayJunction';
+       $this->_processorName    = ts('PayJunction');
    }
 
 
@@ -90,6 +90,9 @@ class CRM_Core_Payment_PayJunction extends CRM_Core_Payment
                          'crypt_type' => '7',
                          'cust_id'    => $params['contact_id']
                         );
+
+      // Allow further manipulation of params via custom hooks
+      CRM_Utils_Hook::alterPaymentProcessorParams( $this, $params, $txnArray );
 
       $pjpgTxn = new pjpgTransaction($txnArray);
   

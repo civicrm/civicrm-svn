@@ -5,16 +5,20 @@
  * 
  * Requirements: PHP5, SimpleXML
  *
- * Copyright (c) 2007 PHPIDS group (http://php-ids.org)
+ * Copyright (c) 2008 PHPIDS group (http://php-ids.org)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; version 2 of the license.
+ * PHPIDS is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, version 3 of the License, or 
+ * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * PHPIDS is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with PHPIDS. If not, see <http://www.gnu.org/licenses/>.  
  *
  * PHP version 5.1.6+
  * 
@@ -40,8 +44,10 @@ require_once 'IDS/Log/Interface.php';
       `name` varchar(128) NOT null,
       `value` text NOT null,
       `page` varchar(255) NOT null,
+      `tags` varchar(128) NOT null,
       `ip` varchar(15) NOT null,
       `impact` int(11) unsigned NOT null,
+      `origin` varchar(15) NOT null,
       `created` datetime NOT null,
       PRIMARY KEY  (`id`)
     ) ENGINE=MyISAM ;
@@ -62,7 +68,7 @@ require_once 'IDS/Log/Interface.php';
  * @author    Christian Matthies <ch0012@gmail.com>
  * @author    Mario Heiderich <mario.heiderich@gmail.com>
  * @author    Lars Strojny <lars@strojny.net>
- * @copyright 2007 The PHPIDS Group
+ * @copyright 2007-2009 The PHPIDS Group
  * @license   http://www.gnu.org/licenses/lgpl.html LGPL
  * @version   Release: $Id:Database.php 517 2007-09-15 15:04:13Z mario $
  * @link      http://php-ids.org/
@@ -137,6 +143,7 @@ class IDS_Log_Database implements IDS_Log_Interface
      * @param mixed $config IDS_Init instance | array
      * 
      * @return void
+     * @throws PDOException if a db error occurred
      */
     protected function __construct($config) 
     {
@@ -155,10 +162,10 @@ class IDS_Log_Database implements IDS_Log_Interface
         }
 
         // determine correct IP address
-        if ($_SERVER['REMOTE_ADDR'] != '127.0.0.1') {
-            $this->ip = $_SERVER['REMOTE_ADDR'];
-        } elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $this->ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        } else {
+            $this->ip = $_SERVER['REMOTE_ADDR'];
         }
 
         try {
@@ -173,22 +180,26 @@ class IDS_Log_Database implements IDS_Log_Interface
                     name,
                     value,
                     page,
+					tags,
                     ip,
                     impact,
+                    origin,
                     created
                 )
                 VALUES (
                     :name,
                     :value,
                     :page,
+					:tags,
                     :ip,
                     :impact,
+                    :origin,
                     now()
                 )
             ');
 
         } catch (PDOException $e) {
-            die('PDOException: ' . $e->getMessage());
+            throw new PDOException('PDOException: ' . $e->getMessage());
         }
     }
 
@@ -198,11 +209,12 @@ class IDS_Log_Database implements IDS_Log_Interface
      * This method allows the passed argument to be either an instance of IDS_Init or
      * an array.
      *
-     * @param mixed $config IDS_Init | array
+     * @param  mixed  $config    IDS_Init | array
+     * @param  string $classname the class name to use
      * 
      * @return object $this
      */
-    public static function getInstance($config)
+    public static function getInstance($config, $classname = 'IDS_Log_Database')
     {
         if ($config instanceof IDS_Init) {
             $wrapper = $config->config['Logging']['wrapper'];
@@ -211,7 +223,7 @@ class IDS_Log_Database implements IDS_Log_Interface
         }
 
         if (!isset(self::$instances[$wrapper])) {
-            self::$instances[$wrapper] = new IDS_Log_Database($config);
+            self::$instances[$wrapper] = new $classname($config);
         }
 
         return self::$instances[$wrapper];
@@ -238,16 +250,29 @@ class IDS_Log_Database implements IDS_Log_Interface
      */
     public function execute(IDS_Report $data) 
     {
+        if (!isset($_SERVER['REQUEST_URI'])) {
+            $_SERVER['REQUEST_URI'] = substr($_SERVER['PHP_SELF'], 1);
+            if (isset($_SERVER['QUERY_STRING']) && $_SERVER['QUERY_STRING']) { 
+                $_SERVER['REQUEST_URI'] .= '?' . $_SERVER['QUERY_STRING']; 
+            } 
+        }     	
 
         foreach ($data as $event) {
             $page = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
             $ip   = $this->ip;
+            
+            $name   = $event->getName();
+            $value  = $event->getValue();
+            $impact = $event->getImpact();
+            $tags   = implode(', ', $event->getTags());
 
-            $this->statement->bindParam('name', $event->getName());
-            $this->statement->bindParam('value', $event->getValue());
+            $this->statement->bindParam('name', $name);
+            $this->statement->bindParam('value', $value);
             $this->statement->bindParam('page', $page);
+            $this->statement->bindParam('tags', $tags);
             $this->statement->bindParam('ip', $ip);
-            $this->statement->bindParam('impact', $data->getImpact());
+            $this->statement->bindParam('impact', $impact);
+            $this->statement->bindParam('origin', $_SERVER['SERVER_ADDR']);
 
             if (!$this->statement->execute()) {
 
@@ -262,9 +287,10 @@ class IDS_Log_Database implements IDS_Log_Interface
     }
 }
 
-/*
+/**
  * Local variables:
  * tab-width: 4
  * c-basic-offset: 4
  * End:
+ * vim600: sw=4 ts=4 expandtab
  */

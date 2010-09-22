@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -31,7 +32,7 @@
  * it need to be defined here first.
  * 
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -153,40 +154,22 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
     public $dateformatYear = '%Y';
 
     /**
-     * String format for a time only date
+     * Display format for time
      * @var string
      */
     public $dateformatTime = '%l:%M %P';
 
     /**
-     * String format for date QuickForm drop-downs
+     * Input format for time 
      * @var string
      */
-    public $dateformatQfDate = '%b %d %Y';
+    public $timeInputFormat = 1;
 
     /**
-     * String format for date and time QuickForm drop-downs
+     * Input format for date plugin
      * @var string
      */
-    public $dateformatQfDatetime = '%b %d %Y, %I : %M %P';
-
-    /**
-     * String format for date-month
-     * @var string
-     */
-    public $dateformatMonthVar = 'M';
-  
-    /**
-     * String format for date-month
-     * @var string
-     */
-    public $datetimeformatMonthVar = 'M';
-
-    /**
-     * String format for date-month
-     * @var string
-     */
-    public $datetimeformatHourVar = 'h';
+    public $dateInputFormat = 'mm/dd/yy';
 
     /**
      * Month and day on which fiscal year starts.
@@ -214,19 +197,13 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
      * Format for monetary amounts
      * @var string
      */
-    public $lcMonetary = 'en_US';
-
-    /**
-     * Format for monetary amounts
-     * @var string
-     */
     public $currencySymbols = '';
     
     /**
      * Format for monetary amounts
      * @var string
      */
-    public $defaultCurrencySymbol = null;
+    public $defaultCurrencySymbol = '$';
    
     /**
      * Monetary decimal point character
@@ -271,6 +248,7 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
     public $userFrameworkBaseURL        = null;
     public $userFrameworkResourceURL    = null;
     public $userFrameworkFrontend       = false;
+    public $userFrameworkLogging        = false;
 
     /**
      * the handle for import file size 
@@ -278,7 +256,15 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
      */
     public $maxImportFileSize = 1048576;
     public $maxAttachments    = 3;
+    public $maxFileSize       = 2;
     public $civiHRD           = 0;
+
+    /**
+     * The custom locale strings. Note that these locale strings are stored
+     * in a separate column in civicrm_domain
+     * @var array
+     */
+    public $localeCustomStrings = null;
 
     /**
      * Map Provider 
@@ -308,6 +294,11 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
      */
     public $mapGeoCoding = 1;
     
+    /**
+     * Whether deleted contacts should be moved to trash instead
+     * @var boolean
+     */
+    public $contactUndelete = true;
 
     /**
      * Whether CiviCRM should check for newer versions
@@ -390,6 +381,16 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
     public $smartGroupCacheTimeout = 0;
 
     public $defaultSearchProfileID = null;
+    
+    /**
+     * Dashboard timeout
+     */
+    public $dashboardCacheTimeout = 1440;    
+    
+    /**
+     * flag to indicate if acl cache is NOT to be reset 
+     */
+    public $doNotResetCache       = 0;    
 
     /**
      * Optimization related variables
@@ -397,11 +398,6 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
     public $includeAlphabeticalPager = 1;
     public $includeOrderByClause     = 1;
     public $oldInputStyle            = 1;
-
-    /**
-     * Should we include dojo?
-     */
-    public $includeDojo              = 1;
 
     /**
      * should we disbable key generation for forms
@@ -438,17 +434,17 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
      * @param
      * @return string
      */
-    public function defaultCurrencySymbol( ) {
+    public function defaultCurrencySymbol( $defaultCurrency = null ) {
         static $cachedSymbol = null;
-        if ( ! $cachedSymbol ) {
-            if ( $this->defaultCurrency ) {
+        if ( ! $cachedSymbol || $defaultCurrency ) {
+            if ( $this->defaultCurrency || $defaultCurrency ) {
                 require_once "CRM/Core/PseudoConstant.php";
                 $currencySymbolName = CRM_Core_PseudoConstant::currencySymbols( 'name' );
                 $currencySymbol     = CRM_Core_PseudoConstant::currencySymbols( );
                 
                 $this->currencySymbols = array_combine( $currencySymbolName, $currencySymbol );
-                
-                $cachedSymbol = CRM_Utils_Array::value($this->defaultCurrency, $this->currencySymbols, '');
+                $currency     = $defaultCurrency ? $defaultCurrency : $this->defaultCurrency;
+                $cachedSymbol = CRM_Utils_Array::value( $currency, $this->currencySymbols, '');
             } else {
                 $cachedSymbol = '$';
             }
@@ -532,33 +528,6 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
         return $cachedProvinceLimit;
     }
 
-    /**
-     * Provide cached default monetary decimal point and monetary thousand separator.
-     *
-     * @param
-     * @return string
-     */
-    public function defaultMonetaryPointSeparator( $lcMonetary ) 
-    {
-        static $cachedDecPoint = array( );
-        if ( empty($cachedDecPoint) ) {
-            if ( $this->defaultCurrency ) {
-                $lcMonetary = $lcMonetary.'.utf8';
-                //set locale settings for selected monetary language.
-                setlocale( LC_ALL, $lcMonetary );
-                //get locale settings for selected monetary language.
-                $localeInfo = localeconv();
-                $cachedDecPoint['decimal_point'] = $this->monetaryDecimalPoint      = CRM_Utils_Array::value( 'mon_decimal_point', $localeInfo );
-                $cachedDecPoint['thousands_sep'] = $this->monetaryThousandSeparator = CRM_Utils_Array::value( 'mon_thousands_sep', $localeInfo );
-            } else {
-                $cachedDecPoint = array( 'decimal_point' => '.',
-                                         'thousands_sep' => ','
-                                         );
-            }
-        }
-        return $cachedDecPoint;
-    }
-    
 } // end CRM_Core_Config
 
 

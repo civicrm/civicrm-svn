@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.3                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -42,7 +43,7 @@ class CRM_Report_Utils_Report {
                                                       $instanceID,
                                                       'report_id' );
         } else {
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             $args   = explode( '/', $_GET[$config->userFrameworkURLVar] );
 
             // remove 'civicrm/report' from args
@@ -80,6 +81,23 @@ WHERE  report_id = %1";
             $valId[$optionVal] = CRM_Core_DAO::singleValueQuery( $sql, $params );
         }
         return $valId[$optionVal];
+    }
+
+    static function getInstanceIDForPath( $path = null ) {
+        static $valId = array();
+
+ 	 // if $path is null, try to get it from url
+	 $path = self::getInstancePath();
+
+	 if ( $path && ! array_key_exists($path, $valId) ) {
+	     $sql = "
+SELECT MAX(id) FROM civicrm_report_instance
+WHERE  TRIM(BOTH '/' FROM CONCAT(report_id, '/', name)) = %1";
+
+	     $params = array( 1 => array( $path, 'String' ) );
+	     $valId[$path] = CRM_Core_DAO::singleValueQuery( $sql, $params );
+	 }
+	 return $valId[$path];
     }
 
     static function getNextUrl( $urlValue, $query = 'reset=1', $absolute = false, $instanceID = null ) {
@@ -130,25 +148,19 @@ WHERE  inst.report_id = %1";
                                       $params,
                                       $instanceInfo );
 
-        $from          = '"' . $domainEmailName . '" <' . $domainEmailAddress . '>';
-        $toDisplayName = "";//$domainEmailName;
-        $toEmail       = CRM_Utils_Array::value( 'email_to', $instanceInfo );
-        $ccEmail       = CRM_Utils_Array::value( 'email_cc', $instanceInfo );
-        $subject       = CRM_Utils_Array::value( 'email_subject', $instanceInfo );
-        $attachments   = CRM_Utils_Array::value( 'attachments', $instanceInfo );
+        $params                = array( );
+        $params['groupName'  ] = 'Report Email Sender';
+        $params['from'       ] = '"' . $domainEmailName . '" <' . $domainEmailAddress . '>';
+        $params['toName'     ] = ""; //$domainEmailName;
+        $params['toEmail'    ] = CRM_Utils_Array::value( 'email_to', $instanceInfo );
+        $params['cc'         ] = CRM_Utils_Array::value( 'email_cc', $instanceInfo );
+        $params['subject'    ] = CRM_Utils_Array::value( 'email_subject', $instanceInfo );
+        $params['attachments'] = CRM_Utils_Array::value( 'attachments', $instanceInfo );
+        $params['text'       ] = '';
+        $params['html'       ] = $fileContent;
 
-        require_once 'Mail/mime.php';
         require_once "CRM/Utils/Mail.php";
-        return CRM_Utils_Mail::send( $from, 
-                                     $toDisplayName, 
-                                     $toEmail, 
-                                     $subject, 
-                                     '',
-                                     $ccEmail, 
-                                     null,  
-                                     null, 
-                                     $fileContent, 
-                                     $attachments );
+        return CRM_Utils_Mail::send( $params );
     }
 
     static function export2csv( &$form, &$rows ) {
@@ -159,7 +171,7 @@ WHERE  inst.report_id = %1";
         header('Content-Disposition: attachment; filename=Report_' . $_SERVER['REQUEST_TIME'] . '.csv');
                   
         require_once 'CRM/Utils/Money.php';
-        $config    =& CRM_Core_Config::singleton( );
+        $config    = CRM_Core_Config::singleton( );
           
         //Output headers if this is the first row.
         $columnHeaders = array_keys( $form->_columnHeaders );
@@ -202,7 +214,7 @@ WHERE  inst.report_id = %1";
             //Output the data row.
             echo implode(',', $displayRows) . "\n";
         }
-        exit( );
+        CRM_Utils_System::civiExit( );
     }
 
     static function add2group( &$form , $groupID ) {
@@ -225,7 +237,7 @@ WHERE  inst.report_id = %1";
     }
     static function getInstanceID() {
 
-        $config    =& CRM_Core_Config::singleton( );
+        $config    = CRM_Core_Config::singleton( );
         $arg       = explode( '/', $_GET[$config->userFrameworkURLVar] );
         
         require_once 'CRM/Utils/Rule.php';
@@ -236,6 +248,19 @@ WHERE  inst.report_id = %1";
             }
         }
     }
+
+    static function getInstancePath() {
+        $config    = CRM_Core_Config::singleton( );
+        $arg       = explode( '/', $_GET[$config->userFrameworkURLVar] );
+        
+        if ( $arg[1] == 'report' &&
+             CRM_Utils_Array::value( 2, $arg ) == 'instance' ) {
+	     unset($arg[0], $arg[1], $arg[2]);
+	     $path = trim( CRM_Utils_Type::escape( implode( '/', $arg ), 'String' ), '/' );
+	     return $path;
+        }
+    }
+
     static function isInstancePermissioned( $instanceId ) {
         if ( ! $instanceId ) {
             return true;

@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -62,20 +63,22 @@ class CRM_Friend_Form_Event extends CRM_Event_Form_ManageEvent
      */
     public function setDefaultValues( ) 
     {   
-        $defaults = array( );         
+        $defaults = array( );
         
         if ( isset($this->_id)  ) {
             $defaults['entity_table'] = 'civicrm_event';            
             $defaults['entity_id']    = $this->_id; 
             CRM_Friend_BAO_Friend::getValues($defaults);
-            $this->_friendId = CRM_Utils_Array::value( 'id', $defaults );
-        } 
-       
+            $this->_friendId          = CRM_Utils_Array::value( 'id', $defaults );
+            $defaults['tf_title']     = CRM_Utils_Array::value( 'title', $defaults );
+            $defaults['tf_is_active'] = CRM_Utils_Array::value( 'is_active', $defaults );
+        }
+        
         if ( !$this->_friendId ) {
             $defaults['intro'] = ts('Help us spread the word about this event. Use the space below to personalize your email message - let your friends know why you\'re attending. Then fill in the name(s) and email address(es) and click \'Send Your Message\'.');
             $defaults['suggested_message'] = ts('Thought you might be interested in checking out this event. I\'m planning on attending.');
             $defaults['thankyou_text'] = ts('Thanks for spreading the word about this event to your friends.');
-            $defaults['title'] = ts('Tell a Friend');
+            $defaults['tf_title'] = ts('Tell a Friend');
             $defaults['thankyou_title'] = ts('Thanks for Spreading the Word');
         }
         
@@ -103,15 +106,20 @@ class CRM_Friend_Form_Event extends CRM_Event_Form_ManageEvent
     public function postProcess() 
     {
         // get the submitted form values.  
-        $formValues = $this->controller->exportValues( $this->_name );     
+        $formValues = $this->controller->exportValues( $this->_name );
+
+        // let's unset event id
+        unset($formValues['id']);
         
-        $formValues['entity_table'     ] = 'civicrm_event';
-        $formValues['entity_id'        ] = $this->_id;
+        $formValues['entity_table'] = 'civicrm_event';
+        $formValues['entity_id'   ] = $this->_id;
+        $formValues['title'       ] = $formValues['tf_title'];
+        $formValues['is_active'   ] = CRM_Utils_Array::value( 'tf_is_active', $formValues, false );
 
         if ( ($this->_action & CRM_Core_Action::UPDATE) && $this->_friendId ) {
             $formValues['id'] = $this->_friendId ;
         }
-
+        
         CRM_Friend_BAO_Friend::addTellAFriend( $formValues );
 
         parent::endPostProcess( );

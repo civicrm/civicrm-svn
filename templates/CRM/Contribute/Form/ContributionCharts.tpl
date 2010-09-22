@@ -1,52 +1,99 @@
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
 {* Display monthly and yearly contributions using Google charts (Bar and Pie) *} 
 {if $hasContributions}
+<div id="chartData">
 <table class="chart">
-<tr>
- {if $monthlyData}
-     <td><img src="{$monthFilePath}" usemap="#monthMap"/>
-	<map id="monthMap" name="monthMap">
-	{foreach from=$monthCoords item=values key=field}
-	   {if $chartType eq 'pie'}   
-	       {foreach from=$values item=coordinates}
-	       <area shape="{$shape}" coords="{$coordinates}" href="{$monthUrls.$field}" title="{ts 1=$field}Contribution(s) for the month of %1{/ts}"/>
-	       {/foreach}
-	   {else}	
-	        <area shape="{$shape}" coords="{$values}" href="{$monthUrls.$field}" title="{ts 1=$field}Contribution(s) for the month of %1{/ts}"/>
-	   {/if}
-	{/foreach}
-	</map>
+  <tr class="crm-contribution-form-block-open_flash_chart">
+     <td>
+         {if $hasByMonthChart}
+      	     {* display monthly chart *}
+             <div id="open_flash_chart_by_month"></div>
+         {else}
+	     {ts}There were no contributions during the selected year.{/ts}  
+         {/if}	
+     </td> 
+     <td>
+       	 {* display yearly chart *}
+         <div id="open_flash_chart_by_year"></div>
      </td>
- {else}
-     <td>{ts}There were no contributions during the selected year.{/ts} </td>
- {/if}
-     <td><img src="{$yearFilePath}" usemap="#yearMap"/>
-	<map id="yearMap" name="yearMap">
-	{foreach from=$yearCoords item=values key=field}
-	   {if $chartType eq 'pie'}   
-	       {foreach from=$values item=coordinates}
-	       <area shape="{$shape}" coords="{$coordinates}" href="{$yearUrls.$field}" title="{ts 1=$field}Contribution(s) for the year of %1{/ts}"/>
-	       {/foreach}
-	   {else}
-	       <area shape="{$shape}" coords="{$values}" href="{$yearUrls.$field}" title="{ts 1=$field}Contribution(s) for the year of %1{/ts}"/>	
-	   {/if}
-	{/foreach}
-	</map>
-     </td>
-</tr>
+  </tr>
 </table>
-<table  class="form-layout-compressed" >
+<div class="form-layout-compressed" >
+<table >
       <td class="label">{$form.select_year.label}</td><td>{$form.select_year.html}</td> 
       <td class="label">{$form.chart_type.label}</td><td>{$form.chart_type.html}</td> 
-      <td class="html-adjust">
-        {$form.buttons.html}<br />
-        <span class="add-remove-link"><a href="{crmURL p="civicrm/contribute" q="reset=1"}">{ts}Table View{/ts}...</a></span>
-      </td> 
 </table> 
+</div>
 {else}
  <div class="messages status"> 
-      <dl> 
-        <dd>{ts}There are no live contribution records to display.{/ts}</dd> 
-      </dl> 
+    {ts}There are no live contribution records to display.{/ts}  
  </div>
 {/if}
 
+{if $hasOpenFlashChart}
+{include file="CRM/common/openFlashChart.tpl"}
+
+{literal}
+<script type="text/javascript">
+   
+  cj( function( ) {
+      buildChart( );
+  });
+
+  function buildChart( ) {
+     var chartData = {/literal}{$openFlashChartData}{literal};	
+     cj.each( chartData, function( chartID, chartValues ) {
+
+	 var xSize   = eval( "chartValues.size.xSize" );
+	 var ySize   = eval( "chartValues.size.ySize" );
+	 var divName = eval( "chartValues.divName" );
+
+	 createSWFObject( chartID, divName, xSize, ySize, 'loadData' );  
+     });
+  }
+  
+  function loadData( chartID ) {
+     var allData = {/literal}{$openFlashChartData}{literal};
+     var data    = eval( "allData." + chartID + ".object" );
+     return JSON.stringify( data );
+  }
+ 
+  function byMonthOnClick( barIndex ) {
+     var allData = {/literal}{$openFlashChartData}{literal};
+     var url     = eval( "allData.by_month.on_click_urls.url_" + barIndex );
+     if ( url ) window.location = url;
+  }
+
+  function byYearOnClick( barIndex ) {
+     var allData = {/literal}{$openFlashChartData}{literal};
+     var url     = eval( "allData.by_year.on_click_urls.url_" + barIndex );
+     if ( url ) window.location = url;
+  }
+
+ </script>
+{/literal}
+{/if}

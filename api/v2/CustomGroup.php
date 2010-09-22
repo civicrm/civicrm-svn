@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -31,7 +32,7 @@
  * @package CiviCRM_APIv2
  * @subpackage API_CustomGroup
  *
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * @version $Id$
  */
 
@@ -141,7 +142,7 @@ function civicrm_custom_group_delete($params)
     }
     // convert params array into Object
     require_once 'CRM/Core/DAO/CustomGroup.php';
-    $values =& new CRM_Core_DAO_CustomGroup( );
+    $values = new CRM_Core_DAO_CustomGroup( );
     $values->id = $params['id'];
     $values->find(true);
     
@@ -231,23 +232,9 @@ function civicrm_custom_field_delete( $params )
     if ( ! CRM_Utils_Array::value( 'customFieldId', $params['result'] ) ) {
         return civicrm_create_error( 'Invalid or no value for Custom Field ID' );
     }
-    
-    if ( CRM_Utils_Array::value('optionValueId', $params['result'] ) ) {
-        require_once 'CRM/Core/BAO/OptionValue.php';
-        $optionValue =& new CRM_Core_DAO_OptionValue( );
-        $optionValue->id = $params['result']['optionValueId'];
-        $optionValue->delete();
-    }
-    
-    if ( CRM_Utils_Array::value('optionGroupId', $params['result'] ) ) {
-        require_once 'CRM/Core/BAO/OptionGroup.php';
-        $optionValue =& new CRM_Core_DAO_OptionValue( );
-        $optionValue->id = $params['result']['optionGroupId'];
-        $optionValue->delete();
-    }
-    
+
     require_once 'CRM/Core/DAO/CustomField.php';
-    $field =& new CRM_Core_DAO_CustomField( );
+    $field = new CRM_Core_DAO_CustomField( );
     $field->id = $params['result']['customFieldId'];
     $field->find(true);
     

@@ -1,7 +1,7 @@
 <?php
 
 ini_set( 'include_path', '.' . PATH_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'packages' . PATH_SEPARATOR . '..' );
-ini_set( 'memory_limit', '256M' );
+ini_set( 'memory_limit', '512M' );
 
 $versionFile = "version.xml";
 $versionXML  =& parseInput( $versionFile );
@@ -26,6 +26,15 @@ Alternatively you can get a version of CiviCRM that matches your PHP version
     exit( );
 }
 
+// default cms is 'drupal', if not specified 
+$cms = isset($argv[3]) ? strtolower($argv[3]) : 'drupal';
+if ( !in_array($cms, array('drupal', 'standalone', 'joomla')) ) {
+    echo "Config file for '{$cms}' not known.";
+    exit();
+} else if ( $cms !== 'joomla' ) {
+    copy("../{$cms}/civicrm.config.php.{$cms}", '../civicrm.config.php');
+}
+
 require_once 'Smarty/Smarty.class.php';
 require_once 'PHP/Beautifier.php';
 
@@ -41,8 +50,9 @@ function createDir( $dir, $perm = 0755 ) {
     }
 }
 
-$smarty =& new Smarty( );
+$smarty = new Smarty( );
 $smarty->template_dir = './templates';
+$smarty->plugins_dir  = array( '../packages/Smarty/plugins', '../CRM/Core/Smarty/plugins' );
 
  if ( isset ( $_SERVER['TMPDIR'] ) ) {
      $tempDir = $_SERVER['TMPDIR'];
@@ -75,7 +85,7 @@ $phpCodePath = '../';
 $tplCodePath = '../templates/';
 
 echo "Parsing input file $file\n";
-$dbXML =& parseInput( $file );
+$dbXML = parseInput( $file );
 //print_r( $dbXML );
 
 echo "Extracting database information\n";
@@ -90,8 +100,25 @@ resolveForeignKeys( $tables, $classNames );
 $tables = orderTables( $tables );
 
 //echo "\n\n\n\n\n*****************************************************************************\n\n";
-// print_r($tables);
-// exit(1);
+//print_r(array_keys($tables));
+//exit(1);
+
+echo "Generating tests truncate file\n";
+
+$truncate = '<?xml version="1.0" encoding="UTF-8" ?>
+<!--  Truncate all tables that will be used in the tests  -->
+<dataset>';
+$tbls = array_keys($tables);
+foreach( $tbls as $d => $t ) {
+    $truncate = $truncate . "\n  <$t />\n";
+}
+
+$truncate = $truncate . "</dataset>\n";
+$ft = fopen( $sqlCodePath . "../tests/phpunit/CiviTest/truncate.xml", "w" );
+fputs( $ft, $truncate );
+fclose( $ft );
+unset( $ft );
+unset( $truncate );
 
 $smarty->assign_by_ref( 'database', $database );
 $smarty->assign_by_ref( 'tables'  , $tables   );
@@ -116,6 +143,12 @@ $fd = fopen( $sqlCodePath . "civicrm_drop.mysql", "w" );
 fputs( $fd, $sql );
 fclose($fd);
 
+echo "Generating navigation file\n";
+$fd  = fopen( $sqlCodePath . "civicrm_navigation.mysql", "w" );
+$sql = $smarty->fetch( 'civicrm_navigation.tpl' );
+fputs( $fd, $sql );
+fclose($fd);
+
 // write the civicrm data file
 // and translate the {ts}-tagged strings
 $smarty->clear_all_assign();
@@ -134,19 +167,26 @@ if (file_exists($localeDir)) {
 }
 if (!in_array('en_US', $locales)) array_unshift($locales, 'en_US');
 
+// CRM-5308 / CRM-3507 - we need {localize} to work in the templates
+require_once 'CRM/Core/Smarty/plugins/block.localize.php';
+$smarty->register_block('localize', 'smarty_block_localize');
+
 global $tsLocale;
 foreach ($locales as $locale) {
     echo "Generating data files for $locale\n";
     $tsLocale = $locale;
     $smarty->assign('locale', $locale);
 
-    $data = '';
-    $data .= $smarty->fetch('civicrm_country.tpl');
-    $data .= $smarty->fetch('civicrm_state_province.tpl');
-    $data .= $smarty->fetch('civicrm_currency.tpl');
-    $data .= $smarty->fetch('civicrm_data.tpl');
+    $data   = array();
+    $data[] = $smarty->fetch('civicrm_country.tpl');
+    $data[] = $smarty->fetch('civicrm_state_province.tpl');
+    $data[] = $smarty->fetch('civicrm_currency.tpl');
+    $data[] = $smarty->fetch('civicrm_data.tpl');
+    $data[] = $smarty->fetch('civicrm_navigation.tpl');
 
-    $data .= " UPDATE civicrm_domain SET version = '$db_version';";
+    $data[] = " UPDATE civicrm_domain SET version = '$db_version';";
+
+    $data = implode("\n", $data);
 
     // write the initialize base-data sql script
     $filename = 'civicrm_data';
@@ -170,14 +210,12 @@ echo "\ncivicrm_domain.version := $db_version\n\n";
 
 $tsLocale = 'en_US';
 
-$sample  = file_get_contents( $smarty->template_dir . '/civicrm_sample.tpl' );
-$sample .= file_get_contents( $smarty->template_dir . '/civicrm_acl.tpl' );
-$fd = fopen( $sqlCodePath . "civicrm_sample.mysql", "w" );
-fputs( $fd, $sample );
-fclose( $fd );
+$sample  = $smarty->fetch('civicrm_sample.tpl');
+$sample .= $smarty->fetch('civicrm_acl.tpl');
+file_put_contents($sqlCodePath . 'civicrm_sample.mysql', $sample);
 
 
-$beautifier =& new PHP_Beautifier(); // create a instance
+$beautifier = new PHP_Beautifier(); // create a instance
 $beautifier->addFilter('ArrayNested');
 $beautifier->addFilter('Pear'); // add one or more filters
 $beautifier->addFilter('NewLines', array( 'after' => 'class, public, require, comment' ) ); // add one or more filters
@@ -226,15 +264,13 @@ foreach ($tables as $table) {
         }
     }
 }
-$columns = serialize($columns);
-$indices = serialize($indices);
-$beautifier->setInputString(
-    file_get_contents("$phpCodePath/header.txt") . "
-    class CRM_Core_I18n_SchemaStructure {
-        static function &columns() { static \$result = null; if (!\$result) \$result = unserialize('$columns');     return \$result; }
-        static function &indices() { static \$result = null; if (!\$result) \$result = unserialize('$indices');     return \$result; }
-        static function &tables()  { static \$result = null; if (!\$result) \$result = array_keys(self::columns()); return \$result; }
-    }");
+
+$smarty->clear_all_cache();
+$smarty->clear_all_assign();
+$smarty->assign_by_ref('columns', $columns);
+$smarty->assign_by_ref('indices', $indices);
+
+$beautifier->setInputString($smarty->fetch('schema_structure.tpl'));
 $beautifier->setOutputFile("$phpCodePath/CRM/Core/I18n/SchemaStructure.php");
 $beautifier->process();
 $beautifier->save();
@@ -248,6 +284,14 @@ if (isset($argv[2]) and $argv[2] != '') {
 }
 file_put_contents("$tplCodePath/CRM/common/version.tpl", $svnversion);
 
+echo "Generating civicrm-version file\n";
+$smarty->assign('db_version',$db_version);
+$smarty->assign('cms',ucwords($cms));
+$fd  = fopen( $phpCodePath . "civicrm-version.txt", "w" );
+$sql = $smarty->fetch( 'civicrm_version.tpl' );
+fputs( $fd, $sql );
+fclose($fd);
+
 // unlink the templates_c directory
 foreach(glob($tempDir . '/templates_c/*') as $tempFile) {
   unlink($tempFile);
@@ -255,7 +299,8 @@ foreach(glob($tempDir . '/templates_c/*') as $tempFile) {
 rmdir($tempDir . '/templates_c');
 
 function &parseInput( $file ) {
-    $dom = DomDocument::load( $file );
+    $dom = new DomDocument( );
+    $dom->load( $file );
     $dom->xinclude( );
     $dbXML = simplexml_import_dom( $dom );
     return $dbXML;
@@ -318,6 +363,7 @@ function resolveForeignKey( &$tables, &$classNames, $name ) {
         }
         $tables[$name]['foreignKey'][$fkey]['className'] = $classNames[$ftable];
         $tables[$name]['foreignKey'][$fkey]['fileName']  = str_replace( '_', '/', $classNames[$ftable] ) . '.php';
+        $tables[$name]['fields'][$fkey]['FKClassName' ] = $classNames[$ftable];
     }
     
 }
@@ -421,7 +467,7 @@ function getTable( $tableXML, &$database, &$tables ) {
             } 
 
             // check if hrd field and hrd is enabled to include
-            if ( value( 'hrd', $fieldXML, 0 ) == 1 &&
+            if ( value( 'hrd', $indexXML, 0 ) == 1 &&
                  ! $config->civiHRD ) {
                 continue;
             }
@@ -476,6 +522,7 @@ function getField( &$fieldXML, &$fields ) {
         $value = (string ) $fieldXML->values;
         $field['sqlType'] = 'enum(';
         $field['values']  = array( );
+        $field['enumValues'] = $value;
         $values = explode( ',', $value );
         $first = true;
         foreach ( $values as $v ) {

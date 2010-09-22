@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -36,7 +37,7 @@
 require_once 'CRM/Core/Config.php';
 
 /**
- * This class contains all the function that are called using AJAX (dojo)
+ * This class contains all the function that are called using AJAX
  */
 class CRM_Core_Page_AJAX_Location
 {
@@ -55,54 +56,54 @@ class CRM_Core_Page_AJAX_Location
         
         require_once 'CRM/Core/BAO/Location.php';
         $entityBlock = array( 'contact_id' => $cid );
-        $loc =& CRM_Core_BAO_Location::getValues( $entityBlock, $location );
+        $location    =& CRM_Core_BAO_Location::getValues( $entityBlock );
 
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         $addressSequence = array_flip($config->addressSequence());
         
-        $elements = array( "location_1_phone_1_phone" => 
-                           $location['location'][1]['phone'][1]['phone'],
-                           "location_1_email_1_email" => 
-                           $location['location'][1]['email'][1]['email']
+        $elements = array( "phone_1_phone" => 
+                           $location['phone'][1]['phone'],
+                           "email_1_email" => 
+                           $location['email'][1]['email']
                            );
         
         if ( array_key_exists( 'street_address', $addressSequence) ) {
-            $elements["location_1_address_street_address"] = $location['location'][1]['address']['street_address'];
+            $elements["address_1_street_address"] = $location['address'][1]['street_address'];
         }
         if ( array_key_exists( 'supplemental_address_1', $addressSequence) ) {
-            $elements['location_1_address_supplemental_address_1'] = 
-                $location['location'][1]['address']['supplemental_address_1'];
+            $elements['address_1_supplemental_address_1'] = 
+                $location['address'][1]['supplemental_address_1'];
         }
         if ( array_key_exists( 'supplemental_address_2', $addressSequence) ) {
-            $elements['location_1_address_supplemental_address_2'] = 
-                $location['location'][1]['address']['supplemental_address_2'];
+            $elements['address_1_supplemental_address_2'] = 
+                $location['address'][1]['supplemental_address_2'];
         }
         if ( array_key_exists( 'city', $addressSequence) ) {
-            $elements['location_1_address_city'] = $location['location'][1]['address']['city'];
+            $elements['address_1_city'] = $location['address'][1]['city'];
         }
         if ( array_key_exists( 'postal_code', $addressSequence) ) {
-            $elements['location_1_address_postal_code'] = 
-                $location['location'][1]['address']['postal_code'];
-            $elements['location_1_address_postal_code_suffix'] = 
-                $location['location'][1]['address']['postal_code_suffix'];
+            $elements['address_1_postal_code'] = 
+                $location['address'][1]['postal_code'];
+            $elements['address_1_postal_code_suffix'] = 
+                $location['address'][1]['postal_code_suffix'];
         }
         if ( array_key_exists( 'country', $addressSequence) ) {
-            $elements['location_1_address_country_id'] = 
-                $location['location'][1]['address']['country_id'];
+            $elements['address_1_country_id'] = 
+                $location['address'][1]['country_id'];
         }
         if ( array_key_exists( 'state_province', $addressSequence) ) {
-            $elements['location_1_address_state_province_id'] = 
-                $location['location'][1]['address']['state_province_id'];
+            $elements['address_1_state_province_id'] = 
+                $location['address'][1]['state_province_id'];
         }
 
         echo json_encode( $elements );
-        exit();
+        CRM_Utils_System::civiExit( );
     }
 
-    function jqState( &$config ) {
+    function jqState( $config ) {
         if ( ! isset( $_GET['_value'] ) ||
         empty( $_GET['_value'] ) ) {
-            exit();
+            CRM_Utils_System::civiExit( );
         }
 
         require_once 'CRM/Core/PseudoConstant.php';
@@ -117,7 +118,7 @@ class CRM_Core_Page_AJAX_Location
 
         require_once "CRM/Utils/JSON.php";
         echo json_encode( $elements );
-        exit();
+        CRM_Utils_System::civiExit( );
     }
 
     function getLocBlock( ) {

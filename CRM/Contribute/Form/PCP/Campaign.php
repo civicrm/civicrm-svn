@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -62,7 +63,7 @@ class CRM_Contribute_Form_PCP_Campaign extends CRM_Core_Form
     {
         require_once 'CRM/Contribute/DAO/PCP.php';
         $dafaults = array( );
-        $dao =& new CRM_Contribute_DAO_PCP( );
+        $dao = new CRM_Contribute_DAO_PCP( );
         
         if( $this->_pageId ) {
             $dao->id = $this->_pageId;
@@ -138,7 +139,7 @@ class CRM_Contribute_Form_PCP_Campaign extends CRM_Core_Form
      * @access public  
      * @static  
      */  
-    static function formRule( &$fields, &$files, $self ) 
+    static function formRule( $fields, $files, $self ) 
     {
         $errors = array();
         if ( $fields['goal_amount'] <= 0 ) {
@@ -173,7 +174,7 @@ class CRM_Contribute_Form_PCP_Campaign extends CRM_Core_Form
                 $params[$key] = 0;
             }
         }
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $contactID = isset( $this->_contactID ) ? $this->_contactID : $session->get('userID');
         if( ! $contactID ) {
             $contactID = $this->get('contactID');
@@ -227,15 +228,15 @@ class CRM_Contribute_Form_PCP_Campaign extends CRM_Core_Form
             
             $supporterUrl = CRM_Utils_System::url( "civicrm/contact/view",
                                                    "reset=1&cid={$pcp->contact_id}",
-                                                   true, null, true,
-                                                   true );
+                                                   true, null, false,
+                                                   false );
             $this->assign( 'supporterUrl', $supporterUrl );
             $supporterName = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $pcp->contact_id, 'display_name' );
             $this->assign( 'supporterName', $supporterName );
            
             $contribPageUrl   = CRM_Utils_System::url( "civicrm/contribute/transact",
                                                        "reset=1&id={$pcp->contribution_page_id}",
-                                                       true, null, true,
+                                                       true, null, false,
                                                        true );
             $this->assign( 'contribPageUrl', $contribPageUrl );
             $contribPageTitle = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage', $pcp->contribution_page_id, 'title' );
@@ -243,24 +244,20 @@ class CRM_Contribute_Form_PCP_Campaign extends CRM_Core_Form
             
             $managePCPUrl =  CRM_Utils_System::url( "civicrm/admin/pcp",
                                                     "reset=1",
-                                                    true, null, true,
-                                                    true );
+                                                    true, null, false,
+                                                    false );
             $this->assign( 'managePCPUrl', $managePCPUrl );
             
-            $subject = ts('Personal Campaign Page Notification');
-            
-            $template =& CRM_Core_Smarty::singleton( );
-            $message  = $template->fetch( 'CRM/Contribute/Form/PCPNotify.tpl' );
-          
             //get the default domain email address.
             require_once 'CRM/Core/BAO/Domain.php';
             list( $domainEmailName, $domainEmailAddress ) = CRM_Core_BAO_Domain::getNameAndEmail( );
             
             if ( !$domainEmailAddress || $domainEmailAddress == 'info@FIXME.ORG') {
-                CRM_Core_Error::fatal( ts( 'The site administrator needs to enter a valid \'FROM Email Address\' in Administer CiviCRM &raquo; Configure &raquo; Domain Information. The email address used may need to be a valid mail account with your email service provider.' ) );
+                require_once 'CRM/Utils/System.php';
+                $fixUrl = CRM_Utils_System::url("civicrm/admin/domain", 'action=update&reset=1');
+                CRM_Core_Error::fatal( ts( 'The site administrator needs to enter a valid \'FROM Email Address\' in <a href="%1">Administer CiviCRM &raquo; Configure &raquo; Domain Information</a>. The email address used may need to be a valid mail account with your email service provider.', array( 1 => $fixUrl ) ) );
             }
-            
-            $emailFrom = '"' . $domainEmailName . '" <' . $domainEmailAddress . '>';
+          
             //if more than one email present for PCP notification ,
             //first email take it as To and other as CC and First email
             //address should be sent in users email receipt for
@@ -269,16 +266,21 @@ class CRM_Contribute_Form_PCP_Campaign extends CRM_Core_Form
             $to = $emailArray[0];
             unset( $emailArray[0] );
             $cc = implode(',', $emailArray );
+
+            require_once 'CRM/Core/BAO/MessageTemplates.php';
+            list ($sent, $subject, $message, $html) = CRM_Core_BAO_MessageTemplates::sendTemplate(
+                array(
+                    'groupName' => 'msg_tpl_workflow_contribution',
+                    'valueName' => 'pcp_notify',
+                    'contactId' => $contactID,
+                    'from'      => "$domainEmailName <$domainEmailAddress>",
+                    'toEmail'   => $to,
+                    'cc'        => $cc,
+                )
+            );
             
-            require_once 'Mail/mime.php';
-            require_once 'CRM/Utils/Mail.php';
-            if ( CRM_Utils_Mail::send( $emailFrom,
-                                       "",
-                                       $to,
-                                       $subject,
-                                       $message,
-                                       $cc ) ) {
-                $notifyStatus = ts(' A notification email has been sent to the site administrator.'); 
+            if ($sent) {
+                $notifyStatus = ts('A notification email has been sent to the site administrator.'); 
             }
         }
         

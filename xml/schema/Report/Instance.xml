@@ -18,6 +18,19 @@
        <autoincrement>false</autoincrement>
   </primaryKey>
   <field>
+      <name>domain_id</name>
+      <type>int unsigned</type>
+      <required>true</required>
+      <comment>Which Domain is this instance for</comment>
+      <add>3.1</add>
+  </field>
+  <foreignKey>
+       <name>domain_id</name>
+       <table>civicrm_domain</table>
+       <key>id</key>
+       <add>3.1</add>
+  </foreignKey>
+  <field>
        <name>title</name>
        <title>Report Instance Title</title>
        <type>varchar</type>
@@ -34,10 +47,23 @@
       <add>2.2</add>
   </field>
   <field>
+      <name>name</name>
+      <type>varchar</type>
+      <length>255</length>
+      <comment>when combined with report_id/template uniquely identifies the instance</comment>
+      <add>3.2</add>
+  </field>
+  <field>
+      <name>args</name>
+      <type>varchar</type>
+      <length>255</length>
+      <comment>arguments that are passed in the url when invoking the instance</comment>
+      <add>3.2</add>
+  </field>
+  <field>
        <name>description</name>
        <type>varchar</type>
        <length>255</length>
-       <localizable>true</localizable>
        <comment>Report Instance description.</comment>
        <add>2.2</add>
   </field>
@@ -97,4 +123,19 @@
       <cols>60</cols>
       <add>2.2</add>     
   </field>
+  <field> 
+      <name>navigation_id</name> 
+      <title>Navigation ID</title>
+      <type>int unsigned</type> 
+      <import>true</import>
+      <comment>FK to navigation ID</comment> 
+      <add>3.0</add> 
+  </field> 
+  <foreignKey> 
+       <name>navigation_id</name> 
+       <table>civicrm_navigation</table>
+       <key>id</key> 
+       <add>3.0</add> 
+       <onDelete>SET NULL</onDelete>
+  </foreignKey> 
 </table>

@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,12 +29,13 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
 
 require_once 'CRM/Core/DAO/OptionValue.php';
+require_once 'CRM/Core/DAO/OptionGroup.php';
 
 class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue 
 {
@@ -61,7 +63,7 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue
      */
     static function retrieve( &$params, &$defaults ) 
     {
-        $optionValue =& new CRM_Core_DAO_OptionValue( );
+        $optionValue = new CRM_Core_DAO_OptionValue( );
         $optionValue->copyValues( $params );
         if ( $optionValue->find( true ) ) {
             CRM_Core_DAO::storeValues( $optionValue, $defaults );
@@ -102,15 +104,32 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue
         $params['filter'     ] =  CRM_Utils_Array::value( 'filter', $params, false );
 
         // action is taken depending upon the mode
-        $optionValue               =& new CRM_Core_DAO_OptionValue( );
+        $optionValue               = new CRM_Core_DAO_OptionValue( );
         $optionValue->copyValues( $params );;
         
-        if ( $params['is_default'] ) {
+        if ( CRM_Utils_Array::value( 'is_default', $params ) ) {
             $query = 'UPDATE civicrm_option_value SET is_default = 0 WHERE  option_group_id = %1';
-            $p     = array( 1 => array( $params['option_group_id'], 'Integer' ) );
+            
+            // tweak default reset, and allow multiple default within group. 
+            if ( $resetDefaultFor = CRM_Utils_Array::value( 'reset_default_for',  $params ) ) {
+                if ( is_array( $resetDefaultFor ) ) {
+                    $colName = key( $resetDefaultFor );
+                    $colVal  = $resetDefaultFor[$colName];
+                    $query  .= " AND ( $colName IN (  $colVal ) )";
+                }
+            }
+            
+            $p = array( 1 => array( $params['option_group_id'], 'Integer' ) );
             CRM_Core_DAO::executeQuery( $query, $p );
         }
         
+        $groupName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', 
+                                                  $params['option_group_id'], 'name', 'id' );
+        require_once 'CRM/Core/OptionGroup.php';
+        if ( in_array($groupName, CRM_Core_OptionGroup::$_domainIDGroups) ) {
+            $optionValue->domain_id = CRM_Core_Config::domainID( );
+        }
+
         $optionValue->id = CRM_Utils_Array::value( 'optionValue', $ids );
         $optionValue->save( );
         return $optionValue;
@@ -128,9 +147,9 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue
      */
     static function del($optionValueId) 
     {
-        $optionValue =& new CRM_Core_DAO_OptionValue( );
+        $optionValue = new CRM_Core_DAO_OptionValue( );
         $optionValue->id = $optionValueId;
-
+        require_once 'CRM/Core/Action.php';
         if ( self::updateRecords($optionValueId, CRM_Core_Action::DELETE) ){
             return $optionValue->delete();        
         }
@@ -189,11 +208,11 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue
      */
     static function updateRecords(&$optionValueId, $action) {
         //finding group name
-        $optionValue =& new CRM_Core_DAO_OptionValue( );
+        $optionValue = new CRM_Core_DAO_OptionValue( );
         $optionValue->id = $optionValueId;
         $optionValue->find(true);
         
-        $optionGroup =& new CRM_Core_DAO_OptionGroup( );
+        $optionGroup = new CRM_Core_DAO_OptionGroup( );
         $optionGroup->id = $optionValue->option_group_id;
         $optionGroup->find(true);
         
@@ -222,7 +241,7 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue
         
         if (array_key_exists($gName, $individuals)) {
             require_once 'CRM/Contact/BAO/Contact.php';
-            $contactDAO =& new CRM_Contact_DAO_Contact();
+            $contactDAO = new CRM_Contact_DAO_Contact();
             
             $contactDAO->$fieldName = $value;
             $contactDAO->find();
@@ -246,7 +265,7 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue
         
         if (array_key_exists($gName, $contributions)) {
             require_once 'CRM/Contribute/DAO/Contribution.php';
-            $contribution =& new CRM_Contribute_DAO_Contribution();
+            $contribution = new CRM_Contribute_DAO_Contribution();
             $contribution->$fieldName = $value;
             $contribution->find();
             while ($contribution->fetch()) {
@@ -260,7 +279,7 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue
         
         if (array_key_exists($gName, $activities)) {
             require_once 'CRM/Activity/DAO/Activity.php';
-            $activity =& new CRM_Activity_DAO_Activity( );
+            $activity = new CRM_Activity_DAO_Activity( );
             $activity->$fieldName = $value;
             $activity->find();
             while ($activity->fetch()) {
@@ -272,7 +291,7 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue
         //delete participant role, type and event type option value
         if (array_key_exists($gName, $participant)) {
             require_once 'CRM/Event/DAO/Participant.php';
-            $participantValue =& new CRM_Event_DAO_Participant( );
+            $participantValue = new CRM_Event_DAO_Participant( );
             $participantValue->$fieldName = $value;
             if ( $participantValue->find(true)) {
                 return false;
@@ -283,7 +302,7 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue
         //delete event type option value
         if (array_key_exists($gName, $eventType)) {
             require_once 'CRM/Event/DAO/Event.php';
-            $event =& new CRM_Event_DAO_Event( );
+            $event = new CRM_Event_DAO_Event( );
             $event->$fieldName = $value;
             if ( $event->find(true) ) {
                 return false;
@@ -295,10 +314,10 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue
         if (array_key_exists( $gName, $aclRole )) {
             require_once 'CRM/ACL/DAO/EntityRole.php';
             require_once 'CRM/ACL/DAO/ACL.php';
-            $entityRole =& new CRM_ACL_DAO_EntityRole( );
+            $entityRole = new CRM_ACL_DAO_EntityRole( );
             $entityRole->$fieldName = $value;
 
-            $aclDAO =& new CRM_ACL_DAO_ACL( );
+            $aclDAO = new CRM_ACL_DAO_ACL( );
             $aclDAO->entity_id = $value;
             if ( $entityRole->find(true) || $aclDAO->find(true)) {
                 return false;
@@ -306,6 +325,34 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue
             return true;
         }
     }
+    
+    /**
+     * updates options values weights.
+     *
+     * @param int   $opGroupIde option group id.
+     * @param array $opWeights  options value , weight pair
+     *
+     * @return void
+     * @access public
+     * @static
+     */
+    static function updateOptionWeights( $opGroupId, $opWeights ) {
+        if ( !is_array($opWeights) || empty($opWeights) ) {
+            return;
+        }
+        
+        foreach( $opWeights as $opValue => $opWeight ) {
+            $optionValue = new CRM_Core_DAO_OptionValue( );
+            $optionValue->option_group_id = $opGroupId;
+            $optionValue->value = $opValue;
+            if ( $optionValue->find(true) ) {
+                $optionValue->weight = $opWeight;
+                $optionValue->save( );
+            }
+            $optionValue->free( ); 
+        }
+    }
+    
 }
 
 

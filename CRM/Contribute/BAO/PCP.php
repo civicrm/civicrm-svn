@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -54,10 +55,10 @@ class CRM_Contribute_BAO_PCP extends CRM_Contribute_DAO_PCP
     }
 
     /**
-     * function to add the Personal Campaign Page Block
+     * function to add or update either a Personal Campaign Page OR a PCP Block
      *
      * @param array $params reference array contains the values submitted by the form
-     * @param array $ids    reference array contains the id     * 
+     * @param bool  $pcpBlock if true, create or update PCPBlock, else PCP
      * @access public
      * @static 
      * @return object
@@ -67,13 +68,13 @@ class CRM_Contribute_BAO_PCP extends CRM_Contribute_DAO_PCP
         if ( $pcpBlock ) {
             // action is taken depending upon the mode
             require_once 'CRM/Contribute/DAO/PCPBlock.php';
-            $dao =& new CRM_Contribute_DAO_PCPBlock( );
+            $dao = new CRM_Contribute_DAO_PCPBlock( );
             $dao->copyValues( $params );
             $dao->save( );
             return $dao;
         } else {
             require_once 'CRM/Contribute/DAO/PCP.php';
-            $dao              =& new CRM_Contribute_DAO_PCP( );
+            $dao              = new CRM_Contribute_DAO_PCP( );
             $dao->copyValues( $params );
 
             // ensure we set status_id since it is a not null field
@@ -83,6 +84,12 @@ class CRM_Contribute_BAO_PCP extends CRM_Contribute_DAO_PCP
                 $dao->status_id = 0;
             }
 
+	    // set currency for CRM-1496
+	    if ( ! isset( $dao->currency ) ) {
+	      $config =& CRM_Core_Config::singleton( );
+	      $dao->currency = $config->defaultCurrency;
+	    }
+	
             $dao->save( );
             return $dao;
         }
@@ -236,7 +243,38 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
         $params = array( 1 => array( $pcpId, 'Integer' ) );
         return CRM_Core_DAO::singleValueQuery( $query, $params );
     }
-    
+
+    /**
+     * function to show the amount, nickname on honor roll
+     *
+     * @param array $pcpId contains the pcp ID
+     * 
+     * @access public
+     * @static 
+     * @return array $honor
+     */
+    static function honorRoll( $pcpId )
+    {
+        $query = "
+            SELECT cc.id, cs.pcp_roll_nickname, cs.pcp_personal_note,
+                   cc.total_amount, cc.currency
+            FROM civicrm_contribution cc 
+                 LEFT JOIN civicrm_contribution_soft cs ON cc.id = cs.contribution_id
+            WHERE cs.pcp_id = {$pcpId}
+                  AND cs.pcp_display_in_roll = 1 
+                  AND contribution_status_id = 1 
+                  AND is_test = 0";
+        $dao   = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
+        $honor = array();
+        require_once 'CRM/Utils/Money.php';
+        while( $dao->fetch() ) {
+            $honor[$dao->id]['nickname']     = ucwords($dao->pcp_roll_nickname);
+            $honor[$dao->id]['total_amount'] = CRM_Utils_Money::format( $dao->total_amount, $dao->currency );
+            $honor[$dao->id]['personal_note'] = $dao->pcp_personal_note;
+        }
+        return $honor;
+    }
+
     /**
      * Get action links
      *
@@ -246,7 +284,7 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
     static function &pcpLinks()
     {
         if (! ( self::$_pcpLinks ) ) {
-            $deleteExtra = ts('Are you sure you want to delete this Personal Campaign Page ?\n This action can not be undone.');
+            $deleteExtra = ts('Are you sure you want to delete this Personal Campaign Page?') . '\n' . ts('This action cannot be undone.');
 
             self::$_pcpLinks['add']  = array (
                                               CRM_Core_Action::ADD => array( 'name'  => ts('Create a Personal Campaign Page'),
@@ -312,7 +350,7 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
         $transaction = new CRM_Core_Transaction( );
         
         // delete from pcp table
-        $pcp     =& new CRM_Contribute_DAO_PCP( );
+        $pcp     = new CRM_Contribute_DAO_PCP( );
         $pcp->id = $id;
         $pcp->delete( );
        
@@ -377,7 +415,7 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
     static function sendStatusUpdate( $pcpId, $newStatus, $isInitial = false ) {
         require_once 'CRM/Contribute/PseudoConstant.php';
         $pcpStatus = CRM_Contribute_PseudoConstant::pcpStatus( );
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         if ( ! isset($pcpStatus[$newStatus]) ) {
             return false;
@@ -386,13 +424,7 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
         require_once 'CRM/Utils/Mail.php';
         require_once 'Mail/mime.php';
         require_once 'CRM/Contact/BAO/Contact/Location.php';        
-        $template      =& CRM_Core_Smarty::singleton( );
 
-        $emailTemplate = 'CRM/Contribute/Form/PCP/PCPStatusChange.tpl';
-        if ( $isInitial ) {
-            $emailTemplate = 'CRM/Contribute/Form/PCP/PCPSupporterNotify.tpl';
-        }
-        
         //set loginUrl
         $loginUrl = $config->userFrameworkBaseURL;
         switch ( ucfirst($config->userFramework) ) 
@@ -407,18 +439,22 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
             break;
         }
         
-        $template->assign( 'loginUrl', $loginUrl );
-        
-        // set appropriate subject
+        // used in subject templates
         $contribPageTitle = self::getPcpContributionPageTitle( $pcpId );
-        $subject  = "Your Personal Campaign Page for $contribPageTitle";
+
+        $tplParams = array(
+            'loginUrl'         => $loginUrl,
+            'contribPageTitle' => $contribPageTitle,
+        );
 
         //get the default domain email address.
         require_once 'CRM/Core/BAO/Domain.php';
         list( $domainEmailName, $domainEmailAddress ) = CRM_Core_BAO_Domain::getNameAndEmail( );
         
         if ( !$domainEmailAddress || $domainEmailAddress == 'info@FIXME.ORG') {
-            CRM_Core_Error::fatal( ts( 'The site administrator needs to enter a valid \'FROM Email Address\' in Administer CiviCRM &raquo; Configure &raquo; Domain Information. The email address used may need to be a valid mail account with your email service provider.' ) );
+            require_once 'CRM/Utils/System.php';
+            $fixUrl = CRM_Utils_System::url("civicrm/admin/domain", 'action=update&reset=1');
+            CRM_Core_Error::fatal( ts( 'The site administrator needs to enter a valid \'FROM Email Address\' in <a href="%1">Administer CiviCRM &raquo; Configure &raquo; Domain Information</a>. The email address used may need to be a valid mail account with your email service provider.', array( 1 => $fixUrl ) ) );
         }
             
         $receiptFrom = '"' . $domainEmailName . '" <' . $domainEmailAddress . '>';
@@ -436,34 +472,42 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
 
         // assign urls required in email template
         if ( $pcpStatus[$newStatus] == 'Approved' ) {
-            $template->assign( 'isTellFriendEnabled', $pcpBlockInfo['is_tellfriend_enabled'] );
+            $tplParams['isTellFriendEnabled'] = $pcpBlockInfo['is_tellfriend_enabled'];
             if ( $pcpBlockInfo['is_tellfriend_enabled'] ) {
                 $pcpTellFriendURL = 
                     CRM_Utils_System::url('civicrm/friend', 
-                                          "reset=1&eid=$eid&blockId=$blockId&page=pcp", 
-                                          true, null, false);
-                $template->assign( 'pcpTellFriendURL', $pcpTellFriendURL );
+                                          "reset=1&eid=$pcpId&blockId=$blockId&page=pcp",
+                                          true, null, false, true);
+                $tplParams['pcpTellFriendURL'] = $pcpTellFriendURL;
             }
         }
         $pcpInfoURL = CRM_Utils_System::url('civicrm/contribute/pcp/info', 
                                             "reset=1&id=$pcpId", 
-                                            true, null, false);
-        $template->assign( 'pcpInfoURL', $pcpInfoURL );
-        $template->assign( 'contribPageTitle', $contribPageTitle );
+                                            true, null, false, true);
+        $tplParams['pcpInfoURL']       = $pcpInfoURL;
+        $tplParams['contribPageTitle'] = $contribPageTitle;
         if ( $emails = CRM_Utils_Array::value( 'notify_email', $pcpBlockInfo ) ) {
             $emailArray = explode(',', $emails );
-            $template->assign( 'pcpNotifyEmailAddress', $emailArray[0] );
+            $tplParams['pcpNotifyEmailAddress'] = $emailArray[0];
         }
         // get appropriate message based on status
-        $template->assign( 'pcpStatus', $pcpStatus[$newStatus] );
-        $message       = $template->fetch( $emailTemplate );
-        
-        return CRM_Utils_Mail::send( $receiptFrom,
-                                     $name,
-                                     $address,
-                                     $subject,
-                                     $message
-                                     );
+        $tplParams['pcpStatus'] = $pcpStatus[$newStatus];
+
+        $tplName = $isInitial ? 'pcp_supporter_notify' : 'pcp_status_change';
+
+        require_once 'CRM/Core/BAO/MessageTemplates.php';
+        list ($sent, $subject, $message, $html) = CRM_Core_BAO_MessageTemplates::sendTemplate(
+            array(
+                'groupName' => 'msg_tpl_workflow_contribution',
+                'valueName' => $tplName,
+                'contactId' => $pcpInfo['contact_id'],
+                'tplParams' => $tplParams,
+                'from'      => $receiptFrom,
+                'toName'    => $name,
+                'toEmail'   => $address,
+            )
+        );
+        return $sent;
     }
 
     /**
@@ -597,5 +641,31 @@ WHERE pcp.id = %1";
         }
 
         return array( );
+    }
+     
+    /**
+     * Function to get supporter profile id
+     * 
+     * @param int $contributionPageId contribution page id
+     *
+     * @return int
+     * @access public
+     *
+     */
+    public function getSupporterProfileId( $contributionPageId )
+    {
+        $query = "
+SELECT pcp.supporter_profile_id
+FROM civicrm_pcp_block pcp 
+INNER JOIN civicrm_uf_group ufgroup 
+      ON pcp.supporter_profile_id = ufgroup.id 
+WHERE pcp.entity_id = %1 
+      AND ufgroup.is_active = 1";
+        $params = array ( 1 => array( $contributionPageId, 'Integer' ) );
+        if ( ! $supporterProfileId = CRM_Core_DAO::singleValueQuery( $query, $params ) ) {
+            CRM_Core_Error::fatal( ts('Supporter profile is not set for this Personal Campaign Page or the profile is disabled. Please contact the site administrator if you need assistance.') ); 
+        } else {
+            return $supporterProfileId;
+        }  
     }
 }

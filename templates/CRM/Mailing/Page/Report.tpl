@@ -1,11 +1,35 @@
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
 <fieldset>
 <legend>{ts}Delivery Summary{/ts}</legend>
 {if $report.jobs.0.start_date}
   {strip}
-  <table class="form-layout-compressed">
+  <table class="crm-info-panel">
   <tr><td class="label"><a href="{$report.event_totals.links.queue}">{ts}Intended Recipients{/ts}</a></td><td>{$report.jobs.0.queue}</td></tr>
   <tr><td class="label"><a href="{$report.event_totals.links.delivered}">{ts}Succesful Deliveries{/ts}</a></td><td>{$report.jobs.0.delivered} ({$report.jobs.0.delivered_rate|string_format:"%0.2f"}%)</td></tr>
-  <tr><td class="label">{ts}Spooled Mails{/ts}</td><td>{$report.jobs.0.spool}</td></tr>
   {if $report.mailing.open_tracking}
     <tr><td class="label"><a href="{$report.event_totals.links.opened}">{ts}Tracked Opens{/ts}</a></td><td>{$report.jobs.0.opened}</td></tr>
   {/if}
@@ -34,14 +58,14 @@
 {if $report.group.include|@count}
 <span class="label">{ts}Included{/ts}</span>
 {strip}
-<table>
+<table class="crm-info-panel">
 {foreach from=$report.group.include item=group}
 <tr class="{cycle values="odd-row,even-row"}">
 <td>
 {if $group.mailing}
-{ts}Recipients of <a href="{$group.link}">{$group.name}</a>{/ts}
+{ts 1=$group.link 2=$group.name}Recipients of <a href="%1">%2</a>{/ts}
 {else}
-{ts}Members of <a href="{$group.link}">{$group.name}</a>{/ts}
+{ts 1=$group.link 2=$group.name}Members of <a href="%1">%2</a>{/ts}
 {/if}
 </td>
 </tr>
@@ -53,14 +77,14 @@
 {if $report.group.exclude|@count}
 <span class="label">{ts}Excluded{/ts}</span>
 {strip}
-<table>
+<table class="crm-info-panel">
 {foreach from=$report.group.exclude item=group}
 <tr class="{cycle values="odd-row,even-row"}">
 <td>
 {if $group.mailing}
-{ts}Recipients of <a href="{$group.link}">{$group.name}</a>{/ts}
+{ts 1=$group.link 2=$group.name}Recipients of <a href="%1">%2</a>{/ts}
 {else}
-{ts}Members of <a href="{$group.link}">{$group.name}</a>{/ts}
+{ts 1=$group.link 2=$group.name}Members of <a href="%1">%2</a>{/ts}
 {/if}
 </td>
 </tr>
@@ -74,7 +98,7 @@
 <fieldset>
 <legend>{ts}Click-through Summary{/ts}</legend>
 {strip}
-<table>
+<table class="crm-info-panel">
 <tr>
 <th><a href="{$report.event_totals.links.clicks}">{ts}Clicks{/ts}</a></th>
 <th><a href="{$report.event_totals.links.clicks_unique}">{ts}Unique Clicks{/ts}</a></th>
@@ -96,12 +120,12 @@
 <fieldset>
 <legend>{ts}Content / Components{/ts}</legend>
 {strip}
-<table class="form-layout-compressed">
+<table class="crm-info-panel">
 {if $report.mailing.body_text}
 <tr>
   <td class="label nowrap">{ts}Text Message{/ts}</td>
   <td>
-    {$report.mailing.body_text|truncate:30|escape|nl2br}
+    {$report.mailing.body_text|mb_truncate:30|escape|nl2br}
     <br />
     <strong><a href='{$textViewURL}'>&raquo; {ts}View complete message{/ts}</a></strong>
   </td>
@@ -112,7 +136,7 @@
 <tr>
   <td class="label nowrap">{ts}HTML Message{/ts}</td>
   <td>
-    {$report.mailing.body_html|truncate:30|escape|nl2br}
+    {$report.mailing.body_html|mb_truncate:30|escape|nl2br}
     <br/>
     <strong><a href='{$htmlViewURL}'>&raquo; {ts}View complete message{/ts}</a></strong>
   </td>
@@ -140,7 +164,7 @@
     {ts}Mailing Settings{/ts}
 </legend>
 {strip}
-<table class="form-layout-compressed">
+<table class="crm-info-panel">
 <tr><td class="label">{ts}Mailing Name{/ts}</td><td>{$report.mailing.name}</td></tr>
 <tr><td class="label">{ts}Subject{/ts}</td><td>{$report.mailing.subject}</td></tr>
 <tr><td class="label">{ts}From{/ts}</td><td>{$report.mailing.from_name} &lt;{$report.mailing.from_email}&gt;</td></tr>

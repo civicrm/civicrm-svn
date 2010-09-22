@@ -1,15 +1,38 @@
-<?php 
- 
+<?php
 /*
  +--------------------------------------------------------------------+
- | eWAY Core Payment Module for CiviCRM version 2.2 & 1.9             |
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*/
+
+/*
+ +--------------------------------------------------------------------+
+ | eWAY Core Payment Module for CiviCRM version 3.2 & 1.9             |
  +--------------------------------------------------------------------+
  | Licensed to CiviCRM under the Academic Free License version 3.0    |
  |                                                                    |
  | Written & Contributed by Dolphin Software P/L - March 2008         |
  +--------------------------------------------------------------------+
  |                                                                    |
- | This file is a NOT YET part of CiviCRM.                            |
+ | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | This code was initially based on the recent PayJunction module     |
  | contributed by Phase2 Technology, and then plundered bits from     |
@@ -73,7 +96,7 @@ require_once 'CRM/Core/Payment.php';
 class CRM_Core_Payment_eWAY extends CRM_Core_Payment 
 { 
    const
-      CHARSET  = 'UFT-8'; # (not used, implicit in the API, might need to convert?)
+      CHARSET  = 'UTF-8'; # (not used, implicit in the API, might need to convert?)
          
    /** 
     * We only need one instance of this object. So we use the singleton 
@@ -100,7 +123,7 @@ class CRM_Core_Payment_eWAY extends CRM_Core_Payment
        
        $this->_mode             = $mode;             // live or test
        $this->_paymentProcessor = $paymentProcessor;
-       $this->_processorName    = 'eWay';
+       $this->_processorName    = ts('eWay');
    }
 
    /**********************************************************
@@ -201,6 +224,9 @@ class CRM_Core_Payment_eWAY extends CRM_Core_Payment
        $eWAYRequest->EwayOption2(          $txtOptions                   );  //  255 Chars - ewayOption2
        $eWAYRequest->EwayOption3(          $txtOptions                   );  //  255 Chars - ewayOption3
        
+       // Allow further manipulation of the arguments via custom hooks ..
+       CRM_Utils_Hook::alterPaymentProcessorParams( $this, $params, $eWAYRequest );
+
        //----------------------------------------------------------------------------------------------------
        // Check to see if we have a duplicate before we send 
        //----------------------------------------------------------------------------------------------------
@@ -223,7 +249,11 @@ class CRM_Core_Payment_eWAY extends CRM_Core_Payment
        curl_setopt($submit, CURLOPT_RETURNTRANSFER, true        );  // return the result on success, FALSE on failure 
        curl_setopt($submit, CURLOPT_POSTFIELDS,     $requestxml ); 
        curl_setopt($submit, CURLOPT_TIMEOUT,        36000       );                                     
-       curl_setopt($submit, CURLOPT_FOLLOWLOCATION, 1           );  // ensures any Location headers are followed 
+       // if open_basedir or safe_mode are enabled in PHP settings CURLOPT_FOLLOWLOCATION won't work so don't apply it
+       // it's not really required CRM-5841
+       if (ini_get('open_basedir') == '' && ini_get('safe_mode' == 'Off')) {
+           curl_setopt($submit, CURLOPT_FOLLOWLOCATION, 1           );  // ensures any Location headers are followed 
+       }
        
        // Send the data out over the wire
        //--------------------------------
@@ -349,7 +379,7 @@ class CRM_Core_Payment_eWAY extends CRM_Core_Payment
    function _checkDupe( $invoiceId ) 
    {
        require_once 'CRM/Contribute/DAO/Contribution.php';
-       $contribution =& new CRM_Contribute_DAO_Contribution( );
+       $contribution = new CRM_Contribute_DAO_Contribution( );
        $contribution->invoice_id = $invoiceId;
        return $contribution->find( );
    }
@@ -435,7 +465,7 @@ class CRM_Core_Payment_eWAY extends CRM_Core_Payment
        require_once 'CRM/Core/BAO/Domain.php';
 
        list( $fromName, $fromEmail ) = CRM_Core_BAO_Domain::getNameAndEmail( );
-       $from      = CRM_Utils_Mail::encodeAddressHeader( $fromName, $fromEmail );
+       $from      = "$fromName <$fromEmail>";
        
        $toName    = 'Support at eWAY';
        $toEmail   = 'Support@eWAY.com.au';
@@ -466,14 +496,19 @@ Regards
 The CiviCRM eWAY Payment Processor Module
 ";
        //$cc       = 'Name@Domain';
-
-       CRM_Utils_Mail::send( $from,
-                             $toName,
-                             $toEmail,
-                             $subject,
-                             $message,
-                             $cc );
        
+       // create the params array
+       $params                = array( );
+
+       $params['groupName'  ] = 'eWay Email Sender';
+       $params['from'       ] = $from;
+       $params['toName'     ] = $toName;
+       $params['toEmail'    ] = $toEmail;
+       $params['subject'    ] = $subject;
+       $params['cc'         ] = $cc;
+       $params['text'       ] = $message;
+
+       CRM_Utils_Mail::send( $params );
    }
 
    

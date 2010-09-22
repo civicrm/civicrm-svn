@@ -20,17 +20,17 @@
  *
  * For questions, help, comments, discussion, etc., please join the
  * Smarty mailing list. Send a blank e-mail to
- * smarty-general-subscribe@lists.php.net
+ * smarty-discussion-subscribe@googlegroups.com 
  *
- * @link http://smarty.php.net/
+ * @link http://www.smarty.net/
  * @copyright 2001-2005 New Digital Group, Inc.
  * @author Monte Ohrt <monte at ohrt dot com>
  * @author Andrei Zmievski <andrei@php.net>
  * @package Smarty
- * @version 2.6.19
+ * @version 2.6.26
  */
 
-/* $Id: Smarty.class.php 2722 2007-06-18 14:29:00Z danilo $ */
+/* $Id: Smarty.class.php 3163 2009-06-17 14:39:24Z monte.ohrt $ */
 
 /**
  * DIR_SEP isn't used anymore, but third party apps might
@@ -107,7 +107,7 @@ class Smarty
     /**
      * When set, smarty does uses this value as error_reporting-level.
      *
-     * @var boolean
+     * @var integer
      */
     var $error_reporting  =  null;
 
@@ -236,7 +236,8 @@ class Smarty
                                     'INCLUDE_ANY'     => false,
                                     'PHP_TAGS'        => false,
                                     'MODIFIER_FUNCS'  => array('count'),
-                                    'ALLOW_CONSTANTS'  => false
+                                    'ALLOW_CONSTANTS'  => false,
+                                    'ALLOW_SUPER_GLOBALS' => true
                                    );
 
     /**
@@ -464,7 +465,7 @@ class Smarty
      *
      * @var string
      */
-    var $_version              = '2.6.19';
+    var $_version              = '2.6.26';
 
     /**
      * current template inclusion depth
@@ -1089,8 +1090,6 @@ class Smarty
      */
     function trigger_error($error_msg, $error_type = E_USER_WARNING)
     {
-        // CRM_Core_Error::backtrace( $error_msg );
-        // exit( );
         trigger_error("Smarty error: $error_msg", $error_type);
     }
 
@@ -1511,10 +1510,47 @@ class Smarty
      */
     function _get_compile_path($resource_name)
     {
-        return $this->_get_auto_filename($this->compile_dir, $resource_name,
-                                         $this->_compile_id) . '.php';
+        $compilePath = $this->_get_auto_filename( $this->compile_dir, 
+                                                  $resource_name,
+                                                  $this->_compile_id );
+        $compilePath .= '.php';
+        
+        //for 'string:' resource smarty might going to fail to create
+        //compile file, so make sure we should have valid path, CRM-5890
+        $matches = array( );
+        if ( preg_match( '/^(\s+)?string:/', $resource_name, $matches ) ) {
+            if ( !$this->validateCompilePath( $compilePath ) ) {
+                $compilePath = $this->_get_auto_filename( $this->compile_dir, 
+                                                          time().rand(),
+                                                          $this->_compile_id );
+                $compilePath .= '.php';
+            }
+        }
+        
+        return $compilePath; 
     }
-
+    
+    /**
+     *  do check can smarty create a file w/ given path.  
+     */
+    function validateCompilePath( $compilePath ) {
+        //first check for directory.
+        $dirname = dirname( $compilePath );
+        if ( !is_dir( $dirname ) ) {
+            require_once(SMARTY_CORE_DIR . 'core.create_dir_structure.php');
+            smarty_core_create_dir_structure( array('dir' => $dirname ), $this );
+        }
+        
+        $isValid = false;
+        if ( $fd = @fopen( $compilePath, 'wb') ) {
+            $isValid = true;
+            @fclose( $fd );
+            @unlink($compilePath);
+        }
+        
+        return $isValid;
+    }
+    
     /**
      * fetch the template info. Gets timestamp, and source
      * if get_source is true
@@ -1550,7 +1586,7 @@ class Smarty
                         $params['source_content'] = $this->_read_file($_resource_name);
                     }
                     $params['resource_timestamp'] = filemtime($_resource_name);
-                    $_return = is_file($_resource_name);
+                    $_return = is_file($_resource_name) && is_readable($_resource_name);
                     break;
 
                 default:
@@ -1713,7 +1749,7 @@ class Smarty
      */
     function _read_file($filename)
     {
-        if ( file_exists($filename) && ($fd = @fopen($filename, 'rb')) ) {
+        if ( file_exists($filename) && is_readable($filename) && ($fd = @fopen($filename, 'rb')) ) {
             $contents = '';
             while (!feof($fd)) {
                 $contents .= fread($fd, 8192);
@@ -1952,7 +1988,7 @@ class Smarty
 			return $function;
 		}
 	}
-    
+  
     /**#@-*/
 
 }

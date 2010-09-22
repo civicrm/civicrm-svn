@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -30,7 +31,7 @@
  * CiviCRM components
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -53,7 +54,7 @@ class CRM_Core_Component
             self::$_info = array( );
             $c = array();
             
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             $c      =& self::getComponents();
 
             foreach( $c as $name => $comp ) {
@@ -83,7 +84,7 @@ class CRM_Core_Component
             $_cache = array( );
 
             require_once 'CRM/Core/DAO/Component.php';
-            $cr =& new CRM_Core_DAO_Component();
+            $cr = new CRM_Core_DAO_Component();
             $cr->find( false );
             while ( $cr->fetch( ) ) {
                 $infoClass = $cr->namespace . '_' . self::COMPONENT_INFO_CLASS;
@@ -123,7 +124,7 @@ class CRM_Core_Component
     static function invoke( &$args, $type ) 
     {
         $info =& self::_info( );
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         $firstArg  = CRM_Utils_Array::value( 1, $args, '' ); 
         $secondArg = CRM_Utils_Array::value( 2, $args, '' ); 
@@ -133,7 +134,7 @@ class CRM_Core_Component
                    ( $comp->info['url'] === $secondArg && $type == 'admin' ) ) ) {
                 if ( $type == 'main' ) {
                     // also set the smarty variables to the current component
-                    $template =& CRM_Core_Smarty::singleton( );
+                    $template = CRM_Core_Smarty::singleton( );
                     $template->assign( 'activeComponent', $name );
                     if( CRM_Utils_Array::value( 'formTpl', $comp->info[$name] ) ) {
                         $template->assign( 'formTpl', $comp->info[$name]['formTpl'] );
@@ -195,10 +196,24 @@ class CRM_Core_Component
 
     static function getComponentID( $componentName ) {
         $info =& self::_info( );
-
+        
         return $info[$componentName]->componentID;
     }
-
+    
+    static function getComponentName( $componentID ) {
+        $info =& self::_info( );
+        
+        $componentName = null;
+        foreach ( $info as $compName => $component ) {
+            if ( $component->componentID == $componentID ) {
+                $componentName = $compName;
+                break;
+            }
+        }
+        
+        return $componentName;
+    }
+    
     static function &getQueryFields( ) 
     {
         $info =& self::_info( );

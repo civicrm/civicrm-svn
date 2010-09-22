@@ -1,3 +1,28 @@
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
 {* Edit or display Profile fields, when embedded in an online contribution or event registration form. *}
 {if ! empty( $fields )}
    {strip} 
@@ -7,7 +32,6 @@
     {foreach from=$fields item=field key=fieldName} 
     {if $field.groupTitle != $fieldset} 
         {if $fieldset != $zeroField} 
-           </table> 
            {if $groupHelpPost && $action neq 4} 
               <div class="messages help">{$groupHelpPost}</div> 
            {/if} 
@@ -24,15 +48,14 @@
         {if $field.groupHelpPre && $action neq 4 && $action neq 1028} 
             <div class="messages help">{$field.groupHelpPre}</div> 
         {/if} 
-        <table class="form-layout-compressed"> 
     {/if} 
      
     {assign var=n value=$field.name} 
 
     {if $field.options_per_line != 0} 
-        <tr> 
-        <td class="option-label">{$form.$n.label}</td> 
-        <td class="view-value"> 
+        <div class="crm-section {$form.$n.id}-section"> 
+        <div class="label option-label">{$form.$n.label}</div> 
+        <div class="content 3"> 
              {assign var="count" value="1"} 
             {strip} 
             <table class="form-layout-compressed"> 
@@ -60,59 +83,49 @@
             {if $field.help_post && $action neq 4 && $action neq 1028}
                 <span class="description">{$field.help_post}</span> 
             {/if} 
-        </td> 
-        </tr> 
+        </div>
+        <div class="clear"></div> 
+        </div> 
     {else} 
-        <tr>
-           <td class="label">{$form.$n.label}</td>
-           <td class="view-value">
+        <div class="crm-section {$form.$n.id}-section"> 
+           <div class="label">{$form.$n.label}</div>
+           <div class="content">
              {if $n|substr:0:3 eq 'im-'}
                {assign var="provider" value=$n|cat:"-provider_id"}
                {$form.$provider.html}&nbsp;
              {/if}
-             {if $n eq 'greeting_type'}
-               <table class="form-layout-compressed">
-                  <tr>
-                     <td>{$form.$n.html}</td>
-                     <td id='customGreeting'>
-                     {$form.custom_greeting.label}&nbsp;&nbsp;&nbsp;{$form.custom_greeting.html|crmReplace:class:big}
-                     </td>
-                  </tr>
-               </table> 
+             {if $n eq 'email_greeting' or  $n eq 'postal_greeting' or $n eq 'addressee'}
+                {include file="CRM/Profile/Form/GreetingType.tpl"}  
              {elseif $n eq 'group'} 
-		<table id="selector" class="selector" style="width:auto;">
-			<tr><td>{$form.$n.html}{* quickform add closing </td> </tr>*}
-		</table>
-   	     {else}
+				<table id="selector" class="selector" style="width:auto;">
+					<tr><td>{$form.$n.html}{* quickform add closing </td> </tr>*}
+				</table>
+             {elseif ( $field.data_type eq 'Date' or 
+                      ( ( ( $n eq 'birth_date' ) or ( $n eq 'deceased_date' ) ) ) ) }
+                      {include file="CRM/common/jcalendar.tpl" elementName=$n}
+   	    	 {else}
                {$form.$n.html}
                {if $n eq 'gender' && $form.$fieldName.frozen neq true}
-                  &nbsp;(&nbsp;<a href="#" title="unselect" onclick="unselectRadio('{$n}', '{$form.formName}');return false;">{ts}unselect{/ts}</a>&nbsp;)
+                  <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$n}', '{$form.formName}');return false;">{ts}clear{/ts}</a>)</span>
                {/if}
              {/if}
              {*CRM-4564*}
-             {if $field.html_type eq 'Radio' && $form.$fieldName.frozen neq true}
+             {if $field.html_type eq 'Radio' && $form.$fieldName.frozen neq true && $field.is_required neq 1}
                  <span style="line-height: .75em; margin-top: 1px;">
-                  &nbsp;(&nbsp;<a href="#" title="unselect" onclick="unselectRadio('{$n}', '{$form.formName}');return false;">{ts}unselect{/ts}</a>&nbsp;)
+                  <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$n}', '{$form.formName}');return false;">{ts}clear{/ts}</a>)</span>
                  </span>
              {elseif $field.html_type eq 'Autocomplete-Select'}
                  {include file="CRM/Custom/Form/AutoComplete.tpl" element_name = $n }
-             {elseif $field.data_type eq 'Date'}
-                {if $element.skip_calendar NEQ true } 
-                    <span>
-                        {include file="CRM/common/calendar/desc.tpl" trigger="$form.$n.name"}
-    	                {include file="CRM/common/calendar/body.tpl" dateVar=$form.$n.name startDate=1905 endDate=2010 doTime=1  trigger="$form.$n.name"}
-    	            </span>
-    	        {/if}
              {/if}  
              {* Show explanatory text for field if not in 'view' or 'preview' modes *} 
              {if $field.help_post && $action neq 4 && $action neq 1028}
                 <br /><span class="description">{$field.help_post}</span> 
              {/if} 
-           </td>
-        </tr> 
+           </div>
+           <div class="clear"></div> 
+        </div> 
     {/if}     
     {/foreach} 
-   </table>
    
     {if $field.groupHelpPost && $action neq 4  && $action neq 1028} 
         <div class="messages help">{$field.groupHelpPost}</div> 
@@ -133,25 +146,9 @@
  
 {/if} {* fields array is not empty *} 
 
-{if $form.greeting_type}
-  {literal}
-    <script type="text/javascript">
-      window.onload = function() {
-        showGreeting();
-      }
-    </script>
-  {/literal}
-{/if}
 {literal}
   <script type="text/javascript">
-    function showGreeting() {
-       if( document.getElementById("greeting_type") && document.getElementById("greeting_type").value == 4 ) {
-           show('customGreeting');                   
-       } else {
-           hide('customGreeting');      
-       }     
-    }
-
+   
 cj(document).ready(function(){ 
 	cj('#selector tr:even').addClass('odd-row ');
 	cj('#selector tr:odd ').addClass('even-row');

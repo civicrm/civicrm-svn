@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -57,7 +58,7 @@ class CRM_Mailing_Event_BAO_Queue extends CRM_Mailing_Event_DAO_Queue {
      * @static
      */
     public static function &create(&$params) {
-        $eq =& new CRM_Mailing_Event_BAO_Queue();
+        $eq = new CRM_Mailing_Event_BAO_Queue();
         $eq->copyValues($params);
         $eq->hash = self::hash($params);
         $eq->save();
@@ -93,16 +94,17 @@ class CRM_Mailing_Event_BAO_Queue extends CRM_Mailing_Event_DAO_Queue {
      * @static
      */
     public static function &verify($job_id, $queue_id, $hash) {
-        $q =& new CRM_Mailing_Event_BAO_Queue();
+        $success = null;
+        $q = new CRM_Mailing_Event_BAO_Queue();
         if (!empty($job_id) && !empty($queue_id) && !empty($hash)) {
             $q->id = $queue_id;
             $q->job_id = $job_id;
             $q->hash = $hash;
             if ($q->find(true)) {
-                return $q;
+                $success = $q;
             }
         }
-        return null;
+        return $success;
     }
 
 
@@ -124,7 +126,7 @@ class CRM_Mailing_Event_BAO_Queue extends CRM_Mailing_Event_DAO_Queue {
                     WHERE       $eq.id = " 
                                 . CRM_Utils_Type::rule($queue_id, 'Integer');
 
-        $q =& new CRM_Mailing_Event_BAO_Queue();
+        $q = new CRM_Mailing_Event_BAO_Queue();
         $q->query($query);
         if (! $q->fetch()) {
             return null;
@@ -143,7 +145,7 @@ class CRM_Mailing_Event_BAO_Queue extends CRM_Mailing_Event_DAO_Queue {
      * @static
      */
     public static function getTotalCount($mailing_id, $job_id = null) {
-        $dao =& new CRM_Core_DAO();
+        $dao = new CRM_Core_DAO();
 
         $queue      = self::getTableName();
         $mailing    = CRM_Mailing_BAO_Mailing::getTableName();
@@ -181,13 +183,22 @@ class CRM_Mailing_Event_BAO_Queue extends CRM_Mailing_Event_DAO_Queue {
      */
     public static function &getRows($mailing_id, $job_id = null, $offset = null,
                                     $rowCount = null, $sort = null) {
-        $dao =& new CRM_Core_Dao();
+        $dao = new CRM_Core_Dao();
         
         $queue      = self::getTableName();
         $mailing    = CRM_Mailing_BAO_Mailing::getTableName();
         $job        = CRM_Mailing_BAO_Job::getTableName();
         $contact    = CRM_Contact_BAO_Contact::getTableName();
         $email      = CRM_Core_BAO_Email::getTableName();
+
+        $orderBy = "sort_name ASC, {$job}.start_date DESC";
+        if ($sort) {
+            if ( is_string( $sort ) ) {
+                $orderBy = $sort;
+            } else {
+                $orderBy = trim( $sort->orderBy() );
+            }
+        }
 
         $query =    "
             SELECT      $contact.display_name as display_name,
@@ -212,9 +223,9 @@ class CRM_Mailing_Event_BAO_Queue extends CRM_Mailing_Event_DAO_Queue {
                     . CRM_Utils_Type::escape($job_id, 'Integer');
         }
 
-        $query .= " ORDER BY $contact.sort_name, $job.start_date DESC ";
+        $query .= " ORDER BY {$orderBy} ";
 
-        if ($offset) {
+        if ($offset||$rowCount) {//Added "||$rowCount" to avoid displaying all records on first page
             $query .= ' LIMIT ' 
                     . CRM_Utils_Type::escape($offset, 'Integer') . ', ' 
                     . CRM_Utils_Type::escape($rowCount, 'Integer');
@@ -244,7 +255,7 @@ class CRM_Mailing_Event_BAO_Queue extends CRM_Mailing_Event_DAO_Queue {
      * @access public
      */
     public function &getMailing() {
-        $mailing    =& new CRM_Mailing_BAO_Mailing();
+        $mailing    = new CRM_Mailing_BAO_Mailing();
         $jobs       = CRM_Mailing_BAO_Job::getTableName();
         $mailings   = CRM_Mailing_BAO_Mailing::getTableName();
         $queue      = self::getTableName();

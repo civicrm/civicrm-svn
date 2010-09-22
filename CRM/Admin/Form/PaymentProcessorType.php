@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id: PaymentProcessorType.php 9702 2007-05-29 23:57:16Z lobo $
  *
  */
@@ -122,6 +123,12 @@ class CRM_Admin_Form_PaymentProcessorType extends CRM_Admin_Form
      */
     public function buildQuickForm( $check = false ) 
     {
+        parent::buildQuickForm( );
+        
+        if ( $this->_action & CRM_Core_Action::DELETE ) { 
+            return;
+        }
+
         $attributes = CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_PaymentProcessorType' );
 
         foreach ( $this->_fields as $field ) {
@@ -137,8 +144,6 @@ class CRM_Admin_Form_PaymentProcessorType extends CRM_Admin_Form
         $this->add('checkbox', 'is_active' , ts('Is this Payment Processor Type active?') );
         $this->add('checkbox', 'is_default', ts('Is this Payment Processor Type the default?') );
         $this->add('checkbox', 'is_recur'  , ts('Does this Payment Processor Type support recurring donations?') );
-
-        parent::buildQuickForm( );
     }
 
     function setDefaultValues( ) {
@@ -153,7 +158,7 @@ class CRM_Admin_Form_PaymentProcessorType extends CRM_Admin_Form
             return $defaults;
         }
 
-        $dao =& new CRM_Core_DAO_PaymentProcessorType( );
+        $dao = new CRM_Core_DAO_PaymentProcessorType( );
         $dao->id        = $this->_id;
 
         if ( ! $dao->find( true ) ) {
@@ -173,6 +178,13 @@ class CRM_Admin_Form_PaymentProcessorType extends CRM_Admin_Form
      */
     public function postProcess() 
     {
+        CRM_Utils_System::flushCache( 'CRM_Core_DAO_PaymentProcessorType' );
+
+        if ( $this->_action & CRM_Core_Action::DELETE ) {
+            CRM_Core_BAO_PaymentProcessorType::del( $this->_id );
+            return;
+        }
+        
         $values = $this->controller->exportValues( $this->_name );
 
         if ( CRM_Utils_Array::value( 'is_default', $values ) ) {
@@ -181,7 +193,7 @@ UPDATE civicrm_payment_processor SET is_default = 0";
             CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
         }
 
-        $dao =& new CRM_Core_DAO_PaymentProcessorType( );
+        $dao = new CRM_Core_DAO_PaymentProcessorType( );
 
         $dao->id         = $this->_id;
         $dao->is_default = CRM_Utils_Array::value( 'is_default', $values, 0 );

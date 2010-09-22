@@ -1,3 +1,30 @@
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
+<div class="crm-block crm-form-block crm-import-maptable-form-block">
+
 {* Import Wizard - Data Mapping table used by MapFields.tpl and Preview.tpl *}
  <div id="map-field">
     {strip}
@@ -13,21 +40,21 @@
 	    {/if}	
             {section name=rows loop=$totalRowsDisplay}
                 { if $smarty.section.rows.iteration == 1 and $showColNames}
-                  <th>{ts}Column Names{/ts}</th>
+                  <td>{ts}Column Names{/ts}</td>
                 {elseif $showColNames}
-                  <th>{ts 1=$smarty.section.rows.iteration-1}Import Data (row %1){/ts}</th>
+                  <td>{ts 1=$smarty.section.rows.iteration-1}Import Data (row %1){/ts}</td>
 		{else}
-		  <th>{ts 1=$smarty.section.rows.iteration}Import Data (row %1){/ts}</th>
+		  <td>{ts 1=$smarty.section.rows.iteration}Import Data (row %1){/ts}</td>
                 {/if}
             {/section}
             
-            <th>{ts}Matching CiviCRM Field{/ts}</th>
+            <td>{ts}Matching CiviCRM Field{/ts}</td>
         </tr>
         
         {*Loop on columns parsed from the import data rows*}
         {section name=cols loop=$columnCount}
             {assign var="i" value=$smarty.section.cols.index}
-            <tr style="border-bottom: 1px solid #92B6EC;">
+            <tr style="border: 1px solid #DDDDDD;">
 
                 {if $showColNames}        
                     <td class="even-row labels">{$columnNames[$i]}</td>
@@ -41,24 +68,30 @@
                 {* Display mapper <select> field for 'Map Fields', and mapper value for 'Preview' *}
                 <td class="form-item even-row{if $wizard.currentStepName == 'Preview'} labels{/if}">
                     {if $wizard.currentStepName == 'Preview'}
-            			{if $relatedContactDetails && $relatedContactDetails[$i] != ''}
+            		    {if $relatedContactDetails && $relatedContactDetails[$i] != ''}
                             {$mapper[$i]} - {$relatedContactDetails[$i]}
                             
                             {if $relatedContactLocType && $relatedContactLocType[$i] != ''}
 	                            - {$relatedContactLocType[$i]}
-                			{/if}
+                	    {/if}
 
                             {if $relatedContactPhoneType && $relatedContactPhoneType[$i] != ''}
 	                            - {$relatedContactPhoneType[$i]}
-                			{/if}
+                	    {/if}
                             
                             {* append IM Service Provider type for related contact *}
                             {if  $relatedContactImProvider && $relatedContactImProvider[$i] != ''}
                                 - {$relatedContactImProvider[$i]}
                             {/if}
+			    
+			    {* append website type *}
+			    {if  $relatedContactWebsiteType && $relatedContactWebsiteType[$i] != ''}
+                                - {$relatedContactWebsiteType[$i]}
+                            {/if}
                                        
-			            {else}                        
-			                {if $locations[$i]}
+			    {else}                        
+			    
+                            {if $locations[$i]}
                                 {$locations[$i]} - 
                             {/if}
 
@@ -70,6 +103,12 @@
                             {if $ims[$i]}
                                 {$ims[$i]} - 
                             {/if}
+			    
+			    {* append website type *}
+                            {if $websites[$i]}
+                                {$websites[$i]} - 
+                            {/if}
+			    
                             {*else*}
                                 {$mapper[$i]}
                             {*/if*}
@@ -93,10 +132,16 @@
     	{/if}
     	<span>{$form.saveMapping.html} &nbsp;&nbsp; {$form.saveMapping.label}</span>
     	<div id="saveDetails" class="form-item">
-    	      <dl>
-    		   <dt>{$form.saveMappingName.label}</dt><dd>{$form.saveMappingName.html}</dd>
-    		   <dt>{$form.saveMappingDesc.label}</dt><dd>{$form.saveMappingDesc.html}</dd>
-    	      </dl>
+    	      <table class="form-layout-compressed">
+    		    <tr class="crm-import-maptable-form-block-saveMappingName">
+                        <td class="label">{$form.saveMappingName.label}</td>
+                        <td>{$form.saveMappingName.html}</td>
+                    </tr>
+    		    <tr class="crm-import-maptable-form-block-saveMappingName">
+                        <td class="label">{$form.saveMappingDesc.label}</td>
+                        <td>{$form.saveMappingDesc.html}</td>
+                    </tr>
+    	      </table>
     	</div>
     	<script type="text/javascript">
              {if $mappingDetailsError }
@@ -117,8 +162,11 @@
         			document.getElementById("saveMappingDesc").disabled = true;
         		 }
              }
-             {/literal}	     
-	    </script>
+            cj('select[id^="mapper"][id$="[0]"]').addClass('huge');
+            {/literal}
+	    {include file="CRM/common/highLightImport.tpl" relationship=true}	    
+	</script>
     </div>
     {/if}
  </div>
+</div>

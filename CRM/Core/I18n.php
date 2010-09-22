@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -50,10 +51,10 @@ class CRM_Core_I18n
      * @param  $locale string  the base of this certain object's existence
      * @return         void
      */
-    private function __construct($locale)
+    function __construct($locale)
     {
         if ($locale != '' and $locale != 'en_US') {
-            $config =& CRM_Core_Config::singleton();
+            $config = CRM_Core_Config::singleton();
             $streamer = new FileReader(implode(DIRECTORY_SEPARATOR, array($config->gettextResourceDir, $locale, 'civicrm.mo')));
             $this->_phpgettext = new gettext_reader($streamer);
         }
@@ -71,48 +72,11 @@ class CRM_Core_I18n
         static $enabled = null;
 
         if (!$all) {
-            $all = array('en_US' => 'English (USA)',
-                         'af_ZA' => 'Afrikaans',
-                         'ar_EG' => 'العربية',
-                         'bg_BG' => 'български',
-                         'ca_ES' => 'Català',
-                         'cs_CZ' => 'Česky',
-                         'da_DK' => 'dansk',
-                         'de_DE' => 'Deutsch',
-                         'el_GR' => 'Ελληνικά',
-                         'en_AU' => 'English (Australia)',
-                         'en_GB' => 'English (United Kingdom)',
-                         'es_ES' => 'español',
-                         'fr_FR' => 'français',
-                         'fr_CA' => 'français (Canada)',
-                         'id_ID' => 'Bahasa Indonesia',
-                         'hi_IN' => 'हिन्दी',
-                         'it_IT' => 'Italiano',
-                         'he_IL' => 'עברית',
-                         'lt_LT' => 'Lietuvių',
-                         'hu_HU' => 'Magyar',
-                         'nl_NL' => 'Nederlands',
-                         'ja_JP' => '日本語',
-                         'no_NO' => 'Norsk',
-                         'km_KH' => 'ភាសាខ្មែរ',
-                         'pl_PL' => 'polski',
-                         'pt_PT' => 'Português',
-                         'pt_BR' => 'Português (Brasil)',
-                         'ro_RO' => 'română',
-                         'ru_RU' => 'русский',
-                         'sk_SK' => 'slovenčina',
-                         'sl_SI' => 'slovenščina',
-                         'fi_FI' => 'suomi',
-                         'sv_SE' => 'Svenska',
-                         'th_TH' => 'ไทย',
-                         'vi_VN' => 'Tiếng Việt',
-                         'tr_TR' => 'Türkçe',
-                         'uk_UA' => 'Українська',
-                         'zh_CN' => '中文 (简体)',
-                         'zh_TW' => '中文 (繁體)');
+            require_once 'CRM/Core/I18n/PseudoConstant.php';
+            $all =& CRM_Core_I18n_PseudoConstant::languages();
 
             // check which ones are available; add them to $all if not there already
-            $config =& CRM_Core_Config::singleton();
+            $config = CRM_Core_Config::singleton();
             $codes = array();
             if (is_dir($config->gettextResourceDir)) {
                 $dir = opendir($config->gettextResourceDir);
@@ -133,7 +97,7 @@ class CRM_Core_I18n
         }
 
         if ($enabled === null) {
-            $config =& CRM_Core_Config::singleton();
+            $config = CRM_Core_Config::singleton();
             $enabled = array();
             if (isset($config->languageLimit) and $config->languageLimit) {
                 foreach ($all as $code => $name) {
@@ -182,12 +146,13 @@ class CRM_Core_I18n
      *       - 'no'/'off'/0 - turns off escaping
      *   - plural - The plural version of the text (2nd parameter of ngettext())
      *   - count - The item count for plural mode (3rd parameter of ngettext())
+     *   - context - gettext context of that string (for homonym handling)
      *
      * @param $text   string  the original string
      * @param $params array   the params of the translation (if any)
      * @return        string  the translated string
      */
-    function crm_translate($text, $params)
+    function crm_translate($text, $params = array())
     {
         if (isset($params['escape'])) {
             $escape = $params['escape'];
@@ -202,23 +167,63 @@ class CRM_Core_I18n
             }
         }
 
-        // use plural if required parameters are set
-        if (isset($count) && isset($plural)) {
+        if (isset($params['context'])) {
+            $context = $params['context'];
+            unset($params['context']);
+        } else {
+            $context = null;
+        }
 
-            if ($this->_phpgettext) {
-                $text = $this->_phpgettext->ngettext($text, $plural, $count);
-            } else {
-                // if the locale's not set, we do ngettext work by hand
-                // if $count == 1 then $text = $text, else $text = $plural
-                if ($count != 1) $text = $plural;
+        // do all wildcard translations first
+        require_once 'CRM/Utils/Array.php';
+        $config =& CRM_Core_Config::singleton( );
+        $stringTable = CRM_Utils_Array::value( $config->lcMessages,
+                                               $config->localeCustomStrings );
+        
+        $exactMatch = false;
+        if ( isset( $stringTable['enabled']['exactMatch'] ) ) {
+            foreach ( $stringTable['enabled']['exactMatch'] as $search => $replace ) {
+                if ( $search === $text ) {
+                    $exactMatch = true;
+                    $text = $replace;
+                    break;
+                }
             }
+        }
+        
+        if ( ! $exactMatch &&
+             isset( $stringTable['enabled']['wildcardMatch'] ) ) {
+            $search  = array_keys  ( $stringTable['enabled']['wildcardMatch'] );
+            $replace = array_values( $stringTable['enabled']['wildcardMatch'] );
+            $text = str_replace( $search,
+                                 $replace,
+                                 $text );
+        }
 
-            // expand %count in translated string to $count
-            $text = strtr($text, array('%count' => $count));
-
-        // if not plural, but the locale's set, translate
-        } elseif ($this->_phpgettext) {
-            $text = $this->_phpgettext->translate($text);
+        // dont translate if we've done exactMatch already
+        if ( ! $exactMatch ) {
+            // use plural if required parameters are set
+            if (isset($count) && isset($plural)) {
+                
+                if ($this->_phpgettext) {
+                    $text = $this->_phpgettext->ngettext($text, $plural, $count);
+                } else {
+                    // if the locale's not set, we do ngettext work by hand
+                    // if $count == 1 then $text = $text, else $text = $plural
+                    if ($count != 1) $text = $plural;
+                }
+                
+                // expand %count in translated string to $count
+                $text = strtr($text, array('%count' => $count));
+                
+                // if not plural, but the locale's set, translate
+            } elseif ($this->_phpgettext) {
+                if ($context) {
+                    $text = $this->_phpgettext->pgettext($context, $text);
+                } else {
+                    $text = $this->_phpgettext->translate($text);
+                }
+            }
         }
 
         // replace the numbered %1, %2, etc. params if present
@@ -228,6 +233,9 @@ class CRM_Core_I18n
 
         // escape SQL if we were asked for it
         if (isset($escape) and ($escape == 'sql')) $text = mysql_escape_string($text);
+
+        // escape for JavaScript (if requested)
+        if (isset($escape) and ($escape == 'js'))  $text = addcslashes($text, "'");
 
         return $text;
     }
@@ -247,14 +255,13 @@ class CRM_Core_I18n
      * Localize (destructively) array values.
      *
      * @param  $array array  the array for localization (in place)
+     * @param  $params array an array of additional parameters
      * @return        void
      */
-    function localizeArray(&$array)
+    function localizeArray(&$array, $params = array())
     {
-        if ($this->_phpgettext) {
-            foreach ($array as $key => $value) {
-                if ($value) $array[$key] = $this->_phpgettext->translate($value);
-            }
+        foreach ($array as &$value) {
+            if ($value) $value = ts($value, $params);
         }
     }
 
@@ -266,14 +273,12 @@ class CRM_Core_I18n
      */
     function localizeTitles(&$array)
     {
-        if ($this->_phpgettext) {
-            foreach ($array as $key => $value) {
-                if (is_array($value)) {
-                    $this->localizeTitles($value);
-                    $array[$key] = $value;
-                } elseif ((string ) $key == 'title') {
-                    $array[$key] = $this->_phpgettext->translate($value);
-                }
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $this->localizeTitles($value);
+                $array[$key] = $value;
+            } elseif ((string ) $key == 'title') {
+                $array[$key] = ts($value);
             }
         }
     }
@@ -287,7 +292,7 @@ class CRM_Core_I18n
 
         global $tsLocale;
         if (!isset($singleton[$tsLocale])) {
-            $singleton[$tsLocale] =& new CRM_Core_I18n($tsLocale);
+            $singleton[$tsLocale] = new CRM_Core_I18n($tsLocale);
         }
 
         return $singleton[$tsLocale];
@@ -316,7 +321,7 @@ class CRM_Core_I18n
 
 /**
  * Short-named function for string translation, defined in global scope so it's available everywhere.
- * @param  $text   string  string for trnaslating
+ * @param  $text   string  string for translating
  * @param  $params array   an array of additional parameters
  * @return         string  the translated string
  */
@@ -332,7 +337,7 @@ function ts($text, $params = array())
     }
 
     if (!$config) {
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
     }
 
     global $tsLocale;

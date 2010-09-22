@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -45,15 +46,16 @@ class CRM_Contact_Form_Search_Custom_Basic
         parent::__construct( $formValues );
 
         $this->normalize( );
-        $this->_columns = array( ts('')        => 'contact_type'  ,
-                                 ts('Name'   ) => 'sort_name'     ,
-                                 ts('Address') => 'street_address',
-                                 ts('City'   ) => 'city'          ,
-                                 ts('State'  ) => 'state_province',
-                                 ts('Postal' ) => 'postal_code'   ,
-                                 ts('Country') => 'country'       ,
-                                 ts('Email'  ) => 'email'         ,
-                                 ts('Phone'  ) => 'phone'         );
+        $this->_columns = array( ts('')        => 'contact_type'    ,
+                                 ts('')        => 'contact_sub_type',
+                                 ts('Name'   ) => 'sort_name'       ,
+                                 ts('Address') => 'street_address'  ,
+                                 ts('City'   ) => 'city'            ,
+                                 ts('State'  ) => 'state_province'  ,
+                                 ts('Postal' ) => 'postal_code'     ,
+                                 ts('Country') => 'country'         ,
+                                 ts('Email'  ) => 'email'           ,
+                                 ts('Phone'  ) => 'phone'           );
 
         $params           =& CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
         $returnProperties = array( );
@@ -61,7 +63,7 @@ class CRM_Contact_Form_Search_Custom_Basic
             $returnProperties[$field] = 1;
         }
 
-        $this->_query =& new CRM_Contact_BAO_Query( $params, $returnProperties, null,
+        $this->_query = new CRM_Contact_BAO_Query( $params, $returnProperties, null,
                                                     false, false, 1, false, false );
     }
 
@@ -96,7 +98,8 @@ class CRM_Contact_Form_Search_Custom_Basic
     }
 
     function buildForm( &$form ) {
-        $form->add('select', 'contact_type', ts('Find...'), CRM_Core_SelectValues::contactType());
+        $contactTypes = array( '' => ts('- any contact type -') ) + CRM_Contact_BAO_ContactType::getSelectElements( );
+        $form->add('select', 'contact_type', ts('Find...'), $contactTypes );
 
         // add select for groups
         $group = 

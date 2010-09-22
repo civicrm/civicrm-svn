@@ -43,7 +43,7 @@
   </item>
   <item>
      <path>civicrm/event/ical</path>
-     <title>Upcoming Events</title>
+     <title>Current and Upcoming Events</title>
      <page_callback>CRM_Event_Page_ICalendar</page_callback>
      <access_arguments>view event info</access_arguments>
      <is_public>true</is_public>
@@ -72,40 +72,11 @@
      <title>Event Templates</title>
      <page_callback>CRM_Admin_Page_EventTemplate</page_callback>
      <desc>Administrators can create Event Templates - which are basically master event records pre-filled with default values</desc>
-     <access_arguments>administer CiviCRM,access CiviEvent</access_arguments>
+     <access_arguments>access CiviEvent</access_arguments>
      <adminGroup>CiviEvent</adminGroup>
      <icon>admin/small/template.png</icon>
      <weight>375</weight>
   </item>  
-  <item>
-     <path>civicrm/admin/price</path>
-     <title>Price Sets</title>
-     <page_callback>CRM_Price_Page_Set</page_callback>
-     <desc>Price sets allow you to offer multiple options with associated fees (e.g. pre-conference workshops, additional meals, etc.). Configure Price Sets for events which need more than a single set of fee levels.</desc>
-     <access_arguments>access CiviEvent</access_arguments>
-     <adminGroup>CiviEvent</adminGroup>
-     <icon>admin/small/price_sets.png</icon>
-     <weight>380</weight>
-  </item>
-  <item>
-     <path>civicrm/admin/price/add</path>
-     <title>New Price Set</title>
-     <page_callback>CRM_Price_Page_Set</page_callback>
-     <desc>Price sets allow you to offer multiple options with associated fees (e.g. pre-conference workshops, additional meals, etc.). Configure Price Sets for events which need more than a single set of fee levels.</desc>
-     <access_arguments>access CiviEvent</access_arguments>
-     <path_arguments>action=add</path_arguments>
-  </item>
-  <item>
-     <path>civicrm/admin/price/field</path>
-     <title>Price Fields</title>
-     <page_callback>CRM_Price_Page_Field</page_callback>
-     <skipBreadcrumb>true</skipBreadcrumb>
-  </item>
-  <item>
-     <path>civicrm/admin/price/field/option</path>
-     <title>Price Field Options</title>
-     <page_callback>CRM_Price_Page_Option</page_callback>
-  </item>
   <item>
      <path>civicrm/admin/options/event_type</path>
      <title>Event Types</title>
@@ -152,15 +123,61 @@
      <page_callback>CRM_Event_Page_ManageEvent</page_callback>
      <access_arguments>access CiviEvent</access_arguments>
      <page_type>1</page_type>
+     <is_ssl>true</is_ssl>
      <weight>820</weight>
+  </item>
+  <item>
+     <path>civicrm/event/badge</path>
+     <title>Print Event Name Badge</title>
+     <page_callback>CRM_Event_Form_Task_Badge</page_callback>
+     <access_arguments>access CiviEvent</access_arguments>
+  </item>
+  <item>
+     <path>civicrm/event/manage/eventInfo</path>
+     <title>Event Info and Settings</title>
+     <page_callback>CRM_Event_Form_ManageEvent_EventInfo</page_callback>
+     <access_arguments>access CiviEvent</access_arguments>
+     <is_ssl>true</is_ssl>
+     <weight>910</weight>
+  </item>
+  <item>
+     <path>civicrm/event/manage/location</path>
+     <title>Event Location</title>
+     <page_callback>CRM_Event_Form_ManageEvent_Location</page_callback>
+     <access_arguments>access CiviEvent</access_arguments>
+     <is_ssl>true</is_ssl>
+     <weight>930</weight>
+  </item>
+  <item>
+     <path>civicrm/event/manage/fee</path>
+     <title>Event Fees</title>
+     <page_callback>CRM_Event_Form_ManageEvent_Fee</page_callback>
+     <access_arguments>access CiviEvent</access_arguments>
+     <is_ssl>true</is_ssl>
+     <weight>920</weight>
+  </item>
+  <item>
+     <path>civicrm/event/manage/registration</path>
+     <title>Event Online Registration</title>
+     <page_callback>CRM_Event_Form_ManageEvent_Registration</page_callback>
+     <access_arguments>access CiviEvent</access_arguments>
+     <is_ssl>true</is_ssl>
+     <weight>930</weight>
+  </item>
+  <item>
+     <path>civicrm/event/manage/friend</path>
+     <title>Tell a Friend</title>
+     <page_callback>CRM_Friend_Form_Event</page_callback>
+     <access_arguments>access CiviEvent</access_arguments>
+     <is_ssl>true</is_ssl>
+     <weight>940</weight>
   </item>
   <item>
      <path>civicrm/event/add</path>
      <path_arguments>action=add</path_arguments>
      <title>New Event</title>
-     <page_callback>CRM_Event_Page_ManageEvent</page_callback>
+     <page_callback>CRM_Event_Form_ManageEvent_EventInfo</page_callback>
      <access_arguments>access CiviEvent</access_arguments>
-     <page_type>1</page_type>
      <weight>830</weight>
   </item>
   <item>
@@ -210,6 +227,11 @@
   <item>
      <path>civicrm/ajax/locBlock</path>
      <page_callback>CRM_Core_Page_AJAX_Location::getLocBlock</page_callback>
+     <access_arguments>access CiviCRM,access CiviEvent</access_arguments>
+  </item>
+  <item>
+     <path>civicrm/ajax/eventlist</path>
+     <page_callback>CRM_Event_Page_AJAX::eventList</page_callback>
      <access_arguments>access CiviCRM,access CiviEvent</access_arguments>
   </item>
 </menu>

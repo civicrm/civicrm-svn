@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -38,7 +39,7 @@ require_once 'CRM/Core/Page/Basic.php';
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -70,7 +71,6 @@ class CRM_ACL_Page_EntityRole extends CRM_Core_Page_Basic
     function &links()
     {
           if (!(self::$_links)) {
-              $disableExtra = ts('Are you sure you want to disable this ACL Role Assignment?');
               self::$_links = array(
                                     CRM_Core_Action::UPDATE  => array(
                                                                       'name'  => ts('Edit'),
@@ -80,15 +80,14 @@ class CRM_ACL_Page_EntityRole extends CRM_Core_Page_Basic
                                                                       ),
                                     CRM_Core_Action::DISABLE => array(
                                                                       'name'  => ts('Disable'),
-                                                                      'url'   => 'civicrm/acl/entityrole',
-                                                                      'qs'    => 'action=disable&id=%%id%%',
-                                                                      'extra' => 'onclick = "return confirm(\'' . $disableExtra . '\');"',
+                                                                      'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_ACL_BAO_EntityRole' . '\',\'' . 'enable-disable' . '\' );"',
+                                                                      'ref'   => 'disable-action',
                                                                       'title' => ts('Disable ACL Role Assignment') 
                                                                       ),
                                     CRM_Core_Action::ENABLE  => array(
                                                                       'name'  => ts('Enable'),
-                                                                      'url'   => 'civicrm/acl/entityrole',
-                                                                      'qs'    => 'action=enable&id=%%id%%',
+                                                                      'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_ACL_BAO_EntityRole' . '\',\'' . 'disable-enable' . '\' );"',
+                                                                      'ref'   => 'enable-action',
                                                                       'title' => ts('Enable ACL Role Assignment') 
                                                                       ),
                                     CRM_Core_Action::DELETE  => array(
@@ -97,10 +96,9 @@ class CRM_ACL_Page_EntityRole extends CRM_Core_Page_Basic
                                                                       'qs'    => 'action=delete&id=%%id%%',
                                                                       'title' => ts('Delete ACL Role Assignment') 
                                                                       ),
-                                    
                                     );
-        }
-        return self::$_links;
+          }
+          return self::$_links;
     }
 
     /**
@@ -144,7 +142,9 @@ class CRM_ACL_Page_EntityRole extends CRM_Core_Page_Basic
         }
 
         // finally browse the acl's
-         $this->browse();
+        if ( $action & CRM_Core_Action::BROWSE ) {
+            $this->browse();
+        }
         
         // parent run 
         parent::run();
@@ -163,7 +163,7 @@ class CRM_ACL_Page_EntityRole extends CRM_Core_Page_Basic
 
         // get all acl's sorted by weight
         $entityRoles =  array( );
-        $dao =& new CRM_ACL_DAO_EntityRole( );
+        $dao = new CRM_ACL_DAO_EntityRole( );
         $dao->find( );
 
         require_once 'CRM/Core/OptionGroup.php';

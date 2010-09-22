@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -58,11 +59,8 @@ class CRM_Case_Form_Activity_ChangeCaseStartDate
      */
     function setDefaultValues( &$form ) 
     {
-        $defaults = array( );
-
-        $defaults['start_date'] = array( );
-        CRM_Utils_Date::getAllDefaultValues( $defaults['start_date'] );
-
+        $defaults = array(); 
+        list( $defaults['start_date'] ) = CRM_Utils_Date::setDateDefaults( );
         return $defaults;
     }
 
@@ -70,8 +68,7 @@ class CRM_Case_Form_Activity_ChangeCaseStartDate
     { 
         $currentStartDate = CRM_Core_DAO::getFieldValue( 'CRM_Case_DAO_Case', $form->_caseId, 'start_date' );
         $form->assign('current_start_date',  $currentStartDate );
-        $form->add( 'date', 'start_date', ts('New Start Date'), CRM_Core_SelectValues::date( ), false );   
-        $form->addRule('start_date', ts('Select a valid date.'), 'qfDate');
+        $form->addDate( 'start_date', ts('New Start Date'), false, array( 'formatType' => 'birth' ) );   
     }
 
     /**
@@ -83,7 +80,7 @@ class CRM_Case_Form_Activity_ChangeCaseStartDate
      * @static
      * @access public
      */
-    static function formRule( &$values, $files, &$form ) 
+    static function formRule( $values, $files, $form ) 
     {
         return true;
     }
@@ -110,7 +107,7 @@ class CRM_Case_Form_Activity_ChangeCaseStartDate
     public function endPostProcess( &$form, &$params, $activity ) 
     {
         if ( CRM_Utils_Array::value('start_date', $params ) ) {
-            $params['start_date'] = CRM_Utils_Date::format( $params['start_date'] );
+            $params['start_date'] = CRM_Utils_Date::processDate( $params['start_date'] );
         }
        
         $caseType = $form->_caseType;
@@ -135,10 +132,13 @@ WHERE civicrm_case.id=  %1";
              ) {
             CRM_Core_Error::fatal('Required parameter missing for ChangeCaseType - end post processing');
         }
+        
+        $config =& CRM_Core_Config::singleton();
+        
         // 1. save activity subject with new start date
         $currentStartDate = CRM_Utils_Date::customFormat( CRM_Core_DAO::getFieldValue( 'CRM_Case_DAO_Case',
-                                                                                       $form->_caseId, 'start_date' ) );
-        $newStartDate = CRM_Utils_Date::customFormat(CRM_Utils_Date::mysqlToIso($params['start_date']));
+                                                                                       $form->_caseId, 'start_date' ), $config->dateformatFull );
+        $newStartDate = CRM_Utils_Date::customFormat(CRM_Utils_Date::mysqlToIso($params['start_date']), $config->dateformatFull );
         $subject = 'Change Case Start Date from ' . $currentStartDate . ' to ' . $newStartDate;
         $activity->subject = $subject;
         $activity->save();

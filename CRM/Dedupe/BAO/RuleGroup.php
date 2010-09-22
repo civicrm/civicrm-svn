@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -75,7 +76,9 @@ class CRM_Dedupe_BAO_RuleGroup extends CRM_Dedupe_DAO_RuleGroup
                 'gender.label'                => 'civicrm_contact.gender_id',
                 'individual_prefix.label'     => 'civicrm_contact.prefix_id',
                 'individual_suffix.label'     => 'civicrm_contact.suffix_id',
-                'greeting_type.label'         => 'civicrm_contact.greeting_type_id'
+                'addressee.label'             => 'civicrm_contact.addressee_id',
+                'email_greeting.label'        => 'civicrm_contact.email_greeting_id',
+                'postal_greeting.label'       => 'civicrm_contact.postal_greeting_id'
             );
             // the table names we support in dedupe rules - a filter for importableFields()
             $supportedTables = array('civicrm_address', 'civicrm_contact', 'civicrm_email',
@@ -118,7 +121,7 @@ class CRM_Dedupe_BAO_RuleGroup extends CRM_Dedupe_DAO_RuleGroup
      */
     function tableQuery() {
         require_once 'CRM/Dedupe/BAO/Rule.php';
-        $bao =& new CRM_Dedupe_BAO_Rule();
+        $bao = new CRM_Dedupe_BAO_Rule();
         $bao->dedupe_rule_group_id = $this->id;
         $bao->find();
         $queries = array();
@@ -139,21 +142,44 @@ class CRM_Dedupe_BAO_RuleGroup extends CRM_Dedupe_DAO_RuleGroup
 
     /**
      * Return the SQL query for getting only the interesting results out of the dedupe table.
+     * 
+     * @$checkPermission boolean $params a flag to indicate if permission should be considered.
+     * default is to always check permissioning but public pages for example might not want 
+     * permission to be checked for anonymous users. Refer CRM-6211. We might be beaking 
+     * Multi-Site dedupe for public pages.
+     *
      */
-    function thresholdQuery() {
+    function thresholdQuery( $checkPermission = true ) {
+        require_once 'CRM/Contact/BAO/Contact/Permission.php';
+        $this->_aclFrom  = '';
+        $this->_aclWhere = ' AND is_deleted = 0 '; // CRM-6603: anonymous dupechecks side-step ACLs
+
         if ( $this->params && !$this->noRules ) { 
-            return "SELECT id
-                FROM dedupe JOIN civicrm_contact USING (id)
-                WHERE contact_type = '{$this->contact_type}'
-                GROUP BY id HAVING SUM(weight) >= {$this->threshold}
+            if ( $checkPermission ) {
+                list( $this->_aclFrom, $this->_aclWhere ) = 
+                    CRM_Contact_BAO_Contact_Permission::cacheClause( 'civicrm_contact' );
+                $this->_aclWhere = $this->_aclWhere ? "AND {$this->_aclWhere}" : '';
+            }
+            $query = "SELECT dedupe.id
+                FROM dedupe JOIN civicrm_contact USING (id) {$this->_aclFrom}
+                WHERE contact_type = '{$this->contact_type}' {$this->_aclWhere}
+                GROUP BY dedupe.id HAVING SUM(weight) >= {$this->threshold}
                 ORDER BY SUM(weight) desc";
         } else {
-            return "SELECT id1, id2, SUM(weight) as weight
-                FROM dedupe JOIN civicrm_contact c1 ON id1 = c1.id JOIN civicrm_contact c2 ON id2 = c2.id
-                WHERE c1.contact_type = '{$this->contact_type}' AND c2.contact_type = '{$this->contact_type}'
-                GROUP BY id1, id2 HAVING SUM(weight) >= {$this->threshold}
+            if ( $checkPermission ) {
+                list( $this->_aclFrom, $this->_aclWhere ) = 
+                    CRM_Contact_BAO_Contact_Permission::cacheClause( array('c1', 'c2') );
+                $this->_aclWhere = $this->_aclWhere ? "AND {$this->_aclWhere}" : '';
+            }
+            $query = "SELECT dedupe.id1, dedupe.id2, SUM(weight) as weight
+                FROM dedupe JOIN civicrm_contact c1 ON dedupe.id1 = c1.id 
+                            JOIN civicrm_contact c2 ON dedupe.id2 = c2.id {$this->_aclFrom}
+                WHERE c1.contact_type = '{$this->contact_type}' AND 
+                      c2.contact_type = '{$this->contact_type}' {$this->_aclWhere}
+                GROUP BY dedupe.id1, dedupe.id2 HAVING SUM(weight) >= {$this->threshold}
                 ORDER BY SUM(weight) desc";
         }
+        return $query;
     }
     
     /**
@@ -166,13 +192,13 @@ class CRM_Dedupe_BAO_RuleGroup extends CRM_Dedupe_DAO_RuleGroup
     function dedupeRuleFieldsWeight( $params)
     {
         require_once 'CRM/Dedupe/BAO/Rule.php';
-        $rgBao =& new CRM_Dedupe_BAO_RuleGroup();
+        $rgBao = new CRM_Dedupe_BAO_RuleGroup();
         $rgBao->level = $params['level'];
         $rgBao->contact_type = $params['contact_type'];
         $rgBao->is_default = 1;
         $rgBao->find(true);
         
-        $ruleBao =& new CRM_Dedupe_BAO_Rule();
+        $ruleBao = new CRM_Dedupe_BAO_Rule();
         $ruleBao->dedupe_rule_group_id = $rgBao->id;
         $ruleBao->find();
         $ruleFields = array();

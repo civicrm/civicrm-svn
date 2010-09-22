@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -68,7 +69,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
      */
     static function retrieve( &$params, &$defaults ) 
     {
-        $membershipType =& new CRM_Member_DAO_MembershipType( );
+        $membershipType = new CRM_Member_DAO_MembershipType( );
         $membershipType->copyValues( $params );
         if ( $membershipType->find( true ) ) {
             CRM_Core_DAO::storeValues( $membershipType, $defaults );
@@ -106,10 +107,12 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
         $params['is_active'] =  CRM_Utils_Array::value( 'is_active', $params, false );
         
         // action is taken depending upon the mode
-        $membershipType               =& new CRM_Member_DAO_MembershipType( );
+        $membershipType               = new CRM_Member_DAO_MembershipType( );
         
         $membershipType->copyValues( $params );
         
+        $membershipType->domain_id = CRM_Core_Config::domainID( );
+
         $membershipType->id = CRM_Utils_Array::value( 'membershipType', $ids );
         $membershipType->member_of_contact_id = CRM_Utils_Array::value( 'memberOfContact', $ids );
 
@@ -146,7 +149,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
         }
         if ($check) {
 
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             $cnt = 1;
             $message = ts('This membership type cannot be deleted due to following reason(s):' ); 
             if ( in_array( 'Membership', $status) ) {
@@ -166,7 +169,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
         
         //delete from membership Type table
         require_once 'CRM/Member/DAO/MembershipType.php';
-        $membershipType =& new CRM_Member_DAO_MembershipType( );
+        $membershipType = new CRM_Member_DAO_MembershipType( );
         $membershipType->id = $membershipTypeId;
         
         //fix for membership type delete api
@@ -227,7 +230,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
     {
         require_once 'CRM/Member/DAO/Membership.php';
         $membershipTypes = array();
-        $membershipType =& new CRM_Member_DAO_MembershipType( );
+        $membershipType = new CRM_Member_DAO_MembershipType( );
         $membershipType->is_active = 1;
         if (  $public ){
             $membershipType->visibility = 'Public';
@@ -252,7 +255,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
         require_once 'CRM/Member/DAO/Membership.php';
         $membershipTypeDetails = array();
         
-        $membershipType =& new CRM_Member_DAO_MembershipType( );
+        $membershipType = new CRM_Member_DAO_MembershipType( );
         $membershipType->is_active = 1;
         $membershipType->id = $membershipTypeId;
         if ( $membershipType->find(true) ) {
@@ -268,8 +271,8 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
      * Function to calculate start date and end date for new membership 
      * 
      * @param int  $membershipTypeId membership type id
-     * @param date $joinDate join date
-     * @param date $startDate start date
+     * @param date $joinDate join date ( in mysql date format ) 
+     * @param date $startDate start date ( in mysql date format ) 
      *
      * @return array associated array with  start date, end date and join date for the membership
      * @static
@@ -277,12 +280,21 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
     function getDatesForMembershipType( $membershipTypeId, $joinDate = null, $startDate = null, $endDate = null ) 
     {
         $membershipTypeDetails = self::getMembershipTypeDetails( $membershipTypeId );
-        $joinDate = $joinDate ? $joinDate : date('Y-m-d');
-
-        if ( $startDate ) {
-            $actualStartDate = $startDate;
+        
+        // convert all dates to 'Y-m-d' format.
+        foreach ( array( 'joinDate', 'startDate', 'endDate' ) as $dateParam ) {
+            if ( !empty( $$dateParam ) ) { 
+                $$dateParam = CRM_Utils_Date::processDate( $$dateParam, null, false, 'Y-m-d' );
+            }
         }
-
+        if ( !$joinDate ) {
+            $joinDate = date( 'Y-m-d' );
+        }
+        $actualStartDate = $joinDate;
+        if ( $startDate ) {
+            $actualStartDate = $startDate; 
+        }
+        
         $fixed_period_rollover = false;
         if ( $membershipTypeDetails['period_type'] == 'rolling' ) {
             if ( !$startDate ) {
@@ -402,9 +414,8 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
             }
         }
 
+        $reminderDate    = null;
         $membershipDates = array( );
-        $membershipDates['start_date']  = CRM_Utils_Date::customFormat( $startDate,'%Y%m%d' );
-        $membershipDates['end_date'  ]  = CRM_Utils_Date::customFormat( $endDate,'%Y%m%d' );
 
         if ( isset( $membershipTypeDetails["renewal_reminder_day"] ) &&
              $membershipTypeDetails["renewal_reminder_day"]          &&
@@ -415,14 +426,20 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
             $day   = $date[2];
             $day   = $day - $membershipTypeDetails["renewal_reminder_day"];
             $reminderDate = date( 'Y-m-d', mktime( 0, 0, 0, $month, $day-1, $year) );
-            $membershipDates['reminder_date'] = CRM_Utils_Date::customFormat($reminderDate,'%Y%m%d');
         }
+
+        $dates = array(  'start_date'    => 'startDate',
+                         'end_date'      => 'endDate',
+                         'join_date'     => 'joinDate',
+                         'reminder_date' => 'reminderDate' );
+        foreach ( $dates as $varName => $valName )  {
+            $membershipDates[$varName] = CRM_Utils_Date::customFormat( $$valName,'%Y%m%d');
+        } 
 
         if ( !$endDate ) {
             $membershipDates['reminder_date'] = null;
         }
 
-        $membershipDates['join_date']   = CRM_Utils_Date::customFormat($joinDate,'%Y%m%d');
         return $membershipDates;
     }
 
@@ -440,7 +457,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
         require_once 'CRM/Member/BAO/MembershipStatus.php';
         $params = array('id' => $membershipId);
         
-        $membership =& new CRM_Member_BAO_Membership( );
+        $membership = new CRM_Member_BAO_Membership( );
         
         //$membership->copyValues( $params );
         $membership->id = $membershipId;
@@ -485,12 +502,16 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
             }
             $today = date( 'Y-m-d' );
         } else {
-            $today = CRM_Utils_Date::getToday( $changeToday );
+            //get date in 'Ymd' format, CRM-5795
+            $today = date( 'Ymd' );
+            if ( $changeToday ) {
+                $today = CRM_Utils_Date::processDate( $changeToday, null, false, 'Ymd' );
+            }
             
             $rollover = false;
                         
             if ( $membershipTypeDetails['period_type'] == 'rolling' ) {
-                $startDate = $logStartDate = $today;
+                $startDate = $logStartDate = CRM_Utils_Date::mysqlToIso( $today );
             } else if ( $membershipTypeDetails['period_type'] == 'fixed' ) {
                 // Renewing expired membership is two step process. 
                 // 1. Renew the start date
@@ -525,7 +546,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
                                                   $yearValue ) );
                 }
                 
-                if ( CRM_Utils_Date::isoToMysql( $today ) > $rolloverDate ) {
+                if ( $today > $rolloverDate ) {
                     $rollover = true;
                 }
             }
@@ -610,7 +631,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
     static function getMembershipTypesByOrg( $orgID )
     {
         $membershipTypes = array();
-        $dao =& new CRM_Member_DAO_MembershipType();
+        $dao = new CRM_Member_DAO_MembershipType();
         $dao->member_of_contact_id = $orgID;
         $dao->find();
         while($dao->fetch()) {

@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -68,7 +69,7 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
             $defaults['relationship_type_id'] = $defaults['relationship_type_id'].'_'.$defaults['relationship_direction'];
         }
         
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         //setting default fixed_period_start_day & fixed_period_rollover_day
         $periods = array('fixed_period_start_day',  'fixed_period_rollover_day');
         foreach ( $periods as $per ) {
@@ -76,7 +77,7 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
                 $dat = $defaults[$per];
                 $dat = ( $dat < 999) ? '0'.$dat : $dat; 
                 $defaults[$per] = array();
-                $defaults[$per][$config->dateformatMonthVar] = substr($dat, 0, 2);
+                $defaults[$per]['M'] = substr($dat, 0, 2);
                 $defaults[$per]['d'] = substr($dat, 2, 3);
             }
         }
@@ -121,11 +122,11 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
         $memberOrg =& $this->add('text', 'member_org', ts('Membership Organization'), 'size=30 maxlength=120' );
         //start day
         $this->add('date', 'fixed_period_start_day', ts('Fixed Period Start Day'), 
-                   CRM_Core_SelectValues::date('custom', 3, 1, "M\001d"), false);
+                   CRM_Core_SelectValues::date( null, 'M d' ), false);
         
         //rollover day
         $this->add('date', 'fixed_period_rollover_day', ts('Fixed Period Rollover Day'), 
-                   CRM_Core_SelectValues::date('custom', 3, 1, "M\001d"), false);
+                   CRM_Core_SelectValues::date(null, 'M d'), false);
         
         $this->add('hidden','action',$this->_action); //required in form rule
 
@@ -135,6 +136,9 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
 
         require_once 'CRM/Contact/BAO/Relationship.php';
         $relTypeInd =  CRM_Contact_BAO_Relationship::getContactRelationshipType( null, null, null, null, true );
+        if ( is_array($relTypeInd) ) {
+            asort($relTypeInd);
+        }
         $memberRel =& $this->add('select', 'relationship_type_id', ts('Relationship Type'),  array('' => ts('- select -')) + $relTypeInd);
 
         $this->add( 'select', 'visibility', ts('Visibility'), CRM_Core_SelectValues::memberVisibility( ) );
@@ -143,7 +147,7 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
         $this->add('checkbox', 'is_active', ts('Enabled?'));
                                             
         require_once "CRM/Core/BAO/MessageTemplates.php";
-        $msgTemplates = CRM_Core_BAO_MessageTemplates::getMessageTemplates();
+        $msgTemplates = CRM_Core_BAO_MessageTemplates::getMessageTemplates( false );
         if ( ! empty( $msgTemplates ) ) { 
             $reminderMsg = $this->add( 'select', 'renewal_msg_id', ts('Renewal Reminder Message'), array('' => ts('- select -')) + $msgTemplates );
         } else {
@@ -211,13 +215,14 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
                 $reminderMsg  = $this->add( 'select', 'renewal_msg_id', ts('Renewal Reminder Message'), 
                                             array('' => ts('- select -')) + $msgTemplates );
                 $reminderDay->freeze( );
-                $reminderMsg->freeze( );
             }
         }
                
         $this->addElement( 'submit', $this->getButtonName('refresh'), $searchBtn, array( 'class' => 'form-submit' ) );
         
         $this->addFormRule(array('CRM_Member_Form_MembershipType', 'formRule'));
+
+        $this->assign('membershipTypeId', $this->_id);
     }
     
     /**
@@ -229,7 +234,7 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
      * @access public
      * @static
      */
-    public function formRule( &$params ) 
+    static function formRule( $params ) 
     {
         require_once 'CRM/Utils/Rule.php';        
         $errors = array( );
@@ -267,12 +272,12 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
                 $errors['period_type'] = ts('Period type should be Rolling when duration unit is Day');
             }
             
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             if ( ( $params['period_type']   == 'fixed' ) && 
                 ( $params['duration_unit'] == 'year'  ) ) {
                 $periods = array('fixed_period_start_day', 'fixed_period_rollover_day');
                 foreach ( $periods as $period ) {
-                    $month = $params[$period][$config->dateformatMonthVar];
+                    $month = $params[$period]['M'];
                     $date  = $params[$period]['d'];
                     if ( !$month || !$date ) {
                         switch ($period) {
@@ -354,11 +359,11 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
                 $params['duration_interval'] = 1;
             }
             
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             $periods = array('fixed_period_start_day', 'fixed_period_rollover_day');
             foreach ( $periods as $per ) {
-                if ($params[$per][$config->dateformatMonthVar] && $params[$per]['d']) {
-                    $mon = $params[$per][$config->dateformatMonthVar];
+                if ($params[$per]['M'] && $params[$per]['d']) {
+                    $mon = $params[$per]['M'];
                     $dat = $params[$per]['d'];
                     $mon = ( $mon < 9) ? '0'.$mon : $mon; 
                     $dat = ( $dat < 9) ? '0'.$dat : $dat; 
@@ -377,6 +382,12 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
             
             $membershipType = CRM_Member_BAO_MembershipType::add($params, $ids);
             CRM_Core_Session::setStatus( ts('The membership type \'%1\' has been saved.', array( 1 => $membershipType->name )) );
+            $buttonName = $this->controller->getButtonName( );
+            $session = CRM_Core_Session::singleton( );
+            if ( $buttonName == $this->getButtonName( 'upload', 'new' ) ) {
+                CRM_Core_Session::setStatus( ts(' You can add another membership type.') );
+                $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/admin/member/membershipType', 'action=add&reset=1' ) );
+            }
         } 
     }
 
@@ -393,21 +404,22 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
     {
         //max records that will be listed
         $searchValues = array();
-        $searchValues[] = array( 'sort_name', 'LIKE', $params['member_org'], 0, 1 );
-        
+        if ( !empty($params['member_org']) ) {
+            $searchValues[] = array( 'sort_name', 'LIKE', $params['member_org'], 0, 1 );
+        }
         $searchValues[] = array( 'contact_type', '=', 'organization', 0, 0 );
 
         // get the count of contact
         require_once 'CRM/Contact/BAO/Contact.php';
-        $contactBAO  =& new CRM_Contact_BAO_Contact( );
-        $query =& new CRM_Contact_BAO_Query( $searchValues );
+        $contactBAO  = new CRM_Contact_BAO_Contact( );
+        $query = new CRM_Contact_BAO_Query( $searchValues );
         $searchCount = $query->searchQuery(0, 0, null, true );
         $this->set( 'searchCount', $searchCount );
         if ( $searchCount <= self::MAX_CONTACTS ) {
             // get the result of the search
             $result = $query->searchQuery(0, self::MAX_CONTACTS, null);
 
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             $searchRows = array( );
 
             while($result->fetch()) {

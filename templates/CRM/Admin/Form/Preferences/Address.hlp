@@ -1,9 +1,34 @@
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
 {htxt id='label-tokens'}
 <p>{ts}The following tokens are available to format Mailing Labels. Address fields are taken from the contact's <strong>primary</strong> location.{/ts}</p>
 <div class="form-item">
 <table style="">
-<tr style="vertical-align:top;"><td style="padding-right:1em;">{literal}{contact.contact_name}{/literal}</td><td>{ts}Used for mailing labels only. Replaced by the configurable Individual Name format for individuals and the display name for Organizations and Households.{/ts}</td></tr>
-<tr style="vertical-align:top;"><td style="padding-right:1em;">{literal}{contact.current_employer}{/literal}</td><td>{ts}Current employer name as configured in the individual contact edit form. If you are printing labels for Organizations and Households AS WELL AS Individuals, then consider putting this token in the Individual Name Format field below (rather than here).{/ts}</td></tr>
+<tr style="vertical-align:top;"><td style="padding-right:1em;">{literal}{contact.addressee}{/literal}</td><td>{ts}Used for mailing labels only. Replaced by the Addressee option selected on contact add/edit screen.{/ts}</td></tr>
+<tr style="vertical-align:top;"><td style="padding-right:1em;">{literal}{contact.current_employer}{/literal}</td><td>{ts}Current employer name as configured in the individual contact edit form. Note that this field is only available for contacts which are the contact type individual.{/ts}</td></tr>
 <tr style="vertical-align:top;"><td style="padding-right:1em;">{literal}{contact.address_name}{/literal}</td><td>{ts}Address Name (e.g. Johnson Paviliont).{/ts}</td>
 <tr style="vertical-align:top;"><td style="padding-right:1em;">{literal}{contact.street_address}{/literal}</td><td>{ts}Full street address (e.g. 110 Main Street).{/ts}</td>
 <tr style="vertical-align:top;"><td style="padding-right:1em;">{literal}{contact.supplemental_address_1}{/literal}</td><td>{ts}Supplemental address 1 (line is skipped if empty).{/ts}</td>

@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -96,16 +97,13 @@ class CRM_Utils_Address
             }
 
             if ( $type == 'Individual' ) {
-                $format = CRM_Core_BAO_Preferences::value( 'individual_name_format' );
-                $format = str_replace('contact.',"",$format);
-                $contactName = self::format($fields, $format, null, null, true);
+                $contactName = CRM_Utils_Array::value( 'addressee_display', $fields );
             }
         }
 
         if (! $microformat) {
             $replacements =
                 array( // replacements in case of Individual Name Format
-                      'addressee'              => CRM_Utils_Array::value( 'addressee', $fields ),
                       'display_name'           => CRM_Utils_Array::value( 'display_name', $fields ),
                       'individual_prefix'      => CRM_Utils_Array::value( 'individual_prefix', $fields ),
                       'first_name'             => CRM_Utils_Array::value( 'first_name', $fields ),
@@ -145,9 +143,13 @@ class CRM_Utils_Address
                       'contact_source'         => CRM_Utils_Array::value( 'contact_source', $fields ),
                       'external_identifier'    => CRM_Utils_Array::value( 'external_identifier', $fields ),
                       'contact_id'             => CRM_Utils_Array::value( 'id', $fields ),
+                      'household_name'         => CRM_Utils_Array::value( 'display_name', $fields ),
+                      'organization_name'      => CRM_Utils_Array::value( 'display_name', $fields ),
+                      'legal_name'             => CRM_Utils_Array::value( 'legal_name', $fields ),
                       'preferred_communication_method' => CRM_Utils_Array::value( 'preferred_communication_method', $fields ),
-                      'email_greeting'         => CRM_Utils_Array::value( 'email_greeting', $fields ),
-                      'postal_greeting'        => CRM_Utils_Array::value( 'postal_greeting', $fields )
+                      'addressee'              => CRM_Utils_Array::value( 'addressee_display', $fields ),
+                      'email_greeting'         => CRM_Utils_Array::value( 'email_greeting_display', $fields ),
+                      'postal_greeting'        => CRM_Utils_Array::value( 'postal_greeting_display', $fields )
                        );
         } else {
             $replacements =
@@ -203,17 +205,17 @@ class CRM_Utils_Address
                 $formatted = preg_replace("/{[^{}]*\b{$token}\b[^{}]*}/u", '', $formatted);
             }
         }
-
         // drop any {...} constructs from lines' ends
         if (! $microformat) {
             $formatted = "\n$formatted\n";
         } else {
-            if( $microformat === 1) {
-                $formatted = "\n<div class=\"location vcard\"><span class=\"adr\">$formatted</span></div>\n";
+            if( $microformat == 1) {
+                $formatted = "\n<div class=\"location vcard\"><span class=\"adr\">\n$formatted</span></div>\n";
             } else {
                 $formatted = "\n<div class=\"vcard\"><span class=\"adr\">$formatted</span></div>\n";
             }
         }
+        
         $formatted = preg_replace('/\n{[^{}]*}/u', "\n", $formatted);
         $formatted = preg_replace('/{[^{}]*}\n/u', "\n", $formatted);
 
@@ -228,16 +230,31 @@ class CRM_Utils_Address
         $formatted = str_replace(array('{', '}'), '', $formatted);
 
         // drop any empty lines left after the replacements
-        $lines = array();
-        foreach (explode("\n", $formatted) as $line) {
-            $line = trim($line);
-            if ( $line ) {
-                $lines[] = $line;
+        $formatted = preg_replace('/^[ \t]*[\r\n]+/m', '', $formatted);
+
+        if ( ! $microformat ) {
+            $finalFormatted = $formatted;
+        } else {
+            // remove \n from each line and only add at the end
+            // this hack solves formatting issue, when we convert nl2br
+            $lines = array( );
+            $count = 1;
+            $finalFormatted = null;
+            $formattedArray = explode("\n", $formatted);
+            $formattedArray = array_filter($formattedArray);
+                
+            foreach ( $formattedArray as $line) {
+                $line = trim($line);
+                if ( $line ) {
+                    if ( $count > 1 && $count < count( $formattedArray ) ) {
+                       $line = "$line\n";
+                    }
+                    $finalFormatted .= $line;
+                    $count++;
+                }
             }
         }
-        $formatted = implode("\n", $lines);
-
-        return $formatted;
+        return $finalFormatted;
     }
 
 }

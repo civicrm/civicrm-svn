@@ -1,37 +1,38 @@
 <?php
 
-  /*
-   +--------------------------------------------------------------------+
-   | CiviCRM version 2.2                                                |
-   +--------------------------------------------------------------------+
-   | Copyright CiviCRM LLC (c) 2004-2009                                |
-   +--------------------------------------------------------------------+
-   | This file is a part of CiviCRM.                                    |
-   |                                                                    |
-   | CiviCRM is free software; you can copy, modify, and distribute it  |
-   | under the terms of the GNU Affero General Public License           |
-   | Version 3, 19 November 2007.                                       |
-   |                                                                    |
-   | CiviCRM is distributed in the hope that it will be useful, but     |
-   | WITHOUT ANY WARRANTY; without even the implied warranty of         |
-   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
-   | See the GNU Affero General Public License for more details.        |
-   |                                                                    |
-   | You should have received a copy of the GNU Affero General Public   |
-   | License along with this program; if not, contact CiviCRM LLC       |
-   | at info[AT]civicrm[DOT]org. If you have questions about the        |
-   | GNU Affero General Public License or the licensing of CiviCRM,     |
-   | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
-   +--------------------------------------------------------------------+
-  */
+/*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*/
 
-  /**
-   *
-   * @package CRM
-   * @copyright CiviCRM LLC (c) 2004-2009
-   * $Id$
-   *
-   */
+/**
+ *
+ * @package CRM
+ * @copyright CiviCRM LLC (c) 2004-2010
+ * $Id$
+ *
+ */
 
 require_once 'CRM/Core/Form.php';
 require_once 'CRM/Core/BAO/OptionGroup.php';
@@ -45,14 +46,17 @@ class CRM_Report_Form_Register extends CRM_Core_Form {
     {  
         $this->_action = CRM_Utils_Request::retrieve( 'action','String',$this, false );
         $this->_id = CRM_Utils_Request::retrieve( 'id','String',$this, false );        
-         if ( $this->_action & CRM_Core_Action::DELETE ) {
+     
+        CRM_Utils_System::setTitle(ts('Report Template'));
+
+        if ( $this->_action & CRM_Core_Action::DELETE ) {
             return;
-         }    
+        }    
         
         //   crm_core_error::debug("$this->_actions", $this->_action);
         $this->_opID = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup',
                                                     'report_template', 'id', 'name' );
-        CRM_Utils_System::setTitle(ts('Report Template'));
+
         $instanceInfo = array( );      
     }
 
@@ -120,7 +124,7 @@ class CRM_Report_Form_Register extends CRM_Core_Form {
             $this->addFormRule( array( 'CRM_Report_Form_Register', 'formRule' ), $this );
         }
     
-    static function formRule( &$fields, &$files, $self ) 
+    static function formRule( $fields, $files, $self ) 
         {  
             $errors = array( );
             $dupeClass = false;

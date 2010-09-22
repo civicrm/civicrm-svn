@@ -1,22 +1,46 @@
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
 {* this template is used for adding/editing/deleting Message Templates *}
 {capture assign=tokenDocsRepeated}{docURL page="Mail-merge Tokens for Contact Data" text="token documentation"}{/capture}
+{if $action neq 8}
 <div id="help">
-    {ts}Use this form to add or edit re-usable message templates.{/ts} {help id="id-msgTplIntro"}
+    {ts}Use this form to add or edit re-usable message templates.{/ts} {help id="id-msgTplIntro" file="CRM/Admin/Page/MessageTemplates.hlp"}
 </div>
+{/if}
+<div class="crm-block crm-form-block"> 
 <div class="form-item" id="message_templates">
-<fieldset><legend>{if $action eq 1}{ts}New Message Template{/ts}{elseif $action eq 2}{ts}Edit Message Template{/ts}{else}{ts}Delete Message Template{/ts}{/if}</legend>
-  
-   {if $action eq 8}
-      <div class="messages status">
-        <dl>
-          <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>
-          <dd>
-          {ts}Do you want to delete this message template?{/ts}
-          </dd>
-       </dl>
-      </div>
-   {else}
-    <table class="form-layout-compressed">
+<h3>{if $action eq 1}{ts}New Message Template{/ts}{elseif $action eq 2}{ts}Edit Message Template{/ts}{else}{ts}Delete Message Template{/ts}{/if}</h3>
+{if $action eq 8}
+   <div class="messages status">
+       <div class="icon inform-icon"></div>
+       {ts}Do you want to delete this message template?{/ts}
+   </div>
+{else}
+        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+        <table class="form-layout-compressed">
         <tr>
             <td class="label">{$form.msg_title.label}</td>
             <td>{$form.msg_title.html}
@@ -25,32 +49,86 @@
         </tr>
         <tr>
             <td class="label">{$form.msg_subject.label}</td>
-            <td>{$form.msg_subject.html}
-                <br /><span class="description">{ts}Subject for email message.{/ts} {ts 1=$tokenDocsRepeated}Tokens may be included (%1).{/ts}
+            <td>
+                  {$form.msg_subject.html|crmReplace:class:huge}
+	              <a href="#" onClick="return showToken('Subject', 3);">{$form.token3.label}</a>
+	              {help id="id-token-text" file="CRM/Contact/Form/Task/Email.hlp"}
+                  <div id='tokenSubject' style="display:none">
+	                   <input  style="border:1px solid #999999;" type="text" id="filter3" size="20" name="filter3" onkeyup="filter(this, 3)"/><br />
+	                   <span class="description">{ts}Begin typing to filter list of tokens{/ts}</span><br/>
+	                   {$form.token3.html}
+                  </div>
+	           <br /><span class="description">{ts}Subject for email message.{/ts} {ts 1=$tokenDocsRepeated}Tokens may be included (%1).{/ts}
             </td>
         </tr>
         <tr>
-            <td colspan="2">{$form.msg_text.label}<br />
-                            {$form.msg_text.html|crmReplace:class:huge}<br />
-			    
-                            <span class="description">{ts}Text formatted message.{/ts} {ts 1=$tokenDocsRepeated}Tokens may be included (%1).{/ts}
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2">{$form.msg_html.label}<br />
-                            {$form.msg_html.html}<br />
-                            <span class="description">{ts}You may optionally create an HTML formatted version of this message. It will be sent to contacts whose Email Format preference is 'HTML' or 'Both'.{/ts} {ts 1=$tokenDocsRepeated}Tokens may be included (%1).{/ts}
-            </td>
-        </tr>
-        <tr>
+	</table>
+
+	    <div class="crm-accordion-wrapper crm-plaint_text_email-accordion crm-accordion-open">
+	    	<div class="crm-accordion-header">
+  	    	    <div class="icon crm-accordion-pointer"></div> 
+  	    	    {ts}Plain-Text Format{/ts}
+	    	</div><!-- /.crm-accordion-header -->
+            <div class="crm-accordion-body">
+                <span class="helpIcon" id="helptext">
+                  <a href="#" onClick="return showToken('Text', 1);">{$form.token1.label}</a>
+                  {help id="id-token-text" file="CRM/Contact/Form/Task/Email.hlp"}
+                  <div id='tokenText' style="display:none">
+                    <input  style="border:1px solid #999999;" type="text" id="filter1" size="20" name="filter1" onkeyup="filter(this, 1)"/><br />
+                    <span class="description">{ts}Begin typing to filter list of tokens{/ts}</span><br/>
+                      {$form.token1.html}
+                  </div>
+                </span>
+  		        <div class="clear"></div>
+                <div class='text'>
+                    {$form.msg_text.html|crmReplace:class:huge}
+                    <div class="description">{ts}Text formatted message.{/ts} {ts 1=$tokenDocsRepeated}Tokens may be included (%1).{/ts}</div>
+                </div>
+            </div><!-- /.crm-accordion-body -->
+	    </div><!-- /.crm-accordion-wrapper -->  
+
+	    <div class="crm-accordion-wrapper crm-html_email-accordion crm-accordion-open">
+	    	<div class="crm-accordion-header">
+    		    <div class="icon crm-accordion-pointer"></div> 
+    		    {ts}HTML Format{/ts}
+    		    {help id="id-message-text" file="CRM/Contact/Form/Task/Email.hlp"}
+		    </div><!-- /.crm-accordion-header -->
+ 		    <div class="crm-accordion-body">
+                <span class="helpIcon" id="helphtml">
+                  <a href="#" onClick="return showToken('Html', 2);">{$form.token2.label}</a> 
+                  {help id="id-token-html" file="CRM/Contact/Form/Task/Email.hlp"}
+                  <div id='tokenHtml' style="display:none">
+                    <input style="border:1px solid #999999;" type="text" id="filter2" size="20" name="filter2" onkeyup="filter(this, 2)"/><br />
+                    <span class="description">{ts}Begin typing to filter list of tokens{/ts}</span><br/>
+                      {$form.token2.html}
+                  </div>
+                </span>
+                <div class="clear"></div>
+                <div class='html'>
+                    {$form.msg_html.html|crmReplace:class:huge}
+                    <div class="description">{ts}You may optionally create an HTML formatted version of this message. It will be sent to contacts whose Email Format preference is 'HTML' or 'Both'.{/ts} {ts 1=$tokenDocsRepeated}Tokens may be included (%1).{/ts}</div>
+                </div>  
+		    </div><!-- /.crm-accordion-body -->
+	    </div><!-- /.crm-accordion-wrapper -->
+
+    {if !$workflow_id}
+	<table class="form-layout-compressed">
+          <tr>
             <td class="label">{$form.is_active.label}</td>
             <td>{$form.is_active.html}</td>
-        </tr>
-    </table> 
+          </tr>
+	</table>
+    {/if}
   {/if}
-  <dl>   
-      <dt></dt><dd class="html-adjust">{$form.buttons.html}</dd>
-  </dl>
+  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
   <br clear="all" />
-</fieldset>
 </div>
+</div> <!-- end of crm-form-block -->
+{include file="CRM/Mailing/Form/InsertTokens.tpl"}
+{literal}
+<script type="text/javascript">
+cj(function() {
+   cj().crmaccordions(); 
+});
+</script>
+{/literal}

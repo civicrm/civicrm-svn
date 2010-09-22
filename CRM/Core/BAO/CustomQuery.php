@@ -2,15 +2,15 @@
 
 /* 
  +--------------------------------------------------------------------+ 
- | CiviCRM version 2.2                                                | 
+ | CiviCRM version 3.2                                                | 
  +--------------------------------------------------------------------+ 
- | Copyright CiviCRM LLC (c) 2004-2009                                | 
+ | Copyright CiviCRM LLC (c) 2004-2010                                | 
  +--------------------------------------------------------------------+ 
  | This file is a part of CiviCRM.                                    | 
  |                                                                    | 
  | CiviCRM is free software; you can copy, modify, and distribute it  | 
  | under the terms of the GNU Affero General Public License           | 
- | Version 3, 19 November 2007.                                       | 
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   | 
  |                                                                    | 
  | CiviCRM is distributed in the hope that it will be useful, but     | 
  | WITHOUT ANY WARRANTY; without even the implied warranty of         | 
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        | 
  |                                                                    | 
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -29,7 +30,7 @@
  * 
  * 
  * @package CRM 
- * @copyright CiviCRM LLC (c) 2004-2009 
+ * @copyright CiviCRM LLC (c) 2004-2010 
  * $Id$ 
  * 
  */ 
@@ -95,7 +96,7 @@ class CRM_Core_BAO_CustomQuery
      *    
      * @var array    
      */ 
-    protected $_fields;
+    public $_fields;
 
     /**
      * This stores custom data group types and tables that it extends
@@ -116,7 +117,8 @@ class CRM_Core_BAO_CustomQuery
                                'Event'        => 'civicrm_event',
                                'Activity'     => 'civicrm_activity',
                                'Pledge'       => 'civicrm_pledge',
-                               'Grant'        => 'civicrm_grant'
+                               'Grant'        => 'civicrm_grant',
+                               'Address'      => 'civicrm_address',
                                );
 
     /**
@@ -154,7 +156,8 @@ class CRM_Core_BAO_CustomQuery
 SELECT f.id, f.label, f.data_type,
        f.html_type, f.is_search_range,
        f.option_group_id, f.custom_group_id,
-       f.column_name, g.table_name 
+       f.column_name, g.table_name,
+       f.date_format,f.time_format 
   FROM civicrm_custom_field f,
        civicrm_custom_group g
  WHERE f.custom_group_id = g.id
@@ -166,7 +169,12 @@ SELECT f.id, f.label, f.data_type,
         while ( $dao->fetch( ) ) {
             // get the group dao to figure which class this custom field extends
             $extends =& CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomGroup', $dao->custom_group_id, 'extends' );
-            $extendsTable = self::$extendsMap[$extends];
+            if ( array_key_exists( $extends, self::$extendsMap ) ) { 
+                $extendsTable = self::$extendsMap[$extends];
+            } else if ( in_array( $extends, CRM_Contact_BAO_ContactType::subTypes( ) ) ) {
+                // if $extends is a subtype, refer contact table
+                $extendsTable = self::$extendsMap['Contact'];
+            }
             $this->_fields[$dao->id] = array( 'id'              => $dao->id,
                                               'label'           => $dao->label,
                                               'extends'         => $extendsTable,
@@ -183,14 +191,20 @@ SELECT f.id, f.label, f.data_type,
             $this->_options[$dao->id]['attributes'] = array( 'label'     => $dao->label,
                                                              'data_type' => $dao->data_type, 
                                                              'html_type' => $dao->html_type );
+                                                             
             $optionGroupID = null;
             $htmlTypes = array( 'CheckBox','Radio','Select','Multi-Select', 'AdvMulti-Select', 'Autocomplete-Select' );                            
             if ( in_array( $dao->html_type, $htmlTypes ) && $dao->data_type != 'ContactReference' ) { 
                 if ( $dao->option_group_id ) {
                     $optionGroupID = $dao->option_group_id;
                 } else if ( $dao->data_type != 'Boolean' ) {
-                    CRM_Core_Error::fatal( );
+                    $errorMessage = ts( "The custom field %1 is corrupt. Please delete and re-build the field",
+                                        array( 1 => $dao->label ) );
+                    CRM_Core_Error::fatal( $errorMessage );
                 }
+            } else if ( $dao->html_type == 'Select Date' ) {
+                $this->_options[$dao->id]['attributes']['date_format'] = $dao->date_format;
+                $this->_options[$dao->id]['attributes']['time_format'] = $dao->time_format;
             }
            
             // build the cache for custom values with options (label => value)
@@ -212,7 +226,10 @@ SELECT label, value
                     }
                 }
                 require_once 'CRM/Utils/Hook.php';
-                CRM_Utils_Hook::customFieldOptions( $dao->id, $this->_options[$dao->id], false );
+                $options = $this->_options[$dao->id];
+                //unset attributes to avoid confussion
+                unset( $options['attributes']);
+                CRM_Utils_Hook::customFieldOptions( $dao->id, $options, false );
             }
         }
     }
@@ -255,6 +272,8 @@ SELECT label, value
                 $joinTable = 'civicrm_relationship';
             } else  if ( $field['extends'] == 'civicrm_grant' ) {
                 $joinTable = 'civicrm_grant';
+            } else  if ( $field['extends'] == 'civicrm_address' ) {
+                $joinTable = 'civicrm_address';
             }
             
             if ( $joinTable ) {
@@ -291,6 +310,8 @@ SELECT label, value
                  ! $values ) {
                 continue;
             }
+
+            $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
 
             foreach ( $values as $tuple ) {
                 list( $name, $op, $value, $grouping, $wildcard ) = $tuple;
@@ -342,6 +363,7 @@ SELECT label, value
                                     $sqlOPlabel = ts('match ANY');
                                     continue;
                                 }
+                                $v = CRM_Core_DAO::escapeString($v);
                                 $sqlValue[] = "( $sql like '%" . CRM_Core_BAO_CustomOption::VALUE_SEPERATOR . $v . CRM_Core_BAO_CustomOption::VALUE_SEPERATOR . "%' ) ";
                             }
                             //if user select only 'CiviCRM_OP_OR' value
@@ -361,13 +383,17 @@ SELECT label, value
                                                 $grouping );
                         } else {
                             if ( $field['html_type'] == 'Autocomplete-Select' ) {
+                                $wildcard = false;
                                 $val = array_search( $value, $this->_options[$field['id']] );
+                            } else if ( in_array( $field['html_type'],  array( 'Select', 'Radio' ) ) ) {
+                                $wildcard = false; 
+                                $val = CRM_Utils_Type::escape( $value, 'String' );
                             } else {
-                                $val = CRM_Utils_Type::escape( strtolower(trim($value)), 'String' );
+                                $val = CRM_Utils_Type::escape( $strtolower(trim($value)), 'String' );
                             }
 
                             if ( $wildcard ) {
-                                $val = strtolower( CRM_Core_DAO::escapeString( $val ) );
+                                $val = $strtolower( CRM_Core_DAO::escapeString( $val ) );
                                 $val = "%$val%";
                                 $op  = 'LIKE';
                             }
@@ -379,8 +405,7 @@ SELECT label, value
                     } 
                     continue;
                 case 'ContactReference':
-                    $label = $value;
-                    $value = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', str_replace( '\\', '', $value), 'id', 'sort_name' );
+                    $label = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $value,  'sort_name');
                     $this->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( $fieldName, $op, $value, 'String' );
                     $this->_qill[$grouping][]  = $field['label'] . " $op $label";                    
                     continue;
@@ -441,27 +466,40 @@ SELECT label, value
                     $toValue   = CRM_Utils_Array::value( 'to'  , $value );
   
                     if ( ! $fromValue && ! $toValue ) {
-                        if ( !CRM_Utils_Date::format( $value ) && $op != 'IS NULL' && $op != 'IS NOT NULL' ) {
+                        if ( !CRM_Utils_Date::processDate( $value ) && $op != 'IS NULL' && $op != 'IS NOT NULL' ) {
                             continue; 
                         } 
-                        $date = CRM_Utils_Date::format( $value ); 
+                        
+                        // hack to handle yy format during search
+                        if ( is_numeric( $value ) && strlen( $value) == 4 ) {
+                            $value = "01-01-{$value}";
+                        }
+                        
+                        $date = CRM_Utils_Date::processDate( $value ); 
                         $this->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( $fieldName, $op, $date, 'String' );
                         $this->_qill[$grouping][]  = $field['label'] . " {$op} " . CRM_Utils_Date::customFormat( $date ); 
                     } else {
-                        $fromDate = CRM_Utils_Date::format( $fromValue );
-                        $toDate   = CRM_Utils_Date::format( $toValue   );
+                        if ( is_numeric( $fromValue ) && strlen( $fromValue ) == 4 ) {
+                            $fromValue = "01-01-{$fromValue}";
+                        }
+                        
+                        if ( is_numeric( $toValue ) && strlen( $toValue ) == 4 ) {
+                            $toValue = "01-01-{$toValue}";
+                        }
+                        
+                        // TO DO: add / remove time based on date parts
+                        $fromDate = CRM_Utils_Date::processDate( $fromValue );
+                        $toDate   = CRM_Utils_Date::processDate( $toValue   );
                         if ( ! $fromDate && ! $toDate ) {
                             continue;
                         }
                         if ( $fromDate ) {
                             $this->_where[$grouping][] = "$fieldName >= $fromDate";
-                            $fromDate = CRM_Utils_Date::format( $fromValue, '-' );
                             $this->_qill[$grouping][]  = $field['label'] . ' >= ' .
                                 CRM_Utils_Date::customFormat( $fromDate );
                         }
                         if ( $toDate ) {
                             $this->_where[$grouping][] = "$fieldName <= $toDate";
-                            $toDate = CRM_Utils_Date::format( $toValue, '-' );
                             $this->_qill[$grouping][]  = $field['label'] . ' <= ' .
                                 CRM_Utils_Date::customFormat( $toDate );
                         }

@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -85,10 +86,11 @@ WHERE    civicrm_event.id = %1";
         list( $offset, $rowCount ) = $this->_pager->getOffsetAndRowCount( );
         
         $query = "
-SELECT   civicrm_contact.id                as contact_id   ,
-         civicrm_contact.display_name      as name         ,
-         civicrm_contact.sort_name         as sort_name    ,
-         civicrm_participant.status_id     as status_id    ,
+SELECT   civicrm_contact.id                as contact_id    ,
+         civicrm_contact.display_name      as name          ,
+         civicrm_contact.sort_name         as sort_name     ,
+         civicrm_participant.id            as participant_id,
+         civicrm_participant.status_id     as status_id     ,
          civicrm_participant.register_date as register_date
          $fromClause
          $whereClause
@@ -100,12 +102,13 @@ LIMIT    $offset, $rowCount";
         require_once 'CRM/Event/PseudoConstant.php';
         $statusLookup = CRM_Event_PseudoConstant::participantStatus( );
         while ( $object->fetch( ) ) {
-            $row = array( 'id'     => $object->contact_id,
-                          'name'   => $object->name      ,
-                          'email'  => $object->email,
-                          'status' => CRM_Utils_Array::value( $object->status_id,
-                                                              $statusLookup ),
-                          'date'   => $object->register_date );
+            $row = array( 'id'            => $object->contact_id,
+                          'participantID' => $object->participant_id,
+                          'name'          => $object->name      ,
+                          'email'         => $object->email,
+                          'status'        => CRM_Utils_Array::value( $object->status_id,
+                                                                     $statusLookup ),
+                          'date'          => $object->register_date );
             $rows[] = $row;
         }
         $this->assign_by_ref( 'rows', $rows );
@@ -118,7 +121,7 @@ LIMIT    $offset, $rowCount";
 
         $params = array( );
 
-        $params['status']       = ts('Group %%StatusMessage%%');
+        $params['status']       = ts('Group') . ' %%StatusMessage%%';
         $params['csvString']    = null;
         $params['buttonTop']    = 'PagerTopButton';
         $params['buttonBottom'] = 'PagerBottomButton';
@@ -157,7 +160,7 @@ SELECT count( civicrm_contact.id )
             $sortID = CRM_Utils_Sort::sortIDValue( $this->get( CRM_Utils_Sort::SORT_ID  ),
                                                    $this->get( CRM_Utils_Sort::SORT_DIRECTION ) );
         }
-        $sort =& new CRM_Utils_Sort( $headers, $sortID );
+        $sort = new CRM_Utils_Sort( $headers, $sortID );
         $this->assign_by_ref( 'headers', $headers );
         $this->assign_by_ref( 'sort'   , $sort    );
         $this->set( CRM_Utils_Sort::SORT_ID,

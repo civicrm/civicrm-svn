@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -197,7 +198,7 @@ class CRM_Contribute_Form_Search extends CRM_Core_Form
 
         require_once 'CRM/Contact/BAO/Query.php';
         $this->_queryParams =& CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
-        $selector =& new CRM_Contribute_Selector_Search( $this->_queryParams,
+        $selector = new CRM_Contribute_Selector_Search( $this->_queryParams,
                                                          $this->_action,
                                                          null,
                                                          $this->_single,
@@ -211,7 +212,7 @@ class CRM_Contribute_Form_Search extends CRM_Core_Form
         $this->assign( "{$prefix}limit", $this->_limit );
         $this->assign( "{$prefix}single", $this->_single );
 
-        $controller =& new CRM_Core_Selector_Controller($selector ,  
+        $controller = new CRM_Core_Selector_Controller($selector ,  
                                                         $this->get( CRM_Utils_Pager::PAGE_ID ),  
                                                         $sortID,  
                                                         CRM_Core_Action::VIEW, 
@@ -256,7 +257,7 @@ class CRM_Contribute_Form_Search extends CRM_Core_Form
         $rows = $this->get( 'rows' ); 
         if ( is_array( $rows ) ) {
             if ( !$this->_single ) {
-                $this->addElement( 'checkbox', 'toggleSelect', null, null, array( 'onclick' => "toggleTaskAction( true ); return toggleCheckboxVals('mark_x_',this.form);" ) ); 
+                $this->addElement( 'checkbox', 'toggleSelect', null, null, array( 'onclick' => "toggleTaskAction( true ); return toggleCheckboxVals('mark_x_',this);" ) ); 
                 foreach ($rows as $row) { 
                     $this->addElement( 'checkbox', $row['checkbox'], 
                                        null, null, 
@@ -271,7 +272,7 @@ class CRM_Contribute_Form_Search extends CRM_Core_Form
             $permission = CRM_Core_Permission::getPermission( );
             
             require_once 'CRM/Contribute/Task.php';
-            $tasks = array( '' => ts('- more actions -') ) + CRM_Contribute_Task::permissionedTaskTitles( $permission );
+            $tasks = array( '' => ts('- actions -') ) + CRM_Contribute_Task::permissionedTaskTitles( $permission );
             $this->add('select', 'task'   , ts('Actions:') . ' '    , $tasks    ); 
             $this->add('submit', $this->_actionButtonName, ts('Go'), 
                        array( 'class'   => 'form-submit',
@@ -284,7 +285,7 @@ class CRM_Contribute_Form_Search extends CRM_Core_Form
             
             // need to perform tasks on all or selected items ? using radio_ts(task selection) for it 
             $this->addElement('radio', 'radio_ts', null, '', 'ts_sel', array( 'checked' => 'checked') );
-            $this->addElement('radio', 'radio_ts', null, '', 'ts_all', array( 'onclick' => $this->getName().".toggleSelect.checked = false; toggleCheckboxVals('mark_x_',".$this->getName()."); toggleTaskAction( true );" ) );
+            $this->addElement('radio', 'radio_ts', null, '', 'ts_all', array( 'onclick' => $this->getName().".toggleSelect.checked = false; toggleCheckboxVals('mark_x_',this); toggleTaskAction( true );" ) );
         }
         
         // add buttons 
@@ -370,18 +371,20 @@ class CRM_Contribute_Form_Search extends CRM_Core_Form
 
         require_once 'CRM/Contact/BAO/Query.php';
         $this->_queryParams =& CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
-        $selector =& new CRM_Contribute_Selector_Search( $this->_queryParams,
-                                                         $this->_action,
-                                                         null,
-                                                         $this->_single,
-                                                         $this->_limit,
-                                                         $this->_context ); 
+        $selector = new CRM_Contribute_Selector_Search( $this->_queryParams,
+                                                        $this->_action,
+                                                        null,
+                                                        $this->_single,
+                                                        $this->_limit,
+                                                        $this->_context ); 
+        $selector->setKey( $this->controller->_key );
+
         $prefix = null;
         if ( $this->_context == 'basic' || $this->_context == 'user' ) {
             $prefix = $this->_prefix;
         }
 
-        $controller =& new CRM_Core_Selector_Controller($selector , 
+        $controller = new CRM_Core_Selector_Controller( $selector , 
                                                         $this->get( CRM_Utils_Pager::PAGE_ID ), 
                                                         $sortID, 
                                                         CRM_Core_Action::VIEW,
@@ -406,14 +409,6 @@ class CRM_Contribute_Form_Search extends CRM_Core_Form
         // then see if there are any get values, and if so over-ride the post values
         // note that this means that GET over-rides POST :)
 
-        // we fix date_to here if set to be the end of the day, i.e. 23:59:59
-        if ( isset( $this->_formValues['contribution_date_high'] ) &&
-             ! CRM_Utils_System::isNull( $this->_formValues['contribution_date_high'] ) ) {
-            $this->_formValues['contribution_date_high']['H'] = 23;
-            $this->_formValues['contribution_date_high']['i'] = 59;
-            $this->_formValues['contribution_date_high']['s'] = 59;
-        }
-        
         if ( ! $this->_force ) {
             return;
         }
@@ -444,21 +439,16 @@ class CRM_Contribute_Form_Search extends CRM_Core_Form
                                                  CRM_Core_DAO::$_nullObject );
         if ( $lowDate ) {
             $lowDate = CRM_Utils_Type::escape( $lowDate, 'Timestamp' );
-            $date = CRM_Utils_Date::unformat( $lowDate, '' );
-            $this->_formValues['contribution_date_low'] = $date;
-            $this->_defaults['contribution_date_low'] = $date;
+            $date = CRM_Utils_Date::setDateDefaults( $lowDate );
+            $this->_formValues['contribution_date_low'] = $this->_defaults['contribution_date_low'] = $date[0];
         }
 
         $highDate= CRM_Utils_Request::retrieve( 'end', 'Timestamp',
                                                 CRM_Core_DAO::$_nullObject );
         if ( $highDate ) { 
             $highDate = CRM_Utils_Type::escape( $highDate, 'Timestamp' ); 
-            $date = CRM_Utils_Date::unformat( $highDate, '' );
-            $this->_formValues['contribution_date_high'] = $date;
-            $this->_defaults['contribution_date_high'] = $date;
-            $this->_formValues['contribution_date_high']['H'] = 23;
-            $this->_formValues['contribution_date_high']['i'] = 59;
-            $this->_formValues['contribution_date_high']['s'] = 59;
+            $date = CRM_Utils_Date::setDateDefaults( $highDate );
+            $this->_formValues['contribution_date_high'] = $this->_defaults['contribution_date_high'] = $date[0];
         }
 
         $this->_limit = CRM_Utils_Request::retrieve( 'limit', 'Positive',
@@ -476,6 +466,13 @@ class CRM_Contribute_Form_Search extends CRM_Core_Form
             $this->_formValues['contribution_recur_id']  = $recur;
             $this->_formValues['contribution_recurring'] = 1;
         }
+        
+        //check for contribution page id.
+        $contribPageId = CRM_Utils_Request::retrieve( 'pid', 'Positive', $this );
+        if ( $contribPageId ) $this->_formValues['contribution_page_id'] = $contribPageId;
+    
+        //give values to default.
+        $this->_defaults = $this->_formValues;
     }
     
     /**

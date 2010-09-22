@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -74,7 +75,7 @@ class CRM_Custom_Form_Preview extends CRM_Core_Form
             // field preview
             $defaults = array();
             $params   = array( 'id' => $this->_fieldId );
-            $fieldDAO =& new CRM_Core_DAO_CustomField();                    
+            $fieldDAO = new CRM_Core_DAO_CustomField();                    
             CRM_Core_DAO::commonRetrieve( 'CRM_Core_DAO_CustomField', $params, $defaults );
             
             if ( CRM_Utils_Array::value( 'is_view', $defaults ) ) {
@@ -84,9 +85,9 @@ class CRM_Custom_Form_Preview extends CRM_Core_Form
             }
             
             $groupTree = array();
-            $groupTree[$groupId]['id']     = 0;
-            $groupTree[$groupId]['fields'] = array();
-            $groupTree[$groupId]['fields'][$fieldId] = $defaults;
+            $groupTree[$this->_groupId]['id']     = 0;
+            $groupTree[$this->_groupId]['fields'] = array();
+            $groupTree[$this->_groupId]['fields'][$this->_fieldId] = $defaults;
             $this->_groupTree = CRM_Core_BAO_CustomGroup::formatGroupTree( $groupTree, 1, $this );
             $this->assign('preview_type', 'field');
         } else {
@@ -124,21 +125,14 @@ class CRM_Custom_Form_Preview extends CRM_Core_Form
      */
     public function buildQuickForm()
     {
-        foreach ( $this->_groupTree[$this->_groupId]['fields'] as &$field ) {
-
-            //fix for calendar for date field
-            //if date elements are less than 3 then don't show the date picker icon
-            if ( CRM_Utils_Array::value( 'data_type', $field ) == 'Date' && 
-                 isset ( $field['date_parts'] ) && 
-                 count( explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR , $field['date_parts'] ) ) < 3 ) {
-                $field['skip_calendar'] = true;
+        if ( is_array( $this->_groupTree[$this->_groupId] ) ) {
+            foreach ( $this->_groupTree[$this->_groupId]['fields'] as &$field ) {
+                //add the form elements
+                CRM_Core_BAO_CustomField::addQuickFormElement( $this, $field['element_name'], $field['id'], false, $field['is_required'] );
             }
-            $elementName = $field['element_name'];
-            //add the form elements
-            CRM_Core_BAO_CustomField::addQuickFormElement( $this, $elementName, $field['id'], false, $field['is_required'] );
-        }
         
-        $this->assign( 'groupTree', $this->_groupTree );  
+            $this->assign( 'groupTree', $this->_groupTree );
+        }
         $this->addButtons( array (
                                   array ( 'type'      => 'cancel',
                                           'name'      => ts('Done with Preview'),

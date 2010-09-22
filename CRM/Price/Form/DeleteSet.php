@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,13 +29,13 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
 
 require_once 'CRM/Core/Form.php';
-require_once 'CRM/Core/BAO/PriceSet.php';
+require_once 'CRM/Price/BAO/Set.php';
 /**
  * This class is to build the form for Deleting Set
  */
@@ -64,7 +65,7 @@ class CRM_Price_Form_DeleteSet extends CRM_Core_Form {
     {
         $this->_sid    = $this->get( 'sid' );
         
-        $this->_title = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_PriceSet', 
+        $this->_title = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', 
                                                      $this->_sid, 'title' );
     }
     
@@ -95,7 +96,7 @@ class CRM_Price_Form_DeleteSet extends CRM_Core_Form {
      */
     public function postProcess( ) 
     {
-        if (CRM_Core_BAO_PriceSet::deleteSet( $this->_sid)) {
+        if (CRM_Price_BAO_Set::deleteSet( $this->_sid)) {
             CRM_Core_Session::setStatus( ts( 'The Price Set \'%1\' has been deleted.', 
                                              array( 1 => $this->_title ) ) );        
         } else {

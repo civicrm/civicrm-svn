@@ -1,15 +1,15 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -17,7 +17,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -30,7 +31,7 @@
  * @package CiviCRM_APIv2
  * @subpackage API_Domain
  *
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * @version $Id$
  *
  */
@@ -54,22 +55,46 @@ function civicrm_domain_get( ) {
                     'entity_table' => 'civicrm_domain'
     );
     require_once 'CRM/Core/BAO/Location.php';
-    CRM_Core_BAO_Location::getValues( $params, $values, true );
+    $values['location'] = CRM_Core_BAO_Location::getValues( $params, true );
     $address_array = array ( 'street_address', 'supplemental_address_1', 'supplemental_address_2',
                              'city', 'state_province_id', 'postal_code', 'country_id', 'geo_code_1', 'geo_code_2' );
-    $domain = array(
-                    'id'           => $dao->id,
-                    'domain_name'  => $dao->name,
-                    'description'  => $dao->description,
-                    'domain_email' => CRM_Utils_Array::value( 'email', $values['location'][1]['email'][1] ),
-                    'domain_phone' => array(
-                                            'phone_type'=> CRM_Core_OptionGroup::getLabel( 'phone_type', CRM_Utils_Array::value('phone_type_id',$values['location'][1]['phone'][1] ) ),
-                                            'phone'     => CRM_Utils_Array::value( 'phone', $values['location'][1]['phone'][1] )
-        )
-    );
+    require_once 'CRM/Core/OptionGroup.php';
+    $domain[$dao->id] = array(
+                              'id'           => $dao->id,
+                              'domain_name'  => $dao->name,
+                              'description'  => $dao->description,
+                              'domain_email' => CRM_Utils_Array::value( 'email', $values['location']['email'][1] ),
+                              'domain_phone' => array(
+                                                      'phone_type'=> CRM_Core_OptionGroup::getLabel( 'phone_type', CRM_Utils_Array::value('phone_type_id',$values['location']['phone'][1] ) ),
+                                                      'phone'     => CRM_Utils_Array::value( 'phone', $values['location']['phone'][1] )
+                                                      )
+                              );
     foreach ( $address_array as $value ) {
-        $domain['domain_address'][$value] = CRM_Utils_Array::value( $value, $values['location'][1]['address'] );
+        $domain[$dao->id]['domain_address'][$value] = CRM_Utils_Array::value( $value, $values['location']['address'][1] );
     }
-    list( $domain['from_name'], $domain['from_email'] ) = CRM_Core_BAO_Domain::getNameAndEmail();
+    list( $domain[$dao->id]['from_name'], $domain[$dao->id]['from_email'] ) = CRM_Core_BAO_Domain::getNameAndEmail();
     return $domain;
+}
+
+/**
+ * Create a new domain
+ *
+ * @param array $params
+ * @return array
+ */
+function civicrm_domain_create( $params ) {
+    require_once 'CRM/Core/BAO/Domain.php';
+    
+    if ( !is_array( $params ) ) {
+        return civicrm_create_error( 'Params need to be of type array!' );
+    }
+
+    if ( empty( $params ) ) {
+        return civicrm_create_error( 'Params cannot be empty!' );
+    }
+    
+    $domain = CRM_Core_BAO_Domain::create( $params );
+    $domain_array = array( );
+    _civicrm_object_to_array( $domain, $domain_array );
+    return $domain_array;
 }

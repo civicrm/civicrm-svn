@@ -32,7 +32,12 @@ $(document).ready(function() {
           'paddingBottom': $(this).css('paddingBottom')
 	})[0];
       // Adjust width to fit cell and hide.
-      $(div).css('paddingRight', parseInt($(div).css('paddingRight')) + $(this).width() - $(div).width() +'px');
+      
+      //CRM-6467
+      var length = $(this).width() - $(div).width();
+      if ( length < 0 ) length = $(div).width() - $(this).width();
+      $(div).css('paddingRight', parseInt($(div).css('paddingRight')) + length +'px');
+
       cells.push(div);
       
       // Get position.
@@ -51,7 +56,7 @@ var scroll = function() {
     var scroll = document.documentElement.scrollTop || document.body.scrollTop;
     var offset = scroll - this.stickyPosition - 4;
     if (offset > 0 && offset < this.stickyMax - 100) {
-      $(this).css({display:'block',top:'25px'});
+      $(this).css({display:'block'});
     }
     else {
       $(this).css('display', 'none');

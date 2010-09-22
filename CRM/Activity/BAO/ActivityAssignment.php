@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -63,30 +64,12 @@ class CRM_Activity_BAO_ActivityAssignment extends CRM_Activity_DAO_ActivityAssig
     public function create( &$params ) 
     {
         require_once 'CRM/Activity/BAO/ActivityAssignment.php';
-        $assignment =& new CRM_Activity_BAO_ActivityAssignment();
+        $assignment = new CRM_Activity_BAO_ActivityAssignment();
 
         $assignment->copyValues( $params );
         return $assignment->save();
     }
 
-
-    /**
-     * Delete activity assignment.
-     *
-     * @param int    $id  ID of the activity assignment.
-     * 
-     * @return void
-     * 
-     * @access public
-     * 
-     */
-    public function removeAssignment( $id )
-    {
-        $this->id = $id;
-        if( $this->find( true ) ) {
-            return $this->delete();
-        }
-    }
 
     /**
      * Retrieve assignee_id by activity_id
@@ -100,14 +83,21 @@ class CRM_Activity_BAO_ActivityAssignment extends CRM_Activity_DAO_ActivityAssig
      */
     static function retrieveAssigneeIdsByActivityId( $activity_id ) 
     {
-        $assignment =& new CRM_Activity_BAO_ActivityAssignment( );
-        $assignment->activity_id = $activity_id;
-        $assignment->find();
         $assigneeArray = array();
-        $count = 1;
+        require_once 'CRM/Utils/Rule.php';
+        if ( ! CRM_Utils_Rule::positiveInteger( $activity_id ) ) {
+            return $assigneeArray;
+        }
+
+        $sql = '
+            SELECT assignee_contact_id
+            FROM civicrm_activity_assignment
+            JOIN civicrm_contact ON assignee_contact_id = civicrm_contact.id
+            WHERE activity_id = %1 AND civicrm_contact.is_deleted = 0
+        ';
+        $assignment =& CRM_Core_DAO::executeQuery($sql, array(1 => array($activity_id, 'Integer')));
         while ( $assignment->fetch( ) ) {
-            $assigneeArray[$count] = $assignment->assignee_contact_id;
-            $count++;
+            $assigneeArray[] = $assignment->assignee_contact_id;
         }
 
         return $assigneeArray;
@@ -127,6 +117,9 @@ class CRM_Activity_BAO_ActivityAssignment extends CRM_Activity_DAO_ActivityAssig
      */
     static function getAssigneeNames( $activity_id, $isDisplayName = false, $skipDetails = true ) 
     {
+        if ( empty( $activity_id ) ) {
+            return;
+        }
         $queryParam  = array();
         $whereClause = "";
         if ( !$skipDetails ) {
@@ -140,6 +133,7 @@ class CRM_Activity_BAO_ActivityAssignment extends CRM_Activity_DAO_ActivityAssig
                   LEFT JOIN civicrm_email ce 
                          ON ce.contact_id = contact_a.id
                   WHERE civicrm_activity_assignment.activity_id = {$activity_id} 
+                        AND contact_a.is_deleted = 0
                         {$whereClause}";
 
         $dao = CRM_Core_DAO::executeQuery($query,$queryParam);

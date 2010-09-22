@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -49,7 +50,7 @@ class CRM_Mailing_Page_Preview extends CRM_Core_Page
     {
         require_once 'CRM/Mailing/BAO/Mailing.php';
 
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         
         $qfKey = CRM_Utils_Request::retrieve('qfKey', 'String', CRM_Core_DAO::$_nullObject, false, 'text');
         $type  = CRM_Utils_Request::retrieve('type', 'String', CRM_Core_DAO::$_nullObject, false, 'text');
@@ -65,10 +66,10 @@ class CRM_Mailing_Page_Preview extends CRM_Core_Page
         // FIXME: the below and CRM_Mailing_Form_Test::testMail()
         // should be refactored
         $fromEmail = null;
-        $mailing =& new CRM_Mailing_BAO_Mailing();
+        $mailing = new CRM_Mailing_BAO_Mailing();
         if ( !empty( $options ) ) { 
             $mailing->id = $options['mailing_id'];
-            $fromEmail   = $options['from_email'];
+            $fromEmail   = CRM_Utils_Array::value( 'from_email', $options );
         }
 
         $mailing->find(true);
@@ -93,19 +94,14 @@ class CRM_Mailing_Page_Preview extends CRM_Core_Page
         $mime =& $mailing->compose(null, null, null, $session->get('userID'), $fromEmail, $fromEmail,
                                    true, $details[0][$session->get('userID')], $attachments );
         
-        // there doesn't seem to be a way to get to Mail_Mime's text and HTML
-        // parts, so we steal a peek at Mail_Mime's private properties, render 
-        // them and exit
-        // note that preview does not display any attachments
-        $mime->get();
         if ($type == 'html') {
             header('Content-Type: text/html; charset=utf-8');
-            print $mime->_htmlbody;
+            print $mime->getHTMLBody();
         } else {
             header('Content-Type: text/plain; charset=utf-8');
-            print $mime->_txtbody;
+            print $mime->getTXTBody();
         }
-        exit;
+        CRM_Utils_System::civiExit( );
     }
 
 }

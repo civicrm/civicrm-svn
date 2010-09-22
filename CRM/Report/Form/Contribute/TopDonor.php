@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -40,8 +41,8 @@ class CRM_Report_Form_Contribute_TopDonor extends CRM_Report_Form {
     protected $_summary = null;
 
     protected $_charts  = array( ''         => 'Tabular',
-                                 'barGraph' => 'Bar Graph',
-                                 'pieGraph' => 'Pie Graph'
+                                 'barChart' => 'Bar Chart',
+                                 'pieChart' => 'Pie Chart'
                                  );
     
     function __construct( ) {
@@ -78,7 +79,8 @@ class CRM_Report_Form_Contribute_TopDonor extends CRM_Report_Form {
                                         'operatorType' => CRM_Report_Form::OP_DATE ),
                                  'total_range'   => 
                                  array( 'title'        => ts( 'Show no. of Top Donors' ),
-                                        'type'         => CRM_Utils_Type::T_INT
+                                        'type'         => CRM_Utils_Type::T_INT,
+                                        'default_op'   => 'eq'
                                         ),
                                  'contribution_type_id' =>
                                  array( 'name'         => 'contribution_type_id',
@@ -95,21 +97,22 @@ class CRM_Report_Form_Contribute_TopDonor extends CRM_Report_Form {
                                  ),
                           ),
 
-                   /*
                    'civicrm_group' => 
-                   array( 'dao'    => 'CRM_Contact_DAO_Group',
+                   array( 'dao'    => 'CRM_Contact_DAO_GroupContact',
                           'alias'  => 'cgroup',
                           'filters' =>             
                           array( 'gid' => 
-                                 array( 'name'         => 'id',
+                                 array( 'name'         => 'group_id',
                                         'title'        => ts( 'Group' ),
                                         'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-                                        'options'      => CRM_Core_PseudoConstant::staticGroup( ) 
-                                        ), ), ),
-                   */
-
+                                        'group'        => true,
+                                        'options'      => CRM_Core_PseudoConstant::group( ) 
+                                        ), 
+                                 ),
+                          ),
                    );
         
+        $this->_tagFilter = true;
         parent::__construct( );
     }
     
@@ -123,7 +126,7 @@ class CRM_Report_Form_Contribute_TopDonor extends CRM_Report_Form {
         //Headers for Rank column
         $this->_columnHeaders["civicrm_donor_rank"]['title'] = ts('Rank');
         $this->_columnHeaders["civicrm_donor_rank"]['type']  = 1;
-        $select[] ="(@rank:=@rank+1)  as civicrm_donor_rank ";
+        //$select[] ="(@rank:=@rank+1)  as civicrm_donor_rank ";
 
         foreach ( $this->_columns as $tableName => $table ) {
             if ( array_key_exists('fields', $table) ) {
@@ -167,7 +170,7 @@ class CRM_Report_Form_Contribute_TopDonor extends CRM_Report_Form {
         $this->_select = " SELECT * FROM ( SELECT " . implode( ', ', $select ) . " ";
     }
 
-    static function formRule( &$fields, &$files, $self ) {  
+    static function formRule( $fields, $files, $self ) {  
         $errors = array( );
 
         $op  = CRM_Utils_Array::value( 'total_range_op', $fields );
@@ -185,9 +188,9 @@ class CRM_Report_Form_Contribute_TopDonor extends CRM_Report_Form {
 
     function from( ) {
         $this->_from = "
-        FROM civicrm_contact {$this->_aliases['civicrm_contact']}
+        FROM civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom}
         	 INNER JOIN civicrm_contribution {$this->_aliases['civicrm_contribution']} 
-		             ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_contribution']}.contact_id
+		             ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_contribution']}.contact_id AND {$this->_aliases['civicrm_contribution']}.is_test = 0
         ";
     }
 
@@ -198,13 +201,13 @@ class CRM_Report_Form_Contribute_TopDonor extends CRM_Report_Form {
             if ( array_key_exists('filters', $table) ) {
                 foreach ( $table['filters'] as $fieldName => $field ) {
                     $clause = null;
-                    if ( $field['type'] & CRM_Utils_Type::T_DATE ) {
+                    if ( CRM_Utils_Array::value( 'type', $field ) & CRM_Utils_Type::T_DATE ) {
                         $relative = CRM_Utils_Array::value( "{$fieldName}_relative", $this->_params );
                         $from     = CRM_Utils_Array::value( "{$fieldName}_from"    , $this->_params );
                         $to       = CRM_Utils_Array::value( "{$fieldName}_to"      , $this->_params );
                         
                         if ( $relative || $from || $to ) {
-                            $clause = $this->dateClause( $field['name'], $relative, $from, $to );
+                            $clause = $this->dateClause( $field['name'], $relative, $from, $to, $field['type'] );
                         }
                     } else {
                         $op = CRM_Utils_Array::value( "{$fieldName}_op", $this->_params );
@@ -234,16 +237,23 @@ class CRM_Report_Form_Contribute_TopDonor extends CRM_Report_Form {
         } else {
             $this->_where = "WHERE " . implode( ' AND ', $clauses );
         }
+
+        if ( $this->_aclWhere ) {
+            $this->_where .= " AND {$this->_aclWhere} ";
+        }     
     }
 
     function groupBy( ) {
-        $this->_groupBy = "GROUP BY contact.id ";
+        $this->_groupBy = "GROUP BY {$this->_aliases['civicrm_contact']}.id ";
     }
     
     function postProcess( ) {
 
         $this->beginPostProcess( );
         
+        // get the acl clauses built before we assemble the query
+        $this->buildACLClause( $this->_aliases['civicrm_contact'] );
+
         $this->select( );
         
         $this->from( );
@@ -253,6 +263,7 @@ class CRM_Report_Form_Contribute_TopDonor extends CRM_Report_Form {
         $this->groupBy( );
 
         $this->limit( );
+
         
         //set the variable value rank, rows = 0
         $setVariable = " SET @rows:=0, @rank=0 ";
@@ -276,14 +287,14 @@ class CRM_Report_Form_Contribute_TopDonor extends CRM_Report_Form {
 
         $this->doTemplateAssignment( $rows );
         
-        $this->endPostProcess( );
+        $this->endPostProcess( $rows );
     }
     
     function limit( $rowCount = CRM_Report_Form::ROW_COUNT_LIMIT ) {
         require_once 'CRM/Utils/Pager.php';
         // lets do the pager if in html mode
         $this->_limit = null;
-        if ( $this->_outputMode == 'html' ) {
+        if ( $this->_outputMode == 'html' || $this->_outputMode == 'group' ) {
             //replace only first occurence of SELECT
             $this->_select = preg_replace('/SELECT/', 'SELECT SQL_CALC_FOUND_ROWS ', $this->_select, 1);
             $pageId = CRM_Utils_Request::retrieve( 'crmPID', 'Integer', CRM_Core_DAO::$_nullObject );
@@ -308,8 +319,11 @@ class CRM_Report_Form_Contribute_TopDonor extends CRM_Report_Form {
         // custom code to alter rows
  
         $entryFound = false;
+        $rank       = 1;
         if (!empty( $rows ) ) {
             foreach ( $rows as $rowNum => $row ) {
+
+                $rows[$rowNum]['civicrm_donor_rank'] = $rank++;
                 // convert display name to links
                 if ( array_key_exists('civicrm_contact_display_name', $row) && 
                      array_key_exists('civicrm_contact_id', $row) ) {

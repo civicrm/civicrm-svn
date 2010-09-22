@@ -46,12 +46,12 @@ class CRM_Contribute_Payment_Dummy extends CRM_Core_Payment_Dummy {
      * @static
      */
     static function &singleton( $mode, &$paymentProcessor ) {
-        if (self::$_singleton === null ) {
-            self::$_singleton =& new CRM_Contribute_Payment_Dummy( $mode, $paymentProcessor );
+        $processorName = $paymentProcessor['name'];
+        if (self::$_singleton[$processorName] === null ) {
+            self::$_singleton[$processorName] = new CRM_Contribute_Payment_Dummy( $mode, $paymentProcessor );
         }
-        return self::$_singleton;
+        return self::$_singleton[$processorName];
     }
-
 }
 
 

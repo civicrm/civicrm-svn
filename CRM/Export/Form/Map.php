@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -112,7 +113,7 @@ class CRM_Export_Form_Map extends CRM_Core_Form
      * @static
      * @access public
      */
-    static function formRule( &$fields, $values, $mappingTypeId ) 
+    static function formRule( $fields, $values, $mappingTypeId ) 
     {
         $errors  = array( );
 
@@ -131,7 +132,7 @@ class CRM_Export_Form_Map extends CRM_Core_Form
         if ( !empty($errors) ) {
             $_flag = 1;
             require_once 'CRM/Core/Page.php';
-            $assignError =& new CRM_Core_Page(); 
+            $assignError = new CRM_Core_Page(); 
             $assignError->assign('mappingDetailsError', $_flag);
             return $errors;
         } else {
@@ -150,14 +151,19 @@ class CRM_Export_Form_Map extends CRM_Core_Form
         $params = $this->controller->exportValues( $this->_name );
         
         $currentPath = CRM_Utils_System::currentPath( );
-
+        
+        $urlParams = null;
+        $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
+        require_once 'CRM/Utils/Rule.php';
+        if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams = "&qfKey=$qfKey"; 
+        
         //get the button name
         $buttonName = $this->controller->getButtonName('done');
         $buttonName1 = $this->controller->getButtonName('next');
         if ( $buttonName == '_qf_Map_done') {
             $this->set('exportColumnCount',null);
             $this->controller->resetPage( $this->_name );
-            return CRM_Utils_System::redirect( CRM_Utils_System::url($currentPath, 'force=1') );
+            return CRM_Utils_System::redirect( CRM_Utils_System::url($currentPath, 'force=1'.$urlParams ) );
         }
 
         if ( $this->controller->exportValue( $this->_name, 'addMore' ) )  {
@@ -177,7 +183,7 @@ class CRM_Export_Form_Map extends CRM_Core_Form
         if ( !$checkEmpty ) {
             $this->set('mappingId', null);
             require_once 'CRM/Utils/System.php';            
-            CRM_Utils_System::redirect( CRM_Utils_System::url( $currentPath, '_qf_Map_display=true' ) );
+            CRM_Utils_System::redirect( CRM_Utils_System::url( $currentPath, '_qf_Map_display=true'.$urlParams ) );
         }
 
         if ( $buttonName1 == '_qf_Map_next' ) {
@@ -207,7 +213,10 @@ class CRM_Export_Form_Map extends CRM_Core_Form
                                                  $mapperKeys,
                                                  $this->get( 'returnProperties' ),
                                                  $this->get( 'exportMode' ),
-                                                 $this->get( 'componentClause' )
+                                                 $this->get( 'componentClause' ),
+                                                 $this->get( 'componentTable' ),
+                                                 $this->get( 'mergeSameAddress' ),
+                                                 $this->get( 'mergeSameHousehold' )
                                                  );
     }
     

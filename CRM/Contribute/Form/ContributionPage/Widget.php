@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -53,9 +54,9 @@ class CRM_Contribute_Form_ContributionPage_Widget extends CRM_Contribute_Form_Co
         } else {
             $this->assign( 'widget_id', $this->_widget->id );
         }
-        $this->assign( 'id', $this->_id );
+        $this->assign( 'cpageId', $this->_id );
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $title = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage',
                                               $this->_id,
                                               'title' );
@@ -76,45 +77,45 @@ class CRM_Contribute_Form_ContributionPage_Widget extends CRM_Contribute_Form_Co
                                 'url_homepage'        => array( ts( 'URL to Home Page' ),
                                                                 'text',
                                                                 false,
-                                                                $config->userFrameworkBaseURL ),
+                                                                $config->userFrameworkBaseURL )
                                 );
         
         $this->_colorFields = array( 'color_title'   => array( ts( 'Title Text Color' ),
                                                               'text',
                                                               false,
-                                                              '0x000000' ),
-                                     'color_button'  => array( ts( 'Button Color' ),
-                                                              'text',
-                                                              false,
-                                                              '0xCC9900' ),
+                                                              '#2786C2' ),
                                      'color_bar'     => array( ts( 'Progress Bar Color' ),
                                                               'text',
                                                               false,
-                                                              '0xCC9900' ),
+                                                              '#FFFFFF' ),
                                      'color_main_text' => array( ts( 'Additional Text Color' ),
                                                               'text',
                                                               false,
-                                                              '0x000000' ),
-                                     'color_main'     => array( ts( 'Inner Background Gradient from Bottom' ),
+                                                              '#FFFFFF' ),
+                                     'color_main'     => array( ts( 'Background Color' ),
                                                               'text',
                                                               false,
-                                                              '0x96E0E0' ),
-                                     'color_main_bg'  => array( ts( 'Inner Background Top Area' ),
+                                                              '#96C0E7' ),
+                                     'color_main_bg'  => array( ts( 'Background Color Top Area' ),
                                                               'text',
                                                               false,
-                                                              '0xFFFFFF' ),
+                                                              '#B7E2FF' ),
                                      'color_bg'       => array( ts( 'Border Color' ),
                                                               'text',
                                                               false,
-                                                              '0x66CCCC' ),
-                                     'color_about_link' => array( ts( 'About Link Color' ),
+                                                              '#96C0E7' ),
+                                     'color_about_link' => array( ts( 'Button Link Color' ),
                                                               'text',
                                                               false,
-                                                              '0x336699' ),
+                                                              '#556C82' ),
+                                     'color_button'  => array( ts( 'Button Background Color' ),
+                                                              'text',
+                                                              false,
+                                                              '#FFFFFF' ),
                                      'color_homepage_link' => array( ts( 'Homepage Link Color' ),
                                                               'text',
                                                               false,
-                                                              '0x336699' ),
+                                                              '#FFFFFF' )
                                );
     }
     
@@ -137,7 +138,7 @@ class CRM_Contribute_Form_ContributionPage_Widget extends CRM_Contribute_Form_Co
         } 
     
         require_once 'CRM/Core/ShowHideBlocks.php';
-        $showHide =& new CRM_Core_ShowHideBlocks( );
+        $showHide = new CRM_Core_ShowHideBlocks( );
         $showHide->addHide( "id-colors" );
         $showHide->addToTemplate( );
         return $defaults;
@@ -190,7 +191,7 @@ class CRM_Contribute_Form_ContributionPage_Widget extends CRM_Contribute_Form_Co
      * @access public
      * @static
      */
-    public static function formRule( &$params, &$files, $self ) 
+    public static function formRule( $params, $files, $self ) 
     { 
         $errors = array( );
         if ( CRM_Utils_Array::value( 'is_active', $params ) ) {

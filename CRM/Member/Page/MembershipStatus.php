@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -66,30 +67,23 @@ class CRM_Member_Page_MembershipStatus extends CRM_Core_Page_Basic
     function &links()
     {
         if (!(self::$_links)) {
-            // helper variable for nicer formatting
-            $disableExtra = ts('Are you sure you want to disable this membership status rule?');
-
             self::$_links = array(
                                   CRM_Core_Action::UPDATE  => array(
                                                                     'name'  => ts('Edit'),
                                                                     'url'   => 'civicrm/admin/member/membershipStatus',
                                                                     'qs'    => 'action=update&id=%%id%%&reset=1',
                                                                     'title' => ts('Edit Membership Status') 
-                                                                   ),
+                                                                    ),
                                   CRM_Core_Action::DISABLE => array(
                                                                     'name'  => ts('Disable'),
                                                                     'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Member_BAO_MembershipStatus' . '\',\'' . 'enable-disable' . '\' );"',
-
                                                                     'ref'   => 'disable-action',
-                                                                    
                                                                     'title' => ts('Disable Membership Status') 
-                                                                   ),
+                                                                    ),
                                   CRM_Core_Action::ENABLE  => array(
                                                                     'name'  => ts('Enable'),
                                                                     'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Member_BAO_MembershipStatus' . '\',\'' . 'disable-enable' . '\' );"',
-                                                                    
                                                                     'ref'   => 'enable-action',
-                                                                    
                                                                     'title' => ts('Enable Membership Status') 
                                                                     ),
                                   CRM_Core_Action::DELETE  => array(
@@ -97,12 +91,12 @@ class CRM_Member_Page_MembershipStatus extends CRM_Core_Page_Basic
                                                                     'url'   => 'civicrm/admin/member/membershipStatus',
                                                                     'qs'    => 'action=delete&id=%%id%%',
                                                                     'title' => ts('Delete Membership Status') 
-                                                                   )
+                                                                    )
                                  );
         }
         return self::$_links;
     }
-
+    
     /**
      * Run the page.
      *
@@ -116,7 +110,6 @@ class CRM_Member_Page_MembershipStatus extends CRM_Core_Page_Basic
      */
     function run()
     {
-               
         // get the requested action
         $action = CRM_Utils_Request::retrieve('action', 'String',
                                               $this, false, 'browse'); // default to 'browse'
@@ -150,7 +143,7 @@ class CRM_Member_Page_MembershipStatus extends CRM_Core_Page_Basic
         // get all custom groups sorted by weight
         $membershipStatus = array();
         require_once 'CRM/Member/DAO/MembershipStatus.php';
-        $dao =& new CRM_Member_DAO_MembershipStatus();
+        $dao = new CRM_Member_DAO_MembershipStatus();
 
         $dao->orderBy('weight');
         $dao->find();

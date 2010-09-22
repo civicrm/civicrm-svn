@@ -49,7 +49,7 @@ function createDir( $dir, $perm = 0755 ) {
 function generateJoomlaConfig( $version ) {
     global $targetDir, $sourceCheckoutDir, $pkgType;
 
-    $smarty =& new Smarty( );
+    $smarty = new Smarty( );
     $smarty->template_dir = $sourceCheckoutDir . '/xml/templates';
     $smarty->compile_dir  = '/tmp/templates_c';
     createDir( $smarty->compile_dir );

@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -47,7 +48,7 @@ class CRM_Core_Joomla {
      * @static
      */
     static function sidebarLeft( ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         if ( $config->userFrameworkFrontend ) {
             return;
@@ -55,12 +56,13 @@ class CRM_Core_Joomla {
 
         require_once 'CRM/Core/Block.php';
         $blockIds = array( 
-            CRM_Core_Block::MENU,
-            CRM_Core_Block::SHORTCUTS,
-            CRM_Core_Block::SEARCH,
-            CRM_Core_Block::FULLTEXT_SEARCH,
+            CRM_Core_Block::CREATE_NEW,
+            CRM_Core_Block::RECENTLY_VIEWED,
+            CRM_Core_Block::DASHBOARD,
             CRM_Core_Block::ADD,
             CRM_Core_Block::LANGSWITCH,
+            //CRM_Core_Block::EVENT,
+            //CRM_Core_Block::FULLTEXT_SEARCH
         );
 
         $blocks = array( );
@@ -69,12 +71,9 @@ class CRM_Core_Joomla {
         }
 
         require_once 'CRM/Core/Smarty.php';
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         $template->assign_by_ref( 'blocks', $blocks );
         $sidebarLeft = $template->fetch( 'CRM/Block/blocks.tpl' );
         $template->assign_by_ref( 'sidebarLeft', $sidebarLeft );
     }
-
 }
-
-

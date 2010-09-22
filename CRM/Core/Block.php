@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,12 +29,13 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
 
 require_once 'CRM/Core/Menu.php';
+require_once 'CRM/Core/Permission.php';
 
 /**
  * defines a simple implemenation of a drupal block.
@@ -48,7 +50,7 @@ class CRM_Core_Block {
      * @var int
      */
     const
-        CREATE_NEW       = 1,
+        CREATE_NEW      = 1,
         RECENTLY_VIEWED = 2,
         DASHBOARD       = 3,
         ADD             = 4,
@@ -82,14 +84,41 @@ class CRM_Core_Block {
             define('BLOCK_CACHE_PER_PAGE', 0x0004);
         }
 
+        if ( ! defined( 'BLOCK_NO_CACHE' ) ) {
+            define('BLOCK_NO_CACHE', -1);
+        }
+        
         if (!(self::$_properties)) {
             self::$_properties = array(
+            // set status item to 0 to disable block by default (at install)
                                        self::CREATE_NEW   => array( 'template'   => 'CreateNew.tpl',
                                                                    'info'       => ts('CiviCRM Create New Record'),
                                                                    'subject'    => ts(''),
                                                                    'active'     => true,
                                                                    'cache'      => BLOCK_CACHE_GLOBAL,
                                                                    'visibility' => 1,
+                                                                   'weight'     => -100,
+                                                                   'status'     => 1,
+                                                                   'pages'      => 'civicrm*',
+                                                                   'region'     => 'left' ),
+                                       self::RECENTLY_VIEWED => array(  'template'   => 'RecentlyViewed.tpl',
+                                                                         'info'       => ts('CiviCRM Recent Items'),
+                                                                         'subject'    => ts('Recent Items'),
+                                                                         'active'     => true,
+                                                                         'cache'      => BLOCK_NO_CACHE,
+                                                                         'visibility' => 1,
+                                                                         'weight'     => -99,
+                                                                         'status'     => 1,
+                                                                         'pages'      => 'civicrm*',
+                                                                         'region'     => 'left' ),                
+                                       self::DASHBOARD   => array( 'template'   => 'Dashboard.tpl',
+                                                                   'info'       => ts('CiviCRM Contact Dashboard'),
+                                                                   'subject'    => '',
+                                                                   'active'     => true,
+                                                                   'cache'      => BLOCK_NO_CACHE,
+                                                                   'visibility' => 1,
+                                                                   'weight'     => -98,
+                                                                   'status'     => 1,
                                                                    'pages'      => 'civicrm*',
                                                                    'region'     => 'left' ),
                                        self::ADD         => array( 'template'   => 'Add.tpl',
@@ -98,6 +127,8 @@ class CRM_Core_Block {
                                                                    'active'     => true,
                                                                    'cache'      => BLOCK_CACHE_GLOBAL,
                                                                    'visibility' => 1,
+                                                                   'weight'     => -97,
+                                                                   'status'     => 1,
                                                                    'pages'      => 'civicrm*',
                                                                    'region'     => 'left' ),
                                        self::LANGSWITCH  => array( 'template'   => 'LangSwitch.tpl',
@@ -105,8 +136,10 @@ class CRM_Core_Block {
                                                                    'subject'    => '',
                                                                    'templateValues' => array(),
                                                                    'active'     => true,
-                                                                   'cache'      => BLOCK_CACHE_GLOBAL,
+                                                                   'cache'      => BLOCK_NO_CACHE,
                                                                    'visibility' => 1,
+                                                                   'weight'     => -96,
+                                                                   'status'     => 1,
                                                                    'pages'      => 'civicrm*',
                                                                    'region'     => 'left' ),
                                        self::EVENT      => array( 'template'   => 'Event.tpl',
@@ -114,8 +147,10 @@ class CRM_Core_Block {
                                                                    'subject'    => ts('Upcoming Events'),
                                                                    'templateValues' => array(),
                                                                    'active'     => true,
-                                                                   'cache'      => BLOCK_CACHE_GLOBAL,
+                                                                   'cache'      => BLOCK_NO_CACHE,
                                                                    'visibility' => 1,
+                                                                   'weight'     => -95,
+                                                                   'status'     => 0,
                                                                    'pages'      => 'civicrm*',
                                                                    'region'     => 'left' ),
                                        self::FULLTEXT_SEARCH => array(  'template'   => 'FullTextSearch.tpl',
@@ -124,26 +159,13 @@ class CRM_Core_Block {
                                                                         'active'     => true,
                                                                         'cache'      => BLOCK_CACHE_GLOBAL,
                                                                         'visibility' => 1,
+                                                                        'weight'     => -94,
+                                                                        'status'     => 0,
                                                                         'pages'      => 'civicrm*',
-                                                                        'region'     => 'left' ),
-                                       self::RECENTLY_VIEWED => array(  'template'   => 'RecentlyViewed.tpl',
-                                                                        'info'       => ts('CiviCRM Recent Items'),
-                                                                        'subject'    => ts('Recent Items'),
-                                                                        'active'     => true,
-                                                                        'cache'      => BLOCK_CACHE_GLOBAL,
-                                                                        'visibility' => 1,
-                                                                        'pages'      => 'civicrm*',
-                                                                        'region'     => 'left' ),
-                                       self::DASHBOARD   => array( 'template'   => 'Dashboard.tpl',
-                                                                   'info'       => ts('CiviCRM Dashboard'),
-                                                                   //'subject'    => ts('CiviCRM Dashboard'),
-                                                                   'active'     => true,
-                                                                   'cache'      => BLOCK_CACHE_GLOBAL,
-                                                                   'visibility' => 1,
-                                                                   'pages'      => 'civicrm*',
-                                                                   'region'     => 'left' ),
+                                                                        'region'     => 'left' )
                                        );
-
+        
+            ksort(self::$_properties);
         }
     }
 
@@ -199,17 +221,23 @@ class CRM_Core_Block {
      * @access public
      */
     static function getInfo( ) {
-        require_once 'CRM/Core/Permission.php';
-
+                
         $block = array( );
         foreach ( self::properties() as $id => $value ) {
              if ( $value['active'] ) {
-                 if ( ( $id == self::ADD || $id == self::CREATE_NEW ) &&
-                      ( ! CRM_Core_Permission::check('add contacts') ) &&
-                      ( ! CRM_Core_Permission::check('edit groups') ) ) {
-                     continue;
+                 if ( in_array( $id, array( self::ADD, self::CREATE_NEW ) ) ) {
+                     $hasAccess = true;
+                     if ( !CRM_Core_Permission::check('add contacts') && 
+                          !CRM_Core_Permission::check('edit groups') ) {
+                         $hasAccess = false;
+                     }
+                     //validate across edit/view - CRM-5666
+                     if ( $hasAccess && ($id == self::ADD) ) {
+                         $hasAccess = CRM_Core_Permission::giveMeAllACLs( );
+                     }
+                     if ( !$hasAccess ) continue; 
                  }
-
+                 
                  if ( $id == self::EVENT &&
                       ( ! CRM_Core_Permission::access( 'CiviEvent', false ) ||
                         ! CRM_Core_Permission::check( 'view event info' ) ) ) {
@@ -223,9 +251,12 @@ class CRM_Core_Block {
                                      'region'     => $value['region']    ,
                                      'visibility' => $value['visibility'],
                                      'pages'      => $value['pages']     ,
+                                     'status'     => $value['status']    ,
+                                     'weight'     => $value['weight']    
                                      );
             }
         }
+        
         return $block;
     }
 
@@ -288,25 +319,16 @@ class CRM_Core_Block {
      * @access private
      */
     private function setTemplateShortcutValues( ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         static $shortCuts = array( );
         
         if (!($shortCuts)) {
             if (CRM_Core_Permission::check('add contacts')) {
-                $shortCuts = array( array( 'path'  => 'civicrm/contact/add',
-                                           'query' => 'ct=Individual&reset=1',
-                                           'ref'   => 'new-individual',
-                                           'title' => ts('Individual') ),
-                                    array( 'path'  => 'civicrm/contact/add',
-                                           'query' => 'ct=Household&reset=1',
-                                           'ref'   => 'new-household',
-                                           'title' => ts('Household') ),
-                                    array( 'path'  => 'civicrm/contact/add',
-                                           'query' => 'ct=Organization&reset=1',
-                                           'ref'   => 'new-organization',
-                                           'title' => ts('Organization') ),
-                                   );
+                if ( CRM_Core_Permission::giveMeAllACLs() ) {
+                    require_once 'CRM/Contact/BAO/ContactType.php';
+                    $shortCuts = CRM_Contact_BAO_ContactType::getCreateNewList( );
+                }
                 if ( CRM_Core_Permission::access( 'Quest' ) ) {
                     $shortCuts = array_merge($shortCuts, array( array( 'path'  => 'civicrm/quest/search',
                                                                        'query' => 'reset=1',
@@ -321,72 +343,23 @@ class CRM_Core_Block {
                                                                'ref'   => 'new-activity',
                                                                'title' => ts('Activity') ) ));
                     
-            if ( CRM_Core_Permission::check('access CiviCase') && 
-                 in_array( 'CiviCase', $config->enableComponents ) ) {
-                require_once 'CRM/Core/OptionGroup.php';
-                $atype = CRM_Core_OptionGroup::getValue('activity_type', 
-                                                        'Open Case', 
-                                                        'name' );
-                if ( $atype ) {
-                    $shortCuts = 
-                        array_merge($shortCuts, array( array( 'path'  => 'civicrm/contact/view/case',
-                                                              'query' => "reset=1&action=add&atype=$atype&context=standalone",
-                                                              'ref'   => 'new-case',
-                                                              'title' => ts('Case') ) ) );
+            require_once 'CRM/Core/Component.php';
+            $components = CRM_Core_Component::getEnabledComponents();
+            
+            if ( !empty( $config->enableComponents ) ) {
+                foreach( $components as $componentName => $obj ) {
+                    if ( in_array(  $componentName, $config->enableComponents ) ) {
+                        eval( '$obj->creatNewShortcut( $shortCuts );');
+                    }
                 }
             }
             
-            if ( CRM_Core_Permission::check('access CiviContribute') && 
-                 in_array( 'CiviContribute', $config->enableComponents ) ) {
-                $shortCuts = 
-                    array_merge($shortCuts, array( array( 'path'  => 'civicrm/contact/view/contribution',
-                                                          'query' => "reset=1&action=add&context=standalone",
-                                                          'ref'   => 'new-contribution',
-                                                          'title' => ts('Contribution') ) ));
-            }            
-
             // new email (select recipients)
-            $shortCuts = array_merge($shortCuts, array( array( 'path'  => 'civicrm/contact/view/activity',
+            $shortCuts = array_merge($shortCuts, array( array( 'path'  => 'civicrm/activity/add',
                                                                'query' => 'atype=3&action=add&reset=1&context=standalone',
                                                                'ref'   => 'new-email',
                                                                'title' => ts('Email') ) ));
-            
-            if ( CRM_Core_Permission::check('access CiviEvent') && 
-                 in_array( 'CiviEvent', $config->enableComponents ) ) {
-                $shortCuts = 
-                    array_merge($shortCuts, array( array( 'path'  => 'civicrm/contact/view/participant',
-                                                          'query' => "reset=1&action=add&context=standalone",
-                                                          'ref'   => 'new-participant',
-                                                          'title' => ts('Event Registration') ) ));
-            }
-
-            if ( CRM_Core_Permission::check('access CiviGrant') && 
-                in_array( 'CiviGrant', $config->enableComponents ) ) {
-                $shortCuts = 
-                array_merge($shortCuts, array( array( 'path'  => 'civicrm/contact/view/grant',
-                                                      'query' => "reset=1&action=add&context=standalone",
-                                                      'ref'   => 'new-grant',
-                                                      'title' => ts('Grant') ) ));
-            }
-            
-            if ( CRM_Core_Permission::check('access CiviMember') && 
-                in_array( 'CiviMember', $config->enableComponents ) ) {
-                $shortCuts = 
-                array_merge($shortCuts, array( array( 'path'  => 'civicrm/contact/view/membership',
-                                                      'query' => "reset=1&action=add&context=standalone",
-                                                      'ref'   => 'new-membership',
-                                                      'title' => ts('Membership') ) ));
-            }
-            
-            if ( CRM_Core_Permission::check('access CiviPledge') && 
-                 in_array( 'CiviPledge', $config->enableComponents ) ) {
-                $shortCuts = 
-                    array_merge($shortCuts, array( array( 'path'  => 'civicrm/contact/view/pledge',
-                                                          'query' => "reset=1&action=add&context=standalone",
-                                                          'ref'   => 'new-pledge',
-                                                          'title' => ts('Pledge') ) ));
-            }
-
+                                    
             if ( CRM_Core_Permission::check('edit groups') ) {
                 $shortCuts = array_merge($shortCuts, array( array( 'path'  => 'civicrm/group/add',
                                                                    'query' => 'reset=1',
@@ -422,7 +395,7 @@ class CRM_Core_Block {
         // call shortcut hook
         require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::shortcuts( $values );
-            
+                    
         self::setProperty( self::CREATE_NEW, 'templateValues', array( 'shortCuts' => $values ) );
     }
 
@@ -434,7 +407,6 @@ class CRM_Core_Block {
      */
     private function setTemplateDashboardValues( ) {
         static $dashboardLinks = array( );
-        require_once 'CRM/Core/Permission.php';
         if ( CRM_Core_Permission::check('access Contact Dashboard')) {
             $dashboardLinks = array( array( 'path'  => 'civicrm/user',
                                             'query' => 'reset=1',
@@ -496,7 +468,7 @@ class CRM_Core_Block {
      * @access private
      */
     private function setTemplateMenuValues( ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         $path = 'navigation';
         $values =& CRM_Core_Menu::getNavigation( );
@@ -512,20 +484,20 @@ class CRM_Core_Block {
      * @access private
      */
     private function setTemplateEventValues( ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         
         require_once 'CRM/Event/BAO/Event.php';
         $info = CRM_Event_BAO_Event::getCompleteInfo( );
 
         if ( $info ) {
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             // check if registration link should be displayed
             foreach ( $info as $id => $event ) {
                 $info[$id]['onlineRegistration'] = CRM_Event_BAO_Event::validRegistrationDate( $event,
                                                                                                $session->get( 'userID' ) );
             }
 
-            self::setProperty( self::EVENT, 'templateValues', array( 'event' => $info ) );
+            self::setProperty( self::EVENT, 'templateValues', array( 'eventBlock' => $info ) );
         }
 
     }
@@ -540,7 +512,7 @@ class CRM_Core_Block {
      */
     static function getContent( $id ) {
         // return if upgrade mode
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( CRM_Utils_Array::value( $config->userFrameworkURLVar, $_GET ) == 'civicrm/upgrade' ) {
             return;
         }
@@ -548,8 +520,7 @@ class CRM_Core_Block {
         if ( ! self::getProperty( $id, 'active' ) ) {
             return null;
         }
-
-        require_once 'CRM/Core/Permission.php';
+        
         if ( $id == self::EVENT &&
              CRM_Core_Permission::check( 'view event info' ) ) {
             // is CiviEvent enabled?
@@ -559,14 +530,28 @@ class CRM_Core_Block {
             // do nothing
         } else if ( ! CRM_Core_Permission::check( 'access CiviCRM' ) ) {
             return null;
-        } else if ( ( $id == self::ADD  ) &&
-                    ( ! CRM_Core_Permission::check( 'add contacts' ) ) &&
-                    ( ! CRM_Core_Permission::check('edit groups') ) ) {
-            return null;
+        } else if ( $id == self::ADD ) {
+            $hasAccess = true;
+            if ( !CRM_Core_Permission::check( 'add contacts' ) &&
+                 !CRM_Core_Permission::check('edit groups') ) {
+                $hasAccess = false;
+            }
+            //validate across edit/view - CRM-5666
+            if ( $hasAccess ) {
+                $hasAccess = CRM_Core_Permission::giveMeAllACLs( );
+            }
+            if ( !$hasAccess ) return null;
         }
-
-
+        
         self::setTemplateValues( $id );
+
+        // Suppress Recent Items block if it's empty - CRM-5188
+        if ($id == self::RECENTLY_VIEWED){
+            $recent = self::getProperty( $id, 'templateValues' );
+            if ( CRM_Utils_Array::crmIsEmptyArray( $recent ) ){
+                return null;
+            }
+        }
 
         $block = array( );
         $block['name'   ] = 'block-civicrm';
@@ -575,6 +560,7 @@ class CRM_Core_Block {
                                          array( 'subject' => self::getProperty( $id, 'subject' ) ) );
         $block['content'] = self::fetch( $id, self::getProperty( $id, 'template' ),
                                          self::getProperty( $id, 'templateValues' ) );
+        
         
         return $block;
     }
@@ -590,7 +576,7 @@ class CRM_Core_Block {
      * @access public
      */
     static function fetch( $id, $fileName, $properties ) {
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
 
         if ( $properties ) {
             $template->assign( $properties );

@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -36,10 +37,11 @@
 require_once 'CRM/Contribute/Form/ContributionPage.php';
 require_once 'CRM/Contribute/PseudoConstant.php';
 
-class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_ContributionPage {
+class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_ContributionPage 
+{
 
     /**
-    * This function sets the default values for the form. Note that in edit/view mode
+     * This function sets the default values for the form. Note that in edit/view mode
      * the default values are retrieved from the database
      *
      * @access public
@@ -67,9 +69,11 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
      */
     public function buildQuickForm()
     {
+        require_once 'CRM/Utils/Money.php';
+
         $this->_first = true;
         $attributes = CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_ContributionPage');
-     
+        
         // name
         $this->add('text', 'title', ts('Title'), $attributes['title'], true);
 
@@ -92,7 +96,7 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
 
         // collect goal amount
         $this->add('text', 'goal_amount', ts('Goal Amount'), array( 'size' => 8, 'maxlength' => 12 ) ); 
-        $this->addRule( 'goal_amount', ts( 'Please enter a valid money value (e.g. 99.99).' ), 'money' );
+        $this->addRule('goal_amount', ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::format('99.99', ' '))), 'money');
         
         // is this page active ?
         $this->addElement('checkbox', 'is_active', ts('Is this Online Contribution Page Active?') );
@@ -105,15 +109,8 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
         $this->add('textarea', 'honor_block_text', ts('Honoree Introductory Message'), $attributes['honor_block_text'] );
 
         // add optional start and end dates
-        $this->add('date', 'start_date',
-                   ts('Start Date'),
-                   CRM_Core_SelectValues::date('datetime') );  
-        $this->addRule('start_date', ts('Please select a valid start date.'), 'qfDate');
-
-        $this->add('date', 'end_date',
-                   ts('End Date / Time'),
-                   CRM_Core_SelectValues::date('datetime') );
-        $this->addRule('end_date', ts('Please select a end valid date.'), 'qfDate');
+        $this->addDateTime( 'start_date', ts('Start Date') );
+        $this->addDateTime( 'end_date', ts('End Date') );
 
         $this->addFormRule( array( 'CRM_Contribute_Form_ContributionPage_Settings', 'formRule' ) );
         
@@ -129,7 +126,7 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
      * @static
      * @access public
      */
-    static function formRule( &$values ) 
+    static function formRule( $values ) 
     {
         $errors = array( );
         
@@ -150,22 +147,27 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
     public function postProcess()
     {
         // get the submitted form values.
-        $params = $this->controller->exportValues( $this->_name );
-
+        $params = $this->controller->exportValues( $this->_name );        
+                
         // we do this in case the user has hit the forward/back button
         if ( $this->_id ) {
             $params['id'] = $this->_id;
-        }
-
+        } else { 
+            $session = CRM_Core_Session::singleton( );
+            $params['created_id']   = $session->get( 'userID' );
+            $params['created_date'] = date('YmdHis');
+        }            
+       
         $params['is_active']             = CRM_Utils_Array::value('is_active'            , $params, false);
         $params['is_credit_card_only']   = CRM_Utils_Array::value('is_credit_card_only'  , $params, false);
         $params['honor_block_is_active'] = CRM_Utils_Array::value('honor_block_is_active', $params, false);
         $params['is_for_organization']   = CRM_Utils_Array::value('is_organization', $params ) 
                                            ? CRM_Utils_Array::value('is_for_organization', $params, false) 
                                            : 0;
-        $params['start_date']            = CRM_Utils_Date::format( $params['start_date'] );
-        $params['end_date'  ]            = CRM_Utils_Date::format( $params['end_date'] );
 
+        $params['start_date']            = CRM_Utils_Date::processDate( $params['start_date'], $params['start_date_time'], true );
+        $params['end_date'  ]            = CRM_Utils_Date::processDate( $params['end_date'], $params['end_date_time'], true );
+        
         $params['goal_amount'] = CRM_Utils_Rule::cleanMoney( $params['goal_amount'] );
 
         if( !$params['honor_block_is_active'] ) {
@@ -177,6 +179,8 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
         $dao =& CRM_Contribute_BAO_ContributionPage::create( $params );
 
         $this->set( 'id', $dao->id );
+        
+        parent::postProcess( );
     }
 
     /** 
@@ -185,7 +189,8 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
      * @return string 
      * @access public 
      */ 
-    public function getTitle( ) {
+    public function getTitle( )
+    {
         return ts( 'Title and Settings' );
     }
 }

@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -63,7 +64,7 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
             return;
         }
 
-        $sortName = "";
+        $sortName   = $displayName = "";
         $firstName  = CRM_Utils_Array::value('first_name'   , $params, '');
         $middleName = CRM_Utils_Array::value('middle_name'  , $params, '');
         $lastName   = CRM_Utils_Array::value('last_name'    , $params, '');
@@ -77,15 +78,18 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
         $prefix = $suffix = null;
         if ( $prefix_id ) {
             $prefix = $prefixes[$prefix_id];
+            $params['individual_prefix'] = $prefix;
         }
         if ( $suffix_id ) {
             $suffix = $suffixes[$suffix_id];
+            $params['individual_suffix'] = $suffix;
         }
 
         $params['is_deceased'] = CRM_Utils_Array::value( 'is_deceased', $params, false );
         
+        $individual = null;
         if ( $contact->id ) {
-            $individual =& new CRM_Contact_BAO_Contact();
+            $individual = new CRM_Contact_BAO_Contact();
             $individual->id = $contact->id;
             if ( $individual->find( true ) ) {
                 
@@ -98,7 +102,7 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
                     $value   = $individual->$dbName;
                     
                     // the db has name values
-                    if ( $value && CRM_Utils_Array::value( 'preserveDBName', $params ) ) {
+                    if ( $value && CRM_Utils_Array::value( 'preserveDBName', $params ) && !$params[$dbName] ) {
                         $useDBNames[] = $name; 
                     }
                 }
@@ -106,7 +110,7 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
                 foreach ( array( 'prefix', 'suffix' ) as $name ) {
                     $dbName  = "{$name}_id";
                     $value   = $individual->$dbName;
-                    if ( $value && CRM_Utils_Array::value( 'preserveDBName', $params ) ) {
+                    if ( $value && CRM_Utils_Array::value( 'preserveDBName', $params ) && !$params[$dbName] ) {
                         $useDBNames[] = $name; 
                     }
                 }
@@ -148,7 +152,10 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
                         }
                     } else if ( array_key_exists( $dbName, $params ) ) {
                         $temp = $$vals;
-                        $$phpName = $temp[$params[$dbName]];
+                        // CRM-5278
+                        if ( ! empty( $params[$dbName] ) ) {
+                            $$phpName = CRM_Utils_Array::value( $params[$dbName], $temp );
+                        }
                     } else if ( $value ) {
                         $temp = $$vals;
                         $$phpName = $temp[$value];
@@ -158,33 +165,51 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
         }
         
         if ( $lastName || $firstName || $middleName ) {
-            if ( $lastName && $firstName ) {
-                $contact->sort_name    = trim( "$lastName, $firstName" );
-            } else {
-                $contact->sort_name    = trim( "$lastName $firstName" );
-            }
-
-            $display_name =
-                trim( "$prefix $firstName $middleName $lastName $suffix" );
-            $display_name = str_replace( '  ', ' ', $display_name );
-        }
-
-        if (isset( $display_name ) &&
-            trim( $display_name ) ) {
-            $contact->display_name = trim( $display_name );
-        }
-
-        if ( CRM_Utils_Array::value( 'location', $params ) ) {
-            foreach ($params['location'] as $locBlock) {
-                if (! isset($locBlock['is_primary']) || ! ($locBlock['is_primary']) ) {
-                    continue;
+            $tokens = array( );
+            CRM_Utils_Hook::tokens( $tokens );
+            $tokenFields = array( );
+            foreach ( $tokens as $category => $catTokens ) {
+                foreach ( $catTokens as $token ) {
+                    $tokenFields[] = $token;
                 }
-                if ( isset($locBlock['email'][1]['email']) ) {
-                    $email = $locBlock['email'][1]['email'];
+            }
+            require_once 'CRM/Utils/Address.php';
+            require_once 'CRM/Core/BAO/Preferences.php';
+            
+            //build the sort name.
+            $format = CRM_Core_BAO_Preferences::value( 'sort_name_format' );
+            $format = str_replace( 'contact.', '', $format );
+            $sortName = CRM_Utils_Address::format( $params, $format,
+                                                   false, false, true, $tokenFields );
+            $sortName = trim( $sortName );
+            
+            //build the display name.
+            $format = CRM_Core_BAO_Preferences::value( 'display_name_format' );
+            $format = str_replace( 'contact.', '', $format );
+            $displayName = CRM_Utils_Address::format( $params, $format,
+                                                      false, false, true, $tokenFields );
+            $displayName = trim( $displayName );
+        }
+        
+        if ( $sortName ) {
+            $contact->sort_name = $sortName;
+        }
+        
+        if ( $displayName ) {
+            $contact->display_name = $displayName;
+        } else if ( $individual && $individual->display_name ) {
+            $contact->display_name = $individual->display_name;
+        }
+        
+        if ( CRM_Utils_Array::value( 'email', $params ) && is_array( $params['email'] ) ) {
+            foreach ($params['email'] as $emailBlock) {
+                if ( isset( $emailBlock['is_primary'] ) ) {
+                    $email = $emailBlock['email'];
                     break;
                 }
             }
         }
+
         $uniqId = CRM_Utils_Array::value( 'user_unique_id', $params );
         if (empty($contact->display_name)) {
             if (isset($email)) {
@@ -201,72 +226,58 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
                 $contact->sort_name = $uniqId;
             }
         }
+
+        // again if sort_name is empty assign primary email
+        if ( !$contact->sort_name && $contact->id ) { 
+            $primEmail = CRM_Contact_BAO_Contact::getPrimaryEmail( $contact->id );
+            $contact->display_name = $contact->sort_name = $primEmail;
+        }
         
+        $format = CRM_Utils_Date::getDateFormat( 'birth' );
         if ( $date = CRM_Utils_Array::value('birth_date', $params) ) {
-            if (is_array($date)) {
-                //CRM-3143
-                if ( !CRM_Utils_System::isNull( $date ) && 
-                     !CRM_Utils_Array::value( 'Y', $date ) ) {
-                    $date['Y'] = '1902';
+            if ( in_array( $format, array('dd-mm', 'mm/dd' ) ) ) {
+                $separator = '/';
+                if ( $format == 'dd-mm' ) {
+                    $separator = '-';
                 }
-                $contact->birth_date = CRM_Utils_Date::format( $date );
-            } else {
-                $contact->birth_date = preg_replace('/[^0-9]/', '', $date);
+                $date = $date . $separator . '1902';
+            } else if ( in_array( $format, array( 'yy-mm' ) ) ) {
+                $date = $date .'-01';
+            } else if ( in_array( $format, array( 'M yy' ) ) ) {
+                $date = '01 '.$date;
+            } else if ( in_array( $format, array( 'yy' ) ) ) {
+                $date = $date.'-01-01';
             }
+            $contact->birth_date = CRM_Utils_Date::processDate($date) ;
         } else if ( $contact->birth_date ) {
             $contact->birth_date = CRM_Utils_Date::isoToMysql( $contact->birth_date );
         }
         
         if ( $date = CRM_Utils_Array::value('deceased_date', $params) ) {
-            if (is_array($date)) {
-                //CRM-3143
-                if ( !CRM_Utils_System::isNull( $date ) && 
-                     !CRM_Utils_Array::value( 'Y', $date ) ) {
-                    $date['Y'] = '1902';
+            if ( in_array( $format, array('dd-mm', 'mm/dd' ) ) ) {
+                $separator = '/';
+                if ( $format == 'dd-mm' ) {
+                    $separator = '-';
                 }
-                $contact->deceased_date = CRM_Utils_Date::format( $date );
-            } else {
-                $contact->deceased_date = preg_replace('/[^0-9]/', '', $date);
+                $date = $date . $separator . '1902';
+            } else if ( in_array( $format, array( 'yy-mm' ) ) ) {
+                $date = $date .'-01'; 
+            } else if ( in_array( $format, array( 'M yy' ) ) ) {
+                $date = '01 '.$date;
+            } else if ( in_array( $format, array( 'yy' ) ) ) {
+                $date = $date.'-01-01';
             }
+            
+            $contact->deceased_date = CRM_Utils_Date::processDate($date) ;
         } else if ( $contact->deceased_date ) {
             $contact->deceased_date = CRM_Utils_Date::isoToMysql( $contact->deceased_date );
         }
-
+        
         if ( $middle_name = CRM_Utils_Array::value('middle_name', $params)) {
             $contact->middle_name = $middle_name;
         }
         
         return $contact;
-    }
-
-    /**
-     * Given the list of params in the params array, fetch the object
-     * and store the values in the values array
-     *
-     * @param array $params input parameters to find object
-     * @param array $values output values of the object
-     * @param array $ids    the array that holds all the db ids
-     *
-     * @return CRM_Contact_BAO_Contact|null the found object or null
-     * @access public
-     * @static
-     */
-    static function getValues( &$params, &$values, &$ids ) 
-    {
-        $individual =& new CRM_Contact_BAO_Individual( );
-        
-        $individual->copyValues( $params );
-        if ( $individual->find(true) ) {
-            $ids['individual'] = $individual->id;
-            CRM_Core_DAO::storeValues( $individual, $values );
-
-            if ( isset( $individual->birth_date ) ) {
-                $values['birth_date'] = CRM_Utils_Date::unformat( $individual->birth_date );
-            }
-
-            return $individual;
-        }
-        return null;
     }
 
     /**
@@ -297,14 +308,14 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
 
         // query for the affected individuals
         $fieldValue = CRM_Utils_Type::escape($fieldValue, 'Integer');
-        $contact =& new CRM_Contact_BAO_Contact( );
+        $contact = new CRM_Contact_BAO_Contact( );
         $contact->$fieldName = $fieldValue;
         $contact->find();
 
         // iterate through the affected individuals and rebuild their display_names
         require_once 'CRM/Contact/BAO/Contact.php';
         while ($contact->fetch()) {
-            $contact =& new CRM_Contact_BAO_Contact();
+            $contact = new CRM_Contact_BAO_Contact();
             $contact->id = $contact->contact_id;
             if ($action == CRM_Core_Action::DELETE) {
                 $contact->$fieldName = 'NULL';

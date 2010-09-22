@@ -44,9 +44,10 @@
   <field>
       <name>membership_type_id</name>
       <type>int unsigned</type>
-      <title>Membership Type</title>
+      <title>Membership Type Id</title>
       <import>true</import>
       <headerPattern>/^(m(embership\s)?type)$/i</headerPattern>
+      <export>false</export>
       <required>true</required>
       <comment>FK to Membership Type</comment>
       <add>1.5</add>
@@ -102,10 +103,11 @@
   </field> 
   <field>
       <name>status_id</name>
-      <title>Membership Status</title>
+      <title>Membership Status Id</title>
       <import>true</import>
       <headerPattern>/(member(ship|).)?(status)$/i</headerPattern>
       <type>int unsigned</type>
+      <export>false</export>
       <required>true</required>
       <comment>FK to Membership Status</comment>
       <add>1.5</add>
@@ -135,7 +137,9 @@
   <field>
       <name>owner_membership_id</name>
       <type>int unsigned</type>
+	  <title>Primary Member ID</title>
       <comment>Optional FK to Parent Membership.</comment>
+      <export>true</export>
       <add>1.7</add>
   </field>
   <foreignKey>

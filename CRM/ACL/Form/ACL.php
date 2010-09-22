@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -38,7 +39,7 @@ require_once 'CRM/Admin/Form.php';
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -58,7 +59,7 @@ class CRM_ACL_Form_ACL extends CRM_Admin_Form
         }
         
         require_once 'CRM/Core/ShowHideBlocks.php';
-        $showHide =& new CRM_Core_ShowHideBlocks( );
+        $showHide = new CRM_Core_ShowHideBlocks( );
 
         if ( isset( $defaults['object_table'] ) ) {
             switch ( $defaults['object_table'] ) {
@@ -180,7 +181,7 @@ class CRM_ACL_Form_ACL extends CRM_Admin_Form
         require_once 'CRM/Event/PseudoConstant.php';
         $event       = array( '-1' => ts( '- select -' ),
                               '0'  => ts( 'All Events' ) )        +
-            CRM_Event_PseudoConstant::event( );
+            CRM_Event_PseudoConstant::event( null, false, "( is_template IS NULL OR is_template != 1 )" );
 
         $this->add( 'select', 'group_id'       , ts( 'Group'        ), $group       );
         $this->add( 'select', 'custom_group_id', ts( 'Custom Data'  ), $customGroup );
@@ -193,14 +194,17 @@ class CRM_ACL_Form_ACL extends CRM_Admin_Form
     }
 
 
-    static function formRule( &$params ) {
-        $showHide =& new CRM_Core_ShowHideBlocks( );
+    static function formRule( $params ) {
+        $showHide = new CRM_Core_ShowHideBlocks( );
 
         // Make sure role is not -1
         if ( $params['entity_id'] == -1 ) {
             $errors['entity_id'] = ts( 'Please assign this permission to a Role.' );
         }
 
+        $validOperations  = array( 'View', 'Edit' );
+        $operationMessage = ts( "Only 'View' and 'Edit' operations are valid for this type of data" );
+        
         // Figure out which type of object we're permissioning on and make sure user has selected a value.
         switch ( $params['object_type'] ) {
             case 1:
@@ -209,22 +213,46 @@ class CRM_ACL_Form_ACL extends CRM_Admin_Form
                     $showHide->addShow( "id-group-acl" );
                     $showHide->addHide( "id-profile-acl" );
                     $showHide->addHide( "id-custom-acl" );
+                    $showHide->addHide( "id-event-acl" );
+                }
+                if ( ! in_array( $params['operation'], $validOperations ) ) {
+                    $errors['operation'] = $operationMessage;
                 }
                 break;
+
             case 2:
                 if ( $params['uf_group_id'] == -1 ) {
                     $errors['uf_group_id'] = ts( 'Please select a Profile (or ALL Profiles).' );
                     $showHide->addShow( "id-profile-acl" );
                     $showHide->addHide( "id-group-acl" );
                     $showHide->addHide( "id-custom-acl" );
+                    $showHide->addHide( "id-event-acl" );
                 }
                 break;
+
             case 3:
                 if ( $params['custom_group_id'] == -1 ) {
                     $errors['custom_group_id'] = ts( 'Please select a set of Custom Data (or ALL Custom Data).' );
                     $showHide->addShow( "id-custom-acl" );
                     $showHide->addHide( "id-group-acl" );
                     $showHide->addHide( "id-profile-acl" );
+                    $showHide->addHide( "id-event-acl" );
+                }
+                if ( ! in_array( $params['operation'], $validOperations ) ) {
+                    $errors['operation'] = $operationMessage;
+                }
+                break;
+                
+            case 4:
+                if ( $params['event_id'] == -1 ) {
+                    $errors['event_id'] = ts( 'Please select an Event (or ALL Events).' );
+                    $showHide->addShow( "id-event-acl" );
+                    $showHide->addHide( "id-custom-acl" );
+                    $showHide->addHide( "id-group-acl" );
+                    $showHide->addHide( "id-profile-acl" );
+                }
+                if ( ! in_array( $params['operation'], $validOperations ) ) {
+                    $errors['operation'] = $operationMessage;
                 }
                 break;
                 
@@ -243,8 +271,9 @@ class CRM_ACL_Form_ACL extends CRM_Admin_Form
      */
     public function postProcess() 
     {
-        require_once 'CRM/ACL/BAO/Cache.php';
-        CRM_ACL_BAO_Cache::resetCache( );
+        require_once 'CRM/Core/BAO/Cache.php';
+        // note this also resets any ACL cache 
+        CRM_Core_BAO_Cache::deleteGroup( 'contact fields' );
 
         require_once 'CRM/ACL/BAO/ACL.php';
 

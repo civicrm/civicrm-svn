@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -82,11 +83,22 @@ class CRM_Core_Config_Defaults
         $this->civiHRD   = defined( 'CIVICRM_HRD' ) ? true : false;
         
         // add UI revamp pages
-        $this->revampPages = array( 'CRM/Admin/Form/Setting/Url.tpl', 'CRM/Admin/Form/Preferences/Address.tpl' );
+        //$this->revampPages = array( 'CRM/Admin/Form/Setting/Url.tpl', 'CRM/Admin/Form/Preferences/Address.tpl' );
+        $this->revampPages = array( );
         
-        //profile double opt-in 
-        $this->profileDoubleOptIn = defined( 'CIVICRM_PROFILE_DOUBLE_OPTIN' ) ? false : true;
+        $this->profileDoubleOptIn = false;
+        // enable profile double Opt-In if Civimail enabled
+        if ( in_array( 'CiviMail', $this->enableComponents ) ) {
+            // set defined value for Profile double Opt-In from civicrm settings file else true 
+            $this->profileDoubleOptIn = defined( 'CIVICRM_PROFILE_DOUBLE_OPTIN' ) ? (bool) CIVICRM_PROFILE_DOUBLE_OPTIN : true;
+        }
 
+        //email notifications to activity Assignees
+        $this->activityAssigneeNotification = defined( 'CIVICRM_ACTIVITY_ASSIGNEE_MAIL' ) ? (bool) CIVICRM_ACTIVITY_ASSIGNEE_MAIL : true;
+
+        // IDS enablement
+        $this->useIDS = defined( 'CIVICRM_IDS_ENABLE' ) ? (bool) CIVICRM_IDS_ENABLE : true;
+        
         // 
         $size = trim( ini_get( 'upload_max_filesize' ) );
         if ( $size ) {
@@ -118,7 +130,7 @@ class CRM_Core_Config_Defaults
      */
     public function setValues(&$defaults, $formMode = false) 
     {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         $baseURL = $config->userFrameworkBaseURL;
 
@@ -205,6 +217,7 @@ class CRM_Core_Config_Defaults
             $uploadDir = $path . "upload/";
             
             CRM_Utils_File::createDir( $uploadDir );
+            CRM_Utils_File::restrictAccess($uploadDir);
             $defaults['uploadDir'] = $uploadDir;
         }
 

@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -67,11 +68,13 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
         /* First make sure there's a matching queue event */
         $q =& CRM_Mailing_Event_BAO_Queue::verify($job_id, $queue_id, $hash);
 
+        $success = null;
+
         if (! $q) {
-            return null;
+            return $success;
         }
 
-        $mailing =& new CRM_Mailing_BAO_Mailing();
+        $mailing = new CRM_Mailing_BAO_Mailing();
         $mailings = CRM_Mailing_BAO_Mailing::getTableName();
         $jobs = CRM_Mailing_BAO_Job::getTableName();
         $mailing->query(
@@ -84,13 +87,13 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
             self::autoRespond($mailing, $queue_id, $replyto);
         }
 
-        $re =& new CRM_Mailing_Event_BAO_Reply();
+        $re = new CRM_Mailing_Event_BAO_Reply();
         $re->event_queue_id = $queue_id;
         $re->time_stamp = date('YmdHis');
         $re->save();
 
         if (! $mailing->forward_replies || empty($mailing->replyto_email)) {
-            return null;
+            return $success;
         }
         
         return $mailing;
@@ -118,6 +121,10 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
             $parsed = array_shift($parser->parseMail($set));
             $parsed->to = array(new ezcMailAddress($mailing->replyto_email));
 
+            // CRM-5567: we need to set Reply-To: so that any response
+            // to the forward goes to the sender of the reply
+            $parsed->setHeader('Reply-To', $replyto instanceof ezcMailAddress ? $parsed->from->__toString() : $replyto);
+
             // $h must be an array, so we can't use generateHeaders()'s result, 
             // but we have to regenerate the headers because we changed To
             $parsed->generateHeaders();
@@ -144,7 +151,7 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
             $eq = CRM_Mailing_Event_BAO_Queue::getTableName();
             $contacts = CRM_Contact_BAO_Contact::getTableName();
             
-            $dao =& new CRM_Core_DAO();
+            $dao = new CRM_Core_DAO();
             $dao->query("SELECT     $contacts.display_name as display_name,
                                     $emails.email as email
                         FROM        $eq
@@ -165,7 +172,8 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
             require_once 'CRM/Core/BAO/MailSettings.php';
             $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
             
-            $message =& new Mail_Mime("\n");
+            $message = new Mail_mime("\n");
+
             $headers = array(
                 'Subject'       => "Re: {$mailing->subject}",
                 'To'            => $mailing->replyto_email,
@@ -180,7 +188,7 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
             $h =& $message->headers($headers);
         }
 
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         $mailer =& $config->getMailer();
 
         PEAR::setErrorHandling( PEAR_ERROR_CALLBACK,
@@ -202,13 +210,13 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
      * @static
      */
     private static function autoRespond(&$mailing, $queue_id, $replyto) {
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
 
         $contacts   = CRM_Contact_DAO_Contact::getTableName();
         $email      = CRM_Core_DAO_Email::getTableName();
         $queue      = CRM_Mailing_Event_DAO_Queue::getTableName();
         
-        $eq =& new CRM_Core_DAO();
+        $eq = new CRM_Core_DAO();
         $eq->query(
         "SELECT     $contacts.preferred_mail_format as format,
                     $email.email as email
@@ -221,11 +229,11 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
 
         $to = empty($replyto) ? $eq->email : $replyto;
         
-        $component =& new CRM_Mailing_BAO_Component();
+        $component = new CRM_Mailing_BAO_Component();
         $component->id = $mailing->reply_id;
         $component->find(true);
 
-        $message =& new Mail_Mime("\n");
+        $message = new Mail_Mime("\n");
 
         require_once 'CRM/Core/BAO/Domain.php';        
         $domain =& CRM_Core_BAO_Domain::getDomain( );
@@ -251,7 +259,7 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
         }
         
         require_once 'CRM/Mailing/BAO/Mailing.php';
-        $bao =& new CRM_Mailing_BAO_Mailing();
+        $bao = new CRM_Mailing_BAO_Mailing();
         $bao->body_text = $text;
         $bao->body_html = $html;
         $tokens = $bao->getTokens();
@@ -294,7 +302,7 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
      */
     public static function getTotalCount($mailing_id, $job_id = null,
                                             $is_distinct = false) {
-        $dao =& new CRM_Core_DAO();
+        $dao = new CRM_Core_DAO();
         
         $reply      = self::getTableName();
         $queue      = CRM_Mailing_Event_BAO_Queue::getTableName();
@@ -323,6 +331,8 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
             $query .= " GROUP BY $queue.id ";
         }
 
+        $dao->query($query);//query was missing
+        
         if ( $dao->fetch() ) {
             return $dao->reply;
         }
@@ -348,7 +358,7 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
     public static function &getRows($mailing_id, $job_id = null, 
         $is_distinct = false, $offset = null, $rowCount = null, $sort = null) {
         
-        $dao =& new CRM_Core_Dao();
+        $dao = new CRM_Core_Dao();
         
         $reply      = self::getTableName();
         $queue      = CRM_Mailing_Event_BAO_Queue::getTableName();
@@ -386,9 +396,18 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
             $query .= " GROUP BY $queue.id ";
         }
 
-        $query .= " ORDER BY $contact.sort_name, $reply.time_stamp DESC ";
-
-        if ($offset) {
+        $orderBy = "sort_name ASC, {$reply}.time_stamp DESC";
+        if ($sort) {
+            if ( is_string( $sort ) ) {
+                $orderBy = $sort;
+            } else {
+                $orderBy = trim( $sort->orderBy() );
+            }
+        }
+        
+        $query .= " ORDER BY {$orderBy} ";
+        
+        if ($offset||$rowCount) {//Added "||$rowCount" to avoid displaying all records on first page
             $query .= ' LIMIT ' 
                     . CRM_Utils_Type::escape($offset, 'Integer') . ', ' 
                     . CRM_Utils_Type::escape($rowCount, 'Integer');

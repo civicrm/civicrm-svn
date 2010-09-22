@@ -22,7 +22,7 @@ DELETE FROM `civicrm_option_value` WHERE `option_group_id` = @og_id_pl;
 --CRM-4256
 -- Update table name in civicrm_price_set_entity (Price Set) 
    
-UPDATE `civicrm_price_set_entity` c SET c.`entity_table`='civicrm_event' WHERE c.`entity_table`='civicrm_event_page'; 
+UPDATE `civicrm_price_set_entity` c SET c.`entity_table`='civicrm_event' WHERE c.`entity_table`='civicrm_event_page';
     
 --Adding new custom search for Contribution Amounts by Tag.
 

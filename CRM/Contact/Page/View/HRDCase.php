@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -57,7 +58,7 @@ class CRM_Contact_Page_View_Case extends CRM_Contact_Page_View
      */
     function view( ) 
     {
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Case_Form_Case',  
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Case_Form_Case',  
                                                        'View Case',  
                                                        $this->_action ); 
         $controller->setEmbedded( true ); 
@@ -69,8 +70,8 @@ class CRM_Contact_Page_View_Case extends CRM_Contact_Page_View
         require_once 'CRM/Activity/Selector/Activity.php' ;
         require_once 'CRM/Core/Selector/Controller.php';
         $output = CRM_Core_Selector_Controller::SESSION;
-        $selector   =& new CRM_Activity_Selector_Activity($this->_contactId, $this->_permission, false, 'case' );
-        $controller =& new CRM_Core_Selector_Controller($selector, $this->get(CRM_Utils_Pager::PAGE_ID),
+        $selector   = new CRM_Activity_Selector_Activity($this->_contactId, $this->_permission, false, 'case' );
+        $controller = new CRM_Core_Selector_Controller($selector, $this->get(CRM_Utils_Pager::PAGE_ID),
                                                         $sortID, CRM_Core_Action::VIEW, $this,  $output, null, $this->_id);
         
         
@@ -92,9 +93,11 @@ class CRM_Contact_Page_View_Case extends CRM_Contact_Page_View
 
         $links  =& self::links( );
         $action = array_sum(array_keys($links));
-        $caseStatus = CRM_Core_OptionGroup::values('case_status');
-        $caseType   = CRM_Core_OptionGroup::values('case_type');
-
+        
+        require_once 'CRM/Case/PseudoConstant.php';
+        $caseType   = CRM_Case_PseudoConstant::caseType( );
+        $caseStatus = CRM_Case_PseudoConstant::caseStatus( );
+        
         require_once 'CRM/Case/BAO/Case.php';
         $queryParams = array();
         $query = "SELECT civicrm_case.id, civicrm_case.case_type_id, civicrm_case.status_id,
@@ -136,12 +139,12 @@ class CRM_Contact_Page_View_Case extends CRM_Contact_Page_View
      */
     function edit( ) 
     {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $this->_id = CRM_Utils_Request::retrieve('id', 'Integer', $this);
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Case_Form_Case', 
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Case_Form_Case', 
                                                        'Create Case', 
                                                        $this->_action );
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $edit = CRM_Utils_Request::retrieve( 'edit', 'String',$this );
         $context =  CRM_Utils_Request::retrieve( 'context', 'String',$this );
         if ($config->civiHRD){ 
@@ -192,7 +195,7 @@ class CRM_Contact_Page_View_Case extends CRM_Contact_Page_View
      */
     static function &links()
     {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
        
         if (!(self::$_links)) {
             $deleteExtra = ts('Are you sure you want to delete this case?');
@@ -256,7 +259,7 @@ class CRM_Contact_Page_View_Case extends CRM_Contact_Page_View
             break;
         }
         
-        $session =& CRM_Core_Session::singleton( ); 
+        $session = CRM_Core_Session::singleton( ); 
         if ( $url ) {
             $session->pushUserContext( $url );
         }

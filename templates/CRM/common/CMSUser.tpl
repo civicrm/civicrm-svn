@@ -1,8 +1,31 @@
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
 {if $showCMS }{*true if is_cms_user field is set *}
- {* NOTE: We are currently not supporting the Drupal registration mode where user enters their password. But logic is left here for when we figure it out. *}
-
-   <fieldset>
-      <div class="messages help">
+   <fieldset class="crm-group crm_user-group">
+      <div class="messages help cms_user_help-section">
 	 {if !$isCMS}
 	    {ts}If you would like to create an account on this site, check the box below and enter a user name{/ts}
 	    {if $form.cms_pass}
@@ -14,22 +37,22 @@
 	 {ts 1=$loginUrl}If you already have an account, <a href='%1'>please login</a> before completing this form.{/ts}
       </div>
       <div>{$form.cms_create_account.html} {$form.cms_create_account.label}</div>
-      <div id="details">
+     <div id="details" class="crm_user_signup-section">
 	 <table class="form-layout-compressed">
-	    <tr>
+	    <tr class="cms_name-section">
 	       <td>{$form.cms_name.label}</td>
-	       <td>{$form.cms_name.html} <a id="checkavailability" href="#">{ts}<strong>Check Availability</strong>{/ts}</a>
+	       <td>{$form.cms_name.html} <a id="checkavailability" href="#" onClick="return false;">{ts}<strong>Check Availability</strong>{/ts}</a>
 	          <span id="msgbox" style="display:none"></span><br />
 	          <span class="description">{ts}Your preferred username; punctuation is not allowed except for periods, hyphens, and underscores.{/ts}</span>
 	       </td>
 	    </tr>
     
 	    {if $form.cms_pass}
-	       <tr>
+	       <tr class="cms_pass-section">
 	          <td>{$form.cms_pass.label}</td>
 	          <td>{$form.cms_pass.html}</td>
 	       </tr>        
-	       <tr>
+	       <tr class="crm_confirm_pass-section">
 	          <td>{$form.cms_confirm_pass.label}</td>
 	          <td>{$form.cms_confirm_pass.html}<br />
 	             <span class="description">{ts}Provide a password for the new account in both fields.{/ts}
@@ -37,7 +60,7 @@
 	       </tr>
 	    {/if}
 	 </table>        
-      </div>
+     </div>
    </fieldset>
 
    {literal}
@@ -57,11 +80,11 @@
    {
       var cId = {/literal}'{$cId}'{literal};
       if ( cId ) {
-	 alert("You are logged-in user");
+	 alert('{/literal}{ts escape="js"}You are logged-in user{/ts}{literal}');
 	 frm.checked = false;
       } else {
 	 var siteName = {/literal}'{$config->userFrameworkBaseURL}'{literal};
-	 alert("Please login if you have an account on this site with the link " + siteName  );
+	 alert('{/literal}{ts escape="js"}Please login if you have an account on this site with the link{/ts}{literal} ' + siteName  );
       }
    }
    var lastName = null;
@@ -81,20 +104,20 @@
       var r = new RegExp( "["+spchar+"]", "i");
       /*regular expression \\ matches a single backslash. this becomes r = /\\/ or r = new RegExp("\\\\").*/
       if ( r.exec(cmsUserName) ) {
-	 alert("Your username contains invalid characters");
+	 alert('{/literal}{ts escape="js"}Your username contains invalid characters{/ts}{literal}');
       	 return;
       } 
       {/literal}{if $config->userFramework == "Joomla"}{literal}
 	 else if ( cmsUserName && cmsUserName.length < 2 ) {
-	    alert("Your username is too short");
+	    alert('{/literal}{ts escape="js"}Your username is too short{/ts}{literal}');
 	    return;	
 	 }
       {/literal}{/if}{literal}
       if (cmsUserName) {
 	 /*take all messages in javascript variable*/
 	 var check        = "{/literal}{ts}Checking...{/ts}{literal}";
-	 var available    = "{/literal}{ts}Username available to register{/ts}{literal}";
-	 var notavailable = "{/literal}{ts}Username Already exists{/ts}{literal}";
+	 var available    = "{/literal}{ts}This username is currently available.{/ts}{literal}";
+	 var notavailable = "{/literal}{ts}This username is taken.{/ts}{literal}";
          
          //remove all the class add the messagebox classes and start fading
          cj("#msgbox").removeClass().addClass('cmsmessagebox').css({"color":"#000","backgroundColor":"#FFC","border":"1px solid #c93"}).text(check).fadeIn("slow");
@@ -115,7 +138,7 @@
 	 }, "json");
 	 lastName = cmsUserName;
       } else {
-	 cj("#msgbox").removeClass().text('').fadeIn("fast");
+	 cj("#msgbox").removeClass().text('').css({"backgroundColor":"#FFFFFF", "border": "0px #FFFFFF"}).fadeIn("fast");
       }
    });
 

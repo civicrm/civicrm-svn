@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,14 +29,15 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
 
-require_once 'CRM/Contact/Page/View.php';
+require_once 'CRM/Core/Page.php';
 
-class CRM_Contact_Page_View_Relationship extends CRM_Contact_Page_View {
+class CRM_Contact_Page_View_Relationship extends CRM_Core_Page 
+{
     /**
      * The action links that we need to display for the browse screen
      *
@@ -50,6 +52,9 @@ class CRM_Contact_Page_View_Relationship extends CRM_Contact_Page_View {
      */
     public $_caseId = null;
     
+    public $_permission = null;
+    public $_contactId  = null; 
+
     /**
      * View details of a relationship
      *
@@ -61,11 +66,10 @@ class CRM_Contact_Page_View_Relationship extends CRM_Contact_Page_View {
     {
         require_once 'CRM/Core/DAO.php';
         $viewRelationship = CRM_Contact_BAO_Relationship::getRelationship( $this->_contactId, null, null, null, $this->_id );
-       
         //To check whether selected contact is a contact_id_a in
         //relationship type 'a_b' in relationship table, if yes then
         //revert the permissionship text in template
-        $relationship =& new CRM_Contact_DAO_Relationship( );
+        $relationship = new CRM_Contact_DAO_Relationship( );
         $relationship->id = $viewRelationship[$this->_id]['id'];
         
         if ($relationship->find(true)) {
@@ -73,22 +77,52 @@ class CRM_Contact_Page_View_Relationship extends CRM_Contact_Page_View {
                 $this->assign( "is_contact_id_a", true );
             }
         }
-        $relType = $viewRelationship[$this->_id]['civicrm_relationship_type_id'];
-        $this->assign( 'viewRelationship', $viewRelationship );
+        $relType = $viewRelationship[$this->_id]['civicrm_relationship_type_id'];        
+        $this->assign( 'viewRelationship', $viewRelationship );        
+
+        $this->assign( 'isCurrentEmployer', false );
+        if ( $viewRelationship[$this->_id]['employer_id'] ) {
+            $this->assign( 'isCurrentEmployer', true);
+        } else if ( $relType == 4 && CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $this->_contactId, 'employer_id' ) ) {
+            // make sure we are viewing employee of relationship
+            $this->assign( 'isCurrentEmployer', true);
+        }
+
         $viewNote = CRM_Core_BAO_Note::getNote($this->_id);
         $this->assign( 'viewNote', $viewNote );
 		
         $groupTree =& CRM_Core_BAO_CustomGroup::getTree('Relationship', $this, $this->_id,0,$relType);
         CRM_Core_BAO_CustomGroup::buildCustomDataView( $this, $groupTree );
+
+        // add viewed contribution to recent items list
+        require_once 'CRM/Utils/Recent.php';
+        $url = CRM_Utils_System::url( 'civicrm/contact/view/rel', 
+                                      "action=view&reset=1&id={$viewRelationship[$this->_id]['id']}&cid={$this->_contactId}&context=home" );
+        
+        $displayName = CRM_Contact_BAO_Contact::displayName( $this->_contactId );
+        $this->assign( 'displayName', $displayName );
+        
+        $title =  $displayName . ' (' . 
+                 $viewRelationship[$this->_id]['relation']. ' ' . 
+                 CRM_Contact_BAO_Contact::displayName( $viewRelationship[$this->_id]['cid'] )  . ')';
+        
+        // add the recently viewed Relationship
+        CRM_Utils_Recent::add( $title,
+                               $url,
+                               $viewRelationship[$this->_id]['id'],
+                               'Relationship',
+                               $this->_contactId,
+                               null );
     }
 
-   /**
+    /**
      * This function is called when action is browse
      * 
      * return null
      * @access public
      */
-    function browse( ) {
+    function browse( ) 
+    {
         $links =& self::links( );
         
         //CRM-4418, handling edit and delete separately. 
@@ -123,30 +157,30 @@ class CRM_Contact_Page_View_Relationship extends CRM_Contact_Page_View {
      * return null
      * @access public
      */
-    function edit( ) {
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Contact_Form_Relationship', ts('Contact Relationships'), $this->_action );
+    function edit( ) 
+    {
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Contact_Form_Relationship', ts('Contact Relationships'), $this->_action );
         $controller->setEmbedded( true );
 
         // set the userContext stack
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         
         // if this is called from case view, we need to redirect back to same page
         if ( $this->_caseId ) {
-            $cid = CRM_Utils_Request::retrieve( 'cid', 'Integer', $this, false );
-            $url = CRM_Utils_System::url('civicrm/contact/view/case', "action=view&reset=1&cid={$cid}&id={$this->_caseId}" );
+            $url = CRM_Utils_System::url('civicrm/contact/view/case', "action=view&reset=1&cid={$this->_contactId}&id={$this->_caseId}" );
         } else {
-            $url = CRM_Utils_System::url('civicrm/contact/view', 'action=browse&selectedChild=rel' );
+            $url = CRM_Utils_System::url('civicrm/contact/view', "action=browse&selectedChild=rel&reset=1&cid={$this->_contactId}" );
         }
         
         $session->pushUserContext( $url );
 
-        if (CRM_Utils_Request::retrieve('confirmed', 'Boolean',
+        if ( CRM_Utils_Request::retrieve('confirmed', 'Boolean',
                                         CRM_Core_DAO::$_nullObject ) ) {
             if ( $this->_caseId ) {
                 //create an activity for case role removal.CRM-4480
                 require_once "CRM/Case/BAO/Case.php";
                 CRM_Case_BAO_Case::createCaseRoleActivity( $this->_caseId, $this->_id );  
-                CRM_Core_Session::setStatus( ts('Case Role has been deleted successfuly.'), false );
+                CRM_Core_Session::setStatus( ts('Case Role has been deleted successfully.'), false );
             } 	
 			
             // delete relationship
@@ -161,14 +195,31 @@ class CRM_Contact_Page_View_Relationship extends CRM_Contact_Page_View {
         $controller->run( );
     }
 
-   /**
+    function preProcess() {
+        $this->_id        = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
+        $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
+        $this->assign( 'contactId', $this->_contactId );
+
+        // check logged in url permission
+        require_once 'CRM/Contact/Page/View.php';
+        CRM_Contact_Page_View::checkUserPermission( $this );
+        
+        // set page title
+        CRM_Contact_Page_View::setTitle( $this->_contactId );
+        
+        $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'browse');
+        $this->assign( 'action', $this->_action);
+    }    
+
+    /**
      * This function is the main function that is called when the page loads,
      * it decides the which action has to be taken for the page.
      * 
      * return null
      * @access public
      */
-    function run( ) {
+    function run( ) 
+    {
         $this->preProcess( );
         
         $this->setContext( );
@@ -182,13 +233,13 @@ class CRM_Contact_Page_View_Relationship extends CRM_Contact_Page_View {
         } else if ( $this->_action & CRM_Core_Action::DISABLE ) {
             CRM_Contact_BAO_Relationship::disableEnableRelationship( $this->_id, CRM_Core_Action::DISABLE );
             CRM_Contact_BAO_Relationship::setIsActive( $this->_id, 0 ) ;
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             CRM_Utils_System::redirect( $session->popUserContext() );
          
         } else if ( $this->_action & CRM_Core_Action::ENABLE ) {
             CRM_Contact_BAO_Relationship::disableEnableRelationship( $this->_id, CRM_Core_Action::ENABLE );
             CRM_Contact_BAO_Relationship::setIsActive( $this->_id, 1 ) ;
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             CRM_Utils_System::redirect( $session->popUserContext() );
         }
  
@@ -213,21 +264,22 @@ class CRM_Contact_Page_View_Relationship extends CRM_Contact_Page_View {
         } else {
             $url = CRM_Utils_System::url('civicrm/contact/view', 'action=browse&selectedChild=rel' );
         }
-        $session =& CRM_Core_Session::singleton( ); 
+        $session = CRM_Core_Session::singleton( ); 
         $session->pushUserContext( $url );
     }
     
-   /**
+    /**
      * This function is called to delete the relationship of a contact
      * 
      * return null
      * @access public
      */
-    function delete( ) {
+    function delete( ) 
+    {
         // calls a function to delete relationship
         CRM_Contact_BAO_Relationship::del($this->_id);
     }
-
+    
     /**
      * Get action links
      *

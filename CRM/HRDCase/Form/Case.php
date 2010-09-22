@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -100,7 +101,7 @@ class CRM_Case_Form_Case extends CRM_Contact_Form_Task
             $advanced = null;
             $builder  = null;
             
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             $advanced = $session->get('isAdvanced');
             $builder  = $session->get('isSearchBuilder');
             
@@ -135,7 +136,7 @@ class CRM_Case_Form_Case extends CRM_Contact_Form_Task
             CRM_Case_BAO_Case::retrieve($params, $defaults, $ids);
             
             $defaults['case_contact'] = CRM_Case_BAO_Case::retrieveContactIdsByCaseId( $this->_id, $this->_contactID );
-            $contactNames =  CRM_Case_BAO_Case::getcontactNames( $this->_id );
+            $contactNames =  CRM_Case_BAO_Case::getContactNames( $this->_id );
             foreach( $contactNames as $key => $name ){
                 $defaults['contact_names'] .=  $defaults['contact_names']?",\"$name\"":"\"$name\"";
             }
@@ -143,7 +144,7 @@ class CRM_Case_Form_Case extends CRM_Contact_Form_Task
         }    
         $this->assign('contactNames',CRM_Utils_Array::value( 'contact_names', $defaults ) );
         $defaults['case_type_id'] = explode( CRM_Case_BAO_Case::VALUE_SEPERATOR, CRM_Utils_Array::value( 'case_type_id' , $defaults ) );
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ($config->civiHRD){
             $defaults['casetag2_id'] = explode( CRM_Case_BAO_Case::VALUE_SEPERATOR, CRM_Utils_Array::value( 'casetag2_id' , $defaults ) );
             $defaults['casetag3_id'] = explode( CRM_Case_BAO_Case::VALUE_SEPERATOR, CRM_Utils_Array::value( 'casetag3_id' , $defaults ) );
@@ -198,16 +199,17 @@ class CRM_Case_Form_Case extends CRM_Contact_Form_Task
         $this->add( 'text', 'subject', ts('Subject'), array_merge( $attributes['subject'], array('maxlength' => '128') ), true);
         $this->addRule( 'subject', ts('A case with this subject already exists.'),     
                         'objectExists', array('CRM_Case_DAO_Case', $this->_id, 'subject') );
-
-        require_once 'CRM/Core/OptionGroup.php';        
-        $caseStatus  = CRM_Core_OptionGroup::values('case_status');
+        
+        require_once 'CRM/Case/PseudoConstant.php';
+        $caseStatus  = CRM_Case_PseudoConstant::caseStatus( );
         $this->add('select', 'status_id',  ts( 'Case Status' ),  
-                    $caseStatus , true  );
-
-        $caseType = CRM_Core_OptionGroup::values('case_type');
+                   $caseStatus , true  );
+        
+        
+        $caseType = CRM_Case_PseudoConstant::caseType( );
         $this->add('select', 'case_type_id',  ts( 'Case Type' ),  
                    $caseType , true, array("size"=>"5",  "multiple"));
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ($config->civiHRD){
             $caseSubType = CRM_Core_OptionGroup::values('f1_case_sub_type');
             $this->add('select', 'casetag2_id',  ts( 'Case Sub Type' ),  
@@ -287,7 +289,7 @@ class CRM_Case_Form_Case extends CRM_Contact_Form_Task
      * @access public  
      * @static  s
      */  
-    static function formRule( &$values ) {
+    static function formRule( $values ) {
 
         $errors = array( ); 
 
@@ -328,7 +330,7 @@ class CRM_Case_Form_Case extends CRM_Contact_Form_Task
         $params['end_date'    ] = CRM_Utils_Date::format( $params['end_date'] );
         $params['case_type_id'] = CRM_Case_BAO_Case::VALUE_SEPERATOR.implode(CRM_Case_BAO_Case::VALUE_SEPERATOR, $params['case_type_id'] ).CRM_Case_BAO_Case::VALUE_SEPERATOR;
         
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ($config->civiHRD){
             $params['casetag2_id'] = CRM_Case_BAO_Case::VALUE_SEPERATOR.implode(CRM_Case_BAO_Case::VALUE_SEPERATOR, $params['casetag2_id'] ).CRM_Case_BAO_Case::VALUE_SEPERATOR;
             $params['casetag3_id'] = CRM_Case_BAO_Case::VALUE_SEPERATOR.implode(CRM_Case_BAO_Case::VALUE_SEPERATOR, $params['casetag3_id'] ).CRM_Case_BAO_Case::VALUE_SEPERATOR;

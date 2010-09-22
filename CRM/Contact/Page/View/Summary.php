@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,12 +29,13 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
 
 require_once 'CRM/Contact/Page/View.php';
+require_once 'CRM/Contact/BAO/Contact.php';
 
 /**
  * Main page for viewing contact.
@@ -52,16 +54,29 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
     function preProcess( ) 
     {
         parent::preProcess( );
+		
+		// actions buttom contextMenu
+		$menuItems = CRM_Contact_BAO_Contact::contextMenu( );
+		
+		$this->assign('actionsMenuList',$menuItems);
+		
+        //retrieve inline custom data
+        $entityType    = $this->get('contactType');
+        $entitySubType = $this->get('contactSubtype');
 
-        //Custom Groups Inline
-        $entityType = CRM_Contact_BAO_Contact::getContactType($this->_contactId);
-        $groupTree =& CRM_Core_BAO_CustomGroup::getTree($entityType, $this, $this->_contactId);
+        $groupTree =& CRM_Core_BAO_CustomGroup::getTree( $entityType,
+                                                         $this, 
+                                                         $this->_contactId,
+                                                         null,
+                                                         $entitySubType );
 
-        CRM_Core_BAO_CustomGroup::buildCustomDataView( $this, $groupTree );
+        CRM_Core_BAO_CustomGroup::buildCustomDataView( $this,
+                                                       $groupTree );
 
         // also create the form element for the activity links box
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Activity_Form_ActivityLinks',
-                                                       ts('Activity Links'), null );
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Activity_Form_ActivityLinks',
+                                                       ts('Activity Links'),
+                                                       null );
         $controller->setEmbedded( true );
         $controller->run( );
     }
@@ -96,11 +111,11 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
     function edit( ) 
     {
         // set the userContext stack
-        $session =& CRM_Core_Session::singleton();
-        $url = CRM_Utils_System::url('civicrm/contact/view/basic', 'action=browse&cid=' . $this->_contactId );
+        $session = CRM_Core_Session::singleton();
+        $url = CRM_Utils_System::url('civicrm/contact/view', 'reset=1&cid=' . $this->_contactId );
         $session->pushUserContext( $url );
         
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Contact_Form_Edit', ts('Contact Page'), CRM_Core_Action::UPDATE );
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Contact_Form_Contact', ts('Contact Page'), CRM_Core_Action::UPDATE );
         $controller->setEmbedded( true );
         $controller->process( );
         return $controller->run( );
@@ -114,7 +129,7 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
      */
     function view( ) 
     {
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $url     = CRM_Utils_System::url('civicrm/contact/view', 'reset=1&cid=' . $this->_contactId );
         $session->pushUserContext( $url );
 
@@ -123,7 +138,8 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
         $ids      = array( );
 
         $params['id'] = $params['contact_id'] = $this->_contactId;
-        $contact = CRM_Contact_BAO_Contact::retrieve( $params, $defaults, $ids, true );
+        $params['noRelationships'] = $params['noNotes'] = $params['noGroups'] = true;
+        $contact = CRM_Contact_BAO_Contact::retrieve( $params, $defaults, true );
         
         $communicationType = array( 
                                     'phone'   => array( 
@@ -132,7 +148,12 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
                                     'im'      => array( 
                                                         'type' => 'IMProvider', 
                                                         'id'   => 'provider'  ),
-                                    'address' => array( 'skip' => true )
+                                    'website' => array( 
+                                                        'type' => 'websiteType', 
+                                                        'id'   => 'website_type' ),                                                        
+                                    'address' => array( 'skip' => true, 'customData' => 1 ),
+									'email'   => array( 'skip' => true ),
+									'openid'  => array( 'skip' => true )
                             ); 
         
         foreach( $communicationType as $key => $value ) {
@@ -144,37 +165,38 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
                         CRM_Utils_Array::lookupValue( $val, $value['id'], $pseudoConst, false );
                     }
                 }
+                if ( isset($value['customData']) ) {
+                    foreach( $defaults[$key] as $blockId => $blockVal ) {
+                        $groupTree = CRM_Core_BAO_CustomGroup::getTree( ucfirst($key),
+                                                                        $this,
+                                                                        $blockVal['id'] );
+                        // we setting the prefix to dnc_ below so that we don't overwrite smarty's grouptree var. 
+                        $defaults[$key][$blockId]['custom'] = 
+                            CRM_Core_BAO_CustomGroup::buildCustomDataView( $this, $groupTree, false, null, "dnc_" );
+                    }
+                    // reset template variable since that won't be of any use, and could be misleading
+                    $this->assign( "dnc_viewCustomData", null );
+                }
             }
         }
-   
-        //CRM_Contact_BAO_Contact::resolveDefaults( $defaults );
-        
-        // unset locations if empty
-        if ( ( count( $defaults['location'] ) == 1 ) &&
-             ( count( $defaults['location'][1] ) == 1 ) ) {
-            // this means this is only one element in the first location
-            // which is is_primary, so we ignore it in view mode
-            unset( $defaults['location'] );
-        }
-
+		
         if ( CRM_Utils_Array::value( 'gender_id',  $defaults ) ) {
             $gender =CRM_Core_PseudoConstant::gender();
             $defaults['gender_display'] =  $gender[CRM_Utils_Array::value( 'gender_id',  $defaults )];
         }
 
-        // get the list of all the categories
-        $tag =& CRM_Core_PseudoConstant::tag();
+        // to make contact type label available in the template -
+        $contactType = array_key_exists( 'contact_sub_type',  $defaults ) ? 
+            $defaults['contact_sub_type'] : $defaults['contact_type'];
+        $defaults['contact_type_label'] = 
+            CRM_Contact_BAO_ContactType::contactTypePairs( true, $contactType );
 
-        // get categories for the contact id
+        // get contact tags
         require_once 'CRM/Core/BAO/EntityTag.php';
-        $entityTag =& CRM_Core_BAO_EntityTag::getTag($this->_contactId);
+        $contactTags = CRM_Core_BAO_EntityTag::getContactTags($this->_contactId);       
         
-        if ( $entityTag ) {
-            $categories = array( );
-            foreach ( $entityTag as $key ) {
-                $categories[] = $tag[$key];
-            }
-            $defaults['contactTag'] = implode( ', ', $categories );
+        if ( !empty( $contactTags ) ) {
+            $defaults['contactTag'] = implode( ', ', $contactTags );
         }
         
         $defaults['privacy_values'] = CRM_Core_SelectValues::privacy();
@@ -189,20 +211,31 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
 
         foreach ( $configItems as $c => $t ) {
             $varName = '_show' . $c;
-            $this->$varName = $this->_editOptions[$c];
+            $this->$varName = CRM_Utils_Array::value( $c, $this->_editOptions );
             $this->assign( substr( $varName, 1 ), $this->$varName );
+        }
+        
+        //get the householdname
+        if ( isset($defaults['mail_to_household_id']) ) {
+            $householdName = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', 
+                                                          $defaults['mail_to_household_id'], 
+                                                          'display_name', 
+                                                          'id' );
+            $this->assign( 'householdName',$householdName );
         }
 
         //get the current employer name
-        if ( $defaults['contact_type'] == 'Individual' ) {
-            require_once 'CRM/Contact/BAO/Relationship.php';
-            $currentEmployer = CRM_Contact_BAO_Relationship::getCurrentEmployer( array( $this->_contactId ) );
-            $defaults['current_employer'] = $currentEmployer[ $this->_contactId ]['org_name'];
-            $defaults['current_employer_id'] = $currentEmployer[ $this->_contactId ]['org_id'];
+        if ( CRM_Utils_Array::value( 'contact_type', $defaults ) == 'Individual' ) {
+            if ( $contact->employer_id && $contact->organization_name ) {
+                $defaults['current_employer']    =  $contact->organization_name;
+                $defaults['current_employer_id'] =  $contact->employer_id;
+            }
+            
+            //for birthdate format with respect to birth format set 
+            $this->assign( 'birthDateViewFormat',  CRM_Utils_Array::value( 'qfMapping', CRM_Utils_Date::checkBirthDateFormat( ) ) );
         }
-
+        
         $this->assign( $defaults );
-        $this->setShowHide( $defaults );        
         
         // also assign the last modifed details
         require_once 'CRM/Core/BAO/Log.php';
@@ -210,8 +243,7 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
         $this->assign_by_ref( 'lastModified', $lastModified );
         
         $allTabs  = array( );
-        $weight = 10;
-        
+        $weight = 10;        
         
         $this->_viewOptions = CRM_Core_BAO_Preferences::valueOptions( 'contact_view_options', true );
         $changeLog = $this->_viewOptions['log'];
@@ -234,7 +266,7 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
                 $u = $elem['url'];
                
                 //appending isTest to url for test soft credit CRM-3891. 
-                //FIXME: hack dojo url.
+                //FIXME: hack ajax url.
                 $q = "reset=1&snippet=1&force=1&cid={$this->_contactId}"; 
                 if ( CRM_Utils_Request::retrieve('isTest', 'Positive', $this) ) {
                     $q = $q."&isTest=1";
@@ -261,7 +293,7 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
                        'log'           => ts('Change Log')    ,
                        );
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( isset( $config->sunlight ) &&
              $config->sunlight ) {
             $title = ts('Elected Officials');
@@ -282,17 +314,18 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
         }
         
         // now add all the custom tabs
-        $activeGroups =&
-            CRM_Core_BAO_CustomGroup::getActiveGroups( CRM_Contact_BAO_Contact::getContactType($this->_contactId),
-                                                       'civicrm/contact/view/cd',
-                                                       $this->_contactId );
-                                                                    
+        $entityType   = $this->get('contactType');
+        $activeGroups = CRM_Core_BAO_CustomGroup::getActiveGroups( $entityType,
+                                                                   'civicrm/contact/view/cd',
+                                                                   $this->_contactId );
+                                             
         foreach ( $activeGroups as $group ) {
             $id = "custom_{$group['id']}";
             $allTabs[] = array( 'id'     => $id,
                                 'url'    => CRM_Utils_System::url( $group['path'], $group['query'] . "&snippet=1&selectedChild=$id"),
                                 'title'  => $group['title'],
-                                'weight' => $weight );
+                                'weight' => $weight,
+								'count'  => CRM_Contact_BAO_Contact::getCountComponent( $id, $this->_contactId, $group['table_name'] )  );
             $weight += 10;
         }
 
@@ -329,65 +362,28 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
      
         $selectedChild = CRM_Utils_Request::retrieve( 'selectedChild', 'String', $this, false, 'summary' );
         $this->assign( 'selectedChild', $selectedChild );
+        
+        // hook for contact summary
+        require_once 'CRM/Utils/Hook.php';
+        $contentPlacement = CRM_Utils_Hook::SUMMARY_BELOW;  // ignored but needed to prevent warnings
+        CRM_Utils_Hook::summary( $this->_contactId, $content, $contentPlacement );
+        if ( $content ) {
+            $this->assign_by_ref( 'hookContent', $content );
+            $this->assign( 'hookContentPlacement', $contentPlacement );
+        }
     }
 
-
-    /**
-     * Show hide blocks based on default values.
-     *
-     * @param array (reference) $defaults
-     * @return void
-     * @access public
-     */
-    function setShowHide( &$defaults ) {
-        
-        $config =& CRM_Core_Config::singleton( );
-        
-        if ( isset($defaults['mail_to_household_id']) ) {
-            $HouseholdName = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', 
-                                                          $defaults['mail_to_household_id'], 
-                                                          'display_name', 
-                                                          'id' );
-            $this->assign( 'HouseholdName',$HouseholdName );
-        }
-        
-        require_once 'CRM/Core/ShowHideBlocks.php';
-        $showHide =& new CRM_Core_ShowHideBlocks();
-        
-        if ( $this->_showCommBlock ) {
-            $showHide->addShow( 'commPrefs' );
-            $showHide->addHide( 'commPrefs_show' );
-        }
-        
-        if ( $this->_showDemographics && $defaults['contact_type'] == 'Individual' ) {
-            // is there any demographics data?
-            if ( CRM_Utils_Array::value( 'gender_id'  , $defaults ) ||
-                 CRM_Utils_Array::value( 'is_deceased', $defaults ) ||
-                 CRM_Utils_Array::value( 'birth_date' , $defaults ) ) {
-                $showHide->addShow( 'demographics' );
-                $showHide->addHide( 'demographics_show' );
-            } else {
-                $showHide->addShow( 'demographics_show' );
-                $showHide->addHide( 'demographics' );
+    function getTemplateFileName() {
+        if ( $this->_contactId ) {
+            $csType = $this->get('contactSubtype');
+            if ( $csType ) {
+                $templateFile = "CRM/Contact/Page/View/SubType/{$csType}.tpl";
+                $template     = CRM_Core_Page::getTemplate( );
+                if ( $template->template_exists( $templateFile ) ) {
+                    return $templateFile;
+                }
             }
         }
-
-        if ( array_key_exists( 'location', $defaults ) ) {
-            $numLocations = count( $defaults['location'] );
-            if ( $numLocations > 0 ) {
-                $showHide->addShow( 'location_1' );
-                $showHide->addHide( 'location_1_show' );
-            }
-            for ( $i = 1; $i < $numLocations; $i++ ) {
-                $locationIndex = $i + 1;
-                $showHide->addShow( "location_{$locationIndex}_show" );
-                $showHide->addHide( "location_{$locationIndex}" );
-            }
-        }
-        
-        $showHide->addToTemplate( );
+        return parent::getTemplateFileName( );
     }
-
 }
-
-

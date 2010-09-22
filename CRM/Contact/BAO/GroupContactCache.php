@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -49,16 +50,41 @@ class CRM_Contact_BAO_GroupContactCache extends CRM_Contact_DAO_GroupContactCach
      * @return boolean true if we did not regenerate, false if we did
      */
     static function check( $groupID ) {
-        $cacheDate = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Group',
-                                                  $groupID,
-                                                  'cache_date' );
-
-        // we'll modify the below if to regenerate if cacheDate is quite old
-        if ( $cacheDate != null ) {
+        if ( empty( $groupID ) ) {
             return true;
         }
-        self::add( $groupID );
-        return false;
+
+        if ( ! is_array( $groupID ) ) {
+            $groupID = array( $groupID );
+        }
+        // note escapeString is a must here and we can't send the imploded value as second arguement to 
+        // the executeQuery(), since that would put single quote around the string and such a string 
+        // of comma separated integers would not work. 
+        $groupID = CRM_Core_DAO::escapeString( implode( ', ', $groupID ) );
+
+        $config  = CRM_Core_Config::singleton( );
+        $smartGroupCacheTimeout = 
+            isset( $config->smartGroupCacheTimeout ) && 
+            is_numeric(  $config->smartGroupCacheTimeout ) ? $config->smartGroupCacheTimeout : 0;
+        $query  = "
+SELECT     g.id
+FROM       civicrm_group g
+WHERE      g.id IN ( {$groupID} ) AND g.saved_search_id = 1 AND 
+          (g.cache_date IS NULL OR (TIMESTAMPDIFF(MINUTE, g.cache_date, NOW()) >= $smartGroupCacheTimeout))
+";
+
+        $dao      =& CRM_Core_DAO::executeQuery( $query );
+        $groupIDs = array( );
+        while ( $dao->fetch() ) {
+            $groupIDs[] = $dao->id;
+        }
+
+        if ( empty( $groupIDs ) ) {
+            return true;
+        } else {
+            self::add( $groupIDs );
+            return false;
+        }
     }
 
     static function add( $groupID ) {
@@ -95,8 +121,7 @@ class CRM_Contact_BAO_GroupContactCache extends CRM_Contact_DAO_GroupContactCach
             $input = array_splice( $values, 0, self::NUM_CONTACTS_TO_INSERT );
             $str   = implode( ',', $input );
             $sql = "REPLACE INTO civicrm_group_contact_cache (group_id,contact_id) VALUES $str;";
-            CRM_Core_DAO::executeQuery( $sql,
-                                        CRM_Core_DAO::$_nullArray );
+            CRM_Core_DAO::executeQuery( $sql );
         }
 
         // only update cache entry if we had any values
@@ -147,14 +172,14 @@ INNER JOIN civicrm_contact c ON c.id = g.contact_id
 WHERE      g.group_id IN (
     SELECT id
     FROM   civicrm_group
-    WHERE  TIMESTAMPDIFF(MINUTE, cache_date, NOW()) > $smartGroupCacheTimeout   
+    WHERE  TIMESTAMPDIFF(MINUTE, cache_date, NOW()) >= $smartGroupCacheTimeout   
 )
 ";
 
             $update = "
 UPDATE civicrm_group g
 SET    cache_date = null
-WHERE  TIMESTAMPDIFF(MINUTE, cache_date, NOW()) > $smartGroupCacheTimeout
+WHERE  TIMESTAMPDIFF(MINUTE, cache_date, NOW()) >= $smartGroupCacheTimeout
 ";
             $params = array( );
         } else if ( is_array( $groupID ) ) {
@@ -224,9 +249,10 @@ WHERE  id = %1
                 $searchSQL   = $customClass->contactIDs( );
                 $idName = 'contact_id';
             } else {
-                $query =& new CRM_Contact_BAO_Query($ssParams, $returnProperties, null,
+                $query = new CRM_Contact_BAO_Query($ssParams, $returnProperties, null,
                                                     false, false, 1,
                                                     true, true, false );
+                $query->_useGroupBy = false;
                 $searchSQL =& $query->searchQuery( 0, 0, null,
                                                    false, false,
                                                    false, true, true, null );
@@ -251,8 +277,7 @@ FROM   civicrm_group_contact
 WHERE  civicrm_group_contact.status = 'Added'
   AND  civicrm_group_contact.group_id = $groupID ";
 
-        $dao = CRM_Core_DAO::executeQuery( $sql,
-                                           CRM_Core_DAO::$_nullArray );
+        $dao = CRM_Core_DAO::executeQuery( $sql );
 
         $values = array( );
         while ( $dao->fetch( ) ) {

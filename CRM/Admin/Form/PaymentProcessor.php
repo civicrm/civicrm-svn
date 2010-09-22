@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id: PaymentProcessor.php 9702 2007-05-29 23:57:16Z lobo $
  *
  */
@@ -70,7 +71,7 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form
 
         $this->assign( 'ppType', $this->_ppType );
         require_once 'CRM/Core/DAO/PaymentProcessorType.php';
-        $this->_ppDAO =& new CRM_Core_DAO_PaymentProcessorType( );
+        $this->_ppDAO = new CRM_Core_DAO_PaymentProcessorType( );
         $this->_ppDAO->name = $this->_ppType;
 
         if ( ! $this->_ppDAO->find( true ) ) {
@@ -90,6 +91,7 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form
         //CRM-4129
         $destination = CRM_Utils_Request::retrieve( 'destination', 'String', $this );
         if ( $destination ) {
+            $destination = urlencode( $destination );
             $refreshURL .= "&destination=$destination";
         }
         
@@ -187,7 +189,7 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form
 
     }
 
-    static function formRule( &$fields ) {
+    static function formRule( $fields ) {
 
         // make sure that at least one of live or test is present
         // and we have at least name and url_site 
@@ -236,20 +238,22 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form
         $defaults['payment_processor_type'] = $this->_ppType;
 
         if ( ! $this->_id ) {
-            $defaults['is_active'] = $defaults['is_default'] = 1;
-            $defaults['url_site'] = $this->_ppDAO->url_site_default;
-            $defaults['url_api'] = $this->_ppDAO->url_api_default;
-            $defaults['url_recur'] = $this->_ppDAO->url_recur_default;
-            $defaults['url_button'] = $this->_ppDAO->url_button_default;
-            $defaults['test_url_site'] = $this->_ppDAO->url_site_test_default;
-            $defaults['test_url_api'] = $this->_ppDAO->url_api_test_default;
-            $defaults['test_url_recur'] = $this->_ppDAO->url_recur_test_default;
+            $defaults['is_active']       = $defaults['is_default'] = 1;
+            $defaults['url_site']        = $this->_ppDAO->url_site_default;
+            $defaults['url_api']         = $this->_ppDAO->url_api_default;
+            $defaults['url_recur']       = $this->_ppDAO->url_recur_default;
+            $defaults['url_button']      = $this->_ppDAO->url_button_default;
+            $defaults['test_url_site']   = $this->_ppDAO->url_site_test_default;
+            $defaults['test_url_api']    = $this->_ppDAO->url_api_test_default;
+            $defaults['test_url_recur']  = $this->_ppDAO->url_recur_test_default;
             $defaults['test_url_button'] = $this->_ppDAO->url_button_test_default;
             return $defaults;
         }
-
-        $dao =& new CRM_Core_DAO_PaymentProcessor( );
+        $domainID = CRM_Core_Config::domainID( );
+        
+        $dao = new CRM_Core_DAO_PaymentProcessor( );
         $dao->id        = $this->_id;
+        $dao->domain_id = $domainID;
         if ( ! $dao->find( true ) ) {
             return $defaults;
         }
@@ -257,9 +261,10 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form
         CRM_Core_DAO::storeValues( $dao, $defaults );
         
         // now get testID
-        $testDAO =& new CRM_Core_DAO_PaymentProcessor( );
+        $testDAO = new CRM_Core_DAO_PaymentProcessor( );
         $testDAO->name      = $dao->name;
         $testDAO->is_test   = 1;
+        $testDAO->domain_id = $domainID;
         if ( $testDAO->find( true ) ) {
             $this->_testID = $testDAO->id;
 
@@ -284,28 +289,32 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form
      */
     public function postProcess() 
     {
+        CRM_Utils_System::flushCache( 'CRM_Core_DAO_PaymentProcessor' );
+
         if ( $this->_action & CRM_Core_Action::DELETE ) {
             CRM_Core_BAO_PaymentProcessor::del( $this->_id );
             CRM_Core_Session::setStatus( ts('Selected Payment Processor has been deleted.') );
             return;
         }
 
-        $values = $this->controller->exportValues( $this->_name );
+        $values   = $this->controller->exportValues( $this->_name );
+        $domainID = CRM_Core_Config::domainID( );
 
         if ( CRM_Utils_Array::value( 'is_default', $values ) ) {
-            $query = "UPDATE civicrm_payment_processor SET is_default = 0";
+            $query = "UPDATE civicrm_payment_processor SET is_default = 0 WHERE domain_id = $domainID";
             CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
         }
 
-        $this->updatePaymentProcessor( $values, false );
-        $this->updatePaymentProcessor( $values, true );
+        $this->updatePaymentProcessor( $values, $domainID, false );
+        $this->updatePaymentProcessor( $values, $domainID, true  );
 
     }//end of function
 
-    function updatePaymentProcessor( &$values, $test ) {
-        $dao =& new CRM_Core_DAO_PaymentProcessor( );
+    function updatePaymentProcessor( &$values, $domainID, $test ) {
+        $dao = new CRM_Core_DAO_PaymentProcessor( );
 
         $dao->id         = $test ? $this->_testID : $this->_id;
+        $dao->domain_id  = $domainID;
         $dao->is_test    = $test;
         if ( ! $test ) {
             $dao->is_default = CRM_Utils_Array::value( 'is_default', $values, 0 );

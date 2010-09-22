@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -69,7 +70,7 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
      */
     static function add( &$params ) 
     {
-        $caseDAO =& new CRM_Case_DAO_Case();
+        $caseDAO = new CRM_Case_DAO_Case();
         $caseDAO->copyValues($params);
         return $caseDAO->save();
     }
@@ -88,7 +89,7 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
      */
     static function &getValues( &$params, &$values, &$ids ) 
     {
-        $case =& new CRM_Case_BAO_Case( );
+        $case = new CRM_Case_BAO_Case( );
 
         $case->copyValues( $params );
         
@@ -152,7 +153,7 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
      */
     function addCaseToContact( $params ) {
         require_once 'CRM/Case/DAO/CaseContact.php';
-        $caseContact =& new CRM_Case_DAO_CaseContact();
+        $caseContact = new CRM_Case_DAO_CaseContact();
         $caseContact->case_id = $params['case_id'];
         $caseContact->contact_id = $params['contact_id'];
         $caseContact->find(true);
@@ -171,7 +172,7 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
      */
     function deleteCaseContact( $caseID ) {
         require_once 'CRM/Case/DAO/CaseContact.php';
-        $caseContact =& new CRM_Case_DAO_CaseContact();
+        $caseContact = new CRM_Case_DAO_CaseContact();
         $caseContact->case_id = $caseID;
         $caseContact->delete();
     }
@@ -253,7 +254,7 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
     static function processCaseActivity( &$params ) 
     {
         require_once 'CRM/Case/DAO/CaseActivity.php';
-        $caseActivityDAO =& new CRM_Case_DAO_CaseActivity();
+        $caseActivityDAO = new CRM_Case_DAO_CaseActivity();
         $caseActivityDAO->activity_id = $params['activity_id'];
         $caseActivityDAO->case_id = $params['case_id'];
 
@@ -295,7 +296,7 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
         $transaction = new CRM_Core_Transaction( );
 
         require_once 'CRM/Case/DAO/Case.php';
-        $case     = & new CRM_Case_DAO_Case( );
+        $case     = new CRM_Case_DAO_Case( );
         $case->id = $caseId; 
         $case->delete( );
 
@@ -314,7 +315,7 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
     static function deleteCaseActivity( $activityId ) 
     {
         require_once 'CRM/Case/DAO/CaseActivity.php';
-        $case              = & new CRM_Case_DAO_CaseActivity( );
+        $case              = new CRM_Case_DAO_CaseActivity( );
         $case->activity_id = $activityId; 
         $case->delete( );
     }
@@ -355,7 +356,7 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
      * @access public
      * 
      */
-    static function getcontactNames( $caseId ) 
+    static function getContactNames( $caseId ) 
     {
         $queryParam = array();
         $query = "SELECT contact_a.sort_name 

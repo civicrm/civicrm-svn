@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -38,7 +39,8 @@ require_once 'CRM/Contribute/Form/ContributionPage.php';
 /**
  * form to configure thank-you messages and receipting features for an online contribution page
  */
-class CRM_Contribute_Form_ContributionPage_ThankYou extends CRM_Contribute_Form_ContributionPage {
+class CRM_Contribute_Form_ContributionPage_ThankYou extends CRM_Contribute_Form_ContributionPage
+{
 
     /**
     * This function sets the default values for the form. Note that in edit/view mode
@@ -66,10 +68,10 @@ class CRM_Contribute_Form_ContributionPage_ThankYou extends CRM_Contribute_Form_
 
         // thank you title and text (html allowed in text)
         $this->add('text', 'thankyou_title', ts('Thank-you Page Title'), CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_ContributionPage', 'thankyou_title'), true);
-        $this->addWysiwyg( 'thankyou_text', ts('Thank-you Message'),CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_ContributionPage', 'thankyou_text'));
-        $this->addWysiwyg( 'thankyou_footer', ts('Thank-you Page Footer'),CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_ContributionPage', 'thankyou_footer'));
+        $this->addWysiwyg( 'thankyou_text', ts('Thank-you Message'), CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_ContributionPage', 'thankyou_text'));
+        $this->addWysiwyg( 'thankyou_footer', ts('Thank-you Page Footer'), CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_ContributionPage', 'thankyou_footer'));
 
-        $this->addElement('checkbox', 'is_email_receipt', ts( 'Email Receipt to Contributor?' ),null,array('onclick' =>"showReceipt()") );
+        $this->addElement('checkbox', 'is_email_receipt', ts( 'Email Receipt to Contributor?' ), null, array('onclick' =>"showReceipt()") );
         $this->add('text', 'receipt_from_name', ts('Receipt From Name'), CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_ContributionPage', 'receipt_from_name') );
         $this->add('text', 'receipt_from_email', ts('Receipt From Email'), CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_ContributionPage', 'receipt_from_email'));
         $this->add('textarea', 'receipt_text', ts('Receipt Message'), CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_ContributionPage', 'receipt_text') );
@@ -96,15 +98,12 @@ class CRM_Contribute_Form_ContributionPage_ThankYou extends CRM_Contribute_Form_
      * @access public 
      * @static 
      */ 
-    static function formRule( &$fields, &$files, $options ) { 
+    static function formRule( $fields, $files, $options )
+    { 
         $errors = array( ); 
 
         // if is_email_receipt is set, the receipt message must be non-empty
         if ( CRM_Utils_Array::value( 'is_email_receipt', $fields ) ) {
-            $message = trim( CRM_Utils_Array::value( 'receipt_text', $fields ) );
-            if ( empty( $message ) ) {
-                $errors['receipt_text'] = ts( 'A Receipt message must be specified if Email Receipt to Contributor is enabled' );
-            }
             //added for CRM-1348
             $email = trim( CRM_Utils_Array::value( 'receipt_from_email', $fields ) );
             if ( empty( $email ) || !CRM_Utils_Rule::email($email) ) {
@@ -146,7 +145,8 @@ class CRM_Contribute_Form_ContributionPage_ThankYou extends CRM_Contribute_Form_
      * @return string 
      * @access public 
      */ 
-    public function getTitle( ) {
+    public function getTitle( )
+    {
         return ts( 'Thanks and Receipt' );
     }
 }

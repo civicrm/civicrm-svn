@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -50,7 +51,7 @@ class CRM_Contribute_Form_PCP_PCP extends CRM_Core_Form
      */
     public function preProcess()
     {
-        if ( $this->_action & CRM_Core_Action::DELETE  ) {
+        if ( $this->_action & CRM_Core_Action::DELETE ) {
             //check permission for action.
             if ( !CRM_Core_Permission::checkActionPermission( 'CiviContribute', $this->_action ) ) {
                 CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) );  
@@ -63,29 +64,34 @@ class CRM_Contribute_Form_PCP_PCP extends CRM_Core_Form
         }
         
         if ( ! $this->_action ) {
-            $action = CRM_Utils_Array::value( 'action', $_GET );
-            $id     = CRM_Utils_Array::value( 'id', $_GET );
-            
-            switch ($action)
-            {
-            case 'delete':
-                require_once 'CRM/Contribute/BAO/PCP.php';
-                $title = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_PCP', $id, 'title' );
-                CRM_Contribute_BAO_PCP::delete( $id );
-                CRM_Core_Session::setStatus( ts("The Campaign Page '%1' has been deleted.", array(1 => $title)) );
-                break;
-                
-            case 'disable':
-                require_once 'CRM/Contribute/BAO/PCP.php';
-                CRM_Contribute_BAO_PCP::setDisable( $id, '0' );
-                break;
-                
-            case 'enable':
-                require_once 'CRM/Contribute/BAO/PCP.php';
-                CRM_Contribute_BAO_PCP::setDisable( $id, '1' );
-                break;
+            $action  = CRM_Utils_Array::value( 'action', $_GET );
+            $id      = CRM_Utils_Array::value( 'id', $_GET );
+            $session = CRM_Core_Session::singleton( );
+            $userID  = $session->get('userID');
+            //do not allow destructive actions without permissions
+            $permission = false;
+            if ( CRM_Core_Permission::check( 'administer CiviCRM' ) ||
+                 ( $userID && (CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_PCP', $id , 'contact_id') == $userID ) ) ) {
+                $permission = true;
             }
-            $session =& CRM_Core_Session::singleton();
+            if ( $permission ) {
+                require_once 'CRM/Contribute/BAO/PCP.php';
+                switch ( $action ) {
+                case 'delete':
+                    $title = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_PCP', $id, 'title' );
+                    CRM_Contribute_BAO_PCP::delete( $id );
+                    CRM_Core_Session::setStatus( ts("The Campaign Page '%1' has been deleted.", array(1 => $title)) );
+                    break;
+                    
+                case 'disable':
+                    CRM_Contribute_BAO_PCP::setDisable( $id, '0' );
+                    break;
+                    
+                case 'enable':
+                    CRM_Contribute_BAO_PCP::setDisable( $id, '1' );
+                    break;
+                }
+            }
             CRM_Utils_System::redirect( $session->popUserContext() );
         }
     }
@@ -104,7 +110,6 @@ class CRM_Contribute_Form_PCP_PCP extends CRM_Core_Form
         $defaults = array();
         return $defaults;
     }
-
  
     /**
      * Function to actually build the form
@@ -135,11 +140,11 @@ class CRM_Contribute_Form_PCP_PCP extends CRM_Core_Form
                                              array( ts('- select -') ),
                                              CRM_Contribute_PseudoConstant::contributionPage( ));
             
-            $this->addElement('select', 'status_id', ts('Personal Campaign Pages Status'), $status );
+            $this->addElement('select', 'status_id', ts('Status'), $status );
             $this->addElement('select', 'contibution_page_id', ts('Contribution Page'), $contribution_page );
             $this->addButtons( array( 
                                      array ( 'type'      => 'refresh',
-                                             'name'      => ts('Show'), 
+                                             'name'      => ts('Search'), 
                                              'spacing'   => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', 
                                              'isDefault' => true
                                              ))
@@ -157,7 +162,7 @@ class CRM_Contribute_Form_PCP_PCP extends CRM_Core_Form
      * @static
      * @access public
      */
-    static function formRule( &$fields, &$files, &$form ) {
+    static function formRule( $fields, $files, $form ) {
     }
 
     /**
@@ -168,7 +173,6 @@ class CRM_Contribute_Form_PCP_PCP extends CRM_Core_Form
      * @return void
      * @access public
      */
-
     public function postProcess()
     {
         if ( $this->_action & CRM_Core_Action::DELETE ) {

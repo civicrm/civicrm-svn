@@ -1,9 +1,33 @@
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
 {* this template is used for viewing and editing Domain information (for system-generated emails CiviMail-related values) *}
+<div class="crm-block crm-form-block crm-domain-form-block">
 {if !($action eq 4)}
-   {$form.buttons.html}
+  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 {/if}
-<div class="form-item">
-<fieldset>
     <table class="form-layout-compressed">
 	<tr>
         <td>
@@ -27,7 +51,7 @@
 				{$form.email_name.label} {help id="from-name"}<br />
 				{$form.email_name.html}
 			</td>
-			<td class="extra-long-fourty">
+			<td class="">
 				{$form.email_address.label} {help id="from-email"}<br />
 				{$form.email_address.html} 
 				   <br /><span class="description">(info@example.org)</span>
@@ -35,23 +59,21 @@
 		</tr>
 		</table>
 	</fieldset>
-    {* Display the domain address and domain contact blocks if CiviMail is enabled.  *}
-    {if array_search('CiviMail', $config->enableComponents)}
-        <fieldset><legend>{ts}CiviMail Domain Address{/ts}</legend>
-			<div class="description">{ts}CiviMail mailings must include the sending organization's address. This is done by putting the {ldelim}domain.address{rdelim} token in either the body or footer of the mailing. The token is replaced by the address entered below when the mailing is sent.{/ts}</div>
-			{include file="CRM/Contact/Form/Edit/Address.tpl"} 
-		</fieldset>
-        <fieldset><legend>{ts}Additional Domain Contact Information{/ts}</legend>
-            <div class="description">{ts}You can also include general email and/or phone contact information in mailings.{/ts} {help id="additional-contact"}</div>
-            <table class="form-layout-compressed">
-				{* Display the email block *}  
-				{include file="CRM/Contact/Form/Edit/Email.tpl" hold=1}
+    
+    <fieldset><legend>{ts}Domain Address{/ts}</legend>
+        <div class="description">{ts 1=&#123;domain.address&#125;}CiviMail mailings must include the sending organization's address. This is done by putting the %1 token in either the body or footer of the mailing. This token may also be used in regular 'Send Email to Contacts' messages and in other Message Templates. The token is replaced by the address entered below when the message is sent.{/ts}</div>
+        {include file="CRM/Contact/Form/Edit/Address.tpl"} 
+    </fieldset>
+    <fieldset><legend>{ts}Additional Domain Contact Information{/ts}</legend>
+        <div class="description">{ts}You can also include general email and/or phone contact information in mailings.{/ts} {help id="additional-contact"}</div>
+        <table class="form-layout-compressed">
+            {* Display the email block *}  
+            {include file="CRM/Contact/Form/Edit/Email.tpl"}
 
-				{* Display the phone block *}
-				{include file="CRM/Contact/Form/Edit/Phone.tpl"} 
-			</table>
-        </fieldset>
-    {/if}
+            {* Display the phone block *}
+            {include file="CRM/Contact/Form/Edit/Phone.tpl"} 
+        </table>
+    </fieldset>
     
     <div class="spacer"></div>
     
@@ -60,16 +82,14 @@
     <a href="{crmURL q="action=update&reset=1"}" id="editDomainInfo">&raquo; {ts}Edit Domain Information{/ts}</a>
     </div>
     {/if}
-</fieldset>
 {if !($action eq 4)}
-  {$form.buttons.html}
+  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 {/if}
 </div>
 
 {* phone_2 a email_2 only included in form if CiviMail enabled. *}
 {if array_search('CiviMail', $config->enableComponents)}
     <script type="text/javascript">
-    //hide('id_location_1_phone_2_show');
-    //hide('id_location_1_email_2_show');
+    cj('a#addEmail,a#addPhone').hide();
     </script>
 {/if}

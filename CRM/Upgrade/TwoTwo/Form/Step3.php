@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -40,7 +41,7 @@ class CRM_Upgrade_TwoTwo_Form_Step3 extends CRM_Upgrade_Form {
     function verifyPreDBState( &$errorMessage ) 
     {
         $errorMessage = ts('Pre-condition failed for upgrade step %1.', array(1 => '3'));
-        return $this->checkVersion( '2.12' );
+        return $this->checkVersion( '2.1.102' );
     }
     
     function upgrade( ) 
@@ -51,7 +52,7 @@ class CRM_Upgrade_TwoTwo_Form_Step3 extends CRM_Upgrade_Form {
         //2.preserve mailer preferences.
         self::mailerPreferences( );
         
-        $this->setVersion( '2.13' );
+        $this->setVersion( '2.1.103' );
     }
     
     function verifyPostDBState( &$errorMessage ) {
@@ -83,7 +84,7 @@ class CRM_Upgrade_TwoTwo_Form_Step3 extends CRM_Upgrade_Form {
         }
         $errorMessage = ts('Post-condition failed for upgrade step %1.', array(1 => '2'));
         
-        return $this->checkVersion( '2.13' );
+        return $this->checkVersion( '2.1.103' );
     }
     
     function getTitle( ) {
@@ -213,7 +214,7 @@ UPDATE  civicrm_option_value
                     //update label/name found record w/ manupulated values.
                     require_once 'CRM/Core/DAO/OptionValue.php';
                     $updateValues['is_active'] = $updateValues['is_default'] = 1;
-                    $optionValue =& new CRM_Core_DAO_OptionValue( );
+                    $optionValue = new CRM_Core_DAO_OptionValue( );
                     $optionValue->copyValues( $updateValues );
                     $optionValue->save( );
                 }
@@ -277,7 +278,7 @@ ALTER TABLE `civicrm_domain`
         
         //get the mailer preferences from backend 
         //store in civicrm_preferences and unset from backend.
-        $domain =& new CRM_Core_DAO_Domain( );
+        $domain = new CRM_Core_DAO_Domain( );
         $domain->find( true );
         if ( $domain->config_backend ) {
             $backendValues = unserialize( $domain->config_backend );
@@ -291,7 +292,7 @@ ALTER TABLE `civicrm_domain`
             $domain->config_backend = serialize( $backendValues );
             $domain->save( ); 
             
-            $mailingDomain =& new CRM_Core_DAO_Preferences( );
+            $mailingDomain = new CRM_Core_DAO_Preferences( );
             $mailingDomain->find( true );
             $mailingDomain->mailing_backend = serialize( $mailerValues );
             $mailingDomain->save( );

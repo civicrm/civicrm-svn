@@ -39,10 +39,17 @@
   <field>  
       <name>supporter_profile_id</name>  
       <type>int unsigned</type>                  
-      <comment>Does Personal Campaign Page require manual activation by administrator? (is inactive by default after setup)?</comment>
+      <comment>FK to civicrm_uf_group.id. Does Personal Campaign Page require manual activation by administrator? (is inactive by default after setup)?</comment>
       <default>NULL</default>
       <add>2.2</add>  
   </field>
+  <foreignKey> 
+      <name>supporter_profile_id</name> 
+      <table>civicrm_uf_group</table> 
+      <key>id</key>
+      <add>3.1</add>
+      <onDelete>SET NULL</onDelete>
+  </foreignKey>
   <field>  
       <name>is_approval_needed</name>  
       <type>boolean</type>                  

@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -29,7 +30,7 @@
    * Class representing the table relationships
    * 
    * @package CRM 
-   * @copyright CiviCRM LLC (c) 2004-2009 
+   * @copyright CiviCRM LLC (c) 2004-2010 
    * $Id$ 
    * 
    */ 
@@ -43,14 +44,6 @@ class CRM_Core_TableHierarchy {
      */
     static $info = array(
                          'civicrm_contact'              => '01',
-                         'civicrm_individual'           => '02',
-                         'civicrm_household'            => '03',
-                         'civicrm_organization'         => '04',
-                         'quest_student'                => '05',
-                         'quest_student_summary'        => '05',
-                         'civicrm_individual_prefix'    => '06',
-                         'civicrm_individual_suffix'    => '07',
-                         'civicrm_gender'               => '08',
                          'civicrm_address'              => '09',
                          'civicrm_county'               => '10',
                          'civicrm_state_province'       => '11',
@@ -59,21 +52,23 @@ class CRM_Core_TableHierarchy {
                          'civicrm_phone'                => '14',
                          'civicrm_im'                   => '15',
                          'civicrm_im_provider'          => '16',
-                         'civicrm_location_type'        => '17',
-                         'civicrm_group_contact'        => '18',
-                         'civicrm_group'                => '19',
-                         'civicrm_subscription_history' => '20',
-                         'civicrm_entity_tag'           => '21',
-                         'civicrm_note'                 => '22',
-                         'civicrm_contribution'         => '23',
-                         'civicrm_contribution_type'    => '24',
-                         'civicrm_participant'          => '25',
-                         'civicrm_event'                => '26',
-                         'civicrm_worldregion'          => '27',
-                         'civicrm_case_contact'         => '28',
-                         'civicrm_case'                 => '29',
-                         'case_relationship'            => '30',
-                         'case_relation_type'           => '31'
+                         'civicrm_openid'               => '17',
+                         'civicrm_location_type'        => '18',
+                         'civicrm_group_contact'        => '19',
+                         'civicrm_group'                => '20',
+                         'civicrm_subscription_history' => '21',
+                         'civicrm_entity_tag'           => '22',
+                         'civicrm_note'                 => '23',
+                         'civicrm_contribution'         => '24',
+                         'civicrm_contribution_type'    => '25',
+                         'civicrm_participant'          => '26',
+                         'civicrm_event'                => '27',
+                         'civicrm_worldregion'          => '28',
+                         'civicrm_case_contact'         => '29',
+                         'civicrm_case'                 => '30',
+                         'case_relationship'            => '31',
+                         'case_relation_type'           => '32',
+                         'civicrm_activity'             => '33'
                          );
 
     static function &info( ) {

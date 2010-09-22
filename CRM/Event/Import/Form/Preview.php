@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -62,7 +63,7 @@ class CRM_Event_Import_Form_Preview extends CRM_Core_Form
         $mappingId = $this->get('loadMappingId');
         if ( $mappingId ) {
             require_once 'CRM/Core/DAO/Mapping.php';
-            $mapDAO =& new CRM_Core_DAO_Mapping();
+            $mapDAO = new CRM_Core_DAO_Mapping();
             $mapDAO->id = $mappingId;
             $mapDAO->find( true );
             $this->assign('loadedMapping', $mappingId);
@@ -77,15 +78,18 @@ class CRM_Event_Import_Form_Preview extends CRM_Core_Form
         }
         
         if ($invalidRowCount) {
-            $this->set('downloadErrorRecordsUrl', CRM_Utils_System::url('civicrm/export', 'type=1&realm=event'));
+            $urlParams = 'type='.CRM_Event_Import_Parser::ERROR . '&parser=CRM_Event_Import_Parser';
+            $this->set('downloadErrorRecordsUrl', CRM_Utils_System::url('civicrm/export', $urlParams));
         }
         
         if ($conflictRowCount) {
-            $this->set('downloadConflictRecordsUrl', CRM_Utils_System::url('civicrm/export', 'type=2&realm=event'));
+            $urlParams = 'type='.CRM_Event_Import_Parser::CONFLICT . '&parser=CRM_Event_Import_Parser';
+            $this->set('downloadConflictRecordsUrl', CRM_Utils_System::url('civicrm/export', $urlParams));
         }
         
         if ($mismatchCount) {
-            $this->set('downloadMismatchRecordsUrl', CRM_Utils_System::url('civicrm/export', 'type=4&realm=event'));
+            $urlParams = 'type='.CRM_Event_Import_Parser::NO_MATCH . '&parser=CRM_Event_Import_Parser';
+            $this->set('downloadMismatchRecordsUrl', CRM_Utils_System::url('civicrm/export', $urlParams));
         }
         
         $properties = array( 'mapper',
@@ -149,7 +153,7 @@ class CRM_Event_Import_Form_Preview extends CRM_Core_Form
         $conflictRowCount   = $this->get('conflictRowCount');
         $onDuplicate        = $this->get('onDuplicate');
         
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $seperator = $config->fieldSeparator;
         
         $mapper = $this->controller->exportValue( 'MapField', 'mapper' );
@@ -160,7 +164,7 @@ class CRM_Event_Import_Form_Preview extends CRM_Core_Form
         }
         
         require_once 'CRM/Event/Import/Parser/Participant.php';
-        $parser =& new CRM_Event_Import_Parser_Participant( $mapperKeys );
+        $parser = new CRM_Event_Import_Parser_Participant( $mapperKeys );
         
         $mapFields = $this->get('fields');
         
@@ -201,9 +205,12 @@ class CRM_Event_Import_Form_Preview extends CRM_Core_Form
             fclose($fd);
             
             $this->set('errorFile', $errorFile);
-            $this->set('downloadErrorRecordsUrl', CRM_Utils_System::url('civicrm/export', 'type=1&realm=event'));
-            $this->set('downloadConflictRecordsUrl', CRM_Utils_System::url('civicrm/export', 'type=2&realm=event'));
-            $this->set('downloadMismatchRecordsUrl', CRM_Utils_System::url('civicrm/export', 'type=4&realm=event'));
+            $urlParams = 'type='.CRM_Event_Import_Parser::ERROR . '&parser=CRM_Event_Import_Parser';
+            $this->set('downloadErrorRecordsUrl', CRM_Utils_System::url('civicrm/export', $urlParams));
+            $urlParams = 'type='.CRM_Event_Import_Parser::CONFLICT . '&parser=CRM_Event_Import_Parser';
+            $this->set('downloadConflictRecordsUrl', CRM_Utils_System::url('civicrm/export', $urlParams));
+            $urlParams = 'type='.CRM_Event_Import_Parser::NO_MATCH . '&parser=CRM_Event_Import_Parser';
+            $this->set('downloadMismatchRecordsUrl', CRM_Utils_System::url('civicrm/export', $urlParams));
         }
     }
 }

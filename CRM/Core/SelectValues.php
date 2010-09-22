@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -31,7 +32,7 @@
  * smart caching scheme on a per domain basis
  * 
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -98,16 +99,13 @@ class CRM_Core_SelectValues
      * various pre defined contact super types
      * @static
      */
-    static function &contactType()
+    static function &contactType( )
     {
         static $contactType = null;
         if (!$contactType) {
-            $contactType = array(
-                ''             => ts('- any contact type -'),
-                'Individual'   => ts('Individual'),
-                'Household'    => ts('Household'),
-                'Organization' => ts('Organization')
-            );
+            require_once 'CRM/Contact/BAO/ContactType.php';
+            $contactType = array( '' => ts('- any contact type -') );
+            $contactType = $contactType + CRM_Contact_BAO_ContactType::basicTypePairs( );
         }
         return $contactType;
     }
@@ -248,27 +246,29 @@ class CRM_Core_SelectValues
         static $customGroupExtends = null;
         if (!$customGroupExtends) {
             $customGroupExtends = array(
-                'Contact'      => ts('Contacts'),
-                'Individual'   => ts('Individuals'),
-                'Household'    => ts('Households'),
-                'Organization' => ts('Organizations'),
-                'Activity'     => ts('Activities'),
-                'Relationship' => ts('Relationships'),
-                'Contribution' => ts('Contributions'),
-                'Group'        => ts('Groups'),
-                'Membership'   => ts('Memberships'),
-                'Event'        => ts('Events'),
-                'Participant'  => ts('Participants'),
-                'ParticipantRole'      => ts('Participants (Role)'),
-                'ParticipantEventName' => ts('Participants (Event Name)'),
-                //'ParticipantEventType' => ts('Participants (Event Type)'),
-                'Pledge'       => ts('Pledges'),
-                'Grant'        => ts('Grants'),
-            );
+                                        'Activity'     => ts('Activities'),
+                                        'Relationship' => ts('Relationships'),
+                                        'Contribution' => ts('Contributions'),
+                                        'Group'        => ts('Groups'),
+                                        'Membership'   => ts('Memberships'),
+                                        'Event'        => ts('Events'),
+                                        'Participant'  => ts('Participants'),
+                                        'ParticipantRole'      => ts('Participants (Role)'),
+                                        'ParticipantEventName' => ts('Participants (Event Name)'),
+                                        'ParticipantEventType' => ts('Participants (Event Type)'),
+                                        'Pledge'       => ts('Pledges'),
+                                        'Grant'        => ts('Grants'),
+                                        'Address'      => ts('Addresses'),
+                                        );
+            $contactTypes = self::contactType( );
+            unset( $contactTypes[''] ); 
+            $contactTypes = !empty( $contactTypes ) ? array( 'Contact' => 'Contacts' ) 
+                + $contactTypes : array( );
+            $customGroupExtends = array_merge( $contactTypes, $customGroupExtends );
         }
         return $customGroupExtends;
     }
-
+    
     /**
      * styles for displaying the custom data group
      *
@@ -299,7 +299,7 @@ class CRM_Core_SelectValues
                                   'Profile'           => ts('Profile'),
                                   'Search Profile'    => ts('Search Results'),
                                   );
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             if ( $config->userFramework == 'Drupal' ) {
                 $ufGroupType += array(
                                       'User Registration' => ts('Drupal User Registration'),
@@ -348,137 +348,52 @@ class CRM_Core_SelectValues
     /**
      * compose the parameters for a date select object
      *
-     * @param  $type the type of date
+     * @param  $type    the type of date
+     * @param  $format  date format ( QF format) 
      *
      * @return array         the date array
      * @static
      */
-    static function &date( $type = 'birth', $min = null, $max = null, $dateParts = null)
+    static function &date( $type = null, $format = null, $minOffset = null, $maxOffset = null )
     {
-        static $_date = null;
-        static $config = null;
 
-        if (!$config) {
-            $config =& CRM_Core_Config::singleton();
-        }
-
-        if (!$_date) {
-            require_once 'CRM/Utils/Date.php';
-            $_date = array(
-                'format'           => CRM_Utils_Date::posixToPhp( $config->dateformatQfDate ),
-                'addEmptyOption'   => true,
-                'emptyOptionText'  => ts('- select -'),
-                'emptyOptionValue' => ''
-            );
-        }
+        $date = array(
+                        'addEmptyOption'   => true,
+                        'emptyOptionText'  => ts('- select -'),
+                        'emptyOptionValue' => ''
+                      );
         
-        $newDate = $_date;
+        if ( $format ) {
+            $date['format'] = $format;
+        } else {
+            if ( $type ) {
+                require_once 'CRM/Core/DAO/PreferencesDate.php';
+                $dao = new CRM_Core_DAO_PreferencesDate( );
+                $dao->name = $type;
+                if ( ! $dao->find( true ) ) {
+                    CRM_Core_Error::fatal( );
+                }
+            }
 
-        require_once 'CRM/Core/DAO/PreferencesDate.php';
-        $dao = new CRM_Core_DAO_PreferencesDate( );
-        $dao->name = $type;
-        if ( ! $dao->find( true ) ) {
-            CRM_Core_Error::fatal( );
-        }
-
-        if ($type == 'birth') {
-            $minOffset = $dao->start;
-            $maxOffset = $dao->end;
+            if ( $type == 'creditCard' ) {
+                $minOffset = $dao->start;
+                $maxOffset = $dao->end;
+                $date['format'] = $dao->date_format;
+                $date['addEmptyOption']   = true;
+                $date['emptyOptionText']  = ts('- select -');
+                $date['emptyOptionValue'] = '';
+            }
             
-            // support for birthdate format, CRM-3090 
-            $format = trim( $dao->format );
-            $birthDateFormat = CRM_Utils_Date::checkBrithDateFormat( $format );
-            if ( $birthDateFormat ) {
-                $formatParts = $birthDateFormat['dateParts'];
-                if ( in_array( 'M', $formatParts ) ) {
-                    $formatParts[array_search( 'M', $formatParts )] = $config->dateformatMonthVar;
-                }
-                $newDate['format'] = CRM_Utils_Date::posixToPhp( $config->dateformatQfDate, $formatParts );
-            } else {
-                $newDate['format'] = CRM_Utils_Date::posixToPhp( $config->dateformatQfDate );
-            }
-        } elseif ($type == 'relative') {
-            $minOffset = $dao->start;
-            $maxOffset = $dao->end;
-        } elseif ($type == 'custom') {
-            $minOffset = $min; 
-            $maxOffset = $max; 
-            if( $dateParts ) {
-                require_once 'CRM/Core/BAO/CustomOption.php';
-                $filter = explode( CRM_Core_DAO::VALUE_SEPARATOR, $dateParts );
-                $format = $config->dateformatQfDate;
-
-                foreach ( $filter as $val ) {
-                    switch ( $val ) {
-                        case 'M':
-                            $filter[] = 'F';
-                            $filter[] = 'm';
-                            break;
-
-                    case 'd':
-                        $filter[] = 'j';
-                        break;
-
-                    case 'h':
-                        $filter[] = 'H';
-                        $filter[] = 'G';
-                        $filter[] = 'g';
-
-                    case 'i':
-                        $format = $config->dateformatQfDatetime;
-                        break;
-                    }
-                }
-
-                $newDate['format'] = CRM_Utils_Date::posixToPhp( $format, $filter );
-            }
-        } elseif ($type == 'activityDate') {
-            $minOffset = $dao->start;
-            $maxOffset = $dao->end;
-        } elseif ($type == 'fixed') {
-            $minOffset = $dao->start;
-            $maxOffset = $dao->end;
-        } elseif ( $type == 'manual' ) {
-            $minOffset = $min;
-            $maxOffset = $max;
-        } elseif ($type == 'creditCard') {
-            $minOffset = $dao->start;
-            $maxOffset = $dao->end;
-            $newDate['format'] = CRM_Utils_Date::posixToPhp( $config->dateformatQfDate,
-                                                             array( $config->dateformatMonthVar, 'Y' ) );
-        } elseif ($type == 'mailing') {
-            $minOffset = $dao->start;
-            $maxOffset = $dao->end;
-            $format = explode( ' ', trim( $dao->format ) );
-            $newDate['format'] = CRM_Utils_Date::posixToPhp( $config->dateformatQfDatetime,
-                                                             $format );
-            $newDate['optionIncrement']['i'] = $dao->minute_increment;
-        } elseif ($type == 'activityDatetime') {
-            require_once 'CRM/Utils/Date.php';
-            //for datetime use datetime format from config
-            $newDate['format'] = CRM_Utils_Date::posixToPhp( $config->dateformatQfDatetime );
-            $newDate['optionIncrement']['i'] = $dao->minute_increment;
-            $minOffset = $dao->start;
-            $maxOffset = $dao->end;
-        } elseif ($type == 'datetime') {
-            require_once 'CRM/Utils/Date.php';
-            //for datetime use datetime format from config
-            $newDate['format'] = CRM_Utils_Date::posixToPhp( $config->dateformatQfDatetime );
-            $newDate['optionIncrement']['i'] = $dao->minute_increment;
-            $minOffset = $dao->start;
-            $maxOffset = $dao->end;
-        } elseif ($type =='duration') {
-            $format = explode( ' ', trim( $dao->format ) );
-            $newDate['format'] = CRM_Utils_Date::posixToPhp( $config->dateformatQfDate,
-                                                             $format );
-            $newDate['optionIncrement']['i'] = $dao->minute_increment;
+            if ( !CRM_Utils_Array::value( 'format', $date ) ) {
+                $date['format'] = 'M d';
+            } 
         }
         
         $year = date('Y');
-        $newDate['minYear'] = $year - $minOffset;
-        $newDate['maxYear'] = $year + $maxOffset;
-        
-        return $newDate;
+        $date['minYear'] = $year - $minOffset;
+        $date['maxYear'] = $year + $maxOffset;
+        return $date;
+       
     }
 
     /**
@@ -582,22 +497,21 @@ class CRM_Core_SelectValues
         static $tokens = null;
 
         if (! $tokens ) {
-            $tokens = array( '{action.unsubscribe}',
-                             '{action.unsubscribeUrl}',
-                             '{action.resubscribe}',
-                             '{action.resubscribeUrl}',
-                             '{action.optOut}',
-                             '{action.optOutUrl}',
-                             '{action.forward}',
-                             '{action.reply}',
-                             '{action.subscribeUrl}',
-                             '{domain.name}',
-                             '{domain.address}',
-                             '{domain.phone}',
-                             '{domain.email}',
-                             '{mailing.name}',
-                             '{mailing.group}'
-                             
+            $tokens = array( '{action.unsubscribe}'    => ts('Unsubscribe via email'),
+                             '{action.unsubscribeUrl}' => ts('Unsubscribe via web page'),
+                             '{action.resubscribe}'    => ts('Resubscribe via email'),
+                             '{action.resubscribeUrl}' => ts('Resubscribe via web page'),
+                             '{action.optOut}'         => ts('Opt out via email'),
+                             '{action.optOutUrl}'      => ts('Opt out via web page'),
+                             '{action.forward}'        => ts('Forward this email (link)'),
+                             '{action.reply}'          => ts('Reply to this email (link)'),
+                             '{action.subscribeUrl}'   => ts('Subscribe via web page'),
+                             '{domain.name}'           => ts('Domain name'),
+                             '{domain.address}'        => ts('Domain (organization) address'),
+                             '{domain.phone}'          => ts('Domain (organization) phone'),
+                             '{domain.email}'          => ts('Domain (organization) email'),
+                             '{mailing.name}'          => ts('Mailing name'),
+                             '{mailing.group}'         => ts('Mailing group')    
                           );
         }
         return $tokens;
@@ -615,12 +529,15 @@ class CRM_Core_SelectValues
         if ( ! $tokens ) {
             require_once 'CRM/Contact/BAO/Contact.php';
             require_once 'CRM/Core/BAO/CustomField.php';
-            $values= array_merge( array_keys(CRM_Contact_BAO_Contact::exportableFields( ) ),
-                                  array( 'display_name', 'checksum', 'contact_id' ) );
+            $additionalFields =  array( 'checksum'     => array( 'title' => ts('Checksum') ),
+                                        'contact_id'   => array( 'title' => ts('Internal Contact ID') ) );
+            $exportFields = array_merge( CRM_Contact_BAO_Contact::exportableFields( ), $additionalFields );
+
+            $values = array_merge( array_keys( $exportFields ) );
             unset($values[0]); 
             
             //FIXME:skipping some tokens for time being.
-            $skipTokens = array( 'greeting_type', 'is_bulkmail', 'group', 'tag', 'contact_sub_type', 'note', 
+            $skipTokens = array( 'is_bulkmail', 'group', 'tag', 'contact_sub_type', 'note', 
                                  'is_deceased','deceased_date','legal_identifier','contact_sub_type', 'user_unique_id'
                                  );
             $customFields = array();
@@ -632,9 +549,9 @@ class CRM_Core_SelectValues
                 } 
                 //keys for $tokens should be constant. $token Values are changed for Custom Fields. CRM-3734
                 if ( $customFieldId = CRM_Core_BAO_CustomField::getKeyID( $val ) ) {
-                    $tokens["{contact.$val}"] = "{contact.".$customFields[$customFieldId]['label'].": ".$customFields[$customFieldId]['groupTitle']."}";
+                    $tokens["{contact.$val}"] = $customFields[$customFieldId]['label']." :: ".$customFields[$customFieldId]['groupTitle'];
                 } else {
-                    $tokens["{contact.$val}"] = "{contact.$val}";
+                    $tokens["{contact.$val}"] = $exportFields[$val]['title'];
                 }
             }
 
@@ -643,8 +560,17 @@ class CRM_Core_SelectValues
             $hookTokens = array( );
             CRM_Utils_Hook::tokens( $hookTokens );
             foreach ( $hookTokens as $category => $tokenValues ) {
-                foreach ( $tokenValues as $value ) {
-                    $tokens[] = '{' . $value . '}';
+                foreach ( $tokenValues as $key => $value ) {
+                    if (is_numeric( $key )) {
+                        $key = $value;
+                    }
+                    if (!preg_match('/^\{[^\}]+\}$/', $key)) {
+                        $key = '{' . $key . '}';
+                    }
+                    if (preg_match('/^\{([^\}]+)\}$/', $value, $matches)) {
+                        $value = $matches[1];
+                    }
+                    $tokens[$key] = $value;
                 }
             }
         }
@@ -681,6 +607,73 @@ class CRM_Core_SelectValues
         
         return $qfDatePartsMapping;
     }
+    
+    /**
+     *  CiviCRM supported date input formats
+     */
+    static function getDatePluginInputFormats( ) {
+        $dateInputFormats = array( 
+                                  "mm/dd/yy"      => ts('mm/dd/yyyy (12/31/2009)'),
+                                  "yy-mm-dd"      => ts('yyyy-mm-dd (2009-12-31)'),
+                                  "dd-mm-yy"      => ts('dd-mm-yyyy (31-12-2009)'),
+                                  'dd.mm.yy'      => ts('dd.mm.yyyy (31.12.2009)'),
+                                  "M d, yy"       => ts('M d, yyyy (Dec 31, 2009)'),
+                                  'd M yy'        => ts('d M yyyy (31 Dec 2009)'),
+                                  "MM d, yy"      => ts('MM d, yyyy (December 31, 2009)'),
+                                  'd MM yy'       => ts('d MM yyyy (31 December 2009)'),
+                                  "DD, d MM yy"   => ts('DD, d MM yyyy (Thursday, 31 December 2009)'),
+                                  "mm/dd"         => ts('mm/dd (12/31)'),
+                                  "dd-mm"         => ts('dd-mm (31-12)'),
+                                  "yy-mm"         => ts('yyyy-mm (2009-12)'),
+                                  'M yy'          => ts('M yyyy (Dec 2009)'),
+                                  "yy"            => ts('yyyy (2009)'),
+                                   );
+        
+        /*
+         Year greater than 2000 get wrong result for following format
+         echo date( 'Y-m-d', strtotime( '7 Nov, 2001') );
+         echo date( 'Y-m-d', strtotime( '7 November, 2001') );
+         Return current year
+         expected :: 2001-11-07
+         output   :: 2009-11-07
+         However
+         echo date( 'Y-m-d', strtotime( 'Nov 7, 2001') );
+         echo date( 'Y-m-d', strtotime( 'November 7, 2001') );
+         gives proper result
+        */
+        
+        return $dateInputFormats;
+    }
+    
+    /**
+     * Map date plugin and actual format that is used by PHP 
+     */
+    static function datePluginToPHPFormats( ) {
+        $dateInputFormats = array( "mm/dd/yy"      => 'm/d/Y',
+                                   "yy-mm-dd"      => 'Y-m-d',
+                                   "dd-mm-yy"      => 'd-m-Y',
+                                   "dd.mm.yy"      => 'd.m.Y',                                 
+                                   "M d, yy"       => 'M j, Y',
+                                   "d M yy"        => 'j M Y',
+                                   "MM d, yy"      => 'F j, Y',
+                                   "d MM yy"       => 'j F Y',
+                                   "DD, d MM yy"   => 'l, j F Y',                                   
+                                   "mm/dd"         => 'm/d',
+                                   "dd-mm"         => 'd-m',
+                                   "yy-mm"         => 'Y-m',
+                                   "M yy"          => 'M Y',
+                                   "yy"            => 'Y',
+                                  
+                                  );
+        return $dateInputFormats;
+    }
+    
+    /**
+     * Time formats
+     */
+    static function getTimeFormats( ) {
+        $timeFormats = array( '1' => ts( '12 Hours' ),
+                              '2' => ts( '24 Hours' ) );
+        return $timeFormats;
+    }
 }
-
-

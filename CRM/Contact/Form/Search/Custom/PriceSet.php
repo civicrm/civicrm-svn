@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -129,7 +130,7 @@ AND    c.id = p.contact_id
 AND    p.event_id = {$this->_eventID}
 AND    pp.contribution_id = o.id
 AND    pp.participant_id  = p.id
-AND    o.id = l.entity_id
+AND    p.id = l.entity_id
 AND    l.option_group_id = g.id
 AND    v.option_group_id = g.id
 AND    v.label = l.label
@@ -237,8 +238,8 @@ AND    p.entity_id    = e.id
         }
 
         // get all the fields and all the option values associated with it
-        require_once 'CRM/Core/BAO/PriceSet.php';
-        $priceSet = CRM_Core_BAO_PriceSet::getSetDetail( $dao->price_set_id );
+        require_once 'CRM/Price/BAO/Set.php';
+        $priceSet = CRM_Price_BAO_Set::getSetDetail( $dao->price_set_id );
         if ( is_array( $priceSet[$dao->price_set_id] ) ) {
             foreach ( $priceSet[$dao->price_set_id]['fields'] as $key => $value ) {
                 if ( is_array( $value['options'] ) ) {
@@ -286,7 +287,7 @@ INNER JOIN {$this->_tableName} tempTable ON ( tempTable.contact_id = contact_a.i
     }
 
     function templateFile( ) {
-        return 'CRM/Contact/Form/Search/Custom/Sample.tpl';
+        return 'CRM/Contact/Form/Search/Custom.tpl';
     }
 
     function setDefaultValues( ) {

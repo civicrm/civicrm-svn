@@ -1,15 +1,15 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -17,7 +17,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -31,11 +32,11 @@
 class CiviReportMail { 
     function processReport( ) {
         $sendmail     = CRM_Utils_Request::retrieve( 'sendmail', 'Boolean', 
-                                                     CRM_Core_DAO::$_nullObject, true );
+                                                     CRM_Core_DAO::$_nullObject, true, null, 'REQUEST' );
         $instanceId   = CRM_Utils_Request::retrieve( 'instanceId', 'Positive', 
-                                                     CRM_Core_DAO::$_nullObject, true );
+                                                     CRM_Core_DAO::$_nullObject, true, null, 'REQUEST' );
         $resetVal     = CRM_Utils_Request::retrieve( 'reset', 'Positive',
-                                                     CRM_Core_DAO::$_nullObject, true );
+                                                     CRM_Core_DAO::$_nullObject, true, null, 'REQUEST' );
               
         $optionVal    = CRM_Report_Utils_Report::getValueFromUrl( $instanceId );
         
@@ -53,7 +54,7 @@ class CiviReportMail {
                 $obj->assign( 'reportTitle', $templateInfo['label'] );
             }
             
-            $wrapper =& new CRM_Utils_Wrapper( );
+            $wrapper = new CRM_Utils_Wrapper( );
             $arguments['urlToSession'] = array( array( 'urlVar'     => 'instanceId',
                                                        'type'       => 'Positive',
                                                        'sessionVar' => 'instanceId',
@@ -69,9 +70,13 @@ require_once 'CRM/Core/Config.php';
 require_once 'CRM/Report/Page/Instance.php';
 require_once 'CRM/Utils/Wrapper.php';
 
-$config =& CRM_Core_Config::singleton();
+$config = CRM_Core_Config::singleton();
 
 CRM_Utils_System::authenticateScript(true);
+
+// load bootstrap to call hooks
+require_once 'CRM/Utils/System.php';
+CRM_Utils_System::loadBootStrap(  );
 
 require_once 'CRM/Core/Lock.php';
 $lock = new CRM_Core_Lock('CiviReportMail');
@@ -79,7 +84,9 @@ $lock = new CRM_Core_Lock('CiviReportMail');
 if ($lock->isAcquired()) {
     // try to unset any time limits
     if (!ini_get('safe_mode')) set_time_limit(0);
-    
+
+    //log the execution of script
+    CRM_Core_Error::debug_log_message( 'CiviReportMail.php' );
     // if there are named sets of settings, use them - otherwise use the default (null)
     CiviReportMail::processReport();
     

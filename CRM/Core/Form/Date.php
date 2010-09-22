@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -62,7 +63,7 @@ Class CRM_Core_Form_Date
         
         require_once "CRM/Utils/System.php";
         if ( CRM_Utils_System::getClassName( $form ) == 'CRM_Activity_Import_Form_UploadFile' ) {
-            $dateText = ts('yyyy-mm-dd OR yyyymmdd OR yyyymmdd hh:mm (1998-12-25 OR 19981225 OR 19981225 10:30) OR (2008-9-1 OR 20080901 10:30)');
+            $dateText = ts('yyyy-mm-dd OR yyyy-mm-dd HH:mm OR yyyymmdd OR yyyymmdd HH:mm (1998-12-25 OR 1998-12-25 15:33 OR 19981225 OR 19981225 10:30 OR ( 2008-9-1 OR 2008-9-1 15:33 OR 20080901 15:33)');
         } else {
             $dateText = ts('yyyy-mm-dd OR yyyymmdd (1998-12-25 OR 19981225) OR (2008-9-1 OR 20080901)');
         }
@@ -86,48 +87,56 @@ Class CRM_Core_Form_Date
      * @static
      * @access public
      */
-    static function buildDateRange( &$form, $fieldName, $count = 1, $required = false ) {
-        $selector = array ('Choose Date Range',
-                           'this.year'        => 'This Year',
-                           'this.fiscal_year' => 'This Fiscal Year',
-                           'this.quarter'     => 'This Quarter',
-                           'this.month'       => 'This Month',
-                           'this.week'        => 'This Week',
-                           'this.day'         => 'This Day',
+    static function buildDateRange( &$form, $fieldName, $count = 1, $required = false, $addReportFilters = true ) {
+        $selector = array (ts('Choose Date Range'),
+                           'this.year'        => ts('This Year'),
+                           'this.fiscal_year' => ts('This Fiscal Year'),
+                           'this.quarter'     => ts('This Quarter'),
+                           'this.month'       => ts('This Month'),
+                           'this.week'        => ts('This Week'),
+                           'this.day'         => ts('This Day'),
                            
-                           'previous.year'        => 'Previous Year',
-                           'previous.fiscal_year' => 'Previous Fiscal Year',
-                           'previous.quarter'     => 'Previous Quarter',
-                           'previous.month'       => 'Previous Month',
-                           'previous.week'        => 'Previous Week',
-                           'previous.day'         => 'Previous Day',
+                           'previous.year'        => ts('Previous Year'),
+                           'previous.fiscal_year' => ts('Previous Fiscal Year'),
+                           'previous.quarter'     => ts('Previous Quarter'),
+                           'previous.month'       => ts('Previous Month'),
+                           'previous.week'        => ts('Previous Week'),
+                           'previous.day'         => ts('Previous Day'),
 
-                           'previous_before.year'    => 'Previous Before Year',
-                           'previous_before.quarter' => 'Previous Before Quarter',
-                           'previous_before.month'   => 'Previous Before Month',
-                           'previous_before.week'    => 'Previous Before Week',
-                           'previous_before.day'     => 'Previous Before Day',
+                           'previous_before.year'    => ts('Previous Before Year'),
+                           'previous_before.quarter' => ts('Previous Before Quarter'),
+                           'previous_before.month'   => ts('Previous Before Month'),
+                           'previous_before.week'    => ts('Previous Before Week'),
+                           'previous_before.day'     => ts('Previous Before Day'),
                            
-                           'previous_2.year'    => 'Previous 2 Years',
-                           'previous_2.quarter' => 'Previous 2 Quarters',
-                           'previous_2.month'   => 'Previous 2 Months',
-                           'previous_2.week'    => 'Previous 2 Weeks',
-                           'previous_2.day'     => 'Previous 2 Days',
+                           'previous_2.year'    => ts('Previous 2 Years'),
+                           'previous_2.quarter' => ts('Previous 2 Quarters'),
+                           'previous_2.month'   => ts('Previous 2 Months'),
+                           'previous_2.week'    => ts('Previous 2 Weeks'),
+                           'previous_2.day'     => ts('Previous 2 Days'),
 
-                           'earlier.year'    => 'Earlier Year',
-                           'earlier.quarter' => 'Earlier Quarter',
-                           'earlier.month'   => 'Earlier Month',
-                           'earlier.week'    => 'Earlier Week',
-                           'earlier.day'     => 'Earlier Day',
+                           'earlier.year'    => ts('Earlier Year'),
+                           'earlier.quarter' => ts('Earlier Quarter'),
+                           'earlier.month'   => ts('Earlier Month'),
+                           'earlier.week'    => ts('Earlier Week'),
+                           'earlier.day'     => ts('Earlier Day'),
 
-                           'greater.year'    => 'Greater Year',
-                           'greater.quarter' => 'Greater Quarter',
-                           'greater.month'   => 'Greater Month',
-                           'greater.week'    => 'Greater Week',
-                           'greater.day'     => 'Greater Day'
+                           'greater.year'    => ts('Greater Year'),
+                           'greater.quarter' => ts('Greater Quarter'),
+                           'greater.month'   => ts('Greater Month'),
+                           'greater.week'    => ts('Greater Week'),
+                           'greater.day'     => ts('Greater Day'),
+
+                           'ending.year'     => ts('Ending Year'),
+                           'ending.quarter'  => ts('Ending Quarter'),
+                           'ending.month'    => ts('Ending Month'),
+                           'ending.week'     => ts('Ending Week'),
                            );
-
-        $config =& CRM_Core_Config::singleton();
+        if( $addReportFilters ) {
+            require_once 'CRM/Report/Form.php';
+            $selector += CRM_Report_Form::getOperationPair( CRM_Report_FORM::OP_DATE );
+        }
+        $config = CRM_Core_Config::singleton();
         //if fiscal year start on 1 jan then remove fiscal year task
         //form list
         if ( $config->fiscalYearStart['d'] == 1 & $config->fiscalYearStart['M'] == 1 ) {

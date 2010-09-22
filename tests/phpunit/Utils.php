@@ -45,14 +45,14 @@ class Utils {
     /**
      *  Construct an object for this database
      */
-    public function __construct( $host, $db, $user, $pass )
+    public function __construct( $host, $user, $pass )
     {
         try {
-            $this->pdo = new PDO( "mysql:host={$host};dbname={$db}",
+            $this->pdo = new PDO( "mysql:host={$host}",
                                   $user, $pass );
         } catch ( PDOException $e ) {
-            echo "Can't connect to database {$db}: "
-                . $e->getMessage() . "\n";
+            echo "Can't connect to MySQL server:" . PHP_EOL
+                . $e->getMessage() . PHP_EOL;
             exit(1);
         }
     }
@@ -67,14 +67,34 @@ class Utils {
      */
     function do_query( $query )
     {
-        //echo "do_query($query)\n";
-        $stmt = $this->pdo->query( $query, PDO::FETCH_ASSOC );
-        //echo "PDO returned";
-        //var_dump($stmt);
+        // echo "do_query($query)\n";
+        // $stmt = $this->pdo->query( $query, PDO::FETCH_ASSOC );
+        // echo "PDO returned";
+        // var_dump($stmt);
+        $string = preg_replace("/^#[^\n]*$/m", "\n", $query );
+        $string = preg_replace("/^(--[^-]).*/m", "\n", $string );
+        
+        $queries  = preg_split('/;$/m', $string);
+        foreach ( $queries as $query ) {
+            $query = trim( $query );
+            if ( ! empty( $query ) ) {
+                $result = $this->pdo->query( $query );
+                if ( $this->pdo->errorCode() == 0 ) {
+                    continue;
+                } else { 
+                    var_dump( $result );
+                   var_dump( $this->pdo->errorInfo() );
+                    // die( "Cannot execute $query: " . $this->pdo->errorInfo() );
+                }
+            }
+        }
+
+        /*******
         if ( $this->pdo->errorCode() == 0 ) {
             //echo "returning the PDOStmt\n";
             return $stmt;
         }
+
         //  operation failed, so output description of where and why
         $errorInfo = $this->pdo->errorInfo();
         echo "Oops, can't do query:\n    {$query}\n    in "
@@ -103,7 +123,8 @@ class Utils {
             }
             echo "\n";
         }
-        return false;
+        ******/
+        return true;
     }
 
 } // class Utils

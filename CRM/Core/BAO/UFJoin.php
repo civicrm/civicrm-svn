@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -56,7 +57,7 @@ class CRM_Core_BAO_UFJoin extends CRM_Core_DAO_UFJoin {
             $params['id'] = $id;
         }
 
-        $dao =& new CRM_Core_DAO_UFJoin( ); 
+        $dao = new CRM_Core_DAO_UFJoin( ); 
         $dao->copyValues( $params ); 
         if ( $params['uf_group_id'] ) {
             $dao->save( ); 
@@ -66,6 +67,24 @@ class CRM_Core_BAO_UFJoin extends CRM_Core_DAO_UFJoin {
 
         return $dao; 
     } 
+
+    public static function &deleteAll( &$params ) {
+        $module      = CRM_Utils_Array::value( 'module'     , $params);
+        $entityTable = CRM_Utils_Array::value( 'entity_table', $params);
+        $entityID    = CRM_Utils_Array::value( 'entity_id'   , $params);
+
+        if ( empty( $entityTable ) ||
+             empty( $entityID ) ||
+             empty( $module ) ) {
+            return;
+        }
+
+        $dao = new CRM_Core_DAO_UFJoin( );
+        $dao->module       = $module;
+        $dao->entity_table = $entityTable;
+        $dao->entity_id    = $entityID;
+        $dao->delete();
+    }
 
     /**
      * Given an assoc list of params, find if there is a record
@@ -82,7 +101,7 @@ class CRM_Core_BAO_UFJoin extends CRM_Core_DAO_UFJoin {
             return $params['id'];
         }
 
-        $dao =& new CRM_Core_DAO_UFJoin( );
+        $dao = new CRM_Core_DAO_UFJoin( );
         
         // CRM-4377 (ab)uses the module column
         if (isset($params['module'])) {
@@ -115,7 +134,7 @@ class CRM_Core_BAO_UFJoin extends CRM_Core_DAO_UFJoin {
      */
     public static function findUFGroupId(&$params) { 
     
-        $dao =& new CRM_Core_DAO_UFJoin( ); 
+        $dao = new CRM_Core_DAO_UFJoin( ); 
          
         $dao->entity_table = CRM_Utils_Array::value( 'entity_table', $params );
         $dao->entity_id    = CRM_Utils_Array::value( 'entity_id'   , $params );
@@ -128,7 +147,7 @@ class CRM_Core_BAO_UFJoin extends CRM_Core_DAO_UFJoin {
 
     public static function getUFGroupIds(&$params) { 
     
-        $dao =& new CRM_Core_DAO_UFJoin( ); 
+        $dao = new CRM_Core_DAO_UFJoin( ); 
          
         // CRM-4377 (ab)uses the module column
         if (isset($params['module'])) {
@@ -136,18 +155,22 @@ class CRM_Core_BAO_UFJoin extends CRM_Core_DAO_UFJoin {
         }
         $dao->entity_table = CRM_Utils_Array::value( 'entity_table', $params );
         $dao->entity_id    = CRM_Utils_Array::value( 'entity_id'   , $params );
-        $dao->orderBy( 'weight' );
+        $dao->orderBy( 'weight asc' );
 
-        $first = $second  = null;
+        $first = $second  = $firstActive = $secondActive = null;
         $firstWeight = null;
         $dao->find( );
         if ( $dao->fetch( ) ) {
             $first       = $dao->uf_group_id;
             $firstWeight = $dao->weight;
-            $firstWeight = $dao->weight;
+            $firstActive = $dao->is_active;
         }
-        if ( $dao->fetch( ) ) {
-            $second = $dao->uf_group_id; 
+        while ( $dao->fetch( ) ) {
+            if ( $first != $dao->uf_group_id ) {
+                $second = $dao->uf_group_id; 
+                $secondActive = $dao->is_active;
+                break;
+            }
         } 
 
         // if there is only one profile check to see the weight, if > 1 then let it be second
@@ -158,7 +181,7 @@ class CRM_Core_BAO_UFJoin extends CRM_Core_DAO_UFJoin {
             $first  = null;
         }
 
-        return array( $first, $second );
+        return array( $first, $second, $firstActive, $secondActive );
     } 
 
 }

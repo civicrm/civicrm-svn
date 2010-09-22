@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -45,7 +46,7 @@ class CRM_Case_PseudoConstant extends CRM_Core_PseudoConstant
      * @var array
      * @static
      */
-    static $caseStatus;
+    static $caseStatus = array( );
 
     /**
      * redaction rules
@@ -60,7 +61,14 @@ class CRM_Case_PseudoConstant extends CRM_Core_PseudoConstant
      * @static
      */
     static $caseType = array( );
-
+    
+    /**
+     * Encounter Medium
+     * @var array
+     * @static
+     */
+    static $encounterMedium = array( );
+    
     /**
      * activity type
      * @var array
@@ -82,18 +90,19 @@ class CRM_Case_PseudoConstant extends CRM_Core_PseudoConstant
      * @return array - array reference of all case statues
      * @static
      */
-
-    public static function caseStatus( )
+    public static function caseStatus( $column = 'label', $onlyActive = true )
     {
-        if ( ! self::$caseStatus ) {
-            self::$caseStatus = array( );
-        
+        $cacheKey = "{$column}_".(int)$onlyActive;
+        if ( !isset( self::$caseStatus[$cacheKey] ) ) {
             require_once 'CRM/Core/OptionGroup.php';
-            self::$caseStatus = CRM_Core_OptionGroup::values('case_status');
+            self::$caseStatus[$cacheKey] = CRM_Core_OptionGroup::values( 'case_status', 
+                                                                         false, false, false, null, 
+                                                                         $column, $onlyActive );
         }
-        return self::$caseStatus;
+        
+        return self::$caseStatus[$cacheKey];
     }
-
+    
     /**
      * Get all the redaction rules
      *
@@ -129,20 +138,39 @@ class CRM_Case_PseudoConstant extends CRM_Core_PseudoConstant
      * @return array - array reference of all case type
      * @static
      */
-
-    public static function caseType( $column = 'label' )
+    public static function caseType( $column = 'label', $onlyActive = true )
     {
-        if ( ! array_key_exists($column, self::$caseType) ) {
-            self::$caseType[$column] = array( );
-            
+        $cacheKey = "{$column}_".(int)$onlyActive;
+        if ( !isset( self::$caseType[$cacheKey] ) ) {
             require_once 'CRM/Core/OptionGroup.php';
-            self::$caseType[$column] = 
-                CRM_Core_OptionGroup::values( 'case_type', false, false, 
-                                              false, null, $column );
+            self::$caseType[$cacheKey] =  CRM_Core_OptionGroup::values( 'case_type', 
+                                                                        false, false, false, null, 
+                                                                        $column, $onlyActive );
         }
-        return self::$caseType[$column];
+        
+        return self::$caseType[$cacheKey];
     }
-
+    
+    /**
+     * Get all the Encounter Medium 
+     *
+     * @access public
+     * @return array - array reference of all Encounter Medium.
+     * @static
+     */
+    public static function encounterMedium( $column = 'label', $onlyActive = true )
+    {
+        $cacheKey = "{$column}_".(int)$onlyActive;
+        if ( !isset( self::$encounterMedium[$cacheKey] ) ) {
+            require_once 'CRM/Core/OptionGroup.php';
+            self::$encounterMedium[$cacheKey] =  CRM_Core_OptionGroup::values( 'encounter_medium', 
+                                                                               false, false, false, null, 
+                                                                               $column, $onlyActive );
+        }
+        
+        return self::$encounterMedium[$cacheKey];
+    }
+    
     /**
      * Get all Activty types for the CiviCase component
      *
@@ -207,27 +235,28 @@ class CRM_Case_PseudoConstant extends CRM_Core_PseudoConstant
      * @return array - array reference of all case type name/id
      * @static
      */
-    public static function caseTypeName( $caseId )
+    public static function caseTypeName( $caseId , $column = 'name')
     {
         if ( !$caseId ) {
             return false;
         }
-        
-        if ( ! array_key_exists($caseId, self::$caseTypePair) ) {
-            $caseTypes    = self::caseType();
-            $caseTypeIds  = CRM_Core_DAO::getFieldValue( 'CRM_Case_DAO_Case',
-                                                         $caseId,
-                                                         'case_type_id' );
-            $caseTypeId   = explode( CRM_Case_BAO_Case::VALUE_SEPERATOR, 
-                                     trim($caseTypeIds, 
-                                          CRM_Case_BAO_Case::VALUE_SEPERATOR) );
-            $caseTypeId   = $caseTypeId[0];
+
+        require_once('CRM/Case/BAO/Case.php');
+        if ( ! array_key_exists($caseId, self::$caseTypePair) || empty(self::$caseTypePair[$caseId][$column]) ) {
+            $caseTypes   = self::caseType( $column );
+            $caseTypeIds = CRM_Core_DAO::getFieldValue( 'CRM_Case_DAO_Case',
+                                                        $caseId,
+                                                        'case_type_id' );
+            $caseTypeId  = explode( CRM_Case_BAO_Case::VALUE_SEPERATOR, 
+                                    trim($caseTypeIds, 
+                                         CRM_Case_BAO_Case::VALUE_SEPERATOR) );
+            $caseTypeId  = $caseTypeId[0];
             
-            self::$caseTypePair[$caseId] = array( 'id'   => $caseTypeId,
+            self::$caseTypePair[$caseId][$column] = array( 'id'   => $caseTypeId,
                                                   'name' => $caseTypes[$caseTypeId] );
         }
 
-        return self::$caseTypePair[$caseId];
+        return self::$caseTypePair[$caseId][$column];
     }
 
 }

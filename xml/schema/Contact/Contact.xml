@@ -4,7 +4,7 @@
   <base>CRM/Contact</base>
   <class>Contact</class>
   <name>civicrm_contact</name>
-  <comment>Three types of contacts are defined: Individual, Organization and Household. Contact objects are defined by a civicrm_contact record plus a related civicrm_contact_type record.</comment>
+  <comment>Contact objects are defined by a civicrm_contact record plus a related civicrm_contact_type record.</comment>
   <add>1.1</add>
   <log>true</log>
  <field>
@@ -24,11 +24,12 @@
   <field>
        <name>contact_type</name>
        <title>Contact Type</title>
-       <type>enum</type>
-       <values>Individual, Organization, Household</values>
+       <type>varchar</type>
+       <length>64</length>
        <comment>Type of Contact.</comment>
        <export>true</export>
-      <add>1.1</add>
+       <add>1.1</add>
+       <change>3.1</change>
   </field>
   <index>
        <name>index_contact_type</name>
@@ -37,10 +38,12 @@
   </index>
   <field>
        <name>contact_sub_type</name>
+       <title>Contact Subtype</title>
        <type>varchar</type>
        <length>64</length>
        <export>true</export>
-       <headerPattern>/C(ontact )?(sub-type|sub type)/i</headerPattern>
+       <import>true</import>
+       <headerPattern>/C(ontact )?(subtype|sub-type|sub type)/i</headerPattern>
        <comment>May be used to over-ride contact view and edit templates.</comment>
        <add>1.5</add>
   </field>
@@ -83,7 +86,7 @@
        <headerPattern>/d(o )?(not )?(sms)/i</headerPattern>
        <dataPattern>/^\d{1,}$/</dataPattern>
        <default>0</default>
-       <add>2.3</add>
+       <add>3.0</add>
   </field>
   <field>
        <name>do_not_trade</name>
@@ -187,11 +190,12 @@
        <dataPattern>/^[\w\/\:\.]+$/</dataPattern>
        <comment>optional "home page" URL for this contact.</comment>
        <add>1.1</add>
+       <drop>3.2</drop>
   </field>
   <field>
        <name>image_URL</name>
        <type>varchar</type>
-       <length>128</length>
+       <length>255</length>
        <import>true</import>
        <comment>optional URL for preferred image (photo, logo, etc.) to display for this contact.</comment>
        <add>1.1</add>
@@ -211,6 +215,15 @@
        <fieldName>preferred_communication_method</fieldName>       
        <add>1.6</add>
   </index>
+  <field>
+      <name>preferred_language</name>
+      <type>varchar</type>
+      <length>5</length>
+      <comment>Which language is preferred for communication. FK to languages in civicrm_option_value.</comment>
+      <headerPattern>/^lang/i</headerPattern>
+      <import>true</import>
+      <add>3.2</add>
+  </field>
   <field>
        <name>preferred_mail_format</name>
        <type>enum</type>
@@ -344,7 +357,7 @@
        <type>int unsigned</type>
        <comment>FK to civicrm_option_value.id, that has to be valid, registered Greeting type.</comment>
        <add>2.2</add>
-       <drop>2.3</drop>
+       <drop>3.0</drop>
   </field>
   <field>
        <name>custom_greeting</name>
@@ -353,54 +366,84 @@
        <import>true</import>
        <comment>Custom greeting message.</comment>
        <add>1.1</add>
-       <drop>2.3</drop>
+       <drop>3.0</drop>
   </field>
   <field>
        <name>email_greeting_id</name>
        <type>int unsigned</type>
        <comment>FK to civicrm_option_value.id, that has to be valid registered Email Greeting.</comment>
-       <add>2.3</add>
+       <add>3.0</add>
   </field>
   <field>
        <name>email_greeting_custom</name>
        <type>varchar</type>
        <length>128</length>
        <import>true</import>
+       <export>false</export>
        <comment>Custom Email Greeting.</comment>
-       <add>2.3</add>
+       <add>3.0</add>
   </field>
-   <field>
+  <field>
+       <name>email_greeting_display</name>
+       <title>Email Greeting</title>
+       <type>varchar</type>
+       <length>255</length>
+       <localizable>true</localizable>
+       <comment>Cache Email Greeting.</comment>
+       <add>3.0</add>
+  </field>
+  <field>
        <name>postal_greeting_id</name>
        <type>int unsigned</type>
        <comment>FK to civicrm_option_value.id, that has to be valid registered Postal Greeting.</comment>
-       <add>2.3</add>
+       <add>3.0</add>
   </field>
   <field>
        <name>postal_greeting_custom</name>
        <type>varchar</type>
        <length>128</length>
        <import>true</import>
+       <export>false</export>
        <comment>Custom Postal greeting.</comment>
-       <add>2.3</add>
+       <add>3.0</add>
+  </field>
+  <field>
+       <name>postal_greeting_display</name>
+       <title>Postal Greeting</title>
+       <type>varchar</type>
+       <length>255</length>
+       <localizable>true</localizable>
+       <comment>Cache Postal greeting.</comment>
+       <add>3.0</add>
   </field>
   <field>
        <name>addressee_id</name>
        <type>int unsigned</type>
        <comment>FK to civicrm_option_value.id, that has to be valid registered Addressee.</comment>
-       <add>2.3</add>
+       <add>3.0</add>
   </field>
   <field>
        <name>addressee_custom</name>
        <type>varchar</type>
        <length>128</length>
        <import>true</import>
+       <export>false</export>
        <comment>Custom Addressee.</comment>
-       <add>2.3</add>
+       <add>3.0</add>
+  </field>
+  <field>
+       <name>addressee_display</name>
+       <title>Addressee</title>
+       <type>varchar</type>
+       <length>255</length>
+       <localizable>true</localizable>
+       <comment>Cache Addressee.</comment>
+       <add>3.0</add>
   </field>
   <field>
        <name>job_title</name>
        <type>varchar</type>
-       <length>64</length>
+       <length>255</length>
        <import>true</import>
        <headerPattern>/^job|(j(ob\s)?title)$/i</headerPattern>
        <dataPattern>//</dataPattern>
@@ -449,8 +492,10 @@
   </field>
   <field>
       <name>mail_to_household_id</name>
+      <title>Mail to Household ID</title>
       <type>int unsigned</type>
       <comment>OPTIONAL FK to civicrm_contact_household record. If NOT NULL, direct mail communications to household rather than individual location.</comment>
+      <export>true</export>
       <add>1.1</add>
   </field>
   <foreignKey>
@@ -530,8 +575,11 @@
   </field>
   <field>
       <name>employer_id</name>
+      <title>Current Employer ID</title>
+      <uniqueName>current_employer_id</uniqueName>
       <type>int unsigned</type>
       <comment>OPTIONAL FK to civicrm_contact record.</comment>
+      <export>true</export>
       <add>2.1</add>
   </field>
   <foreignKey>
@@ -541,4 +589,16 @@
        <add>2.1</add>
        <onDelete>SET NULL</onDelete>
   </foreignKey>
+  <field>
+    <name>is_deleted</name>
+    <type>boolean</type>
+    <default>0</default>
+    <required>true</required>
+    <add>3.2</add>
+  </field>
+  <index>
+    <name>index_is_deleted</name>
+    <fieldName>is_deleted</fieldName>
+    <add>3.2</add>
+  </index>
 </table>

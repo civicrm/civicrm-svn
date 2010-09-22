@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -68,9 +69,6 @@ class CRM_Admin_Page_Tag extends CRM_Core_Page_Basic
     function &links()
     {
         if (!(self::$_links)) {
-            // helper variable for nicer formatting
-            $deleteExtra = ts('Are you sure you want to delete this tag?') . '\n\n' . ts('This tag will be removed from any currently tagged contacts, and users will no longer be able to assign contacts to this tag.');
-
             self::$_links = array(
                                   CRM_Core_Action::UPDATE  => array(
                                                                     'name'  => ts('Edit'),
@@ -83,8 +81,8 @@ class CRM_Admin_Page_Tag extends CRM_Core_Page_Basic
                                                                     'url'   => 'civicrm/admin/tag',
                                                                     'qs'    => 'action=delete&id=%%id%%',
                                                                     'title' => ts('Delete Tag'), 
-                                                                   ),
-                                 );
+                                                                    ),
+                                  );
         }
         return self::$_links;
     }
@@ -138,6 +136,63 @@ class CRM_Admin_Page_Tag extends CRM_Core_Page_Basic
    {
         return 'CRM_Admin_Form_Tag';
    }
+
+   /**
+    * override function browse()
+    */
+   function browse( $action = null, $sort ) {
+       $adminTagSet = false;
+       if ( CRM_Core_Permission::check('administer Tagsets') ) {
+           $adminTagSet = true;
+       }
+       $this->assign( 'adminTagSet', $adminTagSet );
+       
+       require_once 'CRM/Core/OptionGroup.php';
+       $usedFor = CRM_Core_OptionGroup::values('tag_used_for');
+       
+       $query = "SELECT t1.name, t1.id, t2.name as parent, t1.description, t1.used_for, t1.is_tagset,
+                        t1.is_reserved, t1.parent_id, t1.used_for
+                 FROM civicrm_tag t1 LEFT JOIN civicrm_tag t2 ON t1.parent_id = t2.id
+                 GROUP BY t1.parent_id, t1.id";
+                 
+       $tag = CRM_Core_DAO::executeQuery( $query );
+       $values = array( );
+       
+       $action     = CRM_Core_Action::UPDATE + CRM_Core_Action::DELETE;
+       $permission = CRM_Core_Permission::EDIT;
+
+       while( $tag->fetch( ) ) {           
+           $values[$tag->id] = (array) $tag;
+           
+           $used = array( );
+           if ( $values[$tag->id]['used_for'] ) {
+               $usedArray = explode( ",", $values[$tag->id]['used_for'] );
+               foreach( $usedArray as $key => $value ) {
+                   $used[$key] =  $usedFor[$value];
+               }
+           }
+           
+           if ( !empty( $used ) ) {
+               $values[$tag->id]['used_for'] = implode( ", ", $used );      
+           }
+           
+           $newAction = $action;
+           if ( $values[$tag->id]['is_reserved'] ) {
+               $newAction = CRM_Core_Action::UPDATE;
+           }
+           
+           if ( $values[$tag->id]['is_tagset'] && !CRM_Core_Permission::check('administer Tagsets') ) {
+               $newAction = 0;
+           }
+
+           // populate action links
+           if ( $newAction ) {           
+               $this->action( $tag, $newAction, $values[$tag->id], self::links( ), $permission, true );
+           } else {
+               $values[$tag->id]['action'] = '';
+           }   
+       }
+              
+       $this->assign( 'rows', $values );
+   }
 }
-
-

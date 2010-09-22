@@ -17,9 +17,9 @@
  * @author      Adam Daniel <adaniel1@eesus.jnj.com>
  * @author      Bertrand Mansion <bmansion@mamasam.com>
  * @author      Alexey Borzov <avb@php.net>
- * @copyright   2001-2007 The PHP Group
+ * @copyright   2001-2009 The PHP Group
  * @license     http://www.php.net/license/3_01.txt PHP License 3.01
- * @version     CVS: $Id: QuickForm.php,v 1.164 2007/10/05 19:57:32 avb Exp $
+ * @version     CVS: $Id: QuickForm.php,v 1.166 2009/04/04 21:34:02 avb Exp $
  * @link        http://pear.php.net/package/HTML_QuickForm
  */
 
@@ -54,9 +54,8 @@ $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'] =
             'hiddenselect'  =>array('HTML/QuickForm/hiddenselect.php','HTML_QuickForm_hiddenselect'),
             'text'          =>array('HTML/QuickForm/text.php','HTML_QuickForm_text'),
             'textarea'      =>array('HTML/QuickForm/textarea.php','HTML_QuickForm_textarea'),
-            'fckeditor'     =>array('HTML/QuickForm/fckeditor.php','HTML_QuickForm_FCKEditor'),
+            'ckeditor'     =>array('HTML/QuickForm/ckeditor.php','HTML_QuickForm_CKEditor'),
             'tinymce'       =>array('HTML/QuickForm/tinymce.php','HTML_QuickForm_TinyMCE'),
-            'dojoeditor'    =>array('HTML/QuickForm/dojoeditor.php','HTML_QuickForm_dojoeditor'),
             'link'          =>array('HTML/QuickForm/link.php','HTML_QuickForm_link'),
             'advcheckbox'   =>array('HTML/QuickForm/advcheckbox.php','HTML_QuickForm_advcheckbox'),
             'date'          =>array('HTML/QuickForm/date.php','HTML_QuickForm_date'),
@@ -123,7 +122,7 @@ define('QUICKFORM_INVALID_DATASOURCE',     -9);
  * @author      Adam Daniel <adaniel1@eesus.jnj.com>
  * @author      Bertrand Mansion <bmansion@mamasam.com>
  * @author      Alexey Borzov <avb@php.net>
- * @version     Release: 3.2.10
+ * @version     Release: 3.2.11
  */
 class HTML_QuickForm extends HTML_Common
 {
@@ -1042,7 +1041,13 @@ class HTML_QuickForm extends HTML_Common
             $this->_elementIndex[$elementName] = array_shift($this->_duplicateIndex[$elementName]);
         }
         if ($removeRules) {
+            $this->_required = array_diff($this->_required, array($elementName));
             unset($this->_rules[$elementName], $this->_errors[$elementName]);
+            if ('group' == $el->getType()) {
+                foreach (array_keys($el->getElements()) as $key) {
+                    unset($this->_rules[$el->getElementName($key)]);
+                }
+            }
         }
         return $el;
     } // end func removeElement
@@ -1925,11 +1930,69 @@ class HTML_QuickForm extends HTML_Common
      */
     function exportValues($elementList = null)
     {
+        $skipFields = array( 'widget_code', 
+                             'html_message',
+                             'body_html',
+                             'msg_html',
+                             'description',
+                             'intro',
+                             'thankyou_text',
+                             'intro_text',
+                             'page_text',
+                             'body_text',
+                             'footer_text',
+                             'thankyou_footer',
+                             'thankyou_footer_text',
+                             'new_text',
+                             'renewal_text',
+                             'help_pre',
+                             'help_post',
+                             'confirm_title',
+                             'confirm_text',
+                             'confirm_footer_text',
+                             'confirm_email_text',
+                             'event_full_text',
+                             'waitlist_text',
+                             'approval_req_text',
+                             'report_header',
+                             'report_footer',
+                             'cc_id',
+                             'bcc_id',
+                             'premiums_intro_text',
+                             'honor_block_text',
+                             'pay_later_receipt',
+                             'label', // This is needed for FROM Email Address configuration. dgg
+                             'url',  // This is needed for navigation items urls
+                             'details',
+                             'msg_text', // message templates’ text versions
+                             'text_message', // (send an) email to contact’s and CiviMail’s text version
+                             'data', // data i/p of persistent table
+                             'sqlQuery' // CRM-6673
+                             );
+                                    
         $values = array();
         if (null === $elementList) {
             // iterate over all elements, calling their exportValue() methods
             foreach (array_keys($this->_elements) as $key) {
                 $value = $this->_elements[$key]->exportValue($this->_submitValues, true);
+                $fldName = null;
+                if ( isset( $this->_elements[$key]->_attributes['name'] ) ) {
+					//filter the value across XSS vulnerability issues.
+					$fldName = $this->_elements[$key]->_attributes['name'];                
+				}
+                if ( in_array( $this->_elements[$key]->_type, array('text', 'textarea') ) 
+                     && !in_array( $fldName, $skipFields ) ) {
+                    //here value might be array or single value.
+                    //so we should iterate and get filtered value.
+                    $this->filterValue( $value );
+                }
+                
+                // hack to fix extra <br /> injected by CKEDITOR, we should remove this code
+                // once the bug is fixed and is part of release https://dev.fckeditor.net/ticket/5293
+                if ( is_a( $this->_elements[$key], 'HTML_QuickForm_CKeditor' ) ) {
+                    $value[$fldName] = rtrim( CRM_Utils_Array::value( $fldName, $value ), '<br />');
+                }
+                
                 if (is_array($value)) {
                     // This shit throws a bogus warning in PHP 4.3.x
                     $values = HTML_QuickForm::arrayMerge($values, $value);
@@ -1941,6 +2004,12 @@ class HTML_QuickForm extends HTML_Common
             }
             foreach ($elementList as $elementName) {
                 $value = $this->exportValue($elementName);
+                                
+                //filter the value across XSS vulnerability issues.
+                if ( !in_array( $elementName, $skipFields ) ) {
+                    $this->filterValue( $value );
+                }
+                
                 if (PEAR::isError($value)) {
                     return $value;
                 }
@@ -1948,6 +2017,21 @@ class HTML_QuickForm extends HTML_Common
             }
         }
         return $values;
+    }
+
+   /**
+    * This function is going to filter the
+    * submitted values across XSS vulnerability.
+    */
+    function filterValue( &$values ) 
+    {
+        if ( is_array( $values ) ) {
+            foreach ( $values as &$value ) {
+                $this->filterValue( $value );
+            }
+        } else {
+            $values = str_replace(array('<', '>'), array('&lt;', '&gt;'), $values);
+        }
     }
 
     // }}}
@@ -2035,7 +2119,7 @@ class HTML_QuickForm extends HTML_Common
  * @package     HTML_QuickForm
  * @author      Adam Daniel <adaniel1@eesus.jnj.com>
  * @author      Bertrand Mansion <bmansion@mamasam.com>
- * @version     Release: 3.2.10
+ * @version     Release: 3.2.11
  */
 class HTML_QuickForm_Error extends PEAR_Error {
 

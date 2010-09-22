@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,11 +29,12 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
 
+require_once 'CRM/Core/DAO.php';
 
 /**
  * Business objects for managing custom data values.
@@ -73,6 +75,9 @@ class CRM_Core_BAO_CustomValue extends CRM_Core_DAO
             
         case 'Boolean':
             return CRM_Utils_Rule::boolean($value);
+            
+        case 'ContactReference':
+            return CRM_Utils_Rule::validContact($value);
             
         case 'StateProvince':
             
@@ -171,6 +176,13 @@ class CRM_Core_BAO_CustomValue extends CRM_Core_DAO
                 $formValues[$key] = '%' .  $formValues[$key] . '%';
                 
             }
+           
+            $dataType = CRM_Core_DAO::getFieldValue( 'CRM_Core_BAO_CustomField', 
+                                                     substr($key,7), 'data_type');
+            if ( ( $dataType == 'ContactReference' ) && ( $htmlType == 'Autocomplete-Select' ) ) {
+                $formValues[$key] = $formValues[$key.'_id'];
+             }
+            
         }
     }
     

@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,13 +29,13 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
 
 require_once 'CRM/Contribute/Import/Parser.php';
-require_once 'api/v2/Contribute.php';
+require_once 'api/v2/Contribution.php';
 
 /**
  * class to parse contribution csv files
@@ -60,7 +61,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
     /**
      * class constructor
      */
-    function __construct( &$mapperKeys, $mapperSoftCredit = null, $mapperPhoneType = null) 
+    function __construct( &$mapperKeys, $mapperSoftCredit = null, $mapperPhoneType = null ) 
     {
         parent::__construct();
         $this->_mapperKeys =& $mapperKeys;
@@ -169,7 +170,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
         $errorMessage = null;
         
         //for date-Formats
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $dateType = $session->get("dateTypes");
         foreach ($params as $key => $val) {
             if( $val ) {
@@ -225,7 +226,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
             $tempMsg = "Invalid value for field(s) : $errorMessage";
             array_unshift($values, $tempMsg);
             $errorMessage = null;
-            return CRM_Import_Parser::ERROR;
+            return CRM_Contribute_Import_Parser::ERROR;
         }
 
         return CRM_Contribute_Import_Parser::VALID;
@@ -240,7 +241,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
      * @return boolean      the result of this processing
      * @access public
      */
-    function import( $onDuplicate, &$values) 
+    function import( $onDuplicate, &$values ) 
     {
         // first make sure this is a valid line
         $response = $this->summary( $values );
@@ -251,9 +252,12 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
         $params =& $this->getActiveFieldParams( );            
                 
         $formatted = array( );
-               
+
+        // don't add to recent items, CRM-4399
+        $formatted['skipRecentView'] = true;
+        
         //for date-Formats
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $dateType = $session->get("dateTypes");
      
         $customFields = CRM_Core_BAO_CustomField::getFields( CRM_Utils_Array::value( 'contact_type',$params ) );
@@ -335,7 +339,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
         }
 
         if ( $onDuplicate != CRM_Contribute_Import_Parser::DUPLICATE_UPDATE ) {
-            $formatted['custom'] = CRM_Core_BAO_CustomField::postProcess( $params,
+            $formatted['custom'] = CRM_Core_BAO_CustomField::postProcess( $formatted,
                                                                           CRM_Core_DAO::$_nullObject,
                                                                           null,
                                                                           'Contribution' );
@@ -353,7 +357,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
                 $ids['contribution'] = CRM_Contribute_BAO_Contribution::checkDuplicateIds( $dupeIds );                 
                 if ( $ids['contribution'] ) {     
                     $formatted['id'] = $ids['contribution'];
-                    $formatted['custom'] = CRM_Core_BAO_CustomField::postProcess( $params,
+                    $formatted['custom'] = CRM_Core_BAO_CustomField::postProcess( $formatted,
                                                                                   CRM_Core_DAO::$_nullObject,
                                                                                   $formatted['id'],
                                                                                   'Contribution' );
@@ -362,7 +366,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
                         $noteID = array();
                         $contactID = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_Contribution', $ids['contribution'], 'contact_id' );                       
                         require_once 'CRM/Core/BAO/Note.php';
-                        $daoNote = & new CRM_Core_BAO_Note();
+                        $daoNote = new CRM_Core_BAO_Note();
                         $daoNote->entity_table = 'civicrm_contribution';
                         $daoNote->entity_id    = $ids['contribution'];
                         if ( $daoNote->find(true) ) {
@@ -529,24 +533,28 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
             
             return CRM_Contribute_Import_Parser::VALID;
         }
-        
     }
         
     /**
      *  Function to process pledge payments
      */
-    function processPledgePayments( &$formatted ) {
+    function processPledgePayments( &$formatted )
+    {
         if ( CRM_Utils_Array::value( 'pledge_payment_id', $formatted ) &&
              CRM_Utils_Array::value( 'pledge_id', $formatted ) ) {
             //get completed status
             $completeStatusID = CRM_Core_OptionGroup::getValue( 'contribution_status', 'Completed', 'name' );
-                        
-            require_once 'CRM/Pledge/BAO/Payment.php';
-            CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $formatted['pledge_id'], array( $formatted['pledge_payment_id'] ),  $completeStatusID );
-            
+           
             //need to update payment record to map contribution_id
             CRM_Core_DAO::setFieldValue( 'CRM_Pledge_DAO_Payment', $formatted['pledge_payment_id'], 
                                          'contribution_id', $formatted['contribution_id'] );
+            
+            require_once 'CRM/Pledge/BAO/Payment.php';
+            CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $formatted['pledge_id'], 
+                                                               array( $formatted['pledge_payment_id'] ),  
+                                                               $completeStatusID,
+                                                               null,
+                                                               $formatted['total_amount'] );
             
             return CRM_Contribute_Import_Parser::PLEDGE_PAYMENT;
         }

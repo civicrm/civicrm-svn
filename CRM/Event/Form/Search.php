@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,17 +18,18 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
- | see the CiviCRM license FAQ at http://civicrm.org/licensing   
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |    
  +--------------------------------------------------------------------+
 */
 
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -134,6 +135,13 @@ class CRM_Event_Form_Search extends CRM_Core_Form
 
     protected $_defaults;
 
+    /**
+     * the saved search ID retrieved from the GET vars
+     *
+     * @var int
+     * @access protected
+     */
+    protected $_ssID;
 
     /** 
      * processing needed for buildForm and later 
@@ -161,7 +169,7 @@ class CRM_Event_Form_Search extends CRM_Core_Form
         $this->_force   = CRM_Utils_Request::retrieve( 'force', 'Boolean',  $this, false ); 
         $this->_limit   = CRM_Utils_Request::retrieve( 'limit', 'Positive', $this );
         $this->_context = CRM_Utils_Request::retrieve( 'context', 'String', $this, false, 'search' );
-
+        $this->_ssID    = CRM_Utils_Request::retrieve( 'ssID',  'Positive', $this );
         $this->assign( "context", $this->_context );
         
         // get user submitted values  
@@ -191,7 +199,7 @@ class CRM_Event_Form_Search extends CRM_Core_Form
 
         require_once 'CRM/Contact/BAO/Query.php';
         $this->_queryParams =& CRM_Contact_BAO_Query::convertFormValues( $this->_formValues ); 
-        $selector =& new CRM_Event_Selector_Search( $this->_queryParams,
+        $selector = new CRM_Event_Selector_Search( $this->_queryParams,
                                                     $this->_action,
                                                     null,
                                                     $this->_single,
@@ -205,7 +213,7 @@ class CRM_Event_Form_Search extends CRM_Core_Form
         $this->assign( "{$prefix}limit", $this->_limit );
         $this->assign( "{$prefix}single", $this->_single );
         
-        $controller =& new CRM_Core_Selector_Controller($selector ,  
+        $controller = new CRM_Core_Selector_Controller($selector ,  
                                                         $this->get( CRM_Utils_Pager::PAGE_ID ),  
                                                         $sortID,  
                                                         CRM_Core_Action::VIEW, 
@@ -241,21 +249,26 @@ class CRM_Event_Form_Search extends CRM_Core_Form
             require_once 'CRM/Event/BAO/Event.php';
             
             if ( !$this->_single ) {
-                $this->addElement( 'checkbox', 'toggleSelect', null, null, array( 'onclick' => "toggleTaskAction( true ); return toggleCheckboxVals('mark_x_',this.form);" ) ); 
-
-                foreach ($rows as $row) { 
+                $this->addElement( 'checkbox', 
+                                   'toggleSelect', 
+                                   null, 
+                                   null, 
+                                   array( 'onclick' => "toggleTaskAction( true ); return toggleCheckboxVals('mark_x_',this);" ) ); 
+            }
+            foreach ( $rows as $row ) { 
+                if ( !$this->_single ) {
                     $this->addElement( 'checkbox', $row['checkbox'], 
                                        null, null, 
                                        array( 'onclick' => "toggleTaskAction( true ); return checkSelectedBox('" . $row['checkbox'] . "', '" . $this->getName() . "');" )
                                        ); 
-                    
-                    if ( CRM_Event_BAO_Event::usesPriceSet( $row['event_id'] ) ) {
-                        // add line item details if applicable
-                        $participant_id = $row['participant_id'];
-                        $lineItems[$participant_id] = CRM_Event_BAO_Participant::getLineItems( $participant_id );
-                    }
+                }
+                if ( CRM_Event_BAO_Event::usesPriceSet( $row['event_id'] ) ) {
+                    // add line item details if applicable
+                    require_once 'CRM/Price/BAO/LineItem.php';
+                    $lineItems[$row['participant_id']] = CRM_Price_BAO_LineItem::getLineItems( $row['participant_id'] );
                 }
             }
+            
             $this->assign( 'lineItems', $lineItems );
 
             $total = $cancel = 0;
@@ -264,7 +277,7 @@ class CRM_Event_Form_Search extends CRM_Core_Form
             $permission = CRM_Core_Permission::getPermission( );
             
             require_once 'CRM/Event/Task.php';
-            $tasks = array( '' => ts('- more actions -') ) + CRM_Event_Task::permissionedTaskTitles( $permission );
+            $tasks = array( '' => ts('- actions -') ) + CRM_Event_Task::permissionedTaskTitles( $permission );
             if ( isset( $this->_ssID ) ) {
                 if ( $permission == CRM_Core_Permission::EDIT ) {
                     require_once "CRM/Contact/Task.php";
@@ -289,7 +302,7 @@ class CRM_Event_Form_Search extends CRM_Core_Form
             
             // need to perform tasks on all or selected items ? using radio_ts(task selection) for it 
             $this->addElement('radio', 'radio_ts', null, '', 'ts_sel', array( 'checked' => 'checked') ); 
-            $this->addElement('radio', 'radio_ts', null, '', 'ts_all', array( 'onclick' => $this->getName().".toggleSelect.checked = false; toggleCheckboxVals('mark_x_',".$this->getName()."); toggleTaskAction( true );" ) );
+            $this->addElement('radio', 'radio_ts', null, '', 'ts_all', array( 'onclick' => $this->getName().".toggleSelect.checked = false; toggleCheckboxVals('mark_x_',this); toggleTaskAction( true );" ) );
         }
         
         // add buttons 
@@ -324,19 +337,15 @@ class CRM_Event_Form_Search extends CRM_Core_Form
         }
    
         $this->_done = true;
-        
-        $this->_formValues = $this->controller->exportValues($this->_name);
 
-        $eventSearchIds = array( 
-                                'event_id'              => 'event_name_id',
-                                'event_type'            => 'event_type_id',
-                                'participant_fee_level' => 'participant_fee_id'
-                                );
-        foreach( $eventSearchIds as $key => $value ) {
-            $this->_formValues[$key]   = ( empty($this->_formValues[$key]) ) ? '' : $this->_formValues[$value];
-            $this->_formValues[$value] = '';
+        if ( ! empty( $_POST ) ) {
+            $this->_formValues = $this->controller->exportValues($this->_name);
         }
-
+        
+        if ( empty(  $this->_formValues ) ) {       
+            $this->_formValues = $this->controller->exportValues($this->_name);
+        }
+        
         $this->fixFormValues( );
         
         if ( isset( $this->_ssID ) && empty( $_POST ) ) {
@@ -380,12 +389,15 @@ class CRM_Event_Form_Search extends CRM_Core_Form
         require_once 'CRM/Contact/BAO/Query.php';
         $this->_queryParams =& CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
         
-        $selector =& new CRM_Event_Selector_Search( $this->_queryParams,
-                                                    $this->_action,
-                                                    null,
-                                                    $this->_single,
-                                                    $this->_limit,
-                                                    $this->_context ); 
+        $selector = new CRM_Event_Selector_Search( $this->_queryParams,
+                                                   $this->_action,
+                                                   null,
+                                                   $this->_single,
+                                                   $this->_limit,
+                                                   $this->_context ); 
+        
+        $selector->setKey( $this->controller->_key );
+        
         $prefix = null;
         if ( $this->_context == 'user') {
             $prefix = $this->_prefix;
@@ -394,7 +406,7 @@ class CRM_Event_Form_Search extends CRM_Core_Form
         $this->assign( "{$prefix}limit", $this->_limit );
         $this->assign( "{$prefix}single", $this->_single );
 
-        $controller =& new CRM_Core_Selector_Controller($selector , 
+        $controller = new CRM_Core_Selector_Controller($selector , 
                                                         $this->get( CRM_Utils_Pager::PAGE_ID ), 
                                                         $sortID, 
                                                         CRM_Core_Action::VIEW,
@@ -434,11 +446,11 @@ class CRM_Event_Form_Search extends CRM_Core_Form
      * @static
      * @access public
      */
-    static function formRule( &$fields )
+    static function formRule( $fields )
     {
         $errors = array( );
        
-        if ( $fields['event_id'] && !is_numeric( $fields['event_name_id'] ) ) {
+        if ( $fields['event_name'] && !is_numeric( $fields['event_id'] ) ) {
             $errors['event_id'] = ts('Please select valid event.');
         }
         
@@ -474,8 +486,9 @@ class CRM_Event_Form_Search extends CRM_Core_Form
         $event = CRM_Utils_Request::retrieve( 'event', 'Positive',
                                               CRM_Core_DAO::$_nullObject );
         if ( $event ) {
+            require_once 'CRM/Event/PseudoConstant.php';
             $this->_formValues['event_id'] = $event;
-            $this->assign( 'event_id_value', $event );
+            $this->_formValues['event_name'] = CRM_Event_PseudoConstant::event( $event, true );
         }
         
         $status = CRM_Utils_Request::retrieve( 'status', 'String',
@@ -496,6 +509,26 @@ class CRM_Event_Form_Search extends CRM_Core_Form
                 $status[$key] = 1;
             }
             $this->_formValues['participant_status_id'] = $status;    
+        }
+        
+        $role = CRM_Utils_Request::retrieve( 'role', 'String',
+                                             CRM_Core_DAO::$_nullObject );
+        
+        if ( isset ( $role ) ) {
+            require_once 'CRM/Event/PseudoConstant.php';
+            if ( $role === 'true' ) {
+                $roleTypes = CRM_Event_PseudoConstant::participantRole( null, "filter = 1" );
+            } elseif ( $role === 'false' ) {
+                $roleTypes = CRM_Event_PseudoConstant::participantRole( null, "filter = 0" );
+            } elseif (is_numeric($role)) {
+                $role      = (int) $role;
+                $roleTypes = array( $role => CRM_Event_PseudoConstant::participantRole($role));
+            }
+            $role = array( );
+            foreach ( $roleTypes as $key => $value) {
+                $role[$key] = 1;
+            }
+            $this->_formValues['participant_role_id'] = $role;
         }
         
         $type = CRM_Utils_Request::retrieve( 'type', 'Positive',

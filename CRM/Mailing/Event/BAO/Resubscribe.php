@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -51,16 +52,17 @@ class CRM_Mailing_Event_BAO_Resubscribe {
     public static function &resub_to_mailing($job_id, $queue_id, $hash) {
         /* First make sure there's a matching queue event */
         $q =& CRM_Mailing_Event_BAO_Queue::verify($job_id, $queue_id, $hash);
+        $success = null;
         if (! $q) {
-            return null;
+            return $success;
         }
 
         // check if this queue_id was actually unsubscribed 
-        $ue =& new CRM_Mailing_Event_BAO_Unsubscribe();
+        $ue = new CRM_Mailing_Event_BAO_Unsubscribe();
         $ue->event_queue_id = $queue_id;
         $ue->org_unsubscribe = 0;
         if (! $ue->find(true)) {
-            return null;
+            return $success;
         }
         
         $contact_id = $q->contact_id;
@@ -68,7 +70,7 @@ class CRM_Mailing_Event_BAO_Resubscribe {
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
         
-        $do =& new CRM_Core_DAO();
+        $do = new CRM_Core_DAO();
         $mg         = CRM_Mailing_DAO_Group::getTableName();
         $job        = CRM_Mailing_BAO_Job::getTableName();
         $mailing    = CRM_Mailing_BAO_Mailing::getTableName();
@@ -140,6 +142,7 @@ class CRM_Mailing_Event_BAO_Resubscribe {
 
         $contacts = array($contact_id);
         foreach ($groups as $group_id => $group_name) {
+            $notadded = 0;
             if ($group_name) {
                 list($total, $added, $notadded) = CRM_Contact_BAO_GroupContact::addContactsToGroup( $contacts, $group_id, 'Email');
             }
@@ -149,7 +152,7 @@ class CRM_Mailing_Event_BAO_Resubscribe {
         }
         
         // remove entry from Unsubscribe table.
-        $ue =& new CRM_Mailing_Event_BAO_Unsubscribe();
+        $ue = new CRM_Mailing_Event_BAO_Unsubscribe();
         $ue->event_queue_id = $queue_id;
         $ue->org_resubscribe = 0;
         if ($ue->find(true)) {
@@ -176,7 +179,7 @@ class CRM_Mailing_Event_BAO_Resubscribe {
     public static function send_resub_response($queue_id, $groups, $is_domain = false, $job) {
         // param is_domain is not supported as of now.
 
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         $domain =& CRM_Core_BAO_Domain::getDomain( );
 
         $jobTable = CRM_Mailing_BAO_Job::getTableName();
@@ -188,14 +191,14 @@ class CRM_Mailing_Event_BAO_Resubscribe {
         //get the default domain email address.
         list( $domainEmailName, $domainEmailAddress ) = CRM_Core_BAO_Domain::getNameAndEmail( );
         
-        $dao =& new CRM_Mailing_BAO_Mailing();
+        $dao = new CRM_Mailing_BAO_Mailing();
         $dao->query("   SELECT * FROM $mailingTable 
                         INNER JOIN $jobTable ON
                             $jobTable.mailing_id = $mailingTable.id 
                         WHERE $jobTable.id = $job");
         $dao->fetch();
 
-        $component =& new CRM_Mailing_BAO_Component();
+        $component = new CRM_Mailing_BAO_Component();
         $component->id = $dao->resubscribe_id;
         $component->find(true);
 
@@ -206,7 +209,7 @@ class CRM_Mailing_Event_BAO_Resubscribe {
             $text = CRM_Utils_String::htmlToText($component->body_html);
         }
 
-        $eq =& new CRM_Core_DAO();
+        $eq = new CRM_Core_DAO();
         $eq->query(
         "SELECT     $contacts.preferred_mail_format as format,
                     $contacts.id as contact_id,
@@ -223,9 +226,11 @@ class CRM_Mailing_Event_BAO_Resubscribe {
                 unset($groups[$key]);
             }
         }
-        $message =& new Mail_Mime("\n");
+
+        $message = new Mail_mime("\n");
+
         list($addresses, $urls) = CRM_Mailing_BAO_Mailing::getVerpAndUrls($job, $queue_id, $eq->hash, $eq->email);
-        $bao =& new CRM_Mailing_BAO_Mailing();
+        $bao = new CRM_Mailing_BAO_Mailing();
         $bao->body_text = $text;
         $bao->body_html = $html;
         $tokens = $bao->getTokens();

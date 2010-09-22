@@ -42,6 +42,18 @@
        <add>1.1</add>
   </field>
   <field>
+      <name>address_format_id</name>
+      <type>int unsigned</type>
+      <comment>Foreign key to civicrm_address_format.id.</comment>
+       <add>3.2</add>
+  </field>
+  <foreignKey>
+      <name>address_format_id</name>
+      <table>civicrm_address_format</table>
+      <key>id</key>
+      <add>3.2</add>
+  </foreignKey>
+  <field>
        <name>idd_prefix</name>
        <type>varchar</type>
        <length>4</length>
@@ -68,6 +80,13 @@
       <key>id</key>
       <add>1.8</add>
   </foreignKey>
+  <field>
+       <name>is_province_abbreviated</name>
+       <type>boolean</type>
+       <default>0</default>
+       <comment>Should state/province be displayed as abbreviation for contacts from this country?</comment>
+       <add>3.1</add>
+  </field>
   <index>
     <name>UI_name_iso_code</name>
     <fieldName>name</fieldName>

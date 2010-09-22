@@ -1,5 +1,28 @@
 <?php
 /*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*/
+/*
  * Heavily based on anonymous code contribution. No claim.
  *
  * civicrm_handler_field_event_link.inc
@@ -37,6 +60,7 @@ class civicrm_handler_field_event_link extends views_handler_field {
       '#options' => array(
          'none' => t('Don\'t Link this Field'),
          'page' => t('Link to Event Page'),
+         'registration' => t('Link to Event Registration'),
          'config' => t('Link to Event Configuration'),
          'participants' => t('Link to Event Participants'),
          'custom' => t('Link to a Custom Node'),
@@ -79,6 +103,14 @@ class civicrm_handler_field_event_link extends views_handler_field {
                                             "reset=1&id={$values->{$this->aliases['id']}}" );
            }
 
+    // LINKING TO EVENT REGISTRATION PAGE
+      case 'registration':
+           if (user_access('register for events') && $data !== NULL && $data !== '') {
+           return civicrm_views_href( $data,
+                                            'civicrm/event/register',
+                                            "reset=1&id={$values->{$this->aliases['id']}}" );
+           }
+
     // LINKING TO EVENT CONFIG PAGE
       case 'config':
            if (user_access('access CiviEvent') && $data !== NULL && $data !== '') {
@@ -98,7 +130,7 @@ class civicrm_handler_field_event_link extends views_handler_field {
     // CUSTOM NODE LINKAGE, GOOD FOR LINKING TO OTHER VIEWS WITH AN ARGUMENT
       case 'custom':
            if ($custom_link !== NULL && $custom_link !== '' && $data !== NULL && $data !== '') {
-           return l($data, $custom_link . "{$values->{$this->aliases['id']}}" );
+           return l($data, $custom_link . "{$values->{$this->aliases['id']}}", array('html' => TRUE));
            }
     
     // IF THE OTHER CASES AREN'T IN PLAY, THEN JUST PRINT THE DATA

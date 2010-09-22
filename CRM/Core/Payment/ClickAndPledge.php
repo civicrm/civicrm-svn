@@ -31,7 +31,7 @@ class CRM_Core_Payment_ClickAndPledge extends CRM_Core_Payment {
     function __construct( $mode, &$paymentProcessor ) {
         $this->_mode             = $mode;
         $this->_paymentProcessor = $paymentProcessor;
-        $this->_processorName    = 'Click And Pledge';
+        $this->_processorName    = ts('Click And Pledge');
 
         if ( $this->_paymentProcessor['payment_processor_type'] == 'ClickAndPledge' ) {
             return;
@@ -75,6 +75,9 @@ class CRM_Core_Payment_ClickAndPledge extends CRM_Core_Payment {
         $args['countryCode']    = $params['country'];
         $args['zip']            = $params['postal_code'];
 
+        // Allow further manipulation of the arguments via custom hooks ..
+        CRM_Utils_Hook::alterPaymentProcessorParams( $this, $params, $args );
+
         $result = $this->invokeAPI( $args );
 
         if ( is_a( $result, 'CRM_Core_Error' ) ) {  
@@ -109,7 +112,7 @@ class CRM_Core_Payment_ClickAndPledge extends CRM_Core_Payment {
     }
 
     function doTransferCheckout( &$params, $component = 'contribute' ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         if ( $component != 'contribute' && $component != 'event' ) {
             CRM_Core_Error::fatal( ts( 'Component is invalid' ) );
@@ -150,7 +153,9 @@ class CRM_Core_Payment_ClickAndPledge extends CRM_Core_Payment {
 
         // ensure that the returnURL is absolute.
         if ( substr( $returnURL, 0, 4 ) != 'http' ) {
-            CRM_Core_Error::fatal( ts( 'Sending a relative URL to Click And Pledge is erroneous. Please make your resource URL (in Administer CiviCRM >> Global Settings) complete' ) );
+            require_once 'CRM/Utils/System.php';
+            $fixUrl = CRM_Utils_System::url("civicrm/admin/setting/url", '&reset=1');
+            CRM_Core_Error::fatal( ts( 'Sending a relative URL to Click And Pledge is erroneous. Please make your resource URL (in <a href="%1">Administer CiviCRM &raquo; Global Settings &raquo; Resource URLs</a> ) complete.', array( 1 => $fixUrl ) ) );
         }
         
         $ClickAndPledgeParams = array( 'WID' => $this->_paymentProcessor['user_name'],
@@ -175,7 +180,7 @@ class CRM_Core_Payment_ClickAndPledge extends CRM_Core_Payment {
 
         foreach ( array_keys( $params ) as $p ) {
             // get the base name without the location type suffixed to it
-            $parts = split( '-', $p );
+            $parts = explode( '-', $p );
             $name  = count( $parts ) > 1 ? $parts[0] : $p;
             if ( isset( $otherVars[$name] ) ) {
                 $value = $params[$p];
@@ -211,6 +216,9 @@ class CRM_Core_Payment_ClickAndPledge extends CRM_Core_Payment {
                                             'amount' => $params['amount'],
                                             );
         }
+
+        // Allow further manipulation of the arguments via custom hooks ..
+        CRM_Utils_Hook::alterPaymentProcessorParams( $this, $params, $ClickAndPledgeParams );
         
         $uri = '';
         foreach ( $ClickAndPledgeParams as $key => $value ) {

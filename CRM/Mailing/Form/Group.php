@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -51,13 +52,20 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
      */ 
     public function preProcess()  
     {
-        //when user come from search context. 
-        $context = $this->get( 'context' );
-        if ( $context == 'search' ) {
+        //when user come from search context.
+        require_once 'CRM/Contact/Form/Search.php';
+        $this->_searchBasedMailing = CRM_Contact_Form_Search::isSearchContext( $this->get( 'context' ) );
+        if ( $this->_searchBasedMailing ) {
             $searchParams = $this->controller->exportValues( );
             if ( CRM_Utils_Array::value( 'task', $searchParams ) == 20 ) {
                 parent::preProcess( );
             }
+        }
+        
+        // use previous context unless mailing is not schedule, CRM-4290
+        $session = CRM_Core_Session::singleton( ); 
+        if ( strpos( $session->readUserContext( ), 'civicrm/mailing' ) === false ) { 
+            $session->pushUserContext( CRM_Utils_System::url( 'civicrm/mailing','reset=1' ) );
         }
     }
     
@@ -110,10 +118,9 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
         
         //when the context is search hide the mailing recipients.
         require_once 'CRM/Core/ShowHideBlocks.php';
-        $showHide =& new CRM_Core_ShowHideBlocks( );
-        $context  = $this->get( 'context' );
+        $showHide = new CRM_Core_ShowHideBlocks( );
         $showGroupSelector = true;
-        if ( $context == 'search' ) {
+        if ( $this->_searchBasedMailing ) {
             $showGroupSelector = false;
             $formElements = array( 'includeGroups', 'excludeGroups', 'includeMailings', 'excludeMailings' );
             $formValues = $this->controller->exportValues( $this->_name );
@@ -149,6 +156,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
         
         //get the context
         $context = $this->get( 'context' );
+        if ( $this->_searchBasedMailing ) $context = 'search'; 
         $this->assign( 'context', $context );
         
         $this->add( 'text', 'name', ts('Name Your Mailing'),
@@ -168,7 +176,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
         CRM_Utils_Hook::mailingGroups( $this, $groups, $mailings );
         
         //when the context is search add base group's.
-        if ( $context == 'search' ) {
+        if ( $this->_searchBasedMailing ) {
             //get the static groups
             $staticGroups = CRM_Core_PseudoConstant::staticGroup( false, 'Mailing' );
             $this->add( 'select', 'baseGroup',
@@ -186,7 +194,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
                                   );
         
         //as we are having hidden smart group so no need.
-        if ( $context != 'search' ) {
+        if ( !$this->_searchBasedMailing ) {
             $this->addRule( 'includeGroups', ts('Please select a group to be mailed.'), 'required' );
         }
         
@@ -243,7 +251,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
                                   'name'      => ts('Cancel') ),
                           );
         
-        if ( $context == 'search' ) {
+        if ( $this->_searchBasedMailing ) {
             $buttons = array( array ( 'type'      => 'next',
                                       'name'      => ts('Next >>'),
                                       'spacing' => '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;',
@@ -265,17 +273,16 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
         //build hidden smart group. when user want to send  mailing
         //through search contact-> more action -> send Mailing. CRM-3711
         $groups = array( );
-        $context = $this->get( 'context' );
-        if ( $context == 'search' && $this->_contactIds ) {
+        if ( $this->_searchBasedMailing && $this->_contactIds ) {
             //get the hidden smart group id.
             $ssId = $this->get( 'ssID' );
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             $hiddenSmartParams = array( 'group_type'       => array( '2' => 1),
                                         'form_values'      => $this->get( 'formValues' ),
                                         'saved_search_id'  => $ssId, 
                                         'search_custom_id' => $this->get( 'customSearchID' ),
-                                        'is_advanced'      => $session->get('isAdvanced'),
-                                        'is_searchBuilder' => $session->get('isSearchBuilder'));
+                                        'search_context'   => $this->get( 'context' ),
+                                        );
             
             require_once 'CRM/Contact/BAO/Group.php';
             list( $smartGroupId, $savedSearchId ) = CRM_Contact_BAO_Group::createHiddenSmartGroup( $hiddenSmartParams );
@@ -339,7 +346,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
             }
         }
         
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $params['groups']         = $groups;
         $params['mailings']       = $mailings;
         
@@ -354,7 +361,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
             // delete previous includes/excludes, if mailing already existed
             require_once 'CRM/Contact/DAO/Group.php';
             foreach( array( 'groups', 'mailings' ) as $entity ) {
-                $mg =& new CRM_Mailing_DAO_Group();
+                $mg = new CRM_Mailing_DAO_Group();
                 $mg->mailing_id     = $ids['mailing_id'];                        
                 $mg->entity_table   =
                     ( $entity == 'groups' )
@@ -367,8 +374,9 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
             }
         } else {
             // new mailing, so lets set the created_id
-            $session =& CRM_Core_Session::singleton( );
-            $params['created_id'] = $session->get( 'userID' );
+            $session = CRM_Core_Session::singleton( );
+            $params['created_id']   = $session->get( 'userID' );
+            $params['created_date'] = date('YmdHis');
         }
 
         require_once 'CRM/Mailing/BAO/Mailing.php';
@@ -387,7 +395,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
             //redirect it to search result CRM-3711.
             $ssID    = $this->get( 'ssID' );
             $context = $this->get( 'context' );
-            if ( $ssID && $context == 'search' ) {
+            if ( $ssID && $this->_searchBasedMailing ) {
                 if ( $this->_action == CRM_Core_Action::BASIC ) {
                     $fragment = 'search';
                 } else if ( $this->_action == CRM_Core_Action::PROFILE ) {
@@ -398,12 +406,19 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
                     $fragment = 'search/custom';
                 }
                 
+                $context = $this->get( 'context' );
+                if ( !CRM_Contact_Form_Search::isSearchContext( $context ) ) $context = 'search';
+                $urlParams = "force=1&reset=1&ssID={$ssID}&context={$context}";
+                
+                $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
+                if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
+                
                 $draftURL = CRM_Utils_System::url( 'civicrm/mailing/browse/unscheduled', 'scheduled=false&reset=1' );
                 $status = ts("Your mailing has been saved. You can continue later by clicking the 'Continue' action to resume working on it.<br /> From <a href='%1'>Draft and Unscheduled Mailings</a>.", array( 1 => $draftURL ) );
                 CRM_Core_Session::setStatus( $status );
                 
                 //replace user context to search.
-                $url = CRM_Utils_System::url( 'civicrm/contact/' . $fragment, "force=1&reset=1&ssID={$ssID}" );
+                $url = CRM_Utils_System::url( 'civicrm/contact/' . $fragment, $urlParams );
                 CRM_Utils_System::redirect( $url );
             } else { 
                 $status = ts("Your mailing has been saved. Click the 'Continue' action to resume working on it.");
@@ -434,7 +449,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
      * @static
      * @access public
      */
-    static function formRule( &$fields ) 
+    static function formRule( $fields ) 
     {
         $errors = array( );
         if ( isset( $fields['includeGroups'] )    &&

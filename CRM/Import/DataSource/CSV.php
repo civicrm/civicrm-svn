@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -52,7 +53,7 @@ class CRM_Import_DataSource_CSV extends CRM_Import_DataSource
     {
         $form->add('hidden', 'hidden_dataSource', 'CRM_Import_DataSource_CSV');
 
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
 
         // FIXME: why do we limit the file size to 8 MiB if it's larger in config?
         $uploadFileSize = $config->maxImportFileSize >= 8388608 ? 8388608 : $config->maxImportFileSize;
@@ -99,7 +100,7 @@ class CRM_Import_DataSource_CSV extends CRM_Import_DataSource
         $fd = fopen($file, 'r');
         if (!$fd) CRM_Core_Error::fatal("Could not read $file");
         
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         $firstrow = fgetcsv($fd, 0, $config->fieldSeparator);
         
         // create the column names from the CSV header or as col_0, col_1, etc.
@@ -107,7 +108,8 @@ class CRM_Import_DataSource_CSV extends CRM_Import_DataSource
             //need to get original headers.
             $result['original_col_header'] = $firstrow;
             
-            $columns = array_map('strtolower', $firstrow);
+            $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
+            $columns = array_map($strtolower, $firstrow);
             $columns = str_replace(' ', '_', $columns);
             $columns = preg_replace('/[^a-z_]/', '', $columns);
             
@@ -126,6 +128,10 @@ class CRM_Import_DataSource_CSV extends CRM_Import_DataSource
                     }
                 }
             }
+
+            // CRM-4881: we need to quote column names, as they may be MySQL reserved words
+            foreach ($columns as &$column) $column = "`$column`";
+
         } else {
             $columns = array();
             foreach ($firstrow as $i => $_) $columns[] = "col_$i";

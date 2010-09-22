@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -79,11 +80,15 @@ class CRM_Contact_Form_Search_Basic extends CRM_Contact_Form_Search {
         $searchOptions = CRM_Core_BAO_Preferences::valueOptions( 'advanced_search_options' );
         
         if ( CRM_Utils_Array::value( 'contactType', $searchOptions ) ) {
-            $this->add('select', 'contact_type', ts('is...'), CRM_Core_SelectValues::contactType());
+            require_once 'CRM/Contact/BAO/ContactType.php';
+            $contactTypes = array( '' => ts('- any contact type -') ) + CRM_Contact_BAO_ContactType::getSelectElements( );
+            $this->add('select', 'contact_type',
+                       ts('is...'),
+                       $contactTypes );
         }
 
         if ( CRM_Utils_Array::value( 'groups', $searchOptions ) ) {
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             if ( $config->groupTree ) {
                 $this->add('hidden', 'group', null, array('id' => 'group' ));
                 
@@ -113,8 +118,10 @@ class CRM_Contact_Form_Search_Basic extends CRM_Contact_Form_Search {
         
         if ( CRM_Utils_Array::value( 'tags', $searchOptions ) ) {
             // tag criteria
+            if( !empty( $this->_tag ) ){
             $tag = array('' => ts('- any tag -')) + $this->_tag;
             $this->_tagElement =& $this->addElement('select', 'tag', ts('with'), $tag);
+            }
         }
 
         parent::buildQuickForm( );
@@ -183,22 +190,16 @@ class CRM_Contact_Form_Search_Basic extends CRM_Contact_Form_Search {
      * @access public
      */
     function postProcess( ) {
-        
-        $session =& CRM_Core_Session::singleton();
-        $session ->set('isAdvanced','0');
-        $session ->set('isSearchBuilder','0');
+        $this->set('isAdvanced','0');
+        $this->set('isSearchBuilder','0');
 
         // get user submitted values
         // get it from controller only if form has been submitted, else preProcess has set this
         if ( ! empty( $_POST ) ) {
             $this->_formValues = $this->controller->exportValues($this->_name);
             $this->normalizeFormValues( );
-	
-            // also reset the sort by character
-            $this->_sortByCharacter = null;
-            $this->set( 'sortByCharacter', null );
         }
-
+		
         if ( isset( $this->_groupID ) && ! CRM_Utils_Array::value( 'group', $this->_formValues ) ) {
             $this->_formValues['group'][$this->_groupID] = 1;
         } else if ( isset( $this->_ssID ) && empty( $_POST ) ) {
@@ -225,8 +226,8 @@ class CRM_Contact_Form_Search_Basic extends CRM_Contact_Form_Search {
         $this->_params =& CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
         $this->_returnProperties =& $this->returnProperties( );
         
-        //CRM_Core_Error::debug( 'f', $this->_formValues );
-        //CRM_Core_Error::debug( 'p', $this->_params );
+        // CRM_Core_Error::debug( 'f', $this->_formValues );
+        // CRM_Core_Error::debug( 'p', $this->_params );
         parent::postProcess( );
     }
 
@@ -245,7 +246,7 @@ class CRM_Contact_Form_Search_Basic extends CRM_Contact_Form_Search {
             $this->_formValues['contact_type'][$contactType] = 1;
         }
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         
         if ( !$config->groupTree ) {
             $group = CRM_Utils_Array::value( 'group', $this->_formValues );
@@ -268,7 +269,7 @@ class CRM_Contact_Form_Search_Basic extends CRM_Contact_Form_Search {
      * Add a form rule for this form. If Go is pressed then we must select some checkboxes
      * and an action
      */
-    static function formRule( &$fields ) {
+    static function formRule( $fields ) {
         // check actionName and if next, then do not repeat a search, since we are going to the next page
         if ( array_key_exists( '_qf_Search_next', $fields ) ) {
             if ( ! CRM_Utils_Array::value( 'task', $fields ) ) {

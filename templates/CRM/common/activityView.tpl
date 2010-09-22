@@ -1,17 +1,42 @@
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
 {literal}
 <script type="text/javascript">
-cj(document).ready(function(){
-	cj("#activity-content").css({'overflow':'auto', 'width':'680px', 'height':'560px'});
-});
-	
-function viewActivity( activityID, contactID ) {
-    cj("#view-activity").show( );
+function {/literal}{$list}{literal}viewActivity( activityID, contactID, list ) {
+    if ( list ) {
+        list = "-" + list;
+    }
+    
+    cj("#view-activity" + list ).show( );
 
-    cj("#view-activity").dialog({
+    cj("#view-activity" + list ).dialog({
         title: "View Activity",
         modal: true, 
-        width : 700,
-        height : 650,
+        width : "680px", // don't remove px
+        height: "560", 
         resizable: true,
         bgiframe: true,
         overlay: { 
@@ -24,9 +49,9 @@ function viewActivity( activityID, contactID ) {
         },
 
         open:function() {
-            cj("#activity-content").html("");
+            cj("#activity-content" + list ).html("");
             var viewUrl = {/literal}"{crmURL p='civicrm/case/activity/view' h=0 q="snippet=4" }"{literal};
-            cj("#activity-content").load( viewUrl + "&cid="+contactID + "&aid=" + activityID);
+            cj("#activity-content" + list ).load( viewUrl + "&cid="+contactID + "&aid=" + activityID);
             
         },
 

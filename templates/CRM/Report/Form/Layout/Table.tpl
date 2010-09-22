@@ -1,13 +1,36 @@
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
 {if (!$chartEnabled || !$chartSupported )&& $rows}
     {if $pager and $pager->_response and $pager->_response.numPages > 1}
-        <br />
         <div class="report-pager">
-            {include file="CRM/common/pager.tpl" noForm=1}
+            {include file="CRM/common/pager.tpl" location="top" noForm=0}
         </div>
     {/if}
-    <br />
     <table class="report-layout">
-        <thead>
+        <thead class="sticky">
         <tr> 
             {foreach from=$columnHeaders item=header key=field}
                 {assign var=class value=""}
@@ -34,12 +57,12 @@
         </tr>          
         </thead>
        
-        {foreach from=$rows item=row}
-            <tr>
+        {foreach from=$rows item=row key=rowid}
+            <tr  class="{cycle values="odd-row,even-row"} crm-report" id="crm-report_{$rowid}">
                 {foreach from=$columnHeaders item=header key=field}
                     {assign var=fieldLink value=$field|cat:"_link"}
                     {assign var=fieldHover value=$field|cat:"_hover"}
-                    <td {if $header.type eq 1024 OR $header.type eq 1} class="report-contents-right"{elseif $row.$field eq 'Subtotal'} class="report-label"{/if}>
+                    <td class="crm-report-{$field}{if $header.type eq 1024 OR $header.type eq 1} report-contents-right{elseif $row.$field eq 'Subtotal'} report-label{/if}">
                         {if $row.$fieldLink}
                             <a title="{$row.$fieldHover}" href="{$row.$fieldLink}">
                         {/if}
@@ -55,7 +78,7 @@
                                 {$row.$field|truncate:10:''|crmDate}
                             {/if}	
                         {elseif $header.type eq 1024}
-                            {$row.$field|crmMoney}
+                            <span class="nowrap">{$row.$field|crmMoney}</span>
                         {else}
                             {$row.$field}
                         {/if}
@@ -82,4 +105,9 @@
             {* /foreach*}
         {/if}
     </table>
+    {if $pager and $pager->_response and $pager->_response.numPages > 1}
+        <div class="report-pager">
+            {include file="CRM/common/pager.tpl"  noForm=0}
+        </div>
+    {/if}
 {/if}        

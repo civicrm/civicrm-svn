@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -201,7 +202,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
         $errorMessage = null;
         
         //for date-Formats
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $dateType = $session->get( "dateTypes" );
                 
         foreach ( $params as $key => $val ) {
@@ -255,10 +256,13 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
             return $response;
         }
         $params =& $this->getActiveFieldParams( );
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $dateType = $session->get( 'dateTypes' );
         $formatted = array();
         $customFields = CRM_Core_BAO_CustomField::getFields( CRM_Utils_Array::value( 'contact_type',$params ) );
+        
+        // don't add to recent items, CRM-4399
+        $formatted['skipRecentView'] = true;
         
         foreach ($params as $key => $val) {
             if( $val ) {
@@ -289,7 +293,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
             } else {
                 $eventTitle = $params['event_title'];
                 $qParams = array();
-                $dao =& new CRM_Core_DAO();
+                $dao = new CRM_Core_DAO();
                 $roleId =
                     $dao->singleValueQuery("SELECT default_role_id FROM civicrm_event WHERE title = '$eventTitle' ",
                                            $qParams);
@@ -326,7 +330,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
         }
         
         if ( $onDuplicate != CRM_Event_Import_Parser::DUPLICATE_UPDATE ) {
-            $formatted['custom'] = CRM_Core_BAO_CustomField::postProcess( $params,
+            $formatted['custom'] = CRM_Core_BAO_CustomField::postProcess( $formatted,
                                                                           CRM_Core_DAO::$_nullObject,
                                                                           null,
                                                                           'Participant' );
@@ -336,11 +340,10 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
                 $dao =  new CRM_Event_BAO_Participant();
                 $dao->id = $formatValues['participant_id'];
                 
-                $formatted['custom'] = CRM_Core_BAO_CustomField::postProcess( $params,
+                $formatted['custom'] = CRM_Core_BAO_CustomField::postProcess( $formatted,
                                                                               CRM_Core_DAO::$_nullObject,
                                                                               $formatValues['participant_id'],
                                                                               'Participant' );
-                
                 if ( $dao->find( true ) ) { 
                     $ids = array(
                                  'participant' => $formatValues['participant_id'],

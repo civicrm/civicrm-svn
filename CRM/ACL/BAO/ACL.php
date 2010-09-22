@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -71,6 +72,10 @@ class CRM_ACL_BAO_ACL extends CRM_ACL_DAO_ACL {
             self::$_operation = array(
                                       'View'   => ts( 'View'   ),
                                       'Edit'   => ts( 'Edit'   ),
+                                      'Create' => ts( 'Create' ),
+                                      'Delete' => ts( 'Delete' ),
+                                      'Search' => ts( 'Search' ),
+                                      'All'    => ts( 'All' ),
                                       );
         }
         return self::$_operation;
@@ -93,7 +98,7 @@ class CRM_ACL_BAO_ACL extends CRM_ACL_DAO_ACL {
                                             $object_table = null, $object_id = null, 
                                             $acl_id = null, $acl_role = false) 
     {
-        $dao =& new CRM_ACL_DAO_ACL;
+        $dao = new CRM_ACL_DAO_ACL;
         
         $t = array(
             'ACL'           => self::getTableName(),
@@ -104,7 +109,7 @@ class CRM_ACL_BAO_ACL extends CRM_ACL_DAO_ACL {
             'GroupContact'  => CRM_Contact_DAO_GroupContact::getTableName()
         );
 
-        $session     =& CRM_Core_Session::singleton();
+        $session     = CRM_Core_Session::singleton();
         $contact_id  =  $session->get('userID');
         
         $where = " {$t['ACL']}.operation = '" .
@@ -361,7 +366,7 @@ class CRM_ACL_BAO_ACL extends CRM_ACL_DAO_ACL {
             $group_id   = CRM_Utils_Type::escape($group_id, 'Integer');
         }
         
-        $rule       =& new CRM_ACL_BAO_ACL();
+        $rule       = new CRM_ACL_BAO_ACL();
 
         require_once 'CRM/Contact/BAO/Group.php';
         require_once 'CRM/Contact/BAO/GroupContact.php';
@@ -422,7 +427,7 @@ class CRM_ACL_BAO_ACL extends CRM_ACL_DAO_ACL {
             $group_id   = CRM_Utils_Type::escape($group_id, 'Integer');
         }
 
-        $rule       =& new CRM_ACL_BAO_ACL();
+        $rule       = new CRM_ACL_BAO_ACL();
 
         require_once 'CRM/ACL/DAO/EntityRole.php';
         $acl           = self::getTableName();
@@ -486,7 +491,7 @@ class CRM_ACL_BAO_ACL extends CRM_ACL_DAO_ACL {
     public static function &getGroupACLs($contact_id, $aclRoles = false) {
         $contact_id = CRM_Utils_Type::escape($contact_id, 'Integer');
 
-        $rule       =& new CRM_ACL_BAO_ACL();
+        $rule       = new CRM_ACL_BAO_ACL();
 
         require_once 'CRM/Contact/BAO/GroupContact.php';
         require_once 'CRM/Contact/BAO/Group.php';
@@ -532,7 +537,7 @@ INNER JOIN  $c2g
     public static function &getGroupACLRoles($contact_id) {
         $contact_id = CRM_Utils_Type::escape($contact_id, 'Integer');
         
-        $rule       =& new CRM_ACL_BAO_ACL();
+        $rule       = new CRM_ACL_BAO_ACL();
                                                                                 
         $acl        = self::getTableName();
         $aclRole   = 'civicrm_acl_role';
@@ -574,7 +579,7 @@ INNER JOIN  $c2g
         // also get all acls for "Any Role" case
         // and authenticated User Role if present
         $roles = "0";
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         if ( $session->get( 'ufID' ) > 0 ) {
             $roles .= ",2";
         }
@@ -616,7 +621,7 @@ SELECT $acl.*
     }
 
     static function create( &$params ) {
-        $dao =& new CRM_ACL_DAO_ACL( );
+        $dao = new CRM_ACL_DAO_ACL( );
         $dao->copyValues( $params );
         $dao->save( );
     }
@@ -636,6 +641,10 @@ SELECT $acl.*
      */
     static function setIsActive( $id, $is_active ) 
     {
+        require_once 'CRM/Core/BAO/Cache.php';
+        // note this also resets any ACL cache 
+        CRM_Core_BAO_Cache::deleteGroup( 'contact fields' );
+
         return CRM_Core_DAO::setFieldValue( 'CRM_ACL_DAO_ACL', $id, 'is_active', $is_active );
     }
 
@@ -689,8 +698,7 @@ SELECT   a.operation, a.object_id
 ORDER BY a.object_id
 ";
             
-            $dao =& CRM_Core_DAO::executeQuery( $query,
-                                                CRM_Core_DAO::$_nullArray );
+            $dao =& CRM_Core_DAO::executeQuery( $query );
         
             // do an or of all the where clauses u see
             $ids = array( );
@@ -712,11 +720,11 @@ ORDER BY a.object_id
             if ( ! empty( $ids ) ) {
                 $ids = implode( ',', $ids );
                 $query = "
-SELECT g.where_clause, g.select_tables, g.where_tables
+SELECT g.*
   FROM civicrm_group g
  WHERE g.id IN ( $ids )
 ";
-                $dao =& CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
+                $dao =& CRM_Core_DAO::executeQuery( $query );
                 while ( $dao->fetch( ) ) {
                     // currently operation is restrcited to VIEW/EDIT
                     if ( $dao->where_clause ) {
@@ -729,6 +737,14 @@ SELECT g.where_clause, g.select_tables, g.where_tables
                             $whereTables = array_merge( $whereTables,
                                                         unserialize( $dao->where_tables ) );
                         }
+                    }
+                    
+                    if ( ( $dao->saved_search_id ||
+                           $dao->children ||
+                           $dao->parents ) &&
+                         $dao->cache_date == null ) {
+                        require_once 'CRM/Contact/BAO/GroupContactCache.php';
+                        CRM_Contact_BAO_GroupContactCache::load( $dao );
                     }
                 }
             }
@@ -752,12 +768,19 @@ SELECT g.where_clause, g.select_tables, g.where_tables
     public static function group( $type,
                                   $contactID = null,
                                   $tableName = 'civicrm_saved_search',
-                                  $allGroups = null ) {
+                                  $allGroups = null,
+                                  $includedGroups = null ) {
         require_once 'CRM/ACL/BAO/Cache.php';
 
         $acls =& CRM_ACL_BAO_Cache::build( $contactID );
 
-        $ids  = array( );
+        if ( ! empty( $includedGroups ) &&
+             is_array( $includedGroups ) ) {
+            $ids  = $includedGroups;
+        } else {
+            $ids  = array( );
+        }
+
         if ( ! empty( $acls ) ) {
             $aclKeys = array_keys( $acls );
             $aclKeys = implode( ',', $aclKeys );
@@ -775,21 +798,18 @@ ORDER BY a.object_id
             $dao =& CRM_Core_DAO::executeQuery( $query, $params );
             while ( $dao->fetch( ) ) {
                 if ( $dao->object_id ) {
-                    if ( $type == CRM_ACL_API::VIEW ||
-                         ( $type == CRM_ACL_API::EDIT &&
-                           $dao->operation == 'Edit' || $dao->operation == 'All' ) ) {
+                    if ( self::matchType( $type, $dao->operation ) ) {
                         $ids[] = $dao->object_id;
                     }
                 } else {
                     // this user has got the permission for all objects of this type
-                    if ( $type == CRM_ACL_API::VIEW ||
-                         ( $type == CRM_ACL_API::EDIT &&
-                           $dao->operation == 'Edit' || $dao->operation == 'All' ) ) {
+                    // check if the type matches
+                    if ( self::matchType( $type, $dao->operation ) ) {
                         foreach ( $allGroups as $id => $dontCare ) {
                             $ids[] = $id;
                         }
-                        break;
                     }
+                    break;
                 }
             }
         }
@@ -798,6 +818,47 @@ ORDER BY a.object_id
         CRM_Utils_Hook::aclGroup( $type, $contactID, $tableName, $allGroups, $ids );
         
         return $ids;
+    }
+
+    static function matchType( $type, $operation ) {
+        $typeCheck = false;
+        switch ( $operation ) {
+        case 'All':
+            $typeCheck = true;
+            break;
+                    
+        case 'View':
+            if ( $type == CRM_ACL_API::VIEW ) {
+                $typeCheck = true;
+            }
+            break;
+
+        case 'Edit':
+            if ( $type == CRM_ACL_API::VIEW || $type == CRM_ACL_API::EDIT ) {
+                $typeCheck = true;
+            }
+            break;
+                        
+        case 'Create':
+            if ( $type == CRM_ACL_API::CREATE ) {
+                $typeCheck = true;
+            }
+            break;
+
+        case 'Delete':
+            if ( $type == CRM_ACL_API::DELETE ) {
+                $typeCheck = true;
+            }
+            break;
+
+        case 'Search':
+            if ( $type == CRM_ACL_API::SEARCH ) {
+                $typeCheck = true;
+            }
+            break;
+
+        }
+        return $typeCheck;
     }
 
     /**
@@ -814,7 +875,7 @@ ORDER BY a.object_id
         require_once 'CRM/ACL/BAO/Cache.php';
         CRM_ACL_BAO_Cache::resetCache( );
 
-        $acl = & new CRM_ACL_DAO_ACL();
+        $acl = new CRM_ACL_DAO_ACL();
         $acl->id = $aclId;
         $acl->delete();
     }

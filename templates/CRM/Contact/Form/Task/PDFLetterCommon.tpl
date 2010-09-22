@@ -1,21 +1,61 @@
-{*common template for compose mail*}
-<table class="form-layout">
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
+{*common template for compose PDF letters*}
+{if $form.template.html}
+<table class="form-layout-compressed">
     <tr>
-        <td class="label-left">{$form.template.label}</td><td>{$form.template.html}</td>
-    </tr>
-    <tr>
-        <td class="label-left">{$form.token1.label} {help id="id-token-html" file="CRM/Contact/Form/Task/Email.hlp"}</td>
-        <td>{$form.token1.html}</td>
-    </tr>
-    <tr>
-        <td colspan="2">{$form.html_message.label}<br />
-            {if $editor EQ 'textarea'}
-                <span class="description">{ts}If you are composing HTML-formatted messages, you may want to enable a WYSIWYG editor (Administer CiviCRM &raquo; Global Settings &raquo; Site Preferences).{/ts}</span><br />
-            {/if}
-            {$form.html_message.html}
-        </td>
+        <td class="label-left">{$form.template.label}</td>
+	    <td>{$form.template.html}</td>
     </tr>
 </table>
+{/if}
+
+<div class="crm-accordion-wrapper crm-html_email-accordion crm-accordion-open">
+    <div class="crm-accordion-header">
+        {$form.html_message.label}
+    </div>
+    <div class="crm-accordion-body">
+    {if $action neq 4}
+        <span class="helpIcon" id="helphtml">
+		<a href="#" onClick="return showToken('Html', 1);">{$form.token1.label}</a> 
+		{help id="id-token-html" file="CRM/Contact/Form/Task/Email.hlp"}
+		<div id='tokenHtml' style="display:none">
+		    <input style="border:1px solid #999999;" type="text" id="filter1" size="20" name="filter1" onkeyup="filter(this, 1)"/><br />
+		    <span class="description">{ts}Begin typing to filter list of tokens{/ts}</span><br/>
+		    {$form.token1.html}
+		</div>
+	    </span>
+	    {/if}
+	    <div class="clear"></div>
+        <div class='html'>
+        {if $editor EQ 'textarea'}
+            <span class="description">{ts}If you are composing HTML-formatted messages, you may want to enable a WYSIWYG editor (Administer CiviCRM &raquo; Global Settings &raquo; Site Preferences).{/ts}</span><br />
+            {/if}
+            {$form.html_message.html}<br />
+        </div>
 
 {if ! $noAttach}
     <div class="spacer"></div>
@@ -33,19 +73,23 @@
     </div>
 </div>
 
-<div id="saveDetails">
-    {$form.saveTemplateName.label}</dt><dd>{$form.saveTemplateName.html}
+<div id="saveDetails" class="section">
+    <div class="label">{$form.saveTemplateName.label}</div>
+    <div class="content">{$form.saveTemplateName.html|crmReplace:class:huge}</div>
 </div>
+
+    </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
 
 {literal}
 <script type="text/javascript" >
 {/literal}
 {if $templateSelected}
-{literal}
-if ( document.getElementsByName("saveTemplate")[0].checked ) {
-   document.getElementById('template').selectedIndex = {/literal}{$templateSelected}{literal};  	
-}
-{/literal}
+    {literal}
+    if ( document.getElementsByName("saveTemplate")[0].checked ) {
+	document.getElementById('template').selectedIndex = "{/literal}{$templateSelected}{literal}";  	
+    }
+    {/literal}
 {/if}
 {literal}
 var editor = {/literal}"{$editor}"{literal};
@@ -53,9 +97,9 @@ function loadEditor()
 {
     var msg =  {/literal}"{$htmlContent}"{literal};
     if (msg) {
-        if ( editor == "fckeditor" ) {
-            oEditor = FCKeditorAPI.GetInstance('html_message');
-            oEditor.SetHTML( msg );
+        if ( editor == "ckeditor" ) {
+            oEditor = CKEDITOR.instances['html_message'];
+            oEditor.setData( msg );
         } else if ( editor == "tinymce" ) {
             tinyMCE.get('html_message').setContent( msg );
         }
@@ -77,10 +121,10 @@ function showSaveUpdateChkBox()
 
     if ( document.getElementsByName("saveTemplate")[0].checked && document.getElementsByName("updateTemplate")[0].checked == false  ) {
         document.getElementById("updateDetails").style.display = "none";
-    }else if ( document.getElementsByName("saveTemplate")[0].checked && document.getElementsByName("updateTemplate")[0].checked ){
+    } else if ( document.getElementsByName("saveTemplate")[0].checked && document.getElementsByName("updateTemplate")[0].checked ){
         document.getElementById("editMessageDetails").style.display = "block";	
         document.getElementById("saveDetails").style.display = "block";	
-    }else if ( document.getElementsByName("saveTemplate")[0].checked == false && document.getElementsByName("updateTemplate")[0].checked ){
+    } else if ( document.getElementsByName("saveTemplate")[0].checked == false && document.getElementsByName("updateTemplate")[0].checked ){
         document.getElementById("saveDetails").style.display = "none";
         document.getElementById("editMessageDetails").style.display = "block";
     } else {
@@ -94,9 +138,9 @@ function selectValue( val ) {
     if ( !val ) {
         document.getElementById("text_message").value ="";
         document.getElementById("subject").value ="";
-        if ( editor == "fckeditor" ) {
-            oEditor = FCKeditorAPI.GetInstance('html_message');
-            oEditor.SetHTML('');
+        if ( editor == "ckeditor" ) {
+            oEditor = CKEDITOR.instances['html_message'];
+            oEditor.setData('');
         } else if ( editor == "tinymce" ) {
             tinyMCE.get('html_message').setContent('');
         } else {	
@@ -121,9 +165,9 @@ function selectValue( val ) {
            html_body = data.msg_html;
         }
 
-        if ( editor == "fckeditor" ) {
-            oEditor = FCKeditorAPI.GetInstance('html_message');
-            oEditor.SetHTML( html_body );
+        if ( editor == "ckeditor" ) {
+           oEditor = CKEDITOR.instances['html_message'];
+           oEditor.setData(html_body);
         } else if ( editor == "tinymce" ) {
             tinyMCE.get('html_message').setContent( html_body );
         } else {	
@@ -172,47 +216,96 @@ showSaveUpdateChkBox();
 
 function tokenReplHtml ( )
 {
-    var token1 = document.getElementById("token1").options[document.getElementById("token1").selectedIndex].text;
+    var token1 = cj("#token1").val( )[0];
     var editor = {/literal}"{$editor}"{literal};
     if ( editor == "tinymce" ) {
         var content= tinyMCE.get('html_message').getContent() +token1;
         tinyMCE.get('html_message').setContent(content);
-    } else if ( editor == "fckeditor" ) {
-        oEditor = FCKeditorAPI.GetInstance('html_message');
-        var msg=oEditor.GetHTML() + token1;	
-        oEditor.SetHTML( msg );	
+    } else if ( editor == "ckeditor" ) {
+           oEditor = CKEDITOR.instances['html_message'];
+           oEditor.insertHtml(token1);        
     } else {
         document.getElementById("html_message").value =  document.getElementById("html_message").value + token1;
     }
     verify();
 }
 {/literal}
-{if $editor eq "fckeditor"}
+{if $editor eq "ckeditor"}
 {literal}
-	function FCKeditor_OnComplete( editorInstance )
+	function CKeditor_OnComplete( editorInstance )
 	{
-	 	oEditor = FCKeditorAPI.GetInstance('html_message');
-		oEditor.SetHTML( {/literal}'{$message_html}'{literal});
+        oEditor = CKEDITOR.instances['html_message'];
+		oEditor.setData( {/literal}'{$message_html}'{literal});
 		loadEditor();	
-		editorInstance.Events.AttachEvent( 'OnFocus',verify ) ;
-    	}
+    }
+    cj( function() {
+     	 oEditor = CKEDITOR.instances['html_message'];
+	 oEditor.on( 'focus', verify );
+     });
 {/literal}
 {/if}
 {if $editor eq "tinymce"}
 {literal}
 	function customEvent() {
 		loadEditor();
-		tinyMCE.get('html_message').onKeyPress.add(function(ed, e) {
- 		verify();
-		});
 	}
 
 tinyMCE.init({
 	oninit : "customEvent"
 });
 
+cj( function() {
+  cj('div.html').hover( 
+  function( ) {
+    if ( cj('#html_message').tinymce() ) {
+      tinyMCE.get('html_message').onKeyPress.add(function(ed, e) {
+        verify( );
+      });
+    }
+  },
+  function( ) {
+   if ( cj('#html_message').tinymce() ) {
+     if ( tinyMCE.get('html_message').getContent() ) {
+       verify( );
+     } 
+   }
+  }	
+  );
+});
 {/literal}
 {/if}
+{include file="CRM/common/Filter.tpl"}
 {literal}
+    function showToken(element, id) {
+	initFilter(id);
+	cj("#token"+id).css({"width":"290px", "size":"8"});
+	var tokenTitle = {/literal}'{ts}Select Token{/ts}'{literal};
+	cj("#token"+element ).show( ).dialog({
+	    title       : tokenTitle,
+	    modal       : true,
+	    width       : '310px',
+	    resizable   : false,
+	    bgiframe    : false,
+	    overlay     : { opacity: 0.5, background: "black" },
+	    beforeclose : function(event, ui) { cj(this).dialog("destroy"); },
+	    buttons     : { 
+		"Done": function() { 
+		    cj(this).dialog("close");
+
+			//focus on editor/textarea after token selection     
+			if (element == 'Text') {
+			    cj('#text_message').focus();
+			} else if (element == 'Html' ) {
+			    switch ({/literal}"{$editor}"{literal}) {
+				case 'ckeditor': { CKEDITOR.instances['html_message'].focus(); break;}
+				case 'tinymce'  : { tinyMCE.get('html_message').focus(); break; } 
+				default         : { cj("#html_message").focus(); break; } 
+			}
+		    }
+		}
+	    }
+	});
+	return false;
+    }
 </script>
 {/literal}

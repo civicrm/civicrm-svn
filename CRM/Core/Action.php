@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -31,7 +32,7 @@
  * and similar across all objects (thus providing both reuse and standards)
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -67,7 +68,8 @@ class CRM_Core_Action {
         COPY          =  16384,
         RENEW         =  32768,
         DETACH        =  65536,
-        MAX_ACTION    =  131071;
+        REVERT        = 131072,
+        MAX_ACTION    = 262143;
     
     //make sure MAX_ACTION = 2^n - 1 ( n = total number of actions )
     
@@ -96,7 +98,8 @@ class CRM_Core_Action {
                            'copy'          => self::COPY,
                            'profile'       => self::PROFILE,
                            'renew'         => self::RENEW,
-                           'detach'        => self::DETACH
+                           'detach'        => self::DETACH,
+                           'revert'        => self::REVERT,
                            );
 
     /**
@@ -184,7 +187,7 @@ class CRM_Core_Action {
         
         return CRM_Utils_Array::value( $mask, self::$_description, 'NO DESCRIPTION SET' );
     }
-
+    
     /**
      * given a set of links and a mask, return the html action string for
      * the links associated with the mask
@@ -192,61 +195,108 @@ class CRM_Core_Action {
      * @param array $links  the set of link items
      * @param int   $mask   the mask to be used. a null mask means all items
      * @param array $values the array of values for parameter substitution in the link items
-     *
+     * @param string  $extraULName            enclosed extra links in this UL.
+     * @param boolean $enclosedAllInSingleUL  force to enclosed all links in single UL.
+     * 
      * @return string       the html string
      * @access public
      * @static
      */
-    static function formLink( &$links, $mask, $values ) {
-        $config =& CRM_Core_Config::singleton();
+    static function formLink( &$links, 
+                              $mask, 
+                              $values, 
+                              $extraULName = 'more', 
+                              $enclosedAllInSingleUL = false ) 
+    {
+        $config = CRM_Core_Config::singleton( );
         if ( empty( $links ) ) {
             return null;
         }
         
         $url = array( );
+        
+        $firstLink = true;
         foreach ( $links as $m => $link ) {
             if ( ! $mask || ( $mask & $m ) ) {
+                $extra = null;
                 if ( isset( $link['extra'] ) ) {
                     $extra = self::replace( CRM_Utils_Array::value( 'extra', $link, '' ),  $values );
                 }
                 
+                $frontend = false;
+                if ( isset( $link['fe'] ) ) $frontend = true;
+                
                 $urlPath = null;
-                if ( !CRM_Utils_System::isNull( $link['qs'] ) ) {
+                if ( CRM_Utils_Array::value( 'qs', $link ) && !CRM_Utils_System::isNull( $link['qs'] ) ) {
                     $urlPath = CRM_Utils_System::url( self::replace( $link['url'], $values ),
-                                                      self::replace( $link['qs'] , $values ), true );
+                                                      self::replace( $link['qs'], $values ), true, null, true, $frontend );
                 } else {
-                    $urlPath = $link['url'];
+                    $urlPath = CRM_Utils_Array::value( 'url', $link );
                 }
                 
-                $ref = '';
-                if ( isset( $link['ref'] ) ) {
-                    $ref = "class = {$link['ref']}";
+                $classes = 'action-item';
+                if ( $firstLink ) {
+                    $firstLink = false;
+                    $classes .= " action-item-first";
                 }
-                if ( $urlPath ) {                      
-                    $url[] = sprintf('<a href="%s" title="%s" %s ' . $extra . '>%s</a>',
-                                       $urlPath,
-                                       $link['title'], $ref, $link['name'] );
+                if ( isset( $link['ref'] ) ) {
+                    $classes .= ' '. strtolower( $link['ref'] );
+                }
+                
+                //get the user specified classes in.
+                if ( isset( $link['class'] ) ) {
+                    $className = $link['class'];
+                    if ( is_array( $className ) ) {
+                        $className = implode( ' ', $className );
+                    }
+                    $classes .= ' '. strtolower( $className );
+                }
+                
+                $linkClasses = 'class = "' . $classes . '"';
+                
+                if ( $urlPath ) {
+                    if( $frontend ) $extra .= "target=_blank";
+                    $url[] = sprintf('<a href="%s" %s title="%s"' . $extra . '>%s</a>',
+                                     $urlPath,
+                                     $linkClasses,
+                                     CRM_Utils_Array::value( 'title', $link ),
+                                     $link['name'] );
                 } else {
-                    $url[] = sprintf('<a title="%s" %s ' . $extra . '>%s</a>',
-                                       $link['title'], $ref, $link['name'] );
+                    $url[] = sprintf( '<a title="%s"  %s ' . $extra . '>%s</a>',
+                                      CRM_Utils_Array::value( 'title', $link ),
+                                      $linkClasses,
+                                      $link['name'] );
                 }
             }
         }
         
-        $result     = $resultDiv = '';
-        $actionLink = $url;
-        $actionDiv  = array_splice( $url, 2 );
-        $showDiv    = false;
-        if ( count( $actionDiv ) > 1 ) {
-            $actionLink = array_slice ( $url, 0, 2 );
-            $showDiv = true;
+        require_once 'CRM/Utils/String.php';
+        
+        $result = '';
+        $mainLinks  = $url;
+        $extraLinksName = strtolower( $extraULName );
+        if ( $enclosedAllInSingleUL ) {
+            $allLinks = '';
+            CRM_Utils_String::append( $allLinks, '</li><li>', $mainLinks );
+            $allLinks = ts('%1', array( 1 => $extraULName ) )."<ul id='panel_{$extraLinksName}_xx' class='panel'><li>{$allLinks}</li></ul>"; 
+            $result = "<span class='btn-slide' id={$extraLinksName}_xx>{$allLinks}</span>";
+        } else {
+            $extra = '';
+            $extraLinks = array_splice( $url, 2 );
+            if ( count( $extraLinks ) > 1 ) {
+                $mainLinks = array_slice ( $url, 0, 2 );
+                CRM_Utils_String::append( $extra, '</li><li>', $extraLinks );
+                $extra = ts('%1', array( 1 => $extraULName ) )."<ul id='panel_{$extraLinksName}_xx' class='panel'><li>{$extra}</li></ul>"; 
+            }
+            $resultLinks = '';
+            CRM_Utils_String::append( $resultLinks, '', $mainLinks );
+            if ( $extra ) {
+                $result = "<span>{$resultLinks}</span><span class='btn-slide' id={$extraLinksName}_xx>{$extra}</span>";
+            } else {
+                $result = "<span>{$resultLinks}</span>";
+            }
         }
-        CRM_Utils_String::append( $resultLink, '&nbsp;|&nbsp;', $actionLink );
-        if ( $showDiv ) {
-            CRM_Utils_String::append( $resultDiv, '</li><li>', $actionDiv );
-            $resultDiv = "| <img src='{$config->resourceBase}i/menu-collapsed.png' title='".ts('more')."'/> ".ts('more')."<ul id='panel_xx' class='panel'><li>{$resultDiv}</li></ul>";
-        }
-        $result = "<span>{$resultLink} &nbsp;</span><span class='btn-slide' id=xx>{$resultDiv}</span>";
+        
         return $result;
     }
     

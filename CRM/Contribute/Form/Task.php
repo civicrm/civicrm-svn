@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -86,13 +87,18 @@ class CRM_Contribute_Form_Task extends CRM_Core_Form
      */
     function preProcess( ) 
     {
-        $this->_contributionIds = array();
+        self::preProcessCommon( $this );
+    }
 
-        $values = $this->controller->exportValues( 'Search' );
+    static function preProcessCommon( &$form, $useTable = false )
+    {
+        $form->_contributionIds = array();
 
-        $this->_task = $values['task'];
+        $values = $form->controller->exportValues( 'Search' );
+
+        $form->_task = $values['task'];
         $contributeTasks = CRM_Contribute_Task::tasks();
-        $this->assign( 'taskName', $contributeTasks[$this->_task] );
+        $form->assign( 'taskName', $contributeTasks[$form->_task] );
 
         $ids = array();
         if ( $values['radio_ts'] == 'ts_sel' ) {
@@ -102,29 +108,35 @@ class CRM_Contribute_Form_Task extends CRM_Core_Form
                 }
             }
         } else {
-            $queryParams =  $this->get( 'queryParams' );
-            $query       =& new CRM_Contact_BAO_Query( $queryParams, null, null, false, false, 
+            $queryParams =  $form->get( 'queryParams' );
+            $query       = new CRM_Contact_BAO_Query( $queryParams, null, null, false, false, 
                                                        CRM_Contact_BAO_Query::MODE_CONTRIBUTE);
             $result = $query->searchQuery(0, 0, null);
             while ($result->fetch()) {
                 $ids[] = $result->contribution_id;
             }
-            $this->assign( 'totalSelectedContributions', $this->get( 'rowCount' ) );
+            $form->assign( 'totalSelectedContributions', $form->get( 'rowCount' ) );
         }
 
         if ( ! empty( $ids ) ) {
-            $this->_componentClause =
+            $form->_componentClause =
                 ' civicrm_contribution.id IN ( ' .
                 implode( ',', $ids ) . ' ) ';
             
-            $this->assign( 'totalSelectedContributions', count( $ids ) );
+            $form->assign( 'totalSelectedContributions', count( $ids ) );
         }
 
-        $this->_contributionIds = $this->_componentIds = $ids;
+        $form->_contributionIds = $form->_componentIds = $ids;
 
         //set the context for redirection for any task actions
-        $session =& CRM_Core_Session::singleton( );
-        $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/contribute/search', 'force=1' ) );
+        $session = CRM_Core_Session::singleton( );
+        
+        $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $form );
+        require_once 'CRM/Utils/Rule.php';
+        $urlParams = 'force=1';
+        if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
+        
+        $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/contribute/search', $urlParams ) );
     }
 
     /**

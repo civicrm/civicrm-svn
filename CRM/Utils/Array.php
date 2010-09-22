@@ -1,15 +1,15 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -17,7 +17,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -27,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -172,21 +173,14 @@ class CRM_Utils_Array {
 
         $a3 = array( );
         foreach ( $a1 as $key => $value) {
-            if ( array_key_exists($key, $a2) ) {
+            if ( array_key_exists($key, $a2) &&
+                 is_array($a2[$key]) && is_array($a1[$key]) ) {
                 $a3[$key] = array_merge($a1[$key], $a2[$key]);
             } else {
                 $a3[$key] = $a1[$key];
             }
         }
        
-        foreach ( $a2 as $key => $value) {
-            if ( array_key_exists($key, $a1) ) {
-                // already handled in above loop
-                continue;
-            }
-            $a3[$key] = $a2[$key];
-        }
-
         foreach ( $a2 as $key => $value) {
             if ( array_key_exists($key, $a1) ) {
                 // already handled in above loop
@@ -337,6 +331,7 @@ class CRM_Utils_Array {
      *  @static
      */
     static function crmIsEmptyArray( $array = array( ) ) {
+        if ( !is_array( $array ) ) return true;
         foreach ( $array as $element ) {
             if ( is_array( $element ) ) {
                 if ( !self::crmIsEmptyArray($element) ) {

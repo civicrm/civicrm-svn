@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -36,6 +37,7 @@
 require_once 'CRM/Report/Form.php';
 require_once 'CRM/Event/PseudoConstant.php';
 require_once 'CRM/Core/OptionGroup.php';
+require_once 'CRM/Event/BAO/Participant.php';
 
 class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
 
@@ -52,6 +54,9 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
                                 array( 'title'     => ts( 'Participant Name' ),
                                        'required'  => true,
                                        'no_repeat' => true ),
+                                'id'  => 
+                                array( 'no_display' => true,
+                                       'required'   => true, ),
                                 ),
                          'grouping'  => 'contact-fields',
                          'filters' =>             
@@ -104,7 +109,7 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
                          array( 'event_id'                  => array( 'name'         => 'event_id',
                                                                       'title'        => ts( 'Event' ),
                                                                       'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-                                                                      'options'      => CRM_Event_PseudoConstant::event( ), ), 
+                                                                      'options'      => CRM_Event_PseudoConstant::event( null, null, "is_template IS NULL OR is_template = 0" ), ),
                                 
                                 'sid'                       => array( 'name'         => 'status_id',
                                                                       'title'        => ts( 'Participant Status' ),
@@ -193,7 +198,7 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
         $this->_select = "SELECT " . implode( ', ', $select ) . " ";
     }
     
-    static function formRule( &$fields, &$files, $self ) {  
+    static function formRule( $fields, $files, $self ) {  
         $errors = $grouping = array( );
         return $errors;
     }
@@ -202,9 +207,12 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
         $this->_from = "
         FROM civicrm_participant {$this->_aliases['civicrm_participant']}
              LEFT JOIN civicrm_event {$this->_aliases['civicrm_event']} 
-                    ON ({$this->_aliases['civicrm_event']}.id = {$this->_aliases['civicrm_participant']}.event_id )
+                    ON ({$this->_aliases['civicrm_event']}.id = {$this->_aliases['civicrm_participant']}.event_id ) AND 
+                       ({$this->_aliases['civicrm_event']}.is_template IS NULL OR  
+                        {$this->_aliases['civicrm_event']}.is_template = 0)
              LEFT JOIN civicrm_contact {$this->_aliases['civicrm_contact']} 
                     ON ({$this->_aliases['civicrm_participant']}.contact_id  = {$this->_aliases['civicrm_contact']}.id  )
+             {$this->_aclFrom}
              LEFT JOIN civicrm_address {$this->_aliases['civicrm_address']}
                     ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_address']}.contact_id AND 
                        {$this->_aliases['civicrm_address']}.is_primary = 1 
@@ -226,7 +234,7 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
                         $to       = CRM_Utils_Array::value( "{$fieldName}_to"      , $this->_params );
                         
                         if ( $relative || $from || $to ) {
-                            $clause = $this->dateClause( $field['name'], $relative, $from, $to );
+                            $clause = $this->dateClause( $field['name'], $relative, $from, $to, $field['type'] );
                         }
                     } else { 
                         $op = CRM_Utils_Array::value( "{$fieldName}_op", $this->_params );
@@ -248,9 +256,12 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
         }
         
         if ( empty( $clauses ) ) {
-            $this->_where = "WHERE ( 1 ) ";
+            $this->_where = "WHERE {$this->_aliases['civicrm_participant']}.is_test = 0 ";
         } else {
-            $this->_where = "WHERE " . implode( ' AND ', $clauses );
+            $this->_where = "WHERE {$this->_aliases['civicrm_participant']}.is_test = 0 AND " . implode( ' AND ', $clauses );
+        }
+        if ( $this->_aclWhere ) {
+            $this->_where .= " AND {$this->_aclWhere} ";
         }
     }
 
@@ -268,8 +279,13 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
                     }
                 }
             }
-            $this->_groupBy = "ORDER BY " . implode( ', ', $this->_groupBy ) ;
         } 
+        
+        if ( !empty( $this->_groupBy ) ) {
+            $this->_groupBy = "ORDER BY " . implode( ', ', $this->_groupBy )  . ", {$this->_aliases['civicrm_contact']}.sort_name";
+        } else {
+            $this->_groupBy = "ORDER BY {$this->_aliases['civicrm_contact']}.sort_name";
+        }
     }
 
     function postProcess( ) {
@@ -277,6 +293,8 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
         // get ready with post process params
         $this->beginPostProcess( );
 
+        // get the acl clauses built before we assemble the query
+        $this->buildACLClause( $this->_aliases['civicrm_contact'] );
         // build query
         $sql = $this->buildQuery( true );
 
@@ -342,6 +360,28 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
                     $rows[$rowNum]['civicrm_participant_role_id'] = 
                         CRM_Event_PseudoConstant::participantRole( $value, false );
                 }
+                $entryFound = true;
+            }
+            
+            // Handel value seperator in Fee Level 
+            if ( array_key_exists('civicrm_participant_participant_fee_level', $row) ) {
+                if ( $value = $row['civicrm_participant_participant_fee_level'] ) {
+                    CRM_Event_BAO_Participant::fixEventLevel( $value );
+                    $rows[$rowNum]['civicrm_participant_participant_fee_level'] = $value;
+                }
+                $entryFound = true;
+            }
+
+            // Convert display name to link 
+            if ( array_key_exists( 'civicrm_contact_display_name', $row ) && 
+                 $rows[$rowNum]['civicrm_contact_display_name'] && 
+                 array_key_exists( 'civicrm_contact_id', $row ) ) {
+                $url = CRM_Utils_System::url( "civicrm/contact/view"  , 
+                                              'reset=1&cid=' . $row['civicrm_contact_id'],
+                                              $this->_absoluteUrl );
+                $rows[$rowNum]['civicrm_contact_display_name_link' ] = $url;
+                $rows[$rowNum]['civicrm_contact_display_name_hover'] = 
+                    ts("View Contact Summary for this Contact.");
                 $entryFound = true;
             }
             

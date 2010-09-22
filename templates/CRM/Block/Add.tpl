@@ -1,3 +1,28 @@
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
 <div id="crm-quick-create">
 <form action="{$postURL}" method="post">
 
@@ -24,15 +49,15 @@
         <label for="qa_email">{ts}Email:{/ts}</label>
     </div>
     <div>
-        <input type="text" name="location[1][email][1][email]" id="qa_email" class="form-text" maxlength="64" />
+        <input type="text" name="email[1][email]" id="qa_email" class="form-text" maxlength="64" />
     </div>
 
-    <input type="hidden" name="location[1][location_type_id]" value="{$primaryLocationType}" />
-    <input type="hidden" name="location[1][is_primary]" value="1" />
+    <input type="hidden" name="email[1][location_type_id]" value="{$primaryLocationType}" />
+    <input type="hidden" name="email[1][is_primary]" value="1" />
     <input type="hidden" name="ct" value="Individual" />
 </div>
 
-<div class="form-item"><input type="submit" name="_qf_Edit_next" value="{ts}Save{/ts}" class="form-submit" /></div>
+<div class="form-item"><input type="submit" name="_qf_Contact_next" value="{ts}Save{/ts}" class="form-submit" /></div>
 
 </form>
 </div>

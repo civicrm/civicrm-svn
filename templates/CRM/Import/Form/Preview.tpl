@@ -1,124 +1,77 @@
-{if $config->userFramework ne 'Joomla'}
-<script type="text/javascript">
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
+<div class="crm-block crm-form-block crm-import-preview-form-block">
+
 {literal}
-cj(document).ready(function() {
-    var imageBase = "{/literal}{$config->resourceBase}{literal}packages/jquery/plugins/images/";
+<script type="text/javascript">
+function setIntermediate( ) {
+	var dataUrl = "{/literal}{$statusUrl}{literal}";
+	cj.getJSON( dataUrl, function( response ) {
+	   var dataStr = response.toString();
+	   var result  = dataStr.split(",");
+	   cj("#intermediate").html( result[1] );
+	   cj("#importProgressBar").progressBar( result[0] );
+	});
+}
+
+function pollLoop( ){
+	setIntermediate( );
+	window.setTimeout( pollLoop, 10*1000 ); // 10 sec
+}
+
+function verify( ) {
+    if (! confirm('{/literal}{ts}Are you sure you want to Import now{/ts}{literal}?') ) {
+        return false;
+    }
+	
+	cj("#id-processing").show( ).dialog({
+		modal         : true,
+		width         : 350,
+		height        : 160,
+		resizable     : false,
+		bgiframe      : true,
+		draggable     : true,
+		closeOnEscape : false,
+		overlay       : { opacity: 0.5, background: "black" },
+		open          : function ( ) {
+		    cj("#id-processing").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();
+		}
+	});
+	
+	var imageBase = "{/literal}{$config->resourceBase}{literal}packages/jquery/plugins/images/";
     cj("#importProgressBar").progressBar({
         boxImage:       imageBase + 'progressbar.gif',
         barImage: { 0 : imageBase + 'progressbg_red.gif',
                     20: imageBase + 'progressbg_orange.gif',
                     50: imageBase + 'progressbg_yellow.gif',
                     70: imageBase + 'progressbg_green.gif'
-                  },
-	  });
-});
-{/literal}
-</script>
-
-<script type="text/javascript">
-  {literal}
-    var finished = 0;
-
-    setFinished = function(data, ioArgs) {
-        var finished = 1;
-        {/literal}
-        if ( data.match( 'unexpected error' ) ) {ldelim}
-            var prog = document.getElementById('error_status');
-            prog.innerHTML = "<p>We encountered an unknown error in setFinished: " + data + "</p>";
-            var ok = confirm( 'Would you like to reload this page and try again?' );
-            if (ok) {ldelim}
-                location.href = "{crmURL p='civicrm/import/contact' q='_qf_Preview_display=true' h=0}";
-            {rdelim}
-        {rdelim} else {ldelim}
-            location.href = "{crmURL p='civicrm/import/contact' q='_qf_Summary_display=true' h=0}";
-        {rdelim}
-        return data;
-        {literal}
-    }
-
-    setError = function(data, ioArgs){
-        var prog = document.getElementById('error_status');
-        prog.innerHTML = "<p>We encountered an unknown error in setError: " + data + "</p>";
-        finished = 1;
-        return data;
-    }
-
-    setIntermediate = function( ) {
-        var dataUrl = {/literal}"{crmURL p='civicrm/ajax/status' q="id=$statusID" h=0 }"{literal}
-       
-        cj.getJSON( dataUrl, function( response ) {
-           var inter = document.getElementById("intermediate");
-           var dataStr = response.toString();
-           var result  = dataStr.split(",");
-           inter.innerHTML = result[1];
-	   cj("#importProgressBar").css( 'display', 'block' );
-	   cj("#importProgressBar").progressBar( result[0] );
-        });
-    }
-
-    submitForm = function( e ) {
-        dojo.stopEvent( e );
-
-        // Disable Import button
-        if (document.getElementById) {
-            obj = document.getElementsByName('_qf_Preview_next')[0];
-            if (obj.value != null) {
-                obj.value = "Processing...";
-                obj.disabled = true;
-            }
-            obj = document.getElementsByName('_qf_Preview_cancel')[0];
-            if (obj.value != null) {
-                obj.disabled = true;
-
-            }
-            obj = document.getElementsByName('_qf_Preview_back')[0];
-            if (obj.value != null) {
-                obj.disabled = true;
-            }
-        }
-
-        hide('help');
-        hide('preview-info');
-        show('id-processing');
-
-        var kw = {
-            {/literal}
-            url: "{crmURL p='civicrm/import/contact' h=0}",
-            {literal}
-            form: dojo.byId("Preview"),
-            handleAs: "text",
-            load: setFinished,
-            error: setError,
-        };
-        
-        dojo.xhrPost( kw );
-        pollLoop( );
-    }
-
-    pollLoop = function(){
-        setIntermediate();
-        if ( ! finished ) {
-            window.setTimeout( pollLoop,10*1000); // 10 sec
-        }
-    }
-
-     dojo.addOnLoad( function( ) {
-       dojo.connect(dojo.byId("Preview"), "onsubmit", "submitForm" );
-     } );
-
-    {/literal}
-</script>
-{/if}
-
-{literal}
-<script type="text/javascript">
-function verify( )
-{
-    var ok = confirm('Are you sure you want to Import now?');
-    if (!ok) {
-        return false;
-    }
-    return ok;
+                  }
+	}); 
+	cj("#importProgressBar").show( );
+	pollLoop( );
 }
 </script>
 {/literal}
@@ -128,8 +81,7 @@ function verify( )
 
  {* WizardHeader.tpl provides visual display of steps thru the wizard as well as title for current step *}
  {include file="CRM/common/WizardHeader.tpl"}
- 
- <div id="help">
+<div id="help">
     <p>
     {ts}The information below previews the results of importing your data in CiviCRM. Review the totals to ensure that they represent your expected results.{/ts}         
     </p>
@@ -147,21 +99,15 @@ function verify( )
     {/if}
     
     <p>{ts}Click 'Import Now' if you are ready to proceed.{/ts}</p>
- </div>
-
-{if $config->userFramework ne 'Joomla'}
+</div> 
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div> 
 {* Import Progress Bar and Info *}
-<div id="id-processing">
-<h3>Importing records...</h3>
-<br />
+<div id="id-processing" class="hiddenElement">
+	<h3>Importing records...</h3><br />
+	<div class="progressBar" id="importProgressBar" style="margin-left:45px;display:none;"></div>
+	<div id="intermediate"></div>
+	<div id="error_status"></div>
 </div>
-
-<div class="progressBar" id="importProgressBar" style="margin-left:45px;display:none;"></div>
-
-<div id="intermediate"></div>
-
-<div id="error_status"></div>
-{/if}
 
 <div id="preview-info">
  {* Summary Preview (record counts) *}
@@ -193,90 +139,116 @@ function verify( )
     </tr>
     {/if}
 
-    <tr><td class="label">{ts}Valid Rows{/ts}</td>
+    <tr>
+		<td class="label">{ts}Valid Rows{/ts}</td>
         <td class="data">{$validRowCount}</td>
         <td class="explanation">{ts}Total rows to be imported.{/ts}</td>
     </tr>
  </table>
-  
 
  {* Table for mapping preview *}
- {include file="CRM/Import/Form/MapTable.tpl}
- 
+ {include file="CRM/Import/Form/MapTable.tpl"}
  
  {* Group options *}
  {* New Group *}
-    <div id="newGroup_show" class="section-hidden section-hidden-border">
-        <a href="#" onclick="hide('newGroup_show'); show('newGroup'); return false;">&raquo; <label>{ts}Add imported records to a new group{/ts}</label>{*$form.newGroup.label*}</a>
-    </div>
+<div id="new-group" class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div> 
+    {ts}Add imported records to a new group{/ts}
+ </div><!-- /.crm-accordion-header -->
+ <div class="crm-accordion-body">
+            <table class="form-layout-compressed">
+             <tr>
+               <td class="description label">{$form.newGroupName.label}</td>
+               <td>{$form.newGroupName.html}</td>
+             </tr>
+             <tr>
+               <td class="description label">{$form.newGroupDesc.label}</td>
+               <td>{$form.newGroupDesc.html}</td>
+             </tr>
+            </table>
+ </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
 
-    <div id="newGroup" class="section-hidden section-hidden-border">
-        <a href="#" onclick="hide('newGroup'); show('newGroup_show'); return false;">&raquo; <label>{ts}Add imported records to a new group{/ts}</label></a>
-        <div class="form-item">
-            <dl>
-            <dt class="description">{$form.newGroupName.label}</dt><dd>{$form.newGroupName.html}</dd>
-            <dt class="description">{$form.newGroupDesc.label}</dt><dd>{$form.newGroupDesc.html}</dd>
-            </dl>
-        </div>
-    </div>
+
       {* Existing Group *}
-    {if $form.groups}
-    <div id="existingGroup_show" class="section-hidden section-hidden-border">
-        <a href="#" onclick="hide('existingGroup_show'); show('existingGroup'); return false;">&raquo; {$form.groups.label}</a>
-    </div>
-    {/if}
 
-    <div id="existingGroup" class="section-hidden section-hidden-border">
-        <a href="#" onclick="hide('existingGroup'); show('existingGroup_show'); return false;">&raquo; {$form.groups.label}</a>
+<div class="crm-accordion-wrapper crm-existing_group-accordion {if $form.groups}crm-accordion-open{else}crm-accordion-closed{/if}">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div>
+  {$form.groups.label}
+ </div><!-- /.crm-accordion-header -->
+ <div class="crm-accordion-body">
+  
         <div class="form-item">
-            <dl>
-            <dt></dt><dd>{$form.groups.html}</dd>
-            </dl>
+        <table><tr><td style="width: 14em;"></td><td>{$form.groups.html}</td></tr></table>
         </div>
-    </div>
+ </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
 
     {* Tag options *}
     {* New Tag *}
-    <div id="newTag_show" class="section-hidden section-hidden-border">
-        <a href="#" onclick="hide('newTag_show'); show('newTag'); return false;">&raquo; <label>{ts}Create a new tag and assign it to imported records{/ts}</label></a>
-    </div> 
-    <div id="newTag" class="section-hidden section-hidden-border">
-        <a href="#" onclick="hide('newTag'); show('newTag_show'); return false;">&raquo; <label>{ts}Create a new tag and assign it to imported records{/ts}</label></a>
-            <div class="form-item">
-            <dl>
-            <dt class="description">{$form.newTagName.label}</dt><dd>{$form.newTagName.html}</dd>
-            <dt class="description">{$form.newTagDesc.label}</dt><dd>{$form.newTagDesc.html}</dd>
-            </dl>
-        </div>
+<div id="new-tag" class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div>
+  {ts}Create a new tag and assign it to imported records{/ts}            
+ </div><!-- /.crm-accordion-header -->
+ <div class="crm-accordion-body">
+  
+  <div class="form-item">
+	<table class="form-layout-compressed">
+           <tr>
+       	      <td class="description label">{$form.newTagName.label}</td>
+              <td>{$form.newTagName.html}</td>
+           </tr>
+           <tr>
+	      <td class="description label">{$form.newTagDesc.label}</td>
+              <td>{$form.newTagDesc.html}</td>
+           </tr>
+        </table>
     </div>
+ </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
     {* Existing Tag Imported Contact *}
 
-    <div id="tag_show" class="section-hidden section-hidden-border">
-        <a href="#" onclick="hide('tag_show'); show('tag'); return false;">&raquo; <label>{ts}Tag imported records{/ts}</label></a>
-    </div>
+<div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div>
+  {ts}Tag imported records{/ts}
+</div><!-- /.crm-accordion-header -->
+ <div class="crm-accordion-body">
 
-    <div id="tag" class="section-hidden section-hidden-border">
-        <a href="#" onclick="hide('tag'); show('tag_show'); return false;">&raquo; <label>{ts}Tag imported records{/ts}</label></a>
-        <dl>
-            <dt></dt><dd class="listing-box" style="margin-bottom: 0em; width: 15em;">
-           {foreach from=$form.tag item="tag_val"} 
-            <div>{$tag_val.html}</div>
-            {/foreach}
-            </dd>
-        </dl>
-    </div>
+        <table class="form-layout-compressed">
+            <tr><td style="width: 14em;"></td>
+             <td class="listing-box" style="margin-bottom: 0em; width: 15em;">
+				{foreach from=$form.tag item="tag_val"} 
+					<div>{$tag_val.html}</div>
+				{/foreach}
+            </td>
+          </tr>
+        </table>
+ </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
 </div> {* End of preview-info div. We hide this on form submit. *}
 
-<div id="crm-submit-buttons">
-   {$form.buttons.html}
+<div class="crm-submit-buttons">
+   {include file="CRM/common/formButtons.tpl" location="bottom"}
+</div>
 </div>
 
+{literal}
 <script type="text/javascript">
-{if $config->userFramework ne 'Joomla'}
-hide('id-processing');
-{/if}
-hide('newGroup');
-hide('existingGroup');
-hide('newTag');
-hide('tag');
+cj(function() {
+   cj().crmaccordions(); 
+});
+
+{/literal}{if $invalidGroupName}{literal}
+cj("#new-group").removeClass( 'crm-accordion-closed' ).addClass( 'crm-accordion-open' );
+{/literal}{/if}{literal}
+
+{/literal}{if $invalidTagName}{literal}
+cj("#new-tag").removeClass( 'crm-accordion-closed' ).addClass( 'crm-accordion-open' );
+{/literal}{/if}{literal}
+
 </script>
+{/literal} 

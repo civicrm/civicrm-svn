@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -80,7 +81,7 @@ class CRM_Contact_Form_Task_PickProfile extends CRM_Contact_Form_Task {
          */
         parent::preProcess( );
     
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $this->_userContext = $session->readUserContext( );
     
         $validate = false;
@@ -109,24 +110,25 @@ class CRM_Contact_Form_Task_PickProfile extends CRM_Contact_Form_Task {
      */
     function buildQuickForm( ) 
     {
-        CRM_Utils_System::setTitle( ts('Batch Profile Update') );
-        $types    = array();
-        foreach($this->_contactIds as $id) {
-            $types[]    = CRM_Contact_BAO_Contact::getContactType($id);
-            break;
-        }
+        CRM_Utils_System::setTitle( ts('Batch Profile Update for Contact') );
+        
         if ( CRM_Core_Permission::access( 'Quest' ) ) {
-            $types['Student'] = 'Student';            
+            $this->_contactTypes['Student'] = 'Student';            
+        }
+                
+        foreach($this->_contactIds as $id) {
+            $this->_contactTypes   = CRM_Contact_BAO_Contact::getContactTypes( $id );
         }
         
         //add Contact type profiles
-        $types[] = 'Contact';
-
+        $this->_contactTypes[] = 'Contact';
+        
         require_once "CRM/Core/BAO/UFGroup.php";
-        $profiles = CRM_Core_BAO_UFGroup::getProfiles($types);
-
+        $profiles = CRM_Core_BAO_UFGroup::getProfiles($this->_contactTypes);
+        
         if ( empty( $profiles ) ) {
-            CRM_Core_Session::setStatus("The contact type selected for Batch Update do not have corresponding profiles. Please make sure that {$types[0]} has a profile and try again." );
+            $types = implode( 'or', $this->_contactTypes );
+            CRM_Core_Session::setStatus("The contact type selected for Batch Update do not have corresponding profiles. Please make sure that {$types} has a profile and try again." );
             CRM_Utils_System::redirect( $this->_userContext );
         }
         $ufGroupElement = $this->add('select', 'uf_group_id', ts('Select Profile'), array( '' => ts('- select profile -')) + $profiles, true);
@@ -154,7 +156,7 @@ class CRM_Contact_Form_Task_PickProfile extends CRM_Contact_Form_Task {
      * @static
      * @access public
      */
-    static function formRule( &$fields ) 
+    static function formRule( $fields ) 
     {
         require_once "CRM/Core/BAO/UFField.php";
         if ( CRM_Core_BAO_UFField::checkProfileType( $fields['uf_group_id'] ) ) {

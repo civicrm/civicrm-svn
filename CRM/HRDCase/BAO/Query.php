@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -92,16 +93,17 @@ class CRM_Case_BAO_Query
         switch( $name ) {
             
         case 'case_subject':
-            $value = strtolower(CRM_Core_DAO::escapeString(trim($value)));
+            $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
+            $value = $strtolower(CRM_Core_DAO::escapeString(trim($value)));
             $query->_where[$grouping][] = "civicrm_case.subject $op '{$value}'";
             $query->_qill[$grouping ][] = ts( 'Case Subject %2 %1', array( 1 => $value, 2 => $op) );
             $query->_tables['civicrm_case'] = $query->_whereTables['civicrm_case'] = 1;
             return;
 
         case 'case_status_id':
-            require_once 'CRM/Core/OptionGroup.php' ;
-            $caseStatus = CRM_Core_OptionGroup::values('case_status');
-
+            require_once 'CRM/Case/PseudoConstant.php';
+            $caseStatus = CRM_Case_PseudoConstant::caseStatus( );
+            
             $query->_where[$grouping][] = "civicrm_case.status_id {$op} $value ";
 
             $value = $caseStatus[$value];
@@ -110,8 +112,8 @@ class CRM_Case_BAO_Query
             return;
             
         case 'case_type_id':
-            require_once 'CRM/Core/OptionGroup.php' ;
-            $caseType = CRM_Core_OptionGroup::values('case_type');
+            require_once 'CRM/Case/PseudoConstant.php';
+            $caseType = CRM_Case_PseudoConstant::caseType( );
             $names = array( );
             foreach ( $value as $id => $val ) {
                 $names[] = $caseType[$val];
@@ -226,13 +228,15 @@ class CRM_Case_BAO_Query
      */  
     static function buildSearchForm( &$form ) 
     {
-        $config =& CRM_Core_Config::singleton( );
-        require_once 'CRM/Core/OptionGroup.php';
-        $caseType = CRM_Core_OptionGroup::values('case_type');
+        $config = CRM_Core_Config::singleton( );
+        
+        require_once 'CRM/Case/PseudoConstant.php';
+        $caseType = CRM_Case_PseudoConstant::caseType( );
+        
         $form->addElement('select', 'case_type_id',  ts( 'Case Type' ),  
                           $caseType, array("size"=>"5",  "multiple"));
         
-        $caseStatus = CRM_Core_OptionGroup::values('case_status'); 
+        $caseStatus = CRM_Case_PseudoConstant::caseStatus( );
         $form->add('select', 'case_status_id',  ts( 'Case Status' ),  
                    array( '' => ts( '- select -' ) ) + $caseStatus );
         

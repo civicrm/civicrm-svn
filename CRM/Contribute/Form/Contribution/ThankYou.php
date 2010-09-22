@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -51,6 +52,7 @@ class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_Cont
         parent::preProcess( );
 
         $this->_params = $this->get( 'params' );
+        $this->_lineItem = $this->get( 'lineItem' );
         $is_deductible = $this->get('is_deductible');
         $this->assign('is_deductible'        , $is_deductible);
         $this->assign( 'thankyou_title'      , $this->_values['thankyou_title'] );
@@ -94,7 +96,9 @@ class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_Cont
             require_once 'CRM/Contribute/BAO/Premium.php';  
             CRM_Contribute_BAO_Premium::buildPremiumBlock( $this , $this->_id ,false ,$productID, $option);
         }
-
+        
+        $this->assign( 'lineItem', $this->_lineItem );
+        $this->assign( 'priceSetID', $this->_priceSetId );
         $params = $this->_params;
      
         $honor_block_is_active = $this->get( 'honor_block_is_active'); 
@@ -123,11 +127,7 @@ class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_Cont
                 }
             }
         }
-        // Link (button) for users to create their own Personal Campaign page
-        if ( isset( $this->_linkText) ) {
-            $this->assign( 'linkTextUrl', $linkTextUrl );
-            $this->assign( 'linkText', $linkText );
-        } 
+        
         if ( $membershipTypeID ) {
             $transactionID     = $this->get( 'membership_trx_id' );
             $membershipAmount  = $this->get( 'membership_amount' );
@@ -169,22 +169,20 @@ class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_Cont
 
         foreach ($fields as $name => $dontCare ) {
             if ( isset( $contact[$name] ) ) {
+                $defaults[$name] = $contact[$name];
                 if ( substr( $name, 0, 7 ) == 'custom_' ) {
-                    $id = substr( $name, 7 );
-                    $defaults[$name] = CRM_Core_BAO_CustomField::getDefaultValue( $contact[$name],
-                                                                                  $id,
-                                                                                  $options );
-                } else {
-                    $defaults[$name] = $contact[$name];
-                    if ( $name == 'greeting_type' ) {   
-                        if ( $defaults['greeting_type'] ==  $this->_greetingTypeValue ) {
-                            $defaults['custom_greeting'] = $contact['custom_greeting'];
-                        }
+                    $timeField = "{$name}_time";
+                    if ( isset( $contact[ $timeField ] ) ) {
+                        $defaults[ $timeField ] = $contact[ $timeField ];
                     }
+                } else if ( in_array($name, array('addressee', 'email_greeting', 'postal_greeting'))
+                            && CRM_Utils_Array::value( $name.'_custom', $contact ) ) { 
+                    $defaults[$name.'_custom'] = $contact[$name.'_custom'];
                 } 
             }
         }
 
+        $this->_submitValues = array_merge( $this->_submitValues, $defaults );
         $this->setDefaults( $defaults );
         require_once 'CRM/Friend/BAO/Friend.php';
         $values['entity_id'] = $this->_id;
@@ -194,7 +192,7 @@ class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_Cont
         $tellAFriend = false;
         if ( $this->_pcpId ) {
             if ( $this->_pcpBlock['is_tellfriend_enabled'] ) {
-                $this->assign( 'friendText', 'Tell a Friend' );
+                $this->assign( 'friendText', ts('Tell a Friend') );
                 $subUrl = "eid={$this->_pcpId}&blockId={$this->_pcpBlock['id']}&page=pcp";
                 $tellAFriend = true;
             }

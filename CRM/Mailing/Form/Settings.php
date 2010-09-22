@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -38,6 +39,19 @@
  */
 class CRM_Mailing_Form_Settings extends CRM_Core_Form 
 {
+    /** 
+     * Function to set variables up before form is built 
+     *                                                           
+     * @return void 
+     * @access public 
+     */ 
+    public function preProcess()  
+    {
+        //when user come from search context. 
+        require_once 'CRM/Contact/Form/Search.php';
+        $this->_searchBasedMailing = CRM_Contact_Form_Search::isSearchContext( $this->get( 'context' ) );
+    }
+    
     /**
      * This function sets the default values for the form.
      * the default values are retrieved from the database
@@ -68,6 +82,10 @@ class CRM_Mailing_Form_Settings extends CRM_Core_Form
             $dao =&new  CRM_Mailing_DAO_Mailing();
             $dao->id = $mailingID; 
             $dao->find(true);
+            // override_verp must be flipped, as in 3.2 we reverted
+            // its meaning to ‘should CiviMail manage replies?’ – i.e.,
+            // ‘should it *not* override Reply-To: with VERP-ed address?’
+            $dao->override_verp = !$dao->override_verp;
             $dao->storeValues($dao, $defaults);
         }
         return $defaults;
@@ -84,8 +102,11 @@ class CRM_Mailing_Form_Settings extends CRM_Core_Form
     {
         require_once 'CRM/Mailing/PseudoConstant.php';
 
+        $this->addElement('checkbox', 'override_verp', ts('Track Replies?'));
+        $defaults['override_verp'] = defined('CIVICRM_TRACK_CIVIMAIL_REPLIES') ? CIVICRM_TRACK_CIVIMAIL_REPLIES : false;
+
         $this->add('checkbox', 'forward_replies', ts('Forward Replies?'));
-        $defaults['forward_replies'] = true;
+        $defaults['forward_replies'] = false;
         
         $this->add('checkbox', 'url_tracking', ts('Track Click-throughs?'));
         $defaults['url_tracking'] = true;
@@ -121,7 +142,7 @@ class CRM_Mailing_Form_Settings extends CRM_Core_Form
                           array ( 'type'      => 'cancel',
                                   'name'      => ts('Cancel') ),
                           );
-        if ( $this->get( 'context' ) == 'search' && $this->get( 'ssID' ) ) {
+        if ( $this->_searchBasedMailing && $this->get( 'ssID' ) ) {
             $buttons = array( array ( 'type'      => 'back',
                                       'name'      => ts('<< Previous') ),
                               array ( 'type'      => 'next',
@@ -142,7 +163,7 @@ class CRM_Mailing_Form_Settings extends CRM_Core_Form
         $params = $ids       = array( );
         
         $uploadParams        = array('reply_id', 'unsubscribe_id', 'optout_id', 'resubscribe_id');
-        $uploadParamsBoolean = array('forward_replies', 'url_tracking', 'open_tracking', 'auto_responder');
+        $uploadParamsBoolean = array('override_verp', 'forward_replies', 'url_tracking', 'open_tracking', 'auto_responder');
        
         $qf_Settings_submit = $this->controller->exportValue($this->_name, '_qf_Settings_submit');
         
@@ -159,6 +180,11 @@ class CRM_Mailing_Form_Settings extends CRM_Core_Form
             }
             $this->set($key, $this->controller->exportvalue($this->_name, $key));
         }
+
+        // override_verp must be flipped, as in 3.2 we reverted
+        // its meaning to ‘should CiviMail manage replies?’ – i.e.,
+        // ‘should it *not* override Reply-To: with VERP-ed address?’
+        $params['override_verp'] = !$params['override_verp'];
         
         $ids['mailing_id']    = $this->get('mailing_id');
         
@@ -170,8 +196,7 @@ class CRM_Mailing_Form_Settings extends CRM_Core_Form
             //when user perform mailing from search context 
             //redirect it to search result CRM-3711.
             $ssID    = $this->get( 'ssID' );
-            $context = $this->get( 'context' );
-            if ( $ssID && $context == 'search' ) {
+            if ( $ssID && $this->_searchBasedMailing ) {
                 if ( $this->_action == CRM_Core_Action::BASIC ) {
                     $fragment = 'search';
                 } else if ( $this->_action == CRM_Core_Action::PROFILE ) {
@@ -181,13 +206,19 @@ class CRM_Mailing_Form_Settings extends CRM_Core_Form
                 } else {
                     $fragment = 'search/custom';
                 }
+
+                $context = $this->get( 'context' );
+                if ( !CRM_Contact_Form_Search::isSearchContext( $context ) ) $context = 'search';
+                $urlParams = "force=1&reset=1&ssID={$ssID}&context={$context}";
+                $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
+                if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
                 
                 $draftURL = CRM_Utils_System::url( 'civicrm/mailing/browse/unscheduled', 'scheduled=false&reset=1' );
                 $status = ts("Your mailing has been saved. You can continue later by clicking the 'Continue' action to resume working on it.<br /> From <a href='%1'>Draft and Unscheduled Mailings</a>.", array( 1 => $draftURL ) );
                 CRM_Core_Session::setStatus( $status );
                 
                 //replace user context to search.
-                $url = CRM_Utils_System::url( 'civicrm/contact/' . $fragment, "force=1&reset=1&ssID={$ssID}" );
+                $url = CRM_Utils_System::url( 'civicrm/contact/' . $fragment, $urlParams );
                 CRM_Utils_System::redirect( $url );
             } else { 
                 $status = ts("Your mailing has been saved. Click the 'Continue' action to resume working on it.");

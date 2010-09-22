@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -50,7 +51,8 @@ abstract class CRM_Member_Import_Parser {
         CONFLICT        =  8,
         STOP            = 16,
         DUPLICATE       = 32,
-        MULTIPLE_DUPE   = 64;
+        MULTIPLE_DUPE   = 64,
+        NO_MATCH        = 128;
 
     /**
      * various parser modes
@@ -313,7 +315,7 @@ abstract class CRM_Member_Import_Parser {
             /* trim whitespace around the values */
             $empty = true;
             foreach ($values as $k => $v) {
-                $values[$k] = trim($v, " .\t\r\n");
+                $values[$k] = trim($v, " \t\r\n");
             }
             if ( CRM_Utils_System::isNull( $values ) ) {
                 continue;
@@ -407,7 +409,7 @@ abstract class CRM_Member_Import_Parser {
                 $headers = array_merge( array(  ts('Line Number'),
                                                 ts('Reason')), 
                                         $customHeaders);
-                $this->_errorFileName = $fileName . '.errors';
+                $this->_errorFileName = self::errorFileName( self::ERROR );
                 
                 self::exportCSV($this->_errorFileName, $headers, $this->_errors  );
             }
@@ -415,7 +417,7 @@ abstract class CRM_Member_Import_Parser {
                 $headers = array_merge( array(  ts('Line Number'),
                                                 ts('Reason')), 
                                         $customHeaders);
-                $this->_conflictFileName = $fileName . '.conflicts';
+                $this->_conflictFileName = self::errorFileName( self::CONFLICT );
                 self::exportCSV($this->_conflictFileName, $headers, $this->_conflicts);
             }
             if ($this->_duplicateCount) {
@@ -423,7 +425,7 @@ abstract class CRM_Member_Import_Parser {
                                                 ts('View Membership URL')),
                                         $customHeaders);
 
-                $this->_duplicateFileName = $fileName . '.duplicates';
+                $this->_duplicateFileName = self::errorFileName( self::DUPLICATE );
                 self::exportCSV($this->_duplicateFileName, $headers, $this->_duplicates);
             }
         }
@@ -451,7 +453,7 @@ abstract class CRM_Member_Import_Parser {
         require_once 'CRM/Member/Import/Field.php';
         foreach ( $fieldKeys as $key ) {
             if ( empty( $this->_fields[$key] ) ) {
-                $this->_activeFields[] =& new CRM_Member_Import_Field( '', ts( '- do not import -' ) );
+                $this->_activeFields[] = new CRM_Member_Import_Field( '', ts( '- do not import -' ) );
             } else {
                 $this->_activeFields[] = clone( $this->_fields[$key] );
             }
@@ -504,30 +506,11 @@ abstract class CRM_Member_Import_Parser {
     function &getActiveFieldParams( ) {
         $params = array( );
         for ( $i = 0; $i < $this->_activeFieldCount; $i++ ) {
-            if ( isset( $this->_activeFields[$i]->_value ) ) {
-                if (isset( $this->_activeFields[$i]->_hasLocationType)) {
-                    if (! isset($params[$this->_activeFields[$i]->_name])) {
-                        $params[$this->_activeFields[$i]->_name] = array();
-                    }
-                    
-                    $value = array(
-                        $this->_activeFields[$i]->_name => 
-                                $this->_activeFields[$i]->_value,
-                        'location_type_id' => 
-                                $this->_activeFields[$i]->_hasLocationType);
-                    
-                    if (isset( $this->_activeFields[$i]->_phoneType)) {
-                        $value['phone_type'] =
-                            $this->_activeFields[$i]->_phoneType;
-                    }
-                    
-                    $params[$this->_activeFields[$i]->_name][] = $value;
-                }
-                if (!isset($params[$this->_activeFields[$i]->_name])) {
-                    if ( !isset($this->_activeFields[$i]->_related) ) {
-                        $params[$this->_activeFields[$i]->_name] = $this->_activeFields[$i]->_value;
-                    }
-                }
+            if ( isset( $this->_activeFields[$i]->_value )
+                 && !isset( $params[$this->_activeFields[$i]->_name] )
+                 && !isset( $this->_activeFields[$i]->_related ) ) {
+                
+                $params[$this->_activeFields[$i]->_name] = $this->_activeFields[$i]->_value;
             }
         }
         return $params;
@@ -571,16 +554,16 @@ abstract class CRM_Member_Import_Parser {
 
     function addField( $name, $title, $type = CRM_Utils_Type::T_INT, $headerPattern = '//', $dataPattern = '//') {
         if ( empty( $name ) ) {
-            $this->_fields['doNotImport'] =& new CRM_Member_Import_Field($name, $title, $type, $headerPattern, $dataPattern);
+            $this->_fields['doNotImport'] = new CRM_Member_Import_Field($name, $title, $type, $headerPattern, $dataPattern);
         } else {
             
             //$tempField = CRM_Contact_BAO_Contact::importableFields('Individual', null );
             $tempField = CRM_Contact_BAO_Contact::importableFields('All', null );
             if (! array_key_exists ($name,$tempField) ) {
-                $this->_fields[$name] =& new CRM_Member_Import_Field($name, $title, $type, $headerPattern, $dataPattern);
+                $this->_fields[$name] = new CRM_Member_Import_Field($name, $title, $type, $headerPattern, $dataPattern);
             } else {
                 require_once 'CRM/Import/Field.php';
-                $this->_fields[$name] =& new CRM_Import_Field( $name, $title, $type, $headerPattern, $dataPattern,
+                $this->_fields[$name] = new CRM_Import_Field( $name, $title, $type, $headerPattern, $dataPattern,
                                                                CRM_Utils_Array::value( 'hasLocationType', $tempField[$name] ) );
             }
                 
@@ -668,7 +651,7 @@ abstract class CRM_Member_Import_Parser {
         foreach ($header as $key => $value) {
             $header[$key] = "\"$value\"";
         }
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $output[] = implode($config->fieldSeparator, $header);
 
         foreach ($data as $datum) {
@@ -706,6 +689,20 @@ abstract class CRM_Member_Import_Parser {
         foreach ($values as $k => $v) {
             $values[$k] = preg_replace("/^$enclosure(.*)$enclosure$/", '$1', $v);
         }
+    }
+
+    function errorFileName( $type ) 
+    {
+        require_once 'CRM/Import/Parser.php';
+        $fileName = CRM_Import_Parser::errorFileName( $type );
+        return $fileName;
+    }
+    
+    function saveFileName( $type ) 
+    {
+        require_once 'CRM/Import/Parser.php';
+        $fileName = CRM_Import_Parser::saveFileName( $type );
+        return $fileName;
     }
 
 }

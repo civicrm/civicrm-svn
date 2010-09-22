@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -61,7 +62,7 @@ class CRM_Core_BAO_OptionGroup extends CRM_Core_DAO_OptionGroup
      */
     static function retrieve( &$params, &$defaults ) 
     {
-        $optionGroup =& new CRM_Core_DAO_OptionGroup( );
+        $optionGroup = new CRM_Core_DAO_OptionGroup( );
         $optionGroup->copyValues( $params );
         if ( $optionGroup->find( true ) ) {
             CRM_Core_DAO::storeValues( $optionGroup, $defaults );
@@ -100,7 +101,7 @@ class CRM_Core_BAO_OptionGroup extends CRM_Core_DAO_OptionGroup
         $params['is_default'] =  CRM_Utils_Array::value( 'is_default', $params, false );
         
         // action is taken depending upon the mode
-        $optionGroup               =& new CRM_Core_DAO_OptionGroup( );
+        $optionGroup               = new CRM_Core_DAO_OptionGroup( );
         $optionGroup->copyValues( $params );;
         
         if ($params['is_default']) {
@@ -127,11 +128,11 @@ class CRM_Core_BAO_OptionGroup extends CRM_Core_DAO_OptionGroup
     {
         // need to delete all option value field before deleting group 
         require_once 'CRM/Core/DAO/OptionValue.php';
-        $optionValue =& new CRM_Core_DAO_OptionValue( );
+        $optionValue = new CRM_Core_DAO_OptionValue( );
         $optionValue->option_group_id = $optionGroupId;
         $optionValue->delete();
 
-        $optionGroup =& new CRM_Core_DAO_OptionGroup( );
+        $optionGroup = new CRM_Core_DAO_OptionGroup( );
         $optionGroup->id = $optionGroupId;
         $optionGroup->delete();
     }
@@ -147,7 +148,7 @@ class CRM_Core_BAO_OptionGroup extends CRM_Core_DAO_OptionGroup
      * @static
      */
     static function getTitle( $optionGroupId ) {
-        $optionGroup               =& new CRM_Core_DAO_OptionGroup( );
+        $optionGroup               = new CRM_Core_DAO_OptionGroup( );
         $optionGroup->id = $optionGroupId;
         $optionGroup->find(true);
         return $optionGroup->name;
@@ -179,6 +180,8 @@ class CRM_Core_BAO_OptionGroup extends CRM_Core_DAO_OptionGroup
             //fix for CRM-3391.
             //as for event we remove 'page' from group name.
             $page = null;
+        } elseif ( $component == 'price' ) {
+            $page = '_field';
         }
 
         $fromGroupName = 'civicrm_' . $component . $page .'.amount.' . $fromId . $discountSuffix;

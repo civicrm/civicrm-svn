@@ -24,7 +24,7 @@ require_once 'CRM/Core/Invoke.php';
 civicrm_invoke( );
 
 function civicrm_init( ) {
-    $config =& CRM_Core_Config::singleton();
+    $config = CRM_Core_Config::singleton();
 
     // this is the front end, so let others know
     $config->userFrameworkFrontend = 1;
@@ -36,11 +36,13 @@ function civicrm_invoke( ) {
 
     // check and ensure that we have a valid session
     if ( ! empty( $_POST ) ) {
-        if ( count( $_SESSION ) <= 1 ||
-             empty( $_SESSION['CiviCRM'] ) ) {
+        // the session should not be empty
+        // however for standalone forms, it will not have any CiviCRM variables in the
+        // session either, so dont check for it
+        if ( count( $_SESSION ) <= 1 ) {
             require_once 'CRM/Utils/System.php';
 
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             CRM_Utils_System::redirect( $config->userFrameworkBaseURL );
         }
     }
@@ -69,9 +71,12 @@ function civicrm_invoke( ) {
         return;
     }
 
+    require_once 'CRM/Utils/System/Joomla.php';
+    CRM_Utils_System_Joomla::addHTMLHead( null, true );
+
     $user = JFactory::getUser( );
     require_once 'CRM/Core/BAO/UFMatch.php';
-    CRM_Core_BAO_UFMatch::synchronize( $user, false, 'Joomla', 'Individual' );
+    CRM_Core_BAO_UFMatch::synchronize( $user, false, 'Joomla', 'Individual', true );
 
     CRM_Core_Invoke::invoke( $args );
 }
@@ -110,7 +115,7 @@ function civicrm_check_permission( $args ) {
     // an event registration page is valid
     if ( in_array( 'CiviEvent', $config->enableComponents ) ) {
         if ( $arg1 == 'event' &&
-             in_array( $arg2, array( 'register', 'info', 'participant', 'ical' ) ) ) {
+             in_array( $arg2, array( 'register', 'info', 'participant', 'ical', 'confirm' ) ) ) {
             return true;
         }
 

@@ -1,32 +1,59 @@
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
 {include file="CRM/common/pager.tpl" location="top"}
 
 {include file="CRM/common/pagerAToZ.tpl"}
 
 <table summary="{ts}Search results listings.{/ts}" class="selector">
   <thead class="sticky">
-  <th scope="col" title="Select All Rows">{$form.toggleSelect.html}</th>
-  {if $context eq 'smog'}
-      <th scope="col">
-        {ts}Status{/ts}
-      </th>
-  {/if}
-  {foreach from=$columnHeaders item=header}
-    <th scope="col">
-    {if $header.sort}
-      {assign var='key' value=$header.sort}
-      {$sort->_response.$key.link}
-    {else}
-      {$header.name}
-    {/if}
-    </th>
-  {/foreach}
+    <tr>
+      <th scope="col" title="Select All Rows">{$form.toggleSelect.html}</th>
+      {if $context eq 'smog'}
+          <th scope="col">
+            {ts}Status{/ts}
+          </th>
+      {/if}
+      {foreach from=$columnHeaders item=header}
+        <th scope="col">
+        {if $header.sort}
+          {assign var='key' value=$header.sort}
+          {$sort->_response.$key.link}
+        {else}
+          {$header.name}
+        {/if}
+        </th>
+      {/foreach}
+    </tr>
   </thead>
 
   {counter start=0 skip=1 print=false}
 
   { if $id }
       {foreach from=$rows item=row}
-        <tr id='rowid{$row.contact_id}' class="status-hold {cycle values="odd-row,even-row"}">
+        <tr id='rowid{$row.contact_id}' class="{cycle values="odd-row,even-row"}">
             {assign var=cbName value=$row.checkbox}
             <td>{$form.$cbName.html}</td>
             {if $context eq 'smog'}
@@ -56,7 +83,7 @@
      {/foreach}
   {else}
       {foreach from=$rows item=row}
-         <tr id='rowid{$row.contact_id}' class="{cycle values="odd-row,even-row"}">
+         <tr id='rowid{$row.contact_id}' class="{cycle values="odd-row,even-row"}" title="{ts}Click contact name to view a summary. Right-click anywhere in the row for an actions menu."{/ts}>
             {assign var=cbName value=$row.checkbox}
             <td>{$form.$cbName.html}</td>
             {if $context eq 'smog'}
@@ -66,7 +93,7 @@
                 {$row.status}</td>
             {/if}
             <td>{$row.contact_type}</td>	
-            <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`"}">{$row.sort_name}</a></td>
+            <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`"}">{if $row.is_deleted}<del>{/if}{$row.sort_name}{if $row.is_deleted}</del>{/if}</a></td>
             {if $action eq 512 or $action eq 256}
               <td>{$row.street_address|mb_truncate:22:"...":true}</td>
               <td>{$row.city}</td>
@@ -91,7 +118,7 @@
 <!-- Context Menu populated as per component and permission-->
 <ul id="contactMenu" class="contextMenu">
 {foreach from=$contextMenu item=value key=key}
-  <li class="{$value.ref}"><a href="#{$key}">{ts}{$value.title}{/ts}</a></li>
+  <li class="{$value.ref}"><a href="#{$value.key}">{$value.title}</a></li>
 {/foreach}
 </ul>
 <script type="text/javascript">
@@ -107,7 +134,7 @@ var contactUrl  = "{/literal}{crmURL p='civicrm/contact/changeaction' q="reset=1
 // Show menu when contact row is right clicked
 cj(".selector tr").contextMenu({
       menu: 'contactMenu'
-    }, function( action, el ){
+    }, function( action, el ) { 
         var contactId = el.attr('id').substr(5);
         switch (action) {
           case 'activity':
@@ -125,10 +152,14 @@ cj(".selector tr").contextMenu({
         }
         eval( 'locationUrl = locationUrl.replace( /changeid/, contactId );');
         var destination = "{/literal}{crmURL q="force=1" h=0}{literal}";
-        window.location = locationUrl + '&destination=' + destination;
+        window.location = locationUrl + '&destination=' + encodeURIComponent(destination);
    });
 });
-
+cj('ul#contactMenu').mouseup( function(e){ 
+   if( e.button !=0 ) {
+    //when right or middle button clicked fire default right click popup
+   }
+});
 {/literal}
 </script>
 {include file="CRM/common/pager.tpl" location="bottom"}

@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -36,6 +37,8 @@
 require_once 'Mail.php';
 require_once 'CRM/Mailing/DAO/Job.php';
 require_once 'CRM/Mailing/DAO/Mailing.php';
+require_once 'CRM/Mailing/BAO/Job.php';
+require_once 'CRM/Mailing/BAO/Mailing.php';
 
 class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 
@@ -56,15 +59,15 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
      * @static
      */
     public static function runJobs($testParams = null) {
-        $job =& new CRM_Mailing_BAO_Job();
+        $job = new CRM_Mailing_BAO_Job();
         
-        $mailing =& new CRM_Mailing_DAO_Mailing();
+        $mailing = new CRM_Mailing_DAO_Mailing();
         
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         $jobTable     = CRM_Mailing_DAO_Job::getTableName();
         $mailingTable = CRM_Mailing_DAO_Mailing::getTableName();
 
-        if (!empty($testParams)) {
+        if ( ! empty( $testParams ) ) {
             $query = "
 SELECT *
   FROM $jobTable
@@ -72,7 +75,8 @@ SELECT *
             $job->query($query);
         } else {
             $currentTime = date( 'YmdHis' );
-            
+            $mailingACL  = CRM_Mailing_BAO_Mailing::mailingACL( 'm' );
+
             /* FIXME: we might want to go to a progress table.. */
             $query = "
 SELECT   j.*
@@ -85,6 +89,7 @@ SELECT   j.*
    AND       j.status = 'Scheduled' )
     OR     ( j.status = 'Running'
    AND       j.end_date IS null ) )
+   AND   {$mailingACL}
 ORDER BY j.scheduled_date,
          j.start_date";
 
@@ -95,11 +100,6 @@ ORDER BY j.scheduled_date,
 
         /* TODO We should parallelize or prioritize this */
         while ($job->fetch()) {
-            // fix for cancel job at run time which is in queue, CRM-4246
-            if ( CRM_Core_DAO::getFieldValue( 'CRM_Mailing_DAO_Job', $job->id, 'status' ) == 'Canceled' ) {
-                continue;
-            }
-            
             $lockName = "civimail.job.{$job->id}";
 
             // get a lock on this job id
@@ -108,6 +108,23 @@ ORDER BY j.scheduled_date,
                 continue;
             }
 
+            // for test jobs we do not change anything, since its on a short-circuit path
+            if ( empty( $testParams ) ) {
+                // we've got the lock, but while we were waiting and processing
+                // other emails, this job might have changed under us
+                // lets get the job status again and check
+                $job->status = CRM_Core_DAO::getFieldValue( 'CRM_Mailing_DAO_Job', 
+                                                            $job->id,
+                                                            'status' );
+
+                if ( $job->status != 'Running' &&
+                     $job->status != 'Scheduled' ) {
+                    // this includes Cancelled and other statuses, CRM-4246
+                    $lock->release( );
+                    continue;
+                }
+            }
+          
             /* Queue up recipients for all jobs being launched */
             if ($job->status != 'Running') {
                 require_once 'CRM/Core/Transaction.php';
@@ -132,7 +149,7 @@ ORDER BY j.scheduled_date,
 
             /* Compose and deliver */
             $isComplete = $job->deliver($mailer, $testParams);
-
+            
             require_once 'CRM/Utils/Hook.php';
             CRM_Utils_Hook::post( 'create', 'CRM_Mailing_DAO_Spool', $job->id, $isComplete);
             
@@ -174,7 +191,7 @@ ORDER BY j.scheduled_date,
     public function queue($testParams = null) {
        
         require_once 'CRM/Mailing/BAO/Mailing.php';
-        $mailing =& new CRM_Mailing_BAO_Mailing();
+        $mailing = new CRM_Mailing_BAO_Mailing();
         $mailing->id = $this->mailing_id;
         if (!empty($testParams)) {
             $mailing->getTestRecipients($testParams);
@@ -203,7 +220,7 @@ ORDER BY j.scheduled_date,
      */
     public function getMailingSize() {
         require_once 'CRM/Mailing/BAO/Mailing.php';
-        $mailing =& new CRM_Mailing_BAO_Mailing();
+        $mailing = new CRM_Mailing_BAO_Mailing();
         $mailing->id = $this->mailing_id;
 
         $recipients =& $mailing->getRecipientsObject($this->id, true);
@@ -223,11 +240,11 @@ ORDER BY j.scheduled_date,
      */
     public function deliver(&$mailer, $testParams =null) {
         require_once 'CRM/Mailing/BAO/Mailing.php';
-        $mailing =& new CRM_Mailing_BAO_Mailing();
+        $mailing = new CRM_Mailing_BAO_Mailing();
         $mailing->id = $this->mailing_id;
         $mailing->find(true);
 
-        $eq =& new CRM_Mailing_Event_BAO_Queue();
+        $eq = new CRM_Mailing_Event_BAO_Queue();
         $eqTable        = CRM_Mailing_Event_BAO_Queue::getTableName();
         $emailTable     = CRM_Core_BAO_Email::getTableName();
         $contactTable   = CRM_Contact_BAO_Contact::getTableName();
@@ -255,7 +272,7 @@ ORDER BY j.scheduled_date,
         $mailsProcessed = 0;
 
         if ( $config == null ) {
-            $config =& CRM_Core_Config::singleton();
+            $config = CRM_Core_Config::singleton();
         }
 
         $job_date = CRM_Utils_Date::isoToMysql( $this->scheduled_date );
@@ -305,7 +322,7 @@ ORDER BY j.scheduled_date,
                 $fields = array( );
             }
         }
-        
+
         $isDelivered = $this->deliverGroup( $fields, $mailing, $mailer, $job_date, $attachments );
         return $isDelivered;
     }
@@ -332,10 +349,15 @@ ORDER BY j.scheduled_date,
             /* Send the mailing */
             $body    =& $message->get();
             $headers =& $message->headers();
+            // make $recipient actually be the *encoded* header, so as not to baffle Mail_RFC822, CRM-5743
+            $recipient = $headers['To'];
             $result = null;
             /* TODO: when we separate the content generator from the delivery
              * engine, maybe we should dump the messages into a table */
-            CRM_Core_Error::ignoreException( );
+
+            // disable error reporting on real mailings (but leave error reporting for tests), CRM-5744
+            if ($job_date) CRM_Core_Error::ignoreException();
+
             if ( is_object( $mailer ) ) {
                 
                 // hack to stop mailing job at run time, CRM-4246.
@@ -371,46 +393,48 @@ ORDER BY j.scheduled_date,
                 CRM_Mailing_Event_BAO_Delivered::create($params);
             }
             
-            // add activity record for every mail that is send
-            $activityTypeID = CRM_Core_OptionGroup::getValue( 'activity_type',
-                                                              'Email',
-                                                              'name' );
-            $session = & CRM_Core_Session::singleton();
             $targetParams[] = $field['contact_id'];
+
             unset( $result );
         }
 
-        // add activity record for every mail that is send
-        $activityTypeID = CRM_Core_OptionGroup::getValue( 'activity_type',
-                                                          'Bulk Email',
-                                                          'name' );
+        if ( ! empty( $targetParams ) ) {
+            // add activity record for every mail that is send
+            $activityTypeID = CRM_Core_OptionGroup::getValue( 'activity_type',
+                                                              'Bulk Email',
+                                                              'name' );
         
-        $activity = array('source_contact_id'    => $mailing->scheduled_id,
-                          'target_contact_id'    => $targetParams,
-                          'activity_type_id'     => $activityTypeID,
-                          'source_record_id'     => $this->mailing_id,
-                          'activity_date_time'   => $job_date,
-                          'subject'              => $mailing->subject,
-                          'status_id'            => 2
-                          );
+            $activity = array('source_contact_id'    => $mailing->scheduled_id,
+                              'target_contact_id'    => $targetParams,
+                              'activity_type_id'     => $activityTypeID,
+                              'source_record_id'     => $this->mailing_id,
+                              'activity_date_time'   => $job_date,
+                              'subject'              => $mailing->subject,
+                              'status_id'            => 2,
+                              'deleteActivityTarget' => false,
+                              );
 
-        //check whether activity is already created for this mailing.
-        //if yes then create only target contact record.   
-        $query  = "
-SELECT id FROM civicrm_activity
-WHERE civicrm_activity.activity_type_id = %1
-      AND civicrm_activity.source_record_id = %2";
+            //check whether activity is already created for this mailing.
+            //if yes then create only target contact record.   
+            $query  = "
+SELECT id 
+FROM   civicrm_activity
+WHERE  civicrm_activity.activity_type_id = %1
+AND    civicrm_activity.source_record_id = %2";
         
-        $queryParams = array( 1 => array( $activityTypeID, 'Integer' ), 2 => array( $this->mailing_id, 'Integer' ) );
-        $activityID  = CRM_Core_DAO::singleValueQuery( $query, $queryParams );    
+            $queryParams = array( 1 => array( $activityTypeID  , 'Integer' ),
+                                  2 => array( $this->mailing_id, 'Integer' ) );
+            $activityID  = CRM_Core_DAO::singleValueQuery( $query,
+                                                           $queryParams );    
         
-        if ( $activityID ) {
-            $activity['id'] = $activityID;  
-        }
+            if ( $activityID ) {
+                $activity['id'] = $activityID;  
+            }
         
-        require_once 'api/v2/Activity.php';
-        if ( is_a( civicrm_activity_create($activity, 'Email'), 'CRM_Core_Error' ) ) {
-            return false;
+            require_once 'api/v2/Activity.php';
+            if ( is_a( civicrm_activity_create($activity, 'Email'), 'CRM_Core_Error' ) ) {
+                return false;
+            }
         }
         
         return true;
@@ -423,8 +447,10 @@ WHERE civicrm_activity.activity_type_id = %1
      * @static
      */
     public static function cancel($mailingId) {
-        $job =& new CRM_Mailing_BAO_Job();
+        $job = new CRM_Mailing_BAO_Job();
         $job->mailing_id = $mailingId;
+        // test mailing should not be included during Cancellation
+        $job->is_test    = 0;
         if ($job->find(true) and in_array($job->status, array('Scheduled', 'Running', 'Paused'))) {
             // fix MySQL dates...
             $job->scheduled_date = CRM_Utils_Date::isoToMysql($job->scheduled_date);

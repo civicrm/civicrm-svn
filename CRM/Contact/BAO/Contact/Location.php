@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -123,12 +124,13 @@ LEFT JOIN civicrm_phone ON ( civicrm_phone.contact_id = civicrm_contact.id )
      * @static
      * @access public
      */
-    static function &getMapInfo( $ids, $locationTypeID = null ) 
+    static function &getMapInfo( $ids, $locationTypeID = null, $imageUrlOnly = false ) 
     {
         $idString = ' ( ' . implode( ',', $ids ) . ' ) ';
         $sql = "
    SELECT civicrm_contact.id as contact_id,
           civicrm_contact.contact_type as contact_type,
+          civicrm_contact.contact_sub_type as contact_sub_type,
           civicrm_contact.display_name as display_name,
           civicrm_address.street_address as street_address,
           civicrm_address.supplemental_address_1 as supplemental_address_1,
@@ -161,19 +163,20 @@ AND civicrm_contact.id IN $idString ";
         $dao =& CRM_Core_DAO::executeQuery( $sql, $params );
 
         $locations = array( );
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         while ( $dao->fetch( ) ) {
             $location = array( );
-            $location['contactID'  ] = $dao->contact_id;
-            $location['displayName'] = addslashes( $dao->display_name );
-            $location['city'       ] = $dao->city;
-            $location['state'      ] = $dao->state;
-            $location['postal_code'] = $dao->postal_code;
-            $location['lat'        ] = $dao->latitude;
-            $location['lng'        ] = $dao->longitude;
+            $location['contactID'   ] = $dao->contact_id;
+            $location['displayName' ] = addslashes( $dao->display_name );
+            $location['city'        ] = $dao->city;
+            $location['state'       ] = $dao->state;
+            $location['postal_code' ] = $dao->postal_code;
+            $location['lat'         ] = $dao->latitude;
+            $location['lng'         ] = $dao->longitude;
+            $location['marker_class'] = $dao->contact_type;
             $address = '';
-
+            
             CRM_Utils_String::append( $address, '<br />',
                                       array( $dao->street_address,
                                              $dao->supplemental_address_1,
@@ -188,7 +191,9 @@ AND civicrm_contact.id IN $idString ";
             $location['url'           ] = CRM_Utils_System::url( 'civicrm/contact/view', 'reset=1&cid=' . $dao->contact_id );
             $location['location_type' ] = $dao->location_type;
             require_once 'CRM/Contact/BAO/Contact/Utils.php';
-            $location['image'] = CRM_Contact_BAO_Contact_Utils::getImage( $dao->contact_type );
+            $location['image'] = 
+                CRM_Contact_BAO_Contact_Utils::getImage( isset( $dao->contact_sub_type ) ? 
+                                                         $dao->contact_sub_type : $dao->contact_type, $imageUrlOnly, $dao->contact_id );
             $locations[] = $location;
         }
         return $locations;

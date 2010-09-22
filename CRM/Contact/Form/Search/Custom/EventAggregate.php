@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -80,17 +81,8 @@ implements CRM_Contact_Form_Search_Interface {
         $events = CRM_Event_BAO_Event::getEvents( true );
         $form->add('select', 'event_id',  ts( 'Event Name' ), array( '' => ts( '- select -' ) ) + $events ) ;
         
-        $form->add( 'date',
-                    'start_date',
-                    ts('Payments Date From'),
-                    CRM_Core_SelectValues::date('custom', 10, 3 ) );
-        $form->addRule('start_date', ts('Select a valid date.'), 'qfDate');
-        
-        $form->add( 'date',
-                    'end_date',
-                    ts('...through'),
-                    CRM_Core_SelectValues::date('custom', 10, 0 ) );
-        $form->addRule('end_date', ts('Select a valid date.'), 'qfDate');
+        $form->addDate('start_date', ts('Payments Date From'), false, array( 'formatType' => 'custom' ) );
+        $form->addDate('end_date', ts('...through'), false, array( 'formatType' => 'custom' ) );
         
         /**
          * If you are using the sample template, this array tells the template fields to render
@@ -128,8 +120,8 @@ implements CRM_Contact_Form_Search_Interface {
                                           $this->_formValues );
         if ( $onLine ) {
             $from .= "         
-        inner join civicrm_financial_trxn
-        on civicrm_financial_trxn.contribution_id = civicrm_participant_payment.contribution_id";
+        inner join civicrm_entity_financial_trxn
+        on (civicrm_entity_financial_trxn.entity_id = civicrm_participant_payment.contribution_id and civicrm_entity_financial_trxn.entity_type='contribution')";
         }
 
         $showPayees = CRM_Utils_Array::value( 'show_payees',
@@ -207,12 +199,12 @@ implements CRM_Contact_Form_Search_Interface {
             $clauses[] = "civicrm_contribution.payment_instrument_id <> 0";
         }
         
-        $startDate = CRM_Utils_Date::format( $this->_formValues['start_date'] );
+        $startDate = CRM_Utils_Date::processDate( $this->_formValues['start_date'] );
         if ( $startDate ) {
             $clauses[] = "civicrm_contribution.receive_date >= $startDate";
         }
         
-        $endDate = CRM_Utils_Date::format( $this->_formValues['end_date'] );
+        $endDate = CRM_Utils_Date::processDate( $this->_formValues['end_date'] );
         if ( $endDate ) {
             $clauses[] = "civicrm_contribution.receive_date <= {$endDate}235959";
         }
@@ -257,8 +249,8 @@ implements CRM_Contact_Form_Search_Interface {
                                           $this->_formValues );
         if ( $onLine ) {
             $from .= "         
-        inner join civicrm_financial_trxn
-        on civicrm_financial_trxn.contribution_id = civicrm_participant_payment.contribution_id";
+        inner join civicrm_entity_financial_trxn
+        on (civicrm_entity_financial_trxn.entity_id = civicrm_participant_payment.contribution_id and civicrm_entity_financial_trxn.entity_type='contribution')";
         }
 
         

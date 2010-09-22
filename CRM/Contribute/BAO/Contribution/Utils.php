@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -63,7 +64,7 @@ class CRM_Contribute_BAO_Contribution_Utils {
         CRM_Core_Payment_Form::mapParams( $form->_bltID, $form->_params, $paymentParams, true );
         
         require_once 'CRM/Contribute/DAO/ContributionType.php';
-        $contributionType =& new CRM_Contribute_DAO_ContributionType( );
+        $contributionType = new CRM_Contribute_DAO_ContributionType( );
         if( isset( $paymentParams['contribution_type'] ) ) {
             $contributionType->id = $paymentParams['contribution_type'];
         } else {
@@ -85,7 +86,7 @@ class CRM_Contribute_BAO_Contribution_Utils {
         
         if ( $form->_values['is_monetary'] && $form->_amount > 0.0 && is_array( $form->_paymentProcessor ) ) {
             require_once 'CRM/Core/Payment.php';
-            $payment =& CRM_Core_Payment::singleton( $form->_mode, 'Contribute', $form->_paymentProcessor );
+            $payment =& CRM_Core_Payment::singleton( $form->_mode, 'Contribute', $form->_paymentProcessor, $form );
         }
         
         //fix for CRM-2062
@@ -139,6 +140,13 @@ class CRM_Contribute_BAO_Contribution_Utils {
                         if( isset( $paymentParams['contribution_source'] ) ) {
                             $form->_params['source'] = $paymentParams['contribution_source'];
                         }
+                        
+                        // get the price set values for receipt.
+                        if ( $form->_priceSetId && $form->_lineItem ) {
+                            $form->_values['lineItem']   = $form->_lineItem;
+                            $form->_values['priceSetID'] = $form->_priceSetId;
+                        }
+                        
                         require_once "CRM/Contribute/BAO/ContributionPage.php";
                         $form->_values['contribution_id'] = $contribution->id;
                         CRM_Contribute_BAO_ContributionPage::sendMail( $contactID,
@@ -150,9 +158,41 @@ class CRM_Contribute_BAO_Contribution_Utils {
             }
         } elseif ( $form->_contributeMode == 'express' ) {
             if ( $form->_values['is_monetary'] && $form->_amount > 0.0 ) {
+				
+				//LCD determine if express + recurring and direct accordingly
+				if ( $paymentParams['is_recur'] == 1 ) {
+					$result =& $payment->createRecurringPayments( $paymentParams );
+				} else {
                 $result =& $payment->doExpressCheckout( $paymentParams );
+				}
+				
             }
         } elseif ( $form->_values['is_monetary'] && $form->_amount > 0.0 ) {
+           
+            if ( $paymentParams['is_recur']  && $form->_contributeMode == 'direct' ) {
+
+                // For recurring contribution, create Contribution Record first.
+                // Contribution ID, Recurring ID and Contact ID needed 
+                // When we get a callback from the payment processor
+
+                $paymentParams['contactID'] =  $contactID;
+                $contribution = CRM_Contribute_Form_Contribution_Confirm::processContribution(
+                                                                                              $form,
+                                                                                              $paymentParams,
+                                                                                              null,
+                                                                                              $contactID,
+                                                                                              $contributionType, 
+                                                                                              true, true, true );
+                
+                $paymentParams['contributionID'    ] = $contribution->id;
+                $paymentParams['contributionTypeID'] = $contribution->contribution_type_id;
+                $paymentParams['contributionPageID'] = $contribution->contribution_page_id;
+                
+                if ( $form->_values['is_recur'] && $contribution->contribution_recur_id ) {
+                    $paymentParams['contributionRecurID'] = $contribution->contribution_recur_id;
+                }
+            }
+            
             $result =& $payment->doDirectPayment( $paymentParams );
         }
         
@@ -164,7 +204,7 @@ class CRM_Contribute_BAO_Contribution_Utils {
             if ( $component !== 'membership' ) {
                 CRM_Core_Error::displaySessionError( $result );
                 CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/contribute/transact', 
-                                                                   '_qf_Main_display=true' ) );
+                                                                   "_qf_Main_display=true&qfKey={$form->_params['qfKey']}" ) );
             }
             $membershipResult[1] = $result;
         } else {
@@ -194,13 +234,13 @@ class CRM_Contribute_BAO_Contribution_Utils {
                                          $form->_params ) ) {
                 $pending = true;
             }
-            
-            $contribution =
-                CRM_Contribute_Form_Contribution_Confirm::processContribution( $form,
-                                                                               $form->_params, $result,
-                                                                               $contactID, $contributionType,
-                                                                               true, $pending, true );
-            
+            if ( !($paymentParams['is_recur'] && $form->_contributeMode == 'direct') ) {
+                $contribution =
+                    CRM_Contribute_Form_Contribution_Confirm::processContribution( $form,
+                                                                                   $form->_params, $result,
+                                                                                   $contactID, $contributionType,
+                                                                                   true, $pending, true );
+            }
             $form->postProcessPremium( $premiumParams, $contribution );
             
             $membershipResult[1] = $contribution;
@@ -208,7 +248,18 @@ class CRM_Contribute_BAO_Contribution_Utils {
         
         if ( $component == 'membership' ) {
             return $membershipResult;
-        }       
+        }
+        //Do not send an email if Recurring contribution is done via Direct Mode
+        //Email will we send once the IPN will receive.
+        if ( $paymentParams['is_recur'] && $form->_contributeMode == 'direct' ) {
+            return true;
+        }
+        
+        // get the price set values for receipt.
+        if ( $form->_priceSetId && $form->_lineItem ) {
+            $form->_values['lineItem']   = $form->_lineItem;
+            $form->_values['priceSetID'] = $form->_priceSetId;
+        }
         
         // finally send an email receipt
         require_once "CRM/Contribute/BAO/ContributionPage.php";
@@ -251,7 +302,9 @@ class CRM_Contribute_BAO_Contribution_Utils {
         
         $params = null;
         while ( $dao->fetch( ) ) {
-            $params['By Month'][$dao->contribMonth] = $dao->ctAmt;
+            if ( $dao->contribMonth ) {
+                $params['By Month'][$dao->contribMonth] = $dao->ctAmt;
+            }
         } 
         return $params;
         
@@ -275,11 +328,13 @@ class CRM_Contribute_BAO_Contribution_Utils {
               AND contrib.contribution_status_id = 1
         GROUP BY contribYear
         ORDER BY contribYear";
-        $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
+        $dao = CRM_Core_DAO::executeQuery( $query );
         
         $params = null;
         while ( $dao->fetch( ) ) {
-            $params['By Year'][$dao->contribYear] = $dao->ctAmt;
+            if ( ! empty( $dao->contribYear ) ) {
+                $params['By Year'][$dao->contribYear] = $dao->ctAmt;
+            }
         }
         return $params;
     }
@@ -308,22 +363,24 @@ class CRM_Contribute_BAO_Contribution_Utils {
         } else {
             $transaction =& $params;
         }
-
+        
         $params['contact_type'] = 'Individual';
-        if ( array_key_exists( 'location', $params ) || isset($params['email']) ) {
-            $params['location'][1]['is_primary']        = 1;
-            $params['location'][1]['location_type_id']  = 
-                CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_LocationType', 'Billing', 'id', 'name' );
-            
-            if ( isset($params['email']) ) {
-                $params['location'][1]['email'][1]['email'] = $params['email'];
-            }
+        
+        $billingLocTypeId  = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_LocationType', 'Billing', 'id', 'name' );
+        if ( !$billingLocTypeId )  $billingLocTypeId = 1;
+        if ( !CRM_Utils_System::isNull( $params['address'] ) ) {
+            $params['address'][1]['is_primary']       = 1;
+            $params['address'][1]['location_type_id'] = $billingLocTypeId;
         }
-
+        if ( !CRM_Utils_System::isNull( $params['email'] ) ) {
+            $params['email'] = array( 1 => array( 'email'            => $params['email'],
+                                                  'location_type_id' => $billingLocTypeId ) );
+        }
+        
         if ( isset( $transaction['trxn_id'] ) ) {
             // set error message if transaction has already been processed.
             require_once 'CRM/Contribute/DAO/Contribution.php';
-            $contribution =& new CRM_Contribute_DAO_Contribution();
+            $contribution = new CRM_Contribute_DAO_Contribution();
             $contribution->trxn_id = $transaction['trxn_id'];
             if ( $contribution->find(true) ) {
                 $params['error'][] = ts( 'transaction already processed.' );
@@ -373,9 +430,32 @@ class CRM_Contribute_BAO_Contribution_Utils {
                 if ( isset($mapper['contact'][$detail]) ) {
                     $params[$mapper['contact'][$detail]] = $val;
                 } else if ( isset($mapper['location'][$detail]) ) {
-                    $params['location'][1]['address'][$mapper['location'][$detail]] = $val;
+                    $params['address'][1][$mapper['location'][$detail]] = $val;
                 } else if ( isset($mapper['transaction'][$detail]) ) {
-                    $transaction[$mapper['transaction'][$detail]] = $val;
+                    switch ( $detail ) { 
+                        case 'l_period2':
+                            // Sadly, PayPal seems to send two distinct data elements in a single field,
+                            // so we break them out here.  This is somewhat ugly and tragic.
+                            $freqUnits = array (
+                                'D' => 'day',
+                                'W' => 'week',
+                                'M' => 'month',
+                                'Y' => 'year'
+                            );
+                            list($frequency_interval, $frequency_unit) = explode(' ', $val);
+                            $transaction['frequency_interval'] = $frequency_interval;
+                            $transaction['frequency_unit'] = $freqUnits[$frequency_unit];
+                            break;
+                        case 'subscriptiondate':
+                        case 'timestamp':
+                            // PayPal dates are in  ISO-8601 format.  We need a format that
+                            // MySQL likes
+                            $unix_timestamp = strtotime($val);
+                            $transaction[$mapper['transaction'][$detail]] = date('YmdHis', $unix_timestamp);
+                            break;
+                        default:
+                            $transaction[$mapper['transaction'][$detail]] = $val;
+                    }
                 }
             }
 
@@ -397,7 +477,7 @@ class CRM_Contribute_BAO_Contribution_Utils {
                 if ( isset($mapper['contact'][$header[$key]]) ) {
                     $params[$mapper['contact'][$header[$key]]] = $val;
                 } else if ( isset($mapper['location'][$header[$key]]) ) {
-                    $params['location'][1]['address'][$mapper['location'][$header[$key]]] = $val;
+                    $params['address'][1][$mapper['location'][$header[$key]]] = $val;
                 } else if ( isset($mapper['transaction'][$header[$key]]) ) {
                     $transaction[$mapper['transaction'][$header[$key]]] = $val;
                 } else {
@@ -430,9 +510,15 @@ class CRM_Contribute_BAO_Contribution_Utils {
             if ( $riskInfo['google-order-number']['VALUE'] == $apiParams[2]['google-order-number']['VALUE'] ) {
                 foreach ( $riskInfo['risk-information']['billing-address'] as $field => $info ) {
                     if ( CRM_Utils_Array::value( $field, $mapper['location'] ) ) {
-                        $params['location'][1]['address'][$mapper['location'][$field]] = $info['VALUE'];
+                        $params['address'][1][$mapper['location'][$field]] = $info['VALUE'];
                     } else if ( CRM_Utils_Array::value( $field, $mapper['contact'] ) ) {
-                        $params[$mapper['contact'][$field]] = $info['VALUE'];
+                        if ( $newOrder && CRM_Utils_Array::value('structured-name', $newOrder['buyer-billing-address']) ) {
+                            foreach ( $newOrder['buyer-billing-address']['structured-name'] as $namePart => $nameValue ) {
+                                $params[$mapper['contact'][$namePart]] = $nameValue['VALUE'];  
+                            }
+                        } else {
+                            $params[$mapper['contact'][$field]] = $info['VALUE'];
+                        }
                     } else if ( CRM_Utils_Array::value( $field, $mapper['transaction'] ) ) {
                         $transaction[$mapper['transaction'][$field]] = $info['VALUE'];
                     }
@@ -447,6 +533,10 @@ class CRM_Contribute_BAO_Contribution_Utils {
                            'item-name'           => $newOrder['shopping-cart']['items']['item']['item-name']['VALUE'],
                            'timestamp'           => $apiParams[2]['timestamp']['VALUE'],
                            );
+                if ( array_key_exists('latest-charge-fee', $apiParams[2]) ) {
+                    $localMapper['latest-charge-fee'] = $apiParams[2]['latest-charge-fee']['total']['VALUE'];
+                    $localMapper['net-amount'] = $localMapper['total-charge-amount'] - $localMapper['latest-charge-fee'];
+                }
                 foreach ( $localMapper as $localKey => $localVal ) {
                     if ( CRM_Utils_Array::value($localKey, $mapper['transaction']) ) {
                         $transaction[$mapper['transaction'][$localKey]] = $localVal;
@@ -478,6 +568,7 @@ class CRM_Contribute_BAO_Contribution_Utils {
         // add contact using dedupe rule
         require_once 'CRM/Dedupe/Finder.php';
         $dedupeParams = CRM_Dedupe_Finder::formatParams ($params      , 'Individual');
+        $dedupeParams['check_permission'] = false;
         $dupeIds      = CRM_Dedupe_Finder::dupesByParams($dedupeParams, 'Individual');
         // if we find more than one contact, use the first one
         if ( CRM_Utils_Array::value( 0, $dupeIds ) ) {
@@ -508,6 +599,36 @@ class CRM_Contribute_BAO_Contribution_Utils {
                                                    CRM_Utils_Array::value( 'id', $params, null ),
                                                    'Contribution' );
         // create contribution
+        
+        // if this is a recurring contribution then process it first
+        if ( $params['trxn_type'] == 'subscrpayment' ) {
+            // see if a recurring record already exists
+            require_once 'CRM/Contribute/BAO/ContributionRecur.php';
+            $recurring = new CRM_Contribute_BAO_ContributionRecur;
+            $recurring->processor_id = $params['processor_id'];
+            if ( ! $recurring->find( true ) ) {
+                $recurring = new CRM_Contribute_BAO_ContributionRecur;
+                $recurring->invoice_id = $params['invoice_id'];
+                $recurring->find( true );
+            }
+            
+            // This is the same thing the CiviCRM IPN handler does to handle
+            // subsequent recurring payments to avoid duplicate contribution
+            // errors due to invoice ID. See:
+            // ./CRM/Core/Payment/PayPalIPN.php:200
+            if ( $recurring->id ) {
+                $params['invoice_id'] = md5( uniqid( rand( ), true ) );
+            }
+            
+            $recurring->copyValues( $params );
+            $recurring->save( );
+            if ( is_a( $recurring, 'CRM_Core_Error' ) ) {
+                return false;
+            } else {
+                $params['contribution_recur_id'] = $recurring->id;
+            }
+        }
+
         require_once 'CRM/Contribute/BAO/Contribution.php';
         $contribution =& CRM_Contribute_BAO_Contribution::create( $params,
                                                                   CRM_Core_DAO::$_nullArray );

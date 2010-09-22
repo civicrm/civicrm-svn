@@ -1,7 +1,7 @@
 /* CiviCRM Print Media Stylesheet */
 
 /* Hide any buttons or other form items when printing*/
-.form-item {
+#crm-container .buttons, #crm-container .crm-submit-buttons, #crm-container .crm-actions-ribbon, #crm-container .form-submit {
      display: none;
 }
 
@@ -82,7 +82,7 @@ table.form-layout td, table.form-layout th {
 #crm-container table.report-layout th {
     padding          : 4px;
     background-color : #DCDCDC;
-//    text-align       : left;
+    /*text-align       : left;*/
     vertical-align   : top;
 }
 

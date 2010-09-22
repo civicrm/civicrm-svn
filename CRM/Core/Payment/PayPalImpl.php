@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /** 
  * 
  * @package CRM 
- * @copyright CiviCRM LLC (c) 2004-2009 
+ * @copyright CiviCRM LLC (c) 2004-2010 
  * $Id$ 
  * 
  */ 
@@ -51,13 +52,13 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
     function __construct( $mode, &$paymentProcessor ) {
         $this->_mode             = $mode;
         $this->_paymentProcessor = $paymentProcessor;
-        $this->_processorName    = "PayPal Pro";
+        $this->_processorName    = ts('PayPal Pro');
 
         if ( $this->_paymentProcessor['payment_processor_type'] == 'PayPal_Standard' ) {
-            $this->_processorName = "PayPal Standard";
+            $this->_processorName = ts('PayPal Standard');
             return;
         } else if ( $this->_paymentProcessor['payment_processor_type'] == 'PayPal_Express' ) {
-            $this->_processorName = "PayPal Express";
+            $this->_processorName = ts('PayPal Express');
         }
         
         if ( ! $this->_paymentProcessor['user_name'] ) {
@@ -83,6 +84,18 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
         $args['invnum']         = $params['invoiceID'];
         $args['returnURL'   ]   = $params['returnURL'];
         $args['cancelURL'   ]   = $params['cancelURL'];
+		$args['version']		= '56.0';
+		
+		//LCD if recurring, collect additional data and set some values
+		if ( $params['is_recur'] ) {
+			$args['L_BILLINGTYPE0'] = 'RecurringPayments';
+			//$args['L_BILLINGAGREEMENTDESCRIPTION0'] = 'Recurring Contribution';
+			$args['L_BILLINGAGREEMENTDESCRIPTION0'] = $params['amount']." Per ".$params['frequency_interval']. " " . $params['frequency_unit'];
+			$args['L_PAYMENTTYPE0'] = 'Any';
+		}
+
+        // Allow further manipulation of the arguments via custom hooks ..
+        CRM_Utils_Hook::alterPaymentProcessorParams( $this, $params, $args );
 
         $result = $this->invokeAPI( $args );
 
@@ -107,6 +120,7 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
 
         $this->initialize( $args, 'GetExpressCheckoutDetails' );
         $args['token'] = $token;
+		$args['method'] = 'GetExpressCheckoutDetails'; //LCD
 
         $result = $this->invokeAPI( $args );
 
@@ -174,6 +188,53 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
         return $params;
     }
 
+	//LCD add new function for handling recurring payments for PayPal Express
+    function createRecurringPayments( &$params ) {
+        $args = array( );
+
+        $this->initialize( $args, 'CreateRecurringPaymentsProfile' );
+
+        $start_time = strtotime(date('m/d/Y'));
+        $start_date = date('Y-m-d\T00:00:00\Z', $start_time );
+		
+		$args['token']          = $params['token'];
+        $args['paymentAction']  = $params['payment_action'];
+        $args['amt']            = $params['amount'];
+        $args['currencyCode']   = $params['currencyID'];
+        $args['payerID']        = $params['payer_id'];
+        $args['invnum']         = $params['invoiceID'];
+        $args['returnURL'   ]   = $params['returnURL'];
+        $args['cancelURL'   ]   = $params['cancelURL'];
+		$args['profilestartdate'] = $start_date;
+		$args['method']			= 'CreateRecurringPaymentsProfile';
+		$args['billingfrequency'] = $params['frequency_interval'];
+		$args['billingperiod']  = ucwords($params['frequency_unit']);
+		$args['desc']           = $params['amount']." Per ".$params['frequency_interval']. " " . $params['frequency_unit'];
+		//$args['desc']           = 'Recurring Contribution';
+		$args['totalbillingcycles'] = $params['installments'];
+        $args['version']        = '56.0' ;
+		$args['profilereference']   = "i=".$params['invoiceID']."&m=".$component."&c=".$params['contactID']."&r=".$params['contributionRecurID']."&b=".$params['contributionID']."&p=".$params['contributionPageID'];
+
+        $result = $this->invokeAPI( $args );
+
+        if ( is_a( $result, 'CRM_Core_Error' ) ) {  
+            return $result;  
+        }
+
+        /* Success */
+        $params['trxn_id']        = $result['transactionid'];
+        $params['gross_amount'  ] = $result['amt'];
+        $params['fee_amount'    ] = $result['feeamt'];
+        $params['net_amount'    ] = $result['settleamt'];
+        if ( $params['net_amount'] == 0 && $params['fee_amount'] != 0 ) {
+            $params['net_amount'] = $params['gross_amount'] - $params['fee_amount'];
+        }
+        $params['payment_status'] = $result['paymentstatus'];
+        $params['pending_reason'] = $result['pendingreason'];
+        
+        return $params;
+    } //LCD end
+
     function initialize( &$args, $method ) {
         $args['user'     ] = $this->_paymentProcessor['user_name' ];
         $args['pwd'      ] = $this->_paymentProcessor['password'  ];
@@ -192,7 +253,7 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
      * @return array the result in an nice formatted array (or an error object)
      * @public
      */
-    function doDirectPayment( &$params ) {
+    function doDirectPayment( &$params, $component = 'contribute' ) {
         $args = array( );
 
         $this->initialize( $args, 'DoDirectPayment' );
@@ -214,18 +275,45 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
         $args['state']          = $params['state_province'];
         $args['countryCode']    = $params['country'];
         $args['zip']            = $params['postal_code'];
+        $args['desc']           = $params['description'];
         $args['custom']         = CRM_Utils_Array::value( 'accountingCode',
                                                           $params );
+        if ( $params['is_recur'] == 1 ) {
+            $start_time = strtotime(date('m/d/Y'));
+            $start_date = date('Y-m-d\T00:00:00\Z', $start_time );
+            
+            $args['PaymentAction']      = 'Sale';
+            $args['billingperiod']      = ucwords($params['frequency_unit']);
+            $args['billingfrequency']   = $params['frequency_interval'] ;
+            $args['method']             = "CreateRecurringPaymentsProfile" ; 
+            $args['profilestartdate']   = $start_date;
+            $args['desc']               = $params['description'] .": ".$params['amount']." Per ".$params['frequency_interval']. " " . $params['frequency_unit'];
+            $args['amt']                = $params['amount'];
+            $args['totalbillingcycles'] = $params['installments'];
+            $args['version']            = 56.0 ;
+            $args['PROFILEREFERENCE']   = "i=".$params['invoiceID']."&m=".$component."&c=".$params['contactID']."&r=".$params['contributionRecurID']."&b=".$params['contributionID']."&p=".$params['contributionPageID'];
+            
+        }
+
+        // Allow further manipulation of the arguments via custom hooks ..
+        CRM_Utils_Hook::alterPaymentProcessorParams( $this, $params, $args );
 
         $result = $this->invokeAPI( $args );
 
-        if ( is_a( $result, 'CRM_Core_Error' ) ) {  
+		//WAG
+        if ( is_a( $result, CRM_Core_Error ) ) { 
             return $result;  
+        }
+        
+        $params['recurr_profile_id'] = null;
+
+        if ( CRM_Utils_Array::value( 'is_recur', $params ) == 1 ) {
+            $params['recurr_profile_id'] = $result['profileid'];
         }
 
         /* Success */
         $params['trxn_id']        = $result['transactionid'];
-        $params['gross_amount'  ] = $result['amt'];
+        $params['gross_amount'  ] = $result['amt'];        
         return $params;
     }
 
@@ -271,7 +359,7 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
     }
 
     function doTransferCheckout( &$params, $component = 'contribute' ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         if ( $component != 'contribute' && $component != 'event' ) {
             CRM_Core_Error::fatal( ts( 'Component is invalid' ) );
@@ -312,7 +400,9 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
 
         // ensure that the returnURL is absolute.
         if ( substr( $returnURL, 0, 4 ) != 'http' ) {
-            CRM_Core_Error::fatal( ts( 'Sending a relative URL to PayPalIPN is erroneous. Please make your resource URL (in Administer CiviCRM >> Global Settings) absolute' ) );
+            require_once 'CRM/Utils/System.php';
+            $fixUrl = CRM_Utils_System::url("civicrm/admin/setting/url", '&reset=1');
+            CRM_Core_Error::fatal( ts( 'Sending a relative URL to PayPalIPN is erroneous. Please make your resource URL (in <a href="%1">Administer CiviCRM &raquo; Global Settings &raquo; Resource URLs</a> ) complete.', array( 1 => $fixUrl ) ) );
         }
         
         $paypalParams =
@@ -328,21 +418,25 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
                    'rm'                 => 2,
                    'currency_code'      => $params['currencyID'],
                    'invoice'            => $params['invoiceID'] ,
+                   'lc'                 => substr( $config->lcMessages, -2 ),
+                   'charset'            => function_exists('mb_internal_encoding')? mb_internal_encoding() : 'UTF-8',
                    'custom'             => CRM_Utils_Array::value( 'accountingCode',
                                                                    $params ) );
 
         // add name and address if available, CRM-3130
-        $otherVars = array( 'first_name'     => 'first_name',
-                            'last_name'      => 'last_name',
-                            'street_address' => 'address1',
-                            'city'           => 'city',
-                            'state_province' => 'state',
-                            'postal_code'    => 'zip',
-                            'email'          => 'email' );
-
+        $otherVars = array( 'first_name'         => 'first_name',
+                            'last_name'          => 'last_name',
+                            'street_address'     => 'address1',
+                            'country'            => 'country',
+                            'preferred_language' => 'lc',
+                            'city'               => 'city',
+                            'state_province'     => 'state',
+                            'postal_code'        => 'zip',
+                            'email'              => 'email' );
+      
         foreach ( array_keys( $params ) as $p ) {
             // get the base name without the location type suffixed to it
-            $parts = split( '-', $p );
+            $parts = explode( '-', $p );
             $name  = count( $parts ) > 1 ? $parts[0] : $p;
             if ( isset( $otherVars[$name] ) ) {
                 $value = $params[$p];
@@ -350,6 +444,10 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
                     if ( $name == 'state_province' ) {
                         $stateName = CRM_Core_PseudoConstant::stateProvinceAbbreviation( $value );
                         $value     = $stateName;
+                    }
+                    if ( $name == 'country' ) {
+                        $countryName = CRM_Core_PseudoConstant::countryIsoCode( $value );
+                        $value       = $countryName;
                     }
                     // ensure value is not an array
                     // CRM-4174
@@ -387,6 +485,9 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
                        );
         }
         
+        // Allow further manipulation of the arguments via custom hooks ..
+        CRM_Utils_Hook::alterPaymentProcessorParams( $this, $params, $paypalParams );
+
         $uri = '';
         foreach ( $paypalParams as $key => $value ) {
             if ( $value === null ) {

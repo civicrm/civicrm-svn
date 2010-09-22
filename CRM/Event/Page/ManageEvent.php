@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,12 +29,13 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
 
 require_once 'CRM/Core/Page.php';
+require_once 'CRM/Event/BAO/Event.php';
 
 /**
  * Page for displaying list of events
@@ -69,24 +71,6 @@ class CRM_Event_Page_ManageEvent extends CRM_Core_Page
             $deleteExtra = ts('Are you sure you want to delete this Event?');
             
             self::$_actionLinks = array(
-                                        CRM_Core_Action::UPDATE  => array(
-                                                                          'name'  => ts('Configure'),
-                                                                          'url'   => CRM_Utils_System::currentPath( ),
-                                                                          'qs'    => 'action=update&id=%%id%%&reset=1',
-                                                                          'title' => ts('Configure Event') 
-                                                                          ),
-                                        CRM_Core_Action::PREVIEW => array(
-                                                                          'name'  => ts('Test-drive'),
-                                                                          'url'   => 'civicrm/event/info',
-                                                                          'qs'    => 'reset=1&action=preview&id=%%id%%',
-                                                                          'title' => ts('Preview') 
-                                                                          ),
-                                        CRM_Core_Action::FOLLOWUP => array(
-                                                                           'name'  => ts('Live Page'),
-                                                                           'url'   => 'civicrm/event/info',
-                                                                           'qs'    => 'reset=1&id=%%id%%',
-                                                                           'title' => ts('FollowUp'),
-                                                                           ),
                                         CRM_Core_Action::DISABLE => array(
                                                                           'name'  => ts('Disable'),
                                                                           'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Event_BAO_Event' . '\',\'' . 'enable-disable' . '\' );"',
@@ -107,16 +91,17 @@ class CRM_Event_Page_ManageEvent extends CRM_Core_Page
                                                                           'title' => ts('Delete Event') 
                                                                           ),
                                         CRM_Core_Action::COPY     => array(
-                                                                           'name'  => ts('Copy Event'),
-                                                                           'url'   => CRM_Utils_System::currentPath( ),                                                                                                'qs'    => 'reset=1&action=copy&id=%%id%%',
+                                                                           'name'  => ts('Copy'),
+                                                                           'url'   => CRM_Utils_System::currentPath( ), 
+                                                                           'qs'    => 'reset=1&action=copy&id=%%id%%',
                                                                            'extra' => 'onclick = "return confirm(\'' . $copyExtra . '\');"',
                                                                            'title' => ts('Copy Event') 
-                                                                          )
+                                                                           )
                                         );
         }
         return self::$_actionLinks;
     }
-
+    
     /**
      * Run the page.
      *
@@ -136,8 +121,8 @@ class CRM_Event_Page_ManageEvent extends CRM_Core_Page
         
         // assign vars to templates
         $this->assign('action', $action);
-        $id = CRM_Utils_Request::retrieve('id', 'Positive',
-                                          $this, false, 0);
+        $id = CRM_Utils_Request::retrieve( 'id', 'Positive',
+                                           $this, false, 0, 'REQUEST' );
 
         // figure out whether we’re handling an event or an event template
         if ($id) {
@@ -146,33 +131,19 @@ class CRM_Event_Page_ManageEvent extends CRM_Core_Page
             $this->_isTemplate = CRM_Utils_Request::retrieve('is_template', 'Boolean', $this);
         }
         
-        if ($this->_isTemplate) {
-            $breadCrumb = array(array('title' => ts('Manage Event Templates'),
-                                      'url'   => CRM_Utils_System::url('civicrm/admin/eventTemplate', 'reset=1')));
-        } elseif ($this->_id) {
+        if ( !$this->_isTemplate && $id ) {
             $breadCrumb = array(array('title' => ts('Manage Events'),
                                       'url'   => CRM_Utils_System::url(CRM_Utils_System::currentPath(), 'reset=1')));
+            CRM_Utils_System::appendBreadCrumb( $breadCrumb );
         }
 
         // what action to take ?
-        if ( $action & CRM_Core_Action::ADD ) {
-            require_once 'CRM/Event/Page/ManageEventEdit.php';
-            $page =& new CRM_Event_Page_ManageEventEdit( );
-            return $page->run( );
-        } else if ($action & CRM_Core_Action::UPDATE ) {
-            CRM_Utils_System::appendBreadCrumb( $breadCrumb );
-
-            require_once 'CRM/Event/Page/ManageEventEdit.php';
-            $page =& new CRM_Event_Page_ManageEventEdit( );
-            return $page->run( );
-        } else if ( $action & CRM_Core_Action::DELETE ) {
-            $session =& CRM_Core_Session::singleton();
+        if ( $action & CRM_Core_Action::DELETE ) {
+            $session = CRM_Core_Session::singleton();
             $session->pushUserContext( CRM_Utils_System::url( CRM_Utils_System::currentPath( ), 'reset=1&action=browse' ) );
-            $controller =& new CRM_Core_Controller_Simple( 'CRM_Event_Form_ManageEvent_Delete',
-                                                           'Delete Event',
-                                                           $action );
-            $id = CRM_Utils_Request::retrieve('id', 'Positive',
-                                              $this, false, 0);
+            $controller = new CRM_Core_Controller_Simple( 'CRM_Event_Form_ManageEvent_Delete',
+                                                          'Delete Event',
+                                                          $action );
             $controller->set( 'id', $id );
             $controller->process( );
             return $controller->run( );
@@ -194,22 +165,21 @@ class CRM_Event_Page_ManageEvent extends CRM_Core_Page
      */
     function browse()
     {
-
         $this->_sortByCharacter = CRM_Utils_Request::retrieve( 'sortByCharacter',
                                                                'String',
                                                                $this );
+        $createdId = CRM_Utils_Request::retrieve('cid', 'Positive', $this, false, 0);
         if ( $this->_sortByCharacter == 1 ||
              ! empty( $_POST ) ) {
             $this->_sortByCharacter = '';
             $this->set( 'sortByCharacter', '' );
         }
 
-        $this->_force = null;
-        $this->_searchResult = null;
+        $this->_force = $this->_searchResult = null;
       
         $this->search( );
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         
         $params = array( );
         $this->_force = CRM_Utils_Request::retrieve( 'force', 'Boolean',
@@ -224,15 +194,12 @@ class CRM_Event_Page_ManageEvent extends CRM_Core_Page
         $whereClause .= ' AND (is_template = 0 OR is_template IS NULL)'; // because is_template != 1 would be to simple
 
         $this->pager( $whereClause, $params );
+
         list( $offset, $rowCount ) = $this->_pager->getOffsetAndRowCount( );
 
         // get all custom groups sorted by weight
         $manageEvent = array();
 
-        //check for delete CRM-4418
-        require_once 'CRM/Core/Permission.php'; 
-        $allowToDelete = CRM_Core_Permission::check( 'delete in CiviEvent' );
-        
         $query = "
   SELECT *
     FROM civicrm_event
@@ -241,39 +208,62 @@ ORDER BY start_date desc
    LIMIT $offset, $rowCount";
         
         $dao = CRM_Core_DAO::executeQuery( $query, $params, true, 'CRM_Event_DAO_Event' );
-     
-        while ($dao->fetch()) {
-            $manageEvent[$dao->id] = array();
-            CRM_Core_DAO::storeValues( $dao, $manageEvent[$dao->id]);
-            
-            // form all action links
-            $action = array_sum(array_keys($this->links()));
-            
-            if ($dao->is_active) {
-                $action -= CRM_Core_Action::ENABLE;
-            } else {
-                $action -= CRM_Core_Action::DISABLE;
-            }
-            
-            //CRM-4418
-            if ( !$allowToDelete ) {
-                $action -= CRM_Core_Action::DELETE; 
-            }
-            
-            $manageEvent[$dao->id]['action'] = CRM_Core_Action::formLink(self::links(), $action, 
-                                                                         array('id' => $dao->id));
+        $permissions = CRM_Event_BAO_Event::checkPermission( );
 
-            $params = array( 'entity_id' => $dao->id, 'entity_table' => 'civicrm_event');
-            require_once 'CRM/Core/BAO/Location.php';
-            $location = CRM_Core_BAO_Location::getValues($params, $defaults );
-            if ( isset ( $defaults['location'][1]['address']['city'] ) ) {
-                $manageEvent[$dao->id]['city'] = $defaults['location'][1]['address']['city'];
-            }
-            if ( isset( $defaults['location'][1]['address']['state_province_id'] )) {
-                $manageEvent[$dao->id]['state_province'] = CRM_Core_PseudoConstant::stateProvince($defaults['location'][1]['address']['state_province_id']);
+        while ($dao->fetch()) {
+            if ( in_array( $dao->id, $permissions[CRM_Core_Permission::VIEW] ) ) {
+                $manageEvent[$dao->id] = array();
+                CRM_Core_DAO::storeValues( $dao, $manageEvent[$dao->id]);
+            
+                // form all action links
+                $action = array_sum(array_keys($this->links()));
+            
+                if ($dao->is_active) {
+                    $action -= CRM_Core_Action::ENABLE;
+                } else {
+                    $action -= CRM_Core_Action::DISABLE;
+                }
+            
+                if ( ! in_array( $dao->id, $permissions[CRM_Core_Permission::DELETE] ) ) {
+                    $action -= CRM_Core_Action::DELETE; 
+                }
+                if ( ! in_array( $dao->id, $permissions[CRM_Core_Permission::EDIT] ) ) {
+                    $action -= CRM_Core_Action::UPDATE; 
+                }
+            
+                $manageEvent[$dao->id]['action'] = CRM_Core_Action::formLink( self::links(), 
+                                                                              $action, 
+                                                                              array( 'id' => $dao->id ),
+                                                                              'more',
+                                                                              true );
+                
+                $params = array( 'entity_id'    => $dao->id, 
+                                 'entity_table' => 'civicrm_event',
+                                 'is_active'    => 1
+                                 );
+                
+                require_once 'CRM/Core/BAO/Location.php';
+                $defaults['location'] = CRM_Core_BAO_Location::getValues( $params, true );
+
+                require_once 'CRM/Friend/BAO/Friend.php';
+                $manageEvent[$dao->id]['friend'] = CRM_Friend_BAO_Friend::getValues( $params );
+
+                if ( isset ( $defaults['location']['address'][1]['city'] ) ) {
+                    $manageEvent[$dao->id]['city'] = $defaults['location']['address'][1]['city'];
+                }
+                if ( isset( $defaults['location']['address'][1]['state_province_id'] )) {
+                    $manageEvent[$dao->id]['state_province'] = CRM_Core_PseudoConstant::stateProvince($defaults['location']['address'][1]['state_province_id']);
+                }
             }
         }
         $this->assign('rows', $manageEvent);
+        
+        require_once 'CRM/Event/PseudoConstant.php';
+        $statusTypes        = CRM_Event_PseudoConstant::participantStatus(null, 'is_counted = 1');
+        $statusTypesPending = CRM_Event_PseudoConstant::participantStatus(null, 'is_counted = 0');
+        $findParticipants['statusCounted'] = implode( ', ', array_values( $statusTypes ) );
+        $findParticipants['statusNotCounted'] = implode( ', ', array_values( $statusTypesPending ) );
+        $this->assign('findParticipants', $findParticipants);
     }
     
     /**
@@ -287,14 +277,21 @@ ORDER BY start_date desc
     {
         $id = CRM_Utils_Request::retrieve('id', 'Positive', $this, true, 0, 'GET');
         
+        $urlString = 'civicrm/event/manage';
         require_once 'CRM/Event/BAO/Event.php';
-        CRM_Event_BAO_Event::copy( $id );
+        $copyEvent = CRM_Event_BAO_Event::copy( $id );
+        $urlParams = 'reset=1';
+        // Redirect to Copied Event Configuration
+        if ( $copyEvent->id ) {
+            $urlString  = 'civicrm/event/manage/eventInfo';
+            $urlParams .=  '&action=update&id='.$copyEvent->id;
+        }
 
-        return CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/event/manage', 'reset=1' ) );
+        return CRM_Utils_System::redirect( CRM_Utils_System::url( $urlString, $urlParams ) );
     }
-
-
-    function search( ) {
+    
+    function search( )
+    {
         if ( isset($this->_action) &
              ( CRM_Core_Action::ADD    |
                CRM_Core_Action::UPDATE |
@@ -309,10 +306,17 @@ ORDER BY start_date desc
         $form->run( );
     }
     
-    function whereClause( &$params, $sortBy = true, $force ) {
+    function whereClause( &$params, $sortBy = true, $force )
+    {
         $values  =  array( );
         $clauses = array( );
         $title   = $this->get( 'title' );
+        $createdId = $this->get( 'cid' );
+        
+        if( $createdId ) {
+            $clauses[] = "(created_id = {$createdId})";
+        }
+
         if ( $title ) {
             $clauses[] = "title LIKE %1";
             if ( strpos( $title, '%' ) !== false ) {
@@ -333,13 +337,6 @@ ORDER BY start_date desc
                 } 
                 $type = implode (',' ,$val);
             }
-
-
-
-
-
-
-            
             $clauses[] = "event_type_id IN ({$type})";
         }
         
@@ -350,16 +347,12 @@ ORDER BY start_date desc
                 
                 $from = $this->get( 'start_date' );
                 if ( ! CRM_Utils_System::isNull( $from ) ) {
-                    $from = CRM_Utils_date::format( $from );
-                    $from .= '000000';
                     $clauses[] = '( start_date >= %3 OR start_date IS NULL )';
                     $params[3] = array( $from, 'String' );
                 }
                 
                 $to = $this->get( 'end_date' );
                 if ( ! CRM_Utils_System::isNull( $to ) ) {
-                    $to = CRM_Utils_date::format( $to );
-                    $to .= '235959';
                     $clauses[] = '( end_date <= %4 OR end_date IS NULL )';
                     $params[4] = array( $to, 'String' );
                 }
@@ -390,16 +383,13 @@ ORDER BY start_date desc
             }
         }
 
-        require_once 'CRM/Core/Permission.php';
-        $clauses[] = CRM_Core_Permission::eventClause( );
-
-        return implode( ' AND ', $clauses );
+        return !empty($clauses) ? implode( ' AND ', $clauses ) : '(1)';
     }
-
-
-     function pager( $whereClause, $whereParams ) {
+    
+    function pager( $whereClause, $whereParams )
+    {
         require_once 'CRM/Utils/Pager.php';
-
+        
         $params['status']       = ts('Event %%StatusMessage%%');
         $params['csvString']    = null;
         $params['buttonTop']    = 'PagerTopButton';
@@ -420,7 +410,8 @@ SELECT count(id)
         $this->assign_by_ref( 'pager', $this->_pager );
     }
 
-    function pagerAtoZ( $whereClause, $whereParams ) {
+    function pagerAtoZ( $whereClause, $whereParams )
+    {
         require_once 'CRM/Utils/PagerAToZ.php';
         
         $query = "

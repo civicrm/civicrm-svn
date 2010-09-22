@@ -1,187 +1,214 @@
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
 {* This form is for Contact Add/Edit interface *}
 {if $addBlock}
 {include file="CRM/Contact/Form/Edit/$blockName.tpl"}
 {else}
-<div class="crm-submit-buttons">
-   {$form.buttons.html}
-</div>
+<div class="crm-form-block crm-search-form-block">
 <span style="float:right;"><a href="#expand" id="expand">{ts}Expand all tabs{/ts}</a></span>
-<br/>
-<div class="accordion ui-accordion ui-widget ui-helper-reset">
-    <h3 class="head"> 
-        <span class="ui-icon ui-icon-triangle-1-e" id='contact'></span><a href="#">{ts}Contact Details{/ts}</a>
-    </h3>
-    <div id="contact-details" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom">
-        {include file="CRM/Contact/Form/Edit/$contactType.tpl"}
-        <br/>
-        <table class="form-layout-compressed">
+<div class="crm-submit-buttons">
+   {include file="CRM/common/formButtons.tpl"}
+</div>
+<div class="crm-accordion-wrapper crm-contactDetails-accordion crm-accordion-open">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div> 
+	{ts}Contact Details{/ts}
+	
+ </div><!-- /.crm-accordion-header -->
+ <div class="crm-accordion-body" id="contactDetails">
+    <div id="contactDetails">
+        <div class="crm-section contact_basic_information-section">
+            {include file="CRM/Contact/Form/Edit/$contactType.tpl"}
+        </div>
+        <table class="crm-section contact_information-section form-layout-compressed">
             {foreach from=$blocks item="label" key="block"}
                {include file="CRM/Contact/Form/Edit/$block.tpl"}
             {/foreach}
+		</table>
+		<table class="crm-section contact_source-section form-layout-compressed">
             <tr class="last-row">
-            {if $form.home_URL}
-              <td>{$form.home_URL.label}<br />
-                  {$form.home_URL.html}
-              </td>
-            {/if}
               <td>{$form.contact_source.label}<br />
-                  {$form.contact_source.html}
+                  {$form.contact_source.html|crmReplace:class:twenty}
               </td>
               <td>{$form.external_identifier.label}<br />
-                  {$form.external_identifier.html}
+                  {$form.external_identifier.html|crmReplace:class:six}
               </td>
-              <td><label for="internal_identifier">Internal Id</label><br />
-               {$entityID}</td>
+              {if $contactId}
+				<td><label for="internal_identifier">{ts}Internal Id{/ts}</label><br />{$contactId}</td>
+			  {/if}
             </tr>            
+        </table>
+	   <table class="image_URL-section form-layout-compressed">
+	    <tr>
+	        <td>
+    	        {$form.image_URL.label}<br />
+    	        {$form.image_URL.html|crmReplace:class:twenty}
+     	        {if $imageURL}
+     	            {include file="CRM/Contact/Page/ContactImage.tpl"}
+     	        {/if}
+ 	        </td>
+ 	    </tr>
         </table>
 
         {*  add dupe buttons *}
-        {$form._qf_Contact_refresh_dedupe.html}
-        {if $isDuplicate}&nbsp;&nbsp;{$form._qf_Contact_next_duplicate.html}{/if}
+        <span class="crm-button crm-button_qf_Contact_refresh_dedupe">
+            {$form._qf_Contact_refresh_dedupe.html}
+        </span>
+        {if $isDuplicate}
+            &nbsp;&nbsp;
+            <span class="crm-button crm-button_qf_Contact_upload_duplicate">
+                {$form._qf_Contact_upload_duplicate.html}
+            </span>
+        {/if}
         <div class="spacer"></div>
-
-    </div>
-    
+   </div>
+ </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
+<div id='customData'></div>  
     {foreach from = $editOptions item = "title" key="name"}
         {include file="CRM/Contact/Form/Edit/$name.tpl"}
     {/foreach}
-    
-</div>
 <div class="crm-submit-buttons">
-   {$form.buttons.html}
+    {include file="CRM/common/formButtons.tpl"}
 </div>
 
+</div>
 {literal}
 <script type="text/javascript" >
+var action = "{/literal}{$action}{literal}";
+var removeCustomData = true;
+showTab[0] = {"spanShow":"span#contact","divShow":"div#contactDetails"};
 cj(function( ) {
-    cj('.accordion .head').addClass( "ui-accordion-header ui-helper-reset ui-state-default ui-corner-all");
-
-    cj('.accordion .head').hover( function( ) { 
-        cj(this).addClass( "ui-state-hover");
-    }, function() { 
-        cj(this).removeClass( "ui-state-hover");
-    }).bind('click', function( ) { 
-        var checkClass = cj(this).find('span').attr( 'class' );
-        var len        = checkClass.length;
-        if ( checkClass.substring( len - 1, len ) == 's' ) {
-            cj(this).find('span').removeClass( ).addClass('ui-icon ui-icon-triangle-1-e');
-        } else {
-            cj(this).find('span').removeClass( ).addClass('ui-icon ui-icon-triangle-1-s');
+	cj(showTab).each( function(){ 
+        if( this.spanShow ) {
+            cj(this.spanShow).removeClass( ).addClass('crm-accordion-open');
+            cj(this.divShow).show( );
         }
-        cj(this).next( ).toggle('blind'); return false; 
-    }).next( ).hide( );
-    
-    cj('span#contact').removeClass( ).addClass('ui-icon ui-icon-triangle-1-s');
-    cj("#contact-details").show( );
+    });
+
+	cj('.crm-accordion-body').each( function() {
+		//remove tab which doesn't have any element
+		if ( ! cj.trim( cj(this).text() ) ) { 
+			ele     = cj(this);
+			prevEle = cj(this).prev();
+			cj( ele ).remove();
+			cj( prevEle).remove();
+		}
+		//open tab if form rule throws error
+		if ( cj(this).children().find('span.crm-error').text() ) {
+			cj(this).show().prev().children('span:first').removeClass( 'crm-accordion-closed' ).addClass('crm-accordion-open');
+		}
+	});
+
+	highlightTabs( );
 });
-
-cj( function( ) {
-{/literal}
-{if $generateAjaxRequest}
-    {foreach from=$ajaxRequestBlocks key="blockName" item="instances"}
-      //reset count to 1 since each time counter get increamented.
-      cj( "#hidden_" + "{$blockName}" + "_Instances" ).val( 1 );
-        {foreach from=$instances key="instance" item="active"}
-             buildAdditionalBlocks( '{$blockName}', '{$contactType}' );
-        {/foreach}  	
-    {/foreach}
-{/if}
-{literal}
-});
-
-function buildAdditionalBlocks( blockName, contactType ) {
-
-  var previousBlockCount = cj( "#hidden_" + blockName + "_Instances" ).val( ).substr(-1);
-  var currentBlockCount  = parseInt( previousBlockCount ) + 1; 
-
-  var dataUrl = {/literal}"{crmURL p='civicrm/contact/add' h=0 q='snippet=4&ct='}"{literal} + contactType + '&block=' + blockName + '&count=' + currentBlockCount;
-	
-  {/literal}
-  {if $action eq 2}
-  dataUrl += "&action=update&cid={$entityID}";
-  {/if}
-  dataUrl += "&qfKey={$qfKey}";
-  {literal}
-   
-  blockId = (cj('#' + blockName + '_Block_'+ previousBlockCount ).html()) ? previousBlockCount : 1;  
-  var fname = '#' + blockName + '_Block_'+ blockId;
-
-  cj('#addMore' + blockName ).hide();
-  cj.ajax({ 
-            url     : dataUrl,   
-            async   : false,
-            success : function(html){
-                         var html = html.split('<!-Add->',2);
-                         cj(fname).after(html[1]);
-                      }
-         });
-  cj( "#hidden_" + blockName + "_Count" ).val( currentBlockCount );
-
-  //build the hidden block instance string used in post.
-  var prevousBlockCntStr = cj( "#hidden_" + blockName + "_Instances" ).val( );
-  var currentBlockCntStr = prevousBlockCntStr + ',' + currentBlockCount;
-  cj( "#hidden_" + blockName + "_Instances" ).val( currentBlockCntStr );
-
-  if ( blockName == 'Address' ) cj("#addressBlock").show( );
-
-}
 
 cj('a#expand').click( function( ){
-     if( cj(this).attr('href') == '#expand') {   
-          var message = {/literal}{ts}"Collapse all tabs"{/ts}{literal};
-          var class   = 'ui-icon ui-icon-triangle-1-s';
-          var event   = 'show';
-          cj(this).attr('href', '#collapse');
-     } else {
-          var message = {/literal}{ts}"Expand all tabs"{/ts}{literal};
-          var class   = 'ui-icon ui-icon-triangle-1-e';
-          var event   = 'hide';
-          cj(this).attr('href', '#expand');
-     }
-          cj(this).html(message);
-          cj('div.accordion div.ui-accordion-content').each(function() {
-             cj(this).parent().find('h3 span').removeClass( ).addClass(class);
-                 eval( " var showHide = cj(this)." + event + "();" );
-          }); 
+    if( cj(this).attr('href') == '#expand') {   
+        var message     = {/literal}"{ts}Collapse all tabs{/ts}"{literal};
+        cj(this).attr('href', '#collapse');
+        cj('.crm-accordion-closed').removeClass('crm-accordion-closed').addClass('crm-accordion-open');
+    } else {
+        var message     = {/literal}"{ts}Expand all tabs{/ts}"{literal};
+        cj('.crm-accordion-open').removeClass('crm-accordion-open').addClass('crm-accordion-closed');
+        cj(this).attr('href', '#expand');
+    }
+    cj(this).html(message);
+    return false;
 });
 
-//current employer default setting
-var employerId = "{/literal}{$currentEmployer}{literal}";
-if( employerId ) {
-   var dataUrl = "{/literal}{crmURL p='civicrm/ajax/search' h=0 q="org=1&id=" }{literal}" + employerId ;
-    cj.ajax({ 
-        url     : dataUrl,   
-        async   : false,
-        success : function(html){
-                    //fixme for showing address in div
-                    htmlText = html.split( '|' , 2);
-                    cj('input#current_employer').val(htmlText[0]);
-                    cj('input#current_employer_id').val(htmlText[1]);
-                  }
-            }); 
+function showHideSignature( blockId ) {
+    cj('#Email_Signature_' + blockId ).toggle( );   
 }
 
-//select single is_bulk & is_primary
-function singleSelect( blockName, blockId, flagName ) {
-  var instances = cj( "#hidden_" + blockName + "_Instances" ).val( ).split(',');
-  var instance  = 1;
-  cj(instances).each( function( ) { 
-    if ( instance != blockId ) {
-        cj( '#'+blockName+'_'+instance+'_'+flagName).attr( 'checked', false );
+function highlightTabs( ) {
+    if ( action == 2 ) {
+	//highlight the tab having data inside.
+	cj('.crm-accordion-body :input').each( function() { 
+		var element = cj(this).closest(".crm-accordion-body").attr("id");
+		if (element) {
+		eval('var ' + element + ' = "";');
+		switch( cj(this).attr('type') ) {
+		case 'checkbox':
+		case 'radio':
+		  if( cj(this).is(':checked') ) {
+		    eval( element + ' = true;'); 
+		  }
+		  break;
+		  
+		case 'text':
+		case 'textarea':
+		  if( cj(this).val() ) {
+		    eval( element + ' = true;');
+		  }
+		  break;
+		  
+		case 'select-one':
+		case 'select-multiple':
+		  if( cj('select option:selected' ) && cj(this).val() ) {
+		    eval( element + ' = true;');
+		  }
+		  break;		
+		  
+		case 'file':
+		  if( cj(this).next().html() ) eval( element + ' = true;');
+		  break;
+  		}
+		if( eval( element + ';') ) { 
+		  cj(this).closest(".crm-accordion-wrapper").addClass('crm-accordion-hasContent');
+		}
+	     }
+       });
     }
-    instance++;	
-  });
 }
 
-function removeBlock( blockName, blockId ) {
- //update string for removing block instance from qf during post.
- var updateStr = cj( "#hidden_" + blockName + "_Instances" ).val( ).replace( ',' + blockId, '' );
- cj( "#hidden_" + blockName + "_Instances" ).val(  updateStr );
+function removeDefaultCustomFields( ) {
+     //execute only once
+     if (removeCustomData) {
+	 cj(".crm-accordion-wrapper").children().each( function() {
+	    var eleId = cj(this).attr("id");
+	    if ( eleId.substr(0,10) == "customData" ) { cj(this).parent("div").remove(); }
+	 });
+	 removeCustomData = false;
+     }
+}
  
- //unset block from html
- cj( "#"+ blockName + "_Block_" + blockId ).remove();
-}
-
 </script>
+<script type="text/javascript">
+cj(function() {
+   cj().crmaccordions(); 
+});
+</script>
+
 {/literal}
+
+{* include common additional blocks tpl *}
+{include file="CRM/common/additionalBlocks.tpl"}
+
+{* include jscript to warn if unsaved form field changes *}
+{include file="CRM/common/formNavigate.tpl"}
+
 {/if}

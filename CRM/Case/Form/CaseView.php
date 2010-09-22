@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -45,6 +46,10 @@ require_once 'CRM/Case/BAO/Case.php';
  */
 class CRM_Case_Form_CaseView extends CRM_Core_Form
 {
+    /*
+     * check for merge cases.
+     */
+    private $_mergeCases = false;
     
     /**  
      * Function to set variables up before form is built  
@@ -54,12 +59,63 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
      */
     public function preProcess( ) 
     {
+        $this->_showRelatedCases = CRM_Utils_Array::value( 'relatedCases', $_GET );
+
+
+        require_once 'CRM/Case/XMLProcessor/Process.php';
+        $xmlProcessorProcess = new CRM_Case_XMLProcessor_Process( );
+        $isMultiClient = $xmlProcessorProcess->getAllowMultipleCaseClients( );
+        $this->assign( 'multiClient', $isMultiClient );
+        
+        //pull the related cases.
+        $this->assign( 'showRelatedCases', false );
+        if ( $this->_showRelatedCases ) {
+            $relatedCases = $this->get( 'relatedCases' );
+            if ( !isset( $relatedCases ) ) {
+                $cId    = CRM_Utils_Request::retrieve( 'cid', 'Integer', CRM_Core_DAO::$_nullObject );
+                $caseId = CRM_Utils_Request::retrieve( 'id',  'Integer', CRM_Core_DAO::$_nullObject );
+                $relatedCases = CRM_Case_BAO_Case::getRelatedCases( $caseId, $cId );
+            }
+            $this->assign( 'relatedCases', $relatedCases );
+            $this->assign( 'showRelatedCases', true );
+            return;
+        }
+        
+        //check for civicase access.
+        if ( !CRM_Case_BAO_Case::accessCiviCase( ) ) {
+            CRM_Core_Error::fatal( ts( 'You are not authorized to access this page.' ) );
+        }
+        $this->_hasAccessToAllCases = CRM_Core_Permission::check( 'access all cases and activities' );
+        $this->assign( 'hasAccessToAllCases', $this->_hasAccessToAllCases );
+        
         $this->_contactID = $this->get('cid');
         $this->_caseID    = $this->get('id');
-            
+        
+        $fulltext = CRM_Utils_Request::retrieve( 'context', 'String', CRM_Core_DAO::$_nullObject );
+        if ($fulltext == 'fulltext') {
+            $this->assign( 'fulltext', $fulltext);
+        }
+        
         $this->assign( 'caseID', $this->_caseID );
         $this->assign( 'contactID', $this->_contactID );
-
+        
+        //validate case id.
+        $this->_userCases = array( );
+        $session  = CRM_Core_Session::singleton( );
+        $userID   = $session->get( 'userID' );
+        if ( !$this->_hasAccessToAllCases ) {
+            $this->_userCases = CRM_Case_BAO_Case::getCases( false, $userID );
+            if ( !array_key_exists( $this->_caseID, $this->_userCases ) ) {
+                CRM_Core_Error::fatal( ts( 'You are not authorized to access this page.' ) );
+            }
+        }
+        $this->assign( 'userID', $userID );
+        
+        if ( CRM_Case_BAO_Case::caseCount( $this->_contactID ) >= 2 ) {
+            $this->_mergeCases = true;
+        }
+        $this->assign( 'mergeCases', $this->_mergeCases );
+        
         //retrieve details about case
         $params = array( 'id' => $this->_caseID );
 
@@ -69,15 +125,17 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         $values['case_type_id'] = explode( CRM_Case_BAO_Case::VALUE_SEPERATOR, 
                                            CRM_Utils_Array::value( 'case_type_id' , $values ) );
 
-        $statuses  = CRM_Case_PseudoConstant::caseStatus( );
-        $caseType  = CRM_Case_PseudoConstant::caseTypeName( $this->_caseID );
-
-        $this->_caseDetails = array( 'case_type'       => $caseType['name'],
+        require_once 'CRM/Case/PseudoConstant.php';
+        $statuses      = CRM_Case_PseudoConstant::caseStatus( 'label', false );
+        $caseTypeName  = CRM_Case_BAO_Case::getCaseType( $this->_caseID, 'name' );
+        $caseType      = CRM_Case_BAO_Case::getCaseType( $this->_caseID );
+        
+        $this->_caseDetails = array( 'case_type'       => $caseType,
                                      'case_status'     => $statuses[$values['case_status_id']],
                                      'case_subject'    => CRM_Utils_Array::value( 'subject', $values ),
                                      'case_start_date' => $values['case_start_date']
                                    );
-        $this->_caseType = $caseType['name'];
+        $this->_caseType = $caseTypeName;
         $this->assign ( 'caseDetails', $this->_caseDetails );
         
         $newActivityUrl = 
@@ -85,6 +143,13 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
                                    "action=add&reset=1&cid={$this->_contactID}&caseid={$this->_caseID}&atype=", 
                                    false, null, false ); 
         $this->assign ( 'newActivityUrl', $newActivityUrl );
+
+        // Send Email activity requires a different URL format from all other activities
+        $newActivityEmailUrl = 
+            CRM_Utils_System::url( 'civicrm/activity/add', 
+                                   "action=add&context=standalone&reset=1&caseid={$this->_caseID}&atype=", 
+                                   false, null, false ); 
+        $this->assign ( 'newActivityEmailUrl', $newActivityEmailUrl );
 
         $reportUrl = 
             CRM_Utils_System::url( 'civicrm/case/report', 
@@ -97,12 +162,15 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         require_once 'CRM/Contact/BAO/Contact.php';
                
         $url = CRM_Utils_System::url( 'civicrm/contact/view/case', 
-               "action=view&reset=1&id={$this->_caseID}&cid={$this->_contactID}" );
+               "action=view&reset=1&id={$this->_caseID}&cid={$this->_contactID}&context=home" );
 
-        $title = CRM_Contact_BAO_Contact::displayName( $this->_contactID ) . ' - ' . $caseType['name'];
+        $displayName = CRM_Contact_BAO_Contact::displayName( $this->_contactID );
+        $this->assign( 'displayName', $displayName );
+        
+        $title = $displayName . ' - ' . $caseType;
         
         // add the recently created case
-        CRM_Utils_Recent::add( $title,
+        CRM_Utils_Recent::add( $displayName . ' - ' . $caseType,
                                $url,
                                $this->_caseID,
                                'Case',
@@ -110,6 +178,15 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
                                null
                                );
         
+
+        //get the related cases for given case.
+        $relatedCases = $this->get( 'relatedCases' );
+        if ( !isset( $relatedCases ) ) {
+            $relatedCases = CRM_Case_BAO_Case::getRelatedCases( $this->_caseID, $this->_contactID );
+            $relatedCases = empty( $relatedCases ) ? false : $relatedCases;
+            $this->set( 'relatedCases', $relatedCases );
+        }
+        $this->assign( 'hasRelatedCases', $relatedCases );
     }
 
     /**
@@ -133,12 +210,13 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
      */
     public function buildQuickForm( ) 
     {
+        //this call is for show related cases.
+        if ( $this->_showRelatedCases ) return;
+                
         $xmlProcessor = new CRM_Case_XMLProcessor_Process( );
         $caseRoles    = $xmlProcessor->get( $this->_caseType, 'CaseRoles' );
         $reports      = $xmlProcessor->get( $this->_caseType, 'ActivitySets' );
 
-        $xmlProcessor  = new CRM_Case_XMLProcessor_Process( );
-        $caseRoles     = $xmlProcessor->get( $this->_caseType, 'CaseRoles' );
         //adding case manager.CRM-4510.
         $managerRoleId = $xmlProcessor->getCaseManagerRoleId( $this->_caseType );
         if ( !empty($managerRoleId) ) {
@@ -146,38 +224,88 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         } 
         
         $aTypes       = $xmlProcessor->get( $this->_caseType, 'ActivityTypes', true );
+        
+        require_once 'CRM/Core/PseudoConstant.php';
+        $allActTypes = CRM_Core_PseudoConstant::activityType( true, true, false, 'name' );
+        
         // remove Open Case activity type since we're inside an existing case
-        $openCaseID = CRM_Core_OptionGroup::getValue('activity_type', 'Open Case', 'name' );
-        unset( $aTypes[$openCaseID] );
+        if ( ($openActTypeId = array_search( 'Open Case', $allActTypes )) &&
+             array_key_exists( $openActTypeId, $aTypes ) ) {
+            unset( $aTypes[$openActTypeId] );
+        }
+        
+        //check for link cases.
+        $unclosedCases = CRM_Case_BAO_Case::getUnclosedCases( null, array( $this->_caseID ) );
+        if ( empty( $unclosedCases ) &&
+             ($linkActTypeId = array_search('Link Cases', $allActTypes)) &&
+             array_key_exists( $linkActTypeId, $aTypes ) ) {
+            unset( $aTypes[$linkActTypeId] );
+        }
+        
         asort( $aTypes );
-
         
         $this->add('select', 'activity_type_id',  ts( 'New Activity' ), array( '' => ts( '- select activity type -' ) ) + $aTypes );
-        $this->add('select', 'report_id',  ts( 'Report' ), array( '' => ts( '- select report -' ) ) + $reports );
-        $this->add('select', 'timeline_id',  ts( 'Add Timeline' ), array( '' => ts( '- select activity set -' ) ) + $reports );
+        if ( $this->_hasAccessToAllCases ) {
+            $this->add('select', 'report_id',  ts( 'Run QA Audit / Redact' ), 
+                       array( '' => ts( '- select activity set -' ) ) + $reports );
+            $this->add('select', 'timeline_id',  ts( 'Add Timeline' ), 
+                       array( '' => ts( '- select activity set -' ) ) + $reports );
+        }
         $this->addElement( 'submit', $this->getButtonName('next'), ts('Go'), 
-                           array( 'class'   => 'form-submit',
+                           array( 'class'   => 'form-submit-inline',
                                   'onclick' => "return checkSelection( this );") ); 
+        
+        if ( $this->_mergeCases ) {
+            $allCases = CRM_Case_BAO_Case::getContactCases( $this->_contactID );
+            $otherCases = array( );
+            foreach ( $allCases as $caseId => $details ) {
+                //filter current and own cases.
+                if ( ( $caseId == $this->_caseID ) || 
+                     (!$this->_hasAccessToAllCases && 
+                      !array_key_exists( $caseId, $this->_userCases ) ) ) {
+                    continue;
+                }
+                
+                $otherCases[$caseId] = 'Case ID: '.$caseId.' Type: '.$details['case_type'].' Start: '.$details['case_start_date'];
+            }
+            if ( empty( $otherCases ) ) {
+                $this->_mergeCases = false;
+                $this->assign( 'mergeCases', $this->_mergeCases );
+            } else {
+                $this->add( 'select', 'merge_case_id',  
+                            ts( 'Select Case for Merge' ), 
+                            array( '' => ts( '- select case -' ) ) + $otherCases );
+                $this->addElement( 'submit', 
+                                   $this->getButtonName( 'next', 'merge_case' ), 
+                                   ts('Merge'), 
+                                   array( 'class'   => 'form-submit-inline',
+                                          'onclick' => "return checkSelection( this );") ); 
+            }
+        }
+        
+        $this->add( 'text', 'change_client_id', ts( 'Assign to another Client' ) );
+        $this->add( 'hidden', 'contact_id', '', array( 'id' => 'contact_id') );
+        $this->addElement( 'submit', 
+                           $this->getButtonName( 'next', 'edit_client' ), 
+                           ts('Reassign Case'), 
+                           array( 'class'   => 'form-submit-inline',
+                                  'onclick' => "return checkSelection( this );") );
         
         $activityStatus = CRM_Core_PseudoConstant::activityStatus( );
         $this->add('select', 'status_id',  ts( 'Status' ), array( "" => ts(' - any status - ') ) + $activityStatus );
 
-        // Date selects for date 
-        $this->add('date', 'activity_date_low', ts('Activity Dates - From'), CRM_Core_SelectValues::date('relative')); 
-        $this->addRule('activity_date_low', ts('Select a valid date.'), 'qfDate'); 
-        
-        $this->add('date', 'activity_date_high', ts('To'), CRM_Core_SelectValues::date('relative')); 
-        $this->addRule('activity_date_high', ts('Select a valid date.'), 'qfDate'); 
+        // activity dates
+        $this->addDate( 'activity_date_low', ts('Activity Dates - From'), false, array( 'formatType' => 'searchDate') );
+        $this->addDate( 'activity_date_high', ts('To'), false, array( 'formatType' => 'searchDate') );
         
 		require_once"CRM/Core/Permission.php";
 		if ( CRM_Core_Permission::check( 'administer CiviCRM' ) ) { 
 			$this->add( 'checkbox', 'activity_deleted' , ts( 'Deleted Activities' ) );
 		}
-
                                                                                      
 		//get case related relationships (Case Role)
         $caseRelationships = CRM_Case_BAO_Case::getCaseRoles( $this->_contactID, $this->_caseID );
-        
+       
         //build reporter select
         $reporters = array( "" => ts(' - any reporter - ') );
         foreach( $caseRelationships as $key => &$value ) {
@@ -193,10 +321,16 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
             }
         }
         
+        // activity type filter for case activity search, need to add Email Sent activity type
+        $emailSentID = CRM_Core_OptionGroup::getValue('activity_type', 'Email', 'name' );
+        $aTypesFilter = array( $emailSentID => 'Email' ) + $aTypes;
+        asort($aTypesFilter);
+        $this->add('select', 'activity_type_filter_id',  ts( 'Activity Type' ), array( '' => ts( '- select activity type -' ) ) + $aTypesFilter );
+        
         $this->assign('caseRelationships', $caseRelationships);
         
         //also add client as role. CRM-4438
-        $caseRoles['client'] = CRM_Case_BAO_Case::getcontactNames( $this->_caseID );
+        $caseRoles['client'] = CRM_Case_BAO_Case::getContactNames( $this->_caseID );
 
         $this->assign( 'caseRoles', $caseRoles );
         
@@ -225,15 +359,55 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         
 		// List of relationship types
 		require_once 'CRM/Contact/BAO/Relationship.php';
-		$baoRel =& new CRM_Contact_BAO_Relationship();
+		$baoRel = new CRM_Contact_BAO_Relationship();
 		$relType = $baoRel->getRelationType('Individual');
 		$roleTypes = array();
-		foreach ($relType as $k => $v)
-		{
+		foreach ( $relType as $k => $v ) {
 			$roleTypes[substr($k,0,strpos($k,'_'))] = $v;
 		}
 		$this->add('select', 'role_type',  ts( 'Relationship Type' ), array( '' => ts( '- select type -' ) ) + $roleTypes );
-	
+
+        require_once('CRM/Utils/Hook.php');
+        $hookCaseSummary = CRM_Utils_Hook::caseSummary( $this->_caseID );
+        if (is_array($hookCaseSummary)) {
+            $this->assign('hookCaseSummary', $hookCaseSummary);
+        }
+		
+        require_once 'CRM/Core/BAO/EntityTag.php';
+        require_once 'CRM/Core/BAO/Tag.php';
+
+        $allTags = CRM_Core_BAO_Tag::getTags( 'civicrm_case' );
+        
+        if ( !empty($allTags) ) { 
+            $this->add('select', 'case_tag',  ts( 'Tags' ), $allTags, false, 
+                       array( 'id' => 'tags',  'multiple'=> 'multiple', 'title' => ts('- select -') ));
+
+            $tags = CRM_Core_BAO_EntityTag::getTag( $this->_caseID, 'civicrm_case' );            
+           
+            $this->setDefaults( array( 'case_tag' => $tags ) ); 
+
+            foreach( $tags as $tid ) {
+                $tags[$tid] = $allTags[$tid];
+            }
+                        
+            $this->assign('tags', implode( ', ', array_filter( $tags ) ) );
+            $this->assign( 'showTags', true );
+        } else {
+            $this->assign( 'showTags', false );
+        }
+
+        // build tagset widget
+        require_once 'CRM/Core/Form/Tag.php';
+        
+        // see if we have any tagsets which can be assigned to cases
+        $parentNames = CRM_Core_BAO_Tag::getTagSet( 'civicrm_case' );
+        if ($parentNames){
+            $this->assign( 'showTagsets', true );
+        } else {
+            $this->assign( 'showTagsets', false );
+        }
+        CRM_Core_Form_Tag::buildQuickForm( $this, $parentNames, 'civicrm_case', $this->_caseID, false, true );        
+          
         $this->addButtons(array(  
                                 array ( 'type'      => 'cancel',  
                                         'name'      => ts('Done'),  
@@ -243,7 +417,6 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
                           );
     }
 
-
     /**
      * Process the form
      *
@@ -252,17 +425,18 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
      */
     public function postProcess()
     {
-        $params = $this->controller->exportValues( $this->_name );
-                      
+        $params     = $this->controller->exportValues( $this->_name );
+        $buttonName = $this->controller->getButtonName( );
+        
         // user context
         $url = CRM_Utils_System::url( 'civicrm/contact/view/case',
                                       "reset=1&action=view&cid={$this->_contactID}&id={$this->_caseID}&show=1" );
-        $session =& CRM_Core_Session::singleton( ); 
+        $session = CRM_Core_Session::singleton( ); 
         $session->pushUserContext( $url );
 
         if ( CRM_Utils_Array::value( 'timeline_id', $params ) && 
              CRM_Utils_Array::value( '_qf_CaseView_next', $_POST ) ) {
-            $session    =& CRM_Core_Session::singleton();
+            $session    = CRM_Core_Session::singleton();
             $this->_uid = $session->get('userID');
             $xmlProcessor = new CRM_Case_XMLProcessor_Process( );
             $xmlProcessorParams = array( 
@@ -279,6 +453,29 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
             
             CRM_Core_Session::setStatus( ts('Activities from the %1 activity set have been added to this case.', 
                                             array( 1 => $reports[$params['timeline_id']] ) ) );
+        } else if ( $this->_mergeCases &&
+                    $buttonName == '_qf_CaseView_next_merge_case' ) {
+            
+            $mainCaseId  = $params['merge_case_id'];
+            $otherCaseId = $this->_caseID;
+                           
+            //merge two cases.
+            CRM_Case_BAO_Case::mergeCases( $this->_contactID, $mainCaseId, null, $otherCaseId );
+            
+            //redirect user to main case view.
+            $url = CRM_Utils_System::url( 'civicrm/contact/view/case',
+                                          "reset=1&action=view&cid={$this->_contactID}&id={$mainCaseId}&show=1" );
+            $session = CRM_Core_Session::singleton( ); 
+            $session->pushUserContext( $url );
+        } else if ( $buttonName == '_qf_CaseView_next_edit_client' ) {
+            $mainCaseId = CRM_Case_BAO_Case::mergeCases( $params['contact_id'], $this->_caseID, $this->_contactID, null, true );
+            
+            // user context
+            $url = CRM_Utils_System::url( 'civicrm/contact/view/case',
+                                          "reset=1&action=view&cid={$params['contact_id']}&id={$mainCaseId[0]}&show=1" );
+            $session = CRM_Core_Session::singleton( ); 
+            $session->pushUserContext( $url );
         }
     }
+    
 }

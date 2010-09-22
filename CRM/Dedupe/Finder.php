@@ -1,15 +1,15 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -17,7 +17,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -27,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -52,14 +53,14 @@ class CRM_Dedupe_Finder
      * @return array  array of (cid1, cid2, weight) dupe triples
      */
     function dupes($rgid, $cids = array()) {
-        $rgBao =& new CRM_Dedupe_BAO_RuleGroup();
+        $rgBao = new CRM_Dedupe_BAO_RuleGroup();
         $rgBao->id = $rgid;
         $rgBao->contactIds = $cids;
         if (!$rgBao->find(true)) {
             CRM_Core_Error::fatal("$level rule for $ctype does not exist");
         }
 
-        $dao =& new CRM_Core_DAO();
+        $dao = new CRM_Core_DAO();
         $dao->query($rgBao->tableQuery());
         $dao->query($rgBao->thresholdQuery());
         $dupes = array();
@@ -76,6 +77,11 @@ class CRM_Dedupe_Finder
      * params, using the default rule group for the given contact type and 
      * level.
      *
+     * check_permission is a boolean flag to indicate if permission should be considered.
+     * default is to always check permissioning but public pages for example might not want 
+     * permission to be checked for anonymous users. Refer CRM-6211. We might be beaking 
+     * Multi-Site dedupe for public pages.
+     *
      * @param array  $params  array of params of the form $params[$table][$field] == $value
      * @param string $ctype   contact type to match against
      * @param string $level   dedupe rule group level ('Fuzzy' or 'Strict')
@@ -84,7 +90,11 @@ class CRM_Dedupe_Finder
      * @return array  matching contact ids
      */
     function dupesByParams($params, $ctype, $level = 'Strict', $except = array()) {
-        $rgBao =& new CRM_Dedupe_BAO_RuleGroup();
+        // If $params is empty there is zero reason to proceed.
+        if ( ! $params ) {
+            return array();
+        }
+        $rgBao = new CRM_Dedupe_BAO_RuleGroup();
         $rgBao->contact_type = $ctype;
         $rgBao->params = $params;
         $rgBao->level = $level;
@@ -92,12 +102,14 @@ class CRM_Dedupe_Finder
         if (!$rgBao->find(true)) {
             CRM_Core_Error::fatal("$level rule for $ctype does not exist");
         }
-        $dao =& new CRM_Core_DAO();
+        $params['check_permission'] = CRM_Utils_Array::value( 'check_permission', $params, true );
+
+        $dao = new CRM_Core_DAO();
         $dao->query($rgBao->tableQuery());
-        $dao->query($rgBao->thresholdQuery());
+        $dao->query($rgBao->thresholdQuery($params['check_permission']));
         $dupes = array();
         while ($dao->fetch()) {
-            $dupes[] = isset($dao->id) ? $dao->id : NULL;
+            if ( isset( $dao->id ) && $dao->id ) $dupes[] = $dao->id;
         }
         $dao->query($rgBao->tableDropQuery());
 
@@ -129,14 +141,14 @@ class CRM_Dedupe_Finder
     function dupesOfContact($cid, $level = 'Strict', $ctype = null) {
         // if not provided, fetch the contact type from the database
         if (!$ctype) {
-            $dao =& new CRM_Contact_DAO_Contact();
+            $dao = new CRM_Contact_DAO_Contact();
             $dao->id = $cid;
             if (!$dao->find(true)) {
                 CRM_Core_Error::fatal("contact id of $cid does not exist");
             }
             $ctype = $dao->contact_type;
         }
-        $rgBao =& new CRM_Dedupe_BAO_RuleGroup();
+        $rgBao = new CRM_Dedupe_BAO_RuleGroup();
         $rgBao->level = $level;
         $rgBao->contact_type = $ctype;
         $rgBao->is_default = 1;
@@ -177,6 +189,11 @@ class CRM_Dedupe_Finder
                 if (is_array($flat[$date])) $flat[$date] = CRM_Utils_Date::format($flat[$date]);
             }
         }
+        
+        if ( CRM_Utils_Array::value( 'contact_source', $flat ) ) {
+            $flat['source'] = $flat['contact_source'];
+            unset( $flat['contact_source'] );
+        }
 
         // handle preferred_communication_method
         if (array_key_exists('preferred_communication_method', $fields)) {
@@ -209,10 +226,12 @@ class CRM_Dedupe_Finder
             }
         }
 
-        // drop the -digit postfixes (so event registration's $flat['email-5'] becomes $flat['email'])
+        // drop the -digit (and -Primary, for CRM-3902) postfixes (so event registration's $flat['email-5'] becomes $flat['email'])
+        // FIXME: CRM-5026 should be fixed here; the below clobbers all address info; we should split off address fields and match
+        // the -digit to civicrm_address.location_type_id and -Primary to civicrm_address.is_primary
         foreach ($flat as $key => $value) {
             $matches = array();
-            if (preg_match('/(.*)-\d+$/', $key, $matches)) {
+            if (preg_match('/(.*)-(\d+|Primary)$/', $key, $matches)) {
                 $flat[$matches[1]] = $value;
                 unset($flat[$key]);
             }
@@ -221,9 +240,17 @@ class CRM_Dedupe_Finder
         $params = array();
         $supportedFields = CRM_Dedupe_BAO_RuleGroup::supportedFields($ctype);
         if ( is_array( $supportedFields ) ) {
-            foreach( $supportedFields as $table => $fields) {
-                // for matching on civicrm_address fields, we also need the location_type_id
-                if ($table == 'civicrm_address') $fields['location_type_id'] = '';
+            foreach($supportedFields as $table => $fields) {
+                if ($table == 'civicrm_address') {
+                    // for matching on civicrm_address fields, we also need the location_type_id
+                    $fields['location_type_id'] = '';
+                    // FIXME: we also need to do some hacking for id and name fields, see CRM-3902’s comments
+                    $fixes = array( 'address_name' => 'name', 'country' => 'country_id', 
+                                    'state_province' => 'state_province_id', 'county' => 'county_id' );
+                    foreach ($fixes as $orig => $target) {
+                        if (CRM_Utils_Array::value($orig, $flat)) $params[$table][$target] = $flat[$orig];
+                    }
+                }
                 foreach($fields as $field => $title) {
                     if ( CRM_Utils_Array::value( $field, $flat ) ) {
                         $params[$table][$field] = $flat[$field];

@@ -47,7 +47,7 @@ class CRM_Event_Payment_Dummy extends CRM_Core_Payment_Dummy {
      */
     static function &singleton( $mode, &$paymentProcessor ) {
         if (self::$_singleton === null ) {
-            self::$_singleton =& new CRM_Event_Payment_Dummy( $mode, $paymentProcessor );
+            self::$_singleton = new CRM_Event_Payment_Dummy( $mode, $paymentProcessor );
         }
         return self::$_singleton;
     }

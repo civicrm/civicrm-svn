@@ -1,18 +1,43 @@
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
 {* this template is used for adding/editing tags  *}
-<script type="text/javascript" src="{$config->resourceBase}js/rest.js"></script>
 <style>
 .hit {ldelim}padding-left:10px;{rdelim}
 .tree li {ldelim}padding-left:10px;{rdelim}
-#Tag .tree .collapsable .hit {ldelim}background:url('{$config->resourceBase}/i/collapsable.gif') no-repeat left 3px;cursor:pointer{rdelim}
-#Tag .tree .expandable .hit {ldelim}background:url('{$config->resourceBase}/i/expandable.gif') no-repeat left 3px;cursor:pointer{rdelim}
+#Tag .tree .collapsable .hit {ldelim}background:url('{$config->resourceBase}/i/menu-expanded.png') no-repeat left 8px;padding-left: 9px;cursor:pointer{rdelim}
+#Tag .tree .expandable .hit {ldelim}background:url('{$config->resourceBase}/i/menu-collapsed.png') no-repeat left 6px;padding-left: 9px;cursor:pointer{rdelim}
 #Tag #tagtree .highlighted {ldelim}background-color:lightgrey;{rdelim}
-#restmsg {ldelim}position:absolute;top:20px;left:200px;z-index:10000;padding:3px 15px;{rdelim}
-#restmsg.msgok {ldelim}display:block;background:#ffff99;border: 1px solid #5A8FDB;{rdelim}
-#restmsg.msgnok {ldelim}display:block;background:red;color:white;border: 1px solid #5A8FDB;{rdelim}
 </style>
 <script type="text/javascript">
-civicrm_ajaxURL="{crmURL p='civicrm/ajax/rest' h=0}";
-contactID={$contactId};
+
+options = {ldelim} ajaxURL:"{crmURL p='civicrm/ajax/rest' h=0}"
+       ,closetxt:'<div class="icon close-icon"></div>'
+      {rdelim} 
+entityID={$entityID};
+entityTable='{$entityTable}';
 {literal}
 function hideStatus( ) {
     cj( '#restmsg' ).hide( );
@@ -44,11 +69,12 @@ function initTagTree() {
         //get current tag label
         var currentTagLabel = cj("#tagLabel_" + tagid ).text( );
         if (this.checked) {
-            civiREST ('entity_tag','add',{contact_id:contactID,tag_id:tagid});
+            //civiREST ('entity_tag','add',{entity_table:entityTable,entity_id:entityID,tag_id:tagid},image);
+            cj().crmAPI ('entity_tag','add',{entity_table:entityTable,entity_id:entityID,tag_id:tagid},options);
             // add check to tab label array
             tagsArray.push( currentTagLabel );
         } else {
-            civiREST ('entity_tag','remove',{contact_id:contactID,tag_id:tagid});
+            cj().crmAPI ('entity_tag','remove',{entity_table:entityTable,entity_id:entityID,tag_id:tagid},options);
             // build array of tag labels
             tagsArray = cj.map(tagsArray, function (a) { 
                  if ( cj.trim( a ) != currentTagLabel ) {
@@ -56,11 +82,12 @@ function initTagTree() {
                  }
              });
         }
-
+		//showing count of tags in summary tab
+		cj( '.ui-tabs-nav #tab_tag a' ).html( 'Tags <em>' + cj("#tagtree input:checkbox:checked").length + '</em>');
         //update summary tab 
         tagLabels = tagsArray.join(', ');
         cj("#tags").html( tagLabels );
-        cj("#tagLink").show( );
+        ( tagLabels ) ? cj("#tagLink,#tags").show( ) : cj("#tagLink,#tags").hide( );
     });
     
     {/literal}
@@ -74,10 +101,9 @@ function initTagTree() {
 };
 {/literal}
 </script>
-
-<span id="restmsg"></span>
+<span id="restmsg" style="display:none"></span>
 <div id="Tag" class="view-content">
-<fieldset><legend>{ts}Tags{/ts}</legend>
+<h3>{if !$hideContext}{ts}Tags{/ts}{/if}</h3>
     <p>
     {if $action eq 16}
         {if $permission EQ 'edit'}
@@ -87,7 +113,9 @@ function initTagTree() {
             {ts}Current tags are highlighted.{/ts}
         {/if}
     {else}
+        {if !$hideContext} 
         {ts}Mark or unmark the checkboxes, <span class="unobstructive">and click 'Update Tags' to modify tags.<span>{/ts}
+	{/if}
     {/if}
     </p>
     <ul id="tagtree" class="tree">
@@ -95,19 +123,19 @@ function initTagTree() {
         <li id="tag_{$id}">
             {if ! $node.children}<input name="tagList[{$id}]" id="check_{$id}" type="checkbox" {if $tagged[$id]}checked="checked"{/if}/>{/if}
             {if $node.children}<input name="tagList[{$id}]" id="check_{$id}" type="checkbox" {if $tagged[$id]}checked="checked"{/if}/>{/if}
-            <span {if $node.children}class="hit"{/if} id="tagLabel_{$id}">{$node.name}</span>
+            {if $node.children} <span class="hit"></span> {/if} <label for="check_{$id}" id="tagLabel_{$id}">{$node.name}</label> 
             {if $node.children}
             <ul>
                 {foreach from=$node.children item="subnode" key="subid"}
                     <li id="tag_{$subid}">
                         <input id="check_{$subid}" name="tagList[{$subid}]" type="checkbox" {if $tagged[$subid]}checked="checked"{/if}/>
-                        <span {if $subnode.children}class="hit"{/if} id="tagLabel_{$subid}">{$subnode.name}</span>
+                        {if $subnode.children} <span class="hit"></span> {/if} <label for="check_{$subid}" id="tagLabel_{$subid}">{$subnode.name}</label> 
                         {if $subnode.children}
                         <ul>
                             {foreach from=$subnode.children item="subsubnode" key="subsubid"}
                                 <li id="tag_{$subsubid}">
                                     <input id="check_{$subsubid}" name="tagList[{$subsubid}]" type="checkbox" {if $tagged[$subsubid]}checked="checked"{/if}/>
-                                    <span id="tagLabel_{$subsubid}">{$subsubnode.name}</span>
+                                    <label for="check_{$subsubid}" id="tagLabel_{$subsubid}">{$subsubnode.name}</label>
                                 </li>
                             {/foreach} 
                         </ul>
@@ -132,12 +160,14 @@ function initTagTree() {
     {if $permission EQ 'edit' AND $action eq 16}
         </fieldset>
         <div class="action-link unobstructive">
-          <a accesskey="N" href="{crmURL p='civicrm/contact/view/tag' q='action=update'}" class="button"><span>&raquo; {ts}Edit Tags{/ts}</span></a>
+          <a accesskey="N" href="{crmURL p='civicrm/contact/view/tag' q='action=update'}" class="button"><span><div class="icon edit-icon"></div>{ts}Edit Tags{/ts}</span></a>
         </div>
     {else}
        <div class="form-item unobstructive">{$form.buttons.html}</div>
        </fieldset>
     {/if}
+
+    {include file="CRM/common/Tag.tpl"}
 </div>
 
 {if $action eq 1 or $action eq 2 }

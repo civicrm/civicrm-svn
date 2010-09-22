@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | Elavon Core Payment Module for CiviCRM version 2.2           |
+ | Elavon Core Payment Module for CiviCRM version 3.2           |
  +--------------------------------------------------------------------+
  | Licensed to CiviCRM under the Academic Free License version 3.0    |
  |                                                                    |
@@ -45,7 +45,7 @@ class CRM_Event_Payment_Elavon extends CRM_Core_Payment_Elavon
     static function &singleton( $mode, &$paymentProcessor ) 
     {
         if ( self::$_singleton === null ) { 
-            self::$_singleton =& new CRM_Event_Payment_Elavon( $mode, $paymentProcessor );
+            self::$_singleton = new CRM_Event_Payment_Elavon( $mode, $paymentProcessor );
         } 
         return self::$_singleton; 
     } 

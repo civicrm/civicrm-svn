@@ -2,15 +2,15 @@
  
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -29,7 +30,7 @@
  * 
  * @package CRM 
  * @author Alan Dixon
- * @copyright CiviCRM LLC (c) 2004-2009 
+ * @copyright CiviCRM LLC (c) 2004-2010 
  * $Id$ 
  * 
  */ 
@@ -50,10 +51,13 @@ class CRM_Core_Payment_Moneris extends CRM_Core_Payment {
     function __construct( $mode, &$paymentProcessor ) {
         $this->_mode             = $mode;
         $this->_paymentProcessor = $paymentProcessor;
-        $this->_processorName    = 'Moneris';
+        $this->_processorName    = ts('Moneris');
 
-        require_once 'Services/mpgClasses.php'; // require moneris supplied api library
-        $config =& CRM_Core_Config::singleton( ); // get merchant data from config
+        if (include_once('Services/mpgClasses.php') === false ) { // require moneris supplied api library
+            CRM_Core_Error::fatal( ts( 'Please download and put the Moneris mpgClasses.php file in packages/Services directory to enable Moneris Support.' ) );
+        }
+
+        $config = CRM_Core_Config::singleton( ); // get merchant data from config
         $this->_profile['mode']     = $mode; // live or test
         $this->_profile['storeid']  = $this->_paymentProcessor['signature'];
         $this->_profile['apitoken'] = $this->_paymentProcessor['password' ];
@@ -106,6 +110,9 @@ class CRM_Core_Payment_Moneris extends CRM_Core_Payment {
                          'cust_id'    => $params['contact_id']
                          );
         
+        // Allow further manipulation of params via custom hooks
+        CRM_Utils_Hook::alterPaymentProcessorParams( $this, $params, $txnArray );
+
         //create a transaction object passing the hash created above
         $mpgTxn = new mpgTransaction($txnArray);
   

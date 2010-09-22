@@ -1,15 +1,15 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -17,7 +17,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -30,7 +31,7 @@
  * @package CiviCRM_APIv2
  * @subpackage API_UF
  * 
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * @version $Id$
  *
  */
@@ -76,8 +77,13 @@ function &civicrm_uf_profile_groups_get( ) {
  * @static 
  * 
  */ 
-function civicrm_uf_profile_title_get ( $id ) {
-    return CRM_Core_BAO_UFGroup::getTitle( $id );
+function civicrm_uf_profile_title_get($id)
+{
+    if ((int) $id > 0) {
+        return CRM_Core_BAO_UFGroup::getTitle($id);
+    } else {
+        return civicrm_create_error('Param needs to be a positive integer.');
+    }
 }
 
 /** 
@@ -92,8 +98,13 @@ function civicrm_uf_profile_title_get ( $id ) {
  * @static 
  * @access public 
  */ 
-function civicrm_uf_profile_fields_get ( $id, $register = false, $action = null, $visibility = null ) {
-    return CRM_Core_BAO_UFGroup::getFields( $id, $register, $action, null, $visibility, false, null, true );
+function civicrm_uf_profile_fields_get($id, $register = false, $action = null, $visibility = null)
+{
+    if ((int) $id > 0) {
+        return CRM_Core_BAO_UFGroup::getFields($id, $register, $action, null, $visibility, false, null, true);
+    } else {
+        return civicrm_create_error('Param needs to be a positive integer.');
+    }
 }
 
 /** 
@@ -109,8 +120,13 @@ function civicrm_uf_profile_fields_get ( $id, $register = false, $action = null,
  * @static 
  * @access public 
  */ 
-function civicrm_uf_profile_html_get ( $userID, $title, $action = null, $register = false, $reset = false ) {
-    return CRM_Core_BAO_UFGroup::getEditHTML( $userID, $title, $action, $register, $reset );
+function civicrm_uf_profile_html_get($userID, $title, $action = null, $register = false, $reset = false)
+{
+    if ((int) $userID > 0 and is_string($title)) {
+        return CRM_Core_BAO_UFGroup::getEditHTML($userID, $title, $action, $register, $reset);
+    } else {
+        return civicrm_create_error('Params need to be a positive integer and a string.');
+    }
 }
 
 /** 
@@ -126,12 +142,13 @@ function civicrm_uf_profile_html_get ( $userID, $title, $action = null, $registe
  * @static 
  * @access public 
  */ 
-function civicrm_uf_profile_html_by_id_get ( $userID,
-                                             $profileID,
-                                             $action = null,
-                                             $register = false,
-                                             $reset = false ) {
-    return CRM_Core_BAO_UFGroup::getEditHTML( $userID, null, $action, $register, $reset, $profileID );
+function civicrm_uf_profile_html_by_id_get($userID, $profileID, $action = null, $register = false, $reset = false)
+{
+    if ((int) $userID > 0 and (int) $profileID > 0) {
+        return CRM_Core_BAO_UFGroup::getEditHTML($userID, null, $action, $register, $reset, $profileID);
+    } else {
+        return civicrm_create_error('Params need to be positive integers.');
+    }
 }
 
  
@@ -144,10 +161,13 @@ function civicrm_uf_profile_html_by_id_get ( $userID,
  * @static  
  * @access public  
  */  
-function civicrm_uf_create_html_get ( $gid, $reset = false ) {
+function civicrm_uf_create_html_get($gid, $reset = false)
+{
+    if ((int) $gid < 1) return civicrm_create_error('Param needs to be a positive integer.');
+
     require_once 'CRM/Core/Controller/Simple.php';
-    $session =& CRM_Core_Session::singleton( ); 
-    $controller =& new CRM_Core_Controller_Simple( 'CRM_Profile_Form_Edit', '', CRM_Core_Action::ADD ); 
+    $session = CRM_Core_Session::singleton( ); 
+    $controller = new CRM_Core_Controller_Simple( 'CRM_Profile_Form_Edit', '', CRM_Core_Action::ADD ); 
     if ( $reset ) { 
         unset( $_POST['_qf_default'] ); 
         unset( $_REQUEST['_qf_default'] );
@@ -158,7 +178,7 @@ function civicrm_uf_create_html_get ( $gid, $reset = false ) {
     $controller->setEmbedded( true ); 
     $controller->run( ); 
  
-    $template =& CRM_Core_Smarty::singleton( ); 
+    $template = CRM_Core_Smarty::singleton( ); 
     return trim( $template->fetch( 'CRM/Profile/Form/Dynamic.tpl' ) );
 } 
 
@@ -171,9 +191,14 @@ function civicrm_uf_create_html_get ( $gid, $reset = false ) {
  * @access public    
  * @static 
  */ 
-function civicrm_uf_match_id_get ( $ufID ) {
-    require_once 'CRM/Core/BAO/UFMatch.php';
-    return CRM_Core_BAO_UFMatch::getContactId( $ufID );
+function civicrm_uf_match_id_get($ufID)
+{
+    if ((int) $ufID > 0) {
+        require_once 'CRM/Core/BAO/UFMatch.php';
+        return CRM_Core_BAO_UFMatch::getContactId($ufID);
+    } else {
+        return civicrm_create_error('Param needs to be a positive integer.');
+    }
 }
 
 /**  
@@ -185,9 +210,14 @@ function civicrm_uf_match_id_get ( $ufID ) {
  * @access public     
  * @static  
  */  
-function civicrm_uf_id_get ( $contactID ) { 
-    require_once 'CRM/Core/BAO/UFMatch.php'; 
-    return CRM_Core_BAO_UFMatch::getUFId( $contactID ); 
+function civicrm_uf_id_get($contactID)
+{
+    if ((int) $contactID > 0) {
+        require_once 'CRM/Core/BAO/UFMatch.php';
+        return CRM_Core_BAO_UFMatch::getUFId($contactID);
+    } else {
+        return civicrm_create_error('Param needs to be a positive integer.');
+    }
 } 
 
 /*******************************************************************/
@@ -202,12 +232,13 @@ function civicrm_uf_id_get ( $contactID ) {
  *
  * @access public 
  */
-function civicrm_uf_group_create( $params ) {
-    _civicrm_initialize( );
-    
-    if(! is_array($params) || ! isset($params['title']) ) {
-        return civicrm_create_error("params is not an array or may be empty array ");
+function civicrm_uf_group_create($params)
+{
+    if (!is_array($params) or empty($params) or !isset($params['title'])) {
+        return civicrm_create_error('Params must be an array and have a title field.');
     }
+
+    _civicrm_initialize();
     
     $ids = array();
     require_once 'CRM/Core/BAO/UFGroup.php';
@@ -229,17 +260,14 @@ function civicrm_uf_group_create( $params ) {
  *
  * @access public 
  */
-function civicrm_uf_group_update( $params , $groupId) {
+function civicrm_uf_group_update($params, $groupId)
+{
+    if (!is_array($params) or empty($params) or (int) $groupId < 1) {
+        return civicrm_create_error('Params must be a non-empty array and a positive integer.');
+    }
     
     _civicrm_initialize( );
     
-    if(! is_array( $params ) ) {
-        return civicrm_create_error("params is not an array ");
-    }
-    
-    if(! isset( $groupId ) ) {
-        return civicrm_create_error("parameter $groupId  is not set ");
-    }
     $ids = array();
     $ids['ufgroup'] = $groupId;
     
@@ -262,12 +290,13 @@ function civicrm_uf_group_update( $params , $groupId) {
  * @access public 
  *
  */
-function civicrm_uf_field_create( $groupId , $params ) {
-    _civicrm_initialize( );
-    
-    if(! isset( $groupId  ) ) {
-        return civicrm_create_error("Group Id is not set.");
+function civicrm_uf_field_create($groupId, $params)
+{
+    if (!is_array($params) or !isset($params['field_name']) or (int) $groupId < 1) {
+        return civicrm_create_error('Params must be a field_name-carrying array and a positive integer.');
     }
+
+    _civicrm_initialize( );
     
     $field_type       = CRM_Utils_Array::value ( 'field_type'       , $params );
     $field_name       = CRM_Utils_Array::value ( 'field_name'       , $params );
@@ -275,10 +304,6 @@ function civicrm_uf_field_create( $groupId , $params ) {
     $phone_type       = CRM_Utils_Array::value ( 'phone_type'       , $params );
     
     $params['field_name'] =  array( $field_type, $field_name, $location_type_id, $phone_type);
-    
-    if(! is_array( $params ) || $params['field_name'][1] == null || $params['weight'] == null ) {
-        return civicrm_create_error("missing required fields ");
-    }
     
     if ( !( CRM_Utils_Array::value('group_id', $params) ) ) {
         $params['group_id'] =  $groupId;
@@ -329,7 +354,7 @@ function civicrm_uf_field_update( $params , $fieldId ) {
     $params['field_name'] =  array( $field_type, $field_name, $location_type_id, $phone_type);
     
     require_once 'CRM/Core/BAO/UFField.php';
-    $UFField = &new CRM_core_BAO_UFField();
+    $UFField = new CRM_core_BAO_UFField();
     $UFField->id = $fieldId;
     
     if ( !( CRM_Utils_Array::value('group_id', $params) ) && $UFField->find(true) ) {

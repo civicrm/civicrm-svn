@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -68,11 +69,10 @@ class CRM_Case_Form_Activity_ChangeCaseStatus
 
     static function buildQuickForm( &$form ) 
     { 
-        require_once 'CRM/Core/OptionGroup.php';        
-       
-        $caseStatus  = CRM_Core_OptionGroup::values('case_status');
+        require_once 'CRM/Case/PseudoConstant.php';
+        $form->_caseStatus  = CRM_Case_PseudoConstant::caseStatus( );
         $form->add('select', 'case_status_id',  ts( 'Case Status' ),  
-                    $caseStatus , true  );
+                    $form->_caseStatus , true  );
     }
 
     /**
@@ -84,7 +84,7 @@ class CRM_Case_Form_Activity_ChangeCaseStatus
      * @static
      * @access public
      */
-    static function formRule( &$values, $files, &$form ) 
+    static function formRule( $values, $files, $form ) 
     {
         return true;
     }
@@ -106,17 +106,24 @@ class CRM_Case_Form_Activity_ChangeCaseStatus
      * @access public
      * @return None
      */
-    public function endPostProcess( &$form, &$params ) 
+    public function endPostProcess( &$form, &$params, $activity ) 
     {
+        $groupingValues = CRM_Core_OptionGroup::values( 'case_status', false, true, false, null, 'value' );
+              
         // Set case end_date if we're closing the case. Clear end_date if we're (re)opening it.
-        if( $params['case_status_id'] == 
-            CRM_Core_OptionGroup::getValue( 'case_status', 'Closed', 'name' ) 
-            && CRM_Utils_Array::value('activity_date_time', $params) ) {
+        if ( CRM_Utils_Array::value( $params['case_status_id'], $groupingValues ) == 'Closed' 
+             && CRM_Utils_Array::value( 'activity_date_time', $params ) ) {
             $params['end_date'] = $params['activity_date_time'];
-            
-        } else if ( $params['case_status_id'] == 
-                    CRM_Core_OptionGroup::getValue( 'case_status', 'Open', 'name' ) ) {
+        } else if ( CRM_Utils_Array::value( $params['case_status_id'], $groupingValues ) == 'Opened' ) {
             $params['end_date'] = "null";
+        }
+
+        if ($activity->subject == 'null'){
+            $activity->subject = ts('Case status changed from %1 to %2', array(1 => CRM_Utils_Array::value( $form->_defaults['case_status_id'], $form->_caseStatus ),
+                                                                               2 => CRM_Utils_Array::value( $params['case_status_id'], $form->_caseStatus )
+                                                                               )
+                                   );
+            $activity->save();            
         }
         
         // FIXME: does this do anything ?

@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -98,55 +99,8 @@ class CRM_Event_StateMachine_Search extends CRM_Core_StateMachine
             $value = $this->_controller->get( 'task' );
         }
         $this->_controller->set( 'task', $value );
+        return CRM_Event_Task::getTask( $value );
         
-        $result = false;
-
-        switch ( $value ) {
-        case CRM_Event_Task::DELETE_EVENTS:
-            $task   = 'CRM_Event_Form_Task_Delete';
-            break;
-            
-        case CRM_Event_Task::EXPORT_EVENTS:
-            $task   = array('CRM_Export_Form_Select',
-                            'CRM_Export_Form_Map');
-            break;
-            
-        case CRM_Event_Task::BATCH_EVENTS:
-            $task   = array( 'CRM_Event_Form_Task_PickProfile',
-                             'CRM_Event_Form_Task_Batch',
-                             'CRM_Event_Form_Task_Result' );
-            break;
-
-        case CRM_Event_Task::CANCEL_REGISTRATION:
-            $task   = 'CRM_Event_Form_Task_Cancel';
-            break;
-
-        case CRM_Event_Task::EMAIL_CONTACTS:
-            $task   = array('CRM_Event_Form_Task_Email',
-                            'CRM_Event_Form_Task_Result');
-            break;
-
-        case CRM_Event_Task::SAVE_SEARCH:
-            $task   = 'CRM_Event_Form_Task_SaveSearch';
-            $result = true;
-            break;
-
-        case CRM_Event_Task::SAVE_SEARCH_UPDATE:
-            $task   = 'CRM_Event_Form_Task_SaveSearch_Update';
-            $result = true;
-            break;
-
-        case CRM_Event_Task::PARTICIPANT_STATUS:
-            $task = array('CRM_Event_Form_Task_ParticipantStatus',
-                          'CRM_Event_Form_Task_Result');
-            break;
-            
-        default: // the print task is the default and catch=all task
-            $task = 'CRM_Event_Form_Task_Print';
-            break;
-        }
-        
-        return array( $task, $result );
     }
     
     /**

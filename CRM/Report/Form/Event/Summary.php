@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -42,8 +43,8 @@ class CRM_Report_Form_Event_Summary extends CRM_Report_Form {
     protected $_summary = null;
 
     protected $_charts  = array( ''         => 'Tabular',
-                                 'barGraph' => 'Bar Graph',
-                                 'pieGraph' => 'Pie Graph'
+                                 'barChart' => 'Bar Chart',
+                                 'pieChart' => 'Pie Chart'
                                  );
 
     protected $_add2groupSupported = false;
@@ -73,7 +74,7 @@ class CRM_Report_Form_Event_Summary extends CRM_Report_Form {
                          array( 			 			   
                                'id'               => array( 'title'   => ts( 'Event Title' ),
                                                             'operatorType'  => CRM_Report_Form::OP_MULTISELECT,
-                                                            'options' => CRM_Event_PseudoConstant::event() ), 
+                                                            'options' => CRM_Event_PseudoConstant::event( null, null, "is_template IS NULL OR is_template = 0" ), ), 
                                
                                'event_type_id'    => array( 'name'    => 'event_type_id',
                                                             'title'   => ts( 'Event Type' ),
@@ -128,7 +129,7 @@ class CRM_Report_Form_Event_Summary extends CRM_Report_Form {
                         $to       = CRM_Utils_Array::value( "{$fieldName}_to"      , $this->_params );
                         
                         if ( $relative || $from || $to ) {
-                            $clause = $this->dateClause( $field['name'], $relative, $from, $to );
+                            $clause = $this->dateClause( $field['name'], $relative, $from, $to, $field['type'] );
                         }
                     } else { 
                         $op = CRM_Utils_Array::value( "{$fieldName}_op", $this->_params );
@@ -153,12 +154,8 @@ class CRM_Report_Form_Event_Summary extends CRM_Report_Form {
                 }
             }
         }
-
-        if ( empty( $clauses ) ) {
-            $this->_where = "WHERE  ( 1 ) ";
-        } else {
-            $this->_where = "WHERE  " . implode( ' AND ', $clauses);          
-        }
+        $clauses[] = "({$this->_aliases['civicrm_event']}.is_template IS NULL OR {$this->_aliases['civicrm_event']}.is_template = 0)";
+        $this->_where = "WHERE  " . implode( ' AND ', $clauses);          
     }
     
     function groupBy( ) {
@@ -169,8 +166,8 @@ class CRM_Report_Form_Event_Summary extends CRM_Report_Form {
     //get participants information for events
     function participantInfo( ) {
 
-        $statusType1 = CRM_Event_PseudoConstant::participantStatus( null, "filter = 1" ); 
-        $statusType2 = CRM_Event_PseudoConstant::participantStatus( null, "filter = 0" ); 
+        $statusType1 = CRM_Event_PseudoConstant::participantStatus( null, "is_counted = 1" ); 
+        $statusType2 = CRM_Event_PseudoConstant::participantStatus( null, "is_counted = 0" ); 
         
         $sql = "
           SELECT civicrm_participant.event_id    AS event_id, 
@@ -239,8 +236,8 @@ class CRM_Report_Form_Event_Summary extends CRM_Report_Form {
             }
         }
         
-        $statusType1 = CRM_Event_PseudoConstant::participantStatus( null, "filter = 1" ); 
-        $statusType2 = CRM_Event_PseudoConstant::participantStatus( null, "filter = 0" ); 
+        $statusType1 = CRM_Event_PseudoConstant::participantStatus( null, "is_counted = 1" ); 
+        $statusType2 = CRM_Event_PseudoConstant::participantStatus( null, "is_counted = 0" ); 
         
         //make column header for participant status  Registered/Attended  
         $type1_header = implode( '/' , $statusType1 );
@@ -268,8 +265,8 @@ class CRM_Report_Form_Event_Summary extends CRM_Report_Form {
 
         //set pager before exicution of query in function participantInfo() 
         $this->setPager( );
-
-        require_once 'CRM/Utils/PChart.php';
+        
+        require_once 'CRM/Utils/OpenFlashChart.php';
         $rows  = $graphRows = array();
         $count = 0;
         while ( $dao->fetch( ) ) {	
@@ -306,33 +303,36 @@ class CRM_Report_Form_Event_Summary extends CRM_Report_Form {
     }
 
     function buildChart( &$rows ) {
-        
+        $this->_interval = 'events';
+        $countEvent      = null;
         if ( CRM_Utils_Array::value('charts', $this->_params ) ) {
             foreach ( $rows as $key => $value ) {
-                $graphRows['totalAmount'][]    = ($rows[$key]['totalAmount']);
-                $graphRows[$this->_interval][] = ($rows[$key]['civicrm_event_id']);
-                $graphRows['value'][]          = ($rows[$key]['totalAmount']);
-                $count++;
+                $graphRows['totalAmount'][]    = $graphRows['value'][] = CRM_Utils_Array::value( 'totalAmount', $rows[$key] );
+                $graphRows[$this->_interval][] = substr( $rows[$key]['civicrm_event_title'], 0, 12)."..(". $rows[$key]['civicrm_event_id'].") ";
             }
             
-            if ( ( $rows[$key]['totalAmount']) == 0 ) {
+            if ( CRM_Utils_Array::value( 'totalAmount', $rows[$key] ) == 0 ) {
                 $countEvent = count($rows);
             }
-            
+
             if ( (!empty($rows)) && $countEvent != 1 ) {
+                $config  = CRM_Core_Config::Singleton();
                 $chartInfo = array( 'legend' => 'Event Summary',
-                                    'xname'  => 'Total Amount',
-                                    'yname'  => 'Event ID'
+                                    'xname'  => 'Event',
+                                    'yname'  => "Total Amount ({$config->defaultCurrency})"
                                     );
                 if ( !empty($graphRows) ) {
-                    $graphs = CRM_Utils_PChart::reportChart( $graphRows,
-                                                             $this->_params['charts'],
-                                                             $graphRows[$this->_interval],
-                                                             $chartInfo );
-            
-                    $this->assign( 'graphFilePath', $graphs['0']['file_name'] );
-                    $this->_graphPath =  $graphs['0']['file_name'];
-                } 
+                    foreach ( $graphRows[$this->_interval] as $key => $val ) {
+                        $graph[$val] = $graphRows['value'][$key];
+                    }
+                    $chartInfo['values']      = $graph;
+                    $chartInfo['xLabelAngle'] = 20;
+                    
+                    // build the chart.
+                    require_once 'CRM/Utils/OpenFlashChart.php';
+                    CRM_Utils_OpenFlashChart::buildChart( $chartInfo, $this->_params['charts'] );
+                    $this->assign( 'chartType', $this->_params['charts'] );
+                }
             }
         }
     }

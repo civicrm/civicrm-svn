@@ -62,7 +62,7 @@
        <name>grouping</name>
        <title>Option Grouping Name</title>
        <type>varchar</type>
-       <length>64</length>
+       <length>255</length>
        <comment>Use to sort and/or set display properties for sub-set(s) of options within an option group. EXAMPLE: Use for college_interest field, to differentiate partners from non-partners.</comment>
        <add>1.5</add>
   </field>
@@ -88,8 +88,10 @@
   </field>
   <field>
        <name>description</name>
-       <type>varchar</type>
-       <length>255</length>
+       <type>text</type>
+       <htmlType>textarea</htmlType>
+       <rows>8</rows>
+       <cols>60</cols>
        <localizable>true</localizable>
        <comment>Optional description.</comment>
        <add>1.5</add>
@@ -127,6 +129,18 @@
        <key>id</key>
        <add>2.0</add>
   </foreignKey>  
+  <field>
+      <name>domain_id</name>
+      <type>int unsigned</type>
+      <comment>Which Domain is this option value for</comment>
+      <add>3.1</add>
+  </field>
+  <foreignKey>
+       <name>domain_id</name>
+       <table>civicrm_domain</table>
+       <key>id</key>
+       <add>3.1</add>
+  </foreignKey>
   <field>
        <name>visibility_id</name>
        <type>int unsigned</type>

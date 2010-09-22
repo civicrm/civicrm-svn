@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -38,7 +39,7 @@
  * for other useful tips and suggestions
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -53,10 +54,10 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
     /**
      * the title associated with this controller
      *
-     * @var object
+     * @var string
      */
     protected $_title;
-
+    
     /**
      * The key associated with this controller
      *
@@ -86,7 +87,19 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
      * @var boolean
      */
     protected $_embedded = false;
-
+    
+    /**
+     * After entire form execution complete,
+     * do we want to skip control redirection.
+     * Default - It get redirect to user context.
+     *
+     * Useful when we run form in non civicrm context
+     * and we need to transfer control back.(eg. drupal)
+     *
+     * @var boolean
+     */
+    protected $_skipRedirection = false;
+    
     /**
      * Are we in print mode? if so we need to modify the display
      * functionality to do a minimal display :)
@@ -140,10 +153,12 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
     function __construct( $title = null, $modal = true,
                           $mode = null, $scope = null,
                           $addSequence = false, $ignoreKey = false ) {
+        // this has to true for multiple tab session fix                    
+        $addSequence = true;
+
         // add a unique validable key to the name
         $name = CRM_Utils_System::getClassName($this);
         $name = $name . '_' . $this->key( $name, $addSequence, $ignoreKey );
-        $this->HTML_QuickForm_Controller( $name, $modal );
         $this->_title = $title;
         if ( $scope ) {
             $this->_scope = $scope;
@@ -152,10 +167,16 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
         }
         $this->_scope = $this->_scope . '_' . $this->_key;
 
+        require_once 'CRM/Core/BAO/Cache.php';
+        CRM_Core_Session::registerAndRetrieveSessionObjects( array( "_{$name}_container",
+                                                                    array( 'CiviCRM', $this->_scope ) ) );
+        
+        $this->HTML_QuickForm_Controller( $name, $modal );
+
         // let the constructor initialize this, should happen only once
         if ( ! isset( self::$_template ) ) {
-            self::$_template =& CRM_Core_Smarty::singleton( );
-            self::$_session  =& CRM_Core_Session::singleton( );
+            self::$_template = CRM_Core_Smarty::singleton( );
+            self::$_session  = CRM_Core_Session::singleton( );
         }
 
         $snippet = CRM_Utils_Array::value( 'snippet', $_REQUEST );
@@ -190,8 +211,14 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
                                                            false, null, $_REQUEST );
     }
 
+    function fini( ) {
+        CRM_Core_BAO_Cache::storeSessionToCache( array( "_{$this->_name}_container",
+                                                        array( 'CiviCRM', $this->_scope ) ),
+                                                 true );
+    }
+
     function key( $name, $addSequence = false, $ignoreKey = false ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         if ( $ignoreKey ||
              ( isset( $config->keyDisable ) && $config->keyDisable ) ) {
@@ -208,7 +235,10 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
         }
 
         if ( ! $key ) {
-            CRM_Core_Error::fatal( 'Could not find valid Key' );
+            $msg = ts('We can\'t load the requested web page. This page requires cookies to be enabled in your browser settings. Please check this setting and enable cookies (if they are not enabled). Then try again. If this error persists, contact the site adminstrator for assistance.') .
+             '<br /><br />' . ts('Site Administrators: This error may indicate that users are accessing this page using a domain or URL other than the configured Base URL. EXAMPLE: Base URL is http://example.org, but some users are accessing the page via http://www.example.org or a domain alias like http://myotherexample.org.') .
+             '<br /><br />' . ts('Error type: Could not find a valid session key.');
+            CRM_Core_Error::fatal( $msg );
         }
 
         $this->_key = $key;
@@ -350,7 +380,7 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
                 $formName = CRM_Utils_String::getClassName( $name );
             }
             require_once(str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php');
-            $$stateName =& new $className( $stateMachine->find( $className ), $action, 'post', $formName );
+            $$stateName = new $className( $stateMachine->find( $className ), $action, 'post', $formName );
             if ( $title ) {
                 $$stateName->setTitle( $title );
             }
@@ -359,6 +389,10 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
             }
             $this->addPage( $$stateName );
             $this->addAction( $stateName, new HTML_QuickForm_Action_Direct( ) );
+            
+            //CRM-6342 -we need kill the reference here,
+            //as we have deprecated reference object creation.
+            unset( $$stateName );
         }
     }
 
@@ -516,7 +550,53 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
     function getEmbedded( ) {
         return $this->_embedded;
     }
+    
+    /**
+     * setter for skipRedirection
+     *
+     * @param boolean $skipRedirection
+     *
+     * @return void
+     * @access public
+     */
+    function setSkipRedirection( $skipRedirection ) {
+        $this->_skipRedirection = $skipRedirection;
+    }
+    
+    /**
+     * getter for skipRedirection
+     *
+     * @return boolean return the skipRedirection value
+     * @access public
+     */
+    function getSkipRedirection( ) {
+        return $this->_skipRedirection;
+    }
+    
 
+    function setWord ($fileName=null) {
+        //Mark as a CSV file.
+        header('Content-Type: application/vnd.ms-word');
+        
+        //Force a download and name the file using the current timestamp.
+        if (!$fileName) {
+            $fileName = 'Contacts_' . $_SERVER['REQUEST_TIME'] . '.doc';
+        }
+        header("Content-Disposition: attachment; filename=Contacts_$fileName");
+    }
+    
+    function setExcel ($fileName=null) {
+        //Mark as an excel file.
+        header('Content-Type: application/vnd.ms-excel');
+        
+        //Force a download and name the file using the current timestamp.
+        if (! $fileName) {
+            $fileName = 'Contacts_' . $_SERVER['REQUEST_TIME'] . '.xls';
+        }
+        
+        header("Content-Disposition: attachment; filename=Contacts_$fileName");
+    }
+    
     /**
      * setter for print 
      *
@@ -526,6 +606,11 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
      * @access public
      */
     function setPrint( $print  ) {
+        if ($print == "xls") {
+            $this->setExcel();
+        } else if ($print == "doc") {
+            $this->setWord();
+        }
         $this->_print = $print;
     }
 
@@ -543,18 +628,20 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
         if ( $this->_print ) {
             if ( $this->_print == CRM_Core_Smarty::PRINT_PAGE ) {
                 return 'CRM/common/print.tpl';
+            } else if ($this->_print == 'xls' || $this->_print == 'doc') {
+                return 'CRM/Contact/Form/Task/Excel.tpl';
             } else {
                 return 'CRM/common/snippet.tpl';
             }
         } else {
-            $config =& CRM_Core_Config::singleton();
+            $config = CRM_Core_Config::singleton();
             return 'CRM/common/'. strtolower($config->userFramework) .'.tpl';
         }
     }
 
     public function addUploadAction( $uploadDir, $uploadNames ) {
         if ( empty( $uploadDir ) ) {
-            $config  =& CRM_Core_Config::singleton( );
+            $config  = CRM_Core_Config::singleton( );
             $uploadDir = $config->uploadDir;
         }
 
@@ -593,7 +680,7 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
             if ( $setToReferer ) {
                 $url = $_SERVER['HTTP_REFERER'];
             } else {
-                $config =& CRM_Core_Config::singleton( );
+                $config = CRM_Core_Config::singleton( );
                 $url = $config->userFrameworkBaseURL;
             }
         }

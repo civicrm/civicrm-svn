@@ -1,5 +1,30 @@
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
 {if $membershipBlock}
-<div id="membership">
+<div id="membership" class="crm-group membership-group">
   {if $context EQ "makeContribution"}
   <fieldset>    
       {if $renewal_mode }
@@ -7,7 +32,7 @@
             <legend>{$membershipBlock.renewal_title}</legend>
         {/if}
         {if $membershipBlock.renewal_text}
-            <div id="membership-intro">
+            <div id="membership-intro" class="crm-section membership_renewal_intro-section">
                 <p>{$membershipBlock.renewal_text}</p>
             </div> 
         {/if}
@@ -17,7 +42,7 @@
             <legend>{$membershipBlock.new_title}</legend>
         {/if}
         {if $membershipBlock.new_text}
-            <div id="membership-intro">
+            <div id="membership-intro" class="crm-section membership_new_intro-section">
                 <p>{$membershipBlock.new_text}</p>
             </div> 
         {/if}
@@ -43,7 +68,7 @@
     {/if}
    
     {strip}
-        <table id="membership-listings" class="no-border">
+        <table id="membership-listings">
         {foreach from=$membershipTypes item=row }
         <tr {if $context EQ "makeContribution" OR $context EQ "thankContribution" }class="odd-row" {/if}valign="top">
             {if $showRadio }

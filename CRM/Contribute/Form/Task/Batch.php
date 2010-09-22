@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,12 +29,13 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
 
 require_once 'CRM/Profile/Form.php';
+require_once 'CRM/Contribute/Form/Task.php';
 
 /**
  * This class provides the functionality for batch profile update for contributions
@@ -73,8 +75,21 @@ class CRM_Contribute_Form_Task_Batch extends CRM_Contribute_Form_Task {
          * initialize the task and row fields
          */
         parent::preProcess( );
+        
+        //get the contact read only fields to display.
+        require_once 'CRM/Core/BAO/Preferences.php';
+        $readOnlyFields = array_merge( array( 'sort_name' => ts( 'Name' ) ),
+                                       CRM_Core_BAO_Preferences::valueOptions( 'contact_autocomplete_options',
+                                                                               true, null, false, 'name', true ) );
+        //get the read only field data.
+        $returnProperties  = array_fill_keys( array_keys( $readOnlyFields ), 1 );
+        require_once 'CRM/Contact/BAO/Contact/Utils.php';
+        $contactDetails = CRM_Contact_BAO_Contact_Utils::contactDetails( $this->_contributionIds, 
+                                                                         'CiviContribute', $returnProperties );
+        $this->assign( 'contactDetails', $contactDetails );
+        $this->assign( 'readOnlyFields', $readOnlyFields );
     }
-  
+    
     /**
      * Build the form
      *
@@ -138,8 +153,13 @@ class CRM_Contribute_Form_Task_Batch extends CRM_Contribute_Form_Task {
             foreach ( $this->_fields as $name => $field ) {
                 if ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID( $name ) ) {
                     $customValue = CRM_Utils_Array::value( $customFieldID, $customFields );
-                    if ( ( $typeId == $customValue['extends_entity_column_value'] ) ||
-                         CRM_Utils_System::isNull( $customValue['extends_entity_column_value'] ) ) {
+                    if ( CRM_Utils_Array::value( 'extends_entity_column_value', $customValue ) ) {
+                        $entityColumnValue = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, 
+                                                      $customValue['extends_entity_column_value'] );
+                    }
+
+                    if ( CRM_Utils_Array::value( $typeId, $entityColumnValue ) ||
+                         CRM_Utils_System::isNull( $entityColumnValue[$typeId] ) ) {
                         CRM_Core_BAO_UFGroup::buildProfile( $this, $field, null, $contributionId );
                     }
                 } else {
@@ -176,13 +196,9 @@ class CRM_Contribute_Form_Task_Batch extends CRM_Contribute_Form_Task {
         $defaults = array( );
         foreach ($this->_contributionIds as $contributionId) {
             $details[$contributionId] = array( );
-            //build sortname
-            require_once "CRM/Contribute/BAO/Contribution.php";
-            $sortName[$contributionId] = CRM_Contribute_BAO_Contribution::sortName($contributionId);
             CRM_Core_BAO_UFGroup::setProfileDefaults( null, $this->_fields, $defaults, false, $contributionId, 'Contribute' );
         }
         
-        $this->assign('sortName', $sortName);
         return $defaults;
     }
 
@@ -203,23 +219,16 @@ class CRM_Contribute_Form_Task_Batch extends CRM_Contribute_Form_Task {
                         );
         if ( isset( $params['field'] ) ) {
             foreach ( $params['field'] as $key => $value ) {
-                foreach ( $dates as $d ) {
-                    if ( ! CRM_Utils_System::isNull( $value[$d] ) ) {
-                        $value[$d]['H'] = '00';
-                        $value[$d]['i'] = '00';
-                        $value[$d]['s'] = '00';
-                        $value[$d]      =  CRM_Utils_Date::format( $value[$d] );
-                    } else {
-                        unset( $value[$d] );
-                    }   
-                }
-                
+                                
                 $value['custom'] = CRM_Core_BAO_CustomField::postProcess( $value,
                                                                           CRM_Core_DAO::$_nullObject,
                                                                           $key,
                                                                           'Contribution' );
-                
+                                
                 $ids['contribution'] = $key;
+                foreach ( $dates as $val ) {
+                    $value[$val] = CRM_Utils_Date::processDate( $value[$val] );
+                }
                 if ($value['contribution_type']) {
                     $value['contribution_type_id'] = $value['contribution_type'];
                 }

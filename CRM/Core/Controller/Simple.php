@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -32,7 +33,7 @@
  * process
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -64,9 +65,16 @@ class CRM_Core_Controller_Simple extends CRM_Core_Controller {
         // by definition a single page is modal :). We use the form name as the scope for this controller
         parent::__construct( $title, true, $mode, $path, $addSequence, $ignoreKey );
 
-        $this->_stateMachine =& new CRM_Core_StateMachine( $this );
+        $this->_stateMachine = new CRM_Core_StateMachine( $this );
 
         $params = array($path => null);
+
+        $savedAction = CRM_Utils_Request::retrieve('action', 'String', $this, false, null );
+        if ( ! empty( $savedAction ) &&
+             $savedAction != $mode ) {
+            $mode = $savedAction;
+        }
+
 
         $this->_stateMachine->addSequentialPages($params, $mode);
 
@@ -75,7 +83,7 @@ class CRM_Core_Controller_Simple extends CRM_Core_Controller {
         //changes for custom data type File
         $uploadNames = $this->get( 'uploadNames' );
         
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         
         if ( is_array( $uploadNames ) && ! empty ( $uploadNames ) ) {
             $uploadArray = $uploadNames;

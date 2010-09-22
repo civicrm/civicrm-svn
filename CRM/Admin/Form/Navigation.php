@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -42,6 +43,16 @@ require_once 'CRM/Admin/Form.php';
 class CRM_Admin_Form_Navigation extends CRM_Admin_Form
 {
     /**
+     * The parent id of the navigation menu
+     */
+    protected $_currentParentID = null;
+
+    /**
+     * Default values
+     */
+     protected $_defaults = array( );
+     
+    /**
      * Function to build the form
      *
      * @return None
@@ -54,6 +65,11 @@ class CRM_Admin_Form_Navigation extends CRM_Admin_Form
         if ($this->_action & CRM_Core_Action::DELETE ) { 
             return;
         }
+        
+        if ( isset( $this->_id ) ) {
+            $params = array( 'id' => $this->_id );
+            CRM_Core_BAO_Navigation::retrieve( $params, $this->_defaults );
+        }       
         
         $this->applyFilter('__ALL__', 'trim');
         $this->add('text',
@@ -77,34 +93,41 @@ class CRM_Admin_Form_Navigation extends CRM_Admin_Form
         
         $operators = array( 'AND' => 'AND', 'OR' => 'OR' );
         $this->add('select', 'permission_operator', ts( 'Operator'), $operators ); 
-        $parentMenu = array( );
-        CRM_Core_BAO_Navigation::getNavigationList( $parentMenu );            
-        
-        if ( isset( $this->_id ) ) {
-            unset( $parentMenu[$this->_id] );
-        }
-        $this->add( 'select', 'parent_id', ts( 'Parent' ), array( '' => ts('-- select --') ) + $parentMenu );
+
         $this->add('checkbox', 'has_separator', ts('Separator?'));
-        $this->add('checkbox', 'is_active', ts('Enabled?'));
+        $active = $this->add('checkbox', 'is_active', ts('Enabled?'));
+        
+        if ( $this->_defaults['name'] == 'Home' ) {
+            $active->freeze( );
+        } else {
+            $parentMenu = CRM_Core_BAO_Navigation::getNavigationList( );
+
+            if ( isset( $this->_id ) ) {
+                unset( $parentMenu[$this->_id] );
+            }
+            $parent = $this->add( 'select', 'parent_id', ts( 'Parent' ), array( '' => ts('-- select --') ) + $parentMenu );            
+        }
     }
     
     public function setDefaultValues() {
-        $defaults = array( );
+        $defaults = $this->_defaults;
         if ( isset( $this->_id ) ) {
-            $params = array( 'id' => $this->_id );
-            CRM_Core_BAO_Navigation::retrieve( $params, $defaults );
-            if ( CRM_Utils_Array::value( 'permission', $defaults ) ) { 
-                foreach ( explode( ',' , $defaults['permission'] ) as $value ){ 
+            if ( CRM_Utils_Array::value( 'permission', $this->_defaults ) ) { 
+                foreach ( explode( ',' , $this->_defaults['permission'] ) as $value ){ 
                     $components[$value] = $value;
                 }
                 $defaults['permission'] = $components;
             }
+            //Take parent id in object variable to calculate the menu
+            //weight if menu parent id changed
+            $this->_currentParentID = CRM_Utils_Array::value( 'parent_id', $this->_defaults );
         } else {
             $defaults['permission'] = "access CiviCRM";
         }
         
         // its ok if there is no element called is_active
-        $defaults['is_active'] = ( $this->_id ) ? $defaults['is_active'] : 1;
+        $defaults['is_active'] = ( $this->_id ) ? $this->_defaults['is_active'] : 1;
+        
         return $defaults;
     }
        
@@ -120,6 +143,7 @@ class CRM_Admin_Form_Navigation extends CRM_Admin_Form
         
         if ( isset( $this->_id ) ) {
             $params['id'] = $this->_id;
+            $params['current_parent_id'] = $this->_currentParentID;
         }
         
         $navigation = CRM_Core_BAO_Navigation::add( $params );

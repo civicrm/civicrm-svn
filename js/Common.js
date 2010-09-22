@@ -1,14 +1,14 @@
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -16,7 +16,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -26,7 +27,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -387,20 +388,14 @@ function hide(block_id)
  *
  * @return
  */
-function toggleCheckboxVals(fldPrefix,form) {
-    for( i=0; i < form.elements.length; i++) {
-        fpLen = fldPrefix.length;
-        if (form.elements[i].type == 'checkbox' && form.elements[i].name.slice(0,fpLen) == fldPrefix ) {
-            element = form.elements[i];
-            if (form.toggleSelect.checked == false ) {
-                element.checked = false; 
-            } else {
-                element.checked = true;
-            }
-        }
+function toggleCheckboxVals(fldPrefix,object) {
+    if ( object.id == 'toggleSelect' && cj(object).is(':checked') ) {
+       cj( 'Input[id*="' + fldPrefix + '"],Input[id*="toggleSelect"]').attr('checked', true);
+    } else {
+       cj( 'Input[id*="' + fldPrefix + '"],Input[id*="toggleSelect"]').attr('checked', false);
     }
-    /* function called to change the color of selected rows */
-    on_load_init_checkboxes(form.name); 
+   /* function called to change the color of selected rows */
+   on_load_init_checkboxes(object.form.name); 
 }
 
 function countSelectedCheckboxes(fldPrefix, form) {
@@ -419,6 +414,9 @@ function countSelectedCheckboxes(fldPrefix, form) {
  */
 function toggleTaskAction( status ) {
     var radio_ts = document.getElementsByName('radio_ts');
+    if (!radio_ts[1]) {
+	radio_ts[0].checked = true;
+    }
     if ( radio_ts[0].checked || radio_ts[1].checked ) {
 	status = true;
     }
@@ -503,15 +501,15 @@ function checkSelectedBox (chkName, form)
         document.forms[form].radio_ts[1].checked = true;
         
         if (document.getElementById(row).className == 'even-row') {
-            document.getElementById(row).className = 'selected even-row';
+            document.getElementById(row).className = 'row-selected even-row';
         } else {
-            document.getElementById(row).className = 'selected odd-row';
+            document.getElementById(row).className = 'row-selected odd-row';
         }
 	
     } else {
-        if (document.getElementById(row).className == 'selected even-row') {
+        if (document.getElementById(row).className == 'row-selected even-row') {
             document.getElementById(row).className = 'even-row';
-        } else if (document.getElementById(row).className == 'selected odd-row') {
+        } else if (document.getElementById(row).className == 'row-selected odd-row') {
             document.getElementById(row).className = 'odd-row';
         }
     }
@@ -588,127 +586,6 @@ function on_load_init_check(form)
 		      var row = 'rowid' + ss;
 		      changeRowColor(row, form);
            }
-    }
-}
-
-
-/** 
- * This function is used to hide the table row 
- * also checks whether we have reached the 11th row
- * 
- * @param rowid get the id of tablerow
- * @param index current row index
- * @param type type of form to hide the row
- * @access public
- * @return null
- *
- */
-function hiderow(rowid, type)
-{
-    hide(rowid);
-    if(document.getElementById(type+'Link').style.display == 'none') {
-	document.getElementById(type+'Link').style.display = '';
-	if (type == 'optionField') {
-	    document.getElementById('additionalOption').style.display = 'none';
-	}
-    }
-    rowcounter++;
-}
-
-/** 
- * This function is used to show the table row 
- * also checks whether we have reached the 11th or 6th row, according to who called it
- * 
- * @param type eg.discount/optionField
- * @param maxValue number of rows
- * @access public
- * @return null
- *
- */
-
-function showrow(type,maxValue)
-{
-    var rowid ;
-    if( rowcounter == 0 ) {
-	for ( var i = 2; i <= maxValue; i++ ) {
-            rowid = type+"_"+i;
-	    
-	    if ( i == maxValue ) {
-		document.getElementById(type+'Link').style.display = 'none';
-		if (type == 'optionField') {
-		    document.getElementById('additionalOption').style.display = '';
-		}
-            }
-
-	    if(document.getElementById(rowid).style.display == 'none') {
-                document.getElementById(rowid).style.display = '';
-		if(type == 'discount' ) {
-		    //set start date of next discount set, 
-		    //according to end date of previouse discount set
-		    var j = i -1;
-		    var month = document.getElementById("discount_end_date["+j+"][M]").value;
-		    var day   = document.getElementById("discount_end_date["+j+"][d]").value;
-		    var year  = document.getElementById("discount_end_date["+j+"][Y]").value;
-		    
-		    var discount_date=new Date( year, month-1, day );
-		    discount_date.setDate( discount_date.getDate() + 1 );
-		    if ( month && day && year ) {       
-			document.getElementById("discount_start_date["+i+"][M]").value = discount_date.getMonth( )+1;
-			document.getElementById("discount_start_date["+i+"][d]").value = discount_date.getDate( );
-			document.getElementById("discount_start_date["+i+"][Y]").value = discount_date.getFullYear( );
-		    }
-		} else if (i < maxValue && type == 'optionField' ) {
-		    document.getElementById('additionalOption').style.display = 'none';
-		}
-		break;
-	    }
-	}
-    } else {
-        rowcounter--;
-	
-	for (var i = 2; i <= maxValue; i++ ) {
-            rowid = type+'_'+i;
-	    if (i == maxValue) {
-		document.getElementById(type+'Link').style.display = 'none';
-		if ( type == 'optionField') {
-		    document.getElementById('additionalOption').style.display = '';
-		}
-            }	
-	    
-	    if(document.getElementById(rowid).style.display == 'none') {
-                document.getElementById(rowid).style.display = '';
-		if (i <= maxValue && type == 'discount') {
-		    
-		    if(rowcounter == 0) {
-		   	document.getElementById(type+'Link').style.display = 'none';
-		    }
-		    //set start date of next discount set, 
-		    //according to end date of previouse discount set
-		    var j = i -1;
-		    var month = document.getElementById("discount_end_date["+j+"][M]").value;
-		    var day   = document.getElementById("discount_end_date["+j+"][d]").value;
-		    var year  = document.getElementById("discount_end_date["+j+"][Y]").value;
-		    
-		    var discount_date = new Date( year, month-1, day );
-		    discount_date.setDate( discount_date.getDate() + 1 );
-		    
-		    if ( month && day && year ) {			       
-			document.getElementById("discount_start_date["+i+"][M]").value = discount_date.getMonth( )+1;
-			document.getElementById("discount_start_date["+i+"][d]").value = discount_date.getDate( );
-			document.getElementById("discount_start_date["+i+"][Y]").value = discount_date.getFullYear( );
-		    }
-		    
-		    break;
-		} else if (i < maxValue && type == 'optionField') {
-		    document.getElementById('additionalOption').style.display = 'none';
-		    if(rowcounter == 0) {
-		   	document.getElementById('optionFieldLink').style.display = 'none';
-			document.getElementById('additionalOption').style.display = '';
-		    }
-		    break;
-		}
-            }
-        }
     }
 }
 
@@ -848,4 +725,68 @@ function executeInnerHTML ( elementName )
 
 function imagePopUp ( path ) 
 {      window.open(path,'popupWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,copyhistory=no,screenX=150,screenY=150,top=150,left=150');
+}
+
+/**
+ * Function to show / hide the row in optionFields
+ *
+ * @param element name index, that whose innerHTML is to hide else will show the hidden row.
+ */
+function showHideRow( index )
+{
+   if( index) {
+    cj( 'tr#optionField_' + index ).hide( );
+    if( cj( 'table#optionField tr:hidden:first' ).length )  cj( 'div#optionFieldLink' ).show( );
+   } else {
+    cj( 'table#optionField tr:hidden:first' ).show( );
+    if( ! cj( 'table#optionField tr:hidden:last' ).length ) cj( 'div#optionFieldLink' ).hide( );
+   }
+    return false; 
+}
+
+/**
+ * Function to check activity status in relavent to activity date
+ *
+ * @param element message JSON object.
+ */
+function activityStatus( message )
+{
+    var d = new Date(), time = [], i;
+    var currentDateTime = d.getTime()
+    var activityTime    = cj("input#activity_date_time_time").val().replace(":", "");
+    
+    //chunk the time in bunch of 2 (hours,minutes,ampm)
+	for(i=0; i<activityTime.length; i+=2 ) { 
+        time.push( activityTime.slice( i, i+2 ) );
+    }
+    var activityDate = new Date( cj("input#activity_date_time_hidden").val() );
+      
+    d.setFullYear(activityDate.getFullYear());
+    d.setMonth(activityDate.getMonth());
+    d.setDate(activityDate.getDate());
+    var hours = time['0'];
+    var ampm  = time['2'];
+
+    if (ampm == "PM" && hours != 0 && hours != 12) {
+        // force arithmetic instead of string concatenation
+        hours = hours*1 + 12;
+    } else if (ampm == "AM" && hours == 12) {
+        hours = 0;
+    }
+    d.setHours(hours);
+    d.setMinutes(time['1']);
+
+    var activity_date_time = d.getTime();
+
+    var activityStatusId = cj('#status_id').val();
+
+    if ( activityStatusId == 2 && currentDateTime < activity_date_time ) {
+        if (! confirm( message.completed )) {
+            return false;
+        }
+    } else if ( activity_date_time && activityStatusId == 1 && currentDateTime >= activity_date_time ) {
+        if (! confirm( message.scheduled )) {
+            return false;
+        }
+    } 
 }

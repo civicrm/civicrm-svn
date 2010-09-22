@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -63,28 +64,10 @@ class CRM_Activity_BAO_ActivityTarget extends CRM_Activity_DAO_ActivityTarget
     public function create( &$params ) 
     {
         require_once 'CRM/Activity/BAO/ActivityTarget.php';
-        $target =& new CRM_Activity_BAO_ActivityTarget();
+        $target = new CRM_Activity_BAO_ActivityTarget();
 
         $target->copyValues( $params );
         return $target->save();
-    }
-
-    /**
-     * function to remove activity target
-     *
-     * @param int    $id  ID of the activity for which the records needs to be deleted.
-     * 
-     * @return void
-     * 
-     * @access public
-     * 
-     */
-    public function removeTarget( $id )
-    {
-        $this->id = $id;
-        if( $this->find( true ) ) {
-            return $this->delete();
-        }
     }
 
     /**
@@ -99,14 +82,21 @@ class CRM_Activity_BAO_ActivityTarget extends CRM_Activity_DAO_ActivityTarget
      */
     static function retrieveTargetIdsByActivityId( $activity_id ) 
     {
-        $target =& new CRM_Activity_BAO_ActivityTarget( );
-        $target->activity_id = $activity_id;
-        $target->find();
         $targetArray = array();
-        $count = 1;
+        require_once 'CRM/Utils/Rule.php';
+        if ( ! CRM_Utils_Rule::positiveInteger( $activity_id ) ) {
+            return $targetArray;
+        }
+
+        $sql = '
+            SELECT target_contact_id
+            FROM civicrm_activity_target
+            JOIN civicrm_contact ON target_contact_id = civicrm_contact.id
+            WHERE activity_id = %1 AND civicrm_contact.is_deleted = 0
+        ';
+        $target =& CRM_Core_DAO::executeQuery($sql, array(1 => array($activity_id, 'Integer')));
         while ( $target->fetch() ) {
-            $targetArray[$count] = $target->target_contact_id;
-            $count++;
+            $targetArray[] = $target->target_contact_id;
         }
         return $targetArray;
     }
@@ -128,7 +118,7 @@ class CRM_Activity_BAO_ActivityTarget extends CRM_Activity_DAO_ActivityTarget
                   FROM civicrm_contact contact_a 
                   LEFT JOIN civicrm_activity_target 
                          ON civicrm_activity_target.target_contact_id = contact_a.id
-                  WHERE civicrm_activity_target.activity_id = {$activity_id}";
+                  WHERE civicrm_activity_target.activity_id = {$activity_id} AND contact_a.is_deleted = 0";
         $dao = CRM_Core_DAO::executeQuery($query,$queryParam);
         $targetNames = array();
         while ( $dao->fetch() ) {

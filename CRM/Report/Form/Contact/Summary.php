@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -43,7 +44,7 @@ class CRM_Report_Form_Contact_Summary extends CRM_Report_Form {
     
     protected $_phoneField   = false;
     
-    protected $_addressField = false;
+    protected $_customGroupExtends = array( 'Contact', 'Individual', 'Household', 'Organization' );
     
     function __construct( ) {
         $this->_columns = 
@@ -119,15 +120,17 @@ class CRM_Report_Form_Contact_Summary extends CRM_Report_Form {
                           'alias'  => 'cgroup',
                           'filters' =>             
                           array( 'gid' => 
-                                 array( 'name'    => 'id',
+                                 array( 'name'    => 'group_id',
                                         'title'   => ts( 'Group' ),
                                         'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-                                        'options' => CRM_Core_PseudoConstant::staticGroup( ) 
+                                        'group'   => true,
+                                        'options' => CRM_Core_PseudoConstant::group( ) 
                                         ), 
                                  ), 
                           ),
                    );
 
+        $this->_tagFilter = true;
         parent::__construct( );
     }
     
@@ -143,9 +146,7 @@ class CRM_Report_Form_Contact_Summary extends CRM_Report_Form {
                 foreach ( $table['fields'] as $fieldName => $field ) {
                     if ( CRM_Utils_Array::value( 'required', $field ) ||
                          CRM_Utils_Array::value( $fieldName, $this->_params['fields'] ) ) {
-                        if ( $tableName == 'civicrm_address' ) {
-                            $this->_addressField = true;
-                        } else if ( $tableName == 'civicrm_email' ) {
+                        if ( $tableName == 'civicrm_email' ) {
                             $this->_emailField = true;
                         } else if ( $tableName == 'civicrm_phone' ) {
                             $this->_phoneField = true;
@@ -162,21 +163,18 @@ class CRM_Report_Form_Contact_Summary extends CRM_Report_Form {
         $this->_select = "SELECT " . implode( ', ', $select ) . " ";
     }
 
-    static function formRule( &$fields, &$files, $self ) {  
+    static function formRule( $fields, $files, $self ) {  
         $errors = $grouping = array( );
         return $errors;
     }
 
     function from( ) {
         $this->_from = "
-        FROM civicrm_contact {$this->_aliases['civicrm_contact']} ";
-
-        if ( $this->_addressField ) {
-            $this->_from .= "
+        FROM civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom}
             LEFT JOIN civicrm_address {$this->_aliases['civicrm_address']} 
                    ON ({$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_address']}.contact_id AND 
                       {$this->_aliases['civicrm_address']}.is_primary = 1 ) ";
-        }
+        
         if ( $this->_emailField ) {
             $this->_from .= "
             LEFT JOIN  civicrm_email {$this->_aliases['civicrm_email']} 
@@ -190,74 +188,21 @@ class CRM_Report_Form_Contact_Summary extends CRM_Report_Form {
                    ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_phone']}.contact_id AND 
                       {$this->_aliases['civicrm_phone']}.is_primary = 1 ";
         }   
-
-        $this->_from .= "
-        LEFT  JOIN civicrm_group_contact  group_contact 
-                ON {$this->_aliases['civicrm_contact']}.id = group_contact.contact_id  AND 
-                   group_contact.status = 'Added'
-        LEFT  JOIN civicrm_group  {$this->_aliases['civicrm_group']} 
-                ON group_contact.group_id = {$this->_aliases['civicrm_group']}.id ";
-     
-    }
-
-    function where( ) {
-        $clauses = array( );
-        $this->_having = '';
-        foreach ( $this->_columns as $tableName => $table ) {
-            if ( array_key_exists('filters', $table) ) {
-                foreach ( $table['filters'] as $fieldName => $field ) {
-                    $clause = null;
-                    $op = CRM_Utils_Array::value( "{$fieldName}_op", $this->_params );
-                    if ( $op ) {
-                        $clause = 
-                            $this->whereClause( $field,
-                                                $op,
-                                                CRM_Utils_Array::value( "{$fieldName}_value", $this->_params ),
-                                                CRM_Utils_Array::value( "{$fieldName}_min", $this->_params ),
-                                                CRM_Utils_Array::value( "{$fieldName}_max", $this->_params ) );
-                    }
-                    
-                    if ( ! empty( $clause ) ) {
-                        $clauses[] = $clause;
-                    }
-                }
-            }
-        }
-
-        if ( empty( $clauses ) ) {
-            $this->_where = "WHERE ( 1 ) ";
-        } else {
-            $this->_where = "WHERE " . implode( ' AND ', $clauses );
-        }
     }
 
     function groupBy( ) {
-        $this->_groupBy = "";
-        if ( CRM_Utils_Array::value( 'group_bys', $this->_params ) && 
-             is_array($this->_params['group_bys']) && 
-             !empty($this->_params['group_bys']) ) {
-            foreach ( $this->_columns as $tableName => $table ) {
-                if ( array_key_exists('group_bys', $table) ) {
-                    foreach ( $table['group_bys'] as $fieldName => $field ) {
-                        if ( CRM_Utils_Array::value( $fieldName, $this->_params['group_bys'] ) ) {
-                            $this->_groupBy[] = $field['dbAlias'];
-                        }
-                    }
-                }
-            }
-            //temparary fix
-            $this->_groupBy = "GROUP BY civicrm_contact_id";// . implode( ', ', $this->_groupBy );
-        } else {
-            $this->_groupBy = "GROUP BY contact.id";
-        }
+        $this->_groupBy = "GROUP BY {$this->_aliases['civicrm_contact']}.id";
     }
-
+    
     function postProcess( ) {
 
         $this->beginPostProcess( );
 
+        // get the acl clauses built before we assemble the query
+        $this->buildACLClause( $this->_aliases['civicrm_contact'] );
+
         $sql  = $this->buildQuery( true );
-        
+             
         $rows = $graphRows = array();
         $this->buildRows ( $sql, $rows );
         

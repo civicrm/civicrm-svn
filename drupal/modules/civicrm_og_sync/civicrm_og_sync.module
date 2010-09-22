@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -44,15 +45,12 @@ function civicrm_og_sync_nodeapi( &$node, $op, $a3 = null, $a4 = null ) {
         return;
     }
 
-    // check if civicrm is present
-    if ( ! function_exists( 'civicrm_initialize' ) ) {
+    if ( ! civicrm_initialize( ) ) {
         return;
     }
-
-    civicrm_initialize( );
-
-	require_once 'CRM/Bridge/OG/Drupal.php';
-
+    
+    require_once 'CRM/Bridge/OG/Drupal.php';
+    
     $title  = trim( $node->title );
     $params = array( 'name'        => $title,
                      'title'       => $title,
@@ -69,7 +67,7 @@ function civicrm_og_sync_nodeapi( &$node, $op, $a3 = null, $a4 = null ) {
 
         CRM_Bridge_OG_Drupal::nodeapi( $params, 'add' );
 
-        // also call the use hook since OG does not for admin
+        // also call the user hook since OG does not for admin
         civicrm_og_sync_og( 'user update', $node->nid, $node->uid, array( 'is_admin' => 1 ) );
         break;
 
@@ -98,9 +96,22 @@ function civicrm_og_sync_og( $op, $nid, $uid, $args = array( ) ) {
         return;
     }
 
-    civicrm_initialize( );
+    if ( ! civicrm_initialize( ) ) {
+        return;
+    }
+
+    // create the CiviCRM groups if they dont exist
+    $node = node_load(array('nid' => $nid ));
+    $title  = trim( $node->title );
+    $params = array( 'name'        => $title,
+                     'title'       => $title,
+                     'description' => trim( $node->og_description ),
+                     'is_active'   => 1,
+                     'og_id'       => $node->nid );
     
+    // add the group
     require_once 'CRM/Bridge/OG/Drupal.php';
+    CRM_Bridge_OG_Drupal::nodeapi( $params, 'add' );
 
     $params = array( 'og_id'     => $nid,
                      'uf_id'     => $uid,
@@ -168,14 +179,14 @@ function civicrm_og_sync_civicrm_post( $op, $objectName, $objectID, $objectRef )
             if ( ! _civicrm_og_sync_set_context( 'civicrm' ) ) {
                 return;
             }
-            CRM_Bridge_OG_Drupal::groupContact( $objectID, $objectRef, 'add' );
+            CRM_Bridge_OG_CiviCRM::groupContact( $objectID, $objectRef, 'add' );
             break;
 
         case 'delete':
             if ( ! _civicrm_og_sync_set_context( 'civicrm' ) ) {
                 return;
             }
-            CRM_Bridge_OG_Drupal::groupContact( $objectID, $objectRef, 'delete' );
+            CRM_Bridge_OG_CiviCRM::groupContact( $objectID, $objectRef, 'delete' );
             break;
 
         default:
@@ -195,12 +206,9 @@ function civicrm_og_sync_civicrm_post( $op, $objectName, $objectID, $objectRef )
  */
 function civicrm_og_sync_enable() 
 {
-    // check if civicrm is present
-    if ( ! function_exists( 'civicrm_initialize' ) ) {
+    if ( ! civicrm_initialize( ) ) {
         return;
     }
-    
-    civicrm_initialize( );
     
     require_once 'CRM/Bridge/OG/Drupal.php';
     

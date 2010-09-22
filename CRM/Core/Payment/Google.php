@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /** 
  * 
  * @package CRM 
- * @copyright CiviCRM LLC (c) 2004-2009 
+ * @copyright CiviCRM LLC (c) 2004-2010 
  * $Id$ 
  * 
  */ 
@@ -54,7 +55,7 @@ class CRM_Core_Payment_Google extends CRM_Core_Payment {
     function __construct( $mode, &$paymentProcessor ) {
         $this->_mode             = $mode;
         $this->_paymentProcessor = $paymentProcessor;
-        $this->_processorName    = 'Google Checkout';
+        $this->_processorName    = ts('Google Checkout');
     }
 
     /** 
@@ -64,7 +65,7 @@ class CRM_Core_Payment_Google extends CRM_Core_Payment {
      * @public 
      */ 
     function checkConfig( ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         $error = array( );
 
@@ -99,12 +100,9 @@ class CRM_Core_Payment_Google extends CRM_Core_Payment {
     function doTransferCheckout( &$params, $component ) {
         $component = strtolower( $component );
         
-        $url = 
-            $this->_paymentProcessor['url_site'] .
-            'cws/v2/Merchant/' . 
-            $this->_paymentProcessor['user_name'] .
-            '/checkout';
-        
+        $url = rtrim( $this->_paymentProcessor['url_site'], '/' ) . '/cws/v2/Merchant/' . 
+            $this->_paymentProcessor['user_name'] . '/checkout';
+
         //Create a new shopping cart object
         $merchant_id  = $this->_paymentProcessor['user_name'];   // Merchant ID
         $merchant_key = $this->_paymentProcessor['password'];    // Merchant Key
@@ -135,6 +133,9 @@ class CRM_Core_Payment_Google extends CRM_Core_Payment {
             }
         }
         
+        // Allow further manipulation of the arguments via custom hooks ..
+        CRM_Utils_Hook::alterPaymentProcessorParams( $this, $params, $privateData );
+
         $cart->SetMerchantPrivateData($privateData);
         
         if ( $component == "event" ) {
@@ -158,7 +159,7 @@ class CRM_Core_Payment_Google extends CRM_Core_Payment {
         require_once 'HTTP/Request.php';
         $params = array( 'method' => HTTP_REQUEST_METHOD_POST,
                          'allowRedirects' => false );
-        $request =& new HTTP_Request( $url, $params );
+        $request = new HTTP_Request( $url, $params );
         foreach ( $googleParams as $key => $value ) {
             $request->addPostData($key, $value);
         }

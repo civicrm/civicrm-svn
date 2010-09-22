@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -61,12 +62,14 @@ class CRM_Contribute_Import_Form_Summary extends CRM_Core_Form
         $invalidRowCount = $this->get('invalidRowCount');
         $invalidSoftCreditRowCount = $this->get('invalidSoftCreditRowCount');
         if ( $invalidSoftCreditRowCount ) {
-            $this->set('downloadSoftCreditErrorRecordsUrl', CRM_Utils_System::url('civicrm/export', 'type=6&realm=contribution'));
+            $urlParams = 'type='.CRM_Contribute_Import_Parser::SOFT_CREDIT_ERROR . '&parser=CRM_Contribute_Import_Parser';
+            $this->set('downloadSoftCreditErrorRecordsUrl', CRM_Utils_System::url('civicrm/export', $urlParams ) );
         }
         $validSoftCreditRowCount = $this->get('validSoftCreditRowCount');
         $invalidPledgePaymentRowCount = $this->get('invalidPledgePaymentRowCount');
         if ( $invalidPledgePaymentRowCount ) {
-            $this->set('downloadPledgePaymentErrorRecordsUrl', CRM_Utils_System::url('civicrm/export', 'type=5&realm=contribution'));
+            $urlParams = 'type='.CRM_Contribute_Import_Parser::PLEDGE_PAYMENT_ERROR.'&parser=CRM_Contribute_Import_Parser';
+            $this->set('downloadPledgePaymentErrorRecordsUrl', CRM_Utils_System::url('civicrm/export', $urlParams ) );
         }
         $validPledgePaymentRowCount   = $this->get('validPledgePaymentRowCount');
         $conflictRowCount = $this->get('conflictRowCount');
@@ -74,9 +77,11 @@ class CRM_Contribute_Import_Form_Summary extends CRM_Core_Form
         $onDuplicate = $this->get('onDuplicate');
         $mismatchCount      = $this->get('unMatchCount');
         if ($duplicateRowCount > 0) {
-            $this->set('downloadDuplicateRecordsUrl', CRM_Utils_System::url('civicrm/export', 'type=3&realm=contribution'));
+            $urlParams = 'type='.CRM_Contribute_Import_Parser::DUPLICATE . '&parser=CRM_Contribute_Import_Parser';
+            $this->set('downloadDuplicateRecordsUrl', CRM_Utils_System::url('civicrm/export', $urlParams ) );
         }else if($mismatchCount) {
-            $this->set('downloadMismatchRecordsUrl', CRM_Utils_System::url('civicrm/export', 'type=4&realm=contribution'));
+            $urlParams = 'type='.CRM_Contribute_Import_Parser::NO_MATCH . '&parser=CRM_Contribute_Import_Parser';
+            $this->set('downloadMismatchRecordsUrl', CRM_Utils_System::url('civicrm/export', $urlParams ) );
         } else {
             $duplicateRowCount = 0;
             $this->set('duplicateRowCount', $duplicateRowCount);

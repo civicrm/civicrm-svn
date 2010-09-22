@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,12 +29,13 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
 
 require_once 'CRM/Core/Form.php';
+require_once 'CRM/Contact/Form/Location.php';
 
 /**
  * This class is to build the form for adding Group
@@ -68,10 +70,11 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
         $breadCrumbPath = CRM_Utils_System::url( 'civicrm/admin', 'reset=1' );
         CRM_Utils_System::appendBreadCrumb( ts('Administer CiviCRM'), $breadCrumbPath );
 
-        $this->_id = 1;
+        $this->_id = CRM_Core_Config::domainID( );
         $this->_action = CRM_Utils_Request::retrieve( 'action', 'String',
                                                       $this, false, 'view' );
-        
+        //location blocks.
+        CRM_Contact_Form_Location::preProcess( $this );
     }
     
     /*
@@ -114,15 +117,17 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
             require_once 'CRM/Core/BAO/Location.php';
             $defaults = CRM_Core_BAO_Location::getValues( $locParams );
 
+            $config = CRM_Core_Config::singleton( );
+            if ( !isset( $defaults['address'][1]['country_id'] ) ) {
+                $defaults['address'][1]['country_id'] = $config->defaultContactCountry;
+            }
+
             if ( ! empty ( $defaults['address'] ) ) {
-                $config = CRM_Core_Config::singleton( );
                 foreach ( $defaults['address'] as $key => $value ) {
                     CRM_Contact_Form_Edit_Address::fixStateSelect( $this,
                                                               "address[$key][country_id]",
                                                               "address[$key][state_province_id]",
-                                                              CRM_Utils_Array::value( 'country_id',
-                                                                                      CRM_Utils_Array::value( 'address',
-                                                                                                              $value ),
+                                                              CRM_Utils_Array::value( 'country_id', $value,
                                                                                       $config->defaultContactCountry ) );
                 }
             }
@@ -148,27 +153,9 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
         $this->add('text', 'email_address', ts('FROM Email Address'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email','email'), true);
         $this->addRule( "email_address", ts('Domain Email Address must use a valid email address format (e.g. \'info@example.org\').'), 'email' );
 
-        //blocks to be displayed
-        $this->assign( 'locationCount', self::LOCATION_BLOCKS + 1);    
-   
-        require_once 'CRM/Contact/Form/Location.php';
-        $locationCompoments = array('Phone', 'Email');
-        CRM_Contact_Form_Location::buildLocationBlock( $this, self::LOCATION_BLOCKS ,$locationCompoments);
-        $this->assign( 'index'  , 1 );
-        $this->assign( 'blockId', 1 );
-
-        //hack the address sequence so that state province always comes after country
-        $config =& CRM_Core_Config::singleton( );
-        $addressSequence = $config->addressSequence();
-        $key = array_search( 'country', $addressSequence);
-        unset($addressSequence[$key]);
-
-        $key = array_search( 'state_province', $addressSequence);
-        unset($addressSequence[$key]);
-
-        $addressSequence = array_merge( $addressSequence, array ( 'country', 'state_province' ) );
-        $this->assign( 'addressSequence', $addressSequence );
-
+        //build location blocks.
+        CRM_Contact_Form_Location::buildQuickForm( $this );
+        
         $this->addButtons( array(
                                  array ( 'type'      => 'next',
                                          'name'      => ts('Save'),
@@ -203,7 +190,7 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
      * @static
      * @access public
      */
-    static function formRule( &$fields ) 
+    static function formRule( $fields ) 
     {
         $errors = array( );
         // check for state/country mapping
@@ -275,10 +262,14 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
         }
         
         require_once 'CRM/Core/OptionValue.php';
+        
+        //reset default within domain.
+        $emailParams['reset_default_for'] = array( 'domain_id' => CRM_Core_Config::domainID( ) );
+        
         CRM_Core_OptionValue::addOptionValue( $emailParams, $groupParams, $action, $this->_fromEmailId );
        
         CRM_Core_Session::setStatus( ts('Domain information for \'%1\' has been saved.', array( 1 => $domain->name )) );
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $session->replaceUserContext(CRM_Utils_System::url('civicrm/admin', 'reset=1' ) );
 
     }

@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -57,7 +58,7 @@ class CRM_Contribute_Form_PCP_PCPAccount extends CRM_Core_Form
 
     public function preProcess()  
     {
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $this->_action = CRM_Utils_Request::retrieve( 'action', 'String', $this, false );
         $this->_pageId = CRM_Utils_Request::retrieve( 'pageId', 'Positive', $this );
         $this->_id     = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
@@ -67,9 +68,14 @@ class CRM_Contribute_Form_PCP_PCPAccount extends CRM_Core_Form
 
         $this->_contactID = isset( $contactID ) ? $contactID : $session->get( 'userID' );     
         if ( ! $this->_pageId ) {
-            $this->_pageId = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_PCP', $this->_id, 'contribution_page_id' );
+            if ( ! $this->_id ) {
+                $msg = ts( 'We can\'t load the requested web page due to an incomplete link. This can be caused by using your browser\'s Back button or by using an incomplete or invalid link.' );
+                CRM_Core_Error::fatal( $msg );
+            } else {
+                $this->_pageId = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_PCP', $this->_id, 'contribution_page_id' );
+            }
         }
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         //redirect back to online Contribution page, we allow only logged in
         //user to configure the PCP account and Page in standalone installation.
         if ( $config->userFramework == 'Standalone' && !$this->_contactID ) {
@@ -130,8 +136,8 @@ class CRM_Contribute_Form_PCP_PCPAccount extends CRM_Core_Form
      */ 
     public function buildQuickForm( )  
     {
-        $id = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_PCPBlock', $this->_pageId, 'supporter_profile_id', 'entity_id' );
         require_once 'CRM/Contribute/BAO/PCP.php';
+        $id = CRM_Contribute_BAO_PCP::getSupporterProfileId( $this->_pageId );
         if ( CRM_Contribute_BAO_PCP::checkEmailProfile( $id ) ){
             $this->assign('profileDisplay', true);
         }
@@ -206,12 +212,12 @@ class CRM_Contribute_Form_PCP_PCPAccount extends CRM_Core_Form
      * @access public  
      * @static  
      */  
-    static function formRule( &$fields, &$files, $self ) 
+    static function formRule( $fields, $files, $self ) 
     {
         $errors = array( );
         require_once "CRM/Utils/Rule.php";
         foreach( $fields as $key => $value ) {
-            if ( strpos($key, 'email-') !== false ) {
+            if ( strpos($key, 'email-') !== false && !empty($value) ) {
                 $ufContactId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFMatch', $value, 'contact_id', 'uf_name' );
                 if ( $ufContactId && $ufContactId != $self->_contactID ) {
                     $errors[$key] = ts( 'There is already an user associated with this email address. Please enter different email address.' );   
@@ -230,23 +236,39 @@ class CRM_Contribute_Form_PCP_PCPAccount extends CRM_Core_Form
     public function postProcess( )  
     {
         $params  = $this->controller->exportValues( $this->getName() );
+       
         if ( ! $this->_contactID && isset( $params['cms_create_account'] ) ) {
             foreach( $params as $key => $value ) {
-                if ( substr( $key , 0,5 ) == 'email' && ! empty( $value ) )  {
-                    $params['email'] = $value;
+                if ( substr( $key , 0,5 ) == 'email' && !empty( $value ) )  {
+                    list($fieldName, $locTypeId) = CRM_Utils_System::explode('-', $key, 2);
+                    $isPrimary = 0;
+                   if ( $locTypeId == 'Primary') {
+                       require_once "CRM/Core/BAO/LocationType.php";
+                       $locTypeId = & CRM_Core_BAO_LocationType::getDefault();
+                       $isPrimary = 1;
+                   }
+
+                   $params['email'] = array( );
+                   $params['email'][1]['email']            = $value;
+                   $params['email'][1]['location_type_id'] = $locTypeId;
+                   $params['email'][1]['is_primary']       = $isPrimary;
                 }
             }
         }
+        
         require_once 'CRM/Dedupe/Finder.php';
-        $params['location']['1']['email']['1']['email'] = $params['email'];
         $dedupeParams = CRM_Dedupe_Finder::formatParams( $params, 'Individual');
         $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, 'Individual', 'Strict' );
-        unset( $params['location'] );
         if ( $ids ) {
             $this->_contactID = $ids['0'];
         }
         $contactID =& CRM_Contact_BAO_Contact::createProfileContact( $params, $this->_fields, $this->_contactID );
         $this->set('contactID', $contactID);
+        
+        if ( !empty($params['email']) ) {
+            $params['email'] = $params['email'][1]['email']; 
+        }
+
         require_once "CRM/Contribute/BAO/Contribution/Utils.php";
         CRM_Contribute_BAO_Contribution_Utils::createCMSUser( $params, $contactID, 'email' );
     }

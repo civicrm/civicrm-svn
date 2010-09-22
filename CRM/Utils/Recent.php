@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,17 +29,16 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
 
-
-
 /**
  *
  */
-class CRM_Utils_Recent {
+class CRM_Utils_Recent 
+{
     
     /**
      * max number of items in queue
@@ -64,9 +64,10 @@ class CRM_Utils_Recent {
      * @access public
      * @static
      */
-    static function initialize( ) {
+    static function initialize( ) 
+    {
         if ( ! self::$_recent ) {
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             self::$_recent = $session->get( self::STORE_NAME );
             if ( ! self::$_recent ) {
                 self::$_recent = array( );
@@ -81,7 +82,8 @@ class CRM_Utils_Recent {
      * @access public
      * @static
      */
-    static function &get( ) {
+    static function &get( ) 
+    {
         self::initialize( );
         return self::$_recent;
     }
@@ -98,10 +100,18 @@ class CRM_Utils_Recent {
      * @access public
      * @static
      */
-    static function add( $title, $url, $id, $type, $contactId, $contactName ) {
+    static function add( $title, 
+                         $url, 
+                         $id, 
+                         $type, 
+                         $contactId, 
+                         $contactName, 
+                         $imageUrl = null,
+                         $subtype  = null,
+                         $isDeleted = false )
+    {
         self::initialize( );
-
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
 
         // make sure item is not already present in list
         for ( $i = 0; $i < count( self::$_recent ); $i++ ) {
@@ -117,8 +127,11 @@ class CRM_Utils_Recent {
                               'url'         => $url,
                               'id'          => $id,
                               'type'        => $type,
+                              'subtype'     => $subtype,
                               'contact_id'  => $contactId,
-                              'contactName' => $contactName) );
+                              'contactName' => $contactName,
+                              'isDeleted'   => $isDeleted,
+                              'image_url'   => $imageUrl ) );
         if ( count( self::$_recent ) > self::MAX_ITEMS ) {
             array_pop( self::$_recent );
         }
@@ -132,31 +145,31 @@ class CRM_Utils_Recent {
     /**
      * delete an item from the recent stack
      *
-     * @param string $id  contact id that had to be removed
+     * @param array $recentItem array of the recent Item to be removed
      *
      * @return void
      * @access public
      * @static
      */
-    static function del( $id ) {
+    static function del( $recentItem ) 
+    {
         self::initialize( );
-
         $tempRecent = self::$_recent;
         
         self::$_recent = '';
         
         // make sure item is not already present in list
         for ( $i = 0; $i < count( $tempRecent ); $i++ ) {
-            if ( $tempRecent[$i]['id' ] != $id ) {
+            if ( !( $tempRecent[$i]['id'] == $recentItem['id'] && 
+                    $tempRecent[$i]['type'] == $recentItem['type'] ) ) {
                 self::$_recent[] = $tempRecent[$i];
             }
         }
         
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $session->set( self::STORE_NAME, self::$_recent );
     }
-
-
+    
     /**
      * delete an item from the recent stack
      *
@@ -166,21 +179,24 @@ class CRM_Utils_Recent {
      * @access public
      * @static
      */
-    static function delContact( $id ) {
+    static function delContact( $id ) 
+    {
         self::initialize( );
-
+        
         $tempRecent = self::$_recent;
         
         self::$_recent = '';
         
-        // make sure item is not already present in list
+        // rebuild recent.
         for ( $i = 0; $i < count( $tempRecent ); $i++ ) {
-            if ( $tempRecent[$i]['id' ] != $id ) {
-                self::$_recent[] = $tempRecent[$i];
+            // don't include deleted contact in recent.
+            if ( CRM_Utils_Array::value( 'contact_id', $tempRecent[$i] ) == $id ) {
+                continue;
             }
+            self::$_recent[] = $tempRecent[$i];
         }
         
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $session->set( self::STORE_NAME, self::$_recent );
     }
 

@@ -56,6 +56,7 @@
   </foreignKey> 
   <field>  
       <name>contribution_type_id</name>  
+      <export>false</export>
       <type>int unsigned</type>
       <comment>FK to Contribution Type</comment>
       <add>1.3</add>  
@@ -161,12 +162,12 @@
   <field>      
       <name>currency</name>   
       <type>varchar</type>   
-      <length>64</length>
+      <length>3</length>
       <required>true</required> 
       <import>true</import>
       <headerPattern>/cur(rency)?/i</headerPattern>
       <dataPattern>/^[A-Z]{3}$/i</dataPattern>
-      <comment>3 character string, value derived from payment processor config setting.</comment>   
+      <comment>3 character string, value from config setting or input via user.</comment>
       <add>1.3</add>   
   </field> 
   <field>  
@@ -218,8 +219,7 @@
   <field>      
       <name>amount_level</name>
       <title>Amount Label</title>
-      <type>varchar</type>   
-      <length>255</length>
+      <type>text</type>   
       <import>true</import>
       <add>1.7</add>   
   </field> 
@@ -291,10 +291,11 @@
   </field>
   <field>
       <name>contribution_status_id</name>
-      <title>Contribution Status</title>
+      <title>Contribution Status Id</title>
       <type>int unsigned</type>
       <default>1</default>
       <import>true</import>
+      <export>false</export>
       <headerPattern>/status/i</headerPattern>
       <add>1.6</add>
   </field>

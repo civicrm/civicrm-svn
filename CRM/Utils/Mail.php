@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,133 +29,90 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
 
 
-class CRM_Utils_Mail {
-
+class CRM_Utils_Mail
+{
     /**
-     * encodes an UTF-8 string into an RFC-compliant Subject: header's body
+     * Wrapper function to send mail in CiviCRM. Hooks are called from this function. The input parameter
+     * is an associateive array which holds the values of field needed to send an email. These are:
      *
-     * param string $subject  the subject that should be encoded
-     * return string          the encoded Subject: header load
+     * from    : complete from envelope
+     * toName  : name of person to send email
+     * toEmail : email address to send to
+     * cc      : email addresses to cc
+     * bcc     : email addresses to bcc
+     * subject : subject of the email
+     * text    : text of the message
+     * html    : html version of the message
+     * reply-to: reply-to header in the email
+     * attachments: an associative array of
+     *   fullPath : complete pathname to the file
+     *   mime_type: mime type of the attachment
+     *   cleanName: the user friendly name of the attachmment
+     *
+     * @param array $params (by reference)
+     * 
+     * @access public
+     * @return boolean true if a mail was sent, else false
      */
-    static function encodeSubjectHeader($subject)
-    {
-        // encode the subject
-        // - if it contains CR, LF or non-US-ASCII
-        // - if it contains the string =?
-        // - if the full header line would be longer than 998 characters
-        if (substr_count($subject, "\r") or substr_count($subject, "\n")
-            or preg_match('/[^\x00-\x7f]/', $subject)
-            or substr_count($subject, '=?')
-            or strlen($subject) > 998 - strlen('Subject: ')) {
-
-            $encoded = base64_encode($subject);
-
-            // the encoded header lines cannot be longer than 76 characters
-            // simply do it like mutt does - first line contains 32 characters
-            // of the encoded payload, each of the subsequent ones the next
-            // 60 characters
-            $lines = array();
-            $lines[] = '=?utf-8?B?' . substr($encoded, 0, 32) . '?=';
-            $rest = substr($encoded, 32);
-            while ($rest != '') {
-                $lines[] = '=?utf-8?B?' . substr($rest, 0, 60) . '?=';
-                $rest = substr($rest, 60);
-            }
-
-            return implode("\n\t", $lines);
-
-        } else {
-            return $subject;
-        }
-    }
-
-
-
-    /**
-     * encodes an UTF-8 name+email pair into an RFC-compliant From:/To: header's body
-     *
-     * go the easy route and either make the header into
-     * "Adressee's Name" <address@example.com>
-     * or (if the above is not possible) base64-encode the name
-     *
-     * param string $name   the name that should be encoded
-     * param string $email  the email that should be encoded
-     * return string        the encoded To: header load
-     */
-    static function encodeAddressHeader($name, $email)
-    {
-        // a 'plain' name can only contain a certain subset of US-ASCII
-        if (preg_match('/[^\x01-\x08\x0b\x0c\x0e-\x7f]/', $name)
-            or substr_count($name, '=?')) {
-
-            $encoded = base64_encode($name);
-
-            // do what mutt does - split the payload into 60-character
-            // parts and separate these with spaces in the final header
-            $parts = array();
-            $rest = $encoded;
-            while ($rest != '') {
-                $parts[] = '=?utf-8?B?' . substr($encoded, 0, 60) . '?=';
-                $rest = substr($rest, 60);
-            }
-
-            return implode(' ', $parts) . " <$email>";
-
-        } else {
-            // it's a 'plain' name - escape any backslashes and double quotes
-            // found and build an "Adressee's Name" <address@example.com>
-            // header
-            $name = str_replace('\\', '\\\\', $name);
-            $name = str_replace('"', '\"', $name);
-            return "\"$name\" <$email>";
-        }
-    }
-
-    static function send( $from,
-                          $toDisplayName,
-                          $toEmail,
-                          $subject,
-                          $text_message = null,
-                          $cc = null,
-                          $bcc = null,
-                          $replyTo = null,
-                          $html_message = null,
-                          $attachments = null ) {
-        $returnPath = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_MailSettings', 1, 'return_path', 'is_default');
+    static function send( &$params ) {
+        require_once 'CRM/Core/BAO/MailSettings.php';
+        $returnPath = CRM_Core_BAO_MailSettings::defaultReturnPath();
+        $from       = CRM_Utils_Array::value( 'from', $params );
         if ( ! $returnPath ) {
             $returnPath = self::pluckEmailFromHeader($from);
         }
+        $params['returnPath'] = $returnPath;
+
+        // first call the mail alter hook
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::alterMailParams( $params );
+
+        // check if any module has aborted mail sending
+        if ( CRM_Utils_Array::value( 'abortMailSend', $params ) ||
+             ! CRM_Utils_Array::value( 'toEmail', $params ) ) {
+            return false;
+        }
+
+        $textMessage = CRM_Utils_Array::value( 'text'       , $params );
+        $htmlMessage = CRM_Utils_Array::value( 'html'       , $params );
+        $attachments = CRM_Utils_Array::value( 'attachments', $params );
+
+        // CRM-6224
+        if (trim(CRM_Utils_String::htmlToText($htmlMessage)) == '') {
+            $htmlMessage = false;
+        }
 
         $headers = array( );  
-        $headers['From']                      = $from;
-        $headers['To']                        = self::encodeAddressHeader($toDisplayName, $toEmail);  
-        $headers['Cc']                        = $cc;
-        $headers['Subject']                   = self::encodeSubjectHeader($subject);  
-        $headers['Content-Type']              = 'text/plain; charset=utf-8';  
+        $headers['From']                      = $params['from'];
+        $headers['To']                        = "{$params['toName']} <{$params['toEmail']}>";
+        $headers['Cc']                        = CRM_Utils_Array::value( 'cc', $params );
+        $headers['Bcc']                       = CRM_Utils_Array::value( 'bcc', $params );
+        $headers['Subject']                   = CRM_Utils_Array::value( 'subject', $params );
+        $headers['Content-Type']              = $htmlMessage ? 'multipart/mixed; charset=utf-8' : 'text/plain; charset=utf-8';
         $headers['Content-Disposition']       = 'inline';  
         $headers['Content-Transfer-Encoding'] = '8bit';  
-        $headers['Return-Path']               = $returnPath;
-        $headers['Reply-To']                  = isset($replyTo) ? $replyTo : $from;
+        $headers['Return-Path']               = CRM_Utils_Array::value( 'returnPath', $params );
+        $headers['Reply-To']                  = CRM_Utils_Array::value( 'replyTo', $params, $from );
         $headers['Date']                      = date('r');
-
-        $to = array( $toEmail );
-        if ( $cc ) {
-            $to[] = $cc;
+        if (CRM_Utils_Array::value( 'autoSubmitted', $params )) {
+          $headers['Auto-Submitted']          = "Auto-Generated";
         }
 
-        if ( $bcc ) {
-            $to[] = $bcc;
-        }
         require_once 'Mail/mime.php';
-        $msg = & new Mail_Mime("\n");
-        $msg->setTxtBody( $text_message );
-        $msg->setHTMLBody( $html_message );
+        $msg = new Mail_mime("\n");
+        if ( $textMessage ) {
+            $msg->setTxtBody($textMessage);
+        }
+
+        if ( $htmlMessage ) {
+            $msg->setHTMLBody($htmlMessage);
+        }
 
         if ( ! empty( $attachments ) ) {
             foreach ( $attachments as $fileID => $attach ) {
@@ -164,9 +122,21 @@ class CRM_Utils_Mail {
             }
         }
         
-        $message =  self::setMimeParams( $msg );
+        $message =& self::setMimeParams( $msg );
         $headers =& $msg->headers($headers);
+        
+        $to = array( $params['toEmail'] );
 
+        //get emails from headers, since these are 
+        //combination of name and email addresses.
+        if ( CRM_Utils_Array::value( 'Cc', $headers ) ) {
+            $to[] = CRM_Utils_Array::value( 'Cc', $headers );
+        }
+        if ( CRM_Utils_Array::value( 'Bcc', $headers ) ) {
+            $to[] = CRM_Utils_Array::value( 'Bcc', $headers );
+            unset( $headers['Bcc'] );
+        }
+        
         $result = null;
         $mailer =& CRM_Core_Config::getMailer( );
         CRM_Core_Error::ignoreException( );
@@ -178,8 +148,9 @@ class CRM_Utils_Mail {
                 CRM_Core_Session::setStatus( $message, false );
                 return false;
             }
+            return true;
         }
-        return true;
+        return false;
     }
 
     static function errorMessage( $mailer, $result ) {
@@ -224,16 +195,15 @@ class CRM_Utils_Mail {
         $content .= "\n" . $message . "\n";
 
         if ( is_numeric( CIVICRM_MAIL_LOG ) ) {
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             // create the directory if not there
-            $dirName = $config->uploadDir . 'mail' . DIRECTORY_SEPARATOR;
+            $dirName = $config->configAndLogDir . 'mail' . DIRECTORY_SEPARATOR;
             CRM_Utils_File::createDir( $dirName );
             $fileName = md5( uniqid( CRM_Utils_String::munge( $fileName ) ) ) . '.txt';
             file_put_contents( $dirName . $fileName,
                                $content );
         } else {
-            file_put_contents( CIVICRM_MAIL_LOG,
-                               $content );
+            file_put_contents( CIVICRM_MAIL_LOG, $content, FILE_APPEND );
         }
     }
 
@@ -259,7 +229,9 @@ class CRM_Utils_Mail {
     static function validOutBoundMail() {
         require_once "CRM/Core/BAO/Preferences.php";
         $mailingInfo =& CRM_Core_BAO_Preferences::mailingPreferences();
-        if ( $mailingInfo['outBound_option'] == 0 ) {
+        if ( $mailingInfo['outBound_option'] == 3 ) {
+           return true;
+        } else  if ( $mailingInfo['outBound_option'] == 0 ) {
             if ( !isset( $mailingInfo['smtpServer'] ) || $mailingInfo['smtpServer'] == '' || 
                  $mailingInfo['smtpServer'] == 'YOUR SMTP SERVER'|| 
                  ( $mailingInfo['smtpAuth'] && ( $mailingInfo['smtpUsername'] == '' || $mailingInfo['smtpPassword'] == '' ) ) ) {

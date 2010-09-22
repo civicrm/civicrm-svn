@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -40,7 +41,8 @@ require_once 'CRM/Contribute/PseudoConstant.php';
 /**
  * form to process actions on the group aspect of Custom Data
  */
-class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form {
+class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
+{
 
     /**
      * the page id saved to the session for an update
@@ -75,6 +77,14 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form {
     protected $_first = false;
 
     /**
+     * store price set id.
+     *
+     * @var int 
+     * @access protected  
+     */  
+    protected $_priceSetID = null;
+    
+    /**
      * Function to set variables up before form is built
      *
      * @return void
@@ -83,21 +93,29 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form {
     public function preProcess()
     {
         // current contribution page id
-        $this->_id     = $this->get( 'id' );
-        $this->_single = $this->get( 'single' );
-
-        if ( !$this->_single ) {
-            $session =& CRM_Core_Session::singleton();
-            $this->_single = $session->get('singleForm');
-        }
- 
+        $this->_id = CRM_Utils_Request::retrieve('id', 'Positive',
+                                                 $this, false, 0);
+        
+        // get the requested action
+        $this->_action = CRM_Utils_Request::retrieve('action', 'String',
+                                                     $this, false, 'browse'); // default to 'browse'
+        
         // setting title and 3rd level breadcrumb for html page if contrib page exists
         if ( $this->_id ) {
             $title = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage', $this->_id, 'title' );
+            
+            $url = CRM_Utils_System::url( 'civicrm/admin/contribute', 
+                                          "action=update&reset=1&id={$this->_id}" ); 
+            
             $breadCrumb = array( array('title' => ts('Configure Contribution Page'), 
-                                       'url'   => CRM_Utils_System::url( CRM_Utils_System::currentPath( ), 
-                                                                         "action=update&reset=1&id={$this->_id}" )) );
+                                       'url'   => $url ) );
             CRM_Utils_System::appendBreadCrumb( $breadCrumb );
+            if ($this->_action == CRM_Core_Action::UPDATE) {
+                $this->_single = true;
+            }
+            
+            $session = CRM_Core_Session::singleton( ); 
+            $session->pushUserContext( $url );
         }
         if ($this->_action == CRM_Core_Action::UPDATE) {
             CRM_Utils_System::setTitle(ts('Configure Page - %1', array(1 => $title)));
@@ -162,6 +180,7 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form {
     function setDefaultValues()
     {
         $defaults = array();
+        $config   = CRM_Core_Config::singleton();
         if (isset($this->_id)) {
             $params = array('id' => $this->_id);
             CRM_Core_DAO::commonRetrieve( 'CRM_Contribute_DAO_ContributionPage', $params, $defaults);
@@ -192,22 +211,28 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form {
             if (isset($defaults['goal_amount'])) {
                 $defaults['goal_amount'] = CRM_Utils_Money::format($defaults['goal_amount'], null, '%a');
             }
+            
+            // get price set id.
+            require_once 'CRM/Price/BAO/Set.php';
+            $this->_priceSetID = CRM_Price_BAO_Set::getFor( 'civicrm_contribution_page', $this->_id );
+            if ( $this->_priceSetID ) $defaults['price_set_id'] = $this->_priceSetID;
+            
+            if ( CRM_Utils_Array::value( 'end_date', $defaults ) ) {
+                list( $defaults['end_date'], $defaults['end_date_time'] ) = CRM_Utils_Date::setDateDefaults( $defaults['end_date'] );
+            }
+            
+            if ( CRM_Utils_Array::value( 'start_date', $defaults ) ) {
+                list( $defaults['start_date'], $defaults['start_date_time'] ) = CRM_Utils_Date::setDateDefaults( $defaults['start_date'] );
+            }
         } else {
             $defaults['is_active'] = 1;
-        }
-
-        // Set start date to now if this is a new contribution page.
-        if( !isset ( $this->_id) ) {
-            $defaultDate = array( );
-            CRM_Utils_Date::getAllDefaultValues( $defaultDate );
-            $defaultDate['i'] = (int ) ( $defaultDate['i'] / 15 ) * 15;
-            $defaults['start_date'] = $defaultDate;
+            // set current date as start date
+            list( $defaults['start_date'], $defaults['start_date_time'] ) = CRM_Utils_Date::setDateDefaults( );
         }
 
         if (! isset($defaults['for_organization'])) {
             $defaults['for_organization'] = ts('I am contributing on behalf of an organization.');
         }
-
 
         if ( CRM_Utils_Array::value( 'recur_frequency_unit',$defaults ) ) {
             require_once 'CRM/Core/BAO/CustomOption.php';
@@ -219,10 +244,7 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form {
             $defaults['recur_frequency_unit'] = 
                 array_fill_keys( CRM_Core_OptionGroup::values( 'recur_frequency_units' ), '1' );
         }
-        if ( !isset( $defaults['is_recur_interval'] ) ) {
-            $defaults['is_recur_interval'] = 1;
-        }
-
+        
         if ( CRM_Utils_Array::value( 'is_for_organization', $defaults ) ) {
             $defaults['is_organization'] = 1;
         } else {
@@ -241,6 +263,13 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form {
      */
     public function postProcess()
     {
+        $pageId = $this->get( 'id' );
+        //page is newly created.
+        if ( $pageId && !$this->_id ) {
+            $session = CRM_Core_Session::singleton( );
+            $session->pushUserContext( CRM_Utils_System::url( 'civicrm/admin/contribute', 
+                                                              "action=update&reset=1&id={$pageId}" ) );
+        }
     }
 }
 

@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -41,8 +42,8 @@ class CRM_Report_Form_Membership_Summary extends CRM_Report_Form {
     protected $_summary = null;
 
     protected $_charts  = array( ''         => 'Tabular',
-                                 'barGraph' => 'Bar Graph',
-                                 'pieGraph' => 'Pie Graph'
+                                 'barChart' => 'Bar Chart',
+                                 'pieChart' => 'Pie Chart'
                                  );
     
     function __construct( ) {
@@ -171,7 +172,7 @@ class CRM_Report_Form_Membership_Summary extends CRM_Report_Form {
         $this->_select = "SELECT " . implode( ', ', $select ) . " ";
     }
     
-    static function formRule( &$fields, &$files, $self ) {  
+    static function formRule( $fields, $files, $self ) {  
         $errors = $grouping = array( );
         //check for searching combination of dispaly columns and
         //grouping criteria
@@ -302,7 +303,7 @@ LEFT  JOIN civicrm_contribution  {$this->_aliases['civicrm_contribution']}
                 $row[$key] = $dao->$key;
             }
 
-            require_once 'CRM/Utils/PChart.php';
+            require_once 'CRM/Utils/OpenFlashChart.php';
             if ( CRM_Utils_Array::value('charts', $this->_params ) && 
                  $row['civicrm_contribution_receive_date_subtotal'] ) {
                 $graphRows['receive_date'][]   = $row['civicrm_contribution_receive_date_start'];
@@ -319,15 +320,15 @@ LEFT  JOIN civicrm_contribution  {$this->_aliases['civicrm_contribution']}
         $this->assign_by_ref( 'rows', $rows );
         $this->assign( 'statistics', $this->statistics( $rows ) );
         
-        require_once 'CRM/Utils/PChart.php';
+        require_once 'CRM/Utils/OpenFlashChart.php';
         if ( CRM_Utils_Array::value('charts', $this->_params ) ) {
             foreach ( array ( 'receive_date', $this->_interval, 'value' ) as $ignore ) {
                 unset( $graphRows[$ignore][$count-1] );
             }
             
-            $graphs = CRM_Utils_PChart::chart( $graphRows, $this->_params['charts'], $this->_interval );
-            $this->assign( 'graphFilePath', $graphs['0']['file_name'] );
-
+            // build chart.
+            require_once 'CRM/Utils/OpenFlashChart.php';
+            CRM_Utils_OpenFlashChart::chart( $graphRows, $this->_params['charts'], $this->_interval );
         }
         parent::endPostProcess( );
     }

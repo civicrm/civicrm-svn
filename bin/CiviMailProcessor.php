@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -68,15 +69,28 @@ class CiviMailProcessor {
 
         require_once 'CRM/Core/DAO/MailSettings.php';
         $dao = new CRM_Core_DAO_MailSettings;
+        $dao->domain_id = CRM_Core_Config::domainID( );
+        
         $name ? $dao->name = $name : $dao->is_default = 1;
-        if (!$dao->find(true)) throw new Exception("Could not find entry named $name in civicrm_mail_settings");
+        if ( ! $dao->find(true) ) {
+            throw new Exception("Could not find entry named $name in civicrm_mail_settings");
+        }
+
+        $config = CRM_Core_Config::singleton();
+        $verpSeperator = preg_quote( $config->verpSeparator );
+        $twoDigitStringMin = $verpSeperator . '(\d+)' . $verpSeperator . '(\d+)';
+        $twoDigitString    = $twoDigitStringMin . $verpSeperator;
+        $threeDigitString  = $twoDigitString . '(\d+)' . $verpSeperator;
 
         // FIXME: legacy regexen to handle CiviCRM 2.1 address patterns, with domain id and possible VERP part
-        $commonRegex = '/^' . preg_quote($dao->localpart) . '(b|bounce|c|confirm|o|optOut|r|reply|re|e|resubscribe|u|unsubscribe)\.(\d+)\.(\d+)\.(\d+)\.([0-9a-f]{16})(-.*)?@' . preg_quote($dao->domain) . '$/';
-        $subscrRegex = '/^' . preg_quote($dao->localpart) . '(s|subscribe)\.(\d+)\.(\d+)@' . preg_quote($dao->domain) . '$/';
+        $commonRegex = '/^' . preg_quote($dao->localpart) . '(b|bounce|c|confirm|o|optOut|r|reply|re|e|resubscribe|u|unsubscribe)' . $threeDigitString . '([0-9a-f]{16})(-.*)?@' . preg_quote($dao->domain) . '$/';
+        $subscrRegex = '/^' . preg_quote($dao->localpart) . '(s|subscribe)' . $twoDigitStringMin . '@' . preg_quote($dao->domain) . '$/';
 
         // a common-for-all-actions regex to handle CiviCRM 2.2 address patterns
-        $regex = '/^' . preg_quote($dao->localpart) . '(b|c|e|o|r|u)\.(\d+)\.(\d+)\.([0-9a-f]{16})@' . preg_quote($dao->domain) . '$/';
+        $regex = '/^' . preg_quote($dao->localpart) . '(b|c|e|o|r|u)' . $twoDigitString . '([0-9a-f]{16})@' . preg_quote($dao->domain) . '$/';
+
+        // a tighter regex for finding bounce info in soft bounces’ mail bodies
+        $rpRegex = '/Return-Path: ' . preg_quote($dao->localpart) . '(b)' . $twoDigitString . '([0-9a-f]{16})@' . preg_quote($dao->domain) . '/';
 
         // retrieve the emails
         require_once 'CRM/Mailing/MailStore.php';
@@ -104,6 +118,17 @@ class CiviMailProcessor {
                     }
                 }
 
+                // CRM-5471: if $matches is empty, it still might be a soft bounce sent
+                // to another address, so scan the body for ‘Return-Path: …bounce-pattern…’
+                if (!$matches and preg_match($rpRegex, $mail->generateBody(), $matches)) {
+                    list($match, $action, $job, $queue, $hash) = $matches;
+                }
+
+                // if all else fails, check Delivered-To for possible pattern
+                if (!$matches and preg_match($regex, $mail->getHeader('Delivered-To'), $matches)) {
+                    list($match, $action, $job, $queue, $hash) = $matches;
+                }
+
                 // if $matches is empty, this email is not CiviMail-bound
                 if (!$matches) {
                     $store->markIgnored($key);
@@ -123,11 +148,20 @@ class CiviMailProcessor {
                     if ($mail->body instanceof ezcMailText) {
                         $text = $mail->body->text;
                     } elseif ($mail->body instanceof ezcMailMultipart) {
-                        foreach ($mail->body->getParts() as $part) {
-                            if (isset($part->subType) and $part->subType == 'plain') {
-                                $text = $part->text;
-                                break;
-                            }
+                        if ($mail->body instanceof ezcMailMultipartRelated) {
+                           foreach ($mail->body->getRelatedParts() as $part) {
+                               if (isset($part->subType) and $part->subType == 'plain') {
+                                   $text = $part->text;
+                                   break;
+                               }
+                           }                           
+                        } else {   
+                           foreach ($mail->body->getParts() as $part) {
+                               if (isset($part->subType) and $part->subType == 'plain') {
+                                   $text = $part->text;
+                                   break;
+                               }
+                           }
                         }
                     }
                     crm_mailer_event_bounce($job, $queue, $hash, $text);
@@ -171,9 +205,16 @@ class CiviMailProcessor {
 session_start();
 require_once '../civicrm.config.php';
 require_once 'CRM/Core/Config.php';
-$config =& CRM_Core_Config::singleton();
+$config = CRM_Core_Config::singleton();
 
 CRM_Utils_System::authenticateScript(true);
+
+//log the execution of script
+CRM_Core_Error::debug_log_message( 'CiviMailProcessor.php' );
+
+//load bootstrap to call hooks
+require_once 'CRM/Utils/System.php';
+CRM_Utils_System::loadBootStrap(  );
 
 require_once 'CRM/Core/Lock.php';
 $lock = new CRM_Core_Lock('CiviMailProcessor');
@@ -187,7 +228,8 @@ if ($lock->isAcquired()) {
     CiviMailProcessor::cleanupDir($config->customFileUploadDir . DIRECTORY_SEPARATOR . 'CiviMail.processed');
 
     // if there are named sets of settings, use them - otherwise use the default (null)
-    $names = isset($_REQUEST['names']) && is_array($_REQUEST['names']) ? $_REQUEST['names'] : array(null);
+    $names = isset($_REQUEST['names']) && is_array($_REQUEST['names']) ? $_REQUEST['names'] : array( null );
+    
     foreach ($names as $name) {
         CiviMailProcessor::process($name);
     }

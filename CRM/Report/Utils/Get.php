@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.3                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -58,16 +59,33 @@ class CRM_Report_Utils_Get {
         $relative = CRM_Utils_Array::value("{$fieldName}_relative", $_GET );
         if( $relative ) {
             list( $from, $to ) = CRM_Report_Form::getFromTo( $relative, null, null );
+            $from = substr($from, 0, 8 );
+            $to   = substr($to,   0, 8 );
         }
 
-        if ( !($from || $to) ) {
+        if ( ! ( $from || $to ) ) {
             return false;
         } else if ( $from || $to || $relative ) {
             // unset other criteria
             self::unsetFilters( $defaults );
         }
-        $defaults["{$fieldName}_from"] = CRM_Utils_Date::unformat($from, '');
-        $defaults["{$fieldName}_to"]   = CRM_Utils_Date::unformat($to, '');
+
+        if ( $from !== null ) {
+            $dateFrom = CRM_Utils_Date::setDateDefaults( $from );
+            if ( $dateFrom !== null &&
+                 ! empty( $dateFrom[0] ) ) {
+                $defaults["{$fieldName}_from"] = $dateFrom[0];        
+            }
+        }
+
+        if ( $to !== null ) {
+            $dateTo   = CRM_Utils_Date::setDateDefaults( $to );
+            if ( $dateTo !== null &&
+                 ! empty( $dateTo[0] ) ) {
+                $defaults["{$fieldName}_to"]   = $dateTo[0];
+            }
+        }
+
     }
 
     static function stringParam( $fieldName, &$field, &$defaults ) {
@@ -116,26 +134,37 @@ class CRM_Report_Utils_Get {
             if ( $minValue !== null ||
                  $maxValue !== null ) {
                 self::unsetFilters( $defaults );
-                $defaults["{$fieldName}_min"] = $minValue;
-                $defaults["{$fieldName}_max"] = $maxValue;
+                if ( $minValue !== null ) {
+                    $defaults["{$fieldName}_min"] = $minValue;
+                }
+                if ( $maxValue !== null ) {
+                    $defaults["{$fieldName}_max"] = $maxValue;
+                }
                 $defaults["{$fieldName}_op" ] = $fieldOP;
             }
             break;
 
         case 'in' :
-            // assuming only one value for now. A plus symbol could be used 
-            // to diplsay multiple values in url
-            $value    = self::getTypedValue( "{$fieldName}_value", $field['type'] );
+            // send the type as string so that multiple values can also be retrieved from url. 
+            // for e.g url like - "memtype_in=in&memtype_value=1,2,3"
+            $value = self::getTypedValue( "{$fieldName}_value", CRM_Utils_Type::T_STRING );
+            if ( ! preg_match('/^(\d)(,\d){0,14}$/', $value) ) {
+                // extra check. Also put a limit of 15 max values.
+                $value = null;
+            }
+            // unset any default filters already applied for example - incase of an instance.
             self::unsetFilters( $defaults );
-            $defaults["{$fieldName}_value"] = array( $value );
-            $defaults["{$fieldName}_op"   ] = $fieldOP;
+            if ( $value !== null ) {
+                $defaults["{$fieldName}_value"] = explode( ",", $value );
+                $defaults["{$fieldName}_op"   ] = $fieldOP;
+            }
             break;
         }
     }
 
     function processChart( &$defaults ) {
         $chartType = CRM_Utils_Array::value( "charts", $_GET );
-        if ( in_array( $chartType, array('barGraph','pieGraph' ) ) ) {
+        if ( in_array( $chartType, array('barChart','pieChart' ) ) ) {
             $defaults["charts"] = $chartType;
         }
     }
@@ -208,12 +237,12 @@ class CRM_Report_Utils_Get {
     function processFields( &$reportFields, &$defaults ) {
         //add filters from url 
         if ( is_array($reportFields) ) {
-            if ( $urlfileds = CRM_Utils_Array::value( "fld", $_GET) ) {
-                $urlfileds = explode( ',' , $urlfileds );
+            if ( $urlFields = CRM_Utils_Array::value( "fld", $_GET) ) {
+                $urlFields = explode( ',' , $urlFields );
             }
-            if ( !empty( $urlfileds ) ){
+            if ( !empty( $urlFields ) ){
                 foreach ( $reportFields as $tableName => $fields ) {
-                    foreach ( $urlfileds as $fld ) {
+                    foreach ( $urlFields as $fld ) {
                         if ( array_key_exists($fld, $fields) ) {
                             $defaults['fields'][$fld] = 1;
                         }

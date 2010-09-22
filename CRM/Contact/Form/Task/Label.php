@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -86,6 +87,7 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
         $this->addElement('checkbox', 'do_not_mail', ts('Do not print labels for contacts with "Do Not Mail" privacy option checked') );
         
         $this->add( 'checkbox', 'merge_same_address', ts( 'Merge labels for contacts with the same address' ), null );
+        $this->add( 'checkbox', 'merge_same_household', ts( 'Merge labels for contacts belonging to the same household' ), null );
 
         $this->addDefaultButtons( ts('Make Mailing Labels'));
        
@@ -116,48 +118,53 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
     public function postProcess ( )
     {
         $fv = $this->controller->exportValues($this->_name);
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         $locName = null;
         //get the address format sequence from the config file
         require_once 'CRM/Core/BAO/Preferences.php';
        
-        $sequence = CRM_Core_BAO_Preferences::value( 'mailing_sequence' );
-                
+        $sequence = CRM_Core_BAO_Preferences::value( 'mailing_sequence' );                
         foreach ($sequence as $v) {
             $address[$v] = 1;
         }
+        
         if ( array_key_exists( 'postal_code',$address ) ) {
             $address['postal_code_suffix'] = 1;
         }
         
         //build the returnproperties
-        $returnProperties = array ('display_name' => 1 );
-        
-        $nameFormat = CRM_Core_BAO_Preferences::value( 'individual_name_format' );
-        $nameFormatProperties = array();
-        if ( $nameFormat ) {
-            $nameFormatProperties = self::getReturnProperties( $nameFormat );
-        }
-        
+        $returnProperties = array ('display_name' => 1, 'contact_type' => 1 );
         $mailingFormat = CRM_Core_BAO_Preferences::value( 'mailing_format' );
+            
         $mailingFormatProperties = array();
         if ( $mailingFormat ) {
             $mailingFormatProperties = self::getReturnProperties( $mailingFormat );
             $returnProperties = array_merge( $returnProperties , $mailingFormatProperties );
         }
+        //we should not consider addressee for data exists, CRM-6025
+        if ( array_key_exists( 'addressee', $mailingFormatProperties ) ) {
+            unset( $mailingFormatProperties['addressee'] );
+        }  
         
+        $customFormatProperties = array( );            
         if ( stristr( $mailingFormat ,'custom_' ) ) {
             foreach ( $mailingFormatProperties as $token => $true ) {
                 if ( substr( $token,0,7 ) == 'custom_' ) {
-                    if ( !CRM_Utils_Array::value( $token, $nameFormatProperties ) ) { 
-                        $nameFormatProperties[$token] = $mailingFormatProperties[$token];
+                    if ( !CRM_Utils_Array::value( $token, $customFormatProperties ) ) { 
+                        $customFormatProperties[$token] = $mailingFormatProperties[$token];
                     }
                 }
             }
         }
         
-        if ( is_array( $nameFormatProperties ) ) {
-            $returnProperties = array_merge( $returnProperties , $nameFormatProperties );
+        if ( !empty( $customFormatProperties ) ) {
+            $returnProperties = array_merge( $returnProperties , $customFormatProperties );
+        }
+        
+        if ( isset( $fv['merge_same_address'] ) ) {
+            // we need first name/last name for summarising to avoid spillage
+            $returnProperties['first_name'] = 1;
+            $returnProperties['last_name']  = 1;
         }
         
         //get the contacts information
@@ -167,7 +174,7 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
             $locName = $locType[$fv['location_type_id']];
             $location = array ('location' => array("{$locName}"  => $address ) ) ;
             $returnProperties = array_merge( $returnProperties , $location );
-            $params[] = array( 'location_type', '=', array( $fv['location_type_id'] => 1 ), 0, 1 );
+            $params[] = array( 'location_type', '=', array( $fv['location_type_id'] => 1 ), 0, 0 );
             
         } else {
             $returnProperties = array_merge( $returnProperties , $address );
@@ -177,15 +184,15 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
  
         foreach ( $this->_contactIds  as $key => $contactID ) {
             $params[] = array( CRM_Core_Form::CB_PREFIX . $contactID,
-                               '=', 1, 0, 1);
+                               '=', 1, 0, 0);
         }
         
         // fix for CRM-2651
         if ( CRM_Utils_Array::value( 'do_not_mail', $fv ) ) {
-            $params[] = array( 'do_not_mail', '=', 0, 0, 1 );
+            $params[] = array( 'do_not_mail', '=', 0, 0, 0 );
         }
         // fix for CRM-2613
-        $params[] = array( 'is_deceased', '=', 0, 0, 1 );
+        $params[] = array( 'is_deceased', '=', 0, 0, 0 );
 
         $custom = array( );
         foreach ( $returnProperties as $name => $dontCare ) {
@@ -194,19 +201,11 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
                 $custom[] = $cfID;
             }
         }
-       //get custom values of custom email/postal greeting or addressee, CRM-4575
-        $elements = array( 'email_greeting' => 'email_greeting_custom', 
-                           'postal_greeting' => 'postal_greeting_custom', 
-                           'addressee' => 'addressee_custom' );
-        foreach( $elements as $field => $customField ) {
-            if ( CRM_Utils_Array::value( $field, $returnProperties ) ) {
-                $returnProperties[$customField] = 1;
-            }
-        }       
+                           
         //get the total number of contacts to fetch from database.
         $numberofContacts = count( $this->_contactIds );
         require_once 'CRM/Contact/BAO/Query.php';      
-        $query   =& new CRM_Contact_BAO_Query( $params, $returnProperties );
+        $query   = new CRM_Contact_BAO_Query( $params, $returnProperties );
         $details = $query->apiQuery( $params, $returnProperties, NULL, NULL, 0, $numberofContacts );
                       
         // also get all token values
@@ -231,16 +230,6 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
             }
             $contact = CRM_Utils_Array::value( $value, $details['0'] );
                         
-            //if email/postal greeting or addressee has a customized value 
-            //then output the corresponding "custom" column value instead, CRM-4575
-            foreach( $elements as $field => $customField ) {
-                $fieldId = $field."_id";
-                if( $contact[$fieldId] == 4 ) {
-                    $contact[$field] = $contact[$customField];
-                    unset($contact['email_greeting_custom']);
-                } 
-            }
-
             if ( is_a( $contact, 'CRM_Core_Error' ) ) {
                 return null;
             }
@@ -251,11 +240,11 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
             if ( $locName && CRM_Utils_Array::value( $locName, $contact ) ) {
                 // If location type is not primary, $contact contains
                 // one more array as "$contact[$locName] = array( values... )"
-                $found = false;
 
-                foreach ( $sequence as $sequenceName ) {
-                    // we are interested in only those of the address sequences
-                    if ( CRM_Utils_Array::value( $sequenceName, $contact ) ) {
+                $found = false;
+                // we should replace all the tokens that are set in mailing label format
+                foreach ( $mailingFormatProperties as $key => $dontCare ) {
+                    if ( CRM_Utils_Array::value( $key, $contact ) ) {
                         $found = true;
                         break;
                     }
@@ -264,6 +253,7 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
                 if ( ! $found ) {
                     continue;
                 }
+                
                 unset( $contact[$locName] );
                 
                 if ( CRM_Utils_Array::value( 'county_id', $contact )  ) {
@@ -273,18 +263,7 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
                 foreach ( $contact as $field => $fieldValue ) {
                     $rows[$value][$field] = $fieldValue;
                 }
-                //Add contact Details
-                if( CRM_Contact_BAO_Contact::getContactType( $value ) == 'Individual' ) {
-                    $rows[$value]['first_name']           = $contact['first_name'];
-                    $rows[$value]['middle_name']          = $contact['middle_name'];
-                    $rows[$value]['last_name']            = $contact['last_name'];
-                    $rows[$value]['display_name']         = $contact['display_name'];
-                    $rows[$value]['individual_prefix']    = $contact['individual_prefix'];
-                    $rows[$value]['individual_suffix']    = $contact['individual_suffix'];
-                } else {
-                    $rows[$value]['display_name'] = $contact['display_name'];
-                }
-
+                
                 $valuesothers = array();
                 $paramsothers = array ( 'contact_id' => $value ) ;
                 require_once 'CRM/Core/BAO/Location.php';    
@@ -307,13 +286,9 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
                 }
             } else {
                 $found = false;
-                
-                foreach ( $sequence as $sequenceName) {
-                    // we are interested in only those
-                    // $contact which contains any
-                    // of the address sequences
-                    
-                    if ( CRM_Utils_Array::value( $sequenceName, $contact ) ) {
+                // we should replace all the tokens that are set in mailing label format
+                foreach ( $mailingFormatProperties as $key => $dontCare ) {
+                    if ( CRM_Utils_Array::value( $key, $contact ) ) {
                         $found = true;
                         break;
                     }
@@ -323,27 +298,30 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
                     continue;
                 }
                 
-                // again unset all "_id" from $contact
-                // except country_id, state_province_id
-                
-                if (  CRM_Utils_Array::value( 'address_id', $contact )  ) {
-                    unset( $contact['address_id'] );
+                if ( CRM_Utils_Array::value( 'addressee_display', $contact )  ) {
+                    $contact['addressee_display'] = trim( $contact['addressee_display'] );
                 }
-                if (  CRM_Utils_Array::value( 'county_id', $contact )  ) {
-                    unset( $contact['county_id'] );
+                if ( CRM_Utils_Array::value( 'addressee', $contact )  ) {
+                    $contact['addressee'] = $contact['addressee_display'];
                 }
-                
+
                 // now create the rows for generating mailing labels
                 foreach ( $contact as $field => $fieldValue ) {
                     $rows[$value][$field] = $fieldValue;
                 }
             }
         }
+        
         $individualFormat = false;
         if ( isset( $fv['merge_same_address'] ) ) {
             $this->mergeSameAddress( $rows );
             $individualFormat = true;
         }
+        if ( isset( $fv['merge_same_household'] ) ) {
+            $rows = $this->mergeSameHousehold( $rows );
+            $individualFormat = true;
+        }
+                    
         // format the addresses according to CIVICRM_ADDRESS_FORMAT (CRM-1327)
         require_once 'CRM/Utils/Address.php';
         foreach ($rows as $id => $row) { 
@@ -358,7 +336,7 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
                 $row['preferred_communication_method'] = implode(', ', $temp);
             }
             $row['id'] = $id;
-            $formatted = CRM_Utils_Address::format( $row, 'mailing_format', null, true, $individualFormat, $tokenFields );          
+            $formatted = CRM_Utils_Address::format( $row, 'mailing_format', false, true, $individualFormat, $tokenFields );          
 
             // CRM-2211: UFPDF doesn't have bidi support; use the PECL fribidi package to fix it.
             // On Ubuntu (possibly Debian?) be aware of http://pecl.php.net/bugs/bug.php?id=12366
@@ -376,7 +354,7 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
 
         //call function to create labels
         self::createLabel($rows, $fv['label_id']);
-        exit(1);
+        CRM_Utils_System::civiExit( 1 );
     }
     
      /**
@@ -430,7 +408,7 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
                         PREG_PATTERN_ORDER);
         if ( $matches[1] ) {
             foreach ( $matches[1] as $token ) {
-                list( $type, $name ) = split( '\.', $token, 2 );
+                list( $type, $name ) = preg_split( '/\./', $token, 2 );
                 if ( $name ) {
                     $returnProperties["{$name}"] = 1;
                 }
@@ -468,15 +446,48 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
                 if ($count > 2) {			// too many to list 
                     break;
                 }
-                $family = implode(" & ", $first_names) . " " . $last_name;		// collapse the tree to summarize
+                $family = trim (implode(" & ", $first_names) . " " . $last_name );		// collapse the tree to summarize
                 if ($count) {
-                    $rows[$data['ID']]['display_name'] .=  "\n" . $family;
+                    $processedNames .=  "\n" . $family;
                 } else {
-                    $rows[$data['ID']]['display_name']  = $family;		// build display_name string
+                    $processedNames  = $family;	                            	// build display_name string
                 }
                 $count++;
             }
+            $rows[$data['ID']]['addressee'] = $rows[$data['ID']]['addressee_display'] = 
+                $rows[$data['ID']]['display_name'] = $processedNames;
         }
+    }
+
+    function mergeSameHousehold( &$rows ) {
+        # group selected contacts by type
+        $individuals = array( );
+        $households = array( );
+        foreach ( $rows as $contact_id => $row ) {
+            if ( $row['contact_type'] == 'Household' ) {
+                $households[$contact_id] = $row;
+            } elseif ( $row['contact_type'] == 'Individual' ) {
+                $individuals[$contact_id] = $row;
+            }
+        }
+
+        # exclude individuals belonging to selected households
+        require_once 'CRM/Contact/DAO/Relationship.php';
+        foreach ( $households as $household_id => $row ) {
+            $dao =& new CRM_Contact_DAO_Relationship();
+            $dao->contact_id_b = $household_id;
+            $dao->find( );
+            while ( $dao->fetch( ) ) {
+                $individual_id = $dao->contact_id_a;
+                if ( array_key_exists($individual_id, $individuals) ) {
+                    unset($individuals[$individual_id]);
+                }
+            }
+        }
+
+        # merge back individuals and households
+        $rows = array_merge($individuals, $households);
+        return $rows;
     }
 }
 

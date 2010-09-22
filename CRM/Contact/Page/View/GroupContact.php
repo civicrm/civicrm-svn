@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,14 +29,14 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
 
-require_once 'CRM/Contact/Page/View.php';
+require_once 'CRM/Core/Page.php';
 
-class CRM_Contact_Page_View_GroupContact extends CRM_Contact_Page_View {
+class CRM_Contact_Page_View_GroupContact extends CRM_Core_Page {
     
     /**
      * This function is called when action is browse
@@ -66,13 +67,13 @@ class CRM_Contact_Page_View_GroupContact extends CRM_Contact_Page_View {
      * @access public
      */
     function edit( $groupId = null ) {
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Contact_Form_GroupContact',
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Contact_Form_GroupContact',
                                                        ts('Contact\'s Groups'),
                                                        $this->_action );
         $controller->setEmbedded( true );
 
         // set the userContext stack
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
 
         $session->pushUserContext( CRM_Utils_System::url( 'civicrm/contact/view',
                                                           "action=browse&selectedChild=group&cid={$this->_contactId}" ),
@@ -87,6 +88,18 @@ class CRM_Contact_Page_View_GroupContact extends CRM_Contact_Page_View {
 
     }
 
+    function preProcess() {
+        $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
+        $this->assign( 'contactId', $this->_contactId );
+
+        // check logged in url permission
+        require_once 'CRM/Contact/Page/View.php';
+        CRM_Contact_Page_View::checkUserPermission( $this );
+        
+        $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'browse');
+        $this->assign( 'action', $this->_action);
+    }    
+
     /**
      * This function is the main function that is called
      * when the page loads, it decides the which action has
@@ -98,11 +111,7 @@ class CRM_Contact_Page_View_GroupContact extends CRM_Contact_Page_View {
     function run( ) {
         $this->preProcess( );
 
-        $action = CRM_Utils_Request::retrieve( 'action', 'String',
-                                               CRM_Core_DAO::$_nullObject,
-                                               false, 'browse' );
-
-        if ( $action == CRM_Core_Action::DELETE ) {
+        if ( $this->_action == CRM_Core_Action::DELETE ) {
             $groupContactId = CRM_Utils_Request::retrieve( 'gcid', 'Positive',
                                                            CRM_Core_DAO::$_nullObject, true );
             $status         = CRM_Utils_Request::retrieve( 'st', 'String',
@@ -110,7 +119,7 @@ class CRM_Contact_Page_View_GroupContact extends CRM_Contact_Page_View {
             if ( is_numeric($groupContactId) && $status ) {
                 $this->del( $groupContactId, $status, $this->_contactId);
             }
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             CRM_Utils_System::redirect( $session->popUserContext() );
         }
 
@@ -129,7 +138,6 @@ class CRM_Contact_Page_View_GroupContact extends CRM_Contact_Page_View {
      * $access public
      */
     function del( $groupContactId, $status, $contactID ) {
-        $groupContact =& new CRM_Contact_DAO_GroupContact( );
         $groupId = CRM_Contact_BAO_GroupContact::getGroupId($groupContactId);
        
         switch ($status) {
@@ -144,10 +152,19 @@ class CRM_Contact_Page_View_GroupContact extends CRM_Contact_Page_View {
             $groupStatus = 'Removed';
             break;
         }
+
+        $groupNum = CRM_Contact_BAO_GroupContact::getContactGroup( $this->_contactId, 'Added', 
+                                                                   null, true, true );
+        if ( defined( 'CIVICRM_MULTISITE' ) && CIVICRM_MULTISITE && 
+             $groupNum == 1 && $groupStatus == 'Removed' ) {
+            CRM_Core_Session::setStatus( 'make sure at least one contact group association is maintained.' );
+            return false;
+        }
+
         $ids = array($contactID);
         $method = 'Admin';
 
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $userID  = $session->get( 'userID' );
 
         if ( $userID == $contactID ) {
@@ -155,7 +172,6 @@ class CRM_Contact_Page_View_GroupContact extends CRM_Contact_Page_View {
         }
 
         CRM_Contact_BAO_GroupContact::removeContactsFromGroup($ids, $groupId, $method  ,$groupStatus);
-
     }
 }
 

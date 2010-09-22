@@ -1,3 +1,28 @@
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
 <style type="text/css">
 /*<![CDATA[*/
   @import url({$config->resourceBase}/packages/jquery/css/clickmenu.css);
@@ -47,8 +72,9 @@
        width: 500,
        delay:200,
        max:25,
-       minChars:2,
-       selectFirst: true
+       minChars:1,
+       selectFirst: true,
+       matchContains: true	
      }).result(function(event, data, formatted) {
          document.location= contactViewUrl+'&cid='+data["contact_id"];
      });
@@ -64,10 +90,10 @@
   <ul id="menu">
 
 <li id="searchType">
-<img  src='{$config->resourceBase}/i/contact_all.ico' alt =""/>
+<img  src="{$config->resourceBase}/i/contact_all.ico" alt =""/>
 <ul>
-<li><img  src='{$config->resourceBase}/i/contact_all.ico' alt =""/>All contacts</li>
-<li><img  src='{$config->resourceBase}/i/contact_ind.gif' alt ="Search only individuals"/>Only individuals</li>
+<li><img  src="{$config->resourceBase}/i/contact_all.ico" alt =""/>All contacts</li>
+<li><img  src="{$config->resourceBase}/i/contact_ind.gif" alt ="Search only individuals"/>Only individuals</li>
 <li><img  src="/sites/all/modules/civicrm/i/contact_org.gif" alt ="Search only Organizations"/>Only organisations</li>
 <li><img  src="/sites/all/modules/civicrm/i/contact_house.png" alt ="Search only Household"/>Only households</li>
 <li>by email</li>
@@ -184,15 +210,15 @@
       <a href={crmURL p="civicrm/event" q="reset=1"}>CiviEvent</a>
 
       <ul>
-        <li><a href={crmURL p="civicrm/event/search" q="reset=1"}>Find Participants</a></li>
+        <li><a href="{crmURL p="civicrm/event/search" q="reset=1"}">Find Participants</a></li>
 
-        <li><a class="active" href={crmURL p="civicrm/event/manage" q="reset=1"}>Manage Events</a></li>
+        <li><a class="active" href="{crmURL p="civicrm/event/manage" q="reset=1"}">Manage Events</a></li>
 
-        <li><a href={crmURL p="civicrm/event/add" q="action=add&reset=1"}>New Event</a></li>
+        <li><a href="{crmURL p="civicrm/event/add" q="action=add&reset=1"}">New Event</a></li>
 
-        <li><a href={crmURL p="civicrm/event/import" q="reset=1"}>Import Participants</a></li>
+        <li><a href="{crmURL p="civicrm/event/import" q="reset=1"}">Import Participants</a></li>
 
-        <li><a href={crmURL p="civicrm/event/price" q="reset=1"}>Manage Price Sets</a></li>
+        <li><a href="{crmURL p="civicrm/event/price" q="reset=1"}">Manage Price Sets</a></li>
       </ul>
     </li>
 
@@ -216,5 +242,5 @@
       </ul>
     </li>
 
-    <li><a href={crmURL p="civicrm/admin" q="reset=1"}>Configuration</a></li>
+    <li><a href="{crmURL p="civicrm/admin" q="reset=1"}">Configuration</a></li>
   </ul>

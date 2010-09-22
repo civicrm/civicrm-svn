@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -74,23 +75,25 @@ class CRM_Profile_Form_Edit extends CRM_Profile_Form
         }
 
         if ( $this->get( 'edit' ) ) {
+            //this is edit mode.
+            $this->_mode = CRM_Profile_Form::MODE_EDIT;
+            
             // make sure we have right permission to edit this user
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             $userID = $session->get( 'userID' );
             $id = CRM_Utils_Request::retrieve( 'id', 'Positive', $this, false, $userID );
             
             require_once 'CRM/Contact/BAO/Contact/Utils.php';
             if ( $id != $userID ) {
-
-                // do not allow edit for anon users in joomla frontend, CRM-4668
-                $config =& CRM_Core_Config::singleton( );
-                if ( $config->userFrameworkFrontend ) {
-                    CRM_Core_Error::statusBounce( ts( 'You do not have permission to edit this contact record. Contact the site administrator if you need assistance.' ),
-                                                  $config->userFrameworkBaseURL );
-                }
-
+                // do not allow edit for anon users in joomla frontend, CRM-4668, unless u have checksum CRM-5228
                 require_once 'CRM/Contact/BAO/Contact/Permission.php';
-                CRM_Contact_BAO_Contact_Permission::validateChecksumContact( $id, $this );
+                $config = CRM_Core_Config::singleton( );
+                if ( $config->userFrameworkFrontend ) {
+                    CRM_Contact_BAO_Contact_Permission::validateOnlyChecksum( $id, $this );
+                } else {
+                    CRM_Contact_BAO_Contact_Permission::validateChecksumContact( $id, $this );
+                }
+                $this->_isPermissionedChecksum = true;
             }
         }
 
@@ -128,7 +131,7 @@ SELECT module
         // add the hidden field to redirect the postProcess from
         require_once 'CRM/UF/Form/Group.php';
         require_once 'CRM/Core/DAO/UFGroup.php';
-        $ufGroup =& new CRM_Core_DAO_UFGroup( );
+        $ufGroup = new CRM_Core_DAO_UFGroup( );
         
         $ufGroup->id = $this->_gid;
         if ( ! $ufGroup->find(true) ) {
@@ -183,7 +186,7 @@ SELECT module
             }
             
             // replace the session stack in case user cancels (and we dont go into postProcess)
-            $session =& CRM_Core_Session::singleton(); 
+            $session = CRM_Core_Session::singleton(); 
             $session->replaceUserContext( $this->_postURL ); 
         }
 
@@ -232,12 +235,12 @@ SELECT module
                                   'newContactSuccess' => true );
                     
             echo json_encode( $returnArray );
-            exit();
+            CRM_Utils_System::civiExit( );
         }
 
         CRM_Core_Session::setStatus(ts('Thank you. Your information has been saved.'));
 
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         // only replace user context if we do not have a postURL
         if ( ! $this->_postURL  ) {
             $url = CRM_Utils_System::url( 'civicrm/profile/view',

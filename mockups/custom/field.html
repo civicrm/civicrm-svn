@@ -1,0 +1,913 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html class="js" dir="ltr" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" lang="en"><head>
+
+  
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="field_files/jquery_020.js"></script>
+<script type="text/javascript" src="field_files/jquery-ui.js"></script>
+<style type="text/css">@import url("../../packages/jquery/themes/smoothness/jquery-ui.css");</style>
+
+<script type="text/javascript" src="field_files/flexigrid.js"></script>
+<style type="text/css">@import url("../../packages/jquery/css/flexigrid.css");</style>
+
+<script type="text/javascript" src="field_files/jquery_013.js"></script>
+<style type="text/css">@import url("../../packages/jquery/css/jquery.autocomplete.css");</style>
+
+<script type="text/javascript" src="field_files/tree_component.js"></script>
+<script type="text/javascript" src="field_files/css.js"></script>
+<style type="text/css">@import url("../../packages/jquery/css/tree_component.css");</style>
+
+<script type="text/javascript" src="field_files/jquery_003.js"></script>
+<script type="text/javascript" src="field_files/jquery_010.js"></script>
+<style type="text/css">@import url("../../packages/jquery/css/menu.css");</style>
+
+<script type="text/javascript" src="field_files/jquery_009.js"></script>
+<script type="text/javascript" src="field_files/jquery_012.js"></script>
+<script type="text/javascript" src="field_files/jquery_021.js"></script>
+
+<script type="text/javascript" src="field_files/jquery_016.js"></script>
+<script type="text/javascript" src="field_files/jquery_015.js"></script>
+
+<script type="text/javascript" src="field_files/jquery_011.js"></script>
+
+<script type="text/javascript" src="field_files/checkboxselect.js"></script>
+
+    <script type="text/javascript" src="field_files/ckeditor.js"></script>
+<script type="text/javascript" src="field_files/jquery_005.js"></script>
+<script type="text/javascript" src="field_files/jquery_019.js"></script>
+<script type="text/javascript" src="field_files/jquery_007.js"></script>
+
+<script type="text/javascript" src="field_files/jquery_014.js"></script>
+<style type="text/css">@import url("../../packages/jquery/css/token-input-facebook.css");></style>
+
+<script type="text/javascript" src="field_files/jquery_002.js"></script>
+<script type="text/javascript" src="field_files/jquery.js"></script>
+
+<script type="text/javascript" src="field_files/jquery_017.js"></script>
+
+<style type="text/css">@import url("../../packages/jquery/css/dataTable.css");></style>
+<script type="text/javascript" src="field_files/jquery_008.js"></script>
+
+<script type="text/javascript" src="field_files/jquery_004.js"></script>
+<style type="text/css">@import url(../../packages/jquery/css/dashboard.css);></style>
+
+<script type="text/javascript" src="field_files/jquery_006.js"></script>
+
+<script type="text/javascript">var cj = jQuery.noConflict(); $ = cj;</script>
+<link rel="shortcut icon" href="field_files/favicon.ico" type="image/x-icon">
+    <title>Test Custom Group - Custom Fields | CiviCRM Trunk</title>
+    <link type="text/css" rel="stylesheet" media="all" href="field_files/admin_menu.css">
+<link type="text/css" rel="stylesheet" media="all" href="field_files/node.css">
+<link type="text/css" rel="stylesheet" media="all" href="field_files/defaults.css">
+<link type="text/css" rel="stylesheet" media="all" href="field_files/system.css">
+<link type="text/css" rel="stylesheet" media="all" href="field_files/system-menus.css">
+<link type="text/css" rel="stylesheet" media="all" href="field_files/user.css">
+<link type="text/css" rel="stylesheet" media="all" href="field_files/content-module.css">
+<link type="text/css" rel="stylesheet" media="all" href="field_files/ctools.css">
+<link type="text/css" rel="stylesheet" media="all" href="field_files/date.css">
+<link type="text/css" rel="stylesheet" media="all" href="field_files/panels.css">
+<link type="text/css" rel="stylesheet" media="all" href="field_files/deprecate.css">
+<link type="text/css" rel="stylesheet" media="all" href="field_files/civicrm.css">
+<link type="text/css" rel="stylesheet" media="all" href="field_files/extras.css">
+<link type="text/css" rel="stylesheet" media="all" href="field_files/style.css">
+<link type="text/css" rel="stylesheet" media="print" href="field_files/print.css">
+    <script type="text/javascript" src="field_files/jquery_018.js"></script>
+<script type="text/javascript" src="field_files/drupal.js"></script>
+<script type="text/javascript" defer="defer" src="field_files/admin_menu.js"></script>
+<script type="text/javascript" src="field_files/panels.js"></script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+jQuery.extend(Drupal.settings, { "basePath": "/", "admin_menu": { "margin_top": 1 } });
+//--><!]]>
+</script>
+    <!--[if lt IE 7]>
+      <link type="text/css" rel="stylesheet" media="all" href="/themes/garland/fix-ie.css" />    <![endif]-->
+  </head><body class="sidebar-left admin-menu">
+    <ul style="top: 0px; position: fixed;" id="civicrm-menu">
+        <li id="crm-qsearch" class="menumain">
+            <form action="/civicrm/contact/search/basic" name="search_block" id="id_search_block" method="post" onsubmit="getSearchURLValue( );">
+                <input autocomplete="off" class="form-text ac_input" id="sort_name" name="sort_name" style="width: 12em;" type="text">
+                <input id="sort_contact_id" value="" type="hidden">
+                <input value="Go" name="_qf_Basic_refresh" class="form-submit default" style="display: none;" type="submit">
+            </form>
+        </li>
+        <!-- en_US --><li class="menumain">Home<ul style="display: none;" id="civicrm-home"><li><a href="http://civicrm/civicrm/dashboard?reset=1">CiviCRM Home</a></li><li><a href="#" onclick="cj.Menu.closeAll( );cj(" #civicrm-menu="" ).toggle(="" );="">Drupal Menu</a></li></ul></li><li class="menumain">Search...<ul style="display: none;"><li><a href="http://civicrm/civicrm/contact/search&amp;reset=1">Find Contacts</a></li><li><a href="http://civicrm/civicrm/contact/search/advanced&amp;reset=1">Find Contacts - Advanced Search</a></li><li><a href="http://civicrm/civicrm/contact/search/custom&amp;csid=15&amp;reset=1">Full-text Search</a></li><li><a href="http://civicrm/civicrm/contact/search/builder&amp;reset=1">Search Builder</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/contribute/search&amp;reset=1">Find Contributions</a></li><li><a href="http://civicrm/civicrm/mailing&amp;reset=1">Find Mailings</a></li><li><a href="http://civicrm/civicrm/member/search&amp;reset=1">Find Members</a></li><li><a href="http://civicrm/civicrm/event/search&amp;reset=1">Find Participants</a></li><li><a href="http://civicrm/civicrm/pledge/search&amp;reset=1">Find Pledges</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/contact/search/custom/list&amp;reset=1">Custom Searches...</a></li></ul></li><li class="menumain">Contacts<ul style="display: none;"><li><a href="http://civicrm/civicrm/contact/add&amp;reset=1&amp;ct=Individual">New Individual</a></li><li><a href="http://civicrm/civicrm/contact/add&amp;reset=1&amp;ct=Household">New Household</a></li><li><a href="http://civicrm/civicrm/contact/add&amp;reset=1&amp;ct=Organization">New Organization</a></li><li><a href="http://civicrm/civicrm/activity&amp;reset=1&amp;action=add&amp;context=standalone">New Activity</a></li><li><a href="http://civicrm/civicrm/activity/add&amp;atype=3&amp;action=add&amp;reset=1&amp;context=standalone">New Email</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/import/contact&amp;reset=1">Import Contacts</a></li><li><a href="http://civicrm/civicrm/import/activity&amp;reset=1">Import Activities</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/group/add&amp;reset=1">New Group</a></li><li><a href="http://civicrm/civicrm/group&amp;reset=1">Manage Groups</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/admin/tag&amp;reset=1&amp;action=add">New Tag</a></li><li><a href="http://civicrm/civicrm/admin/tag&amp;reset=1">Manage Tags (Categories)</a></li></ul></li><li class="menumain">Contributions<ul style="display: none;"><li><a href="http://civicrm/civicrm/contribute&amp;reset=1">Dashboard</a></li><li><a href="http://civicrm/civicrm/contribute/add&amp;reset=1&amp;action=add&amp;context=standalone">New Contribution</a></li><li><a href="http://civicrm/civicrm/contribute/search&amp;reset=1">Find Contributions</a></li><li><a href="http://civicrm/civicrm/contribute/import&amp;reset=1">Import Contributions</a></li><li class="menu-separator"></li><li>Pledges</li><li><a href="http://civicrm/civicrm/admin/contribute&amp;reset=1&amp;action=add">New Contribution Page</a></li><li><a href="http://civicrm/civicrm/admin/contribute&amp;reset=1">Manage Contribution Pages</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/admin/pcp&amp;reset=1">Personal Campaign Pages</a></li><li><a href="http://civicrm/civicrm/admin/contribute/managePremiums&amp;reset=1">Premiums (Thank-you Gifts)</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/admin/price&amp;reset=1&amp;action=add">New Price Set</a></li><li><a href="http://civicrm/civicrm/admin/price&amp;reset=1">Manage Price Sets</a></li></ul></li><li class="menumain">Events<ul style="display: none;"><li><a href="http://civicrm/civicrm/event&amp;reset=1">Dashboard</a></li><li><a href="http://civicrm/civicrm/participant/add&amp;reset=1&amp;action=add&amp;context=standalone">Register Event Participant</a></li><li><a href="http://civicrm/civicrm/event/search&amp;reset=1">Find Participants</a></li><li><a href="http://civicrm/civicrm/event/import&amp;reset=1">Import Participants</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/event/add&amp;reset=1&amp;action=add">New Event</a></li><li><a href="http://civicrm/civicrm/event/manage&amp;reset=1">Manage Events</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/admin/eventTemplate&amp;reset=1">Event Templates</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/admin/price&amp;reset=1&amp;action=add">New Price Set</a></li><li><a href="http://civicrm/civicrm/admin/price&amp;reset=1">Manage Price Sets</a></li></ul></li><li class="menumain">Mailings<ul style="display: none;"><li><a href="http://civicrm/civicrm/mailing/send&amp;reset=1">New Mailing</a></li><li><a href="http://civicrm/civicrm/mailing/browse/unscheduled&amp;reset=1&amp;scheduled=false">Draft and Unscheduled Mailings</a></li><li><a href="http://civicrm/civicrm/mailing/browse/scheduled&amp;reset=1&amp;scheduled=true">Scheduled and Sent Mailings</a></li><li><a href="http://civicrm/civicrm/mailing/browse/archived&amp;reset=1">Archived Mailings</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/admin/component&amp;reset=1">Headers, Footers, and Automated Messages</a></li><li><a href="http://civicrm/civicrm/admin/messageTemplates&amp;reset=1">Message Templates</a></li><li><a href="http://civicrm/civicrm/admin/options/from_email&amp;group=from_email_address&amp;reset=1">From Email Addresses</a></li></ul></li><li class="menumain">Memberships<ul style="display: none;"><li><a href="http://civicrm/civicrm/member&amp;reset=1">Dashboard</a></li><li><a href="http://civicrm/civicrm/member/add&amp;reset=1&amp;action=add&amp;context=standalone">New Membership</a></li><li><a href="http://civicrm/civicrm/member/search&amp;reset=1">Find Members</a></li><li><a href="http://civicrm/civicrm/member/import&amp;reset=1">Import Members</a></li></ul></li><li class="menumain">Reports<ul style="display: none;"><li><a href="http://civicrm/civicrm/report/list&amp;reset=1">Reports Listing</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/admin/report/template/list&amp;reset=1">Create Reports from Templates</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/report/instance/1&amp;reset=1">Constituent Report (Summary)</a></li><li><a href="http://civicrm/civicrm/report/instance/2&amp;reset=1">Constituent Report (Detail)</a></li><li><a href="http://civicrm/civicrm/report/instance/3&amp;reset=1">Donor Report (Summary)</a></li><li><a href="http://civicrm/civicrm/report/instance/4&amp;reset=1">Donor Report (Detail)</a></li><li><a href="http://civicrm/civicrm/report/instance/5&amp;reset=1">Donation Summary Report (Repeat)</a></li><li><a href="http://civicrm/civicrm/report/instance/6&amp;reset=1">SYBUNT Report</a></li><li><a href="http://civicrm/civicrm/report/instance/7&amp;reset=1">LYBUNT Report</a></li><li><a href="http://civicrm/civicrm/report/instance/8&amp;reset=1">Soft Credit Report</a></li><li><a href="http://civicrm/civicrm/report/instance/9&amp;reset=1">Membership Report (Summary)</a></li><li><a href="http://civicrm/civicrm/report/instance/10&amp;reset=1">Membership Report (Detail)</a></li><li><a href="http://civicrm/civicrm/report/instance/11&amp;reset=1">Membership Report (Lapsed)</a></li><li><a href="http://civicrm/civicrm/report/instance/12&amp;reset=1">Event Participant Report (List)</a></li><li><a href="http://civicrm/civicrm/report/instance/13&amp;reset=1">Event Income Report (Summary)</a></li><li><a href="http://civicrm/civicrm/report/instance/14&amp;reset=1">Event Income Report (Detail)</a></li><li><a href="http://civicrm/civicrm/report/instance/15&amp;reset=1">Attendee List</a></li><li><a href="http://civicrm/civicrm/report/instance/16&amp;reset=1">Activity Report</a></li><li><a href="http://civicrm/civicrm/report/instance/17&amp;reset=1">Relationship Report</a></li><li><a href="http://civicrm/civicrm/report/instance/18&amp;reset=1">Donation Summary Report (Organization)</a></li><li><a href="http://civicrm/civicrm/report/instance/19&amp;reset=1">Donation Summary Report (Household)</a></li><li><a href="http://civicrm/civicrm/report/instance/20&amp;reset=1">Top Donors Report</a></li><li><a href="http://civicrm/civicrm/report/instance/21&amp;reset=1">Pledge Summary Report</a></li><li><a href="http://civicrm/civicrm/report/instance/22&amp;reset=1">Pledged But not Paid Report</a></li></ul></li><li class="menumain">Administer<ul style="display: none;"><li><a href="http://civicrm/civicrm/admin&amp;reset=1">Administration Console</a></li><li>Customize</li><li>Configure</li><li>Manage</li><li>Option Lists</li><li>CiviContribute</li><li>CiviEvent</li><li>CiviMail</li><li>CiviMember</li><li>CiviReport</li></ul></li><li class="menumain">Help<ul style="display: none;"><li><a href="http://documentation.civicrm.org/">Documentation</a></li><li><a href="http://forum.civicrm.org/">Community Forums</a></li><li><a href="http://civicrm.org/participate">Participate</a></li><li><a href="http://civicrm.org/aboutcivicrm">About</a></li></ul></li><li id="menu-logout" class="menumain"><a href="http://civicrm/civicrm/logout?reset=1">Logout</a></li>
+    </ul>
+
+
+<!-- Layout -->
+  <div id="header-region" class="clear-block"></div>
+
+    <div id="wrapper">
+    <div id="container" class="clear-block">
+
+      <div id="header">
+        <div id="logo-floater">
+        <h1><a href="http://civicrm/" title="CiviCRM Trunk"><img src="field_files/logo.png" alt="CiviCRM Trunk" id="logo"><span>CiviCRM Trunk</span></a></h1>        </div>
+
+                                                    
+      </div> <!-- /header -->
+
+              <div id="sidebar-left" class="sidebar">
+                    <div id="block-civicrm-1" class="clear-block block block-civicrm">
+
+  <h2><span class="crm_blocktitle"></span></h2>
+
+  <div class="content"><div class="block-civicrm">
+<select class="form-select" id="civicrm-shortcuts" name="civicrm-shortcuts" onchange="if (this.value) location.href=this.value;">
+	<option selected="selected" value="">- create new -</option>
+		    <option value="/civicrm/contact/add?ct=Individual&amp;reset=1" class="new-Individual">Individual</option>
+    	    <option value="/civicrm/contact/add?ct=Individual&amp;cst=Student&amp;reset=1" class="new--&nbsp;Student">-&nbsp;Student</option>
+    	    <option value="/civicrm/contact/add?ct=Individual&amp;cst=Parent&amp;reset=1" class="new--&nbsp;Parent">-&nbsp;Parent</option>
+    	    <option value="/civicrm/contact/add?ct=Individual&amp;cst=Staff&amp;reset=1" class="new--&nbsp;Staff">-&nbsp;Staff</option>
+    	    <option value="/civicrm/contact/add?ct=Household&amp;reset=1" class="new-Household">Household</option>
+    	    <option value="/civicrm/contact/add?ct=Organization&amp;reset=1" class="new-Organization">Organization</option>
+    	    <option value="/civicrm/contact/add?ct=Organization&amp;cst=Team&amp;reset=1" class="new--&nbsp;Team">-&nbsp;Team</option>
+    	    <option value="/civicrm/contact/add?ct=Organization&amp;cst=Sponsor&amp;reset=1" class="new--&nbsp;Sponsor">-&nbsp;Sponsor</option>
+    	    <option value="/civicrm/activity?action=add&amp;reset=1&amp;context=standalone" class="new-activity">Activity</option>
+    	    <option value="/civicrm/contribute/add?reset=1&amp;action=add&amp;context=standalone" class="new-contribution">Contribution</option>
+    	    <option value="/civicrm/activity/add?atype=3&amp;action=add&amp;reset=1&amp;context=standalone" class="new-email">Email</option>
+    	    <option value="/civicrm/participant/add?reset=1&amp;action=add&amp;context=standalone" class="new-participant">Event Registration</option>
+    	    <option value="/civicrm/member/add?reset=1&amp;action=add&amp;context=standalone" class="new-membership">Membership</option>
+    	    <option value="/civicrm/pledge/add?reset=1&amp;action=add&amp;context=standalone" class="new-pledge">Pledge</option>
+    	    <option value="/civicrm/group/add?reset=1" class="new-group">Group</option>
+    	    <option value="/civicrm/admin/tag?reset=1&amp;action=add" class="new-tag">Tag</option>
+    </select>
+</div></div>
+</div>
+<div id="block-civicrm-2" class="clear-block block block-civicrm">
+
+  <h2><span class="crm_blocktitle">Recent Items</span></h2>
+
+  <div class="content"><div id="recently-viewed">
+    <ul>
+             <li class="Individual"><a href="http://civicrm/civicrm/contact/view?reset=1&amp;cid=102" title="kurund.jalmi@webaccess.co.in">
+                     <div class="icon crm-icon Individual-icon"></div>
+                  kurund.jalmi@webaccess.co.in</a></li>
+       </ul>
+</div></div>
+</div>
+<div id="block-civicrm-3" class="clear-block block block-civicrm">
+
+  <h2><span class="crm_blocktitle"></span></h2>
+
+  <div class="content"><div class="block-civicrm">
+<a accesskey="" href="http://civicrm/civicrm/user?reset=1">My Contact Dashboard</a>
+</div></div>
+</div>
+<div id="block-civicrm-4" class="clear-block block block-civicrm">
+
+  <h2><span class="crm_blocktitle">New Individual</span></h2>
+
+  <div class="content"><div id="crm-quick-create">
+<form action="/civicrm/contact/add?reset=1&amp;ct=Individual" method="post">
+
+<div class="form-item">
+    <div>
+        <label for="qa_first_name">First Name:</label>
+    </div>
+    <div>
+        <input name="first_name" id="qa_first_name" class="form-text" maxlength="64" type="text">
+    </div>
+</div>
+
+<div class="form-item">
+    <div>
+        <label for="qa_last_name">Last Name:</label>
+    </div>
+    <div>
+        <input name="last_name" id="qa_last_name" class="form-text required" maxlength="64" type="text">
+    </div>
+</div>
+
+<div class="form-item">
+    <div>
+        <label for="qa_email">Email:</label>
+    </div>
+    <div>
+        <input name="email[1][email]" id="qa_email" class="form-text" maxlength="64" type="text">
+    </div>
+
+    <input name="email[1][location_type_id]" value="1" type="hidden">
+    <input name="email[1][is_primary]" value="1" type="hidden">
+    <input name="ct" value="Individual" type="hidden">
+</div>
+
+<div class="form-item"><input name="_qf_Contact_next" value="Save" class="form-submit" type="submit"></div>
+
+</form>
+</div></div>
+</div>
+<div id="block-user-1" class="clear-block block block-user">
+
+  <h2>kurund</h2>
+
+  <div class="content"><ul class="menu"><li class="leaf first"><a href="http://civicrm/0"></a></li>
+<li class="leaf"><a href="http://civicrm/civicrm/dashboard">CiviCRM</a></li>
+<li class="leaf"><a href="http://civicrm/user/1">My account</a></li>
+<li class="collapsed"><a href="http://civicrm/node/add">Create content</a></li>
+<li class="collapsed"><a href="http://civicrm/admin">Administer</a></li>
+<li class="leaf last"><a href="http://civicrm/logout">Log out</a></li>
+</ul></div>
+</div>
+        </div>
+      
+      <div id="center"><div id="squeeze"><div class="right-corner"><div class="left-corner">
+          <div class="breadcrumb"><a href="http://civicrm/">Home</a> › <a href="http://civicrm/civicrm?reset=1">CiviCRM</a> › <a href="http://civicrm/civicrm/admin?reset=1">Administer CiviCRM</a> › <a href="http://civicrm/civicrm/admin/custom/group?reset=1">Custom Data</a></div>                              <h2>Test Custom Group - Custom Fields</h2>                                                  <div class="clear-block">
+            
+<div id="crm-container" xml:lang="en" lang="en">
+
+
+
+<script type="text/javascript">
+
+cj( function( ) {
+    var funVariable = 'bind';
+    
+        
+    var currentId  = null;
+    var hideAction = false;
+   
+     // Hiding action menu while clicking outside
+    cj(document).click(function( ) {
+     if ( !hideAction ) {
+           cj(".btn-slide").each(function( ) {
+                 cj(this).find("ul").hide( ); 
+            });
+        }
+        hideAction = false;
+    });
+  
+    eval('cj(".btn-slide").'+ funVariable +'( "click", function( ) {currentId = cj(this).find("ul").attr("id");cj(".btn-slide").each(function( ) {if ( currentId == cj(this).find("ul").attr("id") ) {cj(this).find("ul").show( );hideAction = true;} else {cj(this).find("ul").hide( );}});});');
+
+});
+</script>
+    <div id="menu-container" style="display: none;">
+    <ul id="civicrm-menu">
+        <li id="crm-qsearch" class="menumain">
+            <form action="/civicrm/contact/search/basic" name="search_block" id="id_search_block" method="post" onsubmit="getSearchURLValue( );">
+                <input class="form-text" id="sort_name" name="sort_name" style="width: 12em;" type="text">
+                <input id="sort_contact_id" value="" type="hidden">
+                <input value="Go" name="_qf_Basic_refresh" class="form-submit default" style="display: none;" type="submit">
+            </form>
+        </li>
+        <!-- en_US --><li class="menumain">Home<ul id="civicrm-home"><li><a href="http://civicrm/civicrm/dashboard?reset=1">CiviCRM Home</a></li><li><a href="#" onclick="cj.Menu.closeAll( );cj(" #civicrm-menu="" ).toggle(="" );="">Drupal Menu</a></li></ul></li><li class="menumain">Search...<ul><li><a href="http://civicrm/civicrm/contact/search&amp;reset=1">Find Contacts</a></li><li><a href="http://civicrm/civicrm/contact/search/advanced&amp;reset=1">Find Contacts - Advanced Search</a></li><li><a href="http://civicrm/civicrm/contact/search/custom&amp;csid=15&amp;reset=1">Full-text Search</a></li><li><a href="http://civicrm/civicrm/contact/search/builder&amp;reset=1">Search Builder</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/contribute/search&amp;reset=1">Find Contributions</a></li><li><a href="http://civicrm/civicrm/mailing&amp;reset=1">Find Mailings</a></li><li><a href="http://civicrm/civicrm/member/search&amp;reset=1">Find Members</a></li><li><a href="http://civicrm/civicrm/event/search&amp;reset=1">Find Participants</a></li><li><a href="http://civicrm/civicrm/pledge/search&amp;reset=1">Find Pledges</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/contact/search/custom/list&amp;reset=1">Custom Searches...</a><ul><li><a href="http://civicrm/civicrm/contact/search/custom&amp;reset=1&amp;csid=8">Activity Search</a></li><li><a href="http://civicrm/civicrm/contact/search/custom&amp;reset=1&amp;csid=11">Contacts by Date Added</a></li><li><a href="http://civicrm/civicrm/contact/search/custom&amp;reset=1&amp;csid=2">Contributors by Aggregate Totals</a></li><li><a href="http://civicrm/civicrm/contact/search/custom&amp;reset=1&amp;csid=6">Proximity Search</a></li></ul></li></ul></li><li class="menumain">Contacts<ul><li><a href="http://civicrm/civicrm/contact/add&amp;reset=1&amp;ct=Individual">New Individual</a><ul><li><a href="http://civicrm/civicrm/contact/add&amp;ct=Individual&amp;cst=Student&amp;reset=1">New Student</a></li><li><a href="http://civicrm/civicrm/contact/add&amp;ct=Individual&amp;cst=Parent&amp;reset=1">New Parent</a></li><li><a href="http://civicrm/civicrm/contact/add&amp;ct=Individual&amp;cst=Staff&amp;reset=1">New Staff</a></li></ul></li><li><a href="http://civicrm/civicrm/contact/add&amp;reset=1&amp;ct=Household">New Household</a></li><li><a href="http://civicrm/civicrm/contact/add&amp;reset=1&amp;ct=Organization">New Organization</a><ul><li><a href="http://civicrm/civicrm/contact/add&amp;ct=Organization&amp;cst=Team&amp;reset=1">New Team</a></li><li><a href="http://civicrm/civicrm/contact/add&amp;ct=Organization&amp;cst=Sponsor&amp;reset=1">New Sponsor</a></li></ul></li><li><a href="http://civicrm/civicrm/activity&amp;reset=1&amp;action=add&amp;context=standalone">New Activity</a></li><li><a href="http://civicrm/civicrm/activity/add&amp;atype=3&amp;action=add&amp;reset=1&amp;context=standalone">New Email</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/import/contact&amp;reset=1">Import Contacts</a></li><li><a href="http://civicrm/civicrm/import/activity&amp;reset=1">Import Activities</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/group/add&amp;reset=1">New Group</a></li><li><a href="http://civicrm/civicrm/group&amp;reset=1">Manage Groups</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/admin/tag&amp;reset=1&amp;action=add">New Tag</a></li><li><a href="http://civicrm/civicrm/admin/tag&amp;reset=1">Manage Tags (Categories)</a></li></ul></li><li class="menumain">Contributions<ul><li><a href="http://civicrm/civicrm/contribute&amp;reset=1">Dashboard</a></li><li><a href="http://civicrm/civicrm/contribute/add&amp;reset=1&amp;action=add&amp;context=standalone">New Contribution</a></li><li><a href="http://civicrm/civicrm/contribute/search&amp;reset=1">Find Contributions</a></li><li><a href="http://civicrm/civicrm/contribute/import&amp;reset=1">Import Contributions</a></li><li class="menu-separator"></li><li>Pledges<ul><li><a href="http://civicrm/civicrm/pledge&amp;reset=1">Dashboard</a></li><li><a href="http://civicrm/civicrm/pledge/add&amp;reset=1&amp;action=add&amp;context=standalone">New Pledge</a></li><li><a href="http://civicrm/civicrm/pledge/search&amp;reset=1">Find Pledges</a></li></ul></li><li><a href="http://civicrm/civicrm/admin/contribute&amp;reset=1&amp;action=add">New Contribution Page</a></li><li><a href="http://civicrm/civicrm/admin/contribute&amp;reset=1">Manage Contribution Pages</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/admin/pcp&amp;reset=1">Personal Campaign Pages</a></li><li><a href="http://civicrm/civicrm/admin/contribute/managePremiums&amp;reset=1">Premiums (Thank-you Gifts)</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/admin/price&amp;reset=1&amp;action=add">New Price Set</a></li><li><a href="http://civicrm/civicrm/admin/price&amp;reset=1">Manage Price Sets</a></li></ul></li><li class="menumain">Events<ul><li><a href="http://civicrm/civicrm/event&amp;reset=1">Dashboard</a></li><li><a href="http://civicrm/civicrm/participant/add&amp;reset=1&amp;action=add&amp;context=standalone">Register Event Participant</a></li><li><a href="http://civicrm/civicrm/event/search&amp;reset=1">Find Participants</a></li><li><a href="http://civicrm/civicrm/event/import&amp;reset=1">Import Participants</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/event/add&amp;reset=1&amp;action=add">New Event</a></li><li><a href="http://civicrm/civicrm/event/manage&amp;reset=1">Manage Events</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/admin/eventTemplate&amp;reset=1">Event Templates</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/admin/price&amp;reset=1&amp;action=add">New Price Set</a></li><li><a href="http://civicrm/civicrm/admin/price&amp;reset=1">Manage Price Sets</a></li></ul></li><li class="menumain">Mailings<ul><li><a href="http://civicrm/civicrm/mailing/send&amp;reset=1">New Mailing</a></li><li><a href="http://civicrm/civicrm/mailing/browse/unscheduled&amp;reset=1&amp;scheduled=false">Draft and Unscheduled Mailings</a></li><li><a href="http://civicrm/civicrm/mailing/browse/scheduled&amp;reset=1&amp;scheduled=true">Scheduled and Sent Mailings</a></li><li><a href="http://civicrm/civicrm/mailing/browse/archived&amp;reset=1">Archived Mailings</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/admin/component&amp;reset=1">Headers, Footers, and Automated Messages</a></li><li><a href="http://civicrm/civicrm/admin/messageTemplates&amp;reset=1">Message Templates</a></li><li><a href="http://civicrm/civicrm/admin/options/from_email&amp;group=from_email_address&amp;reset=1">From Email Addresses</a></li></ul></li><li class="menumain">Memberships<ul><li><a href="http://civicrm/civicrm/member&amp;reset=1">Dashboard</a></li><li><a href="http://civicrm/civicrm/member/add&amp;reset=1&amp;action=add&amp;context=standalone">New Membership</a></li><li><a href="http://civicrm/civicrm/member/search&amp;reset=1">Find Members</a></li><li><a href="http://civicrm/civicrm/member/import&amp;reset=1">Import Members</a></li></ul></li><li class="menumain">Reports<ul><li><a href="http://civicrm/civicrm/report/list&amp;reset=1">Reports Listing</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/admin/report/template/list&amp;reset=1">Create Reports from Templates</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/report/instance/1&amp;reset=1">Constituent Report (Summary)</a></li><li><a href="http://civicrm/civicrm/report/instance/2&amp;reset=1">Constituent Report (Detail)</a></li><li><a href="http://civicrm/civicrm/report/instance/3&amp;reset=1">Donor Report (Summary)</a></li><li><a href="http://civicrm/civicrm/report/instance/4&amp;reset=1">Donor Report (Detail)</a></li><li><a href="http://civicrm/civicrm/report/instance/5&amp;reset=1">Donation Summary Report (Repeat)</a></li><li><a href="http://civicrm/civicrm/report/instance/6&amp;reset=1">SYBUNT Report</a></li><li><a href="http://civicrm/civicrm/report/instance/7&amp;reset=1">LYBUNT Report</a></li><li><a href="http://civicrm/civicrm/report/instance/8&amp;reset=1">Soft Credit Report</a></li><li><a href="http://civicrm/civicrm/report/instance/9&amp;reset=1">Membership Report (Summary)</a></li><li><a href="http://civicrm/civicrm/report/instance/10&amp;reset=1">Membership Report (Detail)</a></li><li><a href="http://civicrm/civicrm/report/instance/11&amp;reset=1">Membership Report (Lapsed)</a></li><li><a href="http://civicrm/civicrm/report/instance/12&amp;reset=1">Event Participant Report (List)</a></li><li><a href="http://civicrm/civicrm/report/instance/13&amp;reset=1">Event Income Report (Summary)</a></li><li><a href="http://civicrm/civicrm/report/instance/14&amp;reset=1">Event Income Report (Detail)</a></li><li><a href="http://civicrm/civicrm/report/instance/15&amp;reset=1">Attendee List</a></li><li><a href="http://civicrm/civicrm/report/instance/16&amp;reset=1">Activity Report</a></li><li><a href="http://civicrm/civicrm/report/instance/17&amp;reset=1">Relationship Report</a></li><li><a href="http://civicrm/civicrm/report/instance/18&amp;reset=1">Donation Summary Report (Organization)</a></li><li><a href="http://civicrm/civicrm/report/instance/19&amp;reset=1">Donation Summary Report (Household)</a></li><li><a href="http://civicrm/civicrm/report/instance/20&amp;reset=1">Top Donors Report</a></li><li><a href="http://civicrm/civicrm/report/instance/21&amp;reset=1">Pledge Summary Report</a></li><li><a href="http://civicrm/civicrm/report/instance/22&amp;reset=1">Pledged But not Paid Report</a></li></ul></li><li class="menumain">Administer<ul><li><a href="http://civicrm/civicrm/admin&amp;reset=1">Administration Console</a></li><li>Customize<ul><li><a href="http://civicrm/civicrm/admin/custom/group&amp;reset=1">Custom Data</a></li><li><a href="http://civicrm/civicrm/admin/uf/group&amp;reset=1">CiviCRM Profile</a></li><li><a href="http://civicrm/civicrm/admin/menu&amp;reset=1">Navigation Menu</a></li><li><a href="http://civicrm/civicrm/admin/options/custom_search&amp;reset=1&amp;group=custom_search">Manage Custom Searches</a></li><li><a href="http://civicrm/civicrm/admin/price&amp;reset=1">Price Sets</a></li></ul></li><li>Configure<ul><li><a href="http://civicrm/civicrm/admin/configtask&amp;reset=1">Configuration Checklist</a></li><li><a href="http://civicrm/civicrm/admin/setting&amp;reset=1">Global Settings</a><ul><li><a href="http://civicrm/civicrm/admin/setting/component&amp;reset=1">Enable CiviCRM Components</a></li><li><a href="http://civicrm/civicrm/admin/setting/preferences/display&amp;reset=1">Site Preferences (screen and form configuration)</a></li><li><a href="http://civicrm/civicrm/admin/setting/path&amp;reset=1">Directories</a></li><li><a href="http://civicrm/civicrm/admin/setting/url&amp;reset=1">Resource URLs</a></li><li><a href="http://civicrm/civicrm/admin/setting/smtp&amp;reset=1">Outbound Email (SMTP/Sendmail)</a></li><li><a href="http://civicrm/civicrm/admin/setting/mapping&amp;reset=1">Mapping and Geocoding</a></li><li><a href="http://civicrm/civicrm/admin/paymentProcessor&amp;reset=1">Payment Processors</a></li><li><a href="http://civicrm/civicrm/admin/setting/localization&amp;reset=1">Localization</a></li><li><a href="http://civicrm/civicrm/admin/setting/preferences/address&amp;reset=1">Address Settings</a></li><li><a href="http://civicrm/civicrm/admin/setting/search&amp;reset=1">Search Settings</a></li><li><a href="http://civicrm/civicrm/admin/setting/date&amp;reset=1">Date Formats</a></li><li><a href="http://civicrm/civicrm/admin/setting/uf&amp;reset=1">CMS Integration</a></li><li><a href="http://civicrm/civicrm/admin/setting/misc&amp;reset=1">Miscellaneous (version check, reCAPTCHA...)</a></li><li><a href="http://civicrm/civicrm/admin/options/safe_file_extension&amp;group=safe_file_extension&amp;reset=1">Safe File Extensions</a></li><li><a href="http://civicrm/civicrm/admin/setting/debug&amp;reset=1">Debugging</a></li></ul></li><li><a href="http://civicrm/civicrm/admin/mapping&amp;reset=1">Import/Export Mappings</a></li><li><a href="http://civicrm/civicrm/admin/messageTemplates&amp;reset=1">Message Templates</a></li><li><a href="http://civicrm/civicrm/admin/domain&amp;action=update&amp;reset=1">Domain Information</a></li><li><a href="http://civicrm/civicrm/admin/options/from_email_address&amp;group=from_email_address&amp;reset=1">FROM Email Addresses</a></li><li><a href="http://civicrm/civicrm/admin/setting/updateConfigBackend&amp;reset=1">Update Directory Path and URL</a></li></ul></li><li>Manage<ul><li><a href="http://civicrm/civicrm/admin/deduperules&amp;reset=1">Find and Merge Duplicate Contacts</a></li><li><a href="http://civicrm/civicrm/admin/access&amp;reset=1">Access Control</a></li><li><a href="http://civicrm/civicrm/admin/synchUser&amp;reset=1">Synchronize Users to Contacts</a></li></ul></li><li>Option Lists<ul><li><a href="http://civicrm/civicrm/admin/options/activity_type&amp;reset=1&amp;group=activity_type">Activity Types</a></li><li><a href="http://civicrm/civicrm/admin/reltype&amp;reset=1">Relationship Types</a></li><li><a href="http://civicrm/civicrm/admin/tag&amp;reset=1">Tags (Categories)</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/admin/options/gender&amp;reset=1&amp;group=gender">Gender Options</a></li><li><a href="http://civicrm/civicrm/admin/options/individual_prefix&amp;group=individual_prefix&amp;reset=1">Individual Prefixes (Ms, Mr...)</a></li><li><a href="http://civicrm/civicrm/admin/options/individual_suffix&amp;group=individual_suffix&amp;reset=1">Individual Suffixes (Jr, Sr...)</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/admin/options/addressee&amp;group=addressee&amp;reset=1">Addressee Formats</a></li><li><a href="http://civicrm/civicrm/admin/options/email_greeting&amp;group=email_greeting&amp;reset=1">Email Greetings</a></li><li><a href="http://civicrm/civicrm/admin/options/postal_greeting&amp;group=postal_greeting&amp;reset=1">Postal Greetings</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/admin/options/instant_messenger_service&amp;group=instant_messenger_service&amp;reset=1">Instant Messenger Services</a></li><li><a href="http://civicrm/civicrm/admin/locationType&amp;reset=1">Location Types (Home, Work...)</a></li><li><a href="http://civicrm/civicrm/admin/options/mobile_provider&amp;group=mobile_provider&amp;reset=1">Mobile Phone Providers</a></li><li><a href="http://civicrm/civicrm/admin/options/phone_type&amp;group=phone_type&amp;reset=1">Phone Types</a></li><li><a href="http://civicrm/civicrm/admin/options/preferred_communication_method&amp;group=preferred_communication_method&amp;reset=1">Preferred Communication Methods</a></li><li><a href="http://civicrm/civicrm/admin/options/subtype&amp;reset=1">Contact Types</a></li></ul></li><li>CiviContribute<ul><li><a href="http://civicrm/civicrm/admin/contribute&amp;reset=1&amp;action=add">New Contribution Page</a></li><li><a href="http://civicrm/civicrm/admin/contribute&amp;reset=1">Manage Contribution Pages</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/admin/pcp&amp;reset=1">Personal Campaign Pages</a></li><li><a href="http://civicrm/civicrm/admin/contribute/managePremiums&amp;reset=1">Premiums (Thank-you Gifts)</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/admin/contribute/contributionType&amp;reset=1">Contribution Types</a></li><li><a href="http://civicrm/civicrm/admin/options/payment_instrument&amp;group=payment_instrument&amp;reset=1">Payment Instruments</a></li><li><a href="http://civicrm/civicrm/admin/options/accept_creditcard&amp;group=accept_creditcard&amp;reset=1">Accepted Credit Cards</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/admin/price&amp;reset=1&amp;action=add">New Price Set</a></li><li><a href="http://civicrm/civicrm/admin/price&amp;reset=1">Manage Price Sets</a></li></ul></li><li>CiviEvent<ul><li><a href="http://civicrm/civicrm/event/add&amp;reset=1&amp;action=add">New Event</a></li><li><a href="http://civicrm/civicrm/event/manage&amp;reset=1">Manage Events</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/admin/eventTemplate&amp;reset=1">Event Templates</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/admin/price&amp;reset=1&amp;action=add">New Price Set</a></li><li><a href="http://civicrm/civicrm/admin/price&amp;reset=1">Manage Price Sets</a></li><li class="menu-separator"></li><li><a href="http://civicrm/civicrm/admin/options/participant_listing&amp;group=participant_listing&amp;reset=1">Participant Listing Templates</a></li><li><a href="http://civicrm/civicrm/admin/options/event_type&amp;group=event_type&amp;reset=1">Event Types</a></li><li><a href="http://civicrm/civicrm/admin/participant_status&amp;reset=1">Participant Statuses</a></li><li><a href="http://civicrm/civicrm/admin/options/participant_role&amp;group=participant_role&amp;reset=1">Participant Roles</a></li></ul></li><li>CiviMail<ul><li><a href="http://civicrm/civicrm/admin/component&amp;reset=1">Headers, Footers, and Automated Messages</a></li><li><a href="http://civicrm/civicrm/admin/messageTemplates&amp;reset=1">Message Templates</a></li><li><a href="http://civicrm/civicrm/admin/options/from_email&amp;group=from_email_address&amp;reset=1">From Email Addresses</a></li><li><a href="http://civicrm/civicrm/admin/mailSettings&amp;reset=1">Mail Accounts</a></li></ul></li><li>CiviMember<ul><li><a href="http://civicrm/civicrm/admin/member/membershipType&amp;reset=1">Membership Types</a></li><li><a href="http://civicrm/civicrm/admin/member/membershipStatus&amp;reset=1">Membership Status Rules</a></li></ul></li><li>CiviReport<ul><li><a href="http://civicrm/civicrm/report/list&amp;reset=1">Reports Listing</a></li><li><a href="http://civicrm/civicrm/admin/report/template/list&amp;reset=1">Create Reports from Templates</a></li><li><a href="http://civicrm/civicrm/admin/report/options/report_template&amp;reset=1">Manage Templates</a></li><li><a href="http://civicrm/civicrm/admin/report/register&amp;reset=1">Register Report</a></li></ul></li></ul></li><li class="menumain">Help<ul><li><a href="http://documentation.civicrm.org/">Documentation</a></li><li><a href="http://forum.civicrm.org/">Community Forums</a></li><li><a href="http://civicrm.org/participate">Participate</a></li><li><a href="http://civicrm.org/aboutcivicrm">About</a></li></ul></li><li id="menu-logout" class="menumain"><a href="http://civicrm/civicrm/logout?reset=1">Logout</a></li>
+    </ul>
+</div>
+
+<script type="text/javascript">
+function getSearchURLValue( )
+{
+    var contactId =  cj( '#sort_contact_id' ).val();
+    if ( ! contactId || isNaN( contactId ) ) {
+        var sortValue = cj( '#sort_name' ).val();
+        if ( sortValue ) { 
+            //using xmlhttprequest check if there is only one contact and redirect to view page
+            var dataUrl = "/civicrm/ajax/contact?name=" + sortValue;
+
+            var response = cj.ajax({
+                url: dataUrl,
+                async: false
+                }).responseText;
+
+            contactId = response;
+        }
+    }
+    
+    if ( contactId ) {
+        var url = "/civicrm/contact/view?reset=1&cid=" + contactId;
+        document.getElementById('id_search_block').action = url;
+    }
+}
+
+/* Need to fix this properly*/
+cj( function() {
+    cj("#admin-menu").find("li :contains('CiviCRM')").click(function() {
+        cj("#civicrm-menu").toggle();
+        return false;
+    });
+
+    var contactUrl = "/civicrm/ajax/contactlist?context=navigation";
+
+    cj( '#sort_name' ).autocomplete( contactUrl, {
+        width: 200,
+        selectFirst: false,
+        minChars:2,
+        matchContains: true 	 
+    }).result(function(event, data, formatted) {
+       document.location="/civicrm/contact/view?reset=1&cid="+data[1];
+       return false;
+    });    
+});
+
+var framework = "Drupal";
+if( framework != 'Joomla') {
+	cj('body').prepend( cj("#menu-container").html() );
+
+	//Track Scrolling
+	cj(window).scroll( function () { 
+	   var scroll = document.documentElement.scrollTop || document.body.scrollTop;
+	   cj('#civicrm-menu').css({top: "scroll", position: "fixed", top: "0px"}); 
+	   cj('div.sticky-header').css({ 'top' : "23px", position: "fixed" });
+	});
+} else {
+	   cj('div#toolbar-box div.m').html(cj("#menu-container").html());
+	   cj('#civicrm-menu').ready( function(){ 
+			cj('.outerbox').css({ 'margin-top': '6px'});
+			cj('#root-menu-div .menu-ul li').css({ 'padding-bottom' : '2px', 'margin-top' : '2px' });
+			cj('img.menu-item-arrow').css({ 'top' : '4px' }); 
+		});
+}
+	var resourceBase   = "../../";
+	cj('#civicrm-menu').menu( {arrowSrc: resourceBase + 'packages/jquery/css/images/arrow.png'} );
+</script>
+<script type="text/javascript" src="field_files/Common.js"></script>
+
+<div id="printer-friendly">
+<a href="http://civicrm/civicrm/admin/custom/group/field?q=civicrm/admin/custom/group/field&amp;action=add&amp;gid=2&amp;snippet=2" title="Printer-friendly view of this page."><img src="field_files/print-icon.png" alt="Printer-friendly view of this page."></a>
+</div>
+
+
+<div class="spacer"></div>
+
+
+
+
+
+<!-- .tpl file invoked: CRM/Custom/Page/Field.tpl. Call via form.tpl if we have a form in the page. -->
+    <form action="/civicrm/admin/custom/group/field" method="post" name="Field" id="Field">
+
+
+
+  <div><input name="qfKey" value="73a1416a682783a0ec841c141f438796" type="hidden">
+<input name="_qf_default" value="Field:next" type="hidden">
+</div>
+
+
+
+    
+<script type="text/Javascript">
+function custom_option_html_type( ) {
+    var html_type_name = document.getElementsByName("data_type[1]")[0].value;
+    var data_type_id   = document.getElementsByName("data_type[0]")[0].value;
+
+    if ( !html_type_name && !data_type_id ) {
+        return;
+    }
+
+    if ( data_type_id < 4 ) {
+        if ( html_type_name != "Text" ) {
+            document.getElementById("showoption").style.display="block";		
+            document.getElementById("hideDefaultValTxt").style.display="none";
+            document.getElementById("hideDefaultValDef").style.display="none";
+            document.getElementById("hideDescTxt").style.display="none";
+            document.getElementById("hideDescDef").style.display="none";
+            document.getElementById("searchByRange").style.display = "none";
+            document.getElementsByName("is_search_range")[1].checked = true;
+            document.getElementById("is_searchable").style.display = "block";
+        } else {
+            document.getElementById("showoption").style.display="none";
+            document.getElementById("showoption").style.display="none";
+            document.getElementById("hideDefaultValTxt").style.display="block";
+            document.getElementById("hideDefaultValDef").style.display="block";
+            document.getElementById("hideDescTxt").style.display="block";
+            document.getElementById("hideDescDef").style.display="block";
+            document.getElementById("is_searchable").style.display = "block";
+        }
+    } else {
+        if ( data_type_id == 9 ) { 
+            document.getElementById("default_value").value = '';
+            document.getElementById("hideDefaultValTxt").style.display="none";
+            document.getElementById("hideDefaultValDef").style.display="none";		
+            document.getElementById("is_searchable").style.display = "none";
+            document.getElementById("hideDescTxt").style.display="none";
+            document.getElementById("hideDescDef").style.display="none";
+        } else if ( data_type_id == 11 ) {
+            document.getElementById("hideDefaultValTxt").style.display="none";
+            document.getElementById("hideDefaultValDef").style.display="none";            
+        } else {
+            document.getElementById("hideDefaultValTxt").style.display="block";
+            document.getElementById("hideDefaultValDef").style.display="block";
+            document.getElementById("is_searchable").style.display = "block";
+            document.getElementById("hideDescTxt").style.display="block";
+            document.getElementById("hideDescDef").style.display="block";
+        }
+
+        document.getElementById("showoption").style.display="none";           
+
+    }
+
+    var radioOption, checkBoxOption;
+
+    for ( var i=1; i<=11; i++) {
+        radioOption = 'radio'+i;
+        checkBoxOption = 'checkbox'+i	
+        if ( data_type_id < 4 ) {
+            if ( html_type_name != "Text") {
+                if ( html_type_name == "CheckBox" || html_type_name == "Multi-Select") {
+                    document.getElementById(checkBoxOption).style.display="block";
+                    document.getElementById(radioOption).style.display="none";
+                } else {
+                    document.getElementById(radioOption).style.display="block";	
+                    document.getElementById(checkBoxOption).style.display="none";
+                }
+            }
+        }
+    }
+
+    if ( data_type_id < 4 ) {	
+        if (html_type_name == "CheckBox" || html_type_name == "Radio") {
+            document.getElementById("optionsPerLine").style.display="block";
+            document.getElementById("optionsPerLineDef").style.display="block";
+        } else {
+            document.getElementById("optionsPerLine").style.display="none";
+            document.getElementById("optionsPerLineDef").style.display="none";
+        }
+    }
+
+    if ( data_type_id == 5) {
+        document.getElementById("startDateRange").style.display="block";
+        document.getElementById("startDateRangeDef").style.display="block";
+        document.getElementById("endDateRange").style.display="block";
+        document.getElementById("endDateRangeDef").style.display="block";
+        document.getElementById("incudedDatePart").style.display="block";
+        document.getElementById("incudedDatePartDef").style.display="block";	
+    } else {
+        document.getElementById("startDateRange").style.display="none";
+        document.getElementById("startDateRangeDef").style.display="none";
+        document.getElementById("endDateRange").style.display="none";
+        document.getElementById("endDateRangeDef").style.display="none";
+        document.getElementById("incudedDatePart").style.display="none";
+        document.getElementById("incudedDatePartDef").style.display="none";	 	
+    }
+
+    if ( data_type_id == 0 ) {
+        document.getElementById("textLength").style.display="block";
+        document.getElementById("textLengthDef").style.display="block";
+    } else {
+        document.getElementById("textLength").style.display="none";
+        document.getElementById("textLengthDef").style.display="none";
+    }
+
+    if ( data_type_id == 4 ) {
+        document.getElementById("noteColumns").style.display="block";
+        document.getElementById("noteColumnsDef").style.display="block";
+        document.getElementById("noteRows").style.display="block";
+        document.getElementById("noteRowsDef").style.display="block";
+    } else {
+        document.getElementById("noteColumns").style.display="none";
+        document.getElementById("noteColumnsDef").style.display="none";
+        document.getElementById("noteRows").style.display="none";
+        document.getElementById("noteRowsDef").style.display="none";
+    }
+
+    if ( data_type_id > 3) {
+        document.getElementById("optionsPerLine").style.display="none";
+        document.getElementById("optionsPerLineDef").style.display="none";
+    }
+
+    
+    clearSearchBoxes( );
+    
+}
+</script>
+
+<fieldset><legend>Custom Data Field</legend>
+
+    <div class="form-item">
+        <dl class="html-adjust">
+	    <dt><label for="label">  Field Label
+   <span class="marker" title="This field is required.">*</span>
+</label>
+			    </dt>
+	    <dd><input maxlength="255" size="45" name="label" id="label" class="form-text huge required" type="text" value="Test Hierarchical Field"></dd>
+	
+	    <dt class=""><label>Data and Input Field Type</label></dt>
+	    <dd><script type="text/javascript">
+//<![CDATA[
+hs_data_type_0 = {
+"Text":"Text",
+"Select":"Select",
+"Radio":"Radio",
+"CheckBox":"CheckBox",
+"Multi-Select":"Multi-Select",
+"AdvMulti-Select":"Advanced Multi-Select",
+"Autocomplete-Select":"Autocomplete Select"
+}
+hs_data_type_1 = {
+"Text":"Text",
+"Select":"Select",
+"Radio":"Radio"
+}
+hs_data_type_2 = hs_data_type_1
+hs_data_type_3 = hs_data_type_1
+hs_data_type_4 = {
+"TextArea":"TextArea",
+"RichTextEditor":"RichTextEditor"
+}
+hs_data_type_5 = {
+"Date":"Select Date"
+}
+hs_data_type_6 = {
+"Radio":"Radio"
+}
+hs_data_type_7 = {
+"StateProvince":"Select State/Province",
+"Multi-Select":"Multi-Select State/Province"
+}
+hs_data_type_8 = {
+"Country":"Select Country",
+"Multi-Select":"Multi-Select Country "
+}
+hs_data_type_9 = {
+"File":"Select File"
+}
+hs_data_type_10 = {
+"Link":"Link"
+}
+hs_data_type_11 = {
+"ContactReference":"Autocomplete Select"
+}
+function swapOptions(frm, grpName, eleIndex, nbElements, arName)
+{
+    var n = "";
+    var ctl;
+
+    for (var i = 0; i < nbElements; i++) {
+        ctl = frm[grpName+'['+i+']'];
+        if (!ctl) {
+            ctl = frm[grpName+'['+i+'][]'];
+        }
+        if (i <= eleIndex) {
+            n += "_"+ctl.value;
+        } else {
+            ctl.length = 0;
+        }
+    }
+
+    var t = eval("typeof("+arName + n +")");
+    if (t != 'undefined') {
+        var the_array = eval(arName+n);
+        var j = 0;
+        n = eleIndex + 1;
+        ctl = frm[grpName+'['+ n +']'];
+        if (!ctl) {
+            ctl = frm[grpName+'['+ n +'][]'];
+        }
+        ctl.style.display = 'inline';
+        for (var i in the_array) {
+            opt = new Option(the_array[i], i, false, false);
+            ctl.options[j++] = opt;
+        }
+    } else {
+        n = eleIndex + 1;
+        ctl = frm[grpName+'['+n+']'];
+        if (!ctl) {
+            ctl = frm[grpName+'['+ n +'][]'];
+        }
+        if (ctl) {
+            ctl.style.display = 'none';
+        }
+    }
+    if (eleIndex+1 < nbElements) {
+        swapOptions(frm, grpName, eleIndex+1, nbElements, arName);
+    }
+}
+//]]>
+</script><select onclick="clearSearchBoxes();custom_option_html_type(this.form)" onblur="custom_option_html_type(this.form)" name="data_type[0]" onchange="swapOptions(this.form, 'data_type', 0, 2, 'hs_data_type');" id="data_type[0]">
+	<option selected="selected" value="0">Alphanumeric</option>
+	<option value="1">Integer</option>
+	<option value="2">Number</option>
+	<option value="3">Money</option>
+	<option value="4">Note</option>
+	<option value="5">Date</option>
+	<option value="6">Yes or No</option>
+	<option value="7">State/Province</option>
+	<option value="8">Country</option>
+	<option value="9">File</option>
+	<option value="10">Link</option>
+	<option value="11">Contact Reference</option>
+</select>&nbsp;&nbsp;&nbsp;<select onclick="clearSearchBoxes();custom_option_html_type(this.form)" onblur="custom_option_html_type(this.form)" name="data_type[1]" id="data_type[1]">
+	<option value="Text">Text</option>
+	<option value="Select">Select</option>
+	<option selected="selected" value="HierSelect">Hierarchical Select</option>
+	<option value="Radio">Radio</option>
+	<option value="CheckBox">CheckBox</option>
+	<option value="Multi-Select">Multi-Select</option>
+	<option value="AdvMulti-Select">Advanced Multi-Select</option>
+	<option value="Autocomplete-Select">Autocomplete Select</option>
+</select></dd>
+	    		<dt>&nbsp;</dt>
+		<dd class="description">Select
+the type of data you want to collect and store for this contact. Then
+select from the available HTML input field types (choices are based on
+the type of data being collected).</dd>
+	    	
+	<div class="spacer"></div>    
+	<dt style="display: block;" id="textLength" class="show-block"><label for="text_length">Database field length</label></dt>
+	<dd style="display: block;" id="textLengthDef" class="show-block"><input size="6" maxlength="14" name="text_length" value="255" id="text_length" class="form-text" type="text"></dd> 
+<div id="opt-id">
+		    	    <div style="display: block;" id="showoption" class="hide-block"><dl>
+    <dt><label>Option Type</label></dt><dd><input onclick="showOptionSelect();" value="1" id="qf_78da4c" name="option_type" checked="checked" type="radio"><label for="qf_78da4c">Create a new set of options</label><br><input onclick="showOptionSelect();" value="2" id="qf_db28a4" name="option_type" type="radio"><label for="qf_db28a4">Reuse an existing set</label></dd>
+    <dt>&nbsp;</dt><dd class="description">You
+can create new multiple choice options for this field, or select an
+existing set of options which you've already created for another custom
+field.</dd>
+</dl>
+
+<div style="display: none;" id="option_group">
+  <dl>
+      <dt><label for="option_group_id">Multiple Choice Option Sets</label></dt><dd><select name="option_group_id" id="option_group_id" class="form-select">
+	<option selected="selected" value="">- select -</option>
+	<option value="58">Most Important Issue</option>
+	<option value="59">Marital Status</option>
+</select></dd>
+  </dl>
+</div>
+
+<div class="spacer"></div>
+<div style="display: block;" id="multiple" class="form-item">
+<fieldset><legend>Multiple Choice Options</legend>
+    <div class="description">
+Enter up to ten (10) multiple choice options in this table (click
+'another choice' for each additional choice). If you need more than ten
+options, you can create an unlimited number of additional choices using
+the Edit Multiple Choice Options link after saving this new field. If
+desired, you can mark one of the choices as the default choice. The
+option 'label' is displayed on the form, while the option 'value' is
+stored in the contact record. The label and value may be the same or
+different. Inactive options are hidden when the field is presented. </div>
+	<table id="optionField"><tbody><tr><th>&nbsp;</th><th> Default</th><th> Label</th><th> Value</th><th> Weight</th><th> Active</th><th>Select</th></tr><tr id="optionField_1" class="form-item odd-row"><td></td><td><div id="radio1" style="display: block;"><input value="1" id="qf_c6d68f" name="default_option" class="form-radio" type="radio"></div><div id="checkbox1" style="display: none;"><input id="default_checkbox_option[1]" name="default_checkbox_option[1]" value="1" class="form-checkbox" type="checkbox"></div></td><td> <input maxlength="255" size="45" name="option_label[1]" id="option_label_1" class="form-text huge" type="text"></td><td> <input maxlength="64" size="30" name="option_value[1]" id="option_value_1" class="form-text big" type="text"></td><td> <input size="6" maxlength="14" name="option_weight[1]" value="1" id="option_weight_1" class="form-text" type="text"></td><td> <input id="option_status[1]" name="option_status[1]" value="1" checked="checked" class="form-checkbox" type="checkbox"></td><td><a href="javascript:showDialog('dialog1');" >Add Select</a><div id="dialog1" style="display:none;"></td></tr><tr id="optionField_2" class="form-item even-row"><td><a onclick="showHideRow(2);" name="optionField_2" href="javascript:void(0)" class="form-link"><img src="field_files/TreeMinus.gif" class="action-icon" alt="hide field or section"></a></td><td><div id="radio2" style="display: block;"><input value="2" id="qf_5c4432" name="default_option" class="form-radio" type="radio"></div><div id="checkbox2" style="display: none;"><input id="default_checkbox_option[2]" name="default_checkbox_option[2]" value="1" class="form-checkbox" type="checkbox"></div></td><td> <input maxlength="255" size="45" name="option_label[2]" id="option_label_2" class="form-text huge" type="text"></td><td> <input maxlength="64" size="30" name="option_value[2]" id="option_value_2" class="form-text big" type="text"></td><td> <input size="6" maxlength="14" name="option_weight[2]" value="2" id="option_weight_2" class="form-text" type="text"></td><td> <input id="option_status[2]" name="option_status[2]" value="1" checked="checked" class="form-checkbox" type="checkbox"></td><td><a href="javascript:showDialog('dialog2');">Add Select</a><div id="dialog1" style="display:none;"></td></tr><tr style="display: none;" id="optionField_3" class="form-item odd-row"><td><a onclick="showHideRow(3);" name="optionField_3" href="javascript:void(0)" class="form-link"><img src="field_files/TreeMinus.gif" class="action-icon" alt="hide field or section"></a></td><td><div id="radio3" style="display: block;"><input value="3" id="qf_833d7a" name="default_option" class="form-radio" type="radio"></div><div id="checkbox3" style="display: none;"><input id="default_checkbox_option[3]" name="default_checkbox_option[3]" value="1" class="form-checkbox" type="checkbox"></div></td><td> <input maxlength="255" size="45" name="option_label[3]" id="option_label_3" class="form-text huge" type="text"></td><td> <input maxlength="64" size="30" name="option_value[3]" id="option_value_3" class="form-text big" type="text"></td><td> <input size="6" maxlength="14" name="option_weight[3]" value="3" id="option_weight_3" class="form-text" type="text"></td><td> <input id="option_status[3]" name="option_status[3]" value="1" checked="checked" class="form-checkbox" type="checkbox"></td><td><a href="#">Add Select</a></td></tr><tr style="display: none;" id="optionField_4" class="form-item even-row"><td><a onclick="showHideRow(4);" name="optionField_4" href="javascript:void(0)" class="form-link"><img src="field_files/TreeMinus.gif" class="action-icon" alt="hide field or section"></a></td><td><div id="radio4" style="display: block;"><input value="4" id="qf_e52579" name="default_option" class="form-radio" type="radio"></div><div id="checkbox4" style="display: none;"><input id="default_checkbox_option[4]" name="default_checkbox_option[4]" value="1" class="form-checkbox" type="checkbox"></div></td><td> <input maxlength="255" size="45" name="option_label[4]" id="option_label_4" class="form-text huge" type="text"></td><td> <input maxlength="64" size="30" name="option_value[4]" id="option_value_4" class="form-text big" type="text"></td><td> <input size="6" maxlength="14" name="option_weight[4]" value="4" id="option_weight_4" class="form-text" type="text"></td><td> <input id="option_status[4]" name="option_status[4]" value="1" checked="checked" class="form-checkbox" type="checkbox"></td><td><a href="#">Add Select</a></td></tr><tr style="display: none;" id="optionField_5" class="form-item odd-row"><td><a onclick="showHideRow(5);" name="optionField_5" href="javascript:void(0)" class="form-link"><img src="field_files/TreeMinus.gif" class="action-icon" alt="hide field or section"></a></td><td><div id="radio5" style="display: block;"><input value="5" id="qf_2f1c0b" name="default_option" class="form-radio" type="radio"></div><div id="checkbox5" style="display: none;"><input id="default_checkbox_option[5]" name="default_checkbox_option[5]" value="1" class="form-checkbox" type="checkbox"></div></td><td> <input maxlength="255" size="45" name="option_label[5]" id="option_label_5" class="form-text huge" type="text"></td><td> <input maxlength="64" size="30" name="option_value[5]" id="option_value_5" class="form-text big" type="text"></td><td> <input size="6" maxlength="14" name="option_weight[5]" value="5" id="option_weight_5" class="form-text" type="text"></td><td> <input id="option_status[5]" name="option_status[5]" value="1" checked="checked" class="form-checkbox" type="checkbox"></td><td><a href="#">Add Select</a></td></tr><tr style="display: none;" id="optionField_6" class="form-item even-row"><td><a onclick="showHideRow(6);" name="optionField_6" href="javascript:void(0)" class="form-link"><img src="field_files/TreeMinus.gif" class="action-icon" alt="hide field or section"></a></td><td><div id="radio6" style="display: block;"><input value="6" id="qf_ecd945" name="default_option" class="form-radio" type="radio"></div><div id="checkbox6" style="display: none;"><input id="default_checkbox_option[6]" name="default_checkbox_option[6]" value="1" class="form-checkbox" type="checkbox"></div></td><td> <input maxlength="255" size="45" name="option_label[6]" id="option_label_6" class="form-text huge" type="text"></td><td> <input maxlength="64" size="30" name="option_value[6]" id="option_value_6" class="form-text big" type="text"></td><td> <input size="6" maxlength="14" name="option_weight[6]" value="6" id="option_weight_6" class="form-text" type="text"></td><td> <input id="option_status[6]" name="option_status[6]" value="1" checked="checked" class="form-checkbox" type="checkbox"></td><td><a href="#">Add Select</a></td></tr><tr style="display: none;" id="optionField_7" class="form-item odd-row"><td><a onclick="showHideRow(7);" name="optionField_7" href="javascript:void(0)" class="form-link"><img src="field_files/TreeMinus.gif" class="action-icon" alt="hide field or section"></a></td><td><div id="radio7" style="display: block;"><input value="7" id="qf_2daaa7" name="default_option" class="form-radio" type="radio"></div><div id="checkbox7" style="display: none;"><input id="default_checkbox_option[7]" name="default_checkbox_option[7]" value="1" class="form-checkbox" type="checkbox"></div></td><td> <input maxlength="255" size="45" name="option_label[7]" id="option_label_7" class="form-text huge" type="text"></td><td> <input maxlength="64" size="30" name="option_value[7]" id="option_value_7" class="form-text big" type="text"></td><td> <input size="6" maxlength="14" name="option_weight[7]" value="7" id="option_weight_7" class="form-text" type="text"></td><td> <input id="option_status[7]" name="option_status[7]" value="1" checked="checked" class="form-checkbox" type="checkbox"></td></tr><tr style="display: none;" id="optionField_8" class="form-item even-row"><td><a onclick="showHideRow(8);" name="optionField_8" href="javascript:void(0)" class="form-link"><img src="field_files/TreeMinus.gif" class="action-icon" alt="hide field or section"></a></td><td><div id="radio8" style="display: block;"><input value="8" id="qf_0d08ba" name="default_option" class="form-radio" type="radio"></div><div id="checkbox8" style="display: none;"><input id="default_checkbox_option[8]" name="default_checkbox_option[8]" value="1" class="form-checkbox" type="checkbox"></div></td><td> <input maxlength="255" size="45" name="option_label[8]" id="option_label_8" class="form-text huge" type="text"></td><td> <input maxlength="64" size="30" name="option_value[8]" id="option_value_8" class="form-text big" type="text"></td><td> <input size="6" maxlength="14" name="option_weight[8]" value="8" id="option_weight_8" class="form-text" type="text"></td><td> <input id="option_status[8]" name="option_status[8]" value="1" checked="checked" class="form-checkbox" type="checkbox"></td></tr><tr style="display: none;" id="optionField_9" class="form-item odd-row"><td><a onclick="showHideRow(9);" name="optionField_9" href="javascript:void(0)" class="form-link"><img src="field_files/TreeMinus.gif" class="action-icon" alt="hide field or section"></a></td><td><div id="radio9" style="display: block;"><input value="9" id="qf_c682d7" name="default_option" class="form-radio" type="radio"></div><div id="checkbox9" style="display: none;"><input id="default_checkbox_option[9]" name="default_checkbox_option[9]" value="1" class="form-checkbox" type="checkbox"></div></td><td> <input maxlength="255" size="45" name="option_label[9]" id="option_label_9" class="form-text huge" type="text"></td><td> <input maxlength="64" size="30" name="option_value[9]" id="option_value_9" class="form-text big" type="text"></td><td> <input size="6" maxlength="14" name="option_weight[9]" value="9" id="option_weight_9" class="form-text" type="text"></td><td> <input id="option_status[9]" name="option_status[9]" value="1" checked="checked" class="form-checkbox" type="checkbox"></td></tr><tr style="display: none;" id="optionField_10" class="form-item even-row"><td><a onclick="showHideRow(10);" name="optionField_10" href="javascript:void(0)" class="form-link"><img src="field_files/TreeMinus.gif" class="action-icon" alt="hide field or section"></a></td><td><div id="radio10" style="display: block;"><input value="10" id="qf_cdcd83" name="default_option" class="form-radio" type="radio"></div><div id="checkbox10" style="display: none;"><input id="default_checkbox_option[10]" name="default_checkbox_option[10]" value="1" class="form-checkbox" type="checkbox"></div></td><td> <input maxlength="255" size="45" name="option_label[10]" id="option_label_10" class="form-text huge" type="text"></td><td> <input maxlength="64" size="30" name="option_value[10]" id="option_value_10" class="form-text big" type="text"></td><td> <input size="6" maxlength="14" name="option_weight[10]" value="10" id="option_weight_10" class="form-text" type="text"></td><td> <input id="option_status[10]" name="option_status[10]" value="1" checked="checked" class="form-checkbox" type="checkbox"></td></tr><tr style="display: none;" id="optionField_11" class="form-item odd-row"><td><a onclick="showHideRow(11);" name="optionField_11" href="javascript:void(0)" class="form-link"><img src="field_files/TreeMinus.gif" class="action-icon" alt="hide field or section"></a></td><td><div id="radio11" style="display: block;"><input value="11" id="qf_d434d3" name="default_option" class="form-radio" type="radio"></div><div id="checkbox11" style="display: none;"><input id="default_checkbox_option[11]" name="default_checkbox_option[11]" value="1" class="form-checkbox" type="checkbox"></div></td><td> <input maxlength="255" size="45" name="option_label[11]" id="option_label_11" class="form-text huge" type="text"></td><td> <input maxlength="64" size="30" name="option_value[11]" id="option_value_11" class="form-text big" type="text"></td><td> <input size="6" maxlength="14" name="option_weight[11]" value="11" id="option_weight_11" class="form-text" type="text"></td><td> <input id="option_status[11]" name="option_status[11]" value="1" checked="checked" class="form-checkbox" type="checkbox"></td></tr></tbody></table><div id="optionFieldLink" class="add-remove-link"><a onclick="showHideRow();" name="optionFieldLink" href="javascript:void(0)" class="form-link"><img src="field_files/TreePlus.gif" class="action-icon" alt="show field or section">another choice</a></div><div style="display: none;" id="additionalOption" class="description">If you need additional options - you can add them after you Save your current entries.</div>
+    
+</fieldset>
+</div>
+</div>
+<script type="text/javascript">
+
+function showDialog( fname ) {    
+cj("#" + fname ).show( ).html( cj("#opt-id").html() ).dialog({
+    	title: "Multiple Select",
+ 		modal: true,
+ 		width: 680, 
+ 		overlay: { 
+ 			opacity: 0.5, 
+ 			background: "black" 
+ 		},
+
+     beforeclose: function(event, ui) {
+         cj(this).dialog("destroy");
+     },
+
+	buttons: {
+		'Done': function() {
+			$(this).dialog('close');
+		},
+		Cancel: function() {
+			$(this).dialog('close');
+		}
+	}
+     
+ });
+
+}
+
+    var showRows   = new Array('optionField_1','optionField_2');
+    var hideBlocks = new Array('optionField_3','optionField_4','optionField_5','optionField_6','optionField_7','optionField_8','optionField_9','optionField_10','optionField_11','additionalOption');
+    var rowcounter = 0;
+    
+    if (navigator.appName == "Microsoft Internet Explorer") {    
+	for ( var count = 0; count < hideBlocks.length; count++ ) {
+	    var r = document.getElementById(hideBlocks[count]);
+            r.style.display = 'none';
+        }
+    }
+    
+        on_load_init_blocks( showRows, hideBlocks, '' );
+
+
+function showOptionSelect( ) {
+   if ( document.getElementsByName("option_type")[0].checked ) {
+      show('multiple');
+      hide('option_group');
+   } else {
+      hide('multiple');
+      show('option_group');
+   }
+}
+showOptionSelect( );
+
+</script>
+
+</div>    
+	</dl>
+        <dl class="html-adjust">
+	    <dt style="display: none;" id="optionsPerLine" class="hide-block"><label for="options_per_line">Options Per Line</label></dt>	
+	    <dd style="display: none;" id="optionsPerLineDef" class="hide-block"><input name="options_per_line" id="options_per_line" class="two" type="text"></dd>
+
+	    <dt style="display: none;" id="startDateRange" class="hide-block"><label for="start_date_years">Dates may be up to</label></dt>
+	    <dd style="display: none;" id="startDateRangeDef" class="hide-block"><input size="6" maxlength="14" name="start_date_years" id="start_date_years" class="form-text" type="text"> years prior to current date.</dd> 
+        
+	    <dt style="display: none;" id="endDateRange" class="hide-block"><label for="end_date_years">Dates may be up to</label></dt>
+	    <dd style="display: none;" id="endDateRangeDef" class="hide-block"><input size="6" maxlength="14" name="end_date_years" id="end_date_years" class="form-text" type="text"> years after the current date.</dd> 
+
+	    <dt style="display: none;" id="incudedDatePart" class="hide-block"><label for="date_format">Date Format</label></dt>
+	    <dd style="display: none;" id="incudedDatePartDef" class="hide-block"><select name="date_format" id="date_format" class="form-select">
+	<option selected="selected" value="">- select -</option>
+	<option value="mm/dd/yy">mm/dd/yy (12/31/2009)</option>
+	<option value="yy-mm-dd">yy-mm-dd (2009-12-31)</option>
+	<option value="dd-mm-yy">dd-mm-yy (31-12-2009)</option>
+	<option value="dd.mm.yy">dd.mm.yy (31.12.2009)</option>
+	<option value="M d, yy">M d, yy (Dec 31, 2009)</option>
+	<option value="d M yy">d M yy (31 Dec 2009)</option>
+	<option value="MM d, yy">MM d, yy (December 31, 2009)</option>
+	<option value="d MM yy">d MM yy (31 December 2009)</option>
+	<option value="DD, d MM yy">DD, d MM yy (Thursday, 31 December 2009)</option>
+	<option value="mm/dd">mm/dd (12/31)</option>
+	<option value="dd-mm">dd-mm (31-12)</option>
+	<option value="yy-mm">yy-mm (2009-12)</option>
+	<option value="M yy">M yy (Dec 2009)</option>
+	<option value="yy">yy (2009)</option>
+</select>&nbsp;&nbsp;&nbsp;<label for="time_format">Time</label>&nbsp;&nbsp;<select name="time_format" id="time_format" class="form-select">
+	<option selected="selected" value="">- none -</option>
+	<option value="1">12 Hours</option>
+	<option value="2">24 Hours</option>
+</select></dd> 
+        
+	    <dt style="display: none;" id="noteRows" class="hide-block"><label for="note_rows">Height (rows) </label></dt>
+	    <dd style="display: none;" id="noteRowsDef" class="hide-block"><input size="6" maxlength="14" name="note_rows" value="4" id="note_rows" class="form-text" type="text"></dd> 
+
+	    <dt style="display: none;" id="noteColumns" class="hide-block"><label for="note_columns">Width (columns) </label></dt>
+	    <dd style="display: none;" id="noteColumnsDef" class="hide-block"><input size="6" maxlength="14" name="note_columns" value="60" id="note_columns" class="form-text" type="text"></dd>
+
+	    <dt><label for="weight">  Order
+   <span class="marker" title="This field is required.">*</span>
+</label></dt>
+	    <dd><input size="6" maxlength="14" name="weight" value="1" id="weight" class="two" type="text"></dd>
+	    		<dt>&nbsp;</dt>
+		<dd class="description">Weight
+controls the order in which fields are displayed in a group. Enter a
+positive or negative integer - lower numbers are displayed ahead of
+higher numbers.</dd>
+	    	    <dt style="display: none;" id="hideDefaultValTxt" title="hideDefaultValTxt"><label for="default_value">Default Value</label></dt>
+	    <dd style="display: none;" id="hideDefaultValDef" title="hideDefaultValDef"><input maxlength="255" size="45" name="default_value" id="default_value" class="form-text huge" type="text"></dd>
+	    
+	    		<dt style="display: none;" id="hideDescTxt" title="hideDescTxt">&nbsp;</dt>
+		<dd style="display: none;" id="hideDescDef" title="hideDescDef"><span class="description">If you want to provide a default value for this field, enter it here. For date fields, format is YYYY-MM-DD.</span></dd>
+	    	    <dt><label for="help_pre">Field Pre Help</label> </dt>
+	    <dd>&nbsp;<div class="resizable-textarea"><span><textarea rows="2" cols="80" name="help_pre" id="help_pre" class="huge processed"></textarea><div style="margin-right: -9px;" class="grippie"></div></span></div>&nbsp;</dd>
+
+	    <dt><label for="help_post">Field Post Help</label> </dt>
+	    <dd>&nbsp;<div class="resizable-textarea"><span><textarea rows="2" cols="80" name="help_post" id="help_post" class="huge processed"></textarea><div style="margin-right: -9px;" class="grippie"></div></span></div>&nbsp;</dd>
+            	        <dt>&nbsp;</dt>
+		<dd class="description">Explanatory text displayed to users for this field.</dd>
+                        <dl><div class="spacer"></div>
+	    <dt><label for="is_required">Required?</label></dt><dd>&nbsp;<input id="is_required" name="is_required" value="1" class="form-checkbox" type="checkbox"></dd></dl>
+	<div class="spacer"></div>
+	<div style="display: block;" id="is_searchable">
+	    <dl>
+		<dt><label for="is_searchable">Is this Field Searchable?</label></dt><dd>&nbsp;<input onclick="showSearchRange(this)" id="is_searchable" name="is_searchable" value="1" class="form-checkbox" type="checkbox"></dd>
+	    </dl>
+	    		<dl>
+		    <dt class="">&nbsp;</dt>
+		    <dd class="description">Can
+you search on this field in the Advanced and component search forms?
+NOTE: This feature is available to custom fields used for <strong>Contacts
+(individuals, organizations and househoulds), Contributions, Pledges,
+Memberships, Event Participants, Activities, and Relationships</strong>.</dd>
+		</dl>
+	            
+        </div>        
+        <div style="display: none;" id="searchByRange" class="hide-block">
+    	    <dl>
+	        <dt><label>Search by Range?</label></dt>
+		<dd>&nbsp;<input value="1" id="qf_1de2f4" name="is_search_range" type="radio"><label for="qf_1de2f4">Yes</label>&nbsp;<input checked="checked" value="0" id="qf_8c9a01" name="is_search_range" type="radio"><label for="qf_8c9a01">No</label></dd>
+    	    </dl>
+	</div>        
+        <dl>
+	    <dt><label for="is_active">Active?</label></dt>
+	    <dd>&nbsp;<input id="is_active" name="is_active" value="1" checked="checked" class="form-checkbox" type="checkbox"></dd>
+        </dl>    
+        <dl>
+	    <dt><label for="is_view">View Only?</label></dt>
+	    <dd>&nbsp;<input id="is_view" name="is_view" value="1" class="form-checkbox" type="checkbox"></dd>
+        <dl>
+	    <dt>&nbsp;</dt>
+	    <dd class="description">Is this field set by PHP code (via a custom hook). This field will not be updated by CiviCRM.</dd>
+        </dl>    
+    </dl></dl></div>
+    
+    <div id="crm-submit-buttons" class="form-item">
+        <dl>
+	    		<dt>&nbsp;</dt>
+		<dd><input class="form-submit default" accesskey="S" name="_qf_Field_next" value="Save" type="submit">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input class="form-submit" name="_qf_Field_next_new" value="Save and New" type="submit">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input class="form-submit" name="_qf_Field_cancel" value="Cancel" type="submit"></dd>
+	     	</dl>    
+    </div> 
+</fieldset>
+
+
+<script type="text/javascript">
+    //when page is reload, build show hide boxes
+    //as per data type and html type selected.
+    custom_option_html_type( );
+
+    function showSearchRange(chkbox) {
+        var html_type = document.getElementsByName("data_type[1]")[0].value;
+	    var data_type = document.getElementsByName("data_type[0]")[0].value;
+
+        if ( ((data_type == 1 || data_type == 2 || data_type == 3) && (html_type == "Text")) || data_type == 5) {
+            if (chkbox.checked) {
+		        document.getElementsByName("is_search_range")[0].checked = true;
+        	    document.getElementById("searchByRange").style.display = "block";
+            } else {
+                clearSearchBoxes( );
+            }
+        }
+    }
+      
+    //should not clear search boxes for update mode. 
+    function clearSearchBoxes( ) {
+	
+        action = 1
+        
+                         
+        if ( action != 2 ) {
+	    document.getElementsByName("is_searchable")[0].checked   = false; 
+	    document.getElementsByName("is_search_range")[1].checked = true;
+	    document.getElementById("searchByRange").style.display = "none";
+        } 	
+    }
+</script>
+
+
+</form>
+
+ <div class="footer" id="access">
+ Access Keys:<script type="text/javascript"> cj( function() { cj(".helpicon").toolTip(); });</script>
+<div class="helpicon">&nbsp;<span id="accesskeys_help" style="display: none;"><div class="crm-help"><p>
+<strong>Use the following key combinations for:</strong>
+</p>
+<p></p>
+<ul>
+<li> ALT+SHIFT+I -<em> New Individual</em></li>
+<li> ALT+SHIFT+O -<em> New Organization</em></li>
+<li> ALT+SHIFT+H -<em> New Household</em></li>
+<li> ALT+SHIFT+G -<em> New Group</em></li>
+<li> ALT+SHIFT+A -<em> New Activity</em></li>
+<li> ALT+SHIFT+E -<em> Edit Contact(View Contact Summary Page)</em></li>
+<li> ALT+SHIFT+S -<em> Save Button</em></li>
+<li> ALT+SHIFT+N -<em> Adding a new record in each tab (Contributions, Events,..etc)</em></li>
+</ul>
+</div></span></div>
+ </div>
+
+<div class="footer" id="civicrm-footer">
+Powered by CiviCRM 25764:25765. 
+CiviCRM is openly available under the <a href="http://www.gnu.org/licenses/agpl-3.0.html">GNU Affero General Public License (GNU AGPL)</a>.<br>
+<a href="http://civicrm.org/download">Download source.</a> &nbsp; &nbsp;
+<a href="http://issues.civicrm.org/jira/browse/CRM?report=com.atlassian.jira.plugin.system.project:roadmap-panel">View issues and report bugs.</a> &nbsp; &nbsp;
+<a href="http://wiki.civicrm.org/confluence/display/CRMDOC/" target="_blank" title="Opens documentation in a new window.">Online documentation.</a>
+</div>
+<script type="text/javascript">jQuery.noConflict(true);</script>
+</div>           </div>
+                    <div id="footer"><div id="block-system-0" class="clear-block block block-system">
+
+
+  <div class="content"><a href="http://drupal.org/"><img src="field_files/powered-blue-80x15.png" alt="Powered by Drupal, an open source content management system" title="Powered by Drupal, an open source content management system" height="15" width="80"></a></div>
+</div>
+</div>
+      </div></div></div></div> <!-- /.left-corner, /.right-corner, /#squeeze, /#center -->
+
+      
+    </div> <!-- /container -->
+  </div>
+<!-- /layout -->
+
+  <div id="admin-menu">
+<ul><li class="expandable admin-menu-icon"><a href="http://civicrm/"><img class="admin-menu-icon" src="field_files/favicon.ico" alt="Home" height="16" width="16"></a>
+<ul><li class="expandable"><a href="http://civicrm/admin_menu/flush-cache?destination=civicrm%2Fadmin%2Fcustom%2Fgroup%2Ffield%3Freset%3D1%26action%3Dadd%26gid%3D2">Flush all caches</a>
+<ul><li><a href="http://civicrm/admin_menu/flush-cache/admin_menu?destination=civicrm%2Fadmin%2Fcustom%2Fgroup%2Ffield%3Freset%3D1%26action%3Dadd%26gid%3D2">Administration menu</a></li><li><a href="http://civicrm/admin_menu/flush-cache/cache?destination=civicrm%2Fadmin%2Fcustom%2Fgroup%2Ffield%3Freset%3D1%26action%3Dadd%26gid%3D2">Cache tables</a></li><li><a href="http://civicrm/admin_menu/flush-cache/menu?destination=civicrm%2Fadmin%2Fcustom%2Fgroup%2Ffield%3Freset%3D1%26action%3Dadd%26gid%3D2">Menu</a></li><li><a href="http://civicrm/admin_menu/flush-cache/requisites?destination=civicrm%2Fadmin%2Fcustom%2Fgroup%2Ffield%3Freset%3D1%26action%3Dadd%26gid%3D2">Page requisites</a></li><li><a href="http://civicrm/admin_menu/flush-cache/theme?destination=civicrm%2Fadmin%2Fcustom%2Fgroup%2Ffield%3Freset%3D1%26action%3Dadd%26gid%3D2">Theme registry</a></li></ul></li><li><a href="http://civicrm/admin/reports/status/run-cron">Run cron</a></li><li><a href="http://civicrm/update.php">Run updates</a></li><li><a href="http://civicrm/admin_menu/toggle-modules?destination=civicrm%2Fadmin%2Fcustom%2Fgroup%2Ffield%3Freset%3D1%26action%3Dadd%26gid%3D2">Disable developer modules</a></li><li class="expandable"><a href="http://drupal.org/">Drupal.org</a>
+<ul><li><a href="http://drupal.org/project/issues/drupal">Drupal issue queue</a></li><li><a href="http://drupal.org/project/issues/admin_menu">Administration menu issue queue</a></li><li><a href="http://drupal.org/project/issues/advanced_help">Advanced help issue queue</a></li><li><a href="http://drupal.org/project/issues/ctools">Chaos tools issue queue</a></li><li><a href="http://drupal.org/project/issues/CiviCRM%20CCK%20Activity">CiviCRM CCK Activity issue queue</a></li><li><a href="http://drupal.org/project/issues/cck">Content issue queue</a></li><li><a href="http://drupal.org/project/issues/date">Date issue queue</a></li><li><a href="http://drupal.org/project/issues/og">Organic groups issue queue</a></li><li><a href="http://drupal.org/project/issues/panels">Panels issue queue</a></li><li><a href="http://drupal.org/project/issues/views">Views issue queue</a></li></ul></li></ul></li><li class=" admin-menu-action admin-menu-logout"><a href="http://civicrm/logout">Log out kurund</a></li><li class=" admin-menu-action admin-menu-icon admin-menu-users"><a href="http://civicrm/admin/user/user">0 / 1 <img src="field_files/icon_users.png" alt="Current anonymous / authenticated users" title="Current anonymous / authenticated users" height="15" width="16"></a></li><li class="expandable"><a href="http://civicrm/admin/content">Content management</a>
+<ul><li class="expandable"><a href="http://civicrm/admin/content/comment">Comments</a>
+<ul><li><a href="http://civicrm/admin/content/comment/new">Published comments</a></li><li><a href="http://civicrm/admin/content/comment/approval">Approval queue</a></li></ul></li><li class="expandable"><a href="http://civicrm/admin/content/node">Content</a>
+<ul><li><a href="http://civicrm/admin/content/node/overview">List</a></li></ul></li><li class="expandable"><a href="http://civicrm/admin/content/types">Content types</a>
+<ul><li><a href="http://civicrm/admin/content/types/list">List</a></li><li><a href="http://civicrm/admin/content/types/add">Add content type</a></li><li><a href="http://civicrm/admin/content/node-type/civicrmactivity">Edit CiviCRM Activity</a></li><li><a href="http://civicrm/admin/content/node-type/og">Edit Organic Group</a></li><li><a href="http://civicrm/admin/content/node-type/page">Edit Page</a></li><li><a href="http://civicrm/admin/content/node-type/story">Edit Story</a></li></ul></li><li class="expandable"><a href="http://civicrm/node/add">Create content</a>
+<ul><li><a href="http://civicrm/node/add/civicrmactivity">CiviCRM Activity</a></li><li><a href="http://civicrm/node/add/og">Organic Group</a></li><li><a href="http://civicrm/node/add/page">Page</a></li><li><a href="http://civicrm/node/add/story">Story</a></li></ul></li><li><a href="http://civicrm/admin/content/node-settings">Post settings</a></li><li><a href="http://civicrm/admin/content/rss-publishing">RSS publishing</a></li><li class="expandable"><a href="http://civicrm/admin/content/taxonomy">Taxonomy</a>
+<ul><li><a href="http://civicrm/admin/content/taxonomy/list">List</a></li><li><a href="http://civicrm/admin/content/taxonomy/add/vocabulary">Add vocabulary</a></li></ul></li></ul></li><li class="expandable"><a href="http://civicrm/admin/build">Site building</a>
+<ul><li class="expandable"><a href="http://civicrm/admin/build/block">Blocks</a>
+<ul><li class="expandable"><a href="http://civicrm/admin/build/block/list">List</a>
+<ul><li><a href="http://civicrm/admin/build/block/list/garland">Garland</a></li><li><a href="http://civicrm/admin/build/block/list/minnelli">Minnelli</a></li><li><a href="http://civicrm/admin/build/block/list/zen">Zen</a></li></ul></li><li><a href="http://civicrm/admin/build/block/add">Add block</a></li></ul></li><li class="expandable"><a href="http://civicrm/admin/build/contact">Contact form</a>
+<ul><li><a href="http://civicrm/admin/build/contact/list">List</a></li><li><a href="http://civicrm/admin/build/contact/add">Add category</a></li><li><a href="http://civicrm/admin/build/contact/settings">Settings</a></li></ul></li><li class="expandable"><a href="http://civicrm/admin/build/menu">Menus</a>
+<ul><li><a href="http://civicrm/admin/build/menu/list">List menus</a></li><li><a href="http://civicrm/admin/build/menu/add">Add menu</a></li><li><a href="http://civicrm/admin/build/menu/settings">Settings</a></li></ul></li><li class="expandable"><a href="http://civicrm/admin/build/modules">Modules</a>
+<ul><li><a href="http://civicrm/admin/build/modules/list">List</a></li><li><a href="http://civicrm/admin/build/modules/uninstall">Uninstall</a></li></ul></li><li class="expandable"><a href="http://civicrm/admin/build/themes">Themes</a>
+<ul><li><a href="http://civicrm/admin/build/themes/select">List</a></li><li class="expandable"><a href="http://civicrm/admin/build/themes/settings">Configure</a>
+<ul><li><a href="http://civicrm/admin/build/themes/settings/global">Global settings</a></li><li><a href="http://civicrm/admin/build/themes/settings/garland">Garland</a></li><li><a href="http://civicrm/admin/build/themes/settings/minnelli">Minnelli</a></li><li><a href="http://civicrm/admin/build/themes/settings/zen">Zen</a></li></ul></li></ul></li></ul></li><li class="expandable"><a href="http://civicrm/admin/settings">Site configuration</a>
+<ul><li><a href="http://civicrm/admin/by-module">By module</a></li><li class="expandable"><a href="http://civicrm/admin/settings/actions">Actions</a>
+<ul><li><a href="http://civicrm/admin/settings/actions/manage">Manage actions</a></li></ul></li><li><a href="http://civicrm/admin/settings/admin_menu">Administration menu</a></li><li><a href="http://civicrm/admin/settings/admin">Administration theme</a></li><li><a href="http://civicrm/admin/settings/clean-urls">Clean URLs</a></li><li><a href="http://civicrm/admin/settings/date-time">Date and time</a></li><li><a href="http://civicrm/admin/settings/error-reporting">Error reporting</a></li><li><a href="http://civicrm/admin/settings/file-system">File system</a></li><li><a href="http://civicrm/admin/settings/uploads">File uploads</a></li><li><a href="http://civicrm/admin/settings/image-toolkit">Image toolkit</a></li><li class="expandable"><a href="http://civicrm/admin/settings/filters">Input formats</a>
+<ul><li><a href="http://civicrm/admin/settings/filters/list">List</a></li><li><a href="http://civicrm/admin/settings/filters/add">Add input format</a></li></ul></li><li class="expandable"><a href="http://civicrm/admin/settings/logging">Logging and alerts</a>
+<ul><li><a href="http://civicrm/admin/settings/logging/dblog">Database logging</a></li></ul></li><li><a href="http://civicrm/admin/settings/performance">Performance</a></li><li><a href="http://civicrm/admin/settings/site-information">Site information</a></li><li><a href="http://civicrm/admin/settings/site-maintenance">Site maintenance</a></li></ul></li><li class="expandable"><a href="http://civicrm/admin/user">User management</a>
+<ul><li class="expandable"><a href="http://civicrm/admin/user/rules">Access rules</a>
+<ul><li><a href="http://civicrm/admin/user/rules/list">List</a></li><li><a href="http://civicrm/admin/user/rules/add">Add rule</a></li><li><a href="http://civicrm/admin/user/rules/check">Check rules</a></li></ul></li><li><a href="http://civicrm/admin/user/permissions">Permissions</a></li><li><a href="http://civicrm/admin/user/roles">Roles</a></li><li><a href="http://civicrm/admin/user/settings">User settings</a></li><li class="expandable"><a href="http://civicrm/admin/user/user">Users</a>
+<ul><li><a href="http://civicrm/admin/user/user/list">List</a></li><li><a href="http://civicrm/admin/user/user/create">Add user</a></li></ul></li></ul></li><li class="expandable"><a href="http://civicrm/admin/reports">Reports</a>
+<ul><li><a href="http://civicrm/admin/reports/dblog">Recent log entries</a></li><li><a href="http://civicrm/admin/reports/access-denied">Top 'access denied' errors</a></li><li><a href="http://civicrm/admin/reports/page-not-found">Top 'page not found' errors</a></li><li class="expandable"><a href="http://civicrm/admin/reports/updates">Available updates</a>
+<ul><li><a href="http://civicrm/admin/reports/updates/list">List</a></li><li><a href="http://civicrm/admin/reports/updates/settings">Settings</a></li></ul></li><li><a href="http://civicrm/admin/reports/status">Status report</a></li></ul></li><li><a href="http://civicrm/admin/help">Help</a></li><li><a href="http://civicrm/civicrm?reset=1">CiviCRM</a></li></ul></div>  <div id="root-menu-div" style="position: absolute; top: 0pt; left: 0pt;"><div class="menu-div outerbox" style="position: absolute; top: 0pt; left: 0pt; display: none;"><div class="shadowbox1"></div><div class="shadowbox2"></div><div class="shadowbox3"></div><ul class="menu-ul innerbox"><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/dashboard?reset=1">CiviCRM Home</a></div></li><li style="position: relative;"><div class="menu-item"><a href="#" onclick="cj.Menu.closeAll( );cj(" #civicrm-menu="" ).toggle(="" );="">Drupal Menu</a></div></li></ul></div><div class="menu-div outerbox" style="position: absolute; top: 0pt; left: 0pt; display: none;"><div class="shadowbox1"></div><div class="shadowbox2"></div><div class="shadowbox3"></div><ul class="menu-ul innerbox"><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/contact/search/custom&amp;reset=1&amp;csid=8">Activity Search</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/contact/search/custom&amp;reset=1&amp;csid=11">Contacts by Date Added</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/contact/search/custom&amp;reset=1&amp;csid=2">Contributors by Aggregate Totals</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/contact/search/custom&amp;reset=1&amp;csid=6">Proximity Search</a></div></li></ul></div><div class="menu-div outerbox" style="position: absolute; top: 0pt; left: 0pt; display: none;"><div class="shadowbox1"></div><div class="shadowbox2"></div><div class="shadowbox3"></div><ul class="menu-ul innerbox"><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/contact/search&amp;reset=1">Find Contacts</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/contact/search/advanced&amp;reset=1">Find Contacts - Advanced Search</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/contact/search/custom&amp;csid=15&amp;reset=1">Full-text Search</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/contact/search/builder&amp;reset=1">Search Builder</a></div></li><li class="menu-separator" style="position: relative;"><div class="menu-item"></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/contribute/search&amp;reset=1">Find Contributions</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/mailing&amp;reset=1">Find Mailings</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/member/search&amp;reset=1">Find Members</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/event/search&amp;reset=1">Find Participants</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/pledge/search&amp;reset=1">Find Pledges</a></div></li><li class="menu-separator" style="position: relative;"><div class="menu-item"></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/contact/search/custom/list&amp;reset=1">Custom Searches...</a><img src="field_files/arrow.png" class="menu-item-arrow"></div></li></ul></div><div class="menu-div outerbox" style="position: absolute; top: 0pt; left: 0pt; display: none;"><div class="shadowbox1"></div><div class="shadowbox2"></div><div class="shadowbox3"></div><ul class="menu-ul innerbox"><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/contact/add&amp;ct=Individual&amp;cst=Student&amp;reset=1">New Student</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/contact/add&amp;ct=Individual&amp;cst=Parent&amp;reset=1">New Parent</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/contact/add&amp;ct=Individual&amp;cst=Staff&amp;reset=1">New Staff</a></div></li></ul></div><div class="menu-div outerbox" style="position: absolute; top: 0pt; left: 0pt; display: none;"><div class="shadowbox1"></div><div class="shadowbox2"></div><div class="shadowbox3"></div><ul class="menu-ul innerbox"><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/contact/add&amp;ct=Organization&amp;cst=Team&amp;reset=1">New Team</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/contact/add&amp;ct=Organization&amp;cst=Sponsor&amp;reset=1">New Sponsor</a></div></li></ul></div><div class="menu-div outerbox" style="position: absolute; top: 0pt; left: 0pt; display: none;"><div class="shadowbox1"></div><div class="shadowbox2"></div><div class="shadowbox3"></div><ul class="menu-ul innerbox"><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/contact/add&amp;reset=1&amp;ct=Individual">New Individual</a><img src="field_files/arrow.png" class="menu-item-arrow"></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/contact/add&amp;reset=1&amp;ct=Household">New Household</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/contact/add&amp;reset=1&amp;ct=Organization">New Organization</a><img src="field_files/arrow.png" class="menu-item-arrow"></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/activity&amp;reset=1&amp;action=add&amp;context=standalone">New Activity</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/activity/add&amp;atype=3&amp;action=add&amp;reset=1&amp;context=standalone">New Email</a></div></li><li class="menu-separator" style="position: relative;"><div class="menu-item"></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/import/contact&amp;reset=1">Import Contacts</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/import/activity&amp;reset=1">Import Activities</a></div></li><li class="menu-separator" style="position: relative;"><div class="menu-item"></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/group/add&amp;reset=1">New Group</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/group&amp;reset=1">Manage Groups</a></div></li><li class="menu-separator" style="position: relative;"><div class="menu-item"></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/tag&amp;reset=1&amp;action=add">New Tag</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/tag&amp;reset=1">Manage Tags (Categories)</a></div></li></ul></div><div class="menu-div outerbox" style="position: absolute; top: 0pt; left: 0pt; display: none;"><div class="shadowbox1"></div><div class="shadowbox2"></div><div class="shadowbox3"></div><ul class="menu-ul innerbox"><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/pledge&amp;reset=1">Dashboard</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/pledge/add&amp;reset=1&amp;action=add&amp;context=standalone">New Pledge</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/pledge/search&amp;reset=1">Find Pledges</a></div></li></ul></div><div class="menu-div outerbox" style="position: absolute; top: 0pt; left: 0pt; display: none;"><div class="shadowbox1"></div><div class="shadowbox2"></div><div class="shadowbox3"></div><ul class="menu-ul innerbox"><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/contribute&amp;reset=1">Dashboard</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/contribute/add&amp;reset=1&amp;action=add&amp;context=standalone">New Contribution</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/contribute/search&amp;reset=1">Find Contributions</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/contribute/import&amp;reset=1">Import Contributions</a></div></li><li class="menu-separator" style="position: relative;"><div class="menu-item"></div></li><li style="position: relative;"><div class="menu-item"><span>Pledges</span><img src="field_files/arrow.png" class="menu-item-arrow"></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/contribute&amp;reset=1&amp;action=add">New Contribution Page</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/contribute&amp;reset=1">Manage Contribution Pages</a></div></li><li class="menu-separator" style="position: relative;"><div class="menu-item"></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/pcp&amp;reset=1">Personal Campaign Pages</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/contribute/managePremiums&amp;reset=1">Premiums (Thank-you Gifts)</a></div></li><li class="menu-separator" style="position: relative;"><div class="menu-item"></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/price&amp;reset=1&amp;action=add">New Price Set</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/price&amp;reset=1">Manage Price Sets</a></div></li></ul></div><div class="menu-div outerbox" style="position: absolute; top: 0pt; left: 0pt; display: none;"><div class="shadowbox1"></div><div class="shadowbox2"></div><div class="shadowbox3"></div><ul class="menu-ul innerbox"><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/event&amp;reset=1">Dashboard</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/participant/add&amp;reset=1&amp;action=add&amp;context=standalone">Register Event Participant</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/event/search&amp;reset=1">Find Participants</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/event/import&amp;reset=1">Import Participants</a></div></li><li class="menu-separator" style="position: relative;"><div class="menu-item"></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/event/add&amp;reset=1&amp;action=add">New Event</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/event/manage&amp;reset=1">Manage Events</a></div></li><li class="menu-separator" style="position: relative;"><div class="menu-item"></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/eventTemplate&amp;reset=1">Event Templates</a></div></li><li class="menu-separator" style="position: relative;"><div class="menu-item"></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/price&amp;reset=1&amp;action=add">New Price Set</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/price&amp;reset=1">Manage Price Sets</a></div></li></ul></div><div class="menu-div outerbox" style="position: absolute; top: 0pt; left: 0pt; display: none;"><div class="shadowbox1"></div><div class="shadowbox2"></div><div class="shadowbox3"></div><ul class="menu-ul innerbox"><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/mailing/send&amp;reset=1">New Mailing</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/mailing/browse/unscheduled&amp;reset=1&amp;scheduled=false">Draft and Unscheduled Mailings</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/mailing/browse/scheduled&amp;reset=1&amp;scheduled=true">Scheduled and Sent Mailings</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/mailing/browse/archived&amp;reset=1">Archived Mailings</a></div></li><li class="menu-separator" style="position: relative;"><div class="menu-item"></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/component&amp;reset=1">Headers, Footers, and Automated Messages</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/messageTemplates&amp;reset=1">Message Templates</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/options/from_email&amp;group=from_email_address&amp;reset=1">From Email Addresses</a></div></li></ul></div><div class="menu-div outerbox" style="position: absolute; top: 0pt; left: 0pt; display: none;"><div class="shadowbox1"></div><div class="shadowbox2"></div><div class="shadowbox3"></div><ul class="menu-ul innerbox"><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/member&amp;reset=1">Dashboard</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/member/add&amp;reset=1&amp;action=add&amp;context=standalone">New Membership</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/member/search&amp;reset=1">Find Members</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/member/import&amp;reset=1">Import Members</a></div></li></ul></div><div class="menu-div outerbox" style="position: absolute; top: 0pt; left: 0pt; display: none;"><div class="shadowbox1"></div><div class="shadowbox2"></div><div class="shadowbox3"></div><ul class="menu-ul innerbox"><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/report/list&amp;reset=1">Reports Listing</a></div></li><li class="menu-separator" style="position: relative;"><div class="menu-item"></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/report/template/list&amp;reset=1">Create Reports from Templates</a></div></li><li class="menu-separator" style="position: relative;"><div class="menu-item"></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/report/instance/1&amp;reset=1">Constituent Report (Summary)</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/report/instance/2&amp;reset=1">Constituent Report (Detail)</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/report/instance/3&amp;reset=1">Donor Report (Summary)</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/report/instance/4&amp;reset=1">Donor Report (Detail)</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/report/instance/5&amp;reset=1">Donation Summary Report (Repeat)</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/report/instance/6&amp;reset=1">SYBUNT Report</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/report/instance/7&amp;reset=1">LYBUNT Report</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/report/instance/8&amp;reset=1">Soft Credit Report</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/report/instance/9&amp;reset=1">Membership Report (Summary)</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/report/instance/10&amp;reset=1">Membership Report (Detail)</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/report/instance/11&amp;reset=1">Membership Report (Lapsed)</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/report/instance/12&amp;reset=1">Event Participant Report (List)</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/report/instance/13&amp;reset=1">Event Income Report (Summary)</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/report/instance/14&amp;reset=1">Event Income Report (Detail)</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/report/instance/15&amp;reset=1">Attendee List</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/report/instance/16&amp;reset=1">Activity Report</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/report/instance/17&amp;reset=1">Relationship Report</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/report/instance/18&amp;reset=1">Donation Summary Report (Organization)</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/report/instance/19&amp;reset=1">Donation Summary Report (Household)</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/report/instance/20&amp;reset=1">Top Donors Report</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/report/instance/21&amp;reset=1">Pledge Summary Report</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/report/instance/22&amp;reset=1">Pledged But not Paid Report</a></div></li></ul></div><div class="menu-div outerbox" style="position: absolute; top: 0pt; left: 0pt; display: none;"><div class="shadowbox1"></div><div class="shadowbox2"></div><div class="shadowbox3"></div><ul class="menu-ul innerbox"><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/custom/group&amp;reset=1">Custom Data</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/uf/group&amp;reset=1">CiviCRM Profile</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/menu&amp;reset=1">Navigation Menu</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/options/custom_search&amp;reset=1&amp;group=custom_search">Manage Custom Searches</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/price&amp;reset=1">Price Sets</a></div></li></ul></div><div class="menu-div outerbox" style="position: absolute; top: 0pt; left: 0pt; display: none;"><div class="shadowbox1"></div><div class="shadowbox2"></div><div class="shadowbox3"></div><ul class="menu-ul innerbox"><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/setting/component&amp;reset=1">Enable CiviCRM Components</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/setting/preferences/display&amp;reset=1">Site Preferences (screen and form configuration)</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/setting/path&amp;reset=1">Directories</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/setting/url&amp;reset=1">Resource URLs</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/setting/smtp&amp;reset=1">Outbound Email (SMTP/Sendmail)</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/setting/mapping&amp;reset=1">Mapping and Geocoding</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/paymentProcessor&amp;reset=1">Payment Processors</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/setting/localization&amp;reset=1">Localization</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/setting/preferences/address&amp;reset=1">Address Settings</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/setting/search&amp;reset=1">Search Settings</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/setting/date&amp;reset=1">Date Formats</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/setting/uf&amp;reset=1">CMS Integration</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/setting/misc&amp;reset=1">Miscellaneous (version check, reCAPTCHA...)</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/options/safe_file_extension&amp;group=safe_file_extension&amp;reset=1">Safe File Extensions</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/setting/debug&amp;reset=1">Debugging</a></div></li></ul></div><div class="menu-div outerbox" style="position: absolute; top: 0pt; left: 0pt; display: none;"><div class="shadowbox1"></div><div class="shadowbox2"></div><div class="shadowbox3"></div><ul class="menu-ul innerbox"><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/configtask&amp;reset=1">Configuration Checklist</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/setting&amp;reset=1">Global Settings</a><img src="field_files/arrow.png" class="menu-item-arrow"></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/mapping&amp;reset=1">Import/Export Mappings</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/messageTemplates&amp;reset=1">Message Templates</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/domain&amp;action=update&amp;reset=1">Domain Information</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/options/from_email_address&amp;group=from_email_address&amp;reset=1">FROM Email Addresses</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/setting/updateConfigBackend&amp;reset=1">Update Directory Path and URL</a></div></li></ul></div><div class="menu-div outerbox" style="position: absolute; top: 0pt; left: 0pt; display: none;"><div class="shadowbox1"></div><div class="shadowbox2"></div><div class="shadowbox3"></div><ul class="menu-ul innerbox"><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/deduperules&amp;reset=1">Find and Merge Duplicate Contacts</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/access&amp;reset=1">Access Control</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/synchUser&amp;reset=1">Synchronize Users to Contacts</a></div></li></ul></div><div class="menu-div outerbox" style="position: absolute; top: 0pt; left: 0pt; display: none;"><div class="shadowbox1"></div><div class="shadowbox2"></div><div class="shadowbox3"></div><ul class="menu-ul innerbox"><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/options/activity_type&amp;reset=1&amp;group=activity_type">Activity Types</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/reltype&amp;reset=1">Relationship Types</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/tag&amp;reset=1">Tags (Categories)</a></div></li><li class="menu-separator" style="position: relative;"><div class="menu-item"></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/options/gender&amp;reset=1&amp;group=gender">Gender Options</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/options/individual_prefix&amp;group=individual_prefix&amp;reset=1">Individual Prefixes (Ms, Mr...)</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/options/individual_suffix&amp;group=individual_suffix&amp;reset=1">Individual Suffixes (Jr, Sr...)</a></div></li><li class="menu-separator" style="position: relative;"><div class="menu-item"></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/options/addressee&amp;group=addressee&amp;reset=1">Addressee Formats</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/options/email_greeting&amp;group=email_greeting&amp;reset=1">Email Greetings</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/options/postal_greeting&amp;group=postal_greeting&amp;reset=1">Postal Greetings</a></div></li><li class="menu-separator" style="position: relative;"><div class="menu-item"></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/options/instant_messenger_service&amp;group=instant_messenger_service&amp;reset=1">Instant Messenger Services</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/locationType&amp;reset=1">Location Types (Home, Work...)</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/options/mobile_provider&amp;group=mobile_provider&amp;reset=1">Mobile Phone Providers</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/options/phone_type&amp;group=phone_type&amp;reset=1">Phone Types</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/options/preferred_communication_method&amp;group=preferred_communication_method&amp;reset=1">Preferred Communication Methods</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/options/subtype&amp;reset=1">Contact Types</a></div></li></ul></div><div class="menu-div outerbox" style="position: absolute; top: 0pt; left: 0pt; display: none;"><div class="shadowbox1"></div><div class="shadowbox2"></div><div class="shadowbox3"></div><ul class="menu-ul innerbox"><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/contribute&amp;reset=1&amp;action=add">New Contribution Page</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/contribute&amp;reset=1">Manage Contribution Pages</a></div></li><li class="menu-separator" style="position: relative;"><div class="menu-item"></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/pcp&amp;reset=1">Personal Campaign Pages</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/contribute/managePremiums&amp;reset=1">Premiums (Thank-you Gifts)</a></div></li><li class="menu-separator" style="position: relative;"><div class="menu-item"></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/contribute/contributionType&amp;reset=1">Contribution Types</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/options/payment_instrument&amp;group=payment_instrument&amp;reset=1">Payment Instruments</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/options/accept_creditcard&amp;group=accept_creditcard&amp;reset=1">Accepted Credit Cards</a></div></li><li class="menu-separator" style="position: relative;"><div class="menu-item"></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/price&amp;reset=1&amp;action=add">New Price Set</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/price&amp;reset=1">Manage Price Sets</a></div></li></ul></div><div class="menu-div outerbox" style="position: absolute; top: 0pt; left: 0pt; display: none;"><div class="shadowbox1"></div><div class="shadowbox2"></div><div class="shadowbox3"></div><ul class="menu-ul innerbox"><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/event/add&amp;reset=1&amp;action=add">New Event</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/event/manage&amp;reset=1">Manage Events</a></div></li><li class="menu-separator" style="position: relative;"><div class="menu-item"></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/eventTemplate&amp;reset=1">Event Templates</a></div></li><li class="menu-separator" style="position: relative;"><div class="menu-item"></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/price&amp;reset=1&amp;action=add">New Price Set</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/price&amp;reset=1">Manage Price Sets</a></div></li><li class="menu-separator" style="position: relative;"><div class="menu-item"></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/options/participant_listing&amp;group=participant_listing&amp;reset=1">Participant Listing Templates</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/options/event_type&amp;group=event_type&amp;reset=1">Event Types</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/participant_status&amp;reset=1">Participant Statuses</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/options/participant_role&amp;group=participant_role&amp;reset=1">Participant Roles</a></div></li></ul></div><div class="menu-div outerbox" style="position: absolute; top: 0pt; left: 0pt; display: none;"><div class="shadowbox1"></div><div class="shadowbox2"></div><div class="shadowbox3"></div><ul class="menu-ul innerbox"><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/component&amp;reset=1">Headers, Footers, and Automated Messages</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/messageTemplates&amp;reset=1">Message Templates</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/options/from_email&amp;group=from_email_address&amp;reset=1">From Email Addresses</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/mailSettings&amp;reset=1">Mail Accounts</a></div></li></ul></div><div class="menu-div outerbox" style="position: absolute; top: 0pt; left: 0pt; display: none;"><div class="shadowbox1"></div><div class="shadowbox2"></div><div class="shadowbox3"></div><ul class="menu-ul innerbox"><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/member/membershipType&amp;reset=1">Membership Types</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/member/membershipStatus&amp;reset=1">Membership Status Rules</a></div></li></ul></div><div class="menu-div outerbox" style="position: absolute; top: 0pt; left: 0pt; display: none;"><div class="shadowbox1"></div><div class="shadowbox2"></div><div class="shadowbox3"></div><ul class="menu-ul innerbox"><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/report/list&amp;reset=1">Reports Listing</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/report/template/list&amp;reset=1">Create Reports from Templates</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/report/options/report_template&amp;reset=1">Manage Templates</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin/report/register&amp;reset=1">Register Report</a></div></li></ul></div><div class="menu-div outerbox" style="position: absolute; top: 0pt; left: 0pt; display: none;"><div class="shadowbox1"></div><div class="shadowbox2"></div><div class="shadowbox3"></div><ul class="menu-ul innerbox"><li style="position: relative;"><div class="menu-item"><a href="http://civicrm/civicrm/admin&amp;reset=1">Administration Console</a></div></li><li style="position: relative;"><div class="menu-item"><span>Customize</span><img src="field_files/arrow.png" class="menu-item-arrow"></div></li><li style="position: relative;"><div class="menu-item"><span>Configure</span><img src="field_files/arrow.png" class="menu-item-arrow"></div></li><li style="position: relative;"><div class="menu-item"><span>Manage</span><img src="field_files/arrow.png" class="menu-item-arrow"></div></li><li style="position: relative;"><div class="menu-item"><span>Option Lists</span><img src="field_files/arrow.png" class="menu-item-arrow"></div></li><li style="position: relative;"><div class="menu-item"><span>CiviContribute</span><img src="field_files/arrow.png" class="menu-item-arrow"></div></li><li style="position: relative;"><div class="menu-item"><span>CiviEvent</span><img src="field_files/arrow.png" class="menu-item-arrow"></div></li><li style="position: relative;"><div class="menu-item"><span>CiviMail</span><img src="field_files/arrow.png" class="menu-item-arrow"></div></li><li style="position: relative;"><div class="menu-item"><span>CiviMember</span><img src="field_files/arrow.png" class="menu-item-arrow"></div></li><li style="position: relative;"><div class="menu-item"><span>CiviReport</span><img src="field_files/arrow.png" class="menu-item-arrow"></div></li></ul></div><div class="menu-div outerbox" style="position: absolute; top: 0pt; left: 0pt; display: none;"><div class="shadowbox1"></div><div class="shadowbox2"></div><div class="shadowbox3"></div><ul class="menu-ul innerbox"><li style="position: relative;"><div class="menu-item"><a href="http://documentation.civicrm.org/">Documentation</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://forum.civicrm.org/">Community Forums</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm.org/participate">Participate</a></div></li><li style="position: relative;"><div class="menu-item"><a href="http://civicrm.org/aboutcivicrm">About</a></div></li></ul></div></div></body></html>

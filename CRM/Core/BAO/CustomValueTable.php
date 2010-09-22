@@ -1,37 +1,38 @@
 <?php
 
-  /*
-   +--------------------------------------------------------------------+
-   | CiviCRM version 2.2                                                |
-   +--------------------------------------------------------------------+
-   | Copyright CiviCRM LLC (c) 2004-2009                                |
-   +--------------------------------------------------------------------+
-   | This file is a part of CiviCRM.                                    |
-   |                                                                    |
-   | CiviCRM is free software; you can copy, modify, and distribute it  |
-   | under the terms of the GNU Affero General Public License           |
-   | Version 3, 19 November 2007.                                       |
-   |                                                                    |
-   | CiviCRM is distributed in the hope that it will be useful, but     |
-   | WITHOUT ANY WARRANTY; without even the implied warranty of         |
-   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
-   | See the GNU Affero General Public License for more details.        |
-   |                                                                    |
-   | You should have received a copy of the GNU Affero General Public   |
-   | License along with this program; if not, contact CiviCRM LLC       |
-   | at info[AT]civicrm[DOT]org. If you have questions about the        |
-   | GNU Affero General Public License or the licensing of CiviCRM,     |
-   | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
-   +--------------------------------------------------------------------+
-  */
+/*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*/
 
-  /**
-   *
-   * @package CRM
-   * @copyright CiviCRM LLC (c) 2004-2009
-   * $Id$
-   *
-   */
+/**
+ *
+ * @package CRM
+ * @copyright CiviCRM LLC (c) 2004-2010
+ * $Id$
+ *
+ */
 
 class CRM_Core_BAO_CustomValueTable 
 {
@@ -145,7 +146,7 @@ class CRM_Core_BAO_CustomValueTable
 
                         // need to add/update civicrm_entity_file
                         require_once 'CRM/Core/DAO/EntityFile.php'; 
-                        $entityFileDAO =& new CRM_Core_DAO_EntityFile();
+                        $entityFileDAO = new CRM_Core_DAO_EntityFile();
                         $entityFileDAO->file_id = $field['file_id'];
                         $entityFileDAO->find( true );
 
@@ -161,7 +162,14 @@ class CRM_Core_BAO_CustomValueTable
                     case 'Date':
                         $value = CRM_Utils_Date::isoToMysql($value);
                         break;
-                        
+                    
+                    case 'Int':
+                        if ( is_numeric( $value ) ) {
+                           $type  = 'Integer'; 
+                        } else {
+                           $type = 'Timestamp';
+                        }
+                        break;
                     case 'ContactReference':
                         if ( $value == null ) {
                             $type  = 'Timestamp'; 
@@ -176,9 +184,11 @@ class CRM_Core_BAO_CustomValueTable
 
                     case 'Boolean':
                         //fix for CRM-3290
-                        if ( $value == null ) {
-                            $type  = 'Timestamp';  
+                        $value = CRM_Utils_String::strtoboolstr($value);
+                        if ( $value === false ) {
+                            $type = 'Timestamp';
                         }
+                        break;
 
                     default:
                         break;
@@ -534,6 +544,9 @@ AND    cf.id IN ( $fieldIDList )
      * @static
      */
     static function &getValues( &$params ) {
+        if ( empty( $params ) ) {
+            return null;
+        }
         if ( ! isset( $params['entityID'] ) ||
              CRM_Utils_Type::escape( $params['entityID'],
                                      'Integer', false ) === null ) {

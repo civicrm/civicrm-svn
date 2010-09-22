@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -40,12 +41,13 @@ require_once 'CRM/Core/BAO/CustomGroup.php';
  */
 class CRM_Custom_Form_CustomData 
 {
-    static function preProcess( &$form, $subName = null, $subType = null, $groupCount = null, $type = null, $entityID = null )
+    static function preProcess( &$form, $subName = null, $subType = null, 
+                                $groupCount = null, $type = null, $entityID = null )
     {
         if ( $type ) {
             $form->_type = $type;
         } else {
-            $form->_type     = CRM_Utils_Request::retrieve( 'type', 'String', $form );
+            $form->_type = CRM_Utils_Request::retrieve( 'type', 'String', $form );
         }
 
         if ( isset( $subType ) ) {
@@ -76,6 +78,11 @@ class CRM_Custom_Form_CustomData
 
         $form->assign('cgCount', $form->_groupCount);
 
+        //carry qf key, since this form is not inhereting core form.
+        if ( $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', CRM_Core_DAO::$_nullObject ) ) {
+            $form->assign( 'qfKey', $qfKey );
+        }
+
         if ( $entityID ) {
             $form->_entityId = $entityID;
         } else {
@@ -92,13 +99,22 @@ class CRM_Custom_Form_CustomData
                                                          $form->_subName );
 
         // we should use simplified formatted groupTree
-        $form->_groupTree = CRM_Core_BAO_CustomGroup::formatGroupTree( $groupTree, $form->_groupCount, $form );
+        $groupTree = CRM_Core_BAO_CustomGroup::formatGroupTree( $groupTree, $form->_groupCount, $form );
+
+        if ( isset($form->_groupTree) && is_array($form->_groupTree) ) {
+            $keys = array_keys($groupTree);
+            foreach ( $keys as $key ) {
+                $form->_groupTree[$key] = $groupTree[$key];
+            }
+        } else {
+            $form->_groupTree = $groupTree;
+        }
     }
 
     static function setDefaultValues( &$form ) 
     {
         $defaults = array( );
-        CRM_Core_BAO_CustomGroup::setDefaults( $form->_groupTree, $defaults);
+        CRM_Core_BAO_CustomGroup::setDefaults( $form->_groupTree, $defaults, false, false, $form->get('action') );
         return $defaults;
     }
     

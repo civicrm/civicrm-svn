@@ -17,6 +17,20 @@
        <autoincrement>true</autoincrement>
   </primaryKey>
   <field>
+      <name>domain_id</name>
+      <type>int unsigned</type>
+      <required>true</required>
+      <comment>Which Domain is this menu item for</comment>
+      <add>3.0</add>
+  </field>
+  <foreignKey>
+       <name>domain_id</name>
+       <table>civicrm_domain</table>
+       <key>id</key>
+       <onDelete>CASCADE</onDelete>
+       <add>3.0</add>
+  </foreignKey>
+  <field>
       <name>contact_id</name>
       <type>int unsigned</type>
       <comment>FK to Contact ID</comment>
@@ -26,6 +40,7 @@
        <name>contact_id</name>
        <table>civicrm_contact</table>
        <key>id</key>
+       <onDelete>CASCADE</onDelete>
        <add>1.8</add>
   </foreignKey>
   <field>
@@ -39,6 +54,7 @@
        <type>int unsigned</type>
        <comment>Number of locations to be displayed on edit page?</comment>
        <add>1.8</add>
+       <drop>3.0</drop>
   </field>
   <field>
        <name>contact_view_options</name>
@@ -113,11 +129,23 @@
        <add>1.8</add>
   </field>
   <field>
+       <name>display_name_format</name>
+       <type>text</type>
+       <comment>Format to display contact display name</comment>
+       <add>3.2</add>
+  </field>
+  <field>
+       <name>sort_name_format</name>
+       <type>text</type>
+       <comment>Format to display contact sort name</comment>
+       <add>3.2</add>
+  </field>
+  <field>
        <name>individual_name_format</name>
        <type>text</type>
        <comment>Format to display a individual name</comment>
        <add>1.8</add>
-       <drop>2.3</drop>
+       <drop>3.0</drop>
   </field>
   <field>
        <name>address_standardization_provider</name>
@@ -160,6 +188,13 @@
        <name>navigation</name>
        <type>text</type>
        <comment>Store navigation for the Contact</comment>
-       <add>2.3</add>
+       <add>3.0</add>
+  </field>
+  <field>
+       <name>contact_autocomplete_options</name>
+       <type>varchar</type>
+       <length>255</length>
+       <comment>What Autocomplete has to return</comment>
+       <add>3.1</add>
   </field>
 </table>

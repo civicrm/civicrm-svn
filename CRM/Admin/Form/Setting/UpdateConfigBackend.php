@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -43,6 +44,7 @@ class CRM_Admin_Form_Setting_UpdateConfigBackend extends CRM_Admin_Form_Setting
 {  
     protected $_oldBaseDir;
     protected $_oldBaseURL;
+    protected $_oldSiteName;
   
     /**
      * Function to build the form
@@ -52,32 +54,21 @@ class CRM_Admin_Form_Setting_UpdateConfigBackend extends CRM_Admin_Form_Setting
      */
     public function buildQuickForm( ) {
         CRM_Utils_System::setTitle(ts('Settings - Update Directory Path and URL'));
-
-        $config =& CRM_Core_Config::singleton( );
-
-        if ( $config->userFramework == 'Joomla' ) {
-            $this->_oldBaseURL = substr( $config->userFrameworkResourceURL,
-                                         0, -45 );
-        } else {
-            if ( strpos( $config->userFrameworkResourceURL,
-                         'sites/all/modules' ) == false ) {
-                CRM_Core_Error::statusBounce( ts( 'This function only works when CiviCRM is installed in sites/all/modules' ) );
-            }
-            $this->_oldBaseURL = substr( $config->userFrameworkResourceURL,
-                                         0, -26 );
-        }
-        $this->assign( 'oldBaseURL', $this->_oldBaseURL );
         
-        // 15 characters from end is /civicrm/upload/
-        $this->_oldBaseDir = substr( $config->uploadDir,
-                                    0, -15 ); 
+        require_once 'CRM/Core/BAO/Setting.php';
+        list( $this->_oldBaseURL,
+              $this->_oldBaseDir,
+              $this->_oldSiteName ) = CRM_Core_BAO_Setting::getConfigSettings( );
 
-        $this->assign( 'oldBaseDir',
-                       $this->_oldBaseDir );
-                               
+        $this->assign( 'oldBaseURL', $this->_oldBaseURL );
+        $this->assign( 'oldBaseDir', $this->_oldBaseDir );
+        $this->assign( 'oldSiteName', $this->_oldSiteName );
+
         $this->add( 'text', 'newBaseURL', ts( 'New Base URL' ), null, true );
         $this->add( 'text', 'newBaseDir', ts( 'New Base Directory' ), null, true );
- 
+        if ( $this->_oldSiteName ) {
+            $this->add( 'text', 'newSiteName', ts( 'New Site Name' ), null, true );
+        }
         $this->addFormRule( array( 'CRM_Admin_Form_Setting_UpdateConfigBackend', 'formRule' ) );
 
         parent::buildQuickForm();     
@@ -88,13 +79,16 @@ class CRM_Admin_Form_Setting_UpdateConfigBackend extends CRM_Admin_Form_Setting
         if ( ! $this->_defaults ) {
             parent::setDefaultValues( );
 
-            $this->_defaults['newBaseURL'] = $this->_oldBaseURL;
-            $this->_defaults['newBaseDir'] = $this->_oldBaseDir;
+            $config =& CRM_Core_Config::singleton( );
+            list( $this->_defaults['newBaseURL'],
+                  $this->_defaults['newBaseDir'],
+                  $this->_defaults['newSiteName'] ) = CRM_Core_BAO_Setting::getBestGuessSettings( );
         }
+
         return $this->_defaults;
     }
 
-    static function formRule(&$fields) {
+    static function formRule( $fields) {
         $tmpDir = trim( $fields['newBaseDir'] );
 
         $errors = array( );
@@ -107,14 +101,29 @@ class CRM_Admin_Form_Setting_UpdateConfigBackend extends CRM_Admin_Form_Setting
 
     function postProcess( ) {
         // redirect to admin page after saving
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $session->pushUserContext( CRM_Utils_System::url( 'civicrm/admin') );
 
         $params = $this->controller->exportValues( $this->_name );
 
-        $newValues = str_replace( array( $this->_oldBaseURL, $this->_oldBaseDir ),
-                                  array( trim( $params['newBaseURL'] ),
-                                         trim( $params['newBaseDir'] ) ),
+        //CRM-5679
+        foreach ( $params as $name => &$val ) {
+            if ( $val && in_array( $name, array( 'newBaseURL', 'newBaseDir', 'newSiteName' ) ) ) {
+                $val = CRM_Utils_File::addTrailingSlash( $val );
+            }
+        }
+
+        $from = array( $this->_oldBaseURL, $this->_oldBaseDir );
+        $to   = array( trim( $params['newBaseURL'] ),
+                       trim( $params['newBaseDir'] ) );
+        if ( $this->_oldSiteName &&
+             $params['newSiteName'] ) {
+            $from[] = $this->_oldSiteName;
+            $to[]   = $params['newSiteName'];
+        }
+
+        $newValues = str_replace( $from,
+                                  $to,
                                   $this->_defaults );
 
         parent::commonProcess( $newValues );

@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -38,7 +39,7 @@ require_once 'CRM/Core/Page/Basic.php';
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -69,41 +70,37 @@ class CRM_ACL_Page_ACL extends CRM_Core_Page_Basic
      */
     function &links()
     {
-          if (!(self::$_links)) {
-              $disableExtra = ts('Are you sure you want to disable this ACL?');
-            // helper variable for nicer formatting
-              self::$_links = array(
-                                    CRM_Core_Action::UPDATE  => array(
-                                                                      'name'  => ts('Edit'),
-                                                                      'url'   => 'civicrm/acl',
-                                                                      'qs'    => 'reset=1&action=update&id=%%id%%',
-                                                                      'title' => ts('Edit ACL') 
-                                                                      ),
-                                    CRM_Core_Action::DISABLE => array(
-                                                                      'name'  => ts('Disable'),
-                                                                      'url'   => 'civicrm/acl',
-                                                                      'qs'    => 'reset=1&action=disable&id=%%id%%',
-                                                                      'extra' => 'onclick = "return confirm(\'' . $disableExtra . '\');"',
-                                                                      'title' => ts('Disable ACL') 
-                                                                      ),
-                                    CRM_Core_Action::ENABLE  => array(
-                                                                      'name'  => ts('Enable'),
-                                                                      'url'   => 'civicrm/acl',
-                                                                      'qs'    => 'reset=1&action=enable&id=%%id%%',
-                                                                      'title' => ts('Enable ACL') 
-                                                                      ),
-                                    CRM_Core_Action::DELETE  => array(
-                                                                      'name'  => ts('Delete'),
-                                                                      'url'   => 'civicrm/acl',
-                                                                      'qs'    => 'reset=1&action=delete&id=%%id%%',
-                                                                      'title' => ts('Delete ACL') 
-                                                                      ),
-
-                                 );
+        if (!(self::$_links)) {
+            self::$_links = array(
+                                  CRM_Core_Action::UPDATE  => array(
+                                                                    'name'  => ts('Edit'),
+                                                                    'url'   => 'civicrm/acl',
+                                                                    'qs'    => 'reset=1&action=update&id=%%id%%',
+                                                                    'title' => ts('Edit ACL') 
+                                                                    ),
+                                  CRM_Core_Action::DISABLE => array(
+                                                                    'name'  => ts('Disable'),
+                                                                    'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_ACL_BAO_ACL' . '\',\'' . 'enable-disable' . '\' );"',
+                                                                    'ref'   => 'disable-action',
+                                                                    'title' => ts('Disable ACL') 
+                                                                    ),
+                                  CRM_Core_Action::ENABLE  => array(
+                                                                    'name'  => ts('Enable'),
+                                                                    'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_ACL_BAO_ACL' . '\',\'' . 'disable-enable' . '\' );"',
+                                                                    'ref'   => 'enable-action',
+                                                                    'title' => ts('Enable ACL') 
+                                                                    ),
+                                  CRM_Core_Action::DELETE  => array(
+                                                                    'name'  => ts('Delete'),
+                                                                    'url'   => 'civicrm/acl',
+                                                                    'qs'    => 'reset=1&action=delete&id=%%id%%',
+                                                                    'title' => ts('Delete ACL') 
+                                                                    ),
+                                  );
         }
         return self::$_links;
     }
-
+    
     /**
      * Run the page.
      *

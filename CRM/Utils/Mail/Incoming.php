@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -70,7 +71,7 @@ class CRM_Utils_Mail_Incoming {
         if ( $part instanceof ezcMailMultiPart ) {
             return self::formatMailMultipart( $part, $attachments );
         }
-
+       
         CRM_Core_Error::fatal( ts( "No clue about the %1",
                                    array( 1 => get_class( $part ) ) ) );
     }
@@ -93,6 +94,10 @@ class CRM_Utils_Mail_Incoming {
             return self::formatMailMultipartMixed( $part, $attachments );
         }
 
+        if ( $part instanceof ezcMailMultipartReport ) {
+            return self::formatMailMultipartReport( $part, $attachments );
+        }
+        
         CRM_Core_Error::fatal( ts( "No clue about the %1",
                                    array( 1 => get_class( $part ) ) ) );
     }
@@ -152,6 +157,16 @@ class CRM_Utils_Mail_Incoming {
         return $t;
     }
 
+    function formatMailMultipartReport( $part, &$attachments ) {
+        $t = '';
+        foreach ( $part->getParts() as $key => $reportPart ) {
+            $t .= "-REPORT-$key-\n";
+            $t .= self::formatMailPart( $reportPart, $attachments );
+        }
+        $t .= "-REPORT END---\n";
+        return $t;
+    }
+    
     function formatMailFile( $part, &$attachments ) {
         $attachments[] = array( 'dispositionType' => $part->dispositionType,
                                 'contentType'     => $part->contentType,
@@ -210,7 +225,7 @@ class CRM_Utils_Mail_Incoming {
         require_once 'api/v2/Activity.php';
         require_once 'api/v2/Contact.php';
         
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
 
         // get ready for collecting data about this email
         // and put it in a standardized format
@@ -239,7 +254,7 @@ class CRM_Utils_Mail_Incoming {
         if ( ! empty( $attachments ) ) {
             require_once 'CRM/Utils/File.php';
             $date   =  date( 'Ymdhis' );
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             for ( $i = 0; $i < count( $attachments ); $i++ ) {
                 $attachNum = $i + 1;
                 $fileName = basename( $attachments[$i]['fullName'] );

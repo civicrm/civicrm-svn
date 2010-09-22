@@ -3,15 +3,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -19,7 +19,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -29,14 +30,14 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
 
  
 /**
- * Class that uses geocoder.us to retrieve the lat/long of an address
+ * Class that uses google geocoder
  */
 class CRM_Utils_Geocode_Google {
     /**
@@ -66,15 +67,13 @@ class CRM_Utils_Geocode_Google {
      * @static
       */
     static function format( &$values, $stateName = false ) {
-        CRM_Utils_System::checkPHPVersion( 5, true );
-
         require_once 'CRM/Utils/Array.php';
         // we need a valid country, else we ignore
         if ( ! CRM_Utils_Array::value( 'country'        , $values  ) ) {
             return false;
         }
         
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         
         // CRM-1439: Google (sometimes?) returns data in ISO-8859-1
         // hence we use oe to ensure we get utf-8
@@ -123,11 +122,19 @@ class CRM_Utils_Geocode_Google {
         $query = 'http://' . self::$_server . self::$_uri . $add . $arg;
         
         require_once 'HTTP/Request.php';
-        $request =& new HTTP_Request( $query );
+        $request = new HTTP_Request( $query );
         $request->sendRequest( );
         $string = $request->getResponseBody( );
 
-        $xml = simplexml_load_string( $string );
+        libxml_use_internal_errors( true );
+        $xml = @simplexml_load_string( $string );
+        if ( $xml === false ) {
+            // account blocked maybe?
+            CRM_Core_Error::debug_var( 'Geocoding failed.  Message from Google:', $string );
+            return false;
+        }
+
+
         $ret = array( );
         $val = array( );
         if ( is_a($xml->Response->Placemark->Point, 'SimpleXMLElement') ) {

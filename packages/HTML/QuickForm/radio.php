@@ -16,9 +16,9 @@
  * @package     HTML_QuickForm
  * @author      Adam Daniel <adaniel1@eesus.jnj.com>
  * @author      Bertrand Mansion <bmansion@mamasam.com>
- * @copyright   2001-2007 The PHP Group
+ * @copyright   2001-2009 The PHP Group
  * @license     http://www.php.net/license/3_01.txt PHP License 3.01
- * @version     CVS: $Id: radio.php,v 1.19 2007/05/29 18:34:36 avb Exp $
+ * @version     CVS: $Id: radio.php,v 1.20 2009/04/04 21:34:04 avb Exp $
  * @link        http://pear.php.net/package/HTML_QuickForm
  */
 
@@ -34,7 +34,7 @@ require_once 'HTML/QuickForm/input.php';
  * @package     HTML_QuickForm
  * @author      Adam Daniel <adaniel1@eesus.jnj.com>
  * @author      Bertrand Mansion <bmansion@mamasam.com>
- * @version     Release: 3.2.10
+ * @version     Release: 3.2.11
  * @since       1.0
  */
 class HTML_QuickForm_radio extends HTML_QuickForm_input
@@ -66,6 +66,7 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input
      */
     function HTML_QuickForm_radio($elementName=null, $elementLabel=null, $text=null, $value=null, $attributes=null)
     {
+        
         $this->HTML_QuickForm_element($elementName, $elementLabel, $attributes);
         if (isset($value)) {
             $this->setValue($value);
@@ -73,7 +74,13 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input
         $this->_persistantFreeze = true;
         $this->setType('radio');
         $this->_text = $text;
-        $this->_generateId();
+        // $this->_generateId();
+        if ( ! $this->getAttribute('id') ) {
+            //hack to add 'id' for checkbox
+            static $idTextStr = 1;
+            $this->updateAttributes( array('id' => CRM_Utils_String::munge( "CIVICRM_QFID_{$value}_{$idTextStr}" ) ) );
+            $idTextStr++;
+        }
     } //end constructor
     
     // }}}
@@ -202,11 +209,13 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input
         switch ($event) {
             case 'updateValue':
                 // constant values override both default and submitted ones
-                // default values are overriden by submitted
                 $value = $this->_findValue($caller->_constantValues);
                 if (null === $value) {
-                    $value = $this->_findValue($caller->_submitValues);
-                    if (null === $value) {
+                    // we should retrieve value from submitted values when form is submitted,
+                    // else set value from defaults values
+                    if ( $caller->isSubmitted( ) ) { 
+                        $value = $this->_findValue($caller->_submitValues);
+                    } else {
                         $value = $this->_findValue($caller->_defaultValues);
                     }
                 }
@@ -239,8 +248,10 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input
     {
         $value = $this->_findValue($submitValues);
         if (null === $value) {
-            //fix to return blank value when all radio's are unselected / not selected - kurund
-            $value = $this->getChecked()? $this->getValue(): '';
+            // fix to return blank value when all radio's are unselected / not selected
+            // always use submitted values rather than defaults
+            //$value = $this->getChecked()? $this->getValue(): null;
+            $value = '';
         } elseif ($value != $this->getValue()) {
             $value = null;
         }

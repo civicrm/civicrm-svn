@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,13 +29,13 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
 
 define( 'EMAIL_ACTIVITY_TYPE_ID', 1 );
-define( 'MAIL_DIR_DEFAULT'      , '/Users/lobo/public_html/drupal6/files/civicrm/upload/incoming/');
+define( 'MAIL_DIR_DEFAULT'      , 'PUT YOUR MAIL DIR HERE' );
 
 class bin_Email2Activity {
 
@@ -64,7 +65,7 @@ class bin_Email2Activity {
             exit( );
         }
         
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $dir = $config->uploadDir . DIRECTORY_SEPARATOR . 'mail';
 
         $this->_processedDir = $dir . DIRECTORY_SEPARATOR . 'processed';
@@ -139,14 +140,26 @@ function run( $supportedArgs, $context ) {
 
     require_once '../civicrm.config.php';
     require_once 'CRM/Core/Config.php'; 
-    $config =& CRM_Core_Config::singleton( );
+    $config = CRM_Core_Config::singleton( );
 
     // this does not return on failure
     CRM_Utils_System::authenticateScript( true );
 
+    //log the execution of script
+    CRM_Core_Error::debug_log_message( 'Email2Activity.php' );
+    
+    // load bootstrap to call hooks
+    require_once 'CRM/Utils/System.php';
+    CRM_Utils_System::loadBootStrap(  );
+
     $mailDir = MAIL_DIR_DEFAULT;
     if ( isset( $_GET['mailDir'] ) ) {
         $mailDir = $_GET['mailDir'];
+    }
+
+    if ( $mailDir == 'PUT YOUR MAIL DIR HERE' ) {
+        require_once 'CRM/Core/Error.php';
+        CRM_Core_Error::fatal( );
     }
 
     if ( array_key_exists( 'context', $_GET ) && 

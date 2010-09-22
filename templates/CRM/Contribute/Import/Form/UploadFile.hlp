@@ -1,3 +1,28 @@
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
 {htxt id='upload'}
 <h1>{ts}Import File Format{/ts}</h1>
     <p>{ts}Files to be imported must be in the 'comma-separated-values' format (CSV). Most applications will allow you to export records in CSV format. Consult the documentation for your application if you're not sure how to do this.{/ts}</p>
@@ -15,9 +40,5 @@
 {/htxt}
 
 {htxt id="id-onDuplicate"}
-    <p>
-    {ts}For each import, you can either INSERT new contribution records, or UPDATE existing records. You can not do both types of operations in a single import session. If you are UPDATING existing
-    contributions, you will need to include a unique identifer to match to the existing records. This can be either the CiviCRM-assigned contribution ID, a unique Invoice ID,
-    or a unique Transaction ID.{/ts}
-    </p>
+    <p>{ts}For each import, you can either INSERT new contribution records, or UPDATE existing records. You can not do both types of operations in a single import session. If you are UPDATING existing contributions, you will need to include a unique identifer to match to the existing records. This can be either the CiviCRM-assigned contribution ID, a unique Invoice ID, or a unique Transaction ID.{/ts}</p>
 {/htxt}

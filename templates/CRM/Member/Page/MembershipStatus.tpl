@@ -1,3 +1,28 @@
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
 {capture assign=crmURL}{crmURL p='civicrm/admin/member/membershipStatus' q="action=add&reset=1"}{/capture}
 {if $action eq 1 or $action eq 2 or $action eq 8}
    {include file="CRM/Member/Form/MembershipStatus.tpl"}
@@ -11,7 +36,7 @@
 {if $rows}
 <div id="ltype">
 <p></p>
-    <div class="form-item" id=membership_status_id>
+    <div id="membership_status_id">
         {strip}
         {* handle enable/disable actions*}
  	{include file="CRM/common/enableDisable.tpl"}
@@ -27,14 +52,14 @@
 	        <th></th>
         </thead>
         {foreach from=$rows item=row}
-        <tr id="row_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
-	        <td>{$row.name}</td>	
-	        <td>{$row.start_event}</td>
-	        <td>{$row.end_event}</td>
-	        <td>{if $row.is_current_member eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-	        <td>{if $row.is_admin eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-	        <td class="nowrap">{$row.weight}</td>
-	        <td>{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+        <tr id="row_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class} {if NOT $row.is_active} disabled{/if} crm-membership-status">
+	        <td class="crm-membership-status-label">{$row.label}</td>	
+	        <td class="crm-membership-status-start_event">{$row.start_event}</td>
+	        <td class="crm-membership-status-end_event">{$row.end_event}</td>
+	        <td class="crm-membership-status-is_current_member">{if $row.is_current_member eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+	        <td class="crm-membership-status-is_admin">{if $row.is_admin eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+	        <td class="nowrap crm-membership-status-weight">{$row.weight}</td>
+	        <td id="row_{$row.id}_status" class="crm-membership-status-is_active">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
 	        <td>{$row.action|replace:'xx':$row.id}</td>
           </tr>
         {/foreach}
@@ -43,7 +68,7 @@
 
         {if $action ne 1 and $action ne 2}
 	    <div class="action-link">
-    	<a href="{crmURL q="action=add&reset=1"}" id="newMembershipStatus" class="button"><span>&raquo; {ts}New Membership Status{/ts}</span></a>
+    	<a href="{crmURL q="action=add&reset=1"}" id="newMembershipStatus" class="button"><span><div class="icon add-icon"></div>{ts}Add Membership Status{/ts}</span></a>
         </div>
         {/if}
     </div>
@@ -51,10 +76,7 @@
 {else}
   {if $action ne 1}
     <div class="messages status">
-    <dl>
-        <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/></dt>
-        <dd>{ts 1=$crmURL}There are no custom membership status entered. You can <a href='%1'>add one</a>.{/ts}</dd>
-        </dl>
+         <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>{ts 1=$crmURL}There are no custom membership status entered. You can <a href='%1'>add one</a>.{/ts}
     </div>    
   {/if}
 {/if}

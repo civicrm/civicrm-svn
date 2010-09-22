@@ -46,10 +46,11 @@ class CRM_Contribute_Payment_AuthorizeNet extends CRM_Core_Payment_AuthorizeNet 
      * @static
      */
     static function &singleton( $mode, &$paymentProcessor ) {
-        if (self::$_singleton === null ) {
-            self::$_singleton =& new CRM_Contribute_Payment_AuthorizeNet( $mode, $paymentProcessor );
+        $processorName = $paymentProcessor['name'];
+        if (self::$_singleton[$processorName] === null ) {
+            self::$_singleton[$processorName] = new CRM_Contribute_Payment_AuthorizeNet( $mode, $paymentProcessor );
         }
-        return self::$_singleton;
+        return self::$_singleton[$processorName];
     }
 
 }

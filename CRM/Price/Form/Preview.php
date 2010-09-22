@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,13 +29,13 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
 
 require_once 'CRM/Core/Form.php';
-//require_once 'CRM/Core/BAO/PriceSet.php';
+//require_once 'CRM/Price/BAO/Set.php';
 //
 //require_once 'CRM/Core/BAO/CustomOption.php';
 /**
@@ -66,22 +67,29 @@ class CRM_Price_Form_Preview extends CRM_Core_Form
      */
     function preProcess()
     {
-       
         // get the controller vars
         $groupId  = $this->get('groupId');
         $fieldId  = $this->get('fieldId');
         
         if ($fieldId) {
-            require_once 'CRM/Core/BAO/PriceSet.php';
-            $groupTree = CRM_Core_BAO_PriceSet::getSetDetail($groupId);
+            require_once 'CRM/Price/BAO/Set.php';
+            $groupTree = CRM_Price_BAO_Set::getSetDetail($groupId);
             $this->_groupTree[$groupId]['fields'][$fieldId] = $groupTree[$groupId]['fields'][$fieldId];
             $this->assign('preview_type', 'field');
+            $url = CRM_Utils_System::url( 'civicrm/admin/price/field', "reset=1&action=browse&sid={$groupId}");
+            $breadCrumb     = array( array('title' => ts('Price Set Fields'),
+                                           'url'   => $url) );
         } else {
             // group preview
-            require_once 'CRM/Core/BAO/PriceSet.php';
-            $this->_groupTree  = CRM_Core_BAO_PriceSet::getSetDetail($groupId);
+            require_once 'CRM/Price/BAO/Set.php';
+            $this->_groupTree  = CRM_Price_BAO_Set::getSetDetail($groupId);
             $this->assign('preview_type', 'group');
+            $this->assign('setTitle', CRM_Price_BAO_Set::getTitle($groupId));
+            $url = CRM_Utils_System::url( 'civicrm/admin/price', 'reset=1' );
+            $breadCrumb     = array( array('title' => ts('Price Sets'),
+                                           'url'   => $url) );
         }
+        CRM_Utils_System::appendBreadCrumb( $breadCrumb );        
     }
     
     /**
@@ -126,14 +134,14 @@ class CRM_Price_Form_Preview extends CRM_Core_Form
         $this->assign('groupTree', $this->_groupTree);
         
         // add the form elements
-        require_once 'CRM/Core/BAO/PriceField.php';
+        require_once 'CRM/Price/BAO/Field.php';
         
         foreach ($this->_groupTree as $group) {
             if ( is_array( $group['fields'] ) && !empty( $group['fields'] ) ) {
                 foreach ($group['fields'] as $field) {
                     $fieldId = $field['id'];                
                     $elementName = 'price_' . $fieldId;
-                    CRM_Core_BAO_PriceField::addQuickFormElement($this, $elementName, $fieldId, false, $field['is_required']);
+                    CRM_Price_BAO_Field::addQuickFormElement($this, $elementName, $fieldId, false, $field['is_required']);
                 }
             }
         }

@@ -8,8 +8,11 @@
   <field>
       <name>id</name>
       <type>int unsigned</type>
+      <uniqueName>grant_id</uniqueName>
+      <title>Grant ID</title>
       <required>true</required>
       <comment>Unique Grant id</comment>
+      <import>true</import>
       <add>1.8</add>
   </field>
   <primaryKey>
@@ -20,6 +23,7 @@
       <name>contact_id</name>
       <type>int unsigned</type>
       <uniqueName>grant_contact_id</uniqueName>
+      <title>Contact ID</title>
       <export>true</export>
       <required>true</required>
       <comment>Contact ID of contact record given grant belongs to.</comment>
@@ -34,6 +38,7 @@
   </foreignKey>  
   <field>
       <name>application_received_date</name>
+      <title>Application received date</title>
       <type>date</type>
       <export>true</export>
       <comment>Date on which grant application was received by donor.</comment>
@@ -41,14 +46,18 @@
   </field>
   <field>
       <name>decision_date</name>
+      <title>Decision date</title>
       <type>date</type>
       <comment>Date on which grant decision was made.</comment>
+      <import>true</import>
       <add>1.8</add>
   </field>
   <field>
       <name>money_transfer_date</name>
+      <title>Grant Money transfer date</title>
       <type>date</type>
       <comment>Date on which grant money transfer was made.</comment>
+      <import>true</import>
       <add>1.8</add>
   </field>
   <field>
@@ -59,14 +68,17 @@
   </field>
   <field>
       <name>grant_report_received</name>
+      <title>Grant report received</title>
       <type>boolean</type>
       <comment>Yes/No field stating whether grant report was received by donor.</comment>
+      <import>true</import>
       <add>1.8</add>
   </field>
   <field>
       <name>grant_type_id</name>
       <type>int unsigned</type>
-      <export>true</export>
+      <title>Grant Type Id</title>
+      <export>false</export>
       <required>true</required>
       <comment>Type of grant. Implicit FK to civicrm_option_value in grant_type option_group.</comment>
       <add>1.8</add>
@@ -78,14 +90,17 @@
   </index>
   <field>     
       <name>amount_total</name>
+      <title>Total Amount</title>
       <type>decimal</type>
       <required>true</required>
       <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
+      <import>true</import>
       <comment>Requested grant amount, in default currency.</comment>
       <add>1.8</add>
   </field>
   <field>
       <name>amount_requested</name>
+      <title>Amount Requested</title>
       <type>decimal</type>
       <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
       <comment>Requested grant amount, in original currency (optional).</comment>
@@ -93,10 +108,28 @@
   </field>
   <field>
       <name>amount_granted</name>
+      <title>Amount granted</title>
       <type>decimal</type>
       <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
+      <import>true</import>
       <comment>Granted amount, in default currency.</comment>
       <add>1.8</add>
+  </field>
+  <field>
+      <name>currency</name>
+      <type>varchar</type>
+      <length>3</length>
+      <required>true</required>
+      <comment>3 character string, value from config setting or input via user.</comment>
+      <add>3.2</add>
+  </field>
+  <field>
+      <name>currency</name>
+      <type>varchar</type>
+      <length>8</length>
+      <required>true</required> 
+      <comment>3 character string, value from config setting or input via user.</comment>
+      <add>3.2</add>
   </field>
   <field> 
       <name>rationale</name>
@@ -111,8 +144,11 @@
   <field> 
       <name>status_id</name>
       <type>int unsigned</type>
+      <title>Grant Status Id</title>
       <uniqueName>grant_status_id</uniqueName>
       <required>true</required>
+      <import>true</import> 
+      <export>false</export>
       <comment>Id of Grant status.</comment>
       <add>1.8</add>
   </field>

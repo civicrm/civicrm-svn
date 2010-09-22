@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -56,29 +57,56 @@ class CRM_Admin_Form_PreferencesDate extends CRM_Admin_Form
             return;
         }
         
+        $attributes = CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_PreferencesDate' );
+        
         $this->applyFilter('__ALL__', 'trim');
         $name =& $this->add('text',
                             'name',
                             ts('Name'),
-                            CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_PreferencesDate', 'name' ),
+                            $attributes['name'],
                             true );
         $name->freeze( );
         
-        $attribute  = CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_PreferencesDate', 'start' );
-        $formatAttr = CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_PreferencesDate', 'format' );
-        $descAttr = CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_PreferencesDate', 'description' );
+        $this->add('text', 'description'     , ts('Description'     ), $attributes['description']  , false );
+        $this->add('text', 'start'           , ts('Start Offset'    ), $attributes['start'] , true  );
+        $this->add('text', 'end'             , ts('End Offset'      ), $attributes['end'] , true  );
+        
+        $formatType = CRM_Core_Dao::getFieldValue( 'CRM_Core_DAO_PreferencesDate', $this->_id, 'name' );
 
-        $this->add('text', 'description'     , ts('Description'     ), $descAttr  , false );
-        $this->add('text', 'start'           , ts('Start Offset'    ), $attribute , true  );
-        $this->add('text', 'end'             , ts('End Offset'      ), $attribute , true  );
-        $this->add('text', 'minute_increment', ts('Minute Increment'), $attribute , false );
-        $this->add('text', 'format'          , ts('Format')          , $formatAttr, false );
-
-        $this->addRule( 'start'           , ts( 'Value should be a positive number' ) , 'positiveInteger');
-        $this->addRule( 'end'             , ts( 'Value should be a positive number' ) , 'positiveInteger');
-        $this->addRule( 'minute_increment', ts( 'Value should be a positive number' ) , 'positiveInteger');
+        if ( $formatType  == 'creditCard' ) {
+            $this->add('text', 'date_format', ts('Format'), $attributes['date_format'] , true  );
+        } else {
+            $this->add('select', 'date_format', ts('Format'),  
+                        array( '' => ts( '- default input format -') ) + CRM_Core_SelectValues::getDatePluginInputFormats( ) );
+            $this->add( 'select', 'time_format', ts('Time'), 
+                        array( '' => ts( '- none -') ) + CRM_Core_SelectValues::getTimeFormats( ) );
+        }
+        $this->addRule( 'start', ts( 'Value should be a positive number' ) , 'positiveInteger');
+        $this->addRule( 'end'  , ts( 'Value should be a positive number' ) , 'positiveInteger');
+    
+        // add a form rule
+        $this->addFormRule( array( 'CRM_Admin_Form_PreferencesDate', 'formRule' ) );
     }
 
+    /**
+     * global validation rules for the form
+     *
+     * @param array  $fields   (referance) posted values of the form
+     *
+     * @return array    if errors then list of errors to be posted back to the form,
+     *                  true otherwise
+     * @static
+     * @access public
+     */
+    static function formRule( $fields ) {
+        $errors = array( );
+        
+        if ( $fields['name'] == 'activityDateTime' && !$fields['time_format'] ) {
+            $errors['time_format'] = ts('Time is required for this format.');
+        }
+        
+        return empty($errors) ? true : $errors;
+    }
        
     /**
      * Function to process the form
@@ -97,13 +125,13 @@ class CRM_Admin_Form_PreferencesDate extends CRM_Admin_Form
         $params = $this->controller->exportValues( $this->_name );
         
         // action is taken depending upon the mode
-        $dao                   =& new CRM_Core_DAO_PreferencesDate( );
+        $dao                   = new CRM_Core_DAO_PreferencesDate( );
         $dao->id               =  $this->_id;
         $dao->description      =  $params['description'];  
         $dao->start            =  $params['start'];  
         $dao->end              =  $params['end'];
-        $dao->minute_increment =  $params['minute_increment'];
-        $dao->format           =  $params['format'];
+        $dao->date_format      =  $params['date_format'];
+        $dao->time_format      =  $params['time_format'];
         
         $dao->save( );
         

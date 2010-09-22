@@ -29,7 +29,7 @@
        <type>varchar</type>
        <length>64</length>
        <comment>label for relationship of contact_a to contact_b.</comment>
-       <add>2.3</add>
+       <add>3.0</add>
   </field>
   <field>
        <name>name_b_a</name>
@@ -43,7 +43,7 @@
        <type>varchar</type>
        <length>64</length>
        <comment>Optional label for relationship of contact_b to contact_a.</comment>
-       <add>2.3</add>
+       <add>3.0</add>
   </field>
   <field>
        <name>description</name>
@@ -65,6 +65,22 @@
        <values>Individual, Organization, Household</values>
        <comment>If defined, contact_b in a relationship of this type must be a specific contact_type.</comment>
        <add>1.1</add>
+  </field>
+  <field>
+       <name>contact_sub_type_a</name>
+       <title>Contact Subtype A</title>
+       <type>varchar</type>
+       <length>64</length>
+       <comment>If defined, contact_sub_type_a in a relationship of this type must be a specific contact_sub_type.</comment>
+       <add>3.1</add>
+  </field>
+  <field>
+       <name>contact_sub_type_b</name>
+       <title>Contact Subtype B</title>
+       <type>varchar</type>
+       <length>64</length>
+       <comment>If defined, contact_sub_type_b in a relationship of this type must be a specific contact_sub_type.</comment>
+       <add>3.1</add>
   </field>
   <field>
        <name>is_reserved</name>

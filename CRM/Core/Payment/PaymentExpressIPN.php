@@ -1,4 +1,27 @@
-<?php 
+<?php
+/*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*/
  
   /*
    * PxPay Functionality Copyright (C) 2008 Lucas Baker, Logistic Information Systems Limited (Logis)
@@ -184,7 +207,7 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
         $isTest = null;
 
         $contributionID   = $privateData['contributionID'];
-        $contribution     =& new CRM_Contribute_DAO_Contribution( );
+        $contribution     = new CRM_Contribute_DAO_Contribution( );
         $contribution->id = $contributionID;
 
         if ( ! $contribution->find( true ) ) {
@@ -230,7 +253,7 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
             // we are in event mode
             // make sure event exists and is valid
             require_once 'CRM/Event/DAO/Event.php';
-            $event =& new CRM_Event_DAO_Event( );
+            $event = new CRM_Event_DAO_Event( );
             $event->id = $eventID;
             if ( ! $event->find( true ) ) {
                 CRM_Core_Error::debug_log_message( "Could not find event: $eventID" );
@@ -262,7 +285,7 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
 	static function main( $dps_method,$rawPostData, $dps_url, $dps_user, $dps_key, $mac_key )
     {
 		
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         define('RESPONSE_HANDLER_LOG_FILE', $config->uploadDir . 'CiviCRM.PaymentExpress.log');
         
         //Setup the log file
@@ -316,7 +339,7 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
 		
 		}elseif ($dps_method == "pxaccess"){
 		
-			require_once('PaymentExpress/pxaccess.php');
+			require_once('PaymentExpress/pxaccess.inc.php');
 			global $pxaccess;
 			$pxaccess = new PxAccess($dps_url, $dps_user, $dps_key, $mac_key);
 #getResponse method in PxAccess object returns PxPayResponse object 
@@ -337,6 +360,9 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
 
         $privateData = $privateData ? self::stringToArray($privateData) : '';
 		
+        // Record the current count in array, before we start adding things (for later checks) 
+        $countPrivateData = count($privateData);
+
 		// Private Data consists of : a=contactID, b=contributionID,c=contributionTypeID,d=invoiceID,e=membershipID,f=participantID,g=eventID
 		$privateData['contactID'] = $privateData['a'];
 		$privateData['contributionID'] = $privateData['b'];
@@ -346,9 +372,9 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
 		if ( $component == "event" ) {
 			$privateData['participantID'] = $privateData['f'];
 			$privateData['eventID'] = $privateData['g'];
-		}else if ( $component == "contribute" ) {
+		} else if ( $component == "contribute" ) {
 			
-			if ( count($privateData) == 5) {
+			if ( $countPrivateData == 5 ) {
                 $privateData["membershipID"] = $privateData['e'];					
 			}		
 		}
@@ -374,13 +400,12 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
 			}
 
 			if ( $component == "event" ) {
-
                 $finalURL = CRM_Utils_System::url( 'civicrm/event/register',
-                                                   "_qf_ThankYou_display=1&qfKey={$params['qfKey']}", 
+                                                   "_qf_ThankYou_display=1&qfKey=$qfKey", 
                                                    false, null, false );
 			} elseif ( $component == "contribute" ) {
                 $finalURL = CRM_Utils_System::url( 'civicrm/contribute/transact',
-                                                   "_qf_ThankYou_display=1&qfKey={$params['qfKey']}",
+                                                   "_qf_ThankYou_display=1&qfKey=$qfKey",
                                                    false, null, false );
 			}
 				
@@ -389,12 +414,12 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
 		}else {
 		
             if ( $component == "event" ) {
-                $finalURL = CRM_Utils_System::url( 'civicrm/event/register',
-                                                   "_qf_Register_display=1&cancel=1&qfKey={$params['qfKey']}", 
+                $finalURL = CRM_Utils_System::url( 'civicrm/event/confirm',
+                                                   "reset=1&cc=fail&participantId=$privateData[participantID]",
                                                    false, null, false );
             } elseif ( $component == "contribute" ) {
                 $finalURL = CRM_Utils_System::url( 'civicrm/contribute/transact',
-                                                   "_qf_Main_display=1&cancel=1&qfKey={$params['qfKey']}",
+                                                   "_qf_Main_display=1&cancel=1&qfKey=$qfKey",
                                                    false, null, false );
             }
 				

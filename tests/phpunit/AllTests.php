@@ -32,121 +32,36 @@
 /**
  *  Include parent class definition
  */
-require_once 'PHPUnit/Framework/TestSuite.php';
-require_once 'Utils.php';
-require_once 'standalone/civicrm.settings.php';
+require_once 'CiviTest/CiviTestSuite.php';
 
 /**
  *  Class containing all test suites
  *
- *  @package   CiviCRM_DB_Tools
+ *  @package   CiviCRM
  */
-class AllTests
+class AllTests extends CiviTestSuite
 {
-    /**
-     * @var what DB connection
-     */
-    public static $db_conn;
+    private static $instance = null;
 
     /**
-     *  @var Utils instance
+     *
      */
-    public static $utils;
+    private static function getInstance()
+    {
+        if ( is_null( self::$instance ) ) {
+            self::$instance = new self;
+        }
+        return self::$instance;
+    }
 
     /**
      *  Build test suite dynamically
      */
     public static function suite()
     {
-        $suite = new PHPUnit_Framework_TestSuite('CiviCRM');
-        $dir_name = dirname( __FILE__ );
-        $dir = opendir( $dir_name );
-        while( false !== ( $file = readdir( $dir ) ) ) {
-            $path = $dir_name . '/' . $file ;
-            if ( is_dir( $path )
-                && ( substr( $file, 0, 1 ) != '.' ) ) {
-                self::addAllTests( $suite, $path, $file );
-            }
-        }
-        return $suite;
+        $inst = self::getInstance( );
+        return $inst->implSuite( __FILE__ );
     } 
-
-    /**
-     *  Install the test database
-     */
-    public static function installDB()
-    {
-        static $dbInit = false;
-
-        if ( !$dbInit ) {
-            echo PHP_EOL
-                . "Installing test_civicrm database"
-                . PHP_EOL;
-
-            //  create test database
-            self::$utils = new Utils( $GLOBALS['mysql_host'],
-                                'test_civicrm',
-                                $GLOBALS['mysql_user'],
-                                $GLOBALS['mysql_pass'] );
-            $query = "DROP DATABASE IF EXISTS test_civicrm;"
-                   . "CREATE DATABASE test_civicrm DEFAULT"
-                   . " CHARACTER SET utf8 COLLATE utf8_unicode_ci;"
-                   . "USE test_civicrm;";
-            if ( self::$utils->do_query($query) === false ) {
-
-                //  failed to create test database
-                exit;
-            }
-
-            //  initialize test database
-            $sql_file = dirname( dirname( dirname( __FILE__ ) ) )
-                . "/sql/civicrm.mysql";
-            $query = file_get_contents( $sql_file );
-            if ( self::$utils->do_query($query) === false ) {
-
-                //  failed to initialze test database
-                exit;
-            }
-            $dbInit = true;
-        }
-        return self::$db_conn;
-    }
-
-    /**
-     *  Add all test classes Test* in subdirectories
-     *
-     *  @param  &object Test suite object to add tests to
-     *  @param  string  Name of directory to scan
-     *  @return Test suite has been updated
-     */
-    private static function addAllTests( &$suite, $dir_name, $prefix )
-    {
-        $dir = opendir( $dir_name );
-        if ( $dir === false ) {
-            return $result;
-        }
-        while( false !== ( $file = readdir( $dir ) ) ) {
-            $path = $dir_name . '/' . $file ;
-            if ( is_dir( $path )
-                 && ( substr( $file, 0, 1 ) != '.' ) ) {
-                self::addAllTests( $suite, $path, $prefix . '_' . $file ) ;
-            } else {
-                if ( preg_match( '/Test.*\.php/', $file ) ) {
-                    $oldClassNames = get_declared_classes();
-                    require_once $path;
-                    $newClassNames = get_declared_classes();
-                    foreach( array_diff( $newClassNames,
-                                         $oldClassNames ) as $name ) {
-                        if ( preg_match( "/^{$prefix}_Test/", $name ) ) {
-                            $suite->addTestSuite( $name );
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
 } // class AllTests
 
 // -- set Emacs parameters --

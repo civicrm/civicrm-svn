@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -67,7 +68,23 @@ class CRM_Import_Form_DataSource extends CRM_Core_Form {
         if ( $daoTestPrivilege->_lastError ) {
             CRM_Core_Error::fatal( ts('Database Configuration Error: Insufficient permissions. Import requires that the CiviCRM database user has permission to create temporary tables. Contact your site administrator for assistance.') );
         }
+        
+        $results = array();
+        $config  = CRM_Core_Config::singleton( );
+        $handler = opendir($config->uploadDir);
+        $errorFiles = array( 'sqlImport.errors', 'sqlImport.conflicts', 'sqlImport.duplicates', 'sqlImport.mismatch' );
 
+        while ($file = readdir($handler)) {
+            if ( $file != '.' && $file != '..' &&
+                 in_array( $file, $errorFiles) && !is_writable( $config->uploadDir . $file ) ) {
+                $results[] = $file;
+            }
+        }
+        closedir($handler);
+        if (!empty($results ) ) {            
+            CRM_Core_Error::fatal (ts('<b>%1</b> file(s) in %2 directory are not writable. Listed file(s) might be used during the import to log the errors occurred during Import process. Contact your site administrator for assistance.', array( 1 => implode(', ', $results), 2 => $config->uploadDir ) ) );
+        }
+        
         $this->_dataSourceIsValid = false;
         $this->_dataSource = CRM_Utils_Request::retrieve( 'dataSource', 'String',
                                                           CRM_Core_DAO::$_nullObject );
@@ -87,7 +104,7 @@ class CRM_Import_Form_DataSource extends CRM_Core_Form {
         if ( strpos( $this->_dataSource, 'CRM_Import_DataSource_' ) === 0 ) {
             $this->_dataSourceIsValid = true;
             $this->assign( 'showDataSourceFormPane', true );
-            $dataSourcePath = split( '_', $this->_dataSource );
+            $dataSourcePath = explode( '_', $this->_dataSource );
             $templateFile = "CRM/Import/Form/" . $dataSourcePath[3] . ".tpl";
             $this->assign( 'dataSourceFormTemplateFile', $templateFile );
         }
@@ -150,18 +167,27 @@ class CRM_Import_Form_DataSource extends CRM_Core_Form {
 
         $this->setDefaults(array('onDuplicate' =>
                                     CRM_Import_Parser::DUPLICATE_SKIP));
-            
+        $js = array('onClick' => "buildSubTypes();");    
         // contact types option
-        $contactOptions = array();        
-        $contactOptions[] = HTML_QuickForm::createElement('radio',
-            null, null, ts('Individual'), CRM_Import_Parser::CONTACT_INDIVIDUAL);
-        $contactOptions[] = HTML_QuickForm::createElement('radio',
-            null, null, ts('Household'), CRM_Import_Parser::CONTACT_HOUSEHOLD);
-        $contactOptions[] = HTML_QuickForm::createElement('radio',
-            null, null, ts('Organization'), CRM_Import_Parser::CONTACT_ORGANIZATION);
+        require_once 'CRM/Contact/BAO/ContactType.php';
+        $contactOptions = array();
+        if ( CRM_Contact_BAO_ContactType::isActive( 'Individual' ) ) {
+            $contactOptions[] = HTML_QuickForm::createElement('radio',
+                null, null, ts('Individual'), CRM_Import_Parser::CONTACT_INDIVIDUAL, $js);        
+        }
+        if ( CRM_Contact_BAO_ContactType::isActive( 'Household' ) ) {
+            $contactOptions[] = HTML_QuickForm::createElement('radio',
+                null, null, ts('Household'), CRM_Import_Parser::CONTACT_HOUSEHOLD, $js);
+        }
+        if ( CRM_Contact_BAO_ContactType::isActive( 'Organization' ) ) {
+            $contactOptions[] = HTML_QuickForm::createElement('radio',
+                null, null, ts('Organization'), CRM_Import_Parser::CONTACT_ORGANIZATION, $js);
+        } 
 
         $this->addGroup($contactOptions, 'contactType', 
                         ts('Contact Type'));
+        
+        $this->addElement('select','subType', ts('Subtype'));
 
         $this->setDefaults(array('contactType' =>
                                  CRM_Import_Parser::CONTACT_INDIVIDUAL));
@@ -228,20 +254,22 @@ class CRM_Import_Form_DataSource extends CRM_Core_Form {
         if ($this->_dataSourceIsValid) {
             // Setup the params array 
             $this->_params = $this->controller->exportValues( $this->_name );
-            
-            $onDuplicate  = $this->exportValue('onDuplicate');
-            $contactType  = $this->exportValue('contactType');
-            $dateFormats  = $this->exportValue('dateFormats');
-            $savedMapping = $this->exportValue('savedMapping');
-
+                       
+            $onDuplicate     = $this->exportValue('onDuplicate');
+            $contactType     = $this->exportValue('contactType');
+            $dateFormats     = $this->exportValue('dateFormats');
+            $savedMapping    = $this->exportValue('savedMapping');
+            $contactSubType  = $this->exportValue('subType');
+                              
             $this->set('onDuplicate', $onDuplicate);
             $this->set('contactType', $contactType);
+            $this->set('contactSubType', $contactSubType);
             $this->set('dateFormats', $dateFormats);
             $this->set('savedMapping', $savedMapping);
             $this->set('dataSource', $this->_params['dataSource'] );
             $this->set('skipColumnHeader', CRM_Utils_Array::value( 'skipColumnHeader', $this->_params ) );
             
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             $session->set('dateTypes', $dateFormats);
 
             // Get the PEAR::DB object
@@ -262,11 +290,12 @@ class CRM_Import_Form_DataSource extends CRM_Core_Form {
             $fieldNames = $this->_prepareImportTable( $db, $importTableName );
             $mapper = array( );
 
-            $parser =& new CRM_Import_Parser_Contact( $mapper );
+            $parser = new CRM_Import_Parser_Contact( $mapper );
             $parser->setMaxLinesToProcess( 100 );
             $parser->run( $importTableName, $mapper,
                           CRM_Import_Parser::MODE_MAPFIELD, $contactType,
-                          $fieldNames['pk'], $fieldNames['status']);
+                          $fieldNames['pk'], $fieldNames['status'], 
+                          DUPLICATE_SKIP, null, null, false, CRM_Import_Parser::DEFAULT_TIMEOUT, $contactSubType );
                           
             // add all the necessary variables to the form
             $parser->set( $this );
@@ -302,7 +331,7 @@ class CRM_Import_Form_DataSource extends CRM_Core_Form {
         $alterQuery = "ALTER TABLE $importTableName
                        ADD COLUMN $statusFieldName VARCHAR(32)
                             DEFAULT 'NEW' NOT NULL,
-                       ADD COLUMN ${statusFieldName}Msg VARCHAR(255),
+                       ADD COLUMN ${statusFieldName}Msg TEXT,
                        ADD COLUMN $primaryKeyName INT PRIMARY KEY NOT NULL
                                AUTO_INCREMENT";
         $db->query( $alterQuery );
@@ -318,7 +347,7 @@ class CRM_Import_Form_DataSource extends CRM_Core_Form {
      * @access public
      */
     public function getTitle( ) {
-        return "Choose Data Source";
+        return ts('Choose Data Source');
     }
     
 }

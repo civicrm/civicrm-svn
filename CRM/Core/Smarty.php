@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -73,7 +74,7 @@ class CRM_Core_Smarty extends Smarty {
     function __construct( ) {
         parent::__construct( );
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         if ( isset( $config->customTemplateDir ) && $config->customTemplateDir ) {
             $this->template_dir = array( $config->customTemplateDir, $config->templateDir );
@@ -89,18 +90,34 @@ class CRM_Core_Smarty extends Smarty {
             $this->use_sub_dirs = true;
         }
 
-        $this->plugins_dir  = array ( $config->smartyDir . 'plugins', $config->pluginsDir );
+        $customPluginsDir = null;
+        if ( isset( $config->customPHPPathDir ) ) {
+            $customPluginsDir = 
+                $config->customPHPPathDir . DIRECTORY_SEPARATOR .
+                'CRM'         . DIRECTORY_SEPARATOR . 
+                'Core'        . DIRECTORY_SEPARATOR .
+                'Smarty'      . DIRECTORY_SEPARATOR .
+                'plugins'     . DIRECTORY_SEPARATOR ;
+            if ( ! file_exists( $customPluginsDir ) ) {
+                $customPluginsDir = null;
+            }
+        }
+
+        if ( $customPluginsDir ) {
+            $this->plugins_dir  = array ( $customPluginsDir, $config->smartyDir . 'plugins', $config->pluginsDir );
+        } else {
+            $this->plugins_dir  = array ( $config->smartyDir . 'plugins', $config->pluginsDir );
+        }
 
         // add the session and the config here
-        $config  =& CRM_Core_Config::singleton ();
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
 
         $this->assign_by_ref( 'config'        , $config  );
         $this->assign_by_ref( 'session'       , $session );
         
         // check default editor and assign to template, store it in session to reduce db calls
         $defaultWysiwygEditor = $session->get( 'defaultWysiwygEditor');
-        if ( !$defaultWysiwygEditor ) {
+        if ( !$defaultWysiwygEditor && !CRM_Core_Config::isUpgradeMode() ) {
             require_once 'CRM/Core/BAO/Preferences.php';
             $defaultWysiwygEditor = CRM_Core_BAO_Preferences::value( 'editor_id' );            
             $session->set( 'defaultWysiwygEditor', $defaultWysiwygEditor );
@@ -114,10 +131,10 @@ class CRM_Core_Smarty extends Smarty {
         
         //check if logged in use has access CiviCRM permission and build menu
         require_once 'CRM/Core/Permission.php';
-        $buildNavigation = CRM_Core_Permission::check( 'administer CiviCRM' );
+        $buildNavigation = CRM_Core_Permission::check( 'access CiviCRM' );
         $this->assign('buildNavigation', $buildNavigation );
         
-        if ( $buildNavigation ) {
+        if ( !CRM_Core_Config::isUpgradeMode() && $buildNavigation ) {
             require_once 'CRM/Core/BAO/Navigation.php';
             $contactID = $session->get('userID');
             if ( $contactID ) {
@@ -140,8 +157,8 @@ class CRM_Core_Smarty extends Smarty {
      */
     static function &singleton( ) {
         if ( ! isset( self::$_singleton ) ) {
-            $config =& CRM_Core_Config::singleton( );
-            self::$_singleton =& new CRM_Core_Smarty( $config->templateDir, $config->templateCompileDir );
+            $config = CRM_Core_Config::singleton( );
+            self::$_singleton = new CRM_Core_Smarty( $config->templateDir, $config->templateCompileDir );
         }
         return self::$_singleton;
     }

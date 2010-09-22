@@ -2,15 +2,16 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright U.S. PIRG (c) 2007                                       |
+ | Copyright U.S. PIRG Education Fund (c) 2007                        |
+ | Licensed to CiviCRM under the Academic Free License version 3.0.   |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +19,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -166,7 +168,7 @@ class CRM_Contact_BAO_GroupNesting extends CRM_Contact_DAO_GroupNesting implemen
     function _getNextParentlessGroup( &$group = null ) {
         require_once 'CRM/Contact/BAO/Group.php';
         $lastParentlessGroup = $this->_lastParentlessGroup;
-        $nextGroup =& new CRM_Contact_BAO_Group( );
+        $nextGroup = new CRM_Contact_BAO_Group( );
         $nextGroup->order_by = "title " . self::$_sortOrder;
         $nextGroup->find( );
         if ( $group == null ) {
@@ -189,7 +191,7 @@ class CRM_Contact_BAO_GroupNesting extends CRM_Contact_DAO_GroupNesting implemen
         if ( count( $children ) > 0 ) {
             // we have child groups, so get the first one based on _sortOrder
             require_once 'CRM/Contact/BAO/Group.php';
-            $childGroup =& new CRM_Contact_BAO_Group( );
+            $childGroup = new CRM_Contact_BAO_Group( );
             $cgQuery = "SELECT * FROM civicrm_group WHERE id IN (" .
                 implode( ',', $children ) . ") ORDER BY title " .
                 self::$_sortOrder;
@@ -244,6 +246,7 @@ class CRM_Contact_BAO_GroupNesting extends CRM_Contact_DAO_GroupNesting implemen
      */
     
     static function add( $parentID, $childID ) {
+        // TODO: Add checks here to make sure invalid nests can't be created
         $dao = new CRM_Contact_DAO_GroupNesting( );
         $query = "REPLACE INTO civicrm_group_nesting (child_group_id, parent_group_id) VALUES ($childID,$parentID);";
         $dao->query( $query );
@@ -268,6 +271,47 @@ class CRM_Contact_BAO_GroupNesting extends CRM_Contact_DAO_GroupNesting implemen
         $dao->query( $query );
     }
     
+    /**
+     * Removes associations where a child group is identified by $childGroupId from the group
+     * identified by $groupId; does not delete child group, just the
+     * association between the two
+     *
+     * @param            $parentID         The id of the group to remove the child from
+     * @param            $childID          The id of the child group being removed
+     *
+     * @return           void
+     *
+     * @access public
+     */
+    
+    static function removeAllParentForChild( $childID ) {
+        $dao = new CRM_Contact_DAO_GroupNesting( );
+        $query = "DELETE FROM civicrm_group_nesting WHERE child_group_id = $childID";
+        $dao->query( $query );
+    }
+
+    /**
+     * Returns true if the association between parent and child is present,
+     * false otherwise.
+     *
+     * @param            $parentID         The parent id of the association
+     * @param            $childID          The child id of the association
+     *
+     * @return           boolean           True if association is found, false otherwise.
+     *
+     * @access public
+     */
+    
+    static function isParentChild( $parentID, $childID ) {
+        $dao = new CRM_Contact_DAO_GroupNesting( );
+        $query = "SELECT id FROM civicrm_group_nesting WHERE child_group_id = $childID AND parent_group_id = $parentID";
+        $dao->query( $query );
+        if ( $dao->fetch( ) ) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Returns true if if the given groupId has 1 or more child groups,
      * false otherwise.

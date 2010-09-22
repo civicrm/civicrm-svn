@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -49,7 +50,15 @@ class CRM_Admin_Page_OptionValue extends CRM_Core_Page_Basic
     static $_links = null;
 
     static $_gid = null;
-
+    
+    /**
+     * The option group name
+     *
+     * @var string
+     * @static
+     */
+    static $_gName = null;
+    
     /**
      * Get BAO Name
      *
@@ -68,27 +77,23 @@ class CRM_Admin_Page_OptionValue extends CRM_Core_Page_Basic
     function &links()
     {
         if (!(self::$_links)) {
-            // helper variable for nicer formatting
-            $disableExtra = ts('Are you sure you want to disable this Option Value?');
-
             self::$_links = array(
                                   CRM_Core_Action::UPDATE  => array(
                                                                     'name'  => ts('Edit'),
                                                                     'url'   => 'civicrm/admin/optionValue',
                                                                     'qs'    => 'action=update&id=%%id%%&gid=%%gid%%&reset=1',
                                                                     'title' => ts('Edit Option Value') 
-                                                                   ),
+                                                                    ),
                                   CRM_Core_Action::DISABLE => array(
                                                                     'name'  => ts('Disable'),
-                                                                    'url'   => 'civicrm/admin/optionValue',
-                                                                    'qs'    => 'action=disable&id=%%id%%&gid=%%gid%%',
-                                                                    'extra' => 'onclick = "return confirm(\'' . $disableExtra . '\');"',
+                                                                    'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Core_BAO_OptionValue' . '\',\'' . 'enable-disable' . '\' );"',
+                                                                    'ref'   => 'disable-action',
                                                                     'title' => ts('Disable Option Value') 
-                                                                   ),
+                                                                    ),
                                   CRM_Core_Action::ENABLE  => array(
                                                                     'name'  => ts('Enable'),
-                                                                    'url'   => 'civicrm/admin/optionValue',
-                                                                    'qs'    => 'action=enable&id=%%id%%&gid=%%gid%%',
+                                                                    'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Core_BAO_OptionValue' . '\',\'' . 'disable-enable' . '\' );"',
+                                                                    'ref'   => 'enable-action',
                                                                     'title' => ts('Enable Option Value') 
                                                                     ),
                                   CRM_Core_Action::DELETE  => array(
@@ -96,8 +101,8 @@ class CRM_Admin_Page_OptionValue extends CRM_Core_Page_Basic
                                                                     'url'   => 'civicrm/admin/optionValue',
                                                                     'qs'    => 'action=delete&id=%%id%%&gid=%%gid%%',
                                                                     'title' => ts('Delete Option Value') 
-                                                                   )
-                                 );
+                                                                    )
+                                  );
         }
         return self::$_links;
     }
@@ -123,6 +128,8 @@ class CRM_Admin_Page_OptionValue extends CRM_Core_Page_Basic
             require_once 'CRM/Core/BAO/OptionGroup.php';
             $groupTitle = CRM_Core_BAO_OptionGroup::getTitle($this->_gid);
             CRM_Utils_System::setTitle(ts('%1 - Option Values', array(1 => $groupTitle)));
+            //get optionGroup name in case of email/postal greeting or addressee, CRM-4575
+            $this->_gName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', $this->_gid, 'name');
         }
         
         parent::run();
@@ -139,9 +146,23 @@ class CRM_Admin_Page_OptionValue extends CRM_Core_Page_Basic
     function browse()
     {
         require_once 'CRM/Core/DAO/OptionValue.php';
-        $dao =& new CRM_Core_DAO_OptionValue();
+        $dao = new CRM_Core_DAO_OptionValue();
         
         $dao->option_group_id = $this->_gid;
+
+        require_once 'CRM/Core/OptionGroup.php';
+        if ( in_array($this->_gName, CRM_Core_OptionGroup::$_domainIDGroups) ) {
+            $dao->domain_id = CRM_Core_Config::domainID( );
+        }
+        
+        require_once 'CRM/Case/BAO/Case.php';
+        if ( $this->_gName == 'encounter_medium' ) {
+            $mediumIds = CRM_Case_BAO_Case::getUsedEncounterMediums( );
+        } else if ( $this->_gName == 'case_status' ) {
+            $caseStatusIds = CRM_Case_BAO_Case::getUsedCaseStatuses( );
+        } else if ( $this->_gName == 'case_type' ) {
+            $caseTypeIds = CRM_Case_BAO_Case::getUsedCaseType( );
+        }
 
         $dao->orderBy('name');
         $dao->find();
@@ -155,7 +176,10 @@ class CRM_Admin_Page_OptionValue extends CRM_Core_Page_Basic
             if( $dao->is_default ) {
                 $optionValue[$dao->id]['default_value'] = '[x]';
             }
-            
+            //do not show default option for email/postal greeting and addressee, CRM-4575
+            if ( ! in_array($this->_gName, array('email_greeting', 'postal_greeting', 'addressee') ) ) {
+                $this->assign( 'showIsDefault', true );
+            }
             // update enable/disable links depending on if it is is_reserved or is_active
             if ($dao->is_reserved) {
                 $action = CRM_Core_Action::UPDATE;
@@ -164,6 +188,12 @@ class CRM_Admin_Page_OptionValue extends CRM_Core_Page_Basic
                     $action -= CRM_Core_Action::ENABLE;
                 } else {
                     $action -= CRM_Core_Action::DISABLE;
+                }
+                
+                if ( ( ( $this->_gName == 'encounter_medium' ) && in_array( $dao->value, $mediumIds ) ) ||
+                     ( ( $this->_gName == 'case_status' ) && in_array( $dao->value, $caseStatusIds ) ) ||
+                     ( ( $this->_gName == 'case_type' ) && in_array( $dao->value, $caseTypeIds ) ) ) {
+                    $action -= CRM_Core_Action::DELETE;
                 }
             }
 

@@ -1,3 +1,32 @@
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
+
+{if $action eq 1 or $action eq 2 or $action eq 8}
+   {include file="CRM/Admin/Form/Options.tpl"}
+{else}	
 
 <div id="help">
   {if $gName eq "gender"}
@@ -32,21 +61,25 @@
   {elseif $gName eq 'from_email_address'}
     {ts}By default, CiviCRM uses the primary email address of the logged in user as the FROM address when sending emails to contacts. However, you can use this page to define one or more general Email Addresses that can be selected as an alternative. EXAMPLE: <em>"Client Services" &lt;clientservices@example.org&gt;</em>{/ts}
   {else}
-    {ts}The existing option choices for {$GName} group are listed below. You can add, edit or delete them from this screen.{/ts}
+    {ts 1=$GName}The existing option choices for %1 group are listed below. You can add, edit or delete them from this screen.{/ts}
   {/if}
 </div>
 
-{if $action eq 1 or $action eq 2 or $action eq 8}
-   {include file="CRM/Admin/Form/Options.tpl"}
-{/if}	
-
+<div class="crm-content-block crm-block">
 {if $rows}
+{if $action ne 1 and $action ne 2}
+    <div class="action-link">
+        <a href="{crmURL q="group="|cat:$gName|cat:"&action=add&reset=1"}" id="new"|cat:$GName class="button"><span><div class="icon add-icon"></div>{ts 1=$GName}Add %1{/ts}</span></a>
+    </div>
+{/if}
 <div id={$gName}>
         {strip}
 	{* handle enable/disable actions*} 
 	{include file="CRM/common/enableDisable.tpl"}
-        <table class="selector">
-	       <thead class="sticky">
+    {include file="CRM/common/jsortable.tpl"}
+        <table id="options" class="display">
+	       <thead>
+	       <tr>
             {if $showComponent}
                 <th>{ts}Component{/ts}</th>
             {/if}
@@ -57,6 +90,11 @@
                     {ts}Label{/ts}
                 {/if}
             </th>
+	    {if $gName eq "case_status"}
+	    	<th>
+		    {ts}Status Class{/ts}
+		</th>	    
+            {/if}
             <th>
                 {if $gName eq "redaction_rule"}
                     {ts}Replacement{/ts}
@@ -66,45 +104,56 @@
             </th>
             {if $showCounted}<th>{ts}Counted?{/ts}</th>{/if}
             {if $showVisibility}<th>{ts}Visibility{/ts}</th>{/if}
-            <th>{ts}Description{/ts}</th>
-            <th>{ts}Order{/ts}</th>
+            <th id="nosort">{ts}Description{/ts}</th>
+            <th id="order" class="sortable">{ts}Order{/ts}</th>
 	        {if $showIsDefault}<th>{ts}Default{/ts}</th>{/if}
             <th>{ts}Reserved{/ts}</th>
             <th>{ts}Enabled?{/ts}</th>
+            <th class="hiddenElement"></th>
             <th></th>
+            </tr>
             </thead>
+            <tbody>
         {foreach from=$rows item=row}
-        <tr id="row_{$row.id}" class="{cycle values="odd-row,even-row"}{$row.class}{if NOT $row.is_active} disabled{/if}">
+        <tr id="row_{$row.id}" class="crm-admin-options crm-admin-options_{$row.id} {cycle values="odd-row,even-row"}{if NOT $row.is_active} disabled{/if}">
             {if $showComponent}
-                <td>{$row.component_name}</td>
+                <td class="crm-admin-options-component_name">{$row.component_name}</td>
             {/if}
-	        <td>{$row.label}</td>	
-	        <td>{$row.value}</td>
-	        {if $showCounted}<td>{if $row.filter eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>{/if}
-            {if $showVisibility}<td>{$row.visibility_label}</td>{/if}
-	        <td>{$row.description}</td>	
-	        <td class="nowrap">{$row.weight}</td>
-            {if $showIsDefault}<td>{$row.default_value}</td>{/if}
-	        <td>{if $row.is_reserved eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-	        <td>{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+	        <td class="crm-admin-options-label">{$row.label}</td>
+	    {if $gName eq "case_status"}				
+		<td class="crm-admin-options-grouping">{$row.grouping}</td>
+            {/if}	
+	        <td class="crm-admin-options-value">{$row.value}</td>
+		{if $showCounted}
+		<td class="yes-no crm-admin-options-filter">{if $row.filter eq 1}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Counted{/ts}" />{/if}</td>
+		{/if}
+            {if $showVisibility}<td class="crm-admin-visibility_label">{$row.visibility_label}</td>{/if}
+	        <td class="crm-admin-options-description">{$row.description}</td>	
+	        <td class="nowrap crm-admin-options-order">{$row.order}</td>
+            {if $showIsDefault}
+	    	<td class="crm-admin-options-is_default" align="center">{if $row.is_default eq 1}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Default{/ts}" />{/if}&nbsp;</td>{/if}
+	        <td class="crm-admin-options-is_reserved">{if $row.is_reserved eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+	        <td class="crm-admin-options-is_active" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
 	        <td>{$row.action|replace:'xx':$row.id}</td>
+	        <td class="order hiddenElement">{$row.weight}</td>
         </tr>
         {/foreach}
+        </tbody>
         </table>
         {/strip}
 
         {if $action ne 1 and $action ne 2}
             <div class="action-link">
-                <a href="{crmURL q="group="|cat:$gName|cat:"&action=add&reset=1"}" id="new"|cat:$GName class="button"><span>&raquo; {ts}New {$GName}{/ts}</span></a>
+                <a href="{crmURL q="group="|cat:$gName|cat:"&action=add&reset=1"}" id="new"|cat:$GName class="button"><span><div class="icon add-icon"></div>{ts 1=$GName}Add %1{/ts}</span></a>
             </div>
         {/if}
 </div>
 {else}
     <div class="messages status">
-    <dl>
-        <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/></dt>
+         <div class="icon inform-icon"></div>
         {capture assign=crmURL}{crmURL  q="group="|cat:$gName|cat:"&action=add&reset=1"}{/capture}
-        <dd>{ts 1=$crmURL}There are no option values entered. You can <a href='%1'>add one</a>.{/ts}</dd>
-        </dl>
+        {ts 1=$crmURL}There are no option values entered. You can <a href='%1'>add one</a>.{/ts}
     </div>    
+{/if}
+</div>
 {/if}

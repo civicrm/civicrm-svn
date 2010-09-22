@@ -84,12 +84,14 @@
        <type>varchar</type>
        <length>128</length>
        <comment>Mailing Name.</comment>
+       <localizable>true</localizable>
   </field>
   <field>
        <name>from_name</name>
        <type>varchar</type>
        <length>128</length>
        <comment>From Header of mailing</comment>
+       <localizable>true</localizable>
   </field>
   <field>
        <name>from_email</name>
@@ -108,16 +110,19 @@
        <type>varchar</type>
        <length>128</length>
        <comment>Subject of mailing</comment>
+       <localizable>true</localizable>
   </field>
   <field>
        <name>body_text</name>
        <type>longtext</type>
        <comment>Body of the mailing in text format.</comment>
+       <localizable>true</localizable>
   </field>
   <field>
        <name>body_html</name>
        <type>longtext</type>
        <comment>Body of the mailing in html format.</comment>
+       <localizable>true</localizable>
   </field>
   <field>
        <name>url_tracking</name>
@@ -171,8 +176,15 @@
        <name>created_id</name>
        <table>civicrm_contact</table>
        <key>id</key>
-       <onDelete>CASCADE</onDelete>
+       <onDelete>SET NULL</onDelete>
   </foreignKey>
+  <field>
+      <name>created_date</name>
+      <type>datetime</type>
+      <title>Mailing Created Date</title>
+      <comment>Date and time this mailing was created.</comment>
+      <add>3.0</add>
+  </field>
   <field>
       <name>scheduled_id</name>
       <type>int unsigned</type>
@@ -182,7 +194,7 @@
        <name>scheduled_id</name>
        <table>civicrm_contact</table>
        <key>id</key>
-       <onDelete>CASCADE</onDelete>
+       <onDelete>SET NULL</onDelete>
   </foreignKey>
   <field>
        <name>is_archived</name>

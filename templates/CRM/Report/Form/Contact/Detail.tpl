@@ -1,17 +1,46 @@
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
 {* this div is being used to apply special css *}
-{include file="CRM/Report/Form/Fields.tpl"}
+    {if !$section }
+    <div class="crm-block crm-form-block crm-report-field-form-block">    
+        {include file="CRM/Report/Form/Fields.tpl"}
+    </div>
+    {/if}    
+	
+<div class="crm-block crm-content-block crm-report-form-block">
+{include file="CRM/Report/Form/Actions.tpl"}
+{if !$section }
 {include file="CRM/Report/Form/Statistics.tpl" top=true}
-
+{/if}
     {if $rows}
         <div class="report-pager">
-            {include file="CRM/common/pager.tpl" noForm=1}
+            {include file="CRM/common/pager.tpl" location="top" noForm=0}
         </div>
         {foreach from=$rows item=row}
-            <br />
-            <table class="report-layout">
-                <tr>
-                    <td>
-                	<table class="report-layout">
+                	<table class="report-layout crm-report_contact_civireport">
                             <tr>
                                 {foreach from=$columnHeaders item=header key=field}
                                     {if !$skip}
@@ -30,11 +59,11 @@
                                     {/if}
                                 {/foreach}
                             </tr>               
-                            <tr class="group-row">
+                            <tr class="group-row crm-report">
                                 {foreach from=$columnHeaders item=header key=field}
                                     {assign var=fieldLink value=$field|cat:"_link"}
                                     {assign var=fieldHover value=$field|cat:"_hover"}
-                                    <td  class="report-contents">
+                                    <td  class="report-contents crm-report_{$field}">
                                         {if $row.$fieldLink}<a title="{$row.$fieldHover}" href="{$row.$fieldLink}">{/if}
                         
                                         {if $row.$field eq 'Subtotal'}
@@ -62,27 +91,24 @@
                         </table>
 
                         {if $columnHeadersComponent}
-                            {assign var=contribMode value=$row.contactID}
+                            {assign var=componentContactId value=$row.contactID}
                             {foreach from=$columnHeadersComponent item=pheader key=component}
-                                {if $componentRows.$contribMode.$component}
-                                    <u><strong>{$component|upper}</strong></u>
-                                {/if}
-                        	<table class="report-layout">
+                                {if $componentRows.$componentContactId.$component}
+                                    <h3>{$component|replace:'_civireport':''|upper}</h3>
+                        	<table class="report-layout crm-report_{$component}">
                         	    {*add space before headers*}
-                        	    {if $componentRows.$contribMode.$component}
                         		<tr>
                         		    {foreach from=$pheader item=header}
                         			<th>{$header.title}</th>
                         		    {/foreach}
                         		</tr>
-                        	    {/if}
                              
-                        	    {foreach from=$componentRows.$contribMode.$component item=row}
-                        		<tr>
+                        	    {foreach from=$componentRows.$componentContactId.$component item=row key=rowid}
+                        		<tr class="{cycle values="odd-row,even-row"} crm-report" id="crm-report_{$rowid}">
                         		    {foreach from=$columnHeadersComponent.$component item=header key=field}
                         			{assign var=fieldLink value=$field|cat:"_link"}
                                                 {assign var=fieldHover value=$field|cat:"_hover"}
-                        			<td class="report-contents">
+                        			<td class="report-contents crm-report_{$field}">
                         			    {if $row.$fieldLink}
                         				<a title="{$row.$fieldHover} "href="{$row.$fieldLink}">
                         			    {/if}
@@ -108,14 +134,15 @@
                         		    {/foreach}
                         		</tr>
                         	    {/foreach}
-                        	</table>	
+                        	</table>
+                            {/if}	
                             {/foreach}
                         {/if}
-                    </td>
-                </tr>
-            </table> 
         {/foreach}
-    
+
+	<div class="report-pager">
+            {include file="CRM/common/pager.tpl" noForm=0}
+        </div>
         <br />
         {if $grandStat}
             <table class="report-layout">
@@ -134,8 +161,11 @@
                 </tr>
             </table>
         {/if}
-   
-        {*Statistics at the bottom of the page*}
-        {include file="CRM/Report/Form/Statistics.tpl" bottom=true}
+        
+        {if !$section }
+            {*Statistics at the bottom of the page*}
+            {include file="CRM/Report/Form/Statistics.tpl" bottom=true}
+        {/if}
     {/if} 
-{include file="CRM/Report/Form/ErrorMessage.tpl"}
+    {include file="CRM/Report/Form/ErrorMessage.tpl"}
+</div>

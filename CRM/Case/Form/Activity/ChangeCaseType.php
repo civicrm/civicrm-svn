@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -63,8 +64,7 @@ class CRM_Case_Form_Activity_ChangeCaseType
         $defaults['is_reset_timeline'] = 1;
         
         $defaults['reset_date_time'] = array( );
-        CRM_Utils_Date::getAllDefaultValues( $defaults['reset_date_time'] );
-        $defaults['reset_date_time']['i'] = (int ) ( $defaults['reset_date_time']['i'] / 15 ) * 15;
+        list( $defaults['reset_date_time'], $defaults['reset_date_time_time'] ) = CRM_Utils_Date::setDateDefaults( null, 'activityDateTime' );
         $caseType  = CRM_Case_PseudoConstant::caseTypeName( $form->_caseId );
         $defaults['case_type_id'] = $caseType['id'];
 
@@ -73,16 +73,14 @@ class CRM_Case_Form_Activity_ChangeCaseType
 
     static function buildQuickForm( &$form ) 
     { 
-        require_once 'CRM/Core/OptionGroup.php';        
-        $caseType = CRM_Core_OptionGroup::values('case_type');
+        require_once 'CRM/Case/PseudoConstant.php';
+        $form->_caseType = CRM_Case_PseudoConstant::caseType( );
         $form->add('select', 'case_type_id',  ts( 'New Case Type' ),  
-                   $caseType , true);
+                   $form->_caseType , true);
 
         // timeline
         $form->addYesNo( 'is_reset_timeline', ts( 'Reset Case Timeline?' ),null, true, array('onclick' =>"return showHideByValue('is_reset_timeline','','resetTimeline','table-row','radio',false);") );
-        $form->add( 'date', 'reset_date_time', ts('Reset Start Date'),
-                    CRM_Core_SelectValues::date('activityDatetime' ), false );   
-        $form->addRule('reset_date_time', ts('Select a valid date.'), 'qfDate');
+        $form->addDateTime( 'reset_date_time', ts('Reset Start Date'), false, array( 'formatType' => 'activityDateTime' ) );
     }
 
     /**
@@ -94,7 +92,7 @@ class CRM_Case_Form_Activity_ChangeCaseType
      * @static
      * @access public
      */
-    static function formRule( &$values, $files, &$form ) 
+    static function formRule( $values, $files, $form ) 
     {
         return true;
     }
@@ -115,7 +113,7 @@ class CRM_Case_Form_Activity_ChangeCaseType
             unset($params['reset_date_time']);
         } else {
             // store the date with proper format
-            $params['reset_date_time'] = CRM_Utils_Date::format( $params['reset_date_time'] );
+            $params['reset_date_time'] = CRM_Utils_Date::processDate( $params['reset_date_time'], $params['reset_date_time_time'] );
         }
     }
 
@@ -125,15 +123,18 @@ class CRM_Case_Form_Activity_ChangeCaseType
      * @access public
      * @return None
      */
-    public function endPostProcess( &$form, &$params ) 
+    public function endPostProcess( &$form, &$params, $activity ) 
     {
         if ( !$form->_caseId ) {
             // always expecting a change, so case-id is a must.
             return;
         }
 
-        $caseTypes = CRM_Case_PseudoConstant::caseType( );
-        if ( isset($caseTypes[$params['case_type_id']]) ) {
+        require_once 'CRM/Case/PseudoConstant.php';
+        $caseTypes    = CRM_Case_PseudoConstant::caseType( 'name' );
+        $allCaseTypes = CRM_Case_PseudoConstant::caseType( 'label', false );
+        
+        if ( CRM_Utils_Array::value($params['case_type_id'], $caseTypes) ) {
             $caseType  = $caseTypes[$params['case_type_id']];
         }
         
@@ -144,7 +145,15 @@ class CRM_Case_Form_Activity_ChangeCaseType
              ) {
             CRM_Core_Error::fatal('Required parameter missing for ChangeCaseType - end post processing');
         }
-
+        
+        if ($activity->subject == 'null'){
+            $activity->subject = ts( 'Case type changed from %1 to %2', 
+                                     array( 1 => CRM_Utils_Array::value( $form->_defaults['case_type_id'], $allCaseTypes ),
+                                            2 => CRM_Utils_Array::value( $params['case_type_id'], $allCaseTypes ) )
+                                     );
+            $activity->save();            
+        }
+        
         // 1. initiate xml processor
         $xmlProcessor = new CRM_Case_XMLProcessor_Process( );
         $xmlProcessorParams = array( 'clientID'           => $form->_currentlyViewedContactId,

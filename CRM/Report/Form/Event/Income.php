@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -58,7 +59,8 @@ class CRM_Report_Form_Event_Income extends CRM_Report_Form {
                                 array( 'title'         => ts( 'Event Title' ),
                                        'operatorType'  => CRM_Report_Form::OP_MULTISELECT,
                                        'type'          => CRM_Utils_Type::T_INT,
-                                       'options'       => CRM_Event_PseudoConstant::event(), ), 
+                                       'options'       => CRM_Event_PseudoConstant::event( null, null,
+                                                              "is_template IS NULL OR is_template = 0" ) ), 
                                 ),
                          ),
                   );
@@ -77,7 +79,7 @@ class CRM_Report_Form_Event_Income extends CRM_Report_Form {
         
         $eventID = implode(',', $eventIDs );
 
-        $participantStatus  = CRM_Event_PseudoConstant::participantStatus( null, "filter = 1" );
+        $participantStatus  = CRM_Event_PseudoConstant::participantStatus( null, "is_counted = 1" );
         $participantRole    = CRM_Event_PseudoConstant::participantRole( );
         $paymentInstruments = CRM_Contribute_PseudoConstant::paymentInstrument();
 
@@ -115,10 +117,11 @@ class CRM_Report_Form_Event_Income extends CRM_Report_Form {
             LEFT JOIN  civicrm_option_value 
                    ON  ( civicrm_event.event_type_id = civicrm_option_value.value AND
                          civicrm_option_value.option_group_id = {$optionGroupId} )
-            LEFT JOIN  civicrm_participant ON ( civicrm_event.id = civicrm_participant.event_id )
+            LEFT JOIN  civicrm_participant ON ( civicrm_event.id = civicrm_participant.event_id 
+                       {$activeParticipantClause} AND civicrm_participant.is_test  = 0 )
 
             WHERE      civicrm_event.id IN( {$eventID}) 
-                       {$activeParticipantClause}
+                      
             GROUP BY   civicrm_event.id
             ";
         $eventDAO  = CRM_Core_DAO::executeQuery( $sql );
@@ -273,6 +276,7 @@ class CRM_Report_Form_Event_Income extends CRM_Report_Form {
                          'rowCount'     => self::ROW_COUNT_LIMIT,
                          'status'       => ts( 'Records %%StatusMessage%%' ),
                          'buttonBottom' => 'PagerBottomButton',
+                         'buttonTop'    => 'PagerTopButton',
                          'pageID'       => $this->get( CRM_Utils_Pager::PAGE_ID ) );
         
         $pager = new CRM_Utils_Pager( $params );
@@ -286,7 +290,8 @@ class CRM_Report_Form_Event_Income extends CRM_Report_Form {
         if ( empty( $this->_params['id_value'][0] ) ) {
             $this->_params['id_value'] = array();
             $this->_setVariable = false;
-            $events = CRM_Event_PseudoConstant::event();
+            $events = CRM_Event_PseudoConstant::event( null, null,
+                                                       "is_template IS NULL OR is_template = 0" );
             if ( empty($events) ) {
                 return false;
             }

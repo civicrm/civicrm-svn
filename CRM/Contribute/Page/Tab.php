@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,14 +29,14 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
 
-require_once 'CRM/Contact/Page/View.php';
+require_once 'CRM/Core/Page.php';
 
-class CRM_Contribute_Page_Tab extends CRM_Contact_Page_View 
+class CRM_Contribute_Page_Tab extends CRM_Core_Page
 {
     /**
      * The action links that we need to display for the browse screen
@@ -44,7 +45,8 @@ class CRM_Contribute_Page_Tab extends CRM_Contact_Page_View
      * @static
      */
     static $_links = null;
-    
+    public $_permission = null;    
+    public $_contactId  = null;
     
     /**
      * This method returns the links that are given for honor search row.
@@ -102,7 +104,7 @@ class CRM_Contribute_Page_Tab extends CRM_Contact_Page_View
             CRM_Contribute_BAO_Contribution::annual( $this->_contactId );
         $this->assign( 'annual', $annual );
 
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_Search', ts('Contributions'), $this->_action );
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_Search', ts('Contributions'), $this->_action );
         $controller->setEmbedded( true );
         $controller->reset( );
         $controller->set( 'cid'  , $this->_contactId );
@@ -116,17 +118,15 @@ class CRM_Contribute_Page_Tab extends CRM_Contact_Page_View
         $action = array_sum(array_keys($this->honorLinks( )));	    
         
         $params = array( );
-        $params =  CRM_Contribute_BAO_Contribution::getHonorContacts( $this->_contactId );
+        $params =  CRM_Contribute_BAO_Contribution::getHonorContacts( $this->_contactId );        
         if ( ! empty($params) ) {
-            foreach($params as $ids => $honorId){
-                $contributionId = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_Contribution', $this->_contactId,'id','honor_contact_id' );
-                $subType     = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionType', $honorId['type'], 'id','name' );
+            foreach( $params as $ids => $honorId ) {
                 $params[$ids]['action'] = CRM_Core_Action::formLink(self::honorLinks( ), $action, 
                                                                     array('cid'              => $honorId['honorId'],
-                                                                          'id'               =>  $contributionId,
+                                                                          'id'               => $ids,
                                                                           'cxt'              => 'contribution',
-                                                                          'contributionType' => $subType,
-                                                                          'honorId'          => $this->_contactId)
+                                                                          'contributionType' => $honorId['type_id'],
+                                                                          'honorId'          => $this->_contactId )
                                                                     );
             }
             // assign vars to templates
@@ -144,15 +144,25 @@ class CRM_Contribute_Page_Tab extends CRM_Contact_Page_View
        
         $softCreditList = CRM_Contribute_BAO_Contribution::getSoftContributionList( $this->_contactId, $isTest );
                
-        if( !empty( $softCreditList ) ) {
-            $softCreditTotals = CRM_Contribute_BAO_Contribution::getSoftContributionTotals( $this->_contactId, $isTest );        
+        if ( !empty( $softCreditList ) ) {
+            $softCreditTotals = array();
+            
+            list( $softCreditTotals['amount'],
+                  $softCreditTotals['avg'],
+                  $softCreditTotals['currency'] ) =
+                  CRM_Contribute_BAO_Contribution::getSoftContributionTotals( $this->_contactId, $isTest );        
+                
             $this->assign('softCredit', true);
             $this->assign('softCreditRows', $softCreditList );
             $this->assign('softCreditTotals', $softCreditTotals );
         }
 
+        if ( $this->_contactId ) {
+            require_once 'CRM/Contact/BAO/Contact.php';
+            $displayName = CRM_Contact_BAO_Contact::displayName( $this->_contactId );
+            $this->assign( 'displayName', $displayName );
+        }
     }
-    
 
 
     /** 
@@ -163,7 +173,7 @@ class CRM_Contribute_Page_Tab extends CRM_Contact_Page_View
      */ 
     function view( ) 
     {
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_ContributionView',  
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_ContributionView',  
                                                        'View Contribution',  
                                                        $this->_action ); 
         $controller->setEmbedded( true );  
@@ -187,7 +197,7 @@ class CRM_Contribute_Page_Tab extends CRM_Contact_Page_View
             CRM_Utils_System::redirectToSSL( );
         }
 
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_Contribution', 
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_Contribution', 
                                                        'Create Contribution', 
                                                        $this->_action );
         $controller->setEmbedded( true ); 
@@ -196,8 +206,33 @@ class CRM_Contribute_Page_Tab extends CRM_Contact_Page_View
         
         return $controller->run( );
     }
-    
-    
+
+    function preProcess( ) {
+        $context       = CRM_Utils_Request::retrieve('context', 'String', $this );
+        $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'browse');
+        $this->_id     = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
+        
+        if ( $context == 'standalone' ) {
+            $this->_action = CRM_Core_Action::ADD;
+        } else {
+            $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
+            $this->assign( 'contactId', $this->_contactId );
+
+            // check logged in url permission
+            require_once 'CRM/Contact/Page/View.php';
+            CRM_Contact_Page_View::checkUserPermission( $this );
+
+            // set page title
+            CRM_Contact_Page_View::setTitle( $this->_contactId );
+        }
+        $this->assign('action', $this->_action );     
+        
+        if ( $this->_permission == CRM_Core_Permission::EDIT && ! CRM_Core_Permission::check( 'edit contributions' ) ) {
+            $this->_permission = CRM_Core_Permission::VIEW; // demote to view since user does not have edit contrib rights
+            $this->assign( 'permission', 'view' );
+        }
+    }
+           
     /**
      * This function is the main function that is called when the page
      * loads, it decides the which action has to be taken for the page.
@@ -207,22 +242,8 @@ class CRM_Contribute_Page_Tab extends CRM_Contact_Page_View
      */
     function run( ) 
     {
-        $contactID  = CRM_Utils_Request::retrieve('cid', 'Positive', CRM_Core_DAO::$_nullArray );
-        $context    = CRM_Utils_Request::retrieve('context', 'String', $this );
+        $this->preProcess( );
         
-        if ( $context == 'standalone' && !$contactID ) {
-            $this->_action = CRM_Core_Action::ADD;
-            $this->assign('action', $this->_action );     
-        } else {
-            // we should call contact view, preprocess only for contribution in contact summary
-            $this->preProcess( );           
-        }        
-        
-        if ( $this->_permission == CRM_Core_Permission::EDIT && ! CRM_Core_Permission::check( 'edit contributions' ) ) {
-            $this->_permission = CRM_Core_Permission::VIEW; // demote to view since user does not have edit contrib rights
-            $this->assign( 'permission', 'view' );
-        }
-
         // check if we can process credit card contribs
         $processors = CRM_Core_PseudoConstant::paymentProcessor( false, false,
                                                                  "billing_mode IN ( 1, 3 )" );
@@ -247,9 +268,25 @@ class CRM_Contribute_Page_Tab extends CRM_Contact_Page_View
     
     function setContext( ) 
     {
-        $context = CRM_Utils_Request::retrieve( 'context', 'String',
-                                                $this, false, 'search' );
-        $session =& CRM_Core_Session::singleton( ); 
+        $qfKey       = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+        $context     = CRM_Utils_Request::retrieve( 'context', 'String',
+                                                    $this, false, 'search' );
+        $compContext = CRM_Utils_Request::retrieve( 'compContext', 'String', $this );
+        //swap the context.
+        if ( $context == 'search' && $compContext ) {
+            $context = $compContext;
+        } else {
+            $compContext = null;
+        }
+        
+        // make sure we dont get tricked with a bad key
+        // so check format
+        require_once 'CRM/Core/Key.php';
+        if ( ! CRM_Core_Key::valid( $qfKey ) ) {
+            $qfKey = null;
+        }
+        
+        $session = CRM_Core_Session::singleton( ); 
        
         switch ( $context ) {
 
@@ -259,6 +296,11 @@ class CRM_Contribute_Page_Tab extends CRM_Contact_Page_View
             
         case 'dashboard':
             $url = CRM_Utils_System::url( 'civicrm/contribute',
+                                          'reset=1' );
+            break;
+
+        case 'pledgeDashboard':
+            $url = CRM_Utils_System::url( 'civicrm/pledge',
                                           'reset=1' );
             break;
             
@@ -276,7 +318,13 @@ class CRM_Contribute_Page_Tab extends CRM_Contact_Page_View
             break;
             
         case 'search':
-            $url = CRM_Utils_System::url( 'civicrm/contribute/search', 'force=1' );
+            $extraParams = "force=1";
+            if ( $qfKey ) {
+                $extraParams .= "&qfKey=$qfKey";
+            }
+
+            $this->assign( 'searchKey',  $qfKey );
+            $url = CRM_Utils_System::url( 'civicrm/contribute/search', $extraParams );
             break;
 
         case 'home':
@@ -288,35 +336,71 @@ class CRM_Contribute_Page_Tab extends CRM_Contact_Page_View
                                           "reset=1&force=1&cid={$this->_contactId}&selectedChild=activity" );
             break;
             
+        case 'member':
         case 'membership':
             $componentId     =  CRM_Utils_Request::retrieve( 'compId', 'Positive', $this);
             $componentAction =  CRM_Utils_Request::retrieve( 'compAction', 'Integer', $this );
-
+            
+            $context   = 'membership';
+            $searchKey = null;
+            if ( $compContext ) {
+                $context = 'search';
+                if ( $qfKey ) $searchKey = "&key=$qfKey";
+                $compContext = "&compContext={$compContext}";
+            }
             if ( $componentAction & CRM_Core_Action::VIEW ) {
                 $action = 'view';
             } else {
                 $action = 'update';
             } 
             $url = CRM_Utils_System::url( 'civicrm/contact/view/membership',
-                                          "reset=1&action={$action}&cid={$this->_contactId}&id={$componentId}&context=membership&selectedChild=member" );
+                                          "reset=1&action={$action}&id={$componentId}&cid={$this->_contactId}&context={$context}&selectedChild=member{$searchKey}{$compContext}" );
             break; 
             
         case 'participant':
             $componentId     =  CRM_Utils_Request::retrieve( 'compId', 'Positive', $this );
             $componentAction =  CRM_Utils_Request::retrieve( 'compAction', 'Integer', $this );
             
+            $context   = 'participant';
+            $searchKey = null;
+            if ( $compContext ) {
+                $context = 'search';
+                if ( $qfKey ) $searchKey = "&key=$qfKey";
+                $compContext = "&compContext={$compContext}";
+            }
             if ( $componentAction == CRM_Core_Action::VIEW ) {
                 $action = 'view';
             } else {
                 $action = 'update';
             } 
             $url = CRM_Utils_System::url( 'civicrm/contact/view/participant',
-                                          "reset=1&action={$action}&id={$componentId}&cid={$this->_contactId}&context=participant&selectedChild=event" );
+                                          "reset=1&action={$action}&id={$componentId}&cid={$this->_contactId}&context={$context}&selectedChild=event{$searchKey}{$compContext}" );
             break;
             
         case 'pledge':
             $url = CRM_Utils_System::url( 'civicrm/contact/view',
                                          "reset=1&force=1&cid={$this->_contactId}&selectedChild=pledge" );
+            break;
+       
+        case 'standalone':
+            $url = CRM_Utils_System::url( 'civicrm/dashboard', 'reset=1' );
+            break;
+            
+        case 'fulltext':
+            $keyName   = '&qfKey';
+            $urlParams = 'force=1';
+            $urlString = 'civicrm/contact/search/custom';
+            if ( $this->_action == CRM_Core_Action::UPDATE ) {
+                if ( $this->_contactId ) {
+                    $urlParams .= '&cid=' . $this->_contactId;
+                }
+                $keyName    = '&key';
+                $urlParams .= '&context=fulltext&action=view';
+                $urlString  = 'civicrm/contact/view/contribution';
+            }
+            if ( $qfKey ) $urlParams .= "$keyName=$qfKey";
+            $this->assign( 'searchKey',  $qfKey );
+            $url = CRM_Utils_System::url( $urlString, $urlParams );
             break;
             
         default:
@@ -329,7 +413,7 @@ class CRM_Contribute_Page_Tab extends CRM_Contact_Page_View
             break;
         }
 
-        $session =& CRM_Core_Session::singleton( ); 
+        $session = CRM_Core_Session::singleton( ); 
         $session->pushUserContext( $url );
     }
 }

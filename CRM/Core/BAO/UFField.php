@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -89,7 +90,7 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
         //check if custom data profile field is disabled
         if ( $is_active ) {
             if ( CRM_Core_BAO_UFField::checkUFStatus( $id ) ) {
-                CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_UFField', $id, 'is_active', $is_active );
+                return CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_UFField', $id, 'is_active', $is_active );
             } else {
                 CRM_Core_Session::setStatus(ts('Cannot enable this UF field since the used custom field is disabled.'));
             }
@@ -112,7 +113,7 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
     public static function del($id) 
     { 
         //delete  field field
-        $field = & new CRM_Core_DAO_UFField();
+        $field = new CRM_Core_DAO_UFField();
         $field->id = $id; 
         $field->delete();
         return true;
@@ -129,7 +130,7 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
      */
     public static function duplicateField($params, $ids)
     {
-        $ufField                   =& new CRM_Core_DAO_UFField();
+        $ufField                   = new CRM_Core_DAO_UFField();
         $ufField->uf_group_id      = CRM_Utils_Array::value( 'uf_group', $ids );
         $ufField->field_type       = $params['field_name'][0];
         $ufField->field_name       = $params['field_name'][1]; 
@@ -159,7 +160,7 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
     static function add( &$params, &$ids) 
     {
         // set values for uf field properties and save
-        $ufField                   =& new CRM_Core_DAO_UFField();
+        $ufField                   = new CRM_Core_DAO_UFField();
         $ufField->field_type       = $params['field_name'][0];
         $ufField->field_name       = $params['field_name'][1];
         
@@ -215,7 +216,7 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
     static function setUFField($customFieldId, $is_active) 
     {
         //find the profile id given custom field
-        $ufField =& new CRM_Core_DAO_UFField();
+        $ufField = new CRM_Core_DAO_UFField();
         $ufField->field_name = "custom_".$customFieldId;
         
         $ufField->find();
@@ -238,7 +239,7 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
      */
     static function copy( $old_id, $new_id ) 
     {
-        $ufField =& new CRM_Core_DAO_UFField( );
+        $ufField = new CRM_Core_DAO_UFField( );
         $ufField->uf_group_id = $old_id;
         $ufField->find( );
         while( $ufField->fetch( ) ) {
@@ -262,7 +263,7 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
     function delUFField($customFieldId)
     {
         //find the profile id given custom field id
-        $ufField =& new CRM_Core_DAO_UFField();
+        $ufField = new CRM_Core_DAO_UFField();
         $ufField->field_name = "custom_".$customFieldId;
         
         $ufField->find();
@@ -310,7 +311,6 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
     static function checkUFStatus( $UFFieldId ) 
     {
         $fieldName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFField', $UFFieldId, 'field_name' );
-        
         // return if field is not a custom field
         require_once 'CRM/Core/BAO/CustomField.php';
         if ( !$customFieldId = CRM_Core_BAO_CustomField::getKeyID( $fieldName ) ) {                
@@ -318,9 +318,8 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
         } 
 
         require_once "CRM/Core/DAO/CustomField.php";
-        $customField =& new CRM_Core_DAO_CustomField();
+        $customField = new CRM_Core_DAO_CustomField();
         $customField->id = $customFieldId;
-
         if ( $customField->find(true) ) { // if uf field is custom field
             if ( !$customField->is_active ) {
                 return false;
@@ -344,7 +343,7 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
      */
     static function checkProfileType( $ufGroupId ) 
     {
-        $ufGroup =& new CRM_Core_DAO_UFGroup();
+        $ufGroup = new CRM_Core_DAO_UFGroup();
         $ufGroup->id = $ufGroupId;
         $ufGroup->find( true );
         
@@ -366,6 +365,10 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
             }
         }
 
+        // suppress any subtypes if present
+        require_once "CRM/Contact/BAO/ContactType.php";
+        CRM_Contact_BAO_ContactType::suppressSubTypes( $profileTypes );
+
         $contactTypes = array( 'Contact', 'Individual', 'Household', 'Organization' );
         $components   = array( 'Contribution', 'Participant', 'Membership' );
         $fields = array( );
@@ -382,7 +385,8 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
             if ( count( $profileTypes ) > 1 ) {
                 return true;
             }
-        } else {
+        } else if ( count( $profileTypes ) == 1 ) {
+            // note for subtype case count would be zero
             $profileTypes = array_values( $profileTypes );
             if ( !in_array( $profileTypes[0], $contactTypes ) ) {
                 return true;
@@ -403,14 +407,17 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
      * @acess public
      * @static
      */
-    static function getProfileType( $ufGroupId, $returnMixType = true, $onlyPure = false ) 
+    static function getProfileType( $ufGroupId, $returnMixType = true, $onlyPure = false, $skipComponentType = false ) 
     {
         // profile types
-        $contactTypes = array( 'Contact', 'Individual', 'Household', 'Organization', 'Student' );
+        $contactTypes = array( 'Contact', 'Individual', 'Household', 'Organization' );
+        require_once 'CRM/Contact/BAO/ContactType.php';
+        $subTypes     = CRM_Contact_BAO_ContactType::subTypes( );
+
         $components   = array( 'Contribution', 'Participant', 'Membership' );
 
         require_once 'CRM/Core/DAO/UFGroup.php';
-        $ufGroup =& new CRM_Core_DAO_UFGroup( );
+        $ufGroup = new CRM_Core_DAO_UFGroup( );
         $ufGroup->id          = $ufGroupId;
         $ufGroup->is_active   = 1;        
 
@@ -457,13 +464,24 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
                     $contactTypeCount[] = $value;
                 }
             }
-
-            if ( count( $componentCount ) == 1 && count( $contactTypeCount ) == 1 ) { 
-                // this case if valid profile contact + component
-                 $profileType = $componentCount[0];
-            } elseif( count( $componentCount ) > 1 ) { 
-                // this is mix component profiles
+            // subtype counter
+            $subTypeCount = array( );
+            foreach( $subTypes as $value ) {
+                if ( in_array( $value, $profileTypes ) ) {
+                    $subTypeCount[] = $value;
+                }
+            }
+            if ( !$skipComponentType && count( $componentCount ) == 1 ) {
+                $profileType = $componentCount[0];
+            } else if( count( $componentCount ) > 1 ) {
                 $mixProfileType = $componentCount[1];
+            } else if ( count( $subTypeCount ) == 1 ) {
+                $profileType = $subTypeCount[0];
+            } else if( count( $contactTypeCount ) == 1 ){
+                $profileType = $contactTypeCount[0];
+            } else if( count( $subTypeCount ) > 1 ) {
+                // this is mix subtype profiles
+                $mixProfileType = $subTypeCount[1];
             } else if( count( $contactTypeCount ) > 1 ) {
                 // this is mix contact profiles
                 $mixProfileType = $contactTypeCount[1];
@@ -490,7 +508,7 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
      */
     static function checkProfileGroupType( $ctype ) 
     {
-        $ufGroup =& new CRM_Core_DAO_UFGroup();
+        $ufGroup = new CRM_Core_DAO_UFGroup();
 
         $query = "
 SELECT ufg.id as id

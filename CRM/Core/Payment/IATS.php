@@ -2,9 +2,9 @@
  
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -18,7 +18,8 @@
  | See the Affero General Public License for more details.            |
  |                                                                    |
  | You should have received a copy of the Affero General Public       |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org.  If you have questions about the       |
  | Affero General Public License or the licensing  of CiviCRM,        |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -29,7 +30,7 @@
  * 
  * @package CRM 
  * @author Alan Dixon
- * @copyright CiviCRM LLC (c) 2004-2009 
+ * @copyright CiviCRM LLC (c) 2004-2010 
  * $Id$ 
  * 
  */ 
@@ -50,9 +51,9 @@ class CRM_Core_Payment_IATS extends CRM_Core_Payment {
      */ 
     function __construct( $mode, &$paymentProcessor ) {
         $this->_paymentProcessor = $paymentProcessor;
-        $this->_processorName    = 'IATS';
+        $this->_processorName    = ts('IATS');
 
-        $config =& CRM_Core_Config::singleton( ); // get merchant data from config
+        $config = CRM_Core_Config::singleton( ); // get merchant data from config
         $this->_profile['mode']      = $mode; // live or test
         $this->_profile['webserver'] = parse_url($this->_paymentProcessor['url_site'],PHP_URL_HOST);
         $currencyID                  = $config->defaultCurrency;
@@ -77,8 +78,7 @@ class CRM_Core_Payment_IATS extends CRM_Core_Payment {
         if ( !in_array($params['currencyID'], explode(',',self::CURRENCIES ) ) ) {
             return self::error( 'Invalid currency selection, must be one of '.self::CURRENCIES );
         }
-        $canDollar = ($params['currencyID'] == 'CAD');  //define currency type
-        $isRecur   = ($params['is_recur'] && $params['installments'] > 1);
+        $isRecur   = $params['is_recur'];
         // AgentCode = $this->_paymentProcessor['signature'];
         // Password  = $this->_paymentProcessor['password' ];
         // beginning of modified sample code from IATS php api include IATS supplied api library
@@ -91,7 +91,7 @@ class CRM_Core_Payment_IATS extends CRM_Core_Payment {
             $iatslink1 = new iatslink;
         }
         
-        $iatslink1->setTestMode( $this->_profile['mode'] == 'live' );
+        $iatslink1->setTestMode( $this->_profile['mode'] != 'live' );
         $iatslink1->setWebServer( $this->_profile['webserver'] );
         
         // return self::error($this->_profile['webserver']);
@@ -117,29 +117,40 @@ class CRM_Core_Payment_IATS extends CRM_Core_Payment {
         // send IATS my invoiceID to match things up later
         $iatslink1->setInvoiceNumber($params['invoiceID']);
         
-        if ($canDollar && !$isRecur) {  
-            //Fields setting for one-time Canadian credit card processing
-            $CardHolderName = $params['billing_first_name'].' '.$params['billing_last_name'];
-            $iatslink1->setCardholderName($CardHolderName);
-        } else {    
-            //Fields setting for US credit card processing.
-            $iatslink1->setFirstName($parames['billing_first_name']);
-            $iatslink1->setLastName($params['billing_last_name']);
-            $iatslink1->setStreetAddress($params['street_address']);
-            $iatslink1->setCity($params['city']);
-            $iatslink1->setState($params['state_province']);
-            $iatslink1->setZipCode($params['postal_code']);
-        }
+        // Set billing fields
+        $iatslink1->setFirstName($params['billing_first_name']);
+        $iatslink1->setLastName($params['billing_last_name']);
+        $iatslink1->setStreetAddress($params['street_address']);
+        $iatslink1->setCity($params['city']);
+        $iatslink1->setState($params['state_province']);
+        $iatslink1->setZipCode($params['postal_code']);
         // and now go! ... uses curl to post and retrieve values
         // after various data integrity tests 
         if (!$isRecur) {  // simple version
             // cvv2 only seems to get set for this!
             $iatslink1->setCVV2($params['cvv2']);
+
+            // Allow further manipulation of the arguments via custom hooks, 
+            // before initiating processCreditCard()
+            CRM_Utils_Hook::alterPaymentProcessorParams( $this, $params, $iatslink1 );
+
             $iatslink1->processCreditCard();
         } else { // extra fields for recurring donations
             // implicit - test?: 1 == $params['frequency_interval'];
             $scheduleType  = NULL;
-            $paymentsRecur = $params['installments'] - 1;
+            if ($params['installments']) {
+              $paymentsRecur = $params['installments'] - 1;
+            }
+            else { // handle unspecified installments by setting to 10 years, IATS doesn't allow indefinitely recurring contributions
+              switch($params['frequency_unit']) {
+                case 'week':
+                  $paymentsRecur = 520;
+                case 'month': 
+                  $paymentsRecur = 120;
+              }
+            }
+            // IATS requires end date, calculated here
+
             $startTime     = time(); // to be converted to date format later
             $date          = getdate($startTime);
             
@@ -168,6 +179,11 @@ class CRM_Core_Payment_IATS extends CRM_Core_Payment {
             $iatslink1->setEndDate($endDate);
             $iatslink1->setScheduleType($scheduleType);
             $iatslink1->setScheduleDate($scheduleDate); 
+
+            // Allow further manipulation of the arguments via custom hooks, 
+            // before initiating the curl process
+            CRM_Utils_Hook::alterPaymentProcessorParams( $this, $params, $iatslink1 );
+
             // this next line is the reoccc equiv of processCreditCard
             $iatslink1->createReoccCustomer();
         }
@@ -181,9 +197,16 @@ class CRM_Core_Payment_IATS extends CRM_Core_Payment {
             $trxn_id     = trim($result[1]);
             if ($trxn_result == 'OK') {
                 $params['trxn_id']        = $trxn_id.':'.time();
-                $params['gross_amount'  ] = $amount;
+                $params['gross_amount'] = $amount;
                 return $params;
-            } else {
+            } 
+            // createReoccCustomer() may return other, valid result codes...
+            else if (preg_match('/A\d+/', $trxn_result)) {
+              $params['trxn_id'] = $trxn_result;
+              $params['gross_amount'] = $amount;
+              return $params;
+            }
+            else {
                 return self::error($trxn_id);
             }
         } else {

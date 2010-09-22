@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -50,26 +51,19 @@ class CRM_Contact_Form_Edit_Phone
      * @access public
      * @static
      */
-    static function buildQuickForm( &$form ) {
+    static function buildQuickForm( &$form, $addressBlockCount = null ) {
         
-        //FIXME : &$location, $locationId, $count, $phoneType = null
-        
-        $blockId = ( $form->get( 'Phone_Block_Count' ) ) ? $form->get( 'Phone_Block_Count' ) : 1;
-        
-        //FIXME :
-        $phoneType = null;
-        if ( !$phoneType ) {
-            $phoneType = CRM_Core_PseudoConstant::phoneType( );
+        // passing this via the session is AWFUL. we need to fix this
+        if ( ! $addressBlockCount ) {
+            $blockId = ( $form->get( 'Phone_Block_Count' ) ) ? $form->get( 'Phone_Block_Count' ) : 1;
+        } else {
+            $blockId = $addressBlockCount;
         }
         
-        // only add hidden element when processing first block 
-        // for remaining blocks we'll calculate at run time w/ jQuery. 
-        if ( $blockId == 1 ) {
-            $form->addElement( 'hidden', 'hidden_Phone_Instances', $blockId, array( 'id' => 'hidden_Phone_Instances') );
-        }
+        $form->applyFilter('__ALL__','trim');
         
         //phone type select
-        $form->addElement('select', "phone[$blockId][phone_type_id]", ts('Phone'), $phoneType, null );
+        $form->addElement('select', "phone[$blockId][phone_type_id]", ts('Phone'), CRM_Core_PseudoConstant::phoneType( ) );
         
 		//phone box
 		$form->addElement('text', "phone[$blockId][phone]", ts('Phone'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Phone', 'phone'));
@@ -79,14 +73,10 @@ class CRM_Contact_Form_Edit_Phone
 			$form->addElement('select',"phone[$blockId][location_type_id]", '' , CRM_Core_PseudoConstant::locationType());
 			
 			//is_Primary radio
-			$js = array( 'id' => "Phone_".$blockId."_IsPrimary", 'onClick' => 'singleSelect( "Phone",'. $blockId . ', "IsPrimary" );');
-			$choice[] =& $form->createElement( 'radio', null, '', null, '1', $js );
-			$form->addGroup( $choice, "phone[$blockId][is_primary]" );
-		}              
+			$js = array( 'id' => "Phone_".$blockId."_IsPrimary", 'onClick' => 'singleSelect( this.id );');
+            $form->addElement( 'radio', "phone[$blockId][is_primary]", '', '', '1', $js );
+		}           
         // TODO: set this up as a group, we need a valid phone_type_id if we have a  phone number
         // $form->addRule( "location[$locationId][phone][$locationId][phone]", ts('Phone number is not valid.'), 'phone' );
     }
 }
-
-
-

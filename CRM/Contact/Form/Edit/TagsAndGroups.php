@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,10 +29,16 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
+
+/*
+ * variable to assign value to tpl
+ *
+ */
+$_tagGroup = null;
 
 class CRM_Contact_Form_Edit_TagsandGroups
 {
@@ -65,7 +72,7 @@ class CRM_Contact_Form_Edit_TagsandGroups
                                        $type = CRM_Contact_Form_Edit_TagsandGroups::ALL,
                                        $visibility = false,
                                        $isRequired = null,
-                                       $groupName = 'Groups(s)',
+                                       $groupName = 'Group(s)',
                                        $tagName   = 'Tag(s)',
                                        $fieldName = null ) 
     {
@@ -94,9 +101,10 @@ class CRM_Contact_Form_Edit_TagsandGroups
             
             if ( $groupID || !empty( $group ) ) {
                 $sql = "
-    SELECT id, title, description, visibility
-    FROM   civicrm_group
-    WHERE  id $ids
+    SELECT   id, title, description, visibility
+    FROM     civicrm_group
+    WHERE    id $ids
+    ORDER BY title
     ";
                 $dao = CRM_Core_DAO::executeQuery( $sql );
                 $attributes['skiplabel'] = true;
@@ -106,12 +114,12 @@ class CRM_Contact_Form_Edit_TagsandGroups
                          $dao->visibility == 'User and User Admin Only' ) {
                         continue;
                     }
-                    $tagGroup[$fName][$dao->id]['description'] = $dao->description;
+                    $form->_tagGroup[$fName][$dao->id]['description'] = $dao->description;
                     $elements[] =& $form->addElement('advcheckbox', $dao->id, null, $dao->title, $attributes );
                 }
             
     	        if ( ! empty( $elements ) ) {
-                    $form->addGroup( $elements, $fName, $groupName, '&nbsp;' );
+                    $form->addGroup( $elements, $fName, $groupName, '&nbsp;<br />' );
                     $form->assign('groupCount', count($elements));
                     if ( $isRequired ) {
                         $form->addRule( $fName , ts('%1 is a required field.', array(1 => $groupName)) , 'required');   
@@ -125,9 +133,11 @@ class CRM_Contact_Form_Edit_TagsandGroups
             if ($fieldName) {
                 $fName = $fieldName; 
             }
-            $tagGroup[$fName] = 1;
+            $form->_tagGroup[$fName] = 1;
             $elements = array( );
-            $tag =& CRM_Core_PseudoConstant::tag  ( );
+            require_once 'CRM/Core/BAO/Tag.php';            
+            $tag = CRM_Core_BAO_Tag::getTags( );
+            
             foreach ($tag as $id => $name) {
                 $elements[] =& HTML_QuickForm::createElement('checkbox', $id, null, $name);
             }
@@ -139,8 +149,15 @@ class CRM_Contact_Form_Edit_TagsandGroups
             if ( $isRequired ) {
                 $form->addRule( $fName , ts('%1 is a required field.', array(1 => $tagName)) , 'required');   
             }
+            
+            // build tag widget
+            require_once 'CRM/Core/Form/Tag.php';
+            require_once 'CRM/Core/BAO/Tag.php';
+            $parentNames = CRM_Core_BAO_Tag::getTagSet( 'civicrm_contact' );
+            
+            CRM_Core_Form_Tag::buildQuickForm( $form, $parentNames, 'civicrm_contact', $form->_contactId, false, true );
         }
-        $form->assign('tagGroup', $tagGroup); 
+        $form->assign('tagGroup', $form->_tagGroup); 
     }
 
     /**
@@ -155,7 +172,7 @@ class CRM_Contact_Form_Edit_TagsandGroups
      * @access public
      * @static
      */
-    static function setDefaults( $id, &$defaults, $type = CRM_Contact_Form_GroupTag::ALL, $fieldName = null ) 
+    static function setDefaults( $id, &$defaults, $type = CRM_Contact_Form_Edit_TagsandGroups::ALL, $fieldName = null ) 
     {
         $type = (int ) $type; 
         if ( $type & self::GROUP ) { 
@@ -199,8 +216,9 @@ class CRM_Contact_Form_Edit_TagsandGroups
      */
     function setDefaultValues( &$form, &$defaults ) 
     {
+        $contactEditOptions = $form->get( 'contactEditOptions' );
         if ( $form->_action & CRM_Core_Action::ADD ) {
-            if ( array_key_exists( 'TagsAndGroups', $form->_editOptions ) ) {
+            if ( array_key_exists( 'TagsAndGroups', $contactEditOptions ) ) {
                 // set group and tag defaults if any
                 if ( $form->_gid ) {
                     $defaults['group'][$form->_gid] = 1;
@@ -210,7 +228,7 @@ class CRM_Contact_Form_Edit_TagsandGroups
                 }
             }
         } else {
-            if ( array_key_exists( 'TagsAndGroups', $form->_editOptions ) ) {
+            if ( array_key_exists( 'TagsAndGroups', $contactEditOptions ) ) {
                 // set the group and tag ids
                 self::setDefaults( $form->_contactId, $defaults, self::ALL );
             }

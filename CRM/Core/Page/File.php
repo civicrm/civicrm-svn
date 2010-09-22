@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -65,21 +66,18 @@ class CRM_Core_Page_File extends CRM_Core_Page
                 CRM_Core_BAO_File::delete($id, $eid, $fid);
                 CRM_Core_Session::setStatus( ts('The attached file has been deleted.') );
                 
-                $session =& CRM_Core_Session::singleton();   
+                $session = CRM_Core_Session::singleton();   
                 $toUrl   = $session->popUserContext();
                 CRM_Utils_System::redirect($toUrl);
             } else {
-                $wrapper =& new CRM_Utils_Wrapper( );
+                $wrapper = new CRM_Utils_Wrapper( );
                 return $wrapper->run( 'CRM_Custom_Form_DeleteFile', ts('Domain Information Page'), null);
             }
         } else {
-            if ( CRM_Core_Permission::access( 'Gcc' ) ) {
-                // hack file name for gcc
-                require_once 'CRM/Gcc/Form/File.php';
-                $path = CRM_Gcc_Form_File::getFileName($path);
-            }
-
-            CRM_Utils_System::download( basename( $path ), $mimeType, $buffer );
+            require_once 'CRM/Utils/File.php';
+            CRM_Utils_System::download( CRM_Utils_File::cleanFileName ( basename( $path ) ),
+                                        $mimeType,
+                                        $buffer );
         }
     }
 }

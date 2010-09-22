@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -53,24 +54,20 @@ class CRM_Admin_Form_Preferences_Address extends CRM_Admin_Form_Preferences
 
     function setDefaultValues( ) {
         $defaults = array( );
-
-        $defaults['location_count'] =
-            isset( $this->_config->location_count ) ? $this->_config->location_count : 1;
-
         $defaults['address_standardization_provider'] = $this->_config->address_standardization_provider;
         $defaults['address_standardization_userid'] = $this->_config->address_standardization_userid;
         $defaults['address_standardization_url'] = $this->_config->address_standardization_url;
-
+        
         
         $this->addressSequence = isset($newSequence) ? $newSequence : "";
 
         if ( empty( $this->_config->address_format ) ) {
             $defaults['address_format'] = "
-{street_address}
-{supplemental_address_1}
-{supplemental_address_2}
-{city}{, }{state_province}{ }{postal_code}
-{country}
+{contact.street_address}
+{contact.supplemental_address_1}
+{contact.supplemental_address_2}
+{contact.city}{, }{contact.state_province}{ }{contact.postal_code}
+{contact.country}
 ";
         } else {
             $defaults['address_format'] = $this->_config->address_format;
@@ -78,13 +75,12 @@ class CRM_Admin_Form_Preferences_Address extends CRM_Admin_Form_Preferences
 
         if ( empty( $this->_config->mailing_format ) ) {
             $defaults['mailing_format'] = "
-{addressee}
-{contact_name}
-<{street_address}
-{supplemental_address_1}
-{supplemental_address_2}
-{city}{, }{state_province}{ }{postal_code}
-{country}
+{contact.addressee}
+{contact.street_address}
+{contact.supplemental_address_1}
+{contact.supplemental_address_2}
+{contact.city}{, }{contact.state_province}{ }{contact.postal_code}
+{contact.country}
 ";
         } else {
             $defaults['mailing_format'] = $this->_config->mailing_format;
@@ -104,12 +100,7 @@ class CRM_Admin_Form_Preferences_Address extends CRM_Admin_Form_Preferences
      */
     public function buildQuickForm( ) 
     {
-        $this->add('text',
-                   'location_count',
-                   ts('Number of Locations'),
-                   CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_Preferences', 'location_count' ) );
-        $this->addRule( 'location_count', ts( 'Location count must be a positive integer (e.g. 1 or 2 or ...).' ), 'positiveInteger' );
-
+        $this->applyFilter('__ALL__', 'trim');
         // address formatting options
         $this->addElement('textarea','mailing_format', ts('Mailing Label Format'));  
         $this->addElement('textarea','address_format', ts('Display Format'));  
@@ -124,7 +115,7 @@ class CRM_Admin_Form_Preferences_Address extends CRM_Admin_Form_Preferences
         parent::buildQuickForm();
     }
 
-    static function formRule( &$fields ) {
+    static function formRule( $fields ) {
         $p = $fields['address_standardization_provider'] ;
         $u = $fields['address_standardization_userid'  ] ;
         $w = $fields['address_standardization_url'     ] ;

@@ -1,15 +1,15 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -17,7 +17,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -27,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -74,8 +75,11 @@ class CRM_Case_Selector_Search extends CRM_Core_Selector_Base
                                 'display_name',
                                 'case_id',   
                                 'case_status_id', 
+                                'case_status', 
                                 'case_type_id',
-                                'case_role'
+                                'case_type',
+                                'case_role',
+                                'phone',
                                 );
 
     /** 
@@ -164,7 +168,7 @@ class CRM_Case_Selector_Search extends CRM_Core_Selector_Base
         // type of selector
         $this->_action = $action;
 
-        $this->_query =& new CRM_Contact_BAO_Query( $this->_queryParams, null, null, false, false,
+        $this->_query = new CRM_Contact_BAO_Query( $this->_queryParams, null, null, false, false,
                                                     CRM_Contact_BAO_Query::MODE_CASE);
 
         $this->_query->_distinctComponentClause = " DISTINCT ( civicrm_case.id )";
@@ -183,13 +187,15 @@ class CRM_Case_Selector_Search extends CRM_Core_Selector_Base
      * @access public
      *
      */
-    static function &links( $isDeleted = false )
+    static function &links( $isDeleted = false, $key = null )
     {
+        $extraParams = ( $key ) ? "&key={$key}" : null;
+        
         if ( $isDeleted ) {
             self::$_links = array( CRM_Core_Action::RENEW  => array(
                                                                     'name'     => ts('Restore'),
                                                                     'url'      => 'civicrm/contact/view/case',
-                                                                    'qs'       => 'reset=1&action=renew&id=%%id%%&cid=%%cid%%&context=%%cxt%%',
+                                                                    'qs'       => 'reset=1&action=renew&id=%%id%%&cid=%%cid%%&context=%%cxt%%'.$extraParams,
                                                                     'title'    => ts('Restore Case'),
                                                                     ),                                  
                                    
@@ -199,14 +205,20 @@ class CRM_Case_Selector_Search extends CRM_Core_Selector_Base
                                   CRM_Core_Action::VIEW   => array(
                                                                    'name'     => ts('Manage Case'),
                                                                    'url'      => 'civicrm/contact/view/case',
-                                                                   'qs'       => 'reset=1&id=%%id%%&cid=%%cid%%&action=view&context=%%cxt%%&selectedChild=case',
+                                                                   'qs'       => 'reset=1&id=%%id%%&cid=%%cid%%&action=view&context=%%cxt%%&selectedChild=case'.$extraParams,
                                                                    'title'    => ts('Manage Case'),
                                                                    ),
                                   CRM_Core_Action::DELETE => array(
                                                                    'name'     => ts('Delete'),
                                                                    'url'      => 'civicrm/contact/view/case',
-                                                                   'qs'       => 'reset=1&action=delete&id=%%id%%&cid=%%cid%%&context=%%cxt%%',
+                                                                   'qs'       => 'reset=1&action=delete&id=%%id%%&cid=%%cid%%&context=%%cxt%%'.$extraParams,
                                                                    'title'    => ts('Delete Case')
+                                                                   ),
+                                   CRM_Core_Action::UPDATE => array(
+                                                                   'name'     => ts('Assign to Another Client'),
+                                                                   'url'      => 'civicrm/contact/view/case/editClient',
+                                                                   'qs'       => 'reset=1&action=update&id=%%id%%&cid=%%cid%%&context=%%cxt%%'.$extraParams,
+                                                                   'title'    => ts('Assign to Another Client')
                                                                    )
                                   );
         }    
@@ -310,22 +322,27 @@ class CRM_Case_Selector_Search extends CRM_Core_Selector_Base
              $scheduledInfo['case_deleted'] = $result->case_deleted; 
              $row['checkbox'] = CRM_Core_Form::CB_PREFIX . $result->case_id;
              
-             $row['action']   = CRM_Core_Action::formLink( self::links( $isDeleted ), $mask ,
+             $row['action']   = CRM_Core_Action::formLink( self::links( $isDeleted, $this->_key ), 
+                                                           $mask,
                                                            array( 'id'  => $result->case_id,
                                                                   'cid' => $result->contact_id,
                                                                   'cxt' => $this->_context ) );
              
              require_once( 'CRM/Contact/BAO/Contact/Utils.php' );
-             $row['contact_type' ] = CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_type );
-             
+             $row['contact_type'] = 
+                 CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_sub_type ? 
+                                                          $result->contact_sub_type : $result->contact_type );
+                          
              //adding case manager to case selector.CRM-4510.
-             $caseManagerContact = CRM_Case_BAO_Case::getCaseManagerContact( $result->case_type_id, $result->case_id );
+             $caseType = CRM_Core_OptionGroup::getValue( 'case_type', $result->case_type, 'label', 'String', 'name' );
+             $caseManagerContact = CRM_Case_BAO_Case::getCaseManagerContact( $caseType, $result->case_id );
+
              if ( !empty($caseManagerContact) ) {
                  $row['casemanager_id'] = CRM_Utils_Array::value('casemanager_id', $caseManagerContact );
                  $row['casemanager'   ] = CRM_Utils_Array::value('casemanager'   , $caseManagerContact );              
              } 
 
-             if ( in_array($result->case_status_id, $caseStatus) ) {
+             if ( array_key_exists( $result->case_status_id, $caseStatus ) ) {
                  $row['class'] = "status-urgent";
              } else {
                  $row['class'] = "status-normal";

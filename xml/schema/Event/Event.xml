@@ -435,19 +435,19 @@
       <name>has_waitlist</name>
       <type>boolean</type>
       <comment>Whether the event has waitlist support.</comment>
-      <add>2.3</add>
+      <add>3.0</add>
   </field>
   <field>
       <name>requires_approval</name>
       <type>boolean</type>
       <comment>Whether participants require approval before they can finish registering.</comment>
-      <add>2.3</add>
+      <add>3.0</add>
   </field>
   <field>
       <name>expiration_time</name>
       <type>int unsigned</type>
       <comment>Expire pending but unconfirmed registrations after this many hours.</comment>
-      <add>2.3</add>
+      <add>3.0</add>
   </field>
   <field>
       <name>waitlist_text</name>
@@ -457,7 +457,7 @@
       <cols>60</cols>
       <localizable>true</localizable>
       <comment>Text to display when the event is full, but participants can signup for a waitlist.</comment>
-      <add>2.3</add>
+      <add>3.0</add>
   </field>
   <field>
       <name>approval_req_text</name>
@@ -467,13 +467,14 @@
       <cols>60</cols>
       <localizable>true</localizable>
       <comment>Text to display when the approval is required to complete registration for an event.</comment>
-      <add>2.3</add>
+      <add>3.0</add>
   </field>
   <field>
       <name>is_template</name>
       <type>boolean</type>
+      <default>0</default>
       <comment>whether the event has template</comment>
-      <add>2.3</add>
+      <add>3.0</add>
   </field>
   <field>        
       <name>template_title</name>     
@@ -485,6 +486,26 @@
       <length>255</length>  
       <localizable>true</localizable>
       <comment>Event Template Title</comment>
-      <add>2.3</add>     
+      <add>3.0</add>     
   </field>
- </table>
+  <field>
+      <name>created_id</name>
+      <type>int unsigned</type>
+      <comment>FK to civicrm_contact, who created this event</comment>
+      <add>3.0</add>
+  </field>
+  <foreignKey>
+      <name>created_id</name>
+      <table>civicrm_contact</table>
+      <key>id</key>
+      <add>3.0</add>
+      <onDelete>SET NULL</onDelete>
+  </foreignKey>
+  <field>
+      <name>created_date</name>
+      <type>datetime</type>
+      <title>Event Created Date</title>
+      <comment>Date and time that event was created.</comment>
+      <add>3.0</add>
+  </field>
+</table>

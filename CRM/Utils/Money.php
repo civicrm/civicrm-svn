@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -59,19 +60,33 @@ class CRM_Utils_Money {
      *
      * @static
      */
-    static function format($amount, $currency = null, $format = null)
+    static function format($amount, $currency = null, $format = null, $onlyNumber = false )
     {
+
         if ( CRM_Utils_System::isNull( $amount ) ) {
             return '';
         }
 
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
 
+        if (!$format) {
+            $format = $config->moneyformat;
+        }
+
+        // money_format() exists only in certain PHP install (CRM-650)
+        if (is_numeric($amount) and function_exists('money_format')) {
+            $amount = money_format($config->moneyvalueformat, $amount);
+        }
+
+        if ( $onlyNumber ) {
+            return $amount;
+        }
+        
         if ( !self::$_currencySymbols ) {
             require_once "CRM/Core/PseudoConstant.php";
             $currencySymbolName = CRM_Core_PseudoConstant::currencySymbols( 'name' );
             $currencySymbol     = CRM_Core_PseudoConstant::currencySymbols( );
-            
+           
             self::$_currencySymbols =
                 array_combine( $currencySymbolName, $currencySymbol );
         }
@@ -84,17 +99,31 @@ class CRM_Utils_Money {
             $format = $config->moneyformat;
         }
 
+        setlocale(LC_MONETARY, 'en_US.utf8', 'en_US', 'en_US.utf8', 'en_US', 'C');
         // money_format() exists only in certain PHP install (CRM-650)
-        if (is_numeric($amount) and function_exists('money_format')) {
+        if ( is_numeric($amount) &&
+             function_exists('money_format') ) {
             $amount = money_format($config->moneyvalueformat, $amount);
         }
+  
+        $rep = array( ',' => $config->monetaryThousandSeparator,
+                      '.' => $config->monetaryDecimalPoint );
+
+        // If it contains tags, means that HTML was passed and the 
+        // amount is already converted properly,
+        // so don't mess with it again.
+        if ( strip_tags($amount) === $amount ) {
+            $money = strtr($amount, $rep);
+        } else {
+            $money = $amount;
+        }
+
 
         $replacements = array(
-                              '%a' => $amount,
+                              '%a' => $money,
                               '%C' => $currency,
                               '%c' => CRM_Utils_Array::value($currency, self::$_currencySymbols, $currency),
                               );
-
         return strtr($format, $replacements);
     }
 

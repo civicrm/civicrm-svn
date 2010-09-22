@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -47,7 +48,7 @@ class CRM_Core_Key {
      */
     static function privateKey( ) {
         if ( ! self::$_key ) {
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             self::$_key     =  $session->get( 'qfPrivateKey' );
             if ( ! self::$_key ) {
                 self::$_key =
@@ -61,7 +62,7 @@ class CRM_Core_Key {
 
     static function sessionID( ) {
         if ( ! self::$_sessionID ) {
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             self::$_sessionID = $session->get( 'qfSessionID' );
             if ( ! self::$_sessionID ) {
                 self::$_sessionID = session_id( );
@@ -123,6 +124,25 @@ class CRM_Core_Key {
         return $key;
     }
 
+    static function valid( $key ) {
+        // a valid key is a 32 digit hex number
+        // followed by an optional _ and a number between 1 and 10000
+        if ( strpos( '_', $key ) !== false ) {
+            list( $hash, $seq ) = explode( '_', $key );
+
+            // ensure seq is between 1 and 10000
+            if ( ! is_numeric( $seq ) ||
+                 $seq < 1 ||
+                 $seq > 10000 ) {
+                return false;
+            }
+        } else {
+            $hash = $key;
+        }
+
+        // ensure that hash is a 32 digit hex number
+        return preg_match( '#[0-9a-f]{32}#i', $hash ) ? true : false;
+    }
 }
 
 

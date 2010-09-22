@@ -52,7 +52,7 @@ ALTER TABLE `civicrm_contribution`
     DROP INDEX UI_contrib_trxn_id_domain_id,
     DROP INDEX UI_contrib_invoice_id_domain_id;
 
-ALTER TABLE `civicrm_contribution` DROP domain_id;  
+ALTER TABLE `civicrm_contribution` DROP domain_id;
 
 -- /*******************************************************
 -- *

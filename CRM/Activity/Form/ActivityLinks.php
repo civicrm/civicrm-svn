@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,13 +29,12 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
 
 require_once 'CRM/Core/Form.php';
-require_once 'CRM/Core/BAO/Preferences.php';
 
 /**
  * This class generates form components for Activity Links
@@ -42,31 +42,31 @@ require_once 'CRM/Core/BAO/Preferences.php';
  */
 class CRM_Activity_Form_ActivityLinks extends CRM_Core_Form
 {
-
-    public function buildQuickForm( ) 
-    {
-        $this->applyFilter('__ALL__', 'trim');                                                                       
+    public function buildQuickForm( ) {
         $contactId = CRM_Utils_Request::retrieve( 'cid' , 'Positive', $this );
-        
         $urlParams = "action=add&reset=1&cid={$contactId}&selectedChild=activity&atype=";
-        
+    
         $url = CRM_Utils_System::url( 'civicrm/contact/view/activity', 
                                       $urlParams, false, null, false );
  
-        $activityType = CRM_Core_PseudoConstant::activityType( false );
-        
-        $this->assign( 'emailSetting', false );
+        $activityTypes = array( );
         require_once 'CRM/Utils/Mail.php';
-        if ( CRM_Utils_Mail::validOutBoundMail() ) { 
-            $this->assign( 'emailSetting', true );
+        if ( CRM_Utils_Mail::validOutBoundMail() && $contactId ) { 
+            require_once 'CRM/Contact/BAO/Contact.php';
+            list( $name, $email, $doNotEmail, $onHold, $isDeseased ) = CRM_Contact_BAO_Contact::getContactDetails( $contactId );
+            if ( !$doNotEmail && $email && !$isDeseased ) {
+                $activityTypes = array( '3' => ts('Send an Email') );
+            }
         }
-        $this->applyFilter('__ALL__', 'trim');
-        $this->add('select', 'other_activity', ts('Other Activities'),
-                   array('' => ts('Register Activity')) + $activityType,
-                   false, array('onchange' => "if (this.value) window.location='{$url}'+ this.value; else return false"));
+        
+        // this returns activity types sorted by weight
+        $otherTypes = CRM_Core_PseudoConstant::activityType( false );
+        
+        $activityTypes += $otherTypes;
+        
+        $this->assign( 'activityTypes', $activityTypes );
+        $this->assign( 'url', $url );
 
         $this->assign( 'suppressForm', true );
     }
 }
-
-

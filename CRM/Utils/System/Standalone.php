@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -48,7 +49,11 @@ class CRM_Utils_System_Standalone {
      * @access public
      */
     function setTitle( $title, $pageTitle = null ) {
-        $template =& CRM_Core_Smarty::singleton( );
+        if ( ! $pageTitle ) {
+            $pageTitle = $title;
+        }
+        
+        $template = CRM_Core_Smarty::singleton( );
         $template->assign( 'pageTitle', $pageTitle );
         $template->assign( 'docTitle',  $title );
         return;
@@ -86,8 +91,17 @@ class CRM_Utils_System_Standalone {
         if ( !$allowLogin ) {
             return false;
         }
-        
-        // ask something about the speed of unladen swallows
+
+        // see if the password matches the API key
+        require_once 'CRM/Contact/BAO/Contact.php';
+        $dao = CRM_Contact_BAO_Contact::matchContactOnOpenId( $name );
+        require_once 'CRM/Core/DAO.php';
+        $api_key = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $dao->contact_id, 'api_key');
+        if ( $api_key != $password ) {
+            return false;
+        }
+
+        // everything looks good, setup the session and return
         require_once 'CRM/Standalone/User.php';
         $user = new CRM_Standalone_User( $name );
         require_once 'CRM/Core/BAO/UFMatch.php';
@@ -109,7 +123,7 @@ class CRM_Utils_System_Standalone {
      * @static
      */
     static function appendBreadCrumb( $breadCrumbs ) {
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         $bc = $template->get_template_vars( 'breadcrumb' );
 
         if ( is_array( $breadCrumbs ) ) {
@@ -152,7 +166,7 @@ class CRM_Utils_System_Standalone {
      * @static
      */
     static function addHTMLHead( $head ) {
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         $template->append( 'pageHTMLHead', $head );
         return;
     }
@@ -207,7 +221,7 @@ class CRM_Utils_System_Standalone {
      *
      */
     function url($path = null, $query = null, $absolute = true, $fragment = null, $htmlize = true ) {
-        $config        =& CRM_Core_Config::singleton( );
+        $config        = CRM_Core_Config::singleton( );
         static $script = 'index.php';
 
         if (isset($fragment)) {
@@ -307,6 +321,36 @@ class CRM_Utils_System_Standalone {
         session_destroy();
         header("Location:index.php");
     }
+
+    /**
+     * Get the locale set in the hosting CMS
+     * @return null  as the language is set elsewhere
+     */
+    static function getUFLocale()
+    {
+        return null;
+    }
+
+    /**
+     * check is user logged in.
+     *
+     * @return boolean true/false.
+     */
+    public static function isUserLoggedIn( ) {
+        return true;
+    }
+    
+    /**
+     * Get currently logged in user uf id.
+     *
+     * @return int logged in user uf id.
+     */
+    public static function getLoggedInUfID( ) {
+        //FIXME :
+        $session = CRM_Core_session::singleton( );
+        return $session->get( 'ufID' );
+    }
+    
 }
 
 

@@ -1,12 +1,39 @@
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
 {* Event Import Wizard - Step 4 (summary of import results AFTER actual data loading) *}
 {* @var $form Contains the array for the form elements and other form associated information assigned to the template by the controller *}
+
+<div class="crm-block crm-form-block crm-event-import-summary-form-block">
 
  {* WizardHeader.tpl provides visual display of steps thru the wizard as well as title for current step *}
  {include file="CRM/common/WizardHeader.tpl"}
  
- <div id="help">
+<div id="help">
     <p>
-    {ts}<strong>Import has completed successfully.</strong> The information below summarizes the results.{/ts}
+    <strong>{ts}Import has completed successfully.{/ts}</strong> {ts}The information below summarizes the results.{/ts}
     </p>
     
    {if $unMatchCount }
@@ -45,7 +72,10 @@
         </p>
     {/if}
  </div>
-    
+ 
+<div class="crm-submit-buttons">
+    {include file="CRM/common/formButtons.tpl" location="top"}
+</div> 
  {* Summary of Import Results (record counts) *}
  <table id="summary-counts" class="report">
     <tr><td class="label">{ts}Total Rows{/ts}</td>
@@ -104,6 +134,7 @@
 
  </table>
  
- <div id="crm-submit-buttons">
-    {$form.buttons.html}
+ <div class="crm-submit-buttons">
+    {include file="CRM/common/formButtons.tpl" location="bottom"}
  </div>
+</div>

@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -57,7 +58,9 @@ class CRM_Export_Form_Select extends CRM_Core_Form
         MEMBER_EXPORT      = 3,
         EVENT_EXPORT       = 4,
         PLEDGE_EXPORT      = 5,
-        CASE_EXPORT        = 6;
+        CASE_EXPORT        = 6,
+        GRANT_EXPORT       = 7,
+        ACTIVITY_EXPORT    = 8;
 
     /**
      * current export mode
@@ -65,6 +68,8 @@ class CRM_Export_Form_Select extends CRM_Core_Form
      * @var int
      */
     public $_exportMode;
+    
+    public $_componentTable;
     
     /**
      * build all the data structures needed to build the form
@@ -99,12 +104,12 @@ class CRM_Export_Form_Select extends CRM_Core_Form
             $stateMachine  =& $this->controller->getStateMachine( );
             $formName      = CRM_Utils_System::getClassName($stateMachine);
             $componentName = explode( '_', $formName );
-            $components    = array( 'Contribute', 'Member', 'Event', 'Pledge', 'Case' );
+            $components    = array( 'Contribute', 'Member', 'Event', 'Pledge', 'Case', 'Grant', 'Activity' );
             
             if ( in_array( $componentName[1], $components ) ) {
                 eval( '$this->_exportMode = self::' . strtoupper( $componentName[1] ) . '_EXPORT;');
                 require_once "CRM/{$componentName[1]}/Form/Task.php";
-                eval('CRM_' . $componentName[1] . '_Form_Task::preprocess();');
+                eval('CRM_' . $componentName[1] . '_Form_Task::preProcessCommon( $this, true );');
                 $values = $this->controller->exportValues( 'Search' ); 
             } else {
                 $values = $this->controller->exportValues( 'Basic' ); 
@@ -118,14 +123,23 @@ class CRM_Export_Form_Select extends CRM_Core_Form
             $taskName = $contactTasks[$this->_task]; 
             
             require_once "CRM/Contact/Form/Task.php";
-            CRM_Contact_Form_Task::preprocess();
+            CRM_Contact_Form_Task::preProcessCommon( $this, true );
         } else {
             $this->assign( 'taskName', "Export $componentName[1]" ); 
             eval( '$componentTasks = CRM_'. $componentName[1] .'_Task::tasks();' );
             $taskName = $componentTasks[$this->_task];
         }
 
-        $this->assign( 'totalSelectedRecords', count( $this->_componentIds ) ); 
+        if ( $this->_componentTable ) {
+            $query = "
+SELECT count(*)
+FROM   {$this->_componentTable}
+";
+            $totalSelectedRecords = CRM_Core_DAO::singleValueQuery( $query );
+        } else {
+            $totalSelectedRecords = count( $this->_componentIds );
+        }
+        $this->assign( 'totalSelectedRecords', $totalSelectedRecords );
         $this->assign('taskName', $taskName);
 
         // all records actions = save a search 
@@ -138,6 +152,7 @@ class CRM_Export_Form_Select extends CRM_Core_Form
         $this->set( 'selectAll' , $this->_selectAll  );
         $this->set( 'exportMode' , $this->_exportMode );
         $this->set( 'componentClause', $this->_componentClause );
+        $this->set( 'componentTable', $this->_componentTable );
     }
 
 
@@ -150,7 +165,7 @@ class CRM_Export_Form_Select extends CRM_Core_Form
     public function buildQuickForm( ) 
     {
         //export option
-        $exportoptions = array();        
+        $exportOptions = $mergeHousehold = $mergeAddress = array();        
         $exportOptions[] = HTML_QuickForm::createElement('radio',
                                                          null, null,
                                                          ts('Export PRIMARY fields'),
@@ -162,7 +177,21 @@ class CRM_Export_Form_Select extends CRM_Core_Form
                                                          self::EXPORT_SELECTED,
                                                          array( 'onClick' => 'showMappingOption( );' ));
 
-        $this->addGroup($exportOptions, 'exportOption', ts('Export Type'), '<br/>');
+        $mergeAddress[] = HTML_QuickForm::createElement( 'advcheckbox', 
+                                                         'merge_same_address', 
+                                                         null, 
+                                                         ts('Merge Contacts with the Same Address'));
+        $mergeHousehold[] = HTML_QuickForm::createElement( 'advcheckbox', 
+                                                           'merge_same_household', 
+                                                           null, 
+                                                           ts('Merge Household Members into their Households'));
+        
+        $this->addGroup( $exportOptions, 'exportOption', ts('Export Type'), '<br/>' );
+
+        if ( $this->_exportMode == self::CONTACT_EXPORT ) {
+            $this->addGroup( $mergeAddress, 'merge_same_address', ts('Merge Same Address'), '<br/>');
+            $this->addGroup( $mergeHousehold, 'merge_same_household', ts('Merge Same Household'), '<br/>');
+        }
         
         $this->buildMapping( );
 
@@ -188,6 +217,8 @@ class CRM_Export_Form_Select extends CRM_Core_Form
     public function postProcess( ) 
     {
         $exportOption = $this->controller->exportValue( $this->_name, 'exportOption' ); 
+        $merge_same_address = $this->controller->exportValue( $this->_name, 'merge_same_address' );
+        $merge_same_household = $this->controller->exportValue( $this->_name, 'merge_same_household' );
 
         $mappingId = $this->controller->exportValue( $this->_name, 'mapping' ); 
         if ( $mappingId ) {
@@ -195,7 +226,18 @@ class CRM_Export_Form_Select extends CRM_Core_Form
         } else {
             $this->set('mappingId', null);
         }
-
+        
+        $mergeSameAddress = $mergeSameHousehold = false;
+        if ( $merge_same_address['merge_same_address'] == 1 ) {
+            $mergeSameAddress = true;
+        }
+        $this->set('mergeSameAddress', $mergeSameAddress );
+        
+        if ( $merge_same_household['merge_same_household'] == 1 ) {
+            $mergeSameHousehold = true;
+        }
+        $this->set('mergeSameHousehold', $mergeSameHousehold );
+        
         if ( $exportOption == self::EXPORT_ALL ) {
             require_once "CRM/Export/BAO/Export.php";
             CRM_Export_BAO_Export::exportComponents( $this->_selectAll,
@@ -205,7 +247,10 @@ class CRM_Export_Form_Select extends CRM_Core_Form
                                                      null,
                                                      $this->get( 'returnProperties' ),
                                                      $this->_exportMode,
-                                                     $this->_componentClause
+                                                     $this->_componentClause,
+                                                     $this->_componentTable,
+                                                     $mergeSameAddress,
+                                                     $mergeSameHousehold
                                                      );
         }
         
@@ -228,28 +273,41 @@ class CRM_Export_Form_Select extends CRM_Core_Form
      *
      */
     function buildMapping( ) 
-    {
+    { 
         switch ( $this->_exportMode ) {
         case CRM_Export_Form_Select::CONTACT_EXPORT : 
             $exportType = 'Export Contact';
             break;
+            
         case CRM_Export_Form_Select::CONTRIBUTE_EXPORT : 
             $exportType = 'Export Contribution';
             break;
+            
         case CRM_Export_Form_Select::MEMBER_EXPORT : 
             $exportType = 'Export Membership';
             break;
+            
         case CRM_Export_Form_Select::EVENT_EXPORT : 
             $exportType = 'Export Participant';
             break;
+            
         case CRM_Export_Form_Select::PLEDGE_EXPORT : 
-            $exportType = 'Export Participant';
+            $exportType = 'Export Pledge';
             break;
+            
         case CRM_Export_Form_Select::CASE_EXPORT : 
             $exportType = 'Export Case';
             break;
+            
+        case CRM_Export_Form_Select::GRANT_EXPORT : 
+            $exportType = 'Export Grant';
+            break;
+            
+        case CRM_Export_Form_Select::ACTIVITY_EXPORT : 
+            $exportType = 'Export Activity';
+            break;
         }
-
+        
         require_once "CRM/Core/BAO/Mapping.php";
         $mappingTypeId = CRM_Core_OptionGroup::getValue( 'mapping_type', $exportType, 'name' );
         $this->set( 'mappingTypeId', $mappingTypeId );

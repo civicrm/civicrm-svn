@@ -1,3 +1,28 @@
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
 {include file="CRM/Contribute/Form/ContributionPage/Premium.tpl"}
 {capture assign=managePremiumsURL}{crmURL p='civicrm/admin/contribute/managePremiums' q="reset=1"}{/capture}
 {if $rows}
@@ -18,13 +43,13 @@
             <th></th>
         </tr>
         {foreach from=$rows item=row}
-        <tr class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
-	        <td>{$row.product_name}</td>	
-	        <td>{$row.sku}</td>
-                <td>{$row.price }</td>
-	        <td>{$row.min_contribution}</td>
-	        <td class="nowrap">{$row.weight}</td>
-	        <td>{$row.action}</td>
+        <tr class="{cycle values='odd-row,even-row'} {$row.class}{if NOT $row.is_active} disabled{/if}">
+	        <td class="crm-contribution-form-block-product_name">{$row.product_name}</td>	
+	        <td class="crm-contribution-form-block-sku">{$row.sku}</td>
+            <td class="crm-contribution-form-block-price">{$row.price }</td>
+	        <td class="crm-contribution-form-block-min_contribution">{$row.min_contribution}</td>
+	        <td class="nowrap crm-contribution-form-block-weight">{$row.weight}</td>
+	        <td class="crm-contribution-form-block-action">{$row.action}</td>
         </tr>
         {/foreach}
         </table>
@@ -32,24 +57,22 @@
     </div>
     {if $products ne null }
         <div class="action-link">
-            <a href="{crmURL p='civicrm/admin/contribute' q="reset=1&action=update&id=$id&subPage=AddProductToPage"}">&raquo; {ts}Offer Another Premium on this Contribution Page{/ts}</a>
+            <a href="{crmURL p='civicrm/admin/contribute/addProductToPage' q="reset=1&action=update&id=$id"}">&raquo; {ts}Offer Another Premium on this Contribution Page{/ts}</a>
         </div>
 	{/if}
 </div>
 {else}
     {if $showForm eq false}
     <div class="messages status">
-    <dl>
 	{if $products ne null }
-          <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/></dt>
-          {capture assign=crmURL}{crmURL p='civicrm/admin/contribute' q="reset=1&action=update&id=$id&subPage=AddProductToPage"}{/capture}
-          <dd>{ts 1=$crmURL}There are no premiums offered on this contribution page yet. You can <a href='%1'>add one</a>.{/ts}</dd>
+          <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>
+          {capture assign=crmURL}{crmURL p='civicrm/admin/contribute/addProductToPage' q="reset=1&action=update&id=$id"}{/capture}
+          {ts 1=$crmURL}There are no premiums offered on this contribution page yet. You can <a href='%1'>add one</a>.{/ts}
 	{else}
-	   <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/></dt>
-           <dd>{ts 1=$managePremiumsURL}There are no active premiums for your site. You can <a href='%1'>create and/or enable premiums here</a>.{/ts}</dd>
+	   <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>
+           {ts 1=$managePremiumsURL}There are no active premiums for your site. You can <a href='%1'>create and/or enable premiums here</a>.{/ts}
 	
 	{/if}
-        </dl>
     </div>
     {/if}
    

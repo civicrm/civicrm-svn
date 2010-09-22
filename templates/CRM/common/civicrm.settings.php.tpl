@@ -1,6 +1,32 @@
 <?php
+/*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*/
+
 /**
- * CiviCRM Configuration File - v2.3
+ * CiviCRM Configuration File - v3.1
  */
 
 /**
@@ -127,7 +153,6 @@ define( 'CIVICRM_TEMPLATE_COMPILEDIR', '%%templateCompileDir%%' );
  * CIVICRM_UF_BASEURL - home URL for your site:
  *      define( 'CIVICRM_UF_BASEURL' , 'http://www.example.com/civicrm/standalone/' );
  */
- 
 define( 'CIVICRM_UF_BASEURL'      , '%%baseURL%%' );
 
 /*
@@ -137,6 +162,46 @@ define( 'CIVICRM_UF_BASEURL'      , '%%baseURL%%' );
  * More info at http://wiki.civicrm.org/confluence/display/CRMDOC/Command-line+Script+Configuration
  */
 define( 'CIVICRM_SITE_KEY', null );
+
+/*
+ * If you want to disable IDS, set this to 0.
+ */
+define( 'CIVICRM_IDS_ENABLE', 1);
+
+/**
+ * Multi org / Multi site settings:
+ *
+ */
+//define( 'CIVICRM_MULTISITE'           , null );
+//define( 'CIVICRM_UNIQ_EMAIL_PER_SITE' , null );
+define( 'CIVICRM_DOMAIN_ID'      , 1 );
+define( 'CIVICRM_DOMAIN_GROUP_ID', null );
+define( 'CIVICRM_DOMAIN_ORG_ID'  , null );
+
+define( 'CIVICRM_EVENT_PRICE_SET_DOMAIN_ID', 0 );
+
+/**
+ * Setting to disable email notifications to activity assignees
+ *
+ */
+ define( 'CIVICRM_ACTIVITY_ASSIGNEE_MAIL' , 1 ); 
+
+/**
+ * Setting to disable ajax check if similar contacts exist when creating a new contact
+ *
+ */
+ define( 'CIVICRM_CONTACT_AJAX_CHECK_SIMILAR' , 1 ); 
+
+/**
+ * Setting to disable or enable profile double optin.
+ * This is enable by default and functions only if Civimail is enabled.
+ */
+ define( 'CIVICRM_PROFILE_DOUBLE_OPTIN', 1 );
+
+/**
+ * If set, makes CiviMail default to tracking replies (i.e., using VERP-ed Reply-To:)
+ */
+define('CIVICRM_TRACK_CIVIMAIL_REPLIES', false);
 
 /**
  * 

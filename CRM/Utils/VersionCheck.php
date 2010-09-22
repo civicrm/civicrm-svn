@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -76,7 +77,7 @@ class CRM_Utils_VersionCheck
     function __construct()
     {
         global $civicrm_root;
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
 
         $localfile = $civicrm_root . DIRECTORY_SEPARATOR . self::LOCALFILE_NAME;
         $cachefile = $config->uploadDir . self::CACHEFILE_NAME;
@@ -116,7 +117,7 @@ class CRM_Utils_VersionCheck
                     'CRM_Contribute_DAO_ContributionProduct' => null,
                     'CRM_Contribute_DAO_Widget'              => 'is_active = 1',
                     'CRM_Core_DAO_Discount'                  => null,
-                    'CRM_Core_DAO_PriceSetEntity'            => null,
+                    'CRM_Price_DAO_SetEntity'                => null,
                     'CRM_Core_DAO_UFGroup'                   => 'is_active = 1',
                     'CRM_Event_DAO_Event'                    => 'is_active = 1',
                     'CRM_Event_DAO_Participant'              => 'is_test = 0',
@@ -179,7 +180,7 @@ class CRM_Utils_VersionCheck
     static function &singleton()
     {
         if (!isset(self::$_singleton)) {
-            self::$_singleton =& new CRM_Utils_VersionCheck();
+            self::$_singleton = new CRM_Utils_VersionCheck();
         }
         return self::$_singleton;
     }

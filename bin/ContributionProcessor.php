@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -50,19 +51,27 @@ class CiviContributeProcessor {
                                      'shiptostreet'  => 'street_address',
                                      'shiptostreet2' => 'supplemental_address_1',
                                      'shiptocity'    => 'city',
-                                     'shiptostate'   => 'state',
+                                     'shiptostate'   => 'state_province',
                                      'shiptozip'     => 'postal_code',
                                      'countrycode'   => 'country',
                                      ),
               'transaction' => array(
-                                     'amt'           => 'total_amount',
-                                     'feeamt'        => 'fee_amount',
-                                     'transactionid' => 'trxn_id',
-                                     'currencycode'  => 'currencyID',
-                                     'l_name0'       => 'source',
-                                     'ordertime'     => 'receive_date',
-                                     'note'          => 'note',
-                                     'is_test'       => 'is_test',
+                                     'amt'              => 'total_amount',
+                                     'feeamt'           => 'fee_amount',
+                                     'transactionid'    => 'trxn_id',
+                                     'currencycode'     => 'currency',
+                                     'l_name0'          => 'source',
+                                     'ordertime'        => 'receive_date',
+                                     'note'             => 'note',
+                                     'is_test'          => 'is_test',
+                                     'transactiontype'  => 'trxn_type',
+                                     'recurrences'      => 'installments',
+                                     'l_amt2'           => 'amount',
+                                     'l_period2'        => 'lol',
+                                     'invnum'           => 'invoice_id',
+                                     'subscriptiondate' => 'start_date',
+                                     'subscriptionid'   => 'processor_id',
+                                     'timestamp'        => 'modified_date',
                                      ),
               );
 
@@ -70,8 +79,9 @@ class CiviContributeProcessor {
         array(
               //category    => array(google_param    => civicrm_field);
               'contact'     => array(
+                                     'first-name'    => 'first_name',
+                                     'last-name'     => 'last_name',
                                      'contact-name'  => 'display_name',
-                                     'contact-name'  => 'sort_name',
                                      'email'         => 'email',
                                      ),
               'location'    => array(
@@ -87,6 +97,8 @@ class CiviContributeProcessor {
                                      'currency'            => 'currency',
                                      'item-name'           => 'note',
                                      'timestamp'           => 'receive_date',
+                                     'latest-charge-fee'   => 'fee_amount',
+                                     'net-amount'          => 'net_amount',
                                      ),
               );
 
@@ -135,43 +147,70 @@ class CiviContributeProcessor {
                         'enddate'   => $end );
 
         require_once 'CRM/Core/Payment/PayPalImpl.php';
-        $result = CRM_Core_Payment_PayPalImpl::invokeAPI( $args, $url );
-
-        require_once "CRM/Contribute/BAO/Contribution/Utils.php";
-
-        $keyArgs['method'] = 'GetTransactionDetails';
-        foreach ( $result as $name => $value ) {
-            if ( substr( $name, 0, 15 ) == 'l_transactionid' ) {
-                $keyArgs['transactionid'] = $value;
-                $trxnDetails = CRM_Core_Payment_PayPalImpl::invokeAPI( $keyArgs, $url );
-                if ( is_a( $trxnDetails, 'CRM_Core_Error' ) ) {
-                    echo "PAYPAL ERROR: Skipping transaction id: $value<p>";
-                    continue;
-                }
-
-                // only process completed payments
-                if ( strtolower( $trxnDetails['paymentstatus'] ) != 'completed' ) {
-                    continue;
-                }
-
-                $params = CRM_Contribute_BAO_Contribution_Utils::formatAPIParams( $trxnDetails, 
-                                                                                  self::$_paypalParamsMapper,
-                                                                                  'paypal' );
-                if ( $paymentMode == 'test' ) {
-                    $params['is_test'] = 1;
-                } else {
-                    $params['is_test'] = 0;
-                }
-
-                if ( CRM_Contribute_BAO_Contribution_Utils::processAPIContribution( $params ) ) {
-                    CRM_Core_Error::debug_log_message( "Processed - {$trxnDetails['email']}, {$trxnDetails['amt']}, {$value} ..<p>", true );
-                } else {
-                    CRM_Core_Error::debug_log_message( "Skipped - {$trxnDetails['email']}, {$trxnDetails['amt']}, {$value} ..<p>", true );
+        
+        // as invokeAPI fetch only last 100 transactions.
+        // we should require recursive calls to process more than 100.
+        // first fetch transactions w/ give date intervals.
+        // if we get error code w/ result, which means we do have more than 100
+        // manipulate date interval accordingly and fetch again.
+        
+        do {
+            $result = CRM_Core_Payment_PayPalImpl::invokeAPI( $args, $url );
+            require_once "CRM/Contribute/BAO/Contribution/Utils.php";
+            
+            $keyArgs['method'] = 'GetTransactionDetails';
+            foreach ( $result as $name => $value ) {
+                if ( substr( $name, 0, 15 ) == 'l_transactionid' ) {
+                    
+                    // We don't/can't process subscription notifications, which appear
+                    // to be identified by transaction ids beginning with S-
+                    if ( substr( $value, 0, 2 ) == 'S-' )  {
+                        continue;
+                    }
+                    
+                    $keyArgs['transactionid'] = $value;
+                    $trxnDetails = CRM_Core_Payment_PayPalImpl::invokeAPI( $keyArgs, $url );
+                    if ( is_a( $trxnDetails, 'CRM_Core_Error' ) ) {
+                        echo "PAYPAL ERROR: Skipping transaction id: $value<p>";
+                        continue;
+                    }
+                    
+                    // only process completed payments
+                    if ( strtolower( $trxnDetails['paymentstatus'] ) != 'completed' ) {
+                        continue;
+                    }
+                    
+                    // only process receipts, not payments
+                    if ( strtolower( $trxnDetails['transactiontype'] ) == 'sendmoney' ) {
+                        continue;
+                    }
+                    
+                    $params = CRM_Contribute_BAO_Contribution_Utils::formatAPIParams( $trxnDetails, 
+                                                                                      self::$_paypalParamsMapper,
+                                                                                      'paypal' );
+                    if ( $paymentMode == 'test' ) {
+                        $params['transaction']['is_test'] = 1;
+                    } else {
+                        $params['transaction']['is_test'] = 0;
+                    }
+                    
+                    if ( CRM_Contribute_BAO_Contribution_Utils::processAPIContribution( $params ) ) {
+                        CRM_Core_Error::debug_log_message( "Processed - {$trxnDetails['email']}, {$trxnDetails['amt']}, {$value} ..<p>", true );
+                    } else {
+                        CRM_Core_Error::debug_log_message( "Skipped - {$trxnDetails['email']}, {$trxnDetails['amt']}, {$value} ..<p>", true );
+                    }
                 }
             }
-        }
+            if ( $result['l_errorcode0'] == '11002' ) {
+                $end = $result['l_timestamp99'];
+                $end_time  = strtotime("{$end}", time());
+                $end_date = date('Y-m-d\T00:00:00.00\Z', $end_time );
+                $args['enddate'] = $end_date;
+                
+            }
+        } while ( $result['l_errorcode0'] == '11002' );
     }
-
+    
     static function google( $paymentProcessor, $paymentMode, $start, $end ) {
         require_once "CRM/Contribute/BAO/Contribution/Utils.php";
         require_once 'CRM/Core/Payment/Google.php';
@@ -276,16 +315,16 @@ class CiviContributeProcessor {
     static function process( ) {
         require_once 'CRM/Utils/Request.php';
 
-        $type = CRM_Utils_Request::retrieve( 'type', 'String', CRM_Core_DAO::$_nullObject, false, 'csv' );
+        $type = CRM_Utils_Request::retrieve( 'type', 'String', CRM_Core_DAO::$_nullObject, false, 'csv', 'REQUEST' );
         $type = strtolower( $type );
 
         switch ( $type ) {
         case 'paypal':
         case 'google':
             $start = CRM_Utils_Request::retrieve( 'start', 'String', 
-                                                  CRM_Core_DAO::$_nullObject, false, 31 );
+                                                  CRM_Core_DAO::$_nullObject, false, 31, 'REQUEST' );
             $end   = CRM_Utils_Request::retrieve( 'end', 'String', 
-                                                  CRM_Core_DAO::$_nullObject, false, 0 );
+                                                  CRM_Core_DAO::$_nullObject, false, 0 , 'REQUEST'  );
             if ( $start < $end ) {
                 CRM_Core_Error::fatal("Start offset can't be less than End offset.");
             }
@@ -294,9 +333,9 @@ class CiviContributeProcessor {
             $end   = date( 'Y-m-d', time( ) - $end   * 24 * 60 * 60 ) . 'T23:59:00.00Z';
 
             $ppID  = CRM_Utils_Request::retrieve( 'ppID'  , 'Integer', 
-                                                  CRM_Core_DAO::$_nullObject, true  );
+                                                  CRM_Core_DAO::$_nullObject, true, null, 'REQUEST' );
             $mode  = CRM_Utils_Request::retrieve( 'ppMode', 'String', 
-                                                  CRM_Core_DAO::$_nullObject, false, 'live' );
+                                                  CRM_Core_DAO::$_nullObject, false, 'live', 'REQUEST' );
 
             require_once 'CRM/Core/BAO/PaymentProcessor.php';
             $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $ppID, $mode );
@@ -316,9 +355,16 @@ class CiviContributeProcessor {
 session_start();
 require_once '../civicrm.config.php';
 require_once 'CRM/Core/Config.php';
-$config =& CRM_Core_Config::singleton();
+$config = CRM_Core_Config::singleton();
 
 CRM_Utils_System::authenticateScript(true);
+
+//log the execution of script
+CRM_Core_Error::debug_log_message( 'ContributionProcessor.php');
+
+//load bootstrap to call hooks
+require_once 'CRM/Utils/System.php';
+CRM_Utils_System::loadBootStrap(  );
 
 require_once 'CRM/Core/Lock.php';
 $lock = new CRM_Core_Lock('CiviContributeProcessor');

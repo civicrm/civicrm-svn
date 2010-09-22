@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -181,7 +182,8 @@ class CRM_Contribute_Import_Form_MapField extends CRM_Core_Form {
         } else {
             $this->assign( 'rowDisplayCount', 2 );
         }
-        
+        $highlightedFields   = array();
+        $highlightedFields[] = 'contribution_type';
         //CRM-2219 removing other required fields since for updation only
         //invoice id or trxn id or contribution id is required.
         if ( $this->_onDuplicate == CRM_Contribute_Import_Parser::DUPLICATE_UPDATE ) {
@@ -193,10 +195,17 @@ class CRM_Contribute_Import_Form_MapField extends CRM_Core_Form {
             //modify field title only for update mode. CRM-3245
             foreach ( array( 'contribution_id', 'invoice_id', 'trxn_id' ) as $key ) {
                 $this->_mapperFields[$key] .= " (match to contribution record)";
+                $highlightedFields[] = $key;
             }
+            
         } else if ( $this->_onDuplicate == CRM_Contribute_Import_Parser::DUPLICATE_SKIP ) {
             unset( $this->_mapperFields['contribution_id'] );
+            $highlightedFieldsArray = array( 'contribution_contact_id', 'email', 'first_name', 'last_name', 'external_identifier','total_amount' );
+            foreach ( $highlightedFieldsArray as $name ) {
+                $highlightedFields[] = $name;
+            }            
         }
+        $this->assign( 'highlightedFields', $highlightedFields );
     }
 
     /**
@@ -397,10 +406,10 @@ class CRM_Contribute_Import_Form_MapField extends CRM_Core_Form {
             }
         }
         if ( $warning != 0 && $this->get('savedMapping') ) {
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             $session->setStatus( ts( 'The data columns in this import file appear to be different from the saved mapping. Please verify that you have selected the correct saved mapping before continuing.' ) );
         } else {
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             $session->setStatus( null ); 
         }
                     
@@ -428,7 +437,7 @@ class CRM_Contribute_Import_Form_MapField extends CRM_Core_Form {
      * @static
      * @access public
      */
-    static function formRule( &$fields, &$files, &$self ) {
+    static function formRule( $fields, $files, $self ) {
         $errors       = array( );
         $fieldMessage = null;
         
@@ -518,7 +527,7 @@ class CRM_Contribute_Import_Form_MapField extends CRM_Core_Form {
             if (!empty($errors['saveMappingName'])) {
                 $_flag = 1;
                 require_once 'CRM/Core/Page.php';
-                $assignError =& new CRM_Core_Page(); 
+                $assignError = new CRM_Core_Page(); 
                 $assignError->assign('mappingDetailsError', $_flag);
             }
             return $errors;
@@ -548,7 +557,7 @@ class CRM_Contribute_Import_Form_MapField extends CRM_Core_Form {
         $fileName         = $this->controller->exportValue( 'UploadFile', 'uploadFile' );
         $skipColumnHeader = $this->controller->exportValue( 'UploadFile', 'skipColumnHeader' );
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $seperator = $config->fieldSeparator;
 
         $mapper = $mapperKeys = $mapperKeysMain = $mapperSoftCredit = $softCreditFields = $mapperPhoneType = array( );
@@ -576,7 +585,7 @@ class CRM_Contribute_Import_Form_MapField extends CRM_Core_Form {
         
         //Updating Mapping Records
         if ( CRM_Utils_Array::value('updateMapping', $params)) {
-            $mappingFields =& new CRM_Core_DAO_MappingField();
+            $mappingFields = new CRM_Core_DAO_MappingField();
             $mappingFields->mapping_id = $params['mappingId'];
             $mappingFields->find( );
             
@@ -588,7 +597,7 @@ class CRM_Contribute_Import_Form_MapField extends CRM_Core_Form {
             }
                     
             for ( $i = 0; $i < $this->_columnCount; $i++ ) {
-                $updateMappingFields =& new CRM_Core_DAO_MappingField();
+                $updateMappingFields = new CRM_Core_DAO_MappingField();
                 $updateMappingFields->id = $mappingFieldsId[$i];
                 $updateMappingFields->mapping_id = $params['mappingId'];
                 $updateMappingFields->column_number = $i;
@@ -610,7 +619,7 @@ class CRM_Contribute_Import_Form_MapField extends CRM_Core_Form {
             $saveMapping = CRM_Core_BAO_Mapping::add( $mappingParams );
 
             for ( $i = 0; $i < $this->_columnCount; $i++ ) {                  
-                $saveMappingFields =& new CRM_Core_DAO_MappingField();
+                $saveMappingFields = new CRM_Core_DAO_MappingField();
                 $saveMappingFields->mapping_id = $saveMapping->id;
                 $saveMappingFields->column_number = $i;                             
                 $saveMappingFields->name = $mapper[$i];
@@ -622,7 +631,7 @@ class CRM_Contribute_Import_Form_MapField extends CRM_Core_Form {
             $this->set( 'savedMapping', $saveMappingFields->mapping_id );
         }
 
-        $parser =& new CRM_Contribute_Import_Parser_Contribution( $mapperKeysMain, $mapperSoftCredit ,$mapperPhoneType );
+        $parser = new CRM_Contribute_Import_Parser_Contribution( $mapperKeysMain, $mapperSoftCredit ,$mapperPhoneType );
         $parser->run( $fileName, $seperator, $mapper, $skipColumnHeader,
                       CRM_Contribute_Import_Parser::MODE_PREVIEW, $this->get('contactType') );
         

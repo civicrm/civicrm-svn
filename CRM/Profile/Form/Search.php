@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -58,7 +59,6 @@ class CRM_Profile_Form_Search extends CRM_Profile_Form
     function preProcess() 
     { 
         $this->_mode = CRM_Profile_Form::MODE_SEARCH; 
-      
         parent::preProcess( );
     } 
     
@@ -92,7 +92,7 @@ class CRM_Profile_Form_Search extends CRM_Profile_Form
                     $value[$item] = 1; 
                 } 
             } else if ( in_array( $key, array('birth_date', 'deceased_date')) ) {
-                $value = CRM_Utils_Date::mysqlToiso($value);
+                list( $value ) = CRM_Utils_Date::setDateDefaults($value);
             }
             
             $defaults[$key] = $value;
@@ -108,6 +108,16 @@ class CRM_Profile_Form_Search extends CRM_Profile_Form
      */
     public function buildQuickForm( ) 
     {
+        // Is proximity search enabled for this profile?
+        require_once 'CRM/Core/DAO.php';
+        $proxSearch = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup',
+                                                  $this->get( 'gid' ),
+                                                  'is_proximity_search', 'id');
+        if ( $proxSearch ) {
+            require_once 'CRM/Contact/Form/Task/ProximityCommon.php';
+            CRM_Contact_Form_Task_ProximityCommon::buildQuickForm( $this, $proxSearch );
+        }
+
         $this->addButtons(array( 
                                 array ('type'      => 'refresh', 
                                        'name'      => ts('Search'), 
@@ -115,6 +125,7 @@ class CRM_Profile_Form_Search extends CRM_Profile_Form
                                 ) );
 
         parent::buildQuickForm( );
+
      }
 
        

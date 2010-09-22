@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -73,12 +74,20 @@ class CRM_Member_Form_MembershipStatus extends CRM_Member_Form
         if ($this->_action & CRM_Core_Action::DELETE ) { 
             return;
         }
-
+        
         $this->applyFilter('__ALL__', 'trim');
-        $this->add('text', 'name', ts('Name'), CRM_Core_DAO::getAttribute( 'CRM_Member_DAO_MembershipStatus', 'name' ),true );
-        $this->addRule( 'name', ts('A membership status with this name already exists. Please select another name.'), 
-                        'objectExists', array( 'CRM_Member_DAO_MembershipStatus', $this->_id ) );
-
+        
+        if ( $this->_id ) {
+            $name = $this->add('text', 'name', ts('Name'), 
+                               CRM_Core_DAO::getAttribute( 'CRM_Member_DAO_MembershipStatus', 'name' ) ); 
+            $name->freeze( );
+            $this->assign( 'id', $this->_id );
+        }
+        $this->add('text', 'label', ts('Label'), 
+                   CRM_Core_DAO::getAttribute( 'CRM_Member_DAO_MembershipStatus', 'label' ), true );
+        $this->addRule( 'label', ts('A membership status with this label already exists. Please select another label.'), 
+                        'objectExists', array( 'CRM_Member_DAO_MembershipStatus', $this->_id, 'name' ) );
+        
         $this->add('select', 'start_event', ts('Start Event'), CRM_Core_SelectValues::eventDate( ),true );
         $this->add('select', 'start_event_adjust_unit', ts('Start Event Adjustment'), CRM_Core_SelectValues::unitList( ) );
         $this->add('text', 'start_event_adjust_interval', ts('Start Event Adjust Interval'), 
@@ -89,15 +98,15 @@ class CRM_Member_Form_MembershipStatus extends CRM_Member_Form
                    CRM_Core_DAO::getAttribute( 'CRM_Member_DAO_MembershipStatus', 'end_event_adjust_interval' ) );
         $this->add('checkbox', 'is_current_member', ts('Current Membership?'));
         $this->add('checkbox', 'is_admin', ts('Administrator Only?'));
-
+        
         $this->add('text', 'weight', ts('Weight'), 
                    CRM_Core_DAO::getAttribute( 'CRM_Member_DAO_MembershipStatus', 'weight' ) );
         $this->add('checkbox', 'is_default', ts('Default?'));
         $this->add('checkbox', 'is_active', ts('Enabled?'));
-
+        
     }
-
-       
+    
+    
     /**
      * Function to process the form
      *
@@ -115,7 +124,7 @@ class CRM_Member_Form_MembershipStatus extends CRM_Member_Form
             $params = $ids = array( );
             // store the submitted values in an array
             $params = $this->exportValues();
-
+            
             if ($this->_action & CRM_Core_Action::UPDATE ) {
                 $ids['membershipStatus'] = $this->_id;
             }
@@ -125,8 +134,14 @@ class CRM_Member_Form_MembershipStatus extends CRM_Member_Form
             $params['weight'] = 
                 CRM_Utils_Weight::updateOtherWeights('CRM_Member_DAO_MembershipStatus', $oldWeight, $params['weight']);
             
+            // only for add mode, set label to name.
+            if ( $this->_action & CRM_Core_Action::ADD ) {
+                $params['name'] = $params['label'];
+            }
+            
             $membershipStatus = CRM_Member_BAO_MembershipStatus::add($params, $ids);
-            CRM_Core_Session::setStatus( ts('The membership status \'%1\' has been saved.', array( 1 => $membershipStatus->name )) );
+            CRM_Core_Session::setStatus( ts('The membership status \'%1\' has been saved.', 
+                                            array( 1 => $membershipStatus->label )) );
         }
     }
 }

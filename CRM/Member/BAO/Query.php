@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -39,7 +40,7 @@ class CRM_Member_BAO_Query
     static function &getFields( ) 
     {
         require_once 'CRM/Member/BAO/Membership.php';
-        $fields =& CRM_Member_BAO_Membership::importableFields( );
+        $fields =& CRM_Member_BAO_Membership::exportableFields( );
         return $fields;
     }
     
@@ -62,9 +63,9 @@ class CRM_Member_BAO_Query
             $query->_whereTables['civicrm_membership'] = 1;
            
             //add membership type
-            if ( CRM_Utils_Array::value( 'membership_type_id', $query->_returnProperties ) ) {
-                $query->_select['membership_type_id']  = "civicrm_membership_type.name as membership_type_id";
-                $query->_element['membership_type_id'] = 1;
+            if ( CRM_Utils_Array::value( 'membership_type', $query->_returnProperties ) ) {
+                $query->_select['membership_type']  = "civicrm_membership_type.name as membership_type";
+                $query->_element['membership_type'] = 1;
                 $query->_tables['civicrm_membership_type'] = 1;
                 $query->_whereTables['civicrm_membership_type'] = 1;
             }
@@ -82,8 +83,15 @@ class CRM_Member_BAO_Query
             }
 
             //add status
+            if ( CRM_Utils_Array::value( 'membership_status', $query->_returnProperties ) ) {
+                $query->_select['membership_status']  = "civicrm_membership_status.label as membership_status";
+                $query->_element['membership_status'] = 1;
+                $query->_tables['civicrm_membership_status'] = 1;
+                $query->_whereTables['civicrm_membership_status'] = 1;
+            }
+
             if ( CRM_Utils_Array::value( 'status_id', $query->_returnProperties ) ) {
-                $query->_select['status_id']  = "civicrm_membership_status.name as status_id";
+                $query->_select['status_id']  = "civicrm_membership_status.id as status_id";
                 $query->_element['status_id'] = 1;
                 $query->_tables['civicrm_membership_status'] = 1;
                 $query->_whereTables['civicrm_membership_status'] = 1;
@@ -141,20 +149,20 @@ class CRM_Member_BAO_Query
         case 'member_join_date_high':
             $query->dateQueryBuilder( $values,
                                       'civicrm_membership', 'member_join_date', 'join_date',
-                                      'Join Date', false );
+                                      'Join Date' );
             return;
         case 'member_start_date_low':
         case 'member_start_date_high':
             $query->dateQueryBuilder( $values,
                                       'civicrm_membership', 'member_start_date', 'start_date',
-                                      'Start Date', false );
+                                      'Start Date' );
             return;
 
         case 'member_end_date_low':
         case 'member_end_date_high':
             $query->dateQueryBuilder( $values,
                                        'civicrm_membership', 'member_end_date', 'end_date',
-                                      'End Date', false );
+                                      'End Date' );
             return;
 
         case 'member_join_date':
@@ -170,8 +178,8 @@ class CRM_Member_BAO_Query
             return;
             
         case 'member_source':
-            
-            $value = strtolower(CRM_Core_DAO::escapeString(trim($value)));
+            $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
+            $value = $strtolower(CRM_Core_DAO::escapeString(trim($value)));
 
             $query->_where[$grouping][] = "civicrm_membership.source $op '{$value}'";
             $query->_qill[$grouping ][] = ts( 'Source %2 %1', array( 1 => $value, 2 => $op) );
@@ -188,28 +196,36 @@ class CRM_Member_BAO_Query
             }     
             
             $names = array( );
-            $statusTypes  = CRM_Member_PseudoConstant::membershipStatus( );
+            $statusTypes = CRM_Member_PseudoConstant::membershipStatus(null, null, 'label');
             foreach ( $value as $id => $dontCare ) {
                 $names[] = $statusTypes[$id];
             }
             $query->_qill[$grouping][]  = ts('Membership Status %1', array( 1 => $op ) ) . ' ' . implode( ' ' . ts('or') . ' ', $names );
-                
-            $query->_where[$grouping][] = "civicrm_membership.status_id {$op} {$status}";
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_membership.status_id", 
+                                                                              $op,
+                                                                              $status,
+                                                                              "Integer" );
             $query->_tables['civicrm_membership'] = $query->_whereTables['civicrm_membership'] = 1;
             return;
             
         case 'member_test':
-            $query->_where[$grouping][] = " civicrm_membership.is_test $op $value";
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_membership.is_test", 
+                                                                              $op,
+                                                                              $value,
+                                                                              "Integer" );
             if ( $value ) {
-                $query->_qill[$grouping][]  = "Find Test Memberships";
+                $query->_qill[$grouping][] = ts( "Find Test Memberships" );
             }
             $query->_tables['civicrm_membership'] = $query->_whereTables['civicrm_membership'] = 1;
             return;
             
         case 'member_pay_later':
-            $query->_where[$grouping][] = " civicrm_membership.is_pay_later $op $value";
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_membership.is_pay_later", 
+                                                                              $op,
+                                                                              $value,
+                                                                              "Integer" );
             if ( $value ) {
-                $query->_qill[$grouping][]  = "Find Pay Later Memberships";
+                $query->_qill[$grouping][] = ts( "Find Pay Later Memberships" );
             }
             $query->_tables['civicrm_membership'] = $query->_whereTables['civicrm_membership'] = 1;
             return;
@@ -228,8 +244,10 @@ class CRM_Member_BAO_Query
                 $names[] = $membershipTypes[$id];
             }
             $query->_qill[$grouping][]  = ts('Membership Type %1', array( 1 => $op ) ) . ' ' . implode( ' ' . ts('or') . ' ', $names );
-
-            $query->_where[$grouping][] = "civicrm_membership.membership_type_id {$op} {$mType}";
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_membership.membership_type_id", 
+                                                                              $op,
+                                                                              $mType,
+                                                                              "Integer" );
             $query->_tables['civicrm_membership'] = $query->_whereTables['civicrm_membership'] = 1;
             return;
             
@@ -237,6 +255,27 @@ class CRM_Member_BAO_Query
             $query->_where[$grouping][] = " civicrm_membership.id $op $value";
             $query->_tables['civicrm_membership'] = $query->_whereTables['civicrm_membership'] = 1;
             return;
+            
+        case 'member_is_primary':
+            switch( $value ) {
+                case 1:
+                $query->_qill[$grouping][]  = ts( "Primary AND Related Members" );
+                break;
+
+                case 2:
+                $query->_where[$grouping][] = " civicrm_membership.owner_membership_id IS NULL";
+                $query->_qill[$grouping][]  = ts( "Primary Members Only" );
+                break;
+
+                case 3:
+                $query->_where[$grouping][] = " civicrm_membership.owner_membership_id IS NOT NULL";
+                $query->_qill[$grouping][]  = ts( "Related Members Only" );
+                break;
+
+            }
+            $query->_tables['civicrm_membership'] = $query->_whereTables['civicrm_membership'] = 1;
+            return;
+
         }
     }
 
@@ -278,16 +317,17 @@ class CRM_Member_BAO_Query
         if ( $mode & CRM_Contact_BAO_Query::MODE_MEMBER ) {
             $properties = array(  
                                 'contact_type'           => 1, 
+                                'contact_sub_type'       => 1, 
                                 'sort_name'              => 1, 
                                 'display_name'           => 1,
-                                'membership_type_id'     => 1,
+                                'membership_type'        => 1,
                                 'member_is_test'         => 1, 
                                 'member_is_pay_later'    => 1, 
                                 'join_date'              => 1,
                                 'membership_start_date'  => 1,
                                 'membership_end_date'    => 1,
                                 'membership_source'      => 1,
-                                'status_id'              => 1,
+                                'membership_status'      => 1,
                                 'membership_id'          => 1,
                                 'owner_membership_id'    => 1
                                 );
@@ -307,38 +347,30 @@ class CRM_Member_BAO_Query
 
     static function buildSearchForm( &$form ) 
     {
-        
         require_once 'CRM/Member/PseudoConstant.php';
-        
         foreach (CRM_Member_PseudoConstant::membershipType( ) as $id => $Name) {
             $form->_membershipType =& $form->addElement('checkbox', "member_membership_type_id[$id]", null,$Name);
         }
-        foreach (CRM_Member_PseudoConstant::membershipStatus( ) as $sId => $sName) {
+
+        // Option to include / exclude inherited memberships from search results (e.g. rows where owner_membership_id is NOT NULL)
+        $primaryValues = array( 1 => ts('All Members'), 2 => ts('Primary Members Only'), 3 => ts('Related Members Only') );
+        $form->addRadio( 'member_is_primary', '', $primaryValues );
+        $form->setDefaults( array( 'member_is_primary' => 1 ) );
+        
+        foreach (CRM_Member_PseudoConstant::membershipStatus(null, null, 'label') as $sId => $sName) {
             $form->_membershipStatus =& $form->addElement('checkbox', "member_status_id[$sId]", null,$sName);
         }
 
         $form->addElement( 'text', 'member_source', ts( 'Source' ) );
-        //$form->addElement('date', 'member_join_date', ts('Member Since :'), CRM_Core_SelectValues::date('relative')); 
-        //$form->addRule('member_join_date', ts('Select a valid date.'), 'qfDate'); 
  
-        // Date selects for date 
-        $form->add('date', 'member_join_date_low', ts('Join Date - From'), CRM_Core_SelectValues::date('relative')); 
-        $form->addRule('member_join_date_low', ts('Select a valid date.'), 'qfDate'); 
- 
-        $form->add('date', 'member_join_date_high', ts('To'), CRM_Core_SelectValues::date('relative')); 
-        $form->addRule('member_join_date_high', ts('Select a valid date.'), 'qfDate');
+        $form->addDate( 'member_join_date_low', ts('Join Date - From'), false, array( 'formatType' => 'searchDate') );
+        $form->addDate( 'member_join_date_high', ts('To'), false, array( 'formatType' => 'searchDate') );
 
-        $form->add('date', 'member_start_date_low', ts('Start Date - From'), CRM_Core_SelectValues::date('relative')); 
-        $form->addRule('member_start_date_low', ts('Select a valid date.'), 'qfDate'); 
- 
-        $form->add('date', 'member_start_date_high', ts('To'), CRM_Core_SelectValues::date('relative')); 
-        $form->addRule('member_start_date_high', ts('Select a valid date.'), 'qfDate'); 
+        $form->addDate( 'member_start_date_low', ts('Start Date - From'), false, array( 'formatType' => 'searchDate') );
+        $form->addDate( 'member_start_date_high', ts('To'), false, array( 'formatType' => 'searchDate') );
 
-        $form->add('date', 'member_end_date_low', ts('End Date - From'), CRM_Core_SelectValues::date('relative')); 
-        $form->addRule('member_end_date_low', ts('Select a valid date.'), 'qfDate'); 
- 
-        $form->add('date', 'member_end_date_high', ts('To'), CRM_Core_SelectValues::date('relative')); 
-        $form->addRule('member_end_date_high', ts('Select a valid date.'), 'qfDate'); 
+        $form->addDate( 'member_end_date_low', ts('End Date - From'), false, array( 'formatType' => 'searchDate') );
+        $form->addDate( 'member_end_date_high', ts('To'), false, array( 'formatType' => 'searchDate') );
 
         $form->addElement( 'checkbox', 'member_test' , ts( 'Find Test Memberships?' ) );
         $form->addElement( 'checkbox', 'member_pay_later', ts( 'Find Pay Later Memberships?' ) );

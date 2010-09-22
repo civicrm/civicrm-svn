@@ -2,7 +2,7 @@
  
 /*
  +--------------------------------------------------------------------+
- | eWAY Core Payment Module for CiviCRM version 2.2 & 1.9             |
+ | eWAY Core Payment Module for CiviCRM version 3.2 & 1.9             |
  +--------------------------------------------------------------------+
  | Licensed to CiviCRM under the Academic Free License version 3.0    |
  |                                                                    |
@@ -54,7 +54,7 @@ class CRM_Event_Payment_eWAY extends CRM_Core_Payment_eWAY
    {
       if (self::$_singleton === null ) 
       { 
-         self::$_singleton =& new CRM_Event_Payment_eWAY( $mode, $paymentProcessor );
+         self::$_singleton = new CRM_Event_Payment_eWAY( $mode, $paymentProcessor );
       } 
       return self::$_singleton; 
    } 

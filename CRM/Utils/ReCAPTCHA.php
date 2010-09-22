@@ -1,15 +1,15 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -17,7 +17,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -27,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -62,7 +63,7 @@ class CRM_Utils_ReCAPTCHA {
      */
     static function &singleton( ) {
         if (self::$_singleton === null ) {
-            self::$_singleton =& new CRM_Utils_ReCAPTCHA( );
+            self::$_singleton = new CRM_Utils_ReCAPTCHA( );
         }
         return self::$_singleton;
     }
@@ -76,10 +77,16 @@ class CRM_Utils_ReCAPTCHA {
      */
     function add( &$form ) {
         $error  = null;
-        $config =& CRM_Core_Config::singleton( );
-
+        $config = CRM_Core_Config::singleton( );
+        $useSSL = false;
         require_once 'packages/recaptcha/recaptchalib.php';
-        $html = recaptcha_get_html($config->recaptchaPublicKey, $error);
+      
+        // See if we are using SSL
+        if ( isset( $_SERVER['HTTPS'] ) &&
+            strtolower( $_SERVER['HTTPS'] ) != 'off' ) {     
+            $useSSL = true;
+        }       
+        $html = recaptcha_get_html( $config->recaptchaPublicKey, $error, $useSSL );
 
         $form->assign( 'recaptchaHTML', $html );
         $form->add( 'text',
@@ -99,8 +106,8 @@ class CRM_Utils_ReCAPTCHA {
 
     }
 
-    function validate( $value, &$form ) {
-        $config =& CRM_Core_Config::singleton( );
+    function validate( $value, $form ) {
+        $config = CRM_Core_Config::singleton( );
 
         $resp = recaptcha_check_answer( $config->recaptchaPrivateKey,
                                         $_SERVER['REMOTE_ADDR'],

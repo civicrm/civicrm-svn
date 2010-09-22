@@ -8,6 +8,7 @@
 
   <field>
       <name>id</name>
+      <uniqueName>activity_id</uniqueName>
       <title>Activity ID</title> 
       <import>true</import>
       <type>int unsigned</type>
@@ -24,7 +25,6 @@
       <name>source_contact_id</name>
       <type>int unsigned</type>
       <title>Source Contact</title> 
-      <required>true</required>
       <import>true</import>
       <headerPattern>/(activity.)?source(.contact(.id)?)?/i</headerPattern>
       <comment>Contact ID of the person scheduling or logging this Activity. Usually the authenticated user.</comment>
@@ -35,12 +35,13 @@
        <table>civicrm_contact</table>
        <key>id</key>
        <add>1.1</add>
-       <onDelete>CASCADE</onDelete>
+       <onDelete>SET NULL</onDelete>
   </foreignKey>  
   <index>
        <name>UI_source_contact_id</name>
        <fieldName>source_contact_id</fieldName>       
        <add>2.0</add>
+       <drop>3.2</drop>
   </index>
 
   <field>
@@ -49,13 +50,18 @@
       <comment>Artificial FK to original transaction (e.g. contribution) IF it is not an Activity. Table can be figured out through activity_type_id, and further through component registry.</comment>
       <add>2.0</add>
   </field>
-
+  <index>
+       <name>UI_source_record_id</name>
+       <fieldName>source_record_id</fieldName>       
+       <add>3.2</add>
+  </index>
   <field>
        <name>activity_type_id</name>
        <title>Activity Type ID</title>
        <import>true</import>
        <type>int unsigned</type>
        <required>true</required>
+       <export>false</export>
        <default>1</default>
        <headerPattern>/(activity.)?type(.id$)/i</headerPattern>
        <comment>FK to civicrm_option_value.id, that has to be valid, registered activity type.</comment>
@@ -88,6 +94,7 @@
 
   <field>
        <name>subject</name>
+       <uniqueName>activity_subject</uniqueName>
        <type>varchar</type>
        <title>Subject</title>
        <length>255</length>
@@ -120,7 +127,7 @@
        <type>datetime</type>
        <comment>Date and time this activity is due.</comment>
        <add>2.0</add>
-       <drop>2.3</drop>     
+       <drop>3.0</drop>     
   </field>  
   <field>
        <name>duration_hours</name>
@@ -140,6 +147,7 @@
 
   <field>
       <name>duration</name>
+      <uniqueName>activity_duration</uniqueName>
       <title>Duration</title> 
       <import>true</import>
       <type>int unsigned</type>
@@ -150,6 +158,7 @@
 
   <field>
       <name>location</name>
+      <uniqueName>activity_location</uniqueName>
       <title>Location</title>
       <import>true</import>
       <type>varchar</type>
@@ -183,6 +192,7 @@
 
   <field>
       <name>details</name>
+      <uniqueName>activity_details</uniqueName>
       <title>Details</title>
       <import>true</import> 
       <type>text</type>
@@ -204,8 +214,10 @@
 
   <field>
       <name>status_id</name>
-      <title>Activity Status Label</title>
+      <uniqueName>activity_status_id</uniqueName>
+      <title>Activity Status Id</title>
       <import>true</import>
+      <export>false</export>
       <headerPattern>/(activity.)?status(.label$)?/i</headerPattern>
       <type>int unsigned</type>
       <comment>ID of the status this activity is currently in. Foreign key to civicrm_option_value.</comment>
@@ -234,6 +246,7 @@
   <field>
        <name>is_test</name>
        <title>Test</title>
+       <uniqueName>activity_is_test</uniqueName> 
        <type>boolean</type>
        <default>0</default>
        <import>true</import>
@@ -242,6 +255,7 @@
   </field>
   <field>
        <name>medium_id</name>
+       <uniqueName>activity_medium_id</uniqueName>
        <title>Activity Medium</title>
        <type>int unsigned</type>
        <default>NULL</default>
@@ -304,6 +318,7 @@
        <name>UI_original_id</name>
        <fieldName>original_id</fieldName>
        <add>2.2</add>
+       <drop>3.2</drop>
   </index>    
   <field>
        <name>is_deleted</name>

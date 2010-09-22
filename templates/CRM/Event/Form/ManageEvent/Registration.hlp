@@ -1,3 +1,34 @@
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
+{capture assign=ppUrl}{crmURL p='civicrm/admin/paymentProcessor' q="reset=1"}{/capture}
+{htxt id="id-event-reg"}
+{ts 1=$ppUrl}If you want to provide an Online Registration page for this event, check the first box below and then complete the fields on this form. You can offer online registration for both Paid and Free events. Paid events require that you have configured a <a href="%1">payment processor</a> for your site.{/ts}
+{ts}You may also configure events to require administrative approval prior to participants completing the registration process. To enable this feature you must first enable the Participant Statuses used by the approval work-flow (Administer » CiviEvent » Participant Statuses). Then reload this form and check 'Require participant approval?'.{/ts}
+{/htxt}
+
 {htxt id='event-profile'}
 <p>{ts}If you want collect additional information during event registration, you will need to configure one or two CiviCRM Profiles - which are collections of standard or custom fields. For event registration, you may need to collect additional information specific to a person's <strong>participation</strong> in an Event. Examples include meal and/or volunteer preferences.{/ts}</p>
         
@@ -27,6 +58,7 @@
 
 {htxt id="id-allow_same_email"}  
 {ts}Check this box to allow a user to register multiple participants using the same email address. If you want additional participants to be registered <strong>without requiring an email address to be entered for each person</strong> - check the "Register multiple participants" option, AND include a profile in this registration form which <strong>includes First Name and Last Name fields</strong>.{/ts}
+<p>{ts}You will also need to update the default strict duplicate contact matching rule for Individuals to include First Name and Last Name fields (Administer &raquo; Manage &raquo; Find and Merge Duplicate Contacts).{/ts}</p>
 {/htxt}
 
 {htxt id="id-requires_approval"}

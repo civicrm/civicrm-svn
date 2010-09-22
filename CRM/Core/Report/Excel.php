@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -45,7 +46,7 @@ class CRM_Core_Report_Excel {
      *
      * @access  public
      */
-    function makeCSVTable( &$header, &$rows, $titleHeader = null, $print = true )
+    function makeCSVTable( &$header, &$rows, $titleHeader = null, $print = true, $outputHeader = true )
     {
         if ( $titleHeader ) {
             echo $titleHeader;
@@ -53,7 +54,7 @@ class CRM_Core_Report_Excel {
         
         $result = '';
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $seperator     = $config->fieldSeparator;
         $enclosed      = '"';
         $escaped       = $enclosed;
@@ -72,13 +73,15 @@ class CRM_Core_Report_Excel {
             $schema_insert     .= $seperator;
         } // end while
 
-        // need to add PMA_exportOutputHandler functionality out here, rather than
-        // doing it the moronic way of assembling a buffer
-        $out = trim(substr($schema_insert, 0, -1)) . $add_character;
-        if ( $print ) {
-            echo $out;
-        } else {
-            $result .= $out;
+        if ( $outputHeader ) {
+            // need to add PMA_exportOutputHandler functionality out here, rather than
+            // doing it the moronic way of assembling a buffer
+            $out = trim(substr($schema_insert, 0, -1)) . $add_character;
+            if ( $print ) {
+                echo $out;
+            } else {
+                $result .= $out;
+            }
         }
 
         $i = 0;
@@ -93,7 +96,8 @@ class CRM_Core_Report_Excel {
                     $schema_insert .= '';
                 } else if ($value == '0' || $value != '') {
                     // loic1 : always enclose fields
-                    $value = ereg_replace("\015(\012)?", "\012", $value);
+                    //$value = ereg_replace("\015(\012)?", "\012", $value);
+                    $value = preg_replace("/\015(\012)?/", "\012", $value);
                     if ($enclosed == '') {
                         $schema_insert .= $value;
                     } else {
@@ -144,19 +148,18 @@ class CRM_Core_Report_Excel {
         }
     } // end of the 'getTableCsv()' function
 
-    function writeCSVFile( $fileName, &$header, &$rows, $titleHeader = null ) {
-        
-        require_once 'CRM/Utils/System.php';
-        CRM_Utils_System::download( CRM_Utils_String::munge( $fileName ),
-                                    'text/x-csv',
-                                    CRM_Core_DAO::$_nullObject,
-                                    'csv',
-                                    false );
+    function writeCSVFile( $fileName, &$header, &$rows, $titleHeader = null, $outputHeader = true ) {
+        if ( $outputHeader ) {
+            require_once 'CRM/Utils/System.php';
+            CRM_Utils_System::download( CRM_Utils_String::munge( $fileName ),
+                                        'text/x-csv',
+                                        CRM_Core_DAO::$_nullObject,
+                                        'csv',
+                                        false );
+        }
 
-        self::makeCSVTable( $header, $rows, $titleHeader, true );
-
-        
+        if ( ! empty( $rows ) ) {
+            self::makeCSVTable( $header, $rows, $titleHeader, true, $outputHeader );
+        }
     }
 }
-
-

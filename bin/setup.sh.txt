@@ -105,7 +105,7 @@ fi
 
 echo; echo "DONE!"
 
-# to generate a new data file do the foll:
+# to generate a new data file do the following from the sql directory:
 # mysqladmin -f -u $DBUSER $PASSWDSECTION drop $DBNAME
 # mysqladmin -f -u $DBUSER $PASSWDSECTION create $DBNAME
 # mysql -u $DBUSER $PASSWDSECTION $DBNAME < civicrm.mysql
@@ -116,6 +116,5 @@ echo; echo "DONE!"
 # echo "drop table zipcodes ; update civicrm_domain set config_backend = null" | mysql -u $DBUSER $PASSWDSECTION $DBNAME
 # mysqldump -c -e -t -n -u $DBUSER $PASSWDSECTION $DBNAME  > civicrm_generated.mysql
 # add sample custom data 
-# cat civicrm_sample_report.mysql >> civicrm_generated.mysql
 # cat civicrm_sample_custom_data.mysql >> civicrm_generated.mysql
-
+# cat ../CRM/Case/xml/configuration.sample/SampleConfig.mysql >> civicrm_generated.mysql

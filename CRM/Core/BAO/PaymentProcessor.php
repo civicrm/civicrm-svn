@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -67,7 +68,7 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor
      */
     static function retrieve( &$params, &$defaults ) 
     {
-        $paymentProcessor =& new CRM_Core_DAO_PaymentProcessor( );
+        $paymentProcessor = new CRM_Core_DAO_PaymentProcessor( );
         $paymentProcessor->copyValues( $params );
         if ( $paymentProcessor->find( true ) ) {
             CRM_Core_DAO::storeValues( $paymentProcessor, $defaults );
@@ -125,13 +126,13 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor
             CRM_Core_Error::fatal( ts( 'Invalid value passed to delete function' ) );
         }
 
-        $dao            =& new CRM_Core_DAO_PaymentProcessor( );
+        $dao            = new CRM_Core_DAO_PaymentProcessor( );
         $dao->id        =  $paymentProcessorID;
         if ( ! $dao->find( true ) ) {
             return null;
         }
 
-        $testDAO            =& new CRM_Core_DAO_PaymentProcessor( );
+        $testDAO            = new CRM_Core_DAO_PaymentProcessor( );
         $testDAO->name      =  $dao->name;
         $testDAO->is_test   =  1;
         $testDAO->delete( );
@@ -155,7 +156,7 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor
             CRM_Core_Error::fatal( ts( 'Invalid value passed to getPayment function' ) );
         }
 
-        $dao            =& new CRM_Core_DAO_PaymentProcessor( );
+        $dao            = new CRM_Core_DAO_PaymentProcessor( );
         $dao->id        =  $paymentProcessorID;
         $dao->is_active =  1;
         if ( ! $dao->find( true ) ) {
@@ -163,7 +164,7 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor
         }
 
         if ( $mode == 'test' ) {
-            $testDAO =& new CRM_Core_DAO_PaymentProcessor( );
+            $testDAO = new CRM_Core_DAO_PaymentProcessor( );
             $testDAO->name      = $dao->name;
             $testDAO->is_active = 1;
             $testDAO->is_test   = 1;

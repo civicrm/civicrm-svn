@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -53,7 +54,7 @@ class CRM_Utils_System_Joomla {
             $pageTitle = $title;
         }
 
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         $template->assign( 'pageTitle', $pageTitle );
 
 		$document=& JFactory::getDocument();
@@ -73,7 +74,7 @@ class CRM_Utils_System_Joomla {
      * @static
      */
     static function appendBreadCrumb( $breadCrumbs ) {
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         $bc = $template->get_template_vars( 'breadcrumb' );
 
         if ( is_array( $breadCrumbs ) ) {
@@ -117,8 +118,37 @@ class CRM_Utils_System_Joomla {
      * @access public
      * @static
      */
-    static function addHTMLHead( $head ) {
-        return;
+    static function addHTMLHead( $string = null, $includeAll = false ) {
+        $document =& JFactory::getDocument( );
+
+        if ( $string ) {
+            $document->addCustomTag( $string );
+        }
+
+        if ( $includeAll ) {
+            require_once 'CRM/Core/Config.php';
+            $config = CRM_Core_Config::singleton();
+
+            $document->addStyleSheet( "{$config->resourceBase}css/deprecate.css" );
+            $document->addStyleSheet( "{$config->resourceBase}css/civicrm.css" );
+
+            if ( ! $config->userFrameworkFrontend ) {
+                $document->addStyleSheet( "{$config->resourceBase}css/joomla.css" );
+            } else {
+                $document->addStyleSheet( "{$config->resourceBase}css/joomla_frontend.css" );
+            }
+            if ( isset( $config->customCSSURL ) && ! empty( $config->customCSSURL ) ) {
+                $document->addStyleSheet( $config->customCSSURL );
+            }
+
+            $document->addStyleSheet( "{$config->resourceBase}css/extras.css" );
+
+            $document->addScript( "{$config->resourceBase}js/Common.js" );
+    
+            $template = CRM_Core_Smarty::singleton( );
+            $document->addCustomTag( $template->fetch( 'CRM/common/jquery.tpl' ) );
+            $document->addCustomTag( $template->fetch( 'CRM/common/action.tpl' ) );
+        }
     }
 
     /**
@@ -140,7 +170,7 @@ class CRM_Utils_System_Joomla {
     function url($path = null, $query = null, $absolute = true,
                  $fragment = null, $htmlize = true,
                  $frontend = false ) {
-        $config        =& CRM_Core_Config::singleton( );
+        $config        = CRM_Core_Config::singleton( );
 
         if ( $config->userFrameworkFrontend ) {
             $script = 'index.php';
@@ -232,14 +262,15 @@ class CRM_Utils_System_Joomla {
     static function authenticate( $name, $password ) {
         require_once 'DB.php';
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         
         $dbJoomla = DB::connect( $config->userFrameworkDSN );
         if ( DB::isError( $dbJoomla ) ) {
             CRM_Core_Error::fatal( "Cannot connect to joomla db via $config->userFrameworkDSN, " . $dbJoomla->getMessage( ) ); 
         }                                                      
 
-        $name      = $dbJoomla->escapeSimple( strtolower( $name ) );
+        $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
+        $name      = $dbJoomla->escapeSimple( $strtolower( $name ) );
         $sql = 'SELECT u.* FROM ' . $config->userFrameworkUsersTableName .
             " u WHERE LOWER(u.username) = '$name' AND u.block = 0";
         $query = $dbJoomla->query( $sql );
@@ -290,6 +321,48 @@ class CRM_Utils_System_Joomla {
         session_destroy();
         header("Location:index.php");
     }
+
+    /**
+     * Get the locale set in the hosting CMS
+     * @return string  the used locale or null for none
+     */
+    static function getUFLocale()
+    {
+        if ( defined('_JEXEC') ) {
+            $conf	=& JFactory::getConfig();
+            $locale	= $conf->getValue('config.language');
+            return str_replace('-', '_', $locale);
+        }
+        return null;
+    }
+
+    /* 
+     * load joomla bootstrap
+     */
+    static function loadBootStrap( ) {
+        return true;
+    }
+    
+    /**
+     * check is user logged in.
+     *
+     * @return boolean true/false.
+     */
+    public static function isUserLoggedIn( ) {
+        $user = JFactory::getUser();
+        return ( $user->guest ) ? false : true; 
+    }
+    
+    /**
+     * Get currently logged in user uf id.
+     *
+     * @return int logged in user uf id.
+     */
+    public static function getLoggedInUfID( ) {
+        $user = JFactory::getUser( );
+        return ( $user->guest ) ? null : $user->id;
+    }
+    
 }
 
 

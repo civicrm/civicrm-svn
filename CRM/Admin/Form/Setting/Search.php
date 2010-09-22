@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -48,7 +49,7 @@ class CRM_Admin_Form_Setting_Search extends  CRM_Admin_Form_Setting
      * @access public
      */
     public function buildQuickForm( ) {
-        CRM_Utils_System::setTitle(ts('Settings - Search'));
+        CRM_Utils_System::setTitle(ts('Settings - Contacts Search'));
 
         $this->addYesNo( 'includeWildCardInName'   , ts( 'Automatic Wildcard' ));
         $this->addYesNo( 'includeEmailInName'      , ts( 'Include Email' ));
@@ -66,7 +67,13 @@ class CRM_Admin_Form_Setting_Search extends  CRM_Admin_Form_Setting
 
         $this->add( 'select', 'defaultSearchProfileID', ts('Default Contact Search Profile'),
                     array('' => ts('- select -')) + $profiles );
-
+        require_once 'CRM/Core/OptionGroup.php';
+        $options = array( ts('Contact Name') => 1 ) + array_flip( CRM_Core_OptionGroup::values( 'contact_autocomplete_options', 
+                                                                                                false, false, true ) );
+        $this->addCheckBox( 'autocompleteContactSearch', 'Autocomplete Contact Search', $options, 
+                            null, null, null, null, array( '&nbsp;&nbsp;' ) );
+        $element = $this->getElement( 'autocompleteContactSearch' );
+        $element->_elements[0]->_flagFrozen = true;
         parent::buildQuickForm();    
     }
 }

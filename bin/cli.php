@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright Tech To The People http:tttp.eu (c) 2008                 |
  +--------------------------------------------------------------------+
@@ -45,7 +45,7 @@ class civicrm_CLI {
 //	$include_path = "packages/" . get_include_path( );
 //	set_include_path( $include_path );
 	require_once 'Console/Getopt.php';
-	$shortOptions = "s:u:p:k:";
+	$shortOptions = "s:u:p:";
 	$longOptions  = array( 'site=','user','pass'  );
 
 	$getopt  = new Console_Getopt( );
@@ -56,7 +56,6 @@ class civicrm_CLI {
 	$vars = array(
 		  'user' => 'u',
 		  'pass' => 'p',
-		  'key' => 'k',
 		  'site' => 's'
 		  );
 
@@ -69,11 +68,12 @@ class civicrm_CLI {
 		    }
 		}
 		if ( ! $$var ) {
-		    die ("\nUsage: $ php5 ". $_SERVER['PHP_SELF']." -k key -u user -p password -s yoursite.org\n");
+      $a = explode('/', $_SERVER["SCRIPT_NAME"]);
+      $file = $a[count($a) - 1]; 
+		    die ("\nUsage: \$cd /your/civicrm/root; \$php5 bin/". $file." -u user -p password -s yoursite.org (or default)\n");
 		}
 	 }
 	 $this->site=$site;
-         $this->key=$key; 
 	 $this->setEnv();
 	 $this->authenticate($user,$pass);
     }
@@ -95,8 +95,9 @@ class civicrm_CLI {
 		// so the configuration works with php-cli
 		$_SERVER['PHP_SELF' ] ="/index.php";
 		$_SERVER['HTTP_HOST']= $this->site;
-		$_REQUEST['key']= $this->key;
 		require_once ("./civicrm.config.php");
+         	$this->key= CIVICRM_SITE_KEY;
+		$_REQUEST['key']= $this->key;
     }
 }
 

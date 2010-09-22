@@ -1,13 +1,41 @@
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
 {* Displays current and upcoming public Events Listing as an HTML page. *}
-<table>
-<tr class="columnheader">
-<th>{ts}Event{/ts}</th>
-<th>&nbsp;</th>
-<th>{ts}When{/ts}</th>
-<th>{ts}Location{/ts}</th>
-<th>{ts}Category{/ts}</th>
-<th>{ts}Email{/ts}</th>
+{include file="CRM/common/jsortable.tpl"}
+<table id="options" class="display">
+<thead>
+<tr>
+    <th>{ts}Event{/ts}</th>
+    <th></th>
+    <th>{ts}When{/ts}</th>
+    <th>{ts}Location{/ts}</th>
+    <th>{ts}Category{/ts}</th>
+    <th>{ts}Email{/ts}</th>
 </tr>
+</thead>
 {foreach from=$events key=uid item=event}
 <tr class="{cycle values="odd-row,even-row"} {$row.class}">
     <td><a href="{crmURL p='civicrm/event/info' q="reset=1&id=`$event.event_id`"}" title="{ts}read more{/ts}"><strong>{$event.title}</strong></a></td>

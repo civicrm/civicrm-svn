@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -50,6 +51,11 @@ function smarty_function_help( $params, &$smarty ) {
         return;
     }
 
+    $help = '';
+    if ( isset( $params['text'] ) ) {
+        $help = '<div class="crm-help">' . $params['text'] . '</div>';
+    }
+    
     if ( isset( $params['file'] ) ) {
         $file = $params['file'];
     } else if ( isset( $smarty->_tpl_vars[ 'tplFile' ] ) ) {
@@ -64,12 +70,14 @@ function smarty_function_help( $params, &$smarty ) {
         $file ='CRM/common/accesskeys.hlp';
     }
     require_once 'CRM/Core/Config.php';
-    $config = CRM_Core_Config::Singleton();
+    $config = CRM_Core_Config::singleton();
     $smarty->assign( 'id', $params['id'] );
-    $help = $smarty->fetch( $file );
+    if ( ! $help ) {
+        $help = $smarty->fetch( $file );
+    }
     return <<< EOT
 <script type="text/javascript"> cj( function() { cj(".helpicon").toolTip(); });</script>
-<div class="helpicon">&nbsp;<span id="{$id}_help" style="display:none">$help</span></div>
+<div class="helpicon">&nbsp;<span id="{$id}_help" style="display:none">$help</span></div>&nbsp;&nbsp;&nbsp;
 EOT;
 }
 

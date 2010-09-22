@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -66,9 +67,6 @@ class CRM_Member_Page_MembershipType extends CRM_Core_Page_Basic
     function &links()
     {
         if (!(self::$_links)) {
-            // helper variable for nicer formatting
-            $disableExtra = ts('Are you sure you want to disable this membership type?');
-
             self::$_links = array(
                                   CRM_Core_Action::UPDATE  => array(
                                                                     'name'  => ts('Edit'),
@@ -81,7 +79,6 @@ class CRM_Member_Page_MembershipType extends CRM_Core_Page_Basic
                                                                     'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Member_BAO_MembershipType' . '\',\'' . 'enable-disable' . '\' );"',
                                                                     
                                                                     'ref'   => 'disable-action',
-                                                                    
                                                                     'title' => ts('Disable Membership Type') 
                                                                     ),
                                   CRM_Core_Action::ENABLE  => array(
@@ -89,7 +86,6 @@ class CRM_Member_Page_MembershipType extends CRM_Core_Page_Basic
                                                                     'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Member_BAO_MembershipType' . '\',\'' . 'disable-enable' . '\' );"',
 
                                                                     'ref'   => 'enable-action',
-                                                                    
                                                                     'title' => ts('Enable Membership Type') 
                                                                     ),
                                   CRM_Core_Action::DELETE  => array(
@@ -129,9 +125,10 @@ class CRM_Member_Page_MembershipType extends CRM_Core_Page_Basic
         // what action to take ?
         if ($action & (CRM_Core_Action::UPDATE | CRM_Core_Action::ADD)) {
             $this->edit($action, $id) ;
-        } 
-        // finally browse the custom groups
-        $this->browse();
+        } else { 
+            // finally browse the custom groups
+            $this->browse();
+        }
         
         // parent run 
         parent::run();
@@ -150,7 +147,7 @@ class CRM_Member_Page_MembershipType extends CRM_Core_Page_Basic
         // get all membership types sorted by weight
         $membershipType = array();
         require_once 'CRM/Member/DAO/MembershipType.php';
-        $dao =& new CRM_Member_DAO_MembershipType();
+        $dao = new CRM_Member_DAO_MembershipType();
 
         $dao->orderBy('weight');
         $dao->find();
@@ -165,9 +162,9 @@ class CRM_Member_Page_MembershipType extends CRM_Core_Page_Basic
             if ( CRM_Utils_Array::value( 'minimum_fee', $membershipType[$dao->id] ) ) {
                 $membershipType[$dao->id]['minimum_fee'] = CRM_Utils_Money::format($membershipType[$dao->id]['minimum_fee'], null, '%a');
             }
-            //adding column for relationship type. CRM-4178.
+            //adding column for relationship type label. CRM-4178.
             if ( $dao->relationship_type_id ) {
-                $relationshipName = 'name_'.$dao->relationship_direction;
+                $relationshipName = 'label_'.$dao->relationship_direction;
                 $membershipType[$dao->id]['relationshipTypeName'] = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_RelationshipType', 
                                                                                                 $dao->relationship_type_id, $relationshipName );
             }
@@ -181,6 +178,7 @@ class CRM_Member_Page_MembershipType extends CRM_Core_Page_Basic
                 } else {
                     $action -= CRM_Core_Action::DISABLE;
                 }
+                $membershipType[$dao->id]['order']  = $membershipType[$dao->id]['weight'];
                 $membershipType[$dao->id]['action'] = CRM_Core_Action::formLink(self::links(), $action, 
                                                                                 array('id' => $dao->id));
             }            

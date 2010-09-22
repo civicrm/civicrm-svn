@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -52,10 +53,8 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting
      */
     public function buildQuickForm( ) {
         
-        $outBoundOption = array( '0' => ts('SMTP'), '1' => ts('Sendmail'), '2' => ts('Disable Outbound Email') );
-        $outBoundOptionExtra = array('onclick' =>"showHideMailOptions();",'onload' =>"showHideMailOptions();");
-        
-        $this->addRadio('outBound_option', ts('Select Mailer'),  $outBoundOption, $outBoundOptionExtra );
+        $outBoundOption = array( '3' => ts('mail()'), '0' => ts('SMTP'), '1' => ts('Sendmail'), '2' => ts('Disable Outbound Email') );        
+        $this->addRadio('outBound_option', ts('Select Mailer'),  $outBoundOption );
 
         CRM_Utils_System::setTitle(ts('Settings - Outbound Mail'));
         $this->add('text','sendmail_path', ts('Sendmail Path'));
@@ -89,7 +88,7 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting
             if ( $formValues['outBound_option'] == 2 ) {
                 CRM_Core_Session::setStatus( ts('You have selected "Disable Outbound Email". A test email can not be sent.') );
             } else {
-                $session =& CRM_Core_Session::singleton( );
+                $session = CRM_Core_Session::singleton( );
                 $userID  =  $session->get( 'userID' );
                 require_once 'CRM/Contact/BAO/Contact.php';
                 list( $toDisplayName, $toEmail, $toDoNotEmail ) = CRM_Contact_BAO_Contact::getContactDetails( $userID );
@@ -99,7 +98,9 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting
                 list( $domainEmailName, $domainEmailAddress ) = CRM_Core_BAO_Domain::getNameAndEmail( );
 
                 if ( !$domainEmailAddress || $domainEmailAddress == 'info@FIXME.ORG' ) {
-                    CRM_Core_Error::fatal( ts( 'The site administrator needs to enter a valid \'FROM Email Address\' in Administer CiviCRM &raquo; Configure &raquo; Domain Information. The email address used may need to be a valid mail account with your email service provider.' ) );
+                    require_once 'CRM/Utils/System.php';
+                    $fixUrl = CRM_Utils_System::url("civicrm/admin/domain", 'action=update&reset=1');
+                    CRM_Core_Error::fatal( ts( 'The site administrator needs to enter a valid \'FROM Email Address\' in <a href="%1">Administer CiviCRM &raquo; Configure &raquo; Domain Information</a>. The email address used may need to be a valid mail account with your email service provider.', array( 1 => $fixUrl ) ) );
                 }
                 
                 if ( ! $toEmail ) {
@@ -135,12 +136,17 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting
                     $params['sendmail_path'] = $formValues['sendmail_path'];
                     $params['sendmail_args'] = $formValues['sendmail_args'];
                     $mailerName = 'sendmail';
-                }
+                } elseif ($formValues['outBound_option'] == 3) {
+                    $subject = "Test for PHP mail settings";
+                    $message = "mail settings are correct.";
+                    $mailerName = 'mail';
+                    
+                } 
 
                 $headers = array(   
                                  'From'                      => $from,
                                  'To'                        => $to,
-                                 'Subject'                   => CRM_Utils_Mail::encodeSubjectHeader($subject),  
+                                 'Subject'                   => $subject,
                                  );
                 
                 $mailer =& Mail::factory( $mailerName, $params );
@@ -155,12 +161,21 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting
                 }
             }
         } 
-        $mailingDomain =& new CRM_Core_DAO_Preferences();
+        $mailingDomain = new CRM_Core_DAO_Preferences();
+        $mailingDomain->domain_id  = CRM_Core_Config::domainID( );
+        $mailingDomain->is_domain  = true;
         $mailingDomain->find(true);
         if ( $mailingDomain->mailing_backend ) {
             $values = unserialize( $mailingDomain->mailing_backend );
             CRM_Core_BAO_Setting::formatParams( $formValues, $values );
         }
+        
+        // if password is present, encrypt it
+        if ( ! empty( $formValues['smtpPassword'] ) ) {
+            require_once 'CRM/Utils/Crypt.php';
+            $formValues['smtpPassword'] = CRM_Utils_Crypt::encrypt( $formValues['smtpPassword'] );
+        }
+        
         $mailingDomain->mailing_backend = serialize( $formValues );
         $mailingDomain->save();
     }
@@ -174,7 +189,7 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting
      * @static
      * @access  public
      */
-    static function formRule( &$fields ) 
+    static function formRule( $fields ) 
     {
         if ($fields['outBound_option'] == 0) {
             if ( !$fields['smtpServer'] ) {
@@ -217,10 +232,15 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting
             $this->_defaults = array( );
 
             require_once "CRM/Core/DAO/Preferences.php";
-            $mailingDomain =& new CRM_Core_DAO_Preferences();
+            $mailingDomain = new CRM_Core_DAO_Preferences();
             $mailingDomain->find(true);
             if ( $mailingDomain->mailing_backend ) {
-                $this->_defaults = unserialize( $mailingDomain->mailing_backend );     
+                $this->_defaults = unserialize( $mailingDomain->mailing_backend );
+
+                if ( ! empty( $this->_defaults['smtpPassword'] ) ) {
+                    require_once 'CRM/Utils/Crypt.php';
+                    $this->_defaults['smtpPassword'] = CRM_Utils_Crypt::decrypt( $this->_defaults['smtpPassword'] );
+                }
             } else {
                 if ( ! isset( $this->_defaults['smtpServer'] ) ) {
                     $this->_defaults['smtpServer'] = 'localhost';

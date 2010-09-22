@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -68,32 +69,6 @@ class CRM_Pledge_BAO_PledgeBlock extends CRM_Pledge_DAO_PledgeBlock
             CRM_Core_DAO::storeValues( $pledgeBlock, $defaults );
             return $pledgeBlock;
         }
-        return null;
-    }
-    
-    /**
-     * Given the list of params in the params array, fetch the object
-     * and store the values in the values array
-     *
-     * @param array $params input parameters to find object
-     * @param array $values output values of the object
-     * @param array $ids    the array that holds all the db ids
-     *
-     * @return CRM_Pledge_BAO_PledgeBlock|null the found object or null
-     * @access public
-     * @static
-     */
-    static function &getValues( &$params, &$values, &$ids ) 
-    {
-        $pledgeBlock =& new CRM_Pledge_BAO_PledgeBlock( );
-        $pledgeBlock->copyValues( $params );
-        
-        if ( $pledgeBlock->find(true) ) {
-            $ids['pledgeBlock'] = $pledgeBlock->id;
-            CRM_Core_DAO::storeValues( $pledgeBlock, $values );
-            return $pledgeBlock;
-        }
-        
         return null;
     }
     
@@ -143,7 +118,7 @@ class CRM_Pledge_BAO_PledgeBlock extends CRM_Pledge_DAO_PledgeBlock
             CRM_Utils_Hook::pre( 'create', 'PledgeBlock', null, $params ); 
         }
         
-        $pledgeBlock =& new CRM_Pledge_DAO_PledgeBlock( );
+        $pledgeBlock = new CRM_Pledge_DAO_PledgeBlock( );
         
         //fix for pledge_frequency_unit
         require_once 'CRM/Core/BAO/CustomOption.php';
@@ -218,7 +193,7 @@ class CRM_Pledge_BAO_PledgeBlock extends CRM_Pledge_DAO_PledgeBlock
     {
         $pledgeBlock   = array( );
         
-        $dao =& new CRM_Pledge_DAO_PledgeBlock( );
+        $dao = new CRM_Pledge_DAO_PledgeBlock( );
         $dao->entity_table = 'civicrm_contribution_page';
         $dao->entity_id    = $pageID; 
         if ( $dao->find(true) ) {
@@ -245,7 +220,7 @@ class CRM_Pledge_BAO_PledgeBlock extends CRM_Pledge_DAO_PledgeBlock
                                              $form->_values['pledge_id'], $allPayments, $returnProperties );
             //get all status
             require_once 'CRM/Contribute/PseudoConstant.php';
-            $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( );
+            $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
             
             $nextPayment = array( );
             $isNextPayment = false;
@@ -258,8 +233,8 @@ class CRM_Pledge_BAO_PledgeBlock extends CRM_Pledge_DAO_PledgeBlock
                                                       'scheduled_date'   => CRM_Utils_Date::customFormat( $value['scheduled_date'], 
                                                                                                           '%B %d') 
                                                       );
-                } else if (  !$isNextPayment && 
-                             $allStatus[$value['status_id']] == 'Pending' ) { 
+                } else if ( !$isNextPayment && 
+                            $allStatus[$value['status_id']] == 'Pending' ) { 
                     //get the next payment.
                     $nextPayment =  array( 'id'               => $payID ,
                                            'scheduled_amount' => CRM_Utils_Rule::cleanMoney( $value['scheduled_amount']),
@@ -312,9 +287,12 @@ class CRM_Pledge_BAO_PledgeBlock extends CRM_Pledge_DAO_PledgeBlock
             //Frequency unit drop-down label suffixes switch from *ly to *(s)
             $freqUnitVals  = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, $pledgeBlock['pledge_frequency_unit'] );
             $freqUnits = array( );
+            $frequencyUnits = CRM_Core_OptionGroup::values( 'recur_frequency_units' );
             foreach ( $freqUnitVals as $key => $val ) {
-                // FIXME: this is not localisable
-                $freqUnits[$val] = CRM_Utils_Array::value('is_pledge_interval', $pledgeBlock) ? "{$val}(s)" : $val;
+                if ( array_key_exists( $val, $frequencyUnits )  ) { 
+                    $freqUnits[$val] = CRM_Utils_Array::value('is_pledge_interval', $pledgeBlock) ? 
+                        "{$frequencyUnits[$val]}(s)" : $frequencyUnits[$val];
+                }
             }
             $form->addElement( 'select', 'pledge_frequency_unit', null, $freqUnits ); 
         }

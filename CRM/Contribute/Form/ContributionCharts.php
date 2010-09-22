@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,24 +29,41 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
 require_once 'CRM/Core/Form.php';
 class CRM_Contribute_Form_ContributionCharts extends CRM_Core_Form
 {
-    /** 
-     * @access protected 
-     * @var boolean 
-     */ 
-   
+    /**
+     *  Year of chart
+     *
+     * @var int
+     */
+    protected $_year = null;
+    
+    /**
+     *  The type of chart
+     *
+     * @var string
+     */
+    protected $_chartType = null;
+    
     function preProcess( ) 
     {
+        $this->_year      = CRM_Utils_Request::retrieve( 'year', 'Int',    $this );
+        $this->_chartType = CRM_Utils_Request::retrieve( 'type', 'String', $this );
+        
+        $buildChart = false;
+        
+        if ( $this->_year || $this->_chartType  ) {
+            $buildChart = true;
+        }
+        $this->assign( 'buildChart', $buildChart );
         $this->postProcess( );
     }
-
-  
+    
     /**
      * Build the form
      *
@@ -56,7 +74,11 @@ class CRM_Contribute_Form_ContributionCharts extends CRM_Core_Form
     {
         //p3 = Three dimensional pie chart.
         //bvg = Vertical bar chart
-        $this->addElement('select', 'chart_type', ts('Chart Style'), array( 'bvg' => ts('Bar'), 'p3'=> ts('Pie') ) );
+        $this->addElement('select', 'chart_type', ts('Chart Style'), array( 'bvg' => ts('Bar'), 
+                                                                            'p3'=> ts('Pie') ), 
+                          array( 'onchange' => "getChart();" ) );
+        $defaultValues['chart_type'] = $this->_chartType;
+        $this->setDefaults( $defaultValues );
         
         //take available years from database to show in drop down
         $currentYear = date('Y');
@@ -71,15 +93,10 @@ class CRM_Contribute_Form_ContributionCharts extends CRM_Core_Form
             }
         }
         
-        $this->addElement('select', 'select_year', ts('Select Year (for monthly breakdown)'), $years );
-        $this->setDefaults( array( 'select_year' => $currentYear ) );
-        
-        $this->addButtons( array( 
-                                 array ( 'type'      => 'refresh', 
-                                         'name'      => ts('Reload Charts'), 
-                                         'isDefault' => true   ),
-                                 )
-                           );
+        $this->addElement('select', 'select_year', ts('Select Year (for monthly breakdown)'), 
+                          $years , array( 'onchange' => "getChart();" ) );
+        $this->setDefaults( array( 'select_year' => ( $this->_year ) ? $this->_year : $currentYear
+                                   ) );
     }
     
     /**
@@ -90,121 +107,120 @@ class CRM_Contribute_Form_ContributionCharts extends CRM_Core_Form
      */
     public function postProcess() 
     {
-        //get the submitted form values.
-        $submittedValues = $this->controller->exportValues( $this->_name );
-                
+        $chartType = 'bvg';
+        if ( $this->_chartType ) {
+            $chartType = $this->_chartType;
+        }
+        $selectedYear = date( 'Y' );
+        if ( $this->_year ) {
+            $selectedYear = $this->_year;
+        }
+        
         //take contribution information monthly
         require_once 'CRM/Contribute/BAO/Contribution/Utils.php';
-        $selectedYear = CRM_Utils_Array::value( 'select_year', $submittedValues, date('Y') ); 
         $chartInfoMonthly = CRM_Contribute_BAO_Contribution_Utils::contributionChartMonthly( $selectedYear );
         
-        $pChartParams = array( );
-        $monthlyData = false;
-        $abbrMonthNames = array( );
+        $chartData = $abbrMonthNames = array( );
         if ( is_array( $chartInfoMonthly ) ) {
-            $monthlyData = true;
             for ($i = 1; $i <= 12; $i++) {
                 $abbrMonthNames[$i] = strftime('%b', mktime(0, 0, 0, $i, 10, 1970 ));
             }
             
             foreach ( $abbrMonthNames as $monthKey => $monthName ) {
-                if ( ! CRM_Utils_Array::value( $monthKey, $chartInfoMonthly['By Month'] ) ) {
-                    //set zero value to month which is not in db
-                    $chartInfoMonthly['By Month'][$monthKey] = 0;
-                }
+                $val = CRM_Utils_Array::value( $monthKey, $chartInfoMonthly['By Month'], 0 );
+                
+                // don't include zero value month.
+                if ( !$val && ($chartType != 'bvg' ) ) continue; 
+                
+                //build the params for chart.
+                $chartData['by_month']['values'][$monthName] = $val;
             }
+            $chartData['by_month']['legend'] = 'By Month' . ' - ' . $selectedYear;
             
-            //sort the array.
-            ksort( $chartInfoMonthly['By Month'] );
-            
-            //build the params for pChart.
-            $pChartParams['by_month']['values'] = array_combine( $abbrMonthNames, $chartInfoMonthly['By Month'] );
-            $pChartParams['by_month']['legend'] = 'By Month' . ' - ' . $selectedYear;
+            // handle onclick event.
+            $chartData['by_month']['on_click_fun_name'] = 'byMonthOnClick';
+            $chartData['by_month']['yname'] = ts( 'Contribution' );
         }
-        $this->assign( 'monthlyData', $monthlyData ); 
         
         //take contribution information by yearly
         $chartInfoYearly = CRM_Contribute_BAO_Contribution_Utils::contributionChartYearly( );
         
         //get the years.
-        $this->_years =  $chartInfoYearly['By Year'];
+        $this->_years = $chartInfoYearly['By Year'];
         $hasContributions = false;
         if ( is_array( $chartInfoYearly ) ) {
             $hasContributions = true;
-            $pChartParams['by_year']['legend'] = 'By Year';
-            $pChartParams['by_year']['values'] = $chartInfoYearly['By Year'];
+            $chartData['by_year']['legend'] = 'By Year';
+            $chartData['by_year']['values'] = $chartInfoYearly['By Year'];
+            
+            // handle onclick event.
+            $chartData['by_year']['on_click_fun_name'] = 'byYearOnClick';
+            $chartData['by_year']['yname'] = ts( 'Total Amount' );
         }
         $this->assign( 'hasContributions', $hasContributions );
         
-        //handle pchart functionality.
-        if ( !empty( $pChartParams ) ) {
-            $filesValues = array( );
-            require_once 'CRM/Utils/PChart.php';
-            if ( 'p3' == CRM_Utils_Array::value( 'chart_type', $submittedValues, 'bvg' ) ) {
-                //assign shape for map
-                $this->assign( 'shape', 'poly');
-                $this->assign( 'chartType', 'pie');
-                
-                $chartParams = array( );
-                if ( $monthlyData ) {
-                    $chartParams = array( $pChartParams['by_month'], $pChartParams['by_year'] );  
-                } else {
-                    $chartParams = array( $pChartParams['by_year'] );  
+        // process the data.
+        require_once 'CRM/Utils/OpenFlashChart.php';
+        $chartCnt     = 1;
+
+        $monthlyChart = $yearlyChart = false;
+        
+        foreach ( $chartData as $chartKey => &$values ) {
+            $chartValues = CRM_Utils_Array::value( 'values', $values );
+            
+            if ( !is_array( $chartValues ) || empty( $chartValues ) ) {
+                continue;
+            }
+            if ( $chartKey == 'by_year'  ) $yearlyChart  = true;
+            if ( $chartKey == 'by_month' ) $monthlyChart = true;
+            
+            $values['divName'] = "open_flash_chart_{$chartKey}";
+            $funName = ( $chartType == 'bvg' ) ? 'barChart':'pieChart';
+            
+            // build the chart objects.
+            eval( "\$values['object'] = CRM_Utils_OpenFlashChart::" . $funName .'( $values );' );
+            
+            //build the urls.
+            $urlCnt  = 0;
+            foreach ( $chartValues as $index => $val ) {
+                $urlParams = null;
+                if ( $chartKey == 'by_month' ) {
+                    $monthPosition = array_search( $index, $abbrMonthNames );
+                    $startDate     = CRM_Utils_Date::format( array( 'Y' => $selectedYear, 'M' => $monthPosition ) );
+                    $endDate       = date( 'Ymd', mktime(0, 0, 0, $monthPosition+1, 0, $selectedYear ) );
+                    $urlParams     = "reset=1&force=1&status=1&start={$startDate}&end={$endDate}&test=0";
+                } else if ( $chartKey == 'by_year' ) {
+                    $startDate     = CRM_Utils_Date::format( array( 'Y' => $index ) );
+                    $endDate       = date( 'Ymd', mktime(0, 0, 0, 13, 0, $index ) );
+                    $urlParams     = "reset=1&force=1&status=1&start={$startDate}&end={$endDate}&test=0";
                 }
-                
-                //build the pie graph
-                $filesValues = CRM_Utils_PChart::pieGraph( $chartParams );
-            } else {
-                //assign shape for map
-                $this->assign( 'shape', 'rect');
-                $this->assign( 'chartType', 'bar');
-                
-                $chartParams = array( );
-                if ( $monthlyData ) {
-                    $chartParams = array( $pChartParams['by_month'], $pChartParams['by_year'] );  
-                } else {
-                    $chartParams = array( $pChartParams['by_year'] );  
+                if ( $urlParams ) {
+                    $values['on_click_urls']["url_".$urlCnt++] = CRM_Utils_System::url( 'civicrm/contribute/search', 
+                                                                                        $urlParams, true, false, false );
                 }
-                
-                //build the bar graph.
-                $filesValues = CRM_Utils_PChart::barGraph( $chartParams );
             }
             
-            $formatMonthly = true;
-            foreach ( $filesValues as $chartIndex => $values ) {
-                if ( $monthlyData && $formatMonthly ) {
-                    
-                    $this->assign( 'monthCoords',   $values['coords'   ] );
-                    $this->assign( 'monthFilePath', $values['file_name'] );
-                    
-                    //build the month urls for map.
-                    $monthUrls = array( );
-                    foreach ( $values['coords'] as $month => $value )  {
-                        $monthPosition     = array_search( $month, $abbrMonthNames );
-                        $startDate         = CRM_Utils_Date::format( array( 'Y' => $selectedYear, 'M' => $monthPosition ) );
-                        $endDate           = date( 'Ymd', mktime(0, 0, 0, $monthPosition+1, 0, $selectedYear ) );
-                        $monthUrls[$month] = CRM_Utils_System::url( 'civicrm/contribute/search',
-                                                                    "reset=1&force=1&status=1&start={$startDate}&end={$endDate}&test=0");
-                    }
-                    $this->assign( 'monthUrls', $monthUrls );
-                    $formatMonthly = false;
-                } else {
-                    $this->assign( 'yearCoords',   $values['coords'   ] );
-                    $this->assign( 'yearFilePath', $values['file_name'] );
-                    
-                    //build year urls for map
-                    $yearUrls = array( );
-                    foreach ( $values['coords'] as $year => $value )  {
-                        $startDate       = CRM_Utils_Date::format( array( 'Y' => $year ) );
-                        if ( $year ) {
-                            $endDate     = date( 'Ymd', mktime(0, 0, 0, 13, 0, $year ) );
-                        }
-                        $yearUrls[$year] = CRM_Utils_System::url( 'civicrm/contribute/search',
-                                                                  "reset=1&force=1&status=1&start={$startDate}&end={$endDate}&test=0");
-                    }
-                    $this->assign( 'yearUrls', $yearUrls );
-                }
+            // calculate chart size.
+            $xSize = 400;
+            $ySize = 300;
+            if ( $chartType == 'bvg' ) {
+                $ySize = 250;
+                $xSize = 60*count( $chartValues );
+                
+                // reduce x size by 100 for by_month
+                if ( $chartKey == 'by_month' ) $xSize -= 100;
+
+                //hack to show tooltip.
+                if ( $xSize < 150 ) $xSize = 150;
             }
+            $values['size'] = array( 'xSize' =>  $xSize, 'ySize' => $ySize );
         }
+        
+        // finally assign this chart data to template.
+        $this->assign( 'hasYearlyChart',     $yearlyChart );
+        $this->assign( 'hasByMonthChart',    $monthlyChart  );
+        $this->assign( 'hasOpenFlashChart',  empty( $chartData ) ? false : true );
+        $this->assign( 'openFlashChartData', json_encode( $chartData ) );
     }
+    
 }

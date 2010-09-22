@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -100,22 +101,30 @@ class CRM_Utils_File {
      * if needed
      * 
      * @param string $path  the path name
+     * @param boolean $abort should we abort or just return an invalid code
      *
      * @return void
      * @access public
      * @static
      */
-    function createDir( $path ) {
+    function createDir( $path, $abort = true ) {
         if ( is_dir( $path ) || empty( $path ) ) {
             return;
         }
 
-        CRM_Utils_File::createDir( dirname( $path ) );
-        if ( mkdir( $path, 0777 ) == false ) {
-            echo "Error: Could not create directory: $path.<p>If you have moved your database from a development install to a production install and the directory paths are different, please set the column config_backend in the civicrm_domain table to NULL. You will need to reinitialize your settings in the production install.<p>";
-            exit( );
-        }
+        CRM_Utils_File::createDir( dirname( $path ), $abort );
+        if ( @mkdir( $path, 0777 ) == false ) {
+            if ( $abort ) {
+                $docLink = CRM_Utils_System::docURL2( 'Moving an Existing Installation to a New Server or Location', false, 'Moving an Existing Installation to a New Server or Location' );
+                echo "Error: Could not create directory: $path.<p>If you have moved an existing CiviCRM installation from one location or server to another there are several steps you will need to follow. They are detailed on this CiviCRM wiki page - {$docLink}. A fix for the specific problem that caused this error message to be displayed is to set the value of the config_backend column in the civicrm_domain table to NULL. However we strongly recommend that you review and follow all the steps in that document.</p>";
 
+                require_once 'CRM/Utils/System.php';
+                CRM_Utils_System::civiExit( );
+            } else {
+                return false;
+            }
+        }
+        return true;
     }
 
     /** 
@@ -128,7 +137,7 @@ class CRM_Utils_File {
      * @access public 
      * @static 
      */ 
-    public function cleanDir( $target ) {
+    public function cleanDir( $target, $rmdir = true ) {
         static $exceptions = array( '.', '..' );
 
         if ( $sourcedir = @opendir( $target ) ) {
@@ -137,14 +146,17 @@ class CRM_Utils_File {
                     $object = $target . DIRECTORY_SEPARATOR . $sibling;
                     
                     if ( is_dir( $object ) ) {
-                        CRM_Utils_File::cleanDir( $object );
+                        CRM_Utils_File::cleanDir( $object, $rmdir );
                     } else if ( is_file( $object ) ) {
                         $result = @unlink( $object );
                     }
                 }
             }
             closedir( $sourcedir );
-            $result = @rmdir( $target );
+            
+            if ( $rmdir ) {
+                $result = @rmdir( $target );
+            }
         }
     }
 
@@ -161,7 +173,7 @@ class CRM_Utils_File {
         static $config         = null;
         static $legacyEncoding = null;
         if ($config == null) {
-            $config =& CRM_Core_Config::singleton();
+            $config = CRM_Core_Config::singleton();
             $legacyEncoding = $config->legacyEncoding;
         }
 
@@ -204,7 +216,7 @@ class CRM_Utils_File {
     }
 
 
-    function sourceSQLFile( $dsn, $fileName, $prefix = null, $isQueryString = false ) {
+    function sourceSQLFile( $dsn, $fileName, $prefix = null, $isQueryString = false, $dieOnErrors = true ) {
         require_once 'DB.php';
 
         $db  =& DB::connect( $dsn );
@@ -220,16 +232,21 @@ class CRM_Utils_File {
         }
 
         //get rid of comments starting with # and --
+
         $string = preg_replace("/^#[^\n]*$/m", "\n", $string );
-        $string = preg_replace("/^\-\-[^\n]*$/m", "\n", $string );
+        $string = preg_replace("/^(--[^-]).*/m", "\n", $string );
         
-        $queries  = explode( ';', $string );
+        $queries  = preg_split('/;$/m', $string);
         foreach ( $queries as $query ) {
             $query = trim( $query );
             if ( ! empty( $query ) ) {
                 $res =& $db->query( $query );
                 if ( PEAR::isError( $res ) ) {
-                    die( "Cannot execute $query: " . $res->getMessage( ) );
+                    if ( $dieOnErrors ) {
+                        die( "Cannot execute $query: " . $res->getMessage( ) );
+                    } else {
+                        echo "Cannot execute $query: " . $res->getMessage( ) . "<p>";
+                    }
                 }
             }
         }
@@ -241,6 +258,8 @@ class CRM_Utils_File {
             require_once 'CRM/Core/OptionGroup.php';
             $extensions = CRM_Core_OptionGroup::values( 'safe_file_extension', true );
             
+            //make extensions to lowercase
+            $extensions = array_change_key_case( $extensions, CASE_LOWER );
             // allow html/htm extension ONLY if the user is admin 
             // and/or has access CiviMail
             require_once 'CRM/Core/Permission.php';
@@ -250,7 +269,8 @@ class CRM_Utils_File {
                 unset( $extensions['htm' ] );
             }
         }
-        return isset( $extensions[$ext] ) ? true : false;
+        //support lower and uppercase file extensions
+        return isset( $extensions[strtolower( $ext )] ) ? true : false;
     }
 
     /**
@@ -268,14 +288,14 @@ class CRM_Utils_File {
         $info   = pathinfo( $name );
         $basename = substr($info['basename'],
                            0,
-                           -( strlen( $info['extension'] ) + ( $info['extension'] == '' ? 0 : 1 ) ) );
-        if ( ! self::isExtensionSafe( $info['extension'] ) ) {
+                           -( strlen( CRM_Utils_Array::value( 'extension', $info ) ) + ( CRM_Utils_Array::value( 'extension', $info ) == '' ? 0 : 1 ) ) );
+        if ( ! self::isExtensionSafe( CRM_Utils_Array::value( 'extension', $info ) ) ) {
             // munge extension so it cannot have an embbeded dot in it
             // The maximum length of a filename for most filesystems is 255 chars.  
             // We'll truncate at 240 to give some room for the extension.
-            return CRM_Utils_String::munge( "{$basename}_{$info['extension']}_{$uniqID}", '_',  240 ) . ".unknown";
+            return CRM_Utils_String::munge( "{$basename}_". CRM_Utils_Array::value( 'extension', $info ) . "_{$uniqID}", '_',  240 ) . ".unknown";
         } else {
-            return CRM_Utils_String::munge( "{$basename}_{$uniqID}", '_',  240 ) . ".{$info['extension']}";
+            return CRM_Utils_String::munge( "{$basename}_{$uniqID}", '_',  240 ) . "." . CRM_Utils_Array::value( 'extension', $info );
         }
     }
 
@@ -292,6 +312,26 @@ class CRM_Utils_File {
         return $files;
     }
 
+    /**
+     * Restrict access to a given directory (by planting there a restrictive .htaccess file)
+     *
+     * @param string $dir  the directory to be secured
+     */
+    static function restrictAccess($dir)
+    {
+        $htaccess = <<<HTACCESS
+<Files "*">
+  Order allow,deny
+  Deny from all
+</Files>
+
+HTACCESS;
+        $file = $dir . '.htaccess';
+        if (file_put_contents($file, $htaccess) === false) {
+            require_once 'CRM/Core/Error.php';
+            CRM_Core_Error::movedSiteError($file);
+        }
+    }
 }
 
 

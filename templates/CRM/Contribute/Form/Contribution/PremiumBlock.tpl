@@ -1,5 +1,30 @@
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
 {if $products}
-<div id="premiums">
+<div id="premiums" class="premiums-group">
     {if $context EQ "makeContribution"}
 
 {literal}
@@ -20,18 +45,19 @@ function selectPremium(optionField) {
 </script>
 {/literal}
 
-        <fieldset>
+        <fieldset class="crm-group premiums_select-group">
         {if $premiumBlock.premiums_intro_title}
             <legend>{$premiumBlock.premiums_intro_title}</legend>
         {/if}
         {if $premiumBlock.premiums_intro_text}
-            <div id=premiums-intro>
-                <p>{$premiumBlock.premiums_intro_text}</p>
+            <div id="premiums-intro" class="crm-section premiums_intro-section">
+                {$premiumBlock.premiums_intro_text}
             </div> 
         {/if}
     {/if}
 
     {if $context EQ "confirmContribution" OR $context EQ "thankContribution"}
+    <div class="crm-group premium_display-group">
         <div class="header-dark">
             {if $premiumBlock.premiums_intro_title}
                 {$premiumBlock.premiums_intro_title}
@@ -44,7 +70,7 @@ function selectPremium(optionField) {
         {assign var="showSelectOptions" value="1"}
     {/if}
     {strip}
-        <table id="premiums-listings" class="no-border">
+        <table id="premiums-listings">
         {foreach from=$products item=row}
         <tr {if $context EQ "makeContribution"}class="odd-row" {/if}valign="top"> 
             {if $showRadioPremium }
@@ -87,6 +113,8 @@ function selectPremium(optionField) {
     {/strip}
     {if $context EQ "makeContribution"}
         </fieldset>
+    {elseif ! $preview} {* Close premium-display-group div for Confirm and Thank-you pages *}
+        </div>
     {/if}
 </div>
 {/if}

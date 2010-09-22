@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -133,7 +134,11 @@ class CRM_Contact_Form_CustomData extends CRM_Core_Form
 
 		require_once "CRM/Contact/BAO/Contact.php";
 		$this->_contactType = CRM_Contact_BAO_Contact::getContactType($this->_tableID);
+		$this->_contactSubType = CRM_Contact_BAO_Contact::getContactSubType($this->_tableID);
 		$this->assign( 'contact_type', $this->_contactType);
+		$this->assign( 'contact_subtype', $this->_contactSubType);
+        list( $displayName, $contactImage ) = CRM_Contact_BAO_Contact::getDisplayAndImage( $this->_tableID );        
+        CRM_Utils_System::setTitle( $displayName, $contactImage . ' ' . $displayName );
 	
         // when custom data is included in this page
         if ( CRM_Utils_Array::value( "hidden_custom", $_POST ) ) {
@@ -189,11 +194,13 @@ class CRM_Contact_Form_CustomData extends CRM_Core_Form
 		$groupTree =& CRM_Core_BAO_CustomGroup::getTree( $this->_contactType,
                                                          $this,
                                                          $this->_tableID,
-                                                         $this->_groupID );
+                                                         $this->_groupID,
+                                                         $this->_contactSubType );
                                                      
         if ( !CRM_Utils_Array::value( "hidden_custom_group_count", $_POST ) ) { 
             // custom data building in edit mode (required to handle multi-value)
-            $groupTree =& CRM_Core_BAO_CustomGroup::getTree( $this->_contactType, $this, $this->_tableID, $this->_groupID);
+            $groupTree =& CRM_Core_BAO_CustomGroup::getTree( $this->_contactType, $this, $this->_tableID, 
+                                                             $this->_groupID, $this->_contactSubType   );
             $customValueCount = CRM_Core_BAO_CustomGroup::buildCustomDataView( $this, $groupTree, true, $this->_groupID );
         } else {
             $customValueCount = $_POST['hidden_custom_group_count'][$this->_groupID];
@@ -205,48 +212,6 @@ class CRM_Contact_Form_CustomData extends CRM_Core_Form
         return $defaults;
     }
     
-    /**
-     * This function is used to add the rules (mainly global rules) for form.
-     * All local rules are added near the element
-     *
-     * @return None
-     * @access public
-     * @see valid_date
-     */
-    function addRules( )
-    {
-        $this->addFormRule( array( 'CRM_Contact_Form_CustomData', 'formRule' ) );
-    }
-
-    /**
-     * global validation rules for the form
-     *
-     * @param array $fields posted values of the form
-     * @param array $errors list of errors to be posted back to the form
-     *
-     * @return void
-     * @static
-     * @access public
-     */
-    static function formRule( &$fields )
-    {
-        $errors = array( );
-        foreach ( $fields as $key => $value ) {
-            if ( $customFieldInfo = CRM_Core_BAO_CustomField::getKeyID( $key, true ) &&
-                 substr($key,0,7) == 'custom_' &&
-                 array_key_exists( $key. '_id', $fields ) &&
-                 $fields[$key] && !is_numeric( $fields[$key .'_id'] ) ) {
-                $errors[$key] = ts('Please select valid custom value.');
-            }
-        }
-        
-        if ( !empty( $errors ) ) {
-            return $errors;
-        }  
-        return true;
-    }
-
-
     /**
      * Process the user submitted custom data values.
      *
@@ -263,7 +228,9 @@ class CRM_Contact_Form_CustomData extends CRM_Core_Form
                                                     'civicrm_contact',
                                                     $this->_tableID,
                                                     $this->_entityType );
+
+        // reset the group contact cache for this group
+        require_once 'CRM/Contact/BAO/GroupContactCache.php';
+        CRM_Contact_BAO_GroupContactCache::remove( );
     }
 }
-
-

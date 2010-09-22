@@ -2,15 +2,15 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 2.2                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | CiviCRM is free software; you can copy, modify, and distribute it  |
  | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007.                                       |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
@@ -18,7 +18,8 @@
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
@@ -28,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -40,9 +41,11 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
     protected $_addressField = false;
 
     protected $_charts = array( ''         => 'Tabular',
-                                'barGraph' => 'Bar Graph',
-                                'pieGraph' => 'Pie Graph'
+                                'barChart' => 'Bar Chart',
+                                'pieChart' => 'Pie Chart'
                                 );
+   protected $_customGroupExtends = array( 'Contribution' );
+   protected $_customGroupGroupBy = true;
     
     function __construct( ) {
         $this->_columns = 
@@ -52,6 +55,8 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
                           array( 'display_name'      => 
                                  array( 'title'      => ts( 'Contact Name' ),
                                         'no_repeat'  => true ),
+                                 'postal_greeting_display' =>
+                                 array( 'title'      => ts( 'Postal Greeting' ) ),
                                  'id'           => 
                                  array( 'no_display' => true,
                                         'required'  => true, ), ),
@@ -143,6 +148,13 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
                                         'options'      => CRM_Contribute_PseudoConstant::contributionStatus( ),
                                         'default'      => array( 1 ),
                                         ), 
+
+                                'contribution_type_id'   =>
+                                   array( 'title'        => ts( 'Contribution Type' ), 
+                                          'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+                                          'options'      => CRM_Contribute_PseudoConstant::contributionType( )
+                                        ),
+
                                  'total_amount'   => 
                                  array( 'title'   => ts( 'Donation Amount' ), ), 
 
@@ -170,41 +182,19 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
                                  'contribution_source'     => null, ), ),
 
                    'civicrm_group' => 
-                   array( 'dao'    => 'CRM_Contact_DAO_Group',
+                   array( 'dao'    => 'CRM_Contact_DAO_GroupContact',
                           'alias'  => 'cgroup',
                           'filters' =>             
                           array( 'gid' => 
-                                 array( 'name'          => 'id',
+                                 array( 'name'          => 'group_id',
                                         'title'         => ts( 'Group' ),
                                         'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-                                        'options'       => CRM_Core_PseudoConstant::staticGroup( ) ), ), ),
+                                        'group'         => true,
+                                        'options'       => CRM_Core_PseudoConstant::group( ) ), ), ),
+                   
                    );
-
-        if ( defined( 'CIVICRM_REPORT_CONTRIBUTION_CUSTOM_DATA' ) ) {
-            // Add contribution custom fields
-            $query = 'SELECT id, table_name FROM civicrm_custom_group WHERE is_active = 1 AND extends = "Contribution"';
-            $dao = CRM_Core_DAO::executeQuery( $query );
-            while ( $dao->fetch( ) ) {
-                
-                // Assemble the fields for this custom data group
-                $fields = array();
-                $query = 'SELECT column_name, label FROM civicrm_custom_field WHERE is_active = 1 AND custom_group_id = ' . $dao->id;
-                $dao_column = CRM_Core_DAO::executeQuery( $query );
-                while ( $dao_column->fetch( ) ) {
-                    $fields[$dao_column->column_name] = array(
-                                                              'title' => $dao_column->label,
-                                                              );
-                }
-                
-                // Add the custom data table and fields to the report column options
-                $this->_columns[$dao->table_name] = array(
-                                                          'dao' => 'CRM_Contribute_DAO_Contribution',
-                                                          'fields' => $fields,
-                                                          'group_bys' => $fields,
-                                                          );
-            }
-        }
-
+      
+        $this->_tagFilter = true;
         parent::__construct( );
     }
 
@@ -321,17 +311,20 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
         $this->_select = "SELECT " . implode( ', ', $select ) . " ";
     }
 
-    static function formRule( &$fields, &$files, $self ) {  
+    static function formRule( $fields, $files, $self ) {  
         $errors = $grouping = array( );
         //check for searching combination of dispaly columns and
         //grouping criteria
+        $ignoreFields = array( 'total_amount', 'display_name' );
+        $errors       = $self->customDataFormRule( $fields, $ignoreFields );
+        
         if ( CRM_Utils_Array::value( 'receive_date', $fields['group_bys'] ) ) {
             foreach ( $self->_columns as $tableName => $table ) {
                 if ( array_key_exists('fields', $table) ) {
                     foreach ( $table['fields'] as $fieldName => $field ) {
                         if ( CRM_Utils_Array::value( $field['name'], $fields['fields'] ) && 
                              $fields['fields'][$field['name']] && 
-                             in_array( $field['name'], array( 'display_name', 'contribution_source', 'contribution_type' ) ) ) {
+                             in_array( $field['name'], array( 'display_name', 'postal_greeting_display', 'contribution_source', 'contribution_type' ) ) ) {
                             $grouping[] = $field['title'];
                         }
                     }
@@ -339,15 +332,15 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
             }
             if ( !empty( $grouping ) ) {
                 $temp = 'and '. implode(', ', $grouping );
-                $errors['fields'] = ts("Please Do not use combination of received date %1", array( 1 => $temp ));    
+                $errors['fields'] = ts("Please do not use combination of Receive Date %1", array( 1 => $temp ));    
             }
         }
          
         if ( !CRM_Utils_Array::value( 'receive_date', $fields['group_bys'] ) ) {
-            if ( CRM_Utils_Date::isDate( $fields['receive_date_relative'] ) || 
+            if ( CRM_Utils_Array::value( 'receive_date_relative', $fields ) || 
                  CRM_Utils_Date::isDate( $fields['receive_date_from'] ) || 
                  CRM_Utils_Date::isDate( $fields['receive_date_to'] ) ) {
-                $errors['receive_date_relative'] = ts("Do not use filter on Date if group by received date not used ");      
+                $errors['receive_date_relative'] = ts("Do not use filter on Date if group by Receive Date is not used ");      
             }
         }         
         if ( !CRM_Utils_Array::value( 'total_amount', $fields['fields'] ) ) {
@@ -365,7 +358,8 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
         $this->_from = "
         FROM civicrm_contact  {$this->_aliases['civicrm_contact']}
              INNER JOIN civicrm_contribution   {$this->_aliases['civicrm_contribution']} 
-                     ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_contribution']}.contact_id
+                     ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_contribution']}.contact_id AND
+                        {$this->_aliases['civicrm_contribution']}.is_test = 0
              LEFT  JOIN civicrm_contribution_type  {$this->_aliases['civicrm_contribution_type']} 
                      ON {$this->_aliases['civicrm_contribution']}.contribution_type_id ={$this->_aliases['civicrm_contribution_type']}.id
              LEFT  JOIN civicrm_email {$this->_aliases['civicrm_email']} 
@@ -374,30 +368,14 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
               
              LEFT  JOIN civicrm_phone {$this->_aliases['civicrm_phone']} 
                      ON ({$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_phone']}.contact_id AND 
-                        {$this->_aliases['civicrm_phone']}.is_primary = 1)
-              
-             LEFT  JOIN civicrm_group_contact  group_contact 
-                     ON {$this->_aliases['civicrm_contact']}.id = group_contact.contact_id  AND group_contact.status='Added'
-             LEFT  JOIN civicrm_group  {$this->_aliases['civicrm_group']} 
-                     ON group_contact.group_id = {$this->_aliases['civicrm_group']}.id
-            ";
-
-        if ( defined( 'CIVICRM_REPORT_CONTRIBUTION_CUSTOM_DATA' ) ) {
-            // LEFT JOIN on contribution custom data fields
-            $query = 'SELECT id, table_name FROM civicrm_custom_group WHERE is_active = 1 AND extends = "Contribution"';
-            $dao = CRM_Core_DAO::executeQuery( $query );
-            while ( $dao->fetch( ) ) {
-                $alias = $this->_aliases[$dao->table_name];
-                $this->_from .= "\n" . 'LEFT JOIN ' . $dao->table_name . ' ' . $alias;
-                $this->_from .= "\n" . '        ON ' . $alias . '.entity_id = ' . $this->_aliases['civicrm_contribution'] . '.id';
-            }
-        }
+                        {$this->_aliases['civicrm_phone']}.is_primary = 1)";
 
         if ( $this->_addressField ) {
             $this->_from .= "
-            LEFT JOIN civicrm_address {$this->_aliases['civicrm_address']} 
-                   ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_address']}.contact_id AND 
-                      {$this->_aliases['civicrm_address']}.is_primary = 1\n";
+                  LEFT JOIN civicrm_address {$this->_aliases['civicrm_address']} 
+                         ON {$this->_aliases['civicrm_contact']}.id = 
+                            {$this->_aliases['civicrm_address']}.contact_id AND 
+                            {$this->_aliases['civicrm_address']}.is_primary = 1\n";
         }
     }
 
@@ -438,7 +416,7 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
             }
             $this->_groupBy = "GROUP BY " . implode( ', ', $this->_groupBy ) . " {$this->_rollup} ";
         } else {
-            $this->_groupBy = "GROUP BY contact.id";
+            $this->_groupBy = "GROUP BY {$this->_aliases['civicrm_contact']}.id";
         }
     }
 
@@ -447,9 +425,9 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
 
         if ( ! $this->_having ) {
             $select = "
-            SELECT COUNT( contribution.total_amount )       as count,
-                   SUM( contribution.total_amount )         as amount,
-                   ROUND(AVG(contribution.total_amount), 2) as avg
+            SELECT COUNT({$this->_aliases['civicrm_contribution']}.total_amount )       as count,
+                   SUM({$this->_aliases['civicrm_contribution']}.total_amount )         as amount,
+                   ROUND(AVG({$this->_aliases['civicrm_contribution']}.total_amount), 2) as avg
             ";
         
             $sql = "{$select} {$this->_from} {$this->_where}";
@@ -488,17 +466,18 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
             }
             
             if ( CRM_Utils_Array::value( 'receive_date', $this->_params['group_bys'] ) ) {
-                foreach ( array ( 'receive_date', $this->_interval, 'value' ) as $ignore ) {
-                    unset( $graphRows[$ignore][$count-1] );
-                }
-                $graphs = CRM_Utils_PChart::chart( $graphRows, $this->_params['charts'], $this->_interval );
-                $this->assign( 'graphFilePath', $graphs['0']['file_name'] );
-                $this->_graphPath =  $graphs['0']['file_name'];
+                
+                // build the chart.
+                require_once 'CRM/Utils/OpenFlashChart.php';
+                $config  = CRM_Core_Config::Singleton();
+                $graphRows['xname'] = $this->_interval;
+                $graphRows['yname'] = "Amount ({$config->defaultCurrency})";
+                CRM_Utils_OpenFlashChart::chart( $graphRows, $this->_params['charts'], $this->_interval );
+                $this->assign( 'chartType', $this->_params['charts'] );
             }
         }
     }
-
-
+    
     function alterDisplay( &$rows ) {
         // custom code to alter rows
         $entryFound = false;
@@ -510,9 +489,11 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
                  CRM_Utils_Array::value('civicrm_contribution_receive_date_start',    $row) && 
                  CRM_Utils_Array::value('civicrm_contribution_receive_date_subtotal', $row) ) {
 
-                $dateStart = CRM_Utils_Date::customFormat($row['civicrm_contribution_receive_date_start'], 
-                                                          '%Y%m%d');
-                $dateEnd   = CRM_Utils_Date::unformat($dateStart, '');
+                $dateStart = CRM_Utils_Date::customFormat( $row['civicrm_contribution_receive_date_start'], '%Y%m%d' );
+                $endDate   = new DateTime( $dateStart );
+                $dateEnd   = array( );
+
+                list( $dateEnd['Y'], $dateEnd['M'], $dateEnd['d'] ) = explode(':', $endDate->format('Y:m:d') );
 
                 switch(strtolower($this->_params['group_bys_freq']['receive_date'])) {
                 case 'month': 
