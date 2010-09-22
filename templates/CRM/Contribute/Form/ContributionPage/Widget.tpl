@@ -24,20 +24,6 @@
  +--------------------------------------------------------------------+
 *}
 {include file="CRM/common/WizardHeader.tpl"}
-{if $widget_id} {* If we have a widget for this page, construct the embed code.*}
-    {capture assign=widgetVars}serviceUrl={$config->userFrameworkResourceURL}packages/amfphp/gateway.php&amp;contributionPageID={$id}&amp;widgetID=1{/capture}
-    {capture assign=widget_code}
-<div style="text-align: center; width:260px">
-	<object type="application/x-shockwave-flash" data="{$config->userFrameworkResourceURL}extern/Widget/widget.swf" width="220" height="220" id="civicontribute-widget" align="middle" pluginspage="http://www.macromedia.com/go/getflashplayer">
-    <param name="flashvars" value="{$widgetVars}">
-	<param name="allowScriptAccess" value="sameDomain" />
-	<param name="allowFullScreen" value="false" />
-	<param name="movie" value="{$config->userFrameworkResourceURL}extern/Widget/widget.swf" />
-	<param name="quality" value="high" />
-	<param name="bgcolor" value="#ffffff" />
-	</object>
-</div>{/capture}
-{/if}
 
 <div id="form" class="crm-block crm-form-block crm-contribution-contributionpage-widget-form-block">
     <fieldset><legend>{ts}Configure Widget{/ts}</legend>
@@ -69,7 +55,7 @@
                     <div class="description">
                         {ts}Click <strong>Save & Preview</strong> to save any changes to your settings, and preview the widget again on this page.{/ts}
                     </div>
-                    {$widget_code}<br />
+                    {include file="CRM/Contribute/Page/Widget.tpl" widgetId=$widget_id cpageId=$cpageId}<br />
                 {else}
                     <div class="description">
                         {ts}Click <strong>Save & Preview</strong> to save your settings and preview the widget on this page.{/ts}<br />
@@ -83,7 +69,7 @@
                     <div class="description">
                         {ts}Add this widget to any web page by copying and pasting the code below.{/ts}
                     </div>
-                    <textarea rows="8" cols="50" name="widget_code" id="widget_code">{$widget_code}</textarea>
+                    <textarea rows="8" cols="50" name="widget_code" id="widget_code">{include file="CRM/Contribute/Page/Widget.tpl" widgetId=$widget_id cpageId=$cpageId}</textarea>
                     <br />
                     <strong><a href="#" onclick="Widget.widget_code.select(); return false;">&raquo; Select Code</a></strong>
                 {else}
