@@ -488,7 +488,8 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
         }
         
         // prompt Drupal Views users to update $db_prefix in settings.php, if necessary
-        if ( CIVICRM_UF == 'Drupal' && module_exists('views') ) {
+        global $db_prefix;
+        if ( is_array($db_prefix) && CIVICRM_UF == 'Drupal' && module_exists('views') ) {
             // get table_name for each custom group
             $tables = array( );
             $sql = "SELECT table_name FROM civicrm_custom_group WHERE is_active = 1";
@@ -498,7 +499,6 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
             }
             
             // find out which tables are missing from the $db_prefix array
-            global $db_prefix;
             $missingTableNames = array_diff_key( $tables, $db_prefix );
             
             if ( !empty( $missingTableNames ) ) {
