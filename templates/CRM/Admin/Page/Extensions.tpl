@@ -36,7 +36,7 @@
 {if $rows}
 {if $action ne 1 and $action ne 2}
     <div class="action-link">
-        <a href="{crmURL q="group="|cat:$gName|cat:"&action=add&reset=1"}" id="new"|cat:$GName class="button"><span><div class="icon add-icon"></div>{ts}Refresh{/ts}</span></a>
+        <a href="{crmURL q="reset=1"}" id="new" class="button"><span><div class="icon add-icon"></div>{ts}Refresh{/ts}</span></a>
     </div>
 {/if}
 <div id="extensions">
@@ -72,7 +72,7 @@
 
         {if $action ne 1 and $action ne 2}
             <div class="action-link">
-                <a href="{crmURL q="group="|cat:$gName|cat:"&action=add&reset=1"}" id="new"|cat:$GName class="button"><span><div class="icon add-icon"></div>{ts}Refresh{/ts}</span></a>
+	        <a href="{crmURL q="reset=1"}" id="new" class="button"><span><div class="icon add-icon"></div>{ts}Refresh{/ts}</span></a>
             </div>
         {/if}
 </div>

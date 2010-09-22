@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
- <extension key="org.civicrm.google" type="payment">
-  <callback>Google</callback>
+ <extension key="org.civicrm.googlecheckout" type="payment">
+  <callback>GoogleCheckout</callback>
   <name>Google Checkout</name>
   <description>Google Checkout Payment Processor</description>
   <url>http://civicrm.org</url>
