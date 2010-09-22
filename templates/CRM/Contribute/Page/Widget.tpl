@@ -147,7 +147,9 @@
     <div class="crm-amount-raised-wrapper">
         Raised <span id="crm_cpid_{$cpageId}_amt_raised" class="crm-amount-raised">$1,7350</span> of <span id="crm_cpid_{$cpageId}_amt_total" class="crm-amount-total">$7,500</span>.
     </div>
+    { if $form.url_logo.value}
     <div class="crm-logo"><a class="crm-home-url" href="{$form.url_homepage.value}"><img src="{$form.url_logo.value}" alt={ts}Logo{/ts}></a></div>
+    {/if}
     <div id="crm_cpid_{$cpageId}_donors" class="crm-donors">
         14 Donors
     </div>
