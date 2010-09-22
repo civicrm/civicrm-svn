@@ -1989,7 +1989,7 @@ class HTML_QuickForm extends HTML_Common
                 
                 // hack to fix extra <br /> injected by CKEDITOR, we should remove this code
                 // once the bug is fixed and is part of release https://dev.fckeditor.net/ticket/5293
-                if ( is_a( $this->_elements[$key], 'HTML_QuickForm_CKeditor' ) ) {
+                if ( is_a( $this->_elements[$key], 'HTML_QuickForm_CKeditor' ) && ( CRM_Utils_Array::value( $fldName, $value ) == '<br />' ) ) {
                     $value[$fldName] = rtrim( CRM_Utils_Array::value( $fldName, $value ), '<br />');
                 }
                 

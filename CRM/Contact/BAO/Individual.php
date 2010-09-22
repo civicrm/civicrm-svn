@@ -102,7 +102,7 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
                     $value   = $individual->$dbName;
                     
                     // the db has name values
-                    if ( $value && CRM_Utils_Array::value( 'preserveDBName', $params ) && !$params[$dbName] ) {
+                    if ( $value && CRM_Utils_Array::value( 'preserveDBName', $params ) ) {
                         $useDBNames[] = $name; 
                     }
                 }
@@ -110,7 +110,7 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
                 foreach ( array( 'prefix', 'suffix' ) as $name ) {
                     $dbName  = "{$name}_id";
                     $value   = $individual->$dbName;
-                    if ( $value && CRM_Utils_Array::value( 'preserveDBName', $params ) && !$params[$dbName] ) {
+                    if ( $value && CRM_Utils_Array::value( 'preserveDBName', $params ) ) {
                         $useDBNames[] = $name; 
                     }
                 }
@@ -226,13 +226,7 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
                 $contact->sort_name = $uniqId;
             }
         }
-
-        // again if sort_name is empty assign primary email
-        if ( !$contact->sort_name && $contact->id ) { 
-            $primEmail = CRM_Contact_BAO_Contact::getPrimaryEmail( $contact->id );
-            $contact->display_name = $contact->sort_name = $primEmail;
-        }
-        
+  
         $format = CRM_Utils_Date::getDateFormat( 'birth' );
         if ( $date = CRM_Utils_Array::value('birth_date', $params) ) {
             if ( in_array( $format, array('dd-mm', 'mm/dd' ) ) ) {

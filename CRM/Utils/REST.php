@@ -269,7 +269,7 @@ class CRM_Utils_REST
                 return self::error( 'Unknown function invocation.' );
             }
 
-            return eval( $params['className'] . '::' . $params['fnName'] . '( $params );' );
+            return call_user_func( array( $params['className'], $params['fnName'] ), $params );
 	    } else {
             $fnGroup = ucfirst($args[1]);
             if ( strpos( $fnGroup, '_' ) ) {
