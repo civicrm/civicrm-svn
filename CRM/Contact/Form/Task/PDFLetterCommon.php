@@ -275,24 +275,33 @@ class CRM_Contact_Form_Task_PDFLetterCommon
     
     function formatMessage( &$message ) 
     {
-        $newLineOperators = array( '<p>'    => '/<(\s+)?p(\s+)?>/m',
-                                   '<br />' => '/<(\s+)?br(\s+)?\/>/m' );
-        $formattedMessage = $message;
-        foreach ( $newLineOperators as $op => $preg ) {
-            $htmlMsg = preg_split( $preg, $formattedMessage );
-            foreach ( $htmlMsg as $key => &$msg ) {
+        $newLineOperators = array( 'p'  => array( 'oper'    => '<p>',
+                                                  'pattern' => '/<(\s+)?p(\s+)?>/m' ),
+                                   'br' => array( 'oper'    => '<br />',
+                                                  'pattern' => '/<(\s+)?br(\s+)?\/>/m' ) );
+        
+        $htmlMsg = preg_split( $newLineOperators['p']['pattern'], $message );
+        foreach ( $htmlMsg as $k => &$m ) {
+            $messages = preg_split( $newLineOperators['br']['pattern'], $m );
+            foreach ( $messages as $key => &$msg ) {
                 $msg = trim( $msg );
                 $matches = array( );
                 if ( preg_match( '/^(&nbsp;)+/', $msg, $matches ) ) {
-                    if ( strlen( $msg ) > 200 && 
-                         substr_count( $matches[0], '&nbsp;' ) > 5 ) {
-                        $msg = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.ltrim( $msg, '&nbsp;' );
+                    $spaceLen = strlen( $matches[0] ) / 6;
+                    $trimMsg  = ltrim(  $msg, '&nbsp; ' ); 
+                    $charLen  = strlen( $trimMsg );
+                    $totalLen =  $charLen + $spaceLen;
+                    if ( $totalLen > 100 ) {
+                        $spacesCount = 10;
+                        if ( $spaceLen > 50 ) $spacesCount = 20;
+                        if ( $charLen > 100 ) $spacesCount = 1;
+                        $msg =  str_repeat( '&nbsp;', $spacesCount ) . $trimMsg;
                     }
                 }
             }
-            $formattedMessage = implode( $op, $htmlMsg );
+            $m = implode( $newLineOperators['br']['oper'], $messages );
         }
-        $message = $formattedMessage;
+        $message = implode( $newLineOperators['p']['oper'], $htmlMsg );
     }
 
 }
