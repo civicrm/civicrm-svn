@@ -128,7 +128,7 @@ function civicrm_relationship_type_delete( &$params ) {
  * return An array of Relationship_type
  * * @access  public
  */
-function civicrm_relationshipType_types_get( $params = null ) 
+function civicrm_relationshipType_get( $params = null ) 
 {
     return civicrm_relationship_types_get( $params );
 }
