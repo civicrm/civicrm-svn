@@ -39,15 +39,23 @@
 
 {literal}
 <script type="text/javascript">
+//CRM-6776, enter-to-submit functionality is broken for IE due to hidden field
 cj( document ).ready( function( ) {
-   if ( cj.browser.msie ) {
-     cj( '#quickSearch' ).append( '<input type="submit" value="Go" name="_qf_Basic_refresh" class="form-submit default"/>' );
-     cj( '#quickSearch' ).append( '<input type="text" class="form-text" id="sort_name_navigation" name="sort_name" style="width: 12em; margin-left: -45px;"/>' );
-     cj( '#quickSearch' ).append( '<input type="text" id="sort_contact_id" style="display: none"/>' );
-   } else {
-     cj( '#quickSearch').append( '<input type="text" class="form-text" id="sort_name_navigation" name="sort_name" style="width: 12em;"/> ');
-     cj( '#quickSearch').append( '<input type="hidden" id="sort_contact_id" value="" /> ');
-     cj( '#quickSearch').append( '<input type="submit" value="{ts}Go{/ts}" name="_qf_Basic_refresh" class="form-submit default" style="display: none;"/> ');
+   var htmlContent = '';
+      if ( cj.browser.msie ) {
+          if( cj.browser.version.substr( 0,1 ) == '7' ) {
+              htmlContent = '<input type="submit" value="Go" name="_qf_Basic_refresh" class="form-submit default" style ="margin-right: -5px" />';
+          } else {
+              htmlContent = '<input type="submit" value="Go" name="_qf_Basic_refresh" class="form-submit default" />';
+          }
+          htmlContent += '<input type="text" class="form-text" id="sort_name_navigation" name="sort_name" style="width: 12em; margin-left: -45px;" />' + 
+                         '<input type="text" id="sort_contact_id" style="display: none" />';
+          cj( '#quickSearch' ).append( htmlContent );            
+      } else {
+          htmlContent += '<input type="text" class="form-text" id="sort_name_navigation" name="sort_name" style="width: 12em;" />' + 
+                         '<input type="hidden" id="sort_contact_id" value="" />' + 
+                         '<input type="submit" value="{ts}Go{/ts}" name="_qf_Basic_refresh" class="form-submit default" style="display: none;" />';    
+          cj( '#quickSearch' ).append( htmlContent );
    }
 });
 function getSearchURLValue( )
