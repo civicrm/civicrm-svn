@@ -40,13 +40,21 @@
 	{if $form.contact_edit_options.html}        		       
 	       <tr class="crm-preferences-display-form-block-contact_edit_options">
                <td class="label">{$form.contact_edit_options.label}</td>
-               <td><div style="width:40%">
-	           <ul id="contactEditSortable">
-	           {foreach from=$contactEditOptions item="title" key="opId"}
-		     <li id="preference-{$opId}-contactedit" class="crm-accordion-header">{$form.contact_edit_options.$opId.html}</li>
+               <td><table style="width:80%">
+                   <tr><td>
+	       	   <ul id="contactEditBlocks">
+	           {foreach from=$contactBlocks item="title" key="opId"}
+		     <li id="preference-{$opId}-contactedit" class="ui-widget-header ui-corner-all" style="padding-left:1px;"><span class='ui-icon ui-icon-arrowthick-2-n-s' style="float:left;"></span><span>{$form.contact_edit_options.$opId.html}</span></li>
 		   {/foreach}
 		   </ul>
-	           </div>
+                   </td><td>
+		   <ul id="contactEditOptions">
+	           {foreach from=$editOptions item="title" key="opId"}
+		     <li id="preference-{$opId}-contactedit" class="ui-widget-header ui-corner-all" style="padding-left:1px;"><span class='ui-icon ui-icon-arrowthick-2-n-s' style="float:left;"></span><span>{$form.contact_edit_options.$opId.html}</span></li>
+		   {/foreach}
+		   </ul>
+		   </td></tr>
+	           </table>
 	       </td>
             </tr>
             <tr class="crm-preferences-display-form-block-description">
@@ -111,24 +119,38 @@
 	{/if}
     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>
-{if $contactEditOptions}
+{if $form.contact_edit_options.html}
 {literal}
 <script type="text/javascript" >
-    var params = new Array();
     cj(function( ) {
-	cj("#contactEditSortable").sortable({
+	cj("#contactEditBlocks").sortable({
 			placeholder: 'ui-state-highlight',
 			update: getSorting
 		});
-		cj("#sortable").disableSelection();
+	cj("#contactEditOptions").sortable({
+			placeholder: 'ui-state-highlight',
+			update: getSorting
+		});
     });
  
     function getSorting(e, ui) {
-        var items = cj("#contactEditSortable li");
-        for( var x=0; x<items.length; x++ ) {
-            var idState = items[x].id.split('-');
-            params[x+1] = idState[1];    
-        }
+        var params = new Array();
+    	var y = 0;
+	var items = cj("#contactEditBlocks li");
+	if ( items.length > 0 ) {
+	    for( var y=0; y < items.length; y++ ) {
+	        var idState = items[y].id.split('-');
+	        params[y+1] = idState[1];    
+	    }
+	}     
+    
+        items = cj("#contactEditOptions li");
+	if ( items.length > 0 ) { 
+            for( var x=0; x < items.length; x++ ) {
+                var idState = items[x].id.split('-');
+                params[x+y+1] = idState[1];    
+            }
+	}
         cj('#contact_edit_prefences').val( params.toString( ) );
     }
 </script>
