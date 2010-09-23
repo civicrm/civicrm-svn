@@ -28,8 +28,8 @@
  * We will unify the two files in a future release
  *}
 packages/jquery/jquery.js
-packages/jquery/jquery-ui.js
-packages/jquery/themes/smoothness/jquery-ui.css
+packages/jquery/jquery-ui-1.8.5/js/jquery-ui-1.8.5.custom.min.js
+packages/jquery/jquery-ui-1.8.5/css/smoothness/jquery-ui-1.8.5.custom.css
 
 packages/jquery/plugins/flexigrid.js
 packages/jquery/css/flexigrid.css

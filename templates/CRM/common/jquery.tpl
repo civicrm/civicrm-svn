@@ -29,8 +29,8 @@
  * html profile etc
  *}
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/jquery.js"></script>
-<script type="text/javascript" src="{$config->resourceBase}packages/jquery/jquery-ui.js"></script>
-<style type="text/css">@import url("{$config->resourceBase}packages/jquery/themes/smoothness/jquery-ui.css");</style>
+<script type="text/javascript" src="{$config->resourceBase}packages/jquery/jquery-ui-1.8.5/js/jquery-ui-1.8.5.custom.min.js"></script>
+<style type="text/css">@import url("{$config->resourceBase}packages/jquery/jquery-ui-1.8.5/css/smoothness/jquery-ui-1.8.5.custom.css");</style>
 
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/flexigrid.js"></script>
 <style type="text/css">@import url("{$config->resourceBase}packages/jquery/css/flexigrid.css");</style>
