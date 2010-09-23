@@ -138,8 +138,7 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
             }
         }
         
-        $caseType  = CRM_Case_BAO_Case::getCaseType( $this->_caseId, 'name' );
-        $this->_caseType = $caseType;
+        $this->_caseType = CRM_Case_BAO_Case::getCaseType( $this->_caseId, 'name' );
         $this->assign('caseType', $this->_caseType);
 
         require_once 'CRM/Case/XMLProcessor/Process.php';
@@ -170,7 +169,7 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
             require_once 'CRM/Case/PseudoConstant.php';
             $caseTypes = CRM_Case_PseudoConstant::caseType( );
             
-            if ( empty( $caseTypes ) && ( $this->_activityTypeName == 'Change Case Type' ) ) {
+            if ( empty( $caseTypes ) && ( $this->_activityTypeName == 'Change Case Type' ) && !$this->_caseId ) {
                 $url = CRM_Utils_System::url( 'civicrm/contact/view/case',
                                               "reset=1&action=view&cid={$this->_currentlyViewedContactId}&id={$this->_caseId}&show=1" );
                 $session = CRM_Core_Session::singleton( );

@@ -113,9 +113,16 @@ class CRM_Case_Form_Case extends CRM_Core_Form
         
         if ( !$this->_caseId ) {
             require_once 'CRM/Case/PseudoConstant.php';
-            $caseTypes = CRM_Case_PseudoConstant::caseType( );
-            if ( empty( $caseTypes ) ) {
-                CRM_Core_Error::fatal( ts( 'You do not have any active case types' ) );
+            $caseAttributes = array( 'case_type'        => CRM_Case_PseudoConstant::caseType( ),
+                                     'case_status'      => CRM_Case_PseudoConstant::caseStatus( ),
+                                     'encounter_medium' => CRM_Case_PseudoConstant::encounterMedium( ) );
+            
+            foreach ( $caseAttributes as $key => $values ) {
+                if ( empty ( $values ) ) {
+                    CRM_Core_Error::fatal( ts( 'You do not have any active %1', 
+                                               array( 1 =>  str_replace( '_', ' ', $key ) ) ) );
+                    break;
+                }
             }
         }
 

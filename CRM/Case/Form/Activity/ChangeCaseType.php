@@ -65,8 +65,7 @@ class CRM_Case_Form_Activity_ChangeCaseType
         
         $defaults['reset_date_time'] = array( );
         list( $defaults['reset_date_time'], $defaults['reset_date_time_time'] ) = CRM_Utils_Date::setDateDefaults( null, 'activityDateTime' );
-        $caseType  = CRM_Case_PseudoConstant::caseTypeName( $form->_caseId );
-        $defaults['case_type_id'] = $caseType['id'];
+        $defaults['case_type_id'] = $form->_caseTypeId;
 
         return $defaults;
     }
@@ -74,7 +73,15 @@ class CRM_Case_Form_Activity_ChangeCaseType
     static function buildQuickForm( &$form ) 
     { 
         require_once 'CRM/Case/PseudoConstant.php';
-        $form->_caseType = CRM_Case_PseudoConstant::caseType( );
+        $form->_caseType   = CRM_Case_PseudoConstant::caseType( );
+        $caseTypeId        = explode( CRM_Case_BAO_Case::VALUE_SEPARATOR, CRM_Core_DAO::getFieldValue( 'CRM_Case_DAO_Case',
+                                                                                                       $form->_caseId,
+                                                                                                       'case_type_id' ) );
+        $form->_caseTypeId = $caseTypeId[1];
+        if ( !in_array( $form->_caseTypeId, $form->_caseType ) ) {
+            $form->_caseType[$form->_caseTypeId] = CRM_Core_OptionGroup::getLabel( 'case_type', $form->_caseTypeId, false );
+        }
+
         $form->add('select', 'case_type_id',  ts( 'New Case Type' ),  
                    $form->_caseType , true);
 
