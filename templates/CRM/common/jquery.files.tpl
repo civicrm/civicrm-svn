@@ -37,17 +37,14 @@ packages/jquery/css/flexigrid.css
 packages/jquery/plugins/jquery.autocomplete.js
 packages/jquery/css/jquery.autocomplete.css
 
-packages/jquery/plugins/tree_component.min.js
-packages/jquery/plugins/css.js
-packages/jquery/css/tree_component.css
+packages/jquery/plugins/jsTree.v.1.0rc2/jquery.jstree.js
+packages/jquery/jsTree.v.1.0rc2/themes/default/style.css
 
 packages/jquery/plugins/jquery.menu.pack.js
 packages/jquery/plugins/jquery.dimensions.js
 packages/jquery/css/menu.css
 
 packages/jquery/plugins/jquery.chainedSelects.js
-packages/jquery/plugins/jquery.treeview.min.js
-packages/jquery/plugins/jquery.bgiframe.pack.js
 
 packages/jquery/plugins/jquery.contextMenu.js
 packages/jquery/plugins/jquery.tableHeader.js
