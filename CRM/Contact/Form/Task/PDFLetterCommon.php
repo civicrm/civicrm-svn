@@ -182,6 +182,10 @@ class CRM_Contact_Form_Task_PDFLetterCommon
 				
 		$html_message = $formValues['html_message'];
         
+        //time being hack to strip '&nbsp;'
+        //from particular letter line, CRM-6798 
+        self::formatMessage( $html_message );
+
         require_once 'CRM/Activity/BAO/Activity.php';
 		$messageToken = CRM_Activity_BAO_Activity::getTokens( $html_message );  
 
@@ -255,20 +259,6 @@ class CRM_Contact_Form_Task_PDFLetterCommon
             CRM_Activity_BAO_Activity::createActivityTarget( $activityTargetParams );
         }
         
-        //time being hack to strip '&nbsp;'
-        //from particular letter line, CRM-6798 
-        $htmlMsg = preg_split('/<p>/m', $html );
-        foreach ( $htmlMsg as $key => &$msg ) {
-            $msg = trim( $msg );
-            $matches = array( );
-            if ( preg_match( '/^(&nbsp;)+/', $msg, $matches ) ) {
-                if ( strlen( $msg ) > 200 && 
-                     substr_count( $matches[0], '&nbsp;' ) > 5 ) {
-                    $msg = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.ltrim( $msg, '&nbsp;' );
-                }
-            }
-        }
-        $html = implode( '<p>', $htmlMsg );
         
         require_once 'CRM/Utils/PDF/Utils.php';
         CRM_Utils_PDF_Utils::html2pdf( $html, "CiviLetter.pdf", 'portrait', 'letter' ); 
@@ -281,6 +271,30 @@ class CRM_Contact_Form_Task_PDFLetterCommon
 
         CRM_Utils_System::civiExit( 1 );
     }//end of function
+
+    
+    function formatMessage( &$message ) 
+    {
+        $newLineOperators = array( '<p>'    => '/<(\s+)?p(\s+)?>/m',
+                                   '<br />' => '/<(\s+)?br(\s+)?\/>/m' );
+        $formattedMessage = $message;
+        foreach ( $newLineOperators as $op => $preg ) {
+            $htmlMsg = preg_split( $preg, $formattedMessage );
+            foreach ( $htmlMsg as $key => &$msg ) {
+                $msg = trim( $msg );
+                $matches = array( );
+                if ( preg_match( '/^(&nbsp;)+/', $msg, $matches ) ) {
+                    if ( strlen( $msg ) > 200 && 
+                         substr_count( $matches[0], '&nbsp;' ) > 5 ) {
+                        $msg = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.ltrim( $msg, '&nbsp;' );
+                    }
+                }
+            }
+            $formattedMessage = implode( $op, $htmlMsg );
+        }
+        $message = $formattedMessage;
+    }
+
 }
 
 
