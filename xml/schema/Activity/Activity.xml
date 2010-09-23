@@ -20,7 +20,6 @@
        <name>id</name>
        <autoincrement>true</autoincrement>
   </primaryKey>
-
   <field>
       <name>source_contact_id</name>
       <type>int unsigned</type>
@@ -321,6 +320,15 @@
        <drop>3.2</drop>
   </index>    
   <field>
+       <name>result</name>
+       <uniqueName>activity_result</uniqueName>
+       <type>varchar</type>
+       <title>Result</title>
+       <length>255</length>
+       <comment>Currently being used to store result id for survey activity, FK to option value.</comment>
+       <add>3.3</add>
+  </field>
+  <field>
        <name>is_deleted</name>
        <title>Activity is in the Trash</title>
        <type>boolean</type>
@@ -333,7 +341,7 @@
        <name>index_is_deleted</name>
        <fieldName>is_deleted</fieldName>
        <add>2.2</add>
-  </index> 
+  </index>
   <field>
        <name>activity_tag1_id</name>
        <type>int unsigned</type>

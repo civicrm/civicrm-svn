@@ -338,10 +338,11 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                                        $inline = false,
                                        $customDataSubType = null,
  									   $customDataSubName = null,
- 									   $onlyParent = false ) 
+ 									   $onlyParent = false,
+                                       $onlySubType = false ) 
     {
-        $onlySubType = false;
-
+        //$onlySubType = false;
+        
         if ( $customDataType && 
              !is_array( $customDataType ) ) {
             

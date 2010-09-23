@@ -2015,6 +2015,7 @@ AND cl.modified_id  = c.id
                                   'CiviMember'     => array( 'access CiviMember'     ),
                                   'CiviReport'     => array( 'access CiviReport'     ),
                                   'CiviContribute' => array( 'access CiviContribute' ),
+                                  'CiviCampaign'   => array( 'administer CiviCampaign' ),
                                   );
         
         //return early when it is case activity.

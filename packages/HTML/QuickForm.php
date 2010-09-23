@@ -1969,7 +1969,7 @@ class HTML_QuickForm extends HTML_Common
                              'data', // data i/p of persistent table
                              'sqlQuery' // CRM-6673
                              );
-                                    
+                                  
         $values = array();
         if (null === $elementList) {
             // iterate over all elements, calling their exportValue() methods
@@ -1990,7 +1990,7 @@ class HTML_QuickForm extends HTML_Common
                 // hack to fix extra <br /> injected by CKEDITOR, we should remove this code
                 // once the bug is fixed and is part of release https://dev.fckeditor.net/ticket/5293
                 if ( is_a( $this->_elements[$key], 'HTML_QuickForm_CKeditor' ) ) {
-                    $value[$fldName] = rtrim( CRM_Utils_Array::value( $fldName, $value ), '<br />');
+                    $value[$fldName] = rtrim( $value[$fldName], '<br />');
                 }
                 
                 if (is_array($value)) {

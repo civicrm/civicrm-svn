@@ -106,6 +106,13 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
      */
     protected $_crmDir = 'Activity';
 
+    /*
+     * Survey activity
+     *
+     * @var boolean
+     */
+    protected $_isSurveyActivity;
+
     /**
      * The _fields var can be used by sub class to set/unset/edit the 
      * form fields based on their requirement  
@@ -660,13 +667,30 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         require_once 'CRM/Core/Form/Tag.php';
         $parentNames = CRM_Core_BAO_Tag::getTagSet( 'civicrm_activity' );
         CRM_Core_Form_Tag::buildQuickForm( $this, $parentNames, 'civicrm_activity', $this->_activityId, false, true );
-            
+        
+        // check for survey activity
+        if ( $this->_activityId ) {
+            require_once 'CRM/Campaign/BAO/Survey.php';
+            $this->_isSurveyActivity = CRM_Campaign_BAO_Survey::isSurveyActivity( $this->_activityId );
+            if ( $this->_isSurveyActivity ) {
+                $surveyId = CRM_Core_DAO::getFieldValue( 'CRM_Activity_DAO_Activity', 
+                                                         $this->_activityId, 
+                                                         'source_record_id' );
+                $responseOptions = CRM_Campaign_BAO_Survey::getResponsesOptions( $surveyId );
+                if ($responseOptions) {
+                   $this->add( 'select', 'result', ts('Result'),
+                            array( '' => ts('- select -') ) + array_combine( $responseOptions, $responseOptions ) );
+                }
+            }
+            $this->assign( 'surveyActivity', $this->_isSurveyActivity );
+        }
+                
         // if we're viewing, we're assigning different buttons than for adding/editing
         if ( $this->_action & CRM_Core_Action::VIEW ) { 
             if ( isset( $this->_groupTree ) ) {
 				CRM_Core_BAO_CustomGroup::buildCustomDataView( $this, $this->_groupTree );
             }
-            
+
 			$buttons  = array( );
             // do check for permissions 
             require_once 'CRM/Case/BAO/Case.php';

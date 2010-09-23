@@ -302,7 +302,7 @@ AND        v.name = %1
             foreach ( $profileGroupsXML->ProfileGroup as $profileGroupXML ) {
                 $profileGroup = new CRM_Core_DAO_UFGroup( );
                 $this->copyData( $profileGroup, $profileGroupXML, true, 'title' );
-                $idMap['profile_group'][$profileGroup->title] = $profileGroup->id;
+                $idMap['profile_group'][$profileGroup->name] = $profileGroup->id;
                 $idMap['profile_group'][$profileGroup->name]  = $profileGroup->id;
             }
         }

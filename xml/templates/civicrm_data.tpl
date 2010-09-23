@@ -35,6 +35,7 @@ INSERT INTO civicrm_component (name, namespace) VALUES ('CiviGrant'     , 'CRM_G
 INSERT INTO civicrm_component (name, namespace) VALUES ('CiviPledge'    , 'CRM_Pledge' );
 INSERT INTO civicrm_component (name, namespace) VALUES ('CiviCase'      , 'CRM_Case' );
 INSERT INTO civicrm_component (name, namespace) VALUES ('CiviReport'    , 'CRM_Report' );
+INSERT INTO civicrm_component (name, namespace) VALUES ('CiviCampaign'  , 'CRM_Campaign' );
 
 INSERT INTO civicrm_address ( contact_id, location_type_id, is_primary, is_billing, street_address, street_number, street_number_suffix, street_number_predirectional, street_name, street_type, street_number_postdirectional, street_unit, supplemental_address_1, supplemental_address_2, supplemental_address_3, city, county_id, state_province_id, postal_code_suffix, postal_code, usps_adc, country_id, geo_code_1, geo_code_2, timezone)
       VALUES
@@ -187,7 +188,8 @@ VALUES
    ('tag_used_for'                  , '{ts escape="sql"}Tag Used For{/ts}'                       , 0, 1),
    ('currencies_enabled'            , '{ts escape="sql"}List of currencies enabled for this site{/ts}', 0, 1),
    ('event_badge'                   , '{ts escape="sql"}Event Name Badge{/ts}'                   , 0, 1),
-   ('note_privacy'                  , '{ts escape="sql"}Note Privacy Level{/ts}'                 , 0, 1);
+   ('campaign_type'                 , '{ts escape="sql"}Campaign Type{/ts}'                      , 0, 1),
+   ('campaign_status'               , '{ts escape="sql"}Campaign Status{/ts}'                    , 0, 1);
 
    
 SELECT @option_group_id_pcm            := max(id) from civicrm_option_group where name = 'preferred_communication_method';
@@ -240,6 +242,8 @@ SELECT @option_group_id_tuf            := max(id) from civicrm_option_group wher
 SELECT @option_group_id_currency       := max(id) from civicrm_option_group where name = 'currencies_enabled';
 SELECT @option_group_id_eventBadge     := max(id) from civicrm_option_group where name = 'event_badge';
 SELECT @option_group_id_notePrivacy    := max(id) from civicrm_option_group where name = 'note_privacy';
+SELECT @option_group_id_campaignType   := max(id) from civicrm_option_group where name = 'campaign_type';
+SELECT @option_group_id_campaignStatus := max(id) from civicrm_option_group where name = 'campaign_status';
 
 SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';
 SELECT @eventCompId      := max(id) FROM civicrm_component where name = 'CiviEvent';
@@ -247,6 +251,7 @@ SELECT @memberCompId     := max(id) FROM civicrm_component where name = 'CiviMem
 SELECT @pledgeCompId     := max(id) FROM civicrm_component where name = 'CiviPledge';
 SELECT @caseCompId       := max(id) FROM civicrm_component where name = 'CiviCase';
 SELECT @grantCompId      := max(id) FROM civicrm_component where name = 'CiviGrant';
+SELECT @campaignCompId   := max(id) FROM civicrm_component where name = 'CiviCampaign';
 
 INSERT INTO 
    `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
@@ -286,6 +291,11 @@ VALUES
    (@option_group_id_act, '{ts escape="sql"}Reassigned Case{/ts}',                    24, 'Reassigned Case', NULL, 0,  NULL, 24, '', 0, 1, 1, @caseCompId, NULL ),
    (@option_group_id_act, '{ts escape="sql"}Link Cases{/ts}',                         25, 'Link Cases', NULL, 0,  NULL, 25, '', 0, 1, 1, @caseCompId, NULL ),
    (@option_group_id_act, '{ts escape="sql"}Change Case Tags{/ts}',                   26, 'Change Case Tags', NULL,0, 0, 26, '', 0, 1, 1, @caseCompId, NULL),
+   (@option_group_id_act, '{ts escape="sql"}Survey{/ts}',                             27, 'Survey', NULL,0, 0, 27, '', 0, 1, 1, @campaignCompId, NULL),
+   (@option_group_id_act, '{ts escape="sql"}Canvass{/ts}',                            28, 'Canvass', NULL,0, 0, 28, '', 0, 1, 1, @campaignCompId, NULL),
+   (@option_group_id_act, '{ts escape="sql"}PhoneBank{/ts}',                          29, 'PhoneBank', NULL,0, 0, 29, '', 0, 1, 1, @campaignCompId, NULL),
+   (@option_group_id_act, '{ts escape="sql"}WalkList{/ts}',                           30, 'WalkList', NULL,0, 0, 30, '', 0, 1, 1, @campaignCompId, NULL),
+   (@option_group_id_act, '{ts escape="sql"}Petition{/ts}',                           31, 'Petition', NULL,0, 0, 31, '', 0, 1, 1, @campaignCompId, NULL),
 
    (@option_group_id_gender, '{ts escape="sql"}Female{/ts}',      1, 'Female',      NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_gender, '{ts escape="sql"}Male{/ts}',        2, 'Male',        NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
@@ -620,6 +630,17 @@ VALUES
 -- note privacy levels
   (@option_group_id_notePrivacy, '{ts escape="sql"}None{/ts}'           , 0, '',  NULL, 0, 1, 1, NULL, 0, 1, 1, NULL, NULL),
   (@option_group_id_notePrivacy, '{ts escape="sql"}Author Only{/ts}'    , 1, '',  NULL, 0, 0, 2, NULL, 0, 1, 1, NULL, NULL);
+
+-- Compaign Types
+  (@option_group_id_campaignType, '{ts escape="sql"}Direct Mail{/ts}', 1, 'Direct Mail',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_campaignType, '{ts escape="sql"}Referral Program{/ts}', 2, 'Referral Program',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_campaignType, '{ts escape="sql"}Voter Engagement{/ts}', 3, 'Voter Engagement',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+
+-- Campaign Status
+  (@option_group_id_campaignStatus, '{ts escape="sql"}Planned{/ts}', 1, 'Planned',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL), 
+  (@option_group_id_campaignStatus, '{ts escape="sql"}In Progress{/ts}', 2, 'In Progress',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_campaignStatus, '{ts escape="sql"}Completed{/ts}', 3, 'Completed',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_campaignStatus, '{ts escape="sql"}Cancelled{/ts}', 4, 'Cancelled',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL);
 
 -- Now insert option values which require domainID
 --

@@ -306,7 +306,7 @@ class CRM_Core_PseudoConstant
      * @static
      */
     private static $greeting = array( );
-
+    
     /**
      * populate the object from the database. generic populate
      * method
@@ -1489,7 +1489,7 @@ ORDER BY name";
         }        
         return $_languages;
     }
-
+    
 }
 
 

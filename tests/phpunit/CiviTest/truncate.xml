@@ -91,6 +91,12 @@
 
   <civicrm_membership_status />
 
+  <civicrm_campaign />
+
+  <civicrm_campaign_group />
+
+  <civicrm_survey />
+
   <civicrm_participant_status_type />
 
   <civicrm_dedupe_rule_group />
