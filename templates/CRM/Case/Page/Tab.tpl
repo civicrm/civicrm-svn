@@ -29,14 +29,11 @@
 {elseif $redirectToCaseAdmin}
     <div class="messages status">
       <div class="icon inform-icon"></div>&nbsp; 
-         <strong>{ts}Oops, Its look like there are no active case type or case status.{/ts}</strong>
+         <strong>{ts}Oops, It looks like there are no active case types.{/ts}</strong>
            {if call_user_func(array('CRM_Core_Permission','check'), ' administer CiviCase')}
              {capture assign=adminCaseTypeURL}{crmURL p='civicrm/admin/options/case_type' q='reset=1&group=case_type'}
 	     {/capture}
-             {capture assign=adminCaseStatusURL}{crmURL p='civicrm/admin/options/case_status' q='reset=1&group=case_status'}
-             {/capture}
-             {ts 1=$adminCaseTypeURL 2=$adminCaseStatusURL}Enable <a href='%1'> case types</a> and 
-	     <a href='%2'>case statuses</a>.{/ts}
+             {ts 1=$adminCaseTypeURL 2=$adminCaseStatusURL}Enable <a href='%1'> case types.{/ts}
            {/if}
     </div>	
 

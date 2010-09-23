@@ -334,7 +334,7 @@ class CRM_Case_Selector_Search extends CRM_Core_Selector_Base
                                                           $result->contact_sub_type : $result->contact_type );
                           
              //adding case manager to case selector.CRM-4510.
-             $caseType = CRM_Core_OptionGroup::getValue( 'case_type', $result->case_type, 'label', 'String', 'name' );
+             $caseType           = CRM_Case_BAO_Case::getCaseType( $result->case_id, 'name' );
              $caseManagerContact = CRM_Case_BAO_Case::getCaseManagerContact( $caseType, $result->case_id );
 
              if ( !empty($caseManagerContact) ) {

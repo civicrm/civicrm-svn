@@ -624,7 +624,7 @@ case_relation_type.id = case_relationship.relationship_type_id )";
             $form->addElement('checkbox', "case_type_id[$id]", null,$Name);
         }
         
-        $statuses  = CRM_Case_PseudoConstant::caseStatus( );
+        $statuses  = CRM_Case_PseudoConstant::caseStatus( 'label', false );
         $form->add('select', 'case_status_id',  ts( 'Case Status' ),  
                    array( '' => ts( '- any status -' ) ) + $statuses );
         

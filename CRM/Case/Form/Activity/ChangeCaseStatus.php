@@ -61,16 +61,21 @@ class CRM_Case_Form_Activity_ChangeCaseStatus
     {
         $defaults = array();
         // Retrieve current case status
-        $defaults['case_status_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Case_DAO_Case',
-                                                                  $this->_caseId,
-                                                                  'status_id', 'id' );
+        $defaults['case_status_id'] = $form->_defaultCaseStatus;
         return $defaults;
     }
 
     static function buildQuickForm( &$form ) 
     { 
         require_once 'CRM/Case/PseudoConstant.php';
-        $form->_caseStatus  = CRM_Case_PseudoConstant::caseStatus( );
+        $form->_caseStatus        = CRM_Case_PseudoConstant::caseStatus( );
+        $form->_defaultCaseStatus = CRM_Core_DAO::getFieldValue( 'CRM_Case_DAO_Case', $form->_caseId, 'status_id' );
+
+        if ( !array_key_exists( $form->_defaultCaseStatus, $form->_caseStatus ) ) {
+            $form->_caseStatus[$form->_defaultCaseStatus] = CRM_Core_OptionGroup::getLabel( 'case_status', 
+                                                                                            $form->_defaultCaseStatus, 
+                                                                                            false );
+        }
         $form->add('select', 'case_status_id',  ts( 'Case Status' ),  
                     $form->_caseStatus , true  );
     }

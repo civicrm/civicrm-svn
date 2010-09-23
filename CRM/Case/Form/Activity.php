@@ -241,13 +241,16 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
             }
         }
         $this->assign( 'targetContactValues', empty( $targetContactValues ) ? false : $targetContactValues );
-                
+        
         //return form for ajax
         if ( $this->_cdType  || $this->_addAssigneeContact || $this->_addTargetContact ) {
             return $this->_defaults;
         }
-        // set default encounter medium CRM-4816
-        if ( empty($this->_defaults['medium_id']) ) {
+        
+        if ( $this->_encounterMedium ) {
+            $this->_defaults['medium_id'] = $this->_encounterMedium;
+        } else if ( empty($this->_defaults['medium_id']) ) {
+            // set default encounter medium CRM-4816
             require_once "CRM/Core/OptionGroup.php";
             $medium = CRM_Core_OptionGroup::values('encounter_medium', false, false, false, 'AND is_default = 1');
             if ( count($medium) == 1 ) {
@@ -292,9 +295,19 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
         }
 
         $this->assign( 'urlPath', 'civicrm/case/activity' );
+                                               
+        $encounterMediums = CRM_Case_PseudoConstant::encounterMedium( );
+        if ( $this->_activityTypeFile == 'OpenCase' ) {
+            $this->_encounterMedium = CRM_Core_DAO::getFieldValue( 'CRM_Activity_DAO_Activity', $this->_activityId, 
+                                                                   'medium_id' );
+            if ( !array_key_exists( $this->_encounterMedium, $encounterMediums ) ) {
+                $encounterMediums[$this->_encounterMedium] = CRM_Core_OptionGroup::getLabel( 'encounter_medium', 
+                                                                                             $this->_encounterMedium,
+                                                                                             false );
+            }
+        }
 
-        $this->add('select', 'medium_id',  ts( 'Medium' ), 
-                   CRM_Core_OptionGroup::values('encounter_medium'), true);
+        $this->add( 'select', 'medium_id',  ts( 'Medium' ), $encounterMediums, true );
                       
         $this->_relatedContacts = CRM_Case_BAO_Case::getRelatedAndGlobalContacts( $this->_caseId );
         //add case client in send a copy selector.CRM-4438.

@@ -138,8 +138,7 @@ class CRM_Case_XMLProcessor_Report extends CRM_Case_XMLProcessor {
             require_once 'CRM/Case/BAO/Case.php';
             $case['caseType']     = CRM_Case_BAO_Case::getCaseType( $caseID );
             $case['caseTypeName'] = CRM_Case_BAO_Case::getCaseType( $caseID, 'name' );
-            $case['status']       = CRM_Core_OptionGroup::getLabel( 'case_status',
-                                                                    $dao->status_id );
+            $case['status']       = CRM_Core_OptionGroup::getLabel( 'case_status', $dao->status_id, false );
         }
         return $case;
     }
@@ -417,7 +416,7 @@ WHERE      a.id = %1
         if ( $activityDAO->medium_id ) {
             $activity['fields'][] = array( 'label' => 'Medium',
                                            'value' => CRM_Core_OptionGroup::getLabel( 'encounter_medium',
-                                                                                      $activityDAO->medium_id ),
+                                                                                      $activityDAO->medium_id, false ),
                                            'type'  => 'String' );
         }
         
