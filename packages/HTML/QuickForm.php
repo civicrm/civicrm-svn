@@ -1966,6 +1966,8 @@ class HTML_QuickForm extends HTML_Common
                              'details',
                              'msg_text', // message templates’ text versions
                              'text_message', // (send an) email to contact’s and CiviMail’s text version
+                             'data', // data i/p of persistent table
+                             'sqlQuery' // CRM-6673
                              );
                                   
         $values = array();

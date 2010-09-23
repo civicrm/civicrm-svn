@@ -262,9 +262,13 @@ class CRM_Utils_REST
             if ( $class[ count($class) - 1 ] != 'AJAX' ) {
                 return self::error( 'Unknown function invocation.' );
             } 
-            
+
             // evaluate and call the AJAX function
 	        require_once( str_replace('_', DIRECTORY_SEPARATOR, $params['className'] ) . ".php");
+            if ( !method_exists( $params['className'], $params['fnName'] ) ) {
+                return self::error( 'Unknown function invocation.' );
+            }
+
             return eval( $params['className'] . '::' . $params['fnName'] . '( $params );' );
 	    } else {
             $fnGroup = ucfirst($args[1]);

@@ -87,6 +87,7 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
 
         $params['is_deceased'] = CRM_Utils_Array::value( 'is_deceased', $params, false );
         
+        $individual = null;
         if ( $contact->id ) {
             $individual = new CRM_Contact_BAO_Contact();
             $individual->id = $contact->id;
@@ -101,7 +102,7 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
                     $value   = $individual->$dbName;
                     
                     // the db has name values
-                    if ( $value && CRM_Utils_Array::value( 'preserveDBName', $params ) ) {
+                    if ( $value && CRM_Utils_Array::value( 'preserveDBName', $params ) && !$params[$dbName] ) {
                         $useDBNames[] = $name; 
                     }
                 }
@@ -109,7 +110,7 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
                 foreach ( array( 'prefix', 'suffix' ) as $name ) {
                     $dbName  = "{$name}_id";
                     $value   = $individual->$dbName;
-                    if ( $value && CRM_Utils_Array::value( 'preserveDBName', $params ) ) {
+                    if ( $value && CRM_Utils_Array::value( 'preserveDBName', $params ) && !$params[$dbName] ) {
                         $useDBNames[] = $name; 
                     }
                 }
@@ -196,6 +197,8 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
         
         if ( $displayName ) {
             $contact->display_name = $displayName;
+        } else if ( $individual && $individual->display_name ) {
+            $contact->display_name = $individual->display_name;
         }
         
         if ( CRM_Utils_Array::value( 'email', $params ) && is_array( $params['email'] ) ) {
@@ -222,6 +225,12 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
             } else if (isset($uniqId)) {
                 $contact->sort_name = $uniqId;
             }
+        }
+
+        // again if sort_name is empty assign primary email
+        if ( !$contact->sort_name && $contact->id ) { 
+            $primEmail = CRM_Contact_BAO_Contact::getPrimaryEmail( $contact->id );
+            $contact->display_name = $contact->sort_name = $primEmail;
         }
         
         $format = CRM_Utils_Date::getDateFormat( 'birth' );

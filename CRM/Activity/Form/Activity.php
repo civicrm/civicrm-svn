@@ -768,7 +768,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         require_once 'CRM/Contact/BAO/Contact.php';
        
         if ( $fields['source_contact_id'] && ! is_numeric($fields['source_contact_qid'])) {
-            $errors['source_contact_id'] = ts('Source Contact non-existant!');
+            $errors['source_contact_id'] = ts('Source Contact non-existent!');
         }
         
         if ( CRM_Utils_Array::value( 'assignee_contact_id', $fields ) ) {

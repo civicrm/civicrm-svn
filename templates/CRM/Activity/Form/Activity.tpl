@@ -107,8 +107,9 @@
 
             <table class="{if $action eq 4}crm-info-panel{else}form-layout{/if}">
 
-	     {* don't show in activity view mode, since act type is present as a part if title. *}	     	    
-	     {if $action neq 4}	   
+	     {if $action eq 4}
+            <h3>{$activityTypeName}</h3>
+	     {else}	   
              {if $context eq 'standalone' or $context eq 'search' or $context eq 'smog'}
                 <tr class="crm-activity-form-block-activity_type_id">
                    <td class="label">{$form.activity_type_id.label}</td><td class="view-value">{$form.activity_type_id.html}</td>

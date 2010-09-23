@@ -107,6 +107,13 @@
      {$form.pledge_test.html}&nbsp;{$form.pledge_test.label}
     </td>
  </tr>
+ <tr> 
+    <td colspan="2">
+     {$form.pledge_frequency_unit.label}	
+     <br /> {$form.pledge_frequency_interval.label} &nbsp; {$form.pledge_frequency_interval.html} &nbsp; 
+     {$form.pledge_frequency_unit.html}
+    </td>
+ </tr>
 {if $pledgeGroupTree}
  <tr>
     <td colspan="2">

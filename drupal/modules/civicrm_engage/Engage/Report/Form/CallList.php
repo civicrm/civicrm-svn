@@ -103,7 +103,8 @@ class Engage_Report_Form_CallList extends Engage_Report_Form_List {
                                       'required'    => true),  
                                'birth_date' => 
                                array( 'title' => ts( 'Age' ),
-                                      'required'  => true ),
+                                      'required'  => true,
+                                      'type' => CRM_Report_FORM::OP_INT ),
                                ),
                         'filters' =>             
                         array('sort_name'    => 
@@ -138,7 +139,12 @@ class Engage_Report_Form_CallList extends Engage_Report_Form_List {
                                $this->_coreTypeCol =>
                                array( 'type' => CRM_Report_FORM::OP_STRING,
                                       'required' => true,
-                                      'title'      => ts( 'Contact Type' ) ) 
+                                      'title'      => ts( 'Constituent Type' ) ),
+                               $this->_coreOtherCol =>
+                               array('no_display' => true, 
+                                     'type' => CRM_Report_Form::OP_STRING,
+                                     'required' => true
+                                     ),
                                ),
                         'grouping'=> 'contact-fields'
                         ),
@@ -158,7 +164,7 @@ class Engage_Report_Form_CallList extends Engage_Report_Form_List {
     function preProcess( ) {
         parent::preProcess( );
         $reportDate = CRM_Utils_Date::customFormat( date('Y-m-d H:i') );
-        $this->assign( 'reportTitle', "{$this->_orgName} - Call List {$reportDate}" );
+        $this->assign( 'reportTitle', "{$this->_orgName} - Call List <br /> {$reportDate}" );
     }
 
     /**
@@ -289,7 +295,12 @@ class Engage_Report_Form_CallList extends Engage_Report_Form_List {
                 $rows[$rowNum][ 'civicrm_contact_gender_id' ] = $genderList[$row['civicrm_contact_gender_id']];
                 $entryFound = true;
             }
-
+            
+            if( ( $this->_outputMode != 'html' )  && !empty( $row[ $this->_coreInfoTable . '_' . $this->_coreOtherCol] ) ) {
+                $rows[$rowNum]['civicrm_contact_display_name'] .= "<br />". $row[ $this->_coreInfoTable . '_' . $this->_coreOtherCol];
+                $entryFound = true;    
+            }
+            
             // skip looking further in rows, if first row itself doesn't 
             // have the column we need
             if ( !$entryFound ) {
@@ -297,6 +308,16 @@ class Engage_Report_Form_CallList extends Engage_Report_Form_List {
             }
         }
 
+        $columnOrder = array(
+                             'civicrm_phone_phone',
+                             'civicrm_contact_display_name',
+                             'civicrm_address_street_address',
+                             'civicrm_contact_birth_date',
+                             'civicrm_contact_gender_id',
+                             $this->_demoTable . '_' . $this->_demoLangCol,
+                             $this->_coreInfoTable . '_' . $this->_coreTypeCol,
+                             'civicrm_contact_id',
+                             );
         if ($this->_outputMode == 'print' || $this->_outputMode == 'pdf') {
             $this->_columnHeaders = 
                 array(
@@ -315,12 +336,14 @@ class Engage_Report_Form_CallList extends Engage_Report_Form_List {
                       'civicrm_contact_gender_id' => array( 'title' => 'SEX',
                                                             'type'  => CRM_Utils_Type::T_STRING,
                                                             'class' => 'width=18',),
-                      $this->_demoTable . '_' . $this->_demoLangCol => array( 'title' => 'Lang',
-                                                                        'type'  => CRM_Utils_Type::T_STRING,
-                                                                        'class' => 'width=27',),
-                      $this->_demoTable . '_' . $this->_coreTypeCol => array( 'title' => 'Contact Type',
-                                                                        'type'  => CRM_Utils_Type::T_STRING,
-                                                                        'class' => 'width=48',),
+                      $this->_demoTable . '_' . $this->_demoLangCol => 
+                      array( 'title' => 'Lang',
+                             'type'  => CRM_Utils_Type::T_STRING,
+                             'class' => 'width=27',),
+                      $this->_coreInfoTable . '_' . $this->_coreTypeCol => 
+                      array( 'title' => 'Contact Type',
+                             'type'  => CRM_Utils_Type::T_STRING,
+                             'class' => 'width=48',),
                       'notes' => array( 'title' => 'NOTES',
                                         'type'  => CRM_Utils_Type::T_STRING,
                                         'class' => 'width=48',),
@@ -334,33 +357,32 @@ class Engage_Report_Form_CallList extends Engage_Report_Form_List {
                                                      'type'  => CRM_Utils_Type::T_STRING,
                                                      'class' => 'width=100',),
                       );
-            $printCols = array(
-                               'civicrm_phone_phone',
-                               'civicrm_contact_display_name',
-                               'civicrm_address_street_address',
-                               'civicrm_contact_birth_date',
-                               'civicrm_contact_gender_id',
-                               $this->_demoTable . '_' . $this->_demoLangCol,
-                               $this->_demoTable . '_' . $this->_coreTypeCol,
-                               'civicrm_contact_id',
-                               //'notes',
-                               //response_codes,
-                               //status
-                               );
             $newRows = array( );
-            foreach ( $printCols as $col ) { 
+            foreach ( $columnOrder as $col ) { 
                 foreach ( $rows as $rowNum => $row ) { 
                     $newRows[$rowNum][$col] = $row[$col];
                     $newRows[$rowNum]['notes']  = '&nbsp;';
                     $newRows[$rowNum]['status'] = 'NH&nbsp;MV&nbsp;D&nbsp;WN';
                     $newRows[$rowNum]['response_codes'] = '
-        Q1&nbsp;&nbsp;&nbsp;&nbsp;Y&nbsp;&nbsp;&nbsp;&nbsp;N&nbsp;&nbsp;&nbsp;&nbsp;U&nbsp;&nbsp;&nbsp;&nbsp;D<br>
-        Q2&nbsp;&nbsp;&nbsp;&nbsp;Y&nbsp;&nbsp;&nbsp;&nbsp;N&nbsp;&nbsp;&nbsp;&nbsp;U&nbsp;&nbsp;&nbsp;&nbsp;D<br>
-        Q3&nbsp;&nbsp;&nbsp;&nbsp;Y&nbsp;&nbsp;&nbsp;&nbsp;N&nbsp;&nbsp;&nbsp;&nbsp;U&nbsp;&nbsp;&nbsp;&nbsp;D<br>
+        Q1&nbsp;&nbsp;&nbsp;&nbsp;Y&nbsp;&nbsp;&nbsp;&nbsp;N&nbsp;&nbsp;&nbsp;&nbsp;U&nbsp;&nbsp;&nbsp;&nbsp;D<br />
+        Q2&nbsp;&nbsp;&nbsp;&nbsp;Y&nbsp;&nbsp;&nbsp;&nbsp;N&nbsp;&nbsp;&nbsp;&nbsp;U&nbsp;&nbsp;&nbsp;&nbsp;D<br />
+        Q3&nbsp;&nbsp;&nbsp;&nbsp;Y&nbsp;&nbsp;&nbsp;&nbsp;N&nbsp;&nbsp;&nbsp;&nbsp;U&nbsp;&nbsp;&nbsp;&nbsp;D<br />
         Q4&nbsp;&nbsp;&nbsp;&nbsp;Y&nbsp;&nbsp;&nbsp;&nbsp;N&nbsp;&nbsp;&nbsp;&nbsp;U&nbsp;&nbsp;&nbsp;&nbsp;D';
                 }
             }
             $rows = $newRows;
+            $this->assign( 'pageTotal', ceil((count($newRows)/7)) );
+        } else {
+            // make sure column order is same as in print mode
+            $tempHeaders = $this->_columnHeaders;
+            $this->_columnHeaders = array( );
+            foreach ( $columnOrder as $col ) {
+                if ( array_key_exists($col, $tempHeaders) ) {
+                    $this->_columnHeaders[$col] = $tempHeaders[$col];
+                    unset($tempHeaders[$col]);
+                }
+            }
+            $this->_columnHeaders = $this->_columnHeaders + $tempHeaders;
         }
     }
 }

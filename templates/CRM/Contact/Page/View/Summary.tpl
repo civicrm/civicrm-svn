@@ -304,9 +304,11 @@
                                 <tr>
                                     <td class="label">{ts}Preferred Method(s){/ts}</td><td>{$preferred_communication_method_display}</td>
                                 </tr>
+                                {if $preferred_language}
                                 <tr>
                                     <td class="label">{ts}Preferred Language{/ts}</td><td>{$preferred_language}</td>
                                 </tr>
+                                {/if}
                                 <tr>
                                     <td class="label">{ts}Email Format{/ts}</td><td>{$preferred_mail_format}</td>
                                 </tr>
@@ -358,7 +360,20 @@
                         <div class="clear"></div>
                     </div>
                 </div>
-                
+                {literal}
+                <script type="text/javascript">
+                    cj('.columnheader').click( function( ) {
+                        var aTagObj = cj(this).find('a');
+                        if ( aTagObj.hasClass( "expanded" ) ) {
+                            cj(this).parent().find('tr:not(".columnheader")').hide( );
+                        } else {    
+                            cj(this).parent().find('tr:not(".columnheader")').show( );
+                        }
+                        aTagObj.toggleClass("expanded");
+                        return false;
+                    });
+                </script>
+                {/literal}
                 {if $hookContent and $hookContentPlacement eq 1}
                     {include file="CRM/Contact/Page/View/SummaryHook.tpl"}
                 {/if}

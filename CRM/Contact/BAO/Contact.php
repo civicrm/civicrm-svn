@@ -749,16 +749,22 @@ WHERE id={$id}; ";
         $relativePath = null;
         $config = CRM_Core_Config::singleton( );
         if ( $config->userFramework == 'Joomla' ) {
-            $userFrameworkBaseURL = trim( $config->userFrameworkBaseURL,'/administrator/' );
-            $customFileUploadDirectory = strstr( $absolutePath, '/media' );
+            $userFrameworkBaseURL = trim( str_replace( DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR, 
+                                                       '',
+                                                       $config->userFrameworkBaseURL ) );
+            $customFileUploadDirectory = strstr( $absolutePath, DIRECTORY_SEPARATOR.'media' );
             $relativePath = $userFrameworkBaseURL . $customFileUploadDirectory;     
         } else if ( $config->userFramework == 'Drupal' ) {   
-            $absolutePathStr = strstr( $absolutePath, 'sites');
-            $relativePath =  $config->userFrameworkBaseURL . $absolutePathStr;
+            require_once 'CRM/Utils/System/Drupal.php';
+            $rootPath = CRM_Utils_System_Drupal::cmsRootPath( );
+            $relativePath = str_replace( $rootPath . DIRECTORY_SEPARATOR, 
+                                         $config->userFrameworkBaseURL, 
+                                         $absolutePath );
         } else if ( $config->userFramework == 'Standalone' ) {
             $absolutePathStr = strstr( $absolutePath, 'files');
             $relativePath = $config->userFrameworkBaseURL . $absolutePathStr;
         }
+        
         return $relativePath;
     }
  	
@@ -1482,6 +1488,13 @@ ORDER BY civicrm_email.is_primary DESC";
             //add contact id
             $data['contact_id'] = $contactID;
             $primaryLocationType = self::getPrimaryLocationType($contactID);
+            // preserve db name only if name field exist in params
+            $nameFields = array( 'first_name', 'middle_name', 'last_name' );
+            foreach ( $nameFields as $name ) {
+                if ( array_key_exists( "$name", $params ) ) {
+                    $params['preserveDBName'] = true;
+                }
+            }
         } else {
             require_once "CRM/Core/BAO/LocationType.php";
             $defaultLocation =& CRM_Core_BAO_LocationType::getDefault();
@@ -1736,23 +1749,16 @@ ORDER BY civicrm_email.is_primary DESC";
             require_once 'CRM/Core/BAO/EntityTag.php';
             CRM_Core_BAO_EntityTag::create( $params['tag'], 'civicrm_contact', $contactID );
         } 
-        
-        // Set status = 'Pending' if profileDoubleOptIn = 1. CRM-5905
-        require_once 'CRM/Core/Config.php';
-        $config = CRM_Core_Config::singleton( );
-        if ( $config->profileDoubleOptIn ) {
-            $groupStatus = 'Pending';
-        }
-        
+                
         //to add profile in default group
         if ( is_array ($addToGroupID) ) {
             $contactIds = array($contactID);
             foreach ( $addToGroupID as $groupId ) {
-                CRM_Contact_BAO_GroupContact::addContactsToGroup( $contactIds, $groupId, 'Admin' , $groupStatus );
+                CRM_Contact_BAO_GroupContact::addContactsToGroup( $contactIds, $groupId );
             }
         } else if ( $addToGroupID ) {
             $contactIds = array($contactID);
-            CRM_Contact_BAO_GroupContact::addContactsToGroup( $contactIds, $addToGroupID , 'Admin' , $groupStatus );
+            CRM_Contact_BAO_GroupContact::addContactsToGroup( $contactIds, $addToGroupID );
         }
 
 

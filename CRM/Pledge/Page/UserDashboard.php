@@ -65,6 +65,9 @@ class CRM_Pledge_Page_UserDashboard extends CRM_Contact_Page_View_UserDashBoard
             $this->assign( 'pledgeHonorRows', $honorParams );
             $this->assign( 'pledgeHonor', true );
         }
+        $session = CRM_Core_Session::singleton( );
+        $loggedUserID = $session->get( 'userID' );
+        $this->assign( 'loggedUserID', $loggedUserID );
     }
     
     /**

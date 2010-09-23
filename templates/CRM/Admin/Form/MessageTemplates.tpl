@@ -27,7 +27,7 @@
 {capture assign=tokenDocsRepeated}{docURL page="Mail-merge Tokens for Contact Data" text="token documentation"}{/capture}
 {if $action neq 8}
 <div id="help">
-    {ts}Use this form to add or edit re-usable message templates.{/ts} {help id="id-msgTplIntro"}
+    {ts}Use this form to add or edit re-usable message templates.{/ts} {help id="id-msgTplIntro" file="CRM/Admin/Page/MessageTemplates.hlp"}
 </div>
 {/if}
 <div class="crm-block crm-form-block"> 

@@ -89,6 +89,20 @@
       <collapse_adv_display>0</collapse_adv_display>
     </CustomGroup>
     <CustomGroup>
+      <name>Grant_Info</name>
+      <title>Grant Info</title>
+      <extends>Organization</extends>
+      <style>Tab</style>
+      <collapse_display>0</collapse_display>
+      <help_pre></help_pre>
+      <help_post></help_post>
+      <weight>8</weight>
+      <is_active>1</is_active>
+      <table_name>civicrm_value_grant_info</table_name>
+      <is_multiple>0</is_multiple>
+      <collapse_adv_display>0</collapse_adv_display>
+    </CustomGroup>
+    <CustomGroup>
       <name>Proposal_Info</name>
       <title>Proposal Info</title>
       <extends>Activity</extends>
@@ -338,7 +352,7 @@
         <table_name>civicrm_value_survey_activity_details</table_name>
         <is_multiple>0</is_multiple>
         <collapse_adv_display>0</collapse_adv_display>
-    </CustomGroup>
+    </CustomGroup>  
   </CustomGroups>
   <CustomFields>
     <CustomField>
@@ -424,23 +438,6 @@
       <note_columns>60</note_columns>
       <note_rows>4</note_rows>
       <column_name>precinct</column_name>
-      <custom_group_name>Voter_Info</custom_group_name>
-    </CustomField>
-    <CustomField>
-      <label>Ward</label>
-      <data_type>String</data_type>
-      <html_type>Text</html_type>
-      <is_required>0</is_required>
-      <is_searchable>1</is_searchable>
-      <is_search_range>0</is_search_range>
-      <weight>94</weight>
-      <is_active>1</is_active>
-      <is_view>0</is_view>
-      <text_length>255</text_length>
-      <date_format>M:;:;:;d:;:;:;Y</date_format>
-      <note_columns>60</note_columns>
-      <note_rows>4</note_rows>
-      <column_name>ward</column_name>
       <custom_group_name>Voter_Info</custom_group_name>
     </CustomField>
     <CustomField>
@@ -788,6 +785,59 @@ N - New</help_post>
       <column_name>leadership_level</column_name>
       <option_group_name>leadership_level_20090826153735</option_group_name>
       <custom_group_name>Leadership_Level</custom_group_name>
+    </CustomField>
+    <CustomField>
+      <label>Average Amount</label>
+      <data_type>Money</data_type>
+      <html_type>Text</html_type>
+      <is_required>0</is_required>
+      <is_searchable>1</is_searchable>
+      <is_search_range>1</is_search_range>
+      <weight>62</weight>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>255</text_length>
+      <date_format>M:;:;:;d:;:;:;Y</date_format>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+      <column_name>average_amount</column_name>
+      <custom_group_name>Grant_Info</custom_group_name>
+    </CustomField>
+    <CustomField>
+      <label>Funding Areas</label>
+      <data_type>String</data_type>
+      <html_type>CheckBox</html_type>
+      <is_required>0</is_required>
+      <is_searchable>1</is_searchable>
+      <is_search_range>0</is_search_range>
+      <weight>75</weight>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <options_per_line>2</options_per_line>
+      <text_length>255</text_length>
+      <date_format>M:;:;:;d:;:;:;Y</date_format>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+      <column_name>funding_areas</column_name>
+      <option_group_name>funding_areas_20090903195322</option_group_name>
+      <custom_group_name>Grant_Info</custom_group_name>
+    </CustomField>
+    <CustomField>
+      <label>Requirements Notes</label>
+      <data_type>Memo</data_type>
+      <html_type>RichTextEditor</html_type>
+      <is_required>0</is_required>
+      <is_searchable>0</is_searchable>
+      <is_search_range>0</is_search_range>
+      <weight>88</weight>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>255</text_length>
+      <date_format>M:;:;:;d:;:;:;Y</date_format>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+      <column_name>requirements_notes</column_name>
+      <custom_group_name>Grant_Info</custom_group_name>
     </CustomField>
     <CustomField>
       <label>Ask Amount</label>
@@ -1861,6 +1911,23 @@ D - Declined</help_post>
         <custom_group_name>Membership_Source_Details</custom_group_name>
     </CustomField>
     <CustomField>
+        <label>Ward</label>
+        <data_type>String</data_type>
+        <html_type>Text</html_type>
+        <is_required>0</is_required>
+        <is_searchable>1</is_searchable>
+        <is_search_range>0</is_search_range>
+        <weight>94</weight>
+        <is_active>1</is_active>
+        <is_view>0</is_view>
+        <text_length>255</text_length>
+        <date_format>M:;:;:;d:;:;:;Y</date_format>
+        <note_columns>60</note_columns>
+        <note_rows>4</note_rows>
+        <column_name>ward</column_name>
+        <custom_group_name>Voter_Info</custom_group_name>
+    </CustomField>
+    <CustomField>
         <label>Survey</label>
         <data_type>Int</data_type>
         <html_type>Text</html_type>
@@ -1891,7 +1958,7 @@ D - Declined</help_post>
         <date_format>M:;:;:;d:;:;:;Y</date_format>
         <note_columns>60</note_columns>
         <note_rows>4</note_rows>
-	<column_name>status_id</column_name>
+        <column_name>status_id</column_name>
         <option_group_name>survey_status_201011040411</option_group_name>
         <custom_group_name>Survey_Activity_Details</custom_group_name>
     </CustomField>
@@ -1908,7 +1975,7 @@ D - Declined</help_post>
         <text_length>255</text_length>
         <note_columns>60</note_columns>
         <note_rows>4</note_rows>
-	<column_name>interviewer_id</column_name>
+        <column_name>interviewer_id</column_name>
         <custom_group_name>Survey_Activity_Details</custom_group_name>
     </CustomField>
     <CustomField>
@@ -1924,7 +1991,7 @@ D - Declined</help_post>
         <text_length>255</text_length>
         <note_columns>60</note_columns>
         <note_rows>4</note_rows>
-	<column_name>interviewer_display_name</column_name>
+        <column_name>interviewer_display_name</column_name>
         <custom_group_name>Survey_Activity_Details</custom_group_name>
     </CustomField>
     <CustomField>
@@ -1940,7 +2007,7 @@ D - Declined</help_post>
         <text_length>255</text_length>
         <note_columns>60</note_columns>
         <note_rows>4</note_rows>
-	<column_name>interviewer_email</column_name>
+        <column_name>interviewer_email</column_name>
         <custom_group_name>Survey_Activity_Details</custom_group_name>
     </CustomField>
     <CustomField>
@@ -1956,7 +2023,7 @@ D - Declined</help_post>
         <text_length>255</text_length>
         <note_columns>60</note_columns>
         <note_rows>4</note_rows>
-	<column_name>interviewer_ip</column_name>
+        <column_name>interviewer_ip</column_name>
         <custom_group_name>Survey_Activity_Details</custom_group_name>
     </CustomField>
     <CustomField>
@@ -1970,10 +2037,10 @@ D - Declined</help_post>
         <is_active>1</is_active>
         <is_view>0</is_view>
         <text_length>255</text_length>
-	<date_format>M:;:;:;d:;:;:;Y</date_format>
+        <date_format>M:;:;:;d:;:;:;Y</date_format>
         <note_columns>60</note_columns>
         <note_rows>4</note_rows>
-	<column_name>subject_display_name</column_name>
+        <column_name>subject_display_name</column_name>
         <custom_group_name>Survey_Activity_Details</custom_group_name>
     </CustomField>
     <CustomField>
@@ -1987,11 +2054,11 @@ D - Declined</help_post>
         <is_active>1</is_active>
         <is_view>0</is_view>
         <text_length>64</text_length>
-	<date_format>M:;:;:;d:;:;:;Y</date_format>
+        <date_format>M:;:;:;d:;:;:;Y</date_format>
         <note_columns>60</note_columns>
         <note_rows>4</note_rows>
-	<column_name>result_id</column_name>
-	<option_group_name>survey_result_201011040411</option_group_name>
+        <column_name>result_id</column_name>
+        <option_group_name>survey_result_201011040411</option_group_name>
         <custom_group_name>Survey_Activity_Details</custom_group_name>
     </CustomField>
   </CustomFields>
@@ -2173,7 +2240,7 @@ D - Declined</help_post>
         <name>survey_result_201011040411</name>
         <label>Survey Result</label>
         <is_active>1</is_active>
-    </OptionGroup>
+    </OptionGroup>  
   </OptionGroups>
   <OptionValues>
     <OptionValue>
@@ -3692,7 +3759,7 @@ D - Declined</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>role_20100408173746</option_group_name>
+	<option_group_name>role_20100408173746</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>Lower Level Staff</label>
@@ -3703,7 +3770,7 @@ D - Declined</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>role_20100408173746</option_group_name>
+	<option_group_name>role_20100408173746</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>Complete</label>
@@ -3714,7 +3781,7 @@ D - Declined</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-	<option_group_name>survey_status_201011040411</option_group_name>
+        <option_group_name>survey_status_201011040411</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>Held Pending</label>
@@ -3725,7 +3792,7 @@ D - Declined</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-	<option_group_name>survey_status_201011040411</option_group_name>
+        <option_group_name>survey_status_201011040411</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>Released</label>
@@ -3736,7 +3803,7 @@ D - Declined</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-	<option_group_name>survey_status_201011040411</option_group_name>
+        <option_group_name>survey_status_201011040411</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>Expired</label>
@@ -3747,7 +3814,7 @@ D - Declined</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-	<option_group_name>survey_status_201011040411</option_group_name>
+        <option_group_name>survey_status_201011040411</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>Available</label>
@@ -3758,7 +3825,7 @@ D - Declined</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-	<option_group_name>survey_result_201011040411</option_group_name>
+        <option_group_name>survey_result_201011040411</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>Committed</label>
@@ -3769,7 +3836,7 @@ D - Declined</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-	<option_group_name>survey_result_201011040411</option_group_name>
+        <option_group_name>survey_result_201011040411</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>Favorable</label>
@@ -3780,7 +3847,7 @@ D - Declined</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-	<option_group_name>survey_result_201011040411</option_group_name>
+        <option_group_name>survey_result_201011040411</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>Unsure</label>
@@ -3791,7 +3858,7 @@ D - Declined</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-	<option_group_name>survey_result_201011040411</option_group_name>
+        <option_group_name>survey_result_201011040411</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>Unfavorable</label>
@@ -3802,7 +3869,7 @@ D - Declined</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-	<option_group_name>survey_result_201011040411</option_group_name>
+        <option_group_name>survey_result_201011040411</option_group_name>
     </OptionValue>
   </OptionValues>
   <ProfileGroups>

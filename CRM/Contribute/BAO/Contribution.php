@@ -464,16 +464,28 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
             require_once 'CRM/Contribute/DAO/Product.php';
             require_once 'CRM/Contribute/DAO/ContributionProduct.php';
             require_once 'CRM/Contribute/DAO/ContributionType.php';
-            $impFields = CRM_Contribute_DAO_Contribution::import( );
-            $expFieldProduct = CRM_Contribute_DAO_Product::export( );
-            $expFieldsContrib = CRM_Contribute_DAO_ContributionProduct::export( );
-            $typeField = CRM_Contribute_DAO_ContributionType::export( );
-            $optionField = CRM_Core_OptionValue::getFields($mode ='contribute' );
-            $fields = array_merge($impFields, $typeField);
-            $fields = array_merge($fields, $expFieldProduct );
-            $fields = array_merge($fields, $expFieldsContrib );
-            $fields = array_merge($fields, $optionField );
-            $fields = array_merge($fields, CRM_Core_BAO_CustomField::getFieldsForImport('Contribution'));
+            
+            $impFields          = CRM_Contribute_DAO_Contribution::export( );
+            $expFieldProduct    = CRM_Contribute_DAO_Product::export( );
+            $expFieldsContrib   = CRM_Contribute_DAO_ContributionProduct::export( );
+            $typeField          = CRM_Contribute_DAO_ContributionType::export( );
+            $optionField        = CRM_Core_OptionValue::getFields($mode ='contribute' );
+            $contributionStatus = array( 'contribution_status' => array( 'title'     => 'Contribution Status',
+                                                                         'name'      => 'contribution_status',
+                                                                         'data_type' => CRM_Utils_Type::T_STRING ) );
+            
+            $contributionNote   = array( 'contribution_note' => array( 'title'     => ts('Contribution Note'),
+                                                                       'name'      => 'contribution_note',
+                                                                       'data_type' => CRM_Utils_Type::T_TEXT ) );
+            
+            $contributionRecurId = array( 'contribution_recur_id' => array ( 'title' => ts('Recurring Contributions ID'),
+                                                                             'name'  => 'contribution_recur_id',
+                                                                             'where' => 'civicrm_contribution.contribution_recur_id',
+                                                                             'data_type' => CRM_Utils_Type::T_INT ) );
+            
+            $fields = array_merge( $impFields, $typeField, $contributionStatus, $optionField, $expFieldProduct,
+                                   $expFieldsContrib, $contributionNote, $contributionRecurId, 
+                                   CRM_Core_BAO_CustomField::getFieldsForImport('Contribution') );
             
             self::$_exportableFields = $fields;
         }
@@ -738,6 +750,7 @@ GROUP BY p.id
         if ( !$honorId ) {
             require_once "CRM/Core/BAO/UFGroup.php";
             $honorParams['email'] = $params["honor_email"];
+            $honorParams['check_permission'] = false;
             $ids = CRM_Core_BAO_UFGroup::findContact( $honorParams, null, 'Individual' );
             $contactsIds = explode( ',', $ids );
             

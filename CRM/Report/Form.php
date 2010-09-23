@@ -1606,8 +1606,8 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
             } else if ( $this->_outputMode == 'print' ) {
                 echo $content;
             } else {
-                if( $chartType = CRM_Utils_Array::value( 'charts', $this->_params ) ) {
-                    $config    = CRM_Core_Config::Singleton();
+                if( $chartType =  CRM_Utils_Array::value( 'charts', $this->_params ) ) {
+                    $config    =& CRM_Core_Config::singleton();
                     //get chart image name
                     $chartImg  = $chartType . '_' . $this->_id . '.png';
                     //get image url path

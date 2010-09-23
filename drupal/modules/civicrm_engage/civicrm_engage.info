@@ -1,4 +1,5 @@
-name = Engaging and Phone banking support for CiviCRM
+name = CiviEngage
+description = Walklist and Phone-banking support for CiviCRM
 version = 3.1
 dependencies[] = civicrm
 package = CiviCRM

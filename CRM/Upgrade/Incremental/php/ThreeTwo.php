@@ -247,4 +247,23 @@ UPDATE  civicrm_membership_status
     
     }
     
+    function upgrade_3_2_1($rev)
+    {
+        //CRM-6565 check if Activity Index is already exists or not.
+        $addActivityTypeIndex = true;
+        $indexes = CRM_Core_DAO::executeQuery( 'SHOW INDEXES FROM civicrm_activity' );
+        while ( $indexes->fetch( ) ) {
+            if( $indexes->Key_name == 'UI_activity_type_id' ){
+                $addActivityTypeIndex = false;
+            }
+        }
+        // CRM-6563: restrict access to the upload dir, tighten access to the config-and-log dir
+        $config =& CRM_Core_Config::singleton();
+        require_once 'CRM/Utils/File.php';
+        CRM_Utils_File::restrictAccess($config->uploadDir);
+        CRM_Utils_File::restrictAccess($config->configAndLogDir);
+        $upgrade = new CRM_Upgrade_Form;
+        $upgrade->assign( 'addActivityTypeIndex', $addActivityTypeIndex );
+        $upgrade->processSQL($rev);
+    }
   }

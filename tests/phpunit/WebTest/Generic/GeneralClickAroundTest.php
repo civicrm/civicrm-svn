@@ -43,34 +43,31 @@ class WebTest_Generic_GeneralClickAroundTest extends CiviSeleniumTestCase {
 
       // Log in using webtestLogin() method
       $this->webtestLogin();
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad('50000');
       $this->click("link=CiviCRM");
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad('50000');
 
+      // click Search -> Find Contacts
       $this->click("//ul[@id='civicrm-menu']/li[3]");
       $this->click("//div[@id='root-menu-div']/div[2]/ul/li[1]/div/a");
-      $this->waitForPageToLoad("30000");
+      $this->waitForElementPresent("tag");
 
       $this->click("contact_type");
       $this->select("contact_type", "label=Individual");
       $this->select("group", "label=Newsletter Subscribers");
       $this->select("tag", "label=Major Donor");
       $this->click("_qf_Basic_refresh");
-      $this->waitForPageToLoad("30000");
       $this->waitForElementPresent("search-status");
       $this->assertText("search-status","Contacts IN Newsletter Subscribers ...AND...");
       
       // Advanced Search by Tag
       $this->click("//ul[@id='civicrm-menu']/li[3]");
       $this->click("//div[@id='root-menu-div']/div[2]/ul/li[2]/div/a");
-      $this->waitForPageToLoad("30000");
+      $this->waitForElementPresent("_qf_Advanced_refresh");
       $this->click("crmasmSelect2");
       $this->select("crmasmSelect2", "label=Major Donor");
-//      $this->select("crmasmSelect2", "label=- select -");
-//      $this->click("//select[@id='crmasmSelect2']/option[4]");
       $this->waitForElementPresent("//ul[@id='crmasmList2']/li/span");
       $this->click("_qf_Advanced_refresh");
-      $this->waitForPageToLoad("30000");
       $this->waitForElementPresent("search-status");
       $this->assertText("search-status","Tagged IN Major Donor");
   }

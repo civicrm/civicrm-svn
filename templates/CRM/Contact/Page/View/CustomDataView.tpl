@@ -33,7 +33,7 @@
                 <table id="{$cd_edit.name}_{$count}" >
                   <tr class="columnheader">
                     <td colspan="2" class="grouplabel">
-                        <a href="#" class="show-block {if $cd_edit.collapse_display eq 0 } expanded collapsed {else} collapsed {/if}" onclick='cj("table#{$cd_edit.name}_{$count} tr:not(\".columnheader\")" ).toggle(); cj(this).toggleClass("expanded"); return false;'>
+                        <a href="#" class="show-block {if $cd_edit.collapse_display eq 0 } expanded collapsed {else} collapsed {/if}" >
                             {$cd_edit.title}
                         </a>
                     </td>

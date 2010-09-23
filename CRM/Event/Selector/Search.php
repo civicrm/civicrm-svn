@@ -86,7 +86,9 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
                                  'participant_role_id',
                                  'participant_register_date',
                                  'participant_fee_amount',
-                                 'participant_fee_currency'
+                                 'participant_fee_currency',
+                                 'participant_status',
+                                 'participant_role'
                                  );
 
     /** 
@@ -191,9 +193,11 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
      * @access public
      *
      */
-    static function &links( $key = null )
+    static function &links( $qfKey = null, $context = null )
     {
-        $extraParams = ($key ) ? "&key={$key}" : null;
+        $extraParams = null;
+        if ( $context == 'search' ) $extraParams .= '&compContext=participant';
+        if ( $qfKey ) $extraParams .= "&key={$qfKey}";
         
         if (!(self::$_links)) {
             self::$_links = array(
@@ -316,11 +320,11 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
              }             
              if (CRM_Utils_Array::value('participant_is_test', $row)) $extraInfo[] = ts('test');
 
-             if ($extraInfo) $row['participant_status_id'] .= ' (' . implode(', ', $extraInfo) . ')';
+             if ($extraInfo) $row['participant_status'] .= ' (' . implode(', ', $extraInfo) . ')';
 
              $row['checkbox'] = CRM_Core_Form::CB_PREFIX . $result->participant_id;
              
-             $row['action']   = CRM_Core_Action::formLink( self::links( $this->_key ), $mask,
+             $row['action']   = CRM_Core_Action::formLink( self::links( $this->_key, $this->_context ), $mask,
                                                            array( 'id'  => $result->participant_id,
                                                                   'cid' => $result->contact_id,
                                                                   'cxt' => $this->_context ) );
@@ -345,7 +349,7 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
              $rows[] = $row;
          }
          CRM_Core_Selector_Controller::$_template->assign_by_ref( 'lineItems', $lineItems );
-
+        
          return $rows;
      }
      

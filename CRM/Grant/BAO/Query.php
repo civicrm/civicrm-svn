@@ -54,18 +54,38 @@ class CRM_Grant_BAO_Query
     {
         if ( $query->_mode & CRM_Contact_BAO_Query::MODE_GRANT ) {
             if ( CRM_Utils_Array::value( 'grant_status_id', $query->_returnProperties ) ) {
-                $query->_select['grant_status_id']  = 'grant_status.name as grant_status_id';
+                $query->_select['grant_status_id']  = 'grant_status.id as grant_status_id';
                 $query->_element['grant_status']    = 1;
                 $query->_tables['grant_status']     = $query->_whereTables['grant_status'] = 1;
                 $query->_tables['civicrm_grant']    = $query->_whereTables['civicrm_grant'] = 1;
             }
+
+            if ( CRM_Utils_Array::value( 'grant_status', $query->_returnProperties ) ) {
+                $query->_select['grant_status']  = 'grant_status.label as grant_status';
+                $query->_element['grant_status']    = 1;
+                $query->_tables['grant_status']     = $query->_whereTables['grant_status'] = 1;
+                $query->_tables['civicrm_grant']    = $query->_whereTables['civicrm_grant'] = 1;
+            }
+
             if ( CRM_Utils_Array::value( 'grant_type_id', $query->_returnProperties ) ) {
-                $query->_select['grant_type_id']  = 'grant_type.label as grant_type_id';
+                $query->_select['grant_type_id']  = 'grant_type.id as grant_type_id';
+                $query->_element['grant_type']    = 1;
+                $query->_tables['grant_type']     = $query->_whereTables['grant_type'] = 1;
+                $query->_tables['civicrm_grant']  = $query->_whereTables['civicrm_grant'] = 1;
+            }
+
+            if ( CRM_Utils_Array::value( 'grant_type', $query->_returnProperties ) ) {
+                $query->_select['grant_type']  = 'grant_type.label as grant_type';
                 $query->_element['grant_type']    = 1;
                 $query->_tables['grant_type']     = $query->_whereTables['grant_type'] = 1;
                 $query->_tables['civicrm_grant']  = $query->_whereTables['civicrm_grant'] = 1;
             }
             
+            if ( CRM_Utils_Array::value( 'grant_note', $query->_returnProperties ) ) {
+            $query->_select['grant_note']  = "civicrm_note.note as grant_note";
+            $query->_element['grant_note'] = 1;
+            $query->_tables['grant_note']  = 1;
+        }
             $query->_select['grant_amount_requested'] = 'civicrm_grant.amount_requested as grant_amount_requested';
             $query->_select['grant_amount_granted']   = 'civicrm_grant.amount_granted as grant_amount_granted';
             $query->_select['grant_amount_total']     = 'civicrm_grant.amount_total as grant_amount_total';
@@ -228,6 +248,10 @@ class CRM_Grant_BAO_Query
                 $from .= " $side JOIN civicrm_option_value grant_type ON (civicrm_grant.grant_type_id = grant_type.value AND option_group_grant_type.id = grant_type.option_group_id ) ";
             }
             break;
+        case 'grant_note':
+            $from .= " $side JOIN civicrm_note ON ( civicrm_note.entity_table = 'civicrm_grant' AND
+                                                        civicrm_grant.id = civicrm_note.entity_id )";
+            break;
         } 
         return $from;
         
@@ -252,12 +276,13 @@ class CRM_Grant_BAO_Query
                                 'contact_sub_type'                => 1,
                                 'sort_name'                       => 1,
                                 'grant_id'                        => 1, 
-                                'grant_type_id'                   => 1, 
-                                'grant_status_id'                 => 1, 
+                                'grant_type'                      => 1, 
+                                'grant_status'                    => 1,
                                 'grant_amount_requested'          => 1,
                                 'grant_application_received_date' => 1,
                                 'grant_report_received'           => 1,
                                 'grant_money_transfer_date'       => 1,
+                                'grant_note'                      => 1,
                                 );
        
  

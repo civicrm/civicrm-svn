@@ -40,6 +40,7 @@
        <name>UI_source_contact_id</name>
        <fieldName>source_contact_id</fieldName>       
        <add>2.0</add>
+       <drop>3.2</drop>
   </index>
 
   <field>
@@ -48,13 +49,18 @@
       <comment>Artificial FK to original transaction (e.g. contribution) IF it is not an Activity. Table can be figured out through activity_type_id, and further through component registry.</comment>
       <add>2.0</add>
   </field>
-
+  <index>
+       <name>UI_source_record_id</name>
+       <fieldName>source_record_id</fieldName>       
+       <add>3.2</add>
+  </index>
   <field>
        <name>activity_type_id</name>
        <title>Activity Type ID</title>
        <import>true</import>
        <type>int unsigned</type>
        <required>true</required>
+       <export>false</export>
        <default>1</default>
        <headerPattern>/(activity.)?type(.id$)/i</headerPattern>
        <comment>FK to civicrm_option_value.id, that has to be valid, registered activity type.</comment>
@@ -208,8 +214,9 @@
   <field>
       <name>status_id</name>
       <uniqueName>activity_status_id</uniqueName>
-      <title>Activity Status Label</title>
+      <title>Activity Status Id</title>
       <import>true</import>
+      <export>false</export>
       <headerPattern>/(activity.)?status(.label$)?/i</headerPattern>
       <type>int unsigned</type>
       <comment>ID of the status this activity is currently in. Foreign key to civicrm_option_value.</comment>
@@ -310,7 +317,8 @@
        <name>UI_original_id</name>
        <fieldName>original_id</fieldName>
        <add>2.2</add>
-  </index>
+       <drop>3.2</drop>
+  </index>    
   <field>
        <name>result</name>
        <uniqueName>activity_result</uniqueName>

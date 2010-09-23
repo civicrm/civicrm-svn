@@ -50,22 +50,15 @@ class Engage_Report_Form_List extends CRM_Report_Form {
      * Please note these values 'll need to be adjusted if custom field labels are modified.
      *
      */
-
     const 
-        CF_CONSTITUENT_TYPE_LABEL = 'Constituent Type',
-        CF_PRIMARY_LANG_LABEL     = 'Primary Language',
-        CF_OTHER_NAME_LABEL       = 'Other Name';
-
-    /*
-     * custom groups
-     *
-     */
-    
-    const
-        CG_VOTER_INFO               = 'Voter_Info',
-        CG_CONSTITUENT_INFO_INDIVI  = 'Constituent_Info__Individuals',
-        CG_DEMOGRAPHICS             = 'Demographics';
-        
+        CG_CONSTITUENT_INDIVIDUAL_TABLE = 'civicrm_value_core_info',
+        CF_CONSTITUENT_TYPE_NAME = 'constituent_type',
+        CF_PRIMARY_LANG_NAME     = 'primary_language',
+        CF_OTHER_NAME_NAME       = 'other_name',
+        CG_VOTER_INFO_TABLE      = 'civicrm_value_voter_info',
+        CF_PARTY_REG_NAME        = 'party_registration',
+        CF_VOTER_HISTORY_NAME    = 'voter_history',
+        CG_DEMOGROPHICS_TABLE    = 'civicrm_value_demographics';
     /**
      *  Address information needed in output
      *  @var boolean
@@ -82,7 +75,7 @@ class Engage_Report_Form_List extends CRM_Report_Form {
      *  Demographic information needed in output
      *  @var boolean
      */
-    protected $_demoField   = false; 
+    protected $_demoField   = false;
     
     protected $_coreField   = false; 
 
@@ -171,7 +164,7 @@ class Engage_Report_Form_List extends CRM_Report_Form {
     function __construct( ) {
         //  Find the Voter Info custom data group
         $query = "SELECT id, table_name FROM civicrm_custom_group"
-                 . " WHERE name='". self::CG_VOTER_INFO ."'";
+            . " WHERE table_name='". self::CG_VOTER_INFO_TABLE ."'";
         $dao = CRM_Core_DAO::executeQuery( $query );
         $dao->fetch( );
         $voterInfoID = $dao->id;
@@ -181,7 +174,7 @@ class Engage_Report_Form_List extends CRM_Report_Form {
         $query = "SELECT column_name, option_group_ID"
             . " FROM civicrm_custom_field"
             . " WHERE custom_group_id={$voterInfoID}"
-            . " AND label='Party Registration'";
+            . " AND column_name='". self::CF_PARTY_REG_NAME ."'";
         $dao = CRM_Core_DAO::executeQuery( $query );
         $dao->fetch( );        
         $this->_partyCol = $dao->column_name;
@@ -198,7 +191,7 @@ class Engage_Report_Form_List extends CRM_Report_Form {
         $query = "SELECT column_name, option_group_ID"
             . " FROM civicrm_custom_field"
             . " WHERE custom_group_id={$voterInfoID}"
-            . " AND label='Voter History'";
+            . " AND column_name='". self::CF_VOTER_HISTORY_NAME ."'";
         $dao = CRM_Core_DAO::executeQuery( $query );
         $dao->fetch( );        
         $this->_vhCol = $dao->column_name;
@@ -212,7 +205,7 @@ SELECT ov.label, ov.value FROM civicrm_option_value ov
 WHERE ov.option_group_id = (
     SELECT cf.option_group_id FROM civicrm_custom_field cf
     WHERE  cf.custom_group_id = (
-        SELECT cg.id FROM civicrm_custom_group cg WHERE cg.name='". self::CG_CONSTITUENT_INFO_INDIVI ."' ) AND cf.label like '%" . self::CF_CONSTITUENT_TYPE_LABEL . "%'
+        SELECT cg.id FROM civicrm_custom_group cg WHERE cg.table_name='". self::CG_CONSTITUENT_INDIVIDUAL_TABLE ."' ) AND cf.column_name='" . self::CF_CONSTITUENT_TYPE_NAME . "'
 )";
         $dao = CRM_Core_DAO::executeQuery( $query );
         while ( $dao->fetch() ) {
@@ -221,7 +214,7 @@ WHERE ov.option_group_id = (
 
 
         // ** demographics ** //
-        $query = "SELECT id, table_name FROM civicrm_custom_group WHERE name='". self::CG_DEMOGRAPHICS ."'";
+        $query = "SELECT id, table_name FROM civicrm_custom_group WHERE table_name='". self::CG_DEMOGROPHICS_TABLE ."'";
         $dao = CRM_Core_DAO::executeQuery( $query );
         $dao->fetch( );
         $demoTableID = $dao->id;
@@ -230,13 +223,13 @@ WHERE ov.option_group_id = (
         $query = "
 SELECT column_name 
 FROM   civicrm_custom_field 
-WHERE custom_group_id={$demoTableID} AND label like '%" . self::CF_PRIMARY_LANG_LABEL . "%' LIMIT 1";
+WHERE custom_group_id={$demoTableID} AND column_name = '" . self::CF_PRIMARY_LANG_NAME . "' LIMIT 1";
         $dao = CRM_Core_DAO::executeQuery( $query );
         $dao->fetch( );
         $this->_demoLangCol = $dao->column_name;
 
         // ** Core Info ** //
-        $query = "SELECT id, table_name FROM civicrm_custom_group WHERE name='". self::CG_CONSTITUENT_INFO_INDIVI ."'";
+        $query = "SELECT id, table_name FROM civicrm_custom_group WHERE table_name='" . self::CG_CONSTITUENT_INDIVIDUAL_TABLE . "'";
         $dao = CRM_Core_DAO::executeQuery( $query );
         $dao->fetch( );
         $coreInfoTableID = $dao->id;
@@ -245,7 +238,7 @@ WHERE custom_group_id={$demoTableID} AND label like '%" . self::CF_PRIMARY_LANG_
         $query = "
 SELECT column_name 
 FROM   civicrm_custom_field 
-WHERE custom_group_id={$coreInfoTableID} AND label like '%" . self::CF_OTHER_NAME_LABEL . "%' LIMIT 1";
+WHERE custom_group_id={$coreInfoTableID} AND column_name='". self::CF_OTHER_NAME_NAME ."' LIMIT 1";
         $dao = CRM_Core_DAO::executeQuery( $query );
         $dao->fetch( );        
         $this->_coreOtherCol = $dao->column_name;
@@ -253,7 +246,7 @@ WHERE custom_group_id={$coreInfoTableID} AND label like '%" . self::CF_OTHER_NAM
         $query = "
 SELECT column_name 
 FROM   civicrm_custom_field 
-WHERE custom_group_id={$coreInfoTableID} AND label like '%" . self::CF_CONSTITUENT_TYPE_LABEL . "%' LIMIT 1";
+WHERE custom_group_id={$coreInfoTableID} AND column_name='". self::CF_CONSTITUENT_TYPE_NAME . "' LIMIT 1";
         $dao = CRM_Core_DAO::executeQuery( $query );
         $dao->fetch( );        
         $this->_coreTypeCol = $dao->column_name;
@@ -284,7 +277,7 @@ ORDER BY ov.label
     }
 
     function setDefaultValues( $freeze = true ) {
-        $defaults = parent::setDefaultValues( );
+        $defaults = parent::setDefaultValues( $freeze );
         $defaults['report_header'] = '
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">

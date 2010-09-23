@@ -39,6 +39,8 @@
 
   <civicrm_discount />
 
+  <civicrm_persistent />
+
   <civicrm_acl />
 
   <civicrm_acl_entity_role />

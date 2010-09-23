@@ -134,14 +134,12 @@ class CRM_Case_XMLProcessor_Report extends CRM_Case_XMLProcessor {
             }
             $caseTypeIDs = explode( CRM_Core_DAO::VALUE_SEPARATOR,
                                     $dao->case_type_id );
-            $case['caseType'] = CRM_Core_OptionGroup::getLabel( 'case_type',
-                                                                $caseTypeID );
 
-            require_once 'CRM/Case/PseudoConstant.php';
-            $caseTypeName = CRM_Case_PseudoConstant::caseTypeName( $caseID );
-            $case['caseTypeName'] = $caseTypeName['name'];
-            $case['status'] = CRM_Core_OptionGroup::getLabel( 'case_status',
-                                                              $dao->status_id );
+            require_once 'CRM/Case/BAO/Case.php';
+            $case['caseType']     = CRM_Case_BAO_Case::getCaseType( $caseID );
+            $case['caseTypeName'] = CRM_Case_BAO_Case::getCaseType( $caseID, 'name' );
+            $case['status']       = CRM_Core_OptionGroup::getLabel( 'case_status',
+                                                                    $dao->status_id );
         }
         return $case;
     }
@@ -203,6 +201,7 @@ FROM   civicrm_activity a,
        civicrm_case     c,
        civicrm_case_activity ac
 WHERE  a.is_current_revision = 1
+AND    a.is_deleted =0
 AND    a.activity_type_id IN ( $activityTypeIDs )
 AND    c.id = ac.case_id
 AND    a.id = ac.activity_id
@@ -690,11 +689,11 @@ LIMIT  1
         //get case related relationships (Case Role)
         require_once('CRM/Case/BAO/Case.php');
         $caseRelationships = CRM_Case_BAO_Case::getCaseRoles( $clientID, $caseID );
-        $caseType = CRM_Case_PseudoConstant::caseTypeName( $caseID );
+        $caseType = CRM_Case_BAO_Case::getCaseType( $caseID, 'name' );
         
         require_once ('CRM/Case/XMLProcessor/Process.php');
         $xmlProcessor = new CRM_Case_XMLProcessor_Process( );
-        $caseRoles    = $xmlProcessor->get( $caseType['name'], 'CaseRoles' );
+        $caseRoles    = $xmlProcessor->get( $caseType, 'CaseRoles' );
         foreach( $caseRelationships as $key => &$value ) {          
             if ( CRM_Utils_Array::value($value['relation_type'], $caseRoles) ) {
                 unset( $caseRoles[$value['relation_type']] );

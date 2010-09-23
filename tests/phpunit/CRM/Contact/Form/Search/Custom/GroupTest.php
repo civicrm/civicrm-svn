@@ -73,6 +73,8 @@ class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase
      */
     public function testCount( $fv, $count, $ids, $full )
     {
+        $this->foreignKeyChecksOff( );
+
         //  Truncate the tables
         $op = new PHPUnit_Extensions_Database_Operation_Truncate( );
         $op->execute( $this->_dbconn,
@@ -80,7 +82,7 @@ class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase
                              dirname(__FILE__) . '/../../../../../CiviTest/truncate-option.xml') );
 
 
-        //echo "testCount\n";
+        // echo "testCount\n";
         $op = new PHPUnit_Extensions_Database_Operation_Insert( );
         $op->execute( $this->_dbconn,
                       new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
@@ -88,14 +90,14 @@ class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase
                              . '/dataset.xml') );
 
         $obj = new CRM_Contact_Form_Search_Custom_Group( $fv );
-        /*******
         $sql = $obj->all( );
         $dao = CRM_Core_DAO::executeQuery( $sql );
-        echo "Count: $count, OBJ: ", $obj->count( ) . ", " . $obj->all( ) . "\n";
+        /**
+        echo "Count: $count, OBJ: ", $obj->count( ) . "\n";
         while ( $dao->fetch( ) ) {
             echo "{$dao->contact_id}, {$dao->contact_type}, {$dao->sort_name}, {$dao->group_names}\n";
         }
-        ******/
+        **/
         $this->assertEquals( $count, $obj->count( ),
                              'In line ' . __LINE__  );
 

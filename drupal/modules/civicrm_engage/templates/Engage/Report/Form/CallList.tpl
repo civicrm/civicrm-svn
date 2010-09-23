@@ -1,7 +1,16 @@
 {include file="CRM/Report/Form/Fields.tpl"}
-    
+ 
+{if !$printOnly}  
 {*Statistics at the Top of the page*}
 {include file="CRM/Report/Form/Statistics.tpl" top=true}
+{else}
+    <h1>{$reportTitle}</h1>
+    {if $statistics }
+    {foreach from=$statistics.filters item=row}
+        <h2>{$row.title} &nbsp:{$row.value}</h2>
+    {/foreach}
+    {/if}
+{/if}
     
 {*include the graph*}
 {include file="CRM/Report/Form/Layout/Graph.tpl"}
@@ -14,6 +23,7 @@
             {include file="CRM/common/pager.tpl" noForm=0}
         </div>
     {/if}
+
     <table class={if !$printOnly}"report-layout"{else}"body"{/if}>
         <thead class="sticky">
         <tr> 
@@ -45,6 +55,7 @@
         {assign var=rowCount  value=0}
         {foreach from=$rows item=row}
         {assign var=rowCount  value=`$rowCount+1`}
+        {assign var=nextRow   value=`$rowCount+1`}
             <tr>
                 {foreach from=$columnHeaders item=header key=field}
                     {assign var=fieldLink value=$field|cat:"_link"}
@@ -75,16 +86,21 @@
                 {/foreach}
             </tr>
 
-        {if $printOnly and $rowCount % 7 eq 0} 
+        {if $printOnly and $rowCount % 7 eq 0 and $rows.$nextRow}
 
         </tbody>
         </table>
-        <p>Response Codes: Y= Yes; N= No; U= Undecided; D= Declined to State</p>
+        <p>Response Codes: Y= Yes; N= No; U= Undecided; D= Declined to State</p>	
         <p>Status Codes: NH= Not Home; MV= Moved; D= Deceased; WN= Wrong Number</p>
-        <p style="text-align: right;">Page {$pageNum} of {$pageTotal}</p>
-
-
+	{assign var=pageNum value= `$rowCount/7` }
+        <p style="text-align: right;">Page {$pageNum|Ceil} of {$pageTotal}</p>
+ 	<div class="page"></div>
         <h1>{$reportTitle}</h1>
+        {if $statistics }
+        {foreach from=$statistics.filters item=row}
+            <h2>{$row.title} &nbsp:{$row.value}</h2>
+        {/foreach}
+        {/if}
         <table class={if !$printOnly}"report-layout"{else}"body"{/if}>
         <thead class="sticky">
         <tr> 
@@ -137,13 +153,15 @@
     {if $printOnly}
     <p>Response Codes: Y= Yes; N= No; U= Undecided; D= Declined to State</p>
     <p>Status Codes: NH= Not Home; MV= Moved; D= Deceased; WN= Wrong Number</p>
-    <p style="text-align: right;">Page {$pageNum} of {$pageTotal}</p>
+    {assign var=pageNum value= `$rowCount/7` }
+    <p style="text-align: right;">Page {$pageNum|Ceil} of {$pageTotal}</p>
+   
     {/if}
 {/if}        
 
 {* table layout ends *}
-    
+{if !$printOnly}    
 {*Statistics at the bottom of the page*}
 {include file="CRM/Report/Form/Statistics.tpl" bottom=true}    
-    
+{/if}    
 {include file="CRM/Report/Form/ErrorMessage.tpl"}

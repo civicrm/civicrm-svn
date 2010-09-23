@@ -1096,7 +1096,7 @@ class CRM_Utils_System {
     static function loadBootStrap( ) {
         $config = CRM_Core_Config::singleton();
         require_once(str_replace('_', DIRECTORY_SEPARATOR, $config->userFrameworkClass) . '.php');
-        return eval('return '. $config->userFrameworkClass . '::loadBootStrap($config);');
+        return eval('return '. $config->userFrameworkClass . '::loadBootStrap( );');
     }
     
     /**

@@ -62,7 +62,6 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
     protected function setUp()
     {
-
         $this->setBrowser( $this->settings->browser );
         // Make sure that below strings have path separator at the end
         $this->setBrowserUrl( $this->settings->sandboxURL);
@@ -76,9 +75,11 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
   /**
    */
-    function webtestLogin( ) {
-        $this->type("edit-name", $this->settings->username);
-        $this->type("edit-pass", $this->settings->password);
+    function webtestLogin( $admin = false ) {
+        $password = $admin ? $this->settings->adminPassword : $this->settings->password;
+        $username = $admin ? $this->settings->adminUsername : $this->settings->username;
+        $this->type("edit-name", $username);
+        $this->type("edit-pass", $password);
         $this->click("edit-submit");
         $this->waitForPageToLoad("30000");      
     }
@@ -183,12 +184,12 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
     function fillRichTextField( $fieldName, $text = 'Typing this text into editor.', $editor = 'CKEditor' ) {
         if ( $editor == 'CKEditor') {
-            $this->selectFrame("css=td#cke_contents_{$fieldName} iframe");                        
+            $this->waitForElementPresent("css=td#cke_contents_{$fieldName} iframe");
+            $this->selectFrame("css=td#cke_contents_{$fieldName} iframe");
         } else if ( $editor == 'TinyMCE') {
             $this->selectFrame("{$fieldName}_text_ifr");
         } else {
-            echo "Unknown editor value: $editor, exiting ...";
-            exit( );
+            $this->fail( "Unknown editor value: $editor, failing (in CiviSeleniumTestCase::fillRichTextField ..." );
         }
         $this->type("//html/body", $text);
         $this->selectFrame("relative=top");

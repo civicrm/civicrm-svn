@@ -39,7 +39,7 @@
         <div id="add-more-link-{$cgCount}"><a href="javascript:buildCustomData('{$cd_edit.extends}',{if $cd_edit.subtype}'{$cd_edit.subtype}'{else}'{$cd_edit.extends_entity_column_id}'{/if}, '', {$cgCount}, {$group_id}, true );">{ts 1=$cd_edit.title}Add another %1 record{/ts}</a></div>	
     {/if}
 {else}
-{foreach from=$groupTree item=cd_edit key=group_id}    
+{foreach from=$groupTree item=cd_edit key=group_id name=custom_sets}    
  <div id="{$cd_edit.name}" class="crm-accordion-wrapper crm-accordion_title-accordion {if $cd_edit.collapse_display}crm-accordion-closed{else}crm-accordion-open{/if}">
   <div class="crm-accordion-header">
    <div class="icon crm-accordion-pointer"></div>

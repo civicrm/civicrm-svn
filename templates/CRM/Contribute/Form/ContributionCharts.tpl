@@ -27,7 +27,7 @@
 {if $hasContributions}
 <div id="chartData">
 <table class="chart">
-  <tr crm-contribution-form-block-open_flash_chart">
+  <tr class="crm-contribution-form-block-open_flash_chart">
      <td>
          {if $hasByMonthChart}
       	     {* display monthly chart *}

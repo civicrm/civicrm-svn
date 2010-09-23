@@ -68,8 +68,10 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
         /* First make sure there's a matching queue event */
         $q =& CRM_Mailing_Event_BAO_Queue::verify($job_id, $queue_id, $hash);
 
+        $success = null;
+
         if (! $q) {
-            return null;
+            return $success;
         }
 
         $mailing = new CRM_Mailing_BAO_Mailing();
@@ -91,7 +93,7 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
         $re->save();
 
         if (! $mailing->forward_replies || empty($mailing->replyto_email)) {
-            return null;
+            return $success;
         }
         
         return $mailing;
@@ -121,7 +123,7 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
 
             // CRM-5567: we need to set Reply-To: so that any response
             // to the forward goes to the sender of the reply
-            $parsed->setHeader('Reply-To', empty($replyto) ? $parsed->from->__toString() : $replyto);
+            $parsed->setHeader('Reply-To', $replyto instanceof ezcMailAddress ? $parsed->from->__toString() : $replyto);
 
             // $h must be an array, so we can't use generateHeaders()'s result, 
             // but we have to regenerate the headers because we changed To

@@ -75,7 +75,9 @@ class CRM_Grant_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
                                  'sort_name',
                                  'grant_id',
                                  'grant_status_id',
+                                 'grant_status',
                                  'grant_type_id',
+                                 'grant_type',
                                  'grant_amount_total',
                                  'grant_amount_requested',
                                  'grant_amount_granted',
@@ -302,10 +304,7 @@ class CRM_Grant_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
                      $row[$property] = $result->$property;
                  }
              }
-             //fix status display
-             $row['grant_status'] = $row['grant_status_id'];
-             $row['grant_type']   = $row['grant_type_id'];
-             
+            
              if ($this->_context == 'search') {
                  $row['checkbox'] = CRM_Core_Form::CB_PREFIX . $result->grant_id;
              }

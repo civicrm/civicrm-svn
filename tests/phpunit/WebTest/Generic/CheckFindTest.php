@@ -37,27 +37,12 @@ class WebTest_Generic_CheckFindTest extends CiviSeleniumTestCase
 
   function testCheckDashboardElements()
   {
-      // This is the path where our testing install resides. 
-      // The rest of URL is defined in CiviSeleniumTestCase base class, in
-      // class attributes.
       $this->open( $this->sboxPath );
-      
-      // Logging in. Remember to wait for page to load. In most cases,
-      // you can rely on 30000 as the value that allows your test to pass, however,
-      // sometimes your test might fail because of this. In such cases, it's better to pick one element
-      // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
-      // page contents loaded and you can continue your test execution.
       $this->webtestLogin( );
       
       // Go directly to the URL of the screen that you will be testing.
-      $this->open($this->sboxPath . "civicrm");
-      $this->waitForPageToLoad("30000");
-      
-      $this->click("link=CiviCRM");
-      $this->waitForPageToLoad("30000");
-      $this->click("//ul[@id='civicrm-menu']/li[3]");
-      $this->click("//div[@id='root-menu-div']/div[2]/ul/li[1]/div/a");
-      $this->waitForPageToLoad("30000");
+      $this->open($this->sboxPath . "civicrm/contact/search&reset=1");
+      $this->waitForElementPresent("_qf_Basic_refresh");
       $this->click("//input[@name='_qf_Basic_refresh' and @value='Search']");
       $this->waitForPageToLoad("30000");
       $this->assertTrue($this->isElementPresent("search-status"));

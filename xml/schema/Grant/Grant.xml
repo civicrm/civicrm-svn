@@ -77,8 +77,8 @@
   <field>
       <name>grant_type_id</name>
       <type>int unsigned</type>
-      <title>Grant Type</title>
-      <export>true</export>
+      <title>Grant Type Id</title>
+      <export>false</export>
       <required>true</required>
       <comment>Type of grant. Implicit FK to civicrm_option_value in grant_type option_group.</comment>
       <add>1.8</add>
@@ -144,10 +144,11 @@
   <field> 
       <name>status_id</name>
       <type>int unsigned</type>
-      <title>Grant status</title>
+      <title>Grant Status Id</title>
       <uniqueName>grant_status_id</uniqueName>
       <required>true</required>
       <import>true</import> 
+      <export>false</export>
       <comment>Id of Grant status.</comment>
       <add>1.8</add>
   </field>

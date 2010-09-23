@@ -74,7 +74,7 @@ class Engage_Report_Form_WalkList extends Engage_Report_Form_List {
                                $this->_coreTypeCol =>
                                array( 'type' => CRM_Report_Form::OP_STRING,
                                       'required' => true,
-                                      'title'      => ts( 'Contact Type' ) ),
+                                      'title'      => ts( 'Constituent Type' ) ),
                                $this->_coreOtherCol =>
                                array( 'type' => CRM_Report_Form::OP_STRING,
                                       'required' => true,
@@ -84,7 +84,7 @@ class Engage_Report_Form_WalkList extends Engage_Report_Form_List {
                         array( 
                                $this->_coreTypeCol =>
                                array( 
-                                     'title'      => ts( 'ContactType' ),
+                                     'title'      => ts( 'Constituent Type' ),
                                      'operatorType' => CRM_Report_Form::OP_SELECT,
                                      'type' => CRM_Report_Form::OP_STRING,
                                      'options' =>$this->_contactType
@@ -99,7 +99,8 @@ class Engage_Report_Form_WalkList extends Engage_Report_Form_List {
                                       'required'    => true),  
                                'birth_date' => 
                                array( 'title' => ts( 'Age' ),
-                                      'required'  => true ),
+                                      'required'  => true,
+                                      'type'  => CRM_Report_FORM::OP_INT ),
                                'id'           => 
                                array( 'title' => ts( 'Contact ID' ),
                                       'required'    => true),  
@@ -119,6 +120,10 @@ class Engage_Report_Form_WalkList extends Engage_Report_Form_List {
                                      'operator'   => 'like' ),
                               ),
                         'grouping'=> 'contact-fields',
+                        'order_bys'=>             
+                        array( 'sort_name' => array( 'title' => ts( 'Contact Name' ),
+                                                     'required'  => true ) ),
+                        
                         ),
                  'civicrm_address' =>
                  array( 'dao' => 'CRM_Core_DAO_Address',
@@ -160,10 +165,6 @@ class Engage_Report_Form_WalkList extends Engage_Report_Form_List {
                         array( 'phone' => array( 'default' => true,
                                                  'required' => true ) ),
                         'grouping'=> 'location-fields',
-                        'order_bys'=>             
-                        array( 'phone' => array( 'title' => ts( 'Phone' ),
-                                                 'required'  => true ) ),
-                        
                         ),
                  'civicrm_email' => 
                  array( 'dao' => 'CRM_Core_DAO_Email',
@@ -204,11 +205,7 @@ class Engage_Report_Form_WalkList extends Engage_Report_Form_List {
      *  FIXME: deal with age filter
      */
     function where( ) {
-        //  Don't list anybody who doesn't have a phone
-        //  or has do_not_phone = 1
-        $clauses = array(
-               "{$this->_aliases['civicrm_contact']}.do_not_phone != 1",
-               "NOT ISNULL({$this->_aliases['civicrm_phone']}.phone)");
+        $clauses = array( "{$this->_aliases['civicrm_address']}.id IS NOT NULL" );
 
         foreach ( $this->_columns as $tableName => $table ) {
             //echo "where: table name $tableName<br>";
@@ -331,10 +328,34 @@ class Engage_Report_Form_WalkList extends Engage_Report_Form_List {
                 break;
             }
         }
+
+        // make sure column order is same as in print mode
+        $columnOrder = array(
+                             'civicrm_address_street_number',
+                             'civicrm_address_street_unit',
+                             'civicrm_contact_display_name',
+                             'civicrm_phone_phone',
+                             'civicrm_contact_birth_date',
+                             'civicrm_contact_gender_id',
+                             $this->_demoTable . '_' . $this->_demoLangCol,
+                             $this->_voterInfoTable . '_' . $this->_partyCol,
+                             $this->_voterInfoTable . '_' . $this->_vhCol,
+                             $this->_coreInfoTable . '_' . $this->_coreTypeCol,
+                             'civicrm_contact_id',
+                             );
+        $tempHeaders = $this->_columnHeaders;
+        $this->_columnHeaders = array( );
+        foreach ( $columnOrder as $col ) {
+            if ( array_key_exists($col, $tempHeaders) ) {
+                $this->_columnHeaders[$col] = $tempHeaders[$col];
+                unset($tempHeaders[$col]);
+            }
+        }
+        $this->_columnHeaders = $this->_columnHeaders + $tempHeaders;
     }
 
    function executePrintmode($rows) {
-    
+      
        //  Separate out fields and build a temporary table
        $tempTable = "WalkList_" . uniqid();
        $sql = "CREATE TEMPORARY TABLE {$tempTable}"
@@ -362,7 +383,7 @@ class Engage_Report_Form_WalkList extends Engage_Report_Form_List {
         CRM_Core_DAO::executeQuery($sql);
 
         $gender = CRM_Core_PseudoConstant::gender();
-
+    
         foreach( $rows as $key => $value ) {
 
             $dob = $value['civicrm_contact_birth_date'];
@@ -374,7 +395,7 @@ class Engage_Report_Form_WalkList extends Engage_Report_Form_List {
             $vh = substr( $value[ "{$this->_voterInfoTable}_{$this->_vhCol}" ], 0, 1 );
             $contactType = $value[ $this->_coreInfoTable
                                    . '_' . $this->_coreTypeCol];
-            $on = $value[ $this->_demoTable
+            $on = $value[ $this->_coreInfoTable
                                    . '_' . $this->_coreOtherCol];
             $otherName = empty( $on ) ? 'null' : "'{$on}'";
             $type = null;
@@ -435,11 +456,21 @@ class Engage_Report_Form_WalkList extends Engage_Report_Form_List {
         $groupRows = array( );
         $groupCounts = 0;
         
-        $pdfHeaders = array( 's_street_number' => 'STREET#' , 'apt_number' => 'APT',  'name'   => 'Name',     
-                             'phone'           => 'PHONE',    'age'        => 'AGE',   'sex'   => 'SEX',
-                             'lang'            => 'Lang',     'party'      => 'Party', 'vh'    => 'VH',
-                             'contact_type'    => 'Contact Type', 'note'   => 'NOTES', 'rcode' => 'RESPONSE CODES', 
-                             'status'          => 'STATUS',  'contact_id'  => 'ID' );
+        $pdfHeaders = array( 's_street_number' => array( 'title' => 'STREET#' ),
+                             'apt_number'      => array( 'title' => 'APT'     ),
+                             'name'            => array( 'title' => 'Name'    ),
+                             'phone'           => array( 'title' => 'PHONE'   ),
+                             'age'             => array( 'title' => 'AGE'     ),
+                             'sex'             => array( 'title' => 'SEX'     ),
+                             'lang'            => array( 'title' => 'Lang'    ),
+                             'party'           => array( 'title' => 'Party'   ),
+                             'vh'              => array( 'title' => 'VH'      ),
+                             'contact_type'    => array( 'title' => 'Constituent Type' ),
+                             'note'            => array( 'title' => 'NOTES'   ),
+                             'rcode'           => array( 'title' => 'RESPONSE CODES'   ),
+                             'status'          => array( 'title' => 'STATUS'  ),
+                             'contact_id'      => array( 'title' => 'ID',
+                                                         'class' => 'width=7%') );
         $groupInfo = array( 'date'  => $reportDate,
                             'descr' => empty( $this->_groupDescr )? '': "<br>Group {$this->_groupDescr}"  );
 
@@ -464,8 +495,8 @@ class Engage_Report_Form_WalkList extends Engage_Report_Form_List {
 
                 $groupRow['org']         = $this->_orgName;
                 $groupRow['street_name'] = $street_name;
-                $groupRow['city_zip']    = $city.','.$state .' '.$zip;
-                $groupRow['odd']         = $odd ? 'Even' : 'Odd';
+                $groupRow['city_zip']    = $city.', '.$state .' '.$zip;
+                $groupRow['odd']         = $odd ? 'Odd' : 'Even';
 
                 $groupCounts++;
                 $groupRows[$groupCounts] = $groupRow;
@@ -475,6 +506,10 @@ class Engage_Report_Form_WalkList extends Engage_Report_Form_List {
             $pdfRow = array();
             foreach( $pdfHeaders as $k => $v ){
                 if ( property_exists($dao , $k ) ){
+                    if( $k == 'name' && $dao->other_name ) {
+                        $pdfRow[$k] = $dao->$k. "<br />" . $dao->other_name;
+                        continue;
+                    }
                     $pdfRow[$k] = $dao->$k;  
                 } else {
                     $pdfRow[$k] = "";
@@ -485,7 +520,7 @@ class Engage_Report_Form_WalkList extends Engage_Report_Form_List {
 
             $pageRow++;
         }
-
+        $this->assign( 'pageTotal' , $groupCounts );
         $this->assign( 'pdfHeaders', $pdfHeaders );
         $this->assign( 'groupInfo', $groupInfo );
         $this->assign( 'pdfRows', $pdfRows );

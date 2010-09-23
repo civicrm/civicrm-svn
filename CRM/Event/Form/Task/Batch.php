@@ -168,13 +168,17 @@ class CRM_Event_Form_Task_Batch extends CRM_Event_Form_Task
             foreach ( $this->_fields as $name => $field ) {
                 if ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID( $name ) ) {
                     $customValue = CRM_Utils_Array::value( $customFieldID, $this->_customFields );
+                    if ( CRM_Utils_Array::value( 'extends_entity_column_value', $customValue ) ) {
+                        $entityColumnValue = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, 
+                                                      $customValue['extends_entity_column_value'] );
+                    }
                     if ( ( $this->_roleCustomDataTypeID == $customValue['extends_entity_column_id'] ) &&
-                         ( $roleId == $customValue['extends_entity_column_value'] ) ) {
+                         ( CRM_Utils_Array::value( $roleId, $entityColumnValue ) ) ) {
                         CRM_Core_BAO_UFGroup::buildProfile( $this, $field, null, $participantId );
                     } else if ( ( $this->_eventNameCustomDataTypeID == $customValue['extends_entity_column_id'] ) &&
-                         ( $eventId == $customValue['extends_entity_column_value'] ) ) {
+                         ( $eventId == $entityColumnValue[$roleId] ) ) {
                         CRM_Core_BAO_UFGroup::buildProfile( $this, $field, null, $participantId );
-                    } else if ( CRM_Utils_System::isNull( $customValue['extends_entity_column_value'] ) ) {
+                    } else if ( CRM_Utils_System::isNull( $entityColumnValue[$roleId] ) ) {
                         CRM_Core_BAO_UFGroup::buildProfile( $this, $field, null, $participantId );
                     }
                 } else {

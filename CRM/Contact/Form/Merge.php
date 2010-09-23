@@ -571,6 +571,11 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         CRM_Dedupe_Merger::moveContactBelongings($this->_cid, $this->_oid);
         $otherParams = array('contact_id' => $this->_oid);
         if ( CRM_Core_Permission::check( 'merge duplicate contacts' ) && CRM_Core_Permission::check( 'delete contacts' )) {
+            // if ext id is submitted then set it null for contact to be deleted
+            if ( CRM_Utils_Array::value( 'external_identifier', $submitted ) ) {
+                $query = "UPDATE civicrm_contact SET external_identifier = null WHERE id = {$this->_oid}";
+                CRM_Core_DAO::executeQuery( $query );
+            }
             civicrm_contact_delete($otherParams);
         } else {
             CRM_Core_Session::setStatus(ts('Do not have sufficient permission to delete duplicate contact.'));
