@@ -53,7 +53,7 @@ class CRM_Upgrade_Incremental_php_ThreeThree {
         // make sure name for custom field, group and 
         // profile should be unique and properly munged.
         $colQuery = 'ALTER TABLE `civicrm_custom_field` ADD `name` VARCHAR( 64 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL AFTER `custom_group_id` ';
-        CRM_Core_DAO::executeQuery( $colQuery );
+        CRM_Core_DAO::executeQuery( $colQuery, CRM_Core_DAO::$_nullArray, true, null, false, false );
         
         require_once 'CRM/Utils/String.php';
         require_once 'CRM/Core/DAO/CustomField.php';
@@ -66,9 +66,16 @@ class CRM_Upgrade_Incremental_php_ThreeThree {
             $name   = CRM_Utils_String::munge( $customField->label, '_', 64 );
             $fldCnt = CRM_Core_DAO::singleValueQuery( $customFldCntQuery,
                                                       array( 1 => array( $name,            'String'  ),
-                                                             2 => array( $customField->id, 'Integer' ) ) );
+                                                             2 => array( $customField->id, 'Integer' ) ), true, false );
             if ( $fldCnt ) $name = CRM_Utils_String::munge( "{$name}_" . rand( ), '_', 64 );
-            CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_CustomField', $customField->id, 'name', $name );
+            $customFieldQuery = "
+Update `civicrm_custom_field`
+SET `name` = %1
+WHERE id = %2
+";
+            $customFieldParams = array( 1 => array( $name, 'String' ),
+                                        2 => array( $customField->id, 'Integer' ) );
+            CRM_Core_DAO::executeQuery( $customFieldQuery, $customFieldParams, true, null, false, false );
         }
         $customField->free( );
         
