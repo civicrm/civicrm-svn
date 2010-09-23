@@ -148,7 +148,7 @@ class CRM_Event_BAO_Query
             
             //add role
             if ( CRM_Utils_Array::value( 'participant_role', $query->_returnProperties ) ) {
-                $query->_select['participant_role']  = "participant_role.label as participant_role";
+                $query->_select['participant_role']  = "civicrm_participant.role_id as participant_role_id";
                 $query->_element['participant_role'] = 1;
                 $query->_tables['civicrm_participant'] = 1;
                 $query->_tables['participant_role'] = 1;

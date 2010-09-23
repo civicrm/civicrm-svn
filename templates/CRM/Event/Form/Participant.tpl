@@ -257,12 +257,85 @@
 {include file="CRM/common/customData.tpl"}
 {literal}
 <script type="text/javascript">
+    function showCustomData( type, subType, subName, cgCount, groupID, isMultiple )
+    {
+        var dataUrl = {/literal}"{crmURL p=$urlPath h=0 q='snippet=4&type='}"{literal} + type;
+       	
+        var roleid = "role_id["+subType+"]";
+        
+
+        if( cj('#'+groupID).attr('id') && document.getElementById(roleid).checked == true) {
+            return;
+        }
+
+        if ( subType ) {
+            dataUrl = dataUrl + '&subType=' + subType;
+        }
+  
+        if ( subName ) {
+            dataUrl = dataUrl + '&subName=' + subName;
+            cj('#customData' + subName ).show();
+        } else {
+            cj('#customData').show();		
+        }
+  
+       {/literal}
+       {if $urlPathVar}
+           dataUrl = dataUrl + '&' + '{$urlPathVar}'
+       {/if}
+       {if $groupID}
+           dataUrl = dataUrl + '&groupID=' + '{$groupID}'
+       {/if}
+       {if $qfKey}
+           dataUrl = dataUrl + '&qfKey=' + '{$qfKey}'
+       {/if}
+       {if $entityID}
+           dataUrl = dataUrl + '&entityID=' + '{$entityID}'
+       {/if}
+ 
+       {literal}
+       if ( !cgCount ) {
+           cgCount = 1;
+           var prevCount = 1;		
+       } else if ( cgCount >= 1 ) {
+           var prevCount = cgCount;	
+           cgCount++;
+       }
+  
+       dataUrl = dataUrl + '&cgcount=' + cgCount;
+  
+       if ( isMultiple ) {
+           var fname = '#custom_group_' + groupID + '_' + prevCount;
+           cj("#add-more-link-"+prevCount).hide();
+       } else {
+           if ( subName && subName != 'null' ) {		
+               var fname = '#customData' + subName;
+           } else {
+               var fname = '#customData';
+           }		
+       }
+  
+       var response = cj.ajax({url: dataUrl,
+ 	 		  async: false
+       }).responseText;
+
+       if ( subType != 'null' ) {
+           if ( document.getElementById(roleid).checked == true ) {
+               var response_text = '<div style="display:block;" id = '+subType+'_chk >'+response+'</div>';
+               cj( fname ).append(response_text);
+           } else {
+               cj('#'+subType+'_chk').remove();
+           }
+       }                 
+   }
 	cj(function() {				
 		{/literal}
 		buildCustomData( '{$customDataType}', 'null', 'null' );
-		{if $roleID}
-		    buildCustomData( '{$customDataType}', {$roleID}, {$roleCustomDataTypeID} );
-		{/if}
+		{foreach from = $roleID item = item key=key}
+		   {if $item}
+		       buildCustomData( '{$customDataType}',{$item}, {$roleCustomDataTypeID} );
+		   {/if}
+		{/foreach}
 		{if $eventID}
 		    buildCustomData( '{$customDataType}', {$eventID}, {$eventNameCustomDataTypeID} );
 		{/if}

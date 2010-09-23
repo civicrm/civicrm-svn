@@ -23,3 +23,7 @@ ALTER TABLE `civicrm_note`
 -- CRM-6748
 UPDATE civicrm_navigation SET url = 'civicrm/admin/contribute/add&reset=1&action=add'
         WHERE civicrm_navigation.name = 'New Contribution Page';
+
+-- CRM-6507
+ALTER TABLE civicrm_participant 
+   CHANGE role_id role_id varchar(128) collate utf8_unicode_ci NULL default NULL COMMENT 'Participant role ID. Implicit FK to civicrm_option_value where option_group = participant_role.';

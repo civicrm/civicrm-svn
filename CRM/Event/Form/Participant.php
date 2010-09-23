@@ -41,6 +41,7 @@ require_once 'CRM/Event/Form/EventFees.php';
 require_once 'CRM/Custom/Form/CustomData.php';
 require_once 'CRM/Core/BAO/CustomGroup.php';
 require_once 'CRM/Contact/BAO/Contact/Location.php';
+require_once 'CRM/Core/Form.php';
 
 /**
  * This class generates form components for processing a participation 
@@ -210,10 +211,9 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
 		// get the option value for custom data type 	
         require_once 'CRM/Core/OptionGroup.php';
 		$this->_roleCustomDataTypeID      = CRM_Core_OptionGroup::getValue( 'custom_data_type', 'ParticipantRole', 'name' );
-		$this->_eventNameCustomDataTypeID = CRM_Core_OptionGroup::getValue( 'custom_data_type', 'ParticipantEventName', 'name' );		
-		$this->_eventTypeCustomDataTypeID = CRM_Core_OptionGroup::getValue( 'custom_data_type', 'ParticipantEventType', 'name' );
-
-		$this->assign( 'roleCustomDataTypeID', $this->_roleCustomDataTypeID );
+		$this->_eventNameCustomDataTypeID = CRM_Core_OptionGroup::getValue( 'custom_data_type', 'ParticipantEventName', 'name' );
+        $this->_eventTypeCustomDataTypeID = CRM_Core_OptionGroup::getValue( 'custom_data_type', 'ParticipantEventType', 'name' );
+        $this->assign( 'roleCustomDataTypeID', $this->_roleCustomDataTypeID );
 		$this->assign( 'eventNameCustomDataTypeID', $this->_eventNameCustomDataTypeID );
 		$this->assign( 'eventTypeCustomDataTypeID', $this->_eventTypeCustomDataTypeID );
 		
@@ -359,10 +359,15 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
         // when custom data is included in this page
     	if ( CRM_Utils_Array::value( "hidden_custom", $_POST ) ) {
     		//custom data of type participant role
-    		CRM_Custom_Form_Customdata::preProcess( $this, $this->_roleCustomDataTypeID, $_POST['role_id'], 1, 'Participant', $this->_id );
-    		CRM_Custom_Form_Customdata::buildQuickForm( $this );
-    		CRM_Custom_Form_Customdata::setDefaultValues( $this );
-		
+            if ( $_POST['role_id'] ) {
+                foreach( $_POST['role_id'] as $k => $val ) {
+                    $roleID = $val;
+                    CRM_Custom_Form_Customdata::preProcess( $this, $this->_roleCustomDataTypeID, $k, 1, 'Participant', $this->_id );
+                    CRM_Custom_Form_Customdata::buildQuickForm( $this );
+                    CRM_Custom_Form_Customdata::setDefaultValues( $this );
+                }
+            }
+            
     		//custom data of type participant event
     		CRM_Custom_Form_Customdata::preProcess( $this, $this->_eventNameCustomDataTypeID, $_POST['event_id'], 1, 'Participant', $this->_id );
     		CRM_Custom_Form_Customdata::buildQuickForm( $this );
@@ -425,6 +430,13 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
 
             require_once "CRM/Event/BAO/Participant.php";
             CRM_Event_BAO_Participant::getValues( $params, $defaults, $ids );
+            $sep = CRM_Core_DAO::VALUE_SEPARATOR;
+            if ( $defaults[$this->_id]['role_id'] ) {
+                foreach ( explode( $sep, $defaults[$this->_id]['role_id'] ) as $k => $v ) {
+                    $defaults[$this->_id]["role_id[{$v}]"] = 1;
+                }
+                unset( $defaults[$this->_id]['role_id'] );
+            }
             $this->_contactId = $defaults[$this->_id]['contact_id'];
             $this->_statusId = $defaults[$this->_id]['participant_status_id'];
             
@@ -518,14 +530,11 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
                                                                          CRM_Utils_Array::value( 'register_date', $defaults[$this->_id] ), 'activityDateTime' );
         
 		//assign event and role id, this is needed for Custom data building
-		if ( isset( $_POST['role_id'] ) ) {
-		    $roleID = $_POST['role_id'];
-		}
-		
-		if ( isset( $roleID ) ) {
-		    $this->assign( 'roleID',  $roleID );
-		}
-        
+        $sep = CRM_Core_DAO::VALUE_SEPARATOR;
+        $roleIDs = explode( $sep, $defaults[$this->_id]['participant_role_id'] ); 
+        if ( isset( $roleIDs ) ) {
+            $this->assign( 'roleID', $roleIDs );
+        }
 		if ( isset( $_POST['event_id'] ) ) {
 		    $eventID = $_POST['event_id'];
 			if ( $eventID ) {
@@ -701,11 +710,32 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
 			$this->assign( 'entityID', $this->_id );
 		}
 		
-        $this->add( 'select', 'role_id' , ts( 'Participant Role' ),
-                    array( '' => ts( '- select -' ) ) + CRM_Event_PseudoConstant::participantRole( ),
-                    true,
-                    array('onchange' => "buildCustomData( 'Participant', this.value, {$this->_roleCustomDataTypeID} );") );
+        $roleids = CRM_Event_PseudoConstant::participantRole( );
         
+        foreach ( $roleids as $rolekey => $rolevalue ) {
+            $query = "
+SELECT civicrm_custom_group.name as name, 
+       civicrm_custom_group.id as id
+  FROM civicrm_custom_group
+ WHERE extends_entity_column_value LIKE '%{$rolekey}%' 
+   AND is_active = 1";
+           
+         $dao =& CRM_Core_DAO::executeQuery( $query );
+         $customGroupID = null;
+         while ( $dao->fetch( ) ) {
+             if(  $customGroupID ) {
+                 $customGroupID .= ',';
+             }
+             $customGroupID .= $dao->name.'_1';
+         } 
+         $roleTypes[] = HTML_QuickForm::createElement( 'checkbox', $rolekey, null, $rolevalue,
+                                                       array( 'onclick' => "showCustomData( 'Participant', {$rolekey}, {$this->_roleCustomDataTypeID},'','{$customGroupID}');"
+                                                              )
+                                                       );
+        }
+    
+         $this->addGroup( $roleTypes, 'role_id', ts('Participant Role' ) );
+          $this->addRule( 'role_id', ts('Role is required'), 'required' );
         // CRM-4395
         $checkCancelledJs = array('onchange' => "return sendNotification( );");
         $confirmJS = null;
@@ -1017,23 +1047,30 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
             
         }
 
-		// build custom data getFields array
-		$customFieldsRole  = CRM_Core_BAO_CustomField::getFields( 'Participant', false, false, 
-																CRM_Utils_Array::value( 'role_id', $params ), $this->_roleCustomDataTypeID );
-		$customFieldsEvent = CRM_Core_BAO_CustomField::getFields( 'Participant', false, false, 
-														        CRM_Utils_Array::value( 'event_id', $params ), $this->_eventNameCustomDataTypeID );
-		$customFieldsEventType = 
-            CRM_Core_BAO_CustomField::getFields( 'Participant', false, false, 
-                                                 $this->_eventTypeId, $this->_eventTypeCustomDataTypeID );
-		$customFields      = CRM_Utils_Array::crmArrayMerge( $customFieldsRole, 
-															CRM_Core_BAO_CustomField::getFields( 'Participant', false, false, null, null, true ) );
-		$customFields      = CRM_Utils_Array::crmArrayMerge( $customFieldsEvent, $customFields );
-		$customFields      = CRM_Utils_Array::crmArrayMerge( $customFieldsEventType, $customFields );
-
-        $params['custom'] = CRM_Core_BAO_CustomField::postProcess( $params,
-                                                                   $customFields,
-                                                                   $this->_id,
-                                                                   'Participant' );
+		$roleAllIds = CRM_Utils_Array::value( 'role_id', $params );
+        if ( $roleAllIds ) { 
+            foreach ( $roleAllIds as $rkey => $rvalue ) {
+                $customFieldsRole  = CRM_Core_BAO_CustomField::getFields( 'Participant', false, false, $rkey, $this->_roleCustomDataTypeID );
+                $customFieldsEvent     = CRM_Core_BAO_CustomField::getFields( 'Participant', 
+                                                                              false, 
+                                                                              false, 
+                                                                              CRM_Utils_Array::value( 'event_id', $params ), 
+                                                                              $this->_eventNameCustomDataTypeID );
+                $customFieldsEventType = CRM_Core_BAO_CustomField::getFields( 'Participant', 
+                                                                              false, 
+                                                                              false, 
+                                                                              $this->_eventTypeId, 
+                                                                              $this->_eventTypeCustomDataTypeID );
+                $customFields = CRM_Utils_Array::crmArrayMerge( $customFieldsRole, 
+                                                                CRM_Core_BAO_CustomField::getFields( 'Participant', false, false, null, null, true ) );       
+                $customFields      = CRM_Utils_Array::crmArrayMerge( $customFieldsEvent, $customFields );
+                $customFields      = CRM_Utils_Array::crmArrayMerge( $customFieldsEventType, $customFields );
+                $params['custom']  = CRM_Core_BAO_CustomField::postProcess( $params,
+                                                                            $customFields,
+                                                                            $this->_id,
+                                                                            'Participant' );  
+            }
+        }
 
         if ( $this->_mode ) {
             // add all the additioanl payment params we need
@@ -1131,11 +1168,32 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
             }
 
             if ( $this->_single ) {
+                if ( $params['role_id'] ) {
+                    foreach ( $params['role_id'] as $k => $v ) {
+                        $rolesIDS[] = $k;
+                    }
+                    require_once 'CRM/Core/DAO.php';
+                    $seperator = CRM_Core_DAO::VALUE_SEPARATOR;                   
+                    $params['role_id'] = implode( $seperator, $rolesIDS );
+                } else {
+                    $params['role_id'] = 'NULL';
+                }
                 $participants[] = CRM_Event_BAO_Participant::create( $params );
             } else { 
                 foreach ( $this->_contactIds as $contactID ) {
                     $commonParams = $params;
                     $commonParams['contact_id'] = $contactID;
+                    if ( $commonParams['role_id'] ) {
+                        foreach ( $commonParams['role_id'] as $k => $v ) {
+                            $rolesIDS[] = $k;
+                        }
+                        require_once 'CRM/Core/DAO.php';
+                        $seperator = CRM_Core_DAO::VALUE_SEPARATOR;                   
+                        $commonParams['role_id'] = implode( $seperator, $rolesIDS );
+                        $commonParams['participant_role_id'] = implode( $seperator, $rolesIDS );
+                    } else {
+                        $commonParams['role_id'] = 'NULL';
+                    }
                     $participants[] = CRM_Event_BAO_Participant::create( $commonParams );   
                 }        
             }
@@ -1349,7 +1407,7 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
                 foreach ( $values as $fieldValue ) {
                     $customValue = array( 'data' => $fieldValue['value'] );
                     $customFields[$fieldID]['id'] = $fieldID;
-                    $formattedValue = CRM_Core_BAO_CustomGroup::formatCustomValues( $customValue, $customFields[$fieldID], true );
+                    $formattedValue = CRM_Core_BAO_CustomGroup::formatCustomValues( $customValue, $customFields[$fieldID] );
                     $customGroup[$customFields[$fieldID]['groupTitle']][$customFields[$fieldID]['label']] = str_replace( '&nbsp;', '', $formattedValue );
                 }                
             }
