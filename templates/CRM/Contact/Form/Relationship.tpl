@@ -458,11 +458,11 @@ cj('#saveDetails').hide( );
 cj('#addCurrentEmployer').hide( );
 cj('#addCurrentEmployee').hide( );
 
-cj('#rel_contact').focus( function() {
+setTimeout( function() { cj('#rel_contact').focus( function() {
     cj("input[name=rel_contact_id]").val('');
     cj('#relationship-refresh').show( );
     cj('#relationship-refresh-save').hide( );	      
-});
+});},30000);
 
 {/literal}{if $searchRows || $callAjax}{literal} 
 show('saveElements');
