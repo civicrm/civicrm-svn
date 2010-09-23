@@ -30,7 +30,7 @@
  *}
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/jquery.js"></script>
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/jquery-ui-1.8.5/js/jquery-ui-1.8.5.custom.min.js"></script>
-<style type="text/css">@import url("{$config->resourceBase}packages/jquery/jquery-ui-1.8.5/css/smoothness/jquery-ui-1.8.5.custom.css");</style>
+<style type="text/css">@import url("{$config->resourceBase}packages/jquery/jquery-ui-1.8.5/css/custom-theme/jquery-ui-1.8.5.custom.css");</style>
 
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/flexigrid.js"></script>
 <style type="text/css">@import url("{$config->resourceBase}packages/jquery/css/flexigrid.css");</style>
@@ -67,18 +67,18 @@
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.form.js"></script>
 
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.tokeninput.js"></script>
-<style type="text/css">@import url("{$config->resourceBase}packages/jquery/css/token-input-facebook.css");></style>
+<style type="text/css">@import url("{$config->resourceBase}packages/jquery/css/token-input-facebook.css");</style>
 
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.timeentry.pack.js"></script>
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.mousewheel.pack.js"></script>
 
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.toolTip.js"></script>
 
-<style type="text/css">@import url("{$config->resourceBase}packages/jquery/css/dataTable.css");></style>
+<style type="text/css">@import url("{$config->resourceBase}packages/jquery/css/dataTable.css");</style>
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.dataTables.min.js"></script>
 
-<script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.dashboard.js"></script>
-<style type="text/css">@import url({$config->resourceBase}packages/jquery/css/dashboard.css);></style>
+<script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/DataTables-1.7.2/media/js/jquery.dataTables.min.js"></script>
+<style type="text/css">@import url({$config->resourceBase}packages/jquery/DataTables-1.7.2/media/css/demo_table_jui.css);</style>
 
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.FormNavigate.js"></script>
 

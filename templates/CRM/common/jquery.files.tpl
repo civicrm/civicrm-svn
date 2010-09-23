@@ -29,7 +29,7 @@
  *}
 packages/jquery/jquery.js
 packages/jquery/jquery-ui-1.8.5/js/jquery-ui-1.8.5.custom.min.js
-packages/jquery/jquery-ui-1.8.5/css/smoothness/jquery-ui-1.8.5.custom.css
+packages/jquery/jquery-ui-1.8.5/css/custom-theme/jquery-ui-1.8.5.custom.css
 
 packages/jquery/plugins/flexigrid.js
 packages/jquery/css/flexigrid.css
@@ -67,8 +67,8 @@ packages/jquery/plugins/jquery.mousewheel.pack.js
 
 packages/jquery/plugins/jquery.toolTip.js
 
-packages/jquery/css/dataTable.css
-packages/jquery/plugins/jquery.dataTables.min.js
+packages/jquery/DataTables-1.7.2/media/css/demo_table_jui.css
+packages/jquery/plugins/DataTables-1.7.2/media/js/jquery.dataTables.min.js
 
 packages/jquery/plugins/jquery.dashboard.js
 packages/jquery/css/dashboard.css
