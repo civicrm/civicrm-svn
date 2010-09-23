@@ -108,6 +108,11 @@ SELECT @domainID        := MIN(id) FROM civicrm_domain;
 SELECT @nav_other_id    := id FROM civicrm_navigation WHERE name = 'Other';
 SELECT @nav_other_wt    := MAX(ROUND(weight)) from civicrm_navigation WHERE parent_id = @nav_other_id;
 
+--insert campaigns permissions in 'Other' navigation menu permissions.
+UPDATE  civicrm_navigation 
+   SET  permission = CONCAT( permission, ',administer CiviCampaign,manage campaign,reserve campaign contacts,release campaign contacts,interview campaign contacts' ) 
+ WHERE  id = @nav_other_id;
+
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES
