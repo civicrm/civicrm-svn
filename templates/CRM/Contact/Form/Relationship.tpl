@@ -122,6 +122,7 @@
                         var relationshipType = cj('#relationship_type_id'); 
                         relationshipType.change( function() { 
                             cj('#relationship-refresh-save').hide();
+			     cj('#saveButtons').hide();
                             cj('#rel_contact').val('');
                             cj("input[name=rel_contact_id]").val('');
                             createRelation( );
@@ -458,11 +459,22 @@ cj('#saveDetails').hide( );
 cj('#addCurrentEmployer').hide( );
 cj('#addCurrentEmployee').hide( );
 
-setTimeout( function() { cj('#rel_contact').focus( function() {
-    cj("input[name=rel_contact_id]").val('');
-    cj('#relationship-refresh').show( );
-    cj('#relationship-refresh-save').hide( );	      
-});},30000);
+cj(document).ready(function(){
+  if ( cj.browser.msie ) {
+       cj('#rel_contact').keyup( function( e) {
+         if( e.keyCode == 9 || e.keyCode == 13 ) {
+	     return false;
+	     }
+         cj("input[name=rel_contact_id]").val('');
+         cj('#relationship-refresh').show( );
+         cj('#relationship-refresh-save').hide( );
+    }); } else {
+         cj('#rel_contact').focus( function() {
+         cj("input[name=rel_contact_id]").val('');
+         cj('#relationship-refresh').show( );
+         cj('#relationship-refresh-save').hide( ); 
+}); }
+});
 
 {/literal}{if $searchRows || $callAjax}{literal} 
 show('saveElements');
