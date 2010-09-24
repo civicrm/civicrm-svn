@@ -493,7 +493,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             
             if ( isset( $form->_values['discount'] ) ) {
                 if ( ! isset( $discountId ) &&
-                     ( $form->_action != CRM_Core_Action::UPDATE )) {
+                     ( !( $form->_paymentId && $form->_action & CRM_Core_Action::UPDATE ) ) ) {
                     require_once 'CRM/Core/BAO/Discount.php';
                     $form->_discountId = $discountId = CRM_Core_BAO_Discount::findSet( $form->_eventId, 'civicrm_event' );
                 }
@@ -505,7 +505,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
 
             require_once 'CRM/Utils/Hook.php';
             CRM_Utils_Hook::buildAmount( 'event', $form, $form->_feeBlock );
-            if ( $form->_action != CRM_Core_Action::UPDATE ) {
+            if ( !($form->_paymentId && $form->_action & CRM_Core_Action::UPDATE ) ) {
                 require_once 'CRM/Utils/Money.php';
                 $eventFeeBlockValues = array();
                 foreach ( $form->_feeBlock as $fee ) {

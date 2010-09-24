@@ -162,8 +162,10 @@ class CRM_Event_Form_EventFees
         if ( $priceSetId = CRM_Price_BAO_Set::getFor( 'civicrm_event', $form->_eventId ) ) {
             // get price set default values, CRM-4090
             if ( in_array( get_class( $form ), 
-                           array( 'CRM_Event_Form_Registration_Register',
-                                  'CRM_Event_Form_Registration_AdditionalParticipant' ) ) ) {
+                           array( 
+                                 'CRM_Event_Form_Participant',
+                                 'CRM_Event_Form_Registration_Register',
+                                 'CRM_Event_Form_Registration_AdditionalParticipant' ) ) ) {
                 $priceSetValues = self::setDefaultPriceSet( $form->_pId, $form->_eventId );
                 if ( !empty( $priceSetValues ) ) {
                     $defaults[$form->_pId] = array_merge( $defaults[$form->_pId], $priceSetValues );  
@@ -550,6 +552,7 @@ SELECT  id, label, name, option_group_id
         require_once "CRM/Core/BAO/Preferences.php";
         $mailingInfo =& CRM_Core_BAO_Preferences::mailingPreferences();
         $form->assign( 'outBound_option', $mailingInfo['outBound_option'] );
+        $form->assign( 'hasPayment', $form->_paymentId );
     }
 }
 

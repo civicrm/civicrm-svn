@@ -178,6 +178,11 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
     public $_eventId = null;
     
     /** 
+     * id of payment, if any
+     */
+    public $_paymentId = null;
+    
+    /** 
      * Function to set variables up before form is built 
      *                                                           
      * @return void 
@@ -208,7 +213,13 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
             $this->_id = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
         }
 
-		// get the option value for custom data type 	
+        require_once 'CRM/Event/DAO/ParticipantPayment.php';
+        if ( $this->_id ) {
+            $this->_paymentId = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_ParticipantPayment',
+                                                            $this->_id, 'id', 'participant_id' );
+        }
+        
+        // get the option value for custom data type 	
         require_once 'CRM/Core/OptionGroup.php';
 		$this->_roleCustomDataTypeID      = CRM_Core_OptionGroup::getValue( 'custom_data_type', 'ParticipantRole', 'name' );
 		$this->_eventNameCustomDataTypeID = CRM_Core_OptionGroup::getValue( 'custom_data_type', 'ParticipantEventName', 'name' );
@@ -853,9 +864,10 @@ SELECT civicrm_custom_group.name as name,
         
         // do the amount validations.
         //skip for update mode since amount is freeze, CRM-6052
-        if ( !$self->_id && 
-             !CRM_Utils_Array::value( 'total_amount', $values ) && 
-             empty( $self->_values['line_items'] ) ) {
+        if ( ( !$self->_id && 
+               !CRM_Utils_Array::value( 'total_amount', $values ) && 
+               empty( $self->_values['line_items'] ) ) || 
+             ( $self->_id && !$self->_paymentId && is_array( $self->_values['line_items'] ) ) ) {
             if ( $priceSetId = CRM_Utils_Array::value( 'priceSetId', $values ) ) {
                 require_once 'CRM/Price/BAO/Field.php';
                 CRM_Price_BAO_Field::priceSetValidation( $priceSetId, $values, $errorMsg );
@@ -895,7 +907,7 @@ SELECT civicrm_custom_group.name as name,
             $contributionParams           = array( );
             $lineItem                     = array( );
             $additionalParticipantDetails = array( );
-            if ( $this->_id && $this->_action & CRM_Core_Action::UPDATE ) {
+            if ( ( $this->_id && $this->_action & CRM_Core_Action::UPDATE ) && $this->_paymentId ) {
                 $participantBAO     = new CRM_Event_BAO_Participant( );
                 $participantBAO->id = $this->_id;
                 $participantBAO->find(true);
@@ -1272,8 +1284,15 @@ SELECT civicrm_custom_group.name as name,
             } 
         }
 
+        //do cleanup line  items if participant edit the Event Fee.
+        if ( $this->_lineItem || !isset($params['proceSetId'] ) ) {
+            require_once 'CRM/Price/BAO/LineItem.php';
+            CRM_Price_BAO_LineItem::deleteLineItems( $params['participant_id'], 'civicrm_participant' );
+        }
+
         // also store lineitem stuff here        
-        if ( $this->_lineItem  & $this->_action & CRM_Core_Action::ADD ) {
+        if ( ( $this->_lineItem  & $this->_action & CRM_Core_Action::ADD ) || 
+             ( $this->_lineItem && CRM_Core_Action::UPDATE && !$this->_paymentId ) ) {
             require_once 'CRM/Price/BAO/LineItem.php';
             foreach ( $this->_contactIds as $num => $contactID ) {
                 foreach ( $this->_lineItem as $key => $value ) {
