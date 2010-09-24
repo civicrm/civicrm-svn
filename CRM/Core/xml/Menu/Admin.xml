@@ -527,6 +527,16 @@
      <weight>380</weight>
   </item>
   <item>
+     <path>civicrm/admin/extensions</path>
+     <title>CiviCRM Extensions</title>
+     <page_callback>CRM_Admin_Page_Extensions</page_callback>
+     <desc></desc>
+     <access_arguments>administer CiviCRM</access_arguments>
+     <adminGroup>Customize</adminGroup>
+     <icon>admin/small/price_sets.png</icon>
+     <weight>390</weight>
+  </item>  
+  <item>
      <path>civicrm/admin/price/add</path>
      <title>New Price Set</title>
      <page_callback>CRM_Price_Page_Set</page_callback>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+ <extension key="org.civicrm.report.grant" type="report">
+  <callback>Grant</callback>
+  <name>Grant Report</name>
+  <description>Grant Report allows you to see the summary of grants that
+  have been admitted to your consitutents by your organisation.</description>
+  <url>http://civicrm.org</url>
+  <license>AGPL</license>
+  <maintainer>CiviCRM Core Team &lt;noreply@civicrm.org&gt;</maintainer>
+  <releaseDate>2010-09-01</releaseDate>
+  <version>1.0</version>
+  <develStage>stable</develStage>
+  <compatibility><ver>3.3</ver></compatibility>
+  <comments>For support, please contact project team on the forums. (http://forum.civicrm.org)</comments>
+</extension>

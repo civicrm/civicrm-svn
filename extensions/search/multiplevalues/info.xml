@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<extension key="multiplevalues" name="Multiple Values Search" type="search" callback="MultipleValues">
+    <description>Multiple Values description</description>
+    <maintainer>CiviCRM Core Team &lt;noreply@civicrm.org&gt;</maintainer>
+    <compatibility>
+    	<ver>3.2</ver>
+    </compatibility>
+    <develStage>beta</develStage>
+    <comments>For support, please contact project team on the forums.</comments>
+</extension>

@@ -190,6 +190,7 @@ VALUES
    ('event_badge'                   , '{ts escape="sql"}Event Name Badge{/ts}'                   , 0, 1),
    ('campaign_type'                 , '{ts escape="sql"}Campaign Type{/ts}'                      , 0, 1),
    ('campaign_status'               , '{ts escape="sql"}Campaign Status{/ts}'                    , 0, 1);
+   ('system_extensions'             , '{ts escape="sql"}CiviCRM Extensions{/ts}'                 , 0, 1);
 
    
 SELECT @option_group_id_pcm            := max(id) from civicrm_option_group where name = 'preferred_communication_method';
@@ -244,6 +245,7 @@ SELECT @option_group_id_eventBadge     := max(id) from civicrm_option_group wher
 SELECT @option_group_id_notePrivacy    := max(id) from civicrm_option_group where name = 'note_privacy';
 SELECT @option_group_id_campaignType   := max(id) from civicrm_option_group where name = 'campaign_type';
 SELECT @option_group_id_campaignStatus := max(id) from civicrm_option_group where name = 'campaign_status';
+SELECT @option_group_id_extensions     := max(id) from civicrm_option_group where name = 'system_extensions';
 
 SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';
 SELECT @eventCompId      := max(id) FROM civicrm_component where name = 'CiviEvent';
@@ -655,7 +657,11 @@ VALUES
   (@option_group_id_grantTyp, '{ts escape="sql"}Emergency{/ts}'          , 1, 'Emergency'         , NULL, 0, 1,    1, NULL, 0, 0, 1, NULL, @domainID, NULL),    
   (@option_group_id_grantTyp, '{ts escape="sql"}Family Support{/ts}'     , 2, 'Family Support'    , NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, @domainID, NULL),
   (@option_group_id_grantTyp, '{ts escape="sql"}General Protection{/ts}' , 3, 'General Protection', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, @domainID, NULL),
-  (@option_group_id_grantTyp, '{ts escape="sql"}Impunity{/ts}'           , 4, 'Impunity'          , NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, @domainID, NULL);
+  (@option_group_id_grantTyp, '{ts escape="sql"}Impunity{/ts}'           , 4, 'Impunity'          , NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, @domainID, NULL),
+
+-- default CiviCRM Extensions
+  (@option_group_id_extensions, '{ts escape="sql"}Activity Search{/ts}'    , 'activity', 'Activity Search'    , 'search',   0, 0, 1, NULL, 0, 0, 1, NULL, @domainID, NULL),
+  (@option_group_id_extensions, '{ts escape="sql"}Multi Value Search{/ts}' , 'multivalue', 'Multi Value Search' , 'search', 0, 0, 2, NULL, 0, 0, 1, NULL, @domainID, NULL);
 
 -- CRM-6138
 {include file='languages.tpl'}

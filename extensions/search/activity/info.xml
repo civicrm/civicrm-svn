@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+ <extension key="activity" type="search">
+  <callback>ActivitySearch</callback>
+  <name>Activity Search</name>
+  <description>
+   This custom search allows to search through activities 
+   and returns activities as results (not contacts as 
+   regular search).
+  </description>
+  <maintainer>CiviCRM Core Team &lt;noreply@civicrm.org&gt;</maintainer>
+  <compatibility>
+   <ver>3.3</ver>
+   <ver>3.4</ver>
+  </compatibility>
+  <develStage>beta</develStage>
+  <comments>For support, please contact project team on the forums.</comments>
+</extension>

@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.2                                                |
+ | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -27,6 +27,7 @@
 */
 
 /**
+ * This class stores logic for managing CiviCRM extensions.
  *
  * @package CRM
  * @copyright CiviCRM LLC (c) 2004-2010
@@ -34,46 +35,10 @@
  *
  */
 
-require_once 'CRM/Admin/Form/Setting.php';
-
-/**
- * This class generates form components for File System Path
- * 
- */
-class CRM_Admin_Form_Setting_Path extends CRM_Admin_Form_Setting
+class CRM_Core_Extension 
 {
-    /**
-     * Function to build the form
-     *
-     * @return None
-     * @access public
-     */
-    public function buildQuickForm( ) {
-        CRM_Utils_System::setTitle(ts('Settings - Upload Directories'));
 
-        $directories = array( 'uploadDir'           => ts( 'Temporary Files'  ),
-                              'imageUploadDir'      => ts( 'Images'           ),
-                              'customFileUploadDir' => ts( 'Custom Files'     ),
-                              'customTemplateDir'   => ts( 'Custom Templates' ),
-                              'customPHPPathDir'    => ts( 'Custom PHP Path Directory' ),
-                              'extensionsDir'       => ts( 'CiviCRM Extensions Directory' )
-                              );
-        foreach ( $directories as $name => $title ) {
-            $this->add('text', $name, $title );
-            $this->addRule( $name,
-                            ts( "'%1' directory does not exist",
-                                array( 1 => $title ) ),
-                            'fileExists' );
-        }
-        
-        parent::buildQuickForm();
-    }
 
-    public function postProcess( ) {
-        parent::postProcess( );
-
-        parent::rebuildMenu( );
-    }
 
 }
 
