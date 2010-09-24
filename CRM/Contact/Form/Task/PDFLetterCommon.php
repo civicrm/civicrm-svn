@@ -182,6 +182,10 @@ class CRM_Contact_Form_Task_PDFLetterCommon
 				
 		$html_message = $formValues['html_message'];
         
+        //time being hack to strip '&nbsp;'
+        //from particular letter line, CRM-6798 
+        self::formatMessage( $html_message );
+
         require_once 'CRM/Activity/BAO/Activity.php';
 		$messageToken = CRM_Activity_BAO_Activity::getTokens( $html_message );  
 
@@ -254,6 +258,8 @@ class CRM_Contact_Form_Task_PDFLetterCommon
                                            );
             CRM_Activity_BAO_Activity::createActivityTarget( $activityTargetParams );
         }
+        
+        
         require_once 'CRM/Utils/PDF/Utils.php';
         CRM_Utils_PDF_Utils::html2pdf( $html, "CiviLetter.pdf", 'portrait', 'letter' ); 
 
@@ -265,6 +271,39 @@ class CRM_Contact_Form_Task_PDFLetterCommon
 
         CRM_Utils_System::civiExit( 1 );
     }//end of function
+
+    
+    function formatMessage( &$message ) 
+    {
+        $newLineOperators = array( 'p'  => array( 'oper'    => '<p>',
+                                                  'pattern' => '/<(\s+)?p(\s+)?>/m' ),
+                                   'br' => array( 'oper'    => '<br />',
+                                                  'pattern' => '/<(\s+)?br(\s+)?\/>/m' ) );
+        
+        $htmlMsg = preg_split( $newLineOperators['p']['pattern'], $message );
+        foreach ( $htmlMsg as $k => &$m ) {
+            $messages = preg_split( $newLineOperators['br']['pattern'], $m );
+            foreach ( $messages as $key => &$msg ) {
+                $msg = trim( $msg );
+                $matches = array( );
+                if ( preg_match( '/^(&nbsp;)+/', $msg, $matches ) ) {
+                    $spaceLen = strlen( $matches[0] ) / 6;
+                    $trimMsg  = ltrim(  $msg, '&nbsp; ' ); 
+                    $charLen  = strlen( $trimMsg );
+                    $totalLen =  $charLen + $spaceLen;
+                    if ( $totalLen > 100 ) {
+                        $spacesCount = 10;
+                        if ( $spaceLen > 50 ) $spacesCount = 20;
+                        if ( $charLen > 100 ) $spacesCount = 1;
+                        $msg =  str_repeat( '&nbsp;', $spacesCount ) . $trimMsg;
+                    }
+                }
+            }
+            $m = implode( $newLineOperators['br']['oper'], $messages );
+        }
+        $message = implode( $newLineOperators['p']['oper'], $htmlMsg );
+    }
+
 }
 
 

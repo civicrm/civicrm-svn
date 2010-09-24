@@ -321,16 +321,11 @@
         <script type="text/javascript">
        	cj(document).ready(function() {
     		{/literal}
-    		buildCustomData( '{$customDataType}' );
-    		{if $customDataSubType}
-    			buildCustomData( '{$customDataType}', {$customDataSubType} );
-    		{else}
-    		    {literal}
-    		    if ( cj("#activity_type_id").val( ) ) {
-    		        buildCustomData( '{/literal}{$customDataType}{literal}', cj("#activity_type_id").val( ) );
-    	        }
-    	        {/literal}
-    		{/if}
+                {if $customDataSubType}
+                    buildCustomData( '{$customDataType}', {$customDataSubType} );
+                {else}
+                    buildCustomData( '{$customDataType}' );
+                {/if}
     		{literal}
     	});
 

@@ -195,16 +195,19 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
         }
 
         if ( $contact->contact_type == 'Individual' &&
-             array_key_exists( 'current_employer', $params ) ) {
+             (array_key_exists( 'current_employer', $params ) || 
+              array_key_exists( 'employer_id', $params )) ) {
             // create current employer
-            if ( $params['current_employer'] ) {
-                require_once 'CRM/Contact/BAO/Contact/Utils.php';
+            require_once 'CRM/Contact/BAO/Contact/Utils.php';
+            if ( $params['employer_id']  ) {
+                CRM_Contact_BAO_Contact_Utils::createCurrentEmployerRelationship( $contact->id, 
+                                                                                  $params['employer_id'] );
+            } elseif ( $params['current_employer'] ) {
                 CRM_Contact_BAO_Contact_Utils::createCurrentEmployerRelationship( $contact->id, 
                                                                                   $params['current_employer'] );
             } else {
                 //unset if employer id exits
                 if ( $employerId = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $contact->id, 'employer_id' ) ) {
-                    require_once 'CRM/Contact/BAO/Contact/Utils.php';
                     CRM_Contact_BAO_Contact_Utils::clearCurrentEmployer( $contact->id, $employerId );
                 }
             }
@@ -749,20 +752,18 @@ WHERE id={$id}; ";
         $relativePath = null;
         $config = CRM_Core_Config::singleton( );
         if ( $config->userFramework == 'Joomla' ) {
-            $userFrameworkBaseURL = trim( str_replace( DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR, 
-                                                       '',
-                                                       $config->userFrameworkBaseURL ) );
-            $customFileUploadDirectory = strstr( $absolutePath, DIRECTORY_SEPARATOR.'media' );
-            $relativePath = $userFrameworkBaseURL . $customFileUploadDirectory;     
+            $userFrameworkBaseURL = trim( str_replace( '/administrator/', '', $config->userFrameworkBaseURL ) );
+            $customFileUploadDirectory = strstr( str_replace('\\', '/', $absolutePath), '/media' );
+            $relativePath = $userFrameworkBaseURL . $customFileUploadDirectory;
         } else if ( $config->userFramework == 'Drupal' ) {   
             require_once 'CRM/Utils/System/Drupal.php';
             $rootPath = CRM_Utils_System_Drupal::cmsRootPath( );
-            $relativePath = str_replace( $rootPath . DIRECTORY_SEPARATOR, 
-                                         $config->userFrameworkBaseURL, 
-                                         $absolutePath );
+            $relativePath = str_replace( "$rootPath/",
+                                         $config->userFrameworkBaseURL,
+                                         str_replace('\\', '/', $absolutePath ) );
         } else if ( $config->userFramework == 'Standalone' ) {
             $absolutePathStr = strstr( $absolutePath, 'files');
-            $relativePath = $config->userFrameworkBaseURL . $absolutePathStr;
+            $relativePath = $config->userFrameworkBaseURL . str_replace('\\', '/', $absolutePathStr );
         }
         
         return $relativePath;
@@ -1488,13 +1489,6 @@ ORDER BY civicrm_email.is_primary DESC";
             //add contact id
             $data['contact_id'] = $contactID;
             $primaryLocationType = self::getPrimaryLocationType($contactID);
-            // preserve db name only if name field exist in params
-            $nameFields = array( 'first_name', 'middle_name', 'last_name' );
-            foreach ( $nameFields as $name ) {
-                if ( array_key_exists( "$name", $params ) ) {
-                    $params['preserveDBName'] = true;
-                }
-            }
         } else {
             require_once "CRM/Core/BAO/LocationType.php";
             $defaultLocation =& CRM_Core_BAO_LocationType::getDefault();
@@ -1725,6 +1719,16 @@ ORDER BY civicrm_email.is_primary DESC";
             $contact =& self::create( $data );
         }
         
+        // update sortname to primary email id if null
+        if ( !$contact->sort_name && $contact->id &&
+             ($primEmail = CRM_Contact_BAO_Contact::getPrimaryEmail( $contact->id )) ) {
+            $query = 'UPDATE civicrm_contact SET sort_name = %1
+                      WHERE id = %2';
+            CRM_Core_DAO::singleValueQuery( $query, array( 1 => array( $primEmail,  'String' ),
+                                                           2 => array( (int)$contact->id, 'Integer' ) ) );
+            $contact->sort_name = $primEmail;
+        }
+
         // contact is null if the profile does not have any contact fields
         if ( $contact ) {
           $contactID = $contact->id;

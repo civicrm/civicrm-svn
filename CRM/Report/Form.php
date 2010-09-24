@@ -731,7 +731,7 @@ class CRM_Report_Form extends CRM_Core_Form {
         $errors = array( );
         if( !empty($this->_customGroupExtends) && $this->_customGroupGroupBy && !empty($fields['group_bys']) ) {
             foreach( $this->_columns as $tableName => $table ) {
-                if( substr($tableName, 0, 13) == 'civicrm_value' && !empty( $this->_columns[$tableName]['fields']) ) {
+                if( (substr($tableName, 0, 13) == 'civicrm_value' || substr($tableName, 0, 12) == 'custom_value') && !empty( $this->_columns[$tableName]['fields']) ) {
                     foreach( $this->_columns[$tableName]['fields'] as $fieldName => $field ) {
                         if ( array_key_exists( $fieldName, $fields['group_bys'] ) && 
                              !array_key_exists( $fieldName, $fields['fields'] ) ) {
@@ -1908,7 +1908,7 @@ ORDER BY cg.table_name";
         $mapper = CRM_Core_BAO_CustomQuery::$extendsMap;
 
         foreach( $this->_columns as $table => $prop ) {
-            if (substr($table, 0, 13) == 'civicrm_value') {
+            if (substr($table, 0, 13) == 'civicrm_value' || substr($table, 0, 12) == 'custom_value') {
                 $extendsTable = $mapper[$prop['extends']];
                 
                 // check field is in params

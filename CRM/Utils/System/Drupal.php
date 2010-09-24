@@ -357,17 +357,21 @@ class CRM_Utils_System_Drupal {
     static function cmsRootPath( ) 
     {
         $cmsRoot  = $valid = null;
-        $pathVars = explode( DIRECTORY_SEPARATOR, $_SERVER['SCRIPT_FILENAME'] );
+        $pathVars = explode( '/', str_replace( '\\', '/', $_SERVER['SCRIPT_FILENAME'] ) );
+        
+        //might be windows installation.
+        $firstVar = array_shift( $pathVars );
+        if ( $firstVar ) $cmsRoot = $firstVar;
+        
+        //start w/ csm dir search.
         foreach ( $pathVars as $var ) {
-            if ( $var ) {
-                $cmsRoot .= DIRECTORY_SEPARATOR . $var;
-                $cmsIncludePath = $cmsRoot . DIRECTORY_SEPARATOR .'includes';
-                //stop as we found bootstrap.
-                if ( @opendir( $cmsIncludePath ) && 
-                     file_exists( $cmsIncludePath . DIRECTORY_SEPARATOR . 'bootstrap.inc' ) ) { 
-                    $valid = true;
-                    break;
-                }
+            $cmsRoot .= "/$var";
+            $cmsIncludePath = "$cmsRoot/includes";
+            //stop as we found bootstrap.
+            if ( @opendir( $cmsIncludePath ) && 
+                 file_exists( "$cmsIncludePath/bootstrap.inc" ) ) { 
+                $valid = true;
+                break;
             }
         }
         

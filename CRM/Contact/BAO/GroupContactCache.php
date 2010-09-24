@@ -159,7 +159,11 @@ WHERE  id IN ( $groupIDs )
         if ( $groupID == null ) {
             $invoked = true;
         }
-
+        
+        //when there are difference in timezones for mysql and php.
+        //cache_date set null not behaving properly, CRM-6855 
+        $now = date( 'YmdHis' );
+        
         $config = CRM_Core_Config::singleton( );
         $smartGroupCacheTimeout = 
             isset( $config->smartGroupCacheTimeout ) && is_numeric(  $config->smartGroupCacheTimeout ) ? $config->smartGroupCacheTimeout : 0;
@@ -172,14 +176,14 @@ INNER JOIN civicrm_contact c ON c.id = g.contact_id
 WHERE      g.group_id IN (
     SELECT id
     FROM   civicrm_group
-    WHERE  TIMESTAMPDIFF(MINUTE, cache_date, NOW()) >= $smartGroupCacheTimeout   
+    WHERE  TIMESTAMPDIFF(MINUTE, cache_date, $now) >= $smartGroupCacheTimeout   
 )
 ";
 
             $update = "
 UPDATE civicrm_group g
 SET    cache_date = null
-WHERE  TIMESTAMPDIFF(MINUTE, cache_date, NOW()) >= $smartGroupCacheTimeout
+WHERE  TIMESTAMPDIFF(MINUTE, cache_date, $now) >= $smartGroupCacheTimeout
 ";
             $params = array( );
         } else if ( is_array( $groupID ) ) {

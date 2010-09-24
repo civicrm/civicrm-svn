@@ -94,18 +94,19 @@ class CRM_Utils_Hook {
      * @param string $op         the type of operation being performed
      * @param string $objectName the name of the object
      * @param int    $objectId   the unique identifier for the object 
+     * @params array $links      (optional ) the links array (introduced in v3.2)
      *
      * @return array|null        an array of arrays, each element is a tuple consisting of id, url, img, title, weight
      *
      * @access public
      */
-    static function links( $op, $objectName, &$objectId ) {
+    static function links( $op, $objectName, &$objectId, &$links ) {
         $config = CRM_Core_Config::singleton( );  
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         return   
             eval( 'return ' .
                   $config->userHookClass .
-                  '::invoke( 3, $op, $objectName, $objectId, $op, $op, \'civicrm_links\' );' );  
+                  '::invoke( 4, $op, $objectName, $objectId, $links, $op, \'civicrm_links\' );' );  
     }
 
     /** 
