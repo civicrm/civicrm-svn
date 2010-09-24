@@ -25,8 +25,14 @@
 *}
 {include file="CRM/common/WizardHeader.tpl"}
 
+<h3>{ts}Configure Widget{/ts}</h3>
+{if $showStatus}
+<div class="messages status">
+    <div class="icon inform-icon"></div>
+    {ts}It looks like you are using a flash version of Contribute widget. We won't be supporting flash version in next release, hence you should fix all your sites to use below improved HTML widget.{/ts}
+</div>
+{/if}
 <div id="form" class="crm-block crm-form-block crm-contribution-contributionpage-widget-form-block">
-    <fieldset><legend>{ts}Configure Widget{/ts}</legend>
     <div id="help">
         {ts}CiviContribute widgets allow you and your supporters to easily promote this fund-raising campaign. Widget code can be added to any web page - and will provide a real-time display of current contribution results, and a direct link to this contribution page.{/ts} {help id="id-intro"}
     </div>
@@ -38,13 +44,13 @@
     
     <div id="widgetFields">
         <table class="form-layout-compressed">
-         <tr class="crm-contribution-contributionpage-widget-form-block-title"><td class="label">{$form.title.label}<span class="marker"> *</span></td><td>{$form.title.html}</td></tr>
-   	 <tr class="crm-contribution-form-block-url_logo"><td class="label">{$form.url_logo.label}</span></td><td>{$form.url_logo.html}</td></tr>  
- 	 <tr class="crm-contribution-contributionpage-widget-form-block-button_title"><td class="label">{$form.button_title.label}</td><td>{$form.button_title.html}</td></tr>  
-	 <tr class="crm-contribution-contributionpage-widget-form-block-about"><td class="label">{$form.about.label}<span class="marker"> *</span></td><td>{$form.about.html}
+            <tr class="crm-contribution-contributionpage-widget-form-block-title"><td class="label">{$form.title.label}<span class="marker"> *</span></td><td>{$form.title.html}</td></tr>
+            <tr class="crm-contribution-form-block-url_logo"><td class="label">{$form.url_logo.label}</span></td><td>{$form.url_logo.html}</td></tr>
+            <tr class="crm-contribution-contributionpage-widget-form-block-button_title"><td class="label">{$form.button_title.label}</td><td>{$form.button_title.html}</td></tr>
+            <tr class="crm-contribution-contributionpage-widget-form-block-about"><td class="label">{$form.about.label}<span class="marker"> *</span></td><td>{$form.about.html}
 <br /><span class="description">{ts}Enter content for the about message. You may include HTML formatting tags. You can also include images, as long as they are already uploaded to a server - reference them using complete URLs.{/ts}</span>
 </td></tr>  
-	 <tr class="crm-contribution-contributionpage-widget-form-block-url_homepage"><td class="label">{$form.url_homepage.label}<span class="marker"> *</span></td><td>{$form.url_homepage.html}</td></tr>  
+	  
         </table>
         
         <div id="id-get_code">
@@ -109,8 +115,7 @@
 	   </tr>
 	</table>  
     </div>
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
-    </fieldset>
+  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 
 </div>      
 {include file="CRM/common/showHide.tpl"}

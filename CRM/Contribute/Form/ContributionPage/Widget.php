@@ -53,7 +53,14 @@ class CRM_Contribute_Form_ContributionPage_Widget extends CRM_Contribute_Form_Co
             $this->_widget = null;
         } else {
             $this->assign( 'widget_id', $this->_widget->id );
+
+            // check of home url is set, if set then it flash widget might be in use.
+            $this->assign( 'showStatus', false );
+            if ( $this->_widget->url_homepage ) {
+                $this->assign( 'showStatus', true );
+            }
         }
+        
         $this->assign( 'cpageId', $this->_id );
 
         $config = CRM_Core_Config::singleton( );
@@ -72,13 +79,7 @@ class CRM_Contribute_Form_ContributionPage_Widget extends CRM_Contribute_Form_Co
                                 'button_title'        => array( ts( 'Button Title' ),
                                                                 'text',
                                                                 false,
-                                                                ts( 'Contribute!' ) ),
-                               
-                                'url_homepage'        => array( ts( 'URL to Home Page' ),
-                                                                'text',
-                                                                false,
-                                                                $config->userFrameworkBaseURL )
-                                );
+                                                                ts( 'Contribute!' ) ) );
         
         $this->_colorFields = array( 'color_title'   => array( ts( 'Title Text Color' ),
                                                               'text',
@@ -201,9 +202,7 @@ class CRM_Contribute_Form_ContributionPage_Widget extends CRM_Contribute_Form_Co
             if ( !CRM_Utils_Array::value( 'about', $params ) ) {
                 $errors['about'] = ts( 'About is a required field.' );
             }
-            if ( !CRM_Utils_Array::value( 'url_homepage', $params ) ) {
-                $errors['url_homepage'] = ts( 'URL to Home Page is a required field.' );
-            }
+            
             foreach( $params as $key => $val ) {
                 if ( substr( $key, 0, 6 ) == 'color_' && !CRM_Utils_Array::value( $key, $params ) ) {
                     $errors[$key] = ts( '%1 is a required field.',  array( 1 => $self->_colorFields[$key][0] ) );
@@ -228,7 +227,8 @@ class CRM_Contribute_Form_ContributionPage_Widget extends CRM_Contribute_Form_Co
         }
         $params['contribution_page_id'] = $this->_id;
         $params['is_active']            = CRM_Utils_Array::value('is_active', $params, false);
-
+        $params['url_homepage']         = 'null';
+        
         require_once 'CRM/Contribute/DAO/Widget.php';
         $widget = new CRM_Contribute_DAO_Widget( );
         $widget->copyValues( $params );
