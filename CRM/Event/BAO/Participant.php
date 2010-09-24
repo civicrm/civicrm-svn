@@ -284,6 +284,16 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
             $url = CRM_Utils_System::url( 'civicrm/contact/view/participant', 
                                           "action=view&reset=1&id={$participant->id}&cid={$participant->contact_id}&context=home" );
             
+            $recentOther = array( );
+            if ( CRM_Core_Permission::check('edit event participants') ) {
+                $recentOther['editUrl'] = CRM_Utils_System::url( 'civicrm/contact/view/participant', 
+                                                                 "action=update&reset=1&id={$participant->id}&cid={$participant->contact_id}&context=home" );
+            } 
+            if ( CRM_Core_Permission::check('delete in CiviEvent') ) {
+                $recentOther['deleteUrl'] = CRM_Utils_System::url( 'civicrm/contact/view/participant', 
+                                                                   "action=delete&reset=1&id={$participant->id}&cid={$participant->contact_id}&context=home" );
+            }
+    
             $participantRoles = CRM_Event_PseudoConstant::participantRole();
             $eventTitle = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $participant->event_id, 'title' );
             $title = CRM_Contact_BAO_Contact::displayName( $participant->contact_id ) . ' (' . $participantRoles[$participant->role_id] . ' - ' . $eventTitle . ')' ;
@@ -294,7 +304,8 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
                                    $participant->id,
                                    'Participant',
                                    $participant->contact_id,
-                                   null );
+                                   null,
+                                   $recentOther );
         }
         
         return $participant;

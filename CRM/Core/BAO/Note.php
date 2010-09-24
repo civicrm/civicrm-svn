@@ -174,6 +174,27 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note
             require_once 'CRM/Contact/BAO/Contact.php';
             $displayName = CRM_Contact_BAO_Contact::displayName( $note->entity_id );
 
+            $noteActions = false;
+            $session     = CRM_Core_Session::singleton( );
+            if ( $session->get( 'userID' ) ) {
+                require_once 'CRM/Contact/BAO/Contact/Permission.php';
+                if ( $session->get( 'userID' ) == $note->entity_id ) {
+                    $noteActions = true;
+                } else if ( CRM_Contact_BAO_Contact_Permission::allow( $note->entity_id, CRM_Core_Permission::EDIT ) ) {
+                    $noteActions = true; 
+                }
+            }
+            
+            $recentOther = array( );
+            if ($noteActions ) {
+                $recentOther = 
+                    array( 'editUrl'   => CRM_Utils_System::url( 'civicrm/contact/view/note', 
+                                                                 "reset=1&action=update&cid={$note->entity_id}&id={$note->id}&context=home" ), 
+                           'deleteUrl' => CRM_Utils_System::url( 'civicrm/contact/view/note', 
+                                                                 "reset=1&action=delete&cid={$note->entity_id}&id={$note->id}&context=home" )
+                           );
+            }
+            
             // add the recently created Note
             require_once 'CRM/Utils/Recent.php';
             CRM_Utils_Recent::add( $displayName . ' - ' . $note->subject,
@@ -182,7 +203,8 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note
                                    $note->id,
                                    'Note',
                                    $note->entity_id,
-                                   $displayName );
+                                   $displayName,
+                                   $recentOther );
         }
 
         return $note;

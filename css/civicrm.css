@@ -1179,10 +1179,11 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 .block-civicrm div#recently-viewed ul li {
     margin: 1px;
     padding: 1px 1px 4px 3px;
-    border: 1px solid #999999;
+    border: 1px solid #D7D7D0;
     background-color: #fff;
     white-space: nowrap;
     list-style-type:none;
+    -moz-border-radius: 4px; -webkit-border-radius: 4px;   -khtml-border-radius: 4px; border-radius:4px;
 }
 
 #crm-container #recently-viewed a,
@@ -1190,7 +1191,44 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
     font-weight: normal;
     /*color: #6e6e6e;*/
     color: #4A88DF;
+    text-decoration:none;
     font-size: .95em
+}
+
+.block-civicrm div#recently-viewed ul li.crm-recentview-active {
+    background-color:#FFFFCC;
+    border:1px solid #FFFF66;
+    -moz-border-radius: 4px; -webkit-border-radius: 4px;   -khtml-border-radius: 4px; border-radius:4px;
+}
+
+.block-civicrm div#recently-viewed ul li.crm-recently-viewed ul {
+    position:absolute;
+    z-index : 99;
+    background-color:FFFFCC;
+    overflow:visible;
+    list-style-type:none;
+    margin:0px;
+}
+
+.block-civicrm div#recently-viewed ul li.crm-recently-viewed ul li {
+    font-size:1.1em;
+    background-color:#FFFFCC;
+    margin:0px;
+    border:1px solid #FFFF66;
+    text-align:center;
+    -moz-border-radius: 4px; -webkit-border-radius: 4px;   -khtml-border-radius: 4px; border-radius:4px;
+}
+
+.block-civicrm div#recently-viewed ul li.crm-recently-viewed ul li a:hover {
+  color:#494949; 
+}
+
+.block-civicrm div#recently-viewed ul li.crm-recently-viewed ul.crm-recentview-wrapper-left li {
+    border-left:none;
+}
+
+.block-civicrm div#recently-viewed ul li.crm-recently-viewed ul.crm-recentview-wrapper-right li {
+    border-right:none;
 }
 
 /* alpha filter styles */
@@ -1466,6 +1504,14 @@ table.campaign td,
 #crm-container .pcp-image {
     float:left;
     margin: 0 1em 1em 0;
+}
+
+#crm-container .ui-draggable {
+  background: url("../i/draggable.png") no-repeat left 1px;
+  float:left; 
+  height:16px;
+  text-indent:-10000px;
+  width:16px;
 }
 
 #crm-container .pcp-widgets {

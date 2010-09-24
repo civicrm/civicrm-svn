@@ -133,6 +133,23 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
             require_once 'CRM/Utils/Recent.php';
             $url = CRM_Utils_System::url( 'civicrm/contact/view/rel', 
                                           "action=view&reset=1&id={$relationship->id}&cid={$relationship->contact_id_a}&context=home" );
+ 
+            
+            require_once 'CRM/Core/Session.php';
+            $session      = CRM_Core_Session::singleton( );
+            $recentOther  = array( );
+            require_once 'CRM/Contact/BAO/Contact/Permission.php';
+            if ( ($session->get( 'userID' ) == $relationship->contact_id_a) ||
+                 CRM_Contact_BAO_Contact_Permission::allow( $relationship->contact_id_a, CRM_Core_Permission::EDIT ) ) {
+                $rType       = substr( CRM_Utils_Array::value('relationship_type_id', $params), -3 );
+                $recentOther = 
+                    array( 'editUrl'   =>  CRM_Utils_System::url( 'civicrm/contact/view/rel', 
+                                                                  "action=update&reset=1&id={$relationship->id}&cid={$relationship->contact_id_a}&rtype={$rType}&context=home" ),
+                           'deleteUrl' => CRM_Utils_System::url( 'civicrm/contact/view/rel', 
+                                                                 "action=delete&reset=1&id={$relationship->id}&cid={$relationship->contact_id_a}&rtype={$rType}&context=home" )
+                           );  
+                
+            } 
             
             require_once 'CRM/Contact/BAO/Contact.php';            
             $title = CRM_Contact_BAO_Contact::displayName( $relationship->contact_id_a ) . ' (' . 
@@ -146,7 +163,8 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
                                    $relationship->id,
                                    'Relationship',
                                    $relationship->contact_id_a,
-                                   null );
+                                   null,
+                                   $recentOther );
         }
         
         return array( $valid, $invalid, $duplicate, $saved, $relationshipIds );

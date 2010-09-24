@@ -94,11 +94,28 @@ class CRM_Contact_Page_View_Relationship extends CRM_Core_Page
         $groupTree =& CRM_Core_BAO_CustomGroup::getTree('Relationship', $this, $this->_id,0,$relType);
         CRM_Core_BAO_CustomGroup::buildCustomDataView( $this, $groupTree );
 
+        $rType = CRM_Utils_Array::value('rtype', $viewRelationship[$this->_id] );
         // add viewed contribution to recent items list
         require_once 'CRM/Utils/Recent.php';
         $url = CRM_Utils_System::url( 'civicrm/contact/view/rel', 
                                       "action=view&reset=1&id={$viewRelationship[$this->_id]['id']}&cid={$this->_contactId}&context=home" );
         
+        require_once 'CRM/Core/Session.php';
+        require_once 'CRM/Contact/BAO/Contact/Permission.php';
+
+        $session      = CRM_Core_Session::singleton( );
+        $recentOther  = array( );
+
+        if ( ( $session->get( 'userID' ) == $this->_contactId ) ||
+             Contact_BAO_Contact_Permission::allow( $this->_contactId, CRM_Core_Permission::EDIT ) ) {
+            $recentOther = 
+                array( 'editUrl'   => CRM_Utils_System::url( 'civicrm/contact/view/rel', 
+                                                             "action=update&reset=1&id={$viewRelationship[$this->_id]['id']}&cid={$this->_contactId}&rtype={$rType}&context=home" )  ,
+                       'deleteUrl' => CRM_Utils_System::url( 'civicrm/contact/view/rel', 
+                                                             "action=delete&reset=1&id={$viewRelationship[$this->_id]['id']}&cid={$this->_contactId}&rtype={$rType}&context=home" )
+                       );
+        }
+
         $displayName = CRM_Contact_BAO_Contact::displayName( $this->_contactId );
         $this->assign( 'displayName', $displayName );
         
@@ -112,7 +129,8 @@ class CRM_Contact_Page_View_Relationship extends CRM_Core_Page
                                $viewRelationship[$this->_id]['id'],
                                'Relationship',
                                $this->_contactId,
-                               null );
+                               null,
+                               $recentOther );
     }
 
     /**

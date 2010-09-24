@@ -169,13 +169,20 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         
         $title = $displayName . ' - ' . $caseType;
         
+        $recentOther = array( );
+        if ( CRM_Core_Permission::checkActionPermission('CiviCase', CRM_Core_Action::DELETE ) ) {
+            $recentOther['deleteUrl'] = CRM_Utils_System::url( 'civicrm/contact/view/case', 
+                                                               "action=delete&reset=1&id={$this->_caseID}&cid={$this->_contactID}&context=home" ); 
+        }
+
         // add the recently created case
         CRM_Utils_Recent::add( $displayName . ' - ' . $caseType,
                                $url,
                                $this->_caseID,
                                'Case',
                                $this->_contactID,
-                               null
+                               null,
+                               $recentOther
                                );
         
 

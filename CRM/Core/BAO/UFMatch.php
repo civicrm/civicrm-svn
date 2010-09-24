@@ -170,15 +170,19 @@ WHERE     openid = %1";
             require_once 'CRM/Contact/BAO/Contact.php';
             list( $displayName, $contactImage, $contactType, $contactSubtype, $contactImageUrl ) = 
                 CRM_Contact_BAO_Contact::getDisplayAndImage( $ufmatch->contact_id, true, true );
-                
+             
+            $otherRecent = array( 'imageUrl'  => $contactImageUrl,
+                                  'subtype'   => $contactSubtype,
+                                  'editUrl'   => CRM_Utils_System::url( 'civicrm/contact/add', "reset=1&action=update&cid={$ufmatch->contact_id}" )
+                                  );
+           
             CRM_Utils_Recent::add( $displayName,
                                    CRM_Utils_System::url( 'civicrm/contact/view', "reset=1&cid={$ufmatch->contact_id}" ),
                                    $ufmatch->contact_id,
                                    $contactType,
                                    $ufmatch->contact_id,
                                    $displayName,
-                                   $contactImageUrl,
-                                   $contactSubtype );
+                                   $otherRecent );
         }
 
         if ( $update ) {

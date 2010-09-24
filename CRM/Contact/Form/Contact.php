@@ -943,12 +943,26 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         require_once 'CRM/Utils/Recent.php';
         // add the recently viewed contact
         $displayName = CRM_Contact_BAO_Contact::displayName( $contact->id );
+        
+        require_once 'CRM/Contact/BAO/Contact/Permission.php';
+        $recentOther = array( );
+
+        if ( ( $session->get( 'userID' ) == $contact->id ) ||
+             CRM_Contact_BAO_Contact_Permission::allow( $contact->id, CRM_Core_Permission::EDIT ) ) {
+            $recentOther['editUrl'] = CRM_Utils_System::url( 'civicrm/contact/add', 'reset=1&action=update&cid=' . $contact->id );
+        }
+
+        if ( CRM_Core_Permission::check('delete contacts') ) {
+            $recentOther['deleteUrl'] = CRM_Utils_System::url( 'civicrm/contact/view/delete', 'reset=1&delete=1&cid=' . $contact->id );
+        }
+
         CRM_Utils_Recent::add( $displayName,
                                CRM_Utils_System::url( 'civicrm/contact/view', 'reset=1&cid=' . $contact->id ),
                                $contact->id,
                                $this->_contactType,
                                $contact->id,
-                               $displayName );
+                               $displayName,
+                               $recentOther );
         
         // here we replace the user context with the url to view this contact
         $buttonName = $this->controller->getButtonName( );

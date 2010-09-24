@@ -230,7 +230,17 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge
         require_once 'CRM/Core/Config.php';
         $url = CRM_Utils_System::url( 'civicrm/contact/view/pledge', 
                "action=view&reset=1&id={$pledge->id}&cid={$pledge->contact_id}&context=home" );
-       
+        
+        $recentOther = array( );
+        if ( CRM_Core_Permission::checkActionPermission( 'CiviPledge', CRM_Core_Action::UPDATE ) ) {
+            $recentOther['editUrl'] = CRM_Utils_System::url( 'civicrm/contact/view/pledge', 
+                                                             "action=update&reset=1&id={$pledge->id}&cid={$pledge->contact_id}&context=home" );
+        } 
+        if ( CRM_Core_Permission::checkActionPermission( 'CiviPledge', CRM_Core_Action::DELETE ) ) {
+            $recentOther['deleteUrl'] = CRM_Utils_System::url( 'civicrm/contact/view/pledge', 
+                                                               "action=delete&reset=1&id={$pledge->id}&cid={$pledge->contact_id}&context=home" );
+        }
+        
         $config = CRM_Core_Config::singleton();
         require_once 'CRM/Utils/Money.php';
         $contributionTypes = CRM_Contribute_PseudoConstant::contributionType();
@@ -244,7 +254,9 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge
                                $pledge->id,
                                'Pledge',
                                $pledge->contact_id,
-                               null );
+                               null,
+                               $recentOther
+                               );
         
         return $pledge;
    }
