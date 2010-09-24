@@ -718,6 +718,7 @@ SELECT civicrm_custom_group.name as name,
        civicrm_custom_group.id as id
   FROM civicrm_custom_group
  WHERE extends_entity_column_value LIKE '%{$rolekey}%' 
+   AND extends_entity_column_id LIKE '%{$this->_roleCustomDataTypeID}%'
    AND is_active = 1";
            
          $dao =& CRM_Core_DAO::executeQuery( $query );
@@ -726,7 +727,7 @@ SELECT civicrm_custom_group.name as name,
              if(  $customGroupID ) {
                  $customGroupID .= ',';
              }
-             $customGroupID .= $dao->name.'_1';
+             $customGroupID .= $dao->name;
          } 
          $roleTypes[] = HTML_QuickForm::createElement( 'checkbox', $rolekey, null, $rolevalue,
                                                        array( 'onclick' => "showCustomData( 'Participant', {$rolekey}, {$this->_roleCustomDataTypeID},'','{$customGroupID}');"
@@ -1407,7 +1408,7 @@ SELECT civicrm_custom_group.name as name,
                 foreach ( $values as $fieldValue ) {
                     $customValue = array( 'data' => $fieldValue['value'] );
                     $customFields[$fieldID]['id'] = $fieldID;
-                    $formattedValue = CRM_Core_BAO_CustomGroup::formatCustomValues( $customValue, $customFields[$fieldID] );
+                    $formattedValue = CRM_Core_BAO_CustomGroup::formatCustomValues( $customValue, $customFields[$fieldID], true );
                     $customGroup[$customFields[$fieldID]['groupTitle']][$customFields[$fieldID]['label']] = str_replace( '&nbsp;', '', $formattedValue );
                 }                
             }

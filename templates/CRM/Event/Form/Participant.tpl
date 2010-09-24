@@ -263,11 +263,15 @@
        	
         var roleid = "role_id["+subType+"]";
         
-
-        if( cj('#'+groupID).attr('id') && document.getElementById(roleid).checked == true) {
-            return;
-        }
-
+       if ( document.getElementById(roleid).checked == true ) {
+           var splitGroup = groupID.split(",");
+               for ( i = 0; i < splitGroup.length; i++ ) {
+                   var roleCustomGroupId = splitGroup[i];
+                   if ( roleCustomGroupId.length > 0 ) {
+                       cj('#'+roleCustomGroupId).remove( );
+                   }
+               }
+       }
         if ( subType ) {
             dataUrl = dataUrl + '&subType=' + subType;
         }
