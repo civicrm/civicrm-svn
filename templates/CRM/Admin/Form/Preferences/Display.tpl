@@ -40,26 +40,32 @@
 	{if $form.contact_edit_options.html}        		       
 	       <tr class="crm-preferences-display-form-block-contact_edit_options">
                <td class="label">{$form.contact_edit_options.label}</td>
-               <td><table style="width:80%">
-                   <tr><td>
-	       	   <ul id="contactEditBlocks">
-	           {foreach from=$contactBlocks item="title" key="opId"}
-		     <li id="preference-{$opId}-contactedit" class="ui-widget-header ui-corner-all" style="padding-left:1px;"><span class='ui-icon ui-icon-arrowthick-2-n-s' style="float:left;"></span><span>{$form.contact_edit_options.$opId.html}</span></li>
-		   {/foreach}
-		   </ul>
-                   </td><td>
-		   <ul id="contactEditOptions">
-	           {foreach from=$editOptions item="title" key="opId"}
-		     <li id="preference-{$opId}-contactedit" class="ui-widget-header ui-corner-all" style="padding-left:1px;"><span class='ui-icon ui-icon-arrowthick-2-n-s' style="float:left;"></span><span>{$form.contact_edit_options.$opId.html}</span></li>
-		   {/foreach}
-		   </ul>
-		   </td></tr>
+               <td>
+               <table style="width:80%">
+                 <tr>
+                   <td>
+                       <span class="label"><strong>{ts}Contact Details{/ts}</strong></span>
+                       <ul id="contactEditBlocks">
+                       {foreach from=$contactBlocks item="title" key="opId"}
+                            <li id="preference-{$opId}-contactedit" class="ui-widget-header ui-corner-all" style="padding-left:1px;"><span class='ui-icon ui-icon-arrowthick-2-n-s' style="float:left;"></span><span>{$form.contact_edit_options.$opId.html}</span></li>
+                       {/foreach}
+                       </ul>
+                   </td>
+                   <td>
+                       <span class="label"><strong>{ts}Other Panes{/ts}</strong></span>
+                       <ul id="contactEditOptions">
+                           {foreach from=$editOptions item="title" key="opId"}
+                         <li id="preference-{$opId}-contactedit" class="ui-widget-header ui-corner-all" style="padding-left:1px;"><span class='ui-icon ui-icon-arrowthick-2-n-s' style="float:left;"></span><span>{$form.contact_edit_options.$opId.html}</span></li>
+                       {/foreach}
+                       </ul>
+                   </td>
+                 </tr>
 	           </table>
 	       </td>
             </tr>
             <tr class="crm-preferences-display-form-block-description">
                <td>&nbsp;</td>
-               <td class="description">{ts}Select the sections that should be included when adding or editing a contact record. EXAMPLE: If your organization does not record Gender and Birth Date for individuals, then simplify the form by un-checking this option.{/ts}</td>
+               <td class="description">{ts}Select the sections that should be included when adding or editing a contact record. EXAMPLE: If your organization does not record Gender and Birth Date for individuals, then simplify the form by un-checking this option. Drag interface allows you to change the order of the panes displayed on contact add/edit screen.{/ts}</td>
             </tr>
 	{/if}
 
