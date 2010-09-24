@@ -79,7 +79,7 @@ class CRM_Custom_Page_Field extends CRM_Core_Page
             self::$_actionLinks = array(
                                         CRM_Core_Action::UPDATE  => array(
                                                                           'name'  => ts('Edit Field'),
-                                                                          'url'   => 'civicrm/admin/custom/group/field',
+                                                                          'url'   => 'civicrm/admin/custom/group/field/update',
                                                                           'qs'    => 'action=update&reset=1&gid=%%gid%%&id=%%id%%',
                                                                           'title' => ts('Edit Custom Field') 
                                                                           ),

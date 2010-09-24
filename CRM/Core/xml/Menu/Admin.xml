@@ -23,6 +23,16 @@
      <page_callback>CRM_Custom_Page_Option</page_callback>
   </item>
   <item>
+     <path>civicrm/admin/custom/group/field/add</path>
+     <title>Custom Field - Add</title>
+     <page_callback>CRM_Custom_Form_Field</page_callback>
+  </item>
+  <item>
+     <path>civicrm/admin/custom/group/field/update</path>
+     <title>Custom Field - Edit</title>
+     <page_callback>CRM_Custom_Form_Field</page_callback>
+  </item>
+  <item>
      <path>civicrm/admin/custom/group/field/move</path>
      <title>Custom Field - Move</title>
      <page_callback>CRM_Custom_Form_MoveField</page_callback>
