@@ -2,7 +2,8 @@
  <extension key="org.civicrm.report.grant" type="report">
   <callback>Grant</callback>
   <name>Grant Report</name>
-  <description>Grant Report</description>
+  <description>Grant Report allows you to see the summary of grants that
+  have been admitted to your consitutents by your organisation.</description>
   <url>http://civicrm.org</url>
   <license>AGPL</license>
   <maintainer>CiviCRM Core Team &lt;noreply@civicrm.org&gt;</maintainer>
