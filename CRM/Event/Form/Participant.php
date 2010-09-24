@@ -730,13 +730,14 @@ SELECT civicrm_custom_group.name as name,
              $customGroupID .= $dao->name;
          } 
          $roleTypes[] = HTML_QuickForm::createElement( 'checkbox', $rolekey, null, $rolevalue,
-                                                       array( 'onclick' => "showCustomData( 'Participant', {$rolekey}, {$this->_roleCustomDataTypeID},'','{$customGroupID}');"
+                                                       array( 'onclick' => "showCustomData( 'Participant', {$rolekey}, {$this->_roleCustomDataTypeID}, '{$customGroupID}', '' );"
                                                               )
                                                        );
         }
     
          $this->addGroup( $roleTypes, 'role_id', ts('Participant Role' ) );
-          $this->addRule( 'role_id', ts('Role is required'), 'required' );
+         $this->addRule( 'role_id', ts('Role is required'), 'required' );
+         $this->assign( 'customGroupID', $customGroupID ); 
         // CRM-4395
         $checkCancelledJs = array('onchange' => "return sendNotification( );");
         $confirmJS = null;

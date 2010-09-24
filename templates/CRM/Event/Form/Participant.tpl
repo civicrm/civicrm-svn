@@ -257,13 +257,14 @@
 {include file="CRM/common/customData.tpl"}
 {literal}
 <script type="text/javascript">
-    function showCustomData( type, subType, subName, cgCount, groupID, isMultiple )
+    function showCustomData( type, subType, subName, groupID, cgCount, isMultiple )
     {
         var dataUrl = {/literal}"{crmURL p=$urlPath h=0 q='snippet=4&type='}"{literal} + type;
        	
         var roleid = "role_id["+subType+"]";
         
        if ( document.getElementById(roleid).checked == true ) {
+          if ( groupID ) {
            var splitGroup = groupID.split(",");
                for ( i = 0; i < splitGroup.length; i++ ) {
                    var roleCustomGroupId = splitGroup[i];
@@ -271,6 +272,7 @@
                        cj('#'+roleCustomGroupId).remove( );
                    }
                }
+          }
        }
         if ( subType ) {
             dataUrl = dataUrl + '&subType=' + subType;
@@ -337,7 +339,7 @@
 		buildCustomData( '{$customDataType}', 'null', 'null' );
 		{foreach from = $roleID item = item key=key}
 		   {if $item}
-		       buildCustomData( '{$customDataType}',{$item}, {$roleCustomDataTypeID} );
+		       showCustomData( '{$customDataType}', {$item}, {$roleCustomDataTypeID}, '{$customGroupID}' );
 		   {/if}
 		{/foreach}
 		{if $eventID}
