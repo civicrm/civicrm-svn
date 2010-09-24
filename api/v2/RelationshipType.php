@@ -123,3 +123,12 @@ function civicrm_relationship_type_delete( &$params ) {
     return $relationTypeBAO->del( $params['id'] ) ? civicrm_create_success( ts( 'Deleted relationship type successfully' )  ):civicrm_create_error( ts( 'Could not delete relationship type' ) );
 }
 
+/**
+ * Wrapper to support rest calls, CRM-6860
+ * return An array of Relationship_type
+ * * @access  public
+ */
+function civicrm_relationshipType_get( $params = null ) 
+{
+    return civicrm_relationship_types_get( $params );
+}

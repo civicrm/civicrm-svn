@@ -182,7 +182,11 @@ function &civicrm_activity_update( &$params )
     }
    
     $activity = CRM_Activity_BAO_Activity::create( $params );
-    return $activity;
+
+    $values = array();
+    _civicrm_object_to_array( $activity, $values );
+    
+    return $values;
 }
 
 /**
