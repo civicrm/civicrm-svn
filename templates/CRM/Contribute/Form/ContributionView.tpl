@@ -150,7 +150,7 @@
 	    <tr>
 	        <td class="label">{ts}Invoice ID{/ts}</td>
 	        <td>{$invoice_id}&nbsp;</td>
-	    </tr
+	    </tr>
 	{/if} 
 
 	{if $honor_display}
