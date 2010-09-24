@@ -53,7 +53,9 @@ packages/jquery/plugins/jquery.tableHeader.js
 packages/jquery/plugins/checkboxselect.js
 
 packages/jquery/plugins/jquery.textarearesizer.js
+
 packages/jquery/plugins/jquery.progressbar.js
+
 packages/jquery/plugins/jquery.form.js
 
 packages/jquery/plugins/jquery.tokeninput.js
