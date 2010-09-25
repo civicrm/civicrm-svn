@@ -249,6 +249,13 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         $this->assign( 'editOptions',    $this->_editOptions );
         $this->assign( 'contactType',    $this->_contactType );
         $this->assign( 'contactSubType', $this->_contactSubType );
+
+        //build contact subtype form element, CRM-6864
+        $buildContactSubType = true;
+        if ( $this->_contactSubType && ($this->_action & CRM_Core_Action::ADD) ) {
+            $buildContactSubType = false;
+        }
+        $this->assign( 'buildContactSubType', $buildContactSubType );
         
         // get the location blocks.
         $this->_blocks = $this->get( 'blocks' );
@@ -803,6 +810,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         if ( isset( $params['current_employer_id'] ) ) unset( $params['current_employer_id'] ); 
         
         $params['contact_type'] = $this->_contactType;
+        if ( $this->_contactSubType ) $params['contact_sub_type'] = $this->_contactSubType; 
+        
         if ( $this->_contactId ) {
             $params['contact_id'] = $this->_contactId;
         }
