@@ -810,7 +810,10 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         if ( isset( $params['current_employer_id'] ) ) unset( $params['current_employer_id'] ); 
         
         $params['contact_type'] = $this->_contactType;
-        if ( $this->_contactSubType ) $params['contact_sub_type'] = $this->_contactSubType; 
+        if ( $this->_contactSubType && 
+             !CRM_Utils_Array::value( 'contact_sub_type', $params ) ) {
+            $params['contact_sub_type'] = $this->_contactSubType; 
+        }
         
         if ( $this->_contactId ) {
             $params['contact_id'] = $this->_contactId;
