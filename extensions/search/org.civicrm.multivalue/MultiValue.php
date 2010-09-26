@@ -36,7 +36,7 @@
 
 require_once 'CRM/Contact/Form/Search/Custom/Base.php';
 
-class CRM_Contact_Form_Search_Custom_MultipleValues
+class Extension_Search_org_civicrm_multivalue
    extends    CRM_Contact_Form_Search_Custom_Base
    implements CRM_Contact_Form_Search_Interface {
 
@@ -98,7 +98,7 @@ class CRM_Contact_Form_Search_Custom_MultipleValues
                     ts( 'Contact Name' ),
                     true );
         if ( empty( $this->_groupTree ) ) {
-            CRM_Core_Error::statusBounce( ts("Atleast one Custom Group must be present, for Custom Group search."),
+            CRM_Core_Error::statusBounce( ts("At least one Custom Group must be present, for Custom Group search."),
                                           CRM_Utils_System::url( 'civicrm/contact/search/custom/list',
                                                                  'reset=1') );
         }
@@ -180,7 +180,7 @@ contact_a.sort_name    as sort_name,
     }
 
     function templateFile( ) {
-        return 'CRM/Contact/Form/Search/Custom/MultipleValues.tpl';
+        return 'MultipleValues.tpl';
     }
 
     function setDefaultValues( ) {

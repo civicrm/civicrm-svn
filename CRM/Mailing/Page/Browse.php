@@ -146,9 +146,7 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page {
         if ( $this->_createdId ) {
             $this->set( 'createdId', $this->_createdId );
         }
-        
-        $this->search( );
-        
+       
         $session = CRM_Core_Session::singleton();
         $context = $session->readUserContext( );
         
@@ -250,6 +248,10 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page {
         $session = CRM_Core_Session::singleton( );
         $url = CRM_Utils_System::url( $urlString, $urlParams );
         $session->pushUserContext( $url );
+        
+        //CRM-6862 -run form cotroller after
+        //selector, since it erase $_POST  
+        $this->search( );
         
         return parent::run( );
     }

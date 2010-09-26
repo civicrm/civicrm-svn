@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
- <extension key="org.civicrm.activity" type="search">
+ <extension key="org.civicrm.search.activity" type="search">
   <callback>ActivitySearch</callback>
   <name>Activity Search</name>
   <description>This custom search allows to search through activities and returns activities as results (not contacts as regular search).</description>

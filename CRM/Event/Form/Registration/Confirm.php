@@ -704,7 +704,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
             
             // do a transfer only if a monetary payment greater than 0
             if ( $this->_values['event']['is_monetary'] && $primaryParticipant && $payment ) {
-                $payment->doTransferCheckout( $primaryParticipant );
+                $payment->doTransferCheckout( $primaryParticipant, 'event' );
             }
             
         } else {

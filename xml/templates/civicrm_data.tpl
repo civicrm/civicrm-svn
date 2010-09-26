@@ -632,8 +632,10 @@ VALUES
   (@option_group_id_grantTyp, '{ts escape="sql"}Impunity{/ts}'           , 4, 'Impunity'          , NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, @domainID, NULL),
 
 -- default CiviCRM Extensions
-  (@option_group_id_extensions, '{ts escape="sql"}Activity Search{/ts}'    , 'activity', 'Activity Search'    , 'search',   0, 0, 1, NULL, 0, 0, 1, NULL, @domainID, NULL),
-  (@option_group_id_extensions, '{ts escape="sql"}Multi Value Search{/ts}' , 'multivalue', 'Multi Value Search' , 'search', 0, 0, 2, NULL, 0, 0, 1, NULL, @domainID, NULL);
+  (@option_group_id_extensions, '{ts escape="sql"}Activity Search{/ts}'    , 'org.civicrm.search.activity', 'Activity Search'    , 'search',   0, 0, 1, NULL, 0, 0, 1, NULL, @domainID, NULL),
+  (@option_group_id_extensions, '{ts escape="sql"}Multi Value Search{/ts}' , 'org.civicrm.search.multivalue', 'Multi Value Search' , 'search', 0, 0, 2, NULL, 0, 0, 1, NULL, @domainID, NULL),
+  (@option_group_id_extensions, '{ts escape="sql"}Google Checkout{/ts}' , 'org.civicrm.payment.googlecheckout', 'Google Checkout' , 'payment', 0, 0, 3, NULL, 0, 0, 1, NULL, @domainID, NULL),
+  (@option_group_id_extensions, '{ts escape="sql"}Grant Report{/ts}' , 'org.civicrm.report.grant', 'Grant Report' , 'report', 0, 0, 4, NULL, 0, 0, 1, NULL, @domainID, NULL);
 
 -- CRM-6138
 {include file='languages.tpl'}

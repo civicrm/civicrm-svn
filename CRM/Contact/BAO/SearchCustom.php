@@ -70,10 +70,18 @@ class CRM_Contact_BAO_SearchCustom {
             return $error;
         }
 
-        $customSearchFile = str_replace( '_',
-                                         DIRECTORY_SEPARATOR,
-                                         $customSearchClass ) . '.php';
+        require_once( 'CRM/Core/Extensions.php' );
+        $ext = new CRM_Core_Extensions();
         
+        if( ! $ext->isExtensionKey( $customSearchClass ) ) {
+            $customSearchFile = str_replace( '_',
+                                             DIRECTORY_SEPARATOR,
+                                             $customSearchClass ) . '.php';
+        } else {
+            $customSearchFile = $ext->key2path( $customSearchClass, 'search' );
+            $customSearchClass = $ext->key2class( $customSearchClass, 'search' );
+        }
+
         $error = include_once( $customSearchFile );
         if ( $error == false ) {
             CRM_Core_Error::fatal( 'Custom search file: ' . $customSearchFile . ' does not exist. Please verify your custom search settings in CiviCRM administrative panel.' );

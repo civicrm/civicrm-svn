@@ -55,6 +55,13 @@ class CRM_Core_Extensions
     public $extensions = null;
 
     function __construct( ) {
+
+        $config = CRM_Core_Config::singleton( );
+        $this->extDir = $config->extensionsDir;
+        if( is_null($this->extDir) ) {
+            CRM_Core_Error::fatal( "If you want to use extensions, please configure CiviCRM Extensions directory in Administer -> Configure -> Global Settings -> Directories." );
+        }
+        
         if( is_null( $this->extensions )) {
             $this->extensions = $this->discover();
         }
@@ -214,6 +221,61 @@ class CRM_Core_Extensions
     private function _validateInfoFile() {
         return true;
     }
+    
+    public function key2path( $key, $type ) {
 
+        $e = $this->extensions;
+        $config = CRM_Core_Config::singleton( );
+
+        $callback = (string) $e['enabled'][$type][$key]['info']->callback;
+        $path = $config->extensionsDir . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $key . 
+                                         DIRECTORY_SEPARATOR . $callback . '.php';
+
+
+
+        return $path;
+
+    }
+
+    public function key2class( $key, $type ) {
+        $e = $this->extensions;
+        $config = CRM_Core_Config::singleton( );
+        $callback = (string) $e['enabled'][$type][$key]['info']->callback;
+        $clazz = 'Extension_' . ucwords( $type ) . '_' . str_replace( '.', '_', $key );
+
+        return $clazz;
+    }
+
+    public function class2path( $clazz ) {
+        $elements = explode( '_', $clazz );
+        $type = strtolower( $elements[1]);
+        $keyElm = array_slice( $elements, 2);
+        $key = implode( '.', $keyElm );
+        return $this->key2path( $key, $type );
+    }
+
+    public function getTemplatePath( $clazz ) {
+        $path = $this->class2path( $clazz );
+        $pathElm = explode( DIRECTORY_SEPARATOR, $path );
+        array_pop( $pathElm );
+        return implode( DIRECTORY_SEPARATOR, $pathElm ) . DIRECTORY_SEPARATOR . 'templates';
+    }
+
+    public function isExtensionKey( $string ) {
+        // check if the string is an extension name or the class
+        $dots = strpos($string, '.');
+        if( $dots !== FALSE ) {
+            return TRUE;
+        }
+        return FALSE;        
+    }
+    
+    public function isExtensionClass( $string ) {
+        if( substr( $string, 0, 10 ) == 'Extension_' ) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+    
 }
 

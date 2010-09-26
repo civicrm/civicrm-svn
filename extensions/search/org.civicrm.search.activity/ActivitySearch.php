@@ -36,7 +36,7 @@
 
 require_once 'CRM/Contact/Form/Search/Interface.php';
 
-class Extension_Search_Org_CiviCRM_Activity
+class Extension_Search_org_civicrm_search_activity
 implements CRM_Contact_Form_Search_Interface {
 
     protected $_formValues;

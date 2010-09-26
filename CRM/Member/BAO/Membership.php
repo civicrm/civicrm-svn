@@ -1089,7 +1089,7 @@ AND civicrm_membership.is_test = %2";
                 // this does not return
                 require_once 'CRM/Core/Payment.php';
                 $payment =& CRM_Core_Payment::singleton( $form->_mode, 'Contribute', $form->_paymentProcessor, $form );
-                $payment->doTransferCheckout( $form->_params );
+                $payment->doTransferCheckout( $form->_params, 'contribute' );
             }
         }
 

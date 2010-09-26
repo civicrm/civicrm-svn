@@ -35,8 +35,20 @@
  */ 
 
 require_once 'CRM/Core/Payment.php';
+require_once('packages/Google/library/googlecart.php');
+require_once('packages/Google/library/googleitem.php');
 
-class CRM_Core_Payment_Google extends CRM_Core_Payment { 
+class Extension_Payment_org_civicrm_payment_googlecheckout extends CRM_Core_Payment { 
+
+    /** 
+     * We only need one instance of this object. So we use the singleton 
+     * pattern and cache the instance in this variable 
+     * 
+     * @var object 
+     * @static 
+     */ 
+    static private $_singleton = null; 
+
     /**
      * mode of operation: live or test
      *
@@ -57,6 +69,24 @@ class CRM_Core_Payment_Google extends CRM_Core_Payment {
         $this->_paymentProcessor = $paymentProcessor;
         $this->_processorName    = ts('Google Checkout');
     }
+
+    /** 
+     * singleton function used to manage this object 
+     * 
+     * @param string $mode the mode of operation: live or test
+     *
+     * @return object 
+     * @static 
+     * 
+     */ 
+    static function &singleton( $mode, &$paymentProcessor ) {
+        $processorName = $paymentProcessor['name'];
+        if (self::$_singleton[$processorName] === null ) {
+            self::$_singleton[$processorName] = new Extension_Payment_org_civicrm_payment_googlecheckout( $mode, $paymentProcessor );
+        }
+        return self::$_singleton[$processorName];
+    } 
+
 
     /** 
      * This function checks to see if we have the right config values 
