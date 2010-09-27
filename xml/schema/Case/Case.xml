@@ -5,6 +5,7 @@
   <name>civicrm_case</name>
   <comment>This table stores information about cases grouping activities.</comment>
   <add>1.8</add>
+  <log>true</log>
   <field>
       <name>id</name>
       <type>int unsigned</type>

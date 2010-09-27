@@ -6,6 +6,7 @@
   <name>civicrm_premiums_product</name>
   <comment>joins premiums (settings) to individual product/premium items - determines which products are available for a given contribution page</comment>
   <add>1.4</add> 
+  <log>true</log>
   <field> 
       <name>id</name> 
       <type>int unsigned</type> 

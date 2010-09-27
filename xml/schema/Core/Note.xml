@@ -6,6 +6,7 @@
   <name>civicrm_note</name>
   <comment>Notes can be linked to any object in the application.</comment>
   <add>1.1</add>
+  <log>true</log>
   <field>
       <name>id</name>
       <type>int unsigned</type>

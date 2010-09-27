@@ -6,6 +6,7 @@
   <name>civicrm_uf_group</name>
   <comment>User framework groups. Each group represents a form which encompasses a set of fields defined in civicrm_uf_fields table. Initially will be used for CiviCRM Profile form(s). Subsequently we anticipate using this to define other public facing forms (e.g. online donation solicitation forms, mailing list preferences, etc.).</comment>
   <add>1.1</add>
+  <log>true</log>
   <field>
       <name>id</name>
       <type>int unsigned</type>

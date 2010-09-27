@@ -5,6 +5,7 @@
   <class>ContributionSoft</class> 
   <name>civicrm_contribution_soft</name> 
   <add>2.2</add> 
+  <log>true</log>
   <field> 
       <name>id</name> 
       <uniqueName>contribution_soft_id</uniqueName>

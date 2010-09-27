@@ -5,6 +5,7 @@
   <class>LocationType</class>
   <name>civicrm_location_type</name>
   <add>1.1</add>
+  <log>true</log>
   <field>
       <name>id</name>
       <type>int unsigned</type>

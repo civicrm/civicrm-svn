@@ -6,6 +6,7 @@
   <name>civicrm_pcp_block</name>
   <comment>A Personal Campaign Page Block stores admin configurable status options and rules</comment>
   <add>2.2</add>
+  <log>true</log>
   <field>
       <name>id</name>
       <type>int unsigned</type>

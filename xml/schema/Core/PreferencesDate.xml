@@ -6,6 +6,7 @@
   <name>civicrm_preferences_date</name>
   <comment>Define date preferences for the site</comment>
   <add>2.0</add>
+  <log>true</log>
   <field>
       <name>id</name>
       <type>int unsigned</type>

@@ -5,6 +5,7 @@
   <class>PCP</class> 
   <name>civicrm_pcp</name> 
   <add>2.2</add> 
+  <log>true</log>
   <field> 
       <name>id</name> 
       <uniqueName>pcp_id</uniqueName>

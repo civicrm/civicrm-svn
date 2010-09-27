@@ -4,6 +4,7 @@
   <class>ContributionRecur</class>
   <name>civicrm_contribution_recur</name>
   <add>1.6</add>
+  <log>true</log>
   <field>
       <name>id</name>
       <type>int unsigned</type>
