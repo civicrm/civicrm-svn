@@ -52,7 +52,13 @@
      <page_callback>CRM_UF_Page_Field</page_callback>
      <weight>21</weight>
   </item>
-    <item>
+  <item>
+     <path>civicrm/admin/uf/group/field/add</path>
+     <title>Add Field</title>
+     <page_callback>CRM_UF_Form_Field</page_callback>
+     <weight>22</weight>
+  </item>
+  <item>
      <path>civicrm/admin/uf/group/setting</path>
      <title>AdditionalInfo Form</title>
      <page_callback>CRM_UF_Form_AdvanceSetting</page_callback>
