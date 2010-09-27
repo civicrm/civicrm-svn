@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
 
- <extension key="org.civicrm.multivalue" type="search">
+ <extension key="org.civicrm.search.multivalue" type="search">
   <callback>MultiValue</callback>
   <name>Multiple Values Search</name>
   <description>desc</description>

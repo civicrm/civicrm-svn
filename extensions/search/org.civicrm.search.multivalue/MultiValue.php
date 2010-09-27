@@ -36,7 +36,7 @@
 
 require_once 'CRM/Contact/Form/Search/Custom/Base.php';
 
-class Extension_Search_org_civicrm_multivalue
+class Extension_Search_org_civicrm_search_multivalue
    extends    CRM_Contact_Form_Search_Custom_Base
    implements CRM_Contact_Form_Search_Interface {
 
