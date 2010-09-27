@@ -75,6 +75,7 @@ CRM/Dedupe/DAO
 CRM/Event/DAO
 CRM/Friend/DAO
 CRM/Grant/DAO
+CRM/Logging/SchemaStructure.php
 CRM/Mailing/DAO
 CRM/Mailing/Event/DAO
 CRM/Member/DAO
