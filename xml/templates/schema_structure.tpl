@@ -33,7 +33,7 @@
  * $Id$
  *
  */
-class CRM_Core_I18n_SchemaStructure
+class {$classname}
 {ldelim}
     static function &columns()
     {ldelim}
@@ -43,7 +43,7 @@ class CRM_Core_I18n_SchemaStructure
             {foreach from=$columns key=table item=types}
               '{$table}' => array(
                 {foreach from=$types key=column item=type}
-                  '{$column}' => '{$type}',
+                  '{$column}' => "{$type}",
                 {/foreach}
               ),
             {/foreach}
