@@ -135,4 +135,23 @@ WHERE cg.name LIKE 'civicrm_event.amount%'
         echo json_encode( $elements );
         CRM_Utils_System::civiExit( );
     } 
+
+    /**
+     * Function to get default participant role
+     */
+    function participantRole( ) {
+        
+        require_once 'CRM/Utils/Type.php';
+        
+        $eventID = $_GET['eventId'] ;
+       
+        $defaultRoleId = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', 
+                                                      $eventID, 
+                                                      'default_role_id',
+                                                      'id'
+                                                      );
+        require_once "CRM/Utils/JSON.php";
+        echo $defaultRoleId;
+        CRM_Utils_System::civiExit( );
+    } 
 }

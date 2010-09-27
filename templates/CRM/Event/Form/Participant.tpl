@@ -250,7 +250,39 @@
         } else {
           cj( "#eventFullMsg" ).hide( );
         }
-	}
+	}    
+   
+    function buildParticipantRole( eventID )
+    {
+         var dataUrl = "{/literal}{crmURL p='civicrm/ajax/rest' q='className=CRM_Event_Page_AJAX&fnName=participantRole&json=1&context=participant' h=0 }"{literal};
+         
+         if ( !eventId ) {
+			var eventId  = document.getElementById('event_id').value;
+		 }
+         if ( eventId ) {
+			dataUrl = dataUrl + '&eventId=' + eventID;  
+         }
+        cj.ajax({
+			url: dataUrl,
+			async: false,
+			global: false,
+			success: function ( html ) {
+                     
+			    if ( html ) {
+                   var targetId = 'role_id[' + html + ']';
+                   cj('[id^="role_id"]' ).each( function( ) {
+                        if ( targetId == cj(this).attr('id') ) {
+                            document.getElementById(targetId).checked = true;
+                        } else {
+                            cj(this).removeAttr('checked');
+                        }              
+                   });
+                   showCustomData('Participant', html, 1, {/literal} '{$customGroupID}' {literal});
+                }
+			}
+    	});  
+    }
+
 </script>
 {/literal}
 {*include custom data js file*}

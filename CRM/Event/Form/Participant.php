@@ -682,7 +682,7 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
         $element = $this->add('select', 'event_id',  ts( 'Event' ),  
                               array( '' => ts( '- select -' ) ) + $events,
                               true,
-                              array('onchange' => "buildFeeBlock( this.value ); buildCustomData( 'Participant', this.value, {$this->_eventNameCustomDataTypeID} ); buildEventTypeCustomData( this.value, {$this->_eventTypeCustomDataTypeID}, '{$eventAndTypeMapping}' );", 'class' => 'huge' ) 
+                              array('onchange' => "buildFeeBlock( this.value ); buildCustomData( 'Participant', this.value, {$this->_eventNameCustomDataTypeID} ); buildParticipantRole( this.value ); buildEventTypeCustomData( this.value, {$this->_eventTypeCustomDataTypeID}, '{$eventAndTypeMapping}' );", 'class' => 'huge' ) 
                               );
 
         // CRM-6111
