@@ -112,8 +112,14 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         $this->_gid = CRM_Utils_Request::retrieve( 'gid', 'Positive', $this );
         $this->_id  = CRM_Utils_Request::retrieve( 'id' , 'Positive', $this );
         if ( $this->_gid ) {
-            $this->_title = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup',  $this->_gid, 'title' );
+            $this->_title = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $this->_gid, 'title' );
             CRM_Utils_System::setTitle( $this->_title .' - '.ts( 'CiviCRM Profile Fields' ) );
+            
+            $url = CRM_Utils_System::url( 'civicrm/admin/uf/group/field', 
+                                          "reset=1&action=browse&gid={$this->_gid}" ); 
+            
+            $session = CRM_Core_Session::singleton( ); 
+            $session->pushUserContext( $url );
         }
 
         $showBestResult = CRM_Utils_Request::retrieve( 'sbr', 'Positive', CRM_Core_DAO::$_nullArray );
@@ -125,26 +131,26 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         $this->_fields = array_merge( CRM_Activity_BAO_Activity::exportableFields( 'Activity' ), $this->_fields );
         if ( CRM_Core_Permission::access( 'CiviContribute' ) ) {
             require_once "CRM/Contribute/BAO/Contribution.php";
-            $this->_fields = array_merge (CRM_Contribute_BAO_Contribution::getContributionFields(), $this->_fields);
+            $this->_fields = array_merge ( CRM_Contribute_BAO_Contribution::getContributionFields(), $this->_fields );
         }
 
         if ( CRM_Core_Permission::access( 'CiviMember' ) ) {
             require_once 'CRM/Member/BAO/Membership.php';
-            $this->_fields = array_merge (CRM_Member_BAO_Membership::getMembershipFields(), $this->_fields); 
+            $this->_fields = array_merge ( CRM_Member_BAO_Membership::getMembershipFields(), $this->_fields ); 
         }
 
         if ( CRM_Core_Permission::access( 'CiviEvent' ) ) {
             require_once 'CRM/Event/BAO/Query.php';
-            $this->_fields = array_merge (CRM_Event_BAO_Query::getParticipantFields( true ), $this->_fields); 
+            $this->_fields = array_merge ( CRM_Event_BAO_Query::getParticipantFields( true ), $this->_fields ); 
         }
         
         if ( CRM_Core_Permission::access( 'Quest' ) ) {
             require_once 'CRM/Quest/BAO/Student.php';
-            $this->_fields = array_merge (CRM_Quest_BAO_Student::exportableFields(), $this->_fields);
+            $this->_fields = array_merge ( CRM_Quest_BAO_Student::exportableFields(), $this->_fields );
         }
         
         $this->_selectFields = array( );
-        foreach ($this->_fields as $name => $field ) {
+        foreach ( $this->_fields as $name => $field ) {
             // lets skip note for now since we dont support it
             if ( $name == 'note' ) {
                 continue;
