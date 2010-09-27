@@ -205,6 +205,11 @@ class CRM_Core_BAO_Setting
 
             $session = CRM_Core_Session::singleton();
 
+            // for logging purposes, pass the userID to the db
+            if ($session->get('userID')) {
+                CRM_Core_DAO::executeQuery('SET @civicrm_user_id = %1', array(1 => array($session->get('userID'), 'Integer')));
+            }
+
             // on multi-lang sites based on request and civicrm_uf_match
             if ($multiLang) {
                 require_once 'CRM/Utils/Request.php';
