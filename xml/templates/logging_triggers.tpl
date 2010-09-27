@@ -24,9 +24,9 @@
 
 {foreach from=$logtables key=table item=types}
 
-  DROP TABLE IF EXISTS {$table}_log;
+  DROP TABLE IF EXISTS log_{$table};
 
-  CREATE TABLE {$table}_log (
+  CREATE TABLE log_{$table} (
     {foreach from=$types key=column item=type}
       {$column} {$type},
     {/foreach}
@@ -37,17 +37,17 @@
   ) ENGINE ARCHIVE;
 
   CREATE TRIGGER {$table}_after_insert AFTER INSERT ON {$table}
-    FOR EACH ROW INSERT INTO {$table}_log
+    FOR EACH ROW INSERT INTO log_{$table}
       ({foreach from=$types key=column item=type}{$column},     {/foreach} log_conn_id,     log_user_id,      log_action) VALUES
       ({foreach from=$types key=column item=type}NEW.{$column}, {/foreach} CONNECTION_ID(), @civicrm_user_id, 'Insert');
 
   CREATE TRIGGER {$table}_after_update AFTER UPDATE ON {$table}
-    FOR EACH ROW INSERT INTO {$table}_log
+    FOR EACH ROW INSERT INTO log_{$table}
       ({foreach from=$types key=column item=type}{$column},     {/foreach} log_conn_id,     log_user_id,      log_action) VALUES
       ({foreach from=$types key=column item=type}NEW.{$column}, {/foreach} CONNECTION_ID(), @civicrm_user_id, 'Update');
 
   CREATE TRIGGER {$table}_after_delete AFTER DELETE ON {$table}
-    FOR EACH ROW INSERT INTO {$table}_log
+    FOR EACH ROW INSERT INTO log_{$table}
       ({foreach from=$types key=column item=type}{$column},     {/foreach} log_conn_id,     log_user_id,      log_action) VALUES
       ({foreach from=$types key=column item=type}OLD.{$column}, {/foreach} CONNECTION_ID(), @civicrm_user_id, 'Delete');
 
