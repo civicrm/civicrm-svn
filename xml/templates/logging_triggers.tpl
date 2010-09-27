@@ -36,6 +36,9 @@
     log_action  ENUM('Initialization', 'Insert', 'Update', 'Delete')
   ) ENGINE ARCHIVE;
 
+  INSERT INTO log_{$table} ({foreach from=$types key=column item=type}{$column}, {/foreach} log_conn_id,     log_user_id,      log_action)
+  SELECT                    {foreach from=$types key=column item=type}{$column}, {/foreach} CONNECTION_ID(), @civicrm_user_id, 'Initialization' FROM {$table};
+
   CREATE TRIGGER {$table}_after_insert AFTER INSERT ON {$table}
     FOR EACH ROW INSERT INTO log_{$table}
       ({foreach from=$types key=column item=type}{$column},     {/foreach} log_conn_id,     log_user_id,      log_action) VALUES
