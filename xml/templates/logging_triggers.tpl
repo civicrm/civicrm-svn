@@ -39,16 +39,19 @@
   INSERT INTO log_{$table} ({foreach from=$types key=column item=type}{$column}, {/foreach} log_conn_id,     log_user_id,      log_action)
   SELECT                    {foreach from=$types key=column item=type}{$column}, {/foreach} CONNECTION_ID(), @civicrm_user_id, 'Initialization' FROM {$table};
 
+  DROP TRIGGER IF EXISTS {$table}_after_insert;
   CREATE TRIGGER {$table}_after_insert AFTER INSERT ON {$table}
     FOR EACH ROW INSERT INTO log_{$table}
       ({foreach from=$types key=column item=type}{$column},     {/foreach} log_conn_id,     log_user_id,      log_action) VALUES
       ({foreach from=$types key=column item=type}NEW.{$column}, {/foreach} CONNECTION_ID(), @civicrm_user_id, 'Insert');
 
+  DROP TRIGGER IF EXISTS {$table}_after_update;
   CREATE TRIGGER {$table}_after_update AFTER UPDATE ON {$table}
     FOR EACH ROW INSERT INTO log_{$table}
       ({foreach from=$types key=column item=type}{$column},     {/foreach} log_conn_id,     log_user_id,      log_action) VALUES
       ({foreach from=$types key=column item=type}NEW.{$column}, {/foreach} CONNECTION_ID(), @civicrm_user_id, 'Update');
 
+  DROP TRIGGER IF EXISTS {$table}_after_delete;
   CREATE TRIGGER {$table}_after_delete AFTER DELETE ON {$table}
     FOR EACH ROW INSERT INTO log_{$table}
       ({foreach from=$types key=column item=type}{$column},     {/foreach} log_conn_id,     log_user_id,      log_action) VALUES
