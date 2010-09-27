@@ -63,7 +63,9 @@ class CRM_Logging_Engine
 
         require_once 'CRM/Utils/File.php';
         global $civicrm_root;
-        CRM_Utils_File::sourceSQLFile($config->dsn, "$civicrm_root/sql/logging_tables.sql");
+        if (!self::tablesExist()) {
+            CRM_Utils_File::sourceSQLFile($config->dsn, "$civicrm_root/sql/logging_tables.sql");
+        }
         CRM_Utils_File::sourceSQLFile($config->dsn, "$civicrm_root/sql/logging_triggers.sql");
     }
 
