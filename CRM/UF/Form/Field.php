@@ -112,7 +112,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         $this->_gid = CRM_Utils_Request::retrieve( 'gid', 'Positive', $this );
         $this->_id  = CRM_Utils_Request::retrieve( 'id' , 'Positive', $this );
         if ( $this->_gid ) {
-            $this->_title = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup',  $this->_gid, 'title' );
+            $this->_title = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup',  $this->_gid, 'title' );
             CRM_Utils_System::setTitle( $this->_title .' - '.ts( 'CiviCRM Profile Fields' ) );
         }
 
@@ -163,7 +163,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         $this->assign('fieldId', $this->_id);
         if ( $this->_id ){
             require_once 'CRM/Core/DAO.php';
-            $fieldTitle = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFField', $this->_id, 'label');
+            $fieldTitle = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFField', $this->_id, 'label' );
             $this->assign('fieldTitle', $fieldTitle);
         }
         
@@ -479,11 +479,12 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         }
         $this->assign( 'alreadyMixProfile', $alreadyMixProfile );
         
-        $attributes = array( 'onclick' => "showLabel();mixProfile();", 'onblur' => 'showLabel();mixProfile();' );
+        $extra = array( 'onclick' => 'showLabel();mixProfile();', 
+                        'onblur'  => 'showLabel();mixProfile();' );
         
-        $sel =& $this->addElement( 'hierselect', 'field_name', ts('Field Name'), $attributes );  
+        $sel =& $this->addElement( 'hierselect', 'field_name', ts('Field Name'), $extra );  
+
         $formValues = array();
-        
         $formValues = $this->exportValues( );
 
         if ( empty( $formValues ) ) {
@@ -536,15 +537,16 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         $this->add( 'checkbox', 'in_selector', ts('Results Column?'), null, null, $js );
         $this->add( 'checkbox', 'is_searchable', ts( 'Searchable?'), null, null, $js );
          
+        $attributes = CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_UFField' );
+
         // weight
-        $this->add( 'text', 'weight', ts('Order'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_UFField', 'weight'), true );
+        $this->add( 'text', 'weight', ts('Order'), $attributes['weight'], true );
         $this->addRule( 'weight', ts('is a numeric field'), 'numeric' );
         
-        $this->add( 'textarea', 'help_post', ts('Field Help'), CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_UFField', 'help_post' ) );
+        $this->add( 'textarea', 'help_post', ts('Field Help'), $attributes['help_post'] );
         
         // listings title
-        $this->add( 'text', 'listings_title', ts('Listings Title'),
-                    CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_UFField', 'listings_title' ) );
+        $this->add( 'text', 'listings_title', ts('Listings Title'), $attributes['listings_title'] );
         $this->addRule( 'listings_title', ts('Please enter a valid title for this field when displayed in user listings.'), 'title' );
         
         $this->add( 'checkbox', 'is_required', ts( 'Required?') );
@@ -553,7 +555,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         // $this->add( 'checkbox', 'is_registration', ts( 'Display in Registration Form?' ) );
         //$this->add( 'checkbox', 'is_match'       , ts( 'Key to Match Contacts?'        ) );
 
-        $this->add( 'text', 'label', ts('Field Label'), CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_UFField', 'label' ) );
+        $this->add( 'text', 'label', ts('Field Label'), $attributes['label'] );
         
         $js = null;
         if ( $this->_hasSearchableORInSelector ) {
@@ -740,7 +742,6 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             }
         }  
     }
-    
     
     /**
      * global validation rules for the form

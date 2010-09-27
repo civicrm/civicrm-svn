@@ -75,7 +75,7 @@ class CRM_UF_Page_Field extends CRM_Core_Page {
             self::$_actionLinks = array(
                                         CRM_Core_Action::UPDATE  => array(
                                                                           'name'  => ts('Edit'),
-                                                                          'url'   => 'civicrm/admin/uf/group/field',
+                                                                          'url'   => 'civicrm/admin/uf/group/field/update',
                                                                           'qs'    => 'reset=1&action=update&id=%%id%%&gid=%%gid%%',
                                                                           'title' => ts('Edit CiviCRM Profile Field') 
                                                                           ),
@@ -189,7 +189,6 @@ class CRM_UF_Page_Field extends CRM_Core_Page {
         $session->set( 'showBestResult', false );
     }
 
-
     /**
      * edit CiviCRM Profile data.
      *
@@ -213,7 +212,6 @@ class CRM_UF_Page_Field extends CRM_Core_Page {
         $controller->process();
         $controller->run();
     }
-
 
     /**
      * Run the page.
