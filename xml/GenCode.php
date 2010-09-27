@@ -297,10 +297,11 @@ foreach (array('CRM_Core_I18n_SchemaStructure', 'CRM_Logging_SchemaStructure') a
     $beautifier->save();
 }
 
-echo "Generating logging triggers…\n";
+echo "Generating logging tables and triggers…\n";
 $smarty->clear_all_cache();
 $smarty->clear_all_assign();
 $smarty->assign_by_ref('logtables', $logtables);
+file_put_contents("$phpCodePath/sql/logging_tables.sql",   $smarty->fetch('logging_tables.tpl'));
 file_put_contents("$phpCodePath/sql/logging_triggers.sql", $smarty->fetch('logging_triggers.tpl'));
 
 // add the Subversion revision to templates
