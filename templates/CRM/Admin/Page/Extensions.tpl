@@ -28,17 +28,29 @@
    {include file="CRM/Admin/Form/Extensions.tpl"}
 {else}	
 
-<div id="help">
-  {ts}Extensions help.{/ts}
-</div>
+
+
+{if not $extEnabled}
 
 <div class="crm-content-block crm-block">
+<div id="help">
+  {ts}Extensions disabled help text.{/ts}
+</div>
+</div>
+
+{else} {* extEnabled *}
 
 {if $action ne 1 and $action ne 2}
     <div class="action-link">
         <a href="{crmURL q="reset=1"}" id="new" class="button"><span><div class="icon add-icon"></div>{ts}Refresh{/ts}</span></a>
     </div>
 {/if}
+
+
+<div id="help">
+  {ts}Extensions help.{/ts}
+</div>
+
 
 {if $rows}
 {ts}Locally available extensions.{/ts}<br/>
@@ -141,4 +153,5 @@
         {/if}
 
 </div>
+{/if}
 {/if}

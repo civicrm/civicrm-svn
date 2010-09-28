@@ -36,10 +36,19 @@
  */
 
 require_once 'CRM/Core/Config.php';
+require_once( 'CRM/Core/Extensions/ExtensionType.php' );
 
 class CRM_Core_Extensions
 {
 
+
+    /**
+     * We only need one instance of this object. So we use the singleton
+     * pattern and cache the instance in this variable
+     * @var object
+     * @static
+     */
+    private static $_singleton = null;
 
     /**
      * The option group name
@@ -58,14 +67,22 @@ class CRM_Core_Extensions
 
         $config = CRM_Core_Config::singleton( );
         $this->extDir = $config->extensionsDir;
-        if( is_null($this->extDir) ) {
-            CRM_Core_Error::fatal( "If you want to use extensions, please configure CiviCRM Extensions directory in Administer -> Configure -> Global Settings -> Directories." );
+        if( is_null($this->extDir) || empty( $this->extDir ) ) {
+            return;
         }
         
-        if( is_null( $this->extensions )) {
-            $this->extensions = $this->discover();
-        }
+        $this->extensions = $this->discover();
     }
+
+    static function &singleton()
+    {
+        if ( self::$_singleton === null ) {
+            self::$_singleton = new CRM_Core_Extensions();
+        }
+
+        return self::$_singleton;
+    }
+
 
     public function getExtensions() {
         return $this->extensions;
@@ -91,21 +108,33 @@ class CRM_Core_Extensions
         // get installed extensions
         $extensions['local'] = $this->_discoverInstalled();
 
-//        // if uploaded contains locally installed extensions (temp not cleaned up), ignore them
-//        foreach( $extensions['uploaded'] as $type => $extList ) {
-//            foreach( $extList as $name => $dc ) {
-//                if( array_key_exists( $name, $extensions['local'][$type] ) ) {
-//                    unset($extensions['uploaded'][$type][$name]);
-//                } 
-//            }
-//        }
+        foreach( $extensions['uploaded'] as $type => $extList ) {
+            foreach( $extList as $name => $nfo ) {
+                $extensions['per_id'][$nfo['id']]['label'] = (string) $nfo['info']->name;
+                $extensions['per_id'][$nfo['id']]['key'] = $name;
+                $extensions['per_id'][$nfo['id']]['type'] = $type;
+                $extensions['per_id'][$nfo['id']]['status'] = 'uploaded';
+                $extensions['per_id'][$nfo['id']]['path'] = $nfo['path'];
+            }
+        }
+
 
         // get enabled extensions from the database
         $extensions['enabled'] = $this->_discoverEnabled();
 
+        foreach( $extensions['enabled'] as $type => $extList ) {
+            foreach( $extList as $name => $nfo ) {
+                $extensions['per_id'][$nfo['id']]['label'] = $nfo['label'];
+                $extensions['per_id'][$nfo['id']]['key'] = $name;
+                $extensions['per_id'][$nfo['id']]['type'] = $type;
+                $extensions['per_id'][$nfo['id']]['status'] = 'enabled';
+                $extensions['per_id'][$nfo['id']]['path'] = $nfo['path'];
+            }
+        }
+
         // if local contains enabled extensions, make sure we know
         foreach( $extensions['local'] as $type => $extList ) {
-            foreach( $extList as $name => $dc ) {
+            foreach( $extList as $name => $nfo ) {
                 if( $extensions['enabled'][$type] && array_key_exists( $name, $extensions['enabled'][$type] ) ) {
                     $extensions['local'][$type][$name]['files_exist'] = TRUE;
                     $extensions['local'][$type][$name]['id'] = $extensions['enabled'][$type][$name]['id'];
@@ -115,7 +144,7 @@ class CRM_Core_Extensions
             }
         }
 
-//        CRM_Core_Error::debug( $extensions );
+        CRM_Core_Error::debug( $extensions );
 
         return $extensions;
     }
@@ -124,6 +153,12 @@ class CRM_Core_Extensions
     private function _discoverUploaded() {
 
         $uploaded = array();
+
+        // FIXME: temporary hack for lack of other ideas
+        $y = 1;
+
+        // let's number uploaded extensions, it'll be useful later on
+        // This is used for 
 
         $config = CRM_Core_Config::singleton( );
         $d = $config->extensionsDir . DIRECTORY_SEPARATOR . 'temp';
@@ -136,7 +171,7 @@ class CRM_Core_Extensions
                 $attr = $t['info']->attributes();
                 $uploaded[(string) $attr->type][$name] = $t;
                 // uploaded extensions don't have db ids, so we're using the key here
-                $uploaded[(string) $attr->type][$name]['id'] = $name;
+                $uploaded[(string) $attr->type][$name]['id'] = $y++;
             }
 //            if( function_exists( 'zip_open' ) {
 //                if( is_file( $p ) && zip_open( $p ) ) {
@@ -175,9 +210,17 @@ class CRM_Core_Extensions
                 $enabled[$type][$name] = $this->_buildExtensionRecord( $dir, $id );
                 foreach( $r as $key => $val ) {
                     $enabled[$type][$name][$key] = $val;
-                }                
+                }
+            } else {
+                foreach( $r as $key => $val ) {
+                    $enabled[$type][$name][$key] = $val;                
+                }
+                $enabled[$type][$name]['is_corrupt'] = TRUE;
             }
         }
+        
+//        CRM_Core_Error::debug( $enabled );
+        
         return $enabled;
     }
 
@@ -202,7 +245,6 @@ class CRM_Core_Extensions
             }
         }
         return $local;
-        
     }
 
 
@@ -216,7 +258,6 @@ class CRM_Core_Extensions
             return $rec;
         }
     }
-
 
     private function _parseInfoFile( $file ) {
         $dom = DomDocument::load( $file );
@@ -241,7 +282,6 @@ class CRM_Core_Extensions
         $path = $config->extensionsDir . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $key . 
                                          DIRECTORY_SEPARATOR . $callback . '.php';
         return $path;
-
     }
 
     public function key2class( $key, $type ) {
@@ -283,9 +323,58 @@ class CRM_Core_Extensions
         return FALSE;
     }
 
+    public function getExtensionsPerId( $id ) {
+        return $this->extensions['per_id'][$id];
+    }
+
     public function setIsActive( $id, $is_active ) {
         return CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_OptionValue', $id, 'is_active', $is_active );
     }
+
+    public function install( $id, $key ) {
+        $et = new CRM_Core_Extensions_ExtensionType();
+        $et->install( $id, $key );
+    }
+
+    public function delete( $id, $key ) {
+        $et = new CRM_Core_Extensions_ExtensionType();
+        $et->deinstall( $id, $key );
+//        CRM_Core_Error::debug( $this->extensions );
+//        CRM_Core_Error::debug( $this->extensions['per_id'] );
+//        CRM_Core_Error::debug($id, $this->extensions['per_id'][$id]['key'] );
+
+//        var_dump( $id );
+//        var_dump( $this->extensions['per_id'][$id]['path']);
+        
+//        CRM_Core_Error::debug( 'u', $this->extensions['per_id'] );
+
+//        if( $this->extensions['per_id'][$id]['key'] !== $key ) {
+//            CRM_Core_Error::fatal( ts("Extension key doesn't match extension id - please verify integrity of extensions registry. Skipping uninstall.") );
+//        }
+
+
+//        CRM_Core_Error::debug( $this->extensions['per_id'][$id] );
+
+//        if( $this->extensions['per_id'][$id]['status'] === 'uploaded' ) {
+//            CRM_Utils_File::cleanDir( $this->extensions['per_id'][$id]['path'] );
+//        } elseif( $this->extensions['per_id'][$id]['status'] === 'enabled' ) {
+//            CRM_Utils_File::cleanDir( $this->extensions['per_id'][$id]['path'] );
+//            // and delete appropriate records
+//        } else {
+//            CRM_Core_Error::fatal( ts("Extension status unknown - please verify integrity of extensions registry. Skipping uninstall.") );
+//        }
+
+
+    }
+
+
+    public function extensionsEnabled() {
+        if( is_null($this->extDir) || empty( $this->extDir ) ) {
+            return FALSE;
+        }
+        return TRUE;
+    }
+    
     
 }
 
