@@ -48,8 +48,11 @@ class CRM_Core_Extensions_ExtensionType_Report extends CRM_Core_Extensions_Exten
 
     private $allowedExtTypes = array( 'payment', 'search', 'report' );
     
-    public function install() {
+    public function install( $id, $key ) {
+        parent::install( $id, $key );
     }
 
-    public function deinstall() {
+    public function deinstall( $id, $key ) {
+        parent::deinstall( $id, $key );
     }
+}

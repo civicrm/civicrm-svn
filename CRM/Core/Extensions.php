@@ -144,7 +144,7 @@ class CRM_Core_Extensions
             }
         }
 
-        CRM_Core_Error::debug( $extensions );
+//        CRM_Core_Error::debug( $extensions );
 
         return $extensions;
     }
@@ -331,14 +331,33 @@ class CRM_Core_Extensions
         return CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_OptionValue', $id, 'is_active', $is_active );
     }
 
+    public function getHandlerClass( $type ) {
+        $object = null;
+        switch( $type ) {
+            case 'search':
+                require_once 'CRM/Core/Extensions/ExtensionType/Search.php';
+                $object = new CRM_Core_Extensions_ExtensionType_Search();
+                break;
+            case 'payment':
+                require_once 'CRM/Core/Extensions/ExtensionType/Payment.php';
+                $object = new CRM_Core_Extensions_ExtensionType_Payment();
+                break;
+            case 'report':
+                require_once 'CRM/Core/Extensions/ExtensionType/Report.php';
+                $object = new CRM_Core_Extensions_ExtensionType_Report();
+                break;
+        }
+        return $object;
+    }
+
     public function install( $id, $key ) {
-        $et = new CRM_Core_Extensions_ExtensionType();
-        $et->install( $id, $key );
+        $handler = $this->getHandlerClass( $this->extensions['per_id'][$id]['type'] );
+        $handler->install( $id, $key );
     }
 
     public function delete( $id, $key ) {
-        $et = new CRM_Core_Extensions_ExtensionType();
-        $et->deinstall( $id, $key );
+        $handler = $this->getHandlerClass( $this->extensions['per_id'][$id]['type'] );
+        $handler->deinstall( $id, $key );
 //        CRM_Core_Error::debug( $this->extensions );
 //        CRM_Core_Error::debug( $this->extensions['per_id'] );
 //        CRM_Core_Error::debug($id, $this->extensions['per_id'][$id]['key'] );

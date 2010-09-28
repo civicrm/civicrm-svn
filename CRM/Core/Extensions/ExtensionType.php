@@ -48,7 +48,7 @@ class CRM_Core_Extensions_ExtensionType
 
     private $allowedExtTypes = array( 'payment', 'search', 'report' );
 
-    private static $_extensions = null;
+    protected static $_extensions = null;
 
     function __construct( ) {
         $ext = CRM_Core_Extensions::singleton();
@@ -77,17 +77,19 @@ class CRM_Core_Extensions_ExtensionType
     }
 
     public function createEntry( $id, $key ) {
-            $e = self::$_extensions;
+        $e = self::$_extensions;
 
-            $ids = array();
-            $params = array( 'option_group_id' => 50,
-                             'label' => $e['per_id'][$id]['label'],
-                             'name'  => $e['per_id'][$id]['label'],
-                             'value' => $key,
-                             'grouping' => $e['per_id'][$id]['type'],
-                             'is_active' => 0
-                              );
-            $optionValue = CRM_Core_BAO_OptionValue::add($params, $ids);        
+        $ids = array();
+            
+        $params = array( 'option_group_id' => 50,
+                         'label' => $e['per_id'][$id]['label'],
+                         'name'  => $e['per_id'][$id]['label'],
+                         'value' => $key,
+                         'grouping' => $e['per_id'][$id]['type'],
+                         'is_active' => 0
+                      );
+        $optionValue = CRM_Core_BAO_OptionValue::add($params, $ids);
+                
     }
 
     public function deleteEntry( $id, $key ) {
