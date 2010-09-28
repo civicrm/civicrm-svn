@@ -125,6 +125,11 @@ class CRM_Dedupe_Merger
                     'tables' => array('civicrm_case_contact'),
                     'url'    => CRM_Utils_System::url('civicrm/contact/view', 'reset=1&force=1&cid=$cid&selectedChild=case'),
                 ),
+                'rel_table_grants' => array(
+                    'title'  => ts('Grants'),
+                    'tables' => array('civicrm_grant'),
+                    'url'    => CRM_Utils_System::url('civicrm/contact/view', 'reset=1&force=1&cid=$cid&selectedChild=grant'),
+                ),
                 'rel_table_pcp' => array(
                     'title'  => ts('PCPs'),
                     'tables' => array('civicrm_pcp'),
