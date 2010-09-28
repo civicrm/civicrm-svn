@@ -426,6 +426,13 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
         } else {
             CRM_Utils_Hook::post( 'create', 'Group', $group->id, $group ); 
         }
+        
+        $recentOther = array( );
+        if ( CRM_Core_Permission::check('edit groups') ) {
+            $recentOther['editUrl'] = CRM_Utils_System::url( 'civicrm/group', 'reset=1&action=update&id=' . $group->id );
+            // currently same permission we are using for delete a group
+            $recentOther['deleteUrl'] = CRM_Utils_System::url( 'civicrm/group', 'reset=1&action=delete&id=' . $group->id );
+        }
 
         require_once 'CRM/Utils/Recent.php';
         // add the recently added group (unless hidden: CRM-6432)
@@ -435,7 +442,9 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
                                    $group->id,
                                    'Group',
                                    null,
-                                   null );
+                                   null,
+                                   $recentOther
+                                   );
         }
         return $group;
     }

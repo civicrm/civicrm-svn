@@ -114,8 +114,7 @@ class CRM_Grant_Form_GrantView extends CRM_Core_Form
                                'Grant',
                                $values['contact_id'],
                                null,
-                               array('editUrl'   => $editUrl,
-                                     'deleteUrl' => $deleteUrl) );
+                               $recentOther );
 
         require_once 'CRM/Core/BAO/File.php';
         $attachment = CRM_Core_BAO_File::attachmentInfo( 'civicrm_grant',

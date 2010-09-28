@@ -952,7 +952,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             $recentOther['editUrl'] = CRM_Utils_System::url( 'civicrm/contact/add', 'reset=1&action=update&cid=' . $contact->id );
         }
 
-        if ( CRM_Core_Permission::check('delete contacts') ) {
+        if ( ( $session->get( 'userID' ) != $this->_contactId ) && CRM_Core_Permission::check('delete contacts') ) {
             $recentOther['deleteUrl'] = CRM_Utils_System::url( 'civicrm/contact/view/delete', 'reset=1&delete=1&cid=' . $contact->id );
         }
 
