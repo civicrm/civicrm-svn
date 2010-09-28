@@ -36,7 +36,7 @@
 
 require_once 'CRM/Report/Form.php';
 require_once 'CRM/Grant/PseudoConstant.php';
-class Extension_Report_Extension_org_civicrm_report_grant_Grant extends CRM_Report_Form {
+class Extension_Report_org_civicrm_report_grant extends CRM_Report_Form {
     
     protected $_addressField = false;
     

@@ -91,9 +91,17 @@ abstract class CRM_Core_Payment {
     static function &singleton( $mode = 'test', $component, &$paymentProcessor, &$paymentForm = null ) {
         if ( self::$_singleton === null ) {
             $config       = CRM_Core_Config::singleton( );
-            $paymentClass = "CRM_{$component}_" . $paymentProcessor['class_name'];
-            
-            $classPath = str_replace( '_', '/', $paymentClass ) . '.php';
+
+            require_once( 'CRM/Core/Extensions.php' );
+            $ext = new CRM_Core_Extensions();
+            if( $ext->isExtensionKey( $paymentProcessor['class_name'] ) ) {
+                $paymentClass = $ext->key2class( $paymentProcessor['class_name'], 'payment' );
+                $classPath = $ext->class2path( $paymentClass );
+            } else {
+                $paymentClass = "CRM_{$component}_" . $paymentProcessor['class_name'];
+                $classPath = str_replace( '_', '/', $paymentClass ) . '.php';
+            }
+
             require_once($classPath);
             self::$_singleton = eval( 'return ' . $paymentClass . '::singleton( $mode, $paymentProcessor );' );
 

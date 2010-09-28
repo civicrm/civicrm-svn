@@ -1,6 +1,8 @@
-{*
+<?php
+
+/*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.2                                                |
+ | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -22,5 +24,32 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*}
-{include file="CRM/Report/Form.tpl"}
+*/
+
+/**
+ * This class stores logic for managing CiviCRM extensions.
+ *
+ * @package CRM
+ * @copyright CiviCRM LLC (c) 2004-2010
+ * $Id$
+ *
+ */
+
+require_once 'CRM/Core/Config.php';
+
+class CRM_Core_Extensions_ExtensionType_Payment extends CRM_Core_Extensions_ExtensionType
+{
+
+
+    /**
+     * 
+     */
+    const OPTION_GROUP_NAME = 'system_extensions';
+
+    private $allowedExtTypes = array( 'payment', 'search', 'report' );
+    
+    public function install() {
+    }
+
+    public function deinstall() {
+    }

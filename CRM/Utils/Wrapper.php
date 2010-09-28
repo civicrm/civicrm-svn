@@ -113,5 +113,8 @@ class CRM_Utils_Wrapper
 
         $this->_controller->process();
         $this->_controller->run();
+        
+
+        
     }
 }
