@@ -58,9 +58,8 @@ class CRM_Core_Extensions
 
         $config = CRM_Core_Config::singleton( );
         $this->extDir = $config->extensionsDir;
-        if( is_null($this->extDir) ) {
+        if( is_null($this->extDir) || empty( $this->extDir ) ) {
             return;
-//            CRM_Core_Error::fatal( "If you want to use extensions, please configure CiviCRM Extensions directory in Administer -> Configure -> Global Settings -> Directories." );
         }
         
         if( is_null( $this->extensions )) {
