@@ -33,7 +33,7 @@
     <th>{ts}Type{/ts}</th>
     <th>{ts}My Role{/ts}</th>
     <th>{ts}Case Manager{/ts}</th>      
-    <th>{if $list EQ 'upcoming'}{ts}Next Sched.{/ts}{else}{ts}Most Recent{/ts}{/if}</th>
+    <th>{if $list EQ 'upcoming'}{ts}Next Sched.{/ts}{elseif $list EQ 'recent'}{ts}Most Recent{/ts}{/if}</th>
 
     <th></th>
   </tr>
