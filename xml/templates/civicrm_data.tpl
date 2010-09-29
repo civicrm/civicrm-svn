@@ -189,7 +189,7 @@ VALUES
    ('currencies_enabled'            , '{ts escape="sql"}List of currencies enabled for this site{/ts}', 0, 1),
    ('event_badge'                   , '{ts escape="sql"}Event Name Badge{/ts}'                   , 0, 1),
    ('campaign_type'                 , '{ts escape="sql"}Campaign Type{/ts}'                      , 0, 1),
-   ('campaign_status'               , '{ts escape="sql"}Campaign Status{/ts}'                    , 0, 1);
+   ('campaign_status'               , '{ts escape="sql"}Campaign Status{/ts}'                    , 0, 1),
    ('system_extensions'             , '{ts escape="sql"}CiviCRM Extensions{/ts}'                 , 0, 1);
 
    
