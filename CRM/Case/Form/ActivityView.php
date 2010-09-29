@@ -59,6 +59,7 @@ class CRM_Case_Form_ActivityView extends CRM_Core_Form
         $activitySubject =  CRM_Core_DAO::getFieldValue( 'CRM_Activity_DAO_Activity', 
                                                          $activityID,
                                                          'subject' );
+        $type       = CRM_Utils_Request::retrieve('type', 'String', CRM_Core_DAO::$_nullObject ) ;
         
         //check for required permissions, CRM-6264 
         if ( $activityID &&
@@ -68,6 +69,7 @@ class CRM_Case_Form_ActivityView extends CRM_Core_Form
         
         $this->assign('contactID', $contactID );
         $this->assign('caseID', $caseID );
+        $this->assign('type', $type );
 
         require_once 'CRM/Case/XMLProcessor/Report.php';
         $xmlProcessor = new CRM_Case_XMLProcessor_Report( );

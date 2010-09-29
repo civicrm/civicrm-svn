@@ -51,7 +51,7 @@ function {/literal}{$list}{literal}viewActivity( activityID, contactID, list ) {
         open:function() {
             cj("#activity-content" + list , this).html("");
             var viewUrl = {/literal}"{crmURL p='civicrm/case/activity/view' h=0 q="snippet=4" }"{literal};
-            cj("#activity-content" + list , this).load( viewUrl + "&cid="+contactID + "&aid=" + activityID);
+            cj("#activity-content" + list , this).load( viewUrl + "&cid="+contactID + "&aid=" + activityID + "&type="+list);
             
         },
 

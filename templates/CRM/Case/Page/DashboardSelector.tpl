@@ -51,7 +51,7 @@
 	</span>
 	<span id="minus{$list}{$row.case_id}_hide">
 	    <a href="#" onclick="hideCaseActivities('{$row.case_id}','{$list}');
-                             return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}open section{/ts}" onload="hideCaseActivities('{$row.case_id}','{$list}');return false;"/></a>
+                             return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}open section{/ts}" onload="hideOnload('{$row.case_id}','{$list}');return false;"/></a>
 	</td>
 
     <td class="crm-case-phone"><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`"}">{$row.sort_name}</a>{if $row.phone}<br /><span class="description">{$row.phone}</span>{/if}<br /><span class="description">{ts}Case ID{/ts}: {$row.case_id}</span></td>
@@ -124,11 +124,15 @@
 var widgetId = '';
 var fullscrn = '';
 cj(document).ready( function( ) {
+
+cj(window).bind("ajaxComplete", function() { 
   cj('div.widget-controls').children('a.fullscreen-icon').each(function(){
      cj(this).click(function(){
         widgetId = cj(this).parents('li').attr('id'); 
      });
   });
+});
+
 });
 
 function {/literal}{$list}{literal}CaseDetails( caseId, contactId, type )
@@ -185,6 +189,14 @@ function hideCaseActivities( caseId , type ) {
     show( type+caseId+'_show', 'table-row' );
     hide( type+caseId+'_hide' );
     hide( 'minus'+type+caseId+'_hide' );
+  }
+}
+
+function hideOnload( caseId, type ) {
+  if (cj('#full-screen-header').css('display') == 'block') {
+    fullscrn = cj('#'+widgetId+'-full-screen');
+    cj('#minus'+type+caseId +'_hide', fullscrn).hide();
+    cj('#'+type+caseId+'_hide', fullscrn).hide();
   }
 }
 
