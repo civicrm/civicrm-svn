@@ -182,6 +182,11 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
      */
     public $_paymentId = null;
     
+    /**
+     * array of participant role custom data
+     */
+    public $_participantRoleIds = array();
+    
     /** 
      * Function to set variables up before form is built 
      *                                                           
@@ -410,6 +415,44 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
                                                                                  'Event' );
         }
         $this->set( 'onlinePendingContributionId', $this->_onlinePendingContributionId );
+        $roleIds = CRM_Event_PseudoConstant::participantRole( );
+                
+        if ( !empty($roleIds) ) { 
+            $query = "
+SELECT civicrm_custom_group.name as name, 
+       civicrm_custom_group.id as id,
+       extends_entity_column_value as value
+  FROM civicrm_custom_group
+ WHERE ( extends_entity_column_value REGEXP '[[:<:]]".implode( '[[:>:]]|[[:<:]]', array_keys($roleIds) )."[[:>:]]' 
+    OR extends_entity_column_value IS NULL )
+   AND extends_entity_column_id = '{$this->_roleCustomDataTypeID}' 
+   AND extends = 'Participant'
+   AND is_active = 1";
+            
+            $dao =& CRM_Core_DAO::executeQuery( $query );
+            while ( $dao->fetch( ) ) {
+                if ( $dao->value ) {
+                    $getRole = explode( CRM_Core_DAO::VALUE_SEPARATOR, $dao->value );
+                    foreach ( $getRole as $r ) {
+                        if ( !$r ) continue;
+                        if ( isset( $this->_participantRoleIds[$r] ) ) {
+                            $this->_participantRoleIds[$r] .= ','.$dao->name;
+                        } else {
+                            $this->_participantRoleIds[$r] = $dao->name;
+                        }
+                    }
+                } else {
+                    if ( isset( $this->_participantRoleIds[0] ) ) {
+                        $this->_participantRoleIds[0] .= ','.$dao->name;
+                    } else {
+                        $this->_participantRoleIds[0] = $dao->name;
+                    }
+                }
+            }
+            $dao->free( );
+        }
+        
+        $this->assign( 'participantRoleIds', $this->_participantRoleIds );
     }
     
     /**
@@ -723,27 +766,9 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
 		
         $roleids = CRM_Event_PseudoConstant::participantRole( );
         
-        foreach ( $roleids as $rolekey => $rolevalue ) {
-            $query = "
-SELECT civicrm_custom_group.name as name, 
-       civicrm_custom_group.id as id
-  FROM civicrm_custom_group
- WHERE extends_entity_column_value LIKE '%{$rolekey}%' 
-   AND extends_entity_column_id LIKE '%{$this->_roleCustomDataTypeID}%'
-   AND is_active = 1";
-           
-         $dao =& CRM_Core_DAO::executeQuery( $query );
-         $customGroupID = null;
-         while ( $dao->fetch( ) ) {
-             if(  $customGroupID ) {
-                 $customGroupID .= ',';
-             }
-             $customGroupID .= $dao->name;
-         } 
-         $roleTypes[] = HTML_QuickForm::createElement( 'checkbox', $rolekey, null, $rolevalue,
-                                                       array( 'onclick' => "showCustomData( 'Participant', {$rolekey}, {$this->_roleCustomDataTypeID}, '{$customGroupID}', '' );"
-                                                              )
-                                                       );
+        foreach ( $roleids as $rolekey => $rolevalue ) {  
+            $roleTypes[] = HTML_QuickForm::createElement( 'checkbox', $rolekey, null, $rolevalue, 
+                                                          array( 'onclick' => "showCustomData( 'Participant', {$rolekey}, {$this->_roleCustomDataTypeID} );") );
         }
     
          $this->addGroup( $roleTypes, 'role_id', ts('Participant Role' ) );
