@@ -332,7 +332,7 @@ ORDER BY parent_id, weight";
                 if ( !$value['attributes']['active'] ) {
                     $class = ', attributes: { "class" : "disabled"} ';
                 }
-                $navigationString .= ' { attributes: { "id" : "node_'.$key.'"}, data: { title:"'. $data. '"' .$class.'}';
+                $navigationString .= ' { "attr": { "id" : "node_'.$key.'"}, "data": { "title":"'. $data. '"' .$class.'}';
             } else {
             	// Home is a special case
                 if ($value['attributes']['name'] != 'Home') {
@@ -365,7 +365,7 @@ ORDER BY parent_id, weight";
     {
         if ( $json ) {
             if ( !empty( $value['child'] ) ) {
-                $navigationString .= ', children : [ ';
+                $navigationString .= ', "children": [ ';
             } else {
                 return $navigationString ;
             }
@@ -379,7 +379,7 @@ ORDER BY parent_id, weight";
                     if ( !$val['attributes']['active'] ) {
                         $class = ', attributes: { "class" : "disabled"} ';
                     }                      
-                    $navigationString .= ' { attributes: { "id" : "node_'.$k.'"}, data: { title:"'. $data. '"' .$class.'}';
+                    $navigationString .= ' { "attr": { "id" : "node_'.$k.'"}, "data": { "title":"'. $data. '"' .$class.'}';
                     self::recurseNavigation($val, $navigationString, $json, $skipMenuItems );
                     if ( $appendComma ) {
                         $navigationString .= ' },';
