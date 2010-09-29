@@ -297,7 +297,7 @@
     }
 
   
-    function showCustomData( type, subType, subName, groupID, cgCount, isMultiple )
+    function showCustomData( type, subType, subName )
     {
         var dataUrl = {/literal}"{crmURL p=$urlPath h=0 q='snippet=4&type='}"{literal} + type;
        	
@@ -389,26 +389,12 @@
        {/if}
  
        {literal}
-       if ( !cgCount ) {
-           cgCount = 1;
-           var prevCount = 1;		
-       } else if ( cgCount >= 1 ) {
-           var prevCount = cgCount;	
-           cgCount++;
-       }
-  
-       dataUrl = dataUrl + '&cgcount=' + cgCount;
-  
-       if ( isMultiple ) {
-           var fname = '#custom_group_' + groupID + '_' + prevCount;
-           cj("#add-more-link-"+prevCount).hide();
-       } else {
+       
            if ( subName && subName != 'null' ) {		
                var fname = '#customData' + subName;
            } else {
                var fname = '#customData';
            }		
-       }
   
        var response = cj.ajax({url: dataUrl,
  	 		  async: false
@@ -426,9 +412,9 @@
 	cj(function() {				
 		{/literal}
 		buildCustomData( '{$customDataType}', 'null', 'null' );
-		{foreach from = $roleID item = item key=key}
+		{foreach from=$roleID item=item key=key}
 		   {if $item}
-		       showCustomData( '{$customDataType}', {$item}, {$roleCustomDataTypeID}, '{$customGroupID}' );
+		       showCustomData( '{$customDataType}', {$item}, {$roleCustomDataTypeID} );
 		   {/if}
 		{/foreach}
 		{if $eventID}

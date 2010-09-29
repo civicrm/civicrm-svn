@@ -773,7 +773,7 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
     
          $this->addGroup( $roleTypes, 'role_id', ts('Participant Role' ) );
          $this->addRule( 'role_id', ts('Role is required'), 'required' );
-         $this->assign( 'customGroupID', $customGroupID ); 
+         
         // CRM-4395
         $checkCancelledJs = array('onchange' => "return sendNotification( );");
         $confirmJS = null;
