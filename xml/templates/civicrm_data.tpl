@@ -188,6 +188,7 @@ VALUES
    ('tag_used_for'                  , '{ts escape="sql"}Tag Used For{/ts}'                       , 0, 1),
    ('currencies_enabled'            , '{ts escape="sql"}List of currencies enabled for this site{/ts}', 0, 1),
    ('event_badge'                   , '{ts escape="sql"}Event Name Badge{/ts}'                   , 0, 1),
+   ('note_privacy'                  , '{ts escape="sql"}Privacy levels for notes{/ts}'           , 0, 1),
    ('campaign_type'                 , '{ts escape="sql"}Campaign Type{/ts}'                      , 0, 1),
    ('campaign_status'               , '{ts escape="sql"}Campaign Status{/ts}'                    , 0, 1),
    ('system_extensions'             , '{ts escape="sql"}CiviCRM Extensions{/ts}'                 , 0, 1);
@@ -631,7 +632,7 @@ VALUES
 
 -- note privacy levels
   (@option_group_id_notePrivacy, '{ts escape="sql"}None{/ts}'           , 0, '',  NULL, 0, 1, 1, NULL, 0, 1, 1, NULL, NULL),
-  (@option_group_id_notePrivacy, '{ts escape="sql"}Author Only{/ts}'    , 1, '',  NULL, 0, 0, 2, NULL, 0, 1, 1, NULL, NULL);
+  (@option_group_id_notePrivacy, '{ts escape="sql"}Author Only{/ts}'    , 1, '',  NULL, 0, 0, 2, NULL, 0, 1, 1, NULL, NULL),
 
 -- Compaign Types
   (@option_group_id_campaignType, '{ts escape="sql"}Direct Mail{/ts}', 1, 'Direct Mail',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
