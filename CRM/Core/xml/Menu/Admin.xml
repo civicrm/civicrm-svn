@@ -65,6 +65,18 @@
      <weight>23</weight>
   </item>
   <item>
+     <path>civicrm/admin/uf/group/add</path>
+     <title>New CiviCRM Profile</title>
+     <page_callback>CRM_UF_Form_Group</page_callback>
+     <weight>24</weight>
+  </item>
+  <item>
+     <path>civicrm/admin/uf/group/update</path>
+     <title>Profile Settings</title>
+     <page_callback>CRM_UF_Form_Group</page_callback>
+     <weight>25</weight>
+  </item>
+  <item>
      <path>civicrm/admin/uf/group/setting</path>
      <title>AdditionalInfo Form</title>
      <page_callback>CRM_UF_Form_AdvanceSetting</page_callback>
