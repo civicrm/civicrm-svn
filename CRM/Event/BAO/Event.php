@@ -287,6 +287,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
      * Function to get current/future Events 
      *
      * @param $all boolean true if events all are required else returns current and future events
+     * @param $id  int     id of a specific event to return
      *
      * @static
      */
@@ -294,12 +295,11 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
     {
         $query = "SELECT `id`, `title`, `start_date` FROM `civicrm_event`";
         
-        if ( !$all ) {
-            $endDate = date( 'YmdHis' );
-            $query .= " WHERE `end_date` >= {$endDate} OR end_date IS NULL";
-        }
         if ( $id ) {
             $query .= " WHERE `id` = {$id}";
+        } elseif ( !$all ) {
+            $endDate = date( 'YmdHis' );
+            $query .= " WHERE `end_date` >= {$endDate} OR end_date IS NULL";
         }
 
         $query .= " ORDER BY title asc";
