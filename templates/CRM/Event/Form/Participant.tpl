@@ -412,11 +412,15 @@
 	cj(function() {				
 		{/literal}
 		buildCustomData( '{$customDataType}', 'null', 'null' );
-		{foreach from=$roleID item=item key=key}
-		   {if $item}
-		       showCustomData( '{$customDataType}', {$item}, {$roleCustomDataTypeID} );
-		   {/if}
-		{/foreach}
+		{literal}
+        for ( var i in roleGroupMapper ) {
+            if ( ( i != 0 ) && document.getElementById( "role_id["+i+"]" ).checked == true ) {
+               {/literal}
+               showCustomData( '{$customDataType}', i, {$roleCustomDataTypeID} );
+               {literal}  
+            }
+        }
+        {/literal}
 		{if $eventID}
 		    buildCustomData( '{$customDataType}', {$eventID}, {$eventNameCustomDataTypeID} );
 		{/if}
