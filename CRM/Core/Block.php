@@ -360,20 +360,6 @@ class CRM_Core_Block {
                                                                'ref'   => 'new-email',
                                                                'title' => ts('Email') ) ));
                                     
-            if ( CRM_Core_Permission::check('administer CiviCampaign') &&
-                 in_array( 'CiviCampaign', $config->enableComponents ) ) {
-                $shortCuts = 
-                    array_merge($shortCuts, array( array( 'path'  => 'civicrm/campaign/add',
-                                                          'query' => "reset=1&action=add",
-                                                          'ref'   => 'new-campaign',
-                                                          'title' => ts('Campaign') ),
-                                                   array( 'path'  => 'civicrm/survey/add',
-                                                          'query' => "reset=1&action=add",
-                                                          'ref'   => 'new-survey',
-                                                          'title' => ts('Survey') )
-                                                   ));
-            }
-
             if ( CRM_Core_Permission::check('edit groups') ) {
                 $shortCuts = array_merge($shortCuts, array( array( 'path'  => 'civicrm/group/add',
                                                                    'query' => 'reset=1',

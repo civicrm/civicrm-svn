@@ -190,7 +190,7 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         
         // add campaign status
         $campaignStatus = CRM_Campaign_PseudoConstant::campaignStatus();
-        $this->addElement('select', 'status_id', ts('Compaign Status'), array('' => ts( '- select -' )) + $campaignStatus );
+        $this->addElement('select', 'status_id', ts('Campaign Status'), array('' => ts( '- select -' )) + $campaignStatus );
            
         // add External Identifire Element
         $this->add('text', 'external_identifier', ts('External Id'), 

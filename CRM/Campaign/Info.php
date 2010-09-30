@@ -101,5 +101,24 @@ class CRM_Campaign_Info extends CRM_Core_Component_Info
     {
         return null;
     }
+
+    // add shortcut to Create New
+    public function creatNewShortcut( &$shortCuts ) {
+        require_once 'CRM/Core/Permission.php';
+        if ( CRM_Core_Permission::check('manage campaign') ||
+             CRM_Core_Permission::check('administer CiviCampaign') ) {
+            $shortCuts = 
+                array_merge($shortCuts, array( array( 'path'  => 'civicrm/campaign/add',
+                                                      'query' => "reset=1&action=add",
+                                                      'ref'   => 'new-campaign',
+                                                      'title' => ts('Campaign') ),
+                                               array( 'path'  => 'civicrm/survey/add',
+                                                      'query' => "reset=1&action=add",
+                                                      'ref'   => 'new-survey',
+                                                      'title' => ts('Survey') )
+                                               ));
+        }
+
+    }
     
 }
