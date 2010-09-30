@@ -277,12 +277,13 @@
 			url: dataUrl,
 			async: false,
 			global: false,
-			success: function ( html ) {
+            dataType: "json",
+			success: function ( response ) {
                      
-			    if ( html ) {
+			    if ( response.role ) {
                     for ( var i in roleGroupMapper ) {
                         if ( i != 0 ) {
-                            if ( i == html ) {
+                            if ( i == response.role ) {
                                 document.getElementById("role_id[" +i+ "]"  ).checked = true;
                             } else {
                             var temp = "role_id[" + i + "]";
