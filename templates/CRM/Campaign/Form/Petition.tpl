@@ -57,19 +57,24 @@
 	   <div class="description">{ts}Select the Activity Type.{/ts}</div></td>
        </tr>
        <tr class="crm-campaign-survey-form-block-profile_id">
+           <td class="label">{$form.contact_profile_id.label}</td>
+           <td>{$form.contact_profile_id.html}
+	   <div class="description">{ts}Select the Contact Profile for this petition.{/ts}</div></td>
+       </tr>	
+       <tr class="crm-campaign-survey-form-block-profile_id">
            <td class="label">{$form.profile_id.label}</td>
            <td>{$form.profile_id.html}
-	   <div class="description">{ts}Select the Profile for petition.{/ts}</div></td>
+	   <div class="description">{ts}Select the Activity Profile for this petition.{/ts}</div></td>
        </tr>	
        <tr class="crm-campaign-survey-form-block-is_active">
            <td class="label">{$form.is_active.label}</td>
            <td>{$form.is_active.html}
-	   <div class="description">{ts}Is this petition Active?.{/ts}</div></td>
+	   <div class="description">{ts}Is this petition active?{/ts}</div></td>
        </tr>
        <tr class="crm-campaign-survey-form-block-is_default">
            <td class="label">{$form.is_default.label}</td>
            <td>{$form.is_default.html}
-	   <div class="description">{ts}Is this petition default?.{/ts}</div></td>
+	   <div class="description">{ts}Is this the default petition?{/ts}</div></td>
        </tr>
       </table>
 {/if}

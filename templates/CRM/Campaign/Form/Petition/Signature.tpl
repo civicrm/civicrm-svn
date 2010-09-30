@@ -47,18 +47,21 @@ Please check your email inbox for the confirmation email. If you don't find it, 
 <p>{ts}Thank you for your support.{/ts}</p>
 {include file="CRM/Campaign/Page/Petition/SocialNetwork.tpl" petition_id=$survey_id}
 {else}
+    <div class="crm-submit-buttons">
+    	{include file="CRM/common/formButtons.tpl" location="top"}
+    </div>
 
-		<div class="crm-group">
-			{include file="CRM/Campaign/Form/Petition/Block.tpl" fields=$petitionContactProfile} 	
-		</div>
-		
-		<div class="crm-group">
-			{include file="CRM/Campaign/Form/Petition/Block.tpl" fields=$petitionActivityProfile} 	
-		</div>
-		
-		<div class="crm-submit-buttons">
-			{include file="CRM/common/formButtons.tpl" location="top"}
-		</div>
+	<div class="crm-group">
+		{include file="CRM/Campaign/Form/Petition/Block.tpl" fields=$petitionContactProfile} 	
 	</div>
-
+	
+	<div class="crm-group">
+		{include file="CRM/Campaign/Form/Petition/Block.tpl" fields=$petitionActivityProfile} 	
+	</div>
+	
+	<div class="crm-submit-buttons">
+		{include file="CRM/common/formButtons.tpl" location="bottom"}
+	</div>
 {/if}
+
+</div>
