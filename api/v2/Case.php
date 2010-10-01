@@ -38,6 +38,7 @@
 
 require_once 'api/v2/utils.php';
 require_once 'CRM/Case/BAO/Case.php';
+require_once 'CRM/Case/PseudoConstant.php';
 
 /**
  * Open a new case, add client and manager roles, and add standard timeline
@@ -46,11 +47,11 @@ require_once 'CRM/Case/BAO/Case.php';
  *                  'case_type_id'     => int OR 'case_type' => str (provide one or the other)
  *                  'contact_id'       => int // case client
  *                  'creator_id'       => int // case manager
+ *                  'subject'          => str
  *                  'medium_id'        => int // see civicrm option values for possibilities
  *
  *                //OPTIONAL
  *                  'status_id'        => int // defaults to 1 "ongoing"
- *                  'subject'          => str
  *                  'location'         => str
  *                  'start_date'       => str datestamp // defaults to: date('YmdHis')
  *                  'duration'         => int // in minutes
@@ -66,7 +67,7 @@ function civicrm_case_create( &$params )
     
     //check parameters
     $errors = _civicrm_case_check_params( $params, 'create' ) ;
-    
+       
     if ( $errors ) 
         return $errors;
     
@@ -85,6 +86,7 @@ function civicrm_case_create( &$params )
                         'creator_id'    => $params['creator_id'],
                         'status_id'     => $params['status_id'],
                         'start_date'    => $params['start_date'],
+                        'subject'       => $params['subject']
                         );
     
     $case =& CRM_Case_BAO_Case::create( $newParams );
@@ -326,8 +328,8 @@ function civicrm_case_update( &$params ) {
         return $errors;
     }
     
-    $dao = new CRM_Case_BAO_Case( );
-    $dao->id = $params['id'];
+    $dao     = new CRM_Case_BAO_Case( );
+    $dao->id = $params['case_id'];
     
     $dao->copyValues( $params );
     $dao->save( );
@@ -422,18 +424,20 @@ function _civicrm_case_format_params( &$params, $mode )
 SELECT  ov.value
   FROM  civicrm_option_value ov 
   JOIN  civicrm_option_group og ON og.id = ov.option_group_id
- WHERE  ov.name = {$params['case_type']} AND og.name = 'case_type'";
+ WHERE  ov.label = %1 AND og.name = 'case_type'";
             
-		    $params['case_type_id'] = CRM_Core_DAO::singleValueQuery( $sql );
+            $values = array( 1 => array( $params['case_type'], 'String' ) );
+            $params['case_type_id'] = CRM_Core_DAO::singleValueQuery( $sql, $values );
 	    } else if( !$params['case_type'] ) {
             // figure out case type, if not supplied
 		    $sql = "
 SELECT  ov.name
   FROM  civicrm_option_value ov
   JOIN  civicrm_option_group og ON og.id = ov.option_group_id
- WHERE  ov.value = {$params['case_type_id']} AND og.name = 'case_type'";
-            
-		    $params['case_type'] = CRM_Core_DAO::singleValueQuery( $sql );
+ WHERE  ov.value = %1 AND og.name = 'case_type'";
+           
+            $values = array( 1 => array( $params['case_type_id'], 'Integer' ) );
+            $params['case_type'] = CRM_Core_DAO::singleValueQuery( $sql, $values );
 	    }
 		break;
 		
@@ -449,7 +453,7 @@ SELECT  ov.name
 /**
  * Internal function to check for valid parameters
  */
-function _civicrm_case_check_params( $params, $mode = NULL ) {
+function _civicrm_case_check_params( &$params, $mode = NULL ) {
     
     // return error if we do not get any params
     if( is_null( $params ) || !is_array( $params ) || empty( $params ) ) {
@@ -465,8 +469,9 @@ function _civicrm_case_check_params( $params, $mode = NULL ) {
         
         $required = array( 'contact_id' => 'num',
                            'status_id'  => 'num',
-                           'start_date' => 'num',
                            'medium_id'  => 'num',
+                           'creator_id' => 'num',
+                           'subject'    => 'str'
                            );
         
         if( !$params['case_type'] ) $required['case_type_id'] = 'num';
@@ -494,9 +499,39 @@ function _civicrm_case_check_params( $params, $mode = NULL ) {
 	foreach( $required as $req => $type ){
         
 		if( !$params[$req] )
-			return civicrm_create_error( ts( 'Missing required parameter: %1.', array( 1=> $req ) ) );
+			return civicrm_create_error( ts( 'Missing required parameter: %1.', array( 1 => $req ) ) );
 		
 		if( $type == 'num' && !is_numeric( $params[$req] ) )
-			return civicrm_create_error( ts( 'Invalid parameter: %1. Must provide a numeric value.', array( 1=> $req ) ) );
+			return civicrm_create_error( ts( 'Invalid parameter: %1. Must provide a numeric value.', array( 1 => $req ) ) );
+
+        if( $type == 'str' && !is_string( $params[$req] ) )
+			return civicrm_create_error( ts( 'Invalid parameter: %1. Must provide a string.', array( 1 => $req ) ) );
 	}
+    
+    $caseTypes = CRM_Case_PseudoConstant::caseType( );
+    if ( CRM_Utils_Array::value( 'case_type_id', $params ) ) {
+        if ( !array_key_exists( $params['case_type_id'], $caseTypes ) ) {
+            return civicrm_create_error( ts( 'Invalid Case Type Id' ) );
+        }
+        
+        $sep = CRM_Case_BAO_Case::VALUE_SEPARATOR;
+        $params['case_type']    = $caseTypes[$params['case_type_id']];
+        $params['case_type_id'] = $sep . $params['case_type_id'] . $sep;
+    } else if ( CRM_Utils_Array::value( 'case_type', $params ) && !in_array( $params['case_type'], $caseTypes ) ) {
+        return civicrm_create_error( ts( 'Invalid Case Type' ) );
+    }
+
+    $caseStatusIds = CRM_Case_PseudoConstant::caseStatus( );
+    if ( !in_array( 'status_id', $params ) ) {
+        return civicrm_create_error( ts( 'Invalid Case Status Id' ) );
+    }
+
+    $contactIds = array( 'creator' => CRM_Utils_Array::value( 'creator_id', $params ),
+                         'contact' => CRM_Utils_Array::value( 'contact_id', $params ) );
+    foreach ( $contactIds as $key => $value ) {
+        if ( $value &&
+             !CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $value, 'id' ) ) {
+            return civicrm_create_error( ts( 'Invalid %1 Id', array( 1 => ucfirst( $key ) ) ) );
+        }
+    }
 }
