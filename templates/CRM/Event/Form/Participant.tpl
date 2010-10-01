@@ -286,7 +286,6 @@
                             if ( i == response.role ) {
                                 document.getElementById("role_id[" +i+ "]"  ).checked = true;
                             } else {
-                            var temp = "role_id[" + i + "]";
                                 document.getElementById("role_id[" +i+ "]"  ).checked = false;
                             }  
                             showCustomData( 'Participant', i, {/literal} {$roleCustomDataTypeID} {literal} );
