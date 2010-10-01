@@ -54,7 +54,7 @@ packages/jquery/plugins/checkboxselect.js
 
 packages/jquery/plugins/jquery.textarearesizer.js
 
-packages/jquery/plugins/jquery.progressbar.js
+packages/jquery/jquery-ui-1.8.5/development-bundle/ui/jquery.ui.progressbar.js
 
 packages/jquery/plugins/jquery.form.js
 

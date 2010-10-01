@@ -60,7 +60,7 @@
     <script type="text/javascript" src="{$config->resourceBase}packages/ckeditor/ckeditor.js"></script>
 {/if}
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.textarearesizer.js"></script>
-<script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.progressbar.js"></script>
+<script type="text/javascript" src="{$config->resourceBase}packages/jquery/jquery-ui-1.8.5/development-bundle/ui/jquery.ui.progressbar.js"></script>
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.form.js"></script>
 
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.tokeninput.js"></script>
