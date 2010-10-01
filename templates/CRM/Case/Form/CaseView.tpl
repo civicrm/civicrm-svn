@@ -822,7 +822,7 @@ function addTags() {
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
  
-  <table id="activities-selector"  class="pagerDisplay">
+  <table id="activities-selector"  class="nestedActivitySelector">
   <thead><tr class="columnheader">
   <th class='crm-case-activities-date'>{ts}Date{/ts}</th>
   <th class='crm-case-activities-subject'>{ts}Subject{/ts}</th>
@@ -934,6 +934,7 @@ function buildCaseActivities( filterSearch ) {
 		"aoColumns"  : columns,
 	    	"bProcessing": true,
 		"sPaginationType": "full_numbers",
+		"sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',
 	   	"bServerSide": true,
 	   	"sAjaxSource": sourceUrl,
 		"fnDrawCallback": function() { setSelectorClass(); },
