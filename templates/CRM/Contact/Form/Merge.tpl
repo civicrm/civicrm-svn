@@ -44,8 +44,8 @@
           <td>CMS User</td>
           {if $otherUfId}
           <td>
-	       {if $userRecordUrl}
-	           <a title="View user record"  class="user-record-link" href="{$userRecordUrl}">{$ufFramework} User: {$otherUfName}; user id: {$otherUfId}</a>
+	       {if $otherRecordUrl}
+	           <a title="View user record"  class="user-record-link" href="{$otherRecordUrl}">{$ufFramework} User: {$otherUfName}; user id: {$otherUfId}</a>
 	       {else}
 	           {$ufFramework} User: {$otherUfName}; user id: {$otherUfId}
 	       {/if}
@@ -56,8 +56,8 @@
 	  <td>&nbsp;</td>
 	  {if $mainUfId} 
 	  <td>
-	      {if $userRecordUrl}
-	          <a title="View user record"  class="user-record-link" href="{$userRecordUrl}">{$ufFramework} User: {$mainUfName}; &nbsp;user id: {$mainUfId}</a>
+	      {if $mainRecordUrl}
+	          <a title="View user record"  class="user-record-link" href="{$mainRecordUrl}">{$ufFramework} User: {$mainUfName}; &nbsp;user id: {$mainUfId}</a>
               {else}
 	          {$ufFramework} User: {$mainUfName}; user id: {$mainUfId}
 	      {/if}

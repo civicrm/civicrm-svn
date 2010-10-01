@@ -88,39 +88,39 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         if ( $mainUfId ) {
            
             if ( $config->userFramework == 'Drupal' ) {
-                $user = user_load( $mainUfId );
+                $mainUser = user_load( $mainUfId );
                 if ( $viewUser ) {
-                    $userRecordUrl = CRM_Utils_System::url( 'user/' . $mainUfId );
+                    $mainRecordUrl = CRM_Utils_System::url( 'user/' . $mainUfId );
                 }
             } else if ( $config->userFramework == 'Joomla' ) {
-                $user = JFactory::getUser( $mainUfId );
-                $userRecordUrl = $config->userFrameworkBaseURL . 
+                $mainUser = JFactory::getUser( $mainUfId );
+                $mainRecordUrl = $config->userFrameworkBaseURL . 
                     'index2.php?option=com_users&view=user&task=edit&cid[]=' . $mainUfId;
             }
         }
         
-        $this->assign( 'userRecordUrl', $userRecordUrl );
+        $this->assign( 'mainRecordUrl', $mainRecordUrl );
         $this->assign( 'mainUfId', $mainUfId );
-        $this->assign( 'mainUfName', $user->name );
+        $this->assign( 'mainUfName', $mainUser->name );
         
         // get user info of other contact.
         $otherUfId = CRM_Core_BAO_UFMatch::getUFId( $oid );
         if ( $otherUfId ) {
             if ( $config->userFramework == 'Drupal' ) {
-                $user = user_load( $otherUfId );
+                $otherUser = user_load( $otherUfId );
                 if ( $viewUser ) {
-                    $userRecordUrl = CRM_Utils_System::url( 'user/' . $otherUfId );
+                    $otherRecordUrl = CRM_Utils_System::url( 'user/' . $otherUfId );
                 }
             } else if ( $config->userFramework == 'Joomla' ) {
-                $user = JFactory::getUser( $otherUfId );
-                $userRecordUrl = $config->userFrameworkBaseURL . 
+                $otherUser = JFactory::getUser( $otherUfId );
+                $otherRecordUrl = $config->userFrameworkBaseURL . 
                     'index2.php?option=com_users&view=user&task=edit&cid[]=' . $otherUfId;
             }
         }
         
-        $this->assign( 'userRecordUrl', $userRecordUrl );
+        $this->assign( 'otherRecordUrl', $otherRecordUrl );
         $this->assign( 'otherUfId', $otherUfId );
-        $this->assign( 'otherUfName', $user->name );
+        $this->assign( 'otherUfName', $otherUser->name );
         
         $cmsUser = false;
         if ( $mainUfId || $otherUfId ) {
