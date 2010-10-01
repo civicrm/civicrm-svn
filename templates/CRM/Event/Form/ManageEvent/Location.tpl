@@ -44,7 +44,7 @@
 				</td>
 				{foreach from=$form.location_option key=key item =item}
 					{if $key|is_numeric}
-						<td class="fields"><strong>{$item.html}</strong></td>
+						<td class="value"><strong>{$item.html}</strong></td>
 				    {/if}
                 {/foreach} 
 			 </tr>
@@ -52,7 +52,7 @@
 				<td class="labels">
 					{$form.loc_event_id.label}
 				</td>
-				<td class="fields" colspan="2">
+				<td class="value" colspan="2">
 					{$form.loc_event_id.html|crmReplace:class:huge}
 				</td>
 			</tr>
