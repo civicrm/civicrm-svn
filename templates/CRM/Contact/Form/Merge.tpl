@@ -31,6 +31,7 @@
 <div class="action-link">
     	<a href="{crmURL q="reset=1&cid=$other_cid&oid=$main_cid"}">&raquo; {ts}Flip between original and duplicate contacts.{/ts}</a>
 </div>
+
 <table>
   <tr class="columnheader">
     <th>&nbsp;</th>
@@ -38,7 +39,34 @@
     <th>{ts}Mark All{/ts}<br />=={$form.toggleSelect.html} ==&gt;</th>
     <th><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$main_cid"}">{$main_name}</a></th>
   </tr>
-
+  {if $user}
+      <tr>
+          <td>CMS User</td>
+          {if $otherUfId}
+          <td>
+	       {if $userRecordUrl}
+	           <a title="View user record"  class="user-record-link" href="{$userRecordUrl}">{$ufFramework} User: {$otherUfName}; user id: {$otherUfId}</a>
+	       {else}
+	           {$ufFramework} User: {$otherUfName}; user id: {$otherUfId}
+	       {/if}
+	   </td>
+          {else}
+	  <td>&nbsp;</td>
+	  {/if}
+	  <td>&nbsp;</td>
+	  {if $mainUfId} 
+	  <td>
+	      {if $userRecordUrl}
+	          <a title="View user record"  class="user-record-link" href="{$userRecordUrl}">{$ufFramework} User: {$mainUfName}; &nbsp;user id: {$mainUfId}</a>
+              {else}
+	          {$ufFramework} User: {$mainUfName}; user id: {$mainUfId}
+	      {/if}
+          </td>
+	  {else}
+	  <td>&nbsp;</td>
+	  {/if}
+      </tr>
+  {/if}
   {foreach from=$rows item=row key=field}
      <tr class="{cycle values="odd-row,even-row"}">
         <td>{$row.title}</td>
@@ -85,6 +113,9 @@
 </div>
 <div class="form-item">
     <p><strong>{ts}WARNING: The duplicate contact record WILL BE DELETED after the merge is complete.{/ts}</strong></strong></p>
+    {if $user}
+      <p><strong>{ts}There are Drupal user accounts associated with both the original and duplicate contacts. If you continue with the merge, the user record associated with the duplicate contact will not be deleted, but will be un-linked from the associated contact record (which will be deleted). If that user logs in again, a new contact record will be created for them.{/ts}</strong></strong></p>
+    {/if}
 </div>
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>

@@ -80,6 +80,56 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
             CRM_Utils_System::permissionDenied( );
         }
         
+        // get user info of main contact.
+        $config = CRM_Core_Config::singleton( );
+        require_once 'CRM/Core/Permission.php';
+        $viewUser = CRM_Core_Permission::check('access user profiles');
+        $mainUfId = CRM_Core_BAO_UFMatch::getUFId( $cid );
+        if ( $mainUfId ) {
+           
+            if ( $config->userFramework == 'Drupal' ) {
+                $user = user_load( $mainUfId );
+                if ( $viewUser ) {
+                    $userRecordUrl = CRM_Utils_System::url( 'user/' . $mainUfId );
+                }
+            } else if ( $config->userFramework == 'Joomla' ) {
+                $user = JFactory::getUser( $mainUfId );
+                $userRecordUrl = $config->userFrameworkBaseURL . 
+                    'index2.php?option=com_users&view=user&task=edit&cid[]=' . $mainUfId;
+            }
+        }
+        
+        $this->assign( 'userRecordUrl', $userRecordUrl );
+        $this->assign( 'mainUfId', $mainUfId );
+        $this->assign( 'mainUfName', $user->name );
+        
+        // get user info of other contact.
+        $otherUfId = CRM_Core_BAO_UFMatch::getUFId( $oid );
+        if ( $otherUfId ) {
+            if ( $config->userFramework == 'Drupal' ) {
+                $user = user_load( $otherUfId );
+                if ( $viewUser ) {
+                    $userRecordUrl = CRM_Utils_System::url( 'user/' . $otherUfId );
+                }
+            } else if ( $config->userFramework == 'Joomla' ) {
+                $user = JFactory::getUser( $otherUfId );
+                $userRecordUrl = $config->userFrameworkBaseURL . 
+                    'index2.php?option=com_users&view=user&task=edit&cid[]=' . $otherUfId;
+            }
+        }
+        
+        $this->assign( 'userRecordUrl', $userRecordUrl );
+        $this->assign( 'otherUfId', $otherUfId );
+        $this->assign( 'otherUfName', $user->name );
+        
+        $cmsUser = false;
+        if ( $mainUfId || $otherUfId ) {
+            $cmsUser = true;  
+        }
+        
+        $this->assign( 'user', $cmsUser );
+        $this->assign( 'ufFramework', $config->userFramework );
+        
         $session = CRM_Core_Session::singleton( );
         
         // context fixed.
