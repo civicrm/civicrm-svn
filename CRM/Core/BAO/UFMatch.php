@@ -173,7 +173,8 @@ WHERE     openid = %1";
              
             $otherRecent = array( 'imageUrl'  => $contactImageUrl,
                                   'subtype'   => $contactSubtype,
-                                  'editUrl'   => CRM_Utils_System::url( 'civicrm/contact/add', "reset=1&action=update&cid={$ufmatch->contact_id}" )
+                                  'editUrl'   => CRM_Utils_System::url( 'civicrm/contact/add', "reset=1&action=update&cid={$ufmatch->contact_id}" ),
+                                  'usedFor'   => 'Contact'
                                   );
            
             CRM_Utils_Recent::add( $displayName,
