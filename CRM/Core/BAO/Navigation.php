@@ -322,10 +322,11 @@ ORDER BY parent_id, weight";
         
         //skip children menu item if user don't have access to parent menu item
         $skipMenuItems = array( );
-        foreach( $navigations as $key => $value ) {
+        foreach( $navigations as $key => $value ) { 
             if ( $json ) {
                 if ( $navigationString ) {
                     $navigationString .= '},';
+                   
                 }
                 $data = $value['attributes']['label'];
                 $class = '';
@@ -610,7 +611,7 @@ ORDER BY parent_id, weight";
         }
         return $navigation;
     }
-
+    
     /**
      * Reset navigation for all contacts
      */
@@ -618,11 +619,11 @@ ORDER BY parent_id, weight";
     {
         $query = "UPDATE civicrm_preferences SET navigation = NULL WHERE contact_id IS NOT NULL";
         CRM_Core_DAO::executeQuery( $query );
-
+        
         require_once 'CRM/Core/BAO/Cache.php';
         CRM_Core_BAO_Cache::deleteGroup( 'navigation' );
     }          
-
+    
     /**
      * Function to process navigation
      *
@@ -631,169 +632,134 @@ ORDER BY parent_id, weight";
      * @return void
      * @static
      */
-     static function processNavigation( &$params ) 
-     {
-         $nodeID      = (int)str_replace("node_","",$params['id']);
-         $referenceID = (int)str_replace("node_","",$params['ref_id']);
-         $moveType    = $params['move_type'];
-         $type        = $params['type'];
-         $label       = $params['data'];
-         
-         switch ( $type ) {
-             case "move":
-                self::processMove( $nodeID, $referenceID, $moveType );
-                break;
-             case "rename":
-                self::processRename( $nodeID, $label );
-                break;
-             case "delete":
-                self::processDelete( $nodeID );
-                break;
-         }
-         
-         //reset navigation menus
-         self::resetNavigation( );
-         CRM_Utils_System::civiExit( );
-     }
-     
-     /**
-      * Function to process move action
-      */
-      static function processMove( $nodeID, $referenceID, $moveType ) 
-      {
-          //check if it's a valid move
-          if ( !in_array($moveType, array("after", "before", "inside") ) ) {
-              return false;    
-          }
-          
-          // get the details of reference node
-          $referenInfo = self::getNavigationInfo( $referenceID );
-
-          // determine new parent and weight
-          if ( $moveType == "inside" ) {
-              $newParentID = $referenceID;
-              $newWeight   = 1;
-          } else {
-              $newParentID =  $referenInfo['parent_id'];
-              if ( $moveType == "before" )  {
-                  $newWeight = $referenInfo['weight'];    
-              } else if ( $moveType == "after" ) {
-                  $newWeight = $referenInfo['weight'] + 1; 
-              }    
-          }
-          
-          // get the details of current node
-          $nodeInfo = self::getNavigationInfo( $nodeID ); 
-          $oldParentID  = $nodeInfo['parent_id'];
-          $oldWeight    = $nodeInfo['weight'];
-          
-          $oldParentClause = " parent_id = {$oldParentID}";
-          // if no parent means these are top menus
-          if ( !$oldParentID ) {
-              $oldParentClause = " parent_id IS NULL";
-          }
-          
-          $newParentClause = " parent_id = {$newParentID}";
-          if ( !$newParentID ) {
-              $newParentClause = " parent_id IS NULL";
-              $newParentID = 'NULL';
-          }
-          
-          // since we need to do multiple updates lets build sql array and then fire all with transaction
-          $sql = array( );
-          
-          // reorder was made, since parent are same
-          if ( $oldParentID == $newParentID ) {
-              if ( $newWeight > $oldWeight ) {
-                  $newWeight = $newWeight - 1;
-                  $sql[] = "UPDATE civicrm_navigation SET weight = weight - 1 
-                            WHERE {$oldParentClause}  AND weight BETWEEN {$oldWeight} + 1 AND {$newWeight}";
-              }
-              
-              if ( $newWeight < $oldWeight ) {
-                  $sql[] = "UPDATE civicrm_navigation SET weight = weight + 1 
-                            WHERE {$oldParentClause} AND weight BETWEEN {$newWeight} AND {$oldWeight} - 1";
-              }
-          } else {
-              // 1. fix old parent (move siblings up)                  
-              $sql[] = "UPDATE civicrm_navigation SET weight = weight - 1 
-                        WHERE {$oldParentClause} AND weight > {$oldWeight}";
-              
-              // 2. set new parent (move sibling down)
-              $weightOperator = '>';
-              if ( $moveType != "after" ) {
-                  $weightOperator = '>=';
-              }
-              
-              $sql[] = "UPDATE civicrm_navigation SET weight = weight + 1 
-                        WHERE {$newParentClause} AND weight {$weightOperator} $newWeight";
-          }
-          
-          // finally set the weight of current node
-          $sql[] = "UPDATE civicrm_navigation SET weight = {$newWeight}, parent_id = {$newParentID} WHERE id = {$nodeID}";
-          
-          // now execute all the sql's
-          require_once 'CRM/Core/Transaction.php';
-          $transaction = new CRM_Core_Transaction( );
-          
-          foreach ( $sql as $query ) {
-              CRM_Core_DAO::executeQuery( $query );
-          }
-          
-          $transaction->commit( );
-      }
-      
-      /**
-       *  Function to process rename action for tree
-       *
-       */
-       static function processRename( $nodeID, $label ) 
-       {
-           CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_Navigation', $nodeID, 'label', $label );
-       }
-
-      /**
-       *  Function to process delete action for tree
-       *
-       */
-       static function processDelete( $nodeID ) 
-       {
-           $query = "DELETE FROM civicrm_navigation WHERE id = {$nodeID}";
-           CRM_Core_DAO::executeQuery( $query );
-       }
-       
-      /**
-      * Function to get the info on navigation item
-      * 
-      * @param int $navigationID  navigation id
-      *
-      * @return array associated array
-      * @static
-      */
-      static function getNavigationInfo( $navigationID ) 
-      {
-          $query  = "SELECT parent_id, weight FROM civicrm_navigation WHERE id = %1";
-          $params = array( $navigationID, 'Integer' );
-          $dao =& CRM_Core_DAO::executeQuery( $query, array( 1 => $params ) );
-          $dao->fetch();            
-          return array( 'parent_id' => $dao->parent_id,
-                        'weight'    => $dao->weight );
-      }
-
-      /**
-       * Function to update menu 
-       * 
-       * @param array  $params  
-       * @param array  $newParams new value of params
-       * @static
-       */
-      static function processUpdate( $params, $newParams ) 
-      {
-          $dao = new CRM_Core_DAO_Navigation( );
-          $dao->copyValues( $params );
-          if( $dao->find( true ) ) {
-              $dao->copyValues( $newParams );
-              $dao->save( );
-          }
-      } 
+    static function processNavigation( &$params ) 
+    {
+        $nodeID      = (int)str_replace("node_","",$params['id']);
+        $referenceID = (int)str_replace("node_","",$params['ref_id']);
+        $position    = $params['ps'];
+        $type        = $params['type'];
+        $label       = $params['data'];
+        
+        switch ( $type ) {
+        case "move":
+            self::processMove( $nodeID, $referenceID, $position );
+            break;
+        case "rename":
+            self::processRename( $nodeID, $label );
+            break;
+        case "delete":
+            self::processDelete( $nodeID );
+            break;
+        }
+        
+        //reset navigation menus
+        self::resetNavigation( );
+        CRM_Utils_System::civiExit( );
+    }
+    
+    /**
+     * Function to process move action
+     */
+    static function processMove( $nodeID, $referenceID, $position ) 
+    {
+        if( $referenceID ) {                 
+            $referenInfo = self::getNavigationInfo( $referenceID );
+            if( empty( $referenInfo['parent_id']) ){
+                $newParentID = $referenceID;
+                $newWeight   = $position;           
+            }
+        } else {
+            $newParentID = 'NULL';
+            $newWeight = $position+1;
+        }
+        
+        // get the details of current node
+        $nodeInfo = self::getNavigationInfo( $nodeID ); 
+        $oldParentID  = $nodeInfo['parent_id'];
+        $oldWeight    = $nodeInfo['weight'];
+        $oldParentClause = " parent_id = {$oldParentID}";
+        
+        // since we need to do multiple updates lets build sql array and then fire all with transaction
+        $sql = array( );
+        
+        // reorder was made, since parent are same
+        if ( $oldParentID == $newParentID ) {
+            if ( $newWeight > $oldWeight ) {
+                if( !$referenceID ) { $newWeight = $newWeight - 1; }
+                $sql[] = "UPDATE civicrm_navigation SET weight = weight - 1 
+                             WHERE {$oldParentClause}  AND weight BETWEEN {$oldWeight} + 1 AND {$newWeight}";  
+            }
+            if ( $newWeight < $oldWeight ) {
+                $sql[] = "UPDATE civicrm_navigation SET weight = weight + 1 
+                             WHERE {$oldParentClause} AND weight BETWEEN {$newWeight} AND {$oldWeight} - 1";
+            }
+        }
+        
+        // finally set the weight of current node
+        $sql[] = "UPDATE civicrm_navigation SET weight = {$newWeight}, parent_id = {$newParentID} WHERE id = {$nodeID}";
+        
+        // now execute all the sql's
+        require_once 'CRM/Core/Transaction.php';
+        $transaction = new CRM_Core_Transaction( );
+        
+        foreach ( $sql as $query ) {
+            CRM_Core_DAO::executeQuery( $query );
+        }
+        
+        $transaction->commit( );
+    }
+    
+    /**
+     *  Function to process rename action for tree
+     *
+     */
+    static function processRename( $nodeID, $label ) 
+    {
+        CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_Navigation', $nodeID, 'label', $label );
+    }
+    
+    /**
+     *  Function to process delete action for tree
+     *
+     */
+    static function processDelete( $nodeID ) 
+    {
+        $query = "DELETE FROM civicrm_navigation WHERE id = {$nodeID}";
+        CRM_Core_DAO::executeQuery( $query );
+    }
+    
+    /**
+     * Function to get the info on navigation item
+     * 
+     * @param int $navigationID  navigation id
+     *
+     * @return array associated array
+     * @static
+     */
+    static function getNavigationInfo( $navigationID ) 
+    {
+        $query  = "SELECT parent_id, weight FROM civicrm_navigation WHERE id = %1";
+        $params = array( $navigationID, 'Integer' );
+        $dao =& CRM_Core_DAO::executeQuery( $query, array( 1 => $params ) );
+        $dao->fetch();            
+        return array( 'parent_id' => $dao->parent_id,
+                      'weight'    => $dao->weight );
+    }
+    
+    /**
+     * Function to update menu 
+     * 
+     * @param array  $params  
+     * @param array  $newParams new value of params
+     * @static
+     */
+    static function processUpdate( $params, $newParams ) 
+    {
+        $dao = new CRM_Core_DAO_Navigation( );
+        $dao->copyValues( $params );
+        if( $dao->find( true ) ) {
+            $dao->copyValues( $newParams );
+            $dao->save( );
+        }
+    } 
 }

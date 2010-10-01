@@ -46,7 +46,7 @@
     <script type="text/javascript">
     cj(function () {
         cj("#navigation-tree").jstree({
-             plugins : [ "themes", "json_data", "ui", "crrm","contextmenu" ],
+	     plugins : [ "themes", "json_data", "dnd","ui", "crrm","contextmenu" ],
              json_data  : {
                 ajax:{
                    type  : "json",
@@ -79,9 +79,9 @@
                 
             }},                
  
- }).bind("rename.jstree", function (e,node) {
+ }).bind("rename.jstree", function ( e,node ) {
 
-      var nodeID= node.rslt.obj.attr('id').replace("node_","");
+      var nodeID  = node.rslt.obj.attr('id').replace("node_","");
       var newName = node.rslt.new_name;
       var postURL = {/literal}"{crmURL p='civicrm/ajax/menutree' h=0 }&key={crmKey name='civicrm/ajax/menutree'}"{literal};
           cj.get( postURL + '&type=rename&id=' + nodeID + '&data=' + newName, 
@@ -89,9 +89,9 @@
               			    cj("#reset-menu").show( );
             	 	    }
             	 );
- }). bind("remove.jstree", function (e,node) {
+ }). bind("remove.jstree", function ( e,node ) {
 
-      var nodeID= node.rslt.obj.attr('id').replace("node_","");
+      var nodeID  = node.rslt.obj.attr('id').replace("node_","");
       var postURL = {/literal}"{crmURL p='civicrm/ajax/menutree' h=0 }&key={crmKey name='civicrm/ajax/menutree'}"{literal};
           cj.get( postURL + '&type=delete&id=' + nodeID,
             function (data) {
@@ -100,9 +100,20 @@
            		);   
                         
             
-        });
+ }). bind("move_node.jstree", function ( e,node ) {
+          node.rslt.o.each(function (i) {
+               var nodeID = node.rslt.o.attr('id').replace("node_","");
+               var refID  = node.rslt.np.attr('id').replace("node_","");
+	        if (isNaN( refID ) ){ refID =''; }
+	        var ps = node.rslt.cp+i;
+               var postURL = {/literal}"{crmURL p='civicrm/ajax/menutree' h=0 }&key={crmKey name='civicrm/ajax/menutree'}"{literal};
+               cj.get( postURL + '&type=move&id=' +  nodeID + '&ref_id=' + refID + '&ps='+ps, 
+               function (data) {
+             		cj("#reset-menu").show( );
+             	    }
+           	);}); 
     });
-
+});
     </script>
     {/literal}
 
