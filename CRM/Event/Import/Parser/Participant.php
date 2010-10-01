@@ -214,12 +214,17 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
                 } else {
                     CRM_Import_Parser_Contact::addToErrorMsg('Register Date', $errorMessage);
                 }
-            } else if( $val && ( $key == 'participant_role_id' ) ){
-                if (!CRM_Import_Parser_Contact::in_value($val,CRM_Event_PseudoConstant::participantRole())) {
-                    CRM_Import_Parser_Contact::addToErrorMsg('Participant Role', $errorMessage);
-                }   
+            } else if ( $val && ( $key == 'participant_role_id' ) ) {
+                $val = explode( ',', $val );
+                foreach ( $val as $role ) {
+                  if ( !CRM_Import_Parser_Contact::in_value( $role, CRM_Event_PseudoConstant::participantRole() ) ) {
+                    CRM_Import_Parser_Contact::addToErrorMsg( 'Participant Role', $errorMessage );
+                    break;
+                  }   
+                }
+                  
             } else if( $val && ( $key == 'participant_status_id' ) ){
-                if (!CRM_Import_Parser_Contact::in_value($val,CRM_Event_PseudoConstant::participantStatus())) {
+                if ( !CRM_Import_Parser_Contact::in_value($val,CRM_Event_PseudoConstant::participantStatus())) {
                     CRM_Import_Parser_Contact::addToErrorMsg('Participant Status', $errorMessage);
                 }   
             }
@@ -318,7 +323,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
         }
         
         $formatError = _civicrm_participant_formatted_param( $formatValues, $formatted, true );
-        
+                
         if ( $formatError ) {
             array_unshift($values, $formatError['error_message']);
             return CRM_Event_Import_Parser::ERROR;

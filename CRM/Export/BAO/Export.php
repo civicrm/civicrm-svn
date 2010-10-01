@@ -209,6 +209,10 @@ class CRM_Export_BAO_Export
                 $returnProperties['contribution_id'] = 1;
             } else if ( $exportMode == CRM_Export_Form_Select::EVENT_EXPORT ) {
                 $returnProperties['participant_id'] = 1;
+                if ( $returnProperties['participant_role'] ) {
+                    unset( $returnProperties['participant_role'] );
+                    $returnProperties['participant_role_id'] = 1;
+                }
             } else if ( $exportMode == CRM_Export_Form_Select::MEMBER_EXPORT ) {
                 $returnProperties['membership_id'] = 1;
             } else if ( $exportMode == CRM_Export_Form_Select::PLEDGE_EXPORT ) {
@@ -583,6 +587,15 @@ class CRM_Export_BAO_Export
                             $fieldValue = $phoneTypes[$fieldValue];
                         } else if ( $field == 'provider_id' ) {
                             $fieldValue = CRM_Utils_Array::value( $fieldValue, $imProviders );  
+                        } else if ( $field == 'participant_role_id' ) {
+                            require_once 'CRM/Event/PseudoConstant.php';
+                            $participantRoles = CRM_Event_PseudoConstant::participantRole( ) ;
+                            $sep = CRM_Core_DAO::VALUE_SEPARATOR;
+                            $viewRoles = array();
+                            foreach ( explode( $sep, $dao->$field ) as $k => $v ) {
+                                $viewRoles[] = $participantRoles[$v];
+                            }
+                            $fieldValue = implode( ',', $viewRoles );
                         }
                     } else {
                         $fieldValue = '';
