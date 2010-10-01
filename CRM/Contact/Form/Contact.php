@@ -957,7 +957,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         $displayName = CRM_Contact_BAO_Contact::displayName( $contact->id );
         
         require_once 'CRM/Contact/BAO/Contact/Permission.php';
-        $recentOther = array( 'usedFor' => 'Contact' );
+        $recentOther = array( );
 
         if ( ( $session->get( 'userID' ) == $contact->id ) ||
              CRM_Contact_BAO_Contact_Permission::allow( $contact->id, CRM_Core_Permission::EDIT ) ) {

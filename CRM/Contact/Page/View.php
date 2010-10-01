@@ -162,7 +162,6 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         $recentOther = array( 'imageUrl'  => $contactImageUrl,
                               'subtype'   => $contactSubtype,
                               'isDeleted' => $isDeleted,
-                              'usedFor'   => 'Contact'
                               );
         
         require_once 'CRM/Contact/BAO/Contact/Permission.php';
