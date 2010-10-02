@@ -89,7 +89,8 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
                 CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionValue', $params['extends'][0], 'value', 'name' );
         }
 
-        if ( is_array($params['extends'][1]) && !CRM_Utils_Array::crmIsEmptyArray($params['extends'][1]) ) {
+        if ( is_array($params['extends'][1]) && 
+             ! CRM_Utils_Array::crmIsEmptyArray($params['extends'][1]) ) {
             $params['extends'][1] = implode ( CRM_Core_DAO::VALUE_SEPARATOR, $params['extends'][1] );
 
             if ( $params['extends'][0] == 'Relationship' ) {
@@ -99,10 +100,18 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
                 $group->extends_entity_column_value = $params['extends'][1];
             }
         }
+
+        if ( $params['extends_entity_column_value'] ) {
+            $group->extends_entity_column_value = $params['extends_entity_column_value'];
+        }
         
-        if ( !empty($group->extends_entity_column_value) ) {
-            $group->extends_entity_column_value = CRM_Core_DAO::VALUE_SEPARATOR . 
-                $group->extends_entity_column_value . CRM_Core_DAO::VALUE_SEPARATOR;
+        if ( ! empty($group->extends_entity_column_value) ) {
+            if ( substr( $group->extends_entity_column_value, 0, 1 ) != CRM_Core_DAO::VALUE_SEPARATOR ) {
+                $group->extends_entity_column_value =
+                    CRM_Core_DAO::VALUE_SEPARATOR . 
+                    $group->extends_entity_column_value .
+                    CRM_Core_DAO::VALUE_SEPARATOR;
+            }
         } else {
             $group->extends_entity_column_value = "null";
         }

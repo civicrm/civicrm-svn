@@ -11,6 +11,10 @@ class Custom extends CiviUnitTestCase
     function createGroup( $group, $extends =  null, $isMultiple = false ) 
     {
         if ( empty( $group ) ) {
+            if ( isset( $extends ) &&
+                 ! is_array( $extends ) ) {
+                $extends = array( $extends );
+            }
             $group = array(
                            'title'       => 'Test_Group',
                            'name'        => 'test_group',
@@ -20,20 +24,30 @@ class Custom extends CiviUnitTestCase
                            'is_active'   => 1
                            );
             
+        } else {
+            // this is done for backward compatibility
+            // with tests older than 3.2.3
+            if ( isset( $group['extends'] ) &&
+                 ! is_array( $group['extends'] ) ) {
+                $group['extends'] = array( $group['extends'] );
+            }
         }
 
+        require_once 'api/v2/CustomGroup.php';
+        $result = civicrm_custom_group_create( $group );
+
+        if ( $result['is_error'] ) {
+            return null;
+        }
+
+        // this is done for backward compatibility
+        // with tests older than 3.2.3
         require_once 'CRM/Core/BAO/CustomGroup.php';
-        require_once 'CRM/Utils/String.php';
-        $customGroupBAO =& new CRM_Core_BAO_CustomGroup();
-        $customGroupBAO->copyValues( $group );
-        $customGroup = $customGroupBAO->save();
-        $customGroup->table_name =  "civicrm_value_" .
-            strtolower( CRM_Utils_String::munge( $group['title'], '_', 32 ) );
-        $customGroup->table_name = $customGroup->table_name .'_'.$customGroup->id;
-        $customGroup = $customGroupBAO->save();
-        $customTable = CRM_Core_BAO_CustomGroup::createTable( $customGroup );
-        
-        return $customGroup;
+        $group = new CRM_Core_BAO_CustomGroup( );
+        $group->id = $result['id'];
+        $group->find( true );
+
+        return $group;
     }
     
     /*
