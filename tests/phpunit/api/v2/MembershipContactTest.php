@@ -208,6 +208,8 @@ class api_v2_MembershipContactTest extends CiviUnitTestCase {
                          'relationship_direction' => 'b_a',
                          'is_active'              => 1 );        
         $memType = civicrm_membership_type_create( $params );
+        // in order to reload static caching -
+        CRM_Member_PseudoConstant::membershipType( null, true );
 
         $params = array(
                         'contact_id'         => $memberContactId,
