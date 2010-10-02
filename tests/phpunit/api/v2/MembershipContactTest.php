@@ -342,18 +342,18 @@ class api_v2_MembershipContactTest extends CiviUnitTestCase {
                         );
 
         $result = civicrm_contact_membership_create( $params );
-        $this->assertEquals( $result['is_error'], 0 );
+        $this->assertEquals( $result['is_error'], 1 );
         
         //membership_contact_id which is no in contact table
         $params['membership_contact_id'] = 999;
         $result = civicrm_contact_membership_create( $params );
-        $this->assertEquals( $result['is_error'], 0 );
+        $this->assertEquals( $result['is_error'], 1 );
 
         //invalid join date
         unset( $params['membership_contact_id'] );
         $params['join_date'] = "invalid";
         $result = civicrm_contact_membership_create( $params );
-        $this->assertEquals( $result['is_error'], 0 );
+        $this->assertEquals( $result['is_error'], 1 );
     }
     
     /**
