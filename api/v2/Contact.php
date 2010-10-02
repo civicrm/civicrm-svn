@@ -576,7 +576,7 @@ function civicrm_contact_format_create( &$params ) {
     CRM_Contact_BAO_Contact::resolveDefaults($params, true);
 
     require_once 'CRM/Import/Parser.php';
-    if ( $params['onDuplicate'] != CRM_Import_Parser::DUPLICATE_NOCHECK) {
+    if ( CRM_Utils_Array::value('onDuplicate', $params) != CRM_Import_Parser::DUPLICATE_NOCHECK) {
         CRM_Core_Error::reset( );
         $error = _civicrm_duplicate_formatted_contact($params);
         if (civicrm_error( $error, 'CRM_Core_Error')) {
