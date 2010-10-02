@@ -71,7 +71,11 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
         $group = new CRM_Core_DAO_CustomGroup();
         $group->title = $params['title'];
         require_once 'CRM/Utils/String.php';
-        $group->name  = CRM_Utils_String::titleToVar($params['title'], $fieldLength['maxlength'] );
+        if ( isset( $params['name'] ) ) {
+            $group->name  = $params['name'];
+        } else {
+            $group->name  = CRM_Utils_String::titleToVar($params['title'], $fieldLength['maxlength'] );
+        }
         if ( in_array( $params['extends'][0],
                        array( 'ParticipantRole',
                               'ParticipantEventName',
