@@ -47,6 +47,9 @@ class Custom extends CiviUnitTestCase
         $group->id = $result['id'];
         $group->find( true );
 
+
+
+
         return $group;
     }
     
@@ -68,16 +71,19 @@ class Custom extends CiviUnitTestCase
                             'is_active'       => 1
                             );
         }
-        $customFieldBAO =& new CRM_Core_BAO_CustomField();
-        $customFieldBAO->copyValues( $params );
-        $customField = $customFieldBAO->save();
-        $customFieldBAO->column_name = 'test_'. $params['data_type'] . '_'.$customField->id;
-        $customFieldObject =  $customFieldBAO;
-        $customField = $customFieldBAO->save();
-        
-        require_once 'CRM/Core/BAO/CustomField.php';
-        $createField = CRM_Core_BAO_CustomField::createField( $customFieldObject, 'add' );
-        
+        require_once 'api/v2/CustomGroup.php';
+        $result = civicrm_custom_field_create( $params );
+
+        if ( $result['is_error'] ) {
+            return null;
+        }
+
+        // this is done for backward compatibility
+        // with tests older than 3.2.3
+        $customField =& new CRM_Core_DAO_CustomField();
+        $customField->id = $result['result']['customFieldId'];
+        $customField->find( true );
+
         return $customField;
     }
     

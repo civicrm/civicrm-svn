@@ -91,6 +91,7 @@ class api_v2_ContributionTest extends CiviUnitTestCase
         $this->_contribution =& civicrm_contribution_add($p);
         $params = array('contribution_id'=>$this->_contribution['id']);        
         $contribution =& civicrm_contribution_get($params);
+        CRM_Core_Error::debug( $contribution );
 
         $this->assertEquals($contribution['contact_id'],$this->_individualId); 
         $this->assertEquals($contribution['contribution_type_id'],$this->_contributionTypeId);        
@@ -392,7 +393,7 @@ class api_v2_ContributionTest extends CiviUnitTestCase
         $result =& civicrm_contribution_format_create($params);
 
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Input Parameters empty', 'In line ' . __LINE__ );
+        $this->assertEquals( $result['error_message'], 'No input parameters present', 'In line ' . __LINE__ );
     }
     
     /**
