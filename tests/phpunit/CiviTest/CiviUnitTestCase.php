@@ -738,6 +738,10 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     function eventCreate($params = array())
     {
+        // if no contact was passed, make up a dummy event creator
+        if (!isset($params['contact_id'])) {
+            $params['contact_id'] = $this->_contactCreate(array('contact_type' => 'Individual', 'first_name' => 'Event', 'last_name' => 'Creator'));
+        }
         // set defaults for missing params
         $params = array_merge(array(
             'title'                   => 'Annual CiviCRM meet',
