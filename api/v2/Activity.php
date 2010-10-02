@@ -114,7 +114,7 @@ function &civicrm_activity_create( &$params )
 function civicrm_activity_get( $params, $returnCustom = false ) {
     _civicrm_initialize( );
     
-    $activityId = $params['activity_id'];
+    $activityId = CRM_Utils_Array::value( 'activity_id', $params );
     if ( empty( $activityId ) ) {
         return civicrm_create_error( ts ("Required parameter not found" ) );
     }
@@ -326,12 +326,18 @@ function _civicrm_activity_check_params ( &$params, $addMode = false )
     }
     
     // check for activity status is passed in
-    if ( isset( $params['status_id'] ) && is_numeric( $params['status_id'] ) ) {
+    if ( isset( $params['status_id'] ) ) {
         require_once "CRM/Core/PseudoConstant.php";
         $activityStatus = CRM_Core_PseudoConstant::activityStatus( );
         
         if ( !array_key_exists( $params['status_id'], $activityStatus ) ) { 
             return civicrm_create_error( ts('Invalid Activity Status') );
+        } else {
+            $statusId = array_search( $params['status_id'], $activityStatus );
+            
+            if ( !is_numeric( $statusId ) ) {
+                return civicrm_create_error( ts('Invalid Activity Status') );
+            }
         }
     }
     
@@ -347,7 +353,6 @@ function _civicrm_activity_check_params ( &$params, $addMode = false )
     // check for activity duration minutes
     if ( isset( $params['duration_minutes'] ) && !is_numeric( $params['duration_minutes'] ) ) {
         return civicrm_create_error( ts('Invalid Activity Duration (in minutes)') );
-        
     }
         
     // check for source contact id
