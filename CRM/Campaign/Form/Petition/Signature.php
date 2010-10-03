@@ -343,8 +343,10 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 				$tag_params['is_reserved'] = 1;
 				$tag_params['used_for'] = 'civicrm_contact';
 				$tag = civicrm_tag_create($tag_params); 
+				$this->_tagId = $tag['tag_id'];
+			} else {
+				$this->_tagId = $tag['id'];
 			}
-			$this->_tagId = $tag['id'];
 		}
 		
 		// export the field values to be used for saving the profile form
@@ -504,7 +506,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 					require_once 'api/v2/EntityTag.php';
 					unset($tag_params);
 					$tag_params['contact_id'] = $this->_contactId;
-					$tag_params['tag_id'] = $this->_tagId;;       		
+					$tag_params['tag_id'] = $this->_tagId;
 					$tag_value = civicrm_entity_tag_add($tag_params);					
 					break;
 			}
