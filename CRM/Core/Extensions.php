@@ -115,6 +115,7 @@ class CRM_Core_Extensions
                 $extensions['per_id'][$nfo['id']]['type'] = $type;
                 $extensions['per_id'][$nfo['id']]['status'] = 'uploaded';
                 $extensions['per_id'][$nfo['id']]['path'] = $nfo['path'];
+                $extensions['per_id'][$nfo['id']]['type_info'] = (array) $nfo['type_info'];
             }
         }
 
@@ -180,7 +181,7 @@ class CRM_Core_Extensions
 //                    } while ($f && zip_entry_name($f) != self::EXT_INFO_FILENAME);
 //                    zip_entry_open($p, $f, "r");
 //                    $nfoFile = zip_entry_read($f, zip_entry_filesize($f));
-//                    $nfo = $this->_parseInfoFile( $nfoFile );
+//                    $nfo = $this->_parseXMLFile( $nfoFile );
 //                    $uploaded[$name] = $nfo;
 //                }
 //            }
@@ -253,16 +254,29 @@ class CRM_Core_Extensions
         if( file_exists( $infoFile ) && $this->_validateInfoFile()) {
             $rec['path'] =  $dir;
             $rec['valid'] = $this->_validateExtension();
-            $rec['info'] = $this->_parseInfoFile( $infoFile );
+            $rec['info'] = $this->_parseXMLFile( $infoFile );
             $rec['id'] = $id;
+            $attr = $rec['info']->attributes();
+            $type = (string) $attr->type;
+            
+            if( $type === 'report' ) {
+                $rec['type_info'] = $this->_parseXMLFile( $dir . DIRECTORY_SEPARATOR . 'report_template.xml' );
+            } elseif( $type === 'payment' ) {
+                $rec['type_info'] = $this->_parseXMLFile( $dir . DIRECTORY_SEPARATOR . 'processor_type.xml' );
+            }
             return $rec;
         }
     }
 
-    private function _parseInfoFile( $file ) {
+    private function _parseXMLFile( $file ) {
+
+
         $dom = DomDocument::load( $file );
-        $dom->xinclude( );
-        return simplexml_import_dom( $dom );
+        if( $dom ) {
+            $dom->xinclude( );
+            return simplexml_import_dom( $dom );
+        }
+        return array();
     }
 
     private function _validateExtension() {

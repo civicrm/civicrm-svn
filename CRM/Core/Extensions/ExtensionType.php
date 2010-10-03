@@ -82,11 +82,13 @@ class CRM_Core_Extensions_ExtensionType
         $ids = array();
             
         $params = array( 'option_group_id' => 50,
+                         'weight' => CRM_Utils_Weight::getDefaultWeight( 'CRM_Core_DAO_OptionValue',
+                                                                          array( 'option_group_id' => 50) ),
                          'label' => $e['per_id'][$id]['label'],
                          'name'  => $e['per_id'][$id]['label'],
                          'value' => $key,
                          'grouping' => $e['per_id'][$id]['type'],
-                         'is_active' => 0
+                         'is_active' => 1
                       );
         $optionValue = CRM_Core_BAO_OptionValue::add($params, $ids);
                 

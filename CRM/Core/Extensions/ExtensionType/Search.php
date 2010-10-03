@@ -68,11 +68,13 @@ class CRM_Core_Extensions_ExtensionType_Search extends CRM_Core_Extensions_Exten
         $ids = array();
             
         $params = array( 'option_group_id' => $groupId,
+                         'weight' => CRM_Utils_Weight::getDefaultWeight( 'CRM_Core_DAO_OptionValue',
+                                                                      array( 'option_group_id' => $groupId ) ),
                          'description' => $e['per_id'][$id]['label'] . ' (' . $key . ')',
                          'name'  => $key,
                          'value' => max( $customSearches ) + 1,
                          'label'  => $key,
-                         'is_active' => 0
+                         'is_active' => 1
                       );
                       
         $optionValue = CRM_Core_BAO_OptionValue::add($params, $ids);
