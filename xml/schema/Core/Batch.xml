@@ -25,7 +25,7 @@
      <add>3.3</add>
   </field>
   <field>
-     <name>title</name>
+     <name>label</name>
      <type>varchar</type>
      <length>64</length>
      <localizable>true</localizable>
