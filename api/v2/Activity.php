@@ -324,16 +324,16 @@ function _civicrm_activity_check_params ( &$params, $addMode = false )
             return civicrm_create_error( ts('Invalid Activity Type ID') );
         }
     }
-    
+        
     // check for activity status is passed in
     if ( isset( $params['status_id'] ) ) {
         require_once "CRM/Core/PseudoConstant.php";
         $activityStatus = CRM_Core_PseudoConstant::activityStatus( );
         
-        if ( !array_key_exists( $params['status_id'], $activityStatus ) ) { 
+        if ( !array_key_exists( $params['status_id'], $activityStatus ) ) {             
             return civicrm_create_error( ts('Invalid Activity Status') );
-        } else {
-            $statusId = array_search( $params['status_id'], $activityStatus );
+        } elseif ( !is_numeric( $params['status_id'] ) ) {
+            $statusId = array_search( $params['status_id'], $activityStatus );            
             
             if ( !is_numeric( $statusId ) ) {
                 return civicrm_create_error( ts('Invalid Activity Status') );

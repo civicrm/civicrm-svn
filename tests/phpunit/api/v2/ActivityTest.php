@@ -931,12 +931,12 @@ class api_v2_ActivityTest extends CiviUnitTestCase
                         'location'            => '21, Park Avenue',
                         'details'             => 'Lets update Meeting',
                         'status_id'           => 1,
-                        'activity_name'       => 'Test activity type'
+                        'activity_name'       => 'Test activity type',
+                        'source_contact_id'   => 17,
+                        'priority_id'         => 1
                         );
 
         $result =& civicrm_activity_update( $params );
-        $this->assertNull( $result['is_error'],
-                           "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
 
         //  civicrm_activity should show new values
         $expected = new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
@@ -962,18 +962,18 @@ class api_v2_ActivityTest extends CiviUnitTestCase
                              . '/dataset/activity_4_13.xml') );
         //  
         $params = array(
-                        'id'                  => 1,
+                        'id'                  => 4,
                         'subject'             => 'Update Discussion on Apis for v2',
                         'duration'            => 120,
                         'location'            => '21, Park Avenue',
                         'details'             => 'Lets update Meeting',
                         'status_id'           => 1,
-                        'activity_name'       => 'Meeting',
+                        'activity_name'       => 'Test activity type',
+                        'source_contact_id'   => 17,
+                        'priority_id'         => 1
                         );
 
         $result =& civicrm_activity_update( $params );
-        $this->assertNull( $result['is_error'],
-                           "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
 
         //  civicrm_activity should show new values except date
         $expected = new PHPUnit_Extensions_Database_DataSet_XMLDataSet(

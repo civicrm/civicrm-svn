@@ -51,21 +51,21 @@ class api_v2_ActivityContactTest extends CiviUnitTestCase
                              dirname(__FILE__)
                              . '/dataset/contact_17.xml') );
  
-        //  Insert a row in civicrm_option_group creating option group
-        //  activity_type 
+        //  Insert a row in civicrm_option_group creating 
+        //  an activity_status option group
         $op = new PHPUnit_Extensions_Database_Operation_Insert( );
         $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                             dirname(__FILE__)
-                             . '/dataset/option_group_activity_type.xml') );
- 
-        //  Insert a row in civicrm_option_value creating
-        //  activity_type 5
+                        new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
+                               dirname(__FILE__)
+                               . '/dataset/option_group_activity.xml') );
+
+        //  Insert rows in civicrm_option_value defining activity status
+        //  values of 'Scheduled', 'Completed', 'Cancelled'
         $op = new PHPUnit_Extensions_Database_Operation_Insert( );
         $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                             dirname(__FILE__)
-                             . '/dataset/option_value_activity_5.xml') );
+                        new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
+                               dirname(__FILE__)
+                               . '/dataset/option_value_activity.xml') );
 
         //  Insert rows in civicrm_activity creating activities 4 and
         //  13

@@ -27,7 +27,7 @@
       <value>4</value>                      <!--  id  -->
       <value>17</value>                      <!--  source_contact_id  -->
       <null />                              <!--  source_record_id  -->
-      <value>5</value>                      <!--  activity_type_id  -->
+      <value>1</value>                      <!--  activity_type_id  -->
       <value>test activity type id</value>  <!--  subject  -->
       <null />                              <!--  activity_date_time  -->
       <null />  <!--  duration  -->
@@ -35,8 +35,8 @@
       <null />  <!--  phone_id  -->
       <null />  <!--  phone_number  -->
       <null />  <!--  details  -->
-      <null />  <!--  status_id  -->
-      <null />  <!--  priority_id  -->
+      <value>1</value>  <!--  status_id  -->
+      <value>1</value>  <!--  priority_id  -->
       <null />  <!--  parent_id  -->
       <null />  <!--  is_test  -->
       <null />  <!--  medium_id  -->

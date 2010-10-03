@@ -36,7 +36,7 @@
       <null />  <!--  phone_number  -->
       <value>Lets update Meeting</value>  <!--  details  -->
       <value>1</value>  <!--  status_id  -->
-      <null />  <!--  priority_id  -->
+      <value>1</value>  <!--  priority_id  -->
       <null />  <!--  parent_id  -->
       <null />  <!--  is_test  -->
       <null />  <!--  medium_id  -->
@@ -59,7 +59,7 @@
       <null />  <!--  phone_number  -->
       <null />  <!--  details  -->
       <value>1</value>  <!--  status_id  -->
-      <null />  <!--  priority_id  -->
+      <value>1</value>  <!--  priority_id  -->
       <null />  <!--  parent_id  -->
       <null />  <!--  is_test  -->
       <null />  <!--  medium_id  -->
