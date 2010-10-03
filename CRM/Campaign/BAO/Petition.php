@@ -44,6 +44,39 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
        $this->cookieExpire = (1 * 60 * 60 * 24); // expire cookie in one day
     }
 		
+     /**
+     * Function to get Petition Details 
+     * 
+     * @param boolean $all
+     * @param int $id
+     * @static
+     */
+    static function getPetition( $all = false, $id = false, $defaultOnly = false ) {
+
+        $petitionTypeID = CRM_Core_OptionGroup::getValue( 'activity_type', 'petition',  'name' );
+
+        $survey = array( );
+        $dao = new CRM_Campaign_DAO_Survey( );
+
+        if ( !$all ) {
+            $dao->is_active = 1;
+        } 
+        if ( $id ) {
+            $dao->id = $id;  
+        }
+        if ( $defaultOnly ) {
+            $dao->is_default = 1;   
+        }
+       
+        $dao->whereAdd ( "activity_type_id = $petitionTypeID");   
+        $dao->find( );
+        while ( $dao->fetch() ) {
+            CRM_Core_DAO::storeValues($dao, $survey[$dao->id]);
+        }
+        
+        return $survey;
+    }
+
     /**
      * takes an associative array and creates a petition signature activity
      *
