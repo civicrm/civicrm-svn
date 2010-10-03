@@ -86,10 +86,10 @@ class api_v2_ActivityContactTest extends CiviUnitTestCase
         $params = array( 'contact_id' => 17 );
         $result = civicrm_activity_contact_get( $params );
         $this->assertEquals( 0, $result['is_error'],
-                             "Error message: " . $result['error_message'] );
+                             "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
         $this->assertEquals( 2, count( $result['result'] ),
                              'In line ' . __LINE__ );
-        $this->assertEquals( 5, $result['result'][4]['activity_type_id'] ,
+        $this->assertEquals( 1, $result['result'][4]['activity_type_id'] ,
                              'In line ' . __LINE__ );
         $this->assertEquals( 'Test activity type',
                              $result['result'][4]['activity_name'],

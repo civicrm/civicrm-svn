@@ -2475,7 +2475,10 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         if (is_object($result)) {
             // lets hope that copying the result object is OK!
-            
+            // fix notices in unit test.
+            if ( !CRM_Utils_Array::value( 'RESULTSEQ', $GLOBALS['_DB_DATAOBJECT'] ) ) {
+                $GLOBALS['_DB_DATAOBJECT']['RESULTSEQ'] = 1;
+            }
             $_DB_resultid  = $GLOBALS['_DB_DATAOBJECT']['RESULTSEQ']++;
             $_DB_DATAOBJECT['RESULTS'][$_DB_resultid] = $result; 
             $this->_DB_resultid = $_DB_resultid;
