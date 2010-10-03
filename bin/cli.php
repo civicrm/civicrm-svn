@@ -41,9 +41,13 @@ class civicrm_CLI {
     /**
      * constructor
      */
-    function __construct() {
+ function __construct($authenticate = true ) {
 //	$include_path = "packages/" . get_include_path( );
 //	set_include_path( $include_path );
+  if (!$authenticate) {
+    $this->setEnv();
+    return;
+  }
 	require_once 'Console/Getopt.php';
 	$shortOptions = "s:u:p:";
 	$longOptions  = array( 'site=','user','pass'  );
@@ -86,19 +90,34 @@ class civicrm_CLI {
 
          // this does not return on failure
          // require_once 'CRM/Utils/System.php';
-//    CRM_Utils_System::authenticateScript( true );
          CRM_Utils_System::authenticateScript( true,$user,$pass );
 
     }
 
     function setEnv() {
+    global $civicrm_root;
 		// so the configuration works with php-cli
 		$_SERVER['PHP_SELF' ] ="/index.php";
 		$_SERVER['HTTP_HOST']= $this->site;
 		require_once ("./civicrm.config.php");
+    require_once ("CRM/Core/Error.php");
          	$this->key= CIVICRM_SITE_KEY;
 		$_REQUEST['key']= $this->key;
+		$_SERVER['SCRIPT_FILENAME' ] = $civicrm_root . "/bin/cli.php";
+    if (CIVICRM_CONFDIR) {
+		  $_SERVER['SCRIPT_FILENAME' ] = CIVICRM_CONFDIR . "/sites/all/modules/civicrm/bin/cli.php";
     }
+
+     CRM_Core_Error::setCallback( array( 'civicrm_CLI', 'fatal' ) );
+    // load bootstrap to call hooks
+    require_once 'CRM/Utils/System.php';
+    CRM_Utils_System::loadBootStrap(  );
+    }
+
+    static function fatal( $pearError ) {
+        return civicrm_create_error($pearError->getMessage(),$pearError->getDebugInfo());
+    }
+
 }
 
 
