@@ -40,10 +40,95 @@
  * @todo Write documentation
  *
  */
-function _civicrm_initialize( ) 
+function _civicrm_initialize($useException = false ) 
 {
-    require_once 'CRM/Core/Config.php';
-    $config = CRM_Core_Config::singleton( );
+  require_once 'CRM/Core/Config.php';
+  $config = CRM_Core_Config::singleton( );
+  if ($useException) {
+    CRM_Core_Error::setRaiseException();
+  }
+}
+
+function civicrm_api_verify_acl ($apiName,$params, $raiseException = false) {
+  require_once 'CRM/Core/Permission.php';
+  if (!isset($params['skip_acl']) || $params['skip_acl']) {
+    return true;
+  }
+  $api= explode ('_',$apiName);
+
+  switch ($apiName) {
+    case 'civicrm_event_create':
+    break;
+    default:
+      $ok=false;
+  }
+
+  if ($raiseException && !$ok) {
+     throw CRM_Exception ('failed permission '.$apiName);
+  }
+  return $ok;
+
+/*
+  switch ($api[2]) {//_action
+   case 'add':
+   case 'create':
+     $permission = CRM_Core_Permission::CREATE;
+     break;
+   case 'search':
+   case 'get':
+     $permission = CRM_Core_Permission::VIEW;
+     break;
+   case 'delete':
+     $permission = CRM_Core_Permission::DELETE;
+     break;
+   case 'update':
+     $permission = CRM_Core_Permission::EDIT;
+     break;
+  }
+
+  
+  switch ($api[1]) {//_entity
+   case 'event':
+     require_once ('CRM/Event/BAO/Event.php');
+     $ok= CRM_Event_BAO_Event::checkPermission($params['event_id'],$permission);
+     if ($raiseException)
+       throw CRM_Exception ('failed permission '.$apiName);
+     return $ok;
+     break;
+   case 'case':
+     CRM_Case_BAO_Case::checkPermission();
+     $id = (int) $params[''];
+     break;
+   case 'mailing':
+     $bao = 'CRM_Mailing_BAO_Mailing';
+     break;
+   case 'activity':
+     $bao = 'CRM_Activity_BAO_Activity';
+     break;
+   case 'price':
+     $bao = 'CRM_Price_BAO_Set';
+     break;
+   case 'group':
+     $bao = 'CRM_Contact_BAO_Group';
+     break;
+   default:
+     throw CRM_Exception ("api_verify_acl unknown entity:". $api[1]);
+  }
+*/
+}
+
+function civicrm_verify_mandatory (&$params, $daoName = null, $keys = array() ) {
+  if ( ! is_array( $params ) ) {
+     throw new Exception ('Input parameters is not an array');
+  }
+
+  if ($daoName != null) {
+    _civicrm_check_required_fields( &$params, $daoName, true);
+  }
+  foreach ($keys as $key) {
+    if ( !array_key_exists ($key, $params))
+      throw new Exception ("Mandatory param missing: ". $key);
+  }
 }
 
 /**
@@ -612,7 +697,7 @@ function _civicrm_custom_format_params( &$params, &$values, $extends, $entityId 
  * @return bool true if success false otherwise
  * @access public
  */
-function _civicrm_check_required_fields( &$params, $daoName)
+function _civicrm_check_required_fields( &$params, $daoName, $thowException = false)
 {
     if ( isset($params['extends'] ) ) {
         if ( ( $params['extends'] == 'Activity' || 
@@ -644,6 +729,9 @@ function _civicrm_check_required_fields( &$params, $daoName)
     }
 
     if (!empty($missing)) {
+        if ($throwException) {
+          throw Exception ("Required fields ". implode(',', $missing) . " for $daoName are not found");
+        }
         return civicrm_create_error(ts("Required fields ". implode(',', $missing) . " for $daoName are not found"));
     }
 
