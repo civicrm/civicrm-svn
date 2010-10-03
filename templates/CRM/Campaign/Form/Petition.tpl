@@ -54,7 +54,6 @@
        <tr class="crm-campaign-survey-form-block-activity_type_id">
            <td class="label">{$form.activity_type_id.label}</td>
            <td>{$form.activity_type_id.html}
-	   <div class="description">{ts}Select the Activity Type.{/ts}</div></td>
        </tr>
        <tr class="crm-campaign-survey-form-block-profile_id">
            <td class="label">{$form.contact_profile_id.label}</td>

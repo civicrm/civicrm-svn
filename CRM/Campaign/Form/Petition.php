@@ -90,12 +90,15 @@ class CRM_Campaign_Form_Petition extends CRM_Campaign_Form_Survey
 
         require_once 'CRM/Event/PseudoConstant.php';
         require_once 'CRM/Core/BAO/UFGroup.php';
+        require_once 'CRM/Core/OptionGroup.php';
        
         $this->add('text', 'title', ts('Petition Title'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'title'), true );
 
-        $surveyActivityTypes = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
+        $petitionTypeID = CRM_Core_OptionGroup::getValue( 'activity_type', 'petition',  'name' );
+        $this->addElement( 'hidden', 'activity_type_id', $petitionTypeID );
+//        $surveyActivityTypes = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
         // Activity Type id
-        $this->add('select', 'activity_type_id', ts('Select Activity Type'), array( '' => ts('- select -') ) + $surveyActivityTypes, true );
+//        $this->add('select', 'activity_type_id', ts('Select Activity Type'), array( '' => ts('- select -') ) + $surveyActivityTypes, true );
         
         // Campaign id
         require_once 'CRM/Campaign/BAO/Campaign.php';

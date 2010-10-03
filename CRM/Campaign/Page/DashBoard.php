@@ -188,7 +188,11 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
         $this->assign( 'campaigns',      $campaignsData );
         $this->assign( 'addCampaignUrl', CRM_Utils_System::url( 'civicrm/campaign/add', 'reset=1&action=add' ) );
     }
-    
+   
+    function browsePetition () {
+      $this->browseSurvey ( );
+    }
+ 
     function browseSurvey( ) 
     {
         $surveysData = array( );
@@ -220,7 +224,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
                 }
             }
         }
-        
+      
         $this->assign( 'surveys',      $surveysData );
         $this->assign( 'addSurveyUrl', CRM_Utils_System::url( 'civicrm/survey/add', 'reset=1&action=add' ) );
     }
@@ -228,7 +232,9 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
     function browse( ) 
     {   
         $this->_tabs = array( 'campaign' => ts( 'Campaign' ), 
-                              'survey'   => ts( 'Survey' ) );
+                              'survey'   => ts( 'Survey' ),
+                              'petition' => ts ('Petition')
+                       );
         
         $subPageType = CRM_Utils_Request::retrieve( 'type', 'String', $this );
         if ( $subPageType ) {
