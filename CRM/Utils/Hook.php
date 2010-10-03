@@ -689,4 +689,25 @@ class CRM_Utils_Hook {
                 '::invoke( 5, $type, $data, $mainId, $otherId, $tables , \'civicrm_merge\' );' );
 
     }
+    
+    /** 
+     * This hook is called before record is exported as CSV
+     * 
+     * @param string $exportTempTable - name of the temporary export table used during export
+     * @param array  $headerRows      - header rows for output
+     * @param array  $sqlColumns      - SQL columns
+     * @param int    $exportMode      - export mode ( contact, contribution, etc...)
+     *  
+     * @return void
+     * @access public 
+     */
+    static function export( &$exportTempTable, &$headerRows, &$sqlColumns, &$exportMode ) {
+        $config = CRM_Core_Config::singleton( );
+        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
+        $null =& CRM_Core_DAO::$_nullObject;
+        return   
+            eval( 'return ' .
+                  $config->userHookClass .
+                  '::invoke( 4, $exportTempTable, $headerRows, $sqlColumns, $exportMode, $null, \'civicrm_export\' );' );
+    }
 }
