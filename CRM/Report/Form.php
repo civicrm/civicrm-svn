@@ -1307,6 +1307,138 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
         // override this method for building charts.
     }
 
+    // select() method below has been added recently (v3.3), and many of the report templates might 
+    // still be having their own select() method. We should fix them as and when encountered and move 
+    // towards generalizing the select() method below. 
+    function select( ) {
+        $select = array( );
+
+        $this->_columnHeaders = array( );
+        foreach ( $this->_columns as $tableName => $table ) {
+            if ( array_key_exists('fields', $table) ) {
+                foreach ( $table['fields'] as $fieldName => $field ) {
+                    if ( CRM_Utils_Array::value( 'required', $field ) ||
+                         CRM_Utils_Array::value( $fieldName, $this->_params['fields'] ) ) {
+
+                        // 1. In many cases we want select clause to be built in slightly different way 
+                        //    for a particular field of a particular type.
+                        // 2. This method when used should receive params by reference and modify $this->_columnHeaders
+                        //    as needed.
+                        $selectClause = $this->selectClause( $tableName, 'fields', $fieldName, $field );
+                        if ( $selectClause ) {
+                            $select[] = $selectClause;
+                            continue;
+                        }
+
+                        // include statistics columns only if set
+                        if ( CRM_Utils_Array::value('statistics', $field) ) {
+                            foreach ( $field['statistics'] as $stat => $label ) {
+                                switch (strtolower($stat)) {
+                                case 'sum':
+                                    $select[] = "SUM({$field['dbAlias']}) as {$tableName}_{$fieldName}_{$stat}";
+                                    $this->_columnHeaders["{$tableName}_{$fieldName}_{$stat}"]['title'] = $label;
+                                    $this->_columnHeaders["{$tableName}_{$fieldName}_{$stat}"]['type']  = 
+                                        $field['type'];
+                                    $this->_statFields[] = "{$tableName}_{$fieldName}_{$stat}";
+                                    break;
+                                case 'count':
+                                    $select[] = "COUNT({$field['dbAlias']}) as {$tableName}_{$fieldName}_{$stat}";
+                                    $this->_columnHeaders["{$tableName}_{$fieldName}_{$stat}"]['title'] = $label;
+                                    $this->_columnHeaders["{$tableName}_{$fieldName}_{$stat}"]['type']  = 
+                                        CRM_Utils_Type::T_INT;
+                                    $this->_statFields[] = "{$tableName}_{$fieldName}_{$stat}";
+                                    break;
+                                case 'avg':
+                                    $select[] = "ROUND(AVG({$field['dbAlias']}),2) as {$tableName}_{$fieldName}_{$stat}";
+                                    $this->_columnHeaders["{$tableName}_{$fieldName}_{$stat}"]['title'] = $label;
+                                    $this->_columnHeaders["{$tableName}_{$fieldName}_{$stat}"]['type']  =  
+                                        $field['type'];
+                                    $this->_statFields[] = "{$tableName}_{$fieldName}_{$stat}";
+                                    break;
+                                }
+                            }   
+                        } else {
+                            $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
+                            $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = $field['title'];
+                            $this->_columnHeaders["{$tableName}_{$fieldName}"]['type']  = CRM_Utils_Array::value( 'type', $field );
+                        }
+                    }
+                }
+            }
+
+            // select for group bys
+            if ( array_key_exists('group_bys', $table) ) {
+                foreach ( $table['group_bys'] as $fieldName => $field ) {
+
+                    // 1. In many cases we want select clause to be built in slightly different way 
+                    //    for a particular field of a particular type.
+                    // 2. This method when used should receive params by reference and modify $this->_columnHeaders
+                    //    as needed.
+                    $selectClause = $this->selectClause( $tableName, 'group_bys', $fieldName, $field );
+                    if ( $selectClause ) {
+                        $select[] = $selectClause;
+                        continue;
+                    }
+
+                    if ( CRM_Utils_Array::value( $fieldName, $this->_params['group_bys'] ) ) {
+                        switch ( CRM_Utils_Array::value( $fieldName, $this->_params['group_bys_freq'] ) ) {
+                        case 'YEARWEEK' :
+                            $select[] = "DATE_SUB({$field['dbAlias']}, INTERVAL WEEKDAY({$field['dbAlias']}) DAY) AS {$tableName}_{$fieldName}_start";
+                            $select[] = "YEARWEEK({$field['dbAlias']}) AS {$tableName}_{$fieldName}_subtotal";
+                            $select[] = "WEEKOFYEAR({$field['dbAlias']}) AS {$tableName}_{$fieldName}_interval";
+                            $field['title'] = 'Week';
+                            break;
+                            
+                        case 'YEAR' :
+                            $select[] = "MAKEDATE(YEAR({$field['dbAlias']}), 1)  AS {$tableName}_{$fieldName}_start";
+                            $select[] = "YEAR({$field['dbAlias']}) AS {$tableName}_{$fieldName}_subtotal";
+                            $select[] = "YEAR({$field['dbAlias']}) AS {$tableName}_{$fieldName}_interval";
+                            $field['title'] = 'Year';
+                            break;
+                            
+                        case 'MONTH':
+                            $select[] = "DATE_SUB({$field['dbAlias']}, INTERVAL (DAYOFMONTH({$field['dbAlias']})-1) DAY) as {$tableName}_{$fieldName}_start";
+                            $select[] = "MONTH({$field['dbAlias']}) AS {$tableName}_{$fieldName}_subtotal";
+                            $select[] = "MONTHNAME({$field['dbAlias']}) AS {$tableName}_{$fieldName}_interval";
+                            $field['title'] = 'Month';
+                            break;
+                            
+                        case 'QUARTER':
+                            $select[] = "STR_TO_DATE(CONCAT( 3 * QUARTER( {$field['dbAlias']} ) -2 , '/', '1', '/', YEAR( {$field['dbAlias']} ) ), '%m/%d/%Y') AS {$tableName}_{$fieldName}_start";
+                            $select[] = "QUARTER({$field['dbAlias']}) AS {$tableName}_{$fieldName}_subtotal";
+                            $select[] = "QUARTER({$field['dbAlias']}) AS {$tableName}_{$fieldName}_interval";
+                            $field['title'] = 'Quarter';
+                            break;
+                            
+                        }
+                        // for graphs and charts -
+                        if ( CRM_Utils_Array::value( $fieldName, $this->_params['group_bys_freq'] ) ) {
+                            $this->_interval = $field['title'];
+                            $this->_columnHeaders["{$tableName}_{$fieldName}_start"]['title'] = 
+                                $field['title'] . ' Beginning';
+                            $this->_columnHeaders["{$tableName}_{$fieldName}_start"]['type']  = 
+                                $field['type'];
+                            $this->_columnHeaders["{$tableName}_{$fieldName}_start"]['group_by'] = 
+                                $this->_params['group_bys_freq'][$fieldName];
+
+                            // just to make sure these values are transfered to rows.
+                            // since we 'll need them for calculation purpose, 
+                            // e.g making subtotals look nicer or graphs
+                            $this->_columnHeaders["{$tableName}_{$fieldName}_interval"] = array('no_display' => true);
+                            $this->_columnHeaders["{$tableName}_{$fieldName}_subtotal"] = array('no_display' => true);
+                        }
+                    }
+                }
+            }
+        }
+
+        $this->_select = "SELECT " . implode( ', ', $select ) . " ";
+    }
+
+    function selectClause( &$tableName, $tableKey, &$fieldName, &$field ) {
+        return false;
+    }
+
     function where( ) {
         $whereClauses = $havingClauses = array( );
         foreach ( $this->_columns as $tableName => $table ) {
