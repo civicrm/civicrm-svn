@@ -330,7 +330,7 @@ function _civicrm_activity_check_params ( &$params, $addMode = false )
         require_once "CRM/Core/PseudoConstant.php";
         $activityStatus = CRM_Core_PseudoConstant::activityStatus( );
         
-        if ( !array_key_exists( $params['status_id'], $activityStatus ) ) {             
+        if ( is_numeric( $params['status_id'] ) && !array_key_exists( $params['status_id'], $activityStatus ) ) {             
             return civicrm_create_error( ts('Invalid Activity Status') );
         } elseif ( !is_numeric( $params['status_id'] ) ) {
             $statusId = array_search( $params['status_id'], $activityStatus );            

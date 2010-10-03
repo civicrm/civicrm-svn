@@ -510,16 +510,17 @@ class api_v2_ActivityTest extends CiviUnitTestCase
                         'activity_name'       => 'Test activity type'
                         );
         
-        $result = & civicrm_activity_create( $params );
+        $result = civicrm_activity_create( $params );
+        
         $this->assertEquals( $result['is_error'], 0,
                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
         $this->assertEquals( $result['source_contact_id'], 17 );
         $this->assertEquals( $result['duration'], 120 );
         $this->assertEquals( $result['subject'], 'Discussion on Apis for v2' );
-        $this->assertEquals( $result['activity_date_time'], date('Ymd') );
+        $this->assertEquals( $result['activity_date_time'], date('Ymd') . '000000' );
         $this->assertEquals( $result['location'], 'Pensulvania' );
         $this->assertEquals( $result['details'], 'a test activity' );
-        $this->assertEquals( $result['status_id'], 1 );
+        $this->assertEquals( $result['status_id'], 'Scheduled' );
     }
 
     /**
