@@ -742,16 +742,16 @@ AND    v.weight > 0
 }
 
 /**
- * Sample hook to add more shortcuts
+ * Sample hook to add more actions for Create New
  */
-function civitest_civicrm_shortcuts( &$options ) {
-    // add link to create new profile
-    $options[] = array( 'url'   => '/civicrm/admin/uf/group?action=add&reset=1',
+function civitest_civicrm_links( $op, $objectName, $objectId, &$links ) {
+    if ( $op == 'create.new.shorcuts' ) {
+      // add link to create new profile
+      $links[] = array( 'url'   => '/civicrm/admin/uf/group?action=add&reset=1',
                         'title' => ts('New Profile'),
                         'ref'   => 'new-profile');
-    
+    }                 
 }
-
 
 function civitest_civicrm_membershipTypeValues( &$form, &$membershipTypeValues ) {
     $membershipTypeValues[1]['name']        = 'General (50% discount)';
