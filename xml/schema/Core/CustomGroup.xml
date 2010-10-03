@@ -30,7 +30,7 @@
      <length>64</length>
      <localizable>true</localizable>
      <comment>Friendly Name.</comment>
-       <add>1.1</add>
+     <add>1.1</add>
   </field>
   <field>
      <name>extends</name>
