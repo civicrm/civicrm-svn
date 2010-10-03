@@ -58,8 +58,14 @@ require_once 'CRM/Contact/BAO/Contact.php';
  */
 function civicrm_contact_create( &$params ) {
     // call update and tell it to create a new contact
+  _civicrm_initialize( true );
+  try {
+    civicrm_api_check_permission (__FUNCTION__,$params,true);
     $create_new = true;
     return civicrm_contact_update( $params, $create_new );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  }
 }
 
 /**
@@ -67,7 +73,7 @@ function civicrm_contact_create( &$params ) {
  * @todo Serious FIXMES in the code! File issues.
  */
 function civicrm_contact_update( &$params, $create_new = false ) {
-    _civicrm_initialize( );
+  _civicrm_initialize( );
     require_once 'CRM/Utils/Array.php';
     $contactID = CRM_Utils_Array::value( 'contact_id', $params );
 
