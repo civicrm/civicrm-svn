@@ -1413,3 +1413,29 @@ function civicrm_check_contact_dedupe( &$params ) {
 
     return _civicrm_duplicate_formatted_contact( $contactFormatted );
 } 
+
+/**
+ * Check permissions for a given API call.
+ *
+ * @param $api string    API method being called
+ * @param $params array  params of the API call
+ * @param $throw bool    whether to throw exception instead of returning false
+ *
+ * @return bool whether the current API user has the permission to make the call
+ */
+function civicrm_api_check_permission($api, $params, $throw = false)
+{
+    $mapping = array(
+        'civicrm_contact_create' => array('access CiviCRM', 'add contacts'),
+    );
+    foreach ($mapping[$api] as $perm) {
+        if (!CRM_Core_Permission::check($perm)) {
+            if ($throw) {
+                throw new Exception("API permission check failed for $api call.");
+            } else {
+                return false;
+            }
+        }
+    }
+    return true;
+}
