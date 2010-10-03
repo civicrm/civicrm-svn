@@ -161,7 +161,8 @@ INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES    
     ( @domainID, 'civicrm/campaign&reset=1&subPage=survey',        '{ts escape="sql"}Surveys{/ts}', 'Survey Dashboard', 'administer CiviCampaign', '', @campaigndashboardlastID, '1', NULL, 1 ), 
-    ( @domainID, 'civicrm/campaign&reset=1&subPage=campaign',        '{ts escape="sql"}Campaigns{/ts}', 'Campaign Dashboard', 'administer CiviCampaign', '', @campaigndashboardlastID, '1', NULL, 2 ),
+    ( @domainID, 'civicrm/campaign&reset=1&subPage=petition',        '{ts escape="sql"}Petition{/ts}', 'Petition Dashboard', 'administer CiviCampaign', '', @campaigndashboardlastID, '1', NULL, 2 ),
+    ( @domainID, 'civicrm/campaign&reset=1&subPage=campaign',        '{ts escape="sql"}Campaigns{/ts}', 'Campaign Dashboard', 'administer CiviCampaign', '', @campaigndashboardlastID, '1', NULL, 3 ),
     ( @domainID, 'civicrm/campaign/add&reset=1',        '{ts escape="sql"}New Campaign{/ts}', 'New Campaign', 'administer CiviCampaign', '', @nav_campaign_id, '1', NULL, 2 ), 
     ( @domainID, 'civicrm/survey/add&reset=1',        '{ts escape="sql"}New Survey{/ts}', 'New Survey', 'administer CiviCampaign', '', @nav_campaign_id, '1', NULL, 3 ),
     ( @domainID, 'civicrm/petition/add&reset=1',        '{ts escape="sql"}New Petition{/ts}', 'New Petition', 'administer CiviCampaign', '', @nav_campaign_id, '1', NULL, 4 ),
