@@ -91,8 +91,6 @@ class api_v2_ContributionTest extends CiviUnitTestCase
         $this->_contribution =& civicrm_contribution_add($p);
         $params = array('contribution_id'=>$this->_contribution['id']);        
         $contribution =& civicrm_contribution_get($params);
-        CRM_Core_Error::debug( $contribution );
-
         $this->assertEquals($contribution['contact_id'],$this->_individualId); 
         $this->assertEquals($contribution['contribution_type_id'],$this->_contributionTypeId);        
         $this->assertEquals($contribution['total_amount'],100.00);
