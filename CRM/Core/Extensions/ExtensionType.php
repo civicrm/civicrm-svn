@@ -36,10 +36,10 @@
  */
 
 require_once 'CRM/Core/Config.php';
+require_once 'CRM/Core/Extensions.php';
 
 class CRM_Core_Extensions_ExtensionType
 {
-
 
     /**
      * 
@@ -47,9 +47,68 @@ class CRM_Core_Extensions_ExtensionType
     const OPTION_GROUP_NAME = 'system_extensions';
 
     private $allowedExtTypes = array( 'payment', 'search', 'report' );
+
+    protected static $_extensions = null;
+
+    function __construct( ) {
+        $ext = CRM_Core_Extensions::singleton();
+        self::$_extensions = $ext->getExtensions();
+        $config = CRM_Core_Config::singleton( );
+        $this->extDir = $config->extensionsDir;        
+    }
     
-    public function install() {
+    public function install( $id, $key ) {
+        $this->moveFiles( $id, $key );
+        $this->createEntry( $id, $key );       
     }
 
-    public function deinstall() {
+    public function deinstall( $id, $key ) {
+        $this->deleteEntry( $id, $key );
+        $this->deleteFiles( $id, $key );
     }
+
+    public function moveFiles( $id, $key ) {
+        $e = self::$_extensions;
+        if( $e['per_id'][$id]['status'] === 'uploaded' ) {
+            require_once( 'CRM/Utils/File.php' );
+            CRM_Utils_File::copyDir( $e['per_id'][$id]['path'], $this->extDir . DIRECTORY_SEPARATOR . $e['per_id'][$id]['type'] . DIRECTORY_SEPARATOR . $e['per_id'][$id]['key'] );
+            $this->deleteFiles( $id, $key );
+        }
+    }
+
+    public function createEntry( $id, $key ) {
+        $e = self::$_extensions;
+
+        $ids = array();
+            
+        $params = array( 'option_group_id' => 50,
+                         'weight' => CRM_Utils_Weight::getDefaultWeight( 'CRM_Core_DAO_OptionValue',
+                                                                          array( 'option_group_id' => 50) ),
+                         'label' => $e['per_id'][$id]['label'],
+                         'name'  => $e['per_id'][$id]['label'],
+                         'value' => $key,
+                         'grouping' => $e['per_id'][$id]['type'],
+                         'is_active' => 1
+                      );
+        $optionValue = CRM_Core_BAO_OptionValue::add($params, $ids);
+                
+    }
+
+    public function deleteEntry( $id, $key ) {
+        $e = self::$_extensions;
+        if( $e['per_id'][$id]['status'] === 'enabled' ) {
+            require_once( 'CRM/Core/DAO/OptionValue.php' );
+            $optionValue = new CRM_Core_DAO_OptionValue( );
+            $optionValue->id = $id;
+            return $optionValue->delete();
+        }
+        return false;
+    }
+    
+    public function deleteFiles( $id, $key ) {
+        require_once( 'CRM/Utils/File.php' );
+        $e = self::$_extensions;
+        CRM_Utils_File::cleanDir( $e['per_id'][$id]['path'] );
+    }
+    
+}

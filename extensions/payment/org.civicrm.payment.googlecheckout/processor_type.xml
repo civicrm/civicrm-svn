@@ -8,11 +8,9 @@
   <url_site_default>https://checkout.google.com/</url_site_default>
   <url_api_default></url_api_default>
   <url_recur_default></url_recur_default>
-  <url_button_default>https://checkout.google.com/buttons/checkout.gif?merchant_id=YOURMERCHANTIDHERE&w=160&h=43&style=white&variant=text&loc=en_US</url_button_default>
   <url_site_test_default>https://sandbox.google.com/checkout/</url_site_test_default>
   <url_api_test_default></url_api_test_default>
   <url_recur_test_default></url_recur_test_default>
-  <url_button_test_default>https://sandbox.google.com/checkout/buttons/checkout.gif?merchant_id=YOURMERCHANTIDHERE&w=160&h=43&style=white&variant=text&loc=en_US</url_button_test_default>
   <billing_mode>notify</billing_mode>
   <is_recur>0</is_recur>
   <payment_type>1</payment_type>

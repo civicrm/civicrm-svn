@@ -45,14 +45,43 @@ class CRM_Core_Extensions_ExtensionType_Search extends CRM_Core_Extensions_Exten
      * 
      */
     const OPTION_GROUP_NAME = 'system_extensions';
+    const CUSTOM_SEARCH_GROUP_NAME = 'custom_search';
 
     private $allowedExtTypes = array( 'payment', 'search', 'report' );
     
-    public function install( $info ) {
+    public function install( $id, $key ) {
+        parent::install( $id, $key );
+
+        $groupId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', 
+                                                  self::CUSTOM_SEARCH_GROUP_NAME, 'id', 'name' );
+
+        $customSearches = CRM_Core_OptionGroup::values(self::CUSTOM_SEARCH_GROUP_NAME, true, false, false, null, 'name', false );
+
+//        CRM_Core_Error::debug( $customSearches );
+
+        if( array_key_exists( $key, $customSearches ) ) {
+            CRM_Core_Error::fatal( 'This custom search is already registered.' );
+        }
         
-        
+        $e = parent::$_extensions;
+
+        $ids = array();
+            
+        $params = array( 'option_group_id' => $groupId,
+                         'weight' => CRM_Utils_Weight::getDefaultWeight( 'CRM_Core_DAO_OptionValue',
+                                                                      array( 'option_group_id' => $groupId ) ),
+                         'description' => $e['per_id'][$id]['label'] . ' (' . $key . ')',
+                         'name'  => $key,
+                         'value' => max( $customSearches ) + 1,
+                         'label'  => $key,
+                         'is_active' => 1
+                      );
+                      
+        $optionValue = CRM_Core_BAO_OptionValue::add($params, $ids);
+                
     }
 
-    public function deinstall( $info ) {
-       
+    public function deinstall( $id, $key ) {
+        parent::deinstall( $id, $key );       
     }
+}

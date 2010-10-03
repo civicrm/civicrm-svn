@@ -160,6 +160,23 @@ class CRM_Utils_File {
         }
     }
 
+    public function copyDir( $source, $destination) {
+
+        $dir = opendir($source);
+        @mkdir( $destination );
+        while(false !== ( $file = readdir( $dir )) ) {
+            if (( $file != '.' ) && ( $file != '..' )) {
+                if ( is_dir( $source . DIRECTORY_SEPARATOR . $file ) ) {
+                    CRM_Utils_File::copyDir( $source . DIRECTORY_SEPARATOR . $file, $destination . DIRECTORY_SEPARATOR . $file );
+                } else {
+                    copy($source . DIRECTORY_SEPARATOR . $file, $destination . DIRECTORY_SEPARATOR . $file);
+                }
+            }
+        }
+        closedir($dir);
+    } 
+
+
     /**
      * Given a file name, recode it (in place!) to UTF-8
      *

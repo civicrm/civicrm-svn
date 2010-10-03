@@ -54,10 +54,15 @@ class CRM_Admin_Form_Extensions extends CRM_Admin_Form
     {
         parent::preProcess( );
 
+        require_once 'CRM/Utils/Request.php';
+        $this->_key = CRM_Utils_Request::retrieve('key', 'String',
+                                                  $this, false, 0);
+
         $session = CRM_Core_Session::singleton();
         $url = CRM_Utils_System::url('civicrm/admin/extensions', 'reset=1&action=browse');
         $session->pushUserContext( $url );
         $this->assign('id', $this->_id);
+        $this->assign('key', $this->_key);
     }
 
     /**
@@ -81,7 +86,7 @@ class CRM_Admin_Form_Extensions extends CRM_Admin_Form
     public function buildQuickForm( ) 
     {
         parent::buildQuickForm( );
-        if ($this->_action & CRM_Core_Action::DELETE ) { 
+        if ($this->_action & CRM_Core_Action::DELETE || $this->_action & CRM_Core_Action::ADD ) { 
             return;
         }
     }
@@ -112,12 +117,19 @@ class CRM_Admin_Form_Extensions extends CRM_Admin_Form
      */
     public function postProcess() 
     {
-//        CRM_Utils_System::flushCache( );
+        CRM_Utils_System::flushCache( );
 
-        require_once 'CRM/Core/BAO/OptionValue.php';
         if($this->_action & CRM_Core_Action::DELETE) {
-            CRM_Core_Extensions::delete($this->_id);
+            require_once('CRM/Core/Extensions.php');
+            $ext = new CRM_Core_Extensions();
+            $ext->delete($this->_id, $this->_key);
             CRM_Core_Session::setStatus( ts('Extension has been removed.') );
+        }
+        if($this->_action & CRM_Core_Action::ADD) {
+            require_once('CRM/Core/Extensions.php');
+            $ext = new CRM_Core_Extensions();
+            $ext->install($this->_id, $this->_key);
+            CRM_Core_Session::setStatus( ts('Extension has been installed.') );
         }
     }
 }

@@ -53,6 +53,8 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
 
     static $_extensions = null;
 
+    static $_extEnabled = TRUE;
+
     /**
      * Obtains the group name from url and sets the title.
      *
@@ -66,6 +68,8 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
         require_once 'CRM/Core/Extensions.php';
 
         $ext = new CRM_Core_Extensions();
+
+        self::$_extEnabled = $ext->extensionsEnabled();
         self::$_extensions = $ext->getExtensions();
 
         CRM_Utils_System::setTitle(ts('CiviCRM Extensions'));
@@ -93,9 +97,9 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
             self::$_links = array(
                                   CRM_Core_Action::ADD     => array(
                                                                     'name'  => ts('Install'),
-                                                                    'extra' => 'onclick = "enableDisable( \'%%id%%\',\''. 'CRM_Core_Extensions' . '\',\'' . 'enable-disable' . '\' );"',
-                                                                    'ref'   => 'enable-action',
-                                                                    'title' => ts('Enable')
+                                                                    'url'   => 'civicrm/admin/extensions',
+                                                                    'qs'    => 'action=add&id=%%id%%&key=%%key%%',
+                                                                    'title' => ts('Install')
                                                                     ),
                                   CRM_Core_Action::ENABLE  => array(
                                                                     'name'  => ts('Enable'),
@@ -113,7 +117,7 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
                                   CRM_Core_Action::DELETE  => array(
                                                                     'name'  => ts('Delete'),
                                                                     'url'   => 'civicrm/admin/extensions',
-                                                                    'qs'    => 'action=delete&id=%%id%%',
+                                                                    'qs'    => 'action=delete&id=%%id%%&key=%%key%%',
                                                                     'title' => ts('Delete Extension') 
                                                                     )
                                   );
@@ -143,26 +147,36 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
      */
     function browse()
     {
-        foreach( self::$_extensions as $status => $types ) {
-            if( $status === 'enabled' || $status === 'uploaded' ) {
-                foreach( $types as $type => $exts ) {
-                    foreach( $exts as $name => $row ) {
-                        if( $status === 'uploaded' ) {
-                            $action = CRM_Core_Action::ADD;
-                        } else {
-                            if( $row['is_active'] ) {
-                                $action = CRM_Core_Action::DISABLE;
-                            } else {
+        $this->assign('extEnabled', self::$_extEnabled );
+        if( self::$_extEnabled ) {
+            foreach( self::$_extensions as $status => $types ) {
+                if( $status === 'enabled' || $status === 'uploaded' ) {
+                    foreach( $types as $type => $exts ) {
+                        foreach( $exts as $name => $row ) {
+                            if( $status === 'uploaded' ) {
                                 $action = array_sum(array_keys($this->links()));
                                 $action -= CRM_Core_Action::DISABLE;
-                                $action -= CRM_Core_Action::ADD;
+                                $action -= CRM_Core_Action::ENABLE;
+                            } else {
+                                if( $row['is_active'] ) {
+                                    $action = CRM_Core_Action::DISABLE;
+                                } else {
+                                    $action = array_sum(array_keys($this->links()));
+                                    $action -= CRM_Core_Action::DISABLE;
+                                    $action -= CRM_Core_Action::ADD;
+                                }
                             }
+                            $row['label'] = (string) $row['label'] . ' (' . $name . ')';
+                            if( $row['is_corrupt'] ) {
+                                $row['label'] .= "   CORRUPT!";
+                                $action -= CRM_Core_Action::ENABLE;
+                            }
+                            $row['version'] = (string) $row['info']->version;
+                            $row['action'] = CRM_Core_Action::formLink(self::links(), $action,
+                                                                                    array('id' => $row['id'], 
+                                                                                          'key' => $name ));
+                            $rows[$status][$row['id']] = $row;
                         }
-                        $row['label'] = (string) $row['info']->name . ' (' . $name . ')';
-                        $row['version'] = (string) $row['info']->version;
-                        $row['action'] = CRM_Core_Action::formLink(self::links(), $action,
-                                                                                    array('id' => $row['id'] ));
-                        $rows[$status][$row['id']] = $row;
                     }
                 }
             }
