@@ -57,7 +57,6 @@
               <tr>
                 <th>{ts}Extension name{/ts}</th>
                 <th>{ts}Version{/ts}</th>
-                <th id="nosort">{ts}Description{/ts}</th>
                 <th>{ts}Enabled?{/ts}</th>
                 <th>{ts}Type{/ts}</th>
                 <th class="hiddenElement"></th>
@@ -66,10 +65,12 @@
             </thead>
             <tbody>
               {foreach from=$rows item=row}
-              <tr id="row_{$row.id}" class="crm-admin-options crm-admin-options_{$row.id} {cycle values="odd-row,even-row"}{if NOT $row.is_active} disabled{/if}">
-                <td class="crm-admin-options-label">{$row.label}</td>
+              <tr id="row_{$row.id}" class="crm-admin-options crm-admin-options_{$row.id}{if NOT $row.is_active} disabled{/if}">
+                <td class="crm-admin-options-label">
+                    <a class="collapsed" href="#"></a>&nbsp;{$row.label}
+                    <span class="hiddenElement description"><br/><br/>{$row.description}</span>
+                </td>
                 <td class="crm-admin-options-label">{$row.version}</td>
-                <td class="crm-admin-options-description">{$row.description}</td>	
                 <td class="crm-admin-options-is_active" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
                 <td class="crm-admin-options-description">{$row.grouping}</td>
                 <td class="order hiddenElement">{$row.weight}</td>
@@ -87,7 +88,6 @@
             {ts 1=$crmURL}There are no option values entered. You can <a href='%1'>add one</a>.{/ts}
         </div>    
       {/if}
-
     <br/>
     <h3>{ts}Uploaded extensions{/ts}</h3>
           {if $rowsUploaded}
@@ -99,7 +99,6 @@
                   <tr>
                     <th>{ts}Extension name{/ts}</th>
                     <th>{ts}Version{/ts}</th>
-                    <th id="nosort">{ts}Description{/ts}</th>
                     <th>{ts}Enabled?{/ts}</th>
                     <th>{ts}Type{/ts}</th>
                     <th class="hiddenElement"></th>
@@ -108,10 +107,11 @@
                 </thead>
                 <tbody>
                   {foreach from=$rowsUploaded item=row}
-                  <tr id="uploaded-row_{$row.id}" class="crm-admin-options crm-admin-options_{$row.id} {cycle values='odd-row,even-row'}{if NOT $row.is_active} disabled{/if}">
-                    <td class="crm-admin-options-label">{$row.label}</td>
-                    <td class="crm-admin-options-label">{$row.version}</td>
-                    <td class="crm-admin-options-description">{$row.description}</td>	
+                  <tr id="uploaded-row_{$row.id}" class="crm-admin-options crm-admin-options_{$row.id}{if NOT $row.is_active} disabled{/if}">
+                    <td class="crm-admin-options-label"> <a class="collapsed" href="#"></a>&nbsp;{$row.label}
+                        <span class="hiddenElement description"><br/><br/>{$row.description}</span>
+                    </td>
+                    <td class="crm-admin-options-label">{$row.version}</td>	
                     <td class="crm-admin-options-is_active" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
                     <td class="crm-admin-options-description">{$row.grouping}</td>
                     <td class="order hiddenElement">{$row.weight}</td>
@@ -134,5 +134,22 @@
             <a href="{crmURL q="reset=1"}" id="new" class="button"><span><div class="icon refresh-icon"></div>{ts}Refresh{/ts}</span></a>
               </div>
           {/if}
+          
+          {literal}
+          <script type="text/javascript">
+            cj( function( ) {
+                cj('.collapsed').click( function( ) {
+                    var currentObj = cj( this );
+                    if ( currentObj.hasClass( 'expanded') ) {
+                        currentObj.removeClass( 'expanded' );
+                        currentObj.next( ).hide( );
+                    } else {
+                        currentObj.addClass( 'expanded' );
+                        currentObj.next( ).show( ); 
+                    }
+                });
+            });
+          </script>
+          {/literal}
     {/if}
 {/if}
