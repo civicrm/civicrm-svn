@@ -252,6 +252,7 @@ class CRM_Utils_REST
 
     function process( &$args, $restInterface = true ) {
         $params =& self::buildParamList( );
+        $params['check_permissions'] = true;
         $fnName = null;
         
         // incase of ajax functions className is passed in url
