@@ -877,6 +877,25 @@ class api_v2_ContactTest extends CiviUnitTestCase
         CRM_Core_Permission_UnitTests::$permissions = null; // reset check() stub
     }
 
+    function testContactUpdatePermissions()
+    {
+        require_once 'CRM/Core/Permission/UnitTests.php';
+        $params = array('contact_type' => 'Individual', 'first_name' => 'Foo', 'last_name' => 'Bear');
+        $result = civicrm_contact_create($params);
+
+        $params = array('contact_id' => $result['contact_id'], 'contact_type' => 'Individual', 'last_name' => 'Bar');
+
+        CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM');
+        $result = civicrm_contact_update($params);
+        $this->assertEquals(1,                                                                                                $result['is_error'],      'lacking permissions should not be enough to update a contact');
+        $this->assertEquals('API permission check failed for civicrm_contact_update call; missing permission: add contacts.', $result['error_message'], 'lacking permissions should not be enough to update a contact');
+
+        CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM', 'add contacts', 'import contacts');
+        $result = civicrm_contact_update($params);
+        $this->assertEquals(0, $result['is_error'], 'overfluous permissions should be enough to update a contact');
+
+        CRM_Core_Permission_UnitTests::$permissions = null; // reset check() stub
+    }
 } // class api_v2_ContactTest
 
 // -- set Emacs parameters --
