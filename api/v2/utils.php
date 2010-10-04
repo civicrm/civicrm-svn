@@ -1513,10 +1513,11 @@ function civicrm_check_contact_dedupe( &$params ) {
  */
 function civicrm_api_check_permission($api, $params, $throw = false)
 {
-    $mapping = array(
+    require_once 'CRM/Core/Permission.php';
+    $requirements = array(
         'civicrm_contact_create' => array('access CiviCRM', 'add contacts'),
     );
-    foreach ($mapping[$api] as $perm) {
+    foreach ($requirements[$api] as $perm) {
         if (!CRM_Core_Permission::check($perm)) {
             if ($throw) {
                 throw new Exception("API permission check failed for $api call.");
