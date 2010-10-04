@@ -26,6 +26,7 @@
 */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
+require_once 'CRM/Core/Permission.php';
 require_once 'api/v2/utils.php';
 
 /**
@@ -45,6 +46,7 @@ class api_v2_UtilsTest extends CiviUnitTestCase
     protected function setUp()
     {
         parent::setUp();
+        CRM_Core_Permission_UnitTests::$permissions = array(); // reset check() stub
     }
 
     /**
