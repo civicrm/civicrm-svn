@@ -59,7 +59,7 @@ class CRM_Core_Extensions_ExtensionType_Report extends CRM_Core_Extensions_Exten
         
                 
         if( $e['per_id'][$id]['type_info']['component'] === 'Contact' ) {
-            $compId = null;
+            $compId = 'null';
         } else {
             $comp = CRM_Core_Component::get( $e['per_id'][$id]['type_info']['component'] );
             $compId = $comp->componentID;            

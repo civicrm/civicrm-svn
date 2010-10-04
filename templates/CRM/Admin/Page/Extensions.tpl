@@ -26,132 +26,115 @@
 
 {if $action eq 1 or $action eq 2 or $action eq 8}
    {include file="CRM/Admin/Form/Extensions.tpl"}
-{else}	
-
-
-
-{if not $extEnabled}
-
-<div class="crm-content-block crm-block">
-<div id="help">
-  {ts}Extensions disabled help text.{/ts}
-</div>
-</div>
-
-{else} {* extEnabled *}
-
-{if $action ne 1 and $action ne 2}
-    <div class="action-link">
-        <a href="{crmURL q="reset=1"}" id="new" class="button"><span><div class="icon add-icon"></div>{ts}Refresh{/ts}</span></a>
-    </div>
-{/if}
-
-
-<div id="help">
-  {ts}Extensions help.{/ts}
-</div>
-
-
-{if $rows}
-{ts}Locally available extensions.{/ts}<br/>
-
-
-<div id="extensions">
-        {strip}
-	{* handle enable/disable actions*} 
-	{include file="CRM/common/enableDisable.tpl"}
-    {include file="CRM/common/jsortable.tpl"}
-        <table id="options" class="display">
-	  <thead>
-	    <tr>
-              <th>{ts}Extension name{/ts}</th>
-              <th>{ts}Version{/ts}</th>
-              <th id="nosort">{ts}Description{/ts}</th>
-              <th>{ts}Enabled?{/ts}</th>
-              <th>{ts}Type{/ts}</th>
-              <th class="hiddenElement"></th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-        {foreach from=$rows item=row}
-        <tr id="row_{$row.id}" class="crm-admin-options crm-admin-options_{$row.id} {cycle values="odd-row,even-row"}{if NOT $row.is_active} disabled{/if}">
-	      <td class="crm-admin-options-label">{$row.label}</td>
-	      <td class="crm-admin-options-label">{$row.version}</td>
-	      <td class="crm-admin-options-description">{$row.description}</td>	
-	      <td class="crm-admin-options-is_active" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-	      <td class="crm-admin-options-description">{$row.grouping}</td>
-	      <td class="order hiddenElement">{$row.weight}</td>
-              <td>{$row.action|replace:'xx':$row.id}</td>
-        </tr>
-        {/foreach}
-        </tbody>
-        </table>
-        {/strip}
-
-</div>
-
 {else}
-    <div class="messages status">
-         <div class="icon inform-icon"></div>
-        {ts 1=$crmURL}There are no option values entered. You can <a href='%1'>add one</a>.{/ts}
-    </div>    
-{/if}
+    {if not $extEnabled}
+      <div class="crm-content-block crm-block">
+        <div class="messages status">
+             <div class="icon inform-icon"></div>
+            {ts 1=$crmURL}Your extensions directory is not set. Click <a href='%1'>here</a> to set the extension directory.{/ts}
+        </div>
+      </div>
+    {else} {* extEnabled *}
+      {if $action ne 1 and $action ne 2}
+          <div class="action-link">
+              <a href="{crmURL q="reset=1"}" id="new" class="button"><span><div class="icon refresh-icon"></div>{ts}Refresh{/ts}</span></a>
+          </div>
+      {/if}
 
+      <div class="messages help">
+        {ts}Extensions help.{/ts}
+      </div>
 
-{ts}Uploaded extensions.{/ts}<br/>
+      <h3>{ts}Installed extensions{/ts}</h3>
+      {if $rows}
+        <div id="extensions">
+          {strip}
+          {* handle enable/disable actions*} 
+          {include file="CRM/common/enableDisable.tpl"}
+          {include file="CRM/common/jsortable.tpl"}
+          <table id="installed-extensions" class="display">
+            <thead>
+              <tr>
+                <th>{ts}Extension name{/ts}</th>
+                <th>{ts}Version{/ts}</th>
+                <th id="nosort">{ts}Description{/ts}</th>
+                <th>{ts}Enabled?{/ts}</th>
+                <th>{ts}Type{/ts}</th>
+                <th class="hiddenElement"></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {foreach from=$rows item=row}
+              <tr id="row_{$row.id}" class="crm-admin-options crm-admin-options_{$row.id} {cycle values="odd-row,even-row"}{if NOT $row.is_active} disabled{/if}">
+                <td class="crm-admin-options-label">{$row.label}</td>
+                <td class="crm-admin-options-label">{$row.version}</td>
+                <td class="crm-admin-options-description">{$row.description}</td>	
+                <td class="crm-admin-options-is_active" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+                <td class="crm-admin-options-description">{$row.grouping}</td>
+                <td class="order hiddenElement">{$row.weight}</td>
+                <td>{$row.action|replace:'xx':$row.id}</td>
+              </tr>
+              {/foreach}
+            </tbody>
+          </table>
+          {/strip}
+        </div>
 
-{if $rowsUploaded}
+      {else}
+        <div class="messages status">
+             <div class="icon inform-icon"></div>
+            {ts 1=$crmURL}There are no option values entered. You can <a href='%1'>add one</a>.{/ts}
+        </div>    
+      {/if}
 
-<div id="extensionsUploaded">
-        {strip}
-	{* handle enable/disable actions*} 
-	{include file="CRM/common/enableDisable.tpl"}
-    {include file="CRM/common/jsortable.tpl"}
-        <table id="options" class="display">
-	  <thead>
-	    <tr>
-              <th>{ts}Extension name{/ts}</th>
-              <th>{ts}Version{/ts}</th>
-              <th id="nosort">{ts}Description{/ts}</th>
-              <th>{ts}Enabled?{/ts}</th>
-              <th>{ts}Type{/ts}</th>
-              <th class="hiddenElement"></th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-        {foreach from=$rowsUploaded item=row}
-        <tr id="row_{$row.id}" class="crm-admin-options crm-admin-options_{$row.id} {cycle values="odd-row,even-row"}{if NOT $row.is_active} disabled{/if}">
-	      <td class="crm-admin-options-label">{$row.label}</td>
-	      <td class="crm-admin-options-label">{$row.version}</td>
-	      <td class="crm-admin-options-description">{$row.description}</td>	
-	      <td class="crm-admin-options-is_active" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-	      <td class="crm-admin-options-description">{$row.grouping}</td>
-	      <td class="order hiddenElement">{$row.weight}</td>
-              <td>{$row.action|replace:'xx':$row.id}</td>
-        </tr>
-        {/foreach}
-        </tbody>
-        </table>
-        {/strip}
-
-
-</div>
-
-{else}
-    <div class="messages status">
-         <div class="icon inform-icon"></div>
-        {ts}There are no uploaded extensions to be installed.{/ts}
-    </div>    
-{/if}
-
-        {if $action ne 1 and $action ne 2}
-            <div class="action-link">
-	        <a href="{crmURL q="reset=1"}" id="new" class="button"><span><div class="icon add-icon"></div>{ts}Refresh{/ts}</span></a>
+    <br/>
+    <h3>{ts}Uploaded extensions{/ts}</h3>
+          {if $rowsUploaded}
+            <div id="extensionsUploaded">
+              {strip}
+              {* handle enable/disable actions*} 
+              {include file="CRM/common/enableDisable.tpl"}
+              {include file="CRM/common/jsortable.tpl"}
+              <table id="uploaded-extensions" class="display">
+                <thead>
+                  <tr>
+                    <th>{ts}Extension name{/ts}</th>
+                    <th>{ts}Version{/ts}</th>
+                    <th id="nosort">{ts}Description{/ts}</th>
+                    <th>{ts}Enabled?{/ts}</th>
+                    <th>{ts}Type{/ts}</th>
+                    <th class="hiddenElement"></th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {foreach from=$rowsUploaded item=row}
+                  <tr id="row_{$row.id}" class="crm-admin-options crm-admin-options_{$row.id} {cycle values="odd-row,even-row"}{if NOT $row.is_active} disabled{/if}">
+                    <td class="crm-admin-options-label">{$row.label}</td>
+                    <td class="crm-admin-options-label">{$row.version}</td>
+                    <td class="crm-admin-options-description">{$row.description}</td>	
+                    <td class="crm-admin-options-is_active" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+                    <td class="crm-admin-options-description">{$row.grouping}</td>
+                    <td class="order hiddenElement">{$row.weight}</td>
+                    <td>{$row.action|replace:'xx':$row.id}</td>
+                  </tr>
+                  {/foreach}
+                </tbody>
+              </table>
+              {/strip}
             </div>
-        {/if}
+          {else}
+              <div class="messages status">
+                   <div class="icon inform-icon"></div>
+                  {ts}There are no uploaded extensions to be installed.{/ts}
+              </div>    
+          {/if}
 
-</div>
-{/if}
+          {if $action ne 1 and $action ne 2}
+              <div class="action-link">
+            <a href="{crmURL q="reset=1"}" id="new" class="button"><span><div class="icon refresh-icon"></div>{ts}Refresh{/ts}</span></a>
+              </div>
+          {/if}
+    {/if}
 {/if}

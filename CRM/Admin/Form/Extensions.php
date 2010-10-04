@@ -85,9 +85,25 @@ class CRM_Admin_Form_Extensions extends CRM_Admin_Form
      */
     public function buildQuickForm( ) 
     {
-        parent::buildQuickForm( );
-        if ($this->_action & CRM_Core_Action::DELETE || $this->_action & CRM_Core_Action::ADD ) { 
-            return;
+        if ($this->_action & CRM_Core_Action::DELETE) {
+            $this->addButtons(array(
+                                    array ('type'      => 'next',
+                                           'name'      => ts('Delete'),
+                                           'isDefault' => true),
+                                    array ('type'      => 'cancel',
+                                           'name'      => ts('Cancel')),
+                                    )
+                              );
+        } else {
+            $this->addButtons( array(
+                                     array ( 'type'      => 'next',
+                                             'name'      => ts('Install'),
+                                             'isDefault' => true   ),
+                                     array ( 'type'      => 'cancel',
+                                             'name'      => ts('Cancel') ),
+                                     )
+                               );
+            
         }
     }
     

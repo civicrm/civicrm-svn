@@ -63,16 +63,19 @@ class CRM_Core_Extensions_ExtensionType
     }
 
     public function deinstall( $id, $key ) {
-        $this->deleteEntry( $id, $key );
+        $this->deleteEntry( $id, $key, true );
         $this->deleteFiles( $id, $key );
     }
 
-    public function moveFiles( $id, $key ) {
+    public function moveFiles( $id, $key, $deleteOrginal = false ) {
         $e = self::$_extensions;
         if( $e['per_id'][$id]['status'] === 'uploaded' ) {
             require_once( 'CRM/Utils/File.php' );
             CRM_Utils_File::copyDir( $e['per_id'][$id]['path'], $this->extDir . DIRECTORY_SEPARATOR . $e['per_id'][$id]['type'] . DIRECTORY_SEPARATOR . $e['per_id'][$id]['key'] );
-            $this->deleteFiles( $id, $key );
+            
+            if ( $deleteOrginal ) {
+                $this->deleteFiles( $id, $key );
+            }
         }
     }
 
