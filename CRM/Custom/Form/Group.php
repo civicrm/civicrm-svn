@@ -487,7 +487,7 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
         if ($this->_action & CRM_Core_Action::UPDATE) {
             CRM_Core_Session::setStatus(ts('Your custom field set \'%1 \' has been saved.', array(1 => $group->title)));
         } else {
-            $url = CRM_Utils_System::url( 'civicrm/admin/custom/group/field', 'reset=1&action=add&gid=' . $group->id);
+            $url = CRM_Utils_System::url( 'civicrm/admin/custom/group/field/add', 'reset=1&action=add&gid=' . $group->id);
             CRM_Core_Session::setStatus(ts('Your custom field set \'%1\' has been added. You can add it custom fields now.',
                                            array(1 => $group->title)));
             $session = CRM_Core_Session::singleton( );
