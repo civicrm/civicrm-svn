@@ -322,6 +322,7 @@ class CRM_Core_Extensions
     }
     
     public function getTemplateName( $clazz ) {
+        $e = $this->extensions;
         $elements = explode( '_', $clazz );
         $type = strtolower( $elements[1]);
         $keyElm = array_slice( $elements, 2);
