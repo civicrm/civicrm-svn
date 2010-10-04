@@ -44,12 +44,14 @@
        <tr class="crm-campaign-survey-form-block-title">
            <td class="label">{$form.title.label}</td>
            <td>{$form.title.html}
-	   <div class="description">{ts}Title of the petition.{/ts}</div></td>
        </tr> 
+       <tr class="crm-campaign-survey-form-block-instructions">
+           <td class="label">{$form.instructions.label}</td>
+           <td class="view-value">{$form.instructions.html}
+       </tr>
        <tr class="crm-campaign-survey-form-block-campaign_id">
            <td class="label">{$form.campaign_id.label}</td>
            <td>{$form.campaign_id.html}
-	   <div class="description">{ts}Select the campaign for which petition is created.{/ts}</div></td>
        </tr> 
        <tr class="crm-campaign-survey-form-block-activity_type_id">
            <td class="label">{$form.activity_type_id.label}</td>
@@ -58,12 +60,12 @@
        <tr class="crm-campaign-survey-form-block-profile_id">
            <td class="label">{$form.contact_profile_id.label}</td>
            <td>{$form.contact_profile_id.html}
-	   <div class="description">{ts}Select the Contact Profile for this petition.{/ts}</div></td>
+	   <div class="description">{ts}Fields about the contact you want to collect.{/ts}</div></td>
        </tr>	
        <tr class="crm-campaign-survey-form-block-profile_id">
            <td class="label">{$form.profile_id.label}</td>
            <td>{$form.profile_id.html}
-	   <div class="description">{ts}Select the Activity Profile for this petition.{/ts}</div></td>
+	   <div class="description">{ts}Fields about the petition.{/ts}</div></td>
        </tr>	
        <tr class="crm-campaign-survey-form-block-is_active">
            <td class="label">{$form.is_active.label}</td>

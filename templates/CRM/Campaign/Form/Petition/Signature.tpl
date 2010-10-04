@@ -32,6 +32,7 @@
 {/literal}
 </script>
 
+<div id="intro">{$petition.instructions}</div>
 <div class="crm-block crm-form-block crm-petition-form-block">
 
 {if $duplicate == "confirmed"}

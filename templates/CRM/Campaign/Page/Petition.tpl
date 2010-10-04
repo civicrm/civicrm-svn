@@ -23,35 +23,50 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{* this template is used for displaying signature information *}
+{* this template is used for displaying survey information *}
 
-{if $signatures} 
-
+{if $surveys} 
+  <div class="action-link">
+    <a href="{$addSurveyUrl}" class="button"><span>&raquo; {ts}Add Survey{/ts}</span></a>
+  </div>
  {include file="CRM/common/enableDisable.tpl"}
  {include file="CRM/common/jsortable.tpl"}
-  <div id="signatureList">
+  <div id="surveyList">
     <table id="options" class="display">
       <thead>
-        <tr>
-		  <th>{ts}Petition ID{/ts}</th>
-		  <th>{ts}Petition Title{/ts}</th> 
-          <th>{ts}Signed By{/ts}</th>
-		  <th>{ts}Date{/ts}</th>
-		  <th>{ts}Status{/ts}</th>	  
+        <tr>  
+          <th>{ts}Survey{/ts}</th>
+          <th>{ts}Campaign{/ts}</th>
+          <th>{ts}Survey Type{/ts}</th>   
+          <th>{ts}Release Frequency{/ts}</th>
+	  <th>{ts}Max Number Of Contacts{/ts}</th>
+	  <th>{ts}Default Number Of Contacts{/ts}</th>
+	  <th>{ts}Default?{/ts}</th>
+	  <th>{ts}Active?{/ts}</th>
+	  <th id="nosort"></th>
         </tr>
       </thead>
-      {foreach from=$signatures item=signature}
-        <tr id="row_{$signature.id}">
-          <td>{$signature.source_record_id}</td>
-          <td>{$signature.survey_title}</td>
-          <td><a href="/civicrm/contact/view?reset=1&cid={$signature.contactId}#Activities">{$signature.source_contact_id}</a></td>
-          <td>{$signature.activity_date_time}</td>
-          <td>{if $signature.status_id eq 1}Unconfirmed{/if}{if $signature.status_id eq 2}Confirmed{/if}</td>
+      {foreach from=$surveys item=survey}
+        <tr id="row_{$survey.id}" {if $survey.is_active neq 1}class="disabled"{/if}>
+	  <td>{$survey.title}</td>
+          <td>{$survey.campaign_id}</td>
+          <td>{$survey.activity_type_id}</td>
+          <td>{$survey.release_frequency}</td>
+          <td>{$survey.max_number_of_contacts}</td>
+          <td>{$survey.default_number_of_contacts}</td>
+          <td>{if $survey.is_default}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Default{/ts}" /> {/if}</td>
+          <td id="row_{$survey.id}_status">{if $survey.is_active}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}</td>
+ 	  <td class="crm-report-optionList-action">{$survey.action}</td>
         </tr>
       {/foreach}
     </table>
   </div>
 
 {else} 
-  {ts} No signature found!    {/ts} 
+  <div class="status">
+    <div class="icon inform-icon"></div>&nbsp;{ts}No survey found.{/ts}
+  </div> 
 {/if}
+<div class="action-link">
+   <a href="{$addSurveyUrl}" class="button"><span>&raquo; {ts}Add Survey{/ts}</span></a>
+</div>
