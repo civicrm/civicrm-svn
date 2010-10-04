@@ -50,15 +50,22 @@ class CRM_Core_Extensions_ExtensionType_Report extends CRM_Core_Extensions_Exten
     private $allowedExtTypes = array( 'payment', 'search', 'report' );
     
     public function install( $id, $key ) {
-        parent::install( $id, $key );
 
         $e = parent::$_extensions;
 
         $groupId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', 
                                                   self::REPORT_GROUP_NAME, 'id', 'name' );
+
+        
                 
-        $comp = CRM_Core_Component::get( $e['per_id'][$id]['type_info']['component'] );
-        $compId = $comp->componentID;
+        if( $e['per_id'][$id]['type_info']['component'] === 'Contact' ) {
+            $compId = null;
+        } else {
+            $comp = CRM_Core_Component::get( $e['per_id'][$id]['type_info']['component'] );
+            $compId = $comp->componentID;            
+        }
+        
+
 
         if( empty($compId) ) {
             CRM_Core_Error::fatal( "Component for which you're trying to install the extension (" . $e['per_id'][$id]['type_info']['component'] . ") is currently disabled." );
@@ -76,7 +83,8 @@ class CRM_Core_Extensions_ExtensionType_Report extends CRM_Core_Extensions_Exten
                          'is_active' => 1 );
 
         $optionValue = CRM_Core_BAO_OptionValue::add($params, $ids);
-                        
+
+        parent::install( $id, $key );                        
     }
 
     public function deinstall( $id, $key ) {
