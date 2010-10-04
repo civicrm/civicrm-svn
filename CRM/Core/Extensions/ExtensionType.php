@@ -80,10 +80,12 @@ class CRM_Core_Extensions_ExtensionType
         $e = self::$_extensions;
 
         $ids = array();
+
+        $groupId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', self::OPTION_GROUP_NAME, 'id', 'name' );
             
-        $params = array( 'option_group_id' => CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', self::OPTION_GROUP_NAME, 'id', 'name' ),
+        $params = array( 'option_group_id' => $groupId,
                          'weight' => CRM_Utils_Weight::getDefaultWeight( 'CRM_Core_DAO_OptionValue',
-                                                                          array( 'option_group_id' => 50) ),
+                                                                          array( 'option_group_id' => $groupId) ),
                          'label' => $e['per_id'][$id]['label'],
                          'name'  => $e['per_id'][$id]['label'],
                          'value' => $key,
