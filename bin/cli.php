@@ -92,6 +92,13 @@ class civicrm_CLI {
          // require_once 'CRM/Utils/System.php';
          CRM_Utils_System::authenticateScript( true,$user,$pass );
 
+         // bootstrap CMS environment
+         global $civicrm_root;
+         $_SERVER['SCRIPT_FILENAME'] = "$civicrm_root/bin/cli.php";
+         $_REQUEST['name'] = $user;
+         $_REQUEST['pass'] = $pass;
+         require_once 'CRM/Utils/System.php';
+         CRM_Utils_System::loadBootStrap();
     }
 
     function setEnv() {
@@ -109,9 +116,6 @@ class civicrm_CLI {
     }
 
      CRM_Core_Error::setCallback( array( 'civicrm_CLI', 'fatal' ) );
-    // load bootstrap to call hooks
-    require_once 'CRM/Utils/System.php';
-    CRM_Utils_System::loadBootStrap(  );
     }
 
     static function fatal( $pearError ) {
