@@ -69,42 +69,42 @@ class api_v2_UtilsTest extends CiviUnitTestCase
 
     function testCheckPermissionReturn()
     {
-        $noskip = array('skip_permissions' => false);
+        $check = array('check_permissions' => true);
 
         CRM_Core_Permission_UnitTests::$permissions = array();
-        $this->assertFalse(civicrm_api_check_permission('civicrm_contact_create', $noskip), 'empty permissions should not be enough');
+        $this->assertFalse(civicrm_api_check_permission('civicrm_contact_create', $check), 'empty permissions should not be enough');
         CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM');
-        $this->assertFalse(civicrm_api_check_permission('civicrm_contact_create', $noskip), 'lacking permissions should not be enough');
+        $this->assertFalse(civicrm_api_check_permission('civicrm_contact_create', $check), 'lacking permissions should not be enough');
         CRM_Core_Permission_UnitTests::$permissions = array('add contacts');
-        $this->assertFalse(civicrm_api_check_permission('civicrm_contact_create', $noskip), 'lacking permissions should not be enough');
+        $this->assertFalse(civicrm_api_check_permission('civicrm_contact_create', $check), 'lacking permissions should not be enough');
 
         CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM', 'add contacts');
-        $this->assertTrue(civicrm_api_check_permission('civicrm_contact_create', $noskip), 'exact permissions should be enough');
+        $this->assertTrue(civicrm_api_check_permission('civicrm_contact_create', $check), 'exact permissions should be enough');
 
         CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM', 'add contacts', 'import contacts');
-        $this->assertTrue(civicrm_api_check_permission('civicrm_contact_create', $noskip), 'overfluous permissions should be enough');
+        $this->assertTrue(civicrm_api_check_permission('civicrm_contact_create', $check), 'overfluous permissions should be enough');
     }
 
     function testCheckPermissionThrow()
     {
-        $noskip = array('skip_permissions' => false);
+        $check = array('check_permissions' => true);
 
         try {
             CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM');
-            civicrm_api_check_permission('civicrm_contact_create', $noskip, true);
+            civicrm_api_check_permission('civicrm_contact_create', $check, true);
         } catch (Exception $e) {
             $message = $e->getMessage();
         }
         $this->assertEquals($message, 'API permission check failed for civicrm_contact_create call; missing permission: add contacts.', 'lacking permissions should throw an exception');
 
         CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM', 'add contacts', 'import contacts');
-        $this->assertTrue(civicrm_api_check_permission('civicrm_contact_create', $noskip, true), 'overfluous permissions should return true');
+        $this->assertTrue(civicrm_api_check_permission('civicrm_contact_create', $check, true), 'overfluous permissions should return true');
     }
 
     function testCheckPermissionSkip()
     {
         CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM');
-        $this->assertFalse(civicrm_api_check_permission('civicrm_contact_create', array('skip_permissions' => false)), 'lacking permissions should not be enough');
-        $this->assertTrue(civicrm_api_check_permission('civicrm_contact_create',  array('skip_permissions' => true)),  'permission check should be skippable');
+        $this->assertFalse(civicrm_api_check_permission('civicrm_contact_create', array('check_permissions' => true)),  'lacking permissions should not be enough');
+        $this->assertTrue(civicrm_api_check_permission('civicrm_contact_create',  array('check_permissions' => false)), 'permission check should be skippable');
     }
 }

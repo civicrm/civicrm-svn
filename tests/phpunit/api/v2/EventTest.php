@@ -283,7 +283,7 @@ class api_v2_EventTest extends CiviUnitTestCase
     function testEventCreationPermissions()
     {
         require_once 'CRM/Core/Permission/UnitTests.php';
-        $params = array('event_type_id' => 1, 'start_date' => '2010-10-03', 'title' => 'le cake is a tie', 'skip_permissions' => false);
+        $params = array('event_type_id' => 1, 'start_date' => '2010-10-03', 'title' => 'le cake is a tie', 'check_permissions' => true);
 
         CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM');
         $result = civicrm_event_create($params);

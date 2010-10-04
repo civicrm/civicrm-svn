@@ -865,7 +865,7 @@ class api_v2_ContactTest extends CiviUnitTestCase
 
     function testContactCreationPermissions()
     {
-        $params = array('contact_type' => 'Individual', 'first_name' => 'Foo', 'last_name' => 'Bear', 'skip_permissions' => false);
+        $params = array('contact_type' => 'Individual', 'first_name' => 'Foo', 'last_name' => 'Bear', 'check_permissions' => true);
 
         CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM');
         $result = civicrm_contact_create($params);
@@ -879,10 +879,10 @@ class api_v2_ContactTest extends CiviUnitTestCase
 
     function testContactUpdatePermissions()
     {
-        $params = array('contact_type' => 'Individual', 'first_name' => 'Foo', 'last_name' => 'Bear', 'skip_permissions' => false);
+        $params = array('contact_type' => 'Individual', 'first_name' => 'Foo', 'last_name' => 'Bear', 'check_permissions' => true);
         $result = civicrm_contact_create($params);
 
-        $params = array('contact_id' => $result['contact_id'], 'contact_type' => 'Individual', 'last_name' => 'Bar', 'skip_permissions' => false);
+        $params = array('contact_id' => $result['contact_id'], 'contact_type' => 'Individual', 'last_name' => 'Bar', 'check_permissions' => true);
 
         CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM');
         $result = civicrm_contact_update($params);
