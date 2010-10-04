@@ -61,7 +61,28 @@ function civicrm_relationship_create( &$params ) {
     if ( civicrm_error( $error ) ) {
         return $error;
     }
-   
+    /*---------------------------------------------------------
+     * fix CRM-6895 (Erik Hommel, EE-atWork 2010-10-04
+     *
+     * first retrieve current relations for contact with API get. This
+     * returns all relationships for a contact within the array ['result']
+     * keyed on relationship id
+     */
+    $getparams = array("contact_id" => $params['contact_id_a']);
+    $current_relations = civicrm_contact_relationship_get($getparams);
+    $current_values = $current_relations['result'][$params['id']];
+    $params = array_merge($current_values, $params);
+    if (isset($params['start_date'])) {
+        $params['start_date'] = CRM_Utils_Date::format($params['start_date']);
+    }
+    if (isset($params['end_date'])) {
+        $params['end_date'] = CRM_Utils_Date::format($params['end_date']);
+    }
+
+    /*
+     * end fix CRM-6895
+     --------------------------------------------------------------*/
+
     $values = array( );
     require_once 'CRM/Contact/BAO/Relationship.php';
     $error = _civicrm_relationship_format_params( $params, $values );
@@ -89,7 +110,7 @@ function civicrm_relationship_create( &$params ) {
     } else if ( $relationshipBAO[1] ) {
         return civicrm_create_error( "Relationship is not valid" );
     } else if ( $relationshipBAO[2] ) {
-        return civicrm_create_error( "Relationship already exist" );
+        return civicrm_create_error( "Relationship already exists" );
     }
 
     return civicrm_create_success( array( 'id' => implode( ",", $relationshipBAO[4] ) ) );
