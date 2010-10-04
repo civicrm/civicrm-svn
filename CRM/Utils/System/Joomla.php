@@ -338,8 +338,12 @@ class CRM_Utils_System_Joomla {
 
     /* 
      * load joomla bootstrap
+     *
+     * @param $name string  optional username for login
+     * @param $pass string  optional password for login
      */
-    static function loadBootStrap( ) {
+    static function loadBootStrap($user = null, $pass = null)
+    {
         return true;
     }
     
