@@ -320,6 +320,14 @@ class CRM_Core_Extensions
         array_pop( $pathElm );
         return implode( DIRECTORY_SEPARATOR, $pathElm ) . DIRECTORY_SEPARATOR . 'templates';
     }
+    
+    public function getTemplateName( $clazz ) {
+        $elements = explode( '_', $clazz );
+        $type = strtolower( $elements[1]);
+        $keyElm = array_slice( $elements, 2);
+        $key = implode( '.', $keyElm );
+        return (string) $e['enabled'][$type][$key]['info']->callback . '.tpl' ;
+    }    
 
     public function isExtensionKey( $string ) {
         // check if the string is an extension name or the class

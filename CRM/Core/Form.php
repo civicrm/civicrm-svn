@@ -546,7 +546,7 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
         require_once( 'CRM/Core/Extensions.php' );
         $ext = new CRM_Core_Extensions();
         if( $ext->isExtensionClass( CRM_Utils_System::getClassName( $this ) ) ) {
-            $filename = end(explode( '_', CRM_Utils_System::getClassName( $this ) ) );
+            $filename = $ext->getTemplateName( CRM_Utils_System::getClassName( $this ) );
             $tplname =  $ext->getTemplatePath( CRM_Utils_System::getClassName( $this ) ) . DIRECTORY_SEPARATOR . $filename .'.tpl';
         } else {
             $tplname = str_replace( '_',
