@@ -61,6 +61,9 @@ class api_v2_ContactTest extends CiviUnitTestCase
     {
         //  Connect to the database
         parent::setUp();
+
+        require_once 'CRM/Core/Permission/UnitTests.php';
+        CRM_Core_Permission_UnitTests::$permissions = null; // reset check() stub
     }
 
     /**
@@ -862,7 +865,6 @@ class api_v2_ContactTest extends CiviUnitTestCase
 
     function testContactCreationPermissions()
     {
-        require_once 'CRM/Core/Permission/UnitTests.php';
         $params = array('contact_type' => 'Individual', 'first_name' => 'Foo', 'last_name' => 'Bear');
 
         CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM');
@@ -873,13 +875,10 @@ class api_v2_ContactTest extends CiviUnitTestCase
         CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM', 'add contacts', 'import contacts');
         $result = civicrm_contact_create($params);
         $this->assertEquals(0, $result['is_error'], 'overfluous permissions should be enough to create a contact');
-
-        CRM_Core_Permission_UnitTests::$permissions = null; // reset check() stub
     }
 
     function testContactUpdatePermissions()
     {
-        require_once 'CRM/Core/Permission/UnitTests.php';
         $params = array('contact_type' => 'Individual', 'first_name' => 'Foo', 'last_name' => 'Bear');
         $result = civicrm_contact_create($params);
 
@@ -893,8 +892,6 @@ class api_v2_ContactTest extends CiviUnitTestCase
         CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM', 'add contacts', 'import contacts');
         $result = civicrm_contact_update($params);
         $this->assertEquals(0, $result['is_error'], 'overfluous permissions should be enough to update a contact');
-
-        CRM_Core_Permission_UnitTests::$permissions = null; // reset check() stub
     }
 } // class api_v2_ContactTest
 
