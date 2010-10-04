@@ -20,6 +20,7 @@ CRM/Contact/DAO/SubscriptionHistory.php
 CRM/Contribute/DAO
 CRM/Core/DAO/Address.php
 CRM/Core/DAO/AddressFormat.php
+CRM/Core/DAO/Batch.php
 CRM/Core/DAO/Cache.php
 CRM/Core/DAO/Component.php
 CRM/Core/DAO/Country.php
@@ -31,6 +32,7 @@ CRM/Core/DAO/Dashboard.php
 CRM/Core/DAO/Discount.php
 CRM/Core/DAO/Domain.php
 CRM/Core/DAO/Email.php
+CRM/Core/DAO/EntityBatch.php
 CRM/Core/DAO/EntityFile.php
 CRM/Core/DAO/EntityFinancialTrxn.php
 CRM/Core/DAO/EntityTag.php
