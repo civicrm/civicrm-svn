@@ -1453,7 +1453,7 @@ function civicrm_api_check_permission($api, $params, $throw = false)
     foreach ($requirements[$api] as $perm) {
         if (!CRM_Core_Permission::check($perm)) {
             if ($throw) {
-                throw new Exception("API permission check failed for $api call.");
+                throw new Exception("API permission check failed for $api call; missing permission: $perm.");
             } else {
                 return false;
             }
