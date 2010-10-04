@@ -81,7 +81,7 @@ class CRM_Core_Extensions_ExtensionType
 
         $ids = array();
             
-        $params = array( 'option_group_id' => 50,
+        $params = array( 'option_group_id' => CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', self::OPTION_GROUP_NAME, 'id', 'name' ),
                          'weight' => CRM_Utils_Weight::getDefaultWeight( 'CRM_Core_DAO_OptionValue',
                                                                           array( 'option_group_id' => 50) ),
                          'label' => $e['per_id'][$id]['label'],
