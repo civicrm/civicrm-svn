@@ -867,8 +867,8 @@ class api_v2_ContactTest extends CiviUnitTestCase
 
         CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM');
         $result = civicrm_contact_create($params);
-        $this->assertEquals(1,                                                              $result['is_error'],      'lacking permissions should not be enough to create a contact');
-        $this->assertEquals('API permission check failed for civicrm_contact_create call.', $result['error_message'], 'lacking permissions should not be enough to create a contact');
+        $this->assertEquals(1,                                                                                                $result['is_error'],      'lacking permissions should not be enough to create a contact');
+        $this->assertEquals('API permission check failed for civicrm_contact_create call; missing permission: add contacts.', $result['error_message'], 'lacking permissions should not be enough to create a contact');
 
         CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM', 'add contacts', 'import contacts');
         $result = civicrm_contact_create($params);

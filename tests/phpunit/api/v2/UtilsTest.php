@@ -91,7 +91,7 @@ class api_v2_UtilsTest extends CiviUnitTestCase
         } catch (Exception $e) {
             $message = $e->getMessage();
         }
-        $this->assertEquals($message, 'API permission check failed for civicrm_contact_create call.', 'lacking permissions should throw an exception');
+        $this->assertEquals($message, 'API permission check failed for civicrm_contact_create call; missing permission: add contacts.', 'lacking permissions should throw an exception');
 
         CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM', 'add contacts', 'import contacts');
         $this->assertTrue(civicrm_api_check_permission('civicrm_contact_create', array(), true), 'overfluous permissions should return true');
