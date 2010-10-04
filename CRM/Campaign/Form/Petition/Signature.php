@@ -537,6 +537,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
             require_once 'CRM/Core/BAO/UFGroup.php';
             require_once 'CRM/Profile/Form.php';
             $session = CRM_Core_Session::singleton( );
+            $this->assign( "petition" , $this->petition );
             //$contactID = $this->_contactId;	   
             $this->assign( contact_id, $this->_contactId );
 

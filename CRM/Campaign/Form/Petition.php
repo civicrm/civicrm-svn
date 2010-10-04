@@ -100,19 +100,21 @@ class CRM_Campaign_Form_Petition extends CRM_Campaign_Form_Survey
         // Activity Type id
 //        $this->add('select', 'activity_type_id', ts('Select Activity Type'), array( '' => ts('- select -') ) + $surveyActivityTypes, true );
         
+        // script / instructions
+        $this->add( 'textarea', 'instructions', ts('introduction'), array( 'rows' => 5, 'cols' => 40 ) );
         // Campaign id
         require_once 'CRM/Campaign/BAO/Campaign.php';
         $campaigns = CRM_Campaign_BAO_Campaign::getAllCampaign( );
-        $this->add('select', 'campaign_id', ts('Select Campaign'), array( '' => ts('- select -') ) + $campaigns );
+        $this->add('select', 'campaign_id', ts('Campaign'), array( '' => ts('- select -') ) + $campaigns );
 
         $customContactProfiles = CRM_Core_BAO_UFGroup::getProfiles( array('Individual') );
         // custom group id
-        $this->add('select', 'contact_profile_id', ts('Select Contact Profile'), 
+        $this->add('select', 'contact_profile_id', ts('Contact Profile'), 
                    array( '' => ts('- select -')) + $customContactProfiles, true );
         
         $customProfiles = CRM_Core_BAO_UFGroup::getProfiles( array('Activity') );
         // custom group id
-        $this->add('select', 'profile_id', ts('Select Activity Profile'), 
+        $this->add('select', 'profile_id', ts('Activity Profile'), 
                    array( '' => ts('- select -')) + $customProfiles );
                 
         // is active ?
