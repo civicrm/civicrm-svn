@@ -908,7 +908,8 @@ function buildCaseActivities( filterSearch ) {
 	if( filterSearch ) {
 	    oTable.fnDestroy();
  	}
-	var count = 0; var columns=''; var sortColumn = '';
+	var count   = 0; 
+	var columns = '';
 	var sourceUrl = {/literal}"{crmURL p='civicrm/ajax/activity' h=0 q='snippet=4&caseID='}{$caseID}"{literal};
             sourceUrl = sourceUrl + '&cid={/literal}{$contactID}{literal}';
             sourceUrl = sourceUrl + '&userID={/literal}{$userID}{literal}';   
@@ -923,18 +924,16 @@ function buildCaseActivities( filterSearch ) {
 	});
 
 	columns    = columns.substring(0, columns.length - 1 );
-	sortColumn = sortColumn.substring(0, sortColumn.length - 1 );
-	eval('sortColumn =[' + sortColumn + ']');
 	eval('columns =[' + columns + ']');
 
  	oTable = cj('#activities-selector').dataTable({
     	        "bFilter"    : false,
 		"bAutoWidth" : false,
-                "aaSorting"  : sortColumn,
+                "aaSorting"  : [],
 		"aoColumns"  : columns,
 	    	"bProcessing": true,
 		"sPaginationType": "full_numbers",
-		"sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',
+		"sDom"       : '<"crm-datatable-pager"lfp>rt<"crm-datatable-pager"ip>',	
 	   	"bServerSide": true,
 	   	"sAjaxSource": sourceUrl,
 		"fnDrawCallback": function() { setSelectorClass(); },
