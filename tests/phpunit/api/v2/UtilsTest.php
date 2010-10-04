@@ -47,7 +47,7 @@ class api_v2_UtilsTest extends CiviUnitTestCase
     protected function setUp()
     {
         parent::setUp();
-        CRM_Core_Permission_UnitTests::$permissions = array(); // reset check() stub
+        CRM_Core_Permission_UnitTests::$permissions = null; // reset check() stub
     }
 
     /**
