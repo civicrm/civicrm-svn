@@ -60,7 +60,7 @@ function civicrm_contact_create( &$params ) {
     // call update and tell it to create a new contact
   _civicrm_initialize( true );
   try {
-    civicrm_api_check_permission (__FUNCTION__,$params,true);
+    civicrm_api_check_permission(__FUNCTION__, $params, true);
     $create_new = true;
     return civicrm_contact_update( $params, $create_new );
   } catch (Exception $e) {

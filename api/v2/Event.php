@@ -57,7 +57,7 @@ function civicrm_event_create( &$params )
 {
     _civicrm_initialize( true );
    try {
-      civicrm_api_check_permission (__FUNCTION__,array('access CiviEvent'),$params,true);
+      civicrm_api_check_permission(__FUNCTION__, $params, true);
       civicrm_verify_mandatory ($params,'CRM_Event_DAO_Event',array ('start_date','event_type_id','title'));
 
       // Do we really want $params[id], even if we have
