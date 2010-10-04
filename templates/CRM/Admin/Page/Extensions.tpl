@@ -46,12 +46,12 @@
       </div>
 
       <h3>{ts}Installed extensions{/ts}</h3>
+      {include file="CRM/common/enableDisable.tpl"}
+      {include file="CRM/common/jsortable.tpl"}
       {if $rows}
         <div id="extensions">
           {strip}
           {* handle enable/disable actions*} 
-          {include file="CRM/common/enableDisable.tpl"}
-          {include file="CRM/common/jsortable.tpl"}
           <table id="installed-extensions" class="display">
             <thead>
               <tr>
@@ -94,8 +94,6 @@
             <div id="extensionsUploaded">
               {strip}
               {* handle enable/disable actions*} 
-              {include file="CRM/common/enableDisable.tpl"}
-              {include file="CRM/common/jsortable.tpl"}
               <table id="uploaded-extensions" class="display">
                 <thead>
                   <tr>
@@ -110,7 +108,7 @@
                 </thead>
                 <tbody>
                   {foreach from=$rowsUploaded item=row}
-                  <tr id="row_{$row.id}" class="crm-admin-options crm-admin-options_{$row.id} {cycle values="odd-row,even-row"}{if NOT $row.is_active} disabled{/if}">
+                  <tr id="uploaded-row_{$row.id}" class="crm-admin-options crm-admin-options_{$row.id} {cycle values='odd-row,even-row'}{if NOT $row.is_active} disabled{/if}">
                     <td class="crm-admin-options-label">{$row.label}</td>
                     <td class="crm-admin-options-label">{$row.version}</td>
                     <td class="crm-admin-options-description">{$row.description}</td>	
