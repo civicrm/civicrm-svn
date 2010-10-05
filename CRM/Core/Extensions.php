@@ -204,8 +204,9 @@ class CRM_Core_Extensions
         foreach( $ov as $id => $r ) {
             $name = $r['value'];
             $type = $r['grouping'];
-            $dir = $d . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $name;
+            $dir = $d . DIRECTORY_SEPARATOR . $name;
             $infoFile = $dir . DIRECTORY_SEPARATOR . self::EXT_INFO_FILENAME;
+
             if( is_dir( $dir ) && file_exists( $infoFile ) && in_array( $type, $this->allowedExtTypes ) ) {
                 $enabled[$name] = $this->_buildExtensionRecord( $dir, $id );
                 foreach( $r as $key => $val ) {
@@ -293,6 +294,7 @@ class CRM_Core_Extensions
         $config =& CRM_Core_Config::singleton( );
 
         $callback = (string) $e['enabled'][$key]['info']->callback;
+
         return
             $config->extensionsDir . 
             DIRECTORY_SEPARATOR    .
