@@ -91,6 +91,14 @@ COLS;
 
         CRM_Core_DAO::executeQuery("DROP TABLE IF EXISTS log_$table");
         CRM_Core_DAO::executeQuery($query);
+
+        $dao = CRM_Core_DAO::executeQuery("SHOW COLUMNS FROM $table");
+        $columns = array();
+        while ($dao->fetch()) {
+            $columns[] = $dao->Field;
+        }
+        $columns = implode(', ', $columns);
+        CRM_Core_DAO::executeQuery("INSERT INTO log_$table ($columns, log_conn_id, log_user_id, log_action) SELECT $columns, CONNECTION_ID(), @civicrm_user_id, 'Initialization' FROM $table");
     }
 
     private function createLogTables()
