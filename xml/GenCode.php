@@ -246,7 +246,7 @@ foreach ( array_keys( $tables ) as $name ) {
     $beautifier->save( );
 }
 
-echo "Generating CRM_{Core_I18n,Logging}_SchemaStructure...\n";
+echo "Generating CRM_Core_I18n_SchemaStructure...\n";
 $columns = array();
 $indices = array();
 foreach ($tables as $table) {
@@ -265,37 +265,15 @@ foreach ($tables as $table) {
     }
 }
 
-$logtables = array();
-foreach ($tables as $table) {
-    if ($table['log'] == 'true') {
-        $logtables[$table['name']] = array();
-    } else {
-        continue;
-    }
-    foreach ($table['fields'] as $field) {
-        $logtables[$table['name']][$field['name']] = $field['sqlType'];
-    }
-}
+$smarty->clear_all_cache();
+$smarty->clear_all_assign();
+$smarty->assign_by_ref('columns', $columns);
+$smarty->assign_by_ref('indices', $indices);
 
-foreach (array('CRM_Core_I18n_SchemaStructure', 'CRM_Logging_SchemaStructure') as $classname) {
-    $smarty->clear_all_cache();
-    $smarty->clear_all_assign();
-    $smarty->assign('classname', $classname);
-    switch ($classname) {
-    case 'CRM_Core_I18n_SchemaStructure':
-        $smarty->assign_by_ref('columns', $columns);
-        $smarty->assign_by_ref('indices', $indices);
-        break;
-    case 'CRM_Logging_SchemaStructure':
-        $smarty->assign_by_ref('columns', $logtables);
-        break;
-    }
-
-    $beautifier->setInputString($smarty->fetch('schema_structure.tpl'));
-    $beautifier->setOutputFile($phpCodePath . DIRECTORY_SEPARATOR . str_replace('_', DIRECTORY_SEPARATOR, $classname) . '.php');
-    $beautifier->process();
-    $beautifier->save();
-}
+$beautifier->setInputString($smarty->fetch('schema_structure.tpl'));
+$beautifier->setOutputFile("$phpCodePath/CRM/Core/I18n/SchemaStructure.php");
+$beautifier->process();
+$beautifier->save();
 
 echo "Generating logging triggers…\n";
 $smarty->clear_all_cache();
