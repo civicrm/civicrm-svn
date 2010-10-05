@@ -147,6 +147,8 @@
                         currentObj.addClass( 'expanded' );
                         currentObj.next( ).show( ); 
                     }
+                    
+                    return false;
                 });
             });
           </script>
