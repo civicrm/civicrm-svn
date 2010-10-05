@@ -77,16 +77,15 @@ class CRM_Logging_Schema
         $tables = array();
         $dao = CRM_Core_DAO::executeQuery('SHOW TABLES LIKE "civicrm_value_%"');
         while ($dao->fetch()) {
-            $tables[] = $dao->toValue('Tables_in_civicrm_(civicrm_value_%)');
+            $this->createLogTableFor($dao->toValue('Tables_in_civicrm_(civicrm_value_%)'));
         }
+    }
 
-        // fetch CREATE TABLE queries
-        $queries = array();
-        foreach ($tables as $table) {
-            $dao = CRM_Core_DAO::executeQuery("SHOW CREATE TABLE $table");
-            $dao->fetch();
-            $queries[$table] = $dao->Create_Table;
-        }
+    private function createLogTableFor($table)
+    {
+        $dao = CRM_Core_DAO::executeQuery("SHOW CREATE TABLE $table");
+        $dao->fetch();
+        $query = $dao->Create_Table;
 
         // rewrite the queries into CREATE TABLE queries for log tables:
         // - prepend the name with log_
@@ -100,16 +99,14 @@ class CRM_Logging_Schema
             log_user_id INTEGER,
             log_action  ENUM('Initialization', 'Insert', 'Update', 'Delete')
 COLS;
-        foreach ($queries as $table => $query) {
-            $query = preg_replace("/^CREATE TABLE `$table`/", "CREATE TABLE `log_$table`", $query);
-            $query = preg_replace("/ AUTO_INCREMENT/", '', $query);
-            $query = preg_replace("/^  [^`].*$/m", '', $query);
-            $query = preg_replace("/^\) ENGINE=[^ ]+ /m", ') ENGINE=ARCHIVE ', $query);
-            $query = preg_replace("/^\) /m", "$cols\n) ", $query);
+        $query = preg_replace("/^CREATE TABLE `$table`/", "CREATE TABLE `log_$table`", $query);
+        $query = preg_replace("/ AUTO_INCREMENT/", '', $query);
+        $query = preg_replace("/^  [^`].*$/m", '', $query);
+        $query = preg_replace("/^\) ENGINE=[^ ]+ /m", ') ENGINE=ARCHIVE ', $query);
+        $query = preg_replace("/^\) /m", "$cols\n) ", $query);
 
-            CRM_Core_DAO::executeQuery("DROP TABLE IF EXISTS log_$table");
-            CRM_Core_DAO::executeQuery($query);
-        }
+        CRM_Core_DAO::executeQuery("DROP TABLE IF EXISTS log_$table");
+        CRM_Core_DAO::executeQuery($query);
     }
 
     private function dropTriggers()
