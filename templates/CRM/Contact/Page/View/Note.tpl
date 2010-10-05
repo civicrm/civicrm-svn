@@ -127,7 +127,7 @@
             elRow.removeClass('view-comments');
         } else {
             var getUrl = {/literal}"{crmURL p='civicrm/ajax/rest/'}"{literal};
-            cj.get(getUrl, { fnName: 'civicrm/note/tree_get', json: 1, id: noteId, snippet: 1}, showComments, 'json' );
+            cj.get(getUrl, { fnName: 'civicrm/note/tree_get', json: 1, id: noteId }, showComments, 'json' );
         }
 
     }
