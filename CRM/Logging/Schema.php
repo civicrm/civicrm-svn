@@ -59,26 +59,10 @@ class CRM_Logging_Schema
     {
         if ($this->isEnabled()) return;
 
-        require_once 'CRM/Core/Config.php';
-        $config =& CRM_Core_Config::singleton();
-
-        require_once 'CRM/Utils/File.php';
-        global $civicrm_root;
         if (!$this->tablesExist()) {
-            CRM_Utils_File::sourceSQLFile($config->dsn, "$civicrm_root/sql/logging_tables.sql");
-            $this->createCustomTables();
+            $this->createLogTables();
         }
         CRM_Utils_File::sourceSQLFile($config->dsn, "$civicrm_root/sql/logging_triggers.sql");
-    }
-
-    private function createCustomTables()
-    {
-        // fetch custom table names
-        $tables = array();
-        $dao = CRM_Core_DAO::executeQuery('SHOW TABLES LIKE "civicrm_value_%"');
-        while ($dao->fetch()) {
-            $this->createLogTableFor($dao->toValue('Tables_in_civicrm_(civicrm_value_%)'));
-        }
     }
 
     private function createLogTableFor($table)
@@ -107,6 +91,13 @@ COLS;
 
         CRM_Core_DAO::executeQuery("DROP TABLE IF EXISTS log_$table");
         CRM_Core_DAO::executeQuery($query);
+    }
+
+    private function createLogTables()
+    {
+        foreach ($this->tables as $table) {
+            $this->createLogTableFor($table);
+        }
     }
 
     private function dropTriggers()

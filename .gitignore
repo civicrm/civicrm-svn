@@ -109,7 +109,6 @@ sql/civicrm_data.mysql
 sql/civicrm_drop.mysql
 sql/civicrm_navigation.mysql
 sql/civicrm_sample.mysql
-sql/logging_tables.sql
 sql/logging_triggers.sql
 templates/CRM/common/version.tpl
 tests/phpunit/CiviTest/CiviSeleniumSettings.php
