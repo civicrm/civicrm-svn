@@ -51,9 +51,9 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
      */
     static $_links = null;
 
-    static $_extensions = null;
+    static $_extInstalled = null;
 
-    static $_extEnabled = TRUE;
+    static $_extNotInstalled = TRUE;
 
     /**
      * Obtains the group name from url and sets the title.
@@ -69,8 +69,8 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
 
         $ext = new CRM_Core_Extensions();
 
-        self::$_extEnabled = $ext->extensionsEnabled();
-        self::$_extensions = $ext->getExtensions();
+        self::$_extInstalled = $ext->getInstalled( TRUE );
+        self::$_extNotInstalled = $ext->getNotInstalled();
 
         CRM_Utils_System::setTitle(ts('CiviCRM Extensions'));
             
@@ -147,41 +147,55 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
      */
     function browse()
     {
-        $this->assign('extEnabled', self::$_extEnabled );
-        if( self::$_extEnabled ) {
-            foreach( self::$_extensions as $status => $exts ) {
-                if( $status === 'enabled' || $status === 'uploaded' ) {
-                    foreach( $exts as $name => $row ) {
-                        if( $status === 'uploaded' ) {
-                            $action = array_sum(array_keys($this->links()));
-                            $action -= CRM_Core_Action::DISABLE;
-                            $action -= CRM_Core_Action::ENABLE;
-                        } else {
-                            if( $row['is_active'] ) {
-                                $action = CRM_Core_Action::DISABLE;
-                            } else {
-                                $action = array_sum(array_keys($this->links()));
-                                $action -= CRM_Core_Action::DISABLE;
-                                $action -= CRM_Core_Action::ADD;
-                            }
-                        }
-                        $row['label'] = (string) $row['label'] . ' (' . $name . ')';
-                        if( $row['is_corrupt'] ) {
-                            $row['label'] .= "   CORRUPT!";
-                            $action -= CRM_Core_Action::ENABLE;
-                        }
-                        $row['version'] = (string) $row['info']->version;
-                        $row['action'] = CRM_Core_Action::formLink(self::links(), $action,
-                                                                   array('id' => $row['id'], 
-                                                                         'key' => $name ));
-                        $rows[$status][$row['id']] = $row;
-                    }
+
+        $this->assign('extEnabled', FALSE );
+
+//        CRM_Core_Error::debug( self::$_extInstalled );
+
+        if( self::$_extInstalled ) {
+            $this->assign('extEnabled', TRUE );
+
+            // convert objects to arrays for handling in the template
+            $rows = array();
+            foreach( self::$_extInstalled as $id => $obj ) {
+                $rows[$id] = (array) $obj;
+
+                if( $obj->is_active ) {
+                    $action = CRM_Core_Action::DISABLE;
+                } else {
+                    $action = array_sum(array_keys($this->links()));
+                    $action -= CRM_Core_Action::DISABLE;
+                    $action -= CRM_Core_Action::ADD;
                 }
-            }
+                $rows[$id]['action'] = CRM_Core_Action::formLink(self::links(), $action,
+                                                                 array('id' => $id, 
+                                                                       'key' => $obj->key ));
+            }            
+            $this->assign('rows', $rows );
+
+
         }
 
-        $this->assign('rows', $rows['enabled']);
-        $this->assign('rowsUploaded', $rows['uploaded']);
+
+        
+        if( self::$_extNotInstalled ) {
+            $this->assign('extEnabled', TRUE );        
+
+            $rowsUpl = array();
+            foreach( self::$_extNotInstalled as $id => $obj ) {
+                $rowsUpl[$id] = (array) $obj;
+
+                $action = array_sum(array_keys($this->links()));
+                $action -= CRM_Core_Action::DISABLE;
+                $action -= CRM_Core_Action::ENABLE;
+
+                $rowsUpl[$id]['action'] = CRM_Core_Action::formLink(self::links(), $action,
+                                                                    array('id' => $id, 
+                                                                          'key' => $obj->key ));
+            }
+            $this->assign('rowsUploaded', $rowsUpl );
+        
+        }
 
     }
     

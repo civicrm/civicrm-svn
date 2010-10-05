@@ -46,13 +46,21 @@ class CRM_Core_Extensions_ExtensionType_Payment extends CRM_Core_Extensions_Exte
      */
     const OPTION_GROUP_NAME = 'system_extensions';
 
-    private $allowedExtTypes = array( 'payment', 'search', 'report' );
+
+    public function __construct( $ext ) {
+        $this->ext = $ext;
+    }
     
-    public function install( $id, $key ) {
-        parent::install( $id, $key );
+    public function install( ) {
     }
 
-    public function deinstall( $id, $key ) {
-        parent::deinstall( $id, $key );
+    public function deinstall( ) {
     }
+    
+    public function disable() {
+    }
+    
+    public function enable() {
+    }
+    
 }

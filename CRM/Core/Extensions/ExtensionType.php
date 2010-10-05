@@ -54,7 +54,7 @@ class CRM_Core_Extensions_ExtensionType
         $ext = CRM_Core_Extensions::singleton();
         self::$_extensions = $ext->getExtensions();
         $config = CRM_Core_Config::singleton( );
-        $this->extDir = $config->extensionsDir;        
+        $this->extDir = $config->extensionsDir;
     }
     
     public function install( $id, $key ) {

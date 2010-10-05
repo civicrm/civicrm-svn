@@ -141,7 +141,7 @@ class CRM_Contact_Selector_Custom extends CRM_Core_Selector_Base implements CRM_
 
         require_once( 'CRM/Core/Extensions.php' );
         $ext = new CRM_Core_Extensions();
-                
+
         if( ! $ext->isExtensionKey( $customSearchClass ) ) {
             if( $ext->isExtensionClass( $customSearchClass ) ) {
                 $customSearchFile = $ext->class2path( $customSearchClass );

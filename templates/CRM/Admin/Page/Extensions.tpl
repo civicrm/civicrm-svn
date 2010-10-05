@@ -67,12 +67,12 @@
               {foreach from=$rows item=row}
               <tr id="row_{$row.id}" class="crm-admin-options crm-admin-options_{$row.id}{if NOT $row.is_active} disabled{/if}">
                 <td class="crm-admin-options-label">
-                    <a class="collapsed" href="#"></a>&nbsp;{$row.label}
+                    <a class="collapsed" href="#"></a>&nbsp;{$row.label} ( {$row.key} )
                     <span class="hiddenElement description"><br/><br/>{$row.description}</span>
                 </td>
                 <td class="crm-admin-options-label">{$row.version}</td>
                 <td class="crm-admin-options-is_active" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-                <td class="crm-admin-options-description">{$row.grouping}</td>
+                <td class="crm-admin-options-description">{$row.type}</td>
                 <td class="order hiddenElement">{$row.weight}</td>
                 <td>{$row.action|replace:'xx':$row.id}</td>
               </tr>
@@ -108,7 +108,7 @@
                 <tbody>
                   {foreach from=$rowsUploaded item=row}
                   <tr id="uploaded-row_{$row.id}" class="crm-admin-options crm-admin-options_{$row.id}{if NOT $row.is_active} disabled{/if}">
-                    <td class="crm-admin-options-label"> <a class="collapsed" href="#"></a>&nbsp;{$row.label}
+                    <td class="crm-admin-options-label"> <a class="collapsed" href="#"></a>&nbsp;{$row.label} ( {$row.key} )
                         <span class="hiddenElement description"><br/><br/>{$row.description}</span>
                     </td>
                     <td class="crm-admin-options-label">{$row.version}</td>	
