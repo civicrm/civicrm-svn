@@ -30,10 +30,11 @@
 function setIntermediate( ) {
 	var dataUrl = "{/literal}{$statusUrl}{literal}";
 	cj.getJSON( dataUrl, function( response ) {
+	
 	   var dataStr = response.toString();
 	   var result  = dataStr.split(",");
 	   cj("#intermediate").html( result[1] );
-	   cj("#importProgressBar").progressBar( result[0] );
+	   cj("#importProgressBar" ).progressbar({value:10});
 	});
 }
 
@@ -60,17 +61,7 @@ function verify( ) {
 		    cj("#id-processing").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();
 		}
 	});
-	
-	var imageBase = "{/literal}{$config->resourceBase}{literal}packages/jquery/plugins/images/";
-    cj("#importProgressBar").progressBar({
-        boxImage:       imageBase + 'progressbar.gif',
-        barImage: { 0 : imageBase + 'progressbg_red.gif',
-                    20: imageBase + 'progressbg_orange.gif',
-                    50: imageBase + 'progressbg_yellow.gif',
-                    70: imageBase + 'progressbg_green.gif'
-                  }
-	}); 
-	cj("#importProgressBar").show( );
+    	cj("#importProgressBar").show( );
 	pollLoop( );
 }
 </script>

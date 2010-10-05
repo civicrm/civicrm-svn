@@ -794,7 +794,7 @@ function addTags() {
             {$form.status_id.html}
         </td>
 	<td style="vertical-align: bottom;">
-		<span class="crm-button"><input class="form-submit default" name="_qf_Basic_refresh" value="Search" type="button" onclick="search()"; /></span>
+		<span class="crm-button"><input class="form-submit default" name="_qf_Basic_refresh" value="Search" type="button" onclick="buildCaseActivities( true )"; /></span>
 	</td>
     </tr>
     <tr>
@@ -821,8 +821,19 @@ function addTags() {
   </table>
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
-
-  <table id="activities-selector"  class="nestedActivitySelector" style="display:none"></table>
+ 
+  <table id="activities-selector"  class="nestedActivitySelector">
+  <thead><tr class="columnheader">
+  <th class='crm-case-activities-date'>{ts}Date{/ts}</th>
+  <th class='crm-case-activities-subject'>{ts}Subject{/ts}</th>
+  <th class='crm-case-activities-type'>{ts}Type{/ts}</th>
+  <th class='crm-case-activities-with'>{ts}With{/ts}</th>
+  <th class='crm-case-activities-assignee'>{ts}Reporter / Assignee{/ts}</th>
+  <th class='crm-case-activities-status'>{ts}Status{/ts}</th>
+  <th class='crm-case-activities-status' id="nosort">&nbsp;</th>
+  <th class='hiddenElement'>&nbsp;</th>
+  </tr></thead>
+  </table>
 
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
@@ -831,68 +842,7 @@ function addTags() {
 
 {literal}
 <script type="text/javascript">
-cj(document).ready(function(){
-
-    var dataUrl = {/literal}"{crmURL p='civicrm/ajax/activity' h=0 q='snippet=4&caseID='}{$caseID}"{literal};
-    dataUrl = dataUrl + '&cid={/literal}{$contactID}{literal}';
-    dataUrl = dataUrl + '&userID={/literal}{$userID}{literal}'    
-
-    {/literal}{if $fulltext}{literal}
-    	dataUrl = dataUrl + '&context={/literal}{$fulltext}{literal}';
-    {/literal}{/if}{literal}
-
-    cj("#activities-selector").flexigrid
-    (
-        {
-            url: dataUrl,
-            dataType: 'json',
-            resizable: false,
-            colModel : [
-
-            {display: 'Date',               name : 'display_date',  width : 100,  sortable : true, align: 'left'},
-            {display: 'Subject',            name : 'subject',       width : 105,  sortable : true, align: 'left'},
-            {display: 'Type',               name : 'type',          width : 100,  sortable : true, align: 'left'},
-            {display: 'With',               name : 'with_contacts', width : 100,  sortable : false,align: 'left'},
-            {display: 'Reporter / Assignee',name : 'reporter',      width : 100,  sortable : true, align: 'left'},
-            {display: 'Status',             name : 'status',        width : 65,   sortable : true, align: 'left'},
-            {display: '',                   name : 'links',         width : 110,  align: 'left'},
-            {name : 'class', hide: true, width: 1}  // this col is use for applying css classes
-            ],
-            usepager: true,
-            useRp: true,
-            rp: 40,
-            width:810,
-            showToggleBtn: false,
-            height: 'auto',
-            nowrap: false,
-            onSuccess:setSelectorClass
-        }
-    );	
-}
-);
-
-function search(com)
-{   
-    var activity_date_low  = cj("#activity_date_low").val();
-    var activity_date_high = cj("#activity_date_high").val();
-
-    var activity_deleted = 0;
-    if ( cj("#activity_deleted:checked").val() == 1 ) {
-        activity_deleted = 1;
-    }
-    cj('#activities-selector').flexOptions({
-	    newp:1, 
-		params:[{name:'reporter_id', value: cj("select#reporter_id").val()},
-			{name:'status_id', value: cj("select#status_id").val()},
-			{name:'activity_type_id', value: cj("select#activity_type_filter_id").val()},
-			{name:'activity_date_low', value: activity_date_low},
-			{name:'activity_date_high', value: activity_date_high},
-			{name:'activity_deleted', value: activity_deleted }
-			]
-		});
-    
-    cj("#activities-selector").flexReload(); 
-}
+var oTable;
 
 function checkSelection( field ) {
     var validationMessage = '';
@@ -950,12 +900,76 @@ function checkSelection( field ) {
     }
 }
 
+cj( function ( ) {
+   buildCaseActivities( false );
+});
+
+function buildCaseActivities( filterSearch ) {
+	if( filterSearch ) {
+	    oTable.fnDestroy();
+ 	}
+	var count   = 0; 
+	var columns = '';
+	var sourceUrl = {/literal}"{crmURL p='civicrm/ajax/activity' h=0 q='snippet=4&caseID='}{$caseID}"{literal};
+            sourceUrl = sourceUrl + '&cid={/literal}{$contactID}{literal}';
+            sourceUrl = sourceUrl + '&userID={/literal}{$userID}{literal}';   
+
+        cj('#activities-selector th').each( function( ) {
+          if ( cj(this).attr('id') != 'nosort' ) {
+	    columns += '{"sClass": "' + cj(this).attr('class') +'"},';
+	  } else {
+	    columns += '{ "bSortable": false },';
+	  }
+	  count++; 
+	});
+
+	columns    = columns.substring(0, columns.length - 1 );
+	eval('columns =[' + columns + ']');
+
+ 	oTable = cj('#activities-selector').dataTable({
+    	        "bFilter"    : false,
+		"bAutoWidth" : false,
+                "aaSorting"  : [],
+		"aoColumns"  : columns,
+	    	"bProcessing": true,
+		"sPaginationType": "full_numbers",
+		"sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',	
+	   	"bServerSide": true,
+	   	"sAjaxSource": sourceUrl,
+		"fnDrawCallback": function() { setSelectorClass(); },
+		"fnServerData": function ( sSource, aoData, fnCallback ) {
+
+				if ( filterSearch ) {
+				var activity_deleted = 0;
+    				if ( cj("#activity_deleted:checked").val() == 1 ) {
+        			   activity_deleted = 1;
+    			        }
+				aoData.push(	     
+				{name:'status_id', value: cj("select#status_id").val()},
+				{name:'activity_type_id', value: cj("select#activity_type_filter_id").val()},
+				{name:'activity_date_low', value: cj("#activity_date_low").val()},
+				{name:'activity_date_high', value: cj("#activity_date_high").val() },
+				{name:'activity_deleted', value: activity_deleted }
+				);	
+				}		
+				$.ajax( {
+			 	"dataType": 'json', 
+				"type": "POST", 
+				"url": sSource, 
+				"data": aoData, 
+				"success": fnCallback
+				} ); 
+				}
+     		}); 
+
+}
 
 function setSelectorClass( ) {
     cj("#activities-selector td:last-child").each( function( ) {
        cj(this).parent().addClass(cj(this).text() );
     });
 }
+
 function printCaseReport( ){
  
  	var dataUrl = {/literal}"{crmURL p='civicrm/case/report/print'}"{literal};

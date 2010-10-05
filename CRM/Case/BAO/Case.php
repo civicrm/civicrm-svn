@@ -977,7 +977,10 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
             // CRM-5081 - added id to act like creation date
             $orderBy = " ORDER BY overdue_date ASC, display_date DESC, ca.id DESC";
         } else {
-            $orderBy = " ORDER BY {$sortname} {$sortorder}, display_date DESC";
+            $orderBy = " ORDER BY {$sortname} {$sortorder}";
+            if ( $sortname != 'display_date' ) {
+                $orderBy .= ', display_date DESC';
+            }
         }
         
         $page = CRM_Utils_Array::value( 'page', $params );
