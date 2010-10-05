@@ -451,7 +451,11 @@ SELECT civicrm_custom_group.name as name,
             }
             $dao->free( );
         }
-        
+        foreach ( $roleIds as $k => $v ) {
+            if ( ! isset( $this->_participantRoleIds[$k] ) ) {
+                $this->_participantRoleIds[$k] = '';
+            }
+        }
         $this->assign( 'participantRoleIds', $this->_participantRoleIds );
     }
     
