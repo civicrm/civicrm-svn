@@ -708,6 +708,8 @@ WHERE      c.sort_name LIKE {$this->_text}
         $dao = CRM_Core_DAO::executeQuery( $sql );
         
         $activityTypes = CRM_Core_PseudoConstant::activityType( true, true );
+        require_once 'CRM/Event/PseudoConstant.php';
+        $roleIds = CRM_Event_PseudoConstant::participantRole( );
         while ( $dao->fetch( ) ) {
             $row = array( );
             foreach ( $this->_tableFields as $name => $dontCare ) {
@@ -717,6 +719,14 @@ WHERE      c.sort_name LIKE {$this->_text}
                     $row['activity_type'] = CRM_Utils_Array::value( $dao->$name,
                                                                    $activityTypes );
                 }
+            }
+            if ( isset( $row['participant_role'] ) ) {
+                $participantRole =  explode( CRM_Core_DAO::VALUE_SEPARATOR, $row['participant_role'] );
+                $viewRoles = array();
+                foreach ( $participantRole as $k => $v ) {
+                    $viewRoles[] = $roleIds[$v];  
+                }
+                $row['participant_role'] = implode( ',', $viewRoles );
             }
             $summary[$dao->table_name][] = $row;
         }
@@ -852,15 +862,12 @@ INSERT INTO {$this->_tableName}
 ( table_name, contact_id, sort_name, participant_id, event_title, participant_fee_level, participant_fee_amount, 
 participant_register_date, participant_source, participant_status, participant_role )
    SELECT  'Participant', c.id, c.sort_name, cp.id, ce.title, cp.fee_level, cp.fee_amount, cp.register_date, cp.source, 
-           participantStatus.label, participant_role.label 
+           participantStatus.label, cp.role_id
      FROM  {$this->_entityIDTableName} ct
 INNER JOIN civicrm_participant cp ON cp.id = ct.entity_id
 LEFT JOIN  civicrm_contact c ON cp.contact_id = c.id
 LEFT JOIN  civicrm_event ce ON ce.id = cp.event_id
 LEFT JOIN  civicrm_participant_status_type participantStatus ON participantStatus.id = cp.status_id
-LEFT JOIN  civicrm_option_group option_group_participantRole ON option_group_participantRole.name = 'participant_role'
-LEFT JOIN  civicrm_option_value participant_role 
-           ON ( participant_role.option_group_id = option_group_participantRole.id AND participant_role.value = cp.role_id )
 {$this->_limitRowClause}
 ";
             break;
