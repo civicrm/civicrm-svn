@@ -65,6 +65,16 @@ class CRM_Logging_Schema
         $this->createTriggers();
     }
 
+    private function columnsOf($table)
+    {
+        $dao = CRM_Core_DAO::executeQuery("SHOW COLUMNS FROM $table");
+        $columns = array();
+        while ($dao->fetch()) {
+            $columns[] = $dao->Field;
+        }
+        return $columns;
+    }
+
     private function createLogTableFor($table)
     {
         $dao = CRM_Core_DAO::executeQuery("SHOW CREATE TABLE $table");
@@ -92,12 +102,7 @@ COLS;
         CRM_Core_DAO::executeQuery("DROP TABLE IF EXISTS log_$table");
         CRM_Core_DAO::executeQuery($query);
 
-        $dao = CRM_Core_DAO::executeQuery("SHOW COLUMNS FROM $table");
-        $columns = array();
-        while ($dao->fetch()) {
-            $columns[] = $dao->Field;
-        }
-        $columns = implode(', ', $columns);
+        $columns = implode(', ', $this->columnsOf($table));
         CRM_Core_DAO::executeQuery("INSERT INTO log_$table ($columns, log_conn_id, log_user_id, log_action) SELECT $columns, CONNECTION_ID(), @civicrm_user_id, 'Initialization' FROM $table");
     }
 
@@ -110,11 +115,7 @@ COLS;
 
     private function createTriggersFor($table)
     {
-        $dao = CRM_Core_DAO::executeQuery("SHOW COLUMNS FROM $table");
-        $columns = array();
-        while ($dao->fetch()) {
-            $columns[] = $dao->Field;
-        }
+        $columns = $this->columnsOf($table);
 
         $queries = array();
         foreach (array('Insert', 'Update', 'Delete') as $action) {
