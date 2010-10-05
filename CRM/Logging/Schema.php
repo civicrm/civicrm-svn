@@ -118,11 +118,13 @@ COLS;
 
     private static function tablesExist()
     {
+        // FIXME: probably should be a bit more thorough…
         return CRM_Core_DAO::checkTableExists('log_civicrm_contact');
     }
 
     private static function triggersExist()
     {
+        // FIXME: probably should be a bit more thorough…
         return (bool) CRM_Core_DAO::singleValueQuery("SHOW TRIGGERS LIKE 'civicrm_contact'");
     }
 }
