@@ -933,7 +933,7 @@ function buildCaseActivities( filterSearch ) {
 		"aoColumns"  : columns,
 	    	"bProcessing": true,
 		"sPaginationType": "full_numbers",
-		"sDom"       : '<"crm-datatable-pager"lfp>rt<"crm-datatable-pager"ip>',	
+		"sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',	
 	   	"bServerSide": true,
 	   	"sAjaxSource": sourceUrl,
 		"fnDrawCallback": function() { setSelectorClass(); },

@@ -2806,7 +2806,10 @@ div#civicrm-dashboard form {
 #Tag .tree .expandable .hit { padding-left:16px; }
 
 /*  DataTables fixes */
-#crm-container .crm-datatable-pager { padding-top:10px; padding-bottom:25px; }
+#crm-container .dataTables_length { float:none; padding-bottom:5px; }
+#crm-container .crm-datatable-pager-top { padding-top:5px; padding-bottom:25px; }
+#crm-container .crm-datatable-pager-bottom { padding-top:10px; padding-bottom:25px; }
+#crm-container .crm-datatable-pager-top .dataTables_length { float:left; }
 
 /* Date plugin */
 
