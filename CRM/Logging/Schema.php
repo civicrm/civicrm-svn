@@ -38,9 +38,9 @@ require_once 'CRM/Core/DAO.php';
 
 class CRM_Logging_Schema
 {
-    static function disableLogging()
+    function disableLogging()
     {
-        if (!self::isEnabled()) return;
+        if (!$this->isEnabled()) return;
 
         $dao = new CRM_Core_DAO;
 
@@ -54,23 +54,23 @@ class CRM_Logging_Schema
         $dao->free();
     }
 
-    static function enableLogging()
+    function enableLogging()
     {
-        if (self::isEnabled()) return;
+        if ($this->isEnabled()) return;
 
         require_once 'CRM/Core/Config.php';
         $config =& CRM_Core_Config::singleton();
 
         require_once 'CRM/Utils/File.php';
         global $civicrm_root;
-        if (!self::tablesExist()) {
+        if (!$this->tablesExist()) {
             CRM_Utils_File::sourceSQLFile($config->dsn, "$civicrm_root/sql/logging_tables.sql");
-            self::createCustomTables();
+            $this->createCustomTables();
         }
         CRM_Utils_File::sourceSQLFile($config->dsn, "$civicrm_root/sql/logging_triggers.sql");
     }
 
-    private static function createCustomTables()
+    private function createCustomTables()
     {
         // fetch custom table names
         $tables = array();
@@ -111,18 +111,18 @@ COLS;
         }
     }
 
-    private static function isEnabled()
+    private function isEnabled()
     {
-        return self::tablesExist() and self::triggersExist();
+        return $this->tablesExist() and $this->triggersExist();
     }
 
-    private static function tablesExist()
+    private function tablesExist()
     {
         // FIXME: probably should be a bit more thorough…
         return CRM_Core_DAO::checkTableExists('log_civicrm_contact');
     }
 
-    private static function triggersExist()
+    private function triggersExist()
     {
         // FIXME: probably should be a bit more thorough…
         return (bool) CRM_Core_DAO::singleValueQuery("SHOW TRIGGERS LIKE 'civicrm_contact'");

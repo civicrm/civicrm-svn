@@ -80,6 +80,7 @@ class CRM_Admin_Form_Setting_Miscellaneous extends  CRM_Admin_Form_Setting
         // handle logging
         require_once 'CRM/Logging/Schema.php';
         $values = $this->exportValues();
-        $values['logging'] ? CRM_Logging_Schema::enableLogging() : CRM_Logging_Schema::disableLogging();
+        $logging = new CRM_Logging_Schema;
+        $values['logging'] ? $logging->enableLogging() : $logging->disableLogging();
     }
 }
