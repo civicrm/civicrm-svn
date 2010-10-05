@@ -70,9 +70,9 @@
                                     {foreach from=$row.$eventID item=row key=role}
                                         <tr class="{cycle values="odd-row,even-row"} crm-report crm-report_{$keys}_{$role}" id="crm-report_{$eventID}_{$keys}_{$role}">
                                             <td class="report-contents crm-report_{$keys}_breakdown" width="34%">{$role}</td>
-                                            <td class="report-contents-right crm-report_{$keys}_total">{$row.0}</td>
-                                            <td class="report-contents-right crm-report_{$keys}_percentage">{$row.1}</td>
-                                            <td class="report-contents-right crm-report_{$keys}_revenue">{$row.2|crmMoney}</td>	        
+                                            <td class="report-contents-right crm-report_{$keys}_total">{$row.total}</td>
+                                            <td class="report-contents-right crm-report_{$keys}_percentage">{$row.round}</td>
+                                            <td class="report-contents-right crm-report_{$keys}_revenue">{$row.amount|crmMoney}</td>	        
                                         </tr>
                                     {/foreach}
                                 {/if}
