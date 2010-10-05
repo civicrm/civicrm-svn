@@ -183,11 +183,8 @@
     {/literal}
 </script>
 
-
-
 <div class="crm-results-block">
-    {* show browse table for any action *}
-<h3>Notes</h3>
+{* show browse table for any action *}
 <div id="notes">
     {strip}
     {include file="CRM/common/jsortable.tpl"}
@@ -227,10 +224,10 @@
             <td class="crm-note-note">
                 {if $note.comment_count}
                     <span id="{$note.id}_show" style="display:block" class="icon_comments_show">
-                        <a href="#" onclick="showHideComments({$note.id}); return false;" ><span class="ui-icon dark-icon ui-icon-triangle-1-e"></span>
+                        <a href="#" onclick="showHideComments({$note.id}); return false;" title="{ts}Show comments for this note.{/ts}"><span class="ui-icon dark-icon ui-icon-triangle-1-e"></span>
                     </span>
                     <span id="{$note.id}_hide" style="display:none" class="icon_comments_hide">
-                        <a href="#" onclick="showHideComments({$note.id}); return false;" ><span class="ui-icon dark-icon ui-icon-triangle-1-s"></span>
+                        <a href="#" onclick="showHideComments({$note.id}); return false;" title="{ts}Hide comments for this note.{/ts}"><span class="ui-icon dark-icon ui-icon-triangle-1-s"></span>
                     </span>
                 {else}
                     <span class="ui-icon light-icon ui-icon-triangle-1-e"></span>

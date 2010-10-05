@@ -55,7 +55,7 @@ function civicrm_verify_mandatory (&$params, $daoName = null, $keys = array() ) 
   }
 
   if ($daoName != null) {
-    _civicrm_check_required_fields( &$params, $daoName, true);
+    _civicrm_check_required_fields( $params, $daoName, true);
   }
   foreach ($keys as $key) {
     if ( !array_key_exists ($key, $params))
