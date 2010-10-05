@@ -368,15 +368,9 @@ class CRM_Event_BAO_Query
                         $val[$k] = $k;
                     }
                 } 
-                $role = implode (',' ,$val);
             } else {
-                $role = $value;
+                $value = array( $value => 1 );  
             }
-
-            if (count($val) > 1) {
-                $op = 'IN';
-                $role = "({$role})";
-            }     
 
             require_once 'CRM/Event/PseudoConstant.php';
             $roleTypes = CRM_Event_PseudoConstant::participantRole( );
@@ -391,10 +385,7 @@ class CRM_Event_BAO_Query
             }
 
             $query->_qill[$grouping][]  = ts('Participant Role %1', array( 1 => $op ) ) . ' ' . implode( ' ' . ts('or') . ' ', $names );
-            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_participant.role_id", 
-                                                                              $op,
-                                                                              $role,
-                                                                              "Integer" );
+            $query->_where[$grouping][] = " civicrm_participant.role_id REGEXP '[[:<:]]" . implode( '[[:>:]]|[[:<:]]', array_keys( $value ) ) . "[[:>:]]' ";
             
             $query->_tables['civicrm_participant'] = $query->_whereTables['civicrm_participant'] = 1;
             return;
