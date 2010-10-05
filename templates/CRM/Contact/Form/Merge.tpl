@@ -39,34 +39,6 @@
     <th>{ts}Mark All{/ts}<br />=={$form.toggleSelect.html} ==&gt;</th>
     <th><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$main_cid"}">{$main_name}</a></th>
   </tr>
-  {if $user}
-      <tr>
-          <td>CMS User</td>
-          {if $otherUfId}
-          <td>
-	       {if $otherRecordUrl}
-	           <a title="View user record"  class="user-record-link" href="{$otherRecordUrl}">{$ufFramework} User: {$otherUfName}; user id: {$otherUfId}</a>
-	       {else}
-	           {$ufFramework} User: {$otherUfName}; user id: {$otherUfId}
-	       {/if}
-	   </td>
-          {else}
-	  <td>&nbsp;</td>
-	  {/if}
-	  <td>&nbsp;</td>
-	  {if $mainUfId} 
-	  <td>
-	      {if $mainRecordUrl}
-	          <a title="View user record"  class="user-record-link" href="{$mainRecordUrl}">{$ufFramework} User: {$mainUfName}; &nbsp;user id: {$mainUfId}</a>
-              {else}
-	          {$ufFramework} User: {$mainUfName}; user id: {$mainUfId}
-	      {/if}
-          </td>
-	  {else}
-	  <td>&nbsp;</td>
-	  {/if}
-      </tr>
-  {/if}
   {foreach from=$rows item=row key=field}
      <tr class="{cycle values="odd-row,even-row"}">
         <td>{$row.title}</td>
@@ -102,9 +74,15 @@
   {/foreach}
 
   {foreach from=$rel_tables item=params key=paramName}
+    {if $paramName eq 'move_rel_table_users'}
+      <tr class="{cycle values="even-row,odd-row"}">
+      <th>{ts}Move related...{/ts}</th><td><a href="{$params.other_url}">{$params.other_title}</a></td><td style='white-space: nowrap'>{if $otherUfId}=={$form.$paramName.html}==&gt;{/if}</td><td>{if $mainUfId}<a href="{$params.main_url}">{$params.main_title}</a>{/if}</td>
+    </tr>
+    {else}
     <tr class="{cycle values="even-row,odd-row"}">
       <th>{ts}Move related...{/ts}</th><td><a href="{$params.other_url}">{$params.title}</a></td><td style='white-space: nowrap'>=={$form.$paramName.html}==&gt;</td><td><a href="{$params.main_url}">{$params.title}</a></td>
     </tr>
+    {/if}
   {/foreach}
 </table>
 <div class='form-item'>

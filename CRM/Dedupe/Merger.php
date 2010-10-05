@@ -53,6 +53,17 @@ class CRM_Dedupe_Merger
     static function &relTables()
     {
         static $relTables;
+        
+        $config = CRM_Core_Config::singleton( );
+        if ( $config->userFramework == 'Drupal' ) {
+            $userRecordUrl = CRM_Utils_System::url( 'user/$ufid' );
+            $title = ts( $config->userFramework . ' User:$ufname; ' . ' user id: $ufid' );
+        } else if ( $config->userFramework == 'Joomla' ) {
+            $userRecordUrl = $config->userFrameworkBaseURL . 
+                'index2.php?option=com_users&view=user&task=edit&cid[]=$ufid';
+            $title = ts( $config->userFramework . ' User:$ufname; ' . ' user id: $ufid' );
+        }
+
         if (!$relTables) {
             $relTables = array(
                 'rel_table_contributions' => array(
@@ -140,7 +151,13 @@ class CRM_Dedupe_Merger
                     'title'  => ts('Pledges'),
                     'tables' => array('civicrm_pledge', 'civicrm_pledge_payment' ),
                     'url'    => CRM_Utils_System::url('civicrm/contact/view', 'reset=1&force=1&cid=$cid&selectedChild=pledge'),
-                )
+                ),
+
+                'rel_table_users' => array(
+                    'title'  => $title,
+                    'tables' => array('civicrm_uf_match'),
+                    'url'    => $userRecordUrl,
+                ),
             );
 
             // Allow hook_civicrm_merge() to adjust $relTables
@@ -384,7 +401,7 @@ INNER JOIN  civicrm_participant participant ON ( participant.id = payment.partic
                         $paymentSqls = self::paymentSql( $table, $mainId, $otherId ); 
                         $sqls = array_merge( $sqls, $paymentSqls ); 
                     }
-                    
+                                        
                     $sqls[] = "UPDATE IGNORE $table SET $field = $mainId WHERE $field = $otherId";
                     $sqls[] = "DELETE FROM $table WHERE $field = $otherId";
                 }

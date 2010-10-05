@@ -89,17 +89,11 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
            
             if ( $config->userFramework == 'Drupal' ) {
                 $mainUser = user_load( $mainUfId );
-                if ( $viewUser ) {
-                    $mainRecordUrl = CRM_Utils_System::url( 'user/' . $mainUfId );
-                }
             } else if ( $config->userFramework == 'Joomla' ) {
                 $mainUser = JFactory::getUser( $mainUfId );
-                $mainRecordUrl = $config->userFrameworkBaseURL . 
-                    'index2.php?option=com_users&view=user&task=edit&cid[]=' . $mainUfId;
             }
         }
         
-        $this->assign( 'mainRecordUrl', $mainRecordUrl );
         $this->assign( 'mainUfId', $mainUfId );
         $this->assign( 'mainUfName', $mainUser->name );
         
@@ -108,17 +102,11 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         if ( $otherUfId ) {
             if ( $config->userFramework == 'Drupal' ) {
                 $otherUser = user_load( $otherUfId );
-                if ( $viewUser ) {
-                    $otherRecordUrl = CRM_Utils_System::url( 'user/' . $otherUfId );
-                }
             } else if ( $config->userFramework == 'Joomla' ) {
                 $otherUser = JFactory::getUser( $otherUfId );
-                $otherRecordUrl = $config->userFrameworkBaseURL . 
-                    'index2.php?option=com_users&view=user&task=edit&cid[]=' . $otherUfId;
             }
         }
         
-        $this->assign( 'otherRecordUrl', $otherRecordUrl );
         $this->assign( 'otherUfId', $otherUfId );
         $this->assign( 'otherUfName', $otherUser->name );
         
@@ -128,8 +116,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         }
         
         $this->assign( 'user', $cmsUser );
-        $this->assign( 'ufFramework', $config->userFramework );
-        
+                
         $session = CRM_Core_Session::singleton( );
         
         // context fixed.
@@ -345,6 +332,16 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
             $this->addElement('checkbox', "move_$name");
             $relTables[$name]['main_url']  = str_replace('$cid', $cid, $relTables[$name]['url']);
             $relTables[$name]['other_url'] = str_replace('$cid', $oid, $relTables[$name]['url']);
+            if ( $name == 'rel_table_users' ) {
+                $relTables[$name]['main_url']    = str_replace('$ufid', $mainUfId,  $relTables[$name]['url']);
+                $relTables[$name]['other_url']   = str_replace('$ufid', $otherUfId, $relTables[$name]['url']);
+                $find = array( '$ufid', '$ufname');
+                $replace = array( $mainUfId, $mainUser->name );
+                $relTables[$name]['main_title']  = str_replace( $find, $replace, $relTables[$name]['title']);
+                $replace = array( $otherUfId, $otherUser->name );
+                $relTables[$name]['other_title'] = str_replace( $find, $replace, $relTables[$name]['title']);
+            }
+
         }
         foreach ($relTables as $name => $null) {
             $relTables["move_$name"] = $relTables[$name];
