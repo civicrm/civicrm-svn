@@ -328,6 +328,35 @@ function civicrm_case_update( &$params ) {
         return $errors;
     }
     
+    $mCaseId = array();
+    $origContactIds = array();
+    
+    // get original contact id and creator id of case
+    if ( $params['contact_id'] ) {
+        $origContactIds = CRM_Case_BAO_Case::retrieveContactIdsByCaseId( $params['case_id'] );
+        $origContactId  = $origContactIds[1];
+    }
+    
+    if ( count($origContactIds) > 1 ) {
+        // check valid orig contact id
+        if ( $params['orig_contact_id'] && !in_array( $params['orig_contact_id'], $origContactIds ) ) {
+            return civicrm_create_error( ts( 'Invalid case contact id (orig_contact_id)' ) );
+        } else if ( !$params['orig_contact_id'] ) {
+            return civicrm_create_error( ts( 'Case is linked with more than one contact id. Provide the required params orig_contact_id to be replaced' ) );
+        }
+        $origContactId = $params['orig_contact_id'];
+    }
+    
+    // check for same contact id for edit Client
+    if ( $params['contact_id'] && !in_array( $params['contact_id'], $origContactIds ) ) {
+        $mCaseId = CRM_Case_BAO_Case::mergeCases( $params['contact_id'], $params['case_id'], 
+                                                  $origContactId, null, true );
+    }
+    
+    if ( CRM_Utils_Array::value( '0', $mCaseId ) ) { 
+        $params['case_id']  = $mCaseId[0];
+    }
+    
     $dao     = new CRM_Case_BAO_Case( );
     $dao->id = $params['case_id'];
     
@@ -459,6 +488,11 @@ function _civicrm_case_check_params( &$params, $mode = NULL ) {
     if( is_null( $params ) || !is_array( $params ) || empty( $params ) ) {
         return civicrm_create_error( ts( 'Invalid or missing input parameters. Must provide an associative array.' ) );
     }
+
+    // return error if modifing creator id
+    if ( array_key_exists('creator_id', $params) ) {
+        return civicrm_create_error( ts( 'You have no provision to update creator id' ) );
+    }
     
 	switch( $mode ) {
         
@@ -509,23 +543,42 @@ function _civicrm_case_check_params( &$params, $mode = NULL ) {
 	}
     
     $caseTypes = CRM_Case_PseudoConstant::caseType( );
+    
+    if ( CRM_Utils_Array::value( 'case_type', $params ) && !in_array( $params['case_type'], $caseTypes ) ) {
+        return civicrm_create_error( ts( 'Invalid Case Type' ) );
+    }
+
     if ( CRM_Utils_Array::value( 'case_type_id', $params ) ) {
         if ( !array_key_exists( $params['case_type_id'], $caseTypes ) ) {
             return civicrm_create_error( ts( 'Invalid Case Type Id' ) );
         }
         
+        // check case type miss match error
+        if ( CRM_Utils_Array::value( 'case_type', $params ) &&
+             $params['case_type_id'] != array_search( $params['case_type'], $caseTypes ) ) {
+            return civicrm_create_error( ts( 'Case type and case type id mismatch' ) );
+        }
+        
         $sep = CRM_Case_BAO_Case::VALUE_SEPARATOR;
         $params['case_type']    = $caseTypes[$params['case_type_id']];
         $params['case_type_id'] = $sep . $params['case_type_id'] . $sep;
-    } else if ( CRM_Utils_Array::value( 'case_type', $params ) && !in_array( $params['case_type'], $caseTypes ) ) {
-        return civicrm_create_error( ts( 'Invalid Case Type' ) );
-    }
 
+    } 
+    
+    // check for valid status id
     $caseStatusIds = CRM_Case_PseudoConstant::caseStatus( );
-    if ( !in_array( 'status_id', $params ) ) {
+    if ( CRM_Utils_Array::value( 'status_id', $params ) && 
+         !array_key_exists( $params['status_id'], $caseStatusIds ) ) {
         return civicrm_create_error( ts( 'Invalid Case Status Id' ) );
     }
-
+    
+    // check for valid medium id
+    $encounterMedium = CRM_Core_OptionGroup::values('encounter_medium');
+    if ( CRM_Utils_Array::value( 'medium_id', $params ) && 
+         !array_key_exists( $params['medium_id'], $encounterMedium ) ) {
+        return civicrm_create_error( ts( 'Invalid Case Medium Id' ) );
+    }
+    
     $contactIds = array( 'creator' => CRM_Utils_Array::value( 'creator_id', $params ),
                          'contact' => CRM_Utils_Array::value( 'contact_id', $params ) );
     foreach ( $contactIds as $key => $value ) {
