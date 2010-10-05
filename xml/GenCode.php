@@ -275,12 +275,6 @@ $beautifier->setOutputFile("$phpCodePath/CRM/Core/I18n/SchemaStructure.php");
 $beautifier->process();
 $beautifier->save();
 
-echo "Generating logging triggers…\n";
-$smarty->clear_all_cache();
-$smarty->clear_all_assign();
-$smarty->assign_by_ref('logtables', $logtables);
-file_put_contents("$phpCodePath/sql/logging_triggers.sql", $smarty->fetch('logging_triggers.tpl'));
-
 // add the Subversion revision to templates
 // use svnversion if the version was not specified explicitely on the commandline
 if (isset($argv[2]) and $argv[2] != '') {
