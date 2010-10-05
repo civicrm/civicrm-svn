@@ -550,8 +550,8 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
             $tplname =  $ext->getTemplatePath( CRM_Utils_System::getClassName( $this ) ) . DIRECTORY_SEPARATOR . $filename;
         } else {
             $tplname = str_replace( '_',
-                            DIRECTORY_SEPARATOR,
-                            CRM_Utils_System::getClassName( $this ) ) .'.tpl';
+                                    DIRECTORY_SEPARATOR,
+                                    CRM_Utils_System::getClassName( $this ) ) .'.tpl';
         }
         return $tplname;
     }

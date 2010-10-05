@@ -58,13 +58,11 @@ class CRM_Core_Extensions_ExtensionType
     }
     
     public function install( $id, $key ) {
-        $this->moveFiles( $id, $key );
         $this->createEntry( $id, $key );       
     }
 
     public function deinstall( $id, $key ) {
         $this->deleteEntry( $id, $key, true );
-        $this->deleteFiles( $id, $key );
     }
 
     public function moveFiles( $id, $key, $deleteOrginal = false ) {

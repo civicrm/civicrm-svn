@@ -149,34 +149,32 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
     {
         $this->assign('extEnabled', self::$_extEnabled );
         if( self::$_extEnabled ) {
-            foreach( self::$_extensions as $status => $types ) {
+            foreach( self::$_extensions as $status => $exts ) {
                 if( $status === 'enabled' || $status === 'uploaded' ) {
-                    foreach( $types as $type => $exts ) {
-                        foreach( $exts as $name => $row ) {
-                            if( $status === 'uploaded' ) {
+                    foreach( $exts as $name => $row ) {
+                        if( $status === 'uploaded' ) {
+                            $action = array_sum(array_keys($this->links()));
+                            $action -= CRM_Core_Action::DISABLE;
+                            $action -= CRM_Core_Action::ENABLE;
+                        } else {
+                            if( $row['is_active'] ) {
+                                $action = CRM_Core_Action::DISABLE;
+                            } else {
                                 $action = array_sum(array_keys($this->links()));
                                 $action -= CRM_Core_Action::DISABLE;
-                                $action -= CRM_Core_Action::ENABLE;
-                            } else {
-                                if( $row['is_active'] ) {
-                                    $action = CRM_Core_Action::DISABLE;
-                                } else {
-                                    $action = array_sum(array_keys($this->links()));
-                                    $action -= CRM_Core_Action::DISABLE;
-                                    $action -= CRM_Core_Action::ADD;
-                                }
+                                $action -= CRM_Core_Action::ADD;
                             }
-                            $row['label'] = (string) $row['label'] . ' (' . $name . ')';
-                            if( $row['is_corrupt'] ) {
-                                $row['label'] .= "   CORRUPT!";
-                                $action -= CRM_Core_Action::ENABLE;
-                            }
-                            $row['version'] = (string) $row['info']->version;
-                            $row['action'] = CRM_Core_Action::formLink(self::links(), $action,
-                                                                                    array('id' => $row['id'], 
-                                                                                          'key' => $name ));
-                            $rows[$status][$row['id']] = $row;
                         }
+                        $row['label'] = (string) $row['label'] . ' (' . $name . ')';
+                        if( $row['is_corrupt'] ) {
+                            $row['label'] .= "   CORRUPT!";
+                            $action -= CRM_Core_Action::ENABLE;
+                        }
+                        $row['version'] = (string) $row['info']->version;
+                        $row['action'] = CRM_Core_Action::formLink(self::links(), $action,
+                                                                   array('id' => $row['id'], 
+                                                                         'key' => $name ));
+                        $rows[$status][$row['id']] = $row;
                     }
                 }
             }
