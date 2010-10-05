@@ -38,20 +38,25 @@ require_once 'CRM/Core/DAO.php';
 
 class CRM_Logging_Schema
 {
+    private $tables = array();
+
+    function __construct()
+    {
+        $dao = CRM_Core_DAO::executeQuery('SHOW TABLES LIKE "civicrm_%"');
+        while ($dao->fetch()) {
+            $this->tables[] = $dao->toValue('Tables_in_civicrm_(civicrm_%)');
+        }
+    }
+
     function disableLogging()
     {
         if (!$this->isEnabled()) return;
 
-        $dao = new CRM_Core_DAO;
-
-        require_once 'CRM/Logging/SchemaStructure.php';
-        foreach (CRM_Logging_SchemaStructure::tables() as $table) {
+        foreach ($this->tables as $table) {
             $dao->executeQuery("DROP TRIGGER IF EXISTS {$table}_after_insert");
             $dao->executeQuery("DROP TRIGGER IF EXISTS {$table}_after_update");
             $dao->executeQuery("DROP TRIGGER IF EXISTS {$table}_after_delete");
         }
-
-        $dao->free();
     }
 
     function enableLogging()
