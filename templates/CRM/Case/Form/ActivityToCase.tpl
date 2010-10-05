@@ -137,7 +137,6 @@ function fileOnCase( action, activityID, currentCaseId ) {
 				   return false;
 				}
 						
-				cj(this).dialog("close"); 
 				cj(this).dialog("destroy");
 									
 				var postUrl = {/literal}"{crmURL p='civicrm/ajax/activity/convert' h=0 }"{literal};
