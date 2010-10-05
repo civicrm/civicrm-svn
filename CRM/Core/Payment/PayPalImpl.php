@@ -42,6 +42,15 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
     
     protected $_mode = null;
     
+    /**
+     * We only need one instance of this object. So we use the singleton
+     * pattern and cache the instance in this variable
+     *
+     * @var object
+     * @static
+     */
+    static private $_singleton = null;
+        
     /** 
      * Constructor 
      * 
@@ -64,6 +73,23 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
         if ( ! $this->_paymentProcessor['user_name'] ) {
             CRM_Core_Error::fatal( ts( 'Could not find user name for payment processor' ) );
         }
+    }
+    
+    /** 
+     * singleton function used to manage this object 
+     * 
+     * @param string $mode the mode of operation: live or test
+     *
+     * @return object 
+     * @static 
+     * 
+     */ 
+    static function &singleton( $mode, &$paymentProcessor ) {
+        $processorName = $paymentProcessor['name'];
+        if (self::$_singleton[$processorName] === null ) {
+            self::$_singleton[$processorName] = new CRM_Core_Payment_PaypalImpl( $mode, $paymentProcessor );
+        }
+        return self::$_singleton[$processorName];
     }
 
     /**
