@@ -3217,3 +3217,5 @@ div#crm-toolTip
 #crm-container .crm-content-block { border:1px solid green; }
 #crm-container .crm-form-block {border:1px solid blue;}
 */
+/*Import progress bar */
+.ui-progressbar-value { background-image:url("../packages/jquery/css/images/pbar-ani.gif"); }
