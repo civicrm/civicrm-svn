@@ -62,7 +62,7 @@ class CRM_Logging_Schema
         if (!$this->tablesExist()) {
             $this->createLogTables();
         }
-        CRM_Utils_File::sourceSQLFile($config->dsn, "$civicrm_root/sql/logging_triggers.sql");
+        $this->createTriggers();
     }
 
     private function createLogTableFor($table)
@@ -97,6 +97,42 @@ COLS;
     {
         foreach ($this->tables as $table) {
             $this->createLogTableFor($table);
+        }
+    }
+
+    private function createTriggersFor($table)
+    {
+        $dao = CRM_Core_DAO::executeQuery("SHOW COLUMNS FROM $table");
+        $columns = array();
+        while ($dao->fetch()) {
+            $columns[] = $dao->Field;
+        }
+
+        $queries = array();
+        foreach (array('Insert', 'Update', 'Delete') as $action) {
+            $queries[] = "DROP TRIGGER IF EXISTS {$table}_after_{$action}";
+            $query = "CREATE TRIGGER {$table}_after_{$action} AFTER {$action} ON {$table} FOR EACH ROW INSERT INTO log_{$table} (";
+            foreach ($columns as $column) {
+                $query .= "$column, ";
+            }
+            $query .= "log_conn_id, log_user_id, log_action) VALUES (";
+            foreach ($columns as $column) {
+                $query .= $action == 'Delete' ? "OLD.$column, " : "NEW.$column, ";
+            }
+            $query .= "CONNECTION_ID(), @civicrm_user_id, '$action')";
+            $queries[] = $query;
+        }
+
+        $dao = new CRM_Core_DAO;
+        foreach ($queries as $query) {
+            $dao->executeQuery($query);
+        }
+    }
+
+    private function createTriggers()
+    {
+        foreach ($this->tables as $table) {
+            $this->createTriggersFor($table);
         }
     }
 
