@@ -720,6 +720,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
                     CRM_Core_Session::setStatus("Some of the profile fields cannot be configured for this page.");
                 }
                 
+                $fields = array_diff_assoc( $fields, $this->_fields );
                 $this->assign( $name, $fields );
                 
                 $addCaptcha = false;
