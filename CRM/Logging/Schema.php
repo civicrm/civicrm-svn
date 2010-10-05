@@ -52,11 +52,7 @@ class CRM_Logging_Schema
     {
         if (!$this->isEnabled()) return;
 
-        foreach ($this->tables as $table) {
-            $dao->executeQuery("DROP TRIGGER IF EXISTS {$table}_after_insert");
-            $dao->executeQuery("DROP TRIGGER IF EXISTS {$table}_after_update");
-            $dao->executeQuery("DROP TRIGGER IF EXISTS {$table}_after_delete");
-        }
+        $this->dropTriggers();
     }
 
     function enableLogging()
@@ -113,6 +109,15 @@ COLS;
 
             CRM_Core_DAO::executeQuery("DROP TABLE IF EXISTS log_$table");
             CRM_Core_DAO::executeQuery($query);
+        }
+    }
+
+    private function dropTriggers()
+    {
+        foreach ($this->tables as $table) {
+            $dao->executeQuery("DROP TRIGGER IF EXISTS {$table}_after_insert");
+            $dao->executeQuery("DROP TRIGGER IF EXISTS {$table}_after_update");
+            $dao->executeQuery("DROP TRIGGER IF EXISTS {$table}_after_delete");
         }
     }
 
