@@ -238,6 +238,15 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
                         }
                     } else { 
                         $op = CRM_Utils_Array::value( "{$fieldName}_op", $this->_params );
+                        
+                        if ( $fieldName == 'rid' ) {
+                            $value =  CRM_Utils_Array::value("{$fieldName}_value", $this->_params);
+                            if ( !empty($value) ) {
+                                $clause = "( {$field['dbAlias']} REGEXP '[[:<:]]" . implode( '[[:>:]]|[[:<:]]',  $value ) . "[[:>:]]' )";
+                            }
+                            $op = null;
+                        }
+
                         if ( $op ) {
                             $clause = 
                                 $this->whereClause( $field,
@@ -357,8 +366,12 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
             // handle participant role id
             if ( array_key_exists('civicrm_participant_role_id', $row) ) {
                 if ( $value = $row['civicrm_participant_role_id'] ) {
-                    $rows[$rowNum]['civicrm_participant_role_id'] = 
-                        CRM_Event_PseudoConstant::participantRole( $value, false );
+                    $roles = explode( CRM_Core_DAO::VALUE_SEPARATOR, $value ); 
+                    $value = array( );
+                    foreach( $roles as $role) {
+                        $value[$role] = CRM_Event_PseudoConstant::participantRole( $role, false );
+                    }
+                    $rows[$rowNum]['civicrm_participant_role_id'] = implode( ', ', $value );
                 }
                 $entryFound = true;
             }
