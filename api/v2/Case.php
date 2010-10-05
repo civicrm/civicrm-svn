@@ -328,6 +328,11 @@ function civicrm_case_update( &$params ) {
         return $errors;
     }
     
+    // return error if modifing creator id
+    if ( array_key_exists('creator_id', $params) ) {
+        return civicrm_create_error( ts( 'You have no provision to update creator id' ) );
+    }
+    
     $mCaseId = array();
     $origContactIds = array();
     
@@ -489,11 +494,6 @@ function _civicrm_case_check_params( &$params, $mode = NULL ) {
         return civicrm_create_error( ts( 'Invalid or missing input parameters. Must provide an associative array.' ) );
     }
 
-    // return error if modifing creator id
-    if ( array_key_exists('creator_id', $params) ) {
-        return civicrm_create_error( ts( 'You have no provision to update creator id' ) );
-    }
-    
 	switch( $mode ) {
         
     case 'create':
