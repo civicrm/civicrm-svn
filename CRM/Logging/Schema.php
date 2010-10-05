@@ -67,12 +67,17 @@ class CRM_Logging_Schema
 
     private function columnsOf($table)
     {
-        $dao = CRM_Core_DAO::executeQuery("SHOW COLUMNS FROM $table");
-        $columns = array();
-        while ($dao->fetch()) {
-            $columns[] = $dao->Field;
+        static $columnsOf = array();
+
+        if (!isset($columnsOf[$table])) {
+            $dao = CRM_Core_DAO::executeQuery("SHOW COLUMNS FROM $table");
+            $columnsOf[$table] = array();
+            while ($dao->fetch()) {
+                $columnsOf[$table][] = $dao->Field;
+            }
         }
-        return $columns;
+
+        return $columnsOf[$table];
     }
 
     private function createLogTableFor($table)
