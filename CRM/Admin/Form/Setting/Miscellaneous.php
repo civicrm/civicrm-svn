@@ -78,8 +78,8 @@ class CRM_Admin_Form_Setting_Miscellaneous extends  CRM_Admin_Form_Setting
         parent::postProcess();
 
         // handle logging
-        require_once 'CRM/Logging/Engine.php';
+        require_once 'CRM/Logging/Schema.php';
         $values = $this->exportValues();
-        $values['logging'] ? CRM_Logging_Engine::enableLogging() : CRM_Logging_Engine::disableLogging();
+        $values['logging'] ? CRM_Logging_Schema::enableLogging() : CRM_Logging_Schema::disableLogging();
     }
 }

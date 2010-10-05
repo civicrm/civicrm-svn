@@ -36,7 +36,7 @@
 
 require_once 'CRM/Core/DAO.php';
 
-class CRM_Logging_Engine
+class CRM_Logging_Schema
 {
     static function disableLogging()
     {
