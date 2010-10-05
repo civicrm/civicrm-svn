@@ -110,8 +110,9 @@ COLS;
 
         $queries = array();
         foreach (array('Insert', 'Update', 'Delete') as $action) {
-            $queries[] = "DROP TRIGGER IF EXISTS {$table}_after_{$action}";
-            $query = "CREATE TRIGGER {$table}_after_{$action} AFTER {$action} ON {$table} FOR EACH ROW INSERT INTO log_{$table} (";
+            $trigger = "{$table}_after_" . strtolower($action);
+            $queries[] = "DROP TRIGGER IF EXISTS $trigger";
+            $query = "CREATE TRIGGER $trigger AFTER $action ON $table FOR EACH ROW INSERT INTO log_$table (";
             foreach ($columns as $column) {
                 $query .= "$column, ";
             }
