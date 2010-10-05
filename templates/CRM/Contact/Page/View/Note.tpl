@@ -53,6 +53,13 @@
         </div>
         {/if}
 {elseif $action eq 1 or $action eq 2} {* action is add or update *}
+    <h3>
+        {if $parentId}
+            {if $action eq 1}{ts}New Comment{/ts}{else}{ts}Edit Comment{/ts}{/if}
+        {else}
+            {if $action eq 1}{ts}New Note{/ts}{else}{ts}Edit Note{/ts}{/if}
+        {/if}
+    </h3>
 	<div class="crm-block crm-form-block crm-note-form-block">
     <div class="content crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
         <table class="form-layout">
