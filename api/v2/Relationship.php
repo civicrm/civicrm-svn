@@ -61,48 +61,26 @@ function civicrm_relationship_create( &$params ) {
     if ( civicrm_error( $error ) ) {
         return $error;
     }
-    /*---------------------------------------------------------
-     * fix CRM-6895 (Erik Hommel, EE-atWork 2010-10-04
-     *
-     * first retrieve current relations for contact with API get. This
-     * returns all relationships for a contact within the array ['result']
-     * keyed on relationship id
-     */
-    $getparams = array("contact_id" => $params['contact_id_a']);
-    $current_relations = civicrm_contact_relationship_get($getparams);
-    $current_values = $current_relations['result'][$params['id']];
-    $params = array_merge($current_values, $params);
-    if (isset($params['start_date'])) {
-        $params['start_date'] = CRM_Utils_Date::format($params['start_date']);
-    }
-    if (isset($params['end_date'])) {
-        $params['end_date'] = CRM_Utils_Date::format($params['end_date']);
-    }
-
-    /*
-     * end fix CRM-6895
-     --------------------------------------------------------------*/
-
     $values = array( );
     require_once 'CRM/Contact/BAO/Relationship.php';
     $error = _civicrm_relationship_format_params( $params, $values );
-    
+
     if ( civicrm_error( $error ) ) {
         return $error;
     }
-    
+
     $ids = array( );
     require_once 'CRM/Utils/Array.php';
-    
+
     if( CRM_Utils_Array::value( 'id', $params ) ) {
         $ids['relationship']  = $params['id'];
         $ids['contactTarget'] = $params['contact_id_b'];
     }
-       
+
     $values['relationship_type_id'] = $params['relationship_type_id'].'_a_b';
     $values['contact_check']        = array ( $params['contact_id_b'] => $params['contact_id_b'] );
     $ids   ['contact'      ]        = $params['contact_id_a'];
-    
+
     $relationshipBAO = CRM_Contact_BAO_Relationship::create( $values, $ids );
 
     if ( is_a( $relationshipBAO, 'CRM_Core_Error' ) ) {
@@ -115,7 +93,6 @@ function civicrm_relationship_create( &$params ) {
 
     return civicrm_create_success( array( 'id' => implode( ",", $relationshipBAO[4] ) ) );
 }
-
 
 /**
  * Delete a relationship 
@@ -167,7 +144,42 @@ function civicrm_relationship_delete( &$params ) {
  *
  */
 function civicrm_relationship_update( $params ) {
-    return civicrm_relationship_create( $params );
+    try {
+       _civicrm_initialize(true);
+
+       /*
+        * Erik Hommel, 5 Oct 2010 : fix for CRM-6895
+        * check if required field relationship_id is in the parms. As the
+        * CRM_Contact_BAO_Relationship::getRelatonship throws up some issues
+        * (CRM-6905) the relationship is retrieved with a direct query
+        */
+       civicrm_verify_mandatory($params, "relationship", array("relationship_id"));
+
+       $names = array("id", "contact_id_a", "contact_id_b",
+           "relationship_type_id", "start_date", "end_date", "is_active",
+           "description", "is_permission_a_b", "is_permission_b_a", "case_id");
+
+       $relationship_id = (int) $params['relationship_id'];
+       $query = "SELECT * FROM civicrm_relationship WHERE id = $relationship_id";
+       $daoRelations = & CRM_Core_DAO::executeQuery( $query );
+       while ($daoRelations->fetch()) {
+           foreach ($names as $name) {
+               $current_values[$name] = $daoRelations->$name;
+           }
+       }
+       $params = array_merge($current_values, $params);
+       $params['start_date'] = date("Ymd", strtotime($params['start_date']));
+       $params['end_date'] = date("Ymd", strtotime($params['end_date']));
+       
+       return civicrm_relationship_create( $params );
+
+  } catch (PEAR_Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  }
+
+
 }
 
 
