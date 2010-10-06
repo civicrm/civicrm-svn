@@ -533,6 +533,11 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
         
         $this->_amount   = $this->get( 'amount' );
         
+        //CRM-6907
+        $config = CRM_Core_Config::singleton( );
+        $config->defaultCurrency = CRM_Utils_Array::value( 'currency', 
+                                                           $this->_values, 
+                                                           $config->defaultCurrency );
     }
 
     /** 

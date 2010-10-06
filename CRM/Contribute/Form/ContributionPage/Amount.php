@@ -150,6 +150,9 @@ class CRM_Contribute_Form_ContributionPage_Amount extends CRM_Contribute_Form_Co
             $this->addElement( 'text', 'additional_reminder_day', ts('Send additional reminders'), array('size'=>3) );
         }
         
+        //add currency element.
+        $this->addCurrency( 'currency', ts( 'Currency' ) );
+        
         $this->addFormRule( array( 'CRM_Contribute_Form_ContributionPage_Amount', 'formRule' ), $this );
         
         parent::buildQuickForm( );

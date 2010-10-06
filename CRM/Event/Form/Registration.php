@@ -468,6 +468,12 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
         $this->assign( 'bltID', $this->_bltID );
         $isShowLocation = CRM_Utils_Array::value('is_show_location',$this->_values['event'])  ;
         $this->assign( 'isShowLocation',$isShowLocation );
+        
+        //CRM-6907
+        $config = CRM_Core_Config::singleton( );
+        $config->defaultCurrency = CRM_Utils_Array::value( 'currency', 
+                                                           $this->_values['event'], 
+                                                           $config->defaultCurrency );
     }
 
     /** 
