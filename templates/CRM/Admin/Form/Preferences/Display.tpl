@@ -43,11 +43,11 @@
                <td>
                <table style="width:80%">
                  <tr>
-                   <td>
+                   <td style="width:40%">
                        <span class="label"><strong>{ts}Contact Details{/ts}</strong></span>
                        <ul id="contactEditBlocks">
                        {foreach from=$contactBlocks item="title" key="opId"}
-                            <li id="preference-{$opId}-contactedit" class="ui-widget-header ui-corner-all" style="padding-left:1px;"><span class='ui-icon ui-icon-arrowthick-2-n-s' style="float:left;"></span><span>{$form.contact_edit_options.$opId.html}</span></li>
+                            <li id="preference-{$opId}-contactedit" class="ui-state-default ui-corner-all" style="padding-left:1px;"><span class='ui-icon ui-icon-arrowthick-2-n-s' style="float:left;"></span><span>{$form.contact_edit_options.$opId.html}</span></li>
                        {/foreach}
                        </ul>
                    </td>
@@ -55,7 +55,7 @@
                        <span class="label"><strong>{ts}Other Panes{/ts}</strong></span>
                        <ul id="contactEditOptions">
                            {foreach from=$editOptions item="title" key="opId"}
-                         <li id="preference-{$opId}-contactedit" class="ui-widget-header ui-corner-all" style="padding-left:1px;"><span class='ui-icon ui-icon-arrowthick-2-n-s' style="float:left;"></span><span>{$form.contact_edit_options.$opId.html}</span></li>
+                         <li id="preference-{$opId}-contactedit" class="ui-state-default ui-corner-all" style="padding-left:1px;"><span class='ui-icon ui-icon-arrowthick-2-n-s' style="float:left;"></span><span>{$form.contact_edit_options.$opId.html}</span></li>
                        {/foreach}
                        </ul>
                    </td>
