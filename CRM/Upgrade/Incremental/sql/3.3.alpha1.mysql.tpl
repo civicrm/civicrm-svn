@@ -178,3 +178,19 @@ VALUES
 
 -- CRM-6208
 insert into civicrm_option_group (name, is_active) values ('system_extensions', 1 );
+
+-- CRM-6907
+  ALTER TABLE  `civicrm_event` 
+          ADD  `currency` VARCHAR( 3 ) 
+CHARACTER SET  utf8 COLLATE utf8_unicode_ci NULL 
+      COMMENT  '3 character string, value from config setting or input via user.';
+
+      UPDATE   `civicrm_event` SET `currency` = '{$config->defaultCurrency}';
+
+  ALTER TABLE  `civicrm_contribution_page` 
+          ADD  `currency` VARCHAR( 3 ) 
+CHARACTER SET  utf8 COLLATE utf8_unicode_ci NOT NULL 
+   COMMENT '3  character string, value from config setting or input via user.';
+
+      UPDATE   `civicrm_contribution_page` SET `currency` = '{$config->defaultCurrency}';
+
