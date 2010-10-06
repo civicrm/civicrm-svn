@@ -64,16 +64,11 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
      */
     function preProcess( )
     {
-
         require_once 'CRM/Core/Extensions.php';
-
         $ext = new CRM_Core_Extensions();
-
         self::$_extInstalled = $ext->getInstalled( TRUE );
         self::$_extNotInstalled = $ext->getNotInstalled();
-
         CRM_Utils_System::setTitle(ts('CiviCRM Extensions'));
-            
     }
 
     /**
@@ -115,10 +110,10 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
                                                                     ),
 
                                   CRM_Core_Action::DELETE  => array(
-                                                                    'name'  => ts('Delete'),
+                                                                    'name'  => ts('Uninstall'),
                                                                     'url'   => 'civicrm/admin/extensions',
                                                                     'qs'    => 'action=delete&id=%%id%%&key=%%key%%',
-                                                                    'title' => ts('Delete Extension') 
+                                                                    'title' => ts('Uninstall Extension') 
                                                                     )
                                   );
             
@@ -149,9 +144,6 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
     {
 
         $this->assign('extEnabled', FALSE );
-
-//        CRM_Core_Error::debug( self::$_extInstalled );
-
         if( self::$_extInstalled ) {
             $this->assign('extEnabled', TRUE );
 
@@ -159,7 +151,6 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
             $rows = array();
             foreach( self::$_extInstalled as $id => $obj ) {
                 $rows[$id] = (array) $obj;
-
                 if( $obj->is_active ) {
                     $action = CRM_Core_Action::DISABLE;
                 } else {
@@ -172,29 +163,21 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
                                                                        'key' => $obj->key ));
             }            
             $this->assign('rows', $rows );
-
-
         }
 
-
-        
         if( self::$_extNotInstalled ) {
             $this->assign('extEnabled', TRUE );        
-
             $rowsUpl = array();
             foreach( self::$_extNotInstalled as $id => $obj ) {
                 $rowsUpl[$id] = (array) $obj;
-
                 $action = array_sum(array_keys($this->links()));
                 $action -= CRM_Core_Action::DISABLE;
                 $action -= CRM_Core_Action::ENABLE;
-
                 $rowsUpl[$id]['action'] = CRM_Core_Action::formLink(self::links(), $action,
                                                                     array('id' => $id, 
                                                                           'key' => $obj->key ));
             }
             $this->assign('rowsUploaded', $rowsUpl );
-        
         }
 
     }

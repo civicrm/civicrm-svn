@@ -88,7 +88,7 @@ class CRM_Admin_Form_Extensions extends CRM_Admin_Form
         if ($this->_action & CRM_Core_Action::DELETE) {
             $this->addButtons(array(
                                     array ('type'      => 'next',
-                                           'name'      => ts('Delete'),
+                                           'name'      => ts('Uninstall'),
                                            'isDefault' => true),
                                     array ('type'      => 'cancel',
                                            'name'      => ts('Cancel')),
@@ -138,8 +138,8 @@ class CRM_Admin_Form_Extensions extends CRM_Admin_Form
         if($this->_action & CRM_Core_Action::DELETE) {
             require_once('CRM/Core/Extensions.php');
             $ext = new CRM_Core_Extensions();
-            $ext->delete($this->_id, $this->_key);
-            CRM_Core_Session::setStatus( ts('Extension has been removed.') );
+            $ext->uninstall($this->_id, $this->_key);
+            CRM_Core_Session::setStatus( ts('Extension has been uninstalled.') );
         }
         if($this->_action & CRM_Core_Action::ADD) {
             require_once('CRM/Core/Extensions.php');

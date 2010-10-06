@@ -658,13 +658,13 @@ VALUES
   (@option_group_id_grantTyp, '{ts escape="sql"}Emergency{/ts}'          , 1, 'Emergency'         , NULL, 0, 1,    1, NULL, 0, 0, 1, NULL, @domainID, NULL),    
   (@option_group_id_grantTyp, '{ts escape="sql"}Family Support{/ts}'     , 2, 'Family Support'    , NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, @domainID, NULL),
   (@option_group_id_grantTyp, '{ts escape="sql"}General Protection{/ts}' , 3, 'General Protection', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, @domainID, NULL),
-  (@option_group_id_grantTyp, '{ts escape="sql"}Impunity{/ts}'           , 4, 'Impunity'          , NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, @domainID, NULL),
+  (@option_group_id_grantTyp, '{ts escape="sql"}Impunity{/ts}'           , 4, 'Impunity'          , NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, @domainID, NULL);
 
 -- default CiviCRM Extensions
-  (@option_group_id_extensions, '{ts escape="sql"}Activity Search{/ts}'    , 'org.civicrm.search.activity', 'Activity Search'    , 'search',   0, 0, 1, NULL, 0, 0, 1, NULL, @domainID, NULL),
-  (@option_group_id_extensions, '{ts escape="sql"}Multi Value Search{/ts}' , 'org.civicrm.search.multivalue', 'Multi Value Search' , 'search', 0, 0, 2, NULL, 0, 0, 1, NULL, @domainID, NULL),
-  (@option_group_id_extensions, '{ts escape="sql"}Google Checkout{/ts}' , 'org.civicrm.payment.googlecheckout', 'Google Checkout' , 'payment', 0, 0, 3, NULL, 0, 0, 1, NULL, @domainID, NULL),
-  (@option_group_id_extensions, '{ts escape="sql"}Grant Report{/ts}' , 'org.civicrm.report.grant', 'Grant Report' , 'report', 0, 0, 4, NULL, 0, 0, 1, NULL, @domainID, NULL);
+--  (@option_group_id_extensions, '{ts escape="sql"}Activity Search{/ts}'    , 'org.civicrm.search.activity', 'Activity Search'    , 'search',   0, 0, 1, NULL, 0, 0, 1, NULL, @domainID, NULL),
+--  (@option_group_id_extensions, '{ts escape="sql"}Multi Value Search{/ts}' , 'org.civicrm.search.multivalue', 'Multi Value Search' , 'search', 0, 0, 2, NULL, 0, 0, 1, NULL, @domainID, NULL),
+--  (@option_group_id_extensions, '{ts escape="sql"}Google Checkout{/ts}' , 'org.civicrm.payment.googlecheckout', 'Google Checkout' , 'payment', 0, 0, 3, NULL, 0, 0, 1, NULL, @domainID, NULL),
+--  (@option_group_id_extensions, '{ts escape="sql"}Grant Report{/ts}' , 'org.civicrm.report.grant', 'Grant Report' , 'report', 0, 0, 4, NULL, 0, 0, 1, NULL, @domainID, NULL);
 
 -- CRM-6138
 {include file='languages.tpl'}

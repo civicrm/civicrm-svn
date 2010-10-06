@@ -62,6 +62,10 @@ class CRM_Core_Extensions_Extension
         $this->path = $config->extensionsDir . DIRECTORY_SEPARATOR . $key . DIRECTORY_SEPARATOR;
     }
 
+    public function setId( $id ) {
+        $this->id = $id;
+    }
+
     public function readXMLInfo( ) {
         $info = $this->_parseXMLFile( $this->path . 'info.xml' );
         $this->type = (string) $info->attributes()->type;
@@ -94,12 +98,29 @@ class CRM_Core_Extensions_Extension
         $this->_registerExtensionByType();
         $this->_createExtensionEntry();
     }
+    
+    public function uninstall( ) {
+        $this->_removeExtensionByType();
+        $this->_removeExtensionEntry();
+    }    
 
     private function _registerExtensionByType() {
         $hcName = "CRM_Core_Extensions_ExtensionType_" . ucwords($this->type);
         require_once(str_replace('_', DIRECTORY_SEPARATOR, $hcName) . '.php');
         $ext = new $hcName( $this );
         $ext->install();
+    }
+    
+    private function _removeExtensionByType() {
+        $hcName = "CRM_Core_Extensions_ExtensionType_" . ucwords($this->type);
+        require_once(str_replace('_', DIRECTORY_SEPARATOR, $hcName) . '.php');
+        $ext = new $hcName( $this );
+        $ext->uninstall();
+    }    
+
+    private function _removeExtensionEntry() {
+        CRM_Core_BAO_OptionValue::del($this->id);
+        CRM_Core_Session::setStatus( ts('Selected option value has been deleted.') );
     }
     
     private function _createExtensionEntry() {

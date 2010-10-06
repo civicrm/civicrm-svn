@@ -48,29 +48,27 @@ class CRM_Core_Extensions_ExtensionType_Report extends CRM_Core_Extensions_Exten
 
     public function __construct( $ext ) {
         $this->ext = $ext;
+        $this->groupId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', 
+                                                  self::REPORT_GROUP_NAME, 'id', 'name' );
+        $this->customReports = CRM_Core_OptionGroup::values(self::REPORT_GROUP_NAME, true, false, false, null, 'name', false );
     }
     
     public function install( ) {
-        $groupId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', 
-                                                  self::REPORT_GROUP_NAME, 'id', 'name' );
-
-
-                
+        if( array_key_exists( $this->ext->key, $this->customReports ) ) {
+            CRM_Core_Error::fatal( 'This report is already registered.' );
+        }
+        
         if( $this->ext->typeInfo['component'] === 'Contact' ) {
             $compId = 'null';
         } else {
             $comp = CRM_Core_Component::get( $this->ext->typeInfo['component'] );
             $compId = $comp->componentID;
         }
-
         if( empty($compId) ) {
-            CRM_Core_Error::fatal( "Component for which you're trying to install the extension (" . $e['per_id'][$id]['type_info']['component'] . ") is currently disabled." );
+            CRM_Core_Error::fatal( "Component for which you're trying to install the extension (" . $this->ext->typeInfo['component'] . ") is currently disabled." );
         }
-
         $weight = CRM_Utils_Weight::getDefaultWeight( 'CRM_Core_DAO_OptionValue',
-                                                                      array( 'option_group_id' => $groupId ) );
-
-
+                                                                      array( 'option_group_id' => $this->groupId ) );
         $ids = array();
         $params = array( 'label'        => $this->ext->label . ' (' . $this->ext->key . ')',
                          'value'        => $this->ext->typeInfo['reportUrl'],
@@ -78,13 +76,22 @@ class CRM_Core_Extensions_ExtensionType_Report extends CRM_Core_Extensions_Exten
                          'weight'       => $weight,
                          'description'  => $this->ext->label . ' (' . $this->ext->key . ')',
                          'component_id' => $compId,
-                         'option_group_id' => $groupId,
+                         'option_group_id' => $this->groupId,
                          'is_active' => 1 );
 
         $optionValue = CRM_Core_BAO_OptionValue::add($params, $ids);
     }
 
-    public function deinstall( $id, $key ) {
-        parent::deinstall( $id, $key );
+    public function uninstall( ) {
+
+
+
+//        if( !array_key_exists( $this->ext->key, $this->customReports ) ) {
+//            CRM_Core_Error::fatal( 'This report is not registered.' );
+//        }
+        
+        $cr = CRM_Core_OptionGroup::values(self::REPORT_GROUP_NAME, false, false, false, null, 'id', false );
+        $id = $cr[$this->customReports[$this->ext->key]];
+        $optionValue = CRM_Core_BAO_OptionValue::del( $id );
     }
 }

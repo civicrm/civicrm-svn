@@ -37,14 +37,9 @@
 
 require_once 'CRM/Core/Config.php';
 
-class CRM_Core_Extensions_ExtensionType_Payment extends CRM_Core_Extensions_ExtensionType
+class CRM_Core_Extensions_ExtensionType_Payment
 {
 
-
-    /**
-     * 
-     */
-    const OPTION_GROUP_NAME = 'system_extensions';
 
 
     public function __construct( $ext ) {
@@ -54,7 +49,7 @@ class CRM_Core_Extensions_ExtensionType_Payment extends CRM_Core_Extensions_Exte
     public function install( ) {
     }
 
-    public function deinstall( ) {
+    public function uninstall( ) {
     }
     
     public function disable() {
