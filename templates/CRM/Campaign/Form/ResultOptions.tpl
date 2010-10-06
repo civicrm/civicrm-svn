@@ -164,8 +164,13 @@
 	       }		 
 	}, "json" );
     }
+    
+    cj(document).ready( function( ) {
+      if ( document.getElementsByName("option_type")[1].checked ) {
+        showOptionSelect( );
+      } 			
+    });
 
-    showOptionSelect( );
     {/literal}	
     on_load_init_blocks( showRows, hideBlocks, '' );
 </script>

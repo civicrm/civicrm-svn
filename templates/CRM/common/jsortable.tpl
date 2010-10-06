@@ -125,6 +125,7 @@ eval('tableId =[' + tableId + ']');
 		"aoColumns"  : columns,
 	    	"bProcessing": true,
 		"sPaginationType": "full_numbers",
+		"sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',
 	   	"bServerSide": true,
 	   	"sAjaxSource": sourceUrl,
 

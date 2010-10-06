@@ -119,6 +119,7 @@ function loadVoterList( )
                 "aaSorting": [ [0,'asc'], [1,'asc'], [2,'asc'], [3,'asc'], [4,'asc'] ],
 		"aoColumns":[{sClass:""},{sClass:""},{sClass:""},{sClass:""},{sClass:""},{bSortable:false}],
 		"sPaginationType": "full_numbers",
+		"sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',
 	   	"bServerSide": true,
 	   	"sAjaxSource": sourceUrl,
 				
@@ -136,7 +137,7 @@ function loadVoterList( )
 			//do search to reserve voters.			
 			aoData[dataLength++] = {name: 'campaign_search_voter_for', value: searchVoterFor};
 			
-			cj.ajax( {
+			$.ajax( {
 				"dataType": 'json', 
 				"type": "POST", 
 				"url": sSource, 
