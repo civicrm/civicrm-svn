@@ -1777,6 +1777,7 @@ WHERE  ce.loc_block_id = $locBlockId";
             $fromEmailValues[] = $fromEmailIds[] = $domainEmail;
         }
         
+        require_once 'CRM/Core/BAO/Email.php';
         // add logged in user's active email ids
         if ( $contactID ) {
             $contactEmails = CRM_Core_BAO_Email::allEmails( $contactID );
