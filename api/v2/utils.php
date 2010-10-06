@@ -774,10 +774,16 @@ function _civicrm_participant_formatted_param( &$params, &$values, $create=false
             $values[$key] = $id;
             break;
         case 'participant_role_id':
+        case 'participant_role':
             $role = CRM_Event_PseudoConstant::participantRole();
             $participantRoles = explode( ",", $value );
             foreach ( $participantRoles as $k => $v ) {
-                $participantRoles[$k] = CRM_Utils_Array::key( $v, $role );
+                $v = trim( $v );
+                if (  $key == 'participant_role' ) {
+                    $participantRoles[$k] = CRM_Utils_Array::key( $v, $role );
+                } else {
+                    $participantRoles[$k] = $v;
+                }
             }
             require_once 'CRM/Core/DAO.php';
             $values['role_id'] = implode( CRM_Core_DAO::VALUE_SEPARATOR, $participantRoles ); 
