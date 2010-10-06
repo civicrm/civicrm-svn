@@ -322,4 +322,15 @@
       <comment>Date and time that contribution page was created.</comment>
       <add>3.0</add>
   </field>
+  <field>      
+      <name>currency</name>   
+      <type>varchar</type>   
+      <length>3</length>
+      <required>true</required> 
+      <import>true</import>
+      <headerPattern>/cur(rency)?/i</headerPattern>
+      <dataPattern>/^[A-Z]{3}$/i</dataPattern>
+      <comment>3 character string, value from config setting or input via user.</comment>
+      <add>3.3</add>   
+  </field> 
 </table>
