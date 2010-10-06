@@ -263,9 +263,9 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
     
     function browse( ) 
     {   
-        $this->_tabs = array( 'campaign' => ts( 'Campaign' ), 
-                              'survey'   => ts( 'Survey' ),
-                              'petition' => ts ('Petition')
+        $this->_tabs = array( 'campaign' => ts( 'Campaigns' ), 
+                              'survey'   => ts( 'Surveys' ),
+                              'petition' => ts ('Petitions')
                        );
         
         $subPageType = CRM_Utils_Request::retrieve( 'type', 'String', $this );
