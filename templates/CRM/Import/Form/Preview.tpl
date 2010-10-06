@@ -36,7 +36,7 @@ function setIntermediate( ) {
 	   cj("#intermediate").html( result[1] );
            if( result[0] < 100 ){ 
 	        cj("#importProgressBar .ui-progressbar-value").animate({width: result[0]+"%"}, 500);
-		cj("#status").text( result[0]+"% Completed...");
+		cj("#status").text( result[0]+"% Completed");
              }
  	});
 }
@@ -99,7 +99,7 @@ function verify( ) {
 {* Import Progress Bar and Info *}
 <div id="id-processing" class="hiddenElement">
 	<h3>Importing records...</h3><br />
-       <div id="status"></div>
+       <div id="status" style="margin-left:6px;"></div>
 	<div class="progressBar" id="importProgressBar" style="margin-left:6px;display:none;"></div>
 	<div id="intermediate"></div>
 	<div id="error_status"></div>
