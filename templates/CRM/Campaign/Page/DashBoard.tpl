@@ -31,7 +31,7 @@
 <div id="campaign-dialog" class='hiddenElement'></div>
 {if $campaigns} 
   <div class="action-link">
-      <a href="#" onclick="createCampaign( );" class="button"><span>&raquo; {ts}Add Campaign{/ts}</span></a>
+      <a href="#" onclick="createCampaign( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Campaign{/ts}</span></a>
   </div>
 
   {include file="CRM/common/enableDisable.tpl"}
@@ -68,11 +68,11 @@
 {else} 
     <div class="messages status">
         <div class="icon inform-icon"></div> &nbsp;
-        {ts}No Campaigns found.{/ts}
+        {ts}No campaigns found.{/ts}
     </div>
 {/if}
 <div class="action-link">
-   <a href="#" onclick="createCampaign( );"  class="button"><span>&raquo; {ts}Add Campaign{/ts}</span></a>
+   <a href="#" onclick="createCampaign( );"  class="button"><span><div class="icon add-icon"></div>{ts}Add Campaign{/ts}</span></a>
 </div>
 
 {* build the survey selector *}
@@ -81,7 +81,7 @@
 <div id="survey-dialog" class='hiddenElement'></div>
 {if $surveys} 
   <div class="action-link">
-    <a href="#" onclick="createSurvey( );" class="button"><span>&raquo; {ts}Add Survey{/ts}</span></a>
+    <a href="#" onclick="createSurvey( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Survey{/ts}</span></a>
   </div>
  {include file="CRM/common/enableDisable.tpl"}
  {include file="CRM/common/jsortable.tpl"}
@@ -135,7 +135,7 @@
   </div> 
 {/if}
 <div class="action-link">
-   <a href="#" onclick="createSurvey( );" class="button"><span>&raquo; {ts}Add Survey{/ts}</span></a>
+   <a href="#" onclick="createSurvey( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Survey{/ts}</span></a>
 </div>
 
 {* build normal page *}
@@ -144,7 +144,7 @@
 <div id="petition-dialog" class='hiddenElement'></div>
 {if $surveys} 
   <div class="action-link">
-    <a href="#" onclick="createPetition( );" class="button"><span>&raquo; {ts}Add Petition{/ts}</span></a>
+    <a href="#" onclick="createPetition( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Petition{/ts}</span></a>
   </div>
  {include file="CRM/common/enableDisable.tpl"}
  {include file="CRM/common/jsortable.tpl"}
@@ -186,11 +186,11 @@
 
 {else} 
   <div class="status">
-    <div class="icon inform-icon"></div>&nbsp;{ts}No petition found.{/ts}
+    <div class="icon inform-icon"></div>&nbsp;{ts}No petitions found.{/ts}
   </div> 
 {/if}
 <div class="action-link">
-   <a href="" onclick="createPetition( );" class="button"><span>&raquo; {ts}Add Petition{/ts}</span></a>
+   <a href="#" onclick="createPetition( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Petition{/ts}</span></a>
 </div>
 
 {* build normal page *}
