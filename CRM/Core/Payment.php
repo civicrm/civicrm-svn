@@ -88,7 +88,7 @@ abstract class CRM_Core_Payment {
      * @static  
      *  
      */  
-    static function &singleton( $mode = 'test', $component, &$paymentProcessor, &$paymentForm = null ) {        
+    static function &singleton( $mode = 'test', &$paymentProcessor, &$paymentForm = null ) {        
         if ( self::$_singleton === null ) {
             $config       = CRM_Core_Config::singleton( );
 

@@ -524,7 +524,7 @@ function civicrm_contribute_transact($params) {
   }
 
   require_once 'CRM/Core/Payment.php';
-  $payment =& CRM_Core_Payment::singleton( $params['payment_processor_mode'], 'Contribute', $paymentProcessor );
+  $payment =& CRM_Core_Payment::singleton( $params['payment_processor_mode'], $paymentProcessor );
   if ( civicrm_error($payment) ) {
     return $payment ;
   }
