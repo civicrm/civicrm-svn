@@ -773,8 +773,13 @@ class CRM_Report_Form_Contact_Detail extends CRM_Report_Form {
                                 CRM_Event_PseudoConstant::participantStatus( $val, false );
                         }
                         if ( $val = CRM_Utils_Array::value('civicrm_participant_role_id', $row ) ) {
+                            $roles = explode( CRM_Core_DAO::VALUE_SEPARATOR, $val ); 
+                            $value = array( );
+                            foreach( $roles as $role) {
+                                $value[$role] = CRM_Event_PseudoConstant::participantRole( $role, false );
+                            }
                             $componentRows[$contactID][$component][$rowNum]['civicrm_participant_role_id'] = 
-                                CRM_Event_PseudoConstant::participantRole( $val, false );
+                                implode( ', ', $value );
                         }
                         
                         $entryFound = true;
