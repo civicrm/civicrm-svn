@@ -1889,8 +1889,8 @@ div.grippie {
     padding: .5em 1em !important;
 }
 
-/* Styles for Contact Summary mockup start here. dgg */
-.primary {
+/* Styles for Contact Summary start here. dgg */
+#crm-container .primary {
     FONT-WEIGHT: bold
 }
 
