@@ -387,7 +387,6 @@ class CRM_Core_Permission {
                       'translate CiviCRM'                 => ts( 'translate CiviCRM' ),
                       'administer Tagsets'                => ts( 'administer Tagsets' ),
                       'administer reserved tags'          => ts( 'administer reserved tags' ),
-                      'administer Campaign'               => ts( 'administer Campaign' ),
                       'administer dedupe rules'           => ts( 'administer dedupe rules' ),
                       'merge duplicate contacts'          => ts( 'merge duplicate contacts' ),
                       'view all notes'                    => ts( 'view all notes' ),
