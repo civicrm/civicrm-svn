@@ -332,6 +332,39 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       return $elements;
   }
 
-  
+  /**
+   * Define a payment processor for use by a webtest. Default is to create Dummy processor
+   * which is useful for testing online public forms (online contribution pages and event registration)
+   *
+   * @param string $processorName Name assigned to new processor
+   * @param string $processorType Name for processor type (e.g. PayPal, Dummy, etc.)
+   * @param array  $processorSettings Array of fieldname => value for required settings for the processor
+   *
+   * @return void
+   */
+
+  function webtestAddPaymentProcessor( $processorName, $processorType = 'Dummy', $processorSettings = null ) {
+      if ( !$processorName ) {
+          $this->fail("webTestAddPaymentProcessor requires $processorName.");      
+      }
+      if ( $processorType == 'Dummy' ) {
+          $processorSettings = array( 'user_name'      => 'dummy',
+                                      'url_site'       => 'http://dummy.com',
+                                      'test_user_name' => 'dummytest',
+                                      'test_url_site'  => 'http://dummytest.com',
+                                    );
+      } elseif ( empty( $processorSettings ) ) {
+          $this->fail("webTestAddPaymentProcessor requires $processorSettings array if processorType is not Dummy.");
+      }
+      $this->open($this->sboxPath . "civicrm/admin/paymentProcessor?action=add&reset=1&pp=" . $processorType);
+      $this->type('name', $processorName);          
+      foreach ( $processorSettings AS $f => $v ){
+          $this->type($f, $v);          
+      }
+      $this->click("_qf_PaymentProcessor_next-bottom");
+      $this->waitForPageToLoad("30000");
+      // Is new processor created?
+      $this->assertTrue($this->isTextPresent($processorName), "Processor name not found in selector after adding payment processor (webTestAddPaymentProcessor).");
+  }  
 
 }
