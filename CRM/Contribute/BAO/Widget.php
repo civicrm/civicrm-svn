@@ -153,8 +153,9 @@ class CRM_Contribute_BAO_Widget extends CRM_Contribute_DAO_Widget {
         $data['money_raised_percentage'] = 0;
         if ( $data['money_target'] > 0 ) {
             $data['money_raised_percentage'] = ( $data['money_raised'] / $data['money_target'] ) * 100 . "%";
+            $data['money_target_display'] = CRM_Utils_Money::format( $data['money_target'] );
             $data['money_raised'] = ts( 'Raised %1 of %2', array( '1' => CRM_Utils_Money::format( $data['money_raised'] ), 
-                                                                  '2' => CRM_Utils_Money::format( $data['money_target'] )
+                                                                  '2' => $data['money_target_display']
                 ) );
         } else {
             $data['money_raised'] = ts( 'Raised %1 ', array('1' =>  CRM_Utils_Money::format( $data['money_raised'] ) ) );

@@ -29,7 +29,7 @@
 {if $showStatus}
 <div class="messages status">
     <div class="icon inform-icon"></div>
-    {ts}It looks like you are using a flash version of Contribute widget. We won't be supporting flash version in next release, hence you should fix all your sites to use below improved HTML widget.{/ts}
+    {ts}It looks like you may have posted and / or distributed the flash version of the Contribution widget. We won't be supporting the flash version in next release. You should try and get all sites using the flash widget to update to the improved HTML widget code below as soon as possible.{/ts}
 </div>
 {/if}
 <div id="form" class="crm-block crm-form-block crm-contribution-contributionpage-widget-form-block">
@@ -88,22 +88,22 @@
         </div>
 
         
-        <div id="id-colors-show" class="section-hidden section-hidden-border" style="clear: both;">
-            <a href="#" onclick="hide('id-colors-show'); show('id-colors'); return false;"><img src="{$config->userFrameworkResourceURL}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a><label>{ts}Edit Widget Colors{/ts}</label><br />
-        </div>
-        <div id="id-colors" class="section-shown">
-        <fieldset>
-        <legend><a href="#" onclick="hide('id-colors'); show('id-colors-show'); return false;"><img src="{$config->userFrameworkResourceURL}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Widget Colors{/ts}</legend>
-        <div class="description">
-            {ts}Enter colors in hexadecimal format prefixed with <em>#</em>. EXAMPLE: <em>#FF0000</em> = Red. You can do a web search on 'hexadecimal colors' to find a chart of color codes.{/ts}
-        </div>
-        <table class="form-layout-compressed">
-        {foreach from=$colorFields item=field key=fieldName}
-          <tr><td class="label">{$form.$fieldName.label}<span class="marker"> *</span></td><td>{$form.$fieldName.html}</td></tr>
-        {/foreach}
-        </table>
-        </fieldset>
-        </div>
+        <div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed crm-case-roles-block">
+         <div class="crm-accordion-header">
+          <div class="icon crm-accordion-pointer"></div> 
+        	{ts}Edit Widget Colors{/ts}
+         </div><!-- /.crm-accordion-header -->
+         <div class="crm-accordion-body">
+            <div class="description">
+                {ts}Enter colors in hexadecimal format prefixed with <em>#</em>. EXAMPLE: <em>#FF0000</em> = Red. You can do a web search on 'hexadecimal colors' to find a chart of color codes.{/ts}
+            </div>
+            <table class="form-layout-compressed">
+            {foreach from=$colorFields item=field key=fieldName}
+              <tr><td class="label">{$form.$fieldName.label}<span class="marker"> *</span></td><td>{$form.$fieldName.html}</td></tr>
+            {/foreach}
+            </table>
+         </div><!-- /.crm-accordion-body -->
+        </div><!-- /.crm-accordion-wrapper -->
 
     </div>
 
@@ -117,8 +117,7 @@
     </div>
   <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 
-</div>      
-{include file="CRM/common/showHide.tpl"}
+</div>
 
 {literal}
 <script type="text/javascript">
@@ -143,3 +142,11 @@
 
 {* include jscript to warn if unsaved form field changes *}
 {include file="CRM/common/formNavigate.tpl"}
+
+{literal}
+<script type="text/javascript">
+cj(function() {
+   cj().crmaccordions(); 
+});
+</script>
+{/literal}

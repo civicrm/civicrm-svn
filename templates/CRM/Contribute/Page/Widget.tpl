@@ -95,10 +95,6 @@
         border:0px;
     }
 
-    .crm-contribute-widget .crm-contribute-button-inner {
-        padding:2px;
-        display:block;
-    }
 </style>
 <style>
     .crm-contribute-widget { 
@@ -118,8 +114,13 @@
     }
     .crm-contribute-widget .crm-amount-fill { background-color:#2786C2; }
 
-    .crm-contribute-widget .crm-contribute-button { /* button color */
+    .crm-contribute-widget a.crm-contribute-button { /* button color */
         background-color:{/literal}{$form.color_button.value}{literal};
+    }
+
+    .crm-contribute-widget .crm-contribute-button-inner { /* button text color */
+        padding:2px;
+        display:block;
         color:{/literal}{$form.color_about_link.value}{literal};
     }
 
@@ -190,7 +191,7 @@
         var cpid        = {/literal}{$cpageId}{literal};
         document.getElementById('crm_cpid_'+cpid+'_title').innerHTML        = jsondata.title;
         if ( jsondata.money_target > 0 ) {
-            document.getElementById('crm_cpid_'+cpid+'_amt_hi').innerHTML       = crmCurrency+jsondata.money_target;
+            document.getElementById('crm_cpid_'+cpid+'_amt_hi').innerHTML       = jsondata.money_target_display;
             document.getElementById('crm_cpid_'+cpid+'_amt_low').innerHTML      = crmCurrency+jsondata.money_low;
         }
         document.getElementById('crm_cpid_'+cpid+'_amt_raised').innerHTML   = jsondata.money_raised;
