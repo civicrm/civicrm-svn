@@ -291,6 +291,8 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                     if ( count( $values ) ) {
                         $formattedValues[$count]['additionalCustomPost'] = $values;
                     }
+                    $formattedValues[$count]['additionalCustomPost'] = array_diff_assoc( $formattedValues[$count]['additionalCustomPost'], $formattedValues[$count]['additionalCustomPre'] );
+                    
                     $formattedValues[$count]['additionalCustomPostGroupTitle'] = CRM_Utils_Array::value( 'groupTitle', $groupName );
                 }
                 $count++; 
