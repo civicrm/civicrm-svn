@@ -1076,7 +1076,7 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
             $config = CRM_Core_Config::singleton( );
             $defaultCurrency = $config->defaultCurrency;
         }
-        $this->setDefaults( array( 'currency' => $defaultCurrency ) );
+        $this->setDefaults( array( $name => $defaultCurrency ) );
     }
 
 }
