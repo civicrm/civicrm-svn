@@ -1535,7 +1535,7 @@ WHERE  id = $cfID
                                                                                     $isCustomProfile,
                                                                                     $participantParams );
                     if ( $profilePost ) {
-                        $customProfile[$i]['additionalCustomPost'] =  $profilePost;
+                        $customProfile[$i]['additionalCustomPost'] =  array_diff_assoc( $profilePost, $profilePre );
                         $customProfile[$i] = array_merge( $groupTitles, $customProfile[$i] );
                     }
                     $i++;
