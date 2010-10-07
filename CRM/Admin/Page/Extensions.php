@@ -53,7 +53,7 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
 
     static $_extInstalled = null;
 
-    static $_extNotInstalled = TRUE;
+    static $_extNotInstalled = null;
 
     /**
      * Obtains the group name from url and sets the title.
@@ -66,8 +66,10 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
     {
         require_once 'CRM/Core/Extensions.php';
         $ext = new CRM_Core_Extensions();
-        self::$_extInstalled = $ext->getInstalled( TRUE );
-        self::$_extNotInstalled = $ext->getNotInstalled();
+        if( $ext->enabled === TRUE ) {
+            self::$_extInstalled = $ext->getInstalled( TRUE );
+            self::$_extNotInstalled = $ext->getNotInstalled();
+        }
         CRM_Utils_System::setTitle(ts('CiviCRM Extensions'));
     }
 

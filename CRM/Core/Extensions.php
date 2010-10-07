@@ -51,6 +51,14 @@ class CRM_Core_Extensions
     const EXT_INFO_FILENAME = 'info.xml';
 
     /**
+     * Allows quickly verifying if extensions are enabled
+     * 
+     * @access private
+     * @var boolean
+     */
+    public $enabled = FALSE;
+
+    /**
      * Full path to extensions directory
      * 
      * @access private
@@ -87,6 +95,10 @@ class CRM_Core_Extensions
     public function __construct( ) {
         $config =& CRM_Core_Config::singleton( );
         $this->_extDir = $config->extensionsDir;
+        
+        if( ! empty( $this->_extDir ) ) {
+            $this->enabled = TRUE;
+        }        
     }
 
     /**
