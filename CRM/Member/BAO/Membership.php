@@ -817,7 +817,8 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
         $fields = array_merge($fields, $expFieldMembership );
         $membershipStatus = array( 'membership_status' => array( 'title'     => 'Membership Status',
                                                                  'name'      => 'membership_status',
-                                                                 'data_type' => CRM_Utils_Type::T_STRING ) );
+                                                                 'data_type' => CRM_Utils_Type::T_STRING,
+                                                                 'where'     => 'civicrm_membership_status.name' ) );
         //CRM-6161 fix for customdata export
         $fields = array_merge($fields, $membershipStatus, CRM_Core_BAO_CustomField::getFieldsForImport('Membership'));
         return $fields;
