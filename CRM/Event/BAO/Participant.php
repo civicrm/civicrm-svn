@@ -120,17 +120,17 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
         }
         $participantBAO->copyValues($params);
         
-        //make sure we have valid currency
-        //when amount is not null CRM-4453
+        //CRM-6910
+        //1. If currency present, it should be valid one.
+        //2. We should have currency when amount is not null.
         require_once 'CRM/Utils/Rule.php';
         $currency = $participantBAO->fee_currency;
-        if ( !CRM_Utils_System::isNull( $participantBAO->fee_amount ) ) {
+        if ( $currency ||
+             !CRM_Utils_System::isNull( $participantBAO->fee_amount ) ) {
             if ( !CRM_Utils_Rule::currencyCode( $currency ) ) {
                 $config = CRM_Core_Config::singleton();
                 $currency = $config->defaultCurrency;
             }
-        } else {
-            $currency = '';
         }
         $participantBAO->fee_currency = $currency;
         
