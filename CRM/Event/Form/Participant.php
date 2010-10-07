@@ -1038,10 +1038,10 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
             }
             //modify params according to parameter used in create
             //participant method (addParticipant)            
-            $params['participant_status_id']     = $params['status_id'] ;
-            $params['participant_role_id']       = $params['role_id'] ;
-            $params['participant_register_date'] = $params['register_date'] ;
-            $params['participant_source']        = $params['source'] ;
+            $this->_params['participant_status_id']     = $params['status_id'] ;
+            $this->_params['participant_role_id']       = $params['role_id'] ;
+            $this->_params['participant_register_date'] = $params['register_date'] ;
+            $this->_params['participant_source']        = $params['source'] ;
            
             require_once 'CRM/Core/BAO/PaymentProcessor.php';
             $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $this->_params['payment_processor_id'],
@@ -1182,6 +1182,10 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
           
             // add participant record
             $participants   = array();
+            if ( CRM_Utils_Array::value( 'participant_role_id', $this->_params ) && is_array( $this->_params['participant_role_id'] ) ) {
+                $this->_params['participant_role_id'] = implode( CRM_Core_DAO::VALUE_SEPARATOR, 
+                                                                 array_keys( $this->_params['participant_role_id'] ) );
+            }
             $participants[] = CRM_Event_Form_Registration::addParticipant( $this->_params, $contactID );
 
             //add custom data for participant
@@ -1363,7 +1367,15 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
             unset($event['end_date']);
            
             $role = CRM_Event_PseudoConstant::participantRole();
-            $event['participant_role'] = $role[$params['role_id']];
+            if ( is_array( $params['role_id'] ) ) {
+                $selectedRoles = array( );
+                foreach ( array_keys( $params['role_id'] ) as $roleId ) {
+                    $selectedRoles[ ] = $role[$roleId];
+                }
+                $event['participant_role'] = implode( ', ', $selectedRoles );
+            } else {
+                $event['participant_role'] = $role[$params['role_id']];
+            }
             $event['is_monetary'] = $this->_isPaidEvent;
            
             if ( $params['receipt_text'] ) {
