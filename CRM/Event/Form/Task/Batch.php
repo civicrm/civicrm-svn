@@ -182,6 +182,9 @@ class CRM_Event_Form_Task_Batch extends CRM_Event_Form_Task
                         CRM_Core_BAO_UFGroup::buildProfile( $this, $field, null, $participantId );
                     }
                 } else {
+                    if ( $field['name'] == 'participant_role_id' ) {
+                        $field['is_multiple'] = true;
+                    }
                     // handle non custom fields
                     CRM_Core_BAO_UFGroup::buildProfile( $this, $field, null, $participantId );
                 }
@@ -225,6 +228,15 @@ class CRM_Event_Form_Task_Batch extends CRM_Event_Form_Task
                 $this->_fromStatusIds[$participantId] = 
                     CRM_Utils_Array::value( "field[$participantId][participant_status_id]", $defaults );
             }
+            if ( array_key_exists( 'participant_role_id', $this->_fields ) ) {
+                if ( $defaults["field[{$participantId}][participant_role_id]"] ) {
+                    $roles = $defaults["field[{$participantId}][participant_role_id]"];
+                    foreach ( explode( CRM_Core_DAO::VALUE_SEPARATOR, $roles ) as $k => $v ) {
+                        $defaults["field[$participantId][participant_role_id][{$v}]"] = 1;
+                    }
+                    unset( $defaults["field[{$participantId}][participant_role_id]"] );
+                }
+            }
         }
         
         $this->assign('details',   $details);
@@ -256,7 +268,12 @@ class CRM_Event_Form_Task_Batch extends CRM_Event_Form_Task
                 } 
                 
                 if ( $value['participant_role_id'] ) {
-                    $value['role_id'] = $value['participant_role_id'];
+                    $participantRoles = CRM_Event_PseudoConstant::participantRole( );
+                    if ( is_array( $value['participant_role_id'] ) ) {
+                        $value['role_id'] = implode( CRM_Core_DAO::VALUE_SEPARATOR, array_keys( $value['participant_role_id'] ) );   
+                    } else {
+                        $value['role_id'] = $value['participant_role_id'];
+                    }
                 } 
 
                 //need to send mail when status change

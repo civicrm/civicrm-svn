@@ -1645,8 +1645,13 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                        array(''=>ts( '- select -' )) + CRM_Event_PseudoConstant::participantStatus( null, $cond, 'label' ), $required);
         } else if ($fieldName == 'participant_role_id' ) {
             require_once "CRM/Event/PseudoConstant.php";
-            $form->add('select', $name, $title,
-                       array(''=>ts( '- select -' )) + CRM_Event_PseudoConstant::participantRole( ), $required);
+            if ( CRM_Utils_Array::value( 'is_multiple', $field ) ) {
+                require_once "CRM/Event/PseudoConstant.php";
+                $form->addCheckBox( $name, $title, CRM_Event_PseudoConstant::participantRole( ), null, null, null, null, '&nbsp', true );
+            } else {
+                $form->add( 'select', $name, $title,
+                           array( '' => ts( '- select -' ) ) + CRM_Event_PseudoConstant::participantRole( ), $required );
+            }
         } else if ($fieldName == 'scholarship_type_id' ) {
             $form->add('select', $name, $title, array( "" => "-- Select -- " )+ array_flip( CRM_Core_OptionGroup::values( 'scholarship_type', true ) ) );
         } else if ($fieldName == 'applicant_status_id' ) {  
