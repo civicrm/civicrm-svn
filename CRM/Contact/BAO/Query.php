@@ -49,15 +49,15 @@ class CRM_Contact_BAO_Query
      * @var int
      */
     const
-        MODE_CONTACTS   =   1,
-        MODE_CONTRIBUTE =   2,
-        MODE_QUEST      =   4,
-        MODE_MEMBER     =   8,
-        MODE_EVENT      =  16,
-        MODE_KABISSA    =  64,
-        MODE_GRANT      = 128,
-        MODE_PLEDGEBANK = 256,
-        MODE_PLEDGE     = 512,
+        MODE_CONTACTS   =    1,
+        MODE_CONTRIBUTE =    2,
+        MODE_QUEST      =    4,
+        MODE_MEMBER     =    8,
+        MODE_EVENT      =   16,
+        MODE_KABISSA    =   64,
+        MODE_GRANT      =  128,
+        MODE_PLEDGEBANK =  256,
+        MODE_PLEDGE     =  512,
         MODE_CASE       = 2048,
         MODE_ALL        = 1023,
         MODE_ACTIVITY   = 4096,
@@ -338,6 +338,9 @@ class CRM_Contact_BAO_Query
         // CRM_Core_Error::debug( 'post', $_POST );
         // CRM_Core_Error::debug( 'r', $returnProperties );
         $this->_params =& $params;
+        if ( $this->_params == null ) {
+            $this->_params = array( );
+        }
                     
         if ( empty( $returnProperties ) ) {
             $this->_returnProperties =& self::defaultReturnProperties( $mode );
@@ -1125,7 +1128,7 @@ class CRM_Contact_BAO_Query
         }
 
         if  ( ! $skipWhere ) {
-            $skipWhere   = array( 'task', 'radio_ts', 'uf_group_id' );
+            $skipWhere   = array( 'task', 'radio_ts', 'uf_group_id', 'component_mode' );
         }
 
         if ( in_array( $id, $skipWhere ) || substr( $id, 0, 4 ) == '_qf_' ) {
@@ -3187,7 +3190,8 @@ WHERE  id IN ( $groupIDs )
 
         // hack for now, add permission only if we are in search
         // FIXME: we should actually filter out deleted contacts (unless requested to do the opposite)
-        $permission = ' ( 1 ) ';        
+        $permission = ' ( 1 ) ';
+        $onlyDeleted = false;
         $onlyDeleted = in_array(array('deleted_contacts', '=', '1', '0', '0'), $this->_params);
 
         // if we’re explicitely looking for a certain contact’s contribs, events, etc.
@@ -3342,8 +3346,11 @@ WHERE  id IN ( $groupIDs )
         if ( $this->_mode & CRM_Contact_BAO_Query::MODE_ACTIVITY && ( ! $count ) ) {
             $groupBy = 'GROUP BY civicrm_activity.id ';
         }
+
         $query = "$select $from $where $groupBy $order $limit";
-        //CRM_Core_Error::debug('query', $query); exit();
+        // CRM_Core_Error::debug('query', $query);
+        // CRM_Core_Error::debug('query', $where);
+
 
         if ( $returnQuery ) {
             return $query;
