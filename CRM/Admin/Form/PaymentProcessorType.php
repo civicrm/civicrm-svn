@@ -186,6 +186,11 @@ class CRM_Admin_Form_PaymentProcessorType extends CRM_Admin_Form
         }
         
         $values = $this->controller->exportValues( $this->_name );
+        crm_core_error::debug( '$values', $values );
+        exit( );
+        
+
+        
 
         if ( CRM_Utils_Array::value( 'is_default', $values ) ) {
             $query = "

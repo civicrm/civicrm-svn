@@ -105,14 +105,14 @@ class CRM_Core_Extensions_Extension
     }    
 
     private function _registerExtensionByType() {
-        $hcName = "CRM_Core_Extensions_ExtensionType_" . ucwords($this->type);
+        $hcName = "CRM_Core_Extensions_" . ucwords($this->type);
         require_once(str_replace('_', DIRECTORY_SEPARATOR, $hcName) . '.php');
         $ext = new $hcName( $this );
         $ext->install();
     }
     
     private function _removeExtensionByType() {
-        $hcName = "CRM_Core_Extensions_ExtensionType_" . ucwords($this->type);
+        $hcName = "CRM_Core_Extensions_" . ucwords($this->type);
         require_once(str_replace('_', DIRECTORY_SEPARATOR, $hcName) . '.php');
         $ext = new $hcName( $this );
         $ext->uninstall();

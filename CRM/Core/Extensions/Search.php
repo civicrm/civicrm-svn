@@ -44,15 +44,51 @@ class CRM_Core_Extensions_Search
     /**
      * 
      */
-    const OPTION_GROUP_NAME = 'system_extensions';
+    const CUSTOM_SEARCH_GROUP_NAME = 'custom_search';
 
-    private $allowedExtTypes = array( 'payment', 'search', 'report' );
+    public function __construct( $ext ) {
+        $this->ext = $ext;
+        $this->groupId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', 
+                                                       self::CUSTOM_SEARCH_GROUP_NAME, 'id', 'name' );
+        $this->customSearches = CRM_Core_OptionGroup::values(self::CUSTOM_SEARCH_GROUP_NAME, true, false, false, null, 'name', false );
+    }
+
     
-    public function install( $info ) {
+    public function install( ) {
+        if( array_key_exists( $this->ext->key, $this->customSearches ) ) {
+            CRM_Core_Error::fatal( 'This custom search is already registered.' );
+        }
         
-        
+        $weight = CRM_Utils_Weight::getDefaultWeight( 'CRM_Core_DAO_OptionValue',
+                                                                      array( 'option_group_id' => $this->groupId ) );
+            
+        $params = array( 'option_group_id' => $this->groupId,
+                         'weight' => $weight,
+                         'description' => $this->ext->label . ' (' . $this->ext->key . ')' ,
+                         'name'  => $this->ext->key,
+                         'value' => max( $this->customSearches ) + 1,
+                         'label'  => $this->ext->key,
+                         'is_active' => 1
+                      );
+
+        $ids = array();
+        $optionValue = CRM_Core_BAO_OptionValue::add($params, $ids);
     }
 
-    public function deinstall( $info ) {
-       
+    public function uninstall( ) {
+        if( !array_key_exists( $this->ext->key, $this->customSearches ) ) {
+            CRM_Core_Error::fatal( 'This custom search is not registered.' );
+        }
+        
+        $cs = CRM_Core_OptionGroup::values(self::CUSTOM_SEARCH_GROUP_NAME, false, false, false, null, 'id', false );
+        $id = $cs[$this->customSearches[$this->ext->key]];
+        $optionValue = CRM_Core_BAO_OptionValue::del( $id );
     }
+    
+    public function disable() {
+    }
+    
+    public function enable() {
+    }
+    
+}
