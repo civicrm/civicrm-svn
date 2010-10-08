@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -83,7 +83,6 @@ class CRM_Core_Extensions
     private $_extByKey = null;
 
 
-
     /**
      * Constructor - we're not initializing information here
      * since we don't want any database hits upon object
@@ -102,7 +101,8 @@ class CRM_Core_Extensions
     }
 
     /**
-     * 
+     * Populates variables containing information about extension.
+	 * This method is not supposed to call on object initialisation.
      * 
      * @access public
      * @return null
@@ -111,6 +111,7 @@ class CRM_Core_Extensions
         if( is_null($this->_extDir) || empty( $this->_extDir ) ) {
             return;
         }
+        
         $this->_extById = $this->getInstalled();
         $this->_extByKey = array();
         foreach( $this->_extById as $id => $ext ) {
@@ -119,7 +120,7 @@ class CRM_Core_Extensions
     }
 
     /**
-     * 
+     * Returns the list of extensions ordered by extension key.
      * 
      * @access public
      * @return array the list of installed extensions
@@ -129,7 +130,7 @@ class CRM_Core_Extensions
     }
 
     /**
-     * 
+     * @todo DEPRECATE
      * 
      * @access public
      * @return array the list of installed extensions
@@ -139,7 +140,7 @@ class CRM_Core_Extensions
     }
 
     /**
-     * 
+    * @todo DEPRECATE
      * 
      * @access public
      * @return
@@ -224,7 +225,9 @@ class CRM_Core_Extensions
      * @return
      */
     public function key2path( $key ) {
-        $e = $this->_extByKey;
+        $this->populate();
+        $e = $this->_extByKey;        
+        
         $file = (string) $e[$key]->file;
 
         return
