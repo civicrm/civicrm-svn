@@ -175,6 +175,7 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
                 $action = array_sum(array_keys($this->links()));
                 $action -= CRM_Core_Action::DISABLE;
                 $action -= CRM_Core_Action::ENABLE;
+                $action -= CRM_Core_Action::DELETE;
                 $rowsUpl[$id]['action'] = CRM_Core_Action::formLink(self::links(), $action,
                                                                     array('id' => $id, 
                                                                           'key' => $obj->key ));

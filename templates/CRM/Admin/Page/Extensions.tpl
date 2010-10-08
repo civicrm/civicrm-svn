@@ -61,21 +61,19 @@
                 <th>{ts}Version{/ts}</th>
                 <th>{ts}Enabled?{/ts}</th>
                 <th>{ts}Type{/ts}</th>
-                <th class="hiddenElement"></th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
               {foreach from=$rows item=row}
-              <tr id="row_{$row.id}" class="crm-admin-options crm-admin-options_{$row.id}{if NOT $row.is_active} disabled{/if}">
-                <td class="crm-admin-options-label">
+              <tr id="row_{$row.id}" class="crm-installed-extensions crm-installed-extensions_{$row.id}{if NOT $row.is_active} disabled{/if}">
+                <td class="crm-installed-extensions-label">
                     <a class="collapsed" href="#"></a>&nbsp;{$row.label} ( {$row.key} )
                     <span class="hiddenElement description"><br/><br/>{$row.description}</span>
                 </td>
-                <td class="crm-admin-options-label">{$row.version}</td>
-                <td class="crm-admin-options-is_active" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-                <td class="crm-admin-options-description">{$row.type}</td>
-                <td class="order hiddenElement">{$row.weight}</td>
+                <td class="crm-installed-extensions-label">{$row.version}</td>
+                <td class="crm-installed-extensions-is_active" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+                <td class="crm-installed-extensions-description">{$row.type|capitalize}</td>
                 <td>{$row.action|replace:'xx':$row.id}</td>
               </tr>
               {/foreach}
@@ -87,7 +85,7 @@
       {else}
         <div class="messages status">
              <div class="icon inform-icon"></div>
-            {ts 1=$crmURL}There are no option values entered. You can <a href='%1'>add one</a>.{/ts}
+            {ts}You don't have any extensions.{/ts}
         </div>    
       {/if}
     <br/>
@@ -103,22 +101,22 @@
                     <th>{ts}Version{/ts}</th>
                     <th>{ts}Enabled?{/ts}</th>
                     <th>{ts}Type{/ts}</th>
-                    <th class="hiddenElement"></th>
                     <th></th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody>                
+                  {assign var='rowCount' value = 1}    
                   {foreach from=$rowsUploaded item=row}
-                  <tr id="uploaded-row_{$row.id}" class="crm-admin-options crm-admin-options_{$row.id}{if NOT $row.is_active} disabled{/if}">
-                    <td class="crm-admin-options-label"> <a class="collapsed" href="#"></a>&nbsp;{$row.label} ( {$row.key} )
+                  <tr id="uploaded-row_{$rowCount}" class="crm-uploaded-extensions crm-uploaded-extensions_{$rowCount}">
+                    <td class="crm-uploaded-extensions-label"> <a class="collapsed" href="#"></a>&nbsp;{$row.label} ( {$row.key} )
                         <span class="hiddenElement description"><br/><br/>{$row.description}</span>
                     </td>
-                    <td class="crm-admin-options-label">{$row.version}</td>	
-                    <td class="crm-admin-options-is_active" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-                    <td class="crm-admin-options-description">{$row.grouping}</td>
-                    <td class="order hiddenElement">{$row.weight}</td>
-                    <td>{$row.action|replace:'xx':$row.id}</td>
+                    <td class="crm-uploaded-extensions-label">{$row.version}</td>	
+                    <td class="crm-uploaded-extensions-is_active" id="uploaded-row_{$rowCount}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+                    <td class="crm-uploaded-extensions-description">{$row.type|capitalize}</td>
+                    <td>{$row.action|replace:'xx':$rowCount}</td>
                   </tr>
+                  {assign var='rowCount' value = $rowCount+1} 
                   {/foreach}
                 </tbody>
               </table>
@@ -133,7 +131,7 @@
 
           {if $action ne 1 and $action ne 2}
               <div class="action-link">
-            <a href="{crmURL q="reset=1"}" id="new" class="button"><span><div class="icon refresh-icon"></div>{ts}Refresh{/ts}</span></a>
+                <a href="{crmURL q="reset=1"}" id="new" class="button"><span><div class="icon refresh-icon"></div>{ts}Refresh{/ts}</span></a>
               </div>
           {/if}
           

@@ -135,13 +135,14 @@ class CRM_Admin_Form_Extensions extends CRM_Admin_Form
     {
         CRM_Utils_System::flushCache( );
 
-        if($this->_action & CRM_Core_Action::DELETE) {
+        if ( $this->_action & CRM_Core_Action::DELETE ) {
             require_once('CRM/Core/Extensions.php');
             $ext = new CRM_Core_Extensions();
             $ext->uninstall($this->_id, $this->_key);
             CRM_Core_Session::setStatus( ts('Extension has been uninstalled.') );
         }
-        if($this->_action & CRM_Core_Action::ADD) {
+        
+        if ( $this->_action & CRM_Core_Action::ADD ) {
             require_once('CRM/Core/Extensions.php');
             $ext = new CRM_Core_Extensions();
             $ext->install($this->_id, $this->_key);
