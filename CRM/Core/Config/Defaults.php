@@ -231,12 +231,14 @@ class CRM_Core_Config_Defaults
         if ( isset( $_GET[$config->userFrameworkURLVar] ) ) {
             $args = explode( '/', $_GET[$config->userFrameworkURLVar] );
         }
-    
-        foreach( $defaults['enableComponents'] as $key => $name ) {
-            $comp = $config->componentRegistry->get( $name );
-            if ( $comp ) {
-                $co = $comp->getConfigObject();
-                $co->setDefaults( $defaults );
+        
+        if ( isset( $defaults['enableComponents'] ) ) {
+            foreach( $defaults['enableComponents'] as $key => $name ) {
+                $comp = $config->componentRegistry->get( $name );
+                if ( $comp ) {
+                    $co = $comp->getConfigObject();
+                    $co->setDefaults( $defaults );
+                }
             }
         }
     }
