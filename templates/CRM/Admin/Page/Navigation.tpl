@@ -39,7 +39,7 @@
         </span><br/><br/>
     </div>
     <div class="spacer"></div>
-    <div id="navigation-tree" class="navigation-tree" style="height:auto; border-collapse:separate;"></div>
+    <div id="navigation-tree" class="navigation-tree" style="height:auto; border-collapse:separate; background-color:#FFFFFF;"></div>
     <div class="spacer"></div>
 </div>
     {literal}
