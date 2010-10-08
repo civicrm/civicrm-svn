@@ -88,7 +88,17 @@ class CRM_Core_BAO_Setting
         foreach ( $skipVars as $var ) {
             unset( $params[$var] );
         }
-                           
+
+        require_once 'CRM/Core/BAO/Preferences.php';
+        CRM_Core_BAO_Preferences::fixAndStoreDirAndURL( $params );
+
+        // also skip all Dir Params, we dont need to store those in the DB!
+        foreach ( $params as $name => $val ) {
+            if ( substr( $name, -3 ) == 'Dir' ) {
+                unset( $params[$name] );
+            }
+        }
+
         $domain->config_backend = serialize($params);
         $domain->save();
     }
@@ -176,6 +186,7 @@ class CRM_Core_BAO_Setting
                                'userFrameworkDSN', 
                                'userFrameworkBaseURL', 'userFrameworkClass', 'userHookClass',
                                'userPermissionClass', 'userFrameworkURLVar',
+                               'newBaseURL', 'newBaseDir', 'newSiteName',
                                'qfKey', 'gettextResourceDir', 'cleanURL',
                                'locale_custom_strings', 'localeCustomStrings' );
             foreach ( $skipVars as $skip ) {
@@ -183,7 +194,7 @@ class CRM_Core_BAO_Setting
                     unset( $defaults[$skip] );
                 }
             }
-            
+
             // since language field won't be present before upgrade.
             if ( CRM_Utils_Array::value( 'q', $_GET ) == 'civicrm/upgrade' ) {
                 return;
@@ -282,6 +293,10 @@ class CRM_Core_BAO_Setting
             // (to be moved to a sane location along with the above)
             if (function_exists('mb_internal_encoding')) mb_internal_encoding('UTF-8');
         }
+
+        // retrieve directory and url preferences also
+        require_once 'CRM/Core/BAO/Preferences.php';
+        CRM_Core_BAO_Preferences::retrieveDirectoryAndURLPreferences( $defaults );
     }
 
 

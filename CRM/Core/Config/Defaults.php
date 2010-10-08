@@ -60,8 +60,8 @@ class CRM_Core_Config_Defaults
             'plugins'     . DIRECTORY_SEPARATOR ;
 
         $this->templateDir =
-            $civicrm_root . DIRECTORY_SEPARATOR .
-            'templates'   . DIRECTORY_SEPARATOR ;
+            array( $civicrm_root . DIRECTORY_SEPARATOR .
+                   'templates'   . DIRECTORY_SEPARATOR );
             
         $this->importDataSourceDir =
             $civicrm_root . DIRECTORY_SEPARATOR .
@@ -134,18 +134,9 @@ class CRM_Core_Config_Defaults
 
         $baseURL = $config->userFrameworkBaseURL;
 
+        $baseCMSURL = CRM_Utils_System::baseCMSURL( );
         if ( $config->templateCompileDir ) {
-            $path = dirname( $config->templateCompileDir );
-            
-            //this fix is to avoid creation of upload dirs inside templates_c directory
-            $checkPath = explode( DIRECTORY_SEPARATOR, $path );
-            $cnt = count($checkPath) - 1;
-            if ( $checkPath[$cnt] == 'templates_c' ) {
-                unset( $checkPath[$cnt] );
-                $path = implode( DIRECTORY_SEPARATOR, $checkPath );
-            }
-
-            $path = CRM_Utils_File::addTrailingSlash( $path );
+            $path = CRM_Utils_File::baseFilePath( $config->templateCompileDir );
         }
 
         //set defaults if not set in db

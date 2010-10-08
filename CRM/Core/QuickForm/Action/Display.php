@@ -187,8 +187,14 @@ class CRM_Core_QuickForm_Action_Display extends CRM_Core_QuickForm_Action {
         }
 
         $config = CRM_Core_Config::singleton();
-        self::$_requiredTemplate = file_get_contents( $config->templateDir . '/CRM/Form/label.tpl' );
-        self::$_errorTemplate    = file_get_contents( $config->templateDir . '/CRM/Form/error.tpl' );
+
+        $templateDir = $config->templateDir;
+        if ( is_array( $templateDir ) ) {
+            $templateDir = array_pop( $templateDir );
+        }
+
+        self::$_requiredTemplate = file_get_contents( $templateDir . '/CRM/Form/label.tpl' );
+        self::$_errorTemplate    = file_get_contents( $templateDir . '/CRM/Form/error.tpl' );
     }
 
 }

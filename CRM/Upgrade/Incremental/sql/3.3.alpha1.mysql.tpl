@@ -194,3 +194,32 @@ CHARACTER SET  utf8 COLLATE utf8_unicode_ci NOT NULL
 
       UPDATE   `civicrm_contribution_page` SET `currency` = '{$config->defaultCurrency}';
 
+-- CRM-6914
+ALTER TABLE civicrm_option_value MODIFY COLUMN value varchar(512);
+
+INSERT INTO civicrm_option_group
+       	(`name`, {localize field='description'}description{/localize}, `is_active`)
+VALUES
+	('directory_preferences', {localize}'Directory Preferences'{/localize}     , 1 ),
+   	('url_preferences'      , {localize}'URL Preferences'{/localize}   , 1 );
+
+--insert values for Directory and URL preferences
+   
+SELECT @option_group_id_dirPref := max(id) from civicrm_option_group where name = 'directory_preferences';
+SELECT @option_group_id_urlPref := max(id) from civicrm_option_group where name = 'url_preferences';
+
+INSERT INTO 
+   `civicrm_option_value` (`option_group_id`, {localize field='label'}label{/localize}, `name`, `value`, `weight`, `is_active`, `domain_id` ) 
+VALUES
+  (@option_group_id_dirPref, '{localize}Temporary Files{/localize}'  , 'uploadDir'          , '', 1, 1, @domainID ),
+  (@option_group_id_dirPref, '{localize}Images{/localize}'           , 'imageUploadDir'     , '', 2, 1, @domainID ),
+  (@option_group_id_dirPref, '{localize}Custom Files{/localize}'     , 'customFileUploadDir', '', 3, 1, @domainID ),
+  (@option_group_id_dirPref, '{localize}Custom Templates{/localize}' , 'customTemplateDir'  , '', 4, 1, @domainID ),
+  (@option_group_id_dirPref, '{localize}Custom PHP{/localize}'       , 'customPHPPathDir'   , '', 5, 1, @domainID ),
+  (@option_group_id_dirPref, '{localize}Custom Extensions{/localize}', 'extensionsDir'      , '', 6, 1, @domainID ),
+
+  (@option_group_id_urlPref, '{localize}CiviCRM Resource URL{/localize}'  , 'userFrameworkResourceURL', '', 1, 1, @domainID ),
+  (@option_group_id_urlPref, '{localize}Image Upload URL{/localize}'      , 'imageUploadURL'          , '', 2, 1, @domainID ),
+  (@option_group_id_urlPref, '{localize}Custom CiviCRM CSS URL{/localize}', 'customCSSURL'            , '', 3, 1, @domainID );
+
+

@@ -191,7 +191,9 @@ VALUES
    ('note_privacy'                  , '{ts escape="sql"}Privacy levels for notes{/ts}'           , 0, 1),
    ('campaign_type'                 , '{ts escape="sql"}Campaign Type{/ts}'                      , 0, 1),
    ('campaign_status'               , '{ts escape="sql"}Campaign Status{/ts}'                    , 0, 1),
-   ('system_extensions'             , '{ts escape="sql"}CiviCRM Extensions{/ts}'                 , 0, 1);
+   ('system_extensions'             , '{ts escape="sql"}CiviCRM Extensions{/ts}'                 , 0, 1),
+   ('directory_preferences'         , '{ts escape="sql"}Directory Preferences{/ts}'              , 0, 1),
+   ('url_preferences'               , '{ts escape="sql"}URL Preferences{/ts}'                    , 0, 1);
 
    
 SELECT @option_group_id_pcm            := max(id) from civicrm_option_group where name = 'preferred_communication_method';
@@ -247,6 +249,8 @@ SELECT @option_group_id_notePrivacy    := max(id) from civicrm_option_group wher
 SELECT @option_group_id_campaignType   := max(id) from civicrm_option_group where name = 'campaign_type';
 SELECT @option_group_id_campaignStatus := max(id) from civicrm_option_group where name = 'campaign_status';
 SELECT @option_group_id_extensions     := max(id) from civicrm_option_group where name = 'system_extensions';
+SELECT @option_group_id_directory_pref := max(id) from civicrm_option_group where name = 'directory_preferences';
+SELECT @option_group_id_url_pref       := max(id) from civicrm_option_group where name = 'url_preferences';
 
 SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';
 SELECT @eventCompId      := max(id) FROM civicrm_component where name = 'CiviEvent';
@@ -658,13 +662,24 @@ VALUES
   (@option_group_id_grantTyp, '{ts escape="sql"}Emergency{/ts}'          , 1, 'Emergency'         , NULL, 0, 1,    1, NULL, 0, 0, 1, NULL, @domainID, NULL),    
   (@option_group_id_grantTyp, '{ts escape="sql"}Family Support{/ts}'     , 2, 'Family Support'    , NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, @domainID, NULL),
   (@option_group_id_grantTyp, '{ts escape="sql"}General Protection{/ts}' , 3, 'General Protection', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, @domainID, NULL),
-  (@option_group_id_grantTyp, '{ts escape="sql"}Impunity{/ts}'           , 4, 'Impunity'          , NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, @domainID, NULL);
+  (@option_group_id_grantTyp, '{ts escape="sql"}Impunity{/ts}'           , 4, 'Impunity'          , NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, @domainID, NULL),
 
--- default CiviCRM Extensions
---  (@option_group_id_extensions, '{ts escape="sql"}Activity Search{/ts}'    , 'org.civicrm.search.activity', 'Activity Search'    , 'search',   0, 0, 1, NULL, 0, 0, 1, NULL, @domainID, NULL),
---  (@option_group_id_extensions, '{ts escape="sql"}Multi Value Search{/ts}' , 'org.civicrm.search.multivalue', 'Multi Value Search' , 'search', 0, 0, 2, NULL, 0, 0, 1, NULL, @domainID, NULL),
---  (@option_group_id_extensions, '{ts escape="sql"}Google Checkout{/ts}' , 'org.civicrm.payment.googlecheckout', 'Google Checkout' , 'payment', 0, 0, 3, NULL, 0, 0, 1, NULL, @domainID, NULL),
---  (@option_group_id_extensions, '{ts escape="sql"}Grant Report{/ts}' , 'org.civicrm.report.grant', 'Grant Report' , 'report', 0, 0, 4, NULL, 0, 0, 1, NULL, @domainID, NULL);
+-- Directory preferences
+  (@option_group_id_directory_pref, '{ts escape="sql"}Temporary Files{/ts}' , '', 'uploadDir', NULL, 0, 0, 1, '{ts escape="sql"}File system path where temporary CiviCRM files - such as import data files - are uploaded.{/ts}', 0, 1, 1, NULL, @domainID, NULL),
+  (@option_group_id_directory_pref, '{ts escape="sql"}Images{/ts}' , '', 'imageUploadDir', NULL, 0, 0, 2, '{ts escape="sql"}File system path where image files are uploaded. Currently, this path is used for images associated with premiums (CiviContribute thank-you gifts).{/ts}', 0, 1, 1, NULL, @domainID, NULL),
+  (@option_group_id_directory_pref, '{ts escape="sql"}Custom Files{/ts}' , '', 'customFileUploadDir', NULL, 0, 0, 3, '{ts escape="sql"}Path where documents and images which are attachments to contact records are stored (e.g. contact photos, resumes, contracts, etc.). These attachments are defined using 'file' type custom fields.{/ts}', 0, 1, 1, NULL, @domainID, NULL),
+  (@option_group_id_directory_pref, '{ts escape="sql"}Custom Templates{/ts}' , '', 'customTemplateDir', NULL, 0, 0, 4, '{ts escape="sql"}Path where site specific templates are stored if any. This directory is searched first if set. CiviCase configuration files can also be stored in this custom path.{/ts}', 0, 1, 1, NULL, @domainID, NULL),
+  (@option_group_id_directory_pref, '{ts escape="sql"}Custom PHP{/ts}' , '', 'customPHPPathDir', NULL, 0, 0, 5, '{ts escape="sql"}Path where site specific PHP code files are stored if any. This directory is searched first if set.{/ts}', 0, 1, 1, NULL, @domainID, NULL),
+  (@option_group_id_directory_pref, '{ts escape="sql"}Custom Extensions{/ts}' , '', 'extensionsDir', NULL, 0, 0, 6, '{ts escape="sql"}Path where Custom extensions are stored.{/ts}', 0, 1, 1, NULL, @domainID, NULL),
+
+  (@option_group_id_url_pref, '{ts escape="sql"}CiviCRM Resource URL{/ts}' , '', 'userFrameworkResourceURL', NULL, 0, 0, 1, NULL, 0, 1, 1, NULL, @domainID, NULL),
+  (@option_group_id_url_pref, '{ts escape="sql"}Image Upload URL{/ts}' , '', 'imageUploadURL', NULL, 0, 0, 2, NULL, 0, 1, 1, NULL, @domainID, NULL),
+  (@option_group_id_url_pref, '{ts escape="sql"}Custom CiviCRM CSS URL{/ts}' , '', 'customCSSURL', NULL, 0, 0, 3, NULL, 0, 1, 1, NULL, @domainID, NULL);
+
+
+
+-- URL preferences
+
 
 -- CRM-6138
 {include file='languages.tpl'}
