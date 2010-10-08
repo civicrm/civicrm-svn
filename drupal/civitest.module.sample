@@ -1217,6 +1217,7 @@ function civitest_civicrm_merge ( $type, &$data, $mainId = NULL, $otherId = NULL
     }
 }
 
+/* a ready to use module is available at  http://github.com/tttp/civi_export */
 function civitest_civicrm_export( $exportTempTable, $headerRows, $sqlColumns, $exportMode ) {
     $writeHeader = true;
     $offset = 0;
@@ -1247,7 +1248,7 @@ LIMIT $offset, $limit
 
             $componentDetails[] = $row;
         }
-        CRM_Core_Report_Excel::writeCSVFile( "Export_Records", $headerRows,
+        CRM_Core_Report_Excel::writeHTMLFile( "Export_Records", $headerRows,
                                              $componentDetails, null, $writeHeader );
         $writeHeader = false;
         $offset += $limit;
