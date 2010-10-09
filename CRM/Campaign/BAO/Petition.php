@@ -297,6 +297,8 @@ WHERE
      if ($status_id)
        $sql .= " AND status_id = ". (int) $status_id;
      $fields = array ('id','survey_id','contact_id','activity_date_time','activity_type_id','status_id','first_name','last_name', 'sort_name','gender_id','country_id','state_province_id','country_iso','country');
+     $sql .= " ORDER BY  a.activity_date_time";
+
         $dao =& CRM_Core_DAO::executeQuery( $sql );
         while ( $dao->fetch() ) {
            $row = array();
