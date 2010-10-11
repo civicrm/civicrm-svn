@@ -69,12 +69,17 @@
               <tr id="row_{$row.id}" class="crm-installed-extensions crm-installed-extensions_{$row.id}{if NOT $row.is_active} disabled{/if}">
                 <td class="crm-installed-extensions-label">
                     <a class="collapsed" href="#"></a>&nbsp;{$row.label} ( {$row.key} )
-                    <span class="hiddenElement description"><br/><br/>{$row.description}</span>
                 </td>
                 <td class="crm-installed-extensions-label">{$row.version}</td>
                 <td class="crm-installed-extensions-is_active" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
                 <td class="crm-installed-extensions-description">{$row.type|capitalize}</td>
                 <td>{$row.action|replace:'xx':$row.id}</td>
+              </tr>
+              <tr class="hiddenElement" id="crm-installed-extensions-details-{$row.id}">
+                  <td>
+                      {include file="CRM/Admin/Page/ExtensionDetails.tpl" extension=$row}
+                  </td>
+                  <td></td><td></td><td></td><td></td>
               </tr>
               {/foreach}
             </tbody>
@@ -116,6 +121,12 @@
                     <td class="crm-uploaded-extensions-description">{$row.type|capitalize}</td>
                     <td>{$row.action|replace:'xx':$rowCount}</td>
                   </tr>
+                  <tr class="hiddenElement" id="crm-uploaded-extensions-details-{$row.id}">
+                      <td>
+                          {include file="CRM/Admin/Page/ExtensionDetails.tpl" extension=$row}
+                      </td>
+                      <td></td><td></td><td></td><td></td>
+                  </tr>                  
                   {assign var='rowCount' value = $rowCount+1} 
                   {/foreach}
                 </tbody>
@@ -142,10 +153,10 @@
                     var currentObj = cj( this );
                     if ( currentObj.hasClass( 'expanded') ) {
                         currentObj.removeClass( 'expanded' );
-                        currentObj.next( ).hide( );
+                        currentObj.parent( ).parent( ).next( ).hide( );
                     } else {
                         currentObj.addClass( 'expanded' );
-                        currentObj.next( ).show( ); 
+                        currentObj.parent( ).parent( ).next( ).show( ); 
                     }
                     
                     return false;
