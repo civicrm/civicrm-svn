@@ -291,6 +291,7 @@ class CRM_Core_Extensions
      * @return
      */    
     public function getTemplateName( $clazz ) {
+        $this->populate();
         $e = $this->_extByKey;
         $file = (string) $e[$key]->file;
         $key = $this->class2key( $clazz );
