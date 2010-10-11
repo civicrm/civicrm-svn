@@ -204,6 +204,12 @@ define( 'CIVICRM_EVENT_PRICE_SET_DOMAIN_ID', 0 );
 define('CIVICRM_TRACK_CIVIMAIL_REPLIES', false);
 
 /**
+ * This setting logs all emails to a file. Useful for debugging any mail (or civimail) issues.
+ * This will not send any email, so ensure this is commented out in production
+ */
+// define( 'CIVICRM_MAIL_LOG', '%%templateCompileDir%%/mail.log' );
+
+/**
  * 
  * Do not change anything below this line. Keep as is
  *

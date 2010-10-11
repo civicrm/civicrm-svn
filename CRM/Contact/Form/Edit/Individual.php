@@ -84,26 +84,6 @@ class CRM_Contact_Form_Edit_Individual {
         // override the size for UI to look better
         $attributes['job_title']['size'] = 30;
         $form->addElement('text', 'job_title', ts('Job title'), $attributes['job_title'], 'size="30"');
-            
-        if ( $action & CRM_Core_Action::UPDATE ) {
-            $mailToHouseholdID  = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', 
-                                                               $form->_contactId, 
-                                                               'mail_to_household_id', 
-                                                               'id' );
-            $form->assign('mailToHouseholdID',$mailToHouseholdID );  
-        }
-       
-        //Shared Address Element
-        require_once 'CRM/Contact/BAO/ContactType.php';
-        if( CRM_Contact_BAO_ContactType::isActive( 'Household' ) ) {
-            $label = CRM_Contact_BAO_ContactType::getLabel( 'Household' );
-            $form->addElement( 'checkbox', 'use_household_address', null, 
-                               ts('Use %1 Address',array( 1=> $label ) ) );
-        }
-        $housholdDataURL = CRM_Utils_System::url( 'civicrm/ajax/search', "hh=1", false, null, false );
-        $form->assign('housholdDataURL',$housholdDataURL );
-        $form->add( 'text', 'shared_household', ts( 'Select Household' ) );
-        $form->add( 'hidden', 'shared_household_id', '', array( 'id' => 'shared_household_id' ));
                 
         //Current Employer Element
         $employerDataURL =  CRM_Utils_System::url( 'civicrm/ajax/rest', 'className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=contact&org=1', false, null, false );

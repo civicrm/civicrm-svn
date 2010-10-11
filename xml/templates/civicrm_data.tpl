@@ -188,9 +188,12 @@ VALUES
    ('tag_used_for'                  , '{ts escape="sql"}Tag Used For{/ts}'                       , 0, 1),
    ('currencies_enabled'            , '{ts escape="sql"}List of currencies enabled for this site{/ts}', 0, 1),
    ('event_badge'                   , '{ts escape="sql"}Event Name Badge{/ts}'                   , 0, 1),
+   ('note_privacy'                  , '{ts escape="sql"}Privacy levels for notes{/ts}'           , 0, 1),
    ('campaign_type'                 , '{ts escape="sql"}Campaign Type{/ts}'                      , 0, 1),
-   ('campaign_status'               , '{ts escape="sql"}Campaign Status{/ts}'                    , 0, 1);
-   ('system_extensions'             , '{ts escape="sql"}CiviCRM Extensions{/ts}'                 , 0, 1);
+   ('campaign_status'               , '{ts escape="sql"}Campaign Status{/ts}'                    , 0, 1),
+   ('system_extensions'             , '{ts escape="sql"}CiviCRM Extensions{/ts}'                 , 0, 1),
+   ('directory_preferences'         , '{ts escape="sql"}Directory Preferences{/ts}'              , 0, 1),
+   ('url_preferences'               , '{ts escape="sql"}URL Preferences{/ts}'                    , 0, 1);
 
    
 SELECT @option_group_id_pcm            := max(id) from civicrm_option_group where name = 'preferred_communication_method';
@@ -246,6 +249,8 @@ SELECT @option_group_id_notePrivacy    := max(id) from civicrm_option_group wher
 SELECT @option_group_id_campaignType   := max(id) from civicrm_option_group where name = 'campaign_type';
 SELECT @option_group_id_campaignStatus := max(id) from civicrm_option_group where name = 'campaign_status';
 SELECT @option_group_id_extensions     := max(id) from civicrm_option_group where name = 'system_extensions';
+SELECT @option_group_id_directory_pref := max(id) from civicrm_option_group where name = 'directory_preferences';
+SELECT @option_group_id_url_pref       := max(id) from civicrm_option_group where name = 'url_preferences';
 
 SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';
 SELECT @eventCompId      := max(id) FROM civicrm_component where name = 'CiviEvent';
@@ -499,6 +504,7 @@ VALUES
   (@option_group_id_report , '{ts escape="sql"}Grant Report{/ts}', 'grant', 'CRM_Report_Form_Grant', NULL, 0, 0, 30,  '{ts escape="sql"}Grant Report{/ts}', 0, 0, 1, @grantCompId, NULL),
   (@option_group_id_report, {localize}'{ts escape="sql"}Participant list Count Report{/ts}'{/localize}, 'event/participantlist', 'CRM_Report_Form_Event_ParticipantListCount', NULL, 0, 0, 31, {localize}'{ts escape="sql"}Shows the Participant list with Participant Count.{/ts}'{/localize}, 0, 0, 1, @eventCompId, NULL),
   (@option_group_id_report, {localize}'{ts escape="sql"}Income Count Summary Report{/ts}'{/localize}, 'event/incomesummary', 'CRM_Report_Form_Event_IncomeCountSummary', NULL, 0, 0, 32, {localize}'{ts escape="sql"}Shows the Income Summary of events with Count.{/ts}'{/localize}, 0, 0, 1, @eventCompId, NULL),
+  (@option_group_id_report, {localize}'{ts escape="sql"}Case Detail Report{/ts}'{/localize}, 'case/detail', 'CRM_Report_Form_Case_Detail', NULL, 0, 0, 33, {localize}'{ts escape="sql"}Case Details{/ts}'{/localize}, 0, 0, 1, @caseCompId, NULL),
   
   (@option_group_id_acs, '{ts escape="sql"}Scheduled{/ts}',  1, 'Scheduled',  NULL, 0, 1,    1, NULL, 0, 1, 1, NULL, NULL),
   (@option_group_id_acs, '{ts escape="sql"}Completed{/ts}',  2, 'Completed',  NULL, 0, NULL, 2, NULL, 0, 1, 1, NULL, NULL),
@@ -581,8 +587,8 @@ VALUES
   (@option_group_id_priority, '{ts escape="sql"}Low{/ts}',    3, 'Low',    NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
 
 -- redaction rule
-  (@option_group_id_rr, 'Vancouver', 'city_', NULL, NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
-  (@option_group_id_rr, '{literal}/(19|20)(\\d{2})-(\\d{1,2})-(\\d{1,2})/{/literal}', 'date_', NULL, NULL, 1, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_rr, 'Vancouver', 'city_', NULL, NULL, 0, NULL, 1, NULL, 0, 0, 0, NULL, NULL),
+  (@option_group_id_rr, '{literal}/(19|20)(\\d{2})-(\\d{1,2})-(\\d{1,2})/{/literal}', 'date_', NULL, NULL, 1, NULL, 2, NULL, 0, 0, 0, NULL, NULL),
 
 -- email greeting.
   (@option_group_id_emailGreeting, '{literal}Dear {contact.first_name}{/literal}',                                                 1, '{literal}Dear {contact.first_name}{/literal}',                                                 NULL,    1, 1, 1, NULL, 0, 0, 1, NULL, NULL),
@@ -631,7 +637,7 @@ VALUES
 
 -- note privacy levels
   (@option_group_id_notePrivacy, '{ts escape="sql"}None{/ts}'           , 0, '',  NULL, 0, 1, 1, NULL, 0, 1, 1, NULL, NULL),
-  (@option_group_id_notePrivacy, '{ts escape="sql"}Author Only{/ts}'    , 1, '',  NULL, 0, 0, 2, NULL, 0, 1, 1, NULL, NULL);
+  (@option_group_id_notePrivacy, '{ts escape="sql"}Author Only{/ts}'    , 1, '',  NULL, 0, 0, 2, NULL, 0, 1, 1, NULL, NULL),
 
 -- Compaign Types
   (@option_group_id_campaignType, '{ts escape="sql"}Direct Mail{/ts}', 1, 'Direct Mail',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
@@ -659,9 +665,22 @@ VALUES
   (@option_group_id_grantTyp, '{ts escape="sql"}General Protection{/ts}' , 3, 'General Protection', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, @domainID, NULL),
   (@option_group_id_grantTyp, '{ts escape="sql"}Impunity{/ts}'           , 4, 'Impunity'          , NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, @domainID, NULL),
 
--- default CiviCRM Extensions
-  (@option_group_id_extensions, '{ts escape="sql"}Activity Search{/ts}'    , 'activity', 'Activity Search'    , 'search',   0, 0, 1, NULL, 0, 0, 1, NULL, @domainID, NULL),
-  (@option_group_id_extensions, '{ts escape="sql"}Multi Value Search{/ts}' , 'multivalue', 'Multi Value Search' , 'search', 0, 0, 2, NULL, 0, 0, 1, NULL, @domainID, NULL);
+-- Directory preferences
+  (@option_group_id_directory_pref, '{ts escape="sql"}Temporary Files{/ts}' , '', 'uploadDir', NULL, 0, 0, 1, '{ts escape="sql"}File system path where temporary CiviCRM files - such as import data files - are uploaded.{/ts}', 0, 1, 1, NULL, @domainID, NULL),
+  (@option_group_id_directory_pref, '{ts escape="sql"}Images{/ts}' , '', 'imageUploadDir', NULL, 0, 0, 2, '{ts escape="sql"}File system path where image files are uploaded. Currently, this path is used for images associated with premiums (CiviContribute thank-you gifts).{/ts}', 0, 1, 1, NULL, @domainID, NULL),
+  (@option_group_id_directory_pref, '{ts escape="sql"}Custom Files{/ts}' , '', 'customFileUploadDir', NULL, 0, 0, 3, '{ts escape="sql"}Path where documents and images which are attachments to contact records are stored (e.g. contact photos, resumes, contracts, etc.). These attachments are defined using 'file' type custom fields.{/ts}', 0, 1, 1, NULL, @domainID, NULL),
+  (@option_group_id_directory_pref, '{ts escape="sql"}Custom Templates{/ts}' , '', 'customTemplateDir', NULL, 0, 0, 4, '{ts escape="sql"}Path where site specific templates are stored if any. This directory is searched first if set. CiviCase configuration files can also be stored in this custom path.{/ts}', 0, 1, 1, NULL, @domainID, NULL),
+  (@option_group_id_directory_pref, '{ts escape="sql"}Custom PHP{/ts}' , '', 'customPHPPathDir', NULL, 0, 0, 5, '{ts escape="sql"}Path where site specific PHP code files are stored if any. This directory is searched first if set.{/ts}', 0, 1, 1, NULL, @domainID, NULL),
+  (@option_group_id_directory_pref, '{ts escape="sql"}Custom Extensions{/ts}' , '', 'extensionsDir', NULL, 0, 0, 6, '{ts escape="sql"}Path where Custom extensions are stored.{/ts}', 0, 1, 1, NULL, @domainID, NULL),
+
+  (@option_group_id_url_pref, '{ts escape="sql"}CiviCRM Resource URL{/ts}' , '', 'userFrameworkResourceURL', NULL, 0, 0, 1, NULL, 0, 1, 1, NULL, @domainID, NULL),
+  (@option_group_id_url_pref, '{ts escape="sql"}Image Upload URL{/ts}' , '', 'imageUploadURL', NULL, 0, 0, 2, NULL, 0, 1, 1, NULL, @domainID, NULL),
+  (@option_group_id_url_pref, '{ts escape="sql"}Custom CiviCRM CSS URL{/ts}' , '', 'customCSSURL', NULL, 0, 0, 3, NULL, 0, 1, 1, NULL, @domainID, NULL);
+
+
+
+-- URL preferences
+
 
 -- CRM-6138
 {include file='languages.tpl'}
@@ -1013,7 +1032,8 @@ INSERT INTO civicrm_uf_group
     (4,  'new_individual',     'Individual,Contact',  '{ts escape="sql"}New Individual{/ts}'    , 0,           1,           NULL),
     (5,  'new_organization',   'Organization,Contact','{ts escape="sql"}New Organization{/ts}'  , 0,           1,           NULL),
     (6,  'new_household',      'Household,Contact',   '{ts escape="sql"}New Household{/ts}'     , 0,           1,           NULL),
-    (7,  'summary_overlay',    'Contact',   		  '{ts escape="sql"}Summary Overlay{/ts}'   , 0,           1,           NULL);
+    (7,  'summary_overlay',    'Contact',   		  '{ts escape="sql"}Summary Overlay{/ts}'   , 0,           1,           NULL),
+    (8,  'shared_address',     'Contact',   		  '{ts escape="sql"}Share Address{/ts}'     , 0,           1,           NULL);
 
 INSERT INTO civicrm_uf_join
    (is_active,module,entity_table,entity_id,weight,uf_group_id)
@@ -1025,7 +1045,8 @@ VALUES
    (1, 'Profile', NULL, NULL, 3, 4),
    (1, 'Profile', NULL, NULL, 4, 5),
    (1, 'Profile', NULL, NULL, 5, 6),
-   (1, 'Profile', NULL, NULL, 6, 7);
+   (1, 'Profile', NULL, NULL, 6, 7),
+   (1, 'Profile', NULL, NULL, 7, 8);
    
 INSERT INTO civicrm_uf_field
        (id, uf_group_id, field_name,              is_required, is_reserved, weight, visibility,                  in_selector, is_searchable, location_type_id, label,                                         		field_type,    help_post, phone_type_id ) VALUES
@@ -1057,7 +1078,12 @@ INSERT INTO civicrm_uf_field
 	   (26, 7, 			 'group', 				  1, 		   0, 			8, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   '{ts escape="sql"}Groups{/ts}',  					'Contact', 	   NULL,  NULL),
 	   (27, 7, 			 'tag', 				  1, 		   0, 			9, 	  	'User and User Admin Only',  0, 	      0, 		     NULL, 			   '{ts escape="sql"}Tags{/ts}', 						'Contact', 	   NULL,  NULL),
 	   (28  ,7  	    ,'gender'  				 ,1  	      ,0  			,10  	,'User and User Admin Only' ,0  		 ,0  			,NULL,  			 '{ts escape="sql"}Gender{/ts}'  						,'Individual' ,NULL,  NULL),
-	   (29 	,7 		    ,'birth_date' 			 ,1  	      ,0 			,11 	,'User and User Admin Only' ,0 		 	 ,0 			,NULL, 			  '{ts escape="sql"}Date of Birth{/ts}' 			    ,'Individual' ,NULL,  NULL);
+	   (29 	,7 		    ,'birth_date' 			 ,1  	      ,0 			,11 	,'User and User Admin Only' ,0 		 	 ,0 			,NULL, 			  '{ts escape="sql"}Date of Birth{/ts}' 			    ,'Individual' ,NULL,  NULL),
+	   (30,  1,           'street_address',        0,           0,           1,      'User and User Admin Only',  0,           0,             1,                '{ts escape="sql"}Street Address (Home){/ts}', 		'Contact',     NULL,  NULL),
+       (31,  1,           'city',                  0,           0,           2,      'User and User Admin Only',  0,           0,             1,                '{ts escape="sql"}City (Home){/ts}',           		'Contact',     NULL,  NULL),
+       (32,  1,           'postal_code',           0,           0,           3,      'User and User Admin Only',  0,           0,             1,                '{ts escape="sql"}Postal Code (Home){/ts}',    		'Contact',     NULL,  NULL),
+       (33,  1,           'country',               0,           0,           4,      'Public Pages and Listings', 0,           1,             1,                '{ts escape="sql"}Country (Home){/ts}',        		'Contact',     '{ts escape="sql"}Your state/province and country of residence will be shared with others so folks can find others in their community.{/ts}',  NULL),
+       (34,  1,           'state_province',        0,           0,           5,      'Public Pages and Listings', 1,           1,             1,                '{ts escape="sql"}State (Home){/ts}',          		'Contact',     NULL,  NULL);
 
 INSERT INTO civicrm_participant_status_type
   (id, name,                                  label,                                                       class,      is_reserved, is_active, is_counted, weight, visibility_id) VALUES

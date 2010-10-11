@@ -60,6 +60,13 @@ class CRM_Event_Form_EventFees
 
         require_once 'CRM/Event/BAO/Event.php';
         $form->_fromEmails = CRM_Event_BAO_Event::getFromEmailIds( $form->_eventId );
+        
+        //CRM-6907 set event specific currency.
+        if ( $form->_eventId &&  
+             ($currency = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $form->_eventId, 'currency' ) ) ) {
+            $config = CRM_Core_Config::singleton( );
+            $config->defaultCurrency = $currency; 
+        }
     }
     
     /**

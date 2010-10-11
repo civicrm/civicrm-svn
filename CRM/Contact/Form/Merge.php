@@ -80,6 +80,43 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
             CRM_Utils_System::permissionDenied( );
         }
         
+        // get user info of main contact.
+        $config = CRM_Core_Config::singleton( );
+        require_once 'CRM/Core/Permission.php';
+        $viewUser = CRM_Core_Permission::check('access user profiles');
+        $mainUfId = CRM_Core_BAO_UFMatch::getUFId( $cid );
+        if ( $mainUfId ) {
+           
+            if ( $config->userFramework == 'Drupal' ) {
+                $mainUser = user_load( $mainUfId );
+            } else if ( $config->userFramework == 'Joomla' ) {
+                $mainUser = JFactory::getUser( $mainUfId );
+            }
+        }
+        
+        $this->assign( 'mainUfId', $mainUfId );
+        $this->assign( 'mainUfName', $mainUser->name );
+        
+        // get user info of other contact.
+        $otherUfId = CRM_Core_BAO_UFMatch::getUFId( $oid );
+        if ( $otherUfId ) {
+            if ( $config->userFramework == 'Drupal' ) {
+                $otherUser = user_load( $otherUfId );
+            } else if ( $config->userFramework == 'Joomla' ) {
+                $otherUser = JFactory::getUser( $otherUfId );
+            }
+        }
+        
+        $this->assign( 'otherUfId', $otherUfId );
+        $this->assign( 'otherUfName', $otherUser->name );
+        
+        $cmsUser = false;
+        if ( $mainUfId || $otherUfId ) {
+            $cmsUser = true;  
+        }
+        
+        $this->assign( 'user', $cmsUser );
+                
         $session = CRM_Core_Session::singleton( );
         
         // context fixed.
@@ -295,6 +332,16 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
             $this->addElement('checkbox', "move_$name");
             $relTables[$name]['main_url']  = str_replace('$cid', $cid, $relTables[$name]['url']);
             $relTables[$name]['other_url'] = str_replace('$cid', $oid, $relTables[$name]['url']);
+            if ( $name == 'rel_table_users' ) {
+                $relTables[$name]['main_url']    = str_replace('$ufid', $mainUfId,  $relTables[$name]['url']);
+                $relTables[$name]['other_url']   = str_replace('$ufid', $otherUfId, $relTables[$name]['url']);
+                $find = array( '$ufid', '$ufname');
+                $replace = array( $mainUfId, $mainUser->name );
+                $relTables[$name]['main_title']  = str_replace( $find, $replace, $relTables[$name]['title']);
+                $replace = array( $otherUfId, $otherUser->name );
+                $relTables[$name]['other_title'] = str_replace( $find, $replace, $relTables[$name]['title']);
+            }
+
         }
         foreach ($relTables as $name => $null) {
             $relTables["move_$name"] = $relTables[$name];

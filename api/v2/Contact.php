@@ -58,8 +58,14 @@ require_once 'CRM/Contact/BAO/Contact.php';
  */
 function civicrm_contact_create( &$params ) {
     // call update and tell it to create a new contact
+  _civicrm_initialize( true );
+  try {
+    civicrm_api_check_permission(__FUNCTION__, $params, true);
     $create_new = true;
     return civicrm_contact_update( $params, $create_new );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  }
 }
 
 /**
@@ -67,7 +73,12 @@ function civicrm_contact_create( &$params ) {
  * @todo Serious FIXMES in the code! File issues.
  */
 function civicrm_contact_update( &$params, $create_new = false ) {
-    _civicrm_initialize( );
+    _civicrm_initialize();
+    try {
+        civicrm_api_check_permission(__FUNCTION__, $params, true);
+    } catch (Exception $e) {
+        return civicrm_create_error($e->getMessage());
+    }
     require_once 'CRM/Utils/Array.php';
     $contactID = CRM_Utils_Array::value( 'contact_id', $params );
 
@@ -306,8 +317,9 @@ function civicrm_contact_delete( &$params ) {
     if ( $contactID ==  $session->get( 'userID' ) ) {
         return civicrm_create_error( ts( 'This contact record is linked to the currently logged in user account - and cannot be deleted.' ) );
     }
-
-    if ( CRM_Contact_BAO_Contact::deleteContact( $contactID ) ) {
+    $restore = $params['restore'];
+    $skipUndelete = $params['skip_undelete'];
+    if ( CRM_Contact_BAO_Contact::deleteContact( $contactID , $restore, $skipUndelete) ) {
         return civicrm_create_success( );
     } else {
         return civicrm_create_error( ts( 'Could not delete contact' ) );
@@ -576,7 +588,7 @@ function civicrm_contact_format_create( &$params ) {
     CRM_Contact_BAO_Contact::resolveDefaults($params, true);
 
     require_once 'CRM/Import/Parser.php';
-    if ( $params['onDuplicate'] != CRM_Import_Parser::DUPLICATE_NOCHECK) {
+    if ( CRM_Utils_Array::value('onDuplicate', $params) != CRM_Import_Parser::DUPLICATE_NOCHECK) {
         CRM_Core_Error::reset( );
         $error = _civicrm_duplicate_formatted_contact($params);
         if (civicrm_error( $error, 'CRM_Core_Error')) {

@@ -27,7 +27,7 @@
 <div id="recently-viewed">
     <ul>
     {foreach from=$recentlyViewed item=item}
-         <li class="crm-recently-viewed" ><a  href="#" title="{$item.title}">
+         <li class="crm-recently-viewed" ><a  href="{$item.url}" title="{$item.title}">
          {if $item.image_url}
             <span class="icon crm-icon {if $item.subtype}{$item.subtype}{else}{$item.type}{/if}-icon" style="background: url('{$item.image_url}')"></span>
          {else}
@@ -72,18 +72,31 @@
 		      	addStyle += 'width:'+ ( linkCount*30) + 'px;'; 
 		      }		      
 
- 		      if ( pos.left >= 150 ) { 
-		      	addStyle += 'margin-left:-'+ (linkCount*30+2) + 'px;';
-			addStyle += 'margin-top:-'+ (eleHeight+2) + 'px;';
+ 		      if ( pos.left >= 150 ) {
+		      	// hack for IE6 and IE7  
+		        if ( cj.browser.msie && ( cj.browser.version.substr( 0,1 ) == '7' ||  cj.browser.version.substr( 0,1 ) == '6' ) ) {
+			    gethtml =   '<ul class="crm-recentview-wrapper" style="display:none;">'+  $(this).children('ul').html( ) +'</ul>' ;
+			    $(this).children('ul').remove();			
+			    $(this).prepend(gethtml );
+			    addStyle += 'margin-top:'+ (eleHeight+2) + 'px;';
+			} else {
+		      	    addStyle += 'margin-left:-'+ (linkCount*30+2) + 'px;';
+			    addStyle += 'margin-top:-'+ (eleHeight+2) + 'px;';
+			}
 		        if ($(this).children('ul.crm-recentview-wrapper-right').length == '' ) {
-		          $(this).children('ul').addClass('crm-recentview-wrapper-right');
+		            $(this).children('ul').addClass('crm-recentview-wrapper-right');
 		        }
 		        $(this).children('ul').attr('style', addStyle);
 		      } else {
-		        addStyle += 'margin-left:'+ (eleWidth-1) + 'px;';
-		      	addStyle += 'margin-top:-'+ (eleHeight+2) + 'px;';
+		        // hack for IE6 and IE7  
+			if ( cj.browser.msie && ( cj.browser.version.substr( 0,1 ) == '7' ||  cj.browser.version.substr( 0,1 ) == '6' ) ) {
+			    addStyle += 'margin-top:-3px;';
+			} else {   
+		            addStyle += 'margin-left:'+ (eleWidth-1) + 'px;';
+		      	    addStyle += 'margin-top:-'+ (eleHeight+2) + 'px;';
+			}   
 		        if ($(this).children('ul.crm-recentview-wrapper-left').length == '' ) {
-		      	  $(this).children('ul').addClass('crm-recentview-wrapper-left');
+		      	    $(this).children('ul').addClass('crm-recentview-wrapper-left');
 		        }
 		        $(this).children('ul').attr('style', addStyle);
 		      }	 

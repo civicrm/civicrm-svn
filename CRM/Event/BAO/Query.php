@@ -148,7 +148,7 @@ class CRM_Event_BAO_Query
             
             //add role
             if ( CRM_Utils_Array::value( 'participant_role', $query->_returnProperties ) ) {
-                $query->_select['participant_role']  = "civicrm_participant.role_id as participant_role_id";
+                $query->_select['participant_role']  = "participant_role.label as participant_role";
                 $query->_element['participant_role'] = 1;
                 $query->_tables['civicrm_participant'] = 1;
                 $query->_tables['participant_role'] = 1;
@@ -157,7 +157,7 @@ class CRM_Event_BAO_Query
             }
 
             if ( CRM_Utils_Array::value( 'participant_role_id', $query->_returnProperties ) ) {
-                $query->_select['participant_role_id']  = "participant_role.id as participant_role_id";
+                $query->_select['participant_role_id']  = "civicrm_participant.role_id as participant_role_id";
                 $query->_element['participant_role_id'] = 1;
                 $query->_tables['civicrm_participant'] = 1;
                 $query->_tables['participant_role'] = 1;
@@ -368,15 +368,9 @@ class CRM_Event_BAO_Query
                         $val[$k] = $k;
                     }
                 } 
-                $role = implode (',' ,$val);
             } else {
-                $role = $value;
+                $value = array( $value => 1 );  
             }
-
-            if (count($val) > 1) {
-                $op = 'IN';
-                $role = "({$role})";
-            }     
 
             require_once 'CRM/Event/PseudoConstant.php';
             $roleTypes = CRM_Event_PseudoConstant::participantRole( );
@@ -391,10 +385,7 @@ class CRM_Event_BAO_Query
             }
 
             $query->_qill[$grouping][]  = ts('Participant Role %1', array( 1 => $op ) ) . ' ' . implode( ' ' . ts('or') . ' ', $names );
-            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_participant.role_id", 
-                                                                              $op,
-                                                                              $role,
-                                                                              "Integer" );
+            $query->_where[$grouping][] = " civicrm_participant.role_id REGEXP '[[:<:]]" . implode( '[[:>:]]|[[:<:]]', array_keys( $value ) ) . "[[:>:]]' ";
             
             $query->_tables['civicrm_participant'] = $query->_whereTables['civicrm_participant'] = 1;
             return;
@@ -516,7 +507,7 @@ class CRM_Event_BAO_Query
                                 'event_type'                => 1,
                                 'participant_id'            => 1,
                                 'participant_status'        => 1,
-                                'participant_role'          => 1,
+                                'participant_role_id'       => 1,
                                 'participant_note'          => 1,
                                 'participant_register_date' => 1,
                                 'participant_source'        => 1,

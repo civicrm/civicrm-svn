@@ -519,6 +519,10 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
                     }
                 } else {
                     $url = CRM_Utils_System::url( 'civicrm/activity', $q );
+                    if ( CRM_Core_Permission::check("delete activities") ) {
+                        $recentOther['deleteUrl'] = CRM_Utils_System::url( 'civicrm/activity', 
+                                                                           "action=delete&reset=1&id={$activity->id}&atype={$activity->activity_type_id}&cid={$activity->source_contact_id}&context=home" );
+                    }
                 }
             }
          
@@ -1744,8 +1748,7 @@ AND cl.modified_id  = c.id
             $followupParams['target_contact_id'] = $params['target_contact_id'];
         }
         
-        $currentDate  = implode( ' ', CRM_Utils_Date::setDateDefaults( ) );
-        $followupDate = CRM_Utils_Date::intervalAdd( $params['interval_unit'], $params['interval'], $currentDate );
+        $followupDate = CRM_Utils_Date::intervalAdd( $params['interval_unit'], $params['interval'], $params['activity_date_time'] );
         $followupParams['activity_date_time'] = CRM_Utils_Date::format( $followupDate );
         $followupActivity = self::create( $followupParams );
         

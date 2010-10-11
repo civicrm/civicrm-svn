@@ -31,7 +31,7 @@
 <div id="campaign-dialog" class='hiddenElement'></div>
 {if $campaigns} 
   <div class="action-link">
-      <a href="#" onclick="createCampaign( );" class="button"><span>&raquo; {ts}Add Campaign{/ts}</span></a>
+      <a href="#" onclick="createCampaign( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Campaign{/ts}</span></a>
   </div>
 
   {include file="CRM/common/enableDisable.tpl"}
@@ -68,11 +68,11 @@
 {else} 
     <div class="messages status">
         <div class="icon inform-icon"></div> &nbsp;
-        {ts}No Campaigns found.{/ts}
+        {ts}No campaigns found.{/ts}
     </div>
 {/if}
 <div class="action-link">
-   <a href="#" onclick="createCampaign( );"  class="button"><span>&raquo; {ts}Add Campaign{/ts}</span></a>
+   <a href="#" onclick="createCampaign( );"  class="button"><span><div class="icon add-icon"></div>{ts}Add Campaign{/ts}</span></a>
 </div>
 
 {* build the survey selector *}
@@ -81,7 +81,7 @@
 <div id="survey-dialog" class='hiddenElement'></div>
 {if $surveys} 
   <div class="action-link">
-    <a href="#" onclick="createSurvey( );" class="button"><span>&raquo; {ts}Add Survey{/ts}</span></a>
+    <a href="#" onclick="createSurvey( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Survey{/ts}</span></a>
   </div>
  {include file="CRM/common/enableDisable.tpl"}
  {include file="CRM/common/jsortable.tpl"}
@@ -131,11 +131,66 @@
 
 {else} 
   <div class="status">
-    <div class="icon inform-icon"></div>&nbsp;{ts}No survey found.{/ts}
+    <div class="icon inform-icon"></div>&nbsp;{ts}No surveys found.{/ts}
   </div> 
 {/if}
 <div class="action-link">
-   <a href="#" onclick="createSurvey( );" class="button"><span>&raquo; {ts}Add Survey{/ts}</span></a>
+   <a href="#" onclick="createSurvey( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Survey{/ts}</span></a>
+</div>
+
+{* build normal page *}
+{elseif $subPageType eq 'petition'}
+
+<div id="petition-dialog" class='hiddenElement'></div>
+{if $surveys} 
+  <div class="action-link">
+    <a href="#" onclick="createPetition( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Petition{/ts}</span></a>
+  </div>
+ {include file="CRM/common/enableDisable.tpl"}
+ {include file="CRM/common/jsortable.tpl"}
+  <div id="surveyList">
+    <table id="options" class="display">
+      <thead>
+        <tr class="columnheader">  
+          <th>{ts}Title{/ts}</th>
+          <th>{ts}Campaign{/ts}</th>
+	  <th>{ts}Default?{/ts}</th>
+	  <th>{ts}Active?{/ts}</th>
+	  <th id="nosort"></th>
+	  <th id="nosort"></th>
+        </tr>
+      </thead>
+      {foreach from=$surveys item=survey}
+        <tr id="row_{$survey.id}" class="{cycle values="odd-row,even-row"} crm-survey{if $survey.is_active neq 1} disabled{/if}">
+	  <td class="crm-survey-title">{$survey.title}</td>
+          <td class="crm-survey-campaign_id">{$survey.campaign_id}</td>
+          <td class="crm-survey-is_default">{if $survey.is_default}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Default{/ts}" /> {/if}</td>
+          <td class="crm-survey-is_active" id="row_{$survey.id}_status">{if $survey.is_active}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}</td>
+ 	  <td class="crm-survey-action">{$survey.action}</td>
+	  <td class="crm-survey-voter_links">
+	  {if $survey.voterLinks}
+	    <span id="voter_links-{$survey.id}" class="btn-slide">{ts}more{/ts}
+              <ul class="panel" id="panels_voter_links_{$survey.id}"> 
+ 	      {foreach from=$survey.voterLinks item=voterLink}
+                <li>{$voterLink}</li>
+              {/foreach}   
+	      </ul>
+	    </span>
+	    &nbsp;
+	  {/if}				
+	  </td>
+        </tr>
+      {/foreach}
+    </table>
+  </div>
+
+{else} 
+  <div class="status">
+    <div class="icon inform-icon"></div>&nbsp;{ts}No petitions found.{/ts}
+  </div> 
+{/if}
+<div class="action-link">
+   <a href="#" onclick="createPetition( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Petition{/ts}</span></a>
 </div>
 
 {* build normal page *}
@@ -185,7 +240,13 @@ cj(document).ready( function( ) {
 {literal}
 <script type="text/javascript">
  
-  function createSurvey( ) {
+  function createPetition ( ) {
+    var dataURL   = {/literal}"{crmURL p='civicrm/petition/add' q='reset=1&snippet=5&context=dialog' h=0 }"{literal};
+    var formTitle = {/literal}"{ts}Create New Petition{/ts}"{literal};
+    openModal( dataURL, cj("#petition-dialog"), formTitle, 830 );	
+  }
+
+  function createSurvey ( ) {
     var dataURL   = {/literal}"{crmURL p='civicrm/survey/add' q='reset=1&snippet=5&context=dialog' h=0 }"{literal};
     var formTitle = {/literal}"{ts}Create New Survey{/ts}"{literal};
     openModal( dataURL, cj("#survey-dialog"), formTitle, 830 );	

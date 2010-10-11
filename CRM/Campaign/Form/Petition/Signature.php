@@ -297,7 +297,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 		// add buttons
 		$this->addButtons(array(
                                 array ('type'      => 'next',
-                                       'name'      => ts('Send'),
+                                       'name'      => ts('Sign the Petition'),
                                        'isDefault' => true),  
                                 )
                           );                                      
@@ -329,7 +329,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
     {		
     // TODO: move to civicrm.setting.php 
     // A contact that is created while signing a petition is tagged 'unconfirmed' (until she confirms the signature)
-		define('CIVICRM_TAG_UNCONFIRMED','Unconfirmed');
+		// define('CIVICRM_TAG_UNCONFIRMED','Unconfirmed');
 		
 		if (defined('CIVICRM_TAG_UNCONFIRMED')) {
 			// Check if contact 'email confirmed' tag exists, else create one
@@ -343,8 +343,10 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 				$tag_params['is_reserved'] = 1;
 				$tag_params['used_for'] = 'civicrm_contact';
 				$tag = civicrm_tag_create($tag_params); 
+				$this->_tagId = $tag['tag_id'];
+			} else {
+				$this->_tagId = $tag['id'];
 			}
-			$this->_tagId = $tag['id'];
 		}
 		
 		// export the field values to be used for saving the profile form
@@ -504,7 +506,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 					require_once 'api/v2/EntityTag.php';
 					unset($tag_params);
 					$tag_params['contact_id'] = $this->_contactId;
-					$tag_params['tag_id'] = $this->_tagId;;       		
+					$tag_params['tag_id'] = $this->_tagId;
 					$tag_value = civicrm_entity_tag_add($tag_params);					
 					break;
 			}
@@ -535,6 +537,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
             require_once 'CRM/Core/BAO/UFGroup.php';
             require_once 'CRM/Profile/Form.php';
             $session = CRM_Core_Session::singleton( );
+            $this->assign( "petition" , $this->petition );
             //$contactID = $this->_contactId;	   
             $this->assign( contact_id, $this->_contactId );
 

@@ -227,10 +227,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
 
             // make sure session is always initialised            
             $session = CRM_Core_Session::singleton();
-            
         }
-
-
         return self::$_singleton;
     }
 
@@ -311,6 +308,9 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
         // instead of in CRM_Core_Config_Defaults
         if (defined( 'CIVICRM_DSN' )) {
             $this->dsn = CIVICRM_DSN;
+        } else {
+            echo 'You need to define CIVICRM_DSN in civicrm.settings.php';
+            exit( );
         }
 
         if (defined('CIVICRM_TEMPLATE_COMPILEDIR')) {
@@ -328,6 +328,9 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
             // the below statement will create both the templates directory and the config and log directory
             $this->configAndLogDir = $this->templateCompileDir . 'ConfigAndLog' . DIRECTORY_SEPARATOR;
             CRM_Utils_File::createDir( $this->configAndLogDir );
+        } else {
+            echo 'You need to define CIVICRM_TEMPLATE_COMPILEDIR in civicrm.settings.php';
+            exit( );
         }
 
         if ( defined( 'CIVICRM_UF' ) ) {
@@ -394,7 +397,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
         require_once "CRM/Core/BAO/Setting.php";
         $variables = array();
         CRM_Core_BAO_Setting::retrieve($variables);  
-
+        
         // if settings are not available, go down the full path
         if ( empty( $variables ) ) {
             // Step 1. get system variables with their hardcoded defaults
@@ -407,11 +410,11 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
 
             // add component specific settings
             $this->componentRegistry->addConfig( $this );
-            
+
             // serialise settings 
             CRM_Core_BAO_Setting::add($variables);            
         }
-        
+
         $urlArray     = array('userFrameworkResourceURL', 'imageUploadURL');
         $dirArray     = array('uploadDir','customFileUploadDir');
         
@@ -432,8 +435,10 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
                 }
             } else if ( $key == 'lcMessages' ) {
                 // reset the templateCompileDir to locale-specific and make sure it exists
-                $this->templateCompileDir .= CRM_Utils_File::addTrailingSlash($value);
-                CRM_Utils_File::createDir( $this->templateCompileDir );
+                if ( substr( $this->templateCompileDir, -1 * strlen( $value ) - 1, -1 ) != $value ) {
+                    $this->templateCompileDir .= CRM_Utils_File::addTrailingSlash($value);
+                    CRM_Utils_File::createDir( $this->templateCompileDir );
+                }
             }
             
             $this->$key = $value;

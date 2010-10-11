@@ -161,7 +161,8 @@ INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES    
     ( @domainID, 'civicrm/campaign&reset=1&subPage=survey',        '{ts escape="sql"}Surveys{/ts}', 'Survey Dashboard', 'administer CiviCampaign', '', @campaigndashboardlastID, '1', NULL, 1 ), 
-    ( @domainID, 'civicrm/campaign&reset=1&subPage=campaign',        '{ts escape="sql"}Campaigns{/ts}', 'Campaign Dashboard', 'administer CiviCampaign', '', @campaigndashboardlastID, '1', NULL, 2 ),
+    ( @domainID, 'civicrm/campaign&reset=1&subPage=petition',        '{ts escape="sql"}Petition{/ts}', 'Petition Dashboard', 'administer CiviCampaign', '', @campaigndashboardlastID, '1', NULL, 2 ),
+    ( @domainID, 'civicrm/campaign&reset=1&subPage=campaign',        '{ts escape="sql"}Campaigns{/ts}', 'Campaign Dashboard', 'administer CiviCampaign', '', @campaigndashboardlastID, '1', NULL, 3 ),
     ( @domainID, 'civicrm/campaign/add&reset=1',        '{ts escape="sql"}New Campaign{/ts}', 'New Campaign', 'administer CiviCampaign', '', @nav_campaign_id, '1', NULL, 2 ), 
     ( @domainID, 'civicrm/survey/add&reset=1',        '{ts escape="sql"}New Survey{/ts}', 'New Survey', 'administer CiviCampaign', '', @nav_campaign_id, '1', NULL, 3 ),
     ( @domainID, 'civicrm/petition/add&reset=1',        '{ts escape="sql"}New Petition{/ts}', 'New Petition', 'administer CiviCampaign', '', @nav_campaign_id, '1', NULL, 4 ),
@@ -177,3 +178,64 @@ VALUES
 
 -- CRM-6208
 insert into civicrm_option_group (name, is_active) values ('system_extensions', 1 );
+
+-- CRM-6907
+  ALTER TABLE  `civicrm_event` 
+          ADD  `currency` VARCHAR( 3 ) 
+CHARACTER SET  utf8 COLLATE utf8_unicode_ci NULL 
+      COMMENT  '3 character string, value from config setting or input via user.';
+
+      UPDATE   `civicrm_event` SET `currency` = '{$config->defaultCurrency}';
+
+  ALTER TABLE  `civicrm_contribution_page` 
+          ADD  `currency` VARCHAR( 3 ) 
+CHARACTER SET  utf8 COLLATE utf8_unicode_ci NOT NULL 
+   COMMENT '3  character string, value from config setting or input via user.';
+
+      UPDATE   `civicrm_contribution_page` SET `currency` = '{$config->defaultCurrency}';
+
+-- CRM-6914
+ALTER TABLE civicrm_option_value MODIFY COLUMN value varchar(512);
+
+INSERT INTO civicrm_option_group
+       	(`name`, {localize field='description'}description{/localize}, `is_active`)
+VALUES
+	('directory_preferences', {localize}'Directory Preferences'{/localize}     , 1 ),
+   	('url_preferences'      , {localize}'URL Preferences'{/localize}   , 1 );
+
+--insert values for Directory and URL preferences
+   
+SELECT @option_group_id_dirPref := max(id) from civicrm_option_group where name = 'directory_preferences';
+SELECT @option_group_id_urlPref := max(id) from civicrm_option_group where name = 'url_preferences';
+
+INSERT INTO 
+   `civicrm_option_value` (`option_group_id`, {localize field='label'}label{/localize}, `name`, `value`, `weight`, `is_active`, `domain_id` ) 
+VALUES
+  (@option_group_id_dirPref, '{localize}Temporary Files{/localize}'  , 'uploadDir'          , '', 1, 1, @domainID ),
+  (@option_group_id_dirPref, '{localize}Images{/localize}'           , 'imageUploadDir'     , '', 2, 1, @domainID ),
+  (@option_group_id_dirPref, '{localize}Custom Files{/localize}'     , 'customFileUploadDir', '', 3, 1, @domainID ),
+  (@option_group_id_dirPref, '{localize}Custom Templates{/localize}' , 'customTemplateDir'  , '', 4, 1, @domainID ),
+  (@option_group_id_dirPref, '{localize}Custom PHP{/localize}'       , 'customPHPPathDir'   , '', 5, 1, @domainID ),
+  (@option_group_id_dirPref, '{localize}Custom Extensions{/localize}', 'extensionsDir'      , '', 6, 1, @domainID ),
+
+  (@option_group_id_urlPref, '{localize}CiviCRM Resource URL{/localize}'  , 'userFrameworkResourceURL', '', 1, 1, @domainID ),
+  (@option_group_id_urlPref, '{localize}Image Upload URL{/localize}'      , 'imageUploadURL'          , '', 2, 1, @domainID ),
+  (@option_group_id_urlPref, '{localize}Custom CiviCRM CSS URL{/localize}', 'customCSSURL'            , '', 3, 1, @domainID );
+
+
+-- CRM-6835
+ALTER TABLE civicrm_mailing_job ADD COLUMN `job_type` varchar(255) default NULL;
+ALTER TABLE civicrm_mailing_job ADD COLUMN `parent_id`  int(10)unsigned default NULL;
+ALTER TABLE civicrm_mailing_job ADD COLUMN `job_offset` int(20) default 0;
+ALTER TABLE civicrm_mailing_job ADD COLUMN `job_limit` int(20) default 0;
+ALTER TABLE civicrm_mailing_job ADD CONSTRAINT parent_id FOREIGN KEY (parent_id) REFERENCES civicrm_mailing_job (id);
+
+-- CRM-6931
+SELECT @ogrID       := max(id) from civicrm_option_group where name = 'report_template';
+SELECT @max_weight  := max(ROUND(weight)) from civicrm_option_value WHERE option_group_id = @ogrID;
+SELECT @caseCompId  := max(id) FROM civicrm_component where name = 'CiviCase';
+
+INSERT INTO civicrm_option_value
+  (option_group_id, {localize field='label'}label{/localize}, value, name, grouping, filter, is_default, weight,{localize field='description'} description{/localize}, is_optgroup,is_reserved, is_active, component_id, visibility_id ) 
+VALUES
+  (@ogrID, {localize}'{ts escape="sql"}Case Detail Report{/ts}'{/localize}, 'case/detail', 'CRM_Report_Form_Case_Detail', NULL, 0, 0, @max_weight+1, {localize}'{ts escape="sql"}Case Details{/ts}'{/localize}, 0, 0, 1, @caseCompId, NULL);

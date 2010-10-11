@@ -51,11 +51,12 @@ class CRM_Core_Permission_UnitTests {
         return CRM_Core_PseudoConstant::allGroup( $groupType, $excludeHidden );
     }
 
-    static function check( $str ) {
-        // Always return true for now
-        return true;
+    // permission mapping to stub check() calls
+    public static $permissions = null;
+
+    static function check($str)
+    {
+        // return the stubbed permission (defaulting to true if the array is missing)
+        return is_array(self::$permissions) ? in_array($str, self::$permissions) : true;
     }
-
 }
-
-

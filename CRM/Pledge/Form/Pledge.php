@@ -467,8 +467,8 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         $errors = array( );
 
         //check if contact is selected in standalone mode
-        if ( isset( $fields['contact_select_id'] ) && !$fields['contact_select_id'] ) {
-            $errors['contact'] = ts('Please select a valid contact or create new contact');
+        if ( isset( $fields['contact_select_id'][1] ) && !$fields['contact_select_id'][1] ) {
+            $errors['contact[1]'] = ts('Please select a contact or create new contact');
         }
         
         if ( isset( $fields["honor_type_id"] ) ) {
@@ -517,7 +517,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         
         // set the contact, when contact is selected
         if ( CRM_Utils_Array::value('contact_select_id', $formValues ) ) {
-            $this->_contactID = CRM_Utils_Array::value('contact_select_id', $formValues);
+            $this->_contactID = $formValues['contact_select_id'][1];
         }
         
         $config  = CRM_Core_Config::singleton( );

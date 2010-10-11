@@ -161,7 +161,7 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         
         $recentOther = array( 'imageUrl'  => $contactImageUrl,
                               'subtype'   => $contactSubtype,
-                              'isDeleted' => $isDeleted
+                              'isDeleted' => $isDeleted,
                               );
         
         require_once 'CRM/Contact/BAO/Contact/Permission.php';
@@ -171,7 +171,7 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
             $recentOther['editUrl'] = CRM_Utils_System::url('civicrm/contact/add', "reset=1&action=update&cid={$this->_contactId}");
         }
 
-        if ( CRM_Core_Permission::check('delete contacts') ) {
+        if ( ( $session->get( 'userID' ) != $this->_contactId ) && CRM_Core_Permission::check('delete contacts') ) {
             $recentOther['deleteUrl'] = CRM_Utils_System::url('civicrm/contact/view/delete', "reset=1&delete=1&cid={$this->_contactId}");
         }
             

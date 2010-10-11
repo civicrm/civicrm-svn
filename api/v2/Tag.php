@@ -52,29 +52,13 @@ require_once 'api/v2/utils.php';
  */
 function civicrm_tag_create( &$params ) 
 {
-    _civicrm_initialize( );
+  _civicrm_initialize( true );
+  try {
     
-    if ( ! is_array( $params ) ) {
-        return civicrm_create_error( ts( 'Input parameters is not an array' ) );
-    }
+    civicrm_verify_mandatory ($params,'CRM_Core_DAO_Tag',array ('name'));
 
-    if ( empty( $params ) ) {
-        return civicrm_create_error( ts( 'No input parameters present' ) );
-    }
-   
     if ( !array_key_exists ('used_for', $params)) {
       $params ['used_for'] = "civicrm_contact";
-    }
-    if ( !array_key_exists ('used_for', $params)) {
-      $params ['used_for'] = "civicrm_contact";
-    }
-    $error = _civicrm_check_required_fields($params, 'CRM_Core_DAO_Tag');
-    
-    if ( $error['is_error'] ) {
-        return civicrm_create_error( $error['error_message'] );
-    }
-    if( ! CRM_Utils_Array::value( 'name',$params )  ) {
-        return civicrm_create_error( 'Missing required parameter' );
     }
     
     require_once 'CRM/Core/BAO/Tag.php';
@@ -82,8 +66,9 @@ function civicrm_tag_create( &$params )
     if ( CRM_Utils_Array::value( 'tag', $params ) ) {
         $ids['tag'] = $params['tag'];
     }
+
     $tagBAO = CRM_Core_BAO_Tag::add($params, $ids);
-    
+
     if ( is_a( $tagBAO, 'CRM_Core_Error' ) ) {
         return civicrm_create_error( "Tag is not created" );
     } else {
@@ -94,6 +79,11 @@ function civicrm_tag_create( &$params )
         $tag['is_error'] = 0;
     }
     return $tag;
+  } catch (PEAR_Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  }
 }
 
 /**
@@ -106,17 +96,17 @@ function civicrm_tag_create( &$params )
  */
 function civicrm_tag_delete( &$params ) 
 {
-    if ( ! is_array( $params ) ) {
-        return civicrm_create_error( ts( 'Input parameters is not an array' ) );
-    }
-
+  _civicrm_initialize( true );
+  try {
+    civicrm_verify_mandatory ($params,null,array ('tag_id'));
     $tagID = CRM_Utils_Array::value( 'tag_id', $params );
-    if ( ! $tagID ) {
-        return civicrm_create_error( ts( 'Could not find tag_id in input parameters' ) );
-    }
-    
+
     require_once 'CRM/Core/BAO/Tag.php';
     return CRM_Core_BAO_Tag::del( $tagID ) ? civicrm_create_success( ) : civicrm_create_error(  ts( 'Could not delete tag' )  );
+  } catch (Exception $e) {
+    if (CRM_Core_Error::$modeException) throw $e;
+    return civicrm_create_error( $e->getMessage() );
+  }
 }
 
 /**

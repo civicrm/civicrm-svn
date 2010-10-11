@@ -32,7 +32,8 @@
 {/literal}
 </script>
 
-<div class="crm-block crm-form-block crm-petition-form-block">
+<div id="intro" class="crm-section">{$petition.instructions}</div>
+<div class="crm-block crm-petition-form-block">
 
 {if $duplicate == "confirmed"}
 <p>
@@ -47,18 +48,17 @@ Please check your email inbox for the confirmation email. If you don't find it, 
 <p>{ts}Thank you for your support.{/ts}</p>
 {include file="CRM/Campaign/Page/Petition/SocialNetwork.tpl" petition_id=$survey_id}
 {else}
-
-		<div class="crm-group">
-			{include file="CRM/Campaign/Form/Petition/Block.tpl" fields=$petitionContactProfile} 	
-		</div>
-		
-		<div class="crm-group">
-			{include file="CRM/Campaign/Form/Petition/Block.tpl" fields=$petitionActivityProfile} 	
-		</div>
-		
-		<div class="crm-submit-buttons">
-			{include file="CRM/common/formButtons.tpl" location="top"}
-		</div>
+	<div class="crm-section crm-petition-contact-profile">
+		{include file="CRM/Campaign/Form/Petition/Block.tpl" fields=$petitionContactProfile} 	
 	</div>
-
+	
+	<div class="crm-section crm-petition-activity-profile">
+		{include file="CRM/Campaign/Form/Petition/Block.tpl" fields=$petitionActivityProfile} 	
+	</div>
+	
+	<div class="crm-submit-buttons">
+		{include file="CRM/common/formButtons.tpl" location="bottom"}
+	</div>
 {/if}
+
+</div>

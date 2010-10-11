@@ -76,7 +76,7 @@ class CRM_UF_Page_Group extends CRM_Core_Page
                                                                           ),
                                         CRM_Core_Action::UPDATE  => array(
                                                                           'name'  => ts('Settings'),
-                                                                          'url'   => 'civicrm/admin/uf/group',
+                                                                          'url'   => 'civicrm/admin/uf/group/update',
                                                                           'qs'    => 'action=update&id=%%id%%&context=group',
                                                                           'title' => ts('Edit CiviCRM Profile Group') 
                                                                           ),

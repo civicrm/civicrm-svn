@@ -44,6 +44,39 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
        $this->cookieExpire = (1 * 60 * 60 * 24); // expire cookie in one day
     }
 		
+     /**
+     * Function to get Petition Details 
+     * 
+     * @param boolean $all
+     * @param int $id
+     * @static
+     */
+    static function getPetition( $all = false, $id = false, $defaultOnly = false ) {
+
+        $petitionTypeID = CRM_Core_OptionGroup::getValue( 'activity_type', 'petition',  'name' );
+
+        $survey = array( );
+        $dao = new CRM_Campaign_DAO_Survey( );
+
+        if ( !$all ) {
+            $dao->is_active = 1;
+        } 
+        if ( $id ) {
+            $dao->id = $id;  
+        }
+        if ( $defaultOnly ) {
+            $dao->is_default = 1;   
+        }
+       
+        $dao->whereAdd ( "activity_type_id = $petitionTypeID");   
+        $dao->find( );
+        while ( $dao->fetch() ) {
+            CRM_Core_DAO::storeValues($dao, $survey[$dao->id]);
+        }
+        
+        return $survey;
+    }
+
     /**
      * takes an associative array and creates a petition signature activity
      *
@@ -264,6 +297,8 @@ WHERE
      if ($status_id)
        $sql .= " AND status_id = ". (int) $status_id;
      $fields = array ('id','survey_id','contact_id','activity_date_time','activity_type_id','status_id','first_name','last_name', 'sort_name','gender_id','country_id','state_province_id','country_iso','country');
+     $sql .= " ORDER BY  a.activity_date_time";
+
         $dao =& CRM_Core_DAO::executeQuery( $sql );
         while ( $dao->fetch() ) {
            $row = array();

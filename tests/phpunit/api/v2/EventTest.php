@@ -280,5 +280,20 @@ class api_v2_EventTest extends CiviUnitTestCase
          $this->assertEquals( count($result), 2 , 'In line ' . __LINE__ ); 
      }
 
-}
+    function testEventCreationPermissions()
+    {
+        require_once 'CRM/Core/Permission/UnitTests.php';
+        $params = array('event_type_id' => 1, 'start_date' => '2010-10-03', 'title' => 'le cake is a tie', 'check_permissions' => true);
 
+        CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM');
+        $result = civicrm_event_create($params);
+        $this->assertEquals(1,                                                                                                  $result['is_error'],      'lacking permissions should not be enough to create an event');
+        $this->assertEquals('API permission check failed for civicrm_event_create call; missing permission: access CiviEvent.', $result['error_message'], 'lacking permissions should not be enough to create an event');
+
+        CRM_Core_Permission_UnitTests::$permissions = array('access CiviEvent', 'add contacts');
+        $result = civicrm_event_create($params);
+        $this->assertEquals(0, $result['is_error'], 'overfluous permissions should be enough to create an event');
+
+        CRM_Core_Permission_UnitTests::$permissions = null; // reset check() stub
+    }
+}

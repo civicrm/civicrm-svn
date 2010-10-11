@@ -136,8 +136,10 @@ function showRange()
 {
     if( cj("#is_multiple :checked").length ) {
         cj("tr#multiple").show();
+        cj("select#style option[value='Tab']").attr("selected", "selected");
     } else { 
         cj("tr#multiple").hide();
+        cj("select#style option[value='Inline']").attr("selected", "selected");
     } 
 }
 

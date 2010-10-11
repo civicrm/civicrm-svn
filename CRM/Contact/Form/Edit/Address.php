@@ -219,6 +219,9 @@ class CRM_Contact_Form_Edit_Address
             $form->assign( "dnc_groupTree", null ); // unset the temp smarty var that got created
         }
         // address custom data processing ends ..
+        
+        // shared address
+        $form->addElement( 'checkbox', "use_shared_address[$blockId]", null, ts('Shared Address with') );        
     }
     
     /**

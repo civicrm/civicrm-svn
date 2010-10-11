@@ -126,6 +126,23 @@ class CRM_Core_Payment_eWAY extends CRM_Core_Payment
        $this->_processorName    = ts('eWay');
    }
 
+   /** 
+     * singleton function used to manage this object 
+     * 
+     * @param string $mode the mode of operation: live or test
+     *
+     * @return object 
+     * @static 
+     * 
+     */ 
+    static function &singleton( $mode, &$paymentProcessor ) {
+        $processorName = $paymentProcessor['name'];
+        if (self::$_singleton[$processorName] === null ) {
+            self::$_singleton[$processorName] = new CRM_Core_Payment_eWAY( $mode, $paymentProcessor );
+        }
+        return self::$_singleton[$processorName];
+    }
+
    /**********************************************************
     * This function sends request and receives response from 
     * eWAY payment process

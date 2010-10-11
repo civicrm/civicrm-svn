@@ -179,7 +179,7 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
         $this->_action = $action;
 
         $this->_query = new CRM_Contact_BAO_Query( $this->_queryParams, null, null, false, false,
-                                                    CRM_Contact_BAO_Query::MODE_CONTRIBUTE );
+                                                   CRM_Contact_BAO_Query::MODE_CONTRIBUTE );
     }//end of constructor
 
     /**
@@ -436,6 +436,10 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
         return self::$_columnHeaders;
     }
     
+    function alphabetQuery( ) {
+        return $this->_query->searchQuery( null, null, null, false, false, true );
+    }
+
     function &getQuery( )
     {
         return $this->_query;

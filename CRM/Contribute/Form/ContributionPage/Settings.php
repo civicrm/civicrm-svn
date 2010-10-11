@@ -156,6 +156,8 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
             $session = CRM_Core_Session::singleton( );
             $params['created_id']   = $session->get( 'userID' );
             $params['created_date'] = date('YmdHis');
+            $config = CRM_Core_Config::singleton( );
+            $params['currency'] = $config->defaultCurrency;
         }            
        
         $params['is_active']             = CRM_Utils_Array::value('is_active'            , $params, false);

@@ -736,27 +736,30 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      *
      * @return array $event
      */
-    function eventCreate( $params = null )
+    function eventCreate($params = array())
     {
-        if ( $params === null ) {
-            $params = array(
-                            'title'                   => 'Annual CiviCRM meet',
-                            'summary'                 => 'If you have any CiviCRM related issues or want to track where CiviCRM is heading, Sign up now',
-                            'description'             => 'This event is intended to give brief idea about progess of CiviCRM and giving solutions to common user issues',
-                            'event_type_id'           => 1,
-                            'is_public'               => 1,
-                            'start_date'              => 20081021,
-                            'end_date'                => 20081023,
-                            'is_online_registration'  => 1,
-                            'registration_start_date' => 20080601,
-                            'registration_end_date'   => 20081015,
-                            'max_participants'        => 100,
-                            'event_full_text'         => 'Sorry! We are already full',
-                            'is_monetory'             => 0, 
-                            'is_active'               => 1,
-                            'is_show_location'        => 0,
-                            );
+        // if no contact was passed, make up a dummy event creator
+        if (!isset($params['contact_id'])) {
+            $params['contact_id'] = $this->_contactCreate(array('contact_type' => 'Individual', 'first_name' => 'Event', 'last_name' => 'Creator'));
         }
+        // set defaults for missing params
+        $params = array_merge(array(
+            'title'                   => 'Annual CiviCRM meet',
+            'summary'                 => 'If you have any CiviCRM related issues or want to track where CiviCRM is heading, Sign up now',
+            'description'             => 'This event is intended to give brief idea about progess of CiviCRM and giving solutions to common user issues',
+            'event_type_id'           => 1,
+            'is_public'               => 1,
+            'start_date'              => 20081021,
+            'end_date'                => 20081023,
+            'is_online_registration'  => 1,
+            'registration_start_date' => 20080601,
+            'registration_end_date'   => 20081015,
+            'max_participants'        => 100,
+            'event_full_text'         => 'Sorry! We are already full',
+            'is_monetory'             => 0,
+            'is_active'               => 1,
+            'is_show_location'        => 0,
+        ), $params);
         require_once 'api/v2/Event.php';
         $event =& civicrm_event_create( $params );
         

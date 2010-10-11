@@ -77,17 +77,22 @@ class CRM_Core_IDS {
       require_once 'IDS/Init.php';
 
       // init the PHPIDS and pass the REQUEST array
-      $config = CRM_Core_Config::singleton( );
+      $config =& CRM_Core_Config::singleton( );
+
       $configFile = $config->configAndLogDir . 'Config.IDS.ini';
-        if ( ! file_exists( $configFile ) ) {
-            global $civicrm_root;
-            $contents = "
+      if ( ! file_exists( $configFile ) ) {
+          $tmpDir = empty( $config->uploadDir ) ? CIVICRM_TEMPLATE_COMPILEDIR : $config->uploadDir;
+          // also clear the stat cache in case we are upgrading
+          clearstatcache( );
+
+          global $civicrm_root;
+          $contents = "
 [General]
     filter_type         = xml
     filter_path         = {$civicrm_root}/packages/IDS/default_filter.xml
-    tmp_path            = $config->uploadDir
+    tmp_path            = $tmpDir
     HTML_Purifier_Path  = IDS/vendors/htmlpurifier/HTMLPurifier.auto.php
-    HTML_Purifier_Cache = $config->uploadDir
+    HTML_Purifier_Cache = $tmpDir
     scan_keys           = false
     exceptions[]        = __utmz
     exceptions[]        = __utmc

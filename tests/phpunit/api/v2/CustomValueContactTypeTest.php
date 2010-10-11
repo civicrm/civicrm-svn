@@ -49,7 +49,7 @@ class api_v2_CustomValueContactTypeTest  extends CiviUnitTestCase
         $groupIndiStudent   = array(
                                     'title'       => 'TestGroup For Individual - Student',
                                     'name'        => 'testGroupIndividualStudent',
-                                    'extends'     => 'individual',
+                                    'extends'     => 'Individual',
                                     'extends_entity_column_value' => CRM_Core_DAO::VALUE_SEPARATOR.'Student'.CRM_Core_DAO::VALUE_SEPARATOR,
                                     'style'       => 'Inline',
                                     'is_active'   => 1
@@ -237,8 +237,6 @@ class api_v2_CustomValueContactTypeTest  extends CiviUnitTestCase
                         "return.custom_{$this->IndividualField->id}"  => 1
                          );
         $getContact = civicrm_contact_get( $params );
-        
-        CRM_Core_Error::debug( 'gc', $getContact );
         
         $this->assertEquals( $getContact[$this->individual][ "custom_{$this->IndividualField->id}"], 'Test String', 'In line ' . __LINE__ );
     }

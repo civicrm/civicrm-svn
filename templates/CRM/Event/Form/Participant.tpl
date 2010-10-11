@@ -251,37 +251,6 @@
           cj( "#eventFullMsg" ).hide( );
         }
 	}    
-   
-    function buildParticipantRole( eventID )
-    {
-         var dataUrl = "{/literal}{crmURL p='civicrm/ajax/rest' q='className=CRM_Event_Page_AJAX&fnName=participantRole&json=1&context=participant' h=0 }"{literal};
-         
-         if ( !eventId ) {
-			var eventId  = document.getElementById('event_id').value;
-		 }
-         if ( eventId ) {
-			dataUrl = dataUrl + '&eventId=' + eventID;  
-         }
-        cj.ajax({
-			url: dataUrl,
-			async: false,
-			global: false,
-			success: function ( html ) {
-                     
-			    if ( html ) {
-                   var targetId = 'role_id[' + html + ']';
-                   cj('[id^="role_id"]' ).each( function( ) {
-                        if ( targetId == cj(this).attr('id') ) {
-                            document.getElementById(targetId).checked = true;
-                        } else {
-                            cj(this).removeAttr('checked');
-                        }              
-                   });
-                   showCustomData('Participant', html, 1, {/literal} '{$customGroupID}' {literal});
-                }
-			}
-    	});  
-    }
 
 </script>
 {/literal}
@@ -289,32 +258,120 @@
 {include file="CRM/common/customData.tpl"}
 {literal}
 <script type="text/javascript">
-    function showCustomData( type, subType, subName, groupID, cgCount, isMultiple )
+    var roleGroupMapper = new Array( );
+    {/literal}{foreach from=$participantRoleIds item="grps" key="rlId"}{literal}
+      roleGroupMapper[{/literal}{$rlId}{literal}] = '{/literal}{$grps}{literal}';
+    {/literal}{/foreach}{literal}
+
+    function buildParticipantRole( eventID )
+    {
+         var dataUrl = "{/literal}{crmURL p='civicrm/ajax/rest' q='className=CRM_Event_Page_AJAX&fnName=participantRole&json=1&context=participant' h=0 }"{literal};
+         
+         if ( !eventId ) {
+	         var eventId  = document.getElementById( 'event_id' ).value;
+		 }
+         if ( eventId ) {
+	         dataUrl = dataUrl + '&eventId=' + eventID;  
+         }
+         cj.ajax({
+			url: dataUrl,
+			async: false,
+			global: false,
+            dataType: "json",
+			success: function ( response ) {
+                     
+			    if ( response.role ) {
+                    for ( var i in roleGroupMapper ) {
+                        if ( i != 0 ) {
+                            if ( i == response.role ) {
+                                document.getElementById("role_id[" +i+ "]"  ).checked = true;
+                            } else {
+                                document.getElementById("role_id[" +i+ "]"  ).checked = false;
+                            }  
+                            showCustomData( 'Participant', i, {/literal} {$roleCustomDataTypeID} {literal} );
+                        }
+                    }
+                }
+			}
+    	});  
+    }
+
+  
+    function showCustomData( type, subType, subName )
     {
         var dataUrl = {/literal}"{crmURL p=$urlPath h=0 q='snippet=4&type='}"{literal} + type;
        	
         var roleid = "role_id["+subType+"]";
-        
-       if ( document.getElementById(roleid).checked == true ) {
-          if ( groupID ) {
-           var splitGroup = groupID.split(",");
-               for ( i = 0; i < splitGroup.length; i++ ) {
-                   var roleCustomGroupId = splitGroup[i];
-                   if ( roleCustomGroupId.length > 0 ) {
-                       cj('#'+roleCustomGroupId).remove( );
-                   }
-               }
-          }
-       }
+               
+        var loadData = false;
+     
+        if ( document.getElementById( roleid ).checked == true ) {
+            if ( roleGroupMapper[subType] ) {
+                var splitGroup = roleGroupMapper[subType].split(",");
+                for ( i = 0; i < splitGroup.length; i++ ) {
+                    var roleCustomGroupId = splitGroup[i];
+                    if ( cj( '#'+roleCustomGroupId ).length > 0 ) {
+                        cj( '#'+roleCustomGroupId ).remove( );
+                    }
+                } 
+                loadData = true;  
+            }
+           
+            if ( loadData && roleGroupMapper[0] ) {
+                var splitGroup = roleGroupMapper[0].split(",");
+                for ( i = 0; i < splitGroup.length; i++ ) {
+                    var roleCustomGroupId = splitGroup[i];
+                    if ( cj( '#'+roleCustomGroupId ).length > 0 ) {
+                        cj( '#'+roleCustomGroupId ).remove( );
+                    }
+                } 
+            }
+        } else {
+            var groupUnload = new Array( );
+            var x = 0;
+                
+            if ( roleGroupMapper[0] ) {
+                var splitGroup = roleGroupMapper[0].split(",");
+                for ( x = 0; x < splitGroup.length; x++ ) {
+                    groupUnload[x] = splitGroup[x];
+                }
+            }
+
+            for ( var i in roleGroupMapper ) {
+                if ( ( i != 0 ) && document.getElementById( "role_id["+i+"]" ).checked == true ) {
+                    var splitGroup = roleGroupMapper[i].split(",");
+                    for ( j = 0; j < splitGroup.length; j++ ) {
+                        groupUnload[x+j+1] = splitGroup[j];
+                    }
+                }
+            } 
+
+            if ( roleGroupMapper[subType] ) {
+                var splitGroup = roleGroupMapper[subType].split(",");
+                for ( i = 0; i < splitGroup.length; i++ ) {
+                    var roleCustomGroupId = splitGroup[i];
+                    if ( cj( '#'+roleCustomGroupId ).length > 0 ) {
+                        if ( cj.inArray( roleCustomGroupId, groupUnload ) == -1  ) {
+                            cj( '#'+roleCustomGroupId ).remove( );
+                        }
+                    }
+                } 
+            }        
+        }
+
+        if ( !( loadData ) ) {
+           return false;
+        }       
+ 
         if ( subType ) {
             dataUrl = dataUrl + '&subType=' + subType;
         }
   
         if ( subName ) {
             dataUrl = dataUrl + '&subName=' + subName;
-            cj('#customData' + subName ).show();
+            cj( '#customData' + subName ).show( );
         } else {
-            cj('#customData').show();		
+            cj( '#customData' ).show( );		
         }
   
        {/literal}
@@ -332,26 +389,12 @@
        {/if}
  
        {literal}
-       if ( !cgCount ) {
-           cgCount = 1;
-           var prevCount = 1;		
-       } else if ( cgCount >= 1 ) {
-           var prevCount = cgCount;	
-           cgCount++;
-       }
-  
-       dataUrl = dataUrl + '&cgcount=' + cgCount;
-  
-       if ( isMultiple ) {
-           var fname = '#custom_group_' + groupID + '_' + prevCount;
-           cj("#add-more-link-"+prevCount).hide();
-       } else {
+       
            if ( subName && subName != 'null' ) {		
                var fname = '#customData' + subName;
            } else {
                var fname = '#customData';
            }		
-       }
   
        var response = cj.ajax({url: dataUrl,
  	 		  async: false
@@ -369,11 +412,15 @@
 	cj(function() {				
 		{/literal}
 		buildCustomData( '{$customDataType}', 'null', 'null' );
-		{foreach from = $roleID item = item key=key}
-		   {if $item}
-		       showCustomData( '{$customDataType}', {$item}, {$roleCustomDataTypeID}, '{$customGroupID}' );
-		   {/if}
-		{/foreach}
+		{literal}
+        for ( var i in roleGroupMapper ) {
+            if ( ( i != 0 ) && document.getElementById( "role_id["+i+"]" ).checked == true ) {
+               {/literal}
+               showCustomData( '{$customDataType}', i, {$roleCustomDataTypeID} );
+               {literal}  
+            }
+        }
+        {/literal}
 		{if $eventID}
 		    buildCustomData( '{$customDataType}', {$eventID}, {$eventNameCustomDataTypeID} );
 		{/if}

@@ -109,13 +109,16 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
     }
 
      /**
-     * Function to get Survey Details 
+     * Function to get Petition Details 
      * 
      * @param boolean $all
      * @param int $id
      * @static
      */
     static function getSurvey( $all = false, $id = false, $defaultOnly = false ) {
+
+        $petitionTypeID = CRM_Core_OptionGroup::getValue( 'activity_type', 'petition',  'name' );
+
         $survey = array( );
         $dao = new CRM_Campaign_DAO_Survey( );
 
@@ -129,6 +132,7 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
             $dao->is_default = 1;   
         }
         
+        $dao->whereAdd ("activity_type_id != $petitionTypeID");   
         $dao->find( );
         while ( $dao->fetch() ) {
             CRM_Core_DAO::storeValues($dao, $survey[$dao->id]);

@@ -53,6 +53,13 @@
         </div>
         {/if}
 {elseif $action eq 1 or $action eq 2} {* action is add or update *}
+    <h3>
+        {if $parentId}
+            {if $action eq 1}{ts}New Comment{/ts}{else}{ts}Edit Comment{/ts}{/if}
+        {else}
+            {if $action eq 1}{ts}New Note{/ts}{else}{ts}Edit Note{/ts}{/if}
+        {/if}
+    </h3>
 	<div class="crm-block crm-form-block crm-note-form-block">
     <div class="content crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
         <table class="form-layout">
@@ -120,7 +127,7 @@
             elRow.removeClass('view-comments');
         } else {
             var getUrl = {/literal}"{crmURL p='civicrm/ajax/rest/'}"{literal};
-            cj.get(getUrl, { fnName: 'civicrm/note/tree_get', json: 1, id: noteId, snippet: 1}, showComments, 'json' );
+            cj.get(getUrl, { fnName: 'civicrm/note/tree_get', json: 1, id: noteId }, showComments, 'json' );
         }
 
     }
@@ -176,11 +183,8 @@
     {/literal}
 </script>
 
-
-
 <div class="crm-results-block">
-    {* show browse table for any action *}
-<h3>Notes</h3>
+{* show browse table for any action *}
 <div id="notes">
     {strip}
     {include file="CRM/common/jsortable.tpl"}
@@ -220,10 +224,10 @@
             <td class="crm-note-note">
                 {if $note.comment_count}
                     <span id="{$note.id}_show" style="display:block" class="icon_comments_show">
-                        <a href="#" onclick="showHideComments({$note.id}); return false;" ><span class="ui-icon dark-icon ui-icon-triangle-1-e"></span>
+                        <a href="#" onclick="showHideComments({$note.id}); return false;" title="{ts}Show comments for this note.{/ts}"><span class="ui-icon dark-icon ui-icon-triangle-1-e"></span>
                     </span>
                     <span id="{$note.id}_hide" style="display:none" class="icon_comments_hide">
-                        <a href="#" onclick="showHideComments({$note.id}); return false;" ><span class="ui-icon dark-icon ui-icon-triangle-1-s"></span>
+                        <a href="#" onclick="showHideComments({$note.id}); return false;" title="{ts}Hide comments for this note.{/ts}"><span class="ui-icon dark-icon ui-icon-triangle-1-s"></span>
                     </span>
                 {else}
                     <span class="ui-icon light-icon ui-icon-triangle-1-e"></span>

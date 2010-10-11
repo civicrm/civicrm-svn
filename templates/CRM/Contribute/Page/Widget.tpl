@@ -63,16 +63,14 @@
     .crm-contribute-widget .crm-amount-raised {
         font-weight:bold;
     }
-    .crm-contribute-widget .crm-amount-total {
-        font-weight:bold;
-    }
-
+    
     .crm-contribute-widget .crm-logo {
         text-align:center;
     }
 
     .crm-contribute-widget .crm-comments,
-    .crm-contribute-widget .crm-donors{
+    .crm-contribute-widget .crm-donors,
+    .crm-contribute-widget .crm-campaign {
         font-size:11px;
         margin-bottom:.8em;
     }
@@ -97,10 +95,6 @@
         border:0px;
     }
 
-    .crm-contribute-widget .crm-contribute-button-inner {
-        padding:2px;
-        display:block;
-    }
 </style>
 <style>
     .crm-contribute-widget { 
@@ -114,50 +108,56 @@
     } /* title */
 
     .crm-contribute-widget .crm-amount-raised { color:#000; }
-    .crm-contribute-widget .crm-amount-total { color:#000; }
     .crm-contribute-widget .crm-amount-bar  /* progress bar */
         background-color:{/literal}{$form.color_bar.value}{literal};
         border-color:#CECECE;
     }
     .crm-contribute-widget .crm-amount-fill { background-color:#2786C2; }
 
-    .crm-contribute-widget .crm-contribute-button { /* button color */
+    .crm-contribute-widget a.crm-contribute-button { /* button color */
         background-color:{/literal}{$form.color_button.value}{literal};
+    }
+
+    .crm-contribute-widget .crm-contribute-button-inner { /* button text color */
+        padding:2px;
+        display:block;
         color:{/literal}{$form.color_about_link.value}{literal};
     }
 
     .crm-contribute-widget .crm-comments,
-    .crm-contribute-widget .crm-donors{
+    .crm-contribute-widget .crm-donors,
+    .crm-contribute-widget .crm-campaign {
         color:{/literal}{$form.color_main_text.value}{literal} /* other color*/
+    }
+    
+    .crm-contribute-widget .crm-home-url {
+        color:{/literal}{$form.color_homepage_link.value}{literal} /* home page link color*/
     }
 
 </style>
 {/literal}
 
 <div id="crm_cpid_{$cpageId}" class="crm-contribute-widget">
-    <h5 id="crm_cpid_{$cpageId}_title">Title</h5>
+    <h5 id="crm_cpid_{$cpageId}_title"></h5>
     <div class="crm-amounts">
-        <div id="crm_cpid_{$cpageId}_amt_hi" class="crm-amount-high">$500</div>
-        <div id="crm_cpid_{$cpageId}_amt_low" class="crm-amount-low">$0</div>
-        <div id="crm_cpid_{$cpageId}_percentage" class="crm-percentage">20%</div>
+        <div id="crm_cpid_{$cpageId}_amt_hi" class="crm-amount-high"></div>
+        <div id="crm_cpid_{$cpageId}_amt_low" class="crm-amount-low"></div>
+        <div id="crm_cpid_{$cpageId}_percentage" class="crm-percentage"></div>
     </div>
     <div class="crm-amount-bar">
         <div class="crm-amount-fill" id="crm_cpid_{$cpageId}_amt_fill"></div>
     </div>
     <div class="crm-amount-raised-wrapper">
-        Raised <span id="crm_cpid_{$cpageId}_amt_raised" class="crm-amount-raised">$1,7350</span> of <span id="crm_cpid_{$cpageId}_amt_total" class="crm-amount-total">$7,500</span>.
+        <span id="crm_cpid_{$cpageId}_amt_raised" class="crm-amount-raised"></span>
     </div>
-    { if $form.url_logo.value}
-    <div class="crm-logo"><a class="crm-home-url" href="{$form.url_homepage.value}"><img src="{$form.url_logo.value}" alt={ts}Logo{/ts}></a></div>
+    {if $form.url_logo.value}
+        <div class="crm-logo"><img src="{$form.url_logo.value}" alt={ts}Logo{/ts}></div>
     {/if}
-    <div id="crm_cpid_{$cpageId}_donors" class="crm-donors">
-        14 Donors
-    </div>
-    <div id="crm_cpid_{$cpageId}_comments" class="crm-comments">
-        This campaign is ongoing.
-    </div>
-    <div class="crm-contribute-button-wrapper">
-        <a href='{crmURL p="civicrm/contribute/transact" q="reset=1&id=$cpageId" h=0 a=1}' class="crm-contribute-button"><span class="crm-contribute-button-inner" id="crm_cpid_{$cpageId}_btn_txt">Contribute</span></a>
+    <div id="crm_cpid_{$cpageId}_donors" class="crm-donors"></div>
+    <div id="crm_cpid_{$cpageId}_comments" class="crm-comments"></div>
+    <div id="crm_cpid_{$cpageId}_campaign" class="crm-campaign"></div>
+    <div class="crm-contribute-button-wrapper" id="crm_cpid_{$cpageId}_button">
+        <a href='{crmURL p="civicrm/contribute/transact" q="reset=1&id=$cpageId" h=0 a=1}' class="crm-contribute-button"><span class="crm-contribute-button-inner" id="crm_cpid_{$cpageId}_btn_txt"></span></a>
     </div>
 </div>
 
@@ -190,19 +190,24 @@
         var crmCurrency = jsondata.currencySymbol;
         var cpid        = {/literal}{$cpageId}{literal};
         document.getElementById('crm_cpid_'+cpid+'_title').innerHTML        = jsondata.title;
-        document.getElementById('crm_cpid_'+cpid+'_amt_hi').innerHTML       = crmCurrency+jsondata.money_target;
-        document.getElementById('crm_cpid_'+cpid+'_amt_low').innerHTML      = crmCurrency+jsondata.money_low;
-        document.getElementById('crm_cpid_'+cpid+'_amt_raised').innerHTML   = crmCurrency+jsondata.money_raised;
-        document.getElementById('crm_cpid_'+cpid+'_amt_total').innerHTML    = crmCurrency+jsondata.money_target;
+        if ( jsondata.money_target > 0 ) {
+            document.getElementById('crm_cpid_'+cpid+'_amt_hi').innerHTML       = jsondata.money_target_display;
+            document.getElementById('crm_cpid_'+cpid+'_amt_low').innerHTML      = crmCurrency+jsondata.money_low;
+        }
+        document.getElementById('crm_cpid_'+cpid+'_amt_raised').innerHTML   = jsondata.money_raised;
         document.getElementById('crm_cpid_'+cpid+'_comments').innerHTML     = jsondata.about;
         document.getElementById('crm_cpid_'+cpid+'_donors').innerHTML       = jsondata.num_donors;
         document.getElementById('crm_cpid_'+cpid+'_btn_txt').innerHTML      = jsondata.button_title;
-        var percentComplete = 0;
-        if ( jsondata.money_raised > 0 ) {
-          percentComplete = (jsondata.money_raised/jsondata.money_target)*100+'%';
+        document.getElementById('crm_cpid_'+cpid+'_campaign').innerHTML     = jsondata.campaign_start;
+        if ( jsondata.money_raised_percentage ) {
+            document.getElementById('crm_cpid_'+cpid+'_amt_fill').style.width   = jsondata.money_raised_percentage;
+            document.getElementById('crm_cpid_'+cpid+'_percentage').innerHTML   = jsondata.money_raised_percentage;
         }
-        document.getElementById('crm_cpid_'+cpid+'_amt_fill').style.width   = percentComplete;
-        document.getElementById('crm_cpid_'+cpid+'_percentage').innerHTML   = percentComplete;
+
+        if ( !jsondata.is_active ) {
+            document.getElementById('crm_cpid_'+cpid+'_button').innerHTML   = jsondata.home_url;
+            document.getElementById('crm_cpid_'+cpid+'_button').style.color = 'red';
+        }
     }
     
 </script>

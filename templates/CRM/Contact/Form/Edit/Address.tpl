@@ -54,18 +54,32 @@
             </td>
         {/if}
      </tr>
-     {if $form.use_household_address} 
      <tr>
         <td>
-            {$form.use_household_address.html}{$form.use_household_address.label}{help id="id-usehousehold" file="CRM/Contact/Form/Contact.hlp"}<br />
-            <div id="share_household" style="display:none">
-                {$form.shared_household.label}<br />
-                {$form.shared_household.html|crmReplace:class:huge}&nbsp;&nbsp;<span id="show_address"></span>
-				{if $mailToHouseholdID}<div id="shared_address">{$sharedHouseholdAddress}</div>{/if}
+            {$form.use_shared_address.$blockId.html}{$form.use_shared_address.$blockId.label}{help id="id-sharedAddress" file="CRM/Contact/Form/Contact.hlp"}<br />
+            <div id="shared-address-{$blockId}" class="hiddenElement">
+                New contact creation widget here...
             </div>
         </td>
      </tr>
-     {/if}
+     <script type="text/javascript">
+     {literal}
+     cj( function( ) {
+         // handle check / uncheck of checkbox
+         cj( 'input[id^=use_shared_address]' ).click( function( ) {
+             // get the block id
+             var elementId = cj(this).attr( 'id' ).replace( ']', '').split('[');
+
+             // based on checkbox, show or hide
+             if ( cj(this).attr( 'checked') ) {
+                 cj( '#shared-address-' + elementId[1]).show( );
+             } else {
+                 cj( '#shared-address-' + elementId[1]).hide( );
+             }
+         });
+     });
+     {/literal}
+     </script>
      <tr><td>
 
      <table id="address_{$blockId}" style="display:block" class="form-layout-compressed">
@@ -95,77 +109,6 @@
 {/if}
 {literal}
 <script type="text/javascript">
-{/literal}
-{if $blockId eq 1}
-{literal}
-cj(document).ready( function() { 
-    //shared household default setting
-	if ( cj('#use_household_address').is(':checked') ) {
-    	cj('table#address_1').hide(); 
-        cj('#share_household').show(); 
-    }
-{/literal}
-{if $mailToHouseholdID}
-{literal}
-		var dataUrl = "{/literal}{crmURL p='civicrm/ajax/search' h=0 q="hh=1&id=$mailToHouseholdID"}{literal}";
-		cj.ajax({ 
-            url     : dataUrl,   
-            async   : false,
-            success : function(html){ 
-                        //fixme for showing address in div
-                        htmlText = html.split( '|' , 2);
-                        cj('input#shared_household').val(htmlText[0]);
-                    }
-                });
-{/literal}
-{/if}
-{literal}
-	//event handler for use_household_address check box
-	cj('#use_household_address').click( function() { 
-		cj('#share_household').toggle( );
-        if( ! cj('#use_household_address').is(':checked')) {
-            cj('table#address_1').show( );
-        } else {
-           cj('table#address_1').toggle( );
-        }
-	});	
-});
-
-var dataUrl = "{/literal}{$housholdDataURL}{literal}";
-var newContactText = "{/literal}({ts}new contact record{/ts}){literal}";
-cj('#shared_household').autocomplete( dataUrl, { width : 320, selectFirst : false, matchCase : true, matchContains: true
-}).result( function(event, data, formatted) { 
-    if( isNaN( data[1] ) ){
-        cj( "span#show_address" ).html( newContactText ); 
-        cj( "#shared_household_id" ).val( data[0] );
-        cj( 'table#address_1' ).toggle( ); 
-    } else {
-        var locationTypeId = 'address_'+{/literal}{$blockId}{literal}+'_location_type_id';
-        var isPrimary      = 'Address_'+{/literal}{$blockId}{literal}+'_IsPrimary';
-        var isBilling      = 'Address_'+{/literal}{$blockId}{literal}+'_IsBilling';
-        cj( 'table#address_1' ).hide( ); 
-        cj( "span#show_address" ).html( data[0] ); 
-        cj( "#shared_household_id" ).val( data[1] );
-        cj( "#"+locationTypeId ).val(data[2]); 
-        if( data[3] == 1 ) {
-            cj( "#"+isPrimary ).attr("checked","checked");
-        } else {
-            cj( "#"+isPrimary ).removeAttr("checked");
-        }
-        if( data[4] == 1 ) {
-            cj( "#"+isBilling ).attr("checked","checked");
-        } else {
-            cj( "#"+isBilling ).removeAttr("checked");
-        } 
-    }
-}).bind( 'change blur', function( ) {
-    if ( !parseInt( cj( "#shared_household_id" ).val( ) ) ) {
-        cj( "span#show_address" ).html( newContactText );
-    }
-});
-{/literal}
-{/if}	
-{literal}										  
 //to check if same location type is already selected.
 function checkLocation( object, noAlert ) {
     var selectedText = cj( '#' + object + ' :selected').text();

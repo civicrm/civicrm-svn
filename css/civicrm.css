@@ -1889,8 +1889,8 @@ div.grippie {
     padding: .5em 1em !important;
 }
 
-/* Styles for Contact Summary mockup start here. dgg */
-.primary {
+/* Styles for Contact Summary start here. dgg */
+#crm-container .primary {
     FONT-WEIGHT: bold
 }
 
@@ -2851,9 +2851,11 @@ div#civicrm-dashboard form {
 #Tag .tree .collapsable .hit,
 #Tag .tree .expandable .hit { padding-left:16px; }
 
-
-
 /*  DataTables fixes */
+#crm-container .dataTables_length { float:none; padding-bottom:5px; }
+#crm-container .crm-datatable-pager-top { padding-top:5px; padding-bottom:25px; }
+#crm-container .crm-datatable-pager-bottom { padding-top:10px; padding-bottom:25px; }
+#crm-container .crm-datatable-pager-top .dataTables_length { float:left; }
 
 /* Date plugin */
 
@@ -3215,3 +3217,5 @@ div#crm-toolTip
 #crm-container .crm-content-block { border:1px solid green; }
 #crm-container .crm-form-block {border:1px solid blue;}
 */
+/*Import progress bar */
+.ui-progressbar-value { background-image:url("../packages/jquery/css/images/pbar-ani.gif"); }

@@ -45,6 +45,10 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
 
       // Log in using webtestLogin() method
       $this->webtestLogin();
+      
+      // We need a payment processor
+      $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
+      $this->webtestAddPaymentProcessor($processorName);
 
       // Go directly to the URL of the screen that you will be testing (New Event).
       $this->open($this->sboxPath . "civicrm/event/add&reset=1&action=add");
@@ -56,17 +60,22 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       $streetAddress = "100 Main Street";
       $this->_testAddLocation( $streetAddress );
       
-      $this->_testAddFees();
+      $this->_testAddFees( false, false, $processorName );
       
       // intro text for registration page
       $registerIntro = "Fill in all the fields below and click Continue.";
-      $this->_testAddOnlineRegistration( $registerIntro );
+      $multipleRegistrations = true;
+      $this->_testAddOnlineRegistration( $registerIntro, $multipleRegistrations );
 
       $eventInfoStrings = array( $eventTitle, $eventDescription, $streetAddress );
       $this->_testVerifyEventInfo( $eventTitle, $eventInfoStrings );
       
       $registerStrings = array("250.00 Member", "325.00 Non-member", $registerIntro );
-      $this->_testVerifyRegisterPage( $registerStrings );
+      $registerUrl = $this->_testVerifyRegisterPage( $registerStrings );
+      
+      $numberRegistrations = 3;
+      $anonymous = true;
+      $this->_testOnlineRegistration( $registerUrl, $numberRegistrations, $anonymous );
       
   }
 
@@ -227,12 +236,12 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       
   }
   
-  function _testAddFees( $discount=false, $priceSet=false ){
+  function _testAddFees( $discount=false, $priceSet=false, $processorName = "PP Pro" ){
       // Go to Fees tab
       $this->click("link=Fees");
       $this->waitForElementPresent("_qf_Fee_upload-bottom");
       $this->click("CIVICRM_QFID_1_2");
-      $this->select("payment_processor_id", "value=1");
+      $this->select("payment_processor_id", "label=" . $processorName);
       $this->select("contribution_type_id", "value=4");
       if ( $priceSet) {
           // get one - TBD
@@ -244,7 +253,7 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       }
 
       if ( $discount ) {
-          // enter early bird discounts
+          // enter early bird discounts TBD
       }
       
       $this->click("_qf_Fee_upload-bottom");      
@@ -254,13 +263,17 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       $this->waitForTextPresent("'Fee' information has been saved.");      
   }
   
-  function _testAddOnlineRegistration($registerIntro){
+  function _testAddOnlineRegistration($registerIntro, $multipleRegistrations=false){
       // Go to Online Registration tab
       $this->click("link=Online Registration");
       $this->waitForElementPresent("_qf_Registration_upload-bottom");
 
       $this->check("is_online_registration");
       $this->assertChecked("is_online_registration");
+      if ( $multipleRegistrations ){
+          $this->check("is_multiple_registrations");
+          $this->assertChecked("is_multiple_registrations");
+      }
       
       $this->fillRichTextField("intro_text", $registerIntro);
       
@@ -293,5 +306,51 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       $this->click("link=Register Now");
       $this->waitForElementPresent("_qf_Register_upload-bottom");
       $this->assertStringsPresent( $registerStrings );
+      return $this->getLocation();
+  }
+  
+  function _testOnlineRegistration( $registerUrl, $numberRegistrations=1, $anonymous=true ){
+      if ( $anonymous ){
+          $this->open($this->sboxPath . "civicrm/logout&reset=1");
+          $this->waitForPageToLoad('30000');          
+      }
+      $this->open($registerUrl);
+
+      $this->select("additional_participants", "value=" . $numberRegistrations);
+      $this->type("email-5", "smith" . substr(sha1(rand()), 0, 7) . "@example.org" );
+
+      $this->select("credit_card_type", "value=Visa");
+      $this->type("credit_card_number", "4111111111111111");
+      $this->type("cvv2", "000");
+      $this->select("credit_card_exp_date[M]", "value=1");
+      $this->select("credit_card_exp_date[Y]", "value=2020");
+      $this->type("billing_first_name", "Jane");
+      $this->type("billing_last_name", "Smith" . substr(sha1(rand()), 0, 7));
+      $this->type("billing_street_address-5", "15 Main St.");
+      $this->type(" billing_city-5", "San Jose");
+      $this->select("billing_country_id-5", "value=1228");
+      $this->select("billing_state_province_id-5", "value=1004");
+      $this->type("billing_postal_code-5", "94129");
+      
+      $this->click("_qf_Register_upload-bottom");
+      
+      if ( $numberRegistrations > 1 ){
+          for ($i = 1; $i <= $numberRegistrations; $i++){
+              $this->waitForPageToLoad('30000');
+              // Look for Skip button
+              $this->waitForElementPresent("_qf_Participant_{$i}_next_skip-Array");
+              $this->type("email-5", "smith" . substr(sha1(rand()), 0, 7) . "@example.org" );
+              $this->click("_qf_Participant_{$i}_next");
+          }
+      }
+
+      $this->waitForPageToLoad('30000');
+      $this->waitForElementPresent("_qf_Confirm_next-bottom");
+      $confirmStrings = array("Event Fee(s)", "Billing Name and Address", "Credit Card Information");
+      $this->assertStringsPresent( $confirmStrings );
+      $this->click("_qf_Confirm_next-bottom");
+      $this->waitForPageToLoad('30000');
+      $thankStrings = array("Thank You for Registering", "Event Total", "Transaction Date");
+      $this->assertStringsPresent( $thankStrings );
   }
 }

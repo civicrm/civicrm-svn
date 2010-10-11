@@ -81,7 +81,18 @@ class CRM_Report_Page_Instance extends CRM_Core_Page
             require_once 'CRM/Core/OptionGroup.php';
             $templateInfo = CRM_Core_OptionGroup::getRowValues( 'report_template', "{$optionVal}", 'value' );
 
-            if ( strstr($templateInfo['name'], '_Form') ) {
+            $extKey = strpos($templateInfo['name'], '.');
+
+            $reportClass = null;
+
+            if( $extKey !== FALSE ) {
+                require_once( 'CRM/Core/Extensions.php' );
+                $ext = new CRM_Core_Extensions();
+                $reportClass = $ext->keyToClass( $templateInfo['name'], 'report' );
+                $templateInfo['name'] = $reportClass;
+            }
+            
+            if ( strstr($templateInfo['name'], '_Form') || ! is_null( $reportClass )) {
                 $instanceInfo = array( );
                 CRM_Report_BAO_Instance::retrieve( array('id' => $instanceId), $instanceInfo );
                 

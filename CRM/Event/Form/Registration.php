@@ -351,7 +351,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
                     }
                     
                     // ensure that processor has a valid config
-                    $payment =& CRM_Core_Payment::singleton( $this->_mode, 'Event', $this->_paymentProcessor, $this );
+                    $payment =& CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this );
                     $error = $payment->checkConfig( );
                     if ( ! empty( $error ) ) {
                         CRM_Core_Error::fatal( $error );
@@ -468,6 +468,12 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
         $this->assign( 'bltID', $this->_bltID );
         $isShowLocation = CRM_Utils_Array::value('is_show_location',$this->_values['event'])  ;
         $this->assign( 'isShowLocation',$isShowLocation );
+        
+        //CRM-6907
+        $config = CRM_Core_Config::singleton( );
+        $config->defaultCurrency = CRM_Utils_Array::value( 'currency', 
+                                                           $this->_values['event'], 
+                                                           $config->defaultCurrency );
     }
 
     /** 
@@ -601,6 +607,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
                 CRM_Core_Session::setStatus( "Some of the profile fields cannot be configured for this page." );
             }
             $addCaptcha = false;
+            $fields = array_diff_assoc( $fields, $this->_fields );
             $this->assign( $name, $fields );
             if ( is_array( $fields ) ) {
                 foreach($fields as $key => $field) {

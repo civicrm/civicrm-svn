@@ -290,4 +290,17 @@
        <add>2.1</add>
        <localizable>true</localizable>
   </field>
+  <field>
+      <name>master_id</name>
+      <type>int unsigned</type>
+      <comment>FK to Address ID</comment>
+      <add>3.3</add>
+  </field>
+  <foreignKey>
+       <name>master_id</name>
+       <table>civicrm_address</table>
+       <key>id</key>
+       <add>3.3</add>
+       <onDelete>SET NULL</onDelete>
+  </foreignKey>
 </table>

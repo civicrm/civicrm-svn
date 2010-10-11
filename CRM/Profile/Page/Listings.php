@@ -246,7 +246,6 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
         $formController->setEmbedded( true );
         $formController->set( 'gid', $this->_gid );
         $formController->process( ); 
-        $formController->run( ); 
         
         $searchError = false;
         // check if there is a POST
@@ -310,6 +309,10 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
             $controller->setEmbedded( true );
             $controller->run( );
         }
+        
+        //CRM-6862 -run form cotroller after
+        //selector, since it erase $_POST         
+        $formController->run( ); 
         
         return parent::run( );
     }

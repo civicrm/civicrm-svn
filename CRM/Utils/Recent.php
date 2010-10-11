@@ -136,7 +136,7 @@ class CRM_Utils_Recent
                               'isDeleted'   => CRM_Utils_Array::value('isDeleted', $others, false),
                               'image_url'   => CRM_Utils_Array::value('imageUrl',  $others),
                               'edit_url'    => CRM_Utils_Array::value('editUrl',   $others),
-                              'delete_url'  => CRM_Utils_Array::value('deleteUrl', $others)
+                              'delete_url'  => CRM_Utils_Array::value('deleteUrl', $others),
                               ) );
         if ( count( self::$_recent ) > self::MAX_ITEMS ) {
             array_pop( self::$_recent );

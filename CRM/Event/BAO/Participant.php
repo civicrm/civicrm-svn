@@ -118,18 +118,22 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
             $participantBAO->find(true);
             $participantBAO->register_date = CRM_Utils_Date::isoToMysql($participantBAO->register_date);
         }
+        
         $participantBAO->copyValues($params);
         
-        //make sure we have currency when amount is not null CRM-4453
+        //CRM-6910
+        //1. If currency present, it should be valid one.
+        //2. We should have currency when amount is not null.
         require_once 'CRM/Utils/Rule.php';
-        if ( !CRM_Utils_System::isNull( $participantBAO->fee_amount ) && 
-             !CRM_Utils_Rule::currencyCode( $participantBAO->fee_currency ) ) {
-            require_once 'CRM/Core/Config.php';
-            $config = CRM_Core_Config::singleton();
-            $participantBAO->fee_currency = $config->defaultCurrency;
-        } else {
-            $participantBAO->fee_currency = '';
+        $currency = $participantBAO->fee_currency;
+        if ( $currency ||
+             !CRM_Utils_System::isNull( $participantBAO->fee_amount ) ) {
+            if ( !CRM_Utils_Rule::currencyCode( $currency ) ) {
+                $config = CRM_Core_Config::singleton();
+                $currency = $config->defaultCurrency;
+            }
         }
+        $participantBAO->fee_currency = $currency;
         
         $participantBAO->save();
         
@@ -295,8 +299,18 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
             }
     
             $participantRoles = CRM_Event_PseudoConstant::participantRole();
+            if ( $participant->role_id ) {
+                $role = explode( CRM_Core_DAO::VALUE_SEPARATOR, $participant->role_id );
+                foreach ( $role as $roleKey => $roleValue ) {
+                    if ( isset( $roles ) ) {
+                        $roles .= ", " . $participantRoles[$roleValue];
+                    } else {
+                        $roles = $participantRoles[$roleValue];
+                    }
+                }
+            }
             $eventTitle = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $participant->event_id, 'title' );
-            $title = CRM_Contact_BAO_Contact::displayName( $participant->contact_id ) . ' (' . $participantRoles[$participant->role_id] . ' - ' . $eventTitle . ')' ;
+            $title = CRM_Contact_BAO_Contact::displayName( $participant->contact_id ) . ' (' . $roles . ' - ' . $eventTitle . ')' ;
             
             // add the recently created Participant
             CRM_Utils_Recent::add( $title,

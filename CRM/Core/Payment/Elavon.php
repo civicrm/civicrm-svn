@@ -57,6 +57,23 @@ class CRM_Core_Payment_Elavon extends CRM_Core_Payment
         $this->_processorName    = ts('Elavon');
     }
 
+    /** 
+     * singleton function used to manage this object 
+     * 
+     * @param string $mode the mode of operation: live or test
+     *
+     * @return object 
+     * @static 
+     * 
+     */ 
+    static function &singleton( $mode, &$paymentProcessor ) {
+        $processorName = $paymentProcessor['name'];
+        if (self::$_singleton[$processorName] === null ) {
+            self::$_singleton[$processorName] = new CRM_Core_Payment_Elavon( $mode, $paymentProcessor );
+        }
+        return self::$_singleton[$processorName];
+    }
+
     /**********************************************************
      * This function is set up and put here to make the mapping of fields
      * from the params object  as visually clear as possible for easy editing

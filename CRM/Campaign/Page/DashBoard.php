@@ -36,6 +36,7 @@ require_once 'CRM/Core/Page.php';
 require_once 'CRM/Core/Permission.php';
 require_once 'CRM/Campaign/PseudoConstant.php';
 require_once 'CRM/Campaign/BAO/Survey.php';
+require_once 'CRM/Campaign/BAO/Petition.php';
 require_once 'CRM/Campaign/BAO/Campaign.php';
 
 /**
@@ -188,7 +189,42 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
         $this->assign( 'campaigns',      $campaignsData );
         $this->assign( 'addCampaignUrl', CRM_Utils_System::url( 'civicrm/campaign/add', 'reset=1&action=add' ) );
     }
-    
+   
+    function browsePetition () {
+        $surveysData = array( );
+        //get the survey.
+        $surveys = CRM_Campaign_BAO_Petition::getPetition( true );
+        if ( !empty( $surveys ) ) {
+            $campaigns     = CRM_Campaign_BAO_Campaign::getAllCampaign( );
+            $surveyType    = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
+            foreach( $surveys as $sid => $survey ) {
+                $surveysData[$sid] = $survey;
+                $surveysData[$sid]['campaign_id']       = $campaigns[$survey['campaign_id']];
+                $surveysData[$sid]['activity_type']     = $surveyType[$survey['activity_type_id']];
+                if ( $survey['release_frequency_interval'] ) {
+                    $surveysData[$sid]['release_frequency'] = $survey['release_frequency_interval'].' Day(s)';
+                }
+                
+                $action = array_sum( array_keys( $this->surveyActionLinks($surveysData[$sid]['activity_type']  ) ) );
+                if ( $survey['is_active'] ) {
+                    $action -= CRM_Core_Action::ENABLE;
+                } else {
+                    $action -= CRM_Core_Action::DISABLE;
+                }
+                $surveysData[$sid]['action'] = CRM_Core_Action::formLink( $this->surveyActionLinks($surveysData[$sid]['activity_type'] ), 
+                                                                          $action, 
+                                                                          array('id' => $sid ) );
+                
+                if ( CRM_Utils_Array::value('activity_type', $surveysData[$sid] ) != 'Petition' ) {
+                    $surveysData[$sid]['voterLinks'] =  CRM_Campaign_BAO_Survey::buildPermissionLinks( $sid );
+                }
+            }
+        }
+      
+        $this->assign( 'surveys',      $surveysData );
+        $this->assign( 'addSurveyUrl', CRM_Utils_System::url( 'civicrm/petition/add', 'reset=1&action=add' ) );
+    }
+ 
     function browseSurvey( ) 
     {
         $surveysData = array( );
@@ -220,15 +256,17 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
                 }
             }
         }
-        
+      
         $this->assign( 'surveys',      $surveysData );
         $this->assign( 'addSurveyUrl', CRM_Utils_System::url( 'civicrm/survey/add', 'reset=1&action=add' ) );
     }
     
     function browse( ) 
     {   
-        $this->_tabs = array( 'campaign' => ts( 'Campaign' ), 
-                              'survey'   => ts( 'Survey' ) );
+        $this->_tabs = array( 'campaign' => ts( 'Campaigns' ), 
+                              'survey'   => ts( 'Surveys' ),
+                              'petition' => ts ('Petitions')
+                       );
         
         $subPageType = CRM_Utils_Request::retrieve( 'type', 'String', $this );
         if ( $subPageType ) {

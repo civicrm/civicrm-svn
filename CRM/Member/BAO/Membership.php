@@ -817,7 +817,8 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
         $fields = array_merge($fields, $expFieldMembership );
         $membershipStatus = array( 'membership_status' => array( 'title'     => 'Membership Status',
                                                                  'name'      => 'membership_status',
-                                                                 'data_type' => CRM_Utils_Type::T_STRING ) );
+                                                                 'type'      => CRM_Utils_Type::T_STRING,
+                                                                 'where'     => 'civicrm_membership_status.name' ) );
         //CRM-6161 fix for customdata export
         $fields = array_merge($fields, $membershipStatus, CRM_Core_BAO_CustomField::getFieldsForImport('Membership'));
         return $fields;
@@ -1001,7 +1002,7 @@ AND civicrm_membership.is_test = %2";
             $result = null;
             if ($form->_values['is_monetary'] && !$form->_params['is_pay_later']) {
                 require_once 'CRM/Core/Payment.php';
-                $payment =& CRM_Core_Payment::singleton( $form->_mode, 'Contribute', $form->_paymentProcessor, $form );
+                $payment =& CRM_Core_Payment::singleton( $form->_mode, $form->_paymentProcessor, $form );
                 
                 if ( $form->_contributeMode == 'express' ) {
                     $result =& $payment->doExpressCheckout( $tempParams );
@@ -1101,8 +1102,8 @@ AND civicrm_membership.is_test = %2";
             if ( $form->_values['is_monetary'] && $form->_amount > 0.0 && !$form->_params['is_pay_later'] ) {
                 // this does not return
                 require_once 'CRM/Core/Payment.php';
-                $payment =& CRM_Core_Payment::singleton( $form->_mode, 'Contribute', $form->_paymentProcessor, $form );
-                $payment->doTransferCheckout( $form->_params );
+                $payment =& CRM_Core_Payment::singleton( $form->_mode, $form->_paymentProcessor, $form );
+                $payment->doTransferCheckout( $form->_params, 'contribute' );
             }
         }
 

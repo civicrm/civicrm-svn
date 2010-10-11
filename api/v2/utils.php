@@ -40,10 +40,27 @@
  * @todo Write documentation
  *
  */
-function _civicrm_initialize( ) 
+function _civicrm_initialize($useException = false ) 
 {
-    require_once 'CRM/Core/Config.php';
-    $config = CRM_Core_Config::singleton( );
+  require_once 'CRM/Core/Config.php';
+  $config = CRM_Core_Config::singleton( );
+  if ($useException) {
+    CRM_Core_Error::setRaiseException();
+  }
+}
+
+function civicrm_verify_mandatory (&$params, $daoName = null, $keys = array() ) {
+  if ( ! is_array( $params ) ) {
+     throw new Exception ('Input parameters is not an array');
+  }
+
+  if ($daoName != null) {
+    _civicrm_check_required_fields( $params, $daoName, true);
+  }
+  foreach ($keys as $key) {
+    if ( !array_key_exists ($key, $params))
+      throw new Exception ("Mandatory param missing: ". $key);
+  }
 }
 
 /**
@@ -612,7 +629,7 @@ function _civicrm_custom_format_params( &$params, &$values, $extends, $entityId 
  * @return bool true if success false otherwise
  * @access public
  */
-function _civicrm_check_required_fields( &$params, $daoName)
+function _civicrm_check_required_fields( &$params, $daoName, $thowException = false)
 {
     if ( isset($params['extends'] ) ) {
         if ( ( $params['extends'] == 'Activity' || 
@@ -644,6 +661,9 @@ function _civicrm_check_required_fields( &$params, $daoName)
     }
 
     if (!empty($missing)) {
+        if ($throwException) {
+          throw Exception ("Required fields ". implode(',', $missing) . " for $daoName are not found");
+        }
         return civicrm_create_error(ts("Required fields ". implode(',', $missing) . " for $daoName are not found"));
     }
 
@@ -754,9 +774,20 @@ function _civicrm_participant_formatted_param( &$params, &$values, $create=false
             $values[$key] = $id;
             break;
         case 'participant_role_id':
-            $id = CRM_Core_OptionGroup::getValue('participant_role', $value);
-            $values['role_id'] = $id;
-            unset($values[$key]);
+        case 'participant_role':
+            $role = CRM_Event_PseudoConstant::participantRole();
+            $participantRoles = explode( ",", $value );
+            foreach ( $participantRoles as $k => $v ) {
+                $v = trim( $v );
+                if (  $key == 'participant_role' ) {
+                    $participantRoles[$k] = CRM_Utils_Array::key( $v, $role );
+                } else {
+                    $participantRoles[$k] = $v;
+                }
+            }
+            require_once 'CRM/Core/DAO.php';
+            $values['role_id'] = implode( CRM_Core_DAO::VALUE_SEPARATOR, $participantRoles ); 
+            unset( $values[$key] );
             break;
         default:
             break;
@@ -1408,3 +1439,35 @@ function civicrm_check_contact_dedupe( &$params ) {
 
     return _civicrm_duplicate_formatted_contact( $contactFormatted );
 } 
+
+/**
+ * Check permissions for a given API call.
+ *
+ * @param $api string    API method being called
+ * @param $params array  params of the API call
+ * @param $throw bool    whether to throw exception instead of returning false
+ *
+ * @return bool whether the current API user has the permission to make the call
+ */
+function civicrm_api_check_permission($api, $params, $throw = false)
+{
+    // return early if we’re to skip the permission check or if it’s unset
+    if (!isset($params['check_permissions']) or !$params['check_permissions']) return true;
+
+    require_once 'CRM/Core/Permission.php';
+    $requirements = array(
+        'civicrm_contact_create' => array('access CiviCRM', 'add contacts'),
+        'civicrm_contact_update' => array('access CiviCRM', 'add contacts'),
+        'civicrm_event_create'   => array('access CiviEvent'),
+    );
+    foreach ($requirements[$api] as $perm) {
+        if (!CRM_Core_Permission::check($perm)) {
+            if ($throw) {
+                throw new Exception("API permission check failed for $api call; missing permission: $perm.");
+            } else {
+                return false;
+            }
+        }
+    }
+    return true;
+}

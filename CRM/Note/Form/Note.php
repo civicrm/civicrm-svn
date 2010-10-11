@@ -79,6 +79,9 @@ class CRM_Note_Form_Note extends CRM_Core_Form
         $this->_entityId    = $this->get( 'entityId'   );
         $this->_id          = $this->get( 'id'    );
         $this->_parentId    = CRM_Utils_Array::value( 'parentId', $_GET, 0 );
+        if ( $this->_parentId ) {
+            $this->assign( 'parentId', $this->_parentId );
+        }
 
         if ( $this->_id && CRM_Core_BAO_Note::getNotePrivacyHidden( $this->_id ) ) {
             CRM_Core_Error::statusBounce( ts( 'You do not have access to this note.' ) );

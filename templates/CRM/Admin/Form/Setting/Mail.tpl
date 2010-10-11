@@ -31,17 +31,13 @@
 <fieldset><legend>{ts}CiviMail Configuration{/ts}</legend>
       <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>                         
       <table class="form-layout-compressed">
-        <tr class="crm-mail-form-block-mailerPeriod">
-            <td class="label">{$form.mailerPeriod.label}</td><td>{$form.mailerPeriod.html}<br />      
-            <span class="description">{ts}Number of seconds between delivery attempts for new outgoing mailings.{/ts}</span></td>
-        </tr>
         <tr class="crm-mail-form-block-mailerBatchLimit">
             <td class="label">{$form.mailerBatchLimit.label}</td><td>{$form.mailerBatchLimit.html}<br />    
             <span class="description">{ts}Throttle email delivery by setting the maximum number of emails sent during each CiviMail run (0 = unlimited).{/ts}</span></td>
         </tr>
-        <tr class="crm-mail-form-block-mailerSpoolLimit">
-            <td class="label">{$form.mailerSpoolLimit.label}</td><td>{$form.mailerSpoolLimit.html}<br />    
-            <span class="description">{ts}Set the limit of emails sent via smtp mailer, for more than limit send them in Spool table.{/ts}</span></td>
+        <tr class="crm-mail-form-block-mailerJobSize">
+            <td class="label">{$form.mailerJobSize.label}</td><td>{$form.mailerJobSize.html}<br />    
+            <span class="description">{ts}If you want to utilize multi-threading enter the size you want your sub jobs to be split into (0 = disables multi-threading and processes mail as one single job - batch limits still apply){/ts}</span></td>
         </tr>
         <tr class="crm-mail-form-block-verpSeparator">
             <td class="label">{$form.verpSeparator.label}</td><td>{$form.verpSeparator.html}<br />

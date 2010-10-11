@@ -320,8 +320,11 @@ class CRM_Utils_System_Drupal {
 
     /**
      * load drupal bootstrap
+     *
+     * @param $name string  optional username for login
+     * @param $pass string  optional password for login
      */
-    static function loadBootStrap( ) 
+    static function loadBootStrap($name = null, $pass = null)
     {
         //take the cms root path.
         $cmsPath = self::cmsRootPath( );
@@ -342,8 +345,8 @@ class CRM_Utils_System_Drupal {
         }
         
         //load user, we need to check drupal permissions.
-        $name = trim( CRM_Utils_Array::value( 'name', $_REQUEST ) );
-        $pass = trim( CRM_Utils_Array::value( 'pass', $_REQUEST ) );
+        $name = $name ? $name : trim(CRM_Utils_Array::value('name', $_REQUEST));
+        $pass = $pass ? $pass : trim(CRM_Utils_Array::value('pass', $_REQUEST));
         if ( $name ) {
             $user = user_authenticate(  array( 'name' => $name, 'pass' => $pass ) );
             if ( empty( $user->uid ) ) {

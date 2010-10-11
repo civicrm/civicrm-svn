@@ -251,6 +251,9 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
                          null,
                          array( 'onclick' => "return showHideByValue('is_monetary','0','event-fees','block','radio',false);" ) );
         
+        //add currency element.
+        $this->addCurrency( 'currency', ts( 'Currency' ), false );
+        
         require_once 'CRM/Contribute/PseudoConstant.php';
         $paymentProcessor =& CRM_Core_PseudoConstant::paymentProcessor( );
         $this->assign('paymentProcessor',$paymentProcessor);

@@ -107,8 +107,7 @@ class CRM_Custom_Form_Field extends CRM_Core_Form
               );
     
     private static $_dataToLabels = null;
-    
-    
+        
     /**
      * Function to set variables up before form is built
      * 
@@ -127,7 +126,15 @@ class CRM_Custom_Form_Field extends CRM_Core_Form
         
         //custom group id
         $this->_gid = CRM_Utils_Request::retrieve( 'gid', 'Positive', $this );
-      
+        
+        if ( $this->_gid ) {
+            $url = CRM_Utils_System::url( 'civicrm/admin/custom/group/field', 
+                                          "reset=1&action=browse&gid={$this->_gid}" ); 
+            
+            $session = CRM_Core_Session::singleton( ); 
+            $session->pushUserContext( $url );
+        }
+        
         //custom field id
         $this->_id  = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
         

@@ -25,7 +25,7 @@
 *}
 {* this template is used for adding/editing/deleting grant *}
 
-{if $action eq 1}
+{if $action eq 1 and $context ne 'standalone'}
 	<h3>{ts}New Grant{/ts}</h3>
 {elseif $action eq 2}
 	<h3>{ts}Edit Grant{/ts}</h3>

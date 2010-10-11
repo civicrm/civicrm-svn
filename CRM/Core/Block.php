@@ -360,20 +360,6 @@ class CRM_Core_Block {
                                                                'ref'   => 'new-email',
                                                                'title' => ts('Email') ) ));
                                     
-            if ( CRM_Core_Permission::check('administer CiviCampaign') &&
-                 in_array( 'CiviCampaign', $config->enableComponents ) ) {
-                $shortCuts = 
-                    array_merge($shortCuts, array( array( 'path'  => 'civicrm/campaign/add',
-                                                          'query' => "reset=1&action=add",
-                                                          'ref'   => 'new-campaign',
-                                                          'title' => ts('Campaign') ),
-                                                   array( 'path'  => 'civicrm/survey/add',
-                                                          'query' => "reset=1&action=add",
-                                                          'ref'   => 'new-survey',
-                                                          'title' => ts('Survey') )
-                                                   ));
-            }
-
             if ( CRM_Core_Permission::check('edit groups') ) {
                 $shortCuts = array_merge($shortCuts, array( array( 'path'  => 'civicrm/group/add',
                                                                    'query' => 'reset=1',
@@ -406,9 +392,9 @@ class CRM_Core_Block {
             $values[] = $value;
         }
         
-        // call shortcut hook
+        // call links hook to add user defined links
         require_once 'CRM/Utils/Hook.php';
-        CRM_Utils_Hook::shortcuts( $values );
+        CRM_Utils_Hook::links( 'create.new.shorcuts', null, CRM_Core_DAO::$_nullObject, $values );
                     
         self::setProperty( self::CREATE_NEW, 'templateValues', array( 'shortCuts' => $values ) );
     }

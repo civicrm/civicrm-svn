@@ -151,7 +151,8 @@ WHERE cg.name LIKE 'civicrm_event.amount%'
                                                       'id'
                                                       );
         require_once "CRM/Utils/JSON.php";
-        echo $defaultRoleId;
+        $participantRole = array( 'role' => $defaultRoleId );
+        echo json_encode( $participantRole );
         CRM_Utils_System::civiExit( );
     } 
 }

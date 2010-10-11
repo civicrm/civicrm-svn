@@ -61,6 +61,9 @@ class api_v2_ContactTest extends CiviUnitTestCase
     {
         //  Connect to the database
         parent::setUp();
+
+        require_once 'CRM/Core/Permission/UnitTests.php';
+        CRM_Core_Permission_UnitTests::$permissions = null; // reset check() stub
     }
 
     /**
@@ -185,7 +188,7 @@ class api_v2_ContactTest extends CiviUnitTestCase
 
         $contact =& civicrm_contact_create($params);
         $this->assertEquals( 0, $contact['is_error'], "In line " . __LINE__
-                           . " error message: " . $contact['error_message'] );
+                           . " error message: " . CRM_Utils_Array::value('error_message', $contact) );
         $this->assertEquals( 1, $contact['contact_id'], "In line " . __LINE__ );
 
         // delete the contact
@@ -206,7 +209,7 @@ class api_v2_ContactTest extends CiviUnitTestCase
 
         $contact =& civicrm_contact_create($params);
         $this->assertEquals( 0, $contact['is_error'], "In line " . __LINE__
-                           . " error message: " . $contact['error_message'] );
+                           . " error message: " . CRM_Utils_Array::value('error_message', $contact) );
         $this->assertEquals( 1, $contact['contact_id'], "In line " . __LINE__ );
 
         // delete the contact
@@ -229,7 +232,7 @@ class api_v2_ContactTest extends CiviUnitTestCase
 
         $contact =& civicrm_contact_create($params);
         $this->assertEquals( 0, $contact['is_error'], "In line " . __LINE__
-                           . " error message: " . $contact['error_message'] );
+                           . " error message: " . CRM_Utils_Array::value('error_message', $contact) );
         $this->assertEquals( 1, $contact['contact_id'], "In line " . __LINE__ );
 
         // delete the contact
@@ -253,7 +256,7 @@ class api_v2_ContactTest extends CiviUnitTestCase
 
         $contact =& civicrm_contact_create($params);
         $this->assertEquals( 0, $contact['is_error'], "In line " . __LINE__
-                           . " error message: " . $contact['error_message'] );
+                           . " error message: " . CRM_Utils_Array::value('error_message', $contact) );
         $this->assertEquals( 1, $contact['contact_id'], "In line " . __LINE__ );
 
         // delete the contact
@@ -273,7 +276,7 @@ class api_v2_ContactTest extends CiviUnitTestCase
 
         $contact =& civicrm_contact_create($params);
         $this->assertEquals( 0, $contact['is_error'], "In line " . __LINE__
-                           . " error message: " . $contact['error_message'] );
+                           . " error message: " . CRM_Utils_Array::value('error_message', $contact) );
         $this->assertEquals( 1, $contact['contact_id'], "In line " . __LINE__ );
 
         // delete the contact
@@ -292,7 +295,7 @@ class api_v2_ContactTest extends CiviUnitTestCase
                         );
         $contact =& civicrm_contact_create($params);
         $this->assertEquals( 0, $contact['is_error'], "In line " . __LINE__
-                           . " error message: " . $contact['error_message'] );
+                           . " error message: " . CRM_Utils_Array::value('error_message', $contact) );
         $this->assertEquals( 1, $contact['contact_id'], "In line " . __LINE__ );
 
         // delete the contact
@@ -314,7 +317,7 @@ class api_v2_ContactTest extends CiviUnitTestCase
         
         $contact =& civicrm_contact_create($params);
         $this->assertEquals( 0, $contact['is_error'], "In line " . __LINE__
-                           . " error message: " . $contact['error_message'] );
+                           . " error message: " . CRM_Utils_Array::value('error_message', $contact) );
         $this->assertEquals( 1, $contact['contact_id'], "In line " . __LINE__ );
 
         // delete the contact
@@ -336,7 +339,7 @@ class api_v2_ContactTest extends CiviUnitTestCase
                         );
         $contact =& civicrm_contact_create($params);
         $this->assertEquals( 0, $contact['is_error'], "In line " . __LINE__
-                           . " error message: " . $contact['error_message'] );
+                           . " error message: " . CRM_Utils_Array::value('error_message', $contact) );
         $this->assertEquals( 1, $contact['contact_id'], "In line " . __LINE__ );
 
         // delete the contact
@@ -358,7 +361,7 @@ class api_v2_ContactTest extends CiviUnitTestCase
 
         $contact =& civicrm_contact_create($params);
         $this->assertEquals( 0, $contact['is_error'], "In line " . __LINE__
-                           . " error message: " . $contact['error_message'] );
+                           . " error message: " . CRM_Utils_Array::value('error_message', $contact) );
         $this->assertEquals( 1, $contact['contact_id'], "In line " . __LINE__ );
 
         // delete the contact
@@ -422,7 +425,7 @@ class api_v2_ContactTest extends CiviUnitTestCase
         $contact =& civicrm_contact_check_params($params, true );
         $this->assertEquals( 1, $contact['is_error'] );
         $this->assertRegexp( "/matching contacts.*17/s",
-                             $contact['error_message'] );
+                             CRM_Utils_Array::value('error_message', $contact) );
     }
     
     /**
@@ -526,7 +529,7 @@ class api_v2_ContactTest extends CiviUnitTestCase
 
         //  Result should indicate successful update
         $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
-                           . " error message: " . $result['error_message'] );
+                           . " error message: " . CRM_Utils_Array::value('error_message', $result) );
         $this->assertEquals( $expected, $result, "In line " . __LINE__ );
 
         //  Check updated civicrm_contact against expected
@@ -564,7 +567,7 @@ class api_v2_ContactTest extends CiviUnitTestCase
 
         //  Result should indicate successful update
         $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
-                           . " error message: " . $result['error_message'] );
+                           . " error message: " . CRM_Utils_Array::value('error_message', $result) );
         $this->assertEquals( $expected, $result, "In line " . __LINE__ );
 
         //  Check updated civicrm_contact against expected
@@ -602,7 +605,7 @@ class api_v2_ContactTest extends CiviUnitTestCase
         $params = array( 'foo' => 'bar' );
         $result = civicrm_contact_delete( $params );
         $this->assertEquals( 1, $result['is_error'], "In line " . __LINE__
-                           . " error message: " . $result['error_message'] );
+                           . " error message: " . CRM_Utils_Array::value('error_message', $result) );
     }
     
     /**
@@ -613,7 +616,7 @@ class api_v2_ContactTest extends CiviUnitTestCase
         $params = array( 'contact_id' => 17 );
         $result = civicrm_contact_delete( $params );
         $this->assertEquals( 1, $result['is_error'], "In line " . __LINE__
-                           . " error message: " . $result['error_message'] );
+                           . " error message: " . CRM_Utils_Array::value('error_message', $result) );
     }
     
     /**
@@ -630,7 +633,7 @@ class api_v2_ContactTest extends CiviUnitTestCase
         $params = array( 'contact_id' => 17 );
         $result = civicrm_contact_delete( $params );
         $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
-                           . " error message: " . $result['error_message'] );
+                           . " error message: " . CRM_Utils_Array::value('error_message', $result) );
     }
     
     /**
@@ -681,7 +684,7 @@ class api_v2_ContactTest extends CiviUnitTestCase
         $this->assertTrue( is_array( $result ) );
         $this->assertEquals( 1, $result['is_error'] );
         $this->assertRegexp( "/No.*parameters/s",
-                             $result['error_message'] );
+                             CRM_Utils_Array::value('error_message', $result) );
     }
     
     /**
@@ -694,7 +697,7 @@ class api_v2_ContactTest extends CiviUnitTestCase
         $this->assertTrue( is_array( $result ) );
         $this->assertEquals( 1, $result['is_error'] );
         $this->assertRegexp( "/not.*array/s",
-                             $result['error_message'] );
+                             CRM_Utils_Array::value('error_message', $result) );
     }
     
     /**
@@ -714,7 +717,7 @@ class api_v2_ContactTest extends CiviUnitTestCase
         $this->assertTrue( is_array( $result ) );
         $this->assertEquals( 1, $result['is_error'] );
         $this->assertRegexp( "/0 contacts match/",
-                             $result['error_message'] );
+                             CRM_Utils_Array::value('error_message', $result) );
     }
     
     /**
@@ -803,7 +806,7 @@ class api_v2_ContactTest extends CiviUnitTestCase
 
         $contact =& civicrm_contact_create($params);
         $this->assertEquals( 0, $contact['is_error'], "In line " . __LINE__
-                           . " error message: " . $contact['error_message'] );
+                           . " error message: " . CRM_Utils_Array::value('error_message', $contact) );
         $this->assertEquals( 1, $contact['contact_id'], "In line " . __LINE__ );
 
         $params = array( 'email' => 'man2' );
@@ -857,9 +860,39 @@ class api_v2_ContactTest extends CiviUnitTestCase
         $result = civicrm_replace_contact_formatted( 17, $params, $fields );
         $this->assertTrue( is_array( $result ) );
         $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
-                           . " error message: " . $result['error_message'] );
+                           . " error message: " . CRM_Utils_Array::value('error_message', $result) );
     }
 
+    function testContactCreationPermissions()
+    {
+        $params = array('contact_type' => 'Individual', 'first_name' => 'Foo', 'last_name' => 'Bear', 'check_permissions' => true);
+
+        CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM');
+        $result = civicrm_contact_create($params);
+        $this->assertEquals(1,                                                                                                $result['is_error'],      'lacking permissions should not be enough to create a contact');
+        $this->assertEquals('API permission check failed for civicrm_contact_create call; missing permission: add contacts.', $result['error_message'], 'lacking permissions should not be enough to create a contact');
+
+        CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM', 'add contacts', 'import contacts');
+        $result = civicrm_contact_create($params);
+        $this->assertEquals(0, $result['is_error'], 'overfluous permissions should be enough to create a contact');
+    }
+
+    function testContactUpdatePermissions()
+    {
+        $params = array('contact_type' => 'Individual', 'first_name' => 'Foo', 'last_name' => 'Bear', 'check_permissions' => true);
+        $result = civicrm_contact_create($params);
+
+        $params = array('contact_id' => $result['contact_id'], 'contact_type' => 'Individual', 'last_name' => 'Bar', 'check_permissions' => true);
+
+        CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM');
+        $result = civicrm_contact_update($params);
+        $this->assertEquals(1,                                                                                                $result['is_error'],      'lacking permissions should not be enough to update a contact');
+        $this->assertEquals('API permission check failed for civicrm_contact_update call; missing permission: add contacts.', $result['error_message'], 'lacking permissions should not be enough to update a contact');
+
+        CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM', 'add contacts', 'import contacts');
+        $result = civicrm_contact_update($params);
+        $this->assertEquals(0, $result['is_error'], 'overfluous permissions should be enough to update a contact');
+    }
 } // class api_v2_ContactTest
 
 // -- set Emacs parameters --
