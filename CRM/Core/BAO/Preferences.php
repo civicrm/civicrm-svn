@@ -280,7 +280,7 @@ AND    v.name = %3
         }
     }
 
-    static function &retrieveDirectoryAndURLPreferences( &$params, $setInConfig = false ) {
+    static function retrieveDirectoryAndURLPreferences( &$params, $setInConfig = false ) {
         if ( $setInConfig ) {
             $config =& CRM_Core_Config::singleton( );
         }

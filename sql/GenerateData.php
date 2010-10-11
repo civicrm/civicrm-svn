@@ -607,7 +607,7 @@ class CRM_GCD {
         // FIXME FOR NEW LOCATION BLOCK STRUCTURE
         // $this->_addLocation(self::MAIN, 1, true);
 
-        $domain =& new CRM_Core_DAO_Domain();
+        $domain = new CRM_Core_DAO_Domain();
         for ($id=2; $id<=self::NUM_DOMAIN; $id++) {
             // domain name is pretty simple. it is "Domain $id"
             $domain->name = "Domain $id";
@@ -645,7 +645,7 @@ class CRM_GCD {
     {
 
         // add contacts
-        $contact =& new CRM_Contact_DAO_Contact();
+        $contact = new CRM_Contact_DAO_Contact();
 
         require_once 'CRM/Core/BAO/CustomOption.php';
         for ($id=1; $id<=self::NUM_CONTACT; $id++) {
@@ -679,7 +679,7 @@ class CRM_GCD {
     public function addIndividual()
     {
 
-        $contact =& new CRM_Contact_DAO_Contact();
+        $contact = new CRM_Contact_DAO_Contact();
 
         for ($id=1; $id<=$this->numIndividual; $id++) {
             $contact->first_name = ucfirst($this->_getRandomElement($this->firstName));
@@ -722,13 +722,13 @@ class CRM_GCD {
     public function addHousehold()
     {
 
-        $contact =& new CRM_Contact_DAO_Contact();
+        $contact = new CRM_Contact_DAO_Contact();
         for ($id=1; $id<=$this->numHousehold; $id++) {
             $cid = $this->household[($id-1)];
             $contact->primary_contact_id = $this->householdIndividual[$cid][0];
 
             // get the last name of the primary contact id
-            $individual =& new CRM_Contact_DAO_Contact();
+            $individual = new CRM_Contact_DAO_Contact();
             $individual->id = $contact->primary_contact_id;
             $individual->find(true);
             $firstName = $individual->first_name;
@@ -772,7 +772,7 @@ class CRM_GCD {
     public function addOrganization()
     {
 
-        $contact =& new CRM_Contact_DAO_Contact();       
+        $contact = new CRM_Contact_DAO_Contact();       
 
         for ($id=1; $id<=$this->numOrganization; $id++) {
             $contact->id = $this->organization[($id-1)];
@@ -802,7 +802,7 @@ class CRM_GCD {
     public function addRelationship()
     {
 
-        $relationship =& new CRM_Contact_DAO_Relationship();
+        $relationship = new CRM_Contact_DAO_Relationship();
 
         $relationship->is_active = 1; // all active for now.
 
@@ -895,7 +895,7 @@ class CRM_GCD {
         $this->_addPhone($locationTypeId, $contactId, '2', false);
 
         // need to get sort name to generate email id
-        $contact =& new CRM_Contact_DAO_Contact();
+        $contact = new CRM_Contact_DAO_Contact();
         $contact->id = $contactId;
         $contact->find(true);
         // get the sort name of the contact
@@ -910,7 +910,7 @@ class CRM_GCD {
 
     private function _addAddress($locationTypeId, $contactId, $isPrimary = false, $locationBlockID = null, $offset = 1)
     {
-        $addressDAO =& new CRM_Core_DAO_Address();
+        $addressDAO = new CRM_Core_DAO_Address();
 
         // add addresses now currently we are adding only 1 address for each location
         $addressDAO->location_type_id = $locationTypeId;
@@ -956,7 +956,7 @@ class CRM_GCD {
     private function _addPhone($locationTypeId, $contactId, $phoneType, $isPrimary=false, $locationBlockID = null, $offset = 1)
     {
         if ($contactId % 3) {
-            $phone =& new CRM_Core_DAO_Phone();
+            $phone = new CRM_Core_DAO_Phone();
             $phone->location_type_id = $locationTypeId;
             $phone->contact_id       = $contactId;
             $phone->is_primary = $isPrimary;
@@ -969,7 +969,7 @@ class CRM_GCD {
     private function _addEmail($locationTypeId, $contactId, $sortName, $isPrimary=false, $locationBlockID = null, $offset = 1)
     {
         if ($contactId % 2) {
-            $email =& new CRM_Core_DAO_Email();
+            $email = new CRM_Core_DAO_Email();
             $email->location_type_id = $locationTypeId;
             $email->contact_id = $contactId;
             $email->is_primary = $isPrimary;
@@ -994,7 +994,7 @@ class CRM_GCD {
     public function addEntityTag()
     {
 
-        $entity_tag =& new CRM_Core_DAO_EntityTag();
+        $entity_tag = new CRM_Core_DAO_EntityTag();
         
         // add categories 1,2,3 for Organizations.
         for ($i=0; $i<$this->numOrganization; $i+=2) {
@@ -1036,7 +1036,7 @@ class CRM_GCD {
         $numGroup = count($this->group);
         require_once 'CRM/Contact/BAO/Group.php';
         for ($i=0; $i<$numGroup; $i++) {
-            $group =& new CRM_Contact_BAO_Group();   
+            $group = new CRM_Contact_BAO_Group();   
             $group->name       = $this->group[$i];
             $group->title      = $this->group[$i];
             $group->group_type = "12";
@@ -1049,13 +1049,13 @@ class CRM_GCD {
         
         // 60 are for newsletter
         for ($i=0; $i<60; $i++) {
-            $groupContact =& new CRM_Contact_DAO_GroupContact();
+            $groupContact = new CRM_Contact_DAO_GroupContact();
             $groupContact->group_id = 2;                                                     // newsletter subscribers
             $groupContact->contact_id = $this->individual[$i];
             $groupContact->status = $this->_getRandomElement($this->groupMembershipStatus);  // membership status
 
 
-            $subscriptionHistory =& new CRM_Contact_DAO_SubscriptionHistory();
+            $subscriptionHistory = new CRM_Contact_DAO_SubscriptionHistory();
             $subscriptionHistory->contact_id = $groupContact->contact_id;
 
             $subscriptionHistory->group_id = $groupContact->group_id;
@@ -1070,12 +1070,12 @@ class CRM_GCD {
 
         // 15 volunteers
         for ($i=0; $i<15; $i++) {
-            $groupContact =& new CRM_Contact_DAO_GroupContact();
+            $groupContact = new CRM_Contact_DAO_GroupContact();
             $groupContact->group_id = 3; // Volunteers
             $groupContact->contact_id = $this->individual[$i+60];
             $groupContact->status = $this->_getRandomElement($this->groupMembershipStatus);  // membership status
 
-            $subscriptionHistory =& new CRM_Contact_DAO_SubscriptionHistory();
+            $subscriptionHistory = new CRM_Contact_DAO_SubscriptionHistory();
             $subscriptionHistory->contact_id = $groupContact->contact_id;
             $subscriptionHistory->group_id = $groupContact->group_id;
             $subscriptionHistory->status = $groupContact->status;
@@ -1090,12 +1090,12 @@ class CRM_GCD {
 
         // 8 advisory board group
         for ($i=0; $i<8; $i++) {
-            $groupContact =& new CRM_Contact_DAO_GroupContact();
+            $groupContact = new CRM_Contact_DAO_GroupContact();
             $groupContact->group_id = 4; // advisory board group
             $groupContact->contact_id = $this->individual[$i*7];
             $groupContact->status = $this->_getRandomElement($this->groupMembershipStatus);  // membership status
 
-            $subscriptionHistory =& new CRM_Contact_DAO_SubscriptionHistory();
+            $subscriptionHistory = new CRM_Contact_DAO_SubscriptionHistory();
             $subscriptionHistory->contact_id = $groupContact->contact_id;
             $subscriptionHistory->group_id = $groupContact->group_id;
             $subscriptionHistory->status = $groupContact->status;
@@ -1128,7 +1128,7 @@ class CRM_GCD {
     public function addNote()
     {
 
-        $note =& new CRM_Core_DAO_Note();
+        $note = new CRM_Core_DAO_Note();
         $note->entity_table = 'civicrm_contact';
         $note->contact_id   = 1;
 
@@ -1152,7 +1152,7 @@ class CRM_GCD {
      *******************************************************/
     public function addActivity( )
     {
-        $contactDAO =& new CRM_Contact_DAO_Contact();
+        $contactDAO = new CRM_Contact_DAO_Contact();
         $contactDAO->contact_type = 'Individual';
         $contactDAO->selectAdd();
         $contactDAO->selectAdd('id');
@@ -1167,7 +1167,7 @@ class CRM_GCD {
             }
             for ($i=0; $i<self::NUM_ACTIVITY; $i++) {
                 require_once 'CRM/Activity/DAO/Activity.php';
-                $activityDAO =& new CRM_Activity_DAO_Activity();
+                $activityDAO = new CRM_Activity_DAO_Activity();
                 $activityDAO->source_contact_id     = $contactDAO->id;
                 $activityTypeID = mt_rand(7, 10);
                 require_once 'CRM/Core/PseudoConstant.php';
@@ -1181,7 +1181,7 @@ class CRM_GCD {
                 
                 if ( in_array( $activityTypeID, array( 6, 9 ) ) ) { 
                     require_once 'CRM/Activity/DAO/ActivityTarget.php';
-                    $activityTargetDAO =& new CRM_Activity_DAO_ActivityTarget();
+                    $activityTargetDAO = new CRM_Activity_DAO_ActivityTarget();
                     $activityTargetDAO->activity_id = $activityDAO->id ;
                     $activityTargetDAO->target_contact_id = mt_rand(1,101);
                     $this->_insert($activityTargetDAO);
@@ -1189,7 +1189,7 @@ class CRM_GCD {
 
                 if ( $activityTypeID == 7 ) { 
                     require_once 'CRM/Activity/DAO/ActivityAssignment.php';
-                    $activityAssignmentDAO =& new CRM_Activity_DAO_ActivityAssignment();
+                    $activityAssignmentDAO = new CRM_Activity_DAO_ActivityAssignment();
                     $activityAssignmentDAO->activity_id = $activityDAO->id ;
                     $activityAssignmentDAO->assignee_contact_id = mt_rand(1,101);
                     $this->_insert($activityAssignmentDAO);
@@ -1203,7 +1203,7 @@ class CRM_GCD {
         
         if ( ! isset( $stateMap ) ) {
             $query = 'SELECT id, abbreviation from civicrm_state_province where country_id = 1228';
-            $dao =& new CRM_Core_DAO( );
+            $dao = new CRM_Core_DAO( );
             $dao->query( $query );
             $stateMap = array( );
             while ( $dao->fetch( ) ) {
@@ -1213,7 +1213,7 @@ class CRM_GCD {
 
         $offset = mt_rand( 1, 43000 );
         $query = "SELECT city, state, zip, latitude, longitude FROM zipcodes LIMIT $offset, 1";
-        $dao =& new CRM_Core_DAO( );
+        $dao = new CRM_Core_DAO( );
         $dao->query( $query );
         while ( $dao->fetch( ) ) {
             if ( $stateMap[$dao->state] ) {
@@ -1780,7 +1780,7 @@ function module_list( ) {
 
 
 echo("Starting data generation on " . date("F dS h:i:s A") . "\n");
-$obj1 =& new CRM_GCD();
+$obj1 = new CRM_GCD();
 $obj1->initID();
 $obj1->parseDataFile();
 $obj1->initDB();
