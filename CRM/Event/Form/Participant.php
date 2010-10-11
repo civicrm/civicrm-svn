@@ -859,8 +859,8 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
         }
         
         //check if contact is selected in standalone mode
-        if ( isset( $values['contact_select_id'] ) && !$values['contact_select_id'] ) {
-            $errorMsg['contact'] = ts('Please select a valid contact or create new contact');
+        if ( isset( $fields['contact_select_id'][1] ) && !$fields['contact_select_id'][1] ) {
+            $errors['contact[1]'] = ts('Please select a contact or create new contact');
         }
         
         if ( CRM_Utils_Array::value( 'payment_processor_id', $values ) ) {
@@ -920,10 +920,10 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
         
         // get the submitted form values.  
         $params = $this->controller->exportValues( $this->_name );
-             
+        
         // set the contact, when contact is selected
         if ( CRM_Utils_Array::value('contact_select_id', $params ) ) {
-            $this->_contactId = CRM_Utils_Array::value('contact_select_id', $params);
+            $this->_contactId = $params['contact_select_id'][1];
         }
         
         if ( $this->_id ) {

@@ -208,13 +208,13 @@ class CRM_Case_Form_Activity_OpenCase
         }
 
         $errors = array( );
-        //check if contact is selected in standalone mode for single client option
-        if ( isset( $values[contact_select_id] ) && !$values[contact_select_id]  && !$form->_allowMultiClient ) {
-            $errors['contact'] = ts('Please select a valid contact or create new contact');
+        //check if contact is selected in standalone mode
+        if ( isset( $fields['contact_select_id'][1] ) && !$fields['contact_select_id'][1] ) {
+            $errors['contact[1]'] = ts('Please select a contact or create new contact');
         }
         //check selected contact for multi client option
-        if ( $form->_allowMultiClient && isset( $values[contact] ) && !$values[contact] ) {
-            $errors['contact'] = ts('Please select a valid contact or create new contact');
+        if ( $form->_allowMultiClient && isset( $values[contact][1] ) && !$values[contact][1] ) {
+            $errors['contact[1]'] = ts('Please select a valid contact or create new contact');
         }
         
         return $errors;
@@ -250,7 +250,7 @@ class CRM_Case_Form_Activity_OpenCase
 
         // 1. create case-contact
         if( $isMultiClient && $this->_context != 'case' ) {
-            $client = explode( ',', $params['contact'] );
+            $client = explode( ',', $params['contact'][1] );
             foreach ($client as $key => $cliId ) {
                 if ( empty($cliId) ) {
                     CRM_Core_Error::fatal( 'contact_id cannot be empty' );

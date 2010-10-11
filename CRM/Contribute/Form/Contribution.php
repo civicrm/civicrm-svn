@@ -964,8 +964,8 @@ WHERE  contribution_id = {$this->_id}
         $errors = array( );
         
         //check if contact is selected in standalone mode
-        if ( isset( $fields['contact_select_id'] ) && !$fields['contact_select_id'] ) {
-            $errors['contact'] = ts('Please select a contact or create new contact');
+        if ( isset( $fields['contact_select_id'][1] ) && !$fields['contact_select_id'][1] ) {
+            $errors['contact[1]'] = ts('Please select a contact or create new contact');
         }
          
         if ( isset( $fields["honor_type_id"] ) ) {
@@ -1009,7 +1009,7 @@ WHERE  contribution_id = {$this->_id}
         }    
         
         // get the submitted form values.  
-        $submittedValues = $this->controller->exportValues( $this->_name );
+        $submittedValues = $this->controller->exportValues( $this->_name );        
 
         // process price set and get total amount and line items.
         $lineItem = array( );
@@ -1031,9 +1031,9 @@ WHERE  contribution_id = {$this->_id}
 
         // set the contact, when contact is selected
         if ( CRM_Utils_Array::value('contact_select_id', $submittedValues ) ) {
-            $this->_contactID = CRM_Utils_Array::value('contact_select_id', $submittedValues);
+            $this->_contactID = $submittedValues['contact_select_id'][1];
         }
-        
+                
         $config  = CRM_Core_Config::singleton( );
         $session = CRM_Core_Session::singleton( );
         

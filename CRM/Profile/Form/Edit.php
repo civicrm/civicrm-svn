@@ -49,6 +49,7 @@ class CRM_Profile_Form_Edit extends CRM_Profile_Form
     protected $_cancelURL = null;
     protected $_errorURL  = null;
     protected $_context;
+    protected $_blockNo;
 
     /**
      * pre processing work done here.
@@ -66,8 +67,15 @@ class CRM_Profile_Form_Edit extends CRM_Profile_Form
         //set the context for the profile
         $this->_context = CRM_Utils_Request::retrieve( 'context', 'String', $this );
         
+        //set the block no
+        $this->_blockNo = CRM_Utils_Request::retrieve( 'blockNo', 'String', $this );
+            
         if ( $this->_context ) {
             $this->assign( 'context', $this->_context );
+        }
+
+        if ( $this->_blockNo ) {
+            $this->assign( 'blockNo', $this->_blockNo );
         }
 
         if ( $this->get( 'skipPermission' ) ) {

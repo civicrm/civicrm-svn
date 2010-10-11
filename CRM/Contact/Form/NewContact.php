@@ -40,20 +40,22 @@
  */
 class CRM_Contact_Form_NewContact  
 {
-    function buildQuickForm( &$form ) {
+    function buildQuickForm( &$form, $blockNo = 1 ) {
         // call to build contact autocomplete
         $attributes = array( 'width' => '200px' );    
-        $form->add('text', "contact", ts('Select Contact'), $attributes );
-        $form->addElement('hidden', "contact_select_id" );
+        $form->add('text', "contact[{$blockNo}]", ts('Select Contact'), $attributes );
+        $form->addElement('hidden', "contact_select_id[{$blockNo}]" );
         
         if ( CRM_Core_Permission::check( 'edit all contacts' ) ||
              CRM_Core_Permission::check( 'add contacts' ) ) {            
             // build select for new contact
             require_once 'CRM/Core/BAO/UFGroup.php';
             $contactProfiles = CRM_Core_BAO_UFGroup::getReservedProfiles( );
-            $form->add( 'select', 'profiles', ts('Create New Contact'),
+            $form->add( 'select', "profiles[{$blockNo}]", ts('Create New Contact'),
                         array( '' => ts('- create new contact -') ) + $contactProfiles,
-                        false, array( 'onChange' => "if (this.value) newContact( this.value );") );
+                        false, array( 'onChange' => "if (this.value) newContact( this.value, {$blockNo} );") );
         }
+        
+        $form->assign( 'blockNo', $blockNo );
     }    
 }
