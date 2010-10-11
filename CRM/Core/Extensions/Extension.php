@@ -66,17 +66,48 @@ class CRM_Core_Extensions_Extension
         $this->id = $id;
     }
 
+    public function xmlObjToArray($obj)
+    {
+        $arr = array();
+        if( is_object( $obj ) ) {
+            $obj = get_object_vars( $obj );
+        }
+        if( is_array( $obj ) ) {
+            foreach( $obj as $i => $v ) {
+                if ( is_object( $v ) || is_array( $v ) ) {
+                    $v = $this->xmlObjToArray( $v );
+                }
+                if ( empty( $v ) ) {
+                    $arr[$i] = null;
+                } else {
+                    $arr[$i] = $v;
+                }
+            }
+        }
+        return $arr;
+    }
+
     public function readXMLInfo( ) {
         $info = $this->_parseXMLFile( $this->path . 'info.xml' );
         $this->type = (string) $info->attributes()->type;
         $this->file = (string) $info->file;
         $this->label = (string) $info->name;
 
+        // Convert first level variables to CRM_Core_Extension properties
+        // and deeper into arrays. An exception for URLS section, since
+        // we want them in special format.
         foreach( $info as $attr => $val ) {
             if( count($val->children()) == 0 ) {
                 $this->$attr = (string) $val;
+            } elseif( $attr === 'urls' ) {
+                $this->urls = array();
+                foreach( $val->url as $url) {
+                    $urlAttr = (string) $url->attributes()->desc;
+                    $this->urls[$urlAttr] = (string) $url;
+                }
+                ksort( $this->urls );
             } else {
-                $this->$attr = (array) $val;
+                $this->$attr = $this->xmlObjToArray( $val );
             }
         }
     }

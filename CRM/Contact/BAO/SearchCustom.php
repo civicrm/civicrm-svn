@@ -78,8 +78,8 @@ class CRM_Contact_BAO_SearchCustom {
                                              DIRECTORY_SEPARATOR,
                                              $customSearchClass ) . '.php';
         } else {
-            $customSearchFile = $ext->key2path( $customSearchClass );
-            $customSearchClass = $ext->key2class( $customSearchClass );
+            $customSearchFile = $ext->keyToPath( $customSearchClass );
+            $customSearchClass = $ext->keyToClass( $customSearchClass );
         }
 
         $error = include_once( $customSearchFile );

@@ -224,7 +224,7 @@ class CRM_Core_Extensions
      * @access public
      * @return
      */
-    public function key2path( $key ) {
+    public function keyToPath( $key ) {
         $this->populate();
         $e = $this->_extByKey;        
         
@@ -245,7 +245,7 @@ class CRM_Core_Extensions
      * @access private
      * @return
      */
-    public function key2class( $key ) {
+    public function keyToClass( $key ) {
         return str_replace( '.', '_', $key );
     }
 
@@ -255,7 +255,7 @@ class CRM_Core_Extensions
      * @access public
      * @return
      */
-    public function class2key( $clazz ) {
+    public function classToKey( $clazz ) {
         return str_replace( '_', '.', $clazz );
     }
 
@@ -265,10 +265,10 @@ class CRM_Core_Extensions
      * @access public
      * @return
      */
-    public function class2path( $clazz ) {
+    public function classToPath( $clazz ) {
         $elements = explode( '_', $clazz );
         $key = implode( '.', $elements );
-        return $this->key2path( $key );
+        return $this->keyToPath( $key );
     }
 
     /**
@@ -278,7 +278,7 @@ class CRM_Core_Extensions
      * @return
      */
     public function getTemplatePath( $clazz ) {
-        $path = $this->class2path( $clazz );
+        $path = $this->classToPath( $clazz );
         $pathElm = explode( DIRECTORY_SEPARATOR, $path );
         array_pop( $pathElm );
         return implode( DIRECTORY_SEPARATOR, $pathElm ) . DIRECTORY_SEPARATOR . 'templates';
@@ -294,7 +294,7 @@ class CRM_Core_Extensions
         $this->populate();
         $e = $this->_extByKey;
         $file = (string) $e[$key]->file;
-        $key = $this->class2key( $clazz );
+        $key = $this->classToKey( $clazz );
         return (string) $e[$key]->file . '.tpl' ;
     }    
 

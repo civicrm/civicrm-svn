@@ -88,7 +88,7 @@ class CRM_Report_Page_Instance extends CRM_Core_Page
             if( $extKey !== FALSE ) {
                 require_once( 'CRM/Core/Extensions.php' );
                 $ext = new CRM_Core_Extensions();
-                $reportClass = $ext->key2class( $templateInfo['name'], 'report' );
+                $reportClass = $ext->keyToClass( $templateInfo['name'], 'report' );
                 $templateInfo['name'] = $reportClass;
             }
             

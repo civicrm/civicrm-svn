@@ -40,8 +40,6 @@ require_once 'CRM/Core/Config.php';
 class CRM_Core_Extensions_Payment
 {
 
-
-
     public function __construct( $ext ) {
         $this->ext = $ext;
         $this->paymentProcessorTypes = $this->_getAllPaymentProcessorTypes();
@@ -54,32 +52,26 @@ class CRM_Core_Extensions_Payment
 
         $dao = new CRM_Core_DAO_PaymentProcessorType( );
 
-        $dao->is_active  = 1;
+        $dao->is_active              = 1;
         $dao->class_name             = $this->ext->key;
         $dao->title                  = $this->ext->name;
-
-        $dao->name                   = $this->ext->name;            
-        $dao->user_name_label        = $this->ext->userNameLabel;
-        $dao->password_label         = $this->ext->passwordLabel;
-        $dao->signature_label        = $this->ext->signatureLabel;
-        $dao->subject_label          = $this->ext->subjectLabel;
-        $dao->url_site_default       = $this->ext->urlSiteDefault;
-        $dao->url_api_default        = $this->ext->urlApiDefault;
-        $dao->url_recur_default      = $this->ext->urlRecurDefault;
-        $dao->url_site_test_default  = $this->ext->urlSiteTestDefault;
-        $dao->url_api_test_default   = $this->ext->urlApiTestDefault;
-        $dao->url_recur_test_default = $this->ext->urlRecurTestDefault 
-        $dao->billing_mode           = $this->ext->billingMode
-        $dao->is_recur               = $this->ext->isRecur;
-        $dao->payment_type           = $this->ext->paymentType;
+        $dao->name                   = $this->ext->name;
         $dao->description            = $this->ext->description;
+                
+        $dao->user_name_label        = $this->ext->typeInfo['userNameLabel'];
+        $dao->password_label         = $this->ext->typeInfo['passwordLabel'];
+        $dao->signature_label        = $this->ext->typeInfo['signatureLabel'];
+        $dao->subject_label          = $this->ext->typeInfo['subjectLabel'];
+        $dao->url_site_default       = $this->ext->typeInfo['urlSiteDefault'];
+        $dao->url_api_default        = $this->ext->typeInfo['urlApiDefault'];
+        $dao->url_recur_default      = $this->ext->typeInfo['urlRecurDefault'];
+        $dao->url_site_test_default  = $this->ext->typeInfo['urlSiteTestDefault'];
+        $dao->url_api_test_default   = $this->ext->typeInfo['urlApiTestDefault'];
+        $dao->url_recur_test_default = $this->ext->typeInfo['urlRecurTestDefault']; 
+        $dao->billing_mode           = $this->ext->typeInfo['billingMode'];
+        $dao->is_recur               = $this->ext->typeInfo['isRecur'];
+        $dao->payment_type           = $this->ext->typeInfo['paymentType'];
 
-        foreach ( $this->_fields as $field ) {
-            $dao->{$field['name']} = trim( $values[$field['name']] );
-            if ( empty( $dao->{$field['name']} ) ) {
-                $dao->{$field['name']} = 'null';
-            }
-        }
         $dao->save( );
         
     }

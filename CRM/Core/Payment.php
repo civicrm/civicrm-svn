@@ -96,8 +96,8 @@ abstract class CRM_Core_Payment {
             $ext = new CRM_Core_Extensions();
             
             if ( $ext->isExtensionKey( $paymentProcessor['class_name'] ) ) {
-                $paymentClass = $ext->key2class( $paymentProcessor['class_name'], 'payment' );
-                require_once( $ext->class2path( $paymentClass ) );
+                $paymentClass = $ext->keyToClass( $paymentProcessor['class_name'], 'payment' );
+                require_once( $ext->classToPath( $paymentClass ) );
             } else {                
                 $paymentClass = "CRM_Core_" . $paymentProcessor['class_name'];
                 require_once( str_replace( '_', DIRECTORY_SEPARATOR , $paymentClass ) . '.php' );

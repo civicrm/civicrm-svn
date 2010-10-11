@@ -144,16 +144,16 @@ class CRM_Contact_Selector_Custom extends CRM_Core_Selector_Base implements CRM_
 
         if( ! $ext->isExtensionKey( $customSearchClass ) ) {
             if( $ext->isExtensionClass( $customSearchClass ) ) {
-                $customSearchFile = $ext->class2path( $customSearchClass );
+                $customSearchFile = $ext->classToPath( $customSearchClass );
                 require_once( $customSearchFile );
             } else {
                 require_once( str_replace( '_', DIRECTORY_SEPARATOR, $customSearchClass ) . '.php' );
             }
             eval( '$this->_search = new ' . $customSearchClass . '( $formValues );' );
         } else {
-            $customSearchFile = $ext->key2path( $customSearchClass, 'search' );
+            $customSearchFile = $ext->keyToPath( $customSearchClass, 'search' );
             require_once( $customSearchFile );
-            eval( '$this->_search = new ' . $ext->key2class( $customSearchClass, 'search' ) . '( $formValues );' );
+            eval( '$this->_search = new ' . $ext->keyToClass( $customSearchClass, 'search' ) . '( $formValues );' );
         }
 
 
