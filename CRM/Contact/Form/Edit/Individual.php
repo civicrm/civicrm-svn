@@ -84,15 +84,7 @@ class CRM_Contact_Form_Edit_Individual {
         // override the size for UI to look better
         $attributes['job_title']['size'] = 30;
         $form->addElement('text', 'job_title', ts('Job title'), $attributes['job_title'], 'size="30"');
-            
-        if ( $action & CRM_Core_Action::UPDATE ) {
-            $mailToHouseholdID  = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', 
-                                                               $form->_contactId, 
-                                                               'mail_to_household_id', 
-                                                               'id' );
-            $form->assign('mailToHouseholdID',$mailToHouseholdID );  
-        }
-       
+
         //Shared Address Element
         require_once 'CRM/Contact/BAO/ContactType.php';
         if( CRM_Contact_BAO_ContactType::isActive( 'Household' ) ) {
