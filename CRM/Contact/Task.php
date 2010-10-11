@@ -154,8 +154,7 @@ class CRM_Contact_Task {
                 $label = CRM_Contact_BAO_ContactType::getLabel( 'Organization' );
                 self::$_tasks[10] = array( 'title'  => ts( 'Add Contacts to %1',
                                                            array( 1=> $label ) ) ,
-                                           'class'  => 'CRM_Contact_Form_Task_AddToOrganization',
-                                           'result' => true
+                                           'class'  => 'CRM_Contact_Form_Task_AddToOrganization'
                                            );
             }
             if ( CRM_Core_Permission::check( 'merge duplicate contacts' ) ) {
