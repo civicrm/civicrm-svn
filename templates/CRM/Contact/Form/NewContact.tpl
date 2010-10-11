@@ -57,7 +57,7 @@
   
       if ( allowMultiClient ) { 
       	 existingTokens = '';
-      	 var cid = cj('#contact-' + blockNo ).val();
+      	 var cid = cj('#contact_' + blockNo ).val();
       	 var cids = new Array(); 
       	 cids = cid.split(',');
       	 var i = 0;
