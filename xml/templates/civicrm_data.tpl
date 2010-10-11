@@ -504,6 +504,7 @@ VALUES
   (@option_group_id_report , '{ts escape="sql"}Grant Report{/ts}', 'grant', 'CRM_Report_Form_Grant', NULL, 0, 0, 30,  '{ts escape="sql"}Grant Report{/ts}', 0, 0, 1, @grantCompId, NULL),
   (@option_group_id_report, {localize}'{ts escape="sql"}Participant list Count Report{/ts}'{/localize}, 'event/participantlist', 'CRM_Report_Form_Event_ParticipantListCount', NULL, 0, 0, 31, {localize}'{ts escape="sql"}Shows the Participant list with Participant Count.{/ts}'{/localize}, 0, 0, 1, @eventCompId, NULL),
   (@option_group_id_report, {localize}'{ts escape="sql"}Income Count Summary Report{/ts}'{/localize}, 'event/incomesummary', 'CRM_Report_Form_Event_IncomeCountSummary', NULL, 0, 0, 32, {localize}'{ts escape="sql"}Shows the Income Summary of events with Count.{/ts}'{/localize}, 0, 0, 1, @eventCompId, NULL),
+  (@option_group_id_report, {localize}'{ts escape="sql"}Case Detail Report{/ts}'{/localize}, 'case/detail', 'CRM_Report_Form_Case_Detail', NULL, 0, 0, 33, {localize}'{ts escape="sql"}Case Details{/ts}'{/localize}, 0, 0, 1, @caseCompId, NULL),
   
   (@option_group_id_acs, '{ts escape="sql"}Scheduled{/ts}',  1, 'Scheduled',  NULL, 0, 1,    1, NULL, 0, 1, 1, NULL, NULL),
   (@option_group_id_acs, '{ts escape="sql"}Completed{/ts}',  2, 'Completed',  NULL, 0, NULL, 2, NULL, 0, 1, 1, NULL, NULL),

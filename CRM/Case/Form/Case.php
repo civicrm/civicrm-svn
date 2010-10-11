@@ -333,6 +333,7 @@ class CRM_Case_Form_Case extends CRM_Core_Form
             require_once 'CRM/Case/PseudoConstant.php';
             $caseType = CRM_Case_PseudoConstant::caseType( 'name' );
             $params['case_type']    = $caseType[$params['case_type_id']];
+            $params['subject'] = $params['activity_subject'];
             $params['case_type_id'] = CRM_Case_BAO_Case::VALUE_SEPERATOR . 
                 $params['case_type_id'] . CRM_Case_BAO_Case::VALUE_SEPERATOR;
         }
