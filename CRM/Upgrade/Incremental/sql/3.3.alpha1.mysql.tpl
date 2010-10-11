@@ -225,7 +225,17 @@ VALUES
 
 -- CRM-6835
 ALTER TABLE civicrm_mailing_job ADD COLUMN `job_type` varchar(255) default NULL;
-ALTER TABLE civicrm_mailing_job ADD COLUMN `parent_id` unsigned int(10) default NULL;
+ALTER TABLE civicrm_mailing_job ADD COLUMN `parent_id`  int(10)unsigned default NULL;
 ALTER TABLE civicrm_mailing_job ADD COLUMN `job_offset` int(20) default 0;
 ALTER TABLE civicrm_mailing_job ADD COLUMN `job_limit` int(20) default 0;
 ALTER TABLE civicrm_mailing_job ADD CONSTRAINT parent_id FOREIGN KEY (parent_id) REFERENCES civicrm_mailing_job (id);
+
+-- CRM-6931
+SELECT @ogrID       := max(id) from civicrm_option_group where name = 'report_template';
+SELECT @max_weight  := max(ROUND(weight)) from civicrm_option_value WHERE option_group_id = @ogrID;
+SELECT @caseCompId  := max(id) FROM civicrm_component where name = 'CiviCase';
+
+INSERT INTO civicrm_option_value
+  (option_group_id, {localize field='label'}label{/localize}, value, name, grouping, filter, is_default, weight,{localize field='description'} description{/localize}, is_optgroup,is_reserved, is_active, component_id, visibility_id ) 
+VALUES
+  (@ogrID, {localize}'{ts escape="sql"}Case Detail Report{/ts}'{/localize}, 'case/detail', 'CRM_Report_Form_Case_Detail', NULL, 0, 0, @max_weight+1, {localize}'{ts escape="sql"}Case Details{/ts}'{/localize}, 0, 0, 1, @caseCompId, NULL);

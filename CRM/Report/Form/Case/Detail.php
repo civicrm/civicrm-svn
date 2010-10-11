@@ -201,21 +201,20 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
         $select = array( );
         $this->_columnHeaders = array( );
         foreach ( $this->_columns as $tableName => $table ) { 
-            if ( $tableName == 'civicrm_relationship' ) {
-                $this->_relField = true;
-            }
             if ( array_key_exists('fields', $table) ) {
-                foreach ( $table['fields'] as $fieldName => $field ) {  
+                foreach ( $table['fields'] as $fieldName => $field ) {
+                    if ( $tableName == 'civicrm_address' ) {
+                        $this->_addressField = true;
+                    }elseif ( $tableName == 'civicrm_relationship' ) {
+                        $this->_relField = true;
+                    }
                     if ( CRM_Utils_Array::value( 'required', $field ) ||
                          CRM_Utils_Array::value( $fieldName, $this->_params['fields'] ) ) {
-                        if ( $tableName == 'civicrm_address' ) {
-                            $this->_addressField = true;
-                        }elseif ( $tableName == 'civicrm_email' ) {
+                        if ( $tableName == 'civicrm_email' ) {
                             $this->_emailField = true;
                         }elseif ( $tableName == 'civicrm_phone' ) {
                             $this->_phoneField = true;
                         }
-                        
                         $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
                         $this->_columnHeaders["{$tableName}_{$fieldName}"]['type']  = CRM_Utils_Array::value( 'type', $field );
                         $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = $field['title'];
