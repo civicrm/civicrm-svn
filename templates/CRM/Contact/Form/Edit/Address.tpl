@@ -58,7 +58,9 @@
         <td>
             {$form.use_shared_address.$blockId.html}{$form.use_shared_address.$blockId.label}{help id="id-sharedAddress" file="CRM/Contact/Form/Contact.hlp"}<br />
             <div id="shared-address-{$blockId}" class="hiddenElement">
-                New contact creation widget here...
+               <table>
+               {include file="CRM/Contact/Form/NewContact.tpl" blockNo="$blockId"}
+               </table>
             </div>
         </td>
      </tr>

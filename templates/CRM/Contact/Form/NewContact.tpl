@@ -47,13 +47,13 @@
   cj( function( ) {
       // add multiple client option if configured
       if ( allowMultiClient ) {
-      	 addMultiClientOption( newToken );
+      	 addMultiClientOption{/literal}{$blockNo}{literal}( newToken, {/literal}{$blockNo}{literal} );
       } else {
-         addSingleClientOption( );
+         addSingleClientOption{/literal}{$blockNo}{literal}( {/literal}{$blockNo}{literal} );
       }
   });
 
-  function newContact( gid, blockNo ) {
+  function newContact{/literal}{$blockNo}{literal}( gid, blockNo ) {
   
       if ( allowMultiClient ) { 
       	 existingTokens = '';
@@ -91,25 +91,22 @@
       });
   }
         
-  function addMultiClientOption ( newToken ) {
-  
+  function addMultiClientOption{/literal}{$blockNo}{literal}( newToken, blockNo ) {
       existingTokens = existingTokens + newToken;
       eval( 'existingTokens = [' + existingTokens + ']');
       eval( 'tokenClass = { tokenList: "token-input-list-facebook", token: "token-input-token-facebook", tokenDelete: "token-input-delete-token-facebook", selectedToken: "token-input-selected-token-facebook", highlightedToken: "token-input-highlighted-token-facebook", dropdown: "token-input-dropdown-facebook", dropdownItem: "token-input-dropdown-item-facebook", dropdownItem2: "token-input-dropdown-item2-facebook", selectedDropdownItem: "token-input-selected-dropdown-item-facebook", inputToken: "token-input-input-token-facebook" } ');
 
       var hintText = "{/literal}{ts}Type in a partial or complete name of an existing contact.{/ts}{literal}";
       var contactUrl = {/literal}"{crmURL p='civicrm/ajax/checkemail' q='id=1&noemail=1' h=0 }"{literal};
-      
-      var blockNo = 1;
+
       cj('#contact_' + blockNo).tokenInput( contactUrl, { prePopulate:existingTokens ,classes: tokenClass, hintText: hintText });
       cj('ul.token-input-list-facebook, div.token-input-dropdown-facebook' ).css( 'width', '450px');
       
   }
   
-  function addSingleClientOption ( ) {
+  function addSingleClientOption{/literal}{$blockNo}{literal}( blockNo ) {
       var contactUrl = {/literal}"{crmURL p='civicrm/ajax/rest' q='className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=newcontact' h=0 }"{literal};
       
-      var blockNo = 1;
       var contactElement = '#contact_' + blockNo;
       var contactHiddenElement = 'input[name=contact_select_id[' + blockNo +']]';
       cj( contactElement ).autocomplete( contactUrl, { 

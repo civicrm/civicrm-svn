@@ -53,7 +53,7 @@ class CRM_Contact_Form_NewContact
             $contactProfiles = CRM_Core_BAO_UFGroup::getReservedProfiles( );
             $form->add( 'select', "profiles[{$blockNo}]", ts('Create New Contact'),
                         array( '' => ts('- create new contact -') ) + $contactProfiles,
-                        false, array( 'onChange' => "if (this.value) newContact( this.value, {$blockNo} );") );
+                        false, array( 'onChange' => "if (this.value) newContact{$blockNo}( this.value, {$blockNo} );") );
         }
         
         $form->assign( 'blockNo', $blockNo );

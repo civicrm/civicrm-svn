@@ -221,7 +221,10 @@ class CRM_Contact_Form_Edit_Address
         // address custom data processing ends ..
         
         // shared address
-        $form->addElement( 'checkbox', "use_shared_address[$blockId]", null, ts('Shared Address with') );        
+        $form->addElement( 'checkbox', "use_shared_address[$blockId]", null, ts('Shared Address with') );
+        
+        require_once 'CRM/Contact/Form/NewContact.php';
+        CRM_Contact_Form_NewContact::buildQuickForm( $form, $blockId );        
     }
     
     /**
