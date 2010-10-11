@@ -27,7 +27,7 @@
 {if $context ne 'search'}
     <tr id="contact-success-{$blockNo}" class="hiddenElement">
     <td></td>
-    <td><span class="success-status-{$blockNo}">{ts}New contact has been created.{/ts}</span></td>
+    <td><span class="success-status">{ts}New contact has been created.{/ts}</span></td>
     </tr>
     <tr class="crm-new-contact-form-block-contact crm-new-contact-form-block-contact-{$blockNo}">
     	<td class="label">{$form.contact.$blockNo.label}</td>
