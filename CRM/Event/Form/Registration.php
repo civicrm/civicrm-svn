@@ -607,6 +607,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
                 CRM_Core_Session::setStatus( "Some of the profile fields cannot be configured for this page." );
             }
             $addCaptcha = false;
+            $fields = array_diff_assoc( $fields, $this->_fields );
             $this->assign( $name, $fields );
             if ( is_array( $fields ) ) {
                 foreach($fields as $key => $field) {

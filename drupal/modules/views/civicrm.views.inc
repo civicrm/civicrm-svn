@@ -2511,8 +2511,8 @@ function civicrm_views_data() {
     //TABLE JOINS FOR CIVICRM CONTRIBUTIONS GO HERE!
      $data['civicrm_contribution_recur']['table']['join']['civicrm_contribution'] = array(
                                                                                   'left_table' => 'civicrm_contribution',
-                                                                                  'left_field' => 'contact_id',
-                                                                                  'field' => 'contact_id',
+                                                                                  'left_field' => 'contribution_recur_id',
+                                                                                  'field' => 'id',
                                                                                   );
 
     //CiviCRM Soft Credits - FIELDS

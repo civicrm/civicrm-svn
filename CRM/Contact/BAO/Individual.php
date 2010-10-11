@@ -193,6 +193,8 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
         
         if ( $sortName ) {
             $contact->sort_name = $sortName;
+        } else if ( $individual && $individual->sort_name ) {
+            $contact->sort_name = $individual->sort_name;
         }
         
         if ( $displayName ) {

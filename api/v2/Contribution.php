@@ -69,7 +69,7 @@ function &civicrm_contribution_add( &$params ) {
     }
 
     $values["contact_id"] = $params["contact_id"];
-    $values["source"]     = $params["source"];
+    $values["source"]     = CRM_Utils_Array::value( 'source', $params );
     
     $ids     = array( );
     if ( CRM_Utils_Array::value( 'id', $params ) ) {

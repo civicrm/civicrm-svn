@@ -809,6 +809,10 @@ class CRM_Export_BAO_Export
             self::manipulateHeaderRows( $headerRows, $contactRelationshipTypes );
         }
 
+        // call export hook
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::export( $exportTempTable, $headerRows, $sqlColumns, $exportMode );
+
         // now write the CSV file
         self::writeCSVFromTable( $exportTempTable, $headerRows, $sqlColumns, $exportMode );
 

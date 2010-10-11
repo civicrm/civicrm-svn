@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!--  $Id$  -->
+<!--  $Id: custom_group_activity_type.xml 23352 2009-08-19 21:52:45Z walt $  -->
 <dataset>
     <civicrm_custom_group
         id="9"
@@ -7,7 +7,7 @@
         title="Activity Custom"
         extends="Activity"
         style="Inline"
-        extends_entity_column_value="5"
+        extends_entity_column_value="1"
         table_name="civicrm_value_activity_custom_9"
         is_active="1"
     />

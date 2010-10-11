@@ -51,21 +51,21 @@ class api_v2_ActivityContactTest extends CiviUnitTestCase
                              dirname(__FILE__)
                              . '/dataset/contact_17.xml') );
  
-        //  Insert a row in civicrm_option_group creating option group
-        //  activity_type 
+        //  Insert a row in civicrm_option_group creating 
+        //  an activity_status option group
         $op = new PHPUnit_Extensions_Database_Operation_Insert( );
         $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                             dirname(__FILE__)
-                             . '/dataset/option_group_activity_type.xml') );
- 
-        //  Insert a row in civicrm_option_value creating
-        //  activity_type 5
+                        new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
+                               dirname(__FILE__)
+                               . '/dataset/option_group_activity.xml') );
+
+        //  Insert rows in civicrm_option_value defining activity status
+        //  values of 'Scheduled', 'Completed', 'Cancelled'
         $op = new PHPUnit_Extensions_Database_Operation_Insert( );
         $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                             dirname(__FILE__)
-                             . '/dataset/option_value_activity_5.xml') );
+                        new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
+                               dirname(__FILE__)
+                               . '/dataset/option_value_activity.xml') );
 
         //  Insert rows in civicrm_activity creating activities 4 and
         //  13
@@ -86,10 +86,10 @@ class api_v2_ActivityContactTest extends CiviUnitTestCase
         $params = array( 'contact_id' => 17 );
         $result = civicrm_activity_contact_get( $params );
         $this->assertEquals( 0, $result['is_error'],
-                             "Error message: " . $result['error_message'] );
+                             "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
         $this->assertEquals( 2, count( $result['result'] ),
                              'In line ' . __LINE__ );
-        $this->assertEquals( 5, $result['result'][4]['activity_type_id'] ,
+        $this->assertEquals( 1, $result['result'][4]['activity_type_id'] ,
                              'In line ' . __LINE__ );
         $this->assertEquals( 'Test activity type',
                              $result['result'][4]['activity_name'],

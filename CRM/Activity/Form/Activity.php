@@ -48,7 +48,6 @@ require_once "CRM/Custom/Form/CustomData.php";
  */
 class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
 {
-
     /**
      * The id of the object being edited / created
      *
@@ -124,8 +123,8 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             array(
                   'subject'                  =>  array( 'type'        => 'text',
                                                         'label'       => ts('Subject'),
-                                                        'attributes'  => CRM_Core_DAO::getAttribute('CRM_Activity_DAO_Activity', 
-                                                                                                    'subject' ),
+                                                        'attributes'  => CRM_Core_DAO::getAttribute( 'CRM_Activity_DAO_Activity', 
+                                                                                                     'subject' ),
                                                         ),
                   'duration'                 =>  array( 'type'        => 'text',
                                                         'label'       => ts('Duration'),
@@ -135,8 +134,8 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
                   'location'                 =>  array( 'type'       => 'text',
                                                         'label'      => ts('Location'),
                                                         'attributes' => 
-                                                        CRM_Core_DAO::getAttribute('CRM_Activity_DAO_Activity', 
-                                                                                   'location' ),
+                                                        CRM_Core_DAO::getAttribute( 'CRM_Activity_DAO_Activity', 
+                                                                                    'location' ),
                                                         'required'   => false,
                                                         ),
                   'details'                  => array(  'type'       => 'wysiwyg',
@@ -173,15 +172,15 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
                   'interval_unit'             =>  array( 'type'       => 'select',
                                                          'label'      =>  null,
                                                          'attributes' => 
-                                                         CRM_Core_OptionGroup::values('recur_frequency_units', 
-                                                                                      false, false, false, 
-                                                                                      null, 'name'),
+                                                         CRM_Core_OptionGroup::values( 'recur_frequency_units', 
+                                                                                       false, false, false, 
+                                                                                       null, 'name' ),
                                                          ),
                   // Add optional 'Subject' field for the Follow-up Activiity, CRM-4491
                   'followup_activity_subject' =>  array( 'type'       => 'text',
                                                          'label'      => ts('Subject'),
-                                                         'attributes' => CRM_Core_DAO::getAttribute('CRM_Activity_DAO_Activity', 
-                                                                                                    'subject' ),
+                                                         'attributes' => CRM_Core_DAO::getAttribute( 'CRM_Activity_DAO_Activity', 
+                                                                                                     'subject' ),
                                                          ),
                   
                   );
@@ -189,6 +188,11 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         // append (s) for interval_unit attribute list
         foreach ( $this->_fields['interval_unit']['attributes'] as $name => $label ) {
             $this->_fields['interval_unit']['attributes'][$name] = $label . '(s)';
+        }
+        
+        if ( ( $this->_context == 'standalone' ) &&
+             ( $printPDF = CRM_Utils_Array::key( 'Print PDF Letter', $this->_fields['followup_activity_type_id']['attributes'] ) ) ) {
+            unset( $this->_fields['followup_activity_type_id']['attributes'][$printPDF] );
         }
     }
 
@@ -334,8 +338,8 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         
         if ( $this->_action & CRM_Core_Action::VIEW ) {
             // get the tree of custom fields
-            $this->_groupTree =& CRM_Core_BAO_CustomGroup::getTree("Activity", $this,
-                                                                   $this->_activityId, 0, $this->_activityTypeId );
+            $this->_groupTree =& CRM_Core_BAO_CustomGroup::getTree( 'Activity', $this,
+                                                                    $this->_activityId, 0, $this->_activityTypeId );
         }
 
         if ( $this->_activityTypeId ) {
@@ -388,7 +392,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         }
 
         // when custom data is included in this page
-        if ( CRM_Utils_Array::value( "hidden_custom", $_POST ) ) {
+        if ( CRM_Utils_Array::value( 'hidden_custom', $_POST ) ) {
             // we need to set it in the session for the below code to work
             // CRM-3014
             //need to assign custom data subtype to the template
@@ -507,7 +511,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         }
 
         if (  $this->_activityTypeId ) {
-            $defaults["activity_type_id"] =  $this->_activityTypeId;
+            $defaults['activity_type_id'] =  $this->_activityTypeId;
         }
         
         if ( $this->_action & ( CRM_Core_Action::DELETE | CRM_Core_Action::RENEW ) ) {
@@ -563,7 +567,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         }
 
         //build other activity links
-        require_once "CRM/Activity/Form/ActivityLinks.php";
+        require_once 'CRM/Activity/Form/ActivityLinks.php';
         CRM_Activity_Form_ActivityLinks::buildQuickForm( );
 
         //enable form element (ActivityLinks sets this true)
@@ -985,7 +989,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         
         return array( 'activity' => $activity );
     }
-    
 
     /**
      * Shorthand for getting id by display name (makes code more readable)

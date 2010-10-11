@@ -3,6 +3,7 @@
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'CRM/Contact/BAO/ContactType.php';
 
+
 class CRM_Contact_BAO_ContactType_ContactTypeTest extends CiviUnitTestCase 
 {
     
@@ -161,25 +162,32 @@ class CRM_Contact_BAO_ContactType_ContactTypeTest extends CiviUnitTestCase
     /*
      * test add() with invalid data
      */
-    function testAddInvalid() {
+    function testAddInvalid1() {
         
-        require_once 'CRM/Contact/BAO/ContactType.php';
         // parent id does not exist in db
         $params = array( 'label'     => 'subType',
                          'name'      => 'subType',
-                         'parent_id' => 100,
+                         'parent_id' => 100, //non existant
                          'is_active' => 1
                          );
         $result = CRM_Contact_BAO_ContactType::add( $params );
         $this->assertEquals( $result, null,'In line '. __LINE__ );
+
+    }
+    
+    function testAddInvalid2() {
         
-        // params does not have name and lable keys
+        // params does not have name and label keys
         $params = array( 'parent_id' => 1,
                          'is_active' => 1
                          );
         $result = CRM_Contact_BAO_ContactType::add( $params );
-        $this->assertEquals( $result, null,'In line'. __LINE__ );  
+        $this->assertEquals( $result, null,'In line '. __LINE__ );          
+    }
+    
 
+    function testAddInvalid3() {
+        
         // params does not have parent_id
         $params = array( 'label'     => 'subType',
                          'name'      => 'subType',

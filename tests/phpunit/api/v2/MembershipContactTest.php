@@ -208,6 +208,8 @@ class api_v2_MembershipContactTest extends CiviUnitTestCase {
                          'relationship_direction' => 'b_a',
                          'is_active'              => 1 );        
         $memType = civicrm_membership_type_create( $params );
+        // in order to reload static caching -
+        CRM_Member_PseudoConstant::membershipType( null, true );
 
         $params = array(
                         'contact_id'         => $memberContactId,
@@ -340,18 +342,18 @@ class api_v2_MembershipContactTest extends CiviUnitTestCase {
                         );
 
         $result = civicrm_contact_membership_create( $params );
-        $this->assertEquals( $result['is_error'], 0 );
+        $this->assertEquals( $result['is_error'], 1 );
         
         //membership_contact_id which is no in contact table
         $params['membership_contact_id'] = 999;
         $result = civicrm_contact_membership_create( $params );
-        $this->assertEquals( $result['is_error'], 0 );
+        $this->assertEquals( $result['is_error'], 1 );
 
         //invalid join date
         unset( $params['membership_contact_id'] );
         $params['join_date'] = "invalid";
         $result = civicrm_contact_membership_create( $params );
-        $this->assertEquals( $result['is_error'], 0 );
+        $this->assertEquals( $result['is_error'], 1 );
     }
     
     /**

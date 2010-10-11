@@ -89,7 +89,7 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
       // Select an event fee
       $feeHelp = "Event Fee Level (if applicable).";
       $this->waitForTextPresent($feeHelp);
-      $this->click("CIVICRM_QFID_521_10");
+      $this->click("CIVICRM_QFID_566_10");
 
       // Select 'Record Payment'
       $this->click("record_contribution");

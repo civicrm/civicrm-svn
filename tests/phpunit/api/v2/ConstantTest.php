@@ -89,25 +89,28 @@ class api_v2_ConstantTest extends CiviUnitTestCase
      */
     public function testActivityStatus()
     {
-        //  Insert 'activity_status' option group
+        //  Insert a row in civicrm_option_group creating 
+        //  an activity_status option group
         $op = new PHPUnit_Extensions_Database_Operation_Insert( );
         $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                             dirname(__FILE__)
-                             . '/dataset/option_group_activity_status.xml') );
+                       new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
+                              dirname(__FILE__)
+                              . '/dataset/option_group_activity.xml') );
 
-        //  Insert some activity status values
+        //  Insert rows in civicrm_option_value defining activity status
+        //  values of 'Scheduled', 'Completed', 'Cancelled'
         $op = new PHPUnit_Extensions_Database_Operation_Insert( );
         $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                             dirname(__FILE__)
-                             . '/dataset/option_value_activity_status.xml') );
+                       new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
+                              dirname(__FILE__)
+                              . '/dataset/option_value_activity.xml') );
 
         $result = civicrm_constant_get( 'activityStatus' );
         $this->assertEquals( 3, count( $result ), "In line " . __LINE__  );
         $this->assertContains( 'Scheduled', $result, "In line " . __LINE__  );
         $this->assertContains( 'Completed', $result, "In line " . __LINE__  );
         $this->assertContains( 'Canceled', $result, "In line " . __LINE__  );
+        
         $this->assertTrue( empty( $result['is_error'] ),
                            "In line " . __LINE__  );
     } 
@@ -122,23 +125,20 @@ class api_v2_ConstantTest extends CiviUnitTestCase
         $op->execute( $this->_dbconn,
                       new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
                              dirname(__FILE__)
-                             . '/dataset/option_group_activity_type.xml') );
+                             . '/dataset/option_group_activity.xml') );
 
         //  Insert some activity type values
         $op = new PHPUnit_Extensions_Database_Operation_Insert( );
         $op->execute( $this->_dbconn,
                       new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
                              dirname(__FILE__)
-                             . '/dataset/option_value_activity_1_5.xml') );
+                             . '/dataset/option_value_activity.xml') );
 
         $parameters = array( true, false, true );
         $result = civicrm_constant_get( 'activityType', $parameters );
 
-        $this->assertEquals( 4, count( $result ), "In line " . __LINE__  );
-        $this->assertContains( 'Meeting', $result, "In line " . __LINE__  );
-        $this->assertContains( 'Email', $result, "In line " . __LINE__  );
-        $this->assertContains( 'Phone Call', $result, "In line " . __LINE__  );
-        $this->assertContains( 'Text Message (SMS)', $result, "In line " . __LINE__  );
+        $this->assertEquals( 1, count( $result ), "In line " . __LINE__  );
+        $this->assertContains( 'Test activity type', $result, "In line " . __LINE__  );
         $this->assertTrue( empty( $result['is_error'] ),
                            "In line " . __LINE__  );
     } 

@@ -277,16 +277,21 @@ class api_v2_MembershipTypeTest extends CiviUnitTestCase
     function testUpdate()
     {
         $id = $this->membershipTypeCreate( $this->_contactID );
+        $newMembOrgParams = array(
+			'organization_name' => 'New membership organisation',
+			'contact_type'      => 'Organization'
+		);
+        $newMembOrgID = $this->organizationCreate($newMembOrgParams); // create a new contact to update this membership type to
+
         $params = array(
                         'id'                        => $id,
                         'name'                      => 'Updated General',
-                        'member_of_contact_id'      => '2',
+                        'member_of_contact_id'      => $newMembOrgID,
                         'contribution_type_id'      => '1',
                         'duration_unit'             => 'month',
                         'duration_interval'         => '10',
                         'period_type'               => 'fixed',
                         );
-        
         $membershiptype = & civicrm_membership_type_update($params);
         $this->assertEquals($membershiptype['name'],'Updated General');
         $this->assertEquals($membershiptype['member_of_contact_id'],'2');

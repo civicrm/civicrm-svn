@@ -287,6 +287,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
      * Function to get current/future Events 
      *
      * @param $all boolean true if events all are required else returns current and future events
+     * @param $id  int     id of a specific event to return
      *
      * @static
      */
@@ -294,18 +295,17 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
     {
         $query = "SELECT `id`, `title`, `start_date` FROM `civicrm_event`";
         
-        if ( !$all ) {
-            $endDate = date( 'YmdHis' );
-            $query .= " WHERE `end_date` >= {$endDate} OR end_date IS NULL";
-        }
         if ( $id ) {
             $query .= " WHERE `id` = {$id}";
+        } elseif ( !$all ) {
+            $endDate = date( 'YmdHis' );
+            $query .= " WHERE `end_date` >= {$endDate} OR end_date IS NULL";
         }
 
         $query .= " ORDER BY title asc";
         $events = array( );
         
-        $dao =& CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
+        $dao =& CRM_Core_DAO::executeQuery( $query );
         while ( $dao->fetch( ) ) {
             if ( CRM_Event_BAO_Event::checkPermission( $dao->id ) && $dao->title ) { 
                 $events[$dao->id] = $dao->title . ' - '.CRM_Utils_Date::customFormat($dao->start_date);
@@ -1535,7 +1535,7 @@ WHERE  id = $cfID
                                                                                     $isCustomProfile,
                                                                                     $participantParams );
                     if ( $profilePost ) {
-                        $customProfile[$i]['additionalCustomPost'] =  $profilePost;
+                        $customProfile[$i]['additionalCustomPost'] =  array_diff_assoc( $profilePost, $profilePre );
                         $customProfile[$i] = array_merge( $groupTitles, $customProfile[$i] );
                     }
                     $i++;

@@ -839,7 +839,7 @@ function civicrm_theme_registry_alter(&$theme_registry) {
  * 
  * Strips out JS and CSS for a path. 
  */
- function civicrm_preprocess_page(&$variables) {	
+function civicrm_preprocess_page(&$variables) {	
 	// to increase it's flexibility. 
   	if ( module_exists('date_popup') && ( in_array( arg(0), array('civicrm', 'user') ) ) ) { 
 		/** 
