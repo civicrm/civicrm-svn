@@ -258,7 +258,8 @@ cj(document).ready(function(){
                        if ( allowMultiClient ) {
                            var newToken = '{"name":"'+response.sortName+'","id":"'+response.contactID+'"},';
                            cj('ul.token-input-list-facebook, div.token-input-dropdown-facebook' ).remove();
-                           addMultiClientOption(newToken);
+			   	//we are having multiple instances, CRM-6932
+				eval( 'addMultiClientOption' + blockNo + "( newToken,  blockNo )" );
                        }
                    }
                    cj('input[name=contact_select_id[' + blockNo +']]').val( response.contactID );
