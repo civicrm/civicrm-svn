@@ -135,6 +135,33 @@ function civicrm_contact_update( &$params, $create_new = false ) {
               && ! ( is_numeric( $params['gender_id'] ) ) ) {
         $params['gender_id'] = array_search( $params['gender_id'] , CRM_Core_PseudoConstant::gender() );
     }
+    
+    $greetings = array( 'greeting', 'greeting_id', 'greeting_custom' );
+    $formatParams = false;
+
+    foreach ( array( 'email', 'postal' ) as $greetingValues ) {
+        foreach ( $greetings as $key ) {
+            $value = $greetingValues . '_' . $key;
+            
+            if ( array_key_exists( $value, $params ) ) { 
+                if ( $params['contact_type'] == 'Organization' ) {
+                    return civicrm_create_error( ts( 'You cannot use email/postal greetings for contact type %1.', 
+                                                     array( 1 => $params['contact_type'] ) ) );
+                } else {
+                    $formatParams = true;
+                    break;
+                }
+            }
+        }
+        if ( $formatParams ) break;
+    }
+   
+    if ( $formatParams ) {
+        $error = _civicrm_contact_format_greetingParams( $params );
+        if ( $error['error_message'] ) {
+            return civicrm_create_error( $error['error_message'] );
+        }
+    }
 
     $values   = array( );
     $entityId = CRM_Utils_Array::value( 'contact_id', $params, null );
@@ -195,6 +222,76 @@ function &civicrm_contact_add( &$params ) {
         $result = civicrm_contact_create($params);
     }
     return $result;
+}
+
+/**
+ * Validate the email or postal greetings 
+ *
+ * @param  $params                   Associative array of property name/value
+ *                                   pairs to insert in new contact.
+ * 
+ * @return array (reference )        null on success, error message otherwise
+ *
+ * @access public
+ */
+function _civicrm_contact_format_greetingParams( &$params ) 
+{
+    foreach ( array( 'email', 'postal' ) as $key ) {
+
+        $filter    = array( 'contact_type'  => $params['contact_type'],
+                            'greeting_type' => "{$key}_greeting" );
+                        
+        $greetings = CRM_Core_PseudoConstant::greeting( $filter );
+       
+        if ( !$params["{$key}_greeting_id"] && $params["{$key}_greeting"] ) {
+            $params["{$key}_greeting_id"] = CRM_Utils_Array::key( $params["{$key}_greeting"], $greetings );
+        }
+        
+        if ( $params["{$key}_greeting_id"]
+             && $params["{$key}_greeting_custom"]
+             && $greetings[$params["{$key}_greeting_id"]] != 'Customized' ) {
+            return civicrm_create_error( ts( 'Provide either %1 greeting id and/or %1 greeting or custom %1 greeting',
+                                             array( 1 => $key ) ) );
+        }
+        
+        if ( $params["{$key}_greeting_id"] && $params["{$key}_greeting"] &&
+             ( $params["{$key}_greeting"] != $greetings[$params["{$key}_greeting_id"]] ) ) {
+            return civicrm_create_error( ts( 'Mismatch in %1 greeting id and %1 greeting',
+                                             array( 1 => $key ) ) );
+        } 
+        
+        if ( $params["{$key}_greeting_id"] ) {
+
+            if ( !array_key_exists( $params["{$key}_greeting_id"], $greetings ) ) {
+                return civicrm_create_error( ts( 'Invalid %1 greeting Id', array( 1 => $key ) ) );
+            }
+            
+            if ( ( $greetings[$params["{$key}_greeting_id"]] == 'Customized' ) &&
+                 !CRM_Utils_Array::value( "{$key}_greeting_custom", $params ) ) {
+                return civicrm_create_error( ts( 'Please provide a custom value for %1 greeting', 
+                                                 array( 1 => $key ) ) );
+            }
+                        
+        } else if ( $params["{$key}_greeting"] ) {
+
+            if ( !in_array( $params["{$key}_greeting"], $greetings ) ) {
+                return civicrm_create_error( ts( 'Invalid %1 greeting', array( 1 => $key ) ) );
+            }
+
+            $params["{$key}_greeting_id"] = CRM_Utils_Array::key( $params["{$key}_greeting"], $greetings );
+        }
+                     
+        if ( $params["{$key}_greeting_custom"] ) {
+            $params["{$key}_greeting_id"] = CRM_Utils_Array::key( 'Customized', $greetings );
+        }
+
+        foreach ( array( "{$key}_greeting", "{$key}_greeting_display" ) as $value ) {
+            if ( isset( $params[$value] ) ) {
+                unset( $params[$value] );
+            }
+        }
+    }
+    
 }
 
 /**
