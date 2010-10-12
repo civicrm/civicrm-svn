@@ -239,3 +239,32 @@ INSERT INTO civicrm_option_value
   (option_group_id, {localize field='label'}label{/localize}, value, name, grouping, filter, is_default, weight,{localize field='description'} description{/localize}, is_optgroup,is_reserved, is_active, component_id, visibility_id ) 
 VALUES
   (@ogrID, {localize}'{ts escape="sql"}Case Detail Report{/ts}'{/localize}, 'case/detail', 'CRM_Report_Form_Case_Detail', NULL, 0, 0, @max_weight+1, {localize}'{ts escape="sql"}Case Details{/ts}'{/localize}, 0, 0, 1, @caseCompId, NULL);
+
+-- CRM-5718
+UPDATE civicrm_contribution_widget 
+   SET color_title         = CONCAT( '#', SUBSTRING( color_title, 3 ) )
+ WHERE color_title IS NOT NULL;
+UPDATE civicrm_contribution_widget 
+   SET color_button        = CONCAT( '#', SUBSTRING( color_button, 3 ) )
+ WHERE color_button IS NOT NULL;
+UPDATE civicrm_contribution_widget 
+   SET color_bar           = CONCAT( '#', SUBSTRING( color_bar, 3 ) )
+ WHERE color_bar IS NOT NULL;
+UPDATE civicrm_contribution_widget 
+   SET color_main_text     = CONCAT( '#', SUBSTRING( color_main_text, 3 ) )
+ WHERE color_main_text IS NOT NULL;
+UPDATE civicrm_contribution_widget 
+   SET color_main          = CONCAT( '#', SUBSTRING( color_main, 3 ) )
+ WHERE color_main IS NOT NULL;
+UPDATE civicrm_contribution_widget 
+   SET color_main_bg       = CONCAT( '#', SUBSTRING( color_main_bg, 3 ) )
+ WHERE color_main_bg IS NOT NULL;
+UPDATE civicrm_contribution_widget 
+   SET color_bg            = CONCAT( '#', SUBSTRING( color_bg, 3 ) )
+ WHERE color_bg IS NOT NULL;
+UPDATE civicrm_contribution_widget 
+   SET color_about_link    = CONCAT( '#', SUBSTRING( color_about_link, 3 ) )
+ WHERE color_about_link IS NOT NULL;
+UPDATE civicrm_contribution_widget 
+   SET color_homepage_link = CONCAT( '#', SUBSTRING( color_homepage_link, 3 ) )
+ WHERE color_homepage_link IS NOT NULL;
