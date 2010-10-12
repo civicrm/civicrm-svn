@@ -63,6 +63,12 @@ class CRM_Admin_Form_Extensions extends CRM_Admin_Form
         $session->pushUserContext( $url );
         $this->assign('id', $this->_id);
         $this->assign('key', $this->_key);
+        
+        require_once "CRM/Core/Extensions.php";
+        $ext = new CRM_Core_Extensions( );
+        $extension = $ext->getExtensionsByKey( TRUE );
+
+        $this->assign( 'extension', get_object_vars($extension[$this->_key]) );
     }
 
     /**

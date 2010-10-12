@@ -29,8 +29,11 @@
    {if $action eq 8}
       <div class="messages status">
           <div class="icon inform-icon"></div>
-          {ts}WARNING: Deleting this extension will result in the loss of all records which use the extension.{/ts} {ts}This may mean the loss of a substantial amount of data, and the action cannot be undone.{/ts} {ts}Do you want to continue?{/ts}
+          {ts}WARNING: Deleting this extension will result in the loss of all records which use the extension.{/ts} {ts}This may mean the loss of a substantial amount of data, and the action cannot be undone. Please review the extension information below before you make final decision.{/ts} {ts}Do you want to continue?{/ts}
       </div>
+   {/if}
+   {if $action eq 8 or $action eq 1}
+        {include file="CRM/Admin/Page/ExtensionDetails.tpl"}
    {/if}
    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>      
 </div>

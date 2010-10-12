@@ -107,12 +107,14 @@ class CRM_Core_Extensions
      * @access public
      * @return null
      */
-    public function populate( ) {
+    public function populate( $fullInfo = FALSE ) {
         if( is_null($this->_extDir) || empty( $this->_extDir ) ) {
             return;
         }
         
-        $this->_extById = $this->getInstalled();
+        $installed = $this->getInstalled( $fullInfo );
+        $uploaded = $this->getNotInstalled( );
+        $this->_extById = array_merge( $installed, $uploaded );
         $this->_extByKey = array();
         foreach( $this->_extById as $id => $ext ) {
             $this->_extByKey[$ext->key] = $ext;
@@ -126,6 +128,7 @@ class CRM_Core_Extensions
      * @return array the list of installed extensions
      */
     public function getExtensionsByKey( $fullInfo = FALSE ) {
+        $this->populate( $fullInfo );
         return $this->_extByKey;
     }
 
@@ -316,7 +319,7 @@ class CRM_Core_Extensions
      * @return
      */    
     public function isExtensionClass( $string ) {
-        if( substr( $string, 0, 4 ) == 'org_' ) {
+        if( substr( $string, 0, 4 ) != 'CRM_' ) {
             return TRUE;
         }
         return FALSE;
