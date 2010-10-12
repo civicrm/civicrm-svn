@@ -136,7 +136,7 @@ function civicrm_contact_update( &$params, $create_new = false ) {
         $params['gender_id'] = array_search( $params['gender_id'] , CRM_Core_PseudoConstant::gender() );
     }
     
-    $greetings = array( 'greeting', 'greeting_id', 'greeting_custom' );
+    $greetings = array( 'greeting', 'greeting_id', 'greeting_custom', 'greeting_display' );
     $formatParams = false;
 
     foreach ( array( 'email', 'postal' ) as $greetingValues ) {
