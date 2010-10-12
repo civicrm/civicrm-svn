@@ -46,6 +46,8 @@ class CRM_Logging_Schema
         while ($dao->fetch()) {
             $this->tables[] = $dao->toValue('Tables_in_civicrm_(civicrm_%)');
         }
+        // do not log cache tables
+        $this->tables = preg_grep('/_cache$/', $this->tables, PREG_GREP_INVERT);
     }
 
     function disableLogging()
