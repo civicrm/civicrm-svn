@@ -329,11 +329,14 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
     
     function statistics( &$rows ) {
         $statistics = parent::statistics( $rows );
+
         //CaseType statistics
-        foreach( $statistics['filters'] as $id => $value ) {
-            if( $value['title'] == 'Case Type') {
-                $statistics['filters'][$id]['value'] = 'Is '.$this->case_types[ substr( $statistics['filters'][$id]
-                                                                                        ['value'], -3,-2 ) ];          
+        if ( array_key_exists('filters', $statistics) ) {
+            foreach( $statistics['filters'] as $id => $value ) {
+                if( $value['title'] == 'Case Type') {
+                    $statistics['filters'][$id]['value'] = 'Is '.$this->case_types[ substr( $statistics['filters'][$id]
+                                                                                            ['value'], -3,-2 ) ];          
+                }
             }
         }
         return $statistics;
