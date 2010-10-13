@@ -349,6 +349,10 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
          return self::$_columnHeaders;
      }
      
+     function alphabetQuery( ) {
+         return $this->_query->searchQuery( null, null, null, false, false, true );
+     }
+
      function &getQuery( ) {
          return $this->_query;
      }

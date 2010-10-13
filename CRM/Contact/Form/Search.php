@@ -264,7 +264,13 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                                    'templateFile' => null, ),
                        2 => array( 'selectorName'  => 'CRM_Contribute_Selector_Search',
                                    'templateFile'  => 'CRM/Contribute/Form/Search.tpl',
-                                   'taskClassName' => 'CRM_Contribute_Task' )
+                                   'taskClassName' => 'CRM_Contribute_Task' ),
+                       3 => array( 'selectorName'  => 'CRM_Event_Selector_Search',
+                                   'templateFile'  => 'CRM/Event/Form/Search.tpl',
+                                   'taskClassName' => 'CRM_Event_Task' ),
+                       4 => array( 'selectorName'  => 'CRM_Activity_Selector_Search',
+                                   'templateFile'  => 'CRM/Activity/Form/Search.tpl',
+                                   'taskClassName' => 'CRM_Activity_Task' ),
                        );
         }
         

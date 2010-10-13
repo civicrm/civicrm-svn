@@ -101,6 +101,7 @@ class CRM_Core_IDS {
     exceptions[]        = body_html
     exceptions[]        = msg_html
     exceptions[]        = msg_text
+    exceptions[]        = msg_subject
     exceptions[]        = description
     html[]              = intro
     html[]              = thankyou_text
@@ -114,7 +115,6 @@ class CRM_Core_IDS {
     html[]              = renewal_text
     html[]              = help_pre
     html[]              = help_post
-    html[]              = msg_html
     html[]              = confirm_title
     html[]              = confirm_text
     html[]              = confirm_footer_text
