@@ -337,13 +337,14 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
             $params['assignee_contact_id'] = array_unique( $params['assignee_contact_id'] );
         }
 
+
         $activity->copyValues( $params );
 
         // start transaction        
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
 
-        $result = $activity->save( );        
+        $result = $activity->save( );
         
         if ( is_a( $result, 'CRM_Core_Error' ) ) {
             $transaction->rollback( );

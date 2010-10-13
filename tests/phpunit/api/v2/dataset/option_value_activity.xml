@@ -98,6 +98,21 @@
       <value>0</value>
       <value>1</value>
     </row>
+    <row>
+      <null />
+      <value>2</value>
+      <value>Email processing Test activity type</value>
+      <value>5</value>
+      <value>Email processing Test activity type</value>
+      <null />
+      <value>0</value>
+      <null />
+      <value>2</value>
+      <null />
+      <value>0</value>
+      <value>0</value>
+      <value>1</value>
+    </row>    
   </table>
   <table name="civicrm_option_value">
     <column>id</column>

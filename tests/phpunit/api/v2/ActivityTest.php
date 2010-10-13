@@ -813,24 +813,50 @@ class api_v2_ActivityTest extends CiviUnitTestCase
                       new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
                              dirname(__FILE__)
                              . '/dataset/email_contact_17.xml') );
-        
+
+        //  Truncate the tables
+        $op = new PHPUnit_Extensions_Database_Operation_Truncate( );
+        $op->execute( $this->_dbconn,
+                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
+                             dirname(__FILE__) . '/../../CiviTest/truncate-option.xml') );
+
+        //  Insert a row in civicrm_option_group creating option group
+        //  activity_type 
+        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
+        $op->execute( $this->_dbconn,
+                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
+                             dirname(__FILE__)
+                             . '/dataset/option_group_activity.xml') );
+
+        //  Insert rows in civicrm_option_value defining activity status
+        //  values of 'Scheduled', 'Completed', 'Cancelled'
+        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
+        $op->execute( $this->_dbconn,
+                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
+                             dirname(__FILE__)
+                             . '/dataset/option_value_activity.xml') );
+
         $result = civicrm_activity_process_email(
                    dirname( __FILE__ ) . '/dataset/activity_email' , 5 );
+
+        $this->assertEquals( $result['is_error'], 0,
+                                     "In line " . __LINE__ );
 
         //  civicrm_activity should show the new activity
         $expected = new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
                  dirname( __FILE__ )
                  . '/dataset/activity_1_emailed.xml' );
-        $actual = new PHPUnit_Extensions_Database_DataSet_QueryDataset(
+        $actual = new PHPUnit_Extensions_Database_DataSet_QueryDataSet(
                                        $this->_dbconn );
         $actual->addTable( 'civicrm_activity' );
+        
         $expected->assertEquals( $actual );
 
         //  civicrm_activity_target should show the target of the new activity
         $expected = new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
                  dirname( __FILE__ )
                  . '/dataset/activity_target_1_emailed.xml' );
-        $actual = new PHPUnit_Extensions_Database_DataSet_QueryDataset(
+        $actual = new PHPUnit_Extensions_Database_DataSet_QueryDataSet(
                                        $this->_dbconn );
         $actual->addTable( 'civicrm_activity_target' );
         $expected->assertEquals( $actual );

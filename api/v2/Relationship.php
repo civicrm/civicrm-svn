@@ -153,7 +153,7 @@ function civicrm_relationship_update( $params ) {
         * CRM_Contact_BAO_Relationship::getRelatonship throws up some issues
         * (CRM-6905) the relationship is retrieved with a direct query
         */
-       civicrm_verify_mandatory($params, "relationship", array("relationship_id"));
+       civicrm_verify_mandatory($params, "CRM_Contact_DAO_Relationship", array("relationship_id"));
 
        $names = array("id", "contact_id_a", "contact_id_b",
            "relationship_type_id", "start_date", "end_date", "is_active",

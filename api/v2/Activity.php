@@ -268,7 +268,7 @@ function _civicrm_activity_check_params ( &$params, $addMode = false )
                          );
 
     foreach ( $contactIds as $key => $value ) {
-        if ( $value &&
+        if ( $value && !is_array( $value ) &&
              !CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $value, 'id' ) ) {
             return civicrm_create_error( ts( 'Invalid %1 Contact Id', array( 1 => ucfirst( $key ) ) ) );
         }
@@ -300,8 +300,8 @@ function _civicrm_activity_check_params ( &$params, $addMode = false )
     }
     
     require_once 'CRM/Core/PseudoConstant.php';
-    $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, false, 'name' );
-        
+    $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, true, 'name' );
+
     // check if activity type_id is passed in
     if ( $addMode && !isset( $params['activity_name'] )  && !isset( $params['activity_type_id'] ) ) {
         //when name AND id are both absent
