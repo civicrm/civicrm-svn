@@ -268,3 +268,18 @@ UPDATE civicrm_contribution_widget
 UPDATE civicrm_contribution_widget 
    SET color_homepage_link = CONCAT( '#', SUBSTRING( color_homepage_link, 3 ) )
  WHERE color_homepage_link IS NOT NULL;
+
+--CRM-4572
+
+ALTER TABLE civicrm_address ADD COLUMN master_id INT(10) unsigned default NULL COMMENT 'FK to Address ID';
+ALTER TABLE civicrm_address ADD CONSTRAINT master_id  FOREIGN KEY (master_id) REFERENCES civicrm_address (id) ON DELETE SET NULL; 
+
+UPDATE civicrm_address add1
+INNER JOIN civicrm_contact c1 ON ( c1.id = add1.contact_id AND c1.mail_to_household_id IS NOT NULL )
+INNER JOIN civicrm_address add2 ON ( c1.mail_to_household_id = add2.contact_id AND add2.is_primary = 1 )
+SET add1.master_id = add2.id;
+
+UPDATE civicrm_contact SET mail_to_household_id = NULL;
+
+ALTER TABLE civicrm_contact DROP  FOREIGN KEY FK_civicrm_contact_mail_to_household_id;
+ALTER TABLE civicrm_contact DROP mail_to_household_id;
