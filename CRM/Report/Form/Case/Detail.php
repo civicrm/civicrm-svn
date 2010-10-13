@@ -48,7 +48,8 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
     
     protected $_phoneField   = false;
     
-    
+    protected $_worldRegionField = false;
+
     function __construct( ) {
     	$this->case_statuses = CRM_Case_PseudoConstant::caseStatus();
         $this->case_types = CRM_Case_PseudoConstant::caseType();
@@ -185,6 +186,22 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
                                        'operatorType' => CRM_Report_Form::OP_MULTISELECT,
                                        'options'      => CRM_Core_PseudoConstant::stateProvince( ),), ),
                          ),
+                  'civicrm_worldregion' =>
+                  array( 'dao'       => 'CRM_Core_DAO_Worldregion',
+                         'filters'=>
+                         array(
+                               'worldregion_id'=>
+                               array(
+                                     'name'  => 'id',
+                                     'title'        =>ts('WorldRegion'),
+                                     'type'         => CRM_Utils_Type::T_INT,
+                                     'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+                                     'options'      => CRM_Core_PseudoConstant::worldRegion( ),
+                                     ),),
+                         ),
+                  'civicrm_country' =>
+                  array( 'dao'       => 'CRM_Core_DAO_Country',
+                         ),
                   'civicrm_case_contact' =>
                   array( 'dao'       => 'CRM_Case_DAO_CaseContact',
                          ),
@@ -269,6 +286,14 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
              LEFT JOIN  civicrm_phone {$this->_aliases['civicrm_phone']} 
                        ON ($c.id = {$this->_aliases['civicrm_phone']}.contact_id AND 
                           {$this->_aliases['civicrm_phone']}.is_primary = 1)";
+            
+        }
+        if( $this->_worldRegionField ) {
+            $this->_from .= "
+             LEFT JOIN civicrm_country {$this->_aliases['civicrm_country']}
+                   ON {$this->_aliases['civicrm_country']}.id ={$this->_aliases['civicrm_address']}.country_id
+             LEFT JOIN civicrm_worldregion {$this->_aliases['civicrm_worldregion']}
+                   ON {$this->_aliases['civicrm_country']}.region_id = {$this->_aliases['civicrm_worldregion']}.id ";
             
         }
         
@@ -356,7 +381,11 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
     function postProcess( ) {
         
         $this->beginPostProcess( );
-
+        if ( isset( $this->_params['worldregion_id_value'] ) && !empty( $this->_params['worldregion_id_value'] ) ) {
+            $this->_addressField = true;
+            $this->_worldRegionField = true;
+        }
+        
         $sql  = $this->buildQuery( true );
         
         
