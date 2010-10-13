@@ -1352,7 +1352,7 @@ SELECT id
                     $value = "01-01-{$value}";
                 }
                 
-                $date = CRM_Utils_Date::processDate( $value );
+                $date = CRM_Utils_Date::processDate( $value, null, false, 'YmdHis', $format );
             }
             $value = $date;
         }

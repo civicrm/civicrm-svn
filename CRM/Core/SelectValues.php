@@ -627,6 +627,7 @@ class CRM_Core_SelectValues
                                   "yy-mm"         => ts('yyyy-mm (2009-12)'),
                                   'M yy'          => ts('M yyyy (Dec 2009)'),
                                   "yy"            => ts('yyyy (2009)'),
+                                  "dd/mm/yy"      => ts('dd/mm/yyyy (31/12/2009)'),
                                    );
         
         /*
@@ -663,6 +664,7 @@ class CRM_Core_SelectValues
                                    "yy-mm"         => 'Y-m',
                                    "M yy"          => 'M Y',
                                    "yy"            => 'Y',
+                                   "dd/mm/yy"      => 'd/m/Y',
                                   
                                   );
         return $dateInputFormats;
