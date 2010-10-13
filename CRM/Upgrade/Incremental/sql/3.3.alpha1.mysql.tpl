@@ -242,32 +242,16 @@ VALUES
 
 -- CRM-5718
 UPDATE civicrm_contribution_widget 
-   SET color_title         = CONCAT( '#', SUBSTRING( color_title, 3 ) )
- WHERE color_title IS NOT NULL;
-UPDATE civicrm_contribution_widget 
-   SET color_button        = CONCAT( '#', SUBSTRING( color_button, 3 ) )
- WHERE color_button IS NOT NULL;
-UPDATE civicrm_contribution_widget 
-   SET color_bar           = CONCAT( '#', SUBSTRING( color_bar, 3 ) )
- WHERE color_bar IS NOT NULL;
-UPDATE civicrm_contribution_widget 
-   SET color_main_text     = CONCAT( '#', SUBSTRING( color_main_text, 3 ) )
- WHERE color_main_text IS NOT NULL;
-UPDATE civicrm_contribution_widget 
-   SET color_main          = CONCAT( '#', SUBSTRING( color_main, 3 ) )
- WHERE color_main IS NOT NULL;
-UPDATE civicrm_contribution_widget 
-   SET color_main_bg       = CONCAT( '#', SUBSTRING( color_main_bg, 3 ) )
- WHERE color_main_bg IS NOT NULL;
-UPDATE civicrm_contribution_widget 
-   SET color_bg            = CONCAT( '#', SUBSTRING( color_bg, 3 ) )
- WHERE color_bg IS NOT NULL;
-UPDATE civicrm_contribution_widget 
-   SET color_about_link    = CONCAT( '#', SUBSTRING( color_about_link, 3 ) )
- WHERE color_about_link IS NOT NULL;
-UPDATE civicrm_contribution_widget 
-   SET color_homepage_link = CONCAT( '#', SUBSTRING( color_homepage_link, 3 ) )
- WHERE color_homepage_link IS NOT NULL;
+   SET color_title         = CONCAT( '#', SUBSTRING( color_title, 3 ) ),
+       color_button        = CONCAT( '#', SUBSTRING( color_button, 3 ) ),
+       color_bar           = CONCAT( '#', SUBSTRING( color_bar, 3 ) ),
+       color_main_text     = CONCAT( '#', SUBSTRING( color_main_text, 3 ) ),
+       color_main          = CONCAT( '#', SUBSTRING( color_main, 3 ) ),
+       color_main_bg       = CONCAT( '#', SUBSTRING( color_main_bg, 3 ) ),
+       color_bg            = CONCAT( '#', SUBSTRING( color_bg, 3 ) ),
+       color_about_link    = CONCAT( '#', SUBSTRING( color_about_link, 3 ) ),
+       color_homepage_link = CONCAT( '#', SUBSTRING( color_homepage_link, 3 ) );
+ 
 
 --CRM-4572
 
