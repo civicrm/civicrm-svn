@@ -168,8 +168,8 @@ COLS;
 
     private function tablesExist()
     {
-        // FIXME: probably should be a bit more thorough…
-        return CRM_Core_DAO::checkTableExists('log_civicrm_contact');
+        $missing = array_diff($this->tables, array_keys($this->logs));
+        return empty($missing);
     }
 
     private function triggersExist()
