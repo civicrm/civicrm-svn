@@ -319,8 +319,13 @@ class CRM_Core_Extensions
      * @return
      */    
     public function isExtensionClass( $string ) {
-        if( substr( $string, 0, 4 ) != 'CRM_' ) {
-            return TRUE;
+        
+        if ( substr( $string, 0, 4 ) != 'CRM_' ) {
+            require_once 'CRM/Core/PseudoConstant.php';
+            $extensions = CRM_Core_PseudoConstant::getExtensions( $string );
+            if ( in_array( $string, $extensions ) ) {
+                return TRUE;
+            }
         }
         return FALSE;
     }

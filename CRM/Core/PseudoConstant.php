@@ -308,6 +308,13 @@ class CRM_Core_PseudoConstant
     private static $greeting = array( );
     
     /**
+     * Extensions
+     * @var array
+     * @static
+     */
+    private static $extensions = array( );
+    
+    /**
      * populate the object from the database. generic populate
      * method
      *
@@ -1490,6 +1497,24 @@ ORDER BY name";
         return $_languages;
     }
     
+    /**
+     * Get all extensions 
+     *
+     * The static array extensions
+     *
+     * @access public
+     * @static
+     * @return array - array reference of all system extensions
+     */
+    public static function &getExtensions( )
+    {
+        if ( !self::$extensions ) {
+            require_once 'CRM/Core/OptionGroup.php';
+            self::$extensions = CRM_Core_OptionGroup::values( 'system_extensions' );
+        }
+
+        return self::$extensions;
+    }
 }
 
 
