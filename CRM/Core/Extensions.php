@@ -229,7 +229,7 @@ class CRM_Core_Extensions
      */
     public function keyToPath( $key ) {
         $this->populate();
-        $e = $this->_extByKey;        
+        $e = $this->_extByKey;
         
         $file = (string) $e[$key]->file;
 
