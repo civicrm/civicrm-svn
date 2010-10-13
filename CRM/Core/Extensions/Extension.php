@@ -114,11 +114,13 @@ class CRM_Core_Extensions_Extension
 
     private function _parseXMLFile( $file ) {
         if( file_exists( $file ) ) {
-            $dom = DomDocument::load( $file );
-            if( $dom ) {
-                $dom->xinclude( );
-                return simplexml_import_dom( $dom );
-            }
+            return simplexml_load_file( $file,
+            'SimpleXMLElement', LIBXML_NOCDATA);
+//            $dom = DomDocument::load( $file );
+//            if( $dom ) {
+//                $dom->xinclude( );
+//                return simplexml_import_dom( $dom );
+//            }
         } else {
             CRM_Core_Error::fatal( 'Extension directory ' . $file . ' does not exist.' );
         }
