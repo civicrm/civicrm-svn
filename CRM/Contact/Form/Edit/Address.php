@@ -87,6 +87,10 @@ class CRM_Contact_Form_Edit_Address
                           ts('Billing location for this contact'), 
                           $js );
         
+        // hidden element to store master address id
+        $form->addElement('hidden', "address[$blockId][master_id]" );
+        
+        
         require_once 'CRM/Core/BAO/Preferences.php';
         $addressOptions = CRM_Core_BAO_Preferences::valueOptions( 'address_options', true, null, true );
         $attributes = CRM_Core_DAO::getAttribute('CRM_Core_DAO_Address');
@@ -221,7 +225,7 @@ class CRM_Contact_Form_Edit_Address
         // address custom data processing ends ..
         
         // shared address
-        $form->addElement( 'checkbox', "use_shared_address[$blockId]", null, ts('Shared Address with') );
+        $form->addElement( 'checkbox', "use_shared_address[$blockId]", null, ts('Share Address With') );
         
         require_once 'CRM/Contact/Form/NewContact.php';
         CRM_Contact_Form_NewContact::buildQuickForm( $form, $blockId );        

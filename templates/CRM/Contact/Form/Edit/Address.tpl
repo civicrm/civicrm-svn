@@ -57,11 +57,9 @@
      <tr>
         <td>
             {$form.use_shared_address.$blockId.html}{$form.use_shared_address.$blockId.label}{help id="id-sharedAddress" file="CRM/Contact/Form/Contact.hlp"}<br />
-            <div id="shared-address-{$blockId}" class="hiddenElement">
-               <table>
+            <table id="shared-address-{$blockId}" class="form-layout-compressed hiddenElement">
                {include file="CRM/Contact/Form/NewContact.tpl" blockNo="$blockId"}
-               </table>
-            </div>
+            </table>
         </td>
      </tr>
      <script type="text/javascript">
@@ -75,10 +73,66 @@
              // based on checkbox, show or hide
              if ( cj(this).attr( 'checked') ) {
                  cj( '#shared-address-' + elementId[1]).show( );
+                 cj( 'table#address_' + elementId[1] ).hide( );
              } else {
                  cj( '#shared-address-' + elementId[1]).hide( );
+                 cj( 'table#address_' + elementId[1] ).show( );
              }
          });
+         
+         // start of code to add onchange event for hidden element
+         var blockNo = {/literal}{$blockId}{literal};
+         var contactHiddenElement = 'input[name=contact_select_id[' + blockNo +']]';
+         
+         // store initial value
+         var _default  = cj( contactHiddenElement ).val();
+
+         // observe changes
+         cj( contactHiddenElement ).change(function( ) {
+            var sharedContactId = cj( this ).val( );
+            if ( !sharedContactId || isNaN( sharedContactId ) ) {
+                return;
+            }
+            
+            var addressHTML = '';
+            cj( ).crmAPI( 'location', 'get', { 'contact_id': sharedContactId, 'version': '3.0' }, {
+                  success: function( response ) {
+                      if ( response.address ) {
+                          var selected = 'checked';
+                          cj.each( response.address, function( i, val ) {
+                              if ( i > 1 ) {
+                                  selected = '';
+                              } 
+                              addressHTML = addressHTML + '<input type="radio" name="selected_shared_address-'+ blockNo +'" value=' + val.id + ' ' + selected +'>' + val.display + '<br/>'; 
+                          });
+                          cj( '#shared-address-' + blockNo + ' .shared-address-list' ).remove( );
+                          cj( '#shared-address-' + blockNo ).append( '<tr class="shared-address-list"><td></td><td>' + addressHTML + '</td></tr>');
+                          cj( 'input[name^=selected_shared_address-]' ).click( function( ) {
+                             // get the block id
+                             var elemId = cj(this).attr( 'name' ).split('-');
+                             cj( 'input[name="address[' + elemId[1] + '][master_id]"]' ).val( cj(this).val( ) );
+                          });
+                          
+                      } else {
+                          
+                      }
+                  } 
+            });            
+         });
+
+         // continuous check for changed value
+         setInterval(function( ) {
+           if ( cj( contactHiddenElement ).val( ) != _default ) {
+             // trigger native
+             cj( contactHiddenElement ).change( );
+
+             // update stored value
+             _default = cj( contactHiddenElement ).val( );
+           }  
+
+         }, 500);
+         
+         // end of code to add onchange event for hidden element
      });
      {/literal}
      </script>
