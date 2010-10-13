@@ -397,7 +397,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
         require_once "CRM/Core/BAO/Setting.php";
         $variables = array();
         CRM_Core_BAO_Setting::retrieve($variables);  
-        
+
         // if settings are not available, go down the full path
         if ( empty( $variables ) ) {
             // Step 1. get system variables with their hardcoded defaults
@@ -407,6 +407,10 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
             // available - handled in CRM_Core_Config_Defaults)
             require_once 'CRM/Core/Config/Defaults.php';
             CRM_Core_Config_Defaults::setValues( $variables );
+
+            // retrieve directory and url preferences also
+            require_once 'CRM/Core/BAO/Preferences.php';
+            CRM_Core_BAO_Preferences::retrieveDirectoryAndURLPreferences( $defaults );
 
             // add component specific settings
             $this->componentRegistry->addConfig( $this );

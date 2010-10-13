@@ -294,9 +294,12 @@ class CRM_Core_BAO_Setting
             if (function_exists('mb_internal_encoding')) mb_internal_encoding('UTF-8');
         }
 
-        // retrieve directory and url preferences also
-        require_once 'CRM/Core/BAO/Preferences.php';
-        CRM_Core_BAO_Preferences::retrieveDirectoryAndURLPreferences( $defaults );
+        // dont add if its empty
+        if ( ! empty( $defaults ) ) {
+            // retrieve directory and url preferences also
+            require_once 'CRM/Core/BAO/Preferences.php';
+            CRM_Core_BAO_Preferences::retrieveDirectoryAndURLPreferences( $defaults );
+        }
     }
 
 
