@@ -78,7 +78,7 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
                                'end_date' => 
                                array( 'title' => ts('End Date'), ),
                                'status_id' => 
-                               array( 'title' => ts('Status'),  ),
+                               array( 'title' => ts('Case Status'),  ),
                                'case_type_id'=> 
                                array('title' => ts('Case Type'),) 
                                
@@ -94,7 +94,7 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
                                       'operatorType' => CRM_Report_Form::OP_DATE,
                                       ),
                                'status_id' => 
-                               array( 'title' => ts( 'Status' ),
+                               array( 'title' => ts( 'Case Status' ),
                                       'operatorType' => CRM_Report_Form::OP_MULTISELECT,
                                       'options' => $this->case_statuses,
                                       ),
@@ -254,20 +254,20 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
         if( $this->_addressField ) {
             $this->_from .= "
              LEFT JOIN civicrm_address {$this->_aliases['civicrm_address']} 
-                    ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_address']}.contact_id AND 
+                    ON $c.id = {$this->_aliases['civicrm_address']}.contact_id AND 
                        {$this->_aliases['civicrm_address']}.is_primary = 1\n";
         } 
         if ( $this->_emailField ) {
             $this->_from .= " 
              LEFT JOIN civicrm_email {$this->_aliases['civicrm_email']} 
-                   ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_email']}.contact_id AND 
+                   ON $c.id = {$this->_aliases['civicrm_email']}.contact_id AND 
                        {$this->_aliases['civicrm_email']}.is_primary = 1\n";  
             
         }
         if( $this->_phoneField ) {
             $this->_from .= "
              LEFT JOIN  civicrm_phone {$this->_aliases['civicrm_phone']} 
-                       ON ({$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_phone']}.contact_id AND 
+                       ON ($c.id = {$this->_aliases['civicrm_phone']}.contact_id AND 
                           {$this->_aliases['civicrm_phone']}.is_primary = 1)";
             
         }
@@ -329,7 +329,11 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
     
     function statistics( &$rows ) {
         $statistics = parent::statistics( $rows );
-
+        
+        $select = "select COUNT( DISTINCT( {$this->_aliases['civicrm_address']}.country_id))";
+        $sql    = "{$select} {$this->_from} {$this->_where}";
+        $count  = CRM_Core_DAO::singleValueQuery( $sql );
+        
         //CaseType statistics
         if ( array_key_exists('filters', $statistics) ) {
             foreach( $statistics['filters'] as $id => $value ) {
@@ -339,6 +343,13 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
                 }
             }
         }
+        $statistics['counts']['case']    = array( 
+                                                 'title' => ts( 'Total Number of Cases ' ),
+                                                 'value' => count( $rows ) );
+        $statistics['counts']['country'] = array( 
+                                                 'title' => ts( 'Total Number of Countries ' ),
+                                                 'value' => $count );
+        
         return $statistics;
     }
     

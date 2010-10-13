@@ -29,7 +29,8 @@
             {include file="CRM/common/pager.tpl" location="top" noForm=0}
         </div>
     {/if}
-    <table class="report-layout">
+    {include file="CRM/common/jsortable.tpl"}
+    <table class="report-layout display">
         <thead class="sticky">
         <tr> 
             {foreach from=$columnHeaders item=header key=field}
