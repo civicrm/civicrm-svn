@@ -2182,6 +2182,7 @@ UNION
                  
                  $emailGreeting = CRM_Core_PseudoConstant::greeting( $filter );
                  $emailGreetingString = $emailGreeting[ $contact->email_greeting_id ];
+                 $updateQueryString[] = " email_greeting_custom = NULL ";
              } else if( $contact->email_greeting_custom ) {     
                  $updateQueryString[] = " email_greeting_display = NULL ";
              }
@@ -2200,6 +2201,7 @@ UNION
                                   'greeting_type' => 'postal_greeting' );
                 $postalGreeting = CRM_Core_PseudoConstant::greeting( $filter);    
                 $postalGreetingString = $postalGreeting[ $contact->postal_greeting_id ];
+                $updateQueryString[]  = " postal_greeting_custom = NULL ";
              } elseif ( $contact->postal_greeting_custom ) {
                 $updateQueryString[] = " postal_greeting_display = NULL ";
              }
