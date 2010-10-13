@@ -106,7 +106,6 @@ COLS;
         $query = preg_replace("/^\) ENGINE=[^ ]+ /m", ') ENGINE=ARCHIVE ', $query);
         $query = preg_replace("/^\) /m", "$cols\n) ", $query);
 
-        CRM_Core_DAO::executeQuery("DROP TABLE IF EXISTS log_$table");
         CRM_Core_DAO::executeQuery($query);
 
         $columns = implode(', ', $this->columnsOf($table));
