@@ -78,6 +78,7 @@ class CRM_Admin_Form_Setting_Miscellaneous extends  CRM_Admin_Form_Setting
         parent::postProcess();
 
         // handle logging
+        // FIXME: do it only if the setting changed
         require_once 'CRM/Logging/Schema.php';
         $values = $this->exportValues();
         $logging = new CRM_Logging_Schema;

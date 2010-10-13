@@ -38,6 +38,7 @@ require_once 'CRM/Core/DAO.php';
 
 class CRM_Logging_Schema
 {
+    private $logs   = array();
     private $tables = array();
 
     function __construct()
@@ -48,6 +49,12 @@ class CRM_Logging_Schema
         }
         // do not log cache tables
         $this->tables = preg_grep('/_cache$/', $this->tables, PREG_GREP_INVERT);
+
+        $dao = CRM_Core_DAO::executeQuery('SHOW TABLES LIKE "log_civicrm_%"');
+        while ($dao->fetch()) {
+            $log = $dao->toValue('Tables_in_civicrm_(log_civicrm_%)');
+            $this->logs[substr($log, 4)] = $log;
+        }
     }
 
     function disableLogging()
@@ -61,8 +68,8 @@ class CRM_Logging_Schema
     {
         if ($this->isEnabled()) return;
 
-        if (!$this->tablesExist()) {
-            $this->createLogTables();
+        foreach (array_diff($this->tables, array_keys($this->logs)) as $table) {
+            $this->createLogTableFor($table);
         }
         $this->createTriggers();
     }
@@ -110,13 +117,6 @@ COLS;
 
         $columns = implode(', ', $this->columnsOf($table));
         CRM_Core_DAO::executeQuery("INSERT INTO log_$table ($columns, log_conn_id, log_user_id, log_action) SELECT $columns, CONNECTION_ID(), @civicrm_user_id, 'Initialization' FROM $table");
-    }
-
-    private function createLogTables()
-    {
-        foreach ($this->tables as $table) {
-            $this->createLogTableFor($table);
-        }
     }
 
     private function createTriggersFor($table)
