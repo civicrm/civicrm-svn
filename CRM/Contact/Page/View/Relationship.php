@@ -109,7 +109,7 @@ class CRM_Contact_Page_View_Relationship extends CRM_Core_Page
         $recentOther  = array( );
 
         if ( ( $session->get( 'userID' ) == $this->_contactId ) ||
-             Contact_BAO_Contact_Permission::allow( $this->_contactId, CRM_Core_Permission::EDIT ) ) {
+             CRM_Contact_BAO_Contact_Permission::allow( $this->_contactId, CRM_Core_Permission::EDIT ) ) {
             $recentOther = 
                 array( 'editUrl'   => CRM_Utils_System::url( 'civicrm/contact/view/rel', 
                                                              "action=update&reset=1&id={$viewRelationship[$this->_id]['id']}&cid={$this->_contactId}&rtype={$rType}&context=home" )  ,
