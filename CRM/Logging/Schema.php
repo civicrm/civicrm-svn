@@ -84,6 +84,22 @@ class CRM_Logging_Schema
     }
 
     /**
+     * Add missing log table columns.
+     */
+    function fixSchemaDifferences()
+    {
+        foreach ($this->schemaDifferences() as $table => $cols) {
+            $dao = CRM_Core_DAO::executeQuery("SHOW CREATE TABLE $table");
+            $dao->fetch();
+            $create = explode("\n", $dao->Create_Table);
+            foreach ($cols as $col) {
+                $line = substr(array_pop(preg_grep("/^  `$col` /", $create)), 0, -1);
+                CRM_Core_DAO::executeQuery("ALTER TABLE log_$table ADD $line");
+            }
+        }
+    }
+
+    /**
      * Find missing log table columns by comparing columns of the relevant tables.
      * Returns table-name-keyed array of arrays of missing columns, e.g. array('civicrm_value_foo_1' => array('bar_1', 'baz_2'))
      */
