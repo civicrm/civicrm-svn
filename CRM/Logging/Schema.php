@@ -41,6 +41,9 @@ class CRM_Logging_Schema
     private $logs   = array();
     private $tables = array();
 
+    /**
+     * Populate $this->tables and $this->logs with current db state.
+     */
     function __construct()
     {
         $dao = CRM_Core_DAO::executeQuery('SHOW TABLES LIKE "civicrm_%"');
@@ -57,6 +60,9 @@ class CRM_Logging_Schema
         }
     }
 
+    /**
+     * Disable logging by dropping the triggers (but keep the log tables intact).
+     */
     function disableLogging()
     {
         if (!$this->isEnabled()) return;
@@ -64,6 +70,9 @@ class CRM_Logging_Schema
         $this->dropTriggers();
     }
 
+    /**
+     * Enable logging by creating the log tables (where needed) and creating the triggers.
+     */
     function enableLogging()
     {
         if ($this->isEnabled()) return;
@@ -74,6 +83,9 @@ class CRM_Logging_Schema
         $this->createTriggers();
     }
 
+    /**
+     * Get an array of column names of the given table.
+     */
     private function columnsOf($table)
     {
         static $columnsOf = array();
@@ -89,6 +101,9 @@ class CRM_Logging_Schema
         return $columnsOf[$table];
     }
 
+    /**
+     * Create a log table with schema mirroring the given table’s structure and seeding it with the given table’s contents.
+     */
     private function createLogTableFor($table)
     {
         $dao = CRM_Core_DAO::executeQuery("SHOW CREATE TABLE $table");
@@ -119,6 +134,9 @@ COLS;
         CRM_Core_DAO::executeQuery("INSERT INTO log_$table ($columns, log_conn_id, log_user_id, log_action) SELECT $columns, CONNECTION_ID(), @civicrm_user_id, 'Initialization' FROM $table");
     }
 
+    /**
+     * Create triggers populating the relevant log table every time the given table changes.
+     */
     private function createTriggersFor($table)
     {
         $columns = $this->columnsOf($table);
@@ -145,6 +163,9 @@ COLS;
         }
     }
 
+    /**
+     * Create triggers for all logged tables.
+     */
     private function createTriggers()
     {
         foreach ($this->tables as $table) {
@@ -152,6 +173,9 @@ COLS;
         }
     }
 
+    /**
+     * Drop triggers for all logged tables.
+     */
     private function dropTriggers()
     {
         $dao = new CRM_Core_DAO;
@@ -162,17 +186,26 @@ COLS;
         }
     }
 
+    /**
+     * Predicate whether logging is enabled.
+     */
     private function isEnabled()
     {
         return $this->tablesExist() and $this->triggersExist();
     }
 
+    /**
+     * Predicate whether all tables that need logging have relevant logging tables.
+     */
     private function tablesExist()
     {
         $missing = array_diff($this->tables, array_keys($this->logs));
         return empty($missing);
     }
 
+    /**
+     * Predicate whether the logging triggers are in place.
+     */
     private function triggersExist()
     {
         // FIXME: probably should be a bit more thorough…
