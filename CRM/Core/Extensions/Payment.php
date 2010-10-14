@@ -75,18 +75,53 @@ class CRM_Core_Extensions_Payment
         $dao->url_api_test_default    = trim($this->ext->typeInfo['urlApiTestDefault']);
         $dao->url_recur_test_default  = trim($this->ext->typeInfo['urlRecurTestDefault']);        
         $dao->url_button_default      = trim($this->ext->typeInfo['urlButtonDefault']);
-        $dao->url_button_test_default = trim($this->ext->typeInfo['urlButtonTestDefault']);        
-        $dao->billing_mode            = trim($this->ext->typeInfo['billingMode']);
+        $dao->url_button_test_default = trim($this->ext->typeInfo['urlButtonTestDefault']);
+
+        require_once 'CRM/Core/Payment.php';
+        switch ( trim($this->ext->typeInfo['billingMode'] ) ) {
+            case 'form':
+                $dao->billing_mode = CRM_Core_Payment::BILLING_MODE_FORM;
+                break;
+            case 'button':
+                $dao->billing_mode = CRM_Core_Payment::BILLING_MODE_BUTTON;
+                break;
+            case 'notify':
+                $dao->billing_mode = CRM_Core_Payment::BILLING_MODE_NOTIFY;
+                break;
+            default:
+                CRM_Core_Error::fatal( 'Billing mode in info file has wrong value.' );
+        }
+        
         $dao->is_recur                = trim($this->ext->typeInfo['isRecur']);
         $dao->payment_type            = trim($this->ext->typeInfo['paymentType']);
 
         $dao->save( );
-        
     }
 
+    /**
+     * undocumented function
+     *
+     * @return void
+     **/
     public function uninstall( ) {        
         if( ! array_key_exists( $this->ext->key, $this->paymentProcessorTypes ) ) {
             CRM_Core_Error::fatal( 'This payment processor type is not registered.' );
+        }
+        
+        require_once 'CRM/Core/PseudoConstant.php';
+        $paymentProcessors = CRM_Core_PseudoConstant::paymentProcessor( TRUE );        
+
+        require_once "CRM/Core/DAO/PaymentProcessor.php";
+        foreach( $paymentProcessors as $id => $name ) {
+            $dao = new CRM_Core_DAO_PaymentProcessor();
+            $dao->id = $id;
+            $dao->find( );
+            while ($dao->fetch( )) {                
+                if( $dao->payment_processor_type == $this->ext->name ) {
+                    CRM_Core_Error::fatal( 'Cannot uninstall this extension - there is at least one payment processor using payment processor type provided by it.' );
+                }
+            }
+            
         }
         
         require_once "CRM/Core/BAO/PaymentProcessorType.php";
