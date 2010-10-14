@@ -42,21 +42,27 @@ class CRM_Core_Extensions_Payment
 
     public function __construct( $ext ) {
         $this->ext = $ext;
-        $this->paymentProcessorTypes = $this->_getAllPaymentProcessorTypes();
+        $this->paymentProcessorTypes = $this->_getAllPaymentProcessorTypes( 'class_name' );
     }
     
     public function install( ) {
         if( array_key_exists( $this->ext->key, $this->paymentProcessorTypes ) ) {
-            CRM_Core_Error::fatal( 'This payment processor type is already registered.' );
+            CRM_Core_Error::fatal( 'This payment processor type is already installed.' );
         }
+
+        $ppByName = $this->_getAllPaymentProcessorTypes( 'name' );
+        if( array_key_exists( $this->ext->name, $ppByName ) ) {
+            CRM_Core_Error::fatal( 'This payment processor type already exists.' );
+        }
+
 
         $dao = new CRM_Core_DAO_PaymentProcessorType( );
 
         $dao->is_active               = 1;
         $dao->class_name              = trim($this->ext->key);
         $dao->title                   = trim($this->ext->name) . ' (' . trim($this->ext->key) . ')';
-        $dao->name                    = trim($this->ext->name;
-        $dao->description             = trim($this->ext->description;
+        $dao->name                    = trim($this->ext->name);
+        $dao->description             = trim($this->ext->description);
                 
         $dao->user_name_label         = trim($this->ext->typeInfo['userNameLabel']);
         $dao->password_label          = trim($this->ext->typeInfo['passwordLabel']);
@@ -93,14 +99,14 @@ class CRM_Core_Extensions_Payment
     public function enable() {
     }
 
-    private function _getAllPaymentProcessorTypes() {
+    private function _getAllPaymentProcessorTypes( $attr ) {
         $ppt = array();
         require_once "CRM/Core/DAO/PaymentProcessorType.php";
         require_once "CRM/Core/DAO.php";
         $dao = new CRM_Core_DAO_PaymentProcessorType();
         $dao->find( );
         while ($dao->fetch( )) {
-            $ppt[$dao->class_name] = $dao->id;
+            $ppt[$dao->$attr] = $dao->id;
         }
         return $ppt;
     }
