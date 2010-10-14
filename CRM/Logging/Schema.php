@@ -89,16 +89,34 @@ class CRM_Logging_Schema
     function fixSchemaDifferences()
     {
         foreach ($this->schemaDifferences() as $table => $cols) {
-            $dao = CRM_Core_DAO::executeQuery("SHOW CREATE TABLE $table");
-            $dao->fetch();
-            $create = explode("\n", $dao->Create_Table);
-            foreach ($cols as $col) {
-                $line = substr(array_pop(preg_grep("/^  `$col` /", $create)), 0, -1);
-                CRM_Core_DAO::executeQuery("ALTER TABLE log_$table ADD $line");
-            }
-            // recreate triggers to cater for the new columns
-            $this->createTriggersFor($table);
+            $this->fixSchemaDifferencesFor($table, $cols);
         }
+    }
+
+    /**
+     * Add missing (potentially specified) log table columns for the given table.
+     *
+     * param $table string  name of the relevant table
+     * param $cols mixed    array of columns to add or null (to check for the missing columns)
+     */
+    function fixSchemaDifferencesFor($table, $cols = null)
+    {
+        if (is_null($cols)) {
+           $cols = array_diff($this->columnsOf($table), $this->columnsOf("log_$table"));
+        }
+        if (empty($cols)) return;
+
+        // use the relevant lines from CREATE TABLE to add colums to the log table
+        $dao = CRM_Core_DAO::executeQuery("SHOW CREATE TABLE $table");
+        $dao->fetch();
+        $create = explode("\n", $dao->Create_Table);
+        foreach ($cols as $col) {
+            $line = substr(array_pop(preg_grep("/^  `$col` /", $create)), 0, -1);
+            CRM_Core_DAO::executeQuery("ALTER TABLE log_$table ADD $line");
+        }
+
+        // recreate triggers to cater for the new columns
+        $this->createTriggersFor($table);
     }
 
     /**
