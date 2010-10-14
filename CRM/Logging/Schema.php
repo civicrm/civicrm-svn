@@ -84,6 +84,19 @@ class CRM_Logging_Schema
     }
 
     /**
+     * Find missing log table columns by comparing columns of the relevant tables.
+     * Returns table-name-keyed array of arrays of missing columns, e.g. array('civicrm_value_foo_1' => array('bar_1', 'baz_2'))
+     */
+    function schemaDifferences()
+    {
+        $diffs = array();
+        foreach ($this->tables as $table) {
+            $diffs[$table] = array_diff($this->columnsOf($table), $this->columnsOf("log_$table"));
+        }
+        return array_filter($diffs);
+    }
+
+    /**
      * Get an array of column names of the given table.
      */
     private function columnsOf($table)
