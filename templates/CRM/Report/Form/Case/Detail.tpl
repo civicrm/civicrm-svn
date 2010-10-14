@@ -49,6 +49,18 @@ function viewCase( caseId ,contactId ) {
                              cj( "#casedetails").html( data );
                        },
                    });
+	    var dataUrl = {/literal}"{crmURL p='civicrm/case/details' h=0 q="snippet=4" }"{literal};
+            dataUrl     = dataUrl + '&caseId=' +caseId + '&contactId=' +contactId ;
+	        cj.ajax({
+                         url     : dataUrl,
+                         dataType: "html",
+                         timeout : 5000, //Time in milliseconds
+                         success : function( data ){
+                             cj( "#casedetails").append(data);
+
+                       },
+                   });  
+
 		},
 
                      buttons: { "Done": function() { cj(this).dialog("destroy"); }}

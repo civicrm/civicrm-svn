@@ -49,6 +49,8 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
     protected $_phoneField   = false;
     
     protected $_worldRegionField = false;
+    
+    protected $_activityField  = false;
 
     function __construct( ) {
     	$this->case_statuses = CRM_Case_PseudoConstant::caseStatus();
@@ -202,6 +204,25 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
                   'civicrm_country' =>
                   array( 'dao'       => 'CRM_Core_DAO_Country',
                          ),
+                  'civicrm_activity'  => 
+                  array( 'dao'     => 'CRM_Activity_DAO_Activity',
+                         'fields'  =>
+                         array(
+                               'activity_subject' =>
+                               array(
+                                     'name' =>'subject',
+                                     'title'=>ts('Activity Subject'),
+                                     'no_display'=>true,
+                                     ),
+                               ),
+                         'filters' =>
+                         array( 'activity_date_time'=>
+                                array(
+                                      'title'=>ts('Last Action Date'),
+                                      'operatorType' => CRM_Report_Form::OP_DATE,
+                                      ),
+                                ),
+                         ),
                   'civicrm_case_contact' =>
                   array( 'dao'       => 'CRM_Case_DAO_CaseContact',
                          ),
@@ -296,6 +317,14 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
                    ON {$this->_aliases['civicrm_country']}.region_id = {$this->_aliases['civicrm_worldregion']}.id ";
             
         }
+        if( $this->_activityField ) {
+            $this->_from .= "
+             LEFT JOIN civicrm_activity {$this->_aliases['civicrm_activity']}
+                       ON {$this->_aliases['civicrm_activity']}.source_contact_id = $c.id ";
+            
+        }
+         
+
         
     }
     
@@ -311,6 +340,12 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
                         $relative = CRM_Utils_Array::value( "{$fieldName}_relative", $this->_params );
                         $from     = CRM_Utils_Array::value( "{$fieldName}_from"    , $this->_params );
                         $to       = CRM_Utils_Array::value( "{$fieldName}_to"      , $this->_params );
+                        if( $fieldName =='activity_date_time' ) {
+                            $select  = "SELECT LAST_INSERT_ID ({$this->_aliases['civicrm_activity']}.activity_date_time )";
+                            $orderBy = "ORDER BY {$this->_aliases['civicrm_activity']}.id DESC limit 0,1 ";
+                            $sql     = "{$select} {$this->_from} {$this->_where} {$orderBy}";
+                            $field['dbAlias']  = date( 'YmdHis',strtotime( CRM_Core_DAO::singleValueQuery( $sql ) ) );
+                        }
                         
                         $clause = $this->dateClause( $field['dbAlias'], $relative, $from, $to );
                     } else {
@@ -338,6 +373,9 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
                         $clauses[] = $clause;
                     }
                 }
+            }
+            if( $tableName =='civicrm_activity') {
+                $clauses[] = "{$this->_aliases['civicrm_activity']}.id = ( SELECT MAX( civicrm_activity.id) FROM civicrm_activity )";
             }
         }
         
@@ -385,7 +423,11 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
             $this->_addressField = true;
             $this->_worldRegionField = true;
         }
-        
+        if ( isset( $this->_params['activity_date_time_relative'] ) ) {     
+            $this->_activityField = true;
+            $this->_params['fields']['activity_subject'] = 1;
+        }
+
         $sql  = $this->buildQuery( true );
         
         
@@ -393,6 +435,12 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
         $this->buildRows ( $sql, $rows );
         
         $this->formatDisplay( $rows );
+        if ( isset( $this->_params['activity_date_time_relative'] ) ) {
+            $this->_columnHeaders = array_merge( $this->_columnHeaders ,
+                                                 array( 'civicrm_activity_activity_subject'=>
+                                                        array( 'type'=>'2','title'=>'Last Action Activity Subject' ) ) );
+        }
+        
         $this->doTemplateAssignment( $rows );
         $this->endPostProcess( $rows );	
     }
@@ -445,6 +493,13 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
                 }
                 $entryFound = true;
             }
+            if ( array_key_exists('civicrm_activity_activity_subject', $row) ) {
+                if ( !( $value = $row['civicrm_activity_activity_subject'] ) ) {
+                    $rows[$rowNum]['civicrm_activity_activity_subject'] = "No Subject";
+                }
+                $entryFound = true;
+            }
+            
             if ( !$entryFound ) {
                 break;
             }
