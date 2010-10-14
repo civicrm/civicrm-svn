@@ -291,7 +291,9 @@
   </field>
   <field>
       <name>master_id</name>
+      <title>Master Address ID</title>
       <type>int unsigned</type>
+      <import>true</import>
       <comment>FK to Address ID</comment>
       <add>3.3</add>
   </field>

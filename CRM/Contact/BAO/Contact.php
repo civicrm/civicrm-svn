@@ -1099,10 +1099,15 @@ WHERE id={$id}; ";
             require_once 'CRM/Core/BAO/Cache.php'; 
             $fields =& CRM_Core_BAO_Cache::getItem( 'contact fields', $cacheKeyString );
 
+            $fields = array_merge( $fields, array( 'master_address_belongs_to' =>
+                                                   array ( 'name'  => 'master_id',
+                                                           'title' => ts('Master Address Belongs To') )
+                                                   ));
+
             if ( ! $fields ) {
                 $fields = array( );
                 $fields = array_merge($fields, CRM_Contact_DAO_Contact::export( ));
-            
+                
                 // the fields are meant for contact types
                 if ( in_array( $contactType, array('Individual', 'Household', 'Organization', 'All' ) ) ) {
                     require_once 'CRM/Core/OptionValue.php';
@@ -2491,6 +2496,34 @@ UNION
          ksort( $contextMenu['moreActions'] );
 
          return $contextMenu;
+     }
+     
+     /**
+      * Function to retrieve display name of contact that address is shared 
+      * based on $masterAddressId or $contactId .
+      * @param  int    $masterAddressId    master id.
+      * @param  int    $contactId   contact id.
+      * @return display name |null the found display name or null.
+      * @access public
+      * @static
+      */
+     static function getMasterDisplayName ( $masterAddressId , $contactId = null ) {
+         $masterDisplayName = null;
+         $sql = null;
+         if ( !$masterAddressId && !$contactId ) return $masterDisplayName;
+         
+         if ( $masterAddressId ) {
+             $sql = "SELECT display_name from civicrm_contact
+                 LEFT JOIN civicrm_address ON ( civicrm_address.contact_id = civicrm_contact.id )
+                 WHERE civicrm_address.id = " . $masterAddressId;
+         } else if ( $contactId ) {
+             $sql = "SELECT display_name from civicrm_contact
+                 LEFT JOIN civicrm_address ON ( civicrm_address.contact_id = civicrm_contact.id )
+                 WHERE civicrm_address.contact_id = " . $contactId;
+         }
+         
+         $masterDisplayName  =  CRM_Core_DAO::singleValueQuery( $sql );
+         return $masterDisplayName;
      }
 
 }

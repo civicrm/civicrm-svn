@@ -582,7 +582,6 @@ class CRM_Export_BAO_Export
                     //build row values (data)
                     if ( property_exists( $dao, $field ) ) {
                         $fieldValue = $dao->$field;
-                        // to get phone type from phone type id
                         if ( $field == 'phone_type_id' ) {
                             $fieldValue = $phoneTypes[$fieldValue];
                         } else if ( $field == 'provider_id' ) {
@@ -597,6 +596,13 @@ class CRM_Export_BAO_Export
                             }
                             $fieldValue = implode( ',', $viewRoles );
                         }
+                    } else if ( $field == 'master_address_belongs_to' ) {
+                        $masterAddressId = null;
+                        if ( isset( $dao->master_id ) ) {
+                            $masterAddressId = $dao->master_id;
+                        }
+                        // get display name of contact that address is shared.
+                        $fieldValue = CRM_Contact_BAO_Contact::getMasterDisplayName( $masterAddressId, $dao->contact_id );
                     } else {
                         $fieldValue = '';
                     }
@@ -812,7 +818,7 @@ class CRM_Export_BAO_Export
         // call export hook
         require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::export( $exportTempTable, $headerRows, $sqlColumns, $exportMode );
-
+        
         // now write the CSV file
         self::writeCSVFromTable( $exportTempTable, $headerRows, $sqlColumns, $exportMode );
 
