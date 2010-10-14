@@ -123,15 +123,7 @@ class CRM_Contact_Form_Edit_Individual {
     static function formRule( $fields, $files, $contactID = null ) 
     {
         $errors = array( );
-        //FIXME 
-        if ( CRM_Utils_Array::value( 'state_province_id', $fields['address'][1] )  == 'undefined' ) {
-            $fields['address'][1]['state_province_id'] ='';
-        }
         $primaryID = CRM_Contact_Form_Contact::formRule( $fields, $errors, $contactID );
-        
-        // check for state/country mapping
-        require_once 'CRM/Contact/Form/Edit/Address.php';
-        CRM_Contact_Form_Edit_Address::formRule( $fields, $errors );
         
         // make sure that firstName and lastName or a primary OpenID is set
         if ( !$primaryID && ( !CRM_Utils_Array::value( 'first_name', $fields ) ||  
@@ -141,12 +133,6 @@ class CRM_Contact_Form_Edit_Individual {
         
         //check for duplicate - dedupe rules
         CRM_Contact_Form_Contact::checkDuplicateContacts( $fields, $errors, $contactID, 'Individual' );
-        
-        // if use_household_address option is checked, make sure 'valid household_name' is also present.
-        if ( CRM_Utils_Array::value('use_household_address',$fields ) && 
-             !CRM_Utils_Array::value( 'shared_household_id', $fields ) ) {
-            $errors["shared_household"] = ts("Please select a household from the 'Select Household' list");
-        }
         
         return empty($errors) ? true : $errors; 
     }

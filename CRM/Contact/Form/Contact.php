@@ -541,6 +541,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
 		}
         
         $this->addFormRule( array( 'CRM_Contact_Form_Edit_'. $this->_contactType,   'formRule' ), $this->_contactId );
+        $this->addFormRule( array( 'CRM_Contact_Form_Edit_Address',   'formRule' ) );
+        
         if ( array_key_exists('CommunicationPreferences', $this->_editOptions) ) {
             $this->addFormRule( array( 'CRM_Contact_Form_Edit_CommunicationPreferences','formRule' ), $this );
         }

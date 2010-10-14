@@ -242,8 +242,9 @@ class CRM_Contact_Form_Edit_Address
      * @access public
      * @static
      */
-    static function formRule( $fields, &$errors )
+    static function formRule( $fields, $errors )
     {
+        $errors = array( );
         // check for state/county match if not report error to user.
         if ( is_array( $fields['address'] ) ) {
             foreach ( $fields['address'] as $instance => $addressValues ) {
@@ -306,6 +307,8 @@ class CRM_Contact_Form_Edit_Address
                 }
             }
         }
+        
+        return empty($errors) ? true : $errors;
     }
 
     static function fixStateSelect( &$form,
