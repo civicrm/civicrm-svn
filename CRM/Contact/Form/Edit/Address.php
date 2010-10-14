@@ -225,7 +225,7 @@ class CRM_Contact_Form_Edit_Address
         // address custom data processing ends ..
         
         // shared address
-        $form->addElement( 'checkbox', "use_shared_address[$blockId]", null, ts('Share Address With') );
+        $form->addElement( 'checkbox', "address[$blockId][use_shared_address]", null, ts('Share Address With') );
         
         require_once 'CRM/Contact/Form/NewContact.php';
         CRM_Contact_Form_NewContact::buildQuickForm( $form, $blockId );        
@@ -242,7 +242,7 @@ class CRM_Contact_Form_Edit_Address
      * @access public
      * @static
      */
-    static function formRule( $fields, $errors )
+    static function formRule( $fields, &$errors )
     {
         // check for state/county match if not report error to user.
         if ( is_array( $fields['address'] ) ) {
@@ -264,21 +264,24 @@ class CRM_Contact_Form_Edit_Address
                     if ( $stateProvinceId != ts('- type first letter(s) -') ) {
                         if ( !array_key_exists( $stateProvinceId, CRM_Core_PseudoConstant::stateProvince( false, false ) ) ) {
                             $stateProvinceId = null;
-                            $errors["address[$instance][state_province_id]"] = "Please select a valid State/Province name.";
+                            $errors["address[$instance][state_province_id]"] = ts('Please select a valid State/Province name.');
                         }
                     }
                 }
                 
                 //do check for mismatch countries 
                 if ( $stateProvinceId && $countryId ) {
-                    $stateProvinceDAO = new CRM_Core_DAO_StateProvince();
+                    $stateProvinceDAO = new CRM_Core_DAO_StateProvince( );
                     $stateProvinceDAO->id = $stateProvinceId;
                     $stateProvinceDAO->find(true);
                     if ( $stateProvinceDAO->country_id != $countryId ) {
                         // countries mismatch hence display error
                         $stateProvinces = CRM_Core_PseudoConstant::stateProvince( );
                         $countries =& CRM_Core_PseudoConstant::country( );
-                        $errors["address[$instance][state_province_id]"] = "State/Province " . $stateProvinces[$stateProvinceId] . " is not part of ". $countries[$countryId] . ". It belongs to " . $countries[$stateProvinceDAO->country_id] . "." ;
+                        $errors["address[$instance][state_province_id]"] = ts( 'State/Province %1 is not part of %2. It belongs to %3.', 
+                                                                           array( '1' => $stateProvinces[$stateProvinceId],
+                                                                                  '2' => $countries[$countryId],
+                                                                                  '3' => $countries[$stateProvinceDAO->country_id] ) ) ;
                     }
                 }
                 
@@ -286,14 +289,20 @@ class CRM_Contact_Form_Edit_Address
                 
                 //state county validation
                 if ( $stateProvinceId && $countyId ) {
-                    $countyDAO = new CRM_Core_DAO_County();
+                    $countyDAO = new CRM_Core_DAO_County( );
                     $countyDAO->id = $countyId;
                     $countyDAO->find(true);
-                    
                     if ( $countyDAO->state_province_id != $stateProvinceId ) {
-                        $counties =& CRM_Core_PseudoConstant::county();
-                        $errors["address[$instance][county_id]"] = "County " . $counties[$countyId] . " is not part of ". $stateProvinces[$stateProvinceId] . ". It belongs to " . $stateProvinces[$countyDAO->state_province_id] . "." ;
+                        $counties =& CRM_Core_PseudoConstant::county( );
+                        $errors["address[$instance][county_id]"] = ts( 'County %1 is not part of %2. It belongs to %3.', 
+                                                                           array( '1' => $counties[$countyId],
+                                                                                  '2' => $stateProvinces[$stateProvinceId],
+                                                                                  '3' => $stateProvinces[$countyDAO->state_province_id] ) ) ;
                     }
+                }
+                
+                if ( CRM_Utils_Array::value( 'use_shared_address', $addressValues ) && !CRM_Utils_Array::value( 'master_id', $addressValues ) ) {
+                    $errors["address[$instance][use_shared_address]"] = ts( 'Please select shared contact address.' ) ;
                 }
             }
         }

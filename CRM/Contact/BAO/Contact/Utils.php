@@ -751,4 +751,46 @@ Group By  componentId";
         return $contactDetails;
     }
     
+    /**
+     * Function handles shared contact address processing
+     * In this function we just modify submitted values so that new address created for the user
+     * has same address as shared contact address. We copy the address so that search etc will be 
+     * much efficient.
+     *
+     * @param array $address this is associated array which contains submitted form values
+     *                       
+     * @return void
+     * @static
+     * @access public
+     */
+    static function processSharedAddress( &$address ) {
+        // Sharing contact address during create mode is pretty straight forward.
+        // In update mode we should check following:
+        // - We should check if user has uncheck shared contact address
+        // - If yes then unset the master_id or may be just delete the address that copied master
+        //    Normal update process will automatically create new address with submitted values
+                
+        // 1. loop through entire subnitted address array
+        $masterAddress = array( );
+        $skipFields = array( 'is_primary', 'location_type_id', 'is_billing', 'master_id' );
+        foreach( $address as &$values ) {
+            // 2. check if master id exists, if not continue
+            if ( !CRM_Utils_Array::value( 'master_id', $values ) ) {
+                continue;
+            }
+            
+            // 3. get the address details for master_id
+            $masterAddress = new CRM_Core_BAO_Address( );
+            $masterAddress->id = CRM_Utils_Array::value( 'master_id', $values );
+            $masterAddress->find( true );
+            
+            // 4. modify submitted params and update it with shared contact address
+            // make sure you preserve specific form values like location type, is_primary_ is_billing, master_id
+            foreach ( $values as $field => $submittedValue ) {
+                if ( !in_array( $field, $skipFields ) && isset( $masterAddress->$field ) ) {
+                    $values[$field] = $masterAddress->$field;
+                }
+            } 
+        }
+    } 
 }

@@ -591,8 +591,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                 foreach ( $fields[$name] as $instance => $blockValues ) {
                     $dataExists = self::blockDataExists( $blockValues );
                     
-                    if ( !$dataExists && $name == 'address' &&  $instance == 1 ) {
-                        $dataExists = CRM_Utils_Array::value( 'use_household_address', $fields );
+                    if ( !$dataExists && $name == 'address' ) {
+                        $dataExists = CRM_Utils_Array::value( 'use_shared_address', $fields['address'][$instance] );
                     }
                     
                     if ( $dataExists ) {
@@ -795,10 +795,6 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             CRM_Contact_BAO_Contact::processImageParams( $params ) ;
         }
         
-        //get the related id for shared / current employer
-        if ( CRM_Utils_Array::value( 'shared_household_id',$params ) ) {
-            $params['shared_household'] = $params['shared_household_id'];
-        }
         if ( is_numeric( CRM_Utils_Array::value( 'current_employer_id', $params ) ) 
              && CRM_Utils_Array::value( 'current_employer', $params ) ) { 
 			$params['current_employer'] = $params['current_employer_id'];
@@ -860,20 +856,9 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             $params['is_opt_out'] = CRM_Utils_Array::value( 'is_opt_out', $params, false );
         }
         
-        // copy household address, if use_household_address option (for individual form) is checked
-        if ( $this->_contactType == 'Individual' ) {
-            if ( CRM_Utils_Array::value( 'use_household_address', $params ) && 
-                 CRM_Utils_Array::value( 'shared_household',$params ) ) {
-                if ( is_numeric( $params['shared_household'] ) ) {
-                    CRM_Contact_Form_Edit_Individual::copyHouseholdAddress( $params );
-                }
-                CRM_Contact_Form_Edit_Individual::createSharedHousehold( $params );
-            } else { 
-                $params['mail_to_household_id'] = 'null';
-            }
-        } else {
-            $params['mail_to_household_id'] = 'null';
-        }
+        // process shared contact address.
+        require_once 'CRM/Contact/BAO/Contact/Utils.php';
+        CRM_Contact_BAO_Contact_Utils::processSharedAddress( $params['address'] );
         
         if ( ! array_key_exists( 'TagsAndGroups', $this->_editOptions ) ) {
             unset($params['group']);
@@ -913,17 +898,17 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         // set the contact ID
         $this->_contactId = $contact->id;
 
-        if ( $this->_contactType == 'Individual' && ( CRM_Utils_Array::value( 'use_household_address', $params )) &&
-             CRM_Utils_Array::value( 'mail_to_household_id',$params ) ) {
-            // add/edit/delete the relation of individual with household, if use-household-address option is checked/unchecked.
-            CRM_Contact_Form_Edit_Individual::handleSharedRelation($contact->id , $params );
-        }
-        
-        if ( $this->_contactType == 'Household' && ( $this->_action & CRM_Core_Action::UPDATE ) ) {
-            //TO DO: commented because of schema changes
-            require_once 'CRM/Contact/Form/Edit/Household.php';
-            CRM_Contact_Form_Edit_Household::synchronizeIndividualAddresses( $contact->id );
-        }
+        // if ( $this->_contactType == 'Individual' && ( CRM_Utils_Array::value( 'use_household_address', $params )) &&
+        //      CRM_Utils_Array::value( 'mail_to_household_id',$params ) ) {
+        //     // add/edit/delete the relation of individual with household, if use-household-address option is checked/unchecked.
+        //     CRM_Contact_Form_Edit_Individual::handleSharedRelation($contact->id , $params );
+        // }
+        // 
+        // if ( $this->_contactType == 'Household' && ( $this->_action & CRM_Core_Action::UPDATE ) ) {
+        //     //TO DO: commented because of schema changes
+        //     require_once 'CRM/Contact/Form/Edit/Household.php';
+        //     CRM_Contact_Form_Edit_Household::synchronizeIndividualAddresses( $contact->id );
+        // }
         
         if ( array_key_exists( 'TagsAndGroups', $this->_editOptions ) ) {
             //add contact to tags

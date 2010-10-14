@@ -56,7 +56,7 @@
      </tr>
      <tr>
         <td>
-            {$form.use_shared_address.$blockId.html}{$form.use_shared_address.$blockId.label}{help id="id-sharedAddress" file="CRM/Contact/Form/Contact.hlp"}<br />
+            {$form.address.$blockId.use_shared_address.html}{$form.address.$blockId.use_shared_address.label}{help id="id-sharedAddress" file="CRM/Contact/Form/Contact.hlp"}<br />
             <table id="shared-address-{$blockId}" class="form-layout-compressed hiddenElement">
                {include file="CRM/Contact/Form/NewContact.tpl" blockNo="$blockId"}
             </table>
@@ -65,23 +65,20 @@
      <script type="text/javascript">
      {literal}
      cj( function( ) {
+         var blockNo = {/literal}{$blockId}{literal};
          // handle check / uncheck of checkbox
-         cj( 'input[id^=use_shared_address]' ).click( function( ) {
-             // get the block id
-             var elementId = cj(this).attr( 'id' ).replace( ']', '').split('[');
-
+         cj( '#address\\[' + blockNo + '\\]\\[use_shared_address\\]' ).click( function( ) {
              // based on checkbox, show or hide
              if ( cj(this).attr( 'checked') ) {
-                 cj( '#shared-address-' + elementId[1]).show( );
-                 cj( 'table#address_' + elementId[1] ).hide( );
+                 cj( '#shared-address-' + blockNo ).show( );
+                 cj( 'table#address_' + blockNo ).hide( );
              } else {
-                 cj( '#shared-address-' + elementId[1]).hide( );
-                 cj( 'table#address_' + elementId[1] ).show( );
+                 cj( '#shared-address-' + blockNo ).hide( );
+                 cj( 'table#address_' + blockNo ).show( );
              }
          });
          
          // start of code to add onchange event for hidden element
-         var blockNo = {/literal}{$blockId}{literal};
          var contactHiddenElement = 'input[name=contact_select_id[' + blockNo +']]';
          
          // store initial value

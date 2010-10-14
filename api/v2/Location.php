@@ -84,7 +84,6 @@ function civicrm_location_add( &$params ) {
  * 
  *  @param  object  $contact        A valid Contact object (passed by reference).
  *  @param  string  $location_id    Valid (db-level) id for location to be updated. 
-
  *  @param  Array   $params         Associative array of property name/value pairs to be updated
  *
  *  @return Location object with updated property values
