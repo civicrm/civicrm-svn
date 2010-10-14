@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.2                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -25,7 +25,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | eWAY Core Payment Module for CiviCRM version 3.2 & 1.9             |
+ | eWAY Core Payment Module for CiviCRM version 3.3 & 1.9             |
  +--------------------------------------------------------------------+
  | Licensed to CiviCRM under the Academic Free License version 3.0    |
  |                                                                    |
