@@ -96,6 +96,8 @@ class CRM_Logging_Schema
                 $line = substr(array_pop(preg_grep("/^  `$col` /", $create)), 0, -1);
                 CRM_Core_DAO::executeQuery("ALTER TABLE log_$table ADD $line");
             }
+            // recreate triggers to cater for the new columns
+            $this->createTriggersFor($table);
         }
     }
 
