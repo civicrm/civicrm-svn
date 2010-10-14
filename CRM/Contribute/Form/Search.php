@@ -145,6 +145,8 @@ class CRM_Contribute_Form_Search extends CRM_Core_Form
      */ 
     function preProcess( ) 
     {
+        $this->set( 'searchFormName', 'Search' );
+
         /** 
          * set the button names 
          */ 

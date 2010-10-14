@@ -176,6 +176,8 @@ class CRM_Contact_Form_Search_Basic extends CRM_Contact_Form_Search {
      * @access public
      */
     function preProcess( ) {
+        $this->set( 'searchFormName', 'Basic' );
+
         parent::preProcess( );
     }
 

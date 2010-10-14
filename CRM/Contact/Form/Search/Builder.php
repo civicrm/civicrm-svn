@@ -66,6 +66,8 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search
      * @access public
      */
     public function preProcess() {
+        $this->set( 'searchFormName', 'Builder' );
+        
         $this->set('context', 'builder' );
         parent::preProcess( );
         

@@ -87,7 +87,7 @@ class CRM_Event_Form_Task extends CRM_Core_Form
     {
         $form->_participantIds = array( );
         
-        $values = $form->controller->exportValues( 'Search' );
+        $values = $form->controller->exportValues( $form->get( 'searchFormName' ) );
 
         $form->_task = $values['task'];
         $eventTasks = CRM_Event_Task::tasks();

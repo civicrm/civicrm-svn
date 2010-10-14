@@ -93,7 +93,7 @@ class CRM_Activity_Form_Task extends CRM_Core_Form
     {
         $form->_activityHolderIds = array();
 
-        $values = $form->controller->exportValues( 'Search' );
+        $values = $form->controller->exportValues( $form->get( 'searchFormName' ) );
         
         $form->_task = $values['task'];
         $activityTasks = CRM_Activity_Task::tasks();

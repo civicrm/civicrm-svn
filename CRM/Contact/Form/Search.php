@@ -261,15 +261,27 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         if ( ! self::$_modeValues ) {
             self::$_modeValues = 
                 array( 1 => array( 'selectorName' => 'CRM_Contact_Selector',
-                                   'templateFile' => null, ),
+                                   'taskFile'      => "CRM/Contact/Form/Search/ResultTasks.tpl",
+                                   'taskContext'   => null,
+                                   'resultFile'    => 'CRM/Contact/Form/Selector.tpl',
+                                   'resultContext' => null ),
                        2 => array( 'selectorName'  => 'CRM_Contribute_Selector_Search',
-                                   'templateFile'  => 'CRM/Contribute/Form/Search.tpl',
+                                   'taskFile'      => "CRM/common/searchResultTasks.tpl",
+                                   'taskContext'   => 'Contribution',
+                                   'resultFile'    => 'CRM/Contribute/Form/Selector.tpl',
+                                   'resultContext' => 'Search',
                                    'taskClassName' => 'CRM_Contribute_Task' ),
                        3 => array( 'selectorName'  => 'CRM_Event_Selector_Search',
-                                   'templateFile'  => 'CRM/Event/Form/Search.tpl',
+                                   'taskFile'      => "CRM/common/searchResultTasks.tpl",
+                                   'taskContext'   => null,
+                                   'resultFile'    => 'CRM/Event/Form/Selector.tpl',
+                                   'resultContext' => 'Search',
                                    'taskClassName' => 'CRM_Event_Task' ),
                        4 => array( 'selectorName'  => 'CRM_Activity_Selector_Search',
-                                   'templateFile'  => 'CRM/Activity/Form/Search.tpl',
+                                   'taskFile'      => "CRM/common/searchResultTasks.tpl",
+                                   'taskContext'   => null,
+                                   'resultFile'    => 'CRM/Activity/Form/Selector.tpl',
+                                   'resultContext' => 'Search',
                                    'taskClassName' => 'CRM_Activity_Task' ),
                        );
         }
@@ -277,6 +289,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         if ( ! array_key_exists( $mode, self::$_modeValues ) ) {
             $mode = 1;
         }
+
         return self::$_modeValues[$mode];
     }
 
@@ -442,13 +455,6 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         $this->_tag             =  CRM_Core_BAO_Tag::getTags( );
         $this->_done            =  false;
 
-        /**
-         * set the button names
-         */
-        $this->_searchButtonName = $this->getButtonName( 'refresh' );
-        $this->_printButtonName  = $this->getButtonName( 'next'   , 'print' );
-        $this->_actionButtonName = $this->getButtonName( 'next'   , 'action' );
-        
         /*
          * we allow the controller to set force/reset externally, useful when we are being
          * driven by the wizard framework
@@ -472,6 +478,16 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         $this->_componentMode   = CRM_Utils_Request::retrieve( 'component_mode' , 'Positive',
                                                                $this, false, 1 );
 
+        /**
+         * set the button names
+         */
+        $this->_searchButtonName = $this->getButtonName( 'refresh' );
+        $this->_printButtonName  = $this->getButtonName( 'next'   , 'print' );
+        $this->_actionButtonName = $this->getButtonName( 'next'   , 'action' );
+
+        $this->assign( 'printButtonName' , $this->_printButtonName  );
+        $this->assign( 'actionButtonName', $this->_actionButtonName );
+        
         // reset from session, CRM-3526 
         $session = CRM_Core_Session::singleton();
         if ( $this->_force && $session->get( 'selectedSearchContactIds' ) ) {
@@ -492,10 +508,11 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         if ( ! CRM_Utils_Array::value( $this->_context, self::validContext( ) ) ) {
             $this->_context = 'search';
         }
-        $this->set( 'context', $this->_context );
+        $this->set   ( 'context', $this->_context );
         $this->assign( 'context', $this->_context );
 
         $this->_modeValue = $this->getModeValue( $this->_componentMode );
+        $this->assign( $this->_modeValue );
 
         $this->set( 'selectorName', $this->_selectorName );
 
@@ -721,13 +738,6 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
      */
     function getTitle( ) {
         return ts('Search');
-    }
-
-    function getTemplateFileName( ) {
-        if ( ! empty( $this->_modeValue['templateFile'] ) ) {
-            return $this->_modeValue['templateFile'];
-        }
-        return parent::getTemplateFileName( );
     }
 
 }

@@ -50,6 +50,18 @@ require_once 'CRM/Contact/Form/Search.php';
 class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search 
 {
     /**
+     * processing needed for buildForm and later
+     *
+     * @return void
+     * @access public
+     */
+    function preProcess( ) {
+        $this->set( 'searchFormName', 'Advanced' );
+
+        parent::preProcess( );
+    }
+
+    /**
      * Build the form
      *
      * @access public

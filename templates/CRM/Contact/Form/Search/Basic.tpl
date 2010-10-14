@@ -42,11 +42,27 @@
     {* Search request has returned 1 or more matching rows. *}
        {* This section handles form elements for action task select and submit *}
 	           <div class="crm-search-tasks">
-       {include file="CRM/Contact/Form/Search/ResultTasks.tpl"}
+       {if $taskFile}
+          {if $taskContext}
+            {include file=$taskFile context=$taskContext}
+          {else}
+            {include file=$taskFile}
+          {/if}
+       {else}
+         {include file="CRM/Contact/Form/Search/ResultTasks.tpl"}
+       {/if}
 		</div>
        {* This section displays the rows along and includes the paging controls *}
 	           <div class="crm-search-results">
-       {include file="CRM/Contact/Form/Selector.tpl"}
+       {if $resultFile}
+          {if $resultContext}
+             {include file=$resultFile context=$resultContext}
+          {else}
+             {include file=$resultFile}
+          {/if}
+       {else}
+         {include file="CRM/Contact/Form/Selector.tpl"}
+       {/if}
        </div>
        
     {* END Actions/Results section *}
