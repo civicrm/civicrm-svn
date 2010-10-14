@@ -99,7 +99,7 @@
          var blockNo = {/literal}{$blockId}{literal};
          
          // call this when form loads
-         showHideSharedAddress( blockNo, false );
+         showHideSharedAddress( blockNo, true );
          
          // handle check / uncheck of checkbox
          cj( '#address\\[' + blockNo + '\\]\\[use_shared_address\\]' ).click( function( ) {

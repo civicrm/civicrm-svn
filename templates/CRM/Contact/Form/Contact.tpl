@@ -105,6 +105,7 @@ var action = "{/literal}{$action}{literal}";
 var removeCustomData = true;
 showTab[0] = {"spanShow":"span#contact","divShow":"div#contactDetails"};
 cj(function( ) {
+    cj().crmaccordions( ); 
 	cj(showTab).each( function(){ 
         if( this.spanShow ) {
             cj(this.spanShow).removeClass( ).addClass('crm-accordion-open');
@@ -121,8 +122,8 @@ cj(function( ) {
 			cj( prevEle).remove();
 		}
 		//open tab if form rule throws error
-		if ( cj(this).children().find('span.crm-error').text() ) {
-			cj(this).show().prev().children('span:first').removeClass( 'crm-accordion-closed' ).addClass('crm-accordion-open');
+		if ( cj(this).children( ).find('span.crm-error').text( ).length > 0 ) {
+			cj(this).parent( ).removeClass( 'crm-accordion-closed' ).addClass('crm-accordion-open');
 		}
 	});
 
@@ -200,12 +201,6 @@ function removeDefaultCustomFields( ) {
 }
  
 </script>
-<script type="text/javascript">
-cj(function() {
-   cj().crmaccordions(); 
-});
-</script>
-
 {/literal}
 
 {* include common additional blocks tpl *}
