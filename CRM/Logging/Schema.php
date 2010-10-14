@@ -154,6 +154,7 @@ COLS;
 
     private function dropTriggers()
     {
+        $dao = new CRM_Core_DAO;
         foreach ($this->tables as $table) {
             $dao->executeQuery("DROP TRIGGER IF EXISTS {$table}_after_insert");
             $dao->executeQuery("DROP TRIGGER IF EXISTS {$table}_after_update");
