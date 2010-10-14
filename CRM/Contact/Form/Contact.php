@@ -320,19 +320,6 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                 $defaults['contact_sub_type'] = $this->_contactSubType;
             }
         } else {
-            if ( isset( $this->_elementIndex[ "shared_household" ] ) ) {
-                $sharedHousehold = $this->getElementValue( "shared_household" );
-                if ( $sharedHousehold ) {
-                    $this->assign('defaultSharedHousehold', $sharedHousehold );
-                } elseif ( CRM_Utils_Array::value('mail_to_household_id', $defaults) ) {
-                    $defaults['use_household_address'] = true;
-                    $this->assign('defaultSharedHousehold', $defaults['mail_to_household_id'] );
-                }
-                $defaults['shared_household_id'] = CRM_Utils_Array::value( 'mail_to_household_id', $defaults );
-                if ( array_key_exists(1, $defaults['address']) ) {
-                    $this->assign( 'sharedHouseholdAddress', $defaults['address'][1]['display'] );
-                }
-            }
             require_once 'CRM/Contact/BAO/Relationship.php';
             $currentEmployer = CRM_Contact_BAO_Relationship::getCurrentEmployer( array( $this->_contactId ) );
             $defaults['current_employer_id'] = CRM_Utils_Array::value( 'org_id', $currentEmployer[$this->_contactId] );
@@ -357,11 +344,23 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             }
         }
         
-        // build street address, CRM-5450.
-        $addressValues = array( );
-        if ( $this->_parseStreetAddress ) {
-            if ( is_array( $defaults['address'] ) && 
-                 !CRM_Utils_system::isNull( $defaults['address'] ) ) {
+        $addressValues = array( );       
+        if ( is_array( $defaults['address'] ) && 
+             !CRM_Utils_system::isNull( $defaults['address'] ) ) {
+             
+             // start of contact shared adddress defaults
+             $sharedAddresses = array( );
+             foreach ( $defaults['address'] as $key => $addressValue ) {
+                 if ( CRM_Utils_Array::value( 'master_id', $addressValue ) ) {
+                     $sharedAddresses[$key]['shared_address_display'] = $addressValue['display'];
+                 }
+             }
+             $this->assign( 'sharedAddresses', $sharedAddresses );
+             // end of shared address defaults
+             
+             // start of parse address functionality   
+             // build street address, CRM-5450.  
+             if ( $this->_parseStreetAddress ) {                 
                 $parseFields = array( 'street_address', 'street_number', 'street_name', 'street_unit' );
                 foreach ( $defaults['address'] as $cnt => &$address ) {
                     $streetAddress = null;
@@ -376,38 +375,39 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                         $address['street_address'] = $streetAddress;
                     }
                     $address['street_number'] .= CRM_Utils_Array::value( 'street_number_suffix', $address ); 
-                    
+                
                     // build array for set default.
                     foreach ( $parseFields as $field ) {
                         $addressValues["{$field}_{$cnt}"] = CRM_Utils_Array::value( $field, $address ); 
                     }
-                    
+                
                     // don't load fields, use js to populate.
                     foreach ( array( 'street_number', 'street_name', 'street_unit' ) as $f ) {
                         if ( isset( $address[$f] ) ) unset( $address[$f] );
                     }
                 }
-            }
-            $this->assign( 'allAddressFieldValues', json_encode( $addressValues ) );
-            
-            //hack to handle show/hide address fields.
-            $parsedAddress = array( );
-            if ( $this->_contactId &&
-                 CRM_Utils_Array::value( 'address', $_POST ) 
-                 && is_array( $_POST['address'] ) ) {
-                foreach ( $_POST['address'] as $cnt => $values ) {
-                    $showField = 'streetAddress';
-                    foreach ( array( 'street_number', 'street_name', 'street_unit' ) as $fld ) {
-                        if ( CRM_Utils_Array::value( $fld, $values ) ) {
-                            $showField = 'addressElements';
-                            break;
+                $this->assign( 'allAddressFieldValues', json_encode( $addressValues ) );
+                
+                //hack to handle show/hide address fields.
+                $parsedAddress = array( );
+                if ( $this->_contactId &&
+                     CRM_Utils_Array::value( 'address', $_POST ) 
+                     && is_array( $_POST['address'] ) ) {
+                    foreach ( $_POST['address'] as $cnt => $values ) {
+                        $showField = 'streetAddress';
+                        foreach ( array( 'street_number', 'street_name', 'street_unit' ) as $fld ) {
+                            if ( CRM_Utils_Array::value( $fld, $values ) ) {
+                                $showField = 'addressElements';
+                                break;
+                            }
                         }
+                        $parsedAddress[$cnt] = $showField;
                     }
-                    $parsedAddress[$cnt] = $showField;
                 }
+                $this->assign( 'showHideAddressFields',     $parsedAddress );
+                $this->assign( 'loadShowHideAddressFields', empty( $parsedAddress  ) ? false : true  );             
             }
-            $this->assign( 'showHideAddressFields',     $parsedAddress );
-            $this->assign( 'loadShowHideAddressFields', empty( $parsedAddress  ) ? false : true  );
+            // end of parse address functionality 
         }
         
         if ( CRM_Utils_Array::value( 'image_URL', $defaults  ) ) {

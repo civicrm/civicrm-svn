@@ -439,6 +439,10 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
 
             $values['display'     ] = $address->display;
             $values['display_text'] = $address->display_text;
+            
+            if ( is_numeric( $address->master_id ) ) {
+                $values['use_shared_address'] = 1;
+            }            
 
             $addresses[$count] = $values;
             

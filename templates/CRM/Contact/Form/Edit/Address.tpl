@@ -54,28 +54,56 @@
             </td>
         {/if}
      </tr>
+     <script type="text/javascript">
+     {literal}
+         function showHideSharedAddress( blockNo, showSelect ) {
+             // based on checkbox, show or hide
+             if ( cj( '#address\\[' + blockNo + '\\]\\[use_shared_address\\]' ).attr( 'checked') ) {
+                 if ( showSelect && cj( '#shared-address-display-' + blockNo ).length == 0 ) {
+                     cj( '#shared-address-' + blockNo ).show( );
+                 }
+                 
+                 cj( 'table#address_' + blockNo ).hide( );
+                 cj( '#shared-address-display-' + blockNo ).show( );
+                 cj( '#shared-address-display-cancel-' + blockNo ).hide( );
+             } else {
+                 cj( '#shared-address-' + blockNo ).hide( );
+                 cj( 'table#address_' + blockNo ).show( );
+                 cj( '#shared-address-display-' + blockNo ).hide( );
+                 cj( '#shared-address-display-cancel-' + blockNo ).hide( );
+             }
+         }
+     {/literal}
+     </script>
+     
      <tr>
         <td>
             {$form.address.$blockId.use_shared_address.html}{$form.address.$blockId.use_shared_address.label}{help id="id-sharedAddress" file="CRM/Contact/Form/Contact.hlp"}<br />
+            {if $sharedAddresses.$blockId.shared_address_display}
+                <span class="shared-address-display" id="shared-address-display-{$blockId}"  onclick="cj(this).hide( );cj('#shared-address-display-cancel-{$blockId}').show( );cj('#shared-address-{$blockId}').show( );">
+                    {$sharedAddresses.$blockId.shared_address_display} <a href='#' onclick='return false;'>( {ts}Change current shared address{/ts} )</a>
+                </span>
+                <span id="shared-address-display-cancel-{$blockId}" class="hiddenElement" onclick="cj(this).hide( );cj('#shared-address-display-{$blockId}').show( );cj('#shared-address-{$blockId}').hide( );">
+                    <a href='#' onclick='return false;'>( {ts}Cancel{/ts} )</a>
+                </span>
+            {/if}
             <table id="shared-address-{$blockId}" class="form-layout-compressed hiddenElement">
                {include file="CRM/Contact/Form/NewContact.tpl" blockNo="$blockId"}
             </table>
         </td>
      </tr>
+     
      <script type="text/javascript">
      {literal}
      cj( function( ) {
          var blockNo = {/literal}{$blockId}{literal};
+         
+         // call this when form loads
+         showHideSharedAddress( blockNo, false );
+         
          // handle check / uncheck of checkbox
          cj( '#address\\[' + blockNo + '\\]\\[use_shared_address\\]' ).click( function( ) {
-             // based on checkbox, show or hide
-             if ( cj(this).attr( 'checked') ) {
-                 cj( '#shared-address-' + blockNo ).show( );
-                 cj( 'table#address_' + blockNo ).hide( );
-             } else {
-                 cj( '#shared-address-' + blockNo ).hide( );
-                 cj( 'table#address_' + blockNo ).show( );
-             }
+             showHideSharedAddress( blockNo, true );
          });
          
          // start of code to add onchange event for hidden element
@@ -99,7 +127,9 @@
                           cj.each( response.address, function( i, val ) {
                               if ( i > 1 ) {
                                   selected = '';
-                              } 
+                              } else {
+                                  cj( 'input[name="address[' + blockNo + '][master_id]"]' ).val( val.id );
+                              }
                               addressHTML = addressHTML + '<input type="radio" name="selected_shared_address-'+ blockNo +'" value=' + val.id + ' ' + selected +'>' + val.display + '<br/>'; 
                           });
                           cj( '#shared-address-' + blockNo + ' .shared-address-list' ).remove( );
