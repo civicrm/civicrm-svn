@@ -757,9 +757,9 @@ LEFT JOIN  civicrm_country ON (civicrm_address.country_id = civicrm_country.id)
         $where =  'WHERE ( 1 )';
         if ( $contactId ) {
             if ( $direction == 'a_b' ) {
-                $where .= ' AND civicrm_relationship.contact_id_b = ' . CRM_Utils_Type::escape($contactId, 'Positive') . ' AND civicrm_relationship.contact_id_a = civicrm_contact.id ';
+                $where .= ' AND civicrm_relationship.contact_id_b = ' . CRM_Utils_Type::escape($contactId, 'Positive');
             } else {
-                $where .= ' AND civicrm_relationship.contact_id_a = ' . CRM_Utils_Type::escape($contactId, 'Positive') . ' AND civicrm_relationship.contact_id_b = civicrm_contact.id ';
+                $where .= ' AND civicrm_relationship.contact_id_a = ' . CRM_Utils_Type::escape($contactId, 'Positive');
             }
         }
         if ( $relationshipId ) {
