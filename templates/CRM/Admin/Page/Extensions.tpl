@@ -90,7 +90,7 @@
       {else}
         <div class="messages status">
              <div class="icon inform-icon"></div>
-            {ts}You don't have any extensions.{/ts}
+            {ts}You have not installed any extensions.{/ts}
         </div>    
       {/if}
     <br/>
