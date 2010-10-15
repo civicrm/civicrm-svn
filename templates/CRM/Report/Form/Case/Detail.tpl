@@ -32,8 +32,8 @@ function viewCase( caseId ,contactId ) {
         title: "Case Details",
         modal: true,
         bgiframe: true,
-        width : 450,
-	height: 250,
+        width : 700,
+	height: 400,
         overlay: { 
                    opacity: 0.5, 
             	   background: "black" 

@@ -91,10 +91,12 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
                                'start_date' => 
                                array( 'title' => ts( 'Start Date' ),
                                       'operatorType' => CRM_Report_Form::OP_DATE,
+                                      'type'         => CRM_Utils_Type::T_DATE
                                       ),
                                'end_date' => 
                                array( 'title' => ts( 'End Date' ),
                                       'operatorType' => CRM_Report_Form::OP_DATE,
+                                      'type'         => CRM_Utils_Type::T_DATE
                                       ),
                                'status_id' => 
                                array( 'title' => ts( 'Case Status' ),
@@ -350,7 +352,8 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
                             $field['dbAlias']  = date( 'YmdHis',strtotime( CRM_Core_DAO::singleValueQuery( $sql ) ) );
                         }
                         
-                        $clause = $this->dateClause( $field['dbAlias'], $relative, $from, $to );
+                        $clause = $this->dateClause( $field['dbAlias'], $relative, $from, $to,
+                                                     CRM_Utils_Array::value( 'type',  $field ) );
                     } else {
                         
                         $op = CRM_Utils_Array::value( "{$fieldName}_op", $this->_params );
@@ -436,7 +439,7 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
         }
 
         $sql  = $this->buildQuery( true );
-        
+             
         
         $rows = $graphRows = array();
         $this->buildRows ( $sql, $rows );
