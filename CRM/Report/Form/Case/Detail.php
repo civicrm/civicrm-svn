@@ -227,7 +227,10 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
                   array( 'dao'       => 'CRM_Case_DAO_CaseContact',
                          ),
                    );
-        
+        $this->_options = array( 'my_cases' => 
+                                 array( 'title'   => ts('My Cases'),
+                                        'type'    => 'checkbox' ),
+                                 );
         parent::__construct( );
     }
     
@@ -340,7 +343,7 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
                         $relative = CRM_Utils_Array::value( "{$fieldName}_relative", $this->_params );
                         $from     = CRM_Utils_Array::value( "{$fieldName}_from"    , $this->_params );
                         $to       = CRM_Utils_Array::value( "{$fieldName}_to"      , $this->_params );
-                        if( $fieldName =='activity_date_time' ) {
+                        if( $fieldName =='activity_date_time' && $this->_params['activity_date_time_relative'] ) {
                             $select  = "SELECT LAST_INSERT_ID ({$this->_aliases['civicrm_activity']}.activity_date_time )";
                             $orderBy = "ORDER BY {$this->_aliases['civicrm_activity']}.id DESC limit 0,1 ";
                             $sql     = "{$select} {$this->_from} {$this->_where} {$orderBy}";
@@ -374,9 +377,13 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
                     }
                 }
             }
-            if( $tableName =='civicrm_activity') {
+            if( $tableName =='civicrm_activity' && $this->_params['activity_date_time_relative'] ) {
                 $clauses[] = "{$this->_aliases['civicrm_activity']}.id = ( SELECT MAX( civicrm_activity.id) FROM civicrm_activity )";
             }
+        }
+        if( isset( $this->_params['options']['my_cases'] ) ) {
+            $session   = CRM_Core_Session::singleton( );
+            $clauses[] = "{$this->_aliases['civicrm_contact']}.id = {$session->get( 'userID' )}"; 
         }
         
         if ( empty( $clauses ) ) {
@@ -423,7 +430,7 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
             $this->_addressField = true;
             $this->_worldRegionField = true;
         }
-        if ( isset( $this->_params['activity_date_time_relative'] ) ) {     
+        if ( $this->_params['activity_date_time_relative'] ) {     
             $this->_activityField = true;
             $this->_params['fields']['activity_subject'] = 1;
         }
@@ -435,7 +442,7 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
         $this->buildRows ( $sql, $rows );
         
         $this->formatDisplay( $rows );
-        if ( isset( $this->_params['activity_date_time_relative'] ) ) {
+        if ( $this->_params['activity_date_time_relative'] ) {
             $this->_columnHeaders = array_merge( $this->_columnHeaders ,
                                                  array( 'civicrm_activity_activity_subject'=>
                                                         array( 'type'=>'2','title'=>'Last Action Activity Subject' ) ) );
