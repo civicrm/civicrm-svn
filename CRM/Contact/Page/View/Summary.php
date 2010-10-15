@@ -215,13 +215,13 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
             $this->assign( substr( $varName, 1 ), $this->$varName );
         }
         
-        //get the householdname
-        if ( isset($defaults['mail_to_household_id']) ) {
-            $householdName = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', 
-                                                          $defaults['mail_to_household_id'], 
-                                                          'display_name', 
-                                                          'id' );
-            $this->assign( 'householdName',$householdName );
+        // get the display name of contact that address is shared.
+        if ( CRM_Utils_Array::value( 'master_id', $defaults['address'][1] ) ) {
+            $masterId = $defaults['address'][1]['master_id'];
+            $masterContactId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Address', $masterId, 'contact_id', 'id' );
+            $masterDisplayName = CRM_Contact_BAO_Contact::getMasterDisplayName( $masterId );
+            $this->assign( 'masterContactId', $masterContactId );
+            $this->assign( 'masterDisplayName', $masterDisplayName );
         }
 
         //get the current employer name
