@@ -188,33 +188,61 @@ class EmailProcessor {
                                 }
                             }
                         }
-                        crm_mailer_event_bounce($job, $queue, $hash, $text);
+                        $params = array ( 'job_id'         => $job,
+                                          'event_queue_id' => $queue,
+                                          'hash'           => $hash,
+                                          'body'           => $text
+                                          );
+                        civicrm_mailer_event_bounce( $params );
                         break;
                     case 'c':
                     case 'confirm':
-                        crm_mailer_event_confirm($job, $queue, $hash);
+                        $params = array ( 'job_id'         => $job,
+                                          'event_queue_id' => $queue,
+                                          'hash'           => $hash
+                                          );
+                        civicrm_mailer_event_confirm( $params );
                         break;
                     case 'o':
                     case 'optOut':
-                        crm_mailer_event_domain_unsubscribe($job, $queue, $hash);
+                        $params = array ( 'job_id'         => $job,
+                                          'event_queue_id' => $queue,
+                                          'hash'           => $hash
+                                          );
+                        civicrm_mailer_event_domain_unsubscribe( $params );
                         break;
                     case 'r':
                     case 'reply':
                         // instead of text and HTML parts (4th and 6th params) send the whole email as the last param
-                        crm_mailer_event_reply($job, $queue, $hash, null, $replyTo, null, $mail->generate());
+                        $params = array ( 'job_id'         => $job,
+                                          'event_queue_id' => $queue,
+                                          'hash'           => $hash,
+                                          'bodyTxt'        => null,
+                                          'replyTo'        => $rt,
+                                          'bodyHTML'       => null,
+                                          'fullEmail'      => $mail->generate()
+                                          );
+                        civicrm_mailer_event_reply( $params );
                         break;
                     case 'e':
                     case 're':
                     case 'resubscribe':
-                        crm_mailer_event_resubscribe($job, $queue, $hash);
+                        $params = array ( 'job_id'         => $job,
+                                          'event_queue_id' => $queue,
+                                          'hash'           => $hash
+                                          );
+                        civicrm_mailer_event_resubscribe( $params );
                         break;
                     case 's':
                     case 'subscribe':
-                        crm_mailer_event_subscribe($mail->from->email, $job);
+                        $params = array ( 'email'          => $mail->from->email,
+                                          'group_id'       => $job
+                                          );
+                        civicrm_mailer_event_subscribe( $params );
                         break;
                     case 'u':
                     case 'unsubscribe':
-                        crm_mailer_event_unsubscribe($job, $queue, $hash);
+                        civicrm_mailer_event_unsubscribe($job, $queue, $hash);
                         break;
                     }
         }

@@ -481,7 +481,7 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
         }
 
         if ( $this->_linkToUF ) {
-            require_once 'api/UFGroup.php';
+            require_once 'api/v2/UFGroup.php';
         }
         
         $imProviders  = CRM_Core_PseudoConstant::IMProvider( );
@@ -567,7 +567,7 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
                                'gid' => $this->_gid );
 
             if ( $this->_linkToUF ) {
-                $ufID = crm_uf_get_uf_id( $result->contact_id );
+                $ufID = civicrm_uf_id_get( $result->contact_id );
                 if ( ! $ufID ) {
                     unset( $newLinks[CRM_Core_Action::PROFILE] );
                 } else {

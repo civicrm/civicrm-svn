@@ -75,8 +75,8 @@ class CRM_Bridge_OG_Utils {
     }
 
     static function contactID( $ufID ) {
-        require_once 'api/UFGroup.php';
-        $contactID = crm_uf_get_match_id( $ufID );
+        require_once 'api/v2/UFGroup.php';
+        $contactID = civicrm_uf_match_id_get( $ufID );
         if ( $contactID ) {
             return $contactID;
         }
