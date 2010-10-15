@@ -256,7 +256,7 @@ UPDATE civicrm_contribution_widget
 --CRM-4572
 
 ALTER TABLE civicrm_address ADD COLUMN master_id INT(10) unsigned default NULL COMMENT 'FK to Address ID';
-ALTER TABLE civicrm_address ADD CONSTRAINT master_id  FOREIGN KEY (master_id) REFERENCES civicrm_address (id) ON DELETE SET NULL; 
+ALTER TABLE civicrm_address ADD CONSTRAINT FK_civicrm_address_master_id  FOREIGN KEY (master_id) REFERENCES civicrm_address (id) ON DELETE SET NULL;
 
 UPDATE civicrm_address add1
 INNER JOIN civicrm_contact c1 ON ( c1.id = add1.contact_id AND c1.mail_to_household_id IS NOT NULL )
