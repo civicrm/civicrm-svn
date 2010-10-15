@@ -267,3 +267,30 @@ UPDATE civicrm_contact SET mail_to_household_id = NULL;
 
 ALTER TABLE civicrm_contact DROP  FOREIGN KEY FK_civicrm_contact_mail_to_household_id;
 ALTER TABLE civicrm_contact DROP mail_to_household_id;
+
+-- CRM-6894
+CREATE TABLE `civicrm_batch` ( 
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Unique Address ID.',
+  `name` varchar(64) DEFAULT NULL COMMENT 'Variable name/programmatic handle for this batch.',  
+  `label` varchar(64) DEFAULT NULL COMMENT 'Friendly Name.',     
+  `description` text COMMENT 'Description of this batch set.',                  
+  `created_id` int(10) unsigned default NULL COMMENT 'FK to Contact ID',
+  `created_date` datetime default NULL COMMENT 'When was this item created',
+  `modified_id` int(10) unsigned default NULL COMMENT 'FK to Contact ID',
+  `modified_date` datetime default NULL COMMENT 'When was this item created',
+  PRIMARY KEY ( `id` ),
+  CONSTRAINT FK_civicrm_batch_created_id FOREIGN KEY ( created_id ) REFERENCES civicrm_contact( id ) ON DELETE SET NULL,
+  CONSTRAINT FK_civicrm_batch_modified_id FOREIGN KEY ( modified_id ) REFERENCES civicrm_contact( id ) ON DELETE SET NULL
+)ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+
+CREATE TABLE `civicrm_entity_batch` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+  `entity_table` varchar(64) DEFAULT NULL COMMENT 'physical tablename for entity being joined to file, e.g. civicrm_contact',
+  `entity_id` int(10) unsigned NOT NULL COMMENT 'FK to entity table specified in entity_table column.',
+  `batch_id` int(10) unsigned NOT NULL COMMENT 'FK to civicrm_batch',
+  PRIMARY KEY ( id ),
+  INDEX index_entity ( entity_table, entity_id ),
+  UNIQUE INDEX UI_batch_entity ( batch_id, entity_id, entity_table ),
+  CONSTRAINT FK_civicrm_entity_batch_batch_id FOREIGN KEY ( batch_id ) REFERENCES civicrm_batch ( id ) ON DELETE CASCADE
+ )ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
