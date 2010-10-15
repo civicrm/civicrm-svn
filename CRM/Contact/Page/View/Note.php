@@ -51,6 +51,14 @@ class CRM_Contact_Page_View_Note extends CRM_Core_Page
     static $_links = null;
 
     /**
+     * The action links that we need to display for the browse screen
+     *
+     * @var array
+     * @static
+     */
+    static $_commentLinks = null;
+
+    /**
      * View details of a note
      *
      * @return void
@@ -123,9 +131,13 @@ class CRM_Contact_Page_View_Note extends CRM_Core_Page
         $commentLinks = self::commentLinks( );
         
         $action = array_sum( array_keys( $commentLinks ) ) & $mask;
+        
         $commentAction = CRM_Core_Action::formLink( $commentLinks,
                                                     $action,
-                                                    array(  ) );
+                                                    array( 'id'  => $note->id,
+                                                           'pid' => $note->entity_id,
+                                                           'cid' => $this->_contactId ) 
+                                                    );
         $this->assign( 'commentAction', $commentAction );
 
     }
@@ -270,29 +282,32 @@ class CRM_Contact_Page_View_Note extends CRM_Core_Page
      */
     static function &commentLinks( )
     {
-        $deleteExtra = ts( 'Are you sure you want to delete this comment?' );
-        $links = array (
-                              CRM_Core_Action::VIEW    => array(
-                                                                'name'  => ts('View'),
-                                                                'url'   => 'civicrm/contact/view/note',
-                                                                'qs'    => 'action=view&reset=1&cid={cid}&id={id}&selectedChild=note',
-                                                                'title' => ts('View Comment')
-                                                                ),       
-                              CRM_Core_Action::UPDATE  => array(
-                                                                'name'  => ts('Edit'),
-                                                                'url'   => 'civicrm/contact/view/note',
-                                                                'qs'    => 'action=update&reset=1&cid={cid}&id={id}&selectedChild=note',
-                                                                'title' => ts('Edit Comment')
-                                                                ),
-                              CRM_Core_Action::DELETE  => array(
-                                                                'name'  => ts('Delete'),
-                                                                'url'   => 'civicrm/contact/view/note',
-                                                                'qs'    => 'action=delete&reset=1&cid={cid}&id={id}&selectedChild=note',
-                                                                'extra' => 'onclick = "if (confirm(\'' . $deleteExtra . '\') ) this.href+=\'&amp;confirmed=1\'; else return false;"',
-                                                                'title' => ts('Delete Comment')
-                                                                ),
-                        );
-        return $links;
+        if ( !( self::$_commentLinks ) ) {
+            $deleteExtra = ts( 'Are you sure you want to delete this comment?' );
+            self::$_commentLinks = array (
+                                          CRM_Core_Action::VIEW    => array(
+                                                                            'name'  => ts('View'),
+                                                                            'url'   => 'civicrm/contact/view/note',
+                                                                            'qs'    => 'action=view&reset=1&cid={cid}&id={id}&selectedChild=note',
+                                                                            'title' => ts('View Comment')
+                                                                            ),       
+                                          CRM_Core_Action::UPDATE  => array(
+                                                                            'name'  => ts('Edit'),
+                                                                            'url'   => 'civicrm/contact/view/note',
+                                                                            'qs'    => 'action=update&reset=1&cid={cid}&id={id}&parentId=%%pid%%&selectedChild=note',
+                                                                            'title' => ts('Edit Comment')
+                                                                            ),
+                                          CRM_Core_Action::DELETE  => array(
+                                                                            'name'  => ts('Delete'),
+                                                                            'url'   => 'civicrm/contact/view/note',
+                                                                            'qs'    => 'action=delete&reset=1&cid={cid}&id={id}&selectedChild=note',
+                                                                            'extra' => 'onclick = "if (confirm(\'' . $deleteExtra . '\') ) this.href+=\'&amp;confirmed=1\'; else return false;"',
+                                                                            'title' => ts('Delete Comment')
+                                                                            ),
+                                          );
+         
+        }
+        return self::$_commentLinks;
     }
 }
 
