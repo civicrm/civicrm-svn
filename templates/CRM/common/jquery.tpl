@@ -42,7 +42,6 @@
 <style type="text/css">@import url("{$config->resourceBase}packages/jquery/jsTree.v.1.0rc2/themes/default/style.css");</style>
 
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.menu.pack.js"></script>
-<script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.dimensions.js"></script>
 <style type="text/css">@import url("{$config->resourceBase}packages/jquery/css/menu.css");</style>
 
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.chainedSelects.js"></script>

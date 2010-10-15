@@ -41,7 +41,6 @@ packages/jquery/plugins/jsTree.v.1.0rc2/jquery.jstree.js
 packages/jquery/jsTree.v.1.0rc2/themes/default/style.css
 
 packages/jquery/plugins/jquery.menu.pack.js
-packages/jquery/plugins/jquery.dimensions.js
 packages/jquery/css/menu.css
 
 packages/jquery/plugins/jquery.chainedSelects.js
