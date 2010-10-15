@@ -5,7 +5,7 @@
   <name>civicrm_activity_target</name>
   <comment>Activity targets</comment>
   <add>2.0</add>
-
+  <log>true</log>
   <field>
     <name>id</name>
     <type>int unsigned</type>

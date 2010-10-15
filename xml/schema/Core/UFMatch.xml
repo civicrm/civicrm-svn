@@ -6,6 +6,7 @@
   <name>civicrm_uf_match</name>
   <comment>The mapping from an user framework (UF) object to a CRM object.</comment>
   <add>1.1</add>
+  <log>true</log>
   <field>
       <name>id</name>
       <type>int unsigned</type>

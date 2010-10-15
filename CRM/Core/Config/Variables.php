@@ -301,6 +301,12 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
     public $contactUndelete = true;
 
     /**
+     * Whether database-level logging should be performed
+     * @var boolean
+     */
+    public $logging = false;
+
+    /**
      * Whether CiviCRM should check for newer versions
      *
      * @var boolean

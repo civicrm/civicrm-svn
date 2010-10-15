@@ -52,6 +52,7 @@ class CRM_Admin_Form_Setting_Miscellaneous extends  CRM_Admin_Form_Setting
         CRM_Utils_System::setTitle(ts('Settings - Miscellaneous'));
 
         $this->addYesNo('contactUndelete', ts('Contact Trash & Undelete'));
+        $this->addYesNo('logging',         ts('Logging'));
 
         $this->addYesNo( 'versionCheck'           , ts( 'Version Check & Statistics Reporting' ));
         $this->addElement('text', 'maxAttachments' , ts('Maximum Attachments'),
@@ -71,6 +72,16 @@ class CRM_Admin_Form_Setting_Miscellaneous extends  CRM_Admin_Form_Setting
        
         parent::buildQuickForm();    
     }
+
+    public function postProcess()
+    {
+        parent::postProcess();
+
+        // handle logging
+        // FIXME: do it only if the setting changed
+        require_once 'CRM/Logging/Schema.php';
+        $values = $this->exportValues();
+        $logging = new CRM_Logging_Schema;
+        $values['logging'] ? $logging->enableLogging() : $logging->disableLogging();
+    }
 }
-
-

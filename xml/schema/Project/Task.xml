@@ -6,6 +6,7 @@
   <name>civicrm_task</name>
   <comment>To-do items. Can be assigned to self or other entities.</comment>
   <add>1.5</add>
+  <log>true</log>
   <field>
       <name>id</name>
       <type>int unsigned</type>

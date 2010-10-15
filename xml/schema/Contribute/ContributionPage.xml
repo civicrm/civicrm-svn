@@ -6,6 +6,7 @@
   <name>civicrm_contribution_page</name>
   <comment>A Contribution object store meta information about a single customized contribution page</comment>
   <add>1.3</add>
+  <log>true</log>
   <field>
       <name>id</name>
       <type>int unsigned</type>

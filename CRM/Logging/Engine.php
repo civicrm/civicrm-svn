@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -33,54 +33,54 @@
  * $Id$
  *
  */
-class CRM_Core_I18n_SchemaStructure
-{ldelim}
-    static function &columns()
-    {ldelim}
-        static $result = null;
-        if (!$result) {ldelim}
-          $result = array(
-            {foreach from=$columns key=table item=types}
-              '{$table}' => array(
-                {foreach from=$types key=column item=type}
-                  '{$column}' => "{$type}",
-                {/foreach}
-              ),
-            {/foreach}
-          );
-        {rdelim}
-        return $result;
-    {rdelim}
-    static function &indices()
-    {ldelim}
-        static $result = null;
-        if (!$result) {ldelim}
-          $result = array(
-            {foreach from=$indices key=table item=tableIndices}
-              '{$table}' => array(
-                {foreach from=$tableIndices key=name item=info}
-                  '{$name}' => array(
-                      'name' => '{$info.name}',
-                      'field' => array(
-                        {foreach from=$info.field item=field}
-                          '{$field}',
-                        {/foreach}
-                      ),
-                      {if $info.unique}'unique' => 1,{/if}
-                  ),
-                {/foreach}
-              ),
-            {/foreach}
-          );
-        {rdelim}
-        return $result;
-    {rdelim}
-    static function &tables()
-    {ldelim}
-        static $result = null;
-        if (!$result) {ldelim}
-            $result = array_keys(self::columns());
-        {rdelim}
-        return $result;
-    {rdelim}
-{rdelim}
+
+require_once 'CRM/Core/DAO.php';
+
+class CRM_Logging_Engine
+{
+    static function disableLogging()
+    {
+        if (!self::isEnabled()) return;
+
+        $dao = new CRM_Core_DAO;
+
+        require_once 'CRM/Logging/SchemaStructure.php';
+        foreach (CRM_Logging_SchemaStructure::tables() as $table) {
+            $dao->executeQuery("DROP TRIGGER IF EXISTS {$table}_after_insert");
+            $dao->executeQuery("DROP TRIGGER IF EXISTS {$table}_after_update");
+            $dao->executeQuery("DROP TRIGGER IF EXISTS {$table}_after_delete");
+        }
+
+        $dao->free();
+    }
+
+    static function enableLogging()
+    {
+        if (self::isEnabled()) return;
+
+        require_once 'CRM/Core/Config.php';
+        $config =& CRM_Core_Config::singleton();
+
+        require_once 'CRM/Utils/File.php';
+        global $civicrm_root;
+        if (!self::tablesExist()) {
+            CRM_Utils_File::sourceSQLFile($config->dsn, "$civicrm_root/sql/logging_tables.sql");
+        }
+        CRM_Utils_File::sourceSQLFile($config->dsn, "$civicrm_root/sql/logging_triggers.sql");
+    }
+
+    private static function isEnabled()
+    {
+        return self::tablesExist() and self::triggersExist();
+    }
+
+    private static function tablesExist()
+    {
+        return CRM_Core_DAO::checkTableExists('log_civicrm_contact');
+    }
+
+    private static function triggersExist()
+    {
+        return (bool) CRM_Core_DAO::singleValueQuery("SHOW TRIGGERS LIKE 'civicrm_contact'");
+    }
+}

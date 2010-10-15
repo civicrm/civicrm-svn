@@ -6,6 +6,7 @@
   <name>civicrm_task_status</name>
   <comment>Tracks the responsible entity, optional target entity and status of a task. Tasks can have multiple task_status entries if assigned to multiple responsible entities and-or there are multiple targets.</comment>
   <add>1.5</add>
+  <log>true</log>
   <field>
       <name>id</name>
       <type>int unsigned</type>

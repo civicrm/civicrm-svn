@@ -5,6 +5,7 @@
   <class>OptionValue</class>
   <name>civicrm_option_value</name>
   <add>1.5</add>
+  <log>true</log>
   <field>
       <name>id</name>
       <type>int unsigned</type>

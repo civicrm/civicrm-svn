@@ -5,6 +5,7 @@
   <class>Event</class> 
   <name>civicrm_event</name> 
   <add>1.7</add> 
+  <log>true</log>
   <field> 
       <name>id</name> 
       <type>int unsigned</type> 

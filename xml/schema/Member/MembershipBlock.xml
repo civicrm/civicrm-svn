@@ -6,6 +6,7 @@
   <name>civicrm_membership_block</name>
   <comment>A Membership Block stores admin configurable status options and rules</comment>
   <add>1.5</add>
+  <log>true</log>
   <field>
       <name>id</name>
       <type>int unsigned</type>

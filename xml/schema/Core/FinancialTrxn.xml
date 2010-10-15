@@ -5,6 +5,7 @@
   <class>FinancialTrxn</class>  
   <name>civicrm_financial_trxn</name>  
   <add>1.3</add>  
+  <log>true</log>
   <field>  
       <name>id</name>  
       <type>int unsigned</type>  

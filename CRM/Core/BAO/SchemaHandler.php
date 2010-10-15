@@ -79,6 +79,11 @@ class CRM_Core_BAO_SchemaHandler
         $dao =& CRM_Core_DAO::executeQuery( $sql, array(), true, null, false, false ); // do not i18n-rewrite
         $dao->free();
 
+        // logging support
+        require_once 'CRM/Logging/Schema.php';
+        $logging = new CRM_Logging_Schema;
+        $logging->fixSchemaDifferencesFor($params['name']);
+
         return true;
     }
 
@@ -282,6 +287,13 @@ ALTER TABLE {$tableName}
 
         $dao =& CRM_Core_DAO::executeQuery( $sql );
         $dao->free();
+
+        // logging support: if we’re adding a column (but only then!) make sure the potential relevant log table gets a column as well
+        if ($params['operation'] == 'add') {
+            require_once 'CRM/Logging/Schema.php';
+            $logging = new CRM_Logging_Schema;
+            $logging->fixSchemaDifferencesFor($params['table_name'], array($params['name']));
+        }
         
         return true;
     }

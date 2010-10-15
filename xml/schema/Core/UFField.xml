@@ -6,6 +6,7 @@
   <name>civicrm_uf_field</name>
   <comment>User Framework fields and their properties.</comment>
   <add>1.1</add>
+  <log>true</log>
   <field>
       <name>id</name>
       <type>int unsigned</type>
