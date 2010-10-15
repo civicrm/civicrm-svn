@@ -171,11 +171,11 @@ class CRM_Case_Form_Activity_OpenCase
         }
 
         // set the contact, when contact is selected
-        if ( CRM_Utils_Array::value( 'contact_select_id', $params ) ) {
+        if ( $params['contact_select_id'][1] ) {
             $params['contact_id'] = $params['contact_select_id'][1];
             $form->_currentlyViewedContactId = $params['contact_id'];
         } elseif( $form->_allowMultiClient && $form->_context != 'case' ) {
-            $clients = explode( ',', $params['contact'] );
+            $clients = explode( ',', $params['contact'][1] );
             $form->_currentlyViewedContactId = $clients[0];
         }
 
