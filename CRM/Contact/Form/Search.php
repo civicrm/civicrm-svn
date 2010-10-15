@@ -260,11 +260,12 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
     function getModeValue( $mode = 1 ) {
         if ( ! self::$_modeValues ) {
             self::$_modeValues = 
-                array( 1 => array( 'selectorName' => 'CRM_Contact_Selector',
+                array( 1 => array( 'selectorName'  => 'CRM_Contact_Selector',
                                    'taskFile'      => "CRM/Contact/Form/Search/ResultTasks.tpl",
                                    'taskContext'   => null,
                                    'resultFile'    => 'CRM/Contact/Form/Selector.tpl',
-                                   'resultContext' => null ),
+                                   'resultContext' => null,
+                                   'taskClassName' => 'CRM_Contact_Task' ),
                        2 => array( 'selectorName'  => 'CRM_Contribute_Selector_Search',
                                    'taskFile'      => "CRM/common/searchResultTasks.tpl",
                                    'taskContext'   => 'Contribution',
