@@ -88,6 +88,8 @@ class CRM_Logging_Schema
      */
     function fixSchemaDifferences()
     {
+        if (!$this->isEnabled()) return;
+
         foreach ($this->schemaDifferences() as $table => $cols) {
             $this->fixSchemaDifferencesFor($table, $cols);
         }
@@ -101,6 +103,12 @@ class CRM_Logging_Schema
      */
     function fixSchemaDifferencesFor($table, $cols = null)
     {
+        if (!$this->isEnabled()) return;
+
+        if (empty($this->logs[$table])) {
+            $this->createLogTableFor($table);
+        }
+
         if (is_null($cols)) {
            $cols = array_diff($this->columnsOf($table), $this->columnsOf("log_$table"));
         }
@@ -181,6 +189,9 @@ COLS;
 
         $columns = implode(', ', $this->columnsOf($table));
         CRM_Core_DAO::executeQuery("INSERT INTO log_$table ($columns, log_conn_id, log_user_id, log_action) SELECT $columns, CONNECTION_ID(), @civicrm_user_id, 'Initialization' FROM $table");
+
+        $this->tables[]     = $table;
+        $this->logs[$table] = "log_$table";
     }
 
     /**
