@@ -255,12 +255,11 @@ COLS;
     }
 
     /**
-     * Predicate whether all tables that need logging have relevant logging tables.
+     * Predicate whether any log tables exist.
      */
     private function tablesExist()
     {
-        $missing = array_diff($this->tables, array_keys($this->logs));
-        return empty($missing);
+        return !empty($this->logs);
     }
 
     /**
