@@ -143,7 +143,8 @@
                       } else {
                           
                       }
-                  } 
+                  },
+                  ajaxURL: {/literal}"{crmURL p='civicrm/ajax/rest'}"{literal} 
             });            
          });
 
