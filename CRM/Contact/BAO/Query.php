@@ -1128,7 +1128,7 @@ class CRM_Contact_BAO_Query
         }
 
         if  ( ! $skipWhere ) {
-            $skipWhere   = array( 'task', 'radio_ts', 'uf_group_id', 'component_mode' );
+            $skipWhere   = array( 'task', 'radio_ts', 'uf_group_id', 'component_mode', 'qfKey' );
         }
 
         if ( in_array( $id, $skipWhere ) || substr( $id, 0, 4 ) == '_qf_' ) {
