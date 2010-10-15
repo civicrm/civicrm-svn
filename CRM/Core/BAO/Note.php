@@ -188,7 +188,7 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note
             }
             
             $recentOther = array( );
-            if ($noteActions ) {
+            if ( $noteActions ) {
                 $recentOther = 
                     array( 'editUrl'   => CRM_Utils_System::url( 'civicrm/contact/view/note', 
                                                                  "reset=1&action=update&cid={$note->entity_id}&id={$note->id}&context=home" ), 
@@ -224,7 +224,7 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note
     static function dataExists( &$params ) 
     {
         // return if no data present
-        if ( ! strlen( $params['note']) ) {
+        if ( ! strlen( $params['note'] ) ) {
             return false;
         } 
         return true;
@@ -290,7 +290,7 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note
     static function del( $id ) 
     {
         $return   = null;
-        $recent   = array($id);
+        $recent   = array( $id );
         $note     = new CRM_Core_DAO_Note( );
         $note->id = $id;
         $note->find( );
@@ -387,14 +387,15 @@ ORDER BY modified_date desc";
      * @access public
      * @static
      */
-     static function getContactNoteCount( $contactID ) {
+     static function getContactNoteCount( $contactID )
+     {
          $note = new CRM_Core_DAO_Note( );
-         $note->entity_id = $contactID;
+         $note->entity_id    = $contactID;
          $note->entity_table = 'civicrm_contact';
          $note->find( );
          $count = 0;
          while ( $note->fetch( ) ) {
-            if ( ! self::getNotePrivacyHidden( $note ) ){
+            if ( ! self::getNotePrivacyHidden( $note ) ) {
                $count++;
             }
          }
@@ -408,7 +409,8 @@ ORDER BY modified_date desc";
      * @param bool $snippet If TRUE, returned values will be pre-formatted for display in a table of notes.
      * @return array Nested associative array beginning with direct children of given note.
      */
-    public static function getNoteTree( $parentId, $maxDepth = 0, $snippet = false ) {
+    public static function getNoteTree( $parentId, $maxDepth = 0, $snippet = false )
+    {
         return self::buildNoteTree( $parentId, $maxDepth, $snippet );
     }
 
@@ -417,7 +419,8 @@ ORDER BY modified_date desc";
      * @param int $id Note ID
      * @return int Number of notes having the give note as parent
      */
-    public static function getChildCount( $id ) {
+    public static function getChildCount( $id )
+    {
         $note = new CRM_Core_DAO_Note( );
         $note->entity_table = 'civicrm_note';
         $note->entity_id = $id;
@@ -440,7 +443,8 @@ ORDER BY modified_date desc";
      * @param int $depth Depth of current iteration within the descendent tree (used for comparison against maxDepth)
      * @return array Nested associative array beginning with direct children of given note.
      */
-    private static function buildNoteTree( $parentId, $maxDepth = 0, $snippet = FALSE, &$tree = array(), $depth=0 ) {
+    private static function buildNoteTree( $parentId, $maxDepth = 0, $snippet = FALSE, &$tree = array(), $depth = 0 )
+    {
         if ( $maxDepth && $depth > $max_depth ) {
             return;
         }
@@ -448,7 +452,7 @@ ORDER BY modified_date desc";
         // get direct children of given parentId note
         $note = new CRM_Core_DAO_Note( );
         $note->entity_table = 'civicrm_note';
-        $note->entity_id = $parentId;
+        $note->entity_id    = $parentId;
         $note->orderBy( 'modified_date asc' );
         $note->find( );
         while ( $note->fetch( ) ) {
@@ -460,14 +464,15 @@ ORDER BY modified_date desc";
                 require_once 'CRM/Contact/DAO/Contact.php';
                 require_once 'CRM/Core/Smarty/plugins/modifier.mb_truncate.php';
                 $contact =  new CRM_Contact_DAO_Contact( );
-                $contact->id = $note->contact_id;
+                $createdById = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Note', $parentId, 'entity_id' );
+                $contact->id = $createdById;
                 $contact->find( );
                 $contact->fetch( );
-                $tree[$note->id]['createdBy'] = $contact->display_name;
-                
+                $tree[$note->id]['createdBy']     = $contact->display_name;
+                $tree[$note->id]['createdById']   = $createdById;
                 $tree[$note->id]['modified_date'] = CRM_Utils_Date::customFormat( $tree[$note->id]['modified_date'] );
-
-                if ($snippet ) {
+                
+                if ( $snippet ) {
                     $tree[$note->id]['note'] = nl2br($tree[$note->id]['note'] );
                     $tree[$note->id]['note'] = smarty_modifier_mb_truncate(
                         $tree[$note->id]['note'],
@@ -478,14 +483,15 @@ ORDER BY modified_date desc";
                     CRM_Utils_Date::customFormat( $tree[$note->id]['modified_date'] );
                 }
                 self::buildNoteTree(
-                        $note->id,
-                        $maxDepth,
-                        $snippet,
-                        $tree[$note->id]['child'],
-                        $depth+1
-                );
+                                    $note->id,
+                                    $maxDepth,
+                                    $snippet,
+                                    $tree[$note->id]['child'],
+                                    $depth+1
+                                    );
             }
         }
+
         return $tree;
      }
 
@@ -495,11 +501,12 @@ ORDER BY modified_date desc";
       * @param array $ids (reference) one-dimensional array to store found descendent ids
       * @return array One-dimensional array containing ids of all desendent notes
       */
-     public static function getDescendentIds( $parentId, &$ids = array() ) {
+     public static function getDescendentIds( $parentId, &$ids = array() )
+     {
         // get direct children of given parentId note
         $note = new CRM_Core_DAO_Note( );
         $note->entity_table = 'civicrm_note';
-        $note->entity_id = $parentId;
+        $note->entity_id    = $parentId;
         $note->find( );
         while ( $note->fetch( ) ) {
         // foreach child, add to ids list, and recurse

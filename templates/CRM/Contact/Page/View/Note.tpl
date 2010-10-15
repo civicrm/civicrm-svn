@@ -157,8 +157,8 @@
                     + '</td><td>'
                     + response[i].modified_date
                     + '</td><td>'
-                    + '<a href="'+ urlTemplate + response[i].contact_id +'">'+ response[i].createdBy +'</a>'
-                    + '</td><td>'+ commentAction.replace(/{cid}/g, response[i].contact_id).replace(/{id}/g, response[i].id) +'</td></tr>'
+                    + '<a href="'+ urlTemplate + response[i].createdById +'">'+ response[i].createdBy +'</a>'
+                    + '</td><td>'+ commentAction.replace(/{cid}/g, response[i].createdById).replace(/{id}/g, response[i].id) +'</td></tr>'
 
                 commentRows['cnote_'+ noteId][response[i].id] = str;
             }

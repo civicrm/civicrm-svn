@@ -43,7 +43,7 @@ require_once 'CRM/Core/Page.php';
 class CRM_Contact_Page_View_Note extends CRM_Core_Page 
 {
     /**
-     * The action links that we need to display for the browse screen
+     * The action links for notes that we need to display for the browse screen
      *
      * @var array
      * @static
@@ -51,7 +51,7 @@ class CRM_Contact_Page_View_Note extends CRM_Core_Page
     static $_links = null;
 
     /**
-     * The action links that we need to display for the browse screen
+     * The action links for comments that we need to display for the browse screen
      *
      * @var array
      * @static
