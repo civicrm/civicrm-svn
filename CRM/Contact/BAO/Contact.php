@@ -1098,16 +1098,17 @@ WHERE id={$id}; ";
             // check if we can retrieve from database cache
             require_once 'CRM/Core/BAO/Cache.php'; 
             $fields =& CRM_Core_BAO_Cache::getItem( 'contact fields', $cacheKeyString );
-
-            $fields = array_merge( $fields, array( 'master_address_belongs_to' =>
-                                                   array ( 'name'  => 'master_id',
-                                                           'title' => ts('Master Address Belongs To') )
-                                                   ));
-
+            
+            $masterAddress['master_address_belongs_to'] = array ( 'name'  => 'master_id',
+                                                                  'title' => ts('Master Address Belongs To')
+                                                                  ) ;
+            
             if ( ! $fields ) {
                 $fields = array( );
                 $fields = array_merge($fields, CRM_Contact_DAO_Contact::export( ));
                 
+                // add master address display name for individual
+                $fields = array_merge( $fields, $masterAddress );
                 // the fields are meant for contact types
                 if ( in_array( $contactType, array('Individual', 'Household', 'Organization', 'All' ) ) ) {
                     require_once 'CRM/Core/OptionValue.php';
@@ -2507,19 +2508,22 @@ UNION
       * @access public
       * @static
       */
-     static function getMasterDisplayName ( $masterAddressId , $contactId = null ) {
+     static function getMasterDisplayName( $masterAddressId = null , $contactId = null ) 
+     {
          $masterDisplayName = null;
          $sql = null;
          if ( !$masterAddressId && !$contactId ) return $masterDisplayName;
          
          if ( $masterAddressId ) {
-             $sql = "SELECT display_name from civicrm_contact
-                 LEFT JOIN civicrm_address ON ( civicrm_address.contact_id = civicrm_contact.id )
-                 WHERE civicrm_address.id = " . $masterAddressId;
+             $sql = "
+   SELECT display_name from civicrm_contact
+LEFT JOIN civicrm_address ON ( civicrm_address.contact_id = civicrm_contact.id )
+    WHERE civicrm_address.id = " . $masterAddressId;
          } else if ( $contactId ) {
-             $sql = "SELECT display_name from civicrm_contact
-                 LEFT JOIN civicrm_address ON ( civicrm_address.contact_id = civicrm_contact.id )
-                 WHERE civicrm_address.contact_id = " . $contactId;
+             $sql = "
+   SELECT display_name from civicrm_contact cc, civicrm_address add1
+LEFT JOIN civicrm_address add2 ON ( add1.master_id = add2.id )
+    WHERE cc.id = add2.contact_id AND add1.contact_id = " . $contactId;
          }
          
          $masterDisplayName  =  CRM_Core_DAO::singleValueQuery( $sql );

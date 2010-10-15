@@ -582,6 +582,7 @@ class CRM_Export_BAO_Export
                     //build row values (data)
                     if ( property_exists( $dao, $field ) ) {
                         $fieldValue = $dao->$field;
+                        // to get phone type from phone type id
                         if ( $field == 'phone_type_id' ) {
                             $fieldValue = $phoneTypes[$fieldValue];
                         } else if ( $field == 'provider_id' ) {
