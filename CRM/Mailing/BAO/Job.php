@@ -95,18 +95,16 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 					 j.id
 			LIMIT 0,1";
 
-			// Chang is here, inserting before last AND
-			// AND   {$mailingACL}
             $job->query($query);
         }
 
         require_once 'CRM/Core/Lock.php';
-	$i = 0;
+        $i = 0;
 
-	if ($job->fetch()) {
-        // still use job level lock for each child job
-        $lockName = "civimail.job.{$job->id}";
-
+        if ($job->fetch()) {
+            // still use job level lock for each child job
+            $lockName = "civimail.job.{$job->id}";
+            
 			$lock = new CRM_Core_Lock( $lockName );
 			if ( ! $lock->isAcquired( ) ) {
 				continue;
@@ -307,8 +305,11 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
     
 	// Split the parent job into n number of child job based on an offset
 	// The parameter cannot be null
-	public function split_job($offset = 50) {
-	
+	public function split_job($offset = 200) {
+        if ( empty( $offset ) ) {
+            $offset = 200;
+        }
+
 		$recipient_count = $this->getMailingSize();
 		$jobTable = CRM_Mailing_DAO_Job::getTableName();
 		

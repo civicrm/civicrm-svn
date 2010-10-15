@@ -49,7 +49,7 @@ function run( ) {
     require_once '../civicrm.config.php'; 
     require_once 'CRM/Core/Config.php'; 
     
-    $config = CRM_Core_Config::singleton(); 
+    $config =& CRM_Core_Config::singleton(); 
 
     // this does not return on failure
     CRM_Utils_System::authenticateScript( true );
