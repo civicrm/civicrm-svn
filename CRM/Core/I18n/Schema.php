@@ -428,7 +428,7 @@ class CRM_Core_I18n_Schema
             }
 
             if ($table == 'civicrm_contact') {
-                $trigger = array_merge($trigger, $namesTrigger);
+                $trigger = array_merge($trigger, $namesTrigger, $individualNamesTrigger);
             }
             $trigger[] = 'END';
 
