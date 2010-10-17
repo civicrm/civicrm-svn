@@ -347,15 +347,49 @@ INNER JOIN  civicrm_participant participant ON ( participant.id = payment.partic
      WHERE  participant.contact_id = $otherContactId";
             break;
         }
-        
+
         return $sqls;
     }
     
+    static function operationSql( $mainId, $otherId, $tableName, $tableOperations = array(), $mode = 'add' )
+    {
+        $sqls = array( );
+        if ( !$tableName || !$mainId || !$otherId ) {
+            return $sqls;
+        }
+
+        if ( array_key_exists($tableName, $tableOperations) && $tableOperations[$tableName]['add'] ) 
+            return $sqls; 
+
+        switch ( $tableName ) {
+        case 'civicrm_membership' :
+            if ( $mode == 'add' ) {
+                $sqls[] = "
+DELETE membership1.* FROM civicrm_membership membership1
+ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = membership2.membership_type_id 
+             AND membership1.contact_id = {$mainId} 
+             AND membership2.contact_id = {$otherId} ";
+            }
+            if ( $mode == 'payment' ) {
+                $sqls[] = "
+DELETE contribution.* FROM civicrm_contribution contribution 
+INNER JOIN  civicrm_membership_payment payment ON payment.contribution_id = contribution.id
+INNER JOIN  civicrm_membership membership1 ON membership1.id = payment.membership_id
+            AND membership1.contact_id = {$mainId}
+INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = membership2.membership_type_id
+            AND membership2.contact_id = {$otherId}";
+            }
+            break;
+        }
+
+        return $sqls;
+    }
+
     /**
      * Based on the provided two contact_ids and a set of tables, move the 
      * belongings of the other contact to the main one.
      */
-    function moveContactBelongings($mainId, $otherId, $tables = false)
+    function moveContactBelongings($mainId, $otherId, $tables = false, $tableOperations = array())
     {
         $cidRefs       = self::cidRefs( );
         $eidRefs       = self::eidRefs( );
@@ -398,10 +432,16 @@ INNER JOIN  civicrm_participant participant ON ( participant.id = payment.partic
                 foreach ($cidRefs[$table] as $field) {
                     // carry related contributions CRM-5359
                     if ( in_array( $table, $paymentTables ) ) {
+                        $payOprSqls = self::operationSql( $mainId, $otherId, $table, $tableOperations, 'payment' );
+                        $sqls = array_merge( $sqls, $payOprSqls ); 
+
                         $paymentSqls = self::paymentSql( $table, $mainId, $otherId ); 
                         $sqls = array_merge( $sqls, $paymentSqls ); 
                     }
-                                        
+
+                    $preOperationSqls = self::operationSql( $mainId, $otherId, $table, $tableOperations );
+                    $sqls = array_merge( $sqls, $preOperationSqls ); 
+
                     $sqls[] = "UPDATE IGNORE $table SET $field = $mainId WHERE $field = $otherId";
                     $sqls[] = "DELETE FROM $table WHERE $field = $otherId";
                 }

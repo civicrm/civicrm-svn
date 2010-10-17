@@ -816,4 +816,33 @@ WHERE  ce.on_hold = 0 AND cc.is_deceased = 0 AND cc.do_not_email = 0 AND {$query
         CRM_Utils_System::civiExit( );
   }
 
+    /**
+     * Function to process dupes.
+     *
+     */
+    static function processDupes( ) {
+        $oper = CRM_Utils_Type::escape( $_POST['op' ],  'String'   );
+        $cid  = CRM_Utils_Type::escape( $_POST['cid'],  'Positive' );
+        $oid  = CRM_Utils_Type::escape( $_POST['oid'],  'Positive' );
+
+        if ( !$oper || !$cid || !$oid ) return;  
+        
+        require_once 'CRM/Dedupe/DAO/Exception.php';
+        $exception = new CRM_Dedupe_DAO_Exception( );
+        $exception->contact_id1 = $cid;
+        $exception->contact_id2 = $oid;
+        //make sure contact1 > contact2.
+        if ( $oid < $cid ) {
+           $exception->contact_id1 = $oid;
+           $exception->contact_id2 = $cid;
+        }
+        $exception->find( true );
+        $status = null;
+        if ( $oper == 'dupe-nondupe' ) $status = $exception->save( );
+        if ( $oper == 'nondupe-dupe' ) $status = $exception->delete( );
+
+        echo json_encode( array( 'status' => ($status) ? $oper:$status ) );
+        CRM_Utils_System::civiExit( );
+    }
+
 }

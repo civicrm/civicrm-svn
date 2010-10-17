@@ -123,12 +123,13 @@ class CRM_Dedupe_BAO_RuleGroup extends CRM_Dedupe_DAO_RuleGroup
         require_once 'CRM/Dedupe/BAO/Rule.php';
         $bao = new CRM_Dedupe_BAO_Rule();
         $bao->dedupe_rule_group_id = $this->id;
+        $bao->orderBy('rule_weight DESC');
         $bao->find();
         $queries = array();
         while ($bao->fetch()) {
             $bao->contactIds = $this->contactIds;
             $bao->params = $this->params;
-            $queries[] = $bao->sql();
+            $queries["{$bao->rule_field}_{$bao->rule_weight}"] = $bao->sql();
         }
 
         // if there are no rules in this rule group, add an empty query fulfilling the pattern
@@ -137,7 +138,91 @@ class CRM_Dedupe_BAO_RuleGroup extends CRM_Dedupe_DAO_RuleGroup
             $this->noRules = true;
         }
         
-        return 'CREATE TEMPORARY TABLE dedupe ' . implode(' UNION ALL ', $queries);
+        return $queries;
+    }
+
+    function fillTable( ) {
+        if ( $this->params && !$this->noRules ) { 
+            $tempTableQuery = "CREATE TEMPORARY TABLE dedupe (id1 int, weight int, UNIQUE UI_id1 (id1))";
+            $insertClause   = "INSERT INTO dedupe (id1, weight)";
+            $groupByClause  = "GROUP BY id1";
+            $dupeCopyJoin   = " JOIN dedupe_copy ON dedupe_copy.id1 = t1.column WHERE ";
+        } else {
+            $tempTableQuery = "CREATE TEMPORARY TABLE dedupe (id1 int, id2 int, weight int, UNIQUE UI_id1_id2 (id1, id2))";
+            $insertClause   = "INSERT INTO dedupe (id1, id2, weight)";
+            $groupByClause  = "GROUP BY id1, id2";
+            $dupeCopyJoin   = " JOIN dedupe_copy ON dedupe_copy.id1 = t1.column AND dedupe_copy.id2 = t2.column WHERE ";
+        }
+        $searchWithinDupes = false;
+        $patternColumn     = '/t1.(\w+)/';
+
+        $dao = new CRM_Core_DAO();
+        $dao->query( $tempTableQuery );
+        $tableQueries = $this->tableQuery( );
+        CRM_Utils_Hook::dupeQuery( $this, 'table', $tableQueries );
+        $allWeights   = array_flip(array_keys($tableQueries));
+
+        foreach ( $tableQueries as $key => $tQuery ) {
+            if ( $searchWithinDupes ) {
+                $dao->query( "DROP TEMPORARY TABLE IF EXISTS dedupe_copy" );
+                $dao->query( "CREATE TEMPORARY TABLE dedupe_copy SELECT * FROM dedupe WHERE weight >= $weight" );
+                $dao->free();
+
+                preg_match($patternColumn, $tQuery, $matches);
+                $tQuery = str_replace( ' WHERE ', str_replace( 'column', $matches[1], $dupeCopyJoin ), $tQuery );
+
+                $searchWithinDupes = 0;
+            }
+
+            $tQuery = "{$insertClause} {$tQuery} {$groupByClause} ON DUPLICATE KEY UPDATE weight = weight + VALUES(weight)";
+            $dao->query( $tQuery );
+
+            // FIXME: we need to be more acurate with affected rows, especially for insert vs duplicate insert. 
+            // And that will help optimize further.
+            $affectedRows = mysql_affected_rows();
+            list($isDieSituation, $isInclusive) = $this->isDieOrInclusiveSituation( $allWeights, $key, $affectedRows );
+
+            if ( $isDieSituation ) {
+                // time for a break
+                break;
+            } else if ( $isInclusive ) {
+                // time to search within already found dupes
+                $searchWithinDupes = true;
+            }
+            $weight = substr( $key, strrpos( $key, '_' ) + 1 ) + ($weight ? $weight : 0);
+            $dao->free();
+        }
+    }
+
+    // Function to determine if rest of the queries required to be run, and if yes, whether its an 
+    // inclusive situation where rest of queries are required to be run on already found dupes.
+    function isDieOrInclusiveSituation( &$potentialWeights, $lastFieldWeight, $numberRowsAffected ) {
+        static $isRefined = false, $remainingWeights = array( );
+
+        if ( !$isRefined ) {
+            $isRefined = true;
+            foreach ( $potentialWeights as $key => $val ) {
+                $potentialWeights[$key] = substr( $key, strrpos( $key, '_' ) + 1 );
+            }
+            $remainingWeights = $potentialWeights;
+        }
+
+        $processedWeight = substr( $lastFieldWeight, strrpos( $lastFieldWeight, '_' ) + 1 );
+        if ( ( $numberRowsAffected == 0 ) || ( $processedWeight >= $this->threshold ) ) {
+            unset($potentialWeights[$lastFieldWeight]);
+        }
+
+        // If potential weights (past weights that found dupes + future weights) are not enough to make threshold,
+        // its a die situation. 
+        if ( array_sum( $potentialWeights ) < $this->threshold ) {
+            return array( true, false );
+        }
+        
+        // At this point we know its NOT a die situation. 
+        // So now its either inclusive or exclusive situation based on remaining weights 
+
+        unset($remainingWeights[$lastFieldWeight]);
+        return array( false, array_sum( $remainingWeights ) < $this->threshold );
     }
 
     /**
@@ -160,25 +245,26 @@ class CRM_Dedupe_BAO_RuleGroup extends CRM_Dedupe_DAO_RuleGroup
                     CRM_Contact_BAO_Contact_Permission::cacheClause( 'civicrm_contact' );
                 $this->_aclWhere = $this->_aclWhere ? "AND {$this->_aclWhere}" : '';
             }
-            $query = "SELECT dedupe.id
-                FROM dedupe JOIN civicrm_contact USING (id) {$this->_aclFrom}
+            $query = "SELECT dedupe.id1 as id
+                FROM dedupe JOIN civicrm_contact ON dedupe.id1 = civicrm_contact.id {$this->_aclFrom}
                 WHERE contact_type = '{$this->contact_type}' {$this->_aclWhere}
-                GROUP BY dedupe.id HAVING SUM(weight) >= {$this->threshold}
-                ORDER BY SUM(weight) desc";
+                AND weight >= {$this->threshold}";
         } else {
             if ( $checkPermission ) {
                 list( $this->_aclFrom, $this->_aclWhere ) = 
                     CRM_Contact_BAO_Contact_Permission::cacheClause( array('c1', 'c2') );
                 $this->_aclWhere = $this->_aclWhere ? "AND {$this->_aclWhere}" : '';
             }
-            $query = "SELECT dedupe.id1, dedupe.id2, SUM(weight) as weight
+            $query = "SELECT dedupe.id1, dedupe.id2, dedupe.weight
                 FROM dedupe JOIN civicrm_contact c1 ON dedupe.id1 = c1.id 
                             JOIN civicrm_contact c2 ON dedupe.id2 = c2.id {$this->_aclFrom}
+                       LEFT JOIN civicrm_dedupe_exception exc ON dedupe.id1 = exc.contact_id1 AND dedupe.id2 = exc.contact_id2
                 WHERE c1.contact_type = '{$this->contact_type}' AND 
                       c2.contact_type = '{$this->contact_type}' {$this->_aclWhere}
-                GROUP BY dedupe.id1, dedupe.id2 HAVING SUM(weight) >= {$this->threshold}
-                ORDER BY SUM(weight) desc";
+                      AND weight >= {$this->threshold} AND exc.contact_id1 IS NULL";
         }
+
+        CRM_Utils_Hook::dupeQuery( $this, 'threshold', $query );
         return $query;
     }
     

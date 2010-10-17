@@ -715,4 +715,23 @@ class CRM_Utils_Hook {
                   $config->userHookClass .
                   '::invoke( 4, $exportTempTable, $headerRows, $sqlColumns, $exportMode, $null, \'civicrm_export\' );' );
     }
+
+    /**
+     * This hook allows modification of the queries constructed from dupe rules.
+     * @param string $obj object of rulegroup class
+     * @param string $type type of queries e.g table / threshold
+     * @param array  $query set of queries
+     *
+     * @access public
+     */
+    static function dupeQuery( $obj, $type, &$query ) {
+        $config =& CRM_Core_Config::singleton( );
+        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
+        $null =& CRM_Core_DAO::$_nullObject;
+
+        return
+            eval( 'return ' .
+                  $config->userHookClass .
+                  '::invoke( 3, $obj, $type, $query, $null, $null , \'civicrm_dupeQuery\' );' );
+    }
 }

@@ -103,6 +103,8 @@
 
   <civicrm_dedupe_rule />
 
+  <civicrm_dedupe_exception />
+
   <civicrm_case />
 
   <civicrm_case_contact />

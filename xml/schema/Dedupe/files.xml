@@ -4,4 +4,5 @@
 
 <xi:include href="RuleGroup.xml" parse="xml" />
 <xi:include href="Rule.xml"      parse="xml" />
+<xi:include href="Exception.xml" parse="xml" />
 </tables>

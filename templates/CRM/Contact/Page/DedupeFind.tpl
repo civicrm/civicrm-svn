@@ -24,6 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {if $action eq 2 || $action eq 16}
+<div id='processDupes' class="success-status" style="display:none;"></div> 
 <div class="form-item">
   <table>
     <tr class="columnheader"><th>{ts}Contact{/ts} 1</th><th>{ts}Contact{/ts} 2 ({ts}Duplicate{/ts})</th><th>{ts}Threshold{/ts}</th><th>&nbsp;</th></tr>
@@ -33,11 +34,19 @@
 	{assign var="qParams" value="reset=1&cid=`$main.srcID`&oid=`$main.dstID`&action=update&rgid=`$rgid`"}
 	{if $gid}{assign var="qParams" value="$qParams&gid=`$gid`"}{/if}
         {capture assign=merge}<a href="{crmURL p='civicrm/contact/merge' q="`$qParams`"}">{ts}merge{/ts}</a>{/capture}
-        <tr class="{cycle values="odd-row,even-row"}">
+        <tr id="dupeRow_{$main.srcID}_{$main.dstID}" class="{cycle values="odd-row,even-row"}">
           <td>{$srcLink}</td>
           <td>{$dstLink}</td>
           <td>{$main.weight}</td>
-          <td style="text-align: right;">{if $main.canMerge}{$merge}{else}<em>{ts}Insufficient access rights - cannot merge{/ts}</em>{/if}</td>
+          <td style="text-align: right;">
+	  {if $main.canMerge}
+              {$merge}
+	      &nbsp;|&nbsp;
+	      <a id='notDuplicate' href="#" title={ts}Not a duplicate{/ts} onClick="processDupes( {$main.srcID}, {$main.dstID}, 'dupe-nondupe' );return false;">{ts}not a duplicate{/ts}</a>
+	  {else}
+	       <em>{ts}Insufficient access rights - cannot merge{/ts}</em>
+	  {/if}
+	  </td>
         </tr>
     {/foreach}
   </table>
@@ -48,7 +57,11 @@
         {if $dupe_name}
           {capture assign=link}<a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$dupe_id"}">{$dupe_name}</a>{/capture}
           {capture assign=merge}<a href="{crmURL p='civicrm/contact/merge' q="reset=1&cid=$cid&oid=$dupe_id"}">{ts}merge{/ts}</a>{/capture}
-          <tr class="{cycle values="odd-row,even-row"}"><td>{$link}</td><td style="text-align: right">{$merge}</td></tr>
+          <tr class="{cycle values="odd-row,even-row"}">
+	    <td>{$link}</td>
+	    <td style="text-align: right">{$merge}</td>
+	    <td style="text-align: right"><a id='notDuplicate' href="#" title={ts}Not a duplicate{/ts} onClick="processDupes( {$main.srcID}, {$main.dstID}, 'dupe-nondupe' );return false;">{ts}not a duplicate{/ts}</a></td>
+	    </tr>
         {/if}
       {/foreach}
     </table>
@@ -65,3 +78,77 @@
 {else}
 {include file="CRM/Contact/Form/DedupeFind.tpl"}
 {/if}
+
+{literal}
+<script type='text/javascript'>
+
+cj( '#processDupes' ).hide( );
+
+function processDupes( cid, oid, oper ) {
+        //currently we are doing in a single way.
+        //later we might want two way operations.
+   
+        if ( !cid || !oid || !oper ) return;
+        
+	var title = {/literal}'{ts escape="js"}Marked as non duplicates.{/ts}'{literal};
+	var msg = {/literal}'{ts escape="js"}Are you sure you want to save these contacts as non duplicates.{/ts}'{literal};
+        if ( oper == 'nondupe-dupe' ) {
+	  var title = {/literal}'{ts escape="js"}Marked as duplicates.{/ts}'{literal};
+          var msg = {/literal}'{ts escape="js"}Are you sure you want to save these contacts as duplicates.{/ts}'{literal};
+        }
+    
+	cj("#processDupes").show( );
+	cj("#processDupes").dialog({
+		title: title,
+		modal: true,
+		bgiframe: true,
+		overlay: { 
+			opacity: 0.5, 
+			background: "black" 
+		},
+
+		open:function() {
+		   cj( '#processDupes' ).show( ).html( msg );
+		},
+	
+		buttons: { 
+			"Cancel": function() { 
+				cj(this).dialog("close"); 
+			},
+			"OK": function() { 	    
+			        saveProcessDupes( cid, oid, oper );
+			        cj(this).dialog( 'close' );			        
+			}
+		} 
+	});
+}
+
+
+function saveProcessDupes( cid, oid, oper ) {
+    //currently we are doing in a single way.
+    //later we might want two way operations.
+   
+    if ( !cid || !oid || !oper ) return;
+    
+    var statusMsg = {/literal}'{ts escape="js"}Marked as non duplicates.{/ts}'{literal};	
+    if ( oper == 'nondupe-dupe' ) {
+       var statusMsg = {/literal}'{ts escape="js"}Marked as duplicates.{/ts}'{literal};
+    }
+    
+    var url = {/literal}"{crmURL p='civicrm/ajax/rest' q='className=CRM_Contact_Page_AJAX&fnName=processDupes' h=0 }"{literal};	
+    //post the data to process dupes.	
+    cj.post( url, 
+     	     {cid: cid, oid: oid, op: oper}, 
+             function( result ) {
+		 if ( result.status == oper ) {
+                    if ( oper == 'dupe-nondupe' ) {
+		       cj( "#dupeRow_" + cid + '_' + oid ).addClass( "disabled" );    
+		    } else {
+		       cj( "#dupeRow_" + cid + '_' + oid ).removeClass( "disabled" );
+		    }
+       	         }
+	     },
+	     'json' );
+}
+</script>
+{/literal}

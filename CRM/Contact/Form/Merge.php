@@ -341,7 +341,9 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
                 $replace = array( $otherUfId, $otherUser->name );
                 $relTables[$name]['other_title'] = str_replace( $find, $replace, $relTables[$name]['title']);
             }
-
+            if ( $name == 'rel_table_memberships' ) {
+                $this->addElement('checkbox', "operation[move_{$name}][add]", null, ts('add new'));
+            }
         }
         foreach ($relTables as $name => $null) {
             $relTables["move_$name"] = $relTables[$name];
@@ -381,6 +383,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         
         $relTables =& CRM_Dedupe_Merger::relTables();
         $moveTables = $locBlocks = array( );
+        $tableOperations = array( );
         foreach ($formValues as $key => $value) {
             if ($value == $this->_qfZeroBug) $value = '0';
             if ((in_array(substr($key, 5), CRM_Dedupe_Merger::$validFields) or 
@@ -401,6 +404,13 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
                     CRM_Utils_Array::value( 'locTypeId', $formValues['location'][$fieldName][$fieldCount] );
             } elseif (substr($key, 0, 15) == 'move_rel_table_' and $value == '1') {
                 $moveTables = array_merge($moveTables, $relTables[substr($key, 5)]['tables']);
+                if ( array_key_exists('operation', $formValues) ) {
+                    foreach ( $relTables[substr($key, 5)]['tables'] as $table ) {
+                        if ( array_key_exists($key, $formValues['operation']) ) {
+                            $tableOperations[$table] = $formValues['operation'][$key];
+                        }
+                    }
+                }
             }
         }
         
@@ -560,7 +570,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
 
         // handle the related tables
         if (isset($moveTables)) {
-            CRM_Dedupe_Merger::moveContactBelongings($this->_cid, $this->_oid, $moveTables);
+            CRM_Dedupe_Merger::moveContactBelongings($this->_cid, $this->_oid, $moveTables, $tableOperations);
         }
         
         // move file custom fields
