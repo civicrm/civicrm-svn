@@ -167,7 +167,7 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
         $this->_single  = $single;
         $this->_limit   = $limit;
         $this->_context = $context;
-        
+
         $this->_activityClause = $activityClause;
         
         // type of selector
@@ -232,6 +232,7 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
          require_once 'CRM/Mailing/BAO/Mailing.php';
          $mailingIDs =& CRM_Mailing_BAO_Mailing::mailingACLIDs( );
          $accessCiviMail = CRM_Core_Permission::check( 'access CiviMail' );
+         
          while ( $result->fetch( ) ) {
             $row = array( );
             // the columns we are interested in

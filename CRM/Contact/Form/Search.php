@@ -477,7 +477,8 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         $this->_ufGroupID       = CRM_Utils_Request::retrieve( 'id'             , 'Positive',
                                                                $this );
         $this->_componentMode   = CRM_Utils_Request::retrieve( 'component_mode' , 'Positive',
-                                                               $this, false, 1 );
+                                                               $this,
+                                                               false, 1, $_REQUEST );
 
         /**
          * set the button names
@@ -588,15 +589,23 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
 
         require_once( str_replace('_', DIRECTORY_SEPARATOR, $this->_modeValue['selectorName'] ) . '.php' );
         $this->_selectorName = $this->_modeValue['selectorName'];
-        
-        eval( '$selector = new ' . $this->_selectorName . 
-              '( $this->_customSearchClass,
-                 $this->_formValues,
-                 $this->_params,
-                 $this->_returnProperties,
-                 $this->_action,
-                 false, true,
-                 $this->_context );' );
+
+        if ( $this->_selectorName == 'CRM_Contact_Selector' ) {
+            eval( '$selector = new ' . $this->_selectorName . 
+                  '( $this->_customSearchClass,
+                     $this->_formValues,
+                     $this->_params,
+                     $this->_returnProperties,
+                     $this->_action,
+                     false, true,
+                     $this->_context );' );
+        } else {
+            eval( '$selector = new ' . $this->_selectorName . 
+                  '( $this->_formValues,
+                     $this->_action,
+                     null, false, null,
+                     $this->_context );' );
+        }
         $controller = new CRM_Contact_Selector_Controller( $selector ,
                                                            $this->get( CRM_Utils_Pager::PAGE_ID ),
                                                            $this->get( CRM_Utils_Sort::SORT_ID  ),
@@ -604,7 +613,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                                                            $this,
                                                            CRM_Core_Selector_Controller::TRANSFER );
         $controller->setEmbedded( true );
-
+        
         if ( $this->_force ) {
 
             $this->postProcess( );
@@ -686,16 +695,24 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
             if ( $this->get( 'isAdvanced' ) ) {
                 $searchChildGroups = false;
             }
-            eval( '$selector = new ' . $this->_selectorName . 
-                  '( $this->_customSearchClass,
-                     $this->_formValues,
-                     $this->_params,
-                     $this->_returnProperties,
-                     $this->_action,
-                     false,
-                     $searchChildGroups,
-                     $this->_context,
-                     $this->_contextMenu );' );
+            if ( $this->_selectorName == 'CRM_Contact_Selector' ) {
+                eval( '$selector = new ' . $this->_selectorName . 
+                      '( $this->_customSearchClass,
+                         $this->_formValues,
+                         $this->_params,
+                         $this->_returnProperties,
+                         $this->_action,
+                         false,
+                         $searchChildGroups,
+                         $this->_context,
+                         $this->_contextMenu );' );
+            } else {
+                eval( '$selector = new ' . $this->_selectorName . 
+                      '( $this->_formValues,
+                         $this->_action,
+                         null, false, null,
+                         $this->_context );' );
+            }
 
             $selector->setKey( $this->controller->_key );
             

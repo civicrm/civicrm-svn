@@ -95,9 +95,8 @@ class CRM_Contact_Form_Search_Criteria {
         }
 
         // add checkbox for cms users only
-        if (CIVICRM_UF != 'Standalone'){
-          $form->addYesNo( 'uf_user', ts( 'CMS User?' ) );
-        }
+        $form->addYesNo( 'uf_user', ts( 'CMS User?' ) );
+ 
         // add search profiles
         require_once 'CRM/Core/BAO/UFGroup.php';
 
@@ -119,7 +118,20 @@ class CRM_Contact_Form_Search_Criteria {
             }
         }
         
-        $form->addElement('select', 'uf_group_id', ts('Search Views'),  array('0' => ts('- default view -')) + $searchProfiles);
+        $form->addElement('select', 
+                          'uf_group_id', 
+                          ts('Search Views'), 
+                          array('0' => ts('- default view -')) + $searchProfiles );
+
+        // add component mode select
+        $componentModes = array( ''  => ts( 'Contacts'      ),
+                                 '2' => ts( 'Contributions' ),
+                                 '3' => ts( 'Participants'  ),
+                                 '4' => ts( 'Activities'    ) );
+        $form->addElement('select',
+                          'component_mode', 
+                          ts( 'Display Result as' ),
+                          $componentModes );
 
         // checkboxes for DO NOT phone, email, mail
         // we take labels from SelectValues

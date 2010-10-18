@@ -1131,7 +1131,9 @@ class CRM_Contact_BAO_Query
             $skipWhere   = array( 'task', 'radio_ts', 'uf_group_id', 'component_mode', 'qfKey' );
         }
 
-        if ( in_array( $id, $skipWhere ) || substr( $id, 0, 4 ) == '_qf_' ) {
+        if ( in_array( $id, $skipWhere ) ||
+             substr( $id, 0, 4 ) == '_qf_' ||
+             substr( $id, 0, 7 ) == 'hidden_' ) {
             return $result;
         }
 
@@ -1276,6 +1278,7 @@ class CRM_Contact_BAO_Query
         case 'activity_contact_name':
             CRM_Activity_BAO_Query::whereClauseSingle( $values, $this );
             return;
+
         case 'birth_date_low':
         case 'birth_date_high': 
         case 'deceased_date_low':
@@ -3208,7 +3211,12 @@ WHERE  id IN ( $groupIDs )
 
         if ( ! $this->_skipPermission ) {
             require_once 'CRM/ACL/API.php';
-            $permission = CRM_ACL_API::whereClause( CRM_Core_Permission::VIEW, $this->_tables, $this->_whereTables, null, $onlyDeleted, $this->_skipDeleteClause );
+            $permission = CRM_ACL_API::whereClause( CRM_Core_Permission::VIEW,
+                                                    $this->_tables,
+                                                    $this->_whereTables,
+                                                    null,
+                                                    $onlyDeleted,
+                                                    $this->_skipDeleteClause );
             // CRM_Core_Error::debug( 'p', $permission );
             // CRM_Core_Error::debug( 't', $this->_tables );
             // CRM_Core_Error::debug( 'w', $this->_whereTables );
@@ -3232,6 +3240,8 @@ WHERE  id IN ( $groupIDs )
             $where = "$where AND $permission";
         }
 
+        // CRM_Core_Error::debug( $where );
+        // CRM_Core_Error::debug( $additionalWhereClause );
         if ( $additionalWhereClause ) {
             $where = $where . ' AND ' . $additionalWhereClause;
         }
@@ -3357,7 +3367,7 @@ WHERE  id IN ( $groupIDs )
         }
         
         if ( $count ) {
-            return CRM_Core_DAO::singleValueQuery( $query, CRM_Core_DAO::$_nullArray );
+            return CRM_Core_DAO::singleValueQuery( $query );
         }
 
         $dao =& CRM_Core_DAO::executeQuery( $query );
