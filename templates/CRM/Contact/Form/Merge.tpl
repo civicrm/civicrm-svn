@@ -32,6 +32,10 @@
     	<a href="{crmURL q="reset=1&cid=$other_cid&oid=$main_cid"}">&raquo; {ts}Flip between original and duplicate contacts.{/ts}</a>
 </div>
 
+<div class="action-link">
+       <a id='notDuplicate' href="#" title={ts}Mark this pair as not a duplicate.{/ts} onClick="processDupes( {$main_cid}, {$other_cid}, 'dupe-nondupe' );return false;">&raquo; {ts}Mark this pair as not a duplicate.{/ts}</a>
+</div>	
+
 <table>
   <tr class="columnheader">
     <th>&nbsp;</th>
@@ -148,3 +152,6 @@ function mergeAddress( element, blockId ) {
 
 </script>
 {/literal}
+
+{* process the dupe contacts *}
+{include file="CRM/common/dedupe.tpl"}

@@ -831,8 +831,8 @@ WHERE  ce.on_hold = 0 AND cc.is_deceased = 0 AND cc.do_not_email = 0 AND {$query
         $exception = new CRM_Dedupe_DAO_Exception( );
         $exception->contact_id1 = $cid;
         $exception->contact_id2 = $oid;
-        //make sure contact1 > contact2.
-        if ( $oid < $cid ) {
+        //make sure contact2 > contact1.
+        if ( $cid > $oid ) {
            $exception->contact_id1 = $oid;
            $exception->contact_id2 = $cid;
         }

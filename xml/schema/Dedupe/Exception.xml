@@ -44,4 +44,11 @@
        <add>3.3</add> 
        <onDelete>CASCADE</onDelete>
   </foreignKey>
+  <index>
+     <name>UI_contact_id1_contact_id2</name>
+     <fieldName>contact_id1</fieldName>
+     <fieldName>contact_id2</fieldName>
+     <unique>true</unique>
+     <add>3.3</add>
+  </index>
 </table>
