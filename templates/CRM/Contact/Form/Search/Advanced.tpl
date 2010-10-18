@@ -97,7 +97,31 @@
 {/if}
 {literal}
 <script type="text/javascript">
-cj(function() { cj().crmaccordions(); });
+cj(function() { 
+    cj().crmaccordions(); 
+
+    cj('#component_mode').change( function( ) {
+        var selectedValue = cj(this).val( );
+        switch ( selectedValue ) {
+            case '2':
+            cj('.crm-CiviContribute-accordion').removeClass('crm-accordion-closed').addClass('crm-accordion-open') ;
+            loadPanes('CiviContribute');
+            break;
+
+            case '3':
+            cj('.crm-CiviEvent-accordion').removeClass('crm-accordion-closed').addClass('crm-accordion-open') ;
+            loadPanes('CiviEvent');
+            break;
+
+            case '4':
+            cj('.crm-activity-accordion').removeClass('crm-accordion-closed').addClass('crm-accordion-open') ;
+            loadPanes('activity');
+            break;
+
+            default:
+        } 
+    });
+});
 </script>
 {/literal}
 
