@@ -246,6 +246,11 @@ class CRM_Contact_Task {
             unset( $titles[7] );
         }
 
+        // CRM-6806
+        if (!CRM_Core_Permission::check('access deleted contacts')) {
+            unset($titles[self::DELETE_PERMANENTLY]);
+        }
+
         return $titles;
     }
 
