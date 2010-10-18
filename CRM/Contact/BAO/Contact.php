@@ -871,13 +871,17 @@ WHERE id={$id}; ";
      *  @return void
      */
     function contactTrashRestore( $contactId, $restore = false ) {
+        $params   = array( 1 => array( $contactId, 'Integer' ) );
         $isDelete = ' is_deleted = 1 ';
         if ( $restore ) {
             $isDelete = ' is_deleted = 0 ';
+        } else {
+            $query = "DELETE FROM civicrm_uf_match WHERE contact_id = %1";
+            CRM_Core_DAO::executeQuery( $query, $params );
         }
         
-        $query = "UPDATE civicrm_contact SET {$isDelete} WHERE id = {$contactId}";
-        CRM_Core_DAO::executeQuery( $query );
+        $query = "UPDATE civicrm_contact SET {$isDelete} WHERE id = %1";
+        CRM_Core_DAO::executeQuery( $query, $params );
     }
     
     /**
