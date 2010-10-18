@@ -44,7 +44,8 @@
       {/if}
 
       <div class="messages help">
-        {ts}Extensions help.{/ts}
+        <p>{ts}CiviCRM extensions mechanism allow you to install small functional additions. They provide new functionality in three areas: Custom Searches, Report Templates and Payment Processors. In order to install the extension, you need to upload it manually to Extensions Directory, reload this page and click Install. It will also become available on Custom Reports, Report Templates and Payment Processor Types management screens.{/ts}</p>
+        <strong>{ts}Please note that extensions functionality are in testing period in 3.3 release cycle. Get in touch with CiviCRM core team on project forums if you want to provide the community with your extension.{/ts}</strong>
       </div>
 
       <h3>{ts}Installed extensions{/ts}</h3>

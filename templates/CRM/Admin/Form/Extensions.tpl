@@ -24,14 +24,20 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for install /uninstall extensions  *}
-<h3>{if $action eq 1}{ts}New Extension{/ts}{elseif $action eq 2}{ts}Edit Extension{/ts}{else}{ts}Delete Extension{/ts}{/if}</h3>
+<h3>{if $action eq 1}{ts}Install Extension{/ts}{elseif $action eq 2}{ts}Edit Extension{/ts}{else}{ts}Uninstall Extension{/ts}{/if}</h3>
 <div class="crm-block crm-form-block crm-admin-optionvalue-form-block">
    {if $action eq 8}
       <div class="messages status">
           <div class="icon inform-icon"></div>
-          {ts}WARNING: Deleting this extension will result in the loss of all records which use the extension.{/ts} {ts}This may mean the loss of a substantial amount of data, and the action cannot be undone. Please review the extension information below before you make final decision.{/ts} {ts}Do you want to continue?{/ts}
+          {ts}WARNING: Uninstalling this extension might result in the loss of all records which use the extension.{/ts} {ts}This may mean the loss of a substantial amount of data, and the action cannot be undone. Please review the extension information below before you make final decision.{/ts} {ts}Do you want to continue?{/ts}
       </div>
    {/if}
+   {if $action eq 1}
+      <div class="messages status">
+          <div class="icon inform-icon"></div>
+          {ts}Installing this extension will provide you with new functionality. Please make sure that the extension you're installing comes from trusted source.{/ts} {ts}Do you want to continue?{/ts}
+      </div>
+   {/if}   
    {if $action eq 8 or $action eq 1}
         {include file="CRM/Admin/Page/ExtensionDetails.tpl"}
    {/if}

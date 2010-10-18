@@ -31,6 +31,9 @@ require_once 'CRM/Core/Extensions/ExtensionType.php';
 
 /**
  * This class stores logic for managing CiviCRM extensions.
+ * On this level, we are only manipulating extension objects.
+ * Refer to CRM_Core_Extensions_Extension class for more
+ * information on single extension's operations.
  *
  * @package CRM
  * @copyright CiviCRM LLC (c) 2004-2010
@@ -49,6 +52,12 @@ class CRM_Core_Extensions
      * Extension info file name
      */
     const EXT_INFO_FILENAME = 'info.xml';
+
+    /**
+     * Extension info file name
+     */
+    const EXT_TEMPLATES_DIRNAME = 'templates';
+
 
     /**
      * Allows quickly verifying if extensions are enabled
@@ -89,7 +98,7 @@ class CRM_Core_Extensions
      * initialization.
      * 
      * @access public
-     * @return null
+     * @return void
      */
     public function __construct( ) {
         $config =& CRM_Core_Config::singleton( );
@@ -105,7 +114,8 @@ class CRM_Core_Extensions
 	 * This method is not supposed to call on object initialisation.
      * 
      * @access public
-     * @return null
+     * @param boolean $fullInfo provide full info (read XML files) if true, otherwise only DB stored data
+     * @return void
      */
     public function populate( $fullInfo = FALSE ) {
         if( is_null($this->_extDir) || empty( $this->_extDir ) ) {
@@ -125,6 +135,7 @@ class CRM_Core_Extensions
      * Returns the list of extensions ordered by extension key.
      * 
      * @access public
+     * @param boolean $fullInfo provide full info (read XML files) if true, otherwise only DB stored data
      * @return array the list of installed extensions
      */
     public function getExtensionsByKey( $fullInfo = FALSE ) {
@@ -136,7 +147,8 @@ class CRM_Core_Extensions
      * @todo DEPRECATE
      * 
      * @access public
-     * @return array the list of installed extensions
+     * @param boolean $fullInfo provide full info (read XML files) if true, otherwise only DB stored data
+     * @return array list of extensions
      */
     public function getInstalled( $fullInfo = FALSE ) {
         return $this->_discoverInstalled( $fullInfo );
@@ -146,17 +158,17 @@ class CRM_Core_Extensions
     * @todo DEPRECATE
      * 
      * @access public
-     * @return
+     * @return array list of extensions
      */
     public function getAvailable( ) {
         return $this->_discoverAvailable();
     }
 
     /**
-     * 
+     * Returns the list of extensions which hasn't been installed.
      * 
      * @access public
-     * @return
+     * @return array list of extensions
      */
     public function getNotInstalled( ) {
         $installed = $this->_discoverInstalled();
@@ -175,10 +187,11 @@ class CRM_Core_Extensions
 
 
     /**
-     * 
+     * Searches for and returnes installed extensions.
      * 
      * @access private
-     * @return
+     * @param boolean $fullInfo provide full info (read XML files) if true, otherwise only DB stored data
+     * @return array list of extensions
      */
     private function _discoverInstalled( $fullInfo = FALSE ) {
         require_once 'CRM/Core/OptionValue.php';
@@ -200,10 +213,13 @@ class CRM_Core_Extensions
     }
 
     /**
-     * 
+     * Retrieve all the extension information for all the extensions
+	 * in extension directory. Beware, we're relying on scandir's 
+	 * extension retrieval order here, array indices will be used as 
+	 * ids for extensions that are not installed later on.
      * 
      * @access private
-     * @return
+     * @return array list of extensions
      */
     private function _discoverAvailable() {
         require_once 'CRM/Core/Extensions/Extension.php';
@@ -222,10 +238,12 @@ class CRM_Core_Extensions
     }
 
     /**
-     * 
+     * Given the key, provides the path to file containing
+	 * extension's main class.
      * 
      * @access public
-     * @return
+     * @param string $key extension key
+     * @return string path to file containing extension's main class
      */
     public function keyToPath( $key ) {
         $this->populate();
@@ -243,30 +261,33 @@ class CRM_Core_Extensions
     }
 
     /**
+     * Given the key, provides extension's class name.
      * 
-     * 
-     * @access private
-     * @return
+     * @access public
+     * @param string $key extension key
+     * @return string name of extension's main class
      */
     public function keyToClass( $key ) {
         return str_replace( '.', '_', $key );
     }
 
     /**
-     * 
+     * Given the class, provides extension's key.
      * 
      * @access public
-     * @return
+     * @param string $clazz extension class name
+     * @return string name of extension key
      */
     public function classToKey( $clazz ) {
         return str_replace( '_', '.', $clazz );
     }
 
     /**
-     * 
+     * Given the class, provides extension path.
      * 
      * @access public
-     * @return
+     * @param string $key extension key
+     * @return string name of extension key
      */
     public function classToPath( $clazz ) {
         $elements = explode( '_', $clazz );
@@ -275,23 +296,26 @@ class CRM_Core_Extensions
     }
 
     /**
-     * 
+     * Given the class, provides the template path.
      * 
      * @access public
-     * @return
+     * @param string $clazz extension class name
+     * @return string path to extension's templates directory
      */
     public function getTemplatePath( $clazz ) {
         $path = $this->classToPath( $clazz );
         $pathElm = explode( DIRECTORY_SEPARATOR, $path );
         array_pop( $pathElm );
-        return implode( DIRECTORY_SEPARATOR, $pathElm ) . DIRECTORY_SEPARATOR . 'templates';
+        return implode( DIRECTORY_SEPARATOR, $pathElm ) . DIRECTORY_SEPARATOR . self::EXT_TEMPLATES_DIRNAME;
     }
 
     /**
-     * 
+     * Given te class, provides the template name.
+	 * @todo consider multiple templates, support for one template for now
      * 
      * @access public
-     * @return
+     * @param string $clazz extension class name
+     * @return string extension's template name
      */    
     public function getTemplateName( $clazz ) {
         $this->populate();
@@ -302,28 +326,30 @@ class CRM_Core_Extensions
     }    
 
     /**
-     * 
+     * Given the string, returns true or false if it's an extension key.
      * 
      * @access public
-     * @return
+     * @param string $key a string which might be an extension key
+     * @return boolean true if given string is an extension name
      */
-    public function isExtensionKey( $string ) {
+    public function isExtensionKey( $key ) {
         // check if the string is an extension name or the class
-        return ( strpos($string, '.') !== FALSE ) ? TRUE : FALSE;
+        return ( strpos($key, '.') !== FALSE ) ? TRUE : FALSE;
     }
 
     /**
-     * 
+     * Given the string, returns true or false if it's an extension class name.
      * 
      * @access public
-     * @return
+     * @param string $clazz a string which might be an extension class name
+     * @return boolean true if given string is an extension class name
      */    
-    public function isExtensionClass( $string ) {
+    public function isExtensionClass( $clazz ) {
         
-        if ( substr( $string, 0, 4 ) != 'CRM_' ) {
+        if ( substr( $clazz, 0, 4 ) != 'CRM_' ) {
             require_once 'CRM/Core/PseudoConstant.php';
-            $extensions = CRM_Core_PseudoConstant::getExtensions( $string );
-            if ( in_array( $string, $extensions ) ) {
+            $extensions = CRM_Core_PseudoConstant::getExtensions( $clazz );
+            if ( in_array( $clazz, $extensions ) ) {
                 return TRUE;
             }
         }
@@ -331,20 +357,27 @@ class CRM_Core_Extensions
     }
 
     /**
-     * 
+     * Sets extension's record active or disabled.
      * 
      * @access public
-     * @return
+     * @param int $id id of option value record
+	 * @param boolean $is_active active state
+     * @return mixed result of CRM_Core_DAO::setFieldValue
      */
     public function setIsActive( $id, $is_active ) {
         return CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_OptionValue', $id, 'is_active', $is_active );
     }
 
     /**
-     * 
+     * Given the id from selector (generated in $this->_discoverAvailable),
+	 * fires off appropriate CRM_Core_Extensions_Extension object's install method.
+	 *
+	 * @todo change method signature, drop $id, work with $key only
      * 
      * @access public
-     * @return
+     * @param int $id id of option value record
+	 * @param string $key extension key
+     * @return void
      */
     public function install( $id, $key ) {
         $e = $this->getNotInstalled();
@@ -353,11 +386,16 @@ class CRM_Core_Extensions
     }
 
     /**
-     * 
-     * 
-     * @access public
-     * @return
-     */
+    * Given the key, fires off appropriate CRM_Core_Extensions_Extension object's 
+	* uninstall method.
+	*
+	* @todo change method signature, drop $id, work with $key only
+    * 
+    * @access public
+    * @param int $id id of option value record
+	* @param string $key extension key
+    * @return void
+    */
     public function uninstall( $id, $key ) {
         $this->populate();
         $e = $this->getExtensionsByKey( );
