@@ -763,7 +763,10 @@ Group By  componentId";
      * @static
      * @access public
      */
-    static function processSharedAddress( &$address ) {
+    static function processSharedAddress( &$address ) 
+    {
+        if ( !is_array( $address ) ) return;
+        
         // Sharing contact address during create mode is pretty straight forward.
         // In update mode we should check following:
         // - We should check if user has uncheck shared contact address
