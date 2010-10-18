@@ -233,7 +233,7 @@ class CRM_UF_Page_Group extends CRM_Core_Page
         // add jquery files
         $profile = CRM_Utils_String::addJqueryFiles( $profile );
         
-        $this->assign( 'profile', htmlentities( $profile ) );
+        $this->assign('profile', htmlentities($profile, ENT_NOQUOTES, 'UTF-8'));
         //get the title of uf group
         if ($gid) {
             $title = CRM_Core_BAO_UFGroup::getTitle($gid);
