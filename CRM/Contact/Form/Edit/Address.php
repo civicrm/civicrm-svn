@@ -280,9 +280,9 @@ class CRM_Contact_Form_Edit_Address
                         $stateProvinces = CRM_Core_PseudoConstant::stateProvince( );
                         $countries =& CRM_Core_PseudoConstant::country( );
                         $errors["address[$instance][state_province_id]"] = ts( 'State/Province %1 is not part of %2. It belongs to %3.', 
-                                                                           array( '1' => $stateProvinces[$stateProvinceId],
-                                                                                  '2' => $countries[$countryId],
-                                                                                  '3' => $countries[$stateProvinceDAO->country_id] ) ) ;
+                                                                           array( 1 => $stateProvinces[$stateProvinceId],
+                                                                                  2 => $countries[$countryId],
+                                                                                  3 => $countries[$stateProvinceDAO->country_id] ) ) ;
                     }
                 }
                 
@@ -296,9 +296,9 @@ class CRM_Contact_Form_Edit_Address
                     if ( $countyDAO->state_province_id != $stateProvinceId ) {
                         $counties =& CRM_Core_PseudoConstant::county( );
                         $errors["address[$instance][county_id]"] = ts( 'County %1 is not part of %2. It belongs to %3.', 
-                                                                           array( '1' => $counties[$countyId],
-                                                                                  '2' => $stateProvinces[$stateProvinceId],
-                                                                                  '3' => $stateProvinces[$countyDAO->state_province_id] ) ) ;
+                                                                           array( 1 => $counties[$countyId],
+                                                                                  2 => $stateProvinces[$stateProvinceId],
+                                                                                  3 => $stateProvinces[$countyDAO->state_province_id] ) ) ;
                     }
                 }
                 

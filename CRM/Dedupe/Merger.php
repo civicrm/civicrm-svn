@@ -57,11 +57,11 @@ class CRM_Dedupe_Merger
         $config = CRM_Core_Config::singleton( );
         if ( $config->userFramework == 'Drupal' ) {
             $userRecordUrl = CRM_Utils_System::url( 'user/$ufid' );
-            $title = ts( $config->userFramework . ' User:$ufname; ' . ' user id: $ufid' );
+            $title = ts('%1 User: %2; user id: %3', array(1 => $config->userFramework, 2 => '$ufname', 3 => '$ufid'));
         } else if ( $config->userFramework == 'Joomla' ) {
             $userRecordUrl = $config->userFrameworkBaseURL . 
                 'index2.php?option=com_users&view=user&task=edit&cid[]=$ufid';
-            $title = ts( $config->userFramework . ' User:$ufname; ' . ' user id: $ufid' );
+            $title = ts('%1 User: %2; user id: %3', array(1 => $config->userFramework, 2 => '$ufname', 3 => '$ufid'));
         }
 
         if (!$relTables) {

@@ -124,7 +124,7 @@ class CRM_Contribute_BAO_Widget extends CRM_Contribute_DAO_Widget {
                     if ( $startDate &&
                     $startDate >= $now ) {
                         $data['is_active'] = false;                    
-                        $data['campaign_start'] = ts( 'Campaign starts on %1', array( '1' => CRM_Utils_Date::customFormat( $dao->start_date, 
+                        $data['campaign_start'] = ts( 'Campaign starts on %1', array( 1 => CRM_Utils_Date::customFormat( $dao->start_date, 
                             $config->dateformatFull ) ) );
                     }
                 }
@@ -135,10 +135,10 @@ class CRM_Contribute_BAO_Widget extends CRM_Contribute_DAO_Widget {
                     $endDate < $now ) {
                         $data['is_active'] = false;                    
                     } else if ( $startDate >= $now ) {
-                        $data['campaign_start'] = ts( 'Campaign starts on %1', array( '1' => CRM_Utils_Date::customFormat( $dao->start_date, 
+                        $data['campaign_start'] = ts( 'Campaign starts on %1', array( 1 => CRM_Utils_Date::customFormat( $dao->start_date, 
                             $config->dateformatFull ) ) );
                     } else {    
-                        $data['campaign_start'] = ts( 'Campaign ends on %1', array( '1' => CRM_Utils_Date::customFormat( $dao->end_date, 
+                        $data['campaign_start'] = ts( 'Campaign ends on %1', array( 1 => CRM_Utils_Date::customFormat( $dao->end_date, 
                             $config->dateformatFull ) ) );
                     }
                 }
@@ -154,11 +154,11 @@ class CRM_Contribute_BAO_Widget extends CRM_Contribute_DAO_Widget {
         if ( $data['money_target'] > 0 ) {
             $data['money_raised_percentage'] = ( $data['money_raised'] / $data['money_target'] ) * 100 . "%";
             $data['money_target_display'] = CRM_Utils_Money::format( $data['money_target'] );
-            $data['money_raised'] = ts( 'Raised %1 of %2', array( '1' => CRM_Utils_Money::format( $data['money_raised'] ), 
-                                                                  '2' => $data['money_target_display']
+            $data['money_raised'] = ts( 'Raised %1 of %2', array( 1 => CRM_Utils_Money::format( $data['money_raised'] ), 
+                                                                  2 => $data['money_target_display']
                 ) );
         } else {
-            $data['money_raised'] = ts( 'Raised %1 ', array('1' =>  CRM_Utils_Money::format( $data['money_raised'] ) ) );
+            $data['money_raised'] = ts( 'Raised %1 ', array(1 =>  CRM_Utils_Money::format( $data['money_raised'] ) ) );
         }
 
         $data['money_low' ] = 0;
