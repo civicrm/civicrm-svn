@@ -358,11 +358,11 @@ INNER JOIN  civicrm_participant participant ON ( participant.id = payment.partic
             return $sqls;
         }
 
-        if ( array_key_exists($tableName, $tableOperations) && $tableOperations[$tableName]['add'] ) 
-            return $sqls; 
 
         switch ( $tableName ) {
         case 'civicrm_membership' :
+            if ( array_key_exists($tableName, $tableOperations) && $tableOperations[$tableName]['add'] ) 
+                break;
             if ( $mode == 'add' ) {
                 $sqls[] = "
 DELETE membership1.* FROM civicrm_membership membership1
@@ -379,6 +379,12 @@ INNER JOIN  civicrm_membership membership1 ON membership1.id = payment.membershi
 INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = membership2.membership_type_id
             AND membership2.contact_id = {$otherId}";
             }
+            break;
+
+        case 'civicrm_uf_match' :
+            // normal queries won't work for uf_match since that will lead to violation of unique constraint,
+            // failing to meet intended result. Therefore we introduce this additonal query:
+            $sqls[] = "DELETE FROM civicrm_uf_match WHERE contact_id = {$mainId}";
             break;
         }
 
