@@ -350,7 +350,7 @@ JOIN        civicrm_pcp cp ON ccp.id = cp.contribution_page_id
 WHERE       cp.contribution_page_id = {$id}";
             
             if ( $pageTitle = CRM_Core_DAO::singleValueQuery( $query ) ) {
-                CRM_Core_Session::setStatus( ts('The \'%1\'  cannot be deleted! You must Delete all Personal Campaign Page(s) related with this contribution page prior to deleting the page.', array( 1 => $pageTitle ) ) );
+                CRM_Core_Session::setStatus( ts('The \'%1\' cannot be deleted! You must Delete all Personal Campaign Page(s) related with this contribution page prior to deleting the page.', array( 1 => $pageTitle ) ) );
                 
                 CRM_Utils_System::redirect( CRM_Utils_System::url('civicrm/admin/contribute','reset=1') );   
             }

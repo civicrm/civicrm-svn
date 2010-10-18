@@ -278,7 +278,7 @@ class CRM_Core_Action {
         if ( $enclosedAllInSingleUL ) {
             $allLinks = '';
             CRM_Utils_String::append( $allLinks, '</li><li>', $mainLinks );
-            $allLinks = ts('%1', array( 1 => $extraULName ) )."<ul id='panel_{$extraLinksName}_xx' class='panel'><li>{$allLinks}</li></ul>"; 
+            $allLinks = "$extraULName <ul id='panel_{$extraLinksName}_xx' class='panel'><li>{$allLinks}</li></ul>"; 
             $result = "<span class='btn-slide' id={$extraLinksName}_xx>{$allLinks}</span>";
         } else {
             $extra = '';

@@ -33,7 +33,7 @@
            {if call_user_func(array('CRM_Core_Permission','check'), ' administer CiviCase')}
              {capture assign=adminCaseTypeURL}{crmURL p='civicrm/admin/options/case_type' q='reset=1&group=case_type'}
 	     {/capture}
-             {ts 1=$adminCaseTypeURL 2=$adminCaseStatusURL}Enable <a href='%1'> case types.{/ts}
+             {ts 1=$adminCaseTypeURL 2=$adminCaseStatusURL}Enable <a href='%1'>case types</a>.{/ts}
            {/if}
     </div>	
 

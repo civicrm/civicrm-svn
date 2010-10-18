@@ -158,12 +158,12 @@ class CRM_Contribute_BAO_Widget extends CRM_Contribute_DAO_Widget {
                                                                   2 => $data['money_target_display']
                 ) );
         } else {
-            $data['money_raised'] = ts( 'Raised %1 ', array(1 =>  CRM_Utils_Money::format( $data['money_raised'] ) ) );
+            $data['money_raised'] = ts( 'Raised %1', array(1 =>  CRM_Utils_Money::format( $data['money_raised'] ) ) );
         }
 
         $data['money_low' ] = 0;
         $data['num_donors'] = $data['num_donors'  ] ." " .ts( 'Donors' );
-        $data['home_url'  ] = "<a href='{$config->userFrameworkBaseURL}' class='crm-home-url' style='color:". $widget->color_homepage_link ."'>". ts('Learn more..') ."</a>";
+        $data['home_url'  ] = "<a href='{$config->userFrameworkBaseURL}' class='crm-home-url' style='color:". $widget->color_homepage_link ."'>". ts('Learn more.') ."</a>";
 
         // if is_active is false, show this link and hide the contribute button
         $data['homepage_link'] = $widget->url_homepage;

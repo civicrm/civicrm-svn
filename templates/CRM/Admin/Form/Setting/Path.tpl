@@ -62,7 +62,7 @@
             <tr class="crm-path-form-block-extensionsDir">  
                 <td class="label">{$form.extensionsDir.label}</td>
                 <td>{$form.extensionsDir.html|crmReplace:class:'huge40'}<br />
-                    <span class="description">{ts}Path where CiviCRM extensions are stored..{/ts}</span>
+                    <span class="description">{ts}Path where CiviCRM extensions are stored.{/ts}</span>
                 </td>    
             </tr>
         </table>

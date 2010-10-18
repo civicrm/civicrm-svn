@@ -41,7 +41,7 @@
 	  {if $main.canMerge}
               {$merge}
 	      &nbsp;|&nbsp;
-	      <a id='notDuplicate' href="#" title={ts}Not a duplicate{/ts} onClick="processDupes( {$main.srcID}, {$main.dstID}, 'dupe-nondupe' );return false;">{ts}not a duplicate{/ts}</a>
+	      <a id='notDuplicate' href="#" title={ts}not a duplicate{/ts} onClick="processDupes( {$main.srcID}, {$main.dstID}, 'dupe-nondupe' );return false;">{ts}not a duplicate{/ts}</a>
 	  {else}
 	       <em>{ts}Insufficient access rights - cannot merge{/ts}</em>
 	  {/if}
@@ -59,7 +59,7 @@
           <tr class="{cycle values="odd-row,even-row"}">
 	    <td>{$link}</td>
 	    <td style="text-align: right">{$merge}</td>
-	    <td style="text-align: right"><a id='notDuplicate' href="#" title={ts}Not a duplicate{/ts} onClick="processDupes( {$main.srcID}, {$main.dstID}, 'dupe-nondupe' );return false;">{ts}not a duplicate{/ts}</a></td>
+	    <td style="text-align: right"><a id='notDuplicate' href="#" title={ts}not a duplicate{/ts} onClick="processDupes( {$main.srcID}, {$main.dstID}, 'dupe-nondupe' );return false;">{ts}not a duplicate{/ts}</a></td>
 	    </tr>
         {/if}
       {/foreach}
