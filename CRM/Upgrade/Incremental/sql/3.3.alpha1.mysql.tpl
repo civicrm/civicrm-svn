@@ -294,3 +294,15 @@ CREATE TABLE `civicrm_entity_batch` (
   UNIQUE INDEX UI_batch_entity ( batch_id, entity_id, entity_table ),
   CONSTRAINT FK_civicrm_entity_batch_batch_id FOREIGN KEY ( batch_id ) REFERENCES civicrm_batch ( id ) ON DELETE CASCADE
  )ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- CRM-3702
+CREATE TABLE `civicrm_dedupe_exception` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Unique dedupe exception id.',
+  `contact_id1` int(10) unsigned default NULL COMMENT 'FK to Contact ID',
+  `contact_id2` int(10) unsigned default NULL COMMENT 'FK to Contact ID',
+  PRIMARY KEY ( id ),
+  INDEX UI_contact_id1_contact_id2 (`contact_id1`, `contact_id2`),
+  CONSTRAINT FK_civicrm_dedupe_exception_contact_id1 FOREIGN KEY (`contact_id1`) REFERENCES `civicrm_contact`(`id`) ON DELETE CASCADE,
+  CONSTRAINT FK_civicrm_dedupe_exception_contact_id2 FOREIGN KEY (`contact_id2`) REFERENCES `civicrm_contact`(`id`) ON DELETE CASCADE
+)ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
