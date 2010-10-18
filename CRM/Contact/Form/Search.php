@@ -601,7 +601,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                      $this->_context );' );
         } else {
             eval( '$selector = new ' . $this->_selectorName . 
-                  '( $this->_formValues,
+                  '( $this->_params,
                      $this->_action,
                      null, false, null,
                      $this->_context );' );
@@ -708,7 +708,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                          $this->_contextMenu );' );
             } else {
                 eval( '$selector = new ' . $this->_selectorName . 
-                      '( $this->_formValues,
+                      '( $this->_params,
                          $this->_action,
                          null, false, null,
                          $this->_context );' );

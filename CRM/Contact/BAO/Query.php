@@ -3240,8 +3240,9 @@ WHERE  id IN ( $groupIDs )
             $where = "$where AND $permission";
         }
 
-        // CRM_Core_Error::debug( $where );
-        // CRM_Core_Error::debug( $additionalWhereClause );
+        // CRM_Core_Error::debug( 't', $this );
+        // CRM_Core_Error::debug( 'w', $where );
+        // CRM_Core_Error::debug( 'a', $additionalWhereClause );
         if ( $additionalWhereClause ) {
             $where = $where . ' AND ' . $additionalWhereClause;
         }
