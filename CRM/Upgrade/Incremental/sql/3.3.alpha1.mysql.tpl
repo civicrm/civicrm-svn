@@ -301,7 +301,7 @@ CREATE TABLE `civicrm_dedupe_exception` (
   `contact_id1` int(10) unsigned default NULL COMMENT 'FK to Contact ID',
   `contact_id2` int(10) unsigned default NULL COMMENT 'FK to Contact ID',
   PRIMARY KEY ( id ),
-  INDEX UI_contact_id1_contact_id2 (`contact_id1`, `contact_id2`),
+  UNIQUE INDEX UI_contact_id1_contact_id2 (`contact_id1`, `contact_id2`),
   CONSTRAINT FK_civicrm_dedupe_exception_contact_id1 FOREIGN KEY (`contact_id1`) REFERENCES `civicrm_contact`(`id`) ON DELETE CASCADE,
   CONSTRAINT FK_civicrm_dedupe_exception_contact_id2 FOREIGN KEY (`contact_id2`) REFERENCES `civicrm_contact`(`id`) ON DELETE CASCADE
 )ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;

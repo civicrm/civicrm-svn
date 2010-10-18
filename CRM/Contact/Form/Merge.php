@@ -350,6 +350,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
             unset($relTables[$name]);
         }
         $this->assign('rel_tables', $relTables);
+        $this->assign( 'userContextURL', $session->readUserContext( ) );
     }
     
     function setDefaultValues()

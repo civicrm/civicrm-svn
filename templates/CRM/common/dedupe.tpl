@@ -5,7 +5,7 @@
 
 cj( '#processDupes' ).hide( );
 
-function processDupes( cid, oid, oper ) {
+function processDupes( cid, oid, oper, reload, reloadURL ) {
         //currently we are doing in a single way.
         //later we might want two way operations.
    
@@ -38,7 +38,8 @@ function processDupes( cid, oid, oper ) {
 			},
 			"OK": function() { 	    
 			        saveProcessDupes( cid, oid, oper );
-			        cj(this).dialog( 'close' );			        
+			        cj(this).dialog( 'close' );
+				if ( reload && reloadURL ) window.location.href = reloadURL; 
 			}
 		} 
 	});
@@ -64,8 +65,10 @@ function saveProcessDupes( cid, oid, oper ) {
 		 if ( result.status == oper ) {
                     if ( oper == 'dupe-nondupe' ) {
 		       cj( "#dupeRow_" + cid + '_' + oid ).addClass( "disabled" );    
+		       cj( "#dupeRow_" + cid + '_' + oid + ' td').addClass( "disabled" );
 		    } else {
 		       cj( "#dupeRow_" + cid + '_' + oid ).removeClass( "disabled" );
+		       cj( "#dupeRow_" + cid + '_' + oid + ' td').removeClass( "disabled" );
 		    }
        	         }
 	     },
