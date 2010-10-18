@@ -286,7 +286,7 @@ class CRM_Core_Action {
             if ( count( $extraLinks ) > 1 ) {
                 $mainLinks = array_slice ( $url, 0, 2 );
                 CRM_Utils_String::append( $extra, '</li><li>', $extraLinks );
-                $extra = ts('%1', array( 1 => $extraULName ) )."<ul id='panel_{$extraLinksName}_xx' class='panel'><li>{$extra}</li></ul>"; 
+                $extra = "$extraULName <ul id='panel_{$extraLinksName}_xx' class='panel'><li>{$extra}</li></ul>"; 
             }
             $resultLinks = '';
             CRM_Utils_String::append( $resultLinks, '', $mainLinks );

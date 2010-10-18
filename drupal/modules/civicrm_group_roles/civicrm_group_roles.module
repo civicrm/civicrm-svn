@@ -342,7 +342,7 @@ function civicrm_group_roles_show_rules($action = NULL, $id = NULL)
         $output = t( 'Use the \'Add Association Rule\' form to add new rules.' );
         $output .= theme('table', $header, $data);
     } else {
-        $output = t('There are no rules currently set.') . ' ' . ts('Use the "Add Association Rule" form to add one.');
+        $output = t('There are no rules currently set.') . ' ' . ts('Use the \'Add Association Rule\' form to add one.');
     }
     return $output;
 }
