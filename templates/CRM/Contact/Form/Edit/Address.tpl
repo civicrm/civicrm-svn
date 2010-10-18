@@ -37,8 +37,11 @@
 {/if}
 
  <div id="Address_Block_{$blockId}" {if $className eq 'CRM_Contact_Form_Contact'} class="boxBlock crm-edit-address-block" {/if}>
-  {if $blockId gt 1}<fieldset><legend>Additional Address</legend>{/if}
+  {if $blockId gt 1}<fieldset><legend>{ts}Additional Address{/ts}</legend>{/if}
   <table class="form-layout-compressed crm-edit-address-form">
+     {if $masterAddress.$blockId gt 0 }
+        <tr><td><div class="message status"><div class="icon inform-icon"></div>{ts 1=$masterAddress.$blockId}This address is shared with %1 contact records. Modifying this address will automatically update the shared address for these contacts.{/ts}</div></td></tr>
+     {/if}
      <tr>
 	 {if $className eq 'CRM_Contact_Form_Contact'}
         <td id='Address-Primary-html' colspan="2">
@@ -48,11 +51,11 @@
            <span class="crm-address-element is_billing-address-element">{$form.address.$blockId.is_billing.html}</span>
         </td>
 	 {/if}
-        {if $blockId gt 0}
-            <td>
-                <a href="#" title="{ts}Delete Address Block{/ts}" onClick="removeBlock( 'Address', '{$blockId}' ); return false;">{ts}Delete this address{/ts}</a>
-            </td>
-        {/if}
+     {if $blockId gt 0}
+         <td>
+             <a href="#" title="{ts}Delete Address Block{/ts}" onClick="removeBlock( 'Address', '{$blockId}' ); return false;">{ts}Delete this address{/ts}</a>
+         </td>
+     {/if}
      </tr>
      <script type="text/javascript">
      {literal}
@@ -124,6 +127,7 @@
                   success: function( response ) {
                       if ( response.address ) {
                           var selected = 'checked';
+                          var addressExists = false;
                           cj.each( response.address, function( i, val ) {
                               if ( i > 1 ) {
                                   selected = '';
@@ -131,17 +135,22 @@
                                   cj( 'input[name="address[' + blockNo + '][master_id]"]' ).val( val.id );
                               }
                               addressHTML = addressHTML + '<input type="radio" name="selected_shared_address-'+ blockNo +'" value=' + val.id + ' ' + selected +'>' + val.display + '<br/>'; 
+                              addressExists = true; 
                           });
-                          cj( '#shared-address-' + blockNo + ' .shared-address-list' ).remove( );
-                          cj( '#shared-address-' + blockNo ).append( '<tr class="shared-address-list"><td></td><td>' + addressHTML + '</td></tr>');
-                          cj( 'input[name^=selected_shared_address-]' ).click( function( ) {
-                             // get the block id
-                             var elemId = cj(this).attr( 'name' ).split('-');
-                             cj( 'input[name="address[' + elemId[1] + '][master_id]"]' ).val( cj(this).val( ) );
-                          });
-                          
-                      } else {
-                          
+
+                          if ( addressExists  ) {
+                              cj( '#shared-address-' + blockNo + ' .shared-address-list' ).remove( );
+                              cj( '#shared-address-' + blockNo ).append( '<tr class="shared-address-list"><td></td><td>' + addressHTML + '</td></tr>');
+                              cj( 'input[name^=selected_shared_address-]' ).click( function( ) {
+                                  // get the block id
+                                  var elemId = cj(this).attr( 'name' ).split('-');
+                                  cj( 'input[name="address[' + elemId[1] + '][master_id]"]' ).val( cj(this).val( ) );
+                              });
+                          } else {
+                              var helpText = {/literal}"{ts}Selected contact does not have an address. Please select a contact with address else add an address to the existing selected contact."{/ts}{literal};        
+                              cj( '#shared-address-' + blockNo + ' .shared-address-list' ).remove( );
+                              cj( '#shared-address-' + blockNo ).append( '<tr class="shared-address-list"><td></td><td>' + helpText + '</td></tr>');
+                          }
                       }
                   },
                   ajaxURL: {/literal}"{crmURL p='civicrm/ajax/rest'}"{literal} 

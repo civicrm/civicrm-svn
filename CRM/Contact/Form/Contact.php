@@ -350,12 +350,18 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
              
              // start of contact shared adddress defaults
              $sharedAddresses = array( );
+             $masterAddress = array( );
              foreach ( $defaults['address'] as $key => $addressValue ) {
                  if ( CRM_Utils_Array::value( 'master_id', $addressValue ) ) {
                      $sharedAddresses[$key]['shared_address_display'] = $addressValue['display'];
                  }
+
+                 //check if any address is shared by any other contacts
+                 $masterAddress[$key] = CRM_Contact_BAO_Contact_Utils::checkContactSharedAddress( $addressValue['id'] );
              }
+
              $this->assign( 'sharedAddresses', $sharedAddresses );
+             $this->assign( 'masterAddress', $masterAddress );
              // end of shared address defaults
              
              // start of parse address functionality   

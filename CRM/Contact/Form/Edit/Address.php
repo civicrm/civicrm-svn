@@ -303,7 +303,7 @@ class CRM_Contact_Form_Edit_Address
                 }
                 
                 if ( CRM_Utils_Array::value( 'use_shared_address', $addressValues ) && !CRM_Utils_Array::value( 'master_id', $addressValues ) ) {
-                    $errors["address[$instance][use_shared_address]"] = ts( 'Please select shared contact address.' ) ;
+                    $errors["address[$instance][use_shared_address]"] = ts( 'Please select valid shared contact or a contact with valid address.' ) ;
                 }
             }
         }
