@@ -345,7 +345,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         }
         
         $addressValues = array( );       
-        if ( is_array( $defaults['address'] ) && 
+        if ( isset( $defaults['address'] ) && is_array( $defaults['address'] ) && 
              !CRM_Utils_system::isNull( $defaults['address'] ) ) {
              
              // start of contact shared adddress defaults

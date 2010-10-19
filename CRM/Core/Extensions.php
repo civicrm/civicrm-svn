@@ -102,8 +102,9 @@ class CRM_Core_Extensions
      */
     public function __construct( ) {
         $config =& CRM_Core_Config::singleton( );
-        $this->_extDir = $config->extensionsDir;
-        
+        if( isset( $config->extensionsDir ) ) {
+            $this->_extDir = $config->extensionsDir;
+        }
         if( ! empty( $this->_extDir ) ) {
             $this->enabled = TRUE;
         }        
