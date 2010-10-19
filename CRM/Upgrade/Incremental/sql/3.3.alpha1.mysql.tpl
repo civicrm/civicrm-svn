@@ -133,20 +133,20 @@ SELECT @max_campaign_act_wt            := MAX(ROUND(weight)) from civicrm_option
 INSERT INTO 
    `civicrm_option_value` (`option_group_id`, {localize field='label'}label{/localize}, `value`, `name`, `weight`, `is_active`, `component_id` ) 
 VALUES
-  (@option_group_id_campaignType, '{localize}Direct Mail{/localize}',     1, 'Direct Mail',       1,   1, NULL ),
-  (@option_group_id_campaignType, '{localize}Referral Program{/localize}', 2, 'Referral Program',  2,   1, NULL ),
-  (@option_group_id_campaignType, '{localize}Voter Engagement{/localize}', 3, 'Voter Engagement',  3,   1, NULL ),
+  (@option_group_id_campaignType, {localize}'Direct Mail'{/localize},      1, 'Direct Mail',       1,   1, NULL ),
+  (@option_group_id_campaignType, {localize}'Referral Program'{/localize}, 2, 'Referral Program',  2,   1, NULL ),
+  (@option_group_id_campaignType, {localize}'Voter Engagement'{/localize}, 3, 'Voter Engagement',  3,   1, NULL ),
 
-  (@option_group_id_campaignStatus, '{localize}Planned{/localize}',        1, 'Planned',           1,   1, NULL ), 
-  (@option_group_id_campaignStatus, '{localize}In Progress{/localize}',    2, 'In Progress',       2,   1, NULL ),
-  (@option_group_id_campaignStatus, '{localize}Completed{/localize}',      3, 'Completed',         3,   1, NULL ),
-  (@option_group_id_campaignStatus, '{localize}Cancelled{/localize}',      4, 'Cancelled',         4,   1, NULL ),
+  (@option_group_id_campaignStatus, {localize}'Planned'{/localize},        1, 'Planned',           1,   1, NULL ), 
+  (@option_group_id_campaignStatus, {localize}'In Progress'{/localize},    2, 'In Progress',       2,   1, NULL ),
+  (@option_group_id_campaignStatus, {localize}'Completed'{/localize},      3, 'Completed',         3,   1, NULL ),
+  (@option_group_id_campaignStatus, {localize}'Cancelled'{/localize},      4, 'Cancelled',         4,   1, NULL ),
 
-  (@option_group_id_act, '{localize}Survey{/localize}',                   (SELECT @max_campaign_act_val := @max_campaign_act_val + 1 ), 'Survey',           (SELECT @max_campaign_act_wt := @max_campaign_act_wt + 1 ),   1, @campaignCompId ),
-  (@option_group_id_act, '{localize}Canvass{/localize}',                  (SELECT @max_campaign_act_val := @max_campaign_act_val + 1 ), 'Canvass',          (SELECT @max_campaign_act_wt := @max_campaign_act_wt + 1 ),   1, @campaignCompId ),
-  (@option_group_id_act, '{localize}PhoneBank{/localize}',                (SELECT @max_campaign_act_val := @max_campaign_act_val + 1 ), 'PhoneBank',        (SELECT @max_campaign_act_wt := @max_campaign_act_wt + 1 ),   1, @campaignCompId ),
-  (@option_group_id_act, '{localize}WalkList{/localize}',                 (SELECT @max_campaign_act_val := @max_campaign_act_val + 1 ), 'WalkList',         (SELECT @max_campaign_act_wt := @max_campaign_act_wt + 1 ),   1, @campaignCompId ),
-  (@option_group_id_act, '{localize}Petition{/localize}',                 (SELECT @max_campaign_act_val := @max_campaign_act_val + 1 ), 'Petition',         (SELECT @max_campaign_act_wt := @max_campaign_act_wt + 1 ),   1, @campaignCompId );
+  (@option_group_id_act, {localize}'Survey'{/localize},                   (SELECT @max_campaign_act_val := @max_campaign_act_val + 1 ), 'Survey',           (SELECT @max_campaign_act_wt := @max_campaign_act_wt + 1 ),   1, @campaignCompId ),
+  (@option_group_id_act, {localize}'Canvass'{/localize},                  (SELECT @max_campaign_act_val := @max_campaign_act_val + 1 ), 'Canvass',          (SELECT @max_campaign_act_wt := @max_campaign_act_wt + 1 ),   1, @campaignCompId ),
+  (@option_group_id_act, {localize}'PhoneBank'{/localize},                (SELECT @max_campaign_act_val := @max_campaign_act_val + 1 ), 'PhoneBank',        (SELECT @max_campaign_act_wt := @max_campaign_act_wt + 1 ),   1, @campaignCompId ),
+  (@option_group_id_act, {localize}'WalkList'{/localize},                 (SELECT @max_campaign_act_val := @max_campaign_act_val + 1 ), 'WalkList',         (SELECT @max_campaign_act_wt := @max_campaign_act_wt + 1 ),   1, @campaignCompId ),
+  (@option_group_id_act, {localize}'Petition'{/localize},                 (SELECT @max_campaign_act_val := @max_campaign_act_val + 1 ), 'Petition',         (SELECT @max_campaign_act_wt := @max_campaign_act_wt + 1 ),   1, @campaignCompId );
 
 --campaign navigation.
 SELECT @domainID        := MIN(id) FROM civicrm_domain;
@@ -226,16 +226,16 @@ SELECT @option_group_id_urlPref := max(id) from civicrm_option_group where name 
 INSERT INTO 
    `civicrm_option_value` (`option_group_id`, {localize field='label'}label{/localize}, `name`, `value`, `weight`, `is_active`, `domain_id` ) 
 VALUES
-  (@option_group_id_dirPref, '{localize}Temporary Files{/localize}'  , 'uploadDir'          , '', 1, 1, @domainID ),
-  (@option_group_id_dirPref, '{localize}Images{/localize}'           , 'imageUploadDir'     , '', 2, 1, @domainID ),
-  (@option_group_id_dirPref, '{localize}Custom Files{/localize}'     , 'customFileUploadDir', '', 3, 1, @domainID ),
-  (@option_group_id_dirPref, '{localize}Custom Templates{/localize}' , 'customTemplateDir'  , '', 4, 1, @domainID ),
-  (@option_group_id_dirPref, '{localize}Custom PHP{/localize}'       , 'customPHPPathDir'   , '', 5, 1, @domainID ),
-  (@option_group_id_dirPref, '{localize}Custom Extensions{/localize}', 'extensionsDir'      , '', 6, 1, @domainID ),
+  (@option_group_id_dirPref, {localize}'Temporary Files'{/localize}  , 'uploadDir'          , '', 1, 1, @domainID ),
+  (@option_group_id_dirPref, {localize}'Images'{/localize}           , 'imageUploadDir'     , '', 2, 1, @domainID ),
+  (@option_group_id_dirPref, {localize}'Custom Files'{/localize}     , 'customFileUploadDir', '', 3, 1, @domainID ),
+  (@option_group_id_dirPref, {localize}'Custom Templates'{/localize} , 'customTemplateDir'  , '', 4, 1, @domainID ),
+  (@option_group_id_dirPref, {localize}'Custom PHP'{/localize}       , 'customPHPPathDir'   , '', 5, 1, @domainID ),
+  (@option_group_id_dirPref, {localize}'Custom Extensions'{/localize}, 'extensionsDir'      , '', 6, 1, @domainID ),
 
-  (@option_group_id_urlPref, '{localize}CiviCRM Resource URL{/localize}'  , 'userFrameworkResourceURL', '', 1, 1, @domainID ),
-  (@option_group_id_urlPref, '{localize}Image Upload URL{/localize}'      , 'imageUploadURL'          , '', 2, 1, @domainID ),
-  (@option_group_id_urlPref, '{localize}Custom CiviCRM CSS URL{/localize}', 'customCSSURL'            , '', 3, 1, @domainID );
+  (@option_group_id_urlPref, {localize}'CiviCRM Resource URL'{/localize}  , 'userFrameworkResourceURL', '', 1, 1, @domainID ),
+  (@option_group_id_urlPref, {localize}'Image Upload URL'{/localize}      , 'imageUploadURL'          , '', 2, 1, @domainID ),
+  (@option_group_id_urlPref, {localize}'Custom CiviCRM CSS URL'{/localize}, 'customCSSURL'            , '', 3, 1, @domainID );
 
 
 -- CRM-6835
