@@ -347,8 +347,12 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
         if ( CRM_Utils_Array::value( 'title', $fields ) ) {
             $title = trim( $fields['title'] );
             $name  = CRM_Utils_String::titleToVar( $title, 63 );
-            $query  = 'select count(*) from civicrm_group where (name like %1 OR title like %2) AND 
-                       id <> %3';
+            $query  = "
+SELECT count(*)
+FROM   civicrm_group 
+WHERE  (name LIKE %1 OR title LIKE %2) 
+AND    id <> %3
+";
             $grpCnt = CRM_Core_DAO::singleValueQuery( $query, array( 1 => array( $name,  'String' ),
                                                                      2 => array( $title, 'String' ),
                                                                      3 => array( (int)$parentGroups->_id, 'Integer' ) ) );

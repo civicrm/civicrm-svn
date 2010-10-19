@@ -73,8 +73,10 @@ class CRM_Utils_String {
         if ( CRM_Utils_Rule::title( $variable, $maxLength ) ) {
             return $variable;
         }
-      
-        return null;
+
+        // if longer than the maxLength lets just return a substr of the
+        // md5 to prevent errors downstream
+        return substr( md5( $title ), 0, $maxLength );
     }
 
     /**
