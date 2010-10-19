@@ -111,7 +111,7 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
 	        
 			$activityParams = array ( 'source_contact_id'  => $params['contactId'],
 			                          'source_record_id'   => $params['sid'],
-                    'subject'   => $surveyInfo['title'],
+                                      'subject'            => $surveyInfo['title'],
 									  'activity_type_id'   => $surveyInfo['activity_type_id'],
 									  'activity_date_time' => date("YmdHis"), 
 									  'status_id'          => $params['statusId'] );
@@ -282,7 +282,7 @@ SELECT 	a.id,
     civicrm_contact.contact_type,civicrm_contact.contact_sub_type,image_URL,
     first_name,last_name,sort_name,
     employer_id,organization_name,
-    mail_to_household_id,household_name,
+    household_name,
     IFNULL(gender_id,'') AS gender_id,
     IFNULL(state_province_id,'') AS state_province_id,
     IFNULL(country_id,'') as country_id,IFNULL(iso_code,'') as country_iso, IFNULL(civicrm_country.name,'') as country

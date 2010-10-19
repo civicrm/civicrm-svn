@@ -381,13 +381,12 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
             $sharedContact = new CRM_Contact_DAO_Contact();
             $sharedContact->id = $relationship->contact_id_a;
             $sharedContact->find(true);
+
             if ( $relationship->relationship_type_id == 4 &&
                  $relationship->contact_id_b == $sharedContact->employer_id ) {
                 require_once 'CRM/Contact/BAO/Contact/Utils.php';     
                 CRM_Contact_BAO_Contact_Utils::clearCurrentEmployer( $relationship->contact_id_a );         
-            } else if ( $sharedContact->mail_to_household_id == $relationship->contact_id_b ) {
-                self::deleteSharedAddress( $relationship->contact_id_a );
-            }
+            } 
         }
 
         if ( CRM_Core_Permission::access( 'CiviMember' ) ) {
@@ -449,17 +448,10 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
             // calling relatedMemberships to delete/add the memberships of
             // related contacts.
             if ( $action & CRM_Core_Action::DISABLE ) {
-                
-                //to delete relationship between household and individual
-                if ( $relationship->relationship_type_id == 7 ) {
-                    self::deleteSharedAddress( $relationship->contact_id_a );
-                } 
-                
-                CRM_Contact_BAO_Relationship::relatedMemberships( $relationship->contact_id_a, $params, $ids,CRM_Core_Action::DELETE  );
-            }
-            if ( $action & CRM_Core_Action::ENABLE ) {
+                CRM_Contact_BAO_Relationship::relatedMemberships( $relationship->contact_id_a, $params, $ids, CRM_Core_Action::DELETE );
+            } else if ( $action & CRM_Core_Action::ENABLE ) {
                 $ids['contact'] = $relationship->contact_id_a;
-                CRM_Contact_BAO_Relationship::relatedMemberships( $relationship->contact_id_a, $params, $ids,CRM_Core_Action::ADD  );
+                CRM_Contact_BAO_Relationship::relatedMemberships( $relationship->contact_id_a, $params, $ids, CRM_Core_Action::ADD );
             }     
         }
     }
@@ -1136,19 +1128,6 @@ LEFT JOIN  civicrm_country ON (civicrm_address.country_id = civicrm_country.id)
             }
         }
     }
-
-    /**
-     * Function to delete 'Member of HouseHold' relationship for
-     * related contact ie. by setting 'mail_to_household' field to null of individual.
-     * 
-     * @param $id  Int     contact id of individual
-     * return- set 'mail_to_household' field to null
-     *
-     */ 
-    function deleteSharedAddress( $id )
-    {
-        return CRM_Core_DAO::setFieldValue('CRM_Contact_DAO_Contact', $id, 'mail_to_household_id','NULL' );
-    } 
 
     /**
      * Function to get Current Employer for Contact
