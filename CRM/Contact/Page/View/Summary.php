@@ -216,14 +216,20 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
         }
         
         // get the display name of contact that address is shared.
-        if ( CRM_Utils_Array::value( 'master_id', $defaults['address'][1] ) ) {
-            $masterId = $defaults['address'][1]['master_id'];
-            $masterContactId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Address', $masterId, 'contact_id', 'id' );
-            $masterDisplayName = CRM_Contact_BAO_Contact::getMasterDisplayName( $masterId );
-            $this->assign( 'masterContactId', $masterContactId );
-            $this->assign( 'masterDisplayName', $masterDisplayName );
+        $masterDetails = array();
+        foreach( $defaults['address'] as $key => $value ) {
+            if ( CRM_Utils_Array::value( 'master_id', $defaults['address'][$key] ) ) {
+                $masterId = $defaults['address'][$key]['master_id'];
+                $masterContactId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Address', $masterId, 'contact_id', 'id' );
+                $masterDisplayName = CRM_Contact_BAO_Contact::getMasterDisplayName( $masterId );
+                $masterDetails[$key]['master_id'] = $masterId;
+                $masterDetails[$key]['master_contact_id'] = $masterContactId;
+                $masterDetails[$key]['master_display_name'] = $masterDisplayName;
+            } 
         }
-
+        
+        $this->assign('masterDetails', $masterDetails);
+                
         //get the current employer name
         if ( CRM_Utils_Array::value( 'contact_type', $defaults ) == 'Individual' ) {
             if ( $contact->employer_id && $contact->organization_name ) {

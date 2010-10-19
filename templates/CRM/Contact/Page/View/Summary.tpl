@@ -250,11 +250,11 @@
                                             <br /><a href="{crmURL p='civicrm/contact/map' q="reset=1&cid=`$contactId`&lid=`$add.location_type_id`"}" title="{ts 1='&#123;$add.location_type&#125;'}Map %1 Address{/ts}"><span class="geotag">{ts}Map{/ts}</span></a>
                                         {/if}</td>
                                     <td>
-                                        {if $masterDisplayName and $locationIndex eq 1}
-                                        <strong>{ts}Shared with:{/ts}</strong><br />
-                                        <a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$masterContactId`"}">{$masterDisplayName}</a><br />
-                                        {/if}
-                                        {$add.display|nl2br}
+				         {if $masterDetails.$locationIndex.master_id}
+                                             <strong>{ts}Shared with:{/ts}</strong><br />
+                                             <a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$masterDetails.$locationIndex.master_contact_id`"}">{$masterDetails.$locationIndex.master_display_name}</a><br />
+                                             {/if}
+                                         {$add.display|nl2br}
                                     </td>
                                 </tr>
                             </table>
