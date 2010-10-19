@@ -309,7 +309,7 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
              
              // gross hack to show extra information for pending status
              $statusClass = null;
-             if( $statusId   = array_search( $row['participant_status_id'], $statusTypes ) ) {
+             if ( ( isset( $row['participant_status_id'] ) ) && ( $statusId = array_search( $row['participant_status_id'], $statusTypes ) ) ) {
                 $statusClass = $statusClasses[$statusId];
              }
 

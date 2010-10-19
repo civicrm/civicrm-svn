@@ -589,7 +589,9 @@ SELECT civicrm_custom_group.name as name,
         
 		//assign event and role id, this is needed for Custom data building
         $sep = CRM_Core_DAO::VALUE_SEPARATOR;
-        $roleIDs = explode( $sep, $defaults[$this->_id]['participant_role_id'] ); 
+        if ( CRM_Utils_Array::value( 'participant_role_id', $defaults[$this->_id] ) ) { 
+            $roleIDs = explode( $sep, $defaults[$this->_id]['participant_role_id'] ); 
+        }
         if ( isset( $roleIDs ) ) {
             $this->assign( 'roleID', $roleIDs );
         }
