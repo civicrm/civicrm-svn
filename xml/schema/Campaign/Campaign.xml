@@ -48,7 +48,6 @@
       <htmlType>textarea</htmlType>
       <rows>8</rows>
       <cols>60</cols>
-      <localizable>true</localizable>
       <comment>Full description of Campaign.</comment>
       <add>3.3</add>     
   </field> 
