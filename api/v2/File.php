@@ -53,7 +53,7 @@ require_once 'api/v2/utils.php';
  * @return array of newly created file property values.
  * @access public
  */
-function civicrm_create_file($params) 
+function civicrm_file_create( $params ) 
 {
     if ( ! is_array($params) ) {
         return civicrm_create_error('Params is not an array.');
@@ -97,7 +97,7 @@ function civicrm_create_file($params)
  * @return  Array of all found file object property values.
  * @access public
  */
-function civicrm_get_file($params) 
+function civicrm_file_get($params) 
 {
     if ( ! is_array($params) ) {
         return civicrm_create_error('params is not an array.');
@@ -141,7 +141,7 @@ function civicrm_get_file($params)
  * @return array of updated file object property values
  * @access public
  */
-function &civicrm_update_file( &$params ) {
+function &civicrm_file_update( &$params ) {
     if ( !is_array( $params ) ) {
         return civicrm_create_error( 'Params is not an array' );
     }
@@ -176,7 +176,7 @@ function &civicrm_update_file( &$params ) {
  * @return null if successfull, object of CRM_Core_Error otherwise
  * @access public
  */
-function &civicrm_delete_file( $fileId ) {
+function &civicrm_file_delete( $fileId ) {
     if ( empty($fileId) ) {
         return civicrm_create_error( 'Required parameter missing' );
     }
@@ -210,7 +210,7 @@ function &civicrm_delete_file( $fileId ) {
  * @return array of newly created entity-file object properties
  * @access public
  */
-function civicrm_create_entity_file(&$fileID, &$entityID, $entity_table = 'civicrm_contact')
+function civicrm_entity_file_create( &$fileID, &$entityID, $entity_table = 'civicrm_contact' )
 {
     require_once 'CRM/Core/DAO/EntityFile.php';
     
@@ -242,7 +242,7 @@ function civicrm_create_entity_file(&$fileID, &$entityID, $entity_table = 'civic
  *
  * @access public
  */
-function civicrm_add_file_by_entity( $name, $entityID, $entityTable = 'civicrm_contact', $params ) {
+function civicrm_file_by_entity_add( $name, $entityID, $entityTable = 'civicrm_contact', $params ) {
     require_once 'CRM/Core/BAO/File.php';
 
     CRM_Core_BAO_File::filePostProcess( $name, null, $entityTable, $entityID, null, false, $params );
@@ -257,7 +257,7 @@ function civicrm_add_file_by_entity( $name, $entityID, $entityTable = 'civicrm_c
  * @return array   nested array of entity-file property values.
  * @access public
  */
-function civicrm_get_files_by_entity($entityID, $entityTable = 'civicrm_contact', $fileID = null)
+function civicrm_files_by_entity_get( $entityID, $entityTable = 'civicrm_contact', $fileID = null )
 {
     if ( ! $entityID ) {
         return civicrm_create_error('Required parameters missing');
@@ -308,7 +308,7 @@ function civicrm_get_files_by_entity($entityID, $entityTable = 'civicrm_contact'
  * @return  null if successfull, object of CRM_Core_Error otherwise
  * @access public
  */
-function civicrm_delete_entity_file(&$params)
+function civicrm_entity_file_delete( &$params )
 {
     require_once 'CRM/Core/DAO/EntityFile.php';
     
