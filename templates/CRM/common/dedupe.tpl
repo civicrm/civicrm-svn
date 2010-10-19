@@ -11,11 +11,11 @@ function processDupes( cid, oid, oper, context, reloadURL ) {
    
         if ( !cid || !oid || !oper ) return;
         
-	var title = {/literal}'{ts escape="js"}Marked as non duplicates.{/ts}'{literal};
-	var msg = {/literal}'{ts escape="js"}Are you sure you want to mark these contacts as non duplicates.{/ts}'{literal};
+	var title = {/literal}'{ts escape="js"}Mark as Dedupe Exception{/ts}'{literal};
+	var msg = {/literal}'{ts escape="js"}Are you sure you want to mark these contacts as dedupe exception.{/ts}'{literal};
         if ( oper == 'nondupe-dupe' ) {
-	  var title = {/literal}'{ts escape="js"}Marked as duplicates.{/ts}'{literal};
-          var msg = {/literal}'{ts escape="js"}Are you sure you want to mark these contacts as duplicates.{/ts}'{literal};
+	  var title = {/literal}'{ts escape="js"}Remove Dedupe Exception{/ts}'{literal};
+          var msg = {/literal}'{ts escape="js"}Are you sure you want to remove dedupe exception.{/ts}'{literal};
         }
     
 	cj("#processDupes").show( );

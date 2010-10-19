@@ -335,7 +335,7 @@
 </item>
 <item>
    <path>civicrm/dedupe/exception</path>
-   <title>Non Duplicate Contacts</title>
+   <title>Dedupe Exceptions</title>
    <adminGroup>Manage</adminGroup>
    <page_callback>CRM_Contact_Page_DedupeException</page_callback>
    <weight>110</weight>
