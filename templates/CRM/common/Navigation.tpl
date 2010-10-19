@@ -50,12 +50,12 @@ cj( document ).ready( function( ) {
           }
           htmlContent += '<input type="text" class="form-text" id="sort_name_navigation" name="sort_name" style="width: 12em; margin-left: -45px;" />' + 
                          '<input type="text" id="sort_contact_id" style="display: none" />';
-          cj( '#quickSearch' ).append( htmlContent );            
+          cj( '#quickSearch' ).html( htmlContent );            
       } else {
           htmlContent += '<input type="text" class="form-text" id="sort_name_navigation" name="sort_name" style="width: 12em;" />' + 
                          '<input type="hidden" id="sort_contact_id" value="" />' + 
                          '<input type="submit" value="{ts}Go{/ts}" name="_qf_Basic_refresh" class="form-submit default" style="display: none;" />';    
-          cj( '#quickSearch' ).append( htmlContent );
+          cj( '#quickSearch' ).html( htmlContent );
    }
 });
 function getSearchURLValue( )
