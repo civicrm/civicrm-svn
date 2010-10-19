@@ -346,9 +346,14 @@ WHERE e.id = %1";
         }
         
         //finally delete unwanted blocks.
+        require_once 'CRM/Core/BAO/Address.php';
         foreach ( $deleteBlocks as $blockName => $blockValues ) {
             if ( !is_array( $blockValues ) ) continue;
             foreach ( $blockValues as $count => $deleteBlock ) {
+                //we need to do special handling for shared addressm, if address block is deleted.
+                if ( $blockName == 'address' ) {
+                    CRM_Core_BAO_Address::setSharedAddressDeleteStatus( $deleteBlock['id'] );
+                }
                 CRM_Core_BAO_Block::blockDelete( $blockName, $deleteBlock ); 
             }
         }

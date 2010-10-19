@@ -773,7 +773,7 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
     }
 
     /**
-     * Function to get the list of shared addresses given master address id
+     * Function to update the shared addresses if master address is modified
      *
      * @param int    $addressId address id
      * @param array  $params    associated array of address params
@@ -872,5 +872,60 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
         require_once 'CRM/Contact/BAO/Relationship.php';
         list( $valid, $invalid, $duplicate, 
               $saved, $relationshipIds ) = CRM_Contact_BAO_Relationship::create( $relationshipParams, $cid );
+    }
+
+    /**
+     * Function to check and set the status for shared address delete
+     *
+     * @param int     $addressId address id
+     * @param int     $contactId contact id
+     * @param boolean $returnStatus by default false
+     *
+     * @return string $statusMessage 
+     * @access public
+     * @static
+     */
+    static function setSharedAddressDeleteStatus( $addressId = null, $contactId = null, $returnStatus = false ) {
+        // check if address that is being deleted has any shared
+        if ( $addressId ) {
+            $entityId = $addressId;
+            $query = 'SELECT cc.id, cc.display_name 
+                 FROM civicrm_contact cc INNER JOIN civicrm_address ca ON cc.id = ca.contact_id
+                 WHERE ca.master_id = %1';
+        } else {
+            $entityId = $contactId;
+            $query = 'SELECT cc.id, cc.display_name 
+                FROM civicrm_address ca1 
+                    INNER JOIN civicrm_address ca2 ON ca1.id = ca2.master_id
+                    INNER JOIN civicrm_contact cc  ON ca2.contact_id = cc.id 
+                WHERE ca1.contact_id = %1';
+        }
+  
+        $dao = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $entityId, 'Integer' ) ) );
+        
+        $deleteStatus  = array( ); 
+        $statusMessage = null;
+        $addressCount = 0;
+        while( $dao->fetch( ) ) {
+            if ( empty( $deleteStatus ) ) {
+                $deleteStatus[] = ts( 'The following contact(s) have address records which were shared with the address you removed from this contact. These address records are no longer shared - but they have not been removed or altered.' );
+            }
+            
+            $contactViewUrl = CRM_Utils_System::url( 'civicrm/contact/view', "reset=1&cid={$dao->id}" );
+
+            $deleteStatus[] = "<a href='{$contactViewUrl}'>{$dao->display_name}</a>";
+            $addressCount++;
+        }
+
+        if ( !empty( $deleteStatus ) ) {
+            $statusMessage = implode( '<br/>', $deleteStatus ) . '<br/>';
+        }
+
+        if ( !$returnStatus ) {
+            CRM_Core_Session::setStatus( $statusMessage );
+        } else {
+            return array( 'message' => $statusMessage,
+                          'count'   => $addressCount );
+        }
     }
 }
