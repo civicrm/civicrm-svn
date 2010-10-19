@@ -26,7 +26,7 @@
 {if $confirm}
 <div class="messages status">
       <div class="icon inform-icon"></div>&nbsp;
-      <label>{$display_name} ({$email})</label> has been successfully opted out.
+      <label>{$display_name} ({$email})</label> {ts}has been successfully opted out.{/ts}
 </div>
 {else}
 <div>
