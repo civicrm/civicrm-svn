@@ -173,7 +173,7 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
 
             // call the function to create shared relationships
             // we only create create relationship if address is shared by Individual
-            if ( CRM_Utils_Array::value( 'master_id', $address ) ) {
+            if ( $address->master_id != 'null' ) {
                 self::processSharedAddressRelationship( $address->master_id, $params );
             }
         }
