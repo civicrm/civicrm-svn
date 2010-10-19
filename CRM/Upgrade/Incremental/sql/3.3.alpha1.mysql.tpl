@@ -283,6 +283,25 @@ UPDATE civicrm_contact SET mail_to_household_id = NULL;
 ALTER TABLE civicrm_contact DROP  FOREIGN KEY FK_civicrm_contact_mail_to_household_id;
 ALTER TABLE civicrm_contact DROP mail_to_household_id;
 
+-- added shared address profile.
+INSERT INTO civicrm_uf_group
+    (name, group_type, {localize field='title'}title{/localize}, is_reserved ) VALUES
+    ('shared_address', 'Contact',  {localize}'Shared Address'{/localize}, 1 );
+    
+SELECT @uf_group_id_sharedAddress   := max(id) from civicrm_uf_group where name = 'shared_address';
+
+INSERT INTO civicrm_uf_join
+   (is_active,module,entity_table,entity_id,weight,uf_group_id) VALUES
+   (1, 'Profile', NULL, NULL, 7, @uf_group_id_sharedAddress );
+   
+INSERT INTO civicrm_uf_field
+   (uf_group_id, field_name, is_required, is_reserved, weight, visibility, in_selector, is_searchable, location_type_id, {localize field='label'}label{/localize}, field_type, {localize field='help_post'}help_post{/localize}, phone_type_id ) VALUES
+   (@uf_group_id_sharedAddress, 'street_address',  0, 0, 1, 'User and User Admin Only',  0, 0, 1, {localize}'Street Address (Home)'{/localize},     'Contact',     {localize}NULL{/localize},  NULL),
+   (@uf_group_id_sharedAddress, 'city',            0, 0, 2, 'User and User Admin Only',  0, 0, 1, {localize}'City (Home)'{/localize},        'Contact',     {localize}NULL{/localize},  NULL),
+   (@uf_group_id_sharedAddress, 'postal_code',     0, 0, 3, 'User and User Admin Only',  0, 0, 1, {localize}'Postal Code (Home)'{/localize}, 'Contact',     {localize}NULL{/localize},  NULL),
+   (@uf_group_id_sharedAddress, 'country',         0, 0, 4, 'Public Pages and Listings', 0, 1, 1, {localize}'Country (Home)'{/localize},     'Contact',     {localize}'Your state/province and country of residence will be shared with others so folks can find others in their community.'{/localize},  NULL),
+   (@uf_group_id_sharedAddress, 'state_province',  0, 0, 5, 'Public Pages and Listings', 1, 1, 1, {localize}'State (Home)'{/localize},       'Contact',     {localize}NULL{/localize},  NULL);
+
 -- CRM-6894
 CREATE TABLE `civicrm_batch` ( 
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Unique Address ID.',
