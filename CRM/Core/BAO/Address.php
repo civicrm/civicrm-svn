@@ -168,8 +168,14 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
                 CRM_Core_BAO_CustomValueTable::store( $addressCustom, 'civicrm_address', $address->id );
             }
             
-            //call the funtion to sync shared address
+            //call the function to sync shared address
             self::processSharedAddress( $address->id, $params );
+
+            // call the function to create shared relationships
+            // we only create create relationship if address is shared by Individual
+            if ( $address->master_id ) {
+                self::processSharedAddressRelationship( $address->master_id, $params );
+            }
         }
 
         return $address;
@@ -794,7 +800,77 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
             $addressDAO->free( );
         }
     }
+    
+    /**
+     * Function to create relationship between contacts who share an address
+     *
+     * Note that currently we create relationship only for Individual contacts
+     * Individual + Household and Individual + Orgnization
+     *
+     * @param int    $masterAddressId master address id
+     * @param array  $params          associated array of submitted values
+     *
+     * @return void
+     * @access public
+     * @static
+     */
+    static function processSharedAddressRelationship( $masterAddressId, $params ) {
+        if ( !$masterAddressId ) {
+            return;
+        }
+        
+        // get the contact type of contact being edited / created
+        $currentContactType = CRM_Contact_BAO_Contact::getContactType( $params['contact_id'] );      
+        $currentContactId   = $params['contact_id'];
 
+        // if current contact is not of type individual return    
+        if ( $currentContactType != 'Individual' ) {
+            return;
+        }
+
+        // get the contact id and contact type of shared contact
+        // check the contact type of shared contact, return if it is of type Individual
+        
+        $query = 'SELECT cc.id, cc.contact_type 
+                 FROM civicrm_contact cc INNER JOIN civicrm_address ca ON cc.id = ca.contact_id
+                 WHERE ca.id = %1';
+        
+        $dao = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $masterAddressId, 'Integer' ) ) );     
+        
+        $dao->fetch( );
+        
+        // if current contact is not of type individual return, since we don't create relationship between
+        // 2 individuals    
+        if ( $dao->contact_type == 'Individual' ) {
+            return;
+        }
+        $sharedContactType = $dao->contact_type; 
+        $sharedContactId   = $dao->id;
+
+        // create relationship between ontacts who share an address
+        if ( $sharedContactType == 'Household' ) {
+            // get the relationship type id of "Household Member of"
+            $relationshipType = 'Household Member of';
+        } else {
+            // get the relationship type id of "Employee of"
+            $relationshipType = 'Employee of';
+        }
+
+        $cid = array( 'contact' => $currentContactId );
+
+        $relTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_RelationshipType', $relationshipType, 'id', 'name_a_b' );
+ 
+        if ( !$relTypeId ) {
+            CRM_Core_Error::fatal( ts( "You seem to have deleted the relationship type '%1'", array( '1' => $relationshipType ) ) );
+        }
+
+        // create relationship
+        $relationshipParams = array( 'is_active'            => true,
+                                     'relationship_type_id' => $relTypeId.'_a_b',
+                                     'contact_check'        => array( $sharedContactId => true ) );
+        
+        require_once 'CRM/Contact/BAO/Relationship.php';
+        list( $valid, $invalid, $duplicate, 
+              $saved, $relationshipIds ) = CRM_Contact_BAO_Relationship::create( $relationshipParams, $cid );
+    }
 }
-
-
