@@ -174,6 +174,10 @@ class CRM_Core_I18n_Schema
         // update civicrm_domain.locales
         $domain->locales = 'NULL';
         $domain->save();
+        
+        //CRM-6963 -fair assumption. 
+        global $dbLocale;
+        $dbLocale = '';
     }
 
     /**
