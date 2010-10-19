@@ -152,7 +152,11 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note
         if ( !isset($params['modified_date']) ) {
             $params['modified_date'] = date("Ymd");
         }
-        
+
+        if ( !isset($params['privacy']) ) {
+            $params['privacy']  = 0;
+        }
+
         $note->copyValues( $params );
         if ( ! $params['contact_id'] ) {
             if ( $params['entity_table'] =='civicrm_contact' ) {
