@@ -97,7 +97,7 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
             $dao->query('DROP VIEW IF EXISTS civicrm_domain_view');
             CRM_Core_Error::setCallback();
 
-            if (!$dao->_lastError) {
+            if (!$dao->_lastError and !$config->logging) {
                 $this->addElement('checkbox', 'makeMultilingual', ts('Enable Multiple Languages'),
                                   null, array('onChange' => "if (this.checked) alert('$warning')"));
             }

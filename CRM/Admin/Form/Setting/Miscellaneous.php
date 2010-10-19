@@ -52,7 +52,12 @@ class CRM_Admin_Form_Setting_Miscellaneous extends  CRM_Admin_Form_Setting
         CRM_Utils_System::setTitle(ts('Settings - Miscellaneous'));
 
         $this->addYesNo('contactUndelete', ts('Contact Trash & Undelete'));
-        $this->addYesNo('logging',         ts('Logging'));
+
+        // FIXME: for now, disable logging for multilingual sites
+        $domain = new CRM_Core_DAO_Domain;
+        $domain->find(true);
+        $attribs = $domain->locales ? array('disabled' => 'disabled') : null;
+        $this->addYesNo('logging', ts('Logging'), null, null, $attribs);
 
         $this->addYesNo( 'versionCheck'           , ts( 'Version Check & Statistics Reporting' ));
         $this->addElement('text', 'maxAttachments' , ts('Maximum Attachments'),

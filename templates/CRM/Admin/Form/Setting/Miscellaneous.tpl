@@ -49,6 +49,7 @@
           <td>
             {$form.logging.html}<br />
             <p class="description">{ts}If enabled, all actions performed on non-cache tables will be logged (in the respective log_* tables).{/ts}</p>
+            <p class="description">{ts}(This functionality currenly cannot be enabled on multilingual installations.){/ts}</p>
           </td>
         </tr>
         <tr class="crm-miscellaneous-form-block-versionCheck">
