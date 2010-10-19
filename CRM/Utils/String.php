@@ -423,7 +423,9 @@ class CRM_Utils_String {
     static function stripAlternatives($full)
     {
         $matches = array();
-        if (preg_match('/-ALTERNATIVE ITEM 0-(.*?)-ALTERNATIVE ITEM 1-.*-ALTERNATIVE END-/s', $full, $matches)) {
+        preg_match('/-ALTERNATIVE ITEM 0-(.*?)-ALTERNATIVE ITEM 1-.*-ALTERNATIVE END-/s', $full, $matches);
+
+        if ( trim( strip_tags( $matches[1] ) ) != '' ) {
             return $matches[1];
         } else {
             return $full;
