@@ -120,7 +120,7 @@ class EmailProcessor {
           require_once 'CRM/Mailing/MailStore.php';
           $store = CRM_Mailing_MailStore::getStore($dao->name);
           
-          require_once 'api/Mailer.php';
+          require_once 'api/v2/Mailer.php';
           
           // process fifty at a time, CRM-4002
           while ($mails = $store->fetchNext(MAIL_BATCH_SIZE)) {
