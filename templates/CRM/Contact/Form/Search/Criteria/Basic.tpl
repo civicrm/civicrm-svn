@@ -36,8 +36,10 @@
                 </div>
             </td>
             <td>
+              {if $form.component_mode}  
                 {$form.component_mode.label} {$form.component_mode.html}
                 <br /><br />
+              {/if}
                 {$form.uf_group_id.label} {$form.uf_group_id.html}
                 <br /><br />
                 <div class="form-item">

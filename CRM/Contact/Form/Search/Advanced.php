@@ -125,9 +125,8 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
         usort( $componentPanes, array( 'CRM_Utils_Sort', 'cmpFunc' ) );
        
         foreach( $componentPanes as $name => $pane ) {
-                // FIXME: we should change the use of $name here
-                // FIXME: to keyword
-                $paneNames[$pane['title']] = $pane['name'];
+            // FIXME: we should change the use of $name here to keyword
+            $paneNames[$pane['title']] = $pane['name'];
         }
 
         $this->_paneTemplatePath = array( );

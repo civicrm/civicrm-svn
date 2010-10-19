@@ -128,10 +128,27 @@ class CRM_Contact_Form_Search_Criteria {
                                  '2' => ts( 'Contributions' ),
                                  '3' => ts( 'Participants'  ),
                                  '4' => ts( 'Activities'    ) );
-        $form->addElement('select',
-                          'component_mode', 
-                          ts( 'Display Result as' ),
-                          $componentModes );
+
+        // unset contributions or participants if user does not have
+        // permission on them
+        if ( ! CRM_Core_Permission::access( 'CiviContribute' ) ) {
+            unset ( $componentModes['2'] );
+        }
+
+        if ( ! CRM_Core_Permission::access( 'CiviEvent' ) ) {
+            unset ( $componentModes['3'] );
+        }
+
+        if ( ! CRM_Core_Permission::check( 'view all activities' ) ) {
+            unset ( $componentModes['4'] );
+        }
+
+        if ( count( $componentModes ) > 1 ) {
+            $form->addElement('select',
+                              'component_mode', 
+                              ts( 'Display Result as' ),
+                              $componentModes );
+        }
 
         // checkboxes for DO NOT phone, email, mail
         // we take labels from SelectValues
