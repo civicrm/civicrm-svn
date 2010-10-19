@@ -799,19 +799,4 @@ Group By  componentId";
             } 
         }
     }
-    
-    /**
-     * Check if current address is used by any other contacts
-     *  
-     * @param in $addressId address id
-     * 
-     * @return count of contacts that use this shared address
-     * @access public
-     * @static
-     */
-    static function checkContactSharedAddress( $addressId ) {
-        $query = 'SELECT count(id) FROM civicrm_address WHERE master_id = %1';
-
-        return CRM_Core_DAO::singleValueQuery( $query, array( 1 => array( $addressId, 'Integer' ) ) );
-    }
 }

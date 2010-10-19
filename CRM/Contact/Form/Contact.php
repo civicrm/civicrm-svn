@@ -357,7 +357,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                  }
 
                  //check if any address is shared by any other contacts
-                 $masterAddress[$key] = CRM_Contact_BAO_Contact_Utils::checkContactSharedAddress( $addressValue['id'] );
+                 $masterAddress[$key] = CRM_Core_BAO_Address::checkContactSharedAddress( $addressValue['id'] );
              }
 
              $this->assign( 'sharedAddresses', $sharedAddresses );
@@ -912,11 +912,6 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         //     CRM_Contact_Form_Edit_Individual::handleSharedRelation($contact->id , $params );
         // }
         // 
-        // if ( $this->_contactType == 'Household' && ( $this->_action & CRM_Core_Action::UPDATE ) ) {
-        //     //TO DO: commented because of schema changes
-        //     require_once 'CRM/Contact/Form/Edit/Household.php';
-        //     CRM_Contact_Form_Edit_Household::synchronizeIndividualAddresses( $contact->id );
-        // }
         
         if ( array_key_exists( 'TagsAndGroups', $this->_editOptions ) ) {
             //add contact to tags

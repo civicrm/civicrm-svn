@@ -167,6 +167,9 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
             if ( ! empty( $addressCustom ) ) {
                 CRM_Core_BAO_CustomValueTable::store( $addressCustom, 'civicrm_address', $address->id );
             }
+            
+            //call the funtion to sync shared address
+            self::processSharedAddress( $address->id, $params );
         }
 
         return $address;
@@ -748,6 +751,50 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
         }
         return $fields;
     }
+
+    /**
+     * Check if current address is used by any other contacts
+     *  
+     * @param int $addressId address id
+     * 
+     * @return count of contacts that use this shared address
+     * @access public
+     * @static
+     */
+    static function checkContactSharedAddress( $addressId ) {
+        $query = 'SELECT count(id) FROM civicrm_address WHERE master_id = %1';
+        return CRM_Core_DAO::singleValueQuery( $query, array( 1 => array( $addressId, 'Integer' ) ) );
+    }
+
+    /**
+     * Function to get the list of shared addresses given master address id
+     *
+     * @param int    $addressId address id
+     * @param array  $params    associated array of address params
+     *
+     * @return void
+     * @access public
+     * @static
+     */
+    static function processSharedAddress( $addressId, $params ) {
+        $query = 'SELECT id FROM civicrm_address WHERE master_id = %1';
+        $dao = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $addressId, 'Integer' ) ) );
+        
+        // unset contact id
+        $skipFields = array( 'is_primary', 'location_type_id', 'is_billing', 'master_id', 'contact_id' );
+        foreach ( $skipFields as $value ) {
+            unset( $params[$value] );
+        } 
+
+        $addressDAO = new CRM_Core_DAO_Address( );
+        while( $dao->fetch( ) ) {
+            $addressDAO->copyValues( $params );
+            $addressDAO->id = $dao->id;
+            $addressDAO->save( );
+            $addressDAO->free( );
+        }
+    }
+
 }
 
 
