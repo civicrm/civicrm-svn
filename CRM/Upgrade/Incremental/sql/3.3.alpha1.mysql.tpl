@@ -20,6 +20,8 @@ UPDATE civicrm_option_group
 ALTER TABLE `civicrm_note` 
   ADD `privacy` INT( 10 ) NOT NULL COMMENT 'Foreign Key to Note Privacy Level (which is an option value pair and hence an implicit FK)';
 
+UPDATE `civicrm_note` SET `privacy` = '0' WHERE 1;
+
 -- CRM-6748
 UPDATE civicrm_navigation SET url = 'civicrm/admin/contribute/add&reset=1&action=add'
         WHERE civicrm_navigation.name = 'New Contribution Page';
