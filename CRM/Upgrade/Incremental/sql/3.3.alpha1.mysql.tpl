@@ -22,6 +22,19 @@ ALTER TABLE `civicrm_note`
 
 UPDATE `civicrm_note` SET `privacy` = '0' WHERE 1;
 
+INSERT INTO civicrm_option_group
+      (name, {localize field='description'}description{/localize}, is_reserved, is_active)
+VALUES
+      ('note_privacy', {localize}'Privacy levels for notes'{/localize}, 0, 1);
+
+SELECT @option_group_id_notePrivacy := max(id) from civicrm_option_group where name = 'note_privacy';
+
+INSERT INTO civicrm_option_value
+      (option_group_id, {localize field='label'}label{/localize}, value, name, grouping, filter, is_default, weight, is_optgroup, is_reserved, is_active, component_id, visibility_id)
+VALUES
+      (@option_group_id_notePrivacy, {localize}'None'{/localize}        , 0, '', NULL, 0, 1, 1, 0, 1, 1, NULL, NULL),
+      (@option_group_id_notePrivacy, {localize}'Author Only'{/localize} , 1, '', NULL, 0, 0, 2, 0, 1, 1, NULL, NULL);
+
 -- CRM-6748
 UPDATE civicrm_navigation SET url = 'civicrm/admin/contribute/add&reset=1&action=add'
         WHERE civicrm_navigation.name = 'New Contribution Page';
