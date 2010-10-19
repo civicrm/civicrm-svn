@@ -5,17 +5,17 @@
 
 cj( '#processDupes' ).hide( );
 
-function processDupes( cid, oid, oper, reload, reloadURL ) {
+function processDupes( cid, oid, oper, context, reloadURL ) {
         //currently we are doing in a single way.
         //later we might want two way operations.
    
         if ( !cid || !oid || !oper ) return;
         
 	var title = {/literal}'{ts escape="js"}Marked as non duplicates.{/ts}'{literal};
-	var msg = {/literal}'{ts escape="js"}Are you sure you want to save these contacts as non duplicates.{/ts}'{literal};
+	var msg = {/literal}'{ts escape="js"}Are you sure you want to mark these contacts as non duplicates.{/ts}'{literal};
         if ( oper == 'nondupe-dupe' ) {
 	  var title = {/literal}'{ts escape="js"}Marked as duplicates.{/ts}'{literal};
-          var msg = {/literal}'{ts escape="js"}Are you sure you want to save these contacts as duplicates.{/ts}'{literal};
+          var msg = {/literal}'{ts escape="js"}Are you sure you want to mark these contacts as duplicates.{/ts}'{literal};
         }
     
 	cj("#processDupes").show( );
@@ -37,16 +37,18 @@ function processDupes( cid, oid, oper, reload, reloadURL ) {
 				cj(this).dialog("close"); 
 			},
 			"OK": function() { 	    
-			        saveProcessDupes( cid, oid, oper );
+			        saveProcessDupes( cid, oid, oper, context );
 			        cj(this).dialog( 'close' );
-				if ( reload && reloadURL ) window.location.href = reloadURL; 
+				if ( context == 'merge-contact' && reloadURL ) {
+				     window.location.href = reloadURL;  
+				}
 			}
 		} 
 	});
 }
 
 
-function saveProcessDupes( cid, oid, oper ) {
+function saveProcessDupes( cid, oid, oper, context ) {
     //currently we are doing in a single way.
     //later we might want two way operations.
    
@@ -63,12 +65,13 @@ function saveProcessDupes( cid, oid, oper ) {
      	     {cid: cid, oid: oid, op: oper}, 
              function( result ) {
 		 if ( result.status == oper ) {
-                    if ( oper == 'dupe-nondupe' ) {
-		       cj( "#dupeRow_" + cid + '_' + oid ).addClass( "disabled" );    
-		       cj( "#dupeRow_" + cid + '_' + oid + ' td').addClass( "disabled" );
-		    } else {
-		       cj( "#dupeRow_" + cid + '_' + oid ).removeClass( "disabled" );
-		       cj( "#dupeRow_" + cid + '_' + oid + ' td').removeClass( "disabled" );
+
+		    if ( oper == 'dupe-nondupe' && 
+		         context == 'dupe-listing' ) {
+		      	  cj( "#dupeRow_" + cid + '_' + oid ).addClass( "disabled" );    
+		          cj( "#dupeRow_" + cid + '_' + oid + ' td').addClass( "disabled" ); 
+		    } else if ( oper == 'nondupe-dupe' ) {
+		          cj( "#dupeRow_" + cid + '_' + oid ).hide( ); 
 		    }
        	         }
 	     },

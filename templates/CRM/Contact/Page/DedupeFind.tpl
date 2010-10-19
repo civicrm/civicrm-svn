@@ -41,7 +41,7 @@
 	  {if $main.canMerge}
               {$merge}
 	      &nbsp;|&nbsp;
-	      <a id='notDuplicate' href="#" title={ts}not a duplicate{/ts} onClick="processDupes( {$main.srcID}, {$main.dstID}, 'dupe-nondupe' );return false;">{ts}not a duplicate{/ts}</a>
+	      <a id='notDuplicate' href="#" title={ts}not a duplicate{/ts} onClick="processDupes( {$main.srcID}, {$main.dstID}, 'dupe-nondupe', 'dupe-listing' );return false;">{ts}not a duplicate{/ts}</a>
 	  {else}
 	       <em>{ts}Insufficient access rights - cannot merge{/ts}</em>
 	  {/if}

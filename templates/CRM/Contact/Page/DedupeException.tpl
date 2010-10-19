@@ -34,10 +34,10 @@
     </thead>
     <tbody>
        {foreach from=$dedupeExceptions item=exception key=id}
-       <tr id="exception_{$id}" class="{cycle values="odd-row,even-row"}">
+       <tr id="dupeRow_{$id}" class="{cycle values="odd-row,even-row"}">
 	   <td>{$exception.main.name}</td>
 	   <td>{$exception.other.name}</td>
-	   <td><a id='duplicateContacts' href="#" title={ts}Could be duplicate.{/ts} onClick="processDupes( {$exception.main.id}, {$exception.other.id}, 'nondupe-dupe' );return false;">&raquo; {ts}Could be duplicate.{/ts}</a></td>
+	   <td><a id='duplicateContacts' href="#" title={ts}Could be duplicate.{/ts} onClick="processDupes( {$exception.main.id}, {$exception.other.id}, 'nondupe-dupe', 'dedupe-exception' );return false;">&raquo; {ts}Could be duplicate.{/ts}</a></td>
        </tr>
        {/foreach}
     </tbody>
@@ -48,8 +48,8 @@
 	//load jQuery data table.
         cj('#dedupeExceptions').dataTable( {
 		"sPaginationType": "full_numbers",
-		"aaSorting"  : sortColumn,
-		"aoColumns"  : columns
+		"aaSorting": [[0,'asc'], [1,'asc']],
+		"aoColumns": [{sClass:""},{sClass:""},{bSortable:false}],
         });    
 </script>
 {/literal}
