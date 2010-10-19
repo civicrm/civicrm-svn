@@ -2324,7 +2324,6 @@ div.grippie {
 #crm-create-new-wrapper,
 #crm-contact-actions-wrapper{
 	position:relative;
-	z-index:15;
 	float: left;
 	}
 
@@ -2337,6 +2336,7 @@ div.grippie {
 	top:24px;
 	width:220px;
 	left:0px;
+	z-index:15;
 	}
 
 #crm-event-links-link {width:90px;}
