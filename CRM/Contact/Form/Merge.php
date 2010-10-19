@@ -73,6 +73,8 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         $rgid  = CRM_Utils_Request::retrieve('rgid','Positive', $this, false);
         $gid   = CRM_Utils_Request::retrieve('gid','Positive', $this, false);
         
+        self::validateContacts( $cid, $oid );
+        
         // Block access if user does not have EDIT permissions for both contacts.
         require_once 'CRM/Contact/BAO/Contact/Permission.php';
         if ( ! ( CRM_Contact_BAO_Contact_Permission::allow( $cid, CRM_Core_Permission::EDIT ) 
@@ -646,5 +648,21 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         CRM_Core_Session::setStatus(ts('The contacts have been merged.'));
         $url = CRM_Utils_System::url( 'civicrm/contact/view', "reset=1&cid={$this->_cid}" );
         CRM_Utils_System::redirect($url);
+    }
+    
+    function validateContacts( $cid, $oid ) {
+        if ( !$cid || !$oid ) return; 
+        require_once 'CRM/Dedupe/DAO/Exception.php';
+        $exception = new CRM_Dedupe_DAO_Exception( );
+        $exception->contact_id1 = $cid;
+        $exception->contact_id2 = $oid;
+        //make sure contact2 > contact1.
+        if ( $cid > $oid ) {
+            $exception->contact_id1 = $oid;
+            $exception->contact_id2 = $cid;
+        }
+        if ( $exception->find( true ) ) {
+            CRM_Core_Error::fatal( ts( 'Oops, these contacts seems to be marked as non duplicates.' ) );
+        }
     }
 }
