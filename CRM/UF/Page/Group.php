@@ -313,8 +313,8 @@ class CRM_UF_Page_Group extends CRM_Core_Page
                 $action -= CRM_Core_Action::DELETE;
             }
             
-            // drop Create, Edit and View mode links if profile group_type is Contribution, Membership, or Participant
-            if ( $value['group_type'] == 'Contribution' || $value['group_type'] == 'Membership' || $value['group_type'] == 'Participant' ) {
+            // drop Create, Edit and View mode links if profile group_type is Contribution, Membership, Activities or Participant
+            if ( $value['group_type'] == 'Contribution' || $value['group_type'] == 'Membership' || $value['group_type'] == 'Activity' || $value['group_type'] == 'Participant' ) {
                 $action -= CRM_Core_Action::ADD;
             }
             

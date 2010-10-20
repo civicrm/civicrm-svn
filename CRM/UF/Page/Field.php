@@ -124,6 +124,12 @@ class CRM_UF_Page_Field extends CRM_Core_Page
         $ufFieldBAO->orderBy( 'weight', 'field_name' );
         $ufFieldBAO->find();
         
+        require_once "CRM/Core/BAO/UFField.php";
+        $profileType = CRM_Core_BAO_UFField::getProfileType( $this->_gid );
+        if ( $profileType == 'Contribution' || $profileType == 'Membership' || $profileType == 'Activity' || $profileType == 'Participant' ) {
+            $this->assign( 'skipCreate', true );
+        }
+        
         $locationType = array( );
         $locationType =& CRM_Core_PseudoConstant::locationType();
         
