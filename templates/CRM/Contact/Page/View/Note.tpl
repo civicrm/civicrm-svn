@@ -126,7 +126,7 @@
             cj('tr#cnote_'+ noteId +' span.icon_comments_hide').hide();
             elRow.removeClass('view-comments');
         } else {
-            var getUrl = {/literal}"{crmURL p='civicrm/ajax/rest/'}"{literal};
+            var getUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0}"{literal};
             cj.get(getUrl, { fnName: 'civicrm/note/tree_get', json: 1, id: noteId }, showComments, 'json' );
         }
 
@@ -134,8 +134,7 @@
 
     function showComments (response) {
 
-        var urlTemplate = '{/literal}{crmURL p='civicrm/contact/view' q="reset=1&cid="}{literal}'
-
+        var urlTemplate = '{/literal}{crmURL p='civicrm/contact/view' q="reset=1&cid=" h=0 }{literal}'
         if (response[0] && response[0].entity_id) {
             var noteId = response[0].entity_id
             var row = cj('tr#cnote_'+ noteId);
@@ -148,19 +147,31 @@
                 var rowClassOddEven = 'even'
             }
 
-            commentRows['cnote_'+ noteId] = {};
+            if ( commentRows['cnote_'+ noteId] ) {
+                for ( var i in commentRows['cnote_'+ noteId] ) { 
+                    return false;
+                }
+            } else {
+                commentRows['cnote_'+ noteId] = {}; 
+            }
             for (i in response) {
-                str = '<tr id="cnote_'+ response[i].id +'" class="'+ rowClassOddEven +' note-comment_'+ noteId +'">'
-                    + '<td></td>'
-                    + '<td colspan="2" style="padding-left: 2em">'
-                    + response[i].note
-                    + '</td><td>'
-                    + response[i].modified_date
-                    + '</td><td>'
-                    + '<a href="'+ urlTemplate + response[i].createdById +'">'+ response[i].createdBy +'</a>'
-                    + '</td><td>'+ commentAction.replace(/{cid}/g, response[i].createdById).replace(/{id}/g, response[i].id) +'</td></tr>'
+                if ( response[i].id ) {
+                    if ( commentRows['cnote_'+ noteId] &&
+                        commentRows['cnote_'+ noteId][response[i].id] ) {
+                        continue;
+                    }
+                    str = '<tr id="cnote_'+ response[i].id +'" class="'+ rowClassOddEven +' note-comment_'+ noteId +'">'
+                        + '<td></td>'
+                        + '<td colspan="2" style="padding-left: 2em">'
+                        + response[i].note
+                        + '</td><td>'
+                        + response[i].modified_date
+                        + '</td><td>'
+                        + '<a href="'+ urlTemplate + response[i].createdById +'">'+ response[i].createdBy +'</a>'
+                        + '</td><td>'+ commentAction.replace(/{cid}/g, response[i].createdById).replace(/{id}/g, response[i].id) +'</td></tr>'
 
-                commentRows['cnote_'+ noteId][response[i].id] = str;
+                    commentRows['cnote_'+ noteId][response[i].id] = str;
+                }
             }
             drawCommentRows('cnote_'+ noteId);
 
@@ -221,7 +232,7 @@
 
         {foreach from=$notes item=note}
         <tr id="cnote_{$note.id}" class="{cycle values="odd-row,even-row"} crm-note">
-            <td class="crm-note-note">
+            <td class="crm-note-comment">
                 {if $note.comment_count}
                     <span id="{$note.id}_show" style="display:block" class="icon_comments_show">
                         <a href="#" onclick="showHideComments({$note.id}); return false;" title="{ts}Show comments for this note.{/ts}"><span class="ui-icon dark-icon ui-icon-triangle-1-e"></span>
@@ -230,7 +241,7 @@
                         <a href="#" onclick="showHideComments({$note.id}); return false;" title="{ts}Hide comments for this note.{/ts}"><span class="ui-icon dark-icon ui-icon-triangle-1-s"></span>
                     </span>
                 {else}
-                    <span class="ui-icon light-icon ui-icon-triangle-1-e"></span>
+                    <span class="ui-icon light-icon ui-icon-triangle-1-e" id="{$note.id}_hide" style="display:none"></span>
                 {/if}
             </td>
             <td class="crm-note-note">
