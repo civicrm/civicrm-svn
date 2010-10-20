@@ -57,7 +57,6 @@ function {/literal}{$list}{literal}viewActivity( activityID, contactID, list ) {
 
         buttons: { 
             "Done": function() { 	    
-                cj(this).dialog("close"); 
                 cj(this).dialog("destroy"); 
             }
         }
