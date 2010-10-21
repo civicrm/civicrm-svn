@@ -325,8 +325,6 @@ class CRM_Case_Selector_Search extends CRM_Core_Selector_Base
                  }
              }
              
-             $row['case_subject'] = CRM_Core_DAO::getFieldValue( 'CRM_Case_DAO_Case', $result->case_id, 'subject' );
-             
              $isDeleted = false;
              if ( $result->case_deleted ) {
                  $isDeleted = true;
