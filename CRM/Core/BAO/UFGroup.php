@@ -1602,6 +1602,8 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             
             //Website type select
             $form->addElement('select', $name .'-website_type_id', null, CRM_Core_PseudoConstant::websiteType( ) );
+        } else if ($fieldName == 'note' ) {  //added because note appeared as a standard text input
+            $form->add('textarea', $name, $title, $attributes, $required );
         } else if (substr($fieldName, 0, 6) === 'custom') {
             $customFieldID = CRM_Core_BAO_CustomField::getKeyID($fieldName);
             if ( $customFieldID ) {
