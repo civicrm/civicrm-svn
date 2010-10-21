@@ -147,9 +147,10 @@ contact_a.sort_name    as sort_name,
     function from( ) {
         $from = "FROM      civicrm_contact contact_a";
         $customFrom = array( );
+        // lets do an INNER JOIN so we get only relevant values rather than all values
         if ( !empty( $this->_tables ) ) {
             foreach ( $this->_tables as $tableName => $fields ) {
-                $customFrom[ ] = " LEFT JOIN $tableName ON {$tableName}.entity_id = contact_a.id ";
+                $customFrom[ ] = " INNER JOIN $tableName ON {$tableName}.entity_id = contact_a.id ";
             }
             return $from . implode( ' ', $customFrom );
         }
