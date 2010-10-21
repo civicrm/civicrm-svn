@@ -509,7 +509,7 @@ ORDER BY title asc
                 CRM_Core_Action::formLink( self::actionLinks( ), 
                                            $action, 
                                            array('id' => $dao->id),
-                                           'more',
+                                           ts( 'more' ),
                                            true );
         }
         
