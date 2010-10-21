@@ -385,7 +385,7 @@ LEFT  JOIN (
         }
     }
 
-    function formRule ( &$fields, &$files, $self ) {
+    function formRule ( &$fields, &$files, &$self ) {
         require_once 'CRM/Utils/Date.php';
         
         $errors = $checkDate = $errorCount = array( );
