@@ -125,11 +125,17 @@ class CRM_Case_BAO_Query
             $query->_tables['case_activity']               = $query->_whereTables['case_activity'] = 1;
         }
         
+        if ( CRM_Utils_Array::value( 'case_activity_subject', $query->_returnProperties ) ) {
+            $query->_select['case_activity_subject']  = "case_activity.subject as case_activity_subject";
+            $query->_element['case_activity_subject'] = 1;
+            $query->_tables['case_activity']          = 1;
+            $query->_tables['civicrm_case_contact']   = 1;
+            $query->_tables['civicrm_case']           = 1;
+        }
+
         if ( CRM_Utils_Array::value( 'case_subject', $query->_returnProperties ) ) {
-            $query->_select['case_subject']    = "case_activity.subject as case_subject";
+            $query->_select['case_subject']         = "civicrm_case.subject as case_subject";
             $query->_element['case_subject']        = 1;
-            $query->_element['case_subject']        = 1;
-            $query->_tables['case_activity']        = 1;
             $query->_tables['civicrm_case_contact'] = 1;
             $query->_tables['civicrm_case']         = 1;
         }
@@ -316,11 +322,18 @@ class CRM_Case_BAO_Query
             $query->_tables['civicrm_case'] = $query->_whereTables['civicrm_case'] = 1;
             return;
 
-        case 'case_subject':
+        case 'case_activity_subject':
             $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "case_activity.subject", $op, $value, 'String' ); 
             $query->_qill[$grouping][]  = ts ("Activity Subject %1 '%2'", array(1 => $op, 2 => $value ));
             $query->_tables['case_activity'] = $query->_whereTables['case_activity'] = 1;
             $query->_tables['civicrm_case']  = $query->_whereTables['civicrm_case']  = 1;
+            $query->_tables['civicrm_case_contact'] = $query->_whereTables['civicrm_case_contact'] = 1;
+            return;
+            
+        case 'case_subject':
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_case.subject", $op, $value, 'String' ); 
+            $query->_qill[$grouping][]  = ts ("Case Subject %1 '%2'", array(1 => $op, 2 => $value ));
+            $query->_tables['civicrm_case'] = $query->_whereTables['civicrm_case'] = 1;
             $query->_tables['civicrm_case_contact'] = $query->_whereTables['civicrm_case_contact'] = 1;
             return;
 
@@ -552,7 +565,9 @@ case_relation_type.id = case_relationship.relationship_type_id )";
                                 'contact_id'                  =>      1,
                                 'sort_name'                   =>      1,   
                                 'display_name'                =>      1,
-                                'case_id'                     =>      1,   
+                                'case_id'                     =>      1,  
+                                'case_activity_subject'       =>      1,
+                                'case_subject'                =>      1,
                                 'case_status'                 =>      1, 
                                 'case_type'                   =>      1,
                                 'case_role'                   =>      1,

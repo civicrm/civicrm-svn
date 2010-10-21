@@ -102,6 +102,9 @@
       <name>subject</name>
       <type>varchar</type>
       <length>128</length>
+      <title>Case Subject</title>
+      <import>true</import>
+      <uniqueName>case_subject</uniqueName>
       <comment>Short name of the case.</comment>
        <add>1.8</add>
   </field>

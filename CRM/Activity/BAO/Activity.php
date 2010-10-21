@@ -1836,7 +1836,7 @@ AND cl.modified_id  = c.id
             } else {
 	            //set title to activity fields
 	            $fields = array( 
-	                           'case_subject'                 => array( 'title' => ts('Activity Subject'),        'type' => CRM_Utils_Type::T_STRING ),
+	                           'case_activity_subject'        => array( 'title' => ts('Activity Subject'),        'type' => CRM_Utils_Type::T_STRING ),
                                'case_source_contact_id'       => array( 'title' => ts('Activity Reporter'),       'type' => CRM_Utils_Type::T_STRING ),
 	                           'case_recent_activity_date'    => array( 'title' => ts('Activity Actual Date'),    'type' => CRM_Utils_Type::T_DATE ),
 	                           'case_scheduled_activity_date' => array( 'title' => ts('Activity Scheduled Date'), 'type' => CRM_Utils_Type::T_DATE ),
