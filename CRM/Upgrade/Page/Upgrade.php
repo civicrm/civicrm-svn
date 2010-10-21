@@ -230,12 +230,6 @@ SELECT  count( id ) as statusCount
                 // clear temporary tables
                 $config->clearTempTables( );
 
-                $session = CRM_Core_Session::singleton( );
-                if ( $latestVer == '3.2.4' && 
-                     ( $statusMessage = $session->get( 'upgradeStatusMessage' ) ) ) {
-                    $message .= '<br /><br />' . $statusMessage;
-                }
-                
                 // clean the session. Note: In case of standalone this makes the user logout. 
                 // So skip this step for standalone. 
                 if ( $config->userFramework !== 'Standalone' ) {
