@@ -73,7 +73,8 @@ class CRM_Case_Selector_Search extends CRM_Core_Selector_Base
                                 'contact_type',
                                 'sort_name',   
                                 'display_name',
-                                'case_id',   
+                                'case_id', 
+                                'case_subject',
                                 'case_status_id', 
                                 'case_status', 
                                 'case_type_id',
@@ -196,6 +197,7 @@ class CRM_Case_Selector_Search extends CRM_Core_Selector_Base
                                                                     'name'     => ts('Restore'),
                                                                     'url'      => 'civicrm/contact/view/case',
                                                                     'qs'       => 'reset=1&action=renew&id=%%id%%&cid=%%cid%%&context=%%cxt%%'.$extraParams,
+                                                                    'ref'      => 'restore-case',
                                                                     'title'    => ts('Restore Case'),
                                                                     ),                                  
                                    
@@ -203,27 +205,39 @@ class CRM_Case_Selector_Search extends CRM_Core_Selector_Base
         } else { 
             self::$_links = array(
                                   CRM_Core_Action::VIEW   => array(
-                                                                   'name'     => ts('Manage Case'),
+                                                                   'name'     => ts('Manage'),
                                                                    'url'      => 'civicrm/contact/view/case',
                                                                    'qs'       => 'reset=1&id=%%id%%&cid=%%cid%%&action=view&context=%%cxt%%&selectedChild=case'.$extraParams,
+                                                                   'ref'      => 'manage-case',
                                                                    'title'    => ts('Manage Case'),
                                                                    ),
                                   CRM_Core_Action::DELETE => array(
                                                                    'name'     => ts('Delete'),
                                                                    'url'      => 'civicrm/contact/view/case',
                                                                    'qs'       => 'reset=1&action=delete&id=%%id%%&cid=%%cid%%&context=%%cxt%%'.$extraParams,
+                                                                   'ref'      => 'delete-case',
                                                                    'title'    => ts('Delete Case')
                                                                    ),
                                    CRM_Core_Action::UPDATE => array(
                                                                    'name'     => ts('Assign to Another Client'),
                                                                    'url'      => 'civicrm/contact/view/case/editClient',
                                                                    'qs'       => 'reset=1&action=update&id=%%id%%&cid=%%cid%%&context=%%cxt%%'.$extraParams,
+                                                                   'ref'      => 'reassign',
                                                                    'title'    => ts('Assign to Another Client')
                                                                    )
                                   );
         }    
         
-        return self::$_links;
+        $actionLinks = array( );
+        foreach ( self::$_links as $key => $value ) {
+            if ( $value['ref'] == 'reassign' ) {
+                $actionLinks['moreActions'][$key] = $value;
+            } else {
+                $actionLinks['primaryActions'][$key] = $value;
+            }
+        }
+
+        return $actionLinks;
     } //end of function
 
     
@@ -311,6 +325,8 @@ class CRM_Case_Selector_Search extends CRM_Core_Selector_Base
                  }
              }
              
+             $row['case_subject'] = CRM_Core_DAO::getFieldValue( 'CRM_Case_DAO_Case', $result->case_id, 'subject' );
+             
              $isDeleted = false;
              if ( $result->case_deleted ) {
                  $isDeleted = true;
@@ -322,12 +338,20 @@ class CRM_Case_Selector_Search extends CRM_Core_Selector_Base
              $scheduledInfo['case_deleted'] = $result->case_deleted; 
              $row['checkbox'] = CRM_Core_Form::CB_PREFIX . $result->case_id;
              
-             $row['action']   = CRM_Core_Action::formLink( self::links( $isDeleted, $this->_key ), 
-                                                           $mask,
-                                                           array( 'id'  => $result->case_id,
-                                                                  'cid' => $result->contact_id,
-                                                                  'cxt' => $this->_context ) );
-             
+             $links = self::links( $isDeleted, $this->_key );
+             $row['action'] = CRM_Core_Action::formLink( $links['primaryActions'], 
+                                                         $mask, array( 'id'  => $result->case_id,
+                                                                       'cid' => $result->contact_id,
+                                                                       'cxt' => $this->_context ) 
+                                                         );
+             $row['moreActions'] = CRM_Core_Action::formLink( $links['moreActions'], 
+                                                              $mask, array( 'id'  => $result->case_id,
+                                                                            'cid' => $result->contact_id,
+                                                                            'cxt' => $this->_context ),
+                                                              ts( 'more' ),
+                                                              true 
+                                                              );
+
              require_once( 'CRM/Contact/BAO/Contact/Utils.php' );
              $row['contact_type'] = 
                  CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_sub_type ? 
@@ -395,8 +419,12 @@ class CRM_Case_Selector_Search extends CRM_Core_Selector_Base
         if ( ! isset( self::$_columnHeaders ) ) {
             self::$_columnHeaders = array( 
                                           array(
+                                                'name'      => ts('Subject'),
+                                                'direction' => CRM_Utils_Sort::DONTCARE,
+                                                ),
+                                          array(
                                                 'name'      => ts('Status'),
-                                                'sort'      => 'case_status_id',
+                                                'sort'      => 'case_status',
                                                 'direction' => CRM_Utils_Sort::DONTCARE,
                                                 ),
                                           array(

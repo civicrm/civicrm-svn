@@ -88,6 +88,9 @@
              {/if}
              </td>
 	    {/if}
+        <td class="crm-case=caseview-case_subject label">
+            <span class="crm-case-summary-label">{ts}Case Subject{/ts}:</span>&nbsp;{$caseDetails.case_subject}
+        </td>    
         <td class="crm-case-caseview-case_type label">
             <span class="crm-case-summary-label">{ts}Case Type{/ts}:</span>&nbsp;{$caseDetails.case_type}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseTypeId`"}" title="Change case type (creates activity record)"><span class="icon edit-icon"></span></a>
         </td>

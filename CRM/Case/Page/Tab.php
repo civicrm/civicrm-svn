@@ -232,7 +232,7 @@ class CRM_Case_Page_Tab extends CRM_Core_Page
             $deleteExtra = ts('Are you sure you want to delete this case?');
             self::$_links = array(
                                   CRM_Core_Action::VIEW    => array(
-                                                                    'name'  => ts('Manage Case'),
+                                                                    'name'  => ts('Manage'),
                                                                     'url'   => 'civicrm/contact/view/case',
                                                                     'qs'    => 'action=view&reset=1&cid=%%cid%%&id=%%id%%',
                                                                     'title' => ts('Manage Case')

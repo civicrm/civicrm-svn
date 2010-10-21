@@ -506,6 +506,7 @@ WHERE cc.contact_id = %1
         
         $query = "SELECT
                   civicrm_case.id as case_id,
+                  civicrm_case.subject as case_subject,
                   civicrm_contact.id as contact_id,
                   civicrm_contact.sort_name as sort_name,
                   civicrm_phone.phone as phone,
@@ -675,6 +676,7 @@ AND civicrm_case.status_id != $closedId";
                                'sort_name',
                                'phone',
                                'case_id',
+                               'case_subject',
                                'case_type',
                                'case_type_name',
                                'status_id',
@@ -716,15 +718,27 @@ AND civicrm_case.status_id != $closedId";
         while ( $result->fetch() ) {
             foreach( $resultFields as $donCare => $field ) {
                 $casesList[$result->case_id][$field] = $result->$field;
+                if ( $field == 'case_subject' ) {
+                    $casesList[$result->case_id][$field] = $result->case_subject;
+                }
                 if( $field == 'contact_type' ) {
                     $casesList[$result->case_id]['contact_type_icon'] 
                         = CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_sub_type ? 
                                                                    $result->contact_sub_type : $result->contact_type );
                     $casesList[$result->case_id]['action'] 
-                        = CRM_Core_Action::formLink( $actions, $mask,
+                        = CRM_Core_Action::formLink( $actions['primaryActions'], $mask,
                                                      array( 'id'  => $result->case_id,
                                                             'cid' => $result->contact_id,
-                                                            'cxt' => 'dashboard' ) );
+                                                            'cxt' => $this->_context ) );
+                    $casesList[$result->case_id]['moreActions'] 
+                        = CRM_Core_Action::formLink( $actions['moreActions'], 
+                                                     $mask, array( 'id'  => $result->case_id,
+                                                                   'cid' => $result->contact_id,
+                                                                   'cxt' => $this->_context ),
+                                                     ts( 'more' ),
+                                                     true 
+                                                     );
+
                 } elseif ( $field == 'case_status' ) {  
                     if ( in_array($result->$field, $caseStatus) ) {
                         $casesList[$result->case_id]['class'] = "status-urgent";
