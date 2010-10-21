@@ -718,9 +718,6 @@ AND civicrm_case.status_id != $closedId";
         while ( $result->fetch() ) {
             foreach( $resultFields as $donCare => $field ) {
                 $casesList[$result->case_id][$field] = $result->$field;
-                if ( $field == 'case_subject' ) {
-                    $casesList[$result->case_id][$field] = $result->case_subject;
-                }
                 if( $field == 'contact_type' ) {
                     $casesList[$result->case_id]['contact_type_icon'] 
                         = CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_sub_type ? 
