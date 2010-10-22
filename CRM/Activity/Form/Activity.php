@@ -250,9 +250,14 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             }
         }
         
+        //CRM-6957
+        //when we come from contact search, activity id never comes.
+        //so don't try to get from object, it might gives you wrong one.
+        
         // if we're not adding new one, there must be an id to
         // an activity we're trying to work on.
-        if ( $this->_action != CRM_Core_Action::ADD ) {
+        if ( $this->_action != CRM_Core_Action::ADD && 
+             get_class( $this->controller ) != 'CRM_Contact_Controller_Search' ) {
             $this->_activityId = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
         }
         
