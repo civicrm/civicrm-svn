@@ -129,7 +129,7 @@ class CRM_Dedupe_BAO_RuleGroup extends CRM_Dedupe_DAO_RuleGroup
         while ($bao->fetch()) {
             $bao->contactIds = $this->contactIds;
             $bao->params = $this->params;
-            $queries["{$bao->rule_field}_{$bao->rule_weight}"] = $bao->sql();
+            $queries["{$bao->rule_table}.{$bao->rule_field}.{$bao->rule_weight}"] = $bao->sql();
         }
 
         // if there are no rules in this rule group, add an empty query fulfilling the pattern
@@ -153,76 +153,116 @@ class CRM_Dedupe_BAO_RuleGroup extends CRM_Dedupe_DAO_RuleGroup
             $groupByClause  = "GROUP BY id1, id2";
             $dupeCopyJoin   = " JOIN dedupe_copy ON dedupe_copy.id1 = t1.column AND dedupe_copy.id2 = t2.column WHERE ";
         }
-        $searchWithinDupes = false;
         $patternColumn     = '/t1.(\w+)/';
 
+        // create temp table
         $dao = new CRM_Core_DAO();
         $dao->query( $tempTableQuery );
+
+        // get the list of queries handy
         $tableQueries = $this->tableQuery( );
         CRM_Utils_Hook::dupeQuery( $this, 'table', $tableQueries );
-        $allWeights   = array_flip(array_keys($tableQueries));
 
-        foreach ( $tableQueries as $key => $tQuery ) {
-            if ( $searchWithinDupes ) {
-                $dao->query( "DROP TEMPORARY TABLE IF EXISTS dedupe_copy" );
-                $dao->query( "CREATE TEMPORARY TABLE dedupe_copy SELECT * FROM dedupe WHERE weight >= $weight" );
-                $dao->free();
+        while ( !empty($tableQueries) ) {
+            list( $isInclusive, $isDie ) = self::isQuerySetInclusive( $tableQueries, $this->threshold );
 
-                preg_match($patternColumn, $tQuery, $matches);
-                $tQuery = str_replace( ' WHERE ', str_replace( 'column', $matches[1], $dupeCopyJoin ), $tQuery );
+            if ( $isInclusive ) {
+                // order queries by table count
+                self::orderByTableCount( $tableQueries );
 
                 $searchWithinDupes = 0;
-            }
+                while ( !empty($tableQueries) ) {
+                    // extract the next query ( and weight ) to be executed
+                    $fieldWeight = array_keys( $tableQueries );
+                    $fieldWeight = $fieldWeight[0];
+                    $query = array_shift( $tableQueries );
 
-            $tQuery = "{$insertClause} {$tQuery} {$groupByClause} ON DUPLICATE KEY UPDATE weight = weight + VALUES(weight)";
-            $dao->query( $tQuery );
+                    if ( $searchWithinDupes ) {
+                        // get prepared to search within already found dupes if $searchWithinDupes flag is set
+                        $dao->query( "DROP TEMPORARY TABLE IF EXISTS dedupe_copy" );
+                        $dao->query( "CREATE TEMPORARY TABLE dedupe_copy SELECT * FROM dedupe WHERE weight >= {$weightSum}" );
+                        $dao->free();
+                        
+                        preg_match($patternColumn, $query, $matches);
+                        $query = str_replace( ' WHERE ', str_replace( 'column', $matches[1], $dupeCopyJoin ), $query );
+                    }
+                    $searchWithinDupes = 1;
 
-            // FIXME: we need to be more acurate with affected rows, especially for insert vs duplicate insert. 
-            // And that will help optimize further.
-            $affectedRows = mysql_affected_rows();
-            list($isDieSituation, $isInclusive) = $this->isDieOrInclusiveSituation( $allWeights, $key, $affectedRows );
+                    // construct and execute the intermediate query
+                    $query = "{$insertClause} {$query} {$groupByClause} ON DUPLICATE KEY UPDATE weight = weight + VALUES(weight)";
+                    $dao->query( $query );
 
-            if ( $isDieSituation ) {
-                // time for a break
+                    // FIXME: we need to be more acurate with affected rows, especially for insert vs duplicate insert. 
+                    // And that will help optimize further.
+                    $affectedRows = mysql_affected_rows();
+                    $dao->free();
+
+                    // In an inclusive situation, failure of any query means no further processing -
+                    if ( $affectedRows == 0 ) {
+                        $tableQueries = array( ); // reset to make sure no further execution is done.
+                        break; 
+                    }
+                    $weightSum = substr( $fieldWeight, strrpos( $fieldWeight, '.' ) + 1 ) + $weightSum;
+                }
+            } else if ( !$isDie ) { // An exclusive situation -
+                // since queries are already sorted by weights, we can continue as is
+                $query = array_shift( $tableQueries );
+                $query = "{$insertClause} {$query} {$groupByClause} ON DUPLICATE KEY UPDATE weight = weight + VALUES(weight)";
+                $dao->query( $query );
+                $dao->free();
+            } else {
+                // its a die situation
                 break;
-            } else if ( $isInclusive ) {
-                // time to search within already found dupes
-                $searchWithinDupes = true;
             }
-            $weight = substr( $key, strrpos( $key, '_' ) + 1 ) + ($weight ? $weight : 0);
-            $dao->free();
         }
     }
 
-    // Function to determine if rest of the queries required to be run, and if yes, whether its an 
-    // inclusive situation where rest of queries are required to be run on already found dupes.
-    function isDieOrInclusiveSituation( &$potentialWeights, $lastFieldWeight, $numberRowsAffected ) {
-        static $isRefined = false, $remainingWeights = array( );
+    // Function to determine if a given query set contains inclusive or exclusive set of weights.
+    // The function assumes that the query set is already ordered by weight in desc order.
+    static function isQuerySetInclusive( $tableQueries, $threshold ) {
+        $input = array( );
+        foreach ( $tableQueries as $key => $query ) {
+            $input[] = substr( $key, strrpos( $key, '.' ) + 1 );
+        }
 
-        if ( !$isRefined ) {
-            $isRefined = true;
-            foreach ( $potentialWeights as $key => $val ) {
-                $potentialWeights[$key] = substr( $key, strrpos( $key, '_' ) + 1 );
+        $totalCombinations = 0;
+        for ( $i = 0; $i < ( count($input) - 1 ); $i++ ) {
+            $combination = array($input[$i]);
+            if ( array_sum($combination) >= $threshold ) {
+                $totalCombinations++;
+                continue;
             }
-            $remainingWeights = $potentialWeights;
+            for ( $j = $i+1; $j < count($input); $j++ ) {
+                $combination[] = $input[$j];
+                if ( array_sum($combination) >= $threshold ) {
+                    $totalCombinations++;
+                    $combination = array($input[$i]);
+                }
+            }
+        }
+        return array( $totalCombinations == 1, $totalCombinations <= 0 );
+    }
+
+    // sort queries by number of records for the table associated with them
+    static function orderByTableCount( &$tableQueries ) {
+        static $tableCount = array( );
+
+        $tempArray = array( );
+        foreach ( $tableQueries as $key => $query ) {
+            $table = explode( ".", $key );
+            $table = $table[0];
+            if ( ! array_key_exists($table, $tableCount) ) {
+                $query = "SELECT COUNT(*) FROM {$table}";
+                $tableCount[$table] = CRM_Core_DAO::singleValueQuery( $query );
+            }
+            $tempArray[$key] = $tableCount[$table];
         }
 
-        $processedWeight = substr( $lastFieldWeight, strrpos( $lastFieldWeight, '_' ) + 1 );
-        if ( ( $numberRowsAffected == 0 ) || ( $processedWeight >= $this->threshold ) ) {
-            unset($potentialWeights[$lastFieldWeight]);
+        asort( $tempArray );
+        foreach ( $tempArray as $key => $count ) {
+            $tempArray[$key] = $tableQueries[$key];
         }
-
-        // If potential weights (past weights that found dupes + future weights) are not enough to make threshold,
-        // its a die situation. 
-        if ( array_sum( $potentialWeights ) < $this->threshold ) {
-            return array( true, false );
-        }
-        
-        // At this point we know its NOT a die situation. 
-        // So now its either inclusive or exclusive situation based on remaining weights 
-
-        unset($remainingWeights[$lastFieldWeight]);
-        return array( false, array_sum( $remainingWeights ) < $this->threshold );
+        $tableQueries = $tempArray;
     }
 
     /**
