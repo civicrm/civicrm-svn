@@ -247,7 +247,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
     /**
      * get all the fields that belong to the group with the name title
      *
-     * @param int      $id           the id of the UF group
+     * @param mix      $id           the id of the UF group or ids of ufgroup
      * @param int      $register     are we interested in registration fields
      * @param int      $action       what action are we doing
      * @param int      $visibility   visibility of fields we are interested in
@@ -255,7 +255,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
      * @param boolean  $showall
      * @param string   $restrict     should we restrict based on a specified profile type
      *
-     * @return array   the fields that belong to this title
+     * @return array   the fields that belong to this ufgroup(s)
      * @static
      * @access public
      */
@@ -266,18 +266,25 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                                $ctype = null,
                                $permissionType = CRM_Core_Permission::CREATE ) 
     {
-        if ( $restrict ) {
-            $query  = "SELECT g.* from civicrm_uf_group g, civicrm_uf_join j 
-                            WHERE g.is_active   = 1
-                              AND g.id          = %1 
-                              AND j.uf_group_id = %1 
-                              AND j.module      = %2
-                              ";
-            $params = array( 1 => array( $id, 'Integer' ),
-                             2 => array( $restrict, 'String' ) );
+        if ( !is_array( $id ) ) {
+            $id = CRM_Utils_Type::escape( $id, 'Positive' );
+            $profileIds = array( $id );
         } else {
-            $query  = "SELECT g.* from civicrm_uf_group g WHERE g.is_active = 1 AND g.id = %1 ";
-            $params = array( 1 => array( $id, 'Integer' ) );
+            $profileIds = $id;
+        }
+
+        $gids   = implode( ',', $profileIds );
+        $params = array( );
+        if ( $restrict ) { 
+            $query = "SELECT g.* from civicrm_uf_group g, civicrm_uf_join j 
+                WHERE g.is_active   = 1
+                AND g.id          IN ( {$gids} ) 
+                AND j.uf_group_id IN ( {$gids} )
+                AND j.module      = %1
+                ";
+            $params = array( 1 => array( $restrict, 'String' ) );
+        } else {
+            $query  = "SELECT g.* from civicrm_uf_group g WHERE g.is_active = 1 AND g.id IN ( {$gids} ) ";
         }
         
         // add permissioning for profiles only if not registration
@@ -286,11 +293,10 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
             $permissionClause = CRM_Core_Permission::ufGroupClause( $permissionType, 'g.' );
             $query .= " AND $permissionClause ";
         }
-       
-        $group =& CRM_Core_DAO::executeQuery( $query, $params );
         
+        $group =& CRM_Core_DAO::executeQuery( $query, $params );
         $fields = array( );
-        if ( $group->fetch( ) ) {
+        while ( $group->fetch( ) ) {
             $where = " WHERE uf_group_id = {$group->id}";
             
             if( $searchable ) {
@@ -449,11 +455,13 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                     }
                 }
             }
-        } else {
-            CRM_Core_Error::fatal( ts( 'The requested Profile (gid=%1) is disabled OR it is not configured to be used for \'Profile\' listings in its Settings OR there is no Profile with that ID OR you do not have permission to access this profile. Please contact the site administrator if you need assistance.',
-                                                   array( 1 => $id )) );        
+            $field->free( ); 
         }
-        
+       
+        if ( empty( $fields ) ) {
+            CRM_Core_Error::fatal( ts( 'The requested Profile (gid=%1) is disabled OR it is not configured to be used for \'Profile\' listings in its Settings OR there is no Profile with that ID OR you do not have permission to access this profile. Please contact the site administrator if you need assistance.',
+                                                   array( 1 => implode( ',', $profileIds ) ) ) );        
+        }
         return $fields;
     }
     
