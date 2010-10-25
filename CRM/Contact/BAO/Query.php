@@ -2704,13 +2704,8 @@ WHERE  id IN ( $groupIDs )
         $this->_tables['civicrm_address' ] = $this->_whereTables['civicrm_address' ] = 1;
 
         if ( $name == 'postal_code' ) {
-            if ( $val ) {
-                $this->_where[$grouping][] = "{$field} {$op} '$val'"; 
-                $this->_qill[$grouping][] = ts('Postal code') . " - '$value'";
-            } else {
-                $this->_where[$grouping][] = "{$field} {$op}"; 
-                $this->_qill[$grouping][] = ts('Postal code') . " {$op}";
-            }
+            $this->_where[$grouping][] = self::buildClause( $field, $op, $val, 'String' );
+            $this->_qill[$grouping][] = ts('Postal code') . " {$op} {$value}";
         } else if ( $name =='postal_code_low') { 
             $this->_where[$grouping][] = " ( $field >= '$val' ) ";
             $this->_qill[$grouping][] = ts('Postal code greater than or equal to \'%1\'', array( 1 => $value ) );
