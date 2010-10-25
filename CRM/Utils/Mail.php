@@ -103,7 +103,12 @@ class CRM_Utils_Mail
         if (CRM_Utils_Array::value( 'autoSubmitted', $params )) {
           $headers['Auto-Submitted']          = "Auto-Generated";
         }
-
+        
+        //make sure we has to have space, CRM-6977
+        foreach ( array( 'From', 'To', 'Cc', 'Bcc', 'Reply-To', 'Return-Path' ) as $fld ) {
+            $headers[$fld] = str_replace( '"<', '" <', $headers[$fld] );
+        }
+        
         require_once 'Mail/mime.php';
         $msg = new Mail_mime("\n");
         if ( $textMessage ) {
