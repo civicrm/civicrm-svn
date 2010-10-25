@@ -1213,9 +1213,9 @@ WHERE  contribution_id = {$this->_id}
             }
 
 			// build custom data getFields array
-			$customFieldsContributionType = CRM_Core_BAO_CustomField::getFields( 'Contributio`n', false, false, 
-                                                                                 CRM_Utils_Array::value( 'contribut`ion_type_id', 
-                                                                                                         $params ) )`;
+			$customFieldsContributionType = CRM_Core_BAO_CustomField::getFields( 'Contribution', false, false, 
+                                                                                 CRM_Utils_Array::value( 'contribution_type_id', 
+                                                                                                         $params ) );
 			$customFields      = CRM_Utils_Array::crmArrayMerge( $customFieldsContributionType,
                                                                  CRM_Core_BAO_CustomField::getFields( 'Contribution', false, false, null, null, true ) );
 	        $params['custom'] = CRM_Core_BAO_CustomField::postProcess( $params,
