@@ -51,7 +51,12 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
      * 
      * @var boolean 
      */ 
-    protected $_single = false; 
+    protected $_single = false;
+
+    /**
+     * cache shared address message so we don't query twice
+     */ 
+    protected $_sharedAddressMessage = null;
 
     /** 
      * build all the data structures needed to build the form 
@@ -91,6 +96,16 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
             $this->_contactIds = array( $cid ); 
             $this->_single     = true; 
             $this->assign( 'totalSelectedContacts', 1 );
+
+            if ( !$this->_restore ) {
+                // check if a contact that is being deleted has any shared addresses
+                require_once 'CRM/Core/BAO/Address.php';
+                $this->_sharedAddressMessage = CRM_Core_BAO_Address::setSharedAddressDeleteStatus( null, $cid, true );
+
+                if ( $this->_sharedAddressMessage ) {
+                    CRM_Core_Session::setStatus( ts( 'This address is shared with %1 contact records. Modifying this address will automatically update the shared address for these contacts.', array( '1' => $this->_sharedAddressMessage['count'] ) ) );    
+                }
+            }
         } else {
             parent::preProcess( );
         }
@@ -186,7 +201,15 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
                 }
             }
         }
-
+        
+        if ( $this->_sharedAddressMessage && !$this->_restore ) { 
+            if ( is_array( $status ) ) {
+                $status[] = $this->_sharedAddressMessage['message'];
+            } else {
+                $status = '<br/>' . $this->_sharedAddressMessage['message'];
+            }
+        }            
+        
         CRM_Core_Session::setStatus( $status );
         $session->replaceUserContext( CRM_Utils_System::url( $urlString, $urlParams ) );
     }//end of function

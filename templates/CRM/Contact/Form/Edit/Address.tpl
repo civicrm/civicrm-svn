@@ -83,10 +83,15 @@
         <td>
             {$form.address.$blockId.use_shared_address.html}{$form.address.$blockId.use_shared_address.label}{help id="id-sharedAddress" file="CRM/Contact/Form/Contact.hlp"}<br />
             {if $sharedAddresses.$blockId.shared_address_display}
-                <span class="shared-address-display" id="shared-address-display-{$blockId}"  onclick="cj(this).hide( );cj('#shared-address-display-cancel-{$blockId}').show( );cj('#shared-address-{$blockId}').show( );">
-                    {$sharedAddresses.$blockId.shared_address_display} <a href='#' onclick='return false;'>( {ts}Change current shared address{/ts} )</a>
+                <span class="shared-address-display" id="shared-address-display-name-{$blockId}">
+                    {$sharedAddresses.$blockId.shared_address_display.name}
                 </span>
-                <span id="shared-address-display-cancel-{$blockId}" class="hiddenElement" onclick="cj(this).hide( );cj('#shared-address-display-{$blockId}').show( );cj('#shared-address-{$blockId}').hide( );">
+                
+                <span class="shared-address-display" id="shared-address-display-{$blockId}" onclick="cj(this).hide( );cj('#shared-address-display-name-{$blockId}').hide( );cj('#shared-address-display-cancel-{$blockId}').show( );cj('#shared-address-{$blockId}').show( );">
+                    {$sharedAddresses.$blockId.shared_address_display.address} <a href='#' onclick='return false;'>( {ts}Change current shared address{/ts} )</a>
+                </span>
+                
+                <span id="shared-address-display-cancel-{$blockId}" class="hiddenElement" onclick="cj(this).hide( );cj('#shared-address-display-name-{$blockId}').show( );cj('#shared-address-display-{$blockId}').show( );cj('#shared-address-{$blockId}').hide( );">
                     <a href='#' onclick='return false;'>( {ts}Cancel{/ts} )</a>
                 </span>
             {/if}

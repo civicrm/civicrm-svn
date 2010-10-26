@@ -247,7 +247,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
     /**
      * get all the fields that belong to the group with the name title
      *
-     * @param int      $id           the id of the UF group
+     * @param mix      $id           the id of the UF group or ids of ufgroup
      * @param int      $register     are we interested in registration fields
      * @param int      $action       what action are we doing
      * @param int      $visibility   visibility of fields we are interested in
@@ -255,7 +255,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
      * @param boolean  $showall
      * @param string   $restrict     should we restrict based on a specified profile type
      *
-     * @return array   the fields that belong to this title
+     * @return array   the fields that belong to this ufgroup(s)
      * @static
      * @access public
      */
@@ -266,18 +266,25 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                                $ctype = null,
                                $permissionType = CRM_Core_Permission::CREATE ) 
     {
-        if ( $restrict ) {
-            $query  = "SELECT g.* from civicrm_uf_group g, civicrm_uf_join j 
-                            WHERE g.is_active   = 1
-                              AND g.id          = %1 
-                              AND j.uf_group_id = %1 
-                              AND j.module      = %2
-                              ";
-            $params = array( 1 => array( $id, 'Integer' ),
-                             2 => array( $restrict, 'String' ) );
+        if ( !is_array( $id ) ) {
+            $id = CRM_Utils_Type::escape( $id, 'Positive' );
+            $profileIds = array( $id );
         } else {
-            $query  = "SELECT g.* from civicrm_uf_group g WHERE g.is_active = 1 AND g.id = %1 ";
-            $params = array( 1 => array( $id, 'Integer' ) );
+            $profileIds = $id;
+        }
+
+        $gids   = implode( ',', $profileIds );
+        $params = array( );
+        if ( $restrict ) { 
+            $query = "SELECT g.* from civicrm_uf_group g, civicrm_uf_join j 
+                WHERE g.is_active   = 1
+                AND g.id          IN ( {$gids} ) 
+                AND j.uf_group_id IN ( {$gids} )
+                AND j.module      = %1
+                ";
+            $params = array( 1 => array( $restrict, 'String' ) );
+        } else {
+            $query  = "SELECT g.* from civicrm_uf_group g WHERE g.is_active = 1 AND g.id IN ( {$gids} ) ";
         }
         
         // add permissioning for profiles only if not registration
@@ -286,11 +293,10 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
             $permissionClause = CRM_Core_Permission::ufGroupClause( $permissionType, 'g.' );
             $query .= " AND $permissionClause ";
         }
-       
-        $group =& CRM_Core_DAO::executeQuery( $query, $params );
         
+        $group =& CRM_Core_DAO::executeQuery( $query, $params );
         $fields = array( );
-        if ( $group->fetch( ) ) {
+        while ( $group->fetch( ) ) {
             $where = " WHERE uf_group_id = {$group->id}";
             
             if( $searchable ) {
@@ -449,11 +455,13 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                     }
                 }
             }
-        } else {
-            CRM_Core_Error::fatal( ts( 'The requested Profile (gid=%1) is disabled OR it is not configured to be used for \'Profile\' listings in its Settings OR there is no Profile with that ID OR you do not have permission to access this profile. Please contact the site administrator if you need assistance.',
-                                                   array( 1 => $id )) );        
+            $field->free( ); 
         }
-        
+       
+        if ( empty( $fields ) ) {
+            CRM_Core_Error::fatal( ts( 'The requested Profile (gid=%1) is disabled OR it is not configured to be used for \'Profile\' listings in its Settings OR there is no Profile with that ID OR you do not have permission to access this profile. Please contact the site administrator if you need assistance.',
+                                                   array( 1 => implode( ',', $profileIds ) ) ) );        
+        }
         return $fields;
     }
     
@@ -1602,6 +1610,8 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             
             //Website type select
             $form->addElement('select', $name .'-website_type_id', null, CRM_Core_PseudoConstant::websiteType( ) );
+        } else if ($fieldName == 'note' ) {  //added because note appeared as a standard text input
+            $form->add('textarea', $name, $title, $attributes, $required );
         } else if (substr($fieldName, 0, 6) === 'custom') {
             $customFieldID = CRM_Core_BAO_CustomField::getKeyID($fieldName);
             if ( $customFieldID ) {
@@ -2472,11 +2482,12 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
      * Function to retrieve reserved profiles
      * 
      * @param string $name name if the reserve profile 
-     * 
+     * @param array $extraProfiles associated array of profile id's that needs to merge
+     *
      * @return array $reservedProfiles returns associated array 
      * @static
      */
-    static function getReservedProfiles( $type = 'Contact' ) {
+    static function getReservedProfiles( $type = 'Contact', $extraProfiles = null ) {
         $reservedProfiles = array( );
         $profileNames = array( );
         if ( $type == 'Contact' ) {
@@ -2502,7 +2513,11 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         
         $dao =& CRM_Core_DAO::executeQuery( $query );
         while ( $dao->fetch( ) ) {
-            $reservedProfiles[$dao->id] = $dao->title;
+            $key = $dao->id;
+            if ( $extraProfiles ) {
+                $key .= ',' .implode( ',', $extraProfiles ); 
+            }
+            $reservedProfiles[$key] = $dao->title;
         }
         return $reservedProfiles;
     }    

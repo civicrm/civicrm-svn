@@ -131,6 +131,12 @@ class CRM_Profile_Form extends CRM_Core_Form
 
     protected $_defaults = null;
 
+    /**
+     * Store profile ids if multiple profile ids are passed using comma separated.
+     * Currently lets implement this functionality only for dialog mode
+     */
+    protected $_profileIds = array( );
+
     /** 
      * pre processing work done here. 
      * 
@@ -146,15 +152,32 @@ class CRM_Profile_Form extends CRM_Core_Form
         require_once 'CRM/Core/BAO/UFGroup.php';
         require_once "CRM/Core/BAO/UFField.php";
         
-        $this->_id       = $this->get( 'id'  );
-        $this->_gid      = $this->get( 'gid' ); 
-        $this->_grid     = CRM_Utils_Request::retrieve( 'grid', 'Integer', $this   );
-        $this->_context  = CRM_Utils_Request::retrieve( 'context', 'String', $this );
+        $this->_id         = $this->get( 'id'  );
+        $this->_gid        = $this->get( 'gid' ); 
+        $this->_profileIds = $this->get( 'profileIds' );
+        $this->_grid       = CRM_Utils_Request::retrieve( 'grid', 'Integer', $this   );
+        $this->_context    = CRM_Utils_Request::retrieve( 'context', 'String', $this );
         
         $this->_duplicateButtonName = $this->getButtonName( 'upload',  'duplicate' );
         
-        if ( ! $this->_gid ) {
-            $this->_gid = CRM_Utils_Request::retrieve('gid', 'Positive', $this, false, 0, 'GET');
+        if ( $this->_context == 'dialog' && ( !$this->_profileIds || empty( $this->_profileIds ) ) ) {
+            $gids = explode( ',', CRM_Utils_Request::retrieve('gid', 'String', CRM_Core_DAO::$_nullObject, false, 0, 'GET') );
+            if ( !empty( $gids ) ) {
+                foreach( $gids as $pfId  ) {
+                   $this->_profileIds[ ] = CRM_Utils_Type::escape( $pfId, 'Positive' ); 
+                }
+            }
+            
+            // for now consider 1'st profile as primary profile and validate it 
+            // i.e check for profile type etc.
+            // FIX ME: validations for other than primary
+            $this->_gid = $this->_profileIds[0];
+            $this->set( 'gid', $this->_gid );
+            $this->set( 'profileIds', $this->_profileIds );
+        }
+        
+        if ( !$this->_gid ) {
+           $this->_gid = CRM_Utils_Request::retrieve('gid', 'Positive', $this, false, 0, 'GET');
         } 
         
         //get values for captch and dupe update.
@@ -181,7 +204,13 @@ class CRM_Profile_Form extends CRM_Core_Form
                                                                       $this->_skipPermission,
                                                                       CRM_Core_Permission::SEARCH ); 
         } else { 
-            $this->_fields  = CRM_Core_BAO_UFGroup::getFields( $this->_gid, false, null,
+            if ( empty( $this->_profileIds ) ) {
+                $gids = $this->_gid;
+            } else {
+                $gids = $this->_profileIds; 
+            }
+
+            $this->_fields  = CRM_Core_BAO_UFGroup::getFields( $gids, false, null,
                                                                null, null,
                                                                false, null,
                                                                $this->_skipPermission,
@@ -199,25 +228,25 @@ class CRM_Profile_Form extends CRM_Core_Form
                         $emailField = true;
                     }
                 }
-                if ( ! $emailField ) {
+                
+                if ( !$emailField ) {
                     $session = CRM_Core_Session::singleton( );
                     $status = ts( "Email field should be included in profile if you want to use Group(s) when Profile double-opt in process is enabled." ); 
                     $session->setStatus( $status );
                 }
             }
         }
-        if (! is_array($this->_fields)) {
+
+        if ( !is_array( $this->_fields ) ) {
             $session = CRM_Core_Session::singleton( );
             CRM_Core_Session::setStatus(ts('This feature is not currently available.'));
-            
             return CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm', 'reset=1' ) );
         }
         
-        if( $this->_mode != self::MODE_SEARCH ) {
+        if ( $this->_mode != self::MODE_SEARCH ) {
             CRM_Core_BAO_UFGroup::setRegisterDefaults(  $this->_fields, $defaults );
             $this->setDefaults( $defaults );    
         }
-        
         
         $this->setDefaultsValues();
     }

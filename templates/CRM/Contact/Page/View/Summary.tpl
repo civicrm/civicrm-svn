@@ -430,7 +430,6 @@ function showHideSignature( blockId ) {
 
 		buttons: { 
 			"Done": function() { 
-				cj(this).dialog("close"); 
 				cj(this).dialog("destroy"); 
 			} 
 		} 

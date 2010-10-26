@@ -106,7 +106,10 @@
   
   function addSingleClientOption{/literal}{$blockNo}{literal}( blockNo ) {
       var contactUrl = {/literal}"{crmURL p='civicrm/ajax/rest' q='className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=newcontact' h=0 }"{literal};
-      
+      {/literal}{if $action eq 2}{literal}
+      contactUrl = contactUrl + '&cid=' + {/literal}{$contactId}{literal};
+      {/literal}{/if}{literal}
+
       var contactElement = '#contact_' + blockNo;
       var contactHiddenElement = 'input[name=contact_select_id[' + blockNo +']]';
       cj( contactElement ).autocomplete( contactUrl, { 

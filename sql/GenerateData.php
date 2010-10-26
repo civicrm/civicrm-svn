@@ -1131,6 +1131,7 @@ class CRM_GCD {
         $note = new CRM_Core_DAO_Note();
         $note->entity_table = 'civicrm_contact';
         $note->contact_id   = 1;
+        $note->privacy      = 0;
 
         for ($i=0; $i<self::NUM_CONTACT; $i++) {
             $note->entity_id = $this->contact[$i];

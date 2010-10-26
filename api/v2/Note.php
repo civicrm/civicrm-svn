@@ -206,6 +206,8 @@ function &civicrm_note_get( &$params ) {
     if ( !is_numeric( $params['id'] ) ) {
         return civicrm_create_error( ts ( "Invalid note ID" ) );
     }
-
-    return CRM_Core_BAO_Note::getNoteTree( $params['id'], $params['max_depth'], $params['snippet'] );
+    if ( !isset( $params['max_depth'] ) ) $params['max_depth'] = 0;
+    if ( !isset( $params['snippet'] ) ) $params['snippet'] = FALSE;
+    $noteTree = CRM_Core_BAO_Note::getNoteTree( $params['id'], $params['max_depth'], $params['snippet'] );
+    return $noteTree;
 }

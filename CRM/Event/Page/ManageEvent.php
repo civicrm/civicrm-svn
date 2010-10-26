@@ -234,7 +234,7 @@ ORDER BY start_date desc
                 $manageEvent[$dao->id]['action'] = CRM_Core_Action::formLink( self::links(), 
                                                                               $action, 
                                                                               array( 'id' => $dao->id ),
-                                                                              'more',
+                                                                              ts( 'more' ),
                                                                               true );
                 
                 $params = array( 'entity_id'    => $dao->id, 

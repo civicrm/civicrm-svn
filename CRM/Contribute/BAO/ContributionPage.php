@@ -236,6 +236,9 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
                 $tplParams['contributeMode']= null;
             }
 
+            // CRM-6976
+            $originalCCReceipt = CRM_Utils_Array::value( 'cc_receipt' , $values );
+
             // cc to related contacts of contributor OR the one who
             // signs up. Is used for cases like - on behalf of
             // contribution / signup ..etc  
@@ -291,6 +294,10 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
                 $sendTemplateParams['toEmail']                     = $values['receipt_from_email'];
                 $sendTemplateParams['tplParams']['onBehalfID']     = $contactID;
                 $sendTemplateParams['tplParams']['receiptMessage'] = $message;
+                
+                // fix cc and reset back to original, CRM-6976
+                $sendTemplateParams['cc']      = $originalCCReceipt;
+
                 CRM_Core_BAO_MessageTemplates::sendTemplate($sendTemplateParams);
             }
         }

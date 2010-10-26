@@ -189,7 +189,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
             // if not in cache, fire off config construction
             if ( ! self::$_singleton ) {
                 self::$_singleton = new CRM_Core_Config;
-                self::$_singleton->_initialize( );
+                self::$_singleton->_initialize( $loadFromDB );
                 
                 //initialize variables. for gencode we cannot load from the
                 //db since the db might not be initialized
@@ -202,7 +202,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
                 $cache->set( 'CRM_Core_Config', self::$_singleton );
             } else {
                 // we retrieve the object from memcache, so we now initialize the objects
-                self::$_singleton->_initialize( );
+                self::$_singleton->_initialize( $loadFromDB );
                 
                 // add component specific settings
                 self::$_singleton->componentRegistry->addConfig( $this );
@@ -300,7 +300,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
      * @return void
      * @access public
      */
-    private function _initialize( ) 
+    private function _initialize( $loadFromDB = true ) 
     {
 
         // following variables should be set in CiviCRM settings and
@@ -308,7 +308,8 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
         // instead of in CRM_Core_Config_Defaults
         if (defined( 'CIVICRM_DSN' )) {
             $this->dsn = CIVICRM_DSN;
-        } else {
+        } else if ( $loadFromDB ) {
+            // bypass when calling from gencode
             echo 'You need to define CIVICRM_DSN in civicrm.settings.php';
             exit( );
         }
@@ -328,7 +329,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
             // the below statement will create both the templates directory and the config and log directory
             $this->configAndLogDir = $this->templateCompileDir . 'ConfigAndLog' . DIRECTORY_SEPARATOR;
             CRM_Utils_File::createDir( $this->configAndLogDir );
-        } else {
+        } else if ( $loadFromDB ) {
             echo 'You need to define CIVICRM_TEMPLATE_COMPILEDIR in civicrm.settings.php';
             exit( );
         }

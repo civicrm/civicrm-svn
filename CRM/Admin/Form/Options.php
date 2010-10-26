@@ -343,6 +343,11 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form
                     $params['filter'] = $filter;
                     $params['reset_default_for'] = array( 'filter' => "0, ". $params['filter'] );
                 }
+                
+                //make sure we should has to have space, CRM-6977
+                if ( $this->_gName == 'from_email_address' ) {
+                    $params['label'] = str_replace( '"<', '" <', $params['label'] );  
+                }
             }
             
             // set db value of filter in params if filter is non editable

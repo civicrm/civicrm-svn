@@ -90,13 +90,19 @@ class CRM_Contact_Page_AJAX
             $where .= " AND $aclWhere ";
         }
         
-        if( CRM_Utils_Array::value( 'org', $_GET) ) {
+        if ( CRM_Utils_Array::value( 'org', $_GET) ) {
             $where .= " AND contact_type = \"Organization\"";
             //set default for current_employer
             if ( $orgId = CRM_Utils_Array::value( 'id', $_GET) ) {
                  $where .= " AND cc.id = {$orgId}";
              }
         }
+
+        if ( CRM_Utils_Array::value( 'cid', $_GET) ) {
+            $contactId = CRM_Utils_Type::escape( CRM_Utils_Array::value( 'cid', $_GET), 'Positive' );
+            $where .= " AND cc.id <> {$contactId}";
+        }
+
         //contact's based of relationhip type
         $relType = null; 
         if ( isset($_GET['rel']) ) {
@@ -125,19 +131,19 @@ class CRM_Contact_Page_AJAX
             )";
         }
         
-//CRM-5954
+        //CRM-5954
         $query = "
-SELECT id, data 
-FROM (
-   SELECT cc.id as id, CONCAT_WS( ' :: ', {$select} ) as data, sort_name
-   FROM civicrm_contact cc {$from}
-   {$aclFrom}
-   {$additionalFrom}
-   {$whereClause} 
-   LIMIT 0, {$limit}
-     ) t
-ORDER BY sort_name
-";
+            SELECT id, data 
+            FROM (
+                SELECT cc.id as id, CONCAT_WS( ' :: ', {$select} ) as data, sort_name
+                FROM civicrm_contact cc {$from}
+        {$aclFrom}
+        {$additionalFrom}
+        {$whereClause} 
+        LIMIT 0, {$limit}
+    ) t
+    ORDER BY sort_name
+    ";
 
         // send query to hook to be modified if needed
         require_once 'CRM/Utils/Hook.php';
@@ -151,6 +157,7 @@ ORDER BY sort_name
         while ( $dao->fetch( ) ) {
             echo $contactList = "$dao->data|$dao->id\n";
         }
+        
         //return organization name if doesn't exist in db
         if ( !$contactList ) {
             if ( CRM_Utils_Array::value( 'org', $_GET) ) {

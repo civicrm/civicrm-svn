@@ -356,7 +356,7 @@ WHERE contact_a.id ={$contactId} AND contact_b.id={$orgId}; ";
             
             //FIXME : currently civicrm mysql_query support only single statement
             //execution, though mysql 5.0 support multiple statement execution.
-            $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );  
+            $dao = CRM_Core_DAO::executeQuery( $query );  
         }
     }
 
@@ -372,7 +372,7 @@ WHERE contact_a.id ={$contactId} AND contact_b.id={$orgId}; ";
 SET contact_a.organization_name=contact_b.organization_name 
 WHERE contact_a.employer_id=contact_b.id AND contact_b.id={$organizationId}; ";
 
-        $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );        
+        $dao = CRM_Core_DAO::executeQuery( $query );        
     }
 
     /**
@@ -388,7 +388,7 @@ WHERE contact_a.employer_id=contact_b.id AND contact_b.id={$organizationId}; ";
 SET organization_name=NULL, employer_id = NULL
 WHERE id={$contactId}; ";
         
-        $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
+        $dao = CRM_Core_DAO::executeQuery( $query );
         
         // need to handle related meberships. CRM-3792
         if ( $employerId ) {
@@ -798,5 +798,38 @@ Group By  componentId";
                 }
             } 
         }
+    }
+
+    /**
+     * Function to get the list of contact name give address associated array
+     *
+     * @param array $addresses associated array of 
+     *
+     * @return $contactNames associated array of contact names
+     * @static
+     */
+    static function getAddressShareContactNames( $addresses ) {
+        $contactNames = array( );
+        // get the list of master id's for address
+        $masterAddressIds = array( ); 
+        foreach ( $addresses as $key => $addressValue ) {
+            if ( CRM_Utils_Array::value( 'master_id', $addressValue ) ) {
+                $masterAddressIds[] = $addressValue['master_id'];
+            }
+        }
+        
+        if ( !empty( $masterAddressIds ) ) {
+            $query = 'SELECT ca.id, cc.display_name, cc.id as cid
+                      FROM civicrm_contact cc
+                           INNER JOIN civicrm_address ca ON cc.id = ca.contact_id
+                      WHERE ca.id IN  ( ' . implode( ',', $masterAddressIds ) . ')';
+            $dao = CRM_Core_DAO::executeQuery( $query );
+            
+            while( $dao->fetch( ) ) {
+                $contactViewUrl = CRM_Utils_System::url( 'civicrm/contact/view', "reset=1&cid={$dao->cid}" );
+                $contactNames[ $dao->id ] = "<a href='{$contactViewUrl}'>{$dao->display_name}</a>";
+            }
+        }
+        return $contactNames;
     }
 }

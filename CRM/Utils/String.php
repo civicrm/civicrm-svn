@@ -73,8 +73,10 @@ class CRM_Utils_String {
         if ( CRM_Utils_Rule::title( $variable, $maxLength ) ) {
             return $variable;
         }
-      
-        return null;
+
+        // if longer than the maxLength lets just return a substr of the
+        // md5 to prevent errors downstream
+        return substr( md5( $title ), 0, $maxLength );
     }
 
     /**
@@ -421,7 +423,9 @@ class CRM_Utils_String {
     static function stripAlternatives($full)
     {
         $matches = array();
-        if (preg_match('/-ALTERNATIVE ITEM 0-(.*?)-ALTERNATIVE ITEM 1-.*-ALTERNATIVE END-/s', $full, $matches)) {
+        preg_match('/-ALTERNATIVE ITEM 0-(.*?)-ALTERNATIVE ITEM 1-.*-ALTERNATIVE END-/s', $full, $matches);
+
+        if ( trim( strip_tags( $matches[1] ) ) != '' ) {
             return $matches[1];
         } else {
             return $full;

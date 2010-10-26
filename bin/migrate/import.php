@@ -314,7 +314,7 @@ AND        v.name = %1
             foreach ( $profileFieldsXML->ProfileField as $profileFieldXML ) {
                 $profileField = new CRM_Core_DAO_UFField( );
                 $profileField->uf_group_id = $idMap['profile_group'][(string ) $profileFieldXML->profile_group_name];
-                $this->copyData( $profileField, $profileFieldXML, false, 'name' );
+                $this->copyData( $profileField, $profileFieldXML, false, 'field_name' );
 
                 // fix field name
                 if ( substr( $profileField->field_name, 0, 7 ) == 'custom.' ) {
