@@ -222,10 +222,10 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         // 4 - Individual profile
         // 5 - Organization profile
         // 6 - Household profile
-        $this->select("profiles", "value={$type}");
+        $this->select("profiles_1", "value={$type}");
 
         // create new contact using dialog
-        $this->waitForElementPresent("css=div#contact-dialog");
+        $this->waitForElementPresent("css=div#contact-dialog-1");
         $this->waitForElementPresent("_qf_Edit_next");
 
         $this->type("first_name", $fname);
