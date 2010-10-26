@@ -72,10 +72,18 @@
 
             {if $relationshipTabContext}
                 <td class="bold">
-                   <a href="{crmURL p='civicrm/contact/view/rel' q="action=view&reset=1&selectedChild=rel&cid=`$contactId`&id=`$rel.id`&rtype=`$rel.rtype`"}">{$rel.relation}</a>{if $rel.is_permission_b_a eq 1}<span id="permission-b-a" class="crm-marker permission-relationship"> *</span>{/if}
+                   <a href="{crmURL p='civicrm/contact/view/rel' q="action=view&reset=1&selectedChild=rel&cid=`$contactId`&id=`$rel.id`&rtype=`$rel.rtype`"}">{$rel.relation}</a>
+			{if ($rel.cid eq $rel.contact_id_a and $rel.is_permission_a_b eq 1) OR
+			    ($rel.cid eq $rel.contact_id_b and $rel.is_permission_b_a eq 1) }
+		            <span id="permission-b-a" class="crm-marker permission-relationship"> *</span>
+		        {/if}
 		</td>
                 <td>
-		    <a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$rel.cid`"}">{$rel.name}</a>{if $rel.is_permission_a_b eq 1}<span id="permission-a-b" class="crm-marker permission-relationship"> *</span>{/if}
+		   <a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$rel.cid`"}">{$rel.name}</a>
+		        {if ($contactId eq $rel.contact_id_a and $rel.is_permission_a_b eq 1) OR
+			    ($contactId eq $rel.contact_id_b and $rel.is_permission_b_a eq 1) } 
+		    	    <span id="permission-a-b" class="crm-marker permission-relationship"> *</span>
+		        {/if}
 		</td>
             {else}
                 <td class="bold">{$rel.relation}</strong></td>
