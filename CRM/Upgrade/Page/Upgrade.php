@@ -229,7 +229,7 @@ SELECT  count( id ) as statusCount
 
                 // clear temporary tables
                 $config->clearTempTables( );
-                
+
                 // clean the session. Note: In case of standalone this makes the user logout. 
                 // So skip this step for standalone. 
                 if ( $config->userFramework !== 'Standalone' ) {
