@@ -225,6 +225,10 @@ class CRM_Dedupe_BAO_RuleGroup extends CRM_Dedupe_DAO_RuleGroup
             $input[] = substr( $key, strrpos( $key, '.' ) + 1 );
         }
 
+        if ( count( $input ) == 1 ) {
+            return array( false, $input[0] < $threshold );
+        }
+
         $totalCombinations = 0;
         for ( $i = 0; $i < ( count($input) - 1 ); $i++ ) {
             $combination = array($input[$i]);
