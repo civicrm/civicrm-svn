@@ -143,7 +143,6 @@ class WebTest_Member_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->assertTrue($this->isTextPresent("membership for has been added."), "Status message didn't show up after saving!");
       
       // click through to the membership view screen
-      $this->waitForElementPresent("link=View");
       $this->click('link=View');
       $this->waitForPageToLoad('30000');
       
