@@ -88,8 +88,15 @@ class WebTest_Pledge_StandaloneAddTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad( "30000" );
         
         $this->assertTrue( $this->isTextPresent( "Pledge has been recorded and the payment schedule has been created." ) );
-        $this->waitForElementPresent("link=View");
-        $this->click('link=View');
-        $this->waitForPageToLoad('30000');
+        // verify if Pledge is created
+        $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[9]/span/a[text()='View']" );
+        
+        //click through to the Pledge view screen
+        $this->click( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[9]/span/a[text()='View']" );
+        
+        $this->waitForElementPresent( "_qf_PledgeView_next-bottom" );
+        $this->click( "_qf_PledgeView_next-bottom" );
+        $this->waitForPageToLoad( "30000" );
+        
     }
 }
