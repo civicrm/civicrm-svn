@@ -292,7 +292,7 @@ class CRM_Core_BAO_AddressTest extends CiviUnitTestCase
     }
     
     /**
-     * getValues() method (get Address fields)
+     * parseStreetAddress() method (get street address parsed)
      */
     function testParseStreetAddress( )
     {
