@@ -482,7 +482,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
 INNER JOIN  civicrm_membership_status status ON ( status.id = membership.status_id )
 INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_type_id )
      WHERE  membership.id = %1';
-        $dao = CRM_Core_DAO::executeQuery( $sql, array( 1 => array( $membershipId, 'Integer' ) ) );
+        $dao = CRM_Core_DAO::executeQuery( $sql, array( 1 => array( $membershipId, 'Positive' ) ) );
         $properties = array( 'status', 'status_id', 'membership_type', 'membership_type_id', 'is_current_member' );
         while ( $dao->fetch( ) ) {
             foreach ( $properties as $property ) {
