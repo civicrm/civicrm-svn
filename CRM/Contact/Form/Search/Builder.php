@@ -230,7 +230,7 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search
                         if ( $v[1] == 'IN' ) {
                             $inVal = trim( $v[2] );
                             //checking for format to avoid db errors
-                            if (!preg_match( '/^[(]([A-Za-z0-9\'\,]+)[)]$/', $inVal) ) {
+                            if (!preg_match( '/^[(]([A-Za-z0-9\'\, ]+)[)]$/', $inVal) ) {
                                 $errorMsg["value[$v[3]][$v[4]]"] = ts("Please enter correct Data ( in valid format ).");
                             }
                             // Validate each value in parenthesis to avoid db errors
