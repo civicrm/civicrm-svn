@@ -2231,7 +2231,8 @@ UNION
                              'greeting_type' => 'addressee' );
 
             $addressee = CRM_Core_PseudoConstant::greeting( $filter ); 
-            $addresseeString = $addressee[ $contact->addressee_id ];
+            $addresseeString     = $addressee[ $contact->addressee_id ];
+            $updateQueryString[] = " addressee_custom = NULL ";
          } else if( $contact->addressee_custom ){
             $updateQueryString[] = " addressee_display = NULL ";
          }
