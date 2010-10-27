@@ -109,6 +109,27 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
                                              'Source'          => $sourceText,
                                              )
                                        );
+
+      $this->click("_qf_MembershipView_cancel-bottom");
+      $this->waitForPageToLoad("30000");
+      // page was loaded
+      $this->waitForTextPresent( $sourceText );
+      
+      // click through to the activities screen
+      $this->click("css=li#tab_activity a");
+      // page was loaded
+      $this->waitForTextPresent( 'Membership Signup' );
+
+      // click through to the activiy view screen (which is the membership view
+      $this->click("xpath=//x:tr[td/text()='Membership Signup']/x:td/x:span/x:a[text()='View']");
+      $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
+      
+      $this->webtestVerifyTabularData( array(
+                                             'Membership Type' => 'General',
+                                             'Status'          => 'New',
+                                             'Source'          => $sourceText,
+                                             )
+                                       );
   }
   
 
