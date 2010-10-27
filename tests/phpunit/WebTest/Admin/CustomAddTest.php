@@ -76,9 +76,7 @@ class WebTest_Admin_CustomAddTest extends CiviSeleniumTestCase {
         $textFieldLabel = 'test_text_field' .substr( sha1( rand( ) ), 0, 3 );
         $this->click( "header" );
         $this->type( "label", $textFieldLabel );
-        $this->click( "_qf_Field_next-bottom" );
-        $this->waitForPageToLoad( "30000" );
-        $this->click( "//a[@id='newCustomField']/span" );
+        $this->click( "_qf_Field_next_new-bottom" );
         $this->waitForPageToLoad( "30000" );
         $this->click( "data_type[0]" );
         $this->select( "data_type[0]", "value=0" );
@@ -160,8 +158,7 @@ class WebTest_Admin_CustomAddTest extends CiviSeleniumTestCase {
         $this->assertTrue( $this->isTextPresent( "Your custom field '$radioFieldLabel' has been saved." ) );
 
         //On New Individual contact form
-        $this->click( "//ul[@id='civicrm-menu']/li[4]" );
-        $this->click( "//div[@id='root-menu-div']/div[5]/ul/li[1]/div/a" );
+        $this->open( $this->sboxPath . "civicrm/contact/add?ct=Individual&reset=1" );
         $this->waitForPageToLoad( "30000" );
         $this->assertTrue( $this->isTextPresent( "New Individual" ) );
        
@@ -181,8 +178,7 @@ class WebTest_Admin_CustomAddTest extends CiviSeleniumTestCase {
         $this->assertTrue( $this->isTextPresent( $radioOptionLabel2 ) );
 
         //On New Household contact form
-        $this->click( "//ul[@id='civicrm-menu']/li[4]" );
-        $this->click( "//div[@id='root-menu-div']/div[5]/ul/li[2]/div/a" );
+        $this->open( $this->sboxPath . "civicrm/contact/add?ct=Household&reset=1" );
         $this->waitForPageToLoad( "30000" );
         $this->assertTrue( $this->isTextPresent( "New Household" ) );
         
@@ -202,8 +198,7 @@ class WebTest_Admin_CustomAddTest extends CiviSeleniumTestCase {
         $this->assertTrue( $this->isTextPresent( $radioOptionLabel2 ) );
 
         //On New Organization contact form
-        $this->click( "//ul[@id='civicrm-menu']/li[4]" );
-        $this->click( "//div[@id='root-menu-div']/div[5]/ul/li[3]/div/a" );
+        $this->open( $this->sboxPath . "civicrm/contact/add?ct=Organization&reset=1" );
         $this->waitForPageToLoad( "30000" );
         $this->assertTrue( $this->isTextPresent( "New Organization" ) );
         
