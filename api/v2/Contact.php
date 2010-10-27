@@ -249,7 +249,7 @@ function _civicrm_contact_format_greetingParams( &$params )
         if ( !$formatParams ) continue;
     
         // format params
-        if ( CRM_Utils_Array::value( 'contact_type', $params ) == 'Organization' ) {
+        if ( CRM_Utils_Array::value( 'contact_type', $params ) == 'Organization' && $key != 'addressee' ) {
             return civicrm_create_error( ts( 'You cannot use email/postal greetings for contact type %1.', 
                                              array( 1 => $params['contact_type'] ) ) );
         }
@@ -303,8 +303,9 @@ function _civicrm_contact_format_greetingParams( &$params )
             $greetingId = CRM_Utils_Array::key( 'Customized', $greetings );
         }
 
-        $customValue = $params['contact_id'] ? CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $params['contact_id']
-                                                                            , "{$key}{$greeting}_custom" ) : false;
+        $customValue = $params['contact_id'] ? CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', 
+                                                                            $params['contact_id'], 
+                                                                            "{$key}{$greeting}_custom" ) : false;
                 
         if ( array_key_exists( "{$key}{$greeting}_id", $params ) && empty( $params["{$key}{$greeting}_id"] ) ) {
             $nullValue = true;
