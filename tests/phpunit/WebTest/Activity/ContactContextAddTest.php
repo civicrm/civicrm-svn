@@ -113,6 +113,13 @@ class WebTest_Activity_ContactContextAddTest extends CiviSeleniumTestCase {
       // Adding attachment
       // TODO TBD
       
+      // Scheduling follow-up.
+      $this->click( "css=.crm-activity-form-block-schedule_followup div.crm-accordion-header" );
+      $this->select( "followup_activity_type_id", "value=1" );
+      $this->type( "interval", "1" );
+      $this->select( "interval_unit","value=day" ); 
+      $this->type( "followup_activity_subject","This is subject of schedule follow-up activity" );
+
       // Clicking save.
       $this->click("_qf_Activity_upload");
       $this->waitForPageToLoad("30000");
@@ -120,9 +127,13 @@ class WebTest_Activity_ContactContextAddTest extends CiviSeleniumTestCase {
       // Is status message correct?
       $this->assertTrue($this->isTextPresent("Activity '$subject' has been saved."), "Status message didn't show up after saving!");
 
-      // click through to the Activity View screen
-      $this->waitForElementPresent("link=View");
-      $this->click('link=View');
-      $this->waitForPageToLoad('30000');
+      $this->waitForElementPresent("xpath=//div[@id='Activities']//table/tbody/tr[3]/td[8]/span/a[text()='View']");
+      
+      // click through to the Activity view screen
+      $this->click("xpath=//div[@id='Activities']//table/tbody/tr[3]/td[8]/span/a[text()='View']");
+      $this->waitForElementPresent('_qf_Activity_cancel-bottom');
+
+      // verify Activity created
+      $this->assertTrue($this->isTextPresent($subject), "Activity Subject did not match");   
   }
 }
