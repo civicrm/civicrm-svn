@@ -141,10 +141,12 @@ class WebTest_Member_StandaloneAddTest extends CiviSeleniumTestCase {
       
       // Is status message correct?
       $this->assertTrue($this->isTextPresent("membership for has been added."), "Status message didn't show up after saving!");
+
+      $this->waitForTextPresent( "Active Memberships" );
       
       // click through to the membership view screen
-      $this->click('link=View');
-      $this->waitForPageToLoad('30000');
+      $this->click("xpath=//x:tr[td/text()='Membership StandaloneAddTest Webtest']/x:td/x:span/x:a[text()='View']");
+      $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
       
       $this->webtestVerifyTabularData( array(
                                              'Membership Type'    => 'Student',

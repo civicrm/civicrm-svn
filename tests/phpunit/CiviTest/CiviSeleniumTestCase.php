@@ -168,7 +168,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $tableLocator = "[@id='$tableId']";
         }
         foreach ($expected as $label => $value) {
-            $this->verifyText("xpath={$xpathPrefix}//table{$tableLocator}//tr/td[text()=\"$label\"]/../td[2]", preg_quote($value));
+            $this->verifyText("xpath=//x:table{$tableLocator}/x:tbody/tr/td[text()='{$label}']/following-sibling::td", preg_quote($value));
         }
     }
 
