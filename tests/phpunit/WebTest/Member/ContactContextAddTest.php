@@ -79,8 +79,9 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
       // fill in Membership Organization and Type
       $this->select("membership_type_id[1]", "value=1");
 
+      $sourceText = "Membership ContactAddTest Webtest";
       // fill in Source
-      $this->type("source", "Membership ContactAddTest Webtest");
+      $this->type("source", $sourceText );
 
       // Let Join Date stay default
 
@@ -91,20 +92,22 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
       $this->click("_qf_Membership_upload");
       $this->waitForPageToLoad("30000");
 
+      // page was loaded
+      $this->waitForTextPresent( $sourceText );
+      
       // Is status message correct?
-      $this->assertTrue($this->isTextPresent("membership for $firstName $lastName has been added."), "Status message didn't show up after saving!");
+      $this->assertTrue($this->isTextPresent("membership for $firstName $lastName has been added."),
+                        "Status message didn't show up after saving!");
       
       // click through to the membership view screen
-      $this->click('link=View');
-      $this->waitForPageToLoad('30000');
+      $this->click("xpath=//x:tr[td/text()='$sourceText']/x:td/x:span/x:a[text()='View']");
+      $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
 
       $this->webtestVerifyTabularData( array(
                                              'Membership Type' => 'General',
-                                             'Status'     => 'New',
-                                             'Source'     => 'Membership ContactAddTest Webtest',
-                                             ),
-                                       null,
-                                       'active_membership'
+                                             'Status'          => 'New',
+                                             'Source'          => $sourceText,
+                                             )
                                        );
   }
   
