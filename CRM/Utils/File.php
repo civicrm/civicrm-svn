@@ -384,6 +384,12 @@ HTACCESS;
             return $directory;
         }
 
+        // Make this work on windows. Can't think of better way to do this. Can't use realpath in any way since if $directory doesn't already
+        // exist that doesn't work. Also can't just compare to realpath('/') because that always gives C:\ and $directory might not be on C:
+        if (DIRECTORY_SEPARATOR == '\\' && substr( $directory, 1, 1 ) != ':') {
+        	return $directory;
+        }
+        
         // make everything relative from the baseFilePath
         $basePath = self::baseFilePath( );
         // check if basePath is a substr of $directory, if so
@@ -402,6 +408,12 @@ HTACCESS;
             return $directory;
         }
 
+        // Make this work on windows. Can't think of better way to do this. Can't use realpath in any way since if $directory doesn't already
+        // exist that doesn't work. Also can't just compare to realpath('/') because that always gives C:\ and $directory might not be on C:
+        if (DIRECTORY_SEPARATOR == '\\' && substr( $directory, 1, 1 ) == ':') {
+        	return $directory;
+        }
+        
         // make everything absolute from the baseFilePath
         $basePath = self::baseFilePath( );
 
