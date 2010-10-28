@@ -307,6 +307,10 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
             $componentAction  =  CRM_Utils_Request::retrieve( 'action',      'String',   CRM_Core_DAO::$_nullObject );
             $componentContext = CRM_Utils_Request::retrieve(  'compContext', 'String',   CRM_Core_DAO::$_nullObject );
         }
+
+        // get all contribution status
+        $contributionStatuses = CRM_Core_OptionGroup::values( 'contribution_status', 
+                                                              false, false, false, null, 'name', false );
         
         While ($result->fetch()) {
             $row = array();
@@ -317,10 +321,14 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
                 }         
             }
 
-            if ( $result->is_pay_later && CRM_Utils_Array::value( 'contribution_status', $row ) == 'Pending' ) {
+            // add contribution status name
+            $row['contribution_status_name'] = CRM_Utils_Array::value( $row['contribution_status_id'],
+                                                                       $contributionStatuses );
+
+            if ( $result->is_pay_later && CRM_Utils_Array::value( 'contribution_status_name', $row ) == 'Pending' ) {
                 $row['contribution_status'] .= ' (Pay Later)';
                 
-            } else if ( CRM_Utils_Array::value( 'contribution_status', $row ) == 'Pending' ) {
+            } else if ( CRM_Utils_Array::value( 'contribution_status_name', $row ) == 'Pending' ) {
                 $row['contribution_status'] .= ' (Incomplete Transaction)';
             }
 

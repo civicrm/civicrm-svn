@@ -275,7 +275,7 @@ class CRM_Export_BAO_Export
                 }
         
                 // unset groups, tags, notes for components
-                foreach ( array( 'groups', 'tags', 'notes' ) as $value ) {
+                foreach ( array( 'groups', 'tags', 'notes', 'contribution_status_id', 'pledge_status_id' ) as $value ) {
                     unset( $returnProperties[$value] );
                 }
             }

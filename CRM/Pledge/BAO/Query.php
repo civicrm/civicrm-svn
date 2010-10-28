@@ -72,7 +72,7 @@ class CRM_Pledge_BAO_Query
         }
         
         if ( CRM_Utils_Array::value( 'pledge_status_id', $query->_returnProperties ) ) {
-            $query->_select['pledge_status_id']  = "pledge_status.name as pledge_status_id";
+            $query->_select['pledge_status_id']  = "pledge_status.value as pledge_status_id";
             $query->_element['pledge_status'] = 1;
             $query->_tables['pledge_status']  = $query->_whereTables['pledge_status'] = 1;
             $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
@@ -174,6 +174,12 @@ class CRM_Pledge_BAO_Query
         if ( CRM_Utils_Array::value( 'pledge_frequency_unit', $query->_returnProperties ) ) {
             $query->_select['pledge_frequency_unit'] = "civicrm_pledge.frequency_unit as pledge_frequency_unit";
             $query->_element['pledge_frequency_unit'] = 1;
+            $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
+        }
+
+        if ( CRM_Utils_Array::value( 'pledge_is_test', $query->_returnProperties ) ) {
+            $query->_select['pledge_is_test'] = "civicrm_pledge.is_test as pledge_is_test";
+            $query->_element['pledge_is_test'] = 1;
             $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
         }
     }
@@ -458,6 +464,7 @@ class CRM_Pledge_BAO_Query
                                 'pledge_next_pay_date'            => 1,
                                 'pledge_next_pay_amount'          => 1,
                                 'pledge_status'                   => 1,
+                                'pledge_status_id'                => 1,
                                 'pledge_is_test'                  => 1,
                                 'pledge_contribution_page_id'     => 1,
                                 'pledge_frequency_interval'       => 1,
