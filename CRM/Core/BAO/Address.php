@@ -675,10 +675,11 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
          */
         
         $supportedLocalesForParsing = array( 'en_US', 'en_CA', 'fr_CA' );
-        if ( !$locale ) $locale = 'en_US';
+        if ( !$locale ) $locale = $config->lcMessages;
         // as different locale explicitly requested but is not available, display warning message
         if ( !in_array( $locale, $supportedLocalesForParsing ) ) {
             return CRM_Core_Session::setStatus( ts( "Unsupported locale specified to parseStreetAddress: $locale. Proceeding with en_US locale." ) );
+            $locale = 'en_US';
         }
         $parseFields = array( 'street_name'          => '', 
                               'street_unit'          => '',
@@ -744,6 +745,11 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
                                     'UPPR', 'RM',         'ROOM',  'SIDE',      'SLIP', 'KEY',  
                                     'LOT',  'PIER',       'REAR',  'SPC',       'SPACE', 
                                     'STOP', 'STE',        'SUITE', 'UNIT',      '#',     'ST' );
+        
+        // overwriting $streetUnitFormats for 'en_CA' and 'fr_CA' locale
+        if ( in_array( $locale, array ( 'en_CA', 'fr_CA') ) ) {   
+            $streetUnitFormats = array( 'APT', 'APP', 'SUITE', 'BUREAU', 'UNIT' );
+        }
         
         $streetUnitPreg = '/('. implode( '\s|\s', $streetUnitFormats ) . ')(.+)?/i';
         $matches = array( );
