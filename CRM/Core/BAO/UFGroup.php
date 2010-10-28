@@ -296,7 +296,9 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
         
         $group =& CRM_Core_DAO::executeQuery( $query, $params );
         $fields = array( );
+        $validGroup = false;
         while ( $group->fetch( ) ) {
+            $validGroup = true;
             $where = " WHERE uf_group_id = {$group->id}";
             
             if( $searchable ) {
@@ -379,7 +381,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
             }
             $addressCustomFields = CRM_Core_BAO_CustomField::getFieldsForImport('Address');
             $customFields = array_merge( $customFields, $addressCustomFields );
-
+            
             while ( $field->fetch( ) ) {
                 $name  = $title = $locType = $phoneType = '';
                 $name  = $field->field_name;
@@ -457,8 +459,8 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
             }
             $field->free( ); 
         }
-       
-        if ( empty( $fields ) ) {
+
+        if ( empty( $fields ) && !$validGroup ) {
             CRM_Core_Error::fatal( ts( 'The requested Profile (gid=%1) is disabled OR it is not configured to be used for \'Profile\' listings in its Settings OR there is no Profile with that ID OR you do not have permission to access this profile. Please contact the site administrator if you need assistance.',
                                                    array( 1 => implode( ',', $profileIds ) ) ) );        
         }
