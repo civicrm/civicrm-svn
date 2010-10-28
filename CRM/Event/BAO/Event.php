@@ -1765,8 +1765,11 @@ WHERE  ce.loc_block_id = $locBlockId";
             $returnProperties = array( 'confirm_from_name', 'confirm_from_email', 'cc_confirm', 'bcc_confirm' );
             
             CRM_Core_DAO::commonRetrieve( 'CRM_Event_DAO_Event', $params, $eventEmail, $returnProperties );
-            $fromEmailValues[] = $fromEmailIds[] = 
-                "{$eventEmail['confirm_from_name']} <{$eventEmail['confirm_from_email']}>";
+            if( CRM_Utils_Array::value( 'confirm_from_name', $eventEmail ) 
+                && CRM_Utils_Array::value( 'confirm_from_email', $eventEmail ) ) {
+                $fromEmailValues[] = $fromEmailIds[] = 
+                    "{$eventEmail['confirm_from_name']} <{$eventEmail['confirm_from_email']}>";
+            }
         }
 
         // add the domain email id
