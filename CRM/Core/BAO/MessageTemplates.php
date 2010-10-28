@@ -345,6 +345,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
             'replyTo'     => null,    // the Reply-To: header
             'attachments' => null,    // email attachments
             'isTest'      => false,   // whether this is a test email (and hence should include the test banner)
+            'PDFFilename' => null,    // filename of optional PDF version to add as attachment (do not include path)
         );
         $params = array_merge($defaults, $params);
 
@@ -465,8 +466,36 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
                 $params['html'] = null;
             }
 
+            $pdf_filename = '';
+            if ( $params['PDFFilename'] && $params['html'] ) {
+                require_once 'CRM/Utils/PDF/Utils.php';
+                require_once 'CRM/Utils/File.php';
+                $config = CRM_Core_Config::singleton();
+                $pdf_filename = CRM_Utils_File::makeFileName( $config->templateCompileDir . $params['PDFFilename'] );
+                file_put_contents( $pdf_filename, CRM_Utils_PDF_Utils::html2pdf( $params['html'],
+                                                                                 $params['PDFFilename'],
+                                                                                 null,
+                                                                                 null,
+                                                                                 true
+                                                                               )
+                                 );
+                                 
+			    if ( empty( $params['attachments'] ) ) {
+			        $params['attachments'] = array();
+			    }
+			    $params['attachments'][] = array(
+			        'fullPath' => $pdf_filename,
+			        'mime_type' => 'application/pdf',
+			        'cleanName' => $params['PDFFilename'],
+			    );
+            }
+            
             require_once 'CRM/Utils/Mail.php';
             $sent = CRM_Utils_Mail::send( $params );
+
+            if ( $pdf_filename ) {
+                unlink($pdf_filename);
+            }
         }
 
         return array($sent, $subject, $text, $html);

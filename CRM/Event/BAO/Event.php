@@ -1071,6 +1071,7 @@ WHERE civicrm_event.is_active = 1
                         'confirm_email_text' => CRM_Utils_Array::value('confirm_email_text', $values['event']),
                         'isShowLocation'     => CRM_Utils_Array::value('is_show_location',   $values['event']),
                     ),
+                    'PDFFilename' => 'civicrm.pdf',
                 );
 
                 // address required during receipt processing (pdf and email receipt)
