@@ -317,11 +317,11 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
                 }         
             }
 
-            if ( $result->is_pay_later && $row['contribution_status_id'] == 'Pending' ) {
-                $row['contribution_status_id'] .= ' (Pay Later)';
+            if ( $result->is_pay_later && CRM_Utils_Array::value( 'contribution_status', $row ) == 'Pending' ) {
+                $row['contribution_status'] .= ' (Pay Later)';
                 
-            } else if ( $row['contribution_status_id'] == 'Pending' ) {
-                $row['contribution_status_id'] .= ' (Incomplete Transaction)';
+            } else if ( CRM_Utils_Array::value( 'contribution_status', $row ) == 'Pending' ) {
+                $row['contribution_status'] .= ' (Incomplete Transaction)';
             }
 
             if ( $row['is_test'] ) {
