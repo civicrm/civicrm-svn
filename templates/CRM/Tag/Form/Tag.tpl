@@ -47,14 +47,14 @@ cj(document).ready(function(){initTagTree()});
 function initTagTree() {
     //unobsctructive elements are there to provide the function to those not having javascript, no need for the others
     cj(".unobstructive").hide();
-    cj("#tagtree").treeview({
-        animated: "fast",
-        collapsed: true,
-        unique: true
-    });
+
+    //load js tree.
+    cj("#tagtree").jstree({"plugins" : ["themes", "html_data"]});
+
     cj("#tagtree ul input:checked").each (function(){
-        cj(this).parents("li").children(".hit").addClass('highlighted');
+        cj(this).parents("li").children(".jstree-icon").addClass('highlighted');
     });
+
     cj("#tagtree input").change(function(){
         tagid = this.id.replace("check_", "");
 
@@ -118,7 +118,8 @@ function initTagTree() {
 	{/if}
     {/if}
     </p>
-    <ul id="tagtree" class="tree">
+    <div id="tagtree">
+    <ul class="tree">
         {foreach from=$tree item="node" key="id"}
         <li id="tag_{$id}">
             {if ! $node.children}<input name="tagList[{$id}]" id="check_{$id}" type="checkbox" {if $tagged[$id]}checked="checked"{/if}/>{/if}
@@ -147,6 +148,7 @@ function initTagTree() {
         </li>	 
         {/foreach} 
     </ul>
+    </div>
    
       {*foreach from=$tag item="row" key="id"}
 
