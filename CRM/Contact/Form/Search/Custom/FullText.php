@@ -82,7 +82,7 @@ class CRM_Contact_Form_Search_Custom_FullText
     
         if ( ! $this->_table ) {
             $this->_table   = CRM_Utils_Request::retrieve( 'table', 'String',
-                                                          CRM_Core_DAO::$_nullObject );
+                                                           CRM_Core_DAO::$_nullObject );
             if ( $this->_table ) {
                 $formValues['table'] = $this->_table;
             }
@@ -674,8 +674,8 @@ WHERE      c.sort_name LIKE {$this->_text}
                     ts( 'Tables' ),
                     $tables );
         
-        $form->assign( 'csID', $this->_formValues['customSearchID'] );
-
+        $form->assign( 'csID', CRM_Utils_Array::value( 'customSearchID', $this->_formValues ) );
+                
         /**
          * You can define a custom title for the search form
          */
