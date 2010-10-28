@@ -743,9 +743,9 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
                                     'OFC',  'OFFICE',     'PH',    'PENTHOUSE', 'TRLR', 'TRAILER', 
                                     'UPPR', 'RM',         'ROOM',  'SIDE',      'SLIP', 'KEY',  
                                     'LOT',  'PIER',       'REAR',  'SPC',       'SPACE', 
-                                    'STOP', 'STE',        'SUITE', 'UNIT',      '#'  );
+                                    'STOP', 'STE',        'SUITE', 'UNIT',      '#',     'ST' );
         
-        $streetUnitPreg = '/('. implode( '|', $streetUnitFormats ) . ')(.+)?/i';
+        $streetUnitPreg = '/('. implode( '\s|\s', $streetUnitFormats ) . ')(.+)?/i';
         $matches = array( );
         if ( preg_match( $streetUnitPreg, $streetAddress, $matches ) ) {
             $parseFields['street_unit'] = $matches[0];
