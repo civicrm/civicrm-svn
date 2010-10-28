@@ -379,15 +379,14 @@ HTACCESS;
     }
 
     static function relativeDirectory( $directory ) {
+        // Do nothing on windows
+    	if ( strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ) {
+    		return $directory;
+    	}
+    	
         // check if directory is relative, if so return immediately
         if ( substr( $directory, 0, 1 ) != DIRECTORY_SEPARATOR ) {
             return $directory;
-        }
-
-        // Make this work on windows. Can't think of better way to do this. Can't use realpath in any way since if $directory doesn't already
-        // exist that doesn't work. Also can't just compare to realpath('/') because that always gives C:\ and $directory might not be on C:
-        if (DIRECTORY_SEPARATOR == '\\' && substr( $directory, 1, 1 ) != ':') {
-        	return $directory;
         }
         
         // make everything relative from the baseFilePath
@@ -403,15 +402,14 @@ HTACCESS;
     }
 
     static function absoluteDirectory( $directory ) {
+    	// Do nothing on windows - config will need to specify absolute path
+    	if ( strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ) {
+    		return $directory;
+    	}
+    	
         // check if directory is already absolute, if so return immediately
         if ( substr( $directory, 0, 1 ) == DIRECTORY_SEPARATOR ) {
             return $directory;
-        }
-
-        // Make this work on windows. Can't think of better way to do this. Can't use realpath in any way since if $directory doesn't already
-        // exist that doesn't work. Also can't just compare to realpath('/') because that always gives C:\ and $directory might not be on C:
-        if (DIRECTORY_SEPARATOR == '\\' && substr( $directory, 1, 1 ) == ':') {
-        	return $directory;
         }
         
         // make everything absolute from the baseFilePath
