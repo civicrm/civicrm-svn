@@ -34,7 +34,7 @@
 <script type="text/javascript">
 
 options = {ldelim} ajaxURL:"{crmURL p='civicrm/ajax/rest' h=0}"
-       ,closetxt:'<div class="icon close-icon"></div>'
+       ,closetxt:'<div class="ui-icon ui-icon-close" style="float:left"></div>'
       {rdelim} 
 entityID={$entityID};
 entityTable='{$entityTable}';
