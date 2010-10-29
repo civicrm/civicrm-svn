@@ -272,10 +272,26 @@ class CRM_Core_BAO_Block
                  is_array( $blockIds ) && !empty( $blockIds ) ) {
                 foreach ( $blockIds as $blockId => $blockValue ) {
                     if ( $blockValue['locationTypeId'] == $value['location_type_id'] ) {
-                        //assigned id as first come first serve basis 
-                        $value['id'] = $blockValue['id'];
-                        unset( $blockIds[$blockId] );
-                        break;
+                        $valueId = false;
+                                                                                                
+                        if ( $blockName == 'phone' ) {
+                            if ( $blockValue['phoneTypeId'] == $value['phone_type_id'] ) {
+                                $valueId = true;
+                            }
+                        } else if ( $blockName == 'im' ) {
+                            if ( $blockValue['providerId'] == $value['provider_id'] ) {
+                                $valueId = true;
+                            }
+                        } else {
+                            $valueId = true;
+                        }
+                        
+                        if ( $valueId ) {
+                            //assigned id as first come first serve basis 
+                            $value['id'] = $blockValue['id'];
+                            unset( $blockIds[$blockId] );
+                            break;
+                        }
                     }
                 }
             }

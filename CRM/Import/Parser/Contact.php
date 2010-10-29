@@ -1908,20 +1908,6 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                 
             }
         }
-        // check for primary location type, whether it is already present for the contact or not, CRM-4423
-        if ( CRM_Utils_Array::value( 'id', $formatted ) && isset( $formatted['location'] ) ) {
-            $primaryLocationTypeId = CRM_Contact_BAO_Contact::getPrimaryLocationType($formatted['id'], true);
-            if ( isset ( $primaryLocationTypeId ) ) {
-                foreach ( $formatted['location'] as $loc => $details ) {
-                    if ( $primaryLocationTypeId == CRM_Utils_Array::value( 'location_type_id', $details ) ) {
-                        $formatted['location'][$loc]['is_primary'] = 1; 
-                        break;
-                    } else {
-                        $formatted['location'][$loc]['is_primary'] = 0;
-                    }
-                }
-            }
-        }
         
         // parse street address, CRM-5450
         if ( $this->_parseStreetAddress ) {

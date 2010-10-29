@@ -417,7 +417,9 @@ function _civicrm_add_formatted_location_blocks( &$values, &$params )
         _civicrm_store_values( $fields[$block ], $values,
                                $params[$name][++$blockCnt] );
         
-        if ( $blockCnt == 1 ) $params[$name][$blockCnt]['is_primary'] = true;
+        if ( !CRM_Utils_Array::value( 'id', $params ) && ( $blockCnt == 1 ) ) {
+            $params[$name][$blockCnt]['is_primary'] = true;
+        }
         
         // we only process single block at a time.
         return true;
