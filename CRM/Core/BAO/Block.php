@@ -227,6 +227,7 @@ class CRM_Core_BAO_Block
 
         //lets allow user to update block w/ the help of id, CRM-6170
         $resetPrimaryId  = null;
+        $primaryId       = false;
         foreach ( $params[$blockName] as  $count => $value ) {
             $blockId = CRM_Utils_Array::value( 'id', $value );
             if ( $blockId  ) {
@@ -240,6 +241,7 @@ class CRM_Core_BAO_Block
             //lets allow to update primary w/ more cleanly.
             if ( !$resetPrimaryId && 
                  CRM_Utils_Array::value( 'is_primary', $value ) ) {
+                $primaryId = true;
                 if ( is_array( $blockIds ) ) {
                     foreach ( $blockIds as $blockId => $blockValue ) {
                         if ( CRM_Utils_Array::value( 'is_primary', $blockValue ) ) {
@@ -289,6 +291,9 @@ class CRM_Core_BAO_Block
                         if ( $valueId ) {
                             //assigned id as first come first serve basis 
                             $value['id'] = $blockValue['id'];
+                            if ( !$primaryId && CRM_Utils_Array::value( 'is_primary', $blockValue ) ) {
+                                $value['is_primary'] = $blockValue['is_primary'];
+                            }
                             unset( $blockIds[$blockId] );
                             break;
                         }
