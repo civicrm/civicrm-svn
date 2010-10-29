@@ -82,12 +82,13 @@ class CRM_Admin_Form extends CRM_Core_Form
      * @return None
      */
     function setDefaultValues( ) {
-        $defaults = $this->_values;
         if ( isset( $this->_id ) && empty( $this->_values ) ) {
+            $this->_values = array( );
             $params = array( 'id' => $this->_id );
             require_once(str_replace('_', DIRECTORY_SEPARATOR, $this->_BAOName) . ".php");
-            eval( $this->_BAOName . '::retrieve( $params, $defaults );' );
+            eval( $this->_BAOName . '::retrieve( $params, $this->_values );' );
         }
+        $defaults = $this->_values;
         
         if ( $this->_action == CRM_Core_Action::DELETE &&
              isset( $defaults['name'] ) ) {
