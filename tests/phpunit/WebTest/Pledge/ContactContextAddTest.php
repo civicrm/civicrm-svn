@@ -27,34 +27,52 @@
 
 require_once 'CiviTest/CiviSeleniumTestCase.php';
 
-class WebTest_Pledge_StandaloneAddTest extends CiviSeleniumTestCase {
+class WebTest_Pleadge_ContactContextAddTest extends CiviSeleniumTestCase {
     
     protected function setUp()
     {
         parent::setUp();
     }
     
-    function testStandalonePledgeAdd()
-    {
+    function testContactContextAddTest() {
         // This is the path where our testing install resides. 
         // The rest of URL is defined in CiviSeleniumTestCase base class, in
         // class attributes.
         $this->open( $this->sboxPath );
         
+        // Logging in. Remember to wait for page to load. In most cases,
+        // you can rely on 30000 as the value that allows your test to pass, however,
+        // sometimes your test might fail because of this. In such cases, it's better to pick one element
+        // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
+        // page contents loaded and you can continue your test execution.
         $this->webtestLogin();
         
-        // Go directly to the URL of the screen that you will be testing (New Pledge-standalone).
-        $this->open($this->sboxPath . "civicrm/pledge/add&reset=1&context=standalone");
+        // create unique name
+        $name      = substr(sha1(rand()), 0, 7);
+        $firstName = 'Adam'.$name;
+        $lastName  = 'Jones'.$name;
         
-        // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
-        // button at the end of this page to show up, to make sure it's fully loaded.
-        $this->waitForElementPresent( "_qf_Pledge_upload" );
-            
-        // create new contact using dialog
-        $firstName = 'Ma'.substr( sha1( rand( ) ), 0, 4 );
-        $lastName  = 'An'.substr( sha1( rand( ) ), 0, 7 );
-        $this->webtestNewDialogContact( $firstName, $lastName ,$firstName . "@example.com" );
+        // create new contact
+        $this->webtestAddContact( $firstName, $lastName, $firstName."@example.com");
         
+        // wait for action element
+        $this->waitForElementPresent('crm-contact-actions-link');
+        
+        // now add pledge from contact summary
+        $this->click("//div[@id='crm-contact-actions-link']/span/div");
+        
+        // wait for add plegde link
+        $this->waitForElementPresent('link=Add Pledge');
+        
+        $this->click('link=Add Pledge');
+        
+        // wait for pledge form to load completely
+        $this->waitForElementPresent('_qf_Pledge_upload-bottom');
+        
+        // check contact name on pledge form
+        $this->assertTrue($this->isTextPresent("$firstName $lastName"));   
+        
+        // Let's start filling the form with values.
         $this->type( "amount", "100" );
         $this->type( "installments", "10" );
         $this->select( "frequency_unit", "value=week" );
@@ -71,8 +89,8 @@ class WebTest_Pledge_StandaloneAddTest extends CiviSeleniumTestCase {
         $this->click( "CIVICRM_QFID_1_2" );
         $this->select( "honor_prefix_id", "value=3" );
         
-        $firstName = 'Fo'.substr( sha1( rand( ) ), 0, 4 );
-        $lastName  = 'Ba'.substr( sha1( rand( ) ), 0, 7 );
+        $firstName = 'First'.substr( sha1( rand( ) ), 0, 4 );
+        $lastName  = 'last'.substr( sha1( rand( ) ), 0, 7 );
         $this->type( "honor_first_name", $firstName );
         $this->type( "honor_last_name", $lastName );
         $this->type( "honor_email", $firstName."@example.com" );
@@ -97,6 +115,5 @@ class WebTest_Pledge_StandaloneAddTest extends CiviSeleniumTestCase {
         $this->waitForElementPresent( "_qf_PledgeView_next-bottom" );
         $this->click( "_qf_PledgeView_next-bottom" );
         $this->waitForPageToLoad( "30000" );
-        
     }
 }

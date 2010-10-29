@@ -53,6 +53,8 @@ class CRM_Admin_Form_MessageTemplates extends CRM_Admin_Form
         $this->assign( 'action', $this->_action );
                 
         $this->_BAOName = 'CRM_Core_BAO_MessageTemplates';
+        $this->set( 'BAOName', $this->_BAOName );
+        parent::preProcess( );
     }
 
     /**
@@ -63,8 +65,8 @@ class CRM_Admin_Form_MessageTemplates extends CRM_Admin_Form
      * @return None
      */
     public function setDefaultValues( ) {
-        $defaults = array( );
-        $defaults =& parent::setDefaultValues( );
+        $defaults = $this->_values;
+        
         $this->_workflow_id = CRM_Utils_Array::value( 'workflow_id', $defaults );
         $this->assign( 'workflow_id', $this->_workflow_id );
 

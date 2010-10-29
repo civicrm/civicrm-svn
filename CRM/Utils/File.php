@@ -379,11 +379,16 @@ HTACCESS;
     }
 
     static function relativeDirectory( $directory ) {
+        // Do nothing on windows
+    	if ( strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ) {
+    		return $directory;
+    	}
+    	
         // check if directory is relative, if so return immediately
         if ( substr( $directory, 0, 1 ) != DIRECTORY_SEPARATOR ) {
             return $directory;
         }
-
+        
         // make everything relative from the baseFilePath
         $basePath = self::baseFilePath( );
         // check if basePath is a substr of $directory, if so
@@ -397,11 +402,16 @@ HTACCESS;
     }
 
     static function absoluteDirectory( $directory ) {
+    	// Do nothing on windows - config will need to specify absolute path
+    	if ( strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ) {
+    		return $directory;
+    	}
+    	
         // check if directory is already absolute, if so return immediately
         if ( substr( $directory, 0, 1 ) == DIRECTORY_SEPARATOR ) {
             return $directory;
         }
-
+        
         // make everything absolute from the baseFilePath
         $basePath = self::baseFilePath( );
 

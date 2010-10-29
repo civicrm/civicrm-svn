@@ -43,7 +43,6 @@
     <column>birth_date</column>
     <column>is_deceased</column>
     <column>deceased_date</column>
-    <column>mail_to_household_id</column>
     <column>household_name</column>
     <column>primary_contact_id</column>
     <column>organization_name</column>
@@ -93,7 +92,6 @@
       <null /><!--  birth_date  -->
       <null /><!--  is_deceased  -->
       <null /><!--  deceased_date  -->
-      <null /><!--  mail_to_household_id  -->
       <value>ABC household</value><!--  household_name  -->
       <null /><!--  primary_contact_id  -->
       <null /><!--  organization_name  -->

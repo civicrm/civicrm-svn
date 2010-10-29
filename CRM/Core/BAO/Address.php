@@ -649,17 +649,38 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
     
     /**
      * Parse given street address string in to street_name, 
-     * street_unit, 'street_number and street_number_suffix
+     * street_unit, street_number and street_number_suffix
      * eg "54A Excelsior Ave. Apt 1C", or "917 1/2 Elm Street"
-     * 
+     *
+     * NB: civic street formats for en_CA and fr_CA used by default if those locales are active
+     *     otherwise en_US format is default action
+     *
      * @param  string   Street address including number and apt
+     * @param  string   Locale - to set locale used to parse address
      *
      * @return array    $parseFields    parsed fields values.
      * @access public
      * @static
      */
-    static function parseStreetAddress( $streetAddress ) 
-    {
+    static function parseStreetAddress( $streetAddress, $locale = NULL ) 
+    {  
+        $config = CRM_Core_Config::singleton( );
+        
+        /* locales supported include:
+    	 *  en_US - http://pe.usps.com/cpim/ftp/pubs/pub28/pub28.pdf
+    	 *  en_CA - http://www.canadapost.ca/tools/pg/manual/PGaddress-e.asp
+    	 *  fr_CA - http://www.canadapost.ca/tools/pg/manual/PGaddress-f.asp
+    	 *          NB: common use of comma after street number also supported
+    	 *  default is en_US
+         */
+        
+        $supportedLocalesForParsing = array( 'en_US', 'en_CA', 'fr_CA' );
+        if ( !$locale ) $locale = $config->lcMessages;
+        // as different locale explicitly requested but is not available, display warning message
+        if ( !in_array( $locale, $supportedLocalesForParsing ) ) {
+            return CRM_Core_Session::setStatus( ts( "Unsupported locale specified to parseStreetAddress: $locale. Proceeding with en_US locale." ) );
+            $locale = 'en_US';
+        }
         $parseFields = array( 'street_name'          => '', 
                               'street_unit'          => '',
                               'street_number'        => '', 
@@ -671,23 +692,32 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
         
         $streetAddress = trim( $streetAddress );
         
+        $matches = array( );
+        if ( in_array( $locale, array ( 'en_CA', 'fr_CA') ) && preg_match( '/^([A-Za-z0-9]+)[ ]*\-[ ]*/', $streetAddress, $matches ) ) {
+            $parseFields['street_unit'] = $matches[1];
+            // unset from rest of street address
+            $streetAddress = preg_replace( '/^([A-Za-z0-9]+)[ ]*\-[ ]*/', '', $streetAddress );
+        } 
+        
         // get street number and suffix.
         $matches = array( );
-        if ( preg_match( '/^[A-Za-z0-9]+([^\s]+)/', $streetAddress, $matches ) ) {
+        if ( preg_match( '/^[A-Za-z0-9]+([\W]+)/', $streetAddress, $matches ) ) {
             $steetNumAndSuffix = $matches[0];
             
             // get street number.
             $matches = array( );
             if ( preg_match( '/^(\d+)/', $steetNumAndSuffix, $matches ) ) {
                 $parseFields['street_number'] = $matches[0];
+                $suffix = preg_replace( '/^(\d+)/', '', $steetNumAndSuffix );
+                $suffix = trim( $suffix );
+                $matches = array( );
+                if ( preg_match( '/^[A-Za-z0-9]+/', $suffix, $matches ) ) {
+                    $parseFields['street_number_suffix'] = $matches[0];
+                }
             }
             
-            // consider remaining part as suffix.
-            $suffix = preg_replace( '/^(\d+)/', '', $steetNumAndSuffix );
-            $parseFields['street_number_suffix'] = trim( $suffix ); 
-            
             // unset from main street address.
-            $streetAddress = preg_replace( '/^[A-Za-z0-9]+([^\s]+)/', '', $streetAddress );
+            $streetAddress = preg_replace( '/^[A-Za-z0-9]+([\W]+)/', '', $streetAddress );
             $streetAddress = trim( $streetAddress );
         } else if ( preg_match( '/^(\d+)/', $streetAddress, $matches ) ) {
             $parseFields['street_number'] = $matches[0];
@@ -714,9 +744,14 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
                                     'OFC',  'OFFICE',     'PH',    'PENTHOUSE', 'TRLR', 'TRAILER', 
                                     'UPPR', 'RM',         'ROOM',  'SIDE',      'SLIP', 'KEY',  
                                     'LOT',  'PIER',       'REAR',  'SPC',       'SPACE', 
-                                    'STOP', 'STE',        'SUITE', 'UNIT',      '#'  );
+                                    'STOP', 'STE',        'SUITE', 'UNIT',      '#',     'ST' );
         
-        $streetUnitPreg = '/('. implode( '|', $streetUnitFormats ) . ')(.+)?/i';
+        // overwriting $streetUnitFormats for 'en_CA' and 'fr_CA' locale
+        if ( in_array( $locale, array ( 'en_CA', 'fr_CA') ) ) {   
+            $streetUnitFormats = array( 'APT', 'APP', 'SUITE', 'BUREAU', 'UNIT' );
+        }
+        
+        $streetUnitPreg = '/('. implode( '\s|\s', $streetUnitFormats ) . ')(.+)?/i';
         $matches = array( );
         if ( preg_match( $streetUnitPreg, $streetAddress, $matches ) ) {
             $parseFields['street_unit'] = $matches[0];

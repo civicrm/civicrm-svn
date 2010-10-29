@@ -493,7 +493,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             
             if ( isset( $form->_values['discount'] ) ) {
                 if ( ! isset( $discountId ) &&
-                     ( !( $form->_paymentId && $form->_action & CRM_Core_Action::UPDATE ) ) ) {
+                     ( !( isset($form->_paymentId) && $form->_action & CRM_Core_Action::UPDATE ) ) ) {
                     require_once 'CRM/Core/BAO/Discount.php';
                     $form->_discountId = $discountId = CRM_Core_BAO_Discount::findSet( $form->_eventId, 'civicrm_event' );
                 }
@@ -505,7 +505,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
 
             require_once 'CRM/Utils/Hook.php';
             CRM_Utils_Hook::buildAmount( 'event', $form, $form->_feeBlock );
-            if ( !($form->_paymentId && $form->_action & CRM_Core_Action::UPDATE ) ) {
+            if ( !( isset($form->_paymentId) && $form->_action & CRM_Core_Action::UPDATE ) ) {
                 require_once 'CRM/Utils/Money.php';
                 $eventFeeBlockValues = array();
                 foreach ( $form->_feeBlock as $fee ) {
@@ -1101,11 +1101,8 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
     function checkRegistration($fields, &$self, $isAdditional = false)
     {
         // CRM-3907, skip check for preview registrations
-        // CRM-4167, skip check for multiple registrations from same email address setting
         // CRM-4320 participant need to walk wizard
-        if ( $self->_mode == 'test' || 
-             $self->_values['event']['allow_same_participant_emails'] == 1 ||
-             $self->_allowConfirmation ) {
+        if ( $self->_mode == 'test' || $self->_allowConfirmation ) {
             return false;
         }
         
@@ -1115,15 +1112,33 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             $contactID = parent::getContactID( );
         }
         
-        if ( ! $contactID &&
-             ! empty( $fields ) &&
-             isset( $fields["email-{$self->_bltID}"] ) ) {
-            $emailString = trim( $fields["email-{$self->_bltID}"] );
-            if ( ! empty( $emailString ) ) {
-                $contactID = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Email',
-                                                          $emailString,
-                                                          'contact_Id',
-                                                          'email' );
+        if ( !$contactID && 
+             is_array( $fields ) &&
+             !empty( $fields ) ) {
+            
+            //CRM-6996
+            //as we are allowing w/ same email address,
+            //lets check w/ other contact params.
+            if ( $self->_values['event']['allow_same_participant_emails'] ) {
+                $params = $fields;
+                if ( isset( $params["email-{$self->_bltID}"] ) ) {
+                    unset( $params["email-{$self->_bltID}"] );
+                }
+                require_once 'CRM/Dedupe/Finder.php';                
+                $dedupeParams = CRM_Dedupe_Finder::formatParams( $params, 'Individual' );
+                
+                // disable permission based on cache since event registration is public page/feature.
+                $dedupeParams['check_permission'] = false;
+                $ids = CRM_Dedupe_Finder::dupesByParams( $dedupeParams, 'Individual' );
+                $contactID = CRM_Utils_Array::value( 0, $ids );
+            } else if ( isset( $fields["email-{$self->_bltID}"] ) ) {
+                $emailString = trim( $fields["email-{$self->_bltID}"] );
+                if ( ! empty( $emailString ) ) {
+                    $contactID = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Email',
+                                                              $emailString,
+                                                              'contact_Id',
+                                                              'email' );
+                }
             }
         }
         

@@ -444,34 +444,55 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
     static function retrieve( &$params, &$defaults ) 
     {
         $membership = new CRM_Member_DAO_Membership( );
+        
         $membership->copyValues( $params );
-        $idList = array('membership_type' => 'MembershipType',
-                        'status'          => 'MembershipStatus',
-                        );
+        
         if ( $membership->find( true ) ) {
             CRM_Core_DAO::storeValues( $membership, $defaults );
-            foreach ( $idList as $name => $file ) {
-                if ( $defaults[$name .'_id'] ) {
-                    $defaults[$name] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_' . $file, 
-                                                                    $defaults[$name .'_id'] );
-                }
+            
+            //get the membership status and type values.
+            $statusANDType = self::getStatusANDTypeVaues( $membership->id );
+            foreach ( array( 'status', 'membership_type' ) as $fld ){
+                $defaults[$fld] = CRM_Utils_Array::value( $fld, $statusANDType[$membership->id] );
             }
-
-            if ( $membership->status_id ) {
-                $active = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipStatus',
-                                                      $membership->status_id,
-                                                      'is_current_member');
-                if ( $active ) {
-                    $defaults['active'] = $active;
-                }
+            if ( CRM_Utils_Array::value( 'is_current_member', $statusANDType[$membership->id] ) ) {
+                $defaults['active'] = true;
             }
-
+            
             $membership->free( );
+            
             return $membership;
         }
+        
         return null;
     }
-
+    
+    function getStatusANDTypeVaues( $membershipId ) 
+    {
+        $values = array( );
+        if ( !$membershipId ) return $values;
+        $sql = '
+    SELECT  membership.id as id,
+            status.id as status_id,
+            status.label as status,
+            status.is_current_member as is_current_member,
+            type.id as membership_type_id,
+            type.name as membership_type
+      FROM  civicrm_membership membership
+INNER JOIN  civicrm_membership_status status ON ( status.id = membership.status_id )
+INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_type_id )
+     WHERE  membership.id = %1';
+        $dao = CRM_Core_DAO::executeQuery( $sql, array( 1 => array( $membershipId, 'Positive' ) ) );
+        $properties = array( 'status', 'status_id', 'membership_type', 'membership_type_id', 'is_current_member' );
+        while ( $dao->fetch( ) ) {
+            foreach ( $properties as $property ) {
+                $values[$dao->id][$property] = $dao->$property;
+            }
+        }
+        
+        return $values;
+    }
+    
     /** 
      * Function to delete membership.
      * 

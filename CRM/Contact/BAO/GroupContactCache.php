@@ -253,6 +253,7 @@ WHERE  id = %1
                 $searchSQL   = $customClass->contactIDs( );
                 $idName = 'contact_id';
             } else {
+                require_once 'CRM/Contact/BAO/Query.php';
                 $query = new CRM_Contact_BAO_Query($ssParams, $returnProperties, null,
                                                     false, false, 1,
                                                     true, true, false );

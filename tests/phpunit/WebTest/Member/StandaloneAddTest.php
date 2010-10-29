@@ -31,10 +31,6 @@ require_once 'CiviTest/CiviSeleniumTestCase.php';
  
 class WebTest_Member_StandaloneAddTest extends CiviSeleniumTestCase {
 
-  protected $captureScreenshotOnFailure = TRUE;
-  protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';
-  protected $screenshotUrl = 'http://api.dev.civicrm.org/sc/';
-    
   protected function setUp()
   {
       parent::setUp();
@@ -141,11 +137,13 @@ class WebTest_Member_StandaloneAddTest extends CiviSeleniumTestCase {
       
       // Is status message correct?
       $this->assertTrue($this->isTextPresent("membership for has been added."), "Status message didn't show up after saving!");
+
+      // page was loaded
+      $this->waitForTextPresent( "Membership StandaloneAddTest Webtest" );
       
       // click through to the membership view screen
-      $this->waitForElementPresent("link=View");
-      $this->click('link=View');
-      $this->waitForPageToLoad('30000');
+      $this->click("xpath=//x:tr[td/text()='Membership StandaloneAddTest Webtest']/x:td/x:span/x:a[text()='View']");
+      $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
       
       $this->webtestVerifyTabularData( array(
                                              'Membership Type'    => 'Student',

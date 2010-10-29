@@ -82,12 +82,15 @@ function getSearchURLValue( )
     }
 }
 
-/* Need to fix this properly*/
 cj( function() {
-    cj("#admin-menu").find("li :contains('CiviCRM')").click(function() {
-        cj("#civicrm-menu").toggle();
-        return false;
-    });
+    cj( "#admin-menu>ul>li>a" ).each( function( ) {
+        if ( cj( this ).html( ) == 'CiviCRM' ) {
+            cj( this ).click ( function( ) {
+                cj( "#civicrm-menu" ).toggle( );
+                return false;
+            });
+        }
+     });
 
     var contactUrl = {/literal}"{crmURL p='civicrm/ajax/rest' q='className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=navigation' h=0 }"{literal};
 
@@ -103,7 +106,7 @@ cj( function() {
 });
 
 var framework = "{/literal}{$config->userFramework}{literal}";
-if( framework != 'Joomla') {
+if ( framework != 'Joomla') {
 	cj('body').prepend( cj("#menu-container").html() );
 
 	//Track Scrolling

@@ -238,10 +238,18 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
             $defaults['contribution_type_id']    = array_search( 'Donation', CRM_Contribute_PseudoConstant::contributionType() );
         }
         
+        $pledgeStatus      = CRM_Contribute_PseudoConstant::contributionStatus( );
+        $pledgeStatusNames = CRM_Core_OptionGroup::values( 'contribution_status', 
+                                                           false, false, false, null, 'name', true );
+        // get default status label (pending)
+        $defaultPledgeStatus = CRM_Utils_Array::value( array_search( 'Pending', $pledgeStatusNames ),
+                                                       $pledgeStatus );
+
         //assign status.
         $this->assign( 'status', CRM_Utils_Array::value( CRM_Utils_Array::value( 'status_id', $this->_values ),
-                                                         CRM_Contribute_PseudoConstant::contributionStatus( ),
-                                                         'Pending' ) );
+                                                         $pledgeStatus,
+                                                         $defaultPledgeStatus ) );
+        
         //honoree contact.
         if ( $this->_honorID ) {
             require_once 'CRM/Contact/BAO/Contact.php';

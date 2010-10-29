@@ -150,7 +150,7 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
       // Is status message correct?
       $this->assertTrue($this->isTextPresent("Activity '$subject' has been saved."), "Status message didn't show up after saving!");
 
-      $this->click("css=#recently-viewed .Activity a");
+      $this->click("css=#recently-viewed .crm-recently-viewed a");
       $this->waitForPageToLoad("30000");
 
       $expected =  array(

@@ -274,8 +274,10 @@ class CRM_Export_BAO_Export
                     $returnProperties = array_merge( $returnProperties, $extraReturnProperties );
                 }
         
-                // unset groups, tags, notes for components
-                foreach ( array( 'groups', 'tags', 'notes' ) as $value ) {
+                // unset non exportable fields for components
+                $nonExpoFields = array( 'groups', 'tags', 'notes', 'contribution_status_id', 
+                                        'pledge_status_id', 'pledge_payment_status_id' );
+                foreach ( $nonExpoFields as $value ) {
                     unset( $returnProperties[$value] );
                 }
             }

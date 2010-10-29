@@ -112,7 +112,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $this->typeKeys("contact_1", $sortName);
       $this->waitForElementPresent("css=div.ac_results-inner li");
       $this->click("css=div.ac_results-inner li");
-      $this->assertContains($sortName, $this->getValue("contact"), "autocomplete expected $sortName but didn’t find it in " . $this->getValue("contact"));
+      $this->assertContains($sortName, $this->getValue("contact_1"), "autocomplete expected $sortName but didn’t find it in " . $this->getValue("contact_1"));
    }
 
    /*
@@ -168,7 +168,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $tableLocator = "[@id='$tableId']";
         }
         foreach ($expected as $label => $value) {
-            $this->verifyText("xpath={$xpathPrefix}//table{$tableLocator}//tr/td[text()=\"$label\"]/../td[2]", preg_quote($value));
+            $this->verifyText("xpath=//x:table{$tableLocator}/x:tbody/tr/td[text()='{$label}']/following-sibling::td", preg_quote($value));
         }
     }
 
@@ -366,5 +366,57 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       // Is new processor created?
       $this->assertTrue($this->isTextPresent($processorName), "Processor name not found in selector after adding payment processor (webTestAddPaymentProcessor).");
   }  
-
+  
+  /**
+   * Create new relationship type w/ user specified params or default. 
+   *
+   * @param $params array of required params.
+   *
+   * @return an array of saved params values.
+   */
+  function webtestAddRelationshipType( $params = array( ) ) 
+  {
+      $this->open($this->sboxPath . 'civicrm/admin/reltype?reset=1&action=add');
+      
+      //build the params if not passed.
+      if ( !is_array( $params ) || empty( $params ) ) {
+          $params = array( 'label_a_b'       => 'Test Relationship Type A - B -'.rand( ),
+                           'label_b_a'       => 'Test Relationship Type B - A -'.rand( ),
+                           'contact_types_a' => 'Individual',
+                           'contact_types_b' => 'Individual',
+                           'description'     => 'Test Relationship Type Description' );
+      }
+      //make sure we have minimum required params.
+      if ( !isset( $params['label_a_b'] ) || empty( $params['label_a_b'] ) ) {
+          $params['label_a_b'] = 'Test Relationship Type A - B -'.rand( );
+      }
+      
+      //start the form fill.
+      $this->type('label_a_b', $params['label_a_b'] );
+      $this->type('label_b_a', $params['label_b_a'] );
+      $this->select('contact_types_a', "value={$params['contact_type_a']}");
+      $this->select('contact_types_b', "value={$params['contact_type_b']}");
+      $this->type('description', $params['description'] );
+      
+      //save the data.
+      $this->click('_qf_RelationshipType_next-bottom');
+      $this->waitForPageToLoad( '30000' );
+      
+      //does data saved.
+      $this->assertTrue( $this->isTextPresent( 'The Relationship Type has been saved.' ), 
+                         "Status message didn't show up after saving!" );
+      
+      $this->open($this->sboxPath . 'civicrm/admin/reltype?reset=1' );
+      $this->waitForPageToLoad( '30000' );
+      
+      //validate data on selector.
+      $data = $params;
+      if ( isset( $data['description'] ) ) {
+          unset( $data['description'] );
+      }
+      $this->assertStringsPresent( $data );
+      
+      return $params;
+  }
+  
 }

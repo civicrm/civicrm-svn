@@ -314,10 +314,13 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
             //Additional Participant can also register for an event only once 
             require_once 'CRM/Event/Form/Registration/Register.php';
             $isRegistered =  CRM_Event_Form_Registration_Register::checkRegistration( $fields, $self, true );
-            
             if ( $isRegistered ) {
-                $errors["email-{$self->_bltID}"] = ts( 'A person with this email address is already registered for this event.');
-            } 
+                if ( $self->_values['event']['allow_same_participant_emails'] ) {
+                    $errors['_qf_default'] = ts( 'A person is already registered for this event.');
+                } else {
+                    $errors["email-{$self->_bltID}"] = ts( 'A person with this email address is already registered for this event.');
+                }
+            }
             
             //get the complete params.
             $params = $self->get('params');

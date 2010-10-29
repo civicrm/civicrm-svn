@@ -248,8 +248,6 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
                 foreach ( $table['fields'] as $fieldName => $field ) {
                     if ( $tableName == 'civicrm_address' ) {
                         $this->_addressField = true;
-                    }elseif ( $tableName == 'civicrm_relationship' ) {
-                        $this->_relField = true;
                     }
                     if ( CRM_Utils_Array::value( 'required', $field ) ||
                          CRM_Utils_Array::value( $fieldName, $this->_params['fields'] ) ) {
@@ -257,6 +255,8 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
                             $this->_emailField = true;
                         }elseif ( $tableName == 'civicrm_phone' ) {
                             $this->_phoneField = true;
+                        }elseif ( $tableName == 'civicrm_relationship' ) {
+                            $this->_relField = true;
                         }
                         $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
                         $this->_columnHeaders["{$tableName}_{$fieldName}"]['type']  = CRM_Utils_Array::value( 'type', $field );
@@ -281,8 +281,8 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
         
         $this->_from = "
              FROM civicrm_case $cc
- inner join civicrm_case_contact $ccc on ${ccc}.case_id = ${cc}.id
- inner join civicrm_contact $c on ${c}.id=${ccc}.contact_id
+ LEFT join civicrm_case_contact $ccc on ${ccc}.case_id = ${cc}.id
+ LEFT join civicrm_contact $c on ${c}.id=${ccc}.contact_id
  ";
         if ( $this->_relField ) {
             $this->_from = "
@@ -397,15 +397,15 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
     }
     
     function groupBy( ) {
-        $this->_groupBy = "";
+        $this->_groupBy = " GROUP BY {$this->_aliases['civicrm_case']}.id";
     }
     
     function statistics( &$rows ) {
         $statistics = parent::statistics( $rows );
-        
+               
         $select = "select COUNT( DISTINCT( {$this->_aliases['civicrm_address']}.country_id))";
         $sql    = "{$select} {$this->_from} {$this->_where}";
-        $count  = CRM_Core_DAO::singleValueQuery( $sql );
+        $countryCount  = CRM_Core_DAO::singleValueQuery( $sql );
         
         //CaseType statistics
         if ( array_key_exists('filters', $statistics) ) {
@@ -418,10 +418,10 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
         }
         $statistics['counts']['case']    = array( 
                                                  'title' => ts( 'Total Number of Cases ' ),
-                                                 'value' => count( $rows ) );
+                                                 'value' => isset( $statistics['counts']['rowsFound'] ) ? $statistics['counts']['rowsFound']['value'] : count( $rows ) );
         $statistics['counts']['country'] = array( 
                                                  'title' => ts( 'Total Number of Countries ' ),
-                                                 'value' => $count );
+                                                 'value' => $countryCount );
         
         return $statistics;
     }
@@ -437,9 +437,12 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
             $this->_activityField = true;
             $this->_params['fields']['activity_subject'] = 1;
         }
-
+        if ( isset( $this->_params['relationship_type_id_value'] ) 
+             && !empty( $this->_params['relationship_type_id_value'] ) ) {     
+            $this->_relField = true; 
+        }
         $sql  = $this->buildQuery( true );
-             
+        
         
         $rows = $graphRows = array();
         $this->buildRows ( $sql, $rows );

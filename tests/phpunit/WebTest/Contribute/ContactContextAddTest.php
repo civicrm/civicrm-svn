@@ -83,7 +83,7 @@ class WebTest_Contribute_ContactContextAddTest extends CiviSeleniumTestCase {
       $this->click("AdditionalDetail");
       $this->waitForElementPresent("thankyou_date");
 
-      $this->type("note", "This is a test note.");
+      $this->type("note", "Test note for {$firstName}.");
       $this->type("non_deductible_amount", "10");
       $this->type("fee_amount", "0");
       $this->type("net_amount", "0");
@@ -114,8 +114,13 @@ class WebTest_Contribute_ContactContextAddTest extends CiviSeleniumTestCase {
       // Is status message correct?
       $this->assertTrue($this->isTextPresent("The contribution record has been saved"));
       
-      $this->waitForElementPresent("link=View");
-      $this->click('link=View');
-      $this->waitForPageToLoad('30000');
+      $this->waitForElementPresent("xpath=//div[@id='Contributions']//table/tbody/tr/td[8]/span/a[text()='View']");
+
+      // click through to the Contribution view screen
+      $this->click("xpath=//div[@id='Contributions']//table/tbody/tr/td[8]/span/a[text()='View']");
+      $this->waitForElementPresent('_qf_ContributionView_cancel-bottom');
+      
+      // verify Contribution created
+      $this->assertTrue($this->isTextPresent("Test note for {$firstName}."), "Contribution Note did not match");
   }
 }

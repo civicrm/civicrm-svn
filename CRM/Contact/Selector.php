@@ -200,7 +200,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
 
         $this->_query   = new CRM_Contact_BAO_Query( $this->_params,
                                                      $returnProperties, null, $includeContactIds,
-                                                     false, $mode, false, $searchDescendentGroups );
+                                                     false, CRM_Contact_BAO_Query::MODE_CONTACTS, false, $searchDescendentGroups );
         $this->_options =& $this->_query->_options;
     }//end of constructor
 

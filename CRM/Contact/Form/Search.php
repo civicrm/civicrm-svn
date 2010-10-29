@@ -585,6 +585,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         
         // CRM_Core_Error::debug( 'f', $this->_formValues );
         // CRM_Core_Error::debug( 'p', $this->_params );
+        if ( !isset($this->_objectMode) ) $this->_objectMode = CRM_Contact_BAO_Query::MODE_CONTACTS;
         $modeValues = $this->getModeValue( $this->_objectMode );
 
         require_once( str_replace('_', DIRECTORY_SEPARATOR, $this->_modeValue['selectorName'] ) . '.php' );
