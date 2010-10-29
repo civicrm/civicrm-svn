@@ -74,6 +74,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     public static $utils;
 
+    public static $populateOnce = false;
+
     /**
      *  Constructor
      *
@@ -129,16 +131,25 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
     private function _populateDB() {
 
-            $query = "DROP DATABASE IF EXISTS civicrm_tests_dev;"
-                   . "CREATE DATABASE civicrm_tests_dev DEFAULT"
-                   . " CHARACTER SET utf8 COLLATE utf8_unicode_ci;"
-                   . "USE civicrm_tests_dev;"
-                   . "SET SQL_MODE='STRICT_ALL_TABLES';"
-                   . "SET foreign_key_checks = 0";
-            if ( self::$utils->do_query($query) === false ) {
+        if ( self::$populateOnce ) {
+            return;
+        }
 
-                //  failed to create test database
-                exit;
+        self::$populateOnce = null;
+
+            $queries = array( "DROP DATABASE IF EXISTS civicrm_tests_dev;", 
+                              "CREATE DATABASE civicrm_tests_dev DEFAULT" . 
+                              " CHARACTER SET utf8 COLLATE utf8_unicode_ci;", 
+                              "USE civicrm_tests_dev;", 
+                              // SQL mode needs to be strict, that's our standard
+                              "SET SQL_MODE='STRICT_ALL_TABLES';"
+                             );
+            foreach( $queries as $query ) {
+                if ( self::$utils->do_query($query) === false ) {
+
+                    //  failed to create test database
+                    exit;
+                }
             }
 
             //  initialize test database
@@ -201,6 +212,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
 
     public function cleanDB() {
+        self::$populateOnce = null;
+
         $this->_dbconn = $this->getConnection();
         $this->_populateDB();
     }
@@ -444,7 +457,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                          // FIXME: I know it's 1, cause it was loaded directly to the db.
                          // FIXME: when we load all the data, we'll need to address this to
                          // FIXME: avoid hunting numbers around.
-                         'contribution_type_id' => 1 );
+                         'contribution_type_id' => 1,
+                         'is_active'            => 1 );
         
         $result = civicrm_membership_type_create( $params );
         
@@ -536,7 +550,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
     function relationshipTypeCreate( &$params ) 
     {  
-        require_once 'api/v2/Relationship.php';
+        require_once 'api/v2/RelationshipType.php';
         $result= civicrm_relationship_type_add($params);
         
         if ( civicrm_error( $params ) ) {
@@ -679,7 +693,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     function contributionCreate($cID,$cTypeID)
     {
-        require_once 'api/v2/Contribute.php';
+        require_once 'api/v2/Contribution.php';
         $params = array(
                         'domain_id'              => 1,
                         'contact_id'             => $cID,
@@ -710,7 +724,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     function contributionDelete($contributionId)
     {
-        require_once 'api/v2/Contribute.php';
+        require_once 'api/v2/Contribution.php';
         $params = array( 'contribution_id' => $contributionId );
         $val =& civicrm_contribution_delete( $params );
     }
@@ -722,27 +736,30 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      *
      * @return array $event
      */
-    function eventCreate( $params = null )
+    function eventCreate($params = array())
     {
-        if ( $params === null ) {
-            $params = array(
-                            'title'                   => 'Annual CiviCRM meet',
-                            'summary'                 => 'If you have any CiviCRM related issues or want to track where CiviCRM is heading, Sign up now',
-                            'description'             => 'This event is intended to give brief idea about progess of CiviCRM and giving solutions to common user issues',
-                            'event_type_id'           => 1,
-                            'is_public'               => 1,
-                            'start_date'              => 20081021,
-                            'end_date'                => 20081023,
-                            'is_online_registration'  => 1,
-                            'registration_start_date' => 20080601,
-                            'registration_end_date'   => 20081015,
-                            'max_participants'        => 100,
-                            'event_full_text'         => 'Sorry! We are already full',
-                            'is_monetory'             => 0, 
-                            'is_active'               => 1,
-                            'is_show_location'        => 0,
-                            );
+        // if no contact was passed, make up a dummy event creator
+        if (!isset($params['contact_id'])) {
+            $params['contact_id'] = $this->_contactCreate(array('contact_type' => 'Individual', 'first_name' => 'Event', 'last_name' => 'Creator'));
         }
+        // set defaults for missing params
+        $params = array_merge(array(
+            'title'                   => 'Annual CiviCRM meet',
+            'summary'                 => 'If you have any CiviCRM related issues or want to track where CiviCRM is heading, Sign up now',
+            'description'             => 'This event is intended to give brief idea about progess of CiviCRM and giving solutions to common user issues',
+            'event_type_id'           => 1,
+            'is_public'               => 1,
+            'start_date'              => 20081021,
+            'end_date'                => 20081023,
+            'is_online_registration'  => 1,
+            'registration_start_date' => 20080601,
+            'registration_end_date'   => 20081015,
+            'max_participants'        => 100,
+            'event_full_text'         => 'Sorry! We are already full',
+            'is_monetory'             => 0,
+            'is_active'               => 1,
+            'is_show_location'        => 0,
+        ), $params);
         require_once 'api/v2/Event.php';
         $event =& civicrm_event_create( $params );
         

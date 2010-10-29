@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.2                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -53,6 +53,26 @@ class CRM_Case_Form_EditClient extends CRM_Core_Form
     {
         $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
         $this->_caseId    = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
+        $context          = CRM_Utils_Request::retrieve( 'context', 'String', $this );
+        
+        //get current client name.
+        require_once 'CRM/Contact/BAO/Contact.php';
+        $this->assign( 'currentClientName', CRM_Contact_BAO_Contact::displayName( $this->_contactId ) );
+        
+        //set the context.
+        $url = CRM_Utils_System::url('civicrm/contact/view',"reset=1&force=1&cid={$this->_contactId}&selectedChild=case");
+        if ( $context == 'search' ) {
+            $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+            //validate the qfKey
+            require_once 'CRM/Utils/Rule.php';
+            $urlParams = 'force=1';
+            if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
+            $url = CRM_Utils_System::url( 'civicrm/case/search', $urlParams );
+        } else if ( $context == 'dashboard' ) {
+            $url = CRM_Utils_System::url( 'civicrm/case', 'reset=1' );
+        }
+        $session = CRM_Core_Session::singleton( );
+        $session->pushUserContext( $url );
     }
     
     /**
@@ -63,14 +83,19 @@ class CRM_Case_Form_EditClient extends CRM_Core_Form
      */
     public function buildQuickForm( ) 
     {
-        $this->add( 'text', 'change_client_id', ts( 'Assign to another Client' ) );
+        $this->add( 'text', 'change_client_id', ts( 'Select Contact' ) );
         $this->add( 'hidden', 'contact_id', '', array( 'id' => 'contact_id') );
         $this->addElement( 'submit', 
                            $this->getButtonName( 'next', 'edit_client' ), 
-                           ts('Assign'), 
+                           ts('Reassign Case'), 
                            array( 'class'   => 'form-submit-inline',
                                   'onclick' => "return checkSelection( this );") );
-
+        
+        $this->addElement( 'submit', 
+                           $this->getButtonName( 'cancel', 'edit_client' ), 
+                           ts('Cancel'), 
+                           array( 'class'   => 'form-submit-inline' ) );
+        
         $this->assign( 'contactId', $this->_contactId );
     }
     

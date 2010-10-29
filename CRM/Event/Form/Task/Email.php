@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -74,18 +74,12 @@ class CRM_Event_Form_Task_Email extends CRM_Event_Form_Task {
      */
     
     function preProcess( ) {
+        CRM_Contact_Form_Task_EmailCommon::preProcessFromAddress( $this );
+        parent::preProcess( );
 
-        $cid = CRM_Utils_Request::retrieve( 'cid', 'Positive',
-                                            $this, false );
-
-        if ( $cid ) {
-            CRM_Contact_Form_Task_EmailCommon::preProcessSingle( $this, $cid );
-        } else {
-            parent::preProcess( );
-
-            // we have all the contribution ids, so now we get the contact ids
-            parent::setContactIDs( );
-        }
+        // we have all the participant ids, so now we get the contact ids
+        parent::setContactIDs( );
+        
         $this->assign( 'single', $this->_single );
     }
     

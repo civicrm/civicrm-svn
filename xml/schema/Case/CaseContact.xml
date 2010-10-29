@@ -5,6 +5,7 @@
   <name>civicrm_case_contact</name>
   <comment>Joining table for case-contact associations.</comment>
   <add>2.1</add>
+  <log>true</log>
   <field>
     <name>id</name>
     <type>int unsigned</type>

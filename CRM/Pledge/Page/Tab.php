@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -38,6 +38,9 @@ require_once 'CRM/Core/Page.php';
 
 class CRM_Pledge_Page_Tab extends CRM_Core_Page 
 {
+    public $_permission = null; 
+    public $_contactId  = null;    
+
     /**
      * This function is called when action is browse
      * 
@@ -53,6 +56,12 @@ class CRM_Pledge_Page_Tab extends CRM_Core_Page
         $controller->set( 'context', 'pledge' ); 
         $controller->process( );
         $controller->run( );
+        
+        if ( $this->_contactId ) {
+            require_once 'CRM/Contact/BAO/Contact.php';
+            $displayName = CRM_Contact_BAO_Contact::displayName( $this->_contactId );
+            $this->assign( 'displayName', $displayName );
+        }
     }
     
     /** 
@@ -105,7 +114,10 @@ class CRM_Pledge_Page_Tab extends CRM_Core_Page
             // check logged in url permission
             require_once 'CRM/Contact/Page/View.php';
             CRM_Contact_Page_View::checkUserPermission( $this );
-        }      
+            
+            // set page title
+            CRM_Contact_Page_View::setTitle( $this->_contactId );
+        }
 
         $this->assign('action', $this->_action );     
         
@@ -143,8 +155,11 @@ class CRM_Pledge_Page_Tab extends CRM_Core_Page
         } else if ( $this->_action & CRM_Core_Action::DETACH ) { 
             require_once 'CRM/Pledge/BAO/Payment.php';
             require_once 'CRM/Contribute/PseudoConstant.php';
-            CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $this->_id, null, null, array_search( 'Cancelled', CRM_Contribute_PseudoConstant::contributionStatus() ) );
-
+            CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $this->_id, null, null, 
+                                                               array_search( 'Cancelled', 
+                                                                             CRM_Contribute_PseudoConstant::contributionStatus( null, 
+                                                                                                                                'name' ) ) );
+            
             $session = CRM_Core_Session::singleton();
             $session->setStatus( ts('Pledge has been Cancelled and all scheduled (not completed) payments have been cancelled.<br />') );
             CRM_Utils_System::redirect( $session->popUserContext() );
@@ -159,7 +174,12 @@ class CRM_Pledge_Page_Tab extends CRM_Core_Page
     function setContext( ) 
     {
         $context = CRM_Utils_Request::retrieve( 'context', 'String', $this, false, 'search' );
-
+        
+        $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+        //validate the qfKey
+        require_once 'CRM/Utils/Rule.php';
+        if ( !CRM_Utils_Rule::qfKey( $qfKey ) ) $qfKey = null;        
+        
         switch ( $context ) {
             
         case 'dashboard':           
@@ -168,7 +188,10 @@ class CRM_Pledge_Page_Tab extends CRM_Core_Page
             break;
             
         case 'search':
-            $url = CRM_Utils_System::url( 'civicrm/pledge/search', 'force=1' );
+            $urlParams = 'force=1';
+            if ( $qfKey ) $urlParams .= "&qfKey=$qfKey";
+            
+            $url = CRM_Utils_System::url( 'civicrm/pledge/search', $urlParams );
             break;
             
         case 'user':

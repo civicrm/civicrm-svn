@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -45,7 +45,8 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
      * @static
      */
     static $_links = null;
-    
+    public $_permission = null;    
+    public $_contactId  = null;
     
     /**
      * This method returns the links that are given for honor search row.
@@ -143,7 +144,7 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
        
         $softCreditList = CRM_Contribute_BAO_Contribution::getSoftContributionList( $this->_contactId, $isTest );
                
-        if( !empty( $softCreditList ) ) {
+        if ( !empty( $softCreditList ) ) {
             $softCreditTotals = array();
             
             list( $softCreditTotals['amount'],
@@ -156,6 +157,11 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
             $this->assign('softCreditTotals', $softCreditTotals );
         }
 
+        if ( $this->_contactId ) {
+            require_once 'CRM/Contact/BAO/Contact.php';
+            $displayName = CRM_Contact_BAO_Contact::displayName( $this->_contactId );
+            $this->assign( 'displayName', $displayName );
+        }
     }
 
 
@@ -215,8 +221,10 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
             // check logged in url permission
             require_once 'CRM/Contact/Page/View.php';
             CRM_Contact_Page_View::checkUserPermission( $this );
-        }      
 
+            // set page title
+            CRM_Contact_Page_View::setTitle( $this->_contactId );
+        }
         $this->assign('action', $this->_action );     
         
         if ( $this->_permission == CRM_Core_Permission::EDIT && ! CRM_Core_Permission::check( 'edit contributions' ) ) {
@@ -260,8 +268,24 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
     
     function setContext( ) 
     {
-        $context = CRM_Utils_Request::retrieve( 'context', 'String',
-                                                $this, false, 'search' );
+        $qfKey       = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+        $context     = CRM_Utils_Request::retrieve( 'context', 'String',
+                                                    $this, false, 'search' );
+        $compContext = CRM_Utils_Request::retrieve( 'compContext', 'String', $this );
+        //swap the context.
+        if ( $context == 'search' && $compContext ) {
+            $context = $compContext;
+        } else {
+            $compContext = null;
+        }
+        
+        // make sure we dont get tricked with a bad key
+        // so check format
+        require_once 'CRM/Core/Key.php';
+        if ( ! CRM_Core_Key::valid( $qfKey ) ) {
+            $qfKey = null;
+        }
+        
         $session = CRM_Core_Session::singleton( ); 
        
         switch ( $context ) {
@@ -294,7 +318,13 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
             break;
             
         case 'search':
-            $url = CRM_Utils_System::url( 'civicrm/contribute/search', 'force=1' );
+            $extraParams = "force=1";
+            if ( $qfKey ) {
+                $extraParams .= "&qfKey=$qfKey";
+            }
+
+            $this->assign( 'searchKey',  $qfKey );
+            $url = CRM_Utils_System::url( 'civicrm/contribute/search', $extraParams );
             break;
 
         case 'home':
@@ -306,30 +336,45 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
                                           "reset=1&force=1&cid={$this->_contactId}&selectedChild=activity" );
             break;
             
+        case 'member':
         case 'membership':
             $componentId     =  CRM_Utils_Request::retrieve( 'compId', 'Positive', $this);
             $componentAction =  CRM_Utils_Request::retrieve( 'compAction', 'Integer', $this );
-
+            
+            $context   = 'membership';
+            $searchKey = null;
+            if ( $compContext ) {
+                $context = 'search';
+                if ( $qfKey ) $searchKey = "&key=$qfKey";
+                $compContext = "&compContext={$compContext}";
+            }
             if ( $componentAction & CRM_Core_Action::VIEW ) {
                 $action = 'view';
             } else {
                 $action = 'update';
             } 
             $url = CRM_Utils_System::url( 'civicrm/contact/view/membership',
-                                          "reset=1&action={$action}&cid={$this->_contactId}&id={$componentId}&context=membership&selectedChild=member" );
+                                          "reset=1&action={$action}&id={$componentId}&cid={$this->_contactId}&context={$context}&selectedChild=member{$searchKey}{$compContext}" );
             break; 
             
         case 'participant':
             $componentId     =  CRM_Utils_Request::retrieve( 'compId', 'Positive', $this );
             $componentAction =  CRM_Utils_Request::retrieve( 'compAction', 'Integer', $this );
             
+            $context   = 'participant';
+            $searchKey = null;
+            if ( $compContext ) {
+                $context = 'search';
+                if ( $qfKey ) $searchKey = "&key=$qfKey";
+                $compContext = "&compContext={$compContext}";
+            }
             if ( $componentAction == CRM_Core_Action::VIEW ) {
                 $action = 'view';
             } else {
                 $action = 'update';
             } 
             $url = CRM_Utils_System::url( 'civicrm/contact/view/participant',
-                                          "reset=1&action={$action}&id={$componentId}&cid={$this->_contactId}&context=participant&selectedChild=event" );
+                                          "reset=1&action={$action}&id={$componentId}&cid={$this->_contactId}&context={$context}&selectedChild=event{$searchKey}{$compContext}" );
             break;
             
         case 'pledge':
@@ -342,18 +387,20 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
             break;
             
         case 'fulltext':
+            $keyName   = '&qfKey';
+            $urlParams = 'force=1';
+            $urlString = 'civicrm/contact/search/custom';
             if ( $this->_action == CRM_Core_Action::UPDATE ) {
-                $cid = null;
                 if ( $this->_contactId ) {
-                    $cid = '&cid=' . $this->_contactId;
+                    $urlParams .= '&cid=' . $this->_contactId;
                 }
-                
-                $url = CRM_Utils_System::url( 'civicrm/contact/view/contribution', 
-                                              "reset=1&force=1&context=fulltext&action=view".$cid );
-            } else {
-                $url = CRM_Utils_System::url( 'civicrm/contact/search/custom', 'force=1' );
+                $keyName    = '&key';
+                $urlParams .= '&context=fulltext&action=view';
+                $urlString  = 'civicrm/contact/view/contribution';
             }
-            
+            if ( $qfKey ) $urlParams .= "$keyName=$qfKey";
+            $this->assign( 'searchKey',  $qfKey );
+            $url = CRM_Utils_System::url( $urlString, $urlParams );
             break;
             
         default:

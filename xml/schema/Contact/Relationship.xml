@@ -6,6 +6,7 @@
   <name>civicrm_relationship</name>
   <comment>Relationship between any 2 types of contacts.</comment>
   <add>1.1</add>
+  <log>true</log>
   <field>
       <name>id</name>
       <type>int unsigned</type>

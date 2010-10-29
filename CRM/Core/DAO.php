@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -249,7 +249,8 @@ class CRM_Core_DAO extends DB_DataObject
      */
     function &fields( ) 
     {
-        return null;
+        $result = null;
+        return $result;
     }
 
     function table() 
@@ -866,15 +867,17 @@ FROM   civicrm_domain
         }
         $dao->query( $queryStr, $i18nRewrite );
 
-        if ( $freeDAO ) {
-            // we typically do this for insert/update/delete stataments
+        if ( $freeDAO ||
+             preg_match( '/^(insert|update|delete|create|drop)/i', $queryStr ) ) {
+            // we typically do this for insert/update/delete stataments OR if explicitly asked to
+            // free the dao
             $dao->free( );
         }
         return $dao;
     }
 
     /**
-     * execute a query and get the singleton result
+     * execute a query and get the single result
      *
      * @param string $query query to be executed 
      * 
@@ -1021,16 +1024,20 @@ FROM   civicrm_domain
             
             $fields =& $object->fields( );
             if ( ! is_array( $fieldsFix ) ) {
-                $fieldsToPrefix = array( );
-                $fieldsToSuffix = array( );
+                $fieldsToPrefix  = array( );
+                $fieldsToSuffix  = array( );
+                $fieldsToReplace = array( );
             }
-            if ($fieldsFix['prefix']) {
+            if ( CRM_Utils_Array::value( 'prefix', $fieldsFix ) ) {
                 $fieldsToPrefix = $fieldsFix['prefix'];
             }
-            if ($fieldsFix['suffix']) {
+            if ( CRM_Utils_Array::value( 'suffix', $fieldsFix ) ) {
                 $fieldsToSuffix = $fieldsFix['suffix'];
             }
-
+            if ( CRM_Utils_Array::value( 'replace', $fieldsFix ) ) {
+                $fieldsToReplace = $fieldsFix['replace'];
+            }
+            
             foreach ( $fields as $name => $value ) {
                 if ( $name == 'id' || $value['name'] == 'id' ) {
                     // copy everything but the id!
@@ -1045,10 +1052,13 @@ FROM   civicrm_domain
                 if ( isset( $fieldsToSuffix[$dbName] ) ) {
                     $newObject->$dbName .= $fieldsToSuffix[$dbName];
                 } 
+                if ( isset( $fieldsToReplace[$dbName] ) ) {
+                    $newObject->$dbName = $fieldsToReplace[$dbName];
+                } 
                 
                 if ( substr($name , -5)  == '_date' ||
                      substr($name , -10) == '_date_time' ) {
-                    $newObject->$dbName = CRM_Utils_Date::isoToMysql($object->$dbName);
+                    $newObject->$dbName = CRM_Utils_Date::isoToMysql($newObject->$dbName);
                 }
                 
                 if ( $newData ) {
@@ -1190,7 +1200,7 @@ SELECT contact_id
                         $depObject = CRM_Core_DAO::createTestObject( $FKClassName,
                                                                      CRM_Utils_Array::value( $dbName, $params, 1 ) );
                         $object->$dbName = $depObject->id;
-			unset($depObject);
+			            unset($depObject);
 
                         continue;
                     }
@@ -1237,7 +1247,8 @@ SELECT contact_id
                             else $object->$dbName=$value['enumValues'][0];
                         } else {
                             $object->$dbName=$dbName.'_'.$counter;
-			    if ($value['maxlength']>0 && strlen($object->$dbName)>$value['maxlength']) { 
+                            $maxlength = CRM_Utils_Array::value( 'maxlength', $value );
+                            if ( $maxlength > 0 && strlen($object->$dbName) > $maxlength ) {
                             	$object->$dbName=substr($object->$dbName,0,$value['maxlength']);
 			    }
                         }
@@ -1286,4 +1297,14 @@ SELECT contact_id
 
         $object->delete();
     }
+
+    static function createTempTableName( $prefix = 'civicrm', $addRandomString = true ) {
+        $tableName = $prefix . "_temp";
+
+        if ( $addRandomString ) {
+            $tableName .="_" . md5( uniqid( '', true ) );
+        }
+        return $tableName;
+    }
+
 }

@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -96,6 +96,13 @@ class CRM_Core_PseudoConstant
      */
     private static $imProvider;
 
+    /**
+     * website protocols
+     * @var array
+     * @static
+     */
+    private static $websiteType;
+    
     /**
      * im protocols
      * @var array
@@ -299,7 +306,14 @@ class CRM_Core_PseudoConstant
      * @static
      */
     private static $greeting = array( );
-
+    
+    /**
+     * Extensions
+     * @var array
+     * @static
+     */
+    private static $extensions = array( );
+    
     /**
      * populate the object from the database. generic populate
      * method
@@ -427,7 +441,10 @@ class CRM_Core_PseudoConstant
      *
      * @return array - array reference of all activty types.
      */
-    public static function &activityType( $all = true, $includeCaseActivities = false, $reset = false, $returnColumn = 'label' )
+    public static function &activityType( $all = true, 
+                                          $includeCaseActivities = false, 
+                                          $reset = false,
+                                          $returnColumn = 'label' )
     {
         $index        = (int) $all . '_' . $returnColumn . '_' . (int) $includeCaseActivities;
         
@@ -579,6 +596,31 @@ class CRM_Core_PseudoConstant
         return self::$imProvider;
     }
 
+
+    /**
+     * Get all the website types from database.
+     *
+     * The static array websiteType is returned, and if it's
+     * called the first time, the <b>Website DAO</b> is used 
+     * to get all the Website Types.
+     *
+     * Note: any database errors will be trapped by the DAO.
+     *
+     * @access public
+     * @static
+     *
+     * @return array - array reference of all Website types.
+     *
+     */
+    public static function &websiteType( ) 
+    {
+        if ( ! self::$websiteType ) {
+            require_once 'CRM/Core/OptionGroup.php';
+            self::$websiteType = CRM_Core_OptionGroup::values('website_type');
+        }        
+        return self::$websiteType;
+    }
+
     /**
      * Get the all From Email Address from database.
      *
@@ -666,7 +708,7 @@ class CRM_Core_PseudoConstant
             global $tsLocale;
             if ($tsLocale != '' and $tsLocale != 'en_US') {
                 $i18n =& CRM_Core_I18n::singleton();
-                $i18n->localizeArray(self::$stateProvince);
+                $i18n->localizeArray(self::$stateProvince, array('context' => 'province'));
                 asort(self::$stateProvince);
             }
         }
@@ -795,7 +837,7 @@ WHERE  id = %1";
             global $tsLocale;
             if ($tsLocale != '' and $tsLocale != 'en_US') {
                 $i18n =& CRM_Core_I18n::singleton();
-                $i18n->localizeArray(self::$country);
+                $i18n->localizeArray(self::$country, array('context' => 'country'));
                 asort(self::$country);
             }
         }
@@ -1435,6 +1477,44 @@ ORDER BY name";
         return self::$greeting[$index];
     }
 
+    /**
+     * Get all the Languages from database.
+     *
+     * @access public
+     * @static
+     *
+     * @return array self::languages - array reference of all languages
+     *
+     */
+    public static function &languages( ) 
+    {
+        static $_languages = null;
+
+        if ( ! $_languages ) {
+            require_once 'CRM/Core/OptionGroup.php';
+            $_languages = CRM_Core_OptionGroup::values('languages');
+        }        
+        return $_languages;
+    }
+    
+    /**
+     * Get all extensions 
+     *
+     * The static array extensions
+     *
+     * @access public
+     * @static
+     * @return array - array reference of all system extensions
+     */
+    public static function &getExtensions( )
+    {
+        if ( !self::$extensions ) {
+            require_once 'CRM/Core/OptionGroup.php';
+            self::$extensions = CRM_Core_OptionGroup::values( 'system_extensions' );
+        }
+
+        return self::$extensions;
+    }
 }
 
 

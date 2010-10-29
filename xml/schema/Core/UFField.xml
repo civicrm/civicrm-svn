@@ -6,6 +6,7 @@
   <name>civicrm_uf_field</name>
   <comment>User Framework fields and their properties.</comment>
   <add>1.1</add>
+  <log>true</log>
   <field>
       <name>id</name>
       <type>int unsigned</type>
@@ -73,6 +74,13 @@
      <localizable>true</localizable>
      <comment>Description and/or help text to display after this field.</comment>
      <add>1.1</add>
+  </field>
+  <field>
+     <name>help_pre</name>
+     <type>text</type>
+     <localizable>true</localizable>
+     <comment>Description and/or help text to display before this field.</comment>
+     <add>3.2</add>
   </field>
   <field>
        <name>is_registration</name>

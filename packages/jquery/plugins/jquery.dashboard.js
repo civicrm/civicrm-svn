@@ -168,12 +168,13 @@
 
         // For each widget in this column.
         for (var id in widgets[c]) {
+          var widgetID = id.split('-');
           // Build a new widget object and save it to various publicly accessible places.
-          col.initialWidgets[id] = dashboard.widgets[id] = widget({
-            id: id,
+          col.initialWidgets[id] = dashboard.widgets[widgetID[1]] = widget({
+            id: widgetID[1],
             element: $('<li class="widget"></li>').appendTo(col.element),
             initialColumn: col,
-            minimized: ( widgets[c][id] > 0  ? true : false )
+            minimized: ( widgets[c][widgetID[1]] > 0  ? true : false )
           });
           
           //set empty Dashboard to false
@@ -597,7 +598,7 @@
     columns: 2,
     emptyPlaceholderInner: 'There are no dashlets in this column of your dashboard.',
     fullscreenHeaderInner: 'Back to dashboard mode',
-    throbberMarkup: '<div class="throbber"><p class="loadtext">Loading...</p></div>',
+    throbberMarkup: '<div class="crm-loading-element">Loading...</div>',
     animationSpeed: 200,
     callbacks: {},
     widgetCallbacks: {}

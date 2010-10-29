@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -49,7 +49,9 @@ class CRM_Grant_Page_Tab extends CRM_Contact_Page_View
      * @static
      */
     static $_links = null;
-   
+    public $_permission = null;
+    public $_contactId  = null;
+    
     /**
      * This function is called when action is browse
      *
@@ -65,6 +67,12 @@ class CRM_Grant_Page_Tab extends CRM_Contact_Page_View
          $controller->set( 'context', 'grant' ); 
          $controller->process( );
          $controller->run( );
+         
+         if ( $this->_contactId ) {
+             require_once 'CRM/Contact/BAO/Contact.php';
+             $displayName = CRM_Contact_BAO_Contact::displayName( $this->_contactId );
+             $this->assign( 'displayName', $displayName );
+         }
     }
 
     /** 
@@ -100,6 +108,41 @@ class CRM_Grant_Page_Tab extends CRM_Contact_Page_View
     }
     
     /**
+     * build all the data structures needed to build the form
+     *
+     * @return void
+     * @access public
+     */
+    function preProcess( ) 
+    {
+        $context       = CRM_Utils_Request::retrieve( 'context', 'String', $this );
+        $this->_action = CRM_Utils_Request::retrieve( 'action', 'String', $this, false, 'browse' );
+        $this->_id     = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
+        
+        if ( $context == 'standalone' ) {
+            $this->_action = CRM_Core_Action::ADD;
+        } else {
+            $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
+            require_once 'CRM/Contact/BAO/Contact.php';
+            $displayName = CRM_Contact_BAO_Contact::displayName( $this->_contactId );
+            $this->assign( 'contactId', $this->_contactId );
+            $this->assign( 'displayName', $displayName );
+            
+            // check logged in url permission
+            require_once 'CRM/Contact/Page/View.php';
+            CRM_Contact_Page_View::checkUserPermission( $this );
+            
+            // set page title
+            CRM_Contact_Page_View::setTitle( $this->_contactId );
+        }
+        $this->assign( 'action', $this->_action );     
+        
+        if ( $this->_permission == CRM_Core_Permission::EDIT && !CRM_Core_Permission::check( 'edit grants' ) ) {
+            $this->_permission = CRM_Core_Permission::VIEW; // demote to view since user does not have edit grant rights
+            $this->assign( 'permission', 'view' );
+        }
+    }
+    /**
      * This function is the main function that is called when the page loads,
      * it decides the which action has to be taken for the page.
      *
@@ -108,18 +151,10 @@ class CRM_Grant_Page_Tab extends CRM_Contact_Page_View
      */
     function run( )
     {
-        $contactID  = CRM_Utils_Request::retrieve('cid', 'Positive', CRM_Core_DAO::$_nullArray );
-        $context = CRM_Utils_Request::retrieve('context', 'String', $this );
-
-        if ( $context == 'standalone' && !$contactID ) {
-            $this->_action = CRM_Core_Action::ADD;
-            $this->assign('action', $this->_action );     
-        } else {
-            // we should call contact view, preprocess only for grant in contact summary
-            $this->preProcess( );           
-        } 
-
+        $this->preProcess( );           
+        
         $this->setContext( );
+
         if ( $this->_action & CRM_Core_Action::VIEW ) { 
             $this->view( ); 
         } else if ( $this->_action & ( CRM_Core_Action::UPDATE | CRM_Core_Action::ADD | CRM_Core_Action::DELETE ) ) {
@@ -136,10 +171,19 @@ class CRM_Grant_Page_Tab extends CRM_Contact_Page_View
         $this->_id = CRM_Utils_Request::retrieve('id', 'Integer', $this );
         $session   = CRM_Core_Session::singleton( ); 
         
+        $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+        //validate the qfKey
+        require_once 'CRM/Utils/Rule.php';
+        if ( !CRM_Utils_Rule::qfKey( $qfKey ) ) $qfKey = null;          
+        
         switch ( $context ) {
             
         case 'search':
-            $url = CRM_Utils_System::url('civicrm/grant/search','reset=1&force=1');
+            $urlParams = 'force=1';
+            if ( $qfKey ) $urlParams .= "&qfKey=$qfKey";
+            $this->assign( 'searchKey', $qfKey );
+            
+            $url = CRM_Utils_System::url( 'civicrm/grant/search', $urlParams );
             break;
             
         case 'dashboard':

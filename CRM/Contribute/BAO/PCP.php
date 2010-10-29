@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -84,6 +84,12 @@ class CRM_Contribute_BAO_PCP extends CRM_Contribute_DAO_PCP
                 $dao->status_id = 0;
             }
 
+	    // set currency for CRM-1496
+	    if ( ! isset( $dao->currency ) ) {
+	      $config =& CRM_Core_Config::singleton( );
+	      $dao->currency = $config->defaultCurrency;
+	    }
+	
             $dao->save( );
             return $dao;
         }
@@ -278,7 +284,7 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
     static function &pcpLinks()
     {
         if (! ( self::$_pcpLinks ) ) {
-            $deleteExtra = ts('Are you sure you want to delete this Personal Campaign Page ?\n This action can not be undone.');
+            $deleteExtra = ts('Are you sure you want to delete this Personal Campaign Page?') . '\n' . ts('This action cannot be undone.');
 
             self::$_pcpLinks['add']  = array (
                                               CRM_Core_Action::ADD => array( 'name'  => ts('Create a Personal Campaign Page'),

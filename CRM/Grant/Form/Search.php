@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -257,7 +257,7 @@ class CRM_Grant_Form_Search extends CRM_Core_Form
             $permission = CRM_Core_Permission::getPermission( );
 
             require_once 'CRM/Grant/Task.php';
-            $tasks = array( '' => ts('- more actions -') );
+            $tasks = array( '' => ts('- actions -') );
             $permissionedTask = CRM_Grant_Task::permissionedTaskTitles( $permission );
             if ( is_array( $permissionedTask ) && !CRM_Utils_System::isNull( $permissionedTask ) ) {
                 $tasks += $permissionedTask;
@@ -345,11 +345,13 @@ class CRM_Grant_Form_Search extends CRM_Core_Form
         require_once 'CRM/Contact/BAO/Query.php';
 
         $selector = new CRM_Grant_Selector_Search( $this->_queryParams,
-                                                    $this->_action,
-                                                    null,
-                                                    $this->_single,
-                                                    $this->_limit,
-                                                    $this->_context ); 
+                                                   $this->_action,
+                                                   null,
+                                                   $this->_single,
+                                                   $this->_limit,
+                                                   $this->_context ); 
+        $selector->setKey( $this->controller->_key );
+        
         $prefix = null;
         if ( $this->_context == 'basic' || $this->_context == 'user') {
             $prefix = $this->_prefix;

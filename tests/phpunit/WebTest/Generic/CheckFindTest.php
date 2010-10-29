@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -37,19 +37,15 @@ class WebTest_Generic_CheckFindTest extends CiviSeleniumTestCase
 
   function testCheckDashboardElements()
   {
-    $this->open("/drupal/");
-    $this->type("edit-name", "demo");
-    $this->type("edit-pass", "demo");
-    $this->click("edit-submit");
-    $this->waitForPageToLoad("30000");
-    $this->click("link=CiviCRM");
-    $this->waitForPageToLoad("30000");
-    $this->click("//ul[@id='civicrm-menu']/li[3]");
-    $this->click("//div[@id='root-menu-div']/div[2]/ul/li[1]/div/a");
-    $this->waitForPageToLoad("30000");
-    $this->click("//input[@name='_qf_Basic_refresh' and @value='Search']");
-    $this->waitForPageToLoad("30000");
-    $this->assertTrue($this->isTextPresent("1 Result"));
+      $this->open( $this->sboxPath );
+      $this->webtestLogin( );
+      
+      // Go directly to the URL of the screen that you will be testing.
+      $this->open($this->sboxPath . "civicrm/contact/search&reset=1");
+      $this->waitForElementPresent("_qf_Basic_refresh");
+      $this->click("//input[@name='_qf_Basic_refresh' and @value='Search']");
+      $this->waitForPageToLoad("30000");
+      $this->assertTrue($this->isElementPresent("search-status"));
   }
 
 }

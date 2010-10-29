@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -143,6 +143,7 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
 
         // Provide suggested text for event full and waitlist messages if they're empty
         $defaults['event_full_text'] = CRM_Utils_Array::value('event_full_text', $defaults, ts('This event is currently full.') );
+       
         $defaults['waitlist_text'] = CRM_Utils_Array::value('waitlist_text', $defaults, ts('This event is currently full. However you can register now and get added to a waiting list. You will be notified if spaces become available.') );
         list( $defaults['start_date'], $defaults['start_date_time'] ) = CRM_Utils_Date::setDateDefaults( CRM_Utils_Array::value( 'start_date' , $defaults ), 'activityDateTime' );
         
@@ -325,7 +326,11 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
                 if (!isset($params[$key])) $params[$key] = $value;
             }
         }
-
+        
+        if ( empty( $params['is_template'] ) ) {
+            $params['is_template'] = 0;
+        }
+        
         $event =  CRM_Event_BAO_Event::create( $params );
 
         // now that we have the event’s id, do some more template-based stuff
@@ -383,18 +388,19 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
         }
         
         $this->set( 'id', $event->id );
-        
+                
         if ( $this->_action & CRM_Core_Action::ADD ) {
-            $urlParam = "action=update&reset=1&subPage=Location&id={$event->id}";
-            
+            $url = 'civicrm/event/manage/location';
+            $urlParams = "action=update&reset=1&id={$event->id}";
             // special case for 'Save and Done' consistency.
             if ( $this->controller->getButtonName('submit') == "_qf_EventInfo_upload_done" ) {
-                $urlParam = "action=update&reset=1&id={$event->id}";
+                $url = 'civicrm/event/manage';
+                $urlParams = 'reset=1';
                 CRM_Core_Session::setStatus( ts("'%1' information has been saved.", 
                                                 array( 1 => $this->getTitle( ) ) ) );
             }
             
-            CRM_Utils_System::redirect( CRM_Utils_System::url( CRM_Utils_System::currentPath( ), $urlParam ) );
+            CRM_Utils_System::redirect( CRM_Utils_System::url( $url, $urlParams ) );
         }
         
         parent::endPostProcess( );

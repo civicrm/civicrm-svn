@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -100,7 +100,7 @@ class CRM_Core_Page_AJAX_Location
         CRM_Utils_System::civiExit( );
     }
 
-    function jqState( &$config ) {
+    function jqState( $config ) {
         if ( ! isset( $_GET['_value'] ) ||
         empty( $_GET['_value'] ) ) {
             CRM_Utils_System::civiExit( );

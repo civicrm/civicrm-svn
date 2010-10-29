@@ -4,6 +4,7 @@
   <class>ContributionRecur</class>
   <name>civicrm_contribution_recur</name>
   <add>1.6</add>
+  <log>true</log>
   <field>
       <name>id</name>
       <type>int unsigned</type>
@@ -35,6 +36,14 @@
        <required>true</required>
        <comment>Amount to be contributed or charged each recurrence.</comment>
        <add>1.6</add>
+  </field>
+  <field>
+      <name>currency</name>
+      <type>varchar</type>
+      <length>3</length>
+      <required>true</required> 
+      <comment>3 character string, value from config setting or input via user.</comment>
+      <add>3.2</add>
   </field>
   <field>
        <name>frequency_unit</name>

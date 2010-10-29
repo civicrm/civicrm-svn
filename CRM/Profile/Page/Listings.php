@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -236,11 +236,36 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
             }
         }
 
-        // do not do any work if we are in reset mode
-        if ( ! CRM_Utils_Array::value( 'reset', $_GET ) ||
-             CRM_Utils_Array::value( 'force', $_GET ) ) {
-            $this->assign( 'isReset', false );
 
+        $this->assign( 'isReset', true );
+
+
+        $formController = new CRM_Core_Controller_Simple( 'CRM_Profile_Form_Search',
+                                                           ts('Search Profile'),
+                                                           CRM_Core_Action::ADD );
+        $formController->setEmbedded( true );
+        $formController->set( 'gid', $this->_gid );
+        $formController->process( ); 
+        
+        $searchError = false;
+        // check if there is a POST
+        if ( ! empty( $_POST ) ) {
+            if ( $formController->validate( ) !== true ) {
+                $searchError = true;
+            }
+        }
+
+        // also get the search tpl name
+        $this->assign( 'searchTPL', $formController->getTemplateFileName( ) );
+        
+        $this->assign( 'search', $this->_search );
+
+        // search if search returned a form error?
+        if ( ( ! CRM_Utils_Array::value( 'reset', $_GET ) ||
+               CRM_Utils_Array::value( 'force', $_GET ) ) &&
+             ! $searchError ) {
+            $this->assign( 'isReset', false );
+                
             $map      = 0;
             $linkToUF = 0;
             $editLink = false;
@@ -262,7 +287,7 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
                     }
                 }
             }
-
+                
             // the selector will override this if the user does have
             // edit permissions as determined by the mask, CRM-4341
             // do not allow edit for anon users in joomla frontend, CRM-4668
@@ -271,34 +296,23 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
                  $config->userFrameworkFrontend == 1 ) {
                 $editLink = false;
             }
-            
+                
             $selector = new CRM_Profile_Selector_Listings( $this->_params, $this->_customFields, $this->_gid,
-                                                            $map, $editLink, $linkToUF );
-            
+                                                           $map, $editLink, $linkToUF );
+                
             $controller = new CRM_Core_Selector_Controller($selector ,
-                                                            $this->get( CRM_Utils_Pager::PAGE_ID ),
-                                                            $this->get( CRM_Utils_Sort::SORT_ID  ),
-                                                            CRM_Core_Action::VIEW,
-                                                            $this,
-                                                            CRM_Core_Selector_Controller::TEMPLATE );
+                                                           $this->get( CRM_Utils_Pager::PAGE_ID ),
+                                                           $this->get( CRM_Utils_Sort::SORT_ID  ),
+                                                           CRM_Core_Action::VIEW,
+                                                           $this,
+                                                           CRM_Core_Selector_Controller::TEMPLATE );
             $controller->setEmbedded( true );
             $controller->run( );
-
-        } else {
-            $this->assign( 'isReset', true );
         }
-
-        $formController = new CRM_Core_Controller_Simple( 'CRM_Profile_Form_Search',
-                                                           ts('Search Profile'),
-                                                           CRM_Core_Action::ADD );
-        $formController->setEmbedded( true );
-        $formController->process( ); 
+        
+        //CRM-6862 -run form cotroller after
+        //selector, since it erase $_POST         
         $formController->run( ); 
-        
-        // also get the search tpl name
-        $this->assign( 'searchTPL', $formController->getTemplateFileName( ) );
-        
-        $this->assign( 'search', $this->_search );
         
         return parent::run( );
     }
@@ -363,6 +377,15 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
             $template     =& CRM_Core_Page::getTemplate( );
             if ( $template->template_exists( $templateFile ) ) {
                 return $templateFile;
+            }
+
+            // lets see if we have customized by name
+            $ufGroupName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $this->_gid, 'name' );
+            if ( $ufGroupName ) {
+                $templateFile = "CRM/Profile/Page/{$ufGroupName}/Listings.tpl";
+                if ( $template->template_exists( $templateFile ) ) {
+                    return $templateFile;
+                }
             }
         }
         return parent::getTemplateFileName( );

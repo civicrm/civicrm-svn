@@ -2,7 +2,7 @@
 
   /*
    +----------------------------------------------------------------------------+
-   | PayflowPro Core Payment Module for CiviCRM version 3.2                     |
+   | PayflowPro Core Payment Module for CiviCRM version 3.3                     |
    +----------------------------------------------------------------------------+
    | Licensed to CiviCRM under the Academic Free License version 3.0            |
    |                                                                            |
@@ -39,6 +39,22 @@ class CRM_Core_Payment_PayflowPro extends CRM_Core_Payment {
         $this->_processorName    = ts( 'Payflow Pro' );
     }
     
+    /** 
+     * singleton function used to manage this object 
+     * 
+     * @param string $mode the mode of operation: live or test
+     *
+     * @return object 
+     * @static 
+     * 
+     */ 
+    static function &singleton( $mode, &$paymentProcessor ) {
+        $processorName = $paymentProcessor['name'];
+        if (self::$_singleton[$processorName] === null ) {
+            self::$_singleton[$processorName] = new CRM_Core_Payment_PayflowPro( $mode, $paymentProcessor );
+        }
+        return self::$_singleton[$processorName];
+    }
     
     /*
      * This function  sends request and receives response from
@@ -394,7 +410,7 @@ class CRM_Core_Payment_PayflowPro extends CRM_Core_Payment {
         }
         
         if ( empty( $this->_paymentProcessor['url_site'] ) ) {
-            $errorMsg[] = ' ' . ts( 'URL is not set for '.$this->_paymentProcessor['name']  );
+            $errorMsg[] = ' ' . ts( 'URL is not set for %1', array(1 => $this->_paymentProcessor['name']));
         }
         
         if ( ! empty( $errorMsg ) ) {

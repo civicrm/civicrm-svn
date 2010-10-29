@@ -10,7 +10,7 @@
 {if $isPrimary}
 {ts}If space becomes available you will receive an email with
 a link to a web page where you can complete your registration.{/ts}
-
+{/if}
 ==========================================================={if $participantCount }===================={/if}
 
 {elseif $isRequireApproval}
@@ -106,7 +106,7 @@ registration process.{/ts}
 {if $value neq 'skip'}
 {if $isPrimary}
 {if $lineItem|@count GT 1} {* Header for multi participant registration cases. *}
-{ts 1=$priceset+1}Participant %1{/ts}
+{ts 1=$priceset+1}Participant %1{/ts} {$part.$priceset.info}
 
 {/if}
 {/if}

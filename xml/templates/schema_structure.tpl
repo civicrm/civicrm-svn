@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -43,7 +43,7 @@ class CRM_Core_I18n_SchemaStructure
             {foreach from=$columns key=table item=types}
               '{$table}' => array(
                 {foreach from=$types key=column item=type}
-                  '{$column}' => '{$type}',
+                  '{$column}' => "{$type}",
                 {/foreach}
               ),
             {/foreach}

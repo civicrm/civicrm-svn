@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--  Truncate all tables that will be used in the tests  -->
 <dataset>
+  <civicrm_address_format />
+
   <civicrm_currency />
 
   <civicrm_domain />
 
   <civicrm_file />
+
+  <civicrm_financial_account />
+
+  <civicrm_financial_trxn />
 
   <civicrm_location_type />
 
@@ -32,6 +38,8 @@
   <civicrm_component />
 
   <civicrm_discount />
+
+  <civicrm_persistent />
 
   <civicrm_acl />
 
@@ -83,11 +91,19 @@
 
   <civicrm_membership_status />
 
+  <civicrm_campaign />
+
+  <civicrm_campaign_group />
+
+  <civicrm_survey />
+
   <civicrm_participant_status_type />
 
   <civicrm_dedupe_rule_group />
 
   <civicrm_dedupe_rule />
+
+  <civicrm_dedupe_exception />
 
   <civicrm_case />
 
@@ -109,6 +125,8 @@
 
   <civicrm_price_set_entity />
 
+  <civicrm_batch />
+
   <civicrm_cache />
 
   <civicrm_country />
@@ -121,7 +139,11 @@
 
   <civicrm_email />
 
+  <civicrm_entity_batch />
+
   <civicrm_entity_file />
+
+  <civicrm_entity_financial_trxn />
 
   <civicrm_entity_tag />
 
@@ -148,6 +170,8 @@
   <civicrm_timezone />
 
   <civicrm_openid />
+
+  <civicrm_website />
 
   <civicrm_acl_cache />
 
@@ -232,8 +256,6 @@
   <civicrm_contribution_product />
 
   <civicrm_contribution_soft />
-
-  <civicrm_financial_trxn />
 
   <civicrm_membership_payment />
 

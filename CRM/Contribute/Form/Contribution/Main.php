@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -240,7 +240,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                                              $statuses, $returnProperties );
             
             require_once 'CRM/Contribute/PseudoConstant.php';
-            $paymentStatusTypes = CRM_Contribute_PseudoConstant::contributionStatus( );
+            $paymentStatusTypes = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
             $duePayment = false;
             foreach ( $statuses as $payId => $value ) {
                 if ( $paymentStatusTypes[$value['status_id']] == 'Overdue' ) {
@@ -262,6 +262,12 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             $this->_defaults = array_merge( $this->_defaults, $getDefaults );
         }
 
+        $config = CRM_Core_Config::singleton( );
+        // set default country from config if no country set
+        if ( !CRM_Utils_Array::value("billing_country_id-{$this->_bltID}", $this->_defaults ) ) { 
+            $this->_defaults["billing_country_id-{$this->_bltID}"] = $config->defaultContactCountry;
+        }
+        
         // now fix all state country selectors
         require_once 'CRM/Core/BAO/Address.php';
         CRM_Core_BAO_Address::fixAllStateSelects( $this, $this->_defaults );
@@ -296,6 +302,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         $this->applyFilter('__ALL__', 'trim');
         $this->add( 'text', "email-{$this->_bltID}",
                     ts( 'Email Address' ), array( 'size' => 30, 'maxlength' => 60 ), true );
+        $this->addRule( "email-{$this->_bltID}", ts('Email is not valid.'), 'email' );
         
          //build pledge block.
 
@@ -421,7 +428,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 !$this->_values['is_pay_later'] ) ) {
             $this->addButtons(array( 
                                     array ( 'type'      => 'upload',
-                                            'name'      => ts('Continue >>'), 
+                                            'name'      => ts('Confirm Contribution'), 
                                             'spacing'   => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', 
                                             'isDefault' => true   ), 
                                     ) 
@@ -455,7 +462,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         }
 
         if ( $separateMembershipPayment ) {
-            $elements[''] = $this->createElement('radio',null,null,ts('No thank you'),'no_thanks', null);
+            $elements[''] = $this->createElement('radio',null,null,ts('No thank you'),'no_thanks', array('onclick'=>'clearAmountOther();') );
             $this->assign('is_separate_payment', true); 
         }
 
@@ -520,7 +527,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         $extraOption = array('onclick' =>"enableHonorType();");
         // radio button for Honor Type
         $honorOptions = array( );
-        $honor =CRM_Core_PseudoConstant::honor( ); 
+        $honor = CRM_Core_PseudoConstant::honor( ); 
         foreach ($honor as $key => $var) {
             $honorTypes[$key] = HTML_QuickForm::createElement('radio', null, null, $var, $key, $extraOption );
         }
@@ -564,7 +571,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         }
         $this->assign( 'is_for_organization', true);
         CRM_Contact_BAO_Contact_Utils::buildOnBehalfForm( $this, 'Organization', null, 
-                                                          null, 'Organization Details' );
+                                                          null, ts('Organization Details') );
     }
 
     /**
@@ -625,9 +632,11 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         
         $units    = array( );
         $unitVals = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, $this->_values['recur_frequency_unit'] );
+        $frequencyUnits = CRM_Core_OptionGroup::values( 'recur_frequency_units' );
         foreach ( $unitVals as $key => $val ) {
-            // FIXME: this is not localisable
-            $units[$val] = $this->_values['is_recur_interval'] ? "{$val}(s)" : $val;
+            if ( array_key_exists( $val, $frequencyUnits ) ) {
+                $units[$val] = $this->_values['is_recur_interval'] ? "{$frequencyUnits[$val]}(s)" : $frequencyUnits[$val];
+            }
         }
 
         $frequencyUnit =& $this->add( 'select', 'frequency_unit', null, $units );
@@ -765,32 +774,32 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         }
         
         if ( $self->_values['is_monetary'] ) {
-            if ( ( CRM_Utils_Array::value('amount',$fields) == 'amount_other_radio' )
-                 || isset( $fields['amount_other'] ) ) {
-
-                if ( ! isset($amount) &&
-                     ! CRM_Utils_Array::value('amount_level',$fields) ) {
+            //validate other amount.
+            $checkOtherAmount = false;
+            if ( CRM_Utils_Array::value('amount', $fields ) == 'amount_other_radio' || CRM_Utils_Array::value( 'amount_other', $fields ) ) {
+                $checkOtherAmount = true;
+            }
+            $otherAmountVal = CRM_Utils_Array::value( 'amount_other', $fields );
+            if ( $checkOtherAmount || $otherAmountVal ) {
+                if ( !$otherAmountVal ) {
                     $errors['amount_other'] = ts('Amount is required field.');
                 }
-                
-                if ( CRM_Utils_Array::value('min_amount',$self->_values) ) {
-                    $min = $self->_values['min_amount'];
-                    if ( $fields['amount_other'] != '' && $fields['amount_other'] < $min ) {
-                        $errors['amount_other'] = ts( 'Contribution amount must be greater than %1', 
+                //validate for min and max.
+                if ( $otherAmountVal ) {
+                    $min = CRM_Utils_Array::value( 'min_amount', $self->_values );
+                    $max = CRM_Utils_Array::value('max_amount',  $self->_values );
+                    if ( $min && $otherAmountVal < $min ) {
+                        $errors['amount_other'] = ts( 'Contribution amount must be at least %1', 
                                                       array ( 1 => $min ) );
                     }
-                }
-                    
-                if ( CRM_Utils_Array::value('max_amount',$self->_values) > 0 ) {
-                    $max = $self->_values['max_amount'];
-                    if ( $fields['amount_other'] > $max ) {
-                        $errors['amount_other'] = ts( 'Contribution amount cannot be greater than %1.',
+                    if ( $max && $otherAmountVal > $max ) {
+                        $errors['amount_other'] = ts( 'Contribution amount cannot be more than %1.',
                                                       array ( 1 => $max ) );
                     }
                 }
             }
         }
-
+        
         // validate PCP fields - if not anonymous, we need a nick name value
         if ( $self->_pcpId && CRM_Utils_Array::value('pcp_display_in_roll',$fields) &&
              ( CRM_Utils_Array::value('pcp_is_anonymous',$fields) == 0 ) &&
@@ -882,7 +891,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 $customizedValue = CRM_Core_OptionGroup::getValue( $greeting, 'Customized', 'name' ); 
                 if( $customizedValue  == $greetingType && 
                     ! CRM_Utils_Array::value( $customizedGreeting, $fields ) ) {
-                    $errors[$customizedGreeting] = ts( 'Custom  %1 is a required field if %1 is of type Customized.', 
+                    $errors[$customizedGreeting] = ts( 'Custom %1 is a required field if %1 is of type Customized.', 
                                                        array( 1 => ucwords(str_replace('_'," ", $greeting) ) ) );
                 }
             }
@@ -989,14 +998,14 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                     $this->set( 'contributeMode', 'express' ); 
                     
                     $donateURL = CRM_Utils_System::url( 'civicrm/contribute', '_qf_Contribute_display=1' ); 
-                    $params['cancelURL' ] = CRM_Utils_System::url( 'civicrm/contribute/transact', '_qf_Main_display=1', true, null, false ); 
-                    $params['returnURL' ] = CRM_Utils_System::url( 'civicrm/contribute/transact', '_qf_Confirm_display=1&rfp=1', true, null, false ); 
+                    $params['cancelURL' ] = CRM_Utils_System::url( 'civicrm/contribute/transact', "_qf_Main_display=1&qfKey={$params['qfKey']}", true, null, false ); 
+                    $params['returnURL' ] = CRM_Utils_System::url( 'civicrm/contribute/transact', "_qf_Confirm_display=1&rfp=1&qfKey={$params['qfKey']}", true, null, false ); 
                     $params['invoiceID' ] = $invoiceID;
 
                     //default action is Sale
                     $params['payment_action'] = 'Sale';
                     
-                    $payment =& CRM_Core_Payment::singleton( $this->_mode, 'Contribute', $this->_paymentProcessor, $this ); 
+                    $payment =& CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this ); 
                     $token = $payment->setExpressCheckout( $params ); 
                     if ( is_a( $token, 'CRM_Core_Error' ) ) { 
                         CRM_Core_Error::displaySessionError( $token ); 

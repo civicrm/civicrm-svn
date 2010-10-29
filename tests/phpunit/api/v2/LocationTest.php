@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -459,7 +459,7 @@ class api_v2_LocationTest extends CiviUnitTestCase
         
         $locationUpdate =& civicrm_location_update( $params );
         
-        $this->assertEquals( $locationUpdate['is_error'], 0 );
+        $this->assertEquals( $locationUpdate['is_error'], 0, 'In line ' . __LINE__ );
     }
 
 

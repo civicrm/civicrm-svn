@@ -1,5 +1,5 @@
 {if $rows}
-<div class="form-item">
+<div class="form-item crm-block crm-form-block crm-contribution-form-block">
      <span class="element-right">{$form.buttons.html}</span>
 </div>
 
@@ -32,11 +32,7 @@
 
 {else}
    <div class="messages status">
-      <dl>
-          <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>
-          <dd>
-            {ts}There are no records selected.{/ts}
-          </dd>
-      </dl>
+    <div class="icon inform-icon"></div>
+    {ts}There are no records selected.{/ts}
    </div>
 {/if}

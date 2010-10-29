@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -56,11 +56,12 @@ class CRM_Case_Page_DashBoard extends CRM_Core_Page
             CRM_Core_Error::fatal( ts( 'You are not authorized to access this page.' ) );
         }
         
-        // Make sure case types have been configured for the component
-        require_once 'CRM/Core/OptionGroup.php';        
-        $caseType = CRM_Core_OptionGroup::values('case_type');
-        if ( empty( $caseType ) ){
-            $this->assign('notConfigured', 1);
+        //validate case configuration.
+        require_once 'CRM/Case/BAO/Case.php';
+        $configured = CRM_Case_BAO_Case::isCaseConfigured( );
+        $this->assign( 'notConfigured',       !$configured['configured'] );
+        $this->assign( 'allowToAddNewCase',   $configured['allowToAddNewCase'] );
+        if ( !$configured['configured'] ) {
             return;
         }
         

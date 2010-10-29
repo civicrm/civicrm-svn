@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -86,6 +86,13 @@
             {$form.state_province.html|crmReplace:class:bigSelect}
         </td>
     </tr>
+    {if $addressGroupTree}
+        <tr>
+	    <td colspan="2">
+	        {include file="CRM/Custom/Form/Search.tpl" groupTree=$addressGroupTree showHideLinks=false}
+            </td>
+        </tr>
+    {/if}
     </table>
 </div>
 

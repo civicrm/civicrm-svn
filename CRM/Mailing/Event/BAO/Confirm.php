@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -137,11 +137,7 @@ class CRM_Mailing_Event_BAO_Confirm extends CRM_Mailing_Event_DAO_Confirm {
         $text = CRM_Utils_Token::replaceDomainTokens($text, $domain, false, $tokens['text'] );
         $text = CRM_Utils_Token::replaceWelcomeTokens($text, $group->title, false);
         
-        // we need to wrap Mail_mime because PEAR is apparently unable to fix
-        // a six-year-old bug (PEAR bug #30) in Mail_mime::_encodeHeaders()
-        // this fixes CRM-5466
-        require_once 'CRM/Utils/Mail/FixedMailMIME.php';
-        $message = new CRM_Utils_Mail_FixedMailMIME("\n");
+        $message = new Mail_mime("\n");
 
         $message->setHTMLBody($html);
         $message->setTxtBody($text);

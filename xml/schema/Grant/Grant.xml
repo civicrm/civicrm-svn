@@ -5,6 +5,7 @@
   <name>civicrm_grant</name>
   <comment>This table stores information about grants given to a contact.</comment>
   <add>1.8</add>
+  <log>true</log>
   <field>
       <name>id</name>
       <type>int unsigned</type>
@@ -77,8 +78,8 @@
   <field>
       <name>grant_type_id</name>
       <type>int unsigned</type>
-      <title>Grant Type</title>
-      <export>true</export>
+      <title>Grant Type Id</title>
+      <export>false</export>
       <required>true</required>
       <comment>Type of grant. Implicit FK to civicrm_option_value in grant_type option_group.</comment>
       <add>1.8</add>
@@ -115,6 +116,22 @@
       <comment>Granted amount, in default currency.</comment>
       <add>1.8</add>
   </field>
+  <field>
+      <name>currency</name>
+      <type>varchar</type>
+      <length>3</length>
+      <required>true</required>
+      <comment>3 character string, value from config setting or input via user.</comment>
+      <add>3.2</add>
+  </field>
+  <field>
+      <name>currency</name>
+      <type>varchar</type>
+      <length>8</length>
+      <required>true</required> 
+      <comment>3 character string, value from config setting or input via user.</comment>
+      <add>3.2</add>
+  </field>
   <field> 
       <name>rationale</name>
       <type>text</type>
@@ -128,10 +145,11 @@
   <field> 
       <name>status_id</name>
       <type>int unsigned</type>
-      <title>Grant status</title>
+      <title>Grant Status Id</title>
       <uniqueName>grant_status_id</uniqueName>
       <required>true</required>
       <import>true</import> 
+      <export>false</export>
       <comment>Id of Grant status.</comment>
       <add>1.8</add>
   </field>

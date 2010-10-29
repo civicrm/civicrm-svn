@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -217,16 +217,13 @@ WHERE  id IN ($optionIDs)
         if ( !$entityId || !$entityTable ) {
             return $result;
         }
-        require_once 'CRM/Core/Transaction.php';
-        $transaction = new CRM_Core_Transaction( );
         
-        $lineItem = new CRM_Price_DAO_LineItem( );
-        $lineItem->entity_id    = $entityId;
-        $lineItem->entity_table = $entityTable;
-        $result = $lineItem->delete( );
+        if ( $entityId && !is_array( $entityId ) ) {
+            $entityId = array( $entityId );
+        }
         
-        $transaction->commit( );
-        
+        $query = "DELETE FROM civicrm_line_item where entity_id IN ('" . implode( "','" , $entityId ) . "') AND entity_table = '$entityTable'";
+        $dao = CRM_Core_DAO::executeQuery( $query );
         return $result;
     }
 }

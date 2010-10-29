@@ -8,7 +8,7 @@
     id = '69'
   />
   <civicrm_uf_group
-    id         = '7'
+    id         = '11'
     group_type = 'Contact'
     help_pre   = 'Profile to Test API'
     is_active  = '1'

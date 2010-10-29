@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.2                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -50,12 +50,12 @@ class CRM_Case_Form_ActivityToCase extends CRM_Core_Form
      */
     function preProcess( ) 
     {
-        $this->_activityId = CRM_Utils_Request::retrieve( 'activityId', 'Integer', CRM_Core_DAO::$_nullObject );
+        $this->_activityId = CRM_Utils_Request::retrieve( 'activityId', 'Positive', CRM_Core_DAO::$_nullObject );
         if ( !$this->_activityId ) {
             CRM_Core_Error::fatal('required activity id is missing.');
         }
         
-        $this->_currentCaseId = CRM_Utils_Request::retrieve( 'caseId', 'Integer', CRM_Core_DAO::$_nullObject );
+        $this->_currentCaseId = CRM_Utils_Request::retrieve( 'caseId', 'Positive', CRM_Core_DAO::$_nullObject );
         $this->assign( 'currentCaseId', $this->_currentCaseId );
         $this->assign( 'buildCaseActivityForm', true );
     }
@@ -93,12 +93,12 @@ class CRM_Case_Form_ActivityToCase extends CRM_Core_Form
     public function buildQuickForm( )
     { 
         // tokeninput url
-        $tokenUrl = CRM_Utils_System::url( "civicrm/ajax/checkemail", "noemail=1" );
+        $tokenUrl = CRM_Utils_System::url( "civicrm/ajax/checkemail", "noemail=1", false, null, false );
         $this->assign( 'tokenUrl', $tokenUrl );
         
-        $this->add( 'text',   'unclosed_cases', ts( 'Build Activity To Case' ) );
+        $this->add( 'text',   'unclosed_cases', ts( 'Select Case' ) );
         $this->add( 'hidden', 'unclosed_case_id', '',array( 'id' => 'open_case_id' ) );
-        $this->add( 'text',   'target_contact_id', ts( 'With Contacts' ) );        
-        $this->add( 'text',   'case_activity_subject', ts( 'New Subject' ), array( 'size'=> 50));
+        $this->add( 'text',   'target_contact_id', ts( 'With Contact(s)' ) );        
+        $this->add( 'text',   'case_activity_subject', ts( 'Subject' ), array( 'size'=> 50));
     }
 }

@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -28,8 +28,7 @@
 
 {htxt id="id-intro"}
 <p>
-{ts}Message templates allow you to save and re-use messages with layouts. You can use them when sending email to one or more contacts. If you are using the CiviMail component - you can use templates for your messages. If you are using the CiviMember component, you will need to create one or more message templates for membership renewal reminders.
-{/ts} {$memberTypesDocLink}
+{ts}Message templates allow you to save and re-use messages with layouts. You can use them when sending email to one or more contacts. If you are using the CiviMail component - you can use templates for your messages. If you are using the CiviMember component, you will need to create one or more message templates for membership renewal reminders.{/ts} {$memberTypesDocLink}
 </p>
 
 <p>

@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -235,7 +235,7 @@ class CRM_Contact_Form_Search_Custom_Group
             }
                        
             $sql = "CREATE TEMPORARY TABLE Xg_{$this->_tableName} ( contact_id int primary key) ENGINE=HEAP";  
-            CRM_Core_DAO::executeQuery( $sql, CRM_Core_DAO::$_nullArray );
+            CRM_Core_DAO::executeQuery( $sql );
             
             //used only when exclude group is selected 
             if( $xGroups != 0 ) {
@@ -248,7 +248,7 @@ class CRM_Contact_Form_Search_Custom_Group
                      civicrm_group_contact.status = 'Added' AND
                      civicrm_group_contact.group_id IN( {$xGroups})";
                 
-                CRM_Core_DAO::executeQuery( $excludeGroup, CRM_Core_DAO::$_nullArray );
+                CRM_Core_DAO::executeQuery( $excludeGroup );
 
                 //search for smart group contacts
                 foreach( $this->_excludeGroups as $keys => $values ) {
@@ -263,7 +263,7 @@ class CRM_Contact_Form_Search_Custom_Group
                         
                         $smartGroupQuery = " INSERT IGNORE INTO Xg_{$this->_tableName}(contact_id) $smartSql";
                         
-                        CRM_Core_DAO::executeQuery( $smartGroupQuery, CRM_Core_DAO::$_nullArray );
+                        CRM_Core_DAO::executeQuery( $smartGroupQuery );
                     }
                 }
                 
@@ -273,7 +273,7 @@ class CRM_Contact_Form_Search_Custom_Group
                                                                    contact_id int,
                                                                    group_names varchar(64)) ENGINE=HEAP";
             
-            CRM_Core_DAO::executeQuery( $sql, CRM_Core_DAO::$_nullArray );
+            CRM_Core_DAO::executeQuery( $sql );
 
             if ( $iGroups ) {
                 $includeGroup = 
@@ -376,10 +376,11 @@ class CRM_Contact_Form_Search_Custom_Group
             if( $xTags != 0 ) {
                 $excludeTag = 
                     "INSERT INTO  Xt_{$this->_tableName} ( contact_id )
-                  SELECT  DISTINCT civicrm_entity_tag.contact_id
+                  SELECT  DISTINCT civicrm_entity_tag.entity_id
                   FROM civicrm_entity_tag, civicrm_contact                    
                   WHERE 
-                     civicrm_contact.id = civicrm_entity_tag.contact_id AND 
+                     civicrm_entity_tag.entity_table = 'civicrm_contact' AND
+                     civicrm_contact.id = civicrm_entity_tag.entity_id AND 
                      civicrm_entity_tag.tag_id IN( {$xTags})";
             
                 CRM_Core_DAO::executeQuery( $excludeTag );
@@ -397,7 +398,8 @@ class CRM_Contact_Form_Search_Custom_Group
                  SELECT              civicrm_contact.id as contact_id, civicrm_tag.name as tag_name
                  FROM                civicrm_contact
                     INNER JOIN       civicrm_entity_tag
-                            ON       civicrm_entity_tag.contact_id = civicrm_contact.id
+                            ON       ( civicrm_entity_tag.entity_table = 'civicrm_contact' AND
+                                       civicrm_entity_tag.entity_id = civicrm_contact.id )
                     LEFT JOIN        civicrm_tag
                             ON       civicrm_entity_tag.tag_id = civicrm_tag.id";
             } else {
@@ -424,7 +426,6 @@ class CRM_Contact_Form_Search_Custom_Group
             }
             
             CRM_Core_DAO::executeQuery( $includeTag );
-            
         }  
 
         $from = " FROM civicrm_contact contact_a";
@@ -498,7 +499,7 @@ class CRM_Contact_Form_Search_Custom_Group
     }
 
     function templateFile( ) {
-        return 'CRM/Contact/Form/Search/Custom/Sample.tpl';
+        return 'CRM/Contact/Form/Search/Custom.tpl';
     }
 
 }

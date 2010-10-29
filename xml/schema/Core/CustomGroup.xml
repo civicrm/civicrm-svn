@@ -6,6 +6,7 @@
   <name>civicrm_custom_group</name>
   <comment>All extended (custom) properties are associated with a group. These are logical sets of related data.</comment>
   <add>1.1</add>
+  <log>true</log>
     <field>
       <name>id</name>
       <type>int unsigned</type>
@@ -30,7 +31,7 @@
      <length>64</length>
      <localizable>true</localizable>
      <comment>Friendly Name.</comment>
-       <add>1.1</add>
+     <add>1.1</add>
   </field>
   <field>
      <name>extends</name>

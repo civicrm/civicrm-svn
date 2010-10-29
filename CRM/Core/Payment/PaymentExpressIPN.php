@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -339,7 +339,7 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
 		
 		}elseif ($dps_method == "pxaccess"){
 		
-			require_once('PaymentExpress/pxaccess.php');
+			require_once('PaymentExpress/pxaccess.inc.php');
 			global $pxaccess;
 			$pxaccess = new PxAccess($dps_url, $dps_user, $dps_key, $mac_key);
 #getResponse method in PxAccess object returns PxPayResponse object 
@@ -360,6 +360,9 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
 
         $privateData = $privateData ? self::stringToArray($privateData) : '';
 		
+        // Record the current count in array, before we start adding things (for later checks) 
+        $countPrivateData = count($privateData);
+
 		// Private Data consists of : a=contactID, b=contributionID,c=contributionTypeID,d=invoiceID,e=membershipID,f=participantID,g=eventID
 		$privateData['contactID'] = $privateData['a'];
 		$privateData['contributionID'] = $privateData['b'];
@@ -369,9 +372,9 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
 		if ( $component == "event" ) {
 			$privateData['participantID'] = $privateData['f'];
 			$privateData['eventID'] = $privateData['g'];
-		}else if ( $component == "contribute" ) {
+		} else if ( $component == "contribute" ) {
 			
-			if ( count($privateData) == 5) {
+			if ( $countPrivateData == 5 ) {
                 $privateData["membershipID"] = $privateData['e'];					
 			}		
 		}
@@ -397,13 +400,12 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
 			}
 
 			if ( $component == "event" ) {
-
                 $finalURL = CRM_Utils_System::url( 'civicrm/event/register',
-                                                   "_qf_ThankYou_display=1&qfKey={$params['qfKey']}", 
+                                                   "_qf_ThankYou_display=1&qfKey=$qfKey", 
                                                    false, null, false );
 			} elseif ( $component == "contribute" ) {
                 $finalURL = CRM_Utils_System::url( 'civicrm/contribute/transact',
-                                                   "_qf_ThankYou_display=1&qfKey={$params['qfKey']}",
+                                                   "_qf_ThankYou_display=1&qfKey=$qfKey",
                                                    false, null, false );
 			}
 				
@@ -412,12 +414,12 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
 		}else {
 		
             if ( $component == "event" ) {
-                $finalURL = CRM_Utils_System::url( 'civicrm/event/register',
-                                                   "_qf_Register_display=1&cancel=1&qfKey={$params['qfKey']}", 
+                $finalURL = CRM_Utils_System::url( 'civicrm/event/confirm',
+                                                   "reset=1&cc=fail&participantId=$privateData[participantID]",
                                                    false, null, false );
             } elseif ( $component == "contribute" ) {
                 $finalURL = CRM_Utils_System::url( 'civicrm/contribute/transact',
-                                                   "_qf_Main_display=1&cancel=1&qfKey={$params['qfKey']}",
+                                                   "_qf_Main_display=1&cancel=1&qfKey=$qfKey",
                                                    false, null, false );
             }
 				

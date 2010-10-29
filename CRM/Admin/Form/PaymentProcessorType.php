@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -178,12 +178,14 @@ class CRM_Admin_Form_PaymentProcessorType extends CRM_Admin_Form
      */
     public function postProcess() 
     {
+        CRM_Utils_System::flushCache( 'CRM_Core_DAO_PaymentProcessorType' );
+
         if ( $this->_action & CRM_Core_Action::DELETE ) {
             CRM_Core_BAO_PaymentProcessorType::del( $this->_id );
             return;
         }
         
-        $values = $this->controller->exportValues( $this->_name );
+        $values = $this->controller->exportValues( $this->_name );        
 
         if ( CRM_Utils_Array::value( 'is_default', $values ) ) {
             $query = "

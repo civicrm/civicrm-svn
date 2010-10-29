@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -84,7 +84,7 @@ class CRM_Utils_OpenFlashChart
         $yMin = 0;
         
         // calculate max scale for graph.
-        $yMax = max( $yValues );
+        $yMax = ceil( max( $yValues ) );
         if ( $mod = $yMax%(str_pad( 5, strlen($yMax)-1, 0))) { 
             $yMax += str_pad( 5, strlen($yMax)-1, 0)-$mod;
         }
@@ -108,7 +108,8 @@ class CRM_Utils_OpenFlashChart
         $symbol   = $config->defaultCurrencySymbol;
                         
         // set the tooltip.
-        $bar->set_tooltip( "$symbol #val#" );
+        $tooltip = CRM_Utils_Array::value( 'tip', $params, "$symbol #val#" );
+        $bar->set_tooltip( $tooltip );
         
         // create x axis label obj.
         $xLabels = new x_axis_labels( );
@@ -204,7 +205,8 @@ class CRM_Utils_OpenFlashChart
         $pie->add_animation( new pie_bounce( 2 ) );
         
         // set the tooltip.
-        $pie->set_tooltip( "Amount is $symbol #val# of $symbol #total# <br>#percent#" );
+        $tooltip = CRM_Utils_Array::value( 'tip', $params, "Amount is $symbol #val# of $symbol #total# <br>#percent#" );
+        $pie->set_tooltip( $tooltip );
         
         // set colours.
         $pie->set_colours( self::$_colours );

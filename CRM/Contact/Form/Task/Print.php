@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -110,7 +110,7 @@ class CRM_Contact_Form_Task_Print extends CRM_Contact_Form_Task {
         // just need to add a javacript to popup the window for printing
         // 
         $this->addButtons( array(
-                                 array ( 'type'      => 'back',
+                                 array ( 'type'      => 'next',
                                          'name'      => ts('Print Contact List'),
                                          'js'        => array( 'onclick' => 'window.print()' ),
                                          'isDefault' => true   ),

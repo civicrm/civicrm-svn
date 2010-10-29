@@ -5,6 +5,7 @@
   <name>civicrm_participant_status_type</name>
   <comment>various types of CiviEvent participant statuses</comment>
   <add>3.0</add>
+  <log>true</log>
   <field>
     <name>id</name>
     <type>int unsigned</type>
@@ -18,8 +19,11 @@
   </primaryKey>
   <field>
     <name>name</name>
+    <uniqueName>participant_status</uniqueName>
+    <title>Participant Status</title>
     <type>varchar</type>
     <length>64</length>
+    <import>true</import>
     <unique>true</unique>
     <comment>non-localized name of the status type</comment>
     <add>3.0</add>

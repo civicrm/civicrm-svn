@@ -1243,7 +1243,7 @@ class DB_DataObject extends DB_DataObject_Overload
             }
             
             // special values ... at least null is handled...
-            if (!isset($options['disable_null_strings']) && (strtolower($this->$k) === 'null') && !($v & DB_DATAOBJECT_NOTNULL)) {
+            if (!isset($options['disable_null_strings']) && is_string($this->$k) && (strtolower($this->$k) === 'null') && !($v & DB_DATAOBJECT_NOTNULL)) {
                 $settings .= "$kSql = NULL ";
                 continue;
             }
@@ -2475,7 +2475,10 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         if (is_object($result)) {
             // lets hope that copying the result object is OK!
-            
+            // fix notices in unit test.
+            if ( !CRM_Utils_Array::value( 'RESULTSEQ', $GLOBALS['_DB_DATAOBJECT'] ) ) {
+                $GLOBALS['_DB_DATAOBJECT']['RESULTSEQ'] = 1;
+            }
             $_DB_resultid  = $GLOBALS['_DB_DATAOBJECT']['RESULTSEQ']++;
             $_DB_DATAOBJECT['RESULTS'][$_DB_resultid] = $result; 
             $this->_DB_resultid = $_DB_resultid;
@@ -2562,7 +2565,7 @@ class DB_DataObject extends DB_DataObject_Overload
                 continue;
             }
             
-            if (!isset($options['disable_null_strings']) &&  (strtolower($this->$k) === 'null') && !($v & DB_DATAOBJECT_NOTNULL)) {
+            if (!isset($options['disable_null_strings']) && is_string($this->$k) && (strtolower($this->$k) === 'null') && !($v & DB_DATAOBJECT_NOTNULL)) {
                 $this->whereAdd(" $kSql  IS NULL");
                 continue;
             }

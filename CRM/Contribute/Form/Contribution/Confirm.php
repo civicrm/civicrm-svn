@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -61,7 +61,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                                                 CRM_Core_DAO::$_nullObject, false, null, 'GET' );
             if ( $rfp ) {
                 require_once 'CRM/Core/Payment.php'; 
-                $payment =& CRM_Core_Payment::singleton( $this->_mode, 'Contribute', $this->_paymentProcessor, $this );
+                $payment =& CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this );
                 $expressParams = $payment->getExpressCheckoutDetails( $this->get( 'token' ) );
 
                 $this->_params['payer'       ] = $expressParams['payer'       ];
@@ -287,7 +287,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                                             'js'        => array( 'onclick' => "return submitOnce(this,'" . $this->_name . "','" . ts('Processing') ."');" )
                                             ),
                                     array ( 'type'      => 'back',
-                                            'name'      => ts('<< Go Back')
+                                            'name'      => ts('Go Back')
                                             )
                                     )
                               );
@@ -312,6 +312,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                     $timeField = "{$name}_time";
                     if ( isset( $contact[ $timeField ] ) ) {
                         $defaults[ $timeField ] = $contact[ $timeField ];
+                    }
+                    if ( isset( $contact["{$name}_id"] ) ) {
+                        $defaults["{$name}_id"] = $contact["{$name}_id"];
                     }
                 } else if ( in_array($name, array('addressee', 'email_greeting', 'postal_greeting') )
                          && CRM_Utils_Array::value($name.'_custom', $contact) ) { 
@@ -385,6 +388,10 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         $now = date( 'YmdHis' );
         $fields = array( );
         
+        if ( CRM_Utils_Array::value( 'image_URL', $params  ) ) {
+            CRM_Contact_BAO_Contact::processImageParams( $params ) ;
+        }
+
         // set email for primary location.
         $fields["email-Primary"] = 1;
         
@@ -462,10 +469,26 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         // check for profile double opt-in and get groups to be subscribed
         require_once 'CRM/Core/BAO/UFGroup.php';
         $subscribeGroupIds = CRM_Core_BAO_UFGroup::getDoubleOptInGroupIds( $params, $contactID );
-                
+
+        // since we are directly adding contact to group lets unset it from mailing
+        if ( !empty( $addToGroups ) ) {
+            foreach( $addToGroups as $groupId ) {
+                if ( isset( $subscribeGroupIds[$groupId] ) ) {
+                    unset( $subscribeGroupIds[$groupId] );
+                }
+            }
+        }
+                        
+        foreach ( $addToGroups as $k ) {
+            if ( array_key_exists( $k, $subscribeGroupIds ) ) {
+                unset( $addToGroups[$k] );
+            }
+        }
+
         if ( ! isset( $contactID ) ) {
             require_once 'CRM/Dedupe/Finder.php';
             $dedupeParams = CRM_Dedupe_Finder::formatParams($params, 'Individual');
+            $dedupeParams['check_permission'] = false;
             $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, 'Individual');
 
             // if we find more than one contact, use the first one
@@ -833,13 +856,20 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                 
                 //when user doing pledge payments.
                 //update the schedule when payment(s) are made 
-                
                 require_once 'CRM/Pledge/BAO/Payment.php';
                 foreach ( $form->_params['pledge_amount'] as $paymentId => $dontCare ) {
+                    $scheduledAmount  =  CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_Payment', 
+                                                                       $paymentId,
+                                                                       'scheduled_amount', 
+                                                                       'id'
+                                                                       );
+                    
                     $pledgePaymentParams = array('id'              => $paymentId,
                                                  'contribution_id' => $contribution->id,
-                                                 'status_id'       => $contribution->contribution_status_id
+                                                 'status_id'       => $contribution->contribution_status_id,
+                                                 'actual_amount'   => $scheduledAmount
                                                  );
+                    
                     
                     CRM_Pledge_BAO_Payment::add( $pledgePaymentParams );
                 }
@@ -851,7 +881,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                 //when user creating pledge record.
                 $pledgeParams                            = array( );
                 $pledgeParams['contact_id'             ] = $contribution->contact_id;
-                $pledgeParams['installment_amount'     ] = $contribution->total_amount;
+                $pledgeParams['installment_amount'     ] = $pledgeParams['actual_amount'] = $contribution->total_amount;
                 $pledgeParams['contribution_id'        ] = $contribution->id;
                 $pledgeParams['contribution_page_id'   ] = $contribution->contribution_page_id;
                 $pledgeParams['contribution_type_id'   ] = $contribution->contribution_type_id;
@@ -866,7 +896,8 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                 $pledgeParams['additional_reminder_day'] = $form->_values['additional_reminder_day'];
                 $pledgeParams['is_test'                ] = $contribution->is_test;
                 $pledgeParams['acknowledge_date'       ] = date( 'Ymd' );
-                
+                $pledgeParams['original_installment_amount'] = $pledgeParams['installment_amount'] ;
+
                 require_once 'CRM/Pledge/BAO/Pledge.php';
                 $pledge = CRM_Pledge_BAO_Pledge::create( $pledgeParams );
                 
@@ -942,8 +973,8 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                                 'trxn_result_code'  => $result['trxn_result_code'],
                                 );
             
-            require_once 'CRM/Contribute/BAO/FinancialTrxn.php';
-            $trxn =& CRM_Contribute_BAO_FinancialTrxn::create( $trxnParams );
+            require_once 'CRM/Core/BAO/FinancialTrxn.php';
+            $trxn =& CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
         }
         
         //create contribution activity w/ individual and target
@@ -1090,8 +1121,11 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             // check if matching organization contact exists
             require_once 'CRM/Dedupe/Finder.php';
             $dedupeParams = CRM_Dedupe_Finder::formatParams($behalfOrganization, 'Organization');
+            $dedupeParams['check_permission'] = false;
             $dupeIDs      = CRM_Dedupe_Finder::dupesByParams($dedupeParams, 'Organization', 'Strict');
-            if ( count($dupeIDs) == 1 ) {
+
+            // CRM-6243 says to pick the first org even if more than one match
+            if ( count($dupeIDs) >= 1 ) {
                 $behalfOrganization['contact_id'] = $dupeIDs[0];
                 // don't allow name edit
                 unset($behalfOrganization['organization_name']);

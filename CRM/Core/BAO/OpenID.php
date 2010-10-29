@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -113,7 +113,7 @@ class CRM_Core_BAO_OpenID extends CRM_Core_DAO_OpenID
         }
 
         $query = "
-SELECT openid, civicrm_location_type.name as locationType, civicrm_openid.is_primary as is_primary, 
+SELECT civicrm_openid.openid, civicrm_location_type.name as locationType, civicrm_openid.is_primary as is_primary, 
 civicrm_openid.allowed_to_login as allowed_to_login, civicrm_openid.id as openid_id, 
 civicrm_openid.location_type_id as locationTypeId
 FROM      civicrm_contact

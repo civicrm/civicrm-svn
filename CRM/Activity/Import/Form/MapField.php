@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -191,7 +191,7 @@ class CRM_Activity_Import_Form_MapField extends CRM_Core_Form
             $this->assign( 'rowDisplayCount', 2 );
         }
         $highlightedFields = array();
-        $requiredFields    = array( 'activity_date_time', 'activity_type_id', 'activity_name', 'target_contact_id' );
+        $requiredFields    = array( 'activity_date_time', 'activity_type_id', 'activity_name', 'target_contact_id','activity_subject' );
         foreach ( $requiredFields as $val ) {
             $highlightedFields[] = $val;
         }
@@ -393,7 +393,7 @@ class CRM_Activity_Import_Form_MapField extends CRM_Core_Form
             $requiredFields = array(
                 'target_contact_id'  => ts('Contact ID'),
                 'activity_date_time' => ts('Activity Date'),
-                'subject'            => ts('Subject'),   
+                'activity_subject'   => ts('Activity Subject'),   
                 'activity_type_id'   => ts('Activity Type Id')             
             );
             

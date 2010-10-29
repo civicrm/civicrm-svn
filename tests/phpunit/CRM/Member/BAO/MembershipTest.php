@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -229,7 +229,7 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
         $this->assertEquals( $activeMembers[$membershipId1]['id'], $membership[$membershipId1]['id'], 'Verify active membership record is retrieved.');
         $this->assertEquals( $activeMembers[$membershipId2]['id'], $membership[$membershipId2]['id'], 'Verify active membership record is retrieved.');
         
-        $this->assertNull( $inActiveMembers[$membershipId2]['id'], 'Verify No inactive membership record is retrieved.');
+        $this->assertEquals(0, count($inActiveMembers), 'Verify No inactive membership record is retrieved.');
     }
     
     function testDeleteMembership ()
@@ -327,7 +327,7 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
                
         $params = array(
                         'contact_id'         => $contactId,  
-                        'membership_type_id' => $membershipType->id,
+                        'membership_type_id' => $this->_membershipTypeID,
                         'join_date'          => '2008-01-21',
                         'start_date'         => '2008-01-21',
                         'end_date'           => '2008-12-21',
@@ -361,7 +361,7 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
                
         $params = array(
                         'contact_id'         => $contactId,  
-                        'membership_type_id' => $membershipType->id,
+                        'membership_type_id' => $this->_membershipTypeID,
                         'join_date'          => '2008-01-21',
                         'start_date'         => '2008-01-21',
                         'end_date'           => '2008-12-21',
@@ -407,7 +407,7 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
         
         $params = array(
                         'contact_id'         => $contactId,  
-                        'membership_type_id' => $membershipType->id,
+                        'membership_type_id' => $this->_membershipTypeID,
                         'join_date'          => '2008-01-21',
                         'start_date'         => '2008-01-21',
                         'end_date'           => '2008-12-21',
@@ -441,7 +441,7 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
         
         $params = array(
                         'contact_id'         => $contactId,  
-                        'membership_type_id' => $membershipType->id,
+                        'membership_type_id' => $this->_membershipTypeID,
                         'join_date'          => '2008-01-21',
                         'start_date'         => '2008-01-21',
                         'end_date'           => '2008-12-21',

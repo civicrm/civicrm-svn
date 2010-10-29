@@ -6,6 +6,7 @@
   <name>civicrm_custom_field</name>
   <comment>Stores info about an extended (custom) property (data and form field info).</comment>
   <add>1.1</add>
+  <log>true</log>
   <field>
       <name>id</name>
       <type>int unsigned</type>
@@ -31,6 +32,13 @@
        <add>1.1</add>
        <onDelete>CASCADE</onDelete>
   </foreignKey>
+  <field>
+     <name>name</name>
+     <type>varchar</type>
+     <length>64</length>
+     <comment>Variable name/programmatic handle for this group.</comment>
+     <add>3.3</add>
+  </field>
   <field>
      <name>label</name>
      <type>varchar</type>

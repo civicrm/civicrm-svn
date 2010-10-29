@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -112,9 +112,9 @@ class CRM_Mailing_BAO_Mailing extends CRM_Mailing_DAO_Mailing
      * @param bool $includeDelivered  Whether to include the recipients who already got the mailing
      * @return object                 A DAO loaded with results of the form (email_id, contact_id)
      */
-    function &getRecipientsObject($job_id, $includeDelivered = false) 
+    function &getRecipientsObject($job_id, $includeDelivered = false, $offset = NULL, $limit = NULL) 
     {
-        $eq = self::getRecipients($job_id, $includeDelivered, $this->id);
+        $eq = self::getRecipients($job_id, $includeDelivered, $this->id, $offset, $limit);
         return $eq;
     }
     
@@ -124,7 +124,8 @@ class CRM_Mailing_BAO_Mailing extends CRM_Mailing_DAO_Mailing
         return $eq->N;
     }
     
-    function &getRecipients($job_id, $includeDelivered = false, $mailing_id = null) 
+    function &getRecipients($job_id, $includeDelivered = false, $mailing_id = null,
+                            $offset = NULL, $limit = NULL) 
     {
         $mailingGroup = new CRM_Mailing_DAO_Group();
         
@@ -410,9 +411,21 @@ AND    $mg.mailing_id = {$mailing_id}
 
         $eq = new CRM_Mailing_Event_BAO_Queue();
         
-        $eq->query("SELECT contact_id, email_id 
-                    FROM I_$job_id 
-                    ORDER BY contact_id, email_id");
+        require_once 'CRM/Contact/BAO/Contact/Permission.php';
+        list( $aclFrom, $aclWhere ) = CRM_Contact_BAO_Contact_Permission::cacheClause( );
+        $aclWhere = $aclWhere ? "WHERE {$aclWhere}" : '';
+        $limitString = null;
+        if ( $limit && $offset !== null) {
+            $limitString = "LIMIT $offset, $limit";
+        }
+
+        $eq->query("SELECT i.contact_id, i.email_id 
+                    FROM  civicrm_contact contact_a
+                    INNER JOIN I_$job_id i ON contact_a.id = i.contact_id
+                    {$aclFrom}
+                    {$aclWhere}
+                    ORDER BY i.contact_id, i.email_id
+                    $limitString");
 
         /* Delete the temp table */
         $mailingGroup->reset();
@@ -857,7 +870,7 @@ AND civicrm_contact.is_opt_out =0";
                              'unsubscribe' => 'u' ,
                              'resubscribe' => 'e',
                              'optOut'      => 'o'  );
-
+        
         require_once 'CRM/Core/BAO/MailSettings.php';
         $localpart   = CRM_Core_BAO_MailSettings::defaultLocalpart();
         $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
@@ -881,7 +894,8 @@ FROM   civicrm_mailing, civicrm_mailing_job
 WHERE  civicrm_mailing_job.id = {$job_id} 
 AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
         
-        if( $job_id && CRM_Core_DAO::singleValueQuery( $query,CRM_Core_DAO::$_nullArray ) ) {
+        if ( $job_id && 
+            CRM_Core_DAO::singleValueQuery( $query ) ) {
             $verp['reply'] = "\"{$this->from_name}\" <{$this->from_email}>"; 
         }
         
@@ -955,6 +969,11 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
             $headers['From'] = "<{$fromEmail}>";
         } 
 
+        if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
+            require_once 'CRM/Core/Smarty/resources/String.php';
+            civicrm_smarty_register_string_resource( );
+        }
+        
         if ( $contactDetails ) {
             $contact = $contactDetails;
         } else {
@@ -1014,11 +1033,7 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
                        "extern/open.php?q=$event_queue_id\" width='1' height='1' alt='' border='0'>");
         }
         
-        // we need to wrap Mail_mime because PEAR is apparently unable to fix
-        // a six-year-old bug (PEAR bug #30) in Mail_mime::_encodeHeaders()
-        // this fixes CRM-5466
-        require_once 'CRM/Utils/Mail/FixedMailMIME.php';
-        $message = new CRM_Utils_Mail_FixedMailMIME("\n");
+        $message = new Mail_mime("\n");
         
         if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
             $smarty = CRM_Core_Smarty::singleton( );
@@ -1026,39 +1041,69 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
             $smarty->assign_by_ref( 'contact', $contact );
         }
 
+        $mailParams = $headers;
         if ($text && ( $test || $contact['preferred_mail_format'] == 'Text' ||
                        $contact['preferred_mail_format'] == 'Both' ||
                        ( $contact['preferred_mail_format'] == 'HTML' && !array_key_exists('html',$pEmails) ) ) ) {
             $textBody = join( '', $text );
             if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
+                $smarty->security = true;
                 $textBody = $smarty->fetch( "string:$textBody" );
+                $smarty->security = false;
             }
-            $message->setTxtBody( $textBody );
+            $mailParams['text'] = $textBody;
         }
         
         if ( $html && ( $test ||  ( $contact['preferred_mail_format'] == 'HTML' ||
                                     $contact['preferred_mail_format'] == 'Both') ) ) {
             $htmlBody = join( '', $html );
             if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
+                $smarty->security = true;
                 $htmlBody = $smarty->fetch( "string:$htmlBody" );
+                $smarty->security = false;
             }
-            $message->setHTMLBody( $htmlBody );
+            $mailParams['html'] = $htmlBody;
         }
 
-        if ( ! empty( $attachments ) ) {
-            foreach ( $attachments as $fileID => $attach ) {
+        $mailParams['attachments'] = $attachments;
+        
+        $mailingSubject = CRM_Utils_Array::value( 'subject', $pEmails );
+        if ( is_array( $mailingSubject ) ) {
+            $mailingSubject  = join( '', $mailingSubject );
+        }
+        $mailParams['Subject'] = $mailingSubject;
+
+        $mailParams['toName' ] = $contact['display_name'];
+        $mailParams['toEmail'] = $email;
+
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::alterMailParams( $mailParams );
+
+        if ( ! empty( $mailParams['text'] ) ) {
+            $message->setTxtBody( $mailParams['text'] );
+        }
+
+        if ( ! empty( $mailParams['html'] ) ) {
+            $message->setHTMLBody( $mailParams['html'] );
+        }
+
+        if ( ! empty( $mailParams['attachments'] ) ) {
+            foreach ( $mailParams['attachments'] as $fileID => $attach ) {
                 $message->addAttachment( $attach['fullPath'],
                                          $attach['mime_type'],
                                          $attach['cleanName'] );
             }
         }
 
-        $recipient = "{$contact['display_name']} <$email>";
-        $headers['To'] = $recipient;
+        $headers['To'] = "{$mailParams['toName']} <{$mailParams['toEmail']}>";
+        $headers['Precedence'] = 'bulk';
+        // Will test in the mail processor if the X-VERP is set in the bounced email.
+        // (As an option to replace real VERP for those that can't set it up)
+        $headers['X-CiviMail-Bounce'] = $verp['bounce'];
 
         //CRM-5058
         //token replacement of subject
-        $headers['Subject'] = join( '', $pEmails['subject'] );
+        $headers['Subject'] = $mailingSubject;
         
         CRM_Utils_Mail::setMimeParams( $message );
         $headers = $message->headers( $headers );
@@ -1114,6 +1159,8 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
         $token = $token_a['token'];
         $data = $token;
 
+        $escapeSmarty = defined( 'CIVICRM_MAIL_SMARTY' ) ? true : false;
+
         if ($type == 'embedded_url') {
             $embed_data = array( );
             foreach ( $token as $t ) {
@@ -1142,7 +1189,7 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
                 $data = $token;
             }
         } else if ( $type == 'contact' ) {
-          $data = CRM_Utils_Token::getContactTokenReplacement($token, $contact);
+            $data = CRM_Utils_Token::getContactTokenReplacement($token, $contact, false, false, $escapeSmarty );
         } else if ( $type == 'action' ) {
           $data = CRM_Utils_Token::getActionTokenReplacement($token, $verp, $urls, $html);
         } else if ( $type == 'domain' ) {
@@ -1684,13 +1731,13 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
         return;
     }
 
-    static function mailingACL( ) {
+    static function mailingACL( $alias = null ) {
         $mailingACL = " ( 0 ) ";
 
         $mailingIDs =& self::mailingACLIDs( );
         if ( ! empty( $mailingIDs ) ) {
             $mailingIDs = implode( ',', $mailingIDs );
-            $tableName  = self::getTableName( );
+            $tableName  = !$alias ? self::getTableName( ) : $alias;
             $mailingACL = " $tableName.id IN ( $mailingIDs ) ";
         }
         return $mailingACL;
@@ -1906,7 +1953,11 @@ SELECT $selectClause
      * @return array
      * @access public
      */
-    function getDetails($contactIDs, $returnProperties = null, $skipOnHold = true, $skipDeceased = true, $extraParams = null ) 
+    function getDetails($contactIDs,
+                        $returnProperties = null,
+                        $skipOnHold = true,
+                        $skipDeceased = true,
+                        $extraParams = null ) 
     {
         $params = array( );
         foreach ( $contactIDs  as $key => $contactID ) {
@@ -2125,6 +2176,12 @@ SELECT $selectClause
                            ts('Your Letter'),
                            array('cols' => '80', 'rows' => '8',
                                  'onkeyup' =>"return verify(this)" ) );
+        $action = CRM_Utils_Request::retrieve( 'action', 'String', $this, false );
+        if ( ( CRM_Utils_System::getClassName( $form )  == 'CRM_Contact_Form_Task_PDF' )&& 
+             $action == CRM_Core_Action::VIEW ) { 
+            $form->freeze( 'html_message' );
+        }
+        
     }
     
     /**

@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -163,10 +163,11 @@ function &civicrm_membership_type_update( &$params ) {
     $membershipTypeBAO = new CRM_Member_BAO_MembershipType( );
     $membershipTypeBAO->id = $params['id'];
     if ($membershipTypeBAO->find(true)) {
-        $fields = $membershipTypeBAO->fields( );
+        $fields = $membershipTypeBAO->fields(); 
+        
         foreach ( $fields as $name => $field) {
-            if (array_key_exists($name, $params)) {
-                $membershipTypeBAO->$name = $params[$name];
+            if (array_key_exists($field['name'], $params)) {
+                $membershipTypeBAO->$field['name'] = $params[$field['name']];
             }
         }
         $membershipTypeBAO->save();

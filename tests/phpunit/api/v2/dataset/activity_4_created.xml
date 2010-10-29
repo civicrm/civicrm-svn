@@ -30,7 +30,7 @@
       <value>5</value>                      <!--  activity_type_id  -->
       <value>Update Discussion on Apis for v2</value>  <!--  subject  -->
       <value>2009-10-11T12:34:56</value>                              <!--  activity_date_time  -->
-      <value>120</value  <!--  duration  -->
+      <value>120</value>  <!--  duration  -->
       <value>21, Park Avenue</value>  <!--  location  -->
       <null />  <!--  phone_id  -->
       <null />  <!--  phone_number  -->

@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -94,7 +94,13 @@ function civicrm_activity_type_create( $params ) {
  *
  * @access public
  */
-function civicrm_activity_type_delete( $activityTypeId ) {
+function civicrm_activity_type_delete( $params ) {
+
+    if ( ! isset( $params['activity_type_id'] ) ) {
+        return civicrm_create_error( ts( 'Required parameter "activity_type_id" not found' ) );
+    } 
+
+    $activityTypeId = $params['activity_type_id'];
     require_once 'CRM/Core/BAO/OptionValue.php';
 
     return CRM_Core_BAO_OptionValue::del( $activityTypeId );

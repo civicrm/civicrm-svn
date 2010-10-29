@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -75,7 +75,8 @@ class CRM_Contribute_Form_ContributionCharts extends CRM_Core_Form
         //p3 = Three dimensional pie chart.
         //bvg = Vertical bar chart
         $this->addElement('select', 'chart_type', ts('Chart Style'), array( 'bvg' => ts('Bar'), 
-                                                                            'p3'=> ts('Pie') ) );
+                                                                            'p3'=> ts('Pie') ), 
+                          array( 'onchange' => "getChart();" ) );
         $defaultValues['chart_type'] = $this->_chartType;
         $this->setDefaults( $defaultValues );
         
@@ -93,7 +94,7 @@ class CRM_Contribute_Form_ContributionCharts extends CRM_Core_Form
         }
         
         $this->addElement('select', 'select_year', ts('Select Year (for monthly breakdown)'), 
-                          $years );
+                          $years , array( 'onchange' => "getChart();" ) );
         $this->setDefaults( array( 'select_year' => ( $this->_year ) ? $this->_year : $currentYear
                                    ) );
     }
@@ -154,7 +155,7 @@ class CRM_Contribute_Form_ContributionCharts extends CRM_Core_Form
             
             // handle onclick event.
             $chartData['by_year']['on_click_fun_name'] = 'byYearOnClick';
-            $chartData['by_year']['yname'] = ts( 'Contribution' );
+            $chartData['by_year']['yname'] = ts( 'Total Amount' );
         }
         $this->assign( 'hasContributions', $hasContributions );
         
@@ -205,6 +206,10 @@ class CRM_Contribute_Form_ContributionCharts extends CRM_Core_Form
             if ( $chartType == 'bvg' ) {
                 $ySize = 250;
                 $xSize = 60*count( $chartValues );
+                
+                // reduce x size by 100 for by_month
+                if ( $chartKey == 'by_month' ) $xSize -= 100;
+
                 //hack to show tooltip.
                 if ( $xSize < 150 ) $xSize = 150;
             }

@@ -2,6 +2,8 @@
 
 <tables xmlns:xi="http://www.w3.org/2001/XInclude">
 <xi:include href="Address.xml"              parse="xml" />
+<xi:include href="AddressFormat.xml"        parse="xml" />
+<xi:include href="Batch.xml"                parse="xml" />
 <xi:include href="Cache.xml"                parse="xml" />
 <xi:include href="Country.xml"              parse="xml" />
 <xi:include href="County.xml"               parse="xml" />
@@ -11,9 +13,13 @@
 <xi:include href="Dashboard.xml"            parse="xml" />
 <xi:include href="Domain.xml"               parse="xml" />
 <xi:include href="Email.xml"                parse="xml" />
+<xi:include href="EntityBatch.xml"          parse="xml" />
 <xi:include href="EntityFile.xml"           parse="xml" />
+<xi:include href="EntityFinancialTrxn.xml"  parse="xml" />
 <xi:include href="EntityTag.xml"            parse="xml" />
 <xi:include href="File.xml"                 parse="xml" />
+<xi:include href="FinancialAccount.xml"     parse="xml" />
+<xi:include href="FinancialTrxn.xml"        parse="xml" />
 <xi:include href="IM.xml"                   parse="xml" />
 <xi:include href="LocBlock.xml"             parse="xml" />
 <xi:include href="LocationType.xml"         parse="xml" />
@@ -43,4 +49,6 @@
 <xi:include href="OpenID.xml"               parse="xml" />
 <xi:include href="Component.xml"            parse="xml" />
 <xi:include href="Discount.xml"             parse="xml" />
+<xi:include href="Website.xml"              parse="xml" />
+<xi:include href="Persistent.xml"              parse="xml" />
 </tables>

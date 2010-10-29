@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -53,6 +53,7 @@ class CRM_Core_BAO_Cache extends CRM_Core_DAO_Cache
         if ( $dao->find( true ) ) {
             $data = unserialize( $dao->data );
         }
+        $dao->free( );
         return $data;
     }
 
@@ -70,6 +71,8 @@ class CRM_Core_BAO_Cache extends CRM_Core_DAO_Cache
 
         // CRM_Core_Error::debug_var( "Saving $group, $path on {$dao->created_date}", $data );
         $dao->save( );
+        
+        $dao->free( );
     }
 
     static function deleteGroup( $group = null ) {
@@ -83,6 +86,9 @@ class CRM_Core_BAO_Cache extends CRM_Core_DAO_Cache
         // also reset ACL Cache
         require_once 'CRM/ACL/BAO/Cache.php';
         CRM_ACL_BAO_Cache::resetCache( );
+
+        // also reset memory cache if any
+        CRM_Utils_System::flushCache( );
     }
 
     static function storeSessionToCache( $names,

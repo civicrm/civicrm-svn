@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -40,9 +40,5 @@
 {/htxt}
 
 {htxt id="id-onDuplicate"}
-    <p>
-    {ts}For each import, you can either INSERT new contribution records, or UPDATE existing records. You can not do both types of operations in a single import session. If you are UPDATING existing
-    contributions, you will need to include a unique identifer to match to the existing records. This can be either the CiviCRM-assigned contribution ID, a unique Invoice ID,
-    or a unique Transaction ID.{/ts}
-    </p>
+    <p>{ts}For each import, you can either INSERT new contribution records, or UPDATE existing records. You can not do both types of operations in a single import session. If you are UPDATING existing contributions, you will need to include a unique identifer to match to the existing records. This can be either the CiviCRM-assigned contribution ID, a unique Invoice ID, or a unique Transaction ID.{/ts}</p>
 {/htxt}

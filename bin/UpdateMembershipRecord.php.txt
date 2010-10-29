@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                               |
+ | CiviCRM version 3.3                                               |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -31,7 +31,7 @@
  * update_contact_membership APIs.
  * It takes the first argument as the domain-id if specified, otherwise takes the domain-id as 1.
  *
- * IMPORTANT: You must set a valid FROM email address on line 199 before and then save the file as
+ * IMPORTANT: You must set a valid FROM email address on line 218 before and then save the file as
  * UpdateMembershipRecord.php prior to running this script.
  */
 
@@ -48,6 +48,10 @@ class CRM_UpdateMembershipRecord {
 
         //log the execution time of script
         CRM_Core_Error::debug_log_message( 'UpdateMembershipRecord.php');
+
+        // load bootstrap to call hooks
+        require_once 'CRM/Utils/System.php';
+        CRM_Utils_System::loadBootStrap(  );
     }
 
     function initialize( ) {
@@ -70,10 +74,11 @@ class CRM_UpdateMembershipRecord {
     
     public function updateMembershipStatus( )
     {
-	$config = CRM_Core_Config::singleton();	
+        $config = CRM_Core_Config::singleton();	
         //get all active statuses of membership, CRM-3984
-        $allStatus = CRM_Member_PseudoConstant::membershipStatus( );
-        $allTypes  = CRM_Member_PseudoConstant::membershipType( );
+        $allStatus    = CRM_Member_PseudoConstant::membershipStatus( );
+        $statusLabels = CRM_Member_PseudoConstant::membershipStatus( null, null, 'label' );
+        $allTypes     = CRM_Member_PseudoConstant::membershipType( );
         
         $query = "
 SELECT civicrm_membership.id                 as membership_id,
@@ -86,7 +91,8 @@ SELECT civicrm_membership.id                 as membership_id,
        civicrm_membership.end_date           as end_date,
        civicrm_membership.source             as source,
        civicrm_contact.id                    as contact_id,
-       civicrm_contact.is_deceased           as is_deceased
+       civicrm_contact.is_deceased           as is_deceased,
+       civicrm_membership.owner_membership_id as owner_membership_id
 FROM   civicrm_membership, civicrm_contact
 WHERE  civicrm_membership.contact_id = civicrm_contact.id
 AND    civicrm_membership.is_test = 0
@@ -99,6 +105,10 @@ AND    civicrm_membership.is_test = 0
 
         require_once 'CRM/Core/Smarty.php';
         $smarty =& CRM_Core_Smarty::singleton();
+        
+        require_once 'CRM/Core/BAO/Domain.php';
+        $domainValues     = CRM_Core_BAO_Domain::getNameAndEmail( );
+        $fromEmailAddress = "$domainValues[0] <$domainValues[1]>";
 
         while ( $dao->fetch( ) ) {
             echo ".";
@@ -133,12 +143,6 @@ AND    civicrm_membership.is_test = 0
             
             $smarty->assign_by_ref('memberParams', $memberParams);
 
-            //need to handle related memberships records.
-            //we have deleted during parent membership processing.
-            if ( !CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_Membership', $dao->membership_id, 'contact_id' ) ) {
-                continue;
-            }
-            
             //update membership record to Deceased if contact is deceased
             if ( $dao->is_deceased ) { 
                 // check for 'Deceased' membership status, CRM-5636
@@ -147,20 +151,26 @@ AND    civicrm_membership.is_test = 0
                     CRM_Core_Error::fatal( ts( "Deceased Membership status is missing or not active. <a href='%1'>Click here to check</a>.", array( 1 => CRM_Utils_System::url( 'civicrm/admin/member/membershipStatus', 'reset=1' ) ) ) );
                 }
                 
-                //since we are calculating status here so no
-                //need to calculate again in BAO::create( );
-                $deceasedMembership =  $memberParams;
-                $deceasedMembership['status_id'] = $deceaseStatusId;
-                
-                //create activity when status changed. CRM-2521.
-                //as BAO::create( ) create activity so let BAO handle it.
-                if ( $dao->status_id !=  array_search( 'Deceased', $allStatus ) ) {
-                    $deceasedMembership['createActivity'] = true; 
+                //process only when status change.
+                if ( $dao->status_id != $deceaseStatusId ) {
+                    //take all params that need to save.
+                    $deceasedMembership =  $memberParams;
+                    $deceasedMembership['status_id'] = $deceaseStatusId; 
+                    $deceasedMembership['createActivity'] = true;
+                    
+                    //since there is change in status.
+                    $statusChange = array( 'status_id' => $deceaseStatusId );
+                    $smarty->append_by_ref('memberParams', $statusChange, true );
+                    
+                    //process membership record.
+                    civicrm_contact_membership_create( $deceasedMembership );
                 }
-                
-                civicrm_contact_membership_create( $deceasedMembership );
                 continue;
             }
+            
+            //we fetch related, since we need to check for deceased 
+            //now further processing is handle w/ main membership record. 
+            if ( $dao->owner_membership_id ) continue;
             
             //update membership records where status is NOT - Pending OR Cancelled.
             //as well as membership is not override.
@@ -172,22 +182,21 @@ AND    civicrm_membership.is_test = 0
                 
                 //get the membership status as per id.
                 $newStatus = civicrm_membership_status_calc( array( 'membership_id' => $dao->membership_id ) );
+                $statusId  = CRM_Utils_Array::value( 'id', $newStatus );
                 
-                if ( CRM_Utils_Array::value( 'id', $newStatus ) ) {
-                    
-                    //take all params that need to save for
-                    //related memberships records. since BAO::create( )
-                    //will delete existing and create new records. 
-                    //also we are calculating status here, so no
-                    //need to calculate again in BAO::create( )
+                //process only when status change.
+                if ( $statusId && 
+                     $statusId != $dao->status_id ) {
+                    //take all params that need to save.
                     $memParams = $memberParams;
-                    $memParams['status_id'] = $newStatus['id'];
+                    $memParams['status_id']      = $statusId;
+                    $memParams['createActivity'] = true; 
                     
-                    //create activity when status changed. CRM-2521.
-                    //as BAO::create create activity so let BAO handle it.
-                    if ( $newStatus['id'] != $dao->status_id ) {
-                        $memParams['createActivity'] = true; 
-                    }
+                    //since there is change in status.
+                    $statusChange = array( 'status_id' => $statusId );
+                    $smarty->append_by_ref('memberParams', $statusChange, true );
+                    
+                    //process member record.
                     civicrm_contact_membership_create( $memParams );
                 }
             }
@@ -208,13 +217,10 @@ AND    civicrm_membership.is_test = 0
                     $toEmail  = CRM_Contact_BAO_Contact::getPrimaryEmail( $dao->contact_id );
                     
                     if ( $toEmail ) {
-                        // Set the FROM email address for reminder emails here.
-                        // This must be a valid account for your SMTP service.
-                        $from = "EMAIL@FIXME.ORG";
                         $result = CRM_Core_BAO_MessageTemplates::sendReminder( $dao->contact_id,
                                                                                $toEmail,
                                                                                $memType->renewal_msg_id,
-                                                                               $from );
+                                                                               $fromEmailAddress );
                         if ( ! $result ||
                              is_a( $result, 'PEAR_Error' ) ) {
                             // we could not send an email, for now we ignore
@@ -228,7 +234,7 @@ AND    civicrm_membership.is_test = 0
                         // insert the activity log record.
                         $activityParams = array( );
                         $activityParams['subject']            = $allTypes[$dao->membership_type_id] . 
-                            ": Status - " . $allStatus[$newStatus['id']] . 
+                            ": Status - " . $statusLabels[$newStatus['id']] . 
                             ", End Date - " . CRM_Utils_Date::customFormat(CRM_Utils_Date::isoToMysql($dao->end_date), $config->dateformatFull);
                         $activityParams['source_record_id']   = $dao->membership_id; 
                         $activityParams['source_contact_id']  = $dao->contact_id; 

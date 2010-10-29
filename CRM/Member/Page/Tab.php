@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -47,7 +47,10 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
      */
     static $_links = null;
     static $_membershipTypesLinks = null;
-
+    
+    public $_permission = null; 
+    public $_contactId  = null;
+    
    /**
      * This function is called when action is browse
      * 
@@ -57,9 +60,6 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
     function browse( ) 
     { 
         $links =& self::links( 'all', $this->_isPaymentProcessor, $this->_accessContribution );
-        $idList = array('membership_type' => 'MembershipType',
-                        'status'          => 'MembershipStatus',
-                      );
 
         $membership = array();
         require_once 'CRM/Member/DAO/Membership.php';
@@ -79,27 +79,33 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
         }
         $mask = CRM_Core_Action::mask( $permissions );
         
+        // get deceased status id
+        require_once 'CRM/Member/PseudoConstant.php';
+        $allStatus        = CRM_Member_PseudoConstant::membershipStatus( );
+        $deceasedStatusId = array_search( 'Deceased', $allStatus );
+
         //checks membership of contact itself
         while ($dao->fetch()) {
             $membership[$dao->id] = array();
             CRM_Core_DAO::storeValues( $dao, $membership[$dao->id]); 
             
-            foreach ( $idList as $name => $file ) {
-                if ( $membership[$dao->id][$name .'_id'] ) {
-                    $membership[$dao->id][$name] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_' . $file, 
-                                                                                $membership[$dao->id][$name .'_id'] );
-                }
+            //get the membership status and type values.
+            $statusANDType = CRM_Member_BAO_Membership::getStatusANDTypeVaues( $dao->id );
+            foreach ( array( 'status', 'membership_type' ) as $fld ) {
+                $membership[$dao->id][$fld] = CRM_Utils_Array::value( $fld, $statusANDType[$dao->id] );
             }
-            if ( $dao->status_id ) {
-                $active = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipStatus', $dao->status_id,
-                                                      'is_current_member');
-                if ( $active ) {
-                    $membership[$dao->id]['active'] = $active;
-                }
+            if ( CRM_Utils_Array::value( 'is_current_member', $statusANDType[$dao->id] ) ) {
+                $membership[$dao->id]['active'] = true;
             }
             if ( ! $dao->owner_membership_id ) {
+                // unset renew and followup link for deceased membership
+                $currentMask = $mask;
+                if ( $dao->status_id == $deceasedStatusId ) { 
+                    $currentMask = $currentMask & ~CRM_Core_Action::RENEW & ~CRM_Core_Action::FOLLOWUP;
+                }
+                
                 $membership[$dao->id]['action'] = CRM_Core_Action::formLink( self::links( 'all' ),
-                                                                             $mask, 
+                                                                             $currentMask, 
                                                                              array('id' => $dao->id, 
                                                                                    'cid'=> $this->_contactId));
             } else {
@@ -127,6 +133,12 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
         $this->assign('activeMembers',   $activeMembers);
         $this->assign('inActiveMembers', $inActiveMembers);
         $this->assign('membershipTypes', $membershipTypes);
+        
+        if ( $this->_contactId ) {
+            require_once 'CRM/Contact/BAO/Contact.php';
+            $displayName = CRM_Contact_BAO_Contact::displayName( $this->_contactId );
+            $this->assign( 'displayName', $displayName );
+        }        
     }
 
     /** 
@@ -182,7 +194,7 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
         $context       = CRM_Utils_Request::retrieve('context', 'String', $this );
         $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'browse');
         $this->_id     = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
-        
+
         if ( $context == 'standalone' ) {
             $this->_action = CRM_Core_Action::ADD;
         } else {
@@ -192,6 +204,9 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
             // check logged in url permission
             require_once 'CRM/Contact/Page/View.php';
             CRM_Contact_Page_View::checkUserPermission( $this );
+            
+            // set page title
+            CRM_Contact_Page_View::setTitle( $this->_contactId );
         }      
 
         $this->assign('action', $this->_action );     
@@ -246,9 +261,14 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
     }
 
     function setContext( $contactId = null ) {
-        $context = CRM_Utils_Request::retrieve( 'context', 'String',
-                                                $this, false, 'search' );
-
+        $context      = CRM_Utils_Request::retrieve( 'context'     ,
+                                                     'String', $this, false, 'search' );
+        
+        $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+        //validate the qfKey
+        require_once 'CRM/Utils/Rule.php';
+        if ( !CRM_Utils_Rule::qfKey( $qfKey ) ) $qfKey = null;
+        
         if ( ! $contactId ) {
             $contactId = $this->_contactId;
         }
@@ -266,9 +286,13 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
             break;
 
         case 'search':
-            $url = CRM_Utils_System::url( 'civicrm/member/search', 'force=1' );
+            $urlParams = 'force=1';
+            if ( $qfKey ) $urlParams .= "&qfKey=$qfKey";
+            $this->assign( 'searchKey',  $qfKey );
+            
+            $url = CRM_Utils_System::url( 'civicrm/member/search', $urlParams );
             break;
-
+            
         case 'home':
             $url = CRM_Utils_System::url( 'civicrm/dashboard', 'reset=1' );
             break;
@@ -284,18 +308,22 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
             
         case 'fulltext':
             $action = CRM_Utils_Request::retrieve('action', 'String', $this);
+            $keyName   = '&qfKey';
+            $urlParams = 'force=1';
+            $urlString = 'civicrm/contact/search/custom';
             if ( $action == CRM_Core_Action::UPDATE ) {
-                $cid = null;
                 if ( $this->_contactId ) {
-                    $cid = '&cid=' . $this->_contactId;
+                    $urlParams .= '&cid=' . $this->_contactId;
                 }
-                $url = CRM_Utils_System::url( 'civicrm/contact/view/membership', 
-                                              'force=1&context=fulltext&action=view' . $cid ); 
-            } else {
-                $url = CRM_Utils_System::url( 'civicrm/contact/search/custom', 'force=1' );
+                $keyName    = '&key';
+                $urlParams .= '&context=fulltext&action=view';
+                $urlString  = 'civicrm/contact/view/membership';
             }
+            if ( $qfKey ) $urlParams .= "$keyName=$qfKey";
+            $this->assign( 'searchKey',  $qfKey );
+            $url = CRM_Utils_System::url( $urlString, $urlParams );
             break;
-
+            
         default:
             $cid = null;
             if ( $contactId ) {

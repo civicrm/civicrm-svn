@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -72,7 +72,7 @@
        width: 500,
        delay:200,
        max:25,
-       minChars:2,
+       minChars:1,
        selectFirst: true,
        matchContains: true	
      }).result(function(event, data, formatted) {

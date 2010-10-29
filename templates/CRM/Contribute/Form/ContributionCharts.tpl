@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -27,7 +27,7 @@
 {if $hasContributions}
 <div id="chartData">
 <table class="chart">
-  <tr>
+  <tr class="crm-contribution-form-block-open_flash_chart">
      <td>
          {if $hasByMonthChart}
       	     {* display monthly chart *}
@@ -46,21 +46,16 @@
 <table >
       <td class="label">{$form.select_year.label}</td><td>{$form.select_year.html}</td> 
       <td class="label">{$form.chart_type.label}</td><td>{$form.chart_type.html}</td> 
-      <td class="html-adjust">
-      <a href="javascript:getChart( )">{ts}Reload Chart{/ts}</a>	
-      </td> 
 </table> 
 </div>
 {else}
  <div class="messages status"> 
-      <dl> 
-        <dd>{ts}There are no live contribution records to display.{/ts}</dd> 
-      </dl> 
+    {ts}There are no live contribution records to display.{/ts}  
  </div>
 {/if}
 
 {if $hasOpenFlashChart}
-{include file="CRM/common/openFlashChart.tpl"}
+{include file="CRM/common/openFlashChart.tpl" contriChart=true}
 
 {literal}
 <script type="text/javascript">

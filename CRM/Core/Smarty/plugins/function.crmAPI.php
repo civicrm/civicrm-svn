@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -45,6 +45,11 @@ function smarty_function_crmAPI( $params, &$smarty ) {
         $fnGroup[1] = ucfirst( $fnGroup[1] );
         $fnGroup    = implode( '', $fnGroup );
     }
+    
+    if ( $fnGroup == 'Contribution' ) {
+        $fnGroup = 'Contribute';
+    }
+    
     $apiFile = "api/v2/{$fnGroup}.php";
     require_once $apiFile;
     $fnName = "civicrm_{$params['entity']}_{$params['action']}";
@@ -75,8 +80,12 @@ function smarty_function_crmAPI( $params, &$smarty ) {
         $smarty->trigger_error("assign: missing 'var' parameter");
         return;
     }
-    
-    $smarty->assign($params["var"],$result);
+
+    if (!empty($params['json'])) {
+      $smarty->assign($params["var"],json_encode($result));
+    } else {
+      $smarty->assign($params["var"],$result);
+    }
 }
 
 

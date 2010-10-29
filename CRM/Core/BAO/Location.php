@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -106,13 +106,13 @@ class CRM_Core_BAO_Location extends CRM_Core_DAO
         }
 
         $locBlock['phone_id']     = $location['phone'  ][0]->id;
-        $locBlock['phone_2_id']   = $location['phone'  ][1]->id;
+        $locBlock['phone_2_id']   = CRM_Utils_Array::value(1,$location['phone'])? $location['phone'][1]->id : null;
         $locBlock['email_id']     = $location['email'  ][0]->id;
-        $locBlock['email_2_id']   = $location['email'  ][1]->id;
+        $locBlock['email_2_id']   = CRM_Utils_Array::value(1,$location['email']) ? $location['email'][1]->id : null;
         $locBlock['im_id']        = $location['im'     ][0]->id;
-        $locBlock['im_2_id ']     = $location['im'     ][1]->id;
+        $locBlock['im_2_id ']     = CRM_Utils_Array::value(1,$location['im']) ? $location['im'][1]->id : null;
         $locBlock['address_id']   = $location['address'][0]->id;
-        $locBlock['address_2_id'] = $location['address'][1]->id;
+        $locBlock['address_2_id'] = CRM_Utils_Array::value(1,$location['address']) ? $location['address'][1]->id : null;
        
         $countNull = 0;
         foreach( $locBlock as $key => $block) {
@@ -346,9 +346,14 @@ WHERE e.id = %1";
         }
         
         //finally delete unwanted blocks.
+        require_once 'CRM/Core/BAO/Address.php';
         foreach ( $deleteBlocks as $blockName => $blockValues ) {
             if ( !is_array( $blockValues ) ) continue;
             foreach ( $blockValues as $count => $deleteBlock ) {
+                //we need to do special handling for shared addressm, if address block is deleted.
+                if ( $blockName == 'address' ) {
+                    CRM_Core_BAO_Address::setSharedAddressDeleteStatus( $deleteBlock['id'] );
+                }
                 CRM_Core_BAO_Block::blockDelete( $blockName, $deleteBlock ); 
             }
         }

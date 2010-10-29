@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -78,6 +78,12 @@ class CRM_Contact_Form_Edit_CommunicationPreferences
             $commPreff[] = HTML_QuickForm::createElement('advcheckbox', $value, null, $title );
         }
         $form->addGroup($commPreff, 'preferred_communication_method', ts('Preferred Method(s)'));
+
+        $form->add( 'select', 'preferred_language',
+                    ts( 'Preferred Language' ),
+                    array('' => ts('- select -')) + 
+                    CRM_Core_PseudoConstant::languages( ) );
+
         if ( !empty($privacyOptions) ) {
             $commPreference['privacy'] = $privacyOptions;
         }
@@ -148,6 +154,12 @@ class CRM_Contact_Form_Edit_CommunicationPreferences
      */
     function setDefaultValues( &$form, &$defaults ) 
     {
+
+        if ( ! empty( $defaults['preferred_language'] ) ) {
+            $languages = array_flip( CRM_Core_PseudoConstant::languages( ) );
+            $defaults['preferred_language'] = $languages[$defaults['preferred_language']];
+        }                                                        
+
         //set default from greeting types CRM-4575.
         $greetingTypes = array('addressee'       => 'addressee_id', 
                                'email_greeting'  => 'email_greeting_id', 

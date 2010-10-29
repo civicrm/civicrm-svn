@@ -17,7 +17,6 @@
     <column>display_name</column>
     <column>nick_name</column>
     <column>legal_name</column>
-    <column>home_URL</column>
     <column>image_URL</column>
     <column>preferred_communication_method</column>
     <column>preferred_mail_format</column>
@@ -40,7 +39,6 @@
     <column>birth_date</column>
     <column>is_deceased</column>
     <column>deceased_date</column>
-    <column>mail_to_household_id</column>
     <column>household_name</column>
     <column>primary_contact_id</column>
     <column>organization_name</column>
@@ -63,7 +61,6 @@
       <value>Site Administrator</value>  <!--  display_name  -->
       <null /><!--  nick_name  -->
       <null /><!--  legal_name  -->
-      <null /><!--  home_URL  -->
       <null /><!--  image_URL  -->
       <null /><!--  preferred_communication_method  -->
       <null /><!--  preferred_mail_format  -->
@@ -86,7 +83,6 @@
       <null /><!--  birth_date  -->
       <null /><!--  is_deceased  -->
       <null /><!--  deceased_date  -->
-      <null /><!--  mail_to_household_id  -->
       <null /><!--  household_name  -->
       <null /><!--  primary_contact_id  -->
       <null /><!--  organization_name  -->

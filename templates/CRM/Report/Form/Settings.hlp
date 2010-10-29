@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -39,8 +39,7 @@
 {/htxt}
 
 {htxt id="id-report_header"}
-<p>{ts}The Report Header contains HTML code that will be output at the beginning of the document whenever this report is printed or downloaded in PDF format. The default values will work for most situations. However you may want to enter the actual report title in the &lt;title&gt; tag (replacing 'CiviCRM Report'). You can include a logo by adding an &lt;img&gt; tag. You can also modify the look and feel of the printed report by including a custom CSS file
-(instead of print.css).{/ts}</p>
+<p>{ts}The Report Header contains HTML code that will be output at the beginning of the document whenever this report is printed or downloaded in PDF format. The default values will work for most situations. However you may want to enter the actual report title in the &lt;title&gt; tag (replacing 'CiviCRM Report'). You can include a logo by adding an &lt;img&gt; tag. You can also modify the look and feel of the printed report by including a custom CSS file (instead of print.css).{/ts}</p>
 <p>{ts}The Report Footer HTML code will be output at the end of the document. You can add any additional footer text, replace the CiviCRM logo, or make other changes as needed.{/ts}</p>
 {/htxt}
 

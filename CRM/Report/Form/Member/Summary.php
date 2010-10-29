@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -50,6 +50,8 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
                                  );
     protected $_add2groupSupported = false;
     
+    protected $_customGroupExtends = array( 'Membership' );
+    protected $_customGroupGroupBy = false;
     function __construct( ) {
         // UI for selecting columns to appear in the report list
         // array conatining the columns, group_bys and filters build and provided to Form
@@ -78,7 +80,7 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
                                 'status_id' =>
                                 array('title'         => ts('Membership Status'),
                                       'operatorType'  => CRM_Report_Form::OP_MULTISELECT,
-                                      'options'       => CRM_Member_PseudoConstant::membershipStatus(),
+                                      'options'       => CRM_Member_PseudoConstant::membershipStatus( null, null, 'label' ),
                                       ),
                                 ),  
                          'group_bys'        =>
@@ -93,6 +95,14 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
                                        'default'   => true,
                                       'chart'      => true, )
                                 ),
+                         ),
+
+                  'civicrm_contact' =>
+                  array( 'dao'       => 'CRM_Contact_DAO_Contact',
+                         'fields'    =>
+                          array( 'contact_id' => 
+                                 array( 'no_display'=> true, ) 
+                                 )
                          ),
                   
                   'civicrm_contribution' =>
@@ -247,6 +257,9 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
     function from( ) {
         $this->_from = "
         FROM  civicrm_membership {$this->_aliases['civicrm_membership']}
+               
+              LEFT JOIN civicrm_contact {$this->_aliases['civicrm_contact']} ON ( {$this->_aliases['civicrm_membership']}.contact_id = {$this->_aliases['civicrm_contact']}.id )  
+               
               LEFT JOIN civicrm_membership_status 
                         ON ({$this->_aliases['civicrm_membership']}.status_id = civicrm_membership_status.id  )
               LEFT JOIN civicrm_membership_payment payment
@@ -290,10 +303,9 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
         }
         
         if ( !empty($clauses) ) {
-            $this->_where = "WHERE  civicrm_membership_status.is_current_member = 1 AND {$this->_aliases['civicrm_membership']}.is_test = 0 AND " . implode( ' AND ', $clauses );
+            $this->_where = "WHERE {$this->_aliases['civicrm_membership']}.is_test = 0 AND " . implode( ' AND ', $clauses );
         } else { 
-            $this->_where = "WHERE {$this->_aliases['civicrm_membership']}.is_test = 0 AND
-                            civicrm_membership_status.is_current_member = 1";
+            $this->_where = "WHERE {$this->_aliases['civicrm_membership']}.is_test = 0";
         }
     }
     
@@ -432,9 +444,9 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
             require_once 'CRM/Utils/OpenFlashChart.php';
             if ( $isMembershipType ) { 
                 $graphRows['value'] = $display;
-                $chartInfo          = array( 'legend' => 'MemberShip Summary',
-                                             'xname'  => 'Amount',
-                                             'yname'  => 'Year' );                
+                $chartInfo          = array( 'legend' => 'Membership Summary',
+                                             'xname'  => 'Join Date / Member Type',
+                                             'yname'  => 'Fees' );                
                 CRM_Utils_OpenFlashChart::reportChart( $graphRows, $this->_params['charts'], $interval, $chartInfo );
             } else {                
                 CRM_Utils_OpenFlashChart::chart( $graphRows, $this->_params['charts'], $this->_interval );
@@ -482,10 +494,13 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
                      $typeID = $row['civicrm_membership_membership_type_id'] ) {
                     $typeUrl = "&tid_op=in&tid_value={$typeID}";
                 }
-                     
+                $statusUrl = '';
+                if ( ! empty($this->_params['status_id_value']) ) {
+                    $statusUrl = "&sid_op=in&sid_value=" . implode( ",", $this->_params['status_id_value'] );
+                }
                 $url =
                     CRM_Report_Utils_Report::getNextUrl( 'member/detail',
-                                                         "reset=1&force=1&join_date_from={$dateStart}&join_date_to={$dateEnd}{$typeUrl}", 
+                                                         "reset=1&force=1&join_date_from={$dateStart}&join_date_to={$dateEnd}{$typeUrl}{$statusUrl}", 
                                                          $this->_absoluteUrl, $this->_id );
                 $row['civicrm_membership_join_date_start'] =  CRM_Utils_Date::format($row['civicrm_membership_join_date_start']);
                 $rows[$rowNum]['civicrm_membership_join_date_start_link' ] = $url;

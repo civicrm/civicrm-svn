@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -118,8 +118,10 @@ class CRM_Contact_Form_Search_Basic extends CRM_Contact_Form_Search {
         
         if ( CRM_Utils_Array::value( 'tags', $searchOptions ) ) {
             // tag criteria
+            if( !empty( $this->_tag ) ){
             $tag = array('' => ts('- any tag -')) + $this->_tag;
             $this->_tagElement =& $this->addElement('select', 'tag', ts('with'), $tag);
+            }
         }
 
         parent::buildQuickForm( );
@@ -174,6 +176,8 @@ class CRM_Contact_Form_Search_Basic extends CRM_Contact_Form_Search {
      * @access public
      */
     function preProcess( ) {
+        $this->set( 'searchFormName', 'Basic' );
+
         parent::preProcess( );
     }
 
@@ -197,7 +201,7 @@ class CRM_Contact_Form_Search_Basic extends CRM_Contact_Form_Search {
             $this->_formValues = $this->controller->exportValues($this->_name);
             $this->normalizeFormValues( );
         }
-
+		
         if ( isset( $this->_groupID ) && ! CRM_Utils_Array::value( 'group', $this->_formValues ) ) {
             $this->_formValues['group'][$this->_groupID] = 1;
         } else if ( isset( $this->_ssID ) && empty( $_POST ) ) {

@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -230,7 +230,7 @@ class api_v2_GroupOrganizationTest extends CiviUnitTestCase
                          'group_id'        => $this->_groupID
                          );
         $result =& civicrm_group_organization_create( $params );
-        
+
         $paramsDelete = array( 'id' => $result['result']['id']  );
         $result =& civicrm_group_organization_remove( $paramsDelete );
 

@@ -5,6 +5,7 @@
   <class>ContributionType</class>
   <name>civicrm_contribution_type</name>
   <add>1.3</add>
+  <log>true</log>
   <field>
       <name>id</name>
       <type>int unsigned</type>

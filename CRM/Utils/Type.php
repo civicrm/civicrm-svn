@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -120,7 +120,6 @@ class CRM_Utils_Type
         switch($type) {
         case 'Integer':
         case 'Int':
-        case 'ContactReference':
             if (CRM_Utils_Rule::integer($data)) {
                 return $data;
             }
@@ -146,6 +145,7 @@ class CRM_Utils_Type
             break;
             
         case 'String':
+        case 'Memo'  :
             return CRM_Core_DAO::escapeString($data);
             break;
             
@@ -162,7 +162,17 @@ class CRM_Utils_Type
                 return $data;
             }
             break;
-            
+        
+        case 'ContactReference':
+            if ( strlen( trim( $data ) ) == 0 ) {
+                return trim( $data );
+            }
+
+            if ( CRM_Utils_Rule::validContact( $data ) ) { 
+                return $data;
+            } 
+            break;
+
         default:
             CRM_Core_Error::fatal( "Cannot recognize $type for $data" );
             break;

@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -67,14 +67,16 @@ class CRM_Utils_String {
      * @static
      */
     static function titleToVar( $title, $maxLength = 31 ) {
-        $variable = self::munge( $title );
+        $variable = self::munge( $title, '_', $maxLength );
       
         require_once "CRM/Utils/Rule.php";
         if ( CRM_Utils_Rule::title( $variable, $maxLength ) ) {
             return $variable;
         }
-      
-        return null;
+
+        // if longer than the maxLength lets just return a substr of the
+        // md5 to prevent errors downstream
+        return substr( md5( $title ), 0, $maxLength );
     }
 
     /**
@@ -129,10 +131,12 @@ class CRM_Utils_String {
      * @static
      */
     static function getClassName( $string, $char = '_' ) {
-        $names = explode( $char, $string );
-        return array_pop( $names );
+        if( !is_array( $string ) ) {
+            $names = explode( $char, $string );
+        }
+        if( is_array( $names ) )  return array_pop( $names ); 
     }
-
+    
     /**
      * appends a name to a string and seperated by delimiter.
      * does the right thing for an empty string
@@ -245,7 +249,7 @@ class CRM_Utils_String {
         //redact the strings
         if (!empty($stringRules)){
             foreach ($stringRules as $match => $replace) {
-                $str = str_replace($match, $replace, $str);
+                $str = str_ireplace($match, $replace, $str);
             }
         }
         
@@ -406,6 +410,26 @@ class CRM_Utils_String {
     static function addJqueryFiles( &$html ) {
         $smarty = CRM_Core_Smarty::singleton( );
         return $smarty->fetch( 'CRM/common/jquery.tpl' ) . $html . '<script type="text/javascript">jQuery.noConflict(true);</script>';
+    }
+
+    /**
+     * Given an ezComponents-parsed representation of
+     * a text with alternatives return only the first one
+     *
+     * @param string $full  all alternatives as a long string (or some other text)
+     *
+     * @return string       only the first alternative found (or the text without alternatives)
+     */
+    static function stripAlternatives($full)
+    {
+        $matches = array();
+        preg_match('/-ALTERNATIVE ITEM 0-(.*?)-ALTERNATIVE ITEM 1-.*-ALTERNATIVE END-/s', $full, $matches);
+
+        if ( trim( strip_tags( $matches[1] ) ) != '' ) {
+            return $matches[1];
+        } else {
+            return $full;
+        }
     }
 }
 

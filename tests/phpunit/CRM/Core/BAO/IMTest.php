@@ -68,8 +68,9 @@ class CRM_Core_BAO_IMTest extends CiviUnitTestCase
             new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(dirname(__FILE__) . '/dataset/im_test.xml')
         );
 
+        $contactId = 69;
         require_once 'CRM/Core/BAO/IM.php';
-        $IMs = CRM_Core_BAO_IM::allIMs(69);
+        $IMs = CRM_Core_BAO_IM::allIMs( $contactId );
 
         $this->assertEquals( count( $IMs ) , 3, 'Checking number of returned IMs.' );
         

@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div id="pricesetTotal" class="section section-pricesetTotal">
+<div id="pricesetTotal" class="crm-section section-pricesetTotal">
 	<div class="label" id="pricelabel"><label>Total Fee(s)</label></div>
 	<div class="content view-value" id="pricevalue" ></div>
 </div>
@@ -179,11 +179,11 @@ function calculateText( object ) {
 
 //display calculated amount
 function display( totalfee ) {
-    document.getElementById('pricelabel').style.display = ( totalfee == 0 ) ? "none" : "block";
     var totalEventFee  = formatMoney( totalfee, 2, seperator, thousandMarker);
     document.getElementById('pricevalue').innerHTML = "<b>"+symbol+"</b> "+totalEventFee;
     scriptfee   = totalfee;
     scriptarray = price;
+    cj('#total_amount').val( totalfee );
     
     ( totalfee < 0 ) ? cj('table#pricelabel').addClass('disabled') : cj('table#pricelabel').removeClass('disabled');
     

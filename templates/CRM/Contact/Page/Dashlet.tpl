@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -23,17 +23,15 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-    <div class="status" style="padding: 1em;">
-        {ts}Available dashboard elements - dashlets - are displayed in the dark gray top bar.
-        Drag and drop dashlets onto the left or right columns below to add them to your dashboard.
-        Changes are automatically saved. Click 'Done' to return to the normal dashboard view.{/ts}
+    <div id="help" style="padding: 1em;">
+        {ts}Available dashboard elements - dashlets - are displayed in the dark gray top bar. Drag and drop dashlets onto the left or right columns below to add them to your dashboard. Changes are automatically saved. Click 'Done' to return to the normal dashboard view.{/ts}
         {help id="id-dash_configure" file="CRM/Contact/Page/Dashboard.hlp"}
     </div><br/>
     <div class="dashlets-header">{ts}Available Dashlets{/ts}</div>
     <div id="available-dashlets" class="dash-column">
         {foreach from=$availableDashlets item=row key=dashID}
     	<div class="portlet">
-    		<div class="portlet-header" id="{$dashID}">{$row.label}{if $admin and !$row.is_reserved}&nbsp;<a class="close-icon delete-dashlet"></a>{/if}</div>
+    		<div class="portlet-header" id="{$dashID}">{$row.label}{if $admin and !$row.is_reserved}&nbsp;<a class="ui-icon ui-icon-close delete-dashlet"></a>{/if}</div>
     	</div>
         {/foreach}
     </div>
@@ -44,7 +42,7 @@
     <div id="existing-dashlets-col-0" class="dash-column">
         {foreach from=$contactDashlets.0 item=row key=dashID}
     	<div class="portlet">
-    		<div class="portlet-header" id="{$dashID}">{$row.label}{if $admin and !$row.is_reserved}&nbsp;<a class="close-icon delete-dashlet"></a>{/if}</div>
+    		<div class="portlet-header" id="{$dashID}">{$row.label}{if $admin and !$row.is_reserved}&nbsp;<a class="ui-icon ui-icon-close delete-dashlet"></a>{/if}</div>
     	</div>
         {/foreach}
     </div>
@@ -52,7 +50,7 @@
     <div id="existing-dashlets-col-1" class="dash-column">
         {foreach from=$contactDashlets.1 item=row key=dashID}
     	<div class="portlet">
-    		<div class="portlet-header" id="{$dashID}">{$row.label}{if $admin and !$row.is_reserved}&nbsp;<a class="close-icon delete-dashlet"></a>{/if}</div>
+    		<div class="portlet-header" id="{$dashID}">{$row.label}{if $admin and !$row.is_reserved}&nbsp;<a class="ui-icon ui-icon-close delete-dashlet"></a>{/if}</div>
     	</div>
         {/foreach}
     </div>
@@ -99,6 +97,7 @@
                 // post to server
                 var postUrl = {/literal}"{crmURL p='civicrm/ajax/dashboard' h=0 }"{literal};
                 params['op'] = 'save_columns';
+                params['key'] = {/literal}"{crmKey name='civicrm/ajax/dashboard'}"{literal};
                 cj.post( postUrl, params, function(response, status) {
                     // TO DO show done / disable escape action
                 });
@@ -119,6 +118,7 @@
                 // delete dashlet
                 var postUrl = {/literal}"{crmURL p='civicrm/ajax/dashboard' h=0 }"{literal};
                 params['op'] = 'delete_dashlet';
+                params['key'] = {/literal}"{crmKey name='civicrm/ajax/dashboard'}"{literal};
                 cj.post( postUrl, params, function(response, status) {
                     // delete dom object
                     cj('#' + dashletID ).parent().remove();

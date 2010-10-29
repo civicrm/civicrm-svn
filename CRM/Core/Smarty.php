@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -77,7 +77,8 @@ class CRM_Core_Smarty extends Smarty {
         $config = CRM_Core_Config::singleton( );
 
         if ( isset( $config->customTemplateDir ) && $config->customTemplateDir ) {
-            $this->template_dir = array( $config->customTemplateDir, $config->templateDir );
+            $this->template_dir = array_merge( array( $config->customTemplateDir ),
+                                               $config->templateDir );
         } else {
             $this->template_dir = $config->templateDir;
         }
@@ -90,7 +91,24 @@ class CRM_Core_Smarty extends Smarty {
             $this->use_sub_dirs = true;
         }
 
-        $this->plugins_dir  = array ( $config->smartyDir . 'plugins', $config->pluginsDir );
+        $customPluginsDir = null;
+        if ( isset( $config->customPHPPathDir ) ) {
+            $customPluginsDir = 
+                $config->customPHPPathDir . DIRECTORY_SEPARATOR .
+                'CRM'         . DIRECTORY_SEPARATOR . 
+                'Core'        . DIRECTORY_SEPARATOR .
+                'Smarty'      . DIRECTORY_SEPARATOR .
+                'plugins'     . DIRECTORY_SEPARATOR ;
+            if ( ! file_exists( $customPluginsDir ) ) {
+                $customPluginsDir = null;
+            }
+        }
+
+        if ( $customPluginsDir ) {
+            $this->plugins_dir  = array ( $customPluginsDir, $config->smartyDir . 'plugins', $config->pluginsDir );
+        } else {
+            $this->plugins_dir  = array ( $config->smartyDir . 'plugins', $config->pluginsDir );
+        }
 
         // add the session and the config here
         $session = CRM_Core_Session::singleton();

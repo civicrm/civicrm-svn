@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -115,8 +115,13 @@ WHERE contact_id = %1
     }
 
     static function updateEntry( $id ) {
-        self::delete( $id );
+        // rebuilds civicrm_acl_cache
+        self::deleteEntry( $id );
         self::build( $id );
+
+        // rebuilds civicrm_acl_contact_cache
+        require_once "CRM/Contact/BAO/Contact/Permission.php";
+        CRM_Contact_BAO_Contact_Permission::cache( $id, CRM_Core_Permission::VIEW, true );
     }
 
     // deletes all the cache entries

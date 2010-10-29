@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -286,7 +286,7 @@ class api_v2_ParticipantTest extends CiviUnitTestCase
         
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
     }    
-
+    
     /**
      * check with event_id
      */
@@ -418,7 +418,48 @@ class api_v2_ParticipantTest extends CiviUnitTestCase
         // Cleanup created participant records.
         $result = $this->participantDelete( $participantId );
     }
-
+    
+    /**
+     * check with Invalid participantId
+     */  
+    function testUpdateWithWrongParticipantId()
+    {
+        $params = array(
+                        'id'            => 1234,
+                        'status_id'     => 3,
+                        'role_id'       => 3,
+                        'register_date' => '2006-01-21',
+                        'source'        => 'US Open',
+                        'event_level'   => 'Donation'                        
+                        );
+        $participant = & civicrm_participant_update($params);
+        $this->assertEquals( $participant['is_error'], 1 );
+        $this->assertEquals( $participant['error_message'],'Participant  id is not valid' );
+        
+    }
+    
+    /**
+     * check with Invalid ContactId
+     */
+    function testUpdateWithWrongContactId()
+    {
+        $participantId = $this->participantCreate( array ('contactID' => $this->_individualId,
+                                                          'eventID' => $this->_eventID ) );
+        $params = array(
+                        'id'            => $participantId,
+                        'contact_id'    => 12345,
+                        'status_id'     => 3,
+                        'role_id'       => 3,
+                        'register_date' => '2006-01-21',
+                        'source'        => 'US Open',
+                        'event_level'   => 'Donation'                        
+                        );
+        $participant = & civicrm_participant_update($params);
+        $this->assertEquals( $participant['is_error'], 1 );
+        $this->assertEquals( $participant['error_message'],'Contact id is not valid' );
+        $result = $this->participantDelete( $participantId );  
+    }
+    
     /**
      * check with complete array
      */

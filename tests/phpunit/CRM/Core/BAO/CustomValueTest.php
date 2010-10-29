@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -79,6 +79,7 @@ class CRM_Core_BAO_CustomValueTest extends CiviUnitTestCase
         $values = array( );
         $values = array( 'check1'  => 'chk' );
         foreach ( $values as $type => $value ) {
+            require_once 'CRM/Core/BAO/CustomValue.php';
             $valid =  CRM_Core_BAO_CustomValue::typecheck( $type, $value );  
             $this->assertEquals( $valid, null , 'Checking invalid type for returned CustomField Type.' ); 
         }

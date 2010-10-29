@@ -6,6 +6,7 @@
     <name>civicrm_subscription_history</name>
     <comment>History information of subscribe/unsubscribe actions</comment>
     <add>1.1</add>
+    <log>true</log>
     <field>
         <name>id</name>
         <type>int unsigned</type>

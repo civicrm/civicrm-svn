@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -23,23 +23,29 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+
 <script type="text/javascript">var showTab = Array( );</script>
+
 {foreach from=$groupTree item=cd_edit key=group_id}    
-<h3 class="head"> 
-    <span id="custom{$group_id}" class="ui-icon ui-icon-triangle-1-e"></span><a href="#">{$cd_edit.title}</a>
-</h3>
-<div id="customData{$group_id}" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom">
-    <fieldset>{include file="CRM/Custom/Form/CustomData.tpl" formEdit=true}</fieldset>
-</div>
-<script type="text/javascript">
-{if $cd_edit.collapse_display eq 0 }
-    var eleSpan          = "span#custom{$group_id}";
-    var eleDiv           = "div#customData{$group_id}";
-    showTab[{$group_id}] = {literal}{"spanShow":eleSpan,"divShow":eleDiv}{/literal};
-{else}
-    showTab[{$group_id}] = {literal}{"spanShow":""}{/literal};
-{/if}
-</script>
+	<div class="crm-accordion-wrapper crm-address-accordion {if $cd_edit.collapse_display}crm-accordion-closed{else}crm-accordion-open{/if}">
+		<div class="crm-accordion-header">
+			<div id="custom{$group_id}" class="icon crm-accordion-pointer"></div> 
+			{$cd_edit.title}
+			</div><!-- /.crm-accordion-header -->
+			
+			<div id="customData{$group_id}" class="crm-accordion-body">
+				{include file="CRM/Custom/Form/CustomData.tpl" formEdit=true}
+			</div>
+		<script type="text/javascript">
+			{if $cd_edit.collapse_display eq 0 }
+				var eleSpan          = "span#custom{$group_id}";
+				var eleDiv           = "div#customData{$group_id}";
+				showTab[{$group_id}] = {literal}{"spanShow":eleSpan,"divShow":eleDiv}{/literal};
+			{else}
+				showTab[{$group_id}] = {literal}{"spanShow":""}{/literal};
+			{/if}
+		</script>
+	</div>
 {/foreach}
 
 {include file="CRM/common/customData.tpl"}

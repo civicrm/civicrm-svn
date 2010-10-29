@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -42,19 +42,37 @@ class CRM_Activity_Page_AJAX
     {
         $caseID    = CRM_Utils_Type::escape( $_GET['caseID'], 'Integer' );
         $contactID = CRM_Utils_Type::escape( $_GET['cid'], 'Integer' );
-        $context   = CRM_Utils_Type::escape( $_GET['context'], 'String' );
+        $userID    = CRM_Utils_Type::escape( $_GET['userID'], 'Integer' );
+        $context   = CRM_Utils_Type::escape( CRM_Utils_Array::value( 'context', $_GET ), 'String' );
         
+        $sortMapper  = array( 0 => 'display_date', 1 => 'ca.subject', 2 => 'ca.activity_type_id', 
+                              3 => 'acc.sort_name', 4 => 'cc.sort_name', 5 => 'ca.status_id'  );
+
+        $sEcho       = CRM_Utils_Type::escape($_REQUEST['sEcho'], 'Integer');
+        $offset      = isset($_REQUEST['iDisplayStart'])? CRM_Utils_Type::escape($_REQUEST['iDisplayStart'], 'Integer'):0;
+        $rowCount    = isset($_REQUEST['iDisplayLength'])? CRM_Utils_Type::escape($_REQUEST['iDisplayLength'], 'Integer'):25; 
+        $sort        = isset($_REQUEST['iSortCol_0'] )? CRM_Utils_Array::value( CRM_Utils_Type::escape($_REQUEST['iSortCol_0'],'Integer'), $sortMapper ): null;
+        $sortOrder   = isset($_REQUEST['sSortDir_0'] )? CRM_Utils_Type::escape($_REQUEST['sSortDir_0'], 'String'):'asc';
+
         $params    = $_POST;
+        if ( $sort && $sortOrder ) {
+            $params['sortname']  = $sort;
+            $params['sortorder'] = $sortOrder;
+        }
+        $params['page'] = ($offset/$rowCount) + 1;
+        $params['rp']   = $rowCount;
+
         // get the activities related to given case
         require_once "CRM/Case/BAO/Case.php";
-        $activities = CRM_Case_BAO_Case::getCaseActivity( $caseID, $params, $contactID, $context );
-        $page  = CRM_Utils_Array::value( 'page', $_POST );
-        $total = $params['total'];
+        $activities = CRM_Case_BAO_Case::getCaseActivity( $caseID, $params, $contactID, $context, $userID );
 
         require_once "CRM/Utils/JSON.php";
+        $iFilteredTotal = $iTotal =  $params['total'];
         $selectorElements = array( 'display_date', 'subject', 'type', 'with_contacts', 'reporter', 'status', 'links', 'class' );
-        echo CRM_Utils_JSON::encodeSelector( $activities, $page, $total, $selectorElements );
-        CRM_Utils_System::civiExit();
+
+        echo CRM_Utils_JSON::encodeDataTableSelector( $activities, $sEcho, $iTotal, $iFilteredTotal, $selectorElements );
+        CRM_Utils_System::civiExit( );
+
     }
     
     static function convertToCaseActivity()
@@ -89,8 +107,15 @@ class CRM_Activity_Page_AJAX
         $mainActivity->copyValues( $mainActVals );
         $mainActivity->id = null;
         $mainActivity->activity_date_time = $actDateTime;
+        //make sure this is current revision.
+        $mainActivity->is_current_revision = true;
+        //drop all relations.
+        $mainActivity->parent_id = $mainActivity->original_id = null;
+        
         $mainActivity->save( );
         $mainActivityId = $mainActivity->id;
+        require_once 'CRM/Activity/BAO/Activity.php';
+        CRM_Activity_BAO_Activity::logActivityAction( $mainActivity );
         $mainActivity->free( );
         
         //mark previous activity as deleted.
@@ -102,12 +127,10 @@ class CRM_Activity_Page_AJAX
         $otherActivity->free( ); 
         
         require_once "CRM/Activity/BAO/Activity.php";
-        $targetContacts = array( $contactID );
+        $targetContacts = array( );
         if ( !empty( $targetContactIds ) ) {
-            $targetContacts = array_merge( $targetContacts, explode( ',', $targetContactIds ) );
-            $targetContacts = array_unique( $targetContacts );
+            $targetContacts = array_unique( explode( ',', $targetContactIds ) );
         }
-        
         foreach ( $targetContacts as $key => $value ) { 
             $params = array( 'activity_id' => $mainActivityId, 
                              'target_contact_id' => $value );

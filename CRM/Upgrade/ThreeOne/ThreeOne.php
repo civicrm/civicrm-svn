@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -322,6 +322,22 @@ INNER JOIN ( SELECT id, contact_id FROM civicrm_openid WHERE is_primary = 1 GROU
             $afterUpgradeMessage .= "<br/><br/>";
             $afterUpgradeMessage .= ts("%1 records have been updated so that each contact record should contain only one Address, Email, Phone, Instant Messanger and openID as primary.", array( 1 => $totalCount) );
             $template->assign( 'afterUpgradeMessage', $afterUpgradeMessage );
+        }
+    }
+
+    function upgrade_3_1_4( ) 
+    {
+        $query = "SELECT id FROM civicrm_payment_processor WHERE payment_processor_type = 'Moneris' LIMIT 1";
+        $isMoneris = CRM_Core_DAO::singleValueQuery( $query );
+
+        if ( $isMoneris ) {
+            $template =& CRM_Core_Smarty::singleton( );
+            $afterUpgradeMessage  = $template->get_template_vars('afterUpgradeMessage');
+            $docURL = CRM_Utils_System::docURL2( 'Moneris Configuration Guide', false, 'download and install', 
+                                                 null, 'color: white; text-decoration: underline;');
+
+            $afterUpgradeMessage .= "<br/>" . ts("Please %1 mpgClasses.php in packages/Services in order to continue using Moneris payment processor. That file is no longer included in the CiviCRM distribution.", array( 1 => $docURL ));
+            $template->assign('afterUpgradeMessage', $afterUpgradeMessage);
         }
     }
 }

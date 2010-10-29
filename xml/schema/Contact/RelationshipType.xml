@@ -6,6 +6,7 @@
   <name>civicrm_relationship_type</name>
   <comment>Relationship types s/b structured with contact_a as the 'subject/child' contact and contact_b as the 'object/parent' contact (e.g. Individual A is Employee of Org B).</comment>
   <add>1.1</add>
+  <log>true</log>
   <field>
       <name>id</name>
       <type>int unsigned</type>

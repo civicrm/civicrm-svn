@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -26,17 +26,14 @@
 {* Displays account creation and supporter profile form (step 1 in creating a personal campaign page as well as Update Contact info). *}
 {if $action EQ 1}
 <div id="help">
-        {ts}Creating your own fundraising page is simple. Fill in some basic information below, which will allow you to manage your page and invite friends to make a contribution.
-        Then click 'Continue' to personalize and announce your page.{/ts}
+        {ts}Creating your own fundraising page is simple. Fill in some basic information below, which will allow you to manage your page and invite friends to make a contribution. Then click 'Continue' to personalize and announce your page.{/ts}
 </div>
 {/if}
 
 {if $profileDisplay}
 <div class="messages status">
-<dl>
-  	<dt><img src="{$config->resourceBase}i/Eyeball.gif" alt="{ts}Profile{/ts}"/></dt>
-    	<dd><p><strong>{ts}Profile is not configured with Email address.{/ts}</strong></p></dd>
-</dl>
+  	<img src="{$config->resourceBase}i/Eyeball.gif" alt="{ts}Profile{/ts}"/>
+    	<p><strong>{ts}Profile is not configured with Email address.{/ts}</strong></p>
 </div>
 {else}
 <div class="form-item">
@@ -45,9 +42,8 @@
 {if $isCaptcha} 
 {include file='CRM/common/ReCAPTCHA.tpl'} 
 {/if}
-<dl>
-	<dt></dt>
-	<dd class="html-adjust">{$form.buttons.html}</dd>
-</dl>
+</div>
+<div class="crm-submit-buttons">
+{include file="CRM/common/formButtons.tpl" location="bottom"}
 </div>
 {/if}

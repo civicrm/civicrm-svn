@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -214,12 +214,26 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
                 } else {
                     CRM_Import_Parser_Contact::addToErrorMsg('Register Date', $errorMessage);
                 }
-            } else if( $val && ( $key == 'participant_role_id' ) ){
-                if (!CRM_Import_Parser_Contact::in_value($val,CRM_Event_PseudoConstant::participantRole())) {
-                    CRM_Import_Parser_Contact::addToErrorMsg('Participant Role', $errorMessage);
-                }   
+            } else if ( $val && ( $key == 'participant_role_id' || $key == 'participant_role' ) ) {
+                $roleIDs = CRM_Event_PseudoConstant::participantRole( );
+                $val = explode( ',', $val );
+                if ( $key == 'participant_role_id' ) {
+                    foreach ( $val as $role ) {
+                        if ( !in_array( trim( $role ), array_keys( $roleIDs ) ) ) {
+                            CRM_Import_Parser_Contact::addToErrorMsg( 'Participant Role Id', $errorMessage );
+                            break;
+                        }
+                    }
+                } else {
+                    foreach ( $val as $role ) {
+                        if ( !CRM_Import_Parser_Contact::in_value( trim( $role ), $roleIDs ) ) {
+                            CRM_Import_Parser_Contact::addToErrorMsg( 'Participant Role', $errorMessage );
+                            break;
+                        } 
+                    } 
+                }
             } else if( $val && ( $key == 'participant_status_id' ) ){
-                if (!CRM_Import_Parser_Contact::in_value($val,CRM_Event_PseudoConstant::participantStatus())) {
+                if ( !CRM_Import_Parser_Contact::in_value($val,CRM_Event_PseudoConstant::participantStatus())) {
                     CRM_Import_Parser_Contact::addToErrorMsg('Participant Status', $errorMessage);
                 }   
             }
@@ -286,7 +300,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
             } 
         }
 
-        if ( ! $params['participant_role_id'] ) {
+        if ( !( $params['participant_role_id'] || $params['participant_role'] ) ) {
             if ( $params['event_id'] ) {
                 $roleId= 
                     CRM_Core_DAO::getFieldValue( "CRM_Event_DAO_Event", $params['event_id'] , 'default_role_id' );
@@ -318,7 +332,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
         }
         
         $formatError = _civicrm_participant_formatted_param( $formatValues, $formatted, true );
-        
+                
         if ( $formatError ) {
             array_unshift($values, $formatError['error_message']);
             return CRM_Event_Import_Parser::ERROR;

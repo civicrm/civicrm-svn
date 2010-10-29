@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -54,6 +54,7 @@ class CRM_Core_I18n_PseudoConstant
                 'en_AU' => 'English (Australia)',
                 'en_GB' => 'English (United Kingdom)',
                 'es_ES' => 'español',
+                'es_MX' => 'español (Mexico)',
                 'fr_FR' => 'français',
                 'fr_CA' => 'français (Canada)',
                 'id_ID' => 'Bahasa Indonesia',
@@ -71,14 +72,15 @@ class CRM_Core_I18n_PseudoConstant
                 'pt_BR' => 'Português (Brasil)',
                 'ro_RO' => 'română',
                 'ru_RU' => 'русский',
+                'sq_AL' => 'shqip',
                 'sk_SK' => 'slovenčina',
                 'sl_SI' => 'slovenščina',
                 'fi_FI' => 'suomi',
                 'sv_SE' => 'Svenska',
                 'th_TH' => 'ไทย',
                 'vi_VN' => 'Tiếng Việt',
+                'te_IN' => 'తెలుగు',
                 'tr_TR' => 'Türkçe',
-                'uk_UA' => 'Українська',
                 'zh_CN' => '中文 (简体)',
                 'zh_TW' => '中文 (繁體)',
             );

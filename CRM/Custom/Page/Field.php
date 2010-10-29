@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -79,7 +79,7 @@ class CRM_Custom_Page_Field extends CRM_Core_Page
             self::$_actionLinks = array(
                                         CRM_Core_Action::UPDATE  => array(
                                                                           'name'  => ts('Edit Field'),
-                                                                          'url'   => 'civicrm/admin/custom/group/field',
+                                                                          'url'   => 'civicrm/admin/custom/group/field/update',
                                                                           'qs'    => 'action=update&reset=1&gid=%%gid%%&id=%%id%%',
                                                                           'title' => ts('Edit Custom Field') 
                                                                           ),
@@ -294,6 +294,7 @@ class CRM_Custom_Page_Field extends CRM_Core_Page
         $session = CRM_Core_Session::singleton();
         $session->pushUserContext(CRM_Utils_System::url('civicrm/admin/custom/group/field', 'reset=1&action=browse&gid=' . $this->_gid));
         $controller->set('fieldId', $id);
+        $controller->set('groupId', $this->_gid);
         $controller->setEmbedded(true);
         $controller->process();
         $controller->run();

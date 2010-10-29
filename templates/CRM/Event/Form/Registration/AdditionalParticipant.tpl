@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -41,56 +41,15 @@
     </div>
 {/if}
 
-<div class="form-item">
+<div class="crm-block crm-event-additionalparticipant-form-block">
 {if $priceSet}
-    <fieldset id="priceset"><legend>{$event.fee_label}</legend>
-    <dl>
-    {foreach from=$priceSet.fields item=element key=field_id}
-        {if $element.visibility_id eq 1 || $context == "standalone" }
-        {if ($element.html_type eq 'CheckBox' || $element.html_type == 'Radio') && $element.options_per_line}
-            {assign var="element_name" value=price_$field_id}
-            <dt>{$form.$element_name.label}</dt>
-            <dd>
-            {assign var="count" value="1"}
-            <table class="form-layout-compressed">
-                <tr>
-                    {foreach name=outer key=key item=item from=$form.$element_name}
-                        {if is_numeric($key) }
-                            <td class="labels font-light">{$form.$element_name.$key.html}</td>
-                            {if $count == $element.options_per_line}
-                                {assign var="count" value="1"}
-                                </tr>
-                                <tr>
-                            {else}
-                                {assign var="count" value=`$count+1`}
-                            {/if}
-                        {/if}
-                    {/foreach}
-                </tr>
-            </table>
-            </dd>
-        {else}
-            {assign var="name" value=`$element.name`}
-            {assign var="element_name" value="price_"|cat:$field_id}
-            <dt>{$form.$element_name.label}</dt>
-            <dd>&nbsp;{$form.$element_name.html}</dd>
-        {/if}
-        {if $element.help_post}
-            <dt>&nbsp;</dt>
-            <dd class="description">{$element.help_post}</dd>
-        {/if}
-	{/if}
-    {/foreach}
-    </dl>
-    <div class="form-item">
-        <dt></dt>
-        <dd>{include file="CRM/Price/Form/Calculate.tpl"}</dd>
-    </div> 
+     <fieldset id="priceset" class="crm-group priceset-group"><legend>{$event.fee_label}</legend>
+     	 {include file="CRM/Price/Form/PriceSet.tpl"}
     </fieldset>
 {else}
     {if $paidEvent}
         <table class="form-layout-compressed">
-            <tr>
+            <tr class="crm-event-additionalparticipant-form-block-amount">
                 <td class="label nowrap">{$event.fee_label} <span class="marker">*</span></td>
                 <td>&nbsp;</td>
                 <td>{$form.amount.html}</td>
@@ -110,6 +69,6 @@
 {include file="CRM/UF/Form/Block.tpl" fields=$additionalCustomPost} 
 
 <div id="crm-submit-buttons">
-    {$form.buttons.html}
+    {include file="CRM/common/formButtons.tpl"}
 </div>
 </div>

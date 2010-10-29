@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -84,6 +84,10 @@ function run( ) {
     //log the execution of script
     CRM_Core_Error::debug_log_message( 'UpdateAddress.php' );
     
+    // load bootstrap to call hooks
+    require_once 'CRM/Utils/System.php';
+    CRM_Utils_System::loadBootStrap(  );
+
     // do check for geocoding.
     $processGeocode = false;
     if ( empty( $config->geocodeMethod ) ) {

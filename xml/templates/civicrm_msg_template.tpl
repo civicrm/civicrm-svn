@@ -1,5 +1,5 @@
 -- +--------------------------------------------------------------------+
--- | CiviCRM version 3.1                                                |
+-- | CiviCRM version 3.3                                                |
 -- +--------------------------------------------------------------------+
 -- | Copyright CiviCRM LLC (c) 2004-2010                                |
 -- +--------------------------------------------------------------------+
@@ -32,6 +32,7 @@
     'meta'         => ts('Message Template Workflow for Meta Templates', array('escape' => 'sql')),
     'pledge'       => ts('Message Template Workflow for Pledges',        array('escape' => 'sql')),
     'uf'           => ts('Message Template Workflow for Profiles',       array('escape' => 'sql')),
+    'petition'     => ts('Message Template Workflow for Petition',       array('escape' => 'sql')),
   );
   $ovNames = array(
     'case' => array(
@@ -69,6 +70,10 @@
     ),
     'uf' => array(
       'uf_notify' => ts('Profiles - Admin Notification', array('escape' => 'sql')),
+    ),
+    'petition' => array(
+      'petition_sign' => ts('Petition - signature added', array('escape' => 'sql')),
+      'petition_confirmation_needed' => ts('Petition - need verification', array('escape' => 'sql')),
     ),
   );
   $this->assign('ogNames',  $ogNames);

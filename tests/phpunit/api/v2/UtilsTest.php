@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -26,6 +26,8 @@
 */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
+require_once 'CRM/Core/Permission.php';
+require_once 'CRM/Core/Permission/UnitTests.php';
 require_once 'api/v2/utils.php';
 
 /**
@@ -45,6 +47,7 @@ class api_v2_UtilsTest extends CiviUnitTestCase
     protected function setUp()
     {
         parent::setUp();
+        CRM_Core_Permission_UnitTests::$permissions = null; // reset check() stub
     }
 
     /**
@@ -64,4 +67,44 @@ class api_v2_UtilsTest extends CiviUnitTestCase
       $this->assertTrue( $result );
     }
 
+    function testCheckPermissionReturn()
+    {
+        $check = array('check_permissions' => true);
+
+        CRM_Core_Permission_UnitTests::$permissions = array();
+        $this->assertFalse(civicrm_api_check_permission('civicrm_contact_create', $check), 'empty permissions should not be enough');
+        CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM');
+        $this->assertFalse(civicrm_api_check_permission('civicrm_contact_create', $check), 'lacking permissions should not be enough');
+        CRM_Core_Permission_UnitTests::$permissions = array('add contacts');
+        $this->assertFalse(civicrm_api_check_permission('civicrm_contact_create', $check), 'lacking permissions should not be enough');
+
+        CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM', 'add contacts');
+        $this->assertTrue(civicrm_api_check_permission('civicrm_contact_create', $check), 'exact permissions should be enough');
+
+        CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM', 'add contacts', 'import contacts');
+        $this->assertTrue(civicrm_api_check_permission('civicrm_contact_create', $check), 'overfluous permissions should be enough');
+    }
+
+    function testCheckPermissionThrow()
+    {
+        $check = array('check_permissions' => true);
+
+        try {
+            CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM');
+            civicrm_api_check_permission('civicrm_contact_create', $check, true);
+        } catch (Exception $e) {
+            $message = $e->getMessage();
+        }
+        $this->assertEquals($message, 'API permission check failed for civicrm_contact_create call; missing permission: add contacts.', 'lacking permissions should throw an exception');
+
+        CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM', 'add contacts', 'import contacts');
+        $this->assertTrue(civicrm_api_check_permission('civicrm_contact_create', $check, true), 'overfluous permissions should return true');
+    }
+
+    function testCheckPermissionSkip()
+    {
+        CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM');
+        $this->assertFalse(civicrm_api_check_permission('civicrm_contact_create', array('check_permissions' => true)),  'lacking permissions should not be enough');
+        $this->assertTrue(civicrm_api_check_permission('civicrm_contact_create',  array('check_permissions' => false)), 'permission check should be skippable');
+    }
 }

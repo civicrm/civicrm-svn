@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -53,12 +53,14 @@ class CRM_Event_Form_Registration_ThankYou extends CRM_Event_Form_Registration
         parent::preProcess( );
         $this->_params      = $this->get( 'params' );
         $this->_lineItem    = $this->get( 'lineItem' );
+        $this->_part        = $this->get( 'part' );
         $this->_totalAmount = $this->get( 'totalAmount' );
         $this->_receiveDate = $this->get( 'receiveDate' );
         $this->_trxnId      = $this->get( 'trxnId' );
         $finalAmount = $this->get( 'finalAmount' );
         $this->assign('finalAmount',  $finalAmount); 
         $participantInfo = $this->get( 'participantInfo' );
+        $this->assign('part', $this->_part);
         $this->assign( 'participantInfo', $participantInfo ); 
         $customGroup = $this->get('customProfile');
         $this->assign( 'customProfile',$customGroup );
@@ -132,6 +134,9 @@ class CRM_Event_Form_Registration_ThankYou extends CRM_Event_Form_Registration
                 }
             }
         }
+       
+        $this->_submitValues = array_merge( $this->_submitValues, $defaults );
+              
         $this->setDefaults( $defaults );
 
         require_once 'CRM/Friend/BAO/Friend.php';

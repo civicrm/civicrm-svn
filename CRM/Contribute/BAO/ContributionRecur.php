@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -67,6 +67,12 @@ class CRM_Contribute_BAO_ContributionRecur extends CRM_Contribute_DAO_Contributi
         $recurring = new CRM_Contribute_BAO_ContributionRecur();
         $recurring->copyValues($params);
         $recurring->id        = CRM_Utils_Array::value( 'contribution', $ids );
+
+	// set currency for CRM-1496
+	if ( ! isset( $recurring->currency ) ) {
+	  $config =& CRM_Core_Config::singleton( );
+	  $recurring->currency = $config->defaultCurrency;
+	}
 
         return $recurring->save();
     }

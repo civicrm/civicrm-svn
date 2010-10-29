@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -98,7 +98,7 @@ class CRM_Contribute_Task
                                   6 => array( 'title'  => ts( 'Update Pending Contribution Status' ),
                                               'class'  => 'CRM_Contribute_Form_Task_Status',
                                               'result' => true ),                                             
-                                  7 => array( 'title'  => ts( 'Print Contribution Receipts' ),
+                                  7 => array( 'title'  => ts( 'Print or Email Contribution Receipts' ),
                                               'class'  => 'CRM_Contribute_Form_Task_PDF',
                                               'result' => false ),
                                   );

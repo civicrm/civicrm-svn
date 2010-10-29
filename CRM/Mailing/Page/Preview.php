@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -69,7 +69,7 @@ class CRM_Mailing_Page_Preview extends CRM_Core_Page
         $mailing = new CRM_Mailing_BAO_Mailing();
         if ( !empty( $options ) ) { 
             $mailing->id = $options['mailing_id'];
-            $fromEmail   = $options['from_email'];
+            $fromEmail   = CRM_Utils_Array::value( 'from_email', $options );
         }
 
         $mailing->find(true);
@@ -94,17 +94,12 @@ class CRM_Mailing_Page_Preview extends CRM_Core_Page
         $mime =& $mailing->compose(null, null, null, $session->get('userID'), $fromEmail, $fromEmail,
                                    true, $details[0][$session->get('userID')], $attachments );
         
-        // there doesn't seem to be a way to get to Mail_Mime's text and HTML
-        // parts, so we steal a peek at Mail_Mime's private properties, render 
-        // them and exit
-        // note that preview does not display any attachments
-        $mime->get();
         if ($type == 'html') {
             header('Content-Type: text/html; charset=utf-8');
-            print $mime->_htmlbody;
+            print $mime->getHTMLBody();
         } else {
             header('Content-Type: text/plain; charset=utf-8');
-            print $mime->_txtbody;
+            print $mime->getTXTBody();
         }
         CRM_Utils_System::civiExit( );
     }

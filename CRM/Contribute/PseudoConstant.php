@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -35,6 +35,7 @@
  */
 
 require_once 'CRM/Core/OptionGroup.php';
+require_once 'CRM/Core/PseudoConstant.php';
 
 /**
  * This class holds all the Pseudo constants that are specific to Contributions. This avoids
@@ -144,15 +145,16 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant
      * @return array - array reference of all payment instruments if any
      * @static
      */
-    public static function &paymentInstrument( )
+    public static function &paymentInstrument( $columnName = 'label' )
     {
-        $paymentInstrument = CRM_Core_OptionGroup::values('payment_instrument');
-        if ( ! $paymentInstrument ) {
-            $paymentInstrument = array( );
+        if ( !isset( self::$paymentInstrument[$columnName] ) ) {
+            self::$paymentInstrument[$columnName] = CRM_Core_OptionGroup::values( 'payment_instrument', 
+                                                                                  false, false, false, null, $columnName );
         }
-        return $paymentInstrument;
+        
+        return self::$paymentInstrument[$columnName];
     }
-
+    
     /**
      * Get all the valid accepted credit cards
      *               

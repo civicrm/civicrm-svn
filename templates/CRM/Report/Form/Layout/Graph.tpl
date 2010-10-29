@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -40,7 +40,7 @@
 </table>
 
 {if !$section}
-        {include file="CRM/common/openFlashChart.tpl"}
+        {include file="CRM/common/openFlashChart.tpl" divId="open_flash_chart_$uniqueId"}
 {/if}
 
 {literal}

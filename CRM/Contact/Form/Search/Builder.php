@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -66,8 +66,11 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search
      * @access public
      */
     public function preProcess() {
+        $this->set( 'searchFormName', 'Builder' );
+        
+        $this->set('context', 'builder' );
         parent::preProcess( );
-
+        
         //get the block count
         $this->_blockCount = $this->get('blockCount');
         if ( !$this->_blockCount ) {
@@ -136,7 +139,9 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search
         
         require_once 'CRM/Core/Component.php';
         $compomentFields =& CRM_Core_Component::getQueryFields( );
-        
+        require_once 'CRM/Activity/BAO/Activity.php';
+        $activityFields = CRM_Activity_BAO_Activity::exportableFields( );
+        $compomentFields = array_merge( $compomentFields, $activityFields );
         $fields = array_merge( $fields, $compomentFields );
 
         $fld = array ();
@@ -174,7 +179,7 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search
                         }
                     }
                 } else if ( substr($v[0], 0, 7) === 'do_not_' or substr($v[0], 0, 3) === 'is_' ) { 
-                    if ( $v[2] ) {
+                    if ( isset($v[2]) ) {
                         $v2 = array($v[2]);
                         if ( !isset($v[2]) ) {
                             $errorMsg["value[$v[3]][$v[4]]"] = ts("Please enter the value.");  
@@ -225,7 +230,7 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search
                         if ( $v[1] == 'IN' ) {
                             $inVal = trim( $v[2] );
                             //checking for format to avoid db errors
-                            if (!preg_match( '/^[(]([A-Za-z0-9\'\,]+)[)]$/', $inVal) ) {
+                            if (!preg_match( '/^[(][\']([A-Za-z0-9\'\,\s]+)[\'][)]$/', $inVal) ) {
                                 $errorMsg["value[$v[3]][$v[4]]"] = ts("Please enter correct Data ( in valid format ).");
                             }
                             // Validate each value in parenthesis to avoid db errors

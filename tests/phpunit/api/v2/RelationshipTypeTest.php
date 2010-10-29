@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -26,6 +26,7 @@
 */
 
 require_once 'api/v2/Relationship.php';
+require_once 'api/v2/RelationshipType.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 
 /**
@@ -93,14 +94,14 @@ class api_v2_RelationshipTypeTest extends CiviUnitTestCase
     function testRelationshipTypeCreateWithoutName( )
     {
         $relTypeParams = array(
-                               'name_b_a'       => 'Test 2',
                                'contact_type_a' => 'Individual',
                                'contact_type_b' => 'Organization'
                                );
         $result =& civicrm_relationship_type_add( $relTypeParams );
         
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Missing required parameters' );
+        $this->assertEquals( $result['error_message'], 
+                             'Missing some required parameters (contact_types_a contact_types_b name_a_b name b_a)' );
     }
     
     /**

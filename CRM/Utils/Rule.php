@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -33,8 +33,6 @@
  * $Id$
  *
  */
-
-
 
 require_once 'HTML/QuickForm/Rule/Email.php';
 
@@ -108,10 +106,8 @@ class CRM_Utils_Rule
         return false;
     }
 
-
     static function query( $query ) 
     {
-
         // check length etc
         if ( empty( $query ) || strlen( $query ) < 3 || strlen( $query ) > 127 ) {
             return false;
@@ -134,7 +130,8 @@ class CRM_Utils_Rule
         return Validate::uri( $url, $options );
     }
 
-    static function wikiURL( $string ) {
+    static function wikiURL( $string )
+    {
         $items = explode( ' ', trim( $string ), 2 );
         return self::url( $items[0] );
     }
@@ -161,7 +158,7 @@ class CRM_Utils_Rule
     {
         $result = $default;
         if ( is_string( $value ) &&
-             preg_match( '/^\d\d\d\d-?\d\d-?\d\d(\s\d\d:\d{1,2})?$/', $value ) ) {
+             preg_match( '/^\d\d\d\d-?\d\d-?\d\d(\s\d\d:\d\d:\d\d|\d\d\d\d\d\d)?$/', $value ) ) {
             $result = $value;
         }
         
@@ -258,7 +255,8 @@ class CRM_Utils_Rule
      * @static
      * @access public
      */
-    static function mysqlDate($date) {
+    static function mysqlDate($date)
+    {
         // allow date to be null
         if ( $date == null ) {
             return true;
@@ -318,20 +316,23 @@ class CRM_Utils_Rule
         // first remove all white space
         $value = str_replace( array( ' ', "\t", "\n" ), '', $value );
 
-        $config = CRM_Core_Config::singleton( );
-        setlocale( LC_ALL, $config->lcMessages );
-        $localeInfo = localeconv( );
+        $config =& CRM_Core_Config::singleton( );
 
-        if ( array_key_exists( 'mon_thousands_sep', $localeInfo ) ) {
-            $mon_thousands_sep = $localeInfo['mon_thousands_sep'];
+        if ( $config->monetaryThousandSeparator ) {
+            $mon_thousands_sep = $config->monetaryThousandSeparator;
         } else {
             $mon_thousands_sep = ',';
         }
 
-        $value = str_replace( $mon_thousands_sep, '', $value );
+        // ugly fix for CRM-6391: do not drop the thousand separator if
+        // it looks like it’s separating decimal part (because a given
+        // value undergoes a second cleanMoney() call, for example)
+        if ($mon_thousands_sep != '.' or substr($value, -3, 1) != '.') {
+            $value = str_replace($mon_thousands_sep, '', $value);
+        }
 
-        if ( array_key_exists( 'mon_decimal_point', $localeInfo ) ) {
-            $mon_decimal_point = $localeInfo['mon_decimal_point'];
+        if ( $config->monetaryDecimalPoint ) {
+            $mon_decimal_point = $config->monetaryDecimalPoint;
         } else {
             $mon_decimal_point = '.';
         }
@@ -342,24 +343,23 @@ class CRM_Utils_Rule
 
     static function money($value) 
     {
+        $config = CRM_Core_Config::singleton( );
+        
+        //only edge case when we have a decimal point in the input money
+        //field and not defined in the decimal Point in config settings
+        if ($config->monetaryDecimalPoint && 
+            $config->monetaryDecimalPoint != '.' &&
+            substr_count( $value, '.' ) ) {
+            return false;
+        }
+
         $value = self::cleanMoney( $value );
 
         if ( self::integer( $value ) ) {
             return true;
         }
 
-        return preg_match( '/(^\d+\.\d?\d?$)|(^\.\d\d?$)/', $value ) ? true : false;
-    }
-
-    static function moneySigned($value) 
-    {
-        $value = self::cleanMoney( $value );
-
-        if ( self::integer( $value ) ) {
-            return true;
-        }
-
-        return preg_match( '/(^-?\d+\.\d?\d?$)|(^\.\d\d?$)/', $value ) ? true : false;
+        return preg_match( '/(^-?\d+\.\d?\d?$)|(^-?\.\d\d?$)/', $value ) ? true : false;
     }
 
     static function string($value, $maxLength = 0) 
@@ -523,7 +523,8 @@ class CRM_Utils_Rule
         return false;
     }
 
-    static function xssString( $value ) {
+    static function xssString( $value )
+    {
         if ( is_string( $value ) ) {
             return preg_match( '!<(vb)?script[^>]*>.*</(vb)?script.*>!ims',
                                $value ) ? false : true;
@@ -536,7 +537,8 @@ class CRM_Utils_Rule
         return file_exists( $path );
     }
 
-    static function autocomplete( $value, $options ) {
+    static function autocomplete( $value, $options )
+    {
         if ( $value ) {            
             require_once 'CRM/Core/BAO/CustomOption.php';
             $selectOption =& CRM_Core_BAO_CustomOption::valuesByID( $options['fieldID'], $options['optionGroupID'] );
@@ -548,7 +550,8 @@ class CRM_Utils_Rule
         return true;
     }
     
-    static function validContact( $value, $actualElementValue = null ) {
+    static function validContact( $value, $actualElementValue = null )
+    {
         if ( $actualElementValue ) {
             $value = $actualElementValue;
         }
@@ -603,6 +606,11 @@ class CRM_Utils_Rule
             return checkdate( $mon, $day, $year );
         }
         return false;
+    }
+
+    static function qfKey( $key ) {
+        require_once 'CRM/Core/Key.php';
+        return ( $key ) ? CRM_Core_Key::valid( $key ) : false;
     }
 }
 

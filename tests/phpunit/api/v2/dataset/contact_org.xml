@@ -17,9 +17,9 @@
     <column>display_name</column>
     <column>nick_name</column>
     <column>legal_name</column>
-    <column>home_URL</column>
     <column>image_URL</column>
     <column>preferred_communication_method</column>
+    <column>preferred_language</column>
     <column>preferred_mail_format</column>
     <column>hash</column>
     <column>api_key</column>
@@ -43,13 +43,13 @@
     <column>birth_date</column>
     <column>is_deceased</column>
     <column>deceased_date</column>
-    <column>mail_to_household_id</column>
     <column>household_name</column>
     <column>primary_contact_id</column>
     <column>organization_name</column>
     <column>sic_code</column>
     <column>user_unique_id</column>
     <column>employer_id</column>
+	<column>is_deleted</column>
     <row>
       <value>24</value>  <!--  id  -->
       <value>Organization</value>  <!--  contact_type  -->
@@ -66,9 +66,9 @@
       <null />  <!--  display_name  -->
       <null /><!--  nick_name  -->
       <null /><!--  legal_name  -->
-      <null /><!--  home_URL  -->
       <null /><!--  image_URL  -->
       <null /><!--  preferred_communication_method  -->
+      <null /><!--  preferred_language  -->
       <null /><!--  preferred_mail_format  -->
       <null /><!--  hash  -->
       <null /><!--  api_key  -->
@@ -92,13 +92,13 @@
       <null /><!--  birth_date  -->
       <null /><!--  is_deceased  -->
       <null /><!--  deceased_date  -->
-      <null /><!--  mail_to_household_id  -->
       <null /><!--  household_name  -->
       <null /><!--  primary_contact_id  -->
       <null /><!--  organization_name  -->
       <null /><!--  sic_code  -->
       <null /><!--  user_unique_id  -->
       <null /><!--  employer_id  -->
+	  <value>0</value>
     </row>
   </table>
 </dataset>

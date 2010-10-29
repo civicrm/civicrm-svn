@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -119,21 +119,17 @@ SELECT c.id as contact_id,
        v.id as option_value_id, 
        l.qty
 FROM   civicrm_contact c,
-       civicrm_contribution o,
        civicrm_participant  p,
-       civicrm_participant_payment pp,
        civicrm_line_item    l,
        civicrm_option_group g,
        civicrm_option_value v
-WHERE  c.id = o.contact_id
-AND    c.id = p.contact_id
+WHERE  c.id = p.contact_id
 AND    p.event_id = {$this->_eventID}
-AND    pp.contribution_id = o.id
-AND    pp.participant_id  = p.id
-AND    o.id = l.entity_id
+AND    p.id = l.entity_id
 AND    l.option_group_id = g.id
 AND    v.option_group_id = g.id
 AND    v.label = l.label
+AND    l.entity_table ='civicrm_participant'
 ORDER BY c.id, v.id;
 ";
 
@@ -287,7 +283,7 @@ INNER JOIN {$this->_tableName} tempTable ON ( tempTable.contact_id = contact_a.i
     }
 
     function templateFile( ) {
-        return 'CRM/Contact/Form/Search/Custom/Sample.tpl';
+        return 'CRM/Contact/Form/Search/Custom.tpl';
     }
 
     function setDefaultValues( ) {

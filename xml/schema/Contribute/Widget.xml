@@ -6,6 +6,7 @@
   <name>civicrm_contribution_widget</name>
   <comment>A Widget object to store meta information about a single customized contribution widget</comment>
   <add>2.0</add>
+  <log>true</log>
   <field>
       <name>id</name>
       <type>int unsigned</type>

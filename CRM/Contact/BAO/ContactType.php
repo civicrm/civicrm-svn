@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -144,8 +144,12 @@ WHERE  parent_id IS NULL
      *@static
      *
      */
-    static function &subTypeInfo( $contactType = null, $all = false,  $ignoreCache = false ) {
+    static function &subTypeInfo( $contactType = null, $all = false,  $ignoreCache = false, $reset = false ) {
         static $_cache = null;
+
+        if( $reset === true ) {
+            $_cache = null;
+        }
         
         if ( $_cache === null ) {
             $_cache = array( );
@@ -253,8 +257,12 @@ WHERE  subtype.name IS NOT NULL AND subtype.parent_id IS NOT NULL {$ctWHERE}
      *@static
      *
      */
-    static function contactTypeInfo( $all = false ) {
+    static function contactTypeInfo( $all = false, $reset = false ) {
         static $_cache = null;
+        
+        if( $reset === true ) {
+            $_cache = null;
+        }
         
         if ( $_cache === null ) {
             $_cache = array( );
@@ -564,12 +572,28 @@ WHERE name = %1";
      * @static
      */
     static function add( $params ) {
+
+        // null if empty params or doesn't contain parent_id
+        if ( !CRM_Utils_Array::value( 'parent_id', $params ) ) {
+            return;
+        }
+
+        // label or name
+        if ( !CRM_Utils_Array::value( 'label', $params ) ) {
+            return;
+        }        
+
+        // parent_id
+        if ( !CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_ContactType', $params['parent_id'] ) ) {
+            return;
+        }
+        
         $contactType = new CRM_Contact_DAO_ContactType( );
         $contactType->copyValues( $params );
         $contactType->id        = CRM_Utils_Array::value( 'id', $params );
-        if ( CRM_Utils_Array::value('parent_id', $params) ) { 
-            $contactType->is_active = CRM_Utils_Array::value( 'is_active', $params, 0 );
-        }
+        $contactType->is_active = CRM_Utils_Array::value( 'is_active', $params, 0 );
+
+
         
         $contactType->save( );
         if( $contactType->find( true ) ) {
@@ -598,8 +622,13 @@ WHERE name = %1";
             CRM_Core_BAO_Navigation::add( $navigation );
         }
         CRM_Core_BAO_Navigation::resetNavigation( );
+
+        // reset the cache after adding
+        self::subTypeInfo( null, false, false, true );
+        
         return $contactType;
     }
+
     /**
      * update the is_active flag in the db
      *

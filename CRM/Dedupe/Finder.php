@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -60,8 +60,8 @@ class CRM_Dedupe_Finder
             CRM_Core_Error::fatal("$level rule for $ctype does not exist");
         }
 
+        $rgBao->fillTable();
         $dao = new CRM_Core_DAO();
-        $dao->query($rgBao->tableQuery());
         $dao->query($rgBao->thresholdQuery());
         $dupes = array();
         while ($dao->fetch()) {
@@ -77,6 +77,11 @@ class CRM_Dedupe_Finder
      * params, using the default rule group for the given contact type and 
      * level.
      *
+     * check_permission is a boolean flag to indicate if permission should be considered.
+     * default is to always check permissioning but public pages for example might not want 
+     * permission to be checked for anonymous users. Refer CRM-6211. We might be beaking 
+     * Multi-Site dedupe for public pages.
+     *
      * @param array  $params  array of params of the form $params[$table][$field] == $value
      * @param string $ctype   contact type to match against
      * @param string $level   dedupe rule group level ('Fuzzy' or 'Strict')
@@ -85,6 +90,10 @@ class CRM_Dedupe_Finder
      * @return array  matching contact ids
      */
     function dupesByParams($params, $ctype, $level = 'Strict', $except = array()) {
+        // If $params is empty there is zero reason to proceed.
+        if ( ! $params ) {
+            return array();
+        }
         $rgBao = new CRM_Dedupe_BAO_RuleGroup();
         $rgBao->contact_type = $ctype;
         $rgBao->params = $params;
@@ -93,9 +102,11 @@ class CRM_Dedupe_Finder
         if (!$rgBao->find(true)) {
             CRM_Core_Error::fatal("$level rule for $ctype does not exist");
         }
+        $params['check_permission'] = CRM_Utils_Array::value( 'check_permission', $params, true );
+
+        $rgBao->fillTable();
         $dao = new CRM_Core_DAO();
-        $dao->query($rgBao->tableQuery());
-        $dao->query($rgBao->thresholdQuery());
+        $dao->query($rgBao->thresholdQuery($params['check_permission']));
         $dupes = array();
         while ($dao->fetch()) {
             if ( isset( $dao->id ) && $dao->id ) $dupes[] = $dao->id;

@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -142,7 +142,9 @@ class CRM_ACL_Page_EntityRole extends CRM_Core_Page_Basic
         }
 
         // finally browse the acl's
-         $this->browse();
+        if ( $action & CRM_Core_Action::BROWSE ) {
+            $this->browse();
+        }
         
         // parent run 
         parent::run();

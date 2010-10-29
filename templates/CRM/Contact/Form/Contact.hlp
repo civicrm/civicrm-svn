@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -47,21 +47,18 @@
 {ts}Select the preferred method for Privacy.{/ts}
 {/htxt}
 
-{htxt id="id-usehousehold"}
+{htxt id="id-sharedAddress"}
 {ts}Check this option if you want to use a shared household address for this individual. You can either select an existing household.<br /> To create a new one just enter the name of desired household, select the same from drop down and press enter.{/ts}
 {/htxt}
 
 {htxt id="id-greeting"}
 {capture assign=docLink}{docURL page="Mail-merge Tokens for Contact Data"}{/capture}
-<p>{ts}Use the greeting/address options to determine how you would like the contact's salutation and name displayed for different communication methods. When you send an email or export a list of records to a .csv file for mail merging, the greeting and addressee fields will reflect your preferences.
-{/ts}</p>
+<p>{ts}Use the greeting/address options to determine how you would like the contact's salutation and name displayed for different communication methods. When you send an email or export a list of records to a .csv file for mail merging, the greeting and addressee fields will reflect your preferences.{/ts}</p>
 <p>{ts 1=$docLink}You may also create a customized greeting and use field tokens to insert fields of your choice. For more information on available tokens, see the online documentation %1.{/ts}</p>
 {/htxt}
 
 {htxt id="id-edit-street-elements"}
-<p>{ts}CiviCRM will attempt to split street addresses into separate elements (street number, street name and unit/apt) to help you make lists and reports where
-you need to sort by street number (and/or separate addresses with odd and even numbers). For most addresses, this is done for you automatically. However, you can
-manually edit these elements, and potentially handle addresses that are in unusual formats, by clicking 'Edit Address Elements'.{/ts}</p>
+<p>{ts}CiviCRM will attempt to split street addresses into separate elements (street number, street name and unit/apt) to help you make lists and reports where you need to sort by street number (and/or separate addresses with odd and even numbers). For most addresses, this is done for you automatically. However, you can manually edit these elements, and potentially handle addresses that are in unusual formats, by clicking 'Edit Address Elements'.{/ts}</p>
 {/htxt}
 
 {htxt id="id-edit-complete-street"}

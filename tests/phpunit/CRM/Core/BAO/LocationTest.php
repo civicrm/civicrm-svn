@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -193,6 +193,7 @@ class CRM_Core_BAO_LocationTest extends CiviUnitTestCase
      */
     function testCreateWithLocBlock( )
     {
+        $this->_contactId = Contact::createIndividual( );
         //create test event record.
         $eventId = Event::create( );
         $params = array ( 
@@ -323,6 +324,7 @@ class CRM_Core_BAO_LocationTest extends CiviUnitTestCase
         
         //cleanup DB by deleting the record.
         Event::delete ( $eventId );
+        Contact::delete( $this->_contactId );
     }
     
     /**
@@ -334,6 +336,7 @@ class CRM_Core_BAO_LocationTest extends CiviUnitTestCase
     
     function testDeleteLocBlock( )
     {
+        $this->_contactId = Contact::createIndividual( );
         //create test event record.
         $eventId = Event::create( );
         $params['location'][1] = array ( 'location_type_id'                               => 1,
@@ -405,6 +408,7 @@ class CRM_Core_BAO_LocationTest extends CiviUnitTestCase
 	
         //cleanup DB by deleting the record.
         Event::delete ( $eventId );
+        Contact::delete( $this->_contactId );
 	
         //Now check DB for Event
         $this->assertDBNull( 'CRM_Event_DAO_Event', $eventId, 'id', 'id', 

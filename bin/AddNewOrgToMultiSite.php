@@ -33,6 +33,10 @@ function run( $argc, $argv ) {
 
     $config = CRM_Core_Config::singleton();
 
+    //load bootstrap to call hooks
+    require_once 'CRM/Utils/System.php';
+    CRM_Utils_System::loadBootStrap(  );
+    
     # create the domain
     $existing_domain = civicrm_domain_get( );
     $domain_params = array('name' => $org_name, 'description' => $org_desc,

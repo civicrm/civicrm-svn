@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -54,9 +54,17 @@
   </tr>
   <tr>
     <td colspan="2">
-     {$form._qf_Search_next_print.html} &nbsp; &nbsp;
+    {if $printButtonName}
+       {$form.$printButtonName.html} &nbsp; &nbsp;
+    {else}
+       {$form._qf_Search_next_print.html} &nbsp; &nbsp;
+     {/if}
      {$form.task.html}
+    {if $actionButtonName}
+       {$form.$actionButtonName.html} &nbsp; &nbsp;
+    {else}
      {$form._qf_Search_next_action.html} 
+   {/if}
     </td>
   </tr>
   </table>

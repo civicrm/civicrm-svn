@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -153,7 +153,7 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
     function __construct( $title = null, $modal = true,
                           $mode = null, $scope = null,
                           $addSequence = false, $ignoreKey = false ) {
-
+        // this has to true for multiple tab session fix                    
         $addSequence = true;
 
         // add a unique validable key to the name
@@ -235,7 +235,9 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
         }
 
         if ( ! $key ) {
-            $msg = ts('We can\'t load the requested web page. This page requires cookies to be enabled in your browser settings. Please check this setting and enable cookies (if they are not enabled). Then try again. If this error persists, contact the site adminstrator for assistance.') . '<br /><br />' . ts('Error type: Could not find a valid key.');
+            $msg = ts('We can\'t load the requested web page. This page requires cookies to be enabled in your browser settings. Please check this setting and enable cookies (if they are not enabled). Then try again. If this error persists, contact the site adminstrator for assistance.') .
+             '<br /><br />' . ts('Site Administrators: This error may indicate that users are accessing this page using a domain or URL other than the configured Base URL. EXAMPLE: Base URL is http://example.org, but some users are accessing the page via http://www.example.org or a domain alias like http://myotherexample.org.') .
+             '<br /><br />' . ts('Error type: Could not find a valid session key.');
             CRM_Core_Error::fatal( $msg );
         }
 
@@ -377,7 +379,14 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
             } else {
                 $formName = CRM_Utils_String::getClassName( $name );
             }
-            require_once(str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php');
+            
+            require_once 'CRM/Core/Extensions.php';
+            $ext = new CRM_Core_Extensions( );
+            if ( $ext->isExtensionClass( $className) ) {
+                require_once( $ext->classToPath( $className ) );
+            } else {
+                require_once(str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php');
+            }
             $$stateName = new $className( $stateMachine->find( $className ), $action, 'post', $formName );
             if ( $title ) {
                 $$stateName->setTitle( $title );
@@ -387,6 +396,10 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
             }
             $this->addPage( $$stateName );
             $this->addAction( $stateName, new HTML_QuickForm_Action_Direct( ) );
+            
+            //CRM-6342 -we need kill the reference here,
+            //as we have deprecated reference object creation.
+            unset( $$stateName );
         }
     }
 
@@ -567,6 +580,30 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
         return $this->_skipRedirection;
     }
     
+
+    function setWord ($fileName=null) {
+        //Mark as a CSV file.
+        header('Content-Type: application/vnd.ms-word');
+        
+        //Force a download and name the file using the current timestamp.
+        if (!$fileName) {
+            $fileName = 'Contacts_' . $_SERVER['REQUEST_TIME'] . '.doc';
+        }
+        header("Content-Disposition: attachment; filename=Contacts_$fileName");
+    }
+    
+    function setExcel ($fileName=null) {
+        //Mark as an excel file.
+        header('Content-Type: application/vnd.ms-excel');
+        
+        //Force a download and name the file using the current timestamp.
+        if (! $fileName) {
+            $fileName = 'Contacts_' . $_SERVER['REQUEST_TIME'] . '.xls';
+        }
+        
+        header("Content-Disposition: attachment; filename=Contacts_$fileName");
+    }
+    
     /**
      * setter for print 
      *
@@ -576,6 +613,11 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
      * @access public
      */
     function setPrint( $print  ) {
+        if ($print == "xls") {
+            $this->setExcel();
+        } else if ($print == "doc") {
+            $this->setWord();
+        }
         $this->_print = $print;
     }
 
@@ -593,6 +635,8 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
         if ( $this->_print ) {
             if ( $this->_print == CRM_Core_Smarty::PRINT_PAGE ) {
                 return 'CRM/common/print.tpl';
+            } else if ($this->_print == 'xls' || $this->_print == 'doc') {
+                return 'CRM/Contact/Form/Task/Excel.tpl';
             } else {
                 return 'CRM/common/snippet.tpl';
             }
@@ -620,7 +664,7 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
         }
 
         require_once 'CRM/Core/QuickForm/Action/Upload.php';
-        $action = new CRM_Core_QuickForm_Action_Upload ( $this->_stateMachine,
+        $action =& new CRM_Core_QuickForm_Action_Upload ( $this->_stateMachine,
                                                           $uploadDir,
                                                           $uploadNames );
         $this->addAction('upload' , $action );

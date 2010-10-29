@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -52,30 +52,23 @@ class CRM_Event_Page_DashBoard extends CRM_Core_Page
     {
         CRM_Utils_System::setTitle( ts('CiviEvent') );
 
-        $admin = false;
-        if ( CRM_Core_Permission::check( 'access CiviEvent' ) &&
-             CRM_Core_Permission::check( 'administer CiviCRM' ) ) {
-            $admin = true;
-        }
-        
         require_once 'CRM/Event/BAO/Event.php';
-        $eventSummary = CRM_Event_BAO_Event::getEventSummary( $admin );
+        $eventSummary = CRM_Event_BAO_Event::getEventSummary( );
 
-        $eventMap = false;
+        $actionColumn = false;
         if ( ! empty( $eventSummary ) &&
              isset($eventSummary['events']) &&
              is_array( $eventSummary['events'] ) ) {
             foreach ( $eventSummary['events'] as $e ) {
-                if ( isset( $e['isMap'] ) ) {
-                    $eventMap = true;
+                if ( isset( $e['isMap'] ) || isset( $e['configure'] ) ) {
+                    $actionColumn = true;
                     break;
                 }
             }
         }
 
-        $this->assign( 'eventAdmin'  , $admin );
-        $this->assign( 'eventMap'    , $eventMap );
-        $this->assign( 'eventSummary', $eventSummary);
+        $this->assign( 'actionColumn', $actionColumn );
+        $this->assign( 'eventSummary', $eventSummary );
     }
     
     /** 

@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.2                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -68,6 +68,80 @@ class CRM_Case_Page_AJAX
             echo $details['sort_name'].' - '.$details['case_type']."|$caseId|".$details['contact_id'].'|'.$details['case_type'].'|'.$details['sort_name']."\n";
         }
         
-        exit( );
+        CRM_Utils_System::civiExit( );
     }
+
+    function processCaseTags( ) {
+        require_once 'CRM/Core/BAO/EntityTag.php';
+        
+        $caseId    = CRM_Utils_Type::escape($_POST['case_id'], 'Integer');
+        $tags      = CRM_Utils_Type::escape($_POST['tag'], 'String');
+
+        if ( empty($caseId) ) {
+            echo 'false';
+            CRM_Utils_System::civiExit( );
+        }
+        
+        $tagIds = array( );
+        if ( $tags ) {   
+            $tagIds = explode( ',', $tags );
+        }
+
+        $params = array( 'entity_id'    => $caseId,
+                         'entity_table' => 'civicrm_case' );
+        
+        CRM_Core_BAO_EntityTag::del( $params );
+        
+        foreach( $tagIds as $tagid ) {
+            $params['tag_id'] = $tagid;
+            CRM_Core_BAO_EntityTag::add( $params );
+        }
+        
+        $session =& CRM_Core_Session::singleton( );
+
+        require_once "CRM/Activity/BAO/Activity.php";
+        require_once "CRM/Core/OptionGroup.php";
+        $activityParams = array( );
+        
+        $activityParams['source_contact_id']  = $session->get( 'userID' ); 
+        $activityParams['activity_type_id']   = CRM_Core_OptionGroup::getValue( 'activity_type', 'Change Case Tags', 'name' );
+        $activityParams['activity_date_time'] = date('YmdHis');
+        $activityParams['status_id']          = CRM_Core_OptionGroup::getValue( 'activity_status', 'Completed', 'name' );
+        $activityParams['case_id']            = $caseId;
+        $activityParams['is_auto']            = 0;
+        $activityParams['subject']            = 'Change Case Tags';
+ 
+        $activity = CRM_Activity_BAO_Activity::create( $activityParams );
+        
+        require_once "CRM/Case/BAO/Case.php";
+        $caseParams = array( 'activity_id' => $activity->id,
+                             'case_id'     => $caseId );
+        
+        CRM_Case_BAO_Case::processCaseActivity( $caseParams );
+
+        echo 'true';
+        CRM_Utils_System::civiExit( );
+    }
+    function caseDetails( ) {
+        $caseId    = CRM_Utils_Type::escape( $_GET['caseId'], 'Integer' );
+        $contactId = CRM_Utils_Type::escape( $_GET['contactId'], 'Integer' );
+        require_once 'CRM/Case/BAO/Case.php';
+        $sql = "SELECT * FROM civicrm_case where id = %1";
+        $dao = CRM_Core_DAO::executeQuery( $sql , array( 1 => array( $caseId,  'Integer' ) ) );
+        
+        while ( $dao->fetch( ) ) {
+             $caseType = CRM_Case_BAO_Case::getCaseType( ( str_replace( CRM_Case_BAO_Case::VALUE_SEPERATOR, "", 
+                                                                        $dao->case_type_id) ) );
+             $caseStatuses = CRM_Case_PseudoConstant::caseStatus();
+             $cs = $caseStatuses[$dao->status_id];
+             $caseDetails = "<html><table><tr><td>Case Subject</td><td>$dao->subject</td></tr>
+                                          <tr><td>Case Type</td><td>$caseType</td></tr> 
+                                          <tr><td> Case Status</td><td>$cs</td></tr>
+                                          <tr><td>Case Start Date</td><td>$dao->start_date</td></tr>
+                                          <tr><td>Case End Date</td><td></td></tr>$dao->end_date</table></html>";        
+             echo $caseDetails;
+         }
+         
+    }
+    
 }

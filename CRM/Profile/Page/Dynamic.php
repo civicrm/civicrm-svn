@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -130,12 +130,13 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
             if ( $limitListingsGroupsID ) {
                 require_once 'CRM/Contact/BAO/GroupContact.php';
                 
-                if ( ! CRM_Contact_BAO_GroupContact::isContactInGroup( $this->_id, $limitListingsGroupsID ) ) {
-                    CRM_Core_Error::statusBounce( ts( 'You do not have permission to view this contact record. Contact the site administrator if you need assistance.' ),
-                                                  $config->userFrameworkBaseURL );
+                if ( !CRM_Contact_BAO_GroupContact::isContactInGroup( $this->_id, 
+                                                                      $limitListingsGroupsID ) ) {
+                    CRM_Utils_System::setTitle( ts( 'Profile View - Permission Denied' ) );
+                    return CRM_Core_Session::setStatus(ts('You do not have permission to view this contact record. Contact the site administrator if you need assistance.'));
                 }
             }
-
+            
             require_once 'CRM/Core/BAO/UFGroup.php';
 
             $values = array( );
@@ -168,21 +169,50 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
             }
             CRM_Core_BAO_UFGroup::getValues( $this->_id, $fields, $values );
             
-            // $profileFields_$gid array can be used for customized display of field labels and values in Profile/View.tpl
+            // $profileFields array can be used for customized display of field labels and values in Profile/View.tpl
             $profileFields = array( );
             $labels = array( );
 
             foreach ( $fields as $name => $field ) {
                 $labels[$field['title']] = preg_replace('/\s+|\W+/', '_', $name);
             }
+            
             foreach ( $values as $title => $value ) {
                 $profileFields[$labels[$title]] = array( 'label' => $title,
-                                                    'value' => $value );
+                                                         'value' => $value );
             }
             
             $template->assign_by_ref( 'row', $values );
-            $template->assign_by_ref( 'profileFields_' . $this->_gid, $profileFields );
+            $template->assign_by_ref( 'profileFields', $profileFields );
         }
+        
+        $name = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $this->_gid, 'name' );
+        
+        if ( strtolower( $name ) == 'summary_overlay' ) {
+        	$template->assign( 'overlayProfile', true );
+        }
+
+        $title    = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $this->_gid, 'title' );
+        
+        //CRM-4131.
+        $displayName    = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $this->_id, 'display_name' );
+        if ( $displayName ) {
+            require_once 'CRM/Core/Permission.php';
+            require_once 'CRM/Contact/BAO/Contact/Permission.php';
+            $session   = CRM_Core_Session::singleton( );
+            $config    = CRM_Core_Config::singleton( );
+            if ( $session->get( 'userID' ) && 
+                 CRM_Core_Permission::check('access CiviCRM') &&
+                 CRM_Contact_BAO_Contact_Permission::allow( $session->get( 'userID' ), CRM_Core_Permission::VIEW ) &&
+                 !$config->userFrameworkFrontend ) {
+                $contactViewUrl = CRM_Utils_System::url('civicrm/contact/view', "action=view&reset=1&cid={$this->_id}", true);
+                $this->assign( 'displayName', $displayName);
+                $displayName = "<a href=\"$contactViewUrl\">{$displayName}</a>";
+            } 
+            $title .= ' - ' . $displayName;
+        }
+        
+        CRM_Utils_System::setTitle( $title );
 
         // invoke the pagRun hook, CRM-3906
         require_once 'CRM/Utils/Hook.php';
@@ -197,6 +227,15 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
             $template     =& CRM_Core_Page::getTemplate( );
             if ( $template->template_exists( $templateFile ) ) {
                 return $templateFile;
+            }
+
+            // lets see if we have customized by name
+            $ufGroupName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $this->_gid, 'name' );
+            if ( $ufGroupName ) {
+                $templateFile = "CRM/Profile/Page/{$ufGroupName}/Dynamic.tpl";
+                if ( $template->template_exists( $templateFile ) ) {
+                    return $templateFile;
+                }
             }
         }
         return parent::getTemplateFileName( );

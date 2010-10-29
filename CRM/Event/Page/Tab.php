@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -38,6 +38,10 @@ require_once 'CRM/Core/Page.php';
 
 class CRM_Event_Page_Tab extends CRM_Core_Page 
 {
+
+    public $_permission = null;    
+    public $_contactId  = null;    
+    
     /**
      * This function is called when action is browse
      * 
@@ -53,6 +57,12 @@ class CRM_Event_Page_Tab extends CRM_Core_Page
         $controller->set( 'context', 'participant' ); 
         $controller->process( );
         $controller->run( );
+        
+        if ( $this->_contactId ) {
+            require_once 'CRM/Contact/BAO/Contact.php';
+            $displayName = CRM_Contact_BAO_Contact::displayName( $this->_contactId );
+            $this->assign( 'displayName', $displayName );
+        }
     }
     
     /** 
@@ -117,8 +127,11 @@ class CRM_Event_Page_Tab extends CRM_Core_Page
             // check logged in url permission
             require_once 'CRM/Contact/Page/View.php';
             CRM_Contact_Page_View::checkUserPermission( $this );
-        }      
-
+            
+            // set page title
+            CRM_Contact_Page_View::setTitle( $this->_contactId );
+        }
+        
         $this->assign('action', $this->_action );     
         
         if ( $this->_permission == CRM_Core_Permission::EDIT && ! CRM_Core_Permission::check( 'edit event participants' ) ) {
@@ -168,7 +181,14 @@ class CRM_Event_Page_Tab extends CRM_Core_Page
     
     function setContext( ) 
     {
-        $context = CRM_Utils_Request::retrieve( 'context', 'String', $this, false, 'search' );
+        $context      = CRM_Utils_Request::retrieve( 'context'     ,
+                                                     'String', $this, false, 'search' );
+        
+        $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+        //validate the qfKey
+        require_once 'CRM/Utils/Rule.php';
+        if ( !CRM_Utils_Rule::qfKey( $qfKey ) ) $qfKey = null;
+        
         switch ( $context ) {
             
         case 'dashboard':           
@@ -176,7 +196,11 @@ class CRM_Event_Page_Tab extends CRM_Core_Page
             break;
             
         case 'search':
-            $url = CRM_Utils_System::url( 'civicrm/event/search', 'force=1' );
+            $urlParams = 'force=1';
+            if ( $qfKey ) $urlParams .= "&qfKey=$qfKey";
+            $this->assign( 'searchKey',  $qfKey );
+            
+            $url = CRM_Utils_System::url( 'civicrm/event/search', $urlParams );
             break;
             
         case 'user':
@@ -202,16 +226,18 @@ class CRM_Event_Page_Tab extends CRM_Core_Page
             break; 
 
         case 'fulltext':
+            $keyName   = '&qfKey';
+            $urlParams = 'force=1';
+            $urlString = 'civicrm/contact/search/custom';
             if ( $this->_action == CRM_Core_Action::UPDATE ) {
-                $cid = null;
-                if ( $this->_contactId ) {
-                    $cid = '&cid=' . $this->_contactId;
-                }
-                $url = CRM_Utils_System::url( 'civicrm/contact/view/participant', 
-                                              'force=1&context=fulltext&action=view' . $cid );
-            } else {
-                $url = CRM_Utils_System::url( 'civicrm/contact/search/custom', 'force=1' );
+                if ( $this->_contactId ) $urlParams .= '&cid=' . $this->_contactId;
+                $keyName    = '&key';
+                $urlParams .= '&context=fulltext&action=view';
+                $urlString = 'civicrm/contact/view/participant';
             }
+            if ( $qfKey ) $urlParams .= "$keyName=$qfKey";
+            $this->assign( 'searchKey',  $qfKey );
+            $url = CRM_Utils_System::url( $urlString, $urlParams ); 
             break;
             
         default:

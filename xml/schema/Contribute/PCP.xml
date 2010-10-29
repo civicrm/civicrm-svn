@@ -5,6 +5,7 @@
   <class>PCP</class> 
   <name>civicrm_pcp</name> 
   <add>2.2</add> 
+  <log>true</log>
   <field> 
       <name>id</name> 
       <uniqueName>pcp_id</uniqueName>
@@ -98,6 +99,14 @@
       <comment>Goal amount of this Personal Campaign Page.</comment>  
       <add>2.2</add>  
   </field>  
+  <field>
+      <name>currency</name>
+      <type>varchar</type>
+      <length>3</length>
+      <required>true</required>
+      <comment>3 character string, value from config setting or input via user.</comment>
+      <add>3.2</add>
+  </field>
   <field>      
       <name>referer</name>
       <type>varchar</type>   

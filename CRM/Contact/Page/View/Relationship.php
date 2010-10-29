@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -52,6 +52,9 @@ class CRM_Contact_Page_View_Relationship extends CRM_Core_Page
      */
     public $_caseId = null;
     
+    public $_permission = null;
+    public $_contactId  = null; 
+
     /**
      * View details of a relationship
      *
@@ -74,8 +77,18 @@ class CRM_Contact_Page_View_Relationship extends CRM_Core_Page
                 $this->assign( "is_contact_id_a", true );
             }
         }
-        $relType = $viewRelationship[$this->_id]['civicrm_relationship_type_id'];
-        $this->assign( 'viewRelationship', $viewRelationship );
+        $relType = $viewRelationship[$this->_id]['civicrm_relationship_type_id'];        
+        $this->assign( 'viewRelationship', $viewRelationship );        
+
+        $employerId = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $this->_contactId, 'employer_id' );
+        $this->assign( 'isCurrentEmployer', false );
+        if ( $viewRelationship[$this->_id]['employer_id'] == $this->_contactId ) {
+            $this->assign( 'isCurrentEmployer', true);
+        } else if ( $relType == 4 && 
+                    ( $viewRelationship[$this->_id]['cid'] == $employerId ) ) {
+            // make sure we are viewing employee of relationship
+            $this->assign( 'isCurrentEmployer', true);
+        }
 
         $viewNote = CRM_Core_BAO_Note::getNote($this->_id);
         $this->assign( 'viewNote', $viewNote );
@@ -83,12 +96,32 @@ class CRM_Contact_Page_View_Relationship extends CRM_Core_Page
         $groupTree =& CRM_Core_BAO_CustomGroup::getTree('Relationship', $this, $this->_id,0,$relType);
         CRM_Core_BAO_CustomGroup::buildCustomDataView( $this, $groupTree );
 
+        $rType = CRM_Utils_Array::value('rtype', $viewRelationship[$this->_id] );
         // add viewed contribution to recent items list
         require_once 'CRM/Utils/Recent.php';
         $url = CRM_Utils_System::url( 'civicrm/contact/view/rel', 
                                       "action=view&reset=1&id={$viewRelationship[$this->_id]['id']}&cid={$this->_contactId}&context=home" );
         
-        $title = CRM_Contact_BAO_Contact::displayName( $this->_contactId ) . ' (' . 
+        require_once 'CRM/Core/Session.php';
+        require_once 'CRM/Contact/BAO/Contact/Permission.php';
+
+        $session      = CRM_Core_Session::singleton( );
+        $recentOther  = array( );
+
+        if ( ( $session->get( 'userID' ) == $this->_contactId ) ||
+             CRM_Contact_BAO_Contact_Permission::allow( $this->_contactId, CRM_Core_Permission::EDIT ) ) {
+            $recentOther = 
+                array( 'editUrl'   => CRM_Utils_System::url( 'civicrm/contact/view/rel', 
+                                                             "action=update&reset=1&id={$viewRelationship[$this->_id]['id']}&cid={$this->_contactId}&rtype={$rType}&context=home" )  ,
+                       'deleteUrl' => CRM_Utils_System::url( 'civicrm/contact/view/rel', 
+                                                             "action=delete&reset=1&id={$viewRelationship[$this->_id]['id']}&cid={$this->_contactId}&rtype={$rType}&context=home" )
+                       );
+        }
+
+        $displayName = CRM_Contact_BAO_Contact::displayName( $this->_contactId );
+        $this->assign( 'displayName', $displayName );
+        
+        $title =  $displayName . ' (' . 
                  $viewRelationship[$this->_id]['relation']. ' ' . 
                  CRM_Contact_BAO_Contact::displayName( $viewRelationship[$this->_id]['cid'] )  . ')';
         
@@ -98,7 +131,8 @@ class CRM_Contact_Page_View_Relationship extends CRM_Core_Page
                                $viewRelationship[$this->_id]['id'],
                                'Relationship',
                                $this->_contactId,
-                               null );
+                               null,
+                               $recentOther );
     }
 
     /**
@@ -166,7 +200,7 @@ class CRM_Contact_Page_View_Relationship extends CRM_Core_Page
                 //create an activity for case role removal.CRM-4480
                 require_once "CRM/Case/BAO/Case.php";
                 CRM_Case_BAO_Case::createCaseRoleActivity( $this->_caseId, $this->_id );  
-                CRM_Core_Session::setStatus( ts('Case Role has been deleted successfuly.'), false );
+                CRM_Core_Session::setStatus( ts('Case Role has been deleted successfully.'), false );
             } 	
 			
             // delete relationship
@@ -189,6 +223,9 @@ class CRM_Contact_Page_View_Relationship extends CRM_Core_Page
         // check logged in url permission
         require_once 'CRM/Contact/Page/View.php';
         CRM_Contact_Page_View::checkUserPermission( $this );
+        
+        // set page title
+        CRM_Contact_Page_View::setTitle( $this->_contactId );
         
         $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'browse');
         $this->assign( 'action', $this->_action);

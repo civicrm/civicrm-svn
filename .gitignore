@@ -1,7 +1,9 @@
 CRM/ACL/DAO
 CRM/Activity/DAO
 CRM/Auction/DAO
+CRM/Campaign/DAO
 CRM/Case/DAO
+CRM/Case/xml/configuration
 CRM/Contact/DAO/ACLContactCache.php
 CRM/Contact/DAO/Contact.php
 CRM/Contact/DAO/ContactType.php
@@ -17,6 +19,8 @@ CRM/Contact/DAO/SavedSearch.php
 CRM/Contact/DAO/SubscriptionHistory.php
 CRM/Contribute/DAO
 CRM/Core/DAO/Address.php
+CRM/Core/DAO/AddressFormat.php
+CRM/Core/DAO/Batch.php
 CRM/Core/DAO/Cache.php
 CRM/Core/DAO/Component.php
 CRM/Core/DAO/Country.php
@@ -28,9 +32,13 @@ CRM/Core/DAO/Dashboard.php
 CRM/Core/DAO/Discount.php
 CRM/Core/DAO/Domain.php
 CRM/Core/DAO/Email.php
+CRM/Core/DAO/EntityBatch.php
 CRM/Core/DAO/EntityFile.php
+CRM/Core/DAO/EntityFinancialTrxn.php
 CRM/Core/DAO/EntityTag.php
 CRM/Core/DAO/File.php
+CRM/Core/DAO/FinancialAccount.php
+CRM/Core/DAO/FinancialTrxn.php
 CRM/Core/DAO/IM.php
 CRM/Core/DAO/LineItem.php
 CRM/Core/DAO/LocBlock.php
@@ -48,6 +56,7 @@ CRM/Core/DAO/OptionGroup.php
 CRM/Core/DAO/OptionValue.php
 CRM/Core/DAO/PaymentProcessor.php
 CRM/Core/DAO/PaymentProcessorType.php
+CRM/Core/DAO/Persistent.php
 CRM/Core/DAO/Phone.php
 CRM/Core/DAO/Preferences.php
 CRM/Core/DAO/PreferencesDate.php
@@ -61,6 +70,7 @@ CRM/Core/DAO/UFField.php
 CRM/Core/DAO/UFGroup.php
 CRM/Core/DAO/UFJoin.php
 CRM/Core/DAO/UFMatch.php
+CRM/Core/DAO/Website.php
 CRM/Core/DAO/Worldregion.php
 CRM/Core/I18n/SchemaStructure.php
 CRM/Dedupe/DAO
@@ -99,5 +109,6 @@ sql/civicrm_drop.mysql
 sql/civicrm_navigation.mysql
 sql/civicrm_sample.mysql
 templates/CRM/common/version.tpl
+tests/phpunit/CiviTest/CiviSeleniumSettings.php
 tests/phpunit/CiviTest/civicrm.settings.php
 tools/stats/config.php

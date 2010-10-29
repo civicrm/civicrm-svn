@@ -5,6 +5,7 @@
   <class>Event</class> 
   <name>civicrm_event</name> 
   <add>1.7</add> 
+  <log>true</log>
   <field> 
       <name>id</name> 
       <type>int unsigned</type> 
@@ -472,6 +473,7 @@
   <field>
       <name>is_template</name>
       <type>boolean</type>
+      <default>0</default>
       <comment>whether the event has template</comment>
       <add>3.0</add>
   </field>
@@ -507,4 +509,14 @@
       <comment>Date and time that event was created.</comment>
       <add>3.0</add>
   </field>
+  <field>      
+      <name>currency</name>   
+      <type>varchar</type>   
+      <length>3</length>
+      <import>true</import>
+      <headerPattern>/cur(rency)?/i</headerPattern>
+      <dataPattern>/^[A-Z]{3}$/i</dataPattern>
+      <comment>3 character string, value from config setting or input via user.</comment>
+      <add>3.3</add>   
+  </field> 
 </table>

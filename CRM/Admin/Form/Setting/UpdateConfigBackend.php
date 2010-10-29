@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -66,8 +66,9 @@ class CRM_Admin_Form_Setting_UpdateConfigBackend extends CRM_Admin_Form_Setting
 
         $this->add( 'text', 'newBaseURL', ts( 'New Base URL' ), null, true );
         $this->add( 'text', 'newBaseDir', ts( 'New Base Directory' ), null, true );
-        $this->add( 'text', 'newSiteName', ts( 'New Site Name' ), null, true );
- 
+        if ( $this->_oldSiteName ) {
+            $this->add( 'text', 'newSiteName', ts( 'New Site Name' ), null, true );
+        }
         $this->addFormRule( array( 'CRM_Admin_Form_Setting_UpdateConfigBackend', 'formRule' ) );
 
         parent::buildQuickForm();     

@@ -16,9 +16,9 @@
 
   {foreach from=$rows item=row}
     <tr class="{cycle values="odd-row,even-row"}">
-        <td>{$row.display_name}</td>
-        <td>{$row.amount}</td>
-        <td>{$row.create_date}</td>
+        <td class="crm-pledge-display_name">{$row.display_name}</td>
+        <td class="crm-pledge-amount">{$row.amount}</td>
+        <td class="crm-pledge-create_date">{$row.create_date}</td>
     </tr>
   {/foreach}
 </table>
@@ -30,11 +30,8 @@
 
 {else}
    <div class="messages status">
-      <dl>
-          <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>
-          <dd>
+          <dt><div class="icon inform-icon"></div>
             {ts}There are no records selected.{/ts}
-          </dd>
       </dl>
    </div>
 {/if}

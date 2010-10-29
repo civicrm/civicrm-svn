@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -98,16 +98,19 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         
         $this->assign( 'caseID', $this->_caseID );
         $this->assign( 'contactID', $this->_contactID );
-
+        
         //validate case id.
+        $this->_userCases = array( );
+        $session  = CRM_Core_Session::singleton( );
+        $userID   = $session->get( 'userID' );
         if ( !$this->_hasAccessToAllCases ) {
-            $session  = CRM_Core_Session::singleton( );
-            $allCases = CRM_Case_BAO_Case::getCases( true, $session->get( 'userID' ) );
-            if ( !array_key_exists( $this->_caseID, $allCases ) ) {
+            $this->_userCases = CRM_Case_BAO_Case::getCases( false, $userID );
+            if ( !array_key_exists( $this->_caseID, $this->_userCases ) ) {
                 CRM_Core_Error::fatal( ts( 'You are not authorized to access this page.' ) );
             }
         }
-
+        $this->assign( 'userID', $userID );
+        
         if ( CRM_Case_BAO_Case::caseCount( $this->_contactID ) >= 2 ) {
             $this->_mergeCases = true;
         }
@@ -122,16 +125,17 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         $values['case_type_id'] = explode( CRM_Case_BAO_Case::VALUE_SEPERATOR, 
                                            CRM_Utils_Array::value( 'case_type_id' , $values ) );
 
-        $statuses      = CRM_Case_PseudoConstant::caseStatus( );
-        $caseTypeName  = CRM_Case_PseudoConstant::caseTypeName( $this->_caseID );
-        $caseType      = CRM_Core_OptionGroup::getLabel( 'case_type', $caseTypeName['id'] );
-
+        require_once 'CRM/Case/PseudoConstant.php';
+        $statuses      = CRM_Case_PseudoConstant::caseStatus( 'label', false );
+        $caseTypeName  = CRM_Case_BAO_Case::getCaseType( $this->_caseID, 'name' );
+        $caseType      = CRM_Case_BAO_Case::getCaseType( $this->_caseID );
+        
         $this->_caseDetails = array( 'case_type'       => $caseType,
                                      'case_status'     => $statuses[$values['case_status_id']],
                                      'case_subject'    => CRM_Utils_Array::value( 'subject', $values ),
                                      'case_start_date' => $values['case_start_date']
                                    );
-        $this->_caseType = $caseTypeName['name'];
+        $this->_caseType = $caseTypeName;
         $this->assign ( 'caseDetails', $this->_caseDetails );
         
         $newActivityUrl = 
@@ -139,6 +143,13 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
                                    "action=add&reset=1&cid={$this->_contactID}&caseid={$this->_caseID}&atype=", 
                                    false, null, false ); 
         $this->assign ( 'newActivityUrl', $newActivityUrl );
+
+        // Send Email activity requires a different URL format from all other activities
+        $newActivityEmailUrl = 
+            CRM_Utils_System::url( 'civicrm/activity/add', 
+                                   "action=add&context=standalone&reset=1&caseid={$this->_caseID}&atype=", 
+                                   false, null, false ); 
+        $this->assign ( 'newActivityEmailUrl', $newActivityEmailUrl );
 
         $reportUrl = 
             CRM_Utils_System::url( 'civicrm/case/report', 
@@ -158,13 +169,20 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         
         $title = $displayName . ' - ' . $caseType;
         
+        $recentOther = array( );
+        if ( CRM_Core_Permission::checkActionPermission('CiviCase', CRM_Core_Action::DELETE ) ) {
+            $recentOther['deleteUrl'] = CRM_Utils_System::url( 'civicrm/contact/view/case', 
+                                                               "action=delete&reset=1&id={$this->_caseID}&cid={$this->_contactID}&context=home" ); 
+        }
+
         // add the recently created case
         CRM_Utils_Recent::add( $displayName . ' - ' . $caseType,
                                $url,
                                $this->_caseID,
                                'Case',
                                $this->_contactID,
-                               null
+                               null,
+                               $recentOther
                                );
         
 
@@ -201,7 +219,7 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
     {
         //this call is for show related cases.
         if ( $this->_showRelatedCases ) return;
-        
+                
         $xmlProcessor = new CRM_Case_XMLProcessor_Process( );
         $caseRoles    = $xmlProcessor->get( $this->_caseType, 'CaseRoles' );
         $reports      = $xmlProcessor->get( $this->_caseType, 'ActivitySets' );
@@ -248,24 +266,35 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
             $allCases = CRM_Case_BAO_Case::getContactCases( $this->_contactID );
             $otherCases = array( );
             foreach ( $allCases as $caseId => $details ) {
-                if ( $caseId == $this->_caseID ) continue;
+                //filter current and own cases.
+                if ( ( $caseId == $this->_caseID ) || 
+                     (!$this->_hasAccessToAllCases && 
+                      !array_key_exists( $caseId, $this->_userCases ) ) ) {
+                    continue;
+                }
+                
                 $otherCases[$caseId] = 'Case ID: '.$caseId.' Type: '.$details['case_type'].' Start: '.$details['case_start_date'];
             }
-            $this->add( 'select', 'merge_case_id',  
-                        ts( 'Select Case for Merge' ), 
-                        array( '' => ts( '- select case -' ) ) + $otherCases );
-            $this->addElement( 'submit', 
-                               $this->getButtonName( 'next', 'merge_case' ), 
-                               ts('Merge'), 
-                               array( 'class'   => 'form-submit-inline',
-                                      'onclick' => "return checkSelection( this );") ); 
+            if ( empty( $otherCases ) ) {
+                $this->_mergeCases = false;
+                $this->assign( 'mergeCases', $this->_mergeCases );
+            } else {
+                $this->add( 'select', 'merge_case_id',  
+                            ts( 'Select Case for Merge' ), 
+                            array( '' => ts( '- select case -' ) ) + $otherCases );
+                $this->addElement( 'submit', 
+                                   $this->getButtonName( 'next', 'merge_case' ), 
+                                   ts('Merge'), 
+                                   array( 'class'   => 'form-submit-inline',
+                                          'onclick' => "return checkSelection( this );") ); 
+            }
         }
         
         $this->add( 'text', 'change_client_id', ts( 'Assign to another Client' ) );
         $this->add( 'hidden', 'contact_id', '', array( 'id' => 'contact_id') );
         $this->addElement( 'submit', 
                            $this->getButtonName( 'next', 'edit_client' ), 
-                           ts('Assign'), 
+                           ts('Reassign Case'), 
                            array( 'class'   => 'form-submit-inline',
                                   'onclick' => "return checkSelection( this );") );
         
@@ -350,13 +379,42 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         if (is_array($hookCaseSummary)) {
             $this->assign('hookCaseSummary', $hookCaseSummary);
         }
-        
-        require_once('CRM/Utils/Hook.php');
-        $hookCaseSummary = CRM_Utils_Hook::caseSummary( $this->_caseID );
-        if (is_array($hookCaseSummary)) {
-            $this->assign('hookCaseSummary', $hookCaseSummary);
-        }
 		
+        require_once 'CRM/Core/BAO/EntityTag.php';
+        require_once 'CRM/Core/BAO/Tag.php';
+
+        $allTags = CRM_Core_BAO_Tag::getTags( 'civicrm_case' );
+        
+        if ( !empty($allTags) ) { 
+            $this->add('select', 'case_tag',  ts( 'Tags' ), $allTags, false, 
+                       array( 'id' => 'tags',  'multiple'=> 'multiple', 'title' => ts('- select -') ));
+
+            $tags = CRM_Core_BAO_EntityTag::getTag( $this->_caseID, 'civicrm_case' );            
+           
+            $this->setDefaults( array( 'case_tag' => $tags ) ); 
+
+            foreach( $tags as $tid ) {
+                $tags[$tid] = $allTags[$tid];
+            }
+                        
+            $this->assign('tags', implode( ', ', array_filter( $tags ) ) );
+            $this->assign( 'showTags', true );
+        } else {
+            $this->assign( 'showTags', false );
+        }
+
+        // build tagset widget
+        require_once 'CRM/Core/Form/Tag.php';
+        
+        // see if we have any tagsets which can be assigned to cases
+        $parentNames = CRM_Core_BAO_Tag::getTagSet( 'civicrm_case' );
+        if ($parentNames){
+            $this->assign( 'showTagsets', true );
+        } else {
+            $this->assign( 'showTagsets', false );
+        }
+        CRM_Core_Form_Tag::buildQuickForm( $this, $parentNames, 'civicrm_case', $this->_caseID, false, true );        
+          
         $this->addButtons(array(  
                                 array ( 'type'      => 'cancel',  
                                         'name'      => ts('Done'),  
@@ -407,7 +465,7 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
             
             $mainCaseId  = $params['merge_case_id'];
             $otherCaseId = $this->_caseID;
-            
+                           
             //merge two cases.
             CRM_Case_BAO_Case::mergeCases( $this->_contactID, $mainCaseId, null, $otherCaseId );
             

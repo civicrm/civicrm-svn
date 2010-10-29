@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -39,10 +39,6 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
 //    protected $coverageScriptUrl = 'http://tests.dev.civicrm.org/drupal/phpunit_coverage.php';
 
-//    protected $captureScreenshotOnFailure = TRUE;
-//    protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';
-//    protected $screenshotUrl = 'http://api.dev.civicrm.org/sc/';
-
     /**
      *  Constructor
      *
@@ -59,18 +55,186 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
      */
     function __construct($name = NULL, array $data = array(), $dataName = '', array $browser = array() ) {
         parent::__construct($name, $data, $dataName, $browser);
+        
+        require_once 'CiviSeleniumSettings.php';
+        $this->settings = new CiviSeleniumSettings();
     }
 
     protected function setUp()
     {
-
-        $this->setBrowser('*firefox');
-        $this->setBrowserUrl("http://tests.dev.civicrm.org/");
-        
+        $this->setBrowser( $this->settings->browser );
+        // Make sure that below strings have path separator at the end
+        $this->setBrowserUrl( $this->settings->sandboxURL);
+        $this->sboxPath = $this->settings->sandboxPATH;
     }
 
     protected function tearDown()
     {
+//        $this->open( $this->settings->sandboxPATH . "logout?reset=1");
+    }
+
+  /**
+   */
+    function webtestLogin( $admin = false ) {
+        $password = $admin ? $this->settings->adminPassword : $this->settings->password;
+        $username = $admin ? $this->settings->adminUsername : $this->settings->username;
+        $this->type("edit-name", $username);
+        $this->type("edit-pass", $password);
+        $this->click("edit-submit");
+        $this->waitForPageToLoad("30000");      
+    }
+
+    /**
+     * Add a contact with the given first and last names and either a given email
+     * (when specified), a random email (when true) or no email (when unspecified or null).
+     *
+     * @param string $fname contact’s first name
+     * @param string $lname contact’s last name
+     * @param mixed  $email contact’s email (when string) or random email (when true) or no email (when null)
+     *
+     * @return mixed either a string with the (either generated or provided) email or null (if no email)
+     */
+
+    function webtestAddContact( $fname = 'Anthony', $lname = 'Anderson', $email = null ) {
+        $this->open($this->sboxPath . "civicrm/dashboard?reset=1");
+        $this->type("qa_first_name", $fname);
+        $this->type("qa_last_name", $lname);
+        if ($email === true) $email = substr(sha1(rand()), 0, 7) . '@example.org';
+        if ($email) $this->type("qa_email", $email);
+        $this->click("_qf_Contact_next");
+        $this->waitForPageToLoad("30000");        
+        return $email;
+    }
+
+  /**
+   */
+   function webtestFillAutocomplete( $sortName ) {
+      $this->typeKeys("contact_1", $sortName);
+      $this->waitForElementPresent("css=div.ac_results-inner li");
+      $this->click("css=div.ac_results-inner li");
+      $this->assertContains($sortName, $this->getValue("contact_1"), "autocomplete expected $sortName but didn’t find it in " . $this->getValue("contact_1"));
+   }
+
+   /*
+    * 1. By default, when no strtotime arg is specified, sets date to "now + 1 month"
+    * 2. Does not set time. For setting both date and time use webtestFillDateTime() method.
+    * 3. Examples of $strToTime arguments -
+    *        webtestFillDate('start_date',"now")
+    *        webtestFillDate('start_date',"10 September 2000")
+    *        webtestFillDate('start_date',"+1 day")
+    *        webtestFillDate('start_date',"+1 week")
+    *        webtestFillDate('start_date',"+1 week 2 days 4 hours 2 seconds")
+    *        webtestFillDate('start_date',"next Thursday")
+    *        webtestFillDate('start_date',"last Monday")
+    */
+   function webtestFillDate( $dateElement, $strToTimeArgs = null ) {
+       $timeStamp = strtotime($strToTimeArgs ? $strToTimeArgs : "+1 month");
+
+       $year = date('Y', $timeStamp);
+       $mon  = date('n', $timeStamp) - 1; // -1 ensures month number is inline with calender widget's month
+       $day  = date('j', $timeStamp);
+
+       $this->click ($dateElement);
+       $this->select("css=div#ui-datepicker-div div.ui-datepicker-title select.ui-datepicker-month", "value=$mon");
+       $this->select("css=div#ui-datepicker-div div.ui-datepicker-title select.ui-datepicker-year", "value=$year");
+       $this->click ("link=$day");
+   }
+
+   // 1. set both date and time.
+   function webtestFillDateTime( $dateElement, $strToTimeArgs = null ) {
+       $this->webtestFillDate( $dateElement, $strToTimeArgs );
+
+       $timeStamp = strtotime($strToTimeArgs ? $strToTimeArgs : "+1 month");
+       $hour = date('h', $timeStamp);
+       $min  = date('i', $timeStamp);
+       $meri = date('A', $timeStamp);
+       
+       $this->type("{$dateElement}_time", "{$hour}:{$min}{$meri}");
+   }
+
+    /**
+     * Verify that given label/value pairs are in *sibling* td cells somewhere on the page.
+     *
+     * @param array $expected       Array of key/value pairs (like Status/Registered) to be checked
+     * @param string $xpathPrefix   Pass in an xpath locator to "get to" the desired table or tables. Will be prefixed to xpath
+     *                              table path. Include leading forward slashes (e.g. "//div[@id='activity-content']").
+     * @param string $tableId       Pass in the id attribute of a table to be verified if you want to only check a specific table
+     *                              on the web page.
+     */
+    function webtestVerifyTabularData($expected,  $xpathPrefix = null, $tableId = null )
+    {
+        $tableLocator = "";
+        if ( $tableId ) {
+            $tableLocator = "[@id='$tableId']";
+        }
+        foreach ($expected as $label => $value) {
+            $this->verifyText("xpath=//x:table{$tableLocator}/x:tbody/tr/td[text()='{$label}']/following-sibling::td", preg_quote($value));
+        }
+    }
+
+    /**
+     * Types text into a ckEditor rich text field in a form
+     *
+     * @param string $fieldName form field name (as assigned by PHP buildForm class)
+     * @param string $text      text to type into the field
+     * @param string $editor    which text editor (valid values are 'CKEditor', 'TinyMCE')
+     *
+     * @return void
+     */
+
+    function fillRichTextField( $fieldName, $text = 'Typing this text into editor.', $editor = 'CKEditor' ) {
+        if ( $editor == 'CKEditor') {
+            $this->waitForElementPresent("css=td#cke_contents_{$fieldName} iframe");
+            $this->selectFrame("css=td#cke_contents_{$fieldName} iframe");
+        } else if ( $editor == 'TinyMCE') {
+            $this->selectFrame("{$fieldName}_text_ifr");
+        } else {
+            $this->fail( "Unknown editor value: $editor, failing (in CiviSeleniumTestCase::fillRichTextField ..." );
+        }
+        $this->type("//html/body", $text);
+        $this->selectFrame("relative=top");
+    }
+
+    /**
+     * Types option label and name into a table of multiple choice options
+     * (for price set fields of type select, radio, or checkbox)
+     * TODO: extend for custom field multiple choice table input
+     *
+     * @param array  $options           form field name (as assigned by PHP buildForm class)
+     * @param array  $validateStrings   appends label and name strings to this array so they can be validated later
+     *
+     * @return void
+     */
+     
+     function addMultipleChoiceOptions( $options, &$validateStrings ){
+         foreach ( $options as $oIndex => $oValue ) {
+             $validateStrings[] = $oValue['label'];
+             $validateStrings[] = $oValue['name'];
+             $this->type("option_label_{$oIndex}", $oValue['label'] ); 
+             $this->type("option_name_{$oIndex}" , $oValue['name']  ); 
+             $this->click("link=another choice");
+         }         
+     }
+
+   /**
+    */
+    function webtestNewDialogContact( $fname = 'Anthony', $lname = 'Anderson', $email = 'anthony@anderson.biz', $type = 4 ) {
+        // 4 - Individual profile
+        // 5 - Organization profile
+        // 6 - Household profile
+        $this->select("profiles_1", "value={$type}");
+
+        // create new contact using dialog
+        $this->waitForElementPresent("css=div#contact-dialog-1");
+        $this->waitForElementPresent("_qf_Edit_next");
+
+        $this->type("first_name", $fname);
+        $this->type("last_name",  $lname);
+        $this->type("email-Primary", $email);
+        $this->click("_qf_Edit_next");
+
+        // Is new contact created?
+        $this->assertTrue($this->isTextPresent("New contact has been created."), "Status message didn't show up after saving!");
     }
 
     /** 
@@ -127,4 +291,132 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         }
     }
 
+    /** 
+    * Generic function to check that strings are present in the page
+    * 
+    * @strings  array    array of strings or a single string
+    *
+    * @return   void
+    */
+  function assertStringsPresent( $strings ) {
+      if ( is_array( $strings ) ) {
+          // search for elements
+          foreach ( $strings as $string ) {
+              $this->assertTrue($this->isTextPresent($string), "Could not find $string on page");
+          }
+      } else {
+          $this->assertTrue($this->isTextPresent($strings), "Could not find $strings on page");
+      }
+  }
+
+  /** 
+   * Generic function to parse a URL string into it's elements.extract a variable value from a string (url)
+   * 
+   * @url      string url to parse or retrieve current url if null
+   *
+   * @return   array  returns an associative array containing any of the various components 
+   *                  of the URL that are present. Querystring elements are returned in sub-array (elements.queryString) 
+   *                  http://php.net/manual/en/function.parse-url.php
+   *
+   */
+  function parseURL( $url = null ) {
+      if ( ! $url ) {
+          $url = $this->getLocation( );
+      }
+
+      $elements = parse_url( $url );
+      if ( ! empty( $elements['query'] ) ) {
+          $elements['queryString'] = array( );
+          parse_str( $elements['query'], $elements['queryString'] );
+      }
+      return $elements;
+  }
+
+  /**
+   * Define a payment processor for use by a webtest. Default is to create Dummy processor
+   * which is useful for testing online public forms (online contribution pages and event registration)
+   *
+   * @param string $processorName Name assigned to new processor
+   * @param string $processorType Name for processor type (e.g. PayPal, Dummy, etc.)
+   * @param array  $processorSettings Array of fieldname => value for required settings for the processor
+   *
+   * @return void
+   */
+
+  function webtestAddPaymentProcessor( $processorName, $processorType = 'Dummy', $processorSettings = null ) {
+      if ( !$processorName ) {
+          $this->fail("webTestAddPaymentProcessor requires $processorName.");      
+      }
+      if ( $processorType == 'Dummy' ) {
+          $processorSettings = array( 'user_name'      => 'dummy',
+                                      'url_site'       => 'http://dummy.com',
+                                      'test_user_name' => 'dummytest',
+                                      'test_url_site'  => 'http://dummytest.com',
+                                    );
+      } elseif ( empty( $processorSettings ) ) {
+          $this->fail("webTestAddPaymentProcessor requires $processorSettings array if processorType is not Dummy.");
+      }
+      $this->open($this->sboxPath . "civicrm/admin/paymentProcessor?action=add&reset=1&pp=" . $processorType);
+      $this->type('name', $processorName);          
+      foreach ( $processorSettings AS $f => $v ){
+          $this->type($f, $v);          
+      }
+      $this->click("_qf_PaymentProcessor_next-bottom");
+      $this->waitForPageToLoad("30000");
+      // Is new processor created?
+      $this->assertTrue($this->isTextPresent($processorName), "Processor name not found in selector after adding payment processor (webTestAddPaymentProcessor).");
+  }  
+  
+  /**
+   * Create new relationship type w/ user specified params or default. 
+   *
+   * @param $params array of required params.
+   *
+   * @return an array of saved params values.
+   */
+  function webtestAddRelationshipType( $params = array( ) ) 
+  {
+      $this->open($this->sboxPath . 'civicrm/admin/reltype?reset=1&action=add');
+      
+      //build the params if not passed.
+      if ( !is_array( $params ) || empty( $params ) ) {
+          $params = array( 'label_a_b'       => 'Test Relationship Type A - B -'.rand( ),
+                           'label_b_a'       => 'Test Relationship Type B - A -'.rand( ),
+                           'contact_types_a' => 'Individual',
+                           'contact_types_b' => 'Individual',
+                           'description'     => 'Test Relationship Type Description' );
+      }
+      //make sure we have minimum required params.
+      if ( !isset( $params['label_a_b'] ) || empty( $params['label_a_b'] ) ) {
+          $params['label_a_b'] = 'Test Relationship Type A - B -'.rand( );
+      }
+      
+      //start the form fill.
+      $this->type('label_a_b', $params['label_a_b'] );
+      $this->type('label_b_a', $params['label_b_a'] );
+      $this->select('contact_types_a', "value={$params['contact_type_a']}");
+      $this->select('contact_types_b', "value={$params['contact_type_b']}");
+      $this->type('description', $params['description'] );
+      
+      //save the data.
+      $this->click('_qf_RelationshipType_next-bottom');
+      $this->waitForPageToLoad( '30000' );
+      
+      //does data saved.
+      $this->assertTrue( $this->isTextPresent( 'The Relationship Type has been saved.' ), 
+                         "Status message didn't show up after saving!" );
+      
+      $this->open($this->sboxPath . 'civicrm/admin/reltype?reset=1' );
+      $this->waitForPageToLoad( '30000' );
+      
+      //validate data on selector.
+      $data = $params;
+      if ( isset( $data['description'] ) ) {
+          unset( $data['description'] );
+      }
+      $this->assertStringsPresent( $data );
+      
+      return $params;
+  }
+  
 }

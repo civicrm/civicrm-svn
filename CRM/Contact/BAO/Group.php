@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -195,6 +195,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
 	        if ( isset( $status ) ) {
 	            $groupContact->status   = $status;
 	        }
+	        $groupContact->_query['condition'] = 'WHERE contact_id NOT IN (SELECT id FROM civicrm_contact WHERE is_deleted = 1)';
 	        $count += $groupContact->count( );
 	    }
         return $count;
@@ -335,7 +336,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
         }
 
         // form the name only if missing: CRM-627
-        if( !CRM_Utils_Array::value( 'name', $params ) ) {
+        if( !CRM_Utils_Array::value( 'name', $params ) && !CRM_Utils_Array::value( 'id', $params ) ) {
             require_once 'CRM/Utils/String.php';
             $params['name'] = CRM_Utils_String::titleToVar( $params['title'] );
         }
@@ -382,13 +383,15 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
                 // if no parent present and the group doesn't already have any parents, 
                 // make sure site group goes as parent
                 $params['parents'] = array( $domainGroupID => 1 );
-            } else if ( !is_array($params['parents']) ) {
+            } else if ( array_key_exists( 'parents', $params ) && !is_array($params['parents']) ) {
                 $params['parents'] = array( $params['parents'] => 1 );
             }
 
-            foreach ( $params['parents'] as $parentId => $dnc ) {
-                if ( $parentId && !CRM_Contact_BAO_GroupNesting::isParentChild( $parentId, $group->id ) ) {
-                    CRM_Contact_BAO_GroupNesting::add( $parentId, $group->id );
+            if ( !empty($params['parents']) ) {
+                foreach ( $params['parents'] as $parentId => $dnc ) {
+                    if ( $parentId && !CRM_Contact_BAO_GroupNesting::isParentChild( $parentId, $group->id ) ) {
+                        CRM_Contact_BAO_GroupNesting::add( $parentId, $group->id );
+                    }
                 }
             }
 
@@ -423,15 +426,26 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
         } else {
             CRM_Utils_Hook::post( 'create', 'Group', $group->id, $group ); 
         }
+        
+        $recentOther = array( );
+        if ( CRM_Core_Permission::check('edit groups') ) {
+            $recentOther['editUrl'] = CRM_Utils_System::url( 'civicrm/group', 'reset=1&action=update&id=' . $group->id );
+            // currently same permission we are using for delete a group
+            $recentOther['deleteUrl'] = CRM_Utils_System::url( 'civicrm/group', 'reset=1&action=delete&id=' . $group->id );
+        }
 
         require_once 'CRM/Utils/Recent.php';
-        // add the recently added group
-        CRM_Utils_Recent::add( $group->title,
-                               CRM_Utils_System::url( 'civicrm/group/search', 'reset=1&force=1&context=smog&gid=' . $group->id ),
-                               $group->id,
-                               'Group',
-                               null,
-                               null );
+        // add the recently added group (unless hidden: CRM-6432)
+        if (!$group->is_hidden) {
+            CRM_Utils_Recent::add( $group->title,
+                                   CRM_Utils_System::url( 'civicrm/group/search', 'reset=1&force=1&context=smog&gid=' . $group->id ),
+                                   $group->id,
+                                   'Group',
+                                   null,
+                                   null,
+                                   $recentOther
+                                   );
+        }
         return $group;
     }
 
@@ -547,7 +561,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
         
         //add mapping record only for search builder saved search
         $mappingId = null;
-        if ( $params['is_advanced'] == '2' && $params['is_searchBuilder'] == '1' ) {
+        if ( $params['search_context'] == 'builder' ) {
             //save the mapping for search builder
             require_once "CRM/Core/BAO/Mapping.php";
             if ( !$ssId ) {

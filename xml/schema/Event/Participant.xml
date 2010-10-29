@@ -5,6 +5,7 @@
   <class>Participant</class> 
   <name>civicrm_participant</name> 
   <add>1.7</add> 
+  <log>true</log>
   <field> 
       <name>id</name> 
       <uniqueName>participant_id</uniqueName> 
@@ -56,10 +57,11 @@
   <field> 
       <name>status_id</name> 
       <uniqueName>participant_status_id</uniqueName>
-      <title>Participant Status</title>
+      <title>Participant Status Id</title>
       <headerPattern>/(participant.)?(status)$/i</headerPattern>
       <import>true</import>
       <type>int unsigned</type>
+      <export>false</export>
       <required>true</required>  
       <default>1</default>
       <comment>Participant status ID. FK to civicrm_participant_status_type. Default of 1 should map to status = Registered.</comment>
@@ -79,10 +81,12 @@
   <field> 
       <name>role_id</name> 
       <uniqueName>participant_role_id</uniqueName>
-      <title>Participant Role</title>
+      <title>Participant Role Id</title>
       <headerPattern>/(participant.)?(role)$/i</headerPattern>
       <import>true</import>
-      <type>int unsigned</type> 
+      <type>varchar</type>  
+      <length>128</length> 
+      <export>false</export>
       <default>NULL</default>
       <comment>Participant role ID. Implicit FK to civicrm_option_value where option_group = participant_role.</comment> 
       <add>1.7</add> 
@@ -157,9 +161,11 @@
       <uniqueName>participant_registered_by_id</uniqueName> 
       <type>int unsigned</type> 
       <title>Registered By ID</title>
+      <import>true</import>
       <default>NULL</default>
       <comment>FK to Participant ID</comment> 
       <add>2.1</add> 
+      <export>true</export>
   </field>
   <foreignKey> 
        <name>registered_by_id</name> 
@@ -188,8 +194,8 @@
       <name>fee_currency</name>
       <uniqueName>participant_fee_currency</uniqueName>
       <type>varchar</type>
-      <length>64</length>
-      <default>NULL</default>
+      <length>3</length>
+      <required>true</required>
       <import>true</import>
       <headerPattern>/(fee)?.?cur(rency)?/i</headerPattern>
       <dataPattern>/^[A-Z]{3}$/i</dataPattern>

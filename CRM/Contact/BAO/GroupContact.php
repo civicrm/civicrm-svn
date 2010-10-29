@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -146,8 +146,9 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
         $date = date('YmdHis');
         $numContactsAdded    = 0;
         $numContactsNotAdded = 0;
+       
         foreach ( $contactIds as $contactId ) {
-           
+            
             $groupContact = new CRM_Contact_DAO_GroupContact( );
             $groupContact->group_id   = $groupId;
             $groupContact->contact_id = $contactId;
@@ -188,9 +189,12 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
         }
 
         // also reset the acl cache
-        require_once 'CRM/ACL/BAO/Cache.php';
-        CRM_ACL_BAO_Cache::resetCache( );
-        
+        $config = CRM_Core_Config::singleton( );
+        if ( ! $config->doNotResetCache ) {
+            require_once 'CRM/ACL/BAO/Cache.php';
+            CRM_ACL_BAO_Cache::resetCache( );
+        }
+
         // reset the group contact cache for all group(s)
         // if this group is being used as a smart group
         require_once 'CRM/Contact/BAO/GroupContactCache.php';
@@ -263,9 +267,12 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
         }
         
         // also reset the acl cache
-        require_once 'CRM/ACL/BAO/Cache.php';
-        CRM_ACL_BAO_Cache::resetCache( );
-        
+        $config = CRM_Core_Config::singleton( );
+        if ( ! $config->doNotResetCache ) {
+            require_once 'CRM/ACL/BAO/Cache.php';
+            CRM_ACL_BAO_Cache::resetCache( );
+        }
+
         // reset the group contact cache for all group(s)
         // if this group is being used as a smart group
         require_once 'CRM/Contact/BAO/GroupContactCache.php';

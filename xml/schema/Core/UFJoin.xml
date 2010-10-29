@@ -6,6 +6,7 @@
   <name>civicrm_uf_join</name>
   <comment>User framework join table. This links various internal civicrm object with a profile. Initial use cases are the donation object and the user module</comment>
   <add>1.3</add>
+  <log>true</log>
   <field>
       <name>id</name>
       <type>int unsigned</type>

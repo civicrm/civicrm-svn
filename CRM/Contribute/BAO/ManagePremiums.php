@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -121,6 +121,13 @@ class CRM_Contribute_BAO_ManagePremiums extends CRM_Contribute_DAO_Product
         $premium->copyValues( $params );
 
         $premium->id = CRM_Utils_Array::value( 'premium', $ids );
+
+	// set currency for CRM-1496
+	if ( ! isset( $premium->currency ) ) {
+	  $config =& CRM_Core_Config::singleton( );
+	  $premium->currency = $config->defaultCurrency;
+	}
+	
         $premium->save( );
         return $premium;
     }

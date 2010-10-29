@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -66,6 +66,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         $this->_contactID = CRM_Utils_Request::retrieve( 'cid', 'Positive',
                                                          $this );
         
+        
         // check for edit permission
         if ( !CRM_Core_Permission::checkActionPermission( 'CiviMember', $this->_action ) ) {
             CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) );
@@ -96,7 +97,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
                 } else if ( $paymentProcessor['payment_processor_type'] == 'Dummy' && $this->_mode == 'live' ) {
                     continue;
                 } else {
-                    $paymentObject =& CRM_Core_Payment::singleton( $this->_mode, 'Contribute', $paymentProcessor, $this );
+                    $paymentObject =& CRM_Core_Payment::singleton( $this->_mode, $paymentProcessor, $this );
                     $error = $paymentObject->checkConfig( );
                     if ( empty( $error ) ) {
                         $validProcessors[$ppID] = $label;
@@ -191,23 +192,19 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             if ( $this->_onlinePendingContributionId ) {
                 $defaults['record_contribution'] = $this->_onlinePendingContributionId;
             } else {
-                $defaults['record_contribution'] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipPayment', 
-                                                                                $defaults['id'], 
-                                                                                'contribution_id', 
-                                                                                'membership_id' );
+                $contributionId = CRM_Core_DAO::singleValueQuery( "
+  SELECT contribution_id 
+  FROM civicrm_membership_payment 
+  WHERE membership_id = $this->_id 
+  ORDER BY contribution_id 
+  DESC limit 1" );
+               
+                if ( $contributionId ) {
+                    $defaults['record_contribution'] = $contributionId;
+                }
             }
         }
-        
-        if ( $this->_memType ) {
-            $defaults['contribution_type_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
-                                                                             $this->_memType, 
-                                                                             'contribution_type_id' );
-            
-            $defaults['total_amount'] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
-                                                                     $this->_memType, 
-                                                                     'minimum_fee' );
-        }
-        
+                
         if ( CRM_Utils_Array::value( 'record_contribution', $defaults ) && ! $this->_mode ) {
             $contributionParams   = array( 'id' => $defaults['record_contribution'] );
             $contributionIds      = array( );
@@ -229,11 +226,6 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         if ( $this->_action & CRM_Core_Action::UPDATE ) {
             // in this mode by default uncheck this checkbox
             unset($defaults['record_contribution']);
-        }
-        if ( $defaults['membership_type_id'][1] ) {
-            $defaults['receipt_text_signup'] =  CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
-                                                                             $defaults['membership_type_id'][1],
-                                                                             'receipt_text_signup' );
         }
         
         $this->assign( "member_is_test", CRM_Utils_Array::value('member_is_test',$defaults) );
@@ -361,11 +353,16 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         if ( count($selMemTypeOrg) == 2 ) {
             unset($selMemTypeOrg[0], $selOrgMemType[0][0]);
         }
-        
+        //sort membership organization and type, CRM-6099
+        natcasesort( $selMemTypeOrg );
+        foreach( $selOrgMemType as $index => $orgMembershipType ) {
+            natcasesort( $orgMembershipType );
+            $selOrgMemType[$index] = $orgMembershipType;
+        }
         $sel =& $this->addElement('hierselect', 
                                   'membership_type_id', 
                                   ts('Membership Organization and Type'), 
-                                  array('onChange' => "buildCustomData( 'Membership', this.value ); setPaymentBlock( this.value );")
+                                  array('onChange' => "buildCustomData( 'Membership', this.value );")
                                   );
         
         $sel->setOptions(array($selMemTypeOrg,  $selOrgMemType));
@@ -381,13 +378,12 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         
         if ( !$this->_mode ) {
             $this->add('select', 'status_id', ts( 'Membership Status' ), 
-                       array(''=>ts( '- select -' )) + CRM_Member_PseudoConstant::membershipStatus( ) );
+                       array('' =>ts('- select -')) + CRM_Member_PseudoConstant::membershipStatus(null, null, 'label'));
             $this->addElement('checkbox', 'is_override', 
                               ts('Status Override?'), null, 
                               array( 'onClick' => 'showHideMemberStatus()'));
             
-            $this->addElement('checkbox', 'record_contribution', ts('Record Membership Payment?'), null, 
-                              array('onclick' =>"return showHideByValue('record_contribution','','recordContribution','table-row','radio',false);"));
+            $this->addElement('checkbox', 'record_contribution', ts('Record Membership Payment?') );
             
             require_once 'CRM/Contribute/PseudoConstant.php';
             $this->add('select', 'contribution_type_id', 
@@ -445,6 +441,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         
             $this->assign( 'emailExists', $this->_memberEmail );
             $this->assign( 'displayName', $this->_memberDisplayName );
+            
         }
         
         $this->addFormRule(array('CRM_Member_Form_Membership', 'formRule'), $this );
@@ -470,8 +467,8 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         $errors = array( );
         
         //check if contact is selected in standalone mode
-        if ( isset( $params['contact_select_id'] ) && !$params['contact_select_id'] ) {
-            $errors['contact'] = ts('Please select a contact or create new contact');
+        if ( isset( $fields['contact_select_id'][1] ) && !$fields['contact_select_id'][1] ) {
+            $errors['contact[1]'] = ts('Please select a contact or create new contact');
         }
         
         if (!$params['membership_type_id'][1]) {
@@ -613,7 +610,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
 
         // set the contact, when contact is selected
         if ( CRM_Utils_Array::value('contact_select_id', $formValues ) ) {
-            $this->_contactID = CRM_Utils_Array::value('contact_select_id', $formValues);
+            $this->_contactID = $formValues['contact_select_id'][1];
         }
 
         $params['contact_id'] = $this->_contactID;
@@ -784,7 +781,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             require_once 'CRM/Core/Payment/Form.php';
             CRM_Core_Payment_Form::mapParams( $this->_bltID, $this->_params, $paymentParams, true );
             
-            $payment =& CRM_Core_Payment::singleton( $this->_mode, 'Contribute', $this->_paymentProcessor, $this );
+            $payment =& CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this );
             
             $result  =& $payment->doDirectPayment( $paymentParams );
                       
@@ -836,8 +833,8 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
                                     'trxn_id'           => $result['trxn_id'],
                                     );
                 
-                require_once 'CRM/Contribute/BAO/FinancialTrxn.php';
-                $trxn =& CRM_Contribute_BAO_FinancialTrxn::create( $trxnParams );
+                require_once 'CRM/Core/BAO/FinancialTrxn.php';
+                $trxn =& CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
             }
         } else {
             $params['action'] = $this->_action;
@@ -878,14 +875,6 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             } else {
                 $membership =& CRM_Member_BAO_Membership::create( $params, $ids );
             }
-        }
-                
-        if ( CRM_Utils_Array::value( 'send_receipt', $formValues ) ) {
-            require_once 'CRM/Core/DAO.php';
-            CRM_Core_DAO::setFieldValue( 'CRM_Member_DAO_MembershipType', 
-                                         $params['membership_type_id'], 
-                                         'receipt_text_signup',
-                                         $formValues['receipt_text_signup'] );
         }
 
         $receiptSend = false;
@@ -983,6 +972,8 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             );
         }
         
+        //end date can be modified by hooks, so if end date is set then use it. 
+        $endDate = ( $membership->end_date ) ? $membership->end_date : $endDate ;
         if ( ( $this->_action & CRM_Core_Action::UPDATE ) ) {
             $statusMsg = ts('Membership for %1 has been updated.', array(1 => $this->_memberDisplayName));
             if ( $endDate ) {

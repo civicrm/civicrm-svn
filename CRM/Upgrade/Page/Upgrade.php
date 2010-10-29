@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -116,6 +116,51 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
             $template->assign( 'upgraded', true );
         } else {
             $message   = ts('CiviCRM upgrade was successful.');
+            if ( $latestVer == '3.2.alpha1' ) {
+                $message .= '<br />' . ts("We have reset the COUNTED flag to false for the event participant status 'Pending from incomplete transaction'. This change ensures that people who have a problem during registration can try again.");
+            } else if ( $latestVer == '3.2.beta3' && ( version_compare($currentVer, '3.1.alpha1') >= 0 ) ) {
+                require_once 'CRM/Contact/BAO/ContactType.php';
+                $subTypes = CRM_Contact_BAO_ContactType::subTypes( );
+                                
+                if ( is_array( $subTypes ) && !empty( $subTypes ) ) {
+                    $config = CRM_Core_Config::singleton( );
+                    $subTypeTemplates = array( );
+                    
+                    if ( isset( $config->customTemplateDir ) ) {
+                        foreach( $subTypes as $key => $subTypeName ) {
+                            $customContactSubTypeEdit = $config->customTemplateDir . "CRM/Contact/Form/Edit/" . $subTypeName . ".tpl";
+                            $customContactSubTypeView = $config->customTemplateDir . "CRM/Contact/Page/View/" . $subTypeName . ".tpl";
+                            if ( file_exists( $customContactSubTypeEdit ) || file_exists( $customContactSubTypeView ) ) {
+                                $subTypeTemplates[$subTypeName] = $subTypeName;
+                            }
+                        }
+                    } 
+                    
+                    foreach( $subTypes as $key => $subTypeName ) {
+                        $customContactSubTypeEdit = $config->templateDir . "CRM/Contact/Form/Edit/" . $subTypeName . ".tpl";
+                        $customContactSubTypeView = $config->templateDir . "CRM/Contact/Page/View/" . $subTypeName . ".tpl";
+                            if ( file_exists( $customContactSubTypeEdit ) || file_exists( $customContactSubTypeView ) ) {
+                                $subTypeTemplates[$subTypeName] = $subTypeName;
+                            }
+                    }
+                                        
+                    if ( !empty( $subTypeTemplates ) ) {
+                        $subTypeTemplates = implode( ',', $subTypeTemplates );
+                        $message .= '<br />' . ts('You are using custom template for contact subtypes: %1.', array(1 => $subTypeTemplates)) . '<br />' . ts('You need to move these subtype templates to the SubType directory in %1 and %2 respectively.', array(1 => 'CRM/Contact/Form/Edit', 2 => 'CRM/Contact/Page/View'));
+                    }
+                }
+            } else if ( $latestVer == '3.2.beta4' ) {
+                $statuses = array( 'New', 'Current', 'Grace', 'Expired', 'Pending', 'Cancelled', 'Deceased' );
+                $sql = "
+SELECT  count( id ) as statusCount 
+  FROM  civicrm_membership_status 
+ WHERE  name IN ( '" . implode( "' , '", $statuses )  .  "' ) ";
+                $count = CRM_Core_DAO::singleValueQuery( $sql );
+                if ( $count < count( $statuses ) ) {
+                    $message .= '<br />' . ts( "One or more Membership Status Rules was disabled during the upgrade because it did not match a recognized status name. if custom membership status rules were added to this site - review the disabled statuses and re-enable any that are still needed (Administer > CiviMember > Membership Status Rules)." );
+                }
+            }
+            
             $template->assign( 'currentVersion',  $currentVer);
             $template->assign( 'newVersion',      $latestVer );
             $template->assign( 'upgradeTitle',   ts('Upgrade CiviCRM from v %1 To v %2', 
@@ -132,10 +177,40 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
                         $upgrade->setVersion( $rev . '.upgrade' );
 
                         $phpFunctionName = 'upgrade_' . str_replace( '.', '_', $rev );
-                        if ( is_callable(array($this, $phpFunctionName)) ) {
-                            eval("\$this->{$phpFunctionName}('$rev');");
+
+                        // follow old upgrade process for all version
+                        // below 3.2.alpha1 
+                        if ( version_compare( $rev , '3.2.alpha1' ) < 0 ) {
+                            if ( is_callable(array($this, $phpFunctionName)) ) {
+                                eval("\$this->{$phpFunctionName}('$rev');");
+                            } else {
+                                $upgrade->processSQL( $rev );
+                            }
                         } else {
-                            $upgrade->processSQL( $rev );
+                            // new upgrade process from version
+                            // 3.2.alpha1 
+                            $versionObject = $upgrade->incrementalPhpObject( $rev );
+                            
+                            // predb check for major release.
+                            if ( $upgrade->checkVersionRelease( $rev, 'alpha1' ) ) {
+                                if ( !(is_callable(array($versionObject, 'verifyPreDBstate'))) ) {
+                                    CRM_Core_Error::fatal("verifyPreDBstate method was not found for $rev");
+                                }
+                                
+                                $error = null;
+                                if ( !($versionObject->verifyPreDBstate($error)) ) {
+                                    if ( ! isset( $error ) ) {
+                                        $error = "post-condition failed for current upgrade for $rev";
+                                    }
+                                    CRM_Core_Error::fatal( $error );
+                                }
+                            }
+                            
+                            if ( is_callable(array($versionObject, $phpFunctionName)) ) {
+                                $versionObject->$phpFunctionName( $rev );
+                            } else {
+                                $upgrade->processSQL( $rev );
+                            }
                         }
 
                         // after an successful intermediate upgrade, set the complete version
@@ -151,6 +226,9 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
 
                 // clear db caching
                 $config->clearDBCache( );
+
+                // clear temporary tables
+                $config->clearTempTables( );
 
                 // clean the session. Note: In case of standalone this makes the user logout. 
                 // So skip this step for standalone. 
@@ -405,43 +483,15 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
         $upgrade =& new CRM_Upgrade_Form( );
         $upgrade->processSQL( $rev );
     }
-    
-    function upgrade_3_2_alpha1 ( $rev ) 
+
+    function upgrade_3_1_4 ( $rev ) 
     {     
-        //CRM-5666 -if user already have 'access CiviCase'
-        //give all new permissions and drop access CiviCase.
-        db_query( "UPDATE permission SET perm = REPLACE( perm, 'access CiviCase', 'access my cases and activities, access all cases and activities, administer CiviCase' )" );
+        require_once 'CRM/Upgrade/ThreeOne/ThreeOne.php';
+        $threeOne = new CRM_Upgrade_ThreeOne_ThreeOne( );
+        $threeOne->upgrade_3_1_4( );
         
-        //insert core acls.
-        $casePermissions = array( 'delete in CiviCase',
-                                  'administer CiviCase', 
-                                  'access my cases and activities', 
-                                  'access all cases and activities', );
-        require_once 'CRM/ACL/DAO/ACL.php';
-        $aclParams = array( 'name'         => 'Core ACL',
-                            'deny'         => 0,
-                            'acl_id'       => NULL,
-                            'object_id'    => NULL,
-                            'acl_table'    => NULL,
-                            'entity_id'    => 1,
-                            'operation'    => 'All',
-                            'is_active'    => 1,
-                            'entity_table' => 'civicrm_acl_role' );
-        foreach ( $casePermissions as $per ) {
-            $aclParams['object_table'] = $per;
-            $acl = new CRM_ACL_DAO_ACL( );
-            $acl->object_table = $per;
-            if ( !$acl->find( true ) ) {
-                $acl->copyValues( $aclParams );
-                $acl->save( );
-            }
-        }
-        //drop 'access CiviCase' acl
-        CRM_Core_DAO::executeQuery( "DELETE FROM civicrm_acl WHERE object_table = 'access CiviCase'" );
-        
-        $upgrade =& new CRM_Upgrade_Form( );
+        $upgrade = new CRM_Upgrade_Form( );
         $upgrade->processSQL( $rev );
     }
-    
 }
 

@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                               |
+ | CiviCRM version 3.3                                               |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -53,7 +53,8 @@ class CRM_UpdateGreeting {
         CRM_Core_Error::debug_log_message( 'UpdateGreeting.php');
     }
 
-    function initialize( ) {
+    function initialize( ) 
+    {
         require_once '../civicrm.config.php';
         require_once 'CRM/Core/Config.php';
         require_once 'CRM/Utils/Request.php';
@@ -80,7 +81,7 @@ class CRM_UpdateGreeting {
             CRM_Core_Error::fatal( ts('You cannot use %1 for contact type %2.', array( 1 => $greeting, 2 => $contactType) ) );
         }
         
-        $valueID = CRM_Utils_Request::retrieve( 'id', 'Positive', CRM_Core_DAO::$_nullArray, false, null, 'REQUEST' );
+        $valueID = $id = CRM_Utils_Request::retrieve( 'id', 'Positive', CRM_Core_DAO::$_nullArray, false, null, 'REQUEST' );
         
         // if valueID is not passed use default value 
         if ( !$valueID ) {
@@ -116,68 +117,93 @@ class CRM_UpdateGreeting {
         $processAll = false;
         if ( in_array( $force, array( 1, 'true' ) ) ) {
             $processAll = true;
+        } elseif ( $force == 2 ) {
+            $processOnlyIdSet = true;
         }
         
         //FIXME : apiQuery should handle these clause.
-        $filterContactIds = array( );
+        $filterContactFldIds = $filterIds = array( );
         if ( !$processAll ) {
-            $idFldName = null;
-            if ( $greeting == 'email_greeting' ) {
-                $idFldName = 'email_greeting_id';
-            } else if ( $greeting == 'postal_greeting' ) {
-                $idFldName = 'postal_greeting_id';
-            } else if ( $greeting == 'addressee' ) {
-                $idFldName = 'addressee_id';
+            $idFldName = $displayFldName = null;
+            if ( $greeting == 'email_greeting' || $greeting == 'postal_greeting' ||  $greeting == 'addressee' ) {
+                $idFldName = $greeting . '_id';
+                $displayFldName = $greeting . '_display';
             }
+
             if ( $idFldName ) {
                 $sql = "
-SELECT DISTINCT id 
+SELECT DISTINCT id, $idFldName
   FROM civicrm_contact 
  WHERE contact_type = %1 
-   AND {$idFldName} IS NOT NULL
+   AND ( {$idFldName} IS NULL OR 
+         ( {$idFldName} IS NOT NULL AND {$displayFldName} IS NULL ) )
    ";
                 $dao = CRM_Core_DAO::executeQuery( $sql, array( 1 => array( $contactType, 'String' ) ) );
                 while ( $dao->fetch( ) ) {
-                    $filterContactIds[] = $dao->id;
+                    $filterContactFldIds[$dao->id] = $dao->$idFldName;
+
+                    if (!CRM_Utils_System::isNull( $dao->$idFldName)) {
+                        $filterIds[$dao->id] = $dao->$idFldName;
+                    }
                 }
+              
             }
-            if ( empty( $filterContactIds ) ) {
-                $filterContactIds[] = 0;
+            if ( empty( $filterContactFldIds ) ) {
+                $filterContactFldIds[] = 0;
             }
         }
-        
         // retrieve only required contact information
         require_once 'CRM/Mailing/BAO/Mailing.php';
         $extraParams[] = array( 'contact_type', '=', $contactType, 0, 0 );
-        list($greetingDetails)  = CRM_Mailing_BAO_Mailing::getDetails( $filterContactIds, 
-                                                                       $greetingsReturnProperties, 
-                                                                       false, false, $extraParams );
-        
+        list($greetingDetails) = CRM_Mailing_BAO_Mailing::getDetails( array_keys( $filterContactFldIds ),
+                                                                      $greetingsReturnProperties, 
+                                                                      false, false, $extraParams );
         // perform token replacement and build update SQL
         $contactIds = array( );
         $cacheFieldQuery = "UPDATE civicrm_contact SET {$greeting}_display = CASE id ";
         foreach ( $greetingDetails as $contactID => $contactDetails ) {
-            if ( !$processAll && !in_array( $contactID, $filterContactIds ) ) {
+            if ( !$processAll && !array_key_exists( $contactID, $filterContactFldIds ) ) {
                 continue;
             }
-            
-            $greetingString = $originalGreetingString;	 
+            if ( $processOnlyIdSet ) { 
+                if ( !array_key_exists( $contactID, $filterIds ) ) {
+                    continue;
+                }
+                if ( $id ) {
+                    $greetingString = $originalGreetingString;
+                    $contactIds[] = $contactID;
+                } else {
+                    if ( $greetingBuffer = CRM_Utils_Array::value($filterContactFldIds[$contactID], $allGreetings) ) {
+                        $greetingString = $greetingBuffer;
+                    }  
+                }
+                $allContactIds[] = $contactID;
+            } else {
+                $greetingString = $originalGreetingString;	 
+                if ( $greetingBuffer = CRM_Utils_Array::value($filterContactFldIds[$contactID], $allGreetings) ) {
+                    $greetingString = $greetingBuffer;
+                } else {
+                    $contactIds[] = $contactID;  
+                }
+            }
             CRM_Activity_BAO_Activity::replaceGreetingTokens($greetingString, $contactDetails, $contactID );
             $greetingString = CRM_Core_DAO::escapeString( $greetingString );
             $cacheFieldQuery .= " WHEN {$contactID} THEN '{$greetingString}' ";
-            $contactIds[] = $contactID;
+            
+            $allContactIds[] = $contactID;
         }
         
-        if ( !empty( $contactIds ) ) {
+        if ( !empty( $allContactIds ) ) {
             $cacheFieldQuery .= " ELSE {$greeting}_display
                               END;"; 
-            
-            // need to update greeting _id field.
+            if ( !empty( $contactIds ) ) {
+                // need to update greeting _id field.
             $queryString = "
 UPDATE civicrm_contact 
    SET {$greeting}_id = {$valueID} 
  WHERE id IN (" . implode( ',', $contactIds ) . ")";
             CRM_Core_DAO::executeQuery( $queryString );
+            }
             
             // now update cache field
             CRM_Core_DAO::executeQuery( $cacheFieldQuery );

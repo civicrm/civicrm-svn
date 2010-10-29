@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -126,7 +126,7 @@ class CRM_Core_Menu
                             $elements = explode( ',', $value );
                             $op = 'and';
                         } else {
-                            $elements = explode( ';', $element );
+                            $elements = explode( ';', $value );
                             $op = 'or';
                         }
                         $items = array( );
@@ -288,7 +288,7 @@ class CRM_Core_Menu
                                                                    )
                                              ),
                             'url'   => CRM_Utils_System::url( $path, $query, false ), 
-                            'icon'  => $item['icon'],
+                            'icon'  => CRM_Utils_Array::value( 'icon', $item ),
                             'extra' => CRM_Utils_Array::value( 'extra', $item ) );
             if ( ! array_key_exists( $item['adminGroup'], $values ) ) {
                 $values[$item['adminGroup']] = array( );
@@ -357,7 +357,7 @@ class CRM_Core_Menu
                 // if a child or the parent is active, expand the menu
                 if ( $values[$index ]['active'] ||
                      $values[$parent]['active'] ) {
-                    $values[$parent]['class'] = 'expanded';
+                     $values[$parent]['class'] = 'expanded';
                 }
                     
                 // make the parent inactive if the child is active
@@ -593,8 +593,10 @@ UNION (
             $menuPath['access_callback']       = array('CRM_Core_Permission', 'checkMenu');
         }
 
-        $i18n =& CRM_Core_I18n::singleton();
-        $i18n->localizeTitles($menuPath);
+        if ( ! empty( $menuPath ) ) {
+            $i18n =& CRM_Core_I18n::singleton();
+            $i18n->localizeTitles($menuPath);
+        }
         return $menuPath;
     }
 

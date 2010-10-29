@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -25,21 +25,19 @@
 *}
 {* Report form criteria section *}
     {if $colGroups}
-        <table class="report-layout">
-            <tr>
-	           <th>Display Columns</th>
-            </tr>
-        </table>
+
+	           <h3>Display Columns</h3>
+ 
         {foreach from=$colGroups item=grpFields key=dnc}
             {assign  var="count" value="0"}
-            <table class="report-layout criteria-group">
+            <table class="criteria-group">
                 {if $grpFields.group_title}<tr><td colspan=4>&raquo;&nbsp;{$grpFields.group_title}:</td></tr>{/if}
-                <tr>
+                <tr class="crm-report crm-report-criteria-field crm-report-criteria-field-{$dnc}">
                     {foreach from=$grpFields.fields item=title key=field}
                         {assign var="count" value=`$count+1`}
                         <td width="25%">{$form.fields.$field.html}</td>
                         {if $count is div by 4}
-                            </tr><tr>
+                            </tr><tr class="crm-report crm-report-criteria-field crm-report-criteria-field_{$dnc}">
                         {/if}
                     {/foreach}
                     {if $count is not div by 4}
@@ -51,15 +49,10 @@
     {/if}
     
     {if $groupByElements}
-        <br/>
-        <table class="report-layout">
-            <tr>
-	          <th>Group by Columns</th>
-	        </tr>
-    	</table>
+        <h3>Group by Columns</h3>
         {assign  var="count" value="0"}
         <table class="report-layout">
-            <tr>
+            <tr class="crm-report crm-report-criteria-groupby">
                 {foreach from=$groupByElements item=gbElem key=dnc}
                     {assign var="count" value=`$count+1`}
                     <td width="25%" {if $form.fields.$gbElem} onClick="selectGroupByFields('{$gbElem}');"{/if}>
@@ -69,7 +62,7 @@
                         {/if}
                     </td>
                     {if $count is div by 4}
-                        </tr><tr>
+                        </tr><tr class="crm-report crm-report-criteria-groupby">
                     {/if}
                 {/foreach}
                 {if $count is not div by 4}
@@ -80,15 +73,9 @@
     {/if}
 
     {if $form.options.html || $form.options.html}
-        <br/>
+        <h3>Other Options</h3>
         <table class="report-layout">
-            <tr>
-	        <th>Other Options</th>
-	    </tr>
-	</table>
-
-        <table class="report-layout">
-            <tr>
+            <tr class="crm-report crm-report-criteria-groupby">
 	        <td>{$form.options.html}</td>
 	        {if $form.blank_column_end}
 	            <td>{$form.blank_column_end.label}&nbsp;&nbsp;{$form.blank_column_end.html}</td>
@@ -98,29 +85,24 @@
     {/if}
   
     {if $filters}
-        <br/>
-        <table class="report-layout">
-            <tr>
-	        <th>Set Filters</th>
-	    </tr>
-	</table>
+        <h3>Set Filters</h3>
         <table class="report-layout">
             {foreach from=$filters     item=table key=tableName}
  	        {assign  var="filterCount" value=$table|@count}
-	        {if $colGroups.$tableName.group_title and $filterCount gte 1}</table><table class="report-layout"><tr><td colspan=3>&raquo;&nbsp;{$colGroups.$tableName.group_title}:</td></tr>{/if} 
+	        {if $colGroups.$tableName.group_title and $filterCount gte 1}</table><table class="report-layout"><tr class="crm-report crm-report-criteria-filter crm-report-criteria-filter-{$tableName}"><td colspan=3>&raquo;&nbsp;{$colGroups.$tableName.group_title}:</td></tr>{/if} 
                 {foreach from=$table       item=field key=fieldName}
                     {assign var=fieldOp     value=$fieldName|cat:"_op"}
                     {assign var=filterVal   value=$fieldName|cat:"_value"}
                     {assign var=filterMin   value=$fieldName|cat:"_min"}
                     {assign var=filterMax   value=$fieldName|cat:"_max"}
                     {if $field.operatorType & 4}
-                        <tr class="report-contents">
-                            <th class="report-contents">{$field.title}</td>
+                        <tr class="report-contents crm-report crm-report-criteria-filter crm-report-criteria-filter-{$tableName}">
+                            <td class="label report-contents">{$field.title}</td>
                             {include file="CRM/Core/DateRange.tpl" fieldName=$fieldName}
                         </tr>
                     {elseif $form.$fieldOp.html}
-                        <tr {if $field.no_display} style="display: none;"{/if}>
-                            <th class="report-contents">{$field.title}</th>
+                        <tr class="report-contents crm-report crm-report-criteria-filter crm-report-criteria-filter-{$tableName}" {if $field.no_display} style="display: none;"{/if}>
+                            <td class="label report-contents">{$field.title}</td>
                             <td class="report-contents">{$form.$fieldOp.html}</td>
                             <td>
                                <span id="{$filterVal}_cell">{$form.$filterVal.label}&nbsp;{$form.$filterVal.html}</span>
@@ -153,7 +135,7 @@
             if ( val == "bw" || val == "nbw" ) {
                 cj('#' + fldVal ).hide();
                 cj('#' + fldMinMax ).show();
-            } else if (val =="nll") {
+            } else if (val =="nll" || val == "nnll") {
                 cj('#' + fldVal).hide() ;
                 cj('#' + field + '_value').val('');
                 cj('#' + fldMinMax ).hide();
@@ -176,4 +158,4 @@
     </script>
     {/literal}
 
-    <br/><div>{$form.buttons.html}</div>
+    <div>{$form.buttons.html}</div>

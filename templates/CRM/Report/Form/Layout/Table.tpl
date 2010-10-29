@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -25,12 +25,12 @@
 *}
 {if (!$chartEnabled || !$chartSupported )&& $rows}
     {if $pager and $pager->_response and $pager->_response.numPages > 1}
-        <br />
         <div class="report-pager">
             {include file="CRM/common/pager.tpl" location="top" noForm=0}
         </div>
     {/if}
-    <table class="report-layout">
+    {include file="CRM/common/jsortable.tpl"}
+    <table class="report-layout display">
         <thead class="sticky">
         <tr> 
             {foreach from=$columnHeaders item=header key=field}
@@ -58,12 +58,12 @@
         </tr>          
         </thead>
        
-        {foreach from=$rows item=row}
-            <tr>
+        {foreach from=$rows item=row key=rowid}
+            <tr  class="{cycle values="odd-row,even-row"} crm-report" id="crm-report_{$rowid}">
                 {foreach from=$columnHeaders item=header key=field}
                     {assign var=fieldLink value=$field|cat:"_link"}
                     {assign var=fieldHover value=$field|cat:"_hover"}
-                    <td {if $header.type eq 1024 OR $header.type eq 1} class="report-contents-right"{elseif $row.$field eq 'Subtotal'} class="report-label"{/if}>
+                    <td class="crm-report-{$field}{if $header.type eq 1024 OR $header.type eq 1} report-contents-right{elseif $row.$field eq 'Subtotal'} report-label{/if}">
                         {if $row.$fieldLink}
                             <a title="{$row.$fieldHover}" href="{$row.$fieldLink}">
                         {/if}

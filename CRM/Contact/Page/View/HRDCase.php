@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -93,9 +93,11 @@ class CRM_Contact_Page_View_Case extends CRM_Contact_Page_View
 
         $links  =& self::links( );
         $action = array_sum(array_keys($links));
-        $caseStatus = CRM_Core_OptionGroup::values('case_status');
-        $caseType   = CRM_Core_OptionGroup::values('case_type');
-
+        
+        require_once 'CRM/Case/PseudoConstant.php';
+        $caseType   = CRM_Case_PseudoConstant::caseType( );
+        $caseStatus = CRM_Case_PseudoConstant::caseStatus( );
+        
         require_once 'CRM/Case/BAO/Case.php';
         $queryParams = array();
         $query = "SELECT civicrm_case.id, civicrm_case.case_type_id, civicrm_case.status_id,

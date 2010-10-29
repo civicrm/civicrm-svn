@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -68,8 +68,10 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
         /* First make sure there's a matching queue event */
         $q =& CRM_Mailing_Event_BAO_Queue::verify($job_id, $queue_id, $hash);
 
+        $success = null;
+
         if (! $q) {
-            return null;
+            return $success;
         }
 
         $mailing = new CRM_Mailing_BAO_Mailing();
@@ -91,7 +93,7 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
         $re->save();
 
         if (! $mailing->forward_replies || empty($mailing->replyto_email)) {
-            return null;
+            return $success;
         }
         
         return $mailing;
@@ -121,7 +123,7 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
 
             // CRM-5567: we need to set Reply-To: so that any response
             // to the forward goes to the sender of the reply
-            $parsed->setHeader('Reply-To', empty($replyto) ? $parsed->from->__toString() : $replyto);
+            $parsed->setHeader('Reply-To', $replyto instanceof ezcMailAddress ? $parsed->from->__toString() : $replyto);
 
             // $h must be an array, so we can't use generateHeaders()'s result, 
             // but we have to regenerate the headers because we changed To
@@ -170,11 +172,7 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
             require_once 'CRM/Core/BAO/MailSettings.php';
             $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
             
-            // we need to wrap Mail_mime because PEAR is apparently unable to fix
-            // a six-year-old bug (PEAR bug #30) in Mail_mime::_encodeHeaders()
-            // this fixes CRM-5466
-            require_once 'CRM/Utils/Mail/FixedMailMIME.php';
-            $message = new CRM_Utils_Mail_FixedMailMIME("\n");
+            $message = new Mail_mime("\n");
 
             $headers = array(
                 'Subject'       => "Re: {$mailing->subject}",
@@ -333,6 +331,8 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
             $query .= " GROUP BY $queue.id ";
         }
 
+        $dao->query($query);//query was missing
+        
         if ( $dao->fetch() ) {
             return $dao->reply;
         }
@@ -396,9 +396,18 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
             $query .= " GROUP BY $queue.id ";
         }
 
-        $query .= " ORDER BY $contact.sort_name, $reply.time_stamp DESC ";
-
-        if ($offset) {
+        $orderBy = "sort_name ASC, {$reply}.time_stamp DESC";
+        if ($sort) {
+            if ( is_string( $sort ) ) {
+                $orderBy = $sort;
+            } else {
+                $orderBy = trim( $sort->orderBy() );
+            }
+        }
+        
+        $query .= " ORDER BY {$orderBy} ";
+        
+        if ($offset||$rowCount) {//Added "||$rowCount" to avoid displaying all records on first page
             $query .= ' LIMIT ' 
                     . CRM_Utils_Type::escape($offset, 'Integer') . ', ' 
                     . CRM_Utils_Type::escape($rowCount, 'Integer');

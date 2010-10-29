@@ -17,12 +17,13 @@ $.fn.tokenInput = function (url, options) {
         noResultsText: "No results",
         searchingText: "Searching...",
         searchDelay: 600,
-        minChars: 2,
+        minChars: 1,
         tokenLimit: null,
         jsonContainer: null,
         method: "GET",
         contentType: "json",
         queryParam: "name",
+        ajaxCallbackFunction: null,
         onResult: null
     }, options);
 
@@ -82,7 +83,7 @@ $.TokenList = function (input, settings) {
     var timeout;
 
     // Create a new text input an attach keyup events
-    var input_box = $("<input type=\"text\">")
+    var input_box = $("<input type=\"text\" class='token-input-box'>")
         .css({
             outline: "none"
         })
@@ -94,7 +95,7 @@ $.TokenList = function (input, settings) {
         .blur(function () {
             hide_dropdown();
         })
-        .keydown(function (event) {
+        .bind("keydown text", function (event) {
             var previous_token;
             var next_token;
 
@@ -355,6 +356,10 @@ $.TokenList = function (input, settings) {
 
         // Save this token id
         var id_string = li_data.id;
+        
+        if ( settings.ajaxCallbackFunction !=  null ) {
+            eval( settings.ajaxCallbackFunction + '( "select", id_string )')
+        }
 
         // IE fixes: Remove extra comma at the end
         if ( hidden_input.val( ) ) {
@@ -416,6 +421,10 @@ $.TokenList = function (input, settings) {
     function delete_token (token) {
         // Remove the id from the saved list
         var token_data = $.data(token.get(0), "tokeninput");
+        
+        if ( settings.ajaxCallbackFunction !=  null ) {
+            eval( settings.ajaxCallbackFunction + '( "delete", token_data.id )')
+        }
 
         // Delete the token
         token.remove();
@@ -463,8 +472,14 @@ $.TokenList = function (input, settings) {
 
     // Hide and clear the results dropdown
     function hide_dropdown () {
-        dropdown.hide().empty();
-        selected_dropdown_item = null;
+//         dropdown.hide().empty();
+//         selected_dropdown_item = null;
+
+      //here we need to sleep, fix for IE, CRM-6012 
+      setTimeout(function( ) { 
+	  dropdown.hide().empty(); 
+	  selected_dropdown_item = null; 
+	}, 300 );
     }
 
     function show_dropdown_searching () {

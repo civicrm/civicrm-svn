@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -145,12 +145,17 @@ class CRM_Report_Utils_Get {
             break;
 
         case 'in' :
-            // assuming only one value for now. A plus symbol could be used 
-            // to diplsay multiple values in url
-            $value    = self::getTypedValue( "{$fieldName}_value", $field['type'] );
+            // send the type as string so that multiple values can also be retrieved from url. 
+            // for e.g url like - "memtype_in=in&memtype_value=1,2,3"
+            $value = self::getTypedValue( "{$fieldName}_value", CRM_Utils_Type::T_STRING );
+            if ( ! preg_match('/^(\d)(,\d){0,14}$/', $value) ) {
+                // extra check. Also put a limit of 15 max values.
+                $value = null;
+            }
+            // unset any default filters already applied for example - incase of an instance.
             self::unsetFilters( $defaults );
             if ( $value !== null ) {
-                $defaults["{$fieldName}_value"] = array( $value );
+                $defaults["{$fieldName}_value"] = explode( ",", $value );
                 $defaults["{$fieldName}_op"   ] = $fieldOP;
             }
             break;

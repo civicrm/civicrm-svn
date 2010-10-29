@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -105,9 +105,9 @@ class CRM_Utils_Recent
                          $id, 
                          $type, 
                          $contactId, 
-                         $contactName, 
-                         $imageUrl = null,
-                         $subtype  = null ) 
+                         $contactName,
+                         $others   = array( )
+                         )
     {
         self::initialize( );
         $session = CRM_Core_Session::singleton( );
@@ -121,15 +121,23 @@ class CRM_Utils_Recent
             }
         }
 
+        if ( !is_array($others) ) {
+            $others = array( );
+        }
+
         array_unshift( self::$_recent,
                        array( 'title'       => $title,
                               'url'         => $url,
                               'id'          => $id,
                               'type'        => $type,
-                              'subtype'     => $subtype,
                               'contact_id'  => $contactId,
                               'contactName' => $contactName,
-                              'image_url'   => $imageUrl ) );
+                              'subtype'     => CRM_Utils_Array::value('subtype',   $others),
+                              'isDeleted'   => CRM_Utils_Array::value('isDeleted', $others, false),
+                              'image_url'   => CRM_Utils_Array::value('imageUrl',  $others),
+                              'edit_url'    => CRM_Utils_Array::value('editUrl',   $others),
+                              'delete_url'  => CRM_Utils_Array::value('deleteUrl', $others),
+                              ) );
         if ( count( self::$_recent ) > self::MAX_ITEMS ) {
             array_pop( self::$_recent );
         }

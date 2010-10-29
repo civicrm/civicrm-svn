@@ -6,6 +6,7 @@
   <name>civicrm_note</name>
   <comment>Notes can be linked to any object in the application.</comment>
   <add>1.1</add>
+  <log>true</log>
   <field>
       <name>id</name>
       <type>int unsigned</type>
@@ -75,5 +76,12 @@
        <length>255</length>
        <comment>subject of note description</comment>
        <add>1.5</add>
+  </field>
+  <field>
+       <name>privacy</name>
+       <type>int</type>
+       <length>10</length>
+       <comment>Foreign Key to Note Privacy Level (which is an option value pair and hence an implicit FK)</comment>
+       <add>3.3</add>
   </field>
 </table>

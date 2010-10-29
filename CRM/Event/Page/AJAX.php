@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -42,7 +42,7 @@ class CRM_Event_Page_AJAX
     /**
      * Function for building Event combo box
      */
-    function event( &$config ) 
+    function event( )
     {
         require_once 'CRM/Utils/Type.php';
         $name = trim( CRM_Utils_Type::escape( $_GET['s'], 'String' ) );
@@ -67,7 +67,7 @@ ORDER BY title
     /**
      * Function for building Event Type combo box
      */
-    function eventType( &$config ) 
+    function eventType( )
     {
         require_once 'CRM/Utils/Type.php';
         $name = trim( CRM_Utils_Type::escape( $_GET['s'], 'String' ) );
@@ -96,7 +96,7 @@ ORDER by v.weight";
     /**
      * Function for building EventFee combo box
      */
-    function eventFee( &$config ) 
+    function eventFee( )
     {
         require_once 'CRM/Utils/Type.php';
         $name = trim( CRM_Utils_Type::escape( $_GET['s'], 'String' ) );
@@ -133,6 +133,26 @@ WHERE cg.name LIKE 'civicrm_event.amount%'
 
         require_once "CRM/Utils/JSON.php";
         echo json_encode( $elements );
+        CRM_Utils_System::civiExit( );
+    } 
+
+    /**
+     * Function to get default participant role
+     */
+    function participantRole( ) {
+        
+        require_once 'CRM/Utils/Type.php';
+        
+        $eventID = $_GET['eventId'] ;
+       
+        $defaultRoleId = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', 
+                                                      $eventID, 
+                                                      'default_role_id',
+                                                      'id'
+                                                      );
+        require_once "CRM/Utils/JSON.php";
+        $participantRole = array( 'role' => $defaultRoleId );
+        echo json_encode( $participantRole );
         CRM_Utils_System::civiExit( );
     } 
 }

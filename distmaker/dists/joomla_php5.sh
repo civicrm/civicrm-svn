@@ -77,12 +77,15 @@ mkdir com_civicrm
 mkdir com_civicrm/admin
 mkdir com_civicrm/site
 mkdir com_civicrm/admin/civicrm
+mkdir com_civicrm/admin/helpers
 
 # copying back end code to admin folder
 cp civicrm/joomla/admin/admin.civicrm.php        com_civicrm/admin
 cp civicrm/joomla/admin/configure.php            com_civicrm/admin
 cp civicrm/joomla/admin/toolbar.civicrm.php      com_civicrm/admin
 cp civicrm/joomla/admin/toolbar.civicrm.html.php com_civicrm/admin
+
+cp -r -p civicrm/joomla/admin/helpers/*           com_civicrm/admin/helpers
 
 cp civicrm/joomla/admin/install.civicrm.php      com_civicrm/
 cp civicrm/joomla/admin/uninstall.civicrm.php    com_civicrm/

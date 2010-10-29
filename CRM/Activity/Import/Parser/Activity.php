@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -257,6 +257,8 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
                 } else if ( $customFields[$customFieldID]['data_type'] == 'Boolean' ) {
                     $params[$key] = CRM_Utils_String::strtoboolstr( $val );
                 }
+            } else if ( $key == 'activity_subject' ) {
+                $params['subject'] = $val;
             }
         }
         //date-Format part ends

@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -232,6 +232,26 @@ class CRM_Core_BAO_Domain extends CRM_Core_DAO_Domain {
             $childGrps[] = $domainGroupID;
         }
         return $childGrps;
+    }
+
+    // function to retrieve a list of contact-ids that belongs to current domain/site.
+    static function getContactList( ) {
+        $siteGroups = CRM_Core_BAO_Domain::getChildGroupIds( );
+        $siteContacts = array( );
+
+        if ( ! empty( $siteGroups ) ) {
+            $query = "
+SELECT      cc.id
+FROM        civicrm_contact cc
+INNER JOIN  civicrm_group_contact gc ON 
+           (gc.contact_id = cc.id AND gc.status = 'Added' AND gc.group_id IN (" . implode(',', $siteGroups) . "))";
+
+            $dao =& CRM_Core_DAO::executeQuery( $query );
+            while ( $dao->fetch() ) {
+                $siteContacts[] = $dao->id;
+            }
+        }
+        return $siteContacts;
     }
 }
 

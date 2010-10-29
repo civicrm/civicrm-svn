@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -140,6 +140,8 @@ class CRM_Mailing_Event_BAO_TrackableURLOpen extends CRM_Mailing_Event_DAO_Track
         if ($is_distinct) {
             $query .= " GROUP BY $queue.id ";
         }
+        
+        $dao->query($query);//query was missing
 
         if ( $dao->fetch() ) {
             return $dao->opened;
@@ -215,9 +217,18 @@ class CRM_Mailing_Event_BAO_TrackableURLOpen extends CRM_Mailing_Event_DAO_Track
             $query .= " GROUP BY $queue.id ";
         }
 
-        $query .= " ORDER BY $contact.sort_name, $url.id, $click.time_stamp DESC ";
+        $orderBy = "sort_name ASC, {$click}.time_stamp DESC";
+        if ($sort) {
+            if ( is_string( $sort ) ) {
+                $orderBy = $sort;
+            } else {
+                $orderBy = trim( $sort->orderBy() );
+            }
+        }
+        
+        $query .= " ORDER BY {$orderBy} ";
 
-        if ($offset) {
+        if ($offset||$rowCount) {//Added "||$rowCount" to avoid displaying all records on first page
             $query .= ' LIMIT ' 
                     . CRM_Utils_Type::escape($offset, 'Integer') . ', ' 
                     . CRM_Utils_Type::escape($rowCount, 'Integer');

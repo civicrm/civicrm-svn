@@ -2,7 +2,7 @@
  
 /*
  +--------------------------------------------------------------------+
- | FirstData Core Payment Module for CiviCRM version 2.x              |
+ | FirstData Core Payment Module for CiviCRM version 3.3              |
  +--------------------------------------------------------------------+
  | Licensed to CiviCRM under the Academic Free License version 3.0    |
  |                                                                    |
@@ -84,6 +84,23 @@ class CRM_Core_Payment_FirstData extends CRM_Core_Payment
         $this->_paymentProcessor = $paymentProcessor;
     }
     
+    /** 
+     * singleton function used to manage this object 
+     * 
+     * @param string $mode the mode of operation: live or test
+     *
+     * @return object 
+     * @static 
+     * 
+     */ 
+    static function &singleton( $mode, &$paymentProcessor ) {
+        $processorName = $paymentProcessor['name'];
+        if (self::$_singleton[$processorName] === null ) {
+            self::$_singleton[$processorName] = new CRM_Core_Payment_FirstData( $mode, $paymentProcessor );
+        }
+        return self::$_singleton[$processorName];
+    }
+
     /**********************************************************
      * This function is set up and put here to make the mapping of fields 
      * from the params object  as visually clear as possible for easy editing
@@ -147,11 +164,11 @@ class CRM_Core_Payment_FirstData extends CRM_Core_Payment
     function doDirectPayment( &$params ) 
     { 
         if ( $params['is_recur'] == true ) {       
-            CRM_Core_Error::fatal( ts( '$paymentProcessor - recurring payments not implemented' ) );
+            CRM_Core_Error::fatal(ts('%1 - recurring payments not implemented', array(1 => $paymentProcessor)));
         }
         
         if ( ! defined( 'CURLOPT_SSLCERT' ) ) {
-            CRM_Core_Error::fatal( ts( '$paymentProcessor - Gateway requires curl with SSL support' ) );
+            CRM_Core_Error::fatal(ts('%1 - Gateway requires curl with SSL support', array(1 => $paymentProcessor)));
         }
         
         /**********************************************************

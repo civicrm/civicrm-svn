@@ -47,7 +47,7 @@ class HTML_QuickForm_CKeditor extends HTML_QuickForm_textarea
         $this->_type = 'CKeditor';
         // set editor height smaller if schema defines rows as 4 or less
         if ( is_array($attributes) && array_key_exists( 'rows', $attributes ) && $attributes['rows'] <= 4 ) {
-            $this->height = 200;
+            $this->height = 175;
         }
     }    
 

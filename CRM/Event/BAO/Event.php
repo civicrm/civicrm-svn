@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -97,6 +97,9 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
      */
     static function add( &$params )
     {
+        require_once 'CRM/Utils/System.php';
+        CRM_Utils_System::flushCache( );
+
         require_once 'CRM/Utils/Hook.php';
         
         if ( CRM_Utils_Array::value( 'id', $params ) ) {
@@ -104,6 +107,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
         } else {
             CRM_Utils_Hook::pre( 'create', 'Event', null, $params ); 
         }
+
         
         $event = new CRM_Event_DAO_Event( );
         
@@ -182,7 +186,10 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
         if ( !$id ) {
             return null;
         }
-        
+
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::pre( 'delete', 'Event', $id, CRM_Core_DAO::$_nullArray );
+
         require_once 'CRM/Core/BAO/CustomGroup.php';
         $extends   = array('event');
         $groupTree = CRM_Core_BAO_CustomGroup::getGroupDetail( null, null, $extends );
@@ -241,6 +248,8 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
             if ( ! is_null( $locBlockId ) ) {
                 self::deleteEventLocBlock( $locBlockId, $id );
             }
+
+            CRM_Utils_Hook::post( 'delete', 'Event', $id, $event );
             return $result;
         }
         
@@ -278,6 +287,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
      * Function to get current/future Events 
      *
      * @param $all boolean true if events all are required else returns current and future events
+     * @param $id  int     id of a specific event to return
      *
      * @static
      */
@@ -285,18 +295,17 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
     {
         $query = "SELECT `id`, `title`, `start_date` FROM `civicrm_event`";
         
-        if ( !$all ) {
-            $endDate = date( 'YmdHis' );
-            $query .= " WHERE `end_date` >= {$endDate} OR end_date IS NULL";
-        }
         if ( $id ) {
             $query .= " WHERE `id` = {$id}";
+        } elseif ( !$all ) {
+            $endDate = date( 'YmdHis' );
+            $query .= " WHERE `end_date` >= {$endDate} OR end_date IS NULL";
         }
 
         $query .= " ORDER BY title asc";
         $events = array( );
         
-        $dao =& CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
+        $dao =& CRM_Core_DAO::executeQuery( $query );
         while ( $dao->fetch( ) ) {
             if ( CRM_Event_BAO_Event::checkPermission( $dao->id ) && $dao->title ) { 
                 $events[$dao->id] = $dao->title . ' - '.CRM_Utils_Date::customFormat($dao->start_date);
@@ -312,7 +321,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
      * @static
      * @return array Array of event summary values
      */
-    static function getEventSummary( $admin = false )
+    static function getEventSummary( )
     {
         $eventSummary = $eventIds = array( );
         require_once 'CRM/Core/Config.php';
@@ -348,12 +357,13 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
         $query = "
 SELECT     civicrm_event.id as id, civicrm_event.title as event_title, civicrm_event.is_public as is_public,
            civicrm_event.max_participants as max_participants, civicrm_event.start_date as start_date,
-           civicrm_event.end_date as end_date, civicrm_event.is_map as is_map, civicrm_option_value.label as event_type,
+           civicrm_event.end_date as end_date, civicrm_event.is_online_registration, civicrm_event.is_monetary, civicrm_event.is_show_location,civicrm_event.is_map as is_map, civicrm_option_value.label as event_type, civicrm_tell_friend.is_active as is_friend_active,
            civicrm_event.summary as summary
 FROM       civicrm_event
 LEFT JOIN  civicrm_option_value ON (
            civicrm_event.event_type_id = civicrm_option_value.value AND
            civicrm_option_value.option_group_id = %1 )
+LEFT JOIN  civicrm_tell_friend ON ( civicrm_tell_friend.entity_id = civicrm_event.id  AND civicrm_tell_friend.entity_table = 'civicrm_event' )
 WHERE      civicrm_event.is_active = 1 AND
            ( civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0) AND
            civicrm_event.start_date >= DATE_SUB( NOW(), INTERVAL 7 day )
@@ -413,7 +423,7 @@ LIMIT      0, 10
                         }
                         
                         $eventSummary['events'][$dao->id][$property] = $set;
-                        if ( $admin || in_array( $dao->id, $permissions[CRM_Core_Permission::EDIT] ) ) {
+                        if ( in_array( $dao->id, $permissions[CRM_Core_Permission::EDIT] ) ) {
                             $eventSummary['events'][$dao->id]['configure'] =
                                 CRM_Utils_System::url( "civicrm/admin/event", "action=update&id=$dao->id&reset=1" );
                         }
@@ -466,6 +476,11 @@ LIMIT      0, 10
             } else {
                 $eventSummary['total_events']--;
             }
+            
+            $eventSummary['events'][$dao->id]['friend'] = $dao->is_friend_active;
+            $eventSummary['events'][$dao->id]['is_monetary'] = $dao->is_monetary;
+            $eventSummary['events'][$dao->id]['is_online_registration'] = $dao->is_online_registration;
+            $eventSummary['events'][$dao->id]['is_show_location'] = $dao->is_show_location;
         }
         
         require_once 'CRM/Event/PseudoConstant.php';
@@ -491,6 +506,7 @@ LIMIT      0, 10
     FROM  civicrm_participant p 
     JOIN  civicrm_participant_status_type pst ON ( p.status_id = pst.id )
           {$eventIdsClause}
+     AND  p.contact_id NOT IN (SELECT id FROM civicrm_contact WHERE is_deleted = 1)
 GROUP BY  event_id, status_id";
         $st = CRM_Core_DAO::executeQuery( $query );
         
@@ -578,6 +594,7 @@ LEFT JOIN  civicrm_participant ON ( civicrm_event.id = civicrm_participant.event
     WHERE  civicrm_participant.is_test = 0 
       AND  civicrm_event.is_active = 1
            {$sqlClause}
+      AND  civicrm_participant.contact_id NOT IN (SELECT id FROM civicrm_contact WHERE is_deleted = 1)
  GROUP BY  civicrm_event.id
  ORDER BY  civicrm_event.end_date DESC
   LIMIT 0, 10
@@ -839,7 +856,7 @@ WHERE civicrm_event.is_active = 1
         // since the location is sharable, lets use the same loc_block_id.
         $locBlockId     = CRM_Utils_Array::value( 'loc_block_id', $eventValues );
         
-        $fieldsFix = array ( 'prefix' => array( 'title' => ts( 'Copy of ' ) ) );
+        $fieldsFix = array('prefix' => array('title' => ts('Copy of') . ' '));
         if ( !CRM_Utils_Array::value( 'is_show_location', $eventValues ) ) {
             $fieldsFix['prefix']['is_show_location'] = 0;
         }
@@ -959,11 +976,16 @@ WHERE civicrm_event.is_active = 1
     static function sendMail( $contactID, &$values, $participantId, $isTest = false, $returnMessageText = false ) 
     {
         require_once 'CRM/Core/BAO/UFGroup.php';
+        
         $template = CRM_Core_Smarty::singleton( );
         $gIds = array(
                       'custom_pre_id' => $values['custom_pre_id'],
                       'custom_post_id'=> $values['custom_post_id']
                       );
+        
+        
+        //get the params submitted by participant.
+        $participantParams = CRM_Utils_Array::value( $participantId, $values['params'], array( ) );
         
         if ( ! $returnMessageText ) {
             //send notification email if field values are set (CRM-1941)
@@ -972,7 +994,14 @@ WHERE civicrm_event.is_active = 1
                     $email = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $gId, 'notify' );
                     if ( $email ) {
                         //get values of corresponding profile fields for notification
-                        list( $profileValues ) = self::buildCustomDisplay( $gId, null, $contactID, $template, $participantId, $isTest, true );  
+                        list( $profileValues ) = self::buildCustomDisplay( $gId, 
+                                                                           null, 
+                                                                           $contactID, 
+                                                                           $template, 
+                                                                           $participantId, 
+                                                                           $isTest, 
+                                                                           true,
+                                                                           $participantParams );  
                         $val = array(
                                      'id'     => $gId,
                                      'values' => $profileValues,
@@ -984,7 +1013,7 @@ WHERE civicrm_event.is_active = 1
             }
         }
         
-        if ( $values['event']['is_email_confirm'] ) {
+        if ( $values['event']['is_email_confirm'] || $returnMessageText ) {
             require_once 'CRM/Contact/BAO/Contact/Location.php';
             //use primary email address, since we are not creating billing address for
             //1. participant is pay later.
@@ -1005,7 +1034,7 @@ WHERE civicrm_event.is_active = 1
             }
             
             //send email only when email is present
-            if ( isset( $email ) ) {
+            if ( isset( $email ) || $returnMessageText ) {
                 $preProfileID  = $values['custom_pre_id'];
                 $postProfileID = $values['custom_post_id'];
                 
@@ -1014,9 +1043,24 @@ WHERE civicrm_event.is_active = 1
                     $postProfileID = $values['additional_custom_post_id'];
                 }
                 
-                self::buildCustomDisplay( $preProfileID, 'customPre' , $contactID, $template, $participantId, $isTest );
-                self::buildCustomDisplay( $postProfileID, 'customPost', $contactID, $template, $participantId, $isTest );
-
+                self::buildCustomDisplay( $preProfileID, 
+                                          'customPre', 
+                                          $contactID, 
+                                          $template, 
+                                          $participantId, 
+                                          $isTest, 
+                                          null, 
+                                          $participantParams );
+                
+                self::buildCustomDisplay( $postProfileID, 
+                                          'customPost', 
+                                          $contactID, 
+                                          $template, 
+                                          $participantId, 
+                                          $isTest, 
+                                          null, 
+                                          $participantParams );
+                
                 $sendTemplateParams = array(
                     'groupName' => 'msg_tpl_workflow_event',
                     'valueName' => 'event_online_receipt',
@@ -1027,18 +1071,31 @@ WHERE civicrm_event.is_active = 1
                         'confirm_email_text' => CRM_Utils_Array::value('confirm_email_text', $values['event']),
                         'isShowLocation'     => CRM_Utils_Array::value('is_show_location',   $values['event']),
                     ),
+                    'PDFFilename' => 'civicrm.pdf',
                 );
+
+                // address required during receipt processing (pdf and email receipt)
+                if ( $displayAddress = CRM_Utils_Array::value('address', $values) ) {
+                    $sendTemplateParams['tplParams']['address'] = $displayAddress;
+                    $sendTemplateParams['tplParams']['contributeMode'] = null;
+                }
+                // set lineItem details
+                if ( $lineItem = CRM_Utils_Array::value( 'lineItem', $values ) ) {
+                    $sendTemplateParams['tplParams']['lineItem']   = $lineItem;
+                }
 
                 require_once 'CRM/Core/BAO/MessageTemplates.php';
                 if ( $returnMessageText ) {
                     list ($sent, $subject, $message, $html) = CRM_Core_BAO_MessageTemplates::sendTemplate($sendTemplateParams);
                     return array( 'subject' => $subject,
                                   'body'    => $message,
-                                  'to'      => $displayName );
+                                  'to'      => $displayName,
+                                  'html'    => $html );
                 } else {
                     $sendTemplateParams['from']    = "{$values['event']['confirm_from_name']} <{$values['event']['confirm_from_email']}>";
                     $sendTemplateParams['toName']  = $displayName;
                     $sendTemplateParams['toEmail'] = $email;
+                    $sendTemplateParams['autoSubmitted'] = true;
                     $sendTemplateParams['cc']      = CRM_Utils_Array::value('cc_confirm',  $values['event']);
                     $sendTemplateParams['bcc']     = CRM_Utils_Array::value('bcc_confirm', $values['event']);
                     CRM_Core_BAO_MessageTemplates::sendTemplate($sendTemplateParams);
@@ -1054,7 +1111,14 @@ WHERE civicrm_event.is_active = 1
      * @return None  
      * @access public  
      */ 
-    function buildCustomDisplay( $gid, $name, $cid, &$template, $participantId, $isTest, $isCustomProfile = false ) 
+    function buildCustomDisplay( $gid, 
+                                 $name, 
+                                 $cid, 
+                                 &$template, 
+                                 $participantId, 
+                                 $isTest, 
+                                 $isCustomProfile = false, 
+                                 $participantParams = array( ) ) 
     {  
         if ( $gid ) {
             require_once 'CRM/Core/BAO/UFGroup.php';
@@ -1080,20 +1144,39 @@ WHERE civicrm_event.is_active = 1
                         $groupTitle = $v["groupTitle"];
                     }
                     // suppress all file fields from display
-                    if ( CRM_Utils_Array::value( 'data_type', $v, '' ) == 'File' ) {
+                    if ( CRM_Utils_Array::value( 'data_type', $v, '' ) == 'File' || CRM_Utils_Array::value( 'name', $v, '' ) == 'image_URL' ) {
                         unset( $fields[$k] );
                     }
                 }
-
+                
                 if ( $groupTitle ) {
                     $template->assign( $name."_grouptitle", $groupTitle );
                     $groupTitles[ $name."_grouptitle" ] = $groupTitle;
                 }
-
-
-                CRM_Core_BAO_UFGroup::getValues( $cid, $fields, $values , false, $params );
-
-                if ( isset($values[$fields['participant_status_id']['title']]) &&
+                
+                //display profile groups those are subscribed by participant.
+                if ( ( $groups = CRM_Utils_Array::value( 'group', $participantParams ) ) && 
+                     is_array( $groups ) ) {
+                    $grpIds = array( );
+                    foreach ( $groups as $grpId => $isSelected ) {
+                        if ( $isSelected ) $grpIds[] = $grpId; 
+                    }
+                    if ( !empty( $grpIds ) ) {
+                        //get the group titles.
+                        $grpTitles = array( );
+                        $query = 'SELECT title FROM civicrm_group where id IN ( ' . implode( ',', $grpIds ) . ' )';
+                        $grp = CRM_Core_DAO::executeQuery( $query );
+                        while ( $grp->fetch( ) ) {
+                            $grpTitles[] = $grp->title; 
+                        }
+                        $values[$fields['group']['title']] = implode(', ', $grpTitles );
+                        unset($fields['group']);
+                    }
+                }
+                
+                CRM_Core_BAO_UFGroup::getValues( $cid, $fields, $values, false, $params );
+                
+                if ( isset( $values[$fields['participant_status_id']['title']] ) &&
                      is_numeric( $values[$fields['participant_status_id']['title']] ) ) {
                     $status = array( );
                     $status = CRM_Event_PseudoConstant::participantStatus( );
@@ -1107,11 +1190,12 @@ WHERE civicrm_event.is_active = 1
                     $values[$fields['participant_role_id']['title']] = $roles[$values[$fields['participant_role_id']['title']]];
                 }
 
-                if ( isset($values[$fields['participant_register_date']['title']]) ) {
+                if ( isset( $fields['participant_register_date']['title'] ) &&
+                     isset( $values[$fields['participant_register_date']['title']] ) ) {
                     $values[$fields['participant_register_date']['title']] = 
-                        CRM_Utils_Date::customFormat($values[$fields['participant_register_date']['title']]);
+                        CRM_Utils_Date::customFormat( $values[$fields['participant_register_date']['title']] );
                 }
-                
+
                 //handle fee_level for price set
                 if ( isset( $values[$fields['participant_fee_level']['title']] ) ) {
                     $feeLevel = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, 
@@ -1379,13 +1463,18 @@ WHERE  id = $cfID
      *@return array $customProfile array of Additional participant's info OR array of Ids.   
      *@access public  
      */ 
-    function buildCustomProfile( $participantId, $values, $contactId = null, $isTest = false, $isIdsArray = false, $skipCancel = true ) 
+    function buildCustomProfile( $participantId, 
+                                 $values, 
+                                 $contactId = null, 
+                                 $isTest = false, 
+                                 $isIdsArray = false, 
+                                 $skipCancel = true ) 
     {
         $customProfile = $additionalIDs = array( );
         if ( !$participantId ) {
             CRM_Core_Error::fatal(ts('Cannot find participant ID'));
         }
-                    
+        
         //set Ids of Primary Participant also.
         if ( $isIdsArray && $contactId ) {
             $additionalIDs[$participantId] = $contactId; 
@@ -1422,17 +1511,32 @@ WHERE  id = $cfID
                 $isCustomProfile = true;
                 $i = 1;
                 foreach ( $additionalIDs as $pId => $cId ) {
-                    list( $profilePre, $groupTitles ) =  self::buildCustomDisplay( $values['additional_custom_pre_id'], 'additionalCustomPre',
-                                                             $cId, $template, $pId, $isTest, $isCustomProfile );
+                    //get the params submitted by participant.
+                    $participantParams = CRM_Utils_Array::value( $pId, $values['params'], array( ) );
+                    
+                    list( $profilePre, $groupTitles ) =  self::buildCustomDisplay( $values['additional_custom_pre_id'], 
+                                                                                   'additionalCustomPre', 
+                                                                                   $cId, 
+                                                                                   $template, 
+                                                                                   $pId, 
+                                                                                   $isTest, 
+                                                                                   $isCustomProfile,
+                                                                                   $participantParams );
                     if ( $profilePre ) {
                         $customProfile[$i]['additionalCustomPre'] =  $profilePre;
                         $customProfile[$i] = array_merge( $groupTitles, $customProfile[$i] );
                     }
-
-                    list( $profilePost, $groupTitles ) =  self::buildCustomDisplay( $values['additional_custom_post_id'], 'additionalCustomPost',
-                                                              $cId, $template, $pId, $isTest, $isCustomProfile );
+                    
+                    list( $profilePost, $groupTitles ) =  self::buildCustomDisplay( $values['additional_custom_post_id'], 
+                                                                                    'additionalCustomPost',
+                                                                                    $cId, 
+                                                                                    $template, 
+                                                                                    $pId, 
+                                                                                    $isTest, 
+                                                                                    $isCustomProfile,
+                                                                                    $participantParams );
                     if ( $profilePost ) {
-                        $customProfile[$i]['additionalCustomPost'] =  $profilePost;
+                        $customProfile[$i]['additionalCustomPost'] =  array_diff_assoc( $profilePost, $profilePre );
                         $customProfile[$i] = array_merge( $groupTitles, $customProfile[$i] );
                     }
                     $i++;
@@ -1509,27 +1613,22 @@ WHERE  ce.loc_block_id = $locBlockId";
      * @return boolean true if allow registration otherwise false
      * @access public
      */
-    static function ShowHideRegistrationLink( $values ) {
+    static function showHideRegistrationLink( $values ) {
 
         $session   = CRM_Core_Session::singleton( );
         $contactID = $session->get( 'userID' );
         $alreadyRegistered = false;
         
         if ( $contactID ) {
-            require_once 'CRM/Event/PseudoConstant.php';
-            require_once 'CRM/Event/DAO/Participant.php';
-            $statusTypes = CRM_Event_PseudoConstant::participantStatus( null, "is_counted = 1" );
+            $params = array( 'contact_id' => $contactID );
             
-            $participant = new CRM_Event_DAO_Participant();
-            $participant->contact_id = $contactID;
-            $participant->event_id   = $values['event']['id'];
-            $participant->role_id    = $values['event']['default_role_id'];
-            $participant->is_test    = 0;
-            $participant->selectAdd();
-            $participant->selectAdd('status_id');
-            if ( $participant->find( true ) && array_key_exists ( $participant->status_id, $statusTypes ) ) {
-                $alreadyRegistered = true;
+            if ( $eventId = CRM_Utils_Array::value( 'id', $values['event'] ) ) {
+                $params['event_id'] = $eventId;
             }
+            if ( $roleId = CRM_Utils_Array::value( 'default_role_id', $values['event'] ) ) {
+                $params['role_id'] = $roleId;
+            }
+            $alreadyRegistered = self::checkRegistration( $params );
         }
         
         if ( CRM_Utils_Array::value( 'allow_same_participant_emails', $values['event'] ) ||
@@ -1537,6 +1636,36 @@ WHERE  ce.loc_block_id = $locBlockId";
             return true;
         }
         return false;
+    }
+
+    /* Function to check if given contact is already registered.
+     *
+     * @param  array   $params key/value participant info     
+     * @return boolean $alreadyRegistered true/false
+     * @access public
+     */
+    function checkRegistration( $params ) 
+    {
+        $alreadyRegistered = false;
+        if ( !CRM_Utils_Array::value( 'contact_id', $params ) ) {
+            return $alreadyRegistered;
+        }
+
+        require_once 'CRM/Event/PseudoConstant.php';
+        require_once 'CRM/Event/DAO/Participant.php';
+        $statusTypes = CRM_Event_PseudoConstant::participantStatus( null, "is_counted = 1" );
+
+        $participant = new CRM_Event_DAO_Participant( );
+        $participant->copyValues( $params );
+        
+        $participant->is_test = CRM_Utils_Array::value( 'is_test', $params, 0 );
+        $participant->selectAdd( );
+        $participant->selectAdd( 'status_id' );
+        if ( $participant->find( true ) && array_key_exists ( $participant->status_id, $statusTypes ) ) {
+            $alreadyRegistered = true;
+        }
+
+        return $alreadyRegistered;
     }
 
     /**
@@ -1603,6 +1732,88 @@ WHERE  ce.loc_block_id = $locBlockId";
         }
 
         return $permissions;
+    }
+
+    /**
+     * Build From Email as the combination of all the email ids of the logged in user,
+     * the domain email id and the email id configured for the event
+     * 
+     * @param int $eventId   the id of the event
+     * 
+     * @return array         an array of email ids
+     * @access public
+     * @static
+     */
+    static function getFromEmailIds( $eventId = null ) 
+    {
+        static $emails;
+        $session   = CRM_Core_Session::singleton( );
+        $contactID = $session->get( 'userID' );
+        
+        $cacheKey  = 'd';
+        if ( $eventId ) $cacheKey .= '_eid_'.$eventId;
+        if ( $contactID ) $cacheKey .= '_cid_'.$contactID;
+
+        $fromEmailValues = $fromEmailIds = $eventEmail = $contactEmails = array( );
+        
+        if ( isset( $emails[$cacheKey] ) ) { 
+            return $emails[$cacheKey];
+        }
+
+        if ( $eventId ) {
+            // add the email id configured for the event
+            $params           = array( 'id' => $eventId );
+            $returnProperties = array( 'confirm_from_name', 'confirm_from_email', 'cc_confirm', 'bcc_confirm' );
+            
+            CRM_Core_DAO::commonRetrieve( 'CRM_Event_DAO_Event', $params, $eventEmail, $returnProperties );
+            if( CRM_Utils_Array::value( 'confirm_from_name', $eventEmail ) 
+                && CRM_Utils_Array::value( 'confirm_from_email', $eventEmail ) ) {
+                $fromEmailValues[] = $fromEmailIds[] = 
+                    "{$eventEmail['confirm_from_name']} <{$eventEmail['confirm_from_email']}>";
+            }
+        }
+
+        // add the domain email id
+        require_once 'CRM/Core/BAO/Domain.php';
+        $domainEmail = CRM_Core_BAO_Domain::getNameAndEmail( );
+        $domainEmail = "$domainEmail[0] <$domainEmail[1]>";
+        if ( !in_array( $domainEmail, $fromEmailIds ) ) {
+            $fromEmailValues[] = $fromEmailIds[] = $domainEmail;
+        }
+        
+        require_once 'CRM/Core/BAO/Email.php';
+        // add logged in user's active email ids
+        if ( $contactID ) {
+            $contactEmails = CRM_Core_BAO_Email::allEmails( $contactID );
+            $fromDisplayName = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $contactID, 'display_name' );
+            
+            foreach( $contactEmails as $emailId => $emailVal ) {
+                $email = trim( $emailVal['email'] );
+                if ( !$email || $emailVal['on_hold'] ) {
+                    continue;
+                }
+                
+                $fromEmail = "$fromDisplayName <$email>";
+                if ( !in_array( $fromEmail, $fromEmailIds ) ) {
+                    $fromEmailValues[$emailId]  = $fromEmailIds[] = $fromEmail;
+                    $fromEmailValues[$emailId] .= $emailVal['locationType']; 
+                    
+                    if ( CRM_Utils_Array::value( 'is_primary', $emailVal ) ) {
+                        $fromEmailValues[$emailId] .=  ' ' . ts('(preferred)');
+                    }
+                }
+            }
+        }
+        
+        foreach ( $fromEmailValues as $key => $value ) {
+            $emailValues[] = htmlspecialchars( $value );
+        }
+        
+        $emails[$cacheKey] = array( 'name'  => $fromEmailIds, 
+                                    'label' => $emailValues,
+                                    'cc'    => CRM_Utils_Array::value( 'cc_confirm', $eventEmail ),
+                                    'bcc'   => CRM_Utils_Array::value( 'bcc_confirm', $eventEmail ) ) ;
+        return $emails[$cacheKey];
     }
 }
 

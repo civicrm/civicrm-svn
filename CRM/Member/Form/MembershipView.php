@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -107,12 +107,24 @@ class CRM_Member_Form_MembershipView extends CRM_Core_Form
             
             $title = $displayName . ' - ' . ts('Membership Type:') . ' ' . $values['membership_type'];
             
+            require_once 'CRM/Core/Permission.php';
+            $recentOther = array( );
+            if ( CRM_Core_Permission::checkActionPermission( 'CiviMember', CRM_Core_Action::UPDATE ) ) {
+                $recentOther['editUrl'] = CRM_Utils_System::url( 'civicrm/contact/view/membership', 
+                                                                 "action=update&reset=1&id={$values['id']}&cid={$values['contact_id']}&context=home" );
+            }
+            if ( CRM_Core_Permission::checkActionPermission( 'CiviMember', CRM_Core_Action::DELETE ) ) {
+                $recentOther['deleteUrl'] = CRM_Utils_System::url( 'civicrm/contact/view/membership', 
+                                                                   "action=delete&reset=1&id={$values['id']}&cid={$values['contact_id']}&context=home" );
+            }
             CRM_Utils_Recent::add( $title,
                                    $url,
                                    $values['id'],
                                    'Membership',
                                    $values['contact_id'],
-                                   null );
+                                   null,
+                                   $recentOther
+                                   );
             
             CRM_Member_Page_Tab::setContext($values['contact_id']);
 
@@ -138,7 +150,7 @@ class CRM_Member_Form_MembershipView extends CRM_Core_Form
     public function buildQuickForm( ) 
     {
         $this->addButtons(array(  
-                                array ( 'type'      => 'next',  
+                                array ( 'type'      => 'cancel',  
                                         'name'      => ts('Done'),  
                                         'spacing'   => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',  
                                         'isDefault' => true   )

@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -151,7 +151,7 @@ class api_v2_EntityTagTest extends CiviUnitTestCase
         
         $this->assertEquals( $entity['is_error'], 1,
                              "In line " . __LINE__  );
-        $this->assertEquals( $entity['error_message'], 'contact_id is a required field' );
+        $this->assertEquals( $entity['error_message'], 'params should be an array.' );
     }
 
     function testIndividualEntityTagGetWithoutContactID( )
@@ -160,7 +160,7 @@ class api_v2_EntityTagTest extends CiviUnitTestCase
         $entity       =& civicrm_entity_tag_get( $paramsEntity ); 
         $this->assertEquals( $entity['is_error'], 1 );
         $this->assertNotNull( $entity['error_message'] );
-        $this->assertEquals( $entity['error_message'], 'contact_id is a required field' );
+        $this->assertEquals( $entity['error_message'], 'entity_id is a required field.' );
     }
     
     function testIndividualEntityTagGet()
@@ -341,7 +341,7 @@ class api_v2_EntityTagTest extends CiviUnitTestCase
         
         $result = civicrm_entity_tag_display( $params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'contact_id is a required field' );
+        $this->assertEquals( $result['error_message'], 'entity_id is a required field.' );
     }
 
     function testEntityTagDisplayWithContactId( )

@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -28,7 +28,7 @@
     {if $value neq 'skip'}
     {if $lineItem|@count GT 1} {* Header for multi participant registration cases. *}
         {if $priceset GT 0}<br />{/if}
-        <strong>{ts}Participant {$priceset+1}{/ts}</strong>
+        <strong>{ts}Participant {$priceset+1}{/ts}</strong> {$part.$priceset.info}
     {/if}				 
     <table>
             <tr class="columnheader">
@@ -51,7 +51,7 @@
     {/if}
 {/foreach}
 
-<div class="section no-label total_amount-section">
+<div class="crm-section no-label total_amount-section">
     <div class="content bold">
         {if $context EQ "Contribution"}
             {ts}Contribution Total{/ts}:
@@ -74,7 +74,7 @@
 </div>
 
 {if $hookDiscount.message}
-    <div class="section hookDiscount-section">
+    <div class="crm-section hookDiscount-section">
         <em>({$hookDiscount.message})</em>
     </div>
 {/if}

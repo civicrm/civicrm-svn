@@ -59,9 +59,16 @@ $docLink = CRM_Utils_System::docURL2( 'Installation and Upgrades', false, 'Insta
 if ( $installType == 'drupal' ) {
     // do not check 'sites/all/modules' only since it could be a multi-site
     // install. Rather check for existance of sites & modules in the url
-    if ( ! preg_match( "/" . preg_quote('sites' . CIVICRM_DIRECTORY_SEPARATOR, CIVICRM_DIRECTORY_SEPARATOR) . 
-                       "([a-zA-Z0-9_.]+)" . 
-                       preg_quote(CIVICRM_DIRECTORY_SEPARATOR . 'modules', CIVICRM_DIRECTORY_SEPARATOR) . "/",
+    
+    //old pattern where we do has to have civicrm in sites/.../modules/
+    //$pattern =  "/" . preg_quote('sites' . CIVICRM_DIRECTORY_SEPARATOR, CIVICRM_DIRECTORY_SEPARATOR) . 
+    //    "([a-zA-Z0-9_.]+)" . 
+    //    preg_quote(CIVICRM_DIRECTORY_SEPARATOR . 'modules', CIVICRM_DIRECTORY_SEPARATOR) . "/";
+    
+    //lets check only /modules/.
+    $pattern = '/' . preg_quote( CIVICRM_DIRECTORY_SEPARATOR . 'modules', CIVICRM_DIRECTORY_SEPARATOR ) . '/';
+    
+    if ( ! preg_match( $pattern,
                        str_replace( "\\","/",$_SERVER['SCRIPT_FILENAME'] ) ) ) {
         $errorTitle = "Oops! Please Correct Your Install Location";
         $errorMsg = "Please untar (uncompress) your downloaded copy of CiviCRM in the <strong>" . implode(CIVICRM_DIRECTORY_SEPARATOR, array('sites', 'all', 'modules')) . "</strong> directory below your Drupal root directory. Refer to the online " . $docLink . " for more information.<p>If you want to setup / install a <strong>Standalone CiviCRM</strong> version (i.e. not a Drupal or Joomla module), <a href=\"?mode=standalone\">click here</a>.</p>";
@@ -114,7 +121,11 @@ if (isset($_REQUEST['seedLanguage']) and isset($langs[$_REQUEST['seedLanguage']]
 
 if ( $installType == 'drupal' ) {
     global $cmsPath;
-    $cmsPath = dirname( dirname( dirname( dirname( $crmPath ) ) ) );
+    
+    //CRM-6840 -don't force to install in sites/all/modules/ 
+    require_once "$crmPath/CRM/Utils/System/Drupal.php";
+    $cmsPath = CRM_Utils_System_Drupal::cmsRootPath( );
+
     $siteDir = getSiteDir( $cmsPath, $_SERVER['SCRIPT_FILENAME'] );
     $alreadyInstalled = file_exists( $cmsPath  . CIVICRM_DIRECTORY_SEPARATOR .
                                      'sites'   . CIVICRM_DIRECTORY_SEPARATOR .
@@ -266,7 +277,7 @@ class InstallRequirements {
 
         $this->errors = null;
 
-        $this->requirePHPVersion('5.2.0', array("PHP Configuration", "PHP5 installed", null, "PHP version " . phpversion()), '5.3.0');
+        $this->requirePHPVersion('5.2.0', array("PHP Configuration", "PHP5 installed", null, "PHP version " . phpversion()));
 
         // Check that we can identify the root folder successfully
         $this->requireFile($crmPath . CIVICRM_DIRECTORY_SEPARATOR . 'README.txt',
@@ -276,6 +287,16 @@ class InstallRequirements {
                 $this->getBaseDir()
             ),
             true );
+
+        // CRM-6485: make sure the path does not contain PATH_SEPARATOR, as we don’t know how to escape it
+        $this->requireNoPathSeparator(
+            array(
+                'File permissions',
+                'does the CiviCRM path contain PATH_SEPARATOR?',
+                'the ' . $this->getBaseDir() . ' path contains PATH_SEPARATOR (the ' . PATH_SEPARATOR . ' character)',
+                $this->getBaseDir(),
+            )
+        );
 
         $requiredDirectories = array( 'CRM', 'packages', 'templates', 'js', 'api', 'i', 'sql' );
         foreach ( $requiredDirectories as $dir ) {
@@ -334,6 +355,9 @@ class InstallRequirements {
         // Check for MySQL support
         $this->requireFunction('mysql_connect', array("PHP Configuration", "MySQL support", "MySQL support not included in PHP."));
 
+        // Check for JSON support
+        $this->requireFunction('json_encode', array("PHP Configuration", "JSON support", "JSON support not included in PHP."));
+        
         // Check memory allocation
         $this->requireMemory(32*1024*1024, 64*1024*1024, array("PHP Configuration", "Memory allocated (PHP config option 'memory_limit')", "CiviCRM needs a minimum of 32M allocated to PHP, but recommends 64M.", ini_get("memory_limit")));
 
@@ -456,6 +480,15 @@ class InstallRequirements {
             $this->error($testDetails);
         }
     }
+
+    function requireNoPathSeparator($testDetails)
+    {
+        $this->testing($testDetails);
+        if (substr_count($this->getBaseDir(), PATH_SEPARATOR)) {
+            $this->error($testDetails);
+        }
+    }
+
     function requireNoFile($filename, $testDetails) {
         $this->testing($testDetails);
         $filename = $this->getBaseDir() . $filename;
@@ -822,7 +855,7 @@ class Installer extends InstallRequirements {
 
 function civicrm_install_set_drupal_perms() {
   if (!function_exists('db_select')) {
-    db_query( 'UPDATE {permission} SET perm = CONCAT( perm, \', access CiviMail subscribe/unsubscribe pages, access all custom data, access uploaded files, make online contributions, profile listings and forms, register for events, view event info, view event participants\') WHERE rid IN (1, 2)' );
+    db_query( 'UPDATE {permission} SET perm = CONCAT( perm, \', access CiviMail subscribe/unsubscribe pages, access all custom data, access uploaded files, make online contributions, profile create, profile edit, profile view, register for events, view event info\') WHERE rid IN (1, 2)' );
   }
   else {
     //this isn't working yet for D7:

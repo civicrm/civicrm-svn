@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -42,43 +42,42 @@ class WebTest_Generic_CheckActivityTest extends CiviSeleniumTestCase {
 
   function testCheckDashboardElements()
   {
+      // This is the path where our testing install resides. 
+      // The rest of URL is defined in CiviSeleniumTestCase base class, in
+      // class attributes. 
+      $this->open( $this->sboxPath );
 
+      // Log in using webtestLogin() method
+      $this->webtestLogin();
+      
+      // Adding contact with randomized first name
+      // We're using Quick Add block on the main page for this.
+      $contactFirstName1 = substr(sha1(rand()), 0, 7);
+      $this->webtestAddContact( $contactFirstName1, "Devis", true );
 
-  $this->open("/drupal/");
-
-  $this->type("edit-name", "demo");
-  $this->type("edit-pass", "demo");
-  $this->click("edit-submit");
-  $this->waitForPageToLoad("30000");
-
-
-  $this->open("/drupal/civicrm/activity&reset=1&action=add&context=standalone");  
-  // make sure the form loaded, check the end element
-  $this->waitForElementPresent("_qf_Activity_upload");
-  $this->select("activity_type_id", "label=Meeting");
-  
-  $this->typeKeys("//form[@id='Activity']/fieldset/table/tbody/tr[3]/td[2]/ul/li/input", "John");
-  $this->waitForElementPresent("//form[@id='Activity']/fieldset/table/tbody/tr[3]/td[2]/div/ul/li");
-  $this->click("//form[@id='Activity']/fieldset/table/tbody/tr[3]/td[2]/div/ul/li");
-  $this->waitForElementPresent("//form[@id='Activity']/fieldset/table/tbody/tr[3]/td[2]/ul/li");
-  $this->assertTrue($this->isTextPresent("Doe, John"), "Contact not found in line " . __LINE__ );
-
-  $this->assertTrue($this->isTextPresent("DINGLEBERRIES!"), "Dingleberries fail");
-
-  $this->typeKeys("//form[@id='Activity']/fieldset/table/tbody/tr[4]/td[2]/ul/li/input", "michau");
-  $this->waitForElementPresent("//form[@id='Activity']/fieldset/table/tbody/tr[4]/td[2]/div/ul/li");
-  $this->click("//form[@id='Activity']/fieldset/table/tbody/tr[4]/td[2]/div/ul/li");
-  $this->assertTrue($this->isTextPresent("michau@gmail.com"), "Contact not found in line " . __LINE__ );  
-
-
-
-//  $this->open("/drupal/civicrm/contact/view?reset=1&cid=4");
-//  $this->waitForElementPresent("//a[@title='Activities']");
-//  $this->click("//a[@title='Activities']");
-//  $this->waitForTextPresent("Status");
-//  $this->assertTrue($this->isTextPresent("Testing activity adding"));
-
-
+      // Adding another contact with randomized first name
+      // We're using Quick Add block on the main page for this.
+      $contactFirstName2 = substr(sha1(rand()), 0, 7);
+      $this->webtestAddContact( $contactFirstName2, "Anderson", true );
+      $this->open($this->sboxPath . "civicrm/activity&reset=1&action=add&context=standalone");
+      
+      // make sure the form loaded, check the end element
+      $this->waitForElementPresent("_qf_Activity_upload");
+      $this->select("activity_type_id", "label=Meeting");
+      
+      //select 'With Contact'
+      $this->click("//form[@id='Activity']/div[2]/table/tbody/tr[3]/td[2]/ul/li/input");
+      $this->typeKeys("//form[@id='Activity']/div[2]/table/tbody/tr[3]/td[2]/ul/li/input", $contactFirstName1);
+      $this->waitForElementPresent("//form[@id='Activity']/div[2]/table/tbody/tr[3]/td[2]/div/ul/li");
+      $this->click("//form[@id='Activity']/div[2]/table/tbody/tr[3]/td[2]/div/ul/li");
+      $this->assertTrue($this->isTextPresent("Devis"));
+      
+      //select 'Assigned To'
+      $this->click("//form[@id='Activity']/div[2]/table/tbody/tr[4]/td[2]/ul/li/input");
+      $this->typeKeys("//form[@id='Activity']/div[2]/table/tbody/tr[4]/td[2]/ul/li/input", "Anderson");
+      $this->waitForElementPresent("//form[@id='Activity']/div[2]/table/tbody/tr[4]/td[2]/div/ul/li");
+      $this->click("//form[@id='Activity']/div[2]/table/tbody/tr[4]/td[2]/div/ul/li");
+      $this->assertTrue($this->isTextPresent("Anderson"));
   }
 
 }

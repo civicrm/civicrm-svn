@@ -299,7 +299,8 @@ foreach(glob($tempDir . '/templates_c/*') as $tempFile) {
 rmdir($tempDir . '/templates_c');
 
 function &parseInput( $file ) {
-    $dom = DomDocument::load( $file );
+    $dom = new DomDocument( );
+    $dom->load( $file );
     $dom->xinclude( );
     $dbXML = simplexml_import_dom( $dom );
     return $dbXML;
@@ -466,7 +467,7 @@ function getTable( $tableXML, &$database, &$tables ) {
             } 
 
             // check if hrd field and hrd is enabled to include
-            if ( value( 'hrd', $fieldXML, 0 ) == 1 &&
+            if ( value( 'hrd', $indexXML, 0 ) == 1 &&
                  ! $config->civiHRD ) {
                 continue;
             }

@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -248,7 +248,7 @@ class CRM_Member_Form_Search extends CRM_Core_Form
             $permission = CRM_Core_Permission::getPermission( );
             
             require_once 'CRM/Member/Task.php';
-            $tasks = array( '' => ts('- more actions -') ) + CRM_Member_Task::permissionedTaskTitles( $permission );
+            $tasks = array( '' => ts('- actions -') ) + CRM_Member_Task::permissionedTaskTitles( $permission );
             $this->add('select', 'task'   , ts('Actions:') . ' '    , $tasks    ); 
             $this->add('submit', $this->_actionButtonName, ts('Go'), 
                        array( 'class'   => 'form-submit',
@@ -341,11 +341,13 @@ class CRM_Member_Form_Search extends CRM_Core_Form
         
         require_once "CRM/Member/Selector/Search.php";
         $selector = new CRM_Member_Selector_Search( $this->_queryParams,
-                                                     $this->_action,
-                                                     null,
-                                                     $this->_single,
-                                                     $this->_limit,
-                                                     $this->_context ); 
+                                                    $this->_action,
+                                                    null,
+                                                    $this->_single,
+                                                    $this->_limit,
+                                                    $this->_context ); 
+        $selector->setKey( $this->controller->_key );
+        
         $prefix = null;
         if ( $this->_context == 'basic' ) {
             $prefix = $this->_prefix;

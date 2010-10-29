@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -59,7 +59,8 @@ class CRM_Core_Permission {
         DELETE = 3,
         CREATE = 4,
         SEARCH = 5,
-        ALL    = 6;
+        ALL    = 6,
+        ADMIN  = 7;
     
     /**
      * get the current permission of this user
@@ -336,6 +337,15 @@ class CRM_Core_Permission {
             return (boolean ) $item['access_callback'];
         }
 
+        // check whether the following Ajax requests submitted the right key
+        // FIXME: this should be integrated into ACLs proper
+        if ( $item['page_type'] == 3 ) {
+            require_once 'CRM/Core/Key.php';
+            if (!CRM_Core_Key::validate($_REQUEST['key'], $item['path'])) {
+                return false;
+            }
+        }
+
         // check if callback is for checkMenu, if so optimize it
         if ( is_array( $item['access_callback'] ) &&
              $item['access_callback'][0] == 'CRM_Core_Permission' &&
@@ -359,6 +369,7 @@ class CRM_Core_Permission {
                       'view all contacts'                 => ts( 'view all contacts' ),
                       'edit all contacts'                 => ts( 'edit all contacts' ),
                       'delete contacts'                   => ts( 'delete contacts' ),
+                      'access deleted contacts'           => ts( 'access deleted contacts' ),
                       'import contacts'                   => ts( 'import contacts' ),
                       'edit groups'                       => ts( 'edit groups' ),
                       'administer CiviCRM'                => ts( 'administer CiviCRM' ),
@@ -374,6 +385,11 @@ class CRM_Core_Permission {
                       'access CiviCRM'                    => ts( 'access CiviCRM' ),
                       'access Contact Dashboard'          => ts( 'access Contact Dashboard' ),
                       'translate CiviCRM'                 => ts( 'translate CiviCRM' ),
+                      'administer Tagsets'                => ts( 'administer Tagsets' ),
+                      'administer reserved tags'          => ts( 'administer reserved tags' ),
+                      'administer dedupe rules'           => ts( 'administer dedupe rules' ),
+                      'merge duplicate contacts'          => ts( 'merge duplicate contacts' ),
+                      'view all notes'                    => ts( 'view all notes' ),
                       );
 
             if ( defined( 'CIVICRM_MULTISITE' ) && CIVICRM_MULTISITE ) {
@@ -431,4 +447,39 @@ class CRM_Core_Permission {
         return $hasPermission;
     }
     
-}
+    /**
+     * Function to get component name from given permission.
+     * 
+     * @param string  $permission  
+     *
+     * return string $componentName the name of component.
+     * @static
+     */
+    static function getComponentName( $permission ) 
+    {
+        $componentName = null;
+        $permission = trim( $permission );
+        if ( empty( $permission ) ) return $componentName;
+        
+        static $allCompPermissions;
+        if ( !is_array( $allCompPermissions ) ) {
+            require_once 'CRM/Core/Component.php';
+            $components = CRM_Core_Component::getComponents( );
+            foreach ( $components as $name => $comp ) {
+                $allCompPermissions[$name] = $comp->getPermissions( );
+            }
+        }
+        
+        if ( is_array( $allCompPermissions ) ) {
+            foreach ( $allCompPermissions as $name => $permissions ) {
+                if ( in_array( $permission, $permissions ) ) {
+                    $componentName = $name;
+                    break;
+                }
+            }
+        }
+        
+        return $componentName;
+    }
+    
+  }

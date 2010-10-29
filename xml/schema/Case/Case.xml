@@ -5,6 +5,7 @@
   <name>civicrm_case</name>
   <comment>This table stores information about cases grouping activities.</comment>
   <add>1.8</add>
+  <log>true</log>
   <field>
       <name>id</name>
       <type>int unsigned</type>
@@ -42,7 +43,8 @@
        <length>128</length>
        <required>true</required>
        <import>true</import>
-       <title>Case Type</title>
+       <export>false</export>
+       <title>Case Type Id</title>
        <comment>Id of first case category.</comment>
        <add>2.0</add>
   </field>
@@ -100,6 +102,9 @@
       <name>subject</name>
       <type>varchar</type>
       <length>128</length>
+      <title>Case Subject</title>
+      <import>true</import>
+      <uniqueName>case_subject</uniqueName>
       <comment>Short name of the case.</comment>
        <add>1.8</add>
   </field>
@@ -136,7 +141,8 @@
        <uniqueName>case_status_id</uniqueName>
        <required>true</required>
        <import>true</import>
-       <title>Case Status</title>
+       <export>false</export>
+       <title>Case Status Id</title>
        <comment>Id of case status.</comment>
        <add>1.8</add>
   </field>

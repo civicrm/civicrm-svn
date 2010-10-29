@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -163,6 +163,11 @@ define( 'CIVICRM_UF_BASEURL'      , '%%baseURL%%' );
  */
 define( 'CIVICRM_SITE_KEY', null );
 
+/*
+ * If you want to disable IDS, set this to 0.
+ */
+define( 'CIVICRM_IDS_ENABLE', 1);
+
 /**
  * Multi org / Multi site settings:
  *
@@ -180,6 +185,29 @@ define( 'CIVICRM_EVENT_PRICE_SET_DOMAIN_ID', 0 );
  *
  */
  define( 'CIVICRM_ACTIVITY_ASSIGNEE_MAIL' , 1 ); 
+
+/**
+ * Setting to disable ajax check if similar contacts exist when creating a new contact
+ *
+ */
+ define( 'CIVICRM_CONTACT_AJAX_CHECK_SIMILAR' , 1 ); 
+
+/**
+ * Setting to disable or enable profile double optin.
+ * This is enable by default and functions only if Civimail is enabled.
+ */
+ define( 'CIVICRM_PROFILE_DOUBLE_OPTIN', 1 );
+
+/**
+ * If set, makes CiviMail default to tracking replies (i.e., using VERP-ed Reply-To:)
+ */
+define('CIVICRM_TRACK_CIVIMAIL_REPLIES', false);
+
+/**
+ * This setting logs all emails to a file. Useful for debugging any mail (or civimail) issues.
+ * This will not send any email, so ensure this is commented out in production
+ */
+// define( 'CIVICRM_MAIL_LOG', '%%templateCompileDir%%/mail.log' );
 
 /**
  * 

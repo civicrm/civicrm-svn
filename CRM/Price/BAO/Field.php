@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -69,7 +69,8 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
             $priceFieldBAO->id = $id;
         }
         
-        return $priceFieldBAO->save( );
+        $priceFieldBAO->save( );
+        return $priceFieldBAO;
     }
     
     /**

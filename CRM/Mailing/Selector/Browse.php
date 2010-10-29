@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -381,7 +381,8 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
         }
 
         if ( $this->_parent->get( 'archived' ) ) {
-            $clauses[] = "civicrm_mailing.is_archived = 1";
+            // CRM-6446: archived view should also show cancelled mailings
+            $clauses[] = "(civicrm_mailing.is_archived = 1 OR civicrm_mailing_job.status = 'Canceled')";
         }
         
         // CRM-4290, do not show archived or unscheduled mails 

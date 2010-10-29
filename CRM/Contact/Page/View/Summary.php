@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -35,6 +35,7 @@
  */
 
 require_once 'CRM/Contact/Page/View.php';
+require_once 'CRM/Contact/BAO/Contact.php';
 
 /**
  * Main page for viewing contact.
@@ -53,7 +54,12 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
     function preProcess( ) 
     {
         parent::preProcess( );
-
+		
+		// actions buttom contextMenu
+		$menuItems = CRM_Contact_BAO_Contact::contextMenu( );
+		
+		$this->assign('actionsMenuList',$menuItems);
+		
         //retrieve inline custom data
         $entityType    = $this->get('contactType');
         $entitySubType = $this->get('contactSubtype');
@@ -142,7 +148,10 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
                                     'im'      => array( 
                                                         'type' => 'IMProvider', 
                                                         'id'   => 'provider'  ),
-                                    'address' => array( 'skip' => true ),
+                                    'website' => array( 
+                                                        'type' => 'websiteType', 
+                                                        'id'   => 'website_type' ),                                                        
+                                    'address' => array( 'skip' => true, 'customData' => 1 ),
 									'email'   => array( 'skip' => true ),
 									'openid'  => array( 'skip' => true )
                             ); 
@@ -155,6 +164,18 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
                         eval( '$pseudoConst = CRM_Core_PseudoConstant::'.$value['type'].'( );' );
                         CRM_Utils_Array::lookupValue( $val, $value['id'], $pseudoConst, false );
                     }
+                }
+                if ( isset($value['customData']) ) {
+                    foreach( $defaults[$key] as $blockId => $blockVal ) {
+                        $groupTree = CRM_Core_BAO_CustomGroup::getTree( ucfirst($key),
+                                                                        $this,
+                                                                        $blockVal['id'] );
+                        // we setting the prefix to dnc_ below so that we don't overwrite smarty's grouptree var. 
+                        $defaults[$key][$blockId]['custom'] = 
+                            CRM_Core_BAO_CustomGroup::buildCustomDataView( $this, $groupTree, false, null, "dnc_" );
+                    }
+                    // reset template variable since that won't be of any use, and could be misleading
+                    $this->assign( "dnc_viewCustomData", null );
                 }
             }
         }
@@ -194,15 +215,21 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
             $this->assign( substr( $varName, 1 ), $this->$varName );
         }
         
-        //get the householdname
-        if ( isset($defaults['mail_to_household_id']) ) {
-            $householdName = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', 
-                                                          $defaults['mail_to_household_id'], 
-                                                          'display_name', 
-                                                          'id' );
-            $this->assign( 'householdName',$householdName );
+        // get the display name of contact that address is shared.
+        $masterDetails = array();
+        foreach( $defaults['address'] as $key => $value ) {
+            if ( CRM_Utils_Array::value( 'master_id', $defaults['address'][$key] ) ) {
+                $masterId = $defaults['address'][$key]['master_id'];
+                $masterContactId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Address', $masterId, 'contact_id', 'id' );
+                $masterDisplayName = CRM_Contact_BAO_Contact::getMasterDisplayName( $masterId );
+                $masterDetails[$key]['master_id'] = $masterId;
+                $masterDetails[$key]['master_contact_id'] = $masterContactId;
+                $masterDetails[$key]['master_display_name'] = $masterDisplayName;
+            } 
         }
-
+        
+        $this->assign('masterDetails', $masterDetails);
+                
         //get the current employer name
         if ( CRM_Utils_Array::value( 'contact_type', $defaults ) == 'Individual' ) {
             if ( $contact->employer_id && $contact->organization_name ) {
@@ -356,8 +383,8 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
         if ( $this->_contactId ) {
             $csType = $this->get('contactSubtype');
             if ( $csType ) {
-                $templateFile = "CRM/Contact/Page/View/{$csType}.tpl";
-                $template     =& CRM_Core_Page::getTemplate( );
+                $templateFile = "CRM/Contact/Page/View/SubType/{$csType}.tpl";
+                $template     = CRM_Core_Page::getTemplate( );
                 if ( $template->template_exists( $templateFile ) ) {
                     return $templateFile;
                 }

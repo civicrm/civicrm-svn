@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -48,10 +48,12 @@ class CRM_Event_Task
         BATCH_EVENTS                      =     4,
         CANCEL_REGISTRATION               =     5,
         EMAIL_CONTACTS                    =     6,
-        // Value for SAVE_SEARCH is set as 13 in accordance with CRM_Contact_Task::SAVE_SEARCH
+        // Value for SAVE_SEARCH is set to 13 in accordance with CRM_Contact_Task::SAVE_SEARCH
         SAVE_SEARCH                       =     13,
         SAVE_SEARCH_UPDATE                =     14,
-        PARTICIPANT_STATUS                =     15;
+        PARTICIPANT_STATUS                =     15,
+        // Value for LABEL_CONTACTS is set to 16 in accordance with CRM_Contact_Task::LABEL_CONTACTS
+        LABEL_CONTACTS                    =     16;
 
     /**
      * the task array
@@ -109,6 +111,9 @@ class CRM_Event_Task
                                    15 => array( 'title' => ts( 'Change Participant Status' ),
                                                 'class'  => 'CRM_Event_Form_Task_ParticipantStatus',       
                                                 'result' => true ),
+                                   16 => array( 'title' => ts( 'Print Event Name Badges' ),
+                                                'class'  => 'CRM_Event_Form_Task_Badge',
+                                                'result' => false )
                                    );
             
             //CRM-4418, check for delete 

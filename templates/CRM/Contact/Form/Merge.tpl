@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -23,13 +23,19 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+<div class="crm-block crm-form-block crm-contact-merge-form-block">
 <div id="help">
 {ts}Click <strong>Merge</strong> to move data from the Duplicate Contact on the left into the Main Contact. In addition to the contact data (address, phone, email...), you may choose to move all or some of the related activity records (groups, contributions, memberships, etc.).{/ts} {help id="intro"}
 </div>
-
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 <div class="action-link">
     	<a href="{crmURL q="reset=1&cid=$other_cid&oid=$main_cid"}">&raquo; {ts}Flip between original and duplicate contacts.{/ts}</a>
 </div>
+
+<div class="action-link">
+       <a id='notDuplicate' href="#" title={ts}Mark this pair as not a duplicate.{/ts} onClick="processDupes( {$main_cid}, {$other_cid}, 'dupe-nondupe', 'merge-contact', '{$userContextURL}' );return false;">&raquo; {ts}Mark this pair as not a duplicate.{/ts}</a>
+</div>	
+
 <table>
   <tr class="columnheader">
     <th>&nbsp;</th>
@@ -37,7 +43,6 @@
     <th>{ts}Mark All{/ts}<br />=={$form.toggleSelect.html} ==&gt;</th>
     <th><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$main_cid"}">{$main_name}</a></th>
   </tr>
-
   {foreach from=$rows item=row key=field}
      <tr class="{cycle values="odd-row,even-row"}">
         <td>{$row.title}</td>
@@ -73,20 +78,29 @@
   {/foreach}
 
   {foreach from=$rel_tables item=params key=paramName}
-    <tr class="{cycle values="even-row,odd-row"}">
-      <th>{ts}Move related...{/ts}</th><td><a href="{$params.other_url}">{$params.title}</a></td><td style='white-space: nowrap'>=={$form.$paramName.html}==&gt;</td><td><a href="{$params.main_url}">{$params.title}</a></td>
+    {if $paramName eq 'move_rel_table_users'}
+      <tr class="{cycle values="even-row,odd-row"}">
+      <th>{ts}Move related...{/ts}</th><td><a href="{$params.other_url}">{$params.other_title}</a></td><td style='white-space: nowrap'>{if $otherUfId}=={$form.$paramName.html}==&gt;{/if}</td><td>{if $mainUfId}<a href="{$params.main_url}">{$params.main_title}</a>{/if}</td>
     </tr>
+    {else}
+    <tr class="{cycle values="even-row,odd-row"}">
+      <th>{ts}Move related...{/ts}</th><td><a href="{$params.other_url}">{$params.title}</a></td><td style='white-space: nowrap'>=={$form.$paramName.html}==&gt;</td><td><a href="{$params.main_url}">{$params.title}</a>{if $form.operation.$paramName.add.html}&nbsp;{$form.operation.$paramName.add.html}{/if}</td>
+    </tr>
+    {/if}
   {/foreach}
 </table>
 <div class='form-item'>
   <!--<p>{$form.moveBelongings.html} {$form.moveBelongings.label}</p>-->
   <!--<p>{$form.deleteOther.html} {$form.deleteOther.label}</p>-->
 </div>
-<div class='form-item'>
-    <p><strong>{ts}WARNING: The duplicate contact record WILL BE DELETED after the merge is complete.{/ts}</strong></strong><br />
-    {$form.buttons.html}</p>
+<div class="form-item">
+    <p><strong>{ts}WARNING: The duplicate contact record WILL BE DELETED after the merge is complete.{/ts}</strong></strong></p>
+    {if $user}
+      <p><strong>{ts}There are Drupal user accounts associated with both the original and duplicate contacts. If you continue with the merge, the user record associated with the duplicate contact will not be deleted, but will be un-linked from the associated contact record (which will be deleted). If that user logs in again, a new contact record will be created for them.{/ts}</strong></strong></p>
+    {/if}
 </div>
-
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
+</div>
 
 {literal}
 <script type="text/javascript">
@@ -138,3 +152,6 @@ function mergeAddress( element, blockId ) {
 
 </script>
 {/literal}
+
+{* process the dupe contacts *}
+{include file="CRM/common/dedupe.tpl"}

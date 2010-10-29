@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -77,7 +77,7 @@ class CRM_Contribute_BAO_ContributionPageTest extends CiviUnitTestCase
         
 
          require_once 'CRM/Contribute/BAO/ContributionPage.php';
-         $contributionpage = CRM_Contribute_BAO_ContributionPage::create( $params ,$ids );
+         $contributionpage = CRM_Contribute_BAO_ContributionPage::create( $params );
          
          $this->assertNotNull( $contributionpage->id);
          $this->assertType('int', $contributionpage->id);
@@ -98,7 +98,7 @@ class CRM_Contribute_BAO_ContributionPageTest extends CiviUnitTestCase
                          );
             
         require_once 'CRM/Contribute/BAO/ContributionPage.php';
-        $contributionpage = CRM_Contribute_BAO_ContributionPage::create( $params ,$ids );
+        $contributionpage = CRM_Contribute_BAO_ContributionPage::create( $params );
         $id = $contributionpage->id;
         $is_active = 1;
         $pageActive = CRM_Contribute_BAO_ContributionPage::setIsActive($id ,$is_active );
@@ -120,7 +120,7 @@ class CRM_Contribute_BAO_ContributionPageTest extends CiviUnitTestCase
                          );
             
         require_once 'CRM/Contribute/BAO/ContributionPage.php';
-        $contributionpage = CRM_Contribute_BAO_ContributionPage::create( $params ,$ids );
+        $contributionpage = CRM_Contribute_BAO_ContributionPage::create( $params );
                 
         $id = $contributionpage->id;
         $values = array ();
@@ -160,7 +160,7 @@ class CRM_Contribute_BAO_ContributionPageTest extends CiviUnitTestCase
         
 
          require_once 'CRM/Contribute/BAO/ContributionPage.php';
-         $contributionpage = CRM_Contribute_BAO_ContributionPage::create( $params ,$ids );
+         $contributionpage = CRM_Contribute_BAO_ContributionPage::create( $params );
          $copycontributionpage = CRM_Contribute_BAO_ContributionPage::copy( $contributionpage->id );
          $this->assertEquals( $copycontributionpage->contribution_type_id, $this->_contributionTypeID, 'Check for Contribution type id.' );
          $this->assertEquals( $copycontributionpage->goal_amount , 400, 'Check for goal amount.' );
@@ -184,7 +184,7 @@ class CRM_Contribute_BAO_ContributionPageTest extends CiviUnitTestCase
         require_once 'CRM/Contribute/BAO/ContributionPage.php';
         
 
-        $contributionpage = CRM_Contribute_BAO_ContributionPage::create( $params ,$ids );
+        $contributionpage = CRM_Contribute_BAO_ContributionPage::create( $params );
         $id = $contributionpage->id;
         $checkRecurring  = CRM_Contribute_BAO_ContributionPage::checkRecurPaymentProcessor($id);
         $this->assertEquals( $checkRecurring , false , 'Check for false return.' );

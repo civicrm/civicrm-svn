@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -80,18 +80,18 @@
 {/htxt}
 
 {htxt id='id-is_cms_user'}
-{ts}If you are using this profile as a contact signup form, using it in an online contribution page OR an event registration page, anonymous users will be given the option to create a {$config->userFramework} User Account as part of completing the form.
+{ts 1=`$config->userFramework`}If you are using this profile as a contact signup form, using it in an online contribution page OR an event registration page, anonymous users will be given the option to create a %1 User Account as part of completing the form.{/ts}
 {if $config->userFramework EQ 'Drupal'}
-    This feature requires your Drupal User Settings to allow "vistors to create accounts" (with or without administrator approval). The 'Email Verification' option may be enabled or disabled.
-    If the 'Email Verification' option is enabled, users will receive a welcome email from Drupal with login information. Otherwise they will select a Password inline, and if administrator approval is not required they will be automatically logged in as soon as the transaction is completed.
+    {ts}This feature requires your Drupal User Settings to allow 'vistors to create accounts' (with or without administrator approval). The 'Email Verification' option may be enabled or disabled.{/ts}
+    {ts}If the 'Email Verification' option is enabled, users will receive a welcome email from Drupal with login information. Otherwise they will select a Password inline, and if administrator approval is not required they will be automatically logged in as soon as the transaction is completed.{/ts}
 {elseif $config->userFramework EQ 'Joomla'}
-    This feature requires the 'Allow User Registration' setting to be 'Yes' in Joomla Global Configuration >> System Settings. 
+    {ts}This feature requires the 'Allow User Registration' setting to be 'Yes' in Joomla Global Configuration >> System Settings.{/ts}
 {/if}
-In addition, you must include a Primary Email Address field in the profile.{/ts} {docURL page="How to Create Profiles"}
+{ts}In addition, you must include a Primary Email Address field in the profile.{/ts} {docURL page="How to Create Profiles"}
 {/htxt}
 
 {htxt id='id-is_update_dupe'}
-<p>{ts}If you are using the profile as a contact signup and editing form - this option controls what happens if the data matches an existing contact record. Using this option user can update the matching record or create a duplicate record or otherwise he will get a "duplicate record" warning, and their input will not be saved. Contact matching is based on your configured "Strict" rule for identifying duplicate contacts.{/ts} {docURL page="Find and Merge Duplicate Contacts"}</p>
+<p>{ts}If you are using the profile as a contact signup and editing form - this option controls what happens if the data matches an existing contact record. Using this option user can update the matching record or create a duplicate record or otherwise he will get a 'duplicate record' warning, and their input will not be saved. Contact matching is based on your configured 'Strict' rule for identifying duplicate contacts.{/ts} {docURL page="Find and Merge Duplicate Contacts"}</p>
 <p>{ts}This setting is ignored if the profile is embedded in an online contribution, membership signup or event registration form. In this case a contact match always results in the transaction being linked to the matching contact.</p>{/ts}
 <p>{ts}NOTE: If there are multiple matching contacts, the first matching record is used.{/ts}</p>
 {/htxt}
@@ -105,10 +105,11 @@ In addition, you must include a Primary Email Address field in the profile.{/ts}
 {/htxt}
 
 {htxt id='id-is_uf_link'}
-{ts 1=$config->userFramework}Check this box if you want to include a link in the listings to view contacts' %1 user account information (e.g. their 'My Account' page). This link will only be included for contacts who have a user account on your website.{/ts}
+{ts 1=`$config->userFramework`}Check this box if you want to include a link in the listings to view contacts' %1 user account information (e.g. their 'My Account' page). This link will only be included for contacts who have a user account on your website.{/ts}
 {/htxt}
 
 {htxt id='id-is_proximity_search'}
-{ts}If you are using this profile as a search form, you can choose to include proximity searching. When enabled, a proximity search block will be added to the search criteria. This block will contain fields to set the proximity start address, and a field to set a 'Radius' (distance from that address).
-Set proximity search required is you want all searches using this profile to require the user to enter a start address and a radius.{/ts}
+{ts}If you are using this profile as a search form, you can choose to include proximity searching. When enabled, a proximity search block will be added to the search criteria. This block will contain fields to set the proximity start address, and a field to set a 'Radius' (distance from that address).{/ts}
+{ts}Set Proximity Search as required if you want all searches using this profile to require the user to enter a start address and a radius.{/ts}
+<p>{ts}IMPORTANT: You must enable a Mapping Provider in order to use the Proximity Search feature (Administer > Configure > Global Settings > Mapping and Geocoding).{/ts}</p>
 {/htxt}
