@@ -239,22 +239,25 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
         
         if ( CRM_Utils_Array::value('note', $params) || CRM_Utils_Array::value('participant_note', $params)) {
             if ( CRM_Utils_Array::value('note', $params) ) {
-                $note = CRM_Utils_Array::value('note', $params);
+                $participantNote = CRM_Utils_Array::value( 'note', $params );
             } else {
-                $note = CRM_Utils_Array::value('participant_note', $params);
+                $participantNote = CRM_Utils_Array::value( 'participant_note', $params );
             }
         
-            $noteDetails  = CRM_Core_BAO_Note::getNote( $participant->id, 'civicrm_participant' );
-            $noteIDs      = array( );
-            if ( ! empty( $noteDetails ) ) {
-                $noteIDs['id'] = array_pop( array_flip( $noteDetails ) );
-            }
-
-            if ( $note ) {
+            $note = new CRM_Core_DAO_Note( );
+            $note->entity_id = $participant->id;
+            $note->entity_table = 'civicrm_participant';
+            $noteIDs = array( );
+            if ( $note->find( true ) ) {
+                $id = $note->id;    
+                $noteIDs["id"] = $id;
+             }
+            
+            if ( $participantNote ) {
                 require_once 'CRM/Core/BAO/Note.php';
                 $noteParams = array(
                                     'entity_table'  => 'civicrm_participant',
-                                    'note'          => $note,
+                                    'note'          => $participantNote,
                                     'entity_id'     => $participant->id,
                                     'contact_id'    => $id,
                                     'modified_date' => date('Ymd')

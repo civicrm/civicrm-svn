@@ -585,7 +585,7 @@ class CRM_Export_BAO_Export
                     if ( property_exists( $dao, $field ) ) {
                         $fieldValue = $dao->$field;
                         // to get phone type from phone type id
-                        if ( $field == 'phone_type_id' ) {
+                        if ( $field == 'phone_type_id' && isset( $phoneTypes[$fieldValue] ) ) {
                             $fieldValue = $phoneTypes[$fieldValue];
                         } else if ( $field == 'provider_id' ) {
                             $fieldValue = CRM_Utils_Array::value( $fieldValue, $imProviders );  
@@ -814,7 +814,7 @@ class CRM_Export_BAO_Export
         }
 
         // fix the headers for rows with relationship type
-        if ( $relName ) {
+        if ( !empty( $relName ) ) {
             self::manipulateHeaderRows( $headerRows, $contactRelationshipTypes );
         }
 
