@@ -27,8 +27,8 @@
 
 require_once 'CiviTest/CiviSeleniumTestCase.php';
 
-class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
-
+class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase
+{
   protected $captureScreenshotOnFailure = TRUE;
   protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';
   protected $screenshotUrl = 'http://api.dev.civicrm.org/sc/';
@@ -52,19 +52,20 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
       // page contents loaded and you can continue your test execution.
       $this->webtestLogin( );
       
-      $params = array( 'label_a_b'       => 'Owner of'.rand( ),
-                       'label_b_a'       => 'Belongs to'.rand( ),
+      //create a relationship type between different contact types
+      $params = array( 'label_a_b'       => 'Owner of '.rand( ),
+                       'label_b_a'       => 'Belongs to '.rand( ),
                        'contact_type_a'  => 'Individual',
                        'contact_type_b'  => 'Household',
                        'description'     => 'The company belongs to this individual' );
       
       $this->webtestAddRelationshipType( $params );
 
+      //create a New Individual
       $firstName = substr(sha1(rand()), 0, 7);
       $this->webtestAddContact( $firstName, "Anderson", "$firstName@anderson.name" );
       $sortName    = "Anderson, $firstName";
       $displayName = "$firstName Anderson";
-      
       
       // Go directly to the URL of the screen that you will be testing (New Household).
       $this->open($this->sboxPath . "civicrm/contact/add&reset=1&ct=Household");
@@ -76,36 +77,42 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
       
       // Clicking save.
       $this->click("_qf_Contact_upload_view");
-      
       $this->waitForElementPresent("css=.crm-contact-tabs-list");
-      // visit relationship tab
+
+      // visit relationship tab of the household
       $this->click("css=li#tab_rel a");
       
       // wait for add Relationship link
       $this->waitForElementPresent('link=Add Relationship');
-      //$this->waitForPageToLoad("300000");    
       $this->click('link=Add Relationship');
-      $this->waitForPageToLoad("30000");    
+      
+      //choose the created relationship type 
+      $this->waitForElementPresent("relationship_type_id");
       $this->select('relationship_type_id', "label={$params['label_b_a']}");
+
+      //fill in the individual
       $this->typeKeys("css=input#rel_contact", $sortName);
       $this->click("css=input#rel_contact");
-      
 
-      //$this->waitForElementPresent("_qf_Relationship_refresh");
-      //      $this->click("_qf_Relationship_refresh");
-      
       $this->waitForElementPresent("search-button");
-      //      
       $this->click("search-button");
-      $this->waitForPageToLoad("30000");    
-      $this->waitForElementPresent("_qf_Relationship_refresh_savedetails");
-      $this->waitForElementPresent("contact_select");
-      $this->click("details-save");
       
-      $this->waitForPageToLoad("60000");    
+      //check the checkbox
+      $this->waitForElementPresent("xpath=//table/tbody//tr[1]/td[1]/input");
+      $this->click("xpath=//table/tbody//tr[1]/td[1]/input");
+
+      //fill in the relationship start date
+      $this->webtestFillDate('start_date' , '-2 year' );
+
+      $description = "Well here is some description !!!!";
+      $this->type("description", $description );
       
-      // Is status message correct?
-      //      $this->assertTrue($this->isTextPresent("Saved"));
+      //save the relationship
+      $this->click("_qf_Relationship_upload");
+      $this->waitForElementPresent("current-relationships");
+
+      //check the status message
+      $this->assertTrue($this->isTextPresent("1 new relationship record created."));
 
   }  
 
