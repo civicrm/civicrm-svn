@@ -55,7 +55,7 @@
 {/if}
 
 {if $hasOpenFlashChart}
-{include file="CRM/common/openFlashChart.tpl"}
+{include file="CRM/common/openFlashChart.tpl" contriChart=true}
 
 {literal}
 <script type="text/javascript">

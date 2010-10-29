@@ -40,7 +40,7 @@
 </table>
 
 {if !$section}
-        {include file="CRM/common/openFlashChart.tpl"}
+        {include file="CRM/common/openFlashChart.tpl" divId="open_flash_chart_$uniqueId"}
 {/if}
 
 {literal}
