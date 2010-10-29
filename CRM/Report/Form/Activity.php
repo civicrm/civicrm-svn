@@ -92,7 +92,7 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                                                      'type'      => CRM_Report_Form::OP_STRING  ),
                                               'current_user'     => 
                                               array( 'name'      => 'current_user',
-                                                     'title'     => ts('Limit to current user'),
+                                                     'title'     => ts('Limit To Current User'),
                                                      'type'      => CRM_Utils_Type::T_INT,
                                                      'operatorType' => CRM_Report_Form::OP_SELECT,
                                                      'options'   => array('0'=>ts('No'), '1'=>ts('Yes') ) ) ),
