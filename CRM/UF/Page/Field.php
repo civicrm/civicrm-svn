@@ -264,7 +264,7 @@ class CRM_UF_Page_Field extends CRM_Core_Page
         }
 
         // Call the parents run method
-        parent::run( );
+        return parent::run( );
     }
 
     /**

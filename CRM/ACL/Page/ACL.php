@@ -147,7 +147,7 @@ class CRM_ACL_Page_ACL extends CRM_Core_Page_Basic
         $this->browse();
         
         // parent run 
-        parent::run();
+        return parent::run();
     }
     
     /**

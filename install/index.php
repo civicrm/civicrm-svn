@@ -837,7 +837,6 @@ class Installer extends InstallRequirements {
                 
                 //add basic drupal permissions
                 civicrm_install_set_drupal_perms();
-                
             } elseif ( $installType == 'standalone' ) {
                 $standaloneURL = civicrm_cms_base( ) . 'standalone/index.php';
                 $checkListURL  = $standaloneURL . "?q=civicrm/admin/configtask&reset=1";
@@ -854,25 +853,24 @@ class Installer extends InstallRequirements {
 }
 
 function civicrm_install_set_drupal_perms() {
-  if (!function_exists('db_select')) {
-    db_query( 'UPDATE {permission} SET perm = CONCAT( perm, \', access CiviMail subscribe/unsubscribe pages, access all custom data, access uploaded files, make online contributions, profile create, profile edit, profile view, register for events, view event info\') WHERE rid IN (1, 2)' );
-  }
-  else {
-    //this isn't working yet for D7:
-    $perms =
-      array(
-        'access CiviMail subscribe/unsubscribe pages',
-        'access all custom data',
-        'access uploaded files',
-        'make online contributions',
-        'profile listings and forms',
-        'register for events',
-        'view event info',
-        'view event participants',
-      );
-    //user_role_grant_permissions(DRUPAL_AUTHENTICATED_RID, $perms);
-    //user_role_grant_permissions(DRUPAL_ANONYMOUS_RID, $perms);    
-  }
+    if ( ! function_exists('db_select') ) {
+        db_query( 'UPDATE {permission} SET perm = CONCAT( perm, \', access CiviMail subscribe/unsubscribe pages, access all custom data, access uploaded files, make online contributions, profile listings and forms, register for events, view event info, view event participants\') WHERE rid IN (1, 2)' );
+    } else {
+        //this isn't working yet for D7:
+        $perms =
+            array(
+                  'access CiviMail subscribe/unsubscribe pages',
+                  'access all custom data',
+                  'access uploaded files',
+                  'make online contributions',
+                  'profile listings and forms',
+                  'register for events',
+                  'view event info',
+                  'view event participants',
+                  );
+        user_role_grant_permissions( DRUPAL_AUTHENTICATED_RID, $perms );
+        user_role_grant_permissions( DRUPAL_ANONYMOUS_RID    , $perms );    
+    }
 }
 
 function getSiteDir( $cmsPath, $str ) {

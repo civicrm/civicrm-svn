@@ -155,7 +155,7 @@ class CRM_Contact_Page_DedupeRules extends CRM_Core_Page_Basic
         $this->browse();
 
         // parent run
-        parent::run();
+        return parent::run();
     }
 
     /**

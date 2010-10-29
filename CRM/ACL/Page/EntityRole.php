@@ -147,7 +147,7 @@ class CRM_ACL_Page_EntityRole extends CRM_Core_Page_Basic
         }
         
         // parent run 
-        parent::run();
+        return parent::run();
     }
 
     /**

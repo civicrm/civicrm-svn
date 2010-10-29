@@ -71,7 +71,7 @@ class CRM_Admin_Page_CMSUser extends CRM_Core_Page
         $controller->process( );
         $controller->run( );
         
-        parent::run();
+        return parent::run();
     }
     
 }

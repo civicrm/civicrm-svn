@@ -138,7 +138,7 @@ class CRM_Contribute_Page_PCP extends CRM_Core_Page_Basic
         $this->browse();
 
         // parent run 
-        parent::run();
+        return parent::run();
     }
 
     /**

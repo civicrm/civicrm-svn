@@ -60,7 +60,7 @@ class CRM_Admin_Page_ConfigTaskList extends CRM_Core_Page {
             $this->assign( 'fromEmailId', $id );
         }
         
-        parent::run();
+        return parent::run();
     }   
 }
     

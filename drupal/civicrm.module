@@ -39,12 +39,12 @@ require_once 'civicrm_user.inc';
  * @return int 6 or 7, depending on version
  */
 function civicrm_drupal_major_version() {
-   static $version;
-  //for now, just check for the new DB manager
-  if (empty($version)) {
-    $version = function_exists('db_select') ? 7 : 6; 
-  }
-  return $version;
+    static $version;
+    //for now, just check for the new DB manager
+    if (empty($version)) {
+        $version = function_exists('db_select') ? 7 : 6; 
+    }
+    return $version;
 }
 
 /**
@@ -85,7 +85,7 @@ function civicrm_html_head()
     }
 
     require_once 'CRM/Core/Config.php';
-    $config = CRM_Core_Config::singleton();
+    $config =& CRM_Core_Config::singleton();
 
     $head = null;
 
@@ -126,6 +126,7 @@ function civicrm_help($section)
     	    return;
         }
 
+	return;
         require_once 'CRM/Utils/System.php';
         $docLinkAdmin = CRM_Utils_System::docURL2( "Administrator's Guide", true );
         $docLinkAccess = CRM_Utils_System::docURL2( "Access Control", true );
@@ -171,7 +172,7 @@ function civicrm_perm()
         return;
     }
 
-    $config = CRM_Core_Config::singleton();
+    $config =& CRM_Core_Config::singleton();
 
     require_once 'CRM/Core/Permission.php';
     $permissions =& CRM_Core_Permission::basicPermissions( );
@@ -195,7 +196,7 @@ function civicrm_permission()
         return;
     }
 
-    $config = CRM_Core_Config::singleton();
+    $config =& CRM_Core_Config::singleton();
 
     require_once 'CRM/Core/Permission.php';
     $permissions =& CRM_Core_Permission::basicPermissions( );
@@ -361,18 +362,14 @@ function civicrm_initialize( )
         $initialized = true;
 
         // initialize the system by creating a config object
-        $config = CRM_Core_Config::singleton();
+        $config =& CRM_Core_Config::singleton();
       
         // Add module-specific header elements
         $header = civicrm_html_head();
-        if (civicrm_drupal_major_version() != 7) {
-          if (!empty($header)) {
-            drupal_set_html_head($header);  
-          }
-        }
-        else {
-         //header will need to be a datastructure to work in D7
-          //not implemented yet
+        if ( ! empty( $header ) ) {
+            civicrm_drupal_major_version() <= 7 ?
+                drupal_set_html_head($header) :  
+                drupal_add_html_head($header);
         }
     }
 
@@ -430,21 +427,25 @@ function civicrm_invoke( )
     /* FIXME: hack to bypass synchronize if running upgrade to avoid
        any serious non-recoverable error which might hinder the
        upgrade process. */
-    if ( !isset($args[1]) or $args[1] != 'upgrade' ) {
+    if ( ! isset( $args[1] ) OR 
+         $args[1] != 'upgrade' ) {
         require_once 'CRM/Core/BAO/UFMatch.php';
         CRM_Core_BAO_UFMatch::synchronize( $user, false, 'Drupal',
                                            civicrm_get_ctype( 'Individual' ) );
     }
-      
-    require_once 'CRM/Core/Invoke.php';
-    $printed_content = NULL;
+
+    $printedContent = null;
     ob_start();
-    $page_content = CRM_Core_Invoke::invoke( $args );
-    $printed_content = ob_get_clean();
-    if (empty($page_content) and $printed_content) {
-      $page_content = $printed_content;
+
+    require_once 'CRM/Core/Invoke.php';
+    $pageContent = CRM_Core_Invoke::invoke( $args );
+
+    $printedContent = ob_get_clean();
+    if ( empty( $pageContent ) AND 
+         ! empty( $printedContent ) ) {
+        $pageContent = $printedContent;
     }
-    return $page_content;
+    return $pageContent;
 }
 
 /**
@@ -464,7 +465,6 @@ function civicrm_invoke( )
  */
 function civicrm_user( $type, &$edit, &$user, $category = NULL ) 
 {
-
     if ( $type == 'load' ) {
         return;
     }			
@@ -480,7 +480,7 @@ function civicrm_user( $type, &$edit, &$user, $category = NULL )
         return CRM_Core_BAO_UFMatch::synchronize( $user, false, 'Drupal',
                                                   civicrm_get_ctype( 'Individual' ), true );
     case 'register':
-        $config = CRM_Core_Config::singleton( );
+        $config =& CRM_Core_Config::singleton( );
         if ( $config->inCiviCRM ) {
             return;
         }
@@ -491,25 +491,6 @@ function civicrm_user( $type, &$edit, &$user, $category = NULL )
             return civicrm_register_data( $edit, $user, $category, false, true );
         }
         break;
-
-    case 'insert':
-        $config = CRM_Core_Config::singleton( );
-        if ( $config->inCiviCRM ) {
-            return;
-        }
-
-        // did civicrm generate this page, or is it via a user hook?
-        if ( civicrm_on_user_page( ) ) {
-            return civicrm_register_data( $edit, $user, $category, false );
-        } else {
-            require_once 'CRM/Core/BAO/UFMatch.php';
-            CRM_Core_BAO_UFMatch::synchronize( $user, false, 'Drupal',
-                                               civicrm_get_ctype( 'Individual' ) );
-        }
-        break;
-
-    case 'view':
-        return civicrm_view_data($user);
 
     case 'update':
         // this always comes in via user hook, so udpate email only if it has changed
@@ -531,7 +512,7 @@ function civicrm_user( $type, &$edit, &$user, $category = NULL )
         $inCategory = true;
         if ( $category ) {
             $inCategory = false;
-            $categories = civicrm_categories( $account );
+            $categories = civicrm_user_categories( );
             foreach ( $categories as $cat ) {
                 if ( $category == $cat['name'] ) {
                     $inCategory = true;
@@ -553,7 +534,7 @@ function civicrm_user( $type, &$edit, &$user, $category = NULL )
         return civicrm_validate_data($edit, $user, $category);
         
     case 'categories':
-        return civicrm_categories( $user );
+        return civicrm_user_categories( );
 
 	case 'delete':
         require_once 'CRM/Core/BAO/UFMatch.php';
@@ -567,35 +548,6 @@ function civicrm_user( $type, &$edit, &$user, $category = NULL )
  */
 function civicrm_on_user_page() {
     return isset( $_POST['_qf_default'] );
-}
-
-
-function civicrm_categories( &$user ) 
-{
-    if ( ! civicrm_initialize( ) ) {
-        return;
-    }
-
-    require_once 'CRM/Core/BAO/UFGroup.php';
-    require_once 'CRM/Core/BAO/UFField.php';
-
-    $allUFGroups =& CRM_Core_BAO_UFGroup::getModuleUFGroup('User Account');
-    $ufGroups = array( );
-
-    $weight = 100;
-    foreach ($allUFGroups as $key => $value) {
-        if ( $value['is_active'] ) {
-            $ufGroups[] = array( 'name'   => $value['name'],
-                                 'title'  => $value['name'],
-                                 'weight' => $weight,
-                                 'access callback' => '_civicrm_categories_access',
-                                 'access arguments' => array( "$key" ),
-                                 );
-            $weight += 10;
-        }
-    }
-
-    return $ufGroups;
 }
 
 function _civicrm_categories_access( $profile_id ) {
@@ -615,6 +567,10 @@ function _civicrm_categories_access( $profile_id ) {
 
 function civicrm_register_data($edit, &$user, $category, $reset, $doNotProcess = false ) 
 {
+    if ( ! civicrm_initialize( ) ) {
+        return FALSE;
+    }
+    
     require_once 'CRM/Core/BAO/UFMatch.php';
     require_once 'CRM/Core/BAO/UFGroup.php';
     require_once 'CRM/Core/Action.php';
@@ -636,7 +592,7 @@ function civicrm_register_data($edit, &$user, $category, $reset, $doNotProcess =
                                                    $doNotProcess, $ctype );
     } else {
         // Happens on $type == 'register'
-        $html = CRM_Core_BAO_UFGroup::getEditHTML( $userID, '',
+        $html = CRM_Core_BAO_UFGroup::getEditHTML( null, '',
                                                    1,
                                                    true,
                                                    $reset, null,
@@ -647,26 +603,23 @@ function civicrm_register_data($edit, &$user, $category, $reset, $doNotProcess =
     if ( $html ) {
         $html = civicrm_add_jquery( $html );
         $index = empty( $category ) ? 'civicrm-profile-register' : $category;
-        if (civicrm_drupal_major_version() == 6) {
+        if (civicrm_drupal_major_version() <= 6) {
             $output[$index] = array( '#title' => $category,
                                      '#value' => $html,
                                      '#weight' => 1 );
-        }
-        else {
+        } else {
            //Drupal 7 style markup fields
-           $output[$index] = array( '#title' => $category,
-                                    '#type' => 'item',
-                                     '#markup' => $html,
-                                     '#weight' => 1 );
-          
+           $output[$index] = array( '#title'  => $category,
+                                    '#type'   => 'item',
+                                    '#markup' => $html,
+                                    '#weight' => 1 );
         }
     }
-
     return $output;
 }
 
-function civicrm_form_data($edit, &$user, $category, $reset, $doNotProcess = false) 
-{
+function civicrm_form_data($edit, &$user, $category, $reset, $doNotProcess = false) {
+
     require_once 'CRM/Core/BAO/UFMatch.php';
     require_once 'CRM/Core/BAO/UFGroup.php';
 
@@ -711,15 +664,15 @@ function civicrm_form_data($edit, &$user, $category, $reset, $doNotProcess = fal
                                    '#weight' => 1 );
         if (civicrm_drupal_major_version() == 6) {
             $output[$index][] = array( '#title' => $category,
-                                     '#value' => $html,
-                                     '#weight' => 1 );
+                                       '#value' => $html,
+                                       '#weight' => 1 );
         }
         else {
-           //Drupal 7 style markup fields
-           $output[$index][] = array( '#title' => $category,
-                                    '#type' => 'item',
-                                     '#markup' => $html,
-                                     '#weight' => 1 );
+            //Drupal 7 style markup fields
+            $output[$index][] = array( '#title' => $category,
+                                       '#type' => 'item',
+                                       '#markup' => $html,
+                                       '#weight' => 1 );
           
         }
     }
@@ -727,79 +680,7 @@ function civicrm_form_data($edit, &$user, $category, $reset, $doNotProcess = fal
     return $output;
 }
 
-function civicrm_view_data( &$user ) 
-{
-    require_once 'CRM/Core/BAO/UFMatch.php';
-    $userID = CRM_Core_BAO_UFMatch::getContactId( $user->uid );
-    if ( $userID ) {
-        // make sure user has permission to view the record
-        require_once 'CRM/Contact/BAO/Contact.php';
-        require_once 'CRM/Contact/BAO/Contact/Permission.php';
-        $contactURL = null;
-        if ( CRM_Core_Permission::check( 'access CiviCRM' ) &&
-             CRM_Contact_BAO_Contact_Permission::allow( $userID ) ) {
-            $url = CRM_Utils_System::url( 'civicrm/contact/view', "reset=1&cid=$userID" );
-            $contactURL = '<a href="' .$url. '">&raquo; ' .t("View Contact Record") . '</a>';
-        }
-
-        if ( CRM_Core_Permission::check( 'access Contact Dashboard' ) ) {
-            $url = CRM_Utils_System::url( 'civicrm/user', "reset=1&id=$userID" );
-            if ( ! empty( $contactURL ) ) {
-                $contactURL .= '<br/>';
-            }
-            $contactURL .= '<a href="' .$url. '">&raquo; ' .t("View Contact Dashboard") . '</a>';
-        }
-
-        require_once 'CRM/Profile/Page/Dynamic.php';
-        require_once 'CRM/Core/BAO/UFGroup.php';
-        require_once 'CRM/Core/BAO/UFField.php';
-
-        $ctype = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $userID, 'contact_type' );
-
-        $ufGroups =& CRM_Core_BAO_UFGroup::getModuleUFGroup('User Account', 0, false);
-        $weight   = 100;
-        foreach ( $ufGroups as $id => $title ) {
-            
-            $fieldType = CRM_Core_BAO_UFField::getProfileType( $id );
-            if ( CRM_Contact_BAO_ContactType::isaSubType( $fieldType ) ) {
-                $fieldType = CRM_Contact_BAO_ContactType::getBasicType( $fieldType );
-            }
-            if ( ( $fieldType != 'Contact' ) && ( $fieldType != $ctype ) ) {
-                continue;
-            }
-            $page = new CRM_Profile_Page_Dynamic( $userID, $id, null, true );
-            $pageContent = $page->run( );
-
-            // CRM-3537: profile edit link
-            if ( user_edit_access($user) ) {
-                $editURL = '&raquo; ' . l( t("Edit '!1'", array('!1' => $title['title'])),
-                                           "user/{$user->uid}/edit/{$title['title']}");
-            }
-
-            if ( $pageContent ) {
-                $user->content[$title['title']] =
-                    array( '#title'  => $title['title'],
-                           '#type'   => 'user_profile_category',
-                           '#weight' => $weight );
-                $user->content[$title['title']][$title['title']] = 
-                    array(  '#type'  => 'user_profile_item',
-                            '#value' => $pageContent . $editURL );
-
-                $weight += 10;
-            }
-        }
-        
-        if ( $contactURL ) {
-            $user->content['urls'] = 
-                array( '#value'  => $contactURL,
-                       '#weight' => $weight );
-        }
-    }
-    return;
-}
-
-function civicrm_validate_data($edit, &$user, $title) 
-{
+function civicrm_user_form_validate($form, &$form_state) {
     static $validated = false;
 
     if ( $validated ) {
@@ -837,8 +718,12 @@ function civicrm_validate_data($edit, &$user, $title)
 * Disable the drupal cache for all civicrm pages which should not be cached
 */
 function civicrm_cache_disable( ) {
-	global $conf;
-    $conf['cache'] = CACHE_DISABLED;
+    if ( civicrm_drupal_major_version( ) <= 6 ) {
+        global $conf;
+        $conf['cache'] = CACHE_DISABLED;
+    } else {
+        drupal_page_is_cacheable( false );
+    }
 }
 
 /**
@@ -847,7 +732,7 @@ function civicrm_cache_disable( ) {
  * qfKey
  */
 function civicrm_key_disable( ) {
-    $config = CRM_Core_Config::singleton( );
+    $config =& CRM_Core_Config::singleton( );
     $config->keyDisable = true;
 }
 
@@ -921,22 +806,57 @@ function civicrm_add_jquery( &$html ) {
 }
 
 function  civicrm_form_alter( &$form, $formValues, $formID ) {
-    if ( in_array( $formID, array( 'user_admin_perm', 'system_clean_url_settings' ) ) && !empty( $formValues['post'] ) ) {
-        // reset navigation for permissions changed and clean url
-        if ( ! civicrm_initialize( ) ) {
-            return;
+    switch ( $formID ) {
+    case 'user_admin_perm':
+    case 'system_clean_url_settings':
+        if ( ! empty( $formValues['post'] ) ) {
+            // reset navigation for permissions changed and clean url
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
+            require_once 'CRM/Core/BAO/Navigation.php';
+            CRM_Core_BAO_Navigation::resetNavigation( );
         }
-        require_once 'CRM/Core/BAO/Navigation.php';
-        CRM_Core_BAO_Navigation::resetNavigation( );
-    } else if ( $formID == 'user_register' ) {
+        break;
+
+    case 'user_register_form':
         $form['#attributes']['enctype'] = 'multipart/form-data';
+        $form['#validate'][] = 'civicrm_user_form_validate';
+        $output = civicrm_register_data( $form,
+                                         $form['#user'],
+                                         null, true, false );
+        $form = array_merge( $form, $output );
+        break;
+        
+    case 'user_profile_form':
+      $inCategory = true;
+      if ( $category ) {
+          $inCategory = false;
+          $categories = civicrm_categories( $account );
+          foreach ( $categories as $cat ) {
+              if ( $category == $cat['name'] ) {
+                  $inCategory = true;
+                  break;
+              }
+          }
+      }
+      
+      // only return a form to drupal my account page
+      $output = array();
+      if ( $inCategory      &&
+           arg(0) == 'user' &&
+           arg(2) == 'edit' &&
+           arg(3) ) {
+          $output = civicrm_form_data($edit, $user, $category, true );
+          if (!empty($output))
+            $form = array_merge($form, $output);
+      }
+      break;
+
+    default:
+        break;
     }
-    //if Drupal 7, do its required mods as well.
-    if ( civicrm_drupal_major_version() == 7 ) {
-      //require_once 'civicrm_user.inc';
-      civicrm_form_alter_d7( $form, $formValues, $formID );
-      return;
-    }
+    return;
 }
 
 /*

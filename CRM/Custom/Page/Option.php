@@ -307,7 +307,7 @@ ORDER BY weight, label
             $this->browse();
         }
         // Call the parents run method
-        parent::run();
+        return parent::run();
     }
 }
 

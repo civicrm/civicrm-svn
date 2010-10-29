@@ -40,20 +40,6 @@
 class CRM_Utils_System_Drupal {
 
     /**
-     * Determine the major version of Drupal
-     * now running
-     *
-     * @return int  6 or 7
-     */
-    static function drupalVersion( ) {
-       static $version;
-       if (!isset($version)) {
-          $version = function_exists('db_select') ? 7 : 6;
-       }
-       return $version;
-    }
-
-    /**
      * sets the title of the page
      *
      * @param string $title
@@ -63,14 +49,17 @@ class CRM_Utils_System_Drupal {
      * @access public
      */
     function setTitle( $title, $pageTitle = null ) {
-        if ( !$pageTitle ) {
-            $pageTitle = $title;
-        }
         if ( arg(0) == 'civicrm' )	{
-            if ( self::drupalVersion() == 6 )   
-                drupal_set_title( $title );
-            else
-                drupal_set_title( $title, PASS_THROUGH );
+            if ( !$pageTitle ) {
+                $pageTitle = $title;
+            }
+
+            //set drupal title 
+            if ( civicrm_drupal_major_version( ) <= 6 ) {
+                drupal_set_title( $pageTitle );
+            } else {
+                drupal_set_title( $pageTitle, PASS_THROUGH );
+            }
         }
     }
     
@@ -120,7 +109,7 @@ class CRM_Utils_System_Drupal {
     /**
      * Append a string to the head of the html file
      *
-     * @param string $head the new string to be appended
+     * @param string $header the new string to be appended
      *
      * @return void
      * @access public
@@ -128,10 +117,12 @@ class CRM_Utils_System_Drupal {
      *
      * @todo Not Drupal 7 compatible
      */
-    static function addHTMLHead( $head ) {
-      if (function_exists('drupal_set_html_head')) {
-        drupal_set_html_head( $head );
-      }
+    static function addHTMLHead( $header ) {
+        if ( ! empty( $header ) ) { 
+            civicrm_drupal_major_version() <= 7 ?
+                drupal_set_html_head($header) :  
+                drupal_add_html_head($header);
+        }
     }
 
     /** 

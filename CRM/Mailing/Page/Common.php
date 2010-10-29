@@ -121,7 +121,7 @@ class CRM_Mailing_Page_Common extends CRM_Core_Page
             $session->pushUserContext( $confirmURL ); 
         }
         
-        parent::run();
+        return parent::run();
     }
 }
 

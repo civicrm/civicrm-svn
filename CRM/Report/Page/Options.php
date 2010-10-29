@@ -159,7 +159,7 @@ class CRM_Report_Page_Options extends CRM_Core_Page_Basic
     function run()
     {
         $this->preProcess();
-        parent::run();
+        return parent::run();
     }
     
     /**

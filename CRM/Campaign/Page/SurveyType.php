@@ -153,7 +153,7 @@ class CRM_Campaign_Page_SurveyType extends CRM_Core_Page_Basic
     function run()
     {
         $this->preProcess();
-        parent::run();
+        return parent::run();
     }
     
     /**

@@ -269,7 +269,7 @@ class CRM_Contribute_Page_PCPInfo extends CRM_Core_Page
             return $controller->run();
         }
         $session->pushUserContext( CRM_Utils_System::url(CRM_Utils_System::currentPath( ),'reset=1&id='.$this->_id ));
-        parent::run();
+        return parent::run();
     }
     
     function getTemplateFileName() 

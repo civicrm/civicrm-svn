@@ -146,7 +146,7 @@ class CRM_Profile_Page_View extends CRM_Core_Page
     function run()
     {
         $this->preProcess();
-        parent::run();
+        return parent::run();
     }
 
     function getTemplateFileName() {

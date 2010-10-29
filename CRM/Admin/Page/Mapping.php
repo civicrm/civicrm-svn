@@ -146,7 +146,7 @@ class CRM_Admin_Page_Mapping extends CRM_Core_Page_Basic
    function run() 
    {
        $sort = 'mapping_type asc';
-       parent::run($sort);
+       return parent::run($sort);
    }
 }
 

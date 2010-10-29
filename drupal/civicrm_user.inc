@@ -72,7 +72,7 @@ function civicrm_user_insert( &$edit, &$user, $category = NULL )
 
     // did civicrm generate this page, or is it via a user hook?
     if ( civicrm_on_user_page( ) ) {
-        civicrm_register_data( $edit, $user, $category, false );
+        civicrm_register_data( $edit, $user, $category, false, true );
     } else {
         require_once 'CRM/Core/BAO/UFMatch.php';
         CRM_Core_BAO_UFMatch::synchronize( $user, false, 'Drupal',
@@ -125,8 +125,27 @@ function civicrm_user_categories()
     if ( ! civicrm_initialize( ) ) {
         return;
     }
-    global $user;
-    return civicrm_categories( $user );
+
+    require_once 'CRM/Core/BAO/UFGroup.php';
+    require_once 'CRM/Core/BAO/UFField.php';
+
+    $allUFGroups =& CRM_Core_BAO_UFGroup::getModuleUFGroup('User Account');
+    $ufGroups = array( );
+
+    $weight = 100;
+    foreach ($allUFGroups as $key => $value) {
+        if ( $value['is_active'] ) {
+            $ufGroups[] = array( 'name'   => $value['name'],
+                                 'title'  => $value['name'],
+                                 'weight' => $weight,
+                                 'access callback' => '_civicrm_categories_access',
+                                 'access arguments' => array( "$key" ),
+                                 );
+            $weight += 10;
+        }
+    }
+
+    return $ufGroups;
 }
 
 
@@ -140,66 +159,75 @@ function civicrm_user_view( $user, $view_mode ){
     if ( ! civicrm_initialize( ) ) {
         return;
     }
-    return civicrm_view_data( $user );
-}
+    require_once 'CRM/Core/BAO/UFMatch.php';
+    $userID = CRM_Core_BAO_UFMatch::getContactId( $user->uid );
+    if ( $userID ) {
+        // make sure user has permission to view the record
+        require_once 'CRM/Contact/BAO/Contact.php';
+        require_once 'CRM/Contact/BAO/Contact/Permission.php';
+        $contactURL = null;
+        if ( CRM_Core_Permission::check( 'access CiviCRM' ) &&
+             CRM_Contact_BAO_Contact_Permission::allow( $userID ) ) {
+            $url = CRM_Utils_System::url( 'civicrm/contact/view', "reset=1&cid=$userID" );
+            $contactURL = '<a href="' .$url. '">&raquo; ' .t("View Contact Record") . '</a>';
+        }
 
+        if ( CRM_Core_Permission::check( 'access Contact Dashboard' ) ) {
+            $url = CRM_Utils_System::url( 'civicrm/user', "reset=1&id=$userID" );
+            if ( ! empty( $contactURL ) ) {
+                $contactURL .= '<br/>';
+            }
+            $contactURL .= '<a href="' .$url. '">&raquo; ' .t("View Contact Dashboard") . '</a>';
+        }
 
-/**
- * The remaining functions are manipulations via the Forms API, which
- * have supplanted the old hook_user ops.
- */
+        require_once 'CRM/Profile/Page/Dynamic.php';
+        require_once 'CRM/Core/BAO/UFGroup.php';
+        require_once 'CRM/Core/BAO/UFField.php';
 
-/**
- * bottleneck for D7 specific form_alter handling
- */
-function civicrm_form_alter_d7( &$form, $formValues, $formID )
-{
-  switch ($formID) {
-    case 'user_register_form':
-      $config = CRM_Core_Config::singleton( );
-      if ( $config->inCiviCRM ) {
-          return;
-      }
-      $output = array();
-      if ( empty( $_POST ) ) {
-          $output = civicrm_register_data($edit, $user, $category, true, false );
-      } else {
-          $output = civicrm_register_data( $edit, $user, $category, false, true );
-      }
-      if (!empty($output)) {
-        $form = array_merge($form, $output);
+        $ctype = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $userID, 'contact_type' );
+
+        $ufGroups =& CRM_Core_BAO_UFGroup::getModuleUFGroup('User Account', 0, false);
+        $weight   = 100;
+        foreach ( $ufGroups as $id => $title ) {
+            
+            $fieldType = CRM_Core_BAO_UFField::getProfileType( $id );
+            if ( CRM_Contact_BAO_ContactType::isaSubType( $fieldType ) ) {
+                $fieldType = CRM_Contact_BAO_ContactType::getBasicType( $fieldType );
+            }
+            if ( ( $fieldType != 'Contact' ) && ( $fieldType != $ctype ) ) {
+                continue;
+            }
+            $page = new CRM_Profile_Page_Dynamic( $userID, $id, null, true );
+            $pageContent = $page->run( );
+
+            // CRM-3537: profile edit link
+            if ( user_edit_access($user) ) {
+                $editURL = '&raquo; ' . l( t("Edit '!1'", array('!1' => $title['title'])),
+                                           "user/{$user->uid}/edit/{$title['title']}");
+            }
+
+            if ( $pageContent ) {
+                $user->content[$title['title']] =
+                    array( '#title'  => $title['title'],
+                           '#type'   => 'user_profile_category',
+                           '#weight' => $weight );
+                $user->content[$title['title']][$title['title']] = 
+                    array(  '#type'   => 'user_profile_item',
+                            '#title'  => null,
+                            '#value'  => $pageContent . $editURL,
+			    '#markup' => $pageContent . $editURL );
+
+                $weight += 10;
+            }
+        }
         
-      }
-      break;
-    case 'user_profile_form':
-      $inCategory = true;
-      if ( $category ) {
-          $inCategory = false;
-          $categories = civicrm_categories( $account );
-          foreach ( $categories as $cat ) {
-              if ( $category == $cat['name'] ) {
-                  $inCategory = true;
-                  break;
-              }
-          }
-      }
-      
-      // only return a form to drupal my account page
-      $output = array();
-      if ( $inCategory      &&
-           arg(0) == 'user' &&
-           arg(2) == 'edit' &&
-           arg(3) ) {
-          $output = civicrm_form_data($edit, $user, $category, true );
-          if (!empty($output))
-            $form = array_merge($form, $output);
-      }
-      break;
-    
-    default:
-      break;    
-  }
-  
+        if ( $contactURL ) {
+            $user->content['urls'] = 
+                array( '#value'  => $contactURL,
+                       '#weight' => $weight );
+        }
+    }
+    return;
 }
 
 

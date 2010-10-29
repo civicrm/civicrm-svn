@@ -127,7 +127,7 @@ class CRM_Contribute_Page_ContributionType extends CRM_Core_Page_Basic
         } 
 
         // parent run 
-        parent::run();
+        return parent::run();
     }
 
     /**

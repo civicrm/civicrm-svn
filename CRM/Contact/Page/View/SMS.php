@@ -94,7 +94,7 @@ class CRM_Contact_Page_View_SMS extends CRM_Core_Page {
             CRM_Core_Menu::addParam( 'cid',  $cid);
           
         }
-        parent::run();
+        return parent::run();
     }
 }
 

@@ -97,7 +97,7 @@ class CRM_Admin_Page_Persistent extends CRM_Core_Page
     function run() {
         CRM_Utils_System::setTitle( ts('DB Template Strings') );
         $this->browse();
-        parent::run();
+        return parent::run();
     }
     
     /**

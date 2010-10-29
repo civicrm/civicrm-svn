@@ -175,7 +175,7 @@ class CRM_UF_Page_Group extends CRM_Core_Page
             $this->browse();
         }
         // parent run 
-        parent::run();
+        return parent::run();
     }
     
     /**

@@ -155,7 +155,7 @@ class CRM_Event_Page_ManageEvent extends CRM_Core_Page
         $this->browse();
         
         // parent run 
-        parent::run();
+        return parent::run();
     }
 
     /**

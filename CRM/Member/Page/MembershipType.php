@@ -131,7 +131,7 @@ class CRM_Member_Page_MembershipType extends CRM_Core_Page_Basic
         }
         
         // parent run 
-        parent::run();
+        return parent::run();
     }
 
     /**

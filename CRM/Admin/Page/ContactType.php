@@ -117,7 +117,7 @@ class CRM_Admin_Page_ContactType extends CRM_Core_Page_Basic
         if( !$action ) {
             $this->browse( );
         }
-        parent::run();    
+        return parent::run();    
     }
     function browse()
     {   

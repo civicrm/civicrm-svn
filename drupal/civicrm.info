@@ -5,6 +5,5 @@ package = CiviCRM
 core = 7.x
 php = 5.2
 files[] = civicrm.module
-files[] = civcrm_user.inc
 files[] = civicrm.install
-
+files[] = civicrm_user.inc

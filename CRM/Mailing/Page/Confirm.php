@@ -67,7 +67,7 @@ class CRM_Mailing_Page_Confirm extends CRM_Core_Page
         $this->assign( 'display_name', $displayName);
         $this->assign( 'email'       , $email );
 
-        parent::run();
+        return parent::run();
     }
 }
 

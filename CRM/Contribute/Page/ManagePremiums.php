@@ -136,7 +136,7 @@ class CRM_Contribute_Page_ManagePremiums extends CRM_Core_Page_Basic
         $this->browse();
         
         // parent run 
-        parent::run();
+        return parent::run();
     }
 
     /**
