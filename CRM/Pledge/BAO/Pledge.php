@@ -689,7 +689,10 @@ WHERE  $whereCond
                                        'pledge_next_pay_date'       => array( 'title' => ts('Next Payment Date') ),
                                        'pledge_next_pay_amount'     => array( 'title' => ts('Next Payment Amount') ),
                                        'pledge_payment_paid_amount' => array( 'title' => ts('Paid Amount') ),
-                                       'pledge_payment_paid_date'   => array( 'title' => ts('Paid Date') )
+                                       'pledge_payment_paid_date'   => array( 'title' => ts('Paid Date') ),
+                                       'pledge_payment_status'      => array( 'title'    => ts('Pledge Payment Status'), 
+                                                                              'name'     => 'pledge_payment_status',
+                                                                              'data_type'=> CRM_Utils_Type::T_STRING )
                                        );
 
             

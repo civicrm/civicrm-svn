@@ -491,7 +491,8 @@ class CRM_Pledge_BAO_Query
                                 'pledge_payment_paid_date'        => 1,
                                 'pledge_payment_reminder_date'    => 1,
                                 'pledge_payment_reminder_count'   => 1,
-                                'pledge_payment_status_id'        => 1
+                                'pledge_payment_status_id'        => 1,
+                                'pledge_payment_status'           => 1
                                 );
             
             // also get all the custom pledge properties
