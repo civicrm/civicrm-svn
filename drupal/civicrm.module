@@ -830,11 +830,11 @@ function  civicrm_form_alter( &$form, $formValues, $formID ) {
         
     case 'user_profile_form':
       $inCategory = true;
-      if ( $category ) {
+      if ( $form['#user_category'] ) {
           $inCategory = false;
-          $categories = civicrm_categories( $account );
+          $categories = civicrm_user_categories( );
           foreach ( $categories as $cat ) {
-              if ( $category == $cat['name'] ) {
+              if ( $form['#user_category'] == $cat['name'] ) {
                   $inCategory = true;
                   break;
               }
@@ -847,7 +847,7 @@ function  civicrm_form_alter( &$form, $formValues, $formID ) {
            arg(0) == 'user' &&
            arg(2) == 'edit' &&
            arg(3) ) {
-          $output = civicrm_form_data($edit, $user, $category, true );
+          $output = civicrm_form_data($form, $form['#user'], $form['#user_category'], true );
           if (!empty($output))
             $form = array_merge($form, $output);
       }
