@@ -67,6 +67,11 @@ class CRM_Admin_Form extends CRM_Core_Form
         $this->_id      = $this->get( 'id'      );
         $this->_BAOName = $this->get( 'BAOName' );
         $this->_values  = array( );
+        if ( isset( $this->_id ) ) {
+            $params = array( 'id' => $this->_id );
+            require_once( str_replace( '_', DIRECTORY_SEPARATOR, $this->_BAOName ) . ".php" );
+            eval( $this->_BAOName . '::retrieve( $params, $this->_values );' );
+        }
     }
 
     /**
@@ -77,11 +82,8 @@ class CRM_Admin_Form extends CRM_Core_Form
      * @return None
      */
     function setDefaultValues( ) {
-        
-        $defaults = $params = array( );
-        $defaults['is_active'] = null;
-
-        if ( isset( $this->_id ) ) {
+        $defaults = $this->_values;
+        if ( isset( $this->_id ) && empty( $this->_values ) ) {
             $params = array( 'id' => $this->_id );
             require_once(str_replace('_', DIRECTORY_SEPARATOR, $this->_BAOName) . ".php");
             eval( $this->_BAOName . '::retrieve( $params, $defaults );' );
