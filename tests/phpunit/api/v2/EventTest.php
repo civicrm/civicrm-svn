@@ -123,8 +123,8 @@ class api_v2_EventTest extends CiviUnitTestCase
     {
         $params = null;
         $result = civicrm_event_create( $params );
-        $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Params is not an array');
+        $this->assertEquals( 1, $result['is_error'] );
+        $this->assertEquals( 'Input parameters is not an array', $result['error_message'], 'In line ' . __LINE__ );
     }    
     
     function testCreateEventEmptyParams( )
@@ -132,7 +132,7 @@ class api_v2_EventTest extends CiviUnitTestCase
         $params = array( );
         $result = civicrm_event_create( $params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Missing require fields ( title, event type id,start date)');
+        $this->assertEquals( 'Mandatory param missing: start_date', $result['error_message'], 'In line ' . __LINE__ );
     }
     
     function testCreateEventParamsWithoutTitle( )
@@ -140,7 +140,7 @@ class api_v2_EventTest extends CiviUnitTestCase
         unset($this->_params['title']);
         $result = civicrm_event_create( $this->_params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Missing require fields ( title, event type id,start date)');
+        $this->assertEquals( 'Mandatory param missing: title', $result['error_message'], 'In line ' . __LINE__ );
     }
     
     function testCreateEventParamsWithoutEventTypeId( )
@@ -148,7 +148,7 @@ class api_v2_EventTest extends CiviUnitTestCase
         unset($this->_params['event_type_id']);
         $result = civicrm_event_create( $this->_params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Missing require fields ( title, event type id,start date)');
+        $this->assertEquals( 'Mandatory param missing: event_type_id', $result['error_message'], 'In line ' . __LINE__ );
     }
     
     function testCreateEventParamsWithoutStartDate( )
@@ -156,7 +156,7 @@ class api_v2_EventTest extends CiviUnitTestCase
         unset($this->_params['start_date']);
         $result = civicrm_event_create( $this->_params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Missing require fields ( title, event type id,start date)');
+        $this->assertEquals( 'Mandatory param missing: start_date', $result['error_message'], 'In line ' . __LINE__ );
     }
     
     function testCreateEvent( )
@@ -164,7 +164,7 @@ class api_v2_EventTest extends CiviUnitTestCase
         $result = civicrm_event_create( $this->_params );
 
         $this->assertEquals( $result['is_error'], 0 );
-        $this->assertArrayHasKey( 'event_id', $result );
+        $this->assertArrayHasKey( 'event_id', $result, 'In line ' . __LINE__  );
     }
 
 ///////////////// civicrm_event_delete methods
