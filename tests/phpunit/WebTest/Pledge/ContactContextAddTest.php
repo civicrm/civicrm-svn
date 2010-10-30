@@ -106,7 +106,7 @@ class WebTest_Pleadge_ContactContextAddTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad( "30000" );
         
         $this->assertTrue( $this->isTextPresent( "Pledge has been recorded and the payment schedule has been created." ) );
-        // verify if Pledge is created
+
         $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[9]/span/a[text()='View']" );
         
         //click through to the Pledge view screen
