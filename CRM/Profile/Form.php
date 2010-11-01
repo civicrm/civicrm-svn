@@ -160,7 +160,7 @@ class CRM_Profile_Form extends CRM_Core_Form
         
         $this->_duplicateButtonName = $this->getButtonName( 'upload',  'duplicate' );
         
-        if ( $this->_context == 'dialog' && ( !$this->_profileIds || empty( $this->_profileIds ) ) ) {
+        if ( !$this->_profileIds || empty( $this->_profileIds ) ) {
             $gids = explode( ',', CRM_Utils_Request::retrieve('gid', 'String', CRM_Core_DAO::$_nullObject, false, 0, 'GET') );
             if ( !empty( $gids ) ) {
                 foreach( $gids as $pfId  ) {
@@ -168,6 +168,11 @@ class CRM_Profile_Form extends CRM_Core_Form
                 }
             }
             
+            // check if we are rendering mixed profiles
+            if ( CRM_Core_BAO_UFGroup::checkForMixProfiles( $this->_profileIds ) ) {
+                CRM_Core_Error::fatal( ts( 'You cannot combine profiles of multiple types.' ) );
+            } 
+
             // for now consider 1'st profile as primary profile and validate it 
             // i.e check for profile type etc.
             // FIX ME: validations for other than primary

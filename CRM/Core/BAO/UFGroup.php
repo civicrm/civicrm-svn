@@ -2614,6 +2614,57 @@ SELECT  group_id
         
         return $subscribeGroupIds;
     }
-    
-}
 
+    /**
+     * Function to check if we are rendering mixed profiles
+     *
+     * @param array $profileIds associated array of profile ids
+     * 
+     * @return boolean $mixProfile true if profile is mixed  
+     * @static
+     * @access public
+     */ 
+    static function checkForMixProfiles( $profileIds ) {
+        $mixProfile = false;
+        
+        $contactTypes = array( 'Individual', 'Household', 'Organization' );
+        require_once 'CRM/Contact/BAO/ContactType.php';
+        $subTypes     = CRM_Contact_BAO_ContactType::subTypes( );
+
+        $components   = array( 'Contribution', 'Participant', 'Membership', 'Activity' );
+
+        require_once 'CRM/Core/BAO/UFField.php';
+        $typeCount = array( 'ctype' => array( ), 'subtype' => array( ) );
+        foreach( $profileIds as $gid ) {
+            $profileType = CRM_Core_BAO_UFField::getProfileType( $gid );
+            // ignore profile of type Contact
+            if ( $profileType == 'Contact' ) {
+                continue;
+            }
+            if ( in_array( $profileType, $contactTypes ) ) {
+                if ( !isset( $typeCount['ctype'][$profileType] ) ) {
+                    $typeCount['ctype'][$profileType] = 1;
+                }
+                
+                // check if we are rendering profile of different contact types
+                if ( count( $typeCount['ctype'] ) == 2 ) {
+                    $mixProfile = true; 
+                    break;
+                }
+            } elseif ( in_array( $profileType, $components ) ) {
+                $mixProfile = true;
+                break;  
+            } else {
+                if ( !isset( $typeCount['subtype'][$profileType] ) ) {
+                    $typeCount['subtype'][$profileType] = 1;
+                }
+                // check if we are rendering profile of different contact sub types
+                if ( count( $typeCount['subtype'] ) == 2 ) {
+                    $mixProfile = true; 
+                    break;
+                }
+            }
+        }
+        return $mixProfile;
+    }
+}
