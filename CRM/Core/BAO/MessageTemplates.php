@@ -471,7 +471,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
                 require_once 'CRM/Utils/PDF/Utils.php';
                 require_once 'CRM/Utils/File.php';
                 $config = CRM_Core_Config::singleton();
-                $pdf_filename = CRM_Utils_File::makeFileName( $config->templateCompileDir . $params['PDFFilename'] );
+                $pdf_filename = $config->templateCompileDir . CRM_Utils_File::makeFileName( $params['PDFFilename'] );
                 file_put_contents( $pdf_filename, CRM_Utils_PDF_Utils::html2pdf( $params['html'],
                                                                                  $params['PDFFilename'],
                                                                                  null,
