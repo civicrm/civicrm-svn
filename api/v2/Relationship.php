@@ -70,11 +70,13 @@ function civicrm_relationship_create( &$params ) {
     }
 
     $ids = array( );
+    $action = CRM_Core_Action::ADD;
     require_once 'CRM/Utils/Array.php';
 
     if( CRM_Utils_Array::value( 'id', $params ) ) {
         $ids['relationship']  = $params['id'];
         $ids['contactTarget'] = $params['contact_id_b'];
+        $action               = CRM_Core_Action::UPDATE;
     }
 
     $values['relationship_type_id'] = $params['relationship_type_id'].'_a_b';
@@ -82,6 +84,7 @@ function civicrm_relationship_create( &$params ) {
     $ids   ['contact'      ]        = $params['contact_id_a'];
 
     $relationshipBAO = CRM_Contact_BAO_Relationship::create( $values, $ids );
+    CRM_Contact_BAO_Relationship::relatedMemberships( $params['contact_id_a'], $values, $ids, $action );
 
     if ( is_a( $relationshipBAO, 'CRM_Core_Error' ) ) {
         return civicrm_create_error( "Relationship can not be created" );
@@ -422,6 +425,11 @@ function _civicrm_relationship_check_params( &$params ) {
         $relation->id = $params['id'];
         if ( !$relation->find( true ) ) {
             return civicrm_create_error( 'Relationship id is not valid' );
+        } else {
+            if ( ( $params['contact_id_a'] != $relation->contact_id_a ) ||
+                 ( $params['contact_id_b'] != $relation->contact_id_b ) ) {
+                return civicrm_create_error( 'Cannot change the contacts once relationship has been created' );
+            }
         }
     }
     
