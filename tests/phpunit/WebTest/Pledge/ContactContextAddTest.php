@@ -27,7 +27,7 @@
 
 require_once 'CiviTest/CiviSeleniumTestCase.php';
 
-class WebTest_Pleadge_ContactContextAddTest extends CiviSeleniumTestCase {
+class WebTest_Pledge_ContactContextAddTest extends CiviSeleniumTestCase {
     
     protected function setUp()
     {
@@ -130,5 +130,9 @@ class WebTest_Pleadge_ContactContextAddTest extends CiviSeleniumTestCase {
        
         $this->click( "_qf_PledgeView_next-bottom" );
         $this->waitForPageToLoad( "30000" );
+        
+        $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[9]/span/a[text()='View']" );
+        $this->click( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[1]/span/a" );
+        $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody//tr//td/table/tbody/tr[2]/td[8]/a[text()='Record Payment (Check, Cash, EFT ...)']" );
     }
 }
