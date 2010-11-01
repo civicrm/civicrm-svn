@@ -205,6 +205,10 @@ class CRM_Contribute_Import_Form_MapField extends CRM_Core_Form {
                 $highlightedFields[] = $name;
             }            
         }
+
+        // modify field title for contribution status
+        $this->_mapperFields['contribution_status_id'] = ts('Contribution Status');
+        
         $this->assign( 'highlightedFields', $highlightedFields );
     }
 
