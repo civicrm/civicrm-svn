@@ -293,13 +293,13 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
      */
     static function getEvents( $all = false, $id = false) 
     {
-        $query = "SELECT `id`, `title`, `start_date` FROM `civicrm_event`";
+        $query = "SELECT `id`, `title`, `start_date` FROM `civicrm_event` WHERE ( civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0 )";
         
         if ( $id ) {
-            $query .= " WHERE `id` = {$id}";
+            $query .= " AND `id` = {$id}";
         } elseif ( !$all ) {
             $endDate = date( 'YmdHis' );
-            $query .= " WHERE `end_date` >= {$endDate} OR end_date IS NULL";
+            $query .= " AND ( `end_date` >= {$endDate} OR end_date IS NULL )";
         }
 
         $query .= " ORDER BY title asc";
