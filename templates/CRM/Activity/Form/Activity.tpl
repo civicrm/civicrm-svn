@@ -142,13 +142,13 @@
              
              <tr class="crm-activity-form-block-assignee_contact_id">
              {if $action eq 4}
-                <td class="label">{ts}Assigned To {/ts}</td><td class="view-value">
+                <td class="label">{ts}Assigned To{/ts}</td><td class="view-value">
 			    {foreach from=$assignee_contact key=id item=name}
 			        <a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$id"}">{$name}</a>;&nbsp;
 			    {/foreach}
                 </td>
              {else}
-                <td class="label">{ts}Assigned To {/ts}</td>
+                <td class="label">{ts}Assigned To{/ts}</td>
                 <td>{$form.assignee_contact_id.html}
                    {edit}<span class="description">{ts}You can optionally assign this activity to someone. Assigned activities will appear in their Activities listing at CiviCRM Home.{/ts}
                            {if $config->activityAssigneeNotification}
