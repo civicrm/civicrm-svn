@@ -783,7 +783,10 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
         if ( !$editor || $forceTextarea ) {
             $editor = 'textarea';
         }
-      
+        if ( $editor == 'joomla default editor' ) {
+            $editor = 'joomlaeditor';
+        }
+        
         $this->addElement( $editor, $name, $label, $attributes );
         $this->assign('editor', $editor);
     }    
