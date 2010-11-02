@@ -592,9 +592,10 @@ AND    civicrm_activity.source_record_id = %2";
             if ( $activityID ) {
                 $activity['id'] = $activityID;  
             }
-        
+            
             require_once 'api/v2/Activity.php';
-            if ( is_a( civicrm_activity_create($activity, 'Email'), 'CRM_Core_Error' ) ) {
+            $isError = civicrm_activity_create( $activity );
+            if ( is_a( $isError, 'CRM_Core_Error' ) ) {
                 return false;
             }
         }

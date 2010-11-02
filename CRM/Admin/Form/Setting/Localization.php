@@ -61,6 +61,7 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
 
         $locales =& CRM_Core_I18n::languages();
 
+        require_once 'CRM/Core/DAO/Domain.php';
         $domain = new CRM_Core_DAO_Domain();
         $domain->find(true);
         if ($domain->locales) {
