@@ -58,8 +58,6 @@ class HTML_QuickForm_JoomlaEditor extends HTML_QuickForm_textarea
      */
     function toHtml()
     {
-        $width ='';
-        $height ='';
         jimport( 'joomla.html.editor' );
 		$editor = &JFactory::getEditor();
         
@@ -67,23 +65,23 @@ class HTML_QuickForm_JoomlaEditor extends HTML_QuickForm_textarea
             return $this->getFrozenHtml();
         } else {
             $name = $this->getAttribute( 'name' );
-			$config = CRM_Core_Config::singleton( );
-			$html = null;
+            $html = null;
 			
 			//tinymce and its relatives require 'double-loading' when inside jquery tab
 			if ( $editor->_name == 'jce' || $editor->_name == 'tinymce' ) {
-				$html .= sprintf( '<script type="text/javascript">
+                if( !empty( $this->_value ) ) {
+                    $html .= sprintf( '<script type="text/javascript">
 					//reset the controls if called in jquery tab or via ajax 
-        			tinyMCE.execCommand("mceRemoveControl", false,"' . $this->_attributes['id'] .'");
-        			tinyMCE.execCommand("mceAddControl"   , true, "' . $this->_attributes['id'] .'");
+        			tinyMCE.execCommand( "mceRemoveControl", false,"' . $this->_attributes['id'] .'" );
+        			tinyMCE.execCommand( "mceAddControl"   , true, "' . $this->_attributes['id'] .'" );
 					</script>' );
+                }
 				$html .= sprintf( '<style type="text/css"> <!--
-					#crm-container table.mceLayout td { border: none; } 
-                    .button2-left { display:none; }
+					#crm-container table.mceLayout td { border: none; } .button2-left { display:none; }
 					--> </style> ' );
 			}
 			
-			$html .= $editor->display( $name, $this->getValue(), $width, $height, '94', '20', false );
+			$html .= $editor->display( $name, $this->getValue(), $this->width, $this->height, '94', '20', false );
             return $html;
         }
     }
