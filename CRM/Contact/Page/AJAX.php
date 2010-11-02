@@ -586,6 +586,9 @@ WHERE sort_name LIKE '%$name%'";
 				$queryString = " cc.id IN ( $cid )";
 			}
 
+	        $offset   = CRM_Utils_Array::value( 'offset',   $_GET, 0 );
+	        $rowCount = CRM_Utils_Array::value( 'rowcount', $_GET, 20 );
+
             // add acl clause here
             require_once 'CRM/Contact/BAO/Contact/Permission.php';
             list( $aclFrom, $aclWhere ) = CRM_Contact_BAO_Contact_Permission::cacheClause( 'cc' );
@@ -599,6 +602,7 @@ FROM civicrm_contact cc
      {$aclFrom}
 WHERE cc.is_deceased = 0 AND {$queryString}
       {$aclWhere}
+LIMIT {$offset}, {$rowCount}
 ";
             
               $dao = CRM_Core_DAO::executeQuery( $query );
@@ -613,6 +617,7 @@ FROM   civicrm_email ce INNER JOIN civicrm_contact cc ON cc.id = ce.contact_id
        {$aclFrom}
 WHERE  ce.on_hold = 0 AND cc.is_deceased = 0 AND cc.do_not_email = 0 AND {$queryString}
        {$aclWhere}
+LIMIT {$offset}, {$rowCount}
 ";
 
             
