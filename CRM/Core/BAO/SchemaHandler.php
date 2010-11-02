@@ -215,7 +215,8 @@ ALTER TABLE {$tableName}
 $addFKSql = "
 ALTER TABLE {$tableName}
       ADD CONSTRAINT `FK_{$tableName}_entity_id` FOREIGN KEY (`entity_id`) REFERENCES {$fkTableName} (`id`) ON DELETE CASCADE;";
-        $dao = CRM_Core_DAO::executeQuery( $addFKSql );
+        // CRM-7007: do not i18n-rewrite this query
+        $dao = CRM_Core_DAO::executeQuery($addFKSql, array(), true, null, false, false);
         $dao->free();
 
         return true;
@@ -280,7 +281,8 @@ ALTER TABLE {$tableName}
             
         }
 
-        $dao =& CRM_Core_DAO::executeQuery( $sql );
+        // CRM-7007: do not i18n-rewrite this query
+        $dao =& CRM_Core_DAO::executeQuery($sql, array(), true, null, false, false);
         $dao->free();
         
         return true;
