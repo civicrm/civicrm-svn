@@ -147,9 +147,10 @@ class EmailProcessor {
                             break;
                         }
                     }
-                } 
-                
-                if ( $usedfor == 0 ) {
+                }
+
+                // preseve backward compatibility
+                if ( $usedfor == 0 || ! $civiMail ) {
                     // if its the activities that needs to be processed ..
                     require_once 'CRM/Utils/Mail/Incoming.php';
                     $mailParams = CRM_Utils_Mail_Incoming::parseMailingObject( $mail,$dao->name );
@@ -263,32 +264,31 @@ class EmailProcessor {
 // bootstrap the environment and run the processor
 // you can run this program either from an apache command, or from the cli
 if ( php_sapi_name() == "cli" ) {
-  require_once ("bin/cli.php");
-  $cli=new civicrm_cli ();
-  //if it doesn't die, it's authenticated 
-  //log the execution of script
-  CRM_Core_Error::debug_log_message( 'EmailProcessor.php from the cli');
-  require_once 'CRM/Core/Lock.php';
-  $lock = new CRM_Core_Lock('EmailProcessor');
-
-  if (!$lock->isAcquired()) 
-    throw new Exception('Could not acquire lock, another EmailProcessor process is running');
-  // check if the script is being used for civimail processing or email to 
-  // activity processing.
-  if ($cli->args[0] == "activities") {
-      EmailProcessor::processActivities();
-   } else {
-      EmailProcessor::processBounces();
-   }
-  $lock->release();
-  exit;
-} else
-{
-session_start();
-  require_once '../civicrm.config.php';
-  require_once 'CRM/Core/Config.php';
-  $config = CRM_Core_Config::singleton();
-  CRM_Utils_System::authenticateScript(true);
+    require_once ("bin/cli.php");
+    $cli=new civicrm_cli ();
+    //if it doesn't die, it's authenticated 
+    //log the execution of script
+    CRM_Core_Error::debug_log_message( 'EmailProcessor.php from the cli');
+    require_once 'CRM/Core/Lock.php';
+    $lock = new CRM_Core_Lock('EmailProcessor');
+    
+    if (!$lock->isAcquired()) 
+        throw new Exception('Could not acquire lock, another EmailProcessor process is running');
+    // check if the script is being used for civimail processing or email to 
+    // activity processing.
+    if ($cli->args[0] == "activities") {
+        EmailProcessor::processActivities();
+    } else {
+        EmailProcessor::processBounces();
+    }
+    $lock->release();
+    exit;
+} else {
+    session_start();
+    require_once '../civicrm.config.php';
+    require_once 'CRM/Core/Config.php';
+    $config = CRM_Core_Config::singleton();
+    CRM_Utils_System::authenticateScript(true);
 }
 
 //log the execution of script
@@ -303,8 +303,10 @@ $lock = new CRM_Core_Lock('EmailProcessor');
 
 if ($lock->isAcquired()) {
     // try to unset any time limits
-    if (!ini_get('safe_mode')) set_time_limit(0);
-
+    if ( ! ini_get('safe_mode') ) {
+        set_time_limit(0);
+    }
+    
     // check if the script is being used for civimail processing or email to 
     // activity processing.
     $isCiviMail = CRM_Utils_Array::value( 'emailtoactivity', $_REQUEST ) ? false : true;
