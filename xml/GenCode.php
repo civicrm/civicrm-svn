@@ -433,11 +433,6 @@ function getTable( $tableXML, &$database, &$tables ) {
             continue;
         }
         
-        // check if hrd field and hrd is enabled to include
-        if ( value( 'hrd', $fieldXML, 0 ) == 1 &&
-             ! $config->civiHRD ) {
-            continue;
-        }
         if ( value( 'add', $fieldXML, 0 ) <= $build_version) {
             getField( $fieldXML, $fields );
         }
@@ -465,12 +460,6 @@ function getTable( $tableXML, &$database, &$tables ) {
             if ( value( 'drop', $indexXML, 0 ) > 0 and value( 'drop', $indexXML, 0 ) <= $build_version) { 
                 continue; 
             } 
-
-            // check if hrd field and hrd is enabled to include
-            if ( value( 'hrd', $indexXML, 0 ) == 1 &&
-                 ! $config->civiHRD ) {
-                continue;
-            }
 
             getIndex( $indexXML, $fields, $index );
         }

@@ -379,11 +379,6 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
                                                                   ));
             }
             
-            if($config->civiHRD){
-                require_once 'CRM/Core/OptionGroup.php';
-                $caseActivityType = CRM_Core_OptionGroup::values('case_activity_type');
-                $row['activitytag1'] =  $caseActivityType[CRM_Core_DAO::getFieldValue('CRM_Activity_DAO_Activity',$row['id'],'activity_tag1_id' )];
-            }
             unset($row);
         }
          
