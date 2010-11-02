@@ -76,7 +76,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
         $this->assign( 'formId', $participantNo );
         $this->_params = array( );
         $this->_params = $this->get( 'params' );
-        $participantTot = $this->_params[0]['additional_participants'] + 1; 
+        $participantTot = $this->_params[0]['additional_participants']; 
         $skipCount = count( array_keys( $this->_params, "skip" ) );
         if( $skipCount ) {
             $this->assign('skipCount', $skipCount );
@@ -477,12 +477,13 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
                          !(CRM_Utils_Array::value( 'amount', $self->_params[0], 0 ) == 0 ) &&
                          $totalParticipants < $self->_availableRegistrations ) {
                         $errors['_qf_default'] = ts("Your event registration will be confirmed. Please go back to the main registration page, to complete payment information.");
-                    }
-                    
-                    if ( !CRM_Utils_Array::value( 'has_waitlist', $self->_values['event'] ) ) {
-                        if ( $self->_availableRegistrations <  $totalParticipants ) {
-                            $errors['_qf_default'] = ts("Only %1 Registrations available.", array( 1 => $self->_availableRegistrations ) );
-                        }
+                        
+                    } 
+                    //check for availability of registrations.
+                    if ( !$self->_allowConfirmation &&
+                         !CRM_Utils_Array::value( 'bypass_payment', $params[0] ) &&
+                         $totalParticipants > $self->_availableRegistrations ) {
+                        $errors['_qf_default'] = ts('It looks like event has only %2 seats available and you are trying to register %1 participants, so could you please select price options accordingly.', array( 1 =>$totalParticipants,  2 => $self->_availableRegistrations ) );
                     }
                 }
             }
