@@ -55,11 +55,11 @@ class EmailProcessor {
         require_once 'CRM/Core/DAO/MailSettings.php';
         $dao = new CRM_Core_DAO_MailSettings;
         $dao->domain_id = CRM_Core_Config::domainID( );
-        $dao->is_default=true;
+        $dao->is_default = true;
         $dao->find( );
 
         while ( $dao->fetch() ) {
-          EmailProcessor::_process(true,$dao);
+            EmailProcessor::_process(true,$dao);
         }
     }
 
@@ -72,11 +72,11 @@ class EmailProcessor {
         require_once 'CRM/Core/DAO/MailSettings.php';
         $dao = new CRM_Core_DAO_MailSettings;
         $dao->domain_id = CRM_Core_Config::domainID( );
-        $dao->is_default=false;
+        $dao->is_default = false;
         $dao->find( );
 
         while ( $dao->fetch() ) {
-          EmailProcessor::_process(false,$dao);
+            EmailProcessor::_process(false,$dao);
         }
     }
 
@@ -93,12 +93,16 @@ class EmailProcessor {
         $dao->find( );
 
         while ( $dao->fetch() ) {
-          EmailProcessor::_process($civiMail,$dao);
+            EmailProcessor::_process($civiMail,$dao);
         }
     }
 
     static function _process ($civiMail,$dao) {
-        require_once 'CRM/Core/OptionGroup.php';
+        
+		// 0 = activities; 1 = bounce;
+		$usedfor = $dao->is_default;
+		
+		require_once 'CRM/Core/OptionGroup.php';
         $emailActivityTypeId = 
             ( defined('EMAIL_ACTIVITY_TYPE_ID') && EMAIL_ACTIVITY_TYPE_ID )  ? 
             EMAIL_ACTIVITY_TYPE_ID : CRM_Core_OptionGroup::getValue( 'activity_type', 
@@ -109,71 +113,73 @@ class EmailProcessor {
         }
 
 
-          // FIXME: legacy regexen to handle CiviCRM 2.1 address patterns, with domain id and possible VERP part
-          $commonRegex = '/^' . preg_quote($dao->localpart) . '(b|bounce|c|confirm|o|optOut|r|reply|re|e|resubscribe|u|unsubscribe)\.(\d+)\.(\d+)\.(\d+)\.([0-9a-f]{16})(-.*)?@' . preg_quote($dao->domain) . '$/';
-          $subscrRegex = '/^' . preg_quote($dao->localpart) . '(s|subscribe)\.(\d+)\.(\d+)@' . preg_quote($dao->domain) . '$/';
-          
-          // a common-for-all-actions regex to handle CiviCRM 2.2 address patterns
-          $regex = '/^' . preg_quote($dao->localpart) . '(b|c|e|o|r|u)\.(\d+)\.(\d+)\.([0-9a-f]{16})@' . preg_quote($dao->domain) . '$/';
-
-          // retrieve the emails
-          require_once 'CRM/Mailing/MailStore.php';
-          $store = CRM_Mailing_MailStore::getStore($dao->name);
-          
-          require_once 'api/v2/Mailer.php';
-          
-          // process fifty at a time, CRM-4002
-          while ($mails = $store->fetchNext(MAIL_BATCH_SIZE)) {
-              foreach ($mails as $key => $mail) {
-                  
-                  // for every addressee: match address elements if it's to CiviMail
-                  $matches = array();
-
-                  if ( $civiMail ) {
-                      foreach ($mail->to as $address) {
-                          if (preg_match($regex, $address->email, $matches)) {
-                              list($match, $action, $job, $queue, $hash) = $matches;
-                              break;
-                              // FIXME: the below elseifs should be dropped when we drop legacy support
-                          } elseif (preg_match($commonRegex, $address->email, $matches)) {
-                              list($match, $action, $_, $job, $queue, $hash) = $matches;
-                              break;
-                          } elseif (preg_match($subscrRegex, $address->email, $matches)) {
-                              list($match, $action, $_, $job) = $matches;
-                              break;
-                          }
-                      }
-                  } else {
-                      // if its the activities that needs to be processed ..
-                      require_once 'CRM/Utils/Mail/Incoming.php';
-                      $mailParams = CRM_Utils_Mail_Incoming::parseMailingObject( $mail,$dao->name );
-
-                      require_once 'api/v2/Activity.php';
-                      $params = _civicrm_activity_buildmailparams( $mailParams, $emailActivityTypeId );
-                      $result = civicrm_activity_create( $params );
-
-                      if ( $result['is_error'] ) {
-                          $matches = false;
-                          echo "Failed Processing: {$mail->subject}. Reason: {$result['error_message']}\n";
-                      } else {
-                          $matches = true;
-                          echo "Processed: {$mail->subject}\n";
-                      }
-                  }
-                  
-                  // if $matches is empty, this email is not CiviMail-bound
-                  if (!$matches) {
-                      $store->markIgnored($key);
-                      continue;
-                  }
-                  
-                  // get $replyTo from either the Reply-To header or from From
-                  // FIXME: make sure it works with Reply-Tos containing non-email stuff
-                  $replyTo = $mail->getHeader('Reply-To') ? $mail->getHeader('Reply-To') : $mail->from->email;
-                  
-                  // handle the action by passing it to the proper API call
-                  // FIXME: leave only one-letter cases when dropping legacy support
-        if (! empty($action)) {
+        // FIXME: legacy regexen to handle CiviCRM 2.1 address patterns, with domain id and possible VERP part
+        $commonRegex = '/^' . preg_quote($dao->localpart) . '(b|bounce|c|confirm|o|optOut|r|reply|re|e|resubscribe|u|unsubscribe)\.(\d+)\.(\d+)\.(\d+)\.([0-9a-f]{16})(-.*)?@' . preg_quote($dao->domain) . '$/';
+        $subscrRegex = '/^' . preg_quote($dao->localpart) . '(s|subscribe)\.(\d+)\.(\d+)@' . preg_quote($dao->domain) . '$/';
+        
+        // a common-for-all-actions regex to handle CiviCRM 2.2 address patterns
+        $regex = '/^' . preg_quote($dao->localpart) . '(b|c|e|o|r|u)\.(\d+)\.(\d+)\.([0-9a-f]{16})@' . preg_quote($dao->domain) . '$/';
+        
+        // retrieve the emails
+        require_once 'CRM/Mailing/MailStore.php';
+        $store = CRM_Mailing_MailStore::getStore($dao->name);
+        
+        require_once 'api/v2/Mailer.php';
+        
+        // process fifty at a time, CRM-4002
+        while ($mails = $store->fetchNext(MAIL_BATCH_SIZE)) {
+            foreach ($mails as $key => $mail) {
+                
+                // for every addressee: match address elements if it's to CiviMail
+                $matches = array();
+                
+                if ( $usedfor == 1 ) {
+                    foreach ($mail->to as $address) {
+                        if (preg_match($regex, $address->email, $matches)) {
+                            list($match, $action, $job, $queue, $hash) = $matches;
+                            break;
+                            // FIXME: the below elseifs should be dropped when we drop legacy support
+                        } elseif (preg_match($commonRegex, $address->email, $matches)) {
+                            list($match, $action, $_, $job, $queue, $hash) = $matches;
+                            break;
+                        } elseif (preg_match($subscrRegex, $address->email, $matches)) {
+                            list($match, $action, $_, $job) = $matches;
+                            break;
+                        }
+                    }
+                } 
+                
+                if ( $usedfor == 0 ) {
+                    // if its the activities that needs to be processed ..
+                    require_once 'CRM/Utils/Mail/Incoming.php';
+                    $mailParams = CRM_Utils_Mail_Incoming::parseMailingObject( $mail,$dao->name );
+                    
+                    require_once 'api/v2/Activity.php';
+                    $params = _civicrm_activity_buildmailparams( $mailParams, $emailActivityTypeId );
+                    $result = civicrm_activity_create( $params );
+                    
+                    if ( $result['is_error'] ) {
+                        $matches = false;
+                        echo "Failed Processing: {$mail->subject}. Reason: {$result['error_message']}\n";
+                    } else {
+                        $matches = true;
+                        echo "Processed as Activity: {$mail->subject}\n";
+                    }
+                }
+                
+                // if $matches is empty, this email is not CiviMail-bound
+                if (!$matches) {
+                    $store->markIgnored($key);
+                    continue;
+                }
+                
+                // get $replyTo from either the Reply-To header or from From
+                // FIXME: make sure it works with Reply-Tos containing non-email stuff
+                $replyTo = $mail->getHeader('Reply-To') ? $mail->getHeader('Reply-To') : $mail->from->email;
+                
+                // handle the action by passing it to the proper API call
+                // FIXME: leave only one-letter cases when dropping legacy support
+                if (! empty($action)) {
                     switch ($action) {
                     case 'b':
                     case 'bounce':
@@ -245,12 +251,12 @@ class EmailProcessor {
                         civicrm_mailer_event_unsubscribe($job, $queue, $hash);
                         break;
                     }
-        }
+                }
                             
-                  $store->markProcessed($key);
-              }
-          }
-  }
+                $store->markProcessed($key);
+            }
+        }
+    }
 
 }
 
