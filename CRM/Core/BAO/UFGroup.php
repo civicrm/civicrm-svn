@@ -277,34 +277,39 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
         $params = array( );
         if ( $restrict ) { 
             $query = "SELECT g.* from civicrm_uf_group g, civicrm_uf_join j 
-                WHERE g.is_active   = 1
-                AND g.id          IN ( {$gids} ) 
+                WHERE g.id IN ( {$gids} ) 
                 AND j.uf_group_id IN ( {$gids} )
                 AND j.module      = %1
                 ";
             $params = array( 1 => array( $restrict, 'String' ) );
         } else {
-            $query  = "SELECT g.* from civicrm_uf_group g WHERE g.is_active = 1 AND g.id IN ( {$gids} ) ";
+            $query  = "SELECT g.* from civicrm_uf_group g WHERE g.id IN ( {$gids} ) ";
         }
-        
+
+        if ( !$showAll ) {
+            $query .= " AND g.is_active = 1";
+        }
+
         // add permissioning for profiles only if not registration
         if ( ! $skipPermission ) {
             require_once 'CRM/Core/Permission.php';
             $permissionClause = CRM_Core_Permission::ufGroupClause( $permissionType, 'g.' );
             $query .= " AND $permissionClause ";
         }
-        
+
         $group =& CRM_Core_DAO::executeQuery( $query, $params );
         $fields = array( );
         $validGroup = false;
+       
         while ( $group->fetch( ) ) {
             $validGroup = true;
             $where = " WHERE uf_group_id = {$group->id}";
             
-            if( $searchable ) {
+            if ( $searchable ) {
                 $where .= " AND is_searchable = 1"; 
-            }     
-            if ( ! $showAll ) {
+            }
+
+            if ( !$showAll ) {
                 $where .= " AND is_active = 1";
             }
             
@@ -2343,7 +2348,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
     function calculateGroupType( $gId, $ignoreFieldId = null ) 
     {
         //get the profile fields.
-        $ufFields  = self::getFields( $gId, false, null, null, null, true );
+        $ufFields  = self::getFields( $gId, false, null, null, null, true, null, true );
         $groupType = array( );
         if ( !empty( $ufFields ) ) {
             foreach ( $ufFields as $fieldName => $fieldValue ) {

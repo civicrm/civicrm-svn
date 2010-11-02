@@ -298,7 +298,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         
         //group selected and unwanted fields list
         require_once 'CRM/Core/BAO/UFGroup.php';
-        $groupFieldList = array_merge( CRM_Core_BAO_UFGroup::getFields( $this->_gid, false, null, null , null, true ), 
+        $groupFieldList = array_merge( CRM_Core_BAO_UFGroup::getFields( $this->_gid, false, null, null , null, true, null, true ), 
                                        array( 'note', 'email_greeting_custom', 'postal_greeting_custom', 'addressee_custom', 'id' ) 
                                      );
         //unset selected fields
