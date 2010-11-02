@@ -113,6 +113,18 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase
 
       //check the status message
       $this->assertTrue($this->isTextPresent("1 new relationship record created."));
+      
+      $this->waitForElementPresent("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='View']");
+      $this->click("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='View']");
+     
+      $this->waitForPageToLoad("300000"); 
+      $this->webtestVerifyTabularData(
+                                      array(
+                                            'Description'         => $description,
+                                            'Status'	          => 'Enabled',
+                                            $params['label_b_a']  => $sortName
+                                            )
+                                      );
 
   }  
 
