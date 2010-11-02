@@ -148,7 +148,7 @@ function civicrm_event_search( &$params )
     $returnCustomProperties = array( );
     $otherVars              = array( 'sort', 'offset', 'rowCount' );
 
-    $sort     = false;
+    $sort     =  array_key_exists( 'return.sort', $params ) ? $params['return.sort'] : false; 
     // don't check if empty, more meaningful error for API user instead of siletn defaults
     $offset   = array_key_exists( 'return.offset', $params ) ? $params['return.offset'] : 0;
     $rowCount = array_key_exists( 'return.max_results', $params ) ? $params['return.max_results'] : 25;
