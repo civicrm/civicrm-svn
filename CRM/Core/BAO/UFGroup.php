@@ -186,27 +186,27 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
     /** 
      * get all the listing fields 
      * 
-     * @param int  $action            what action are we doing 
-     * @param int  $visibility        visibility of fields we are interested in
-     * @param bool $considerSelector  whether to consider the in_selector parameter
-     * @param      $ufGroupId
-     * @param      $searchable
+     * @param int     $action            what action are we doing 
+     * @param int     $visibility        visibility of fields we are interested in
+     * @param bool    $considerSelector  whether to consider the in_selector parameter
+     * @param array   $ufGroupIds
+     * @param boolean $searchable
      * 
-     * @return array     the fields that are listings related
+     * @return array   the fields that are listings related
      * @static 
      * @access public 
      */ 
     static function getListingFields( $action,
                                       $visibility,
                                       $considerSelector = false,
-                                      $ufGroupId = null,
+                                      $ufGroupIds = null,
                                       $searchable = null,
                                       $restrict = null,
                                       $skipPermission = false,
                                       $permissionType = CRM_Core_Permission::SEARCH ) 
     {
-        if ($ufGroupId) {
-            $subset = self::getFields( $ufGroupId, false, $action,
+        if ( $ufGroupIds ) {
+            $subset = self::getFields( $ufGroupIds, false, $action,
                                        $visibility, $searchable,
                                        false, $restrict,
                                        $skipPermission,

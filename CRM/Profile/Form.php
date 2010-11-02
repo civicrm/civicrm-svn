@@ -196,7 +196,13 @@ class CRM_Profile_Form extends CRM_Core_Form
             }
             $dao->free( );
         }
-        
+
+        if ( empty( $this->_profileIds ) ) {
+            $gids = $this->_gid;
+        } else {
+            $gids = $this->_profileIds; 
+        }
+       
         // if we dont have a gid use the default, else just use that specific gid
         if ( ( $this->_mode == self::MODE_REGISTER || $this->_mode == self::MODE_CREATE ) && ! $this->_gid ) {
             $this->_ctype  = CRM_Utils_Request::retrieve( 'ctype', 'String', $this, false, 'Individual', 'REQUEST' );
@@ -205,17 +211,11 @@ class CRM_Profile_Form extends CRM_Core_Form
             $this->_fields  = CRM_Core_BAO_UFGroup::getListingFields( $this->_action,
                                                                       CRM_Core_BAO_UFGroup::PUBLIC_VISIBILITY | CRM_Core_BAO_UFGroup::LISTINGS_VISIBILITY,
                                                                       false,
-                                                                      $this->_gid,
+                                                                      $gids,
                                                                       true, null,
                                                                       $this->_skipPermission,
                                                                       CRM_Core_Permission::SEARCH ); 
         } else { 
-            if ( empty( $this->_profileIds ) ) {
-                $gids = $this->_gid;
-            } else {
-                $gids = $this->_profileIds; 
-            }
-
             $this->_fields  = CRM_Core_BAO_UFGroup::getFields( $gids, false, null,
                                                                null, null,
                                                                false, null,
