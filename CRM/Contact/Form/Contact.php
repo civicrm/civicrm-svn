@@ -573,9 +573,6 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
     static function formRule( $fields, $errors, $contactId = null )
     {
         $config = CRM_Core_Config::singleton( );
-        if ( $config->civiHRD && ! isset( $fields['tag'] ) ) {
-            $errors["tag"] = ts('Please select at least one tag.');
-        }
         
         // validations.
         //1. for each block only single value can be marked as is_primary = true.

@@ -47,10 +47,12 @@ class WebTest_Activity_ContactContextAddTest extends CiviSeleniumTestCase {
       // Log in using webtestLogin() method
       $this->webtestLogin();
 
-      // Adding Anderson, Anthony and Summerson, Samuel for test testContactContextActivityAdd
+      // Adding Adding contact with randomized first name for test testContactContextActivityAdd
       // We're using Quick Add block on the main page for this.
-      $this->webtestAddContact( "Samuel", "Summerson" );
-      $this->webtestAddContact( "Anthony", "Anderson" );
+      $firstName1 = substr(sha1(rand()), 0, 7);
+      $this->webtestAddContact( $firstName1, "Summerson", $firstName1 . "@summerson.name" );
+      $firstName2 = substr(sha1(rand()), 0, 7);
+      $this->webtestAddContact( $firstName2, "Anderson", $firstName2 . "@anderson.name" ); 
       
       // Go directly to the URL of the screen that you will be testing (Activity Tab).
       $this->click("css=li#tab_activity a");
@@ -81,7 +83,7 @@ class WebTest_Activity_ContactContextAddTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td ul li span.token-input-delete-token-facebook");
       
       // ...and verifying if the page contains properly formatted display name for chosen contact.
-      $this->assertTrue($this->isTextPresent("Summerson, Samuel"), "Contact not found in line " . __LINE__ );
+      $this->assertTrue($this->isTextPresent("Summerson, {$firstName1}"), "Contact not found in line " . __LINE__ );
       
       // Since we're here, let's check if screen help is being displayed properly
       $this->assertTrue($this->isTextPresent("A copy of this activity will be emailed to each Assignee"));
@@ -134,6 +136,24 @@ class WebTest_Activity_ContactContextAddTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent('_qf_Activity_cancel-bottom');
 
       // verify Activity created
-      $this->assertTrue($this->isTextPresent($subject), "Activity Subject did not match");   
+      $this->webtestVerifyTabularData( 
+                                      array( 
+                                            'Subject'      => $subject,
+                                            'Location'     => 'Some location needs to be put in this field.',
+                                            'Status'       => 'Scheduled',
+                                            'Duration'     => '30',
+                                            // Tough luck filling in WYSIWYG editor, so skipping verification for now.
+                                            //'Details'    => 'Really brief details information.',
+                                            'Priority'     => 'Urgent',
+                                             ),
+                                      "/label"
+                                       );
+      
+      $this->webtestVerifyTabularData( 
+                                      array( 
+                                            'With Contact' => "Anderson, {$firstName2}",
+                                            'Assigned To'  => "Summerson, {$firstName1}",
+                                             )
+                                       );
   }
 }

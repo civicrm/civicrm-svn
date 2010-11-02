@@ -258,7 +258,12 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
                         }elseif ( $tableName == 'civicrm_relationship' ) {
                             $this->_relField = true;
                         }
-                        $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
+                        if( $fieldName == 'display_name' ) {
+                            $select[] = "GROUP_CONCAT({$field['dbAlias']}  ORDER BY {$field['dbAlias']} ) 
+                                         as {$tableName}_{$fieldName}";
+                        } else {
+                            $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
+                        }
                         $this->_columnHeaders["{$tableName}_{$fieldName}"]['type']  = CRM_Utils_Array::value( 'type', $field );
                         $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = $field['title'];
                     }

@@ -186,27 +186,27 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
     /** 
      * get all the listing fields 
      * 
-     * @param int  $action            what action are we doing 
-     * @param int  $visibility        visibility of fields we are interested in
-     * @param bool $considerSelector  whether to consider the in_selector parameter
-     * @param      $ufGroupId
-     * @param      $searchable
+     * @param int     $action            what action are we doing 
+     * @param int     $visibility        visibility of fields we are interested in
+     * @param bool    $considerSelector  whether to consider the in_selector parameter
+     * @param array   $ufGroupIds
+     * @param boolean $searchable
      * 
-     * @return array     the fields that are listings related
+     * @return array   the fields that are listings related
      * @static 
      * @access public 
      */ 
     static function getListingFields( $action,
                                       $visibility,
                                       $considerSelector = false,
-                                      $ufGroupId = null,
+                                      $ufGroupIds = null,
                                       $searchable = null,
                                       $restrict = null,
                                       $skipPermission = false,
                                       $permissionType = CRM_Core_Permission::SEARCH ) 
     {
-        if ($ufGroupId) {
-            $subset = self::getFields( $ufGroupId, false, $action,
+        if ( $ufGroupIds ) {
+            $subset = self::getFields( $ufGroupIds, false, $action,
                                        $visibility, $searchable,
                                        false, $restrict,
                                        $skipPermission,
@@ -277,34 +277,39 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
         $params = array( );
         if ( $restrict ) { 
             $query = "SELECT g.* from civicrm_uf_group g, civicrm_uf_join j 
-                WHERE g.is_active   = 1
-                AND g.id          IN ( {$gids} ) 
+                WHERE g.id IN ( {$gids} ) 
                 AND j.uf_group_id IN ( {$gids} )
                 AND j.module      = %1
                 ";
             $params = array( 1 => array( $restrict, 'String' ) );
         } else {
-            $query  = "SELECT g.* from civicrm_uf_group g WHERE g.is_active = 1 AND g.id IN ( {$gids} ) ";
+            $query  = "SELECT g.* from civicrm_uf_group g WHERE g.id IN ( {$gids} ) ";
         }
-        
+
+        if ( !$showAll ) {
+            $query .= " AND g.is_active = 1";
+        }
+
         // add permissioning for profiles only if not registration
         if ( ! $skipPermission ) {
             require_once 'CRM/Core/Permission.php';
             $permissionClause = CRM_Core_Permission::ufGroupClause( $permissionType, 'g.' );
             $query .= " AND $permissionClause ";
         }
-        
+
         $group =& CRM_Core_DAO::executeQuery( $query, $params );
         $fields = array( );
         $validGroup = false;
+       
         while ( $group->fetch( ) ) {
             $validGroup = true;
             $where = " WHERE uf_group_id = {$group->id}";
             
-            if( $searchable ) {
+            if ( $searchable ) {
                 $where .= " AND is_searchable = 1"; 
-            }     
-            if ( ! $showAll ) {
+            }
+
+            if ( !$showAll ) {
                 $where .= " AND is_active = 1";
             }
             
@@ -2343,7 +2348,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
     function calculateGroupType( $gId, $ignoreFieldId = null ) 
     {
         //get the profile fields.
-        $ufFields  = self::getFields( $gId, false, null, null, null, true );
+        $ufFields  = self::getFields( $gId, false, null, null, null, true, null, true );
         $groupType = array( );
         if ( !empty( $ufFields ) ) {
             foreach ( $ufFields as $fieldName => $fieldValue ) {
@@ -2614,6 +2619,57 @@ SELECT  group_id
         
         return $subscribeGroupIds;
     }
-    
-}
 
+    /**
+     * Function to check if we are rendering mixed profiles
+     *
+     * @param array $profileIds associated array of profile ids
+     * 
+     * @return boolean $mixProfile true if profile is mixed  
+     * @static
+     * @access public
+     */ 
+    static function checkForMixProfiles( $profileIds ) {
+        $mixProfile = false;
+        
+        $contactTypes = array( 'Individual', 'Household', 'Organization' );
+        require_once 'CRM/Contact/BAO/ContactType.php';
+        $subTypes     = CRM_Contact_BAO_ContactType::subTypes( );
+
+        $components   = array( 'Contribution', 'Participant', 'Membership', 'Activity' );
+
+        require_once 'CRM/Core/BAO/UFField.php';
+        $typeCount = array( 'ctype' => array( ), 'subtype' => array( ) );
+        foreach( $profileIds as $gid ) {
+            $profileType = CRM_Core_BAO_UFField::getProfileType( $gid );
+            // ignore profile of type Contact
+            if ( $profileType == 'Contact' ) {
+                continue;
+            }
+            if ( in_array( $profileType, $contactTypes ) ) {
+                if ( !isset( $typeCount['ctype'][$profileType] ) ) {
+                    $typeCount['ctype'][$profileType] = 1;
+                }
+                
+                // check if we are rendering profile of different contact types
+                if ( count( $typeCount['ctype'] ) == 2 ) {
+                    $mixProfile = true; 
+                    break;
+                }
+            } elseif ( in_array( $profileType, $components ) ) {
+                $mixProfile = true;
+                break;  
+            } else {
+                if ( !isset( $typeCount['subtype'][$profileType] ) ) {
+                    $typeCount['subtype'][$profileType] = 1;
+                }
+                // check if we are rendering profile of different contact sub types
+                if ( count( $typeCount['subtype'] ) == 2 ) {
+                    $mixProfile = true; 
+                    break;
+                }
+            }
+        }
+        return $mixProfile;
+    }
+}

@@ -83,8 +83,16 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
      */
     public function buildQuickForm( ) 
     {
-        $this->addElement( 'select', 'wysiwyg_editor', ts('WYSIWYG Editor'), 
-                           array( '' => ts( 'Textarea' ) ) + CRM_Core_PseudoConstant::wysiwygEditor( ),null );
+        $wysiwyg_options = array( '' => ts( 'Textarea' ) ) + CRM_Core_PseudoConstant::wysiwygEditor( );
+
+        $config =& CRM_Core_Config::singleton();
+        
+		//if not using Joomla, remove Joomla default editor option
+		if ( $config->userFramework != 'Joomla' ) {
+			unset( $wysiwyg_options[3] );
+		}
+        $this->addElement( 'select', 'wysiwyg_editor', ts('WYSIWYG Editor'), $wysiwyg_options, null );
+
         $this->addElement('textarea','display_name_format', ts('Individual Display Name Format'));  
         $this->addElement('textarea','sort_name_format',    ts('Individual Sort Name Format'));
                 

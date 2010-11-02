@@ -60,7 +60,7 @@ class WebTest_Pledge_StandaloneAddTest extends CiviSeleniumTestCase {
         $this->select( "frequency_unit", "value=week" );
         $this->type( "frequency_day", "2" );
         
-        $this->webtestFillDate( 'acknowledge_date' );
+        $this->webtestFillDate( 'acknowledge_date',now );
         
         $this->select( "contribution_page_id", "value=3" );
         
@@ -71,11 +71,11 @@ class WebTest_Pledge_StandaloneAddTest extends CiviSeleniumTestCase {
         $this->click( "CIVICRM_QFID_1_2" );
         $this->select( "honor_prefix_id", "value=3" );
         
-        $firstName = 'Fo'.substr( sha1( rand( ) ), 0, 4 );
-        $lastName  = 'Ba'.substr( sha1( rand( ) ), 0, 7 );
-        $this->type( "honor_first_name", $firstName );
-        $this->type( "honor_last_name", $lastName );
-        $this->type( "honor_email", $firstName."@example.com" );
+        $honorFirstName = 'Fo'.substr( sha1( rand( ) ), 0, 4 );
+        $honorLastName  = 'Ba'.substr( sha1( rand( ) ), 0, 7 );
+        $this->type( "honor_first_name", $honorFirstName );
+        $this->type( "honor_last_name", $honorLastName );
+        $this->type( "honor_email", $honorFirstName."@example.com" );
         
         //PaymentReminders
         $this->click( "PaymentReminders" );
@@ -88,15 +88,35 @@ class WebTest_Pledge_StandaloneAddTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad( "30000" );
         
         $this->assertTrue( $this->isTextPresent( "Pledge has been recorded and the payment schedule has been created." ) );
+        
         // verify if Pledge is created
         $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[9]/span/a[text()='View']" );
         
         //click through to the Pledge view screen
         $this->click( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[9]/span/a[text()='View']" );
-        
         $this->waitForElementPresent( "_qf_PledgeView_next-bottom" );
+        $pledgeDate = date('F jS, Y', strtotime('now'));
+
+        $this->webtestVerifyTabularData( array(
+                                               'Pledge By'              => $firstName.' '.$lastName,
+                                               'Total Pledge Amount'    => '$ 100.00',
+                                               'To be paid in'          => '10 installments of $ 10.00 every 1 week(s)',
+                                               'Payments are due on the'=> '2 day of the period',
+                                               'Pledge Made'            => $pledgeDate,
+                                               'Contribution Type'      => 'Donation',
+                                               'Pledge Status'          => 'Pending',
+                                               'In Honor of'            => 'Mr. '.$honorFirstName.' '.$honorLastName,
+                                               'Initial Reminder Day'   => '4 days prior to schedule date', 
+                                               'Maximum Reminders Send' => 2,
+                                               'Send additional reminders'=> '4 days after the last one sent',
+                                               )
+                                         );
         $this->click( "_qf_PledgeView_next-bottom" );
         $this->waitForPageToLoad( "30000" );
         
+        $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[9]/span/a[text()='View']" );
+        $this->click( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[1]/span/a" );
+        $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody//tr//td/table/tbody/tr[2]/td[8]/a[text()='Record Payment (Check, Cash, EFT ...)']" );  
+            
     }
 }

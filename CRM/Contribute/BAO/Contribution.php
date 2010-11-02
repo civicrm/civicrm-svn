@@ -974,7 +974,7 @@ AND civicrm_pledge_payment.pledge_id {$componentClause} )
 ";
         }
         
-        $query = " SELECT total_amount, contribution_status.name as status_id, payment_instrument.name as payment_instrument, receive_date,
+        $query = " SELECT total_amount, contribution_status.name as status_id, contribution_status.label as status, payment_instrument.name as payment_instrument, receive_date,
                           trxn_id, {$componentSelect}
 FROM civicrm_contribution 
 LEFT JOIN civicrm_option_group option_group_payment_instrument ON ( option_group_payment_instrument.name = 'payment_instrument')
@@ -990,7 +990,7 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
 
         while ( $dao->fetch() ) {
             $paymentDetails[$dao->id] = array ( 'total_amount'        => $dao->total_amount,
-                                                'contribution_status' => $dao->status_id,
+                                                'contribution_status' => $dao->status,
                                                 'receive_date'        => $dao->receive_date,
                                                 'pay_instru'          => $dao->payment_instrument,
                                                 'trxn_id'             => $dao->trxn_id );

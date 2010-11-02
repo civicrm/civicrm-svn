@@ -239,22 +239,25 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
         
         if ( CRM_Utils_Array::value('note', $params) || CRM_Utils_Array::value('participant_note', $params)) {
             if ( CRM_Utils_Array::value('note', $params) ) {
-                $note = CRM_Utils_Array::value('note', $params);
+                $participantNote = CRM_Utils_Array::value( 'note', $params );
             } else {
-                $note = CRM_Utils_Array::value('participant_note', $params);
+                $participantNote = CRM_Utils_Array::value( 'participant_note', $params );
             }
         
-            $noteDetails  = CRM_Core_BAO_Note::getNote( $participant->id, 'civicrm_participant' );
-            $noteIDs      = array( );
-            if ( ! empty( $noteDetails ) ) {
-                $noteIDs['id'] = array_pop( array_flip( $noteDetails ) );
-            }
-
-            if ( $note ) {
+            $note = new CRM_Core_DAO_Note( );
+            $note->entity_id = $participant->id;
+            $note->entity_table = 'civicrm_participant';
+            $noteIDs = array( );
+            if ( $note->find( true ) ) {
+                $id = $note->id;    
+                $noteIDs["id"] = $id;
+             }
+            
+            if ( $participantNote ) {
                 require_once 'CRM/Core/BAO/Note.php';
                 $noteParams = array(
                                     'entity_table'  => 'civicrm_participant',
-                                    'note'          => $note,
+                                    'note'          => $participantNote,
                                     'entity_id'     => $participant->id,
                                     'contact_id'    => $id,
                                     'modified_date' => date('Ymd')
@@ -444,6 +447,11 @@ GROUP BY  counted.event_id
             }
             
             if ( $counted->counted_participants >= $counted->max_participants ) {
+                // CRM-6902: if event is full and waiting list is enabled allow
+                // participant to register in waiting list
+                if ( $returnEmptySeats ) {
+                    return null;
+                }
                 return $eventFullmsg;
             }      
             
@@ -474,6 +482,144 @@ GROUP BY  counted.event_id
         }
         
         return $evenFullText;
+    }
+    
+    /**
+     * returns the options of the field Id which are not available for
+     * registration ( field option full ) for the specified event.
+     *
+     * @param int      $eventId     event id.
+     * @param int      $fieldId     price field id.
+     * @param int      $isTest      is event is test event?      
+     *
+     * @return array $optionsFull options which are full
+     *                            pair of option id => remaining count 
+     * @static
+     * @access public
+     */
+    static function priceFieldOptionFull( $eventId, $fieldId, $skipParticipants = array( ), $isTest = 0 ) {
+        require_once 'CRM/Price/BAO/FieldValue.php';
+        
+        $optionsFull = array( );
+        
+        $options = array( );
+        CRM_Price_BAO_FieldValue::getValues( $fieldId, $options );
+        
+        if ( empty($options) ) return array($options, $optionsFull);
+
+        $checkOptions = array( );
+        foreach ( $options as $opt ) {
+            if ( CRM_Utils_Array::value( 'max_value', $opt ) ) {
+                $checkOptions[ ] = $opt['id'];
+            }
+        }
+        
+        if ( empty($checkOptions) ) return array($options, $optionsFull);
+
+        require_once 'CRM/Event/PseudoConstant.php';
+        $countedStatuses    = CRM_Event_PseudoConstant::participantStatus( null, "is_counted = 1" );
+        $countedStatusIds   = implode( ',', array_keys( $countedStatuses ) );
+        if ( !$countedStatusIds ) {
+            $countedStatusIds = 0;
+        }
+
+        if ( $isTest ) $isTest = 1;
+        
+        $queryNonCount  = "SELECT COUNT(*) as count, li.price_field_value_id FROM civicrm_line_item li LEFT JOIN civicrm_participant p ON p.id = li.entity_id WHERE li.entity_table = 'civicrm_participant' AND li.price_field_id = %1 AND li.price_field_value_id IN (". implode( ', ', $checkOptions) ." ) AND p.event_id = %2 AND p.status_id IN ( $countedStatusIds ) AND p.is_test = %3 AND ( li.participant_count IS NULL OR li.participant_count = 0 ) ";
+
+        $queryCount     = "SELECT SUM(participant_count) as count, li.price_field_value_id FROM civicrm_line_item li LEFT JOIN civicrm_participant p ON p.id = li.entity_id WHERE li.entity_table = 'civicrm_participant' AND li.price_field_id = %1 AND li.price_field_value_id IN (". implode( ', ', $checkOptions) ." ) AND p.event_id = %2 AND p.status_id IN ( $countedStatusIds ) AND p.is_test = %3 AND li.participant_count IS NOT NULL AND li.participant_count > 0 ";
+        
+        if ( is_array($skipParticipants) && !empty($skipParticipants) ) {
+            $queryCount    .= " AND p.id NOT IN (". implode(',',$skipParticipants) .") "; 
+            $queryNonCount .= " AND p.id NOT IN (". implode(',',$skipParticipants) .") ";
+        }
+        
+        $queryCount    .= "GROUP BY li.price_field_value_id";
+        $queryNonCount .= "GROUP BY li.price_field_value_id";
+ 
+        $params = array( 1 => array( $fieldId, 'Integer' ),
+                         2 => array( $eventId, 'Integer' ),
+                         3 => array( $isTest, 'Integer')
+                         );
+
+        $optionsCount = array( );
+
+        $resultNonCount  = CRM_Core_DAO::executeQuery( $queryNonCount, $params );
+        while ( $resultNonCount->fetch( ) ) { 
+            if ( !$resultNonCount->price_field_value_id || !$resultNonCount->count ) continue;
+            
+            $optionsCount[$resultNonCount->price_field_value_id] = $resultNonCount->count;
+        }
+
+        $resultCount = CRM_Core_DAO::executeQuery( $queryCount, $params );
+        while ( $resultCount->fetch( ) ) { 
+            if ( !$resultCount->price_field_value_id || !$resultCount->count ) continue;
+
+            $optionsCount[$resultCount->price_field_value_id] = $resultCount->count + CRM_Utils_Array::value( $resultCount->price_field_value_id, $optionsCount, 0);
+        }
+        
+        foreach( $checkOptions as $opId ) {
+            if ( !CRM_Utils_Array::value( $opId, $optionsCount ) ) continue;
+            
+            $options[$opId]['total_count'] = $optionsCount[$opId];
+
+            if ( CRM_Utils_Array::value( 'count', $options[$opId] ) && 
+                 ( $optionsCount[$opId] + $options[$opId]['count'] ) > $options[$opId]['max_value'] ) {
+                $optionsFull[$opId] = $optionsCount[$opId];
+            } else if ( !CRM_Utils_Array::value( 'count', $options[$opId] ) && 
+                        $optionsCount[$opId] >= $options[$opId]['max_value'] ) {
+                $optionsFull[$opId] = $optionsCount[$opId];
+            }
+        }
+
+        return array($options, $optionsFull);
+    }
+
+    /**
+     * unset the default field options which are freezed because of the
+     * option full
+     *
+     * @param int      $eventId               event id.
+     * @param array    $priceFieldDefault     price fields to be unset.
+     * @param array    $default ( reference ) default values  
+     *
+     * @return void
+     *
+     * @static
+     * @access public
+     *
+     */
+    static function unsetFreezedOptions( $eventId, $priceFieldDefault, &$defaults ) {
+        
+        if ( !is_array($priceFieldDefault) || empty($priceFieldDefault) ) {
+            return;
+        }
+        
+        foreach( $priceFieldDefault as $pfield => $fieldDetails ) {
+            // text field can not have default value in price set
+            if ( CRM_Utils_Array::value( 'html_type', $fieldDetails ) == 'Text' ||
+                 !CRM_Utils_Array::value( 'options', $fieldDetails ) ||
+                 !isset($defaults["price_{$pfield}"]) ) {
+                continue;
+            }
+               
+
+            foreach( $fieldDetails['options'] as $pfieldVal => $valDetails ) {
+                if ( !CRM_Utils_Array::value( 'is_full', $valDetails ) ) {
+                    continue;
+                }
+
+                if ( CRM_Utils_Array::value( 'html_type', $fieldDetails ) == 'CheckBox' ) {
+                    if ( is_array($defaults["price_{$pfield}"]) && 
+                         isset($defaults["price_{$pfield}"][$pfieldVal] ) ) {
+                        unset( $defaults["price_{$pfield}"][$pfieldVal] );
+                    } 
+                } else if ( !is_array( $defaults["price_{$pfield}"] ) &&
+                            ( $defaults["price_{$pfield}"] == $pfieldVal ) ) {
+                    unset( $defaults["price_{$pfield}"] );
+                }
+            }
+        }
     }
     
     /**

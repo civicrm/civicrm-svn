@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div id="priceset_{$priceSetId}" class="crm-section price_set-section">
+<div id="priceset" class="crm-section price_set-section">
     {if $priceSet.help_pre}
         <div class="messages help">{$priceSet.help_pre}</div>
     {/if}

@@ -160,14 +160,20 @@ class CRM_Profile_Form extends CRM_Core_Form
         
         $this->_duplicateButtonName = $this->getButtonName( 'upload',  'duplicate' );
         
-        if ( $this->_context == 'dialog' && ( !$this->_profileIds || empty( $this->_profileIds ) ) ) {
-            $gids = explode( ',', CRM_Utils_Request::retrieve('gid', 'String', CRM_Core_DAO::$_nullObject, false, 0, 'GET') );
+        $gids = explode( ',', CRM_Utils_Request::retrieve('gid', 'String', CRM_Core_DAO::$_nullObject, false, 0, 'GET') );
+        
+        if ( ( count( $gids ) > 1 )  && !$this->_profileIds && empty( $this->_profileIds ) ) {
             if ( !empty( $gids ) ) {
                 foreach( $gids as $pfId  ) {
                    $this->_profileIds[ ] = CRM_Utils_Type::escape( $pfId, 'Positive' ); 
                 }
             }
             
+            // check if we are rendering mixed profiles
+            if ( CRM_Core_BAO_UFGroup::checkForMixProfiles( $this->_profileIds ) ) {
+                CRM_Core_Error::fatal( ts( 'You cannot combine profiles of multiple types.' ) );
+            } 
+
             // for now consider 1'st profile as primary profile and validate it 
             // i.e check for profile type etc.
             // FIX ME: validations for other than primary
@@ -190,7 +196,13 @@ class CRM_Profile_Form extends CRM_Core_Form
             }
             $dao->free( );
         }
-        
+
+        if ( empty( $this->_profileIds ) ) {
+            $gids = $this->_gid;
+        } else {
+            $gids = $this->_profileIds; 
+        }
+       
         // if we dont have a gid use the default, else just use that specific gid
         if ( ( $this->_mode == self::MODE_REGISTER || $this->_mode == self::MODE_CREATE ) && ! $this->_gid ) {
             $this->_ctype  = CRM_Utils_Request::retrieve( 'ctype', 'String', $this, false, 'Individual', 'REQUEST' );
@@ -199,17 +211,11 @@ class CRM_Profile_Form extends CRM_Core_Form
             $this->_fields  = CRM_Core_BAO_UFGroup::getListingFields( $this->_action,
                                                                       CRM_Core_BAO_UFGroup::PUBLIC_VISIBILITY | CRM_Core_BAO_UFGroup::LISTINGS_VISIBILITY,
                                                                       false,
-                                                                      $this->_gid,
+                                                                      $gids,
                                                                       true, null,
                                                                       $this->_skipPermission,
                                                                       CRM_Core_Permission::SEARCH ); 
         } else { 
-            if ( empty( $this->_profileIds ) ) {
-                $gids = $this->_gid;
-            } else {
-                $gids = $this->_profileIds; 
-            }
-
             $this->_fields  = CRM_Core_BAO_UFGroup::getFields( $gids, false, null,
                                                                null, null,
                                                                false, null,

@@ -339,27 +339,6 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
         require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::tabs( $allTabs, $this->_contactId );
 
-        if( $config->civiHRD ) {
-            $hrdOrder = array(
-                       'rel'           => 1,
-                       'case'          => 2,
-                       'activity'      => 3,
-                       'participant'   => 4,
-                       'grant'         => 5,
-                       'contribute'    => 6,
-                       'group'         => 7,
-                       'note'          => 8,
-                       'tag'           => 9,
-                       'log'           => 10
-                       );
-
-            foreach( $allTabs as $i => $tab ) {
-                if( array_key_exists( $tab['id'],  $hrdOrder ) ) {
-                    $allTabs[$i]['weight'] = $hrdOrder[$tab['id']];
-                }
-            }
-        }
-
         // now sort the tabs based on weight
         require_once 'CRM/Utils/Sort.php';
         usort( $allTabs, array( 'CRM_Utils_Sort', 'cmpFunc' ) );

@@ -523,6 +523,9 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
             }
         }
 
+        if ( !$params['note'] ) {
+            $params['note'] = 'null';
+        }
         $params['start_date'] = CRM_Utils_Date::processDate( $params['start_date'], null, true );
         $params['end_date']   = CRM_Utils_Date::processDate( $params['end_date'], null, true );
 

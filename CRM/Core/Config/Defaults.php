@@ -79,9 +79,6 @@ class CRM_Core_Config_Defaults
         // show tree widget
         $this->groupTree = defined( 'CIVICRM_GROUPTREE' ) ? true : false;
 
-        // in hrd mode?
-        $this->civiHRD   = defined( 'CIVICRM_HRD' ) ? true : false;
-        
         // add UI revamp pages
         //$this->revampPages = array( 'CRM/Admin/Form/Setting/Url.tpl', 'CRM/Admin/Form/Preferences/Address.tpl' );
         $this->revampPages = array( );
