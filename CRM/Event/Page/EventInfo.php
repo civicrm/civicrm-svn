@@ -85,6 +85,11 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
             CRM_Core_Error::fatal( ts( 'The page you requested is currently unavailable.' ) );
         }          
         
+        if ( !empty(  $values['event']['is_template'] ) ) {
+            // form is an Event Template
+            CRM_Core_Error::fatal( ts( 'The page you requested is currently unavailable.' ) );
+        }
+        
         $this->assign( 'isShowLocation', CRM_Utils_Array::value( 'is_show_location', $values['event'] ) );
         
         // show event fees.

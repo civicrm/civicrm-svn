@@ -436,6 +436,15 @@ function civicrm_participant_check_params( &$params ,$checkDuplicate = false )
             return civicrm_create_error( ts( 'Contact id is not valid' ));
         }
     }
+    
+    //check that event id is not an template
+    if( CRM_Utils_Array::value( 'event_id', $params ) ) {
+        $isTemplate = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $params['event_id'], 'is_template' );
+        if ( !empty( $isTemplate ) ) {
+            return civicrm_create_error( ts( 'Event templates are not meant to be registered' ));
+        }
+    }
+    
     $result = array( );
     if( $checkDuplicate ) {
         if( CRM_Event_BAO_Participant::checkDuplicate( $params, $result ) ) {
