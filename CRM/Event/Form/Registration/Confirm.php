@@ -216,7 +216,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
         $this->assignToTemplate( );
         if( $this->_params[0]['amount'] || $this->_params[0]['amount'] == 0 ) {
             $this->_amount = array();
-                        
+
             foreach( $this->_params as $k => $v ) {
                 if ( is_array( $v ) ) {
                     foreach (array ('first_name', 'last_name') as $name) {
@@ -377,21 +377,8 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
         $this->assign( 'isRequireApproval', $this->_requireApproval );
         
         // Assign Participant Count to Lineitem Table
-        if ( $this->_priceSetId ) {
-            // Assign Participant Count to Lineitem Table
-            $query = "SELECT count from civicrm_price_field where price_set_id = %1 ";
-            $params = array( 1 => array( $this->_priceSetId, 'Integer' ));
-            $dao = CRM_Core_DAO::executeQuery( $query, $params );
-            $participantCount = array();
-            while ( $dao->fetch() ) {
-                if ( ! empty( $dao->count ) ){
-                    $participantCount[] = $dao->count;
-                } 
-            }
-            if ( !empty( $participantCount ) ) {
-                $this->assign( 'participantCount', $participantCount );
-            }
-        }
+        require_once "CRM/Price/BAO/Set.php";
+        $this->assign( 'pricesetFieldsCount', CRM_Price_BAO_Set::getPricesetCount( $this->_priceSetId ) );
     }
     
     /**

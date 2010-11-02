@@ -161,7 +161,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
      * @var int
      * @protected
      */
-    public $_priceSetId;
+    public $_priceSetId = null;
 
     /**
      * Array of fields for the price set
@@ -173,6 +173,17 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
     
     public $_action;
 
+    /* Is event already full.
+     *
+     * @var boolean
+     * @protected
+     */
+    public $_isEventFull;
+    
+    public $_lineItem;
+    public $_lineItemParticipants;
+    public $_availableRegistrations;
+    
     /** 
      * Function to set variables up before form is built 
      *                                                           
@@ -196,6 +207,13 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
         $this->_paymentProcessor = $this->get( 'paymentProcessor' );
         $this->_priceSetId       = $this->get( 'priceSetId' );
         $this->_priceSet         = $this->get( 'priceSet' ) ;
+        $this->_lineItem         = $this->get( 'lineItem' );
+        $this->_isEventFull      = $this->get( 'isEventFull' );
+        $this->_lineItemParticipants = $this->get( 'lineItemParticipants' );
+        if ( !is_array( $this->_lineItem ) ) $this->_lineItem = array( );
+        if ( !is_array( $this->_lineItemParticipants ) ) $this->_lineItemParticipants = array( );
+        $this->_availableRegistrations = $this->get( 'availableRegistrations' );
+        $this->_totalParticipantCount  = $this->get( 'totalParticipantcount' );
         
         //check if participant allow to walk registration wizard.
         $this->_allowConfirmation = $this->get( 'allowConfirmation' );
@@ -259,13 +277,16 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
             
             $eventFull = CRM_Event_BAO_Participant::eventFull( $this->_eventId );
             $this->_allowWaitlist = false;
+            $this->_isEventFull   = false;
             if ( $eventFull && !$this->_allowConfirmation ) {
+                $this->_isEventFull = true;
                 //lets redirecting to info only when to waiting list.
                 $this->_allowWaitlist = CRM_Utils_Array::value( 'has_waitlist', $this->_values['event'] );
                 if ( !$this->_allowWaitlist ) {
                     CRM_Utils_System::redirect( $infoUrl ); 
                 }
             }
+            $this->set( 'isEventFull',   $this->_isEventFull  );
             $this->set( 'allowWaitlist', $this->_allowWaitlist );
             
             //check for require requires approval.
@@ -436,6 +457,9 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
 
             $this->set( 'values', $this->_values );
             $this->set( 'fields', $this->_fields );
+
+            $this->_availableRegistrations = CRM_Event_BAO_Participant::eventFull( $this->_values['event']['id'], true );
+            $this->set( 'availableRegistrations', $this->_availableRegistrations );
         }
         
         $this->assign_by_ref( 'paymentProcessor', $this->_paymentProcessor );
@@ -848,6 +872,132 @@ WHERE  v.option_group_id = g.id
         $transaction->commit( );
         
         return $participant;
+    }
+
+
+    /* 
+     * provides the total participants recorded for the event
+     * registration when priceset is enabled for that event. 
+     * 
+     * @return $recordedParticipants, total recorded participants.
+     * @access public 
+     */
+    public function getTotalRecordedParticipants( ) {
+        
+        $addParticipantNum    = substr( $this->_name, 12 );
+        $recordedParticipants = 0;
+
+        if ( !empty($this->_lineItemParticipants) ) {
+            foreach( $this->_lineItemParticipants as $addNum => $pCounts ) {
+                if ( ( !is_numeric($pCounts) && $pCounts == 'skip' ) || $addNum == $addParticipantNum ) {
+                    continue;
+                }
+
+                // there is alteast 1 participant on each
+                // page of registration
+                if ( $pCounts < 1 ) {
+                    $pCounts = 1;
+                }
+                $recordedParticipants += $pCounts; 
+            }
+        }
+
+        return $recordedParticipants;
+    }
+
+    /* 
+     * provides the total participants of each price field value for the event
+     * registration when priceset is enabled for that event. 
+     * 
+     * @return array $optionCounts, participant count of each option.
+     * @access public 
+     */
+    public function getTotalOptionCounts( ) {
+        $optionCounts       = array( ); 
+        $addParticipantNum  = substr( $this->_name, 12 );
+
+        if ( !empty($this->_lineItem) ) {
+            foreach( $this->_lineItem  as $addNum => $lineItems ) {
+                if ( !is_array($lineItems) || ($addNum == $addParticipantNum) ) {
+                    continue;
+                }
+                foreach( $lineItems as $opId => $item ) { 
+                    if ( !CRM_Utils_Array::value( 'participant_count', $item ) ) {
+                        continue;
+                    }
+                    if ( !isset($optionCounts[$opId]) ) {
+                        $optionCounts[$opId] = 0;
+                    }
+                    $optionCounts[$opId]   += $item['participant_count'];
+                }
+            }
+        }
+        return $optionCounts;
+    }
+
+    /*
+     * provides the options which are currently full for each
+     * additional participants.
+     *
+     * @param int $fieldId, price field id.
+     * @param array $optionsFull (reference), options which are full
+     *                                        for current event  
+     * 
+     * @return $optionsFull, modify $optionsFull
+     * @access public 
+     */
+    public function modifyPricesetOptionFull( $fieldId, &$optionsFull, $optionDetails ) {
+        
+        $optionCounts       = array( );
+        $addParticipantNum  = substr( $this->_name, 12 );
+        
+        if ( !is_array($optionsFull) ) {
+            $optionsFull = array( );
+        }
+
+        if ( !empty($this->_lineItem) ) {
+            foreach( $this->_lineItem  as $addNum => $lineItems ) {
+                if ( !is_array($lineItems) || ($addNum == $addParticipantNum) ) {
+                    continue;
+                }
+                foreach( $lineItems as $opId => $item ) { 
+
+                    if ( !CRM_Utils_Array::value( 'max_value', $item ) || 
+                         (CRM_Utils_Array::value( 'price_field_id', $item ) != $fieldId) ) {
+                        continue;
+                    }
+
+                    if ( !isset($optionCounts[$opId]) ) {
+                        $optionCounts[$opId]['count'] = 0;
+                    }
+                    $fldCount = 1;
+                    if ( CRM_Utils_Array::value( 'participant_count', $item ) ) $fldCount = $item['participant_count'];
+ 
+                    $optionCounts[$opId]['count']     += $fldCount;
+                    $optionCounts[$opId]['max_value']  = $item['max_value'];
+                }
+            }
+        }
+
+        if ( !empty($optionCounts) ) {
+            foreach( $optionCounts as $opId => $opValues ) {
+                if ( isset($optionsFull[$opId]) ) continue;
+
+                $optionCount = $opValues['count'];
+                if ( isset($optionDetails[$opId] ) ) 
+                    $optionCount += CRM_Utils_Array::value( 'total_count', $optionDetails[$opId], 0 );
+                
+                if ( CRM_Utils_Array::value( 'count', $optionDetails[$opId] ) &&
+                     ($optionCount + $optionDetails[$opId]['count']) > $opValues['max_value'] ) {
+                    $optionsFull[$opId] = $opValues['count'];
+                } else if ( !CRM_Utils_Array::value( 'count', $optionDetails[$opId] ) &&
+                            $optionCount >= $opValues['max_value'] ) {
+                    $optionsFull[$opId] = $opValues['count'];
+                }
+            }
+        }
+
+        return $optionsFull;
     }
 
 

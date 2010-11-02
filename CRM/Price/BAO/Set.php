@@ -321,13 +321,11 @@ WHERE     ct.id = cp.contribution_type_id AND
         
         require_once 'CRM/Utils/Array.php';
         if ( $oid = CRM_Utils_Array::value( 'oid', $params ) ) {
-            require_once 'CRM/Core/DAO/OptionGroup.php';
-            $optionGroup     = new CRM_Core_DAO_OptionGroup( );
-            $optionGroup->id = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionValue', 
-                                                            $oid, 'option_group_id' );
-            if ( $optionGroup->find( true ) ) {
-                $groupName   = explode( ".", $optionGroup->name );
-                $fid         = $groupName[2];
+            require_once 'CRM/Price/DAO/FieldValue.php';
+            $fieldValue     = new CRM_Price_DAO_FieldValue( );
+            $fieldValue->id = $oid;
+            if ( $fieldValue->find( true ) ) {
+                $fid = $fieldValue->price_field_id;
             }
         } else {
             $fid = CRM_Utils_Array::value( 'fid', $params ) ;
@@ -582,7 +580,7 @@ WHERE  id = %1";
                 break;
             }
         }
-        
+ 
         $amount_level = array( );
         $totalParticipant = 0;
         if ( is_array( $lineItem ) ) {
@@ -688,9 +686,10 @@ WHERE  id = %1";
             $price = array_combine( self::getFieldIds( $id ), self::getFieldIds( $copy->id ) );
         
             //copy option group and values 
-            require_once "CRM/Core/BAO/OptionGroup.php";
             foreach ($price as $originalId => $copyId)  {
-                CRM_Core_BAO_OptionGroup::copyValue( 'price', $originalId, $copyId );
+                CRM_Core_DAO::copyGeneric( 'CRM_Price_DAO_FieldValue', 
+                                           array( 'price_field_id' => $originalId ),
+                                           array( 'price_field_id' =>  $copyId ) );  
             }
         }
         $copy->save( );
@@ -700,6 +699,10 @@ WHERE  id = %1";
         return $copy;
     }
     
+    /**
+     * This function is to check price set permission
+     * @param int $sid the price set id 
+     */
     function checkPermission( $sid ) {
         if ( $sid && defined( 'CIVICRM_EVENT_PRICE_SET_DOMAIN_ID' ) && CIVICRM_EVENT_PRICE_SET_DOMAIN_ID ) {
             $domain_id = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $sid, 'domain_id',  'id' ) ;
@@ -708,6 +711,40 @@ WHERE  id = %1";
             }
         } 
         return true;
+    }
+    
+    /**
+     * Get the sum of participant count 
+     * for all fields of given price set.
+     *
+     * @param int $sid the price set id
+     *
+     * @access public
+     * @static
+     */ 
+    public static function getPricesetCount( $sid, $onlyActive = true ) 
+    {
+        $count = 0;
+        if ( !$sid ) return $count;
+        
+        $where = null;
+        if ( $onlyActive ) $where = 'AND  value.is_active = 1 AND field.is_active = 1';
+        
+        static $pricesetFieldCount;
+        if ( !isset( $pricesetFieldCount[$sid] ) ) {
+            $sql = "
+    SELECT  sum(value.count) as totalCount
+      FROM  civicrm_price_field_value  value
+INNER JOIN  civicrm_price_field field ON ( field.id = value.price_field_id )
+INNER JOIN  civicrm_price_set pset    ON ( pset.id = field.price_set_id ) 
+     WHERE  pset.id = %1
+            $where";
+            
+            $count = CRM_Core_DAO::singleValueQuery( $sql, array( 1 => array( $sid, 'Positive' ) ) );
+            $pricesetFieldCount[$sid] = ( $count ) ? $count : 0;
+        }
+        
+        return $pricesetFieldCount[$sid];
     }
 }
 

@@ -105,7 +105,7 @@ class CRM_Price_Form_Preview extends CRM_Core_Form
         $defaults = array();
         $groupId  = $this->get('groupId');
         $fieldId  = $this->get('fieldId');
-        if ( $this->_groupTree[$groupId] ) {
+        if ( CRM_Utils_Array::value( 'fields',$this->_groupTree[$groupId] ) ) {
             foreach( $this->_groupTree[$groupId]['fields'] as $key => $val ) {
                 foreach ( $val['options'] as $keys => $values ) {
                     if ( $values['is_default'] ) {

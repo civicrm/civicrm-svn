@@ -25,7 +25,110 @@
 *}
 {* This template is used for adding/editing/deleting offline Event Registrations *}
 {if $showFeeBlock }
+
+    {if $priceSet}
+    <div id='validate_pricefield' class='messages crm-error hiddenElement'></div>
+    {literal}
+    <script type="text/javascript">
+
+    var fieldOptionsFull = new Array( );
+    {/literal}
+    {foreach from=$priceSet.fields item=fldElement key=fldId}
+    {if $fldElement.options}
+      {foreach from=$fldElement.options item=fldOptions key=opId}
+      {if $fldOptions.is_full}
+        {literal}
+	fieldOptionsFull[{/literal}{$fldId}{literal}] = new Array( );
+        fieldOptionsFull[{/literal}{$fldId}{literal}][{/literal}{$opId}{literal}] = 1; 
+        {/literal}
+      {/if} 
+      {/foreach}
+    {/if}
+    {/foreach}
+    {literal}
+
+    if ( fieldOptionsFull.length > 0 ) {
+    cj(document).ready( function( ) {
+      cj("input,#priceset select,#priceset").each(function () {
+        if ( cj(this).attr('price') ) {
+            switch( cj(this).attr('type') ) { 
+              case 'checkbox':
+              case 'radio':
+                cj(this).click( function() { 
+                  validatePriceField(this);    
+                });
+                break;
+
+	      case 'select-one':
+	        cj(this).change( function() {
+	          validatePriceField(this); 
+	        });
+	        break;
+	      case 'text':
+		cj(this).bind( 'keyup', function() { validatePriceField(this) });
+		break;
+            }
+        }
+      });
+    });
+    
+    function validatePriceField( obj ) {
+	         var namePart =  cj(obj).attr('name').split('_');
+		 var fldVal  =  cj(obj).val();
+		 if ( cj(obj).attr('type') == 'checkbox') {
+		   var eleIdpart = namePart[1].split('[');
+		   var eleId = eleIdpart[0];
+		 } else {
+		   var eleId  = namePart[1];
+		 }		 
+		 var showError = false;
+		 
+		 switch( cj(obj).attr('type') ) {
+		  case 'text':
+		       if ( fieldOptionsFull[eleId] && fldVal ) {
+		       	  showError = true;
+			  cj(obj).parent( ).parent( ).children('.label').addClass('crm-error');	   
+		       } else {
+		          cj(obj).parent( ).parent( ).children('.label').removeClass('crm-error');
+			  cj('#validate_pricefield').hide( ).html('');	       
+		       }
+		       break;
+
+		  case 'checkbox':  
+		      var checkBoxValue = eleIdpart[1].split(']');
+		      if ( cj(obj).attr("checked") == true &&
+		           fieldOptionsFull[eleId] &&
+		           fieldOptionsFull[eleId][checkBoxValue[0]]) {
+		           showError = true;
+		           cj(obj).parent( ).addClass('crm-error');	       
+		      } else {
+		   	cj(obj).parent( ).removeClass('crm-error');
+		      }
+		      break;   
+    
+		  default:
+		      if ( fieldOptionsFull[eleId] &&
+		           fieldOptionsFull[eleId][fldVal]  ) {
+		           showError = true;
+		           cj(obj).parent( ).addClass('crm-error');	       
+		      } else {
+		   	cj(obj).parent( ).removeClass('crm-error');
+		      }
+		 }
+		 
+		 if ( showError ) {
+  		   cj('#validate_pricefield').show().html("<span class='icon red-icon alert-icon'></span>{/literal}{ts}This Option is already full for this event.{/ts}{literal}");
+		 } else {
+		   cj('#validate_pricefield').hide( ).html('');
+		 }
+		             		 	   
+        }
+	}
+    </script>
+    {/literal}
+    {/if}
     {include file="CRM/Event/Form/EventFees.tpl"}
+    
 {elseif $cdType }
     {include file="CRM/Custom/Form/CustomData.tpl"}
 {else}

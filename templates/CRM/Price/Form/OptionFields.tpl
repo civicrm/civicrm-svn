@@ -32,7 +32,12 @@
 	<tr><th>&nbsp;</th>
 	<th> {ts}Default{/ts}</th>
         <th> {ts}Label{/ts}</th>
+	<th> {ts}description{/ts}</th>
         <th> {ts}Amount{/ts} {help id="id-negative-options"}</th>
+	{if $useForEvent}
+	  <th> {ts}Participant Count{/ts}</th>
+	  <th> {ts}Max Participant{/ts}</th>
+	{/if}
         <th> {ts}Weight{/ts}</th>
 	<th> {ts}Active?{/ts}</th>
     </tr>
@@ -54,7 +59,12 @@
 		</div>
 	    </td>
 	    <td> {$form.option_label.$index.html}</td>
-	    <td> {$form.option_name.$index.html|crmReplace:class:eight}</td>
+	    <td> {$form.option_description.$index.html}</td>
+	    <td> {$form.option_amount.$index.html|crmReplace:class:eight}</td>
+	    {if $useForEvent}
+	      <td> {$form.option_count.$index.html}</td>
+	      <td> {$form.option_max_value.$index.html}</td>
+	    {/if}  
 	    <td> {$form.option_weight.$index.html}</td>
  	    <td> {$form.option_status.$index.html}</td>
 	</tr>

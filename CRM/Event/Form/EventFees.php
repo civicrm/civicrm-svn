@@ -181,9 +181,13 @@ class CRM_Event_Form_EventFees
                 }
             }
             if ( $form->_action == CRM_Core_Action::ADD && CRM_Utils_Array::value( 'fields', $form->_priceSet ) ) {
+                $priceFieldDefault = array( );
                 foreach( $form->_priceSet['fields'] as $key => $val ) {
                     foreach ( $val['options'] as $keys => $values ) {
                         if ( $values['is_default'] ) {
+                            
+                            $priceFieldDefault[$key]= $val;
+                            
                             if ( $val['html_type'] == 'CheckBox') {
                                 $defaults[$form->_pId]["price_{$key}"][$keys] = 1;
                             } else {
@@ -191,6 +195,14 @@ class CRM_Event_Form_EventFees
                             }
                         }
                     }
+                }
+                
+                if ( !in_array( get_class($form) , array('CRM_Event_Form_Participant') ) && 
+                     $form->_eventId && 
+                     !empty($priceFieldDefault) ) {
+                    // CRM-6902, if price option is freezed, unset it from setdefault
+                    require_once 'CRM/Event/BAO/Participant.php';
+                    CRM_Event_BAO_Participant::unsetFreezedOptions( $form->_eventId, $priceFieldDefault, $defaults[$form->_pId] ); 
                 }
             }
             
@@ -360,9 +372,9 @@ class CRM_Event_Form_EventFees
             $priceFields = $htmlTypes = $optionValues = array( );
             foreach ( $lineItems[$participantID] as $lineId => $items ) {
                 $priceFieldId  = CRM_Utils_Array::value( 'price_field_id', $items );
-                $optionGroupId = CRM_Utils_Array::value( 'option_group_id', $items );
-                if ( $priceFieldId && $optionGroupId ) {
-                    $priceFields[$priceFieldId] = $optionGroupId;
+                $priceOptionId = CRM_Utils_Array::value( 'price_field_value_id', $items );
+                if ( $priceFieldId && $priceOptionId ) {
+                    $priceFields[$priceFieldId][] = $priceOptionId;
                 }
             }
             
@@ -379,17 +391,7 @@ SELECT  id, html_type
             while ( $fieldDAO->fetch( ) ) {
                 $htmlTypes[$fieldDAO->id] = $fieldDAO->html_type;
             }
-            
-            $sql = "
-SELECT  id, label, name, option_group_id  
-  FROM  civicrm_option_value 
- WHERE  option_group_id IN (" .implode( ',', $priceFields ).')';
-            $valueDAO  = CRM_Core_DAO::executeQuery( $sql );
-            while ( $valueDAO->fetch( ) ) {
-                $optionValues[$valueDAO->option_group_id][$valueDAO->id] = array( 'name'  => $valueDAO->name,
-                                                                                  'label' => $valueDAO->label );
-            }
-            
+           
             foreach ( $lineItems[$participantID] as $lineId => $items ) {
                 $fieldId  = $items['price_field_id'];
                 $htmlType = CRM_Utils_Array::value( $fieldId, $htmlTypes );
@@ -398,19 +400,15 @@ SELECT  id, label, name, option_group_id
                 if ( $htmlType == "Text" ) {
                     $defaults["price_{$fieldId}"] = $items['qty'];
                 } else {
-                    $optionGroupId  = CRM_Utils_Array::value( $fieldId,  $priceFields );
-                    $fieldOptValues = CRM_Utils_Array::value( $optionGroupId, $optionValues ); 
+                    $fieldOptValues = CRM_Utils_Array::value( $fieldId, $priceFields ); 
                     if ( !is_array( $fieldOptValues ) ) continue; 
                     
-                    foreach ( $fieldOptValues as $optionId => $values ) {
-                        if ( $values['label'] == $items['label'] &&
-                             $values['name']  == $items['unit_price'] ) {
-                            if ( $htmlType == "CheckBox" ) {
-                                $defaults["price_{$fieldId}"][$optionId] = true;
-                            } else {
-                                $defaults["price_{$fieldId}"] = $optionId;
-                                break;
-                            }
+                    foreach ( $fieldOptValues as $optionId ) {
+                        if ( $htmlType == "CheckBox" ) {
+                            $defaults["price_{$fieldId}"][$optionId] = true;
+                        } else {
+                            $defaults["price_{$fieldId}"] = $optionId;
+                            break;
                         }
                     }
                 }
