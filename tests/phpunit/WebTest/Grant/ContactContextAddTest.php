@@ -108,16 +108,16 @@ class WebTest_Grant_ContactContextAddTest extends CiviSeleniumTestCase {
         $this->type('amount_granted', '190');
         
         // fill in application received Date
-        $this->webtestFillDate('application_received_date');
+        $this->webtestFillDate('application_received_date', 'now');
         
         // fill in decision Date
-        $this->webtestFillDate('decision_date');
+        $this->webtestFillDate('decision_date', 'now');
         
         // fill in money transfered date
-        $this->webtestFillDate('money_transfer_date');
+        $this->webtestFillDate('money_transfer_date', 'now');
         
         // fill in grant due Date
-        $this->webtestFillDate('grant_due_date');
+        $this->webtestFillDate('grant_due_date', 'now');
         
         // check  grant report recieved.
         $this->check('grant_report_received');
@@ -141,8 +141,24 @@ class WebTest_Grant_ContactContextAddTest extends CiviSeleniumTestCase {
         $this->click("xpath=//div[@id='Grants']//table/tbody/tr[2]/td[8]/span/a[text()='View']");
         $this->waitForElementPresent('_qf_GrantView_cancel-bottom');
         
-        // verify created Grant with unique note
-        $this->assertTrue($this->isTextPresent("Grant Note for $firstName"), "Grant note did not match");   
+        $gDate = date('F jS, Y', strtotime('now'));
+        
+        // verify tabular data for grant view
+        $this->webtestVerifyTabularData( array(
+                                               'Name'                   => "$firstName $lastName",
+                                               'Grant Status'           => 'Pending',
+                                               'Grant Type'             => 'Emergency',
+                                               'Application Received'   => $gDate,
+                                               'Grant Decision'         => $gDate,
+                                               'Money Transferred'      => $gDate,
+                                               'Grant Report Due'       => $gDate,
+                                               'Amount Requested'       => '$ 200.00',
+                                               'Amount Granted'         => '$ 190.00',
+                                               'Grant Report Received?' => 'Yes',
+                                               'Rationale'              => 'Grant Rationale for webtest',
+                                               'Notes'                  => "Grant Note for $firstName"
+                                               )
+                                         );
         
     }
 }

@@ -121,4 +121,116 @@ WHERE id = %2
         CRM_Core_BAO_Setting::add( $params );
     }
     
+    function upgrade_3_3_beta1( $rev ) 
+    {
+        $upgrade =& new CRM_Upgrade_Form( );
+        $upgrade->processSQL( $rev );
+
+        // CRM-6902
+        // Add column price_field_value_id in civicrm_line_item.
+        // Do not drop option_group_id column now since we need it to
+        // update line items.
+        $updateLineItem1 = "ALTER TABLE civicrm_line_item ADD COLUMN price_field_value_id int(10) unsigned default NULL;";
+        CRM_Core_DAO::executeQuery( $updateLineItem1 );
+
+        require_once 'CRM/Price/BAO/FieldValue.php';
+        require_once 'CRM/Price/DAO/LineItem.php';
+        require_once 'CRM/Price/DAO/Field.php';
+        require_once 'CRM/Core/DAO/OptionGroup.php';
+        require_once 'CRM/Core/DAO/OptionValue.php';
+        
+        $priceFieldDAO = new CRM_Price_DAO_Field();
+        $priceFieldDAO->find( );
+        $ids = array( );
+        while( $priceFieldDAO->fetch( ) ) {
+            
+            $opGroupDAO  = new CRM_Core_DAO_OptionGroup();
+            $opGroupDAO->name = 'civicrm_price_field.amount.'.$priceFieldDAO->id;
+            
+            if ( !$opGroupDAO->find(true) ) {
+                $opGroupDAO->free( );
+                continue;
+            }
+            
+            $opValueDAO = new CRM_Core_DAO_OptionValue();
+            $opValueDAO->option_group_id = $opGroupDAO->id;
+            $opValueDAO->find( );
+           
+            while( $opValueDAO->fetch( ) ) {
+                // FIX ME: not migrating description(?), there will
+                // be a field description for each option.
+                $fieldValue = array( 'price_field_id' => $priceFieldDAO->id,
+                                     'label'          => $opValueDAO->label,
+                                     'name'           => CRM_Utils_String::munge( $opValueDAO->label, '_', 64 ),
+                                     'amount'         => $opValueDAO->name,
+                                     'weight'         => $opValueDAO->weight,
+                                     'is_default'     => $opValueDAO->is_default,
+                                     'is_active'      => $opValueDAO->is_active
+                                     );
+                
+                if ( $priceFieldDAO->count ) {
+                    // Migrate Participant Counts on option level.
+                    // count of each option will be the same
+                    // as earlier field count. 
+                    $fieldValue['count'] = $priceFieldDAO->count;
+                }
+               
+                $fieldValueDAO = CRM_Price_BAO_FieldValue::add( $fieldValue, $ids );
+                
+                $lineItemDAO = new CRM_Price_DAO_LineItem();
+                $lineItemDAO->option_group_id = $opGroupDAO->id;
+                $lineItemDAO->label           = $opValueDAO->label;
+                $lineItemDAO->unit_price      = $opValueDAO->name;
+                
+                $labelFound = $priceFound = false;
+                
+                // check with label and amount
+                if ( !$lineItemDAO->find(true) ) {
+                    $lineItemDAO->free( );
+                    $lineItemDAO = new CRM_Price_DAO_LineItem();
+                    $lineItemDAO->option_group_id = $opGroupDAO->id;
+                    $lineItemDAO->label           = $opValueDAO->label;
+
+                    // check with label only
+                    if ( $lineItemDAO->find(true) ) {
+                        $labelFound = true;
+                    }
+                } else {
+                    $labelFound = true;
+                    $priceFound = true;
+                }
+                
+                $lineItemDAO->free( );
+                
+                // update civicrm_line_item for price_field_value_id.
+                // Used query to avoid line by line update.
+                if ( $labelFound || $priceFound ) {
+                    $lineItemParams  = array( 1 => array( $fieldValueDAO->id, 'Integer' ),
+                                              2 => array( $opValueDAO->label, 'String'  ),
+                                              );                                           
+                    $updateLineItems = "UPDATE civicrm_line_item SET price_field_value_id = %1 WHERE label = %2"; 
+                    if ( $priceFound ) {
+                        $lineItemParams[3] = array( $opValueDAO->name, 'Float' );
+                        $updateLineItems .= " AND unit_price = %3";
+                    }
+                    CRM_Core_DAO::executeQuery( $updateLineItems, $lineItemParams );
+                }
+            }
+
+            $opGroupDAO->delete( );
+            $opValueDAO->free( );
+            $opGroupDAO->free( );
+        }
+        
+        $priceFieldDAO->free( );
+        
+        // Now drop option_group_id column from civicrm_line_item
+        $updateLineItem2 = "ALTER TABLE civicrm_line_item DROP option_group_id,
+                           ADD CONSTRAINT `FK_civicrm_price_field_value_id` FOREIGN KEY (price_field_value_id) REFERENCES civicrm_price_field_value(id) ON DELETE SET NULL;";
+        CRM_Core_DAO::executeQuery( $updateLineItem2, array( ), true, null, false, false );
+        
+        $updatePriceField = "ALTER TABLE civicrm_price_field DROP count";
+        CRM_Core_DAO::executeQuery( $updatePriceField, array( ), true, null, false, false );        
+    }
+
 }

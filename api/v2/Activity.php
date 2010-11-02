@@ -261,15 +261,32 @@ function _civicrm_activity_check_params ( &$params, $addMode = false )
     if ( empty( $params ) ) {
         return civicrm_create_error( ts( 'Input Parameters empty' ) );
     }
-
+    
     $contactIds = array( 'source'   => CRM_Utils_Array::value( 'source_contact_id', $params ),
                          'assignee' => CRM_Utils_Array::value( 'assignee_contact_id', $params ),
                          'target'   => CRM_Utils_Array::value( 'target_contact_id', $params )
                          );
-
+    
     foreach ( $contactIds as $key => $value ) {
-        if ( $value && !is_array( $value ) &&
-             !CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $value, 'id' ) ) {
+        if ( empty( $value ) ) {
+            continue;
+        }
+        $valueIds = array( $value );
+        if ( is_array( $value ) ) {
+            $valueIds = array( );
+            foreach ( $value as $id ) {
+                if ( $id ) $valueIds[$id] = $id;
+            }
+        }
+        if ( empty( $valueIds ) ) {
+            continue;
+        }
+        
+        $sql = '
+SELECT  count(*) 
+  FROM  civicrm_contact 
+ WHERE  id IN (' . implode( ', ', $valueIds ) . ' )';
+        if ( count( $valueIds ) !=  CRM_Core_DAO::singleValueQuery( $sql ) ) {
             return civicrm_create_error( ts( 'Invalid %1 Contact Id', array( 1 => ucfirst( $key ) ) ) );
         }
     }

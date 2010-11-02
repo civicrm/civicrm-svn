@@ -147,5 +147,6 @@ function civicrm_tag_get($params)
     }
 
     _civicrm_object_to_array($tagBAO, $tag);
+    $tag['is_error'] = 0;    
     return $tag;
 }

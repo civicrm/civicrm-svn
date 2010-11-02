@@ -205,7 +205,7 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
         $result = & civicrm_relationship_create( $params );
 
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Relationship already exist' ); 
+        $this->assertEquals( $result['error_message'], 'Relationship already exists' ); 
         
         $params['id'] = $relationship['result']['id'] ; 
         $result = & civicrm_relationship_delete( $params );
@@ -470,7 +470,7 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
         $params = array( );
         $result =& civicrm_relationship_update( $params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Input Parameters empty' );
+        $this->assertEquals( 'Mandatory param missing: relationship_id', $result['error_message'], 'In line ' . __LINE__ );
     }
     
     /**
@@ -481,7 +481,7 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
         $params = 'relationship_type_id = 5';                            
         $result =& civicrm_relationship_update( $params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Input parameter is not an array' );
+        $this->assertEquals( 'Input parameters is not an array', $result['error_message'], 'In line ' . __LINE__ );
     }
 
     /**
@@ -497,11 +497,11 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
         
         $result =& civicrm_relationship_update( $params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Required fields not found contact_id_a contact_id_b relationship_type_id' );
+        $this->assertEquals( 'Mandatory param missing: relationship_id', $result['error_message'], 'In line ' . __LINE__ );
     }  
    
     /**
-     * check relationship creation
+     * check relationship update
      */
     function testRelationshipUpdate( )
     {
@@ -515,12 +515,11 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
                                );
 
         $result = & civicrm_relationship_create( $relParams );
-        $this->_relationID =$result['result']['id'];
-        $this->assertNotNull( $result['result']['id'] );  
-
+        $this->assertNotNull( $result['result']['id'], 'In line ' . __LINE__ );  
+        $this->_relationID = $result['result']['id'];
 
         $params = array(
-                        'id'                   => $this->_relationID,
+                        'relationship_id'      => $this->_relationID,
                         'contact_id_a'         => $this->_cId_a,
                         'contact_id_b'         => $this->_cId_b,
                         'relationship_type_id' => $this->_relTypeID,
@@ -530,8 +529,7 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
                         );
         
         $result = & civicrm_relationship_update( $params );
-        
-        $this->assertNotNull( $result['result']['id'] );   
+        $this->assertNotNull( $result['result']['id'], 'In line ' . __LINE__ );
         
         //delete created relationship
         $params = array();

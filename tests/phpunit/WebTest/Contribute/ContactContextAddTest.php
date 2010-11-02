@@ -121,6 +121,16 @@ class WebTest_Contribute_ContactContextAddTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent('_qf_ContributionView_cancel-bottom');
       
       // verify Contribution created
-      $this->assertTrue($this->isTextPresent("Test note for {$firstName}."), "Contribution Note did not match");
+      $this->webtestVerifyTabularData(
+                                      array(
+                                            'From'                            => $firstName . " Anderson",
+                                            'Contribution Type'               => 'Donation',
+                                            'Contribution Status'             => 'Completed',
+                                            'Paid By'                         => 'Check',
+                                            'How long have you been a donor?' => 'Less than 1 year',
+                                            'Total Amount'                    => '$ 100.00',
+                                            'Check Number'                    => 'check #1041'
+                                            )
+                                      );
   }
 }

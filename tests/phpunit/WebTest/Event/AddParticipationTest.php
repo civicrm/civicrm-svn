@@ -69,7 +69,7 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
       $this->select("event_id", "label=regexp:Rain-forest Cup Youth Soccer Tournament.");
       
       // Select role
-      $this->select("role_id", "value=1");
+      $this->click("role_id[1]");
 
       // Choose Registration Date.
       // Using helper webtestFillDate function.

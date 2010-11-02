@@ -639,16 +639,16 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     {
         if ( $params === null ) {
             $params = array(
-                            'name'        => 'New Tag3',
-                            'description' => 'This is description for New Tag 03',
+                            'name'        => 'New Tag3' . rand(),
+                            'description' => 'This is description for New Tag ' . rand(),
                             'domain_id'   => '1'
                             );
         }
         
         require_once 'api/v2/Tag.php';
-        $tag =& civicrm_tag_create($params);
+        $tag = civicrm_tag_create( $params );
         
-        return $tag['tag_id'];
+        return array_merge( $params, $tag );
     }
     
     /** 

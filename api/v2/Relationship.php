@@ -86,15 +86,15 @@ function civicrm_relationship_create( &$params ) {
     $relationshipBAO = CRM_Contact_BAO_Relationship::create( $values, $ids );
 
     if ( is_a( $relationshipBAO, 'CRM_Core_Error' ) ) {
-        return civicrm_create_error( "Relationship can not be created" );
+        return civicrm_create_error( 'Relationship can not be created' );
     } else if ( $relationshipBAO[1] ) {
-        return civicrm_create_error( "Relationship is not valid" );
+        return civicrm_create_error( 'Relationship is not valid' );
     } else if ( $relationshipBAO[2] ) {
-        return civicrm_create_error( "Relationship already exists" );
+        return civicrm_create_error( 'Relationship already exists' );
     }
     CRM_Contact_BAO_Relationship::relatedMemberships( $params['contact_id_a'], $values, $ids, $action );
 
-    return civicrm_create_success( array( 'id' => implode( ",", $relationshipBAO[4] ) ) );
+    return civicrm_create_success( array( 'id' => implode( ',', $relationshipBAO[4] ) ) );
 }
 
 /**
@@ -156,12 +156,12 @@ function civicrm_relationship_update( $params ) {
         * CRM_Contact_BAO_Relationship::getRelatonship throws up some issues
         * (CRM-6905) the relationship is retrieved with a direct query
         */
-       civicrm_verify_mandatory($params, "CRM_Contact_DAO_Relationship", array("relationship_id"));
+       civicrm_verify_mandatory($params, 'CRM_Contact_DAO_Relationship', array('relationship_id'));
 
-       $names = array("id", "contact_id_a", "contact_id_b",
-           "relationship_type_id", "start_date", "end_date", "is_active",
-           "description", "is_permission_a_b", "is_permission_b_a", "case_id");
-
+       $names = array('id', 'contact_id_a', 'contact_id_b',
+                      'relationship_type_id', 'start_date', 'end_date', 'is_active',
+                      'description', 'is_permission_a_b', 'is_permission_b_a', 'case_id');
+       
        $relationship_id = (int) $params['relationship_id'];
        $query = "SELECT * FROM civicrm_relationship WHERE id = $relationship_id";
        $daoRelations = & CRM_Core_DAO::executeQuery( $query );
@@ -446,7 +446,7 @@ function _civicrm_relationship_check_params( &$params ) {
     }
     
     if ( ! $valid ) {
-        return civicrm_create_error( "Required fields not found" . $error );
+        return civicrm_create_error( 'Required fields not found' . $error );
     }
     
     return array();

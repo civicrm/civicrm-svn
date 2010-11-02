@@ -233,6 +233,8 @@
 
   <civicrm_price_field />
 
+  <civicrm_price_field_value />
+
   <civicrm_line_item />
 
   <civicrm_county />

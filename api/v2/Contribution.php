@@ -133,7 +133,7 @@ function &civicrm_contribution_get( &$params ) {
  * @access public
  */
 function civicrm_contribution_delete( &$params ) {
-
+    _civicrm_initialize( );
     $contributionID = CRM_Utils_Array::value( 'contribution_id', $params );
     if ( ! $contributionID ) {
         return civicrm_create_error( ts( 'Could not find contribution_id in input parameters' ) );

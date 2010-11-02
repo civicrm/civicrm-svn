@@ -66,7 +66,7 @@
     {if $lineItems.$participant_id}
         <td>
         {foreach from=$lineItems.$participant_id item=line name=lineItemsIter}
-            {$line.description}: {$line.qty}
+	    {if $line.html_type eq 'Text'}{$line.label}{else}{$line.field_title} - {$line.label}{/if}: {$line.qty}
             {if ! $smarty.foreach.lineItemsIter.last}<br />{/if}
         {/foreach}
         </td>
