@@ -257,6 +257,8 @@ class CRM_Export_BAO_Export
             case CRM_Contact_BAO_Query::MODE_PLEDGE :
                 require_once 'CRM/Pledge/BAO/Query.php';
                 $extraReturnProperties = CRM_Pledge_BAO_Query::extraReturnProperties( $queryMode );
+                $paymentFields  = true;
+                $paymentTableId = "pledge_payment_id";
                 break;
             case CRM_Contact_BAO_Query::MODE_CASE :
                 require_once 'CRM/Case/BAO/Query.php';
