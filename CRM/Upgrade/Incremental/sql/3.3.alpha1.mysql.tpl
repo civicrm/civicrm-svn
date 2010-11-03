@@ -1,4 +1,4 @@
--- CRM-6696
+NULL-- CRM-6696
 ALTER TABLE civicrm_option_value {localize field='description'}MODIFY COLUMN description text{/localize};
 
 -- CRM-6442
@@ -299,7 +299,7 @@ INSERT INTO civicrm_uf_field
    (@uf_group_id_sharedAddress, 'street_address',  0, 0, 1, 'User and User Admin Only',  0, 0, 1, {localize}'Street Address (Home)'{/localize},     'Contact',     {localize}NULL{/localize},  NULL),
    (@uf_group_id_sharedAddress, 'city',            0, 0, 2, 'User and User Admin Only',  0, 0, 1, {localize}'City (Home)'{/localize},        'Contact',     {localize}NULL{/localize},  NULL),
    (@uf_group_id_sharedAddress, 'postal_code',     0, 0, 3, 'User and User Admin Only',  0, 0, 1, {localize}'Postal Code (Home)'{/localize}, 'Contact',     {localize}NULL{/localize},  NULL),
-   (@uf_group_id_sharedAddress, 'country',         0, 0, 4, 'Public Pages and Listings', 0, 1, 1, {localize}'Country (Home)'{/localize},     'Contact',     {localize}'Your state/province and country of residence will be shared with others so folks can find others in their community.'{/localize},  NULL),
+   (@uf_group_id_sharedAddress, 'country',         0, 0, 4, 'Public Pages and Listings', 0, 1, 1, {localize}'Country (Home)'{/localize},     'Contact',     {localize}NULL{/localize},  NULL),
    (@uf_group_id_sharedAddress, 'state_province',  0, 0, 5, 'Public Pages and Listings', 1, 1, 1, {localize}'State (Home)'{/localize},       'Contact',     {localize}NULL{/localize},  NULL);
 
 -- CRM-6894
