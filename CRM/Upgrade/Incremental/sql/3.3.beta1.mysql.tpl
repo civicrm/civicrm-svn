@@ -25,3 +25,6 @@ CREATE TABLE `civicrm_price_field_value`
   PRIMARY KEY (`id`),
   CONSTRAINT `FK_civicrm_price_field_value_price_field_id` FOREIGN KEY (`price_field_id`) REFERENCES civicrm_price_field(id) ON DELETE CASCADE )ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+--CRM-7003
+ ALTER TABLE `civicrm_uf_match` ADD INDEX `I_civicrm_uf_match_uf_id`(`uf_id`);
+
