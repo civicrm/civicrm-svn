@@ -503,11 +503,13 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 				
 				case self::EMAIL_CONFIRM:
 					// set 'Unconfirmed' tag for this new contact
-					require_once 'api/v2/EntityTag.php';
-					unset($tag_params);
-					$tag_params['contact_id'] = $this->_contactId;
-					$tag_params['tag_id'] = $this->_tagId;
-					$tag_value = civicrm_entity_tag_add($tag_params);					
+					if (defined('CIVICRM_TAG_UNCONFIRMED')) {	
+						require_once 'api/v2/EntityTag.php';
+						unset($tag_params);
+						$tag_params['contact_id'] = $this->_contactId;
+						$tag_params['tag_id'] = $this->_tagId;
+						$tag_value = civicrm_entity_tag_add($tag_params);					
+					}
 					break;
 			}
 				
