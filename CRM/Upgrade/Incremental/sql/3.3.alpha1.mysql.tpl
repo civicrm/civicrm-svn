@@ -1,4 +1,4 @@
-NULL-- CRM-6696
+-- CRM-6696
 ALTER TABLE civicrm_option_value {localize field='description'}MODIFY COLUMN description text{/localize};
 
 -- CRM-6442
