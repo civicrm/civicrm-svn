@@ -230,7 +230,8 @@ class CRM_Price_Form_Set extends CRM_Core_Form
     {
         // get the submitted form values.
         $params              = $this->controller->exportValues( 'Set' );
-        $params['name']      = CRM_Utils_String::titleToVar( $params['title'] );
+        $nameLength          = CRM_Core_DAO::getAttribute( 'CRM_Price_DAO_Set', 'name' );
+        $params['name']      = CRM_Utils_String::titleToVar( $params['title'], CRM_Utils_Array::value( 'maxlength' , $nameLength ) );
         $params['is_active'] = CRM_Utils_Array::value( 'is_active', $params, false );
         
         $compIds = array( );
