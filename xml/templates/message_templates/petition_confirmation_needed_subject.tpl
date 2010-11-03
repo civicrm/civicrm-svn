@@ -1,2 +1,1 @@
-Confirmation of signature needed
-+link to click
+Confirmation of signature needed for {$petition.title}
