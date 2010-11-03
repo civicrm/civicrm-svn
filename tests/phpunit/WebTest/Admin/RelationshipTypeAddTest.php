@@ -27,7 +27,7 @@
 
 require_once 'CiviTest/CiviSeleniumTestCase.php';
 
-class WebTest_Admin_RelationshipAddTest extends CiviSeleniumTestCase 
+class WebTest_Admin_RelationshipTypeAddTest extends CiviSeleniumTestCase 
 {
     
     protected function setUp( )
@@ -117,6 +117,11 @@ class WebTest_Admin_RelationshipAddTest extends CiviSeleniumTestCase
         $this->select('contact_types_b', "value=Individual");
         $this->type('description', 'Test Relationship Type Description' );
         $this->click('_qf_RelationshipType_next-bottom');
+        $this->waitForPageToLoad('30000');
+
+        $this->open( $this->sboxPath . 'civicrm/admin/reltype&reset=1&action=browse' );
+        $this->waitForPageToLoad( '30000' );
+        $this->click('link=Add Relationship Type');
         $this->waitForPageToLoad('30000');
         
         $this->type('label_a_b', $labelAB );
