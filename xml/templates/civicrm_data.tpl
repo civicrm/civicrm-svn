@@ -1083,7 +1083,7 @@ INSERT INTO civicrm_uf_field
 	   (30,  8,           'street_address',        1,           1,           1,      'User and User Admin Only',  0,           0,             1,                '{ts escape="sql"}Street Address (Home){/ts}', 		'Contact',     NULL,  NULL),
        (31,  8,           'city',                  1,           1,           2,      'User and User Admin Only',  0,           0,             1,                '{ts escape="sql"}City (Home){/ts}',           		'Contact',     NULL,  NULL),
        (32,  8,           'postal_code',           0,           0,           3,      'User and User Admin Only',  0,           0,             1,                '{ts escape="sql"}Postal Code (Home){/ts}',    		'Contact',     NULL,  NULL),
-       (33,  8,           'country',               0,           0,           4,      'Public Pages and Listings', 0,           1,             1,                '{ts escape="sql"}Country (Home){/ts}',        		'Contact',     '{ts escape="sql"}Your state/province and country of residence will be shared with others so folks can find others in their community.{/ts}',  NULL),
+       (33,  8,           'country',               0,           0,           4,      'Public Pages and Listings', 0,           1,             1,                '{ts escape="sql"}Country (Home){/ts}',        		'Contact',     NULL,  NULL),
        (34,  8,           'state_province',        0,           0,           5,      'Public Pages and Listings', 1,           1,             1,                '{ts escape="sql"}State (Home){/ts}',          		'Contact',     NULL,  NULL);
 
 INSERT INTO civicrm_participant_status_type
