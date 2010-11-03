@@ -592,7 +592,7 @@ AND    civicrm_activity.source_record_id = %2";
             
             require_once 'api/v2/Activity.php';
             $isError = civicrm_activity_create( $activity );
-            if ( is_a( $isError, 'CRM_Core_Error' ) ) {
+            if ( civicrm_error( $isError ) ) {
                 return false;
             }
         }

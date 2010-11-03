@@ -182,8 +182,13 @@ class CRM_Contact_Form_Task_EmailCommon
         }
         
     	if ( is_array ( $form->_contactIds ) && $toSetDefault ) {
-            $returnProperties = array( 'sort_name' => 1, 'email' => 1, 'do_not_email' => 1,
-                                       'on_hold' => 1, 'display_name' => 1, 'preferred_mail_format' => 1 );
+            $returnProperties = array( 'sort_name'             => 1, 
+                                       'email'                 => 1, 
+                                       'do_not_email'          => 1, 
+                                       'is_deceased'           => 1,
+                                       'on_hold'               => 1, 
+                                       'display_name'          => 1, 
+                                       'preferred_mail_format' => 1 );
         
             require_once 'CRM/Mailing/BAO/Mailing.php';
             
