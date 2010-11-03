@@ -28,3 +28,8 @@ CREATE TABLE `civicrm_price_field_value`
 --CRM-7003
  ALTER TABLE `civicrm_uf_match` ADD INDEX `I_civicrm_uf_match_uf_id`(`uf_id`);
 
+--CRM-4572
+SELECT @uf_group_id_sharedAddress   := max(id) from civicrm_uf_group where name = 'shared_address';
+UPDATE civicrm_uf_field
+   SET {localize field='help_post'} help_post = NULL {/localize}
+WHERE civicrm_uf_field.uf_group_id = @uf_group_id_sharedAddress AND civicrm_uf_field.field_name= 'country';
