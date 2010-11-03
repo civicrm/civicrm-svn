@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--  $Id$ -->
 <dataset>
+  <civicrm_domain
+    id="1"
+    name="Test domain"
+  />
   <civicrm_relationship_type
     id="1"
     name_a_b="Member of"
