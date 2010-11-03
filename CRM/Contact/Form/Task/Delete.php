@@ -103,7 +103,7 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
                 $this->_sharedAddressMessage = CRM_Core_BAO_Address::setSharedAddressDeleteStatus( null, $cid, true );
 
                 if ( $this->_sharedAddressMessage ) {
-                    CRM_Core_Session::setStatus( ts( 'This address is shared with %1 contact records. Modifying this address will automatically update the shared address for these contacts.', array( '1' => $this->_sharedAddressMessage['count'] ) ) );    
+                    CRM_Core_Session::setStatus( ts( 'This contact has an address record which is shared with %1 other contact(s). Shared addresses will not be removed or altered but will no longer be shared.', array( '1' => $this->_sharedAddressMessage['count'] ) ) );    
                 }
             }
         } else {
