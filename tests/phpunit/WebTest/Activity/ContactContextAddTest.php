@@ -69,21 +69,24 @@ class WebTest_Activity_ContactContextAddTest extends CiviSeleniumTestCase {
 
       // Let's start filling the form with values.
 
+      // ...and verifying if the page contains properly formatted display name for chosen contact.
+      $this->assertTrue($this->isTextPresent("Anderson, " . $firstName2), "Contact not found in line " . __LINE__ );
+
       // Now we're filling the "Assigned To" field.
       // Typing contact's name into the field (using typeKeys(), not type()!)...
-      $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input.token-input-box", 'Summerson');
+      $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input.token-input-box", $firstName1);
 
       // ...waiting for drop down with results to show up...
       $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td div ul li");
       
-      // ...clicking first result (which is an li element), selenium picks first matching element so we don't need to specify that...
+      // ...clicking first result (which is a li element), selenium picks first matching element so we don't need to specify that...
       $this->click("css=tr.crm-activity-form-block-assignee_contact_id td div ul li");
 
       // ...again, waiting for the box with contact name to show up...
       $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td ul li span.token-input-delete-token-facebook");
       
       // ...and verifying if the page contains properly formatted display name for chosen contact.
-      $this->assertTrue($this->isTextPresent("Summerson, {$firstName1}"), "Contact not found in line " . __LINE__ );
+      $this->assertTrue($this->isTextPresent("Summerson, " . $firstName1), "Contact not found in line " . __LINE__ );
       
       // Since we're here, let's check if screen help is being displayed properly
       $this->assertTrue($this->isTextPresent("A copy of this activity will be emailed to each Assignee"));
