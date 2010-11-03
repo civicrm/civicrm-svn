@@ -49,6 +49,12 @@ class api_v2_EntityTagTest extends CiviUnitTestCase
     {
         parent::setUp();
 
+        //  Truncate the tables
+        $op = new PHPUnit_Extensions_Database_Operation_Truncate( );
+        $op->execute( $this->_dbconn,
+                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
+                             dirname(__FILE__) . '/../../CiviTest/truncate-tag.xml') );
+
         $this->_individualID = $this->individualCreate( );
         $this->_tagID = $this->tagCreate( ); 
         $this->_householdID = $this->houseHoldCreate( );
