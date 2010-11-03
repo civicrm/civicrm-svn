@@ -182,7 +182,7 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 		$i++;
 	}
 
-	// Chang is here, post process to determine if the parent job
+	// post process to determine if the parent job
 	// as well as the mailing is complete after the run
 	public static function runJobs_post() { 
 	
@@ -253,8 +253,8 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 	}
 	
 	
-   // Chang is here, before we run jobs, we need to split the jobs
-   public static function runJobs_pre($offset = 50) {
+   // before we run jobs, we need to split the jobs
+   public static function runJobs_pre($offset = 200) {
         $job = new CRM_Mailing_BAO_Job();
         
         $config = CRM_Core_Config::singleton();
@@ -344,7 +344,6 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
 		}
 	}
 
-	// Chang is here
     public function queue($testParams = null) {
        
         require_once 'CRM/Mailing/BAO/Mailing.php';
@@ -353,12 +352,10 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
         if (!empty($testParams)) {
             $mailing->getTestRecipients($testParams);
         } else {
-			// Chang is here:
 			// We are still getting all the recipients from the parent job 
 			// (The original so we don't mess with the include/exclude) logic
             $recipients = $mailing->getRecipientsObject($this->parent_id, false, $this->job_offset, $this->job_limit);
 
-			// Chang is here:
 			// Here we will use the parent jobid to fetch the receipents, except 
 			// We will introduce the limit and offset from the child job DAO object
 			// To only pick up segment of the receipents instead of the whole
