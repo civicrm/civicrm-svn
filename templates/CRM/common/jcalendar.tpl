@@ -71,7 +71,9 @@
           yearRange  += ':';
           yearRange  += currentYear + parseInt( cj( element_date ).attr('endOffset'  ) ); 
       {literal}
- 
+
+      var lcMessage = {/literal}"{$config->lcMessages}"{literal};
+      var localisation = lcMessage.split('_');
       cj(element_date).datepicker({
                                     closeAtTop        : true, 
                                     dateFormat        : date_format,
@@ -79,9 +81,10 @@
                                     changeYear        : true,
                                     altField          : alt_field,
                                     altFormat         : 'mm/dd/yy',
-                                    yearRange         : yearRange
+                                    yearRange         : yearRange,
+                                    regional          : localisation[0]
                                 });
-    
+
       cj(element_date).click( function( ) {
           hideYear( this );
       });  
