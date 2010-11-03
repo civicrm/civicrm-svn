@@ -76,6 +76,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
         $this->assign( 'formId', $participantNo );
         $this->_params = array( );
         $this->_params = $this->get( 'params' );
+        
         $participantTot = $this->_params[0]['additional_participants']; 
         $skipCount = count( array_keys( $this->_params, "skip" ) );
         if( $skipCount ) {
@@ -236,19 +237,8 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
             //get the event spaces.
             $spaces = $this->_availableRegistrations; 
             
-            $processedCnt = 0;
-            foreach ( $this->_params as $key => $value ) {
-                if ( $value == 'skip' || $key == $currentParticipantNum ) {
-                    continue;
-                }
-                $participants = 1;
-                if ( $isLineItemParticipants &&
-                     CRM_Utils_Array::value( $key, $this->_lineItemParticipants ) &&
-                     is_numeric( $this->_lineItemParticipants[$key] ) ) {
-                    $participants = $this->_lineItemParticipants[$key];
-                }
-                $processedCnt += $participants;
-            }
+            //get the participant total.
+            $processedCnt = self::getTotalRecordedParticipants( $this, $this->_params, true );
             
             $currentPageMaxCount = 1;
             if ( $pricesetFieldsCount ) $currentPageMaxCount = $pricesetFieldsCount;

@@ -792,19 +792,20 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
     {
         // get the submitted form values. 
         $params = $this->controller->exportValues( $this->_name ); 
-
+        
         //set as Primary participant
         $params ['is_primary'] = 1;         
         
         if ( CRM_Utils_Array::value( 'image_URL', $params  ) ) {
             CRM_Contact_BAO_Contact::processImageParams( $params ) ;
         }
-
+        
         //hack to allow group to register w/ waiting
+        $totalParticipants = self::getTotalRecordedParticipants( $this, $params );
         if ( !$this->_allowConfirmation && 
              CRM_Utils_Array::value( 'bypass_payment', $params ) &&
              is_numeric( $this->_availableRegistrations ) &&
-             CRM_Utils_Array::value( 'additional_participants', $params ) > $this->_availableRegistrations ) {
+             $totalParticipants > $this->_availableRegistrations ) {
             $this->_allowWaitlist = true;
             $this->set( 'allowWaitlist', true );
         }
@@ -853,7 +854,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                 $priceSet   = array();
                 $priceSet[] = $lineItem;
                 $psetParticipantCount = 0;
-
+                
                 if ( !empty($lineItem)  ) {
                     foreach ( $lineItem as $values ) {
                         $psetParticipantCount += $values['participant_count'];
