@@ -33,3 +33,19 @@ SELECT @uf_group_id_sharedAddress   := max(id) from civicrm_uf_group where name 
 UPDATE civicrm_uf_field
    SET {localize field='help_post'} help_post = NULL {/localize}
 WHERE civicrm_uf_field.uf_group_id = @uf_group_id_sharedAddress AND civicrm_uf_field.field_name= 'country';
+
+--CRM-7031
+ALTER TABLE `civicrm_participant` 
+ CHANGE `fee_currency` `fee_currency` VARCHAR( 3 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '3 character string, value derived from config setting.';
+
+ALTER TABLE `civicrm_contribution` 
+  CHANGE `currency` `currency` VARCHAR( 3 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '3 character string, value from config setting or input via user.';
+
+ALTER TABLE `civicrm_grant` 
+ CHANGE `currency` `currency` VARCHAR( 8 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '3 character string, value from config setting or input via user.';
+
+ALTER TABLE `civicrm_pcp` 
+ CHANGE `currency` `currency` VARCHAR( 3 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '3 character string, value from config setting or input via user.';
+
+ALTER TABLE `civicrm_pledge` 
+ CHANGE `currency` `currency` VARCHAR( 3 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '3 character string, value from config setting or input via user.';
