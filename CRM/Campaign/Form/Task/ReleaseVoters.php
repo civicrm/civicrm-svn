@@ -157,10 +157,10 @@ class CRM_Campaign_Form_Task_ReleaseVoters extends CRM_Campaign_Form_Task {
         
         $status = array( );
         if ( count($heldContacts) > 0 ) {
-            $status[ ] = ts("%1 voters has been released.", array( 1 => count($heldContacts) ) );
+            $status[ ] = ts("%1 voter(s) have been released.", array( 1 => count($heldContacts) ) );
         }
         if ( count($this->_contactIds) > count($heldContacts) ) {
-            $status[ ] = ts("%1 voters did not release.", array( 1 => (count($this->_contactIds) - count($heldContacts)) ) );  
+            $status[ ] = ts("%1 voters were not released.", array( 1 => (count($this->_contactIds) - count($heldContacts)) ) );  
         }
         
         if ( !empty($status) ) {

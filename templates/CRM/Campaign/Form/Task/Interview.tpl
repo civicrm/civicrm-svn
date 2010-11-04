@@ -43,7 +43,7 @@
     {if $votingTab}
     {ts}Click <strong>vote</strong> button to update values for each voter as needed.{/ts}
     {else}
-    {ts}Click <strong>vote</strong> button to update values for each voter as needed. <br />Click <strong>Release Voters >></strong> button below to continue for release voters. <br />Click <strong>Reserve More Voters >></strong> button below to continue for reserve voters. {/ts}
+    {ts}Click <strong>vote</strong> button to update values for each voter as needed. <br />Click <strong>Release Voters >></strong> button below to release any voters for whon you haven't recorded a response. <br />Click <strong>Reserve More Voters >></strong> button if you need to get more voters to interview.{/ts}
     {/if}
 </div>
 

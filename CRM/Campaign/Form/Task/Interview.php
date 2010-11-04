@@ -388,6 +388,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         if ( $result = CRM_Utils_Array::value( 'result', $params ) ) {
             $activity->result = $result;
         }
+                
         $activity->subject = CRM_Utils_Array::value( 'subject', $params, ts('Voter Interview') );
         $activity->save( );
         $activity->free( );

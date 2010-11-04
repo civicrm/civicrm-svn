@@ -151,7 +151,7 @@ class CRM_Campaign_Form_Task_Release extends CRM_Campaign_Form_Task {
             $query = 'UPDATE civicrm_activity SET is_deleted = 1 WHERE id IN ( '. implode(', ',$deleteActivityIds ) .' )';
             CRM_Core_DAO::executeQuery( $query );
             
-            $status = array( ts("%1 voters has been released.", array( 1 => count( $deleteActivityIds ) ) ) );
+            $status = array( ts("%1 voter(s) have been released.", array( 1 => count( $deleteActivityIds ) ) ) );
             if ( count( $this->_contactIds ) > count( $deleteActivityIds ) ) {
                 $status[] = ts("%1 voters did not release.", 
                                array( 1 => ( count( $this->_contactIds ) - count( $deleteActivityIds ) ) ) );  
