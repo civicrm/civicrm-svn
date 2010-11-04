@@ -1669,5 +1669,51 @@ UPDATE  civicrm_participant
          
          return $ids;
      }
-
+     
+     /**
+      * Function to calculate event seats for given participant ids.
+      *
+      * @param array  $paticipantIds an array of participant ids.
+      *
+      * @return int $totalSeats  total number if event seats.
+      * @access public
+      * @static
+      */
+     static function totalEventSeats( $participantIds ) 
+     {
+         $totalSeats = 0;
+         if ( !is_array( $participantIds ) || empty( $participantIds ) ) {
+             return $totalSeats;
+         }
+         
+         $sql ="
+    SELECT  line.id as lineId,
+            line.entity_id as entity_id,
+            line.qty,
+            value.count,
+            field.html_type
+      FROM  civicrm_line_item line
+INNER JOIN  civicrm_price_field_value value ON ( value.id = line.price_field_value_id )
+INNER JOIN  civicrm_price_field field ON ( value.price_field_id = field.id )   
+     WHERE  line.entity_table = 'civicrm_participant'
+       AND  line.entity_id IN (" . implode( ', ', $participantIds ) .' )';
+         
+         $lineItem = CRM_Core_DAO::executeQuery( $sql );
+         $countDetails = array( );
+         while ( $lineItem->fetch( ) ) {
+             $count = $lineItem->count;
+             if ( !$count ) $count = 0; 
+             if ( $lineItem->html_type == 'Text' ) $count *= $lineItem->qty;  
+             $countDetails[$lineItem->entity_id][$lineItem->lineId] = $count;
+         }
+         foreach ( $participantIds as $pId ) {
+             $count = 1;
+             $optCounts = CRM_Utils_Array::value( $pId, $countDetails );
+             if ( is_array( $optCounts ) ) $count = array_sum( $optCounts );
+             $totalSeats += $count;
+         }
+         
+         return $totalSeats;
+     }
+     
 }
