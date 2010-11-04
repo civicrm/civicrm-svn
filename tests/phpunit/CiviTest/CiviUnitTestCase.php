@@ -142,7 +142,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                               " CHARACTER SET utf8 COLLATE utf8_unicode_ci;", 
                               "USE civicrm_tests_dev;", 
                               // SQL mode needs to be strict, that's our standard
-                              "SET SQL_MODE='STRICT_ALL_TABLES';"
+                              "SET SQL_MODE='STRICT_ALL_TABLES';" . 
+                              "set global innodb_flush_log_at_trx_commit = 2;"
                              );
             foreach( $queries as $query ) {
                 if ( self::$utils->do_query($query) === false ) {
@@ -174,6 +175,12 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                 echo "Cannot load test_data.mysql. Aborting.";
                 exit;
             }
+
+            // done with all the loading, get transactions back
+            if ( self::$utils->do_query("set global innodb_flush_log_at_trx_commit = 1;") === false ) {
+                echo "Cannot set global? Huh?";
+                exit;
+            }            
             
             unset( $query, $query1, $query2);
     }
