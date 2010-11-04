@@ -645,8 +645,8 @@ AND    $mg.mailing_id = {$mailing_id}
               
               $this->templates['html'] = join("\n",$template);
     
-              // this is where we create a text tepalte from the html template if the texttempalte did not exist
-              // this way we ensure that every recipient will receive n email even if the pref is set to text and the
+              // this is where we create a text template from the html template if the text template did not exist
+              // this way we ensure that every recipient will receive an email even if the pref is set to text and the
               // user uploads an html email only
               if ( !$this->body_text ) {
                   $this->templates['text'] = CRM_Utils_String::htmlToText( $this->templates['html'] );
