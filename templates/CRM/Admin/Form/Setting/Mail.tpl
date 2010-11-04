@@ -28,8 +28,7 @@
 <div id="help">
     {ts 1=$docLink}These settings are used to configure mailer properties for the optional CiviMail component. They are NOT used for the built-in 'Send Email to Contacts' feature. Refer to the %1 for more information.{/ts}
 </div>
-<fieldset><legend>{ts}CiviMail Configuration{/ts}</legend>
-      <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>                         
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>                         
       <table class="form-layout-compressed">
         <tr class="crm-mail-form-block-mailerBatchLimit">
             <td class="label">{$form.mailerBatchLimit.label}</td><td>{$form.mailerBatchLimit.html}<br />    
@@ -44,7 +43,6 @@
             <span class="description">{ts}Separator character used when CiviMail generates VERP (variable envelope return path) Mail-From addresses.{/ts}</span></td>
         </tr>
       </table>
-      <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>     
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>     
 <div class="spacer"></div>
-</fieldset>
 </div>

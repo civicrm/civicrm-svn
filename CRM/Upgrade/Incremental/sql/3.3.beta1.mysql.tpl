@@ -49,3 +49,14 @@ ALTER TABLE `civicrm_pcp`
 
 ALTER TABLE `civicrm_pledge` 
  CHANGE `currency` `currency` VARCHAR( 3 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '3 character string, value from config setting or input via user.';
+ 
+ -- insert civimail settings into nav menu
+ SELECT @domainID               := MIN(id) FROM civicrm_domain;
+ SELECT @nav_civimailadmin_id   := id FROM civicrm_navigation WHERE name = 'CiviMail';
+ SELECT @nav_civimailadmin_wt   := MAX(ROUND(weight)) from civicrm_navigation WHERE parent_id = @nav_civimailadmin_id;
+
+ INSERT INTO civicrm_navigation
+     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
+ VALUES
+     ( @domainID, 'civicrm/admin/mail&reset=1', '{ts escape="sql"}Mailer Settings{/ts}', 'Mailer Settings', 'access CiviMail,administer CiviCRM', 'AND', @nav_civimailadmin_id, '1', NULL, @nav_civimailadmin_wt + 1 );
+ 
