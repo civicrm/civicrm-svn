@@ -836,7 +836,11 @@ LEFT JOIN  civicrm_case_activity ON ( civicrm_case_activity.activity_id = {$acti
         $compInfo = CRM_Core_Component::getEnabledComponents( );
         foreach ( $compInfo as $compObj ) {
             if ( CRM_Utils_Array::value( 'showActivitiesInCore', $compObj->info ) ) {
-                $componentPermission = "access {$compObj->name}";
+                if ( $compObj->info['name'] == 'CiviCampaign' ) {
+                    $componentPermission = "administer {$compObj->name}";
+                } else {
+                    $componentPermission = "access {$compObj->name}";
+                }
                 if ( $compObj->info['name'] == 'CiviCase' ) {
                     require_once 'CRM/Case/BAO/Case.php';
                     if ( CRM_Case_BAO_Case::accessCiviCase( ) ) {
