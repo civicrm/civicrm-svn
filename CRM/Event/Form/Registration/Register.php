@@ -801,7 +801,11 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         }
         
         //hack to allow group to register w/ waiting
-        $totalParticipants = self::getTotalRecordedParticipants( $this, $params );
+        $primaryParticipantCount = self::getParticipantCount( $this, $params );
+        $totalParticipants = $primaryParticipantCount;
+        if ( CRM_Utils_Array::value( 'additional_participants', $params ) ) {
+            $totalParticipants += $params['additional_participants'];
+        }
         if ( !$this->_allowConfirmation && 
              CRM_Utils_Array::value( 'bypass_payment', $params ) &&
              is_numeric( $this->_availableRegistrations ) &&
@@ -851,35 +855,8 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                 $lineItem = array( );
                 require_once "CRM/Price/BAO/Set.php";
                 CRM_Price_BAO_Set::processAmount( $this->_values['fee']['fields'], $params, $lineItem );
-                $priceSet   = array();
-                $priceSet[] = $lineItem;
-                $psetParticipantCount = 0;
-                
-                if ( !empty($lineItem)  ) {
-                    foreach ( $lineItem as $values ) {
-                        $psetParticipantCount += $values['participant_count'];
-                    }
-                }
-                
-                $lineItemParticipants[] = $psetParticipantCount;
-                $this->set( 'lineItemParticipants', $lineItemParticipants );
-                $this->set( 'lineItem', $priceSet );
-                
-                $totalParticipants = $psetParticipantCount;
-                if ( CRM_Utils_Array::value('additional_participants', $params ) ) {
-                    //do -ve 1 since we have included primary also.
-                    $totalParticipants += $params['additional_participants'] - 1;
-                }
-                
-                //hack to allow group to register w/ waiting
-                if ( !$this->_allowConfirmation && is_numeric( $this->_availableRegistrations ) ) {
-                    $this->_allowWaitlist  = false;
-                    if ( CRM_Utils_Array::value( 'bypass_payment', $params ) && 
-                         ( $totalParticipants > $this->_availableRegistrations ) ) {
-                        $this->_allowWaitlist = true;
-                    }
-                    $this->set( 'allowWaitlist', $this->_allowWaitlist );
-                }
+                $this->set( 'lineItem', array( $lineItem ) );
+                $this->set( 'lineItemParticipants', array( $primaryParticipantCount ) );
             }
 
             $this->set( 'amount', $params['amount'] ); 

@@ -881,7 +881,7 @@ WHERE  v.option_group_id = g.id
      * @return $totalCount total participant count.
      * @access public 
      */
-    public function getTotalRecordedParticipants( &$form, $params = array( ), $skipCurrent = false ) 
+    public function getParticipantCount( &$form, $params, $skipCurrent = false ) 
     {
         $totalCount = 0;
         if ( !is_array( $params ) || empty( $params ) ) {
@@ -911,27 +911,10 @@ WHERE  v.option_group_id = g.id
         
         //first format the params.
         if ( $singleFormParams ) {
-            if ( $hasPriceFieldsCount ) {
-                foreach ( $params as $key => &$value ) {
-                    $vals = array( );
-                    if ( strpos( $key, 'price_' ) !== false ) {
-                        $fieldId  = substr( $key, 6 );
-                        if ( !array_key_exists( $fieldId, $priceSetDetails['fields'] ) ||
-                             is_array( $value ) ) {
-                            continue;
-                        }
-                        $field = $priceSetDetails['fields'][$fieldId];
-                        if ( $field['html_type'] == 'Text'  ) {
-                            $value = array( $fieldId => $value );
-                        } else {
-                            $value = array( $value => true );
-                        }
-                    }
-                }
-            }
+            $params = self::formatPriceSetParams( $form, $params );
             $params = array( $params );
         }
-        
+                
         foreach ( $params as $key => $values ) {
             if ( !is_numeric( $key ) ||
                  $values == 'skip' ||
@@ -961,11 +944,46 @@ WHERE  v.option_group_id = g.id
             $totalCount += $count;
         }
         if ( !$totalCount ) $totalCount = 1; 
-        if ( CRM_Utils_Array::value( 'additional_participants', $params[0] ) ) {
-            $totalCount += $params[0]['additional_participants'];
-        }
         
         return $totalCount;
+    }
+    
+    /* Format user submitted price set params.
+     * Convert price set each param as an array. 
+     * 
+     * @param $params an array of user submitted params.
+     *
+     *
+     * @return array $formatted, formatted price set params.
+     * @access public 
+     */
+    public function formatPriceSetParams( &$form, $params ) 
+    {
+        if ( !is_array( $params ) || empty( $params ) ) {
+            return $params;
+        }
+        $priceSetId = $form->get( 'priceSetId' );
+        if ( !$priceSetId ) return $params;
+        $priceSetDetails = $form->get( 'priceSet' );
+        
+        foreach ( $params as $key => &$value ) {
+            $vals = array( );
+            if ( strpos( $key, 'price_' ) !== false ) {
+                $fieldId  = substr( $key, 6 );
+                if ( !array_key_exists( $fieldId, $priceSetDetails['fields'] ) ||
+                     is_array( $value ) ) {
+                    continue;
+                }
+                $field = $priceSetDetails['fields'][$fieldId];
+                if ( $field['html_type'] == 'Text'  ) {
+                    $value = array( $fieldId => $value );
+                } else {
+                    $value = array( $value => true );
+                }
+            }
+        }
+        
+        return $params;
     }
     
     /* 

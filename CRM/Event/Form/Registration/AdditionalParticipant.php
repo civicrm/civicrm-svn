@@ -238,7 +238,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
             $spaces = $this->_availableRegistrations; 
             
             //get the participant total.
-            $processedCnt = self::getTotalRecordedParticipants( $this, $this->_params, true );
+            $processedCnt = self::getParticipantCount( $this, $this->_params, true );
             
             $currentPageMaxCount = 1;
             if ( $pricesetFieldsCount ) $currentPageMaxCount = $pricesetFieldsCount;
@@ -442,21 +442,14 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
                     }
                 }
                 
-                $lineItem = array( );
-                CRM_Price_BAO_Set::processAmount( $self->_values['fee']['fields'], $fields, $lineItem );
-                
-                $psetParticipantCount = 0;
-                if ( !empty($checkPriceFields) ) {
-                    foreach ( $lineItem as $values ) {
-                        $psetParticipantCount += $values['participant_count'];
-                    }
-                }
                 if ( empty($checkPriceFields) ) {
                     $errors['_qf_default'] = ts( "Select at least one option from Event Fee(s)." );
                 }
-                $recordedParticipants = $self->getTotalRecordedParticipants( );
-                if ( !$psetParticipantCount ) $psetParticipantCount = 1;
-                $totalParticipants = $psetParticipantCount + $recordedParticipants;
+                
+                //get the current page count.
+                $currentCount  = self::getParticipantCount( $self, $fields );
+                $previousCount = self::getParticipantCount( $self, $self->_params, true ); 
+                $totalParticipants = $currentCount + $previousCount;
                 
                 if ( !$self->_allowConfirmation && 
                      is_numeric( $self->_availableRegistrations ) ) {
@@ -513,6 +506,27 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
         
         //take the participant instance.
         $addParticipantNum = substr( $this->_name, 12 );
+        
+        //user submitted params.
+        $params = $this->controller->exportValues( $this->_name );
+        
+        // if waiting is enabled
+        if ( !$this->_allowConfirmation && 
+             is_numeric( $this->_availableRegistrations ) ) {
+            $this->_allowWaitlist = false;
+            //get the current page count.
+            $currentCount = self::getParticipantCount( $this, $params );
+            //get the total count.
+            $previousCount = self::getParticipantCount( $this, $this->_params, true );
+            $totalParticipants = $currentCount + $previousCount;
+            if ( CRM_Utils_Array::value( 'bypass_payment',  $this->_params[0] ) &&
+                 $totalParticipants > $this->_availableRegistrations ) {
+                $this->_allowWaitlist = true;
+            }
+            $this->set( 'allowWaitlist', $this->_allowWaitlist );
+            if ( $button != 'skip' ) $this->_lineItemParticipants[$addParticipantNum] = $currentCount;
+        }
+        
         if ( $button == 'skip' ) {
             //hack for free/zero amount event.
             if ( $this->_resetAllowWaitlist ) {
@@ -531,25 +545,13 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
                 $this->_lineItem[$addParticipantNum] = 'skip';
                 $this->_lineItemParticipants[$addParticipantNum] = 'skip'; 
             }
-            
-            // if waiting is enabled
-            $totalParticipants = $this->getTotalRecordedParticipants( );
-            if ( !$this->_allowConfirmation && is_numeric( $this->_availableRegistrations ) ) {
-                $this->_allowWaitlist = false;
-                if ( CRM_Utils_Array::value( 'bypass_payment',  $this->_params[0] ) &&
-                     $totalParticipants > $this->_availableRegistrations ) {
-                    $this->_allowWaitlist = true;
-                }
-                $this->set( 'allowWaitlist', $this->_allowWaitlist );
-            }
         } else {
-            $params = $this->controller->exportValues( $this->_name );
             
             $config = CRM_Core_Config::singleton( );
             $params['currencyID'] = $config->defaultCurrency;            
             
             if ( $this->_values['event']['is_monetary'] ) {
-
+                
                 //added for discount
                 require_once 'CRM/Core/BAO/Discount.php';
                 $discountId = CRM_Core_BAO_Discount::findSet( $this->_eventId, 'civicrm_event' );
@@ -562,34 +564,12 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
                 } else if ( empty( $params['priceSetId'] ) ) {
                     $params['amount_level'] = $this->_values['fee'][$params['amount']]['label'];
                     $params['amount']       = $this->_values['fee'][$params['amount']]['value'];
-
+                    
                 } else {
                     $lineItem = array( ); 
                     require_once 'CRM/Price/BAO/Set.php';
-                    CRM_Price_BAO_Set::processAmount( $this->_values['fee']['fields'], 
-                                                      $params, $lineItem );
-
-                    $psetParticipantCount = 0;
-                    if ( !empty($lineItem)  ) {
-                        foreach ( $lineItem as $values ) {
-                            $psetParticipantCount += $values['participant_count'];
-                        }
-                    }
-                    if ( !$psetParticipantCount ) $psetParticipantCount = 1;
+                    CRM_Price_BAO_Set::processAmount( $this->_values['fee']['fields'], $params, $lineItem );
                     
-                    $totalParticipants = $psetParticipantCount + $this->getTotalRecordedParticipants( );
-                    
-                    // if waiting is enabled
-                    if ( !$this->_allowConfirmation && is_numeric( $this->_availableRegistrations ) ) {
-                        $this->_allowWaitlist = false;
-                        if ( CRM_Utils_Array::value( 'bypass_payment',  $this->_params[0] ) &&
-                             $totalParticipants > $this->_availableRegistrations ) {
-                            $this->_allowWaitlist = true;
-                        }
-                        $this->set( 'allowWaitlist', $this->_allowWaitlist );
-                    }
-                    $this->_lineItemParticipants[$addParticipantNum] = $psetParticipantCount;
-
                     //build the line item..
                     if ( array_key_exists( $addParticipantNum, $this->_lineItem ) ) {
                         $this->_lineItem[$addParticipantNum] = $lineItem;
@@ -598,7 +578,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
                     }
                 }
             }
-
+            
             if ( ! CRM_Utils_Array::value( 'participant_role_id', $params ) && $this->_values['event']['default_role_id'] ) {
                 $params['participant_role_id'] = $this->_values['event']['default_role_id'];
             }
@@ -620,7 +600,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
                 $this->_params[] = $params; 
             }
         }
-
+        
         //finally set the params.
         $this->set( 'params', $this->_params );
         //set the line item.
