@@ -327,10 +327,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
      */
     public function postProcess() 
     {		
-    // TODO: move to civicrm.setting.php 
-    // A contact that is created while signing a petition is tagged 'unconfirmed' (until she confirms the signature)
-		// define('CIVICRM_TAG_UNCONFIRMED','Unconfirmed');
-		
+    
 		if (defined('CIVICRM_TAG_UNCONFIRMED')) {
 			// Check if contact 'email confirmed' tag exists, else create one
 			// This should be in the petition module initialise code to create a default tag for this
