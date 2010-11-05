@@ -117,6 +117,7 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
      */
     static function getSurvey( $all = false, $id = false, $defaultOnly = false ) {
 
+		require_once 'CRM/Core/OptionGroup.php';
         $petitionTypeID = CRM_Core_OptionGroup::getValue( 'activity_type', 'petition',  'name' );
 
         $survey = array( );

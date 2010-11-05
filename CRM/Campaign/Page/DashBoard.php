@@ -136,6 +136,24 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
                                                                                 'qs'    => 'action=update&id=%%id%%&reset=1',
                                                                                 'title' => ts('Update Petition')
                                                                                 );
+             self::$_petitionActionLinks [CRM_Core_Action::DISABLE] = array(
+                                                                                'name'  => ts('Disable'),
+                                                                                'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Campaign_BAO_Survey' . '\',\'' . 'enable-disable' . '\' );"',
+                                                                                'ref'   => 'disable-action',
+                                                                                'title' => ts('Disable Petition')
+                                                                                );     
+			self::$_petitionActionLinks [CRM_Core_Action::ENABLE]  = array(
+                                                                                'name'  => ts('Enable'),
+                                                                                'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Campaign_BAO_Survey' . '\',\'' . 'disable-enable' . '\' );"',
+                                                                                'ref'   => 'enable-action',
+                                                                                'title' => ts('Enable Petition')
+                                                                                );                                              
+			self::$_petitionActionLinks [CRM_Core_Action::DELETE]  = array(
+                                                                                'name'  => ts('Delete'),
+                                                                                'url'   => 'civicrm/petition/add',
+                                                                                'qs'    => 'action=delete&id=%%id%%&reset=1',
+                                                                                'title' => ts('Delete Petition'),
+                                                                                );                                                                             
              self::$_petitionActionLinks [CRM_Core_Action::PROFILE]  = array(
                                                                                 'name'  => ts('Sign'),
                                                                                 'url'   => 'civicrm/petition/sign',
