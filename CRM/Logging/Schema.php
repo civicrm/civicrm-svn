@@ -48,7 +48,7 @@ class CRM_Logging_Schema
     {
         $dao = CRM_Core_DAO::executeQuery('SHOW TABLES LIKE "civicrm_%"');
         while ($dao->fetch()) {
-            $this->tables[] = $dao->toValue('Tables_in_civicrm_(civicrm_%)');
+            $this->tables[] = $dao->toValue("Tables_in_{$dao->_database}_(civicrm_%)");
         }
         // do not log cache tables
         $this->tables = preg_grep('/_cache$/', $this->tables, PREG_GREP_INVERT);
