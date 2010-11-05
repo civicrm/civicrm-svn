@@ -174,7 +174,13 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
       $activityViewPrefix = "//div[@id='activity-content']";
       $activityViewTableId = "crm-activity-view-table";
       // Probably don't need both tableId and prefix - but good examples for other situations where only one can be used
-      $this->webtestVerifyTabularData( $openCaseData, $activityViewPrefix, $activityViewTableId );
+      
+      foreach ($openCaseData as $label => $value) {
+          if ( $xpathPrefix ) {
+              $this->verifyText("xpath=//x:table{$tableLocator}/x:tbody/tr/td{$xpathPrefix}[text()='{$label}']/following-sibling::td", preg_quote( $value ) );
+          }
+      }
+      
   }
 
 }
