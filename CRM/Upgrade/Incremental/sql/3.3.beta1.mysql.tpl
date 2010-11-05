@@ -60,3 +60,6 @@ ALTER TABLE `civicrm_pledge`
  VALUES
      ( @domainID, 'civicrm/admin/mail&reset=1', '{ts escape="sql"}Mailer Settings{/ts}', 'Mailer Settings', 'access CiviMail,administer CiviCRM', 'AND', @nav_civimailadmin_id, '1', NULL, @nav_civimailadmin_wt + 1 );
  
+ -- update petition system workflow message templates
+ {include file='../CRM/Upgrade/3.3.beta1.msg_template/civicrm_msg_template.tpl'}
+ 
