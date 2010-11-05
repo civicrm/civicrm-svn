@@ -118,8 +118,9 @@ class CRM_Campaign_Form_Petition extends CRM_Campaign_Form_Survey
         // Activity Type id
 //        $this->add('select', 'activity_type_id', ts('Select Activity Type'), array( '' => ts('- select -') ) + $surveyActivityTypes, true );
         
-        // script / instructions
-        $this->add( 'textarea', 'instructions', ts('Introduction'), array( 'rows' => 5, 'cols' => 40 ) );
+        // script / instructions / description of petition purpose
+        $this->addWysiwyg('instructions',ts('Introduction'), $attributes['instructions']);
+
         // Campaign id
         require_once 'CRM/Campaign/BAO/Campaign.php';
         $campaigns = CRM_Campaign_BAO_Campaign::getAllCampaign( );

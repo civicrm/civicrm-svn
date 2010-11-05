@@ -122,6 +122,7 @@ class CRM_Core_IDS {
     html[]              = report_header
     html[]              = report_footer
     html[]              = data
+    html[]              = instructions
 ";
             if ( file_put_contents( $configFile, $contents ) === false ) {
                 require_once 'CRM/Core/Error.php';
