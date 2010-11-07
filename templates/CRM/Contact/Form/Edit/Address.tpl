@@ -57,6 +57,7 @@
          </td>
      {/if}
      </tr>
+    {if $className eq 'CRM_Contact_Form_Contact'}
      <script type="text/javascript">
      {literal}
          function showHideSharedAddress( blockNo, showSelect ) {
@@ -178,6 +179,7 @@
      });
      {/literal}
      </script>
+ {/if}    
      <tr><td>
 
      <table id="address_{$blockId}" style="display:block" class="form-layout-compressed">
