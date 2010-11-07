@@ -204,8 +204,8 @@ class CRM_Utils_REST
 
         $store = null;
         if ( $args[1] == 'login' ) {
-            $name = CRM_Utils_Request::retrieve( 'name', 'String', $store, false, 'REQUEST' );
-            $pass = CRM_Utils_Request::retrieve( 'pass', 'String', $store, false, 'REQUEST' );
+            $name = CRM_Utils_Request::retrieve( 'name', 'String', $store, false, null, 'REQUEST' );
+            $pass = CRM_Utils_Request::retrieve( 'pass', 'String', $store, false, null, 'REQUEST' );
             if ( empty( $name ) ||
                  empty( $pass ) ) {
                 return self::error( 'Invalid name / password.' );
@@ -238,7 +238,7 @@ class CRM_Utils_REST
         // secret key.
         if ( !$valid_user ) {
             require_once 'CRM/Core/DAO.php';
-            $api_key = CRM_Utils_Request::retrieve( 'api_key', 'String', $store, false, 'REQUEST' );
+            $api_key = CRM_Utils_Request::retrieve( 'api_key', 'String', $store, false, null, 'REQUEST' );
             $valid_user = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $api_key, 'id', 'api_key');
         }
 	
