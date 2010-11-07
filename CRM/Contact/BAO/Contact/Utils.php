@@ -808,7 +808,7 @@ Group By  componentId";
      * @return $contactNames associated array of contact names
      * @static
      */
-    static function getAddressShareContactNames( $addresses ) {
+    static function getAddressShareContactNames( &$addresses ) {
         $contactNames = array( );
         // get the list of master id's for address
         $masterAddressIds = array( ); 
@@ -819,15 +819,16 @@ Group By  componentId";
         }
         
         if ( !empty( $masterAddressIds ) ) {
-            $query = 'SELECT ca.id, cc.display_name, cc.id as cid
+            $query = 'SELECT ca.id, cc.display_name, cc.id as cid, cc.is_deleted
                       FROM civicrm_contact cc
                            INNER JOIN civicrm_address ca ON cc.id = ca.contact_id
                       WHERE ca.id IN  ( ' . implode( ',', $masterAddressIds ) . ')';
             $dao = CRM_Core_DAO::executeQuery( $query );
-            
-            while( $dao->fetch( ) ) {
+
+            while ( $dao->fetch( ) ) {
                 $contactViewUrl = CRM_Utils_System::url( 'civicrm/contact/view', "reset=1&cid={$dao->cid}" );
-                $contactNames[ $dao->id ] = "<a href='{$contactViewUrl}'>{$dao->display_name}</a>";
+                $contactNames[ $dao->id ] = array( 'name' => "<a href='{$contactViewUrl}'>{$dao->display_name}</a>", 
+                                                   'is_deleted' => $dao->is_deleted );                
             }
         }
         return $contactNames;
