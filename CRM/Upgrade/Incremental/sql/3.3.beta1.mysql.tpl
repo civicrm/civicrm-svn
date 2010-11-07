@@ -90,5 +90,6 @@ SELECT  @campaignTypeOptGrpID := MAX(id) from civicrm_option_group where name = 
 UPDATE  civicrm_option_value
    SET  {localize field='label'}label = REPLACE(label, 'Voter', 'Respondent' ){/localize},
 	name = REPLACE(name, 'Voter', 'Respondent' )	
- WHERE  option_group_id = @campaignTypeOptGrpID;
+ WHERE  name = 'Voter Engagement'
+   AND  option_group_id = @campaignTypeOptGrpID;
 
