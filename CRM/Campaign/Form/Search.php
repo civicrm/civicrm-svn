@@ -228,7 +228,7 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         $controller->moveFromSessionToTemplate(); 
 
         //set the form title.
-        CRM_Utils_System::setTitle( ts( 'Find Voters To %1', array( 1 => ucfirst( $this->_operation ) ) ) );
+        CRM_Utils_System::setTitle( ts( 'Find Respondent To %1', array( 1 => ucfirst( $this->_operation ) ) ) );
     }
     
     function setDefaultValues( ) 
@@ -531,7 +531,7 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
      */
     public function getTitle( ) 
     {
-        return ts('Find Voters');
+        return ts('Find Respondents');
     }
     
 }

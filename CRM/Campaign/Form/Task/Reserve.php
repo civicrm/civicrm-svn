@@ -93,7 +93,7 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
             CRM_Core_Error::statusBounce( ts( "Missing Interviewer contact." ) );
         }
         if ( !is_array( $this->_contactIds ) || empty( $this->_contactIds ) ) {
-            CRM_Core_Error::statusBounce( ts( "Could not find contacts for voter reservation.") );
+            CRM_Core_Error::statusBounce( ts( "Could not find contacts for reservation.") );
         }
         
         $params = array( 'id' => $this->_surveyId );
@@ -116,7 +116,7 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
         $this->assign( 'surveyTitle', $this->_surveyDetails['title'] );
         
         //set the title.
-        CRM_Utils_System::setTitle( ts( 'Reserve Voters' ) );
+        CRM_Utils_System::setTitle( ts( 'Reserve Respondents' ) );
     }
     
     function validateSurvey( ) 
@@ -125,15 +125,15 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
         $maxVoters = CRM_Utils_Array::value('max_number_of_contacts', $this->_surveyDetails );
         if ( $maxVoters ) {
             if ( $maxVoters <= $this->_numVoters ) {
-                $errorMsg = ts( 'Voter Reservation is full for this survey.' );
+                $errorMsg = ts( 'Reservation is full for this survey.' );
             } else if ( count( $this->_contactIds ) > ( $maxVoters - $this->_numVoters ) ) {
-                $errorMsg = ts( 'You can select maximum %1 contact(s) for voter reservation of this survey.', 
+                $errorMsg = ts( 'You can select maximum %1 contact(s) for reservation.', 
                                 array( 1 => $maxVoters - $this->_numVoters ) );
             }
         }
         $defaultNum = CRM_Utils_Array::value( 'default_number_of_contacts', $this->_surveyDetails );
         if ( !$errorMsg && $defaultNum && (count( $this->_contactIds ) > $defaultNum) ) {
-            $errorMsg = ts( 'You can select maximum %1 contact(s) at a time for voter reservation of this survey.', 
+            $errorMsg = ts( 'You can select maximum %1 contact(s) at a time for reservation.', 
                             array( 1 => $defaultNum ) );
         }
         if ( $errorMsg ) CRM_Core_Error::statusBounce( $errorMsg );
@@ -207,7 +207,7 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
                  ( !empty( $campContacts ) && !in_array( $cid, $campContacts ) ) ) {
                 continue;
             }
-            $subject =  ts( '%1', array( 1 =>  $this->_surveyDetails['title'] ) ). ' - ' . ts( 'Voter Reservation' );
+            $subject =  ts( '%1', array( 1 =>  $this->_surveyDetails['title'] ) ). ' - ' . ts( 'Respondent Reservation' );
             $activityParams = array( 'source_contact_id'   => $this->_interviewerId,
                                      'assignee_contact_id' => array( $this->_interviewerId ),
                                      'target_contact_id'   => array( $cid ),
@@ -230,10 +230,10 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
         
         $status = array( );
         if ( $countVoters > 0 ) {
-            $status[] = ts('Voter Reservation has been added for %1 Contact(s).', array( 1 => $countVoters ));
+            $status[] = ts('Reservation has been added for %1 Contact(s).', array( 1 => $countVoters ));
         }
         if ( count($this->_contactIds) > $countVoters ) {
-            $status[] = ts( 'Voter Reservation did not add for %1 Contact(s).', 
+            $status[] = ts( 'Reservation did not add for %1 Contact(s).', 
                             array( 1 => ( count($this->_contactIds) - $countVoters) ) );
         }
         if ( !empty($status) ) {

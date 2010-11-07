@@ -75,22 +75,22 @@ class CRM_Campaign_Task
     static function &tasks( )
     {
         if ( !( self::$_tasks ) ) {
-            self::$_tasks = array( 1 => array( 'title'  => ts( 'Record Voters Interview' ),
+            self::$_tasks = array( 1 => array( 'title'  => ts( 'Record Respondents Interview' ),
                                                'class'  => array( 'CRM_Campaign_Form_Task_Interview',
                                                                   'CRM_Campaign_Form_Task_Release' ),
                                                'result' => false ),
                                    
-                                   2 => array( 'title'  => ts( 'Reserve Voters' ),
+                                   2 => array( 'title'  => ts( 'Reserve Respondents' ),
                                                'class'  => array( 'CRM_Campaign_Form_Task_Reserve',
                                                                   'CRM_Campaign_Form_Task_Interview',
                                                                   'CRM_Campaign_Form_Task_Release' ),
                                                'result' => false ),
                                    
-                                   3 => array( 'title'  => ts( 'Release Voters' ),
+                                   3 => array( 'title'  => ts( 'Release Respondents' ),
                                                'class'  => 'CRM_Campaign_Form_Task_Release',
                                                'result' => false ),
                                    
-                                   4 => array( 'title'  => ts( 'Print Voters' ),
+                                   4 => array( 'title'  => ts( 'Print Respondents' ),
                                                'class'  => 'CRM_Campaign_Form_Task_Print',
                                                'result' => false ),
                                    );

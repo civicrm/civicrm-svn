@@ -78,4 +78,9 @@ UPDATE  civicrm_option_value
 WHERE   option_group_id = @actTypeOptGrpID
   AND   component_id    = @campaignCompID;
 
+-- replace voter w/ respondent.
+UPDATE    civicrm_navigation
+   SET    label  = REPLACE(label, 'Voter', 'Respondent' ),
+          name   = REPLACE(name,  'Voter', 'Respondent' )
+  WHERE   name IN ( 'Reserve Voters', 'Interview Voters', 'Release Voters', 'Voter Listing' ); 
 

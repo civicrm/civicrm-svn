@@ -563,19 +563,19 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
                 $voterLinks['reserve'] = array( 'name'  => 'reserve',
                                                 'url'   => 'civicrm/survey/search',
                                                 'qs'    => 'sid=%%id%%&reset=1&op=reserve&force=1',
-                                                'title' => ts('Reserve Voters') );
+                                                'title' => ts('Reserve Respondents') );
             }
             if ( $permissioned || CRM_Core_Permission::check( "interview campaign contacts" ) ) {
                 $voterLinks['release'] = array( 'name'  => 'interview',
                                                 'url'   => 'civicrm/survey/search',
                                                 'qs'    => 'sid=%%id%%&reset=1&op=interview&force=1',
-                                                'title' => ts('Interview Voters') );
+                                                'title' => ts('Interview Respondents') );
             }
             if ( $permissioned || CRM_Core_Permission::check( "release campaign contacts" ) ) {
                 $voterLinks['interview'] = array( 'name'  => 'release',
                                                   'url'   => 'civicrm/survey/search',
                                                   'qs'    => 'sid=%%id%%&reset=1&op=release&force=1',
-                                                  'title' => ts('Release Voters') );
+                                                  'title' => ts('Release Respondents') );
             }
         }
         

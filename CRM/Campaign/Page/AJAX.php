@@ -262,7 +262,7 @@ class CRM_Campaign_Page_AJAX
                 }
                 if ( $searchVoterFor == 'reserve' ) {
                     $voterExtraColHtml = '<input type="checkbox" id="survey_activity['. $contactID .']" name="survey_activity['. $contactID .']" value='. $contactID .' onClick="processVoterData( this, \'reserve\' );" />';
-                    $voterExtraColHtml .= "&nbsp;<span id='success_msg_{$contactID}' class='ok' style='display:none;'>{ts}Voter Reserved.{/ts}</span>";
+                    $voterExtraColHtml .= "&nbsp;<span id='success_msg_{$contactID}' class='ok' style='display:none;'>{ts}Respondent Reserved.{/ts}</span>";
                 } else {
                     $surveyActId  = $result->survey_activity_id; 
                     $voterExtraColHtml = '<input type="checkbox" id="survey_activity['. $surveyActId .']" name="survey_activity['. $surveyActId .']" value='. $surveyActId .' onClick="processVoterData( this, \'release\' );" />';
@@ -339,7 +339,7 @@ class CRM_Campaign_Page_AJAX
                         $surveytitle = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', 
                                                                     $activityParams['source_record_id'], 'title' );
                     }
-                    $subject =  ts( '%1', array( 1 => $surveytitle ) ). ' - ' . ts( 'Voter Reservation' );
+                    $subject =  ts( '%1', array( 1 => $surveytitle ) ). ' - ' . ts( 'Respondent Reservation' );
                     $activityParams['subject']            = $subject;
                     $activityParams['status_id']          = $scheduledStatusId;
                     $activityParams['skipRecentView']     = 1;

@@ -63,28 +63,28 @@
   </item>
   <item>
     <path>civicrm/survey/search</path>
-    <title>Reserve Voters</title>
+    <title>Reserve Respondents</title>
     <path_arguments>op=reserve</path_arguments>
     <page_callback>CRM_Campaign_Controller_Search</page_callback>
     <component>CiviCampaign</component>
   </item>
   <item>
     <path>civicrm/survey/search</path>
-    <title>Release Voters</title>
+    <title>Release Respondents</title>
     <path_arguments>op=release</path_arguments>
     <page_callback>CRM_Campaign_Controller_Search</page_callback>
     <component>CiviCampaign</component>
   </item>
   <item>
     <path>civicrm/survey/search</path>
-    <title>Record Voters Interview</title>
+    <title>Record Respondents Interview</title>
     <path_arguments>op=interview</path_arguments>
     <page_callback>CRM_Campaign_Controller_Search</page_callback>
     <component>CiviCampaign</component>
   </item>
   <item>
     <path>civicrm/campaign/gotv</path>
-    <title>Voter List</title>
+    <title>Respondent List</title>
     <page_callback>CRM_Campaign_Form_Gotv</page_callback>
     <access_arguments>administer CiviCampaign;manage campaign;release campaign contacts</access_arguments>
     <component>CiviCampaign</component>

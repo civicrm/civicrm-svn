@@ -276,14 +276,14 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
              $adminCampaign  ||
              CRM_Core_Permission::check( 'release campaign contacts' ) ) { 
             $buttons[] = array ( 'type'      => 'next',
-                                 'name'      => ts('Release Voters >>'),
+                                 'name'      => ts('Release Respondents >>'),
                                  'subName'   => 'interviewToRelease' );
         }
         if ( $manageCampaign ||
              $adminCampaign  ||
              CRM_Core_Permission::check( 'reserve campaign contacts' ) ) { 
             $buttons[] = array ( 'type'      => 'done',
-                                 'name'      => ts('Reserve More Voters >>'),
+                                 'name'      => ts('Reserve More Respondents >>'),
                                  'subName'   => 'interviewToReserve' );
         }
         
@@ -396,7 +396,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
             $subject  = ts( '%1', array( 1 => $surveyTitle ) );
             $subject .= ' - '; 
         }
-        $subject .= ts('Voter Interview');
+        $subject .= ts('Respondent Interview');
         
         $activity->subject = $subject;
         $activity->save( );

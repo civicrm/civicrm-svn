@@ -93,7 +93,7 @@ class CRM_Campaign_Form_Task_Print extends CRM_Campaign_Form_Task
         // 
         $this->addButtons( array(
                                  array ( 'type'      => 'next',
-                                         'name'      => ts('Print Voters'),
+                                         'name'      => ts('Print Respondents'),
                                          'js'        => array( 'onclick' => 'window.print()' ),
                                          'isDefault' => true   ),
                                  array ( 'type'      => 'back',

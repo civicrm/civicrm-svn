@@ -41,9 +41,9 @@
 
 <div id='help'>
     {if $votingTab}
-    {ts}Click <strong>vote</strong> button to update values for each voter as needed.{/ts}
+    {ts}Click <strong>vote</strong> button to update values for each respondent as needed.{/ts}
     {else}
-    {ts}Click <strong>vote</strong> button to update values for each voter as needed. <br />Click <strong>Release Voters >></strong> button below to release any voters for whon you haven't recorded a response. <br />Click <strong>Reserve More Voters >></strong> button if you need to get more voters to interview.{/ts}
+    {ts}Click <strong>vote</strong> button to update values for each respondent as needed. <br />Click <strong>Release Respondents >></strong> button below to release any respondents for whon you haven't recorded a response. <br />Click <strong>Reserve More Respondents >></strong> button if you need to get more respondents to interview.{/ts}
     {/if}
 </div>
 
@@ -93,7 +93,7 @@
 
 	    <td>
 		<a id = "interview_voter_button_{$voterId}" class='button' style="float:left;" href="#" title={ts}Vote{/ts} onClick="registerInterview( {$voterId} );return false;">
-		{ts}vote{/ts}
+		{ts}record response{/ts}
 		</a>
 		{if $allowAjaxReleaseButton}
 		   <a id="release_voter_button_{$voterId}" class='button'  href="#" title={ts}Release{/ts} onClick="releaseOrReserveVoter( {$voterId} );return false;">
@@ -101,7 +101,7 @@
 		   </a>
 		{/if}
 		<span id='restmsg_vote_{$voterId}' class="ok" style="display:none;float:right;">
-		     {ts}Vote Saved.{/ts}
+		     {ts}Response Saved.{/ts}
 		</span>
 		
 		<span id='restmsg_release_or_reserve_{$voterId}' class="ok" style="display:none;float:right;">
@@ -125,7 +125,7 @@
 
 {literal}
 <script type="text/javascript">
-    var updateVote = "{/literal}{ts}Update Vote{/ts}{literal}";	
+    var updateVote = "{/literal}{ts}Update Response{/ts}{literal}";	
     cj( function( ) {
         var count = 0; var columns=''; var sortColumn = '';
 	
