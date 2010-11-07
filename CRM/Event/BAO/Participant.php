@@ -1007,7 +1007,7 @@ WHERE  civicrm_participant.id = {$participantId}
      * @return array $additionalParticipantIds
      * @static
      */
-    static function getAdditionalParticipantIds( $primaryParticipantId, $excludeCancel = true, $oldStatusId = null, $includeFeeLevels = array( ) )
+    static function getAdditionalParticipantIds( $primaryParticipantId, $excludeCancel = true, $oldStatusId = null )
     {
         $additionalParticipantIds = array( );
         if ( !$primaryParticipantId ) {
@@ -1022,48 +1022,85 @@ WHERE  civicrm_participant.id = {$participantId}
             $cancelStatusId = array_search( 'Cancelled', $negativeStatuses );
             $where .= " AND participant.status_id != {$cancelStatusId}";
         }
-
+        
         if ( $oldStatusId ) {
             $where .= " AND participant.status_id = {$oldStatusId}";    
-        }
-        
-        $feeLevelClause    =  "";
-        $displaynameClause =  "";
-        if ( CRM_Utils_Array::value('fee_level', $includeFeeLevels) ) {
-            $feeLevelClause    = " ,participant.fee_level, participant.fee_amount, contact.display_name ";
-            $displaynameClause = " LEFT JOIN civicrm_contact contact ON participant.contact_id = contact.id "; 
         }
         
         $query = "
   SELECT  participant.id {$feeLevelClause}
     FROM  civicrm_participant participant
-    {$displaynameClause}
    WHERE  {$where}"; 
         
         $dao = CRM_Core_DAO::executeQuery( $query );
-        if ( !$includeFeeLevels ) {
-            $cnt = 1;
-            while ( $dao->fetch( ) ) {
-                $additionalParticipantIds[$cnt] = $dao->id;
-                $cnt++;
-            }
-        } else {
-            if ( CRM_Utils_Array::value('fee_level', $includeFeeLevels) ) {
-                while ( $dao->fetch( ) ) {
-                    $additionalParticipantIds[$dao->id] = array( 'label'  => $dao->fee_level.' - '.$dao->display_name, 
-                                                                 'amount' => $dao->fee_amount   );
-                }   
-            } elseif (  CRM_Utils_Array::value('priceset', $includeFeeLevels) ) {
-                require_once 'CRM/Price/BAO/LineItem.php';
-                while ( $dao->fetch( ) ) {
-                    $additionalParticipantIds[] = CRM_Price_BAO_LineItem::getLineItems( $dao->id );  
-                }  
-            }
+        while ( $dao->fetch( ) ) {
+            $additionalParticipantIds[$dao->id] = $dao->id;
         }
         
         return $additionalParticipantIds;
     }
     
+    /**
+     * Get the event fee info for given participant ids 
+     * either from line item table / participant table.
+     *
+     * @param array    $participantIds participant ids.
+     * @param boolean  $hasLineItems   do fetch from line items.
+     *
+     * @return array $feeDetails
+     * @static
+     */
+    function getFeeDetails( $participantIds, $hasLineItems = false ) {
+        $feeDetails = array( );
+        if ( !is_array( $participantIds ) || empty( $participantIds ) ) {
+            return $feeDetails;
+        }
+        
+        $select = '
+SELECT  participant.id         as id,
+        participant.fee_level  as fee_level,
+        participant.fee_amount as fee_amount';
+        $from   = 'FROM civicrm_participant participant';
+        if ( $hasLineItems ) {
+            $select .= ' ,
+lineItem.id          as lineId, 
+lineItem.label       as label, 
+lineItem.qty         as qty, 
+lineItem.unit_price  as unit_price, 
+lineItem.line_total  as line_total, 
+field.label          as field_title,
+field.html_type      as html_type,
+field.id             as price_field_id,
+value.id             as price_field_value_id,
+value.description    as description,
+IF( value.count, value.count, 0 ) as participant_count';
+            $from .= "
+INNER JOIN civicrm_line_item lineItem      ON ( lineItem.entity_table = 'civicrm_participant' 
+                                                AND lineItem.entity_id = participant.id )
+INNER JOIN civicrm_price_field field ON ( field.id = lineItem.price_field_id )
+INNER JOIN civicrm_price_field_value value ON ( value.id = lineItem.price_field_value_id ) 
+";
+        }
+        $where = 'WHERE participant.id IN ( ' . implode( ', ', $participantIds ) . ' )'; 
+        $query = "$select $from  $where";
+        
+        $feeInfo = CRM_Core_DAO::executeQuery( $query );
+        $feeProperties  = array( 'fee_level', 'fee_amount' ); 
+        $lineProperties = array( 'lineId',   'label', 'qty', 'unit_price', 
+                                 'line_total', 'field_title', 'html_type', 
+                                 'price_field_id', 'participant_count', 'price_field_value_id', 'description' );
+        while ( $feeInfo->fetch( ) ) {
+            if ( $hasLineItems ) {
+                foreach ( $lineProperties as $property ) {
+                    $feeDetails[$feeInfo->id][$feeInfo->lineId][$property] = $feeInfo->$property;
+                }
+            } else {
+                foreach ( $feeProperties as $property ) $feeDetails[$feeInfo->id][$property] = $feeInfo->$property; 
+            }
+        }
+        
+        return $feeDetails;
+    }
     
     /**
      * Retrieve additional participants display-names and URL to view their participant records.

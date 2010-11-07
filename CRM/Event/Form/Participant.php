@@ -954,12 +954,10 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
                 }
                 //also add additional participant's fee level/priceset
                 if ( CRM_Event_BAO_Participant::isPrimaryParticipant($this->_id) ) {
-                    if ( !isset($params['priceSetId']) ) {
-                        $additionalParticipantDetails = CRM_Event_BAO_Participant::getAdditionalParticipantIds( $this->_id, true, null, array( 'fee_level' => 1) );
-                        
-                    } else {
-                        $additionalParticipantDetails = CRM_Event_BAO_Participant::getAdditionalParticipantIds( $this->_id, true, null, array( 'priceset' => 1) ); 
-                    }
+                    $additionalIds = CRM_Event_BAO_Participant::getAdditionalParticipantIds( $this->_id );
+                    $hasLineItems  = CRM_Utils_Array::value( 'priceSetId', $params, false );
+                    $additionalParticipantDetails = CRM_Event_BAO_Participant::getFeeDetails( $additionalIds, 
+                                                                                              $hasLineItems );
                 }
             } else {
                 
