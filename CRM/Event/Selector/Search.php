@@ -295,10 +295,11 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
          
          require_once 'CRM/Event/BAO/Event.php';
          require_once 'CRM/Event/PseudoConstant.php';
-         $statusTypes   = CRM_Event_PseudoConstant::participantStatus();
-         $statusClasses = CRM_Event_PseudoConstant::participantStatusClass();
+         $statusTypes      = CRM_Event_PseudoConstant::participantStatus();
+         $statusClasses    = CRM_Event_PseudoConstant::participantStatusClass();
+         $participantRoles = CRM_Event_PseudoConstant::participantRole( ) ;
+         $sep              = CRM_Core_DAO::VALUE_SEPARATOR;
 
-         
          while ( $result->fetch( ) ) {
              $row = array();
              // the columns we are interested in
@@ -307,21 +308,19 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
                      $row[$property] = $result->$property;
                  }
              }
-             
+
              // gross hack to show extra information for pending status
              $statusClass = null;
-             if ( ( isset( $row['participant_status_id'] ) ) && ( $statusId = array_search( $row['participant_status_id'], $statusTypes ) ) ) {
+             if ( ( isset( $row['participant_status_id'] ) ) &&
+                  ( $statusId = array_search( $row['participant_status_id'], $statusTypes ) ) ) {
                 $statusClass = $statusClasses[$statusId];
              }
 
-             $extraInfo = array();
-             $row['showConfirmUrl'] = false;
-             if ($statusClass == 'Pending') {
-                 $row['showConfirmUrl'] = true;
-             }             
-             if (CRM_Utils_Array::value('participant_is_test', $row)) $extraInfo[] = ts('test');
+             $row['showConfirmUrl'] = ( $statusClass == 'Pending' ) ? true : false;
 
-             if ($extraInfo) $row['participant_status'] .= ' (' . implode(', ', $extraInfo) . ')';
+             if ( CRM_Utils_Array::value('participant_is_test', $row) ) {
+                 $row['participant_status'] .= ' (' . ts('test') . ')';
+             }
 
              $row['checkbox'] = CRM_Core_Form::CB_PREFIX . $result->participant_id;
              
@@ -347,18 +346,17 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
                  require_once 'CRM/Price/BAO/LineItem.php';
                  $lineItems[$row['participant_id']] = CRM_Price_BAO_LineItem::getLineItems( $row['participant_id'] );
              }
-             require_once 'CRM/Event/PseudoConstant.php';
-             $participantRoles = CRM_Event_PseudoConstant::participantRole( ) ;
-             $sep = CRM_Core_DAO::VALUE_SEPARATOR;
+
              $viewRoles = array();
              foreach ( explode( $sep, $row['participant_role_id'] ) as $k => $v ) {
                  $viewRoles[] = $participantRoles[$v];
              }
              $row['participant_role_id'] = implode( ', ', $viewRoles );
+
              $rows[] = $row;
          }
          CRM_Core_Selector_Controller::$_template->assign_by_ref( 'lineItems', $lineItems );
-        
+
          return $rows;
      }
      
