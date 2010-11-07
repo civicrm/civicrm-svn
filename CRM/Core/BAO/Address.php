@@ -875,12 +875,12 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
         $sharedContactId   = $dao->id;
 
         // create relationship between ontacts who share an address
-        if ( $sharedContactType == 'Household' ) {
-            // get the relationship type id of "Household Member of"
-            $relationshipType = 'Household Member of';
+        if ( $sharedContactType == 'Organization' ) {
+            require_once 'CRM/Contact/BAO/Contact/Utils.php';
+            return CRM_Contact_BAO_Contact_Utils::createCurrentEmployerRelationship( $currentContactId, $sharedContactId );
         } else {
-            // get the relationship type id of "Employee of"
-            $relationshipType = 'Employee of';
+             // get the relationship type id of "Household Member of"
+            $relationshipType = 'Household Member of';
         }
 
         $cid = array( 'contact' => $currentContactId );
