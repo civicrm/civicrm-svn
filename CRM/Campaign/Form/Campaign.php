@@ -70,7 +70,7 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
     
     public function preProcess()
     {
-        if ( !CRM_Core_Permission::check( 'administer CiviCampaign' ) ) {
+        if ( !CRM_Core_Permission::check( 'manage campaign' ) ) {
             CRM_Utils_System::permissionDenied( );
         }
 

@@ -303,7 +303,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
     
     function run( ) 
     {
-        if ( !CRM_Core_Permission::check( 'administer CiviCampaign' ) ) {
+        if ( !CRM_Core_Permission::check( 'manage campaign' ) ) {
             CRM_Utils_System::permissionDenied( );
         }
         
