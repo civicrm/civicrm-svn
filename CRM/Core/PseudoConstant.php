@@ -463,12 +463,13 @@ class CRM_Core_PseudoConstant
             // build filter for listing activity types only if their 
             // respective components are enabled
             foreach ( $compInfo as $compName => $compObj ) {
-                if ( $compName !== 'CiviCase' ) {
-                    $componentIds[] = $compObj->componentID;
-                } else if ( $includeCaseActivities ) {
+                if ( $compName == 'CiviCase' ) {
+                    if ( $includeCaseActivities ) {
+                        $componentIds[] = $compObj->componentID;
+                    }
+                } else { 
                     $componentIds[] = $compObj->componentID;
                 }
-                
             }
             
             if ( count($componentIds) ) {
