@@ -83,6 +83,12 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
         $this->assign( 'buildSelector',  $this->_search );
         $this->assign( 'searchVoterFor', $this->_searchVoterFor );
         
+        $surveyTitle = null;
+        if ( $this->_surveyId ) {
+            $surveyTitle = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', $this->_surveyId, 'title' );
+        }
+        $this->assign( 'svreyTitle', $surveyTitle );
+        
         //set the form title.
         CRM_Utils_System::setTitle( ts( 'Voter List' ) );
     }

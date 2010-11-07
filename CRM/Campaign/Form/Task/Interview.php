@@ -168,7 +168,8 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
             }
             $this->set( 'surveyValues', $this->_surveyValues );
         }
-        
+        $this->assign( 'surveyValues', $this->_surveyValues );
+                
         //get the survey result options.
         $this->_resultOptions = $this->get( 'resultOptions' );
         if ( !is_array( $this->_resultOptions ) ) {
@@ -388,8 +389,16 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         if ( $result = CRM_Utils_Array::value( 'result', $params ) ) {
             $activity->result = $result;
         }
-                
-        $activity->subject = CRM_Utils_Array::value( 'subject', $params, ts('Voter Interview') );
+        
+        $subject = '';
+        $surveyTitle = CRM_Utils_Array::value( 'surveyTitle', $params );
+        if ( $surveyTitle ) {
+            $subject  = ts( '%1', array( 1 => $surveyTitle ) );
+            $subject .= ' - '; 
+        }
+        $subject .= ts('Voter Interview');
+        
+        $activity->subject = $subject;
         $activity->save( );
         $activity->free( );
         

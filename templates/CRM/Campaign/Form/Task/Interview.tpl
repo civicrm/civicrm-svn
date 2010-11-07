@@ -191,6 +191,7 @@
 	data['activity_id']      = activityId;
 	data['result']           = cj( '#field_' + voterId + '_result' ).val( ); 
 	data['note']             = cj( '#field_' + voterId + '_note' ).val( );
+	data['surveyTitle']      = {/literal}'{$surveyValues.title}'{literal};
 
 	var dataUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Campaign_Page_AJAX&fnName=registerInterview' }"{literal}	          
 	

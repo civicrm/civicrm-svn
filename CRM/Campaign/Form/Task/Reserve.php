@@ -207,12 +207,13 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
                  ( !empty( $campContacts ) && !in_array( $cid, $campContacts ) ) ) {
                 continue;
             }
+            $subject =  ts( '%1', array( 1 =>  $this->_surveyDetails['title'] ) ). ' - ' . ts( 'Voter Reservation' );
             $activityParams = array( 'source_contact_id'   => $this->_interviewerId,
                                      'assignee_contact_id' => array( $this->_interviewerId ),
                                      'target_contact_id'   => array( $cid ),
                                      'source_record_id'    => $this->_surveyId,
                                      'activity_type_id'    => $this->_surveyDetails['activity_type_id'],
-                                     'subject'             => ts('Voter Reservation'),
+                                     'subject'             => $subject,
                                      'activity_date_time'  => date('YmdHis'),
                                      'status_id'           => $statusHeld,
                                      'skipRecentView'      => 1

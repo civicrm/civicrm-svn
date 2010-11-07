@@ -50,7 +50,8 @@ class CRM_Campaign_Page_AJAX
                              'details'          => CRM_Utils_Array::value( 'note',             $_POST ),
                              'result'           => CRM_Utils_Array::value( 'result',           $_POST ),
                              'interviewer_id'   => CRM_Utils_Array::value( 'interviewer_id',   $_POST ),
-                             'activity_type_id' => CRM_Utils_Array::value( 'activity_type_id', $_POST ) );
+                             'activity_type_id' => CRM_Utils_Array::value( 'activity_type_id', $_POST ),
+                             'surveyTitle'      => CRM_Utils_Array::value( 'surveyTitle',      $_POST ) );
         
         $customKey = "field_{$voterId}_custom";
         foreach ( $_POST as $key => $value ) {
@@ -333,7 +334,13 @@ class CRM_Campaign_Page_AJAX
                     $activityTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey',
                                                                    $activityParams['source_record_id'],
                                                                    'activity_type_id' );
-                    $activityParams['subject']            = ts('Voter Reservation');
+                    $surveytitle = CRM_Utils_Array::value( 'surveyTitle', $_POST );
+                    if ( !$surveytitle ) {
+                        $surveytitle = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', 
+                                                                    $activityParams['source_record_id'], 'title' );
+                    }
+                    $subject =  ts( '%1', array( 1 => $surveytitle ) ). ' - ' . ts( 'Voter Reservation' );
+                    $activityParams['subject']            = $subject;
                     $activityParams['status_id']          = $scheduledStatusId;
                     $activityParams['skipRecentView']     = 1;
                     $activityParams['activity_date_time'] = date('YmdHis');
