@@ -163,6 +163,7 @@
   <field>      
       <name>currency</name>   
       <type>varchar</type>   
+      <length>3</length>
       <default>NULL</default>
       <import>true</import>
       <headerPattern>/cur(rency)?/i</headerPattern>
