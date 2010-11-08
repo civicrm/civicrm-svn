@@ -241,7 +241,7 @@ class CRM_Contact_Task {
         if (!CRM_Core_Permission::check('access deleted contacts')) {
             unset($titles[self::DELETE_PERMANENTLY]);
         }
-
+        asort( $titles );
         return $titles;
     }
 

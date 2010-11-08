@@ -33,3 +33,65 @@ SELECT @uf_group_id_sharedAddress   := max(id) from civicrm_uf_group where name 
 UPDATE civicrm_uf_field
    SET {localize field='help_post'} help_post = NULL {/localize}
 WHERE civicrm_uf_field.uf_group_id = @uf_group_id_sharedAddress AND civicrm_uf_field.field_name= 'country';
+
+--CRM-7031
+ALTER TABLE `civicrm_participant` 
+ CHANGE `fee_currency` `fee_currency` VARCHAR( 3 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '3 character string, value derived from config setting.';
+
+ALTER TABLE `civicrm_contribution` 
+  CHANGE `currency` `currency` VARCHAR( 3 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '3 character string, value from config setting or input via user.';
+
+ALTER TABLE `civicrm_grant` 
+ CHANGE `currency` `currency` VARCHAR( 8 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '3 character string, value from config setting or input via user.';
+
+ALTER TABLE `civicrm_pcp` 
+ CHANGE `currency` `currency` VARCHAR( 3 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '3 character string, value from config setting or input via user.';
+
+ALTER TABLE `civicrm_pledge` 
+ CHANGE `currency` `currency` VARCHAR( 3 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '3 character string, value from config setting or input via user.';
+ 
+ -- insert civimail settings into nav menu
+ SELECT @domainID               := MIN(id) FROM civicrm_domain;
+ SELECT @nav_civimailadmin_id   := id FROM civicrm_navigation WHERE name = 'CiviMail';
+ SELECT @nav_civimailadmin_wt   := MAX(ROUND(weight)) from civicrm_navigation WHERE parent_id = @nav_civimailadmin_id;
+
+ INSERT INTO civicrm_navigation
+     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
+ VALUES
+     ( @domainID, 'civicrm/admin/mail&reset=1', '{ts escape="sql"}Mailer Settings{/ts}', 'Mailer Settings', 'access CiviMail,administer CiviCRM', 'AND', @nav_civimailadmin_id, '1', NULL, @nav_civimailadmin_wt + 1 );
+ 
+ -- update petition system workflow message templates
+ {include file='../CRM/Upgrade/3.3.beta1.msg_template/civicrm_msg_template.tpl'}
+ 
+-- CRM-6231 -tweak permissions.
+UPDATE  civicrm_navigation 
+   SET  permission = CONCAT( permission, ',manage campaign' ),
+        permission_operator = 'OR'
+ WHERE  name in ( 'Dashboard', 'Survey Dashboard', 'Petition Dashboard', 'Campaign Dashboard', 'New Campaign', 'New Survey',  'New Petition' )
+   AND  permission = 'administer CiviCampaign';
+
+
+-- suppress campaign activity types from actions. 
+SELECT @campaignCompID   := MAX(id) FROM civicrm_component where name = 'CiviCampaign';
+SELECT @actTypeOptGrpID  := MAX(id) from civicrm_option_group where name = 'activity_type';
+ 
+UPDATE  civicrm_option_value
+   SET  filter = 1
+WHERE   option_group_id = @actTypeOptGrpID
+  AND   component_id    = @campaignCompID;
+
+-- replace voter w/ respondent.
+UPDATE    civicrm_navigation
+   SET    label  = REPLACE(label, 'Voter', 'Respondent' ),
+          name   = REPLACE(name,  'Voter', 'Respondent' )
+  WHERE   name IN ( 'Reserve Voters', 'Interview Voters', 'Release Voters', 'Voter Listing' );
+
+
+SELECT  @campaignTypeOptGrpID := MAX(id) from civicrm_option_group where name = 'campaign_type';
+
+UPDATE  civicrm_option_value
+   SET  {localize field='label'}label = REPLACE(label, 'Voter', 'Respondent' ){/localize},
+	name = REPLACE(name, 'Voter', 'Respondent' )	
+ WHERE  name = 'Voter Engagement'
+   AND  option_group_id = @campaignTypeOptGrpID;
+

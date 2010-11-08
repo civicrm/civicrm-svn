@@ -196,6 +196,12 @@ class CRM_Activity_BAO_Query
             $query->_qill [$grouping][]  = ts('Activity Type') . ' ' . implode( ' ' . ts('or') . ' ', $clause );
             
             break;
+        case 'activity_survey_id':
+            if (!$value)
+              break;
+            $query->_where[$grouping][] = " source_record_id = $value";
+            $query->_qill[$grouping][]  = ts( 'Survey' ) . " is '$value'";
+            break;
             
         case 'activity_role':
             CRM_Contact_BAO_Query::$_activityRole = $values[2];
@@ -411,6 +417,10 @@ class CRM_Activity_BAO_Query
                                                         null, $tagName);         
             }
         }
+        require_once ('CRM/Campaign/BAO/Survey.php');
+        $surveys = array('' => ts('- none -')) + CRM_Campaign_BAO_Survey::getSurveyList( );
+        $form->add( 'select', 'activity_survey_id', ts('Survey'), $surveys, false );
+
         require_once 'CRM/Core/BAO/CustomGroup.php';
         $extends = array( 'Activity' );
         $groupDetails = CRM_Core_BAO_CustomGroup::getGroupDetail( null, true, $extends );

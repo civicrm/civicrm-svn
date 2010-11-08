@@ -37,6 +37,11 @@
   {else}
       <td>&nbsp;</td>
   {/if} 
+ {if $form.activity_survey_id }
+    <td><label>{$form.activity_survey_id.label}</label> 
+    {$form.activity_survey_id.html}</td>
+  {/if} 
+
   {if $form.activity_tags }
     <td><label>{ts}Activity Tag(s){/ts}</label>
       <div id ="Tags" class="listing-box">

@@ -195,7 +195,7 @@
       <uniqueName>participant_fee_currency</uniqueName>
       <type>varchar</type>
       <length>3</length>
-      <required>true</required>
+      <default>NULL</default>
       <import>true</import>
       <headerPattern>/(fee)?.?cur(rency)?/i</headerPattern>
       <dataPattern>/^[A-Z]{3}$/i</dataPattern>

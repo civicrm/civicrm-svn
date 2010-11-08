@@ -222,6 +222,14 @@ WHERE c.title IS NOT NULL" . $whereClause;
     {  
         return CRM_Core_DAO::setFieldValue( 'CRM_Campaign_DAO_Campaign', $id, 'is_active', $is_active );
     }
+    
+    static function accessCampaignDashboard( ) {
+        $allow = false;
+        if ( CRM_Core_Permission::check( 'manage campaign' ) ||
+             CRM_Core_Permission::check( 'administer CiviCampaign' ) ) {
+            $allow = true;
+        }
+        
+        return $allow;
+    }
 }
-
-?>

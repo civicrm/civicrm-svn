@@ -678,6 +678,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         CRM_Core_Form_Tag::buildQuickForm( $this, $parentNames, 'civicrm_activity', $this->_activityId, false, true );
         
         // check for survey activity
+        $this->_isSurveyActivity = false;
         if ( $this->_activityId ) {
             require_once 'CRM/Campaign/BAO/Survey.php';
             $this->_isSurveyActivity = CRM_Campaign_BAO_Survey::isSurveyActivity( $this->_activityId );
@@ -686,14 +687,19 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
                                                          $this->_activityId, 
                                                          'source_record_id' );
                 $responseOptions = CRM_Campaign_BAO_Survey::getResponsesOptions( $surveyId );
-                if ($responseOptions) {
-                   $this->add( 'select', 'result', ts('Result'),
-                            array( '' => ts('- select -') ) + array_combine( $responseOptions, $responseOptions ) );
+                if ( $responseOptions ) {
+                    $this->add( 'select', 'result', ts('Result'),
+                                array( '' => ts('- select -') ) + array_combine( $responseOptions, $responseOptions ) );
                 }
+                $surveyTitle = null;
+                if ( $surveyId ) {
+                    $surveyTitle = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', $surveyId, 'title' );
+                }
+                $this->assign( 'surveyTitle', $surveyTitle );
             }
-            $this->assign( 'surveyActivity', $this->_isSurveyActivity );
         }
-                
+        $this->assign( 'surveyActivity', $this->_isSurveyActivity );
+        
         // if we're viewing, we're assigning different buttons than for adding/editing
         if ( $this->_action & CRM_Core_Action::VIEW ) { 
             if ( isset( $this->_groupTree ) ) {

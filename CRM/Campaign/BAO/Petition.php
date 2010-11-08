@@ -110,12 +110,13 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
 			// 1-Schedule, 2-Completed
 	        
 			$activityParams = array ( 'source_contact_id'  => $params['contactId'],
+									  'target_contact_id'  => $params['contactId'],	
 			                          'source_record_id'   => $params['sid'],
                                       'subject'            => $surveyInfo['title'],
 									  'activity_type_id'   => $surveyInfo['activity_type_id'],
 									  'activity_date_time' => date("YmdHis"), 
 									  'status_id'          => $params['statusId'] );
-									  			
+
 			//activity creation
         	// *** check for activity using source id - if already signed
 			$activity = CRM_Activity_BAO_Activity::create( $activityParams );
@@ -143,8 +144,6 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
         CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
 
 		// remove 'Unconfirmed' tag for this contact
-		define('CIVICRM_TAG_UNCONFIRMED','Unconfirmed');
-		
 		if (defined('CIVICRM_TAG_UNCONFIRMED')) {
 			// Check if contact 'email confirmed' tag exists, else create one
 			// This should be in the petition module initialise code to create a default tag for this

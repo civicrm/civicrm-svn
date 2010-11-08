@@ -80,9 +80,8 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
 
         $isPrimary = $isBilling = true;
         $blocks    = array( );
-
+        
         $updateBlankLocInfo = CRM_Utils_Array::value( 'updateBlankLocInfo', $params, false );
-
         require_once "CRM/Core/BAO/Block.php";
         foreach ( $params['address'] as $key => $value ) {
             if ( !is_array( $value ) ) {
@@ -94,7 +93,7 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
             }
             
             $addressExists = self::dataExists( $value );
-
+            
             // Note there could be cases when address info already exist ($value[id] is set) for a contact/entity 
             // BUT info is not present at this time, and therefore we should be really careful when deleting the block. 
             // $updateBlankLocInfo will help take appropriate decision. CRM-5969
@@ -339,20 +338,13 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
         if ( self::$_overwrite ) {
             //return true;
         }
-
+        
         $config = CRM_Core_Config::singleton( );
         foreach ($params as $name => $value) {
-            if ( in_array ($name, array ('is_primary', 'location_type_id', 'id', 'contact_id', 'is_billing', 'display' ) ) ) {
+            if ( in_array ($name, array ('is_primary', 'location_type_id', 'id', 'contact_id', 'is_billing', 'display', 'master_id' ) ) ) {
                 continue;
-            } else if ( !empty($value) ) {
-                if ( substr( $name, 0, 14 ) == 'state_province' ) {
-                    // hack to skip  - type first
-                    // letter(s) - for state_province CRM-2649
-                    $selectOption = ts('- type first letter(s) -');
-                    if ( $value != $selectOption ) {
-                        return true;
-                    }
-                } else if ( substr( $name, 0, 7 ) == 'country' ) { // name could be country or country id
+            } else if ( !CRM_Utils_System::isNull( $value ) ) {
+                if ( substr( $name, 0, 7 ) == 'country' ) { // name could be country or country id
                     // make sure its different from the default country
                     // iso code
                     $defaultCountry     =& $config->defaultContactCountry( );
@@ -883,12 +875,12 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
         $sharedContactId   = $dao->id;
 
         // create relationship between ontacts who share an address
-        if ( $sharedContactType == 'Household' ) {
-            // get the relationship type id of "Household Member of"
-            $relationshipType = 'Household Member of';
+        if ( $sharedContactType == 'Organization' ) {
+            require_once 'CRM/Contact/BAO/Contact/Utils.php';
+            return CRM_Contact_BAO_Contact_Utils::createCurrentEmployerRelationship( $currentContactId, $sharedContactId );
         } else {
-            // get the relationship type id of "Employee of"
-            $relationshipType = 'Employee of';
+             // get the relationship type id of "Household Member of"
+            $relationshipType = 'Household Member of';
         }
 
         $cid = array( 'contact' => $currentContactId );
@@ -939,6 +931,7 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
         $dao = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $entityId, 'Integer' ) ) );
         
         $deleteStatus  = array( ); 
+        $sharedContactList = array( );
         $statusMessage = null;
         $addressCount = 0;
         while( $dao->fetch( ) ) {
@@ -947,8 +940,9 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
             }
             
             $contactViewUrl = CRM_Utils_System::url( 'civicrm/contact/view', "reset=1&cid={$dao->id}" );
-
-            $deleteStatus[] = "<a href='{$contactViewUrl}'>{$dao->display_name}</a>";
+            $sharedContactList[] = "<a href='{$contactViewUrl}'>{$dao->display_name}</a>";
+            $deleteStatus[]      = "<a href='{$contactViewUrl}'>{$dao->display_name}</a>";
+            
             $addressCount++;
         }
 
@@ -959,8 +953,8 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
         if ( !$returnStatus ) {
             CRM_Core_Session::setStatus( $statusMessage );
         } else {
-            return array( 'message' => $statusMessage,
-                          'count'   => $addressCount );
+            return array( 'contactList' => $sharedContactList,
+                          'count'       => $addressCount );
         }
     }
 }

@@ -168,7 +168,8 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
             }
             $this->set( 'surveyValues', $this->_surveyValues );
         }
-        
+        $this->assign( 'surveyValues', $this->_surveyValues );
+                
         //get the survey result options.
         $this->_resultOptions = $this->get( 'resultOptions' );
         if ( !is_array( $this->_resultOptions ) ) {
@@ -182,6 +183,13 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         
         //validate the required ids.
         $this->validateIds( );
+        
+        //append breadcrumb to survey dashboard.
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        if ( CRM_Campaign_BAO_Campaign::accessCampaignDashboard( ) ) {
+            $url = CRM_Utils_System::url( 'civicrm/campaign', 'reset=1&subPage=survey' );
+            CRM_Utils_System::appendBreadCrumb( array( array( 'title' => ts('Survey(s)'), 'url' => $url ) ) );
+        }
         
         //set the title.
         require_once 'CRM/Core/PseudoConstant.php';
@@ -238,8 +246,8 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
                     $customValue = CRM_Utils_Array::value( $customFieldID, $customFields );
                     // allow custom fields from profile which are having
                     // the activty type same of that selected survey.
-                    if ( ( $this->_surveyTypeId == $customValue['extends_entity_column_value'] ) ||
-                         CRM_Utils_System::isNull( $customValue['extends_entity_column_value'] ) ) {
+                    $valueType = CRM_Utils_Array::value( 'extends_entity_column_value', $customValue );
+                    if ( !$valueType || ( $valueType == $this->_surveyTypeId ) ) {
                         CRM_Core_BAO_UFGroup::buildProfile( $this, $field, null, $contactId );
                         $exposedSurveyFields[$name] = $field;
                     }
@@ -275,14 +283,14 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
              $adminCampaign  ||
              CRM_Core_Permission::check( 'release campaign contacts' ) ) { 
             $buttons[] = array ( 'type'      => 'next',
-                                 'name'      => ts('Release Voters >>'),
+                                 'name'      => ts('Release Respondents >>'),
                                  'subName'   => 'interviewToRelease' );
         }
         if ( $manageCampaign ||
              $adminCampaign  ||
              CRM_Core_Permission::check( 'reserve campaign contacts' ) ) { 
             $buttons[] = array ( 'type'      => 'done',
-                                 'name'      => ts('Reserve More Voters >>'),
+                                 'name'      => ts('Reserve More Respondents >>'),
                                  'subName'   => 'interviewToReserve' );
         }
         
@@ -388,7 +396,16 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         if ( $result = CRM_Utils_Array::value( 'result', $params ) ) {
             $activity->result = $result;
         }
-        $activity->subject = CRM_Utils_Array::value( 'subject', $params, ts('Voter Interview') );
+        
+        $subject = '';
+        $surveyTitle = CRM_Utils_Array::value( 'surveyTitle', $params );
+        if ( $surveyTitle ) {
+            $subject  = ts( '%1', array( 1 => $surveyTitle ) );
+            $subject .= ' - '; 
+        }
+        $subject .= ts('Respondent Interview');
+        
+        $activity->subject = $subject;
         $activity->save( );
         $activity->free( );
         

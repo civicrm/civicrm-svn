@@ -483,6 +483,10 @@ div.spacer,
     padding: 10px;
 }
 
+#crm-container table.advmultiselect td select {
+    width: 150px;
+}
+
 
 #crm-container .form-layout td {
     vertical-align: top;

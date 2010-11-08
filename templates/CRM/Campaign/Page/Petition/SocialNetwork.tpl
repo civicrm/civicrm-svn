@@ -1,8 +1,8 @@
-{* Default Thank-you page for verified signers.
+{* 
+Default Thank-you page for verified signers.
 You might have a specific page that displays more information that the form.
 
 Check SocialNetwork.drupal as an example
-
 *}
 
 {capture assign=petitionURL}{crmURL p='civicrm/petition/sign' q="sid=$petition_id" a=true}{/capture}
@@ -16,10 +16,10 @@ Check SocialNetwork.drupal as an example
 	<p>Share it on Facebook or tweet it on Twitter.</p>
 	<div class="crm_fb_tweet_buttons">
 		<a href="http://www.facebook.com/sharer.php?u={$petitionURL}" id="crm_fbshare">
-			<img src="{$config->resourceBase}i/fbshare.png" width="70px" height="28px" alt="Facebook Share Button">
+			<img src="{$config->userFrameworkResourceURL}/i/fbshare.png" width="70px" height="28px" alt="Facebook Share Button">
 		</a>
 		<a href="http://twitter.com/share?url={$petitionURL}&amp;text=Sign this, I did" id="crm_tweet">
-			<img src="{$config->resourceBase}/i/tweet.png" width="55px" height="20px"  alt="Tweet Button">
+			<img src="{$config->userFrameworkResourceURL}/i/tweet.png" width="55px" height="20px"  alt="Tweet Button">
 		</a>
 	</div>
  </div>

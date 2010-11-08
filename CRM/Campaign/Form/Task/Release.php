@@ -98,7 +98,7 @@ class CRM_Campaign_Form_Task_Release extends CRM_Campaign_Form_Task {
             CRM_Core_Error::statusBounce( ts( 'Missing Interviewer contact.' ) );
         }
         if ( !is_array( $this->_contactIds ) || empty( $this->_contactIds ) ) {
-            CRM_Core_Error::statusBounce( ts( 'Could not find contacts for release voters resevation.') );
+            CRM_Core_Error::statusBounce( ts( 'Could not find respondents to release.') );
         }
         
         $surveyDetails = array( );
@@ -117,13 +117,20 @@ class CRM_Campaign_Form_Task_Release extends CRM_Campaign_Form_Task {
                                                                                   $this->_interviewerId,
                                                                                   $statusIds );
         if ( count( $this->_surveyActivities ) < 1 ) {
-            CRM_Core_Error::statusBounce( ts( 'We could not found voter for this survey to release.') );
+            CRM_Core_Error::statusBounce( ts( 'We could not found respondent for this survey to release.') );
         }
         
         $this->assign( 'surveyTitle', $surveyDetails['title'] );
         
+        //append breadcrumb to survey dashboard.
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        if ( CRM_Campaign_BAO_Campaign::accessCampaignDashboard( ) ) {
+            $url = CRM_Utils_System::url( 'civicrm/campaign', 'reset=1&subPage=survey' );
+            CRM_Utils_System::appendBreadCrumb( array( array( 'title' => ts('Survey(s)'), 'url' => $url ) ) );
+        }
+        
         //set the title.
-        CRM_Utils_System::setTitle( ts( 'Release Voters' ) );
+        CRM_Utils_System::setTitle( ts( 'Release Respondents' ) );
     }
 
     /**
@@ -134,7 +141,7 @@ class CRM_Campaign_Form_Task_Release extends CRM_Campaign_Form_Task {
      */
     function buildQuickForm( ) {
        
-        $this->addDefaultButtons( ts('Release Voters'), 'done' );
+        $this->addDefaultButtons( ts('Release Respondents'), 'done' );
     }
     
     function postProcess( ) 
@@ -151,9 +158,9 @@ class CRM_Campaign_Form_Task_Release extends CRM_Campaign_Form_Task {
             $query = 'UPDATE civicrm_activity SET is_deleted = 1 WHERE id IN ( '. implode(', ',$deleteActivityIds ) .' )';
             CRM_Core_DAO::executeQuery( $query );
             
-            $status = array( ts("%1 voters has been released.", array( 1 => count( $deleteActivityIds ) ) ) );
+            $status = array( ts("%1 respondent(s) have been released.", array( 1 => count( $deleteActivityIds ) ) ) );
             if ( count( $this->_contactIds ) > count( $deleteActivityIds ) ) {
-                $status[] = ts("%1 voters did not release.", 
+                $status[] = ts("%1 respondents did not release.", 
                                array( 1 => ( count( $this->_contactIds ) - count( $deleteActivityIds ) ) ) );  
             }
             CRM_Core_Session::setStatus( implode('&nbsp;', $status) );

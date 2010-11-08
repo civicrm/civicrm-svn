@@ -102,6 +102,29 @@ class api_v2_MailerTest extends CiviUnitTestCase
             $this->assertEquals( $result['error_message'], 'Subscription failed', 'In line ' . __LINE__ );
         }
     }
+
+    /**
+     * Test civicrm_mailer_event_subscribe with given contact ID.
+     */
+    public function testMailerSubscribeGivenContactId( )
+    {   
+        $params = array( 'first_name'       => 'Test',
+                         'last_name'        => 'Test',
+                         'email'            => $this->_email,
+                         'contact_type'     => 'Individual' );
+        $contactID = $this->individualCreate($params);
+
+        $params = array(
+                        'email'        => $this->_email,
+                        'group_id'     => $this->_groupID,
+                        'contact_id'   => $contactID,
+                        );
+        $result =& civicrm_mailer_event_subscribe($params);
+        $this->assertEquals($result['is_error'], 0);
+        $this->assertEquals($result['contact_id'], $contactID);
+
+        $this->contactDelete( $contactID );
+    }
     
     //----------- civicrm_mailer_event_confirm methods -----------
     

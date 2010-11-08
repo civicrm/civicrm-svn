@@ -873,38 +873,119 @@ WHERE  v.option_group_id = g.id
         
         return $participant;
     }
-
-
-    /* 
-     * provides the total participants recorded for the event
-     * registration when priceset is enabled for that event. 
+    
+    /* Calculate the total participant count as per params. 
      * 
-     * @return $recordedParticipants, total recorded participants.
+     * @param  array $params user params.
+     *
+     * @return $totalCount total participant count.
      * @access public 
      */
-    public function getTotalRecordedParticipants( ) {
+    public function getParticipantCount( &$form, $params, $skipCurrent = false ) 
+    {
+        $totalCount = 0;
+        if ( !is_array( $params ) || empty( $params ) ) {
+            return $totalCount;
+        }
         
-        $addParticipantNum    = substr( $this->_name, 12 );
-        $recordedParticipants = 0;
-
-        if ( !empty($this->_lineItemParticipants) ) {
-            foreach( $this->_lineItemParticipants as $addNum => $pCounts ) {
-                if ( ( !is_numeric($pCounts) && $pCounts == 'skip' ) || $addNum == $addParticipantNum ) {
-                    continue;
-                }
-
-                // there is alteast 1 participant on each
-                // page of registration
-                if ( $pCounts < 1 ) {
-                    $pCounts = 1;
-                }
-                $recordedParticipants += $pCounts; 
+        $priceSetId = $form->get( 'priceSetId' );
+        $addParticipantNum = substr( $form->_name, 12 );
+        $priceSetFields = $priceSetDetails = array( );
+        $hasPriceFieldsCount = false;
+        if ( $priceSetId ) {
+            $priceSetDetails = $form->get( 'priceSet' );
+            if ( isset( $priceSetDetails['optionsCountTotal'] ) 
+                 && $priceSetDetails['optionsCountTotal'] ) {
+                $hasPriceFieldsCount = true;
+                $priceSetFields = $priceSetDetails['optionsCountDetails']['fields'];
             }
         }
-
-        return $recordedParticipants;
+        
+        $singleFormParams = false;
+        foreach ( $params as $key => $val ) {
+            if ( !is_numeric( $key ) ) {
+                $singleFormParams = true;
+                break;
+            }
+        }
+        
+        //first format the params.
+        if ( $singleFormParams ) {
+            $params = self::formatPriceSetParams( $form, $params );
+            $params = array( $params );
+        }
+                
+        foreach ( $params as $key => $values ) {
+            if ( !is_numeric( $key ) ||
+                 $values == 'skip' ||
+                 ($skipCurrent && ($addParticipantNum == $key)) ) {
+                continue;
+            }
+            $count = 1;
+            if ( $hasPriceFieldsCount ) {
+                $count = 0;
+                foreach ( $values as $valKey => $value ) {
+                    if ( strpos( $valKey, 'price_' ) === false ) {
+                        continue;
+                    }
+                    $priceFieldId = substr( $valKey, 6 );
+                    if ( !$priceFieldId ||
+                         !is_array( $value ) || 
+                         !array_key_exists( $priceFieldId, $priceSetFields ) ) {
+                        continue;
+                    }
+                    foreach ( $value as $optId => $optVal ) {
+                        $currentCount = $priceSetFields[$priceFieldId]['options'][$optId]*$optVal;
+                        if ( $currentCount ) $count += $currentCount; 
+                    }
+                }
+                if ( !$count ) $count = 1; 
+            }
+            $totalCount += $count;
+        }
+        if ( !$totalCount ) $totalCount = 1; 
+        
+        return $totalCount;
     }
-
+    
+    /* Format user submitted price set params.
+     * Convert price set each param as an array. 
+     * 
+     * @param $params an array of user submitted params.
+     *
+     *
+     * @return array $formatted, formatted price set params.
+     * @access public 
+     */
+    public function formatPriceSetParams( &$form, $params ) 
+    {
+        if ( !is_array( $params ) || empty( $params ) ) {
+            return $params;
+        }
+        $priceSetId = $form->get( 'priceSetId' );
+        if ( !$priceSetId ) return $params;
+        $priceSetDetails = $form->get( 'priceSet' );
+        
+        foreach ( $params as $key => &$value ) {
+            $vals = array( );
+            if ( strpos( $key, 'price_' ) !== false ) {
+                $fieldId  = substr( $key, 6 );
+                if ( !array_key_exists( $fieldId, $priceSetDetails['fields'] ) ||
+                     is_array( $value ) ) {
+                    continue;
+                }
+                $field = $priceSetDetails['fields'][$fieldId];
+                if ( $field['html_type'] == 'Text'  ) {
+                    $value = array( $fieldId => $value );
+                } else {
+                    $value = array( $value => true );
+                }
+            }
+        }
+        
+        return $params;
+    }
+    
     /* 
      * provides the total participants of each price field value for the event
      * registration when priceset is enabled for that event. 

@@ -345,7 +345,7 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
         $className = CRM_Utils_System::getClassName( $form );
         if ( empty( $surveys ) && 
              ($className == 'CRM_Campaign_Form_Search') ) {
-            CRM_Core_Error::statusBounce( ts( 'Could not find survey for %1 voters.', 
+            CRM_Core_Error::statusBounce( ts( 'Could not find survey for %1 respondents.', 
                                               array( 1 =>  $form->get( 'op' ) ) ),
                                           CRM_Utils_System::url( 'civicrm/survey/add',
                                                                  'reset=1&action=add' ) );
