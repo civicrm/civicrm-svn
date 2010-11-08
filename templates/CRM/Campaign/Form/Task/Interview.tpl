@@ -179,6 +179,16 @@
 	       data[cj(this).attr( 'id' )] = '';
 	     }
            }
+	   
+        });
+	
+	var radioFields = 'field['+ voterId +'][custom_';		
+	cj( '[name^="'+ radioFields +'"]' ).each( function( ) {
+	   if ( cj(this).attr( 'type' ) == 'radio' ) {
+               if ( cj(this).attr('checked') == true ) {
+                  data[cj(this).attr( 'name' )] = cj(this).val();
+               }
+           }
         });
 	
 	var surveyActivityIds = {/literal}{$surveyActivityIds}{literal};
