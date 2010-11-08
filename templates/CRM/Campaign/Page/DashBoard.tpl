@@ -255,7 +255,6 @@ cj(document).ready( function( ) {
   function createCampaign(  ) {
     var dataURL = {/literal}"{crmURL p='civicrm/campaign/add' q='reset=1&snippet=5&context=dialog' h=0 }"{literal};
     var formTitle = {/literal}"{ts}Create New Campaign{/ts}"{literal};
-    
     openModal( dataURL, cj("#campaign-dialog"), formTitle, 730 );	
   }
 	
@@ -263,6 +262,7 @@ cj(document).ready( function( ) {
      cj.ajax({
          url: dataURL,
          success: function( content ) {
+             content = '<div id="crm-container">'+content+'</div>';
              cj(modalElement).show( ).html( content ).dialog({
          	    	title: formTitle,
              		modal: true,
@@ -272,7 +272,6 @@ cj(document).ready( function( ) {
              			opacity: 0.5, 
              			background: "black" 
              		},
-
                  beforeclose: function(event, ui) {
                      cj(this).dialog("destroy");
                  }
