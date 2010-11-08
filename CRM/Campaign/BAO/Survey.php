@@ -177,9 +177,9 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
         require_once 'CRM/Core/OptionGroup.php';
         $activityTypes = array( );
 
-        $campaingCompId = CRM_Core_Component::getComponentID('CiviCampaign');
-        if ( $campaingCompId ) {
-            $activityTypes = CRM_Core_OptionGroup::values( 'activity_type', false, false, false, " AND v.component_id={$campaingCompId}" , 'name' );
+        $campaignCompId = CRM_Core_Component::getComponentID('CiviCampaign');
+        if ( $campaignCompId ) {
+            $activityTypes = CRM_Core_OptionGroup::values( 'activity_type', false, false, false, " AND v.component_id={$campaignCompId}" , 'name' );
         }
         return $activityTypes;
     }
