@@ -48,11 +48,7 @@
 	          <th>{ts}Street Name{/ts}</th>
 	          <th>{ts}Street Number{/ts}</th>
 	          <th>{ts}Street Unit{/ts}</th>
-	          {if $searchVoterFor eq 'release'}
-	          <th>{ts}Is Interview Conducted?{/ts}</th>
-	          {else}
-	          <th>{ts}Is Reserved?{/ts}</th>
-	          {/if}
+	          <th>{ts}Voted?{/ts}</th>
               </tr>
            </thead>
            <tbody></tbody>
@@ -155,20 +151,11 @@ function processVoterData( element, operation )
   if ( !operation ) return;
 
   var data = new Object;
-  if ( operation == 'release' ) {
-       	data['operation']   = operation; 
-	data['activity_id'] = cj( element ).val( );
-	data['isDelete']    = cj( element ).attr( 'checked') ? 1:0; 	 
-  } else if ( operation == 'reserve' ) {
-        var interviewerId           = cj( '#survey_interviewer_id' ).val( );
-        data['operation']           = operation;
-        data['source_record_id']    = cj( '#campaign_survey_id' ).val( );
-	data['target_contact_id']   = cj( element ).val( );
-        data['source_contact_id']   = interviewerId;
-        data['assignee_contact_id'] = interviewerId;
-	data['isReserved']          = cj( element ).attr( 'checked') ? 1:0; 
-  }
-  data['surveyTitle'] = {/literal}'{$surveytitle}'{literal};
+
+  data['operation']   = operation; 
+  data['activity_id'] = cj( element ).val( );
+  data['isVoted']    = cj( element ).attr( 'checked') ? 1 : 0; 	 
+  data['surveyTitle'] = {/literal}'{$surveytitle|escape:javascript}'{literal};
    
   var actUrl = {/literal}
 	       "{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Campaign_Page_AJAX&fnName=processVoterData'}"
@@ -181,17 +168,9 @@ function processVoterData( element, operation )
 	       if ( response.status == 'success' ) {
                    var msgId = '#success_msg_' + cj( element ).val( ); 
 		   cj( msgId ).fadeIn('slow').fadeOut('slow');
-		   if ( operation == 'release' ) {
-	               msg = '{/literal}{ts}Save as voted.{/ts}{literal}';
-		       var isDeleted = cj( element ).attr( 'checked') ? 1:0;
-		       if ( !isDeleted ) msg = '{/literal}{ts}Save as non voted.{/ts}{literal}'; 
-		   } else if ( operation == 'reserve' ) {
-		       if ( cj( element ).attr( 'checked') ) {
-		       	  msg = '{/literal}{ts}Reserved.{/ts}{literal}';	  
-		       } else {
-		       	  msg = '{/literal}{ts}Released.{/ts}{literal}';	  
-		       }
-		   }
+	           msg = '{/literal}{ts}Vote Recorded.{/ts}{literal}';
+		   var isVoted = cj( element ).attr( 'checked') ? 1:0;
+		   if ( !isVoted ) msg = '{/literal}{ts}Vote Cancelled.{/ts}{literal}'; 
 		   cj( msgId ).html( msg );
 	       }
 	   }, 'json' );
