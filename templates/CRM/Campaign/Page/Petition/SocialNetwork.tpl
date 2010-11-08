@@ -13,7 +13,7 @@ Check SocialNetwork.drupal as an example
 
 <h3>Do you use Facebook or Twitter ?</h3>
 <div id="crm_socialnetwork" class="crm-section">
-	<p>Share it on Facebook or tweet it on Twitter.</p>
+	<p>{ts}Share it on Facebook or tweet it on Twitter.{/ts}</p>
 	<div class="crm_fb_tweet_buttons">
 		<a href="http://www.facebook.com/sharer.php?u={$petitionURL}" id="crm_fbshare">
 			<img src="{$config->userFrameworkResourceURL}/i/fbshare.png" width="70px" height="28px" alt="Facebook Share Button">
@@ -24,7 +24,7 @@ Check SocialNetwork.drupal as an example
 	</div>
  </div>
 
-<h3>Do you have a website for your organisation or yourself?</h3>
+<h3>{ts}Do you have a website for your organisation or yourself?{/ts}</h3>
 <div class="crm-section">
     {ts 1=$petitionURL}You can write a story about it - don't forget to add the link to <a href="%1">%1.</a>{/ts}
 </div>
