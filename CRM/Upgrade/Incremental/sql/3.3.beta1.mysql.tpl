@@ -85,3 +85,8 @@ UPDATE  civicrm_option_value
  WHERE  name = 'Voter Engagement'
    AND  option_group_id = @campaignTypeOptGrpID;
 
+UPDATE  civicrm_navigation 
+   SET  permission = CONCAT( permission, ',release campaign contacts' )
+ WHERE  name like 'Respondent Listing'
+   AND  permission = 'administer CiviCampaign,manage campaign';
+
