@@ -38,7 +38,7 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         // open browser, login, go to the New Contribution Page page
         $this->open($this->sboxPath);
         $this->webtestLogin();
-        $this->open($this->sboxPath . 'civicrm/admin/contribute?action=add&reset=1');
+        $this->open($this->sboxPath . 'civicrm/admin/contribute?action=add&reset=1');        
         $this->waitForPageToLoad();
 
         // fill in step 1 (Title and Settings)
@@ -149,7 +149,6 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         $this->type('url_logo',     "URL to Logo Image $hash");
         $this->type('button_title', "Button Title $hash");
         $this->type('about',        "About $hash");
-        $this->type('url_homepage', "URL to Home Page $hash");
 
         // go to step 9
         $this->click('_qf_Widget_next');
@@ -166,6 +165,9 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         // submit new contribution page
         $this->click('_qf_PCP_next');
         $this->waitForPageToLoad();
+
+        $this->open($this->sboxPath . 'civicrm/admin/contribute&reset=1');
+        $this->waitForPageToLoad();        
 
         // search for the new contrib page and go to its test version
         $this->type('title', "Title $hash");
@@ -188,7 +190,7 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
             "Supporter Profile",
         );
         foreach ($texts as $text) {
-            $this->verifyTextPresent($text);
+            $this->assertTrue( $this->isTextPresent($text), 'Missing text: ' . $text );
         }
     }
 }
