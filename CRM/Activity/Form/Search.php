@@ -330,9 +330,9 @@ class CRM_Activity_Form_Search extends CRM_Core_Form
             require_once ('CRM/Campaign/BAO/Survey.php');
             // if the user has choosen a survey but not any activity type, we force the activity type
             $sid = CRM_Utils_Array::value( 'activity_survey_id', $this->_formValues ) ;
-            $bao = new CRM_Campaign_DAO_Survey(); 
-            $bao->get ( 'id', $sid);
-            $this->_formValues['activity_type_id'][ $bao->activity_type_id ] = 1;
+            $activity_type_id = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', $sid, 'activity_type_id' );
+
+            $this->_formValues['activity_type_id'][ $activity_type_id ] = 1;
         }
 
         if ( ! CRM_Utils_Array::value( 'activity_test', $this->_formValues ) ) {
