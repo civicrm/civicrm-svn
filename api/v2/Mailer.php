@@ -30,7 +30,8 @@
  *
  * APIv2 functions for registering/processing mailer events.
  *
- * @package CRM
+ * @package CiviCRM_APIv2
+ * @subpackage API_Mailer
  * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
