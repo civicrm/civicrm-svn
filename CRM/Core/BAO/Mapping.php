@@ -663,6 +663,12 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
             }
         }
         
+        $form->_blockCount  = $blockCount;
+        $form->_columnCount = $columnCount;
+
+        $form->set( 'blockCount',  $form->_blockCount );
+        $form->set( 'columnCount', $form->_columnCount );
+        
         $defaults = array();
         
         $noneArray = array( );
