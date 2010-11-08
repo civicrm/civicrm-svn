@@ -221,7 +221,10 @@ AND    {$this->_componentClause}";
         }
         if ( $createPdf ) {
             require_once 'CRM/Utils/PDF/Utils.php';
-            CRM_Utils_PDF_Utils::domlib( $message, 'civicrmContributionReceipt.pdf' );
+            CRM_Utils_PDF_Utils::domlib( $message,
+                                         'civicrmContributionReceipt.pdf',
+                                         'portrait',
+                                         'letter' );
             CRM_Utils_System::civiExit( );
         } else {
             if ( $suppressedEmails ) {

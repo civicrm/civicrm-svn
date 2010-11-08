@@ -217,7 +217,7 @@ class CRM_Contact_Form_Task_EmailCommon
             }
 
     		if ( empty( $toArray ) ) {
-    			CRM_Core_Error::statusBounce( ts('Selected contact(s) do not have a valid email address, or communication preferences specify DO NOT EMAIL, or they are deceased or Primary email address is On Hold).' ));
+    			CRM_Core_Error::statusBounce( ts('Selected contact(s) do not have a valid email address, or communication preferences specify DO NOT EMAIL, or they are deceased or Primary email address is On Hold.' ));
     		}
     	}
 	
