@@ -177,6 +177,7 @@ class CRM_Campaign_BAO_Query
             foreach ( $query->_params as $paramValues ) {
                 if ( CRM_Utils_Array::value( 0, $paramValues ) == 'survey_interviewer_name' ) {
                     $surveyInterviewerName = CRM_Utils_Array::value( 2, $paramValues );
+                    break;
                 }
             }
             $query->_qill[$grouping ][] = ts( 'Survey Interviewer - %1', array( 1 => $surveyInterviewerName ) );
