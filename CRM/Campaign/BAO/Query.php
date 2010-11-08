@@ -282,6 +282,7 @@ class CRM_Campaign_BAO_Query
     {
         require_once 'CRM/Campaign/BAO/Survey.php';
         $attributes = CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_Address' );
+        $className = CRM_Utils_System::getClassName( $form );
         
         $form->add( 'text', 'sort_name',       ts( 'Contact Name'   ), 
                     CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'sort_name' ) );
@@ -295,6 +296,11 @@ class CRM_Campaign_BAO_Query
         $showInterviewer = false;
         if ( CRM_Core_Permission::check( 'administer CiviCampaign' ) ) {
             $showInterviewer = true;
+        }
+        $form->assign( 'showInterviewer', $showInterviewer );
+        
+        if ( $showInterviewer ||
+             $className == 'CRM_Campaign_Form_Gotv' ) {
             //autocomplete url
             $dataUrl = CRM_Utils_System::url( 'civicrm/ajax/rest',
                                               'className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&reset=1',
@@ -319,7 +325,6 @@ class CRM_Campaign_BAO_Query
                 $form->setDefaults( $defaults );
             }
         }
-        $form->assign( 'showInterviewer', $showInterviewer );
         
         //build ward and precinct custom fields.
         $query = '
@@ -344,7 +349,7 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
         $form->assign( 'customSearchFields',  $customSearchFields );
         
         $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
-        $className = CRM_Utils_System::getClassName( $form );
+        
         if ( empty( $surveys ) && 
              ($className == 'CRM_Campaign_Form_Search') ) {
             CRM_Core_Error::statusBounce( ts( 'Could not find survey for %1 respondents.', 
