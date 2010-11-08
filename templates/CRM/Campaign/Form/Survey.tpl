@@ -85,22 +85,22 @@
        <tr class="crm-campaign-survey-form-block-max_number_of_contacts">
            <td class="label">{$form.max_number_of_contacts.label}</td>
            <td class="view-value">{$form.max_number_of_contacts.html}
-	   <div class="description">{ts}Maximum number of contacts can have for a survey.{/ts}</div></td>
+	   <div class="description">{ts}Maximum number of contacts an interviewer can reserve to survey.{/ts}</div></td>
        </tr>
        <tr class="crm-campaign-survey-form-block-default_number_of_contacts">
            <td class="label">{$form.default_number_of_contacts.label}</td>
            <td class="view-value">{$form.default_number_of_contacts.html}
-	   <div class="description">{ts}Default number of Contacts for survey.{/ts}</div></td>
+	   <div class="description">{ts}Default number of contacts for survey.{/ts}</div></td>
        </tr>	
        <tr class="crm-campaign-survey-form-block-is_active">
            <td class="label">{$form.is_active.label}</td>
            <td class="view-value">{$form.is_active.html}
-	   <div class="description">{ts}Is this survey Active?.{/ts}</div></td>
+	   <div class="description">{ts}Is this survey active?{/ts}</div></td>
        </tr>
        <tr class="crm-campaign-survey-form-block-is_default">
            <td class="label">{$form.is_default.label}</td>
            <td class="view-value">{$form.is_default.html}
-	   <div class="description">{ts}Is this survey default?.{/ts}</div></td>
+	   <div class="description">{ts}Is this the default survey?{/ts}</div></td>
        </tr>
       </table>
 {/if}

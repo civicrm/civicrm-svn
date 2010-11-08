@@ -224,13 +224,13 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $optionGroups = CRM_Campaign_BAO_Survey::getResultSets( );
 
         if ( empty($optionGroups) ) {
-            $optionTypes = array( '1' => ts( 'Create a new' ));
+            $optionTypes = array( '1' => ts( 'Create new response set' ));
         } else {
             $optionTypes = array( '1' => ts( 'Create a new' ),
                                   '2' => ts( 'Reuse Existing' ) );
             $this->add( 'select', 
                         'option_group_id', 
-                        ts( 'Survey Response Set' ),
+                        ts( 'Select Response Set' ),
                         array( '' => ts( '- select -' ) ) + $optionGroups, false, 
                         array('onChange' => 'loadOptionGroup( )' ) );
         }
@@ -297,9 +297,9 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $this->add( 'textarea', 'instructions', ts('Instructions for volunteers'), array( 'rows' => 5, 'cols' => 40 ) );
         
         // release frequency
-        $this->add('text', 'release_frequency', ts('Release Frequency'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'release_frequency') );
+        $this->add('text', 'release_frequency', ts('Release frequency'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'release_frequency') );
 
-        $this->addRule('release_frequency', ts('Frequenct interval should be a positive number') , 'positiveInteger');
+        $this->addRule('release_frequency', ts('Release Frequency interval should be a positive number.') , 'positiveInteger');
 
         // max number of contacts
         $this->add('text', 'max_number_of_contacts', ts('Maximum number of contacts'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'max_number_of_contacts') );
@@ -311,10 +311,10 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $this->addRule('default_number_of_contacts', ts('Default number of contacts should be a positive number') , 'positiveInteger');    
         
         // is active ?
-        $this->add('checkbox', 'is_active', ts('Is Active?'));
+        $this->add('checkbox', 'is_active', ts('Active?'));
         
         // is default ?
-        $this->add('checkbox', 'is_default', ts('Is Default?'));
+        $this->add('checkbox', 'is_default', ts('Default?'));
 
         // add buttons
         if ( $this->_context == 'dialog' )  {
