@@ -387,7 +387,7 @@ class CRM_Activity_BAO_Query
      */  
     static function buildSearchForm( &$form ) 
     {
-        $activityOptions = CRM_Core_PseudoConstant::activityType( true, true );
+        $activityOptions = CRM_Core_PseudoConstant::activityType( true, true, false, 'label', true );
         asort( $activityOptions );
         foreach ( $activityOptions as $activityID => $activity ) {
             $form->_activityElement =& $form->addElement( 'checkbox', "activity_type_id[$activityID]", null, $activity,array('onClick' => 'showCustomData( this.id );'));
