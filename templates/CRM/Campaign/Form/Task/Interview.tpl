@@ -79,10 +79,10 @@
 	    {foreach from=$surveyFields item=field key=fieldName}
 		<td class="compressed">
                 {if ( $field.data_type eq 'Date') or 
-		    ( $n eq 'thankyou_date' ) or ( $n eq 'cancel_date' ) or ( $n eq 'receipt_date' ) or (  $n eq 'activity_date_time') }
+		    ( $fieldName eq 'thankyou_date' ) or ( $fieldName eq 'cancel_date' ) or ( $fieldName eq 'receipt_date' ) or (  $fieldName eq 'activity_date_time') }
                     {include file="CRM/common/jcalendar.tpl" elementName=$fieldName elementIndex=$voterId batchUpdate=1}
                 {else}
-                   {$form.field.$voterId.$n.html}
+                   {$form.field.$voterId.$fieldName.html}
                 {/if}
 		</td> 
             {/foreach}
