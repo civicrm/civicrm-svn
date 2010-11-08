@@ -931,6 +931,7 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
         $dao = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $entityId, 'Integer' ) ) );
         
         $deleteStatus  = array( ); 
+        $sharedContactList = array( );
         $statusMessage = null;
         $addressCount = 0;
         while( $dao->fetch( ) ) {
@@ -939,8 +940,9 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
             }
             
             $contactViewUrl = CRM_Utils_System::url( 'civicrm/contact/view', "reset=1&cid={$dao->id}" );
-
-            $deleteStatus[] = "<a href='{$contactViewUrl}'>{$dao->display_name}</a>";
+            $sharedContactList[] = "<a href='{$contactViewUrl}'>{$dao->display_name}</a>";
+            $deleteStatus[]      = "<a href='{$contactViewUrl}'>{$dao->display_name}</a>";
+            
             $addressCount++;
         }
 
@@ -951,8 +953,8 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
         if ( !$returnStatus ) {
             CRM_Core_Session::setStatus( $statusMessage );
         } else {
-            return array( 'message' => $statusMessage,
-                          'count'   => $addressCount );
+            return array( 'contactList' => $sharedContactList,
+                          'count'       => $addressCount );
         }
     }
 }

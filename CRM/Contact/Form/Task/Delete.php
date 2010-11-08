@@ -97,22 +97,42 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
             $this->_single     = true; 
             $this->assign( 'totalSelectedContacts', 1 );
             
-            $this->_sharedAddressMessage = $this->get( 'sharedAddressMessage' );
-
-            if ( !$this->_restore && !$this->_sharedAddressMessage ) {
-                // check if a contact that is being deleted has any shared addresses
-                require_once 'CRM/Core/BAO/Address.php';
-                $this->_sharedAddressMessage = CRM_Core_BAO_Address::setSharedAddressDeleteStatus( null, $cid, true );
-
-                // set in form controller so that queries are not fired again
-                $this->set( 'sharedAddressMessage', $this->_sharedAddressMessage );
-
-                if ( $this->_sharedAddressMessage['count'] > 0 ) {
-                    CRM_Core_Session::setStatus( ts( 'This contact has an address record which is shared with %1 other contact(s). Shared addresses will not be removed or altered but will no longer be shared.', array( '1' => $this->_sharedAddressMessage['count'] ) ) );    
-                }
-            }
         } else {
             parent::preProcess( );
+        }
+
+        $this->_sharedAddressMessage = $this->get( 'sharedAddressMessage' );
+        if ( !$this->_restore && !$this->_sharedAddressMessage ) {
+            // we check for each contact for shared contact address
+            require_once 'CRM/Core/BAO/Address.php';
+            $sharedContactList = array( );
+            $sharedAddressCount = 0;
+            foreach( $this->_contactIds as $contactId ) {
+                // check if a contact that is being deleted has any shared addresses
+                $sharedAddressMessage = CRM_Core_BAO_Address::setSharedAddressDeleteStatus( null, $contactId, true );
+
+                if ( $sharedAddressMessage['count'] > 0 ) {
+                    $sharedAddressCount += $sharedAddressMessage['count'];
+                    $sharedContactList = array_merge( $sharedContactList, 
+                                                      $sharedAddressMessage['contactList'] );   
+                }
+            }
+            
+            $this->_sharedAddressMessage = array( 'count'       => $sharedAddressCount,
+                                                  'contactList' => $sharedContactList ); 
+
+            if ( $sharedAddressCount > 0 ) {
+                if ( count( $this->_contactIds ) > 1 ) {
+                    //more than one contact is deleted
+                    CRM_Core_Session::setStatus( ts( 'Selected contact(s) has an address record which is shared with %1 other contact(s). Shared addresses will not be removed or altered but will no longer be shared.', array( '1' => $sharedAddressCount ) ) ); 
+                } else {
+                    // only one contact is been deleted
+                    CRM_Core_Session::setStatus( ts( 'This contact has an address record which is shared with %1 other contact(s). Shared addresses will not be removed or altered but will no longer be shared.', array( '1' => $sharedAddressCount ) ) );    
+                }
+            }
+
+            // set in form controller so that queries are not fired again
+            $this->set( 'sharedAddressMessage', $this->_sharedAddressMessage );
         }
     }
     
@@ -208,18 +228,23 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
         }
         
         if ( $this->_sharedAddressMessage && !$this->_restore ) { 
-            if ( is_array( $status ) ) {
-                $status[] = $this->_sharedAddressMessage['message'];
+            if ( count( $this->_contactIds ) > 1 ) {
+                $sharedAddressMessage = ts( 'The following contact(s) have address records which were shared with the address you removed from selected contacts. These address records are no longer shared - but they have not been removed or altered.' ) . '<br>' . implode( '<br>', $this->_sharedAddressMessage['contactList'] );
             } else {
-                $status .= $this->_sharedAddressMessage['message'];
+                $sharedAddressMessage = ts( 'The following contact(s) have address records which were shared with the address you removed from this contact. These address records are no longer shared - but they have not been removed or altered.' ) . '<br>' . implode( '<br>', $this->_sharedAddressMessage['contactList'] );
+ 
             }
+
+            if ( is_array( $status ) ) {
+                $status[] = $sharedAddressMessage;
+            } else {
+                $status .= $sharedAddressMessage;
+            }
+
+            $this->set( 'sharedAddressMessage', null );
         }            
         
         CRM_Core_Session::setStatus( $status );
         $session->replaceUserContext( CRM_Utils_System::url( $urlString, $urlParams ) );
     }//end of function
-
-
 }
-
-
