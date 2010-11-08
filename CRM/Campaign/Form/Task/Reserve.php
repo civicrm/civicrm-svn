@@ -215,7 +215,8 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
                 continue;
             }
             $subject =  ts( '%1', array( 1 =>  $this->_surveyDetails['title'] ) ). ' - ' . ts( 'Respondent Reservation' );
-            $activityParams = array( 'source_contact_id'   => $this->_interviewerId,
+            $session =& CRM_Core_Session::singleton( );
+            $activityParams = array( 'source_contact_id'   => $session->get( 'userID' ),
                                      'assignee_contact_id' => array( $this->_interviewerId ),
                                      'target_contact_id'   => array( $cid ),
                                      'source_record_id'    => $this->_surveyId,
