@@ -29,6 +29,8 @@
 
 /**
  * Address utilties
+ *
+ * @package CRM
  */
 class CRM_Utils_Address 
 {
