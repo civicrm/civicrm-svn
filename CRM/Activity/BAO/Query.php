@@ -200,7 +200,10 @@ class CRM_Activity_BAO_Query
             if (!$value)
               break;
             $query->_where[$grouping][] = " source_record_id = $value";
-            $query->_qill[$grouping][]  = ts( 'Survey' ) . " is '$value'";
+            require_once ('CRM/Campaign/BAO/Survey.php');
+            $bao = new CRM_Campaign_DAO_Survey(); 
+            $bao->get ( 'id', $value);
+            $query->_qill[$grouping][]  = ts( 'Survey' ) . " is ". $bao->title;
             break;
             
         case 'activity_role':
