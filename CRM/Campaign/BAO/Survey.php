@@ -586,7 +586,7 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
                  !CRM_Utils_System::isNull( $link['qs'] ) ) {
                 $urlPath = CRM_Utils_System::url( CRM_Core_Action::replace( $link['url'], $ids ),
                                                   CRM_Core_Action::replace( $link['qs'], $ids ) );
-                $menuLinks[] = sprintf( '<a href="%s" class="action-item" title="%s" target=_blank>%s</a>',
+                $menuLinks[] = sprintf( '<a href="%s" class="action-item" title="%s">%s</a>',
                                         $urlPath,
                                         CRM_Utils_Array::value( 'title', $link ),
                                         $link['title'] );

@@ -226,7 +226,13 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         
         $controller->setEmbedded( true ); 
         $controller->moveFromSessionToTemplate(); 
-
+        
+        //append breadcrumb to survey dashboard.
+        if ( CRM_Core_Permission::check( 'manage campaign' ) ) {
+            $url = CRM_Utils_System::url( 'civicrm/campaign', 'reset=1&subPage=survey' );
+            CRM_Utils_System::appendBreadCrumb( array( array( 'title' => ts('Survey(s)'), 'url' => $url ) ) );
+        }
+        
         //set the form title.
         CRM_Utils_System::setTitle( ts( 'Find Respondent To %1', array( 1 => ucfirst( $this->_operation ) ) ) );
     }

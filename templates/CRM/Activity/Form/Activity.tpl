@@ -119,6 +119,13 @@
                 </tr>
              {/if}
 	     {/if}
+	     
+	     {if $surveyActivity} 
+               <tr class="crm-activity-form-block-survey">
+                 <td class="label">{ts}Survey Title{/ts}</td><td class="view-value">{$surveyTitle}</td>
+               </tr>
+	     {/if}
+	     
              <tr class="crm-activity-form-block-source_contact_id">
                 <td class="label">{$form.source_contact_id.label}</td>
                 <td class="view-value">

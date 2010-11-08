@@ -184,6 +184,12 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         //validate the required ids.
         $this->validateIds( );
         
+        //append breadcrumb to survey dashboard.
+        if ( CRM_Core_Permission::check( 'manage campaign' ) ) {
+            $url = CRM_Utils_System::url( 'civicrm/campaign', 'reset=1&subPage=survey' );
+            CRM_Utils_System::appendBreadCrumb( array( array( 'title' => ts('Survey(s)'), 'url' => $url ) ) );
+        }
+        
         //set the title.
         require_once 'CRM/Core/PseudoConstant.php';
         $activityTypes = CRM_Core_PseudoConstant::activityType( );
@@ -239,8 +245,8 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
                     $customValue = CRM_Utils_Array::value( $customFieldID, $customFields );
                     // allow custom fields from profile which are having
                     // the activty type same of that selected survey.
-                    if ( ( $this->_surveyTypeId == $customValue['extends_entity_column_value'] ) ||
-                         CRM_Utils_System::isNull( $customValue['extends_entity_column_value'] ) ) {
+                    $valueType = CRM_Utils_Array::value( 'extends_entity_column_value', $customValue );
+                    if ( !$valueType || ( $valueType == $this->_surveyTypeId ) ) {
                         CRM_Core_BAO_UFGroup::buildProfile( $this, $field, null, $contactId );
                         $exposedSurveyFields[$name] = $field;
                     }

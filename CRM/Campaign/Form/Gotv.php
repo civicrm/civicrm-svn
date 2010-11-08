@@ -89,6 +89,12 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
         }
         $this->assign( 'svreyTitle', $surveyTitle );
         
+        //append breadcrumb to survey dashboard.
+        if ( CRM_Core_Permission::check( 'manage campaign' ) ) {
+            $url = CRM_Utils_System::url( 'civicrm/campaign', 'reset=1&subPage=survey' );
+            CRM_Utils_System::appendBreadCrumb( array( array( 'title' => ts('Survey(s)'), 'url' => $url ) ) );
+        }
+
         //set the form title.
         CRM_Utils_System::setTitle( ts( 'Respondent List' ) );
     }

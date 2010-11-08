@@ -115,6 +115,12 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
         $this->validateSurvey( );
         $this->assign( 'surveyTitle', $this->_surveyDetails['title'] );
         
+        //append breadcrumb to survey dashboard.
+        if ( CRM_Core_Permission::check( 'manage campaign' ) ) {
+            $url = CRM_Utils_System::url( 'civicrm/campaign', 'reset=1&subPage=survey' );
+            CRM_Utils_System::appendBreadCrumb( array( array( 'title' => ts('Survey(s)'), 'url' => $url ) ) );
+        }
+        
         //set the title.
         CRM_Utils_System::setTitle( ts( 'Reserve Respondents' ) );
     }
