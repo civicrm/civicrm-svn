@@ -45,6 +45,24 @@ require_once 'CRM/Campaign/Form/Survey.php';
 class CRM_Campaign_Form_Petition extends CRM_Campaign_Form_Survey
 {
 
+    public function preProcess()
+    {
+    	parent::preProcess();
+        if ( $this->_action & ( CRM_Core_Action::UPDATE | CRM_Core_Action::DELETE ) ) {
+            $this->_surveyId = CRM_Utils_Request::retrieve('id', 'Positive', $this, true);
+
+            if ( $this->_action & CRM_Core_Action::UPDATE ) {
+                CRM_Utils_System::setTitle( ts('Edit Petition') ); 
+            } else {
+                CRM_Utils_System::setTitle( ts('Delete Petition') ); 
+            }
+        }
+        
+        $session = CRM_Core_Session::singleton();
+        $url     = CRM_Utils_System::url('civicrm/campaign', 'reset=1&subPage=petition'); 
+        $session->pushUserContext( $url );
+    }
+
     /**
      * This function sets the default values for the form. Note that in edit/view mode
      * the default values are retrieved from the database
@@ -100,8 +118,9 @@ class CRM_Campaign_Form_Petition extends CRM_Campaign_Form_Survey
         // Activity Type id
 //        $this->add('select', 'activity_type_id', ts('Select Activity Type'), array( '' => ts('- select -') ) + $surveyActivityTypes, true );
         
-        // script / instructions
-        $this->add( 'textarea', 'instructions', ts('Introduction'), array( 'rows' => 5, 'cols' => 40 ) );
+        // script / instructions / description of petition purpose
+        $this->addWysiwyg('instructions',ts('Introduction'), $attributes['instructions']);
+
         // Campaign id
         require_once 'CRM/Campaign/BAO/Campaign.php';
         $campaigns = CRM_Campaign_BAO_Campaign::getAllCampaign( );
@@ -157,7 +176,7 @@ class CRM_Campaign_Form_Petition extends CRM_Campaign_Form_Survey
             if ( $this->_action & CRM_Core_Action::DELETE ) {
                 CRM_Campaign_BAO_Survey::del( $this->_surveyId );
                 CRM_Core_Session::setStatus(ts(' Petition has been deleted.'));
-                $session->replaceUserContext( CRM_Utils_System::url('civicrm/campaign', 'reset=1&subPage=survey' ) ); 
+                $session->replaceUserContext( CRM_Utils_System::url('civicrm/campaign', 'reset=1&subPage=petition' ) ); 
                 return;
             }
 

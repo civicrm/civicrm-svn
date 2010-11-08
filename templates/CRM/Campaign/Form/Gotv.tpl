@@ -167,6 +167,7 @@ function processVoterData( element, operation )
         data['assignee_contact_id'] = interviewerId;
 	data['isReserved']          = cj( element ).attr( 'checked') ? 1:0; 
   }
+  data['surveyTitle'] = {/literal}'{$surveytitle}'{literal};
    
   var actUrl = {/literal}
 	       "{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Campaign_Page_AJAX&fnName=processVoterData'}"

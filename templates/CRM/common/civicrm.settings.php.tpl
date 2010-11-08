@@ -210,6 +210,13 @@ define('CIVICRM_TRACK_CIVIMAIL_REPLIES', false);
 // define( 'CIVICRM_MAIL_LOG', '%%templateCompileDir%%/mail.log' );
 
 /**
+ * For use with CiviCampaign Petitions
+ * If set, contacts that are created when signing a petition are tagged with the 
+ * defined tag name (default below is 'Unconfirmed')
+ */
+define('CIVICRM_TAG_UNCONFIRMED', 'Unconfirmed');
+
+/**
  * 
  * Do not change anything below this line. Keep as is
  *

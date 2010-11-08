@@ -495,8 +495,25 @@ WHERE  id = %1";
             $priceSet             = self::getSetDetail($priceSetId, $required);
             $form->_priceSet      = CRM_Utils_Array::value($priceSetId,$priceSet);
             $form->_values['fee'] = CRM_Utils_Array::value($priceSetId,$priceSet);
+            
+            //get the price set fields participant count.
+            if ( $entityTable == 'civicrm_event' ) {
+                require_once "CRM/Price/BAO/Set.php";
+                $form->_priceSet['optionsCountTotal'] = self::getPricesetCount( $priceSetId );
+                if ( $form->_priceSet['optionsCountTotal'] ) {
+                    $optionsCountDeails = array( );
+                    foreach ( $form->_priceSet['fields'] as $field ) {
+                        foreach ( $field['options'] as $option ){
+                            $count = CRM_Utils_Array::value( 'count', $option, 0 );
+                            $optionsCountDeails['fields'][$field['id']]['options'][$option['id']] = $count;
+                        }
+                    }
+                    $form->_priceSet['optionsCountDetails'] = $optionsCountDeails;
+                }
+            }
             $form->set('priceSetId', $form->_priceSetId);
-            $form->set('priceSet', $form->_priceSet);
+            $form->set('priceSet', $form->_priceSet );
+            
             return $priceSetId;
         }
         return false;

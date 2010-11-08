@@ -707,8 +707,8 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                                                                     $field->option_group_id );
             $include =& $qf->addElement('advmultiselect', $elementName, 
                                         $label, $selectOption,
-                                        array('size' => 5, 
-                                              'style' => 'width:150px',
+                                        array('size' => 5,
+                                              'style'=> '',
                                               'class' => 'advmultiselect')
                                         );
             

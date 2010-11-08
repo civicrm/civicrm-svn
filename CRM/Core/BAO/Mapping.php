@@ -663,6 +663,12 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
             }
         }
         
+        $form->_blockCount  = $blockCount;
+        $form->_columnCount = $columnCount;
+
+        $form->set( 'blockCount',  $form->_blockCount );
+        $form->set( 'columnCount', $form->_columnCount );
+        
         $defaults = array();
         
         $noneArray = array( );
@@ -841,9 +847,11 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
             $js .= implode( ', ', $elements );
             $js .= "]";
             $js .= "
-for(var i=0;i<nullArray.length;i++) {
-  {$formName}['mapper['+nullArray[i][0]+']['+nullArray[i][1]+']['+nullArray[i][2]+']'].style.display = '';
-}
+                for(var i=0;i<nullArray.length;i++) {
+                    if ( {$formName}['mapper['+nullArray[i][0]+']['+nullArray[i][1]+']['+nullArray[i][2]+']'] ) {
+                        {$formName}['mapper['+nullArray[i][0]+']['+nullArray[i][1]+']['+nullArray[i][2]+']'].style.display = '';
+                    }
+                }
 ";
         }
         if ( ! empty( $noneArray ) ) {
@@ -860,9 +868,11 @@ for(var i=0;i<nullArray.length;i++) {
             $js .= implode( ', ', $elements );
             $js .= "]";
             $js .= "
-for(var i=0;i<noneArray.length;i++) {
+                for(var i=0;i<noneArray.length;i++) {
+                    if ( {$formName}['mapper['+noneArray[i][0]+']['+noneArray[i][1]+']['+noneArray[i][2]+']'] ) {  
   {$formName}['mapper['+noneArray[i][0]+']['+noneArray[i][1]+']['+noneArray[i][2]+']'].style.display = 'none';  
-}
+                    }
+                } 
 ";
         }
         $js .= "</script>\n"; 

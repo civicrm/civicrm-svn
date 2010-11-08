@@ -354,11 +354,13 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
 
              // get contact name of shared contact names
              $shareAddressContactNames = CRM_Contact_BAO_Contact_Utils::getAddressShareContactNames( $defaults['address'] );
-             
+
              foreach ( $defaults['address'] as $key => $addressValue ) {
-                 if ( CRM_Utils_Array::value( 'master_id', $addressValue ) ) {
+                 if ( CRM_Utils_Array::value( 'master_id', $addressValue ) && !$shareAddressContactNames[ $addressValue['master_id']]['is_deleted'] ) {
                      $sharedAddresses[$key]['shared_address_display'] = array( 'address' => $addressValue['display'],
-                                                                               'name'    => $shareAddressContactNames[ $addressValue['master_id'] ] ); 
+                                                                               'name'    => $shareAddressContactNames[ $addressValue['master_id'] ]['name'] ); 
+                 } else {
+                    $defaults['address'][$key]['use_shared_address'] = 0;
                  }
 
                  //check if any address is shared by any other contacts

@@ -64,6 +64,11 @@ function civicrm_membership_delete(&$membershipID)
         return civicrm_create_error('Membership ID cannot be empty.');
     }
     
+    // membershipID should be numeric
+    if ( ! is_numeric( $membershipID ) ) {
+        return civicrm_create_error( 'Input parameter should be numeric' );
+    }    
+    
     require_once 'CRM/Member/BAO/Membership.php';
     CRM_Member_BAO_Membership::deleteRelatedMemberships( $membershipID );
     

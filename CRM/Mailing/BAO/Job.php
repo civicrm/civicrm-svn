@@ -304,12 +304,8 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
     }
     
 	// Split the parent job into n number of child job based on an offset
-	// The parameter cannot be null
+	// If null or 0 , we create only one child job
 	public function split_job($offset = 200) {
-        if ( empty( $offset ) ) {
-            $offset = 200;
-        }
-
 		$recipient_count = $this->getMailingSize();
 		$jobTable = CRM_Mailing_DAO_Job::getTableName();
 		
@@ -332,7 +328,8 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
 
 		// create one child job if the mailing size is less than the offset
 		// probably use a CRM_Mailing_DAO_Job( );
-		if($recipient_count <= $offset) {
+		if ( empty($offset) ||
+             $recipient_count <= $offset ) {
             CRM_Core_DAO::executeQuery( $sql, $params );
 		} else {
 			// Creating 'child jobs'

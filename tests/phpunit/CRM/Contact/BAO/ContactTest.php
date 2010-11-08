@@ -1250,22 +1250,22 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         Contact::delete( $contactId );
     }
     
-    /**
-     * test logged in user has permissions for 
-     * various  operation types
-     */
-    function testPermissionedContact() 
-    {
-        $contactId = Contact::createIndividual(); 
-        require_once 'CRM/Contact/BAO/Contact/Permission.php';
-        $userViewPermission = CRM_Contact_BAO_Contact_Permission::allow($contactId);
-        $this->assertEquals( $userViewPermission, true, 'Check user for view contact permission.' );  
-        
-        $userEditPermission = CRM_Contact_BAO_Contact_Permission::allow($contactId, CRM_Core_Permission::EDIT);
-        $this->assertEquals( $userEditPermission, true, 'Check user for edit contact permission.' );  
-        
-        Contact::delete($contactId);
-    }
+//    /**
+//     * test logged in user has permissions for 
+//     * various  operation types
+//     */
+//    function testPermissionedContact() 
+//    {
+//        $contactId = Contact::createIndividual(); 
+//        require_once 'CRM/Contact/BAO/Contact/Permission.php';
+//        $userViewPermission = CRM_Contact_BAO_Contact_Permission::allow($contactId);
+//        $this->assertEquals( $userViewPermission, true, 'Check user for view contact permission.' );  
+//        
+//        $userEditPermission = CRM_Contact_BAO_Contact_Permission::allow($contactId, CRM_Core_Permission::EDIT);
+//        $this->assertEquals( $userEditPermission, true, 'Check user for edit contact permission.' );  
+//        
+//        Contact::delete($contactId);
+//    }
     
     /**
      * function to build common params

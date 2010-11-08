@@ -205,7 +205,7 @@ class CRM_Campaign_Selector_Search extends CRM_Core_Selector_Base implements CRM
     function getPagerParams( $action, &$params ) 
     {
         $params['csvString']    = null;
-        $params['status']       = ts('Voters') . ' %%StatusMessage%%';
+        $params['status']       = ts('Respondents') . ' %%StatusMessage%%';
         $params['rowCount']     = ( $this->_limit ) ? $this->_limit:CRM_Utils_Pager::ROWCOUNT;
         $params['buttonTop']    = 'PagerTopButton';
         $params['buttonBottom'] = 'PagerBottomButton';
@@ -325,7 +325,7 @@ class CRM_Campaign_Selector_Search extends CRM_Core_Selector_Base implements CRM
      * @return string name of the file 
      */ 
     function getExportFileName( $output = 'csv') { 
-        return ts('CiviCRM Voter Search'); 
+        return ts('CiviCRM Respondent Search'); 
     }
     
 }//end of class

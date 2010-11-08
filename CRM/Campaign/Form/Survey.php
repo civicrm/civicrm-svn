@@ -85,7 +85,8 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
     
     public function preProcess()
     {
-        if ( !CRM_Core_Permission::check( 'administer CiviCampaign' ) ) {
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        if ( !CRM_Campaign_BAO_Campaign::accessCampaignDashboard( ) ) {
             CRM_Utils_System::permissionDenied( );
         }
         
@@ -226,14 +227,13 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
             $optionTypes = array( '1' => ts( 'Create a new' ));
         } else {
             $optionTypes = array( '1' => ts( 'Create a new' ),
-                                  '2' => ts( 'Copy From Existing' ) );
-        }
-
-        $this->add( 'select', 
+                                  '2' => ts( 'Reuse Existing' ) );
+            $this->add( 'select', 
                         'option_group_id', 
                         ts( 'Survey Response Set' ),
                         array( '' => ts( '- select -' ) ) + $optionGroups, false, 
                         array('onChange' => 'loadOptionGroup( )' ) );
+        }
         
         $this->assign( 'existingOptions', $existingOptions );
         

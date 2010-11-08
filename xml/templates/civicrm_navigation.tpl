@@ -241,21 +241,21 @@ SET @campaignlastID:=LAST_INSERT_ID();
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES    
-    ( @domainID, 'civicrm/campaign&reset=1',        '{ts escape="sql"}Dashboard{/ts}', 'Dashboard', 'administer CiviCampaign', '', @campaignlastID, '1', NULL, 1 );
+    ( @domainID, 'civicrm/campaign&reset=1',        '{ts escape="sql"}Dashboard{/ts}', 'Dashboard', 'manage campaign,administer CiviCampaign', 'OR', @campaignlastID, '1', NULL, 1 );
 SET @campaigndashboardlastID:=LAST_INSERT_ID();
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES    
-    ( @domainID, 'civicrm/campaign&reset=1&subPage=survey',        '{ts escape="sql"}Surveys{/ts}', 'Survey Dashboard', 'administer CiviCampaign', '', @campaigndashboardlastID, '1', NULL, 1 ), 
-    ( @domainID, 'civicrm/campaign&reset=1&subPage=petition',        '{ts escape="sql"}Petitions{/ts}', 'Petition Dashboard', 'administer CiviCampaign', '', @campaigndashboardlastID, '1', NULL, 2 ), 
-    ( @domainID, 'civicrm/campaign&reset=1&subPage=campaign',        '{ts escape="sql"}Campaigns{/ts}', 'Campaign Dashboard', 'administer CiviCampaign', '', @campaigndashboardlastID, '1', NULL, 3 ), 
-    ( @domainID, 'civicrm/campaign/add&reset=1',        '{ts escape="sql"}New Campaign{/ts}', 'New Campaign', 'administer CiviCampaign', '', @campaignlastID, '1', NULL, 2 ), 
-    ( @domainID, 'civicrm/survey/add&reset=1',        '{ts escape="sql"}New Survey{/ts}', 'New Survey', 'administer CiviCampaign', '', @campaignlastID, '1', NULL, 3 ),
-    ( @domainID, 'civicrm/petition/add&reset=1',        '{ts escape="sql"}New Petition{/ts}', 'New Petition', 'administer CiviCampaign', '', @campaignlastID, '1', NULL, 4 ),
-    ( @domainID, 'civicrm/survey/search&reset=1&op=reserve', '{ts escape="sql"}Reserve Voters{/ts}', 'Reserve Voters', 'administer CiviCampaign,manage campaign,reserve campaign contacts', 'OR', @campaignlastID, '1', NULL, 5 ),
-    ( @domainID, 'civicrm/survey/search&reset=1&op=interview', '{ts escape="sql"}Interview Voters{/ts}', 'Interview Voters', 'administer CiviCampaign,manage campaign,interview campaign contacts', 'OR', @campaignlastID, '1', NULL, 6 ),
-    ( @domainID, 'civicrm/survey/search&reset=1&op=release', '{ts escape="sql"}Release Voters{/ts}', 'Release Voters', 'administer CiviCampaign,manage campaign,release campaign contacts', 'OR', @campaignlastID, '1', NULL, 7 ),
-    ( @domainID, 'civicrm/campaign/gotv&reset=1', '{ts escape="sql"}Voter Listing{/ts}', 'Voter Listing', 'administer CiviCampaign,manage campaign', 'OR', @campaignlastID, '1', NULL, 8 ),
+    ( @domainID, 'civicrm/campaign&reset=1&subPage=survey',        '{ts escape="sql"}Surveys{/ts}', 'Survey Dashboard', 'manage campaign,administer CiviCampaign', 'OR', @campaigndashboardlastID, '1', NULL, 1 ), 
+    ( @domainID, 'civicrm/campaign&reset=1&subPage=petition',        '{ts escape="sql"}Petitions{/ts}', 'Petition Dashboard', 'manage campaign,administer CiviCampaign', 'OR', @campaigndashboardlastID, '1', NULL, 2 ), 
+    ( @domainID, 'civicrm/campaign&reset=1&subPage=campaign',        '{ts escape="sql"}Campaigns{/ts}', 'Campaign Dashboard', 'manage campaign,administer CiviCampaign', 'OR', @campaigndashboardlastID, '1', NULL, 3 ), 
+    ( @domainID, 'civicrm/campaign/add&reset=1',        '{ts escape="sql"}New Campaign{/ts}', 'New Campaign', 'manage campaign,administer CiviCampaign', 'OR', @campaignlastID, '1', NULL, 2 ), 
+    ( @domainID, 'civicrm/survey/add&reset=1',        '{ts escape="sql"}New Survey{/ts}', 'New Survey', 'manage campaign,administer CiviCampaign', 'OR', @campaignlastID, '1', NULL, 3 ),
+    ( @domainID, 'civicrm/petition/add&reset=1',        '{ts escape="sql"}New Petition{/ts}', 'New Petition', 'manage campaign,administer CiviCampaign', 'OR', @campaignlastID, '1', NULL, 4 ),
+    ( @domainID, 'civicrm/survey/search&reset=1&op=reserve', '{ts escape="sql"}Reserve Respondents{/ts}', 'Reserve Respondents', 'administer CiviCampaign,manage campaign,reserve campaign contacts', 'OR', @campaignlastID, '1', NULL, 5 ),
+    ( @domainID, 'civicrm/survey/search&reset=1&op=interview', '{ts escape="sql"}Interview Respondents{/ts}', 'Interview Respondents', 'administer CiviCampaign,manage campaign,interview campaign contacts', 'OR', @campaignlastID, '1', NULL, 6 ),
+    ( @domainID, 'civicrm/survey/search&reset=1&op=release', '{ts escape="sql"}Release Respondents{/ts}', 'Release Respondents', 'administer CiviCampaign,manage campaign,release campaign contacts', 'OR', @campaignlastID, '1', NULL, 7 ),
+    ( @domainID, 'civicrm/campaign/gotv&reset=1', '{ts escape="sql"}Respondent Listing{/ts}', 'Respondent Listing', 'administer CiviCampaign,manage campaign', 'OR', @campaignlastID, '1', NULL, 8 ),
     ( @domainID, 'civicrm/campaign/vote&reset=1', '{ts escape="sql"}Conduct Survey{/ts}', 'Conduct Survey', 'administer CiviCampaign,manage campaign,reserve campaign contacts,interview campaign contacts', 'OR', @campaignlastID, '1', NULL, 9 );
 
     
@@ -442,7 +442,8 @@ VALUES
     ( @domainID, 'civicrm/admin/component&reset=1',            '{ts escape="sql"}Headers, Footers, and Automated Messages{/ts}', 'Headers, Footers, and Automated Messages', 'access CiviMail,administer CiviCRM', 'AND', @adminMailinglastID, '1', NULL, 1 ), 
     ( @domainID, 'civicrm/admin/messageTemplates&reset=1',     '{ts escape="sql"}Message Templates{/ts}', 'Message Templates', 'administer CiviCRM', '',   @adminMailinglastID, '1', NULL, 2 ), 
     ( @domainID, 'civicrm/admin/options/from_email&group=from_email_address&reset=1', '{ts escape="sql"}From Email Addresses{/ts}', 'From Email Addresses', 'administer CiviCRM', '', @adminMailinglastID, '1', NULL, 3 ), 
-    ( @domainID, 'civicrm/admin/mailSettings&reset=1',         '{ts escape="sql"}Mail Accounts{/ts}', 'Mail Accounts', 'access CiviMail,administer CiviCRM', 'AND',           @adminMailinglastID, '1', NULL, 4 );
+    ( @domainID, 'civicrm/admin/mailSettings&reset=1',         '{ts escape="sql"}Mail Accounts{/ts}', 'Mail Accounts', 'access CiviMail,administer CiviCRM', 'AND',           @adminMailinglastID, '1', NULL, 4 ),
+    ( @domainID, 'civicrm/admin/mail&reset=1',                 '{ts escape="sql"}Mailer Settings{/ts}', 'Mailer Settings', 'access CiviMail,administer CiviCRM', 'AND',           @adminMailinglastID, '1', NULL, 5 );
 
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )

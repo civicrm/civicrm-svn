@@ -46,7 +46,7 @@ class CRM_Campaign_Page_Vote extends CRM_Core_Page
     function reserve( ) 
     {
         //build ajax voter search and selector.
-        $controller = new CRM_Core_Controller_Simple( 'CRM_Campaign_Form_Gotv', 'Reserve Voters' );
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Campaign_Form_Gotv', ts( 'Reserve Respondents' ) );
         $controller->set( 'votingTab',    true );
         $controller->set( 'subVotingTab', 'searchANDReserve' );
         $controller->process( );
@@ -56,7 +56,7 @@ class CRM_Campaign_Page_Vote extends CRM_Core_Page
     function interview( ) 
     {
         //build interview and release voter interface.
-        $controller = new CRM_Core_Controller_Simple( 'CRM_Campaign_Form_Task_Interview', 'Interview Voters' );
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Campaign_Form_Task_Interview', ts( 'Interview Respondents' ) );
         $controller->set( 'votingTab',     true );
         $controller->set( 'subVotingTab',  'searchANDInterview' );
         if ( $this->_surveyId      ) $controller->set( 'surveyId',      $this->_surveyId      );
@@ -67,8 +67,8 @@ class CRM_Campaign_Page_Vote extends CRM_Core_Page
     
     function browse( ) 
     {   
-        $this->_tabs = array( 'reserve'   => ts( 'Reserve Voters' ), 
-                              'interview' => ts( 'Interview Voters' ) );
+        $this->_tabs = array( 'reserve'   => ts( 'Reserve Respondents' ), 
+                              'interview' => ts( 'Interview Respondents' ) );
 
         $this->_surveyId      = CRM_Utils_Request::retrieve( 'sid', 'Positive', $this );
         $this->_interviewerId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );

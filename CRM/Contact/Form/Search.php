@@ -585,8 +585,10 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         
         // CRM_Core_Error::debug( 'f', $this->_formValues );
         // CRM_Core_Error::debug( 'p', $this->_params );
-        if ( !isset($this->_objectMode) ) $this->_objectMode = CRM_Contact_BAO_Query::MODE_CONTACTS;
-        $modeValues = $this->getModeValue( $this->_objectMode );
+        if ( ! isset($this->_componentMode ) ) {
+            $this->_componentMode = CRM_Contact_BAO_Query::MODE_CONTACTS;
+        }
+        $modeValues = $this->getModeValue( $this->_componentMode );
 
         require_once( str_replace('_', DIRECTORY_SEPARATOR, $this->_modeValue['selectorName'] ) . '.php' );
         $this->_selectorName = $this->_modeValue['selectorName'];
@@ -605,7 +607,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                   '( $this->_params,
                      $this->_action,
                      null, false, null,
-                     $this->_context );' );
+                     "search" );' );
         }
         $controller = new CRM_Contact_Selector_Controller( $selector ,
                                                            $this->get( CRM_Utils_Pager::PAGE_ID ),
@@ -713,7 +715,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                       '( $this->_params,
                          $this->_action,
                          null, false, null,
-                         $this->_context );' );
+                         "search" );' );
             }
 
             $selector->setKey( $this->controller->_key );

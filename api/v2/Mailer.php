@@ -183,8 +183,9 @@ function civicrm_mailer_event_subscribe($params)
         return $errors;
     }
           
-    $email    = $params['email']; 
-    $group_id = $params['group_id']; 
+    $email      = $params['email']; 
+    $group_id   = $params['group_id']; 
+    $contact_id = CRM_Utils_Array::value('contact_id', $params);
     
     $group = new CRM_Contact_DAO_Group();
     $group->is_active = 1;
@@ -193,7 +194,7 @@ function civicrm_mailer_event_subscribe($params)
         return civicrm_create_error( ts( 'Invalid Group id' ) );
     }
         
-    $subscribe =& CRM_Mailing_Event_BAO_Subscribe::subscribe($group_id, $email);
+    $subscribe =& CRM_Mailing_Event_BAO_Subscribe::subscribe($group_id, $email, $contact_id);
 
     if ($subscribe !== null) {
         /* Ask the contact for confirmation */

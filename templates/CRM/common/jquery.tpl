@@ -88,4 +88,7 @@
 <script type="text/javascript" src="{$config->resourceBase}js/style.js"></script>
 <![endif]-->
 
+{* CRM-6819: localize datepicker *}
+<script type="text/javascript" src="{$config->resourceBase}packages/jquery/jquery-ui-1.8.5/development-bundle/ui/i18n/jquery.ui.datepicker-{$config->lcMessages|substr:0:2}.js"></script>
+
 <script type="text/javascript">var cj = jQuery.noConflict(); $ = cj;</script>

@@ -214,22 +214,17 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
             $this->$varName = CRM_Utils_Array::value( $c, $this->_editOptions );
             $this->assign( substr( $varName, 1 ), $this->$varName );
         }
-        
-        // get the display name of contact that address is shared.
-        $masterDetails = array();
-        foreach( $defaults['address'] as $key => $value ) {
-            if ( CRM_Utils_Array::value( 'master_id', $defaults['address'][$key] ) ) {
-                $masterId = $defaults['address'][$key]['master_id'];
-                $masterContactId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Address', $masterId, 'contact_id', 'id' );
-                $masterDisplayName = CRM_Contact_BAO_Contact::getMasterDisplayName( $masterId );
-                $masterDetails[$key]['master_id'] = $masterId;
-                $masterDetails[$key]['master_contact_id'] = $masterContactId;
-                $masterDetails[$key]['master_display_name'] = $masterDisplayName;
-            } 
+
+        // get contact name of shared contact names
+        $shareAddressContactNames = CRM_Contact_BAO_Contact_Utils::getAddressShareContactNames( $defaults['address'] );
+        foreach ( $defaults['address'] as $key => $addressValue ) {
+            if ( CRM_Utils_Array::value( 'master_id', $addressValue ) && !$shareAddressContactNames[ $addressValue['master_id']]['is_deleted'] ) {
+                $sharedAddresses[$key]['shared_address_display'] = array( 'address' => $addressValue['display'],
+                    'name'    => $shareAddressContactNames[ $addressValue['master_id'] ]['name'] ); 
+            }
         }
-        
-        $this->assign('masterDetails', $masterDetails);
-                
+        $this->assign( 'sharedAddresses', $sharedAddresses );
+
         //get the current employer name
         if ( CRM_Utils_Array::value( 'contact_type', $defaults ) == 'Individual' ) {
             if ( $contact->employer_id && $contact->organization_name ) {
