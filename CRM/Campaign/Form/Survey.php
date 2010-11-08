@@ -226,8 +226,8 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         if ( empty($optionGroups) ) {
             $optionTypes = array( '1' => ts( 'Create new response set' ));
         } else {
-            $optionTypes = array( '1' => ts( 'Create a new' ),
-                                  '2' => ts( 'Reuse Existing' ) );
+            $optionTypes = array( '1' => ts( 'Create a new response set' ),
+                                  '2' => ts( 'Use existing response set' ) );
             $this->add( 'select', 
                         'option_group_id', 
                         ts( 'Select Response Set' ),
