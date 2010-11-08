@@ -196,7 +196,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         
         //set the title.
         require_once 'CRM/Core/PseudoConstant.php';
-        $activityTypes = CRM_Core_PseudoConstant::activityType( );
+        $activityTypes = CRM_Core_PseudoConstant::activityType( false, true, false, 'label', true );
         $this->_surveyTypeId = CRM_Utils_Array::value( 'activity_type_id', $this->_surveyValues );
         CRM_Utils_System::setTitle( ts( 'Record %1 Responses', array( 1 => $activityTypes[$this->_surveyTypeId] ) ) );
     }

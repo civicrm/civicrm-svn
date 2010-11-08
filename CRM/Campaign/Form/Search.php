@@ -289,7 +289,8 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
             if ( $this->_operation == 'interview' && 
                  CRM_Utils_Array::value( 'campaign_survey_id', $this->_formValues ) ) {
                 require_once 'CRM/Core/PseudoConstant.php';
-                $activityTypes = CRM_Core_PseudoConstant::activityType( );
+                $activityTypes = CRM_Core_PseudoConstant::activityType( false, true, false, 'label', true );
+                
                 $surveyTypeId  = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey',
                                                               $this->_formValues['campaign_survey_id'],
                                                               'activity_type_id' );

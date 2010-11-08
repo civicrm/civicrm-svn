@@ -70,16 +70,6 @@ UPDATE  civicrm_navigation
  WHERE  name in ( 'Dashboard', 'Survey Dashboard', 'Petition Dashboard', 'Campaign Dashboard', 'New Campaign', 'New Survey',  'New Petition' )
    AND  permission = 'administer CiviCampaign';
 
-
--- suppress campaign activity types from actions. 
-SELECT @campaignCompID   := MAX(id) FROM civicrm_component where name = 'CiviCampaign';
-SELECT @actTypeOptGrpID  := MAX(id) from civicrm_option_group where name = 'activity_type';
- 
-UPDATE  civicrm_option_value
-   SET  filter = 1
-WHERE   option_group_id = @actTypeOptGrpID
-  AND   component_id    = @campaignCompID;
-
 -- replace voter w/ respondent.
 UPDATE    civicrm_navigation
    SET    label  = REPLACE(label, 'Voter', 'Respondent' ),
