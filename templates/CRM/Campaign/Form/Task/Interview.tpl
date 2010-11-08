@@ -51,7 +51,7 @@
     <thead>
        <tr class="columnheader">
              {foreach from=$readOnlyFields item=fTitle key=fName}
-	        <th class="contact_details">{$fTitle}</th>
+	        <th {if $fName neq 'contact_type'} class="contact_details"{/if}>{$fTitle}</th>
 	     {/foreach}
 	    
 	     {* display headers for profile survey fields *}
@@ -71,7 +71,7 @@
 	{foreach from=$componentIds item=voterId}
 	<tr id="row_{$voterId}" class="{cycle values="odd-row,even-row"}">
 	    {foreach from=$readOnlyFields item=fTitle key=fName}
-	       <td class='name'>{$voterDetails.$voterId.$fName}</td>
+	       <td {if $fName neq 'contact_type'} class="name"{/if}>{$voterDetails.$voterId.$fName}</td>
 	    {/foreach}
 
 	    {* here build the survey profile fields *}

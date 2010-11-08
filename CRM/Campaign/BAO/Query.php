@@ -223,7 +223,8 @@ class CRM_Campaign_BAO_Query
         if ( $mode & CRM_Contact_BAO_Query::MODE_CAMPAIGN ) {
             $properties = array(
                                 'contact_id'                => 1,
-                                'contact_type'              => 1, 
+                                'contact_type'              => 1,
+                                'contact_sub_type'          => 1,
                                 'sort_name'                 => 1, 
                                 'display_name'              => 1,
                                 'street_unit'               => 1,

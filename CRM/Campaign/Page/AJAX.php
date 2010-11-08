@@ -226,7 +226,8 @@ class CRM_Campaign_Page_AJAX
         
         $iTotal      = $searchCount;
         
-        $selectorCols = array( 'sort_name', 'street_address', 'street_name', 'street_number', 'street_unit' );
+        $selectorCols = array( 'contact_type', 'sort_name', 'street_address', 
+                               'street_name', 'street_number', 'street_unit' );
         
         $extraVoterColName = 'is_interview_conducted';
         if ( $params['campaign_search_voter_for'] = 'reserve' ) {
@@ -244,21 +245,18 @@ class CRM_Campaign_Page_AJAX
                                            false, 
                                            $voterClause, 
                                            $sortOrder );
-            
             while( $result->fetch() ) {
-                $contactID    = $result->contact_id;
-                $contact_type = '<img src="' . $config->resourceBase . 'i/contact_';
-                $typeImage = 
-                    CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_sub_type ? 
-                                                             $result->contact_sub_type : $result->contact_type );
+                $contactID  = $result->contact_id;
+                $typeImage  = CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_sub_type ? 
+                                                                       $result->contact_sub_type : $result->contact_type,
+                                                                       false,
+                                                                       $result->contact_id );
                 
                 $searchRows[$contactID] = array( 'id' => $contactID );
                 foreach ( $selectorCols as $col ) {
-                    $colVal = $result->$col;
-                    if ( $col == 'sort_name' ) {
-                        $colVal = $typeImage.' '.$result->sort_name;
-                    }
-                    $searchRows[$contactID][$col] = $colVal;
+                    $val = $result->$col;
+                    if ( $col == 'contact_type' ) $val = $typeImage;  
+                    $searchRows[$contactID][$col] = $val;
                 }
                 if ( $searchVoterFor == 'reserve' ) {
                     $voterExtraColHtml = '<input type="checkbox" id="survey_activity['. $contactID .']" name="survey_activity['. $contactID .']" value='. $contactID .' onClick="processVoterData( this, \'reserve\' );" />';

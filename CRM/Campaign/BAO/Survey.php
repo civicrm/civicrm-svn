@@ -276,7 +276,9 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
         if ( empty( $returnProperties ) ) {
             require_once 'CRM/Core/BAO/Preferences.php';
             $autocompleteContactSearch = CRM_Core_BAO_Preferences::valueOptions( 'contact_autocomplete_options' );
-            $returnProperties = array_fill_keys( array_merge( array( 'sort_name'), 
+            $returnProperties = array_fill_keys( array_merge( array( 'contact_type',
+                                                                     'contact_sub_type',
+                                                                     'sort_name'), 
                                                               array_keys( $autocompleteContactSearch ) ), 1 );
         }
         
@@ -285,8 +287,10 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
             $value = ( in_array( $property, array( 'city', 'street_address' ) ) ) ? 'address' : $property;
             switch ( $property ) {
             case 'sort_name' :
+            case 'contact_type' :
+            case 'contact_sub_type' :
                 $select[] = "$property as $property";
-                $from[$value] = 'civicrm_contact contact';
+                $from['contact'] = 'civicrm_contact contact';
                 break;
                 
             case 'email' :
@@ -307,7 +311,7 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
                 break;
             }
         }
-        
+                
         //finally retrieve contact details.
         if ( !empty( $select ) && !empty( $from ) ) {
             $fromClause   = implode( ' ' , $from   );
@@ -321,11 +325,17 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
 Group By  contact.id";
             
             $contact = CRM_Core_DAO::executeQuery( $query );
+            require_once 'CRM/Contact/BAO/Contact/Utils.php';
             while ( $contact->fetch( ) ) {
                 $voterDetails[$contact->contactId]['contact_id'] = $contact->contactId;
                 foreach ( $returnProperties as $property => $ignore ) {
                     $voterDetails[$contact->contactId][$property] = $contact->$property;
                 }
+                $image = CRM_Contact_BAO_Contact_Utils::getImage( $contact->contact_sub_type ? 
+                                                                  $contact->contact_sub_type : $contact->contact_type,
+                                                                  false,
+                                                                  $contact->contactId );
+                $voterDetails[$contact->contactId]['contact_type'] = $image;
             }
             $contact->free( );
         }

@@ -42,7 +42,8 @@
        <table id="gotvVoterRecords">
            <thead>
               <tr class="columnheader">
-	          <th>{ts}Name{/ts}</th>
+	          <th></th>
+		  <th>{ts}Name{/ts}</th>
 	          <th>{ts}Street Address{/ts}</th>
 	          <th>{ts}Street Name{/ts}</th>
 	          <th>{ts}Street Number{/ts}</th>
@@ -105,7 +106,7 @@ function searchVoters( )
 	      cj( '#search_form_' + {/literal}'{$searchVoterFor}'{literal} ).addClass( 'crm-accordion-closed' );
       }, 'html' );
 }
-	
+
 function loadVoterList( ) 
 {
      var sourceUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='snippet=4&className=CRM_Campaign_Page_AJAX&fnName=voterList' }"{literal};
@@ -116,8 +117,8 @@ function loadVoterList( )
      	        "bFilter"    : false,
 		"bAutoWidth" : false,
 	    	"bProcessing": true,
-                "aaSorting": [ [0,'asc'], [1,'asc'], [2,'asc'], [3,'asc'], [4,'asc'] ],
-		"aoColumns":[{sClass:""},{sClass:""},{sClass:""},{sClass:""},{sClass:""},{bSortable:false}],
+                "aaSorting": [[0,''],[1,'asc'], [2,'asc'], [3,'asc'], [4,'asc'], [5,'asc'] ],
+		"aoColumns":[{bSortable:false},{sClass:""},{sClass:""},{sClass:""},{sClass:""},{sClass:""},{bSortable:false}],
 		"sPaginationType": "full_numbers",
 		"sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',
 	   	"bServerSide": true,
