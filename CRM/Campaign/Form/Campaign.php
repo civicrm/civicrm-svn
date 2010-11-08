@@ -70,7 +70,8 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
     
     public function preProcess()
     {
-        if ( !CRM_Core_Permission::check( 'manage campaign' ) ) {
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        if ( !CRM_Campaign_BAO_Campaign::accessCampaignDashboard( ) ) {
             CRM_Utils_System::permissionDenied( );
         }
 

@@ -185,7 +185,8 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         $this->validateIds( );
         
         //append breadcrumb to survey dashboard.
-        if ( CRM_Core_Permission::check( 'manage campaign' ) ) {
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        if ( CRM_Campaign_BAO_Campaign::accessCampaignDashboard( ) ) {
             $url = CRM_Utils_System::url( 'civicrm/campaign', 'reset=1&subPage=survey' );
             CRM_Utils_System::appendBreadCrumb( array( array( 'title' => ts('Survey(s)'), 'url' => $url ) ) );
         }

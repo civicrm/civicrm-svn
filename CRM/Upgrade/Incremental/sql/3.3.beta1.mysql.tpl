@@ -64,10 +64,12 @@ ALTER TABLE `civicrm_pledge`
  {include file='../CRM/Upgrade/3.3.beta1.msg_template/civicrm_msg_template.tpl'}
  
 -- CRM-6231 -tweak permissions.
-UPDATE  civicrm_navigation
-   SET  permission = 'manage campaign'
- WHERE  name in ( 'Dashboard', 'Survey Dashboard', 'Petition Dashboard', 'Campaign Dashboard', 'New Campaign', 'New Survey',                  'New Petition' )
-  AND  permission = 'administer CiviCampaign';
+UPDATE  civicrm_navigation 
+   SET  permission = CONCAT( permission, ',manage campaign' ),
+        permission_operator = 'OR'
+ WHERE  name in ( 'Dashboard', 'Survey Dashboard', 'Petition Dashboard', 'Campaign Dashboard', 'New Campaign', 'New Survey',  'New Petition' )
+   AND  permission = 'administer CiviCampaign';
+
 
 -- suppress campaign activity types from actions. 
 SELECT @campaignCompID   := MAX(id) FROM civicrm_component where name = 'CiviCampaign';
