@@ -205,8 +205,8 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
     {
         $required = array( 'surveyId'       => ts( 'Could not find Survey.'),
                            'interviewerId'  => ts( 'Could not find Interviewer.' ),
-                           'contactIds'     => ts( 'Could not find valid activities to conduct survey.'),
-                           'resultOptions'  => ts( 'Oops, It looks like there is no response option configured.' ) );
+                           'contactIds'     => ts( 'No respondents are currently reserved for you to interview.'),
+                           'resultOptions'  => ts( 'Oops. It looks like there is no response option configured.' ) );
         
         $errorMessages = array( );
         foreach ( $required as $fld => $msg ) {
