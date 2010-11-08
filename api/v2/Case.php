@@ -145,10 +145,7 @@ function civicrm_case_create( &$params )
  *               'contact_id'  => finds all cases associated with a contact (in any role, not just client)
  *
  *
- * @return (get mode, case_id provided): Array with case details, case roles, case activity ids
- *
- * @return (search mode, case_id not provided): Array of cases found
- *
+ * @return (get mode, case_id provided): Array with case details, case roles, case activity ids, (search mode, case_id not provided): Array of cases found
  * @access public
  */
 function civicrm_case_get( &$params )
