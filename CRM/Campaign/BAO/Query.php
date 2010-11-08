@@ -158,6 +158,7 @@ class CRM_Campaign_BAO_Query
             $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( 'civicrm_survey.id', 
                                                                               $op, $value, "Integer" );
             return;
+
         case 'survey_status_id' :
             require_once 'CRM/Core/PseudoConstant.php';
             $activityStatus = CRM_Core_PseudoConstant::activityStatus( );
@@ -166,6 +167,7 @@ class CRM_Campaign_BAO_Query
             $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( 'civicrm_activity.status_id', 
                                                                               $op, $value, "Integer" );
             return;
+
         case 'campaign_search_voter_for' :
             if ( in_array( $value, array('release', 'interview' ) ) ) {
                 $query->_where[$grouping][] = '(civicrm_activity.is_deleted = 0 OR civicrm_activity.is_deleted IS NULL)';
@@ -181,7 +183,8 @@ class CRM_Campaign_BAO_Query
                 }
             }
             $query->_qill[$grouping ][] = ts( 'Survey Interviewer - %1', array( 1 => $surveyInterviewerName ) );
-            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( 'civicrm_activity.source_contact_id', 
+            $query->_tables['civicrm_activity_assignment']   = $query->_whereTables['civicrm_activity_assignment'] = 1;
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( 'civicrm_activity_assignment.assignee_contact_id',
                                                                               $op, $value, "Integer" );
             return;
         }
@@ -203,7 +206,12 @@ class CRM_Campaign_BAO_Query
         case self::civicrm_activity :
             require_once 'CRM/Campaign/PseudoConstant.php';
             $surveyActivityTypes = CRM_Campaign_PseudoConstant::activityType( );
-            $from = " INNER JOIN civicrm_activity ON ( civicrm_activity.id = civicrm_activity_target.activity_id AND civicrm_activity.activity_type_id IN (". implode( ',', array_keys( $surveyActivityTypes ) ) .") ) ";
+            $surveyKeys = "(". implode( ',', array_keys( $surveyActivityTypes ) ) .")"; 
+            $from = " 
+INNER JOIN civicrm_activity ON ( civicrm_activity.id = civicrm_activity_target.activity_id AND 
+                                 civicrm_activity.activity_type_id IN $surveyKeys )
+INNER JOIN civicrm_activity_assignment ON ( civicrm_activity.id = civicrm_activity_assignment.activity_id )
+";
             break;
             
         case 'civicrm_survey':
