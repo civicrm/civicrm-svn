@@ -74,7 +74,6 @@
        <tr class="crm-campaign-survey-form-block-instructions">
            <td class="label">{$form.instructions.label}</td>
            <td class="view-value">{$form.instructions.html}
-	   <div class="description">{ts}Instruction for volunteers.{/ts}</div></td>
        </tr>
        <tr class="crm-campaign-survey-form-block-release_frequency">
            <td class="label">{$form.release_frequency.label}</td>

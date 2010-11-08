@@ -157,7 +157,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
                 unset($defaults['recontact_interval']);
                 $defaults['option_group_id'] = $resultId;
             } 
-                
+
             $ufJoinParams = array( 'entity_table' => 'civicrm_survey',
                                    'entity_id'    => $this->_surveyId,
                                    'weight'       => 1);
@@ -166,10 +166,16 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
                 $defaults['profile_id'] = $ufGroupId;
             }
         }
-        if ( !isset($defaults['is_active']) ) {
+
+        if ( ! isset($defaults['is_active']) ) {
             $defaults['is_active'] = 1;
         }
 
+        // set defaults for weight.
+        for ( $i=1; $i<=self::NUM_OPTION; $i++ ) {
+            $defaults["option_weight[{$i}]"] = $i;
+        }
+                
         $defaultSurveys = CRM_Campaign_BAO_Survey::getSurvey(false, false, true);
         if ( !isset($defaults['is_default'] ) && empty($defaultSurveys) ) {
             $defaults['is_default'] = 1;  
@@ -294,7 +300,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $_showHide->addToTemplate();      
 
         // script / instructions
-        $this->add( 'textarea', 'instructions', ts('Instructions for volunteers'), array( 'rows' => 5, 'cols' => 40 ) );
+        $this->add( 'textarea', 'instructions', ts('Instructions for interviewers'), array( 'rows' => 5, 'cols' => 40 ) );
         
         // release frequency
         $this->add('text', 'release_frequency', ts('Release frequency'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'release_frequency') );
