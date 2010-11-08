@@ -81,12 +81,12 @@ SELECT  @campaignTypeOptGrpID := MAX(id) from civicrm_option_group where name = 
 
 UPDATE  civicrm_option_value
    SET  {localize field='label'}label = REPLACE(label, 'Voter', 'Respondent' ){/localize},
-	name = REPLACE(name, 'Voter', 'Respondent' )	
+	name = REPLACE(name, 'Voter', 'Constituent' )	
  WHERE  name = 'Voter Engagement'
    AND  option_group_id = @campaignTypeOptGrpID;
 
 UPDATE  civicrm_navigation 
    SET  permission = CONCAT( permission, ',release campaign contacts' )
- WHERE  name like 'Respondent Listing'
+ WHERE  name like 'Voter Listing'
    AND  permission = 'administer CiviCampaign,manage campaign';
 

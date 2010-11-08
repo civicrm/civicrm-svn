@@ -97,7 +97,7 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
         }
 
         //set the form title.
-        CRM_Utils_System::setTitle( ts( 'Respondent List' ) );
+        CRM_Utils_System::setTitle( ts( 'GOTV (Track Voters)' ) );
     }
     
     /**

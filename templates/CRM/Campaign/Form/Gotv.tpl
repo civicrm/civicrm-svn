@@ -43,7 +43,7 @@
            <thead>
               <tr class="columnheader">
 	          <th></th>
-		  <th>{ts}Name{/ts}</th>
+		      <th>{ts}Name{/ts}</th>
 	          <th>{ts}Street Address{/ts}</th>
 	          <th>{ts}Street Name{/ts}</th>
 	          <th>{ts}Street Number{/ts}</th>

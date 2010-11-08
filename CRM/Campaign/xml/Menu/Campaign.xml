@@ -84,7 +84,7 @@
   </item>
   <item>
     <path>civicrm/campaign/gotv</path>
-    <title>Respondent List</title>
+    <title>GOTV (Track Voters)</title>
     <page_callback>CRM_Campaign_Form_Gotv</page_callback>
     <access_arguments>administer CiviCampaign;manage campaign;release campaign contacts</access_arguments>
     <component>CiviCampaign</component>
