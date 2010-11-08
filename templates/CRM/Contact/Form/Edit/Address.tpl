@@ -50,14 +50,12 @@
            <span class="crm-address-element is_primary-address-element">{$form.address.$blockId.is_primary.html}</span>
            <span class="crm-address-element is_billing-address-element">{$form.address.$blockId.is_billing.html}</span>
         </td>
-	 {/if}
      {if $blockId gt 0}
          <td>
              <a href="#" title="{ts}Delete Address Block{/ts}" onClick="removeBlock( 'Address', '{$blockId}' ); return false;">{ts}Delete this address{/ts}</a>
          </td>
      {/if}
      </tr>
-    {if $className eq 'CRM_Contact_Form_Contact'}
      <script type="text/javascript">
      {literal}
          function showHideSharedAddress( blockNo, showSelect ) {
