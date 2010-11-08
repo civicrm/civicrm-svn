@@ -196,14 +196,17 @@ class CRM_Activity_BAO_Query
             $query->_qill [$grouping][]  = ts('Activity Type') . ' ' . implode( ' ' . ts('or') . ' ', $clause );
             
             break;
+
         case 'activity_survey_id':
-            if (!$value)
-              break;
+            if ( ! $value ) {
+                break;
+            }
+            $value = CRM_Utils_Type::escape( $value, 'Integer' );
             $query->_where[$grouping][] = " source_record_id = $value";
-            require_once ('CRM/Campaign/BAO/Survey.php');
-            $bao = new CRM_Campaign_DAO_Survey(); 
-            $bao->get ( 'id', $value);
-            $query->_qill[$grouping][]  = ts( 'Survey' ) . " is ". $bao->title;
+            $query->_qill[$grouping][] = 
+                ts( 'Survey' ) . 
+                ' - ' . 
+                CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', $value, 'title' );
             break;
             
         case 'activity_role':
