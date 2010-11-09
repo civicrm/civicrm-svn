@@ -229,7 +229,7 @@ AND    {$this->_componentClause}";
             CRM_Utils_System::civiExit( );
         } else {
             if ( $suppressedEmails ) {
-                $status = array( '', ts( 'Email was NOT sent to %1 contacts - (no email address on file, or communication preferences specify DO NOT EMAIL, or contact is deceased).', array( 1 => $suppressedEmails ) ) );
+                $status = array( '', ts( 'Email was NOT sent to %1 contacts (no email address on file, or communication preferences specify DO NOT EMAIL, or contact is deceased).', array( 1 => $suppressedEmails ) ) );
             } else {
                 $status = array( '', ts( 'Your mail has been sent.' ) );
             }
