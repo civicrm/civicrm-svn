@@ -216,6 +216,7 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
         }
 
         // get contact name of shared contact names
+        $sharedAddresses = array( );
         $shareAddressContactNames = CRM_Contact_BAO_Contact_Utils::getAddressShareContactNames( $defaults['address'] );
         foreach ( $defaults['address'] as $key => $addressValue ) {
             if ( CRM_Utils_Array::value( 'master_id', $addressValue ) && !$shareAddressContactNames[ $addressValue['master_id']]['is_deleted'] ) {
