@@ -124,10 +124,10 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
             if ( $sharedAddressCount > 0 ) {
                 if ( count( $this->_contactIds ) > 1 ) {
                     //more than one contact is deleted
-                    CRM_Core_Session::setStatus( ts( 'Selected contact(s) has an address record which is shared with %1 other contact(s). Shared addresses will not be removed or altered but will no longer be shared.', array( '1' => $sharedAddressCount ) ) ); 
+                    CRM_Core_Session::setStatus(ts('Selected contact(s) has an address record which is shared with %1 other contact(s). Shared addresses will not be removed or altered but will no longer be shared.', array(1 => $sharedAddressCount)));
                 } else {
                     // only one contact is been deleted
-                    CRM_Core_Session::setStatus( ts( 'This contact has an address record which is shared with %1 other contact(s). Shared addresses will not be removed or altered but will no longer be shared.', array( '1' => $sharedAddressCount ) ) );    
+                    CRM_Core_Session::setStatus(ts('This contact has an address record which is shared with %1 other contact(s). Shared addresses will not be removed or altered but will no longer be shared.', array(1 => $sharedAddressCount)));
                 }
             }
 

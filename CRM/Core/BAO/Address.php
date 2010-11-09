@@ -670,7 +670,7 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
         if ( !$locale ) $locale = $config->lcMessages;
         // as different locale explicitly requested but is not available, display warning message
         if ( !in_array( $locale, $supportedLocalesForParsing ) ) {
-            return CRM_Core_Session::setStatus( ts( "Unsupported locale specified to parseStreetAddress: $locale. Proceeding with en_US locale." ) );
+            return CRM_Core_Session::setStatus(ts('Unsupported locale specified to parseStreetAddress: %1. Proceeding with en_US locale.', array(1 => $locale)));
             $locale = 'en_US';
         }
         $parseFields = array( 'street_name'          => '', 
@@ -888,7 +888,7 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
         $relTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_RelationshipType', $relationshipType, 'id', 'name_a_b' );
  
         if ( !$relTypeId ) {
-            CRM_Core_Error::fatal( ts( "You seem to have deleted the relationship type '%1'", array( '1' => $relationshipType ) ) );
+            CRM_Core_Error::fatal(ts("You seem to have deleted the relationship type '%1'", array(1 => $relationshipType)));
         }
 
         // create relationship
