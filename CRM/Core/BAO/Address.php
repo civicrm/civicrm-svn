@@ -67,10 +67,12 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
 
         $addresses = array( );
         $contactId = null;
+        
+        $updateBlankLocInfo = CRM_Utils_Array::value( 'updateBlankLocInfo', $params, false );
         if ( ! $entity ) {
             $contactId = $params['contact_id'];
             //get all the addresses for this contact
-            $addresses = self::allAddress( $contactId );
+            $addresses = self::allAddress( $contactId, $updateBlankLocInfo );
         } else {
             // get all address from location block
             $entityElements = array( 'entity_table' => $params['entity_table'],
@@ -80,20 +82,24 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
 
         $isPrimary = $isBilling = true;
         $blocks    = array( );
-        
-        $updateBlankLocInfo = CRM_Utils_Array::value( 'updateBlankLocInfo', $params, false );
         require_once "CRM/Core/BAO/Block.php";
         foreach ( $params['address'] as $key => $value ) {
             if ( !is_array( $value ) ) {
                 continue;
             }
-
-            if ( ! empty( $addresses ) && array_key_exists( $value['location_type_id'], $addresses ) ) {
-                $value['id'] = $addresses[ $value['location_type_id'] ];
-            }
             
             $addressExists = self::dataExists( $value );
             
+            if ( $updateBlankLocInfo ) {
+                if ( ( !empty( $addresses ) || !$addressExists ) && array_key_exists( $key, $addresses ) ) {
+                    $value['id'] = $addresses[ $key ];
+                }
+            } else {
+                if ( !empty( $addresses ) && array_key_exists( $value['location_type_id'], $addresses ) ) {
+                    $value['id'] = $addresses[ $value['location_type_id'] ];
+                }
+            }
+
             // Note there could be cases when address info already exist ($value[id] is set) for a contact/entity 
             // BUT info is not present at this time, and therefore we should be really careful when deleting the block. 
             // $updateBlankLocInfo will help take appropriate decision. CRM-5969
@@ -117,7 +123,6 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
                 $value['is_billing'] = 0;
             }
             $value['contact_id'] = $contactId;
-
             $blocks[] = self::add( $value, $fixAddress );
         }
 
@@ -334,10 +339,10 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
      */
     static function dataExists( &$params )
     {
-        // if we should not overwrite, then the id is not relevant.
-        if ( self::$_overwrite ) {
-            //return true;
-        }
+        //check if location type is set if not return false
+        if ( !isset( $params['location_type_id'] ) ) {
+            return false;
+        } 
         
         $config = CRM_Core_Config::singleton( );
         foreach ($params as $name => $value) {
@@ -516,7 +521,7 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
      * @access public
      * @static
      */
-    static function allAddress( $id ) 
+    static function allAddress( $id, $updateBlankLocInfo = false ) 
     {
         if ( !$id ) {
             return null;
@@ -531,8 +536,13 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
 
         $addresses = array( );
         $dao =& CRM_Core_DAO::executeQuery( $query, $params );
+        $count = 1;
         while ( $dao->fetch( ) ) {
-            $addresses[$dao->location_type_id] = $dao->address_id;
+            if ( $updateBlankLocInfo ) {
+                $addresses[$count++] = $dao->address_id;
+            } else {
+                $addresses[$dao->location_type_id] = $dao->address_id;
+            }
         }
         return $addresses;
     }
