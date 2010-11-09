@@ -69,7 +69,7 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
         //does control come from voting tab interface.
         $this->_votingTab      = $this->get( 'votingTab' );
         $this->_subVotingTab   = $this->get( 'subVotingTab' );
-        $this->_searchVoterFor = 'gotv';
+        $this->_searchVoterFor = 'release';
         if ( $this->_votingTab ) {
             if ( $this->_subVotingTab == 'searchANDReserve' ) {
                 $this->_searchVoterFor = 'reserve';

@@ -149,11 +149,34 @@ class CRM_Campaign_Page_AJAX
         }
         
         $interviewerId  = $surveyTypeId = $surveyId = null;
-
-        //get the survey status in where clause.
-        require_once 'CRM/Core/PseudoConstant.php';
-        $scheduledStatusId = array_search( 'Scheduled', CRM_Core_PseudoConstant::activityStatus( 'name' ) );
-        if ( $scheduledStatusId ) $params['survey_status_id'] = $scheduledStatusId;
+        $searchVoterFor = $params['campaign_search_voter_for']; 
+        if ( $searchVoterFor == 'reserve' ) {
+            if ( CRM_Utils_Array::value( 'campaign_survey_id', $params ) ) {
+                require_once 'CRM/Campaign/DAO/Survey.php';
+                $survey = new CRM_Campaign_DAO_Survey( );
+                $survey->id = $surveyId = $params['campaign_survey_id'];
+                $survey->selectAdd( 'campaign_id, activity_type_id' );
+                $survey->find( true );
+                $campaignId   = $survey->campaign_id;
+                $surveyTypeId = $survey->activity_type_id;
+                if ( $campaignId ) {
+                    require_once 'CRM/Campaign/BAO/Campaign.php';
+                    $campaignGroups = CRM_Campaign_BAO_Campaign::getCampaignGroups($campaignId);
+                    foreach( $campaignGroups as $id => $group ) {
+                        if ( $group['entity_table'] == 'civicrm_group' ) {
+                            $params['group'][$group['entity_id']] = 1;
+                        }
+                    }
+                }
+                unset( $params['campaign_survey_id'] );
+            }
+            unset( $params['survey_interviewer_id'] );
+        } else {
+            //get the survey status in where clause.
+            require_once 'CRM/Core/PseudoConstant.php';
+            $scheduledStatusId = array_search( 'Scheduled', CRM_Core_PseudoConstant::activityStatus( 'name' ) );
+            if ( $scheduledStatusId ) $params['survey_status_id'] = $scheduledStatusId;
+        }
         
         $selectorCols = array( 'sort_name', 
                                'street_address', 
@@ -207,6 +230,9 @@ class CRM_Campaign_Page_AJAX
                                'street_name', 'street_number', 'street_unit' );
         
         $extraVoterColName = 'is_interview_conducted';
+        if ( $params['campaign_search_voter_for'] = 'reserve' ) {
+            $extraVoterColName = 'reserve_voter';
+        }
         
         if ( $searchCount > 0 ) {
             require_once( 'CRM/Contact/BAO/Contact/Utils.php' );
@@ -232,11 +258,14 @@ class CRM_Campaign_Page_AJAX
                     if ( $col == 'contact_type' ) $val = $typeImage;  
                     $searchRows[$contactID][$col] = $val;
                 }
-
-                $surveyActId  = $result->survey_activity_id; 
-                $voterExtraColHtml = '<input type="checkbox" id="survey_activity['. $surveyActId .']" name="survey_activity['. $surveyActId .']" value='. $surveyActId .' onClick="processVoterData( this, \'gotv\' );" />';
-                $voterExtraColHtml .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id='success_msg_{$surveyActId}' class='ok' style='display:none;'>{ts}GOTV Recorded.{/ts}</span>";
-
+                if ( $searchVoterFor == 'reserve' ) {
+                    $voterExtraColHtml = '<input type="checkbox" id="survey_activity['. $contactID .']" name="survey_activity['. $contactID .']" value='. $contactID .' onClick="processVoterData( this, \'reserve\' );" />';
+                    $voterExtraColHtml .= "&nbsp;<span id='success_msg_{$contactID}' class='ok' style='display:none;'>{ts}Respondent Reserved.{/ts}</span>";
+                } else {
+                    $surveyActId  = $result->survey_activity_id; 
+                    $voterExtraColHtml = '<input type="checkbox" id="survey_activity['. $surveyActId .']" name="survey_activity['. $surveyActId .']" value='. $surveyActId .' onClick="processVoterData( this, \'release\' );" />';
+                    $voterExtraColHtml .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id='success_msg_{$surveyActId}' class='ok' style='display:none;'>{ts}Vote Saved.{/ts}</span>";
+                }
                 $searchRows[$contactID][$extraVoterColName] = $voterExtraColHtml;
             }
         }
@@ -254,7 +283,6 @@ class CRM_Campaign_Page_AJAX
     {
         $status    = null; 
         $operation = CRM_Utils_Type::escape( $_POST['operation'], 'String' );
-
         if ( $operation == 'release' ) {
             require_once 'CRM/Utils/String.php';
             $activityId = CRM_Utils_Type::escape($_POST['activity_id'],  'Integer' );
@@ -340,23 +368,8 @@ class CRM_Campaign_Page_AJAX
                     }
                 }
             }
-        } else if ( $operation == 'gotv' ) {
-            require_once 'CRM/Utils/String.php';
-            $activityId = CRM_Utils_Type::escape($_POST['activity_id'],  'Integer' );
-            $isVoted    = CRM_Utils_String::strtoboolstr( CRM_Utils_Type::escape($_POST['isVoted'], 'String' ) );
-            if ( $activityId ) {
-                if ( $isVoted ) {
-                    $statusValue = 2;
-                } else {
-                    $statusValue = 1;
-                }
-                CRM_Core_DAO::setFieldValue( 'CRM_Activity_DAO_Activity', 
-                                             $activityId, 
-                                             'status_id', 
-                                             $statusValue );
-                $status = 'success';
-            }
         }
+        
         echo json_encode( array( 'status' => $status ) );
         CRM_Utils_System::civiExit( );
     }
