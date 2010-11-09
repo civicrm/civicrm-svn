@@ -90,5 +90,19 @@ UPDATE  civicrm_navigation
  WHERE  name like 'Voter Listing'
    AND  permission = 'administer CiviCampaign,manage campaign';
 
+
+{if $multilingual}
+  {foreach from=$locales item=loc}
+   ALTER TABLE civicrm_batch ADD label_{$loc} varchar(64);
+   ALTER TABLE civicrm_batch ADD description_{$loc} text;
+
+   UPDATE civicrm_batch SET label_{$loc} = label;
+   UPDATE civicrm_batch SET description_{$loc} = description;
+  {/foreach}
+  ALTER TABLE civicrm_batch DROP label;
+  ALTER TABLE civicrm_batch DROP description;
+{/if}
+
 -- CRM-7044 (needed for the installs that upgraded to 3.3 from pre-3.2.5)
 UPDATE civicrm_state_province SET name = 'Khomas' WHERE name = 'Khomae';
+
