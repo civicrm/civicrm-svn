@@ -102,73 +102,70 @@
     }
     
     function showOptionSelect( ) {
-      if ( document.getElementsByName("option_type")[0].checked ) {
-        cj('#option_group').hide();
-	cj('#default_option').val(''); 
-	resetResultSet( );
-      } else {
-        cj('#option_group').show();
-	loadOptionGroup( );
-      }
+        if ( document.getElementsByName("option_type")[0].checked ) {
+            cj('#option_group').hide();
+            cj('#default_option').val(''); 
+            resetResultSet( );
+        } else {
+            cj('#option_group').show();
+            loadOptionGroup( );
+        }
     }
 
     function resetResultSet( ) {
-	for( i=1; i<=11; i++ ) {
-	  cj('#option_label_'+ i).val('');
-	  cj('#option_value_'+ i).val('');
-	  cj('#option_weight_'+ i).val('');
-	  cj('#option_interval_'+ i).val('');
-	  if ( i > 2 ) {
-	    showHideRow(i);
-	  }
-	}
+        for( i=1; i<=11; i++ ) {
+            cj('#option_label_'+ i).val('');
+            cj('#option_value_'+ i).val('');
+            cj('#option_weight_'+ i).val('');
+            cj('#option_interval_'+ i).val('');
+            if ( i > 2 ) {
+                showHideRow(i);
+            }
+        }
     }
 
     function loadOptionGroup( ) {
         var data = new Object;
 	
-	resetResultSet( );
-	if ( cj('#option_group_id').val() ) { 
-	  data['option_group_id'] = cj('#option_group_id').val();
-	  data['survey_id'] = surveyId;
-	} else {
-	  return false;
-	}
- 
+        resetResultSet( );
+        if ( cj('#option_group_id').val() ) { 
+            data['option_group_id'] = cj('#option_group_id').val();
+            data['survey_id'] = surveyId;
+        } else {
+            return false;
+        }
+
      	var dataUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Campaign_Page_AJAX&fnName=loadOptionGroupDetails' }"{literal}	          
 	
-	// build new options
-	cj.post( dataUrl, data, function( opGroup ) {
+	    // build new options
+    	cj.post( dataUrl, data, function( opGroup ) {
 	       if ( opGroup.status == 'success' ) {
 	         var result = opGroup.result;
-		 var countRows = 1;
+             var countRows = 1;
 	       	 for( key in result ) {
-		  
-		   cj('#option_label_'+ countRows).val( result[key].label);
-		   cj('#option_value_'+ countRows).val( result[key].value);
-		   cj('#option_weight_'+ countRows).val( result[key].weight);
+                cj('#option_label_'+ countRows).val( result[key].label);
+                cj('#option_value_'+ countRows).val( result[key].value);
+                cj('#option_weight_'+ countRows).val( result[key].weight);
 
-		   if ( surveyId && result[key].interval ) {
-		      cj('#option_interval_'+ countRows).val( result[key].interval);
-		   }
-		  
-		   if ( result[key].is_default == 1 ) {
-		     cj('#radio'+countRows+' input').attr('checked', 'true');
-		   } 
-		   
-		   if ( countRows > 1 ) {
-		   	 showHideRow( );
-		   }
-                   countRows +=1; 
-		 }
-	       }		 
-	}, "json" );
-    }
+                if ( surveyId && result[key].interval ) {
+                    cj('#option_interval_'+ countRows).val( result[key].interval);
+                }
+
+                if ( result[key].is_default == 1 ) {
+                    cj('#radio'+countRows+' input').attr('checked', 'true');
+                } 
+
+                if ( countRows > 1 ) {
+                    showHideRow( );
+                }
+                countRows +=1; 
+		    }
+	      }		 
+	    }, "json" );
+  }
     
     cj(document).ready( function( ) {
-      if ( document.getElementsByName("option_type")[1].checked ) {
         showOptionSelect( );
-      } 			
     });
 
     {/literal}	
