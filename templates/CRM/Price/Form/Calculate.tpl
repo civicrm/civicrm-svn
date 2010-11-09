@@ -149,7 +149,7 @@ cj("input,#priceset select,#priceset").each(function () {
 	price[ele] = 0;
       }
       eval( 'var selectedText = ' + cj(this).attr('price') );
-      var addprice = parseFloat( cj(selectedText).attr( cj(this).val( ) ) );
+      var addprice = parseFloat( selectedText[cj(this).val( )].split(optionSep) );
       
       if ( addprice ) {
 	totalfee   = parseFloat(totalfee) + addprice - parseFloat(price[ele]);
