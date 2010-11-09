@@ -3223,3 +3223,5 @@ div#crm-toolTip
 */
 /*Import progress bar */
 .ui-progressbar-value { background-image:url("../packages/jquery/css/images/pbar-ani.gif"); }
+/*Needed for jstree contextmenu */ 
+#vakata-contextmenu.jstree-default-context li { background:none repeat scroll 0 0 transparent;}
