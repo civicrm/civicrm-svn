@@ -260,15 +260,18 @@ class CRM_Campaign_Page_AJAX
                 }
                 if ( $searchVoterFor == 'reserve' ) {
                     $voterExtraColHtml = '<input type="checkbox" id="survey_activity['. $contactID .']" name="survey_activity['. $contactID .']" value='. $contactID .' onClick="processVoterData( this, \'reserve\' );" />';
-                    $voterExtraColHtml .= "&nbsp;<span id='success_msg_{$contactID}' class='ok' style='display:none;'>{ts}Respondent Reserved.{/ts}</span>";
+                    $msg = ts( 'Respondent Reserved.' );
+                    $voterExtraColHtml .= "&nbsp;<span id='success_msg_{$contactID}' class='ok' style='display:none;'>$msg</span>";
                 } else if ( $searchVoterFor == 'gotv' ) {
                     $surveyActId  = $result->survey_activity_id; 
                     $voterExtraColHtml = '<input type="checkbox" id="survey_activity['. $surveyActId .']" name="survey_activity['. $surveyActId .']" value='. $surveyActId .' onClick="processVoterData( this, \'gotv\' );" />';
-                    $voterExtraColHtml .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id='success_msg_{$surveyActId}' class='ok' style='display:none;'>{ts}Vote Recorded.{/ts}</span>";
+                    $msg = ts( 'Vote Recorded' );
+                    $voterExtraColHtml .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id='success_msg_{$surveyActId}' class='ok' style='display:none;'>$msg</span>";
                 } else {
                     $surveyActId  = $result->survey_activity_id; 
                     $voterExtraColHtml = '<input type="checkbox" id="survey_activity['. $surveyActId .']" name="survey_activity['. $surveyActId .']" value='. $surveyActId .' onClick="processVoterData( this, \'release\' );" />';
-                    $voterExtraColHtml .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id='success_msg_{$surveyActId}' class='ok' style='display:none;'>{ts}Vote Saved.{/ts}</span>";
+                    $msg = ts( 'Vote Recorded' );
+                    $voterExtraColHtml .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id='success_msg_{$surveyActId}' class='ok' style='display:none;'>$msg</span>";
                 }
                 $searchRows[$contactID][$extraVoterColName] = $voterExtraColHtml;
             }
@@ -375,9 +378,9 @@ class CRM_Campaign_Page_AJAX
         } else if ( $operation == 'gotv' ) {
             require_once 'CRM/Utils/String.php';
             $activityId = CRM_Utils_Type::escape($_POST['activity_id'],  'Integer' );
-            $isVoted    = CRM_Utils_String::strtoboolstr( CRM_Utils_Type::escape($_POST['isVoted'], 'String' ) );
+            $hasVoted    = CRM_Utils_String::strtoboolstr( CRM_Utils_Type::escape($_POST['hasVoted'], 'String' ) );
             if ( $activityId ) {
-                if ( $isVoted ) {
+                if ( $hasVoted ) {
                     $statusValue = 2;
                 } else {
                     $statusValue = 1;

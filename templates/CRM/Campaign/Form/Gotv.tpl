@@ -191,6 +191,10 @@ function processVoterData( element, operation )
 	               msg = '{/literal}{ts}Save as voted.{/ts}{literal}';
 		       var isDeleted = cj( element ).attr( 'checked') ? 1:0;
 		       if ( !isDeleted ) msg = '{/literal}{ts}Save as non voted.{/ts}{literal}'; 
+		   } else if ( operation == 'gotv' ) {
+		       msg = '{/literal}{ts}Vote Recorded.{/ts}{literal}';
+		       var hasVoted = cj( element ).attr( 'checked') ? 1:0;
+		       if ( !hasVoted ) msg = '{/literal}{ts}Vote Cancelled.{/ts}{literal}'; 
 		   } else if ( operation == 'reserve' ) {
 		       if ( cj( element ).attr( 'checked') ) {
 		       	  msg = '{/literal}{ts}Reserved.{/ts}{literal}';	  
