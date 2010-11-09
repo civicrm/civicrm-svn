@@ -164,6 +164,8 @@ class CRM_Logging_Schema
      */
     private function createLogTableFor($table)
     {
+        CRM_Core_DAO::executeQuery("DROP TABLE IF EXISTS log_$table");
+
         $dao = CRM_Core_DAO::executeQuery("SHOW CREATE TABLE $table");
         $dao->fetch();
         $query = $dao->Create_Table;
