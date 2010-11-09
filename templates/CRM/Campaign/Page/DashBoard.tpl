@@ -31,7 +31,8 @@
 <div id="campaign-dialog" class='hiddenElement'></div>
 {if $campaigns} 
   <div class="action-link">
-      <a href="#" onclick="createCampaign( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Campaign{/ts}</span></a>
+      <!--a href="#" onclick="createCampaign( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Campaign{/ts}</span></a-->
+      <a href="{crmURL p='civicrm/campaign/add' q='reset=1' h=0 }" class="button"><span><div class="icon add-icon"></div>{ts}Add Campaign{/ts}</span></a>
   </div>
 
   {include file="CRM/common/enableDisable.tpl"}
@@ -72,7 +73,9 @@
     </div>
 {/if}
 <div class="action-link">
-   <a href="#" onclick="createCampaign( );"  class="button"><span><div class="icon add-icon"></div>{ts}Add Campaign{/ts}</span></a>
+   <!--a href="#" onclick="createCampaign( );"  class="button"><span><div class="icon add-icon"></div>{ts}Add Campaign{/ts}</span></a-->
+<a href="{crmURL p='civicrm/campaign/add' q='reset=1' h=0 }" class="button"><span><div class="icon add-icon"></div>{ts}Add Campaign{/ts}</span></a>
+ 
 </div>
 
 {* build the survey selector *}
@@ -81,8 +84,10 @@
 <div id="survey-dialog" class='hiddenElement'></div>
 {if $surveys} 
   <div class="action-link">
-    <a href="#" onclick="createSurvey( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Survey{/ts}</span></a>
-  </div>
+    <!--a href="#" onclick="createSurvey( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Survey{/ts}</span></a-->
+<a href="{crmURL p='civicrm/survey/add' q='reset=1' h=0 }" class="button"><span><div class="icon add-icon"></div>{ts}Add Survey{/ts}</span></a>
+ 
+</div>
  {include file="CRM/common/enableDisable.tpl"}
  {include file="CRM/common/jsortable.tpl"}
   <div id="surveyList">
@@ -135,7 +140,8 @@
   </div> 
 {/if}
 <div class="action-link">
-   <a href="#" onclick="createSurvey( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Survey{/ts}</span></a>
+   <!--a href="#" onclick="createSurvey( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Survey{/ts}</span></a-->
+<a href="{crmURL p='civicrm/survey/add' q='reset=1' h=0 }" class="button"><span><div class="icon add-icon"></div>{ts}Add Survey{/ts}</span></a> 
 </div>
 
 {* build normal page *}
@@ -144,7 +150,9 @@
 <div id="petition-dialog" class='hiddenElement'></div>
 {if $surveys} 
   <div class="action-link">
-    <a href="#" onclick="createPetition( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Petition{/ts}</span></a>
+    <!--a href="#" onclick="createPetition( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Petition{/ts}</span></a-->
+    <a href="{crmURL p='civicrm/petition/add' q='reset=1' h=0 }" class="button"><span><div class="icon add-icon"></div>{ts}Add Petition{/ts}</span></a>
+ 
   </div>
  {include file="CRM/common/enableDisable.tpl"}
  {include file="CRM/common/jsortable.tpl"}
@@ -190,7 +198,8 @@
   </div> 
 {/if}
 <div class="action-link">
-   <a href="#" onclick="createPetition( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Petition{/ts}</span></a>
+   <!--a href="#" onclick="createPetition( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Petition{/ts}</span></a-->
+    <a href="{crmURL p='civicrm/petition/add' q='reset=1' h=0 }" class="button"><span><div class="icon add-icon"></div>{ts}Add Petition{/ts}</span></a>
 </div>
 
 {* build normal page *}

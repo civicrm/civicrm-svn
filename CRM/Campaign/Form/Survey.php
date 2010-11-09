@@ -357,7 +357,9 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
     static function formRule( $fields, $files, $form ) {
         $errors = array( );
 
-        if ( ( count(array_filter( $fields['option_label'] ) ) == 0 ) &&
+        if ( CRM_Utils_Array::value( 'option_label', $fields ) &&
+             CRM_Utils_Array::value( 'option_value', $fields ) && 
+             ( count(array_filter( $fields['option_label'] ) ) == 0 ) &&
              ( count(array_filter( $fields['option_value'] ) ) == 0 ) ) {
              $errors['option_label[1]'] = ts( 'Enter atleast one response option.' );
              return $errors;       
