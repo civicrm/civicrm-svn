@@ -62,14 +62,14 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
     function preProcess( ) 
     {
         $this->_search        = CRM_Utils_Array::value( 'search', $_GET );
-        $this->_force         = CRM_Utils_Request::retrieve( 'force',    'Boolean',   $this, false ); 
-        $this->_surveyId      = CRM_Utils_Request::retrieve( 'sid',      'Positive',  $this );
-        $this->_interviewerId = CRM_Utils_Request::retrieve( 'cid',      'Positive',  $this );
+        $this->_force         = CRM_Utils_Request::retrieve( 'force', 'Boolean',   $this, false ); 
+        $this->_surveyId      = CRM_Utils_Request::retrieve( 'sid'  , 'Positive',  $this );
+        $this->_interviewerId = CRM_Utils_Request::retrieve( 'cid'  , 'Positive',  $this );
         
         //does control come from voting tab interface.
         $this->_votingTab      = $this->get( 'votingTab' );
         $this->_subVotingTab   = $this->get( 'subVotingTab' );
-        $this->_searchVoterFor = 'release';
+        $this->_searchVoterFor = 'gotv';
         if ( $this->_votingTab ) {
             if ( $this->_subVotingTab == 'searchANDReserve' ) {
                 $this->_searchVoterFor = 'reserve';
@@ -87,7 +87,7 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
         if ( $this->_surveyId ) {
             $surveyTitle = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', $this->_surveyId, 'title' );
         }
-        $this->assign( 'svreyTitle', $surveyTitle );
+        $this->assign( 'surveyTitle', $surveyTitle );
         
         //append breadcrumb to survey dashboard.
         require_once 'CRM/Campaign/BAO/Campaign.php';
@@ -158,9 +158,9 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
     {
         $errorMessages = array( );
         //check for required permissions.
-        if ( !CRM_Core_Permission::check( 'manage campaign' ) &&
-             !CRM_Core_Permission::check( 'administer CiviCampaign' ) &&
-             !CRM_Core_Permission::check( "{$this->_searchVoterFor} campaign contacts" ) ) {
+        if ( ! CRM_Core_Permission::check( 'manage campaign' ) &&
+             ! CRM_Core_Permission::check( 'administer CiviCampaign' ) &&
+             ! CRM_Core_Permission::check( "{$this->_searchVoterFor} campaign contacts" ) ) {
             $errorMessages[] = ts( 'You are not authorized to access this page.' );
         }
         

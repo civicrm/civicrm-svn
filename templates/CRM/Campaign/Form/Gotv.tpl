@@ -43,13 +43,15 @@
            <thead>
               <tr class="columnheader">
 	          <th></th>
-		      <th>{ts}Name{/ts}</th>
+                  <th>{ts}Name{/ts}</th>
 	          <th>{ts}Street Address{/ts}</th>
 	          <th>{ts}Street Name{/ts}</th>
 	          <th>{ts}Street Number{/ts}</th>
 	          <th>{ts}Street Unit{/ts}</th>
 	          {if $searchVoterFor eq 'release'}
 	          <th>{ts}Is Interview Conducted?{/ts}</th>
+	          {elseif $searchVoterFor eq 'gotv'}
+	          <th>{ts}Voted?{/ts}</th>
 	          {else}
 	          <th>{ts}Is Reserved?{/ts}</th>
 	          {/if}
@@ -167,8 +169,12 @@ function processVoterData( element, operation )
         data['source_contact_id']   = interviewerId;
         data['assignee_contact_id'] = interviewerId;
 	data['isReserved']          = cj( element ).attr( 'checked') ? 1:0; 
+  } else if ( operation == 'gotv' ) {
+       	data['operation']   = operation; 
+	data['activity_id'] = cj( element ).val( );
+	data['hasVoted']    = cj( element ).attr( 'checked') ? 1: 0; 	 
   }
-  data['surveyTitle'] = {/literal}'{$surveytitle}'{literal};
+  data['surveyTitle'] = {/literal}'{$surveyTitle|escape:javascript}'{literal};
    
   var actUrl = {/literal}
 	       "{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Campaign_Page_AJAX&fnName=processVoterData'}"
