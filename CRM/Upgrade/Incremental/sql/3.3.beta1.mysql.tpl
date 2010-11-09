@@ -90,3 +90,5 @@ UPDATE  civicrm_navigation
  WHERE  name like 'Voter Listing'
    AND  permission = 'administer CiviCampaign,manage campaign';
 
+-- CRM-7044 (needed for the installs that upgraded to 3.3 from pre-3.2.5)
+UPDATE civicrm_state_province SET name = 'Khomas' WHERE name = 'Khomae';
