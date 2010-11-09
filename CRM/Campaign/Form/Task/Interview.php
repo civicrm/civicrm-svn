@@ -258,8 +258,11 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
             }
             
             //build the result field.
-            $this->add( 'select', "field[$contactId][result]", ts('Result'), 
-                        array( '' => ts('- select -') ) + array_combine( $this->_resultOptions, $this->_resultOptions ) );
+            if ( ! empty( $this->_resultOptions ) ) {
+                $this->add( 'select', "field[$contactId][result]", ts('Result'), 
+                            array( '' => ts('- select -') ) + 
+                            array_combine( $this->_resultOptions, $this->_resultOptions ) );
+            }
             
             $this->add( 'text', "field[{$contactId}][note]", ts('Note') );
             

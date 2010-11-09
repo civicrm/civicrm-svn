@@ -307,14 +307,13 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
 
         $this->addRule('release_frequency', ts('Release Frequency interval should be a positive number.') , 'positiveInteger');
 
-        // max number of contacts
-        $this->add('text', 'max_number_of_contacts', ts('Maximum number of contacts'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'max_number_of_contacts') );
-
-        $this->addRule('max_number_of_contacts', ts('Maximum number of contacts should be a positive number') , 'positiveInteger');
+        // max reserved contacts at a time
+        $this->add('text', 'default_number_of_contacts', ts('Maximum reserved at one time'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'default_number_of_contacts') );
+        $this->addRule('default_number_of_contacts', ts('Maximum reserved at one time should be a positive number') , 'positiveInteger');    
         
-        // default number of contacts
-        $this->add('text', 'default_number_of_contacts', ts('Default number of contacts'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'default_number_of_contacts') );
-        $this->addRule('default_number_of_contacts', ts('Default number of contacts should be a positive number') , 'positiveInteger');    
+        // total reserved per interviewer
+        $this->add('text', 'max_number_of_contacts', ts('Total reserved per interviewer'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'max_number_of_contacts') );
+        $this->addRule('max_number_of_contacts', ts('Total reserved contacts should be a positive number') , 'positiveInteger');
         
         // is active ?
         $this->add('checkbox', 'is_active', ts('Active?'));
