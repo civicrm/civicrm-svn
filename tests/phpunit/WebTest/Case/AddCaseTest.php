@@ -121,7 +121,7 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
       $this->_testVerifyCaseRoles( $caseRoles );
       $this->_testVerifyCaseActivities( $activityTypes );
       
-      $openCaseData = array( "Client"           => $displayName,
+      $openCaseData = array( "Client"           => $contactName,
                              "Activity Type"    => "Open Case",
                              "Subject"          => $subject,
                              "Created By"       => $this->settings->UFemail,
@@ -176,9 +176,7 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
       // Probably don't need both tableId and prefix - but good examples for other situations where only one can be used
       
       foreach ($openCaseData as $label => $value) {
-          if ( $xpathPrefix ) {
-              $this->verifyText("xpath=//x:table{$tableLocator}/x:tbody/tr/td{$xpathPrefix}[text()='{$label}']/following-sibling::td", preg_quote( $value ) );
-          }
+              $this->verifyText("xpath=//x:table{$tableLocator}/x:tbody/tr/td[text()='{$label}']/following-sibling::td", preg_quote( $value ) );
       }
       
   }
