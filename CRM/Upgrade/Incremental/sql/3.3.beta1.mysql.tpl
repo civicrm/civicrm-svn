@@ -74,13 +74,13 @@ UPDATE  civicrm_navigation
 UPDATE    civicrm_navigation
    SET    label  = REPLACE(label, 'Voter', 'Respondent' ),
           name   = REPLACE(name,  'Voter', 'Respondent' )
-  WHERE   name IN ( 'Reserve Voters', 'Interview Voters', 'Release Voters', 'Voter Listing' );
+  WHERE   name IN ( 'Reserve Voters', 'Interview Voters', 'Release Voters' );
 
 
 SELECT  @campaignTypeOptGrpID := MAX(id) from civicrm_option_group where name = 'campaign_type';
 
 UPDATE  civicrm_option_value
-   SET  {localize field='label'}label = REPLACE(label, 'Voter', 'Respondent' ){/localize},
+   SET  {localize field='label'}label = REPLACE(label, 'Voter', 'Constituent' ){/localize},
 	name = REPLACE(name, 'Voter', 'Constituent' )	
  WHERE  name = 'Voter Engagement'
    AND  option_group_id = @campaignTypeOptGrpID;
