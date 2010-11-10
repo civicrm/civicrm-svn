@@ -39,6 +39,10 @@
 <div class="form-item">
 <fieldset>
 
+{if $surveyValues.instructions}
+   <div id='survey_instructions' class='help'>{ts 1=$surveyValues.instructions}%1{/ts}</div>
+{/if}
+
 <div id='help'>
     {if $votingTab}
     {ts}Click <strong>record response</strong> button to update values for each respondent as needed.{/ts}

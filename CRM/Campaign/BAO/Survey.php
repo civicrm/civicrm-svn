@@ -429,7 +429,9 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
         $query = "
     SELECT  activity.id, activity.status_id, 
             activityTarget.target_contact_id as voter_id,
-            activityAssignment.assignee_contact_id as interviewer_id
+            activityAssignment.assignee_contact_id as interviewer_id,
+            activity.result as result,
+            activity.activity_date_time as activity_date_time
       FROM  civicrm_activity activity
 INNER JOIN  civicrm_activity_target activityTarget ON ( activityTarget.activity_id = activity.id )
 INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignment.activity_id = activity.id )
@@ -445,14 +447,16 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
             $activities[$activity->id] = array( 'id'             => $activity->id,
                                                 'voter_id'       => $activity->voter_id,
                                                 'status_id'      => $activity->status_id,
-                                                'interviewer_id' => $activity->interviewer_id );
+                                                'interviewer_id' => $activity->interviewer_id,
+                                                'result'         => $activity->result,
+                                                'activity_date_time' => $activity->activity_date_time );
         }
         
         return $activities;
     }
     
     /**
-     * This function retrieve survey voter ids.
+     * This function retrieve survey voter information.
      *
      * @param int    $surveyId       survey id.
      * @param int    $interviewerId  interviewer id.
@@ -460,7 +464,7 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
      * @return survey related contact ids. 
      * @static
      */
-    static function getSurveyVoterIds( $surveyId, $interviewerId = null, $statusIds = array( ) ) 
+    static function getSurveyVoterInfo( $surveyId, $interviewerId = null, $statusIds = array( ) ) 
     {
         $voterIds = array( );
         if ( !$surveyId ) return $voterIds;
@@ -475,7 +479,7 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
         if ( !isset( $contactIds[$cacheKey] ) ) {
             $activities = self::getSurveyActivities( $surveyId, $interviewerId, $statusIds );
             foreach ( $activities as $values ) {
-                $voterIds[$values['voter_id']] = $values['voter_id'];
+                $voterIds[$values['voter_id']] = $values;
             }
             $contactIds[$cacheKey] = $voterIds;
         }

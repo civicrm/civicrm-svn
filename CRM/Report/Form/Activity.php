@@ -146,7 +146,7 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                                               'activity_type_id'    => 
                                               array( 'title'        => ts( 'Activity Type' ),
                                                      'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-                                                     'options'      => CRM_Core_PseudoConstant::activityType(), ), 
+                                                     'options'      => CRM_Core_PseudoConstant::activityType( true, false, false, 'label', true ), ), 
                                               'status_id'           => 
                                               array( 'title'        => ts( 'Activity Status' ),
                                                      'operatorType' => CRM_Report_Form::OP_MULTISELECT,
@@ -372,7 +372,7 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
         // custom code to alter rows
         
         $entryFound     = false;
-        $activityType   = CRM_Core_PseudoConstant::activityType( true, true );
+        $activityType   = CRM_Core_PseudoConstant::activityType( true, true, false, 'label', true );
         $activityStatus = CRM_Core_PseudoConstant::activityStatus();
         $viewLinks      = false;
 

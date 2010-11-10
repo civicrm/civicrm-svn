@@ -122,7 +122,6 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         $this->_surveyActivityIds = CRM_Campaign_BAO_Survey::voterActivityDetails( $this->_surveyId, 
                                                                                    $this->_contactIds,
                                                                                    $this->_interviewerId );
-        
         require_once 'CRM/Core/PseudoConstant.php';
         $activityStatus    = CRM_Core_PseudoConstant::activityStatus( 'name' );
         $scheduledStatusId = array_search( 'Scheduled', $activityStatus );
@@ -442,9 +441,10 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
             $statusIds = array( );
             if ( $statusId = array_search( 'Scheduled', $activityStatus ) ) $statusIds[] = $statusId;  
             require_once 'CRM/Campaign/BAO/Survey.php';
-            $this->_contactIds = CRM_Campaign_BAO_Survey::getSurveyVoterIds( $this->_surveyId, 
+            $surveyActivities = CRM_Campaign_BAO_Survey::getSurveyVoterInfo( $this->_surveyId, 
                                                                              $this->_interviewerId, 
                                                                              $statusIds );
+            foreach ( $surveyActivities as $val ) $this->_contactIds[$val['voter_id']] = $val['voter_id'];  
             $this->set( 'contactIds', $this->_contactIds );
         }
     }

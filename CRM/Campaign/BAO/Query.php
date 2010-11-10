@@ -391,16 +391,53 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
         require_once 'CRM/Core/PseudoConstant.php';
         $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
         $status = array( 'Scheduled' );
+        if ( $searchVoterFor == 'reserve' ) $status[] = 'Completed';
+        
+        $completedStatusId = null;
         foreach ( $status as $name ) {
-            if ( $statusId = array_search( $name, $activityStatus ) ) $statusIds[] = $statusId; 
+            if ( $statusId = array_search( $name, $activityStatus ) ) {
+                $statusIds[] = $statusId;
+                if ( $name == 'Completed' ) $completedStatusId = $statusId; 
+            }
         }
         
         require_once 'CRM/Campaign/BAO/Survey.php';
-        $voterIds = CRM_Campaign_BAO_Survey::getSurveyVoterIds( $surveyId, null, $statusIds );
-        if ( !empty( $voterIds ) ) {
+        $voterActValues = CRM_Campaign_BAO_Survey::getSurveyVoterInfo( $surveyId, null, $statusIds );
+        
+        if ( !empty( $voterActValues ) ) {
             $operator = 'IN';
-            if ( $searchVoterFor == 'reserve' ) $operator = 'NOT IN';
-            $voterClause = "( contact_a.id $operator (".  implode( ', ', $voterIds ). ') )';
+            $voterIds = array_keys( $voterActValues );
+            if ( $searchVoterFor == 'reserve' ) {
+                $operator = 'NOT IN';
+                //filter out recontact survey contacts.
+                $recontactInterval = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', 
+                                                                  $surveyId, 'recontact_interval' );
+                $recontactInterval = unserialize( $recontactInterval );
+                if ( $surveyId && 
+                     is_array( $recontactInterval ) && 
+                     !empty( $recontactInterval ) ) {
+                    $voterIds = array( );
+                    foreach ( $voterActValues as $values ) {
+                        $numOfDays = CRM_Utils_Array::value( $values['result'], $recontactInterval );
+                        if ( $numOfDays && 
+                             $values['status_id'] == $completedStatusId ) {
+                            $recontactIntSeconds = $numOfDays * 24 * 3600;
+                            $actDateTimeSeconds  = CRM_Utils_Date::unixTime( $values['activity_date_time'] );
+                            $totalSeconds = $recontactIntSeconds + $actDateTimeSeconds;
+                            //don't consider completed survey activity
+                            //unless it fulfill recontact interval criteria.
+                            if ( $totalSeconds <= time( ) ) {
+                                continue;
+                            }
+                        }
+                        $voterIds[$values['voter_id']] = $values['voter_id'];
+                    }
+                }
+            }
+            
+            if ( !empty( $voterIds ) ) {
+                $voterClause = "( contact_a.id $operator ( ".  implode( ', ', $voterIds  ). ' ) )';
+            }
         }
         
         return $voterClause;
