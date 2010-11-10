@@ -229,14 +229,19 @@ class CRM_Contact_Page_View_UserDashBoard extends CRM_Core_Page
                                                                     'qs'    => 'reset=1&id=%%cbid%%',
                                                                     'title' => ts('View Relationship')
                                                                     ),
-                                  CRM_Core_Action::DISABLE => array(
+                                 );
+
+
+            if ( CRM_Core_Permission::check( 'access CiviCRM' ) ) {
+                self::$_links = array_merge( self::$_links, array(  CRM_Core_Action::DISABLE => array(
                                                                     'name'  => ts('Disable'),
                                                                     'url'   => 'civicrm/contact/view/rel',
                                                                     'qs'    => 'action=disable&reset=1&cid=%%cid%%&id=%%id%%&rtype=%%rtype%%&selectedChild=rel%%&context=dashboard',
                                                                     'extra' => 'onclick = "return confirm(\'' . $disableExtra . '\');"',
                                                                     'title' => ts('Disable Relationship')
-                                                                    ),
-                                  );
+                                                                    )
+                                                                 ) );
+            }
         }
 
         // call the hook so we can modify it
