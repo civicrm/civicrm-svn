@@ -567,6 +567,9 @@ $.Autocompleter.Select = function (options, input, select, config) {
 		if (!needsInit)
 			return;
 
+		//make sure to clear cache, CRM-6116
+		$('.' + options.resultsClass ).remove( );
+
 		element = $("<div/>")
 		.hide()
 		.addClass(options.resultsClass)
