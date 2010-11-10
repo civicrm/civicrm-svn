@@ -198,6 +198,32 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
             $this->_returnProperties['sort_name'   ] = 1;
         }
 
+        // rectify params to what proximity search expects if there is a value for prox_distance
+        // CRM-7021
+        foreach ($this->_params as $param){
+            if ($param[0] == 'prox_distance'){
+                // add prox_ prefix to these
+                $param_alter = array('street_address', 'city', 'postal_code', 'state_province', 'country');
+
+                foreach ($this->_params as $key => $_param){
+                    if (in_array($_param[0], $param_alter)){
+                        $this->_params[$key][0] = 'prox_' . $_param[0];
+
+                        // _id suffix where needed
+                        if ($_param[0] == 'country' || $_param[0] == 'state_province'){
+                            $this->_params[$key][0] .= '_id';
+
+                            // flatten state_province array
+                            if (is_array($this->_params[$key][2])){
+                                $this->_params[$key][2] = $this->_params[$key][2][0];
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+        }
+
         $this->_query   = new CRM_Contact_BAO_Query( $this->_params,
                                                      $returnProperties, null, $includeContactIds,
                                                      false, CRM_Contact_BAO_Query::MODE_CONTACTS, false, $searchDescendentGroups );
