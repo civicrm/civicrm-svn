@@ -118,9 +118,10 @@ function fileOnCase( action, activityID, currentCaseId ) {
     	             cj("#fileOnCaseDialog").show( ).html( content ).dialog({
 		             title       : dialogTitle,
 		             modal       : true,
-			         bgiframe    : true,
-	    	         width       : 600,
+			     bgiframe    : true,
+	    	             width       : 600,
 		             height      : 270,
+			     close       : function( event, ui ) { cj( "#unclosed_cases" ).unautocomplete( ); },
 			     overlay     : { opacity: 0.5, background: "black" },
 		             beforeclose : function( event, ui ) {
                                      cj(this).dialog("destroy");

@@ -262,6 +262,7 @@ function addClient( ) {
         title: "Add Client to the Case",
         modal: true,
 		bgiframe: true,
+		close   : function(event, ui) { cj("#rel_contact").unautocomplete( ); },
 		overlay: { opacity: 0.5, background: "black" },
 		beforeclose: function(event, ui) { cj(this).dialog("destroy"); },
 
@@ -294,6 +295,7 @@ function createRelationship( relType, contactID, relID, rowNumber, relTypeName )
 		title: "Assign Case Role",
 		modal: true, 
 		bgiframe: true,
+		close   : function(event, ui) { cj("#rel_contact").unautocomplete( ); },
 		overlay: { 
 			opacity: 0.5, 
 			background: "black" 
@@ -538,6 +540,7 @@ function addRole() {
 		title: "Add Role",
 		modal: true,
 		bgiframe: true,
+		close   : function(event, ui) { cj("#role_contact").unautocomplete( ); },
 		overlay: { 
 			opacity: 0.5, 
 			background: "black" 
