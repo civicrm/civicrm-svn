@@ -130,13 +130,12 @@ cj("input,#priceset select,#priceset").each(function () {
 	price[ele] = 0;
       }
       eval( 'var selectedText = ' + cj(this).attr('price') );
+      var addprice = 0;
       if ( cj(this).val( ) ) {
         optionPart = selectedText[cj(this).val( )].split(optionSep);
-        var addprice   = parseFloat( optionPart[0] );
-      } else {
-       var addprice = 0;	
-      }
-      
+        addprice   = parseFloat( optionPart[0] );
+      } 
+
     if ( addprice ) {
 	totalfee   = parseFloat(totalfee) + addprice - parseFloat(price[ele]);
 	price[ele] = addprice;
@@ -149,8 +148,13 @@ cj("input,#priceset select,#priceset").each(function () {
 	price[ele] = 0;
       }
       eval( 'var selectedText = ' + cj(this).attr('price') );
-      var addprice = parseFloat( selectedText[cj(this).val( )].split(optionSep) );
-      
+
+      var addprice = 0;
+      if ( cj(this).val( ) ) {
+        optionPart = selectedText[cj(this).val( )].split(optionSep);
+        addprice   = parseFloat( optionPart[0] );
+      }
+
       if ( addprice ) {
 	totalfee   = parseFloat(totalfee) + addprice - parseFloat(price[ele]);
 	price[ele] = addprice;

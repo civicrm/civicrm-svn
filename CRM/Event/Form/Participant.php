@@ -1005,7 +1005,7 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
                     }
                 } 
                 if ( $participantCount ) {
-                    $this->assign( 'participantCount', $participantCount );
+                    $this->assign( 'pricesetFieldsCount', $participantCount );
                 }
                 $this->assign ( 'lineItem', empty($lineItem[0])?false:$lineItem );
             } else {
