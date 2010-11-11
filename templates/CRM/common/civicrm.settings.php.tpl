@@ -216,6 +216,12 @@ define('CIVICRM_TRACK_CIVIMAIL_REPLIES', false);
  */
 define('CIVICRM_TAG_UNCONFIRMED', 'Unconfirmed');
 
+/** 
+ * Defines the group name containing all contacts that have signed a CiviCampaign petition.
+ * Do not unset - required for email verification. Group will be created if it does not exist.
+ */
+define('CIVICRM_PETITION_CONTACTS','Petition Contacts');
+
 /**
  * 
  * Do not change anything below this line. Keep as is
