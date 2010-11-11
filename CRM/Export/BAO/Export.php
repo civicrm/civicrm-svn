@@ -850,21 +850,36 @@ class CRM_Export_BAO_Export
     {
         $type       = CRM_Utils_Request::retrieve( 'type',   'Positive', CRM_Core_DAO::$_nullObject );
         $parserName = CRM_Utils_Request::retrieve( 'parser', 'String',   CRM_Core_DAO::$_nullObject );
-        if ( empty( $parserName ) || empty( $type ) ) return;
+        if ( empty( $parserName ) || empty( $type ) ) {
+            return;
+        }
         
-        require_once(str_replace('_', DIRECTORY_SEPARATOR, $parserName ) . ".php");
-        eval( '$errorFileName =' . $parserName . '::errorFileName( $type );' );
-        eval( '$saveFileName =' . $parserName . '::saveFileName( $type );' );
-        if ( empty( $errorFileName ) || empty( $saveFileName ) ) return; 
+        // clean and ensure parserName is a valid string
+        $parserName = CRM_Utils_String::munge( $parserName, '_', 512 );
+        $parserClass = explode( '_', $parserName );
         
-        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-        header('Content-Description: File Transfer');
-        header('Content-Type: text/csv');
-        header('Content-Length: ' . filesize( $errorFileName ) );
-        header('Content-Disposition: attachment; filename=' . $saveFileName );
-        
-        readfile( $errorFileName );
-        
+        // make sure parserClass is in the CRM namespace and
+        // at least 3 levels deep
+        if ( $parserClass[0] == 'CRM' &&
+             count( $parserClass ) >= 3 ) {
+            require_once(str_replace('_', DIRECTORY_SEPARATOR, $parserName ) . ".php");
+            // ensure the functions exists
+            if ( method_exists( $parserName, 'errorFileName' ) &&
+                 method_exists( $parserName, 'saveFileName' ) ) {
+                eval( '$errorFileName =' . $parserName . '::errorFileName( $type );' );
+                eval( '$saveFileName =' . $parserName . '::saveFileName( $type );' );
+                if ( ! empty( $errorFileName ) &&
+                     ! empty( $saveFileName ) ) {
+                    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+                    header('Content-Description: File Transfer');
+                    header('Content-Type: text/csv');
+                    header('Content-Length: ' . filesize( $errorFileName ) );
+                    header('Content-Disposition: attachment; filename=' . $saveFileName );
+                    
+                    readfile( $errorFileName );
+                }
+            }
+        }
         CRM_Utils_System::civiExit( );
     }
     

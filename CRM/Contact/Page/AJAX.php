@@ -508,20 +508,32 @@ WHERE sort_name LIKE '%$name%'";
         }
         $status = array( 'status' => 'record-updated-fail' );
         if ( isset( $isActive ) ) { 
-             require_once(str_replace('_', DIRECTORY_SEPARATOR, $recordBAO) . ".php");
-             $method  = 'setIsActive'; 
-             $result  = array($recordBAO,$method);
-             $updated = call_user_func_array(($result), array($recordID,$isActive));
-             if ( $updated ) {   
-                $status = array( 'status' => 'record-updated-success' );
-             }
-             // call hook enableDisable
-             CRM_Utils_Hook::enableDisable( $recordBAO, $recordID, $isActive );
-             
+            // first munge and clean the recordBAO and get rid of any non alpha numeric characters
+            $recordBAO = CRM_Utils_String::munge( $recordBAO, '_', 512 );
+            $recordClass = explode( '_', $recordBAO );
+            
+            // make sure recordClass is in the CRM namespace and
+            // at least 3 levels deep
+            if ( $recordClass[0] == 'CRM' &&
+                 count( $recordClass ) >= 3 ) {
+                require_once(str_replace('_', DIRECTORY_SEPARATOR, $recordBAO) . ".php");
+                $method  = 'setIsActive'; 
+
+                if ( method_exists( $recordBAO, $method ) ) {
+                    $updated = call_user_func_array( array( $recordBAO, $method ),
+                                                     array( $recordID, $isActive ) );
+                    if ( $updated ) {   
+                        $status = array( 'status' => 'record-updated-success' );
+                    }
+
+                    // call hook enableDisable
+                    CRM_Utils_Hook::enableDisable( $recordBAO, $recordID, $isActive );
+                }
+            }
+            echo json_encode( $status );
+            CRM_Utils_System::civiExit( );
         }
-        echo json_encode( $status );
-        CRM_Utils_System::civiExit( );
-     }
+    }
  
     /*
      *Function to check the CMS username
