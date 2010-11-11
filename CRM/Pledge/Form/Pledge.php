@@ -372,7 +372,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         // Fix frequency unit display for use with frequency_interval
         $freqUnitsDisplay = array( );
         foreach ($this->_freqUnits as $val => $label) {
-            $freqUnitsDisplay[$val] = ts( '%1(s)', array( 1 => $val ) );
+            $freqUnitsDisplay[$val] = ts('%1(s)', array(1 => $label));
         }
         $element =& $this->add( 'select', 'frequency_unit', 
                                 ts( 'Frequency' ), 
