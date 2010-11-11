@@ -91,7 +91,7 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
                 CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionValue', $params['extends'][0], 'value', 'name' );
         }
 
-        if ( is_array($params['extends'][1]) && 
+        if ( isset($params['extends'][1]) && is_array($params['extends'][1]) && 
              ! CRM_Utils_Array::crmIsEmptyArray($params['extends'][1]) ) {
             $params['extends'][1] = implode ( CRM_Core_DAO::VALUE_SEPARATOR, $params['extends'][1] );
 
@@ -102,12 +102,9 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
                 $group->extends_entity_column_value = $params['extends'][1];
             }
         }
-
-        if ( $params['extends_entity_column_value'] ) {
-            $group->extends_entity_column_value = $params['extends_entity_column_value'];
-        }
         
-        if ( ! empty($group->extends_entity_column_value) ) {
+        if ( CRM_Utils_Array::value( 'extends_entity_column_value', $params ) ) {
+            $group->extends_entity_column_value = $params['extends_entity_column_value'];
             if ( substr( $group->extends_entity_column_value, 0, 1 ) != CRM_Core_DAO::VALUE_SEPARATOR ) {
                 $group->extends_entity_column_value =
                     CRM_Core_DAO::VALUE_SEPARATOR . 
@@ -181,7 +178,7 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
             require_once 'CRM/Core/BAO/SchemaHandler.php';
             CRM_Core_BAO_SchemaHandler::changeUniqueToIndex( $oldTableName, CRM_Utils_Array::value('is_multiple', $params) );
         }
-        if ($params['overrideFKConstraint'] ==1 ) {
+        if ( CRM_Utils_Array::value( 'overrideFKConstraint', $params ) == 1 ) {
             $table = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomGroup',
                                                   $params['id'],
                                                   'table_name' );
