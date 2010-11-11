@@ -126,8 +126,7 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
 
         // fill in step 6 (Include Profiles)
         $this->select('custom_pre_id',  'value=1');
-        $this->select('custom_post_id', 'value=2');
-
+      
         // go to step 7
         $this->click('_qf_Custom_next');
         $this->waitForPageToLoad();
@@ -187,7 +186,6 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
             "Honoree Section Title $hash",
             "Honoree Introductory Message $hash",
             "Name and Address",
-            "Supporter Profile",
         );
         foreach ($texts as $text) {
             $this->assertTrue( $this->isTextPresent($text), 'Missing text: ' . $text );

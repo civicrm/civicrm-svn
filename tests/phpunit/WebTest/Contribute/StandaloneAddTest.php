@@ -123,22 +123,23 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
 
       // Is status message correct?
       $this->assertTrue($this->isTextPresent("The contribution record has been saved."), "Status message didn't show up after saving!");
-
-      // click through to the contribution view screen
-      $this->waitForElementPresent("link=View");
-
-      $this->click('link=View');
-      $this->waitForPageToLoad('30000');
+     
+      // verify if Membership is created
+      $this->waitForElementPresent( "xpath=//div[@id='Contributions']//table//tbody/tr[1]/td[8]/span/a[text()='View']" );
       
-      $this->webtestVerifyTabularData(
-          array(
-              'Contribution Type'               => 'Donation',
-              'Contribution Status'             => 'Completed',
-              'Paid By'                         => 'Check',
-              'How long have you been a donor?' => 'Less than 1 year',
-              'Total Amount'                    => '100.00',
-              'Check Number'      	            => 'check #1041'
-          )
-      );
+      //click through to the Membership view screen
+      $this->click( "xpath=//div[@id='Contributions']//table/tbody/tr[1]/td[8]/span/a[text()='View']" );
+      $this->waitForElementPresent("_qf_ContributionView_cancel-bottom");
+      
+      $expected = array(
+                        2  => 'Donation', 
+                        3  => '100.00',
+                        8  => 'Completed',
+                        9  => 'Check',
+                        10 => 'check #1041'
+                        );
+      foreach ( $expected as $label => $value ) {
+          $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[$label]/td[2]", preg_quote($value));
+      }
   }
 }

@@ -51,7 +51,7 @@
     </tr>
     <tr>
         <td class="label">{ts}Contribution Type{/ts}</td>
-    	<td>{$contribution_type}&nbsp; {if $is_test} {ts}(test){/ts} {/if}</td>
+    	<td>{$contribution_type}{if $is_test} {ts}(test){/ts} {/if}</td>
     </tr>
     {if $lineItem}
     <tr>
