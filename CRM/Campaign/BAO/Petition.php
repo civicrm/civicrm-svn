@@ -489,10 +489,16 @@ WHERE 	a.source_record_id = " . $surveyId . "
 				
 				$confirmUrl = CRM_Utils_System::url( 'civicrm/petition/confirm',
 											  "reset=1&cid={$se->contact_id}&sid={$se->id}&h={$se->hash}&a={$params['activityId']}&p={$params['sid']}",
-											  true );
-
+											  true );				
+				$confirmUrlPlainText = CRM_Utils_System::url( 'civicrm/petition/confirm',
+											  "reset=1&cid={$se->contact_id}&sid={$se->id}&h={$se->hash}&a={$params['activityId']}&p={$params['sid']}",
+											  true,
+											  null,
+											  false);
+		
 				// set email specific message template params and assign to tplParams
 				$petitionTokens['confirmUrl'] = $confirmUrl;
+				$petitionTokens['confirmUrlPlainText'] = $confirmUrlPlainText;
 				$tplParams['petition'] = $petitionTokens;		
 						
 				require_once 'CRM/Core/BAO/MessageTemplates.php';
@@ -509,7 +515,7 @@ WHERE 	a.source_record_id = " . $surveyId . "
 							'replyTo' => $replyTo,
 							'petitionId' => $params['sid'],
 							'petitionTitle' => $petitionInfo['title'],
-							'confirmUrl' => $confirmUrl, 
+							'confirmUrl' => $confirmUrl
 						)
 					);					
 				}						
