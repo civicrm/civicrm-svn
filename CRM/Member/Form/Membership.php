@@ -47,7 +47,10 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
 {
     protected $_memType = null;
     
-    
+    protected $_onlinePendingContributionId;
+
+    protected $_mode;
+
     public function preProcess()  
     {  
         //custom data related code
@@ -471,10 +474,11 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             $errors['contact[1]'] = ts('Please select a contact or create new contact');
         }
         
-        if (!$params['membership_type_id'][1]) {
+        if ( !CRM_Utils_Array::value( 1, $params['membership_type_id'] ) ) {
             $errors['membership_type_id'] = ts('Please select a membership type.');
         }
-        if ( $params['membership_type_id'][1] && CRM_Utils_Array::value( 'payment_processor_id', $params ) ) {
+        if ( CRM_Utils_Array::value( 1, $params['membership_type_id'] ) && 
+             CRM_Utils_Array::value( 'payment_processor_id', $params ) ) {
             // make sure that credit card number and cvv are valid
             require_once 'CRM/Utils/Rule.php';
             if ( CRM_Utils_Array::value( 'credit_card_type', $params ) ) {
@@ -490,13 +494,17 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             }
         }
         
-        $joinDate = CRM_Utils_Date::processDate( $params['join_date'] );
-        if ( $joinDate ) {
+        $joinDate = null;
+        if ( CRM_Utils_Array::value( 'join_date', $params ) ) {
+            $joinDate = CRM_Utils_Date::processDate( $params['join_date'] );
             require_once 'CRM/Member/BAO/MembershipType.php';
             $membershipDetails = CRM_Member_BAO_MembershipType::getMembershipTypeDetails( $params['membership_type_id'][1] );
             
-            $startDate = CRM_Utils_Date::processDate( $params['start_date'] );
-            if ( $startDate && $membershipDetails['period_type'] == 'rolling' ) {
+            $startDate = null;
+            if ( CRM_Utils_Array::value( 'start_date', $params ) ) {
+                $startDate = CRM_Utils_Date::processDate( $params['start_date'] );
+            }
+            if ( $startDate && CRM_Utils_Array::value( 'period_type', $membershipDetails ) == 'rolling' ) {
                 if ( $startDate < $joinDate ) {
                     $errors['start_date'] = ts( 'Start date must be the same or later than join date.' );
                 }
@@ -506,7 +514,10 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             // and that end date is later than start date
             // If selected membership type has duration unit as 'lifetime'
             // and end date is set, then give error
-            $endDate = CRM_Utils_Date::processDate( $params['end_date'] );
+            $endDate = null;
+            if ( CRM_Utils_Array::value( 'end_date', $params ) ) {
+                $endDate = CRM_Utils_Date::processDate( $params['end_date'] );
+            }
             if ( $endDate ) {
                 if ( $membershipDetails['duration_unit'] == 'lifetime' ) {
                     $errors['end_date'] = ts('The selected Membership Type has a lifetime duration. You cannot specify an End Date for lifetime memberships. Please clear the End Date OR select a different Membership Type.');
@@ -558,7 +569,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         
         if ( isset( $params['is_override'] ) &&
              $params['is_override']          &&
-             ! $params['status_id'] ) {
+             ! CRM_Utils_Array::value( 'status_id', $params ) ) {
             $errors['status_id'] = ts('Please enter the status.');
         }
         
