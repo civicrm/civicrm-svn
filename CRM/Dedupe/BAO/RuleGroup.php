@@ -230,7 +230,7 @@ class CRM_Dedupe_BAO_RuleGroup extends CRM_Dedupe_DAO_RuleGroup
         }
 
         $totalCombinations = 0;
-        for ( $i = 0; $i < ( count($input) - 1 ); $i++ ) {
+        for ( $i = 0; $i < count($input); $i++ ) {
             $combination = array($input[$i]);
             if ( array_sum($combination) >= $threshold ) {
                 $totalCombinations++;
