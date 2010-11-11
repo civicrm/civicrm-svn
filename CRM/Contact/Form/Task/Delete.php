@@ -227,7 +227,7 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
             }
         }
         
-        if ( $this->_sharedAddressMessage && !$this->_restore ) { 
+        if ( isset( $this->_sharedAddressMessage ) && $this->_sharedAddressMessage['count'] > 0 && !$this->_restore ) { 
             if ( count( $this->_contactIds ) > 1 ) {
                 $sharedAddressMessage = ts( 'The following contact(s) have address records which were shared with the address you removed from selected contacts. These address records are no longer shared - but they have not been removed or altered.' ) . '<br>' . implode( '<br>', $this->_sharedAddressMessage['contactList'] );
             } else {
