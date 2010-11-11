@@ -524,7 +524,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
             //get the total count.
             $previousCount = self::getParticipantCount( $this, $this->_params, true );
             $totalParticipants = $currentCount + $previousCount;
-            if ( CRM_Utils_Array::value( 'bypass_payment',  $this->_params[0] ) &&
+            if ( CRM_Utils_Array::value( 'has_waitlist', $this->_values['event'] ) &&
                  $totalParticipants > $this->_availableRegistrations ) {
                 $this->_allowWaitlist = true;
             }
