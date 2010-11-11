@@ -105,7 +105,6 @@
         if ( document.getElementsByName("option_type")[0].checked ) {
             cj('#option_group').hide();
             cj('#default_option').val(''); 
-            resetResultSet( );
         } else {
             cj('#option_group').show();
             loadOptionGroup( );
