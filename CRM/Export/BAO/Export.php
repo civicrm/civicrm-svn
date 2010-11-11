@@ -855,7 +855,7 @@ class CRM_Export_BAO_Export
         }
         
         // clean and ensure parserName is a valid string
-        $parserName = CRM_Utils_String::munge( $parserName, '_', 512 );
+        $parserName = CRM_Utils_String::munge( $parserName );
         $parserClass = explode( '_', $parserName );
         
         // make sure parserClass is in the CRM namespace and

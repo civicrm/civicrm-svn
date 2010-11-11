@@ -509,7 +509,7 @@ WHERE sort_name LIKE '%$name%'";
         $status = array( 'status' => 'record-updated-fail' );
         if ( isset( $isActive ) ) { 
             // first munge and clean the recordBAO and get rid of any non alpha numeric characters
-            $recordBAO = CRM_Utils_String::munge( $recordBAO, '_', 512 );
+            $recordBAO = CRM_Utils_String::munge( $recordBAO );
             $recordClass = explode( '_', $recordBAO );
             
             // make sure recordClass is in the CRM namespace and
