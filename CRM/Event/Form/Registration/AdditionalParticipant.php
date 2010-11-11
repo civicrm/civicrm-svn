@@ -306,7 +306,6 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
                 $this->assign( 'waitingMsg', $waitingMsg );
                 $this->assign( 'confirmedMsg', $confirmedMsg );
                 
-                $this->addElement( 'hidden', 'is_confirmed', null, array( 'id' => 'is_confirmed') );
                 $this->assign( 'availableRegistrations', $this->_availableRegistrations );
                 $this->assign( 'currentParticipantCount',$processedCnt );
                 $this->assign( 'allowGroupOnWaitlist', true );

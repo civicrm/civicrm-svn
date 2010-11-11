@@ -914,7 +914,7 @@ WHERE  v.option_group_id = g.id
             $params = self::formatPriceSetParams( $form, $params );
             $params = array( $params );
         }
-                
+
         foreach ( $params as $key => $values ) {
             if ( !is_numeric( $key ) ||
                  $values == 'skip' ||
@@ -976,7 +976,8 @@ WHERE  v.option_group_id = g.id
                 }
                 $field = $priceSetDetails['fields'][$fieldId];
                 if ( $field['html_type'] == 'Text'  ) {
-                    $value = array( $fieldId => $value );
+                    $fieldOption = current($field['options']);
+                    $value = array( $fieldOption['id'] => $value );
                 } else {
                     $value = array( $value => true );
                 }
