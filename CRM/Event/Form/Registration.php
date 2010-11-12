@@ -271,7 +271,12 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
             require_once 'CRM/Event/BAO/Participant.php';
             //check for additional participants.
             if ( $this->_allowConfirmation && $this->_values['event']['is_multiple_registrations'] ) {
-                $this->_additionalParticipantIds = CRM_Event_BAO_Participant::getAdditionalParticipantIds($this->_participantId);
+                $additionalParticipantIds = CRM_Event_BAO_Participant::getAdditionalParticipantIds($this->_participantId);
+                $cnt = 1;
+                foreach ( $additionalParticipantIds as $additionalParticipantId ) {
+                    $this->_additionalParticipantIds[$cnt] = $additionalParticipantId;
+                    $cnt++; 
+                }
                 $this->set( 'additionalParticipantIds', $this->_additionalParticipantIds );
             }
             
