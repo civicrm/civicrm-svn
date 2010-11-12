@@ -61,6 +61,8 @@ class CRM_Campaign_Form_Petition extends CRM_Campaign_Form_Survey
         $session = CRM_Core_Session::singleton();
         $url     = CRM_Utils_System::url('civicrm/campaign', 'reset=1&subPage=petition'); 
         $session->pushUserContext( $url );
+        
+        CRM_Utils_System::appendBreadCrumb( array( array( 'title' => ts('Petition Dashboard'), 'url' => $url ) ) );
     }
 
     /**

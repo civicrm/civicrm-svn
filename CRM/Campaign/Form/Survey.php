@@ -111,9 +111,12 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $session = CRM_Core_Session::singleton();
         $url     = CRM_Utils_System::url('civicrm/campaign', 'reset=1&subPage=survey'); 
         $session->pushUserContext( $url );
-
+        
+        if ( $this->_name != 'Petition'  ) {
+            CRM_Utils_System::appendBreadCrumb( array( array( 'title' => ts('Survey Dashboard'), 'url' => $url ) ) );
+        }
+                
         $this->_values = array( );
-
         if ( $this->_surveyId ) {
             $this->assign( 'surveyId', $this->_surveyId );
 
