@@ -444,6 +444,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
             $surveyActivities = CRM_Campaign_BAO_Survey::getSurveyVoterInfo( $this->_surveyId, 
                                                                              $this->_interviewerId, 
                                                                              $statusIds );
+            $this->_contactIds = array( );
             foreach ( $surveyActivities as $val ) $this->_contactIds[$val['voter_id']] = $val['voter_id'];  
             $this->set( 'contactIds', $this->_contactIds );
         }

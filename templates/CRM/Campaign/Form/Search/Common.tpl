@@ -150,9 +150,12 @@
     
 {literal}
 <script type="text/javascript">
+
+    {/literal}{if !$doNotReloadCRMAccordion}{literal}	
     cj(function() {
       cj().crmaccordions(); 
     });
+    {/literal}{/if}{literal}
 
   //load interviewer autocomplete.
   var interviewerDataUrl = "{/literal}{$dataUrl}{literal}";
