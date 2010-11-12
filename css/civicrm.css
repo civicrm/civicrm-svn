@@ -2450,7 +2450,7 @@ span.icon {
 
 .delete-icon { background-position: -179px -99px;}
 .button:hover .delete-icon {
-    background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_cd0a0a_256x240.png")!important;
+    background-image:url("../packages/jquery/jquery-ui-1.8.5/css/custom-theme/images/ui-icons_8d2c27_256x240.png")!important;
 }
 
 .restore-icon { background-position:0px -66px;background-image:url("../i/icons/jquery-ui-91CE00.png"); }
