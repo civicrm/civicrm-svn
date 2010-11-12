@@ -70,35 +70,6 @@ table.crm-table-group-summary {
     color:#3e3e3e;
     background-color: #FFF;
 }
-/*  DataTables sorting */
-th.sorting, 
-th.sorting_asc, 
-th.sorting_desc,
-th a.sorting, 
-th a.sorting_asc, 
-th a.sorting_desc {
-    padding-left:16px !important;
-    background: url('../i/dataTable/sort_sprites.png') no-repeat left 0px;
-}
-th.sorting {
-    background-position:0px 5px;
-}
-th.sorting_desc {
-    background-position:0px -59px;
-}
-th.sorting_asc {
-    background-position:0px -27px;
-}
-#crm-container a.sorting {
-    background-position:0px 1px;
-	}
-#crm-container a.sorting_desc {
-    background-position:0px -64px;
-	}
-#crm-container a.sorting_asc {
-    background-position:0px -31px;
-	}
-
 
 /* Set background back to normal gray for form labels which use <th>. Temporary fix until we standardize form layout markup. */
 #crm-container table.form-layout-compressed tbody th.label { background-color: #F7F7F7; }
