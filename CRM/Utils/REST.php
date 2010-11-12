@@ -255,7 +255,7 @@ class CRM_Utils_REST
         $fnName = $apiFile = null;
 
         // clean up all function / class names. they should be alphanumeric and _ only
-        foreach ( $i = 1 ; $i <= 3; $i++ ) {
+        for ( $i = 1 ; $i <= 3; $i++ ) {
             if ( ! empty( $args[$i] ) ) {
                 $args[$i] = CRM_Utils_String::munge( $args[$i] );
             }
