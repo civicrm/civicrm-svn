@@ -29,7 +29,7 @@ require_once 'CiviTest/CiviSeleniumTestCase.php';
 
 
  
-class WebTest_Contact_AddGroup extends CiviSeleniumTestCase {
+class WebTest_Contact_TagAddTest extends CiviSeleniumTestCase {
 
   protected $captureScreenshotOnFailure = TRUE;
   protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';
@@ -40,7 +40,7 @@ class WebTest_Contact_AddGroup extends CiviSeleniumTestCase {
       parent::setUp();
   }
 
-  function testGroupAdd( )
+  function testAddTag( )
   {
       // This is the path where our testing install resides. 
       // The rest of URL is defined in CiviSeleniumTestCase base class, in
@@ -54,37 +54,46 @@ class WebTest_Contact_AddGroup extends CiviSeleniumTestCase {
       // page contents loaded and you can continue your test execution.
       $this->webtestLogin( );
       
-      // Go directly to the URL of the screen that you will be testing (New Group).
-      $this->open($this->sboxPath . "civicrm/group/add&reset=1");
+      // Go directly to the URL of the screen that you will be testing (New Tag).
+      $this->open($this->sboxPath . "civicrm/admin/tag?action=add&reset=1");
 
       // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
       // button at the end of this page to show up, to make sure it's fully loaded.
-      $this->waitForElementPresent("_qf_Edit_upload");
+      $this->waitForElementPresent("_qf_Tag_next");
 
-      // take group name
-      $groupName = 'group_'.substr(sha1(rand()), 0, 7);
+      // take a tag name
+      $tagName = 'tag_'.substr(sha1(rand()), 0, 7);
 
-      // fill group name
-      $this->type("title", $groupName);
+      // fill tag name
+      $this->type("name", $tagName);
       
       // fill description
-      $this->type("description", "Adding new group.");
+      $this->type("description", "Adding new tag.");
 
-      // check Access Control
-      $this->click("group_type[1]");
+      // select used for contact
+      $this->select("used_for", "value=civicrm_contact");
 
-      // check Mailing List
-      $this->click("group_type[2]");
+      // check reserved
+      $this->click("is_reserved");
 
-      // select Visibility as Public Pages
-      $this->select("visibility", "value=Public Pages");
-      
       // Clicking save.
-      $this->click("_qf_Edit_upload");
+      $this->click("_qf_Tag_next");
       $this->waitForPageToLoad("30000");
 
       // Is status message correct?
-      $this->assertTrue($this->isTextPresent("The Group '$groupName' has been saved."));
+      $this->assertTrue($this->isTextPresent("The tag '$tagName' has been saved."));
+
+      // sort by ID desc
+      $this->click("xpath=//table//tr/th[text()=\"ID\"]");
+      $this->waitForElementPresent("css=table.display tbody tr td");
+      $this->click("xpath=//table//tr/th[text()=\"ID\"]");
+      $this->waitForElementPresent("css=table.display tbody tr td");
+
+      // verify text in first row.
+      $this->verifyText("xpath=//table//tbody/tr/td[1]", $tagName);
+      $this->verifyText("xpath=//table//tbody/tr/td[3]", "Adding new tag.");
+      $this->verifyText("xpath=//table//tbody/tr/td[5]", "Contacts");
+
   }  
 
 }
