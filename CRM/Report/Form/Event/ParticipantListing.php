@@ -38,6 +38,7 @@ require_once 'CRM/Report/Form.php';
 require_once 'CRM/Event/PseudoConstant.php';
 require_once 'CRM/Core/OptionGroup.php';
 require_once 'CRM/Event/BAO/Participant.php';
+require_once 'CRM/Contact/BAO/Contact.php';
 
 class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
 
@@ -57,6 +58,8 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
                                 'id'  => 
                                 array( 'no_display' => true,
                                        'required'   => true, ),
+                                'employer_id'       => 
+                                array( 'title'     => ts( 'Organization' ), ),
                                 ),
                          'grouping'  => 'contact-fields',
                          'filters' =>             
@@ -83,7 +86,13 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
                   'civicrm_address'     =>
                   array( 'dao'          => 'CRM_Core_DAO_Address',
                          'fields'       =>
-                         array( 'street_address' => null,                                
+                         array( 'street_address'    => null, 
+                                'city'              => null,
+                                'postal_code'       => null,
+                                'state_province_id' => 
+                                array( 'title'      => ts( 'State/Province' ), ),
+                                'country_id'        => 
+                                array( 'title'      => ts( 'Country' ), ),
                                 ),
                          'grouping'  => 'contact-fields',
                          ),                  
@@ -398,6 +407,35 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
                 $entryFound = true;
             }
             
+            // Handle country id
+            if ( array_key_exists( 'civicrm_address_country_id', $row ) ) {
+                if ( $value = $row['civicrm_address_country_id'] ) {
+                    $rows[$rowNum]['civicrm_address_country_id'] = CRM_Core_PseudoConstant::country( $value, true );
+                }
+                $entryFound = true;
+            }
+
+            // Handle state/province id
+            if ( array_key_exists( 'civicrm_address_state_province_id', $row ) ) {
+                if ( $value = $row['civicrm_address_state_province_id'] ) {
+                    $rows[$rowNum]['civicrm_address_state_province_id'] = 
+                        CRM_Core_PseudoConstant::stateProvince( $value, true );
+                }
+                $entryFound = true;
+            }
+            
+            // Handle employer id
+            if ( array_key_exists( 'civicrm_contact_employer_id', $row ) ) {
+                if ( $value = $row['civicrm_contact_employer_id'] ) {
+                    $rows[$rowNum]['civicrm_contact_employer_id'] = CRM_Contact_BAO_Contact::displayName( $value );
+                    $url = CRM_Utils_System::url( 'civicrm/contact/view',
+                                                  'reset=1&cid=' . $value, $this->_absoluteUrl );
+                    $rows[$rowNum]['civicrm_contact_employer_id_link']  = $url;
+                    $rows[$rowNum]['civicrm_contact_employer_id_hover'] = 
+                        ts('View Contact Summary for this Contact.');
+                }
+            }
+
             // skip looking further in rows, if first row itself doesn't 
             // have the column we need
             if ( !$entryFound ) {
