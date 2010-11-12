@@ -402,7 +402,7 @@ registration process.{/ts}</p>
         <th {$headerStyle}>
          {ts 1=$customName+1}Participant Information - Participant %1{/ts}
         </th>
-       <tr>
+       </tr>
        {foreach from=$value item=val key=field}
         {if $field eq 'additionalCustomPre' or $field eq 'additionalCustomPost'}
          <tr>
