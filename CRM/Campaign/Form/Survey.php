@@ -374,6 +374,9 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
             return $errors;
         }
 
+        $_flagOption = $_rowError = 0;
+        $_showHide = new CRM_Core_ShowHideBlocks('','');
+
         //capture duplicate Custom option values
         if ( ! empty($fields['option_value']) ) {
             $countValue = count($fields['option_value']);
@@ -442,7 +445,27 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
                 $errors['option_interval['.$i.']'] = ts( 'Please enter a valid integer.' );
             }
             
+            $showBlocks = 'optionField_'.$i;
+            if ( $_flagOption ) {
+                $_showHide->addShow( $showBlocks );
+                $_rowError = 1;
+            } 
+            
+            if (!empty($_emptyRow)) {
+                $_showHide->addHide( $showBlocks );
+            } else {
+                $_showHide->addShow( $showBlocks );
+            }
+
+            if ( $i == self::NUM_OPTION ) {
+                $hideBlock = 'additionalOption';
+                $_showHide->addHide( $hideBlock );
+            }
+            
+            $_flagOption = $_emptyRow = 0; 
         }
+        $_showHide->addToTemplate(); 
+
         return empty($errors) ? true : $errors;
     }   
     
