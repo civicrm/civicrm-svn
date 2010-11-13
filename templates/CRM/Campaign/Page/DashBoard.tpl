@@ -98,12 +98,12 @@
           <th>{ts}Campaign{/ts}</th>
           <th>{ts}Survey Type{/ts}</th>   
           <th>{ts}Release Frequency{/ts}</th>
-	  <th>{ts}Max Contacts{/ts}</th>
-	  <th>{ts}Default Contacts{/ts}</th>
-	  <th>{ts}Default?{/ts}</th>
-	  <th>{ts}Active?{/ts}</th>
-	  <th id="nosort"></th>
-	  <th id="nosort"></th>
+	      <th>{ts}Reserve Each Time{/ts}</th>
+	      <th>{ts}Total Reserve{/ts}</th>
+	      <th>{ts}Default?{/ts}</th>
+	      <th>{ts}Active?{/ts}</th>
+	      <th id="nosort"></th>
+	      <th id="nosort"></th>
         </tr>
       </thead>
       {foreach from=$surveys item=survey}
@@ -112,8 +112,8 @@
           <td class="crm-survey-campaign_id">{$survey.campaign_id}</td>
           <td class="crm-survey-activity_type">{$survey.activity_type}</td>
           <td class="crm-survey-release_frequency">{$survey.release_frequency}</td>
-          <td class="crm-survey-max_number_of_contacts">{$survey.max_number_of_contacts}</td>
           <td class="crm-survey-default_number_of_contacts">{$survey.default_number_of_contacts}</td>
+          <td class="crm-survey-max_number_of_contacts">{$survey.max_number_of_contacts}</td>
           <td class="crm-survey-is_default">{if $survey.is_default}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Default{/ts}" /> {/if}</td>
           <td class="crm-survey-is_active" id="row_{$survey.id}_status">{if $survey.is_active}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}</td>
  	  <td class="crm-survey-action">{$survey.action}</td>
