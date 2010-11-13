@@ -95,12 +95,12 @@ UPDATE  civicrm_activity
             }
         }
         
-        echo "<br /><br />Number of respondent released = {$releasedCount}";
+        echo "<br /><br />Number of respondents released = {$releasedCount}";
     }
 }
 
 $obj = new CRM_RespondentProcessor( );
 echo "Releasing..";
 $obj->releaseRespondent( );
-echo "<br /><br />Respondent Released. (Done)";
+echo "<br /><br />Respondent Release Done";
 ?>
