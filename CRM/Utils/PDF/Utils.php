@@ -39,7 +39,9 @@ class CRM_Utils_PDF_Utils {
 
     static function domlib( $text,
                             $fileName = 'civicrm.pdf',
-                            $output = false ) {
+                            $output = false,
+                            $orientation = 'landscape',
+                            $paperSize   = 'a3' ) {
         require_once 'packages/dompdf/dompdf_config.inc.php';
         $dompdf = new DOMPDF( );
         
@@ -103,6 +105,7 @@ class CRM_Utils_PDF_Utils {
         </html>';
                         
         $dompdf->load_html( $html );
+        $dompdf->set_paper ($paperSize, $orientation);
         $dompdf->render( );
         
         if ( $output ) {

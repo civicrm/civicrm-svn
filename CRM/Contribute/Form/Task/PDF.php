@@ -224,6 +224,7 @@ AND    {$this->_componentClause}";
             require_once 'CRM/Utils/PDF/Utils.php';
             CRM_Utils_PDF_Utils::domlib( $message,
                                          'civicrmContributionReceipt.pdf',
+                                         false,
                                          'portrait',
                                          'letter' );
             CRM_Utils_System::civiExit( );
