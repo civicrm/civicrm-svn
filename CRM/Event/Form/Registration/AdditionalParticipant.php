@@ -231,17 +231,9 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
              CRM_Utils_Array::value( 'bypass_payment', $this->_params[0] ) &&
              $this->_lastParticipant ) { 
             
-            //need to check current participant present in params.
-            $currentParticipantNum = substr( $this->_name, 12 );
-            
-            $isLineItemParticipants = false;
-            if ( !empty( $this->_lineItemParticipants ) ) {
-                $isLineItemParticipants = true;
-            }
-            
             //get the event spaces.
             $spaces = $this->_availableRegistrations; 
-                       
+            
             $currentPageMaxCount = 1;
             if ( $pricesetFieldsCount ) $currentPageMaxCount = $pricesetFieldsCount;
             
@@ -488,15 +480,18 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
             $this->_allowWaitlist = false;
             //get the current page count.
             $currentCount = self::getParticipantCount( $this, $params );
+            if ( $button == 'skip' ) $currentCount = 'skip';
+            
             //get the total count.
             $previousCount = self::getParticipantCount( $this, $this->_params, true );
-            $totalParticipants = $currentCount + $previousCount;
+            $totalParticipants = $previousCount;
+            if ( is_numeric( $currentCount ) ) $totalParticipants += $currentCount; 
             if ( CRM_Utils_Array::value( 'has_waitlist', $this->_values['event'] ) &&
                  $totalParticipants > $this->_availableRegistrations ) {
                 $this->_allowWaitlist = true;
             }
             $this->set( 'allowWaitlist', $this->_allowWaitlist );
-            if ( $button != 'skip' ) $this->_lineItemParticipants[$addParticipantNum] = $currentCount;
+            $this->_lineItemParticipantsCount[$addParticipantNum] = $currentCount;
         }
         
         if ( $button == 'skip' ) {
@@ -515,7 +510,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
             $this->_params[$addParticipantNum] = 'skip';
             if ( isset( $this->_lineItem ) ) {
                 $this->_lineItem[$addParticipantNum] = 'skip';
-                $this->_lineItemParticipants[$addParticipantNum] = 'skip'; 
+                $this->_lineItemParticipantsCount[$addParticipantNum] = 'skip'; 
             }
         } else {
             
@@ -578,7 +573,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
         //set the line item.
         if ( $this->_lineItem ) {
             $this->set( 'lineItem', $this->_lineItem );
-            $this->set( 'lineItemParticipants', $this->_lineItemParticipants );
+            $this->set( 'lineItemParticipantsCount', $this->_lineItemParticipantsCount );
         }
         
         $participantNo = count( $this->_params );

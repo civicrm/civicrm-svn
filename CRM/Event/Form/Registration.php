@@ -181,7 +181,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
     public $_isEventFull;
     
     public $_lineItem;
-    public $_lineItemParticipants;
+    public $_lineItemParticipantsCount;
     public $_availableRegistrations;
     
     /** 
@@ -209,9 +209,9 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
         $this->_priceSet         = $this->get( 'priceSet' ) ;
         $this->_lineItem         = $this->get( 'lineItem' );
         $this->_isEventFull      = $this->get( 'isEventFull' );
-        $this->_lineItemParticipants = $this->get( 'lineItemParticipants' );
+        $this->_lineItemParticipantsCount = $this->get( 'lineItemParticipants' );
         if ( !is_array( $this->_lineItem ) ) $this->_lineItem = array( );
-        if ( !is_array( $this->_lineItemParticipants ) ) $this->_lineItemParticipants = array( );
+        if ( !is_array( $this->_lineItemParticipantsCount ) ) $this->_lineItemParticipantsCount = array( );
         $this->_availableRegistrations = $this->get( 'availableRegistrations' );
         $this->_totalParticipantCount  = $this->get( 'totalParticipantcount' );
         
@@ -927,7 +927,15 @@ WHERE  v.option_group_id = g.id
                 continue;
             }
             $count = 1;
-            if ( $hasPriceFieldsCount ) {
+            
+            $usedCache  = false;
+            $cacheCount = CRM_Utils_Array::value( $key, $form->_lineItemParticipantsCount );
+            if ( $cacheCount && is_numeric( $cacheCount ) ) {
+                $count = $cacheCount;
+                $usedCache = true;
+            }
+            
+            if ( !$usedCache && $hasPriceFieldsCount ) {
                 $count = 0;
                 foreach ( $values as $valKey => $value ) {
                     if ( strpos( $valKey, 'price_' ) === false ) {
@@ -1136,6 +1144,7 @@ WHERE  v.option_group_id = g.id
         
         $optionMaxValues = $fieldSelected = array( );
         foreach ( $params as $pNum => $values ) {
+            if ( !is_array( $values ) || $values == 'skip' ) continue; 
             foreach ( $values as $valKey => $value ) {
                 if ( strpos( $valKey, 'price_' ) === false ) {
                     continue;
@@ -1169,6 +1178,7 @@ WHERE  v.option_group_id = g.id
         
         //validate for price field selection.
         foreach ( $params as $pNum => $values ) {
+            if ( !is_array( $values ) || $values == 'skip' ) continue; 
             if ( !CRM_Utils_Array::value( $pNum, $fieldSelected ) ) {
                 $errors[$pNum]['_qf_default'] = ts( 'Select at least one option from Event Fee(s).' );
             }

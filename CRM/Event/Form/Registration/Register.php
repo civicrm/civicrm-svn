@@ -772,6 +772,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         
         //hack to allow group to register w/ waiting
         $primaryParticipantCount = self::getParticipantCount( $this, $params );
+        
         $totalParticipants = $primaryParticipantCount;
         if ( CRM_Utils_Array::value( 'additional_participants', $params ) ) {
             $totalParticipants += $params['additional_participants'];
@@ -826,7 +827,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                 require_once "CRM/Price/BAO/Set.php";
                 CRM_Price_BAO_Set::processAmount( $this->_values['fee']['fields'], $params, $lineItem );
                 $this->set( 'lineItem', array( $lineItem ) );
-                $this->set( 'lineItemParticipants', array( $primaryParticipantCount ) );
+                $this->set( 'lineItemParticipantsCount', array( $primaryParticipantCount ) );
             }
 
             $this->set( 'amount', $params['amount'] ); 
