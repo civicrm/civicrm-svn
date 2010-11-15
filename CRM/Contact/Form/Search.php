@@ -169,7 +169,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
      * @var array
      * @access protected
      */
-    protected $_formValues;
+    public $_formValues;
 
     /**
      * The params used for search
