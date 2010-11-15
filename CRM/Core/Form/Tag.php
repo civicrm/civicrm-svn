@@ -85,18 +85,34 @@ class CRM_Core_Form_Tag
                     $tagset[$tagsetItem]['entityId'] = $entityId;
                     require_once 'CRM/Core/BAO/EntityTag.php';
                     $entityTags = CRM_Core_BAO_EntityTag::getChildEntityTags( $parentId, $entityId, $entityTable );                    
-                    if ( !empty( $entityTags ) ) {
-                        // assign as simple array for display in smarty
-                        $tagset[$tagsetItem]['entityTagsArray'] =  $entityTags;
-                        // assign as json for js widget
-                        $tagset[$tagsetItem]['entityTags'] =  json_encode( array_values( $entityTags ) );
-                        
-                        if ( !empty( $form->_entityTagValues ) ) {
-                            $form->_entityTagValues = CRM_Utils_Array::crmArrayMerge( $entityTags, $form->_entityTagValues );
-                        } else {
-                            $form->_entityTagValues = $entityTags;
-                        }                        
+                } elseif ( !empty( $form->_submitValues['taglist'] ) ) {
+                    $allTags = CRM_Core_Pseudoconstant::tag( );
+                    foreach( $form->_submitValues['taglist'] as $key => $value ) {
+                        $tagIds = explode( ',', $value );
+                        foreach( $tagIds as $tagId ) {
+                            if ( is_numeric( $tagId ) ) {
+                                $tagName = $allTags[$tagId];
+                            } else {
+                                $tagName = $tagId;
+                            }
+
+                            $entityTags[$tagId] = array( 'id'   => $tagId,
+                                                         'name' => $tagName );
+                        } 
                     }
+                }     
+                
+                if ( !empty( $entityTags ) ) {
+                    // assign as simple array for display in smarty
+                    $tagset[$tagsetItem]['entityTagsArray'] =  $entityTags;
+                    // assign as json for js widget
+                    $tagset[$tagsetItem]['entityTags'] =  json_encode( array_values( $entityTags ) );
+
+                    if ( !empty( $form->_entityTagValues ) ) {
+                        $form->_entityTagValues = CRM_Utils_Array::crmArrayMerge( $entityTags, $form->_entityTagValues );
+                    } else {
+                        $form->_entityTagValues = $entityTags;
+                    }                        
                 }
             }
         }
