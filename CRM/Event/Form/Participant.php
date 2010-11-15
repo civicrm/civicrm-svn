@@ -1231,6 +1231,7 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
                     $commonParams = $params;
                     $commonParams['contact_id'] = $contactID;
                     if ( $commonParams['role_id'] ) {
+                        $rolesIDS = array( );
                         foreach ( $commonParams['role_id'] as $k => $v ) {
                             $rolesIDS[] = $k;
                         }
