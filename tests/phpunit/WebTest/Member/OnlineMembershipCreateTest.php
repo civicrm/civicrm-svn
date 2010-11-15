@@ -236,9 +236,6 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
                                                'Total Amount'=> '$ 50.00',
                                                )
                                          );
-        
-        $this->click( "_qf_ContributionView_cancel-bottom" );
-        
     }  
     function _testVerifyRegisterPage( $registerStrings ){
         $this->waitForElementPresent("idLive");
