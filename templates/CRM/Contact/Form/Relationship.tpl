@@ -157,7 +157,7 @@
               </tr>
               </table>
                 <div class="crm-submit-buttons">
-                    <span id="relationship-refresh" class="crm-button crm-button-type-refresh crm-button_qf_Relationship_refresh.html">{$form._qf_Relationship_refresh.html}</span>
+                    <span id="relationship-refresh" class="crm-button crm-button-type-refresh crm-button_qf_Relationship_refresh">{$form._qf_Relationship_refresh.html}</span>
                     <span id="relationship-refresh-save" class="crm-button crm-button-type-save crm-button_qf_Relationship_refresh_save" style="display:none">{$form._qf_Relationship_refresh_save.html}</span>
                     <span class="crm-button crm-button-type-cancel crm-button_qf_Relationship_cancel">{$form._qf_Relationship_cancel.html}</span>
                 </div>
@@ -461,7 +461,7 @@ cj('#addCurrentEmployee').hide( );
 
 cj(document).ready(function(){
   if ( cj.browser.msie ) {
-       cj('#rel_contact').keyup( function( e) {
+       cj('#rel_contact').keyup( function(e) {
          if( e.keyCode == 9 || e.keyCode == 13 ) {
 	     return false;
 	     }
