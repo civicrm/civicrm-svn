@@ -100,11 +100,14 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         
         //get the contact read only fields to display.
         require_once 'CRM/Core/BAO/Preferences.php';
-        $readOnlyFields = array_merge( array( 'sort_name' => ts( 'Name' ) ),
+        $readOnlyFields = array_merge( array( 'contact_type' => '', 
+                                              'sort_name'    => ts( 'Name' ) ),
                                        CRM_Core_BAO_Preferences::valueOptions( 'contact_autocomplete_options',
                                                                                true, null, false, 'name', true ) );
+        
         //get the read only field data.
         $returnProperties  = array_fill_keys( array_keys( $readOnlyFields ), 1 );
+        $returnProperties['contact_sub_type'] = true;
         
         //get the profile id.
         require_once 'CRM/Core/BAO/UFJoin.php'; 
@@ -119,7 +122,6 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         $this->_surveyActivityIds = CRM_Campaign_BAO_Survey::voterActivityDetails( $this->_surveyId, 
                                                                                    $this->_contactIds,
                                                                                    $this->_interviewerId );
-        
         require_once 'CRM/Core/PseudoConstant.php';
         $activityStatus    = CRM_Core_PseudoConstant::activityStatus( 'name' );
         $scheduledStatusId = array_search( 'Scheduled', $activityStatus );
@@ -193,7 +195,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         
         //set the title.
         require_once 'CRM/Core/PseudoConstant.php';
-        $activityTypes = CRM_Core_PseudoConstant::activityType( );
+        $activityTypes = CRM_Core_PseudoConstant::activityType( false, true, false, 'label', true );
         $this->_surveyTypeId = CRM_Utils_Array::value( 'activity_type_id', $this->_surveyValues );
         CRM_Utils_System::setTitle( ts( 'Record %1 Responses', array( 1 => $activityTypes[$this->_surveyTypeId] ) ) );
     }
@@ -202,8 +204,8 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
     {
         $required = array( 'surveyId'       => ts( 'Could not find Survey.'),
                            'interviewerId'  => ts( 'Could not find Interviewer.' ),
-                           'contactIds'     => ts( 'Could not find valid activities to conduct survey.'),
-                           'resultOptions'  => ts( 'Oops, It looks like there is no response option configured.' ) );
+                           'contactIds'     => ts( 'No respondents are currently reserved for you to interview.'),
+                           'resultOptions'  => ts( 'Oops. It looks like there is no response option configured.' ) );
         
         $errorMessages = array( );
         foreach ( $required as $fld => $msg ) {
@@ -255,8 +257,11 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
             }
             
             //build the result field.
-            $this->add( 'select', "field[$contactId][result]", ts('Result'), 
-                        array( '' => ts('- select -') ) + array_combine( $this->_resultOptions, $this->_resultOptions ) );
+            if ( ! empty( $this->_resultOptions ) ) {
+                $this->add( 'select', "field[$contactId][result]", ts('Result'), 
+                            array( '' => ts('- select -') ) + 
+                            array_combine( $this->_resultOptions, $this->_resultOptions ) );
+            }
             
             $this->add( 'text', "field[{$contactId}][note]", ts('Note') );
             
@@ -436,9 +441,11 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
             $statusIds = array( );
             if ( $statusId = array_search( 'Scheduled', $activityStatus ) ) $statusIds[] = $statusId;  
             require_once 'CRM/Campaign/BAO/Survey.php';
-            $this->_contactIds = CRM_Campaign_BAO_Survey::getSurveyVoterIds( $this->_surveyId, 
+            $surveyActivities = CRM_Campaign_BAO_Survey::getSurveyVoterInfo( $this->_surveyId, 
                                                                              $this->_interviewerId, 
                                                                              $statusIds );
+            $this->_contactIds = array( );
+            foreach ( $surveyActivities as $val ) $this->_contactIds[$val['voter_id']] = $val['voter_id'];  
             $this->set( 'contactIds', $this->_contactIds );
         }
     }

@@ -265,6 +265,7 @@ function addClient( ) {
         title: "Add Client to the Case",
         modal: true,
 		bgiframe: true,
+		close  : function(event, ui) { cj("#rel_contact").unautocomplete( ); },
 		overlay: { opacity: 0.5, background: "black" },
 		beforeclose: function(event, ui) { cj(this).dialog("destroy"); },
 
@@ -297,14 +298,12 @@ function createRelationship( relType, contactID, relID, rowNumber, relTypeName )
 		title: "Assign Case Role",
 		modal: true, 
 		bgiframe: true,
+		close: function(event, ui) { cj("#rel_contact").unautocomplete( ); },
 		overlay: { 
 			opacity: 0.5, 
 			background: "black" 
 		},
-		beforeclose: function(event, ui) {
-            cj(this).dialog("destroy");
-        },
-
+		
 		open:function() {
 			/* set defaults if editing */
 			cj("#rel_contact").val( "" );
@@ -541,15 +540,13 @@ function addRole() {
 		title: "Add Role",
 		modal: true,
 		bgiframe: true, 
+		close: function(event, ui) { cj("#role_contact").unautocomplete( ); },
 		overlay: { 
 			opacity: 0.5, 
 			background: "black" 
 		},
 
-        beforeclose: function(event, ui) {
-            cj(this).dialog("destroy");
-        },
-
+        
 		open:function() {
 			/* set defaults if editing */
 			cj("#role_contact").val( "" );
@@ -595,9 +592,7 @@ function addRole() {
 				
                /* send synchronous request so that disabling any actions for slow servers*/
 				var postUrl = {/literal}"{crmURL p='civicrm/ajax/relation' h=0 }"{literal}; 
-				cj(this).dialog("close"); 
-				cj(this).dialog("destroy");
-                		var data = 'rel_contact='+ v1 + '&rel_type='+ v2 + '&contact_id='+sourceContact + '&rel_id='+ relID + '&case_id=' + caseID + "&key={/literal}{crmKey name='civicrm/ajax/relation'}{literal}";
+				var data = 'rel_contact='+ v1 + '&rel_type='+ v2 + '&contact_id='+sourceContact + '&rel_id='+ relID + '&case_id=' + caseID + "&key={/literal}{crmKey name='civicrm/ajax/relation'}{literal}";
                 		cj.ajax({ type     : "POST", 
 					  url      : postUrl, 
 					  data     : data, 
@@ -617,6 +612,8 @@ function addRole() {
 							}
 					  	    }
 				       });
+				       cj(this).dialog("close"); 
+				       cj(this).dialog("destroy");
  			},
 
 			"Cancel": function() { 

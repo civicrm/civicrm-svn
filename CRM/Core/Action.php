@@ -275,7 +275,6 @@ class CRM_Core_Action {
         $result = '';
         $mainLinks  = $url;
         $extraLinksName = strtolower( $extraULName );
-        $extraULName    = ts( $extraULName );
         if ( $enclosedAllInSingleUL ) {
             $allLinks = '';
             CRM_Utils_String::append( $allLinks, '</li><li>', $mainLinks );

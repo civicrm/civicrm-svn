@@ -86,6 +86,10 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       // Log in using webtestLogin() method
       $this->webtestLogin();
 
+      // We need a payment processor
+      $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
+      $this->webtestAddPaymentProcessor($processorName);
+      
       // Go directly to the URL of the screen that you will be testing (New Event).
       $this->open($this->sboxPath . "civicrm/event/add&reset=1&action=add");
 
@@ -99,7 +103,7 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       $streetAddress = "100 Main Street";
       $this->_testAddLocation( $streetAddress );
       
-      $this->_testAddFees();
+      $this->_testAddFees( false, false, $processorName );
             
       // intro text for registration page
       $registerIntro = "Fill in all the fields below and click Continue.";

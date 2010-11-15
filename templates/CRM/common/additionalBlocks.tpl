@@ -126,6 +126,7 @@ function removeBlock( blockName, blockId ) {
     if ( ( blockName == 'Address' ) && element == 1 ) {
       return clearFirstBlock(blockName , blockId);
     }
+
     if ( cj( "#"+ blockName + "_" + blockId + "_IsPrimary").attr('checked') ) {
        	var primaryBlockId = 1;
         // consider next block as a primary,
@@ -146,18 +147,19 @@ function removeBlock( blockName, blockId ) {
     }
     
     //remove the spacer for address block only.
-    if( blockName == 'Address' && cj( "#"+ blockName + "_Block_" + blockId ).prev().attr('class') == 'spacer' ){
+    if ( blockName == 'Address' && cj( "#"+ blockName + "_Block_" + blockId ).prev().attr('class') == 'spacer' ){
         cj( "#"+ blockName + "_Block_" + blockId ).prev().remove();
     }
 
     //unset block from html
-    cj( "#"+ blockName + "_Block_" + blockId ).remove();
+    cj( "#"+ blockName + "_Block_" + blockId ).empty().remove();
 
     //show the link 'add address' to last element of Address Block
     if ( blockName == 'Address' ) {
-        var lastBlockId = getAddressBlock('last');
-        if ( lastBlockId[0] ) {
-            cj( '#addMoreAddress' + lastBlockId[0] ).show();
+        var lastAddressBlock = cj('div[id^=Address_Block_]').last().attr('id');
+        var lastBlockId = lastAddressBlock.split( '_' );
+        if ( lastBlockId[2] ) {
+            cj( '#addMoreAddress' + lastBlockId[2] ).show();
         } 
     }
 }

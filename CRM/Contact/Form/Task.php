@@ -197,9 +197,19 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
                 }
                 $dao->free( );
             } else {
+                // filter duplicates here
+                // CRM-7058
+                // might be better to do this in the query, but that logic is a bit complex
+                // and it decides when to use distinct based on input criteria, which needs
+                // to be fixed and optimized.
+                $alreadySeen = array( );
                 while ( $dao->fetch( ) ) {
-                    $form->_contactIds[] = $dao->contact_id;
+                    if ( ! array_key_exists( $dao->contact_id, $alreadySeen ) ) {
+                        $form->_contactIds[] = $dao->contact_id;
+                        $alreadySeen[$dao->contact_id] = 1;
+                    }
                 }
+                unset( $alreadySeen );
                 $dao->free( );
             }
         } else if ( CRM_Utils_Array::value( 'radio_ts' , $values ) == 'ts_sel') {

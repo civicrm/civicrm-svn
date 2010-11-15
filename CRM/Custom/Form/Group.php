@@ -228,7 +228,8 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
               
         $sel1 = array( "" => "- select -" ) + CRM_Core_SelectValues::customGroupExtends( );
         $sel2 = array( );
-        $activityType    = CRM_Core_PseudoConstant::activityType( false, true );
+        $activityType = CRM_Core_PseudoConstant::activityType( false, true, false, 'label', true );
+        
         $eventType       = CRM_Core_OptionGroup::values( 'event_type' );
         $membershipType  = CRM_Member_BAO_MembershipType::getMembershipTypes( false );
         $participantRole = CRM_Core_OptionGroup::values( 'participant_role' );

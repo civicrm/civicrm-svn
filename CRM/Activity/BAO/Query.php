@@ -196,11 +196,17 @@ class CRM_Activity_BAO_Query
             $query->_qill [$grouping][]  = ts('Activity Type') . ' ' . implode( ' ' . ts('or') . ' ', $clause );
             
             break;
+
         case 'activity_survey_id':
-            if (!$value)
-              break;
+            if ( ! $value ) {
+                break;
+            }
+            $value = CRM_Utils_Type::escape( $value, 'Integer' );
             $query->_where[$grouping][] = " source_record_id = $value";
-            $query->_qill[$grouping][]  = ts( 'Survey' ) . " is '$value'";
+            $query->_qill[$grouping][] = 
+                ts( 'Survey' ) . 
+                ' - ' . 
+                CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', $value, 'title' );
             break;
             
         case 'activity_role':
@@ -387,7 +393,7 @@ class CRM_Activity_BAO_Query
      */  
     static function buildSearchForm( &$form ) 
     {
-        $activityOptions = CRM_Core_PseudoConstant::activityType( true, true );
+        $activityOptions = CRM_Core_PseudoConstant::activityType( true, true, false, 'label', true );
         asort( $activityOptions );
         foreach ( $activityOptions as $activityID => $activity ) {
             $form->_activityElement =& $form->addElement( 'checkbox', "activity_type_id[$activityID]", null, $activity,array('onClick' => 'showCustomData( this.id );'));

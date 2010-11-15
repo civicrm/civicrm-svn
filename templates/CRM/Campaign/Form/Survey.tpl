@@ -74,33 +74,31 @@
        <tr class="crm-campaign-survey-form-block-instructions">
            <td class="label">{$form.instructions.label}</td>
            <td class="view-value">{$form.instructions.html}
-	   <div class="description">{ts}Instruction for volunteers.{/ts}</div></td>
-       </tr>
-       <tr class="crm-campaign-survey-form-block-release_frequency">
-           <td class="label">{$form.release_frequency.label}</td>
-           <td class="view-value">{$form.release_frequency.html}
- 	   <div class="description">{ts}Release frequency interval for this survey (in days).{/ts}</div> 
-           </td>
-       </tr>
-       <tr class="crm-campaign-survey-form-block-max_number_of_contacts">
-           <td class="label">{$form.max_number_of_contacts.label}</td>
-           <td class="view-value">{$form.max_number_of_contacts.html}
-	   <div class="description">{ts}Maximum number of contacts can have for a survey.{/ts}</div></td>
        </tr>
        <tr class="crm-campaign-survey-form-block-default_number_of_contacts">
            <td class="label">{$form.default_number_of_contacts.label}</td>
            <td class="view-value">{$form.default_number_of_contacts.html}
-	   <div class="description">{ts}Default number of Contacts for survey.{/ts}</div></td>
+	       <div class="description">{ts}Maximum number of contacts that can be reserved for an interviewer at one time.{/ts}</div></td>
        </tr>	
+       <tr class="crm-campaign-survey-form-block-max_number_of_contacts">
+           <td class="label">{$form.max_number_of_contacts.label}</td>
+           <td class="view-value">{$form.max_number_of_contacts.html}
+	       <div class="description">{ts}Maximum total number of contacts that can be in a reserved state for an interviewer.{/ts}</div></td>
+       </tr>
+       <tr class="crm-campaign-survey-form-block-release_frequency">
+           <td class="label">{$form.release_frequency.label}</td>
+           <td class="view-value">{$form.release_frequency.html}
+ 	       <div class="description">{ts}Reserved respondents are released if they haven't been surveyed within this number of days. The Respondent Processor script must be run periodically to release respondents.{/ts} {docURL page="Command-line Script Configuration"}</div> </td>
+       </tr>
        <tr class="crm-campaign-survey-form-block-is_active">
            <td class="label">{$form.is_active.label}</td>
            <td class="view-value">{$form.is_active.html}
-	   <div class="description">{ts}Is this survey Active?.{/ts}</div></td>
+	   <div class="description">{ts}Is this survey active?{/ts}</div></td>
        </tr>
        <tr class="crm-campaign-survey-form-block-is_default">
            <td class="label">{$form.is_default.label}</td>
            <td class="view-value">{$form.is_default.html}
-	   <div class="description">{ts}Is this survey default?.{/ts}</div></td>
+	       <div class="description">{ts}Is this the default survey?{/ts}</div></td>
        </tr>
       </table>
 {/if}

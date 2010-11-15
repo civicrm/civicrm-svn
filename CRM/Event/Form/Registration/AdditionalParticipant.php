@@ -77,7 +77,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
         $this->_params = array( );
         $this->_params = $this->get( 'params' );
         
-        $participantTot = $this->_params[0]['additional_participants']; 
+        $participantTot = $this->_params[0]['additional_participants']+1;
         $skipCount = count( array_keys( $this->_params, "skip" ) );
         if( $skipCount ) {
             $this->assign('skipCount', $skipCount );
@@ -222,9 +222,14 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
         require_once "CRM/Price/BAO/Set.php";
         $pricesetFieldsCount = CRM_Price_BAO_Set::getPricesetCount( $this->_priceSetId );
         
+        if ( $this->_lastParticipant || $pricesetFieldsCount ) {
+            //get the participant total.
+            $processedCnt = self::getParticipantCount( $this, $this->_params, true );
+        }
+
         if ( !$this->_allowConfirmation && 
              CRM_Utils_Array::value( 'bypass_payment', $this->_params[0] ) &&
-             ($pricesetFieldsCount || $this->_lastParticipant) ) { 
+             $this->_lastParticipant ) { 
             
             //need to check current participant present in params.
             $currentParticipantNum = substr( $this->_name, 12 );
@@ -236,17 +241,14 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
             
             //get the event spaces.
             $spaces = $this->_availableRegistrations; 
-            
-            //get the participant total.
-            $processedCnt = self::getParticipantCount( $this, $this->_params, true );
-            
+                       
             $currentPageMaxCount = 1;
             if ( $pricesetFieldsCount ) $currentPageMaxCount = $pricesetFieldsCount;
             
             //we might did reset allow waiting in case of dynamic calculation 
             if ( CRM_Utils_Array::value( 'bypass_payment', $this->_params[0] ) &&
                  is_numeric( $spaces ) && 
-                 CRM_Utils_Array::value( 'additional_participants', $this->_params[0] ) > $spaces ) {
+                 $processedCnt > $spaces ) {
                 $this->_allowWaitlist = true;
                 $this->set( 'allowWaitlist', true );
             }
@@ -288,13 +290,18 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
                     $includeSkipButton = false;
                 }
             }
+        }
+        
+        // for priceset with count
+        if ( $pricesetFieldsCount && 
+             CRM_Utils_Array::value( 'has_waitlist', $this->_values['event'] ) &&
+             !$this->_allowConfirmation ) {
+
+            if ( $this->_isEventFull ) {
+                $statusMessage = ts('This event is currently full. You are registering in a waiting list. You will be notified if spaces become available.');
+            } else if ( $this->_allowWaitlist ||
+                        (!$this->_allowWaitlist && ($processedCnt + $pricesetFieldsCount) > $this->_availableRegistrations) ) {
             
-            //do check again.
-            if ( $pricesetFieldsCount ) {
-                if ( $this->_isEventFull ) {
-                    $statusMessage = ts('This event is currently full. You are registering in a waiting list. You will be notified if spaces become available.');
-                } 
-                
                 $waitingMsg   = ts('It looks like you are now registering a group participants which are extending the event availability. All participant will be listed in the waiting list and you will be notified if spaces become available.');
                 $confirmedMsg = ts('It look like that total participant recoreded will fit in the event availability (you will not be wait listed).');
                 if ( $this->_requireApproval ) {
@@ -302,11 +309,9 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
                     $confirmedMsg = ts('It look like that total participant recoreded will fit in the event availability (you will not be wait listed). Registration for this event requires approval. You will receive an email once your registration has been reviewed.');
                 }
                 
-                // FIX ME: modify status messages && handle for current skip
                 $this->assign( 'waitingMsg', $waitingMsg );
                 $this->assign( 'confirmedMsg', $confirmedMsg );
                 
-                $this->addElement( 'hidden', 'is_confirmed', null, array( 'id' => 'is_confirmed') );
                 $this->assign( 'availableRegistrations', $this->_availableRegistrations );
                 $this->assign( 'currentParticipantCount',$processedCnt );
                 $this->assign( 'allowGroupOnWaitlist', true );
@@ -322,7 +327,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
                 $this->assign( 'paymentBypassed', $paymentBypassed );
             }
         }
-        
+
         $this->assign( 'statusMessage', $statusMessage );
         
         $buttons = array( array ( 'type'      => 'back',
@@ -464,7 +469,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
                     } 
                     //check for availability of registrations.
                     if ( !$self->_allowConfirmation &&
-                         !CRM_Utils_Array::value( 'bypass_payment', $params[0] ) &&
+                         !CRM_Utils_Array::value( 'has_waitlist', $self->_values['event'] ) &&
                          $totalParticipants > $self->_availableRegistrations ) {
                         $errors['_qf_default'] = ts('It looks like event has only %2 seats available and you are trying to register %1 participants, so could you please select price options accordingly.', array( 1 =>$totalParticipants,  2 => $self->_availableRegistrations ) );
                     }
@@ -519,7 +524,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
             //get the total count.
             $previousCount = self::getParticipantCount( $this, $this->_params, true );
             $totalParticipants = $currentCount + $previousCount;
-            if ( CRM_Utils_Array::value( 'bypass_payment',  $this->_params[0] ) &&
+            if ( CRM_Utils_Array::value( 'has_waitlist', $this->_values['event'] ) &&
                  $totalParticipants > $this->_availableRegistrations ) {
                 $this->_allowWaitlist = true;
             }

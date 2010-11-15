@@ -28,9 +28,9 @@
 
 /**
  *
- * @package CRM
+ * @package CiviCRM_Hook
  * @copyright CiviCRM LLC (c) 2004-2010
- * $Id$
+ * $Id: $
  *
  */
 

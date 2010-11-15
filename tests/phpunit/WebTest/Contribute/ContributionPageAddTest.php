@@ -38,7 +38,7 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         // open browser, login, go to the New Contribution Page page
         $this->open($this->sboxPath);
         $this->webtestLogin();
-        $this->open($this->sboxPath . 'civicrm/admin/contribute?action=add&reset=1');
+        $this->open($this->sboxPath . 'civicrm/admin/contribute?action=add&reset=1');        
         $this->waitForPageToLoad();
 
         // fill in step 1 (Title and Settings)
@@ -126,8 +126,8 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
 
         // fill in step 6 (Include Profiles)
         $this->select('custom_pre_id',  'value=1');
-        $this->select('custom_post_id', 'value=2');
-
+        $this->select('custom_post_id', 'value=7');
+      
         // go to step 7
         $this->click('_qf_Custom_next');
         $this->waitForPageToLoad();
@@ -149,7 +149,6 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         $this->type('url_logo',     "URL to Logo Image $hash");
         $this->type('button_title', "Button Title $hash");
         $this->type('about',        "About $hash");
-        $this->type('url_homepage', "URL to Home Page $hash");
 
         // go to step 9
         $this->click('_qf_Widget_next');
@@ -166,6 +165,9 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         // submit new contribution page
         $this->click('_qf_PCP_next');
         $this->waitForPageToLoad();
+
+        $this->open($this->sboxPath . 'civicrm/admin/contribute&reset=1');
+        $this->waitForPageToLoad();        
 
         // search for the new contrib page and go to its test version
         $this->type('title', "Title $hash");
@@ -185,10 +187,10 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
             "Honoree Section Title $hash",
             "Honoree Introductory Message $hash",
             "Name and Address",
-            "Supporter Profile",
+            "Summary Overlay"
         );
         foreach ($texts as $text) {
-            $this->verifyTextPresent($text);
+            $this->assertTrue( $this->isTextPresent($text), 'Missing text: ' . $text );
         }
     }
 }

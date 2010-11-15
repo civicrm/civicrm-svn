@@ -39,11 +39,15 @@
 <div class="form-item">
 <fieldset>
 
+{if $surveyValues.instructions}
+   <div id='survey_instructions' class='help'>{ts 1=$surveyValues.instructions}%1{/ts}</div>
+{/if}
+
 <div id='help'>
     {if $votingTab}
-    {ts}Click <strong>vote</strong> button to update values for each respondent as needed.{/ts}
+    {ts}Click <strong>record response</strong> button to update values for each respondent as needed.{/ts}
     {else}
-    {ts}Click <strong>vote</strong> button to update values for each respondent as needed. <br />Click <strong>Release Respondents >></strong> button below to release any respondents for whon you haven't recorded a response. <br />Click <strong>Reserve More Respondents >></strong> button if you need to get more respondents to interview.{/ts}
+    {ts}Click <strong>record response</strong> button to update values for each respondent as needed. <br />Click <strong>Release Respondents >></strong> button below to release any respondents for whon you haven't recorded a response. <br />Click <strong>Reserve More Respondents >></strong> button if you need to get more respondents to interview.{/ts}
     {/if}
 </div>
 
@@ -51,7 +55,7 @@
     <thead>
        <tr class="columnheader">
              {foreach from=$readOnlyFields item=fTitle key=fName}
-	        <th class="contact_details">{$fTitle}</th>
+	        <th {if $fName neq 'contact_type'} class="contact_details"{/if}>{$fTitle}</th>
 	     {/foreach}
 	    
 	     {* display headers for profile survey fields *}
@@ -71,7 +75,7 @@
 	{foreach from=$componentIds item=voterId}
 	<tr id="row_{$voterId}" class="{cycle values="odd-row,even-row"}">
 	    {foreach from=$readOnlyFields item=fTitle key=fName}
-	       <td class='name'>{$voterDetails.$voterId.$fName}</td>
+	       <td {if $fName neq 'contact_type'} class="name"{/if}>{$voterDetails.$voterId.$fName}</td>
 	    {/foreach}
 
 	    {* here build the survey profile fields *}
@@ -179,6 +183,16 @@
 	       data[cj(this).attr( 'id' )] = '';
 	     }
            }
+	   
+        });
+	
+	var radioFields = 'field['+ voterId +'][custom_';		
+	cj( '[name^="'+ radioFields +'"]' ).each( function( ) {
+	   if ( cj(this).attr( 'type' ) == 'radio' ) {
+               if ( cj(this).attr('checked') == true ) {
+                  data[cj(this).attr( 'name' )] = cj(this).val();
+               }
+           }
         });
 	
 	var surveyActivityIds = {/literal}{$surveyActivityIds}{literal};
@@ -191,7 +205,7 @@
 	data['activity_id']      = activityId;
 	data['result']           = cj( '#field_' + voterId + '_result' ).val( ); 
 	data['note']             = cj( '#field_' + voterId + '_note' ).val( );
-	data['surveyTitle']      = {/literal}'{$surveyValues.title}'{literal};
+	data['surveyTitle']      = {/literal}'{$surveyValues.title|escape:javascript}'{literal};
 
 	var dataUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Campaign_Page_AJAX&fnName=registerInterview' }"{literal}	          
 	

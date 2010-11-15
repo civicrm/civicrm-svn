@@ -271,7 +271,12 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
             require_once 'CRM/Event/BAO/Participant.php';
             //check for additional participants.
             if ( $this->_allowConfirmation && $this->_values['event']['is_multiple_registrations'] ) {
-                $this->_additionalParticipantIds = CRM_Event_BAO_Participant::getAdditionalParticipantIds($this->_participantId);
+                $additionalParticipantIds = CRM_Event_BAO_Participant::getAdditionalParticipantIds($this->_participantId);
+                $cnt = 1;
+                foreach ( $additionalParticipantIds as $additionalParticipantId ) {
+                    $this->_additionalParticipantIds[$cnt] = $additionalParticipantId;
+                    $cnt++; 
+                }
                 $this->set( 'additionalParticipantIds', $this->_additionalParticipantIds );
             }
             
@@ -914,7 +919,7 @@ WHERE  v.option_group_id = g.id
             $params = self::formatPriceSetParams( $form, $params );
             $params = array( $params );
         }
-                
+
         foreach ( $params as $key => $values ) {
             if ( !is_numeric( $key ) ||
                  $values == 'skip' ||
@@ -976,7 +981,8 @@ WHERE  v.option_group_id = g.id
                 }
                 $field = $priceSetDetails['fields'][$fieldId];
                 if ( $field['html_type'] == 'Text'  ) {
-                    $value = array( $fieldId => $value );
+                    $fieldOption = current($field['options']);
+                    $value = array( $fieldOption['id'] => $value );
                 } else {
                     $value = array( $value => true );
                 }

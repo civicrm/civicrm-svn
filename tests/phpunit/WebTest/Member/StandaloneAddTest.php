@@ -111,7 +111,7 @@ class WebTest_Member_StandaloneAddTest extends CiviSeleniumTestCase {
       // fill in Status Override?
       $this->click("is_override", "value=1");
       $this->waitForElementPresent("status_id");
-      $this->select("status_id", "value=5");
+      $this->select("status_id", "value=3");
       
       // fill in Record Membership Payment?
       $this->click("record_contribution", "value=1");
@@ -141,16 +141,21 @@ class WebTest_Member_StandaloneAddTest extends CiviSeleniumTestCase {
       // page was loaded
       $this->waitForTextPresent( "Membership StandaloneAddTest Webtest" );
       
-      // click through to the membership view screen
-      $this->click("xpath=//x:tr[td/text()='Membership StandaloneAddTest Webtest']/x:td/x:span/x:a[text()='View']");
+      // verify if Membership is created
+      $this->waitForElementPresent( "xpath=//div[@id='Memberships']//table//tbody/tr[1]/td[6]/span/a[text()='View']" );
+      
+      //click through to the Membership view screen
+      $this->click( "xpath=//div[@id='Memberships']//table//tbody/tr[1]/td[6]/span/a[text()='View']" );
       $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
       
-      $this->webtestVerifyTabularData( array(
-                                             'Membership Type'    => 'Student',
-                                             'Status'             => 'Pending',
-                                             'Source'             => 'Membership StandaloneAddTest Webtest',
-                                             )
-                                       );
+      $expected = array(
+                        2 => 'Student', 
+                        3 => 'Grace',
+                        4 => 'Membership StandaloneAddTest Webtest',
+                        );
+      foreach ( $expected as $label => $value ) {
+          $this->verifyText("xpath=id('MembershipView')/div[2]/div/table/tbody/tr[$label]/td[2]", preg_quote($value));
+      }
   }
   
 

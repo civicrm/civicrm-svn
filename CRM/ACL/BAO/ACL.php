@@ -703,16 +703,13 @@ ORDER BY a.object_id
             // do an or of all the where clauses u see
             $ids = array( );
             while ( $dao->fetch( ) ) {
-                if ( ! $dao->object_id ) {
-                    $ids = array( );
-                    $whereClause = ' ( 1 ) ';
-                    break;
-                }
-
                 // make sure operation matches the type TODO
-                if ( $type == CRM_ACL_API::VIEW ||
-                     ( $type == CRM_ACL_API::EDIT &&
-                       $dao->operation == 'Edit' || $dao->operation == 'All' ) ) {
+                if ( self::matchType( $type, $dao->operation ) ) {
+                    if ( ! $dao->object_id ) {
+                        $ids = array( );
+                        $whereClause = ' ( 1 ) ';
+                        break;
+                    } 
                     $ids[] = $dao->object_id;
                 }
             }

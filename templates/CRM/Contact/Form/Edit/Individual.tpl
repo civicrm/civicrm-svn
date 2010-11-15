@@ -108,7 +108,7 @@ var checkSimilar =  {$checkSimilar};
     
     <tr>
         <td colspan="2">
-            {$form.current_employer.label}&nbsp;&nbsp;<br />
+            {$form.current_employer.label}&nbsp;{help id="id-current-employer" file="CRM/Contact/Form/Contact.hlp"}<br />
             {$form.current_employer.html|crmReplace:class:twenty}
             <div id="employer_address" style="display:none;"></div>
         </td>

@@ -1031,7 +1031,7 @@ WHERE  civicrm_participant.id = {$participantId}
         }
         
         $query = "
-  SELECT  participant.id {$feeLevelClause}
+  SELECT  participant.id
     FROM  civicrm_participant participant
    WHERE  {$where}"; 
         

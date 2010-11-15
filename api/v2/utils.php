@@ -632,7 +632,7 @@ function _civicrm_custom_format_params( &$params, &$values, $extends, $entityId 
  * @return bool true if success false otherwise
  * @access public
  */
-function _civicrm_check_required_fields( &$params, $daoName, $thowException = false)
+function _civicrm_check_required_fields( &$params, $daoName, $throwException = false)
 {
     if ( isset($params['extends'] ) ) {
         if ( ( $params['extends'] == 'Activity' || 

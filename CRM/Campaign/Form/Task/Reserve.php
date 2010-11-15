@@ -132,15 +132,15 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
         $maxVoters = CRM_Utils_Array::value('max_number_of_contacts', $this->_surveyDetails );
         if ( $maxVoters ) {
             if ( $maxVoters <= $this->_numVoters ) {
-                $errorMsg = ts( 'Reservation is full for this survey.' );
+                $errorMsg = ts( 'The maximum number of contacts is already reserved for this interviewer.' );
             } else if ( count( $this->_contactIds ) > ( $maxVoters - $this->_numVoters ) ) {
-                $errorMsg = ts( 'You can select maximum %1 contact(s) for reservation.', 
+                $errorMsg = ts( 'You can reserve a maximum of %1 contact(s) at a time for this survey.', 
                                 array( 1 => $maxVoters - $this->_numVoters ) );
             }
         }
         $defaultNum = CRM_Utils_Array::value( 'default_number_of_contacts', $this->_surveyDetails );
         if ( !$errorMsg && $defaultNum && (count( $this->_contactIds ) > $defaultNum) ) {
-            $errorMsg = ts( 'You can select maximum %1 contact(s) at a time for reservation.', 
+            $errorMsg = ts( 'You can reserve a maximum of %1 contact(s) at a time for this survey.', 
                             array( 1 => $defaultNum ) );
         }
         if ( $errorMsg ) CRM_Core_Error::statusBounce( $errorMsg );
@@ -215,7 +215,8 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
                 continue;
             }
             $subject =  ts( '%1', array( 1 =>  $this->_surveyDetails['title'] ) ). ' - ' . ts( 'Respondent Reservation' );
-            $activityParams = array( 'source_contact_id'   => $this->_interviewerId,
+            $session =& CRM_Core_Session::singleton( );
+            $activityParams = array( 'source_contact_id'   => $session->get( 'userID' ),
                                      'assignee_contact_id' => array( $this->_interviewerId ),
                                      'target_contact_id'   => array( $cid ),
                                      'source_record_id'    => $this->_surveyId,

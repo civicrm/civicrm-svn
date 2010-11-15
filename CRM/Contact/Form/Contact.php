@@ -877,10 +877,6 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         }
 
         if ( CRM_Utils_Array::value( 'contact_id', $params ) && ( $this->_action & CRM_Core_Action::UPDATE ) ) {
-            // cleanup unwanted location blocks
-            require_once 'CRM/Core/BAO/Location.php';
-            CRM_Core_BAO_Location::cleanupContactLocations( $params );
-
             // figure out which all groups are intended to be removed
             if ( ! empty($params['group']) ) {
                 $contactGroupList =& CRM_Contact_BAO_GroupContact::getContactGroup( $params['contact_id'], 'Added' );

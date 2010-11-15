@@ -444,9 +444,11 @@ class CRM_Core_PseudoConstant
     public static function &activityType( $all = true, 
                                           $includeCaseActivities = false, 
                                           $reset = false,
-                                          $returnColumn = 'label' )
+                                          $returnColumn = 'label',
+                                          $includeCampaignActivities = false )
     {
-        $index        = (int) $all . '_' . $returnColumn . '_' . (int) $includeCaseActivities;
+        $index = (int) $all . '_' . $returnColumn . '_' . (int) $includeCaseActivities;
+        $index .= '_' . (int)$includeCampaignActivities;
         
         if ( ! array_key_exists( $index, self::$activityType ) || $reset ) {
             require_once 'CRM/Core/OptionGroup.php';
@@ -465,6 +467,10 @@ class CRM_Core_PseudoConstant
             foreach ( $compInfo as $compName => $compObj ) {
                 if ( $compName == 'CiviCase' ) {
                     if ( $includeCaseActivities ) {
+                        $componentIds[] = $compObj->componentID;
+                    }
+                } else if ( $compName == 'CiviCampaign' ) {
+                    if ( $includeCampaignActivities ) {
                         $componentIds[] = $compObj->componentID;
                     }
                 } else { 

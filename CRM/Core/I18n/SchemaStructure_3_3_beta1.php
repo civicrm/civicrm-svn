@@ -102,6 +102,10 @@ class CRM_Core_I18n_SchemaStructure_3_3_beta1
                     'help_pre' => 'text',
                     'help_post' => 'text',
                 ) ,
+                'civicrm_batch' => array(
+                    'label' => 'varchar(64)',
+                    'description' => 'text',
+                ) ,
                 'civicrm_custom_group' => array(
                     'title' => 'varchar(64)',
                     'help_pre' => 'text',

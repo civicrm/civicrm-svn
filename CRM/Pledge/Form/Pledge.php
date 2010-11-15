@@ -255,7 +255,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
             require_once 'CRM/Contact/BAO/Contact.php';
             $honorDefault = array();
             $idParams = array( 'contact_id' => $this->_honorID );
-            CRM_Contact_BAO_Contact::retrieve( $idParams, $honorDefault, $ids );
+            CRM_Contact_BAO_Contact::retrieve( $idParams, $honorDefault );
             $honorType = CRM_Core_PseudoConstant::honor( );   
             $defaults["honor_prefix_id"]  = $honorDefault["prefix_id"];
             $defaults["honor_first_name"] = CRM_Utils_Array::value( "first_name", $honorDefault );
@@ -372,7 +372,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         // Fix frequency unit display for use with frequency_interval
         $freqUnitsDisplay = array( );
         foreach ($this->_freqUnits as $val => $label) {
-            $freqUnitsDisplay[$val] = ts( '%1(s)', array( 1 => $val ) );
+            $freqUnitsDisplay[$val] = ts('%1(s)', array(1 => $label));
         }
         $element =& $this->add( 'select', 'frequency_unit', 
                                 ts( 'Frequency' ), 

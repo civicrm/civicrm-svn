@@ -42,6 +42,8 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
     protected $_customGroupExtends = array( 'Activity' );
 
     function __construct( ) {
+        $config = CRM_Core_Config::singleton( );
+        $campaignEnabled = in_array( "CiviCampaign", $config->enableComponents );
         $this->_columns = array(  
                                 'civicrm_contact'      =>
                                 array( 'dao'     => 'CRM_Contact_DAO_Contact',
@@ -126,12 +128,13 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                                                       ),
                                                'activity_type_id'  => 
                                                array( 'title'      => ts( 'Activity Type' ),
-                                                      'default'    => true ,
+                                                      'default'    => true,
                                                       'type'       =>  CRM_Utils_Type::T_STRING 
                                                       ),
                                                'subject'           => 
                                                array( 'title'      => ts('Subject'),
-                                                      'default'    => true ),
+                                                      'default'    => true,
+                                                      ),
                                                'source_contact_id' => 
                                                array( 'no_display' => true ,
                                                       'required'   => true , ),
@@ -148,11 +151,12 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                                                      'operatorType' => CRM_Report_Form::OP_DATE),
                                               'subject'             =>
                                               array( 'title'        => ts( 'Activity Subject' ),
-                                                     'operator'     => 'like' ),
+                                                     'operator'     => 'like',
+                                                     'type'       =>  CRM_Utils_Type::T_STRING  ),
                                               'activity_type_id'    => 
                                               array( 'title'        => ts( 'Activity Type' ),
                                                      'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-                                                     'options'      => CRM_Core_PseudoConstant::activityType(), ), 
+                                                     'options'      => CRM_Core_PseudoConstant::activityType( true, false, false, 'label', true ), ), 
                                               'status_id'           => 
                                               array( 'title'        => ts( 'Activity Status' ),
                                                      'operatorType' => CRM_Report_Form::OP_MULTISELECT,
@@ -204,6 +208,15 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
  
                                   );
         
+        if ( $campaignEnabled ) {
+            // Add display column and filter for Survey Results if CiviCampaign is enabled
+            $this->_columns['civicrm_activity']['fields']['result']   = array('title' => 'Survey Result',
+                                                                              'default' => 'false');
+            $this->_columns['civicrm_activity']['filters']['result']  = array( 'title'        => ts( 'Survey Result' ),
+                                                                               'operator'     => 'like',
+                                                                               'type'       =>  CRM_Utils_Type::T_STRING  );
+
+        }
         parent::__construct( );
     }
 
@@ -398,7 +411,7 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
         // custom code to alter rows
         
         $entryFound     = false;
-        $activityType   = CRM_Core_PseudoConstant::activityType( true, true );
+        $activityType   = CRM_Core_PseudoConstant::activityType( true, true, false, 'label', true );
         $activityStatus = CRM_Core_PseudoConstant::activityStatus();
         $viewLinks      = false;
 

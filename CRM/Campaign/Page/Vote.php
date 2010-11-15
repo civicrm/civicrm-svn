@@ -49,6 +49,14 @@ class CRM_Campaign_Page_Vote extends CRM_Core_Page
         $controller = new CRM_Core_Controller_Simple( 'CRM_Campaign_Form_Gotv', ts( 'Reserve Respondents' ) );
         $controller->set( 'votingTab',    true );
         $controller->set( 'subVotingTab', 'searchANDReserve' );
+        
+        //make sure to load crmaccordions once.
+        $doNotReloadCRMAccordion = $this->get( 'doNotReloadCRMAccordion' );
+        if ( !$doNotReloadCRMAccordion && $this->get( 'type' ) )  {
+            $this->set( 'doNotReloadCRMAccordion', true );
+        }
+        $controller->set( 'doNotReloadCRMAccordion', $doNotReloadCRMAccordion );
+        
         $controller->process( );
         return $controller->run( );
     }

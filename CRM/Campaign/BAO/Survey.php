@@ -177,9 +177,9 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
         require_once 'CRM/Core/OptionGroup.php';
         $activityTypes = array( );
 
-        $campaingCompId = CRM_Core_Component::getComponentID('CiviCampaign');
-        if ( $campaingCompId ) {
-            $activityTypes = CRM_Core_OptionGroup::values( 'activity_type', false, false, false, " AND v.component_id={$campaingCompId}" , 'name' );
+        $campaignCompId = CRM_Core_Component::getComponentID('CiviCampaign');
+        if ( $campaignCompId ) {
+            $activityTypes = CRM_Core_OptionGroup::values( 'activity_type', false, false, false, " AND v.component_id={$campaignCompId}" , 'name' );
         }
         return $activityTypes;
     }
@@ -276,7 +276,9 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
         if ( empty( $returnProperties ) ) {
             require_once 'CRM/Core/BAO/Preferences.php';
             $autocompleteContactSearch = CRM_Core_BAO_Preferences::valueOptions( 'contact_autocomplete_options' );
-            $returnProperties = array_fill_keys( array_merge( array( 'sort_name'), 
+            $returnProperties = array_fill_keys( array_merge( array( 'contact_type',
+                                                                     'contact_sub_type',
+                                                                     'sort_name'), 
                                                               array_keys( $autocompleteContactSearch ) ), 1 );
         }
         
@@ -285,8 +287,10 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
             $value = ( in_array( $property, array( 'city', 'street_address' ) ) ) ? 'address' : $property;
             switch ( $property ) {
             case 'sort_name' :
+            case 'contact_type' :
+            case 'contact_sub_type' :
                 $select[] = "$property as $property";
-                $from[$value] = 'civicrm_contact contact';
+                $from['contact'] = 'civicrm_contact contact';
                 break;
                 
             case 'email' :
@@ -307,7 +311,7 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
                 break;
             }
         }
-        
+                
         //finally retrieve contact details.
         if ( !empty( $select ) && !empty( $from ) ) {
             $fromClause   = implode( ' ' , $from   );
@@ -321,11 +325,17 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
 Group By  contact.id";
             
             $contact = CRM_Core_DAO::executeQuery( $query );
+            require_once 'CRM/Contact/BAO/Contact/Utils.php';
             while ( $contact->fetch( ) ) {
                 $voterDetails[$contact->contactId]['contact_id'] = $contact->contactId;
                 foreach ( $returnProperties as $property => $ignore ) {
                     $voterDetails[$contact->contactId][$property] = $contact->$property;
                 }
+                $image = CRM_Contact_BAO_Contact_Utils::getImage( $contact->contact_sub_type ? 
+                                                                  $contact->contact_sub_type : $contact->contact_type,
+                                                                  false,
+                                                                  $contact->contactId );
+                $voterDetails[$contact->contactId]['contact_type'] = $image;
             }
             $contact->free( );
         }
@@ -419,7 +429,9 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
         $query = "
     SELECT  activity.id, activity.status_id, 
             activityTarget.target_contact_id as voter_id,
-            activityAssignment.assignee_contact_id as interviewer_id
+            activityAssignment.assignee_contact_id as interviewer_id,
+            activity.result as result,
+            activity.activity_date_time as activity_date_time
       FROM  civicrm_activity activity
 INNER JOIN  civicrm_activity_target activityTarget ON ( activityTarget.activity_id = activity.id )
 INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignment.activity_id = activity.id )
@@ -435,14 +447,16 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
             $activities[$activity->id] = array( 'id'             => $activity->id,
                                                 'voter_id'       => $activity->voter_id,
                                                 'status_id'      => $activity->status_id,
-                                                'interviewer_id' => $activity->interviewer_id );
+                                                'interviewer_id' => $activity->interviewer_id,
+                                                'result'         => $activity->result,
+                                                'activity_date_time' => $activity->activity_date_time );
         }
         
         return $activities;
     }
     
     /**
-     * This function retrieve survey voter ids.
+     * This function retrieve survey voter information.
      *
      * @param int    $surveyId       survey id.
      * @param int    $interviewerId  interviewer id.
@@ -450,7 +464,7 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
      * @return survey related contact ids. 
      * @static
      */
-    static function getSurveyVoterIds( $surveyId, $interviewerId = null, $statusIds = array( ) ) 
+    static function getSurveyVoterInfo( $surveyId, $interviewerId = null, $statusIds = array( ) ) 
     {
         $voterIds = array( );
         if ( !$surveyId ) return $voterIds;
@@ -465,7 +479,7 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
         if ( !isset( $contactIds[$cacheKey] ) ) {
             $activities = self::getSurveyActivities( $surveyId, $interviewerId, $statusIds );
             foreach ( $activities as $values ) {
-                $voterIds[$values['voter_id']] = $values['voter_id'];
+                $voterIds[$values['voter_id']] = $values;
             }
             $contactIds[$cacheKey] = $voterIds;
         }

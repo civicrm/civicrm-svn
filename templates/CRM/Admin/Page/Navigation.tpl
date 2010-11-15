@@ -90,15 +90,19 @@
             	 	    }
             	 );
  }). bind("remove.jstree", function ( e,node ) {
-
-      var nodeID  = node.rslt.obj.attr('id').replace("node_","");
-      var postURL = {/literal}"{crmURL p='civicrm/ajax/menutree' h=0 }&key={crmKey name='civicrm/ajax/menutree'}"{literal};
-          cj.get( postURL + '&type=delete&id=' + nodeID,
-            function (data) {
-             			    cj("#reset-menu").show( );
-             		    }
-           		);   
-                        
+      var menuName  = node.rslt.obj.find('a').first( ).text( );
+      var deleteMsg = {/literal}"Are you sure you want to delete this menu item: "{literal} + menuName + {/literal}" ? This action can not be undone."{literal};
+      var isDelete  = confirm( deleteMsg );
+          if( isDelete ) {
+              var nodeID  = node.rslt.obj.attr('id').replace("node_","");
+              var postURL = {/literal}"{crmURL p='civicrm/ajax/menutree' h=0 }&key={crmKey name='civicrm/ajax/menutree'}"{literal};
+              cj.get( postURL + '&type=delete&id=' + nodeID,
+                 function (data) {
+                		cj("#reset-menu").show( );
+          	      } );
+               } else { 
+ 	         cj("#navigation-tree").jstree('refresh');
+    	  }                 
             
  }). bind("move_node.jstree", function ( e,node ) {
           node.rslt.o.each(function (i) {

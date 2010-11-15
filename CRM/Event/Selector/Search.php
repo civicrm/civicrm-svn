@@ -182,6 +182,15 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
         $this->_query->_distinctComponentClause = " DISTINCT(civicrm_participant.id)";
     }//end of constructor
 
+    /**
+     * Can be used to alter the number of participation returned from a buildForm hook
+     * @param int     $limit  how many participations do we want returned
+     * @access public
+     *
+     */
+    function setLimit ($limit) {
+        $this->_limit   = $limit;
+    }
 
     /**
      * This method returns the links that are given for each search row.

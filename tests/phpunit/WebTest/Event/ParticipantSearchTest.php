@@ -243,10 +243,10 @@ class WebTest_Event_ParticipantSearchTest extends CiviSeleniumTestCase {
         // there are participants
         $this->assertTrue($this->isTextPresent("Select Records"), "A forced event search did not return any results");
 
-        // click any view link
-        $this->click( "link=View" );
-        $this->waitForPageToLoad("30000");
-      
+        $this->waitForElementPresent( "xpath=id('participantSearch')/table/tbody/tr/td[11]/span/a[text()='View']" );
+        $this->click( "xpath=id('participantSearch')/table/tbody/tr/td[11]/span/a[text()='View']" );
+        $this->waitForElementPresent( "_qf_ParticipantView_cancel-bottom" );
+        
         // ensure we get to particpant view
         $stringsToCheck = 
             array( "View Participant",
@@ -273,10 +273,10 @@ class WebTest_Event_ParticipantSearchTest extends CiviSeleniumTestCase {
         // there are participants
         $this->assertTrue($this->isTextPresent("Select Records"), "A forced event search did not return any results");
 
-        // click any view link
-        $this->click( "link=Edit" );
-        $this->waitForPageToLoad("30000");
-      
+        $this->waitForElementPresent( "xpath=id('participantSearch')/table/tbody/tr/td[11]/span/a[text()='Edit']" );
+        $this->click( "xpath=id('participantSearch')/table/tbody/tr/td[11]/span/a[text()='Edit']" );
+        $this->waitForElementPresent( "_qf_Participant_cancel-bottom" );
+        
         // ensure we get to particpant view
         $stringsToCheck = 
             array( "Edit Event Registration",

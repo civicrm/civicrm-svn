@@ -167,9 +167,13 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
         }
         $this->_scope = $this->_scope . '_' . $this->_key;
 
-        require_once 'CRM/Core/BAO/Cache.php';
-        CRM_Core_Session::registerAndRetrieveSessionObjects( array( "_{$name}_container",
-                                                                    array( 'CiviCRM', $this->_scope ) ) );
+        // only use the civicrm cache if we have a valid key
+        // else we clash with other users CRM-7059
+        if ( ! empty( $this->_key ) ) {
+            require_once 'CRM/Core/BAO/Cache.php';
+            CRM_Core_Session::registerAndRetrieveSessionObjects( array( "_{$name}_container",
+                                                                        array( 'CiviCRM', $this->_scope ) ) );
+        }
         
         $this->HTML_QuickForm_Controller( $name, $modal );
 
@@ -212,6 +216,7 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
     }
 
     function fini( ) {
+        require_once 'CRM/Core/BAO/Cache.php';
         CRM_Core_BAO_Cache::storeSessionToCache( array( "_{$this->_name}_container",
                                                         array( 'CiviCRM', $this->_scope ) ),
                                                  true );

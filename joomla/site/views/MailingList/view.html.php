@@ -1,9 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
- +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -24,38 +22,12 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 */
-
-require_once 'CiviTest/CiviUnitTestCase.php';
-
-/**
- * Test class for CRM_Core_BAO_Discount BAO
- *
- *  @package   CiviCRM
+/*
+ * Copyright (C) 2010 Brian Shaughnessy
+ * Licensed to CiviCRM under the Academic Free License version 3.0.
  */
-class CRM_Core_BAO_DiscountTest extends CiviUnitTestCase 
-{
+  //////////////////////////////////////////////////
+  // CiviCRM Front-end Presentation Layer
+  //////////////////////////////////////////////////
 
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     *
-     * @access protected
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-    }
-
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     *
-     * @access protected
-     */
-    protected function tearDown()
-    {
-    }
-
-
-
-}
+defined('_JEXEC') or die('No direct access allowed'); 

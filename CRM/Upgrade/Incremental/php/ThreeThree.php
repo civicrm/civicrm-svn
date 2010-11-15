@@ -231,6 +231,13 @@ WHERE id = %2
         
         $updatePriceField = "ALTER TABLE civicrm_price_field DROP count";
         CRM_Core_DAO::executeQuery( $updatePriceField, array( ), true, null, false, false );        
+        
+        // as the table 'civicrm_price_field' is localised and column 'count' is dropped 
+        // after the views are rebuild, we need to rebuild views to avoid invalid refrence of table.
+        if ( $upgrade->multilingual ) {
+            require_once 'CRM/Core/I18n/Schema.php';
+            CRM_Core_I18n_Schema::rebuildMultilingualSchema( $upgrade->locales, $rev );
+        } 
     }
 
 }

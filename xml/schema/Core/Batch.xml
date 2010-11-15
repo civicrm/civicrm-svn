@@ -36,6 +36,7 @@
      <name>description</name>
      <type>text</type>
      <comment>Description of this batch set.</comment>
+     <localizable>true</localizable>
      <htmlType>textarea</htmlType>
      <rows>4</rows>
      <cols>80</cols>

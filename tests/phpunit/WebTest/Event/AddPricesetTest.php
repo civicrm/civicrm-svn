@@ -110,24 +110,24 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
                 break;
              case 'Select':
                 $options = array( 1 => array( 'label' => "Chicken",
-                                              'name'  => "30.00" ),
+                                              'amount'  => "30.00" ),
                                   2 => array( 'label' => "Vegetarian", 
-                                              'name'  => "25.00" ) );
+                                              'amount'  => "25.00" ) );
                 $this->addMultipleChoiceOptions( $options, $validateStrings );
                 break;
              case 'Radio':
                 $options = array( 1 => array( 'label' => "Yes",
-                                              'name'  => "50.00" ),
+                                              'amount'  => "50.00" ),
                                   2 => array( 'label' => "No", 
-                                              'name'  => "0" ) );
+                                              'amount'  => "0" ) );
                 $this->addMultipleChoiceOptions( $options, $validateStrings );
                 $this->check("is_required");
                 break;
              case 'CheckBox':
                 $options = array( 1 => array( 'label' => "First Night",
-                                              'name'  => "15.00" ),
+                                              'amount'  => "15.00" ),
                                   2 => array( 'label' => "Second Night", 
-                                              'name'  => "15.00" ) );
+                                              'amount'  => "15.00" ) );
                 $this->addMultipleChoiceOptions( $options, $validateStrings );
                 break;
              default:

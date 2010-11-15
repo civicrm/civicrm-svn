@@ -2343,7 +2343,7 @@ INSERT INTO civicrm_state_province (id, country_id, abbreviation, name) VALUES
 (3862, 1148, "ER", "Erongo"),
 (3863, 1148, "HA", "Hardap"),
 (3864, 1148, "KA", "Karas"),
-(3865, 1148, "KH", "Khomae"),
+(3865, 1148, "KH", "Khomas"),
 (3866, 1148, "KU", "Kunene"),
 (3867, 1148, "OW", "Ohangwena"),
 (3868, 1148, "OK", "Okavango"),

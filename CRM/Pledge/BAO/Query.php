@@ -573,7 +573,7 @@ class CRM_Pledge_BAO_Query
         
         $frequencies = CRM_Core_OptionGroup::values( 'recur_frequency_units' );
         foreach ( $frequencies as $val => $label) {
-            $freqUnitsDisplay["'{$val}'"] = ts( '%1(s)', array( 1 => $val ) );
+            $freqUnitsDisplay["'{$val}'"] = ts('%1(s)', array(1 => $label));
         }
         
         $form->add( 'select', 'pledge_frequency_unit', 

@@ -31,7 +31,8 @@
 <div id="campaign-dialog" class='hiddenElement'></div>
 {if $campaigns} 
   <div class="action-link">
-      <a href="#" onclick="createCampaign( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Campaign{/ts}</span></a>
+      <!--a href="#" onclick="createCampaign( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Campaign{/ts}</span></a-->
+      <a href="{crmURL p='civicrm/campaign/add' q='reset=1' h=0 }" class="button"><span><div class="icon add-icon"></div>{ts}Add Campaign{/ts}</span></a>
   </div>
 
   {include file="CRM/common/enableDisable.tpl"}
@@ -72,7 +73,9 @@
     </div>
 {/if}
 <div class="action-link">
-   <a href="#" onclick="createCampaign( );"  class="button"><span><div class="icon add-icon"></div>{ts}Add Campaign{/ts}</span></a>
+   <!--a href="#" onclick="createCampaign( );"  class="button"><span><div class="icon add-icon"></div>{ts}Add Campaign{/ts}</span></a-->
+<a href="{crmURL p='civicrm/campaign/add' q='reset=1' h=0 }" class="button"><span><div class="icon add-icon"></div>{ts}Add Campaign{/ts}</span></a>
+ 
 </div>
 
 {* build the survey selector *}
@@ -81,8 +84,10 @@
 <div id="survey-dialog" class='hiddenElement'></div>
 {if $surveys} 
   <div class="action-link">
-    <a href="#" onclick="createSurvey( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Survey{/ts}</span></a>
-  </div>
+    <!--a href="#" onclick="createSurvey( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Survey{/ts}</span></a-->
+<a href="{crmURL p='civicrm/survey/add' q='reset=1' h=0 }" class="button"><span><div class="icon add-icon"></div>{ts}Add Survey{/ts}</span></a>
+ 
+</div>
  {include file="CRM/common/enableDisable.tpl"}
  {include file="CRM/common/jsortable.tpl"}
   <div id="surveyList">
@@ -93,12 +98,12 @@
           <th>{ts}Campaign{/ts}</th>
           <th>{ts}Survey Type{/ts}</th>   
           <th>{ts}Release Frequency{/ts}</th>
-	  <th>{ts}Max Contacts{/ts}</th>
-	  <th>{ts}Default Contacts{/ts}</th>
-	  <th>{ts}Default?{/ts}</th>
-	  <th>{ts}Active?{/ts}</th>
-	  <th id="nosort"></th>
-	  <th id="nosort"></th>
+	      <th>{ts}Reserve Each Time{/ts}</th>
+	      <th>{ts}Total Reserve{/ts}</th>
+	      <th>{ts}Default?{/ts}</th>
+	      <th>{ts}Active?{/ts}</th>
+	      <th id="nosort"></th>
+	      <th id="nosort"></th>
         </tr>
       </thead>
       {foreach from=$surveys item=survey}
@@ -107,8 +112,8 @@
           <td class="crm-survey-campaign_id">{$survey.campaign_id}</td>
           <td class="crm-survey-activity_type">{$survey.activity_type}</td>
           <td class="crm-survey-release_frequency">{$survey.release_frequency}</td>
-          <td class="crm-survey-max_number_of_contacts">{$survey.max_number_of_contacts}</td>
           <td class="crm-survey-default_number_of_contacts">{$survey.default_number_of_contacts}</td>
+          <td class="crm-survey-max_number_of_contacts">{$survey.max_number_of_contacts}</td>
           <td class="crm-survey-is_default">{if $survey.is_default}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Default{/ts}" /> {/if}</td>
           <td class="crm-survey-is_active" id="row_{$survey.id}_status">{if $survey.is_active}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}</td>
  	  <td class="crm-survey-action">{$survey.action}</td>
@@ -135,7 +140,8 @@
   </div> 
 {/if}
 <div class="action-link">
-   <a href="#" onclick="createSurvey( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Survey{/ts}</span></a>
+   <!--a href="#" onclick="createSurvey( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Survey{/ts}</span></a-->
+<a href="{crmURL p='civicrm/survey/add' q='reset=1' h=0 }" class="button"><span><div class="icon add-icon"></div>{ts}Add Survey{/ts}</span></a> 
 </div>
 
 {* build normal page *}
@@ -144,7 +150,9 @@
 <div id="petition-dialog" class='hiddenElement'></div>
 {if $surveys} 
   <div class="action-link">
-    <a href="#" onclick="createPetition( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Petition{/ts}</span></a>
+    <!--a href="#" onclick="createPetition( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Petition{/ts}</span></a-->
+    <a href="{crmURL p='civicrm/petition/add' q='reset=1' h=0 }" class="button"><span><div class="icon add-icon"></div>{ts}Add Petition{/ts}</span></a>
+ 
   </div>
  {include file="CRM/common/enableDisable.tpl"}
  {include file="CRM/common/jsortable.tpl"}
@@ -190,7 +198,8 @@
   </div> 
 {/if}
 <div class="action-link">
-   <a href="#" onclick="createPetition( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Petition{/ts}</span></a>
+   <!--a href="#" onclick="createPetition( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Petition{/ts}</span></a-->
+    <a href="{crmURL p='civicrm/petition/add' q='reset=1' h=0 }" class="button"><span><div class="icon add-icon"></div>{ts}Add Petition{/ts}</span></a>
 </div>
 
 {* build normal page *}
@@ -255,7 +264,6 @@ cj(document).ready( function( ) {
   function createCampaign(  ) {
     var dataURL = {/literal}"{crmURL p='civicrm/campaign/add' q='reset=1&snippet=5&context=dialog' h=0 }"{literal};
     var formTitle = {/literal}"{ts}Create New Campaign{/ts}"{literal};
-    
     openModal( dataURL, cj("#campaign-dialog"), formTitle, 730 );	
   }
 	
@@ -263,6 +271,7 @@ cj(document).ready( function( ) {
      cj.ajax({
          url: dataURL,
          success: function( content ) {
+             content = '<div id="crm-container">'+content+'</div>';
              cj(modalElement).show( ).html( content ).dialog({
          	    	title: formTitle,
              		modal: true,
@@ -272,7 +281,6 @@ cj(document).ready( function( ) {
              			opacity: 0.5, 
              			background: "black" 
              		},
-
                  beforeclose: function(event, ui) {
                      cj(this).dialog("destroy");
                  }

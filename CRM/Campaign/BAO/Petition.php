@@ -398,12 +398,10 @@ WHERE 	a.source_record_id = " . $surveyId . "
 	 */
 		require_once 'CRM/Campaign/Form/Petition/Signature.php';
 		
-		define('PETITION_CONTACT_GROUP','Petition Contacts');
-		
-		if (defined('PETITION_CONTACT_GROUP')) {
-			// check if 'Petition Contacts' group exists, else create it
+		if (defined('CIVICRM_PETITION_CONTACTS')) {
+			// check if the group defined by CIVICRM_PETITION_CONTACTS exists, else create it
 			require_once 'api/v2/Group.php';
-			$group_params['title'] = PETITION_CONTACT_GROUP;
+			$group_params['title'] = CIVICRM_PETITION_CONTACTS;
 			$groups = civicrm_group_get($group_params);
 			if (($groups['is_error'] == 1) && ($groups['error_message'] == 'No such group exists')) {
 				$group_params['is_active'] = 1;
@@ -445,7 +443,13 @@ WHERE 	a.source_record_id = " . $surveyId . "
 				
 		switch ($sendEmailMode) {
 			case CRM_Campaign_Form_Petition_Signature::EMAIL_THANK:	
-			
+
+				//add this contact to the CIVICRM_PETITION_CONTACTS group
+				require_once 'api/v2/GroupContact.php';
+				$params['group_id'] = $group_id[0];
+				$params['contact_id'] = $params['contactId'];
+				civicrm_group_contact_add($params);
+				
 				require_once 'CRM/Core/BAO/MessageTemplates.php';
 				if ($params['email-Primary']) {
 					CRM_Core_BAO_MessageTemplates::sendTemplate(
@@ -489,10 +493,16 @@ WHERE 	a.source_record_id = " . $surveyId . "
 				
 				$confirmUrl = CRM_Utils_System::url( 'civicrm/petition/confirm',
 											  "reset=1&cid={$se->contact_id}&sid={$se->id}&h={$se->hash}&a={$params['activityId']}&p={$params['sid']}",
-											  true );
-
+											  true );				
+				$confirmUrlPlainText = CRM_Utils_System::url( 'civicrm/petition/confirm',
+											  "reset=1&cid={$se->contact_id}&sid={$se->id}&h={$se->hash}&a={$params['activityId']}&p={$params['sid']}",
+											  true,
+											  null,
+											  false);
+		
 				// set email specific message template params and assign to tplParams
 				$petitionTokens['confirmUrl'] = $confirmUrl;
+				$petitionTokens['confirmUrlPlainText'] = $confirmUrlPlainText;
 				$tplParams['petition'] = $petitionTokens;		
 						
 				require_once 'CRM/Core/BAO/MessageTemplates.php';
@@ -509,7 +519,7 @@ WHERE 	a.source_record_id = " . $surveyId . "
 							'replyTo' => $replyTo,
 							'petitionId' => $params['sid'],
 							'petitionTitle' => $petitionInfo['title'],
-							'confirmUrl' => $confirmUrl, 
+							'confirmUrl' => $confirmUrl
 						)
 					);					
 				}						

@@ -69,7 +69,7 @@
            {include file="CRM/common/searchResultTasks.tpl"}
 	    </div>
         {* This section displays the rows along and includes the paging controls *}
-    	<div class="crm-event-search-results">
+    	<div id='participantSearch' class="crm-event-search-results">
 	        {include file="CRM/Event/Form/Selector.tpl" context="Search"}
         </div>
     {* END Actions/Results section *}
