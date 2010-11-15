@@ -73,6 +73,7 @@ class CRM_RespondentProcessor
       FROM  civicrm_activity activity
 INNER JOIN  civicrm_survey survey ON ( survey.id = activity.source_record_id ) 
      WHERE  activity.is_deleted = 0 
+       AND  activity.status_id = %1 
        AND  activity.activity_type_id IN ( ' . implode( ', ', $surveyActivityTypesIds ) . ' )';
             $activity = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $reserveStatusId, 'Positive' ) ) );
             $releasedIds = array( );
