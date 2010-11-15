@@ -35,3 +35,9 @@ ALTER TABLE `civicrm_contribution_soft`
 
 ALTER TABLE `civicrm_contribution_page`
  	 CHANGE `currency` `currency` VARCHAR( 3 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '3 character string, value from config setting or input via user.';
+
+-- CRM-7088
+UPDATE  civicrm_navigation
+   SET  label  = 'GOTV (Voter Tracking)'
+ WHERE  name like 'Voter Listing';
+
