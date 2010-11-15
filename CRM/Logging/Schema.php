@@ -56,7 +56,7 @@ class CRM_Logging_Schema
 
         $dao = CRM_Core_DAO::executeQuery('SHOW TABLES LIKE "log_civicrm_%"');
         while ($dao->fetch()) {
-            $log = $dao->toValue('Tables_in_civicrm_(log_civicrm_%)');
+            $log = $dao->toValue("Tables_in_{$dao->_database}_(log_civicrm_%)");
             $this->logs[substr($log, 4)] = $log;
         }
     }
@@ -164,6 +164,8 @@ class CRM_Logging_Schema
      */
     private function createLogTableFor($table)
     {
+        CRM_Core_DAO::executeQuery("DROP TABLE IF EXISTS log_$table");
+
         $dao = CRM_Core_DAO::executeQuery("SHOW CREATE TABLE $table");
         $dao->fetch();
         $query = $dao->Create_Table;

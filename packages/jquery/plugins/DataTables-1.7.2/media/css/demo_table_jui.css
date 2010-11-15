@@ -202,20 +202,51 @@ table.display td.center {
  * DataTables sorting
  */
 
-.sorting_asc {
-	background: url('../images/sort_asc.jpg') no-repeat center right;
+.sorting,
+th.sorting,
+th a.sorting,
+.sorting_asc,
+th.sorting_asc,
+th a.sorting_asc
+.sorting_desc,
+th.sorting_desc,
+th a.sorting_desc {
+     padding-left:16px !important;
+     background-repeat : no-repeat;
 }
 
-.sorting_desc {
-	background: url('../images/sort_desc.jpg') no-repeat center right;
+.sorting_asc,
+th.sorting_asc,
+th a.sorting_asc {
+      background-image: url('../images/sort_asc.png');
+      background-position:-2px 8px;
 }
 
-.sorting {
-	background: url('../images/sort_both.jpg') no-repeat center right;
+.sorting_desc,
+th.sorting_desc,
+th a.sorting_desc {
+      background-image: url('../images/sort_desc.png');
+      background-position:-2px 0px;
 }
 
+.sorting,
+th.sorting,
+th a.sorting {
+      background-image: url('../images/sort_both.png');
+      background-position:-2px 3px;
+}
 
+#crm-container a.sorting {
+      background-position:-2px -2px;
+}
 
+#crm-container a.sorting_asc {
+      background-position:-2px 4px;
+}
+
+#crm-container a.sorting_desc {
+      background-position:-2px -4px;
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * DataTables row classes

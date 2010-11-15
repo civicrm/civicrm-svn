@@ -1,4 +1,3 @@
-<<<<<<< .working
 {if !$printOnly }
 {include file="CRM/Report/Form.tpl"}
 {else}

@@ -103,7 +103,6 @@ function allowGroupOnWaitlist( participantCount, currentCount )
   if ( totalParticipants > availableRegistrations ) {
 
     cj('#waiting-status').show( ).html(waitingMsg);
-    cj('#is_confirmed').val(0);
 
     if ( paymentBypassed ) {
       cj('input[name=_qf_Participant_'+ formId +'_next]').parent( ).show( );
@@ -114,7 +113,6 @@ function allowGroupOnWaitlist( participantCount, currentCount )
       confirmedMsg += '<br /> ' + paymentBypassed;
     }	
     cj('#waiting-status').show( ).html(confirmedMsg);
-    cj('#is_confirmed').val(1);
 
     if ( paymentBypassed ) {
       cj('input[name=_qf_Participant_'+ formId +'_next]').parent( ).hide( );

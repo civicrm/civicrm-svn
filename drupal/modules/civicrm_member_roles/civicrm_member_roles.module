@@ -451,67 +451,60 @@ function _civicrm_member_roles_sync($ext_uid = NULL)
             return FALSE;
         }
     }
-    
+    $memberRules = db_query( 'SELECT * FROM {civicrm_member_roles_rules}' );
+    $memberroles = array();
+    while ( $ruleValues = db_fetch_object( $memberRules ) ) {
+        $memberroles[$ruleValues->type_id][] = array(
+                                                     'rid' => $ruleValues->rid,
+                                                     'codes' => unserialize( $ruleValues->status_codes ),
+                                                     );
+    }
+    $allRoles = user_roles(TRUE); 
     while ( $contacts->fetch() ) {
         $cid = $contacts->contact_id;
-        $uid = CRM_Core_BAO_UFMatch::getUFId($cid);
-        if ( empty($uid) ) continue;
+        $uid = CRM_Core_BAO_UFMatch::getUFId( $cid );
+        if ( empty( $uid ) ) continue;
         
         //Get all memberships of contact
         require_once 'api/v2/Membership.php';
         $memberships = civicrm_contact_memberships_get( $cid );
-        $contactMemberships = CRM_Utils_Array::value( $cid, $memberships, array( ));
-        $currentRoleIds = $expiredRoleIds = array( );
-        $addAccount = $removeAccount = array( );
-        
-        $memberRules = db_query('SELECT * FROM {civicrm_member_roles_rules}');
-        while ( $ruleValues = db_fetch_object( $memberRules ) ) {
-            $codes  = unserialize($ruleValues->status_codes);
-            $rid    = $ruleValues->rid;
-            $typeId = $ruleValues->type_id;
-            
-            $addRule = false;
-            $removeRule = true;
-            
-            // If contact doesn't have any membeship lets unset the membership rule roles.
-            if ( empty( $contactMemberships ) ) {
-                db_query('DELETE  FROM {users_roles} WHERE uid = '.$uid.' AND rid = '.$rid );
-                continue;
-            }
-            
-            foreach ( $contactMemberships as $membership ) { 
-                if ( !empty( $contactMemberships ) ) {
-                    if ( $membership['membership_type_id'] != $typeId ) { 
-                        db_query('DELETE  FROM {users_roles} WHERE uid = '.$uid.' AND rid = '.$rid );
-                        continue;
+        $contactMemberships = CRM_Utils_Array::value( $cid, $memberships, array( ) );
+        $addRoles = array();
+        $expRoles = array();
+        foreach ( $contactMemberships as $membership ) { 
+            if ( is_array( $memberroles[$membership['membership_type_id']] ) ) {
+                foreach( $memberroles[$membership['membership_type_id']] as $rolerule ) {
+                    if ( in_array( $membership['status_id'], $rolerule['codes']['current'] ) ) {
+                        $addRoles[] = $rolerule['rid'];
+                    } elseif ( in_array( $membership['status_id'], $rolerule['codes']['expired'] ) ) {
+                        $expRoles[] = $rolerule['rid'];
                     }
                 }
-                //If the record has the correct status, then
-                //+ set up the Drupal user to either have a role added or removed
-                //+ save the role id ($rid) in $roles array for final processing loop
-                if (in_array($membership['status_id'], $codes['current'])) {
-                    $addRule = true;
-                    $addAccount[$rid] = $uid;
-                }
-                if (in_array($membership['status_id'], $codes['expired'])) {
-                    $removeRule = true;
-                    $removeAccount[$rid] = $uid;
-                }
-                if ( $addRule && $removeRule ) break;
             }
-            if ( $addRule ) {
-                $removeRule = false;
-                $currentRoleIds[$rid] = $rid;
-                if ( array_key_exists( $rid, $expiredRoleIds ) ) {
-                    unset( $expiredRoleIds[$rid] );
-                    break;
+            if ( count( $addRoles ) > 0 || count( $expRoles ) > 0) {
+                $addRoles = array_unique( $addRoles );
+                $expRoles = array_unique( $expRoles );
+                $account = user_load( array( 'uid' => $uid ) );
+                if ( $account !== FALSE ) {
+                    // Retain a user's existing roles that aren't explicitly expired--the assumption is that roles granted 
+                    // manually won't have expired memberships that correspond to those roles.  If a status is neither 
+                    // current nor expired, the membership will have no effect on the role.
+                    
+                    $rolesRetain = array_diff_key( $account->roles, array_flip( $expRoles ) ); 
+                    
+                    // Certainly add all roles that correspond to current memberships
+                    
+                    foreach ( $addRoles as $addRole ) {
+                        $rolesRetain[$addRole] = $allRoles[$addRole];
+                    }
+                    
+                    // Overwrite the user's roles to the ones we've set
+                    user_save( $account, array( 'roles' => $rolesRetain ) ); 
                 }
             }
-            if ( $removeRule ) $expiredRoleIds[$rid] = $rid;
+            
         }
-        //Apply roles.
-        foreach ( $currentRoleIds as $role ) user_multiple_role_edit($addAccount, 'add_role', $role);
-        foreach ( $expiredRoleIds as $role ) user_multiple_role_edit($removeAccount, 'remove_role', $role);
+        
     }
     return TRUE;    
 }

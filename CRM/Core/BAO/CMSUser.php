@@ -352,8 +352,9 @@ class CRM_Core_BAO_CMSUser
         $isJoomla = ucfirst($config->userFramework) == 'Joomla' ? true : false;
         
         $dao = new CRM_Core_DAO( );
-        $name  = $dao->escape( $params['name'] );
-        $email = $dao->escape( $params['mail'] );
+        $name  = $dao->escape( CRM_Utils_Array::value( 'name', $params ) );
+        $email = $dao->escape( CRM_Utils_Array::value( 'mail', $params ) );
+
 
         if ( $isDrupal ) {
             _user_edit_validate(null, $params );
@@ -405,9 +406,9 @@ SELECT username, email
         $query = $db_cms->query( $sql );
         $row = $query->fetchRow( );
         if ( !empty( $row ) ) {
-            if ( $row[0] == $name ) {
+            if ( strtolower( $row[0]) == strtolower( $name )) {
                 $errors['cms_name'] = ts( 'The username %1 is already taken. Please select another username.', array( 1 => $name) );
-            } else if ( $row[1] == $email ) {
+            } else if ( strtolower( $row[1] ) == strtolower( $email ) ) {
                 $errors['email-Primary'] = ts( 'This email %1 is already registered. Please select another email.', array( 1 => $email) );
             }
         }

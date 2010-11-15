@@ -235,7 +235,7 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         }
         
         //set the form title.
-        CRM_Utils_System::setTitle( ts( 'Find Respondent To %1', array( 1 => ucfirst( $this->_operation ) ) ) );
+        CRM_Utils_System::setTitle( ts( 'Find Respondents To %1', array( 1 => ucfirst( $this->_operation ) ) ) );
     }
     
     function setDefaultValues( ) 
@@ -289,7 +289,8 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
             if ( $this->_operation == 'interview' && 
                  CRM_Utils_Array::value( 'campaign_survey_id', $this->_formValues ) ) {
                 require_once 'CRM/Core/PseudoConstant.php';
-                $activityTypes = CRM_Core_PseudoConstant::activityType( );
+                $activityTypes = CRM_Core_PseudoConstant::activityType( false, true, false, 'label', true );
+                
                 $surveyTypeId  = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey',
                                                               $this->_formValues['campaign_survey_id'],
                                                               'activity_type_id' );
@@ -416,10 +417,16 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
     {
         $interviewerId = CRM_Utils_Array::value( 'survey_interviewer_id', $this->_formValues ); 
         if ( !$interviewerId ) {
-            $session = CRM_Core_Session::singleton( );
+            $session =& CRM_Core_Session::singleton( );
             $this->_formValues['survey_interviewer_id'] = $interviewerId = $session->get( 'userID' );
         }
         $this->set( 'interviewerId', $interviewerId );
+        if ( !CRM_Utils_Array::value( 'survey_interviewer_name', $this->_formValues ) ) {
+            $this->_formValues['survey_interviewer_name'] = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
+                                                                                         $interviewerId,
+                                                                                         'sort_name',
+                                                                                         'id' );
+        }
         
         if ( $this->_operation == 'reserve' ) {
             if ( CRM_Utils_Array::value( 'campaign_survey_id', $this->_formValues ) ) {

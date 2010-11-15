@@ -296,12 +296,12 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
         }
         
         $fixed_period_rollover = false;
-        if ( $membershipTypeDetails['period_type'] == 'rolling' ) {
+        if ( CRM_Utils_Array::value( 'period_type', $membershipTypeDetails)  == 'rolling' ) {
             if ( !$startDate ) {
                 $startDate = $joinDate;
             }
             $actualStartDate = $startDate;
-        } else if ( $membershipTypeDetails['period_type'] == 'fixed' ) {
+        } else if ( CRM_Utils_Array::value( 'period_type', $membershipTypeDetails ) == 'fixed' ) {
             //calculate start date
 
             // today is always join date, in case of Online join date
@@ -505,9 +505,9 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
             
             $rollover = false;
                         
-            if ( $membershipTypeDetails['period_type'] == 'rolling' ) {
+            if ( CRM_Utils_Array::value( 'period_type', $membershipTypeDetails ) == 'rolling' ) {
                 $startDate = $logStartDate = CRM_Utils_Date::mysqlToIso( $today );
-            } else if ( $membershipTypeDetails['period_type'] == 'fixed' ) {
+            } else if ( CRM_Utils_Array::value( 'period_type', $membershipTypeDetails ) == 'fixed' ) {
                 // Renewing expired membership is two step process. 
                 // 1. Renew the start date
                 // 2. Renew the end date

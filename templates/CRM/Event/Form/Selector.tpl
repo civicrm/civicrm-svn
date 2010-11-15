@@ -80,7 +80,7 @@
         {/if}
    </td>
     <td class="crm-participant-participant_register_date">{$row.participant_register_date|truncate:10:''|crmDate}</td>	
-    <td class="crm-participant-participant_status">{$row.participant_status}</td>
+    <td class="crm-participant-participant_status crm-participant_status_{$row.participant_status_id}">{$row.participant_status}</td>
     <td class="crm-participant-participant_role">{$row.participant_role_id}</td>
     <td>{$row.action|replace:'xx':$participant_id}</td>
    </tr>

@@ -256,6 +256,14 @@ class CRM_Contact_Form_Search_Criteria {
                                   CRM_Utils_Array::value( 'postal_code', $attributes ) );
             }
         }
+
+        // extend addresses with proximity search
+        $form->addElement('text', 'prox_distance', ts('Find contacts within'));
+        $form->addElement('select', 'prox_distance_unit', null, array('miles' => ts('Miles'), 'kilos' => ts('Kilometers') ));
+
+        // is there another form rule that does decimals besides money ? ...
+        $form->addRule('prox_distance', ts('Please enter positive number as a distance'), 'numeric');
+
         require_once 'CRM/Core/BAO/Address.php';
         CRM_Core_BAO_Address::addStateCountryMap( $stateCountryMap ); 
         $worldRegions =  array('' => ts('- any region -')) + CRM_Core_PseudoConstant::worldRegion( );
@@ -406,6 +414,8 @@ class CRM_Contact_Form_Search_Criteria {
                                                                false, false, true );
             }
         }
+
+        //TODO: validate for only one state if prox_distance isset
     }
 
     static function CiviCase( &$form ) {

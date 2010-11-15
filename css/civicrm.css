@@ -70,35 +70,6 @@ table.crm-table-group-summary {
     color:#3e3e3e;
     background-color: #FFF;
 }
-/*  DataTables sorting */
-th.sorting, 
-th.sorting_asc, 
-th.sorting_desc,
-th a.sorting, 
-th a.sorting_asc, 
-th a.sorting_desc {
-    padding-left:16px !important;
-    background: url('../i/dataTable/sort_sprites.png') no-repeat left 0px;
-}
-th.sorting {
-    background-position:0px 5px;
-}
-th.sorting_desc {
-    background-position:0px -59px;
-}
-th.sorting_asc {
-    background-position:0px -27px;
-}
-#crm-container a.sorting {
-    background-position:0px 1px;
-	}
-#crm-container a.sorting_desc {
-    background-position:0px -64px;
-	}
-#crm-container a.sorting_asc {
-    background-position:0px -31px;
-	}
-
 
 /* Set background back to normal gray for form labels which use <th>. Temporary fix until we standardize form layout markup. */
 #crm-container table.form-layout-compressed tbody th.label { background-color: #F7F7F7; }
@@ -2450,7 +2421,7 @@ span.icon {
 
 .delete-icon { background-position: -179px -99px;}
 .button:hover .delete-icon {
-    background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_cd0a0a_256x240.png")!important;
+    background-image:url("../packages/jquery/jquery-ui-1.8.5/css/custom-theme/images/ui-icons_8d2c27_256x240.png")!important;
 }
 
 .restore-icon { background-position:0px -66px;background-image:url("../i/icons/jquery-ui-91CE00.png"); }
@@ -2852,6 +2823,21 @@ div#civicrm-dashboard form {
     border-color:none;
 }	
 
+/* ui dialog state */ 
+.ui-state-hover, 
+.ui-widget-content  
+.ui-state-hover, 
+.ui-widget-header 
+.ui-state-hover, 
+.ui-state-focus, 
+.ui-widget-content .ui-state-focus, 
+.ui-widget-header .ui-state-focus { 
+border: 0px solid #70716b; 
+background: #484e4c url("../packages/jquery/jquery-ui-1.8.5/css/custom-theme/images/ui-bg_flat_40_70716b_40x100.png") 50% 50% repeat-x; 
+font-weight: normal; 
+color: #f5f6f1; 
+}
+
 #Tag .tree .collapsable .hit,
 #Tag .tree .expandable .hit { padding-left:16px; }
 
@@ -3223,3 +3209,5 @@ div#crm-toolTip
 */
 /*Import progress bar */
 .ui-progressbar-value { background-image:url("../packages/jquery/css/images/pbar-ani.gif"); }
+/*Needed for jstree contextmenu */ 
+#vakata-contextmenu.jstree-default-context li { background:none repeat scroll 0 0 transparent;}

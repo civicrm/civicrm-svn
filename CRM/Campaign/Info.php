@@ -64,6 +64,7 @@ class CRM_Campaign_Info extends CRM_Core_Component_Info
                       'reserve campaign contacts',
                       'release campaign contacts',
                       'interview campaign contacts',
+                      'gotv campaign contacts',
                       'sign CiviCRM Petition'
                       );
     }

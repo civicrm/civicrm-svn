@@ -92,7 +92,7 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
         $customGrouptitle = 'My Custom Group';
         $groupParams = array(
                              'title'            => $customGrouptitle,
-                             'name'             => 'my_custom_group',
+                             'name'             => 'My_Custom_Group',
                              'style'            => 'Tab',
                              'extends'          => 'Individual',
                              'help_pre'         => 'Custom Group Help Pre',
@@ -179,7 +179,7 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
         $customGrouptitle = 'My Custom Group';
         $groupParams = array(
                              'title'            => $customGrouptitle,
-                             'name'             => 'my_custom_group',
+                             'name'             => 'My_Custom_Group',
                              'extends'          => 'Individual',
                              'help_pre'         => 'Custom Group Help Pre',
                              'help_post'        => 'Custom Group Help Post',

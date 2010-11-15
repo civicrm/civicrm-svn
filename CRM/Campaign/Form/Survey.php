@@ -111,9 +111,12 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $session = CRM_Core_Session::singleton();
         $url     = CRM_Utils_System::url('civicrm/campaign', 'reset=1&subPage=survey'); 
         $session->pushUserContext( $url );
-
+        
+        if ( $this->_name != 'Petition'  ) {
+            CRM_Utils_System::appendBreadCrumb( array( array( 'title' => ts('Survey Dashboard'), 'url' => $url ) ) );
+        }
+                
         $this->_values = array( );
-
         if ( $this->_surveyId ) {
             $this->assign( 'surveyId', $this->_surveyId );
 
@@ -157,7 +160,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
                 unset($defaults['recontact_interval']);
                 $defaults['option_group_id'] = $resultId;
             } 
-                
+
             $ufJoinParams = array( 'entity_table' => 'civicrm_survey',
                                    'entity_id'    => $this->_surveyId,
                                    'weight'       => 1);
@@ -166,10 +169,16 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
                 $defaults['profile_id'] = $ufGroupId;
             }
         }
-        if ( !isset($defaults['is_active']) ) {
+
+        if ( ! isset($defaults['is_active']) ) {
             $defaults['is_active'] = 1;
         }
 
+        // set defaults for weight.
+        for ( $i=1; $i<=self::NUM_OPTION; $i++ ) {
+            $defaults["option_weight[{$i}]"] = $i;
+        }
+                
         $defaultSurveys = CRM_Campaign_BAO_Survey::getSurvey(false, false, true);
         if ( !isset($defaults['is_default'] ) && empty($defaultSurveys) ) {
             $defaults['is_default'] = 1;  
@@ -224,13 +233,13 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $optionGroups = CRM_Campaign_BAO_Survey::getResultSets( );
 
         if ( empty($optionGroups) ) {
-            $optionTypes = array( '1' => ts( 'Create a new' ));
+            $optionTypes = array( '1' => ts( 'Create new response set' ));
         } else {
-            $optionTypes = array( '1' => ts( 'Create a new' ),
-                                  '2' => ts( 'Reuse Existing' ) );
+            $optionTypes = array( '1' => ts( 'Create a new response set' ),
+                                  '2' => ts( 'Use existing response set' ) );
             $this->add( 'select', 
                         'option_group_id', 
-                        ts( 'Survey Response Set' ),
+                        ts( 'Select Response Set' ),
                         array( '' => ts( '- select -' ) ) + $optionGroups, false, 
                         array('onChange' => 'loadOptionGroup( )' ) );
         }
@@ -294,27 +303,26 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $_showHide->addToTemplate();      
 
         // script / instructions
-        $this->add( 'textarea', 'instructions', ts('Instructions for volunteers'), array( 'rows' => 5, 'cols' => 40 ) );
+        $this->add( 'textarea', 'instructions', ts('Instructions for interviewers'), array( 'rows' => 5, 'cols' => 40 ) );
         
         // release frequency
-        $this->add('text', 'release_frequency', ts('Release Frequency'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'release_frequency') );
+        $this->add('text', 'release_frequency', ts('Release frequency'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'release_frequency') );
 
-        $this->addRule('release_frequency', ts('Frequenct interval should be a positive number') , 'positiveInteger');
+        $this->addRule('release_frequency', ts('Release Frequency interval should be a positive number.') , 'positiveInteger');
 
-        // max number of contacts
-        $this->add('text', 'max_number_of_contacts', ts('Maximum number of contacts'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'max_number_of_contacts') );
-
-        $this->addRule('max_number_of_contacts', ts('Maximum number of contacts should be a positive number') , 'positiveInteger');
+        // max reserved contacts at a time
+        $this->add('text', 'default_number_of_contacts', ts('Maximum reserved at one time'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'default_number_of_contacts') );
+        $this->addRule('default_number_of_contacts', ts('Maximum reserved at one time should be a positive number') , 'positiveInteger');    
         
-        // default number of contacts
-        $this->add('text', 'default_number_of_contacts', ts('Default number of contacts'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'default_number_of_contacts') );
-        $this->addRule('default_number_of_contacts', ts('Default number of contacts should be a positive number') , 'positiveInteger');    
+        // total reserved per interviewer
+        $this->add('text', 'max_number_of_contacts', ts('Total reserved per interviewer'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'max_number_of_contacts') );
+        $this->addRule('max_number_of_contacts', ts('Total reserved contacts should be a positive number') , 'positiveInteger');
         
         // is active ?
-        $this->add('checkbox', 'is_active', ts('Is Active?'));
+        $this->add('checkbox', 'is_active', ts('Active?'));
         
         // is default ?
-        $this->add('checkbox', 'is_default', ts('Is Default?'));
+        $this->add('checkbox', 'is_default', ts('Default?'));
 
         // add buttons
         if ( $this->_context == 'dialog' )  {
@@ -350,14 +358,24 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
      *
      */
     static function formRule( $fields, $files, $form ) {
-        
         $errors = array( );
-        
+
+        if ( CRM_Utils_Array::value( 'option_label', $fields ) &&
+             CRM_Utils_Array::value( 'option_value', $fields ) && 
+             ( count(array_filter( $fields['option_label'] ) ) == 0 ) &&
+             ( count(array_filter( $fields['option_value'] ) ) == 0 ) ) {
+             $errors['option_label[1]'] = ts( 'Enter atleast one response option.' );
+             return $errors;       
+        } 
+
         if ( $fields['option_type'] == 2 && 
              !CRM_Utils_Array::value( 'option_group_id', $fields) ) {
             $errors['option_group_id'] = ts("Please select Survey Response set.");
             return $errors;
         }
+
+        $_flagOption = $_rowError = 0;
+        $_showHide = new CRM_Core_ShowHideBlocks('','');
 
         //capture duplicate Custom option values
         if ( ! empty($fields['option_value']) ) {
@@ -427,8 +445,27 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
                 $errors['option_interval['.$i.']'] = ts( 'Please enter a valid integer.' );
             }
             
+            $showBlocks = 'optionField_'.$i;
+            if ( $_flagOption ) {
+                $_showHide->addShow( $showBlocks );
+                $_rowError = 1;
+            } 
+            
+            if (!empty($_emptyRow)) {
+                $_showHide->addHide( $showBlocks );
+            } else {
+                $_showHide->addShow( $showBlocks );
+            }
+
+            if ( $i == self::NUM_OPTION ) {
+                $hideBlock = 'additionalOption';
+                $_showHide->addHide( $hideBlock );
+            }
+            
+            $_flagOption = $_emptyRow = 0; 
         }
-        
+        $_showHide->addToTemplate(); 
+
         return empty($errors) ? true : $errors;
     }   
     

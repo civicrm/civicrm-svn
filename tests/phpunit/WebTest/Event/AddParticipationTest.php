@@ -69,7 +69,7 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
       $this->select("event_id", "label=regexp:Rain-forest Cup Youth Soccer Tournament.");
       
       // Select role
-      $this->click("role_id[1]");
+      $this->click("role_id[2]");
 
       // Choose Registration Date.
       // Using helper webtestFillDate function.
@@ -89,7 +89,7 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
       // Select an event fee
       $feeHelp = "Event Fee Level (if applicable).";
       $this->waitForTextPresent($feeHelp);
-      $this->click("CIVICRM_QFID_566_10");
+      $this->click("CIVICRM_QFID_552_10");
 
       // Select 'Record Payment'
       $this->click("record_contribution");
@@ -104,46 +104,49 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
       
       // go for the chicken combo (obviously)
 //      $this->click("CIVICRM_QFID_chicken_Chicken");
-
+      
       // Clicking save.
       $this->click("_qf_Participant_upload-bottom");
       $this->waitForPageToLoad("30000");
-
+      
       // Is status message correct?
       $this->assertTrue($this->isTextPresent("Event registration for $displayName has been added"), "Status message didn't show up after saving!");
-
-      // click through to the Participant View screen
-      $this->waitForElementPresent("link=View");
-      $this->click('link=View');
-      $this->waitForPageToLoad('30000');
-
-      // verify that the event registration values were properly saved by checking for label/value pairs on the view page 
-      $this->webtestVerifyTabularData(
-          array(
-              'Event'	         => 'Rain-forest Cup Youth Soccer Tournament', 
-              'Participant Role' => 'Attendee',
-              'Status'           => 'Registered',
-              'Event Source'	 => 'Event StandaloneAddTest Webtest', 
-              'Event Level' 	 => 'Tiny-tots (ages 5-8) - $ 800.00',
-//              'Soup Selection'   => 'Chicken Combo'
-          )
-      );
+      
+      $this->waitForElementPresent( "xpath=//div[@id='Events']//table//tbody/tr[1]/td[8]/span/a[text()='View']" );
+      //click through to the participant view screen
+      $this->click( "xpath=//div[@id='Events']//table//tbody/tr[1]/td[8]/span/a[text()='View']" );
+      $this->waitForElementPresent( "_qf_ParticipantView_cancel-bottom" );
+      
+      $expected = array(
+                        2 => 'Rain-forest Cup Youth Soccer Tournament', 
+                        3 => 'Attendee',
+                        5 => 'Registered',
+                        6 => 'Event StandaloneAddTest Webtest', 
+                        7 => 'Tiny-tots (ages 5-8) - $ 800.00',
+                        );
+      foreach ( $expected as $label => $value ) {
+          $this->verifyText("xpath=id('ParticipantView')/div[2]/table[1]/tbody/tr[$label]/td[2]", preg_quote($value));
+      }
       
       // check contribution record as well
-      $this->click('link=View');
-      $this->waitForPageToLoad('30000');
-
-      $this->webtestVerifyTabularData(
-          array(
-              'From'                => $displayName,
-              'Contribution Type'   => 'Event Fee', 
-              'Total Amount' 	    => '$ 800.00',
-              'Received'            => $today, 
-              'Contribution Status' => 'Completed',
-              'Paid By'             => 'Check',
-              'Check Number' 	    => '1044',
-          )      
-      );
+      //click through to the contribution view screen
+      $this->waitForElementPresent( "xpath=id('ParticipantView')/div[2]/table[2]/tbody/tr[1]/td[8]/span/a[text()='View']" );
+      $this->click( "xpath=id('ParticipantView')/div[2]/table[2]/tbody/tr[1]/td[8]/span/a[text()='View']" );
+      $this->waitForElementPresent( "_qf_ContributionView_cancel-bottom" );
+      
+      $expected = array(
+                        1 => $displayName,
+                        2 => 'Event Fee', 
+                        3 => '$ 800.00',
+                        4 => $today, 
+                        5 => 'Completed',
+                        6 => 'Check',
+                        7 => '1044',
+                        );      
+      
+      foreach ( $expected as $label => $value ) {
+          $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[$label]/td[2]", preg_quote($value));
+      }
   }
-
+  
 }

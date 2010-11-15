@@ -42,13 +42,16 @@
        <table id="gotvVoterRecords">
            <thead>
               <tr class="columnheader">
-	          <th>{ts}Name{/ts}</th>
+	          <th></th>
+                  <th>{ts}Name{/ts}</th>
 	          <th>{ts}Street Address{/ts}</th>
 	          <th>{ts}Street Name{/ts}</th>
 	          <th>{ts}Street Number{/ts}</th>
 	          <th>{ts}Street Unit{/ts}</th>
 	          {if $searchVoterFor eq 'release'}
 	          <th>{ts}Is Interview Conducted?{/ts}</th>
+	          {elseif $searchVoterFor eq 'gotv'}
+	          <th>{ts}Voted?{/ts}</th>
 	          {else}
 	          <th>{ts}Is Reserved?{/ts}</th>
 	          {/if}
@@ -105,7 +108,7 @@ function searchVoters( )
 	      cj( '#search_form_' + {/literal}'{$searchVoterFor}'{literal} ).addClass( 'crm-accordion-closed' );
       }, 'html' );
 }
-	
+
 function loadVoterList( ) 
 {
      var sourceUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='snippet=4&className=CRM_Campaign_Page_AJAX&fnName=voterList' }"{literal};
@@ -116,8 +119,8 @@ function loadVoterList( )
      	        "bFilter"    : false,
 		"bAutoWidth" : false,
 	    	"bProcessing": true,
-                "aaSorting": [ [0,'asc'], [1,'asc'], [2,'asc'], [3,'asc'], [4,'asc'] ],
-		"aoColumns":[{sClass:""},{sClass:""},{sClass:""},{sClass:""},{sClass:""},{bSortable:false}],
+                "aaSorting": [[0,''],[1,'asc'], [2,'asc'], [3,'asc'], [4,'asc'], [5,'asc'] ],
+		"aoColumns":[{bSortable:false},{sClass:""},{sClass:""},{sClass:""},{sClass:""},{sClass:""},{bSortable:false}],
 		"sPaginationType": "full_numbers",
 		"sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',
 	   	"bServerSide": true,
@@ -166,8 +169,12 @@ function processVoterData( element, operation )
         data['source_contact_id']   = interviewerId;
         data['assignee_contact_id'] = interviewerId;
 	data['isReserved']          = cj( element ).attr( 'checked') ? 1:0; 
+  } else if ( operation == 'gotv' ) {
+       	data['operation']   = operation; 
+	data['activity_id'] = cj( element ).val( );
+	data['hasVoted']    = cj( element ).attr( 'checked') ? 1: 0; 	 
   }
-  data['surveyTitle'] = {/literal}'{$surveytitle}'{literal};
+  data['surveyTitle'] = {/literal}'{$surveyTitle|escape:javascript}'{literal};
    
   var actUrl = {/literal}
 	       "{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Campaign_Page_AJAX&fnName=processVoterData'}"
@@ -184,6 +191,10 @@ function processVoterData( element, operation )
 	               msg = '{/literal}{ts}Save as voted.{/ts}{literal}';
 		       var isDeleted = cj( element ).attr( 'checked') ? 1:0;
 		       if ( !isDeleted ) msg = '{/literal}{ts}Save as non voted.{/ts}{literal}'; 
+		   } else if ( operation == 'gotv' ) {
+		       msg = '{/literal}{ts}Vote Recorded.{/ts}{literal}';
+		       var hasVoted = cj( element ).attr( 'checked') ? 1:0;
+		       if ( !hasVoted ) msg = '{/literal}{ts}Vote Cancelled.{/ts}{literal}'; 
 		   } else if ( operation == 'reserve' ) {
 		       if ( cj( element ).attr( 'checked') ) {
 		       	  msg = '{/literal}{ts}Reserved.{/ts}{literal}';	  

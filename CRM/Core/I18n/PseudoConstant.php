@@ -52,6 +52,7 @@ class CRM_Core_I18n_PseudoConstant
                 'et_EE' => 'Eesti',
                 'el_GR' => 'Ελληνικά',
                 'en_AU' => 'English (Australia)',
+                'en_CA' => 'English (Canada)',
                 'en_GB' => 'English (United Kingdom)',
                 'es_ES' => 'español',
                 'es_MX' => 'español (Mexico)',

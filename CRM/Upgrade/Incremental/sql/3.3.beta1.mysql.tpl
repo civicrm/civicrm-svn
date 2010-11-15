@@ -70,28 +70,39 @@ UPDATE  civicrm_navigation
  WHERE  name in ( 'Dashboard', 'Survey Dashboard', 'Petition Dashboard', 'Campaign Dashboard', 'New Campaign', 'New Survey',  'New Petition' )
    AND  permission = 'administer CiviCampaign';
 
-
--- suppress campaign activity types from actions. 
-SELECT @campaignCompID   := MAX(id) FROM civicrm_component where name = 'CiviCampaign';
-SELECT @actTypeOptGrpID  := MAX(id) from civicrm_option_group where name = 'activity_type';
- 
-UPDATE  civicrm_option_value
-   SET  filter = 1
-WHERE   option_group_id = @actTypeOptGrpID
-  AND   component_id    = @campaignCompID;
-
 -- replace voter w/ respondent.
 UPDATE    civicrm_navigation
    SET    label  = REPLACE(label, 'Voter', 'Respondent' ),
           name   = REPLACE(name,  'Voter', 'Respondent' )
-  WHERE   name IN ( 'Reserve Voters', 'Interview Voters', 'Release Voters', 'Voter Listing' );
+  WHERE   name IN ( 'Reserve Voters', 'Interview Voters', 'Release Voters' );
 
 
 SELECT  @campaignTypeOptGrpID := MAX(id) from civicrm_option_group where name = 'campaign_type';
 
 UPDATE  civicrm_option_value
-   SET  {localize field='label'}label = REPLACE(label, 'Voter', 'Respondent' ){/localize},
-	name = REPLACE(name, 'Voter', 'Respondent' )	
+   SET  {localize field='label'}label = REPLACE(label, 'Voter', 'Constituent' ){/localize},
+	name = REPLACE(name, 'Voter', 'Constituent' )	
  WHERE  name = 'Voter Engagement'
    AND  option_group_id = @campaignTypeOptGrpID;
+
+UPDATE  civicrm_navigation 
+   SET  permission = CONCAT( permission, ',release campaign contacts' )
+ WHERE  name like 'Voter Listing'
+   AND  permission = 'administer CiviCampaign,manage campaign';
+
+
+{if $multilingual}
+  {foreach from=$locales item=loc}
+   ALTER TABLE civicrm_batch ADD label_{$loc} varchar(64);
+   ALTER TABLE civicrm_batch ADD description_{$loc} text;
+
+   UPDATE civicrm_batch SET label_{$loc} = label;
+   UPDATE civicrm_batch SET description_{$loc} = description;
+  {/foreach}
+  ALTER TABLE civicrm_batch DROP label;
+  ALTER TABLE civicrm_batch DROP description;
+{/if}
+
+-- CRM-7044 (needed for the installs that upgraded to 3.3 from pre-3.2.5)
+UPDATE civicrm_state_province SET name = 'Khomas' WHERE name = 'Khomae';
 

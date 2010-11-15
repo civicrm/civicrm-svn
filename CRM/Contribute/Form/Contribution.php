@@ -544,7 +544,7 @@ WHERE  contribution_id = {$this->_id}
                                      'contact_id' => $defaults['honor_contact_id'] );
             CRM_Contact_BAO_Contact::retrieve( $idParams, $honorDefault, $ids );
 
-            $defaults['honor_prefix_id']  = $honorDefault['prefix_id'];
+            $defaults['honor_prefix_id']  = CRM_Utils_Array::value('prefix_id',  $honorDefault);
             $defaults['honor_first_name'] = CRM_Utils_Array::value('first_name', $honorDefault);
             $defaults['honor_last_name']  = CRM_Utils_Array::value('last_name',  $honorDefault);
             $defaults['honor_email']      = CRM_Utils_Array::value('email',      $honorDefault['email'][1]);

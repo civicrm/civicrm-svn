@@ -56,8 +56,9 @@
     	    {assign var=cbName value=$row.checkbox}
     	    <td>{$form.$cbName.html}</td> 
  	{/if}
-    	<td>{$row.contact_type} &nbsp;<a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`"}">{$row.sort_name}</a></td>
+    <td>{$row.contact_type} &nbsp;<a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`"}">{$row.sort_name}</a></td>
 	<td>{$row.street_number}</td>
+	<td>{$row.street_name}</td>
 	<td>{$row.street_address}</td>
 	<td>{$row.city}</td>
 	<td>{$row.postal_code}</td>

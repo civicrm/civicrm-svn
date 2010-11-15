@@ -89,24 +89,16 @@
 	  </tr>	
           <tr>
               <td class="font-size12pt">
-                  {$form.street_type.label}
-       	      </td>
-              <td>	
-                  {$form.street_type.html}
+                  {$form.city.label}
+              </td>
+              <td>
+                  {$form.city.html}
               </td>
 	      <td class="font-size12pt">
                   {$form.street_number.label}
        	      </td>
               <td>	
                   {$form.street_number.html}
-              </td>
-	  </tr>
-	  <tr>
-              <td class="font-size12pt">
-                  {$form.city.label}
-              </td>
-              <td>
-                  {$form.city.html}
               </td>
 	  </tr>
 	  {if $customSearchFields.ward || $customSearchFields.precinct}
@@ -150,9 +142,12 @@
     
 {literal}
 <script type="text/javascript">
+
+    {/literal}{if !$doNotReloadCRMAccordion}{literal}	
     cj(function() {
       cj().crmaccordions(); 
     });
+    {/literal}{/if}{literal}
 
   //load interviewer autocomplete.
   var interviewerDataUrl = "{/literal}{$dataUrl}{literal}";

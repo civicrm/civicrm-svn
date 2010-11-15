@@ -158,6 +158,7 @@ class CRM_Campaign_BAO_Query
             $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( 'civicrm_survey.id', 
                                                                               $op, $value, "Integer" );
             return;
+
         case 'survey_status_id' :
             require_once 'CRM/Core/PseudoConstant.php';
             $activityStatus = CRM_Core_PseudoConstant::activityStatus( );
@@ -166,6 +167,7 @@ class CRM_Campaign_BAO_Query
             $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( 'civicrm_activity.status_id', 
                                                                               $op, $value, "Integer" );
             return;
+
         case 'campaign_search_voter_for' :
             if ( in_array( $value, array('release', 'interview' ) ) ) {
                 $query->_where[$grouping][] = '(civicrm_activity.is_deleted = 0 OR civicrm_activity.is_deleted IS NULL)';
@@ -177,10 +179,12 @@ class CRM_Campaign_BAO_Query
             foreach ( $query->_params as $paramValues ) {
                 if ( CRM_Utils_Array::value( 0, $paramValues ) == 'survey_interviewer_name' ) {
                     $surveyInterviewerName = CRM_Utils_Array::value( 2, $paramValues );
+                    break;
                 }
             }
             $query->_qill[$grouping ][] = ts( 'Survey Interviewer - %1', array( 1 => $surveyInterviewerName ) );
-            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( 'civicrm_activity.source_contact_id', 
+            $query->_tables['civicrm_activity_assignment']   = $query->_whereTables['civicrm_activity_assignment'] = 1;
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( 'civicrm_activity_assignment.assignee_contact_id',
                                                                               $op, $value, "Integer" );
             return;
         }
@@ -202,7 +206,12 @@ class CRM_Campaign_BAO_Query
         case self::civicrm_activity :
             require_once 'CRM/Campaign/PseudoConstant.php';
             $surveyActivityTypes = CRM_Campaign_PseudoConstant::activityType( );
-            $from = " INNER JOIN civicrm_activity ON ( civicrm_activity.id = civicrm_activity_target.activity_id AND civicrm_activity.activity_type_id IN (". implode( ',', array_keys( $surveyActivityTypes ) ) .") ) ";
+            $surveyKeys = "(". implode( ',', array_keys( $surveyActivityTypes ) ) .")"; 
+            $from = " 
+INNER JOIN civicrm_activity ON ( civicrm_activity.id = civicrm_activity_target.activity_id AND 
+                                 civicrm_activity.activity_type_id IN $surveyKeys )
+INNER JOIN civicrm_activity_assignment ON ( civicrm_activity.id = civicrm_activity_assignment.activity_id )
+";
             break;
             
         case 'civicrm_survey':
@@ -223,7 +232,8 @@ class CRM_Campaign_BAO_Query
         if ( $mode & CRM_Contact_BAO_Query::MODE_CAMPAIGN ) {
             $properties = array(
                                 'contact_id'                => 1,
-                                'contact_type'              => 1, 
+                                'contact_type'              => 1,
+                                'contact_sub_type'          => 1,
                                 'sort_name'                 => 1, 
                                 'display_name'              => 1,
                                 'street_unit'               => 1,
@@ -280,12 +290,12 @@ class CRM_Campaign_BAO_Query
     {
         require_once 'CRM/Campaign/BAO/Survey.php';
         $attributes = CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_Address' );
+        $className = CRM_Utils_System::getClassName( $form );
         
         $form->add( 'text', 'sort_name',       ts( 'Contact Name'   ), 
                     CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'sort_name' ) );
         $form->add( 'text', 'street_name',     ts( 'Street Name'    ), $attributes['street_name']    );
         $form->add( 'text', 'street_number',   ts( 'Street Number'  ), $attributes['street_number']  );
-        $form->add( 'text', 'street_type',     ts( 'Street Type'    ), $attributes['street_type']    );
         $form->add( 'text', 'street_unit',     ts( 'Street Unit'    ), $attributes['street_unit']    );
         $form->add( 'text', 'street_address',  ts( 'Street Address' ), $attributes['street_address'] );
         $form->add( 'text', 'city',            ts( 'City'           ), $attributes['city']           );
@@ -293,6 +303,11 @@ class CRM_Campaign_BAO_Query
         $showInterviewer = false;
         if ( CRM_Core_Permission::check( 'administer CiviCampaign' ) ) {
             $showInterviewer = true;
+        }
+        $form->assign( 'showInterviewer', $showInterviewer );
+        
+        if ( $showInterviewer ||
+             $className == 'CRM_Campaign_Form_Gotv' ) {
             //autocomplete url
             $dataUrl = CRM_Utils_System::url( 'civicrm/ajax/rest',
                                               'className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&reset=1',
@@ -317,7 +332,6 @@ class CRM_Campaign_BAO_Query
                 $form->setDefaults( $defaults );
             }
         }
-        $form->assign( 'showInterviewer', $showInterviewer );
         
         //build ward and precinct custom fields.
         $query = '
@@ -342,7 +356,7 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
         $form->assign( 'customSearchFields',  $customSearchFields );
         
         $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
-        $className = CRM_Utils_System::getClassName( $form );
+        
         if ( empty( $surveys ) && 
              ($className == 'CRM_Campaign_Form_Search') ) {
             CRM_Core_Error::statusBounce( ts( 'Could not find survey for %1 respondents.', 
@@ -376,16 +390,53 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
         require_once 'CRM/Core/PseudoConstant.php';
         $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
         $status = array( 'Scheduled' );
+        if ( $searchVoterFor == 'reserve' ) $status[] = 'Completed';
+        
+        $completedStatusId = null;
         foreach ( $status as $name ) {
-            if ( $statusId = array_search( $name, $activityStatus ) ) $statusIds[] = $statusId; 
+            if ( $statusId = array_search( $name, $activityStatus ) ) {
+                $statusIds[] = $statusId;
+                if ( $name == 'Completed' ) $completedStatusId = $statusId; 
+            }
         }
         
         require_once 'CRM/Campaign/BAO/Survey.php';
-        $voterIds = CRM_Campaign_BAO_Survey::getSurveyVoterIds( $surveyId, null, $statusIds );
-        if ( !empty( $voterIds ) ) {
+        $voterActValues = CRM_Campaign_BAO_Survey::getSurveyVoterInfo( $surveyId, null, $statusIds );
+        
+        if ( !empty( $voterActValues ) ) {
             $operator = 'IN';
-            if ( $searchVoterFor == 'reserve' ) $operator = 'NOT IN';
-            $voterClause = "( contact_a.id $operator (".  implode( ', ', $voterIds ). ') )';
+            $voterIds = array_keys( $voterActValues );
+            if ( $searchVoterFor == 'reserve' ) {
+                $operator = 'NOT IN';
+                //filter out recontact survey contacts.
+                $recontactInterval = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', 
+                                                                  $surveyId, 'recontact_interval' );
+                $recontactInterval = unserialize( $recontactInterval );
+                if ( $surveyId && 
+                     is_array( $recontactInterval ) && 
+                     !empty( $recontactInterval ) ) {
+                    $voterIds = array( );
+                    foreach ( $voterActValues as $values ) {
+                        $numOfDays = CRM_Utils_Array::value( $values['result'], $recontactInterval );
+                        if ( $numOfDays && 
+                             $values['status_id'] == $completedStatusId ) {
+                            $recontactIntSeconds = $numOfDays * 24 * 3600;
+                            $actDateTimeSeconds  = CRM_Utils_Date::unixTime( $values['activity_date_time'] );
+                            $totalSeconds = $recontactIntSeconds + $actDateTimeSeconds;
+                            //don't consider completed survey activity
+                            //unless it fulfill recontact interval criteria.
+                            if ( $totalSeconds <= time( ) ) {
+                                continue;
+                            }
+                        }
+                        $voterIds[$values['voter_id']] = $values['voter_id'];
+                    }
+                }
+            }
+            
+            if ( !empty( $voterIds ) ) {
+                $voterClause = "( contact_a.id $operator ( ".  implode( ', ', $voterIds  ). ' ) )';
+            }
         }
         
         return $voterClause;

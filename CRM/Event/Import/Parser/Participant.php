@@ -332,7 +332,8 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
         }
         
         $formatError = _civicrm_participant_formatted_param( $formatValues, $formatted, true );
-                
+        require_once "api/v2/Participant.php";
+
         if ( $formatError ) {
             array_unshift($values, $formatError['error_message']);
             return CRM_Event_Import_Parser::ERROR;
@@ -363,7 +364,11 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
                                  'participant' => $formatValues['participant_id'],
                                  'userId'      => $session->get('userID')
                                  );
-                    
+                    $newParticipant = civicrm_participant_check_params($formatted, false);
+                    if ( $newParticipant['error_message'] ) {
+                        array_unshift( $values, $newParticipant['error_message'] ); 
+                        return CRM_Event_Import_Parser::ERROR;
+                    }
                     $newParticipant =& CRM_Event_BAO_Participant::create( $formatted , $ids );
                     
                     $this->_newParticipant[] = $newParticipant->id;
@@ -374,8 +379,6 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
                 }
             }
         }
-        
-        require_once "api/v2/Participant.php";
         
         if ( $this->_contactIdIndex < 0 ) {
             
@@ -445,9 +448,13 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
                 $participantID = CRM_Utils_Array::value( 'participantID', $newParticipant['error_data'] );
                 $url           = CRM_Utils_System::url( 'civicrm/contact/view/participant',
                                                         "reset=1&id={$participantID}&cid={$contactID}&action=view", true );
-                if ( $participantID = $newParticipant['error_message']['params'][0] ) {
+                if ( is_array( $newParticipant['error_message'] ) && 
+                     ( $participantID == $newParticipant['error_message']['params'][0] ) ) {
                     array_unshift( $values, $url ); 
                     return CRM_Event_Import_Parser::DUPLICATE;
+                } else if ( $newParticipant['error_message'] ) {
+                    array_unshift( $values, $newParticipant['error_message'] ); 
+                    return CRM_Event_Import_Parser::ERROR;
                 }
                 return CRM_Event_Import_Parser::ERROR;
             }

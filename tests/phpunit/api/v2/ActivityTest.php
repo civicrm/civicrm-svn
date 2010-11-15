@@ -1046,7 +1046,7 @@ class api_v2_ActivityTest extends CiviUnitTestCase
                              dirname(__FILE__)
                              . '/dataset/activity_type_5.xml') );
         $params = array(
-                        'id'                  => 1,
+                        'id'                  => 4,
                         'source_contact_id'   => 17,
                         'subject'             => 'Hurry update works', 
                         'status_id'           => 1,
@@ -1054,10 +1054,9 @@ class api_v2_ActivityTest extends CiviUnitTestCase
                         );
 
         $result =& civicrm_activity_update( $params );
-        $this->assertNull( $result['is_error'],
-                             "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
-        $this->assertEquals( $result['id'] , 1,
-                             "In line " . __LINE__ );
+        $this->assertNotContains( 'is_error', $result );
+        $this->assertEquals( $result['id'] , 4,
+                              "In line " . __LINE__ );
         $this->assertEquals( $result['source_contact_id'] , 17,
                              "In line " . __LINE__ );
         $this->assertEquals( $result['subject'], 'Hurry update works',

@@ -435,6 +435,12 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
         $relationship->id = $id;
         
         $relationship->find(true);
+        //get the relationship type id of "Employee of"
+        $relTypeId = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_RelationshipType', 'Employee of', 'id', 'name_a_b' );
+        if ( $relTypeId && ( $action & CRM_Core_Action::DISABLE ) ) {
+            require_once 'CRM/Contact/BAO/Contact/Utils.php';
+            CRM_Contact_BAO_Contact_Utils::clearCurrentEmployer( $relationship->contact_id_a ); 
+        }
         
         if ( CRM_Core_Permission::access( 'CiviMember' ) ) {
             // create $params array which isrequired to delete memberships

@@ -31,10 +31,6 @@ require_once 'CiviTest/CiviSeleniumTestCase.php';
  
 class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
 
-  protected $captureScreenshotOnFailure = TRUE;
-  protected $screenshotPath = '/tmp';
-  protected $screenshotUrl = 'http://api.dev.civicrm.org/sc/';
-    
   protected function setUp()
   {
       parent::setUp();

@@ -130,7 +130,6 @@ class CRM_Campaign_Page_AJAX
                                'street_unit',
                                'street_name',
                                'street_number', 
-                               'street_type', 
                                'street_address', 
                                'survey_interviewer_id', 
                                'campaign_survey_id',
@@ -226,7 +225,8 @@ class CRM_Campaign_Page_AJAX
         
         $iTotal      = $searchCount;
         
-        $selectorCols = array( 'sort_name', 'street_address', 'street_name', 'street_number', 'street_unit' );
+        $selectorCols = array( 'contact_type', 'sort_name', 'street_address', 
+                               'street_name', 'street_number', 'street_unit' );
         
         $extraVoterColName = 'is_interview_conducted';
         if ( $params['campaign_search_voter_for'] = 'reserve' ) {
@@ -244,29 +244,33 @@ class CRM_Campaign_Page_AJAX
                                            false, 
                                            $voterClause, 
                                            $sortOrder );
-            
             while( $result->fetch() ) {
-                $contactID    = $result->contact_id;
-                $contact_type = '<img src="' . $config->resourceBase . 'i/contact_';
-                $typeImage = 
-                    CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_sub_type ? 
-                                                             $result->contact_sub_type : $result->contact_type );
+                $contactID  = $result->contact_id;
+                $typeImage  = CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_sub_type ? 
+                                                                       $result->contact_sub_type : $result->contact_type,
+                                                                       false,
+                                                                       $result->contact_id );
                 
                 $searchRows[$contactID] = array( 'id' => $contactID );
                 foreach ( $selectorCols as $col ) {
-                    $colVal = $result->$col;
-                    if ( $col == 'sort_name' ) {
-                        $colVal = $typeImage.' '.$result->sort_name;
-                    }
-                    $searchRows[$contactID][$col] = $colVal;
+                    $val = $result->$col;
+                    if ( $col == 'contact_type' ) $val = $typeImage;  
+                    $searchRows[$contactID][$col] = $val;
                 }
                 if ( $searchVoterFor == 'reserve' ) {
                     $voterExtraColHtml = '<input type="checkbox" id="survey_activity['. $contactID .']" name="survey_activity['. $contactID .']" value='. $contactID .' onClick="processVoterData( this, \'reserve\' );" />';
-                    $voterExtraColHtml .= "&nbsp;<span id='success_msg_{$contactID}' class='ok' style='display:none;'>{ts}Respondent Reserved.{/ts}</span>";
+                    $msg = ts( 'Respondent Reserved.' );
+                    $voterExtraColHtml .= "&nbsp;<span id='success_msg_{$contactID}' class='ok' style='display:none;'>$msg</span>";
+                } else if ( $searchVoterFor == 'gotv' ) {
+                    $surveyActId  = $result->survey_activity_id; 
+                    $voterExtraColHtml = '<input type="checkbox" id="survey_activity['. $surveyActId .']" name="survey_activity['. $surveyActId .']" value='. $surveyActId .' onClick="processVoterData( this, \'gotv\' );" />';
+                    $msg = ts( 'Vote Recorded' );
+                    $voterExtraColHtml .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id='success_msg_{$surveyActId}' class='ok' style='display:none;'>$msg</span>";
                 } else {
                     $surveyActId  = $result->survey_activity_id; 
                     $voterExtraColHtml = '<input type="checkbox" id="survey_activity['. $surveyActId .']" name="survey_activity['. $surveyActId .']" value='. $surveyActId .' onClick="processVoterData( this, \'release\' );" />';
-                    $voterExtraColHtml .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id='success_msg_{$surveyActId}' class='ok' style='display:none;'>{ts}Vote Saved.{/ts}</span>";
+                    $msg = ts( 'Vote Recorded' );
+                    $voterExtraColHtml .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id='success_msg_{$surveyActId}' class='ok' style='display:none;'>$msg</span>";
                 }
                 $searchRows[$contactID][$extraVoterColName] = $voterExtraColHtml;
             }
@@ -370,8 +374,24 @@ class CRM_Campaign_Page_AJAX
                     }
                 }
             }
+        } else if ( $operation == 'gotv' ) {
+            require_once 'CRM/Utils/String.php';
+            $activityId = CRM_Utils_Type::escape($_POST['activity_id'],  'Integer' );
+            $hasVoted    = CRM_Utils_String::strtoboolstr( CRM_Utils_Type::escape($_POST['hasVoted'], 'String' ) );
+            if ( $activityId ) {
+                if ( $hasVoted ) {
+                    $statusValue = 2;
+                } else {
+                    $statusValue = 1;
+                }
+                CRM_Core_DAO::setFieldValue( 'CRM_Activity_DAO_Activity', 
+                                             $activityId, 
+                                             'status_id', 
+                                             $statusValue );
+                $status = 'success';
+           }
         }
-        
+
         echo json_encode( array( 'status' => $status ) );
         CRM_Utils_System::civiExit( );
     }

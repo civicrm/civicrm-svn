@@ -80,7 +80,8 @@ class CRM_Member_Form_MembershipTest extends CiviUnitTestCase
      */
     function testFormRuleEmptyContact()
     {
-        $params = array( 'contact_select_id' => 0 );
+        $params = array( 'contact_select_id' => 0,
+                         'membership_type_id' => array( ) );
         $files  = array();
         $obj    = new CRM_Member_Form_Membership;
         $rc = $obj->formRule( $params, $files, $obj );

@@ -253,20 +253,33 @@ class CRM_Utils_REST
     function process( &$args, $restInterface = true ) {
         $params =& self::buildParamList( );
         $params['check_permissions'] = true;
-        $fnName = null;
+        $fnName = $apiFile = null;
+
+        // clean up all function / class names. they should be alphanumeric and _ only
+        for ( $i = 1 ; $i <= 3; $i++ ) {
+            if ( ! empty( $args[$i] ) ) {
+                $args[$i] = CRM_Utils_String::munge( $args[$i] );
+            }
+        }
         
         // incase of ajax functions className is passed in url
         if ( isset( $params['className'] ) ) {
+            $params['className'] = CRM_Utils_String::munge( $params['className'] );
+
             // functions that are defined only in AJAX.php can be called via
             // rest interface
             $class = explode( '_', $params['className'] );
-            if ( $class[ count($class) - 1 ] != 'AJAX' ) {
+            if ( $class[ 0 ] != 'CRM' ||
+                 count($class) < 4    ||
+                 $class[ count($class) - 1 ] != 'AJAX' ) {
                 return self::error( 'Unknown function invocation.' );
             } 
 
+            $params['fnName'] = CRM_Utils_String::munge( $params['fnName'] );
+
             // evaluate and call the AJAX function
 	        require_once( str_replace('_', DIRECTORY_SEPARATOR, $params['className'] ) . ".php");
-            if ( !method_exists( $params['className'], $params['fnName'] ) ) {
+            if ( ! method_exists( $params['className'], $params['fnName'] ) ) {
                 return self::error( 'Unknown function invocation.' );
             }
 

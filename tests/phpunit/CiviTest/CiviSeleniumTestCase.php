@@ -213,9 +213,9 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
      function addMultipleChoiceOptions( $options, &$validateStrings ){
          foreach ( $options as $oIndex => $oValue ) {
              $validateStrings[] = $oValue['label'];
-             $validateStrings[] = $oValue['name'];
+             $validateStrings[] = $oValue['amount'];
              $this->type("option_label_{$oIndex}", $oValue['label'] ); 
-             $this->type("option_name_{$oIndex}" , $oValue['name']  ); 
+             $this->type("option_amount_{$oIndex}" , $oValue['amount']  ); 
              $this->click("link=another choice");
          }         
      }
