@@ -806,7 +806,12 @@ WHERE  ce.on_hold = 0 AND cc.is_deceased = 0 AND cc.do_not_email = 0 AND {$query
         }
 
         foreach( $searchRows as $cid => $row ) {
-            $searchRows[$cid]['check'] = '<input type="checkbox" id="contact_check['.$cid.']" name="contact_check['.$cid.']" value='.$cid.' />';
+            if ( $sEcho == 1 && count($searchRows) == 1 ) { 
+                 $searchRows[$cid]['check'] = '<input type="checkbox" id="contact_check['.$cid.']" name="contact_check['.$cid.']" value='.$cid.' checked />';
+            } else {
+                 $searchRows[$cid]['check'] = '<input type="checkbox" id="contact_check['.$cid.']" name="contact_check['.$cid.']" value='.$cid.' />';
+            }
+
             if ( $typeName == 'Employee of' ) {
                  $searchRows[$cid]['employee_of'] = '<input type="radio" name="employee_of" value='.$cid.' >';
             } elseif ( $typeName == 'Employer of' ) {
