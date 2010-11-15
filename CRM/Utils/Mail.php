@@ -108,7 +108,14 @@ class CRM_Utils_Mail
         foreach ( array( 'From', 'To', 'Cc', 'Bcc', 'Reply-To', 'Return-Path' ) as $fld ) {
             $headers[$fld] = str_replace( '"<', '" <', $headers[$fld] );
         }
-        
+
+        // quote FROM, if comma is detected AND is not already quoted. CRM-7053
+        if ( strpos( $headers['From'], ',' ) !== false && 
+             strpos( $headers['From'], '"' ) === false ) {
+            $from = explode( ' <', $headers['From'] );
+            $headers['From'] = "\"{$from[0]}\" <{$from[1]}";
+        }
+
         require_once 'Mail/mime.php';
         $msg = new Mail_mime("\n");
         if ( $textMessage ) {
