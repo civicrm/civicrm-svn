@@ -161,7 +161,7 @@ function &civicrm_note_get( &$params ) {
         return civicrm_create_error( ts( 'Input parameters is not an array' ) );
     }
    
-    if ( !is_numeric( $params['entity_id'] ) ) {
+    if ( ( CRM_Utils_Array::value( 'entity_id', $params ) ) && ( !is_numeric( $params['entity_id'] ) ) ) {
         return civicrm_create_error( ts ( "Invalid entity ID" ) );
     }
 

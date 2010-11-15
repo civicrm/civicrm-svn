@@ -107,7 +107,6 @@ class api_v2_CustomGroupTest extends CiviUnitTestCase
                          'data_type'       => 'String',
                          'option_label'     => array('Label1', 'Label2'),
                          'option_value'     => array( 'value1', 'value2'),
-                         'option_name'      => array( $name.'_1', $name.'_2'),
                          'option_weight'    => array(1, 2),
                          'label'            => 'Country'
                          );

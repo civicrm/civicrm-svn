@@ -171,11 +171,11 @@ function civicrm_custom_field_create( $params )
         return civicrm_create_error("params is not an array ");
     }
     
-    if ( !( CRM_Utils_Array::value('custom_group_id', $params ) ) ) {                        
+    if ( ! CRM_Utils_Array::value( 'custom_group_id', $params ) ) {                        
         return civicrm_create_error("Missing Required field :custom_group_id");
     }
     
-    if (!($params['label']) ) {                                     
+    if ( !( CRM_Utils_Array::value( 'label', $params ) ) ) {                                     
         return civicrm_create_error("Missing Required field :label");
     }
     
