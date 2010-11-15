@@ -380,6 +380,24 @@ Group By  waiting.event_id
             $waiting = CRM_Core_DAO::executeQuery( $waitingQuery, CRM_Core_DAO::$_nullArray );
             while ( $waiting->fetch( ) && $waiting->waiting_participant_count ) {
                 if ( $returnWaitingCount ) {
+                    //include line items waiting participants.
+                    $lineItemWaitingTotal = "
+    SELECT  count(DISTINCT lineitem.entity_id) as entityCount, 
+            sum(lineitem.participant_count) as counted_participants
+      FROM  civicrm_line_item lineitem 
+INNER JOIN  civicrm_participant counted ON ( counted.id = lineitem.entity_id ) 
+     WHERE  counted.status_id IN ( {$onWaitlistStatusId} )
+       AND  counted.is_test = 0
+       AND  lineitem.entity_table = 'civicrm_participant'
+       AND  lineitem.participant_count != 0
+       AND  counted.event_id = %1
+  GROUP BY  counted.event_id";
+                    $lineItemWaiting = CRM_Core_DAO::executeQuery( $lineItemWaitingTotal, 
+                                                                   array( 1 => array( $eventId, 'Positive'  ) ) );
+                    while ( $lineItemWaiting->fetch( ) && $lineItemWaiting->counted_participants ) {
+                        $waiting->waiting_participant_count += ( $lineItemWaiting->counted_participants - 
+                                                                 $lineItemWaiting->entityCount );
+                    }
                     return $waiting->waiting_participant_count;
                 } else {
                     //get the event full message.
