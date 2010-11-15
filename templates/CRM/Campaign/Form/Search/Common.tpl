@@ -89,24 +89,16 @@
 	  </tr>	
           <tr>
               <td class="font-size12pt">
-                  {$form.street_type.label}
-       	      </td>
-              <td>	
-                  {$form.street_type.html}
+                  {$form.city.label}
+              </td>
+              <td>
+                  {$form.city.html}
               </td>
 	      <td class="font-size12pt">
                   {$form.street_number.label}
        	      </td>
               <td>	
                   {$form.street_number.html}
-              </td>
-	  </tr>
-	  <tr>
-              <td class="font-size12pt">
-                  {$form.city.label}
-              </td>
-              <td>
-                  {$form.city.html}
               </td>
 	  </tr>
 	  {if $customSearchFields.ward || $customSearchFields.precinct}

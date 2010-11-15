@@ -296,7 +296,6 @@ INNER JOIN civicrm_activity_assignment ON ( civicrm_activity.id = civicrm_activi
                     CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'sort_name' ) );
         $form->add( 'text', 'street_name',     ts( 'Street Name'    ), $attributes['street_name']    );
         $form->add( 'text', 'street_number',   ts( 'Street Number'  ), $attributes['street_number']  );
-        $form->add( 'text', 'street_type',     ts( 'Street Type'    ), $attributes['street_type']    );
         $form->add( 'text', 'street_unit',     ts( 'Street Unit'    ), $attributes['street_unit']    );
         $form->add( 'text', 'street_address',  ts( 'Street Address' ), $attributes['street_address'] );
         $form->add( 'text', 'city',            ts( 'City'           ), $attributes['city']           );

@@ -130,7 +130,6 @@ class CRM_Campaign_Page_AJAX
                                'street_unit',
                                'street_name',
                                'street_number', 
-                               'street_type', 
                                'street_address', 
                                'survey_interviewer_id', 
                                'campaign_survey_id',
