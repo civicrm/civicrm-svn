@@ -981,7 +981,7 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
                     $params['amount']       = $this->_values['fee'][$params['amount']]['value'];
                     
                 } else {
-                    CRM_Price_BAO_Set::processAmount( $this->_values['fee']['fields'], 
+                    CRM_Price_BAO_Set::processAmount( $this->_values['fee'], 
                                                       $params, $lineItem[0] );
                 }
                 

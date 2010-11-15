@@ -457,7 +457,7 @@ SELECT  id, html_type
             //retrieve custom information
             $form->_values = array( );
             require_once "CRM/Event/Form/Registration/Register.php";
-            CRM_Event_Form_Registration::initPriceSet($form, $event['id'] );
+            CRM_Event_Form_Registration::initEventFee( $form, $event['id'] );
             CRM_Event_Form_Registration_Register::buildAmount( $form, true, $form->_discountId );
             $lineItem = array();
             if ( !CRM_Utils_System::isNull( CRM_Utils_Array::value( 'line_items', $form->_values ) ) ) {

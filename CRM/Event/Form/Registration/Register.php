@@ -502,7 +502,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             }
 
             require_once 'CRM/Price/BAO/Field.php';                       
-            foreach ( $form->_values['fee']['fields'] as $field ) {
+            foreach ( $form->_values['fee'] as $field ) {
                 if (  CRM_Utils_Array::value( 'visibility', $field ) == 'public' || $className == 'CRM_Event_Form_Participant' ) {
                     $fieldId = $field['id'];
                     $elementName = 'price_' . $fieldId;
@@ -681,7 +681,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             
             $lineItem = array( );
             require_once 'CRM/Price/BAO/Set.php';
-            CRM_Price_BAO_Set::processAmount( $self->_values['fee']['fields'], $fields, $lineItem );
+            CRM_Price_BAO_Set::processAmount( $self->_values['fee'], $fields, $lineItem );
             if ( $fields['amount'] < 0) {
                 $errors['_qf_default'] = ts( "Event Fee(s) can not be less than zero. Please select the options accordingly" );
             }
@@ -825,7 +825,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             } else {
                 $lineItem = array( );
                 require_once "CRM/Price/BAO/Set.php";
-                CRM_Price_BAO_Set::processAmount( $this->_values['fee']['fields'], $params, $lineItem );
+                CRM_Price_BAO_Set::processAmount( $this->_values['fee'], $params, $lineItem );
                 $this->set( 'lineItem', array( $lineItem ) );
                 $this->set( 'lineItemParticipantsCount', array( $primaryParticipantCount ) );
             }

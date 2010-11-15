@@ -387,19 +387,8 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
                 $this->set( 'paymentProcessor', $this->_paymentProcessor );
             }
             
-            // get price info
-            $price = self::initPriceSet( $this, $eventID );
-            if ( $price == false ) {
-                if ( ! isset( $this->_values['fee'] ) ) {
-                    $this->_values['fee'] = array( );
-                }
-                require_once 'CRM/Core/OptionGroup.php'; 
-                CRM_Core_OptionGroup::getAssoc( "civicrm_event.amount.{$eventID}", $this->_values['fee'], true );
-                //fix for non-upgraded price sets.CRM-4256.
-                if ( $isMonetary && empty($this->_values['fee']) ) {
-                    CRM_Core_Error::fatal( ts('No Fee Level(s) or Price Set is configured for this event.<br />Click <a href=\'%1\'>CiviEvent >> Manage Event >> Configure >> Event Fees</a> to configure the Fee Level(s) or Price Set for this event.', array( 1 => CRM_Utils_System::url('civicrm/event/manage/fee', 'reset=1&action=update&id='.$this->_eventId ))));  
-                }
-            }
+            //init event fee.
+            self::initEventFee( $this, $eventID );
             
             // get the profile ids
             require_once 'CRM/Core/BAO/UFJoin.php'; 
@@ -682,11 +671,12 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
         }
     }
     
-    static function initPriceSet( &$form, $eventID ) 
+    static function initEventFee( &$form, $eventID ) 
     {
         // get price info
         require_once 'CRM/Price/BAO/Set.php';
         $price = CRM_Price_BAO_Set::initSet( $form, $eventID, 'civicrm_event' );
+        
         if ( $price == false ) {
             require_once 'CRM/Core/OptionGroup.php'; 
             CRM_Core_OptionGroup::getAssoc( "civicrm_event.amount.{$eventID}", $form->_values['fee'], true );
@@ -701,7 +691,21 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
                 }
             }
         }
-        return $price;
+        
+        $eventFee = CRM_Utils_Array::value( 'fee', $form->_values ); 
+        if ( !is_array( $eventFee ) || empty( $eventFee )  ) {
+            $form->_values['fee'] = array( );
+        }
+        
+        //fix for non-upgraded price sets.CRM-4256.
+        if ( isset( $form->_isPaidEvent ) ) {
+            $isPaidEvent = $form->_isPaidEvent;
+        } else {
+            $isPaidEvent = CRM_Utils_Array::value( 'is_monetary', $form->_values['event'] );    
+        }
+        if ( $isPaidEvent && empty( $form->_values['fee'] ) ) {
+            CRM_Core_Error::fatal( ts('No Fee Level(s) or Price Set is configured for this event.<br />Click <a href=\'%1\'>CiviEvent >> Manage Event >> Configure >> Event Fees</a> to configure the Fee Level(s) or Price Set for this event.', array( 1 => CRM_Utils_System::url('civicrm/event/manage/fee', 'reset=1&action=update&id='.$form->_eventId ))));  
+        }
     }
 
     /**  

@@ -494,7 +494,7 @@ WHERE  id = %1";
             $form->_priceSetId    = $priceSetId;
             $priceSet             = self::getSetDetail($priceSetId, $required);
             $form->_priceSet      = CRM_Utils_Array::value($priceSetId,$priceSet);
-            $form->_values['fee'] = CRM_Utils_Array::value($priceSetId,$priceSet);
+            $form->_values['fee'] = CRM_Utils_Array::value( 'fields', $form->_priceSet );
             
             //get the price set fields participant count.
             if ( $entityTable == 'civicrm_event' ) {
