@@ -54,6 +54,11 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
       // page contents loaded and you can continue your test execution.
       $this->webtestLogin();
 
+      $softCreditFname = substr(sha1(rand()), 0, 7);
+      $softCreditLname = substr(sha1(rand()), 0, 7);
+
+      $this->webtestAddContact( $softCreditFname, $softCreditLname, false );
+
       // Go directly to the URL of the screen that you will be testing (New Contribution-standalone).
       $this->open($this->sboxPath . "civicrm/contribute/add&reset=1&context=standalone");
 
@@ -116,6 +121,13 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->select("product_name[0]", "label=Coffee Mug ( MUG-101 )");
       $this->select("product_name[1]", "label=Black");
       $this->webtestFillDate('fulfilled_date');
+
+
+
+      $this->typeKeys("soft_credit_to", $softCreditFname);
+      $this->fireEvent("soft_credit_to", "focus");
+      $this->waitForElementPresent("css=div.ac_results-inner li");
+      $this->click("css=div.ac_results-inner li");
 
       // Clicking save.
       $this->click("_qf_Contribution_upload");
