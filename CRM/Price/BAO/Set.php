@@ -499,6 +499,8 @@ WHERE  id = %1";
             //get the price set fields participant count.
             if ( $entityTable == 'civicrm_event' ) {
                 require_once "CRM/Price/BAO/Set.php";
+                
+                //get option count info.
                 $form->_priceSet['optionsCountTotal'] = self::getPricesetCount( $priceSetId );
                 if ( $form->_priceSet['optionsCountTotal'] ) {
                     $optionsCountDeails = array( );
@@ -509,6 +511,21 @@ WHERE  id = %1";
                         }
                     }
                     $form->_priceSet['optionsCountDetails'] = $optionsCountDeails;
+                }
+                
+                //get option max value info.
+                $optionsMaxValueTotal   = 0;
+                $optionsMaxValueDetails = array( );
+                foreach ( $form->_priceSet['fields'] as $field ) {
+                    foreach ( $field['options'] as $option ){
+                        $maxVal = CRM_Utils_Array::value( 'max_value', $option, 0 );
+                        $optionsMaxValueDetails['fields'][$field['id']]['options'][$option['id']] = $maxVal;
+                        $optionsMaxValueTotal += $maxVal; 
+                    }
+                }
+                $form->_priceSet['optionsMaxValueTotal'] = $optionsMaxValueTotal;
+                if ( $optionsMaxValueTotal ) {
+                    $form->_priceSet['optionsMaxValueDetails'] = $optionsMaxValueDetails; 
                 }
             }
             $form->set('priceSetId', $form->_priceSetId);

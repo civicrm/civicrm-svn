@@ -1765,6 +1765,7 @@ INNER JOIN  civicrm_price_field field ON ( value.price_field_id = field.id )
              $count = 1;
              $optCounts = CRM_Utils_Array::value( $pId, $countDetails );
              if ( is_array( $optCounts ) ) $count = array_sum( $optCounts );
+             if ( !$count ) $count = 1;
              $totalSeats += $count;
          }
          

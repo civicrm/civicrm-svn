@@ -617,6 +617,8 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
      */ 
     static function formRule( $fields, $files, $self) 
     {
+        $errors = array( );
+        
         //To check if the user is already registered for the event(CRM-2426)
         $self->checkRegistration($fields, $self);
         //check for availability of registrations.
@@ -656,52 +658,20 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
 
         // priceset validations
         if ( CRM_Utils_Array::value( 'priceSetId', $fields ) ) {
-            require_once "CRM/Price/BAO/Set.php";
-            $checkPriceFields     = array( );
-            $psetParticipantCount = 0;
+            //format params.
+            $formatted               = self::formatPriceSetParams( $self, $fields );
+            $ppParams                = array( $formatted );
+            $priceSetErrors          = self::validatePriceSet( $self, $ppParams );
+            $primaryParticipantCount = self::getParticipantCount( $self, $ppParams );
             
-            if ( !empty($self->_priceSet) ) {
-                foreach( $self->_priceSet['fields'] as $pFieldId => $pFieldDetails ) {
-                    if ( !empty( $fields["price_{$pFieldId}"] ) ) {
-                        $checkPriceFields[] = $pFieldId;
-                        
-                        // check submitted value if there is text
-                        // field in priceset
-                        if ( CRM_Utils_Array::value('html_type', $pFieldDetails) == 'Text' &&
-                             CRM_Utils_Array::value('options', $pFieldDetails) ) {
-                            foreach( $pFieldDetails['options'] as $opId => $opDetails ) {
-                                
-                                if ( CRM_Utils_Array::value( 'max_value', $opDetails) ) {
-                                    $fldCount = 1;
-                                    if ( CRM_Utils_Array::value( 'count', $opDetails) ) {
-                                        $fldCount =  CRM_Utils_Array::value( 'count', $opDetails);
-                                    }
-                                    $fieldTotal = ( $fldCount * $fields["price_{$pFieldId}"]) + CRM_Utils_Array::value('total_count', $opDetails, 0);
-                                    if ( $fieldTotal > CRM_Utils_Array::value( 'max_value', $opDetails) ) {
-                                        $errors["price_{$pFieldId}"] = ts( " %1 Participant count extending its maximum participants limit.", array( 1 => $pFieldDetails['label']) );
-                                    }
-                                }
-                                break;
-                            }
-                        }
-                    }
-                }
+            //get price set fields errors in.
+            $errors = array_merge( $errors, CRM_Utils_Array::value( 0, $priceSetErrors, array( ) ) );
+            
+            $totalParticipants = $primaryParticipantCount;
+            if ( CRM_Utils_Array::value( 'additional_participants', $fields ) ) {
+                $totalParticipants += $fields['additional_participants'];
             }
             
-            $lineItem = array( );
-            CRM_Price_BAO_Set::processAmount( $self->_values['fee']['fields'], $fields, $lineItem );
-            
-            if ( !empty($checkPriceFields) ) {
-                foreach ( $lineItem as $values ) {
-                    $psetParticipantCount += $values['participant_count'];
-                }
-            }
-            if ( !$psetParticipantCount ) $psetParticipantCount = 1;
-            $totalParticipants = $psetParticipantCount;
-            if ( CRM_Utils_Array::value('additional_participants', $fields ) ) {
-                //do -ve 1 since we have included primary also.
-                $totalParticipants += $fields['additional_participants'] - 1;
-            }
             if ( !CRM_Utils_Array::value( 'bypass_payment', $fields ) && 
                  !$self->_allowConfirmation &&
                  is_numeric( $self->_availableRegistrations ) &&
@@ -709,9 +679,9 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                 $errors['_qf_default'] = ts("Only %1 Registrations available.", array( 1 => $self->_availableRegistrations ) );
             }
             
-            if ( empty( $checkPriceFields ) ) {
-                $errors['_qf_default'] = ts( "Select at least one option from Event Fee(s)." );
-            }
+            $lineItem = array( );
+            require_once 'CRM/Price/BAO/Set.php';
+            CRM_Price_BAO_Set::processAmount( $self->_values['fee']['fields'], $fields, $lineItem );
             if ( $fields['amount'] < 0) {
                 $errors['_qf_default'] = ts( "Event Fee(s) can not be less than zero. Please select the options accordingly" );
             }

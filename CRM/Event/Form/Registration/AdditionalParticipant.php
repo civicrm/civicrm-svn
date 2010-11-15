@@ -399,6 +399,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
             
             //take the participant instance.
             $addParticipantNum = substr( $self->_name, 12 );
+            
             if ( is_array( $params ) &&
                  $self->_values['event']['allow_same_participant_emails'] != 1 ) {
                 foreach ( $params as $key => $value ) {
@@ -409,52 +410,18 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
                     }
                 }
             }
-
+            
             //check for atleast one pricefields should be selected
             if ( CRM_Utils_Array::value( 'priceSetId', $fields ) ) {
-                require_once "CRM/Price/BAO/Set.php";
-                $checkPriceFields     = array( );
-                $psetParticipantCount = 0;
-                $optionCounts         = $self->getTotalOptionCounts( );
-
-                if ( !empty($self->_priceSet) ) {
-                    foreach( $self->_priceSet['fields'] as $pFieldId => $pFieldDetails ) {
-                        if ( !empty( $fields["price_{$pFieldId}"] ) ) {
-                            $checkPriceFields[] = $pFieldId;
-                            
-                            // check submitted value if there is text
-                            // field in priceset
-                            if ( CRM_Utils_Array::value('html_type', $pFieldDetails) == 'Text' &&
-                             CRM_Utils_Array::value('options', $pFieldDetails) ) {
-                                foreach( $pFieldDetails['options'] as $opId => $opDetails ) {
-                                    
-                                    if ( CRM_Utils_Array::value( 'max_value', $opDetails) ) {
-                                        $fldCount = 1;
-                                        if ( CRM_Utils_Array::value( 'count', $opDetails) ) {
-                                            $fldCount =  CRM_Utils_Array::value( 'count', $opDetails);
-                                        }
-
-                                        $fieldTotal = ( $fldCount * $fields["price_{$pFieldId}"] ) + CRM_Utils_Array::value('total_count', $opDetails, 0) + CRM_Utils_Array::value($opId, $optionCounts, 0);
-                                        
-                                        if ( $fieldTotal > CRM_Utils_Array::value( 'max_value', $opDetails) ) {
-                                            $errors["price_{$pFieldId}"] = ts( " %1 Participant count extending its maximum participants limit.", array( 1 => $pFieldDetails['label']) );
-                                        }
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
+                $allParticipantParams = $params;
                 
-                if ( empty($checkPriceFields) ) {
-                    $errors['_qf_default'] = ts( "Select at least one option from Event Fee(s)." );
-                }
+                //format current participant params.
+                $allParticipantParams[$addParticipantNum] = self::formatPriceSetParams( $self, $fields );
+                $totalParticipants = self::getParticipantCount( $self, $allParticipantParams );
                 
-                //get the current page count.
-                $currentCount  = self::getParticipantCount( $self, $fields );
-                $previousCount = self::getParticipantCount( $self, $self->_params, true ); 
-                $totalParticipants = $currentCount + $previousCount;
+                //validate price field params.
+                $priceSetErrors = self::validatePriceSet( $self, $allParticipantParams );
+                $errors = array_merge( $errors, CRM_Utils_Array::value( $addParticipantNum, $priceSetErrors, array( ) ) );
                 
                 if ( !$self->_allowConfirmation && 
                      is_numeric( $self->_availableRegistrations ) ) {
