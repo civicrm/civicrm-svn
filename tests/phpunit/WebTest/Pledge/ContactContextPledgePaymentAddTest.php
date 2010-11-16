@@ -143,7 +143,42 @@ class WebTest_Pledge_ContactContextPledgePaymentAddTest extends CiviSeleniumTest
 
         $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[9]/span/a[text()='View']" );
         $this->click( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[1]/span/a" );
-        $this->waitForPageToLoad( "30000" );
+        
+        $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody//tr//td/table/tbody/tr[3]/td[1][text()='$ 5.00']" );
+        
+        
+        $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody//tr//td/table/tbody/tr[3]/td[8]/a[text()='Record Payment (Check, Cash, EFT ...)']" );
+        $this->click( "xpath=//div[@id='Pledges']//table//tbody//tr//td/table/tbody/tr[3]/td[8]/a[text()='Record Payment (Check, Cash, EFT ...)']" );
 
+        $this->waitForElementPresent( "totalAmount" );
+        
+        $this->click('CIVICRM_QFID_2_8');
+
+        $this->click( "totalAmount" );
+        $this->type( "total_amount", "100" );
+
+        $this->click( "_qf_Contribution_upload" );
+
+        $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[9]/span/a[text()='View']" );
+        //click through to the Pledge view screen
+        $this->click( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[9]/span/a[text()='View']" );
+        $this->waitForElementPresent( "_qf_PledgeView_next-bottom" );
+        $pledgeDate = date('F jS, Y', strtotime('now'));
+        
+        $this->webtestVerifyTabularData( array(
+                                               'Pledge By'              => $firstName.' '.$lastName,
+                                               'Total Pledge Amount'    => '$ 195.00',
+                                               'To be paid in'          => '10 installments of $ 10.00 every 1 week(s)',
+                                               'Payments are due on the'=> '2 day of the period',
+                                               'Pledge Made'            => $pledgeDate,
+                                               'Contribution Type'      => 'Donation',
+                                               'Pledge Status'          => 'In Progress',
+                                               'In Honor of'            => 'Mr. '.$honreeFirstName.' '.$honreeLastName,
+                                               'Initial Reminder Day'   => '4 days prior to schedule date', 
+                                               'Maximum Reminders Send' => 2,
+                                               'Send additional reminders'=> '4 days after the last one sent',
+                                               )
+                                         );
+               
     }
 }
