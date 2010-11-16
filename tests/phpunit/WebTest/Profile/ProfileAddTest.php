@@ -52,7 +52,7 @@ class WebTest_Profile_ProfileAddTest extends CiviSeleniumTestCase {
         
         $this->waitForPageToLoad("30000");
         
-        $this->click("newCiviCRMProfile");
+        $this->click("newCiviCRMProfile-top");
         
         $this->waitForElementPresent("_qf_Group_next");
         
@@ -92,13 +92,13 @@ class WebTest_Profile_ProfileAddTest extends CiviSeleniumTestCase {
         $this->click("add_captcha");
         
         //Drupal user account registration option
-        $this->click("CIVICRM_QFID_0_No_acco");
+        $this->click("CIVICRM_QFID_0_8");
         
         //What to do upon duplicate match
-        $this->click("CIVICRM_QFID_0_No_acco");
+        $this->click("CIVICRM_QFID_0_2");
         
         //Proximity search options
-        $this->click("CIVICRM_QFID_1_Optiona");
+        $this->click("CIVICRM_QFID_0_14");
         
         // enable maping for contact
         $this->click("is_map");
