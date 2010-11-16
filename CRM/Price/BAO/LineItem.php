@@ -187,7 +187,7 @@ WHERE     %2.id = %1";
         foreach( $params["price_{$fid}"] as $oid => $qty ) {
             require_once 'CRM/Price/BAO/Field.php';
             $price        = $fields['options'][$oid]['amount'];
-            $participantsPerField = CRM_Utils_Array::value( 'count', $optionValues[$oid], 0 );
+            $participantsPerField = CRM_Utils_Array::value( 'count', $fields['options'][$oid], 0 );
             $values[$oid] = array( 'price_field_id'       => $fid,
                                    'price_field_value_id' => $oid,
                                    'label'                => $options[$oid]['label'],
