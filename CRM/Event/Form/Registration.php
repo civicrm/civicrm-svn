@@ -1155,8 +1155,7 @@ WHERE  v.option_group_id = g.id
                 }
                 $priceFieldId = substr( $valKey, 6 );
                 if ( !$priceFieldId ||
-                     !is_array( $value ) || 
-                     !array_key_exists( $priceFieldId, $optionsCountDetails ) ) {
+                     !is_array( $value ) ) {
                     continue;
                 }
                 $fieldSelected[$pNum] = true;
