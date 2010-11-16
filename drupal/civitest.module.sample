@@ -141,6 +141,49 @@ function civitest_civicrm_buildAmount( $pageType,
                                       &$form,
                                       &$amount ) {
 
+
+    //sample to modify priceset fee 
+    $priceSetId = $form->get( 'priceSetId' );
+    if ( !empty( $priceSetId ) ) {
+        $feeBlock =& $amount;				      
+        
+        //lets do check for event/contribution.
+        if ( !in_array( $pageType, array( 'contribution', 'event' ) ) ||
+             !is_array( $feeBlock ) ||
+             empty( $feeBlock ) ) {
+            return;
+        }
+        
+        //in case of event we get eventId,
+        //so lets apply hook for eventId = 1
+        if ( $pageType == 'event' && $form->_eventId != 1 ) {
+            return;
+        }
+        
+        //in case of contrbution 
+        //for online case we get page id so we could apply for specific
+        if ( $pageType == 'contribution' ) {
+            if ( !in_array( get_class( $form ), array( 'CRM_Contribute_Form_Contribution',
+                                                       'CRM_Contribute_Form_Contribution_Main') ) ) {
+                return;
+            }
+        }
+        
+        //start modifying price set fee.
+        foreach ( $feeBlock as &$fee ) {
+            if ( !is_array( $fee['options'] ) ) {
+                continue;
+            }
+            foreach ( $fee['options'] as &$option ) {
+                //for sample lets modify first option from all fields.
+                $option['amount'] = 100;
+                $option['label']  = ts( 'Power of hooks' );
+                break;
+            }
+        }
+    }
+    //done w/ priceset sample.
+
     // only modify the contributon page with id = 1
     if ( $pageType != 'contribution' ||
          $form->_id != 1 ) {
