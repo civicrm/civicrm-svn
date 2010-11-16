@@ -130,8 +130,8 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
       
       // check contribution record as well
       //click through to the contribution view screen
-      $this->waitForElementPresent( "xpath=id('ParticipantView')/div[2]/table[2]/tbody/tr[1]/td[8]/span/a[text()='View']" );
-      $this->click( "xpath=id('ParticipantView')/div[2]/table[2]/tbody/tr[1]/td[8]/span/a[text()='View']" );
+      $this->waitForElementPresent( "xpath=id('ParticipantView')/div[2]/table[@class='selector']/tbody/tr[1]/td[8]/span/a[text()='View']" );
+      $this->click( "xpath=id('ParticipantView')/div[2]/table[@class='selector']/tbody/tr[1]/td[8]/span/a[text()='View']" );
       $this->waitForElementPresent( "_qf_ContributionView_cancel-bottom" );
       
       $expected = array(
@@ -162,10 +162,114 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
 
       // Adding contact with randomized first name (so we can then select that contact when creating event registration)
       // We're using Quick Add block on the main page for this.
-      $firstName = substr(sha1(rand()), 0, 7);
+      $firstName = 'contact_'.substr(sha1(rand()), 0, 7);
       $this->webtestAddContact( $firstName, "Anderson", true );
       $contactName = "Anderson, $firstName";
       $displayName = "$firstName Anderson";
+
+      // add custom data for participant role
+      $this->open($this->sboxPath . "civicrm/admin/custom/group&reset=1 ");
+      $this->waitForPageToLoad("30000");
+
+      //add new custom data
+      $this->click("//a[@id='newCustomDataGroup']/span");
+      $this->waitForPageToLoad("30000");
+      
+      //fill custom group title
+      $customGroupTitle = 'custom_'.substr(sha1(rand()), 0, 7);
+      $this->click("title");
+      $this->type("title", $customGroupTitle);
+
+      //custom group extends 
+      $this->click("extends[0]");
+      $this->select("extends[0]", "value=ParticipantRole");
+
+      $this->click("extends[1]");
+      $this->select("extends[1]", "value=2");
+
+      $this->click("//option[@value='Contact']");
+      $this->click("_qf_Group_next");
+      $this->waitForPageToLoad("30000");
+
+      //Is custom group created?
+      $this->assertTrue($this->isTextPresent("Your custom field set '$customGroupTitle' has been added. You can add it custom fields now."));
+
+      //add custom field - alphanumeric checkbox
+      $checkboxFieldLabel = 'custom_field'.substr(sha1(rand()), 0, 4);
+      $this->click("label");
+      $this->type("label", $checkboxFieldLabel);
+      $this->click("data_type[1]");
+      $this->select("data_type[1]", "value=CheckBox");
+      $this->click("//option[@value='CheckBox']");
+      $checkboxOptionLabel1 = 'optionLabel_'.substr(sha1(rand()), 0, 5);
+      $this->type("option_label_1", $checkboxOptionLabel1);
+      $this->type("option_value_1", "1");
+      $checkboxOptionLabel2 = 'optionLabel_'.substr(sha1(rand()), 0, 5);
+      $this->type("option_label_2", $checkboxOptionLabel2);
+      $this->type("option_value_2", "2");
+      $this->click("link=another choice");
+      $checkboxOptionLabel3 = 'optionLabel_'.substr(sha1(rand()), 0, 5);
+      $this->type("option_label_3", $checkboxOptionLabel3);
+      $this->type("option_value_3", "3");
+      
+
+      //enter options per line
+      $this->type("options_per_line", "2");
+      
+      //enter pre help message
+      $this->type("help_pre", "this is field pre help");
+
+      //enter post help message
+      $this->type("help_post", "this field post help");
+
+      //Is searchable?
+      $this->click("is_searchable");
+
+      //clicking save
+      $this->click("_qf_Field_next");
+      $this->waitForPageToLoad("30000");
+
+      //Is custom field created?
+      $this->assertTrue($this->isTextPresent("Your custom field '$checkboxFieldLabel' has been saved."));
+
+      //create another custom field - Integer Radio
+      $this->click("//a[@id='newCustomField']/span");
+      $this->waitForPageToLoad("30000");
+      $this->click("data_type[0]");
+      $this->select("data_type[0]", "value=1");
+      $this->click("//option[@value='1']");
+      $this->click("data_type[1]");
+      $this->select("data_type[1]", "value=Radio");
+      $this->click("//option[@value='Radio']");
+      
+      $radioFieldLabel = 'custom_field'.substr(sha1(rand()), 0, 4);
+      $this->type("label", $radioFieldLabel);
+      $radioOptionLabel1 = 'optionLabel_'.substr(sha1(rand()), 0, 5);
+      $this->type("option_label_1", $radioOptionLabel1);
+      $this->type("option_value_1", "1");
+      $radioOptionLabel2 = 'optionLabel_'.substr(sha1(rand()), 0, 5);
+      $this->type("option_label_2", $radioOptionLabel2);
+      $this->type("option_value_2", "2");
+      $this->click("link=another choice");
+      $radioOptionLabel3 = 'optionLabel_'.substr(sha1(rand()), 0, 5);
+      $this->type("option_label_3", $radioOptionLabel3);
+      $this->type("option_value_3", "3");     
+
+      //select options per line
+      $this->type("options_per_line", "3");
+      
+      //enter pre help msg
+      $this->type("help_pre", "this is field pre help");
+      
+      //enter post help msg
+      $this->type("help_post", "this is field post help");
+
+      //Is searchable?
+      $this->click("is_searchable");
+      
+      //clicking save
+      $this->click("_qf_Field_next");
+      $this->waitForPageToLoad("30000");
 
       // Go directly to the URL of the screen that you will be testing (Register Participant for Event-standalone).
       $this->open($this->sboxPath . "civicrm/participant/add?reset=1&action=add&context=standalone");
@@ -185,6 +289,12 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
       $this->click("role_id[2]");
       $this->click("role_id[3]");
 
+      $this->waitForElementPresent( "xpath=//div[@id='$customGroupTitle']//div" );
+      $this->click("xpath=//div[@id='$customGroupTitle']//div[1]");
+      $this->click( "xpath=//div[@id='$customGroupTitle']//div[2]//table//tbody//tr[2]//td[2]//table//tbody//tr[1]//td[1]//label" );
+
+      $this->click( "xpath=//div[@id='$customGroupTitle']//div[2]//table//tbody//tr[4]//td[2]//table//tbody//tr[1]//td[1]//label" );
+      
       // Choose Registration Date.
       // Using helper webtestFillDate function.
       $this->webtestFillDate('register_date', 'now');
@@ -245,10 +355,14 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
           $this->verifyText("xpath=id('ParticipantView')/div[2]/table[1]/tbody/tr[$label]/td[2]", preg_quote($value));
       }
       
+      $this->assertTrue($this->isTextPresent("$customGroupTitle"));
+      $this->assertTrue($this->isTextPresent("$checkboxOptionLabel1"));
+      $this->assertTrue($this->isTextPresent("$radioOptionLabel1"));
+
       // check contribution record as well
       //click through to the contribution view screen
-      $this->waitForElementPresent( "xpath=id('ParticipantView')/div[2]/table[2]/tbody/tr[1]/td[8]/span/a[text()='View']" );
-      $this->click( "xpath=id('ParticipantView')/div[2]/table[2]/tbody/tr[1]/td[8]/span/a[text()='View']" );
+      $this->waitForElementPresent( "xpath=id('ParticipantView')/div[2]/table[@class='selector']/tbody/tr[1]/td[8]/span/a[text()='View']" );
+      $this->click( "xpath=id('ParticipantView')/div[2]/table[@class='selector']/tbody/tr[1]/td[8]/span/a[text()='View']" );
       $this->waitForElementPresent( "_qf_ContributionView_cancel-bottom" );
       
       $expected = array(
