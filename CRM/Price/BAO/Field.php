@@ -343,7 +343,8 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
                                  array( 'price' => json_encode( $priceVal ) ) );
             
             // CRM-6902
-            if ( !empty($feezeOptions) ) {
+            $button = substr( $qf->controller->getButtonName(), -4 );
+            if ( !empty($feezeOptions) && $button != 'skip' ) {
                 $qf->addRule($elementName, ts('Participant count for this option is full.') , 'regex', "/".implode('|', $allowedOptions )."/" ); 
             }
             
