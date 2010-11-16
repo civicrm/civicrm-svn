@@ -43,7 +43,12 @@ class WebTest_Contribute_ContactContextAddTest extends CiviSeleniumTestCase {
       
       // Log in using webtestLogin() method
       $this->webtestLogin();
-      
+
+      // Create a contact to be used as soft creditor
+      $softCreditFname = substr(sha1(rand()), 0, 7);
+      $softCreditLname = substr(sha1(rand()), 0, 7);
+      $this->webtestAddContact( $softCreditFname, $softCreditLname, false );
+
       // Adding contact with randomized first name (so we can then select that contact when creating contribution.)
       // We're using Quick Add block on the main page for this.
       $firstName = substr(sha1(rand()), 0, 7);
@@ -76,6 +81,12 @@ class WebTest_Contribute_ContactContextAddTest extends CiviSeleniumTestCase {
 
       $this->type("trxn_id", "P20901X1" . rand(100, 10000));
       
+      // soft credit
+      $this->typeKeys("soft_credit_to", $softCreditFname);
+      $this->fireEvent("soft_credit_to", "focus");
+      $this->waitForElementPresent("css=div.ac_results-inner li");
+      $this->click("css=div.ac_results-inner li");
+
       //Custom Data
       $this->click('CIVICRM_QFID_3_6');
 
@@ -132,5 +143,22 @@ class WebTest_Contribute_ContactContextAddTest extends CiviSeleniumTestCase {
                                             'Check Number'                    => 'check #1041'
                                             )
                                       );
+
+      // go to soft creditor contact view page
+      $this->click( "xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[16]/td[2]/a[text()='{$softCreditFname} {$softCreditLname}']" );
+
+      // go to contribution tab
+      $this->waitForElementPresent("css=li#tab_contribute a");
+      $this->click("css=li#tab_contribute a");
+      $this->waitForElementPresent("link=Record Contribution (Check, Cash, EFT ...)");
+
+      // verify soft credit details
+      $expected = array( 3  => 'Donation', 
+                         2  => '100.00',
+                         5  => 'Completed',
+                         1  => "{$firstName} Anderson", );
+      foreach ( $expected as  $value => $label ) {
+          $this->verifyText("xpath=id('Search')/div[2]/table[2]/tbody/tr[2]/td[$value]", preg_quote($label));
+      }
   }
 }
