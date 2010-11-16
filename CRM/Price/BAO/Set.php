@@ -650,7 +650,8 @@ WHERE  id = %1";
      */ 
     static function buildPriceSet( &$form )  
     {
-        $priceSetId = $form->get( 'priceSetId' ); 
+        $priceSetId = $form->get( 'priceSetId' );
+        
         if ( !$priceSetId ) return;
         
         $priceSet = self::getSetDetail( $priceSetId, true );
@@ -658,10 +659,31 @@ WHERE  id = %1";
         $form->assign( 'priceSet',  $form->_priceSet );
         require_once 'CRM/Core/PseudoConstant.php';
         $className = CRM_Utils_System::getClassName( $form );
-        foreach ( $form->_priceSet['fields'] as $field ) {
-            if ( CRM_Utils_Array::value( 'visibility', $field ) == 'public' || $className == 'CRM_Contribute_Form_Contribution' ) {
-                CRM_Price_BAO_Field::addQuickFormElement( $form, 'price_'.$field['id'], $field['id'], false, 
-                                                          CRM_Utils_Array::value( 'is_required', $field, false ) );
+        
+        if ( $className == 'CRM_Contribute_Form_Contribution_Main' ) {
+            $feeBlock =& $form->_values['fee'];
+        } else {
+            $feeBlock =& $form->_priceSet['fields'];
+        }
+        
+        // call the hook.
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::buildAmount( 'contribution', $form, $feeBlock );
+        
+        foreach ( $feeBlock as $field ) {
+            if ( CRM_Utils_Array::value( 'visibility', $field ) == 'public' || 
+                 $className == 'CRM_Contribute_Form_Contribution' ) {
+                
+                $options = CRM_Utils_Array::value( 'options', $field );
+                if ( !is_array( $options ) ) continue; 
+                
+                CRM_Price_BAO_Field::addQuickFormElement( $form, 
+                                                          'price_'.$field['id'], 
+                                                          $field['id'], 
+                                                          false, 
+                                                          CRM_Utils_Array::value( 'is_required', $field, false ),
+                                                          null,
+                                                          $options );
             }
         }
     }

@@ -516,19 +516,31 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             foreach ( $form->_feeBlock as $field ) {
                 if (  CRM_Utils_Array::value( 'visibility', $field ) == 'public' || 
                       $className == 'CRM_Event_Form_Participant' ) {
+                    
                     $fieldId = $field['id'];
                     $elementName = 'price_' . $fieldId;
+                    
                     if ( $button == 'skip' ) {
                         $isRequire = false;
                     } else {
                         $isRequire = CRM_Utils_Array::value( 'is_required', $field );
                     }
                     
+                    //user might modified w/ hook.
+                    $options = CRM_Utils_Array::value( 'options', $field );
+                    if ( !is_array( $options ) ) continue;
+                    
+                    $optionFullIds = CRM_Utils_Array::value( 'option_full_ids', $field, array( ) );
+                    
                     //build the element.
-                    CRM_Price_BAO_Field::addQuickFormElement( $form, $elementName, 
-                                                              $fieldId, false, 
-                                                              $isRequire, null, 
-                                                              CRM_Utils_Array::value( 'option_full_ids', $field, array()) );
+                    CRM_Price_BAO_Field::addQuickFormElement( $form, 
+                                                              $elementName, 
+                                                              $fieldId, 
+                                                              false, 
+                                                              $isRequire, 
+                                                              null,
+                                                              $options,
+                                                              $optionFullIds );
                 }
             }
             $form->assign( 'priceSet', $form->_priceSet );
@@ -873,7 +885,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                 $this->set( 'lineItem', array( $lineItem ) );
                 $this->set( 'lineItemParticipantsCount', array( $primaryParticipantCount ) );
             }
-
+            
             $this->set( 'amount', $params['amount'] ); 
             $this->set( 'amount_level', $params['amount_level'] );
                       

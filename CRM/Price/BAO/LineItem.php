@@ -169,32 +169,36 @@ WHERE     %2.id = %1";
         }
 
         $optionIDs = implode( ',', array_keys( $params["price_{$fid}"] ) );
-       
-        require_once 'CRM/Price/BAO/FieldValue.php';
-        $optionValues = array( );
-
-        CRM_Price_BAO_FieldValue::getValues( $fid, $optionValues, 'weight', true );
-        $fieldTitle = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Field', $fid, 'label' );
-
+        
+        //lets first check in fun parameter,
+        //since user might modified w/ hooks.
+        $options = array( );
+        if ( array_key_exists( 'options', $fields ) ) {
+            $options = $fields['options'];
+        } else {
+            require_once 'CRM/Price/BAO/FieldValue.php';
+            CRM_Price_BAO_FieldValue::getValues( $fid, $options, 'weight', true );
+        }
+        $fieldTitle = CRM_Utils_Array::value( 'label', $fields );
+        if ( !$fieldTitle ) {
+            $fieldTitle = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Field', $fid, 'label' );
+        }
+        
         foreach( $params["price_{$fid}"] as $oid => $qty ) {
             require_once 'CRM/Price/BAO/Field.php';
             $price        = $fields['options'][$oid]['amount'];
             $participantsPerField = CRM_Utils_Array::value( 'count', $optionValues[$oid], 0 );
-           
-            $values[$oid] = array(
-                                  'price_field_id'       => $fid,
-                                  'price_field_value_id' => $oid,
-                                  'label'                => $optionValues[$oid]['label'],
-                                  'field_title'          => $fieldTitle,
-                                  'description'          => $optionValues[$oid]['description'],
-                                  'qty'                  => $qty,
-                                  'unit_price'           => $price,
-                                  'line_total'           => $qty * $price,
-                                  'participant_count'    => $qty * $participantsPerField,
-                                  'max_value'            => CRM_Utils_Array::value( 'max_value', $optionValues[$oid] ),
-                                  'html_type'            => $fields['html_type']
-                                  );
-            
+            $values[$oid] = array( 'price_field_id'       => $fid,
+                                   'price_field_value_id' => $oid,
+                                   'label'                => $options[$oid]['label'],
+                                   'field_title'          => $fieldTitle,
+                                   'description'          => $options[$oid]['description'],
+                                   'qty'                  => $qty,
+                                   'unit_price'           => $price,
+                                   'line_total'           => $qty * $price,
+                                   'participant_count'    => $qty * $participantsPerField,
+                                   'max_value'            => CRM_Utils_Array::value( 'max_value', $options[$oid] ),
+                                   'html_type'            => $fields['html_type'] );
         }
     }
     
