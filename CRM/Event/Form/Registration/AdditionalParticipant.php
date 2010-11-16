@@ -125,19 +125,6 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
                     if ( $values['is_default'] ) {
                         if ( isset($optionsFull[$keys]) ) {
                             $val['options'][$keys]['is_full'] = true;
-                            
-                            // unset freezed options from
-                            // submitted values ( if any )
-                            if ( !empty($this->_submitValues) && 
-                                 !empty($this->_submitValues["price_{$key}"]) ) {
-                                if ( is_array($this->_submitValues["price_{$key}"]) &&
-                                     CRM_Utils_Array::value($keys,  $this->_submitValues["price_{$key}"]) ) {
-                                    unset($this->_submitValues["price_$key"][$keys] );
-                                } else if ( !is_array($this->_submitValues["price_{$key}"]) &&
-                                            $this->_submitValues["price_{$key}"] == $keys ) {
-                                    $this->_submitValues["price_{$key}"] = null;
-                                }
-                            }
                         }
                         
                         $priceFieldDefault[$key] = $val;
