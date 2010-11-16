@@ -95,7 +95,7 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
                 
                 //lets allow to update single name field though preserveDBName
                 //but if db having null value and params contain value, CRM-4330.
-                $useDBNames = $formatted = array( );
+                $useDBNames = array( );
                 
                 foreach ( array( 'last', 'middle', 'first' ) as $name ) {
                     $dbName  = "{$name}_name";
@@ -131,7 +131,7 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
                     } else if ( array_key_exists( $dbName, $params )  ) {
                         $$phpName = $params[$dbName];
                     } else if ( $value ) {
-                        $$phpName = $formatted[$dbName] = $value; 
+                        $$phpName = $value; 
                     }
                 }
 
@@ -158,14 +158,29 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
                         }
                     } else if ( $value ) {
                         $temp = $$vals;
-                        $$phpName = $formatted["individual_$name"] = $temp[$value];
+                        $$phpName = $temp[$value];
                     }
                 }
             }
         }
         
-        $formatted = array_unique( array_merge( $params, $formatted ) );
         if ( $lastName || $firstName || $middleName ) {
+            // make sure we have values for all the name fields.
+            $formatted  = $params;
+            $nameParams = array( 'first_name'        => $firstName,
+                                 'middle_name'       => $middleName,
+                                 'last_name'         => $lastName, 
+                                 'individual_suffix' => $suffix,
+                                 'individual_prefix' => $prefix,
+                                 'prefix_id'         => $prefix_id,
+                                 'suffix_id'         => $suffix_id );
+            // make sure we have all the name fields.
+            foreach ( $nameParams as $name => $value ) {
+                if ( !CRM_Utils_Array::value( $name, $formatted ) && $value ) {
+                    $formatted[$name] = $value;
+                }
+            }
+
             $tokens = array( );
             CRM_Utils_Hook::tokens( $tokens );
             $tokenFields = array( );
