@@ -36,16 +36,18 @@ class WebTest_Generic_GeneralClickAroundTest extends CiviSeleniumTestCase {
       parent::setUp();
   }
 
+  function login()
+  {
+      $this->open($this->sboxPath);
+      $this->webtestLogin();
+      $this->waitForPageToLoad();
+      $this->click("//a[contains(text(),'CiviCRM')]");
+      $this->waitForPageToLoad();
+  }
+
   function testSearchMenu()
   {
-
-      $this->open( $this->sboxPath );
-
-      // Log in using webtestLogin() method
-      $this->webtestLogin();
-      $this->waitForPageToLoad('50000');
-      $this->click("//a[contains(text(),'CiviCRM')]");
-      $this->waitForPageToLoad('50000');
+      $this->login();
 
       // click Search -> Find Contacts
       $this->click("//ul[@id='civicrm-menu']/li[3]");
