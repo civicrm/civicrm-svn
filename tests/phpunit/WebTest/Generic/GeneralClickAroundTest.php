@@ -44,7 +44,7 @@ class WebTest_Generic_GeneralClickAroundTest extends CiviSeleniumTestCase {
       // Log in using webtestLogin() method
       $this->webtestLogin();
       $this->waitForPageToLoad('50000');
-      $this->click("link=CiviCRM");
+      $this->click("//a[contains(text(),'CiviCRM')]");
       $this->waitForPageToLoad('50000');
 
       // click Search -> Find Contacts
