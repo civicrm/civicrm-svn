@@ -563,8 +563,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
     {
         $priceSet   = $form->get('priceSet' );
         $priceSetId = $form->get('priceSetId' );
-        $optionsMaxValueTotal = CRM_Utils_Array::value( 'optionsMaxValueTotal', $priceSet );
-        if ( !$optionsMaxValueTotal || !$priceSetId || !is_array( $priceSet ) || empty( $priceSet ) ) {
+        if ( !$priceSetId || !is_array( $priceSet ) || empty( $priceSet ) || !CRM_Utils_Array::value( 'optionsMaxValueTotal', $priceSet ) ) {
             return;
         }
         
