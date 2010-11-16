@@ -230,14 +230,14 @@ class WebTest_Contribute_OnlineContributionTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent( "_qf_ContributionView_cancel-bottom" );
       
       //View Contribution Record
-      $this->webtestVerifyTabularData( array(
-                                             'From'              => $firstName.' '.$lastName,
-                                             'Contribution Type' => 'Donation',
-                                             'Total Amount'      => '$ 100.00',
-                                             )
-                                       );
-      
-      $this->click( "_qf_ContributionView_cancel-bottom" );  
+      $expected = array( 3  => 'Donation',  
+                         2  => '100.00', 
+                         5  => 'Completed', 
+                         1  => "{$firstName} {$lastName}" 
+                         ); 
+      foreach ( $expected as  $value => $label ) { 
+          $this->verifyText("xpath=id('Search')/div[2]/table[2]/tbody/tr[2]/td[$value]", preg_quote($label)); 
+      }
   }
 
   function _testVerifyRegisterPage( $registerStrings ) {
