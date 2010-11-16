@@ -540,7 +540,13 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                         $isRequire = CRM_Utils_Array::value( 'is_required', $field );
                     }
                     
-                    list( $optionDetails, $optionsFull ) = CRM_Event_BAO_Participant::priceFieldOptionFull( $form->_eventId, $fieldId, $skipParticipants );
+                    //format price field options to check max value.
+                    $formattedOptions = CRM_Event_BAO_Participant::priceFieldOptionFull( $form->_eventId, 
+                                                                                         $fieldId, 
+                                                                                         $skipParticipants );
+                    
+                    $optionsFull   = CRM_Utils_Array::value( 'fullOptionIds', $formattedOptions, array( ) );
+                    $optionDetails = CRM_Utils_Array::value( 'options',       $formattedOptions, array( ) );
                     
                     if ( !empty($optionDetails) ) {  
                         foreach( $optionDetails as $opId => $opDetails ) {

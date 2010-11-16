@@ -512,84 +512,84 @@ GROUP BY  counted.event_id
      * @static
      * @access public
      */
-    static function priceFieldOptionFull( $eventId, $fieldId, $skipParticipants = array( ), $isTest = 0 ) {
+    static function priceFieldOptionFull( $eventId, $fieldId, $skipParticipants = array( ), $isTest = 0 ) 
+    {
         require_once 'CRM/Price/BAO/FieldValue.php';
+        $formatted = $options = $optionsFull = array( );
+        if ( !$fieldId || !$eventId ) {
+            return $formatted;
+        }
         
-        $optionsFull = array( );
-        
-        $options = array( );
+        //get all options for give field.
         CRM_Price_BAO_FieldValue::getValues( $fieldId, $options );
+        if ( empty( $options ) ) return $formatted;
         
-        if ( empty($options) ) return array($options, $optionsFull);
-
-        $checkOptions = array( );
+        $maxValueOptions = array( );
         foreach ( $options as $opt ) {
             if ( CRM_Utils_Array::value( 'max_value', $opt ) ) {
-                $checkOptions[ ] = $opt['id'];
+                $maxValueOptions[$opt['id']] = $opt['id'];
             }
         }
+        if ( empty( $maxValueOptions ) ) return $formatted; 
         
-        if ( empty($checkOptions) ) return array($options, $optionsFull);
-
         require_once 'CRM/Event/PseudoConstant.php';
-        $countedStatuses    = CRM_Event_PseudoConstant::participantStatus( null, "is_counted = 1" );
-        $countedStatusIds   = implode( ',', array_keys( $countedStatuses ) );
-        if ( !$countedStatusIds ) {
-            $countedStatusIds = 0;
-        }
-
-        if ( $isTest ) $isTest = 1;
+        $countedStatuses  = CRM_Event_PseudoConstant::participantStatus( null, "is_counted = 1" );
+        $waitingStatuses  = CRM_Event_PseudoConstant::participantStatus( null, "class = 'Waiting'"  );
+        $allStatusIds     = array_merge( array_keys( $countedStatuses ), array_keys( $waitingStatuses ) );
         
-        $queryNonCount  = "SELECT COUNT(*) as count, li.price_field_value_id FROM civicrm_line_item li LEFT JOIN civicrm_participant p ON p.id = li.entity_id WHERE li.entity_table = 'civicrm_participant' AND li.price_field_id = %1 AND li.price_field_value_id IN (". implode( ', ', $checkOptions) ." ) AND p.event_id = %2 AND p.status_id IN ( $countedStatusIds ) AND p.is_test = %3 AND ( li.participant_count IS NULL OR li.participant_count = 0 ) ";
-
-        $queryCount     = "SELECT SUM(participant_count) as count, li.price_field_value_id FROM civicrm_line_item li LEFT JOIN civicrm_participant p ON p.id = li.entity_id WHERE li.entity_table = 'civicrm_participant' AND li.price_field_id = %1 AND li.price_field_value_id IN (". implode( ', ', $checkOptions) ." ) AND p.event_id = %2 AND p.status_id IN ( $countedStatusIds ) AND p.is_test = %3 AND li.participant_count IS NOT NULL AND li.participant_count > 0 ";
-        
-        if ( is_array($skipParticipants) && !empty($skipParticipants) ) {
-            $queryCount    .= " AND p.id NOT IN (". implode(',',$skipParticipants) .") "; 
-            $queryNonCount .= " AND p.id NOT IN (". implode(',',$skipParticipants) .") ";
+        $statusIdClause = null;
+        if ( !empty( $allStatusIds ) ) {
+            $statusIdClause = ' AND p.status_id IN ( '. implode( ', ', array_values( $allStatusIds ) ). ')';
         }
         
-        $queryCount    .= "GROUP BY li.price_field_value_id";
-        $queryNonCount .= "GROUP BY li.price_field_value_id";
- 
-        $params = array( 1 => array( $fieldId, 'Integer' ),
-                         2 => array( $eventId, 'Integer' ),
-                         3 => array( $isTest, 'Integer')
-                         );
-
+        $isTestClause = ' AND ( p.is_test IS NULL OR p.is_test = 0 )';
+        if ( $isTest ) $isTestClause = 'p.is_test = 1'; 
+        
+        $valueIdClause = null;
+        if ( !empty( $maxValueOptions ) ) {
+            $valueIdClause = ' AND li.price_field_value_id IN ( '. implode(', ', $maxValueOptions ) .' )';
+        }
+        
+        $skipParticipantClause = null;
+        if ( is_array( $skipParticipants ) && !empty( $skipParticipants ) ) {
+            $skipParticipantClause = ' AND p.id IN ( '. implode( ', ', $skipParticipants ) . ')';
+        }
+        
+        $countQuery = "
+    SELECT  IF( participant_count, SUM(participant_count), count(*) ) as count, 
+            li.price_field_value_id 
+      FROM  civicrm_line_item li 
+INNER JOIN  civicrm_participant p ON p.id = li.entity_id 
+     WHERE  li.entity_table = 'civicrm_participant' 
+       AND  li.price_field_id = %1
+       AND  p.event_id = %2 
+            {$valueIdClause}
+            {$statusIdClause}
+            {$isTestClause}
+            {$skipParticipantClause}
+  GROUP BY  li.price_field_value_id";
+        
         $optionsCount = array( );
-
-        $resultNonCount  = CRM_Core_DAO::executeQuery( $queryNonCount, $params );
-        while ( $resultNonCount->fetch( ) ) { 
-            if ( !$resultNonCount->price_field_value_id || !$resultNonCount->count ) continue;
-            
-            $optionsCount[$resultNonCount->price_field_value_id] = $resultNonCount->count;
-        }
-
-        $resultCount = CRM_Core_DAO::executeQuery( $queryCount, $params );
-        while ( $resultCount->fetch( ) ) { 
+        $params = array( 1 => array( $fieldId, 'Integer' ),
+                         2 => array( $eventId, 'Integer' ) );
+        $resultCount  = CRM_Core_DAO::executeQuery( $countQuery, $params );
+        while ( $resultCount->fetch( ) ) {
             if ( !$resultCount->price_field_value_id || !$resultCount->count ) continue;
-
-            $optionsCount[$resultCount->price_field_value_id] = $resultCount->count + CRM_Utils_Array::value( $resultCount->price_field_value_id, $optionsCount, 0);
+            $optionsCount[$resultCount->price_field_value_id] = $resultCount->count;
         }
         
-        foreach( $checkOptions as $opId ) {
+        foreach ( $maxValueOptions as $opId ) {
             if ( !CRM_Utils_Array::value( $opId, $optionsCount ) ) continue;
-            
             $options[$opId]['total_count'] = $optionsCount[$opId];
-
-            if ( CRM_Utils_Array::value( 'count', $options[$opId] ) && 
-                 ( $optionsCount[$opId] + $options[$opId]['count'] ) > $options[$opId]['max_value'] ) {
-                $optionsFull[$opId] = $optionsCount[$opId];
-            } else if ( !CRM_Utils_Array::value( 'count', $options[$opId] ) && 
-                        $optionsCount[$opId] >= $options[$opId]['max_value'] ) {
+            if ( $optionsCount[$opId] >= $options[$opId]['max_value'] ) {
                 $optionsFull[$opId] = $optionsCount[$opId];
             }
         }
-
-        return array($options, $optionsFull);
+        $formatted = array( 'options' => $options, 'fullOptionIds' => $optionsFull );
+        
+        return $formatted;
     }
-
+    
     /**
      * unset the default field options which are freezed because of the
      * option full
