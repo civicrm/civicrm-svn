@@ -552,7 +552,7 @@ GROUP BY  counted.event_id
         
         $skipParticipantClause = null;
         if ( is_array( $skipParticipants ) && !empty( $skipParticipants ) ) {
-            $skipParticipantClause = ' AND p.id IN ( '. implode( ', ', $skipParticipants ) . ')';
+            $skipParticipantClause = ' AND p.id NOT IN ( '. implode( ', ', $skipParticipants ) . ')';
         }
         
         $countQuery = "
