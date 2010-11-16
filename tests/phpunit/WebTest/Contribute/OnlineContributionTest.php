@@ -86,10 +86,7 @@ class WebTest_Contribute_OnlineContributionTest extends CiviSeleniumTestCase {
       // go to step 3
       $this->click( "_qf_Amount_next-bottom" );
       $this->waitForPageToLoad( "30000" );
- 
-    
-      
-      
+
       // go to step 4
       $this->click( '_qf_MembershipBlock_next' );
       $this->waitForPageToLoad( '30000' );
@@ -231,8 +228,6 @@ class WebTest_Contribute_OnlineContributionTest extends CiviSeleniumTestCase {
       $this->click( "xpath=//div[@id='contributionSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']" );
       $this->waitForPageToLoad( '30000' );
       $this->waitForElementPresent( "_qf_ContributionView_cancel-bottom" );
-      
-     
       
       //View Contribution Record
       $this->webtestVerifyTabularData( array(
