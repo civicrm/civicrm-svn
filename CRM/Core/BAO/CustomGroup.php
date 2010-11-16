@@ -112,7 +112,7 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
                     $group->extends_entity_column_value .
                     CRM_Core_DAO::VALUE_SEPARATOR;
             }
-        } else {
+        } else if ( !$group->extends_entity_column_value ) {
             $group->extends_entity_column_value = "null";
         }
 
