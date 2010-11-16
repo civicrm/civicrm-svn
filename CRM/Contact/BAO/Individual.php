@@ -95,7 +95,7 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
                 
                 //lets allow to update single name field though preserveDBName
                 //but if db having null value and params contain value, CRM-4330.
-                $useDBNames = array( );
+                $useDBNames = $formatted = array( );
                 
                 foreach ( array( 'last', 'middle', 'first' ) as $name ) {
                     $dbName  = "{$name}_name";
@@ -131,7 +131,7 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
                     } else if ( array_key_exists( $dbName, $params )  ) {
                         $$phpName = $params[$dbName];
                     } else if ( $value ) {
-                        $$phpName = $value;  
+                        $$phpName = $formatted[$dbName] = $value; 
                     }
                 }
 
@@ -158,12 +158,13 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
                         }
                     } else if ( $value ) {
                         $temp = $$vals;
-                        $$phpName = $temp[$value];
+                        $$phpName = $formatted["individual_$name"] = $temp[$value];
                     }
                 }
             }
         }
         
+        $formatted = array_unique( array_merge( $params, $formatted ) );
         if ( $lastName || $firstName || $middleName ) {
             $tokens = array( );
             CRM_Utils_Hook::tokens( $tokens );
@@ -179,14 +180,14 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
             //build the sort name.
             $format = CRM_Core_BAO_Preferences::value( 'sort_name_format' );
             $format = str_replace( 'contact.', '', $format );
-            $sortName = CRM_Utils_Address::format( $params, $format,
+            $sortName = CRM_Utils_Address::format( $formatted, $format,
                                                    false, false, true, $tokenFields );
             $sortName = trim( $sortName );
             
             //build the display name.
             $format = CRM_Core_BAO_Preferences::value( 'display_name_format' );
             $format = str_replace( 'contact.', '', $format );
-            $displayName = CRM_Utils_Address::format( $params, $format,
+            $displayName = CRM_Utils_Address::format( $formatted, $format,
                                                       false, false, true, $tokenFields );
             $displayName = trim( $displayName );
         }
@@ -201,6 +202,11 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
             $contact->display_name = $displayName;
         } else if ( $individual && $individual->display_name ) {
             $contact->display_name = $individual->display_name;
+        }
+
+        if ( !$contact->addressee_id && $individual->addressee_id ) {
+            $contact->addressee_id     = $individual->addressee_id;
+            $contact->addressee_custom = $individual->addressee_custom;
         }
         
         if ( CRM_Utils_Array::value( 'email', $params ) && is_array( $params['email'] ) ) {
