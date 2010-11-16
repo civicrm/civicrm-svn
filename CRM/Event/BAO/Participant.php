@@ -555,14 +555,31 @@ GROUP BY  counted.event_id
             $skipParticipantClause = ' AND p.id NOT IN ( '. implode( ', ', $skipParticipants ) . ')';
         }
         
-        $countQuery = "
-    SELECT  IF( participant_count, SUM(participant_count), count(*) ) as count, 
+        
+        $nonCountQuery = "
+    SELECT  count(*) as count, 
             li.price_field_value_id 
       FROM  civicrm_line_item li 
 INNER JOIN  civicrm_participant p ON p.id = li.entity_id 
      WHERE  li.entity_table = 'civicrm_participant' 
        AND  li.price_field_id = %1
-       AND  p.event_id = %2 
+       AND  p.event_id = %2
+       AND  (li.participant_count IS NULL OR li.participant_count = 0) 
+            {$valueIdClause}
+            {$statusIdClause}
+            {$isTestClause}
+            {$skipParticipantClause}
+  GROUP BY  li.price_field_value_id";
+        
+        $countQuery = "
+    SELECT  SUM(participant_count) as count, 
+            li.price_field_value_id 
+      FROM  civicrm_line_item li 
+INNER JOIN  civicrm_participant p ON p.id = li.entity_id 
+     WHERE  li.entity_table = 'civicrm_participant' 
+       AND  li.price_field_id = %1
+       AND  p.event_id = %2
+       AND  (li.participant_count IS NOT NULL AND li.participant_count > 0)
             {$valueIdClause}
             {$statusIdClause}
             {$isTestClause}
@@ -572,10 +589,18 @@ INNER JOIN  civicrm_participant p ON p.id = li.entity_id
         $optionsCount = array( );
         $params = array( 1 => array( $fieldId, 'Integer' ),
                          2 => array( $eventId, 'Integer' ) );
+        
+        $resultNonCount = CRM_Core_DAO::executeQuery( $nonCountQuery, $params );
+        while ( $resultNonCount->fetch( ) ) {
+            if ( !$resultNonCount->price_field_value_id || !$resultNonCount->count ) continue;
+            $optionsCount[$resultNonCount->price_field_value_id] = $resultNonCount->count;
+        }
+        
         $resultCount  = CRM_Core_DAO::executeQuery( $countQuery, $params );
         while ( $resultCount->fetch( ) ) {
             if ( !$resultCount->price_field_value_id || !$resultCount->count ) continue;
-            $optionsCount[$resultCount->price_field_value_id] = $resultCount->count;
+            $optionsCount[$resultCount->price_field_value_id] = 
+                $resultCount->count + CRM_Utils_Array::value( $resultCount->price_field_value_id, $optionsCount, 0 );
         }
         
         foreach ( $maxValueOptions as $opId ) {
