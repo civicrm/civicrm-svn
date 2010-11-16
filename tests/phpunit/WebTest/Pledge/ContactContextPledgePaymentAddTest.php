@@ -73,8 +73,8 @@ class WebTest_Pledge_ContactContextPledgePaymentAddTest extends CiviSeleniumTest
         $this->assertTrue($this->isTextPresent("$firstName $lastName"));   
         
         // Let's start filling the form with values.
-        $this->type( "amount", "100" );
-        $this->type( "installments", "10" );
+        $this->type( "amount", "30" );
+        $this->type( "installments", "3" );
         $this->select( "frequency_unit", "value=week" );
         $this->type( "frequency_day", "2" );
         
@@ -115,8 +115,8 @@ class WebTest_Pledge_ContactContextPledgePaymentAddTest extends CiviSeleniumTest
         
         $this->webtestVerifyTabularData( array(
                                                'Pledge By'              => $firstName.' '.$lastName,
-                                               'Total Pledge Amount'    => '$ 100.00',
-                                               'To be paid in'          => '10 installments of $ 10.00 every 1 week(s)',
+                                               'Total Pledge Amount'    => '$ 30.00',
+                                               'To be paid in'          => '3 installments of $ 10.00 every 1 week(s)',
                                                'Payments are due on the'=> '2 day of the period',
                                                'Pledge Made'            => $pledgeDate,
                                                'Contribution Type'      => 'Donation',
@@ -167,8 +167,8 @@ class WebTest_Pledge_ContactContextPledgePaymentAddTest extends CiviSeleniumTest
         
         $this->webtestVerifyTabularData( array(
                                                'Pledge By'              => $firstName.' '.$lastName,
-                                               'Total Pledge Amount'    => '$ 195.00',
-                                               'To be paid in'          => '10 installments of $ 10.00 every 1 week(s)',
+                                               'Total Pledge Amount'    => '$ 125.00',
+                                               'To be paid in'          => '3 installments of $ 10.00 every 1 week(s)',
                                                'Payments are due on the'=> '2 day of the period',
                                                'Pledge Made'            => $pledgeDate,
                                                'Contribution Type'      => 'Donation',
@@ -179,6 +179,38 @@ class WebTest_Pledge_ContactContextPledgePaymentAddTest extends CiviSeleniumTest
                                                'Send additional reminders'=> '4 days after the last one sent',
                                                )
                                          );
-               
+          
+        $this->click( "_qf_PledgeView_next-bottom" );
+     
+        $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[9]/span/a[text()='View']" );
+        $this->click( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[1]/span/a" );
+        
+        $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody//tr//td/table/tbody/tr[4]/td[8]/a[text()='Record Payment (Check, Cash, EFT ...)']" );
+        $this->click( "xpath=//div[@id='Pledges']//table//tbody//tr//td/table/tbody/tr[4]/td[8]/a[text()='Record Payment (Check, Cash, EFT ...)']" );
+        
+        $this->waitForElementPresent( "totalAmount" );
+        $this->click( "totalAmount" );
+        
+        $this->waitForElementPresent("_qf_Contribution_upload");
+        $this->click( "_qf_Contribution_upload" );
+        
+        $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[9]/span/a[text()='View']" );
+        $this->click( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[9]/span/a[text()='View']" );
+        
+        $this->waitForElementPresent( "_qf_PledgeView_next-bottom" );
+        $this->webtestVerifyTabularData( array(
+                                               'Pledge By'              => $firstName.' '.$lastName,
+                                               'Total Pledge Amount'    => '$ 125.00',
+                                               'To be paid in'          => '3 installments of $ 10.00 every 1 week(s)',
+                                               'Payments are due on the'=> '2 day of the period',
+                                               'Pledge Made'            => $pledgeDate,
+                                               'Contribution Type'      => 'Donation',
+                                               'Pledge Status'          => 'Completed',
+                                               'In Honor of'            => 'Mr. '.$honreeFirstName.' '.$honreeLastName,
+                                               'Initial Reminder Day'   => '4 days prior to schedule date', 
+                                               'Maximum Reminders Send' => 2,
+                                               'Send additional reminders'=> '4 days after the last one sent',
+                                               )
+                                         );
     }
 }
