@@ -101,7 +101,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
      */
     function setDefaultValues( ) 
     {
-        $defaults = array( );
+        $defaults = $unsetSubmittedOptions = array( );
         $discountId = null;
         //fix for CRM-3088, default value for discount set.      
         if ( ! empty( $this->_values['discount'] ) ){
@@ -116,7 +116,6 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
         if ( $this->_priceSetId ) {
             $priceFieldDefault = array( );
             
-            $unsetSubmittedOptions = array( );
             foreach( $this->_priceSet['fields'] as $key => $val ) {
                 if ( !CRM_Utils_Array::value( 'options', $val ) ) continue;
                 
@@ -147,10 +146,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
                 CRM_Event_BAO_Participant::unsetFreezedOptions( $this->_eventId, $priceFieldDefault, $defaults );
             } 
             
-            //reset values for all options those are full.
-            if ( !empty( $unsetSubmittedOptions ) ) {
-                $this->resetSubmittedValue( $unsetSubmittedOptions );
-            }
+            
         }
         
         //CRM-4320, setdefault additional participant values.
@@ -171,7 +167,12 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
         }
         
         $defaults = array_merge( $this->_defaults, $defaults );
-
+        
+        //reset values for all options those are full.
+        if ( !empty( $unsetSubmittedOptions ) ) {
+            $this->resetElementValue( $unsetSubmittedOptions );
+        }
+        
         return $defaults;
     }  
     /** 
@@ -634,7 +635,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
      * Reset values for all options those are full.
      *
      **/
-    function resetSubmittedValue( $optionFullIds = array( ) ) 
+    function resetElementValue( $optionFullIds = array( ) ) 
     {
         if ( !is_array( $optionFullIds ) || 
              empty( $optionFullIds ) || 
@@ -644,36 +645,75 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
         
         foreach ( $optionFullIds as $fldId => $optIds ) {
             $name = "price_$fldId";
-            if ( $this->elementExists( $name ) ) {
-                $element = $this->getElement( $name );
-                $eleType = $element->getType( );
-                switch ( $eleType ) {
-                case 'text' :
-                    if ( $element->isFrozen( ) ) {
-                        $element->setValue( '' );
-                    }
-                    break;
-                    
-                case 'group' :
-                    if ( is_array( $element->_elements ) ) {
-                        foreach ( $element->_elements as $child ) {
-                            $childType = $child->getType( );
-                            $methodeName = 'getName';
-                            if ( $childType ) $methodeName = 'getValue';
-                            if ( in_array( $child->{$methodeName}( ), $optIds ) && $child->isFrozen( ) ) {
-                                $child->updateAttributes( array( 'checked' => null ) );
-                            }
+            if ( !$this->elementExists( $name ) ) continue; 
+            
+            $element = $this->getElement( $name );
+            $eleType = $element->getType( );
+            
+            $resetSubmitted = false;
+            switch ( $eleType ) {
+            case 'text' :
+                if ( $element->isFrozen( ) ) {
+                    $element->setValue( '' );
+                    $resetSubmitted = true;
+                }
+                break;
+                
+            case 'group' :
+                if ( is_array( $element->_elements ) ) {
+                    foreach ( $element->_elements as $child ) {
+                        $childType = $child->getType( );
+                        $methodName = 'getName';
+                        if ( $childType ) $methodName = 'getValue';
+                        if ( in_array( $child->{$methodName}( ), $optIds ) && $child->isFrozen( ) ) {
+                            $resetSubmitted = true;
+                            $child->updateAttributes( array( 'checked' => null ) );
                         }
                     }
-                    break;
-                    
-                case 'select' :
-                    $element->_values = array( );
-                    break;
                 }
+                break;
+                
+            case 'select' :
+                $resetSubmitted = true;
+                $element->_values = array( );
+                break;
+            }
+            
+            //finally unset values from submitted.
+            if ( $resetSubmitted ) {
+                $this->resetSubmittedValue( $name, $optIds );
             }
         }
         
     }
-
+    
+    function resetSubmittedValue( $elementName, $optionIds = array( ) ) 
+    {
+        if ( empty( $elementName ) || 
+             !$this->elementExists( $elementName ) || 
+             !$this->getSubmitValue( $elementName ) ) {
+            return;
+        }
+        foreach ( array( 'constantValues', 'submitValues', 'defaultValues' ) as $val ) {
+            $values =& $this->{"_$val"};
+            if ( !is_array( $values ) || empty( $values ) ) continue;
+            $eleVal = CRM_Utils_Array::value( $elementName, $values );
+            if ( empty( $eleVal ) ) continue; 
+            if ( is_array( $eleVal ) ) {
+                $found = false;
+                foreach ( $eleVal as $keyId => $ignore ) {
+                    if ( in_array( $keyId, $optionIds ) ) {
+                        $found = true;
+                        unset( $values[$elementName][$keyId] );
+                    }
+                }
+                if ( $found && empty( $values[$elementName][$keyId] ) ) {
+                    $values[$elementName][$keyId] = null;
+                }
+            } else {
+                $values[$elementName][$keyId] = null;
+            }
+        }
+    }
+    
 }
