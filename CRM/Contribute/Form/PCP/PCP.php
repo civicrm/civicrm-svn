@@ -54,7 +54,7 @@ class CRM_Contribute_Form_PCP_PCP extends CRM_Core_Form
         if ( $this->_action & CRM_Core_Action::DELETE ) {
             //check permission for action.
             if ( !CRM_Core_Permission::checkActionPermission( 'CiviContribute', $this->_action ) ) {
-                CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) );  
+                CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) );
             }
             
             $this->_id    = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
@@ -71,7 +71,9 @@ class CRM_Contribute_Form_PCP_PCP extends CRM_Core_Form
         }
 
         $session = CRM_Core_Session::singleton( );
+        $context = $session->popUserContext();
         $userID  = $session->get('userID');
+
         //do not allow destructive actions without permissions
         $permission = false;
         if ( CRM_Core_Permission::check( 'administer CiviCRM' ) ||
@@ -105,7 +107,9 @@ class CRM_Contribute_Form_PCP_PCP extends CRM_Core_Form
                 break;
             }
             
-            CRM_Utils_System::redirect( $session->popUserContext() );
+            if ( $context ) {
+                CRM_Utils_System::redirect( $context );
+            }
         }
         
     }
