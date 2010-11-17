@@ -37,7 +37,7 @@ packages/jquery/css/flexigrid.css
 packages/jquery/plugins/jquery.autocomplete.js
 packages/jquery/css/jquery.autocomplete.css
 
-packages/jquery/plugins/jsTree.v.1.0rc2/jquery.jstree.js
+packages/jquery/plugins/jsTree.v.1.0rc2/jquery.jstree.min.js
 packages/jquery/jsTree.v.1.0rc2/themes/default/style.css
 
 packages/jquery/plugins/jquery.menu.pack.js
