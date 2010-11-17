@@ -169,7 +169,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
         $defaults = array_merge( $this->_defaults, $defaults );
         
         //reset values for all options those are full.
-        if ( !empty( $unsetSubmittedOptions ) ) {
+        if ( !empty( $unsetSubmittedOptions ) && empty( $_POST ) ) {
             $this->resetElementValue( $unsetSubmittedOptions );
         }
         
