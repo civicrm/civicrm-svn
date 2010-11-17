@@ -850,7 +850,7 @@ GROUP BY  participant.event_id
     static function participantDetails( $participantId ) 
     {
         $query = "
-SELECT civicrm_contact.sort_name as name, civicrm_event.title as title
+SELECT civicrm_contact.sort_name as name, civicrm_event.title as title, civicrm_contact.id as cid
 FROM   civicrm_participant 
    LEFT JOIN civicrm_event   ON (civicrm_participant.event_id = civicrm_event.id)
    LEFT JOIN civicrm_contact ON (civicrm_participant.contact_id = civicrm_contact.id)
@@ -862,6 +862,7 @@ WHERE  civicrm_participant.id = {$participantId}
         while ( $dao->fetch() ) {
             $details['name' ] = $dao->name;
             $details['title'] = $dao->title;
+            $details['cid'] =   $dao->cid;
         }
         
         return $details;
@@ -928,6 +929,7 @@ WHERE  civicrm_participant.id = {$participantId}
     static function deleteParticipant( $id ) 
     {
         require_once 'CRM/Core/Transaction.php';
+      
         $transaction = new CRM_Core_Transaction( );
 
         //delete activity record
@@ -1076,14 +1078,14 @@ WHERE  civicrm_participant.id = {$participantId}
         $query = "
   SELECT  participant.id
     FROM  civicrm_participant participant
-   WHERE  {$where}"; 
+   WHERE  {$where}";
         
         $dao = CRM_Core_DAO::executeQuery( $query );
         while ( $dao->fetch( ) ) {
             $additionalParticipantIds[$dao->id] = $dao->id;
         }
-        
         return $additionalParticipantIds;
+       
     }
     
     /**
@@ -1800,4 +1802,28 @@ INNER JOIN  civicrm_price_field field ON ( value.price_field_id = field.id )
          return $totalSeats;
      }
      
+     /**
+      * Function to get additional Participant edit & view url .
+      *
+      * @param array  $paticipantIds an array of additional participant ids.
+      *
+      * @return array of Urls.
+      * @access public
+      * @static
+      */
+     
+     static function getAdditionalParticipantUrl( $participantIds ){
+         foreach( $participantIds as $value ) {
+             $links =array();
+             $details = self::participantDetails( $value );
+             $viewUrl = CRM_Utils_System::url( 'civicrm/contact/view/participant', 
+                                               "action=view&reset=1&id={$value}&cid={$details['cid']}" );
+             $editUrl = CRM_Utils_System::url( 'civicrm/contact/view/participant', 
+                                               "action=update&reset=1&id={$value}&cid={$details['cid']}" );
+             $links[] = "<td><a href='{$viewUrl}'>".$details['name']."</a></td><td></td><td><a href='{$editUrl}'>".ts(Edit)."</a></td>";
+             $links = "<table><tr>". implode( "</tr><tr>", $links)."</tr></table>";
+             return $links;  
+         }
+         
+     }
 }

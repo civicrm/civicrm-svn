@@ -41,3 +41,8 @@ UPDATE  civicrm_navigation
    SET  label  = 'GOTV (Voter Tracking)'
  WHERE  name like 'Voter Listing';
 
+--CRM-7067
+ALTER TABLE `civicrm_participant`
+   DROP FOREIGN KEY `FK_civicrm_participant_registered_by_id`;
+ALTER TABLE `civicrm_participant`
+    ADD CONSTRAINT `FK_civicrm_participant_registered_by_id` FOREIGN KEY (`registered_by_id`) REFERENCES `civicrm_participant` (`id`) ON DELETE SET NULL;
