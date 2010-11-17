@@ -125,7 +125,7 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                                                       'default'    => true,
                                                       'type'       =>  CRM_Utils_Type::T_STRING 
                                                       ),
-                                               'subject'           => 
+                                               'activity_subject'  => 
                                                array( 'title'      => ts('Subject'),
                                                       'default'    => true,
                                                       ),
@@ -143,10 +143,8 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                                        array( 'activity_date_time'  => 
                                               array( 'default'      => 'this.month',
                                                      'operatorType' => CRM_Report_Form::OP_DATE),
-                                              'subject'             =>
-                                              array( 'title'        => ts( 'Activity Subject' ),
-                                                     'operator'     => 'like',
-                                                     'type'       =>  CRM_Utils_Type::T_STRING  ),
+                                              'activity_subject'    =>
+                                              array( 'title'        => ts( 'Activity Subject' ) ),
                                               'activity_type_id'    => 
                                               array( 'title'        => ts( 'Activity Type' ),
                                                      'operatorType' => CRM_Report_Form::OP_MULTISELECT,
