@@ -658,6 +658,9 @@ INNER JOIN  civicrm_participant p ON p.id = li.entity_id
                             ( $defaults["price_{$pfield}"] == $pfieldVal ) ) {
                     unset( $defaults["price_{$pfield}"] );
                 }
+                if ( isset($defaults["price_{$pfield}"]) && empty($defaults["price_{$pfield}"]) ) {
+                    unset($defaults["price_{$pfield}"]);
+                }
             }
         }
     }
