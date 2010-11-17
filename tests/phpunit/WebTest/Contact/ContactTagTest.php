@@ -86,7 +86,7 @@ class WebTest_Contact_ContactTagTest extends CiviSeleniumTestCase {
       
       // visit tag tab
       $this->click("css=li#tab_tag a");
-      $this->waitForElementPresent("css=ul#tagtree");
+      $this->waitForElementPresent("css=div#tagtree");
       
       // check tag we have created
       $this->click("xpath=//ul/li/label[text()=\"$tagName\"]");
