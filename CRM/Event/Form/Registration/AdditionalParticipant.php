@@ -115,12 +115,14 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
         }
         if ( $this->_priceSetId ) {
             $priceFieldDefault = array( );
+            
+            $unsetSubmittedOptions = array( );
             foreach( $this->_priceSet['fields'] as $key => $val ) {
                 if ( !CRM_Utils_Array::value( 'options', $val ) ) continue;
-
+                
                 $optionsFull = array( );
                 $this->modifyPricesetOptionFull( $val['id'], $optionsFull, $val['options'] );
- 
+                
                 foreach ( $val['options'] as $keys => $values ) {
                     if ( $values['is_default'] ) {
                         if ( isset($optionsFull[$keys]) ) {
@@ -135,12 +137,20 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
                         }
                     }
                 }
+                if ( !empty( $optionsFull ) ) {
+                    $unsetSubmittedOptions[$val['id']] = array_keys( $optionsFull );
+                }
             }
             if ( !empty($priceFieldDefault) ) {
                 // CRM-6902, if price option is freezed, unset it from setdefault
                 require_once 'CRM/Event/BAO/Participant.php';
                 CRM_Event_BAO_Participant::unsetFreezedOptions( $this->_eventId, $priceFieldDefault, $defaults );
             } 
+            
+            //reset values for all options those are full.
+            if ( !empty( $unsetSubmittedOptions ) ) {
+                $this->resetSubmittedValue( $unsetSubmittedOptions );
+            }
         }
         
         //CRM-4320, setdefault additional participant values.
@@ -619,5 +629,51 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
         }
         return false;
     } 
+
+    /**
+     * Reset values for all options those are full.
+     *
+     **/
+    function resetSubmittedValue( $optionFullIds = array( ) ) 
+    {
+        if ( !is_array( $optionFullIds ) || 
+             empty( $optionFullIds ) || 
+             !$this->isSubmitted( ) ) {
+            return;
+        }
+        
+        foreach ( $optionFullIds as $fldId => $optIds ) {
+            $name = "price_$fldId";
+            if ( $this->elementExists( $name ) ) {
+                $element = $this->getElement( $name );
+                $eleType = $element->getType( );
+                switch ( $eleType ) {
+                case 'text' :
+                    if ( $element->isFrozen( ) ) {
+                        $element->setValue( '' );
+                    }
+                    break;
+                    
+                case 'group' :
+                    if ( is_array( $element->_elements ) ) {
+                        foreach ( $element->_elements as $child ) {
+                            $childType = $child->getType( );
+                            $methodeName = 'getName';
+                            if ( $childType ) $methodeName = 'getValue';
+                            if ( in_array( $child->{$methodeName}( ), $optIds ) && $child->isFrozen( ) ) {
+                                $child->updateAttributes( array( 'checked' => null ) );
+                            }
+                        }
+                    }
+                    break;
+                    
+                case 'select' :
+                    $element->_values = array( );
+                    break;
+                }
+            }
+        }
+        
+    }
 
 }
