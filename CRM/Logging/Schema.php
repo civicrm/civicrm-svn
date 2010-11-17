@@ -182,10 +182,10 @@ class CRM_Logging_Schema
             log_user_id INTEGER,
             log_action  ENUM('Initialization', 'Insert', 'Update', 'Delete')
 COLS;
-        $query = preg_replace("/^CREATE TABLE `$table`/", "CREATE TABLE `log_$table`", $query);
-        $query = preg_replace("/ AUTO_INCREMENT/", '', $query);
+        $query = preg_replace("/^CREATE TABLE `$table`/i", "CREATE TABLE `log_$table`", $query);
+        $query = preg_replace("/ AUTO_INCREMENT/i", '', $query);
         $query = preg_replace("/^  [^`].*$/m", '', $query);
-        $query = preg_replace("/^\) ENGINE=[^ ]+ /m", ') ENGINE=ARCHIVE ', $query);
+        $query = preg_replace("/^\) ENGINE=[^ ]+ /im", ') ENGINE=ARCHIVE ', $query);
         $query = preg_replace("/^\) /m", "$cols\n) ", $query);
 
         CRM_Core_DAO::executeQuery($query);
