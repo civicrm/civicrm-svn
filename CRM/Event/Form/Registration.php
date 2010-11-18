@@ -588,7 +588,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
      */ 
     function buildCustom( $id, $name, $viewOnly = false ) 
     {
-        $stateCountryMap = array( );
+        $stateCountryMap = $fields = array( );
 
         if ( $id ) {
             $button = substr( $this->controller->getButtonName(), -4 );
@@ -602,7 +602,6 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
             $fieldsToIgnore = array( 'participant_fee_amount' => 1,
                                      'participant_fee_level'  => 1
                                    );
-            $fields = null;
             if ( $contactID ) {
                 if ( CRM_Core_BAO_UFGroup::filterUFGroups($id, $contactID)  ) {
                     $fields = CRM_Core_BAO_UFGroup::getFields( $id, false, CRM_Core_Action::ADD ); 
