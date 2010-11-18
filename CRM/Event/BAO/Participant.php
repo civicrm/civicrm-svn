@@ -616,56 +616,6 @@ INNER JOIN  civicrm_participant p ON p.id = li.entity_id
     }
     
     /**
-     * unset the default field options which are freezed because of the
-     * option full
-     *
-     * @param int      $eventId               event id.
-     * @param array    $priceFieldDefault     price fields to be unset.
-     * @param array    $default ( reference ) default values  
-     *
-     * @return void
-     *
-     * @static
-     * @access public
-     *
-     */
-    static function unsetFreezedOptions( $eventId, $priceFieldDefault, &$defaults ) {
-        
-        if ( !is_array($priceFieldDefault) || empty($priceFieldDefault) ) {
-            return;
-        }
-        
-        foreach( $priceFieldDefault as $pfield => $fieldDetails ) {
-            // text field can not have default value in price set
-            if ( CRM_Utils_Array::value( 'html_type', $fieldDetails ) == 'Text' ||
-                 !CRM_Utils_Array::value( 'options', $fieldDetails ) ||
-                 !isset($defaults["price_{$pfield}"]) ) {
-                continue;
-            }
-               
-
-            foreach( $fieldDetails['options'] as $pfieldVal => $valDetails ) {
-                if ( !CRM_Utils_Array::value( 'is_full', $valDetails ) ) {
-                    continue;
-                }
-
-                if ( CRM_Utils_Array::value( 'html_type', $fieldDetails ) == 'CheckBox' ) {
-                    if ( is_array($defaults["price_{$pfield}"]) && 
-                         isset($defaults["price_{$pfield}"][$pfieldVal] ) ) {
-                        unset( $defaults["price_{$pfield}"][$pfieldVal] );
-                    } 
-                } else if ( !is_array( $defaults["price_{$pfield}"] ) &&
-                            ( $defaults["price_{$pfield}"] == $pfieldVal ) ) {
-                    unset( $defaults["price_{$pfield}"] );
-                }
-                if ( isset($defaults["price_{$pfield}"]) && empty($defaults["price_{$pfield}"]) ) {
-                    unset($defaults["price_{$pfield}"]);
-                }
-            }
-        }
-    }
-    
-    /**
      * Get the empty spaces for event those we can allocate
      * to pending participant to become confirm.
      *

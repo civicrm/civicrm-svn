@@ -217,12 +217,11 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             $this->_defaults['participant_role_id'] = $this->_values['event']['default_role_id'];
         }
         if ( $this->_priceSetId ) {
-            $priceFieldDefault = array( );
             foreach( $this->_priceSet['fields'] as $key => $val ) {
                 foreach ( $val['options'] as $keys => $values ) {
-                    if ( $values['is_default'] ) {  
+                    if ( $values['is_default'] && 
+                         !CRM_Utils_Array::value( 'is_full', $values ) ) {  
 
-                        $priceFieldDefault[$key] = $val;
                         if ( $val['html_type'] == 'CheckBox') {
                             $this->_defaults["price_{$key}"][$keys] = 1;
                         } else {
@@ -230,12 +229,6 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                         }
                     }
                 }
-            }
-            
-            if ( !empty($priceFieldDefault) ) {
-                // CRM-6902, if price option is freezed, unset it from setdefault
-                require_once 'CRM/Event/BAO/Participant.php';
-                CRM_Event_BAO_Participant::unsetFreezedOptions( $this->_eventId, $priceFieldDefault, $this->_defaults );
             }
         }
 

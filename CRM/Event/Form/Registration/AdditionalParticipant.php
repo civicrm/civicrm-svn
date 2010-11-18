@@ -114,7 +114,6 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
             }
         }
         if ( $this->_priceSetId ) {
-            $priceFieldDefault = array( );
             
             foreach( $this->_priceSet['fields'] as $key => $val ) {
                 if ( !CRM_Utils_Array::value( 'options', $val ) ) continue;
@@ -123,10 +122,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
                 $this->modifyPricesetOptionFull( $val['id'], $optionsFull, $val['options'] );
                 
                 foreach ( $val['options'] as $keys => $values ) {
-                    if ( $values['is_default'] ) {
-                        if ( isset($optionsFull[$keys]) ) {
-                            $val['options'][$keys]['is_full'] = true;
-                        }
+                    if ( $values['is_default'] && !isset($optionsFull[$keys]) ) {
                         
                         $priceFieldDefault[$key] = $val;
                         if ( $val['html_type'] == 'CheckBox') {
@@ -140,13 +136,6 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
                     $unsetSubmittedOptions[$val['id']] = array_keys( $optionsFull );
                 }
             }
-            if ( !empty($priceFieldDefault) ) {
-                // CRM-6902, if price option is freezed, unset it from setdefault
-                require_once 'CRM/Event/BAO/Participant.php';
-                CRM_Event_BAO_Participant::unsetFreezedOptions( $this->_eventId, $priceFieldDefault, $defaults );
-            } 
-            
-            
         }
         
         //CRM-4320, setdefault additional participant values.
