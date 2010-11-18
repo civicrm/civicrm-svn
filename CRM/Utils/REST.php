@@ -254,6 +254,7 @@ class CRM_Utils_REST
         $params =& self::buildParamList( );
         $fnName = $apiFile = null;
 
+        require_once 'CRM/Utils/String.php';
         // clean up all function / class names. they should be alphanumeric and _ only
         for ( $i = 1 ; $i <= 3; $i++ ) {
             if ( ! empty( $args[$i] ) ) {
