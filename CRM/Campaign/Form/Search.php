@@ -38,6 +38,7 @@
  * Files required
  */
 
+require_once 'CRM/Campaign/BAO/Survey.php';
 require_once 'CRM/Campaign/Selector/Search.php';
 require_once 'CRM/Core/Selector/Controller.php';
 
@@ -240,6 +241,12 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
     
     function setDefaultValues( ) 
     { 
+        //load the default survey for all actions.
+        if ( empty( $this->_defaults ) ) {
+            $defaultSurveyId = key( CRM_Campaign_BAO_Survey::getSurvey( false, null, true ) );
+            if ( $defaultSurveyId ) $this->_defaults['campaign_survey_id'] = $defaultSurveyId; 
+        }
+        
         return $this->_defaults;
     }
     
@@ -481,14 +488,7 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
             $surveyId = CRM_Utils_Type::escape( $surveyId, 'Integer' );
         } else {
             // use default survey id
-            require_once 'CRM/Campaign/DAO/Survey.php';
-            
-            $dao = new CRM_Campaign_DAO_Survey( );
-            $dao->is_active  = 1;
-            $dao->is_default = 1;   
-            if ( $dao->find( true ) ) {
-                $surveyId = $dao->id;
-            }
+            $surveyId = key( CRM_Campaign_BAO_Survey::getSurvey( false, null, true ) );
         }
         if ( !$surveyId ) {
             CRM_Core_Error::fatal('Could not find valid Survey Id.');
