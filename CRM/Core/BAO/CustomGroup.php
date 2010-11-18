@@ -72,8 +72,9 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
         if ( isset( $params['name'] ) ) {
             $group->name  = $params['name'];
         } else {
-            $maxlength = CRM_Utils_Array::value( 'maxlength', $fieldLength ) ? $fieldLength['maxlength'] : null;
-            $group->name  = CRM_Utils_String::titleToVar($params['title'], $maxlength );
+            $maxLength   = CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_CustomGroup', 'name' );
+            $group->name = CRM_Utils_String::titleToVar( $params['title'], 
+                                                         CRM_Utils_Array::value( 'maxlength', $maxLength ) );
         }
         if ( in_array( $params['extends'][0],
                        array( 'ParticipantRole',
@@ -104,8 +105,7 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
             }
         }
         
-        if ( CRM_Utils_Array::value( 'extends_entity_column_value', $params ) ) {
-            $group->extends_entity_column_value = $params['extends_entity_column_value'];
+        if ( !empty( $group->extends_entity_column_value ) ) {
             if ( substr( $group->extends_entity_column_value, 0, 1 ) != CRM_Core_DAO::VALUE_SEPARATOR ) {
                 $group->extends_entity_column_value =
                     CRM_Core_DAO::VALUE_SEPARATOR . 
