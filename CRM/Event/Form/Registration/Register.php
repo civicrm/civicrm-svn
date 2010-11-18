@@ -586,16 +586,9 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         if ( $form->_allowConfirmation && ( isset($form->_pId) || isset($form->_additionalParticipantId) ) ) {
             require_once 'CRM/Event/Form/EventFees.php';
             $participantId = isset($form->_pId) ? $form->_pId : $form->_additionalParticipantId;
-            $pricesetDefaultOptions = CRM_Event_Form_EventFees::setDefaultPriceSet($participantId, $form->_eventId);
-            if ( !empty($pricesetDefaultOptions) ) {
-                foreach ( $pricesetDefaultOptions as $pField => $pFieldValue ) {
-                    if ( !(substr( $pField, 0, 6) == 'price_' ) ) {
-                        continue;
-                    }
-                    $overrideOptionFull[substr($pField, 6)] = $pFieldValue;
-                }
-            }
-            
+            $pricesetDefaultOptions = CRM_Event_Form_EventFees::setDefaultPriceSet( $participantId, $form->_eventId );
+            $overrideOptionFull     = self::formatPriceSetParams( $form, $pricesetDefaultOptions );
+
             $skipParticipants[] = $form->_participantId;
             if ( !empty($form->_additionalParticipantIds) ) {
                 $skipParticipants = array_merge( $skipParticipants, $form->_additionalParticipantIds);
@@ -619,24 +612,17 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                 
                 if ( !empty($optionDetails) ) {  
                     foreach( $optionDetails as $opId => $opDetails ) {
-                        $form->_priceSet['fields'][$fieldId]['options'][$opId]['total_count'] = CRM_Utils_Array::value('total_count', $opDetails);
+                        $form->_priceSet['fields'][$fieldId]['options'][$opId]['total_count'] = 
+                            CRM_Utils_Array::value('total_count', $opDetails);
+                        
                         // In case confirmation modify $optionsFull
-                        if ( $form->_allowConfirmation && !empty($overrideOptionFull) ) {
+                        if ( $form->_allowConfirmation && 
+                             !empty($overrideOptionFull) &&
+                             CRM_Utils_Array::value( 'count', $opDetails ) ) {
                             
-                            // disable options which have count
-                            if ( CRM_Utils_Array::value( 'count', $opDetails ) ) {
-                                
-                                $markFull = true;
-                                if ( CRM_Utils_Array::value($fieldId, $overrideOptionFull) ) {
-                                    if ( is_array($overrideOptionFull[$fieldId]) && in_array($opId, array_keys($overrideOptionFull[$fieldId]) ) ) {
-                                        $markFull = false;
-                                    } else if ( !is_array($overrideOptionFull[$fieldId]) && $field['html_type'] == 'Text' ) {
-                                        $markFull = false;   
-                                    } else if ( !is_array($overrideOptionFull[$fieldId]) && $overrideOptionFull[$fieldId] == $opId ) {
-                                        $markFull = false; 
-                                    }
-                                }
-                                if ( $markFull ) $optionsFull[$opId] = 1;
+                            if ( !( CRM_Utils_Array::value( 'price_'.$fieldId, $overrideOptionFull ) &&
+                                    CRM_Utils_Array::value( $opId , $overrideOptionFull['price_'.$fieldId] ) ) ) {
+                                $optionsFull[$opId] = 1;
                             }
                         }
                         if ( isset( $optionsFull[$opId] ) ) {
