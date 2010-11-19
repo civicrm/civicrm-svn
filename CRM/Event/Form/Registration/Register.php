@@ -462,15 +462,15 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
     {
         //if payment done, no need to build the fee block.
         if ( isset( $form->_paymentId ) && $form->_paymentId ) {
-            
             //fix to diaplay line item in update mode.
-            $form->assign( 'priceSet', isset($form->_priceSet)?$form->_priceSet:null );
-            
+            $form->assign( 'priceSet', isset($form->_priceSet) ? $form->_priceSet : null );
             return;
         }
         
         $feeFields = CRM_Utils_Array::value( 'fee', $form->_values );
-        if ( is_array( $feeFields ) ) $form->_feeBlock =& $form->_values['fee'];
+        if ( is_array( $feeFields ) ) {
+            $form->_feeBlock =& $form->_values['fee'];
+        }
         
         //check for discount.
         $discountedFee = CRM_Utils_Array::value( 'discount', $form->_values );
@@ -483,7 +483,9 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                 $form->_feeBlock =& $form->_values['discount'][$discountId];
             }
         }
-        if ( !is_array( $form->_feeBlock ) ) $form->_feeBlock = array( ); 
+        if ( ! is_array( $form->_feeBlock ) ) {
+            $form->_feeBlock = array( ); 
+        }
         
         //its time to call the hook.
         require_once 'CRM/Utils/Hook.php';
@@ -491,7 +493,9 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         
         //reset required is participant is skipped.
         $button = substr( $form->controller->getButtonName( ), -4 );
-        if ( $required && $button ) $required = false;
+        if ( $required && $button ) {
+            $required = false;
+        }
         
         $className = CRM_Utils_System::getClassName( $form );
         
