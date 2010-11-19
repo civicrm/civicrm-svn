@@ -684,12 +684,6 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             }
         }
         
-        $email = $fields["email-{$self->_bltID}"];
-        require_once 'CRM/Core/BAO/UFMatch.php';
-        if ( CRM_Core_BAO_UFMatch::isDuplicateUser( $email ) ) {
-            $errors["email-{$self->_bltID}"] = ts( 'The email %1 already exists in the database.',
-                                                   array( 1 => $email ) );
-        }
         if ( CRM_Utils_Array::value( 'additional_participants', $fields ) &&
 	     ! CRM_Utils_Rule::positiveInteger( $fields['additional_participants'] ) ) {
             $errors['additional_participants'] =  ts('Please enter a whole number for Number of additional people.'); 

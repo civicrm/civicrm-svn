@@ -669,13 +669,6 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         $errors = array( );
         $amount = self::computeAmount( $fields, $self );
         
-        $email = $fields["email-{$self->_bltID}"];
-        require_once 'CRM/Core/BAO/UFMatch.php';
-        if ( CRM_Core_BAO_UFMatch::isDuplicateUser( $email ) ) {
-            $errors["email-{$self->_bltID}"] = ts( 'The email %1 already exists in the database.',
-                                                   array( 1 => $email ) );
-        }
-
         //check for atleast one pricefields should be selected
         if ( CRM_Utils_Array::value( 'priceSetId', $fields ) ) {
             $priceField = new CRM_Price_DAO_Field( );

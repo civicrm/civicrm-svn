@@ -409,7 +409,7 @@ SELECT username, email
             if ( strtolower( $row[0]) == strtolower( $name )) {
                 $errors['cms_name'] = ts( 'The username %1 is already taken. Please select another username.', array( 1 => $name) );
             } else if ( strtolower( $row[1] ) == strtolower( $email ) ) {
-                $errors['email-Primary'] = ts( 'This email %1 is already registered. Please select another email.', array( 1 => $email) );
+                $errors['email-5'] = ts( 'This email %1 is already registered. Please select another email.', array( 1 => $email) );
             }
         }
     }
