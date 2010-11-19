@@ -176,7 +176,7 @@ class CRM_Campaign_Page_AJAX
             $scheduledStatusId = array_search( 'Scheduled', CRM_Core_PseudoConstant::activityStatus( 'name' ) );
             if ( $scheduledStatusId ) $params['survey_status_id'] = $scheduledStatusId;
             //BAO/Query knows reserve/release/interview processes.
-            if ( $params['campaign_search_voter_for'] == 'gotv ' ) {
+            if ( $params['campaign_search_voter_for'] == 'gotv' ) {
                 $params['campaign_search_voter_for'] = 'release';
             }
         }
