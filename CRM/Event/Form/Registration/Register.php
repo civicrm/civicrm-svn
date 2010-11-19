@@ -468,6 +468,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         }
         
         $feeFields = CRM_Utils_Array::value( 'fee', $form->_values );
+        
         if ( is_array( $feeFields ) ) {
             $form->_feeBlock =& $form->_values['fee'];
         }
@@ -491,9 +492,9 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::buildAmount( 'event', $form, $form->_feeBlock );
         
-        //reset required is participant is skipped.
+        //reset required if participant is skipped.
         $button = substr( $form->controller->getButtonName( ), -4 );
-        if ( $required && $button ) {
+        if ( $required && $button == 'skip' ) {
             $required = false;
         }
         
@@ -511,17 +512,13 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             
             require_once 'CRM/Price/BAO/Field.php';                       
             foreach ( $form->_feeBlock as $field ) {
-                if (  CRM_Utils_Array::value( 'visibility', $field ) == 'public' || 
-                      $className == 'CRM_Event_Form_Participant' ) {
-                    
+                if ( CRM_Utils_Array::value( 'visibility', $field ) == 'public' || 
+                     $className == 'CRM_Event_Form_Participant' ) {
                     $fieldId = $field['id'];
                     $elementName = 'price_' . $fieldId;
                     
-                    if ( $button == 'skip' ) {
-                        $isRequire = false;
-                    } else {
-                        $isRequire = CRM_Utils_Array::value( 'is_required', $field );
-                    }
+                    $isRequire = CRM_Utils_Array::value( 'is_required', $field );
+                    if ( $button == 'skip' ) $isRequire = false; 
                     
                     //user might modified w/ hook.
                     $options = CRM_Utils_Array::value( 'options', $field );
@@ -572,20 +569,23 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
     {
         $priceSet   = $form->get('priceSet' );
         $priceSetId = $form->get('priceSetId' );
-        if ( !$priceSetId || !is_array( $priceSet ) || empty( $priceSet ) || !CRM_Utils_Array::value( 'optionsMaxValueTotal', $priceSet ) ) {
+        if ( !$priceSetId || 
+             !is_array( $priceSet ) || 
+             empty( $priceSet ) || 
+             !CRM_Utils_Array::value( 'optionsMaxValueTotal', $priceSet ) ) {
             return;
         }
         
         require_once 'CRM/Event/Form/EventFees.php'; 
         require_once 'CRM/Event/BAO/Participant.php';       
         
-        $skipParticipants = $overrideOptionFull = array( );
+        $skipParticipants = $formattedPriceSetDefaults = array( );
         if ( $form->_allowConfirmation && ( isset($form->_pId) || isset($form->_additionalParticipantId) ) ) {
             require_once 'CRM/Event/Form/EventFees.php';
             $participantId = isset($form->_pId) ? $form->_pId : $form->_additionalParticipantId;
-            $pricesetDefaultOptions = CRM_Event_Form_EventFees::setDefaultPriceSet( $participantId, $form->_eventId );
-            $overrideOptionFull     = self::formatPriceSetParams( $form, $pricesetDefaultOptions );
-
+            $pricesetDefaults          = CRM_Event_Form_EventFees::setDefaultPriceSet( $participantId, 
+                                                                                       $form->_eventId );
+            $formattedPriceSetDefaults = self::formatPriceSetParams( $form, $pricesetDefaultOptions );
             $skipParticipants[] = $form->_participantId;
             if ( !empty($form->_additionalParticipantIds) ) {
                 $skipParticipants = array_merge( $skipParticipants, $form->_additionalParticipantIds);
@@ -594,52 +594,51 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         
         $className = CRM_Utils_System::getClassName( $form );
         
+        //get the current price event price set options count.
+        $currentOptionsCount  = self::getPriceSetOptionCount( $form );
+        $recordedOptionsCount = CRM_Event_BAO_Participant::priceSetOptionsCount( $form->_eventId );
+        
         foreach ( $form->_feeBlock as &$field ) {
-            if (  CRM_Utils_Array::value( 'visibility', $field ) == 'public' || 
-                  $className == 'CRM_Event_Form_Participant' ) {
-                $fieldId = $field['id'];
+            $optionFullIds = array( );
+            $fieldId = $field['id'];
+            if ( !is_array( $field['options'] ) ) continue; 
+            foreach ( $field['options'] as &$option ) {
+                $optId             = $option['id']; 
+                $count             = CRM_Utils_Array::value( 'count',      $option, 0 );
+                $maxValue          = CRM_Utils_Array::value( 'max_value',  $option, 0 );
+                $dbTotalCount      = CRM_Utils_Array::value( $optId,       $recordedOptionsCount, 0 );
+                $currentTotalCount = CRM_Utils_Array::value( $optId,       $currentOptionsCount,  0 );
+                $totalCount        = $currentTotalCount + $dbTotalCount;
                 
-                //format price field options to check max value.
-                $formattedOptions = CRM_Event_BAO_Participant::priceFieldOptionFull( $form->_eventId, 
-                                                                                     $fieldId, 
-                                                                                     $skipParticipants );
+                $isFull = false;
+                if ( $maxValue && ( $totalCount >= $maxValue ) ) {
+                    $isFull = true;
+                    $optionFullIds[$optId] = $optId;
+                }
                 
-                $optionsFull   = CRM_Utils_Array::value( 'fullOptionIds', $formattedOptions, array( ) );
-                $optionDetails = CRM_Utils_Array::value( 'options',       $formattedOptions, array( ) );
-                
-                if ( !empty($optionDetails) ) {  
-                    foreach( $optionDetails as $opId => $opDetails ) {
-                        $form->_priceSet['fields'][$fieldId]['options'][$opId]['total_count'] = 
-                            CRM_Utils_Array::value('total_count', $opDetails);
-                        
-                        // In case confirmation modify $optionsFull
-                        if ( $form->_allowConfirmation && 
-                             !empty($overrideOptionFull) &&
-                             CRM_Utils_Array::value( 'count', $opDetails ) ) {
-                            
-                            if ( !( CRM_Utils_Array::value( 'price_'.$fieldId, $overrideOptionFull ) &&
-                                    CRM_Utils_Array::value( $opId , $overrideOptionFull['price_'.$fieldId] ) ) ) {
-                                $optionsFull[$opId] = 1;
-                            }
-                        }
-                        if ( isset( $optionsFull[$opId] ) ) {
-                            $form->_priceSet['fields'][$fieldId]['options'][$opId]['is_full'] = true;
-                        }
+                //here option is not full,
+                //but we don't want to allow participant to increase
+                //seats at the time of re-walking registration.
+                if ( $count && 
+                     $form->_allowConfirmation && 
+                     !empty( $formattedPriceSetDefaults ) ) {
+                    if ( !CRM_Utils_Array::value( "price_{$field}", $formattedPriceSetDefaults ) ||
+                         !CRM_Utils_Array::value( $opId, $formattedPriceSetDefaults["price_{$fieldId}"] ) ) {
+                        $optionFullIds[$optId] = $optId;
+                        $isFull = true;
                     }
                 }
-                
-                // for offline allow admin to register participant
-                // event though max participant limit 
-                if ( in_array( $className , array('CRM_Event_Form_Participant') ) ) {
-                    $optionsFull = array( );
-                } else if ( $className == 'CRM_Event_Form_Registration_AdditionalParticipant' || 
-                            ( $className == 'CRM_Event_Form_Registration_Register' && CRM_Utils_Array::value('is_multiple_registrations', $form->_values['event']) ) ) {
-                    $form->modifyPricesetOptionFull( $fieldId, $optionsFull, $optionDetails );
-                }
-                
-                //finally get option ids in.
-                $field['option_full_ids'] = array_keys( $optionsFull );
+                $option['is_full']            = $isFull;
+                $option['total_option_count'] = $totalCount;
             }
+            
+            //ignore option full for offline registration.
+            if ( $className == 'CRM_Event_Form_Participant' ) {
+                $optionFullIds = array( );
+            }
+            
+            //finally get option ids in.
+            $field['option_full_ids'] = $optionFullIds;
         }
     }
     

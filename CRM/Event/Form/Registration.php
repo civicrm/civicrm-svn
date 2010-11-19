@@ -1004,73 +1004,65 @@ WHERE  v.option_group_id = g.id
         
         return $params;
     }
-    
-    /*
-     * provides the options which are currently full for each
-     * additional participants.
-     *
-     * @param int $fieldId, price field id.
-     * @param array $optionsFull (reference), options which are full
-     *                                        for current event  
+
+    /* Calculate total count for each price set options.
+     * those are currently selected by user.
      * 
-     * @return $optionsFull, modify $optionsFull
+     * @param $form form object.
+     *
+     *
+     * @return array $optionsCount, array of each option w/ count total.
      * @access public 
      */
-    public function modifyPricesetOptionFull( $fieldId, &$optionsFull, $optionDetails ) {
+    function getPriceSetOptionCount( &$form ) {
+        $params     = $form->get( 'params' );
+        $priceSet   = $form->get( 'priceSet' );
+        $priceSetId = $form->get( 'priceSetId' );
         
-        $optionCounts       = array( );
-        $addParticipantNum  = substr( $this->_name, 12 );
-        
-        if ( !is_array($optionsFull) ) {
-            $optionsFull = array( );
+        $optionsCount = array( );
+        if ( !$priceSetId || 
+             !is_array( $priceSet ) ||
+             empty( $priceSet ) ||
+             !is_array( $params ) ||
+             empty( $params ) ) {
+            return $optionsCount;
         }
-
-        if ( !empty($this->_lineItem) ) {
-            foreach( $this->_lineItem  as $addNum => $lineItems ) {
-                if ( !is_array($lineItems) || ($addNum == $addParticipantNum) ) {
+        
+        $priceSetFields = array( );
+        if ( isset( $priceSet['optionsCountTotal'] ) 
+             && $priceSet['optionsCountTotal'] ) {
+            $priceSetFields = $priceSet['optionsCountDetails']['fields'];
+        }
+        
+        $addParticipantNum = substr( $form->_name, 12 );
+        foreach ( $params as $pCnt => $values ) {
+            if ( $values == 'skip' ||
+                 $pCnt == $addParticipantNum ) {
+                continue;
+            }
+            
+            foreach ( $values as $valKey => $value ) {
+                if ( strpos( $valKey, 'price_' ) === false ) {
                     continue;
                 }
-                foreach( $lineItems as $opId => $item ) { 
-
-                    if ( !CRM_Utils_Array::value( 'max_value', $item ) || 
-                         (CRM_Utils_Array::value( 'price_field_id', $item ) != $fieldId) ) {
-                        continue;
-                    }
-
-                    if ( !isset($optionCounts[$opId]) ) {
-                        $optionCounts[$opId]['count'] = 0;
-                    }
-                    $fldCount = 1;
-                    if ( CRM_Utils_Array::value( 'participant_count', $item ) ) $fldCount = $item['participant_count'];
- 
-                    $optionCounts[$opId]['count']     += $fldCount;
-                    $optionCounts[$opId]['max_value']  = $item['max_value'];
-                }
-            }
-        }
-
-        if ( !empty($optionCounts) ) {
-            foreach( $optionCounts as $opId => $opValues ) {
-                if ( isset($optionsFull[$opId]) ) continue;
-
-                $optionCount = $opValues['count'];
-                if ( isset($optionDetails[$opId] ) ) 
-                    $optionCount += CRM_Utils_Array::value( 'total_count', $optionDetails[$opId], 0 );
                 
-                if ( CRM_Utils_Array::value( 'count', $optionDetails[$opId] ) &&
-                     ($optionCount + $optionDetails[$opId]['count']) > $opValues['max_value'] ) {
-                    $optionsFull[$opId] = $opValues['count'];
-                } else if ( !CRM_Utils_Array::value( 'count', $optionDetails[$opId] ) &&
-                            $optionCount >= $opValues['max_value'] ) {
-                    $optionsFull[$opId] = $opValues['count'];
+                $priceFieldId = substr( $valKey, 6 );
+                if ( !$priceFieldId ||
+                     !is_array( $value ) || 
+                     !array_key_exists( $priceFieldId, $priceSetFields ) ) {
+                    continue;
+                }
+                
+                foreach ( $value as $optId => $optVal ) {
+                    $currentCount = $priceSetFields[$priceFieldId]['options'][$optId]*$optVal;
+                    $optionsCount[$optId] = $currentCount + CRM_Utils_Array::value( $optId, $optionsCount );
                 }
             }
         }
-
-        return $optionsFull;
+        
+        return $optionsCount;
     }
-
-
+    
     function getTemplateFileName() 
     {
         if ( $this->_eventId ) {

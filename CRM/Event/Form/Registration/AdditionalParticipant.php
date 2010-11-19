@@ -114,17 +114,12 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
             }
         }
         if ( $this->_priceSetId ) {
-            
-            foreach( $this->_priceSet['fields'] as $key => $val ) {
+            foreach( $this->_feeBlock as $key => $val ) {
                 if ( !CRM_Utils_Array::value( 'options', $val ) ) continue;
                 
-                $optionsFull = array( );
-                $this->modifyPricesetOptionFull( $val['id'], $optionsFull, $val['options'] );
-                
+                $optionsFull = CRM_Utils_Array::value( 'option_full_ids', $val, array( ) );
                 foreach ( $val['options'] as $keys => $values ) {
-                    if ( $values['is_default'] && !isset($optionsFull[$keys]) ) {
-                        
-                        $priceFieldDefault[$key] = $val;
+                    if ( $values['is_default'] && !in_array( $keys, $optionsFull ) ) {
                         if ( $val['html_type'] == 'CheckBox') {
                             $defaults["price_{$key}"][$keys] = 1;
                         } else {
@@ -133,7 +128,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
                     }
                 }
                 if ( !empty( $optionsFull ) ) {
-                    $unsetSubmittedOptions[$val['id']] = array_keys( $optionsFull );
+                    $unsetSubmittedOptions[$val['id']] = $optionsFull;
                 }
             }
         }
