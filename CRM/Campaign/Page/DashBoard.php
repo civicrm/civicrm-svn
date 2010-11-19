@@ -219,6 +219,8 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
                 $surveysData[$sid] = $survey;
                 $surveysData[$sid]['campaign_id']       = $campaigns[$survey['campaign_id']];
                 $surveysData[$sid]['activity_type']     = $surveyType[$survey['activity_type_id']];
+                $surveysData[$sid]['result_id']         = $survey['result_id'];
+                
                 if ( $survey['release_frequency_interval'] ) {
                     $surveysData[$sid]['release_frequency'] = $survey['release_frequency_interval'].' Day(s)';
                 }
