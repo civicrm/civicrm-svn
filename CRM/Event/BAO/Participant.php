@@ -482,10 +482,10 @@ SELECT  event.event_full_text,
      * @access public
      */
     static function priceSetOptionsCount( $eventId, 
-                                          $skipParticipantIds = array( ), 
-                                          $isTest = 0,
+                                          $skipParticipantIds = array( ),
                                           $considerCounted = true,
-                                          $considerWaiting = true ) {
+                                          $considerWaiting = true,
+                                          $considerTestParticipants = false ) {
         $optionsCount = array( );
         if ( !$eventId ) return $optionsCount;
         
@@ -503,8 +503,11 @@ SELECT  event.event_full_text,
         if ( !empty( $allStatusIds ) ) {
             $statusIdClause = ' AND participant.status_id IN ( '. implode( ', ', array_values( $allStatusIds ) ). ')';
         }
-        $isTestClause = ' AND ( participant.is_test IS NULL OR participant.is_test = 0 )';
-        if ( $isTest ) $isTestClause = 'participant.is_test = 1'; 
+        
+        $isTestClause = null;
+        if ( !$considerTestParticipants ) {
+            $isTestClause = ' AND ( participant.is_test IS NULL OR participant.is_test = 0 )';
+        }
         
         $skipParticipantClause = null;
         if ( is_array( $skipParticipantIds ) && !empty( $skipParticipantIds ) ) {
