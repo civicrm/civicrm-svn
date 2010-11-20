@@ -611,7 +611,8 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                 $totalCount        = $currentTotalCount + $dbTotalCount;
                 
                 $isFull = false;
-                if ( $maxValue && ( $totalCount >= $maxValue ) ) {
+                if ( $maxValue && 
+                     ( ( $totalCount >= $maxValue ) || ( $totalCount + $count > $maxValue ) ) ) {
                     $isFull = true;
                     $optionFullIds[$optId] = $optId;
                 }

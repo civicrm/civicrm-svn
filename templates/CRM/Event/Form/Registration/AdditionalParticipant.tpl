@@ -85,8 +85,6 @@
 
 function allowGroupOnWaitlist( participantCount, currentCount ) 
 {
-  
-
   var formId          = {/literal}'{$formId}'{literal};
   var waitingMsg      = {/literal}'{$waitingMsg}'{literal};
   var confirmedMsg    = {/literal}'{$confirmedMsg}'{literal};
@@ -96,7 +94,8 @@ function allowGroupOnWaitlist( participantCount, currentCount )
   if ( !participantCount ) participantCount = {/literal}'{$currentParticipantCount}'{literal};	 
   var totalParticipants = parseInt(participantCount) + parseInt(currentCount);
 
-  cj("#event_participant_status").html("Event Avaialability: "+ availableRegistrations +"<br />Total Participants Recorded: "+ totalParticipants  );
+  var seatStatistics = '{/literal}{ts 1="' + totalParticipants + '"}Total Participants : %1{/ts}{/literal}' + '<br />' + '{/literal}{ts 1="' + availableRegistrations + '"}Event Availability : %1{/ts}{/literal}';
+  cj("#event_participant_status").html( seatStatistics );
   
   if ( !{/literal}'{$lastParticipant}'{literal} ) return; 
 
