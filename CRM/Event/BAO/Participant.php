@@ -343,8 +343,14 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
      * @static
      * @access public
      */
-    static function eventFull( $eventId, $returnEmptySeats = false, $includeWaitingList = true, $returnWaitingCount = false )
-    {
+    static function eventFull( $eventId, 
+                               $returnEmptySeats = false, 
+                               $includeWaitingList = true, 
+                               $returnWaitingCount = false,
+                               $considerTestParticipant = false ) {
+        $result = null;
+        if ( !$eventId ) return $result; 
+        
         // consider event is full when. 
         // 1. (count(is_counted) >= event_size) or 
         // 2. (count(participants-with-status-on-waitlist) > 0)
@@ -352,148 +358,112 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
         // is full, as waitlist might represent group require spaces > empty.
         
         require_once 'CRM/Event/PseudoConstant.php';
+        $participantRoles   = CRM_Event_PseudoConstant::participantRole(   null, 'filter = 1' ); 
         $countedStatuses    = CRM_Event_PseudoConstant::participantStatus( null, "is_counted = 1" );
         $waitingStatuses    = CRM_Event_PseudoConstant::participantStatus( null, "class = 'Waiting'" );
-        $countedStatusIds   = implode( ',', array_keys( $countedStatuses ) );
         $onWaitlistStatusId = array_search( 'On waitlist', $waitingStatuses );
-
-        if ( !$countedStatusIds ) {
-            $countedStatusIds = 0;
+        
+        //when we do require only waiting count don't consider counted.
+        if ( !$returnWaitingCount && !empty( $countedStatuses ) ) {
+            $allStatusIds = array_keys( $countedStatuses );
         }
         
-        if ( !$onWaitlistStatusId ) {
-            $onWaitlistStatusId = 0;
+        $where = array( ' event.id = %1 ' );
+        if ( !$considerTestParticipant ) {
+            $where[] = ' ( participant.is_test = 0 OR participant.is_test IS NULL ) ';
+        }
+        if ( !empty( $participantRoles ) ) {
+            $where[] = ' participant.role_id IN ( ' . implode( ', ', array_keys($participantRoles)).' ) ';
         }
         
-        //if waiting straight forward consider event as full.
-        if ( $includeWaitingList ) {
-            $waitingQuery = "
-  SELECT  count( waiting.id ) waiting_participant_count,
-          civicrm_event.event_full_text as event_full_text
-    FROM  civicrm_participant waiting, civicrm_event 
-   WHERE  waiting.event_id = civicrm_event.id
-     AND  waiting.status_id = {$onWaitlistStatusId}
-     AND  waiting.is_test = 0
-     AND  waiting.event_id = {$eventId}
-Group By  waiting.event_id
-";
-            $waiting = CRM_Core_DAO::executeQuery( $waitingQuery, CRM_Core_DAO::$_nullArray );
-            while ( $waiting->fetch( ) && $waiting->waiting_participant_count ) {
-                if ( $returnWaitingCount ) {
-                    //include line items waiting participants.
-                    $lineItemWaitingTotal = "
-    SELECT  count(DISTINCT lineitem.entity_id) as entityCount, 
-            sum(lineitem.participant_count) as counted_participants
-      FROM  civicrm_line_item lineitem 
-INNER JOIN  civicrm_participant counted ON ( counted.id = lineitem.entity_id ) 
-     WHERE  counted.status_id IN ( {$onWaitlistStatusId} )
-       AND  counted.is_test = 0
-       AND  lineitem.entity_table = 'civicrm_participant'
-       AND  lineitem.participant_count != 0
-       AND  counted.event_id = %1
-  GROUP BY  counted.event_id";
-                    $lineItemWaiting = CRM_Core_DAO::executeQuery( $lineItemWaitingTotal, 
-                                                                   array( 1 => array( $eventId, 'Positive'  ) ) );
-                    while ( $lineItemWaiting->fetch( ) && $lineItemWaiting->counted_participants ) {
-                        $waiting->waiting_participant_count += ( $lineItemWaiting->counted_participants - 
-                                                                 $lineItemWaiting->entityCount );
-                    }
-                    return $waiting->waiting_participant_count;
-                } else {
-                    //get the event full message.
-                    $eventFullmsg = ts( "This event is full !!!" );
-                    if ( $waiting->event_full_text ) {
-                        $eventFullmsg = $waiting->event_full_text;
-                    }
-                    return $eventFullmsg;
+        $eventParams = array( 1 => array( $eventId, 'Positive' ) );
+        
+        //in case any waiting, straight forward event is full.
+        if ( $includeWaitingList && $onWaitlistStatusId ) {
+            
+            //build the where clause.
+            $whereClause  = ' WHERE ' . implode( ' AND ', $where );
+            $whereClause .= " AND participant.status_id = $onWaitlistStatusId ";
+            
+            $query = "
+    SELECT  participant.id id,
+            event.event_full_text as event_full_text
+      FROM  civicrm_participant participant 
+INNER JOIN  civicrm_event event ON ( event.id = participant.event_id )
+            {$whereClause}";
+            
+            $participantIds = array( );
+            $eventFullText  = ts( 'This event is full !!!' );
+            $participants   = CRM_Core_DAO::executeQuery( $query, $eventParams );
+            while ( $participants->fetch( ) ) {
+                $participantIds[$participants->id] = $participants->id;
+                //oops here event is full and we don't want waiting count.
+                if ( !$returnWaitingCount ) {
+                    $eventFullText = $participants->event_full_text;
+                    break;
                 }
             }
-        }
- 
-        $roleSQL = '';
-        if ( $countedRoles =
-             implode( ',', array_keys( CRM_Event_PseudoConstant::participantRole( null, 'filter = 1' ) ) ) ) {
-            $roleSQL = " AND counted.role_id IN ({$countedRoles})";
-        }
-
-        // participant has to have is_counted true for event to be full
-        $query = " 
-  SELECT  count(counted.id) as counted_participants,
-          civicrm_event.max_participants as max_participants,
-          civicrm_event.event_full_text as event_full_text  
-    FROM  civicrm_participant counted, civicrm_event 
-   WHERE  counted.event_id = civicrm_event.id
-     AND  counted.status_id IN ( {$countedStatusIds} )
-     AND  counted.is_test = 0
-     AND  counted.event_id = {$eventId}
-     {$roleSQL}
-GROUP BY  counted.event_id
-";
-        $counted = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
-        
-        if ( $counted->fetch( ) ) {
-            
-            // Add the Participant Total from Line Item. 
-            $lineItemTotalParticipants = "SELECT  count(DISTINCT lineitem.entity_id) as entityCount , sum(lineitem.participant_count) as counted_participants
-     FROM  civicrm_line_item lineitem, civicrm_participant counted, civicrm_event 
-     WHERE  counted.event_id = civicrm_event.id 
-      AND  counted.status_id IN ( {$countedStatusIds} )
-      AND  counted.is_test = 0
-      AND lineitem.entity_table = 'civicrm_participant'
-      AND lineitem.entity_id = counted.id
-      AND lineitem.participant_count != 0
-      AND  counted.event_id = {$eventId}
-      {$roleSQL}
-   GROUP BY  counted.event_id
-   ";  
-            $countedLineItemTotalParticipants = CRM_Core_DAO::executeQuery( $lineItemTotalParticipants, CRM_Core_DAO::$_nullArray );
-            while( $countedLineItemTotalParticipants->fetch( ) ) {
-                $counted->counted_participants += ( $countedLineItemTotalParticipants->counted_participants - $countedLineItemTotalParticipants->entityCount );
-            }
-
-            if ( $counted->max_participants == NULL ) {
-                return null;
-            }
-            
-            //get the event full message.
-            $eventFullmsg = ts( "This event is full !!!" );
-            if ( $counted->event_full_text ) {
-                $eventFullmsg = $counted->event_full_text;
-            }
-            
-            if ( $counted->counted_participants >= $counted->max_participants ) {
-                // CRM-6902: if event is full and waiting list is enabled allow
-                // participant to register in waiting list
-                if ( $returnEmptySeats ) {
-                    return null;
-                }
-                return $eventFullmsg;
-            }      
-            
-            //return the difference ( exclude waitings. )
-            if ( $returnEmptySeats ) {
-                return $counted->max_participants - $counted->counted_participants; 
+            if ( !empty( $participantIds ) ) {
+                return ( !$returnWaitingCount ) ? $eventFullText : self::totalEventSeats( $participantIds );
             }
         }
         
-        // return size/false/full message as there is no participant register yet.
-        $maxParticipants = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $eventId, 'max_participants' );
+        //consider only counted participants.
+        $where[] = ' participant.status_id IN ( ' . implode( ', ', array_keys( $countedStatuses ) ) . ' ) ';
+        $whereClause = ' WHERE ' . implode( ' AND ', $where );
+        
+        $query = "
+    SELECT  participant.id id,
+            event.event_full_text as event_full_text,
+            event.max_participants as max_participants
+      FROM  civicrm_participant participant 
+INNER JOIN  civicrm_event event ON ( event.id = participant.event_id )
+            {$whereClause}";
+        
+        $eventMaxSeats  = null; 
+        $participantIds = array( );
+        $eventFullText  = ts( 'This event is full !!!' );
+        $participants   = CRM_Core_DAO::executeQuery( $query, $eventParams );
+        while ( $participants->fetch( ) ) {
+            $eventFullText = $participants->event_full_text;
+            $eventMaxSeats = $participants->max_participants;
+            $participantIds[$participants->id] = $participants->id;
+            
+            //don't have limit for event seats.
+            if ( $participants->max_participants == null ) {
+                return $result;
+            }
+        }
+        
+        //get the total event seats occupied by these participants.
+        $eventRegisteredSeats = self::totalEventSeats( $participantIds );
+        
+        if ( $eventRegisteredSeats ) {
+            if ( $eventRegisteredSeats >= $eventMaxSeats ) {
+                $result = $eventFullText;
+            } else if ( $returnEmptySeats ) {
+                $result = $eventMaxSeats - $eventRegisteredSeats;
+            }
+            return $result;
+        } else {
+            $query = '
+SELECT  event.event_full_text,
+        event.max_participants
+  FROM  civicrm_event event
+ WHERE  event.id = %1';
+            $event = CRM_Core_DAO::executeQuery( $query, $eventParams ); 
+            while ( $event->fetch( ) ) {
+                $eventFullText = $event->event_full_text;
+                $eventMaxSeats = $event->max_participants;
+            }
+        }
         
         // no limit for registration.
-        if ( $maxParticipants == null ) {
-            return null;
+        if ( $eventMaxSeats == null ) {
+            return $result;
         }
-        
-        if ( $maxParticipants ) {
-            if ( $returnEmptySeats ) {
-                return $maxParticipants;
-            }
-            return false;
-        }
-        
-        $evenFullText = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $eventId, 'event_full_text' );
-        if ( !$evenFullText ) {
-            $evenFullText = ts( "This event is full !!!" );
+        if ( $eventMaxSeats  ) {
+            return ( $returnEmptySeats ) ? $eventMaxSeats : false;
         }
         
         return $evenFullText;
