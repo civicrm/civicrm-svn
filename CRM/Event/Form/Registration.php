@@ -1136,6 +1136,10 @@ WHERE  v.option_group_id = g.id
             $hasOptCount = true;
             $optionsCountDetails = $priceSetDetails['optionsCountDetails']['fields'];
         }
+        $feeBlock = $form->_feeBlock;
+        if ( empty( $feeBlock ) ) {
+            $feeBlock = $priceSetDetails['fields'];
+        }
         
         $optionMaxValues = $fieldSelected = array( );
         foreach ( $params as $pNum => $values ) {
@@ -1162,8 +1166,10 @@ WHERE  v.option_group_id = g.id
         
         //validate for option max value.
         foreach ( $optionMaxValues as $fieldId => $values ) {
+            $options = CRM_Utils_Array::value( 'options', $feeBlock[$fieldId], array( ) );
             foreach ( $values as $optId => $total ) {
-                $optMax = $optionsMaxValueDetails[$fieldId]['options'][$optId];
+                $optMax  = $optionsMaxValueDetails[$fieldId]['options'][$optId];
+                $total  += CRM_Utils_Array::value( 'db_total_count', $options[$optId], 0 );
                 if ( $optMax && $total > $optMax ) {
                     $errors[$currentParticipantNum]["price_{$fieldId}"] = ts( 'It looks like this field participant count extending its maximum limit.' );
                 }

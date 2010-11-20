@@ -629,6 +629,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                     }
                 }
                 $option['is_full']            = $isFull;
+                $option['db_total_count']     = $dbTotalCount;
                 $option['total_option_count'] = $totalCount;
             }
             
