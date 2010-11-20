@@ -381,10 +381,9 @@ class CRM_Core_BAO_CMSUser
             }
         
             $sql = "
-SELECT count(*)
+SELECT name, mail
   FROM {$config->userFrameworkUsersTableName}
- WHERE LOWER(name) = LOWER('$name')
-";
+ WHERE (LOWER(name) = LOWER('$name')) OR (LOWER(mail) = LOWER('$email'))";
         } elseif ( $isJoomla ) {
             //don't allow the special characters and min. username length is two
             //regex \\ to match a single backslash would become '/\\\\/' 
@@ -398,7 +397,7 @@ SELECT username, email
  WHERE (LOWER(username) = LOWER('$name')) OR (LOWER(email) = LOWER('$email'))
 ";
         }
-
+        
         $db_cms = DB::connect($config->userFrameworkDSN);
         if ( DB::isError( $db_cms ) ) { 
             die( "Cannot connect to UF db via $dsn, " . $db_cms->getMessage( ) ); 
@@ -406,10 +405,15 @@ SELECT username, email
         $query = $db_cms->query( $sql );
         $row = $query->fetchRow( );
         if ( !empty( $row ) ) {
-            if ( strtolower( $row[0]) == strtolower( $name )) {
-                $errors['cms_name'] = ts( 'The username %1 is already taken. Please select another username.', array( 1 => $name) );
-            } else if ( strtolower( $row[1] ) == strtolower( $email ) ) {
-                $errors['email-5'] = ts( 'This email %1 is already registered. Please select another email.', array( 1 => $email) );
+            $dbName  = CRM_Utils_Array::value( 0, $row );
+            $dbEmail = CRM_Utils_Array::value( 1, $row );
+            if ( strtolower( $dbName ) == strtolower( $name ) ) {
+                $errors['cms_name'] = ts( 'The username %1 is already taken. Please select another username.', 
+                                          array( 1 => $name ) );
+            }
+            if ( strtolower( $dbEmail ) == strtolower( $email ) ) {
+                $errors[$emailName] = ts( 'This email %1 is already registered. Please select another email.', 
+                                          array( 1 => $email) );
             }
         }
     }
