@@ -41,11 +41,16 @@ class CRM_Logging_Schema
     private $logs   = array();
     private $tables = array();
 
+    private $loggingDB;
+
     /**
      * Populate $this->tables and $this->logs with current db state.
      */
     function __construct()
     {
+        $dsn = defined('CIVICRM_LOGGING_DSN') ? DB::parseDSN(CIVICRM_LOGGING_DSN) : DB::parseDSN(CIVICRM_DSN);
+        $this->loggingDB = $dsn['database'];
+
         $dao = CRM_Core_DAO::executeQuery('SHOW TABLES LIKE "civicrm_%"');
         while ($dao->fetch()) {
             $this->tables[] = $dao->toValue("Tables_in_{$dao->_database}_(civicrm_%)");
@@ -54,9 +59,9 @@ class CRM_Logging_Schema
         $this->tables = preg_grep('/^civicrm_import_job_/', $this->tables, PREG_GREP_INVERT);
         $this->tables = preg_grep('/_cache$/',              $this->tables, PREG_GREP_INVERT);
 
-        $dao = CRM_Core_DAO::executeQuery('SHOW TABLES LIKE "log_civicrm_%"');
+        $dao = CRM_Core_DAO::executeQuery("SHOW TABLES FROM {$this->loggingDB} LIKE 'log_civicrm_%'");
         while ($dao->fetch()) {
-            $log = $dao->toValue("Tables_in_{$dao->_database}_(log_civicrm_%)");
+            $log = $dao->toValue("Tables_in_{$this->loggingDB}_(log_civicrm_%)");
             $this->logs[substr($log, 4)] = $log;
         }
     }
@@ -121,7 +126,7 @@ class CRM_Logging_Schema
         $create = explode("\n", $dao->Create_Table);
         foreach ($cols as $col) {
             $line = substr(array_pop(preg_grep("/^  `$col` /", $create)), 0, -1);
-            CRM_Core_DAO::executeQuery("ALTER TABLE log_$table ADD $line");
+            CRM_Core_DAO::executeQuery("ALTER TABLE {$this->loggingDB}.log_$table ADD $line");
         }
 
         // recreate triggers to cater for the new columns
@@ -148,8 +153,10 @@ class CRM_Logging_Schema
     {
         static $columnsOf = array();
 
+        $from = (substr($table, 0, 4) == 'log_') ? "{$this->loggingDB}.$table" : $table;
+
         if (!isset($columnsOf[$table])) {
-            $dao = CRM_Core_DAO::executeQuery("SHOW COLUMNS FROM $table");
+            $dao = CRM_Core_DAO::executeQuery("SHOW COLUMNS FROM $from");
             $columnsOf[$table] = array();
             while ($dao->fetch()) {
                 $columnsOf[$table][] = $dao->Field;
@@ -164,7 +171,7 @@ class CRM_Logging_Schema
      */
     private function createLogTableFor($table)
     {
-        CRM_Core_DAO::executeQuery("DROP TABLE IF EXISTS log_$table");
+        CRM_Core_DAO::executeQuery("DROP TABLE IF EXISTS {$this->loggingDB}.log_$table");
 
         $dao = CRM_Core_DAO::executeQuery("SHOW CREATE TABLE $table");
         $dao->fetch();
@@ -182,7 +189,7 @@ class CRM_Logging_Schema
             log_user_id INTEGER,
             log_action  ENUM('Initialization', 'Insert', 'Update', 'Delete')
 COLS;
-        $query = preg_replace("/^CREATE TABLE `$table`/i", "CREATE TABLE `log_$table`", $query);
+        $query = preg_replace("/^CREATE TABLE `$table`/i", "CREATE TABLE {$this->loggingDB}.log_$table", $query);
         $query = preg_replace("/ AUTO_INCREMENT/i", '', $query);
         $query = preg_replace("/^  [^`].*$/m", '', $query);
         $query = preg_replace("/^\) ENGINE=[^ ]+ /im", ') ENGINE=ARCHIVE ', $query);
@@ -191,7 +198,7 @@ COLS;
         CRM_Core_DAO::executeQuery($query);
 
         $columns = implode(', ', $this->columnsOf($table));
-        CRM_Core_DAO::executeQuery("INSERT INTO log_$table ($columns, log_conn_id, log_user_id, log_action) SELECT $columns, CONNECTION_ID(), @civicrm_user_id, 'Initialization' FROM $table");
+        CRM_Core_DAO::executeQuery("INSERT INTO {$this->loggingDB}.log_$table ($columns, log_conn_id, log_user_id, log_action) SELECT $columns, CONNECTION_ID(), @civicrm_user_id, 'Initialization' FROM {$table}");
 
         $this->tables[]     = $table;
         $this->logs[$table] = "log_$table";
@@ -208,7 +215,7 @@ COLS;
         foreach (array('Insert', 'Update', 'Delete') as $action) {
             $trigger = "{$table}_after_" . strtolower($action);
             $queries[] = "DROP TRIGGER IF EXISTS $trigger";
-            $query = "CREATE TRIGGER $trigger AFTER $action ON $table FOR EACH ROW INSERT INTO log_$table (";
+            $query = "CREATE TRIGGER $trigger AFTER $action ON $table FOR EACH ROW INSERT INTO {$this->loggingDB}.log_$table (";
             foreach ($columns as $column) {
                 $query .= "$column, ";
             }

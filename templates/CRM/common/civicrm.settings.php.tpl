@@ -80,6 +80,14 @@ define( 'CIVICRM_UF_DSN'           , 'mysql://%%CMSdbUser%%:%%CMSdbPass%%@%%CMSd
 define( 'CIVICRM_DSN'          , 'mysql://%%dbUser%%:%%dbPass%%@%%dbHost%%/%%dbName%%?new_link=true' );
 
 /**
+ * CiviCRM Logging Database
+ *
+ * Used to point to a different database to use for logging (if desired). If unset defaults to equal CIVICRM_DSN.
+ * The CIVICRM_DSN user needs to have the rights to modify the below database schema and be able to write to it.
+ */
+define('CIVICRM_LOGGING_DSN', CIVICRM_DSN);
+
+/**
  * File System Paths:
  *
  * $civicrm_root is the file system path on your server where the civicrm
