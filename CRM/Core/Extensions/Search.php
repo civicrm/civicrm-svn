@@ -86,9 +86,15 @@ class CRM_Core_Extensions_Search
     }
     
     public function disable() {
+        $cs = CRM_Core_OptionGroup::values(self::CUSTOM_SEARCH_GROUP_NAME, false, false, false, null, 'id', false );
+        $id = $cs[$this->customSearches[$this->ext->key]];
+        $optionValue = CRM_Core_BAO_OptionValue::setIsActive( $id, 0 );
     }
     
     public function enable() {
+        $cs = CRM_Core_OptionGroup::values(self::CUSTOM_SEARCH_GROUP_NAME, false, false, false, null, 'id', false );
+        $id = $cs[$this->customSearches[$this->ext->key]];
+        $optionValue = CRM_Core_BAO_OptionValue::setIsActive( $id, 1 );
     }
     
 }

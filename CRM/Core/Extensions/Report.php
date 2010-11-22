@@ -84,8 +84,6 @@ class CRM_Core_Extensions_Report
 
     public function uninstall( ) {
 
-
-
 //        if( !array_key_exists( $this->ext->key, $this->customReports ) ) {
 //            CRM_Core_Error::fatal( 'This report is not registered.' );
 //        }
@@ -94,4 +92,17 @@ class CRM_Core_Extensions_Report
         $id = $cr[$this->customReports[$this->ext->key]];
         $optionValue = CRM_Core_BAO_OptionValue::del( $id );
     }
+
+    public function disable() {
+        $cr = CRM_Core_OptionGroup::values(self::REPORT_GROUP_NAME, false, false, false, null, 'id', false );
+        $id = $cr[$this->customReports[$this->ext->key]];
+        $optionValue = CRM_Core_BAO_OptionValue::setIsActive( $id, 0 );
+    }
+    
+    public function enable() {
+        $cr = CRM_Core_OptionGroup::values(self::REPORT_GROUP_NAME, false, false, false, null, 'id', false );
+        $id = $cr[$this->customReports[$this->ext->key]];
+        $optionValue = CRM_Core_BAO_OptionValue::setIsActive( $id, 1 );
+    }
+
 }

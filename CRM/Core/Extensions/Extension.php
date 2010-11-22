@@ -116,11 +116,6 @@ class CRM_Core_Extensions_Extension
         if( file_exists( $file ) ) {
             return simplexml_load_file( $file,
             'SimpleXMLElement', LIBXML_NOCDATA);
-//            $dom = DomDocument::load( $file );
-//            if( $dom ) {
-//                $dom->xinclude( );
-//                return simplexml_import_dom( $dom );
-//            }
         } else {
             CRM_Core_Error::fatal( 'Extension directory ' . $file . ' does not exist.' );
         }
@@ -136,6 +131,24 @@ class CRM_Core_Extensions_Extension
         $this->_removeExtensionByType();
         $this->_removeExtensionEntry();
     }    
+
+    public function enable( ) {
+        $this->_setActiveByType( 1 );
+        CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_OptionValue', $this->id, 'is_active', 1 );
+    }
+    
+    public function disable( ) {
+        $this->_setActiveByType( 0 );
+        CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_OptionValue', $this->id, 'is_active', 0 );
+    }
+
+
+    private function _setActiveByType( $state ) {
+        $hcName = "CRM_Core_Extensions_" . ucwords($this->type);
+        require_once(str_replace('_', DIRECTORY_SEPARATOR, $hcName) . '.php');
+        $ext = new $hcName( $this );
+        $state ? $ext->enable() : $ext->disable();
+    }
 
     private function _registerExtensionByType() {
         $hcName = "CRM_Core_Extensions_" . ucwords($this->type);
