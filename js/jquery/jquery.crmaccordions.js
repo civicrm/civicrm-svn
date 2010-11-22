@@ -29,6 +29,7 @@
 		function() {$(this).addClass('crm-accordion-header-hover')});
 	$('.crm-accordion-header').live('mouseout',	
 		function() {$(this).removeClass('crm-accordion-header-hover')});
+	$('.crm-accordion-header').die('click');
 	$('.crm-accordion-header').live('click', function () {
 		$(this).parent().toggleClass('crm-accordion-open');
 		$(this).parent().toggleClass('crm-accordion-closed');
