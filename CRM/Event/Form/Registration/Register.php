@@ -217,7 +217,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             $this->_defaults['participant_role_id'] = $this->_values['event']['default_role_id'];
         }
         if ( $this->_priceSetId ) {
-            foreach( $this->_priceSet['fields'] as $key => $val ) {
+            foreach( $this->_feeBlock as $key => $val ) {
                 foreach ( $val['options'] as $keys => $values ) {
                     if ( $values['is_default'] && 
                          !CRM_Utils_Array::value( 'is_full', $values ) ) {  
@@ -585,13 +585,17 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         $skipParticipants = $formattedPriceSetDefaults = array( );
         if ( $form->_allowConfirmation && ( isset($form->_pId) || isset($form->_additionalParticipantId) ) ) {
             require_once 'CRM/Event/Form/EventFees.php';
-            $participantId = isset($form->_pId) ? $form->_pId : $form->_additionalParticipantId;
-            $pricesetDefaults          = CRM_Event_Form_EventFees::setDefaultPriceSet( $participantId, 
-                                                                                       $form->_eventId );
+            $participantId    = isset($form->_pId) ? $form->_pId : $form->_additionalParticipantId;
+            $pricesetDefaults = CRM_Event_Form_EventFees::setDefaultPriceSet( $participantId, 
+                                                                              $form->_eventId );
+            // modify options full to respect the selected fields
+            // options on confirmation.
             $formattedPriceSetDefaults = self::formatPriceSetParams( $form, $pricesetDefaultOptions );
+
+            // to skip current registered participants fields option count on confirmation.
             $skipParticipants[] = $form->_participantId;
             if ( !empty($form->_additionalParticipantIds) ) {
-                $skipParticipants = array_merge( $skipParticipants, $form->_additionalParticipantIds);
+                $skipParticipants = array_merge( $skipParticipants, $form->_additionalParticipantIds );
             }
         }
         
