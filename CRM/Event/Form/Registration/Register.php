@@ -526,6 +526,9 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                     
                     $optionFullIds = CRM_Utils_Array::value( 'option_full_ids', $field, array( ) );
                     
+                    //soft suppress required rule when option is full. 
+                    if ( !empty( $optionFullIds ) ) $isRequire = false; 
+                    
                     //build the element.
                     CRM_Price_BAO_Field::addQuickFormElement( $form, 
                                                               $elementName, 
