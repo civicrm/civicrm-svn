@@ -256,6 +256,13 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
             }
         }
 
+        $config =& CRM_Core_Config::singleton();
+
+        // CRM-6942: set preferred language to the current language if it’s unset (and we’re creating a contact)
+        if ((!isset($params['id']) or !$params['id']) and (!isset($params['preferred_language']) or !$params['preferred_language'])) {
+            $params['preferred_language'] = $config->lcMessages;
+        }
+
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
 
@@ -292,7 +299,6 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
             }
         }
 
-        $config = CRM_Core_Config::singleton( );
         if ( ! $config->doNotResetCache ) {
             // Note: doNotResetCache flag is currently set by import contact process, since resetting and 
             // rebuilding cache could be expensive (for many contacts). We might come out with better 

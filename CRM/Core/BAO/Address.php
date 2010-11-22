@@ -531,7 +531,7 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
 SELECT civicrm_address.id as address_id, civicrm_address.location_type_id as location_type_id
 FROM civicrm_contact, civicrm_address 
 WHERE civicrm_address.contact_id = civicrm_contact.id AND civicrm_contact.id = %1
-ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC, address_id ASC";
+ORDER BY civicrm_address.is_primary DESC, address_id ASC";
         $params = array( 1 => array( $id, 'Integer' ) );
 
         $addresses = array( );

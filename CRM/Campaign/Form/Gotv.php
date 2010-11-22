@@ -38,6 +38,7 @@
  * Files required
  */
 require_once 'CRM/Core/Form.php';
+require_once 'CRM/Campaign/BAO/Survey.php';
 
 class CRM_Campaign_Form_Gotv extends CRM_Core_Form 
 {
@@ -125,16 +126,12 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
         $this->assign( 'searchParams', json_encode( $this->_searchParams ) );
         
         $defaults = array( );
+        
+        if ( !$this->_surveyId ) {
+            $this->_surveyId = key( CRM_Campaign_BAO_Survey::getSurvey( false, null, true ) );
+        }
+        
         if ( $this->_force || $this->_votingTab ) {
-            if ( !$this->_surveyId ) {
-                // use default survey id
-                require_once 'CRM/Campaign/DAO/Survey.php';
-                $dao = new CRM_Campaign_DAO_Survey( );
-                $dao->is_active  = 1;
-                $dao->is_default = 1;   
-                $dao->find( true );
-                $this->_surveyId = $dao->id;
-            }
             $session = CRM_Core_Session::singleton( );
             $userId = $session->get( 'userID' );
             // get interviewer id

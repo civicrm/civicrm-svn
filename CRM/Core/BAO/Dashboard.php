@@ -234,8 +234,16 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
 
         // if content is empty and url is set, retrieve it from url
         if ( !$dao->content && $dao->url ) {
+            $url = $dao->url;
+            
+            if ( substr( $dao->url, 0, 4 ) != 'http' && 
+                 $config->userFramework == 'Drupal' &&
+                 !variable_get('clean_url', '0') ) {
+                $url =  CRM_Utils_System::url( $dao->url );
+            }
+                 
             //get content from url
-            $dao->content = CRM_Utils_System::getServerResponse( $dao->url );
+            $dao->content = CRM_Utils_System::getServerResponse( $url );
             $dao->created_date = date( "YmdHis" );
             $dao->save( );
         }

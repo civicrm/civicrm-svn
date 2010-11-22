@@ -150,8 +150,14 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
     public function deleteActivity( &$params, $moveToTrash = false ) 
     {
         require_once 'CRM/Core/Transaction.php';
+      
         $transaction = new CRM_Core_Transaction( );
-        
+        if ( is_array( $params['source_record_id'] ) ) {
+                    $sourceRecordIds = implode( ',', $params['source_record_id'] );
+                } else {
+                    $sourceRecordIds = $params['source_record_id'];
+                }
+
         $result = null;
         if ( ! $moveToTrash ) { 
             if ( !isset( $params['id'] ) ) { 
@@ -161,7 +167,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
                     $activityTypes = $params['activity_type_id'];
                 }
                               
-                $query = "DELETE FROM civicrm_activity WHERE source_record_id = {$params['source_record_id']} AND activity_type_id IN ( {$activityTypes} )";
+                $query = "DELETE FROM civicrm_activity WHERE source_record_id IN ({$sourceRecordIds}) AND activity_type_id IN ( {$activityTypes} )";
                 $dao = CRM_Core_DAO::executeQuery( $query );
             } else {
                 $activity    = new CRM_Activity_DAO_Activity( );

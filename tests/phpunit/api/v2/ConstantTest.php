@@ -137,7 +137,7 @@ class api_v2_ConstantTest extends CiviUnitTestCase
         $parameters = array( true, false, true );
         $result = civicrm_constant_get( 'activityType', $parameters );
 
-        $this->assertEquals( 1, count( $result ), "In line " . __LINE__  );
+        $this->assertEquals( 2, count( $result ), "In line " . __LINE__  );
         $this->assertContains( 'Test activity type', $result, "In line " . __LINE__  );
         $this->assertTrue( empty( $result['is_error'] ),
                            "In line " . __LINE__  );

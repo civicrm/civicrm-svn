@@ -346,8 +346,14 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
      * @static
      * @access public
      */
-    static function eventFull( $eventId, $returnEmptySeats = false, $includeWaitingList = true, $returnWaitingCount = false )
-    {
+    static function eventFull( $eventId, 
+                               $returnEmptySeats = false, 
+                               $includeWaitingList = true, 
+                               $returnWaitingCount = false,
+                               $considerTestParticipant = false ) {
+        $result = null;
+        if ( !$eventId ) return $result; 
+        
         // consider event is full when. 
         // 1. (count(is_counted) >= event_size) or 
         // 2. (count(participants-with-status-on-waitlist) > 0)
@@ -355,271 +361,188 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
         // is full, as waitlist might represent group require spaces > empty.
         
         require_once 'CRM/Event/PseudoConstant.php';
+        $participantRoles   = CRM_Event_PseudoConstant::participantRole(   null, 'filter = 1' ); 
         $countedStatuses    = CRM_Event_PseudoConstant::participantStatus( null, "is_counted = 1" );
         $waitingStatuses    = CRM_Event_PseudoConstant::participantStatus( null, "class = 'Waiting'" );
-        $countedStatusIds   = implode( ',', array_keys( $countedStatuses ) );
         $onWaitlistStatusId = array_search( 'On waitlist', $waitingStatuses );
-
-        if ( !$countedStatusIds ) {
-            $countedStatusIds = 0;
+        
+        //when we do require only waiting count don't consider counted.
+        if ( !$returnWaitingCount && !empty( $countedStatuses ) ) {
+            $allStatusIds = array_keys( $countedStatuses );
         }
         
-        if ( !$onWaitlistStatusId ) {
-            $onWaitlistStatusId = 0;
+        $where = array( ' event.id = %1 ' );
+        if ( !$considerTestParticipant ) {
+            $where[] = ' ( participant.is_test = 0 OR participant.is_test IS NULL ) ';
+        }
+        if ( !empty( $participantRoles ) ) {
+            $where[] = ' participant.role_id IN ( ' . implode( ', ', array_keys($participantRoles)).' ) ';
         }
         
-        //if waiting straight forward consider event as full.
-        if ( $includeWaitingList ) {
-            $waitingQuery = "
-  SELECT  count( waiting.id ) waiting_participant_count,
-          civicrm_event.event_full_text as event_full_text
-    FROM  civicrm_participant waiting, civicrm_event 
-   WHERE  waiting.event_id = civicrm_event.id
-     AND  waiting.status_id = {$onWaitlistStatusId}
-     AND  waiting.is_test = 0
-     AND  waiting.event_id = {$eventId}
-Group By  waiting.event_id
-";
-            $waiting = CRM_Core_DAO::executeQuery( $waitingQuery, CRM_Core_DAO::$_nullArray );
-            while ( $waiting->fetch( ) && $waiting->waiting_participant_count ) {
-                if ( $returnWaitingCount ) {
-                    return $waiting->waiting_participant_count;
-                } else {
-                    //get the event full message.
-                    $eventFullmsg = ts( "This event is full !!!" );
-                    if ( $waiting->event_full_text ) {
-                        $eventFullmsg = $waiting->event_full_text;
-                    }
-                    return $eventFullmsg;
+        $eventParams = array( 1 => array( $eventId, 'Positive' ) );
+        
+        //in case any waiting, straight forward event is full.
+        if ( $includeWaitingList && $onWaitlistStatusId ) {
+            
+            //build the where clause.
+            $whereClause  = ' WHERE ' . implode( ' AND ', $where );
+            $whereClause .= " AND participant.status_id = $onWaitlistStatusId ";
+            
+            $query = "
+    SELECT  participant.id id,
+            event.event_full_text as event_full_text
+      FROM  civicrm_participant participant 
+INNER JOIN  civicrm_event event ON ( event.id = participant.event_id )
+            {$whereClause}";
+            
+            $participantIds = array( );
+            $eventFullText  = ts( 'This event is full !!!' );
+            $participants   = CRM_Core_DAO::executeQuery( $query, $eventParams );
+            while ( $participants->fetch( ) ) {
+                $participantIds[$participants->id] = $participants->id;
+                //oops here event is full and we don't want waiting count.
+                if ( !$returnWaitingCount ) {
+                    $eventFullText = $participants->event_full_text;
+                    break;
                 }
             }
-        }
- 
-        $roleSQL = '';
-        if ( $countedRoles =
-             implode( ',', array_keys( CRM_Event_PseudoConstant::participantRole( null, 'filter = 1' ) ) ) ) {
-            $roleSQL = " AND counted.role_id IN ({$countedRoles})";
-        }
-
-        // participant has to have is_counted true for event to be full
-        $query = " 
-  SELECT  count(counted.id) as counted_participants,
-          civicrm_event.max_participants as max_participants,
-          civicrm_event.event_full_text as event_full_text  
-    FROM  civicrm_participant counted, civicrm_event 
-   WHERE  counted.event_id = civicrm_event.id
-     AND  counted.status_id IN ( {$countedStatusIds} )
-     AND  counted.is_test = 0
-     AND  counted.event_id = {$eventId}
-     {$roleSQL}
-GROUP BY  counted.event_id
-";
-        $counted = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
-        
-        if ( $counted->fetch( ) ) {
-            
-            // Add the Participant Total from Line Item. 
-            $lineItemTotalParticipants = "SELECT  count(DISTINCT lineitem.entity_id) as entityCount , sum(lineitem.participant_count) as counted_participants
-     FROM  civicrm_line_item lineitem, civicrm_participant counted, civicrm_event 
-     WHERE  counted.event_id = civicrm_event.id 
-      AND  counted.status_id IN ( {$countedStatusIds} )
-      AND  counted.is_test = 0
-      AND lineitem.entity_table = 'civicrm_participant'
-      AND lineitem.entity_id = counted.id
-      AND lineitem.participant_count != 0
-      AND  counted.event_id = {$eventId}
-      {$roleSQL}
-   GROUP BY  counted.event_id
-   ";  
-            $countedLineItemTotalParticipants = CRM_Core_DAO::executeQuery( $lineItemTotalParticipants, CRM_Core_DAO::$_nullArray );
-            while( $countedLineItemTotalParticipants->fetch( ) ) {
-                $counted->counted_participants += ( $countedLineItemTotalParticipants->counted_participants - $countedLineItemTotalParticipants->entityCount );
-            }
-
-            if ( $counted->max_participants == NULL ) {
-                return null;
-            }
-            
-            //get the event full message.
-            $eventFullmsg = ts( "This event is full !!!" );
-            if ( $counted->event_full_text ) {
-                $eventFullmsg = $counted->event_full_text;
-            }
-            
-            if ( $counted->counted_participants >= $counted->max_participants ) {
-                // CRM-6902: if event is full and waiting list is enabled allow
-                // participant to register in waiting list
-                if ( $returnEmptySeats ) {
-                    return null;
-                }
-                return $eventFullmsg;
-            }      
-            
-            //return the difference ( exclude waitings. )
-            if ( $returnEmptySeats ) {
-                return $counted->max_participants - $counted->counted_participants; 
+            if ( !empty( $participantIds ) ) {
+                return ( !$returnWaitingCount ) ? $eventFullText : self::totalEventSeats( $participantIds );
             }
         }
         
-        // return size/false/full message as there is no participant register yet.
-        $maxParticipants = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $eventId, 'max_participants' );
+        //consider only counted participants.
+        $where[] = ' participant.status_id IN ( ' . implode( ', ', array_keys( $countedStatuses ) ) . ' ) ';
+        $whereClause = ' WHERE ' . implode( ' AND ', $where );
+        
+        $query = "
+    SELECT  participant.id id,
+            event.event_full_text as event_full_text,
+            event.max_participants as max_participants
+      FROM  civicrm_participant participant 
+INNER JOIN  civicrm_event event ON ( event.id = participant.event_id )
+            {$whereClause}";
+        
+        $eventMaxSeats  = null; 
+        $participantIds = array( );
+        $eventFullText  = ts( 'This event is full !!!' );
+        $participants   = CRM_Core_DAO::executeQuery( $query, $eventParams );
+        while ( $participants->fetch( ) ) {
+            $eventFullText = $participants->event_full_text;
+            $eventMaxSeats = $participants->max_participants;
+            $participantIds[$participants->id] = $participants->id;
+            
+            //don't have limit for event seats.
+            if ( $participants->max_participants == null ) {
+                return $result;
+            }
+        }
+        
+        //get the total event seats occupied by these participants.
+        $eventRegisteredSeats = self::totalEventSeats( $participantIds );
+        
+        if ( $eventRegisteredSeats ) {
+            if ( $eventRegisteredSeats >= $eventMaxSeats ) {
+                $result = $eventFullText;
+            } else if ( $returnEmptySeats ) {
+                $result = $eventMaxSeats - $eventRegisteredSeats;
+            }
+            return $result;
+        } else {
+            $query = '
+SELECT  event.event_full_text,
+        event.max_participants
+  FROM  civicrm_event event
+ WHERE  event.id = %1';
+            $event = CRM_Core_DAO::executeQuery( $query, $eventParams ); 
+            while ( $event->fetch( ) ) {
+                $eventFullText = $event->event_full_text;
+                $eventMaxSeats = $event->max_participants;
+            }
+        }
         
         // no limit for registration.
-        if ( $maxParticipants == null ) {
-            return null;
+        if ( $eventMaxSeats == null ) {
+            return $result;
         }
-        
-        if ( $maxParticipants ) {
-            if ( $returnEmptySeats ) {
-                return $maxParticipants;
-            }
-            return false;
-        }
-        
-        $evenFullText = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $eventId, 'event_full_text' );
-        if ( !$evenFullText ) {
-            $evenFullText = ts( "This event is full !!!" );
+        if ( $eventMaxSeats  ) {
+            return ( $returnEmptySeats ) ? $eventMaxSeats : false;
         }
         
         return $evenFullText;
     }
     
     /**
-     * returns the options of the field Id which are not available for
-     * registration ( field option full ) for the specified event.
+     * Return the array of all price set field options,
+     * with total participant count that field going to carry.
      *
-     * @param int      $eventId     event id.
-     * @param int      $fieldId     price field id.
-     * @param int      $isTest      is event is test event?      
+     * @param int     $eventId          event id.
+     * @param array   $skipParticipants an array of participant ids those we should skip.
+     * @param int     $isTest           would you like to consider test participants.
      *
-     * @return array $optionsFull options which are full
-     *                            pair of option id => remaining count 
+     * @return array $optionsCount an array of each option id and total count 
      * @static
      * @access public
      */
-    static function priceFieldOptionFull( $eventId, $fieldId, $skipParticipants = array( ), $isTest = 0 ) {
-        require_once 'CRM/Price/BAO/FieldValue.php';
-        
-        $optionsFull = array( );
-        
-        $options = array( );
-        CRM_Price_BAO_FieldValue::getValues( $fieldId, $options );
-        
-        if ( empty($options) ) return array($options, $optionsFull);
-
-        $checkOptions = array( );
-        foreach ( $options as $opt ) {
-            if ( CRM_Utils_Array::value( 'max_value', $opt ) ) {
-                $checkOptions[ ] = $opt['id'];
-            }
-        }
-        
-        if ( empty($checkOptions) ) return array($options, $optionsFull);
-
-        require_once 'CRM/Event/PseudoConstant.php';
-        $countedStatuses    = CRM_Event_PseudoConstant::participantStatus( null, "is_counted = 1" );
-        $countedStatusIds   = implode( ',', array_keys( $countedStatuses ) );
-        if ( !$countedStatusIds ) {
-            $countedStatusIds = 0;
-        }
-
-        if ( $isTest ) $isTest = 1;
-        
-        $queryNonCount  = "SELECT COUNT(*) as count, li.price_field_value_id FROM civicrm_line_item li LEFT JOIN civicrm_participant p ON p.id = li.entity_id WHERE li.entity_table = 'civicrm_participant' AND li.price_field_id = %1 AND li.price_field_value_id IN (". implode( ', ', $checkOptions) ." ) AND p.event_id = %2 AND p.status_id IN ( $countedStatusIds ) AND p.is_test = %3 AND ( li.participant_count IS NULL OR li.participant_count = 0 ) ";
-
-        $queryCount     = "SELECT SUM(participant_count) as count, li.price_field_value_id FROM civicrm_line_item li LEFT JOIN civicrm_participant p ON p.id = li.entity_id WHERE li.entity_table = 'civicrm_participant' AND li.price_field_id = %1 AND li.price_field_value_id IN (". implode( ', ', $checkOptions) ." ) AND p.event_id = %2 AND p.status_id IN ( $countedStatusIds ) AND p.is_test = %3 AND li.participant_count IS NOT NULL AND li.participant_count > 0 ";
-        
-        if ( is_array($skipParticipants) && !empty($skipParticipants) ) {
-            $queryCount    .= " AND p.id NOT IN (". implode(',',$skipParticipants) .") "; 
-            $queryNonCount .= " AND p.id NOT IN (". implode(',',$skipParticipants) .") ";
-        }
-        
-        $queryCount    .= "GROUP BY li.price_field_value_id";
-        $queryNonCount .= "GROUP BY li.price_field_value_id";
- 
-        $params = array( 1 => array( $fieldId, 'Integer' ),
-                         2 => array( $eventId, 'Integer' ),
-                         3 => array( $isTest, 'Integer')
-                         );
-
+    static function priceSetOptionsCount( $eventId, 
+                                          $skipParticipantIds = array( ),
+                                          $considerCounted = true,
+                                          $considerWaiting = true,
+                                          $considerTestParticipants = false ) {
         $optionsCount = array( );
-
-        $resultNonCount  = CRM_Core_DAO::executeQuery( $queryNonCount, $params );
-        while ( $resultNonCount->fetch( ) ) { 
-            if ( !$resultNonCount->price_field_value_id || !$resultNonCount->count ) continue;
-            
-            $optionsCount[$resultNonCount->price_field_value_id] = $resultNonCount->count;
+        if ( !$eventId ) return $optionsCount;
+        
+        require_once 'CRM/Event/PseudoConstant.php';
+        $allStatusIds = array( );
+        if ( $considerCounted ) {
+            $countedStatuses = CRM_Event_PseudoConstant::participantStatus( null, "is_counted = 1" );
+            $allStatusIds    = array_merge( $allStatusIds, array_keys( $countedStatuses ) );
         }
-
-        $resultCount = CRM_Core_DAO::executeQuery( $queryCount, $params );
-        while ( $resultCount->fetch( ) ) { 
-            if ( !$resultCount->price_field_value_id || !$resultCount->count ) continue;
-
-            $optionsCount[$resultCount->price_field_value_id] = $resultCount->count + CRM_Utils_Array::value( $resultCount->price_field_value_id, $optionsCount, 0);
+        if ( $considerWaiting ) {
+            $waitingStatuses = CRM_Event_PseudoConstant::participantStatus( null, "class = 'Waiting'"  );
+            $allStatusIds    = array_merge( $allStatusIds, array_keys(  $waitingStatuses ) );
+        }
+        $statusIdClause = null;
+        if ( !empty( $allStatusIds ) ) {
+            $statusIdClause = ' AND participant.status_id IN ( '. implode( ', ', array_values( $allStatusIds ) ). ')';
         }
         
-        foreach( $checkOptions as $opId ) {
-            if ( !CRM_Utils_Array::value( $opId, $optionsCount ) ) continue;
-            
-            $options[$opId]['total_count'] = $optionsCount[$opId];
-
-            if ( CRM_Utils_Array::value( 'count', $options[$opId] ) && 
-                 ( $optionsCount[$opId] + $options[$opId]['count'] ) > $options[$opId]['max_value'] ) {
-                $optionsFull[$opId] = $optionsCount[$opId];
-            } else if ( !CRM_Utils_Array::value( 'count', $options[$opId] ) && 
-                        $optionsCount[$opId] >= $options[$opId]['max_value'] ) {
-                $optionsFull[$opId] = $optionsCount[$opId];
-            }
-        }
-
-        return array($options, $optionsFull);
-    }
-
-    /**
-     * unset the default field options which are freezed because of the
-     * option full
-     *
-     * @param int      $eventId               event id.
-     * @param array    $priceFieldDefault     price fields to be unset.
-     * @param array    $default ( reference ) default values  
-     *
-     * @return void
-     *
-     * @static
-     * @access public
-     *
-     */
-    static function unsetFreezedOptions( $eventId, $priceFieldDefault, &$defaults ) {
-        
-        if ( !is_array($priceFieldDefault) || empty($priceFieldDefault) ) {
-            return;
+        $isTestClause = null;
+        if ( !$considerTestParticipants ) {
+            $isTestClause = ' AND ( participant.is_test IS NULL OR participant.is_test = 0 )';
         }
         
-        foreach( $priceFieldDefault as $pfield => $fieldDetails ) {
-            // text field can not have default value in price set
-            if ( CRM_Utils_Array::value( 'html_type', $fieldDetails ) == 'Text' ||
-                 !CRM_Utils_Array::value( 'options', $fieldDetails ) ||
-                 !isset($defaults["price_{$pfield}"]) ) {
-                continue;
-            }
-               
-
-            foreach( $fieldDetails['options'] as $pfieldVal => $valDetails ) {
-                if ( !CRM_Utils_Array::value( 'is_full', $valDetails ) ) {
-                    continue;
-                }
-
-                if ( CRM_Utils_Array::value( 'html_type', $fieldDetails ) == 'CheckBox' ) {
-                    if ( is_array($defaults["price_{$pfield}"]) && 
-                         isset($defaults["price_{$pfield}"][$pfieldVal] ) ) {
-                        unset( $defaults["price_{$pfield}"][$pfieldVal] );
-                    } 
-                } else if ( !is_array( $defaults["price_{$pfield}"] ) &&
-                            ( $defaults["price_{$pfield}"] == $pfieldVal ) ) {
-                    unset( $defaults["price_{$pfield}"] );
-                }
-            }
+        $skipParticipantClause = null;
+        if ( is_array( $skipParticipantIds ) && !empty( $skipParticipantIds ) ) {
+            $skipParticipantClause = ' AND participant.id NOT IN ( '. implode( ', ', $skipParticipantIds ) . ')';
         }
+        
+        $sql ="
+    SELECT  line.id as lineId,
+            line.entity_id as entity_id,
+            line.qty,
+            value.id as valueId,
+            value.count,
+            field.html_type
+      FROM  civicrm_line_item line
+INNER JOIN  civicrm_participant participant ON ( line.entity_table  = 'civicrm_participant' 
+                                                 AND participant.id = line.entity_id ) 
+INNER JOIN  civicrm_price_field_value value ON ( value.id = line.price_field_value_id )
+INNER JOIN  civicrm_price_field field       ON ( value.price_field_id = field.id )   
+     WHERE  participant.event_id = %1
+            {$statusIdClause}
+            {$isTestClause}
+            {$skipParticipantClause}";
+        
+        $lineItem = CRM_Core_DAO::executeQuery( $sql, array( 1 => array( $eventId, 'Positive' ) ) );
+        while ( $lineItem->fetch( ) ) {
+            $count = $lineItem->count;
+            if ( !$count ) $count = 0; 
+            if ( $lineItem->html_type == 'Text' ) $count *= $lineItem->qty;
+            $optionsCount[$lineItem->valueId] = $count + CRM_Utils_Array::value( $lineItem->valueId, $optionsCount, 0 );
+        }
+        
+        return $optionsCount;
     }
     
     /**
@@ -807,7 +730,7 @@ GROUP BY  participant.event_id
     static function participantDetails( $participantId ) 
     {
         $query = "
-SELECT civicrm_contact.sort_name as name, civicrm_event.title as title
+SELECT civicrm_contact.sort_name as name, civicrm_event.title as title, civicrm_contact.id as cid
 FROM   civicrm_participant 
    LEFT JOIN civicrm_event   ON (civicrm_participant.event_id = civicrm_event.id)
    LEFT JOIN civicrm_contact ON (civicrm_participant.contact_id = civicrm_contact.id)
@@ -819,6 +742,7 @@ WHERE  civicrm_participant.id = {$participantId}
         while ( $dao->fetch() ) {
             $details['name' ] = $dao->name;
             $details['title'] = $dao->title;
+            $details['cid'] =   $dao->cid;
         }
         
         return $details;
@@ -885,6 +809,7 @@ WHERE  civicrm_participant.id = {$participantId}
     static function deleteParticipant( $id ) 
     {
         require_once 'CRM/Core/Transaction.php';
+      
         $transaction = new CRM_Core_Transaction( );
 
         //delete activity record
@@ -1033,14 +958,14 @@ WHERE  civicrm_participant.id = {$participantId}
         $query = "
   SELECT  participant.id
     FROM  civicrm_participant participant
-   WHERE  {$where}"; 
+   WHERE  {$where}";
         
         $dao = CRM_Core_DAO::executeQuery( $query );
         while ( $dao->fetch( ) ) {
             $additionalParticipantIds[$dao->id] = $dao->id;
         }
-        
         return $additionalParticipantIds;
+       
     }
     
     /**
@@ -1750,10 +1675,35 @@ INNER JOIN  civicrm_price_field field ON ( value.price_field_id = field.id )
              $count = 1;
              $optCounts = CRM_Utils_Array::value( $pId, $countDetails );
              if ( is_array( $optCounts ) ) $count = array_sum( $optCounts );
+             if ( !$count ) $count = 1;
              $totalSeats += $count;
          }
          
          return $totalSeats;
      }
      
+     /**
+      * Function to get additional Participant edit & view url .
+      *
+      * @param array  $paticipantIds an array of additional participant ids.
+      *
+      * @return array of Urls.
+      * @access public
+      * @static
+      */
+     
+     static function getAdditionalParticipantUrl( $participantIds ){
+         foreach( $participantIds as $value ) {
+             $links =array();
+             $details = self::participantDetails( $value );
+             $viewUrl = CRM_Utils_System::url( 'civicrm/contact/view/participant', 
+                                               "action=view&reset=1&id={$value}&cid={$details['cid']}" );
+             $editUrl = CRM_Utils_System::url( 'civicrm/contact/view/participant', 
+                                               "action=update&reset=1&id={$value}&cid={$details['cid']}" );
+             $links[] = "<td><a href='{$viewUrl}'>".$details['name']."</a></td><td></td><td><a href='{$editUrl}'>".ts(Edit)."</a></td>";
+             $links = "<table><tr>". implode( "</tr><tr>", $links)."</tr></table>";
+             return $links;  
+         }
+         
+     }
 }

@@ -101,7 +101,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
      */
     function setDefaultValues( ) 
     {
-        $defaults = array( );
+        $defaults = $unsetSubmittedOptions = array( );
         $discountId = null;
         //fix for CRM-3088, default value for discount set.      
         if ( ! empty( $this->_values['discount'] ) ){
@@ -114,18 +114,12 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
             }
         }
         if ( $this->_priceSetId ) {
-            $priceFieldDefault = array( );
-            foreach( $this->_priceSet['fields'] as $key => $val ) {
+            foreach( $this->_feeBlock as $key => $val ) {
                 if ( !CRM_Utils_Array::value( 'options', $val ) ) continue;
-
-                $optionsFull = array( );
-                $this->modifyPricesetOptionFull( $val['id'], $optionsFull, $val['options'] );
- 
+                
+                $optionsFull = CRM_Utils_Array::value( 'option_full_ids', $val, array( ) );
                 foreach ( $val['options'] as $keys => $values ) {
-                    if ( $values['is_default'] ) {
-                        if ( isset($optionsFull[$keys]) ) $val['options'][$keys]['is_full'] = true;
-
-                        $priceFieldDefault[$key] = $val;
+                    if ( $values['is_default'] && !in_array( $keys, $optionsFull ) ) {
                         if ( $val['html_type'] == 'CheckBox') {
                             $defaults["price_{$key}"][$keys] = 1;
                         } else {
@@ -133,12 +127,10 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
                         }
                     }
                 }
+                if ( !empty( $optionsFull ) ) {
+                    $unsetSubmittedOptions[$val['id']] = $optionsFull;
+                }
             }
-            if ( !empty($priceFieldDefault) ) {
-                // CRM-6902, if price option is freezed, unset it from setdefault
-                require_once 'CRM/Event/BAO/Participant.php';
-                CRM_Event_BAO_Participant::unsetFreezedOptions( $this->_eventId, $priceFieldDefault, $defaults );
-            } 
         }
         
         //CRM-4320, setdefault additional participant values.
@@ -159,7 +151,12 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
         }
         
         $defaults = array_merge( $this->_defaults, $defaults );
-
+        
+        //reset values for all options those are full.
+        if ( !empty( $unsetSubmittedOptions ) && empty( $_POST ) ) {
+            $this->resetElementValue( $unsetSubmittedOptions );
+        }
+        
         return $defaults;
     }  
     /** 
@@ -231,17 +228,9 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
              CRM_Utils_Array::value( 'bypass_payment', $this->_params[0] ) &&
              $this->_lastParticipant ) { 
             
-            //need to check current participant present in params.
-            $currentParticipantNum = substr( $this->_name, 12 );
-            
-            $isLineItemParticipants = false;
-            if ( !empty( $this->_lineItemParticipants ) ) {
-                $isLineItemParticipants = true;
-            }
-            
             //get the event spaces.
             $spaces = $this->_availableRegistrations; 
-                       
+            
             $currentPageMaxCount = 1;
             if ( $pricesetFieldsCount ) $currentPageMaxCount = $pricesetFieldsCount;
             
@@ -399,6 +388,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
             
             //take the participant instance.
             $addParticipantNum = substr( $self->_name, 12 );
+            
             if ( is_array( $params ) &&
                  $self->_values['event']['allow_same_participant_emails'] != 1 ) {
                 foreach ( $params as $key => $value ) {
@@ -409,52 +399,18 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
                     }
                 }
             }
-
+            
             //check for atleast one pricefields should be selected
             if ( CRM_Utils_Array::value( 'priceSetId', $fields ) ) {
-                require_once "CRM/Price/BAO/Set.php";
-                $checkPriceFields     = array( );
-                $psetParticipantCount = 0;
-                $optionCounts         = $self->getTotalOptionCounts( );
-
-                if ( !empty($self->_priceSet) ) {
-                    foreach( $self->_priceSet['fields'] as $pFieldId => $pFieldDetails ) {
-                        if ( !empty( $fields["price_{$pFieldId}"] ) ) {
-                            $checkPriceFields[] = $pFieldId;
-                            
-                            // check submitted value if there is text
-                            // field in priceset
-                            if ( CRM_Utils_Array::value('html_type', $pFieldDetails) == 'Text' &&
-                             CRM_Utils_Array::value('options', $pFieldDetails) ) {
-                                foreach( $pFieldDetails['options'] as $opId => $opDetails ) {
-                                    
-                                    if ( CRM_Utils_Array::value( 'max_value', $opDetails) ) {
-                                        $fldCount = 1;
-                                        if ( CRM_Utils_Array::value( 'count', $opDetails) ) {
-                                            $fldCount =  CRM_Utils_Array::value( 'count', $opDetails);
-                                        }
-
-                                        $fieldTotal = ( $fldCount * $fields["price_{$pFieldId}"] ) + CRM_Utils_Array::value('total_count', $opDetails, 0) + CRM_Utils_Array::value($opId, $optionCounts, 0);
-                                        
-                                        if ( $fieldTotal > CRM_Utils_Array::value( 'max_value', $opDetails) ) {
-                                            $errors["price_{$pFieldId}"] = ts( " %1 Participant count extending its maximum participants limit.", array( 1 => $pFieldDetails['label']) );
-                                        }
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
+                $allParticipantParams = $params;
                 
-                if ( empty($checkPriceFields) ) {
-                    $errors['_qf_default'] = ts( "Select at least one option from Event Fee(s)." );
-                }
+                //format current participant params.
+                $allParticipantParams[$addParticipantNum] = self::formatPriceSetParams( $self, $fields );
+                $totalParticipants = self::getParticipantCount( $self, $allParticipantParams );
                 
-                //get the current page count.
-                $currentCount  = self::getParticipantCount( $self, $fields );
-                $previousCount = self::getParticipantCount( $self, $self->_params, true ); 
-                $totalParticipants = $currentCount + $previousCount;
+                //validate price field params.
+                $priceSetErrors = self::validatePriceSet( $self, $allParticipantParams );
+                $errors = array_merge( $errors, CRM_Utils_Array::value( $addParticipantNum, $priceSetErrors, array( ) ) );
                 
                 if ( !$self->_allowConfirmation && 
                      is_numeric( $self->_availableRegistrations ) ) {
@@ -521,15 +477,18 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
             $this->_allowWaitlist = false;
             //get the current page count.
             $currentCount = self::getParticipantCount( $this, $params );
+            if ( $button == 'skip' ) $currentCount = 'skip';
+            
             //get the total count.
             $previousCount = self::getParticipantCount( $this, $this->_params, true );
-            $totalParticipants = $currentCount + $previousCount;
+            $totalParticipants = $previousCount;
+            if ( is_numeric( $currentCount ) ) $totalParticipants += $currentCount; 
             if ( CRM_Utils_Array::value( 'has_waitlist', $this->_values['event'] ) &&
                  $totalParticipants > $this->_availableRegistrations ) {
                 $this->_allowWaitlist = true;
             }
             $this->set( 'allowWaitlist', $this->_allowWaitlist );
-            if ( $button != 'skip' ) $this->_lineItemParticipants[$addParticipantNum] = $currentCount;
+            $this->_lineItemParticipantsCount[$addParticipantNum] = $currentCount;
         }
         
         if ( $button == 'skip' ) {
@@ -548,7 +507,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
             $this->_params[$addParticipantNum] = 'skip';
             if ( isset( $this->_lineItem ) ) {
                 $this->_lineItem[$addParticipantNum] = 'skip';
-                $this->_lineItemParticipants[$addParticipantNum] = 'skip'; 
+                $this->_lineItemParticipantsCount[$addParticipantNum] = 'skip'; 
             }
         } else {
             
@@ -573,7 +532,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
                 } else {
                     $lineItem = array( ); 
                     require_once 'CRM/Price/BAO/Set.php';
-                    CRM_Price_BAO_Set::processAmount( $this->_values['fee']['fields'], $params, $lineItem );
+                    CRM_Price_BAO_Set::processAmount( $this->_values['fee'], $params, $lineItem );
                     
                     //build the line item..
                     if ( array_key_exists( $addParticipantNum, $this->_lineItem ) ) {
@@ -611,7 +570,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
         //set the line item.
         if ( $this->_lineItem ) {
             $this->set( 'lineItem', $this->_lineItem );
-            $this->set( 'lineItemParticipants', $this->_lineItemParticipants );
+            $this->set( 'lineItemParticipantsCount', $this->_lineItemParticipantsCount );
         }
         
         $participantNo = count( $this->_params );
@@ -656,4 +615,89 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
         return false;
     } 
 
+    /**
+     * Reset values for all options those are full.
+     *
+     **/
+    function resetElementValue( $optionFullIds = array( ) ) 
+    {
+        if ( !is_array( $optionFullIds ) || 
+             empty( $optionFullIds ) || 
+             !$this->isSubmitted( ) ) {
+            return;
+        }
+        
+        foreach ( $optionFullIds as $fldId => $optIds ) {
+            $name = "price_$fldId";
+            if ( !$this->elementExists( $name ) ) continue; 
+            
+            $element = $this->getElement( $name );
+            $eleType = $element->getType( );
+            
+            $resetSubmitted = false;
+            switch ( $eleType ) {
+            case 'text' :
+                if ( $element->isFrozen( ) ) {
+                    $element->setValue( '' );
+                    $resetSubmitted = true;
+                }
+                break;
+                
+            case 'group' :
+                if ( is_array( $element->_elements ) ) {
+                    foreach ( $element->_elements as $child ) {
+                        $childType = $child->getType( );
+                        $methodName = 'getName';
+                        if ( $childType ) $methodName = 'getValue';
+                        if ( in_array( $child->{$methodName}( ), $optIds ) && $child->isFrozen( ) ) {
+                            $resetSubmitted = true;
+                            $child->updateAttributes( array( 'checked' => null ) );
+                        }
+                    }
+                }
+                break;
+                
+            case 'select' :
+                $resetSubmitted = true;
+                $element->_values = array( );
+                break;
+            }
+            
+            //finally unset values from submitted.
+            if ( $resetSubmitted ) {
+                $this->resetSubmittedValue( $name, $optIds );
+            }
+        }
+        
+    }
+    
+    function resetSubmittedValue( $elementName, $optionIds = array( ) ) 
+    {
+        if ( empty( $elementName ) || 
+             !$this->elementExists( $elementName ) || 
+             !$this->getSubmitValue( $elementName ) ) {
+            return;
+        }
+        foreach ( array( 'constantValues', 'submitValues', 'defaultValues' ) as $val ) {
+            $values =& $this->{"_$val"};
+            if ( !is_array( $values ) || empty( $values ) ) continue;
+            $eleVal = CRM_Utils_Array::value( $elementName, $values );
+            if ( empty( $eleVal ) ) continue; 
+            if ( is_array( $eleVal ) ) {
+                $found = false;
+                foreach ( $eleVal as $keyId => $ignore ) {
+                    if ( in_array( $keyId, $optionIds ) ) {
+                        $found = true;
+                        unset( $values[$elementName][$keyId] );
+                    }
+                }
+                if ( $found && empty( $values[$elementName][$keyId] ) ) {
+                    $values[$elementName][$keyId] = null;
+                }
+            } else {
+                $values[$elementName][$keyId] = null;
+            }
+        }
+    }
+    
 }

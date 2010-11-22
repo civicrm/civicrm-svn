@@ -156,5 +156,183 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
       // Check for expected price set field strings
       $this->assertStringsPresent( $validateStrings );
   }
+  
+  function testRegisterWithPriceSet()
+  {
+ 
+      // This is the path where our testing install resides. 
+      // The rest of URL is defined in CiviSeleniumTestCase base class, in
+      // class attributes.
+      $this->open( $this->sboxPath );
 
+      // Log in using webtestLogin() method
+      $this->webtestLogin();
+
+        $setTitle = 'Conference Fees - '.substr(sha1(rand()), 0, 7);
+        $usedFor = 'Event';
+        $setHelp = "Select your conference options.";
+        $this->_testAddSet( $setTitle, $usedFor, $setHelp );
+
+        // Get the price set id ($sid) by retrieving and parsing the URL of the New Price Field form
+        // which is where we are after adding Price Set.
+        $elements = $this->parseURL( );
+        $sid = $elements['queryString']['sid'];
+        $this->assertType( "numeric", $sid );
+        
+        $validStrings = array( );
+
+        $fields = array( "Full Conference" => "Text",
+                         "Meal Choice" => "Select",
+                         "Pre-conference Meetup?" => "Radio",
+                         "Evening Sessions" => "CheckBox",
+                       );
+        $this->_testAddPriceFields( $fields, $validateStrings );
+        
+        // load the Price Set Preview and check for expected values
+        $this->_testVerifyPriceSet( $validateStrings, $sid );      
+      
+        // We need a payment processor
+        $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
+        $this->webtestAddPaymentProcessor($processorName);
+    
+        // Go directly to the URL of the screen that you will be testing (New Event).
+        $this->open($this->sboxPath . "civicrm/event/add&reset=1&action=add");
+      
+        $eventTitle = 'My Conference - '.substr(sha1(rand()), 0, 7);
+        $email = "Smith" . substr(sha1(rand()), 0, 7). "@example.com";
+        $eventDescription = "Here is a description for this conference.";
+        
+        $this->waitForElementPresent("_qf_EventInfo_upload-bottom");
+        
+       // Let's start filling the form with values.
+       $this->select("event_type_id", "value=1");
+     
+       // Attendee role s/b selected now.
+       $this->select("default_role_id", "value=1");
+      
+       // Enter Event Title, Summary and Description
+       $this->type("title", $eventTitle);
+       $this->type("summary", "This is a great conference. Sign up now!");
+      
+       // Type description in ckEditor (fieldname, text to type, editor)
+       $this->fillRichTextField( "description", $eventDescription,'CKEditor' );
+      
+       // Choose Start and End dates.
+       // Using helper webtestFillDate function.
+       $this->webtestFillDateTime("start_date", "+1 week");
+       $this->webtestFillDateTime("end_date", "+1 week 1 day 8 hours ");
+      
+       $this->type("max_participants", "50");
+       $this->click("is_map");
+       $this->click("_qf_EventInfo_upload-bottom");      
+      
+       // Wait for Location tab form to load
+       $this->waitForPageToLoad("30000");
+     
+       // Go to Fees tab
+       $this->click("link=Fees");
+       $this->waitForElementPresent("_qf_Fee_upload-bottom");
+       $this->click("CIVICRM_QFID_1_2");
+       $this->select("payment_processor_id", "label=" . $processorName);
+       $this->select("contribution_type_id", "value=4");
+       $this->select("price_set_id", "label=" . $setTitle);
+      
+       $this->click("_qf_Fee_upload-bottom");
+       $this->waitForPageToLoad("30000");
+    
+       // intro text for registration page
+       $registerIntro = "Fill in all the fields below and click Continue.";
+      
+       // Go to Online Registration tab
+       $this->click("link=Online Registration");
+       $this->waitForElementPresent("_qf_Registration_upload-bottom");
+      
+       $this->check("is_online_registration");
+       $this->assertChecked("is_online_registration");
+       
+       $this->fillRichTextField("intro_text", $registerIntro);
+      
+       // enable confirmation email
+       $this->click("CIVICRM_QFID_1_2");
+       $this->type("confirm_from_name", "Jane Doe");
+       $this->type("confirm_from_email", "jane.doe@example.org");
+      
+       $this->click("_qf_Registration_upload-bottom");
+       $this->waitForPageToLoad("30000");
+       $this->waitForTextPresent("'Registration' information has been saved.");
+       
+       // verify event input on info page
+       // start at Manage Events listing
+       $this->open($this->sboxPath . "civicrm/event/manage&reset=1");
+       $this->click("link=$eventTitle");
+       
+      $this->waitForPageToLoad('30000');
+       $eventInfoUrl = $this->getLocation();
+       
+       
+       $this->open($this->sboxPath . "civicrm/logout&reset=1");
+       $this->waitForPageToLoad('30000'); 
+       $this->open( $eventInfoUrl );
+       $this->click("link=Register Now");
+       $this->waitForElementPresent("_qf_Register_upload-bottom");
+       
+       $this->type("xpath=//input[@class='form-text four required']", "1");
+       $this->click("xpath=//input[@class='form-radio']");
+       $this->click("xpath=//input[@class='form-checkbox']");
+       $this->type("email-5", $email);
+       
+       $this->select("credit_card_type", "value=Visa");
+       $this->type("credit_card_number", "4111111111111111");
+       $this->type("cvv2", "000");
+       $this->select("credit_card_exp_date[M]", "value=1");
+       $this->select("credit_card_exp_date[Y]", "value=2020");
+       $this->type("billing_first_name", "Jane");
+       $this->type("billing_last_name", "San");
+       $this->type("billing_street_address-5", "15 Main St.");
+       $this->type(" billing_city-5", "San Jose");
+       $this->select("billing_country_id-5", "value=1228");
+       $this->select("billing_state_province_id-5", "value=1004");
+       $this->type("billing_postal_code-5", "94129");
+       
+       $this->click("_qf_Register_upload-bottom");
+       $this->waitForPageToLoad('30000');
+       $this->waitForElementPresent("_qf_Confirm_next-bottom");
+       $confirmStrings = array("Event Fee(s)", "Billing Name and Address", "Credit Card Information");
+       $this->assertStringsPresent( $confirmStrings );
+       $this->click("_qf_Confirm_next-bottom");
+       $this->waitForPageToLoad('30000');
+       $thankStrings = array("Thank You for Registering", "Event Total", "Transaction Date");
+       $this->assertStringsPresent( $thankStrings );
+      
+       //login to check participant
+       $this->open( $this->sboxPath );
+       
+       // Log in using webtestLogin() method
+       $this->webtestLogin( );
+       
+       //Find Participant
+       $this->open( $this->sboxPath . "civicrm/event/search&reset=1" );
+       
+       $this->waitForElementPresent( "_qf_Search_refresh" );
+       
+       $this->type( "sort_name", "$email" );
+       $this->click( "_qf_Search_refresh" );
+       
+       $this->waitForPageToLoad( '30000' );
+       
+       $this->waitForElementPresent( "xpath=id('participantSearch')/table/tbody/tr/td[11]/span/a[text()='View']" );
+       $this->click( "xpath=id('participantSearch')/table/tbody/tr/td[11]/span/a[text()='View']" );
+       $this->waitForElementPresent( "_qf_ParticipantView_cancel-bottom" );
+       
+       $expected = array( 2  => 'Full Conference', 
+                          3  => 'Pre-conference Meetup? - Yes',
+                          4  => 'Evening Sessions - First Night'
+                          );
+       foreach ( $expected as  $value => $label ) {
+           $this->verifyText("xpath=id('ParticipantView')/div[2]/table[1]/tbody/tr[7]/td[2]/table/tbody/tr[$value]/td", $label );
+       }
+       $this->assertStringsPresent("Event Total: $ 590.00" );
+       $this->click( "_qf_ParticipantView_cancel-bottom" ); 
+  }
+  
 }

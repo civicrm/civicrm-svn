@@ -476,6 +476,28 @@ function civicrm_views_data() {
                                                                    ),
                                                    );
 
+    //BOOLEAN : Is Deleted
+    $data['civicrm_contact']['is_deleted'] = array(
+                                                   'title' => t('Is Deleted'),
+                                                   'help' => t('Has this contact been deleted?'),
+                                                   'field' => array(
+                                                                    'handler' => 'views_handler_field_boolean',
+                                                                    'click sortable' => TRUE,
+                                                                    ),
+
+                                                   'argument' => array(
+                                                                       'handler' => 'views_handler_argument',
+                                                                       ),
+
+                                                   'filter' => array(
+                                                                     'handler' => 'views_handler_filter_boolean_operator',
+                                                                     ),
+
+                                                   'sort' => array(
+                                                                   'handler' => 'views_handler_sort',
+                                                                   ),
+                                                   );
+
     // Organization Name
     $data['civicrm_contact']['organization_name'] = array(
                                              'title' => t('Organization Name'), // The item it appears as on the UI,
@@ -545,7 +567,7 @@ function civicrm_views_data() {
                          'do_not_trade'      => 1,
                          'is_opt_out'        => 1,
                          'contact_type'      => 1,
-                         'organization_name' => 1,
+                         'organization_name' => 1
                          );
     civicrm_views_add_fields( $fields, $data['civicrm_contact'], $skipFields, 'civicrm_contact' );
 

@@ -139,8 +139,8 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         
         $diffs = CRM_Dedupe_Merger::findDifferences($cid, $oid);
         
-        $mainParams  = array('contact_id' => $cid, 'return.display_name' => 1);
-        $otherParams = array('contact_id' => $oid, 'return.display_name' => 1);
+        $mainParams  = array('contact_id' => $cid, 'return.display_name' => 1, 'return.contact_sub_type' => 1);
+        $otherParams = array('contact_id' => $oid, 'return.display_name' => 1, 'return.contact_sub_type' => 1);
         // API 2 has to have the requested fields spelt-out for it
         foreach (CRM_Dedupe_Merger::$validFields as $field) {
             $mainParams["return.$field"] = $otherParams["return.$field"] = 1;
@@ -159,7 +159,12 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
             CRM_Core_Error::fatal( ts( 'The other contact record does not exist' ) );
         }
 
+        require_once 'CRM/Contact/BAO/ContactType.php';
+        $subtypes = CRM_Contact_BAO_ContactType::subTypePairs( null, true, '' );
+
         $this->assign('contact_type', $main['contact_type']);
+        $this->assign('main_contact_subtype',  $subtypes[$main['contact_sub_type']]);
+        $this->assign('other_contact_subtype', $subtypes[$other['contact_sub_type']]);
         $this->assign('main_name',    $main['display_name']);
         $this->assign('other_name',   $other['display_name']);
         $this->assign('main_cid',     $main['contact_id']);

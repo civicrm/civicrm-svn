@@ -120,7 +120,7 @@ class WebTest_Contact_SearchTest extends CiviSeleniumTestCase {
       // tag a contact
       // visit tag tab
       $this->click("css=li#tab_tag a");
-      $this->waitForElementPresent("css=ul#tagtree");
+      $this->waitForElementPresent("css=div#tagtree");
       
       // select tag
       $this->click("xpath=//ul/li/label[text()=\"$tagName\"]");

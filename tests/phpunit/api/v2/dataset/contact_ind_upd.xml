@@ -68,7 +68,7 @@
       <null /><!--  legal_name  -->
       <value>http://some.url.com/image.jpg</value><!--  image_URL  -->
       <null /><!--  preferred_communication_method  -->
-      <null /><!--  preferred_language  -->
+      <value>en_US</value><!--  preferred_language  -->
       <value>HTML</value><!--  preferred_mail_format  -->
       <null /><!--  hash  -->
       <null /><!--  api_key  -->

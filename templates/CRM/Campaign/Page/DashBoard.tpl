@@ -88,6 +88,7 @@
 <a href="{crmURL p='civicrm/survey/add' q='reset=1' h=0 }" class="button"><span><div class="icon add-icon"></div>{ts}Add Survey{/ts}</span></a>
  
 </div>
+ <div id="survey-response-dialog" class="hiddenElement"></div>
  {include file="CRM/common/enableDisable.tpl"}
  {include file="CRM/common/jsortable.tpl"}
   <div id="surveyList">
@@ -104,6 +105,7 @@
 	      <th>{ts}Active?{/ts}</th>
 	      <th id="nosort"></th>
 	      <th id="nosort"></th>
+	      <th id="nosort"></th>
         </tr>
       </thead>
       {foreach from=$surveys item=survey}
@@ -116,6 +118,7 @@
           <td class="crm-survey-max_number_of_contacts">{$survey.max_number_of_contacts}</td>
           <td class="crm-survey-is_default">{if $survey.is_default}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Default{/ts}" /> {/if}</td>
           <td class="crm-survey-is_active" id="row_{$survey.id}_status">{if $survey.is_active}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}</td>
+	  <td class="crm-survey-resultset"> <a href="javascript:displayResponses({$survey.id}, '{$survey.title}', {$survey.result_id})">{ts}Response Set{/ts}</a> </td>
  	  <td class="crm-survey-action">{$survey.action}</td>
 	  <td class="crm-survey-voter_links">
 	  {if $survey.voterLinks}
@@ -288,5 +291,42 @@ cj(document).ready( function( ) {
          }
       });
   }    
+
+
+{/literal}{if $subPageType eq 'survey' and $surveys }{literal}
+
+function displayResponses( surveyId, surveyTitle, OptionGroupId ) {
+  var data                = new Object;
+  data['option_group_id'] = OptionGroupId;
+  data['survey_id']       = surveyId;
+
+  var dataUrl  = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Campaign_Page_AJAX&fnName=loadOptionGroupDetails' }"{literal};
+  var content  = '<tr><th>{/literal}{ts}Label{/ts}{literal}</th><th>{/literal}{ts}Value{/ts}{literal}</th><th>{/literal}{ts}Recontact Interval{/ts}{literal}</th><th>{/literal}{ts}Weight{/ts}{literal}</th></tr>';
+  var setTitle = '{/literal}{ts}Response Options for {/ts}{literal}' + surveyTitle;
+	 
+  cj.post( dataUrl, data, function( opGroup ) {
+    if ( opGroup.status == 'success' ) {
+      var result = opGroup.result; 
+      for( key in result ) {
+        content += '<tr><td>'+  result[key].label +'</td><td>'+ result[key].value +'</td><td>'+ result[key].interval +'</td><td>'+ result[key].weight +'</td></tr>';
+      }
+
+      cj("#survey-response-dialog").show( ).html('<table>'+content+'</table>').dialog({
+        title: setTitle,
+        modal: true,
+        width: 480, 
+        overlay: { 
+          opacity: 0.5, 
+          background: "black" 
+        },
+        beforeclose: function(event, ui) {
+          cj(this).dialog("destroy");
+        }
+      });
+    }
+  }, "json" );	  
+
+}
+{/literal}{/if}{literal}
 </script>
 {/literal}

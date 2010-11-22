@@ -181,12 +181,13 @@ class CRM_Event_Form_EventFees
                 }
             }
             if ( $form->_action == CRM_Core_Action::ADD && CRM_Utils_Array::value( 'fields', $form->_priceSet ) ) {
-                $priceFieldDefault = array( );
                 foreach( $form->_priceSet['fields'] as $key => $val ) {
                     foreach ( $val['options'] as $keys => $values ) {
                         if ( $values['is_default'] ) {
-                            
-                            $priceFieldDefault[$key]= $val;
+                            if ( get_class($form) != 'CRM_Event_Form_Participant' && 
+                                 CRM_Utils_Array::value( 'is_full', $values ) ) {
+                                continue;
+                            }
                             
                             if ( $val['html_type'] == 'CheckBox') {
                                 $defaults[$form->_pId]["price_{$key}"][$keys] = 1;
@@ -195,14 +196,6 @@ class CRM_Event_Form_EventFees
                             }
                         }
                     }
-                }
-                
-                if ( !in_array( get_class($form) , array('CRM_Event_Form_Participant') ) && 
-                     $form->_eventId && 
-                     !empty($priceFieldDefault) ) {
-                    // CRM-6902, if price option is freezed, unset it from setdefault
-                    require_once 'CRM/Event/BAO/Participant.php';
-                    CRM_Event_BAO_Participant::unsetFreezedOptions( $form->_eventId, $priceFieldDefault, $defaults[$form->_pId] ); 
                 }
             }
             
@@ -457,7 +450,7 @@ SELECT  id, html_type
             //retrieve custom information
             $form->_values = array( );
             require_once "CRM/Event/Form/Registration/Register.php";
-            CRM_Event_Form_Registration::initPriceSet($form, $event['id'] );
+            CRM_Event_Form_Registration::initEventFee( $form, $event['id'] );
             CRM_Event_Form_Registration_Register::buildAmount( $form, true, $form->_discountId );
             $lineItem = array();
             if ( !CRM_Utils_System::isNull( CRM_Utils_Array::value( 'line_items', $form->_values ) ) ) {

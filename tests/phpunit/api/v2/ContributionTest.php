@@ -145,8 +145,7 @@ class api_v2_ContributionTest extends CiviUnitTestCase
                         'trxn_id'                => 12345,
                         'invoice_id'             => 67890,
                         'source'                 => 'SSF',
-                        'contribution_status_id' => 1,
-                        $customField             => 'Custom Data for Contribution'
+                        'contribution_status_id' => 1
                         );
         
         $contribution =& civicrm_contribution_add($params);
