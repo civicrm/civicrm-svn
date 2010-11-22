@@ -350,7 +350,7 @@ class CRM_Core_Extensions
         if ( substr( $clazz, 0, 4 ) != 'CRM_' ) {
             require_once 'CRM/Core/PseudoConstant.php';
             $extensions = CRM_Core_PseudoConstant::getExtensions( $clazz );
-            if ( in_array( $clazz, $extensions ) ) {
+            if ( array_key_exists( $this->classToKey($clazz), $extensions ) ) {
                 return TRUE;
             }
         }
