@@ -83,10 +83,6 @@
 
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.dashboard.js"></script>
 <style type="text/css">@import url("{$config->resourceBase}packages/jquery/css/dashboard.css");</style>
-<!--[if !(IE 8)]>
-<script type="text/javascript" src="{$config->resourceBase}js/dd_roundies.js"></script>
-<script type="text/javascript" src="{$config->resourceBase}js/style.js"></script>
-<![endif]-->
 
 {* CRM-6819: localize datepicker *}
 {if $l10nURL}

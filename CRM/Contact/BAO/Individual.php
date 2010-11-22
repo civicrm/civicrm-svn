@@ -164,7 +164,17 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
             }
         }
         
-        if ( $lastName || $firstName || $middleName ) {
+        //email is defined before display name is set, CRM-7114
+        if ( CRM_Utils_Array::value( 'email', $params ) && is_array( $params['email'] ) ) {
+            foreach ($params['email'] as $emailBlock) {
+                if ( isset( $emailBlock['is_primary'] ) ) {
+                    $email = $emailBlock['email'];
+                    break;
+                }
+            }
+        }
+        
+        if ( $lastName || $firstName || $middleName || $email ) { 
             // make sure we have values for all the name fields.
             $formatted  = $params;
             $nameParams = array( 'first_name'        => $firstName,
@@ -205,12 +215,11 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
             $displayName = CRM_Utils_Address::format( $formatted, $format,
                                                       false, false, true, $tokenFields );
             $displayName = trim( $displayName );
+            if ( empty($displayName) ) $displayName = $email; //if no displayName is set, use email
         }
         
         if ( $sortName ) {
             $contact->sort_name = $sortName;
-        } else if ( $individual && $individual->sort_name ) {
-            $contact->sort_name = $individual->sort_name;
         }
         
         if ( $displayName ) {
@@ -224,15 +233,6 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
             $contact->addressee_custom = $individual->addressee_custom;
         }
         
-        if ( CRM_Utils_Array::value( 'email', $params ) && is_array( $params['email'] ) ) {
-            foreach ($params['email'] as $emailBlock) {
-                if ( isset( $emailBlock['is_primary'] ) ) {
-                    $email = $emailBlock['email'];
-                    break;
-                }
-            }
-        }
-
         $uniqId = CRM_Utils_Array::value( 'user_unique_id', $params );
         if (empty($contact->display_name)) {
             if (isset($email)) {
