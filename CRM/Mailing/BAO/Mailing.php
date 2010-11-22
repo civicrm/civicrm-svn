@@ -537,6 +537,10 @@ AND    $mg.mailing_id = {$mailing_id}
                     $token = $list[1];
                     $funcStruct['token'][] = $this->getDataFunc($match);
                 }
+                // fixed truncated url, CRM-7113
+                if ( $token ) {
+                    $funcStruct['embed_parts'][] = $token;
+                }
             } else {
                 $funcStruct['type'] = 'url';
             }
