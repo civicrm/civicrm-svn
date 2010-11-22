@@ -163,10 +163,13 @@
                 </div>
     			{if $additionalParticipant}
                     <div class="crm-content">
-                        {ts 1=$additionalParticipant} There are %1 more Participant(s) registered by this participant. Deleting this registration will also result in deletion of these additional participant(s).{/ts}
+                        {ts 1=$additionalParticipant} There are %1 more Participant(s) registered by this participant.{/ts}
                     </div>
     			{/if}
             </div>
+	    {if $additionalParticipant}
+              {$form.delete_participant.html}
+            {/if}
         {else} {* If action is other than Delete *}
             <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
             <table class="form-layout-compressed">

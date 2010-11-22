@@ -110,10 +110,13 @@ class CRM_Utils_Mail
         }
 
         // quote FROM, if comma is detected AND is not already quoted. CRM-7053
-        if ( strpos( $headers['From'], ',' ) !== false && 
-             strpos( $headers['From'], '"' ) === false ) {
+        if ( strpos( $headers['From'], ',' )  !== false ) {
             $from = explode( ' <', $headers['From'] );
-            $headers['From'] = "\"{$from[0]}\" <{$from[1]}";
+            if ( substr( $from[0],  0,  1 ) != '"' || 
+                 substr( $from[0], -1,  1 ) != '"' ) {
+                $from[0] = str_replace( '"', '\"', $from[0] );
+                $headers['From'] = "\"{$from[0]}\" <{$from[1]}";
+            }
         }
 
         require_once 'Mail/mime.php';

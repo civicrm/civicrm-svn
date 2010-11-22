@@ -79,14 +79,14 @@
  cj( function( ) { 
     //collapse the search form.
     cj( '#search_form_' + {/literal}'{$searchVoterFor}'{literal} ).addClass( 'crm-accordion-closed' );	      	  
-    searchVoters( );
+    searchVoters( {/literal}'{$qfKey}'{literal} );
  }); 	
      	
  {/literal}
  {/if}
  {literal}
 
-function searchVoters( ) 
+function searchVoters( qfKey ) 
 {
       var dataUrl =  {/literal}"{crmURL h=0 q='search=1&snippet=4'}"{literal};
 
@@ -97,9 +97,8 @@ function searchVoters( )
       if ( surveyId ) dataUrl = dataUrl + '&sid=' + surveyId;
       if ( interviewerId ) dataUrl = dataUrl + '&cid=' + interviewerId;
     
-      {/literal}{if $qfKey}
-      dataUrl = dataUrl + '&qfKey=' + '{$qfKey}'; 
-      {/if}{literal}
+      //lets carry qfKey to retain form session.
+      if ( qfKey ) dataUrl = dataUrl + '&qfKey=' + qfKey;
   
       cj.get( dataUrl, null, function( voterList ) {
 	      cj( '#voterList' ).html( voterList );
@@ -125,7 +124,8 @@ function loadVoterList( )
 		"sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',
 	   	"bServerSide": true,
 	   	"sAjaxSource": sourceUrl,
-				
+		"fnDrawCallback": function() { cj().crmtooltip(); },
+	
 		"fnServerData": function ( sSource, aoData, fnCallback ) {
 			var dataLength = aoData.length;
 		       		

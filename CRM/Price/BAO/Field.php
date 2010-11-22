@@ -222,6 +222,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
                                                 $inactiveNeeded,
                                                 $useRequired = true,
                                                 $label = null,
+                                                $fieldOptions = null,
                                                 $feezeOptions = array( ) ) 
     {
         require_once 'CRM/Utils/Money.php';
@@ -231,7 +232,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
             /* FIXME: failure! */
             return null;
         }
-
+        
         $config    = CRM_Core_Config::singleton();
         $qf->assign('currencySymbol', CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Currency',$config->defaultCurrency,'symbol','name') );
         if (!isset($label)) {
@@ -242,17 +243,26 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
             $useRequired = false;
         }
         
+        $customOption = $fieldOptions;
+        if ( !is_array( $customOption ) ) {
+            $customOption = CRM_Price_BAO_Field::getOptions($field->id, $inactiveNeeded);
+        }
+        
         //use value field.
         $valueFieldName = 'amount';
         $seperator      = '|';
         switch($field->html_type) {
         case 'Text':
-            $customOption = CRM_Price_BAO_Field::getOptions( $field->id, $inactiveNeeded );
             $optionKey    = key($customOption);
             $count        = CRM_Utils_Array::value( 'count', $customOption[$optionKey], '' );
             $max_value    = CRM_Utils_Array::value( 'max_value', $customOption[$optionKey], '' );
             $priceVal     = implode( $seperator, array( $customOption[$optionKey][$valueFieldName], $count, $max_value ) );
-
+            
+            //check for label.
+            if ( CRM_Utils_Array::value( 'label', $fieldOptions[$optionKey] ) ) {
+                $label = $fieldOptions[$optionKey]['label'];
+            }
+            
             if ($field->is_display_amounts) {
                 $label .= '&nbsp;-&nbsp;';
                 $label .= CRM_Utils_Money::format( CRM_Utils_Array::value($valueFieldName, $customOption[$optionKey]) );
@@ -276,7 +286,6 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
             
         case 'Radio':
             $choice = array();
-            $customOption = CRM_Price_BAO_Field::getOptions($field->id, $inactiveNeeded);
 
             if ( !$field->is_required ) {
                 // add "none" option
@@ -311,7 +320,6 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
             break;
             
         case 'Select':
-            $customOption = CRM_Price_BAO_Field::getOptions($field->id, $inactiveNeeded);
             $selectOption = $allowedOptions = $priceVal = array();
             
             foreach ($customOption as $opt) {
@@ -335,14 +343,15 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
                                  array( 'price' => json_encode( $priceVal ) ) );
             
             // CRM-6902
-            if ( !empty($feezeOptions) ) {
+            $button = substr( $qf->controller->getButtonName(), -4 );
+            if ( !empty($feezeOptions) && $button != 'skip' ) {
                 $qf->addRule($elementName, ts('Participant count for this option is full.') , 'regex', "/".implode('|', $allowedOptions )."/" ); 
             }
             
             break;
             
         case 'CheckBox':
-            $customOption = CRM_Price_BAO_Field::getOptions($field->id, $inactiveNeeded);
+
             $check = array();
             foreach ($customOption as $opId => $opt) {
                 $count     = CRM_Utils_Array::value( 'count', $opt, '' );

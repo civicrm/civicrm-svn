@@ -448,8 +448,8 @@ function civicrm_contact_delete( &$params )
     if ( $contactID ==  $session->get( 'userID' ) ) {
         return civicrm_create_error( ts( 'This contact record is linked to the currently logged in user account - and cannot be deleted.' ) );
     }
-    $restore = $params['restore'];
-    $skipUndelete = $params['skip_undelete'];
+    $restore      = CRM_Utils_Array::value( 'restore', $params ) ? $params['restore'] : false;
+    $skipUndelete = CRM_Utils_Array::value( 'skip_undelete', $params ) ? $params['skip_undelete'] : false;
     if ( CRM_Contact_BAO_Contact::deleteContact( $contactID , $restore, $skipUndelete) ) {
         return civicrm_create_success( );
     } else {

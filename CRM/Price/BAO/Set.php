@@ -494,11 +494,13 @@ WHERE  id = %1";
             $form->_priceSetId    = $priceSetId;
             $priceSet             = self::getSetDetail($priceSetId, $required);
             $form->_priceSet      = CRM_Utils_Array::value($priceSetId,$priceSet);
-            $form->_values['fee'] = CRM_Utils_Array::value($priceSetId,$priceSet);
+            $form->_values['fee'] = CRM_Utils_Array::value( 'fields', $form->_priceSet );
             
             //get the price set fields participant count.
             if ( $entityTable == 'civicrm_event' ) {
                 require_once "CRM/Price/BAO/Set.php";
+                
+                //get option count info.
                 $form->_priceSet['optionsCountTotal'] = self::getPricesetCount( $priceSetId );
                 if ( $form->_priceSet['optionsCountTotal'] ) {
                     $optionsCountDeails = array( );
@@ -509,6 +511,21 @@ WHERE  id = %1";
                         }
                     }
                     $form->_priceSet['optionsCountDetails'] = $optionsCountDeails;
+                }
+                
+                //get option max value info.
+                $optionsMaxValueTotal   = 0;
+                $optionsMaxValueDetails = array( );
+                foreach ( $form->_priceSet['fields'] as $field ) {
+                    foreach ( $field['options'] as $option ){
+                        $maxVal = CRM_Utils_Array::value( 'max_value', $option, 0 );
+                        $optionsMaxValueDetails['fields'][$field['id']]['options'][$option['id']] = $maxVal;
+                        $optionsMaxValueTotal += $maxVal; 
+                    }
+                }
+                $form->_priceSet['optionsMaxValueTotal'] = $optionsMaxValueTotal;
+                if ( $optionsMaxValueTotal ) {
+                    $form->_priceSet['optionsMaxValueDetails'] = $optionsMaxValueDetails; 
                 }
             }
             $form->set('priceSetId', $form->_priceSetId);
@@ -633,7 +650,8 @@ WHERE  id = %1";
      */ 
     static function buildPriceSet( &$form )  
     {
-        $priceSetId = $form->get( 'priceSetId' ); 
+        $priceSetId = $form->get( 'priceSetId' );
+        
         if ( !$priceSetId ) return;
         
         $priceSet = self::getSetDetail( $priceSetId, true );
@@ -641,10 +659,31 @@ WHERE  id = %1";
         $form->assign( 'priceSet',  $form->_priceSet );
         require_once 'CRM/Core/PseudoConstant.php';
         $className = CRM_Utils_System::getClassName( $form );
-        foreach ( $form->_priceSet['fields'] as $field ) {
-            if ( CRM_Utils_Array::value( 'visibility', $field ) == 'public' || $className == 'CRM_Contribute_Form_Contribution' ) {
-                CRM_Price_BAO_Field::addQuickFormElement( $form, 'price_'.$field['id'], $field['id'], false, 
-                                                          CRM_Utils_Array::value( 'is_required', $field, false ) );
+        
+        if ( $className == 'CRM_Contribute_Form_Contribution_Main' ) {
+            $feeBlock =& $form->_values['fee'];
+        } else {
+            $feeBlock =& $form->_priceSet['fields'];
+        }
+        
+        // call the hook.
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::buildAmount( 'contribution', $form, $feeBlock );
+        
+        foreach ( $feeBlock as $field ) {
+            if ( CRM_Utils_Array::value( 'visibility', $field ) == 'public' || 
+                 $className == 'CRM_Contribute_Form_Contribution' ) {
+                
+                $options = CRM_Utils_Array::value( 'options', $field );
+                if ( !is_array( $options ) ) continue; 
+                
+                CRM_Price_BAO_Field::addQuickFormElement( $form, 
+                                                          'price_'.$field['id'], 
+                                                          $field['id'], 
+                                                          false, 
+                                                          CRM_Utils_Array::value( 'is_required', $field, false ),
+                                                          null,
+                                                          $options );
             }
         }
     }

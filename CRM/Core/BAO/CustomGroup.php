@@ -72,7 +72,9 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
         if ( isset( $params['name'] ) ) {
             $group->name  = $params['name'];
         } else {
-            $group->name  = CRM_Utils_String::titleToVar($params['title'], $fieldLength['maxlength'] );
+            $maxLength   = CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_CustomGroup', 'name' );
+            $group->name = CRM_Utils_String::titleToVar( $params['title'], 
+                                                         CRM_Utils_Array::value( 'maxlength', $maxLength ) );
         }
         if ( in_array( $params['extends'][0],
                        array( 'ParticipantRole',
@@ -90,31 +92,26 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
             $group->extends_entity_column_id  = 
                 CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionValue', $params['extends'][0], 'value', 'name' );
         }
-
-        if ( isset($params['extends'][1]) && is_array($params['extends'][1]) && 
-             ! CRM_Utils_Array::crmIsEmptyArray($params['extends'][1]) ) {
-            $params['extends'][1] = implode ( CRM_Core_DAO::VALUE_SEPARATOR, $params['extends'][1] );
-
-            if ( $params['extends'][0] == 'Relationship' ) {
-                $group->extends_entity_column_value = 
-                    str_replace( array('_a_b', '_b_a'), array('', ''), $params['extends'][1]);
-            } else {
-                $group->extends_entity_column_value = $params['extends'][1];
-            }
-        }
         
-        if ( CRM_Utils_Array::value( 'extends_entity_column_value', $params ) ) {
-            $group->extends_entity_column_value = $params['extends_entity_column_value'];
-            if ( substr( $group->extends_entity_column_value, 0, 1 ) != CRM_Core_DAO::VALUE_SEPARATOR ) {
-                $group->extends_entity_column_value =
-                    CRM_Core_DAO::VALUE_SEPARATOR . 
-                    $group->extends_entity_column_value .
-                    CRM_Core_DAO::VALUE_SEPARATOR;
+        //this is format when form get submit.
+        $extendsChildType = CRM_Utils_Array::value( 1, $params['extends'] );
+        //lets allow user to pass direct child type value, CRM-6893
+        if ( CRM_Utils_Array::value( 'extends_entity_column_value',  $params ) ) {
+            $extendsChildType = $params['extends_entity_column_value'];
+        }
+        if ( !CRM_Utils_System::isNull( $extendsChildType ) ) {
+            $extendsChildType = implode( CRM_Core_DAO::VALUE_SEPARATOR, $extendsChildType );
+            if ( CRM_Utils_Array::value( 0, $params['extends'] ) == 'Relationship' ) {
+                $extendsChildType = str_replace( array('_a_b', '_b_a'), array('', ''), $extendsChildType );
+            }
+            if ( substr( $extendsChildType, 0, 1 ) != CRM_Core_DAO::VALUE_SEPARATOR ) {
+                $extendsChildType = CRM_Core_DAO::VALUE_SEPARATOR.$extendsChildType.CRM_Core_DAO::VALUE_SEPARATOR; 
             }
         } else {
-            $group->extends_entity_column_value = "null";
+            $extendsChildType = 'null';
         }
-
+        $group->extends_entity_column_value = $extendsChildType;
+        
         if ( isset( $params['id'] ) ) {
             $oldWeight = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomGroup', $params['id'], 'weight', 'id' );
         } else {

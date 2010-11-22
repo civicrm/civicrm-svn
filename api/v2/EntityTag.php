@@ -120,7 +120,7 @@ function civicrm_tag_entities_get( &$params )
     require_once 'CRM/Core/BAO/Tag.php';
     require_once 'CRM/Core/BAO/EntityTag.php';
     $tag      = new CRM_Core_BAO_Tag();
-    $tag->id  = $params['tag_id'] ? $params['tag_id'] : null;
+    $tag->id  = CRM_Utils_Array::value( 'tag_id', $params ) ? $params['tag_id'] : null;
     $entities =& CRM_Core_BAO_EntityTag::getEntitiesByTag($tag);    
     return $entities;   
 }

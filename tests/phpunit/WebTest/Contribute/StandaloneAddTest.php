@@ -54,6 +54,11 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
       // page contents loaded and you can continue your test execution.
       $this->webtestLogin();
 
+      // Create a contact to be used as soft creditor
+      $softCreditFname = substr(sha1(rand()), 0, 7);
+      $softCreditLname = substr(sha1(rand()), 0, 7);
+      $this->webtestAddContact( $softCreditFname, $softCreditLname, false );
+
       // Go directly to the URL of the screen that you will be testing (New Contribution-standalone).
       $this->open($this->sboxPath . "civicrm/contribute/add&reset=1&context=standalone");
 
@@ -86,6 +91,12 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
 
       $this->type("trxn_id", "P20901X1" . rand(100, 10000));
       
+      // soft credit
+      $this->typeKeys("soft_credit_to", $softCreditFname);
+      $this->fireEvent("soft_credit_to", "focus");
+      $this->waitForElementPresent("css=div.ac_results-inner li");
+      $this->click("css=div.ac_results-inner li");
+
       //Custom Data
       $this->click('CIVICRM_QFID_3_6');
 
@@ -136,10 +147,27 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
                         3  => '100.00',
                         8  => 'Completed',
                         9  => 'Check',
-                        10 => 'check #1041'
-                        );
+                        10 => 'check #1041',
+                        16 => "{$softCreditFname} {$softCreditLname}" );
       foreach ( $expected as $label => $value ) {
           $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[$label]/td[2]", preg_quote($value));
+      }
+
+      // go to soft creditor contact view page
+      $this->click( "xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[16]/td[2]/a[text()='{$softCreditFname} {$softCreditLname}']" );
+
+      // go to contribution tab
+      $this->waitForElementPresent("css=li#tab_contribute a");
+      $this->click("css=li#tab_contribute a");
+      $this->waitForElementPresent("link=Record Contribution (Check, Cash, EFT ...)");
+
+      // verify soft credit details
+      $expected = array( 3  => 'Donation', 
+                         2  => '100.00',
+                         5  => 'Completed',
+                         1  => "{$firstName} Contributor", );
+      foreach ( $expected as  $value => $label ) {
+          $this->verifyText("xpath=id('Search')/div[2]/table[2]/tbody/tr[2]/td[$value]", preg_quote($label));
       }
   }
 }

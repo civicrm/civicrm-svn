@@ -467,7 +467,10 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
      */
     function testRelationshipUpdateEmpty( )
     {
-        $params = array( );
+        $params = array( 'contact_id_a'         => $this->_cId_a,
+                         'contact_id_b'         => $this->_cId_b,
+                         'relationship_type_id' => $this->_relTypeID,
+                         );
         $result =& civicrm_relationship_update( $params );
         $this->assertEquals( $result['is_error'], 1 );
         $this->assertEquals( 'Mandatory param missing: relationship_id', $result['error_message'], 'In line ' . __LINE__ );
@@ -490,6 +493,9 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
     function testRelationshipUpdateWithoutRequired( )
     {
         $params = array(
+                        'contact_id_a'         => $this->_cId_a,
+                        'contact_id_b'         => $this->_cId_b,
+                        'relationship_type_id' => $this->_relTypeID,
                         'start_date' => array('d'=>'10','M'=>'1','Y'=>'2008'),
                         'end_date'   => array('d'=>'10','M'=>'1','Y'=>'2009'),
                         'is_active'  => 1
@@ -529,8 +535,8 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
                         );
         
         $result = & civicrm_relationship_update( $params );
-        $this->assertNotNull( $result['result']['id'], 'In line ' . __LINE__ );
         
+        $this->assertEquals( $result['is_error'], 1 );
         //delete created relationship
         $params = array();
         $params['id']=$this->_relationID;

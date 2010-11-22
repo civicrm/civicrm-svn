@@ -38,7 +38,7 @@
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.autocomplete.js"></script>
 <style type="text/css">@import url("{$config->resourceBase}packages/jquery/css/jquery.autocomplete.css");</style>
 
-<script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jsTree.v.1.0rc2/jquery.jstree.js"></script>
+<script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jsTree.v.1.0rc2/jquery.jstree.min.js"></script>
 <style type="text/css">@import url("{$config->resourceBase}packages/jquery/jsTree.v.1.0rc2/themes/default/style.css");</style>
 
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.menu.pack.js"></script>
@@ -83,12 +83,10 @@
 
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.dashboard.js"></script>
 <style type="text/css">@import url("{$config->resourceBase}packages/jquery/css/dashboard.css");</style>
-<!--[if !(IE 8)]>
-<script type="text/javascript" src="{$config->resourceBase}js/dd_roundies.js"></script>
-<script type="text/javascript" src="{$config->resourceBase}js/style.js"></script>
-<![endif]-->
 
 {* CRM-6819: localize datepicker *}
-<script type="text/javascript" src="{$config->resourceBase}packages/jquery/jquery-ui-1.8.5/development-bundle/ui/i18n/jquery.ui.datepicker-{$config->lcMessages|substr:0:2}.js"></script>
+{if $l10nURL}
+  <script type="text/javascript" src="{$l10nURL}"></script>
+{/if}
 
 <script type="text/javascript">var cj = jQuery.noConflict(); $ = cj;</script>

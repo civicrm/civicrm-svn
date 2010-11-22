@@ -146,6 +146,15 @@ class CRM_Utils_System_Joomla {
             $document->addScript( "{$config->resourceBase}js/Common.js" );
     
             $template = CRM_Core_Smarty::singleton( );
+
+            // CRM-6819 + CRM-7086
+            $lang     = substr($config->lcMessages, 0, 2);
+            $l10nFile = "{$config->smartyDir}../jquery/jquery-ui-1.8.5/development-bundle/ui/i18n/jquery.ui.datepicker-{$lang}.js";
+            $l10nURL  = "{$config->resourceBase}packages/jquery/jquery-ui-1.8.5/development-bundle/ui/i18n/jquery.ui.datepicker-{$lang}.js";
+            if (file_exists($l10nFile)) {
+                $template->assign('l10nURL', $l10nURL);
+            }
+
             $document->addCustomTag( $template->fetch( 'CRM/common/jquery.tpl' ) );
             $document->addCustomTag( $template->fetch( 'CRM/common/action.tpl' ) );
         }

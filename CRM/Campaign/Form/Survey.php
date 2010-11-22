@@ -35,6 +35,7 @@
  */
 
 require_once 'CRM/Core/Form.php';
+require_once 'CRM/Core/ShowHideBlocks.php';
 require_once 'CRM/Campaign/BAO/Survey.php';
 
 /**
@@ -261,7 +262,6 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
 
         // form fields of Custom Option rows
         $defaultOption = array();
-        require_once 'CRM/Core/ShowHideBlocks.php';
         $_showHide = new CRM_Core_ShowHideBlocks('','');
                     
         $optionAttributes =& CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_OptionValue' );

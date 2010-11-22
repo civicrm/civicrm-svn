@@ -181,7 +181,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
     public $_isEventFull;
     
     public $_lineItem;
-    public $_lineItemParticipants;
+    public $_lineItemParticipantsCount;
     public $_availableRegistrations;
     
     /** 
@@ -209,9 +209,9 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
         $this->_priceSet         = $this->get( 'priceSet' ) ;
         $this->_lineItem         = $this->get( 'lineItem' );
         $this->_isEventFull      = $this->get( 'isEventFull' );
-        $this->_lineItemParticipants = $this->get( 'lineItemParticipants' );
+        $this->_lineItemParticipantsCount = $this->get( 'lineItemParticipants' );
         if ( !is_array( $this->_lineItem ) ) $this->_lineItem = array( );
-        if ( !is_array( $this->_lineItemParticipants ) ) $this->_lineItemParticipants = array( );
+        if ( !is_array( $this->_lineItemParticipantsCount ) ) $this->_lineItemParticipantsCount = array( );
         $this->_availableRegistrations = $this->get( 'availableRegistrations' );
         $this->_totalParticipantCount  = $this->get( 'totalParticipantcount' );
         
@@ -387,19 +387,8 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
                 $this->set( 'paymentProcessor', $this->_paymentProcessor );
             }
             
-            // get price info
-            $price = self::initPriceSet( $this, $eventID );
-            if ( $price == false ) {
-                if ( ! isset( $this->_values['fee'] ) ) {
-                    $this->_values['fee'] = array( );
-                }
-                require_once 'CRM/Core/OptionGroup.php'; 
-                CRM_Core_OptionGroup::getAssoc( "civicrm_event.amount.{$eventID}", $this->_values['fee'], true );
-                //fix for non-upgraded price sets.CRM-4256.
-                if ( $isMonetary && empty($this->_values['fee']) ) {
-                    CRM_Core_Error::fatal( ts('No Fee Level(s) or Price Set is configured for this event.<br />Click <a href=\'%1\'>CiviEvent >> Manage Event >> Configure >> Event Fees</a> to configure the Fee Level(s) or Price Set for this event.', array( 1 => CRM_Utils_System::url('civicrm/event/manage/fee', 'reset=1&action=update&id='.$this->_eventId ))));  
-                }
-            }
+            //init event fee.
+            self::initEventFee( $this, $eventID );
             
             // get the profile ids
             require_once 'CRM/Core/BAO/UFJoin.php'; 
@@ -599,7 +588,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
      */ 
     function buildCustom( $id, $name, $viewOnly = false ) 
     {
-        $stateCountryMap = array( );
+        $stateCountryMap = $fields = array( );
 
         if ( $id ) {
             $button = substr( $this->controller->getButtonName(), -4 );
@@ -613,7 +602,6 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
             $fieldsToIgnore = array( 'participant_fee_amount' => 1,
                                      'participant_fee_level'  => 1
                                    );
-            $fields = null;
             if ( $contactID ) {
                 if ( CRM_Core_BAO_UFGroup::filterUFGroups($id, $contactID)  ) {
                     $fields = CRM_Core_BAO_UFGroup::getFields( $id, false, CRM_Core_Action::ADD ); 
@@ -682,11 +670,12 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
         }
     }
     
-    static function initPriceSet( &$form, $eventID ) 
+    static function initEventFee( &$form, $eventID ) 
     {
         // get price info
         require_once 'CRM/Price/BAO/Set.php';
         $price = CRM_Price_BAO_Set::initSet( $form, $eventID, 'civicrm_event' );
+        
         if ( $price == false ) {
             require_once 'CRM/Core/OptionGroup.php'; 
             CRM_Core_OptionGroup::getAssoc( "civicrm_event.amount.{$eventID}", $form->_values['fee'], true );
@@ -701,7 +690,21 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
                 }
             }
         }
-        return $price;
+        
+        $eventFee = CRM_Utils_Array::value( 'fee', $form->_values ); 
+        if ( !is_array( $eventFee ) || empty( $eventFee )  ) {
+            $form->_values['fee'] = array( );
+        }
+        
+        //fix for non-upgraded price sets.CRM-4256.
+        if ( isset( $form->_isPaidEvent ) ) {
+            $isPaidEvent = $form->_isPaidEvent;
+        } else {
+            $isPaidEvent = CRM_Utils_Array::value( 'is_monetary', $form->_values['event'] );    
+        }
+        if ( $isPaidEvent && empty( $form->_values['fee'] ) ) {
+            CRM_Core_Error::fatal( ts('No Fee Level(s) or Price Set is configured for this event.<br />Click <a href=\'%1\'>CiviEvent >> Manage Event >> Configure >> Event Fees</a> to configure the Fee Level(s) or Price Set for this event.', array( 1 => CRM_Utils_System::url('civicrm/event/manage/fee', 'reset=1&action=update&id='.$form->_eventId ))));  
+        }
     }
 
     /**  
@@ -927,7 +930,15 @@ WHERE  v.option_group_id = g.id
                 continue;
             }
             $count = 1;
-            if ( $hasPriceFieldsCount ) {
+            
+            $usedCache  = false;
+            $cacheCount = CRM_Utils_Array::value( $key, $form->_lineItemParticipantsCount );
+            if ( $cacheCount && is_numeric( $cacheCount ) ) {
+                $count = $cacheCount;
+                $usedCache = true;
+            }
+            
+            if ( !$usedCache && $hasPriceFieldsCount ) {
                 $count = 0;
                 foreach ( $values as $valKey => $value ) {
                     if ( strpos( $valKey, 'price_' ) === false ) {
@@ -967,6 +978,7 @@ WHERE  v.option_group_id = g.id
         if ( !is_array( $params ) || empty( $params ) ) {
             return $params;
         }
+        
         $priceSetId = $form->get( 'priceSetId' );
         if ( !$priceSetId ) return $params;
         $priceSetDetails = $form->get( 'priceSet' );
@@ -976,7 +988,8 @@ WHERE  v.option_group_id = g.id
             if ( strpos( $key, 'price_' ) !== false ) {
                 $fieldId  = substr( $key, 6 );
                 if ( !array_key_exists( $fieldId, $priceSetDetails['fields'] ) ||
-                     is_array( $value ) ) {
+                     is_array( $value ) ||
+                     !$value ) {
                     continue;
                 }
                 $field = $priceSetDetails['fields'][$fieldId];
@@ -991,103 +1004,65 @@ WHERE  v.option_group_id = g.id
         
         return $params;
     }
-    
-    /* 
-     * provides the total participants of each price field value for the event
-     * registration when priceset is enabled for that event. 
+
+    /* Calculate total count for each price set options.
+     * those are currently selected by user.
      * 
-     * @return array $optionCounts, participant count of each option.
-     * @access public 
-     */
-    public function getTotalOptionCounts( ) {
-        $optionCounts       = array( ); 
-        $addParticipantNum  = substr( $this->_name, 12 );
-
-        if ( !empty($this->_lineItem) ) {
-            foreach( $this->_lineItem  as $addNum => $lineItems ) {
-                if ( !is_array($lineItems) || ($addNum == $addParticipantNum) ) {
-                    continue;
-                }
-                foreach( $lineItems as $opId => $item ) { 
-                    if ( !CRM_Utils_Array::value( 'participant_count', $item ) ) {
-                        continue;
-                    }
-                    if ( !isset($optionCounts[$opId]) ) {
-                        $optionCounts[$opId] = 0;
-                    }
-                    $optionCounts[$opId]   += $item['participant_count'];
-                }
-            }
-        }
-        return $optionCounts;
-    }
-
-    /*
-     * provides the options which are currently full for each
-     * additional participants.
+     * @param $form form object.
      *
-     * @param int $fieldId, price field id.
-     * @param array $optionsFull (reference), options which are full
-     *                                        for current event  
-     * 
-     * @return $optionsFull, modify $optionsFull
+     *
+     * @return array $optionsCount, array of each option w/ count total.
      * @access public 
      */
-    public function modifyPricesetOptionFull( $fieldId, &$optionsFull, $optionDetails ) {
+    function getPriceSetOptionCount( &$form ) {
+        $params     = $form->get( 'params' );
+        $priceSet   = $form->get( 'priceSet' );
+        $priceSetId = $form->get( 'priceSetId' );
         
-        $optionCounts       = array( );
-        $addParticipantNum  = substr( $this->_name, 12 );
-        
-        if ( !is_array($optionsFull) ) {
-            $optionsFull = array( );
+        $optionsCount = array( );
+        if ( !$priceSetId || 
+             !is_array( $priceSet ) ||
+             empty( $priceSet ) ||
+             !is_array( $params ) ||
+             empty( $params ) ) {
+            return $optionsCount;
         }
-
-        if ( !empty($this->_lineItem) ) {
-            foreach( $this->_lineItem  as $addNum => $lineItems ) {
-                if ( !is_array($lineItems) || ($addNum == $addParticipantNum) ) {
+        
+        $priceSetFields = array( );
+        if ( isset( $priceSet['optionsCountTotal'] ) 
+             && $priceSet['optionsCountTotal'] ) {
+            $priceSetFields = $priceSet['optionsCountDetails']['fields'];
+        }
+        
+        $addParticipantNum = substr( $form->_name, 12 );
+        foreach ( $params as $pCnt => $values ) {
+            if ( $values == 'skip' ||
+                 $pCnt == $addParticipantNum ) {
+                continue;
+            }
+            
+            foreach ( $values as $valKey => $value ) {
+                if ( strpos( $valKey, 'price_' ) === false ) {
                     continue;
                 }
-                foreach( $lineItems as $opId => $item ) { 
-
-                    if ( !CRM_Utils_Array::value( 'max_value', $item ) || 
-                         (CRM_Utils_Array::value( 'price_field_id', $item ) != $fieldId) ) {
-                        continue;
-                    }
-
-                    if ( !isset($optionCounts[$opId]) ) {
-                        $optionCounts[$opId]['count'] = 0;
-                    }
-                    $fldCount = 1;
-                    if ( CRM_Utils_Array::value( 'participant_count', $item ) ) $fldCount = $item['participant_count'];
- 
-                    $optionCounts[$opId]['count']     += $fldCount;
-                    $optionCounts[$opId]['max_value']  = $item['max_value'];
-                }
-            }
-        }
-
-        if ( !empty($optionCounts) ) {
-            foreach( $optionCounts as $opId => $opValues ) {
-                if ( isset($optionsFull[$opId]) ) continue;
-
-                $optionCount = $opValues['count'];
-                if ( isset($optionDetails[$opId] ) ) 
-                    $optionCount += CRM_Utils_Array::value( 'total_count', $optionDetails[$opId], 0 );
                 
-                if ( CRM_Utils_Array::value( 'count', $optionDetails[$opId] ) &&
-                     ($optionCount + $optionDetails[$opId]['count']) > $opValues['max_value'] ) {
-                    $optionsFull[$opId] = $opValues['count'];
-                } else if ( !CRM_Utils_Array::value( 'count', $optionDetails[$opId] ) &&
-                            $optionCount >= $opValues['max_value'] ) {
-                    $optionsFull[$opId] = $opValues['count'];
+                $priceFieldId = substr( $valKey, 6 );
+                if ( !$priceFieldId ||
+                     !is_array( $value ) || 
+                     !array_key_exists( $priceFieldId, $priceSetFields ) ) {
+                    continue;
+                }
+                
+                foreach ( $value as $optId => $optVal ) {
+                    $currentCount = $priceSetFields[$priceFieldId]['options'][$optId]*$optVal;
+                    $optionsCount[$optId] = $currentCount + CRM_Utils_Array::value( $optId, $optionsCount );
                 }
             }
         }
-
-        return $optionsFull;
+        
+        return $optionsCount;
     }
-
-
+    
     function getTemplateFileName() 
     {
         if ( $this->_eventId ) {
@@ -1126,6 +1101,90 @@ WHERE  v.option_group_id = g.id
         // check if the user is registered and we have a contact ID
         $session = CRM_Core_Session::singleton( );
         return $session->get( 'userID' ); 
+    }
+    
+    /* Validate price set submitted params for price option limit,
+     * as well as user should select at least one price field option.
+     *
+     */
+    function validatePriceSet( &$form, $params ) 
+    {
+        $errors = array( );
+        if ( !is_array( $params ) || empty( $params )  ) {
+            return $errors;
+        }
+        
+        $currentParticipantNum = substr( $form->_name, 12 );
+        if ( !$currentParticipantNum ) $currentParticipantNum = 0;
+        
+        $priceSetId = $form->get( 'priceSetId' );
+        $priceSetDetails = $form->get( 'priceSet' );
+        if ( !$priceSetId || 
+             !is_array( $priceSetDetails ) || 
+             empty( $priceSetDetails )  ) {
+            return $errors;
+        }
+        
+        $optionsCountDetails = $optionsMaxValueDetails = array( );
+        if ( isset( $priceSetDetails['optionsMaxValueTotal'] ) 
+             && $priceSetDetails['optionsMaxValueTotal'] ) {
+            $hasOptMaxValue = true;
+            $optionsMaxValueDetails = $priceSetDetails['optionsMaxValueDetails']['fields'];
+        }
+        if ( isset( $priceSetDetails['optionsCountTotal'] ) 
+             && $priceSetDetails['optionsCountTotal'] ) {
+            $hasOptCount = true;
+            $optionsCountDetails = $priceSetDetails['optionsCountDetails']['fields'];
+        }
+        $feeBlock = $form->_feeBlock;
+        if ( empty( $feeBlock ) ) {
+            $feeBlock = $priceSetDetails['fields'];
+        }
+        
+        $optionMaxValues = $fieldSelected = array( );
+        foreach ( $params as $pNum => $values ) {
+            if ( !is_array( $values ) || $values == 'skip' ) continue; 
+            foreach ( $values as $valKey => $value ) {
+                if ( strpos( $valKey, 'price_' ) === false ) {
+                    continue;
+                }
+                $priceFieldId = substr( $valKey, 6 );
+                if ( !$priceFieldId ||
+                     !is_array( $value ) ) {
+                    continue;
+                }
+                $fieldSelected[$pNum] = true;
+                if ( !$hasOptMaxValue ) continue;
+                foreach ( $value as $optId => $optVal ) {
+                    $currentMaxValue = $optionsCountDetails[$priceFieldId]['options'][$optId]*$optVal;
+                    if ( !$currentMaxValue ) $currentMaxValue = 1; 
+                    $optionMaxValues[$priceFieldId][$optId] = $currentMaxValue + 
+                        CRM_Utils_Array::value( $optId, $optionMaxValues[$priceFieldId], 0 );
+                }
+            }
+        }
+        
+        //validate for option max value.
+        foreach ( $optionMaxValues as $fieldId => $values ) {
+            $options = CRM_Utils_Array::value( 'options', $feeBlock[$fieldId], array( ) );
+            foreach ( $values as $optId => $total ) {
+                $optMax  = $optionsMaxValueDetails[$fieldId]['options'][$optId];
+                $total  += CRM_Utils_Array::value( 'db_total_count', $options[$optId], 0 );
+                if ( $optMax && $total > $optMax ) {
+                    $errors[$currentParticipantNum]["price_{$fieldId}"] = ts( 'It looks like this field participant count extending its maximum limit.' );
+                }
+            }
+        }
+        
+        //validate for price field selection.
+        foreach ( $params as $pNum => $values ) {
+            if ( !is_array( $values ) || $values == 'skip' ) continue; 
+            if ( !CRM_Utils_Array::value( $pNum, $fieldSelected ) ) {
+                $errors[$pNum]['_qf_default'] = ts( 'Select at least one option from Event Fee(s).' );
+            }
+        }
+        
+        return $errors;
     }
     
 }

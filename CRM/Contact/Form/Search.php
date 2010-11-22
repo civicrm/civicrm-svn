@@ -673,6 +673,10 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
             $this->_formValues['component_mode'] = $this->_componentMode;
         }
 
+        if ( ! CRM_Utils_Array::value( 'qfKey', $this->_formValues ) ) {
+            $this->_formValues['qfKey'] = $this->controller->_key;
+        }
+
         if (!CRM_Core_Permission::check('access deleted contacts')) {
             unset($this->_formValues['deleted_contacts']);
         }

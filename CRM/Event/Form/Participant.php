@@ -643,6 +643,11 @@ SELECT civicrm_custom_group.name as name,
                 require_once 'CRM/Event/BAO/Event.php';
                 $additionalParticipant = count (CRM_Event_BAO_Event::buildCustomProfile( $this->_id, null, $this->_contactId, false, true )) - 1;
                 if ( $additionalParticipant ) {
+                    $deleteParticipants  = array( 1 => ts( 'Delete this participant record along with associated 
+                                                            participant record(s).' ), 
+                                                  2 => ts( 'Delete only this participant record.' ) );
+                    $this->addRadio( 'delete_participant', null, $deleteParticipants, null, '<br />');
+                    $this->setDefaults( array( 'delete_participant' => 1 ) );
                     $this->assign( "additionalParticipant", $additionalParticipant );
                 }   
             }
@@ -914,14 +919,30 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
      */ 
     public function postProcess( )
     {   
-        if ( $this->_action & CRM_Core_Action::DELETE ) {
-            require_once "CRM/Event/BAO/Participant.php";
-            CRM_Event_BAO_Participant::deleteParticipant( $this->_id );
-            return;
-        }
-        
         // get the submitted form values.  
         $params = $this->controller->exportValues( $this->_name );
+     
+        if ( $this->_action & CRM_Core_Action::DELETE ) {
+            require_once "CRM/Event/BAO/Participant.php";
+            if(  CRM_Utils_Array::value( 'delete_participant', $params ) == 2 ) {
+                $additionalId = (CRM_Event_BAO_Participant::getAdditionalParticipantIds( $this->_id ));
+                $participantLinks = (CRM_Event_BAO_Participant::getAdditionalParticipantUrl( $additionalId ));
+            }
+            if( CRM_Utils_Array::value( 'delete_participant', $params ) == 1 ) {
+                $additionalIds = CRM_Event_BAO_Participant::getAdditionalParticipantIds( $this->_id );
+                foreach( $additionalIds as $value ) {
+                    CRM_Event_BAO_Participant::deleteParticipant( $value );
+                }
+            }
+            CRM_Event_BAO_Participant::deleteParticipant( $this->_id );
+            if ( !empty( $participantLinks ) ) {
+                $status = ts( 'The following participants no longer have an event fee recorded. You can edit their registration and record a replacement contribution by clicking the links below:' ) . '<br>' .$participantLinks ;         
+            } else {
+                $status =("Selected Participants was deleted sucessfully.");
+            }
+            CRM_Core_Session::setStatus( $status );
+            return;
+        }
         
         // set the contact, when contact is selected
         if ( CRM_Utils_Array::value('contact_select_id', $params ) ) {
@@ -981,7 +1002,7 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
                     $params['amount']       = $this->_values['fee'][$params['amount']]['value'];
                     
                 } else {
-                    CRM_Price_BAO_Set::processAmount( $this->_values['fee']['fields'], 
+                    CRM_Price_BAO_Set::processAmount( $this->_values['fee'], 
                                                       $params, $lineItem[0] );
                 }
                 
@@ -1231,6 +1252,7 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
                     $commonParams = $params;
                     $commonParams['contact_id'] = $contactID;
                     if ( $commonParams['role_id'] ) {
+                        $rolesIDS = array( );
                         foreach ( $commonParams['role_id'] as $k => $v ) {
                             $rolesIDS[] = $k;
                         }

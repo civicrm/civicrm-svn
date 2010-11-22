@@ -66,7 +66,7 @@
         </div>
 
         {* This section displays the rows along and includes the paging controls *}
-	<div class="crm-search-results">
+	<div id="contributionSearch" class="crm-search-results">
         {include file="CRM/Contribute/Form/Selector.tpl" context="Search"}
 	</div>
     {* END Actions/Results section *}

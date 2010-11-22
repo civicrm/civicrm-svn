@@ -66,9 +66,5 @@
 {/htxt}
 
 {htxt id="id-current-employer"}
-<p>{ts}You can select an existing organization record here, OR type in the name of a new organization if this person's employer is not already in your database.
-However, if you want this person to share their work address with their employer AND that organization doesn't exist yet - leave this field blank and use
-the Shared Address feature in the Address pane below to create the employer record AND enter the employer address. The "current employer" relationship
-will be automatically created for you.
-{/ts}</p>
+<p>{ts}You can select an existing organization record here, OR type in the name of a new organization if this person's employer is not already in your database. However, if you want this person to share their work address with their employer AND that organization doesn't exist yet - leave this field blank and use the Shared Address feature in the Address pane below to create the employer record AND enter the employer address. The 'current employer' relationship will be automatically created for you.{/ts}</p>
 {/htxt}

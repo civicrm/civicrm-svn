@@ -81,6 +81,10 @@ class CRM_Campaign_Form_Task_Release extends CRM_Campaign_Form_Task {
             foreach ( array( 'surveyId', 'contactIds', 'interviewerId' ) as $fld ) {
                 $this->{"_$fld"} = $this->get( $fld ); 
             }
+
+            if ( !empty($this->_contactIds) ) {
+                $this->assign( 'totalSelectedContacts', count($this->_contactIds) );
+            }
         } else {
             parent::preProcess( );
             //get the survey id from user submitted values.
