@@ -596,7 +596,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         
         //get the current price event price set options count.
         $currentOptionsCount  = self::getPriceSetOptionCount( $form );
-        $recordedOptionsCount = CRM_Event_BAO_Participant::priceSetOptionsCount( $form->_eventId );
+        $recordedOptionsCount = CRM_Event_BAO_Participant::priceSetOptionsCount( $form->_eventId, $skipParticipants );
         
         foreach ( $form->_feeBlock as &$field ) {
             $optionFullIds = array( );
