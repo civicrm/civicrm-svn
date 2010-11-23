@@ -293,7 +293,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
      */
     static function getEvents( $all = false, $id = false) 
     {
-        $query = "SELECT `id`, `title`, `start_date` FROM `civicrm_event` WHERE ( civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0 )";
+        $query = "SELECT `id`, `title`, `start_date` FROM `civicrm_event` WHERE ( civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0 AND civicrm_event.is_active = 1 )";
         
         if ( $id ) {
             $query .= " AND `id` = {$id}";
@@ -548,7 +548,7 @@ GROUP BY  event_id, status_id";
     {
         // consider both role and status for counted participants, CRM-4924.
         require_once 'CRM/Event/PseudoConstant.php';
-        
+        require_once 'CRM/Event/BAO/Participant.php';
         $operator = " AND ";
         // not counted participant.
         if ( $considerStatus && $considerRole && !$status && !$role ) {
@@ -588,21 +588,28 @@ GROUP BY  event_id, status_id";
         }
         
         $query = "
-   SELECT  civicrm_event.id AS id, count( civicrm_participant.id ) AS participant
+   SELECT  civicrm_event.id AS id, civicrm_participant.id AS participantId
      FROM  civicrm_event 
 LEFT JOIN  civicrm_participant ON ( civicrm_event.id = civicrm_participant.event_id )
     WHERE  civicrm_participant.is_test = 0 
       AND  civicrm_event.is_active = 1
            {$sqlClause}
       AND  civicrm_participant.contact_id NOT IN (SELECT id FROM civicrm_contact WHERE is_deleted = 1)
- GROUP BY  civicrm_event.id
  ORDER BY  civicrm_event.end_date DESC
-  LIMIT 0, 10
 ";
-        $participant = array( );
+        $participant = $participants = $participantIds = $uniqueEventIds = array( );
         $event = CRM_Core_DAO::executeQuery( $query );
         while ( $event->fetch( ) ) {
-            $participant[$event->id] = $event->participant;
+            $participantIds[$event->participantId] = $event->id;
+            $uniqueEventIds =  array_unique( $participantIds );
+            $participants[$event->id][] =  $event->participantId;
+            if ( count($uniqueEventIds) == 3 ) {
+                array_pop($participants);
+                break;
+            }
+        }
+        foreach ( $participants as $k => $v ) {  
+            $participant[$k]  = CRM_Event_BAO_Participant::totalEventSeats( $participants[$k] );
         }
         
         return $participant;
