@@ -183,12 +183,14 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
         if ( !empty( $campaigns ) ) {
             $campaignType    = CRM_Campaign_PseudoConstant::campaignType( );
             $campaignStatus  = CRM_Campaign_PseudoConstant::campaignStatus( );
-            $properties      = array( 'id', 'name', 'title', 'status_id', 'description', 'campaign_type_id', 'is_active', 'start_date', 'end_date' );
+            $properties      = array( 'id', 'name', 'title', 'status_id', 'description', 
+                                      'campaign_type_id', 'is_active', 'start_date', 'end_date' );
             foreach( $campaigns as $cmpid => $campaign ) { 
                 foreach ( $properties as $prop ) {
-                    $campaignsData[$cmpid][$prop] = $campaign[$prop];
+                    $campaignsData[$cmpid][$prop] = CRM_Utils_Array::value( $prop, $campaign );
                 }
-                $campaignsData[$cmpid]['status'       ] = $campaignStatus[$campaign['status_id']];
+                $statusId = CRM_Utils_Array::value( 'status_id', $campaign );
+                $campaignsData[$cmpid]['status'       ] = CRM_Utils_Array::value( $statusId, $campaignStatus );
                 $campaignsData[$cmpid]['campaign_id'  ] = $campaign['id'];
                 $campaignsData[$cmpid]['campaign_type'] = $campaignType[$campaign['campaign_type_id']];
                 
@@ -217,12 +219,12 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
             $surveyType    = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
             foreach( $surveys as $sid => $survey ) {
                 $surveysData[$sid] = $survey;
-                $surveysData[$sid]['campaign_id']       = $campaigns[$survey['campaign_id']];
+                $camapignId = CRM_Utils_Array::value( 'campaign_id', $survey );
+                $surveysData[$sid]['campaign_id']       = CRM_Utils_Array::value( $camapignId, $campaigns );
                 $surveysData[$sid]['activity_type']     = $surveyType[$survey['activity_type_id']];
-                $surveysData[$sid]['result_id']         = $survey['result_id'];
-                
-                if ( $survey['release_frequency_interval'] ) {
-                    $surveysData[$sid]['release_frequency'] = $survey['release_frequency_interval'].' Day(s)';
+                $surveysData[$sid]['result_id']         = CRM_Utils_Array::value( 'result_id', $survey );
+                if ( CRM_Utils_Array::value( 'release_frequency', $survey ) ) {
+                    $surveysData[$sid]['release_frequency'] = $survey['release_frequency'].' Day(s)';
                 }
                 
                 $action = array_sum( array_keys( $this->surveyActionLinks($surveysData[$sid]['activity_type']  ) ) );
@@ -255,10 +257,11 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
             $surveyType    = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
             foreach( $surveys as $sid => $survey ) {
                 $surveysData[$sid] = $survey;
-                $surveysData[$sid]['campaign_id']       = $campaigns[$survey['campaign_id']];
+                $campaignId = CRM_Utils_Array::value( 'campaign_id', $survey );
+                $surveysData[$sid]['campaign_id']       = CRM_Utils_Array::value( $campaignId, $campaigns );
                 $surveysData[$sid]['activity_type']     = $surveyType[$survey['activity_type_id']];
-                if ( $survey['release_frequency_interval'] ) {
-                    $surveysData[$sid]['release_frequency'] = $survey['release_frequency_interval'].' Day(s)';
+                if ( CRM_Utils_Array::value( 'release_frequency', $survey ) ) {
+                    $surveysData[$sid]['release_frequency'] = $survey['release_frequency'].' Day(s)';
                 }
                 
                 $action = array_sum( array_keys( $this->surveyActionLinks($surveysData[$sid]['activity_type']  ) ) );

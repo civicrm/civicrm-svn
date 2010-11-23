@@ -38,7 +38,15 @@
 {elseif $buildSelector}
   
        {* load voter selector for reserve/release *}
-       <script type="text/javascript">loadVoterList( );</script>
+       
+       {literal}
+       <script type="text/javascript">
+       cj( function( ){
+           loadVoterList( );
+       });
+       </script>
+       {/literal}
+
        <table id="gotvVoterRecords">
            <thead>
               <tr class="columnheader">
