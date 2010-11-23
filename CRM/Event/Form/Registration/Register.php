@@ -1175,11 +1175,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                 $params = $fields;
 
                 // unset email from dedupe params for 'additional participant wizard' case only
-                $submittedValues = $self->controller->exportValues( $self->_name );
-                $unsetEmail      =  array_key_exists( 'additional_participants', $submittedValues ) ? 
-                    $submittedValues['additional_participants'] : $self->get( 'addParticipant' );
-
-                if ( isset( $params["email-{$self->_bltID}"] ) && $unsetEmail ) {
+                if ( isset( $params["email-{$self->_bltID}"] ) && $isAdditional ) {
                     unset( $params["email-{$self->_bltID}"] );
                 }
                 require_once 'CRM/Dedupe/Finder.php';                
