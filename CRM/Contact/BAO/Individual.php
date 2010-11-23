@@ -165,6 +165,22 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
         }
         
         if ( $lastName || $firstName || $middleName || $email ) { 
+            // make sure we have values for all the name fields.
+            $formatted  = $params;
+            $nameParams = array( 'first_name'        => $firstName,
+                                 'middle_name'       => $middleName,
+                                 'last_name'         => $lastName, 
+                                 'individual_suffix' => $suffix,
+                                 'individual_prefix' => $prefix,
+                                 'prefix_id'         => $prefix_id,
+                                 'suffix_id'         => $suffix_id );
+            // make sure we have all the name fields.
+            foreach ( $nameParams as $name => $value ) {
+                if ( !CRM_Utils_Array::value( $name, $formatted ) && $value ) {
+                    $formatted[$name] = $value;
+                }
+            }
+            
             $tokens = array( );
             CRM_Utils_Hook::tokens( $tokens );
             $tokenFields = array( );
@@ -179,14 +195,14 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
             //build the sort name.
             $format = CRM_Core_BAO_Preferences::value( 'sort_name_format' );
             $format = str_replace( 'contact.', '', $format );
-            $sortName = CRM_Utils_Address::format( $params, $format,
+            $sortName = CRM_Utils_Address::format( $formatted, $format,
                                                    false, false, true, $tokenFields );
             $sortName = trim( $sortName );
             
             //build the display name.
             $format = CRM_Core_BAO_Preferences::value( 'display_name_format' );
             $format = str_replace( 'contact.', '', $format );
-            $displayName = CRM_Utils_Address::format( $params, $format,
+            $displayName = CRM_Utils_Address::format( $formatted, $format,
                                                       false, false, true, $tokenFields );
             $displayName = trim( $displayName );
         }
