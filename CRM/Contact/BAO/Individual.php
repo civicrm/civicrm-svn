@@ -164,7 +164,7 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
             }
         }
         
-        if ( $lastName || $firstName || $middleName || $email ) { 
+        if ( $lastName || $firstName || $middleName ) { 
             // make sure we have values for all the name fields.
             $formatted  = $params;
             $nameParams = array( 'first_name'        => $firstName,
