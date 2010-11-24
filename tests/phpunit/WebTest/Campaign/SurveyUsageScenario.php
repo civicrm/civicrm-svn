@@ -75,7 +75,7 @@ class WebTest_Campaign_SurveyUsageScenario extends CiviSeleniumTestCase {
       $this->waitForPageToLoad("30000");
 
       $firstName2 = substr(sha1(rand()), 0, 7);
-      $this->webtestAddContact( $firstName2, "John", "$firstName1.john@example.org" );
+      $this->webtestAddContact( $firstName2, "John", "$firstName2.john@example.org" );
      
       // add contact to group
       // visit group tab
@@ -157,6 +157,8 @@ class WebTest_Campaign_SurveyUsageScenario extends CiviSeleniumTestCase {
       $this->type("label", "Field $title");
 
       $this->select("data_type[1]", "value=Radio");
+
+      $this->waitForElementPresent("option_label_1");
 
       // create a set of options
       $this->type("option_label_1", "Option $title 1");
@@ -279,6 +281,78 @@ class WebTest_Campaign_SurveyUsageScenario extends CiviSeleniumTestCase {
 
       $this->click("_qf_Interview_cancel_interview");
       $this->waitForPageToLoad("30000");
+
+      // add a contact to the group to test release respondents
+      $firstName3 = substr(sha1(rand()), 0, 7);
+      $this->webtestAddContact( $firstName3, "James", "$firstName3.james@example.org" );
+      $url = $this->getLocation();
+      $id  = explode( 'cid=', $url );
+      $sortName3 = "James, $firstName3";
+     
+      // add contact to group
+      // visit group tab
+      $this->click("css=li#tab_group a");
+      $this->waitForElementPresent("group_id");
+
+      // add to group
+      $this->select("group_id", "label=group_$title");
+      $this->click("_qf_GroupContact_next");
+      $this->waitForPageToLoad("30000");
+
+      // Reserve Respondents
+      $this->open($this->sboxPath . "civicrm/survey/search&reset=1&op=reserve");
+
+      $this->waitForElementPresent("_qf_Search_refresh");
+
+      // search for the respondents
+      $this->select("campaign_survey_id", "label=Survey $title");
+
+      $this->click("_qf_Search_refresh");
+
+      $this->waitForElementPresent("Go");
+      $this->click("CIVICRM_QFID_ts_all_4");
+      $this->click("Go");
+
+      $this->waitForElementPresent("_qf_Reserve_done_reserve-bottom");
+      $this->click("_qf_Reserve_done_reserve-bottom");
+      $this->waitForPageToLoad("30000");
+      $this->assertTrue($this->isTextPresent("Reservation has been added for 3 Contact(s)."),
+                        "Status message didn't show up after saving!");
+      
+      // Release Respondents
+      $this->open($this->sboxPath . "civicrm/survey/search&reset=1&op=release");
+      
+      $this->waitForElementPresent("_qf_Search_refresh");
+
+      // search for the respondents
+      $this->select("campaign_survey_id", "label=Survey $title");
+
+      $this->click("_qf_Search_refresh");
+
+      $this->waitForElementPresent("Go");
+      $this->click("xpath=id('mark_x_$id[1]')");
+      
+      $this->waitForElementPresent("Go");
+      $this->click("Go");
+      $this->waitForPageToLoad("30000");
+
+      $this->waitForElementPresent("_qf_Release_done-bottom");
+      $this->click("_qf_Release_done-bottom");
+      $this->waitForPageToLoad("30000");
+      $this->assertTrue($this->isTextPresent("1 respondent(s) have been released."),
+                        "Status message didn't show up after saving!");  
+
+      // check whether contact is available for reserving again
+      $this->open($this->sboxPath . "civicrm/survey/search&reset=1&op=reserve");
+
+      $this->waitForElementPresent("_qf_Search_refresh");
+
+      // search for the respondents
+      $this->select("campaign_survey_id", "label=Survey $title");
+
+      $this->click("_qf_Search_refresh");
+      $this->waitForPageToLoad("30000");
+      $this->assertTrue($this->isTextPresent(" 1 Result"), "Status message didn't show up after saving!");
   }
 
   function addGroup( $groupName = 'New Group' ) {
