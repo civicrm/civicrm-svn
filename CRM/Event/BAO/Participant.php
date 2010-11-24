@@ -1697,7 +1697,7 @@ INNER JOIN  civicrm_price_field field ON ( value.price_field_id = field.id )
                                                "action=view&reset=1&id={$value}&cid={$details['cid']}" );
              $editUrl = CRM_Utils_System::url( 'civicrm/contact/view/participant', 
                                                "action=update&reset=1&id={$value}&cid={$details['cid']}" );
-             $links[] = "<td><a href='{$viewUrl}'>".$details['name']."</a></td><td></td><td><a href='{$editUrl}'>".ts(Edit)."</a></td>";
+             $links[] = "<td><a href='{$viewUrl}'>".$details['name']."</a></td><td></td><td><a href='{$editUrl}'>".ts('Edit')."</a></td>";
              $links = "<table><tr>". implode( "</tr><tr>", $links)."</tr></table>";
              return $links;  
          }
