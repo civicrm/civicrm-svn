@@ -47,8 +47,10 @@ require_once 'api/v2/utils.php';
  * Create a Event
  *  
  * This API is used for creating a Event
- * 
- * @param   array  $params  an associative array of title/value property values of civicrm_event
+ *
+ * @param  array   $params           (reference ) input parameters
+ * Allowed @params array keys are:
+ * {@schema Event/Event.xml} 
  * 
  * @return array of newly created event property values.
  * @access public
