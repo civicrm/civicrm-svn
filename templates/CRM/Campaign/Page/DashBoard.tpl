@@ -302,7 +302,7 @@ function displayResponses( surveyId, surveyTitle, OptionGroupId ) {
 
   var dataUrl  = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Campaign_Page_AJAX&fnName=loadOptionGroupDetails' }"{literal};
   var content  = '<tr><th>{/literal}{ts}Label{/ts}{literal}</th><th>{/literal}{ts}Value{/ts}{literal}</th><th>{/literal}{ts}Recontact Interval{/ts}{literal}</th><th>{/literal}{ts}Weight{/ts}{literal}</th></tr>';
-  var setTitle = '{/literal}{ts}Response Options for {/ts}{literal}' + surveyTitle;
+  var setTitle = '{/literal}{ts}Response Options for{/ts} {literal}' + surveyTitle;
 	 
   cj.post( dataUrl, data, function( opGroup ) {
     if ( opGroup.status == 'success' ) {

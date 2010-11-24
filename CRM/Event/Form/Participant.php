@@ -643,8 +643,7 @@ SELECT civicrm_custom_group.name as name,
                 require_once 'CRM/Event/BAO/Event.php';
                 $additionalParticipant = count (CRM_Event_BAO_Event::buildCustomProfile( $this->_id, null, $this->_contactId, false, true )) - 1;
                 if ( $additionalParticipant ) {
-                    $deleteParticipants  = array( 1 => ts( 'Delete this participant record along with associated 
-                                                            participant record(s).' ), 
+                    $deleteParticipants  = array( 1 => ts( 'Delete this participant record along with associated participant record(s).' ), 
                                                   2 => ts( 'Delete only this participant record.' ) );
                     $this->addRadio( 'delete_participant', null, $deleteParticipants, null, '<br />');
                     $this->setDefaults( array( 'delete_participant' => 1 ) );
