@@ -92,16 +92,28 @@ class CRM_Contribute_Form_ContributionPage_Amount extends CRM_Contribute_Form_Co
         $this->addElement('checkbox', 'is_monetary', ts('Execute real-time monetary transactions') );
         
         $paymentProcessor =& CRM_Core_PseudoConstant::paymentProcessor( );
+        $paymentProcessorIds = implode( ',', array_keys( $paymentProcessor ) );
+        $recurringPaymentProcessor = array( );
+        $query = "
+SELECT id
+  FROM civicrm_payment_processor
+ WHERE id IN ({$paymentProcessorIds})
+   AND is_recur = 1";
+        $dao =& CRM_Core_DAO::executeQuery( $query );
+        while ( $dao->fetch( ) ) {
+            $recurringPaymentProcessor[] = $dao->id;
+        } 
+        $this->assign( 'recurringPaymentProcessor', $recurringPaymentProcessor );
         if ( count($paymentProcessor) ) {
             $this->assign('paymentProcessor',$paymentProcessor);
         }
         $this->add( 'select', 'payment_processor_id', ts( 'Payment Processor' ),
-                    array(''=>ts( '- select -' )) + $paymentProcessor );
+                    array(''=>ts( '- select -' )) + $paymentProcessor, null, array( 'onchange' => "showRecurring( this.value );" ) );
         
         require_once "CRM/Contribute/BAO/ContributionPage.php";
         
         //check if selected payment processor supports recurring payment
-        if ( CRM_Contribute_BAO_ContributionPage::checkRecurPaymentProcessor( $this->_id ) ) {
+        if ( !empty( $recurringPaymentProcessor ) ) {
             $this->addElement( 'checkbox', 'is_recur', ts('Recurring contributions'), null, 
                                array('onclick' => "showHideByValue('is_recur',true,'recurFields','table-row','radio',false); showRecurInterval( );") );
             require_once 'CRM/Core/OptionGroup.php';

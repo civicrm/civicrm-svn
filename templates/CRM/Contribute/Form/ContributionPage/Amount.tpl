@@ -118,8 +118,8 @@
             </tr>
             {/if}
 
-            {if $form.is_recur}
-            <tr class="crm-contribution-form-block-is_recur"><th scope="row" class="label" width="20%">{$form.is_recur.label}</th>
+            {if $recurringPaymentProcessor}
+            <tr id="recurringContribution" class="crm-contribution-form-block-is_recur"><th scope="row" class="label" width="20%">{$form.is_recur.label}</th>
                <td>{$form.is_recur.html}<br />
                   <span class="description">{ts}Check this box if you want to give users the option to make recurring contributions. (This feature requires that you use a payment processor with this functionality built in - Paypal std or Pro, Pay2Cash or Payjunction at the time of writing.){/ts}</span>
                </td>
@@ -173,6 +173,13 @@
 
 {literal}
 <script type="text/javascript">
+   var paymentProcessorMapper = new Array( );
+       {/literal}{foreach from=$recurringPaymentProcessor item="paymentProcessor" key="index"}{literal}
+           paymentProcessorMapper[{/literal}{$index}{literal}] = '{/literal}{$paymentProcessor}{literal}';
+       {/literal}{/foreach}{literal}
+   cj( document ).ready( function( ) { 
+       showRecurring( cj( '#payment_processor_id' ).val( ) ) 
+   });
 	var element_other_amount = document.getElementsByName('is_allow_other_amount');
   	if (! element_other_amount[0].checked) {
 	   hide('minMaxFields', 'table-row');
@@ -259,6 +266,17 @@
 		 }
 	}
 
+    function showRecurring( paymentProcessorId ) {
+        if ( cj.inArray( paymentProcessorId, paymentProcessorMapper) == -1 ) {
+            if ( cj( '#is_recur' ).attr( 'checked' ) ) {
+                cj( '#is_recur' ).removeAttr("checked");
+                cj( '#recurFields' ).hide( );
+            }
+            cj( '#recurringContribution' ).hide( );
+        } else { 
+            cj( '#recurringContribution' ).show( );
+        }  
+    }
 </script>
 {/literal}
 {if $form.is_recur}
