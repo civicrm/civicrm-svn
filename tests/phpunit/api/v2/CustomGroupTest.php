@@ -107,7 +107,7 @@ class api_v2_CustomGroupTest extends CiviUnitTestCase
                          'data_type'       => 'String',
                          'option_label'     => array('Label1', 'Label2'),
                          'option_value'     => array( 'value1', 'value2'),
-                         'option_name'      => array( $name.'_1', $name.'_2'),
+                         'option_name'      => array( 'name_1', 'name_2'),
                          'option_weight'    => array(1, 2),
                          'label'            => 'Country'
                          );
@@ -209,7 +209,7 @@ class api_v2_CustomGroupTest extends CiviUnitTestCase
     {
         $params = array('title'            => 'Test_Group_6',
                         'name'             => 'test_group_6',
-                        'extends'          => array( 'Contribution', 1 ),
+                        'extends'          => array( 'Contribution', array( 1 ) ),
                         'weight'           => 6,
                         'collapse_display' => 1,
                         'style'            => 'Inline',
@@ -257,7 +257,7 @@ class api_v2_CustomGroupTest extends CiviUnitTestCase
         $params = array(
                         'title'            => 'Test_Group_10',
                         'name'             => 'test_group_10',
-                        'extends'          => array('Activity', 1),
+                        'extends'          => array('Activity', array( 1 ) ),
                         'weight'           => 8,
                         'collapse_display' => 1,
                         'style'            => 'Inline',
