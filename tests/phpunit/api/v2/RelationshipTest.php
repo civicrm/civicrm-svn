@@ -470,7 +470,7 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
         $params = array( );
         $result =& civicrm_relationship_update( $params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( 'Mandatory param missing: relationship_id', $result['error_message'], 'In line ' . __LINE__ );
+        $this->assertEquals( 'Required fields contact_id_a,contact_id_b,relationship_type_id for CRM_Contact_DAO_Relationship are not found', $result['error_message'], 'In line ' . __LINE__ );
     }
     
     /**
@@ -499,7 +499,7 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
         
         $result =& civicrm_relationship_update( $params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( 'Mandatory param missing: relationship_id', $result['error_message'], 'In line ' . __LINE__ );
+        $this->assertEquals( 'Required fields contact_id_a for CRM_Contact_DAO_Relationship are not found', $result['error_message'], 'In line ' . __LINE__ );
     }  
    
     /**
