@@ -807,7 +807,9 @@ LIMIT {$offset}, {$rowCount}
                 require_once( 'CRM/Contact/BAO/Contact/Utils.php' );
                 $typeImage = 
                     CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_sub_type ? 
-                                                             $result->contact_sub_type : $result->contact_type );
+                                                             $result->contact_sub_type : $result->contact_type,
+                                                             false, $contactID );
+
                 $searchRows[$contactID]['id']    = $contactID;
                 $searchRows[$contactID]['name']  = $typeImage.' '.$result->sort_name;
                 $searchRows[$contactID]['city']  = $result->city;
