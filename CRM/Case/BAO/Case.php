@@ -1074,7 +1074,12 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
             
             $values[$dao->id]['id']           = $dao->id;
             $values[$dao->id]['type']         = $activityTypes[$dao->type]['label'];
-            $values[$dao->id]['reporter']     = ($hasViewContact)?"<a href='{$contactViewUrl}{$dao->reporter_id}'>$dao->reporter</a>":$dao->reporter;
+            
+            $reporterName = $dao->reporter;
+            if ( $hasViewContact ) {
+                $reporterName = '<a href="'. $contactViewUrl . $dao->reporter_id . '">'.$dao->reporter.'</a>';
+            }
+            $values[$dao->id]['reporter'] = $reporterName;
             
             $targetNames = CRM_Activity_BAO_ActivityTarget::getTargetNames( $dao->id );
             $targetContactUrls = $withContacts = array( );
@@ -1084,7 +1089,8 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
                 }
             }
             foreach ( $withContacts as $cid => $name ) {
-                $targetContactUrls[] = ($hasViewContact) ? "<a href='{$contactViewUrl}{$cid}'>$name</a>" : $name;
+                if ( $hasViewContact ) $name =  '<a href="' . $contactViewUrl . $cid .'">'. $name. '</a>';
+                $targetContactUrls[] = $name;
             }
             $values[$dao->id]['with_contacts'] = implode( '; ', $targetContactUrls );
             
@@ -1094,10 +1100,10 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
             //check for view activity.
             $subject = (empty($dao->subject)) ? '(' . ts('no subject') . ')'  : $dao->subject;
             if ( $allowView ) {
-                $subject = "<a href='javascript:{$type}viewActivity( {$dao->id}, {$contactID}, \"{$type}\" );' title='{$viewTitle}'>{$subject}</a>"; 
+                $subject = '<a href="javascript:'. $type .'viewActivity('. $dao->id .','. $contactID . ',' .'\''. $type . '\' );" title=' .$viewTitle .'>' .$subject .'</a>'; 
             }
             $values[$dao->id]['subject'] = $subject;
-           
+            
             // add activity assignee to activity selector. CRM-4485.
             if ( isset($dao->assignee) ) {
                 if( $dao->ismultiple == 1 ) {
@@ -1116,26 +1122,26 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
                 if ( ! in_array($dao->type, $emailActivityTypeIDs) ) {
                     //hide Edit link if activity type is NOT editable (special case activities).CRM-5871
                     if ( $allowEdit ) {
-                        $url = "<a href='" .$editUrl.$additionalUrl."'>". ts('Edit') . "</a> ";
+                        $url = '<a href="' .$editUrl.$additionalUrl.'">'. ts('Edit') . '</a> ';
                     }
                 }
                 if ( $allowDelete ) {
                     if ( !empty($url) ) {
                         $url .= " | ";   
                     }
-                    $url .= "<a href='" .$deleteUrl.$additionalUrl."'>". ts('Delete') . "</a>";
+                    $url .= '<a href="' .$deleteUrl.$additionalUrl.'">'. ts('Delete') . '</a>';
                 }
             } else if ( !$caseDeleted ) {
-                $url = "<a href='" .$restoreUrl.$additionalUrl."'>". ts('Restore') . "</a>";
+                $url = '<a href="' .$restoreUrl.$additionalUrl.'">'. ts('Restore') . '</a>';
                 $values[$dao->id]['status']  = $values[$dao->id]['status'].'<br /> (deleted)'; 
             } 
             
             //check for operations.
             if ( self::checkPermission( $dao->id, 'Move To Case', $dao->activity_type_id ) ) {
-                $url .= " | "."<a href='#' onClick='Javascript:fileOnCase( \"move\", \"{$dao->id}\", $caseID ); return false;'>". ts('Move To Case') . "</a> ";
+                $url .= " | ". '<a href="#" onClick="Javascript:fileOnCase( \'move\','. $dao->id .', '. $caseID . ' ); return false;">'. ts('Move To Case') . '</a> ';
             }
             if ( self::checkPermission( $dao->id, 'Copy To Case', $dao->activity_type_id ) ) {
-                $url .= " | "."<a href='#' onClick='Javascript:fileOnCase( \"copy\", \"{$dao->id}\", $caseID ); return false;'>". ts('Copy To Case') . "</a> ";
+                $url .= " | ". '<a href="#" onClick="Javascript:fileOnCase( \'copy\','. $dao->id .','. $caseID .' ); return false;">' . ts('Copy To Case') . '</a> ';
             }
             
             $values[$dao->id]['links'] = $url;

@@ -148,7 +148,7 @@ function loadVoterList( )
 			//do search to reserve voters.			
 			aoData[dataLength++] = {name: 'campaign_search_voter_for', value: searchVoterFor};
 			
-			$.ajax( {
+			cj.ajax( {
 				"dataType": 'json', 
 				"type": "POST", 
 				"url": sSource, 
