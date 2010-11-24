@@ -28,7 +28,7 @@ require_once 'CiviTest/CiviSeleniumTestCase.php';
 
 
  
-class WebTest_Campaign_PetitionUsageScenario extends CiviSeleniumTestCase {
+class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
 
   protected $captureScreenshotOnFailure = TRUE;
   protected $screenshotPath = '/tmp/';
