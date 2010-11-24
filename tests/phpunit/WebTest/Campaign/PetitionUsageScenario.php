@@ -59,7 +59,7 @@ class WebTest_Campaign_PetitionUsageScenario extends CiviSeleniumTestCase {
       $this->waitForPageToLoad('30000');
       $this->waitForElementPresent("_qf_Component_next-bottom");
       $enabledComponents = $this->getSelectOptions("enableComponents-t");
-      if (! array_search( "CiviCampaign", $enabledComponents ) ) {
+      if ( !array_search( "CiviCampaign", $enabledComponents ) ) {
           $this->addSelection("enableComponents-f", "label=CiviCampaign");
           $this->click("//option[@value='CiviCampaign']");
           $this->click("add");
@@ -155,7 +155,7 @@ class WebTest_Campaign_PetitionUsageScenario extends CiviSeleniumTestCase {
       $this->assertTrue($this->isTextPresent("The changes have been saved."));
       
       // logout and sign as anonymous.
-      $this->open( $this->sboxPath ."logout" );
+      $this->open( $this->sboxPath ."civicrm/logout&reset=1" );
       
       // go to the link that you will be sign as anonymous
       $this->open($url);
@@ -190,10 +190,19 @@ class WebTest_Campaign_PetitionUsageScenario extends CiviSeleniumTestCase {
       $this->waitForElementPresent("xpath=//table/tbody//tr//td[1][text()='$title Petition']/../td[5]/span[2][text()='more ']/ul/li/a[text()='Signatures']");
       $this->click("xpath=//table/tbody//tr//td[1][text()='$title Petition']/../td[5]/span[2][text()='more ']/ul/li/a[text()='Signatures']");
       $this->waitForPageToLoad("30000");
+
+      // verify tabular data
+      $expected = array(
+                        2 => 'Petition',
+                        3 => "$title Petition", 
+                        4 => "$firstName $lastName",
+                        5 => "$lastName, $firstName", 
+                        8 => 'Scheduled'
+                        );      
       
-      // verify tabular data.
-      $this->waitForElementPresent("xpath=//table/tbody//tr[2]//td[2][text()='Petition']");
-      $this->waitForElementPresent("xpath=//table/tbody//tr[2]//td[3][text()='$title Petition']");
-           
+      foreach ( $expected as $column => $value ) {
+          $this->verifyText("xpath=//table[@class='selector']/tbody/tr[2]/td[$column]", preg_quote($value));
+      }
+
   }
 }
