@@ -88,15 +88,12 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase
       $this->select('relationship_type_id', "label={$params['label_b_a']}");
 
       //fill in the individual
-      $this->typeKeys("css=input#rel_contact", $sortName);
-      $this->click("css=input#rel_contact");
+      $this->typeKeys( 'rel_contact', $sortName );
+      $this->fireEvent("rel_contact", "focus");
+      $this->waitForElementPresent("css=div.ac_results-inner li");
+      $this->click("css=div.ac_results-inner li");
 
-      $this->waitForElementPresent("search-button");
-      $this->click("search-button");
-      
-      //check the checkbox
-      $this->waitForElementPresent("xpath=//table/tbody//tr[1]/td[1]/input");
-      $this->click("xpath=//table/tbody//tr[1]/td[1]/input");
+      $this->waitForElementPresent("quick-save");
 
       //fill in the relationship start date
       $this->webtestFillDate('start_date' , '-2 year' );
@@ -105,7 +102,8 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase
       $this->type("description", $description );
       
       //save the relationship
-      $this->click("_qf_Relationship_upload");
+      //$this->click("_qf_Relationship_upload");
+      $this->click("quick-save");
       $this->waitForElementPresent("current-relationships");
 
       //check the status message
@@ -118,12 +116,10 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase
       $this->webtestVerifyTabularData(
                                       array(
                                             'Description'         => $description,
-                                            'Status'	          => 'Enabled',
-                                            $params['label_b_a']  => $sortName
+                                            'Status'	          => 'Enabled'
                                             )
-                                      );
-
+                                        );
+      $this->assertTrue( $this->isTextPresent( $params['label_b_a'] ) );
   }  
-
 }
 ?>
