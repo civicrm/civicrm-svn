@@ -588,31 +588,36 @@ GROUP BY  event_id, status_id";
         }
         
         $query = "
-   SELECT  civicrm_event.id AS id, civicrm_participant.id AS participantId
-     FROM  civicrm_event 
-LEFT JOIN  civicrm_participant ON ( civicrm_event.id = civicrm_participant.event_id )
-    WHERE  civicrm_participant.is_test = 0 
-      AND  civicrm_event.is_active = 1
-           {$sqlClause}
-      AND  civicrm_participant.contact_id NOT IN (SELECT id FROM civicrm_contact WHERE is_deleted = 1)
- ORDER BY  civicrm_event.end_date DESC
-";
-        $participant = $participants = $participantIds = $uniqueEventIds = array( );
+    SELECT   civicrm_event.id AS id, 
+             civicrm_participant.id AS participantId
+      FROM   civicrm_event 
+INNER JOIN   civicrm_participant ON ( civicrm_event.id = civicrm_participant.event_id )
+INNER JOIN   civicrm_contact contact ON ( contact.id = civicrm_participant.contact_id AND contact.is_deleted = 0 )
+     WHERE   ( civicrm_participant.is_test = 0 OR civicrm_participant.is_test IS NULL ) 
+       AND   civicrm_event.is_active = 1
+             {$sqlClause}
+  ORDER BY   civicrm_event.end_date DESC";
+        
+        $eventLimit = 10;
+        $eventIds = $participantIds = array( );
         $event = CRM_Core_DAO::executeQuery( $query );
         while ( $event->fetch( ) ) {
-            $participantIds[$event->participantId] = $event->id;
-            $uniqueEventIds =  array_unique( $participantIds );
-            $participants[$event->id][] =  $event->participantId;
-            if ( count($uniqueEventIds) == 3 ) {
-                array_pop($participants);
+            //we are interested in first 10 events only.
+            if ( count( array_keys( $participantIds ) ) > $eventLimit ) {
                 break;
             }
+            $participantIds[$event->id][$event->participantId] = $event->participantId;
         }
-        foreach ( $participants as $k => $v ) {  
-            $participant[$k]  = CRM_Event_BAO_Participant::totalEventSeats( $participants[$k] );
+        //poped last 11th events participants.
+        if ( count( array_keys( $participantIds ) ) > $eventLimit ) array_pop( $participantIds );
+        
+        //pickup event seats
+        $participantCount = array( );
+        foreach ( $participantIds as $eventId => $pIds ) {  
+            $participantCount[$eventId]  = CRM_Event_BAO_Participant::totalEventSeats( $pIds );
         }
         
-        return $participant;
+        return $participantCount;
     }
     
     /**
