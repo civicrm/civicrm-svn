@@ -207,17 +207,21 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
             $displayName = trim( $displayName );
         }
         
-        $email = null;
-        if ( CRM_Utils_Array::value( 'email', $params ) && 
-             is_array( $params['email'] ) ) {
-            foreach ($params['email'] as $emailBlock) {
-                if ( isset( $emailBlock['is_primary'] ) ) {
-                    $email = $emailBlock['email'];
-                    break;
+        //start further check for email.
+        if ( empty( $sortName ) || empty( $displayName ) ) {
+            $email = null;
+            if ( CRM_Utils_Array::value( 'email', $params ) && 
+                 is_array( $params['email'] ) ) {
+                foreach ($params['email'] as $emailBlock) {
+                    if ( isset( $emailBlock['is_primary'] ) ) {
+                        $email = $emailBlock['email'];
+                        break;
+                    }
                 }
             }
+            $uniqId = CRM_Utils_Array::value( 'user_unique_id', $params );
+            if ( !$email && $contact->id ) $email = CRM_Contact_BAO_Contact::getPrimaryEmail( $contact->id );
         }
-        $uniqId = CRM_Utils_Array::value( 'user_unique_id', $params );
         
         //now set the names.
         $names = array( 'sortName' => 'sort_name' , 'displayName' => 'display_name' );
@@ -276,7 +280,7 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
         if ( $middle_name = CRM_Utils_Array::value('middle_name', $params)) {
             $contact->middle_name = $middle_name;
         }
-        
+      
         return $contact;
     }
 
