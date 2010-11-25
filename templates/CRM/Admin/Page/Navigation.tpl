@@ -92,6 +92,11 @@
             },                
             callback : {
                 onmove  : function( node, reference, type ) {
+                    var homeNode = 'node_' + {/literal}{$homeMenuId}{literal};
+                    if ( node.id == homeNode || reference.id == homeNode ) {
+                        return false;
+                    }
+
                     var postURL = {/literal}"{crmURL p='civicrm/ajax/menutree' h=0 }&key={crmKey name='civicrm/ajax/menutree'}"{literal};
                     cj.get( postURL + '&type=move&id=' + node.id + '&ref_id=' + (reference === -1 ? 0 : reference.id) + '&move_type=' + type, 
                         function (data) {
