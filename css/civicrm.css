@@ -714,62 +714,8 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
     background-image: url(menu-leaf.png);
 }
 
-
-/* Styles from jsTree.com menu. Copied here since Drupal styles over-ride otherwise. */
-/* DOTS */
-#crm-container .tree-default ul { background-position:6px 1px; background-repeat:repeat-y; background-image:url("../packages/jquery/plugins/themes/default/dot.gif"); }
-#crm-container .tree-default li { background-position:7px 8px; background-repeat:no-repeat; background-image:url("../packages/jquery/plugins/themes/default/li.gif"); }
-#crm-container .tree-default li.last { background-position:5px top; background-repeat:no-repeat; background-image:url("../packages/jquery/plugins/themes/default/lastli.gif"); }
-
-/* OPEN or CLOSED */
-#crm-container .tree-default li.open { background:url("../packages/jquery/plugins/themes/default/fminus.gif") 4px 6px no-repeat; }
-#crm-container .tree-default li.closed, #jstree-dragged.tree-default li li.open { background:url("../packages/jquery/plugins/themes/default/fplus.gif") 5px 5px no-repeat; }
-
-/* Needed for icon and text alignment when dragging a node. dgg */
-.tree-default li a:link { padding:0px 3px 0px 22px; background-position:3px 0px;  }
-
-/* DEFAULT, HOVER, CLICKED, LOADING STATES */
-#crm-container .tree-default li a, 
-.tree-default li span { 
-    background-color:transparent; 
-    background-repeat:no-repeat; 
-    background-position:4px 1px; 
-    padding:1px 4px 1px 23px; 
-    background-image:url("../packages/jquery/plugins/themes/default/f.png"); 
-    border-radius:3px; 
-    -moz-border-radius:3px; 
-    -webkit-border-radius:3px; 
-    -khtml-border-radius:3px;
-}
-#crm-container .tree-default li a:hover, 
-.tree-default li a.hover { 
-    background-color: #e7f4f9; 
-    border:1px solid #d8f0fa; 
-    padding:0px 3px 0px 22px; 
-    background-position:3px 0px;  
-}
-#crm-container .tree-default li a.clicked, 
-.tree-default li a.clicked:hover, 
-.tree-default li span.clicked { 
-    background-color: #beebff; 
-    border:1px solid #99defd; 
-    padding:0px 3px 0px 22px; 
-    background-position:3px 0px;  
-}
-#crm-container .tree-default li span.clicked { padding:0px 3px 0px 20px; }
-#crm-container .tree-default li a.loading,
 #crm-container .crm-loading-element { background-image:url("../i/loading.gif"); width:20px; height:20px;}
 #crm-container .crm-form-block .crm-loading-element { background-image:url("../i/loading-E6E6DC.gif"); }
-
-#crm-container .tree li {position: relative;}
-#crm-container .tree .hitarea {
-    width: 12px;
-    height:12px;
-    position: absolute;
-    left:30px;
-    top:4px;
-    cursor:pointer;
-    }
 
 #crm-container .crm-loading-element  {
     padding-left:30px;
@@ -782,55 +728,6 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
     height:16px;
     width:16px;
     padding: 0px;
-}
-
-
-/* CONTEXT MENU */
-.tree-default-context { 
-    width:160px; 
-    background:#F0F0F0 url("../packages/jquery/plugins/themes/default/context.gif") 22px 0 repeat-y; 
-    border:1px solid silver; 
-    position:absolute; 
-}
-
-.tree-context a, 
-.tree-default-context a, 
-.tree-default-context a.disabled:hover { 
-    display:block; 
-    text-decoration:none; 
-    color:black; 
-    line-height:20px; 
-    background-repeat: no-repeat; 
-    background-position:2px center; 
-    padding:1px 0 1px 25px !important; 
-    background-color:transparent; 
-    border:1px solid #f0f0f0; 
-    border-width:0 1px; 
-    margin:0; 
-}
-.tree-default-context a:hover { 
-    background-color:#e7f4f9; 
-    border:1px solid #d8f0fa; 
-    padding:0 0 0 25px; 
-    margin:0; 
-}
-.tree-default-context a.disabled, 
-.tree-default-context a.disabled:hover { 
-    color:silver; 
-    opacity:0.5; -ms-filter:'alpha(opacity=50)'; 
-    filter:alpha(opacity=50); 
-    zoom:1; 
-}
-.tree-context span.separator, 
-.tree-default-context .separator { 
-    background:#FFFFFF;
-    border-top:1px solid #E0E0E0;
-    font-size:1px;
-    height:1px;
-    line-height:1px;
-    margin:0 2px 0 24px;
-    min-height:1px;
-    display:block; 
 }
 
 /*
@@ -865,8 +762,6 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 }
 
 /* Set display: inline to over-ride drupal.css which sets label tags to display:block */
-
-
 #crm-container .notorg {
     font-weight: normal;
 }
@@ -896,13 +791,9 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
     line-height: 1.1em;
 }
 
-
-
 /* 
 ** Styles for record browser and report tables, and pager bar
 */
-
-
 #crm-container #map-field table, 
 #crm-container table.report, 
 #crm-container table.chart  {
@@ -917,18 +808,18 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
     white-space: nowrap;
 }
 
-
-
 #crm-container tr.columnheader {
     background-color: #E6E6E6;
     color: #000000;
     border: 1px solid #DDD;
 }
+
 #crm-container tr.columnheader a {
     color: #000;
     text-decoration: none;
     vertical-align: top;
 }
+
 #crm-container tr.columnheader-dark th {
     /*background-color: #B0B0B0;*/
     background-color: #999999;
@@ -937,7 +828,6 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
     /*border: 1px solid #000000;*/
     border: 1px solid #696969;
 }
-
 
 #crm-container tr.columnheader-dark td, 
 #crm-container tr.columnheader-dark th, 
@@ -953,7 +843,7 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 }
 
 #crm-container tr.columnfooter {
-    border-top: 2px solid #999999; /*#4574BA;*//*#4A88DF;*/
+    border-top: 2px solid #999999; 
     font-size: 1.1em;
 }
 
@@ -1070,8 +960,7 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 
 
 .crm-pager a {
-    /*color: #FFFFFF;*/
-    color: #FAFAFA;/*#BADAFF;*/
+    color: #FAFAFA;
 }
 
 .crm-pager input {
@@ -1207,8 +1096,6 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 }
 
 /* alpha filter styles */
-
-
 #crm-container #recently-viewed ul, #crm-container #alpha-filter ul {
     border-collapse: collapse;
     padding: 0em;
@@ -1245,17 +1132,11 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
     font-weight:normal;
 }
 
-
-
-
-
 #crm-container div#lang-switch {
     float: right;
     z-index: 2;
     margin: -24px 30px 0px 0px;
 }
-
-
 
 /*
 ** Boxes of checkbox elements (e.g. Advanced Search page)
@@ -1518,28 +1399,6 @@ table.campaign td,
     margin-bottom: 1em;
 }
 
-/* flexigrid styles */
-
-#crm-container .flexigrid th {
-    border-bottom-width: 2px;
-    border-top : 0px;
-    padding    : 0px 4px;
-	}
-
-#crm-container .flexigrid tr {
-    font-size    : 1.1em;
-}
-
-#crm-container .flexigrid div {
-    line-height  : 100%;
-}
-
-#crm-container .flexigrid table {
-    border : 0;
-    width  : 100%; 
-    margin : 0pt;
-}
-
 #crm-container table.nestedSelector {
     margin: 0px;
     width: 100%;
@@ -1559,13 +1418,12 @@ table.campaign td,
 
 #crm-container table.caseSelector tr {
     border-bottom: 1px solid #999999;
-	}
-
+}
 
 #crm-container table.caseSelector td.status-urgent {   
     font-weight: bold;
     text-transform: uppercase;
-	}
+}
 
 #crm-container table.caseSelector td {
     border-right: 0px;
@@ -1641,8 +1499,6 @@ table.campaign td,
     border: 1px solid #696969;
 }
 
-
-
 /* Styles for Config Task List */
 #crm-container td.tasklist a {
     font-weight: bold;
@@ -1667,7 +1523,7 @@ table.campaign td,
 #crm-container .crm-actions-ribbon ul {
     margin: 0px;
     padding: 0px;
-    }
+}
 
 #crm-container .crm-actions-ribbon li {
     float:left;
@@ -1738,7 +1594,8 @@ table.campaign td,
     border-left:none;
     z-index: 2;
 }
-    .btn-slide-active { z-index: 10;} 
+
+.btn-slide-active { z-index: 10;} 
 
 .crm-configure-actions,
 .crm-event-participants,
@@ -1793,8 +1650,6 @@ table.campaign td,
     outline             : none;
     padding             : 0px 0px 1px 5px;
 }
-
-
 
 /*class for CMS user name check used in profile*/
 .cmsmessagebox {
@@ -1944,8 +1799,6 @@ div.grippie {
     border-bottom: 1px solid #E2E2E2;
 }
 
-
-
 #crm-container div.contact_panel td.label {
     width : 28%;
 }
@@ -2025,7 +1878,6 @@ div.grippie {
 }
 
 /* reports */
-
 #crm-container .report-layout {
     border           : none;
 }
@@ -2234,32 +2086,34 @@ div.grippie {
     text-decoration: none;
     cursor: pointer;
     border:1px solid #3e3e3e;
-    }
-    #crm-container .crm-button {
-        padding:0;
-    }
+}
 
-    #crm-container input.form-submit,
-    #crm-container input[type=button],
-    #crm-container input.form-submit-inline { padding:2px 6px;}
-    #crm-container .crm-button input[type=button],
-    #crm-container .crm-button input.form-submit,
-    #crm-container .crm-button input.form-submit-inline{
-        padding:2px 4px;
-        margin:0px;
-        background: none;
-        border:none;
-        }
+#crm-container .crm-button {
+    padding:0;
+}
+
+#crm-container input.form-submit,
+#crm-container input[type=button],
+#crm-container input.form-submit-inline { padding:2px 6px;}
+
+#crm-container .crm-button input[type=button],
+#crm-container .crm-button input.form-submit,
+#crm-container .crm-button input.form-submit-inline {
+    padding:2px 4px;
+    margin:0px;
+    background: none;
+    border:none;
+}
 
 #crm-container a.button,
 #crm-create-new-link,
 #crm-participant-link,
 #crm-event-links-link,
 #crm-contact-actions-link,
-#crm-container a.button:link{
+#crm-container a.button:link {
     display: block;
     float: left;
-    }
+}
 
 #crm-create-new-link span,
 #crm-contact-actions-link span,
@@ -2323,43 +2177,45 @@ div.grippie {
 
 #crm-contact-actions-list .crm-contact_activities-list select {
 	margin-top:4px;
-	}
+}
 	
 #crm-contact-actions-list .crm-contact_activities-list,
 #crm-contact-actions-list .crm-contact_print-list,
 #crm-contact-actions-list .crm-contact_actions-list {
     width: 160px;
-    }
-    #crm-contact-actions-list .crm-contact_activities-list ul,
-    #crm-contact-actions-list .crm-contact_print-list ul,
-    #crm-contact-actions-list .crm-contact_actions-list ul,
-    #crm-event-links-list .crm-event-info ul,
-    #crm-event-links-list .crm-event-test ul,
-    #crm-event-links-list .crm-event-live ul,
-    #crm-participant-list .crm-participant-counted ul,
-    #crm-participant-list .crm-participant-not-counted ul,
-    #crm-participant-list .crm-participant-listing ul,
-    #crm-create-new-list ul { 
-        width: auto;
-        margin:0px;
-        padding: 0px;
-        }
-        #crm-contact-actions-list .crm-contact_activities-list ul { padding-right: 4px; }
-        #crm-contact-actions-list .crm-contact_print-list ul { padding-left: 4px; }
-        #crm-contact-actions-list .crm-contact_actions-list ul { padding-left: 4px; }
+}
+
+#crm-contact-actions-list .crm-contact_activities-list ul,
+#crm-contact-actions-list .crm-contact_print-list ul,
+#crm-contact-actions-list .crm-contact_actions-list ul,
+#crm-event-links-list .crm-event-info ul,
+#crm-event-links-list .crm-event-test ul,
+#crm-event-links-list .crm-event-live ul,
+#crm-participant-list .crm-participant-counted ul,
+#crm-participant-list .crm-participant-not-counted ul,
+#crm-participant-list .crm-participant-listing ul,
+#crm-create-new-list ul { 
+    width: auto;
+    margin:0px;
+    padding: 0px;
+}
+
+#crm-contact-actions-list .crm-contact_activities-list ul { padding-right: 4px; }
+#crm-contact-actions-list .crm-contact_print-list ul { padding-left: 4px; }
+#crm-contact-actions-list .crm-contact_actions-list ul { padding-left: 4px; }
 
 #crm-contact-actions-list .crm-contact_activities-list { 
     float:left;
-    }
+}
 #crm-contact-actions-list .crm-contact_print-list { 
     float:right;
-    }
+}
 #crm-contact-actions-list .crm-contact_actions-list { 
     margin-left: 160px;
     margin-right: 161px;
     border-left: 1px solid #a7a7a7;
     border-right: 1px solid #a7a7a7;
-    }    
+}    
 
 /* =================== */
 /* ! contact actions   */
@@ -2367,15 +2223,15 @@ div.grippie {
 
 
 #crm-contact-actions-wrapper {
-        width:85px; /* fixes ie bug where button is toooooo long */
-        }
+    width:85px; /* fixes ie bug where button is toooooo long */
+}
 #crm-contact-actions-list {
-        width:495px; /* fixes ie bug  caused by above*/
-        }
+    width:495px; /* fixes ie bug  caused by above*/
+}
 
 #crm-create-new-link {
     width:95px;
-    }
+}
 
 /* setup for icons */
 
@@ -2393,7 +2249,7 @@ div.grippie {
 span.icon {
 	float:none;
 	display:inline-block;
-	}
+}
 
 #crm-contact-actions-link .icon,
 #crm-participant-link .icon,
@@ -2410,10 +2266,9 @@ span.icon {
     color:#333;
 }
 
-.light-icon, .ui-widget-content .light-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_888888_256x240.png")}
-.dark-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_222222_256x240.png")}
+.light-icon, .ui-widget-content .light-icon {background-image:url("../packages/jquery/jquery-ui-1.8.5/css/custom-theme/images/ui-icons_3e3e3e_256x240.png")}
+.dark-icon {background-image:url("../packages/jquery/jquery-ui-1.8.5/css/custom-theme/images/ui-icons_222222_256x240.png")}
 .red-icon {background-image:url("../i/icons/jquery-ui-8A1F11.png")}
-.blue-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_2e83ff_256x240.png")}
 
 .edit-icon { background-position: -66px -114px;}
 
@@ -2484,17 +2339,13 @@ span.icon {
 .Note-icon { background-position: -16px -32px; }
 .Relationship-icon { background-position: -32px -32px; }
 
-
-
 /* accordion styles */
-
 
 .crm-accordion-header {
     background-color:#32414f; 
     padding:4px 8px;
     cursor: pointer;
 }
-
 
 .crm-accordion-header .crm-accordion-pointer {margin-right:4px;}
 
@@ -2528,11 +2379,12 @@ span.icon {
     color: #3e3e3e;
     margin-bottom: 0px
 }
-	.crm-accordion-inner .crm-accordion-header {
-		background-color: transparent;
-    	font-size:12px;
-    	color: #3e3e3e;
-		}
+
+.crm-accordion-inner .crm-accordion-header {
+    background-color: transparent;
+    font-size:12px;
+    color: #3e3e3e;
+}
 
 .crm-accordion-wrapper .crm-master-accordion-header .crm-accordion-pointer,
 .crm-accordion-inner .crm-accordion-header .crm-accordion-pointer {
@@ -2541,7 +2393,7 @@ span.icon {
 
 .crm-accordion-email-signature .crm-accordion-header .crm-accordion-pointer {
 	background-image:url("../i/icons/jquery-ui-2786C2.png")
-	}
+}
 
 .crm-accordion-hasContent .crm-accordion-header {
     font-weight:bold;
@@ -2552,25 +2404,25 @@ span.icon {
 	color: #2786C2;
 	font-weight: normal;
 	padding-left: 0px;	
-	}
+}
 
 .crm-accordion-wrapper {
     margin-bottom:4px;
-    }
+}
 
 .crm-accordion-closed .crm-accordion-header {
     -moz-border-radius: 4px; 
     -webkit-border-radius: 4px;   
     -khtml-border-radius: 4px; 
     border-radius:4px; 
-    }
+}
 
 .crm-accordion-open>.crm-accordion-header {
     -moz-border-radius: 4px 4px 0px 0px; 
     -webkit-border-radius: 4px 4px 0px 0px;   
     -khtml-border-radius: 4px 4px 0px 0px; 
     border-radius:4px 4px 0px 0px;
-    }
+}
 
 .crm-accordion-open>.crm-accordion-body {
     -moz-border-radius: 0px 0px 4px 4px; 
@@ -2580,7 +2432,8 @@ span.icon {
     border:1px solid #70716B;
     border-top:0px;
     padding: 4px; 
-    }
+}
+
 /* ==================================================================================== */
 /* ! hack to force pages with master accordions 
      to work, needs updating of tpl files   */
@@ -2588,7 +2441,7 @@ span.icon {
 #crm-container .crm-master-accordion-header+.crm-accordion-body  { 
     border:none;
     padding: 0px;
-    }
+}
 
 
 /* civicrm admin menu */
@@ -2618,7 +2471,6 @@ span.icon {
 
 
 /* fix autocomplete colors/styles */
-
 
 .ac_even{ background-color:#F5F5F5; }
 .ac_odd { background-color:#FAFAFA; }
@@ -2652,10 +2504,11 @@ div.helpicon {
     z-index:1;
     position:absolute;
 }
-    div.crm-accordion-header div.helpicon {
-        background-image:url(../i/icons/jquery-ui-F5F6F1.png);
-        float: right;
-    }
+
+div.crm-accordion-header div.helpicon {
+    background-image:url(../i/icons/jquery-ui-F5F6F1.png);
+    float: right;
+}
 
 div.statusicon {
     background  : transparent url(../i/quiz.png) no-repeat;
@@ -2726,7 +2579,6 @@ div#crm-toolTip #hide-tooltip {
 
 .crm-tooltip-active .crm-tooltip-wrapper {display:block;}
 
-
 .crm-summary-group h2 {
 	padding:2px 4px 0 4px;
 	font-size: 14px;
@@ -2784,8 +2636,6 @@ div#crm-toolTip #hide-tooltip {
     padding-left: 24px;
     color: #ff6655 !important;
 }
-
-
 
 /* specific, targeted fixes */
 #crm-container .dashboard-elements,
@@ -2848,12 +2698,12 @@ color: #f5f6f1;
 #crm-container .crm-datatable-pager-top .dataTables_length { float:left; }
 
 /* Date plugin */
-
 #crm-container input.dateplugin {
     background:white url(../i/cal.gif) no-repeat scroll right center;
     padding-right:16px; /* so that text doesn't flow on top of icon */
     width: 9em;
 }
+
 /* Date plugin */
 #crm-container div.batch-update {
     overflow: visible; 
@@ -2938,8 +2788,6 @@ tbody.scrollContent tr.alternateRow {
 #crm-container tr a.sorting_desc {
     color:#52534D;
 }
-
-
 
 /*contact summary page */
 .ui-tabs .ui-tabs-nav { background-color: #e6e6dc; }
@@ -3055,18 +2903,17 @@ table.crm-info-panel td.label {
 }
 
 .crm-accordion-header-hover {
-	background-color:#484E4C;
-	}
+    background-color:#484E4C;
+}
 
 #contact-summary .crm-accordion-header {
 	background-color:transparent;
 	color: #3e3e3e;
-	}
+}
 
 #contact-summary .crm-accordion-wrapper .crm-accordion-header .crm-accordion-pointer {
 	background-image:url(../i/icons/jquery-ui-3e3e3e.png);
-	}		
-
+}		
 
 /* warning labels and messages */
 del,
@@ -3202,12 +3049,8 @@ div#crm-toolTip
     font-size: 1.2em;
 }
 
-
-/*
-#crm-container .crm-content-block { border:1px solid green; }
-#crm-container .crm-form-block {border:1px solid blue;}
-*/
 /*Import progress bar */
 .ui-progressbar-value { background-image:url("../packages/jquery/css/images/pbar-ani.gif"); }
+
 /*Needed for jstree contextmenu */ 
 #vakata-contextmenu.jstree-default-context li { background:none repeat scroll 0 0 transparent;}
