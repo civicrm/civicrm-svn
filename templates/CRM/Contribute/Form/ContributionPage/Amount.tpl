@@ -174,9 +174,13 @@
 {literal}
 <script type="text/javascript">
    var paymentProcessorMapper = new Array( );
-       {/literal}{foreach from=$recurringPaymentProcessor item="paymentProcessor" key="index"}{literal}
-           paymentProcessorMapper[{/literal}{$index}{literal}] = '{/literal}{$paymentProcessor}{literal}';
-       {/literal}{/foreach}{literal}
+     {/literal}
+       {if $recurringPaymentProcessor}
+           {foreach from=$recurringPaymentProcessor item="paymentProcessor" key="index"}{literal}
+               paymentProcessorMapper[{/literal}{$index}{literal}] = '{/literal}{$paymentProcessor}{literal}';
+           {/literal}{/foreach}
+       {/if}
+     {literal}
    cj( document ).ready( function( ) { 
        showRecurring( cj( '#payment_processor_id' ).val( ) ) 
    });
