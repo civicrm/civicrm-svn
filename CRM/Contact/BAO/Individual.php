@@ -163,6 +163,11 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
                 }
             }
         }
+
+        //first trim before further processing.
+        foreach ( array( 'lastName', 'firstName', 'middleName' ) as $fld ) {
+            $$fld = trim( $$fld );
+        }
         
         if ( $lastName || $firstName || $middleName ) { 
             // make sure we have values for all the name fields.
