@@ -60,6 +60,18 @@
                 deletable : "all",
                 draggable : "all"
             },
+	    crrm  :  {
+                move: {
+                        check_move: function(m) {
+		            if( cj( m.r[0] ).attr('id').replace("node_","") == {/literal}{$homeMenuId}{literal} || 
+                                cj( m.o[0] ).attr('id').replace("node_","") == {/literal}{$homeMenuId}{literal} ) { 
+                                    return false; 
+                            } else { 
+                                    return true; 
+                            } 
+		         } 
+                      }
+            },
              contextmenu	:{ 
                 items: {
                         create : false,
