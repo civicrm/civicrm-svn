@@ -60,78 +60,26 @@
                 deletable : "all",
                 draggable : "all"
             },
-            ui : {
-                context	: 
-                [ 
-                    { 
-                        id		: "edit",
-                        label	: "Edit", 
-                        icon	: "create.png",
-                        visible	: function (node, treeObject) { if(node.length != 1) return false; return treeObject.check("renameable", node); }, 
-                        action	: function (node, treeObject) { 
-                                    var nid = cj(node).attr('id');
-                                    var nodeID = nid.substr( 5 );
-                                    var editURL = {/literal}"{crmURL p='civicrm/admin/menu' h=0 q='action=update&reset=1&id='}"{literal} + nodeID;
-                                    location.href =  editURL;  
-                                  } 
-                    },
-                    "separator",
-                    { 
-                        id		: "rename",
-                        label	: "Rename", 
-                        icon	: "rename.png",
-                        visible	: function (node, treeObject) { if(node.length != 1) return false; return treeObject.check("renameable", node); }, 
-                        action	: function (node, treeObject) { treeObject.rename(node); } 
-                    },
-                    "separator",
-                    { 
-                        id		: "delete",
-                        label	: "Delete",
-                        icon	: "remove.png",
-                        visible	: function (node, treeObject) { var ok = true; cj.each(node, function () { if(treeObject.check("deletable", this) == false) ok = false; return false; }); return ok; }, 
-                        action	: function (node, treeObject) { cj.each(node, function () { treeObject.remove(this); }); } 
-                    }
-                ]
-            },                
-            callback : {
-                onmove  : function( node, reference, type ) {
-                    var homeNode = 'node_' + {/literal}{$homeMenuId}{literal};
-                    if ( node.id == homeNode || reference.id == homeNode ) {
-                        return false;
-                    }
-
-                    var postURL = {/literal}"{crmURL p='civicrm/ajax/menutree' h=0 }&key={crmKey name='civicrm/ajax/menutree'}"{literal};
-                    cj.get( postURL + '&type=move&id=' + node.id + '&ref_id=' + (reference === -1 ? 0 : reference.id) + '&move_type=' + type, 
-                        function (data) {
-            			    cj("#reset-menu").show( );
-            		    }
-            		);                		                    
-                },
-                onrename : function( node ) {
-                    var postURL = {/literal}"{crmURL p='civicrm/ajax/menutree' h=0 }&key={crmKey name='civicrm/ajax/menutree'}"{literal};
-                    cj.get( postURL + '&type=rename&id=' + node.id + '&data=' + cj( node ).children("a:visible").text(), 
-                        function (data) {
-            			    cj("#reset-menu").show( );
-            		    }
-            		);
-    			},
-    			beforedelete : function( node ) {
-    			    var nid = cj( node ).attr("id");
-    			    var menuItem = cj("#" + nid ).find("a").html();
-    			    var deleteMsg = {/literal}"Are you sure you want to delete this menu item: "{literal} + menuItem + {/literal}" ? This action can not be undone."{literal};
-    				return confirm( deleteMsg );
-    			},
-    			ondelete : function ( node ) {
-                    var postURL = {/literal}"{crmURL p='civicrm/ajax/menutree' h=0 }&key={crmKey name='civicrm/ajax/menutree'}"{literal};
-                    cj.get( postURL + '&type=delete&id=' + node.id, 
-                        function (data) {
-            			    cj("#reset-menu").show( );
-            		    }
-            		);
-    			}
-            }
-        });
-    });
+             contextmenu	:{ 
+                items: {
+                        create : false,
+                        ccp : {   
+                                   label   : "Edit", 
+                                   visible : function (node, obj) { if(node.length != 1) return false; 
+                                                  return obj.check("renameable", node); }, 
+                                   action  : function (node, obj) { 
+                                             var nid = cj(node).attr('id');
+                                             var nodeID = nid.substr( 5 );
+                                             var editURL = {/literal}"{crmURL p='civicrm/admin/menu' h=0 q='action=update&reset=1&id='}"{literal} + nodeID;
+                                      location.href =  editURL;  
+                                       },
+				   submenu : false,
+                                },       
+      
+                
+            }},                
+ 
+ }).bind("rename.jstree", function ( e,node ) {
 
       var nodeID  = node.rslt.obj.attr('id').replace("node_","");
       var newName = node.rslt.new_name;
