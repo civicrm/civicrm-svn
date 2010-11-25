@@ -441,7 +441,7 @@ class CRM_Mailing_Selector_Event    extends CRM_Core_Selector_Base
         if (empty($events)) {
             $events = array(
                 'queue'     => ts('Intended Recipients'),
-                'delivered' => ts('Succesful Deliveries'),
+                'delivered' => ts('Successful Deliveries'),
                 'bounce'    => ts('Bounces'),
                 'forward'   => ts('Forwards'),
                 'reply'     => $this->_is_distinct 
