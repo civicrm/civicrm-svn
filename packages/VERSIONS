@@ -16,6 +16,7 @@ Licensing info in this file:
 
 PEAR install instructions
 =========================
+pear config-set download_dir /tmp
 pear config-set bin_dir   packages/bin
 pear config-set doc_dir   packages/doc
 pear config-set ext_dir   packages/ext
