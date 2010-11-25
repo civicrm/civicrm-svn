@@ -1339,7 +1339,7 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
         }
 
         //do cleanup line  items if participant edit the Event Fee.
-        if ( $this->_lineItem || !isset($params['proceSetId'] ) ) {
+        if ( ( $this->_lineItem || !isset($params['proceSetId'] ) ) && !$this->_paymentId ) {
             require_once 'CRM/Price/BAO/LineItem.php';
             CRM_Price_BAO_LineItem::deleteLineItems( $params['participant_id'], 'civicrm_participant' );
         }
