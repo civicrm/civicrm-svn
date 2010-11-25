@@ -35,7 +35,7 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
   {
       parent::setUp();
   }
-
+  
   function testEventParticipationAdd()
   {
 
@@ -90,7 +90,7 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
       $feeHelp = "Event Fee Level (if applicable).";
       $this->waitForTextPresent($feeHelp);
 
-      $this->click("xpath=id('feeBlock')/x:table/x:tbody/x:tr[1]/x:td/x:table/x:tbody/x:tr/x:td[2]/x:label[1]");
+      $this->click("xpath=id('feeBlock')/table/tbody/tr[1]/td/table/tbody/tr/td[2]/label[1]");
       
       // Select 'Record Payment'
       $this->click("record_contribution");
@@ -148,7 +148,7 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
       foreach ( $expected as $label => $value ) {
           $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[$label]/td[2]", preg_quote($value));
       }
-  }
+  } 
 
   function testEventParticipationAddWithMultipleRoles()
   {
@@ -160,7 +160,14 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
 
       // Log in using webtestLogin() method
       $this->webtestLogin();
-
+      
+      // Adding contact with randomized first name (so we can then select that contact when creating event registration)
+      // We're using Quick Add block on the main page for this.
+      $firstName = substr(sha1(rand()), 0, 7);
+      $this->webtestAddContact( $firstName, "Anderson", true );
+      $contactName = "Anderson, $firstName";
+      $displayName = "$firstName Anderson";
+      
       // add custom data for participant role
       $this->open($this->sboxPath . "civicrm/admin/custom/group&reset=1 ");
       $this->waitForPageToLoad("30000");
@@ -272,14 +279,6 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
       // button at the end of this page to show up, to make sure it's fully loaded.
       $this->waitForElementPresent("_qf_Participant_upload-bottom");
 
-      // Adding contact with randomized first name (so we can then select that contact when creating event registration)
-      // We're using Quick Add block on the main page for this.
-      $firstName = 'contact_'.substr(sha1(rand()), 0, 7);
-      $this->webtestAddContact( $firstName, "Anderson", true );
-      $contactName = "Anderson, $firstName";
-      $displayName = "$firstName Anderson";
-
-
       // Let's start filling the form with values.
       // Type contact last name in contact auto-complete, wait for dropdown and click first result
       $this->webtestFillAutocomplete( $firstName );
@@ -316,7 +315,7 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
       $feeHelp = "Event Fee Level (if applicable).";
       $this->waitForTextPresent($feeHelp);
       
-      $this->click("xpath=id('feeBlock')/x:table/x:tbody/x:tr[1]/x:td/x:table/x:tbody/x:tr/x:td[2]/x:label[1]");
+      $this->click("xpath=id('feeBlock')/table/tbody/tr[1]/td/table/tbody/tr/td[2]/label[1]");
 
       // Select 'Record Payment'
       $this->click("record_contribution");
