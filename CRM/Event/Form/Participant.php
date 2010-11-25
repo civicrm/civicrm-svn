@@ -1569,7 +1569,7 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
             } else {
                 $statusMsg = ts('Total Participant(s) added to event: %1.', array(1 => count($this->_contactIds)));
                 if( count($notSent) > 0 ) {
-                    $statusMsg .= ' ' . ts('Email has NOT been sent to %1 contact - communication preferences specify DO NOT EMAIL OR valid Email is NOT present. ', array(1 => count($notSent)));
+                    $statusMsg .= ' ' . ts('Email has NOT been sent to %1 contact(s) - communication preferences specify DO NOT EMAIL OR valid Email is NOT present. ', array(1 => count($notSent)));
                 } elseif ( isset ( $params['send_receipt'] ) ) {
                     $statusMsg .= ' ' .  ts('A confirmation email has been sent to ALL participants');
                 }
