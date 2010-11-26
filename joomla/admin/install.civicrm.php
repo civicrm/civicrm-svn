@@ -32,9 +32,13 @@ function com_install() {
     global $civicrmUpgrade;
     
     $liveSite      = substr_replace(JURI::root(), '', -1, 1);
-    $configTaskUrl = $liveSite . '/administrator/index2.php?option=com_civicrm&task=civicrm/admin/configtask&reset=1';
-    $upgradeUrl    = $liveSite . '/administrator/index2.php?option=com_civicrm&task=civicrm/upgrade&reset=1';
-
+    require_once'CRM/Core/Config.php';
+    $config = CRM_Core_Config::singleton( );
+    $script = $config->userFrameworkVersion > 1.5 ? 'index.php' :'index2.php';
+    
+    $configTaskUrl = $liveSite . "/administrator/{$script}?option=com_civicrm&task=civicrm/admin/configtask&reset=1";
+    $upgradeUrl    = $liveSite . "/administrator/{$script}?option=com_civicrm&task=civicrm/upgrade&reset=1";
+    
     if ( $civicrmUpgrade ) {
         $docLink = CRM_Utils_System::docURL2( 'Installation and Upgrades', true, 'Upgrade Guide' );    
         // UPGRADE successful status and links

@@ -181,7 +181,7 @@ class CRM_Utils_System_Joomla {
                  $frontend = false ) {
         $config        = CRM_Core_Config::singleton( );
 
-        if ( $config->userFrameworkFrontend ) {
+        if ( $config->userFrameworkFrontend || $config->userFrameworkVersion > 1.5 ) {
             $script = 'index.php';
         } else {
             $script = 'index2.php';
