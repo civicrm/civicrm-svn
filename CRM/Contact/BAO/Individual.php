@@ -228,7 +228,7 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
             $contact->display_name = $individual->display_name;
         }
 
-        if ( !$contact->addressee_id && $individual->addressee_id ) {
+        if ( !$contact->addressee_id && $individual && $individual->addressee_id ) {
             $contact->addressee_id     = $individual->addressee_id;
             $contact->addressee_custom = $individual->addressee_custom;
         }

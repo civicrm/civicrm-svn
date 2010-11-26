@@ -568,6 +568,7 @@ div.spacer,
 
 #crm-container div.status {
     background-color:#FFFFCC;
+    background-image:none;
     border:1px solid #FFFF66;
     margin:0.5em 0px;
     padding:0.25em 0.5em;

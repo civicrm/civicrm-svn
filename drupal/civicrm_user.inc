@@ -72,7 +72,7 @@ function civicrm_user_insert( &$edit, &$user, $category = NULL )
 
     // did civicrm generate this page, or is it via a user hook?
     if ( civicrm_on_user_page( ) ) {
-        civicrm_register_data( $edit, $user, $category, false, true );
+        civicrm_register_data( $edit, $user, $category, false );
     } else {
         require_once 'CRM/Core/BAO/UFMatch.php';
         CRM_Core_BAO_UFMatch::synchronize( $user, false, 'Drupal',
