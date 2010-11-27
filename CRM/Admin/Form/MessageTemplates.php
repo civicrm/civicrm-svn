@@ -69,7 +69,15 @@ class CRM_Admin_Form_MessageTemplates extends CRM_Admin_Form
         
         $this->_workflow_id = CRM_Utils_Array::value( 'workflow_id', $defaults );
         $this->assign( 'workflow_id', $this->_workflow_id );
-
+        if ($this->_action & CRM_Core_Action::ADD) {
+            $defaults['is_active'] = 1;
+            //set the context for redirection after form submit or cancel
+            require_once 'CRM/Core/Session.php';
+            $session = CRM_Core_Session::singleton( );
+            $session->replaceUserContext(CRM_Utils_System::url('civicrm/admin/messageTemplates', 
+                                                               'selectedChild=user&reset=1') );
+        }
+        
         // FIXME: we need to fix the Cancel button here as we don’t know whether it’s a workflow template in buildQuickForm()
         if ($this->_action & CRM_Core_Action::UPDATE) {
             if ($this->_workflow_id){
