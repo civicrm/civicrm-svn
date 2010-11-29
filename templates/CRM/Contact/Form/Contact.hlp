@@ -68,3 +68,15 @@
 {htxt id="id-current-employer"}
 <p>{ts}You can select an existing organization record here, OR type in the name of a new organization if this person's employer is not already in your database. However, if you want this person to share their work address with their employer AND that organization doesn't exist yet - leave this field blank and use the Shared Address feature in the Address pane below to create the employer record AND enter the employer address. The 'current employer' relationship will be automatically created for you.{/ts}</p>
 {/htxt}
+
+{htxt id="id-website"}
+<p>{ts}Record one or more web addresses (URLs) associated with this contact. Examples include personal web addresses like a Facebook or Twitter page, as well as links to a company or organization web site or page.{/ts}</p>
+{/htxt}
+
+{htxt id="id-upload-image"}
+<p>{ts}Upload a photo or icon that you want to be displayed when viewing this contact.{/ts}</p>
+{/htxt}
+
+{htxt id="id-external-id"}
+<p>{ts}Use this field to store a unique identifier. This is generally used to link contacts with records in a related or legacy application. When migrating data from another system, import the unique contact identifier from the old system to this field. You can then use it to match imported contributions and other transactional data to the corresponding contact record.{/ts}</p>
+{/htxt}
