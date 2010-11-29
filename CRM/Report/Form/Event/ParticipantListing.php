@@ -100,6 +100,9 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
                   array( 'dao'     => 'CRM_Event_DAO_Participant',
                          'fields'  =>
                          array( 'participant_id'            => array( 'title' => 'Participant ID' ),
+                                'participant_record'        => array( 'name'       => 'id' ,
+                                                                      'no_display' => true,
+                                                                      'required'   => true, ),
 
                                 'event_id'                  => array( 'default' => true,
                                                                       'type'    =>  CRM_Utils_Type::T_STRING ),
@@ -189,7 +192,10 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
                          CRM_Utils_Array::value( $fieldName, $this->_params['fields'] ) ) {
                         
                         $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
-                        $this->_columnHeaders["{$tableName}_{$fieldName}"]['type']  = CRM_Utils_Array::value( 'type', $field );
+                        $this->_columnHeaders["{$tableName}_{$fieldName}"]['type'] = 
+                            CRM_Utils_Array::value( 'type', $field ); 
+                        $this->_columnHeaders["{$tableName}_{$fieldName}"]['no_display'] =
+                            CRM_Utils_Array::value( 'no_display', $field );
                         $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = $field['title'];
 
                     }
@@ -395,15 +401,24 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
             }
 
             // Convert display name to link 
-            if ( array_key_exists( 'civicrm_contact_display_name', $row ) && 
-                 $rows[$rowNum]['civicrm_contact_display_name'] && 
-                 array_key_exists( 'civicrm_contact_id', $row ) ) {
-                $url = CRM_Utils_System::url( "civicrm/contact/view"  , 
-                                              'reset=1&cid=' . $row['civicrm_contact_id'],
-                                              $this->_absoluteUrl );
-                $rows[$rowNum]['civicrm_contact_display_name_link' ] = $url;
-                $rows[$rowNum]['civicrm_contact_display_name_hover'] = 
-                    ts("View Contact Summary for this Contact.");
+            if ( ( $displayName = CRM_Utils_Array::value( 'civicrm_contact_display_name', $row ) ) && 
+                 ( $cid         = CRM_Utils_Array::value( 'civicrm_contact_id', $row ) ) && 
+                 ( $id          = CRM_Utils_Array::value( 'civicrm_participant_participant_record', $row ) ) ) {
+                $url     = CRM_Report_Utils_Report::getNextUrl( 'contact/detail', 
+                                                                "reset=1&force=1&id_op=eq&id_value=$cid",
+                                                                $this->_absoluteUrl );
+                
+                $viewUrl = CRM_Utils_System::url( "civicrm/contact/view/participant", 
+                                                  "reset=1&id=$id&cid=$cid&action=view",
+                                                  $this->_absoluteUrl );
+                
+                $contactTitle     = ts('View Contact Details');
+                $participantTitle = ts('View Participant Record');
+                
+                $rows[$rowNum]['civicrm_contact_display_name' ]  = "<a title='$contactTitle' href=$url>$displayName</a>";
+                $rows[$rowNum]['civicrm_contact_display_name' ] .= 
+                    "<span style='float: right;'><a title='$participantTitle' href=$viewUrl>" 
+                    . ts('View') . "</a></span>";
                 $entryFound = true;
             }
             
