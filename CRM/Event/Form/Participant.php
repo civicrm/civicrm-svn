@@ -643,8 +643,7 @@ SELECT civicrm_custom_group.name as name,
                 require_once 'CRM/Event/BAO/Event.php';
                 $additionalParticipant = count (CRM_Event_BAO_Event::buildCustomProfile( $this->_id, null, $this->_contactId, false, true )) - 1;
                 if ( $additionalParticipant ) {
-                    $deleteParticipants  = array( 1 => ts( 'Delete this participant record along with associated 
-                                                            participant record(s).' ), 
+                    $deleteParticipants  = array( 1 => ts( 'Delete this participant record along with associated participant record(s).' ), 
                                                   2 => ts( 'Delete only this participant record.' ) );
                     $this->addRadio( 'delete_participant', null, $deleteParticipants, null, '<br />');
                     $this->setDefaults( array( 'delete_participant' => 1 ) );
@@ -1340,7 +1339,7 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
         }
 
         //do cleanup line  items if participant edit the Event Fee.
-        if ( $this->_lineItem || !isset($params['proceSetId'] ) ) {
+        if ( ( $this->_lineItem || !isset($params['proceSetId'] ) ) && !$this->_paymentId ) {
             require_once 'CRM/Price/BAO/LineItem.php';
             CRM_Price_BAO_LineItem::deleteLineItems( $params['participant_id'], 'civicrm_participant' );
         }
@@ -1570,7 +1569,7 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
             } else {
                 $statusMsg = ts('Total Participant(s) added to event: %1.', array(1 => count($this->_contactIds)));
                 if( count($notSent) > 0 ) {
-                    $statusMsg .= ' ' . ts('Email has NOT been sent to %1 contact - communication preferences specify DO NOT EMAIL OR valid Email is NOT present. ', array(1 => count($notSent)));
+                    $statusMsg .= ' ' . ts('Email has NOT been sent to %1 contact(s) - communication preferences specify DO NOT EMAIL OR valid Email is NOT present. ', array(1 => count($notSent)));
                 } elseif ( isset ( $params['send_receipt'] ) ) {
                     $statusMsg .= ' ' .  ts('A confirmation email has been sent to ALL participants');
                 }

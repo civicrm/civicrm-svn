@@ -119,7 +119,8 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         
         if ( isset( $defaults['start_date'] ) ) { 
             list( $defaults['start_date'], 
-                  $defaults['start_date_time'] ) = CRM_Utils_Date::setDateDefaults( $defaults['start_date'], 'start_date' );
+                  $defaults['start_date_time'] ) = CRM_Utils_Date::setDateDefaults( $defaults['start_date'], 
+                                                                                    'activityDateTime' );
         } else {
             list( $defaults['start_date'], 
                   $defaults['start_date_time'] ) = CRM_Utils_Date::setDateDefaults( );
@@ -127,7 +128,8 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         
         if ( isset( $defaults['end_date'] ) ) { 
             list( $defaults['end_date'], 
-                  $defaults['end_date_time'] ) = CRM_Utils_Date::setDateDefaults( $defaults['end_date'], 'end_date' );
+                  $defaults['end_date_time'] ) = CRM_Utils_Date::setDateDefaults( $defaults['end_date'], 
+                                                                                  'activityDateTime' );
         }
         
         if ( !isset( $defaults['is_active'] ) ) {
@@ -180,10 +182,10 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         $this->add('textarea', 'description', ts('Description'), $attributes['description'] );
 
         // add campaign start date
-        $this->addDateTime('start_date', ts('Start Date'), true, array( 'formatType' => 'campaignDateTime') );
+        $this->addDateTime('start_date', ts('Start Date'), true, array( 'formatType' => 'activityDateTime') );
         
         // add campaign end date
-        $this->addDateTime('end_date', ts('End Date'), false, array( 'formatType' => 'campaignDateTime') );
+        $this->addDateTime('end_date', ts('End Date'), false, array( 'formatType' => 'activityDateTime') );
         
         // add campaign type
         $campaignType = CRM_Campaign_PseudoConstant::campaignType();

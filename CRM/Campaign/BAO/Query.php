@@ -317,7 +317,10 @@ INNER JOIN civicrm_activity_assignment ON ( civicrm_activity.id = civicrm_activi
             $form->add( 'text',   'survey_interviewer_name', ts( 'Select Interviewer' ) );
             $form->add( 'hidden', 'survey_interviewer_id', '',array( 'id' => 'survey_interviewer_id' ) );
             
-            $userId = $form->_interviewerId;
+            $userId = null;
+            if ( isset( $form->_interviewerId ) && $form->_interviewerId ) {
+                $userId = $form->_interviewerId;
+            }
             if ( !$userId ) {
                 $session = CRM_core_Session::singleton( );
                 $userId  = $session->get( 'userID' );

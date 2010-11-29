@@ -952,7 +952,7 @@ function buildCaseActivities( filterSearch ) {
 				{name:'activity_deleted', value: activity_deleted }
 				);	
 				}		
-				$.ajax( {
+				cj.ajax( {
 			 	"dataType": 'json', 
 				"type": "POST", 
 				"url": sSource, 

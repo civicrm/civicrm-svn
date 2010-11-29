@@ -143,6 +143,18 @@ class CRM_Core_Extensions
         $this->populate( $fullInfo );
         return $this->_extByKey;
     }
+    
+    /**
+     * Returns the list of extensions ordered by id.
+     * 
+     * @access public
+     * @param boolean $fullInfo provide full info (read XML files) if true, otherwise only DB stored data
+     * @return array the list of installed extensions
+     */
+    public function getExtensionsById( $fullInfo = FALSE ) {
+        $this->populate( $fullInfo );
+        return $this->_extById;
+    }    
 
     /**
      * @todo DEPRECATE
@@ -365,15 +377,23 @@ class CRM_Core_Extensions
 	 * @param boolean $is_active active state
      * @return mixed result of CRM_Core_DAO::setFieldValue
      */
-    public function setIsActive( $id, $is_active ) {
-        return CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_OptionValue', $id, 'is_active', $is_active );
+    static public function setIsActive( $id, $is_active ) {
+        $extensions = new CRM_Core_Extensions();
+        $e = $extensions->getExtensionsByKey();
+        foreach( $e as $key => $eo ) {
+            if( $eo->id == $id ) {
+                $ext = $eo;
+            }
+        }
+        $is_active ? $ext->enable() : $ext->disable();
+        return true;
     }
 
     /**
      * Given the id from selector (generated in $this->_discoverAvailable),
-	 * fires off appropriate CRM_Core_Extensions_Extension object's install method.
-	 *
-	 * @todo change method signature, drop $id, work with $key only
+     * fires off appropriate CRM_Core_Extensions_Extension object's install method.
+     *
+     * @todo change method signature, drop $id, work with $key only
      * 
      * @access public
      * @param int $id id of option value record

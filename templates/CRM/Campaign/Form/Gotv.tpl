@@ -38,7 +38,15 @@
 {elseif $buildSelector}
   
        {* load voter selector for reserve/release *}
-       <script type="text/javascript">loadVoterList( );</script>
+       
+       {literal}
+       <script type="text/javascript">
+       cj( function( ){
+           loadVoterList( );
+       });
+       </script>
+       {/literal}
+
        <table id="gotvVoterRecords">
            <thead>
               <tr class="columnheader">
@@ -140,7 +148,7 @@ function loadVoterList( )
 			//do search to reserve voters.			
 			aoData[dataLength++] = {name: 'campaign_search_voter_for', value: searchVoterFor};
 			
-			$.ajax( {
+			cj.ajax( {
 				"dataType": 'json', 
 				"type": "POST", 
 				"url": sSource, 

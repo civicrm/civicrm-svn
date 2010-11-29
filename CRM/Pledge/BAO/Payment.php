@@ -112,14 +112,11 @@ WHERE     pledge_id = %1
         $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
         //calculation of schedule date according to frequency day of period
         //frequency day is not applicable for daily installments
-        if ( $params['frequency_unit'] != 'day' ) {
+        if ( $params['frequency_unit'] != 'day' && $params['frequency_unit'] != 'year') {
             if ( $params['frequency_unit'] != 'week' ) {
                 
-                //for month use day of next month & for year use day of month Jan of next year as next payment date 
+                //for month use day of next month as next payment date 
                 $date['day'] = $params['frequency_day'];
-                if ( $params['frequency_unit'] == 'year' ) {
-                    $date['month'] = '1';
-                }   
             } else if ( $params['frequency_unit'] == 'week' ) {
                 
                 //for week calculate day of week ie. Sunday,Monday etc. as next payment date

@@ -133,7 +133,7 @@ VALUES
   ( '{ts escape="sql"}Member Dues{/ts}'          , 0, 1, 1 ), 
   ( '{ts escape="sql"}Campaign Contribution{/ts}', 0, 1, 0 ),
   ( '{ts escape="sql"}Event Fee{/ts}'            , 0, 1, 0 );
-
+  
 -- option groups and values for 'preferred communication methods' , 'activity types', 'gender', etc.
 
 INSERT INTO 

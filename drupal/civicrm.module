@@ -628,7 +628,8 @@ function civicrm_view_data( &$user )
             $contactURL = '<a href="' .$url. '">&raquo; ' .t("View Contact Record") . '</a>';
         }
 
-        if ( CRM_Core_Permission::check( 'access Contact Dashboard' ) ) {
+        if ( CRM_Core_Permission::check( 'access Contact Dashboard' ) &&
+             CRM_Contact_BAO_Contact_Permission::allow( $userID ) ) {
             $url = CRM_Utils_System::url( 'civicrm/user', "reset=1&id=$userID" );
             if ( ! empty( $contactURL ) ) {
                 $contactURL .= '<br/>';

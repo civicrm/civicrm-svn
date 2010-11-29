@@ -29,7 +29,7 @@
   {strip}
   <table class="crm-info-panel">
   <tr><td class="label"><a href="{$report.event_totals.links.queue}">{ts}Intended Recipients{/ts}</a></td><td>{$report.event_totals.queue}</td></tr>
-  <tr><td class="label"><a href="{$report.event_totals.links.delivered}">{ts}Succesful Deliveries{/ts}</a></td><td>{$report.event_totals.delivered} ({$report.event_totals.delivered_rate|string_format:"%0.2f"}%)</td></tr>
+  <tr><td class="label"><a href="{$report.event_totals.links.delivered}">{ts}Successful Deliveries{/ts}</a></td><td>{$report.event_totals.delivered} ({$report.event_totals.delivered_rate|string_format:"%0.2f"}%)</td></tr>
   {if $report.mailing.open_tracking}
     <tr><td class="label"><a href="{$report.event_totals.links.opened}">{ts}Tracked Opens{/ts}</a></td><td>{$report.event_totals.opened}</td></tr>
   {/if}

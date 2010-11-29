@@ -124,7 +124,10 @@ class CRM_Contact_Form_Search_Custom extends CRM_Contact_Form_Search {
             $this->_formValues['customSearchID'   ] = $this->_customSearchID   ;
             $this->_formValues['customSearchClass'] = $this->_customSearchClass;
         }            
-
+        
+        //use the custom selector
+        $this->_selectorName = 'CRM_Contact_Selector_Custom';
+        
         parent::postProcess( );
     }
 

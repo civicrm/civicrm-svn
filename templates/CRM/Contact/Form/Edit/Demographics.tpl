@@ -57,10 +57,11 @@
     showDeceasedDate( );    
     function showDeceasedDate( )
     {
-        if (document.getElementsByName("is_deceased")[0].checked) {
-      	    show('showDeceasedDate');
+        if ( cj("#is_deceased").is(':checked') ) {
+      	    cj("#showDeceasedDate").show( );
         } else {
-	    hide('showDeceasedDate');
+	  cj("#showDeceasedDate").hide( );
+         cj("#deceased_date").val('');
         }
     }     
 </script>

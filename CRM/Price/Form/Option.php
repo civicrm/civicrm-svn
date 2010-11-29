@@ -159,7 +159,9 @@ class CRM_Price_Form_Option extends CRM_Core_Form
             // please check with Lobo before u comment this
             $this->registerRule( 'amount', 'callback', 'money', 'CRM_Utils_Rule' );
             $this->addRule('amount', ts('Please enter a monetary value for this field.'), 'money');
-            
+
+            $this->add( 'textarea', 'description', ts('Description') );
+ 
             // count
             $this->add('text', 'count', ts('Participants Count') );
             $this->addRule('count' , ts('Please enter a valid Max Participants.'), 'positiveInteger');

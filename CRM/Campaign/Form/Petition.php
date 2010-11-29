@@ -114,6 +114,8 @@ class CRM_Campaign_Form_Petition extends CRM_Campaign_Form_Survey
        
         $this->add('text', 'title', ts('Petition Title'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'title'), true );
 
+        $attributes = CRM_Core_DAO::getAttribute( 'CRM_Campaign_DAO_Survey' );
+        
         $petitionTypeID = CRM_Core_OptionGroup::getValue( 'activity_type', 'petition',  'name' );
         $this->addElement( 'hidden', 'activity_type_id', $petitionTypeID );
 //        $surveyActivityTypes = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
@@ -122,7 +124,7 @@ class CRM_Campaign_Form_Petition extends CRM_Campaign_Form_Survey
         
         // script / instructions / description of petition purpose
         $this->addWysiwyg('instructions',ts('Introduction'), $attributes['instructions']);
-
+        
         // Campaign id
         require_once 'CRM/Campaign/BAO/Campaign.php';
         $campaigns = CRM_Campaign_BAO_Campaign::getAllCampaign( );

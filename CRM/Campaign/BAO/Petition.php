@@ -143,20 +143,23 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
                 AND  	source_contact_id = $contact_id";
         CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
 
-		// remove 'Unconfirmed' tag for this contact
-		if (defined('CIVICRM_TAG_UNCONFIRMED')) {
-			// Check if contact 'email confirmed' tag exists, else create one
-			// This should be in the petition module initialise code to create a default tag for this
-			require_once 'api/v2/Tag.php';	
-			$tag_params['name'] = CIVICRM_TAG_UNCONFIRMED;
-			$tag = civicrm_tag_get($tag_params); 
-			
-			require_once 'api/v2/EntityTag.php';				
-			unset($tag_params);
-			$tag_params['contact_id'] = $contact_id;
-			$tag_params['tag_id'] = $tag['id'];			
-			$tag_value = civicrm_entity_tag_remove($tag_params);	
-		}
+		// define constant CIVICRM_TAG_UNCONFIRMED, if not exist in civicrm.settings.php
+		if ( !defined('CIVICRM_TAG_UNCONFIRMED') ) {
+            define('CIVICRM_TAG_UNCONFIRMED', 'Unconfirmed');
+        }
+        
+        // remove 'Unconfirmed' tag for this contact
+        // Check if contact 'email confirmed' tag exists, else create one
+        // This should be in the petition module initialise code to create a default tag for this
+        require_once 'api/v2/Tag.php';	
+        $tag_params['name'] = CIVICRM_TAG_UNCONFIRMED;
+        $tag = civicrm_tag_get($tag_params); 
+		
+        require_once 'api/v2/EntityTag.php';				
+        unset($tag_params);
+        $tag_params['contact_id'] = $contact_id;
+        $tag_params['tag_id'] = $tag['id'];			
+        $tag_value = civicrm_entity_tag_remove($tag_params);	
 		
 		// set permanent cookie to indicate this users email address now confirmed
 		setcookie('confirmed_'.$petition_id, $activity_id, time() + $this->cookieExpire, '/');						
@@ -398,23 +401,26 @@ WHERE 	a.source_record_id = " . $surveyId . "
 	 */
 		require_once 'CRM/Campaign/Form/Petition/Signature.php';
 		
-		if (defined('CIVICRM_PETITION_CONTACTS')) {
-			// check if the group defined by CIVICRM_PETITION_CONTACTS exists, else create it
-			require_once 'api/v2/Group.php';
-			$group_params['title'] = CIVICRM_PETITION_CONTACTS;
-			$groups = civicrm_group_get($group_params);
-			if (($groups['is_error'] == 1) && ($groups['error_message'] == 'No such group exists')) {
-				$group_params['is_active'] = 1;
-				$group_params['visibility'] = 'Public Pages';
-				$newgroup = civicrm_group_add($group_params);
-				if ($newgroup['is_error'] == 0) {
-					$group_id[0] = $newgroup['result'];
-				}
-			} else {
-				$group_id = array_keys($groups);
-			}
-    	}
-
+        // define constant CIVICRM_PETITION_CONTACTS, if not exist in civicrm.settings.php
+		if ( !defined('CIVICRM_PETITION_CONTACTS') ) {
+            define('CIVICRM_PETITION_CONTACTS','Petition Contacts'); 
+        }
+			
+        // check if the group defined by CIVICRM_PETITION_CONTACTS exists, else create it
+        require_once 'api/v2/Group.php';
+        $group_params['title'] = CIVICRM_PETITION_CONTACTS;
+        $groups = civicrm_group_get($group_params);
+        if (($groups['is_error'] == 1) && ($groups['error_message'] == 'No such group exists')) {
+            $group_params['is_active'] = 1;
+            $group_params['visibility'] = 'Public Pages';
+            $newgroup = civicrm_group_add($group_params);
+            if ($newgroup['is_error'] == 0) {
+                $group_id[0] = $newgroup['result'];
+            }
+        } else {
+            $group_id = array_keys($groups);
+        }
+        
 		// get petition info
 		$petitionParams['id'] = $params['sid'];
 		$petitionInfo = array();

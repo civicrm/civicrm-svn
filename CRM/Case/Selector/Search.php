@@ -364,7 +364,8 @@ class CRM_Case_Selector_Search extends CRM_Core_Selector_Base
                  $row['casemanager'   ] = CRM_Utils_Array::value('casemanager'   , $caseManagerContact );              
              } 
 
-             if ( array_key_exists( $result->case_status_id, $caseStatus ) ) {
+             if ( isset( $result->case_status_id ) && 
+                  array_key_exists( $result->case_status_id, $caseStatus ) ) {
                  $row['class'] = "status-urgent";
              } else {
                  $row['class'] = "status-normal";
