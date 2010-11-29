@@ -299,6 +299,11 @@ class CRM_Export_BAO_Export
         }
         
         if ( $moreReturnProperties ) {
+            // fix for CRM-7066
+            if ( CRM_Utils_Array::value( 'group', $moreReturnProperties ) ) {
+                unset( $moreReturnProperties['group'] );
+                $moreReturnProperties['groups'] = 1;
+            }
             $returnProperties = array_merge( $returnProperties, $moreReturnProperties );
         }
 
@@ -485,7 +490,7 @@ class CRM_Export_BAO_Export
         // for CRM-3157 purposes
         require_once 'CRM/Core/I18n.php';
         $i18n =& CRM_Core_I18n::singleton();
-
+        
         while ( 1 ) {
             $limitQuery = "{$queryString} LIMIT {$offset}, {$rowCount}";
             $dao = CRM_Core_DAO::executeQuery( $limitQuery );
@@ -800,7 +805,7 @@ class CRM_Export_BAO_Export
             $dao->free( );
             $offset += $rowCount;
         }
-
+        
         self::writeDetailsToTable( $exportTempTable, $componentDetails, $sqlColumns );
 
         // do merge same address and merge same household processing
