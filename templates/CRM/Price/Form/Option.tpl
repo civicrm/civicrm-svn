@@ -42,11 +42,15 @@
                 <td class="label">{$form.amount.label}</td>
                 <td>{$form.amount.html}</td>
             </tr>
-	    <tr class="crm-price-option-form-block-count">
+            <tr class="crm-price-option-form-block-description">
+                <td class="label">{$form.description.label}</td>
+                <td>{$form.description.html}</td>
+            </tr>
+            <tr class="crm-price-option-form-block-count">
                 <td class="label">{$form.count.label}</td>
                 <td>{$form.count.html}</td>
             </tr>
-	    <tr class="crm-price-option-form-block-max_value">
+            <tr class="crm-price-option-form-block-max_value">
                 <td class="label">{$form.max_value.label}</td>
                 <td>{$form.max_value.html}</td>
             </tr>

@@ -129,9 +129,13 @@ class CRM_Core_Extensions_Payment
     }
     
     public function disable() {
+        require_once "CRM/Core/BAO/PaymentProcessorType.php";
+        CRM_Core_BAO_PaymentProcessorType::setIsActive( $this->paymentProcessorTypes[$this->ext->key], 0 );
     }
     
     public function enable() {
+        require_once "CRM/Core/BAO/PaymentProcessorType.php";
+        CRM_Core_BAO_PaymentProcessorType::setIsActive( $this->paymentProcessorTypes[$this->ext->key], 1 );    
     }
 
     private function _getAllPaymentProcessorTypes( $attr ) {

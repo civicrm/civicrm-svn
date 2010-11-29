@@ -163,18 +163,29 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
                 }
             }
         }
-        
-        //email is defined before display name is set, CRM-7114
-        if ( CRM_Utils_Array::value( 'email', $params ) && is_array( $params['email'] ) ) {
-            foreach ($params['email'] as $emailBlock) {
-                if ( isset( $emailBlock['is_primary'] ) ) {
-                    $email = $emailBlock['email'];
-                    break;
-                }
-            }
+
+        //first trim before further processing.
+        foreach ( array( 'lastName', 'firstName', 'middleName' ) as $fld ) {
+            $$fld = trim( $$fld );
         }
         
-        if ( $lastName || $firstName || $middleName || $email ) { 
+        if ( $lastName || $firstName || $middleName ) { 
+            // make sure we have values for all the name fields.
+            $formatted  = $params;
+            $nameParams = array( 'first_name'        => $firstName,
+                                 'middle_name'       => $middleName,
+                                 'last_name'         => $lastName, 
+                                 'individual_suffix' => $suffix,
+                                 'individual_prefix' => $prefix,
+                                 'prefix_id'         => $prefix_id,
+                                 'suffix_id'         => $suffix_id );
+            // make sure we have all the name fields.
+            foreach ( $nameParams as $name => $value ) {
+                if ( !CRM_Utils_Array::value( $name, $formatted ) && $value ) {
+                    $formatted[$name] = $value;
+                }
+            }
+            
             // make sure we have values for all the name fields.
             $formatted  = $params;
             $nameParams = array( 'first_name'        => $firstName,
@@ -215,41 +226,38 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
             $displayName = CRM_Utils_Address::format( $formatted, $format,
                                                       false, false, true, $tokenFields );
             $displayName = trim( $displayName );
-            if ( empty($displayName) ) $displayName = $email; //if no displayName is set, use email
         }
         
-        if ( $sortName ) {
-            $contact->sort_name = $sortName;
-        }
-        
-        if ( $displayName ) {
-            $contact->display_name = $displayName;
-        } else if ( $individual && $individual->display_name ) {
-            $contact->display_name = $individual->display_name;
-        }
-
-        if ( !$contact->addressee_id && $individual && $individual->addressee_id ) {
-            $contact->addressee_id     = $individual->addressee_id;
-            $contact->addressee_custom = $individual->addressee_custom;
-        }
-        
-        $uniqId = CRM_Utils_Array::value( 'user_unique_id', $params );
-        if (empty($contact->display_name)) {
-            if (isset($email)) {
-                $contact->display_name = $email;
-            } else if (isset($uniqId)) {
-                $contact->display_name = $uniqId;
+        //start further check for email.
+        if ( empty( $sortName ) || empty( $displayName ) ) {
+            $email = null;
+            if ( CRM_Utils_Array::value( 'email', $params ) && 
+                 is_array( $params['email'] ) ) {
+                foreach ($params['email'] as $emailBlock) {
+                    if ( isset( $emailBlock['is_primary'] ) ) {
+                        $email = $emailBlock['email'];
+                        break;
+                    }
+                }
             }
+            $uniqId = CRM_Utils_Array::value( 'user_unique_id', $params );
+            if ( !$email && $contact->id ) $email = CRM_Contact_BAO_Contact::getPrimaryEmail( $contact->id );
         }
         
-        if (empty($contact->sort_name)) {
-            if (isset($email)) {
-                $contact->sort_name = $email;
-            } else if (isset($uniqId)) {
-                $contact->sort_name = $uniqId;
+        //now set the names.
+        $names = array( 'sortName' => 'sort_name' , 'displayName' => 'display_name' );
+        foreach ( $names as $value => $name ) {
+            if ( empty( $$value ) ) {
+                if (  $email ) {
+                    $$value = $email; 
+                } else if ( $uniqId ) {
+                    $$value = $uniqId;
+                }
             }
+            //finally if we could not pass anything lets keep db.
+            if ( !empty( $$value ) ) $contact->$name = $$value;
         }
-  
+        
         $format = CRM_Utils_Date::getDateFormat( 'birth' );
         if ( $date = CRM_Utils_Array::value('birth_date', $params) ) {
             if ( in_array( $format, array('dd-mm', 'mm/dd' ) ) ) {
@@ -293,7 +301,7 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
         if ( $middle_name = CRM_Utils_Array::value('middle_name', $params)) {
             $contact->middle_name = $middle_name;
         }
-        
+      
         return $contact;
     }
 

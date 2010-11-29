@@ -1173,7 +1173,9 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             //lets check w/ other contact params.
             if ( $self->_values['event']['allow_same_participant_emails'] ) {
                 $params = $fields;
-                if ( isset( $params["email-{$self->_bltID}"] ) ) {
+
+                // unset email from dedupe params for 'additional participant wizard' case only
+                if ( isset( $params["email-{$self->_bltID}"] ) && $isAdditional ) {
                     unset( $params["email-{$self->_bltID}"] );
                 }
                 require_once 'CRM/Dedupe/Finder.php';                

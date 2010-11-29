@@ -57,7 +57,8 @@ class bin_migrate_import {
         $this->optionValues( $xml, $idMap );
 
         $this->relationshipTypes( $xml );
-
+        $this->contributionTypes( $xml );
+        
         // now create custom groups
         $this->customGroups( $xml, $idMap );
         $this->customFields( $xml, $idMap );
@@ -143,6 +144,16 @@ WHERE      v.option_group_id = %1
         }
     }
 
+    function contributionTypes( &$xml ) {
+        require_once 'CRM/Contribute/BAO/ContributionType.php';
+        
+        foreach ( $xml->ContributionTypes as $contributionTypesXML ) {
+            foreach ( $contributionTypesXML->ContributionType as $contributionTypeXML ) {
+                $contributionType = new CRM_Contribute_DAO_ContributionType( );
+                $this->copyData( $contributionType, $contributionTypeXML, true, 'name' );
+            }
+        }
+    }
 
     function customGroups( &$xml, &$idMap ) {
         require_once 'CRM/Core/BAO/CustomGroup.php';

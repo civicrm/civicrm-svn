@@ -2147,8 +2147,9 @@ class CRM_Contact_BAO_Query
                 }
             }
         } else {
-            list( $contactType, $subType ) = explode( CRM_Core_DAO::VALUE_SEPARATOR,
-                                                      $value, 2 );
+            $contactTypeANDSubType = explode( CRM_Core_DAO::VALUE_SEPARATOR, $value, 2 );
+            $contactType = $contactTypeANDSubType[0];
+            $subType     = CRM_Utils_Array::value( 1, $contactTypeANDSubType );
             if ( ! empty( $subType ) ) {
                 $subTypes[$subType] = 1;
             }
@@ -3287,7 +3288,10 @@ WHERE  id IN ( $groupIDs )
                 $doOpt = true;
                 // hack for order clause
                 if ( $orderBy ) {
-                    list( $field, $dir ) = explode( ' ', $orderBy );
+                    $fieldOrder = explode( ' ', $orderBy );
+                    $field = $fieldOrder[0];
+                    $dir   = CRM_Utils_Array::value( 1, $fieldOrder );
+                    
                     if ( $field ) {
                         switch ( $field ) {
                         case 'sort_name':

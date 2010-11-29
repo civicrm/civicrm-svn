@@ -66,7 +66,7 @@
     {* Search request has returned 1 or more matching rows. *}
         {* This section handles form elements for action task select and submit *}
         <div class="crm-search-tasks crm-event-search-tasks">
-           {include file="CRM/common/searchResultTasks.tpl"}
+           {include file="CRM/common/searchResultTasks.tpl" context='Event'}
 	    </div>
         {* This section displays the rows along and includes the paging controls *}
     	<div id='participantSearch' class="crm-event-search-results">

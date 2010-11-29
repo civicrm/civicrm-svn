@@ -72,6 +72,12 @@ class CRM_Contribute_Page_PCP extends CRM_Core_Page_Basic
             $deleteExtra = ts('Are you sure you want to delete this Campaign Page ?');
 
             self::$_links = array(
+                                  CRM_Core_Action::UPDATE => array(
+                                                                   'name'  => ts('Edit'),
+                                                                   'url'   => 'civicrm/contribute/pcp/info',
+                                                                   'qs'    => 'action=update&reset=1&id=%%id%%&context=dashboard',
+                                                                   'title' => ts('Edit Personal Campaign Page') 
+                                                                   ),
                                   CRM_Core_Action::RENEW  => array(
                                                                    'name'  => ts('Approve'),
                                                                    'url'   => 'civicrm/admin/pcp',
@@ -83,18 +89,6 @@ class CRM_Contribute_Page_PCP extends CRM_Core_Page_Basic
                                                                     'url'   => 'civicrm/admin/pcp',
                                                                     'qs'    => 'action=revert&id=%%id%%',
                                                                     'title' => ts('Reject Personal Campaign Page') 
-                                                                    ),
-                                  CRM_Core_Action::ENABLE  => array(
-                                                                    'name'  => ts('Enable'),
-                                                                    'url'   => 'civicrm/admin/pcp',
-                                                                    'qs'    => 'action=enable&id=%%id%%',
-                                                                    'title' => ts('Enable Personal Campaign Page') 
-                                                                    ),
-                                  CRM_Core_Action::DISABLE  => array(
-                                                                    'name'  => ts('Disable'),
-                                                                    'url'   => 'civicrm/admin/pcp',
-                                                                    'qs'    => 'action=disable&id=%%id%%',
-                                                                    'title' => ts('Disable Personal Campaign Page') 
                                                                     ),
                                   CRM_Core_Action::DELETE  => array(
                                                                     'name'  => ts('Delete'),
@@ -125,17 +119,7 @@ class CRM_Contribute_Page_PCP extends CRM_Core_Page_Basic
         $action = CRM_Utils_Request::retrieve('action', 'String',
                                               $this, false,
                                               'browse');
-        if ( $action & CRM_Core_Action::ENABLE ) { 
-            $id = CRM_Utils_Request::retrieve( 'id', 'Positive', $this, false );
-            CRM_Contribute_BAO_PCP::setDisable( $id, '1' );
-            $session = CRM_Core_Session::singleton();
-            $session->pushUserContext( CRM_Utils_System::url( CRM_Utils_System::currentPath( ), 'reset=1' ) );
-        } elseif ( $action & CRM_Core_Action::DISABLE ) {
-            $id = CRM_Utils_Request::retrieve( 'id', 'Positive', $this, false );
-            CRM_Contribute_BAO_PCP::setDisable( $id, '0' );
-            $session = CRM_Core_Session::singleton();
-            $session->pushUserContext( CRM_Utils_System::url( CRM_Utils_System::currentPath( ), 'reset=1' ) );
-        } elseif ( $action & CRM_Core_Action::REVERT ) {
+        if ( $action & CRM_Core_Action::REVERT ) {
             $id = CRM_Utils_Request::retrieve( 'id', 'Positive', $this, false );
             CRM_Contribute_BAO_PCP::setIsActive( $id, 0 );
             $session = CRM_Core_Session::singleton();
@@ -255,16 +239,6 @@ class CRM_Contribute_Page_PCP extends CRM_Core_Page_Basic
                 break;
             }
 
-            switch ( $dao->active ) {
-            case 1:                   
-                $action -= CRM_Core_Action::ENABLE;            
-                break;
-                
-            case 0:                   
-                $action -= CRM_Core_Action::DISABLE;
-                break;
-            }
-            
             if ( !$allowToDelete ) {
                 $action -= CRM_Core_Action::DELETE; 
             }

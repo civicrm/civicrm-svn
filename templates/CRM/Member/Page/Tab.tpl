@@ -49,7 +49,7 @@
         <div class="action-link">
             <a accesskey="N" href="{$newURL}" class="button"><span><div class="icon add-icon"></div>{ts}Add Membership{/ts}</span></a>
             {if $accessContribution and $newCredit}
-                <a accesskey="N" href="{$newCreditURL}" class="button"><span>{ts}Submit Credit Card Membership{/ts}</span></a><br /><br />
+                <a accesskey="N" href="{$newCreditURL}" class="button"><span><div class="icon add-icon"></div>{ts}Submit Credit Card Membership{/ts}</span></a><br /><br />
             {else}
                 <br/ ><br/ >
             {/if}

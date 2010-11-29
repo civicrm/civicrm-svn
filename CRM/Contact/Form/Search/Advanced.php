@@ -187,6 +187,8 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
      */
     function &setDefaultValues() {
         $defaults = $this->_formValues;
+        $this->normalizeDefaultValues( $defaults );
+        
         if ( $this->_context === 'amtg' ) {
             $defaults['task'] = CRM_Contact_Task::GROUP_CONTACTS;
         } else {
@@ -333,6 +335,30 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
         }
 
         return;
+    }
+    
+     /**
+     * normalize default values for multiselect plugins
+     *
+     * @return void
+     * @access private
+     */
+    function normalizeDefaultValues( &$defaults ) {
+        if ( !is_array($defaults) ) {
+            $defaults = array( );
+        }
+
+        if ( $this->_ssID && empty($_POST) ) {
+            $fields = array( 'contact_type', 'group', 'contact_tags');
+
+            foreach( $fields as $field ) {
+                $fieldValues = CRM_Utils_Array::value( $field, $defaults );
+                if ( $fieldValues && is_array($fieldValues) ) {
+                    $defaults[$field] = array_keys($fieldValues);
+                }
+            }
+        } 
+        return $defaults;
     }
 }
 

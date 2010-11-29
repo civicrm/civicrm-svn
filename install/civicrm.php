@@ -130,7 +130,7 @@ function civicrm_source( $dsn, $fileName, $lineMode = false ) {
         $string = file_get_contents( $fileName );
 
         // change \r\n to fix windows issues
-        $string = ereg_replace("\r\n", "\n", $string );
+        $string = str_replace("\r\n", "\n", $string );
 
         //get rid of comments starting with # and --
 

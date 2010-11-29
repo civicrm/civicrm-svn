@@ -29,17 +29,18 @@
     </div>
 	{strip}
 	<table id='optionField'>
-	<tr><th>&nbsp;</th>
-	<th> {ts}Default{/ts}</th>
-        <th> {ts}Label{/ts}</th>
-	<th> {ts}description{/ts}</th>
-        <th> {ts}Amount{/ts} {help id="id-negative-options"}</th>
-	{if $useForEvent}
-	  <th> {ts}Participant Count{/ts}</th>
-	  <th> {ts}Max Participant{/ts}</th>
-	{/if}
-        <th> {ts}Weight{/ts}</th>
-	<th> {ts}Active?{/ts}</th>
+	<tr>
+        <th>&nbsp;</th>
+	    <th>{ts}Default{/ts}</th>
+        <th>{ts}Label{/ts}</th>
+        <th>{ts}Amount{/ts} {help id="id-negative-options"}</th>
+	    <th>{ts}Description{/ts}</th>
+        {if $useForEvent}
+	        <th>{ts}Participant Count{/ts}</th>
+	        <th>{ts}Max Participant{/ts}</th>
+	    {/if}
+        <th>{ts}Weight{/ts}</th>
+	    <th>{ts}Active?{/ts}</th>
     </tr>
 	
 	{section name=rowLoop start=1 loop=12}
@@ -59,9 +60,9 @@
 		</div>
 	    </td>
 	    <td> {$form.option_label.$index.html}</td>
-	    <td> {$form.option_description.$index.html}</td>
 	    <td> {$form.option_amount.$index.html|crmReplace:class:eight}</td>
-	    {if $useForEvent}
+	    <td> {$form.option_description.$index.html}</td>
+        {if $useForEvent}
 	      <td> {$form.option_count.$index.html}</td>
 	      <td> {$form.option_max_value.$index.html}</td>
 	    {/if}  

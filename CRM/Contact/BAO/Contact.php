@@ -1735,16 +1735,6 @@ ORDER BY civicrm_email.is_primary DESC";
             $contact =& self::create( $data );
         }
         
-        // update sortname to primary email id if null
-        if ( !$contact->sort_name && $contact->id &&
-             ($primEmail = CRM_Contact_BAO_Contact::getPrimaryEmail( $contact->id )) ) {
-            $query = 'UPDATE civicrm_contact SET sort_name = %1
-                      WHERE id = %2';
-            CRM_Core_DAO::singleValueQuery( $query, array( 1 => array( $primEmail,  'String' ),
-                                                           2 => array( (int)$contact->id, 'Integer' ) ) );
-            $contact->sort_name = $primEmail;
-        }
-
         // contact is null if the profile does not have any contact fields
         if ( $contact ) {
           $contactID = $contact->id;

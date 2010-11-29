@@ -26,7 +26,7 @@ class api_v2_CustomValueContactTypeTest  extends CiviUnitTestCase
         $groupIndividual   = array(
                                    'title'       => 'TestGroup For Individual',
                                    'name'        => 'testGroupIndividual',
-                                   'extends'     => 'individual',
+                                   'extends'     => array( 'individual' ),
                                    'style'       => 'Inline',
                                    'is_active'   => 1
                           );
@@ -49,8 +49,8 @@ class api_v2_CustomValueContactTypeTest  extends CiviUnitTestCase
         $groupIndiStudent   = array(
                                     'title'       => 'TestGroup For Individual - Student',
                                     'name'        => 'testGroupIndividualStudent',
-                                    'extends'     => 'Individual',
-                                    'extends_entity_column_value' => CRM_Core_DAO::VALUE_SEPARATOR.'Student'.CRM_Core_DAO::VALUE_SEPARATOR,
+                                    'extends'     => array( 'Individual', array('Student') ),
+                                    
                                     'style'       => 'Inline',
                                     'is_active'   => 1
                                     );
@@ -72,31 +72,36 @@ class api_v2_CustomValueContactTypeTest  extends CiviUnitTestCase
         $params = array( 'first_name'   => 'Mathev',     
                          'last_name'    => 'Adison',
                          'contact_type' => 'Individual',
+                         'addressee'    => 1
                          );
         $this->individual = Contact::create( $params );
         
         $params = array( 'first_name'   => 'Steve',     
                          'last_name'    => 'Tosun',
                          'contact_type' => 'Individual',
-                         'contact_sub_type' => 'Student'
+                         'contact_sub_type' => 'Student',
+                         'addressee'    => 1
                          );
         $this->individualStudent = Contact::create( $params );
         
         $params = array( 'first_name'   => 'Mark',     
                          'last_name'    => 'Dawson',
                          'contact_type' => 'Individual',
-                         'contact_sub_type' => 'Parent'
+                         'contact_sub_type' => 'Parent',
+                         'addressee'    => 1
                          );
         $this->individualParent = Contact::create( $params );
         
         $params = array( 'organization_name' => 'Wellspring' ,     
                          'contact_type'      => 'Organization',
+                         'addressee'    => 1
                          );
         $this->organization = Contact::create( $params );
         
         $params = array( 'organization_name' => 'SubUrban' ,     
                          'contact_type'      => 'Organization',
-                         'contact_sub_type'  => 'Sponsor'
+                         'contact_sub_type'  => 'Sponsor',
+                         'addressee'    => 1
                          );
         $this->organizationSponsor = Contact::create( $params );
     }

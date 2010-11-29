@@ -241,7 +241,11 @@ class CRM_Contact_Form_Search_Criteria {
                     $selectElements = array( '' => ts('- select -') ) 
                         + CRM_Core_PseudoConstant::$select( );
                     $element = $form->addElement('select', $name, $title, $selectElements );   
-                }
+                } else {
+                    $selectElements = array( '' => ts('- select -') ) 
+                        + CRM_Core_PseudoConstant::$select( );
+                    $element = $form->addElement('select', $name, $title, $selectElements );   
+		}
                 if ( $multiSelect ) {
                     $element->setMultiple( true );
                 }

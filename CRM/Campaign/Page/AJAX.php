@@ -74,7 +74,7 @@ class CRM_Campaign_Page_AJAX
         $activityId = CRM_Campaign_Form_Task_Interview::registerInterview( $params );
         $result = array( 'status'       => ( $activityId ) ? 'success' : 'fail',
                          'voter_id'     => $voterId,
-                         'activity_id'  => $interviewId );
+                         'activity_id'  => $params['interviewer_id'] );
         
         require_once "CRM/Utils/JSON.php";
         echo json_encode( $result );

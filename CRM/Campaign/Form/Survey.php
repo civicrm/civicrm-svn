@@ -245,8 +245,6 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
                         array('onChange' => 'loadOptionGroup( )' ) );
         }
         
-        $this->assign( 'existingOptions', $existingOptions );
-        
         $element =& $this->addRadio( 'option_type', 
                                      ts('Survey Responses'), 
                                      $optionTypes,
@@ -596,7 +594,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         }
         
         if( ! is_a( $surveyId, 'CRM_Core_Error' ) ) {
-            CRM_Core_Session::setStatus( ts( 'Survey %1 as been saved.', array( 1 => $params['title'] ) ) );
+            CRM_Core_Session::setStatus( ts( 'Survey %1 has been saved.', array( 1 => $params['title'] ) ) );
         }
         
         if ( $this->_context == 'dialog' )  {

@@ -38,6 +38,7 @@ function com_install() {
     
     $configTaskUrl = $liveSite . "/administrator/{$script}?option=com_civicrm&task=civicrm/admin/configtask&reset=1";
     $upgradeUrl    = $liveSite . "/administrator/{$script}?option=com_civicrm&task=civicrm/upgrade&reset=1";
+    $registerSiteURL = "http://civicrm.org/civicrm/profile/create?reset=1&gid=15";
     
     if ( $civicrmUpgrade ) {
         $docLink = CRM_Utils_System::docURL2( 'Installation and Upgrades', true, 'Upgrade Guide' );    
@@ -78,6 +79,7 @@ function com_install() {
                     <li>' . $event. '</li>
                 </ul>
             </p>
+           <p><strong>Have you registered this site at CiviCRM.org? If not, please help strengthen the CiviCRM ecosystem by taking a few minutes to <a href="' . $registerSiteURL . '" target="_blank">fill out the site registration form</a>. The information collected will help us prioritize improvements, target our communications and build the community. If you have a technical role for this site, be sure to check Keep in Touch to receive technical updates (a low volume  mailing list).</strong></p>
         </td>
     </tr>
   </table>

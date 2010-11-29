@@ -162,8 +162,10 @@
                     }
                     str = '<tr id="cnote_'+ response[i].id +'" class="'+ rowClassOddEven +' note-comment_'+ noteId +'">'
                         + '<td></td>'
-                        + '<td colspan="2" style="padding-left: 2em">'
+                        + '<td style="padding-left: 2em">'
                         + response[i].note
+                        + '</td><td>'
+                        + response[i].subject
                         + '</td><td>'
                         + response[i].modified_date
                         + '</td><td>'
