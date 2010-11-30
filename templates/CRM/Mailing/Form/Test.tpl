@@ -40,7 +40,7 @@
   </table>
 </fieldset>
 
-<div class="crm-accordion-wrapper crm-plaint_text_email-accordion crm-accordion-closed">
+<div class="crm-accordion-wrapper crm-plain_text_email-accordion crm-accordion-closed">
     <div class="crm-accordion-header">
         <div class="icon crm-accordion-pointer"></div> 
         {ts}Preview Mailing{/ts}
