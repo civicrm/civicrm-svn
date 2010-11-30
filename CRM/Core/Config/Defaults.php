@@ -131,6 +131,17 @@ class CRM_Core_Config_Defaults
 
         $baseURL = $config->userFrameworkBaseURL;
 
+        // CRM-6216: Drupal’s $baseURL might have a trailing LANGUAGE_NEGOTIATION_PATH,
+        // which needs to be stripped before we start basing ResourceURL on it
+        if ($config->userFramework == 'Drupal') {
+            global $language;
+            if (isset($language->prefix) and $language->prefix) {
+                if (substr($baseURL, -(strlen($language->prefix) + 1)) == $language->prefix . '/') {
+                    $baseURL = substr($baseURL, 0, -(strlen($language->prefix) + 1));
+                }
+            }
+        }
+
         $baseCMSURL = CRM_Utils_System::baseCMSURL( );
         if ( $config->templateCompileDir ) {
             $path = CRM_Utils_File::baseFilePath( $config->templateCompileDir );
