@@ -202,7 +202,7 @@ VALUES
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES     
-    ( @domainID, NULL, '{ts escape="sql"}Other{/ts}', 'Other', 'access CiviGrant,administer CiviCase,access my cases and activities,access all cases and activities,administer CiviCampaign,manage campaign,reserve campaign contacts,release campaign contacts,interview campaign contacts', 'OR', NULL, '1', NULL, 9 );
+    ( @domainID, NULL, '{ts escape="sql"}Other{/ts}', 'Other', 'access CiviGrant,administer CiviCase,access my cases and activities,access all cases and activities,administer CiviCampaign,manage campaign,reserve campaign contacts,release campaign contacts,interview campaign contacts,gotv campaign contacts', 'OR', NULL, '1', NULL, 9 );
     
 SET @otherlastID:=LAST_INSERT_ID();
 INSERT INTO civicrm_navigation
@@ -235,7 +235,7 @@ VALUES
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES
-    ( @domainID, NULL, '{ts escape="sql"}Campaigns{/ts}', 'Campaigns', 'interview campaign contacts,release campaign contacts,reserve campaign contacts,manage campaign,administer CiviCampaign', 'OR', @otherlastID, '1', NULL, 3 );
+    ( @domainID, NULL, '{ts escape="sql"}Campaigns{/ts}', 'Campaigns', 'interview campaign contacts,release campaign contacts,reserve campaign contacts,manage campaign,administer CiviCampaign,gotv campaign contacts', 'OR', @otherlastID, '1', NULL, 3 );
 
 SET @campaignlastID:=LAST_INSERT_ID();
 INSERT INTO civicrm_navigation
@@ -255,7 +255,7 @@ VALUES
     ( @domainID, 'civicrm/survey/search&reset=1&op=reserve', '{ts escape="sql"}Reserve Respondents{/ts}', 'Reserve Respondents', 'administer CiviCampaign,manage campaign,reserve campaign contacts', 'OR', @campaignlastID, '1', NULL, 5 ),
     ( @domainID, 'civicrm/survey/search&reset=1&op=interview', '{ts escape="sql"}Interview Respondents{/ts}', 'Interview Respondents', 'administer CiviCampaign,manage campaign,interview campaign contacts', 'OR', @campaignlastID, '1', NULL, 6 ),
     ( @domainID, 'civicrm/survey/search&reset=1&op=release', '{ts escape="sql"}Release Respondents{/ts}', 'Release Respondents', 'administer CiviCampaign,manage campaign,release campaign contacts', 'OR', @campaignlastID, '1', NULL, 7 ),
-    ( @domainID, 'civicrm/campaign/gotv&reset=1', '{ts escape="sql"}GOTV (Voter Tracking){/ts}', 'Voter Listing', 'administer CiviCampaign,manage campaign,release campaign contacts', 'OR', @campaignlastID, '1', NULL, 8 ),
+    ( @domainID, 'civicrm/campaign/gotv&reset=1', '{ts escape="sql"}GOTV (Voter Tracking){/ts}', 'Voter Listing', 'administer CiviCampaign,manage campaign,release campaign contacts,gotv campaign contacts', 'OR', @campaignlastID, '1', NULL, 8 ),
     ( @domainID, 'civicrm/campaign/vote&reset=1', '{ts escape="sql"}Conduct Survey{/ts}', 'Conduct Survey', 'administer CiviCampaign,manage campaign,reserve campaign contacts,interview campaign contacts', 'OR', @campaignlastID, '1', NULL, 9 );
 
     
