@@ -108,6 +108,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
             case 'event_id':
                 $this->_eventIndex               = $index;
                 break;
+            case 'participant_status':
             case 'participant_status_id':
                 $this->_participantStatusIndex   = $index;
                 break;
@@ -232,10 +233,17 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
                         } 
                     } 
                 }
-            } else if( $val && ( $key == 'participant_status_id' ) ){
-                if ( !CRM_Import_Parser_Contact::in_value($val,CRM_Event_PseudoConstant::participantStatus())) {
-                    CRM_Import_Parser_Contact::addToErrorMsg('Participant Status', $errorMessage);
-                }   
+            } else if ( $val && ( ( $key == 'participant_status_id' ) || ( $key == 'participant_status' ) ) ) {
+                $statusIDs = CRM_Event_PseudoConstant::participantStatus( );
+                if ( $key == 'participant_status_id' ) {
+                    if ( !in_array( trim( $val ), array_keys( $statusIDs ) ) ) {
+                        CRM_Import_Parser_Contact::addToErrorMsg( 'Participant Status Id', $errorMessage );
+                        break;
+                    }
+                } else if ( !CRM_Import_Parser_Contact::in_value( $val, $statusIDs ) ) {
+                    CRM_Import_Parser_Contact::addToErrorMsg( 'Participant Status', $errorMessage );
+                    break;
+                }
             }
         }
         //date-Format part ends
