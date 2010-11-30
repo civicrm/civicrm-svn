@@ -396,31 +396,39 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                     $entryFound = true; 
                 }
             }
-            
-            if ( array_key_exists('civicrm_contact_contact_assignee', $row ) ) {
-                if ( $value = $row['civicrm_activity_assignment_assignee_contact_id'] ) {
+            if ( array_key_exists( 'civicrm_contact_contact_assignee', $row ) && 
+                 $row['civicrm_activity_assignment_assignee_contact_id'] ) {
+                $assignee = array( );
+                //retrieve all contact assignees and build list with links 
+                require_once 'CRM/Activity/BAO/ActivityAssignment.php';
+                $activity_assignment_ids = CRM_Activity_BAO_ActivityAssignment::getAssigneeNames( $row['civicrm_activity_id'], false, true );
+                foreach ( $activity_assignment_ids as $cid => $assignee_name ) {
                     if ( $viewLinks ) {
-                        $url = CRM_Utils_System::url( "civicrm/contact/view"  , 
-                                                      'reset=1&cid=' . $value ,
-                                                      $this->_absoluteUrl );
-                        $rows[$rowNum]['civicrm_contact_contact_assignee_link' ] = $url; 
-                        $rows[$rowNum]['civicrm_contact_contact_assignee_hover'] = $onHover;
+                        $url = CRM_Utils_System::url( "civicrm/contact/view", 'reset=1&cid=' . $cid, $this->_absoluteUrl );
+                        $assignee[] = '<a title="'.$onHover.'" href="'.$url.'">'.$assignee_name.'</a>'; 
+                    } else {
+                        $assignee[] = $assignee_name;
                     }
-                    $entryFound = true; 
                 }
+                $rows[$rowNum]['civicrm_contact_contact_assignee'] = implode( '; ', $assignee );
+                $entryFound = true;
             }
-            
-            if ( array_key_exists('civicrm_contact_contact_target', $row ) ) {
-                if ( $value = $row['civicrm_activity_target_target_contact_id'] ) {
+            if ( array_key_exists( 'civicrm_contact_contact_target', $row ) &&
+                 $row['civicrm_activity_target_target_contact_id'] ) {
+                $target = array( );
+                //retrieve all contact targets and build list with links
+                require_once 'CRM/Activity/BAO/ActivityTarget.php';
+                $activity_target_ids = CRM_Activity_BAO_ActivityTarget::getTargetNames( $row['civicrm_activity_id'] );
+                foreach ( $activity_target_ids as $cid => $target_name ) {
                     if ( $viewLinks ) {
-                        $url = CRM_Utils_System::url( "civicrm/contact/view"  , 
-                                                      'reset=1&cid=' . $value ,
-                                                      $this->_absoluteUrl );
-                        $rows[$rowNum]['civicrm_contact_contact_target_link' ] = $url; 
-                        $rows[$rowNum]['civicrm_contact_contact_target_hover'] = $onHover;
+                        $url = CRM_Utils_System::url( "civicrm/contact/view", 'reset=1&cid=' . $cid, $this->_absoluteUrl );
+                        $target[] = '<a title="'.$onHover.'" href="'.$url.'">'.$target_name.'</a>'; 
+                    } else {
+                        $target[] = $target_name;
                     }
-                    $entryFound = true; 
                 }
+                $rows[$rowNum]['civicrm_contact_contact_target'] = implode( '; ', $target );
+                $entryFound = true;
             }
             
             if ( array_key_exists('civicrm_activity_activity_type_id', $row ) ) {
