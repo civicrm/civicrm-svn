@@ -238,6 +238,8 @@ class CRM_Campaign_Page_AJAX
         }
         
         if ( $searchCount > 0 ) {
+            if ( $searchCount < $offset ) $offset = 0;
+            
             require_once( 'CRM/Contact/BAO/Contact/Utils.php' );
             $config = CRM_Core_Config::singleton( );
             
