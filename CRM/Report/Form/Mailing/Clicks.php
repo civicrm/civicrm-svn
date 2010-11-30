@@ -316,7 +316,7 @@ class CRM_Report_Form_Mailing_Clicks extends CRM_Report_Form {
 		$data = array('' => '--Please Select--');
 		
 		$mailing = new CRM_Mailing_BAO_Mailing();
-		$query = "SELECT name FROM civicrm_mailing";
+		$query = "SELECT name FROM civicrm_mailing ";
 		$mailing->query($query);
 		
 		while($mailing->fetch()) {
