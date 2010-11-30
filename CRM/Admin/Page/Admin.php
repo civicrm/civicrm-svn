@@ -51,8 +51,8 @@ class CRM_Admin_Page_Admin extends CRM_Core_Page
         if ( rand( 1, 10 ) == 3 &&
              CRM_Core_DAO::isDBMyISAM( 150 ) ) {
             $errorMessage = 'Your database is configured to use the MyISAM database engine. CiviCRM  requires InnoDB. You will need to convert any MyISAM tables in your database to InnoDB. Using MyISAM tables will result in data integrity issues.';
-            require_once 'CRM/Core/Error.php';
-            CRM_Core_Error::fatal( $errorMessage );
+            require_once 'CRM/Core/Session.php';
+            CRM_Core_Session::setStatus( $errorMessage );
         }
 
         if ( !CRM_Utils_System::isDBVersionValid( $errorMessage ) ) {
