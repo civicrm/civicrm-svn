@@ -3054,3 +3054,9 @@ div#crm-toolTip
 
 /*Needed for jstree contextmenu */ 
 #vakata-contextmenu.jstree-default-context li { background:none repeat scroll 0 0 transparent;}
+
+/* Class for successful upgrade */
+.upgrade-success { 
+    background-color:#00CC00;
+    color:white;
+ }
