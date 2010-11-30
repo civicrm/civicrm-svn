@@ -181,12 +181,18 @@ function &civicrm_activity_update( &$params )
         return $errors;
     }
    
-    $activity = CRM_Activity_BAO_Activity::create( $params );
-
+    // processing for custom data
     $values = array();
-    _civicrm_object_to_array( $activity, $values );
+    _civicrm_custom_format_params( $params, $values, 'Activity' );
+    if ( ! empty($values['custom']) ) {
+        $params['custom'] = $values['custom'];
+    }
     
-    return $values;
+    $activity = CRM_Activity_BAO_Activity::create( $params );
+    $activityArray = array();
+    _civicrm_object_to_array( $activity, $activityArray );
+    
+    return $activityArray;
 }
 
 /**
