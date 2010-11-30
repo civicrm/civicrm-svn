@@ -56,7 +56,6 @@ class CRM_Core_I18n_PseudoConstant
     static function longForShort($short)
     {
         $longForShortMapping =& self::longForShortMapping();
-        CRM_Core_Error::debug('$longForShortMapping', $longForShortMapping);
         return $longForShortMapping[$short];
     }
 
