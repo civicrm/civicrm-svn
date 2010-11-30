@@ -81,6 +81,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
     protected $_single;
     
     public $_context;
+    public $_compContext;
     public $_action;
     public $_activityTypeFile;
 
@@ -239,6 +240,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             if ( CRM_Contact_Form_Search::isSearchContext( $this->_context ) ) {
                 $this->_context = 'search';
             }
+            $this->_compContext = CRM_Utils_Request::retrieve( 'compContext', 'String', $this );
         }
         $this->assign( 'context', $this->_context );
         
@@ -381,7 +383,9 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         } else if ( $this->_context == 'search' ) {
             $urlParams = 'force=1';
             if ( $qfKey ) $urlParams .= "&qfKey=$qfKey"; 
-            $urlString = 'civicrm/activity/search';
+            if ( $this->_compContext == 'advanced' ) {
+                $urlString = 'civicrm/contact/search/advanced';
+            }
             $this->assign( 'searchKey',  $qfKey );
         } else if ( $this->_context != 'caseActivity' ) {
             $urlParams = "action=browse&reset=1&cid={$this->_currentlyViewedContactId}&selectedChild=activity";

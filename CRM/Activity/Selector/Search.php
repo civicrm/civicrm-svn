@@ -112,6 +112,14 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
     protected $_context = null;
     
     /**
+     * what component context are we being invoked from
+     *   
+     * @access protected     
+     * @var string
+     */     
+    protected $_compContext = null;
+
+    /**
      * queryParams is the array returned by exportValues called on
      * the HTML_QuickForm_Controller for that page.
      *
@@ -159,7 +167,8 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
                          $activityClause = null,
                          $single = false,
                          $limit = null,
-                         $context = 'search' ) 
+                         $context = 'search',
+                         $compContext = null ) 
     {
         // submitted form values
         $this->_queryParams =& $queryParams;
@@ -167,6 +176,7 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
         $this->_single  = $single;
         $this->_limit   = $limit;
         $this->_context = $context;
+        $this->_compContext = $compContext;
 
         $this->_activityClause = $activityClause;
         
@@ -280,7 +290,8 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
                                                           CRM_Utils_Array::value( 'source_record_id', $row ),
                                                           $accessMailingReport,
                                                           CRM_Utils_Array::value( 'activity_id', $row ),
-                                                          $this->_key );
+                                                          $this->_key,
+                                                          $this->_compContext );
             $row['action'] = CRM_Core_Action::formLink( $actionLinks, null,
                                                         array( 'id'  => $result->activity_id,
                                                                'cid' => $contactId,

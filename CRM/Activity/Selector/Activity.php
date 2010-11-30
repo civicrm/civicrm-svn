@@ -114,13 +114,17 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
                           $sourceRecordId = null, 
                           $accessMailingReport = false, 
                           $activityId = null, 
-                          $key = null ) 
+                          $key = null,
+                          $compContext = null ) 
     {
         $activityTypes   = CRM_Core_PseudoConstant::activityType( false );
         $activityTypeIds = array_flip( CRM_Core_PseudoConstant::activityType( true, true, false, 'name' ) );
         
         $extraParams = ( $key ) ? "&key={$key}" : null;
-        
+        if ( $compContext ) {
+            $extraParams .= "&compContext={$compContext}";
+        }
+
         //show  edit link only for meeting/phone and other activities
         $showUpdate = false;
         $showDelete = false;
