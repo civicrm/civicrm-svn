@@ -3,15 +3,11 @@
 {include file='../CRM/Upgrade/3.2.alpha3.msg_template/civicrm_msg_template.tpl'}
 
 -- CRM-6144
-   SELECT @option_value_activityTypeId := civicrm_option_value.id
-     FROM civicrm_option_value 
-LEFT JOIN civicrm_option_group ON ( civicrm_option_value.option_group_id = civicrm_option_group.id 
-      AND civicrm_option_group.name = 'activity_type' )
-    WHERE civicrm_option_value.name = 'Close Case';
-
    UPDATE civicrm_option_value 
-      SET is_reserved = 1, is_active = 0 
-    WHERE civicrm_option_value.id = @option_value_activityTypeId;
+LEFT JOIN civicrm_option_group ON ( civicrm_option_value.option_group_id = civicrm_option_group.id )
+      SET civicrm_option_value.is_reserved = 1, civicrm_option_value.is_active = 0 
+    WHERE civicrm_option_group.name = 'activity_type' 
+      AND civicrm_option_value.name = 'Close Case';
 
 -- CRM-6102
 ALTER TABLE civicrm_preferences 
