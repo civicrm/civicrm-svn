@@ -65,10 +65,15 @@ function civicrm_user_insert( &$edit, &$user, $category = NULL )
     if ( ! civicrm_initialize( ) ) {
         return;
     }
+
     $config = CRM_Core_Config::singleton( );
     if ( $config->inCiviCRM ) {
         return;
     }
+
+    $args = func_get_args( );
+    CRM_Core_Error::debug( $args );
+    exit( );
 
     // did civicrm generate this page, or is it via a user hook?
     if ( civicrm_on_user_page( ) ) {
