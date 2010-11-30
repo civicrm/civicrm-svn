@@ -34,13 +34,14 @@
  *
  */
 
+require_once 'CRM/Core/OptionValue.php';
+
 class CRM_Core_I18n_PseudoConstant
 {
     static function &languages()
     {
         static $languages = null;
         if ($languages === null) {
-            require_once 'CRM/Core/OptionValue.php';
             $rows = array();
             CRM_Core_OptionValue::getValues(array('name' => 'languages'), $rows, 'weight', true);
 
@@ -50,5 +51,38 @@ class CRM_Core_I18n_PseudoConstant
             }
         }
         return $languages;
+    }
+
+    static function longForShort($short)
+    {
+        $longForShortMapping =& self::longForShortMapping();
+        CRM_Core_Error::debug('$longForShortMapping', $longForShortMapping);
+        return $longForShortMapping[$short];
+    }
+
+    static function &longForShortMapping()
+    {
+        static $longForShortMapping = null;
+        if ($longForShortMapping === null) {
+            $rows = array();
+            CRM_Core_OptionValue::getValues(array('name' => 'languages'), $rows);
+
+            $longForShortMapping = array();
+            foreach ($rows as $row) {
+                $longForShortMapping[$row['value']] = $row['name'];
+            }
+            // hand-crafted enforced overrides for language variants
+            $longForShortMapping['zh'] = 'zh_CN';
+            $longForShortMapping['en'] = 'en_US';
+            $longForShortMapping['fr'] = 'fr_FR';
+            $longForShortMapping['pt'] = 'pt_PT';
+            $longForShortMapping['es'] = 'es_ES';
+        }
+        return $longForShortMapping;
+    }
+
+    static function shortForLong($long)
+    {
+        return substr($long, 0, 2);
     }
 }
