@@ -71,10 +71,6 @@ function civicrm_user_insert( &$edit, &$user, $category = NULL )
         return;
     }
 
-    $args = func_get_args( );
-    CRM_Core_Error::debug( $args );
-    exit( );
-
     // did civicrm generate this page, or is it via a user hook?
     if ( civicrm_on_user_page( ) ) {
         civicrm_register_data( $edit, $user, $category, false );
