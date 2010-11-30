@@ -836,9 +836,9 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         }
 
         // process membership status for deceased contact
-        $deceasedParams = array( 'contact_id'  => $params['contact_id'],
-                                 'is_deceased'   => $params['is_deceased'],
-                                 'deceased_date' => $params['deceased_date'] );
+        $deceasedParams = array( 'contact_id'    => CRM_Utils_Array::value( 'contact_id', $params ),
+                                 'is_deceased'   => CRM_Utils_Array::value( 'is_deceased', $params, false ),
+                                 'deceased_date' => CRM_Utils_Array::value( 'deceased_date', $params, null ) );
         $updateMembershipMsg = $this->updateMembershipStatus( $deceasedParams );
         
         // action is taken depending upon the mode
@@ -922,9 +922,6 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         $statusMsg = ts('Your %1 contact record has been saved.', array( 1 => $contact->contact_type_display ) );
         if ( $parseStatusMsg ) {
             $statusMsg =  "$statusMsg <br > $parseStatusMsg";
-        }
-        if ( $uploadFailMsg  ) {
-            $statusMsg = "$statusMsg <br > $uploadFailMsg";
         }
         if ( $updateMembershipMsg ) {
             $statusMsg = "$statusMsg <br > $updateMembershipMsg";

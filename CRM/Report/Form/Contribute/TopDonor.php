@@ -279,7 +279,9 @@ class CRM_Report_Form_Contribute_TopDonor extends CRM_Report_Form {
         while ( $dao->fetch( ) ) {
             $row = array( );
             foreach ( $this->_columnHeaders as $key => $value ) {
-                $row[$key] = $dao->$key;
+                if ( property_exists( $dao, $key ) ) {
+                    $row[$key] = $dao->$key;
+                }
             }
             $rows[] = $row;
         }

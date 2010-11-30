@@ -199,7 +199,7 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
               array_key_exists( 'employer_id', $params )) ) {
             // create current employer
             require_once 'CRM/Contact/BAO/Contact/Utils.php';
-            if ( $params['employer_id']  ) {
+            if ( CRM_Utils_Array::value( 'employer_id', $params ) ) {
                 CRM_Contact_BAO_Contact_Utils::createCurrentEmployerRelationship( $contact->id, 
                                                                                   $params['employer_id'] );
             } elseif ( $params['current_employer'] ) {
@@ -2056,7 +2056,7 @@ UNION
             // get preferred languages
             if ( ! empty( $contact->preferred_language ) ) {
                 $languages =& CRM_Core_PseudoConstant::languages( );
-                $values['preferred_language'] = $languages[$contact->preferred_language];
+                $values['preferred_language'] = CRM_Utils_Array::value($contact->preferred_language, $languages);
             }
 
             // Calculating Year difference            
