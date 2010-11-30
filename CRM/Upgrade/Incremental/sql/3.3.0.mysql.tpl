@@ -97,3 +97,20 @@ UPDATE civicrm_option_value SET name = 'te_IN' WHERE value = 'te' AND option_gro
 UPDATE civicrm_option_value SET name = 'th_TH' WHERE value = 'th' AND option_group_id = @option_group_id_languages;
 UPDATE civicrm_option_value SET name = 'tr_TR' WHERE value = 'tr' AND option_group_id = @option_group_id_languages;
 UPDATE civicrm_option_value SET name = 'vi_VN' WHERE value = 'vi' AND option_group_id = @option_group_id_languages;
+
+UPDATE civicrm_option_value SET {localize field='label'}label = 'Chinese (China)'           {/localize} WHERE name = 'zh_CN' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET {localize field='label'}label = 'English (United States)'   {/localize} WHERE name = 'en_US' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET {localize field='label'}label = 'French (France)'           {/localize} WHERE name = 'fr_FR' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET {localize field='label'}label = 'Portuguese (Portugal)'     {/localize} WHERE name = 'pt_PT' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET {localize field='label'}label = 'Spanish; Castilian (Spain)'{/localize} WHERE name = 'es_ES' AND option_group_id = @option_group_id_languages;
+
+SELECT @weight := MAX(weight) FROM civicrm_option_value WHERE option_group_id = @option_group_id_languages;
+INSERT INTO civicrm_option_value
+  (option_group_id,            name,    value, {localize field='label'}label{/localize},           weight) VALUES
+  (@option_group_id_languages, 'zh_TW', 'zh',  {localize}'Chinese (Taiwan)'{/localize},            @weight := @weight + 1),
+  (@option_group_id_languages, 'en_AU', 'en',  {localize}'English (Australia)'{/localize},         @weight := @weight + 1),
+  (@option_group_id_languages, 'en_CA', 'en',  {localize}'English (Canada)'{/localize},            @weight := @weight + 1),
+  (@option_group_id_languages, 'en_GB', 'en',  {localize}'English (United Kingdom)'{/localize},    @weight := @weight + 1),
+  (@option_group_id_languages, 'fr_CA', 'fr',  {localize}'French (Canada)'{/localize},             @weight := @weight + 1),
+  (@option_group_id_languages, 'pt_BR', 'pt',  {localize}'Portuguese (Brazil)'{/localize},         @weight := @weight + 1),
+  (@option_group_id_languages, 'es_MX', 'es',  {localize}'Spanish; Castilian (Mexico)'{/localize}, @weight := @weight + 1);
