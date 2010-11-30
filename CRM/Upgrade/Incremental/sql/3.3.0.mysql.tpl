@@ -59,3 +59,41 @@ VALUES
 
 UPDATE civicrm_report_instance SET navigation_id = LAST_INSERT_ID() WHERE id = @instanceID;
 
+-- CRM-7123
+SELECT @option_group_id_languages := MAX(id) FROM civicrm_option_group WHERE name = 'languages';
+UPDATE civicrm_option_value SET name = 'af_ZA' WHERE value = 'af' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'sq_AL' WHERE value = 'sq' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'ar_EG' WHERE value = 'ar' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'bg_BG' WHERE value = 'bg' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'ca_ES' WHERE value = 'ca' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'zh_CN' WHERE value = 'zh' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'cs_CZ' WHERE value = 'cs' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'da_DK' WHERE value = 'da' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'nl_NL' WHERE value = 'nl' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'en_US' WHERE value = 'en' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'et_EE' WHERE value = 'et' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'fi_FI' WHERE value = 'fi' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'fr_FR' WHERE value = 'fr' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'de_DE' WHERE value = 'de' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'el_GR' WHERE value = 'el' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'he_IL' WHERE value = 'he' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'hi_IN' WHERE value = 'hi' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'hu_HU' WHERE value = 'hu' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'id_ID' WHERE value = 'id' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'it_IT' WHERE value = 'it' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'ja_JP' WHERE value = 'ja' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'km_KH' WHERE value = 'km' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'lt_LT' WHERE value = 'lt' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'no_NO' WHERE value = 'no' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'pl_PL' WHERE value = 'pl' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'pt_PT' WHERE value = 'pt' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'ro_RO' WHERE value = 'ro' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'ru_RU' WHERE value = 'ru' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'sk_SK' WHERE value = 'sk' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'sl_SI' WHERE value = 'sl' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'es_ES' WHERE value = 'es' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'sv_SE' WHERE value = 'sv' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'te_IN' WHERE value = 'te' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'th_TH' WHERE value = 'th' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'tr_TR' WHERE value = 'tr' AND option_group_id = @option_group_id_languages;
+UPDATE civicrm_option_value SET name = 'vi_VN' WHERE value = 'vi' AND option_group_id = @option_group_id_languages;
