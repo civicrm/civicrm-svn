@@ -406,11 +406,10 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
                  ( $id          = CRM_Utils_Array::value( 'civicrm_participant_participant_record', $row ) ) ) {
                 $url     = CRM_Report_Utils_Report::getNextUrl( 'contact/detail', 
                                                                 "reset=1&force=1&id_op=eq&id_value=$cid",
-                                                                $this->_absoluteUrl );
+                                                                $this->_absoluteUrl, $this->_id );
                 
                 $viewUrl = CRM_Utils_System::url( "civicrm/contact/view/participant", 
-                                                  "reset=1&id=$id&cid=$cid&action=view",
-                                                  $this->_absoluteUrl );
+                                                  "reset=1&id=$id&cid=$cid&action=view" );
                 
                 $contactTitle     = ts('View Contact Details');
                 $participantTitle = ts('View Participant Record');
