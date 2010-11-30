@@ -40,51 +40,14 @@ class CRM_Core_I18n_PseudoConstant
     {
         static $languages = null;
         if ($languages === null) {
-            $languages = array(
-                'en_US' => 'English (USA)',
-                'af_ZA' => 'Afrikaans',
-                'ar_EG' => 'العربية',
-                'bg_BG' => 'български',
-                'ca_ES' => 'Català',
-                'cs_CZ' => 'Česky',
-                'da_DK' => 'dansk',
-                'de_DE' => 'Deutsch',
-                'et_EE' => 'Eesti',
-                'el_GR' => 'Ελληνικά',
-                'en_AU' => 'English (Australia)',
-                'en_CA' => 'English (Canada)',
-                'en_GB' => 'English (United Kingdom)',
-                'es_ES' => 'español',
-                'es_MX' => 'español (Mexico)',
-                'fr_FR' => 'français',
-                'fr_CA' => 'français (Canada)',
-                'id_ID' => 'Bahasa Indonesia',
-                'hi_IN' => 'हिन्दी',
-                'it_IT' => 'Italiano',
-                'he_IL' => 'עברית',
-                'lt_LT' => 'Lietuvių',
-                'hu_HU' => 'Magyar',
-                'nl_NL' => 'Nederlands',
-                'ja_JP' => '日本語',
-                'no_NO' => 'Norsk',
-                'km_KH' => 'ភាសាខ្មែរ',
-                'pl_PL' => 'polski',
-                'pt_PT' => 'Português',
-                'pt_BR' => 'Português (Brasil)',
-                'ro_RO' => 'română',
-                'ru_RU' => 'русский',
-                'sq_AL' => 'shqip',
-                'sk_SK' => 'slovenčina',
-                'sl_SI' => 'slovenščina',
-                'fi_FI' => 'suomi',
-                'sv_SE' => 'Svenska',
-                'th_TH' => 'ไทย',
-                'vi_VN' => 'Tiếng Việt',
-                'te_IN' => 'తెలుగు',
-                'tr_TR' => 'Türkçe',
-                'zh_CN' => '中文 (简体)',
-                'zh_TW' => '中文 (繁體)',
-            );
+            require_once 'CRM/Core/OptionValue.php';
+            $rows = array();
+            CRM_Core_OptionValue::getValues(array('name' => 'languages'), $rows, 'weight', true);
+
+            $languages = array();
+            foreach ($rows as $row) {
+                $languages[$row['name']] = $row['label'];
+            }
         }
         return $languages;
     }
