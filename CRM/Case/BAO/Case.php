@@ -908,6 +908,9 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
         $from  = 'FROM civicrm_case_activity cca 
                   INNER JOIN civicrm_activity ca ON ca.id = cca.activity_id
                   INNER JOIN civicrm_contact cc ON cc.id = ca.source_contact_id
+                  INNER JOIN civicrm_option_group cog ON cog.name = "activity_type"
+                  INNER JOIN civicrm_option_value cov ON cov.option_group_id = cog.id 
+                         AND cov.value = ca.activity_type_id AND cov.is_active = 1
                   LEFT OUTER JOIN civicrm_option_group og ON og.name="activity_status"
                   LEFT OUTER JOIN civicrm_option_value ov ON ov.option_group_id=og.id AND ov.name="Scheduled"
                   LEFT JOIN civicrm_activity_assignment caa 
