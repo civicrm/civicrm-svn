@@ -699,7 +699,9 @@ SELECT civicrm_custom_group.name as name,
         $events = array( );
         $this->assign("past", false);
         require_once "CRM/Event/BAO/Event.php";
-        if ( $this->getElementValue( 'past_event' ) || ( $this->_action & CRM_Core_Action::UPDATE ) ) {
+        if ( $this->_action & CRM_Core_Action::UPDATE ) {
+            $events = CRM_Event_BAO_Event::getEvents( true, false, false );
+        } elseif ( $this->getElementValue( 'past_event' ) )  {
             $events = CRM_Event_BAO_Event::getEvents( true );
             $this->assign("past", true);
         } else {

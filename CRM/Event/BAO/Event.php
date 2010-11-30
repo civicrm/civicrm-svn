@@ -291,9 +291,9 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
      *
      * @static
      */
-    static function getEvents( $all = false, $id = false) 
+    static function getEvents( $all = false, $id = false, $isActive = true ) 
     {
-        $query = "SELECT `id`, `title`, `start_date` FROM `civicrm_event` WHERE ( civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0 AND civicrm_event.is_active = 1 )";
+        $query = "SELECT `id`, `title`, `start_date` FROM `civicrm_event` WHERE ( civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0 )";
         
         if ( $id ) {
             $query .= " AND `id` = {$id}";
@@ -301,6 +301,9 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
             $endDate = date( 'YmdHis' );
             $query .= " AND ( `end_date` >= {$endDate} OR end_date IS NULL )";
         }
+        if ( $isActive ) {
+            $query .= " AND civicrm_event.is_active = 1";
+        } 
 
         $query .= " ORDER BY title asc";
         $events = array( );
