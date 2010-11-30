@@ -607,7 +607,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                   '( $this->_params,
                      $this->_action,
                      null, false, null,
-                     "search" );' );
+                     "search", "advanced" );' );
         }
         $controller = new CRM_Contact_Selector_Controller( $selector ,
                                                            $this->get( CRM_Utils_Pager::PAGE_ID ),
@@ -719,7 +719,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                       '( $this->_params,
                          $this->_action,
                          null, false, null,
-                         "search" );' );
+                         "search", "advanced" );' );
             }
 
             $selector->setKey( $this->controller->_key );
