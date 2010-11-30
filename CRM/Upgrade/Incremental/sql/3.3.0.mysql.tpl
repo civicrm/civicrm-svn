@@ -262,3 +262,11 @@ INSERT INTO civicrm_option_value
   (@option_group_id_languages, 'fr_CA', 'fr',  {localize}'French (Canada)'{/localize},             @weight := @weight + 1),
   (@option_group_id_languages, 'pt_BR', 'pt',  {localize}'Portuguese (Brazil)'{/localize},         @weight := @weight + 1),
   (@option_group_id_languages, 'es_MX', 'es',  {localize}'Spanish; Castilian (Mexico)'{/localize}, @weight := @weight + 1);
+
+-- CRM-7119: switch civicrm_contact.preferred_language to the relevant xx_YY codes (special-casing language variants first)
+UPDATE civicrm_contact SET preferred_language = 'en_US' WHERE preferred_language = 'en';
+UPDATE civicrm_contact SET preferred_language = 'es_ES' WHERE preferred_language = 'es';
+UPDATE civicrm_contact SET preferred_language = 'fr_FR' WHERE preferred_language = 'fr';
+UPDATE civicrm_contact SET preferred_language = 'pt_PT' WHERE preferred_language = 'pt';
+UPDATE civicrm_contact SET preferred_language = 'zh_CN' WHERE preferred_language = 'zh';
+UPDATE civicrm_contact SET preferred_language = (SELECT name FROM civicrm_option_value WHERE value = preferred_language AND option_group_id = @option_group_id_languages LIMIT 1) WHERE LENGTH(preferred_language) = 2;
