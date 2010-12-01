@@ -74,6 +74,7 @@ class CRM_Logging_Schema
         if (!$this->isEnabled()) return;
 
         $this->dropTriggers();
+        $this->deleteReports();
     }
 
     /**
@@ -87,6 +88,7 @@ class CRM_Logging_Schema
             $this->createLogTableFor($table);
         }
         $this->createTriggers();
+        $this->addReports();
     }
 
     /**
@@ -144,6 +146,30 @@ class CRM_Logging_Schema
             $diffs[$table] = array_diff($this->columnsOf($table), $this->columnsOf("log_$table"));
         }
         return array_filter($diffs);
+    }
+
+    private function addReports()
+    {
+        require_once 'CRM/Core/OptionGroup.php';
+        $templates = CRM_Core_OptionGroup::values('report_template');
+        if (!isset($templates['logging/contact/summary']) or
+            !isset($templates['logging/contact/details'])) return;
+
+        require_once 'CRM/Report/BAO/Instance.php';
+
+        $bao = new CRM_Report_BAO_Instance;
+        $bao->domain_id  = CRM_Core_Config::domainID();
+        $bao->title      = ts('Contact Logging Report (Summary)');
+        $bao->report_id  = 'logging/contact/summary';
+        $bao->permission = 'administer CiviCRM';
+        $bao->insert();
+
+        $bao = new CRM_Report_BAO_Instance;
+        $bao->domain_id  = CRM_Core_Config::domainID();
+        $bao->title      = ts('Contact Logging Report (Details)');
+        $bao->report_id  = 'logging/contact/details';
+        $bao->permission = 'administer CiviCRM';
+        $bao->insert();
     }
 
     /**
@@ -241,6 +267,21 @@ COLS;
         foreach ($this->tables as $table) {
             $this->createTriggersFor($table);
         }
+    }
+
+    private function deleteReports()
+    {
+        require_once 'CRM/Report/DAO/Instance.php';
+
+        $bao = new CRM_Report_DAO_Instance;
+        $bao->domain_id = CRM_Core_Config::domainID();
+        $bao->report_id = 'logging/contact/summary';
+        $bao->delete();
+
+        $bao = new CRM_Report_DAO_Instance;
+        $bao->domain_id = CRM_Core_Config::domainID();
+        $bao->report_id = 'logging/contact/details';
+        $bao->delete();
     }
 
     /**
