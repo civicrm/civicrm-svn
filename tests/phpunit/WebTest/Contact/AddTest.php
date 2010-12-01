@@ -142,7 +142,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       
       //select preferred language
       $this->waitForElementPresent("preferred_language");
-      $this->select("preferred_language", "value=en");
+      $this->select("preferred_language", "value=en_US");
       
       
       //Notes section
@@ -252,7 +252,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       
       //select preferred language
       $this->waitForElementPresent("preferred_language");
-      $this->select("preferred_language", "value=fr");
+      $this->select("preferred_language", "value=fr_FR");
       
       
       //Notes section
@@ -356,7 +356,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->click("privacy[do_not_mail]");
       //select preferred language
       $this->waitForElementPresent("preferred_language");
-      $this->select("preferred_language", "value=de");
+      $this->select("preferred_language", "value=de_DE");
       
       //Notes section
       $this->click("notesBlock");
