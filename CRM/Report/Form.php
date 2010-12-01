@@ -1904,7 +1904,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
       cg.is_active = 1 AND 
       cf.is_active = 1 AND 
       cf.is_searchable = 1
-ORDER BY cg.table_name";
+ORDER BY cg.weight";
         $customDAO =& CRM_Core_DAO::executeQuery( $sql );
         
         $curTable  = null;
