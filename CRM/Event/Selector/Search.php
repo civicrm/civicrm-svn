@@ -445,7 +445,7 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
                                                 ),
                                           array(
                                                 'name'      => ts('Role'),
-                                                'sort'      => 'participant_role',
+                                                'sort'      => 'participant_role_id',
                                                 'direction' => CRM_Utils_Sort::DONTCARE,
                                                 ),
                                           array('desc' => ts('Actions') ),
