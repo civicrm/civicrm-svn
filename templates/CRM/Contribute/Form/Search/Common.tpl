@@ -78,7 +78,7 @@
 </tr>
 
 <tr>
-	<td><label>{ts}Currency Type{/ts}</label> <br />
+	<td><label>{ts}Currency{/ts}</label> <br />
 	{$form.contribution_currency_type.html}</td>
 </tr>
 {if $contributeGroupTree}

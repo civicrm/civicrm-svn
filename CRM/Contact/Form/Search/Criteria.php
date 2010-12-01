@@ -146,7 +146,7 @@ class CRM_Contact_Form_Search_Criteria {
         if ( count( $componentModes ) > 1 ) {
             $form->addElement('select',
                               'component_mode', 
-                              ts( 'Display Result as' ),
+                              ts( 'Display Results As' ),
                               $componentModes );
         }
 
