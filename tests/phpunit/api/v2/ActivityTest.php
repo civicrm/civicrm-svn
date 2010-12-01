@@ -413,7 +413,6 @@ class api_v2_ActivityTest extends CiviUnitTestCase
         $params = array( 'activity_id' => 1,
                          'activity_type_id' => 1 );
         $result = civicrm_activity_get( $params, true );
-        
         $this->assertEquals( 0, $result['is_error'],
                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
         $this->assertEquals( 1, $result['result']['id'],
@@ -949,6 +948,134 @@ class api_v2_ActivityTest extends CiviUnitTestCase
         $expected->assertEquals( $actual );
     }
     
+    /**
+     *  Test civicrm_activity_update() with valid parameters
+     *  and some custom data
+     */
+    function testActivityUpdateCustom( )
+    {
+        //  Truncate the tables
+        $op = new PHPUnit_Extensions_Database_Operation_Truncate( );
+        $op->execute( $this->_dbconn,
+                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
+                             dirname(__FILE__) . '/../../CiviTest/truncate-option.xml') );
+ 
+        //  Insert a row in civicrm_option_group creating option group
+        //  activity_type 
+        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
+        $op->execute( $this->_dbconn,
+                       new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
+                              dirname(__FILE__)
+                              . '/dataset/option_group_activity.xml') );
+
+        //  Insert a row in civicrm_option_value creating
+        //  activity_type 5
+        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
+        $op->execute( $this->_dbconn,
+                       new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
+                              dirname(__FILE__)
+                              . '/dataset/option_value_activity.xml') );
+                                                     
+        //  Insert rows in civicrm_custom_group and civicrm_custom_field
+        //  creating Activity Custom to extend activity type 5
+        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
+        $op->execute( $this->_dbconn,
+                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
+                             dirname(__FILE__)
+                             . '/dataset/custom_group_activity_type.xml') );
+ 
+        //  Drop and create table civicrm_value_activity_custom_9
+        $query = 'USE civicrm_tests_dev; DROP TABLE IF EXISTS civicrm_value_activity_custom_9';
+        self::$utils->do_query( $query );
+        $group = new CRM_Core_DAO_CustomGroup();
+        $group->extends = "Activity";
+        $group->table_name = 'civicrm_value_activity_custom_9';
+        $group->is_multiple = 0;
+        $group->is_active = 1;
+        CRM_Core_BAO_CustomGroup::createTable( $group );
+
+        //  Add column activity_custom_11 to the custom table
+        $customField =& new CRM_Core_DAO_CustomField();
+        $customField->column_name = 'activity_custom_11';
+        $customField->custom_group_id = 9;
+        $customField->is_required = 0;
+        $customField->is_active = 1;
+        $customField->data_type = 'String';
+        $customField->text_length = 255;
+        $customFiledId = CRM_Core_BAO_CustomField::createField( $customField, 'add' );
+        
+        //  Create an activity with custom data
+        $params = array(
+                'source_contact_id'   => 17,
+                'subject'             => 'Discussion on Activity Apis for v2',
+                'activity_date_time'  => date('Ymd'),
+                'duration'            => 120,
+                'location'            => 'Pensulvania',
+                'details'             => 'a test activity to check the update api',
+                'status_id'           => 1,
+                'activity_name'       => 'Test activity type',
+                'custom'              => array( array(
+                 array( 'value' => 'bite my test data',
+                        'type'  => 'String',
+                        'custom_field_id' => 11,
+                        'custom_group_id' => 9,
+                        'table_name'      => 'civicrm_value_activity_custom_9',
+                        'column_name'     => 'activity_custom_11',
+                        'is_multiple'     => 0,
+                        'file_id'         => null
+                        ) ) )
+                        );
+        $result = civicrm_activity_create( $params );
+        $this->assertEquals( 0, $result['is_error'],
+                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
+        $this->assertEquals( 1, $result['id'],
+                              'In line ' . __LINE__ );
+
+         //  Retrieve and check the activity created
+         $params = array( 'activity_id' => 1,
+                          'activity_type_id' => 1 );
+         $result = civicrm_activity_get( $params, true );
+         $this->assertEquals( 0, $result['is_error'],
+                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
+         $this->assertEquals( 1, $result['result']['id'],
+                              'In line ' . __LINE__ );
+         $this->assertEquals( 'Discussion on Activity Apis for v2',
+                              $result['result']['subject'],
+                              'In line ' . __LINE__ );
+        
+         //  Update the activity with custom data
+         $params = array(
+                 'id'                  => $result['result']['id'],
+                 'source_contact_id'   => 17,
+                 'subject'             => 'Discussion on Apis for v2 - Activity Update',
+                 'status_id'           => 1,
+                 'activity_name'       => 'Test activity type',
+                 'custom_11'           => 'Updated my test data'
+                         );
+         $result = civicrm_activity_update( $params );
+         
+         //  Retrieve and check the activity created
+         $params = array( 'activity_id' => $result['id'],
+                          'activity_type_id' => 1 );
+         $result = civicrm_activity_get( $params, true );
+         
+         $this->assertEquals( 0, $result['is_error'],
+                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
+         $this->assertEquals( 'Discussion on Apis for v2 - Activity Update',
+                              $result['result']['subject'],
+                              'In line ' . __LINE__ );
+         
+         // Check that the custom field value is update
+         $params = array( 'entityID'   => $result['result']['id'],
+                          'custom_11' => 1
+                          );
+         $values = CRM_Core_BAO_CustomValueTable::getValues( $params );
+         // check for updated custom value
+         $this->assertEquals( 'Updated my test data',
+                              $values['custom_11'],
+                              'In line ' . __LINE__ );
+    }
+
     /**
      *  Test civicrm_activity_update() where the DB has a date_time
      *  value and there is none in the update params.
