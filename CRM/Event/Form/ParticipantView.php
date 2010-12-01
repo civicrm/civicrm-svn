@@ -129,6 +129,11 @@ class CRM_Event_Form_ParticipantView extends CRM_Core_Form
             }
         }
         CRM_Core_BAO_CustomGroup::buildCustomDataView( $this, $finalTree );
+        $eventTitle  = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $values[$participantID]['event_id'], 'title' );
+        //CRM-7150, show event name on participant view even if the event is disabled
+        if ( ! CRM_Utils_Array::value( 'event', $values[$participantID] ) ) {
+            $values[$participantID]['event'] = $eventTitle;
+        }
         $this->assign( $values[$participantID] );
         
         // add viewed participant to recent items list
@@ -148,7 +153,6 @@ class CRM_Event_Form_ParticipantView extends CRM_Core_Form
         }
 
         $participantRoles = CRM_Event_PseudoConstant::participantRole();
-        $eventTitle  = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $values[$participantID]['event_id'], 'title' );
         $displayName = CRM_Contact_BAO_Contact::displayName( $contactID );
         
         $participantCount = array();
