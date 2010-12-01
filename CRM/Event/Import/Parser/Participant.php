@@ -310,18 +310,16 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
 
         if ( !( $params['participant_role_id'] || $params['participant_role'] ) ) {
             if ( $params['event_id'] ) {
-                $roleId= 
+                $params['participant_role_id'] = 
                     CRM_Core_DAO::getFieldValue( "CRM_Event_DAO_Event", $params['event_id'] , 'default_role_id' );
             } else {
                 $eventTitle = $params['event_title'];
                 $qParams = array();
                 $dao = new CRM_Core_DAO();
-                $roleId =
+                $params['participant_role_id'] =
                     $dao->singleValueQuery("SELECT default_role_id FROM civicrm_event WHERE title = '$eventTitle' ",
                                            $qParams);
             }
-            require_once 'CRM/Event/PseudoConstant.php';
-            $params['participant_role_id'] = CRM_Event_PseudoConstant::participantRole( $roleId );
         } 
         //date-Format part ends
         static $indieFields = null;
