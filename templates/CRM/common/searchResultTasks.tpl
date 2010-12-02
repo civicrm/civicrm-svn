@@ -28,9 +28,9 @@
 <div id="search-status">
   <table class="form-layout-compressed">
   <tr>
-    <td class="font-size12pt" style="width: 30%;">
+    <td class="font-size12pt" style="width: 40%;">
     {if $savedSearch.name}{$savedSearch.name} ({ts}smart group{/ts}) - {/if}
-    {ts count=$pager->_totalItems plural='%count Results'}%count Result{/ts}
+    {ts count=$pager->_totalItems plural='%count Results'}%count Result{/ts}{if $selectorLabel}&nbsp;-&nbsp;{$selectorLabel}{/if}
     </td>
     <td class="nowrap">
         {* Search criteria are passed to tpl in the $qill array *}

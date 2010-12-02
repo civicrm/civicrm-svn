@@ -244,7 +244,13 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
          $accessCiviMail = CRM_Core_Permission::check( 'access CiviMail' );
          
          while ( $result->fetch( ) ) {
-            $row = array( );
+             $row = array( );
+
+             // ignore rows where we dont have an activity id
+             if ( empty( $result->activity_id ) ) {
+                 continue;
+             }
+
             // the columns we are interested in
             foreach ( self::$_properties as $property) {
                 if ( isset( $result->$property ) ) {
@@ -253,7 +259,9 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
             }
             
             $contactId = CRM_Utils_Array::value( 'contact_id', $row );
-            if ( !$contactId ) $contactId = CRM_Utils_Array::value( 'source_contact_id', $row );
+            if ( !$contactId ) {
+                $contactId = CRM_Utils_Array::value( 'source_contact_id', $row );
+            }
 
             $row['target_contact_name'] = CRM_Activity_BAO_ActivityTarget::getTargetNames( $row['activity_id'] );
             $row['assignee_contact_name'] = CRM_Activity_BAO_ActivityAssignment::getAssigneeNames( $row['activity_id'] );
