@@ -550,11 +550,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         $this->addRule( 'weight', ts('is a numeric field'), 'numeric' );
         
         $this->add( 'textarea', 'help_post', ts('Field Help'), $attributes['help_post'] );
-        
-        // listings title
-        $this->add( 'text', 'listings_title', ts('Listings Title'), $attributes['listings_title'] );
-        $this->addRule( 'listings_title', ts('Please enter a valid title for this field when displayed in user listings.'), 'title' );
-        
+       
         $this->add( 'checkbox', 'is_required', ts( 'Required?') );
         $this->add( 'checkbox', 'is_active', ts( 'Active?' ) );
         $this->add( 'checkbox', 'is_view', ts( 'View Only?' ) );
