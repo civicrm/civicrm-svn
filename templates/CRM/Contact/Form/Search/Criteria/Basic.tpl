@@ -26,31 +26,18 @@
 	<table class="form-layout">
 		<tr>
             <td class="font-size12pt">{$form.sort_name.label} {help id='id-advanced-intro'}</td>
-            <td>{$form.sort_name.html}
-                <div class="description font-italic">
-                    {ts}Complete OR partial Contact Name.{/ts}
-                </div>
+            <td>
+                <label>{ts}Complete OR partial Contact Name.{/ts}</label><br />
+                {$form.sort_name.html}<br /><br />
+                <label>{ts}Complete OR partial Email Address.{/ts}</label><br />
                 {$form.email.html}
-                <div class="description font-italic">
-                    {ts}Complete OR partial Email Address.{/ts}
-                </div>
             </td>
             <td>
-              {if $form.component_mode}  
-                {$form.component_mode.label} {$form.component_mode.html}
-                <br /><br />
-              {/if}
-                {$form.uf_group_id.label} {$form.uf_group_id.html}
-                <br /><br />
-                <div class="form-item">
-                    {if $form.uf_user}{$form.uf_user.label} {$form.uf_user.html}
-                    <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('uf_user', 'Advanced'); return false;" >{ts}clear{/ts}</a>)</span>
-
-                    <div class="description font-italic">
-                        {ts 1=$config->userFramework}Does the contact have a %1 Account?{/ts}
-                    </div>
-                    {/if}
-                </div>
+                {if $form.component_mode}  
+                    {$form.component_mode.label} {help id="id-display-results"}<br />{$form.component_mode.html}
+                    <br /><br />
+                {/if}
+                {$form.uf_group_id.label} {help id="id-search-views"}<br />{$form.uf_group_id.html}
             </td>
             <td class="label">{$form.buttons.html}</td>       
         </tr>
@@ -118,6 +105,16 @@
 	    </tr>
         <tr>
             <td>
+            {if $form.uf_user}
+                {$form.uf_user.label} {$form.uf_user.html} <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('uf_user', 'Advanced'); return false;" >{ts}clear{/ts}</a>)</span>
+                <div class="description font-italic">
+                    {ts 1=$config->userFramework}Does the contact have a %1 Account?{/ts}
+                </div>
+            {else}
+                &nbsp;
+            {/if}
+            </td>
+            <td>
                 {$form.preferred_language.label}<br />
                 {$form.preferred_language.html}
             </td> 
@@ -135,14 +132,14 @@
             </td>
         </tr>
         <tr>
-            <td>{$form.contact_source.label}</td>
-            <td>{$form.contact_source.html}</td>
-            <td colspan="2">{$form.job_title.label}&nbsp;&nbsp;{$form.job_title.html}</td>
+            <td>
+                {$form.contact_source.label}<br />
+                {$form.contact_source.html}
+            </td>
+            <td>{$form.job_title.label}<br />{$form.job_title.html}</td>
+            <td colspan="2">
+                {if $form.deleted_contacts}<br />{$form.deleted_contacts.html} {$form.deleted_contacts.label}{else}&nbsp;{/if}
+            </td>
         </tr>
-        {if $form.deleted_contacts}
-          <tr>
-            <td colspan="4">{$form.deleted_contacts.html} {$form.deleted_contacts.label}</td>
-          </tr>
-        {/if}
         <tr><td colspan="4">{include file="CRM/common/Tag.tpl"}</td></tr>
     </table>
