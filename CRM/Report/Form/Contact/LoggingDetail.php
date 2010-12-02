@@ -73,6 +73,9 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
 
     function buildRows($sql, &$rows)
     {
+        // safeguard for when there aren’t any log entries yet
+        if (!$this->log_conn_id or !$this->log_date) return;
+
         $params = array(
             1 => array($this->log_conn_id, 'Integer'),
             2 => array($this->log_date,    'String'),
