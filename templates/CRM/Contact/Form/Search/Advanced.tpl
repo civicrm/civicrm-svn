@@ -102,6 +102,7 @@ cj(function() {
 
     cj('#component_mode').change( function( ) {
         var selectedValue = cj(this).val( );
+	cj('#task').val( '' );
         switch ( selectedValue ) {
             case '2':
             cj('.crm-CiviContribute-accordion').removeClass('crm-accordion-closed').addClass('crm-accordion-open') ;
