@@ -55,7 +55,7 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
 
         // make sure the report works even without the params
         if (!$this->log_conn_id or !$this->log_date) {
-            $dao =& new CRM_Core_DAO;
+            $dao = new CRM_Core_DAO;
             $dao->query("SELECT log_conn_id, log_date FROM {$this->loggingDB}.log_civicrm_contact WHERE log_action = 'Update' ORDER BY log_date DESC LIMIT 1");
             $dao->fetch();
             $this->log_conn_id = $dao->log_conn_id;
@@ -77,6 +77,26 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
             1 => array($this->log_conn_id, 'Integer'),
             2 => array($this->log_date,    'String'),
         );
+
+        // let the template know who updated whom when
+        $sql = "
+            SELECT who.id who_id, who.display_name who_name, whom.id whom_id, whom.display_name whom_name
+            FROM {$this->loggingDB}.log_civicrm_contact l
+            JOIN civicrm_contact who ON (l.log_user_id = who.id)
+            JOIN civicrm_contact whom ON (l.id = whom.id)
+            WHERE log_action = 'Update' AND log_conn_id = %1 AND log_date = %2 ORDER BY log_date DESC LIMIT 1
+        ";
+        $dao =& CRM_Core_DAO::executeQuery($sql, $params);
+        $dao->fetch();
+        $this->assign('who_url',   CRM_Utils_System::url('civicrm/contact/view', "reset=1&cid={$dao->who_id}"));
+        $this->assign('whom_url',  CRM_Utils_System::url('civicrm/contact/view', "reset=1&cid={$dao->whom_id}"));
+        $this->assign('who_name',  $dao->who_name);
+        $this->assign('whom_name', $dao->whom_name);
+        $this->assign('log_date',  $this->log_date);
+
+        // link back to summary report
+        require_once 'CRM/Report/Utils/Report.php';
+        $this->assign('summaryReportURL', CRM_Report_Utils_Report::getNextUrl('logging/contact/summary', 'reset=1', false, true));
 
         // we look for the last change in the given connection that happended less than 10 seconds later than log_date to catch multi-query changes
         $changedSQL = "SELECT * FROM {$this->loggingDB}.log_civicrm_contact WHERE log_conn_id = %1 AND log_date < DATE_ADD(%2, INTERVAL 10 SECOND) ORDER BY log_date DESC LIMIT 1";
