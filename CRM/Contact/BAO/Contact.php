@@ -758,9 +758,15 @@ WHERE id={$id}; ";
         } else if ( $config->userFramework == 'Drupal' ) {   
             require_once 'CRM/Utils/System/Drupal.php';
             $rootPath = CRM_Utils_System_Drupal::cmsRootPath( );
-            $relativePath = str_replace( "$rootPath/",
-                                         $config->userFrameworkBaseURL,
-                                         str_replace('\\', '/', $absolutePath ) );
+            $baseUrl = $config->userFrameworkBaseURL;
+            if ( module_exists('locale') && $mode = variable_get( 'language_negotiation', LANGUAGE_NEGOTIATION_NONE ) ) {
+                global $language;
+                if( isset( $language->prefix ) ) {
+                    $baseUrl=  str_replace( $language->prefix.'/', '', $config->userFrameworkBaseURL );
+                }
+            }  
+            
+            $relativePath = str_replace( "$rootPath/", $baseUrl, str_replace('\\', '/', $absolutePath ) );
         } else if ( $config->userFramework == 'Standalone' ) {
             $absolutePathStr = strstr( $absolutePath, 'files');
             $relativePath = $config->userFrameworkBaseURL . str_replace('\\', '/', $absolutePathStr );
