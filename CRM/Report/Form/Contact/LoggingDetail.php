@@ -58,7 +58,6 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
             $dao =& new CRM_Core_DAO;
             $dao->query("SELECT log_conn_id, log_date FROM {$this->loggingDB}.log_civicrm_contact WHERE log_action = 'Update' ORDER BY log_date DESC LIMIT 1");
             $dao->fetch();
-            CRM_Core_Error::debug('$dao', $dao);
             $this->log_conn_id = $dao->log_conn_id;
             $this->log_date    = $dao->log_date;
         }
