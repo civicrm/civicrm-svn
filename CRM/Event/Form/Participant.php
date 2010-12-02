@@ -557,7 +557,7 @@ SELECT civicrm_custom_group.name as name,
             }
 
 			$submittedRole = $this->getElementValue( 'role_id' );
-			if ( $submittedRole[0] ) {
+			if ( CRM_Utils_Array::value( 0, $submittedRole ) ) {
 				$roleID  = $submittedRole[0];
 			}
 			$submittedEvent = $this->getElementValue( 'event_id' );
@@ -745,7 +745,7 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
         // but we do the same for the onChange element and this form is complex
         // and i did not want to break it late in the 3.2 cycle
         $preloadJSSnippet = null;
-        if ( $_GET['reset'] ) {
+        if ( CRM_Utils_Array::value( 'reset', $_GET ) ) {
             $this->_eID = CRM_Utils_Request::retrieve( 'eid', 'Positive', $this );
             if ( $this->_eID ) {
                 $preloadJSSnippet = "

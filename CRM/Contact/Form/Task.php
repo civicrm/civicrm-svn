@@ -129,9 +129,9 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
         $session->replaceUserContext( $url );
         
         require_once 'CRM/Contact/Task.php';
-        $form->_task         = $values['task'];
+        $form->_task         = CRM_Utils_Array::value( 'task', $values ) ;
         $crmContactTaskTasks = CRM_Contact_Task::taskTitles();
-        $form->assign( 'taskName', $crmContactTaskTasks[$form->_task] );
+        $form->assign( 'taskName', CRM_Utils_Array::value( $form->_task, $crmContactTaskTasks ) );
        
         if ( $useTable ) {
             $form->_componentTable = CRM_Core_DAO::createTempTableName( 'civicrm_task_action', false );

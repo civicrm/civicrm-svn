@@ -2056,7 +2056,7 @@ UNION
             // get preferred languages
             if ( ! empty( $contact->preferred_language ) ) {
                 $languages =& CRM_Core_PseudoConstant::languages( );
-                $values['preferred_language'] = $languages[$contact->preferred_language];
+                $values['preferred_language'] = CRM_Utils_Array::value( $contact->preferred_language, $languages );
             }
 
             // Calculating Year difference            
