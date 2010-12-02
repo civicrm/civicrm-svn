@@ -53,6 +53,16 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         $this->log_conn_id = CRM_Utils_Request::retrieve('log_conn_id', 'Integer', CRM_Core_DAO::$_nullObject);
         $this->log_date    = CRM_Utils_Request::retrieve('log_date',    'String',  CRM_Core_DAO::$_nullObject);
 
+        // make sure the report works even without the params
+        if (!$this->log_conn_id or !$this->log_date) {
+            $dao =& new CRM_Core_DAO;
+            $dao->query("SELECT log_conn_id, log_date FROM {$this->loggingDB}.log_civicrm_contact WHERE log_action = 'Update' ORDER BY log_date DESC LIMIT 1");
+            $dao->fetch();
+            CRM_Core_Error::debug('$dao', $dao);
+            $this->log_conn_id = $dao->log_conn_id;
+            $this->log_date    = $dao->log_date;
+        }
+
         $this->_columnHeaders = array(
             'field' => array('title' => ts('Field')),
             'from'  => array('title' => ts('Changed From')),
