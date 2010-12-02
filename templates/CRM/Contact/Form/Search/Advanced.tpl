@@ -101,8 +101,11 @@ cj(function() {
     cj().crmaccordions(); 
 
     cj('#component_mode').change( function( ) {
+        // reset task dropdown if user changes component mode and it exists
+	    if ($("#task").length > 0) {
+	        cj('#task').val( '' );
+	    }
         var selectedValue = cj(this).val( );
-	cj('#task').val( '' );
         switch ( selectedValue ) {
             case '2':
             cj('.crm-CiviContribute-accordion').removeClass('crm-accordion-closed').addClass('crm-accordion-open') ;
