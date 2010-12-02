@@ -240,4 +240,28 @@ WHERE id = %2
         } 
     }
 
-}
+
+    function upgrade_3_3_0( $rev ) 
+    {        
+        $upgrade =& new CRM_Upgrade_Form( );
+        $upgrade->processSQL( $rev );
+        
+        //CRM-7123 -lets activate needful languages.
+        $config = CRM_Core_Config::singleton( );
+        if ( isset( $config->languageLimit ) && !empty( $config->languageLimit ) ) { 
+            $locales = array_keys( $config->languageLimit );
+            if ( !empty( $locales ) ) {
+                $sql = '
+    UPDATE  civicrm_option_value val
+INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id )
+       SET  val.is_active = 1
+     WHERE  grp.name = %1
+       AND  val.name IN ( '."'". implode( "', '", $locales ) ."' )";
+                CRM_Core_DAO::executeQuery( $sql, 
+                                            array( 1 => array( 'languages', 'String' ) ), 
+                                            true, null, false, false );
+            }
+        }
+    }
+    
+  }
