@@ -270,3 +270,11 @@ UPDATE civicrm_contact SET preferred_language = 'fr_FR' WHERE preferred_language
 UPDATE civicrm_contact SET preferred_language = 'pt_PT' WHERE preferred_language = 'pt';
 UPDATE civicrm_contact SET preferred_language = 'zh_CN' WHERE preferred_language = 'zh';
 UPDATE civicrm_contact SET preferred_language = (SELECT name FROM civicrm_option_value WHERE value = preferred_language AND option_group_id = @option_group_id_languages LIMIT 1) WHERE LENGTH(preferred_language) = 2;
+
+-- add logging report templates
+SELECT @option_group_id_report := MAX(id) FROM civicrm_option_group WHERE name = 'report_template';
+SELECT @weight := MAX(weight) FROM civicrm_option_value WHERE option_group_id = @option_group_id_languages;
+INSERT INTO civicrm_option_value
+  (option_group_id,         {localize field='label'}label{/localize},                value,                     name,                                     weight,                 {localize field='description'}description{/localize},                                         is_active) VALUES
+  (@option_group_id_report, {localize}'Contact Logging Report (Summary)'{/localize}, 'logging/contact/summary', 'CRM_Report_Form_Contact_LoggingSummary', @weight := @weight + 1, {localize}'Contact modification report for the logging infrastructure (summary).'{/localize}, 0),
+  (@option_group_id_report, {localize}'Contact Logging Report (Detail)'{/localize},  'logging/contact/detail',  'CRM_Report_Form_Contact_LoggingDetail',  @weight := @weight + 1, {localize}'Contact modification report for the logging infrastructure (detail).'{/localize},  0);

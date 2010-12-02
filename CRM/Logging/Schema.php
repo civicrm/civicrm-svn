@@ -150,11 +150,16 @@ class CRM_Logging_Schema
 
     private function addReports()
     {
+        // enable logging templates
+        $dao =& CRM_Core_DAO::executeQuery("UPDATE civicrm_option_value SET is_active = 1 WHERE value = 'logging/contact/summary' OR value = 'logging/contact/detail'");
+
+        // return early if the logging report templates are missing
         require_once 'CRM/Core/OptionGroup.php';
         $templates = CRM_Core_OptionGroup::values('report_template');
         if (!isset($templates['logging/contact/summary']) or
-            !isset($templates['logging/contact/details'])) return;
+            !isset($templates['logging/contact/detail'])) return;
 
+        // add report instances
         require_once 'CRM/Report/BAO/Instance.php';
 
         $bao = new CRM_Report_BAO_Instance;
@@ -166,8 +171,8 @@ class CRM_Logging_Schema
 
         $bao = new CRM_Report_BAO_Instance;
         $bao->domain_id  = CRM_Core_Config::domainID();
-        $bao->title      = ts('Contact Logging Report (Details)');
-        $bao->report_id  = 'logging/contact/details';
+        $bao->title      = ts('Contact Logging Report (Detail)');
+        $bao->report_id  = 'logging/contact/detail';
         $bao->permission = 'administer CiviCRM';
         $bao->insert();
     }
@@ -271,6 +276,10 @@ COLS;
 
     private function deleteReports()
     {
+        // disable logging templates
+        $dao =& CRM_Core_DAO::executeQuery("UPDATE civicrm_option_value SET is_active = 0 WHERE value = 'logging/contact/summary' OR value = 'logging/contact/detail'");
+
+        // delete report instances
         require_once 'CRM/Report/DAO/Instance.php';
 
         $bao = new CRM_Report_DAO_Instance;
