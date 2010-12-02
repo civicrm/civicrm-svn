@@ -25,9 +25,14 @@
 *}
 {literal}
 <script type="text/javascript">
-cj( function( ) {
-var useAjax = {/literal}{if $useAjax}1{else}0{/if}{literal};
+var oTable;
 
+cj( function( ) {
+if ( typeof (oTable) != 'undefined' ) {
+  oTable.fnDestroy( );
+} 
+
+var useAjax = {/literal}{if $useAjax}1{else}0{/if}{literal};
 var sourceUrl = '';
 var useClass  = 'display';
 
@@ -116,7 +121,7 @@ eval('tableId =[' + tableId + ']');
   	    }
 	}
 	
-    var oTable = null;
+    oTable = null;
     if ( useAjax ) {
       oTable = cj(tabId).dataTable({
     	        "bFilter"    : false,
