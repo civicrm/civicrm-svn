@@ -130,7 +130,7 @@ class CRM_Core_Smarty extends Smarty {
         $this->assign('tsLocale',   $tsLocale);
 
         // CRM-7163 hack: we don’t display langSwitch on upgrades anyway
-        if ($_REQUEST['q'] != 'civicrm/upgrade') {
+        if ( $_REQUEST[$config->userFrameworkURLVar] != 'civicrm/upgrade' ) {
             $this->assign('langSwitch', CRM_Core_I18n::languages(true));
         }
         
