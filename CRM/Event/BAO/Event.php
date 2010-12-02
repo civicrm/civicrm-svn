@@ -534,7 +534,7 @@ LIMIT      0, 10
      * @param  boolean $status         consider counted participant.
      * @param  boolean $considerRole   consider role for participant count.
      * @param  boolean $role           consider counted( is filter role) participant.
-     * @param  array   $eventsIds      consider participants from given events.
+     * @param  array   $eventIds       consider participants from given events.
      * @param  boolean $countWithStatus  retrieve participant count w/ each participant status.
      *
      * @access public
@@ -586,10 +586,13 @@ LIMIT      0, 10
         if ( !empty( $clause ) ) {
             $sqlClause = ' AND ( ' . implode( $operator, $clause ) . ' )';
         }
+        
+        $eventLimit = 10;
         if ( is_array( $eventIds ) && !empty( $eventIds ) ) {
+            $eventLimit = null;
             $sqlClause .= ' AND civicrm_event.id IN (' . implode( ',', $eventIds ) . ')';
         }
-
+        
         $select = '
     SELECT   civicrm_event.id as id, 
              civicrm_participant.id as participantId';
@@ -610,9 +613,6 @@ INNER JOIN   civicrm_participant_status_type status_type ON ( civicrm_participan
              {$sqlClause}";
         
         $orderBy = 'Order By civicrm_event.end_date DESC';
-        $eventLimit = null;
-        if ( !is_array( $eventsIds ) || empty( $eventsIds ) ) $eventLimit = 10; 
-        
         $participantIds = $participantCount = array( );
         
         $query = "$select $from $where $orderBy";
