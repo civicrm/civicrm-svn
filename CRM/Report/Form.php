@@ -1711,7 +1711,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                         }
                         if ( $value ) {
                             $statistics['filters'][] = 
-                                array( 'title' => $field['title'],
+                                array( 'title' => CRM_Utils_Array::value( 'title', $field ),
                                        'value' => $value );
                         }
                     }
