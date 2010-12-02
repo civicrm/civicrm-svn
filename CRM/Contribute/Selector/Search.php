@@ -321,7 +321,7 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
             if ( ! $componentContext &&
                  $this->_compContext ) {
                 $componentContext = $this->_compContext;
-                $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', CRM_Core_DAO::$_nullObject );
+                $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', CRM_Core_DAO::$_nullObject, null, false, 'REQUEST' );
             }
         }
 
