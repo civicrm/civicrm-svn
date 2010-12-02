@@ -2273,7 +2273,7 @@ span.icon {
 .edit-icon { background-position: -66px -114px;}
 
 .add-icon { background-position: -2px -193px;}
-
+.back-icon { background-position: -2px -65px;}
 .delete-icon { background-position: -179px -99px;}
 .button:hover .delete-icon {
     background-image:url("../packages/jquery/jquery-ui-1.8.5/css/custom-theme/images/ui-icons_8d2c27_256x240.png")!important;

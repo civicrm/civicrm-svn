@@ -32,5 +32,7 @@
         <div class='icon inform-icon'></div>&nbsp; {ts}This report can not be displayed because there are no entries in the logging tables yet.{/ts}
     </div>
   {/if}
-  <p><a href='{$summaryReportURL}'>{ts}Back to Report{/ts}</a></p>
+  <div class="action-link">
+      <a href="{$summaryReportURL}" class="button"><span><div class="icon back-icon"></div>{ts}Back to Logging Summary{/ts}</span></a>
+  </div>
 </div>
