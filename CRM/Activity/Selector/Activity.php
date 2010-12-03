@@ -154,10 +154,10 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
         } elseif ( $activityTypeId == $activityTypeIds['Inbound Email'] ) {
             $url      = 'civicrm/contact/view/activity';
             $qsView   = "atype={$activityTypeId}&action=view&reset=1&id=%%id%%&cid=%%cid%%&context=%%cxt%%{$extraParams}";
-        } elseif ( $activityTypeId == $activityTypeIds['Open Case'] ||
-                   $activityTypeId == $activityTypeIds['Change Case Type'] ||
-                   $activityTypeId == $activityTypeIds['Change Case Status'] ||
-                   $activityTypeId == $activityTypeIds['Change Case Start Date'] ) {
+        } elseif ( $activityTypeId == CRM_Utils_Array::value( 'Open Case', $activityTypeIds ) ||
+                   $activityTypeId == CRM_Utils_Array::value( 'Change Case Type', $activityTypeIds ) ||
+                   $activityTypeId == CRM_Utils_Array::value( 'Change Case Status', $activityTypeIds ) ||
+                   $activityTypeId == CRM_Utils_Array::value( 'Change Case Start Date', $activityTypeIds ) ) {
             $showUpdate =  $showDelete = false;
             $url      = 'civicrm/contact/view/activity';
             $qsView   = "atype={$activityTypeId}&action=view&reset=1&id=%%id%%&cid=%%cid%%&context=%%cxt%%{$extraParams}";
