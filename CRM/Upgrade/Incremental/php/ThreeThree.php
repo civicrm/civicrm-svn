@@ -250,6 +250,20 @@ WHERE id = %2
         $config = CRM_Core_Config::singleton( );
         if ( isset( $config->languageLimit ) && !empty( $config->languageLimit ) ) { 
             $locales = array_keys( $config->languageLimit );
+            $codes = array( );
+            if (is_dir($config->gettextResourceDir)) {
+                $dir = opendir($config->gettextResourceDir);
+                while ($filename = readdir($dir)) {
+                    if (preg_match('/^[a-z][a-z]_[A-Z][A-Z]$/', $filename)) {
+                        $codes[] = $filename;
+                        if (!isset($all[$filename])) $all[$filename] = $filename;
+                    }
+                }
+                closedir($dir);
+            }
+            //get all already enabled and all l10n languages.
+            $locales = array_merge( $locales, array_values( $codes ) );
+            
             if ( !empty( $locales ) ) {
                 $sql = '
     UPDATE  civicrm_option_value val
