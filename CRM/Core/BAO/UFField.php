@@ -175,6 +175,7 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
         $ufField->phone_type_id   = CRM_Utils_Array::value( 3, $params['field_name'], 'NULL' );
         $ufField->listings_title  = CRM_Utils_Array::value( 'listings_title' , $params );
         $ufField->visibility      = CRM_Utils_Array::value( 'visibility'     , $params );
+        $ufField->help_pre        = CRM_Utils_Array::value( 'help_pre'       , $params );
         $ufField->help_post       = CRM_Utils_Array::value( 'help_post'      , $params );
         $ufField->label           = CRM_Utils_Array::value( 'label'          , $params );
         $ufField->is_required     = CRM_Utils_Array::value( 'is_required'    , $params, false );

@@ -428,6 +428,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                                                                                                     $importableFields) ),
                           'is_required'      => $field->is_required,
                           'is_view'          => $field->is_view,
+                          'help_pre'         => $field->help_pre,
                           'help_post'        => $field->help_post,
                           'visibility'       => $field->visibility,
                           'in_selector'      => $field->in_selector,

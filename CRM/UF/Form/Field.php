@@ -549,7 +549,8 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         $this->add( 'text', 'weight', ts('Order'), $attributes['weight'], true );
         $this->addRule( 'weight', ts('is a numeric field'), 'numeric' );
         
-        $this->add( 'textarea', 'help_post', ts('Field Help'), $attributes['help_post'] );
+        $this->add( 'textarea', 'help_pre', ts('Field Pre Help'), $attributes['help_pre'] );
+        $this->add( 'textarea', 'help_post', ts('Field Post Help'), $attributes['help_post'] );
         
         // listings title
         $this->add( 'text', 'listings_title', ts('Listings Title'), $attributes['listings_title'] );

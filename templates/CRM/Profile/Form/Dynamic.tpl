@@ -75,7 +75,11 @@
                 {/if}
                 <div class="form-layout-compressed">
             {/if}
-
+            {if $field.help_pre && $action neq 4 && $form.$n.html}
+                <div class="crm-section helprow-{$n}-section" id="helprow-{$n}">
+                    <div class="content description">{$field.help_pre}</div>
+                </div>
+            {/if}
             {if $field.options_per_line}
             	<div class="crm-section editrow_{$n}-section form-item" id="editrow-{$n}">
                     <div class="label">{$form.$n.label}</div>
