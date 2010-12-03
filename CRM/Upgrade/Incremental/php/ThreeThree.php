@@ -255,8 +255,7 @@ WHERE id = %2
                 $dir = opendir($config->gettextResourceDir);
                 while ($filename = readdir($dir)) {
                     if (preg_match('/^[a-z][a-z]_[A-Z][A-Z]$/', $filename)) {
-                        $codes[] = $filename;
-                        if (!isset($all[$filename])) $all[$filename] = $filename;
+                        $codes[$filename] = $filename;
                     }
                 }
                 closedir($dir);
