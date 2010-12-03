@@ -52,10 +52,12 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
                 'dao' => 'CRM_Contact_DAO_Contact',
                 'fields' => array(
                     'id' => array(
-                        'no_display' => true
+                        'no_display' => true,
+                        'required'   => true
                     ),
                     'log_user_id' => array(
-                        'no_display' => true
+                        'no_display' => true,
+                        'required'   => true
                     ),
                     'log_date' => array(
                         'default'  => true,
@@ -68,7 +70,8 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
                         'title'   => ts('Altered Contact'),
                     ),
                    'log_conn_id' => array(
-                        'no_display' => true
+                       'no_display' => true,
+                       'required'   => true
                     ),
                     'log_action' => array(
                         'default' => true,
@@ -107,7 +110,6 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
                 ),
             ),
         );
-
         parent::__construct();
     }
 
@@ -131,6 +133,27 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
             unset($row['log_civicrm_contact_log_user_id']);
             unset($row['log_civicrm_contact_log_conn_id']);
         }
+    }
+
+    function select( ) {
+        $select = array( );
+        $this->_columnHeaders = array( );
+        foreach ( $this->_columns as $tableName => $table ) {
+            if ( array_key_exists('fields', $table) ) {
+                foreach ( $table['fields'] as $fieldName => $field ) {
+                    if ( CRM_Utils_Array::value( 'required', $field ) ||
+                        CRM_Utils_Array::value( $fieldName, $this->_params['fields'] ) ) {
+                            $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
+                            $this->_columnHeaders["{$tableName}_{$fieldName}"]['type']  = CRM_Utils_Array::value( 'type', $field );
+                            $this->_columnHeaders["{$tableName}_{$fieldName}"]['no_display']  = CRM_Utils_Array::value( 'no_display', $field );
+ 
+                            $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = $field['title'];
+                        }
+                }
+            }
+        }
+
+        $this->_select = "SELECT " . implode( ', ', $select ) . " ";
     }
 
     function from()
