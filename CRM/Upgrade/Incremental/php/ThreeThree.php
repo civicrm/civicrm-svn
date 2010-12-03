@@ -248,32 +248,33 @@ WHERE id = %2
         
         //CRM-7123 -lets activate needful languages.
         $config = CRM_Core_Config::singleton( );
-        if ( isset( $config->languageLimit ) && !empty( $config->languageLimit ) ) { 
-            $locales = array_keys( $config->languageLimit );
-            $codes = array( );
-            if (is_dir($config->gettextResourceDir)) {
-                $dir = opendir($config->gettextResourceDir);
-                while ($filename = readdir($dir)) {
-                    if (preg_match('/^[a-z][a-z]_[A-Z][A-Z]$/', $filename)) {
-                        $codes[$filename] = $filename;
-                    }
+        $locales = array( );
+        if ( is_dir( $config->gettextResourceDir ) ) {
+            $dir = opendir( $config->gettextResourceDir );
+            while ( $filename = readdir( $dir ) ) {
+                if ( preg_match('/^[a-z][a-z]_[A-Z][A-Z]$/', $filename ) ) {
+                    $locales[$filename] = $filename;
                 }
-                closedir($dir);
             }
+            closedir($dir);
+        }
+        
+        if ( isset( $config->languageLimit ) && !empty( $config->languageLimit ) ) { 
             //get all already enabled and all l10n languages.
-            $locales = array_merge( $locales, array_values( $codes ) );
-            
-            if ( !empty( $locales ) ) {
-                $sql = '
+            $locales = array_merge( array_values( $locales ), array_keys( $config->languageLimit ) );
+        }
+        
+        if ( !empty( $locales ) ) {
+            $sql = '
     UPDATE  civicrm_option_value val
 INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id )
        SET  val.is_active = 1
      WHERE  grp.name = %1
        AND  val.name IN ( '."'". implode( "', '", $locales ) ."' )";
-                CRM_Core_DAO::executeQuery( $sql, 
-                                            array( 1 => array( 'languages', 'String' ) ), 
-                                            true, null, false, false );
-            }
+            
+            CRM_Core_DAO::executeQuery( $sql, 
+                                        array( 1 => array( 'languages', 'String' ) ), 
+                                        true, null, false, false );
         }
     }
     
