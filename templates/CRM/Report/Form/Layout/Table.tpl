@@ -70,13 +70,13 @@
                         
                         {if $row.$field eq 'Subtotal'}
                             {$row.$field}
-                        {elseif $header.type eq 4 OR $header.type eq 256}   
+                        {elseif $header.type & 4 OR $header.type & 256}   
                             {if $header.group_by eq 'MONTH' or $header.group_by eq 'QUARTER'}
                                 {$row.$field|crmDate:$config->dateformatPartial}
                             {elseif $header.group_by eq 'YEAR'}	
                                 {$row.$field|crmDate:$config->dateformatYear}
                             {else}	
-                                {if $header.type eq 4}	
+                                {if $header.type & 4}	
                                    {$row.$field|truncate:10:''|crmDate}
                                 {else}
                                    {$row.$field|crmDate}
