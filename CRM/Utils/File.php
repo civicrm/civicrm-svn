@@ -336,17 +336,22 @@ class CRM_Utils_File {
      */
     static function restrictAccess($dir)
     {
-        $htaccess = <<<HTACCESS
+        // note: empty value for $dir can play havoc, since that might result in putting '.htaccess' to root dir 
+        // of site, causing site to stop functioning.
+        // FIXME: we should do more checks here -
+        if ( ! empty( $dir ) ) {
+            $htaccess = <<<HTACCESS
 <Files "*">
   Order allow,deny
   Deny from all
 </Files>
 
 HTACCESS;
-        $file = $dir . '.htaccess';
-        if (file_put_contents($file, $htaccess) === false) {
-            require_once 'CRM/Core/Error.php';
-            CRM_Core_Error::movedSiteError($file);
+            $file = $dir . '.htaccess';
+            if (file_put_contents($file, $htaccess) === false) {
+                require_once 'CRM/Core/Error.php';
+                CRM_Core_Error::movedSiteError($file);
+            }
         }
     }
 
