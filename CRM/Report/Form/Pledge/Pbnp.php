@@ -43,6 +43,8 @@ class CRM_Report_Form_Pledge_Pbnp extends CRM_Report_Form {
                                 'pieChart' => 'Pie Chart'
                                 );
     
+    protected $_customGroupExtends = array( 'Pledge' );
+
     function __construct( ) {
         $this->_columns = 
             array( 'civicrm_contact'  =>

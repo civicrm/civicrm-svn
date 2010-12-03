@@ -48,6 +48,8 @@ class CRM_Report_Form_Event_IncomeCountSummary extends CRM_Report_Form {
     
     protected $_add2groupSupported = false;
     
+    protected $_customGroupExtends = array( 'Event' );
+
     function __construct( ) {
         
         $this->_columns = 
