@@ -52,12 +52,10 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
                 'dao' => 'CRM_Contact_DAO_Contact',
                 'fields' => array(
                     'id' => array(
-                        'no_display' => true,
-                        'required'   => true,
+                        'no_display' => true
                     ),
                     'log_user_id' => array(
-                        'no_display' => true,
-                        'required'   => true,
+                        'no_display' => true
                     ),
                     'log_date' => array(
                         'default'  => true,
@@ -69,13 +67,12 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
                         'name'    => 'display_name',
                         'title'   => ts('Altered Contact'),
                     ),
+                   'log_conn_id' => array(
+                        'no_display' => true
+                    ),
                     'log_action' => array(
                         'default' => true,
                         'title'   => ts('Action'),
-                    ),
-                    'log_conn_id' => array(
-                        'no_display' => true,
-                        'required'   => true,
                     ),
                 ),
                 'filters' => array(
