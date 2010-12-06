@@ -58,7 +58,7 @@ function civicrm_rules_event_info( ) {
                                            'label'     => t( 'Contact has been deleted' ),
                                            'module'    => 'CiviCRM',
                                            'arguments' => rules_events_hook_civicrm_arguments( t( 'deleted contact' ) ),
-                                           ),
+                                           )
                  );
 }
 
@@ -70,7 +70,7 @@ function rules_events_hook_civicrm_arguments( $label ) {
         array(
               'contact' => array( 'type'  => 'contact',
                                   'label' => $label )
-              ) +
+              );
         rules_events_global_civicrm_argument( );
 }
 
@@ -83,7 +83,7 @@ function rules_events_global_civicrm_argument( ) {
               'userContact' => array( 'type'    => 'contact',
                                       'label'   => t( 'Logged in User' ),
                                       'handler' => 'rules_events_argument_global_userContact' )
-              ) +
+              );
         rules_events_global_user_argument( );
 }
 
@@ -113,7 +113,7 @@ function civicrm_rules_condition_info() {
       ),
       'help' => t('Whether the contact is in the selected group(s).'),
       'module' => 'CiviCRM',
-    ),
+    )
   );
 }
 
@@ -178,7 +178,7 @@ function civicrm_rules_action_info() {
         'email'      => array('type' => 'string', 'label' => t('E-mail'    )),
       ),
       'module' => 'CiviCRM',
-    ),
+    )
   );
 }
 
@@ -251,6 +251,3 @@ class rules_data_type_contact extends rules_data_type {
         return $contact->id;
     }
 }
-
-
-
