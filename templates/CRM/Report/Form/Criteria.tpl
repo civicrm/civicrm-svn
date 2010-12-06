@@ -142,7 +142,6 @@
 
             {/foreach}
             {if $closed eq 0 }</table>{/if}
-        </table>
     {/if}
  
     {literal}
