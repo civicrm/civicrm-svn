@@ -2138,8 +2138,13 @@ class CRM_Contact_BAO_Query
         if ( is_array( $value ) ) {
             foreach ( $value as $k => $v) { 
                 if ($k) { //fix for CRM-771
-                    list( $contactType, $subType ) = explode( CRM_Core_DAO::VALUE_SEPARATOR,
-                                                              $k, 2 );
+                    $subType      = null;
+                    $contactType  = $k;
+                    if ( strpos( $k, CRM_Core_DAO::VALUE_SEPARATOR ) ) {
+                        list( $contactType, $subType ) = explode( CRM_Core_DAO::VALUE_SEPARATOR,
+                                                                  $k, 2 );
+                    }
+
                     if ( ! empty( $subType ) ) {
                         $subTypes[$subType] = 1;
                     }
