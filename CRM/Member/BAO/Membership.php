@@ -410,12 +410,15 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
                 $relType   = array( 'id' => $values['civicrm_relationship_type_id'] );
                 $relValues = array( );
                 CRM_Contact_BAO_RelationshipType::retrieve( $relType, $relValues);
-                
-                // 1. Check if contact and membership type relationship type are same
-                // 2. Check if relationship direction is same or name_a_b = name_b_a
-                if ( ( $values['civicrm_relationship_type_id'] == $membershipType['relationship_type_id'] )
-                     && ( ( $values['rtype'] == $membershipType['relationship_direction'] ) ||
-                          ( $relValues['name_a_b'] == $relValues['name_b_a'] ) ) ) {
+                // Check if contact's relationship type exists in membership type
+                $relTypeDirs   = array( );
+                $relTypeIds    = explode( CRM_Core_DAO::VALUE_SEPARATOR,$membershipType['relationship_type_id'] );
+                $relDirections = explode( CRM_Core_DAO::VALUE_SEPARATOR,$membershipType['relationship_direction'] );
+                foreach ( $relTypeIds as $key => $value ) {
+                    $relTypeDirs[] = $value."_".$relDirections[$key];
+                }
+                $relTypeDir = $values['civicrm_relationship_type_id'].'_'.$values['rtype'];
+                if ( in_array( $relTypeDir, $relTypeDirs ) ) {
                     // $values['status'] is going to have value for
                     // current or past relationships.
                     $contacts[$values['cid']] = $values['status'];
