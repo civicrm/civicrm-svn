@@ -235,9 +235,10 @@ class CRM_Contribute_Form_ContributionPage_Widget extends CRM_Contribute_Form_Co
         $widget->save( );
 
         $buttonName = $this->controller->getButtonName( );
-        if ( $buttonName = $this->_refreshButtonName ) {
+        if ( $buttonName == $this->_refreshButtonName ) {
             return;
         }
+        parent::endPostProcess( );
     }
 
     /** 

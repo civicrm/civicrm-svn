@@ -181,8 +181,13 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
         $dao =& CRM_Contribute_BAO_ContributionPage::create( $params );
 
         $this->set( 'id', $dao->id );
-        
-        parent::postProcess( );
+        if ( $this->_id ) {
+            $session = CRM_Core_Session::singleton( );
+            $session->pushUserContext( CRM_Utils_System::url( 'civicrm/admin/contribute/amount', 
+                                                              "action=update&reset=1&id={$this->_id}" ) );
+        } else {        
+            parent::postProcess( );
+        }
     }
 
     /** 

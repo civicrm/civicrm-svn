@@ -23,8 +23,6 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{include file="CRM/common/WizardHeader.tpl"}
-
 <h3>{ts}Configure Widget{/ts}</h3>
 {if $showStatus}
 <div class="messages status">

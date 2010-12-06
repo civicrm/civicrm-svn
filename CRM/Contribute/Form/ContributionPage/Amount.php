@@ -477,6 +477,7 @@ SELECT id
                 CRM_Core_OptionGroup::deleteAssoc( "civicrm_contribution_page.amount.{$contributionPageID}" );
             }
         }
+        parent::endPostProcess( );
     }
     
     /** 

@@ -136,7 +136,7 @@ class CRM_Contribute_Form_ContributionPage_Premium extends CRM_Contribute_Form_C
         $dao = new CRM_Contribute_DAO_Premium();
         $dao->copyValues($params);
         $dao->save();
-
+        parent::endPostProcess( );
     }
 
     /** 

@@ -24,8 +24,6 @@
  +--------------------------------------------------------------------+
 *}
 {* Configure Membership signup/renewal block for an Online Contribution page *}
-{* WizardHeader.tpl provides visual display of steps thru the wizard as well as title for current step *}
-{include file="CRM/common/WizardHeader.tpl"}
 <div id="form" class="crm-block crm-form-block crm-member-membershipblock-form-block">
 <div id="help">
     {ts}Use this form to enable and configure a Membership Signup and Renewal section for this Online Contribution Page. If you're not using this page for membership signup, leave the <strong>Enabled</strong> box un-checked..{/ts} {docURL page="Configure Membership"}
