@@ -1041,6 +1041,7 @@ class CRM_Contact_BAO_Query
                         $this->_tables[$tbName]                 = 1;
                     }
                 }
+                $this->_useGroupBy = true;
             }
             if ( $this->_useDistinct && !isset( $this->_distinctComponentClause) ) {
                 if ( !( $this->_mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) ) {
