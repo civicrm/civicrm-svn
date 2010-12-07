@@ -199,7 +199,7 @@ function rules_action_civicrm_send_email($contact, $settings) {
         $params = array();
         $params['from'] = "Admin";
         $params['toEmail'] = $settings['send_email'];
-        $params['subject'] = "Sending an email...";
+        $params['subject'] = $settings['email_subject'];
 
         $text[] = "First Name  : $contact->first_name";
         $text[] = "Middle Name : $contact->middle_name";
@@ -217,11 +217,19 @@ function rules_action_civicrm_send_email($contact, $settings) {
  */
 function rules_action_civicrm_send_email_form( $settings, &$form ) {
     $settings += array('send_email' => '' );
+    $settings += array('email_subject' => '' );
 	$form['settings']['send_email'] = array(
                                 '#type' => 'textfield',
                                 '#title' => t('Send an Email'),
-                                '#description' => t('Send an Email'),
+                                '#description' => t('Enter e-mail address of recipient. (Use a comma to separate multiple e-mail addresses.)'),
                                 '#default_value' => $settings['send_email'],
+                               );
+
+    $form['settings']['email_subject'] = array(
+                                '#type' => 'textfield',
+                                '#title' => t('Message Subject'),
+                                '#description' => t('Enter subject for the email'),
+                                '#default_value' => $settings['email_subject'],
                                );
 }
 
