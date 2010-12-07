@@ -196,8 +196,18 @@ function civicrm_rules_action_info() {
 
 function rules_action_civicrm_send_email($contact, $settings) {
 	if ( $contact->id ) {
-		return array('contact' => $contact );
+        $params = array();
+        $params['from'] = "Admin";
+        $params['toEmail'] = $settings['send_email'];
+        $params['subject'] = "Sending an email...";
 
+        $text[] = "First Name  : $contact->first_name";
+        $text[] = "Middle Name : $contact->middle_name";
+        $text[] = "Last Name   : $contact->last_name";
+        
+        $params['text'] = implode("\n", $text);
+        CRM_Utils_Mail::send($params);
+		return array('contact' => $contact );
 	}
 }
 
