@@ -82,6 +82,37 @@ class WebTest_Profile_DedupeTest extends CiviSeleniumTestCase {
          $this->waitForPageToLoad("30000");
          $this->assertTrue( $this->isTextPresent( "The changes have been saved." ) );
 
+         // set default strict rule.
+         $this->open( $this->sboxPath . "civicrm/contact/deduperules?action=update&id=4" );
+         $this->waitForPageToLoad("30000");
+         $this->waitForElementPresent( "_qf_DedupeRules_next-bottom" );
+
+         $this->select( "where_0","value=civicrm_email.email" );
+         $this->type( "length_0", "" );
+         $this->type( "weight_0", 10 );
+         
+         $this->select( "where_1","label=- none -" );
+         $this->type( "length_1", "" );
+         $this->type( "weight_1", "" );
+
+         $this->select( "where_2","label=- none -" );
+         $this->type( "length_2", "" );
+         $this->type( "weight_2", "" );
+
+         $this->select( "where_3","label=- none -" );
+         $this->type( "length_3", "" );
+         $this->type( "weight_3", "" );
+
+         $this->select( "where_4","label=- none -" );
+         $this->type( "length_4", "" );
+         $this->type( "weight_4", "" );
+
+         $this->type( "threshold", 10 );
+
+         // click save 
+         $this->click( "_qf_DedupeRules_next-bottom" );
+         $this->waitForPageToLoad( "30000" );
+
          // logout and sign as anonymous.
          $this->open( $this->sboxPath ."civicrm/logout&reset=1" );
 
@@ -104,6 +135,7 @@ class WebTest_Profile_DedupeTest extends CiviSeleniumTestCase {
 
          // click save
          $this->click( "_qf_Edit_next" );
+         $this->waitForPageToLoad( "30000" );
          $this->waitForElementPresent( "_qf_Edit_next" );
 
          $this->isTextPresent( "A record already exists with the same information." );
@@ -111,7 +143,7 @@ class WebTest_Profile_DedupeTest extends CiviSeleniumTestCase {
 
      function testProfileCreateDupeCustomStrictRules( ) 
      {
-          // This is the path where our testing install resides. 
+         // This is the path where our testing install resides. 
          // The rest of URL is defined in CiviSeleniumTestCase base class, in
          // class attributes.
          $this->open( $this->sboxPath );
@@ -184,6 +216,7 @@ class WebTest_Profile_DedupeTest extends CiviSeleniumTestCase {
 
          // click save
          $this->click( "_qf_Edit_next" );
+         $this->waitForPageToLoad( "30000" );
          $this->waitForElementPresent( "_qf_Edit_next" );
 
          $this->isTextPresent( "A record already exists with the same information." );
