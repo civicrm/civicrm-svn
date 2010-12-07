@@ -99,9 +99,12 @@ class CRM_Event_Page_Tab extends CRM_Core_Page
         if ( $mode == 'test' || $mode == 'live' ) {
             CRM_Utils_System::redirectToSSL( );
         }
-
-        // build associated contributions
-        $this->associatedContribution( );
+        
+        if( $this->_action != CRM_Core_Action::ADD ) {
+            // get associated contributions only on edit/delete
+            $this->associatedContribution( );
+        }
+        
         $controller = new CRM_Core_Controller_Simple( 'CRM_Event_Form_Participant', 
                                                        'Create Participation', 
                                                        $this->_action );
