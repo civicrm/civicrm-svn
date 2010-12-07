@@ -48,6 +48,11 @@ class CRM_Report_Form_Mailing_Opened extends CRM_Report_Form {
 	
     protected $_customGroupExtends = array( 'Contact', 'Individual', 'Household', 'Organization' );
     
+    protected $_charts  = array( ''         => 'Tabular',
+                                 'barChart' => 'Bar Chart',
+                                 'pieChart' => 'Pie Chart'
+                                 );
+
     function __construct( ) {
         $this->_columns = array(); 
 		
@@ -97,7 +102,7 @@ class CRM_Report_Form_Mailing_Opened extends CRM_Report_Form {
 				'mailing_name' => array(
 					'name' => 'name',
 					'title' => ts('Mailing'),
-					'operatorType' => CRM_Report_Form::OP_SELECT,
+					'operatorType' => CRM_Report_Form::OP_MULTISELECT,
 					'type'=> CRM_Utils_Type::T_STRING,
 					'options' => self::mailing_select( ),
 					'operator' => 'like',
@@ -136,6 +141,7 @@ class CRM_Report_Form_Mailing_Opened extends CRM_Report_Form {
     }
     
     function preProcess( ) {
+        $this->assign( 'chartSupported', true );
         parent::preProcess( );
     }
     
@@ -160,6 +166,11 @@ class CRM_Report_Form_Mailing_Opened extends CRM_Report_Form {
                     }
                 }
             }
+        }
+
+        if ( CRM_Utils_Array::value('charts', $this->_params) ) {
+            $select[] = "COUNT(civicrm_mailing_event_opened.id) as civicrm_mailing_opened_count";
+            $this->_columnHeaders["civicrm_mailing_opened_count"]['title'] = ts('Opened Count'); 
         }
 
         $this->_select = "SELECT " . implode( ', ', $select ) . " ";
@@ -242,7 +253,11 @@ class CRM_Report_Form_Mailing_Opened extends CRM_Report_Form {
     }
 	
     function groupBy( ) {
-        $this->_groupBy    = "GROUP BY {$this->_aliases['civicrm_contact']}.id";
+        if ( CRM_Utils_Array::value('charts', $this->_params) ) {
+            $this->_groupBy = " GROUP BY {$this->_aliases['civicrm_mailing']}.id";
+        } else {
+            $this->_groupBy  = "GROUP BY {$this->_aliases['civicrm_contact']}.id, {$this->_aliases['civicrm_mailing']}.id";
+        }
     }
     
     function postProcess( ) {
@@ -262,6 +277,27 @@ class CRM_Report_Form_Mailing_Opened extends CRM_Report_Form {
         $this->formatDisplay( $rows );
         $this->doTemplateAssignment( $rows );
         $this->endPostProcess( $rows );	
+    }
+
+    function buildChart( &$rows ) {
+        if ( empty($rows) ) {
+            return;
+        }
+
+        $chartInfo  = array( 'legend'      => ts('Mail Opened Report'),
+                             'xname'       => ts('Mailing'),
+                             'yname'       => ts('Opened'),
+                             'xLabelAngle' => 20,
+                             'tip'         => ts("Mail Opened: %1", array( '%1' => '#val#') ) 
+                             );
+        foreach( $rows as $row ) {
+            $chartInfo['values'][$row['civicrm_mailing_name']] = $row['civicrm_mailing_opened_count']; 
+        }
+        
+        // build the chart.
+        require_once 'CRM/Utils/OpenFlashChart.php';
+        CRM_Utils_OpenFlashChart::buildChart( $chartInfo, $this->_params['charts'] );
+        $this->assign( 'chartType', $this->_params['charts'] ); 
     }
 
     function alterDisplay( &$rows ) {
@@ -306,8 +342,7 @@ class CRM_Report_Form_Mailing_Opened extends CRM_Report_Form {
 	function mailing_select() {
 		require_once('CRM/Mailing/BAO/Mailing.php');
 		
-		$data = array('' => '--Please Select--');
-		
+		$data = array( );
 		$mailing = new CRM_Mailing_BAO_Mailing();
 		$query = "SELECT name FROM civicrm_mailing ";
 		$mailing->query($query);
