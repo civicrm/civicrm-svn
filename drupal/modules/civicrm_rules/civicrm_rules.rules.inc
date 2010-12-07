@@ -34,6 +34,8 @@
  *
  */
 
+require_once 'utils.inc';
+
 /**
  * Implementation of hook_rules_event_info().
  */
@@ -66,27 +68,31 @@ function civicrm_rules_event_info( ) {
  * Returns some arguments suitable for hook_civicrm
  */
 function rules_events_hook_civicrm_arguments( $label ) {
-    return
-        array(
-              'contact' => array( 'type'  => 'contact',
-                                  'label' => $label )
-              );
-        rules_events_global_civicrm_argument( );
+	return
+		array(
+			'contact' => array( 'type'  => 'contact',
+			'label' => $label )
+		);
+	//rules_events_global_civicrm_argument( );
 }
 
 /**
  * Gets the user account of the logged in user and civicrm contact
+ * FIX Me: This function is never called
  */
 function rules_events_global_civicrm_argument( ) {
-    return 
-        array(
-              'userContact' => array( 'type'    => 'contact',
-                                      'label'   => t( 'Logged in User' ),
-                                      'handler' => 'rules_events_argument_global_userContact' )
-              );
-        rules_events_global_user_argument( );
+	return 
+		array(
+			'userContact' => array( 'type'    => 'contact',
+			'label'   => t( 'Logged in User' ),
+			'handler' => 'rules_events_argument_global_userContact' )
+		);
+	rules_events_global_user_argument( );
 }
 
+/*
+ * FIX ME: this function is never called
+ */
 function rules_events_argument_global_userContact( ) {
     $session = CRM_Core_Session::singleton( );
     return _civicrm_rules_load_contact( $session->get( 'userID' ) );
@@ -94,9 +100,12 @@ function rules_events_argument_global_userContact( ) {
 
 /**
  * Implementation of hook_rules_condition_info().
+ * FIX ME : Here we should add sensible conditions
  */
 function civicrm_rules_condition_info() {
-  return array(
+	/*
+	// commenting conditions for now since it does not make sense to me
+	return array(
     'rules_condition_civicrm_comparison' => array(
       'label' => t('Compare two contacts'),
       'arguments' => array(
@@ -114,11 +123,13 @@ function civicrm_rules_condition_info() {
       'help' => t('Whether the contact is in the selected group(s).'),
       'module' => 'CiviCRM',
     )
-  );
+	);
+	 */
 }
 
 /**
  * A simple contact comparison
+ * FIX ME: this function is called by condition and can be removed
  */
 function rules_condition_civicrm_comparison( $contact_1, $contact_2 ) {
   return $contact_1->id == $contact_2->id;
@@ -126,6 +137,7 @@ function rules_condition_civicrm_comparison( $contact_1, $contact_2 ) {
 
 /**
  * Condition user: condition to check whether user has particular roles
+ * FIX ME: this function is called by condition and can be removed
  */
 function rules_condition_civicrm_ingroup($contact, $settings) {
   $groups = $settings['groups'];
@@ -157,20 +169,21 @@ function rules_condition_civicrm_ingroup($contact, $settings) {
 function civicrm_rules_action_info() {
   return array(
     'rules_action_civicrm_add_to_group' => array(
-      'label' => t('Add Contact to CiviCRM Group'),
-      'arguments' => array(
+			'label' => t('Add Contact to CiviCRM Group'),
+			/*'arguments' => array(
         'contact' => array('type' => 'contact', 'label' => t('Contact who should be added to the group')),
-      ),
+			),*/
       'module' => 'CiviCRM',
     ),
     'rules_action_civicrm_remove_from_group' => array(
       'label' => t('Remove Contact from CiviCRM Group'),
-      'arguments' => array(
+/*      'arguments' => array(
         'contact' => array('type' => 'contact', 'label' => t('Contact who should be removed from the group')),
-      ),
+			),*/
       'module' => 'CiviCRM',
     ),
-    'rules_action_civicrm_contact_create' => array(
+/*
+		'rules_action_civicrm_contact_create' => array(
       'label' => t('Create a contact'),
       'arguments' => array(
         'first_name' => array('type' => 'string', 'label' => t('First Name')),
@@ -178,36 +191,73 @@ function civicrm_rules_action_info() {
         'email'      => array('type' => 'string', 'label' => t('E-mail'    )),
       ),
       'module' => 'CiviCRM',
-    )
+		)
+ */
   );
 }
+
+/**
+ * Define form for add to group configuration
+ *
+ */
+function rules_action_civicrm_add_to_group_form( $settings, &$form ) {
+	$settings += array('groups' => '' );
+	
+	$form['settings']['groups'] = array(
+		'#type' => 'select',
+		'#title' => t('Select the group'),
+		'#options' => _civicrm_get_groups( ),
+		'#multiple' => true,
+		'#default_value' => $settings['groups'],
+		'#description' => t('Contact will be added to selected group.'),
+	);
+}
+
+/**
+ * Define form for remove from group configuration
+ *
+ */
+function rules_action_civicrm_remove_from_group_form( $settings, &$form ) {
+	$settings += array('groups' => '' );
+	
+	$form['settings']['groups'] = array(
+		'#type' => 'select',
+		'#title' => t('Select the group'),
+		'#options' => _civicrm_get_groups( ),
+		'#multiple' => true,
+		'#default_value' => $settings['groups'],
+		'#description' => t('Contact will be removed from selected group.'),
+	);
+}
+
 
 /**
  * Action contact: add a contact to a group
  */
 function rules_action_civicrm_add_to_group($contact, $settings) {
-    if ($contact->id) {
-        foreach ($settings['groups'] as $gid) {
-            _civicrm_rules_add_to_group( $contact, $gid );
-        }
-        return array('contact' => $contact );
-    }
+	if ( $contact->id ) {
+		foreach ( $settings['groups'] as $gid ) {
+			_civicrm_rules_group_contact( $contact->id, $gid );
+		}
+		return array('contact' => $contact );
+	}
 }
 
 /**
  * Action contact: remove a contact from a group
  */
 function rules_action_civicrm_remove_from_group($contact, $settings) {
-    if ($contact->id) {
-        foreach ($settings['groups'] as $gid) {
-            _civicrm_rules_remove_from_group( $contact, $gid );
-        }
-        return array('contact' => $contact );
-    }
+	if ( $contact->id ) {
+		foreach ( $settings['groups'] as $gid ) {
+			_civicrm_rules_group_contact( $contact->id, $gid, 'remove' );
+		}
+		return array('contact' => $contact );
+	}
 }
 
 /**
  * Action: Creates a contact.
+ * FIX ME: This function is not called, hence can be deleted 
  */
 function rules_action_civicrm_contact_create($first_name, $last_name, $email) {
     $params = array( 'first_name' => $first_name,

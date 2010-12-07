@@ -35,6 +35,39 @@
  */
 
 /**
+ * This file contains functions that calls civicrm apis for data manupulation / retrieval
+ */
+
+/**
+ * Function to get the list of groups
+ */
+function _civicrm_get_groups( ) {
+	civicrm_initialize( );
+	require_once 'api/v2/Group.php';
+	$params = array( 'return.id' => 1, 'return.title' => 1 );
+	$groupInformation = civicrm_group_get( $params );
+
+	$groups = array( );	
+	foreach ( $groupInformation as $values ) {
+		$groups[ $values['id'] ] = $values['title'];
+	}
+	
+	return $groups;
+}	
+
+/**
+ * Function to add contacts to group
+ */
+function _civicrm_rules_group_contact( $contactId, $groupId, $action = 'add' ) {	
+	civicrm_initialize( );
+	require_once 'api/v2/GroupContact.php';
+	$params = array( 'contact_id' => $contactId,
+									 'group_id' => $groupId
+								 );
+	civicrm_group_contact_common( $params, $action );
+}
+
+/**
  * Loads a contact into a version suitable for the rules actions
  */
 function _civicrm_rules_load_contact( $contactID ) {
