@@ -45,6 +45,11 @@ class CRM_Report_Form_Mailing_Summary extends CRM_Report_Form {
 	
     protected $_customGroupExtends = array();
     
+    
+    protected $_charts  = array( ''            => 'Tabular',
+                                 'bar_3dChart' => 'Bar Chart'
+                                 );
+
     function __construct( ) {
         $this->_columns = array(); 
 		
@@ -70,9 +75,17 @@ class CRM_Report_Form_Mailing_Summary extends CRM_Report_Form {
 					),
 					//'operator' => 'like',
 					'default' => 1,
-				),					
-			),		
-		);
+				),
+                
+                'mailing_name' => array(
+					'name' => 'name',
+					'title' => ts('Mailing'),
+					'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+					'type'=> CRM_Utils_Type::T_STRING,
+					'options' => self::mailing_select( ),
+					'operator' => 'like', ),	
+                               )
+                                                   );
 		
 		$this->_columns['civicrm_mailing_job'] = array(
 			'dao' => 'CRM_Mailing_DAO_Job',
@@ -215,7 +228,24 @@ class CRM_Report_Form_Mailing_Summary extends CRM_Report_Form {
         parent::__construct( );
     }
     
+    function mailing_select() {
+		require_once('CRM/Mailing/BAO/Mailing.php');
+		
+		$data = array( );
+		
+		$mailing = new CRM_Mailing_BAO_Mailing();
+		$query = "SELECT name FROM civicrm_mailing ";
+		$mailing->query($query);
+		
+		while($mailing->fetch()) {
+			$data[$mailing->name] = $mailing->name;
+		}
+
+		return $data;
+	}
+
     function preProcess( ) {
+        $this->assign( 'chartSupported', true );
         parent::preProcess( );
     }
     
@@ -270,11 +300,6 @@ class CRM_Report_Form_Mailing_Summary extends CRM_Report_Form {
 
         $this->_select = "SELECT " . implode( ', ', $select ) . " ";
 		//print_r($this->_select);
-    }
-
-    static function formRule( $fields, $files, $self ) {  
-        $errors = $grouping = array( );
-        return $errors;
     }
 
     function from( ) {
@@ -372,6 +397,72 @@ class CRM_Report_Form_Mailing_Summary extends CRM_Report_Form {
         $this->formatDisplay( $rows );
         $this->doTemplateAssignment( $rows );
         $this->endPostProcess( $rows );	
+    }
+
+    static function getChartCriteria( ) {
+        return array( 'civicrm_mailing_event_delivered_delivered_count'      => ts('Delivered'),
+                      'civicrm_mailing_event_bounce_bounce_count'            => ts('Bounce'), 
+                      'civicrm_mailing_event_opened_open_count'              => ts('Opened'),
+                      'civicrm_mailing_event_trackable_url_open_click_count' => ts('Clicks'),
+                      'civicrm_mailing_event_unsubscribe_unsubscribe_count'  => ts('unsubscribe') ); 
+    }
+
+    function formRule( $fields, $files, $self ) {  
+        $errors   = array( );
+            
+        if ( !CRM_Utils_Array::value( 'charts', $fields ) ) {
+            return $errors;
+        }
+
+        $criterias = self::getChartCriteria( );
+        $isError   = true;
+        foreach ( $fields['fields'] as $fld => $isActive ) {
+            if ( in_array( $fld, array( 'delivered_count', 'bounce_count', 'open_count', 'click_count', 'unsubscribe_count' ) ) ) {
+                $isError = false;
+            }
+        }
+
+        if ( $isError ) {
+            $errors['_qf_default'] = ts("For Chart view, please select at least one field from %1.", array( '%1' => implode(', ', $criterias ) ) );
+        }
+
+        return $errors;
+    }
+    
+    function buildChart( &$rows ) {
+        if ( empty($rows) ) {
+            return;
+        }
+
+        $criterias = self::getChartCriteria();
+
+        $chartInfo  = array( 'legend'      => ts('Mail Summary'),
+                             'xname'       => ts('Mailing'),
+                             'yname'       => ts('Statistics'),
+                             'xLabelAngle' => 20,
+                             'tip'         => '#val#'
+                             );
+
+        foreach( $rows as $row ) {
+            $chartInfo['values'][$row['civicrm_mailing_name']] = array( );
+            foreach(  $criterias as $criteria => $label ) {
+                if ( isset($row[$criteria]) ) {
+                    $chartInfo['values'][$row['civicrm_mailing_name']][$label] = $row[$criteria];
+                } elseif( isset($criterias[$criteria] ) ) {
+                    unset($criterias[$criteria]);
+                }
+            }
+        }
+
+        $chartInfo['criteria'] = array_values($criterias );
+
+        // dynamically set the graph site
+        $chartInfo['xSize']    = ( (count($rows) * 150) + ( count($rows) * count($criterias)* 20 ) );
+        
+        // build the chart.
+        require_once 'CRM/Utils/OpenFlashChart.php';
+        CRM_Utils_OpenFlashChart::buildChart( $chartInfo, $this->_params['charts'] );
+        $this->assign( 'chartType', $this->_params['charts'] ); 
     }
 
     function alterDisplay( &$rows ) {
