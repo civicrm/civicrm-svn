@@ -114,6 +114,8 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
                 $this->_single = true;
             }
             
+            $this->assign( 'contribPageId', $this->_id );
+            
             $session = CRM_Core_Session::singleton( ); 
             $session->pushUserContext( $url );
         }
