@@ -194,7 +194,7 @@ class CRM_Dedupe_BAO_RuleGroup extends CRM_Dedupe_DAO_RuleGroup
 
                     // FIXME: we need to be more acurate with affected rows, especially for insert vs duplicate insert. 
                     // And that will help optimize further.
-                    $affectedRows = $dao->affectedRows( );
+                    $affectedRows = mysql_affected_rows( );
                     $dao->free();
 
                     // In an inclusive situation, failure of any query means no further processing -
