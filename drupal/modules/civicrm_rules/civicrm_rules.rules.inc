@@ -181,8 +181,38 @@ function civicrm_rules_action_info() {
 				'contact' => array('type' => 'contact', 'label' => t('Contact who should be removed from the group')),
 			),
 			'module' => 'CiviCRM Contact',
-		)
+    ),
+
+        'rules_action_civicrm_send_email' => array(
+            'label' => t('Send Email'),
+            'arguments' => array(
+                'contact' => array('type' => 'contact', 'label' => t('Send an email')),
+            ),
+            'module' => 'CiviCRM Contact',
+    )
+        
 	);
+}
+
+function rules_action_civicrm_send_email($contact, $settings) {
+	if ( $contact->id ) {
+		return array('contact' => $contact );
+
+	}
+}
+
+/**
+ * Define form for sending an email
+ *
+ */
+function rules_action_civicrm_send_email_form( $settings, &$form ) {
+    $settings += array('send_email' => '' );
+	$form['settings']['send_email'] = array(
+                                '#type' => 'textfield',
+                                '#title' => t('Send an Email'),
+                                '#description' => t('Send an Email'),
+                                '#default_value' => $settings['send_email'],
+                               );
 }
 
 /**
