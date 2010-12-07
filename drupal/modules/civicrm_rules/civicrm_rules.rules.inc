@@ -44,22 +44,22 @@ function civicrm_rules_event_info( ) {
                  'contact_insert' => array(
                                            'label'     => t( 'Contact has been created' ),
                                            'module'    => 'CiviCRM',
-                                           'arguments' => rules_events_hook_civicrm_arguments( t( 'created contact' ) ),
+                                           'arguments' => rules_events_hook_civicrm_arguments( t( 'Created contact' ) ),
                                            ),
                  'contact_update' => array(
                                            'label'     => t( 'Contact has been updated' ),
                                            'module'    => 'CiviCRM',
-                                           'arguments' => rules_events_hook_civicrm_arguments( t( 'updated contact' ) ),
+                                           'arguments' => rules_events_hook_civicrm_arguments( t( 'Updated contact' ) ),
                                            ),
                  'contact_view'   => array(
                                            'label'     => t( 'Contact has been viewed' ),
                                            'module'    => 'CiviCRM',
-                                           'arguments' => rules_events_hook_civicrm_arguments( t( 'viewed contact' ) ),
+                                           'arguments' => rules_events_hook_civicrm_arguments( t( 'Viewed contact' ) ),
                                            ),
                  'contact_delete' => array(
                                            'label'     => t( 'Contact has been deleted' ),
                                            'module'    => 'CiviCRM',
-                                           'arguments' => rules_events_hook_civicrm_arguments( t( 'deleted contact' ) ),
+                                           'arguments' => rules_events_hook_civicrm_arguments( t( 'Deleted contact' ) ),
                                            )
                  );
 }
@@ -170,29 +170,18 @@ function civicrm_rules_action_info() {
   return array(
     'rules_action_civicrm_add_to_group' => array(
 			'label' => t('Add Contact to CiviCRM Group'),
-			/*'arguments' => array(
-        'contact' => array('type' => 'contact', 'label' => t('Contact who should be added to the group')),
-			),*/
+			'arguments' => array(
+				'contact' => array('type' => 'contact', 'label' => t('Contact who should be added to the group')),
+			),
       'module' => 'CiviCRM',
     ),
     'rules_action_civicrm_remove_from_group' => array(
-      'label' => t('Remove Contact from CiviCRM Group'),
-/*      'arguments' => array(
-        'contact' => array('type' => 'contact', 'label' => t('Contact who should be removed from the group')),
-			),*/
-      'module' => 'CiviCRM',
-    ),
-/*
-		'rules_action_civicrm_contact_create' => array(
-      'label' => t('Create a contact'),
-      'arguments' => array(
-        'first_name' => array('type' => 'string', 'label' => t('First Name')),
-        'last_name'  => array('type' => 'string', 'label' => t('Lasr Name' )),
-        'email'      => array('type' => 'string', 'label' => t('E-mail'    )),
-      ),
-      'module' => 'CiviCRM',
-		)
- */
+			'label' => t('Remove Contact from CiviCRM Group'),
+			'arguments' => array(
+				'contact' => array('type' => 'contact', 'label' => t('Contact who should be removed from the group')),
+			),
+			'module' => 'CiviCRM',
+    )
   );
 }
 
