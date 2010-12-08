@@ -1483,9 +1483,9 @@ SELECT c.contribution_page_id as pageID
         
         $membership->find( );
         while ( $membership->fetch( ) ) {
-            //CRM-7127 first delete present and then start recursive. 
-            self::deleteMembership( $membership->id );
+            //delete related first and then delete parent.
             self::deleteRelatedMemberships(  $membership->id );
+            self::deleteMembership( $membership->id );
         }
         $membership->free( );
     }

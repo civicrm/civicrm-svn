@@ -1092,7 +1092,8 @@ SELECT relationship_type_id, relationship_direction
                     }
                     $relTypeIds = explode(CRM_Core_DAO::VALUE_SEPARATOR, $relTypeId);      
                     if ( in_array( $values[$cid]['relationshipTypeId'], $relTypeIds ) ) {
-                        CRM_Member_BAO_Membership::deleteRelatedMemberships( $membershipId );
+                        $relatedContactId = key( CRM_Utils_Array::value( 'relatedContacts', $details, array( ) ) );
+                        CRM_Member_BAO_Membership::deleteRelatedMemberships( $membershipId, $relatedContactId );
                     }
                     continue;
                 }
