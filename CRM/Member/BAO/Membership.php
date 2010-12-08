@@ -1598,8 +1598,18 @@ WHERE  civicrm_membership.contact_id = civicrm_contact.id
         $relatedContactIds[$membership->contact_id] = true;
         foreach( $allRelatedContacts as $cid => $status ) {
             if ( !CRM_Utils_Array::value( $cid, $relatedContactIds ) ) {
-                $relatedContacts[$cid] =  $status;
                 $relatedContactIds[$cid] = true;
+                
+                //don't create membership again for owner contact.
+                $nestedRelationship = false;
+                if ( $membership->owner_membership_id ) {
+                    $nestedRelMembership = new CRM_Member_DAO_Membership( );
+                    $nestedRelMembership->id = $membership->owner_membership_id;
+                    $nestedRelMembership->contact_id = $cid;
+                    $nestedRelationship = $nestedRelMembership->find( true );
+                    $nestedRelMembership->free( );
+                }
+                if ( !$nestedRelationship ) $relatedContacts[$cid] =  $status;
             }
         }
         
