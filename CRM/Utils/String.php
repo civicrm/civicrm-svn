@@ -445,5 +445,30 @@ class CRM_Utils_String {
             return $full;
         }
     }
+
+    /** 
+     * strip leading, trailing, double spaces from string
+     * used for postal/greeting/addressee
+     * @param string  $string input string to be cleaned
+     *
+     * @return cleaned string
+     * @access public
+     * @static
+     */
+	static function stripSpaces( $string ) 
+	{
+        if ( empty($string) ) return $string;
+        
+        $pat = array( 0 => "/^\s+/",
+                      1 =>  "/\s{2,}/", 
+                      2 => "/\s+\$/" );
+        
+        $rep = array( 0 => "",
+                      1 => " ",
+                      2 => "" );
+        
+        return preg_replace( $pat, $rep, $string );
+	}
+
 }
 
