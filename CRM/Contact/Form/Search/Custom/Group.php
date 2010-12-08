@@ -181,7 +181,7 @@ class CRM_Contact_Form_Search_Custom_Group
         $where = $this->where( $includeContactIDs );
         
         $sql = " SELECT $selectClause $from WHERE  $where ";
-        if ( ! $justIDs ) {
+        if ( ! $justIDs  && ! $this->_allSearch ) {
             $sql .= " GROUP BY contact_id ";  
         } 
         
