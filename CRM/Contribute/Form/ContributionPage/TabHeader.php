@@ -117,14 +117,15 @@ class CRM_Contribute_Form_ContributionPage_TabHeader
         $contribPageId = $form->getVar( '_id' );
         $fullName      = $form->getVar( '_name' );
         $className     = CRM_Utils_String::getClassName( $fullName );
-        $class         = strtolower($className) ;
-                
+        
         if ( $className == 'ThankYou' ) {
             $class = 'thankYou';
         } else if ( $className == 'Contribute' ) {
             $class = 'friend';
         } else if ( $className == 'MembershipBlock' ) {
             $class = 'membership';
+        } else {
+            $class = strtolower($className) ;
         }
 
         if ( array_key_exists( $class, $tabs ) ) {
@@ -134,13 +135,9 @@ class CRM_Contribute_Form_ContributionPage_TabHeader
         if ( $contribPageId ) {
             $reset = CRM_Utils_Array::value( 'reset', $_GET ) ? 'reset=1&' : '';
             
-            //add qf key
-            $qfKey = $form->get( 'qfKey' );
-            $form->assign( 'qfKey', $qfKey );
-
             foreach ( $tabs as $key => $value ) {
                 $tabs[$key]['link']   = CRM_Utils_System::url( "civicrm/admin/contribute/{$key}",
-                                                               "{$reset}action=update&snippet=4&id={$contribPageId}&qfKey={$qfKey}" );
+                                                               "{$reset}action=update&snippet=4&id={$contribPageId}" );
                 $tabs[$key]['active'] = $tabs[$key]['valid'] = true;
             }
             //get all section info.
