@@ -128,6 +128,8 @@ class CRM_Contribute_Form_ContributionPage_TabHeader
             $class = strtolower($className) ;
         }
 
+        $qfKey = $form->get( 'qfKey' );
+        
         if ( array_key_exists( $class, $tabs ) ) {
             $tabs[$class]['current'] = true;
         }
@@ -137,7 +139,7 @@ class CRM_Contribute_Form_ContributionPage_TabHeader
             
             foreach ( $tabs as $key => $value ) {
                 $tabs[$key]['link']   = CRM_Utils_System::url( "civicrm/admin/contribute/{$key}",
-                                                               "{$reset}action=update&snippet=4&id={$contribPageId}" );
+                                                               "{$reset}action=update&snippet=4&id={$contribPageId}&qfKey={$qfKey}" );
                 $tabs[$key]['active'] = $tabs[$key]['valid'] = true;
             }
             //get all section info.
