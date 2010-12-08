@@ -242,6 +242,8 @@ class CRM_Utils_OpenFlashChart
             return $chart;
         }
        
+        // $params['values'] should contains the values for each
+        // criteria defined in $params['criteria']
         $values    = CRM_Utils_Array::value( 'values', $params );
         $criterias = CRM_Utils_Array::value( 'criteria', $params );
         if ( !is_array( $values ) || empty( $values ) || !is_array( $criterias ) || empty($criterias ) ) return $chart; 
@@ -259,13 +261,36 @@ class CRM_Utils_OpenFlashChart
                 
             } 
         }
+        
+        if ( empty($xReferences) ) return $chart; 
+        
+        // get the currency.
+        require_once 'CRM/Utils/Money.php';
+        $config   = CRM_Core_Config::singleton();
+        $symbol   = $config->defaultCurrencySymbol;
+                        
+        // set the tooltip.
+        $tooltip = CRM_Utils_Array::value( 'tip', $params, "$symbol #val#" );  
 
         $count = 0;
         foreach( $xReferences as $criteria => $values ) {
+            $toolTipVal = $tooltip;
+            // for seperate tooltip for each criteria
+            if ( is_array($tooltip) ) {
+                $toolTipVal = CRM_Utils_Array::value($criteria, $tooltip, "$symbol #val#" ); 
+            }
+            
+            // create bar_3d object
             $xValues[$count] = new bar_3d( );
+            // set colour pattel 
             $xValues[$count]->set_colour( self::$_colours[$count] );
+            // define colur pattel with bar criterias
             $xValues[$count]->key( (string)$criteria , 12 );
+            // define bar chart values
             $xValues[$count]->set_values(array_values($values));
+
+            // set tooltip
+            $xValues[$count]->set_tooltip( $toolTipVal );
             $count++;  
         }
 
@@ -280,7 +305,6 @@ class CRM_Utils_OpenFlashChart
             $yMax += str_pad( 5, strlen($yMax)-1, 0)-$mod;
         }
         $ySteps = $yMax/5;
- 
 
         // create x axis label obj.
         $xLabels = new x_axis_labels( );
@@ -314,18 +338,8 @@ class CRM_Utils_OpenFlashChart
         // set title to chart.
         $chart->set_title( $title );
         
-       
-        // get the currency.
-        require_once 'CRM/Utils/Money.php';
-        $config   = CRM_Core_Config::singleton();
-        $symbol   = $config->defaultCurrencySymbol;
-                        
-        // set the tooltip.
-        $tooltip = CRM_Utils_Array::value( 'tip', $params, "$symbol #val#" );        
-
         foreach( $xValues as $bar ) {
             // add bar element to chart.
-            $bar->set_tooltip( $tooltip );
             $chart->add_element( $bar );
         }
 

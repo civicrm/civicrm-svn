@@ -404,7 +404,7 @@ class CRM_Report_Form_Mailing_Summary extends CRM_Report_Form {
                       'civicrm_mailing_event_bounce_bounce_count'            => ts('Bounce'), 
                       'civicrm_mailing_event_opened_open_count'              => ts('Opened'),
                       'civicrm_mailing_event_trackable_url_open_click_count' => ts('Clicks'),
-                      'civicrm_mailing_event_unsubscribe_unsubscribe_count'  => ts('unsubscribe') ); 
+                      'civicrm_mailing_event_unsubscribe_unsubscribe_count'  => ts('Unsubscribe') ); 
     }
 
     function formRule( $fields, $files, $self ) {  
@@ -440,7 +440,7 @@ class CRM_Report_Form_Mailing_Summary extends CRM_Report_Form {
                              'xname'       => ts('Mailing'),
                              'yname'       => ts('Statistics'),
                              'xLabelAngle' => 20,
-                             'tip'         => '#val#'
+                             'tip'         => array( )
                              );
 
         foreach( $rows as $row ) {
@@ -448,6 +448,7 @@ class CRM_Report_Form_Mailing_Summary extends CRM_Report_Form {
             foreach(  $criterias as $criteria => $label ) {
                 if ( isset($row[$criteria]) ) {
                     $chartInfo['values'][$row['civicrm_mailing_name']][$label] = $row[$criteria];
+                    $chartInfo['tip'][$label] = "{$label} #val#";
                 } elseif( isset($criterias[$criteria] ) ) {
                     unset($criterias[$criteria]);
                 }
@@ -456,8 +457,8 @@ class CRM_Report_Form_Mailing_Summary extends CRM_Report_Form {
 
         $chartInfo['criteria'] = array_values($criterias );
 
-        // dynamically set the graph site
-        $chartInfo['xSize']    = ( (count($rows) * 150) + ( count($rows) * count($criterias)* 20 ) );
+        // dynamically set the graph size
+        $chartInfo['xSize']    = ( (count($rows) * 135) + ( count($rows) * count($criterias)* 30 ) );
         
         // build the chart.
         require_once 'CRM/Utils/OpenFlashChart.php';
