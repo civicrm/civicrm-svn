@@ -885,10 +885,6 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
                 }
             } else {
                 $membership =& CRM_Member_BAO_Membership::create( $params, $ids );
-                require_once 'CRM/Core/DAO.php';
-                CRM_Core_DAO::storeValues( $membership, $membershipParams );
-                require_once 'CRM/Member/BAO/Membership.php';
-                CRM_Member_BAO_Membership::updateInheritedMemberships( $membership->id, $membershipParams );
             }
         }
 

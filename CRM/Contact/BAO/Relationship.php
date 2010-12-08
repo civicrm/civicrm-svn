@@ -1092,8 +1092,8 @@ SELECT relationship_type_id, relationship_direction
                     }
                     $relTypeIds = explode(CRM_Core_DAO::VALUE_SEPARATOR, $relTypeId);      
                     if ( in_array( $values[$cid]['relationshipTypeId'], $relTypeIds ) ) {
-                        $relatedContactId = key( CRM_Utils_Array::value( 'relatedContacts', $details, array( ) ) );
-                        CRM_Member_BAO_Membership::deleteRelatedMemberships( $membershipId, $relatedContactId );
+                        CRM_Member_BAO_Membership::deleteRelatedMemberships( $membershipId, 
+                                                                             CRM_Utils_Array::value( 'contact', $ids )  );
                     }
                     continue;
                 }
@@ -1151,7 +1151,8 @@ SELECT relationship_type_id, relationship_direction
                     // membership=>relationship then we need to
                     // delete the membership record created for
                     // previous relationship.
-                    CRM_Member_BAO_Membership::deleteRelatedMemberships( $membershipId, $ids['contactTarget'] );
+                    CRM_Member_BAO_Membership::deleteRelatedMemberships( $membershipId, 
+                                                                         CRM_Utils_Array::value( 'contact', $ids ) );
                 }
             }
         }
