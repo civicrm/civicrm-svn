@@ -303,14 +303,9 @@ class CRM_Core_Extensions
      * @return string name of extension key
      */
     public function classToPath( $clazz ) {
-      if ( $this->isExtensionClass( $clazz ) ) {
-	$elements = explode( '_', $clazz );
+        $elements = explode( '_', $clazz );
 	$key = implode( '.', $elements );
 	return $this->keyToPath( $key );
-      }
-      // if it seems like a civicrm class file, do the normal stuff
-      // CRM-7182
-      return str_replace( '_', DIRECTORY_SEPARATOR, $clazz ) . '.php';
     }
 
     /**
