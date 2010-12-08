@@ -1471,9 +1471,11 @@ SELECT c.contribution_page_id as pageID
      */
     static function deleteRelatedMemberships( $ownerMembershipId, $contactId = null ) 
     {
+        if ( !$ownerMembershipId && !$contactId ) return;  
+        
         $membership = new CRM_Member_DAO_Membership( );
         $membership->owner_membership_id = $ownerMembershipId;
-
+        
         if ( $contactId ) {
             $membership->contact_id      = $contactId;
         }
