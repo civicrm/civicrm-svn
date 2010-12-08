@@ -364,7 +364,7 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
      *
      * @static
      */
-    static function del ( $id ) 
+    static function del( $id ) 
     {
         // delete from relationship table
         require_once 'CRM/Utils/Hook.php';
@@ -1075,6 +1075,8 @@ LEFT JOIN  civicrm_country ON (civicrm_address.country_id = civicrm_country.id)
             if ( ! array_key_exists( 'memberships', $details ) ) {
                 continue;
             }
+
+            $mainRelatedContactId = key( CRM_Utils_Array::value( 'relatedContacts', $details, array( ) ) );
             
             require_once 'CRM/Member/BAO/MembershipType.php';
             foreach ( $details['memberships'] as $membershipId => $membershipValues ) {
@@ -1092,8 +1094,7 @@ SELECT relationship_type_id, relationship_direction
                     }
                     $relTypeIds = explode(CRM_Core_DAO::VALUE_SEPARATOR, $relTypeId);      
                     if ( in_array( $values[$cid]['relationshipTypeId'], $relTypeIds ) ) {
-                        CRM_Member_BAO_Membership::deleteRelatedMemberships( $membershipId, 
-                                                                             CRM_Utils_Array::value( 'contact', $ids )  );
+                        CRM_Member_BAO_Membership::deleteRelatedMemberships( $membershipId, $mainRelatedContactId  );
                     }
                     continue;
                 }
@@ -1151,8 +1152,7 @@ SELECT relationship_type_id, relationship_direction
                     // membership=>relationship then we need to
                     // delete the membership record created for
                     // previous relationship.
-                    CRM_Member_BAO_Membership::deleteRelatedMemberships( $membershipId, 
-                                                                         CRM_Utils_Array::value( 'contact', $ids ) );
+                    CRM_Member_BAO_Membership::deleteRelatedMemberships( $membershipId, $mainRelatedContactId );
                 }
             }
         }
