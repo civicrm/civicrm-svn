@@ -241,6 +241,36 @@ WHERE id = %2
     }
 
 
+    function upgrade_3_3_beta3( $rev ) 
+    {
+        // get the duplicate Ids of line item entries
+        $dupeLineItemIds = array( );
+        $fields = array( 'entity_table', 'entity_id', 'price_field_id', 'price_field_value_id' );
+        require_once 'CRM/Price/BAO/LineItem.php';
+        $mainLineItem = new CRM_Price_BAO_LineItem( );
+        $mainLineItem->find( true );
+        while ( $mainLineItem->fetch( ) ) {
+            $dupeLineItem = new CRM_Price_BAO_LineItem( );
+            foreach ( $fields as $fld ) $dupeLineItem->$fld = $mainLineItem->$fld; 
+            $dupeLineItem->find( true );
+            $dupeLineItem->addWhere( "id != $mainLineItem->id" );
+            while ( $dupeLineItem->fetch( ) ) {
+                $dupeLineItemIds[$dupeLineItem->id] = $dupeLineItem->id;
+            }
+            $dupeLineItem->free( );
+        }
+        $mainLineItem->free( );
+        
+        //clean line item table.
+        if ( !empty( $dupeLineItemIds ) ) {
+            $sql = 'DELETE FROM civicrm_line_item WHERE id IN ( '. implode( ', ', $dupeLineItemIds ) .' )';
+            CRM_Core_DAO::executeQuery( $sql );
+        }
+
+        $upgrade =& new CRM_Upgrade_Form( );
+        $upgrade->processSQL( $rev );
+    }
+     
     function upgrade_3_3_0( $rev ) 
     {        
         $upgrade =& new CRM_Upgrade_Form( );
