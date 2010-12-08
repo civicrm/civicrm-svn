@@ -459,6 +459,7 @@ class CRM_Contact_Form_Search_Custom_Group
         } else {
             $xT = false;
         }
+        if( !$this->_groups || !$this->_tags )  $this->_andOr = 1;
         /*
          * Set from statement depending on array sel
          */
