@@ -40,7 +40,7 @@ class WebTest_Contact_AddCmsUserTest extends CiviSeleniumTestCase {
   {
       $this->open( $this->sboxPath );
       
-      $this->webtestLogin( true );
+      $this->webtestLogin( );
       
       // Go directly to the URL of the screen that will Create User Authentically.
       $this->open( $this->sboxPath . "admin/user/user/create" );
@@ -106,7 +106,7 @@ class WebTest_Contact_AddCmsUserTest extends CiviSeleniumTestCase {
       
       $this->click( "edit-submit" );
       $this->waitForPageToLoad( "30000" );
-      $this->assertTrue( $this->isTextPresent( "Thank you for applying for an account." ) );
+      $this->assertTrue( $this->isTextPresent( "Your password and further instructions have been sent to your e-mail address." ) );
       $this->webtestLogin( );
       
       $this->open( $this->sboxPath . "civicrm/contact/search&reset=1" );

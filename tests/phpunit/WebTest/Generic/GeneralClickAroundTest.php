@@ -83,7 +83,7 @@ class WebTest_Generic_GeneralClickAroundTest extends CiviSeleniumTestCase {
       $this->click("link=Individual");
       $this->waitForPageToLoad();
 
-      $this->assertElementPresent("frist_name");
+      $this->assertElementPresent("first_name");
       $this->assertElementPresent("email_1_email");
       $this->assertElementPresent("phone_1_phone");
       $this->assertElementPresent("contact_source");
@@ -185,6 +185,6 @@ class WebTest_Generic_GeneralClickAroundTest extends CiviSeleniumTestCase {
       $this->assertElementPresent("contribution_source");
       $this->assertTextPresent("Personal Campaign Page");
       $this->assertTextPresent("Display In Roll");
-      $this->assertTextPresent("Currency Type");
+      $this->assertTextPresent("Currency");
   }
 }
