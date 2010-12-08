@@ -1483,9 +1483,9 @@ SELECT c.contribution_page_id as pageID
         
         $membership->find( );
         while ( $membership->fetch( ) ) {
-            // call delete function recursively since we need to delete inherited memberships of inherited memberships
-            self::deleteRelatedMemberships(  $membership->id );
+            //CRM-7127 first delete present and then start recursive. 
             self::deleteMembership( $membership->id );
+            self::deleteRelatedMemberships(  $membership->id );
         }
         $membership->free( );
     }
