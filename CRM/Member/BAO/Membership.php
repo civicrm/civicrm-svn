@@ -1346,6 +1346,9 @@ AND civicrm_membership.is_test = %2";
         }
         
         $membership =& self::create( $memParams, $ids, false, $activityType );
+        require_once 'CRM/Core/DAO.php';
+        CRM_Core_DAO::storeValues( $membership, $membershipParams );
+        self::updateInheritedMemberships( $membership->id, $membershipParams );
         // not sure why this statement is here, seems quite odd :( - Lobo: 12/26/2010
         // related to: http://forum.civicrm.org/index.php/topic,11416.msg49072.html#msg49072
         $membership->find(true);
@@ -1751,5 +1754,39 @@ FROM   civicrm_membership_type
     static function getContactMembershipCount( $contactID ) {
         $query = "SELECT count(*) FROM civicrm_membership WHERE civicrm_membership.contact_id = {$contactID} AND civicrm_membership.is_test = 0 ";
         return CRM_Core_DAO::singleValueQuery( $query );
+    }
+   
+    /**
+     * Function to update inherited membership records
+     *
+     * @param int   $membershipId owner membership id
+     *        array $membershipParams related membership params
+     * 
+     * @access public
+     * @static
+     */
+    static function updateInheritedMemberships( $membershipId, $membershipParams ) {
+         
+          $params = array( 'status_id'     => CRM_Utils_Array::value( 'status_id', $membershipParams ),
+                           'join_date'     => CRM_Utils_Date::customFormat( CRM_Utils_Array::value( 'join_date',     $membershipParams ),'%Y%m%d' ),
+                           'start_date'    => CRM_Utils_Date::customFormat( CRM_Utils_Array::value( 'start_date',    $membershipParams ),'%Y%m%d' ),
+                           'end_date'      => CRM_Utils_Date::customFormat( CRM_Utils_Array::value( 'end_date',      $membershipParams ),'%Y%m%d' ),
+                           'reminder_date' => CRM_Utils_Date::customFormat( CRM_Utils_Array::value( 'reminder_date', $membershipParams ),'%Y%m%d' ),
+                           'source'        => CRM_Utils_Array::value( 'source', $membershipParams )
+                           );
+        
+        $ownerMembership = new CRM_Member_DAO_Membership( );
+        $ownerMembership->owner_membership_id = $membershipId;
+        $ownerMembership->find( );
+        
+        while ( $ownerMembership->fetch( ) ) { 
+            self::updateInheritedMemberships( $ownerMembership->id, $params );
+            $relatedMembership = new CRM_Member_DAO_Membership( );
+            $relatedMembership->id = $ownerMembership->id;
+            $relatedMembership->copyValues( $params );
+            $relatedMembership->save( );
+            $relatedMembership->free( );
+        }
+        $ownerMembership->free( );       
     }
 }
