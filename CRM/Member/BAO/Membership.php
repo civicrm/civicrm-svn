@@ -1590,7 +1590,7 @@ WHERE  civicrm_membership.contact_id = civicrm_contact.id
                                                                         $membership->contact_id,
                                                                         CRM_Utils_Array::value( 'action', $params ) );
         }
-
+        
         // check for loops. CRM-4213
         // remove repeated related contacts, which already inherited membership.
         $relatedContactIds[$membership->contact_id] = true;
@@ -1601,7 +1601,11 @@ WHERE  civicrm_membership.contact_id = civicrm_contact.id
             }
         }
         
-        if ( ! empty($relatedContacts) ) {
+        //lets cleanup related membership if any.
+        if ( empty( $relatedContacts ) ) {
+            require_once 'CRM/Member/BAO/Membership.php';
+            CRM_Member_BAO_Membership::deleteRelatedMemberships( $membership->id );
+        } else {
             // Edit the params array
             unset( $params['id'] );
             // Reminder should be sent only to the direct membership
