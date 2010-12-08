@@ -156,7 +156,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->click("demographics");
       
       $this->click("CIVICRM_QFID_1_8");
-      $this->webtestFillDate('birth_date');
+      $this->webtestFillDate('birth_date', "-1 year");
       
       //Tags and Groups section
       $this->click("tagGroup");
