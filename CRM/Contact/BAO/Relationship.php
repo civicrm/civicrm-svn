@@ -400,7 +400,11 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
             $ids = array();
             // calling relatedMemberships to delete the memberships of
             // related contacts.
-            self::relatedMemberships( $relationship->contact_id_a, $params, $ids, CRM_Core_Action::DELETE );
+            self::relatedMemberships( $relationship->contact_id_a, 
+                                      $params, 
+                                      $ids, 
+                                      CRM_Core_Action::DELETE,
+                                      false );
         }
         
         $relationship->delete();
@@ -454,10 +458,18 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
             // calling relatedMemberships to delete/add the memberships of
             // related contacts.
             if ( $action & CRM_Core_Action::DISABLE ) {
-                CRM_Contact_BAO_Relationship::relatedMemberships( $relationship->contact_id_a, $params, $ids, CRM_Core_Action::DELETE );
+                CRM_Contact_BAO_Relationship::relatedMemberships( $relationship->contact_id_a, 
+                                                                  $params, 
+                                                                  $ids, 
+                                                                  CRM_Core_Action::DELETE,
+                                                                  false );
             } else if ( $action & CRM_Core_Action::ENABLE ) {
                 $ids['contact'] = $relationship->contact_id_a;
-                CRM_Contact_BAO_Relationship::relatedMemberships( $relationship->contact_id_a, $params, $ids, CRM_Core_Action::ADD );
+                CRM_Contact_BAO_Relationship::relatedMemberships( $relationship->contact_id_a, 
+                                                                  $params, 
+                                                                  $ids, 
+                                                                  CRM_Core_Action::ADD,
+                                                                  false );
             }     
         }
     }
