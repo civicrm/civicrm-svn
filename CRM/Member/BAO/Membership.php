@@ -414,11 +414,17 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
                 $relTypeDirs   = array( );
                 $relTypeIds    = explode( CRM_Core_DAO::VALUE_SEPARATOR,$membershipType['relationship_type_id'] );
                 $relDirections = explode( CRM_Core_DAO::VALUE_SEPARATOR,$membershipType['relationship_direction'] );
+                $bidirectional = false;
                 foreach ( $relTypeIds as $key => $value ) {
                     $relTypeDirs[] = $value."_".$relDirections[$key];
+                    if ( in_array( $value, $relType ) &&
+                         $relValues['name_a_b'] == $relValues['name_b_a'] ) {
+                        $bidirectional = true;
+                        break;
+                    }
                 }
                 $relTypeDir = $values['civicrm_relationship_type_id'].'_'.$values['rtype'];
-                if ( in_array( $relTypeDir, $relTypeDirs ) ) {
+                if ( $bidirectional || in_array( $relTypeDir, $relTypeDirs ) ) {
                     // $values['status'] is going to have value for
                     // current or past relationships.
                     $contacts[$values['cid']] = $values['status'];
