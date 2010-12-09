@@ -136,7 +136,7 @@
   <field> 
       <name>relationship_direction</name>     
       <type>varchar</type>  
-      <length>64</length>                  
+      <length>128</length>                  
       <add>1.7</add>  
   </field> 
   <field>  
