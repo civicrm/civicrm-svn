@@ -163,14 +163,14 @@ class CRM_Contact_Form_Search_Custom_Group
                          contact_a.sort_name    as sort_name";
             
             //distinguish column according to user selection
-            if ( $this->_groups && ! $this->_tags ) {
+            if ( $this->_includeGroups && ( ! $this->_includeTags ) ) {
                 unset( $this->_columns['Tag Name'] );
                 $selectClause .= ", GROUP_CONCAT(DISTINCT group_names ORDER BY group_names ASC ) as gname";
-            } else if ( ! $this->_groups && $this->_tags) {
+            } else if ( $this->_includeTags && ( ! $this->_includeGroups ) ) {
                 unset( $this->_columns['Group Name'] );
                 $selectClause .= ", GROUP_CONCAT(DISTINCT tag_names  ORDER BY tag_names ASC ) as tname";
             } else {
-                if (!empty($this->_includeTags)) {
+                if ( !empty($this->_includeTags ) && !empty( $this->_includeGroups ) ) {
                     $selectClause .=", GROUP_CONCAT(DISTINCT group_names ORDER BY group_names ASC ) as gname , GROUP_CONCAT(DISTINCT tag_names ORDER BY tag_names ASC ) as tname";
                 } 
             }
