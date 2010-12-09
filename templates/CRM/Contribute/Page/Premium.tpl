@@ -23,7 +23,6 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{include file="CRM/Contribute/Form/ContributionPage/Premium.tpl"}
 {capture assign=managePremiumsURL}{crmURL p='civicrm/admin/contribute/managePremiums' q="reset=1"}{/capture}
 {if $rows}
 <div id="ltype">
@@ -55,7 +54,7 @@
         </table>
         {/strip}
     </div>
-    {if $products ne null }
+    {if $products}
         <div class="action-link">
             <a href="{crmURL p='civicrm/admin/contribute/addProductToPage' q="reset=1&action=update&id=$id"}">&raquo; {ts}Offer Another Premium on this Contribution Page{/ts}</a>
         </div>

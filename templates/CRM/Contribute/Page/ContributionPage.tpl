@@ -23,14 +23,11 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{if $id and $action eq 2}
-    {include file="CRM/Contribute/Page/ContributionPageEdit.tpl"}
-{else}
     {capture assign=newPageURL}{crmURL p='civicrm/admin/contribute/add' q='action=add&reset=1'}{/capture}
     <div id="help">
     	 {ts}CiviContribute allows you to create and maintain any number of Online Contribution Pages. You can create different pages for different programs or campaigns - and customize text, amounts, types of information collected from contributors, etc.{/ts} {help id="id-intro"}
     </div>
-
+    
     {include file="CRM/Contribute/Form/SearchContribution.tpl"}  
     {if NOT ($action eq 1 or $action eq 2) }
     	<table class="form-layout-compressed">
@@ -113,8 +110,7 @@
     	{else}
     	<div class="messages status">
              <div class="icon inform-icon"></div> &nbsp;
-             {ts 1=$newPageURL}No contribution pages have been created yet. Click <a accesskey="N" href='%1'>here</a> to create a new contribution page using the step-by-step wizard.{/ts}
+             {ts 1=$newPageURL}No contribution pages have been created yet. Click <a accesskey="N" href='%1'>here</a> to create a new contribution page.{/ts}
     	</div>
       	{/if}
     {/if}
-{/if}

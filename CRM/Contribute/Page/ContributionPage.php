@@ -316,14 +316,8 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
             CRM_Utils_System::appendBreadCrumb( $breadCrumb );
             return $controller->run( );
         } else if ( $action & CRM_Core_Action::UPDATE ) {
-            CRM_Utils_System::appendBreadCrumb( $breadCrumb );
-            $session = CRM_Core_Session::singleton( ); 
-            $session->pushUserContext( CRM_Utils_System::url( CRM_Utils_System::currentPath( ),
-                                                              "action=update&reset=1&id={$id}") );
             $config = CRM_Core_Config::singleton( );
-           
-            CRM_Utils_System::setTitle( ts('Configure Contribution Page') );
-        
+                       
             // assign vars to templates
             $this->assign( 'id', $id );
             $this->assign( 'title', CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage', $id, 'title' ) );

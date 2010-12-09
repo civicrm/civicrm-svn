@@ -106,17 +106,11 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
             
             $url = CRM_Utils_System::url( 'civicrm/admin/contribute', 'reset=1' ); 
             
-            $breadCrumb = array( array('title' => ts('Configure Contribution Page'), 
-                                       'url'   => $url ) );
-            CRM_Utils_System::appendBreadCrumb( $breadCrumb );
             if ($this->_action == CRM_Core_Action::UPDATE) {
                 $this->_single = true;
             }
             
             $this->assign( 'contribPageId', $this->_id );
-            
-            $session = CRM_Core_Session::singleton( ); 
-            $session->pushUserContext( $url );
         }
 
         // set up tabs
@@ -317,7 +311,8 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
     {
         if ( $this->controller->getPrint( ) == CRM_Core_Smarty::PRINT_NOFORM ||
              $this->getVar( '_id' ) <= 0 ||
-             ( $this->_action & CRM_Core_Action::DELETE ) ) {
+             ( $this->_action & CRM_Core_Action::DELETE ) || 
+             ( CRM_Utils_String::getClassName( $this->_name ) == 'AddProduct' ) ) {
             return parent::getTemplateFileName( );
         } else {
             return 'CRM/Contribute/Form/ContributionPage/Tab.tpl';
