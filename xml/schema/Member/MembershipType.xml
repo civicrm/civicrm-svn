@@ -133,6 +133,11 @@
       <add>1.5</add>
       <drop>3.3</drop>
   </foreignKey>
+  <index>
+       <name>index_relationship_type_id</name>
+       <fieldName>relationship_type_id</fieldName>
+       <add>3.3</add>
+  </index>
   <field> 
       <name>relationship_direction</name>     
       <type>varchar</type>  
