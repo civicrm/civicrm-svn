@@ -215,6 +215,7 @@
 	       	 cj("#row_"+voterId+' td.name').attr('class', 'name disabled' );
 		 cj( '#restmsg_vote_' + voterId ).fadeIn("slow").fadeOut("slow");
 		 cj( '#interview_voter_button_' + voterId ).html(updateVote);
+		 cj( '#release_voter_button_' + voterId ).hide( );
 	       }		 
 	}, 'json' );
     }
