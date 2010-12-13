@@ -364,10 +364,16 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                 $types     = array_merge( array( 'Individual' ), CRM_Contact_BAO_ContactType::subTypes( 'Individual' ) );
                 $profiles  = CRM_Core_BAO_UFGroup::getProfiles( $types );
 
-                $profileId = CRM_Utils_Array::value( 'additional_custom_pre_id', $values ) ? $values['additional_custom_pre_id'] : CRM_Utils_Array::value( 'additional_custom_post_id', $values );
+                $profileId = 
+                    CRM_Utils_Array::value( 'custom_pre_id', $values ) ? $values['custom_pre_id'] : 
+                    CRM_Utils_Array::value( 'custom_post_id', $values );
 
-                if ( !$profileId ||
-                     !array_key_exists( $profileId, $profiles ) ) {
+                $additionalProfileId = 
+                    CRM_Utils_Array::value( 'additional_custom_pre_id', $values ) ? $values['additional_custom_pre_id'] : 
+                    CRM_Utils_Array::value( 'additional_custom_post_id', $values );
+                
+                if ( ( !$additionalProfileId && !$profileId ) || 
+                     ( $additionalProfileId && !array_key_exists( $additionalProfileId, $profiles ) ) ) {
                     $errorMsg['additional_custom_pre_id'] = ts("Allow multiple registrations from the same email address requires a profile of type 'Individual'");
                 }
             }
