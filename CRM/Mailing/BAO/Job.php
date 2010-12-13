@@ -87,7 +87,8 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 			   AND   j.is_test = 0
 			   AND   ( ( j.start_date IS null
 			   AND       j.scheduled_date <= $currentTime
-			   AND       j.status = 'Scheduled'
+			   AND       j.status = 'Scheduled' )
+                OR     ( j.status = 'Running'
 			   AND       j.end_date IS null ) )
 			   AND (j.job_type = 'child')
 			   AND   {$mailingACL}
@@ -512,7 +513,9 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
              * engine, maybe we should dump the messages into a table */
 
             // disable error reporting on real mailings (but leave error reporting for tests), CRM-5744
-            if ($job_date) CRM_Core_Error::ignoreException();
+            if ($job_date) {
+                CRM_Core_Error::ignoreException();
+            }
 
             if ( is_object( $mailer ) ) {
                 
