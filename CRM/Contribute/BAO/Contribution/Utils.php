@@ -286,17 +286,18 @@ class CRM_Contribute_BAO_Contribution_Utils {
             $param = array( 1 => array( $param, 'Integer' ) );
         }
         
-        $query = 
-        "SELECT sum(contrib.total_amount) AS ctAmt,
-                MONTH( contrib.receive_date) AS contribMonth
-        FROM civicrm_contribution AS contrib,
-             civicrm_contact AS contact
-        WHERE contrib.contact_id = contact.id
-              AND contrib.is_test = 0
-              AND contrib.contribution_status_id = 1
-              AND date_format(contrib.receive_date,'%Y') = %1 
-        GROUP BY contribMonth
-        ORDER BY month(contrib.receive_date)";
+        $query = "
+    SELECT   sum(contrib.total_amount) AS ctAmt,
+             MONTH( contrib.receive_date) AS contribMonth
+      FROM   civicrm_contribution AS contrib
+INNER JOIN   civicrm_contact AS contact ON ( contact.id = contrib.contact_id ) 
+     WHERE   contrib.contact_id = contact.id
+       AND   ( contrib.is_test = 0 OR contrib.is_test IS NULL )
+       AND   contrib.contribution_status_id = 1
+       AND   date_format(contrib.receive_date,'%Y') = %1 
+       AND   contact.is_deleted = 0 
+  GROUP BY   contribMonth
+  ORDER BY   month(contrib.receive_date)";
         
         $dao = CRM_Core_DAO::executeQuery( $query, $param );
         
@@ -320,14 +321,16 @@ class CRM_Contribute_BAO_Contribution_Utils {
      */
     static function contributionChartYearly( ) 
     {
-        $query = 
-        "SELECT sum(contrib.total_amount) AS ctAmt,
-            year(contrib.receive_date) as contribYear
-        FROM civicrm_contribution AS contrib
-        WHERE contrib.is_test = 0
-              AND contrib.contribution_status_id = 1
-        GROUP BY contribYear
-        ORDER BY contribYear";
+        $query = '
+    SELECT   sum(contrib.total_amount) AS ctAmt,
+             year(contrib.receive_date) as contribYear
+      FROM   civicrm_contribution AS contrib
+INNER JOIN   civicrm_contact contact ON ( contact.id = contrib.contact_id ) 
+     WHERE   ( contrib.is_test = 0 OR contrib.is_test IS NULL )
+       AND   contrib.contribution_status_id = 1
+       AND   contact.is_deleted = 0 
+  GROUP BY   contribYear
+  ORDER BY   contribYear';
         $dao = CRM_Core_DAO::executeQuery( $query );
         
         $params = null;

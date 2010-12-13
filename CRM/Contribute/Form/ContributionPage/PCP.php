@@ -192,6 +192,7 @@ class CRM_Contribute_Form_ContributionPage_PCP extends CRM_Contribute_Form_Contr
 
         require_once 'CRM/Contribute/BAO/PCP.php'; 
         $dao = CRM_Contribute_BAO_PCP::add( $params ); 
+        parent::endPostProcess( );
     }
 
     /** 

@@ -150,6 +150,7 @@ class CRM_Contribute_Page_Premium extends CRM_Core_Page_Basic
         $dao->find(true);
         $premiumID = $dao->id;
         $this->assign( 'products', false );
+        $this->assign( 'id', $pageID );
         if (!$premiumID) {
             return;
         }

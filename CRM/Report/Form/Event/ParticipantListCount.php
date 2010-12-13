@@ -43,6 +43,8 @@ class CRM_Report_Form_Event_ParticipantListCount extends CRM_Report_Form {
     
 	protected $_summary = null;
     
+    protected $_customGroupExtends = array( 'Participant' );
+
     function __construct( ) {
 		$this->_columns = 
 			array( 

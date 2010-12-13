@@ -580,7 +580,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
         
         
         // Membership for related contacts CRM-1657
-        if ( CRM_Core_Permission::access( 'CiviMember' ) ) {
+        if ( CRM_Core_Permission::access( 'CiviMember' ) && ( !$duplicate ) ) {
             CRM_Contact_BAO_Relationship::relatedMemberships( $this->_contactId, 
                                                               $params, $ids, 
                                                               $this->_action );

@@ -107,8 +107,7 @@ if ( isset($_REQUEST['loadGenerated'] ) ) {
     $loadGenerated = 1;
 }
 
-require_once "$crmPath/CRM/Core/I18n/PseudoConstant.php";
-$langs =& CRM_Core_I18n_PseudoConstant::languages();
+require_once dirname(__FILE__) . CIVICRM_DIRECTORY_SEPARATOR . 'langs.php';
 foreach ($langs as $locale => $_) {
     if ($locale == 'en_US') continue;
     if (!file_exists(implode(CIVICRM_DIRECTORY_SEPARATOR, array($crmPath, 'sql', "civicrm_data.$locale.mysql")))) unset($langs[$locale]);

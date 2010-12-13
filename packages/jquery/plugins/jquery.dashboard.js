@@ -205,8 +205,11 @@
         handle: '.widget-header',
 
         // The class of placeholder elements (the 'ghost' widget showing where the dragged item would land if released now.)
-        placeholder: 'placeholder',
-
+        placeholder: 'placeholder',   
+        activate: function(event, ui) { 
+		  var h= cj(ui.item).height(); 
+		  $('.placeholder').css('height', h +'px'); },
+         	    
         opacity: 0.2,
 
         // Maks sure that only widgets are sortable, and not empty placeholders.

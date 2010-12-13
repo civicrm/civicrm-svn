@@ -409,14 +409,17 @@ WHERE     ct.id = cp.contribution_type_id AND
         if ( $required == true ) {
             $priceFields[] = 'is_required';   
         }
+
         // create select
         $select = 'SELECT ' . implode( ',', $priceFields );
         $from = ' FROM civicrm_price_field';
         
         $params = array( );
         $params[1] = array( $setID, 'Integer' );
-        $where = ' WHERE price_set_id = %1';
-        $where .= ' AND is_active = 1';
+        $where = '
+WHERE price_set_id = %1
+AND is_active = 1
+';
 
         $orderBy = ' ORDER BY weight';
 
@@ -485,12 +488,14 @@ WHERE  id = %1";
                 
                 if ( $entityId && $entity ) {
                     require_once 'CRM/Price/BAO/LineItem.php';
-                    $form->_values['line_items'] = CRM_Price_BAO_LineItem::getLineItems( $entityId, $entity );
+                    $form->_values['line_items'] = 
+                        CRM_Price_BAO_LineItem::getLineItems( $entityId, $entity );
                 }
                 $required = false;
             } else {
                 $required = true;
             }
+
             $form->_priceSetId    = $priceSetId;
             $priceSet             = self::getSetDetail($priceSetId, $required);
             $form->_priceSet      = CRM_Utils_Array::value($priceSetId,$priceSet);

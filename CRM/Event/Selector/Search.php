@@ -116,6 +116,14 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
     protected $_context = null;
 
     /**
+     * what component context are we being invoked from
+     *   
+     * @access protected     
+     * @var string
+     */     
+    protected $_compContext = null;
+
+    /**
      * queryParams is the array returned by exportValues called on
      * the HTML_QuickForm_Controller for that page.
      *
@@ -163,7 +171,8 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
                          $eventClause = null,
                          $single = false,
                          $limit = null,
-                         $context = 'search' ) 
+                         $context = 'search',
+                         $compContext = null ) 
     {
         // submitted form values
         $this->_queryParams =& $queryParams;
@@ -171,6 +180,7 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
         $this->_single  = $single;
         $this->_limit   = $limit;
         $this->_context = $context;
+        $this->_compContext = $compContext;
 
         $this->_eventClause = $eventClause;
 
@@ -203,11 +213,19 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
      * @access public
      *
      */
-    static function &links( $qfKey = null, $context = null )
+    static function &links( $qfKey = null, $context = null, $compContext = null )
     {
         $extraParams = null;
-        if ( $context == 'search' ) $extraParams .= '&compContext=participant';
-        if ( $qfKey ) $extraParams .= "&key={$qfKey}";
+        if ( $compContext ) {
+            $extraParams .= "&compContext={$compContext}";
+        } else if ( $context == 'search' ) {
+            $extraParams .= '&compContext=participant';
+        }
+
+        if ( $qfKey ) {
+            $extraParams .= "&key={$qfKey}";
+        }
+
         
         if (!(self::$_links)) {
             self::$_links = array(
@@ -333,7 +351,8 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
 
              $row['checkbox'] = CRM_Core_Form::CB_PREFIX . $result->participant_id;
              
-             $row['action']   = CRM_Core_Action::formLink( self::links( $this->_key, $this->_context ), $mask,
+             $row['action']   = CRM_Core_Action::formLink( self::links( $this->_key, $this->_context, $this->_compContext ),
+                                                           $mask,
                                                            array( 'id'  => $result->participant_id,
                                                                   'cid' => $result->contact_id,
                                                                   'cxt' => $this->_context ) );
@@ -426,7 +445,7 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
                                                 ),
                                           array(
                                                 'name'      => ts('Role'),
-                                                'sort'      => 'participant_role',
+                                                'sort'      => 'participant_role_id',
                                                 'direction' => CRM_Utils_Sort::DONTCARE,
                                                 ),
                                           array('desc' => ts('Actions') ),

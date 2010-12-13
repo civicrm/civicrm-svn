@@ -117,6 +117,14 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
     protected $_context = null;
 
     /**
+     * what component context are we being invoked from
+     *   
+     * @access protected     
+     * @var string
+     */     
+    protected $_compContext = null;
+
+    /**
      * queryParams is the array returned by exportValues called on
      * the HTML_QuickForm_Controller for that page.
      *
@@ -164,7 +172,8 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
                          $contributionClause = null,
                          $single = false,
                          $limit = null,
-                         $context = 'search' ) 
+                         $context = 'search',
+                         $compContext = null ) 
     {
         // submitted form values
         $this->_queryParams =& $queryParams;
@@ -172,6 +181,7 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
         $this->_single  = $single;
         $this->_limit   = $limit;
         $this->_context = $context;
+        $this->_compContext = $compContext;
 
         $this->_contributionClause = $contributionClause;
 
@@ -303,10 +313,16 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
         $qfKey = $this->_key;
         $componentId = $componentContext = null;
         if ( $this->_context != 'contribute' ) {
-            $qfKey            = CRM_Utils_Request::retrieve(  'key',         'String',   CRM_Core_DAO::$_nullObject ); 
-            $componentId      =  CRM_Utils_Request::retrieve( 'id',          'Positive', CRM_Core_DAO::$_nullObject );
-            $componentAction  =  CRM_Utils_Request::retrieve( 'action',      'String',   CRM_Core_DAO::$_nullObject );
-            $componentContext = CRM_Utils_Request::retrieve(  'compContext', 'String',   CRM_Core_DAO::$_nullObject );
+            $qfKey            = CRM_Utils_Request::retrieve( 'key',         'String',   CRM_Core_DAO::$_nullObject ); 
+            $componentId      = CRM_Utils_Request::retrieve( 'id',          'Positive', CRM_Core_DAO::$_nullObject );
+            $componentAction  = CRM_Utils_Request::retrieve( 'action',      'String',   CRM_Core_DAO::$_nullObject );
+            $componentContext = CRM_Utils_Request::retrieve( 'compContext', 'String',   CRM_Core_DAO::$_nullObject );
+
+            if ( ! $componentContext &&
+                 $this->_compContext ) {
+                $componentContext = $this->_compContext;
+                $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', CRM_Core_DAO::$_nullObject, null, false, 'REQUEST' );
+            }
         }
 
         // get all contribution status

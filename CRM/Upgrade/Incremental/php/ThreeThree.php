@@ -240,4 +240,72 @@ WHERE id = %2
         } 
     }
 
-}
+
+    function upgrade_3_3_beta3( $rev ) 
+    {
+        // get the duplicate Ids of line item entries
+        $dupeLineItemIds = array( );
+        $fields = array( 'entity_table', 'entity_id', 'price_field_id', 'price_field_value_id' );
+        require_once 'CRM/Price/BAO/LineItem.php';
+        $mainLineItem = new CRM_Price_BAO_LineItem( );
+        $mainLineItem->find( true );
+        while ( $mainLineItem->fetch( ) ) {
+            $dupeLineItem = new CRM_Price_BAO_LineItem( );
+            foreach ( $fields as $fld ) $dupeLineItem->$fld = $mainLineItem->$fld; 
+            $dupeLineItem->find( true );
+            $dupeLineItem->addWhere( "id != $mainLineItem->id" );
+            while ( $dupeLineItem->fetch( ) ) {
+                $dupeLineItemIds[$dupeLineItem->id] = $dupeLineItem->id;
+            }
+            $dupeLineItem->free( );
+        }
+        $mainLineItem->free( );
+        
+        //clean line item table.
+        if ( !empty( $dupeLineItemIds ) ) {
+            $sql = 'DELETE FROM civicrm_line_item WHERE id IN ( '. implode( ', ', $dupeLineItemIds ) .' )';
+            CRM_Core_DAO::executeQuery( $sql );
+        }
+
+        $upgrade =& new CRM_Upgrade_Form( );
+        $upgrade->processSQL( $rev );
+    }
+     
+    function upgrade_3_3_0( $rev ) 
+    {        
+        $upgrade =& new CRM_Upgrade_Form( );
+        $upgrade->processSQL( $rev );
+        
+        //CRM-7123 -lets activate needful languages.
+        $config = CRM_Core_Config::singleton( );
+        $locales = array( );
+        if ( is_dir( $config->gettextResourceDir ) ) {
+            $dir = opendir( $config->gettextResourceDir );
+            while ( $filename = readdir( $dir ) ) {
+                if ( preg_match('/^[a-z][a-z]_[A-Z][A-Z]$/', $filename ) ) {
+                    $locales[$filename] = $filename;
+                }
+            }
+            closedir($dir);
+        }
+        
+        if ( isset( $config->languageLimit ) && !empty( $config->languageLimit ) ) { 
+            //get all already enabled and all l10n languages.
+            $locales = array_merge( array_values( $locales ), array_keys( $config->languageLimit ) );
+        }
+        
+        if ( !empty( $locales ) ) {
+            $sql = '
+    UPDATE  civicrm_option_value val
+INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id )
+       SET  val.is_active = 1
+     WHERE  grp.name = %1
+       AND  val.name IN ( '."'". implode( "', '", $locales ) ."' )";
+            
+            CRM_Core_DAO::executeQuery( $sql, 
+                                        array( 1 => array( 'languages', 'String' ) ), 
+                                        true, null, false, false );
+        }
+    }
+    
+  }

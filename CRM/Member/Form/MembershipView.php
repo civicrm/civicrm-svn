@@ -88,11 +88,31 @@ class CRM_Member_Form_MembershipView extends CRM_Core_Form
 
                 $membershipType = CRM_Member_BAO_MembershipType::getMembershipTypeDetails($values['membership_type_id']);
                 $direction =  strrev($membershipType['relationship_direction']);
-
-                $values['relationship']          = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_RelationshipType', 
-                                                                                $membershipType['relationship_type_id'], 
+                // To display relationship type in view membership page
+                $relTypeIds = str_replace( CRM_Core_DAO::VALUE_SEPARATOR, ",", $membershipType['relationship_type_id'] );
+                $sql = "
+SELECT relationship_type_id,
+  CASE    
+  WHEN  contact_id_a = {$values['owner_contact_id']} AND contact_id_b = {$values['contact_id']} THEN 'b_a'
+  WHEN  contact_id_b = {$values['owner_contact_id']} AND contact_id_a = {$values['contact_id']} THEN 'a_b'
+END AS 'relType'
+  FROM civicrm_relationship 
+ WHERE relationship_type_id IN ($relTypeIds)";
+                $dao = CRM_Core_DAO::executeQuery( $sql );
+                $values['relationship'] = null; 
+                while ( $dao->fetch( ) ) {
+                    $membershipType['relationship_type_id'] = $dao->relationship_type_id;
+                    $direction = $dao->relType;
+                    if ( $direction && $membershipType['relationship_type_id'] ) {
+                        if ( $values['relationship'] ) {
+                            $values['relationship'] .= ',';
+                        }
+                        $values['relationship'] .= CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_RelationshipType', 
+                                                                                $membershipType['relationship_type_id'],
                                                                                 "name_$direction",
                                                                                 'id');
+                    }
+                }
             }
 
             $displayName = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', 

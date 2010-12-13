@@ -86,8 +86,10 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
         if ( isset( $params['start_date'] ) ) {
             $params['start_date'] = CRM_Utils_Date::isoToMysql($params['start_date']);
         }
-        if ( isset( $params['end_date'] ) ) {
+        if ( CRM_Utils_Array::value( 'end_date', $params ) ) {
             $params['end_date']   = CRM_Utils_Date::isoToMysql($params['end_date']);
+        } else {
+            $params['end_date']   = 'null';
         }
         if ( CRM_Utils_Array::value( 'reminder_date', $params ) ) { 
             $params['reminder_date']  = CRM_Utils_Date::isoToMysql($params['reminder_date']);
@@ -268,8 +270,8 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
             $contributionParams = array( );
             $config = CRM_Core_Config::singleton();
             $contributionParams['currency'  ] = $config->defaultCurrency;
-            $contributionParams['receipt_date'] = $params['receipt_date'] ? $params['receipt_date'] : 'null';
-            $contributionParams['source']       = $params['contribution_source'];
+            $contributionParams['receipt_date'] = ( CRM_Utils_Array::value('receipt_date', $params) ) ? $params['receipt_date'] : 'null';
+            $contributionParams['source']       = CRM_Utils_Array::value('contribution_source', $params);
             $contributionParams['non_deductible_amount'] = 'null';
             $recordContribution = array( 'contact_id', 'total_amount', 'receive_date', 'contribution_type_id', 'payment_instrument_id', 'trxn_id', 'invoice_id', 'is_test', 'contribution_status_id', 'check_number' );
             foreach ( $recordContribution as $f ) {
@@ -410,12 +412,21 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
                 $relType   = array( 'id' => $values['civicrm_relationship_type_id'] );
                 $relValues = array( );
                 CRM_Contact_BAO_RelationshipType::retrieve( $relType, $relValues);
-                
-                // 1. Check if contact and membership type relationship type are same
-                // 2. Check if relationship direction is same or name_a_b = name_b_a
-                if ( ( $values['civicrm_relationship_type_id'] == $membershipType['relationship_type_id'] )
-                     && ( ( $values['rtype'] == $membershipType['relationship_direction'] ) ||
-                          ( $relValues['name_a_b'] == $relValues['name_b_a'] ) ) ) {
+                // Check if contact's relationship type exists in membership type
+                $relTypeDirs   = array( );
+                $relTypeIds    = explode( CRM_Core_DAO::VALUE_SEPARATOR,$membershipType['relationship_type_id'] );
+                $relDirections = explode( CRM_Core_DAO::VALUE_SEPARATOR,$membershipType['relationship_direction'] );
+                $bidirectional = false;
+                foreach ( $relTypeIds as $key => $value ) {
+                    $relTypeDirs[] = $value."_".$relDirections[$key];
+                    if ( in_array( $value, $relType ) &&
+                         $relValues['name_a_b'] == $relValues['name_b_a'] ) {
+                        $bidirectional = true;
+                        break;
+                    }
+                }
+                $relTypeDir = $values['civicrm_relationship_type_id'].'_'.$values['rtype'];
+                if ( $bidirectional || in_array( $relTypeDir, $relTypeDirs ) ) {
                     // $values['status'] is going to have value for
                     // current or past relationships.
                     $contacts[$values['cid']] = $values['status'];
@@ -1468,16 +1479,18 @@ SELECT c.contribution_page_id as pageID
      */
     static function deleteRelatedMemberships( $ownerMembershipId, $contactId = null ) 
     {
+        if ( !$ownerMembershipId && !$contactId ) return;  
+        
         $membership = new CRM_Member_DAO_Membership( );
         $membership->owner_membership_id = $ownerMembershipId;
-
+        
         if ( $contactId ) {
             $membership->contact_id      = $contactId;
         }
         
         $membership->find( );
         while ( $membership->fetch( ) ) {
-            // call delete function recursively since we need to delete inherited memberships of inherited memberships
+            //delete related first and then delete parent.
             self::deleteRelatedMemberships(  $membership->id );
             self::deleteMembership( $membership->id );
         }
@@ -1587,18 +1600,32 @@ WHERE  civicrm_membership.contact_id = civicrm_contact.id
                                                                         $membership->contact_id,
                                                                         CRM_Utils_Array::value( 'action', $params ) );
         }
-
+        
         // check for loops. CRM-4213
         // remove repeated related contacts, which already inherited membership.
         $relatedContactIds[$membership->contact_id] = true;
         foreach( $allRelatedContacts as $cid => $status ) {
             if ( !CRM_Utils_Array::value( $cid, $relatedContactIds ) ) {
-                $relatedContacts[$cid] =  $status;
                 $relatedContactIds[$cid] = true;
+                
+                //don't create membership again for owner contact.
+                $nestedRelationship = false;
+                if ( $membership->owner_membership_id ) {
+                    $nestedRelMembership = new CRM_Member_DAO_Membership( );
+                    $nestedRelMembership->id = $membership->owner_membership_id;
+                    $nestedRelMembership->contact_id = $cid;
+                    $nestedRelationship = $nestedRelMembership->find( true );
+                    $nestedRelMembership->free( );
+                }
+                if ( !$nestedRelationship ) $relatedContacts[$cid] =  $status;
             }
         }
         
-        if ( ! empty($relatedContacts) ) {
+        //lets cleanup related membership if any.
+        if ( empty( $relatedContacts ) ) {
+            require_once 'CRM/Member/BAO/Membership.php';
+            CRM_Member_BAO_Membership::deleteRelatedMemberships( $membership->id );
+        } else {
             // Edit the params array
             unset( $params['id'] );
             // Reminder should be sent only to the direct membership
@@ -1652,11 +1679,8 @@ WHERE  civicrm_membership.contact_id = civicrm_contact.id
                     }
                 }
                 
-                //avoid extra processing.
-                if ( $relMembership->id && 
-                     $params['status_id'] == $relMembership->status_id ) {
-                    continue;
-                }
+                //don't calculate status again in create( );
+                $params['skipStatusCal'] = true;
                 
                 //do create activity if we changed status. 
                 if ( $params['status_id'] != $relMembership->status_id ) {
@@ -1749,4 +1773,5 @@ FROM   civicrm_membership_type
         $query = "SELECT count(*) FROM civicrm_membership WHERE civicrm_membership.contact_id = {$contactID} AND civicrm_membership.is_test = 0 ";
         return CRM_Core_DAO::singleValueQuery( $query );
     }
+   
 }

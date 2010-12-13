@@ -24,7 +24,6 @@
  +--------------------------------------------------------------------+
 *}
 {* WizardHeader.tpl provides visual display of steps thru the wizard as well as title for current step *}
-{include file="CRM/common/WizardHeader.tpl"}
 {capture assign='reqMark'}<span class="marker"  title="{ts}This field is required.{/ts}">*</span>{/capture}
 <div class="crm-block crm-form-block crm-contribution-contributionpage-thankyou-form-block">
 <div id="help">

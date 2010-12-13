@@ -123,11 +123,8 @@ class CRM_Contact_Form_Search_Criteria {
                           ts('Search Views'), 
                           array('0' => ts('- default view -')) + $searchProfiles );
 
-        // add component mode select
-        $componentModes = array( ''  => ts( 'Contacts'      ),
-                                 '2' => ts( 'Contributions' ),
-                                 '3' => ts( 'Participants'  ),
-                                 '4' => ts( 'Activities'    ) );
+        require_once 'CRM/Contact/Form/Search.php';
+        $componentModes =& CRM_Contact_Form_Search::getModeSelect( );
 
         // unset contributions or participants if user does not have
         // permission on them
@@ -146,7 +143,7 @@ class CRM_Contact_Form_Search_Criteria {
         if ( count( $componentModes ) > 1 ) {
             $form->addElement('select',
                               'component_mode', 
-                              ts( 'Display Result as' ),
+                              ts( 'Display Results As' ),
                               $componentModes );
         }
 

@@ -165,7 +165,7 @@ div#crm-container {
 .crmasmSelect,
 .crmtagContainer,
 .crmtagSelect {
-    width:200px;
+    width:160px;
 }
 
 .crmasmSelect,
@@ -2021,6 +2021,7 @@ div.grippie {
 .ac_results-inner,
 .crm-participant-list-inner,
 .crm-event-links-list-inner,
+.crm-contribpage-links-list-inner,
 .crm-create-new-list-inner,
 .crm-contact-actions-list-inner  {
     background-color:#2f2f2e;
@@ -2071,6 +2072,7 @@ div.grippie {
 #crm-create-new-link,
 #crm-participant-link,
 #crm-event-links-link,
+#crm-contribpage-links-link,
 #crm-contact-actions-link,
 #crm-container a.button:link,
 #crm-container input.form-submit,
@@ -2110,6 +2112,7 @@ div.grippie {
 #crm-create-new-link,
 #crm-participant-link,
 #crm-event-links-link,
+#crm-contribpage-links-link,
 #crm-contact-actions-link,
 #crm-container a.button:link {
     display: block;
@@ -2120,6 +2123,7 @@ div.grippie {
 #crm-contact-actions-link span,
 #crm-participant-link span,
 #crm-event-links-link span,
+#crm-contribpage-links-link span,
 #crm-container a.button span {
     display: block;
     line-height: 14px;
@@ -2151,6 +2155,7 @@ div.grippie {
 
 #crm-participant-wrapper,
 #crm-event-links-wrapper,
+#crm-contribpage-links-wrapper,
 #crm-create-new-wrapper,
 #crm-contact-actions-wrapper{
 	position:relative;
@@ -2158,6 +2163,7 @@ div.grippie {
 	}
 
 #crm-event-links-list,
+#crm-contribpage-links-list,
 #crm-create-new-list,
 #crm-contact-actions-list,
 #crm-participant-list{
@@ -2192,6 +2198,9 @@ div.grippie {
 #crm-event-links-list .crm-event-info ul,
 #crm-event-links-list .crm-event-test ul,
 #crm-event-links-list .crm-event-live ul,
+#crm-contribpage-links-list .crm-contribpage-contribution ul,
+#crm-contribpage-links-list .crm-contribpage-test ul,
+#crm-contribpage-links-list .crm-contribpage-live ul,
 #crm-participant-list .crm-participant-counted ul,
 #crm-participant-list .crm-participant-not-counted ul,
 #crm-participant-list .crm-participant-listing ul,
@@ -2255,6 +2264,7 @@ span.icon {
 #crm-contact-actions-link .icon,
 #crm-participant-link .icon,
 #crm-event-links-link .icon,
+#crm-contribpage-links-link .icon,
 #crm-create-new-link .icon,
 .button .icon,
 .crm-button .icon {background-image:url("../i/icons/jquery-ui-FFFFFF.png");}
@@ -2274,7 +2284,7 @@ span.icon {
 .edit-icon { background-position: -66px -114px;}
 
 .add-icon { background-position: -2px -193px;}
-
+.back-icon { background-position: -2px -65px;}
 .delete-icon { background-position: -179px -99px;}
 .button:hover .delete-icon {
     background-image:url("../packages/jquery/jquery-ui-1.8.5/css/custom-theme/images/ui-icons_8d2c27_256x240.png")!important;
@@ -2537,6 +2547,8 @@ div#crm-toolTip {
     right:20px;
     width:500px;
     display:none;
+    max-height:500px;
+    overflow:auto;
 }
 
 div#crm-toolTip td {
@@ -2939,6 +2951,7 @@ del,
 #crm-create-new-link,
 #crm-participant-link,
 #crm-event-links-link,
+#crm-contribpage-links-link,
 #crm-contact-actions-link,
 #crm-container a.button:link,
 #crm-container input.form-submit,
@@ -2978,6 +2991,7 @@ div#crm-toolTip
 .ac_results-inner,
 .crm-participant-list-inner,
 .crm-event-links-list-inner,
+.crm-contribpage-links-list-inner,
 .crm-create-new-list-inner,
 .crm-contact-actions-list-inner { background-color:#2f2f2e; }
 
@@ -3038,6 +3052,7 @@ div#crm-toolTip
 #crm-container .panel li a:hover,
 #crm-container .crm-participant-list-inner li a:hover,
 #crm-container .crm-event-links-list-inner li a:hover,
+#crm-container .crm-contribpage-links-list-inner li a:hover,
 #crm-container .contextMenu li a:hover,
 .crm-contextmenu li a:hover {
     color: #3e3e3e;
@@ -3055,3 +3070,9 @@ div#crm-toolTip
 
 /*Needed for jstree contextmenu */ 
 #vakata-contextmenu.jstree-default-context li { background:none repeat scroll 0 0 transparent;}
+
+/* Class for successful upgrade */
+.upgrade-success { 
+    background-color:#00CC00;
+    color:white;
+ }

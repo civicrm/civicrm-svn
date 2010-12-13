@@ -94,8 +94,9 @@ class CRM_Contribute_Form_ContributionPage_Premium extends CRM_Contribute_Form_C
         if ( $this->_single ) {
             if ( $this->_id ) {
                 $daoPremium = new CRM_Contribute_DAO_Premium( );
-                $daoPremium->entity_id    = $this->_id;
-                $daoPremium->entity_table = 'civicrm_contribution_page';
+                $daoPremium->entity_id       = $this->_id;
+                $daoPremium->entity_table    = 'civicrm_contribution_page';
+                $daoPremium->premiums_active = 1;
                 if ( $daoPremium->find( true ) ) {
                     $showForm = false;
                 }
@@ -104,6 +105,10 @@ class CRM_Contribute_Form_ContributionPage_Premium extends CRM_Contribute_Form_C
         $this->assign( 'showForm', $showForm );
         
         parent::buildQuickForm( );
+
+        require_once 'CRM/Contribute/Page/Premium.php';
+        $premiumPage = new CRM_Contribute_Page_Premium( );
+        $premiumPage->browse( );
     }
 
     /**
@@ -136,7 +141,7 @@ class CRM_Contribute_Form_ContributionPage_Premium extends CRM_Contribute_Form_C
         $dao = new CRM_Contribute_DAO_Premium();
         $dao->copyValues($params);
         $dao->save();
-
+        parent::endPostProcess( );
     }
 
     /** 

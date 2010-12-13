@@ -147,13 +147,6 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
                                                                                     'qs'    => $urlParams,
                                                                                     'uniqueName' => 'membership'
                                                                                      ),
-                                                 CRM_Core_Action::PROFILE  => array( 
-                                                                                    'name'  => ts('Include Profiles'),
-                                                                                    'title' => ts('Include Profiles'),
-                                                                                    'url'   => $urlString.'custom',
-                                                                                    'qs'    => $urlParams,
-                                                                                    'uniqueName' => 'custom'
-                                                                                     ),
                                                  CRM_Core_Action::EXPORT   => array( 
                                                                                     'name'  => ts('Thank-you and Receipting'),
                                                                                     'title' => ts('Thank-you and Receipting'),
@@ -168,12 +161,12 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
                                                                                     'qs'    => $urlParams,
                                                                                     'uniqueName' => 'friend'
                                                                                      ),
-                                                 CRM_Core_Action::ADVANCED => array( 
-                                                                                    'name'  => ts('Personal Campaign Pages'),
-                                                                                    'title' => ts('Personal Campaign Pages'),
-                                                                                    'url'   => $urlString.'pcp',
+                                                 CRM_Core_Action::PROFILE  => array( 
+                                                                                    'name'  => ts('Include Profiles'),
+                                                                                    'title' => ts('Include Profiles'),
+                                                                                    'url'   => $urlString.'custom',
                                                                                     'qs'    => $urlParams,
-                                                                                    'uniqueName' => 'pcp'
+                                                                                    'uniqueName' => 'custom'
                                                                                      ),
                                                  CRM_Core_Action::MAP      => array( 
                                                                                     'name'  => ts('Contribution Widget'),
@@ -188,6 +181,13 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
                                                                                     'url'   => $urlString.'premium',
                                                                                     'qs'    => $urlParams,
                                                                                     'uniqueName' => 'premium'
+                                                                                     ),
+                                                 CRM_Core_Action::ADVANCED => array( 
+                                                                                    'name'  => ts('Personal Campaign Pages'),
+                                                                                    'title' => ts('Personal Campaign Pages'),
+                                                                                    'url'   => $urlString.'pcp',
+                                                                                    'qs'    => $urlParams,
+                                                                                    'uniqueName' => 'pcp'
                                                                                      ),
                                                  );
         }
@@ -212,6 +212,7 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
                                                                                       'title' => ts('Live Page'),
                                                                                       'url'   => $urlString,
                                                                                       'qs'    => $urlParams,
+                                                                                      'fe'    => true,
                                                                                       'uniqueName' => 'live_page'
                                                                                        ),
                                                     CRM_Core_Action::PREVIEW => array( 
@@ -315,14 +316,8 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
             CRM_Utils_System::appendBreadCrumb( $breadCrumb );
             return $controller->run( );
         } else if ( $action & CRM_Core_Action::UPDATE ) {
-            CRM_Utils_System::appendBreadCrumb( $breadCrumb );
-            $session = CRM_Core_Session::singleton( ); 
-            $session->pushUserContext( CRM_Utils_System::url( CRM_Utils_System::currentPath( ),
-                                                              "action=update&reset=1&id={$id}") );
             $config = CRM_Core_Config::singleton( );
-           
-            CRM_Utils_System::setTitle( ts('Configure Contribution Page') );
-        
+                       
             // assign vars to templates
             $this->assign( 'id', $id );
             $this->assign( 'title', CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage', $id, 'title' ) );

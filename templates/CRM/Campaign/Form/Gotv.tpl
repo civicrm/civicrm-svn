@@ -86,7 +86,8 @@
  {literal}
  cj( function( ) { 
     //collapse the search form.
-    cj( '#search_form_' + {/literal}'{$searchVoterFor}'{literal} ).addClass( 'crm-accordion-closed' );	      	  
+    var searchFormName = '#search_form_' + {/literal}'{$searchVoterFor}'{literal};
+    cj( searchFormName ).removeClass( 'crm-accordion-open' ).addClass( 'crm-accordion-closed' );	      	  
     searchVoters( {/literal}'{$qfKey}'{literal} );
  }); 	
      	
@@ -112,7 +113,8 @@ function searchVoters( qfKey )
 	      cj( '#voterList' ).html( voterList );
 
 	      //collapse the search form.
-	      cj( '#search_form_' + {/literal}'{$searchVoterFor}'{literal} ).addClass( 'crm-accordion-closed' );
+	      var searchFormName = '#search_form_' + {/literal}'{$searchVoterFor}'{literal};
+	      cj( searchFormName ).removeClass( 'crm-accordion-open' ).addClass( 'crm-accordion-closed' );
       }, 'html' );
 }
 
@@ -202,7 +204,13 @@ function processVoterData( element, operation )
 		   } else if ( operation == 'gotv' ) {
 		       msg = '{/literal}{ts}Vote Recorded.{/ts}{literal}';
 		       var hasVoted = cj( element ).attr( 'checked') ? 1:0;
-		       if ( !hasVoted ) msg = '{/literal}{ts}Vote Cancelled.{/ts}{literal}'; 
+		       var trObject = cj( '[id^="survey_activity['+ cj( element ).val() +']"]' ).parents('tr' );
+		       var methodName = 'addClass';	      
+		       if ( !hasVoted ) {
+			  msg = '{/literal}{ts}Vote Cancelled.{/ts}{literal}'; 
+			  methodName = 'removeClass';  
+		       }
+		       eval( 'trObject.' + methodName + "( 'name disabled' )" );
 		   } else if ( operation == 'reserve' ) {
 		       if ( cj( element ).attr( 'checked') ) {
 		       	  msg = '{/literal}{ts}Reserved.{/ts}{literal}';	  

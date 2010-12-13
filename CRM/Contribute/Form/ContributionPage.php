@@ -104,19 +104,19 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
         if ( $this->_id ) {
             $title = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage', $this->_id, 'title' );
             
-            $url = CRM_Utils_System::url( 'civicrm/admin/contribute', 
-                                          "action=update&reset=1&id={$this->_id}" ); 
+            $url = CRM_Utils_System::url( 'civicrm/admin/contribute', 'reset=1' ); 
             
-            $breadCrumb = array( array('title' => ts('Configure Contribution Page'), 
-                                       'url'   => $url ) );
-            CRM_Utils_System::appendBreadCrumb( $breadCrumb );
             if ($this->_action == CRM_Core_Action::UPDATE) {
                 $this->_single = true;
             }
             
-            $session = CRM_Core_Session::singleton( ); 
-            $session->pushUserContext( $url );
+            $this->assign( 'contribPageId', $this->_id );
         }
+
+        // set up tabs
+        require_once 'CRM/Contribute/Form/ContributionPage/TabHeader.php';
+        CRM_Contribute_Form_ContributionPage_TabHeader::build( $this );
+         
         if ($this->_action == CRM_Core_Action::UPDATE) {
             CRM_Utils_System::setTitle(ts('Configure Page - %1', array(1 => $title)));
         } else if ($this->_action == CRM_Core_Action::VIEW) {
@@ -142,6 +142,10 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
                                             'name'      => ts('Save'),
                                             'spacing'   => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
                                             'isDefault' => true   ),
+                                    array ( 'type'      => 'upload',
+                                            'name'      => ts('Save and Done'),
+                                            'spacing'   => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+                                            'subName'   => 'done'   ),
                                     array ( 'type'      => 'cancel',
                                             'name'      => ts('Cancel') ),
                                     )
@@ -267,8 +271,51 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
         //page is newly created.
         if ( $pageId && !$this->_id ) {
             $session = CRM_Core_Session::singleton( );
-            $session->pushUserContext( CRM_Utils_System::url( 'civicrm/admin/contribute', 
-                                                              "action=update&reset=1&id={$pageId}" ) );
+            $session->pushUserContext( CRM_Utils_System::url( 'civicrm/admin/contribute', 'reset=1' ) );
+        }
+    }
+
+    function endPostProcess( )
+    {
+        // make submit buttons keep the current working tab opened.
+        if ( $this->_action & CRM_Core_Action::UPDATE ) {
+            $className = CRM_Utils_String::getClassName( $this->_name );
+            if ( $className == 'ThankYou' ) {
+                $subPage = 'thankYou';
+            } else if ( $className == 'Contribute' ) {
+                $subPage = 'friend';
+            } else if ( $className == 'MembershipBlock' ) {
+                $subPage = 'membership';
+            } else {
+                $subPage = strtolower( $className );
+            }
+                        
+            CRM_Core_Session::setStatus( ts("'%1' information has been saved.", 
+                                            array( 1 => ( $subPage == 'friend' ) ? 'Friend' : $className ) ) );
+            
+            // we need to call the hook manually here since we redirect and never 
+            // go back to CRM/Core/Form.php
+            // A better way might have been to setUserContext so the framework does the rediret
+            CRM_Utils_Hook::postProcess( get_class( $this ), $this );
+            
+            if ( $this->controller->getButtonName('submit') == "_qf_{$className}_next" ) {
+                CRM_Utils_System::redirect( CRM_Utils_System::url( "civicrm/admin/contribute/{$subPage}",
+                                                                   "action=update&reset=1&id={$this->_id}" ) );
+            } else {
+                CRM_Utils_System::redirect( CRM_Utils_System::url( "civicrm/admin/contribute", 'reset=1' ) );
+            }
+        }
+    }
+
+    function getTemplateFileName( )
+    {
+        if ( $this->controller->getPrint( ) == CRM_Core_Smarty::PRINT_NOFORM ||
+             $this->getVar( '_id' ) <= 0 ||
+             ( $this->_action & CRM_Core_Action::DELETE ) || 
+             ( CRM_Utils_String::getClassName( $this->_name ) == 'AddProduct' ) ) {
+            return parent::getTemplateFileName( );
+        } else {
+            return 'CRM/Contribute/Form/ContributionPage/Tab.tpl';
         }
     }
 }

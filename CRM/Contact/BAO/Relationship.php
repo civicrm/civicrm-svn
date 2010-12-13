@@ -364,7 +364,7 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
      *
      * @static
      */
-    static function del ( $id ) 
+    static function del( $id ) 
     {
         // delete from relationship table
         require_once 'CRM/Utils/Hook.php';
@@ -400,7 +400,11 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
             $ids = array();
             // calling relatedMemberships to delete the memberships of
             // related contacts.
-            self::relatedMemberships( $relationship->contact_id_a, $params, $ids, CRM_Core_Action::DELETE );
+            self::relatedMemberships( $relationship->contact_id_a, 
+                                      $params, 
+                                      $ids, 
+                                      CRM_Core_Action::DELETE,
+                                      false );
         }
         
         $relationship->delete();
@@ -454,10 +458,18 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
             // calling relatedMemberships to delete/add the memberships of
             // related contacts.
             if ( $action & CRM_Core_Action::DISABLE ) {
-                CRM_Contact_BAO_Relationship::relatedMemberships( $relationship->contact_id_a, $params, $ids, CRM_Core_Action::DELETE );
+                CRM_Contact_BAO_Relationship::relatedMemberships( $relationship->contact_id_a, 
+                                                                  $params, 
+                                                                  $ids, 
+                                                                  CRM_Core_Action::DELETE,
+                                                                  false );
             } else if ( $action & CRM_Core_Action::ENABLE ) {
                 $ids['contact'] = $relationship->contact_id_a;
-                CRM_Contact_BAO_Relationship::relatedMemberships( $relationship->contact_id_a, $params, $ids, CRM_Core_Action::ADD );
+                CRM_Contact_BAO_Relationship::relatedMemberships( $relationship->contact_id_a, 
+                                                                  $params, 
+                                                                  $ids, 
+                                                                  CRM_Core_Action::ADD,
+                                                                  false );
             }     
         }
     }
@@ -1075,12 +1087,27 @@ LEFT JOIN  civicrm_country ON (civicrm_address.country_id = civicrm_country.id)
             if ( ! array_key_exists( 'memberships', $details ) ) {
                 continue;
             }
+
+            $mainRelatedContactId = key( CRM_Utils_Array::value( 'relatedContacts', $details, array( ) ) );
             
             require_once 'CRM/Member/BAO/MembershipType.php';
             foreach ( $details['memberships'] as $membershipId => $membershipValues ) {
-                if ( $action & CRM_Core_Action::DELETE ) {
-                    // delete memberships of the related contacts.
-                    CRM_Member_BAO_Membership::deleteRelatedMemberships( $membershipId );
+                if ( $action & CRM_Core_Action::DELETE ) {                   
+                    // Delete memberships of the related contacts only if relationship type exists for membership type
+                    $query = "
+SELECT relationship_type_id, relationship_direction
+  FROM civicrm_membership_type 
+ WHERE id = {$membershipValues['membership_type_id']}";
+                    $dao = CRM_Core_DAO::executeQuery( $query );
+                    $relTypeDirs = array( );
+                    while ( $dao->fetch( ) ) {
+                        $relTypeId   = $dao->relationship_type_id;
+                       $relDirection = $dao->relationship_direction;
+                    }
+                    $relTypeIds = explode(CRM_Core_DAO::VALUE_SEPARATOR, $relTypeId);      
+                    if ( in_array( $values[$cid]['relationshipTypeId'], $relTypeIds ) ) {
+                        CRM_Member_BAO_Membership::deleteRelatedMemberships( $membershipId, $mainRelatedContactId  );
+                    }
                     continue;
                 }
                 if ( ( $action & CRM_Core_Action::UPDATE        ) && 
@@ -1098,7 +1125,15 @@ LEFT JOIN  civicrm_country ON (civicrm_address.country_id = civicrm_country.id)
                 
                 // Get the Membership Type Details. 
                 $membershipType = CRM_Member_BAO_MembershipType::getMembershipTypeDetails( $membershipValues['membership_type_id'] );
-                if( "{$details['relationshipTypeId']}{$details['relationshipTypeDirection']}" == CRM_Utils_Array::value( 'relationship_type_id', $membershipType ) . "_" . CRM_Utils_Array::value( 'relationship_direction', $membershipType ) ) {
+                // Check if contact's relationship type exists in membership type
+                $relTypeDirs   = array( );
+                $relTypeIds    = explode( CRM_Core_DAO::VALUE_SEPARATOR,$membershipType['relationship_type_id'] );
+                $relDirections = explode( CRM_Core_DAO::VALUE_SEPARATOR,$membershipType['relationship_direction'] );
+                foreach( $relTypeIds as $key => $value ) {
+                    $relTypeDirs[] = $value."_".$relDirections[$key];
+                }
+                $relTypeDir = $details['relationshipTypeId'].$details['relationshipTypeDirection'];
+                if ( in_array( $relTypeDir, $relTypeDirs ) ) {
                     // Check if relationship being created/updated is
                     // similar to that of membership type's
                     // relationship.
@@ -1129,7 +1164,7 @@ LEFT JOIN  civicrm_country ON (civicrm_address.country_id = civicrm_country.id)
                     // membership=>relationship then we need to
                     // delete the membership record created for
                     // previous relationship.
-                    CRM_Member_BAO_Membership::deleteRelatedMemberships( $membershipId, $ids['contactTarget'] );
+                    CRM_Member_BAO_Membership::deleteRelatedMemberships( $membershipId, $mainRelatedContactId );
                 }
             }
         }

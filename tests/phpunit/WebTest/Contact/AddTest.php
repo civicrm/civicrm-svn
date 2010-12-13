@@ -142,7 +142,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       
       //select preferred language
       $this->waitForElementPresent("preferred_language");
-      $this->select("preferred_language", "value=en");
+      $this->select("preferred_language", "value=en_US");
       
       
       //Notes section
@@ -156,7 +156,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->click("demographics");
       
       $this->click("CIVICRM_QFID_1_8");
-      $this->webtestFillDate('birth_date');
+      $this->webtestFillDate('birth_date', "-1 year");
       
       //Tags and Groups section
       $this->click("tagGroup");
@@ -252,7 +252,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       
       //select preferred language
       $this->waitForElementPresent("preferred_language");
-      $this->select("preferred_language", "value=fr");
+      $this->select("preferred_language", "value=fr_FR");
       
       
       //Notes section
@@ -356,7 +356,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->click("privacy[do_not_mail]");
       //select preferred language
       $this->waitForElementPresent("preferred_language");
-      $this->select("preferred_language", "value=de");
+      $this->select("preferred_language", "value=de_DE");
       
       //Notes section
       $this->click("notesBlock");

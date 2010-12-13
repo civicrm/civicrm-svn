@@ -914,9 +914,12 @@ class CRM_Export_BAO_Export
     {
         require_once "CRM/Core/Extensions.php";
         $ext = new CRM_Core_Extensions();
-        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $ext->classToPath($customSearchClass )));
+        if( ! $ext->isExtensionClass( $customSearchClass ) ) {
+            require_once( str_replace( '_', DIRECTORY_SEPARATOR, $customSearchClass ) . '.php' );
+        } else {
+            require_once( $ext->classToPath($customSearchClass ));
+        }
         eval( '$search = new ' . $customSearchClass . '( $formValues );' );
-
       
         $includeContactIDs = false;
         if ( $formValues['radio_ts'] == 'ts_sel' ) {

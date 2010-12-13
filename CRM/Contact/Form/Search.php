@@ -257,28 +257,32 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         return $searchContext ? true : false;
     }
 
-    function getModeValue( $mode = 1 ) {
+    function setModeValues( ) {
         if ( ! self::$_modeValues ) {
             self::$_modeValues = 
-                array( 1 => array( 'selectorName'  => ($this->_selectorName)?$this->_selectorName:'CRM_Contact_Selector',
+                array( 1 => array( 'selectorName'  => ( property_exists($this, '_selectorName') && $this->_selectorName )? $this->_selectorName:'CRM_Contact_Selector',
+                                   'selectorLabel' => ts( 'Contacts' ),
                                    'taskFile'      => "CRM/Contact/Form/Search/ResultTasks.tpl",
                                    'taskContext'   => null,
                                    'resultFile'    => 'CRM/Contact/Form/Selector.tpl',
                                    'resultContext' => null,
                                    'taskClassName' => 'CRM_Contact_Task' ),
                        2 => array( 'selectorName'  => 'CRM_Contribute_Selector_Search',
+                                   'selectorLabel' => ts( 'Contributions' ),
                                    'taskFile'      => "CRM/common/searchResultTasks.tpl",
                                    'taskContext'   => 'Contribution',
                                    'resultFile'    => 'CRM/Contribute/Form/Selector.tpl',
                                    'resultContext' => 'Search',
                                    'taskClassName' => 'CRM_Contribute_Task' ),
                        3 => array( 'selectorName'  => 'CRM_Event_Selector_Search',
+                                   'selectorLabel' => ts( 'Event Participants' ),
                                    'taskFile'      => "CRM/common/searchResultTasks.tpl",
                                    'taskContext'   => null,
                                    'resultFile'    => 'CRM/Event/Form/Selector.tpl',
                                    'resultContext' => 'Search',
                                    'taskClassName' => 'CRM_Event_Task' ),
                        4 => array( 'selectorName'  => 'CRM_Activity_Selector_Search',
+                                   'selectorLabel' => ts( 'Activities' ),
                                    'taskFile'      => "CRM/common/searchResultTasks.tpl",
                                    'taskContext'   => null,
                                    'resultFile'    => 'CRM/Activity/Form/Selector.tpl',
@@ -286,12 +290,41 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                                    'taskClassName' => 'CRM_Activity_Task' ),
                        );
         }
+    }        
+    
+    function getModeValue( $mode = 1 ) {
+        self::setModeValues( );
         
         if ( ! array_key_exists( $mode, self::$_modeValues ) ) {
             $mode = 1;
         }
 
         return self::$_modeValues[$mode];
+    }
+
+    function getModeSelect( ) {
+        self::setModeValues( );
+        
+        $select = array( );
+        foreach ( self::$_modeValues as $id =>& $value ) {
+            $select[$id] = $value['selectorLabel'];
+        }
+
+        // unset contributions or participants if user does not have
+        // permission on them
+        if ( ! CRM_Core_Permission::access( 'CiviContribute' ) ) {
+            unset ( $select['2'] );
+        }
+
+        if ( ! CRM_Core_Permission::access( 'CiviEvent' ) ) {
+            unset ( $select['3'] );
+        }
+
+        if ( ! CRM_Core_Permission::check( 'view all activities' ) ) {
+            unset ( $select['4'] );
+        }
+
+        return $select;
     }
 
     /**
@@ -607,7 +640,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                   '( $this->_params,
                      $this->_action,
                      null, false, null,
-                     "search" );' );
+                     "search", "advanced" );' );
         }
         $controller = new CRM_Contact_Selector_Controller( $selector ,
                                                            $this->get( CRM_Utils_Pager::PAGE_ID ),
@@ -719,7 +752,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                       '( $this->_params,
                          $this->_action,
                          null, false, null,
-                         "search" );' );
+                         "search", "advanced" );' );
             }
 
             $selector->setKey( $this->controller->_key );

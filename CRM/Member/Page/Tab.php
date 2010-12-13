@@ -171,10 +171,12 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
         if ( $mode == 'test' || $mode == 'live' ) {
             CRM_Utils_System::redirectToSSL( );
         }
-
-        // build associated contributions
-        $this->associatedContribution( );
-
+        
+        if( $this->_action != CRM_Core_Action::ADD ) {
+            // get associated contributions only on edit/renew/delete
+            $this->associatedContribution( );
+        }
+        
         if ( $this->_action & CRM_Core_Action::RENEW ) { 
             $path  = 'CRM_Member_Form_MembershipRenewal';
             $title = ts('Renew Membership');
@@ -439,8 +441,9 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
         if ( !$membershipId ) {
             $membershipId = $this->_id;
         }
-
-        if ( CRM_Core_Permission::access( 'CiviContribute' ) ) {
+        
+        // retrieive membership contributions if the $membershipId is set
+        if ( CRM_Core_Permission::access( 'CiviContribute' ) && $membershipId ) {
             $this->assign( 'accessContribution', true );
             $controller = new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_Search', ts('Contributions'), null );  
             $controller->setEmbedded( true );                           

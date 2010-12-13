@@ -68,9 +68,9 @@ function &civicrm_contribution_add( &$params ) {
         return $error;
     }
 
-    $values["contact_id"] = $params["contact_id"];
-    $values["source"]     = CRM_Utils_Array::value( 'source', $params );
-    
+    $values['contact_id'] = $params['contact_id'];
+    $values['source']     = CRM_Utils_Array::value( 'source', $params );
+    $values['skipRecentView'] = true;
     $ids     = array( );
     if ( CRM_Utils_Array::value( 'id', $params ) ) {
         $ids['contribution'] = $params['id'];
@@ -404,7 +404,7 @@ function _civicrm_contribute_format_params( &$params, &$values, $create=false ) 
             break;
         case 'contribution_type_id' :
             if ( !CRM_Utils_Array::value( $value, CRM_Contribute_PseudoConstant::contributionType( ) ) ) {
-                return civicrm_create_error( "Invalid Contribution Type Id" );
+                return civicrm_create_error( 'Invalid Contribution Type Id' );
             }
             break;
         case 'contribution_type':
@@ -413,11 +413,11 @@ function _civicrm_contribute_format_params( &$params, &$values, $create=false ) 
             if ( $contributionTypeId ) {
                 if ( CRM_Utils_Array::value( 'contribution_type_id', $values ) &&
                      $contributionTypeId != $values['contribution_type_id'] ) {
-                    return civicrm_create_error( "Mismatched Contribution Type and Contribution Type Id" );
+                    return civicrm_create_error( 'Mismatched Contribution Type and Contribution Type Id' );
                 } 
                 $values['contribution_type_id'] = $contributionTypeId; 
             } else {
-                return civicrm_create_error( "Invalid Contribution Type" );
+                return civicrm_create_error( 'Invalid Contribution Type' );
             }
             break;
         case 'payment_instrument': 

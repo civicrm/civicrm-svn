@@ -118,12 +118,20 @@
             </thead>
             {foreach from=$inActiveMembers item=inActiveMember}
             <tr id="crm-membership_{$inActiveMember.id}" class="{cycle values="odd-row,even-row"} {$inActiveMember.class} crm-membership">
-                <td class="crm-membership-membership_type">{$inActiveMember.membership_type}</td>
+                <td class="crm-membership-membership_type">{$inActiveMember.membership_type}
+		    {if $inActiveMember.owner_membership_id}<br />({ts}by relationship{/ts}){/if}
+		</td>
                 <td class="crm-membership-start_date">{$inActiveMember.start_date|crmDate}</td>
                 <td class="crm-membership-end_date">{$inActiveMember.end_date|crmDate}</td>
                 <td class="crm-membership-status">{$inActiveMember.status}</td>
                 <td class="crm-membership-source">{$inActiveMember.source}</td>
-                <td>{$inActiveMember.action|replace:'xx':$inActiveMember.id}</td>
+                <td>{$inActiveMember.action|replace:'xx':$inActiveMember.id}
+		    {if $inActiveMember.owner_membership_id}
+                        &nbsp;|&nbsp;
+			<a href="{crmURL p='civicrm/membership/view' q="reset=1&id=`$inActiveMember.owner_membership_id`&action=view&context=membership&selectedChild=member"}" title="{ts}View Primary member record{/ts}">{ts}View Primary{/ts}
+			</a>
+                    {/if}
+		</td>
             </tr>
             {/foreach}
         </table>

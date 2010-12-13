@@ -4785,6 +4785,9 @@
 			}
 			else if ( oSettings.fnRecordsDisplay() == oSettings.fnRecordsTotal() )
 			{
+			        //fixed pager start.
+			        if ( sTotal < sStart ) sStart = 1; 
+			  
 				/* Normal record set */
 				sOut = oSettings.oLanguage.sInfo.
 						replace('_START_', sStart).
