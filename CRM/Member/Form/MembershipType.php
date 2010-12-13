@@ -356,15 +356,26 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
             if ( CRM_Utils_Array::value( 'relationship_type_id', $params ) ) {
                 // To insert relation ids and directions with value separator
                 $relTypeDirs = $params['relationship_type_id'];
+                $relIds = $relDirection = array( );
                 foreach( $relTypeDirs as $key => $value ) {
                     $relationId = explode( '_', $value );
-                    $relIds[] = $relationId[0];
-                    $relDirection[] = $relationId[1].'_'.$relationId[2];
+                    if ( count( $relationId ) == 3 &&
+                         is_numeric( $relationId[0] ) ) {
+                        $relIds[] = $relationId[0];
+                        $relDirection[] = $relationId[1].'_'.$relationId[2];
+                    }
                 } 
-                require_once 'CRM/Core/DAO.php';
-                $params['relationship_type_id'  ] = implode( CRM_Core_DAO::VALUE_SEPARATOR, $relIds );
-                $params['relationship_direction'] = implode( CRM_Core_DAO::VALUE_SEPARATOR, $relDirection );
-            } 
+                if ( ! empty( $relIds ) ) {
+                    require_once 'CRM/Core/DAO.php';
+                    $params['relationship_type_id'  ] = implode( CRM_Core_DAO::VALUE_SEPARATOR, $relIds );
+                    $params['relationship_direction'] = implode( CRM_Core_DAO::VALUE_SEPARATOR, $relDirection );
+                } else {
+                    $params['relationship_type_id'  ] = $params['relationship_direction'] = 'NULL';
+                }
+            } else {
+                $params['relationship_type_id'  ] = $params['relationship_direction'] = 'NULL';
+            }
+
             if ($this->_action & CRM_Core_Action::UPDATE ) {
                 $ids['membershipType'] = $this->_id;
             }
