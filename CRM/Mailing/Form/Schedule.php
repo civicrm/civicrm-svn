@@ -34,9 +34,6 @@
   *
   */
 
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Mailing/BAO/Mailing.php';
-
  /**
   *
   */
@@ -50,26 +47,11 @@ require_once 'CRM/Mailing/BAO/Mailing.php';
       */ 
      public function preProcess()  
      {
-         require_once 'CRM/Mailing/Info.php';
-         if ( CRM_Mailing_Info::workflowEnabled( ) &&
-              ! CRM_Core_Permission::check('schedule mailings' ) ) {
-             $url = CRM_Utils_System::url( 'civicrm/mailing/browse/unscheduled', 'reset=1&scheduled=false' );
-             CRM_Utils_System::redirect( $url );
-         }
-
          //when user come from search context.
          require_once 'CRM/Contact/Form/Search.php';
          $this->_searchBasedMailing = CRM_Contact_Form_Search::isSearchContext( $this->get( 'context' ) );
-
-         $this->_mailingID = $this->get( 'mailing_id' );
-         $this->_scheduleFormOnly = false;
-         if ( ! $this->_mailingID ) {
-             CRM_Utils_Request::retrieve( 'mid', 'Integer', $this, true );
-             $this->_scheduleFormOnly = true;
-         }
-
      }
-
+     
      /**
       * This function sets the default values for the form.
       * 
@@ -79,12 +61,8 @@ require_once 'CRM/Mailing/BAO/Mailing.php';
      function setDefaultValues( ) 
      {
          $defaults = array( );
-         if ( $this->_scheduleFormOnly ) {
-             $count = CRM_Mailing_BAO_Mailing::getRecipientsCount( true, false, $this->_mailingID );
-         } else {
-             $count = $this->get( 'count' );
-         }
-         $this->assign( 'count', $count );
+         $count = $this->get('count');
+         $this->assign('count',$count);
          $defaults['now'] = 1;
          return $defaults;
      }
@@ -100,39 +78,29 @@ require_once 'CRM/Mailing/BAO/Mailing.php';
      {
          $this->addDateTime( 'start_date', ts('Schedule Mailing'), false, array( 'formatType' => 'mailing') );
 
-         $this->addElement( 'checkbox', 'now', ts('Send Immediately') );
+         $this->addElement('checkbox', 'now', ts('Send Immediately'));
 
-         $this->addFormRule( array( 'CRM_Mailing_Form_Schedule', 'formRule' ), $this );
-      
-         if ( $this->_scheduleFormOnly ) {
-             $buttons = array( array( 'type'  => 'next',
-                                      'name'  => ts('Submit Mailing'),
-                                      'spacing' => '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;',
-                                      'isDefault' => true),
-                               array( 'type'  => 'cancel',
-                                      'name'  => ts('Cancel') ),
-                               );
-         } else {
-             //FIXME : currently we are hiding save an continue later when
-             //search base mailing, we should handle it when we fix CRM-3876
+         $this->addFormRule(array('CRM_Mailing_Form_Schedule', 'formRule'), $this );
+
+         //FIXME : currently we are hiding save an continue later when
+         //search base mailing, we should handle it when we fix CRM-3876
+         $buttons = array( array(  'type'  => 'back',
+                                   'name'  => ts('<< Previous')),
+                           array(  'type'  => 'next',
+                                   'name'  => ts('Submit Mailing'),
+                                   'spacing' => '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;',
+                                   'isDefault' => true),
+                           array(  'type'  => 'cancel',
+                                   'name'  => ts('Continue Later')),
+                           );
+         if ( $this->_searchBasedMailing && $this->get( 'ssID' ) ) {
              $buttons = array( array(  'type'  => 'back',
-                                       'name'  => ts('<< Previous') ),
+                                       'name'  => ts('<< Previous')),
                                array(  'type'  => 'next',
                                        'name'  => ts('Submit Mailing'),
                                        'spacing' => '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;',
                                        'isDefault' => true),
-                               array(  'type'  => 'cancel',
-                                       'name'  => ts('Continue Later') ),
                                );
-             if ( $this->_searchBasedMailing && $this->get( 'ssID' ) ) {
-                 $buttons = array( array(  'type'  => 'back',
-                                           'name'  => ts('<< Previous') ),
-                                   array(  'type'  => 'next',
-                                           'name'  => ts('Submit Mailing'),
-                                           'spacing' => '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;',
-                                           'isDefault' => true),
-                                   );
-             }
          }
          $this->addButtons( $buttons );
      }
@@ -149,12 +117,12 @@ require_once 'CRM/Mailing/BAO/Mailing.php';
       *                          date is properly set.
       * @static
       */
-     public static function formRule( $params, $files, $self ) 
+     public static function formRule($params, $files, $self) 
      {
          if ( $params['_qf_Schedule_submit'] ) {
              //when user perform mailing from search context 
              //redirect it to search result CRM-3711.
-             $ssID = $self->get( 'ssID' );
+             $ssID    = $self->get( 'ssID' );
              if ( $ssID && $self->_searchBasedMailing ) {
                  if ( $self->_action == CRM_Core_Action::BASIC ) {
                      $fragment = 'search';
@@ -172,15 +140,11 @@ require_once 'CRM/Mailing/BAO/Mailing.php';
                  
                  //replace user context to search.
                  $context = $self->get( 'context' );
-                 if ( !CRM_Contact_Form_Search::isSearchContext( $context ) ) {
-                     $context = 'search';
-                 }
-
+                 if ( !CRM_Contact_Form_Search::isSearchContext( $context ) ) $context = 'search';
                  $urlParams = "force=1&reset=1&ssID={$ssID}&context={$context}";
                  $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
-                 if ( CRM_Utils_Rule::qfKey( $qfKey ) ) {
-                     $urlParams .= "&qfKey=$qfKey";
-                 }
+                 if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
+                 
                  $url = CRM_Utils_System::url( "civicrm/contact/" . $fragment, "force=1&reset=1&ssID={$ssID}" );
                  CRM_Utils_System::redirect( $url );
              } else {
@@ -211,24 +175,22 @@ require_once 'CRM/Mailing/BAO/Mailing.php';
     public function postProcess() 
     {
         $params = array();
-
-        $params['mailing_id'] = $ids['mailing_id'] = $this->_mailingID;
-
-        if ( empty( $params['mailing_id'] ) ) {
-            CRM_Core_Error::fatal( );
+        $params['mailing_id'] = $ids['mailing_id'] = $this->get('mailing_id');
+        
+        foreach(array('now', 'start_date', 'start_date_time') as $parameter) {
+            $params[$parameter] = $this->controller->exportValue($this->_name,
+                                                                 $parameter);
         }
-
-        foreach( array( 'now', 'start_date', 'start_date_time' ) as $parameter ) {
-            $params[$parameter] = $this->controller->exportValue( $this->_name,
-                                                                  $parameter );
-        }
-
+        
+        require_once 'CRM/Mailing/BAO/Mailing.php';
         $mailing = new CRM_Mailing_BAO_Mailing();
         $mailing->id = $ids['mailing_id'];
-        if ( $mailing->find(true) ) {
+        
+        if ($mailing->find(true)) {
+            
             $job = new CRM_Mailing_BAO_Job();
             $job->mailing_id = $mailing->id;
-
+            
             if ( ! $mailing->is_template) {
                 $job->status = 'Scheduled';
                 if ($params['now']) {
@@ -239,24 +201,12 @@ require_once 'CRM/Mailing/BAO/Mailing.php';
                 $job->save();
             } 
 
-            // set approval details if workflow is not enabled 
-            if ( !CRM_Mailing_Info::workflowEnabled( ) ) {
-                $session =& CRM_Core_Session::singleton( );
-                $mailing->approver_id         = $session->get( 'userID' );
-                $mailing->approval_date       = date('YmdHis');
-                $mailing->approval_status_id  = 1; 
-            }
-
-            if ( $mailing->approval_date ) { 
-                $mailing->approval_date = CRM_Utils_Date::isoToMysql( $mailing->approval_date );
-            }
- 
             // also set the scheduled_id 
-            $session =& CRM_Core_Session::singleton( );
-            $mailing->scheduled_id   = $session->get( 'userID' );
-            $mailing->scheduled_date = date('YmdHis');
-            $mailing->created_date  = CRM_Utils_Date::isoToMysql( $mailing->created_date );
+            $session = CRM_Core_Session::singleton( );
+            $mailing->scheduled_id = $session->get( 'userID' );
+            $mailing->created_date = CRM_Utils_Date::isoToMysql( $mailing->created_date );
             $mailing->save( );
+            
         }
         
         //when user perform mailing from search context 
