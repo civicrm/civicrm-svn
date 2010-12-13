@@ -529,10 +529,15 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
         $whereCond = implode( ' AND ', $where );
 
         $query = "
-SELECT sum( total_amount ) as total_amount, count( id ) as total_count, currency
-FROM   civicrm_contribution
-WHERE  $whereCond AND is_test=0
-GROUP BY currency
+    SELECT  sum( total_amount ) as total_amount, 
+            count( civicrm_contribution.id ) as total_count, 
+            currency
+      FROM  civicrm_contribution
+INNER JOIN  civicrm_contact contact ON ( contact.id = civicrm_contribution.contact_id ) 
+     WHERE  $whereCond 
+       AND  ( is_test = 0 OR is_test IS NULL )
+       AND  contact.is_deleted = 0
+  GROUP BY  currency
 ";
 
         $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );

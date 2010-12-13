@@ -74,6 +74,7 @@ class CRM_Logging_Schema
         if (!$this->isEnabled()) return;
 
         $this->dropTriggers();
+        $this->deleteReports();
     }
 
     /**
@@ -87,6 +88,7 @@ class CRM_Logging_Schema
             $this->createLogTableFor($table);
         }
         $this->createTriggers();
+        $this->addReports();
     }
 
     /**
@@ -144,6 +146,35 @@ class CRM_Logging_Schema
             $diffs[$table] = array_diff($this->columnsOf($table), $this->columnsOf("log_$table"));
         }
         return array_filter($diffs);
+    }
+
+    private function addReports()
+    {
+        // enable logging templates
+        $dao =& CRM_Core_DAO::executeQuery("UPDATE civicrm_option_value SET is_active = 1 WHERE value = 'logging/contact/summary' OR value = 'logging/contact/detail'");
+
+        // return early if the logging report templates are missing
+        require_once 'CRM/Core/OptionGroup.php';
+        $templates = CRM_Core_OptionGroup::values('report_template');
+        if (!isset($templates['logging/contact/summary']) or
+            !isset($templates['logging/contact/detail'])) return;
+
+        // add report instances
+        require_once 'CRM/Report/BAO/Instance.php';
+
+        $bao = new CRM_Report_BAO_Instance;
+        $bao->domain_id  = CRM_Core_Config::domainID();
+        $bao->title      = ts('Contact Logging Report (Summary)');
+        $bao->report_id  = 'logging/contact/summary';
+        $bao->permission = 'administer CiviCRM';
+        $bao->insert();
+
+        $bao = new CRM_Report_BAO_Instance;
+        $bao->domain_id  = CRM_Core_Config::domainID();
+        $bao->title      = ts('Contact Logging Report (Detail)');
+        $bao->report_id  = 'logging/contact/detail';
+        $bao->permission = 'administer CiviCRM';
+        $bao->insert();
     }
 
     /**
@@ -241,6 +272,25 @@ COLS;
         foreach ($this->tables as $table) {
             $this->createTriggersFor($table);
         }
+    }
+
+    private function deleteReports()
+    {
+        // disable logging templates
+        $dao =& CRM_Core_DAO::executeQuery("UPDATE civicrm_option_value SET is_active = 0 WHERE value = 'logging/contact/summary' OR value = 'logging/contact/detail'");
+
+        // delete report instances
+        require_once 'CRM/Report/DAO/Instance.php';
+
+        $bao = new CRM_Report_DAO_Instance;
+        $bao->domain_id = CRM_Core_Config::domainID();
+        $bao->report_id = 'logging/contact/summary';
+        $bao->delete();
+
+        $bao = new CRM_Report_DAO_Instance;
+        $bao->domain_id = CRM_Core_Config::domainID();
+        $bao->report_id = 'logging/contact/details';
+        $bao->delete();
     }
 
     /**

@@ -124,8 +124,8 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
       $openCaseData = array( "Client"           => $contactName,
                              "Activity Type"    => "Open Case",
                              "Subject"          => $subject,
-                             "Created By"       => $this->settings->UFemail,
-                             "Reported By"      => $this->settings->UFemail,
+                             "Created By"       => $this->settings->UFname,
+                             "Reported By"      => $this->settings->UFname,
                              "Medium"           => "In Person",
                              "Location"         => $location,
                              "Date and Time"    => $today,
@@ -153,7 +153,7 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
           $this->assertText("css=div.crm-case-roles-block", $role);
       }
       // check that case creator role has been assigned to logged in user
-      $this->assertText("css=td.crm-case-caseview-role-name", $this->settings->UFemail);
+      $this->assertText("css=td.crm-case-caseview-role-name", $this->settings->UFname);
   }
 
   function _testVerifyCaseActivities( $activityTypes ){

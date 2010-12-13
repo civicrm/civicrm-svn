@@ -205,6 +205,12 @@ class CRM_Report_Form extends CRM_Core_Form {
         if ( $this->_tagFilter ) {
             $this->buildTagFilter( );
         }
+        
+        // do not allow custom data for reports if user don't have
+        // permission to access custom data.
+        if ( !empty( $this->_customGroupExtends ) && !CRM_Core_Permission::check( 'access all custom data' ) ) {
+            $this->_customGroupExtends = array( );
+        }
 
         // merge custom data columns to _columns list, if any
         $this->addCustomDataToColumns( );
@@ -1705,7 +1711,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                         }
                         if ( $value ) {
                             $statistics['filters'][] = 
-                                array( 'title' => $field['title'],
+                                array( 'title' => CRM_Utils_Array::value( 'title', $field ),
                                        'value' => $value );
                         }
                     }
@@ -1904,7 +1910,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
       cg.is_active = 1 AND 
       cf.is_active = 1 AND 
       cf.is_searchable = 1
-ORDER BY cg.table_name";
+ORDER BY cg.weight";
         $customDAO =& CRM_Core_DAO::executeQuery( $sql );
         
         $curTable  = null;

@@ -1,0 +1,40 @@
+****************************************
+Sponsors for 3.3 Make-it-Happen Projects
+****************************************
+The following people and organizations sponsored new and improved features for the 3.3 release.
+
+JMA Consulting: http://jmaconsulting.biz/
+Emergency Picnic: http://emergencypicnic.net/
+Thomas Carlson
+Micheas Herman
+T.J. Hellman
+Gold Strategy Group: http://www.goldstrategygroup.com
+Laura Velkei
+John Barclay
+Matthew Briney: http://emotivellc.com
+2020Media: http://www.2020media.com/
+Social Contxt: http://socialcontxt.com/
+Impari Systems Inc: http://www.imparisystems.com/
+Alpha: http://uk.alpha.org
+Cambridge Union: http://www.cus.org
+St Ethelburga's: http://stethelburgas.org
+Joomkit: http://www.joomkit.com
+International Mountain Biking Assocation: http://www.imba.com/
+Niro Solutions: http://www.nirosolutions.com/
+Fuzion: http://fuzion.co.nz
+ArtD Webdesign
+CivicActions: http://civicactions.com/
+NES Alumni and Friends Nonprofit Partnership: https://www.nesalumni.org/en
+Gold Strategy Group: http://www.goldstrategygroup.com
+Creative Commons: http://creativecommons.org/
+Community Builders Australia Pty Ltd: http://www.communitybuilders.com.au/
+Australian Greens: http://greens.org.au/
+NES Alumni and Friends Nonprofit Partnership: https://www.nesalumni.org/en
+Data-Scribe: http://www.datascribe.biz/
+Rayogram: http://www.rayogram.com/
+GingerFeet LLC: http://www.gingerfeet.com/
+Kabissa: http://kabissa.org
+Beth Hynes-Ciernia
+
+More details at:
+http://wiki.civicrm.org/confluence/display/CRMDOC33/Make+it+Happen!

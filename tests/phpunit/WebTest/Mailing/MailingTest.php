@@ -221,8 +221,8 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
       // verify intended recipients
       $this->verifyText("xpath=//table//tr[td/a[text()='Intended Recipients']]/descendant::td[2]", preg_quote("1"));
       
-      // verify succesful deliveries
-      $this->verifyText("xpath=//table//tr[td/a[text()='Succesful Deliveries']]/descendant::td[2]", preg_quote("1 (100.00%)"));
+      // verify successful deliveries
+      $this->verifyText("xpath=//table//tr[td/a[text()='Successful Deliveries']]/descendant::td[2]", preg_quote("1 (100.00%)"));
       
       // verify status
       $this->verifyText("xpath=//table//tr[td[1]/text()='Status']/descendant::td[2]", preg_quote("Complete"));
@@ -235,11 +235,11 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
 
       //---- check for delivery detail--
       
-      $this->click("link=Succesful Deliveries");
+      $this->click("link=Successful Deliveries");
       $this->waitForPageToLoad("30000");
       
       // check for open page
-      $this->assertTrue($this->isTextPresent("Succesful Deliveries"));
+      $this->assertTrue($this->isTextPresent("Successful Deliveries"));
       
       // verify email
       $this->assertTrue($this->isTextPresent("mailino$firstName@mailson.co.in"));

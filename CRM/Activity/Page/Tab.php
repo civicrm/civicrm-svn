@@ -79,7 +79,7 @@ class CRM_Activity_Page_Tab extends CRM_Core_Page
         }
         
         $this->assign( 'enableCase', $enableCase);
-        $this->assign( 'context',      'activity');        
+        $this->assign( 'context'   , 'activity');        
     }
 
     function edit( )

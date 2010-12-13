@@ -764,9 +764,15 @@ WHERE id={$id}; ";
         } else if ( $config->userFramework == 'Drupal' ) {   
             require_once 'CRM/Utils/System/Drupal.php';
             $rootPath = CRM_Utils_System_Drupal::cmsRootPath( );
-            $relativePath = str_replace( "$rootPath/",
-                                         $config->userFrameworkBaseURL,
-                                         str_replace('\\', '/', $absolutePath ) );
+            $baseUrl = $config->userFrameworkBaseURL;
+            if ( module_exists('locale') && $mode = variable_get( 'language_negotiation', LANGUAGE_NEGOTIATION_NONE ) ) {
+                global $language;
+                if( isset( $language->prefix ) ) {
+                    $baseUrl=  str_replace( $language->prefix.'/', '', $config->userFrameworkBaseURL );
+                }
+            }  
+            
+            $relativePath = str_replace( "$rootPath/", $baseUrl, str_replace('\\', '/', $absolutePath ) );
         } else if ( $config->userFramework == 'Standalone' ) {
             $absolutePathStr = strstr( $absolutePath, 'files');
             $relativePath = $config->userFrameworkBaseURL . str_replace('\\', '/', $absolutePathStr );
@@ -2056,7 +2062,7 @@ UNION
             // get preferred languages
             if ( ! empty( $contact->preferred_language ) ) {
                 $languages =& CRM_Core_PseudoConstant::languages( );
-                $values['preferred_language'] = $languages[$contact->preferred_language];
+                $values['preferred_language'] = CRM_Utils_Array::value( $contact->preferred_language, $languages );
             }
 
             // Calculating Year difference            
@@ -2195,7 +2201,7 @@ UNION
                   
              if ( $emailGreetingString ) {
                  CRM_Activity_BAO_Activity::replaceGreetingTokens($emailGreetingString, $contactDetails, $contact->id );
-                 $emailGreetingString = CRM_Core_DAO::escapeString( $emailGreetingString );
+                 $emailGreetingString = CRM_Core_DAO::escapeString( CRM_Utils_String::stripSpaces($emailGreetingString) );
                  $updateQueryString[] = " email_greeting_display = '{$emailGreetingString}'";
              } 
 
@@ -2214,7 +2220,7 @@ UNION
 
              if ( $postalGreetingString ) {
                  CRM_Activity_BAO_Activity::replaceGreetingTokens($postalGreetingString, $contactDetails, $contact->id );
-                 $postalGreetingString = CRM_Core_DAO::escapeString( $postalGreetingString );
+                 $postalGreetingString = CRM_Core_DAO::escapeString( CRM_Utils_String::stripSpaces($postalGreetingString) );
                  $updateQueryString[]  = " postal_greeting_display = '{$postalGreetingString}'";
              }         
         }
@@ -2235,7 +2241,7 @@ UNION
 
          if ( $addresseeString ) {
              CRM_Activity_BAO_Activity::replaceGreetingTokens($addresseeString, $contactDetails, $contact->id );
-             $addresseeString     = CRM_Core_DAO::escapeString( $addresseeString );
+             $addresseeString     = CRM_Core_DAO::escapeString( CRM_Utils_String::stripSpaces($addresseeString) );
              $updateQueryString[] = " addressee_display = '{$addresseeString}'";
          }
 

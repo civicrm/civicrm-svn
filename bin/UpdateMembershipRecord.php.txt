@@ -31,8 +31,12 @@
  * update_contact_membership APIs.
  * It takes the first argument as the domain-id if specified, otherwise takes the domain-id as 1.
  *
- * IMPORTANT: You must set a valid FROM email address on line 218 before and then save the file as
- * UpdateMembershipRecord.php prior to running this script.
+ * IMPORTANT: 
+ * We are using domain FROM Name and FROM Email Address as a default From email address.  
+ * ( for example 'FIXME <info@FIXME.ORG>' )
+ * If you want to use any other, you could modify on line 125 and set your valid email address.
+ *
+ * Save the file as UpdateMembershipRecord.php prior to running this script.
  */
 
 class CRM_UpdateMembershipRecord {
@@ -115,8 +119,11 @@ AND    civicrm_membership.is_test = 0
         
         require_once 'CRM/Core/BAO/Domain.php';
         $domainValues     = CRM_Core_BAO_Domain::getNameAndEmail( );
-        $fromEmailAddress = "$domainValues[0] <$domainValues[1]>";
-
+        $domainFromEmail  = "$domainValues[0] <$domainValues[1]>";
+        
+        //use domain email address as a default From email.
+        $fromEmailAddress = $domainFromEmail;
+        
         while ( $dao->fetch( ) ) {
             echo ".";
             

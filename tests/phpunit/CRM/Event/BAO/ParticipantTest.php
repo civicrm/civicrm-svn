@@ -162,7 +162,8 @@ class CRM_Event_BAO_ParticipantTest extends CiviUnitTestCase
 	
         $participantId = Participant::create( $this->_contactId, $this->_eventId);
         $eventFull = CRM_Event_BAO_Participant::eventFull( $this->_eventId );
-        $this->assertEquals( $eventFull, 'This event is full !!!', 'Checking if Event is full.' );
+        
+        $this->assertNotEquals( $eventFull, 'This event is full !!!', 'Checking if Event is full.' );
 
         Participant::delete( $participantId );
         Contact::delete( $this->_contactId );
@@ -190,8 +191,8 @@ class CRM_Event_BAO_ParticipantTest extends CiviUnitTestCase
         $params =  array ( 'name'  => 'Doe, John', 'title' => 'Test Event' );
         
         $participantDetails = CRM_Event_BAO_Participant::participantDetails( $participantId );
-
-        $this->assertEquals( count( $participantDetails ) , 2, 'Equating the array contains.' );
+        
+        $this->assertEquals( count( $participantDetails ) , 3, 'Equating the array contains.' );
         $this->assertEquals( $participantDetails['name'] ,$params['name'] , 'Checking Name of Participant.' );
         $this->assertEquals( $participantDetails['title'] ,$params['title'] , 'Checking Event Title in which participant is enroled.' );
 
@@ -350,9 +351,10 @@ class CRM_Event_BAO_ParticipantTest extends CiviUnitTestCase
         require_once  'CRM/Utils/String.php';
         require_once  'CRM/Utils/Array.php';
 
-        $paramsSet['title']     =  'Price Set';
+        $paramsSet['title']     = 'Price Set';
         $paramsSet['name']      = CRM_Utils_String::titleToVar( 'Price Set' );
         $paramsSet['is_active'] = CRM_Utils_Array::value('is_active', $params, false);
+        $paramsSet['extends']   = 1;
         
         require_once 'CRM/Price/BAO/Set.php';
         $priceset = CRM_Price_BAO_Set::create( $paramsSet );

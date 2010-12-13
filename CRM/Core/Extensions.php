@@ -304,8 +304,8 @@ class CRM_Core_Extensions
      */
     public function classToPath( $clazz ) {
         $elements = explode( '_', $clazz );
-        $key = implode( '.', $elements );
-        return $this->keyToPath( $key );
+	$key = implode( '.', $elements );
+	return $this->keyToPath( $key );
     }
 
     /**

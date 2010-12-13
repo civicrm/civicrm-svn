@@ -121,7 +121,8 @@
   </field> 
   <field>
       <name>relationship_type_id</name>
-      <type>int unsigned</type>
+      <type>varchar</type>
+      <length>64</length>
       <comment>FK to Relationship Type ID</comment>
       <add>1.5</add>
   </field>
@@ -130,11 +131,17 @@
       <table>civicrm_relationship_type</table> 
       <key>id</key> 
       <add>1.5</add>
+      <drop>3.3</drop>
   </foreignKey>
+  <index>
+       <name>index_relationship_type_id</name>
+       <fieldName>relationship_type_id</fieldName>
+       <add>3.3</add>
+  </index>
   <field> 
       <name>relationship_direction</name>     
       <type>varchar</type>  
-      <length>6</length>                  
+      <length>128</length>                  
       <add>1.7</add>  
   </field> 
   <field>  

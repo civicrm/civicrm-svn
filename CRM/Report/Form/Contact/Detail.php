@@ -48,7 +48,9 @@ class CRM_Report_Form_Contact_Detail extends CRM_Report_Form {
     protected $_phoneField   = false;
     
     protected $_addressField = false;
-    
+
+    protected $_customGroupExtends = array( 'Contact', 'Individual', 'Household', 'Organization' );
+
     function __construct( ) {
         $this->_columns = 
             array( 'civicrm_contact' =>

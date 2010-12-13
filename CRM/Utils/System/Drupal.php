@@ -286,35 +286,16 @@ class CRM_Utils_System_Drupal {
      */
     static function getUFLocale()
     {
-        // an array of xx_YY locales
-        static $locales = null;
-        if ($locales === null) {
-            require_once 'CRM/Core/I18n/PseudoConstant.php';
-            $locales = array_keys(CRM_Core_I18n_PseudoConstant::languages());
-            sort($locales);
-        }
-
-        // an array of xx → xx_YY mappings (naïve, as pt_PT will trump pt_BR
-        // and en_US will trump other English entries, but works in our case)
-        static $prefixes = null;
-        if ($prefixes === null) {
-            // seed with Chinese mappings for CRM-6281
-            $prefixes = array('zh-hans' => 'zh_CN', 'zh-hant' => 'zh_TW');
-            foreach ($locales as $locale) {
-                $prefixes[substr($locale, 0, 2)] = $locale;
-            }
-        }
-
-        // return CiviCRM locale that either matches Drupal’s xx_YY
-        // or begins with Drupal’s xx (so Drupal’s pt_BR will return
-        // CiviCRM’s pt_BR, while Drupal’s pt will return CiviCRM’s pt_PT)
+        // return CiviCRM’s xx_YY locale that either matches Drupal’s Chinese locale
+        // (for CRM-6281), Drupal’s xx_YY or is retrieved based on Drupal’s xx
         global $language;
-        if (in_array($language->language, $locales)) {
-            return $language->language;
-        } elseif (in_array($language->language, array_keys($prefixes))) {
-            return $prefixes[$language->language];
-        } else {
-            return null;
+        switch (true) {
+        case $language->language == 'zh-hans':             return 'zh_CN';
+        case $language->language == 'zh-hant':             return 'zh_TW';
+        case preg_match('/^.._..$/', $language->language): return $language->language;
+        default:
+            require_once 'CRM/Core/I18n/PseudoConstant.php';
+            return CRM_Core_I18n_PseudoConstant::longForShort(substr($language->language, 0, 2));
         }
     }
 
@@ -324,7 +305,7 @@ class CRM_Utils_System_Drupal {
      * @param $name string  optional username for login
      * @param $pass string  optional password for login
      */
-    static function loadBootStrap($name = null, $pass = null)
+    static function loadBootStrap($name = null, $pass = null, $uid = null )
     {
         //take the cms root path.
         $cmsPath = self::cmsRootPath( );
@@ -352,6 +333,15 @@ class CRM_Utils_System_Drupal {
             if ( empty( $user->uid ) ) {
                 echo '<br />Sorry, unrecognized username or password.';
                 exit( );
+            }
+        } else if ( $uid ) {
+            $account = user_load( array( 'uid' => $uid ) );
+            if ( empty( $account->uid ) ) {
+                echo '<br />Sorry, unrecognized user id.';
+                exit( );
+            } else {
+                global $user;
+                $user = $account;
             }
         }
         

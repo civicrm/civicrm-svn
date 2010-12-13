@@ -1495,13 +1495,8 @@ ORDER BY name";
      */
     public static function &languages( ) 
     {
-        static $_languages = null;
-
-        if ( ! $_languages ) {
-            require_once 'CRM/Core/OptionGroup.php';
-            $_languages = CRM_Core_OptionGroup::values('languages');
-        }        
-        return $_languages;
+        require_once 'CRM/Core/I18n/PseudoConstant.php';
+        return CRM_Core_I18n_PseudoConstant::languages();
     }
     
     /**

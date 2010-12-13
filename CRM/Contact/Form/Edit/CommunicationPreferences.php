@@ -160,6 +160,12 @@ class CRM_Contact_Form_Edit_CommunicationPreferences
             $defaults['preferred_language'] = $languages[$defaults['preferred_language']];
         }                                                        
 
+        // CRM-7119: set preferred_language to default if unset
+        if (!isset($defaults['preferred_language']) or empty($defaults['preferred_language'])) {
+            $config =& CRM_Core_Config::singleton();
+            $defaults['preferred_language'] = $config->lcMessages;
+        }
+
         //set default from greeting types CRM-4575.
         $greetingTypes = array('addressee'       => 'addressee_id', 
                                'email_greeting'  => 'email_greeting_id', 

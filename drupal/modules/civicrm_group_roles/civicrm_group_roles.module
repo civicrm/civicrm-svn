@@ -512,7 +512,7 @@ function civicrm_group_roles_add_remove_groups( $roles, $user, $op )
                     $contacts = array( $contact );
                     $gparams = array( 'group_id' => $gid, 'contact_id' => $contact_id );
                     $function =  'civicrm_group_contact_'.$op;
-                    $result = call_user_func( $function, &$gparams );
+                    $result = call_user_func( $function, $gparams );
                     
                     if ( $result['is_error'] > 0 ) {
                         $msg = 'Error: Unable to sync role @role';

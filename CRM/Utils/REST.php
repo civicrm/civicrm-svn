@@ -112,6 +112,7 @@ class CRM_Utils_REST
         $session->set('key', $result[2]);
         $session->set('rest_time', time());
         $session->set('PHPSESSID', session_id() );
+        $session->set('cms_user_id', $result[1] );
 
         return self::simple( array( 'api_key' => $api_key, 'PHPSESSID' => session_id(), 'key' => sha1($result[2]) ) );
     }
@@ -384,4 +385,25 @@ class CRM_Utils_REST
         CRM_Utils_System::civiExit( );
     }
 
+    function loadCMSBootstrap( ) {
+        $q = CRM_Utils_array::value( 'q', $_REQUEST );
+        $args = explode( '/', $q );
+
+        // If the function isn't in the civicrm namespace or request
+        // is for login or ping
+        if ( empty($args) || 
+             $args[0] != 'civicrm' ||
+             ( ( count( $args ) != 3 ) && ( $args[1] != 'login' ) && ( $args[1] != 'ping') ) ||
+             $args[1] == 'login' ||
+             $args[1] == 'ping' ) {
+            return;
+        }
+
+        $session = CRM_Core_Session::singleton( );
+        if ( CRM_Utils_System::authenticateKey( false ) && 
+             ($uid = $session->get('cms_user_id') ) ) {
+            CRM_Utils_System::loadBootStrap( null, null, $uid );
+        }
+    }
+     
 }

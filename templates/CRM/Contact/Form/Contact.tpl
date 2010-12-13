@@ -56,7 +56,7 @@
               <td>{$form.contact_source.label}<br />
                   {$form.contact_source.html|crmReplace:class:twenty}
               </td>
-              <td>{$form.external_identifier.label}<br />
+              <td>{$form.external_identifier.label}{help id="id-external-id" file="CRM/Contact/Form/Contact.hlp"}&nbsp;<br />
                   {$form.external_identifier.html|crmReplace:class:six}
               </td>
               {if $contactId}
@@ -67,7 +67,7 @@
 	   <table class="image_URL-section form-layout-compressed">
 	    <tr>
 	        <td>
-    	        {$form.image_URL.label}<br />
+    	        {$form.image_URL.label}&nbsp;&nbsp;{help id="id-upload-image" file="CRM/Contact/Form/Contact.hlp"}<br />
     	        {$form.image_URL.html|crmReplace:class:twenty}
      	        {if $imageURL}
      	            {include file="CRM/Contact/Page/ContactImage.tpl"}

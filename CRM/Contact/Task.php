@@ -310,8 +310,8 @@ class CRM_Contact_Task {
         if ( ! CRM_Utils_Array::value( $value, self::$_tasks ) ) {
             $value = 15; // make it the print task by default
         }
-        return array( self::$_tasks[$value]['class' ],
-                      self::$_tasks[$value]['result'] );
+        return array( CRM_Utils_Array::value( 'class', self::$_tasks[$value] ),
+                      CRM_Utils_Array::value( 'result', self::$_tasks[$value] ) );
     }
 
 }
