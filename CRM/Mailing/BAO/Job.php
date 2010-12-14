@@ -101,7 +101,7 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 
         require_once 'CRM/Core/Lock.php';
 
-        if ($job->fetch()) {
+        while ($job->fetch()) {
             // still use job level lock for each child job
             $lockName = "civimail.job.{$job->id}";
             
@@ -283,6 +283,8 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 
 		$job->query($query);
 
+        require_once 'CRM/Core/Lock.php';
+
 		// For reach of the "Parent Jobs" we find, we split them into 
 		// X Number of child jobs
 		while ($job->fetch()) {
@@ -446,7 +448,7 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
         $eq->query($query);
 
         static $config = null;
-        $mailsProcessed = 0;
+        static $mailsProcessed = 0;
 
         if ( $config == null ) {
             $config = CRM_Core_Config::singleton();
