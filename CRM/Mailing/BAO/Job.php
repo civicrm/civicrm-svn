@@ -288,6 +288,24 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 		// For reach of the "Parent Jobs" we find, we split them into 
 		// X Number of child jobs
 		while ($job->fetch()) {
+            // still use job level lock for each child job
+            $lockName = "civimail.job.{$job->id}";
+            
+			$lock = new CRM_Core_Lock( $lockName );
+			if ( ! $lock->isAcquired( ) ) {
+				continue;
+			}
+
+            // refetch the job status in case things
+            // changed between the first query and now
+            $job->status = CRM_Core_DAO::getFieldValue( 'CRM_Mailing_DAO_Job', 
+                                                        $job->id,
+                                                        'status' );
+            if ( $job->status != 'Scheduled' ) {
+                $lock->release( );
+                continue;
+            }
+            
 			$job->split_job($offset);
 			
 			// update the status of the parent job
@@ -301,6 +319,9 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 			$saveJob->save();
 
 			$transaction->commit( );
+
+			// Release the job lock
+			$lock->release( );
 		}
     }
     
