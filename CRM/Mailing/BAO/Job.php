@@ -94,13 +94,12 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 			   AND   {$mailingACL}
 			ORDER BY j.mailing_id,
 					 j.id
-			LIMIT 0,1";
+			";
 
             $job->query($query);
         }
 
         require_once 'CRM/Core/Lock.php';
-        $i = 0;
 
         if ($job->fetch()) {
             // still use job level lock for each child job
@@ -180,7 +179,6 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 				return $isComplete;
 			}
 		}
-		$i++;
 	}
 
 	// post process to determine if the parent job
@@ -298,6 +296,7 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 
             // refetch the job status in case things
             // changed between the first query and now
+            // avoid race conditions
             $job->status = CRM_Core_DAO::getFieldValue( 'CRM_Mailing_DAO_Job', 
                                                         $job->id,
                                                         'status' );
