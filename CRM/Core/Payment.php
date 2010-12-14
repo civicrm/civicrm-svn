@@ -88,8 +88,8 @@ abstract class CRM_Core_Payment {
      * @static  
      *  
      */  
-    static function &singleton( $mode = 'test', &$paymentProcessor, &$paymentForm = null ) {        
-        if ( self::$_singleton === null ) {
+    static function &singleton( $mode = 'test', &$paymentProcessor, &$paymentForm = null, $force = false ) {        
+        if ( self::$_singleton === null || $force ) {
             $config       = CRM_Core_Config::singleton( );
 
             require_once 'CRM/Core/Extensions.php';

@@ -1165,8 +1165,9 @@ WHERE  contribution_id = {$this->_id}
             if ( CRM_Utils_Array::value( 'is_email_receipt', $this->_params ) ) {
                 $paymentParams['email'] = $this->userEmail;
             }
-            
-            $payment = CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this );
+
+            // force a reget of the payment processor in case the form changed it, CRM-7179
+            $payment =& CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this, true );
             
             $result = $payment->doDirectPayment( $paymentParams );
             
