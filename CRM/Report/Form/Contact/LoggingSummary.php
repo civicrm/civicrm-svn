@@ -159,7 +159,7 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
     function from()
     {
         $this->_from = "
-            FROM {$this->loggingDB}.log_civicrm_contact {$this->_aliases['log_civicrm_contact']}
+            FROM `{$this->loggingDB}`.log_civicrm_contact {$this->_aliases['log_civicrm_contact']}
             JOIN civicrm_contact     {$this->_aliases['civicrm_contact']}
             ON ({$this->_aliases['log_civicrm_contact']}.log_user_id = {$this->_aliases['civicrm_contact']}.id)
         ";
