@@ -165,15 +165,16 @@ if ( $installType == 'drupal' ) {
         errorDisplayPage( $errorTitle, $errorMsg );
     }
 
-    $drupalVersionFile = implode(CIVICRM_DIRECTORY_SEPARATOR, array($cmsPath, 'modules', 'system', 'system.module'));
+    define('DRUPAL_ROOT', $cmsPath);
+    $drupalVersionFile = implode(CIVICRM_DIRECTORY_SEPARATOR, array($cmsPath, 'includes', 'bootstrap.inc'));
 
     if ( file_exists( $drupalVersionFile ) ) {
         require_once $drupalVersionFile;
     }
 
-    if ( !defined('VERSION') or version_compare(VERSION, '6.0') < 0 ) {
+    if ( !defined('VERSION') or version_compare(VERSION, '7.0-rc1') < 0 ) {
         $errorTitle = "Oops! Incorrect Drupal Version";
-        $errorMsg = "This version of CiviCRM can only be used with Drupal 6.x. Please ensure that '$drupalVersionFile' exists if you are running Drupal 6.0 and over. Refer to the online " . $docLink . " for information about installing CiviCRM.";
+        $errorMsg = "This version of CiviCRM can only be used with Drupal 7.x. Please ensure that '$drupalVersionFile' exists if you are running Drupal 7.0 and over. Refer to the online " . $docLink . " for information about installing CiviCRM.";
         errorDisplayPage( $errorTitle, $errorMsg );
     }
 }
@@ -818,10 +819,7 @@ class Installer extends InstallRequirements {
                 echo "<li>Drupal user permissions have been automatically set - giving anonymous and authenticated users access to public CiviCRM forms and features. We recommend that you <a target='_blank' href={$drupalPermissionsURL}>review these permissions</a> to ensure that they are appropriate for your requirements (<a target='_blank' href='http://wiki.civicrm.org/confluence/display/CRMDOC/Default+Permissions+and+Roles'>learn more...</a>)</li>
                       <li>Use the <a target='_blank' href=\"$drupalURL\">Configuration Checklist</a> to review and configure settings for your new site</li>
                       <li> Have you registered this site at CiviCRM.org? If not, please help strengthen the CiviCRM ecosystem by taking a few minutes to <a href='$registerSiteURL' target='_blank'>fill out the site registration form</a>. The information collected will help us prioritize improvements, target our communications and build the community. If you have a technical role for this site, be sure to check Keep in Touch to receive technical updates (a low volume  mailing list).</li>";
-                
-                // explicitly setting error reporting, since we cannot handle drupal related notices
-                error_reporting(1);
-                
+                                
                 // automatically enable CiviCRM module once it is installed successfully.
                 // so we need to Bootstrap Drupal, so that we can call drupal hooks.
                 global $cmsPath, $crmPath;
@@ -829,8 +827,16 @@ class Installer extends InstallRequirements {
                 chdir( $cmsPath ); 
                 include_once "./includes/bootstrap.inc";
                 drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
+                
+                // load user
+                global $user;
+                $user = user_load(1);
+
+                // explicitly setting error reporting, since we cannot handle drupal related notices
+                error_reporting(1);
+
                 // rebuild modules, so that civicrm is added
-                module_rebuild_cache( );
+                system_rebuild_module_data();
                 // now enable civicrm module.
                 module_enable( array('civicrm') );
                 // clear block and page cache, to make sure civicrm link is present in navigation block
