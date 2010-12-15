@@ -4,9 +4,9 @@ require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'CiviTest/Contact.php';
 require_once 'CiviTest/Custom.php';
 require_once 'CRM/Core/BAO/CustomValueTable.php';
-require_once 'api/v2/Contact.php';
+require_once 'api/v3/Contact.php';
 
-class api_v2_CustomValueContactTypeTest  extends CiviUnitTestCase 
+class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase 
 {
     function get_info( ) 
     {

@@ -25,10 +25,10 @@
  +--------------------------------------------------------------------+
 */
 
-require_once 'api/v2/MembershipContact.php';
-require_once 'api/v2/Membership.php';
-require_once 'api/v2/MembershipType.php';
-require_once 'api/v2/MembershipStatus.php';
+require_once 'api/v3/MembershipContact.php';
+require_once 'api/v3/Membership.php';
+require_once 'api/v3/MembershipType.php';
+require_once 'api/v3/MembershipStatus.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 
 /**
@@ -36,7 +36,7 @@ require_once 'CiviTest/CiviUnitTestCase.php';
  *
  *  @package   CiviCRM
  */
-class api_v2_MembershipContactTest extends CiviUnitTestCase {
+class api_v3_MembershipContactTest extends CiviUnitTestCase {
 
     
     /**

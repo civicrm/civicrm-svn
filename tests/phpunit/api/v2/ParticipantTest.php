@@ -26,10 +26,10 @@
 */
 
 
-require_once 'api/v2/Participant.php';
+require_once 'api/v3/Participant.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 
-class api_v2_ParticipantTest extends CiviUnitTestCase 
+class api_v3_ParticipantTest extends CiviUnitTestCase 
 {
     protected $_contactID;
     protected $_createdParticipants;

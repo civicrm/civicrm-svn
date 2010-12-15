@@ -26,14 +26,14 @@
 */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/v2/GroupOrganization.php';
+require_once 'api/v3/GroupOrganization.php';
 
 /**
  * Test class for GroupOrganization API - civicrm_group_organization_*
  *
  *  @package   CiviCRM
  */
-class api_v2_GroupOrganizationTest extends CiviUnitTestCase
+class api_v3_GroupOrganizationTest extends CiviUnitTestCase
 {
 
     function get_info( )

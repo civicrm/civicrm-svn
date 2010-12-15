@@ -25,17 +25,17 @@
    */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/v2/Mailer.php';
+require_once 'api/v3/Mailer.php';
 
 
 /**
- *  Test APIv2 civicrm_mailer_* functions
+ *  Test APIv3 civicrm_mailer_* functions
  *
  *  @package   CiviCRM
  */
 
 
-class api_v2_MailerTest extends CiviUnitTestCase 
+class api_v3_MailerTest extends CiviUnitTestCase 
 {
     protected $_groupID;
     protected $_email;

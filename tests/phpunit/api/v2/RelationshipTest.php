@@ -26,15 +26,15 @@
 */
 
 
-require_once 'api/v2/Relationship.php';
-require_once 'api/v2/CustomGroup.php';
+require_once 'api/v3/Relationship.php';
+require_once 'api/v3/CustomGroup.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 
 /**
  * Class contains api test cases for "civicrm_relationship"
  *
  */
-class api_v2_RelationshipTest extends CiviUnitTestCase 
+class api_v3_RelationshipTest extends CiviUnitTestCase 
 {
     protected $_cId_a;
     protected $_cId_b;

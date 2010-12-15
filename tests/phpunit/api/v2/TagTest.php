@@ -25,10 +25,10 @@
  +--------------------------------------------------------------------+
 */
 
-require_once 'api/v2/Tag.php';
+require_once 'api/v3/Tag.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 
-class api_v2_TagTest extends CiviUnitTestCase 
+class api_v3_TagTest extends CiviUnitTestCase 
 {
     
     function setUp() 

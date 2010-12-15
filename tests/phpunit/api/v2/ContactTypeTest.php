@@ -28,9 +28,9 @@
 
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'CRM/Contact/BAO/ContactType.php';
-require_once 'api/v2/Contact.php';
+require_once 'api/v3/Contact.php';
 
-class api_v2_ContactTypeTest extends CiviUnitTestCase
+class api_v3_ContactTypeTest extends CiviUnitTestCase
 {
     
     function setUp()

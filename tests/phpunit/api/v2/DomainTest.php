@@ -26,14 +26,14 @@
 */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/v2/Domain.php';
+require_once 'api/v3/Domain.php';
 
 /**
  * Test class for Domain API - civicrm_domain_*
  *
  *  @package   CiviCRM
  */
-class api_v2_DomainTest extends CiviUnitTestCase
+class api_v3_DomainTest extends CiviUnitTestCase
 {
 
     /**

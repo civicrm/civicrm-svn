@@ -10,7 +10,7 @@
  *   @license   http://www.fsf.org/licensing/licenses/agpl-3.0.html
  *              GNU Affero General Public License version 3
  *   @version   $Id$
- *   @package CiviCRM_APIv2
+ *   @package CiviCRM_APIv3
  *   @subpackage API_Constant
  *
  *   This file is part of CiviCRM
@@ -34,17 +34,17 @@
  *  Include class definitions
  */
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/v2/Constant.php';
+require_once 'api/v3/Constant.php';
 require_once 'CRM/Core/I18n.php';
 require_once 'CRM/Utils/Cache.php';
 
 /**
- *  Test APIv2 civicrm_activity_* functions
+ *  Test APIv3 civicrm_activity_* functions
  *
- *  @package CiviCRM_APIv2
+ *  @package CiviCRM_APIv3
  *  @subpackage API_Constant
  */
-class api_v2_ConstantTest extends CiviUnitTestCase
+class api_v3_ConstantTest extends CiviUnitTestCase
 {
     /**
      *  Constructor
@@ -256,7 +256,7 @@ class api_v2_ConstantTest extends CiviUnitTestCase
         $this->assertTrue( empty( $result['is_error'] ),
                            "In line " . __LINE__  );
     } 
-} // class api_v2_ConstantTest
+} // class api_v3_ConstantTest
 
 // -- set Emacs parameters --
 // Local variables:

@@ -26,10 +26,10 @@
 */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/v2/Membership.php';
+require_once 'api/v3/Membership.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 
-class api_v2_MembershipTest extends CiviUnitTestCase
+class api_v3_MembershipTest extends CiviUnitTestCase
 {
 
     public function setUp()
