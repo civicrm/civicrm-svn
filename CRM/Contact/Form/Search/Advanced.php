@@ -101,7 +101,8 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
         if ( empty( $groupDetails) ) {
             unset( $paneNames[ts('Custom Fields')] );
         }
-
+        //crm_core_Error::debug('$this->_searchOptions',$this->_searchOptions);
+        //crm_Core_Error::debug('$paneNames',$paneNames);
         foreach ( $paneNames as $name => $type ) {
             if ( ! $this->_searchOptions[$type] ) {
                 unset( $paneNames[$name] );
@@ -123,13 +124,14 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
 
         require_once 'CRM/Utils/Sort.php';
         usort( $componentPanes, array( 'CRM_Utils_Sort', 'cmpFunc' ) );
-       
+        //crm_core_Error::debug('$componentPanes',$componentPanes);
         foreach( $componentPanes as $name => $pane ) {
             // FIXME: we should change the use of $name here to keyword
             $paneNames[$pane['title']] = $pane['name'];
         }
 
         $this->_paneTemplatePath = array( );
+        
         foreach ( $paneNames as $name => $type ) {
             if ( ! $this->_searchOptions[$type] ) {
                 continue;
@@ -141,10 +143,12 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
                                       'id'   => $type );
             
             // see if we need to include this paneName in the current form
+            //crm_core_error::debug('$type',$type);
             if ( $this->_searchPane == $type ||
                  CRM_Utils_Array::value( "hidden_{$type}", $_POST ) ||
                  CRM_Utils_Array::value( "hidden_{$type}", $this->_formValues ) ) {
                 $allPanes[$name]['open'] = 'true';
+                
                 
                 if ( CRM_Utils_Array::value( $type, $components ) ) {
                     $c = $components[ $type ];
@@ -157,7 +161,8 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
                     $this->_paneTemplatePath[$type] = "CRM/Contact/Form/Search/Criteria/{$template}.tpl";
                 }
             }
-        }               
+        }   
+        //CRM_Core_Error::debug( '$allPanes', $allPanes );
         $this->assign( 'allPanes', $allPanes );
         if ( ! $this->_searchPane ) {
             parent::buildQuickForm();
@@ -186,6 +191,7 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
      * @return array the default array reference
      */
     function &setDefaultValues() {
+        
         $defaults = $this->_formValues;
         $this->normalizeDefaultValues( $defaults );
         
@@ -256,7 +262,7 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
             if ( array_key_exists('case_owner', $this->_formValues ) && 
                  ! $this->_formValues['case_owner'] && 
                  ! $this->_force ) {
-                foreach ( array( 'case_type_id', 'case_status_id', 'case_deleted' ) as $caseCriteria ) {
+                foreach ( array( 'case_type_id', 'case_status_id', 'case_deleted', 'case_tags' ) as $caseCriteria ) {
                     if ( CRM_Utils_Array::value( $caseCriteria, $this->_formValues ) ) { 
                         $allCases = true;
                         $this->_formValues['case_owner'] = 1;  
