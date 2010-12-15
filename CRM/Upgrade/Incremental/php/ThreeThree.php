@@ -307,5 +307,18 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id )
                                         true, null, false, false );
         }
     }
+
+    function upgrade_3_3_2( $rev ) 
+    {        
+        //CRM-7172
+        //give all new permissions to roles that have access CiviMail permission
+        $config = CRM_Core_Config::singleton( );
+        if ( $config->userFramework == 'Drupal' ) {
+            db_query( "UPDATE {permission} SET perm = REPLACE( perm, 'access CiviMail', 'access CiviMail, create mailings, approve mailings, schedule mailings' )" );
+        }
+
+        $upgrade =& new CRM_Upgrade_Form( );
+        $upgrade->processSQL( $rev );
+    }
     
   }
