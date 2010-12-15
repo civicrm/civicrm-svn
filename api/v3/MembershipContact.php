@@ -30,7 +30,7 @@
  *
  * File for the CiviCRM APIv2 membership contact functions
  *
- * @package CiviCRM_APIv2
+ * @package CiviCRM_APIv3
  * @subpackage API_Membership
  *  
  * @copyright CiviCRM LLC (c) 2004-2010

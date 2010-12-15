@@ -28,7 +28,7 @@
 /**
  * File for the CiviCRM APIv2 tag functions
  *
- * @package CiviCRM_APIv2
+ * @package CiviCRM_APIv3
  * @subpackage API_Tag
  * 
  * @copyright CiviCRM LLC (c) 2004-2010

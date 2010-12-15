@@ -29,7 +29,7 @@
 /**
  * File for the CiviCRM APIv2 activity functions
  *
- * @package CiviCRM_APIv2
+ * @package CiviCRM_APIv3
  * @subpackage API_Activity
  * @copyright CiviCRM LLC (c) 2004-2010
  * @version $Id: Activity.php 30486 2010-11-02 16:12:09Z shot $

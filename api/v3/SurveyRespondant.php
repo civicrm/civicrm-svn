@@ -28,7 +28,7 @@
 /**
  * File for the CiviCRM APIv2 Petition Signatures functions
  *
- * @package CiviCRM_APIv2
+ * @package CiviCRM_APIv3
  * @subpackage API_Contribute
  */
 

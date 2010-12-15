@@ -30,7 +30,7 @@
  * File for the CiviCRM APIv2 Case functions
  * Developed by woolman.org
  *
- * @package CiviCRM_APIv2
+ * @package CiviCRM_APIv3
  * @subpackage API_Case
  * @copyright CiviCRM LLC (c) 2004-2010
  *

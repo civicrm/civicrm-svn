@@ -29,7 +29,7 @@
 /**
  * File for the CiviCRM APIv2 note functions
  *
- * @package CiviCRM_APIv2
+ * @package CiviCRM_APIv3
  * @subpackage API_Note
  * 
  * @copyright CiviCRM LLC (c) 2004-2010

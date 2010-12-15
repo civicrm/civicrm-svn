@@ -28,7 +28,7 @@
 /**
  * File for CiviCRM APIv2 pseudoconstants
  *
- * @package CiviCRM_APIv2
+ * @package CiviCRM_APIv3
  * @subpackage API_Constant
  * @copyright CiviCRM LLC (c) 2004-2010
  * @version $Id: Constant.php 30171 2010-10-14 09:11:27Z mover $

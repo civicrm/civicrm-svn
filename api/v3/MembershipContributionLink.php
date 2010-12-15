@@ -30,7 +30,7 @@
  *
  * @todo Probably needs renaming
  *
- * @package CiviCRM_APIv2
+ * @package CiviCRM_APIv3
  * @subpackage API_Membership
  * 
  * @copyright CiviCRM LLC (c) 2004-2010

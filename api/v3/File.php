@@ -33,7 +33,7 @@
  * {@link http://objectledge.org/confluence/display/CRM/CRM+v1.0+Public+APIs
  * here}
  *
- * @package CiviCRM_APIv2
+ * @package CiviCRM_APIv3
  * @subpackage API_File
  * @copyright CiviCRM LLC (c) 2004-2010
  * $Id: $
