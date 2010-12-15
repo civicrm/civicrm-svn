@@ -23,8 +23,6 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{* WizardHeader.tpl provides visual display of steps thru the wizard as well as title for current step *}
-{include file="CRM/common/WizardHeader.tpl"}
 {capture assign="adminPriceSets"}{crmURL p='civicrm/admin/price' q="reset=1"}{/capture}
 <div class="crm-block crm-form-block crm-contribution-contributionpage-amount-form-block">
 <div id="help">
