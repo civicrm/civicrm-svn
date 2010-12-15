@@ -252,15 +252,23 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
 	    
         //search for civicase
         if ( is_array( $this->_formValues ) ) {
+            $allCases = false;
             if ( array_key_exists('case_owner', $this->_formValues ) && 
                  ! $this->_formValues['case_owner'] && 
                  ! $this->_force ) {
-                $this->_formValues['case_owner']  = 0;
-            } else if ( array_key_exists('case_owner', $this->_formValues ) ) {
-                $this->_formValues['case_owner'] = 1;
+                foreach ( array( 'case_type_id', 'case_status_id', 'case_deleted' ) as $caseCriteria ) {
+                    if ( CRM_Utils_Array::value( $caseCriteria, $this->_formValues ) ) { 
+                        $allCases = true;
+                        $this->_formValues['case_owner'] = 1;  
+                        continue;
+                    }
+                }
+                if ( ! $allCases ) {
+                    $this->_formValues['case_owner'] = 0;
+                }
             } 
         }
-
+        
         // we dont want to store the sortByCharacter in the formValue, it is more like 
         // a filter on the result set
         // this filter is reset if we click on the search button
