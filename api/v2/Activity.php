@@ -69,7 +69,7 @@ require_once 'api/v2/ActivityContact.php';
  * {@schema Activity/Activity.xml}
  *                            
  * @return CRM_Activity|CRM_Error Newly created Activity object
- * 
+ * @todo Erik Hommel 15 dec 2010 : check if function processes update according to standards
  */
 function &civicrm_activity_create( &$params ) 
 {
@@ -110,6 +110,8 @@ function &civicrm_activity_create( &$params )
  * @param <type> $params
  * @param <type> $returnCustom
  * @return <type>
+ * @todo Erik Hommel 15 dec 2010 check required field activityId with civicrm_verify_mandatory
+ * @todo Erik Hommel 15 dec 2010 inegrate civicrm_activity_get and _civicrm_activity_get?
  */
 function civicrm_activity_get( $params, $returnCustom = false ) {
     _civicrm_initialize( );
@@ -136,6 +138,7 @@ function civicrm_activity_get( $params, $returnCustom = false ) {
  * Wrapper to make this function compatible with the REST API
  *
  * Obsolete now; if no one is using this, it should be removed. -- Wes Morgan
+ * @todo Erik Hommel 15 dec 2010 remove function in V3
  */
 function civicrm_activity_get_contact( $params ) {
     // TODO: Spit out deprecation warning here
@@ -149,6 +152,7 @@ function civicrm_activity_get_contact( $params ) {
  *
  * @return array (reference)  array of activities / error message.
  * @access public
+ * @todo Erik Hommel 15 dec 2010 remove function in V3
  */
 function civicrm_activities_get_contact( $params )
 {
@@ -169,6 +173,7 @@ function civicrm_activities_get_contact( $params )
  *                                Error Object (if integrity violation)
  *
  * @access public
+ * @todo Erik Hommel 15 dec 2010 function needs to be merged into create function according to standards
  *
  */
 function &civicrm_activity_update( &$params ) 
@@ -203,6 +208,7 @@ function &civicrm_activity_update( &$params )
  *                         permissions are insufficient, etc.
  *
  * @access public
+ * @todo Erik Hommel 15 dec 2010 verify required params with civicrm_verify_mandatory
  *
  */
 function civicrm_activity_delete( &$params ) 
@@ -232,6 +238,7 @@ function civicrm_activity_delete( &$params )
  *
  * @return array (reference)  activity object
  * @access public
+ * @todo Erik Hommel 15 dec 2010 params should be array
  */
 function _civicrm_activity_get( $activityId, $returnCustom = false ) {
     $dao = new CRM_Activity_BAO_Activity();
@@ -459,6 +466,7 @@ function _civicrm_activity_buildmailparams( $result, $activityTypeID ) {
  * @param <type> $file
  * @param <type> $activityTypeID
  * @return <type>
+ * @todo Erik Hommel 15 dec 2010 remove function for V3
  */
 function civicrm_activity_process_email( $file, $activityTypeID ) {
     // TODO: Spit out deprecation warning here
@@ -467,7 +475,8 @@ function civicrm_activity_process_email( $file, $activityTypeID ) {
 
 /**
  *
- * @return <type> 
+ * @return <type>
+ * @todo Erik Hommel 15 dec 2010 remove function for V3 
  */
 function civicrm_activity_get_types( ) {
     // TODO: Spit out deprecation warning here
@@ -475,11 +484,12 @@ function civicrm_activity_get_types( ) {
 }
 
 /**
- * Function retrieve actiovity custom data.
+ * Function retrieve activity custom data.
  * @param  array  $params key => value array.
  * @return array  $customData activity custom data 
  *
  * @access public
+ * @todo Erik Hommel 15 dec 2010 Ideally this function should be integrated in the get function with custom data yes as a parameter?
  */
 function civicrm_activity_custom_get( $params ) {
     
