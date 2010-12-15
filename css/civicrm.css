@@ -1575,7 +1575,8 @@ table.campaign td,
     right:0px;
 }
 
-#crm-container td ul.panel li {
+#crm-container td ul.panel li,
+.cluetip-default #cluetip-inner li {
     margin: 0px;
     padding: 2px;
     list-style: none;
@@ -1595,7 +1596,13 @@ table.campaign td,
     z-index: 2;
 }
 
-.btn-slide-active { z-index: 10;} 
+.selector .crm-actions-container .btn-slide {display:none;}
+
+.crm-actionslist {
+    display:none;
+    }
+
+
 
 .crm-configure-actions,
 .crm-event-participants,
@@ -1605,13 +1612,143 @@ table.campaign td,
     z-index: 1;
     }
 
-#crm-container .panel li a {
+.cluetip-default #cluetip-inner span a {
+    display:block;
+    padding:0px 14px 0 5px;
+    }
+.cluetip-default #cluetip-inner .action-item {
+        margin:2px
+        }
+
+.cluetip-default #cluetip-inner .btn-slide { padding:0px;}
+
+
+#crm-container .panel li a,
+.cluetip-default #cluetip-inner li a {
     text-decoration: none;
     padding: 4px;
     display: block;
     border:none;
     cursor: pointer;
 }
+
+/*styles for cluetip menu */
+
+#cluetip-inner .crm-actionslist { 
+    display:block; 
+    }
+
+#cluetip-inner .crm-extra_ul-name {
+    display:none;
+    }
+
+
+/* global */
+#cluetip-close img {
+  border: 0;
+}
+#cluetip-title {
+  overflow: hidden;
+}
+#cluetip-title #cluetip-close {
+  float: right;
+  position: relative;
+}
+#cluetip-waitimage {
+  width: 43px;
+  height: 11px;
+  position: absolute;
+  background-image: url(images/wait.gif);
+}
+.cluetip-arrows {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: -11px;
+  height: 22px;
+  width: 11px;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+}
+#cluetip-extra {
+  display: none;
+}
+
+/***************************************
+   =cluetipClass: 'default' 
+-------------------------------------- */
+
+.cluetip-default {
+  background-color: #2F2F2E;
+  font-size:0.95em;
+}
+.cluetip-default #cluetip-outer {
+  position: relative;
+  margin: 0;
+  background-color: #2F2F2E>;
+}
+.cluetip-default h3#cluetip-title {
+  margin: 0 0 5px;
+  padding: 8px 10px 4px;
+  font-size: 1.1em;
+  font-weight: normal;
+  background-color: #2F2F2E;
+  color: #fff;
+}
+.cluetip-default #cluetip-title a {
+  color: #2F2F2E;
+  font-size: 0.95em;
+}  
+.cluetip-default #cluetip-inner {
+  padding: 0px;
+}
+.cluetip-default div#cluetip-close { 
+  text-align: right;
+  margin: 0 5px 5px;
+  color: #900;
+}
+
+.cluetip-default #cluetip-inner {
+    
+    }
+
+
+
+/* default arrows */
+
+.clue-right-default .cluetip-arrows {
+  background-image: url(images/darrowleft.gif);
+}
+.clue-left-default .cluetip-arrows {
+  background-image: url(images/darrowright.gif);
+  left: 100%;
+  margin-right: -11px;
+}
+.clue-top-default .cluetip-arrows {
+  background-image: url(images/darrowdown.gif);
+  top: 100%;
+  left: 50%;
+  margin-left: -11px;
+  height: 11px;
+  width: 22px;  
+}  
+.clue-bottom-default .cluetip-arrows {
+  background-image: url(../i/dropdown-pointer.gif);
+  top: -4px;
+  left: 40px;
+  margin-left: -11px;
+  height: 4px;
+  width: 22px;
+}
+
+
+
+/* stupid IE6 HasLayout hack */
+.cluetip-rounded #cluetip-title,
+.cluetip-rounded #cluetip-inner {
+  zoom: 1;
+}
+
 
 /*Styles for Context menu */
 
@@ -2571,7 +2708,7 @@ div#crm-toolTip #hide-tooltip {
 .crm-tooltip-down .crm-tooltip-wrapper {
     top:20px;
     padding-top: 10px;
-    background: transparent url('../i/overlay-pointer.png') no-repeat top left;
+    background: transparent url('../i/overlay-pointer-down.png') no-repeat top left;
     overflow: visible;
 }
 
@@ -2993,7 +3130,8 @@ div#crm-toolTip
 #crm-container .ac_results li,
 #crm-container .ac_results li a,
 #crm-container .ac_results li a:hover,
-#crm-container .ac_results li a:visited { color:#DFDFDF; text-decoration: none;}
+#crm-container .ac_results li a:visited,
+.cluetip-default #cluetip-inner span a:hover { color:#DFDFDF; text-decoration: none;}
 .ac_results li strong { color: #FFF; font-weight: normal; }
 .ac_results li .icon,
 .ac_results li a .icon,
@@ -3015,7 +3153,8 @@ div#crm-toolTip
 #crm-container .ac_results li:hover,
 #crm-container .ac_results li.ac_over a,
 #crm-container .ac_results li.ac_over a:hover,
-#crm-container .ac_results li.ac_over a:visited   {  background-color:#F5F6F1; color:#666; }
+#crm-container .ac_results li.ac_over a:visited,
+.cluetip-default #cluetip-inner span a:hover   {  background-color:#F5F6F1; color:#666; }
 .ac_results li.ac_over strong,
 #crm-container .ac_results li.ac_over strong { color:#000; }	
 
@@ -3026,6 +3165,8 @@ div#crm-toolTip
     background-color:#2F2F2E;
 }
 
+.cluetip-default #cluetip-inner span a,
+.cluetip-default #cluetip-inner li a,
 #crm-container .panel li a, 
 #crm-container .contextMenu a,
 .crm-contextmenu a,
@@ -3034,6 +3175,7 @@ div#crm-toolTip
     color:#DFDFDF;
 }
 
+.cluetip-default #cluetip-inner li a:hover,
 #crm-container .panel li a:hover,
 #crm-container .crm-participant-list-inner li a:hover,
 #crm-container .crm-event-links-list-inner li a:hover,

@@ -76,3 +76,7 @@ js/rest.js
 js/jquery/jquery.crmaccordions.js
 js/jquery/jquery.crmasmselect.js
 js/jquery/jquery.crmtooltip.js
+js/jquery/jquery.cluetip.js
+js/dd_roundies.js
+js/style.js
+

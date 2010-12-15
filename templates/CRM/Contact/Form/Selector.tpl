@@ -83,25 +83,25 @@
      {/foreach}
   {else}
       {foreach from=$rows item=row}
-         <tr id='rowid{$row.contact_id}' class="{cycle values="odd-row,even-row"}" title="{ts}Click contact name to view a summary. Right-click anywhere in the row for an actions menu."{/ts}>
+         <tr id='rowid{$row.contact_id}' class="{cycle values="odd-row,even-row"}" title="{ts}Click anywhere in the row for an actions menu."{/ts}>
             {assign var=cbName value=$row.checkbox}
             <td>{$form.$cbName.html}</td>
             {if $context eq 'smog'}
-                {if $row.status eq 'Pending'}<td class="status-pending"}>
-                {elseif $row.status eq 'Removed'}<td class="status-removed">
-                {else}<td>{/if}
+                {if $row.status eq 'Pending'}<td class="status-pending"  rel="#crm-actionslist-{$row.contact_id}">
+                {elseif $row.status eq 'Removed'}<td class="status-removed" rel="#crm-actionslist-{$row.contact_id}">
+                {else}<td rel="#crm-actionslist-{$row.contact_id}">{/if}
                 {$row.status}</td>
             {/if}
-            <td>{$row.contact_type}</td>	
-            <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`"}">{if $row.is_deleted}<del>{/if}{$row.sort_name}{if $row.is_deleted}</del>{/if}</a></td>
+            <td rel="#crm-actionslist-{$row.contact_id}">{$row.contact_type}</td>	
+            <td rel="#crm-actionslist-{$row.contact_id}"><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`"}">{if $row.is_deleted}<del>{/if}{$row.sort_name}{if $row.is_deleted}</del>{/if}</a></td>
             {if $action eq 512 or $action eq 256}
-              <td>{$row.street_address|mb_truncate:22:"...":true}</td>
-              <td>{$row.city}</td>
-              <td>{$row.state_province}</td>
-              <td>{$row.postal_code}</td>
-              <td>{$row.country}</td>
-              <td {if $row.on_hold}class="status-hold"{/if}>{$row.email|mb_truncate:17:"...":true}{if $row.on_hold}&nbsp;(On Hold){/if}</td>
-              <td>{$row.phone}</td> 
+              <td rel="#crm-actionslist-{$row.contact_id}">{$row.street_address|mb_truncate:22:"...":true}</td>
+              <td rel="#crm-actionslist-{$row.contact_id}">{$row.city}</td>
+              <td rel="#crm-actionslist-{$row.contact_id}">{$row.state_province}</td>
+              <td rel="#crm-actionslist-{$row.contact_id}">{$row.postal_code}</td>
+              <td rel="#crm-actionslist-{$row.contact_id}">{$row.country}</td>
+              <td rel="#crm-actionslist-{$row.contact_id}"{if $row.on_hold}class="status-hold"{/if}>{$row.email|mb_truncate:17:"...":true}{if $row.on_hold}&nbsp;(On Hold){/if}</td>
+              <td rel="#crm-actionslist-{$row.contact_id}">{$row.phone}</td> 
            {else}
               {foreach from=$row item=value key=key}
                 {if ($key neq "checkbox") and ($key neq "action") and ($key neq "contact_type") and ($key neq "contact_sub_type") and ($key neq "status") and ($key neq "sort_name") and ($key neq "contact_id")}
@@ -109,7 +109,12 @@
                 {/if}   
               {/foreach}
             {/if}
-            <td style='width:125px;'>{$row.action|replace:'xx':$row.contact_id}</td>
+            <td style='width:80px;' class="crm-actions-container">
+            {$row.action|replace:'xx':$row.contact_id}
+            <div id="crm-actionslist-{$row.contact_id}" class="crm-actionslist">
+                {$row.action|replace:'xx':$row.contact_id}
+            </div>
+            </td>
          </tr>
     {/foreach}
   {/if}
@@ -126,40 +131,22 @@
     var fname = "{$form.formName}";	
     on_load_init_checkboxes(fname);
  {literal}
-cj(document).ready( function() {
-var url         = "{/literal}{crmURL p='civicrm/contact/view/changeaction' q="reset=1&action=add&cid=changeid&context=changeaction" h=0}{literal}";
-var activityUrl = "{/literal}{crmURL p='civicrm/contact/view' q="action=browse&selectedChild=activity&reset=1&cid=changeid" h=0}{literal}";
-var emailUrl    = "{/literal}{crmURL p='civicrm/contact/view/activity' q="atype=3&action=add&reset=1&cid=changeid" h=0}{literal}";
-var contactUrl  = "{/literal}{crmURL p='civicrm/contact/changeaction' q="reset=1&cid=changeid" h=0}{literal}";
-// Show menu when contact row is right clicked
-cj(".selector tr").contextMenu({
-      menu: 'contactMenu'
-    }, function( action, el ) { 
-        var contactId = el.attr('id').substr(5);
-        switch (action) {
-          case 'activity':
-          case 'email':
-            eval( 'locationUrl = '+action+'Url;');
-            break;
-          case 'add':
-            contactId += '&action=update';
-          case 'view':
-            locationUrl = contactUrl.replace( /changeaction/g, action );
-            break;
-          default:
-            locationUrl = url.replace( /changeaction/g, action );
-            break;
-        }
-        eval( 'locationUrl = locationUrl.replace( /changeid/, contactId );');
-        var destination = "{/literal}{crmURL q="force=1" h=0}{literal}";
-        window.location = locationUrl + '&destination=' + encodeURIComponent(destination);
-   });
-});
-cj('ul#contactMenu').mouseup( function(e){ 
-   if( e.button !=0 ) {
-    //when right or middle button clicked fire default right click popup
-   }
-});
-{/literal}
+
+cj(document).ready(function() {
+      cj('.selector td').cluetip({
+            local:true, 
+            arrows:true,
+            mouseOutClose:true, 
+            sticky:true, 
+            positionBy: 'mouse',
+            showTitle:false,
+            closePosition:'title', 
+            activation:'toggle',
+            topOffset: 8,
+            leftOffset:-34,
+            width: 180
+            });
+    });
+      {/literal}
 </script>
 {include file="CRM/common/pager.tpl" location="bottom"}

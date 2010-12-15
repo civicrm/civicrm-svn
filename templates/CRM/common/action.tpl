@@ -28,14 +28,14 @@
  cj({/literal}{if $isSnippet }document{else}'#crm-container'{/if}{literal})
  	.bind('click', function(event) {
     if (cj(event.target).is('.btn-slide')) {
-      cj('.panel').css('display', 'none');
-      cj(event.target).children().show();
-      cj('.btn-slide-active').removeClass('btn-slide-active');	
-      cj(event.target).addClass('btn-slide-active');
-    } else {
-    	cj('.btn-slide .panel').hide();
-    	cj('.btn-slide-active').removeClass('btn-slide-active');	
-	} 
+    if ($cluetip.is(':hidden') || !$this.is('.cluetip-clicked')) {
+            activate(event);
+            $('.cluetip-clicked').removeClass('cluetip-clicked');
+            $this.addClass('cluetip-clicked');
+          } else {
+            inactivate(event);
+          }
+    } 
   });
 </script>
 {/literal}
