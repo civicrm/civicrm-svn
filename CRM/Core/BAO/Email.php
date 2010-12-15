@@ -125,11 +125,12 @@ ORDER BY
         $count = 1;
         while ( $dao->fetch( ) ) {
             $values = array( 'locationType'   => $dao->locationType,
-                                             'is_primary'     => $dao->is_primary,
-                                             'on_hold'        => $dao->on_hold,
-                                             'id'             => $dao->email_id,
-                                             'email'          => $dao->email,
-                                             'locationTypeId' => $dao->locationTypeId );
+                             'is_primary'     => $dao->is_primary,
+                             'on_hold'        => $dao->on_hold,
+                             'id'             => $dao->email_id,
+                             'email'          => $dao->email,
+                             'locationTypeId' => $dao->locationTypeId );
+            
             if ( $updateBlankLocInfo ) {
                 $emails[$count++] = $values; 
             } else {
