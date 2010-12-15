@@ -1248,6 +1248,12 @@ WHERE  id = %1";
             $condition .= " AND ( $additionalCond ) ";
         }
 
+        // CRM-7178. Make sure we only include payment processors valid in ths
+        // domain
+        require_once 'CRM/Core/Config.php';
+        $condition .= 
+            " AND domain_id = " . CRM_Core_Config::domainID( );
+
         if ( ! self::$paymentProcessor ) {
             self::populate( self::$paymentProcessor, 'CRM_Core_DAO_PaymentProcessor', $all, 
                             'name', 'is_active', $condition, 'is_default desc, name' );

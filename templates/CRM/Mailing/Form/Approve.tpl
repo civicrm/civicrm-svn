@@ -23,34 +23,23 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-block crm-form-block crm-mailing-schedule-form-block">
-{include file="CRM/common/WizardHeader.tpl"}
-<div id="help">
-    {ts}You can schedule this mailing to be sent starting at a specific date and time, OR you can request that it be sent as soon as possible by checking &quot;Send Immediately&quot;.{/ts} {help id="sending"}
+
+<div class="action-link">
+    	<a href="{$flipURL}">&raquo; {$flipMessage}</a>
 </div>
-{include file="CRM/Mailing/Form/Count.tpl"}
+
+<div class="crm-block crm-form-block crm-mailing-approve-form-block">
 
 <table class="form-layout">
   <tbody>
-    <tr class="crm-mailing-schedule-form-block-now">
-        <td class="label">{$form.now.label}</td>
-        <td>{$form.now.html}</td>
-    </tr>
-    <tr>
-        <td class="label">{ts}OR{/ts}</td>
-        <td>&nbsp;</td>
-    </tr>
-    <tr class="crm-mailing-schedule-form-block-start_date">
-        <td class="label">{$form.start_date.label}</td>
-        <td>{include file="CRM/common/jcalendar.tpl" elementName=start_date}
-            <div class="description">{ts}Set a date and time when you want CiviMail to start sending this mailing.{/ts}</div>
-        </td>
+    <tr class="crm-mailing-approve-form-block-approval_note">
+        <td class="label">{$form.approval_note.label}</td>
+        <td>{$form.approval_note.html}</td>
     </tr>
   </tbody>
 </table>
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
 
-{if $preview}
 <div class="crm-accordion-wrapper crm-plain_text_email-accordion crm-accordion-closed">
     <div class="crm-accordion-header">
         <div class="icon crm-accordion-pointer"></div> 
@@ -68,14 +57,9 @@
         </table>
     </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->    
-{/if}
-
-{* include jscript to warn if unsaved form field changes *}
-{include file="CRM/common/formNavigate.tpl"}
 
 </div>
 
-{if $preview}
 {literal}
 <script type="text/javascript">
 cj(function() {
@@ -83,4 +67,4 @@ cj(function() {
 });
 </script>
 {/literal}
-{/if}
+

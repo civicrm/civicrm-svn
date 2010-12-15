@@ -54,7 +54,11 @@ class CRM_Utils_Token
                                                       ),
                              'mailing'       => array(
                                                       'name',
-                                                      'group'
+                                                      'group',
+                                                      'subject',
+                                                      'viewUrl',
+                                                      'editUrl',
+                                                      'scheduleUrl'
                                                       ),
                              'contact'       => null,  // populate this dynamically
                              'domain'        => array( 
@@ -362,17 +366,47 @@ class CRM_Utils_Token
     public static function getMailingTokenReplacement($token, &$mailing, $escapeSmarty = false) 
     {
         $value = '';
-        
-        // check if the token we were passed is valid
-        // we have to do this because this function is
-        // called only when we find a token in the string
-        if (!in_array($token,self::$_tokens['mailing'])) {
-            $value = "{mailing.$token}";
-        } else if ($token == 'name') {
+        switch ( $token ) {
+        case 'name':
             $value = $mailing ? $mailing->name : 'Mailing Name';
-        } else if ($token == 'group') {
+            break;
+
+        case 'group':
             $groups = $mailing  ? $mailing->getGroupNames() : array('Mailing Groups');
             $value = implode(', ', $groups);
+            break;
+
+        case 'subject':
+            $value = $mailing->subject;
+            break;
+
+        case 'viewUrl':
+            $value = CRM_Utils_System::url( 'civicrm/mailing/view',
+                                            "reset=1&id={$mailing->id}",
+                                            true, null, true, true );
+            break;
+
+        case 'editUrl':
+            $value = CRM_Utils_System::url( 'civicrm/mailing/send',
+                                            "reset=1&mid={$mailing->id}&continue=true",
+                                            true, null, false, true );
+            break;
+            
+        case 'scheduleUrl':
+            $value = CRM_Utils_System::url( 'civicrm/mailing/schedule',
+                                            "reset=1&mid={$mailing->id}",
+                                            true, null, false, true );
+            break;
+            
+        case 'html':
+            require_once 'CRM/Mailing/Page/View.php';
+            $page = new CRM_Mailing_Page_View( );
+            $value = $page->run( $mailing->id, false );
+            break;
+            
+        default:
+            $value = "{mailing.$token}";
+            break;
         }
      
         if ( $escapeSmarty ) {

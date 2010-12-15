@@ -171,7 +171,7 @@ VALUES
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES 
-    ( @domainID, NULL, '{ts escape="sql" skip="true"}Mailings{/ts}', 'Mailings', 'access CiviMail', '', NULL, '1', NULL, 6 );
+    ( @domainID, NULL, '{ts escape="sql" skip="true"}Mailings{/ts}', 'Mailings', 'access CiviMail,create mailings,approve mailings,schedule mailings', 'OR', NULL, '1', NULL, 6 );
 
 SET @mailinglastID:=LAST_INSERT_ID();
 INSERT INTO civicrm_navigation
@@ -414,7 +414,7 @@ VALUES
     ( @domainID, 'civicrm/admin/eventTemplate&reset=1',                    '{ts escape="sql" skip="true"}Event Templates{/ts}',    'Event Templates',                  'access CiviEvent,administer CiviCRM', 'AND', @adminEventlastID, '1', 1,    3 ), 
     ( @domainID, 'civicrm/admin/price&reset=1&action=add',                 '{ts escape="sql" skip="true"}New Price Set{/ts}',      'New Price Set',                    'access CiviEvent,administer CiviCRM', 'AND', @adminEventlastID, '1', NULL, 4 ), 
     ( @domainID, 'civicrm/admin/price&reset=1',                            '{ts escape="sql" skip="true"}Manage Price Sets{/ts}',  'Manage Price Sets',                'access CiviEvent,administer CiviCRM', 'AND', @adminEventlastID, '1', 1,    5 ),
-    ( @domainID, 'civicrm/admin/options/participant_listing&group=participant_listing&reset=1', '{ts escape="sql" skip="true"}Participant Listing Templates{/ts}', 'Participant Listing Templates', 'access CiviEvent,administer CiviCRM', 'AND', @adminEventlastID, '1', NULL, 6 ), 
+    ( @domainID, 'civicrm/admin/options/participant_listing&group=participant_listing&reset=1', '{ts escape="sql" skip="true"}Participant Listing Options{/ts}', 'Participant Listing Options', 'access CiviEvent,administer CiviCRM', 'AND', @adminEventlastID, '1', NULL, 6 ), 
     ( @domainID, 'civicrm/admin/options/event_type&group=event_type&reset=1',  '{ts escape="sql" skip="true"}Event Types{/ts}',    'Event Types',                      'access CiviEvent,administer CiviCRM', 'AND', @adminEventlastID, '1', NULL, 7 ), 
     ( @domainID, 'civicrm/admin/participant_status&reset=1',                   '{ts escape="sql" skip="true"}Participant Statuses{/ts}', 'Participant Statuses',       'access CiviEvent,administer CiviCRM', 'AND', @adminEventlastID, '1', NULL, 8 ), 
     ( @domainID, 'civicrm/admin/options/participant_role&group=participant_role&reset=1', '{ts escape="sql" skip="true"}Participant Roles{/ts}', 'Participant Roles',  'access CiviEvent,administer CiviCRM', 'AND', @adminEventlastID, '1', NULL, 9 );

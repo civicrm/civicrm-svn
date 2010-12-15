@@ -82,7 +82,7 @@ class CRM_Core_BAO_Setting
                            'userFrameworkDSN', 
                            'userFrameworkBaseURL', 'userFrameworkClass', 'userHookClass',
                            'userPermissionClass', 'userFrameworkURLVar',
-                           'newBaseURL', 'newBaseDir', 'newSiteName',
+                           'newBaseURL', 'newBaseDir', 'newSiteName', 'configAndLogDir',
                            'qfKey', 'gettextResourceDir', 'cleanURL',
                            'locale_custom_strings', 'localeCustomStrings' );
         foreach ( $skipVars as $var ) {
@@ -186,7 +186,7 @@ class CRM_Core_BAO_Setting
                                'userFrameworkDSN', 
                                'userFrameworkBaseURL', 'userFrameworkClass', 'userHookClass',
                                'userPermissionClass', 'userFrameworkURLVar',
-                               'newBaseURL', 'newBaseDir', 'newSiteName',
+                               'newBaseURL', 'newBaseDir', 'newSiteName', 'configAndLogDir',
                                'qfKey', 'gettextResourceDir', 'cleanURL',
                                'locale_custom_strings', 'localeCustomStrings' );
             foreach ( $skipVars as $skip ) {

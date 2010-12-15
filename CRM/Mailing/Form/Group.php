@@ -79,7 +79,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
     function setDefaultValues( ) 
     {
         $mailingID = CRM_Utils_Request::retrieve('mid', 'Integer', $this, false, null );
-        $continue = CRM_Utils_Request::retrieve('continue', 'String', $this, false, null );
+        $continue  = CRM_Utils_Request::retrieve('continue', 'String', $this, false, null );
         
         // check that the user has permission to access mailing id
         require_once 'CRM/Mailing/BAO/Mailing.php';
@@ -100,7 +100,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
         
         if ( $mailingID ) { 
             require_once "CRM/Mailing/DAO/Group.php";
-            $dao =&new  CRM_Mailing_DAO_Group();
+            $dao =& new CRM_Mailing_DAO_Group();
             
             $mailingGroups = array();
             $dao->mailing_id = $mailingID;

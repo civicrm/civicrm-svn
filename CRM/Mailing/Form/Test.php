@@ -103,6 +103,13 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form
                                       'name'  => ts('Cancel') ),
                               );
         }
+
+        require_once 'CRM/Mailing/Info.php';
+         if ( CRM_Mailing_Info::workflowEnabled( ) &&
+              ! CRM_Core_Permission::check('schedule mailings' ) ) {
+            unset( $buttons[1]);     
+         }
+
         $this->addButtons( $buttons );
         
         $mailingID = $this->get('mailing_id' );
@@ -314,6 +321,9 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form
      */
     public function getTitle( ) {
         return ts( 'Test' );
+    }
+
+    public function postProcess( ) {
     }
 
 }

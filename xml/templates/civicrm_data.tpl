@@ -193,7 +193,8 @@ VALUES
    ('campaign_status'               , '{ts escape="sql"}Campaign Status{/ts}'                    , 0, 1),
    ('system_extensions'             , '{ts escape="sql"}CiviCRM Extensions{/ts}'                 , 0, 1),
    ('directory_preferences'         , '{ts escape="sql"}Directory Preferences{/ts}'              , 0, 1),
-   ('url_preferences'               , '{ts escape="sql"}URL Preferences{/ts}'                    , 0, 1);
+   ('url_preferences'               , '{ts escape="sql"}URL Preferences{/ts}'                    , 0, 1),
+   ('mail_approval_status'          , '{ts escape="sql"}CiviMail Approval Status{/ts}'           , 0, 1);
 
    
 SELECT @option_group_id_pcm            := max(id) from civicrm_option_group where name = 'preferred_communication_method';
@@ -251,6 +252,7 @@ SELECT @option_group_id_campaignStatus := max(id) from civicrm_option_group wher
 SELECT @option_group_id_extensions     := max(id) from civicrm_option_group where name = 'system_extensions';
 SELECT @option_group_id_directory_pref := max(id) from civicrm_option_group where name = 'directory_preferences';
 SELECT @option_group_id_url_pref       := max(id) from civicrm_option_group where name = 'url_preferences';
+SELECT @option_group_id_mail_approval_status := max(id) from civicrm_option_group where name = 'mail_approval_status';
 
 SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';
 SELECT @eventCompId      := max(id) FROM civicrm_component where name = 'CiviEvent';
@@ -259,7 +261,7 @@ SELECT @pledgeCompId     := max(id) FROM civicrm_component where name = 'CiviPle
 SELECT @caseCompId       := max(id) FROM civicrm_component where name = 'CiviCase';
 SELECT @grantCompId      := max(id) FROM civicrm_component where name = 'CiviGrant';
 SELECT @campaignCompId   := max(id) FROM civicrm_component where name = 'CiviCampaign';
-SELECT @mailCompId   := max(id) FROM civicrm_component where name = 'CiviMail';
+SELECT @mailCompId       := max(id) FROM civicrm_component where name = 'CiviMail';
 
 INSERT INTO 
    `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
@@ -681,13 +683,15 @@ VALUES
   (@option_group_id_directory_pref, '{ts escape="sql"}Custom PHP{/ts}' , '', 'customPHPPathDir', NULL, 0, 0, 5, '{ts escape="sql"}Path where site specific PHP code files are stored if any. This directory is searched first if set.{/ts}', 0, 1, 1, NULL, @domainID, NULL),
   (@option_group_id_directory_pref, '{ts escape="sql"}Custom Extensions{/ts}' , '', 'extensionsDir', NULL, 0, 0, 6, '{ts escape="sql"}Path where Custom extensions are stored.{/ts}', 0, 1, 1, NULL, @domainID, NULL),
 
+-- URL preferences
   (@option_group_id_url_pref, '{ts escape="sql"}CiviCRM Resource URL{/ts}' , '', 'userFrameworkResourceURL', NULL, 0, 0, 1, NULL, 0, 1, 1, NULL, @domainID, NULL),
   (@option_group_id_url_pref, '{ts escape="sql"}Image Upload URL{/ts}' , '', 'imageUploadURL', NULL, 0, 0, 2, NULL, 0, 1, 1, NULL, @domainID, NULL),
-  (@option_group_id_url_pref, '{ts escape="sql"}Custom CiviCRM CSS URL{/ts}' , '', 'customCSSURL', NULL, 0, 0, 3, NULL, 0, 1, 1, NULL, @domainID, NULL);
+  (@option_group_id_url_pref, '{ts escape="sql"}Custom CiviCRM CSS URL{/ts}' , '', 'customCSSURL', NULL, 0, 0, 3, NULL, 0, 1, 1, NULL, @domainID, NULL),
 
-
-
--- URL preferences
+-- Mail Approval Status Preferences
+  (@option_group_id_mail_approval_status, '{ts escape="sql"}Approved{/ts}' , 1, 'Approved', NULL, 0, 1, 1, NULL, 0, 1, 1, @mailCompId, @domainID, NULL),
+  (@option_group_id_mail_approval_status, '{ts escape="sql"}Rejected{/ts}' , 2, 'Rejected', NULL, 0, 0, 2, NULL, 0, 1, 1, @mailCompId, @domainID, NULL),
+  (@option_group_id_mail_approval_status, '{ts escape="sql"}None{/ts}' , 3, 'None', NULL, 0, 0, 3, NULL, 0, 1, 1, @mailCompId, @domainID, NULL);
 
 
 -- CRM-6138

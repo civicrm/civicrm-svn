@@ -1803,7 +1803,8 @@ SELECT $selectClause
         $query = "
             SELECT      $mailing.id,
                         $mailing.name, 
-                        $job.status, 
+                        $job.status,
+                        $mailing.approval_status_id,
                         MIN($job.scheduled_date) as scheduled_date, 
                         MIN($job.start_date) as start_date,
                         MAX($job.end_date) as end_date,
@@ -1851,6 +1852,7 @@ SELECT $selectClause
                             'created_id'    => $dao->created_id,
                             'scheduled_id'  => $dao->scheduled_id,
                             'archived'      => $dao->archived,
+                            'approval_status_id' => $dao->approval_status_id
                             );
         }
         return $rows;
