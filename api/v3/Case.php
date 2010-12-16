@@ -60,6 +60,12 @@ require_once 'CRM/Case/PseudoConstant.php';
  * @return sucessfully opened case
  *
  * @access public
+ *
+ * @todo Erik Hommel 16 dec 2010 use utils function civicrm_verify_mandatory to check for required params
+ * @todo Erik Hommel 16 dec 2010 check if function processes update as per standard
+ * @todo Erik Hommel 16 dec 2010 check for permission using util function civicrm_api_permission_check
+ * @todo Erik Hommel 16 dec 2010 introduce version as param
+ * @todo Erik Hommel 16 dec 2010 check if civicrm_return_success does not cause error in REST (should be fixed in civicrm_return_success)
  */
 function civicrm_case_create( &$params )
 {
@@ -74,10 +80,10 @@ function civicrm_case_create( &$params )
     _civicrm_case_format_params( $params, 'create' );
     // If format_params didn't find what it was looking for, return error
     if( !$params['case_type_id'] ) {
-        return civicrm_create_error( ts('Invalid case_type. No such case type exists.') );
+        return civicrm_create_error('Invalid case_type. No such case type exists.' );
     }
     if( !$params['case_type'] ) {
-        return civicrm_create_error( ts('Invalid case_type_id. No such case type exists.') );
+        return civicrm_create_error('Invalid case_type_id. No such case type exists.');
     }
     
     // format input with value separators
@@ -92,7 +98,7 @@ function civicrm_case_create( &$params )
     $case =& CRM_Case_BAO_Case::create( $newParams );
     
     if ( !$case ) {
-        return civicrm_create_error( ts('Case not created. Please check your input params.') );
+        return civicrm_create_error('Case not created. Please check your input params.');
     }
     
     // Add client role
@@ -147,6 +153,11 @@ function civicrm_case_create( &$params )
  *
  * @return (get mode, case_id provided): Array with case details, case roles, case activity ids, (search mode, case_id not provided): Array of cases found
  * @access public
+ *
+ * @todo Erik Hommel 16 dec 2010 use utils function civicrm_verify_mandatory to check for required params
+ * @todo Erik Hommel 16 dec 2010 check if all DB fields are returned
+ * @todo Erik Hommel 16 dec 2010 Introduce version as param
+ * @todo Erik Hommel 16 dec 2010 check if civicrm_return_success does not cause error in REST (should be fixed in civicrm_return_success)
  */
 function civicrm_case_get( &$params )
 {
@@ -156,7 +167,7 @@ function civicrm_case_get( &$params )
     if( $caseId = $params['case_id'] ) {
         //validate param
         if( !is_numeric( $caseId ) ) {
-            return civicrm_create_error( ts( 'Invalid parameter: case_id. Must provide a numeric value.' ) );
+            return civicrm_create_error(  'Invalid parameter: case_id. Must provide a numeric value.' );
         }
         
         $case = _civicrm_case_read( $caseId );
@@ -271,6 +282,12 @@ SELECT DISTINCT case_id
 *
 * NOTE: For other case activity functions (update, delete, etc) use the Activity API
 *
+* @todo Erik Hommel 16 dec 2010 use utils function civicrm_verify_mandatory to check for required params
+* @todo Erik Hommel 16 dec 2010 check if function processes update as per standard (or should it not and use activity_update?)
+* @todo Erik Hommel 16 dec 2010 check for permission using util function civicrm_api_permission_check
+* @todo Erik Hommel 16 dec 2010 introduce version as param
+* @todo Erik Hommel 16 dec 2010 check if civicrm_return_success does not cause error in REST (should be fixed in civicrm_return_success)
+*
 */
 function civicrm_case_activity_create( &$params ) 
 {
@@ -313,6 +330,8 @@ function civicrm_case_activity_create( &$params )
  *
  * @access public
  *
+ * @todo Erik Hommel 16 dec 2010 function should be integrated in create as per standard
+ *
  */
 function civicrm_case_update( &$params ) {
     _civicrm_initialize( );
@@ -327,7 +346,7 @@ function civicrm_case_update( &$params ) {
     
     // return error if modifing creator id
     if ( array_key_exists('creator_id', $params) ) {
-        return civicrm_create_error( ts( 'You have no provision to update creator id' ) );
+        return civicrm_create_error(  'You have no provision to update creator id' );
     }
     
     $mCaseId = array();
@@ -342,9 +361,9 @@ function civicrm_case_update( &$params ) {
     if ( count($origContactIds) > 1 ) {
         // check valid orig contact id
         if ( $params['orig_contact_id'] && !in_array( $params['orig_contact_id'], $origContactIds ) ) {
-            return civicrm_create_error( ts( 'Invalid case contact id (orig_contact_id)' ) );
+            return civicrm_create_error(  'Invalid case contact id (orig_contact_id)' );
         } else if ( !$params['orig_contact_id'] ) {
-            return civicrm_create_error( ts( 'Case is linked with more than one contact id. Provide the required params orig_contact_id to be replaced' ) );
+            return civicrm_create_error( 'Case is linked with more than one contact id. Provide the required params orig_contact_id to be replaced' );
         }
         $origContactId = $params['orig_contact_id'];
     }
@@ -385,6 +404,11 @@ function civicrm_case_update( &$params ) {
  * @return boolean: true if success, else false
  *
  * @access public
+ *
+ * @todo Erik Hommel 16 dec 2010 use utils function civicrm_verify_mandatory to check for required params
+ * @todo Erik Hommel 16 dec 2010 check for permission using util function civicrm_api_permission_check
+ * @todo Erik Hommel 16 dec 2010 introduce version as param
+ * @todo Erik Hommel 16 dec 2010 check if civicrm_return_success does not cause error in REST (should be fixed in civicrm_return_success)
  */
 function civicrm_case_delete( &$params ) {
     _civicrm_initialize( );
@@ -396,9 +420,9 @@ function civicrm_case_delete( &$params ) {
         return $errors;
     
     if ( CRM_Case_BAO_Case::deleteCase( $params['case_id'], $params['move_to_trash'] ) ) {
-        return civicrm_create_success( ts( 'Case Deleted' ) );
+        return civicrm_create_success(  'Case Deleted' );
     } else {
-        return civicrm_create_error( ts( 'Could not delete case.' ) );
+        return civicrm_create_error( 'Could not delete case.' );
     }
     
 }
@@ -488,7 +512,7 @@ function _civicrm_case_check_params( &$params, $mode = NULL ) {
     
     // return error if we do not get any params
     if( is_null( $params ) || !is_array( $params ) || empty( $params ) ) {
-        return civicrm_create_error( ts( 'Invalid or missing input parameters. Must provide an associative array.' ) );
+        return civicrm_create_error(  'Invalid or missing input parameters. Must provide an associative array.' );
     }
 
 	switch( $mode ) {
@@ -496,7 +520,7 @@ function _civicrm_case_check_params( &$params, $mode = NULL ) {
     case 'create':
 		
         if( !$params['case_type_id'] && !$params['case_type'] )
-            return civicrm_create_error( ts( 'Missing input parameters. Must provide case_type or case_type_id.' ) );
+            return civicrm_create_error(  'Missing input parameters. Must provide case_type or case_type_id.' );
         
         $required = array( 'contact_id' => 'num',
                            'status_id'  => 'num',
@@ -530,30 +554,30 @@ function _civicrm_case_check_params( &$params, $mode = NULL ) {
 	foreach( $required as $req => $type ){
         
 		if( !$params[$req] )
-			return civicrm_create_error( ts( 'Missing required parameter: %1.', array( 1 => $req ) ) );
+			return civicrm_create_error(  'Missing required parameter: %1.', array( 1 => $req ) );
 		
 		if( $type == 'num' && !is_numeric( $params[$req] ) )
-			return civicrm_create_error( ts( 'Invalid parameter: %1. Must provide a numeric value.', array( 1 => $req ) ) );
+			return civicrm_create_error(  'Invalid parameter: %1. Must provide a numeric value.', array( 1 => $req ) );
 
         if( $type == 'str' && !is_string( $params[$req] ) )
-			return civicrm_create_error( ts( 'Invalid parameter: %1. Must provide a string.', array( 1 => $req ) ) );
+			return civicrm_create_error(  'Invalid parameter: %1. Must provide a string.', array( 1 => $req ) );
 	}
     
     $caseTypes = CRM_Case_PseudoConstant::caseType( );
     
     if ( CRM_Utils_Array::value( 'case_type', $params ) && !in_array( $params['case_type'], $caseTypes ) ) {
-        return civicrm_create_error( ts( 'Invalid Case Type' ) );
+        return civicrm_create_error( 'Invalid Case Type' );
     }
 
     if ( CRM_Utils_Array::value( 'case_type_id', $params ) ) {
         if ( !array_key_exists( $params['case_type_id'], $caseTypes ) ) {
-            return civicrm_create_error( ts( 'Invalid Case Type Id' ) );
+            return civicrm_create_error( 'Invalid Case Type Id' );
         }
         
         // check case type miss match error
         if ( CRM_Utils_Array::value( 'case_type', $params ) &&
              $params['case_type_id'] != array_search( $params['case_type'], $caseTypes ) ) {
-            return civicrm_create_error( ts( 'Case type and case type id mismatch' ) );
+            return civicrm_create_error( 'Case type and case type id mismatch' );
         }
         
         $sep = CRM_Case_BAO_Case::VALUE_SEPARATOR;
@@ -566,14 +590,14 @@ function _civicrm_case_check_params( &$params, $mode = NULL ) {
     $caseStatusIds = CRM_Case_PseudoConstant::caseStatus( );
     if ( CRM_Utils_Array::value( 'status_id', $params ) && 
          !array_key_exists( $params['status_id'], $caseStatusIds ) ) {
-        return civicrm_create_error( ts( 'Invalid Case Status Id' ) );
+        return civicrm_create_error( 'Invalid Case Status Id' );
     }
     
     // check for valid medium id
     $encounterMedium = CRM_Core_OptionGroup::values('encounter_medium');
     if ( CRM_Utils_Array::value( 'medium_id', $params ) && 
          !array_key_exists( $params['medium_id'], $encounterMedium ) ) {
-        return civicrm_create_error( ts( 'Invalid Case Medium Id' ) );
+        return civicrm_create_error(  'Invalid Case Medium Id' );
     }
     
     $contactIds = array( 'creator' => CRM_Utils_Array::value( 'creator_id', $params ),
@@ -581,7 +605,7 @@ function _civicrm_case_check_params( &$params, $mode = NULL ) {
     foreach ( $contactIds as $key => $value ) {
         if ( $value &&
              !CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $value, 'id' ) ) {
-            return civicrm_create_error( ts( 'Invalid %1 Id', array( 1 => ucfirst( $key ) ) ) );
+            return civicrm_create_error( 'Invalid %1 Id', array( 1 => ucfirst( $key ) ) );
         }
     }
 }
