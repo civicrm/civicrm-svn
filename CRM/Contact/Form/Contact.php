@@ -572,7 +572,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
      * @static
      * @access public
      */
-    static function formRule( $fields, $errors, $contactId = null )
+    static function formRule( $fields, &$errors, $contactId = null )
     {
         $config = CRM_Core_Config::singleton( );
         
