@@ -51,6 +51,10 @@ require_once 'api/v2/utils.php';
  * 
  * @return array $activityTypes activity types keyed by id
  * @access public
+ *
+ * @todo Erik Hommel 16 dec 2010 Check if get function returns all DB fields
+ * @todo Erik Hommel 16 dec 2010 Check permission with utils function civicrm_api_permission_check
+ * @todo Erik Hommel 16 dec 2010 Introduce version as param
  */
 function civicrm_activity_type_get( ) {
     require_once 'CRM/Core/OptionGroup.php';
@@ -65,12 +69,18 @@ function civicrm_activity_type_get( ) {
  * @return array $activityType created / updated activity type
  *
  * @access public
+ *
+ * @todo Erik Hommel 16 dec 2010 Check permission with utils function civicrm_api_permission_check
+ * @todo Erik Hommel 16 dec 2010 Introduce version as param
+ * @todo Erik Hommel 16 dec 2010 Check if function processes update according to standards
+ * @todo Erik Hommel 16 dec 2010 Use utils function civicrm_verify_mandatory to check required fields
+ */
  */
 function civicrm_activity_type_create( $params ) {
     require_once 'CRM/Core/OptionGroup.php';
     
     if ( ! isset( $params['label'] ) || ! isset( $params['weight'] ) ) {
-        return civicrm_create_error( ts( 'Required parameter "label / weight" not found' ) );
+        return civicrm_create_error(  'Required parameter "label / weight" not found' );
     }
         
     $action = 1;
@@ -93,11 +103,15 @@ function civicrm_activity_type_create( $params ) {
  * @return boolen
  *
  * @access public
+ *
+ * @todo Erik Hommel 16 dec 2010 Check permission with utils function civicrm_api_permission_check
+ * @todo Erik Hommel 16 dec 2010 Introduce version as param
+ * @todo Erik Hommel 16 dec 2010 Use utils function civicrm_verify_mandatory to check required fields
  */
 function civicrm_activity_type_delete( $params ) {
 
     if ( ! isset( $params['activity_type_id'] ) ) {
-        return civicrm_create_error( ts( 'Required parameter "activity_type_id" not found' ) );
+        return civicrm_create_error( 'Required parameter "activity_type_id" not found' );
     } 
 
     $activityTypeId = $params['activity_type_id'];
