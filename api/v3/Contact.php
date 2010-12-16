@@ -45,6 +45,7 @@ require_once 'CRM/Contact/BAO/Contact.php';
 /**
  * @todo Write sth
  * @todo - make sure it doesn't create new if contact_id is set
+ * @todo Erik Hommel 16 dec 2010 introduce version as param
  *
  * @param  array   $params           (reference ) input parameters
  *
@@ -73,6 +74,8 @@ function civicrm_contact_create( &$params )
 /**
  * @todo Write sth
  * @todo Serious FIXMES in the code! File issues.
+ * @todo Erik Hommel 16 dec 2010 check for required fields with utils function civicrm_verify_mandatory
+ * @todo Erik Hommel 16 dec 2010 introduce version as param
  */
 function civicrm_contact_update( &$params, $create_new = false )
 {
@@ -215,8 +218,8 @@ function _civicrm_greeting_format_params( &$params )
     
         // format params
         if ( CRM_Utils_Array::value( 'contact_type', $params ) == 'Organization' && $key != 'addressee' ) {
-            return civicrm_create_error( ts( 'You cannot use email/postal greetings for contact type %1.', 
-                                             array( 1 => $params['contact_type'] ) ) );
+            return civicrm_create_error( 'You cannot use email/postal greetings for contact type %1.', 
+                                             array( 1 => $params['contact_type'] ) );
         }
         
         $nullValue      = false; 
@@ -234,31 +237,31 @@ function _civicrm_greeting_format_params( &$params )
         
         if ( $customGreeting && $greetingId &&
              ( $greetingId != array_search( 'Customized', $greetings ) ) ) {
-            return civicrm_create_error( ts( 'Provide either %1 greeting id and/or %1 greeting or custom %1 greeting',
-                                             array( 1 => $key ) ) );
+            return civicrm_create_error( 'Provide either %1 greeting id and/or %1 greeting or custom %1 greeting',
+                                             array( 1 => $key ) );
         }
         
         if ( $greetingVal && $greetingId &&
              ( $greetingId != CRM_Utils_Array::key( $greetingVal, $greetings ) ) ) {
-            return civicrm_create_error( ts( 'Mismatch in %1 greeting id and %1 greeting',
-                                             array( 1 => $key ) ) );
+            return civicrm_create_error( 'Mismatch in %1 greeting id and %1 greeting',
+                                             array( 1 => $key ) );
         } 
         
         if ( $greetingId ) {
 
             if ( !array_key_exists( $greetingId, $greetings ) ) {
-                return civicrm_create_error( ts( 'Invalid %1 greeting Id', array( 1 => $key ) ) );
+                return civicrm_create_error( 'Invalid %1 greeting Id', array( 1 => $key ) );
             }
             
             if ( !$customGreeting && ( $greetingId == array_search( 'Customized', $greetings ) ) ) {
-                return civicrm_create_error( ts( 'Please provide a custom value for %1 greeting', 
-                                                 array( 1 => $key ) ) );
+                return civicrm_create_error( 'Please provide a custom value for %1 greeting', 
+                                                 array( 1 => $key ) );
             }
                         
         } else if ( $greetingVal ) {
 
             if ( !in_array( $greetingVal, $greetings ) ) {
-                return civicrm_create_error( ts( 'Invalid %1 greeting', array( 1 => $key ) ) );
+                return civicrm_create_error( 'Invalid %1 greeting', array( 1 => $key ) );
             }
 
             $greetingId = CRM_Utils_Array::key( $greetingVal, $greetings );
@@ -307,6 +310,11 @@ function _civicrm_greeting_format_params( &$params )
  * @return array (reference )        array of properties, if error an array with an error id and error message
  * @static void
  * @access public
+ *
+ * @todo Erik Hommel 16 dec 2010 Check that all DB fields are returned
+ * @todo Erik Hommel 16 dec 2010 fix custom data (CRM-7231)
+ * @todo Erik Hommel 16 dec 2010 Introduce version as param and get rid of $deprecated_behaviour
+ * @todo Erik Hommel 16 dec 2010 Use civicrm_return_success / error ?
  */
 function civicrm_contact_get( &$params, $deprecated_behavior = false )
 {
@@ -360,6 +368,8 @@ function civicrm_contact_get( &$params, $deprecated_behavior = false )
  * @return array (reference )        array of properties, if error an array with an error id and error message
  * @static void
  * @access public
+ *
+ * @todo Erik Hommel 16 dec 2010 Once version has been introduced as param?
  */
 function _civicrm_contact_get_deprecated( &$params )
 {
@@ -379,9 +389,9 @@ function _civicrm_contact_get_deprecated( &$params )
 
     if ( count( $contacts ) != 1 &&
          ! CRM_Utils_Array::value( 'returnFirst', $params ) ) {
-        return civicrm_create_error( ts( '%1 contacts matching input params', array( 1 => count( $contacts ) ) ) );
+        return civicrm_create_error(  '%1 contacts matching input params', array( 1 => count( $contacts ) ) );
     } else if ( count( $contacts ) == 0 ) {
-        return civicrm_create_error( ts( 'No contacts match the input params' ) );
+        return civicrm_create_error( 'No contacts match the input params' );
     }
 
     $contacts = array_values( $contacts );
@@ -432,6 +442,9 @@ function civicrm_contact_delete( &$params )
  * @return array (reference )        array of contacts, if error an array with an error id and error message
  * @static void
  * @access public
+ *
+ * @todo Erik Hommel 16 dec 2010 hmmm we here have a civicrm_contact_get_deprecated and a contact search. Really both of them should disappear, and possibly act on the version param
+ *     
  */
 function &civicrm_contact_search( &$params )
 {
@@ -486,6 +499,8 @@ function &civicrm_contact_search( &$params )
  *
  * @return null on success, error message otherwise
  * @access public
+ *
+ * @todo Erik Hommel 16 dec 2010 required check should be incorporated in utils function civicrm_verify_mandatory
  */
 function civicrm_contact_check_params( &$params, $dupeCheck = true, $dupeErrorArray = false, $requiredCheck = true )
 {
