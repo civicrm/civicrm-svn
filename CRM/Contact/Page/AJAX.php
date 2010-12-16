@@ -118,9 +118,11 @@ class CRM_Contact_Page_AJAX
         } else {
            $strSearch = "$name%";
         }
-
-        $whereClause = " WHERE sort_name LIKE '$strSearch' {$where} ";
- 
+        if( $config->includeEmailInName ) {
+            $whereClause = " WHERE email LIKE '$strSearch' {$where} ";
+        } else{
+            $whereClause = " WHERE sort_name LIKE '$strSearch' {$where} ";
+        }
         $additionalFrom = '';
         if ( $relType ) {
             $additionalFrom = "
