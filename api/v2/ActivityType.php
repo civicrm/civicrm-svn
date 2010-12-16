@@ -51,7 +51,6 @@ require_once 'api/v2/utils.php';
  * 
  * @return array $activityTypes activity types keyed by id
  * @access public
- * @todo Erik Hommel 15 dec 2010 params has to be array (with version)
  */
 function civicrm_activity_type_get( ) {
     require_once 'CRM/Core/OptionGroup.php';
@@ -66,8 +65,6 @@ function civicrm_activity_type_get( ) {
  * @return array $activityType created / updated activity type
  *
  * @access public
- * @todo Erik Hommel 15 dec 2010 check if function handles update
- * @todo Erik Hommel 15 dec 2010 validate required fields with civicrm_validate_mandatory
  */
 function civicrm_activity_type_create( $params ) {
     require_once 'CRM/Core/OptionGroup.php';
@@ -96,7 +93,6 @@ function civicrm_activity_type_create( $params ) {
  * @return boolen
  *
  * @access public
- * @todo Erik Hommel 15 dec 2010 validate required fields with civicrm_validate_mandatory
  */
 function civicrm_activity_type_delete( $params ) {
 
