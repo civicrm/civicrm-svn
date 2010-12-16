@@ -52,9 +52,9 @@ require_once 'CRM/Activity/BAO/Activity.php';
  * @return array (reference)  array of activities / error message.
  * @access public
  *
- * @todo Erik Hommel 16 dec 2010 test mandatory contactId with civicrm_validate_mandatory (in utils.php)
+ * @todo Erik Hommel 16 dec 2010 test mandatory contactId with utils function civicrm_verify_mandatory
  * @todo Erik Hommel 16 dec 2010 check if all DB fields are retrieved with get
- * @todo Erik Hommel 16 dec 2010 check permission with civicrm_api_permission_check (in utils.php)
+ * @todo Erik Hommel 16 dec 2010 check permission with utils function civicrm_api_permission_check
  * @todo Erik Hommel 16 dec 2010 introduce version parameter
  * @todo Erik Hommel 16 dec 2010 check uniform error messages (inventarization to be done first)
  */
@@ -93,8 +93,8 @@ function civicrm_activity_contact_get( $params ) {
  * @access public
  *
  * @todo Erik Hommel 16 dec 2010 Incoming params have to be array
- * @todo Erik Hommel 16 dec 2010 test mandatory contactId with civicrm_validate_mandatory (in utils.php)
- * @todo Erik Hommel 16 dec 2010 check permission with civicrm_api_permission_check (in utils.php)
+ * @todo Erik Hommel 16 dec 2010 test mandatory contactId with utils function civicrm_verify_mandatory
+ * @todo Erik Hommel 16 dec 2010 check permission with utils function civicrm_api_permission_check
  * @todo Erik Hommel 16 dec 2010 should function civicrm_activity_custom_get be separate? or with params['custom_date'] => 1?
  */
 function &_civicrm_activities_get( $contactID, $type = 'all' ) 
