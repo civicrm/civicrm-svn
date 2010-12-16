@@ -106,7 +106,7 @@ function civicrm_constant_get($name, $params = array())
         return $values;
     }
 
-    return civicrm_create_error(ts('Unknown civicrm constant or method not callable'));
+    return civicrm_create_error('Unknown civicrm constant or method not callable');
 }
 
 
