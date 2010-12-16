@@ -69,6 +69,11 @@ require_once 'api/v2/ActivityContact.php';
  * {@schema Activity/Activity.xml}
  *                            
  * @return CRM_Activity|CRM_Error Newly created Activity object
+ *
+ * @todo Erik Hommel 16 dec 2010 check if create function processes update correctly when activity_id is passed
+ * @todo Erik Hommel 16 dec 2010 check for mandatory fields with utils function civicrm_verify_mandatory
+ * @todo Erik Hommel 16 dec 2010 check permissions with utils function civicrm_api_permission_check
+ * @todo Erik Hommel 16 dec 2010 introduce version as param
  * 
  */
 function &civicrm_activity_create( &$params ) 
@@ -110,7 +115,14 @@ function &civicrm_activity_create( &$params )
  * @param <type> $params
  * @param <type> $returnCustom
  * @return <type>
+ *
+ * @todo Erik Hommel 16 dec 2010 check for mandatory fields with utils function civicrm_verify_mandatory
+ * @todo Erik Hommel 16 dec 2010 check permissions with utils function civicrm_api_permission_check
+ * @todo Erik Hommel 16 dec 2010 check if all DB fields are returned
+ * @todo Erik Hommel 16 dec 2010 check if civicrm_create_success is handled correctly with REST (should be fixed in utils function civicrm_create_success)
+ * @todo Erik Hommel 16 dec 2010 introduce version as param
  */
+ 
 function civicrm_activity_get( $params, $returnCustom = false ) {
     _civicrm_initialize( );
     
@@ -146,6 +158,8 @@ function civicrm_activity_get( $params, $returnCustom = false ) {
  *
  * @access public
  *
+ * @todo Erik Hommel 16 dec 2010 function update should be integrated with create function, update does not exist in API standards
+ *
  */
 function &civicrm_activity_update( &$params ) 
 {
@@ -173,6 +187,11 @@ function &civicrm_activity_update( &$params )
  *                         permissions are insufficient, etc.
  *
  * @access public
+ *
+ * @todo Erik Hommel 16 dec 2010 check for mandatory fields with utils function civicrm_verify_mandatory
+ * @todo Erik Hommel 16 dec 2010 check permissions with utils function civicrm_api_permission_check
+ * @todo Erik Hommel 16 dec 2010 introduce version as a param
+ * @todo Erik Hommel 16 dec 2010 check if civicrm_create_success is handled correctly with REST (should be fixed in utils function civicrm_create_success)
  *
  */
 function civicrm_activity_delete( &$params ) 
@@ -202,6 +221,7 @@ function civicrm_activity_delete( &$params )
  *
  * @return array (reference)  activity object
  * @access public
+ *
  */
 function _civicrm_activity_get( $activityId, $returnCustom = false ) {
     $dao = new CRM_Activity_BAO_Activity();
