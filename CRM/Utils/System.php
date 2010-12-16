@@ -461,7 +461,7 @@ class CRM_Utils_System {
         return true;
     }
 
-    static function authenticateScript( $abort = true, $name = null, $pass = null, $storeInSession = true ) {
+    static function authenticateScript( $abort = true, $name = null, $pass = null, $storeInSession = true, $loadCMSBootstrap = true ) {
         // auth to make sure the user has a login/password to do a shell
         // operation
         // later on we'll link this to acl's
@@ -479,7 +479,7 @@ class CRM_Utils_System {
             return false;
         }
 
-        $result = CRM_Utils_System::authenticate( $name, $pass );
+        $result = CRM_Utils_System::authenticate( $name, $pass, $loadCMSBootstrap );
         if ( ! $result ) {
             return self::authenticateAbort( "ERROR: Invalid username and/or password\n",
                                             $abort );
@@ -510,11 +510,11 @@ class CRM_Utils_System {
      * @access public 
      * @static 
      */ 
-    static function authenticate( $name, $password ) {
+    static function authenticate( $name, $password, $loadCMSBootstrap ) {
         $config = CRM_Core_Config::singleton( ); 
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userFrameworkClass ) . '.php' );
         return  
-            eval( 'return ' . $config->userFrameworkClass . '::authenticate($name, $password);' ); 
+            eval( 'return ' . $config->userFrameworkClass . '::authenticate($name, $password, $loadCMSBootstrap);' ); 
 
     }
 
@@ -1099,14 +1099,14 @@ class CRM_Utils_System {
     /**
      * load cms bootstrap
      *
-     * @param $name string  optional username for login
-     * @param $pass string  optional password for login
+     * @param $params   array with uid name and pass
+     * @param $loadUser boolean load user or not
      */
-    static function loadBootStrap($name = null, $pass = null, $uid = null)
+    static function loadBootStrap( $params = array( ), $loadUser = true , $throwError = true )
     {
         $config = CRM_Core_Config::singleton();
         require_once(str_replace('_', DIRECTORY_SEPARATOR, $config->userFrameworkClass) . '.php');
-        return call_user_func("{$config->userFrameworkClass}::loadBootStrap", $name, $pass, $uid);
+        return call_user_func("{$config->userFrameworkClass}::loadBootStrap", $params, $loadUser, $throwError);
     }
     
     /**

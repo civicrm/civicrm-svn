@@ -95,8 +95,7 @@ class civicrm_CLI {
          // bootstrap CMS environment
          global $civicrm_root;
          $_SERVER['SCRIPT_FILENAME'] = "$civicrm_root/bin/cli.php";
-         require_once 'CRM/Utils/System.php';
-         CRM_Utils_System::loadBootStrap($user, $pass);
+       
     }
 
     function setEnv() {

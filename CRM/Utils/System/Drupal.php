@@ -226,15 +226,16 @@ class CRM_Utils_System_Drupal {
      *
      * @param string $name     the user name
      * @param string $password the password for the above user name
+     * @param $loadCMSBootstrap boolean load cms bootstrap?
      *
      * @return mixed false if no auth
      *               array( contactID, ufID, unique string ) if success
      * @access public
      * @static
      */
-    static function authenticate( $name, $password ) {
+     static function authenticate( $name, $password, $loadCMSBootstrap = true ) {
         require_once 'DB.php';
-
+        
         $config = CRM_Core_Config::singleton( );
         
         $dbDrupal = DB::connect( $config->userFrameworkDSN );
@@ -242,23 +243,25 @@ class CRM_Utils_System_Drupal {
             CRM_Core_Error::fatal( "Cannot connect to drupal db via $config->userFrameworkDSN, " . $dbDrupal->getMessage( ) ); 
         }                                                      
 
-        $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
-        $password  = md5( $password );
-        $name      = $dbDrupal->escapeSimple( $strtolower( $name ) );
-        $sql = 'SELECT u.* FROM ' . $config->userFrameworkUsersTableName .
-            " u WHERE LOWER(u.name) = '$name' AND u.pass = '$password' AND u.status = 1";
-        $query = $dbDrupal->query( $sql );
+        if ( $loadCMSBootstrap ) {
+            $bootStrapParams = array( );
+            if ( $name && $password ) {
+                $bootStrapParams = array( 'name' => $name,
+                                          'pass' => $password ); 
+            }
+            CRM_Utils_System::loadBootStrap( $bootStrapParams );
+        }
 
-        $user = null;
-        // need to change this to make sure we matched only one row
+        global $user;
+        $account = null;
         require_once 'CRM/Core/BAO/UFMatch.php';
-        while ( $row = $query->fetchRow( DB_FETCHMODE_ASSOC ) ) { 
-            CRM_Core_BAO_UFMatch::synchronizeUFMatch( $user, $row['uid'], $row['mail'], 'Drupal' );
-            $contactID = CRM_Core_BAO_UFMatch::getContactId( $row['uid'] );
+        if ( $user && $user->uid ) { 
+            CRM_Core_BAO_UFMatch::synchronizeUFMatch( $account, $user->uid , $user->mail, 'Drupal' );
+            $contactID = CRM_Core_BAO_UFMatch::getContactId( $user->uid );
             if ( ! $contactID ) {
                 return false;
             }
-            return array( $contactID, $row['uid'], mt_rand() );
+            return array( $contactID, $user->uid, mt_rand() );
         }
         return false;
     }
@@ -313,49 +316,77 @@ class CRM_Utils_System_Drupal {
     /**
      * load drupal bootstrap
      *
-     * @param $name string  optional username for login
-     * @param $pass string  optional password for login
+     * @param $params array with uid or name and password 
+     * @param $loadUser boolean load cms user?
+     * @param $throwError throw error on failure?
      */
-    static function loadBootStrap($name = null, $pass = null, $uid = null )
+    static function loadBootStrap( $params = array( ), $loadUser = true, $throwError = true )
     {
         //take the cms root path.
         $cmsPath = self::cmsRootPath( );
         
         if ( !file_exists( "$cmsPath/includes/bootstrap.inc" ) ) {
-            echo '<br />Sorry, could not able to locate bootstrap.inc.';
-            exit( );
+            if ( $throwError ) {
+                echo '<br />Sorry, could not able to locate bootstrap.inc.';
+                exit( );
+            }
+            return false;
         }
         
+        // load drupal bootstrap
         chdir($cmsPath);
+        define('DRUPAL_ROOT', $cmsPath);
         require_once 'includes/bootstrap.inc';
-        @drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
+        drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
         
+        // explicitly setting error reporting, since we cannot handle drupal related notices
+        error_reporting( 1 );
         if ( !function_exists('module_exists') || 
              !module_exists( 'civicrm' ) ) {
-            echo '<br />Sorry, could not able to load drupal bootstrap.';
+            if ( $throwError ) {
+                echo '<br />Sorry, could not able to load drupal bootstrap.';
+                exit( );
+            } 
+            return false;
+        }
+        
+        if ( !$loadUser ) {
+            return true;
+        }
+      
+        $uid = CRM_Utils_Array::value( 'uid', $params );
+        if ( !$uid ) {
+            //load user, we need to check drupal permissions.
+            $name = CRM_Utils_Array::value( 'name', $params, false ) ? $params['name'] : trim(CRM_Utils_Array::value('name', $_REQUEST));
+            $pass = CRM_Utils_Array::value( 'pass', $params, false ) ? $params['pass'] : trim(CRM_Utils_Array::value('pass', $_REQUEST));
+
+            if ( $name ) {
+                $uid = user_authenticate( $name,  $pass );
+                if ( !$uid ) {
+                    if ( $throwError ) {
+                        echo '<br />Sorry, unrecognized username or password.';
+                        exit( );
+                    }
+                    return false;
+                }
+            } 
+        }
+        
+        if ( $uid ) {
+            $account = user_load($uid );
+            if ( $account && $account->uid ) {
+                global $user;
+                $user = $account;
+                return true;
+            }
+        }
+        
+        if ( $throwError ) {
+            echo '<br />Sorry, can not load CMS user account.';
             exit( );
         }
         
-        //load user, we need to check drupal permissions.
-        $name = $name ? $name : trim(CRM_Utils_Array::value('name', $_REQUEST));
-        $pass = $pass ? $pass : trim(CRM_Utils_Array::value('pass', $_REQUEST));
-        if ( $name ) {
-            $user = user_authenticate(  array( 'name' => $name, 'pass' => $pass ) );
-            if ( empty( $user->uid ) ) {
-                echo '<br />Sorry, unrecognized username or password.';
-                exit( );
-            }
-        } else if ( $uid ) {
-            $account = user_load( array( 'uid' => $uid ) );
-            if ( empty( $account->uid ) ) {
-                echo '<br />Sorry, unrecognized user id.';
-                exit( );
-            } else {
-                global $user;
-                $user = $account;
-            }
-        }
-        
+        return false;
     }
     
     static function cmsRootPath( ) 
