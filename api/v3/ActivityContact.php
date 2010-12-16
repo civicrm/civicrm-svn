@@ -91,6 +91,11 @@ function civicrm_activity_contact_get( $params ) {
  *
  * @return array (reference)  array of activities.
  * @access public
+ *
+ * @todo Erik Hommel 16 dec 2010 Incoming params have to be array
+ * @todo Erik Hommel 16 dec 2010 test mandatory contactId with civicrm_validate_mandatory (in utils.php)
+ * @todo Erik Hommel 16 dec 2010 check permission with civicrm_api_permission_check (in utils.php)
+ * @todo Erik Hommel 16 dec 2010 should function civicrm_activity_custom_get be separate? or with params['custom_date'] => 1?
  */
 function &_civicrm_activities_get( $contactID, $type = 'all' ) 
 {
