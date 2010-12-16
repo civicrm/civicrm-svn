@@ -233,7 +233,7 @@ class CRM_Utils_System_Drupal {
      * @access public
      * @static
      */
-     static function authenticate( $name, $password, $loadCMSBootstrap = true ) {
+     static function authenticate( $name, $password, $loadCMSBootstrap = false ) {
         require_once 'DB.php';
         
         $config = CRM_Core_Config::singleton( );

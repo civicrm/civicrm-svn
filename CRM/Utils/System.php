@@ -510,7 +510,7 @@ class CRM_Utils_System {
      * @access public 
      * @static 
      */ 
-    static function authenticate( $name, $password, $loadCMSBootstrap ) {
+    static function authenticate( $name, $password, $loadCMSBootstrap = false ) {
         $config = CRM_Core_Config::singleton( ); 
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userFrameworkClass ) . '.php' );
         return  
@@ -1104,6 +1104,9 @@ class CRM_Utils_System {
      */
     static function loadBootStrap( $params = array( ), $loadUser = true , $throwError = true )
     {
+        if ( !is_array($params) ) {
+            $params = array( ); 
+        }
         $config = CRM_Core_Config::singleton();
         require_once(str_replace('_', DIRECTORY_SEPARATOR, $config->userFrameworkClass) . '.php');
         return call_user_func("{$config->userFrameworkClass}::loadBootStrap", $params, $loadUser, $throwError);

@@ -90,7 +90,7 @@ class CRM_Utils_REST
         require_once 'CRM/Core/DAO.php';
 
         $result =& CRM_Utils_System::authenticate($name, $pass);
-        
+
         if (empty($result)) {
             return self::error( 'Could not authenticate user, invalid name or password.' );
         }
@@ -394,16 +394,44 @@ class CRM_Utils_REST
         if ( empty($args) || 
              $args[0] != 'civicrm' ||
              ( ( count( $args ) != 3 ) && ( $args[1] != 'login' ) && ( $args[1] != 'ping') ) ||
-             $args[1] == 'login' ||
              $args[1] == 'ping' ) {
             return;
         }
 
-        $session = CRM_Core_Session::singleton( );
-        if ( CRM_Utils_System::authenticateKey( false ) && 
-             ($uid = $session->get('cms_user_id') ) ) {
-            CRM_Utils_System::loadBootStrap( null, null, $uid );
+        if ( !CRM_Utils_System::authenticateKey( false ) ) {
+            return;
         }
+        
+        require_once 'CRM/Core/DAO.php';
+        if ( $args[1] == 'login' ) {
+            CRM_Utils_System::loadBootStrap( CRM_Core_DAO::$_nullArray, true, false );
+            return;
+        }
+
+        $uid     = null;
+        $session = CRM_Core_Session::singleton( );
+
+        if ( $session->get('PHPSESSID') &&
+             $session->get('cms_user_id') ) {
+            $uid = $session->get('cms_user_id');
+        }
+
+        if ( !$uid ) {
+            require_once 'CRM/Utils/Request.php';
+            
+            $store      = null;
+            $api_key    = CRM_Utils_Request::retrieve( 'api_key', 'String', $store, false, null, 'REQUEST' );
+            $contact_id = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $api_key, 'id', 'api_key');
+            if ( $contact_id ) {
+                require_once 'CRM/Core/BAO/UFMatch.php';
+                $uid = CRM_Core_BAO_UFMatch::getUFId( $contact_id );
+            }
+        }
+
+        if ( $uid ) {
+            CRM_Utils_System::loadBootStrap( array( 'uid' => $uid ), true, false );
+        }
+        
     }
      
 }
