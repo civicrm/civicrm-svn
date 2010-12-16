@@ -2331,7 +2331,7 @@ UNION
                        							'weight'	   => 0, 
                                                 'ref'          =>  'delete-contact',
                                                 'key'          =>  'delete',
-                                                'permissions'  =>  array( 'delete contacts', 'edit all contacts' ) 
+                                                'permissions'  =>  array( 'access deleted contacts', 'delete contacts' ) 
                                                 ),
                        'contribution' => array( 'title'        =>  ts( 'Add Contribution' ),
                                                 'weight'	   => 5, 
