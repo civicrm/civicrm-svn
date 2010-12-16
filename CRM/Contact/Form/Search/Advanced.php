@@ -101,8 +101,7 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
         if ( empty( $groupDetails) ) {
             unset( $paneNames[ts('Custom Fields')] );
         }
-        //crm_core_Error::debug('$this->_searchOptions',$this->_searchOptions);
-        //crm_Core_Error::debug('$paneNames',$paneNames);
+        
         foreach ( $paneNames as $name => $type ) {
             if ( ! $this->_searchOptions[$type] ) {
                 unset( $paneNames[$name] );
@@ -124,7 +123,6 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
 
         require_once 'CRM/Utils/Sort.php';
         usort( $componentPanes, array( 'CRM_Utils_Sort', 'cmpFunc' ) );
-        //crm_core_Error::debug('$componentPanes',$componentPanes);
         foreach( $componentPanes as $name => $pane ) {
             // FIXME: we should change the use of $name here to keyword
             $paneNames[$pane['title']] = $pane['name'];
@@ -143,7 +141,6 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
                                       'id'   => $type );
             
             // see if we need to include this paneName in the current form
-            //crm_core_error::debug('$type',$type);
             if ( $this->_searchPane == $type ||
                  CRM_Utils_Array::value( "hidden_{$type}", $_POST ) ||
                  CRM_Utils_Array::value( "hidden_{$type}", $this->_formValues ) ) {
@@ -162,7 +159,6 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
                 }
             }
         }   
-        //CRM_Core_Error::debug( '$allPanes', $allPanes );
         $this->assign( 'allPanes', $allPanes );
         if ( ! $this->_searchPane ) {
             parent::buildQuickForm();
