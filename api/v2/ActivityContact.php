@@ -51,8 +51,7 @@ require_once 'CRM/Activity/BAO/Activity.php';
  *
  * @return array (reference)  array of activities / error message.
  * @access public
- * @todo Erik Hommel 15 dec 2010 : check if all fields are retrieved with get
- * @todo Erik Hommel 15 dec 2010 : change validation of required contactId to standard _civicrm_verify_mandatory
+
  */
 function civicrm_activity_contact_get( $params ) {
   _civicrm_initialize( );
@@ -87,9 +86,7 @@ function civicrm_activity_contact_get( $params ) {
  *
  * @return array (reference)  array of activities.
  * @access public
- * @todo Erik Hommel 15 dec 2010 : check if all db fields are retrieved
- * @todo Erik Hommel 15 dec 2010 : array as input parameter
- * @todo Erik Hommel 15 dec 2010 : check for required contactId with civicrm_verify_mandatory
+ 
  */
 function &_civicrm_activities_get( $contactID, $type = 'all' ) 
 {
