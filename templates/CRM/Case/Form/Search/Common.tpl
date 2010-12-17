@@ -26,7 +26,7 @@
 {if $notConfigured} {* Case types not present. Component is not configured for use. *}
     {include file="CRM/Case/Page/ConfigureError.tpl"}
 {else}
-<tr>
+<tr id='case_search_form'>
   <td class="crm-case-common-form-block-case_type" width="25%"><label>{ts}Case Type{/ts}</label>
     <br />
       <div class="listing-box" style="width: auto; height: 120px">
@@ -64,14 +64,15 @@
 {literal}
 <script type="text/javascript">
     var verifyCaseInput = new Array();
-    var countCaseInputs = 1;
     cj( function() {
-        
-        cj("#case-search input,#case-search select").each(function () {
+       
+        var countCaseInputs = 1;
+        cj("#case_search_form input,#case_search_form select").each(function () {
             cj(this).attr('case_pref', countCaseInputs);
-                countCaseInputs++;
-        })
-        cj("#case-search input,#case-search select").each(function () {
+            countCaseInputs++;
+        });
+
+        cj("#case_search_form input,#case_search_form select").each(function () {
         if (  cj(this).attr('case_pref') ) {
             switch( cj(this).attr('type') ) { 
           
@@ -119,7 +120,7 @@
            
     function alterCaseFilters( ) {
         var isChecked = 0;
-        cj("#case-search input[name=case_owner]").each( function( ) {
+        cj("#case_search_form input[name=case_owner]").each( function( ) {
             if ( (cj(this).attr('type') == 'radio' && cj(this).attr('checked') ) ) {
                 isChecked = 1;
             }    
@@ -130,7 +131,7 @@
         }
 
         if ( cj.inArray( 1, verifyCaseInput ) != -1 ) {
-            cj("#case-search input[name=case_owner]").each( function( ) {
+            cj("#case_search_form input[name=case_owner]").each( function( ) {
                 if ( (cj(this).attr('type') == 'radio' && cj(this).val( ) == 1) ) {
                     cj(this).click();
                 }    
@@ -140,7 +141,7 @@
  
     function unselectCaseRadio( eleName, thisForm ) {
         if ( cj.inArray( 1, verifyCaseInput ) != -1 ) {
-            alert('unselect all' );
+            alert( 'It is mandatory to select either Search All Cases or Only My Cases if any of the case serach criteria is selected' );
             return;
         }
         unselectRadio( eleName, thisForm);

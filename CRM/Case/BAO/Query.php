@@ -641,9 +641,6 @@ case_relation_type.id = case_relationship.relationship_type_id )";
         }
         $form->assign( 'accessAllCases', $accessAllCases );
         
-        $caseOwner = array( 1 => ts('Search All Cases'), 2 => ts('Only My Cases') );
-        $form->addRadio( 'case_owner', ts( 'Cases' ), $caseOwner );
-        
         require_once 'CRM/Core/BAO/Tag.php';
         $caseTags = CRM_Core_BAO_Tag::getTagsUsedFor( array('civicrm_case') );
         if( $caseTags ) {
