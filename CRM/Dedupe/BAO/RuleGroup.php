@@ -154,7 +154,7 @@ class CRM_Dedupe_BAO_RuleGroup extends CRM_Dedupe_DAO_RuleGroup
             $dupeCopyJoin   = " JOIN dedupe_copy ON dedupe_copy.id1 = t1.column AND dedupe_copy.id2 = t2.column WHERE ";
         }
         $patternColumn     = '/t1.(\w+)/';
-        $exclWeightCount   = 0;
+        $exclWeightSum     = 0;
 
         // create temp table
         $dao = new CRM_Core_DAO();
