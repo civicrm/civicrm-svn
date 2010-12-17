@@ -238,7 +238,8 @@ class CRM_Contact_Task {
         }
 
         // CRM-6806
-        if (!CRM_Core_Permission::check('access deleted contacts')) {
+        if ( !CRM_Core_Permission::check( 'access deleted contacts' ) || 
+             !CRM_Core_Permission::check( 'delete contacts' ) ) {
             unset($titles[self::DELETE_PERMANENTLY]);
         }
         asort( $titles );
