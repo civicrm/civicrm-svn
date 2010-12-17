@@ -54,7 +54,7 @@
                         </li>
                         {/if}
 
-                        {else}
+                        {elseif call_user_func(array('CRM_Core_Permission','check'), 'delete contacts')}
                         <li class="crm-delete-action crm-contact-delete">
                         <a href="{crmURL p='civicrm/contact/view/delete' q="reset=1&delete=1&cid=$contactId"}" class="delete button" title="{ts}Delete{/ts}">
                         <span><div class="icon delete-icon"></div>{ts}Delete{/ts}</span>
