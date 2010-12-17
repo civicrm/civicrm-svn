@@ -265,7 +265,13 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
                         continue;
                     }
                 }
-                if ( ! $allCases ) {
+                if ( $allCases ) {
+                    if ( CRM_Core_Permission::check( 'access all cases and activities' ) ) {
+                        $this->_formValues['case_owner'] = 1;    
+                    } else {
+                        $this->_formValues['case_owner'] = 2;     
+                    }
+                } else {
                     $this->_formValues['case_owner'] = 0;
                 }
             } 
