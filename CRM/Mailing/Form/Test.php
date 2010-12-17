@@ -172,7 +172,7 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form
     {
         $error = null;
         
-        $urlString = "civicrm/mailing/send";
+        $urlString = 'civicrm/mailing/send';
         $urlParams = "_qf_Test_display=true&qfKey={$testParams['qfKey']}";
         
         $ssID    = $self->get( 'ssID' );
@@ -186,12 +186,12 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form
             } else {
                 $fragment = 'search/custom';
             }
-            $urlString = "civicrm/contact/" . $fragment;
+            $urlString = 'civicrm/contact/' . $fragment;
         }
         $emails = null;
         if ( CRM_Utils_Array::value( 'sendtest', $testParams ) ) {
             if (!($testParams['test_group'] || $testParams['test_email'] )) {
-                CRM_Core_Session::setStatus( ts("Your did not provided any email address or selected any group. No test mail is sent.") );
+                CRM_Core_Session::setStatus( ts('Your did not provided any email address or selected any group. No test mail is sent.') );
                 $error = true;
             }
 
@@ -202,7 +202,7 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form
                     $testParams['emails'][] = $email;
                     $emails .= $emails?",'$email'":"'$email'";
                     if ( !CRM_Utils_Rule::email($email) ) {
-                        CRM_Core_Session::setStatus( ts("Please enter valid email addresses only") );
+                        CRM_Core_Session::setStatus( ts('Please enter valid email addresses only.') );
                         $error = true;
                     }
                 }

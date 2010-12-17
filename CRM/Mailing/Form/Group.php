@@ -88,10 +88,10 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
         $defaults = array( );
         
         if ( $mailingID && $continue ) {
-            $defaults["name"] = CRM_Core_DAO::getFieldValue('CRM_Mailing_DAO_Mailing', $mailingID, 'name', 'id');
+            $defaults['name'] = CRM_Core_DAO::getFieldValue('CRM_Mailing_DAO_Mailing', $mailingID, 'name', 'id');
             $this->set('mailing_id', $mailingID);
         } elseif ( $mailingID && !$continue ) {
-            $defaults["name"] = ts('Copy of %1',
+            $defaults['name'] = ts('Copy of %1',
                                    array(1 => CRM_Core_DAO::getFieldValue('CRM_Mailing_DAO_Mailing',
                                                                           $mailingID,
                                                                           'name', 
@@ -99,7 +99,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
         }
         
         if ( $mailingID ) { 
-            require_once "CRM/Mailing/DAO/Group.php";
+            require_once 'CRM/Mailing/DAO/Group.php';
             $dao =& new CRM_Mailing_DAO_Group();
             
             $mailingGroups = array();
@@ -383,7 +383,6 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
         $mailing = CRM_Mailing_BAO_Mailing::create($params, $ids);
         $this->set('mailing_id', $mailing->id);
         
-        require_once "CRM/Mailing/BAO/Mailing.php";
         $count = CRM_Mailing_BAO_Mailing::getRecipientsCount(true, false, $mailing->id);
         $this->set   ('count'   , $count   );
         $this->assign('count'   , $count   );
