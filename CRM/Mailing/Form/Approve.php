@@ -47,6 +47,7 @@ class CRM_Mailing_Form_Approve extends CRM_Core_Form
         $url = CRM_Utils_System::url( 'civicrm/mailing/browse/unscheduled', 'reset=1&scheduled=false' );
         CRM_Utils_System::redirect( $url );
     }
+
     /** 
      * Function to set variables up before form is built 
      *                                                           
@@ -70,21 +71,20 @@ class CRM_Mailing_Form_Approve extends CRM_Core_Form
         
         require_once 'CRM/Mailing/PseudoConstant.php';
         $mailApprovalStatus = CRM_Mailing_PseudoConstant::approvalStatus( );
-        $approved = array_search( 'Approved', $mailApprovalStatus );
+        $this->_approvedStatus = array_search( 'Approved', $mailApprovalStatus );
         $rejected = array_search( 'Rejected', $mailApprovalStatus );
 
-        if ( ! ( $this->_approve == $approved || 
-                 $this->_approve == $rejected ) ) {
-            $this->_approve = $approved;
+        if ( $this->_approve != $rejected ) {
+            $this->_approve = $this->_approvedStatus;
         } 
 
-        if ( $this->_approve == $approved ) {
+        if ( $this->_approve == $this->_approvedStatus ) {
             $flipURL     = CRM_Utils_System::url( 'civicrm/mailing/approve', 
                                                   "reset=1&mid={$this->_mailingID}&approve={$rejected}" );
             $flipMessage = ts( 'Do you want to reject this message instead?' );
         } else if ( $this->_approve == $rejected ) {
             $flipURL     = CRM_Utils_System::url( 'civicrm/mailing/approve', 
-                                                  "reset=1&mid={$this->_mailingID}&approve={$approved}" );
+                                                  "reset=1&mid={$this->_mailingID}&approve={$this->_approvedStatus}" );
             $flipMessage = ts( 'Do you want to approve this message instead?' );
         }
 
@@ -115,7 +115,7 @@ class CRM_Mailing_Form_Approve extends CRM_Core_Form
     }
 
     /**
-     * Build the form for the last step of the mailing wizard
+     * Build the form for the approval/rejection mailing
      *
      * @param
      * @return void
@@ -123,19 +123,19 @@ class CRM_Mailing_Form_Approve extends CRM_Core_Form
      */
     public function buildQuickform() 
     {
-        if ( $this->_approve == 1  ) {
+        if ( $this->_approve == $this->_approvedStatus ) {
             $note    = ts('Approval Note');
-            $title   = ts('Approve Mailing');
+            $title   = ts('Approve Mailing') . ' - ' .  $this->_mailing->name;
             $btnName = ts('Approve');
         } else  {
             $note    = ts('Rejection Note');
-            $title   = ts('Reject Mailing');
+            $title   = ts('Reject Mailing') . ' - ' .  $this->_mailing->name;
             $btnName = ts('Reject');
         }
 
         CRM_Utils_System::setTitle( $title );
         $this->addElement( 'textarea', 'approval_note', $note );
-
+      
         $buttons = array( array( 'type'      => 'next',
                                  'name'      => $btnName,
                                  'spacing'   => '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;',
@@ -162,7 +162,7 @@ class CRM_Mailing_Form_Approve extends CRM_Core_Form
     }
 
     /**
-     * Process the posted form values.  Create and schedule a mailing.
+     * Process the posted form values.  Approve /reject a mailing.
      *
      * @param
      * @return void

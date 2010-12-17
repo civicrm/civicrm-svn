@@ -105,6 +105,11 @@ require_once 'CRM/Mailing/BAO/Mailing.php';
          $this->addFormRule( array( 'CRM_Mailing_Form_Schedule', 'formRule' ), $this );
       
          if ( $this->_scheduleFormOnly ) {
+             $title = ts('Schedule Mailing') . ' - ' . CRM_Core_DAO::getFieldValue( 'CRM_Mailing_DAO_Mailing',
+                                                                                    $this->_mailingID,
+                                                                                    'name' );
+            
+             CRM_Utils_System::setTitle( $title  );
              $buttons = array( array( 'type'  => 'next',
                                       'name'  => ts('Submit Mailing'),
                                       'spacing' => '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;',
@@ -198,7 +203,7 @@ require_once 'CRM/Mailing/BAO/Mailing.php';
                  if ( CRM_Utils_Rule::qfKey( $qfKey ) ) {
                      $urlParams .= "&qfKey=$qfKey";
                  }
-                 $url = CRM_Utils_System::url( "civicrm/contact/" . $fragment, "force=1&reset=1&ssID={$ssID}" );
+                 $url = CRM_Utils_System::url( 'civicrm/contact/' . $fragment, "force=1&reset=1&ssID={$ssID}" );
                  CRM_Utils_System::redirect( $url );
              } else {
                  CRM_Core_Session::setStatus( ts("Your mailing has been saved. Click the 'Continue' action to resume working on it.") );
