@@ -101,32 +101,73 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         require_once 'CRM/Report/Utils/Report.php';
         $this->assign('summaryReportURL', CRM_Report_Utils_Report::getNextUrl('logging/contact/summary', 'reset=1', false, true));
 
-        // we look for the last change in the given connection that happended less than 10 seconds later than log_date to catch multi-query changes
-        $changedSQL = "SELECT * FROM `{$this->loggingDB}`.log_civicrm_contact WHERE log_conn_id = %1 AND log_date < DATE_ADD(%2, INTERVAL 10 SECOND) ORDER BY log_date DESC LIMIT 1";
-        $changed    = $this->sqlToArray($changedSQL, $params);
+        $rows = $this->diffsInTable('log_civicrm_contact');
 
-        // we look for the previous state (different log_conn_id) of the found id
-        $params[3]   = array($changed['id'], 'Integer');
-        $originalSQL = "SELECT * FROM `{$this->loggingDB}`.log_civicrm_contact WHERE log_conn_id != %1 AND log_date < %2 AND id = %3 ORDER BY log_date DESC LIMIT 1";
-        $original    = $this->sqlToArray($originalSQL, $params);
-
-        require_once 'CRM/Contact/DAO/Contact.php';
-        $dao = new CRM_Contact_DAO_Contact;
-        $fields =& $dao->fields();
-
-        // populate $rows with only the differences between $changed and $original (skipping log_* columns)
-        foreach (array_keys(array_diff_assoc($changed, $original)) as $diff) {
-            if (substr($diff, 0, 4) == 'log_') continue;
-            $rows[] = array(
-                'field' => isset($fields[$diff]['title']) ? $fields[$diff]['title'] : $diff,
-                'from'  => $original[$diff],
-                'to'    => $changed[$diff],
-            );
+        // add custom data changes
+        $dao = CRM_Core_DAO::executeQuery("SHOW TABLES FROM `{$this->loggingDB}` LIKE 'log_civicrm_value_%'");
+        while ($dao->fetch()) {
+            $table = $dao->toValue("Tables_in_{$this->loggingDB}_(log_civicrm_value_%)");
+            $rows  = array_merge($rows, $this->diffsInTable($table));
         }
     }
 
     function buildQuery()
     {
+    }
+
+    private function diffsInTable($table)
+    {
+        // cache for pretty field titles
+        static $titles = null;
+        if ($titles == null) {
+            // civicrm_contact titles
+            require_once 'CRM/Contact/DAO/Contact.php';
+            $dao = new CRM_Contact_DAO_Contact;
+            foreach ($dao->fields() as $field) {
+                $titles['log_civicrm_contact'][$field['name']] = $field['title'];
+            }
+
+            // custom data titles
+            require_once 'CRM/Core/BAO/CustomGroup.php';
+            $tree =& CRM_Core_BAO_CustomGroup::getTree('Individual', CRM_Core_DAO::$_nullObject, null, -1);
+            foreach ($tree as $key => $cg) {
+                if (!is_int($key)) continue;
+                foreach($cg['fields'] as $cf) {
+                    $titles["log_{$cg['table_name']}"][$cf['column_name']] = "{$cg['title']}: {$cf['label']}";
+                }
+            }
+        }
+
+        $params = array(
+            1 => array($this->log_conn_id, 'Integer'),
+            2 => array($this->log_date,    'String'),
+        );
+
+        // we look for the last change in the given connection that happended less than 10 seconds later than log_date to catch multi-query changes
+        $changedSQL = "SELECT * FROM `{$this->loggingDB}`.`$table` WHERE log_conn_id = %1 AND log_date < DATE_ADD(%2, INTERVAL 10 SECOND) ORDER BY log_date DESC LIMIT 1";
+        $changed    = $this->sqlToArray($changedSQL, $params);
+
+        // return early if nothing found
+        if (empty($changed)) return array();
+
+        // we look for the previous state (different log_conn_id) of the found id
+        $params[3]   = array($changed['id'], 'Integer');
+        $originalSQL = "SELECT * FROM `{$this->loggingDB}`.`$table` WHERE log_conn_id != %1 AND log_date < %2 AND id = %3 ORDER BY log_date DESC LIMIT 1";
+        $original    = $this->sqlToArray($originalSQL, $params);
+
+        $rows = array();
+
+        // populate $rows with only the differences between $changed and $original (skipping log_* columns)
+        foreach (array_keys(array_diff_assoc($changed, $original)) as $diff) {
+            if (substr($diff, 0, 4) == 'log_') continue;
+            $rows[] = array(
+                'field' => isset($titles[$table][$diff]) ? $titles[$table][$diff] : substr($table, 4) . ".$diff",
+                'from'  => $original[$diff],
+                'to'    => $changed[$diff],
+            );
+        }
+
+        return $rows;
     }
 
     private function sqlToArray($sql, $params)
