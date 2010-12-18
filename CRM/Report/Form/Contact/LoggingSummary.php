@@ -115,8 +115,15 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
 
     function alterDisplay(&$rows)
     {
+        // cache for id → is_deleted mapping
+        $isDeleted = array();
+
         foreach ($rows as &$row) {
-            if ($row['log_civicrm_contact_log_action'] != 'Delete') {
+            if (!isset($isDeleted[$row['log_civicrm_contact_id']])) {
+                $isDeleted[$row['log_civicrm_contact_id']] = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $row['log_civicrm_contact_id'], 'is_deleted') !== '0';
+            }
+
+            if (!$isDeleted[$row['log_civicrm_contact_id']]) {
                 $row['log_civicrm_contact_altered_contact_link'] = CRM_Utils_System::url('civicrm/contact/view', 'reset=1&cid=' . $row['log_civicrm_contact_id']);
                 $row['log_civicrm_contact_altered_contact_hover'] = ts("Go to contact summary.");
             }
