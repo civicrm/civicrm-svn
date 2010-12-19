@@ -181,6 +181,11 @@ class CRM_Core_BAO_Setting
         $domain->find(true);
         if ($domain->config_backend) {
             $defaults = unserialize($domain->config_backend);
+            if ( $defaults === false ||
+                 ! is_array( $defaults ) ) {
+                $defaults = array( );
+                return;
+            }
 
             $skipVars = array( 'dsn', 'templateCompileDir',
                                'userFrameworkDSN', 
