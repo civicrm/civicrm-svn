@@ -62,6 +62,7 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
                     'log_date' => array(
                         'default'  => true,
                         'required' => true,
+                        'type' => CRM_Utils_Type::T_DATE,
                         'title'    => ts('When'),
                     ),
                     'altered_contact' => array(
@@ -79,16 +80,21 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
                     ),
                 ),
                 'filters' => array(
-                    'log_action' => array(
-                        'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-                        'options'      => array('Insert' => ts('Insert'), 'Update' => ts('Update'), 'Delete' => ts('Delete')),
-                        'title'        => ts('Action'),
-                        'type'         => CRM_Utils_Type::T_STRING,
+                    'log_date' => array(
+                        'title'        => ts('When'),
+                        'operatorType' => CRM_Report_Form::OP_DATE,
+                        'type' => CRM_Utils_Type::T_DATE,
                     ),
                     'altered_contact' => array(
                         'name'  => 'display_name',
                         'title' => ts('Altered Contact'),
                         'type'  => CRM_Utils_Type::T_STRING,
+                    ),
+                    'log_action' => array(
+                        'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+                        'options'      => array('Insert' => ts('Insert'), 'Update' => ts('Update'), 'Delete' => ts('Delete')),
+                        'title'        => ts('Action'),
+                        'type'         => CRM_Utils_Type::T_STRING,
                     ),
                 ),
             ),
@@ -135,6 +141,7 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
                 $url = CRM_Report_Utils_Report::getNextUrl('logging/contact/detail', $q, false, true);
                 $row['log_civicrm_contact_log_action_link'] = $url;
                 $row['log_civicrm_contact_log_action_hover'] = ts("View details for this update.");
+                $row['log_civicrm_contact_log_action'] = ts('Update (click for details)');
             }
 
             unset($row['log_civicrm_contact_log_user_id']);
@@ -186,5 +193,37 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
     {
         parent::where();
         $this->_where .= " AND (log_action != 'Initialization')";
+        $clauses = array( );
+        foreach ( $this->_columns as $tableName => $table ) {
+            if ( array_key_exists('filters', $table) ) { 
+                foreach ( $table['filters'] as $fieldName => $field ) {                    
+                    $clause = null;
+                    if ( CRM_Utils_Array::value( 'type', $field ) & CRM_Utils_Type::T_DATE ) {
+                        $relative = CRM_Utils_Array::value( "{$fieldName}_relative", $this->_params );
+                        $from     = CRM_Utils_Array::value( "{$fieldName}_from"    , $this->_params );
+                        $to       = CRM_Utils_Array::value( "{$fieldName}_to"      , $this->_params );
+                        
+                        if ( $relative || $from || $to ) {
+                            $clause = $this->dateClause( $field['name'], $relative, $from, $to, $field['type'] );
+                        }
+                    } else { 
+                        $op = CRM_Utils_Array::value( "{$fieldName}_op", $this->_params );
+                        if ( $op ) {
+                            $clause = 
+                                $this->whereClause( $field,
+                                                    $op,
+                                                    CRM_Utils_Array::value( "{$fieldName}_value", $this->_params ),
+                                                    CRM_Utils_Array::value( "{$fieldName}_min", $this->_params ),
+                                                    CRM_Utils_Array::value( "{$fieldName}_max", $this->_params ) );
+                        }
+                    }
+                    if ( ! empty( $clause ) ) {
+                        $clauses[] = $clause;
+                        $this->_where = "WHERE " . implode( ' AND ', $clauses ); 
+                    }
+                    
+                }
+            }
+        } 
     }
 }
