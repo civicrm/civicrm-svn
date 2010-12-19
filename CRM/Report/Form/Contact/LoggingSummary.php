@@ -131,17 +131,17 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
 
             if (!$isDeleted[$row['log_civicrm_contact_id']]) {
                 $row['log_civicrm_contact_altered_contact_link'] = CRM_Utils_System::url('civicrm/contact/view', 'reset=1&cid=' . $row['log_civicrm_contact_id']);
-                $row['log_civicrm_contact_altered_contact_hover'] = ts("Go to contact summary.");
+                $row['log_civicrm_contact_altered_contact_hover'] = ts("Go to contact summary");
             }
             $row['civicrm_contact_altered_by_link'] = CRM_Utils_System::url('civicrm/contact/view', 'reset=1&cid=' . $row['log_civicrm_contact_log_user_id']);
-            $row['civicrm_contact_altered_by_hover'] = ts("Go to contact summary.");
+            $row['civicrm_contact_altered_by_hover'] = ts("Go to contact summary");
 
             if ($row['log_civicrm_contact_log_action'] == 'Update') {
                 $q = "reset=1&log_conn_id={$row['log_civicrm_contact_log_conn_id']}&log_date={$row['log_civicrm_contact_log_date']}";
                 $url = CRM_Report_Utils_Report::getNextUrl('logging/contact/detail', $q, false, true);
                 $row['log_civicrm_contact_log_action_link'] = $url;
-                $row['log_civicrm_contact_log_action_hover'] = ts("View details for this update.");
-                $row['log_civicrm_contact_log_action'] = ts('Update (click for details)');
+                $row['log_civicrm_contact_log_action_hover'] = ts("View details for this update");
+                $row['log_civicrm_contact_log_action'] = '<div class="icon details-icon"></div> ' . ts('Update');
             }
 
             unset($row['log_civicrm_contact_log_user_id']);
