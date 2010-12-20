@@ -27,7 +27,7 @@
 */
 
 /**
- * File for the CiviCRM APIv2 location functions
+ * File for the CiviCRM APIv3 location functions
  *
  * @package CiviCRM_APIv3
  * @subpackage API_Location
@@ -71,7 +71,7 @@ function civicrm_location_add( &$params ) {
         CRM_Core_PseudoConstant::flush( 'locationType' );
         
         if ( !isset($locationTypeId) ) {
-            return civicrm_create_error( ts( '$location_type is not valid one' ) );
+            return civicrm_create_error(  '$location_type is not valid one'  );
         }
     }
     
@@ -99,7 +99,7 @@ function civicrm_location_update( $params ) {
     }
     
     if( ! isset( $params['contact_id'] ) ) {
-        return civicrm_create_error( ts ('$contact is not valid contact datatype') );
+        return civicrm_create_error( '$contact is not valid contact datatype' );
     } 
     
     $unsetVersion = false;
@@ -113,7 +113,7 @@ function civicrm_location_update( $params ) {
         
         if ( ! ( $locationTypeId = CRM_Utils_Array::value( 'location_type_id', $params ) ) && 
              ! ( CRM_Utils_Rule::integer( $locationTypeId ) ) ) {
-            return civicrm_create_error( ts('missing or invalid location_type_id') );
+            return civicrm_create_error( 'missing or invalid location_type_id' );
         }
         $locationTypes = CRM_Utils_Array::value( 'location_type', $params );
         
@@ -145,7 +145,7 @@ function civicrm_location_update( $params ) {
         //get all location types.
         foreach ( $locTypeIds as $locId ) {
             $name = CRM_Utils_Array::value( $locId, $allLocationTypes );
-            if ( !$name ) return civicrm_create_error( ts('Invalid Location Type Id : %1', array( 1 => $locId ) ) );
+            if ( !$name ) return civicrm_create_error( 'Invalid Location Type Id : %1', array( 1 => $locId ) ) ;
             if ( !in_array( $name, $locationTypes ) ) $locationTypes[] = $name;
         }
     }
@@ -155,7 +155,7 @@ function civicrm_location_update( $params ) {
         if ( !in_array( $name, $allLocationTypes ) ) $invalidTypes[$name] = $name; 
     }
     if ( !empty( $invalidTypes ) ) {
-        return civicrm_create_error( ts( "Invalid Location Type(s) : %1", array( 1 => implode( ', ', $invalidTypes ) ) ) );
+        return civicrm_create_error(  "Invalid Location Type(s) : %1", array( 1 => implode( ', ', $invalidTypes ) )  );
     }
     
     //allow to swap locations.
@@ -164,7 +164,7 @@ function civicrm_location_update( $params ) {
     if ( !empty( $locationTypes ) ) {
         $params['location_type'] = $locationTypes;
     } else {
-        return civicrm_create_error( ts('missing or invalid location_type_id') );
+        return civicrm_create_error( 'missing or invalid location_type_id' );
     }
     
     //get location filter by loc type.
@@ -175,8 +175,8 @@ function civicrm_location_update( $params ) {
     }
     
     if ( CRM_Utils_System::isNull( $locations ) ) {
-        return civicrm_create_error( ts( "Invalid Location Type(s) : %1", 
-                                         array( 1 => implode( ', ',CRM_Utils_Array::value( 'location_type',$params))))); 
+        return civicrm_create_error(  "Invalid Location Type(s) : %1", 
+                                         array( 1 => implode( ', ',CRM_Utils_Array::value( 'location_type',$params)))); 
     }
     
     $location =& _civicrm_location_update( $params, $locations );
@@ -203,14 +203,14 @@ function civicrm_location_delete( &$contact ) {
     }
     
     if( ! isset( $contact['contact_id'] ) ) {
-        return civicrm_create_error( ts('$contact is not valid contact datatype') );
+        return civicrm_create_error( '$contact is not valid contact datatype' );
     } 
     
     require_once 'CRM/Utils/Rule.php';
     $locationTypeID = CRM_Utils_Array::value( 'location_type', $contact );
     if ( ! $locationTypeID ||
          ! CRM_Utils_Rule::integer( $locationTypeID ) ) {
-        return civicrm_create_error( ts('missing or invalid location') );
+        return civicrm_create_error( 'missing or invalid location' );
     }
     
     $result =& _civicrm_location_delete( $contact );

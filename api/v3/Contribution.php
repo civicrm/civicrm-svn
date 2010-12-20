@@ -26,7 +26,7 @@
 */
 
 /**
- * File for the CiviCRM APIv2 Contribution functions
+ * File for the CiviCRM APIv3 Contribution functions
  *
  * @package CiviCRM_APIv3
  * @subpackage API_Contribute

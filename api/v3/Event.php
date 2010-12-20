@@ -28,7 +28,7 @@
 
 /**
  *
- * File for the CiviCRM APIv2 event functions
+ * File for the CiviCRM APIv3 event functions
  *
  * @package CiviCRM_APIv3
  * @subpackage API_Event
@@ -41,7 +41,7 @@
 /**
  * Files required for this package
  */
-require_once 'api/v2/utils.php';
+require_once 'api/v3/utils.php';
 
 /**
  * Create a Event
