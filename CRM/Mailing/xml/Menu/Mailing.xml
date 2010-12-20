@@ -178,7 +178,7 @@
      <path>civicrm/mailing/schedule</path>
      <title>Schedule Mailing</title>
      <page_callback>CRM_Mailing_Form_Schedule</page_callback>
-     <access_arguments>access CiviMail</access_arguments>
+     <access_arguments>schedule mailings</access_arguments>
      <weight>700</weight>
   </item>
   <item>

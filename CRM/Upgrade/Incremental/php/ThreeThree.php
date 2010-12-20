@@ -313,7 +313,11 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id )
         //CRM-7172
         //give all new permissions to roles that have access CiviMail permission
         $config = CRM_Core_Config::singleton( );
-        if ( $config->userFramework == 'Drupal' ) {
+        $enableWorkflow = defined( 'CIVICRM_CIVIMAIL_WORFLOW' ) ? (bool) CIVICRM_CIVIMAIL_WORFLOW : false;
+
+        if ( $enableWorkflow &&
+             $config->userFramework == 'Drupal' &&
+             module_exists( 'rules' ) ) {
             db_query( "UPDATE {permission} SET perm = REPLACE( perm, 'access CiviMail', 'access CiviMail, create mailings, approve mailings, schedule mailings' )" );
         }
 
