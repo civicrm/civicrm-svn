@@ -50,7 +50,8 @@ class CRM_Mailing_Page_View extends CRM_Core_Page
      * Second check for visibility
      * Call a hook to see if hook wants to override visibility setting
      */
-    function checkPermission( ) {
+    function checkPermission( )
+    {
         if ( ! $this->_mailing ) {
             return false;
         }
@@ -94,10 +95,11 @@ AND        q.contact_id = %2
      * @return void
      */ 
     function run( $id = null, $print = true )
-    {
+    {               
         if ( is_numeric( $id ) ) {
             $this->_mailingID = $id;
         } else {
+            $print = true;
             $this->_mailingID = CRM_Utils_Request::retrieve( 'id', 'Integer', CRM_Core_DAO::$_nullObject, true );
         }        
 
@@ -113,7 +115,7 @@ AND        q.contact_id = %2
             CRM_Core_Error::statusBounce( ts('You do not have the necessary permission to approve this mailing.' ) );
         }
 
-        CRM_Mailing_BAO_Mailing::tokenReplace($this->_mailing);
+        CRM_Mailing_BAO_Mailing::tokenReplace( $this->_mailing );
         
         if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
             require_once 'CRM/Core/Smarty/resources/String.php';
