@@ -62,7 +62,7 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
                     'log_date' => array(
                         'default'  => true,
                         'required' => true,
-                        'type' => CRM_Utils_Type::T_DATE,
+                        'type' => CRM_Utils_Type::T_TIME,
                         'title'    => ts('When'),
                     ),
                     'altered_contact' => array(
