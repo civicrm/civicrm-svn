@@ -117,26 +117,9 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
 
     private function diffsInTable($table)
     {
-        // cache for pretty field titles
+        // caches for pretty field titles and value mappings
         static $titles = null;
-        if ($titles == null) {
-            // civicrm_contact titles
-            require_once 'CRM/Contact/DAO/Contact.php';
-            $dao = new CRM_Contact_DAO_Contact;
-            foreach ($dao->fields() as $field) {
-                $titles['log_civicrm_contact'][$field['name']] = $field['title'];
-            }
-
-            // custom data titles
-            require_once 'CRM/Core/BAO/CustomGroup.php';
-            $tree =& CRM_Core_BAO_CustomGroup::getTree('Individual', CRM_Core_DAO::$_nullObject, null, -1);
-            foreach ($tree as $key => $cg) {
-                if (!is_int($key)) continue;
-                foreach($cg['fields'] as $cf) {
-                    $titles["log_{$cg['table_name']}"][$cf['column_name']] = "{$cg['title']}: {$cf['label']}";
-                }
-            }
-        }
+        static $values = null;
 
         $params = array(
             1 => array($this->log_conn_id, 'Integer'),
@@ -149,6 +132,70 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
 
         // return early if nothing found
         if (empty($changed)) return array();
+
+        // seed caches with civicrm_contact titles/values
+        if (!isset($titles['log_civicrm_contact']) or !isset($values['log_civicrm_contact'])) {
+            $titles['log_civicrm_contact'] = array(
+                'gender_id'                      => ts('Gender'),
+                'preferred_communication_method' => ts('Preferred Communication Method'),
+                'preferred_language'             => ts('Preferred Language'),
+                'prefix_id'                      => ts('Prefix'),
+                'suffix_id'                      => ts('Suffix'),
+            );
+            $values['log_civicrm_contact'] = array(
+                'gender_id'                      => CRM_Core_PseudoConstant::gender(),
+                'preferred_communication_method' => CRM_Core_PseudoConstant::pcm(),
+                'preferred_language'             => CRM_Core_PseudoConstant::languages(),
+                'prefix_id'                      => CRM_Core_PseudoConstant::individualPrefix(),
+                'suffix_id'                      => CRM_Core_PseudoConstant::individualSuffix(),
+            );
+            require_once 'CRM/Contact/DAO/Contact.php';
+            $dao = new CRM_Contact_DAO_Contact;
+            foreach ($dao->fields() as $field) {
+                if (!isset($titles['log_civicrm_contact'][$field['name']])) {
+                    $titles['log_civicrm_contact'][$field['name']] = $field['title'];
+                }
+                if ($field['type'] == CRM_Utils_Type::T_BOOLEAN) {
+                    $values['log_civicrm_contact'][$field['name']] = array('0' => ts('false'), '1' => ts('true'));
+                }
+            }
+        }
+
+        // add custom data titles/values for the given table
+        if (!isset($titles[$table]) or !isset($values[$table])) {
+            $titles[$table] = array();
+            $values[$table] = array();
+
+            $params[3] = array(substr($table, 4), 'String');
+            $sql = "SELECT id, title FROM `{$this->loggingDB}`.log_civicrm_custom_group WHERE log_date <= %2 AND table_name = %3 ORDER BY log_date DESC LIMIT 1";
+            $cgDao =& CRM_Core_DAO::executeQuery($sql, $params);
+            $cgDao->fetch();
+
+            $params[3] = array($cgDao->id, 'Integer');
+            $sql = "SELECT column_name, data_type, label, name FROM `{$this->loggingDB}`.log_civicrm_custom_field WHERE log_date <= %2 AND custom_group_id = %3 ORDER BY log_date";
+            $cfDao =& CRM_Core_DAO::executeQuery($sql, $params);
+            while ($cfDao->fetch()) {
+                $titles[$table][$cfDao->column_name] = "{$cgDao->title}: {$cfDao->label}";
+                switch ($cfDao->data_type) {
+                case 'Boolean':
+                    $values[$table][$cfDao->column_name] = array('0' => ts('false'), '1' => ts('true'));
+                    break;
+                case 'String':
+                    $values[$table][$cfDao->column_name] = array();
+                    $params[3] = array("custom_{$cfDao->name}", 'String');
+                    $sql = "SELECT id FROM `{$this->loggingDB}`.log_civicrm_option_group WHERE log_date <= %2 AND name = %3 ORDER BY log_date DESC LIMIT 1";
+                    $ogId = CRM_Core_DAO::singleValueQuery($sql, $params);
+
+                    $params[3] = array($ogId, 'Integer');
+                    $sql = "SELECT label, value FROM `{$this->loggingDB}`.log_civicrm_option_value WHERE log_date <= %2 AND option_group_id = %3 ORDER BY log_date";
+                    $ovDao =& CRM_Core_DAO::executeQuery($sql, $params);
+                    while ($ovDao->fetch()) {
+                        $values[$table][$cfDao->column_name][$ovDao->value] = $ovDao->label;
+                    }
+                    break;
+                }
+            }
+        }
 
         // we look for the previous state (different log_conn_id) of the found id
         $params[3]   = array($changed['id'], 'Integer');
@@ -164,8 +211,8 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
             if ($original[$diff] == $changed[$diff]) continue;
             $rows[] = array(
                 'field' => isset($titles[$table][$diff]) ? $titles[$table][$diff] : substr($table, 4) . ".$diff",
-                'from'  => $original[$diff],
-                'to'    => $changed[$diff],
+                'from'  => isset($values[$table][$diff][$original[$diff]]) ? $values[$table][$diff][$original[$diff]] : $original[$diff],
+                'to'    => isset($values[$table][$diff][$changed[$diff]])  ? $values[$table][$diff][$changed[$diff]]  : $changed[$diff],
             );
         }
 
