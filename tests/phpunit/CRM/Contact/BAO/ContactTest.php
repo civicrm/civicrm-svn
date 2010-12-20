@@ -1120,7 +1120,7 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         $params = $this->contactParams( );
         $params['openid'][2] = $params['openid'][1];
         $params['openid'][2]['location_type_id'] = 2;
-        $params['openid'][2]['openid'] = 'http://primaryOpenID.org/';
+        $params['openid'][2]['openid'] = 'http://primaryopenid.org/';
         unset( $params['openid'][1]['is_primary'] );
         
         //create contact
