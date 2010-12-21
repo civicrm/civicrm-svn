@@ -214,25 +214,15 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
             $cancelExtra  = ts('Are you sure you want to cancel this mailing?');
             $deleteExtra  = ts('Are you sure you want to delete this mailing?');
             $archiveExtra = ts('Are you sure you want to archive this mailing?');
-            $approveExtra = ts('Are you sure you want to approve this mailing?');
-            $detachExtra  = ts('Are you sure you want to reject this mailing?');
 
             $actionLinks = array(
                 CRM_Core_Action::ENABLE => array(
                     'name'  => ts('Approve/Reject'),
                     'url'   => 'civicrm/mailing/approve',
-                    'qs'    => 'mid=%%mid%%&reset=1&approve=%%approve%%',
-                    'extra' => 'onclick="if (confirm(\''. $approveExtra .'\')) this.href+=\'&amp;confirmed=1\'; else return false;"',
-                    'title' => ts('Approve Mailing')
+                    'qs'    => 'mid=%%mid%%&reset=1',
+                    'title' => ts('Approve/Reject Mailing')
                     ),
-                CRM_Core_Action::DETACH => array(
-                    'name'  => ts('Approve/Reject'),
-                    'url'   => 'civicrm/mailing/approve',
-                    'qs'    => 'mid=%%mid%%&reset=1&approve=%%approve%%',
-                    'extra' => 'onclick="if (confirm(\''. $detachExtra .'\')) this.href+=\'&amp;confirmed=1\'; else return false;"',
-                    'title' => ts('Reject Mailing')
-                    ),
-                CRM_Core_Action::VIEW => array(
+                 CRM_Core_Action::VIEW => array(
                     'name'  => ts('Report'),
                     'url'   => 'civicrm/mailing/report',
                     'qs'    => 'mid=%%mid%%&reset=1',
@@ -314,17 +304,8 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
                      ( in_array( $row['status'], array( 'Scheduled', 'Running', 'Paused' ) ) ) ) {
                     require_once 'CRM/Mailing/PseudoConstant.php';
                     require_once 'CRM/Mailing/PseudoConstant.php';
-                    $mailApprovalStatus = CRM_Mailing_PseudoConstant::approvalStatus( );
-                    $approved = array_search( 'Approved', $mailApprovalStatus );
-                    $rejected = array_search( 'Rejected', $mailApprovalStatus );
                     if ( $row['status'] == 'Scheduled' && $showApprovalLinks == true ) {
-                        if ( $row['approval_status_id'] == $approved ) {
-                            $actionMask |= CRM_Core_Action::DETACH;
-                            $row['approve'] = $rejected;
-                        } else {
-                            $actionMask |= CRM_Core_Action::ENABLE;
-                            $row['approve'] = $approved;
-                        }
+                        $actionMask |= CRM_Core_Action::ENABLE;
                     }    
                 } else {
                     if ( !( $row['status'] == 'Not scheduled' ) ) {
@@ -341,18 +322,8 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
                     }
                     if ( in_array( $row['status'], array( 'Scheduled', 'Running', 'Paused' ) ) ) {
                         $actionMask |= CRM_Core_Action::DISABLE;
-                        require_once 'CRM/Mailing/PseudoConstant.php';
-                        $mailApprovalStatus = CRM_Mailing_PseudoConstant::approvalStatus( );
-                        $approved = array_search( 'Approved', $mailApprovalStatus );
-                        $rejected = array_search( 'Rejected', $mailApprovalStatus );
                         if ( $row['status'] == 'Scheduled' && $showApprovalLinks == true ) {
-                            if ( $row['approval_status_id'] == $approved ) {
-                                $actionMask |= CRM_Core_Action::DETACH;
-                                $row['approve'] = $rejected;
-                            } else {
-                                $actionMask |= CRM_Core_Action::ENABLE;
-                                $row['approve'] = $approved;
-                            }
+                            $actionMask |= CRM_Core_Action::ENABLE;
                         }                    
                     }  
                     
@@ -371,8 +342,7 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
                 $rows[$key]['action'] = 
                     CRM_Core_Action::formLink( $actionLinks,
                                                $actionMask,
-                                               array( 'mid'      => $row['id'],
-                                                      'approve'  => $row['approve']) );
+                                               array( 'mid' => $row['id'] ) );
 
                 //unset($rows[$key]['id']);
                 // if the scheduled date is 0, replace it with an empty string
