@@ -185,6 +185,7 @@
      <path>civicrm/mailing/view</path>
      <title>View Mailing</title>
      <page_callback>CRM_Mailing_Page_View</page_callback>
+     <access_arguments>access CiviMail;approve mailings;create mailings;schedule mailings</access_arguments>
      <is_public>true</is_public>
      <weight>800</weight>
   </item>
@@ -192,7 +193,7 @@
      <path>civicrm/mailing/approve</path>
      <title>Approve Mailing</title>
      <page_callback>CRM_Mailing_Form_Approve</page_callback>
-     <access_arguments>approve mailings</access_arguments>
+     <access_arguments>approve mailings</access_arguments>     
      <weight>850</weight>
   </item>
 </menu>
