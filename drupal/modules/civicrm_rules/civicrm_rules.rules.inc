@@ -190,6 +190,12 @@ function rules_action_civicrm_mailing_send_email( $mailing, $settings ) {
 }
 
 function rules_action_civicrm_mailing_send_email_form( $settings = array(), &$form ) {
+    civicrm_initialize();
+    //get the default from email address.
+    require_once 'CRM/Core/OptionGroup.php';
+    $defaultAddress = CRM_Core_OptionGroup::values( 'from_email_address', null, null, null, ' AND is_default = 1' );
+    $settings['from'] = $defaultAddress[1];
+
     $settings['subject'] = 'New Email: {mailing.subject}';
     $settings['message'] = '
 Senate District ABC has scheduled a new mailing. 
