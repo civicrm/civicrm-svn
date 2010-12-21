@@ -72,7 +72,7 @@
      <title>Draft and Unscheduled Mailings</title>
      <path_arguments>scheduled=false</path_arguments>
      <page_callback>CRM_Mailing_Page_Browse</page_callback>
-     <access_arguments>access CiviMail</access_arguments>
+     <access_arguments>access CiviMail;create mailings</access_arguments>
      <page_type>1</page_type>
      <weight>620</weight>
   </item>
