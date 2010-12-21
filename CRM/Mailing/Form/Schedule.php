@@ -67,7 +67,6 @@ require_once 'CRM/Mailing/BAO/Mailing.php';
              $this->_mailingID = CRM_Utils_Request::retrieve( 'mid', 'Integer', $this, true );
              $this->_scheduleFormOnly = true;
          }
-
      }
 
      /**
@@ -108,7 +107,6 @@ require_once 'CRM/Mailing/BAO/Mailing.php';
              $title = ts('Schedule Mailing') . ' - ' . CRM_Core_DAO::getFieldValue( 'CRM_Mailing_DAO_Mailing',
                                                                                     $this->_mailingID,
                                                                                     'name' );
-            
              CRM_Utils_System::setTitle( $title  );
              $buttons = array( array( 'type'  => 'next',
                                       'name'  => ts('Submit Mailing'),
@@ -145,7 +143,7 @@ require_once 'CRM/Mailing/BAO/Mailing.php';
               $this->_scheduleFormOnly ) {
              // add the preview elements
              $preview = array( );
-
+             $preview['type'] = CRM_Core_DAO::getFieldValue( 'CRM_Mailing_DAO_Mailing',$this->_mailingID, 'body_html' ) ? 'html' : 'text';
              $preview['subject'] = CRM_Core_DAO::getFieldValue( 'CRM_Mailing_DAO_Mailing',
                                                                 $this->_mailingID,
                                                                 'subject' );

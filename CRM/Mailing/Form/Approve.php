@@ -120,7 +120,7 @@ class CRM_Mailing_Form_Approve extends CRM_Core_Form
                           array( 'type'      => 'cancel',
                                  'name'      => ts('Cancel') ),
                           );
-        
+
         $this->addButtons( $buttons );
 
         // add the preview elements
@@ -130,7 +130,7 @@ class CRM_Mailing_Form_Approve extends CRM_Core_Form
                                                            $this->_mailingID,
                                                            'subject' );
         $preview['viewURL'] = CRM_Utils_System::url( 'civicrm/mailing/view', "reset=1&id={$this->_mailingID}" );
-
+        $preview['type']    = $this->_mailing->body_html ? 'html' : 'text';
         require_once 'CRM/Core/BAO/File.php';
         $preview['attachment'] = CRM_Core_BAO_File::attachmentInfo( 'civicrm_mailing',
                                                                     $this->_mailingID );
