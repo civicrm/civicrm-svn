@@ -24,10 +24,6 @@
  +--------------------------------------------------------------------+
 *}
 
-<div class="action-link">
-    	<a href="{$flipURL}">&raquo; {$flipMessage}</a>
-</div>
-
 <div class="crm-block crm-form-block crm-mailing-approve-form-block">
 
 <table class="form-layout">
@@ -35,6 +31,10 @@
     <tr class="crm-mailing-approve-form-block-approval_note">
         <td class="label">{$form.approval_note.label}</td>
         <td>{$form.approval_note.html}</td>
+    </tr>
+    <tr class="crm-mailing-approve-form-block-approval_status">
+        <td class="label">{$form.approval_status_id.label}</td>
+        <td>{$form.approval_status_id.html}</td>
     </tr>
   </tbody>
 </table>

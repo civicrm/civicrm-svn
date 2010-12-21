@@ -66,31 +66,6 @@ class CRM_Mailing_Form_Approve extends CRM_Core_Form
         }
 
         $this->_mailingID = CRM_Utils_Request::retrieve( 'mid', 'Integer', $this, true );
-        $this->_approve   = CRM_Utils_Request::retrieve( 'approve',
-                                                         'Integer', $this, false, 1 );
-        
-        require_once 'CRM/Mailing/PseudoConstant.php';
-        $mailApprovalStatus = CRM_Mailing_PseudoConstant::approvalStatus( );
-        $this->_approvedStatus = array_search( 'Approved', $mailApprovalStatus );
-        $rejected = array_search( 'Rejected', $mailApprovalStatus );
-
-        if ( $this->_approve != $rejected ) {
-            $this->_approve = $this->_approvedStatus;
-        } 
-
-        if ( $this->_approve == $this->_approvedStatus ) {
-            $flipURL     = CRM_Utils_System::url( 'civicrm/mailing/approve', 
-                                                  "reset=1&mid={$this->_mailingID}&approve={$rejected}" );
-            $flipMessage = ts( 'Do you want to reject this message instead?' );
-        } else if ( $this->_approve == $rejected ) {
-            $flipURL     = CRM_Utils_System::url( 'civicrm/mailing/approve', 
-                                                  "reset=1&mid={$this->_mailingID}&approve={$this->_approvedStatus}" );
-            $flipMessage = ts( 'Do you want to approve this message instead?' );
-        }
-
-        $this->assign( 'flipURL'    , $flipURL     );
-        $this->assign( 'flipMessage', $flipMessage );
-
         $session =& CRM_Core_Session::singleton( );
         $this->_contactID = $session->get( 'userID' );
         
@@ -111,6 +86,11 @@ class CRM_Mailing_Form_Approve extends CRM_Core_Form
     function setDefaultValues( ) 
     {
         $defaults = array( );
+        if ( $this->_mailingID ) {
+            $defaults['approval_status_id'] = $this->_mailing->approval_status_id;
+            $defaults['approval_note']      = $this->_mailing->approval_note;
+        }
+
         return $defaults;
     }
 
@@ -123,21 +103,19 @@ class CRM_Mailing_Form_Approve extends CRM_Core_Form
      */
     public function buildQuickform() 
     {
-        if ( $this->_approve == $this->_approvedStatus ) {
-            $note    = ts('Approval Note');
-            $title   = ts('Approve Mailing') . ' - ' .  $this->_mailing->name;
-            $btnName = ts('Approve');
-        } else  {
-            $note    = ts('Rejection Note');
-            $title   = ts('Reject Mailing') . ' - ' .  $this->_mailing->name;
-            $btnName = ts('Reject');
-        }
-
+        $title   = ts('Approve/Reject Mailing') . ' - ' .  $this->_mailing->name;
         CRM_Utils_System::setTitle( $title );
-        $this->addElement( 'textarea', 'approval_note', $note );
+        $this->addElement( 'textarea', 'approval_note',  ts('Approve/Reject Note') );
       
+        require_once 'CRM/Mailing/PseudoConstant.php';
+        $mailApprovalStatus = CRM_Mailing_PseudoConstant::approvalStatus( );
+        unset($mailApprovalStatus[3]);
+        
+        $this->add( 'select', 'approval_status_id', ts( 'Approval Status' ), 
+                    $mailApprovalStatus, true );
+                
         $buttons = array( array( 'type'      => 'next',
-                                 'name'      => $btnName,
+                                 'name'      => ts('Save'),
                                  'spacing'   => '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;',
                                  'isDefault' => true),
                           array( 'type'      => 'cancel',
@@ -172,6 +150,7 @@ class CRM_Mailing_Form_Approve extends CRM_Core_Form
     {
         // get the submitted form values.  
         $params = $this->controller->exportValues( $this->_name );
+       
         $ids    = array( );              
         if ( isset( $this->_mailingID ) ) {
             $ids['mailing_id'] = $this->_mailingID;
@@ -179,9 +158,8 @@ class CRM_Mailing_Form_Approve extends CRM_Core_Form
             $ids['mailing_id'] = $this->get('mailing_id');
         }
         
-        $params['approver_id']        = $this->_contactID;
-        $params['approval_date']      = date('YmdHis');
-        $params['approval_status_id'] = $this->_approve;
+        $params['approver_id']   = $this->_contactID;
+        $params['approval_date'] = date('YmdHis');
 
         CRM_Mailing_BAO_Mailing::create( $params, $ids );
 
@@ -198,7 +176,7 @@ class CRM_Mailing_Form_Approve extends CRM_Core_Form
      */
     public function getTitle( ) 
     {
-        return ts( 'Approve Mailing' );
+        return ts( 'Approve/Reject Mailing' );
     }
 
 }
