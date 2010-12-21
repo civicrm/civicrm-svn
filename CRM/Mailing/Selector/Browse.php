@@ -219,14 +219,14 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
 
             $actionLinks = array(
                 CRM_Core_Action::ENABLE => array(
-                    'name'  => ts('Approve'),
+                    'name'  => ts('Approve/Reject'),
                     'url'   => 'civicrm/mailing/approve',
                     'qs'    => 'mid=%%mid%%&reset=1&approve=%%approve%%',
                     'extra' => 'onclick="if (confirm(\''. $approveExtra .'\')) this.href+=\'&amp;confirmed=1\'; else return false;"',
                     'title' => ts('Approve Mailing')
                     ),
                 CRM_Core_Action::DETACH => array(
-                    'name'  => ts('Reject'),
+                    'name'  => ts('Approve/Reject'),
                     'url'   => 'civicrm/mailing/approve',
                     'qs'    => 'mid=%%mid%%&reset=1&approve=%%approve%%',
                     'extra' => 'onclick="if (confirm(\''. $detachExtra .'\')) this.href+=\'&amp;confirmed=1\'; else return false;"',

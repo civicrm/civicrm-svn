@@ -109,11 +109,10 @@ class CRM_Mailing_Form_Approve extends CRM_Core_Form
       
         require_once 'CRM/Mailing/PseudoConstant.php';
         $mailApprovalStatus = CRM_Mailing_PseudoConstant::approvalStatus( );
-        unset($mailApprovalStatus[3]);
-        
-        $this->add( 'select', 'approval_status_id', ts( 'Approval Status' ), 
-                    $mailApprovalStatus, true );
+        unset( $mailApprovalStatus[3] );
                 
+        $this->addRadio( 'approval_status_id', ts( 'Approval Status' ), $mailApprovalStatus );
+                        
         $buttons = array( array( 'type'      => 'next',
                                  'name'      => ts('Save'),
                                  'spacing'   => '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;',
