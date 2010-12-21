@@ -274,10 +274,15 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
                 );
         }
         $showApprovalLinks = true;
+        $noShowLinks = false;
         require_once 'CRM/Mailing/Info.php';
         if ( CRM_Mailing_Info::workflowEnabled( ) ) {
             if ( ! CRM_Core_Permission::check( 'approve mailings' ) ) {
                 $showApprovalLinks = false;
+            } else {
+                if ( ! CRM_Core_Permission::check( 'access CiviMail' ) ) {
+                    $noShowLinks = true;
+                }
             }
         } else {
             $showApprovalLinks = false;
@@ -305,20 +310,9 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
         if ( $output != CRM_Core_Selector_Controller::EXPORT ) {
             foreach ( $rows as $key => $row ) {
                 $actionMask = null;
-                if ( !( $row['status'] == 'Not scheduled' ) ) {
-                    $actionMask = CRM_Core_Action::VIEW;
-                    if ( !in_array( $row['id'], $searchMailings ) ) {
-                        $actionMask |= CRM_Core_Action::UPDATE;
-                    }
-                } else {
-                    //FIXME : currently we are hiding continue action for
-                    //search base mailing, we should handle it when we fix CRM-3876
-                    if ( !in_array( $row['id'], $searchMailings ) ) {
-                        $actionMask = CRM_Core_Action::PREVIEW;
-                    }
-                }
-                if ( in_array( $row['status'], array( 'Scheduled', 'Running', 'Paused' ) ) ) {
-                    $actionMask |= CRM_Core_Action::DISABLE;
+                if ( ( $noShowLinks == true ) && 
+                     ( in_array( $row['status'], array( 'Scheduled', 'Running', 'Paused' ) ) ) ) {
+                    require_once 'CRM/Mailing/PseudoConstant.php';
                     require_once 'CRM/Mailing/PseudoConstant.php';
                     $mailApprovalStatus = CRM_Mailing_PseudoConstant::approvalStatus( );
                     $approved = array_search( 'Approved', $mailApprovalStatus );
@@ -331,26 +325,55 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
                             $actionMask |= CRM_Core_Action::ENABLE;
                             $row['approve'] = $approved;
                         }
-                    }                    
-                }  
-
-                if ( $row['status'] == 'Complete' && !$row['archived'] ) {
-                    $actionMask |= CRM_Core_Action::RENEW;
+                    }    
+                } else {
+                    if ( !( $row['status'] == 'Not scheduled' ) ) {
+                        $actionMask = CRM_Core_Action::VIEW;
+                        if ( !in_array( $row['id'], $searchMailings ) ) {
+                            $actionMask |= CRM_Core_Action::UPDATE;
+                        }
+                    } else {
+                        //FIXME : currently we are hiding continue action for
+                        //search base mailing, we should handle it when we fix CRM-3876
+                        if ( !in_array( $row['id'], $searchMailings ) ) {
+                            $actionMask = CRM_Core_Action::PREVIEW;
+                        }
+                    }
+                    if ( in_array( $row['status'], array( 'Scheduled', 'Running', 'Paused' ) ) ) {
+                        $actionMask |= CRM_Core_Action::DISABLE;
+                        require_once 'CRM/Mailing/PseudoConstant.php';
+                        $mailApprovalStatus = CRM_Mailing_PseudoConstant::approvalStatus( );
+                        $approved = array_search( 'Approved', $mailApprovalStatus );
+                        $rejected = array_search( 'Rejected', $mailApprovalStatus );
+                        if ( $row['status'] == 'Scheduled' && $showApprovalLinks == true ) {
+                            if ( $row['approval_status_id'] == $approved ) {
+                                $actionMask |= CRM_Core_Action::DETACH;
+                                $row['approve'] = $rejected;
+                            } else {
+                                $actionMask |= CRM_Core_Action::ENABLE;
+                                $row['approve'] = $approved;
+                            }
+                        }                    
+                    }  
+                    
+                    if ( $row['status'] == 'Complete' && !$row['archived'] ) {
+                        $actionMask |= CRM_Core_Action::RENEW;
+                    }
+                    
+                    //check for delete permission.
+                    if ( $allowToDelete ) {
+                        $actionMask |= CRM_Core_Action::DELETE;
+                    }
                 }
-                
-                //check for delete permission.
-                if ( $allowToDelete ) {
-                    $actionMask |= CRM_Core_Action::DELETE;
-                }
-
                 //get status strings as per locale settings CRM-4411.
                 $rows[$key]['status'] = CRM_Mailing_BAO_Job::status( $row['status'] );
                                
                 $rows[$key]['action'] = 
                     CRM_Core_Action::formLink( $actionLinks,
                                                $actionMask,
-                                               array( 'mid'     => $row['id'],
-                                                      'approve' => $row['approve'] ) );
+                                               array( 'mid'      => $row['id'],
+                                                      'approve'  => $row['approve']) );
+
                 //unset($rows[$key]['id']);
                 // if the scheduled date is 0, replace it with an empty string
                 if ( $rows[$key]['scheduled_iso'] == '0000-00-00 00:00:00') {

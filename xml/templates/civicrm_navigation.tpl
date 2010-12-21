@@ -178,8 +178,8 @@ INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES    
     ( @domainID, 'civicrm/mailing/send&reset=1',                            '{ts escape="sql" skip="true"}New Mailing{/ts}', 'New Mailing',                                          'access CiviMail,create mailings', 'OR', @mailinglastID, '1', NULL, 1 ), 
-    ( @domainID, 'civicrm/mailing/browse/unscheduled&reset=1&scheduled=false', '{ts escape="sql" skip="true"}Draft and Unscheduled Mailings{/ts}', 'Draft and Unscheduled Mailings', 'access CiviMail', '', @mailinglastID, '1', NULL, 2 ), 
-    ( @domainID, 'civicrm/mailing/browse/scheduled&reset=1&scheduled=true', '{ts escape="sql" skip="true"}Scheduled and Sent Mailings{/ts}', 'Scheduled and Sent Mailings',          'access CiviMail', '', @mailinglastID, '1', NULL, 3 ), 
+    ( @domainID, 'civicrm/mailing/browse/unscheduled&reset=1&scheduled=false', '{ts escape="sql" skip="true"}Draft and Unscheduled Mailings{/ts}', 'Draft and Unscheduled Mailings', 'access CiviMail,schedule mailings', 'OR', @mailinglastID, '1', NULL, 2 ), 
+    ( @domainID, 'civicrm/mailing/browse/scheduled&reset=1&scheduled=true', '{ts escape="sql" skip="true"}Scheduled and Sent Mailings{/ts}', 'Scheduled and Sent Mailings',          'access CiviMail,approve mailings', 'OR', @mailinglastID, '1', NULL, 3 ), 
     ( @domainID, 'civicrm/mailing/browse/archived&reset=1',                 '{ts escape="sql" skip="true"}Archived Mailings{/ts}', 'Archived Mailings',                              'access CiviMail', '', @mailinglastID, '1', 1,    4 ), 
     ( @domainID, 'civicrm/admin/component&reset=1',                         '{ts escape="sql" skip="true"}Headers, Footers, and Automated Messages{/ts}', 'Headers, Footers, and Automated Messages', 'access CiviMail,administer CiviCRM', 'AND', @mailinglastID, '1', NULL, 5 ),
     ( @domainID, 'civicrm/admin/messageTemplates&reset=1',                  '{ts escape="sql" skip="true"}Message Templates{/ts}', 'Message Templates',                 'administer CiviCRM', '', @mailinglastID, '1', NULL, 6 ),
