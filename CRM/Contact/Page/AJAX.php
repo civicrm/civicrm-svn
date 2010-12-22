@@ -118,9 +118,9 @@ class CRM_Contact_Page_AJAX
         } else {
            $strSearch = "$name%";
         }
+        $includeEmailFrom ='';
         if( $config->includeEmailInName ) {
-            if( !in_array('email',$list ) ) {
-                $includeEmailFrom ='';
+            if( !in_array( 'email', $list ) ) {
                 $includeEmailFrom ="LEFT JOIN civicrm_email eml ON ( cc.id = eml.contact_id AND eml.is_primary = 1 )" ;  
             }
             $whereClause = " WHERE ( email LIKE '$strSearch' || sort_name LIKE '$strSearch' ) {$where} "; 
