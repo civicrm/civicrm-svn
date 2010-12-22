@@ -119,8 +119,12 @@ class CRM_Contact_Page_AJAX
            $strSearch = "$name%";
         }
         if( $config->includeEmailInName ) {
-            $whereClause = " WHERE email LIKE '$strSearch' {$where} ";
-        } else{
+            if( !in_array('email',$list ) ) {
+                $includeEmailFrom ='';
+                $includeEmailFrom ="LEFT JOIN civicrm_email eml ON ( cc.id = eml.contact_id AND eml.is_primary = 1 )" ;  
+            }
+            $whereClause = " WHERE ( email LIKE '$strSearch' || sort_name LIKE '$strSearch' ) {$where} "; 
+        } else {
             $whereClause = " WHERE sort_name LIKE '$strSearch' {$where} ";
         }
         $additionalFrom = '';
@@ -140,13 +144,13 @@ class CRM_Contact_Page_AJAX
                 SELECT cc.id as id, CONCAT_WS( ' :: ', {$select} ) as data, sort_name
                 FROM civicrm_contact cc {$from}
         {$aclFrom}
-        {$additionalFrom}
+        {$additionalFrom}{$includeEmailFrom}
         {$whereClause} 
         LIMIT 0, {$limit}
     ) t
     ORDER BY sort_name
     ";
-
+        
         // send query to hook to be modified if needed
         require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::contactListQuery( $query,
