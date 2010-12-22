@@ -14,8 +14,8 @@
         <version>3.2</version>
         <description>CiviCRM Personal Campaign Information Pages</description>
 	<config>	
-        <fields addFormPath="/administrator/components/com_civicrm/civicrm/joomla/site/elements">
-	  <fieldset name="advanced">
+        <fields name="params" addfieldpath="/administrator/components/com_civicrm/civicrm/joomla/site/elements">
+	  <fieldset name="basic">
 	  		<field name="task" type="hidden" default="civicrm/contribute/pcp/info" label="Choose CiviCRM task" />
 			<field name="id" type="civipcps" label="Select Personal Campaign Page" description="Configured CiviCRM Personal Campaign Page" />
 	  		<field name="reset" type="hidden" size="5" default="1" label="Reset" description="Keep this set to 1. This is needed for the form to work properly." />

@@ -14,8 +14,8 @@
         <description>CiviCRM event information page. Only current/future, active events are available (next 25 upcoming events).</description>
 	<name>Standard Event Information Layout</name>
 	<config>
-		<fields name="params" addFormPath="/administrator/components/com_civicrm/civicrm/joomla/site/elements">
-	          <fieldset name="advanced">
+		<fields name="params" addfieldpath="/administrator/components/com_civicrm/civicrm/joomla/site/elements">
+	          <fieldset name="basic">
 		    <field name="id" type="civievents" label="Select Event" description="Configured CiviCRM Event" />
 	            <field name="task" type="hidden" default="civicrm/event/info" label="Choose CiviCRM task" />
 	  	    <field name="reset" type="hidden" size="5" default="1" label="Reset" description="Keep this set to 1. This is needed for the form to work properly." />

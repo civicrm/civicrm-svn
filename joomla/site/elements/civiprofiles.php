@@ -28,7 +28,7 @@
   // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die( 'Restricted access' );
 
-class JElementCiviprofiles extends JElement {
+class JFormFieldCiviProfiles extends JFormField {
 	/**
 	 * Element name
 	 *
@@ -37,9 +37,10 @@ class JElementCiviprofiles extends JElement {
 	 */
 	var	$_name = 'CiviProfiles';
 	
-	function fetchElement($name, $value, &$node, $control_name)
+    protected function getInput( )
 	{
-		// Initiate CiviCRM
+        $value = $this->value;
+        // Initiate CiviCRM
 		require_once JPATH_ROOT.'/'.'administrator/components/com_civicrm/civicrm.settings.php';
 		require_once 'CRM/Core/Config.php';
 		$config =& CRM_Core_Config::singleton( );
