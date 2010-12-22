@@ -196,7 +196,10 @@ function rules_action_civicrm_mailing_send_email_form( $settings = array(), &$fo
     $defaultAddress = CRM_Core_OptionGroup::values( 'from_email_address', null, null, null, ' AND is_default = 1' );
     $settings['from'] = $defaultAddress[1];
 
+    if ( !CRM_Utils_Array::value('subject', $settings ) )
     $settings['subject'] = 'New Email: {mailing.subject}';
+    
+    if ( !CRM_Utils_Array::value('message', $settings ) ) {
     $settings['message'] = '
 Senate District ABC has scheduled a new mailing. 
 {mailing.name}
@@ -209,6 +212,7 @@ The content of the email is:
 {mailing.html}
 </pre>
 ';
+    }
 
     rules_action_mail_form( $settings, $form );
 }
