@@ -58,7 +58,12 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
     {
         $defaults = array( );
         $defaults =& parent::setDefaultValues( );
-        
+                
+        $autoRenewMsg = true;
+        if ( isset( $defaults['auto_renew'] ) && $defaults['auto_renew'] == 0 ) {
+            $autoRenewMsg = false;
+        }
+        $this->assign('autoRenewMsg', $autoRenewMsg);
         //finding default weight to be put 
         if ( !isset  ( $defaults['weight'] ) ||( ! $defaults['weight'] ) ) {
             $defaults['weight'] = CRM_Utils_Weight::getDefaultWeight('CRM_Member_DAO_MembershipType');
@@ -129,6 +134,27 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
         //start day
         $this->add('date', 'fixed_period_start_day', ts('Fixed Period Start Day'), 
                    CRM_Core_SelectValues::date( null, 'M d' ), false);
+        
+        
+        //Auto-renew Option
+        $paymentProcessor =& CRM_Core_PseudoConstant::paymentProcessor( false, false, 'is_recur = 1');
+        $isAuthorize = false;
+        $options = array( );
+        if ( is_array( $paymentProcessor ) && !empty( $paymentProcessor ) ) {
+            $isAuthorize = true;
+            $options = array( ts('No auto-renew option'), ts('Give option, but not required'), ts('Auto-renew required ') );
+            
+            require_once "CRM/Core/BAO/MessageTemplates.php";
+            $msgTemplates = CRM_Core_BAO_MessageTemplates::getMessageTemplates( false );
+            
+            if ( ! empty( $msgTemplates ) ) { 
+            $autoRenewReminderMsg = $this->add( 'select', 'autorenewal_msg_id', 
+                                                ts('Auto-renew Reminder Message'), 
+                                                array('' => ts('- select -')) + $msgTemplates );
+            } 
+        }
+        $this->addRadio('auto_renew', ts('Auto-renew Option'), $options, array( 'onclick' => "setReminder(this);" ) );
+        $this->assign( 'authorize', $isAuthorize );
         
         //rollover day
         $this->add('date', 'fixed_period_rollover_day', ts('Fixed Period Rollover Day'), 
@@ -316,12 +342,13 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
         }
 
         $renewalReminderDay = CRM_Utils_Array::value( 'renewal_reminder_day', $params );
-        $renewalMsgId       = CRM_Utils_Array::value( 'renewal_msg_id', $params ); 
+        $renewalMsgId       = CRM_Utils_Array::value( 'renewal_msg_id', $params );
+        $autoRenewalMsgId   = CRM_Utils_Array::value( 'autorenewal_msg_id', $params );
         if ( !( ( ($renewalReminderDay && $renewalMsgId ) ) || ( ! $renewalReminderDay &&  ! $renewalMsgId ) ) ) {
 
             if ( ! $renewalReminderDay ) {
                 $errors['renewal_reminder_day'] = ts('Please enter renewal reminder days.');
-            } elseif ( ! $renewalMsgId ) {
+            } elseif ( ! $renewalMsgId && ( isset( $params['autorenewal_msg_id'] ) && !$autoRenewalMsgId ) ) {
                 $errors['renewal_msg_id']       = ts('Please select renewal message.');
             }
         }
@@ -360,6 +387,8 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
                              'period_type',
                              'minimum_fee',
                              'description',
+                             'auto_renew',
+                             'autorenewal_msg_id',
                              'duration_unit',
                              'renewal_msg_id',
                              'duration_interval',

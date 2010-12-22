@@ -1,4 +1,6 @@
-{*
+<?php
+
+/*
  +--------------------------------------------------------------------+
  | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
@@ -22,56 +24,24 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*}
-{* this template is used for adding Credit Cart and billing details *} 
-<div id="id-creditCard" class="section-shown">
-    {include file='CRM/Core/BillingBlock.tpl'}
-</div>
+*/
 
-//build recurring contribution block.
-{if $buildRecurBlock}
-{literal}
-<script type="text/javascript" >
+/** 
+ * 
+ * @package CRM 
+ * @copyright CiviCRM LLC (c) 2004-2010 
+ * $Id$ 
+ * 
+ */ 
 
-   function enablePeriod( ) 
-   {
-       var frUnit = cj( '#frequency_unit' );
-       var frInerval = cj( '#frequency_interval' );	 
-       var installments = cj( '#installments' );	 
-       isDisabled = false;
-       if ( document.getElementsByName("is_recur")[0].checked == true )  {
-          isDisabled = true;
-          frInerval.val( '' );
-          installments.val( '' );
-       }
- 
-       frUnit.attr( 'disabled', isDisabled );
-       frInerval.attr( 'disabled', isDisabled );	
-       installments.attr( 'disabled', isDisabled );
-   }
+session_start( );
 
-   function buildRecurBlock( processorId ) {
+require_once '../civicrm.config.php';
+require_once 'CRM/Core/Config.php';
 
-       if ( !processorId ) processorId = cj( "#payment_processor_id" ).val( );
-       var recurPaymentProIds = {/literal}'{$recurringPaymentProcessorIds}'{literal};       
-       var funName = 'hide';
-       if ( recurPaymentProIds.indexOf( processorId ) != -1 ) funName = 'show';
+$config = CRM_Core_Config::singleton();
 
-       var priceSet = cj("#price_set_id");
-       if ( priceSet && priceSet.val( ) ) {
-          funName = 'hide';
-          cj( '#is_recur' ).val( 0 );
-       }
-   
-       enablePeriod( );   
-       eval( 'cj( "#recurringPaymentBlock" ).' + funName + "( )" );
-   }
-	 
-   cj( function() { 
-       buildRecurBlock( null );
-       enablePeriod( );
-   }); 
+require_once 'CRM/Core/Payment/AuthorizeNetIPN.php';
+$authorizeNetIPN = new CRM_Core_Payment_AuthorizeNetIPN( );
+$authorizeNetIPN->main( );
 
-</script>
-{/literal}
-{/if}

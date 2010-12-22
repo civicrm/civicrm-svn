@@ -357,7 +357,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
             'PDFFilename' => null,    // filename of optional PDF version to add as attachment (do not include path)
         );
         $params = array_merge($defaults, $params);
-
+                
         if (!$params['groupName'] or !$params['valueName']) {
             CRM_Core_Error::fatal(ts("Message template's option group and/or option value missing."));
         }
@@ -468,7 +468,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
         $params['subject'] = $subject;
         $params['text'   ] = $text;
         $params['html'   ] = $html;
-
+        
         if ($params['toEmail']) {
             $contactParams = array('email' => $params['toEmail']);
             $contact =& civicrm_contact_get($contactParams);

@@ -70,3 +70,29 @@ UPDATE civicrm_report_instance SET form_values = '{literal}a:25:{s:6:"fields";a:
 UPDATE civicrm_report_instance SET form_values = '{literal}a:37:{s:6:"fields";a:4:{s:2:"id";s:1:"1";s:10:"first_name";s:1:"1";s:9:"last_name";s:1:"1";s:5:"email";s:1:"1";}s:12:"sort_name_op";s:3:"has";s:15:"sort_name_value";s:0:"";s:9:"source_op";s:3:"has";s:12:"source_value";s:0:"";s:6:"id_min";s:0:"";s:6:"id_max";s:0:"";s:5:"id_op";s:3:"lte";s:8:"id_value";s:0:"";s:15:"mailing_name_op";s:2:"in";s:18:"mailing_name_value";a:0:{}s:6:"gid_op";s:2:"in";s:9:"gid_value";a:0:{}s:8:"tagid_op";s:2:"in";s:11:"tagid_value";a:0:{}s:11:"custom_1_op";s:2:"in";s:14:"custom_1_value";a:0:{}s:11:"custom_2_op";s:2:"in";s:14:"custom_2_value";a:0:{}s:17:"custom_3_relative";s:1:"0";s:13:"custom_3_from";s:0:"";s:11:"custom_3_to";s:0:"";s:17:"custom_9_relative";s:1:"0";s:13:"custom_9_from";s:0:"";s:11:"custom_9_to";s:0:"";s:12:"custom_10_op";s:2:"in";s:15:"custom_10_value";a:0:{}s:12:"custom_11_op";s:3:"has";s:15:"custom_11_value";s:0:"";s:11:"description";s:49:"Display contacts who opened emails from a mailing";s:13:"email_subject";s:0:"";s:8:"email_to";s:0:"";s:8:"email_cc";s:0:"";s:10:"permission";s:15:"access CiviMail";s:6:"groups";s:0:"";s:6:"charts";s:0:"";s:9:"domain_id";i:1;}{/literal}'  WHERE  report_id = 'Mailing/opened';
 
 UPDATE civicrm_report_instance SET form_values = '{literal}a:37:{s:6:"fields";a:5:{s:2:"id";s:1:"1";s:10:"first_name";s:1:"1";s:9:"last_name";s:1:"1";s:5:"email";s:1:"1";s:3:"url";s:1:"1";}s:12:"sort_name_op";s:3:"has";s:15:"sort_name_value";s:0:"";s:9:"source_op";s:3:"has";s:12:"source_value";s:0:"";s:6:"id_min";s:0:"";s:6:"id_max";s:0:"";s:5:"id_op";s:3:"lte";s:8:"id_value";s:0:"";s:15:"mailing_name_op";s:2:"in";s:18:"mailing_name_value";a:0:{}s:6:"gid_op";s:2:"in";s:9:"gid_value";a:0:{}s:8:"tagid_op";s:2:"in";s:11:"tagid_value";a:0:{}s:11:"custom_1_op";s:2:"in";s:14:"custom_1_value";a:0:{}s:11:"custom_2_op";s:2:"in";s:14:"custom_2_value";a:0:{}s:17:"custom_3_relative";s:1:"0";s:13:"custom_3_from";s:0:"";s:11:"custom_3_to";s:0:"";s:17:"custom_9_relative";s:1:"0";s:13:"custom_9_from";s:0:"";s:11:"custom_9_to";s:0:"";s:12:"custom_10_op";s:2:"in";s:15:"custom_10_value";a:0:{}s:12:"custom_11_op";s:3:"has";s:15:"custom_11_value";s:0:"";s:11:"description";s:32:"Display clicks from each mailing";s:13:"email_subject";s:0:"";s:8:"email_to";s:0:"";s:8:"email_cc";s:0:"";s:10:"permission";s:15:"access CiviMail";s:6:"groups";s:0:"";s:6:"charts";s:0:"";s:9:"domain_id";i:1;}{/literal}'  WHERE  report_id = 'Mailing/clicks';
+
+-- CRM-7115
+UPDATE  civicrm_payment_processor
+   SET  is_recur = 1,
+   	payment_processor_type =  'AuthNet'
+ WHERE  payment_processor_type = 'AuthNet_AIM';
+
+UPDATE  civicrm_payment_processor_type
+   SET  is_recur = 1, 
+        name = 'AuthNet', 
+        title = '{ts escape="sql"}Authorize.Net{/ts}'
+ WHERE  name = 'AuthNet_AIM';
+
+-- CRM-7137
+ ALTER TABLE `civicrm_membership`
+   ADD `contribution_recur_id` int(10) unsigned default NULL COMMENT 'Conditional foreign key to civicrm_contribution_recur.id.',
+   ADD CONSTRAINT `FK_civicrm_membership_contribution_recur_id` FOREIGN KEY (`contribution_recur_id`) REFERENCES `civicrm_contribution_recur` (`id`) ON DELETE SET NULL;
+
+ ALTER TABLE `civicrm_membership_type` 
+   ADD `auto_renew` TINYINT (4) NULL DEFAULT '0',
+   ADD `autorenewal_msg_id` int(10) unsigned default NULL COMMENT 'FK to civicrm_msg_template.id',
+   ADD CONSTRAINT `FK_civicrm_membership_autorenewal_msg_id` FOREIGN KEY (`autorenewal_msg_id`) REFERENCES `civicrm_msg_template` (`id`) ON DELETE SET NULL;
+
+-- CRM-7137
+ 
+  {include file='../CRM/Upgrade/3.3.2.msg_template/civicrm_msg_template.tpl'}

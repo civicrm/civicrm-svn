@@ -100,7 +100,7 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
             $this->_setParam( $field, $value );
         }
 
-        if ( $params['is_recur'] && $params['installments'] > 1 ) {
+        if ( $params['is_recur'] && $params['contributionRecurID'] ) {
             return $this->doRecurPayment( $params );
         }
 
@@ -174,6 +174,7 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
         }
         $params['gross_amount'] = $response_fields[9];
         // TODO: include authorization code?
+
         return $params;
     }
     
@@ -222,10 +223,15 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
         $template->assign( 'apiLogin', $this->_getParam( 'apiLogin' ) );
         $template->assign( 'paymentKey', $this->_getParam( 'paymentKey' ) );
         $template->assign( 'refId', substr( $this->_getParam( 'invoiceID' ), 0, 20 ) );
-        // insert page title as name
-
+        
+        //for recurring, carry first contribution id  
+        $template->assign( 'invoiceNumber', $this->_getParam( 'contributionID' ) );
+        
         $template->assign( 'startDate', date('Y-m-d') );
-        $template->assign( 'totalOccurrences', $this->_getParam('installments') );
+        
+        // for open ended subscription totalOccurrences has to be 9999
+        $installments = $this->_getParam('installments');
+        $template->assign( 'totalOccurrences', $installments ? $installments : 9999 );
 
         $template->assign( 'amount', $this->_getParam('amount') );
 
@@ -237,6 +243,7 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
         $template->assign( 'description', $this->_getParam('description') );
 
         $template->assign( 'email', $this->_getParam('email') );
+        $template->assign( 'contactID', $this->_getParam('contactID') );
         $template->assign( 'billingFirstName', $this->_getParam('billing_first_name') );
         $template->assign( 'billingLastName', $this->_getParam('billing_last_name') );
         $template->assign( 'billingAddress', $this->_getParam('street_address') );
@@ -244,9 +251,9 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
         $template->assign( 'billingState', $this->_getParam('state_province') );
         $template->assign( 'billingZip', $this->_getParam('postal_code') );
         $template->assign( 'billingCountry', $this->_getParam('country') );
-
+        
         $arbXML = $template->fetch( 'CRM/Contribute/Form/Contribution/AuthorizeNetARB.tpl' );
-
+        
         // submit to authorize.net
         $submit = curl_init( $this->_paymentProcessor['url_recur'] );
         if ( !$submit ) {
@@ -274,8 +281,14 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
             return self::error( $responseFields['code'], $responseFields['text'] );
         }
 
+        // log request
+        CRM_Core_Error::debug_var( 'Create Subscription Request', $arbXML );
+
         $params['trxn_id'] = $responseFields['subscriptionId'];
-        
+
+        // update recur processor_id with subscriptionId
+        CRM_Core_DAO::setFieldValue( 'CRM_Contribute_DAO_ContributionRecur', $params['contributionRecurID'], 
+                                     'processor_id', $responseFields['subscriptionId'] );
         return $params;
     }
 
@@ -539,4 +552,48 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
             'https://test.authorize.net' : 'https://authorize.net';
     }
 
+    function cancelSubscription( ) {
+        $template = CRM_Core_Smarty::singleton( );
+
+        $template->assign( 'subscriptionType', 'cancel' );
+
+        $template->assign( 'apiLogin', $this->_getParam( 'apiLogin' ) );
+        $template->assign( 'paymentKey', $this->_getParam( 'paymentKey' ) );
+        $template->assign( 'subscriptionId', $this->_getParam( 'subscriptionId' ) );
+
+        $arbXML = $template->fetch( 'CRM/Contribute/Form/Contribution/AuthorizeNetARB.tpl' );
+        
+        // submit to authorize.net
+        $submit = curl_init( $this->_paymentProcessor['url_recur'] );
+        if ( !$submit ) {
+            return self::error(9002, 'Could not initiate connection to payment gateway');
+        }
+
+        curl_setopt($submit, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($submit, CURLOPT_HTTPHEADER, Array("Content-Type: text/xml"));
+        curl_setopt($submit, CURLOPT_HEADER, 1);
+        curl_setopt($submit, CURLOPT_POSTFIELDS, $arbXML);
+        curl_setopt($submit, CURLOPT_POST, 1);
+        curl_setopt($submit, CURLOPT_SSL_VERIFYPEER, 0);
+        
+        $response = curl_exec($submit);
+
+        if ( !$response ) {
+            return self::error( curl_errno($submit), curl_error($submit) );
+        }
+
+        curl_close( $submit );
+
+        $responseFields = $this->_ParseArbReturn( $response );
+
+        if ( $responseFields['resultCode'] == 'Error' ) {
+            return self::error( $responseFields['code'], $responseFields['text'] );
+        }
+
+        // log request
+        CRM_Core_Error::debug_var( 'Cancel Subscription Request', $arbXML );
+
+        // carry on cancelation procedure
+        return true;
+    }
 }         

@@ -23,55 +23,13 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{* this template is used for adding Credit Cart and billing details *} 
-<div id="id-creditCard" class="section-shown">
-    {include file='CRM/Core/BillingBlock.tpl'}
+<h3>{ts}Cancel Membership Subscription{/ts}</h3>
+<div class="crm-block crm-form-block crm-contribution-form-block">
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
+<div class="messages status">
+          <div class="icon inform-icon"></div>       
+          {ts}Click the button below if you want to cancel the auto-renewal option for your $membershipType membership? This will not cancel your membership. However you will need to arrange payment for renewal when your membership expires.{/ts}  
 </div>
-
-//build recurring contribution block.
-{if $buildRecurBlock}
-{literal}
-<script type="text/javascript" >
-
-   function enablePeriod( ) 
-   {
-       var frUnit = cj( '#frequency_unit' );
-       var frInerval = cj( '#frequency_interval' );	 
-       var installments = cj( '#installments' );	 
-       isDisabled = false;
-       if ( document.getElementsByName("is_recur")[0].checked == true )  {
-          isDisabled = true;
-          frInerval.val( '' );
-          installments.val( '' );
-       }
- 
-       frUnit.attr( 'disabled', isDisabled );
-       frInerval.attr( 'disabled', isDisabled );	
-       installments.attr( 'disabled', isDisabled );
-   }
-
-   function buildRecurBlock( processorId ) {
-
-       if ( !processorId ) processorId = cj( "#payment_processor_id" ).val( );
-       var recurPaymentProIds = {/literal}'{$recurringPaymentProcessorIds}'{literal};       
-       var funName = 'hide';
-       if ( recurPaymentProIds.indexOf( processorId ) != -1 ) funName = 'show';
-
-       var priceSet = cj("#price_set_id");
-       if ( priceSet && priceSet.val( ) ) {
-          funName = 'hide';
-          cj( '#is_recur' ).val( 0 );
-       }
-   
-       enablePeriod( );   
-       eval( 'cj( "#recurringPaymentBlock" ).' + funName + "( )" );
-   }
-	 
-   cj( function() { 
-       buildRecurBlock( null );
-       enablePeriod( );
-   }); 
-
-</script>
-{/literal}
-{/if}
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
+</div>
+</div>

@@ -168,9 +168,10 @@ class CRM_Core_Payment_BaseIPN {
 
             // get the contribution page id from the contribution
             // and then initialize the payment processor from it
-            if ( ! $contribution->contribution_page_id ) {
-                if ( !CRM_Utils_Array::value( 'pledge_payment', $ids ) ) {
-                    // return if we are just doing an optional validation
+            // it might be offline recur and we are processing ipn call 
+            if ( ! $contribution->contribution_page_id && 
+                 ! CRM_Utils_Array::value( 'pledge_payment', $ids ) ) {
+                // return if we are just doing an optional validation
                     if ( ! $required ) {
                         return true;
                     }
@@ -178,11 +179,11 @@ class CRM_Core_Payment_BaseIPN {
                     CRM_Core_Error::debug_log_message( "Could not find contribution page for contribution record: $contributionID" );
                     echo "Failure: Could not find contribution page for contribution record: $contributionID<p>";
                     return false;
-                }
             }
 
             //for offline pledge we dont have contribution page.
-            if ( !CRM_Utils_Array::value( 'pledge_payment', $ids ) ) {
+            if ( !CRM_Utils_Array::value( 'pledge_payment', $ids ) && 
+                 $contribution->contribution_page_id ) {
                 // get the payment processor id from contribution page
                 $paymentProcessorID = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage',
                                                                    $contribution->contribution_page_id,
@@ -242,7 +243,10 @@ class CRM_Core_Payment_BaseIPN {
         $membership   =& $objects['membership']  ;
         $participant  =& $objects['participant'] ;
 
-        $contribution->contribution_status_id = 4;
+        require_once 'CRM/Contribute/PseudoConstant.php';
+        $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
+        
+        $contribution->contribution_status_id = array_search( 'Failed', $contributionStatus );
         $contribution->save( );
 
         if ( $membership ) {
@@ -451,11 +455,15 @@ class CRM_Core_Payment_BaseIPN {
         $contribution->save( );
         
         // next create the transaction record
+        $paymentProcessor = '';
         if ( isset( $objects['paymentProcessor'] ) ) {
-            $paymentProcessor = $objects['paymentProcessor']['payment_processor_type'];
-        } else {
-            $paymentProcessor = '';
+            if ( is_array( $objects['paymentProcessor'] ) ) {
+                $paymentProcessor = $objects['paymentProcessor']['payment_processor_type'];    
+            } else {
+                $paymentProcessor = $objects['paymentProcessor']->payment_processor_type;    
+            }
         }
+        
         if ( $contribution->trxn_id ) {
             
             $trxnParams = array(

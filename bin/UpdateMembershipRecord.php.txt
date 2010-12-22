@@ -85,6 +85,7 @@ class CRM_UpdateMembershipRecord {
         require_once 'CRM/Member/PseudoConstant.php';
         require_once 'CRM/Contact/BAO/Contact.php';
         require_once 'CRM/Activity/BAO/Activity.php';
+        require_once 'CRM/Member/BAO/MembershipType.php';
 
         //get all active statuses of membership, CRM-3984
         $allStatus    = CRM_Member_PseudoConstant::membershipStatus( );
@@ -103,7 +104,8 @@ SELECT civicrm_membership.id                 as membership_id,
        civicrm_membership.source             as source,
        civicrm_contact.id                    as contact_id,
        civicrm_contact.is_deceased           as is_deceased,
-       civicrm_membership.owner_membership_id as owner_membership_id
+       civicrm_membership.owner_membership_id as owner_membership_id,
+       civicrm_membership.contribution_recur_id as recur_id
 FROM   civicrm_membership, civicrm_contact
 WHERE  civicrm_membership.contact_id = civicrm_contact.id
 AND    civicrm_membership.is_test = 0
@@ -226,8 +228,11 @@ AND    civicrm_membership.is_test = 0
                 $memType = new CRM_Member_BAO_MembershipType( );
                 
                 $memType->id = $dao->membership_type_id;
-                if ( $memType->find( true ) &&
-                     $memType->renewal_msg_id ) {
+                if ( $memType->find( true ) ) {
+                    $autoRenewalMsgId = CRM_Member_BAO_MembershipType::membershipRenewalMsgId( $dao );
+                    $renewalMsgId     = ( $autoRenewalMsgId ) ? $memType->autorenewal_msg_id : $memType->renewal_msg_id;
+                }
+                if ( $renewalMsgId ) {
                     $toEmail  = CRM_Contact_BAO_Contact::getPrimaryEmail( $dao->contact_id );
                     
                     if ( $toEmail ) {

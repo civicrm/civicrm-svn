@@ -310,6 +310,26 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id )
 
     function upgrade_3_3_2( $rev ) 
     {        
+        //CRM-7137
+        require_once 'CRM/Member/DAO/MembershipBlock.php';
+        // get membership type for each membership block.
+        $sql = "SELECT id, membership_types FROM civicrm_membership_block ";
+        $dao = CRM_Core_DAO::executeQuery( $sql );
+        while( $dao->fetch( ) ){
+            $memType = explode(',', $dao->membership_types );
+            
+            $memTypeSerialize = array();
+            foreach( $memType as $k => $v ) {
+                $memTypeSerialize[$v] = 0;
+            }
+            
+            // save membership type as an serialized array along w/ auto_renew defalt value zero.
+            $memBlock = new CRM_Member_DAO_MembershipBlock();
+            $memBlock->id = $dao->id;
+            $memBlock->membership_types = serialize( $memTypeSerialize );
+            $memBlock->save( );
+        }
+                
         //CRM-7172
         require_once 'CRM/Mailing/Info.php';
         if ( CRM_Mailing_Info::workflowEnabled( ) ) {

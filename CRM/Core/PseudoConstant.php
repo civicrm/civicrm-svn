@@ -1254,11 +1254,14 @@ WHERE  id = %1";
         $condition .= 
             " AND domain_id = " . CRM_Core_Config::domainID( );
 
-        if ( ! self::$paymentProcessor ) {
-            self::populate( self::$paymentProcessor, 'CRM_Core_DAO_PaymentProcessor', $all, 
+        $cacheKey = $condition.'_'.(int)$all;
+        if ( !isset( self::$paymentProcessor[$cacheKey] ) ) {
+            self::populate( self::$paymentProcessor[$cacheKey], 
+                            'CRM_Core_DAO_PaymentProcessor', $all, 
                             'name', 'is_active', $condition, 'is_default desc, name' );
         }
-        return self::$paymentProcessor;
+        
+        return self::$paymentProcessor[$cacheKey];
     }
 
     /**

@@ -104,18 +104,30 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
                     $currentMask = $currentMask & ~CRM_Core_Action::RENEW & ~CRM_Core_Action::FOLLOWUP;
                 }
                 
-                $membership[$dao->id]['action'] = CRM_Core_Action::formLink( self::links( 'all' ),
+                
+                $isCancelSupported = CRM_Member_BAO_Membership::isCancelSubscriptionSupported( $membership[$dao->id]['membership_id'] );
+                
+                
+                $membership[$dao->id]['action'] = CRM_Core_Action::formLink( self::links( 'all', 
+                                                                                          null, 
+                                                                                          null, 
+                                                                                          $isCancelSupported ),
                                                                              $currentMask, 
                                                                              array('id' => $dao->id, 
-                                                                                   'cid'=> $this->_contactId));
+                                                                                   'cid'=> $this->_contactId)
+                                                                              );
             } else {
                 $membership[$dao->id]['action'] = CRM_Core_Action::formLink( self::links( 'view' ),
                                                                              $mask, 
                                                                              array('id' => $dao->id, 
                                                                                    'cid'=> $this->_contactId));
             }
+            
+            //does membership is auto renew CRM-7137.
+            $membership[$dao->id]['auto_renew'] = CRM_Utils_Array::value( 'contribution_recur_id', 
+                                                                          $membership[$dao->id] ); 
         }
-    
+        
         //Below code gives list of all Membership Types associated
         //with an Organization(CRM-2016)
         include_once 'CRM/Member/BAO/MembershipType.php';
@@ -125,9 +137,8 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
                                                                           $mask, 
                                                                           array('id' => $value['id'], 
                                                                                 'cid'=> $this->_contactId));
-            
         }
-
+        
         $activeMembers = CRM_Member_BAO_Membership::activeMembers( $membership );
         $inActiveMembers = CRM_Member_BAO_Membership::activeMembers( $membership, 'inactive');
         $this->assign('activeMembers',   $activeMembers);
@@ -346,7 +357,10 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
      * @return array (reference) of action links
      * @static
      */
-    static function &links( $status = 'all', $isPaymentProcessor = null, $accessContribution = null )
+    static function &links( $status = 'all', 
+                            $isPaymentProcessor = null, 
+                            $accessContribution = null, 
+                            $isCancelSupported = false )
     {
         if ( ! CRM_Utils_Array::value( 'view', self::$_links ) ) {
             self::$_links['view'] = array(
@@ -394,6 +408,17 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
             self::$_links['all'] = self::$_links['view'] + $extraLinks;
         }
        
+        
+        if ( $isCancelSupported ) {
+            self::$_links['all'][CRM_Core_Action::DISABLE] = array( 
+                                                                   'name' => ts('Cancel Subscription'),
+                                                                   'url'  => 'civicrm/contribute/unsubscribe',
+                                                                   'qs'   => 'reset=1&mid=%%id%%',
+                                                                   'title'=> ts('Cancel Auto Renew Subscription')
+                                                                    );
+        } else if ( isset( self::$_links['all'][CRM_Core_Action::DISABLE] ) ) {
+            unset( self::$_links['all'][CRM_Core_Action::DISABLE] );
+        }
         return self::$_links[$status];
     }
     

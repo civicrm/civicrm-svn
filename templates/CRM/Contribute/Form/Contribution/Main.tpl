@@ -70,7 +70,7 @@ function clearAmountOther() {
         </fieldset>
     </div>
 {else}
-    {include file="CRM/Contribute/Form/Contribution/MembershipBlock.tpl" context="makeContribution"}
+    {include file="CRM/Contribute/Form/Contribution/MembershipBlock.tpl" context="makeContribution" isRecur=$form.is_recur}
 
 	{if $form.amount}
 	    <div class="crm-section {$form.amount.name}-section">
@@ -401,4 +401,10 @@ function showHidePayPalExpressOption()
     }
 }
 {/literal}
+{if $form.is_recur} 
+{literal}
+      cj("#auto_renew").attr( 'checked', false );
+      cj("#auto-renew").hide();
+{/literal} 
+{/if}
 </script>

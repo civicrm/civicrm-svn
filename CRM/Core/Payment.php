@@ -185,6 +185,17 @@ abstract class CRM_Core_Payment {
         return false;
     }
 
+    /**
+     * Function to check whether the method is present for the payment processor  
+     *
+     * @param  object $paymentObject Object of the payment processor.
+     * @return boolean
+     * @public
+     */
+    static function isCancelSupported( &$paymentObject ) 
+    {
+        return method_exists( CRM_Utils_System::getClassName( $paymentObject ), 'cancelSubscription' );
+    }
 }
 
 
