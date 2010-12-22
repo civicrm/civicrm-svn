@@ -136,7 +136,7 @@ function civicrm_rules_civicrm_postProcess( $formName, &$form ) {
     if ( $eventName ) {
         require_once 'CRM/Mailing/DAO/Mailing.php';
         $eventParams = new CRM_Mailing_DAO_Mailing( );
-        $eventParams->id = $form->get( 'mailing_id' );
+        $eventParams->id = $form->get( 'mid' );
         $eventParams->find( true );
     
         rules_invoke_event( $eventName, $eventParams );
