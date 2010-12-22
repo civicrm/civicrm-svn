@@ -58,7 +58,9 @@ class CRM_Utils_Token
                                                       'subject',
                                                       'viewUrl',
                                                       'editUrl',
-                                                      'scheduleUrl'
+                                                      'scheduleUrl',
+                                                      'approvalStatus',
+                                                      'approvalNote'
                                                       ),
                              'contact'       => null,  // populate this dynamically
                              'domain'        => array( 
@@ -402,6 +404,16 @@ class CRM_Utils_Token
             require_once 'CRM/Mailing/Page/View.php';
             $page = new CRM_Mailing_Page_View( );
             $value = $page->run( $mailing->id, false );
+            break;
+            
+        case 'approvalStatus':
+            require_once 'CRM/Mailing/PseudoConstant.php';
+            $mailApprovalStatus = CRM_Mailing_PseudoConstant::approvalStatus( );
+            $value = $mailApprovalStatus[$mailing->approval_status_id];
+            break;
+    
+        case 'approvalNote':
+            $value = $mailing->approval_note;
             break;
             
         default:
