@@ -78,13 +78,21 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form
         $this->setDefaults($defaults);
 
         $this->add('submit', 'sendtest', ts('Send a Test Mailing'));
+        $name = ts('Next >>');
+        require_once 'CRM/Mailing/Info.php';
+        if ( CRM_Mailing_Info::workflowEnabled( ) ) {
+            if ( ! CRM_Core_Permission::check( 'schedule mailings' ) &&
+                 CRM_Core_Permission::check( 'create mailings' ) ) {
+                $name = ts('Inform Scheduler');
+            }
+        }
         
         //FIXME : currently we are hiding save an continue later when
         //search base mailing, we should handle it when we fix CRM-3876
         $buttons = array( array(  'type'  => 'back',
                                   'name'  => '<< Previous'),
                           array(  'type'  => 'next',
-                                  'name'  => ts('Next >>'),
+                                  'name'  => $name,
                                   'spacing' => '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;',
                                   'isDefault' => true ),
                           array ( 'type'      => 'submit',
@@ -104,20 +112,12 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form
                               );
         }
 
-        require_once 'CRM/Mailing/Info.php';
-         if ( CRM_Mailing_Info::workflowEnabled( ) &&
-              ! CRM_Core_Permission::check('schedule mailings' ) ) {
-            unset( $buttons[1]);     
-         }
-
         $this->addButtons( $buttons );
-        
+              
         $mailingID = $this->get('mailing_id' );
         $textFile = $this->get('textFile');
         $htmlFile = $this->get('htmlFile');
        
-        
-
         $this->addFormRule(array('CRM_Mailing_Form_Test', 'testMail'), $this );
         $preview = array();
         if ($textFile) {
