@@ -180,7 +180,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
              !CRM_utils_Array::value( 'is_recur',        $this->_params )           &&
              !CRM_Utils_Array::value( 'frequency_interval', $this->_params ) ) {
             // FIXME: set interval and unit based on selected membership type
-            $this->_params['is_recur']           = 1;
+            $this->_params['is_recur']           = $this->_values['is_recur'] = 1;
             $this->_params['frequency_interval'] = 
                 CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType',
                                              $this->_params['selectMembership'], 'duration_interval' );
