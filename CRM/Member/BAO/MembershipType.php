@@ -635,35 +635,6 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
         } 
         return $membershipTypes;
     }
-
-    /**
-     * Function checks if auto renewal message id is present 
-     * for the membership type
-     *  
-     * @param object $dao membership object
-     *
-     * @return boolean
-     * @static
-     */
-    static function membershipRenewalMsgId( $dao )
-    {
-        require_once 'CRM/Contribute/PseudoConstant.php';
-        
-        $sql = "
-    SELECT contribution.contribution_status_id 
-      FROM civicrm_contribution contribution
-INNER JOIN civicrm_membership_payment payment ON ( payment.contribution_id = contribution.id )
-INNER JOIN civicrm_membership membership ON ( payment.membership_id = membership.id )
-     WHERE membership.id = {$dao->membership_id}";
-        
-        $contributionStatus = CRM_Core_DAO::singleValueQuery( $sql );
-        $status             = CRM_Contribute_PseudoConstant::contributionStatus( );
-        
-        if ( ( $contributionStatus != array_search( 'Cancelled', $status ) ) && $dao->recur_id ) {
-            return true;
-        }
-        return false;
-    }
 }
 
 

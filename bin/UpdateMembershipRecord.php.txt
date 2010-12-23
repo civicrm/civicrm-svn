@@ -85,7 +85,7 @@ class CRM_UpdateMembershipRecord {
         require_once 'CRM/Member/PseudoConstant.php';
         require_once 'CRM/Contact/BAO/Contact.php';
         require_once 'CRM/Activity/BAO/Activity.php';
-        require_once 'CRM/Member/BAO/MembershipType.php';
+        require_once 'CRM/Contribute/PseudoConstant.php';
 
         //get all active statuses of membership, CRM-3984
         $allStatus    = CRM_Member_PseudoConstant::membershipStatus( );
@@ -220,6 +220,7 @@ AND    civicrm_membership.is_test = 0
             //convert date from string format to timestamp format
             $reminder_date = CRM_Utils_DATE::unixTime( $dao->reminder_date );
             $today_date    = CRM_Utils_DATE::unixTime( $today );
+            $contribStatus = CRM_Contribute_PseudoConstant::contributionStatus( );
             
             //send reminder for membership renewal
             if ( $dao->reminder_date &&
@@ -229,16 +230,24 @@ AND    civicrm_membership.is_test = 0
                 
                 $memType->id = $dao->membership_type_id;
                 if ( $memType->find( true ) ) {
-                    $autoRenewalMsgId = CRM_Member_BAO_MembershipType::membershipRenewalMsgId( $dao );
-                    $renewalMsgId     = ( $autoRenewalMsgId ) ? $memType->autorenewal_msg_id : $memType->renewal_msg_id;
+
+                    $renewalMsgId = $memType->renewal_msg_id;
+                    if ( $dao->recur_id ) {
+                        $contribStatusId = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionRecur',
+                                                                        $dao->recur_id, 'contribution_status_id' );
+                        if ( ( $contribStatusId != array_search( 'Cancelled', $contribStatus ) ) &&
+                             $memType->autorenewal_msg_id ) {
+                            $renewalMsgId = $memType->autorenewal_msg_id;
+                        }
+                    }
                 }
                 if ( $renewalMsgId ) {
                     $toEmail  = CRM_Contact_BAO_Contact::getPrimaryEmail( $dao->contact_id );
-                    
+                                        
                     if ( $toEmail ) {
                         $result = CRM_Core_BAO_MessageTemplates::sendReminder( $dao->contact_id,
                                                                                $toEmail,
-                                                                               $memType->renewal_msg_id,
+                                                                               $renewalMsgId,
                                                                                $fromEmailAddress );
                         if ( ! $result ||
                              is_a( $result, 'PEAR_Error' ) ) {
