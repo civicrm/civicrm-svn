@@ -28,7 +28,7 @@
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 <div class="messages status">
           <div class="icon inform-icon"></div>       
-          {ts}Click the button below if you want to cancel the auto-renewal option for your $membershipType membership? This will not cancel your membership. However you will need to arrange payment for renewal when your membership expires.{/ts}  
+          {ts}Click the button below if you want to cancel the auto-renewal option for your {$membershipType} membership? This will not cancel your membership. However you will need to arrange payment for renewal when your membership expires.{/ts}  
 </div>
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 </div>

@@ -41,6 +41,7 @@
 
 require_once 'CRM/Core/Form.php';
 require_once 'CRM/Core/Payment.php';
+require_once 'CRM/Member/PseudoConstant.php';
 
 class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form
 {
@@ -64,6 +65,10 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form
     {
         $mid = CRM_Utils_Request::retrieve( 'mid', 'Integer', $this, false );
         if ( $mid ) {
+            $membershipTypes  = CRM_Member_PseudoConstant::membershipType( );
+            $membershipTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_Membership', $mid, 'membership_type_id' );
+            $this->assign( 'membershipType', CRM_Utils_Array::value( $membershipTypeId, $membershipTypes ) );
+
             require_once 'CRM/Member/BAO/Membership.php';
             $isCancelSupported = CRM_Member_BAO_Membership::isCancelSubscriptionSupported( $mid ); 
         }
