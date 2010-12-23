@@ -11,6 +11,10 @@ ALTER TABLE `civicrm_mailing`
 
 UPDATE  `civicrm_navigation` SET  `permission` =  'access CiviMail,create mailings,approve mailings,schedule mailings', `permission_operator` =  'OR' WHERE  name = 'Mailings';
 
+UPDATE  `civicrm_navigation` SET  `permission` =  'access CiviMail,create mailings', `permission_operator` =  'OR' WHERE  name = 'Draft and Unscheduled Mailings';
+
+UPDATE  `civicrm_navigation` SET  `permission` =  'access CiviMail,approve mailings', `permission_operator` =  'OR' WHERE  name = 'Scheduled and Sent Mailings';
+
 --CRM-7180, Change Participant Listing Templates menu title`
 
 UPDATE `civicrm_navigation` SET `label` = '{ts escape="sql"}Participant Listing Options{/ts}', `name`= 'Participant Listing Options' WHERE name = 'Participant Listing Templates';
