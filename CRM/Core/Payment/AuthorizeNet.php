@@ -384,14 +384,17 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
      *
      * @return bool
      */
-    function checkMD5( $responseMD5, $transaction_id, $amount ) {
+    function checkMD5( $responseMD5, $transaction_id, $amount, $ipn = false ) {
         // cannot check if no MD5 hash
         $md5Hash = $this->_getParam( 'md5Hash' );
         if ( $md5Hash == '' ) {
             return true;
         }
-        $loginid = $this->_getParam( 'apiLogin' );
-        $result  = strtoupper ( md5( $md5Hash . $loginid . $transaction_id . $amount ) );
+        $loginid    = $this->_getParam( 'apiLogin' );
+        $hashString = $ipn ? ( $md5Hash . $transaction_id . $amount ) : 
+            ( $md5Hash . $loginid . $transaction_id . $amount );
+        $result     = strtoupper ( md5( $hashString ) );
+
         if ( $result == $responseMD5 ) {
             return true;
         } else {

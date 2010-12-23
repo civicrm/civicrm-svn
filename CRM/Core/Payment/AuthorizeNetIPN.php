@@ -35,6 +35,7 @@
  */
 
 require_once 'CRM/Core/Payment/BaseIPN.php';
+require_once 'CRM/Core/Payment.php';
 
 class CRM_Core_Payment_AuthorizeNetIPN extends CRM_Core_Payment_BaseIPN {
 
@@ -151,6 +152,10 @@ class CRM_Core_Payment_AuthorizeNetIPN extends CRM_Core_Payment_BaseIPN {
             $objects['paymentProcessor'] =& $paymentProcessor;
         }
         
+        // since we have processor loaded for sure at this point, 
+        // check and validate gateway MD5 response if present
+        $this->checkMD5 ( $ids, $input );
+
         if ( $input['response_code'] == 1 ) {
             // Approved
             if ( $first ) {
@@ -194,6 +199,7 @@ class CRM_Core_Payment_AuthorizeNetIPN extends CRM_Core_Payment_BaseIPN {
         $input['amount']               = self::retrieve( 'x_amount'       ,        'String'  );
         $input['subscription_id']      = self::retrieve( 'x_subscription_id',      'Integer' );
         $input['response_code']        = self::retrieve( 'x_response_code',        'Integer' );
+        $input['MD5_Hash']             = self::retrieve( 'x_MD5_Hash',             'String', false, '' );
         $input['fee_amount']           = self::retrieve( 'x_fee_amount',           'Money',  false, '0.00' );
         $input['net_amount']           = self::retrieve( 'x_net_amount',           'Money',  false, '0.00' );
         $input['response_reason_code'] = self::retrieve( 'x_response_reason_code', 'String', false );
@@ -279,5 +285,18 @@ INNER JOIN civicrm_membership_payment mp ON m.id = mp.membership_id AND mp.contr
             exit( );
         }
         return $value;
+    }
+
+    function checkMD5( $ids, $input ) {
+        $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $ids['paymentProcessor'],
+                                                                       $input['is_test'] ? 'test' : 'live' );
+        $paymentObject    =& CRM_Core_Payment::singleton( $input['is_test'] ? 'test' : 'live', $paymentProcessor );
+
+        if ( ! $paymentObject->checkMD5 ( $input['MD5_Hash'], $input['trxn_id'], $input['amount'], true ) ) {
+            CRM_Core_Error::debug_log_message( "MD5 Verification failed." );
+            echo "Failure: Security verification failed<p>";
+            exit( );
+        }
+        return true;
     }
 }
