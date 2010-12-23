@@ -413,7 +413,7 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
             self::$_links['all'][CRM_Core_Action::DISABLE] = array( 
                                                                    'name' => ts('Cancel Subscription'),
                                                                    'url'  => 'civicrm/contribute/unsubscribe',
-                                                                   'qs'   => 'reset=1&mid=%%id%%',
+                                                                   'qs'   => 'reset=1&cid=%%cid%%&mid=%%id%%&context=membership&selectedChild=member',
                                                                    'title'=> ts('Cancel Auto Renew Subscription')
                                                                     );
         } else if ( isset( self::$_links['all'][CRM_Core_Action::DISABLE] ) ) {

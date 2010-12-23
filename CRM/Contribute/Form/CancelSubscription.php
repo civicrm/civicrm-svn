@@ -54,7 +54,9 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form
     protected $_mode = null;
 
     protected $_contributionRecurId = null;
-
+    
+    protected $_userContext = null;
+    
     /** 
      * Function to set variables up before form is built 
      *                                                           
@@ -64,6 +66,28 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form
     public function preProcess( )  
     {
         $mid = CRM_Utils_Request::retrieve( 'mid', 'Integer', $this, false );
+        $cid = CRM_Utils_Request::retrieve( 'cid', 'Integer', $this, false );
+        $context = CRM_Utils_Request::retrieve( 'context', 'String', $this, false );
+        $selectedChild = CRM_Utils_Request::retrieve( 'selectedChild', 'String', $this, false );
+        if ( !$context ) {
+            $context = CRM_Utils_Request::retrieve( 'compContext', 'String', $this, false );
+            
+        }
+        
+        $qfkey = CRM_Utils_Request::retrieve( 'key', 'String', $this, false );
+        
+        if ( $cid ) {
+            $this->_userContext = CRM_Utils_System::url( 'civicrm/contact/view', 
+                                          "reset=1&force=1&selectedChild={$selectedChild}&cid={$cid}" );
+        } else if ( $mid ) {
+            $this->_userContext = CRM_Utils_System::url( 'civicrm/member/search', 
+                                          "force=1&context={$context}&key={$qfkey}" );
+            if ( $context == 'dashboard' ) {
+                $this->_userContext = CRM_Utils_System::url( 'civicrm/member', 
+                                          "force=1&context={$context}&key={$qfkey}" );
+            }
+        }
+        
         if ( $mid ) {
             $membershipTypes  = CRM_Member_PseudoConstant::membershipType( );
             $membershipTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_Membership', $mid, 'membership_type_id' );
@@ -157,7 +181,7 @@ INNER JOIN civicrm_entity_financial_trxn eft ON ( eft.financial_trxn_id = ft.id 
      * @access public 
      * @return None 
      */ 
-    public function postProcess ( ) {
+    public function postProcess ( ) { 
         $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $this->_ppID,
                                                                               $this->_mode );
 
@@ -166,13 +190,18 @@ INNER JOIN civicrm_entity_financial_trxn eft ON ( eft.financial_trxn_id = ft.id 
         $cancelSubscription = $paymentObject->cancelSubscription( );
 
         if ( is_a( $cancelSubscription, 'CRM_Core_Error' ) ) {
+            
             CRM_Core_Error::displaySessionError( $cancelSubscription );
+            CRM_Utils_System::redirect( $this->_userContext );
         } else if ( $cancelSubscription ) {
             require_once 'CRM/Contribute/BAO/ContributionRecur.php';
-            CRM_Contribute_BAO_ContributionRecur::cancelRecurContribution( $this->_contributionRecurId, 
+            $cancelled = CRM_Contribute_BAO_ContributionRecur::cancelRecurContribution( $this->_contributionRecurId, 
                                                                            $this->_objects );
+            CRM_Core_Session::setStatus( ts( 'Subscription is cancelled successfully.' ) );
+            CRM_Utils_System::redirect( $this->_userContext );
         } else {
             CRM_Core_Session::setStatus( ts( 'Subscription could not be cancelled.' ) );
+            CRM_Utils_System::redirect( $this->_userContext );
         }
     }
 }
