@@ -66,11 +66,15 @@ class CRM_Contact_BAO_GroupContactCache extends CRM_Contact_DAO_GroupContactCach
         $smartGroupCacheTimeout = 
             isset( $config->smartGroupCacheTimeout ) && 
             is_numeric(  $config->smartGroupCacheTimeout ) ? $config->smartGroupCacheTimeout : 0;
+
+        date_default_timezone_set('UTC');
+        $now = date('Y-m-d H:i:s');
+      
         $query  = "
 SELECT     g.id
 FROM       civicrm_group g
 WHERE      g.id IN ( {$groupID} ) AND ( g.saved_search_id IS NOT NULL OR g.children IS NOT NULL ) AND 
-          (g.cache_date IS NULL OR (TIMESTAMPDIFF(MINUTE, g.cache_date, NOW()) >= $smartGroupCacheTimeout))
+          (g.cache_date IS NULL OR (TIMESTAMPDIFF(MINUTE, g.cache_date, $now)) >= $smartGroupCacheTimeout))
 ";
 
         $dao      =& CRM_Core_DAO::executeQuery( $query );
@@ -127,6 +131,7 @@ WHERE      g.id IN ( {$groupID} ) AND ( g.saved_search_id IS NOT NULL OR g.child
         // only update cache entry if we had any values
         if ( $processed ) {
             // also update the group with cache date information
+            date_default_timezone_set('UTC');
             $now = date('YmdHis');
         } else {
             $now = 'null';
@@ -162,6 +167,7 @@ WHERE  id IN ( $groupIDs )
         
         //when there are difference in timezones for mysql and php.
         //cache_date set null not behaving properly, CRM-6855 
+        date_default_timezone_set('UTC');
         $now = date( 'YmdHis' );
         
         $config = CRM_Core_Config::singleton( );
