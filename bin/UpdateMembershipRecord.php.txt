@@ -88,28 +88,29 @@ class CRM_UpdateMembershipRecord {
         require_once 'CRM/Contribute/PseudoConstant.php';
 
         //get all active statuses of membership, CRM-3984
-        $allStatus    = CRM_Member_PseudoConstant::membershipStatus( );
-        $statusLabels = CRM_Member_PseudoConstant::membershipStatus( null, null, 'label' );
-        $allTypes     = CRM_Member_PseudoConstant::membershipType( );
+        $allStatus     = CRM_Member_PseudoConstant::membershipStatus( );
+        $statusLabels  = CRM_Member_PseudoConstant::membershipStatus( null, null, 'label' );
+        $allTypes      = CRM_Member_PseudoConstant::membershipType( );
+        $contribStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
         
         $query = "
-SELECT civicrm_membership.id                 as membership_id,
-       civicrm_membership.is_override        as is_override,
-       civicrm_membership.reminder_date      as reminder_date,
-       civicrm_membership.membership_type_id as membership_type_id,
-       civicrm_membership.status_id          as status_id,
-       civicrm_membership.join_date          as join_date,
-       civicrm_membership.start_date         as start_date,
-       civicrm_membership.end_date           as end_date,
-       civicrm_membership.source             as source,
-       civicrm_contact.id                    as contact_id,
-       civicrm_contact.is_deceased           as is_deceased,
-       civicrm_membership.owner_membership_id as owner_membership_id,
-       civicrm_membership.contribution_recur_id as recur_id
-FROM   civicrm_membership, civicrm_contact
-WHERE  civicrm_membership.contact_id = civicrm_contact.id
-AND    civicrm_membership.is_test = 0
-";
+SELECT     civicrm_membership.id                    as membership_id,
+           civicrm_membership.is_override           as is_override,
+           civicrm_membership.reminder_date         as reminder_date,
+           civicrm_membership.membership_type_id    as membership_type_id,
+           civicrm_membership.status_id             as status_id,
+           civicrm_membership.join_date             as join_date,
+           civicrm_membership.start_date            as start_date,
+           civicrm_membership.end_date              as end_date,
+           civicrm_membership.source                as source,
+           civicrm_contact.id                       as contact_id,
+           civicrm_contact.is_deceased              as is_deceased,
+           civicrm_membership.owner_membership_id   as owner_membership_id,
+           civicrm_membership.contribution_recur_id as recur_id
+FROM       civicrm_membership
+INNER JOIN civicrm_contact ON ( civicrm_membership.contact_id = civicrm_contact.id )
+WHERE      civicrm_membership.is_test = 0";
+
         $params = array( );
         $dao =& CRM_Core_DAO::executeQuery( $query, $params );
         
@@ -220,7 +221,6 @@ AND    civicrm_membership.is_test = 0
             //convert date from string format to timestamp format
             $reminder_date = CRM_Utils_DATE::unixTime( $dao->reminder_date );
             $today_date    = CRM_Utils_DATE::unixTime( $today );
-            $contribStatus = CRM_Contribute_PseudoConstant::contributionStatus( );
             
             //send reminder for membership renewal
             if ( $dao->reminder_date &&
@@ -229,16 +229,14 @@ AND    civicrm_membership.is_test = 0
                 $memType = new CRM_Member_BAO_MembershipType( );
                 
                 $memType->id = $dao->membership_type_id;
-                if ( $memType->find( true ) ) {
+                $memType->find( true );
+                $renewalMsgId = $memType->renewal_msg_id;
 
-                    $renewalMsgId = $memType->renewal_msg_id;
-                    if ( $dao->recur_id ) {
-                        $contribStatusId = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionRecur',
-                                                                        $dao->recur_id, 'contribution_status_id' );
-                        if ( ( $contribStatusId != array_search( 'Cancelled', $contribStatus ) ) &&
-                             $memType->autorenewal_msg_id ) {
-                            $renewalMsgId = $memType->autorenewal_msg_id;
-                        }
+                if ( $memType->autorenewal_msg_id && $dao->recur_id ) {
+                    $contribStatusId = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionRecur',
+                                                                    $dao->recur_id, 'contribution_status_id' );
+                    if ( $contribStatusId != array_search( 'Cancelled', $contribStatus ) ) {
+                        $renewalMsgId = $memType->autorenewal_msg_id;
                     }
                 }
                 if ( $renewalMsgId ) {
