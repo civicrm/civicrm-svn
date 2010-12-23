@@ -28,7 +28,7 @@
     {include file='CRM/Core/BillingBlock.tpl'}
 </div>
 
-//build recurring contribution block.
+{* build recurring contribution block. *}
 {if $buildRecurBlock}
 {literal}
 <script type="text/javascript" >
