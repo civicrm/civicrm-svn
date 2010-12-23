@@ -120,6 +120,8 @@ INNER JOIN civicrm_entity_financial_trxn eft ON ( eft.financial_trxn_id = ft.id 
                 $contribution = new CRM_Contribute_DAO_Contribution();
                 $contribution->id = $contributionId;
                 $contribution->find(true);
+                $contribution->receive_date = CRM_Utils_Date::isoToMysql( $recur->receive_date );;
+
                 $this->_objects['contribution'] = $contribution;
             }
             if ( !$this->_subscriptionId || empty( $this->_objects ) ) {
@@ -163,12 +165,12 @@ INNER JOIN civicrm_entity_financial_trxn eft ON ( eft.financial_trxn_id = ft.id 
         $paymentObject->_setParam( 'subscriptionId', $this->_subscriptionId );
         $cancelSubscription = $paymentObject->cancelSubscription( );
 
-        if ( $cancelSubscription === true ) {
+        if ( is_a( $cancelSubscription, 'CRM_Core_Error' ) ) {
+            CRM_Core_Error::displaySessionError( $cancelSubscription );
+        } else if ( $cancelSubscription ) {
             require_once 'CRM/Contribute/BAO/ContributionRecur.php';
             CRM_Contribute_BAO_ContributionRecur::cancelRecurContribution( $this->_contributionRecurId, 
                                                                            $this->_objects );
-        } else if ( is_a( $cancelSubscription, 'CRM_Core_Error' ) ) {
-            CRM_Core_Error::displaySessionError( $cancelSubscription );
         } else {
             CRM_Core_Session::setStatus( ts( 'Subscription could not be cancelled.' ) );
         }
