@@ -32,9 +32,9 @@
  * It takes the first argument as the domain-id if specified, otherwise takes the domain-id as 1.
  *
  * IMPORTANT: 
- * We are using domain FROM Name and FROM Email Address as a default From email address.  
- * ( for example 'FIXME <info@FIXME.ORG>' )
- * If you want to use any other, you could modify on line 125 and set your valid email address.
+ * We are using the default Domain FROM Name and FROM Email Address as the From email address for emails sent by this script.  
+ * Verify that this value has been properly set from Administer > Configure > Domain Information
+ * If you want to use some other FROM email address, modify line 125 and set your valid email address.
  *
  * Save the file as UpdateMembershipRecord.php prior to running this script.
  */
@@ -197,8 +197,9 @@ WHERE      civicrm_membership.is_test = 0";
                                                     array_search( 'Cancelled', $allStatus ),
                                                     array_search( 'Expired', $allStatus ) ) ) ) {
                 
+                // CRM-7248: added excludeIsAdmin param to the following fn call to prevent moving to admin statuses
                 //get the membership status as per id.
-                $newStatus = civicrm_membership_status_calc( array( 'membership_id' => $dao->membership_id ) );
+                $newStatus = civicrm_membership_status_calc( array( 'membership_id' => $dao->membership_id ), true );
                 $statusId  = CRM_Utils_Array::value( 'id', $newStatus );
                 
                 //process only when status change.

@@ -219,7 +219,7 @@ function civicrm_membership_status_delete( &$params ) {
  * @return Array  Array of status id and status name 
  * @public
  */
-function civicrm_membership_status_calc( $membershipParams )
+function civicrm_membership_status_calc( $membershipParams, $excludeIsAdmin = false )
 {
     if ( ! is_array( $membershipParams ) ) {
         return civicrm_create_error( ts( 'membershipParams is not an array' ) );
@@ -238,10 +238,13 @@ SELECT start_date, end_date, join_date
     $dao =& CRM_Core_DAO::executeQuery( $query, $params );
     if ( $dao->fetch( ) ) {
         require_once 'CRM/Member/BAO/MembershipStatus.php';
+        // CRM-7248 added $excludeIsAdmin to this function, also 'today' param
         $result =&
             CRM_Member_BAO_MembershipStatus::getMembershipStatusByDate( $dao->start_date,
                                                                         $dao->end_date,
-                                                                        $dao->join_date );
+                                                                        $dao->join_date,
+                                                                        'today',
+                                                                        $excludeIsAdmin );
         
         //make is error zero only when valid status found.
         if ( CRM_Utils_Array::value( 'id', $result ) ) {
