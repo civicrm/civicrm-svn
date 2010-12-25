@@ -65,7 +65,7 @@ class CRM_Core_I18n_PseudoConstant
                 'hu_HU' => 'Magyar',
                 'nl_NL' => 'Nederlands',
                 'ja_JP' => '日本語',
-                'no_NO' => 'Norsk',
+                'nb_NO' => 'Norsk (Bokmål)',
                 'km_KH' => 'ភាសាខ្មែរ',
                 'pl_PL' => 'polski',
                 'pt_PT' => 'Português',
