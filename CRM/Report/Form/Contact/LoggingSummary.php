@@ -78,6 +78,10 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
                         'default' => true,
                         'title'   => ts('Action'),
                     ),
+                    'is_deleted' => array(
+                        'no_display' => true,
+                        'required'   => true,
+                    ),
                 ),
                 'filters' => array(
                     'log_date' => array(
@@ -135,6 +139,10 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
             }
             $row['civicrm_contact_altered_by_link'] = CRM_Utils_System::url('civicrm/contact/view', 'reset=1&cid=' . $row['log_civicrm_contact_log_user_id']);
             $row['civicrm_contact_altered_by_hover'] = ts("Go to contact summary");
+
+            if ($row['log_civicrm_contact_is_deleted'] and $row['log_civicrm_contact_log_action'] == 'Update') {
+                $row['log_civicrm_contact_log_action'] = ts('Delete (to trash)');
+            }
 
             if ($row['log_civicrm_contact_log_action'] == 'Update') {
                 $q = "reset=1&log_conn_id={$row['log_civicrm_contact_log_conn_id']}&log_date={$row['log_civicrm_contact_log_date']}";

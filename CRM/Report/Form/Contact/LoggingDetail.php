@@ -83,7 +83,7 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
 
         // let the template know who updated whom when
         $sql = "
-            SELECT who.id who_id, who.display_name who_name, whom.id whom_id, whom.display_name whom_name
+            SELECT who.id who_id, who.display_name who_name, whom.id whom_id, whom.display_name whom_name, l.is_deleted
             FROM `{$this->loggingDB}`.log_civicrm_contact l
             JOIN civicrm_contact who ON (l.log_user_id = who.id)
             JOIN civicrm_contact whom ON (l.id = whom.id)
