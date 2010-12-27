@@ -327,7 +327,7 @@ function checkEmail( ) {
 cj("#autorenew").hide( );
 
 function checkProcessor( Id ) {
-  var recur = {/literal}"{$recurProcessor}"{literal};	 
+  var recur = {/literal}{$recurProcessor}{literal};	 
 
   if( recur && !recur[Id] ) {
     cj("#autorenew").hide( );
@@ -339,7 +339,7 @@ function checkProcessor( Id ) {
 }
 
 function buildAutoRenew( memType ) {
-  var recur = {/literal}"{$recurProcessor}"{literal};	
+  var recur = {/literal}{$recurProcessor}{literal};	
   var processor = cj("#payment_processor_id").val();
   if ( !recur[processor] ) {
       cj("#autorenew").hide( );

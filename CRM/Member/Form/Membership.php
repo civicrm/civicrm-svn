@@ -381,11 +381,11 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         $js = array( 'onChange' => "buildCustomData( 'Membership', this.value );");
         
         //build the form for auto renew.
+        $recurProcessor = array( );
         if ( $this->_mode ) {
             //get the valid recurring processors.
             $recurring = CRM_Core_PseudoConstant::paymentProcessor( false, false, 'is_recur = 1' );
             $recurProcessor = array_intersect_assoc( $this->_processors, $recurring );
-            $this->assign( 'recurProcessor', json_encode( $recurProcessor ) );
             if ( !empty( $recurProcessor ) ) {
                 $autoRenew = array( );
                 if ( !empty( $membershipType ) ) {
@@ -409,7 +409,8 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                 $this->addElement('checkbox', 'auto_renew', ts('Membership renewed automatically') );
             }
         }
-        
+        $this->assign( 'recurProcessor', json_encode( $recurProcessor ) );
+
         $sel =& $this->addElement('hierselect', 
                                   'membership_type_id', 
                                   ts('Membership Organization and Type'), $js );
