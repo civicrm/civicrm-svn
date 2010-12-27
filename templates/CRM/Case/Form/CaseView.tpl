@@ -220,7 +220,7 @@
 	       {/if}
            </tr>
          {else}
-           <tr>
+           <tr class="crm-case-caseview-clientrole">
                <td rowspan="{$relName|@count}" class="crm-case-caseview-role-label label">{ts}Client{/ts}</td>
 	   {foreach from=$relName item=client name=clientsRoles}
                {if not $smarty.foreach.clientsRoles.first}</tr>{/if}
