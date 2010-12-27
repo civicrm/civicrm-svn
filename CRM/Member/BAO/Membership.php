@@ -1818,56 +1818,17 @@ FROM   civicrm_membership_type
      */
     static function isCancelSubscriptionSupported( $mid ) 
     {
-        if ( !$mid ) {
-            return false;
-        }
         static $supportsCancel = array( );
         
         if ( !array_key_exists( $mid, $supportsCancel ) ) {
+            $supportsCancel[$mid] = false;
             require_once 'CRM/Core/BAO/PaymentProcessor.php';
             require_once 'CRM/Core/Payment.php';
-            $sql = " 
-    SELECT membership_payment.contribution_id, membership.is_test, contribution_page.payment_processor_id 
-      FROM civicrm_membership_payment membership_payment 
-INNER JOIN civicrm_membership membership ON ( membership_payment.membership_id = membership.id 
-       AND membership.contribution_recur_id IS NOT NULL ) 
-INNER JOIN civicrm_contribution contribution ON ( contribution.id = membership_payment.contribution_id )
-LEFT  JOIN civicrm_contribution_page contribution_page ON ( contribution_page.id = contribution.contribution_page_id )
-     WHERE membership_payment.membership_id = %1";
-            
-            $params = array( 1 => array( $mid, 'Integer' ) );
-            $dao    = CRM_Core_DAO::executeQuery( $sql, $params );
-            if ( $dao->fetch( ) ) { 
-                $mode = ( $dao->is_test ) ? 'test' : 'live';
-                $ppId = $dao->payment_processor_id;
-            }
-
-            if ( !$ppId && $dao->contribution_id ) {
-                $sql = " 
-    SELECT ft.payment_processor 
-      FROM civicrm_financial_trxn ft 
-INNER JOIN civicrm_entity_financial_trxn eft ON ( eft.financial_trxn_id = ft.id AND eft.entity_table = 'civicrm_contribution' ) 
-     WHERE eft.entity_id = {$dao->contribution_id}";
-                $ftDao = CRM_Core_DAO::executeQuery( $sql );
-                $ftDao->fetch( );
-                if ( $ftDao->payment_processor ) {
-                    $params = array( 'payment_processor_type' => $ftDao->payment_processor,
-                                     'is_test'                => $dao->is_test ? 1 : 0 );
-                    require_once 'CRM/Core/BAO/PaymentProcessor.php';
-                    CRM_Core_BAO_PaymentProcessor::retrieve( $params, $paymentProcessor );
-                    $ppId = $paymentProcessor['id'];
-                }
-            }
-            if ( $ppId ) {
-                $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $ppId,
-                                                                               $mode );
-                $paymentObject =& CRM_Core_Payment::singleton( $mode, $paymentProcessor );
-                
-                $supportsCancel[$mid] = true;
-                return CRM_Core_Payment::isCancelSupported( $paymentObject );
+            $paymentObject = CRM_Core_BAO_PaymentProcessor::getProcessorForEntity( $mid, 'membership', 'obj' );
+            if ( ! empty($paymentObject) ) {
+                $supportsCancel[$mid] = CRM_Core_Payment::isCancelSupported( $paymentObject );
             }
         }
         return $supportsCancel[$mid];
     }
-
 }
