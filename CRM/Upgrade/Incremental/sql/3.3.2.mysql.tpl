@@ -87,6 +87,21 @@ UPDATE  civicrm_payment_processor_type
         title = '{ts escape="sql"}Authorize.Net{/ts}'
  WHERE  name = 'AuthNet_AIM';
 
+ALTER TABLE `civicrm_contribution_recur` ADD `payment_processor_id` INT( 10 ) UNSIGNED NULL COMMENT 'Foreign key to civicrm_payment_processor.id';
+ALTER TABLE `civicrm_contribution_recur` ADD CONSTRAINT `FK_civicrm_contribution_recur_payment_processor_id` FOREIGN KEY (`payment_processor_id`) REFERENCES `civicrm_payment_processor` (`id`) ON DELETE SET NULL;
+
+-- Pickup payment processor and fill payment processor id in recur contrib table.
+
+    UPDATE  civicrm_contribution_recur recur
+INNER JOIN  civicrm_contribution contrib ON ( contrib.contribution_recur_id = recur.id )
+INNER JOIN  civicrm_entity_financial_trxn eft ON ( eft.entity_id = contrib.id AND entity_table = 'civicrm_contribution' )
+INNER JOIN  civicrm_financial_trxn trxn ON ( trxn.id = eft.financial_trxn_id )  
+INNER JOIN  civicrm_payment_processor processor ON ( processor.payment_processor_type = trxn.payment_processor 
+                                                     AND  processor.is_test = recur.is_test )
+       SET  recur.payment_processor_id = processor.id;
+
+-- done w/ CRM-7115
+
 -- CRM-7137
  ALTER TABLE `civicrm_membership`
    ADD `contribution_recur_id` int(10) unsigned default NULL COMMENT 'Conditional foreign key to civicrm_contribution_recur.id.',

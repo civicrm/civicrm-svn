@@ -191,7 +191,6 @@
   <field>
       <name>payment_processor_id</name>
       <type>int unsigned</type>
-      <default>NULL</default>
       <comment>Foreign key to civicrm_payment_processor.id</comment>
       <add>3.3</add>
   </field>
