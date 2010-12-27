@@ -102,7 +102,11 @@
         <tr id="memberStatus_show">
             <td class="label">{$form.status_id.label}</td><td class="view-value">{$membershipStatus}</td>
         </tr>
-	{else}{* Show editable status field when is_override is TRUE *}
+	<tr class="crm-membership-form-block-auto_renew">
+           <td class="label"> {$form.auto_renew.label} </td>
+           <td> {$form.auto_renew.html} </td>
+        </tr>
+        {else}{* Show editable status field when is_override is TRUE *}
         <tr id="memberStatus"><td class="label">{$form.status_id.label}</td><td>{$form.status_id.html}<br />
             <span class="description">{ts}If <strong>Status Override</strong> is checked, the selected status will remain in force (it will NOT be modified by the automated status update script).{/ts}</span></td></tr>
         {/if}
