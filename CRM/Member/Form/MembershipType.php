@@ -58,7 +58,12 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
     {
         $defaults = array( );
         $defaults =& parent::setDefaultValues( );
-        
+                
+        $autoRenewMsg = true;
+        if ( isset( $defaults['auto_renew'] ) && $defaults['auto_renew'] == 0 ) {
+            $autoRenewMsg = false;
+        }
+        $this->assign('autoRenewMsg', $autoRenewMsg);
         //finding default weight to be put 
         if ( !isset  ( $defaults['weight'] ) ||( ! $defaults['weight'] ) ) {
             $defaults['weight'] = CRM_Utils_Weight::getDefaultWeight('CRM_Member_DAO_MembershipType');
@@ -129,6 +134,27 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
         //start day
         $this->add('date', 'fixed_period_start_day', ts('Fixed Period Start Day'), 
                    CRM_Core_SelectValues::date( null, 'M d' ), false);
+        
+        
+        //Auto-renew Option
+        $paymentProcessor =& CRM_Core_PseudoConstant::paymentProcessor( false, false, 'is_recur = 1');
+        $isAuthorize = false;
+        $options = array( );
+        if ( is_array( $paymentProcessor ) && !empty( $paymentProcessor ) ) {
+            $isAuthorize = true;
+            $options = array( ts('No auto-renew option'), ts('Give option, but not required'), ts('Auto-renew required ') );
+            
+            require_once "CRM/Core/BAO/MessageTemplates.php";
+            $msgTemplates = CRM_Core_BAO_MessageTemplates::getMessageTemplates( false );
+            
+            if ( ! empty( $msgTemplates ) ) { 
+            $autoRenewReminderMsg = $this->add( 'select', 'autorenewal_msg_id', 
+                                                ts('Auto-renew Reminder Message'), 
+                                                array('' => ts('- select -')) + $msgTemplates );
+            } 
+        }
+        $this->addRadio('auto_renew', ts('Auto-renew Option'), $options, array( 'onclick' => "setReminder(this);" ) );
+        $this->assign( 'authorize', $isAuthorize );
         
         //rollover day
         $this->add('date', 'fixed_period_rollover_day', ts('Fixed Period Rollover Day'), 
@@ -316,12 +342,13 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
         }
 
         $renewalReminderDay = CRM_Utils_Array::value( 'renewal_reminder_day', $params );
-        $renewalMsgId       = CRM_Utils_Array::value( 'renewal_msg_id', $params ); 
+        $renewalMsgId       = CRM_Utils_Array::value( 'renewal_msg_id', $params );
+        $autoRenewalMsgId   = CRM_Utils_Array::value( 'autorenewal_msg_id', $params );
         if ( !( ( ($renewalReminderDay && $renewalMsgId ) ) || ( ! $renewalReminderDay &&  ! $renewalMsgId ) ) ) {
 
             if ( ! $renewalReminderDay ) {
                 $errors['renewal_reminder_day'] = ts('Please enter renewal reminder days.');
-            } elseif ( ! $renewalMsgId ) {
+            } elseif ( ! $renewalMsgId && ( isset( $params['autorenewal_msg_id'] ) && !$autoRenewalMsgId ) ) {
                 $errors['renewal_msg_id']       = ts('Please select renewal message.');
             }
         }
@@ -337,25 +364,53 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
     public function postProcess() 
     {
         require_once 'CRM/Member/BAO/MembershipType.php';
-        if($this->_action & CRM_Core_Action::DELETE) {
-            $wt = CRM_Utils_Weight::delWeight('CRM_Member_DAO_MembershipType', $this->_id);
+        if ( $this->_action & CRM_Core_Action::DELETE ) {
+            CRM_Utils_Weight::delWeight('CRM_Member_DAO_MembershipType', $this->_id);
             CRM_Member_BAO_MembershipType::del($this->_id);
             CRM_Core_Session::setStatus( ts('Selected membership type has been deleted.') );
         } else { 
-            $params = $ids = array( );
-            $params = $this->exportValues();
-
+            $buttonName = $this->controller->getButtonName( );
+            $submitted  = $this->controller->exportValues( $this->_name );
+            
             $this->set( 'searchDone', 0 );
-            if ( CRM_Utils_Array::value( '_qf_MembershipType_refresh', $_POST ) ) {
-                $this->search( $params );
+            if ( $buttonName == '_qf_MembershipType_refresh' ) {
+                $this->search( $submitted );
                 $this->set( 'searchDone', 1 );
                 return;
             }
-           
-            $params['minimum_fee'] = CRM_Utils_Rule::cleanMoney( $params['minimum_fee'] );
-            if ( CRM_Utils_Array::value( 'relationship_type_id', $params ) ) {
+            
+            $fields = array( 'name',
+                             'weight',
+                             'is_active',
+                             'member_org',
+                             'visibility',
+                             'period_type',
+                             'minimum_fee',
+                             'description',
+                             'auto_renew',
+                             'autorenewal_msg_id',
+                             'duration_unit',
+                             'renewal_msg_id',
+                             'duration_interval',
+                             'renewal_reminder_day',
+                             'contribution_type_id',
+                             'fixed_period_start_day',
+                             'fixed_period_rollover_day' );
+            
+            $params = $ids = array( );
+            foreach ( $fields as $fld ) {
+                $params[$fld] = CRM_Utils_Array::value( $fld, $submitted, 'NULL' );
+            }
+            
+            //clean money.
+            if ( $params['minimum_fee'] ) {
+                $params['minimum_fee'] = CRM_Utils_Rule::cleanMoney( $params['minimum_fee'] );
+            }
+            
+            $hasRelTypeVal = false;
+            if ( !CRM_Utils_System::isNull( $submitted['relationship_type_id'] ) ) {
                 // To insert relation ids and directions with value separator
-                $relTypeDirs = $params['relationship_type_id'];
+                $relTypeDirs = $submitted['relationship_type_id'];
                 $relIds = $relDirection = array( );
                 foreach( $relTypeDirs as $key => $value ) {
                     $relationId = explode( '_', $value );
@@ -364,58 +419,63 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
                         $relIds[] = $relationId[0];
                         $relDirection[] = $relationId[1].'_'.$relationId[2];
                     }
-                } 
-                if ( ! empty( $relIds ) ) {
+                }
+                if ( !empty( $relIds ) ) {
+                    $hasRelTypeVal = true;
                     require_once 'CRM/Core/DAO.php';
                     $params['relationship_type_id'  ] = implode( CRM_Core_DAO::VALUE_SEPARATOR, $relIds );
                     $params['relationship_direction'] = implode( CRM_Core_DAO::VALUE_SEPARATOR, $relDirection );
-                } else {
-                    $params['relationship_type_id'  ] = $params['relationship_direction'] = 'NULL';
                 }
-            } else {
-                $params['relationship_type_id'  ] = $params['relationship_direction'] = 'NULL';
             }
-
-            if ($this->_action & CRM_Core_Action::UPDATE ) {
-                $ids['membershipType'] = $this->_id;
+            if ( !$hasRelTypeVal ) {
+                $params['relationship_type_id'] = $params['relationship_direction'] = 'NULL';
             }
             
-            if ($params['duration_unit'] == 'lifetime' and empty($params['duration_interval'])) {
+            if ( $params['duration_unit'] == 'lifetime' && 
+                 empty( $params['duration_interval'] ) ) {
                 $params['duration_interval'] = 1;
             }
             
             $config = CRM_Core_Config::singleton( );
             $periods = array('fixed_period_start_day', 'fixed_period_rollover_day');
             foreach ( $periods as $per ) {
-                if ($params[$per]['M'] && $params[$per]['d']) {
+                if ( CRM_Utils_Array::value( 'M', $params[$per] ) && 
+                     CRM_Utils_Array::value( 'd', $params[$per] ) ) {
                     $mon = $params[$per]['M'];
                     $dat = $params[$per]['d'];
                     $mon = ( $mon < 9) ? '0'.$mon : $mon; 
                     $dat = ( $dat < 9) ? '0'.$dat : $dat; 
                     $params[$per] = $mon . $dat;
                 } else {
-                    $params[$per] = 'null';
+                    $params[$per] = 'NULL';
                 }
             }
             $oldWeight = null;
-            $ids['memberOfContact'] = CRM_Utils_Array::value( 'contact_check', $params );
-            if ($this->_id) {
-                $oldWeight = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', $this->_id, 'weight', 'id' );
-            }
-            $params['weight'] = 
-                CRM_Utils_Weight::updateOtherWeights('CRM_Member_DAO_MembershipType', $oldWeight, $params['weight']);
+            $ids['memberOfContact'] = CRM_Utils_Array::value( 'contact_check', $submitted );
             
-            $membershipType = CRM_Member_BAO_MembershipType::add($params, $ids);
-            CRM_Core_Session::setStatus( ts('The membership type \'%1\' has been saved.', array( 1 => $membershipType->name )) );
-            $buttonName = $this->controller->getButtonName( );
+            if ( $this->_id ) {
+                $oldWeight = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
+                                                          $this->_id, 'weight', 'id' );
+            }
+            $params['weight'] = CRM_Utils_Weight::updateOtherWeights( 'CRM_Member_DAO_MembershipType', 
+                                                                      $oldWeight, $params['weight'] );
+            
+            if ( $this->_action & CRM_Core_Action::UPDATE ) {
+                $ids['membershipType'] = $this->_id;
+            }
+            
+            $membershipType = CRM_Member_BAO_MembershipType::add( $params, $ids );
+            CRM_Core_Session::setStatus( ts('The membership type \'%1\' has been saved.', 
+                                            array( 1 => $membershipType->name )) );
             $session = CRM_Core_Session::singleton( );
             if ( $buttonName == $this->getButtonName( 'upload', 'new' ) ) {
                 CRM_Core_Session::setStatus( ts(' You can add another membership type.') );
-                $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/admin/member/membershipType', 'action=add&reset=1' ) );
+                $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/admin/member/membershipType', 
+                                                                     'action=add&reset=1' ) );
             }
-        } 
+        }
     }
-
+    
     /**
      * This function is to get the result of the search for membership organisation.
      *

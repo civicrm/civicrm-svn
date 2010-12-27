@@ -399,9 +399,32 @@ class CRM_Utils_REST
             return;
         }
 
+        $uid     = null;
         $session = CRM_Core_Session::singleton( );
-        if ( CRM_Utils_System::authenticateKey( false ) && 
-             ($uid = $session->get('cms_user_id') ) ) {
+
+        if ( !CRM_Utils_System::authenticateKey( false ) ) {
+            return;
+        }
+        
+        if ( $session->get('PHPSESSID') &&
+             $session->get('cms_user_id') ) {
+            $uid = $session->get('cms_user_id');
+        }
+        
+        if ( !$uid ) {
+            require_once 'CRM/Core/DAO.php';
+            require_once 'CRM/Utils/Request.php';
+
+            $store      = null;
+            $api_key    = CRM_Utils_Request::retrieve( 'api_key', 'String', $store, false, null, 'REQUEST' );
+            $contact_id = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $api_key, 'id', 'api_key');
+            if ( $contact_id ) {
+                require_once 'CRM/Core/BAO/UFMatch.php';
+                $uid = CRM_Core_BAO_UFMatch::getUFId( $contact_id );
+            }
+        }
+
+        if ( $uid ) {
             CRM_Utils_System::loadBootStrap( null, null, $uid );
         }
     }

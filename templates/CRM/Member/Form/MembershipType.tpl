@@ -134,6 +134,14 @@
                     <span class="description">{ts}Select the contribution type assigned to fees for this membership type (for example 'Membership Fees'). This is required for all membership types - including free or complimentary memberships.{/ts}</span>
                  </td>
              </tr>
+	     <tr class="crm-membership-type-form-block-auto_renew">
+           	     <td class="label">{$form.auto_renew.label}</td>
+                     {if $authorize}
+                        <td>{$form.auto_renew.html}</td>
+                     {else}
+                        <td>{ts}You will need to select and configure a supported payment processor (currently Authornize.net) in order to offer automatically renewing memberships.{/ts}{docURL page="CiviContribute Payment Processor Configuration"}</td>
+                     {/if}
+             </tr>
              <tr class="crm-membership-type-form-block-duration_unit_interval">        
                  <td class="label">{$form.duration_unit.label}<span class="marker">*</span></td>
                  <td>{$form.duration_interval.html}&nbsp;&nbsp;{$form.duration_unit.html}<br />
@@ -197,6 +205,12 @@
                         <span class="description">{ts}Select the renewal reminder message to be sent to the members of this membership type.{/ts}</span>
                     </td>
                 </tr>
+                <tr id="autoRenewalMsgId" class="crm-membership-type-form-block-autorenewal_msg_id">
+                   <td class="label">{$form.autorenewal_msg_id.label}</td>
+                   <td>{$form.autorenewal_msg_id.html}<br />
+                       <span class="description">{ts}Select the autorenewal reminder message to be sent to the members of this membership type.{/ts}</span>
+                   </td>
+                </tr>
                 <tr class="crm-membership-type-form-block-renewal_reminder_day">              
                     <td class="label">{$form.renewal_reminder_day.label}</td>
                     <td>{$form.renewal_reminder_day.html}<br />
@@ -239,6 +253,25 @@
 		    document.getElementsByName("fixed_period_rollover_day[M]")[0].value = "";
 		    document.getElementsByName("fixed_period_rollover_day[d]")[0].value = "";
 	    }
+    }
+
+    {/literal}
+
+    {if $action eq 1 || ( $authorize && !$autoRenewMsg ) }
+        {literal} cj("#autoRenewalMsgId").hide( ); {/literal}
+    {elseif $action eq 2 && $authorize}
+        {literal} cj("#autoRenewalMsgId").show( ); {/literal}
+    {else}
+        {literal} cj("#autoRenewalMsgId").hide( ); {/literal}
+    {/if}
+    {literal}
+    
+    function setReminder ( renew ) {
+       if ( renew.value == 1 || renew.value == 2 ) {
+       	  cj("#autoRenewalMsgId").show();
+       } else { 
+          cj("#autoRenewalMsgId").hide();
+       }
     }
     </script>
 {/literal}

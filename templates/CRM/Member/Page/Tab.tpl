@@ -74,6 +74,7 @@
                 <th>{ts}End Date{/ts}</th>
                 <th>{ts}Status{/ts}</th>
                 <th>{ts}Source{/ts}</th>
+                <th>{ts}Auto-renew{/ts}</th>
                 <th></th>
             </tr>
             </thead>
@@ -87,7 +88,8 @@
                 <td class="crm-membership-end_date">{$activeMember.end_date|crmDate}</td>
                 <td class="crm-membership-status">{$activeMember.status}</td>
                 <td class="crm-membership-source">{$activeMember.source}</td>
-                <td>
+                <td class="crm-membership-auto_renew">{if $activeMember.auto_renew}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Auto-renew{/ts}" /> {/if}</td>
+		<td>
                     {$activeMember.action|replace:'xx':$activeMember.id}
                     {if $activeMember.owner_membership_id}
                         &nbsp;|&nbsp;<a href="{crmURL p='civicrm/membership/view' q="reset=1&id=`$activeMember.owner_membership_id`&action=view&context=membership&selectedChild=member"}" title="{ts}View Primary member record{/ts}">{ts}View Primary{/ts}</a>
@@ -113,7 +115,8 @@
                 <th>{ts}End Date{/ts}</th>
                 <th>{ts}Status{/ts}</th>
                 <th>{ts}Source{/ts}</th>
-                <th></th>
+                <th>{ts}Auto-renew{/ts}</th>
+		<th></th>
             </tr>
             </thead>
             {foreach from=$inActiveMembers item=inActiveMember}
@@ -125,7 +128,8 @@
                 <td class="crm-membership-end_date">{$inActiveMember.end_date|crmDate}</td>
                 <td class="crm-membership-status">{$inActiveMember.status}</td>
                 <td class="crm-membership-source">{$inActiveMember.source}</td>
-                <td>{$inActiveMember.action|replace:'xx':$inActiveMember.id}
+                <td class="crm-membership-auto_renew">{if $inActiveMember.auto_renew}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Auto-renew{/ts}" /> {/if}</td>
+		<td>{$inActiveMember.action|replace:'xx':$inActiveMember.id}
 		    {if $inActiveMember.owner_membership_id}
                         &nbsp;|&nbsp;
 			<a href="{crmURL p='civicrm/membership/view' q="reset=1&id=`$inActiveMember.owner_membership_id`&action=view&context=membership&selectedChild=member"}" title="{ts}View Primary member record{/ts}">{ts}View Primary{/ts}

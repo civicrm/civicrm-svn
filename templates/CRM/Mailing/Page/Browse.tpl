@@ -23,9 +23,11 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="action-link">
-    <a accesskey="N" href="{crmURL p='civicrm/mailing/send' q='reset=1'}" class="button"><span><div class="icon email-icon"></div>{ts}New Mailing{/ts}</span></a><br/><br/>
-</div>
+{if $showLinks}
+    <div class="action-link">
+    	<a accesskey="N" href="{crmURL p='civicrm/mailing/send' q='reset=1'}" class="button"><span><div class="icon email-icon"></div>{ts}New Mailing{/ts}</span></a><br/><br/>
+    </div>
+{/if}
 {include file="CRM/Mailing/Form/Search.tpl"}
 
 {if $rows}
@@ -64,9 +66,11 @@
     {/strip}
 
     {include file="CRM/common/pager.tpl" location="bottom"}
-    <div class="action-link">
-        <a accesskey="N" href="{crmURL p='civicrm/mailing/send' q='reset=1'}" class="button"><span><div class="icon email-icon"></div>{ts}New Mailing{/ts}</span></a><br/>
-    </div>
+    {if $showLinks}
+    	<div class="action-link">
+            <a accesskey="N" href="{crmURL p='civicrm/mailing/send' q='reset=1'}" class="button"><span><div class="icon email-icon"></div>{ts}New Mailing{/ts}</span></a><br/>
+    	</div>
+    {/if}
 
 {* No mailings to list. Check isSearch flag to see if we're in a search or not. *}
 {elseif $isSearch eq 1}
