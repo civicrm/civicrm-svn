@@ -816,8 +816,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
 
         $contribParams["contribution_status_id"] = $pending ? 2 : 1;
 
+        $contribParams['is_test'] = 0;
         if ( $form->_mode == 'test' ) {
-            $contribParams["is_test"] = 1;
+            $contribParams['is_test'] = 1;
         }
         
         $ids = array( );
@@ -1047,8 +1048,10 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         $recurParams['frequency_interval'] = $params['frequency_interval'];
         $recurParams['installments']       = $params['installments'];
         
-        if ( $form->_action & CRM_Core_Action::PREVIEW ) {
-            $recurParams["is_test"] = 1;
+        $recurParams['is_test'] = 0;
+        if ( ( $form->_action & CRM_Core_Action::PREVIEW ) || 
+             ( isset( $form->_mode ) && ( $form->_mode == 'test' ) ) ) {
+            $recurParams['is_test'] = 1;
         }
         
         $now = date( 'YmdHis' );

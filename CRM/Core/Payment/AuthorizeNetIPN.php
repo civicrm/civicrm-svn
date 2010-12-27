@@ -66,8 +66,8 @@ class CRM_Core_Payment_AuthorizeNetIPN extends CRM_Core_Payment_BaseIPN {
             
             CRM_Core_Error::debug_var( '$ids', $ids );
             CRM_Core_Error::debug_var( '$input', $input );
-
-            if ( ! $this->validateData( $input, $ids, $objects, false ) ) {
+            
+            if ( ! $this->validateData( $input, $ids, $objects ) ) {
                 return false;
             }
             
@@ -135,22 +135,6 @@ class CRM_Core_Payment_AuthorizeNetIPN extends CRM_Core_Payment_BaseIPN {
         $objects['contribution']->invoice_id   = md5( uniqid( rand( ), true ) );
         $objects['contribution']->total_amount = $input['amount'];
         $objects['contribution']->trxn_id      = $input['trxn_id'];
-        
-        // load the processor, if offline mode
-        if ( !$objects['contribution']->contribution_page_id || 
-             !CRM_Utils_Array::value( 'paymentProcessor', $ids ) ) {
-            require_once 'CRM/Core/BAO/PaymentProcessor.php';
-            $authNet = new CRM_Core_DAO_PaymentProcessor( );
-            $authNet->payment_processor_type = 'AuthNet';
-            $authNet->is_test = CRM_Utils_Array::value( 'is_test', $input, 0 );
-            $authNet->find( true );
-
-            $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $authNet->id,
-                                                                           $input['is_test'] ? 'test' : 'live' );
-
-            $ids['paymentProcessor']     =  $authNet->id;
-            $objects['paymentProcessor'] =& $paymentProcessor;
-        }
         
         // since we have processor loaded for sure at this point, 
         // check and validate gateway MD5 response if present
