@@ -88,6 +88,9 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form
             }
         }
         
+        $session = CRM_Core_Session::singleton( ); 
+        $session->pushUserContext( $this->_userContext );
+        
         if ( $mid ) {
             $membershipTypes  = CRM_Member_PseudoConstant::membershipType( );
             $membershipTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_Membership', $mid, 'membership_type_id' );
@@ -185,23 +188,24 @@ INNER JOIN civicrm_entity_financial_trxn eft ON ( eft.financial_trxn_id = ft.id 
         $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $this->_ppID,
                                                                               $this->_mode );
 
+        $status = null;
         $paymentObject =& CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this );
         $paymentObject->_setParam( 'subscriptionId', $this->_subscriptionId );
         $cancelSubscription = $paymentObject->cancelSubscription( );
 
         if ( is_a( $cancelSubscription, 'CRM_Core_Error' ) ) {
-            
             CRM_Core_Error::displaySessionError( $cancelSubscription );
-            CRM_Utils_System::redirect( $this->_userContext );
         } else if ( $cancelSubscription ) {
+            $status = ts( 'Subscription is cancelled successfully.' );
             require_once 'CRM/Contribute/BAO/ContributionRecur.php';
             $cancelled = CRM_Contribute_BAO_ContributionRecur::cancelRecurContribution( $this->_contributionRecurId, 
                                                                            $this->_objects );
-            CRM_Core_Session::setStatus( ts( 'Subscription is cancelled successfully.' ) );
-            CRM_Utils_System::redirect( $this->_userContext );
         } else {
-            CRM_Core_Session::setStatus( ts( 'Subscription could not be cancelled.' ) );
-            CRM_Utils_System::redirect( $this->_userContext );
+            $status = ts( 'Subscription could not be cancelled.' );
+        }
+        
+        if ( $status ) {
+            CRM_Core_Session::setStatus( $status );
         }
     }
 }
