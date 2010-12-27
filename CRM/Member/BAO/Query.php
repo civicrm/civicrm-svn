@@ -219,6 +219,13 @@ class CRM_Member_BAO_Query
             $query->_tables['civicrm_membership'] = $query->_whereTables['civicrm_membership'] = 1;
             return;
             
+        case 'member_auto_renew':
+            if ( $value ) {
+                 $query->_where[$grouping][] = " civicrm_membership.contribution_recur_id IS NOT NULL";
+                 $query->_qill[$grouping][] = ts( "Find Auto-renew Memberships" );
+            }
+            $query->_tables['civicrm_membership'] = $query->_whereTables['civicrm_membership'] = 1;
+            return;
         case 'member_pay_later':
             $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_membership.is_pay_later", 
                                                                               $op,
@@ -374,6 +381,7 @@ class CRM_Member_BAO_Query
 
         $form->addElement( 'checkbox', 'member_test' , ts( 'Find Test Memberships?' ) );
         $form->addElement( 'checkbox', 'member_pay_later', ts( 'Find Pay Later Memberships?' ) );
+        $form->addElement( 'checkbox', 'member_auto_renew', ts( 'Find Auto-renew Memberships?' ) );
 
         // add all the custom  searchable fields
         require_once 'CRM/Custom/Form/CustomData.php';

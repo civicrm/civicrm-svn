@@ -101,8 +101,15 @@
               {/if}
            </td> 
         </tr>
-        
+	
         {/foreach}
+	<tr id="auto-renew">    
+	     <td style="width: auto;">{$form.auto_renew.html}</td>
+	     <td style="width: auto;">
+	        {$form.auto_renew.label}
+            <div class="description crm-auto-renew-cancel-info">({ts}Your initial membership fee will be processed once you complete the confirmation step. You will be able to cancel automatic renewals at any time by logging in to your account or contacting us.{/ts})</div>
+	     </td>
+	</tr>
         {if $showRadio}
             {if $showRadioNoThanks } {* Provide no-thanks option when Membership signup is not required - per membership block configuration. *}
             <tr class="odd-row">
@@ -118,3 +125,45 @@
     {/if}
 </div>
 {/if}
+
+{literal}
+<script>
+{/literal}
+{if $defaultMemTypeAutoRenew}
+   {literal}
+      var defaultMemTypeAutoRenew = {/literal}{$defaultMemTypeAutoRenew}{literal};
+      showAutoRenew( defaultMemTypeAutoRenew );
+   {/literal}
+{else}
+   {literal}
+        cj("#auto-renew").hide( );
+   {/literal}
+{/if}
+{if $isRecur} 
+    {literal} var isRecurBlock = true; {/literal}
+{else}
+    {literal} var isRecurBlock = false;{/literal}
+{/if}
+{literal}
+
+function showAutoRenew( memTypeAutoRenew ) 
+{
+    
+    if ( isRecurBlock ) {
+         cj("#auto_renew").attr( 'checked', false );
+         cj("#auto-renew").hide( );
+	 return;
+    }    
+
+    if ( memTypeAutoRenew == 1 ) {
+        cj("#auto-renew").show( );
+        return;
+    } else if ( memTypeAutoRenew == 2 ) {
+        cj("#auto_renew").attr( 'checked', true );
+    } else {
+        cj("#auto_renew").attr( 'checked', false );
+    }
+    cj("#auto-renew").hide( );
+}
+</script>
+{/literal}

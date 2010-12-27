@@ -187,4 +187,181 @@ class WebTest_Generic_GeneralClickAroundTest extends CiviSeleniumTestCase {
       $this->assertTextPresent("Display In Roll");
       $this->assertTextPresent("Currency");
   }
+
+  function testNewMailing( ) 
+  {
+      $this->login();
+      
+      // New Mailing Form
+      $this->click("//ul[@id='civicrm-menu']/li[7]");
+      $this->click("//div[@id='root-menu-div']/div[9]/ul/li/div/a");
+      $this->waitForPageToLoad();
+
+      $this->assertTextPresent("New Mailing");
+      $this->assertElementPresent("name");
+      $this->assertElementPresent("includeGroups-f");
+      $this->assertElementPresent("excludeGroups-t");
+  }
+
+  function testConstituentReportSummary( ) 
+  {
+      $this->login();
+
+      // Constituent Report Summary
+      $this->click("//ul[@id='civicrm-menu']/li[9]");
+      $this->click("//div[@id='root-menu-div']/div[11]/ul/li[5]/div/a");
+      $this->waitForPageToLoad();
+
+      $this->assertTextPresent("Constituent Report (Summary)");
+      $this->click("//form[@id='Summary']/div[2]/div/div/div/div");
+      $this->assertTextPresent("Display Columns");
+      $this->click("//form[@id='Summary']/div[2]//div[@id='id_default']/div/div/div");
+      $this->assertTextPresent("Most Important Issue");
+      $this->assertTextPresent("Set Filters");
+      $this->assertTextPresent("Contact Name");
+      $this->assertTextPresent("Contact Source");
+      $this->assertTextPresent("Country");
+      $this->assertTextPresent("State / Province");
+      $this->assertTextPresent("Group");
+      $this->assertTextPresent("Tag");
+      $this->click("_qf_Summary_submit");
+      $this->waitForElementPresent("_qf_Summary_submit_print");
+      $this->assertTextPresent("Row(s) Listed");
+      $this->assertTextPresent("Total Row(s)");
+  }
+  
+  function testCustomData( )
+  {
+      $this->login();
+
+      // Custom Data selector
+      $this->click("//ul[@id='civicrm-menu']/li[10]");
+      $this->click("//div[@id='root-menu-div']/div[22]/ul/li[2]/div/span");
+      $this->click("//div[@id='menu-container']/ul/li[10]/ul/li[2]/ul/li[1]/a");
+      $this->waitForPageToLoad();
+
+      $this->assertTextPresent("Custom Data");
+      $this->assertTextPresent("Constituent Information");
+      $this->assertTextPresent("Donor Information");
+      $this->assertTextPresent("Food Preference");
+
+      // Verify create form
+      $this->click("//span[contains(text(), 'Add Set of Custom Fields')]");
+      $this->waitForPageToLoad();
+      $this->assertElementPresent("title");
+      $this->assertElementPresent("extends[0]");
+      $this->assertElementPresent("weight");
+      $this->assertTextPresent("Pre-form Help");
+      $this->assertTextPresent("Post-form Help");
+  }
+  
+  function testProfile( )
+  {
+      $this->login();
+
+      // Profile selector
+      $this->click("//ul[@id='civicrm-menu']/li[10]");
+      $this->click("//div[@id='root-menu-div']/div[22]/ul/li[2]/div/span");
+      $this->click("//div[@id='menu-container']/ul/li[10]/ul/li[2]/ul/li[2]/a");
+      $this->waitForPageToLoad();
+
+      $this->assertTextPresent("CiviCRM Profile");
+      // Verify Reserved Profiles
+      $this->assertTextPresent("New Household");
+      $this->assertTextPresent("New Individual");
+      $this->assertTextPresent("New Organization");
+      $this->assertTextPresent("Participant Status");
+      $this->assertTextPresent("Shared Address");
+      $this->assertTextPresent("Summary Overlay");
+
+      // Verify profiles that are not reserved
+      $this->assertTextPresent("Name and Address");
+      $this->assertTextPresent("Supporter Profile");
+
+      // Verify create form
+      $this->click("//span[contains(text(), 'Add Profile')]");
+      $this->waitForPageToLoad();
+      $this->assertElementPresent("title");
+      $this->assertElementPresent("uf_group_type[Profile]");
+      $this->assertElementPresent("weight");
+      $this->assertTextPresent("Pre-form Help");
+      $this->assertTextPresent("Post-form Help");
+      $this->click("//form[@id='Group']/div[2]/div[2]/div/div");
+      $this->assertElementPresent("group");
+      $this->assertElementPresent("post_URL");
+      $this->assertTextPresent("Drupal user account registration option?");
+      $this->assertTextPresent("What to do upon duplicate match");
+      $this->assertTextPresent("Proximity search");
+  }
+ 
+  function testTags( )
+  {
+      $this->login();
+
+      $this->click("//ul[@id='civicrm-menu']/li[10]");
+      $this->click("//div[@id='root-menu-div']/div[22]/ul/li[5]/div/span");
+      $this->click("//div[@id='menu-container']/ul/li[10]/ul/li[5]/ul/li[3]/a");
+      $this->waitForPageToLoad();
+
+      // Verify tags
+      $this->assertTextPresent("Non-profit");
+      $this->assertTextPresent("Company");
+      $this->assertTextPresent("Government Entity");
+      $this->assertTextPresent("Major Donor");
+      $this->assertTextPresent("Volunteer");
+  }
+ 
+  function testActivityTypes( )
+  {
+      $this->login();
+
+      $this->click("//ul[@id='civicrm-menu']/li[10]");
+      $this->click("//div[@id='root-menu-div']/div[22]/ul/li[5]/div/span");
+      $this->click("//div[@id='menu-container']/ul/li[10]/ul/li[5]/ul/li[1]/a");
+      $this->waitForPageToLoad();
+
+      // Verify activity types
+      $this->assertTextPresent("Meeting");
+      $this->assertTextPresent("Print PDF Letter");
+      $this->assertTextPresent("Event Registration");
+      $this->assertTextPresent("Contribution");
+      $this->assertTextPresent("Membership Signup");
+  }
+
+  function testRelionshipTypes( )
+  {
+      $this->login();
+
+      $this->click("//ul[@id='civicrm-menu']/li[10]");
+      $this->click("//div[@id='root-menu-div']/div[22]/ul/li[5]/div/span");
+      $this->click("//div[@id='menu-container']/ul/li[10]/ul/li[5]/ul/li[2]/a");
+      $this->waitForPageToLoad();
+
+      // Verify relationship types
+      $this->assertTextPresent("Child of");
+      $this->assertTextPresent("Head of Household for");
+      $this->assertTextPresent("Sibling of");
+      $this->assertTextPresent("Spouse of");
+      $this->assertTextPresent("Supervised by");
+      $this->assertTextPresent("Volunteer for");
+  }
+
+  function testMessageTemplates( )
+  {
+      $this->login();
+
+      $this->click("//ul[@id='civicrm-menu']/li[10]");
+      $this->click("//div[@id='root-menu-div']/div[22]/ul/li[3]/div/span");
+      $this->click("//div[@id='menu-container']/ul/li[10]/ul/li[3]/ul/li[4]/a");
+      $this->waitForPageToLoad();
+
+      // Verify message templates
+      $this->click("//a[contains(text(),'System Workflow Messages')]");
+      $this->assertTextPresent("Contributions - Receipt (on-line)");
+      $this->assertTextPresent("Events - Registration Confirmation and Receipt (off-line)");
+      $this->assertTextPresent("Memberships - Signup and Renewal Receipts (off-line)");
+      $this->assertTextPresent("Personal Campaign Pages - Supporter Status Change Notification");
+      $this->assertTextPresent("Profiles - Admin Notification");
+      $this->assertTextPresent("Tell-a-Friend Email");
+  }
 }

@@ -342,7 +342,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
      */
     static function formRule( $values ) 
     {
-        if ( $values['is_online_registration'] ) {
+        if ( CRM_Utils_Array::value( 'is_online_registration', $values ) ) {
             if ( !$values['confirm_title'] ) {
                 $errorMsg['confirm_title'] = ts('Please enter a Title for the registration Confirmation Page');
             }

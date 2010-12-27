@@ -24,6 +24,12 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing/deleting memberships for a contact  *}
+{if $cancelAutoRenew}
+<div class="messages status">
+    <div class="icon inform-icon"></div>
+       <p>{ts 1=$cancelAutoRenew}This membership is set to renew automatically {if $endDate}on {$endDate|crmDate}{/if}. You will need to cancel the auto-renew option if you want to modify the Membership Type, End Date or Membership Status. <a href="%1">Click here</a> if you want to cancel the automatic renewal option.{/ts}</p>
+    </div>
+{/if}
 <div class="spacer"></div>
 {if $cdType }
   {include file="CRM/Custom/Form/CustomData.tpl"}
@@ -78,30 +84,33 @@
  	<tr class="crm-membership-form-block-start_date"><td class="label">{$form.start_date.label}</td><td>{include file="CRM/common/jcalendar.tpl" elementName=start_date}
 		<br />
         <span class="description">{ts}First day of current continuous membership period. Start Date will be automatically set based on Membership Type if you don't select a date.{/ts}</span></td></tr>
- 	<tr class="crm-membership-form-block-end_date"><td class="label">{$form.end_date.label}</td><td>{include file="CRM/common/jcalendar.tpl" elementName=end_date}
+ 	<tr class="crm-membership-form-block-end_date"><td class="label">{$form.end_date.label}</td>
+	<td>{if $isRecur && $endDate}{$endDate|crmDate}{else}{include file="CRM/common/jcalendar.tpl" elementName=end_date}{/if}
 		<br />
         <span class="description">{ts}Latest membership period expiration date. End Date will be automatically set based on Membership Type if you don't select a date.{/ts}</span></td></tr>
+        <tr id="autorenew" class="crm-membership-form-block-auto_renew">
+           <td class="label"> {$form.auto_renew.label} </td>
+           <td> {$form.auto_renew.html} </td>
+        </tr>
     {if ! $membershipMode}
         <tr><td class="label">{$form.is_override.label}</td><td>{$form.is_override.html}&nbsp;&nbsp;{help id="id-status-override"}</td></tr>
     {/if}
 
     {if ! $membershipMode}
     {* Show read-only Status block - when action is UPDATE and is_override is FALSE *}
+        {if $action eq 2}
         <tr id="memberStatus_show">
-          {if $action eq 2}
-             <td class="label">{$form.status_id.label}</td><td class="view-value">{$membershipStatus}</td>
-          {/if}
+            <td class="label">{$form.status_id.label}</td><td class="view-value">{$membershipStatus}</td>
         </tr>
-
-    {* Show editable status field when is_override is TRUE *}
+	{else}{* Show editable status field when is_override is TRUE *}
         <tr id="memberStatus"><td class="label">{$form.status_id.label}</td><td>{$form.status_id.html}<br />
             <span class="description">{ts}If <strong>Status Override</strong> is checked, the selected status will remain in force (it will NOT be modified by the automated status update script).{/ts}</span></td></tr>
-	{elseif $membershipMode}
+        {/if}
+    {elseif $membershipMode}
         <tr class="crm-membership-form-block-billing"><td colspan="2">
         {include file='CRM/Core/BillingBlock.tpl'}
         </td></tr>
- 	{/if}
-
+    {/if}
         {if $accessContribution and ! $membershipMode AND ($action neq 2 or !$rows.0.contribution_id or $onlinePendingContributionId)}
         <tr id="contri">
             <td class="label">{if $onlinePendingContributionId}{ts}Update Payment Status{/ts}{else}{$form.record_contribution.label}{/if}</td>
@@ -245,7 +254,7 @@ cj( function( ) {
 {literal}
 <script type="text/javascript">
 {/literal}
-{if !$membershipMode}
+{if !$membershipMode && !$isRecur}
 {literal}
 showHideMemberStatus();
 
@@ -308,6 +317,47 @@ function checkEmail( ) {
 }
 {/literal}
 {/if}
+{if $autoRenew}
+{literal}
+   var renew = {/literal}{$autoRenew}{literal};
+{/literal}
+{/if}
+
+{literal}
+cj("#autorenew").hide( );
+
+function checkProcessor( Id ) {
+  var recur = {/literal}{$recurProcessor}{literal};	 
+
+  if( recur && !recur[Id] ) {
+    cj("#autorenew").hide( );
+    return false;
+  } else {
+    memType = cj('#membership_type_id\\[1\\]').val( );
+    buildAutoRenew( memType );
+  }
+}
+
+function buildAutoRenew( memType ) {
+  var recur = {/literal}{$recurProcessor}{literal};	
+  var processor = cj("#payment_processor_id").val();
+  if ( !recur[processor] ) {
+      cj("#autorenew").hide( );
+      return false;
+  }
+  if ( renew ) {
+     if ( renew[memType] == 1 || renew[memType] == 2 ) {
+        cj("#autorenew").show( );
+        if ( renew[memType] == 2 ) {
+           cj("#auto_renew").attr( 'checked', true );
+           cj("#auto_renew").attr( 'disabled', true );
+        }
+     } else {
+     cj("#autorenew").hide( );
+     } 
+  }
+}
 </script>
+{/literal}
 {/if} {* closing of delete check if *} 
 {/if}{* closing of custom data if *}

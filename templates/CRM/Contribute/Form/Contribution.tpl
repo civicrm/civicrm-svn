@@ -25,7 +25,7 @@
 *}
 {* this template is used for adding/editing/deleting contribution *}
 
-{if $cdType }
+{if $cdType}
   {include file="CRM/Custom/Form/CustomData.tpl"}
 {elseif $priceSetId}
   {include file="CRM/Price/Form/PriceSet.tpl" context="standalone"}
@@ -102,6 +102,25 @@
 	            <br /><span class="description">{ts}Actual amount given by contributor.{/ts}</span>
 	    </td>
         </tr>
+	    {if $buildRecurBlock}
+	    <tr id='recurringPaymentBlock' class='hiddenElement'>
+	       <td></td>		
+	       <td>
+		  <strong>{$form.is_recur.html} {ts}every{/ts} 
+		          &nbsp;{$form.frequency_interval.html} 
+		          &nbsp;{$form.frequency_unit.html}&nbsp; 
+		          {ts}for{/ts} 
+		          &nbsp;{$form.installments.html} 
+		          &nbsp;{$form.installments.label}
+		  </strong>
+		  <br />
+		  <span class="description"> 
+		  {ts}Your recurring contribution will be processed automatically for the number of installments you specify. You can leave the number of installments blank if you want to make an open-ended commitment. In either case, you can choose to cancel at any time. You will receive an email receipt for each recurring contribution. The receipts will include a link you can use if you decide to modify or cancel your future contributions.{/ts}
+		  </span>
+	       </td>
+	    </tr>	    	
+	    {/if}	
+	    	
 	    <tr id="adjust-option-type" class="crm-contribution-form-block-option_type">
             <td class="label"></td><td {$valueStyle}>{$form.option_type.html}</td> 
 	    </tr>
@@ -424,11 +443,20 @@ function buildAmount( priceSetId ) {
       cj( "#totalAmountORPriceSet" ).show( );
       cj( "#totalAmount").show( );
 
+      //we might want to build recur block.
+      if ( cj( "#is_recur" ) ) buildRecurBlock( null );
+
       return;
   }
-
+  
+  //don't allow recurring w/ priceset.
+  if ( cj( "#is_recur" ) ) {
+      cj( '#is_recur' ).val( 0 ); 
+      cj( "#recurringPaymentBlock" ).hide( );
+  }
+      
   var dataUrl = {/literal}"{crmURL h=0 q='snippet=4'}"{literal} + '&priceSetId=' + priceSetId;
-
+  
   var response = cj.ajax({
 		         url: dataUrl,
 			 async: false
@@ -446,5 +474,6 @@ cj('#adjust-option-type').show();
 cj("#total_amount").removeAttr("READONLY");
 cj("#total_amount").css('background-color', '#ffffff');
 }
+
 </script>
 {/literal}

@@ -23,7 +23,6 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{include file="CRM/common/WizardHeader.tpl"}
 <div id="form" class="crm-form-block crm-friend-manage-block">
 <div id="help">
         {if $context EQ 'Contribute'}

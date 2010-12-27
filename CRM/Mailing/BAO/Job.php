@@ -87,21 +87,21 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 			   AND   j.is_test = 0
 			   AND   ( ( j.start_date IS null
 			   AND       j.scheduled_date <= $currentTime
-			   AND       j.status = 'Scheduled'
+			   AND       j.status = 'Scheduled' )
+                OR     ( j.status = 'Running'
 			   AND       j.end_date IS null ) )
 			   AND (j.job_type = 'child')
 			   AND   {$mailingACL}
 			ORDER BY j.mailing_id,
 					 j.id
-			LIMIT 0,1";
+			";
 
             $job->query($query);
         }
 
         require_once 'CRM/Core/Lock.php';
-        $i = 0;
 
-        if ($job->fetch()) {
+        while ($job->fetch()) {
             // still use job level lock for each child job
             $lockName = "civimail.job.{$job->id}";
             
@@ -179,7 +179,6 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 				return $isComplete;
 			}
 		}
-		$i++;
 	}
 
 	// post process to determine if the parent job
@@ -284,9 +283,30 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 
 		$job->query($query);
 
+        require_once 'CRM/Core/Lock.php';
+
 		// For reach of the "Parent Jobs" we find, we split them into 
 		// X Number of child jobs
 		while ($job->fetch()) {
+            // still use job level lock for each child job
+            $lockName = "civimail.job.{$job->id}";
+            
+			$lock = new CRM_Core_Lock( $lockName );
+			if ( ! $lock->isAcquired( ) ) {
+				continue;
+			}
+
+            // refetch the job status in case things
+            // changed between the first query and now
+            // avoid race conditions
+            $job->status = CRM_Core_DAO::getFieldValue( 'CRM_Mailing_DAO_Job', 
+                                                        $job->id,
+                                                        'status' );
+            if ( $job->status != 'Scheduled' ) {
+                $lock->release( );
+                continue;
+            }
+            
 			$job->split_job($offset);
 			
 			// update the status of the parent job
@@ -300,6 +320,9 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 			$saveJob->save();
 
 			$transaction->commit( );
+
+			// Release the job lock
+			$lock->release( );
 		}
     }
     
@@ -425,7 +448,7 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
         $eq->query($query);
 
         static $config = null;
-        $mailsProcessed = 0;
+        static $mailsProcessed = 0;
 
         if ( $config == null ) {
             $config = CRM_Core_Config::singleton();
@@ -512,7 +535,9 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
              * engine, maybe we should dump the messages into a table */
 
             // disable error reporting on real mailings (but leave error reporting for tests), CRM-5744
-            if ($job_date) CRM_Core_Error::ignoreException();
+            if ($job_date) {
+                CRM_Core_Error::ignoreException();
+            }
 
             if ( is_object( $mailer ) ) {
                 
