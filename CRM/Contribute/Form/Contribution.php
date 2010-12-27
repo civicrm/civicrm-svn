@@ -1088,6 +1088,11 @@ WHERE  contribution_id = {$this->_id}
             require_once 'CRM/Core/BAO/PaymentProcessor.php';
             $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $this->_params['payment_processor_id'],
                                                                                   $this->_mode );
+            
+            //get the payment processor id as per mode.
+            $params['payment_processor_id'] = $this->_params['payment_processor_id'] = 
+                $submittedValues['payment_processor_id'] = $this->_paymentProcessor['id'];
+            
             require_once 'CRM/Contact/BAO/Contact.php';
             
             $now = date( 'YmdHis' );

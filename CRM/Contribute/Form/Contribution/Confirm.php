@@ -401,6 +401,15 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         $this->_params['currencyID'] = $config->defaultCurrency;
 
         $premiumParams = $membershipParams = $tempParams = $params = $this->_params;
+        
+        //carry payment processor id.
+        if ( $paymentProcessorId = CRM_Utils_Array::value( 'id', $this->_paymentProcessor ) ) {
+            $this->_params['payment_processor_id'] = $paymentProcessorId;
+            foreach ( array( 'premiumParams', 'membershipParams', 'tempParams', 'params' ) as $p ) {
+                ${$p}['payment_processor_id'] = $paymentProcessorId;
+            }
+        }
+        
         $now = date( 'YmdHis' );
         $fields = array( );
         
@@ -1046,6 +1055,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         $recurParams['start_date'] = $recurParams['create_date'] = $recurParams['modified_date'] = $now;
         $recurParams['invoice_id'] = $params['invoiceID'];
         $recurParams['contribution_status_id'] = 2;
+        $recurParams['payment_processor_id']   = $params['payment_processor_id'];
         
         // we need to add a unique trxn_id to avoid a unique key error
         // in paypal IPN we reset this when paypal sends us the real trxn id, CRM-2991

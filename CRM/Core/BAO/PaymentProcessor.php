@@ -188,7 +188,7 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor
      */
     static function buildPayment( $dao ) 
     {
-        $fields = array( 'name', 'payment_processor_type', 'user_name', 'password',
+        $fields = array( 'id', 'name', 'payment_processor_type', 'user_name', 'password',
                          'signature', 'url_site', 'url_api', 'url_recur', 'url_button',
                          'subject', 'class_name', 'is_recur', 'billing_mode',
                          'payment_type' );

@@ -816,6 +816,10 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $formValues['payment_processor_id'],
                                                                                   $this->_mode );
             
+            //get the payment processor id as per mode.
+            $params['payment_processor_id'] = $this->_params['payment_processor_id'] = 
+                $formValues['payment_processor_id'] = $this->_paymentProcessor['id'];
+            
             require_once "CRM/Contact/BAO/Contact.php";
             
             $now = date( 'YmdHis' );
