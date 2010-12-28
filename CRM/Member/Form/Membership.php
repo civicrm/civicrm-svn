@@ -300,7 +300,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             $defaults['join_date']    = $now;
         }
         
-        if ( $defaults['membership_end_date'] ) {
+        if ( CRM_Utils_Array::value( 'membership_end_date', $defaults) ) {
             $this->assign( 'endDate', $defaults['membership_end_date'] );
         }
         
@@ -715,8 +715,11 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         }
         
         // set the contact, when contact is selected
+        require_once 'CRM/Contact/BAO/Contact/Location.php';
         if ( CRM_Utils_Array::value('contact_select_id', $formValues ) ) {
             $this->_contactID = $formValues['contact_select_id'][1];
+            list( $this->_memberDisplayName, 
+                  $this->_memberEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $this->_contactID );
         }
         
         $params['contact_id'] = $this->_contactID;
@@ -787,7 +790,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                                                                    'Membership' );
 
         // Retrieve the name and email of the current user - this will be the FROM for the receipt email
-        require_once 'CRM/Contact/BAO/Contact/Location.php';
         list( $userName, $userEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $ids['userId'] );
 
         if ( CRM_Utils_Array::value( 'record_contribution', $formValues ) ) {
