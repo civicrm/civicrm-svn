@@ -91,7 +91,7 @@
         <tr  class="crm-contribution-form-block-total_amount">
             <td class="label">{$form.total_amount.label}</td>
     	    <td {$valueStyle}>
-        	    <span id='totalAmount'>{$form.total_amount.html|crmMoney:$form.currency.html|crmReplace:class:eight}</span> 
+        	    <span id='totalAmount'>{$form.currency.html|crmReplace:class:eight}&nbsp;{$form.total_amount.html|crmReplace:class:eight}</span> 
         	    {if $hasPriceSets}
         	        <span id='totalAmountORPriceSet'> {ts}OR{/ts}</span>
         	        <span id='selectPriceSet'>{$form.price_set_id.html}</span>
