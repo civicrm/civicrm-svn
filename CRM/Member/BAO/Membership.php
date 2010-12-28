@@ -1171,6 +1171,13 @@ AND civicrm_membership.is_test = %2";
         if ( isset( $contribution[$index]->id ) ) {
             $form->_values['contribution_id'] = $contribution[$index]->id;
         }
+
+        // Do not send an email if Recurring transaction is done via Direct Mode
+        // Email will we sent when the IPN is received.
+        if ( $form->_params['is_recur'] && $form->_contributeMode == 'direct' ) {
+            return true;
+        }
+
         //finally send an email receipt
         require_once "CRM/Contribute/BAO/ContributionPage.php";
         CRM_Contribute_BAO_ContributionPage::sendMail( $contactID,

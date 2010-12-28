@@ -723,7 +723,11 @@ class CRM_Core_Payment_BaseIPN {
             require_once 'CRM/Core/Payment.php';
             $paymentObject =& CRM_Core_Payment::singleton( $contribution->is_test ? 'test' : 'live', 
                                                            $objects['paymentProcessor'] );
-            $url = $paymentObject->cancelSubscriptionURL( );
+            if ( ! empty($membership) && $membership->id ) {
+                $url = $paymentObject->cancelSubscriptionURL( $membership->id, 'membership' );
+            } else {
+                $url = $paymentObject->cancelSubscriptionURL( );
+            }
             $template->assign( 'cancelSubscriptionUrl', $url );
             if ( $objects['paymentProcessor']['billing_mode'] & CRM_Core_Payment::BILLING_MODE_FORM ) {
                 //direct mode showing billing block, so use directIPN for temporary

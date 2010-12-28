@@ -284,8 +284,6 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
         // log request
         CRM_Core_Error::debug_var( 'Create Subscription Request', $arbXML );
 
-        $params['trxn_id'] = $responseFields['subscriptionId'];
-
         // update recur processor_id with subscriptionId
         CRM_Core_DAO::setFieldValue( 'CRM_Contribute_DAO_ContributionRecur', $params['contributionRecurID'], 
                                      'processor_id', $responseFields['subscriptionId'] );
@@ -550,7 +548,11 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
         }
     }
 
-    function cancelSubscriptionURL( ) {
+    function cancelSubscriptionURL( $entityID = null, $entity = null ) {
+        if ( $entityID && $entity == 'membership' ) {
+            return CRM_Utils_System::url( 'civicrm/contribute/unsubscribe', 
+                                          "reset=1&mid={$entityID}", true );
+        }
         return ( $this->_mode == 'test' ) ?
             'https://test.authorize.net' : 'https://authorize.net';
     }
