@@ -1816,12 +1816,15 @@ FROM   civicrm_membership_type
      * @access public
      * @static
      */
-    static function isCancelSubscriptionSupported( $mid ) 
+    static function isCancelSubscriptionSupported( $mid, $isAlreadyCancelled = true ) 
     {
         static $supportsCancel = array( );
         
         if ( !array_key_exists( $mid, $supportsCancel ) ) {
             $supportsCancel[$mid] = false;
+            if ( $isAlreadyCancelled ) {
+                $status = self::isSubscriptionCancelled( $mid );
+            }
             require_once 'CRM/Core/BAO/PaymentProcessor.php';
             require_once 'CRM/Core/Payment.php';
             $paymentObject = CRM_Core_BAO_PaymentProcessor::getProcessorForEntity( $mid, 'membership', 'obj' );
@@ -1829,6 +1832,34 @@ FROM   civicrm_membership_type
                 $supportsCancel[$mid] = CRM_Core_Payment::isCancelSupported( $paymentObject );
             }
         }
+        
+        if ( $status != 'Cancelled' && $supportsCancel[$mid] )  {
+            return true;
+        } else {
+            return false;
+        }
         return $supportsCancel[$mid];
+    }
+    
+    /**
+     * Function to check whether subscription is already cancelled  
+     *
+     * @param int $mid membership id
+     * 
+     * @return string $status contribution status 
+     * @access public
+     * @static
+     */
+    static function isSubscriptionCancelled ( $mid ) {
+        $sql = "
+   SELECT con.contribution_status_id 
+     FROM civicrm_contribution       con
+LEFT JOIN civicrm_membership_payment cmp ON ( con.id = cmp.contribution_id )
+    WHERE cmp.membership_id = %1 LIMIT 1";
+        $params = array( 1 => array( $mid, 'Integer' ) );
+        $statusId = CRM_Core_DAO::singleValueQuery( $sql, $params );
+        require_once 'CRM/Contribute/PseudoConstant.php';
+        $status = CRM_Contribute_PseudoConstant::contributionStatus( $statusId );
+        return $status;
     }
 }

@@ -348,6 +348,11 @@ SELECT id
         // get the submitted form values.
         $params = $this->controller->exportValues( $this->_name );
        
+        if ( CRM_Utils_Array::value( 'payment_processor_id', $params) == 
+             CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_PaymentProcessor', 'AuthNet', 
+                                          'id', 'payment_processor_type') ) {
+            CRM_Core_Session::setStatus( ts( ' Please note that Authorize Payment Processor only allow recurring subscriptions of interval length 7-365 days or 1-12 months (Not greater than 1 year).' ) );
+        }
         // check for price set.
         $priceSetID = CRM_Utils_Array::value( 'price_set_id', $params );
         
