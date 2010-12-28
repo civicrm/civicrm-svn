@@ -76,13 +76,8 @@
 
 {/if}
 {if $is_recur}
-{if $contributeMode eq 'notify'}
-{ts}This is an auto renew membership. You can modify or cancel auto-renewal option by logging in to your account at:{/ts}
-
-{$cancelSubscriptionUrl}
-{elseif $contributeMode eq 'directIPN' and $receiptFromEmail}
-{ts 1=$cancelSubscriptionUrl}This is an auto renew membership. To modify or cancel auto-renewal option visit: %1.{/ts}
-
+{if $contributeMode eq 'notify' or $contributeMode eq 'directIPN'}
+{ts 1=$cancelSubscriptionUrl}This membership will be renewed automatically. You can modify or cancel the auto-renewal option by visiting this web page: %1.{/ts}
 {/if}
 {/if}
 

@@ -64,7 +64,16 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form
      */ 
     public function preProcess( )  
     {
-        $mid = CRM_Utils_Request::retrieve( 'mid', 'Integer', $this, false );
+        $mid = CRM_Utils_Request::retrieve( 'mid', 'Integer', $this, true );
+        if ( !CRM_Core_Permission::check( 'edit memberships' ) ) {
+            require_once 'CRM/Contact/BAO/Contact/Utils.php';
+            $userChecksum = CRM_Utils_Request::retrieve( 'cs', 'String', $this, false );
+            $contactID    = CRM_Core_DAO::getFieldValue( "CRM_Member_DAO_Membership", $mid, "contact_id" );
+            if ( !  CRM_Contact_BAO_Contact_Utils::validChecksum( $contactID, $userChecksum ) ) {
+                CRM_Core_Error::fatal( ts( 'You do not have permission to cancel subscription.' ) );
+            }
+        } 
+
         $cid = CRM_Utils_Request::retrieve( 'cid', 'Integer', $this, false );
         $context = CRM_Utils_Request::retrieve( 'context', 'String', $this, false );
         $selectedChild = CRM_Utils_Request::retrieve( 'selectedChild', 'String', $this, false );

@@ -550,8 +550,12 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
 
     function cancelSubscriptionURL( $entityID = null, $entity = null ) {
         if ( $entityID && $entity == 'membership' ) {
+            require_once 'CRM/Contact/BAO/Contact/Utils.php';
+            $contactID = CRM_Core_DAO::getFieldValue( "CRM_Member_DAO_Membership", $entityID, "contact_id" );
+            $checksumValue = CRM_Contact_BAO_Contact_Utils::generateChecksum( $contactID, null, 'inf' );
+
             return CRM_Utils_System::url( 'civicrm/contribute/unsubscribe', 
-                                          "reset=1&mid={$entityID}", true );
+                                          "reset=1&mid={$entityID}&cs={$checksumValue}", true );
         }
         return ( $this->_mode == 'test' ) ?
             'https://test.authorize.net' : 'https://authorize.net';
