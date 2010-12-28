@@ -73,18 +73,15 @@
 {/if}
 {if $membership_trx_id}
 {ts}Membership Transaction #{/ts}: {$membership_trx_id}
-{if $cancelAutoRenew}
-{ts}Cancel Subscription}{/ts} : {$cancelAutoRenew}
-{/if}
 
 {/if}
 {if $is_recur}
 {if $contributeMode eq 'notify'}
-{ts}This is a recurring contribution. You can modify or cancel future contributions by logging in to your account at:{/ts}
+{ts}This is an auto renew membership. You can modify or cancel auto-renewal option by logging in to your account at:{/ts}
 
 {$cancelSubscriptionUrl}
 {elseif $contributeMode eq 'directIPN' and $receiptFromEmail}
-{ts 1=$receiptFromEmail}This is a recurring contribution. To modify or cancel future contributions please contact us at %1.{/ts}
+{ts 1=$cancelSubscriptionUrl}This is an auto renew membership. To modify or cancel auto-renewal option visit: %1.{/ts}
 
 {/if}
 {/if}
