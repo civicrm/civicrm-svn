@@ -452,13 +452,10 @@ function buildAmount( priceSetId ) {
   //don't allow recurring w/ priceset.
   if ( cj( "#is_recur" ) && cj( 'input:radio[name=is_recur]:checked').val( ) ) {
       //reset the values of recur block. 
-      cj('input[name=is_recur]:radio').each( function( value ) { 
-          if ( !value ) { 
-             cj(this).attr( 'checked', true );
-             cj("#frequency_interval").val('');
-             cj("#installments").val('');
-          }
-      });
+      cj("#installments").val('');
+      cj("#frequency_interval").val('');
+      cj( 'input:radio[name=is_recur]')[0].checked = true;
+
       cj( "#recurringPaymentBlock" ).hide( );
   }
       
