@@ -234,7 +234,10 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             unset($defaults['record_contribution']);
         }
         
-        if ( CRM_Utils_Array::value( 'contribution_recur_id', $defaults ) ) {
+        if ( CRM_Utils_Array::value( 'id' , $defaults ) ) {
+            $subscriptionCancelled = CRM_Member_BAO_Membership::isSubscriptionCancelled( $this->_id );
+        }
+        if ( CRM_Utils_Array::value( 'contribution_recur_id', $defaults ) && !$subscriptionCancelled ) {
             $defaults['auto_renew'] = 1;
         }
 

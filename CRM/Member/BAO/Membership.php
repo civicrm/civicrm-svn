@@ -1830,7 +1830,7 @@ FROM   civicrm_membership_type
         if ( !array_key_exists( $mid, $supportsCancel ) ) {
             $supportsCancel[$mid] = false;
             if ( $isAlreadyCancelled ) {
-                $status = self::isSubscriptionCancelled( $mid );
+                $subscriptionCancelled = self::isSubscriptionCancelled( $mid );
             }
             require_once 'CRM/Core/BAO/PaymentProcessor.php';
             require_once 'CRM/Core/Payment.php';
@@ -1840,7 +1840,7 @@ FROM   civicrm_membership_type
             }
         }
         
-        if ( $status != 'Cancelled' && $supportsCancel[$mid] )  {
+        if ( !$subscriptionCancelled && $supportsCancel[$mid] )  {
             return true;
         } else {
             return false;
@@ -1867,6 +1867,7 @@ LEFT JOIN civicrm_membership_payment cmp ON ( con.id = cmp.contribution_id )
         $statusId = CRM_Core_DAO::singleValueQuery( $sql, $params );
         require_once 'CRM/Contribute/PseudoConstant.php';
         $status = CRM_Contribute_PseudoConstant::contributionStatus( $statusId );
-        return $status;
+        if ( $status == 'Cancelled' ) return true;
+        return false;
     }
 }
