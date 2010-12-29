@@ -296,6 +296,13 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
                 $errors['duration_interval'] = ts('Please enter a duration interval.');
             }
             
+            if ( in_array( CRM_Utils_Array::value( 'auto_renew', $params ), array( 1, 2 ) ) ) {
+                if ( ( $params['duration_interval'] > 1    &&  $params['duration_unit']  == 'year'  ) || 
+                     ( $params['duration_interval'] > 12   &&  $params['duration_unit']  == 'month' ) ) {
+                    $errors['duration_unit'] = ts( 'Automatic renewals are not supported by the currently available payment processors when the membership duration is greater than 1 year / 12 months.' );
+                }
+            }
+
             if ( empty( $params['period_type'] ) ) {
                 $errors['period_type'] = ts('Please select a period type.');
             }
