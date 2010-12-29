@@ -715,6 +715,8 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                     CRM_Utils_Array::value( $mapParam, 
                                             $recurMembershipTypeValues ); 
             }
+            // unset send-receipt option, since receipt will be sent when ipn is received.
+            unset( $this->_params['send_receipt'], $formValues['send_receipt'] );
         }
         
         // set the contact, when contact is selected
