@@ -555,7 +555,7 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
             $checksumValue = CRM_Contact_BAO_Contact_Utils::generateChecksum( $contactID, null, 'inf' );
 
             return CRM_Utils_System::url( 'civicrm/contribute/unsubscribe', 
-                                          "reset=1&mid={$entityID}&cs={$checksumValue}", true );
+                                          "reset=1&mid={$entityID}&cs={$checksumValue}", true, null, false, false );
         }
         return ( $this->_mode == 'test' ) ?
             'https://test.authorize.net' : 'https://authorize.net';

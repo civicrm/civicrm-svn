@@ -236,7 +236,7 @@
       {if $contributeMode eq 'notify' or $contributeMode eq 'directIPN'}
        <tr>
         <td {$labelStyle}>
-         {ts 1=$cancelSubscriptionUrl}This membership will be renewed automatically. You can modify or cancel the auto-renewal option by <a href="$cancelSubscriptionUrl">visiting this web page</a>.{/ts}
+         {ts 1=$cancelSubscriptionUrl}This membership will be renewed automatically. You can modify or cancel the auto-renewal option by <a href="%1">visiting this web page</a>.{/ts}
         </td>
        </tr>
       {/if}
