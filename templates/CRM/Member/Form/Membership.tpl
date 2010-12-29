@@ -164,7 +164,7 @@
 	{/if}
 
     {if $emailExists and $outBound_option != 2 }
-        <tr class="crm-membership-form-block-send_receipt">
+        <tr id="send-receipt" class="crm-membership-form-block-send_receipt">
             <td class="label">{$form.send_receipt.label}</td><td>{$form.send_receipt.html}<br />
             <span class="description">{ts 1=$emailExists}Automatically email a membership confirmation and receipt to %1?{/ts}</span></td>
         </tr>
@@ -255,6 +255,14 @@ cj( function( ) {
     invert              = 0
 }
 {/if}
+{include file="CRM/common/showHideByFieldValue.tpl" 
+    trigger_field_id    ="auto_renew"
+    trigger_value       =""
+    target_element_id   ="send-receipt" 
+    target_element_type ="table-row"
+    field_type          ="radio"
+    invert              = 1
+}
 {literal}
 <script type="text/javascript">
 {/literal}
@@ -355,10 +363,20 @@ function buildAutoRenew( memType ) {
         if ( renew[memType] == 2 ) {
            cj("#auto_renew").attr( 'checked', true );
            cj("#auto_renew").attr( 'disabled', true );
+        } else {
+           cj("#auto_renew").attr( 'checked', false );
+           cj("#auto_renew").removeAttr( 'disabled' );
         }
      } else {
-     cj("#autorenew").hide( );
+        cj("#autorenew").hide( );
      } 
+  }
+
+  if ( cj("#auto_renew").attr( 'checked' ) ) {
+      cj("#send_receipt").attr( 'checked', false );
+      cj(".crm-membership-form-block-send_receipt").hide( );
+  } else {
+      cj(".crm-membership-form-block-send_receipt").show( );
   }
 }
 </script>

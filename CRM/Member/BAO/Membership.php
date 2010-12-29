@@ -1149,15 +1149,6 @@ AND civicrm_membership.is_test = %2";
         }
         
         $form->_params['membershipID'] = $membership->id;
-        if ( CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_Membership', $membership->id, 'contribution_recur_id' ) ) {
-            require_once 'CRM/Member/BAO/Membership.php'; 
-            if ( CRM_Member_BAO_Membership::isCancelSubscriptionSupported( $membership->id ) ) {
-                $form->assign( 'cancelAutoRenew', 
-                               CRM_Utils_System::url( 'civicrm/contribute/unsubscribe', 
-                                                      "reset=1&mid={$membership->id}", true ) );
-            }
-        }
-        
         if ( $form->_contributeMode == 'notify' ) {
             if ( $form->_values['is_monetary'] && $form->_amount > 0.0 && !$form->_params['is_pay_later'] ) {
                 // this does not return
