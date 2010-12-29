@@ -641,7 +641,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
      * function to check if running in upgrade mode
      */
     function isUpgradeMode( $path = null ) {
-        if ( ( $path && $path == 'civicrm/upgrade' ) || ( CRM_Utils_Array::value('upgrade', $_POST ) ) ) {
+        if ( $path && $path == 'civicrm/upgrade' ) {
             return true;
         }
         $config =& self::singleton( );
