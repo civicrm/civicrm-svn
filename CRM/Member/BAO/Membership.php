@@ -1825,10 +1825,13 @@ FROM   civicrm_membership_type
      */
     static function isCancelSubscriptionSupported( $mid, $isAlreadyCancelled = true ) 
     {
+        $cacheKeyString  = "$mid";
+        $cacheKeyString .= $isAlreadyCancelled ? "_1" : "_0";
+        
         static $supportsCancel = array( );
         
-        if ( !array_key_exists( $mid, $supportsCancel ) ) {
-            $supportsCancel[$mid] = false;
+        if ( !array_key_exists( $cacheKeyString, $supportsCancel ) ) {
+            $supportsCancel[$cacheKeyString] = false;
             if ( $isAlreadyCancelled ) {
                 $subscriptionCancelled = self::isSubscriptionCancelled( $mid );
             }
@@ -1836,16 +1839,16 @@ FROM   civicrm_membership_type
             require_once 'CRM/Core/Payment.php';
             $paymentObject = CRM_Core_BAO_PaymentProcessor::getProcessorForEntity( $mid, 'membership', 'obj' );
             if ( ! empty($paymentObject) ) {
-                $supportsCancel[$mid] = CRM_Core_Payment::isCancelSupported( $paymentObject );
+                $supportsCancel[$cacheKeyString] = CRM_Core_Payment::isCancelSupported( $paymentObject );
             }
         }
         
-        if ( !$subscriptionCancelled && $supportsCancel[$mid] )  {
+        if ( !$subscriptionCancelled && $supportsCancel[$cacheKeyString] )  {
             return true;
         } else {
             return false;
         }
-        return $supportsCancel[$mid];
+        return $supportsCancel[$cacheKeyString];
     }
     
     /**
