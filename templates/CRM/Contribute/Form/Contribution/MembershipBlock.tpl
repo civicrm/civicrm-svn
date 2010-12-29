@@ -152,7 +152,14 @@ function showHideAutoRenew( memTypeId )
   
   var autoRenew = cj("#auto_renew");	
   if ( considerUserInput ) isChecked = autoRenew.attr( 'checked' ); 
-  
+
+  //its a normal recur contribution.
+  if ( cj( "is_recur" ) && 
+      ( cj( 'input:radio[name=is_recur]:checked').val() == 1 ) ) {
+     isChecked = false;
+     funName   = 'hide();';
+  }
+
   autoRenew.attr( 'readonly', readOnly );
   autoRenew.attr( 'checked',  isChecked );
   eval( "cj('#allow_auto_renew')." + funName );
