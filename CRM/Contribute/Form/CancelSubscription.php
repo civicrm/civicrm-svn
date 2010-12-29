@@ -95,17 +95,21 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form
                                           "force=1&context={$context}&key={$qfkey}" );
             }
         }
-        
         $session = CRM_Core_Session::singleton( ); 
-        $session->pushUserContext( $this->_userContext );
-        
+        if ( $session->get( 'userID' ) ) {
+            $session->pushUserContext( $this->_userContext );
+        }
+
         if ( $mid ) {
             $membershipTypes  = CRM_Member_PseudoConstant::membershipType( );
             $membershipTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_Membership', $mid, 'membership_type_id' );
             $this->assign( 'membershipType', CRM_Utils_Array::value( $membershipTypeId, $membershipTypes ) );
 
             require_once 'CRM/Member/BAO/Membership.php';
-            $isCancelSupported = CRM_Member_BAO_Membership::isCancelSubscriptionSupported( $mid );
+            if ( CRM_Member_BAO_Membership::isSubscriptionCancelled( $mid ) ) {
+                CRM_Core_Error::fatal( ts( 'The auto renew membership looks to have been cancelled already.' ) );
+            }
+            $isCancelSupported = CRM_Member_BAO_Membership::isCancelSubscriptionSupported( $mid, false );
         }
         if ( $isCancelSupported ) {
             $sql = " 
@@ -137,7 +141,7 @@ INNER JOIN civicrm_contribution       con ON ( con.id = mp.contribution_id )
                     CRM_Core_BAO_PaymentProcessor::getProcessorForEntity( $mid, 'membership', 'obj' );
             }
         } else {
-            CRM_Core_Error::fatal( ts( 'Could not detect payment processor OR the processor does not support cancellation of subscription.' ) );
+            CRM_Core_Error::fatal( ts( 'Could not detect payment processor OR the processor does not support cancellation of auto renew.' ) );
         }
     }
     
@@ -175,16 +179,21 @@ INNER JOIN civicrm_contribution       con ON ( con.id = mp.contribution_id )
         if ( is_a( $cancelSubscription, 'CRM_Core_Error' ) ) {
             CRM_Core_Error::displaySessionError( $cancelSubscription );
         } else if ( $cancelSubscription ) {
-            $status = ts( 'Subscription is cancelled successfully.' );
+            $status = ts( 'The auto-renewal option for your membership has been successfully cancelled. Your membership has not been cancelled. However you will need to arrange payment for renewal when your membership expires.' );
             require_once 'CRM/Contribute/BAO/ContributionRecur.php';
             $cancelled = CRM_Contribute_BAO_ContributionRecur::cancelRecurContribution( $this->_contributionRecurId, 
                                                                                         $this->_objects );
         } else {
-            $status = ts( 'Subscription could not be cancelled.' );
+            $status = ts( 'Auto renew could not be cancelled.' );
         }
         
         if ( $status ) {
-            CRM_Core_Session::setStatus( $status );
+            $session = CRM_Core_Session::singleton( );
+            if ( $session->get( 'userID' ) ) {
+                CRM_Core_Session::setStatus( $status );
+            } else if ( function_exists( 'drupal_set_message' ) ) {
+                drupal_set_message( $status );
+            }
         }
     }
 }
