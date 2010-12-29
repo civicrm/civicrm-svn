@@ -194,7 +194,11 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             $this->_defaults['selectMembership'] = $defaultMemType =
                 $this->_defaultMemTypeId ? $this->_defaultMemTypeId : 
                 CRM_Utils_Array::value( 'membership_type_default', $this->_membershipBlock );
-            if ( CRM_utils_Array::value( 'is_recur', $this->_paymentProcessor ) ) {
+            if ( $selectedMemType = CRM_Utils_Array::value( 'selectMembership', $this->_submitValues ) ) {
+                if ( $this->_membershipBlock['auto_renew'][$selectedMemType] == 2 ) {
+                    $this->assign( 'defaultMemTypeAutoRenew', $this->_membershipBlock['auto_renew'][$selectedMemType] );
+                }
+            } else if ( CRM_utils_Array::value( 'is_recur', $this->_paymentProcessor ) ) {
                 $this->assign( 'defaultMemTypeAutoRenew', $this->_membershipBlock['auto_renew'][$defaultMemType] );
             }
         }

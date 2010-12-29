@@ -157,13 +157,14 @@ function showAutoRenew( memTypeAutoRenew )
 
     if ( memTypeAutoRenew == 1 ) {
         cj("#auto-renew").show( );
-        return;
+        cj("#auto_renew").attr( 'disabled', false );
     } else if ( memTypeAutoRenew == 2 ) {
         cj("#auto_renew").attr( 'checked', true );
+        cj("#auto_renew").attr( 'disabled', true );
     } else {
         cj("#auto_renew").attr( 'checked', false );
+        cj("#auto-renew").hide( );
     }
-    cj("#auto-renew").hide( );
 }
 </script>
 {/literal}
