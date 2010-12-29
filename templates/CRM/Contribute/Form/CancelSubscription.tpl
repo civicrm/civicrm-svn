@@ -23,8 +23,8 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<h3>{ts}Cancel Membership Subscription{/ts}</h3>
-<div class="crm-block crm-form-block crm-contribution-form-block">
+<h3>{ts}Cancel Auto-renewal Option for {$membershipType} Membership{/ts}</h3>
+<div class="crm-block crm-form-block crm-auto-renew-membership-cancellation">
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 <div class="messages status">
           <div class="icon inform-icon"></div>       

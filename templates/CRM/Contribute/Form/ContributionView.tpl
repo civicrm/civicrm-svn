@@ -64,7 +64,7 @@
         <td><strong>{$total_amount|crmMoney:$currency}</strong>&nbsp; 
             {if $contribution_recur_id}
               <strong>{ts}Recurring Contribution{/ts}</strong> <br/>
-              {ts}Installments{/ts}: {$recur_installments}, {ts}Interval{/ts}: {$recur_frequency_interval} {$recur_frequency_unit}(s)
+              {ts}Installments{/ts}: {if $recur_installments}{$recur_installments}{else}{ts}(ongoing){/ts}{/if}, {ts}Interval{/ts}: {$recur_frequency_interval} {$recur_frequency_unit}(s)
             {/if}
         </td>
     </tr>
