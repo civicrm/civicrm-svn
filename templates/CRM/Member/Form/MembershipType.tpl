@@ -192,7 +192,7 @@
         <div class="description">
             {ts}If you would like Membership Renewal Reminder emails sent to members automatically, you need to create a reminder message template and you need to configure and periodically run a 'cron' job on your server.{/ts} {docURL page="Membership Types"}
         </div>
-        {if $noMsgTemplates}
+        {if !$hasMsgTemplates}
             {capture assign=msgTemplate}{crmURL p='civicrm/admin/messageTemplates' q="action=add&reset=1"}{/capture}
             <div class="status message">
                 {ts 1=$msgTemplate}No message templates have been created yet. If you want renewal reminders to be sent, <a href='%1'>click here</a> to create a reminder email template. Then return to this screen to assign the renewal reminder message, and set reminder date.{/ts}
@@ -205,12 +205,14 @@
                         <span class="description">{ts}Select the renewal reminder message to be sent to the members of this membership type.{/ts}</span>
                     </td>
                 </tr>
+		{if $allowAutoRenewMsg}
                 <tr id="autoRenewalMsgId" class="crm-membership-type-form-block-autorenewal_msg_id">
                    <td class="label">{$form.autorenewal_msg_id.label}</td>
                    <td>{$form.autorenewal_msg_id.html}<br />
                        <span class="description">{ts}Select the autorenewal reminder message to be sent to the members of this membership type.{/ts}</span>
                    </td>
                 </tr>
+		{/if}
                 <tr class="crm-membership-type-form-block-renewal_reminder_day">              
                     <td class="label">{$form.renewal_reminder_day.label}</td>
                     <td>{$form.renewal_reminder_day.html}<br />
@@ -254,24 +256,25 @@
 		    document.getElementsByName("fixed_period_rollover_day[d]")[0].value = "";
 	    }
     }
-
-    {/literal}
-
-    {if $action eq 1 || ( $authorize && !$autoRenewMsg ) }
-        {literal} cj("#autoRenewalMsgId").hide( ); {/literal}
-    {elseif $action eq 2 && $authorize}
-        {literal} cj("#autoRenewalMsgId").show( ); {/literal}
-    {else}
-        {literal} cj("#autoRenewalMsgId").hide( ); {/literal}
-    {/if}
-    {literal}
     
-    function setReminder ( renew ) {
-       if ( renew.value == 1 || renew.value == 2 ) {
-       	  cj("#autoRenewalMsgId").show();
-       } else { 
-          cj("#autoRenewalMsgId").hide();
+    //load the auto renew msg if recur allow.
+    {/literal}{if $authorize and $allowAutoRenewMsg}{literal}
+    cj( function(){ 
+       setReminder( null ); 
+    });
+    {/literal}{/if}{literal}
+    
+    function setReminder( autoRenewOpt ) {
+       //don't process.
+       if ( !{/literal}{$allowAutoRenewMsg}{literal} ) {
+          return;
        }
+       if ( !autoRenewOpt ) {
+       	  autoRenewOpt = cj( 'input:radio[name=auto_renew]:checked').val();
+       }	     
+       funName = 'hide();';
+       if ( autoRenewOpt == 1 || autoRenewOpt == 2 ) funName = 'show();';
+       eval( "cj('#autoRenewalMsgId')." + funName );
     }
     </script>
 {/literal}
