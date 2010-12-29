@@ -103,7 +103,7 @@
         </tr>
 	
         {/foreach}
-	<tr id="auto-renew">    
+	<tr id="allow_auto_renew">    
 	     <td style="width: auto;">{$form.auto_renew.html}</td>
 	     <td style="width: auto;">
 	        {$form.auto_renew.label}
@@ -127,44 +127,37 @@
 {/if}
 
 {literal}
-<script>
-{/literal}
-{if $defaultMemTypeAutoRenew}
-   {literal}
-      var defaultMemTypeAutoRenew = {/literal}{$defaultMemTypeAutoRenew}{literal};
-      showAutoRenew( defaultMemTypeAutoRenew );
-   {/literal}
-{else}
-   {literal}
-        cj("#auto-renew").hide( );
-   {/literal}
-{/if}
-{if $isRecur} 
-    {literal} var isRecurBlock = true; {/literal}
-{else}
-    {literal} var isRecurBlock = false;{/literal}
-{/if}
-{literal}
-
-function showAutoRenew( memTypeAutoRenew ) 
+<script type="text/javascript">
+cj(function(){
+   showHideAutoRenew( null );	
+});
+function showHideAutoRenew( memTypeId ) 
 {
-    
-    if ( isRecurBlock ) {
-         cj("#auto_renew").attr( 'checked', false );
-         cj("#auto-renew").hide( );
-	 return;
-    }    
-
-    if ( memTypeAutoRenew == 1 ) {
-        cj("#auto-renew").show( );
-        cj("#auto_renew").attr( 'disabled', false );
-    } else if ( memTypeAutoRenew == 2 ) {
-        cj("#auto_renew").attr( 'checked', true );
-        cj("#auto_renew").attr( 'disabled', true );
-    } else {
-        cj("#auto_renew").attr( 'checked', false );
-        cj("#auto-renew").hide( );
-    }
+  var considerUserInput = {/literal}'{$takeUserSubmittedAutoRenew}'{literal};	    
+  if ( memTypeId ) considerUserInput = false;
+  if ( !memTypeId ) memTypeId = cj('input:radio[name=selectMembership]:checked').val();
+  var renewOptions  = {/literal}{$autoRenewMembershipTypeOptions}{literal};	 
+  var currentOption = eval( "renewOptions." + 'autoRenewMembershipType_' + memTypeId );
+  
+  funName = 'hide();';
+  var readOnly = false;
+  var isChecked  = false; 
+  if ( currentOption == 1 ) {
+     funName = 'show();';
+     isChecked = true;
+  } else if ( currentOption == 2 ) {
+     funName = 'show();';
+     isChecked = readOnly = true;
+  }
+  
+  var autoRenew = cj("#auto_renew");	
+  if ( considerUserInput ) isChecked = autoRenew.attr( 'checked' ); 
+  
+  autoRenew.attr( 'readonly', readOnly );
+  autoRenew.attr( 'checked',  isChecked );
+  eval( "cj('#allow_auto_renew')." + funName );
 }
+
 </script>
 {/literal}
+
