@@ -213,9 +213,22 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
             }
         }
 
+        if ( CRM_Utils_Array::value( 'contribution', $ids ) && 
+             !CRM_Utils_Array::value( 'softID', $params ) ) {
+            if ( $softID = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionSoft', $ids['contribution'], 'id', 'contribution_id') ) {
+                $params['softID'] = $softID;
+            }
+        }
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
 
+        if ( CRM_Utils_Array::value( 'contribution', $ids ) && 
+             ( !CRM_Utils_Array::value( 'soft_credit_to', $params ) ) &&
+             CRM_Utils_Array::value( 'softID', $params ) ) {
+            $softCredit = new CRM_Contribute_DAO_ContributionSoft( );
+            $softCredit->id = $params['softID'];
+            $softCredit->delete( );
+        }
         $contribution = self::add($params, $ids);
 
         if ( is_a( $contribution, 'CRM_Core_Error') ) {
