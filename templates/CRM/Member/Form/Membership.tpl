@@ -351,7 +351,7 @@ function checkProcessor( Id ) {
 }
 
 function buildAutoRenew( memType ) {
-  var recur = {/literal}{$recurProcessor}{literal};	
+  var recur = {/literal}{$recurProcessor}{literal};
   var processor = cj("#payment_processor_id").val();
   if ( !recur[processor] ) {
       cj("#autorenew").hide( );
@@ -369,14 +369,16 @@ function buildAutoRenew( memType ) {
         }
      } else {
         cj("#autorenew").hide( );
+        cj("#send-receipt").show( );
+        return;
      } 
   }
 
   if ( cj("#auto_renew").attr( 'checked' ) ) {
       cj("#send_receipt").attr( 'checked', false );
-      cj(".crm-membership-form-block-send_receipt").hide( );
+      cj("#send-receipt").hide( );
   } else {
-      cj(".crm-membership-form-block-send_receipt").show( );
+      cj("#send-receipt").show( );
   }
 }
 </script>
