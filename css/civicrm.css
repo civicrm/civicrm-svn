@@ -2457,6 +2457,9 @@ span.icon {
 
 
 /* civicrm admin menu */
+#civicrm-menu {
+    height:27px;
+}
 
 #civicrm-menu .ac_input, #crm-container .ac_input {
     background:white url(../i/magnify.gif) no-repeat scroll right center;
