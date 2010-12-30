@@ -729,7 +729,8 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
             $form->assign( 'autoRenewMembershipTypeOptions', json_encode( $autoRenewMembershipTypeOptions ) );
             
             //give preference to user submitted auto_renew value.
-            $form->assign('takeUserSubmittedAutoRenew', empty( $_POST ) ? false : true );
+            $takeUserSubmittedAutoRenew = ( !empty( $_POST ) || $this->isSubmitted( ) ) ? true : false;
+            $form->assign( 'takeUserSubmittedAutoRenew', $takeUserSubmittedAutoRenew );
         }
 
         return $separateMembershipPayment;
