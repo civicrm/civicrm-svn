@@ -265,20 +265,26 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
         }
 
         $showApprovalLinks = true;
-        $noShowLinks = false;
+        $noShowLinks = $blockLinks = false;
         require_once 'CRM/Mailing/Info.php';
         if ( CRM_Mailing_Info::workflowEnabled( ) ) {
             if ( ! CRM_Core_Permission::check( 'approve mailings' ) ) {
                 $showApprovalLinks = false;
+                 
             } else {
                 if ( ! CRM_Core_Permission::check( 'access CiviMail' ) ) {
                     $noShowLinks = true;
                 }
             }
+            //only create action
+            if ( ! CRM_Core_Permission::check( 'approve mailings' ) &&
+                 ! CRM_Core_Permission::check( 'schedule mailings' ) &&
+                   CRM_Core_Permission::check( 'create mailings' ) ) {
+                $blockLinks = true;
+            }
         } else {
             $showApprovalLinks = false;
         }
-        
         $mailing = new CRM_Mailing_BAO_Mailing();
         
         $params = array( );
@@ -312,7 +318,9 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
                     }    
                 } else {
                     if ( !( $row['status'] == 'Not scheduled' ) ) {
-                        $actionMask = CRM_Core_Action::VIEW;
+                        if ( $blockLinks == false ) {
+                            $actionMask = CRM_Core_Action::VIEW;
+                        }
                         if ( !in_array( $row['id'], $searchMailings ) ) {
                             $actionMask |= CRM_Core_Action::UPDATE;
                         }
@@ -324,7 +332,10 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
                         }
                     }
                     if ( in_array( $row['status'], array( 'Scheduled', 'Running', 'Paused' ) ) ) {
-                        $actionMask |= CRM_Core_Action::DISABLE;
+                        if ( $blockLinks == false ) {
+                            $actionMask |= CRM_Core_Action::DISABLE;
+                        }
+
                         if ( $row['status'] == 'Scheduled' &&
                              $showApprovalLinks == true &&
                              empty( $row['approval_status_id'] ) ) {

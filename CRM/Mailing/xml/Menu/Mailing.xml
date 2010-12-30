@@ -54,7 +54,7 @@
      <path>civicrm/mailing/send</path>
      <title>New Mailing</title>
      <page_callback>CRM_Mailing_Controller_Send</page_callback>
-     <access_arguments>access CiviMail;create mailings</access_arguments>
+     <access_arguments>access CiviMail;create mailings;schedule mailings</access_arguments>
      <page_type>1</page_type>
      <weight>610</weight>
   </item>
@@ -63,7 +63,7 @@
      <title>Scheduled and Sent Mailings</title>
      <path_arguments>scheduled=true</path_arguments>
      <page_callback>CRM_Mailing_Page_Browse</page_callback>
-     <access_arguments>access CiviMail;approve mailings</access_arguments>
+     <access_arguments>access CiviMail;approve mailings;create mailings</access_arguments>
      <page_type>1</page_type>
      <weight>620</weight>
   </item>
@@ -72,7 +72,7 @@
      <title>Draft and Unscheduled Mailings</title>
      <path_arguments>scheduled=false</path_arguments>
      <page_callback>CRM_Mailing_Page_Browse</page_callback>
-     <access_arguments>access CiviMail;create mailings</access_arguments>
+     <access_arguments>access CiviMail;create mailings;schedule mailings</access_arguments>
      <page_type>1</page_type>
      <weight>620</weight>
   </item>
