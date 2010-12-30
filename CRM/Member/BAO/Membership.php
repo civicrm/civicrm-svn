@@ -1826,30 +1826,27 @@ FROM   civicrm_membership_type
      * @access public
      * @static
      */
-    static function isCancelSubscriptionSupported( $mid, $isAlreadyCancelled = true ) 
+    static function isCancelSubscriptionSupported( $mid, $isNotCancelled = true ) 
     {
         $cacheKeyString  = "$mid";
-        $cacheKeyString .= $isAlreadyCancelled ? "_1" : "_0";
+        $cacheKeyString .= $isNotCancelled ? "_1" : "_0";
         
         static $supportsCancel = array( );
         
         if ( !array_key_exists( $cacheKeyString, $supportsCancel ) ) {
             $supportsCancel[$cacheKeyString] = false;
-            if ( $isAlreadyCancelled ) {
-                $subscriptionCancelled = self::isSubscriptionCancelled( $mid );
+            $isCancelled = false;
+
+            if ( $isNotCancelled ) {
+                $isCancelled = self::isSubscriptionCancelled( $mid );
             }
+
             require_once 'CRM/Core/BAO/PaymentProcessor.php';
             require_once 'CRM/Core/Payment.php';
             $paymentObject = CRM_Core_BAO_PaymentProcessor::getProcessorForEntity( $mid, 'membership', 'obj' );
             if ( ! empty($paymentObject) ) {
-                $supportsCancel[$cacheKeyString] = CRM_Core_Payment::isCancelSupported( $paymentObject );
+                $supportsCancel[$cacheKeyString] = CRM_Core_Payment::isCancelSupported( $paymentObject ) && !$isCancelled;
             }
-        }
-        
-        if ( !$subscriptionCancelled && $supportsCancel[$cacheKeyString] )  {
-            return true;
-        } else {
-            return false;
         }
         return $supportsCancel[$cacheKeyString];
     }
