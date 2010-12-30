@@ -266,7 +266,7 @@
     
     function setReminder( autoRenewOpt ) {
        //don't process.
-       if ( !{/literal}{$allowAutoRenewMsg}{literal} ) {
+       if ( !{/literal}'{$allowAutoRenewMsg}'{literal} ) {
           return;
        }
        if ( !autoRenewOpt ) {
