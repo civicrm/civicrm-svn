@@ -260,8 +260,9 @@ FROM civicrm_navigation WHERE domain_id = $domainID {$whereClause} ORDER BY pare
      * @return array $navigationTree nested array of menus
      * @static
      */
-    static function buildNavigationTree( &$navigationTree, $parentID ) 
+    static function buildNavigationTree( &$navigationTree, $parentID, $cleanNavUrl = false ) 
     {
+
         $whereClause = " parent_id IS NULL";
 
         if (  $parentID ) {
@@ -289,14 +290,14 @@ ORDER BY parent_id, weight";
             // for each menu get their children
             $navigationTree[$navigation->id] = array( 'attributes' => array( 'label'      => $navigation->label,
                                                                              'name'       => $navigation->name,
-                                                                             'url'        => $navigation->url,
+                                                                             'url'        => $cleanNavUrl ? self::cleanNavigationUrl($navigation->url) : $navigation->url,
                                                                              'permission' => $navigation->permission,
                                                                              'operator'   => $navigation->permission_operator,
                                                                              'separator'  => $navigation->has_separator,
                                                                              'parentID'   => $navigation->parent_id,
                                                                              'navID'      => $navigation->id,
                                                                              'active'     => $navigation->is_active ));
-            self::buildNavigationTree( $navigationTree[$navigation->id]['child'], $navigation->id );
+            self::buildNavigationTree( $navigationTree[$navigation->id]['child'], $navigation->id, $cleanNavUrl );
         }
 
         return $navigationTree;
@@ -312,8 +313,16 @@ ORDER BY parent_id, weight";
      */
     static function buildNavigation( $json = false ) 
     {
+        $cleanNavUrl = false;
+        $config   = CRM_Core_Config::singleton();
+        if ( $config->userFramework == 'Drupal' && 
+             function_exists('variable_get') &&
+             variable_get('clean_url', 0 ) )  {
+            $cleanNavUrl = true;
+        }
+        
         $navigations = array( );
-        self::buildNavigationTree( $navigations, $parent = NULL );
+        self::buildNavigationTree( $navigations, $parent = NULL, $cleanNavUrl );
         $navigationString = null;
 
         // run the Navigation  through a hook so users can modify it
@@ -749,5 +758,25 @@ ORDER BY parent_id, weight";
               $dao->copyValues( $newParams );
               $dao->save( );
           }
+      }
+     
+      /**
+       * Function to clean navigation url, replaces first '&' with '?' 
+       * 
+       * @param string $navUrl
+       *
+       * @return string $navUrl, clean url
+       * @static
+       */
+      static function cleanNavigationUrl( $navUrl ) {
+          if ( !$navUrl ) {
+              return null;
+          }
+          
+          if ( $pos = strpos($navUrl, '&') ) {
+              $navUrl = substr_replace( $navUrl, '?', $pos, 1 );
+          }
+                        
+          return $navUrl;
       }
 }
