@@ -110,7 +110,11 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page {
                 $showLinks = false;
             }
         }
-        $this->assign('showLinks', $showLinks);
+        $this->assign('showLinks', $showLinks); 
+        if ( CRM_Core_Permission::check( 'access CiviMail' ) ) {
+            $archiveLinks = true;
+            $this->assign( 'archiveLinks', $archiveLinks );
+        }
     }
 
     /** 

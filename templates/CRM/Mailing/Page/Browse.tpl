@@ -118,6 +118,6 @@
             {capture assign=crmURL}{crmURL p='civicrm/mailing/send' q='reset=1'}{/capture}
             {capture assign=archiveURL}{crmURL p='civicrm/mailing/browse/archived' q='reset=1'}{/capture}
             {ts}There are no Scheduled or Sent Mailings.{/ts}
-	    {if $showLinks}{ts 1=$crmURL, 2=$archiveURL} You can <a href='%1'>create and send one</a> OR you can search the <a href='%2'>Archived Mailings</a>.{/ts}{/if}	    
+	    {if $showLinks}{ts 1=$crmURL} You can <a href='%1'>create and send one</a>{/ts}{/if}{if $archiveLinks}{ts 1=$archiveURL} OR you can search the <a href='%1'>Archived Mailings</a>{/ts}{/if}.	    
    </div>
 {/if}
