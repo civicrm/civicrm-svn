@@ -270,18 +270,28 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
         if ( CRM_Mailing_Info::workflowEnabled( ) ) {
             if ( ! CRM_Core_Permission::check( 'approve mailings' ) ) {
                 $showApprovalLinks = false;
-                 
             } else {
                 if ( ! CRM_Core_Permission::check( 'access CiviMail' ) ) {
                     $noShowLinks = true;
                 }
             }
+
             //only create action
             if ( ! CRM_Core_Permission::check( 'approve mailings' ) &&
                  ! CRM_Core_Permission::check( 'schedule mailings' ) &&
-                   CRM_Core_Permission::check( 'create mailings' ) ) {
+                 ! CRM_Core_Permission::check( 'access CiviMail' ) &&
+                 CRM_Core_Permission::check( 'create mailings' ) ) {
                 $blockLinks = true;
             }
+            
+            //only schedule action
+            if ( ! CRM_Core_Permission::check( 'approve mailings' ) &&
+                 CRM_Core_Permission::check( 'schedule mailings' ) &&
+                 ! CRM_Core_Permission::check( 'access CiviMail' ) &&
+                 !CRM_Core_Permission::check( 'create mailings' ) ) {
+                $blockLinks = true;
+            }
+
         } else {
             $showApprovalLinks = false;
         }
