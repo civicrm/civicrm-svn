@@ -111,14 +111,10 @@ function civicrm_rules_civicrm_pageRun( &$page ) {
  */
 function civicrm_rules_civicrm_postProcess( $formName, &$form ) {
     $eventName = $eventParams  = null;
-
+   
     switch ( $formName ) {
     case 'CRM_Mailing_Form_Schedule':
         $eventName = 'mailing_scheduled';
-        break;
-
-    case 'CRM_Mailing_Form_Test':
-        $eventName = 'mailing_test';
         break;
 
     case 'CRM_Mailing_Form_Approve':
@@ -127,6 +123,13 @@ function civicrm_rules_civicrm_postProcess( $formName, &$form ) {
         
     case 'CRM_Mailing_Form_Upload':
         $eventName = 'mailing_uploaded';
+        break;
+        
+    case 'CRM_Mailing_Form_Test':
+        $eventName = 'mailing_test';
+        if ( $form->_submitValues['_qf_Test_next'] == 'Inform Scheduler' ) {
+            $eventName = 'mailing_inform';
+        } 
         break;
         
     default:
