@@ -146,7 +146,7 @@ FROM   civicrm_mailing
         
     case 'CRM_Mailing_Form_Test':
         $eventName = 'mailing_inform';
-        $mailingId = $form->get( 'mailing_id' );
+        $mailingId = $form->get( 'mailing_id' ) ? $form->get( 'mailing_id' ) : $form->get( 'mid' );
         break;
         
     default:
