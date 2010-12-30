@@ -761,13 +761,21 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         if ( CRM_Utils_Array::value( 'is_email_receipt', $form->_values ) ) {
             $receiptDate = $now;
         }
-
-        // check contribution Type
+        
+        //get the contrib page id.
+        $contributionPageId = null;
+        if ( $online ) {
+            $contributionPageId = $form->_id;
+        } else {
+            //also for offline we do support - CRM-7290
+            $contributionPageId = CRM_Utils_Array::value( 'contribution_page_id', $params );
+        }
+        
         // first create the contribution record
         $contribParams = array(
                                'contact_id'            => $contactID,
                                'contribution_type_id'  => $contributionType->id,
-                               'contribution_page_id'  => $online ? $form->_id : null,
+                               'contribution_page_id'  => $contributionPageId,
                                'receive_date'          => $now,
                                'non_deductible_amount' => $nonDeductibleAmount,
                                'total_amount'          => $params['amount'],
