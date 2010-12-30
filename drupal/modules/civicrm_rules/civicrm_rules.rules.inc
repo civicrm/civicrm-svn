@@ -83,12 +83,6 @@ function civicrm_rules_event_info( ) {
                                              'arguments' => rules_events_hook_civicrm_arguments( t( 'Mailing content uploaded' ),
                                                                                                  'mailing' ),
                                               ),
-                 'mailing_test'     => array(
-                                             'label'     => t( 'Mailing has been tested' ),
-                                             'module'    => 'CiviCRM Mailing',
-                                             'arguments' => rules_events_hook_civicrm_arguments( t( 'Mailing content tested' ),
-                                                                                                 'mailing' ),
-                                              ),
                  'mailing_scheduled' => array(
                                               'label'     => t( 'Mailing has been scheduled' ),
                                               'module'    => 'CiviCRM Mailing',

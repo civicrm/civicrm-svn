@@ -110,14 +110,11 @@ function civicrm_rules_civicrm_pageRun( &$page ) {
  */
 function civicrm_rules_civicrm_postProcess( $formName, &$form ) {
     $eventName = $eventParams  = null;
-    require_once 'CRM/Mailing/DAO/Mailing.php';
-    $eventParams = new CRM_Mailing_DAO_Mailing( );
-    $eventParams->id = $form->get( 'mid' );
-    
     switch ( $formName ) {
     case 'CRM_Mailing_Form_Group':
         if (  $form->get( 'continue' ) == true ) {
             $eventName = 'mailing_edit';
+            $mailingId = $form->get( 'mid' );
         } else {
             $query = "
 SELECT max(id)
@@ -125,30 +122,31 @@ FROM   civicrm_mailing
 ";
             $mailingId = CRM_Core_DAO::singleValueQuery( $query );
             $eventName = 'mailing_create';
-            $eventParams->id = $mailingId;
         }    
-        break;    
+        break;
+    
     case 'CRM_Mailing_Form_Schedule':
-        if ( ! $eventParams->id )
-            $eventParams->id = $form->_mailingID; 
+        if ( $form->get( 'mid' ) ) {
+            $mailingId = $form->get( 'mid' );
+        } else {
+            $mailingId = $form->_mailingID; 
+        }
         $eventName = 'mailing_scheduled';
         break;
 
     case 'CRM_Mailing_Form_Approve':
+        $mailingId = $form->get( 'mid' );
         $eventName = 'mailing_approved';
         break;
         
     case 'CRM_Mailing_Form_Upload':
         $eventName = 'mailing_uploaded';
-        $eventParams->id = $form->_mailingID;
+        $mailingId = $form->_mailingID;
         break;
         
     case 'CRM_Mailing_Form_Test':
-        $eventName = 'mailing_test';
-        $eventParams->id = $form->get( 'mailing_id' );
-        if ( $form->_submitValues['_qf_Test_next'] == 'Inform Scheduler' ) {
-            $eventName = 'mailing_inform';
-        } 
+        $eventName = 'mailing_inform';
+        $mailingId = $form->_mailingID;
         break;
         
     default:
@@ -156,6 +154,9 @@ FROM   civicrm_mailing
     }
 
     if ( $eventName ) {
+        require_once 'CRM/Mailing/DAO/Mailing.php';
+        $eventParams = new CRM_Mailing_DAO_Mailing( );
+        $eventParams->id = $mailingId;
         $eventParams->find( true );
         rules_invoke_event( $eventName, $eventParams );
     }
