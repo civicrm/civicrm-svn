@@ -357,33 +357,29 @@ class CRM_Core_BAO_CMSUser
 
 
         if ( $isDrupal ) {
-            _user_edit_validate(null, $params );
             $errors = form_get_errors( );
-        
             if ( $errors ) {
-                if ( CRM_Utils_Array::value( 'name', $errors ) ) {
-                    $errors['cms_name'] = $errors['name'];
-                } 
-            
-                if ( CRM_Utils_Array::value( 'mail', $errors ) ) {
-                    $errors[$emailName] = $errors['mail'];
-                } 
-            
-                // also unset drupal messages to avoid twice display of errors
+                // unset drupal messages to avoid twice display of errors
                 unset( $_SESSION['messages'] );
             }
-        
-            // drupal api sucks
-            // do the name check manually
-            $nameError = user_validate_name( $params['name'] );
-            if ( $nameError ) {
-                $errors['cms_name'] = $nameError;
+
+            if ( CRM_Utils_Array::value('name', $params) ) {
+                if ( $nameError = user_validate_name( $params['name'] ) ) {
+                    $errors['cms_name'] = $nameError;
+                } elseif ( (bool) db_select('users')->fields($config->userFrameworkUsersTableName, array('uid'))->condition('name', db_like($params['name']), 'LIKE')->range(0, 1)->execute()->fetchField() )  {
+                    $errors['cms_name'] = ts( 'The username %1 is already taken. Please select another username.', array( 1 => $params['name'] ) );
+                }
             }
-        
-            $sql = "
-SELECT name, mail
-  FROM {$config->userFrameworkUsersTableName}
- WHERE (LOWER(name) = LOWER('$name')) OR (LOWER(mail) = LOWER('$email'))";
+
+            if ( CRM_Utils_Array::value( 'mail', $params ) ) {
+                if ( $emailError = user_validate_mail($params['mail']) ) {
+                    $errors[$emailName] = $emailError;
+                } elseif ( (bool) db_select('users')->fields($config->userFrameworkUsersTableName, array('uid'))->condition('mail', db_like($params['mail']), 'LIKE')->range(0, 1)->execute()->fetchField() ) {
+                    $errors[$emailName] = ts( 'This email %1 is already registered. Please select another email.', 
+                                              array( 1 => $params['mail']) );
+                }
+            }
+
         } elseif ( $isJoomla ) {
             //don't allow the special characters and min. username length is two
             //regex \\ to match a single backslash would become '/\\\\/' 
@@ -396,26 +392,29 @@ SELECT username, email
   FROM {$config->userFrameworkUsersTableName}
  WHERE (LOWER(username) = LOWER('$name')) OR (LOWER(email) = LOWER('$email'))
 ";
-        }
-        
-        $db_cms = DB::connect($config->userFrameworkDSN);
-        if ( DB::isError( $db_cms ) ) { 
-            die( "Cannot connect to UF db via $dsn, " . $db_cms->getMessage( ) ); 
-        }
-        $query = $db_cms->query( $sql );
-        $row = $query->fetchRow( );
-        if ( !empty( $row ) ) {
-            $dbName  = CRM_Utils_Array::value( 0, $row );
-            $dbEmail = CRM_Utils_Array::value( 1, $row );
-            if ( strtolower( $dbName ) == strtolower( $name ) ) {
-                $errors['cms_name'] = ts( 'The username %1 is already taken. Please select another username.', 
-                                          array( 1 => $name ) );
+
+                    
+            $db_cms = DB::connect($config->userFrameworkDSN);
+            if ( DB::isError( $db_cms ) ) { 
+                die( "Cannot connect to UF db via $dsn, " . $db_cms->getMessage( ) ); 
             }
-            if ( strtolower( $dbEmail ) == strtolower( $email ) ) {
-                $errors[$emailName] = ts( 'This email %1 is already registered. Please select another email.', 
-                                          array( 1 => $email) );
+            
+            $query = $db_cms->query( $sql );
+            $row = $query->fetchRow( );
+            if ( !empty( $row ) ) {
+                $dbName  = CRM_Utils_Array::value( 0, $row );
+                $dbEmail = CRM_Utils_Array::value( 1, $row );
+                if ( strtolower( $dbName ) == strtolower( $name ) ) {
+                    $errors['cms_name'] = ts( 'The username %1 is already taken. Please select another username.', 
+                                              array( 1 => $name ) );
+                }
+                if ( strtolower( $dbEmail ) == strtolower( $email ) ) {
+                    $errors[$emailName] = ts( 'This email %1 is already registered. Please select another email.', 
+                                              array( 1 => $email) );
+                }
             }
         }
+
     }
     
     /**
