@@ -600,13 +600,13 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
      *
      * @static
      */
-    function buildMembershipBlock( &$form,
-                                   $pageID,
-                                   $formItems = false,
-                                   $selectedMembershipTypeID = null,
-                                   $thankPage       = false,
-                                   $isTest          = null,
-                                   $memberContactId = null )
+    static function buildMembershipBlock( &$form,
+                                          $pageID,
+                                          $formItems = false,
+                                          $selectedMembershipTypeID = null,
+                                          $thankPage       = false,
+                                          $isTest          = null,
+                                          $memberContactId = null )
     {
         require_once 'CRM/Member/DAO/MembershipBlock.php';
 
@@ -729,7 +729,7 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
             $form->assign( 'autoRenewMembershipTypeOptions', json_encode( $autoRenewMembershipTypeOptions ) );
             
             //give preference to user submitted auto_renew value.
-            $takeUserSubmittedAutoRenew = ( !empty( $_POST ) || $this->isSubmitted( ) ) ? true : false;
+            $takeUserSubmittedAutoRenew = ( !empty( $_POST ) || $form->isSubmitted( ) ) ? true : false;
             $form->assign( 'takeUserSubmittedAutoRenew', $takeUserSubmittedAutoRenew );
         }
 
