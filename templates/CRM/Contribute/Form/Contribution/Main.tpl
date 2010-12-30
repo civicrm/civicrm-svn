@@ -332,8 +332,9 @@ function enablePeriod ( ) {
 	document.getElementById('installments').disabled   = true;
 	document.getElementById('frequency_unit').disabled = true;
 
-	//get back to auto renew settings.
-	if ( {/literal}'{$allowAutoRenewMembership}'{literal} && cj("#auto_renew") ) {
+	//get back to auto renew settings. 
+	var allowAutoRenew = {/literal}'{$allowAutoRenewMembership}'{literal};
+	if ( allowAutoRenew && cj("#auto_renew") ) {
 	   showHideAutoRenew( null );
 	}	
     } else {
@@ -344,7 +345,8 @@ function enablePeriod ( ) {
 	document.getElementById('frequency_unit').disabled = false;
 	
 	//disabled auto renew settings.
-	if ( {/literal}'{$allowAutoRenewMembership}'{literal} && cj("#auto_renew") ) {
+	var allowAutoRenew = {/literal}'{$allowAutoRenewMembership}'{literal};
+	if ( allowAutoRenew && cj("#auto_renew") ) {
 	    cj("#auto_renew").attr( 'checked', false );
 	    cj('#allow_auto_renew').hide( );
 	} 
