@@ -377,9 +377,19 @@ function buildAutoRenew( memType ) {
   if ( cj("#auto_renew").attr( 'checked' ) ) {
       cj("#send_receipt").attr( 'checked', false );
       cj("#send-receipt").hide( );
+      cj("#notice").hide( );
   } else {
       cj("#send-receipt").show( );
   }
+}
+
+function showHideNotice( )
+{
+   if ( cj("#auto_renew").attr( 'checked' ) ) {
+       cj("#notice").hide( );
+   } else if ( cj("#send_receipt").attr( 'checked' ) ) {
+       cj("#notice").show( );
+   }
 }
 </script>
 {/literal}

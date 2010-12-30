@@ -416,7 +416,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                 $this->assign( 'autoRenew', json_encode($autoRenew) );
             }
             $autoRenewElement = $this->addElement('checkbox', 'auto_renew', ts('Membership renewed automatically'),
-                                                  null, array( 'onclick' => "return showHideByValue('auto_renew','','send-receipt','table-row','radio',true);") );
+                                                  null, array( 'onclick' => "showHideByValue('auto_renew','','send-receipt','table-row','radio',true); showHideNotice( );") );
             if ( $this->_action & CRM_Core_Action::UPDATE ) {
                 $autoRenewElement->freeze();
             }
