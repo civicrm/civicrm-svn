@@ -163,15 +163,18 @@ function showHideAutoRenew( memTypeId )
   autoRenew.attr( 'readonly', readOnly );
   autoRenew.attr( 'checked',  isChecked );
   eval( "cj('#allow_auto_renew')." + funName );
-
-  //keep read only always checked.
-  cj("#auto_renew").click(function( ) {
-    if ( cj(this).attr( 'readonly' ) ) { 
-       cj(this).attr( 'checked', true );
-    }
-  });
 }
 
+{/literal}{if $allowAutoRenewMembership}{literal}
+  cj( function( ) {
+     //keep read only always checked.
+     cj( "#auto_renew" ).click(function( ) {
+        if ( cj(this).attr( 'readonly' ) ) { 
+            cj(this).attr( 'checked', true );
+        }
+     });
+  }); 
+{/literal}{/if}{literal}
 </script>
 {/literal}
 
