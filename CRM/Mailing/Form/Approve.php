@@ -103,13 +103,22 @@ class CRM_Mailing_Form_Approve extends CRM_Core_Form
      */
     public function buildQuickform() 
     {
-        $title   = ts('Approve/Reject Mailing') . ' - ' .  $this->_mailing->name;
+        $title   = ts('Approve/Reject Mailing') . " - {$this->_mailing->name}";
         CRM_Utils_System::setTitle( $title );
+
         $this->addElement( 'textarea', 'approval_note',  ts('Approve/Reject Note') );
       
         require_once 'CRM/Mailing/PseudoConstant.php';
         $mailApprovalStatus = CRM_Mailing_PseudoConstant::approvalStatus( );
-        unset( $mailApprovalStatus[3] );
+
+        // eliminate the none option
+        require_once 'CRM/Core/OptionGroup.php';
+        $noneOptionID = CRM_Core_OptionGroup::getValue( 'mail_approval_status',
+                                                          'None',
+                                                          'name' );
+        if ( $noneOptionID ) {
+            unset( $mailApprovalStatus[$noneOptionID] );
+        }
                 
         $this->addRadio( 'approval_status_id', ts( 'Approval Status' ), $mailApprovalStatus, true, null, true );
                         
@@ -156,9 +165,29 @@ class CRM_Mailing_Form_Approve extends CRM_Core_Form
         } else {
             $ids['mailing_id'] = $this->get('mailing_id');
         }
-        
+
+        if ( ! $ids['mailing_id'] ) {
+            CRM_Core_Error::fatal( );
+        }
+
         $params['approver_id']   = $this->_contactID;
         $params['approval_date'] = date('YmdHis');
+
+        // if rejected, then we need to reset the scheduled date and scheduled id
+        require_once 'CRM/Core/OptionGroup.php';
+        $rejectOptionID = CRM_Core_OptionGroup::getValue( 'mail_approval_status',
+                                                          'Rejected',
+                                                          'name' );
+        if ( $rejectOptionID &&
+             $params['approval_status_id'] == $rejectOptionID ) {
+            $params['scheduled_id']   = 'null';
+            $params['scheduled_date'] = 'null';
+
+            // also delete any jobs associated with this mailing
+            $job = new CRM_Mailing_BAO_Job();
+            $job->mailing_id = $ids['mailing_id'];
+            $job->delete( );
+        }
 
         CRM_Mailing_BAO_Mailing::create( $params, $ids );
 

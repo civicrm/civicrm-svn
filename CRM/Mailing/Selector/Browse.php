@@ -263,6 +263,7 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
                     ),
                 );
         }
+
         $showApprovalLinks = true;
         $noShowLinks = false;
         require_once 'CRM/Mailing/Info.php';
@@ -304,7 +305,9 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
                      ( in_array( $row['status'], array( 'Scheduled', 'Running', 'Paused' ) ) ) ) {
                     require_once 'CRM/Mailing/PseudoConstant.php';
                     require_once 'CRM/Mailing/PseudoConstant.php';
-                    if ( $row['status'] == 'Scheduled' && $showApprovalLinks == true ) {
+                    if ( $row['status'] == 'Scheduled' && 
+                         $showApprovalLinks == true &&
+                         empty( $row['approval_status_id'] ) ) {
                         $actionMask |= CRM_Core_Action::ENABLE;
                     }    
                 } else {
@@ -322,7 +325,9 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
                     }
                     if ( in_array( $row['status'], array( 'Scheduled', 'Running', 'Paused' ) ) ) {
                         $actionMask |= CRM_Core_Action::DISABLE;
-                        if ( $row['status'] == 'Scheduled' && $showApprovalLinks == true ) {
+                        if ( $row['status'] == 'Scheduled' &&
+                             $showApprovalLinks == true &&
+                             empty( $row['approval_status_id'] ) ) {
                             $actionMask |= CRM_Core_Action::ENABLE;
                         }                    
                     }  
