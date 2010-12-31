@@ -393,7 +393,7 @@ $.Autocompleter.defaults = {
 	minChars: 0,
 	delay: 400,
 	matchCase: false,
-	matchSubset: true,
+	matchSubset: false,
 	matchContains: false,
 	cacheLength: 10,
 	max: 100,

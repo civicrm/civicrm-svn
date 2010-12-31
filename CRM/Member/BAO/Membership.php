@@ -600,13 +600,13 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
      *
      * @static
      */
-    function buildMembershipBlock( &$form,
-                                   $pageID,
-                                   $formItems = false,
-                                   $selectedMembershipTypeID = null,
-                                   $thankPage       = false,
-                                   $isTest          = null,
-                                   $memberContactId = null )
+    static function buildMembershipBlock( &$form,
+                                          $pageID,
+                                          $formItems = false,
+                                          $selectedMembershipTypeID = null,
+                                          $thankPage       = false,
+                                          $isTest          = null,
+                                          $memberContactId = null )
     {
         require_once 'CRM/Member/DAO/MembershipBlock.php';
 
@@ -627,6 +627,9 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
             $membershipTypes   = array( ); 
             $radio             = array( ); 
 
+            $allowAutoRenewMembership = false;
+            $autoRenewMembershipTypeOptions = array( );
+            
             $separateMembershipPayment = CRM_Utils_Array::value( 'is_separate_payment', $membershipBlock );
             if ( $membershipBlock['membership_types'] ) {
                 $membershipTypeIds = explode( ',', $membershipBlock['membership_types'] );
@@ -644,7 +647,7 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
                 }
                 
                 $membershipTypeValues = self::buildMembershipTypeValues( $form, $membershipTypeIds );
-
+                
                 foreach ( $membershipTypeIds as $value ) {
                     $memType = $membershipTypeValues[$value];
                     if ($selectedMembershipTypeID  != null ) {
@@ -665,13 +668,14 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
                         }
                     } else if ( $memType['is_active'] ) {
                         $javascriptMethod = null;
-                        if ( CRM_Utils_Array::value( 'is_recur', $form->_paymentProcessor ) ) {
-                            $autoRenew = $form->_membershipBlock['auto_renew'][$value];
-                            $javascriptMethod = array('onclick' => "return showAutoRenew( {$autoRenew} );");
-                            $form->addElement( 'checkbox', 'auto_renew', 'Please renew my membership automatically' ); 
-                        }
-
-                        $radio[$memType['id']] = $form->createElement( 'radio',null, null, null, 
+                        $allowAutoRenewOpt = CRM_Utils_Array::value( $value, $form->_membershipBlock['auto_renew'] );
+                        if ( !CRM_Utils_Array::value( 'is_recur', $form->_paymentProcessor ) ) $allowAutoRenewOpt = 0;
+                        $javascriptMethod = array('onclick' => "return showHideAutoRenew( this.value );");
+                        $autoRenewMembershipTypeOptions["autoRenewMembershipType_{$value}"] = (int)$allowAutoRenewOpt;
+                        if ( $allowAutoRenewOpt ) $allowAutoRenewMembership = true;
+                        
+                        //add membership type.
+                        $radio[$memType['id']] = $form->createElement( 'radio', null, null, null, 
                                                                        $memType['id'], $javascriptMethod );
                         if ( $cid ) {
                             $membership = new CRM_Member_DAO_Membership();
@@ -707,17 +711,26 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
                     $form->addGroup($radio,'selectMembership',null);
                 } else if( $membershipBlock['is_required']  && count( $radio ) == 1 ) {
                     $temp = array_keys( $radio ) ;
-                    $form->addElement('hidden', "selectMembership", $temp[0]  );
+                    $form->add( 'hidden', 'selectMembership', $temp[0], array( 'id' => 'selectMembership') );
                     $form->assign('singleMembership' , true );
                     $form->assign( 'showRadio', false );
                 } else {
                     $form->addGroup($radio,'selectMembership',null);
                 }
                 $form->addRule('selectMembership',ts("Please select one of the memberships"),'required');
+                if ( $allowAutoRenewMembership ) {
+                    $form->addElement( 'checkbox', 'auto_renew', ts( 'Please renew my membership automatically' ) );
+                }
             }
             
             $form->assign( 'membershipBlock' , $membershipBlock );
             $form->assign( 'membershipTypes' , $membershipTypes );
+            $form->assign( 'allowAutoRenewMembership', $allowAutoRenewMembership );
+            $form->assign( 'autoRenewMembershipTypeOptions', json_encode( $autoRenewMembershipTypeOptions ) );
+            
+            //give preference to user submitted auto_renew value.
+            $takeUserSubmittedAutoRenew = ( !empty( $_POST ) || $form->isSubmitted( ) ) ? true : false;
+            $form->assign( 'takeUserSubmittedAutoRenew', $takeUserSubmittedAutoRenew );
         }
 
         return $separateMembershipPayment;
@@ -1149,15 +1162,6 @@ AND civicrm_membership.is_test = %2";
         }
         
         $form->_params['membershipID'] = $membership->id;
-        if ( CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_Membership', $membership->id, 'contribution_recur_id' ) ) {
-            require_once 'CRM/Member/BAO/Membership.php'; 
-            if ( CRM_Member_BAO_Membership::isCancelSubscriptionSupported( $membership->id ) ) {
-                $form->assign( 'cancelAutoRenew', 
-                               CRM_Utils_System::url( 'civicrm/contribute/unsubscribe', 
-                                                      "reset=1&mid={$membership->id}", true ) );
-            }
-        }
-        
         if ( $form->_contributeMode == 'notify' ) {
             if ( $form->_values['is_monetary'] && $form->_amount > 0.0 && !$form->_params['is_pay_later'] ) {
                 // this does not return
@@ -1171,6 +1175,13 @@ AND civicrm_membership.is_test = %2";
         if ( isset( $contribution[$index]->id ) ) {
             $form->_values['contribution_id'] = $contribution[$index]->id;
         }
+
+        // Do not send an email if Recurring transaction is done via Direct Mode
+        // Email will we sent when the IPN is received.
+        if ( $form->_params['is_recur'] && $form->_contributeMode == 'direct' ) {
+            return true;
+        }
+
         //finally send an email receipt
         require_once "CRM/Contribute/BAO/ContributionPage.php";
         CRM_Contribute_BAO_ContributionPage::sendMail( $contactID,
@@ -1816,58 +1827,51 @@ FROM   civicrm_membership_type
      * @access public
      * @static
      */
-    static function isCancelSubscriptionSupported( $mid ) 
+    static function isCancelSubscriptionSupported( $mid, $isNotCancelled = true ) 
     {
-        if ( !$mid ) {
-            return false;
-        }
+        $cacheKeyString  = "$mid";
+        $cacheKeyString .= $isNotCancelled ? "_1" : "_0";
+        
         static $supportsCancel = array( );
         
-        if ( !array_key_exists( $mid, $supportsCancel ) ) {
+        if ( !array_key_exists( $cacheKeyString, $supportsCancel ) ) {
+            $supportsCancel[$cacheKeyString] = false;
+            $isCancelled = false;
+
+            if ( $isNotCancelled ) {
+                $isCancelled = self::isSubscriptionCancelled( $mid );
+            }
+
             require_once 'CRM/Core/BAO/PaymentProcessor.php';
             require_once 'CRM/Core/Payment.php';
-            $sql = " 
-    SELECT membership_payment.contribution_id, membership.is_test, contribution_page.payment_processor_id 
-      FROM civicrm_membership_payment membership_payment 
-INNER JOIN civicrm_membership membership ON ( membership_payment.membership_id = membership.id 
-       AND membership.contribution_recur_id IS NOT NULL ) 
-INNER JOIN civicrm_contribution contribution ON ( contribution.id = membership_payment.contribution_id )
-LEFT  JOIN civicrm_contribution_page contribution_page ON ( contribution_page.id = contribution.contribution_page_id )
-     WHERE membership_payment.membership_id = %1";
-            
-            $params = array( 1 => array( $mid, 'Integer' ) );
-            $dao    = CRM_Core_DAO::executeQuery( $sql, $params );
-            if ( $dao->fetch( ) ) { 
-                $mode = ( $dao->is_test ) ? 'test' : 'live';
-                $ppId = $dao->payment_processor_id;
-            }
-
-            if ( !$ppId && $dao->contribution_id ) {
-                $sql = " 
-    SELECT ft.payment_processor 
-      FROM civicrm_financial_trxn ft 
-INNER JOIN civicrm_entity_financial_trxn eft ON ( eft.financial_trxn_id = ft.id AND eft.entity_table = 'civicrm_contribution' ) 
-     WHERE eft.entity_id = {$dao->contribution_id}";
-                $ftDao = CRM_Core_DAO::executeQuery( $sql );
-                $ftDao->fetch( );
-                if ( $ftDao->payment_processor ) {
-                    $params = array( 'payment_processor_type' => $ftDao->payment_processor,
-                                     'is_test'                => $dao->is_test ? 1 : 0 );
-                    require_once 'CRM/Core/BAO/PaymentProcessor.php';
-                    CRM_Core_BAO_PaymentProcessor::retrieve( $params, $paymentProcessor );
-                    $ppId = $paymentProcessor['id'];
-                }
-            }
-            if ( $ppId ) {
-                $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $ppId,
-                                                                               $mode );
-                $paymentObject =& CRM_Core_Payment::singleton( $mode, $paymentProcessor );
-                
-                $supportsCancel[$mid] = true;
-                return CRM_Core_Payment::isCancelSupported( $paymentObject );
+            $paymentObject = CRM_Core_BAO_PaymentProcessor::getProcessorForEntity( $mid, 'membership', 'obj' );
+            if ( ! empty($paymentObject) ) {
+                $supportsCancel[$cacheKeyString] = CRM_Core_Payment::isCancelSupported( $paymentObject ) && !$isCancelled;
             }
         }
-        return $supportsCancel[$mid];
+        return $supportsCancel[$cacheKeyString];
     }
-
+    
+    /**
+     * Function to check whether subscription is already cancelled  
+     *
+     * @param int $mid membership id
+     * 
+     * @return string $status contribution status 
+     * @access public
+     * @static
+     */
+    static function isSubscriptionCancelled ( $mid ) {
+        $sql = "
+   SELECT con.contribution_status_id 
+     FROM civicrm_contribution       con
+LEFT JOIN civicrm_membership_payment cmp ON ( con.id = cmp.contribution_id )
+    WHERE cmp.membership_id = %1 LIMIT 1";
+        $params = array( 1 => array( $mid, 'Integer' ) );
+        $statusId = CRM_Core_DAO::singleValueQuery( $sql, $params );
+        require_once 'CRM/Contribute/PseudoConstant.php';
+        $status = CRM_Contribute_PseudoConstant::contributionStatus( $statusId );
+        if ( $status == 'Cancelled' ) return true;
+        return false;
+    }
 }

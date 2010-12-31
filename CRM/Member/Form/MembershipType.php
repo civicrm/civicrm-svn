@@ -59,11 +59,6 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
         $defaults = array( );
         $defaults =& parent::setDefaultValues( );
                 
-        $autoRenewMsg = true;
-        if ( isset( $defaults['auto_renew'] ) && $defaults['auto_renew'] == 0 ) {
-            $autoRenewMsg = false;
-        }
-        $this->assign('autoRenewMsg', $autoRenewMsg);
         //finding default weight to be put 
         if ( !isset  ( $defaults['weight'] ) ||( ! $defaults['weight'] ) ) {
             $defaults['weight'] = CRM_Utils_Weight::getDefaultWeight('CRM_Member_DAO_MembershipType');
@@ -135,26 +130,29 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
         $this->add('date', 'fixed_period_start_day', ts('Fixed Period Start Day'), 
                    CRM_Core_SelectValues::date( null, 'M d' ), false);
         
+        require_once "CRM/Core/BAO/MessageTemplates.php";
+        $msgTemplates = CRM_Core_BAO_MessageTemplates::getMessageTemplates( false );
+        $hasMsgTemplates = false;
+        if ( !empty( $msgTemplates ) ) $hasMsgTemplates = true;
         
         //Auto-renew Option
         $paymentProcessor =& CRM_Core_PseudoConstant::paymentProcessor( false, false, 'is_recur = 1');
         $isAuthorize = false;
         $options = array( );
+        $allowAutoRenewMsg = false;
         if ( is_array( $paymentProcessor ) && !empty( $paymentProcessor ) ) {
             $isAuthorize = true;
             $options = array( ts('No auto-renew option'), ts('Give option, but not required'), ts('Auto-renew required ') );
-            
-            require_once "CRM/Core/BAO/MessageTemplates.php";
-            $msgTemplates = CRM_Core_BAO_MessageTemplates::getMessageTemplates( false );
-            
-            if ( ! empty( $msgTemplates ) ) { 
-            $autoRenewReminderMsg = $this->add( 'select', 'autorenewal_msg_id', 
-                                                ts('Auto-renew Reminder Message'), 
-                                                array('' => ts('- select -')) + $msgTemplates );
-            } 
+            if ( $hasMsgTemplates ) { 
+                $allowAutoRenewMsg    = true;
+                $autoRenewReminderMsg = $this->add( 'select', 'autorenewal_msg_id', 
+                                                    ts('Auto-renew Reminder Message'), 
+                                                    array('' => ts('- select -')) + $msgTemplates );
+            }
         }
-        $this->addRadio('auto_renew', ts('Auto-renew Option'), $options, array( 'onclick' => "setReminder(this);" ) );
+        $this->addRadio('auto_renew', ts('Auto-renew Option'), $options, array( 'onclick' => "setReminder(this.value);" ) );
         $this->assign( 'authorize', $isAuthorize );
+        $this->assign( 'allowAutoRenewMsg', $allowAutoRenewMsg );
         
         //rollover day
         $this->add('date', 'fixed_period_rollover_day', ts('Fixed Period Rollover Day'), 
@@ -178,14 +176,12 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
         $this->add('text', 'weight', ts('Order'), 
                    CRM_Core_DAO::getAttribute( 'CRM_Member_DAO_MembershipType', 'weight' ) );
         $this->add('checkbox', 'is_active', ts('Enabled?'));
-                                            
-        require_once "CRM/Core/BAO/MessageTemplates.php";
-        $msgTemplates = CRM_Core_BAO_MessageTemplates::getMessageTemplates( false );
-        if ( ! empty( $msgTemplates ) ) { 
+        
+        if ( $hasMsgTemplates ) { 
             $reminderMsg = $this->add( 'select', 'renewal_msg_id', ts('Renewal Reminder Message'), array('' => ts('- select -')) + $msgTemplates );
-        } else {
-            $this->assign('noMsgTemplates', true );            
-        }
+        } 
+        $this->assign( 'hasMsgTemplates', $hasMsgTemplates );
+        
         $reminderDay =& $this->add('text',
                                    'renewal_reminder_day',
                                    ts('Renewal Reminder Day'),
@@ -296,6 +292,13 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
                 $errors['duration_interval'] = ts('Please enter a duration interval.');
             }
             
+            if ( in_array( CRM_Utils_Array::value( 'auto_renew', $params ), array( 1, 2 ) ) ) {
+                if ( ( $params['duration_interval'] > 1    &&  $params['duration_unit']  == 'year'  ) || 
+                     ( $params['duration_interval'] > 12   &&  $params['duration_unit']  == 'month' ) ) {
+                    $errors['duration_unit'] = ts( 'Automatic renewals are not supported by the currently available payment processors when the membership duration is greater than 1 year / 12 months.' );
+                }
+            }
+
             if ( empty( $params['period_type'] ) ) {
                 $errors['period_type'] = ts('Please select a period type.');
             }
