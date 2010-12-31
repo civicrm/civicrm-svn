@@ -162,7 +162,8 @@ END AS 'relType'
             $values['membership_type'] .= ' (test) ';
         }
 
-        $values['auto_renew'] = $autoRenew ? 'Yes' : 'No';
+        $subscriptionCancelled = CRM_Member_BAO_Membership::isSubscriptionCancelled( $id );
+        $values['auto_renew'] = ( $autoRenew && !$subscriptionCancelled ) ? 'Yes' : 'No';
                         
         $this->assign( $values ); 
     }

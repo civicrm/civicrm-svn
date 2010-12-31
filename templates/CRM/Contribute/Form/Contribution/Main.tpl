@@ -70,7 +70,7 @@ function clearAmountOther() {
         </fieldset>
     </div>
 {else}
-    {include file="CRM/Contribute/Form/Contribution/MembershipBlock.tpl" context="makeContribution" isRecur=$form.is_recur}
+    {include file="CRM/Contribute/Form/Contribution/MembershipBlock.tpl" context="makeContribution"}
 
 	{if $form.amount}
 	    <div class="crm-section {$form.amount.name}-section">
@@ -331,12 +331,26 @@ function enablePeriod ( ) {
 	}
 	document.getElementById('installments').disabled   = true;
 	document.getElementById('frequency_unit').disabled = true;
+
+	//get back to auto renew settings. 
+	var allowAutoRenew = {/literal}'{$allowAutoRenewMembership}'{literal};
+	if ( allowAutoRenew && cj("#auto_renew") ) {
+	   showHideAutoRenew( null );
+	}	
     } else {
 	if ( frqInt ) {
 	    document.getElementById('frequency_interval').disabled = false;
 	}
 	document.getElementById('installments').disabled   = false;
 	document.getElementById('frequency_unit').disabled = false;
+	
+	//disabled auto renew settings.
+	var allowAutoRenew = {/literal}'{$allowAutoRenewMembership}'{literal};
+	if ( allowAutoRenew && cj("#auto_renew") ) {
+	    cj("#auto_renew").attr( 'checked', false );
+	    cj('#allow_auto_renew').hide( );
+	} 
+	
     }
 }
 
@@ -401,10 +415,4 @@ function showHidePayPalExpressOption()
     }
 }
 {/literal}
-{if $form.is_recur} 
-{literal}
-      cj("#auto_renew").attr( 'checked', false );
-      cj("#auto-renew").hide();
-{/literal} 
-{/if}
 </script>

@@ -369,16 +369,6 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form
         
         // current contribution id
         if ( $this->_id ) {
-
-            // check for entity_financial_trxn linked to this contribution to see if it's an online contribution
-            require_once 'CRM/Core/BAO/FinancialTrxn.php';
-            $fids = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnIds( $this->_id, 'civicrm_contribution' ); 
-            $this->_online = $fids['entityFinancialTrxnId'];
-
-            if ( $this->_online ) {
-                $this->assign( 'isOnline', true );
-            }
-            
             //to get Premium id
             $sql = "
 SELECT *
@@ -397,6 +387,14 @@ WHERE  contribution_id = {$this->_id}
             $params = array( 'id' => $this->_id );
             require_once 'CRM/Contribute/BAO/Contribution.php';
             CRM_Contribute_BAO_Contribution::getValues( $params, $this->_values, $ids );
+            
+            //do check for online / recurring contributions
+            require_once 'CRM/Core/BAO/FinancialTrxn.php';
+            $fids = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnIds( $this->_id, 'civicrm_contribution' );
+            $this->_online = CRM_Utils_Array::value( 'entityFinancialTrxnId', $fids );
+            //don't allow to update all fields for recuring contribution.
+            if ( !$this->_online ) $this->_online = CRM_Utils_Array::value( 'contribution_recur_id', $this->_values ); 
+            $this->assign( 'isOnline', $this->_online ? true : false );
             
             //unset the honor type id:when delete the honor_contact_id
             //and edit the contribution, honoree infomation pane open

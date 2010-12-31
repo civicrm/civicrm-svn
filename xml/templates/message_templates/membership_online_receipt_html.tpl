@@ -232,24 +232,11 @@
        </td>
       </tr>
      {/if}
-     {if $cancelAutoRenew}
-     <tr>
-       <td colspan="2" {$valueStyle}>
-	 <a href="{$cancelAutoRenew}" title="{ts}Cancel Subscription{/ts}">{ts}Cancel Subscription{/ts}</a>
-       </td>
-     </tr>
-     {/if}
      {if $is_recur}
-      {if $contributeMode eq 'notify'}
+      {if $contributeMode eq 'notify' or $contributeMode eq 'directIPN'}
        <tr>
         <td {$labelStyle}>
-         {ts 1=$cancelSubscriptionUrl}This is a recurring contribution. You can modify or cancel future contributions by <a href="%1">logging in to your account</a>.{/ts}
-        </td>
-       </tr>
-      {elseif $contributeMode eq 'directIPN' and $receiptFromEmail}
-       <tr>
-        <td {$labelStyle}>
-         {ts 1=$receiptFromEmail}This is a recurring contribution. To modify or cancel future contributions please contact us at %1.{/ts}
+         {ts 1=$cancelSubscriptionUrl}This membership will be renewed automatically. You can modify or cancel the auto-renewal option by <a href="%1">visiting this web page</a>.{/ts}
         </td>
        </tr>
       {/if}

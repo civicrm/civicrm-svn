@@ -84,6 +84,7 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 			  FROM   $jobTable     j,
 					 $mailingTable m
 			 WHERE   m.id = j.mailing_id
+                     $workflowClause
 			   AND   j.is_test = 0
 			   AND   ( ( j.start_date IS null
 			   AND       j.scheduled_date <= $currentTime
@@ -264,6 +265,20 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 		$mailingACL  = CRM_Mailing_BAO_Mailing::mailingACL( 'm' );
 
 
+        // add an additional check and only process
+        // jobs that are approved
+        $workflowClause = null;
+        require_once 'CRM/Mailing/Info.php';
+        if ( CRM_Mailing_Info::workflowEnabled( ) ) {
+            require_once 'CRM/Core/OptionGroup.php';
+            $approveOptionID = CRM_Core_OptionGroup::getValue( 'mail_approval_status',
+                                                               'Approved',
+                                                               'name' );
+            if ( $approveOptionID ) {
+                $workflowClause = " AND m.approval_status_id = $approveOptionID ";
+            }
+        }
+
 		// Select all the mailing jobs that are created from 
 		// when the mailing is submitted or scheduled.
 		$query = "
@@ -271,6 +286,7 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 		  FROM   $jobTable     j,
 				 $mailingTable m
 		 WHERE   m.id = j.mailing_id
+                 $workflowClause
 		   AND   j.is_test = 0
 		   AND   ( ( j.start_date IS null
 		   AND       j.scheduled_date <= $currentTime

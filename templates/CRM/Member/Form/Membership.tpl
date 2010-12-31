@@ -102,7 +102,11 @@
         <tr id="memberStatus_show">
             <td class="label">{$form.status_id.label}</td><td class="view-value">{$membershipStatus}</td>
         </tr>
-	{else}{* Show editable status field when is_override is TRUE *}
+	<tr class="crm-membership-form-block-auto_renew">
+           <td class="label"> {$form.auto_renew.label} </td>
+           <td> {$form.auto_renew.html} </td>
+        </tr>
+        {else}{* Show editable status field when is_override is TRUE *}
         <tr id="memberStatus"><td class="label">{$form.status_id.label}</td><td>{$form.status_id.html}<br />
             <span class="description">{ts}If <strong>Status Override</strong> is checked, the selected status will remain in force (it will NOT be modified by the automated status update script).{/ts}</span></td></tr>
         {/if}
@@ -160,7 +164,7 @@
 	{/if}
 
     {if $emailExists and $outBound_option != 2 }
-        <tr class="crm-membership-form-block-send_receipt">
+        <tr id="send-receipt" class="crm-membership-form-block-send_receipt">
             <td class="label">{$form.send_receipt.label}</td><td>{$form.send_receipt.html}<br />
             <span class="description">{ts 1=$emailExists}Automatically email a membership confirmation and receipt to %1?{/ts}</span></td>
         </tr>
@@ -251,6 +255,14 @@ cj( function( ) {
     invert              = 0
 }
 {/if}
+{include file="CRM/common/showHideByFieldValue.tpl" 
+    trigger_field_id    ="auto_renew"
+    trigger_value       =""
+    target_element_id   ="send-receipt" 
+    target_element_type ="table-row"
+    field_type          ="radio"
+    invert              = 1
+}
 {literal}
 <script type="text/javascript">
 {/literal}
@@ -339,7 +351,7 @@ function checkProcessor( Id ) {
 }
 
 function buildAutoRenew( memType ) {
-  var recur = {/literal}{$recurProcessor}{literal};	
+  var recur = {/literal}{$recurProcessor}{literal};
   var processor = cj("#payment_processor_id").val();
   if ( !recur[processor] ) {
       cj("#autorenew").hide( );
@@ -351,11 +363,33 @@ function buildAutoRenew( memType ) {
         if ( renew[memType] == 2 ) {
            cj("#auto_renew").attr( 'checked', true );
            cj("#auto_renew").attr( 'disabled', true );
+        } else {
+           cj("#auto_renew").attr( 'checked', false );
+           cj("#auto_renew").removeAttr( 'disabled' );
         }
      } else {
-     cj("#autorenew").hide( );
+        cj("#autorenew").hide( );
+        cj("#send-receipt").show( );
+        return;
      } 
   }
+
+  if ( cj("#auto_renew").attr( 'checked' ) ) {
+      cj("#send_receipt").attr( 'checked', false );
+      cj("#send-receipt").hide( );
+      cj("#notice").hide( );
+  } else {
+      cj("#send-receipt").show( );
+  }
+}
+
+function showHideNotice( )
+{
+   if ( cj("#auto_renew").attr( 'checked' ) ) {
+       cj("#notice").hide( );
+   } else if ( cj("#send_receipt").attr( 'checked' ) ) {
+       cj("#notice").show( );
+   }
 }
 </script>
 {/literal}

@@ -70,6 +70,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
                                                          $this );
         $this->_contactID = CRM_Utils_Request::retrieve( 'cid', 'Positive',
                                                          $this );
+        $this->_processors = array( );
         
         
         // check for edit permission
@@ -233,6 +234,13 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             unset($defaults['record_contribution']);
         }
         
+        if ( CRM_Utils_Array::value( 'id' , $defaults ) ) {
+            $subscriptionCancelled = CRM_Member_BAO_Membership::isSubscriptionCancelled( $this->_id );
+        }
+        if ( CRM_Utils_Array::value( 'contribution_recur_id', $defaults ) && !$subscriptionCancelled ) {
+            $defaults['auto_renew'] = 1;
+        }
+
         $this->assign( "member_is_test", CRM_Utils_Array::value('member_is_test',$defaults) );
         
         $this->assign( 'membership_status_id', CRM_Utils_Array::value('status_id',$defaults) );
@@ -295,7 +303,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             $defaults['join_date']    = $now;
         }
         
-        if ( $defaults['membership_end_date'] ) {
+        if ( CRM_Utils_Array::value( 'membership_end_date', $defaults) ) {
             $this->assign( 'endDate', $defaults['membership_end_date'] );
         }
         
@@ -382,7 +390,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         
         //build the form for auto renew.
         $recurProcessor = array( );
-        if ( $this->_mode ) {
+        if ( $this->_mode || ( $this->_action & CRM_Core_Action::UPDATE ) ) {
             //get the valid recurring processors.
             $recurring = CRM_Core_PseudoConstant::paymentProcessor( false, false, 'is_recur = 1' );
             $recurProcessor = array_intersect_assoc( $this->_processors, $recurring );
@@ -406,7 +414,11 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                 }
                 $js = array( 'onChange' => "buildCustomData( 'Membership', this.value ); buildAutoRenew(this.value);");
                 $this->assign( 'autoRenew', json_encode($autoRenew) );
-                $this->addElement('checkbox', 'auto_renew', ts('Membership renewed automatically') );
+            }
+            $autoRenewElement = $this->addElement('checkbox', 'auto_renew', ts('Membership renewed automatically'),
+                                                  null, array( 'onclick' => "showHideByValue('auto_renew','','send-receipt','table-row','radio',true); showHideNotice( );") );
+            if ( $this->_action & CRM_Core_Action::UPDATE ) {
+                $autoRenewElement->freeze();
             }
         }
         $this->assign( 'recurProcessor', json_encode( $recurProcessor ) );
@@ -704,11 +716,16 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                     CRM_Utils_Array::value( $mapParam, 
                                             $recurMembershipTypeValues ); 
             }
+            // unset send-receipt option, since receipt will be sent when ipn is received.
+            unset( $this->_params['send_receipt'], $formValues['send_receipt'] );
         }
         
         // set the contact, when contact is selected
+        require_once 'CRM/Contact/BAO/Contact/Location.php';
         if ( CRM_Utils_Array::value('contact_select_id', $formValues ) ) {
             $this->_contactID = $formValues['contact_select_id'][1];
+            list( $this->_memberDisplayName, 
+                  $this->_memberEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $this->_contactID );
         }
         
         $params['contact_id'] = $this->_contactID;
@@ -779,7 +796,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                                                                    'Membership' );
 
         // Retrieve the name and email of the current user - this will be the FROM for the receipt email
-        require_once 'CRM/Contact/BAO/Contact/Location.php';
         list( $userName, $userEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $ids['userId'] );
 
         if ( CRM_Utils_Array::value( 'record_contribution', $formValues ) ) {

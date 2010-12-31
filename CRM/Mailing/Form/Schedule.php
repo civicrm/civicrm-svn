@@ -260,11 +260,16 @@ require_once 'CRM/Mailing/BAO/Mailing.php';
             } 
 
             // set approval details if workflow is not enabled 
-            if ( !CRM_Mailing_Info::workflowEnabled( ) ) {
+            if ( ! CRM_Mailing_Info::workflowEnabled( ) ) {
                 $session =& CRM_Core_Session::singleton( );
                 $mailing->approver_id         = $session->get( 'userID' );
                 $mailing->approval_date       = date('YmdHis');
                 $mailing->approval_status_id  = 1; 
+            } else { 
+                // reset them in case this mailing was rejected
+                $mailing->approver_id         = 'null';
+                $mailing->approval_date       = 'null';
+                $mailing->approval_status_id  = 'null';
             }
 
             if ( $mailing->approval_date ) { 

@@ -60,7 +60,8 @@ class CRM_Utils_Token
                                                       'editUrl',
                                                       'scheduleUrl',
                                                       'approvalStatus',
-                                                      'approvalNote'
+                                                      'approvalNote',
+                                                      'approveUrl',
                                                       ),
                              'contact'       => null,  // populate this dynamically
                              'domain'        => array( 
@@ -385,7 +386,7 @@ class CRM_Utils_Token
         case 'viewUrl':
             $value = CRM_Utils_System::url( 'civicrm/mailing/view',
                                             "reset=1&id={$mailing->id}",
-                                            true, null, true, true );
+                                            true, null, false, true );
             break;
 
         case 'editUrl':
@@ -414,6 +415,12 @@ class CRM_Utils_Token
     
         case 'approvalNote':
             $value = $mailing->approval_note;
+            break;
+
+        case 'approveUrl':
+            $value = CRM_Utils_System::url( 'civicrm/mailing/approve',
+                                            "reset=1&mid={$mailing->id}",
+                                            true, null, false, true );
             break;
             
         default:

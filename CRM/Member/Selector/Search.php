@@ -372,7 +372,6 @@ class CRM_Member_Selector_Search extends CRM_Core_Selector_Base implements CRM_C
                  }
                  
                  $isCancelSupported = CRM_Member_BAO_Membership::isCancelSubscriptionSupported( $row['membership_id'] );
-                                  
                  $row['action']   = CRM_Core_Action::formLink( self::links( 'all', 
                                                                             $this->_isPaymentProcessor, 
                                                                             $this->_accessContribution, 
@@ -392,7 +391,7 @@ class CRM_Member_Selector_Search extends CRM_Core_Selector_Base implements CRM_C
              
              $isRecur = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_Membership' , 
                                                      $result->membership_id, 'contribution_recur_id' );
-             $row['auto_renew'] = ( $isRecur ) ? true : false;
+             $row['auto_renew'] = ( $isRecur && $isCancelSupported ) ? true : false;
              
              require_once( 'CRM/Contact/BAO/Contact/Utils.php' );
              $row['contact_type' ] = 

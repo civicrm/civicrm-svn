@@ -28,13 +28,13 @@
 
 <table class="form-layout">
   <tbody>
-    <tr class="crm-mailing-approve-form-block-approval_note">
-        <td class="label">{$form.approval_note.label}</td>
-        <td>{$form.approval_note.html}</td>
-    </tr>
     <tr class="crm-mailing-approve-form-block-approval_status">
         <td class="label">{$form.approval_status_id.label}</td>
         <td>{$form.approval_status_id.html}</td>
+    </tr>
+    <tr class="crm-mailing-approve-form-block-approval_note">
+        <td class="label">{$form.approval_note.label}</td>
+        <td>{$form.approval_note.html}</td>
     </tr>
   </tbody>
 </table>

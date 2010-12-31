@@ -124,8 +124,10 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
             }
             
             //does membership is auto renew CRM-7137.
-            $membership[$dao->id]['auto_renew'] = CRM_Utils_Array::value( 'contribution_recur_id', 
-                                                                          $membership[$dao->id] ); 
+            if ( $isCancelSupported ) {
+                $membership[$dao->id]['auto_renew'] = CRM_Utils_Array::value( 'contribution_recur_id', 
+                                                                              $membership[$dao->id] ); 
+            }
         }
         
         //Below code gives list of all Membership Types associated

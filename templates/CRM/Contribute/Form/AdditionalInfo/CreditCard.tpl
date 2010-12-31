@@ -39,7 +39,8 @@
        var frInerval = cj( '#frequency_interval' );	 
        var installments = cj( '#installments' );	 
        isDisabled = false;
-       if ( document.getElementsByName("is_recur")[0].checked == true )  {
+
+       if ( cj( 'input:radio[name=is_recur]:checked').val() == 0 )  {
           isDisabled = true;
           frInerval.val( '' );
           installments.val( '' );
@@ -60,9 +61,15 @@
        var priceSet = cj("#price_set_id");
        if ( priceSet && priceSet.val( ) ) {
           funName = 'hide';
-          cj( '#is_recur' ).val( 0 );
+          //reset the values of recur block. 
+	  if ( cj( 'input:radio[name=is_recur]:checked').val() ) {
+	      cj("#installments").val('');
+	      cj("#frequency_interval").val('');
+	      cj( 'input:radio[name=is_recur]')[0].checked = true;
+	  }
        }
-   
+
+
        enablePeriod( );   
        eval( 'cj( "#recurringPaymentBlock" ).' + funName + "( )" );
    }

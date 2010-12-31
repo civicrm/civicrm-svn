@@ -42,6 +42,7 @@
 require_once 'CRM/Core/Form.php';
 require_once 'CRM/Core/Payment.php';
 require_once 'CRM/Member/PseudoConstant.php';
+require_once 'CRM/Core/BAO/PaymentProcessor.php';
 
 class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form
 {
@@ -49,12 +50,10 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form
 
     protected $_objects = array( );
 
-    protected $_ppID = null;
-
-    protected $_mode = null;
-
     protected $_contributionRecurId = null;
-    
+
+    protected $_paymentObject = null;
+
     protected $_userContext = null;
     
     /** 
@@ -65,7 +64,16 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form
      */ 
     public function preProcess( )  
     {
-        $mid = CRM_Utils_Request::retrieve( 'mid', 'Integer', $this, false );
+        $mid = CRM_Utils_Request::retrieve( 'mid', 'Integer', $this, true );
+        if ( !CRM_Core_Permission::check( 'edit memberships' ) ) {
+            require_once 'CRM/Contact/BAO/Contact/Utils.php';
+            $userChecksum = CRM_Utils_Request::retrieve( 'cs', 'String', $this, false );
+            $contactID    = CRM_Core_DAO::getFieldValue( "CRM_Member_DAO_Membership", $mid, "contact_id" );
+            if ( !  CRM_Contact_BAO_Contact_Utils::validChecksum( $contactID, $userChecksum ) ) {
+                CRM_Core_Error::fatal( ts( 'You do not have permission to cancel subscription.' ) );
+            }
+        } 
+
         $cid = CRM_Utils_Request::retrieve( 'cid', 'Integer', $this, false );
         $context = CRM_Utils_Request::retrieve( 'context', 'String', $this, false );
         $selectedChild = CRM_Utils_Request::retrieve( 'selectedChild', 'String', $this, false );
@@ -87,56 +95,36 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form
                                           "force=1&context={$context}&key={$qfkey}" );
             }
         }
-        
+        $session = CRM_Core_Session::singleton( ); 
+        if ( $session->get( 'userID' ) ) {
+            $session->pushUserContext( $this->_userContext );
+        }
+
         if ( $mid ) {
             $membershipTypes  = CRM_Member_PseudoConstant::membershipType( );
             $membershipTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_Membership', $mid, 'membership_type_id' );
             $this->assign( 'membershipType', CRM_Utils_Array::value( $membershipTypeId, $membershipTypes ) );
 
             require_once 'CRM/Member/BAO/Membership.php';
-            $isCancelSupported = CRM_Member_BAO_Membership::isCancelSubscriptionSupported( $mid ); 
+            if ( CRM_Member_BAO_Membership::isSubscriptionCancelled( $mid ) ) {
+                CRM_Core_Error::fatal( ts( 'The auto renew membership looks to have been cancelled already.' ) );
+            }
+            $isCancelSupported = CRM_Member_BAO_Membership::isCancelSubscriptionSupported( $mid, false );
         }
         if ( $isCancelSupported ) {
-            //FIXME: for offline contribution page id won't exist
-
             $sql = " 
-    SELECT mp.contribution_id, rec.id as recur_id, rec.processor_id, mem.is_test, cp.payment_processor_id 
+    SELECT mp.contribution_id, rec.id as recur_id, rec.processor_id 
       FROM civicrm_membership_payment mp 
 INNER JOIN civicrm_membership         mem ON ( mp.membership_id = mem.id ) 
 INNER JOIN civicrm_contribution_recur rec ON ( mem.contribution_recur_id = rec.id )
 INNER JOIN civicrm_contribution       con ON ( con.id = mp.contribution_id )
-LEFT  JOIN civicrm_contribution_page   cp ON ( con.contribution_page_id = cp.id )
      WHERE mp.membership_id = {$mid}";
             
             $dao = CRM_Core_DAO::executeQuery( $sql );
             if ( $dao->fetch( ) ) { 
-                $this->_subscriptionId      = $dao->processor_id;
                 $this->_contributionRecurId = $dao->recur_id;
-                $contributionId = $dao->contribution_id;
-                $ppId = $dao->payment_processor_id;
-            }
-
-            if ( !$ppId && $contributionId ) {
-                $sql = " 
-    SELECT ft.payment_processor 
-      FROM civicrm_financial_trxn ft 
-INNER JOIN civicrm_entity_financial_trxn eft ON ( eft.financial_trxn_id = ft.id AND eft.entity_table = 'civicrm_contribution' ) 
-     WHERE eft.entity_id = {$contributionId}";
-                $ftDao = CRM_Core_DAO::executeQuery( $sql );
-                $ftDao->fetch( );
-                if ( $ftDao->payment_processor ) {
-                    $params = array( 'payment_processor_type' => $ftDao->payment_processor,
-                                     'is_test'                => $dao->is_test ? 1 : 0 );
-                    require_once 'CRM/Core/BAO/PaymentProcessor.php';
-                    CRM_Core_BAO_PaymentProcessor::retrieve( $params, $paymentProcessor );
-                    $ppId = $paymentProcessor['id'];
-                }
-            }
-            if ( $ppId ) {
-                $this->_ppID    = $ppId;
-                $this->_mode    = ( $dao->is_test ) ? 'test' : 'live';
-            } else {
-                CRM_Core_Error::fatal(ts('Could not figure out the Payment Processor.'));
+                $this->_subscriptionId      = $dao->processor_id;
+                $contributionId        = $dao->contribution_id;
             }
 
             if ( $contributionId ) {
@@ -144,15 +132,16 @@ INNER JOIN civicrm_entity_financial_trxn eft ON ( eft.financial_trxn_id = ft.id 
                 $contribution = new CRM_Contribute_DAO_Contribution();
                 $contribution->id = $contributionId;
                 $contribution->find(true);
-                $contribution->receive_date = CRM_Utils_Date::isoToMysql( $recur->receive_date );;
-
+                $contribution->receive_date = CRM_Utils_Date::isoToMysql( $recur->receive_date );
+                $contribution->receipt_date = CRM_Utils_Date::isoToMysql( $recur->receipt_date );
+                
                 $this->_objects['contribution'] = $contribution;
-            }
-            if ( !$this->_subscriptionId || empty( $this->_objects ) ) {
-                CRM_Core_Error::fatal( ts( 'Invalid membership or subscription.' ) );
+                
+                $this->_paymentObject = 
+                    CRM_Core_BAO_PaymentProcessor::getProcessorForEntity( $mid, 'membership', 'obj' );
             }
         } else {
-            CRM_Core_Error::fatal( ts( 'Could not detect payment processor OR the processor does not support cancellation of subscription.' ) );
+            CRM_Core_Error::fatal( ts( 'Could not detect payment processor OR the processor does not support cancellation of auto renew.' ) );
         }
     }
     
@@ -182,26 +171,29 @@ INNER JOIN civicrm_entity_financial_trxn eft ON ( eft.financial_trxn_id = ft.id 
      * @return None 
      */ 
     public function postProcess ( ) { 
-        $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $this->_ppID,
-                                                                              $this->_mode );
+        $status = null;
 
-        $paymentObject =& CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this );
-        $paymentObject->_setParam( 'subscriptionId', $this->_subscriptionId );
-        $cancelSubscription = $paymentObject->cancelSubscription( );
+        $this->_paymentObject->_setParam( 'subscriptionId', $this->_subscriptionId );
+        $cancelSubscription = $this->_paymentObject->cancelSubscription( );
 
         if ( is_a( $cancelSubscription, 'CRM_Core_Error' ) ) {
-            
             CRM_Core_Error::displaySessionError( $cancelSubscription );
-            CRM_Utils_System::redirect( $this->_userContext );
         } else if ( $cancelSubscription ) {
+            $status = ts( 'The auto-renewal option for your membership has been successfully cancelled. Your membership has not been cancelled. However you will need to arrange payment for renewal when your membership expires.' );
             require_once 'CRM/Contribute/BAO/ContributionRecur.php';
             $cancelled = CRM_Contribute_BAO_ContributionRecur::cancelRecurContribution( $this->_contributionRecurId, 
-                                                                           $this->_objects );
-            CRM_Core_Session::setStatus( ts( 'Subscription is cancelled successfully.' ) );
-            CRM_Utils_System::redirect( $this->_userContext );
+                                                                                        $this->_objects );
         } else {
-            CRM_Core_Session::setStatus( ts( 'Subscription could not be cancelled.' ) );
-            CRM_Utils_System::redirect( $this->_userContext );
+            $status = ts( 'Auto renew could not be cancelled.' );
+        }
+        
+        if ( $status ) {
+            $session = CRM_Core_Session::singleton( );
+            if ( $session->get( 'userID' ) ) {
+                CRM_Core_Session::setStatus( $status );
+            } else if ( function_exists( 'drupal_set_message' ) ) {
+                drupal_set_message( $status );
+            }
         }
     }
 }

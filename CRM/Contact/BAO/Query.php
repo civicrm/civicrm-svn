@@ -273,13 +273,21 @@ class CRM_Contact_BAO_Query
      */
     public $_distinctComponentClause;
 
-  /**
+    /**
      * use groupBy component clause for component searches
      *
      * @var string
      */
     public $_groupByComponentClause;
-
+    
+    /**
+     * Track open panes, useful in advance search
+     *
+     * @var array
+     * @static
+     */
+    public static $_openedPanes = array( );
+    
     /**
      * The tables which have a dependency on location and/or address
      *
@@ -418,6 +426,7 @@ class CRM_Contact_BAO_Query
         $this->_fromClause       = self::fromClause( $this->_tables     , null, null, $this->_primaryLocation, $this->_mode );
         $this->_simpleFromClause = self::fromClause( $this->_whereTables, null, null, $this->_primaryLocation, $this->_mode );
 
+        $this->openedSearchPanes( true );
     }
 
     function buildParamsLookup( ) 
@@ -659,7 +668,7 @@ class CRM_Contact_BAO_Query
 
         if ( ! empty( $this->_cfIDs ) ) {
             require_once 'CRM/Core/BAO/CustomQuery.php';
-            $this->_customQuery = new CRM_Core_BAO_CustomQuery( $this->_cfIDs );
+            $this->_customQuery = new CRM_Core_BAO_CustomQuery( $this->_cfIDs, true );
             $this->_customQuery->query( );
             $this->_select       = array_merge( $this->_select , $this->_customQuery->_select );
             $this->_element      = array_merge( $this->_element, $this->_customQuery->_element);
@@ -1581,6 +1590,7 @@ class CRM_Contact_BAO_Query
             $wc = ( $op != 'LIKE' ) ? "LOWER({$field['where']})" : "{$field['where']}";
             $this->_where[$grouping][] = self::buildClause( $wc, $op, $value, 'String' );
             $this->_qill[$grouping][] = ts('Gender') . " $op '$value'";
+            self::$_openedPanes['Demographics'] = true;
         } else if ( $name === 'birth_date' ) {
             $date = CRM_Utils_Date::processDate( $value );
             $this->_where[$grouping][] = self::buildClause( "contact_a.{$name}", $op, $date );
@@ -2834,7 +2844,8 @@ WHERE  id IN ( $groupIDs )
             $this->dateQueryBuilder( $values,
                                      'contact_a', 'deceased_date', 'deceased_date', ts('Deceased Date') );
         }
-       
+        
+        self::$_openedPanes['Demographics'] = true;
     }
 
     function privacy( &$values ) 
@@ -3692,6 +3703,33 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
             return "$clause $value";
         }
         
+    }
+
+    function openedSearchPanes( $reset = false ) {
+        if ( !$reset || empty($this->_whereTables)  ) {
+            return self::$_openedPanes;
+        }
+        
+        // pane name to table mapper
+        $panesMapper = array( 'Contributions'   => 'civicrm_contribution',
+                              'Memberships'     => 'civicrm_membership',
+                              'Events'          => 'civicrm_participant',
+                              'Relationships'   => 'civicrm_relationship',
+                              'Activities'      => 'civicrm_activity',
+                              'Pledges'         => 'civicrm_pledge',
+                              'Grants'          => 'civicrm_grant',
+                              'Address Fields'  => 'civicrm_address',
+                              'Notes'           => 'civicrm_note',
+                              'Change Log'      => 'civicrm_log',
+                              );
+        
+        foreach( array_keys($this->_whereTables) as $table ) {
+           if ( $panName = array_search( $table , $panesMapper ) ) {
+                self::$_openedPanes[$panName] = true;
+            }
+        }
+
+        return self::$_openedPanes;
     }
 
 }

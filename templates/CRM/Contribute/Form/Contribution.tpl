@@ -91,7 +91,7 @@
         <tr  class="crm-contribution-form-block-total_amount">
             <td class="label">{$form.total_amount.label}</td>
     	    <td {$valueStyle}>
-        	    <span id='totalAmount'>{$form.total_amount.html|crmMoney:$form.currency.html|crmReplace:class:eight}</span> 
+        	    <span id='totalAmount'>{$form.currency.html|crmReplace:class:eight}&nbsp;{$form.total_amount.html|crmReplace:class:eight}</span> 
         	    {if $hasPriceSets}
         	        <span id='totalAmountORPriceSet'> {ts}OR{/ts}</span>
         	        <span id='selectPriceSet'>{$form.price_set_id.html}</span>
@@ -448,10 +448,14 @@ function buildAmount( priceSetId ) {
 
       return;
   }
-  
+
   //don't allow recurring w/ priceset.
-  if ( cj( "#is_recur" ) ) {
-      cj( '#is_recur' ).val( 0 ); 
+  if ( cj( "#is_recur" ) && cj( 'input:radio[name=is_recur]:checked').val( ) ) {
+      //reset the values of recur block. 
+      cj("#installments").val('');
+      cj("#frequency_interval").val('');
+      cj( 'input:radio[name=is_recur]')[0].checked = true;
+
       cj( "#recurringPaymentBlock" ).hide( );
   }
       

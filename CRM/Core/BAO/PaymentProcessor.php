@@ -210,7 +210,7 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor
      * @static
      * @access public 
      */
-    static function getProcessorForComponent( $componentID, $component = 'contribute', $type = 'id' ) 
+    static function getProcessorForEntity( $entityID, $component = 'contribute', $type = 'id' ) 
     {
         if ( ! in_array( $component, array('membership', 'contribute') ) ) {
             return null;
@@ -218,49 +218,31 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor
 
         if ( $component == 'membership' ) {
             $sql = " 
-    SELECT cp.payment_processor_id, con.id, con.is_test 
+    SELECT cr.payment_processor_id as ppID1, cp.payment_processor_id as ppID2, con.is_test 
       FROM civicrm_membership mem
 INNER JOIN civicrm_membership_payment mp  ON ( mem.id = mp.membership_id ) 
 INNER JOIN civicrm_contribution       con ON ( mp.contribution_id = con.id )
- LEFT JOIN civicrm_contribution_page   cp ON ( con.contribution_page_id = cp.id )
+ LEFT JOIN civicrm_contribution_recur cr  ON ( mem.contribution_recur_id = cr.id )
+ LEFT JOIN civicrm_contribution_page  cp  ON ( con.contribution_page_id  = cp.id )
      WHERE mp.membership_id = %1";
 
         } else if ( $component == 'contribute' ) {
             $sql = " 
-    SELECT cp.payment_processor_id, con.id, con.is_test 
-      FROM civicrm_contribution      con
- LEFT JOIN civicrm_contribution_page cp ON ( con.contribution_page_id = cp.id )
+    SELECT cr.payment_processor_id as ppID1, cp.payment_processor_id as ppID2, con.is_test 
+      FROM civicrm_contribution       con
+ LEFT JOIN civicrm_contribution_recur cr  ON ( con.contribution_recur_id = cr.id )
+ LEFT JOIN civicrm_contribution_page  cp  ON ( con.contribution_page_id  = cp.id )
      WHERE con.id = %1";
         }
 
-        $params = array( 1 => array( $componentID, 'Integer' ) );
+        $params = array( 1 => array( $entityID, 'Integer' ) );
         $dao    = CRM_Core_DAO::executeQuery( $sql, $params );
         $dao->fetch();
 
-        $ppID = $dao->payment_processor_id;
-        $contributionID = $dao->id;
-        
-        if ( !$ppID && $contributionID ) {
-            // it's probably a offline contribution
-            // FIXME: dependency from financial_trxn should be removed, when we have added processor_id in recur table.
-            $sql = " 
-    SELECT ft.payment_processor 
-      FROM civicrm_financial_trxn ft 
-INNER JOIN civicrm_entity_financial_trxn eft ON ( eft.financial_trxn_id = ft.id AND eft.entity_table = 'civicrm_contribution' ) 
-     WHERE eft.entity_id = %1";
-            $params = array( 1 => array( $contributionID, 'Integer' ) );
-            $processorType  = CRM_Core_DAO::singleValueQuery( $sql, $params );
-
-            if ( $processorType ) {
-                $params = array( 'payment_processor_type' => $processorType,
-                                 'is_test'                => $dao->is_test ? 1 : 0 );
-                CRM_Core_BAO_PaymentProcessor::retrieve( $params, $paymentProcessor );
-                $ppID = $paymentProcessor['id'];
-            }
-        }
-
+        $ppID = $dao->ppID1 ? $dao->ppID1 : $dao->ppID2;
         $mode = ( $dao->is_test ) ? 'test' : 'live';
-        if ( $type == 'id' ) {
+
+        if ( !$ppID || $type == 'id' ) {
             return $ppID;
         } else if ( $type == 'info' ) {
             return CRM_Core_BAO_PaymentProcessor::getPayment( $ppID, $mode );
