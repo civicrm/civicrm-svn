@@ -74,6 +74,8 @@
             {if $showRadio }
                 {assign var="pid" value=$row.id}
                 <td style="width: 1em;">{$form.selectMembership.$pid.html}</td>
+            {else}
+                <td>&nbsp;</td>                
             {/if}
            <td style="width: auto;">
                 <span class="bold">{$row.name} &nbsp;
@@ -138,7 +140,7 @@ function showHideAutoRenew( memTypeId )
   if ( !memTypeId ) memTypeId = cj('input:radio[name=selectMembership]:checked').val();
   
   //does this page has only one membership type.
-  var singleMembership = {/literal}{$singleMembership}{literal};
+  var singleMembership = {/literal}'{$singleMembership}'{literal};
   if ( !memTypeId && singleMembership ) memTypeId = cj("#selectMembership").val( ); 
   
   var renewOptions  = {/literal}{$autoRenewMembershipTypeOptions}{literal};	 
