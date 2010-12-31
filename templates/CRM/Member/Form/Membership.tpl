@@ -332,6 +332,18 @@ function checkEmail( ) {
 {if $autoRenew}
 {literal}
    var renew = {/literal}{$autoRenew}{literal};
+   
+   //keep read only always checked.
+   cj( function( ) {
+      var allowAutoRenew = {/literal}'{$allowAutoRenew}'{literal};
+      if ( allowAutoRenew ) {
+          cj( "#auto_renew" ).click(function( ) {
+              if ( cj(this).attr( 'readonly' ) ) { 
+                 cj(this).attr( 'checked', true );
+              }
+          });
+       }
+    }); 
 {/literal}
 {/if}
 
@@ -362,13 +374,14 @@ function buildAutoRenew( memType ) {
         cj("#autorenew").show( );
         if ( renew[memType] == 2 ) {
            cj("#auto_renew").attr( 'checked', true );
-           cj("#auto_renew").attr( 'disabled', true );
+           cj("#auto_renew").attr( 'readonly', true );
         } else {
            cj("#auto_renew").attr( 'checked', false );
-           cj("#auto_renew").removeAttr( 'disabled' );
+           cj("#auto_renew").removeAttr( 'readonly' );
         }
      } else {
         cj("#autorenew").hide( );
+	cj("#auto_renew").attr( 'checked', false );
         cj("#send-receipt").show( );
         return;
      } 

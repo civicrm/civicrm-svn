@@ -422,7 +422,8 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             }
         }
         $this->assign( 'recurProcessor', json_encode( $recurProcessor ) );
-
+        $this->assign( 'allowAutoRenew', empty( $recurProcessor ) ? false : true );
+        
         $sel =& $this->addElement('hierselect', 
                                   'membership_type_id', 
                                   ts('Membership Organization and Type'), $js );
