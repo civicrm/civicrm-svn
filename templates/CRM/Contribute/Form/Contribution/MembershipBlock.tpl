@@ -166,6 +166,10 @@ function showHideAutoRenew( memTypeId )
      isChecked = false;
      funName   = 'hide();';
   }
+ 
+  //when we do show auto_renew read only 
+  //which implies it should be checked.	 
+  if ( readOnly && funName == 'show();' ) isChecked = true; 
 
   autoRenew.attr( 'readonly', readOnly );
   autoRenew.attr( 'checked',  isChecked );
