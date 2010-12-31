@@ -826,6 +826,8 @@ class Installer extends InstallRequirements {
                 // relative / abosolute paths are not working for drupal, hence using chdir()
                 chdir( $cmsPath ); 
                 include_once "./includes/bootstrap.inc";
+                include_once "./includes/unicode.inc";
+
                 drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
                 
                 // load user
