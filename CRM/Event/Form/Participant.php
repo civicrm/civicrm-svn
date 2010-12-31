@@ -375,7 +375,7 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
         // when custom data is included in this page
     	if ( CRM_Utils_Array::value( "hidden_custom", $_POST ) ) {
     		//custom data of type participant role
-            if ( $_POST['role_id'] ) {
+            if ( CRM_Utils_Array::value( 'role_id', $_POST ) ) {
                 foreach( $_POST['role_id'] as $k => $val ) {
                     $roleID = $val;
                     CRM_Custom_Form_Customdata::preProcess( $this, $this->_roleCustomDataTypeID, $k, 1, 'Participant', $this->_id );
