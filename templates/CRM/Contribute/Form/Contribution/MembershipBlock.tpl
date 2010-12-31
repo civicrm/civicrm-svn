@@ -136,6 +136,11 @@ function showHideAutoRenew( memTypeId )
   var considerUserInput = {/literal}'{$takeUserSubmittedAutoRenew}'{literal};	    
   if ( memTypeId ) considerUserInput = false;
   if ( !memTypeId ) memTypeId = cj('input:radio[name=selectMembership]:checked').val();
+  
+  //does this page has only one membership type.
+  var singleMembership = {/literal}{$singleMembership}{literal};
+  if ( !memTypeId && singleMembership ) memTypeId = cj("#selectMembership").val( ); 
+  
   var renewOptions  = {/literal}{$autoRenewMembershipTypeOptions}{literal};	 
   var currentOption = eval( "renewOptions." + 'autoRenewMembershipType_' + memTypeId );
   
