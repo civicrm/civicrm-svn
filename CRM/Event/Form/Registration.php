@@ -823,7 +823,9 @@ WHERE  v.option_group_id = g.id
         $registerDate = null;
         if ( $this->_allowConfirmation && $this->_participantId ) {
             $registerDate = $params['participant_register_date'];
-        } else if ( is_array( $params['participant_register_date'] ) && !empty( $params['participant_register_date'] ) ) {
+        } else if ( CRM_Utils_Array::value( 'participant_register_date', $params ) && 
+                    is_array( $params['participant_register_date'] ) && 
+                    !empty( $params['participant_register_date'] ) ) {
             $registerDate = CRM_Utils_Date::format( $params['participant_register_date'] ); 
         }
         
