@@ -44,9 +44,8 @@ class CRM_Admin_Page_Access extends CRM_Core_Page
 {
     function run( ) {
         $config = CRM_Core_Config::singleton( );
-        $ufAccessURL = CRM_Utils_System::url( 'admin/user/permissions' );
-        
-        $this->assign('ufAccessURL', $ufAccessURL);
+
+        $this->assign('ufAccessURL', CRM_Utils_System::url( 'admin/people/permissions' ) );
         return parent::run();
     }
 }
