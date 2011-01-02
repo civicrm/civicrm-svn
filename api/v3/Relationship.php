@@ -26,7 +26,7 @@
 */
 
 /**
- * File for the CiviCRM APIv2 relationship functions
+ * File for the CiviCRM APIv3 relationship functions
  *
  * @package CiviCRM_APIv3
  * @subpackage API_Relationship
@@ -107,14 +107,14 @@ function civicrm_relationship_create( &$params ) {
  * @access public
  */
 
-function civicrm_relationship_delete( &$params ) {
+function civicrm_relationship_delete( $params ) {
      
     if ( empty( $params ) ) { 
         return civicrm_create_error( 'No input parameter present' );
     }
 
     if ( ! is_array( $params ) ) {
-        return civicrm_create_error( ts( 'Input parameter is not an array' ) );
+        return civicrm_create_error(  'Input parameter is not an array'  );
     }
         
     if( ! CRM_Utils_Array::value( 'id',$params )  ) {
@@ -128,10 +128,10 @@ function civicrm_relationship_delete( &$params ) {
     $relationBAO = new CRM_Contact_BAO_Relationship( );
     $relationBAO->id = $params['id'];
     if ( !$relationBAO->find( true ) ) {
-        return civicrm_create_error( ts( 'Relationship id is not valid' ));
+        return civicrm_create_error(  'Relationship id is not valid' );
     } else {
         $relationBAO->del( $params['id'] );
-        return civicrm_create_success( ts( 'Deleted relationship successfully' ) );
+        return civicrm_create_success(  'Deleted relationship successfully'  );
     }
 
 }
@@ -197,18 +197,12 @@ function civicrm_relationship_update( $params ) {
  */
 function civicrm_relationship_get( $params ) {
     if ( !isset( $params['contact_id'] ) ) {
-        return civicrm_create_error( ts( 'Could not find contact_id in input parameters.' ) );
+        return civicrm_create_error(  'Could not find contact_id in input parameters.'  );
     }
 
     return civicrm_contact_relationship_get( $params );
 }
 
-/**
- * backward compatibility function to match broken naming convention in v2.2.1 and prior
- */
-function civicrm_get_relationships( $contact_a, $contact_b = null, $relationshipTypes = null, $sort = null ) {
-    return civicrm_contact_relationship_get( $contact_a, $contact_b, $relationshipTypes, $sort );
-}
 
 /**
  * Function to get the relationship
@@ -217,7 +211,7 @@ function civicrm_get_relationships( $contact_a, $contact_b = null, $relationship
  * @param array   $contact_b          (reference ) input parameters.
  * @param array   $relationshipTypes  an array of Relationship Type Name.
  * @param string  $sort               sort all relationship by relationshipId (eg asc/desc)
- *
+ * @todo doesn't take a single array - but may also need to be an internal function (prefaced by _)?
  * @return        Array of all relationship.
  *
  * @access  public
@@ -225,11 +219,11 @@ function civicrm_get_relationships( $contact_a, $contact_b = null, $relationship
 function civicrm_contact_relationship_get( $contact_a, $contact_b = null, $relationshipTypes = null, $sort = null ) 
 {
     if ( ! is_array( $contact_a ) ) {
-        return civicrm_create_error( ts( 'Input parameter is not an array' ) );
+        return civicrm_create_error(  'Input parameter is not an array'  );
     }
     
     if ( !isset( $contact_a['contact_id'] ) ) {
-        return civicrm_create_error( ts( 'Could not find contact_id in input parameters.' ) );
+        return civicrm_create_error(  'Could not find contact_id in input parameters.'  );
     }
     require_once 'CRM/Contact/BAO/Relationship.php';
     $contactID     = $contact_a['contact_id'];
@@ -290,7 +284,7 @@ function civicrm_contact_relationship_get( $contact_a, $contact_b = null, $relat
     if ( $relationships ) {
         return civicrm_create_success( $relationships );
     } else {
-        return civicrm_create_error( ts( 'Invalid Data' ) );
+        return civicrm_create_error(  'Invalid Data'  );
     }
 }
 

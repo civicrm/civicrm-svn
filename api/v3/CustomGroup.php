@@ -27,7 +27,7 @@
 */
 
 /**
- * File for the CiviCRM APIv2 custom group functions
+ * File for the CiviCRM APIv3 custom group functions
  *
  * @package CiviCRM_APIv3
  * @subpackage API_CustomGroup
@@ -39,7 +39,7 @@
 /**
  * Files required for this package
  */
-require_once 'api/v2/utils.php';
+require_once 'api/v3/utils.php';
 
 /**
  * Most API functions take in associative arrays ( name => value pairs

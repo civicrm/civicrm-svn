@@ -39,7 +39,7 @@
 /**
  * Include utility functions
  */
-require_once 'api/v2/utils.php';
+require_once 'api/v3/utils.php';
 require_once 'CRM/Utils/Rule.php';
 require_once 'CRM/Contribute/PseudoConstant.php';
 
@@ -105,7 +105,7 @@ function civicrm_contribution_delete( &$params ) {
     if ( CRM_Contribute_BAO_Contribution::deleteContribution( $contributionID ) ) {
         return civicrm_create_success( );
     } else {
-        return civicrm_create_error( ts( 'Could not delete contribution' ) );
+        return civicrm_create_error(  'Could not delete contribution' );
     }
 }
 

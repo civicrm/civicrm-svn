@@ -51,48 +51,40 @@ require_once 'api/v2/MembershipStatus.php';
  * 
  * This API is used for deleting a contact membership
  * 
- * @param  Int  $membershipID   Id of the contact membership to be deleted
- * 
+ * @param  $params array  array holding membership_id - Id of the contact membership to be deleted
+ * @todo should this really return null if successful - should be array
+ * @todo should function be in here or membershp contact? This whole file is probably deprecated
  * @return null if successfull, object of CRM_Core_Error otherwise
  * @access public
  */
-function civicrm_membership_delete(&$membershipID)
+function civicrm_membership_delete($params)
 {
     _civicrm_initialize();
     
-    if (empty($membershipID)) {
+    if (empty($params['membership_id'])) {
         return civicrm_create_error('Membership ID cannot be empty.');
     }
     
     // membershipID should be numeric
-    if ( ! is_numeric( $membershipID ) ) {
+    if ( ! is_numeric( $params['membership_id']) ) {
         return civicrm_create_error( 'Input parameter should be numeric' );
     }    
     
     require_once 'CRM/Member/BAO/Membership.php';
-    CRM_Member_BAO_Membership::deleteRelatedMemberships( $membershipID );
+    CRM_Member_BAO_Membership::deleteRelatedMemberships( $params['membership_id'] );
     
     $membership = new CRM_Member_BAO_Membership();
-    $result = $membership->deleteMembership($membershipID);
+    $result = $membership->deleteMembership($params['membership_id']);
     
     return $result ? civicrm_create_success( ) : civicrm_create_error('Error while deleting Membership');
 }
 
-/**
- *
- * @param <type> $contactID
- * @return <type>
- * @deprecated compatilibility wrappers
- */
-function civicrm_contact_memberships_get(&$contactID)
-{
-    return civicrm_membership_contact_get($contactID);
-}
 
 /**
  *
  * @param <type> $params
  * @return <type>
+ * @todo wrapper fuunction - delete?
  */
 function civicrm_contact_membership_create(&$params)
 {
@@ -101,8 +93,9 @@ function civicrm_contact_membership_create(&$params)
 
 /**
  *
- * @param <type> $params
+ * @param  $params array
  * @return <type>
+ * @todo  wrapper fuunction - delete?
  */
 function civicrm_membership_types_get(&$params) {
     return civicrm_membership_type_get($params);
@@ -110,8 +103,9 @@ function civicrm_membership_types_get(&$params) {
 
 /**
  *
- * @param <type> $params
+ * @param  $params array
  * @return <type> 
+ * @todo  wrapper fuunction - delete?
  */
 function civicrm_membership_statuses_get(&$params) {
     return civicrm_membership_status_get($params);

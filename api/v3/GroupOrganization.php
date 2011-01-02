@@ -26,7 +26,7 @@
 */
 
 /**
- * File for the CiviCRM APIv2 group contact functions
+ * File for the CiviCRM APIv3 group contact functions
  *
  * @package CiviCRM_APIv3
  * @subpackage API_Group
@@ -39,7 +39,7 @@
 /**
  * Include utility functions
  */
-require_once 'api/v2/utils.php';
+require_once 'api/v3/utils.php';
 
 /**
  * This API will give list of the groups for particular contact 
@@ -56,7 +56,7 @@ function civicrm_group_organization_get( &$params )
     _civicrm_initialize( );
 
     if ( ! is_array( $params ) ) {
-        return civicrm_create_error( ts( 'Input parameter is not an array' ) );
+        return civicrm_create_error(  'Input parameter is not an array'  );
     }
 
     if ( empty( $params ) ) {
@@ -65,7 +65,7 @@ function civicrm_group_organization_get( &$params )
     
     if ( ! array_key_exists( 'organization_id', $params ) &&
          ! array_key_exists( 'group_id', $params ) ) {
-        return civicrm_create_error( ts( 'at least one of organization_id or group_id is a required field' ) );
+        return civicrm_create_error(  'at least one of organization_id or group_id is a required field'  );
     }
 
     require_once 'CRM/Contact/DAO/GroupOrganization.php';
@@ -84,14 +84,14 @@ function civicrm_group_organization_get( &$params )
 
 /**
  *
- * @param <type> $params
+ * @param $params array
  * @return <type>
  */
 function civicrm_group_organization_create( &$params ) 
 {
 
     if ( ! is_array( $params ) ) {
-        return civicrm_create_error( ts( 'Input parameter is not an array' ) );
+        return civicrm_create_error(  'Input parameter is not an array'  );
     }
     
     if ( empty( $params ) ) {
@@ -100,7 +100,7 @@ function civicrm_group_organization_create( &$params )
     
     if ( ! array_key_exists( 'organization_id', $params ) ||
          ! array_key_exists( 'group_id', $params ) ) {
-        return civicrm_create_error( ts( 'organization_id and group_id are required field' ) );
+        return civicrm_create_error( 'organization_id and group_id are required field' );
     }
 
     require_once 'CRM/Contact/BAO/GroupOrganization.php';
@@ -143,6 +143,6 @@ function civicrm_group_organization_delete( &$params )
     }
     require_once 'CRM/Contact/BAO/GroupOrganization.php';
     $result = CRM_Contact_BAO_GroupOrganization::delete( $params['id'] );
-    return $result ? civicrm_create_success( ts( 'Deleted Group Organization successfully' ) ):civicrm_create_error( ts( 'Could not delete Group Organization' ) );
+    return $result ? civicrm_create_success(  'Deleted Group Organization successfully'  ):civicrm_create_error(  'Could not delete Group Organization'  );
     
 }

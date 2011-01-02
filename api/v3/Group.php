@@ -26,7 +26,7 @@
 */
 
 /**
- * File for the CiviCRM APIv2 group functions
+ * File for the CiviCRM APIv3 group functions
  *
  * @package CiviCRM_APIv3
  * @subpackage API_Group
@@ -38,7 +38,7 @@
  * Include utility functions
  */
 require_once 'CRM/Contact/BAO/Group.php';
-require_once 'api/v2/utils.php';
+require_once 'api/v3/utils.php';
 
 /**
  * create/update group

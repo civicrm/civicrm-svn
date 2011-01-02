@@ -54,6 +54,7 @@ require_once 'api/v3/utils.php';
  * 
  * @return array of newly created event property values.
  * @access public
+ * @todo v2 Event API didn't create custom fields - I can see this has been 'touched up' but should check event custom fields can now be created & then remove this comment
  */
 function civicrm_event_create( &$params ) 
 {
@@ -62,11 +63,6 @@ function civicrm_event_create( &$params )
       civicrm_api_check_permission(__FUNCTION__, $params, true);
       civicrm_verify_mandatory ($params,'CRM_Event_DAO_Event',array ('start_date','event_type_id','title'));
 
-      // Do we really want $params[id], even if we have
-      // $params[event_id]? if yes then please uncomment the below line 
-      
-      //$ids['event'      ] = $params['id'];
-      
       $ids['eventTypeId'] = (int) $params['event_type_id'];
       $ids['startDate'  ] = $params['start_date'];
       $ids['event_id']    = CRM_Utils_Array::value( 'event_id', $params );
@@ -105,7 +101,7 @@ function civicrm_event_get( &$params )
 {
 
     if ( ! is_array( $params ) ) {
-        return civicrm_create_error( ts( 'Input parameters is not an array.' ) );
+        return civicrm_create_error(  'Input parameters is not an array.'  );
     }
 
     $inputParams            = array( );
@@ -114,7 +110,7 @@ function civicrm_event_get( &$params )
     $otherVars              = array( 'sort', 'offset', 'rowCount' );
 
     $sort     =  array_key_exists( 'return.sort', $params ) ? $params['return.sort'] : false; 
-    // don't check if empty, more meaningful error for API user instead of siletn defaults
+    // don't check if empty, more meaningful error for API user instead of silent defaults
     $offset   = array_key_exists( 'return.offset', $params ) ? $params['return.offset'] : 0;
     $rowCount = array_key_exists( 'return.max_results', $params ) ? $params['return.max_results'] : 25;
     
@@ -191,7 +187,7 @@ function civicrm_event_get( &$params )
 function civicrm_event_delete( &$params ) 
 {
     if ( empty( $params ) ) {
-        return civicrm_create_error( ts( 'No input parameters present' ) );
+        return civicrm_create_error( 'No input parameters present'  );
     }
     
     $eventID = null;
@@ -199,11 +195,11 @@ function civicrm_event_delete( &$params )
     $eventID = CRM_Utils_Array::value( 'event_id', $params );
     
     if ( ! isset( $eventID ) ) {
-        return civicrm_create_error( ts( 'Invalid value for eventID' ) );
+        return civicrm_create_error(  'Invalid value for eventID'  );
     }
     
     require_once 'CRM/Event/BAO/Event.php';
     
-    return CRM_Event_BAO_Event::del( $eventID ) ?  civicrm_create_success( ) : civicrm_create_error( ts( 'Error while deleting event' ) );
+    return CRM_Event_BAO_Event::del( $eventID ) ?  civicrm_create_success( ) : civicrm_create_error(  'Error while deleting event' );
 }
 

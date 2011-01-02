@@ -26,7 +26,7 @@
 */
 
 /**
- * File for the CiviCRM APIv2 user framework group functions
+ * File for the CiviCRM APIv3 user framework group functions
  *
  * @package CiviCRM_APIv3
  * @subpackage API_UF
@@ -40,7 +40,7 @@
 /**
  * Files required for this package
  */
-require_once 'api/v2/utils.php'; 
+require_once 'api/v3/utils.php'; 
 require_once 'CRM/Core/BAO/UFGroup.php';
 
 /**
@@ -53,12 +53,15 @@ require_once 'CRM/Core/BAO/UFGroup.php';
  * @param array $returnProperties the limited set of object properties that
  *                                need to be returned to the caller
  *
+ * @todo several functions here that don't take array. naming conventions don't match filename
+ * 
+ * @todo is this the right way to group these functions? UF_id (get user ID) seems more logically to be a return value on the contact api
  */
 
 
 /**                
  * Get all the user framework groups 
- * 
+ *
  * @access public                                         
  * @return array - array reference of all groups. 
  * @static 
@@ -207,7 +210,9 @@ function civicrm_uf_match_id_get($ufID)
  * @param int $contactID
  *  
  * @return int ufID
- * @access public     
+ * @access public
+ * @todo function doesn't accept or return arrays
+ * @todo does this function belong here? Would be useful as a return option on contact id     
  * @static  
  */  
 function civicrm_uf_id_get($contactID)

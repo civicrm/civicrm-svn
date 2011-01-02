@@ -176,6 +176,7 @@ function &civicrm_file_update( &$params ) {
  * 
  * @return null if successfull, object of CRM_Core_Error otherwise
  * @access public
+ * @todo doesn't take array
  */
 function &civicrm_file_delete( $fileId ) {
     if ( empty($fileId) ) {
