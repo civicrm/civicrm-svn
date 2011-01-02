@@ -25,7 +25,7 @@
  +--------------------------------------------------------------------+
 */
 
-require_once 'api/v3/Note.php';
+require_once 'api/v2/Note.php';
 require_once 'tests/phpunit/CiviTest/CiviUnitTestCase.php';
 
 /**
@@ -33,7 +33,7 @@ require_once 'tests/phpunit/CiviTest/CiviUnitTestCase.php';
  *
  */
 
-class api_v3_NoteTest extends CiviUnitTestCase 
+class api_v2_NoteTest extends CiviUnitTestCase 
 {
     protected $_contactID;
     protected $_params;

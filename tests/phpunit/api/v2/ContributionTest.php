@@ -26,10 +26,10 @@
 */
 
 
-require_once 'api/v3/Contribution.php';
+require_once 'api/v2/Contribution.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 
-class api_v3_ContributionTest extends CiviUnitTestCase 
+class api_v2_ContributionTest extends CiviUnitTestCase 
 {
     /**
      * Assume empty database with just civicrm_data

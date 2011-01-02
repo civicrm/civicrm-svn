@@ -26,14 +26,14 @@
 */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/v3/GroupNesting.php';
+require_once 'api/v2/GroupNesting.php';
 
 /**
  * Test class for GroupNesting API - civicrm_group_nesting_*
  *
  *  @package   CiviCRM
  */
-class api_v3_GroupNestingTest extends CiviUnitTestCase
+class api_v2_GroupNestingTest extends CiviUnitTestCase
 {
 
     /**

@@ -33,16 +33,16 @@
  *  Include class definitions
  */
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/v3/Activity.php';
+require_once 'api/v2/Activity.php';
 require_once 'CRM/Core/BAO/CustomGroup.php';
 require_once 'Utils.php';
 
 /**
- *  Test APIv3 civicrm_activity_* functions
+ *  Test APIv2 civicrm_activity_* functions
  *
  *  @package   CiviCRM
  */
-class api_v3_ActivityTest extends CiviUnitTestCase
+class api_v2_ActivityTest extends CiviUnitTestCase
 {
     /**
      *  Test setup for every test
@@ -193,7 +193,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     function testActivityCreateWithMissingContactId( )
     {
         $params = array(
-                        'subject'             => 'Discussion on Apis for v3',
+                        'subject'             => 'Discussion on Apis for v2',
                         'activity_date_time'  => date('Ymd'),
                         'duration'            => 120,
                         'location'            => 'Pensulvania',
@@ -215,7 +215,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     {
         $params = array(
                         'source_contact_id'   => 'fubar',
-                        'subject'             => 'Discussion on Apis for v3',
+                        'subject'             => 'Discussion on Apis for v2',
                         'activity_date_time'  => date('Ymd'),
                         'duration'            => 120,
                         'location'            => 'Pensulvania',
@@ -239,7 +239,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     //{
     //    $params = array(
     //                    'source_contact_id'   => 17,
-    //                    'subject'             => 'Discussion on Apis for v3',
+    //                    'subject'             => 'Discussion on Apis for v2',
     //                    'activity_date_time'  => date('Ymd'),
     //                    'duration'            => 'fubar',
     //                    'location'            => 'Pensulvania',
@@ -261,7 +261,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     {
         $params = array(
                         'source_contact_id'   => 17,
-                        'subject'             => 'Discussion on Apis for v3',
+                        'subject'             => 'Discussion on Apis for v2',
                         'activity_date_time'  => date('Ymd'),
                         'duration'            => 120,
                         'location'            => 'Pensulvania',
@@ -283,7 +283,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     {
         $params = array(
                         'source_contact_id'   => 17,
-                        'subject'             => 'Discussion on Apis for v3',
+                        'subject'             => 'Discussion on Apis for v2',
                         'activity_date_time'  => date('Ymd'),
                         'duration'            => 120,
                         'location'            => 'Pensulvania',
@@ -305,7 +305,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     {
         $params = array(
                         'source_contact_id'   => 17,
-                        'subject'             => 'Discussion on Apis for v3',
+                        'subject'             => 'Discussion on Apis for v2',
                         'activity_date_time'  => date('Ymd'),
                         'duration'            => 120,
                         'location'            => 'Pensulvania',
@@ -319,7 +319,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
         $this->assertEquals( $result['source_contact_id'], 17 );
         $this->assertEquals( $result['duration'], 120 );
-        $this->assertEquals( $result['subject'], 'Discussion on Apis for v3' );
+        $this->assertEquals( $result['subject'], 'Discussion on Apis for v2' );
         $this->assertEquals( $result['activity_date_time'], date('Ymd') . '000000' );
         $this->assertEquals( $result['location'], 'Pensulvania' );
         $this->assertEquals( $result['details'], 'a test activity' );
@@ -385,7 +385,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         //  Create an activity with custom data
         $params = array(
                 'source_contact_id'   => 17,
-                'subject'             => 'Discussion on Apis for v3',
+                'subject'             => 'Discussion on Apis for v2',
                 'activity_date_time'  => date('Ymd'),
                 'duration'            => 120,
                 'location'            => 'Pensulvania',
@@ -421,7 +421,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                              'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['result']['activity_type_id'],
                              'In line ' . __LINE__ );
-        $this->assertEquals( 'Discussion on Apis for v3',
+        $this->assertEquals( 'Discussion on Apis for v2',
                              $result['result']['subject'],
                              'In line ' . __LINE__ );
     }
@@ -455,7 +455,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
 
         $params = array(
                         'source_contact_id'   => 17,
-                        'subject'             => 'Discussion on Apis for v3',
+                        'subject'             => 'Discussion on Apis for v2',
                         'activity_date_time'  => date('Ymd'),
                         'duration'            => 120,
                         'location'            => 'Pensulvania',
@@ -500,7 +500,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
 
         $params = array(
                         'source_contact_id'   => 17,
-                        'subject'             => 'Discussion on Apis for v3',
+                        'subject'             => 'Discussion on Apis for v2',
                         'activity_date_time'  => date('Ymd'),
                         'duration'            => 120,
                         'location'            => 'Pensulvania',
@@ -515,7 +515,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
         $this->assertEquals( $result['source_contact_id'], 17 );
         $this->assertEquals( $result['duration'], 120 );
-        $this->assertEquals( $result['subject'], 'Discussion on Apis for v3' );
+        $this->assertEquals( $result['subject'], 'Discussion on Apis for v2' );
         $this->assertEquals( $result['activity_date_time'], date('Ymd') . '000000' );
         $this->assertEquals( $result['location'], 'Pensulvania' );
         $this->assertEquals( $result['details'], 'a test activity' );
@@ -951,7 +951,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
 
         $params = array(
                         'id'                  => 4,
-                        'subject'             => 'Update Discussion on Apis for v3',
+                        'subject'             => 'Update Discussion on Apis for v2',
                         'activity_date_time'  => '20091011123456',
                         'duration'            => 120,
                         'location'            => '21, Park Avenue',
@@ -1033,7 +1033,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         //  Create an activity with custom data
         $params = array(
                 'source_contact_id'   => 17,
-                'subject'             => 'Discussion on Activity Apis for v3',
+                'subject'             => 'Discussion on Activity Apis for v2',
                 'activity_date_time'  => date('Ymd'),
                 'duration'            => 120,
                 'location'            => 'Pensulvania',
@@ -1065,7 +1065,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                               "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
          $this->assertEquals( 1, $result['result']['id'],
                               'In line ' . __LINE__ );
-         $this->assertEquals( 'Discussion on Activity Apis for v3',
+         $this->assertEquals( 'Discussion on Activity Apis for v2',
                               $result['result']['subject'],
                               'In line ' . __LINE__ );
         
@@ -1073,7 +1073,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
          $params = array(
                  'id'                  => $result['result']['id'],
                  'source_contact_id'   => 17,
-                 'subject'             => 'Discussion on Apis for v3 - Activity Update',
+                 'subject'             => 'Discussion on Apis for v2 - Activity Update',
                  'status_id'           => 1,
                  'activity_name'       => 'Test activity type',
                  'custom_11'           => 'Updated my test data'
@@ -1087,7 +1087,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
          
          $this->assertEquals( 0, $result['is_error'],
                               "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
-         $this->assertEquals( 'Discussion on Apis for v3 - Activity Update',
+         $this->assertEquals( 'Discussion on Apis for v2 - Activity Update',
                               $result['result']['subject'],
                               'In line ' . __LINE__ );
          
@@ -1117,7 +1117,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         //  
         $params = array(
                         'id'                  => 4,
-                        'subject'             => 'Update Discussion on Apis for v3',
+                        'subject'             => 'Update Discussion on Apis for v2',
                         'duration'            => 120,
                         'location'            => '21, Park Avenue',
                         'details'             => 'Lets update Meeting',
@@ -1192,7 +1192,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                              "In line " . __LINE__ );
     }
 
-} // class api_v3_ActivityTest
+} // class api_v2_ActivityTest
 
 // -- set Emacs parameters --
 // Local variables:

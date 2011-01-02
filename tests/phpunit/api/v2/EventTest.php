@@ -25,10 +25,10 @@
  +--------------------------------------------------------------------+
 */
 
-require_once 'api/v3/Event.php';
+require_once 'api/v2/Event.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 
-class api_v3_EventTest extends CiviUnitTestCase 
+class api_v2_EventTest extends CiviUnitTestCase 
 {
     protected $_params;
     

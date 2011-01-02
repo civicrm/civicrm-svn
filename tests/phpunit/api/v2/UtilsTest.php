@@ -28,14 +28,14 @@
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'CRM/Core/Permission.php';
 require_once 'CRM/Core/Permission/UnitTests.php';
-require_once 'api/v3/utils.php';
+require_once 'api/v2/utils.php';
 
 /**
  * Test class for API utils
  *
  *  @package   CiviCRM
  */
-class api_v3_UtilsTest extends CiviUnitTestCase
+class api_v2_UtilsTest extends CiviUnitTestCase
 {
 
     /**

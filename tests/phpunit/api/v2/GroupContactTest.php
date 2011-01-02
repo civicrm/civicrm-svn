@@ -25,10 +25,10 @@
  +--------------------------------------------------------------------+
 */
 
-require_once 'api/v3/GroupContact.php';
+require_once 'api/v2/GroupContact.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 
-class api_v3_GroupContactTest extends CiviUnitTestCase 
+class api_v2_GroupContactTest extends CiviUnitTestCase 
 {
    
     protected $_contactId;

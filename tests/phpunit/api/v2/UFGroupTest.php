@@ -26,8 +26,8 @@
 */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/v3/UFGroup.php';
-require_once 'api/v3/UFJoin.php';
+require_once 'api/v2/UFGroup.php';
+require_once 'api/v2/UFJoin.php';
 
 /**
  * Test class for UFGroup API - civicrm_uf_*
@@ -35,7 +35,7 @@ require_once 'api/v3/UFJoin.php';
  *
  *  @package   CiviCRM
  */
-class api_v3_UFGroupTest extends CiviUnitTestCase
+class api_v2_UFGroupTest extends CiviUnitTestCase
 {
     // ids from the uf_group_test.xml fixture
     protected $_ufGroupId = 11;

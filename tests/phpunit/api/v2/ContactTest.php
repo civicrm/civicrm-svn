@@ -33,14 +33,14 @@
  *  Include class definitions
  */
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/v3/Contact.php';
+require_once 'api/v2/Contact.php';
 
 /**
- *  Test APIv3 civicrm_activity_* functions
+ *  Test APIv2 civicrm_activity_* functions
  *
  *  @package   CiviCRM
  */
-class api_v3_ContactTest extends CiviUnitTestCase
+class api_v2_ContactTest extends CiviUnitTestCase
 {
     /**
      *  Constructor
@@ -893,7 +893,7 @@ class api_v3_ContactTest extends CiviUnitTestCase
         $result = civicrm_contact_update($params);
         $this->assertEquals(0, $result['is_error'], 'overfluous permissions should be enough to update a contact');
     }
-} // class api_v3_ContactTest
+} // class api_v2_ContactTest
 
 // -- set Emacs parameters --
 // Local variables:

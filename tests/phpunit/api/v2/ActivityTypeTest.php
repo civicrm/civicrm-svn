@@ -25,17 +25,17 @@
  */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/v3/ActivityType.php';
+require_once 'api/v2/ActivityType.php';
 
 
 /**
- *  Test APIv3 civicrm_activity_* functions
+ *  Test APIv2 civicrm_activity_* functions
  *
  *  @package   CiviCRM
  */
 
 
-class api_v3_ActivityTypeTest extends CiviUnitTestCase 
+class api_v2_ActivityTypeTest extends CiviUnitTestCase 
 {
  
     function get_info( ) 

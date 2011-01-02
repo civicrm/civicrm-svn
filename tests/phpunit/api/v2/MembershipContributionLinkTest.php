@@ -26,16 +26,16 @@
 */
 
 
-require_once 'api/v3/MembershipContributionLink.php';
+require_once 'api/v2/MembershipContributionLink.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'CiviTest/Contact.php';
-require_once 'api/v3/MembershipType.php';
-require_once 'api/v3/MembershipStatus.php';
+require_once 'api/v2/MembershipType.php';
+require_once 'api/v2/MembershipStatus.php';
 require_once 'CRM/Member/BAO/MembershipType.php';
 require_once 'CRM/Member/BAO/Membership.php';
 
 
-class api_v3_MembershipContributionLinkTest extends CiviUnitTestCase 
+class api_v2_MembershipContributionLinkTest extends CiviUnitTestCase 
 {
     
     function setUp() 

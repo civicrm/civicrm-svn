@@ -26,11 +26,11 @@
 */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/v3/ActivityContact.php';
+require_once 'api/v2/ActivityContact.php';
 require_once 'CRM/Core/BAO/CustomGroup.php';
-require_once 'api/v3/Contact.php';
+require_once 'api/v2/Contact.php';
 
-class api_v3_ActivityContactTest extends CiviUnitTestCase
+class api_v2_ActivityContactTest extends CiviUnitTestCase
 {
 
     public function setUp()
