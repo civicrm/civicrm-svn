@@ -1349,7 +1349,7 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
      * @return array    array of importable Fields
      * @access public
      */
-    function &importableFields( ) 
+    function &importableFields( $status = false ) 
     {
         if ( ! self::$_importableFields ) {
             if ( ! self::$_importableFields ) {

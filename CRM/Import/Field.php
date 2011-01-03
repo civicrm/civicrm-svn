@@ -75,6 +75,12 @@ class CRM_Import_Field {
      */
      public $_dataPattern;
 
+     /**
+     * regexp to match the pattern of header from various column/fields
+     * @var string
+     */
+     public $_headerPattern;
+
     /**
      * location type
      * @var int
