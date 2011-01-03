@@ -1333,13 +1333,13 @@ VALUES
             } else if ( ($count+1) % 2 == 0 ) {
                 // membership type 2
                 $startDate = date( 'Y-m-d', mktime( 0, 0, 0, date('m'), ( date('d') - $count ), date('Y') ) );
-                $endDate   = date( 'Y-m-d', mktime( 0, 0, 0, date('m'), ( date('d') - $count ), ( date('Y') + 1) ) );
+                $endDate   = date( 'Y-m-d', mktime( 0, 0, 0, date('m'), ( date('d') - ($count+1) ), ( date('Y') + 1) ) );
                 $membership .= "( {$randomContacts[$count]}, 2, '{$startDate}', '{$startDate}', '{$endDate}', '{$source}', 1)";
                 $activity   .= "( {$randomContacts[$count]}, {$acititySourceId}, 7, 'Student', '{$startDate} 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 )";
             } else {
                 // membership type 1
                 $startDate = date( 'Y-m-d', mktime( 0, 0, 0, date('m'), ( date('d') - $count ), date('Y') ) );
-                $endDate   = date( 'Y-m-d', mktime( 0, 0, 0, date('m'), ( date('d') - $count ), ( date('Y') + 2) ) );
+                $endDate   = date( 'Y-m-d', mktime( 0, 0, 0, date('m'), ( date('d') - ($count+1) ), ( date('Y') + 2) ) );
                 $membership .= "( {$randomContacts[$count]}, 1, '{$startDate}', '{$startDate}', '{$endDate}', '{$source}', 1)";
                 $activity   .= "( {$randomContacts[$count]}, {$acititySourceId}, 7, 'General', '{$startDate} 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 )";
             }
