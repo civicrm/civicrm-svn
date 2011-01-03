@@ -133,14 +133,14 @@ class CRM_Event_Form_Task_Badge extends CRM_Event_Form_Task
         $query = new CRM_Contact_BAO_Query( $queryParams, $returnProperties, null, false, false,
                                             CRM_Contact_BAO_Query::MODE_EVENT );
         
-        list( $select, $from, $where ) = $query->query( );
+        list( $select, $from, $where, $having ) = $query->query( );
         if ( empty( $where ) ) {
             $where = "WHERE {$this->_componentClause}";
         } else {
             $where .= " AND {$this->_componentClause}";
         }
         
-        $queryString = "$select $from $where";
+        $queryString = "$select $from $where $having";
 
         $dao = CRM_Core_DAO::executeQuery( $queryString );
         $rows = array( );
