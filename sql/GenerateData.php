@@ -1285,10 +1285,10 @@ class CRM_GCD {
         $randomContacts      = array_slice($contacts, 20, 30);
         
         $sources             = array( 'Payment', 'Donation', 'Check' );
-        $membershipTypes     = array( 2, 1 );
-        $membershipTypeNames = array( 'Student', 'General' );
+        $membershipTypes     = array( 1, 2 );
+        $membershipTypeNames = array( 'General', 'Student' );
         $statuses            = array( 3, 4 );
-                
+        
         $membership = " 
 INSERT INTO civicrm_membership
         (contact_id, membership_type_id, join_date, start_date, end_date, source, status_id)
@@ -1310,20 +1310,26 @@ VALUES
                 $activity   .= "( {$randomContacts[$count]}, {$acititySourceId}, 7, 'Lifetime', '{$startDate} 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 )";
             } else if ( ($count+1) % 5 == 0 ) {
                 // Grace or expired, memberhsip type is random of 1 & 2
-                $randId         = $membershipTypes[array_rand( $membershipTypes )];
+                $randIndex = array_rand( $membershipTypes );
+                $membershipTypeId   = $membershipTypes[$randIndex];
+                $membershipStatusId = $statuses[$randIndex];
+                $membershipTypeName = $membershipTypeNames[$randIndex];
+                $YearFactor = $membershipTypeId*2;
+                //reverse the type and consider as year factor.
+                if ( $YearFactor != 2 ) $YearFactor = 1;
+                $dateFactor = ($count*($YearFactor)*($YearFactor)*($YearFactor));
+                $startDate  = date( 'Y-m-d', mktime( 0, 0, 0, 
+                                                     date('m'), 
+                                                     ( date('d') - ( $dateFactor ) ), 
+                                                     ( date('Y') - ( $YearFactor ) ) ) );
+                $partOfDate  = explode( '-', $startDate );
+                $endDate     = date( 'Y-m-d', mktime( 0, 0, 0, 
+                                                      $partOfDate[1], 
+                                                      ( $partOfDate[2] - 1 ),
+                                                      ( $partOfDate[0] + ( $YearFactor ) ) )  );
                 
-                $membershipType = self::_getRandomElement($membershipTypes);
-                $startDate      = date( 'Y-m-d', mktime( 0, 0, 0, 
-                                                         date('m'), 
-                                                         ( date('d') - ($count*($randId)*($randId)*($randId) ) ), 
-                                                         ( date('Y') - ($randId) ) ) );
-                $partOfDate     = explode( '-', $startDate );
-                $endDate        = date( 'Y-m-d', mktime( 0, 0, 0, 
-                                                         $partOfDate[1], 
-                                                         ( $partOfDate[2] - 1 ),
-                                                         ( $partOfDate[0] + ($randId) ) )  );
-                $membership .= "( {$randomContacts[$count]}, {$membershipType}, '{$startDate}', '{$startDate}', '{$endDate}', '{$source}', {$statuses[$randId]})";
-                $activity   .= "( {$randomContacts[$count]}, {$acititySourceId}, 7, '{$membershipTypeNames[$randId]}', '{$startDate} 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 )";
+                $membership .= "( {$randomContacts[$count]}, {$membershipTypeId}, '{$startDate}', '{$startDate}', '{$endDate}', '{$source}', {$membershipStatusId})";
+                $activity   .= "( {$randomContacts[$count]}, {$acititySourceId}, 7, '{$membershipTypeName}', '{$startDate} 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 )";
             } else if ( ($count+1) % 2 == 0 ) {
                 // membership type 2
                 $startDate = date( 'Y-m-d', mktime( 0, 0, 0, date('m'), ( date('d') - $count ), date('Y') ) );
