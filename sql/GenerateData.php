@@ -1310,7 +1310,8 @@ VALUES
                 $activity   .= "( {$randomContacts[$count]}, {$acititySourceId}, 7, 'Lifetime', '{$startDate} 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 )";
             } else if ( ($count+1) % 5 == 0 ) {
                 // Grace or expired, memberhsip type is random of 1 & 2
-                $randId         = array_rand( $membershipTypes );
+                $randId         = $membershipTypes[array_rand( $membershipTypes )];
+                
                 $membershipType = self::_getRandomElement($membershipTypes);
                 $startDate      = date( 'Y-m-d', mktime( 0, 0, 0, 
                                                          date('m'), 
