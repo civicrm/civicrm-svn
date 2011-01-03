@@ -239,8 +239,8 @@ INNER JOIN civicrm_contribution       con ON ( mp.contribution_id = con.id )
         $dao    = CRM_Core_DAO::executeQuery( $sql, $params );
         $dao->fetch();
 
-        $ppID = $dao->ppID1 ? $dao->ppID1 : $dao->ppID2;
-        $mode = ( $dao->is_test ) ? 'test' : 'live';
+        $ppID = ( isset($dao->ppID1) && $dao->ppID1 ) ? $dao->ppID1 : ( isset($dao->ppID2) ? $dao->ppID2 : null );
+        $mode = ( isset($dao->is_test) && $dao->is_test ) ? 'test' : 'live';
 
         if ( !$ppID || $type == 'id' ) {
             return $ppID;

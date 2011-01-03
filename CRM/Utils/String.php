@@ -131,10 +131,11 @@ class CRM_Utils_String {
      * @static
      */
     static function getClassName( $string, $char = '_' ) {
+        $names = array( );
         if( !is_array( $string ) ) {
             $names = explode( $char, $string );
         }
-        if( is_array( $names ) )  return array_pop( $names ); 
+        if( !empty( $names ) )  return array_pop( $names ); 
     }
     
     /**
