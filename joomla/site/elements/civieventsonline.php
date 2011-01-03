@@ -18,6 +18,8 @@ class JFormFieldCiviEventsOnline extends JFormField {
     protected function getInput( )
 	{
         $value = $this->value;
+        $name  = $this->name;
+        
         // Initiate CiviCRM
 		require_once JPATH_ROOT.'/'.'administrator/components/com_civicrm/civicrm.settings.php';
 		require_once 'CRM/Core/Config.php';
@@ -42,7 +44,7 @@ class JFormFieldCiviEventsOnline extends JFormField {
 			}
 		}
 		
-		return JHTML::_('select.genericlist', $options, 'params[id]', null, 'value', 'text', $value);
+		return JHTML::_('select.genericlist', $options, $name, null, 'value', 'text', $value);
         
 	}
 }

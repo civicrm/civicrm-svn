@@ -41,6 +41,8 @@ class JFormFieldCiviContribPages extends JFormField
     protected function getInput() {
         
         $value = $this->value;
+        $name  = $this->name;
+        
         // Initiate CiviCRM
 		require_once JPATH_ROOT.'/'.'administrator/components/com_civicrm/civicrm.settings.php';
 		require_once 'CRM/Core/Config.php';
@@ -53,7 +55,7 @@ class JFormFieldCiviContribPages extends JFormField
         while ( $dao->fetch( ) ) {
             $options[] = JHTML::_( 'select.option', $dao->id, $dao->title ); 
         }
-        return JHTML::_( 'select.genericlist', $options, 'params[id]', null, 'value', 'text', $value );
+        return JHTML::_( 'select.genericlist', $options, $name, null, 'value', 'text', $value );
 	}
 }
 ?>

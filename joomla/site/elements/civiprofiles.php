@@ -40,6 +40,8 @@ class JFormFieldCiviProfiles extends JFormField {
     protected function getInput( )
 	{
         $value = $this->value;
+        $name  = $this->name;
+        
         // Initiate CiviCRM
 		require_once JPATH_ROOT.'/'.'administrator/components/com_civicrm/civicrm.settings.php';
 		require_once 'CRM/Core/Config.php';
@@ -51,7 +53,7 @@ class JFormFieldCiviProfiles extends JFormField {
         foreach ( $ufGroups  as $key =>$values ) {
             $options[] = JHTML::_( 'select.option', $key, $values );
         }
-        return JHTML::_( 'select.genericlist', $options, 'params[gid]', null, 'value', 'text', $value );
+        return JHTML::_( 'select.genericlist', $options, $name, null, 'value', 'text', $value );
 	}
 }
 ?>
