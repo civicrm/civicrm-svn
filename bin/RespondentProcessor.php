@@ -43,7 +43,6 @@ class CRM_RespondentProcessor
         require_once 'CRM/Utils/Hook.php';
         
         CRM_Utils_System::authenticateScript( true );
-        $config->cleanURL = 1;
         
         //log the execution time of script
         CRM_Core_Error::debug_log_message( 'RespondentProcessor.php' );
