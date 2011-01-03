@@ -264,6 +264,8 @@ class CRM_Report_Form_Mailing_Clicks extends CRM_Report_Form {
     }
 
     function groupBy( ) {
+
+        $this->_groupBy = '';
         if ( CRM_Utils_Array::value('charts', $this->_params) ) {
             $this->_groupBy = " GROUP BY {$this->_aliases['civicrm_mailing']}.id";
         }
