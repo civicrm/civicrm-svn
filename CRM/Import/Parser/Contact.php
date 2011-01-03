@@ -1059,6 +1059,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
        
         //CRM-5125
         //add custom fields for contact sub type
+        $csType = null;
         if ( !empty($this->_contactSubType) ) {
             $csType = $this->_contactSubType;
         }
@@ -1066,7 +1067,9 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         if ( CRM_Utils_Array::value('contact_sub_type', $params) ) {
             $csType = CRM_Utils_Array::value('contact_sub_type', $params);
         }
-        
+        if ( !CRM_Utils_Array::value( 'contact_type', $params ) ) {
+            $params['contact_type'] = 'Individual';
+        }
         $customFields = CRM_Core_BAO_CustomField::getFields( $params['contact_type'], false, false, $csType );
         
         foreach ($params as $key => $value) {

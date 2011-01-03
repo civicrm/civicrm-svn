@@ -209,7 +209,8 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
         //date-Format part ends
 
         //checking error in custom data
-        $params['contact_type'] =  $this->_contactType;
+        $params['contact_type'] = isset($this->_contactType) ? $this->_contactType : null;
+
         CRM_Import_Parser_Contact::isErrorInCustomData($params, $errorMessage);
 
         if ( $errorMessage ) {
