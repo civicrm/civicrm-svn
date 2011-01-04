@@ -75,7 +75,7 @@ class CRM_Export_BAO_Export
         $headerRows = $returnProperties = array();
         $primary    = $paymentFields    = false;
         $origFields = $fields;
-        $queryMode  = null; 
+        $queryMode  = $relationField = null; 
 
         $phoneTypes  = CRM_Core_PseudoConstant::phoneType();
         $imProviders = CRM_Core_PseudoConstant::IMProvider();
@@ -463,6 +463,7 @@ class CRM_Export_BAO_Export
         
         $header = $addPaymentHeader = false;
         
+        $paymentDetails = array( );
         if ( $paymentFields ) {
             //special return properties for event and members
             $paymentHeaders = array( 'total_amount'        => ts('Total Amount'), 
@@ -782,7 +783,7 @@ class CRM_Export_BAO_Export
                 // add payment related information
                 if ( $paymentFields && isset( $paymentDetails[ $row[$paymentTableId] ] ) ) {
                     $row = array_merge( $row, $paymentDetails[ $row[$paymentTableId] ] );
-                } else if ( $paymentDetails ) {
+                } else if ( !empty($paymentDetails) ) {
                     $row = array_merge( $row, $nullContributionDetails );  
                 }
 

@@ -232,7 +232,11 @@ class CRM_Utils_Mail
      */
     function pluckEmailFromHeader($header) {
         preg_match('/<([^<]*)>$/', $header, $matches);
-        return $matches[1];
+        
+        if ( isset($matches[1]) ) {
+            return $matches[1];
+        }
+        return null;
     }
     
     /**
