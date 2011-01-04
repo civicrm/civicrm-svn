@@ -333,6 +333,7 @@ WHERE     pledge_id = %1
                                         $adjustTotalAmount = false,
                                         $isScriptUpdate = false )
     {
+        $totalAmountClause = '';
         //get all status
         require_once 'CRM/Contribute/PseudoConstant.php';
         $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
@@ -375,6 +376,7 @@ WHERE     pledge_id = %1
                                                                );
             //  while editing scheduled  we need to check if we are editing last pending
             if ( !$paymentContributionId ) {
+                $lastPending = false;
                 $checkPendingCount = self::getOldestPledgePayment( $pledgeID, 2 );
                 if ( $checkPendingCount['count'] == 1 ) {
                     $lastPending = true;
