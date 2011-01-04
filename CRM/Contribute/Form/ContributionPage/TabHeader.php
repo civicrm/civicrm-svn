@@ -100,7 +100,7 @@ class CRM_Contribute_Form_ContributionPage_TabHeader
                                                'active'  => false,
                                                'current' => false,
                                                ),
-                      'widget'       => array( 'title'   => ts( 'Widget' ),
+                      'widget'       => array( 'title'   => ts( 'Widgets' ),
                                                'link'    => null,
                                                'valid'   => false,
                                                'active'  => false,
