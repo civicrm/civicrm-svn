@@ -208,7 +208,7 @@
 <script type="text/javascript">
 {literal}
 cj( function( ) {
-    cj("#contact").blur( function( ) {
+    cj("#contact_1").blur( function( ) {
         checkEmail( );
     } );
     checkEmail( );
