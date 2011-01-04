@@ -134,7 +134,9 @@
              <th scope="row" class="label">{$field.label|escape}</th>
              {if $field.label eq 'Activity Type' or $field.label eq 'Status'}
                 <td class="bold">{$field.value|escape}</th> 
-             {else}
+             {elseif $field.label eq 'Details'}
+                <td>{$field.value}</th>
+             {else} 
                 <td>{$field.value|escape}</th> 
              {/if}
            </tr>
