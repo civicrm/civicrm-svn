@@ -167,13 +167,13 @@ class CRM_Member_Import_Form_Preview extends CRM_Core_Form {
         foreach ($mapper as $key => $value) {
             $mapperKeys[$key] = $mapper[$key][0];
 
-            if (is_numeric($mapper[$key][1])) {
+            if ( CRM_Utils_Array::value( 1, $mapper[$key] ) && is_numeric( $mapper[$key][1] ) ) {
                 $mapperLocType[$key] = $mapper[$key][1];
             } else {
                 $mapperLocType[$key] = null;
             }
             
-            if (!is_numeric($mapper[$key][2])) {
+            if ( CRM_Utils_Array::value( 2, $mapper[$key] ) && ( !is_numeric( $mapper[$key][2] ) ) ) {
                 $mapperPhoneType[$key] = $mapper[$key][2];
             } else {
                 $mapperPhoneType[$key] = null;

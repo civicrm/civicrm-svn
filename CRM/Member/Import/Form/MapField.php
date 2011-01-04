@@ -445,6 +445,7 @@ class CRM_Member_Import_Form_MapField extends CRM_Core_Form {
                     $weightSum += $ruleFields[$val];
                 }
             }
+            $fieldMessage = '';
             foreach ($ruleFields as $field => $weight) {
                 $fieldMessage .= ' '.$field.'(weight '.$weight.')';
             }
@@ -528,13 +529,13 @@ class CRM_Member_Import_Form_MapField extends CRM_Core_Form {
             $mapper[$i]     = $this->_mapperFields[$mapperKeys[$i][0]];
             $mapperKeysMain[$i] = $mapperKeys[$i][0];
             
-            if (is_numeric($mapperKeys[$i][1])) {
+            if ( CRM_Utils_Array::value( 1, $mapperKeys[$i] ) && is_numeric( $mapperKeys[$i][1] ) ) {
                 $mapperLocType[$i] = $mapperKeys[$i][1];
             } else {
                 $mapperLocType[$i] = null;
             }
 
-            if ( !is_numeric($mapperKeys[$i][2])) {
+            if ( CRM_Utils_Array::value( 2, $mapperKeys[$i] ) && ( !is_numeric( $mapperKeys[$i][2] ) ) ) {
                 $mapperPhoneType[$i] = $mapperKeys[$i][2];
             } else {
                 $mapperPhoneType[$i] = null;
@@ -544,8 +545,9 @@ class CRM_Member_Import_Form_MapField extends CRM_Core_Form {
         $this->set( 'mapper'    , $mapper     );
                
         // store mapping Id to display it in the preview page 
-        $this->set('loadMappingId', $params['mappingId']);
-        
+        if ( CRM_Utils_Array::value( 'mappingId', $params ) ) { 
+            $this->set('loadMappingId', $params['mappingId']);
+        }
         //Updating Mapping Records
         if ( CRM_Utils_Array::value('updateMapping', $params)) {
             $mappingFields = new CRM_Core_DAO_MappingField();

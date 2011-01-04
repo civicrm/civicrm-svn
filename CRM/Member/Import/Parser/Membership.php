@@ -79,6 +79,9 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
         $fields =& CRM_Member_BAO_Membership::importableFields( $this->_contactType, false );
 
         foreach ($fields as $name => $field) {
+            $field['type']          = CRM_Utils_Array::value( 'type', $field, CRM_Utils_Type::T_INT );
+            $field['dataPattern']   = CRM_Utils_Array::value( 'dataPattern', $field, '//' );
+            $field['headerPattern'] = CRM_Utils_Array::value( 'headerPattern', $field, '//' );
             $this->addField( $name, $field['title'], $field['type'], $field['headerPattern'], $field['dataPattern']);
         }
 
@@ -490,7 +493,7 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
             }
             
         } else {
-            if ( $formatValues['external_identifier'] ) {
+            if ( CRM_Utils_Array::value( 'external_identifier', $formatValues ) ) {
                 $checkCid = new CRM_Contact_DAO_Contact();
                 $checkCid->external_identifier = $formatValues['external_identifier'];
                 $checkCid->find(true);
@@ -521,7 +524,7 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
                                                                                       $joinDate,
                                                                                       'today',
                                                                                       $excludeIsAdmin );
-            if ( ! $formatted['status_id']) {
+            if ( ! CRM_Utils_Array::value( 'status_id', $formatted ) ) {
                 $formatted['status_id'] = $calcStatus['id'];
             } else if ( !CRM_Utils_Array::value('is_override', $formatted ) ) {
                 if ( empty( $calcStatus ) ) {
