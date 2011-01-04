@@ -25,6 +25,7 @@
 *}
 {* Report form criteria section *}
     {if $colGroups}
+	    <div id="col-groups" class="civireport-criteria" >
 	    <h3>Display Columns</h3>
         {foreach from=$colGroups item=grpFields key=dnc}
             {assign  var="count" value="0"}
@@ -56,9 +57,11 @@
                 </div><!-- /.crm-accordion-wrapper -->
             {/if}
         {/foreach}
+        </div>
     {/if}
     
     {if $groupByElements}
+        <div id="group-by-elements" class="civireport-criteria" >
         <h3>Group by Columns</h3>
         {assign  var="count" value="0"}
         <table class="report-layout">
@@ -79,10 +82,12 @@
                     <td colspan="4 - ($count % 4)"></td>
                 {/if}
             </tr>
-        </table>      
+        </table>    
+     </div>  
     {/if}
 
     {if $form.options.html || $form.options.html}
+        <div id="other-options" class="civireport-criteria" >
         <h3>Other Options</h3>
         <table class="report-layout">
             <tr class="crm-report crm-report-criteria-groupby">
@@ -92,9 +97,11 @@
                 {/if}
             </tr>
         </table>
+        </div>
     {/if}
   
     {if $filters}
+	<div id="set-filters" class="civireport-criteria" >
         <h3>Set Filters</h3>
         <table class="report-layout">
             {foreach from=$filters     item=table key=tableName}
@@ -142,6 +149,7 @@
 
             {/foreach}
             {if $closed eq 0 }</table>{/if}
+        </div>
     {/if}
  
     {literal}
