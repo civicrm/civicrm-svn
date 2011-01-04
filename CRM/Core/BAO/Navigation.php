@@ -290,7 +290,7 @@ ORDER BY parent_id, weight";
             // for each menu get their children
             $navigationTree[$navigation->id] = array( 'attributes' => array( 'label'      => $navigation->label,
                                                                              'name'       => $navigation->name,
-                                                                             'url'        => $cleanNavUrl ? self::cleanNavigationUrl($navigation->url) : $navigation->url,
+                                                                             'url'        => $cleanNavUrl ? CRM_Utils_System::cleanUrl($navigation->url) : $navigation->url,
                                                                              'permission' => $navigation->permission,
                                                                              'operator'   => $navigation->permission_operator,
                                                                              'separator'  => $navigation->has_separator,
@@ -758,25 +758,5 @@ ORDER BY parent_id, weight";
               $dao->copyValues( $newParams );
               $dao->save( );
           }
-      }
-     
-      /**
-       * Function to clean navigation url, replaces first '&' with '?' 
-       * 
-       * @param string $navUrl
-       *
-       * @return string $navUrl, clean url
-       * @static
-       */
-      static function cleanNavigationUrl( $navUrl ) {
-          if ( !$navUrl ) {
-              return null;
-          }
-          
-          if ( $pos = strpos($navUrl, '&') ) {
-              $navUrl = substr_replace( $navUrl, '?', $pos, 1 );
-          }
-                        
-          return $navUrl;
       }
 }

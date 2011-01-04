@@ -240,12 +240,18 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
             // -lets use relative url for internal use.
             // -make sure relative url should not be htmlize.
             if ( substr( $dao->url, 0, 4 ) != 'http' ) {
-                if ( $config->userFramework == 'Joomla' ||
-                     ( $config->userFramework == 'Drupal' && !variable_get('clean_url', '0' ) ) ) {
+                if ( $config->userFramework == 'Joomla' ) {
                     $url = CRM_Utils_System::url( $dao->url, null, false, null, false );
+                } else if ( $config->userFramework == 'Drupal' )  {
+                    if ( variable_get('clean_url', 0 ) ) {
+                        require_once 'CRM/Core/BAO/Navigation.php';
+                        $url = CRM_Utils_System::cleanUrl( $dao->url );
+                    } else {
+                        $url = CRM_Utils_System::url( $dao->url, null, false, null, false );
+                    }
                 }
             }
-            
+
             //get content from url
             $dao->content = CRM_Utils_System::getServerResponse( $url );
             $dao->created_date = date( "YmdHis" );

@@ -1199,5 +1199,24 @@ class CRM_Utils_System {
 
         return $baseURL . $url;
     }
-    
+       
+    /**
+     * Function to clean url, replaces first '&' with '?' 
+     * 
+     * @param string $url
+     *
+     * @return string $url, clean url
+     * @static
+     */
+    static function cleanUrl( $url ) {
+        if ( !$url ) {
+            return null;
+        }
+        
+        if ( $pos = strpos($url, '&') ) {
+            $url = substr_replace( $url, '?', $pos, 1 );
+        }
+        
+        return $url;
+    }
 }
