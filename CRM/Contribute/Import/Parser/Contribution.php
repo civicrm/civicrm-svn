@@ -502,7 +502,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
             }
             
         } else {
-            if ( $paramValues['external_identifier'] ) { 
+            if ( CRM_Utils_Array::value( 'external_identifier', $paramValues ) ) { 
                 $checkCid = new CRM_Contact_DAO_Contact();
                 $checkCid->external_identifier = $paramValues['external_identifier'];
                 $checkCid->find(true);

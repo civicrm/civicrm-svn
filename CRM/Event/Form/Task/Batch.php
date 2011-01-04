@@ -263,11 +263,11 @@ class CRM_Event_Form_Task_Batch extends CRM_Event_Form_Task
                                                                           'Participant' );
 
                 $value['id'] = $key;
-                if ( $value['participant_register_date'] ) {
+                if ( CRM_Utils_Array::value( 'participant_register_date', $value ) ) {
                     $value['register_date'] = CRM_Utils_Date::processDate( $value['participant_register_date'], $value['participant_register_date_time'] );
                 } 
                 
-                if ( $value['participant_role_id'] ) {
+                if ( CRM_Utils_Array::value( 'participant_role_id', $value ) ) {
                     $participantRoles = CRM_Event_PseudoConstant::participantRole( );
                     if ( is_array( $value['participant_role_id'] ) ) {
                         $value['role_id'] = implode( CRM_Core_DAO::VALUE_SEPARATOR, array_keys( $value['participant_role_id'] ) );   
@@ -278,7 +278,7 @@ class CRM_Event_Form_Task_Batch extends CRM_Event_Form_Task
 
                 //need to send mail when status change
                 $statusChange = false;
-                if ( $value['participant_status_id'] ) {
+                if ( CRM_Utils_Array::value( 'participant_status_id', $value ) ) {
                     $value['status_id'] = $value['participant_status_id'];
                     $fromStatusId = CRM_Utils_Array::value( $key, $this->_fromStatusIds );
                     if ( !$fromStatusId ) {
@@ -290,7 +290,7 @@ class CRM_Event_Form_Task_Batch extends CRM_Event_Form_Task
                     }
                 }
                 
-                if ( $value['participant_source'] ) {
+                if ( CRM_Utils_Array::value( 'participant_source', $value ) ) {
                     $value['source'] = $value['participant_source'];
                 }            
                 unset($value['participant_register_date']);
