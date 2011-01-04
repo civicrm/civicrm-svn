@@ -44,11 +44,18 @@ class CRM_Bridge_OG_Utils {
         return self::aclEnabled;
     }
 
+    /**
+     * Switch to stop synchronization from CiviCRM
+     * This was always false before, and is always true
+     * now.  Most likely, this needs to be a setting.
+     */
     static function syncFromCiviCRM( ) {
         // make sure that acls are not enabled
-        return ! self::aclEnabled & self::syncFromCiviCRM;
+        //RMT -- the following makes no f**king sense...
+        //return ! self::aclEnabled & self::syncFromCiviCRM;
+        return TRUE;
     }
-    
+
     static function ogSyncName( $ogID ) {
         return "OG Sync Group :{$ogID}:";
     }
@@ -105,7 +112,7 @@ SELECT id
             $query .= " OR title = %2";
             $params[2] = array( $title, 'String' );
         }
-                         
+
         $groupID = CRM_Core_DAO::singleValueQuery( $query, $params );
         if ( $abort &&
              ! $groupID ) {
@@ -117,5 +124,3 @@ SELECT id
 
 
 }
-
-
