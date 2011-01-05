@@ -388,7 +388,7 @@ WHERE     ct.id = cp.contribution_type_id AND
      * @param int $setId - price set id whose details are needed
      * @return array $setTree - array consisting of field details
      */
-    public static function getSetDetail( $setID, $required = true ) 
+    public static function getSetDetail( $setID, $required = true, $validOnly = false ) 
     {
         // create a new tree
         $setTree = array();
@@ -425,12 +425,14 @@ WHERE     ct.id = cp.contribution_type_id AND
 WHERE price_set_id = %1
 AND is_active = 1
 ';
-
-		$currentTime = date( 'YmdHis' );
-        $dateSelect = '
-AND ( active_on IS NULL OR active_on <= $currentTime )
-AND ( expire_on IS NULL OR expire_on >= $currentTime )
-';
+        $dateSelect = '';
+        if ( $validOnly ) {
+            $currentTime = date( 'YmdHis' );
+            $dateSelect = "
+AND ( active_on IS NULL OR active_on <= {$currentTime} )
+AND ( expire_on IS NULL OR expire_on >= {$currentTime} )
+";
+        }
 
         $orderBy = ' ORDER BY weight';
 
@@ -473,7 +475,7 @@ WHERE  id = %1";
         return $setTree;
     }
 
-    static function initSet( &$form, $id, $entityTable = 'civicrm_event' ) 
+    static function initSet( &$form, $id, $entityTable = 'civicrm_event', $validOnly = false ) 
     {
         // get price info
         if ( $priceSetId = self::getFor( $entityTable, $id ) ) {
@@ -508,7 +510,7 @@ WHERE  id = %1";
             }
 
             $form->_priceSetId    = $priceSetId;
-            $priceSet             = self::getSetDetail($priceSetId, $required);
+            $priceSet             = self::getSetDetail($priceSetId, $required, $validOnly);
             $form->_priceSet      = CRM_Utils_Array::value($priceSetId,$priceSet);
             $form->_values['fee'] = CRM_Utils_Array::value( 'fields', $form->_priceSet );
             
@@ -670,7 +672,13 @@ WHERE  id = %1";
         
         if ( !$priceSetId ) return;
         
-        $priceSet = self::getSetDetail( $priceSetId, true );
+          
+        $validFieldsOnly = true;
+        if ( CRM_Utils_System::getClassName($form) == 'CRM_Contribute_Form_Contribution' ) {
+            $validFieldsOnly = false;
+        }
+
+        $priceSet = self::getSetDetail( $priceSetId, true, $validFieldsOnly );
         $form->_priceSet = CRM_Utils_Array::value( $priceSetId, $priceSet );
         $form->assign( 'priceSet',  $form->_priceSet );
         require_once 'CRM/Core/PseudoConstant.php';
