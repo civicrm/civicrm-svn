@@ -188,7 +188,7 @@ class EmailProcessor {
                         echo "Processed as Activity: {$mail->subject}\n";
                     }
 
-                    CRM_Utils_Hook::emailProcessor( 'activity', $params, $mail );
+                    CRM_Utils_Hook::emailProcessor( 'activity', $params, $mail, $result );
                 }
                 
                 // if $matches is empty, this email is not CiviMail-bound
@@ -204,6 +204,8 @@ class EmailProcessor {
                 // handle the action by passing it to the proper API call
                 // FIXME: leave only one-letter cases when dropping legacy support
                 if (! empty($action)) {
+                    $result = null;
+
                     switch ($action) {
                     case 'b':
                     case 'bounce':
@@ -223,8 +225,9 @@ class EmailProcessor {
                                           'hash'           => $hash,
                                           'body'           => $text
                                           );
-                        civicrm_mailer_event_bounce( $params );
+                        $result = civicrm_mailer_event_bounce( $params );
                         break;
+
                     case 'c':
                     case 'confirm':
                         $params = array ( 'job_id'         => $job,
@@ -233,14 +236,16 @@ class EmailProcessor {
                                           );
                         civicrm_mailer_event_confirm( $params );
                         break;
+
                     case 'o':
                     case 'optOut':
                         $params = array ( 'job_id'         => $job,
                                           'event_queue_id' => $queue,
                                           'hash'           => $hash
                                           );
-                        civicrm_mailer_event_domain_unsubscribe( $params );
+                        $result = civicrm_mailer_event_domain_unsubscribe( $params );
                         break;
+
                     case 'r':
                     case 'reply':
                         // instead of text and HTML parts (4th and 6th params) send the whole email as the last param
@@ -252,8 +257,9 @@ class EmailProcessor {
                                           'bodyHTML'       => null,
                                           'fullEmail'      => $mail->generate()
                                           );
-                        civicrm_mailer_event_reply( $params );
+                        $result = civicrm_mailer_event_reply( $params );
                         break;
+
                     case 'e':
                     case 're':
                     case 'resubscribe':
@@ -261,22 +267,24 @@ class EmailProcessor {
                                           'event_queue_id' => $queue,
                                           'hash'           => $hash
                                           );
-                        civicrm_mailer_event_resubscribe( $params );
+                        $result = civicrm_mailer_event_resubscribe( $params );
                         break;
+
                     case 's':
                     case 'subscribe':
                         $params = array ( 'email'          => $mail->from->email,
                                           'group_id'       => $job
                                           );
-                        civicrm_mailer_event_subscribe( $params );
+                        $result = civicrm_mailer_event_subscribe( $params );
                         break;
+
                     case 'u':
                     case 'unsubscribe':
-                        civicrm_mailer_event_unsubscribe($job, $queue, $hash);
+                        $result = civicrm_mailer_event_unsubscribe($job, $queue, $hash);
                         break;
                     }
 
-                    CRM_Utils_Hook::emailProcessor( 'mailing', $params, $mail, $action );
+                    CRM_Utils_Hook::emailProcessor( 'mailing', $params, $mail, $result, $action );
                     
                 }
                             
