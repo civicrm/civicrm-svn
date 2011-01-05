@@ -305,7 +305,6 @@ function _civicrm_greeting_format_params( &$params )
  * Retrieve one or more contacts, given a set of search params
  *
  * @param  mixed[]  (reference ) input parameters
- * @param  bool  follow the pre-2.2.3 behavior of this function
  *
  * @return array (reference )        array of properties, if error an array with an error id and error message
  * @static void
@@ -315,6 +314,7 @@ function _civicrm_greeting_format_params( &$params )
  * @todo Erik Hommel 16 dec 2010 fix custom data (CRM-7231)
  * @todo Erik Hommel 16 dec 2010 Introduce version as param and get rid of $deprecated_behaviour
  * @todo Erik Hommel 16 dec 2010 Use civicrm_return_success / error ?
+ * @todo EM 6 Jan 11 no handling for empty params or params that are not an array: Invalid argument supplied for foreach() C:\utils\eclipseworkspace\api-civicrm\api\v3\Contact.php:332
  */
 function civicrm_contact_get( &$params )
 {
