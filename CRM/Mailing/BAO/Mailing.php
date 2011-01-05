@@ -1759,12 +1759,11 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
             $selectClause = ( $count ) ? 'COUNT( DISTINCT m.id) as count' : 'DISTINCT( m.id ) as id';
             // get all the mailings that are in this subset of groups
             $query = "
-SELECT $selectClause 
-  FROM civicrm_mailing m,
-       civicrm_mailing_group g
- WHERE g.mailing_id   = m.id
-   AND g.entity_table = 'civicrm_group'
-   AND g.entity_id IN ( $groupIDs )
+SELECT    $selectClause 
+  FROM    civicrm_mailing m
+LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
+ WHERE ( ( g.entity_table = 'civicrm_group' AND g.entity_id IN ( $groupIDs ) )
+    OR   ( g.entity_table IS NULL AND g.entity_id IS NULL ) )
    $condition";
             $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
             if ( $count ) {
