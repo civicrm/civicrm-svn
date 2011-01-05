@@ -154,7 +154,7 @@ class api_v3_ActivityContactTest extends CiviUnitTestCase
                         'contact_type'  => 'Individual'
                         );
         
-        $contact =&civicrm_contact_add( $params );
+        $contact =&civicrm_contact_create( $params );
         $params  = array( 'contact_id' => $contact['contact_id'] );
         $result  = civicrm_activity_contact_get( $params );
         $this->assertEquals( $result['is_error'], 0 );

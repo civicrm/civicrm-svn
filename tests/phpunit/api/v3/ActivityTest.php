@@ -85,36 +85,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                              . '/dataset/option_value_activity.xml') );
     }
 
-    /**
-     *  Test civicrm_activities_get_contact()
-     */
-    function testActivitiesGetContact()
-    {
-        //  Insert rows in civicrm_activity creating activities 4 and
-        //  13
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                             dirname(__FILE__)
-                             . '/dataset/activity_4_13.xml') );
 
-        //  Get activities associated with contact 17
-        $params = array( 'contact_id' => 17 );
-        $result = civicrm_activity_get_contact( $params );
-        $this->assertEquals( 0, $result['is_error'],
-                             "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
-        $this->assertEquals( 2, count( $result['result'] ),
-                             'In line ' . __LINE__ );
-        $this->assertEquals( 2, count( $result['result'] ),
-                             'In line ' . __LINE__ );
-        $this->assertEquals( 'Test activity type',
-                             $result['result'][4]['activity_name'],
-                             'In line ' . __LINE__ );
-        $this->assertEquals( 'Test activity type',
-                             $result['result'][13]['activity_name'],
-                             'In line ' . __LINE__ );
-
-    }
     
     /**
      * check with empty array
@@ -363,7 +334,9 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                              . '/dataset/custom_group_activity_type.xml') );
 
         //  Drop and create table civicrm_value_activity_custom_9
-        $query = 'USE civicrm_tests_dev; DROP TABLE IF EXISTS civicrm_value_activity_custom_9';
+        $query = 'USE civicrm_tests_dev; ';
+        self::$utils->do_query( $query );
+        $query = 'DROP TABLE IF EXISTS civicrm_value_activity_custom_9';
         self::$utils->do_query( $query );
         $group = new CRM_Core_DAO_CustomGroup();
         $group->extends = "Activity";
@@ -523,36 +496,6 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     }
 
     /**
-     *  Test civicrm_activity_get_contact()
-     */
-    function testActivityGetContact()
-    {
-        //  Insert rows in civicrm_activity creating activities 4 and
-        //  13
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                             dirname(__FILE__)
-                             . '/dataset/activity_4_13.xml') );
-
-        //  Get activities associated with contact 17
-        $params = array( 'contact_id' => 17 );
-        $result = civicrm_activity_get_contact( $params );
-        $this->assertEquals( 0, $result['is_error'],
-                             "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
-        $this->assertEquals( 2, count( $result['result'] ),
-                             'In line ' . __LINE__ );
-        $this->assertEquals( 2, count( $result['result'] ),
-                             'In line ' . __LINE__ );
-        $this->assertEquals( 'Test activity type',
-                             $result['result'][4]['activity_name'],
-                             'In line ' . __LINE__ );
-        $this->assertEquals( 'Test activity type',
-                             $result['result'][13]['activity_name'],
-                             'In line ' . __LINE__ );
-    }
-
-    /**
      *  Test civicrm_activity_get() with no params
      */
     function testActivityGetEmpty()
@@ -633,8 +576,10 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                              . '/dataset/custom_group_activity_type.xml') );
 
         //  Drop and create table civicrm_value_activity_custom_9
-        $query = 'USE civicrm_tests_dev; DROP TABLE IF EXISTS civicrm_value_activity_custom_9';
+        $query = 'USE civicrm_tests_dev; ';
         self::$utils->do_query( $query );
+        $query = 'DROP TABLE IF EXISTS civicrm_value_activity_custom_9';
+        self::$utils->do_query( $query );        
         $group = new CRM_Core_DAO_CustomGroup();
         $group->extends = "Activity";
         $group->table_name = 'civicrm_value_activity_custom_9';
@@ -653,7 +598,9 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         CRM_Core_BAO_CustomField::createField( $customField, 'add' );
 
         //  Insert a test value into the new table
-        $query = "USE civicrm_tests_dev; INSERT INTO civicrm_value_activity_custom_9"
+        $query = "USE civicrm_tests_dev; ";
+        self::$utils->do_query( $query );
+        $query = "INSERT INTO civicrm_value_activity_custom_9"
                . "( entity_id, activity_custom_11 )"
                . " VALUES ( 4,  'bite my test data' )";
         self::$utils->do_query( $query );
@@ -675,17 +622,6 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                              'In line ' . __LINE__ );
     }
 
-    /**
-     *  Test civicrm_activity_get_types()
-     */
-    function testActivityGetTypes()
-    {
-        $result = civicrm_activity_get_types( );
-        $this->assertTrue( is_array( $result ),
-                             "In line " . __LINE__ );
-        $this->assertEquals( 'Test activity type', $result[1],
-                             "In line " . __LINE__ );
-    }
   
     /**
      * check activity deletion with empty params
@@ -755,7 +691,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     }
 
     /**
-     *  Test civicrm_activity_processmail()
+     *  Test civicrm_activity_processemail()
      */
     function testActivityProcess_EMail()
     {
@@ -766,7 +702,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                              dirname(__FILE__)
                              . '/dataset/email_contact_17.xml') );
         
-        $result = civicrm_activity_process_email(
+        $result = civicrm_activity_processemail(
                    dirname( __FILE__ ) . '/dataset/activity_email' , 5 );
 
         //  civicrm_activity should show the new activity
@@ -784,7 +720,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
      */
     function testActivityProcessEMailNoFile()
     {
-        $result = civicrm_activity_process_email( 'no/such/file/nohow' , 5 );
+        $result = civicrm_activity_processemail( 'no/such/file/nohow' , 5 );
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
     }
@@ -835,7 +771,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                              dirname(__FILE__)
                              . '/dataset/option_value_activity.xml') );
 
-        $result = civicrm_activity_process_email(
+        $result = civicrm_activity_processemail(
                    dirname( __FILE__ ) . '/dataset/activity_email' , 5 );
 
         $this->assertEquals( $result['is_error'], 0,
@@ -1011,7 +947,9 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                              . '/dataset/custom_group_activity_type.xml') );
  
         //  Drop and create table civicrm_value_activity_custom_9
-        $query = 'USE civicrm_tests_dev; DROP TABLE IF EXISTS civicrm_value_activity_custom_9';
+        $query = 'USE civicrm_tests_dev;';
+        self::$utils->do_query( $query );
+        $query = 'DROP TABLE IF EXISTS civicrm_value_activity_custom_9';
         self::$utils->do_query( $query );
         $group = new CRM_Core_DAO_CustomGroup();
         $group->extends = "Activity";
