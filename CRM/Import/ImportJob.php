@@ -169,7 +169,7 @@ class CRM_Import_ImportJob {
             //set respective mapper value to null.
             foreach ( array_values( $mapperPeroperties ) as $perpertyVal ) $$perpertyVal = null;  
             
-            $header   = array( $this->_mapFields[$fldName] );
+            $header   = array( );
             $fldName  = CRM_Utils_Array::value( 0, $mapper[$key] );
             $selOne   = CRM_Utils_Array::value( 1, $mapper[$key] );
             $selTwo   = CRM_Utils_Array::value( 2, $mapper[$key] );
@@ -196,7 +196,11 @@ class CRM_Import_ImportJob {
                 }
             }
             
-            list( $id, $first, $second ) = explode( '_', $fldName, 3 );
+            $fldNameParts = explode( '_', $fldName, 3 );
+            $id           = $fldNameParts[0];
+            $first        = isset($fldNameParts[1])? $fldNameParts[1] : null;
+            $second       = isset($fldNameParts[2])? $fldNameParts[2] : null;
+
             if ( ($first == 'a' && $second == 'b') ||
                  ($first == 'b' && $second == 'a') ) {
                 
