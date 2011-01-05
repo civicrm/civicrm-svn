@@ -139,7 +139,7 @@ function civicrm_entity_tag_create( &$params ) {
  * @param array $params
  * @return <type>
  */
-function civicrm_entity_tag_remove( &$params ) {
+function civicrm_entity_tag_delete( &$params ) {
     return civicrm_entity_tag_common( $params, 'remove' );
 }
 
