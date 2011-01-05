@@ -316,13 +316,10 @@ function _civicrm_greeting_format_params( &$params )
  * @todo Erik Hommel 16 dec 2010 Introduce version as param and get rid of $deprecated_behaviour
  * @todo Erik Hommel 16 dec 2010 Use civicrm_return_success / error ?
  */
-function civicrm_contact_get( &$params, $deprecated_behavior = false )
+function civicrm_contact_get( &$params )
 {
     _civicrm_initialize( );
     
-    if ($deprecated_behavior) {
-        return _civicrm_contact_get_deprecated($params);
-    }
 
     $inputParams      = array( );
     $returnProperties = array( );
@@ -358,45 +355,6 @@ function civicrm_contact_get( &$params, $deprecated_behavior = false )
     return $contacts;
 }
 
-/**
- * Retrieve a specific contact, given a set of search params
- *
- * @deprecated deprecated since version 2.2.3
- *
- * @param  array   $params           (reference ) input parameters
- *
- * @return array (reference )        array of properties, if error an array with an error id and error message
- * @static void
- * @access public
- *
- * @todo Erik Hommel 16 dec 2010 Once version has been introduced as param?
- */
-function _civicrm_contact_get_deprecated( &$params )
-{
-    $values = array( );
-    if ( empty( $params ) ) {
-        return civicrm_create_error( ts( 'No input parameters present' ) );
-    }
-
-    if ( ! is_array( $params ) ) {
-        return civicrm_create_error( ts( 'Input parameters is not an array' ) );
-    }
-
-    $contacts =& civicrm_contact_search( $params );
-    if ( civicrm_error( $contacts ) ) {
-        return $contacts;
-    }
-
-    if ( count( $contacts ) != 1 &&
-         ! CRM_Utils_Array::value( 'returnFirst', $params ) ) {
-        return civicrm_create_error(  '%1 contacts matching input params', array( 1 => count( $contacts ) ) );
-    } else if ( count( $contacts ) == 0 ) {
-        return civicrm_create_error( 'No contacts match the input params' );
-    }
-
-    $contacts = array_values( $contacts );
-    return $contacts[0];
-}
 
 /**
  * Delete a contact with given contact id
