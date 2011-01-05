@@ -117,25 +117,43 @@ class EmailProcessor {
 
 
         // FIXME: legacy regexen to handle CiviCRM 2.1 address patterns, with domain id and possible VERP part
-        $commonRegex = '/^' . preg_quote($dao->localpart) . '(b|bounce|c|confirm|o|optOut|r|reply|re|e|resubscribe|u|unsubscribe)\.(\d+)\.(\d+)\.(\d+)\.([0-9a-f]{16})(-.*)?@' . preg_quote($dao->domain) . '$/';
-        $subscrRegex = '/^' . preg_quote($dao->localpart) . '(s|subscribe)\.(\d+)\.(\d+)@' . preg_quote($dao->domain) . '$/';
+        $commonRegex = 
+            '/^' . 
+            preg_quote($dao->localpart) . '(b|bounce|c|confirm|o|optOut|r|reply|re|e|resubscribe|u|unsubscribe)\.(\d+)\.(\d+)\.(\d+)\.([0-9a-f]{16})(-.*)?@' .
+            preg_quote($dao->domain) .
+            '$/';
+
+
+        $subscrRegex = 
+            '/^' . 
+            preg_quote($dao->localpart) . 
+            '(s|subscribe)\.(\d+)\.(\d+)@' . 
+            preg_quote($dao->domain) .
+            '$/';
         
         // a common-for-all-actions regex to handle CiviCRM 2.2 address patterns
-        $regex = '/^' . preg_quote($dao->localpart) . '(b|c|e|o|r|u)\.(\d+)\.(\d+)\.([0-9a-f]{16})@' . preg_quote($dao->domain) . '$/';
+        $regex = 
+            '/^' . 
+            preg_quote($dao->localpart) . 
+            '(b|c|e|o|r|u)\.(\d+)\.(\d+)\.([0-9a-f]{16})@' . 
+            preg_quote($dao->domain) . 
+            '$/';
         
         // retrieve the emails
         require_once 'CRM/Mailing/MailStore.php';
         $store = CRM_Mailing_MailStore::getStore($dao->name);
         
         require_once 'api/v2/Mailer.php';
-        
+        require_once 'CRM/Utils/Hook.php';
+
         // process fifty at a time, CRM-4002
         while ($mails = $store->fetchNext(MAIL_BATCH_SIZE)) {
             foreach ($mails as $key => $mail) {
                 
                 // for every addressee: match address elements if it's to CiviMail
                 $matches = array();
-                
+                $action  = null;
+
                 if ( $usedfor == 1 ) {
                     foreach ($mail->to as $address) {
                         if (preg_match($regex, $address->email, $matches)) {
@@ -156,7 +174,7 @@ class EmailProcessor {
                 if ( $usedfor == 0 || ! $civiMail ) {
                     // if its the activities that needs to be processed ..
                     require_once 'CRM/Utils/Mail/Incoming.php';
-                    $mailParams = CRM_Utils_Mail_Incoming::parseMailingObject( $mail,$dao->name );
+                    $mailParams = CRM_Utils_Mail_Incoming::parseMailingObject( $mail );
                     
                     require_once 'api/v2/Activity.php';
                     $params = _civicrm_activity_buildmailparams( $mailParams, $emailActivityTypeId );
@@ -169,6 +187,8 @@ class EmailProcessor {
                         $matches = true;
                         echo "Processed as Activity: {$mail->subject}\n";
                     }
+
+                    CRM_Utils_Hook::emailProcessor( 'activity', $params, $mail );
                 }
                 
                 // if $matches is empty, this email is not CiviMail-bound
@@ -255,6 +275,9 @@ class EmailProcessor {
                         civicrm_mailer_event_unsubscribe($job, $queue, $hash);
                         break;
                     }
+
+                    CRM_Utils_Hook::emailProcessor( 'mailing', $params, $mail, $action );
+                    
                 }
                             
                 $store->markProcessed($key);
