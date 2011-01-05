@@ -88,8 +88,9 @@ abstract class CRM_Core_Payment {
      * @static  
      *  
      */  
-    static function &singleton( $mode = 'test', &$paymentProcessor, &$paymentForm = null, $force = false ) {        
-        $cacheKey = "{$mode}_{$paymentProcessor['id']}";
+    static function &singleton( $mode = 'test', &$paymentProcessor, &$paymentForm = null, $force = false ) 
+    {        
+        $cacheKey = "{$mode}_{$paymentProcessor['id']}_".(int)isset( $paymentForm );
         if ( !isset( self::$_singleton[$cacheKey] ) || $force ) {
             $config = CRM_Core_Config::singleton( );
             require_once 'CRM/Core/Extensions.php';
