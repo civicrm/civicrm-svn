@@ -136,14 +136,14 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         }
 
         self::$populateOnce = null;
-
-            $queries = array( "DROP DATABASE IF EXISTS civicrm_tests_dev;", 
-                              "CREATE DATABASE civicrm_tests_dev DEFAULT" . 
-                              " CHARACTER SET utf8 COLLATE utf8_unicode_ci;", 
-                              "USE civicrm_tests_dev;", 
-                              // SQL mode needs to be strict, that's our standard
-                              "SET SQL_MODE='STRICT_ALL_TABLES';" . 
-                              "set global innodb_flush_log_at_trx_commit = 2;"
+       
+        $queries = array( "DROP DATABASE IF EXISTS civicrm_tests_dev;", 
+                          "CREATE DATABASE civicrm_tests_dev DEFAULT" . 
+                          " CHARACTER SET utf8 COLLATE utf8_unicode_ci;", 
+            							"USE civicrm_tests_dev;",                               
+                          // SQL mode needs to be strict, that's our standard
+                          "SET SQL_MODE='STRICT_ALL_TABLES';" ,
+                          "SET global innodb_flush_log_at_trx_commit = 2;"
                              );
             foreach( $queries as $query ) {
                 if ( self::$utils->do_query($query) === false ) {
