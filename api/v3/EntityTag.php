@@ -26,7 +26,7 @@
 */
 
 /**
- * File for the CiviCRM APIv2 entity tag functions
+ * File for the CiviCRM APIv3 entity tag functions
  *
  * @package CiviCRM_APIv3
  * @subpackage API_EntityTag
@@ -38,11 +38,11 @@
 /**
  * Include utility functions
  */
-require_once 'api/v2/utils.php';
+require_once 'api/v3/utils.php';
 
 /**
  *
- * @param Array $params
+ * @param array $params
  * @return <type>
  */
 function civicrm_entity_tag_get( &$params ) {
@@ -127,8 +127,8 @@ function civicrm_tag_entities_get( &$params )
 
 /**
  *
- * @param <type> $params
- * @return <type>
+ * @param array $params
+ * @return array
  */
 function civicrm_entity_tag_create( &$params ) {
     return civicrm_entity_tag_common( $params, 'add' );
@@ -136,7 +136,7 @@ function civicrm_entity_tag_create( &$params ) {
 
 /**
  *
- * @param <type> $params
+ * @param array $params
  * @return <type>
  */
 function civicrm_entity_tag_remove( &$params ) {

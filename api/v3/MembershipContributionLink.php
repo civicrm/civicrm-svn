@@ -26,7 +26,7 @@
 */
 
 /**
- * File for the CiviCRM APIv2 membership contribution link functions
+ * File for the CiviCRM APIv3 membership contribution link functions
  *
  * @todo Probably needs renaming
  *
@@ -40,7 +40,7 @@
 /**
  * Include utility functions
  */
-require_once 'api/v2/utils.php';
+require_once 'api/v3/utils.php';
 
 /**
  * Add or update a link between contribution and membership

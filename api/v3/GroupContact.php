@@ -26,7 +26,7 @@
 */
 
 /**
- * File for the CiviCRM APIv2 group contact functions
+ * File for the CiviCRM APIv3 group contact functions
  *
  * @package CiviCRM_APIv3
  * @subpackage API_Group
@@ -39,7 +39,7 @@
 /**
  * Include utility functions
  */
-require_once 'api/v2/utils.php';
+require_once 'api/v3/utils.php';
 
 /**
  * This API will give list of the groups for particular contact 
@@ -54,11 +54,11 @@ require_once 'api/v2/utils.php';
 function civicrm_group_contact_get( &$params ) 
 {
     if ( ! is_array( $params ) ) {
-        return civicrm_create_error( ts( 'input parameter should be an array' ) );
+        return civicrm_create_error(  'input parameter should be an array'  );
     }
 
     if ( ! array_key_exists( 'contact_id', $params ) ) {
-        return civicrm_create_error( ts( 'contact_id is a required field' ) );
+        return civicrm_create_error(  'contact_id is a required field'  );
     }
 
     $status = CRM_Utils_Array::value( 'status', $params, 'Added' );

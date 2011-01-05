@@ -26,7 +26,7 @@
 */
 
 /**
- * File for the CiviCRM APIv2 domain functions
+ * File for the CiviCRM APIv3 domain functions
  *
  * @package CiviCRM_APIv3
  * @subpackage API_Domain
@@ -39,7 +39,7 @@
 /**
  * Include utility functions
  */
-require_once 'api/v2/utils.php';
+require_once 'api/v3/utils.php';
 
 /**
  * Generic file to retrieve all the constants and
@@ -82,7 +82,7 @@ function civicrm_domain_get( ) {
  * @param array $params
  * @return array
  */
-function civicrm_domain_create( $params ) {
+function civicrm_domain_create( &$params ) {
     require_once 'CRM/Core/BAO/Domain.php';
     
     if ( !is_array( $params ) ) {

@@ -26,7 +26,7 @@
 */
 
 /**
- * File for the CiviCRM APIv2 group nesting functions
+ * File for the CiviCRM APIv3 group nesting functions
  *
  * @package CiviCRM_APIv3
  * @subpackage API_Group
@@ -39,12 +39,12 @@
 /**
  * Include utility functions
  */
-require_once 'api/v2/utils.php';
+require_once 'api/v3/utils.php';
 
 /**
  * Provides group nesting record(s) given parent and/or child id.
  * 
- * @param  array $params  an array containing at least child_group_id or parent_group_id
+ * @param array $params  an array containing at least child_group_id or parent_group_id
  *
  * @return  array  list of group nesting records
  */
@@ -137,7 +137,7 @@ function civicrm_group_nesting_delete( &$params )
 
     if ( ! array_key_exists( 'child_group_id', $params ) ||
          ! array_key_exists( 'parent_group_id', $params ) ) {
-        return civicrm_create_error( ts( 'You need to define parent_group_id and child_group_id in params.' ) );
+        return civicrm_create_error('You need to define parent_group_id and child_group_id in params.'  );
     }
 
     require_once 'CRM/Contact/DAO/GroupNesting.php';

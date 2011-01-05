@@ -26,7 +26,7 @@
 */
 
 /**
- * File for the CiviCRM APIv2 tag functions
+ * File for the CiviCRM APIv3 tag functions
  *
  * @package CiviCRM_APIv3
  * @subpackage API_Tag
@@ -38,7 +38,7 @@
 /**
  * Include utility functions
  */
-require_once 'api/v2/utils.php';
+require_once 'api/v3/utils.php';
 
 /**
  *  Add a Tag. Tags are used to classify CRM entities (including Contacts, Groups and Actions).

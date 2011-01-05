@@ -27,7 +27,7 @@
 */
 
 /**
- * File for the CiviCRM APIv2 activity functions
+ * File for the CiviCRM APIv3 activity functions
  *
  * @package CiviCRM_APIv3
  * @subpackage API_Activity
@@ -39,14 +39,10 @@
 /**
  * Include common API util functions
  */
-require_once 'api/v2/utils.php';
+require_once 'api/v3/utils.php';
 
 require_once 'CRM/Activity/BAO/Activity.php';
 require_once 'CRM/Core/DAO/OptionGroup.php';
-
-// require these to call new function names from deprecated ones in here
-require_once 'api/v2/ActivityType.php';
-require_once 'api/v2/ActivityContact.php';
 
 /**
  * Create a new Activity.
@@ -396,8 +392,7 @@ function civicrm_activity_processemail( $file, $activityTypeID, $result = array(
         if ( ! file_exists( $file ) ||
              ! is_readable( $file ) ) {
                  //TODO we don't like creating core errors!
-            return CRM_Core_Error::createAPIError( ts( 'File %1 does not exist or is not readable',
-                                                       array( 1 => $file ) ) );
+            return CRM_Core_Error::createAPIError(  "File $file does not exist or is not readable");
         }
     }
 

@@ -26,7 +26,7 @@
 */
 
 /**
- * File for CiviCRM APIv2 pseudoconstants
+ * File for CiviCRM APIv3 pseudoconstants
  *
  * @package CiviCRM_APIv3
  * @subpackage API_Constant
@@ -39,7 +39,7 @@
 /**
  * Include utility functions
  */
-require_once 'api/v2/utils.php';
+require_once 'api/v3/utils.php';
 
 /**
  * Generic file to retrieve all the constants and

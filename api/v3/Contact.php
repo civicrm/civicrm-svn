@@ -40,7 +40,7 @@
 /**
  * Include common API util functions
  */
-require_once 'api/v2/utils.php';
+require_once 'api/v3/utils.php';
 require_once 'CRM/Contact/BAO/Contact.php';
 /**
  * @todo Write sth

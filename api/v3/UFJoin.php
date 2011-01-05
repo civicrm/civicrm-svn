@@ -27,7 +27,7 @@
 */
 
 /**
- * File for the CiviCRM APIv2 user framework join functions
+ * File for the CiviCRM APIv3 user framework join functions
  *
  * @package CiviCRM_APIv3
  * @subpackage API_UF
@@ -40,7 +40,7 @@
 /**
  * Files required for this package
  */
-require_once 'api/v2/utils.php'; 
+require_once 'api/v3/utils.php'; 
 
 require_once 'CRM/Core/BAO/UFJoin.php';
 

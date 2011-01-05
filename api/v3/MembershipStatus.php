@@ -27,7 +27,7 @@
 */
 
 /**
- * File for the CiviCRM APIv2 membership status functions
+ * File for the CiviCRM APIv3 membership status functions
  *
  * @package CiviCRM_APIv3
  * @subpackage API_Membership
@@ -40,7 +40,7 @@
 /**
  * Files required for this package
  */
-require_once 'api/v2/utils.php';
+require_once 'api/v3/utils.php';
 
 /**
  * Create a Membership Status

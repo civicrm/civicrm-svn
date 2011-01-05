@@ -27,7 +27,7 @@
 */
 
 /**
- * File for the CiviCRM APIv2 activity contact functions
+ * File for the CiviCRM APIv3 activity contact functions
  *
  * @package CiviCRM_APIv3
  * @subpackage API_Activity
@@ -40,7 +40,7 @@
 /**
  * Files required for this package
  */
-require_once 'api/v2/utils.php';
+require_once 'api/v3/utils.php';
 
 require_once 'CRM/Activity/BAO/Activity.php';
 
@@ -58,7 +58,8 @@ require_once 'CRM/Activity/BAO/Activity.php';
  * @todo Erik Hommel 16 dec 2010 introduce version parameter
  * @todo Erik Hommel 16 dec 2010 check uniform error messages (inventarization to be done first)
  */
-function civicrm_activity_contact_get( $params ) {
+
+function civicrm_activity_contact_get( &$params ) {
   _civicrm_initialize( );
   
   $contactId = CRM_Utils_Array::value( 'contact_id', $params ); 
@@ -103,7 +104,7 @@ function &_civicrm_activities_get( $contactID, $type = 'all' )
     
     //get the custom data.
     if ( is_array( $activities ) && !empty( $activities ) ) {
-        require_once 'api/v2/Activity.php';
+        require_once 'api/v3/Activity.php';
         foreach ( $activities as $activityId => $values ) {
             $customParams =  array( 'activity_id'      => $activityId,
                                     'activity_type_id' => CRM_Utils_Array::value( 'activity_type_id', $values ) );

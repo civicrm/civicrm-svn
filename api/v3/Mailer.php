@@ -28,7 +28,7 @@
 
 /**
  *
- * APIv2 functions for registering/processing mailer events.
+ * APIv3 functions for registering/processing mailer events.
  *
  * @package CiviCRM_APIv3
  * @subpackage API_Mailer
@@ -42,7 +42,7 @@
  */
 
 
-require_once 'api/v2/utils.php';
+require_once 'api/v3/utils.php';
 
 require_once 'CRM/Contact/BAO/Group.php';
 

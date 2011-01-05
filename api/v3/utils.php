@@ -26,7 +26,7 @@
 */
 
 /**
- * File for CiviCRM APIv2 utilitity functions
+ * File for CiviCRM APIv3 utilitity functions
  *
  * @package CiviCRM_APIv3
  * @subpackage API_utils

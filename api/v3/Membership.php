@@ -27,7 +27,7 @@
 */
 
 /**
- * File for the CiviCRM APIv2 membership functions
+ * File for the CiviCRM APIv3 membership functions
  *
  * @package CiviCRM_APIv3
  * @subpackage API_Membership
@@ -40,11 +40,11 @@
 /**
  * Files required for this package
  */
-require_once 'api/v2/utils.php';
+require_once 'api/v3/utils.php';
 require_once 'CRM/Utils/Rule.php';
-require_once 'api/v2/MembershipContact.php';
-require_once 'api/v2/MembershipType.php';
-require_once 'api/v2/MembershipStatus.php';
+require_once 'api/v3/MembershipContact.php';
+require_once 'api/v3/MembershipType.php';
+require_once 'api/v3/MembershipStatus.php';
 
 /**
  * Deletes an existing contact membership

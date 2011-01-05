@@ -27,7 +27,7 @@
 */
 
 /**
- * File for the CiviCRM APIv2 Case functions
+ * File for the CiviCRM APIv3 Case functions
  * Developed by woolman.org
  *
  * @package CiviCRM_APIv3
@@ -36,7 +36,7 @@
  *
  */
 
-require_once 'api/v2/utils.php';
+require_once 'api/v3/utils.php';
 require_once 'CRM/Case/BAO/Case.php';
 require_once 'CRM/Case/PseudoConstant.php';
 

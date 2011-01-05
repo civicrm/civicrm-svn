@@ -100,7 +100,7 @@ function civicrm_relationship_create( &$params ) {
 /**
  * Delete a relationship 
  *
- * @param  id of relationship  $id
+ * @param  array $params
  *
  * @return boolean  true if success, else false
  * @static void

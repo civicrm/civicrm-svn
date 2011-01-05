@@ -26,7 +26,7 @@
 */
 
 /**
- * File for the CiviCRM APIv2 Petition Signatures functions
+ * File for the CiviCRM APIv3 Petition Signatures functions
  *
  * @package CiviCRM_APIv3
  * @subpackage API_Contribute
@@ -35,7 +35,7 @@
 /**
  * Include utility functions
  */
-require_once 'api/v2/utils.php';
+require_once 'api/v3/utils.php';
 require_once 'CRM/Utils/Rule.php';
 require_once 'CRM/Campaign/BAO/Petition.php';
 

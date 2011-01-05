@@ -44,7 +44,7 @@
 /**
  * Include common API util functions
  */   
-require_once 'api/v2/utils.php';
+require_once 'api/v3/utils.php';
 
 /**
  * Function to retrieve activity types
@@ -75,8 +75,8 @@ function civicrm_activity_type_get( ) {
  * @todo Erik Hommel 16 dec 2010 Check if function processes update according to standards
  * @todo Erik Hommel 16 dec 2010 Use utils function civicrm_verify_mandatory to check required fields
  */
- */
-function civicrm_activity_type_create( $params ) {
+ 
+function civicrm_activity_type_create( &$params ) {
     require_once 'CRM/Core/OptionGroup.php';
     
     if ( ! isset( $params['label'] ) || ! isset( $params['weight'] ) ) {
