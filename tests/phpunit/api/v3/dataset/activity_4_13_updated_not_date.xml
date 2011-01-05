@@ -29,7 +29,7 @@
       <value>17</value>                      <!--  source_contact_id  -->
       <null />                              <!--  source_record_id  -->
       <value>1</value>                      <!--  activity_type_id  -->
-      <value>Update Discussion on Apis for v2</value>  <!--  subject  -->
+      <value>Updated Make-it-Happen Meeting</value>  <!--  subject  -->
       <value>2009-01-23 12:34:56</value>         <!--  activity_date_time  -->
       <value>120</value>  <!--  duration  -->
       <value>21, Park Avenue</value>  <!--  location  -->

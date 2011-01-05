@@ -77,9 +77,12 @@ function &civicrm_activity_create( &$params )
     _civicrm_initialize( );
     
     $errors = array( );
-    
+    $addmode = True;
+    if (!empty($params['id']) || !empty($params['activity_id'])){
+      $addmode = False;
+    }
     // check for various error and required conditions
-    $errors = _civicrm_activity_check_params( $params, true ) ;
+    $errors = _civicrm_activity_check_params( $params, $addmode ) ;
 
     if ( !empty( $errors ) ) {
         return $errors;
@@ -108,9 +111,8 @@ function &civicrm_activity_create( &$params )
 
 /**
  *
- * @param <type> $params
- * @param <type> $returnCustom
- * @return <type>
+ * @param array $params
+ * @return array
  *
  * @todo Erik Hommel 16 dec 2010 check for mandatory fields with utils function civicrm_verify_mandatory
  * @todo Erik Hommel 16 dec 2010 check permissions with utils function civicrm_api_permission_check
@@ -119,7 +121,7 @@ function &civicrm_activity_create( &$params )
  * @todo Erik Hommel 16 dec 2010 introduce version as param
  */
  
-function civicrm_activity_get( $params, $returnCustom = false ) {
+function civicrm_activity_get( $params ) {
     _civicrm_initialize( );
     
     $activityId = CRM_Utils_Array::value( 'activity_id', $params );
@@ -131,48 +133,13 @@ function civicrm_activity_get( $params, $returnCustom = false ) {
         return civicrm_create_error( "Invalid activity Id"  );
     }
     
-    $activity = _civicrm_activity_get( $activityId, $returnCustom );
+    $activity = _civicrm_activity_get( $activityId );
     
     if ( $activity ) {
         return civicrm_create_success( $activity );
     } else {
         return civicrm_create_error(  'Invalid Data'  );
     }
-}
-
-/**
- * Update a specified activity.
- *
- * Updates activity with the values passed in the 'params' array. An
- * error is returned if an invalid id or activity Name is passed 
- * @param CRM_Activity $activity A valid Activity object
- * @param array       $params  Associative array of property
- *                             name/value pairs to be updated. 
- *  
- * @return CRM_Activity|CRM_Core_Error  Return the updated ActivtyType Object else
- *                                Error Object (if integrity violation)
- *
- * @access public
- *
- * @todo Erik Hommel 16 dec 2010 function update should be integrated with create function, update does not exist in API standards
- *
- */
-function &civicrm_activity_update( &$params ) 
-{
-    $errors = array( );
-    //check for various error and required conditions
-    $errors = _civicrm_activity_check_params( $params ) ;
-
-    if ( !empty( $errors ) ) {
-        return $errors;
-    }
-   
-    $activity = CRM_Activity_BAO_Activity::create( $params );
-
-    $values = array();
-    _civicrm_object_to_array( $activity, $values );
-    
-    return $values;
 }
 
 /**
@@ -214,12 +181,12 @@ function civicrm_activity_delete( &$params )
  * Retrieve a specific Activity by Id.
  *
  * @param int $activityId
- *
+ * @todo this should probably be merged into main function
  * @return array (reference)  activity object
  * @access public
  *
  */
-function _civicrm_activity_get( $activityId, $returnCustom = false ) {
+function _civicrm_activity_get( $activityId, $returnCustom = true ) {
     $dao = new CRM_Activity_BAO_Activity();
     $dao->id = $activityId;
     if( $dao->find( true ) ) {
@@ -228,7 +195,7 @@ function _civicrm_activity_get( $activityId, $returnCustom = false ) {
 
         //also return custom data if needed.
         if ( $returnCustom && !empty( $activity ) ) {
-            $customdata = civicrm_activity_custom_get( array( 'activity_id'      => $activityId, 
+            $customdata = _civicrm_activity_custom_get( array( 'activity_id'      => $activityId, 
                                                               'activity_type_id' => $activity['activity_type_id']  )  );
             $activity = array_merge( $activity, $customdata );
         }
@@ -291,20 +258,24 @@ SELECT  count(*)
     foreach ( $activityIds as $id => $value ) {
         if (  $value &&
               !CRM_Core_DAO::getFieldValue( 'CRM_Activity_DAO_Activity', $value, 'id' ) ) {
-            return civicrm_create_error(  'Invalid %1 Id', array( 1 => ucfirst( $id ) )  );
+            return civicrm_create_error(  'Invalid ' . ucfirst( $id ) . ' Id' );
         }
     }
-
+    /*
+     * @todo unique name for subject is activity subject - subject won't be supported in v4
+     */
     // check for activity subject if add mode
-    if ( $addMode && ! isset( $params['subject'] ) ) {
+    if ( $addMode && ! isset( $params['subject']) && ! isset( $params['activity_subject'] ) ) {
         return civicrm_create_error( 'Missing Subject'  );
     }
-
-    if ( ! $addMode && ! isset( $params['id'] )) {
+  /*
+     * @todo unique name for id is activity id - id won't be supported in v4
+     */
+    if ( ! $addMode && ! isset( $params['id'] )&& ! isset( $params['activity_id'] )) {
         return civicrm_create_error(  'Required parameter "id" not found'  );
     }
 
-    if ( ! $addMode && $params['id'] && ! is_numeric ( $params['id'] )) {
+    if ( ! $addMode && $params['id'] && (! is_numeric ( $params['id'] )) || ($params['id'] && ! is_numeric ( $params['id'] ) )) {
         return civicrm_create_error(  'Invalid activity "id"'  );
     }
     
@@ -333,16 +304,21 @@ SELECT  count(*)
             return civicrm_create_error( 'Invalid Activity Type ID' );
         }
     }
-        
+  /*
+     * @todo unique name for status_id is activity status id - status id won't be supported in v4
+     */
+    if (!empty($params['status_id'])){
+      $params['activity_status_id'] = $params['status_id'];
+    }
     // check for activity status is passed in
-    if ( isset( $params['status_id'] ) ) {
+    if ( isset( $params['activity_status_id'] ) ) {
         require_once "CRM/Core/PseudoConstant.php";
         $activityStatus = CRM_Core_PseudoConstant::activityStatus( );
         
-        if ( is_numeric( $params['status_id'] ) && !array_key_exists( $params['status_id'], $activityStatus ) ) {             
+        if ( is_numeric( $params['activity_status_id'] ) && !array_key_exists( $params['activity_status_id'], $activityStatus ) ) {             
             return civicrm_create_error( 'Invalid Activity Status' );
-        } elseif ( !is_numeric( $params['status_id'] ) ) {
-            $statusId = array_search( $params['status_id'], $activityStatus );            
+        } elseif ( !is_numeric( $params['activity_status_id'] ) ) {
+            $statusId = array_search( $params['activity_status_id'], $activityStatus );            
             
             if ( !is_numeric( $statusId ) ) {
                 return civicrm_create_error( 'Invalid Activity Status' );
@@ -446,10 +422,11 @@ function _civicrm_activity_buildmailparams( $result, $activityTypeID ) {
  * Function retrieve activity custom data.
  * @param  array  $params key => value array.
  * @return array  $customData activity custom data 
+ * @todo is this an internal function? should be just returned / available by 'return' param?
  *
  * @access public
  */
-function civicrm_activity_custom_get( $params ) {
+function _civicrm_activity_custom_get( $params ) {
     
     $customData = array( );
     if ( !CRM_Utils_Array::value( 'activity_id', $params ) ) {
