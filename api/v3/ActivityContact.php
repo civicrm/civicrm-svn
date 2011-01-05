@@ -109,7 +109,7 @@ function &_civicrm_activities_get( $contactID, $type = 'all' )
             $customParams =  array( 'activity_id'      => $activityId,
                                     'activity_type_id' => CRM_Utils_Array::value( 'activity_type_id', $values ) );
             
-            $customData = civicrm_activity_custom_get( $customParams );
+            $customData = _civicrm_activity_custom_get( $customParams );
             
             if ( is_array( $customData ) && !empty( $customData ) ) {
                 $activities[$activityId] = array_merge( $activities[$activityId], $customData );
