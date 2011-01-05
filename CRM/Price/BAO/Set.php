@@ -400,10 +400,15 @@ WHERE     ct.id = cp.contribution_type_id AND
                              'label',
                              'html_type',
                              'is_enter_qty',
+                             'help_pre',
                              'help_post',
+                             'weight',
                              'is_display_amounts',
                              'options_per_line',
                              'is_active',
+                             'active_on',
+                             'expire_on',
+                             'javascript',
                              'visibility_id'
                              );
         if ( $required == true ) {
@@ -421,9 +426,15 @@ WHERE price_set_id = %1
 AND is_active = 1
 ';
 
+		$currentTime = date( 'YmdHis' );
+        $dateSelect = '
+AND ( active_on IS NULL OR active_on <= $currentTime )
+AND ( expire_on IS NULL OR expire_on >= $currentTime )
+';
+
         $orderBy = ' ORDER BY weight';
 
-        $sql = $select . $from . $where . $orderBy;
+        $sql = $select . $from . $where . $dateSelect . $orderBy;
 
         $dao =& CRM_Core_DAO::executeQuery( $sql, $params );
 
