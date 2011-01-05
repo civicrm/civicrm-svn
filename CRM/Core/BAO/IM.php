@@ -110,7 +110,8 @@ ORDER BY
                              'is_primary'     => $dao->is_primary,
                              'id'             => $dao->im_id,
                              'name'           => $dao->im,
-                             'locationTypeId' => $dao->locationTypeId );
+                             'locationTypeId' => $dao->locationTypeId,
+                             'providerId'     => $dao->providerId );
             
             if ( $updateBlankLocInfo ) {
                 $ims[$count++] = $values; 
