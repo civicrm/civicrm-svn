@@ -340,6 +340,7 @@ WHERE     pledge_id = %1
         
         // if we get do not get contribution id means we are editing the scheduled payment.
         if ( !empty( $paymentIDs ) ) {
+            $editScheduled = false;
             $payments = implode( ',', $paymentIDs );
             $paymentContributionId  =  CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_Payment', 
                                                                     $payments,
@@ -375,8 +376,8 @@ WHERE     pledge_id = %1
                                                                'id'
                                                                );
             //  while editing scheduled  we need to check if we are editing last pending
+            $lastPending = false;
             if ( !$paymentContributionId ) {
-                $lastPending = false;
                 $checkPendingCount = self::getOldestPledgePayment( $pledgeID, 2 );
                 if ( $checkPendingCount['count'] == 1 ) {
                     $lastPending = true;

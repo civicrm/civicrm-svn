@@ -567,7 +567,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
 
         $dates = array( 'create_date', 'start_date', 'acknowledge_date', 'cancel_date' );
         foreach ( $dates as $d ) {
-            if ( $this->_id && !$this->_isPending ) {
+            if ( $this->_id && ( !$this->_isPending ) && CRM_Utils_Array::value( $d, $this->_values ) ) {
                 if ( $d == 'start_date' ) {
                     $params['scheduled_date'] = CRM_Utils_Date::processDate( $this->_values[$d] );
                 }
