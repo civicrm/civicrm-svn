@@ -1159,8 +1159,12 @@ SELECT relationship_type_id, relationship_direction
                 $membershipType = CRM_Member_BAO_MembershipType::getMembershipTypeDetails( $membershipValues['membership_type_id'] );
                 // Check if contact's relationship type exists in membership type
                 $relTypeDirs   = array( );
-                $relTypeIds    = explode( CRM_Core_DAO::VALUE_SEPARATOR,$membershipType['relationship_type_id'] );
-                $relDirections = explode( CRM_Core_DAO::VALUE_SEPARATOR,$membershipType['relationship_direction'] );
+                if ( CRM_Utils_Array::value( 'relationship_type_id', $membershipType ) ) {
+                    $relTypeIds = explode( CRM_Core_DAO::VALUE_SEPARATOR, $membershipType['relationship_type_id'] );
+                }
+                if ( CRM_Utils_Array::value( 'relationship_direction', $membershipType ) ) {
+                    $relDirections = explode( CRM_Core_DAO::VALUE_SEPARATOR, $membershipType['relationship_direction'] );
+                }
                 foreach( $relTypeIds as $key => $value ) {
                     $relTypeDirs[] = $value."_".$relDirections[$key];
                 }

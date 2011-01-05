@@ -512,10 +512,10 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
                 CRM_Contact_BAO_Contact_Utils::clearCurrentEmployer( $this->_values['current_employee_id'] );
             }
         } elseif ( $quickSave ) {
-            if ( $params['add_current_employee'] &&
+            if ( CRM_Utils_Array::value( 'add_current_employee', $params ) &&
                  $this->_allRelationshipNames[$relationshipTypeId]["name_a_b"] == 'Employee of' ) {
                 $params['employee_of'] = $params['rel_contact_id'];
-            } elseif ( $params['add_current_employer'] &&
+            } elseif ( CRM_Utils_Array::value( 'add_current_employer', $params ) &&
                        $this->_allRelationshipNames[$relationshipTypeId]["name_b_a"] == 'Employer of' ) {
                 $params['employer_of'] = array( $params['rel_contact_id'] => 1 );
             }
