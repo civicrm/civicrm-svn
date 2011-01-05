@@ -738,6 +738,7 @@ class CRM_Utils_Hook {
 
     /**
      * This hook is called AFTER EACH email has been processed by the script bin/EmailProcessor.php
+     *
      * @param string  $type    type of mail processed: 'activity' OR 'mailing'
      * @param array  &$params  the params that were sent to the CiviCRM API function
      * @param object  $mail    the mail object which is an ezcMail class
