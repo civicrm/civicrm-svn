@@ -567,7 +567,7 @@ class CRM_Core_Payment_BaseIPN {
                 $relatedContact = CRM_Contribute_BAO_Contribution::getOnbehalfIds( $contribID,
                                                                                    $contribution->contact_id );
                 // if this is onbehalf of contribution then set related contact
-                if ( $relatedContactId = $relatedContact['individual_id'] ) {
+                if ( $relatedContactId = CRM_Utils_Array::value( 'individual_id', $relatedContact ) ) {
                     $values['related_contact'] = $ids['related_contact'] = $relatedContactId;
                 }
                 

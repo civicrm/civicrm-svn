@@ -674,9 +674,9 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
         }
         $contactTypeAdded = false;
         
-        $excludedContactIds = array( $this->_contactId );
+        $excludedContactIds = isset( $this->_contactId ) ? array( $this->_contactId ) : array( );
 
-        if ( $params['relationship_type_id'] ) {
+        if ( CRM_Utils_Array::value( 'relationship_type_id', $params ) ) {
             $relationshipType = new CRM_Contact_DAO_RelationshipType( );
             list( $rid, $direction ) = explode( '_', $params['relationship_type_id'], 2 );
            
