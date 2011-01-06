@@ -129,6 +129,7 @@ class CRM_Campaign_Page_AJAX
                                'sort_name', 
                                'street_unit',
                                'street_name',
+                               'postal_code',
                                'street_number', 
                                'street_address', 
                                'survey_interviewer_id', 
