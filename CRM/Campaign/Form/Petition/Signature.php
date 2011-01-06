@@ -537,8 +537,8 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
             require_once 'CRM/Profile/Form.php';
             $session = CRM_Core_Session::singleton( );
             $this->assign( "petition" , $this->petition );
-            //$contactID = $this->_contactId;	   
-            $this->assign( contact_id, $this->_contactId );
+            $contactID = null; //$contactID = $this->_contactId;	   
+            $this->assign( 'contact_id', $this->_contactId );
 
             $fields = null;
             if ( $contactID ) { //TODO: contactID is never set (commented above)
@@ -592,13 +592,13 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
     }
        
 
-  function getTemplateFileName() {
-    if ($this->thankyou) {
-       return('CRM/Campaign/Page/Petition/ThankYou.tpl');
-    } else {
+    function getTemplateFileName() {
+        if ( isset($this->thankyou) ) {
+            return('CRM/Campaign/Page/Petition/ThankYou.tpl');
+        } else {
+        }
+        return parent::getTemplateFileName();
     }
-      return parent::getTemplateFileName();
-  }
  
     // check if user has already signed this petition    
 	function redirectIfSigned( $params )
