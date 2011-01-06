@@ -866,6 +866,7 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
             return true;
         }
         
+        $errorMsg = array( );
         //check if contact is selected in standalone mode
         if ( isset( $values['contact_select_id'][1] ) && !$values['contact_select_id'][1] ) {
             $errorMsg['contact[1]'] = ts('Please select a contact or create new contact');
@@ -1054,6 +1055,10 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
               $userEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $userID );
         require_once "CRM/Event/BAO/Participant.php";
         
+        if ( $this->_contactId ) { 
+            list( $this->_contributorDisplayName, $this->_contributorEmail, $this->_toDoNotEmail ) = CRM_Contact_BAO_Contact::getContactDetails( $this->_contactId );
+        }
+
         if ( $this->_mode ) {
             if ( ! $this->_isPaidEvent ) {
                 CRM_Core_Error::fatal( ts( 'Selected Event is not Paid Event ') );
@@ -1075,7 +1080,6 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
             
             // set email for primary location.
             $fields["email-Primary"] = 1;
-            list( $this->_contributorDisplayName, $this->_contributorEmail, $this->_toDoNotEmail ) = CRM_Contact_BAO_Contact::getContactDetails( $this->_contactId );
             $params["email-Primary"] = $params["email-{$this->_bltID}"] = $this->_contributorEmail;
             
             $params['register_date'] = $now;
@@ -1375,6 +1379,7 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
                                                                                $this->_statusId );
         }
         
+        $sent = array( );
         if ( CRM_Utils_Array::value( 'send_receipt', $params ) ) {
             $receiptFrom = CRM_Utils_Array::value( $params['from_email_address'], $this->_fromEmails['name'] );
             

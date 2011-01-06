@@ -203,7 +203,7 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
         //add reservation.
         require_once 'CRM/Core/PseudoConstant.php';
         $countVoters    = 0;
-        $maxVoters      = $surveyDetails['max_number_of_contacts'];
+        $maxVoters      = CRM_Utils_Array::value( 'max_number_of_contacts', $surveyDetails );
         $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
         $statusHeld     = array_search( 'Scheduled', $activityStatus );
         require_once 'CRM/Activity/BAO/Activity.php';

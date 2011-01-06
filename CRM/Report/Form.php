@@ -1853,6 +1853,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
         $group = new CRM_Contact_DAO_Group( );
         $group->is_active = 1;
         $group->find();
+        $smartGroups = array( );
         while( $group->fetch( ) ) {
              if( in_array( $group->id, $this->_params['gid_value'] ) && $group->saved_search_id ) {
                  $smartGroups[] = $group->id;
