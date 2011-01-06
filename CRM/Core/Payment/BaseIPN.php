@@ -331,21 +331,23 @@ class CRM_Core_Payment_BaseIPN {
         
         $values = array( );
         if ( $input['component'] == 'contribute' ) {
-            $isOfflineRecur = false;
             if ( $contribution->contribution_page_id ) {
                 require_once 'CRM/Contribute/BAO/ContributionPage.php';
                 CRM_Contribute_BAO_ContributionPage::setValues( $contribution->contribution_page_id, $values ); 
                 $source = ts( 'Online Contribution' ) . ': ' . $values['title'];
             } else if ( $recurContrib->id ) {
-                $isOfflineRecur = true;
                 $contribution->contribution_page_id = null;
                 $values['amount'] = $recurContrib->amount;
                 $values['contribution_type_id'] = $objects['contributionType']->id;
-                $values['title'] = $source = ts( 'Offline Recurring Contribution Payment' );
+                $values['title'] = $source = ts( 'Offline Recurring Contribution' );
+                $values['is_email_receipt'] = true;
+                require_once 'CRM/Core/BAO/Domain.php';
+                $domainValues = CRM_Core_BAO_Domain::getNameAndEmail( );
+                $values['receipt_from_name'] = $domainValues[0];
+                $values['receipt_from_email'] = $domainValues[1];
             }
             $contribution->source = $source;  
-            if ( $isOfflineRecur || 
-                 CRM_Utils_Array::value( 'is_email_receipt', $values ) ) {
+            if ( CRM_Utils_Array::value( 'is_email_receipt', $values ) ) {
                 $contribution->receipt_date = self::$_now;
             }
             
@@ -530,7 +532,7 @@ class CRM_Core_Payment_BaseIPN {
        
         CRM_Core_Error::debug_log_message( "Contribution record updated successfully" );
         $transaction->commit( );
-
+        
         self::sendMail( $input, $ids, $objects, $values, $recur, false );
 
         CRM_Core_Error::debug_log_message( "Success: Database updated and mail sent" );

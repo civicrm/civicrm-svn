@@ -146,7 +146,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
         if ( $isTest && !empty( $params['custom_post_id'] ) ) {
             $params['custom_post_id'][] = array( 'contribution_test', '=', 1, 0, 0 );
         }
-        if ( ! $returnMessageText ) {
+        if ( ! $returnMessageText && !empty( $gIds ) ) {
             //send notification email if field values are set (CRM-1941)
             require_once 'CRM/Core/BAO/UFGroup.php';
             foreach ( $gIds as $key => $gId ) {
@@ -331,17 +331,18 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
         $isEmailReceipt = CRM_Utils_Array::value( 'is_email_receipt', $value[$pageID] );
         $isOfflineRecur = false;
         if ( !$pageID && $recur->id ) $isOfflineRecur = true; 
-        if ( $isOfflineRecur || $isOfflineRecur ) {
-            require_once 'CRM/Core/BAO/Domain.php';
-            $domainValues = CRM_Core_BAO_Domain::getNameAndEmail( );
-            $receiptFrom      = "$domainValues[0] <$domainValues[1]>";
-            $receiptFromName  = $domainValues[0];
-            $receiptFromEmail = $domainValues[1];
+        if ( $isEmailReceipt || $isOfflineRecur ) {
             if ( $pageID ) {
                 $receiptFrom = '"' . CRM_Utils_Array::value('receipt_from_name',$value[$pageID]) . '" <' . $value[$pageID]['receipt_from_email'] . '>';
                 
                 $receiptFromName  = $value[$pageID]['receipt_from_name'];
                 $receiptFromEmail = $value[$pageID]['receipt_from_email']; 
+            } else {
+                require_once 'CRM/Core/BAO/Domain.php';
+                $domainValues = CRM_Core_BAO_Domain::getNameAndEmail( );
+                $receiptFrom      = "$domainValues[0] <$domainValues[1]>";
+                $receiptFromName  = $domainValues[0];
+                $receiptFromEmail = $domainValues[1];
             }
             
             require_once 'CRM/Contact/BAO/Contact/Location.php';
