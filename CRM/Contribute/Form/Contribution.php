@@ -501,7 +501,7 @@ WHERE  contribution_id = {$this->_id}
                 CRM_Core_BAO_UFGroup::setProfileDefaults( $this->_contactID, $fields, $defaults  );
             }
             foreach ( $billingFields as $name => $billingName ) {
-                $defaults[$billingName] = $defaults[$name];
+                $defaults[$billingName] = CRM_Utils_Array::value( $name, $defaults );                
             }
             
             $config = CRM_Core_Config::singleton( );
