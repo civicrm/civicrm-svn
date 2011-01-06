@@ -261,12 +261,12 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
             
             // use either the contribution or membership receipt, based on whether it’s a membership-related contrib or not
             $sendTemplateParams = array(
-                'groupName' => $tplParams['membershipID'] ? 'msg_tpl_workflow_membership' : 'msg_tpl_workflow_contribution',
-                'valueName' => $tplParams['membershipID'] ? 'membership_online_receipt'   : 'contribution_online_receipt',
-                'contactId' => $contactID,
-                'tplParams' => $tplParams,
-                'isTest'    => $isTest,
-            	'PDFFilename' => 'civicrm.pdf',
+                'groupName'   => $tplParams['membershipID'] ? 'msg_tpl_workflow_membership' : 'msg_tpl_workflow_contribution',
+                'valueName'   => $tplParams['membershipID'] ? 'membership_online_receipt'   : 'contribution_online_receipt',
+                'contactId'   => $contactID,
+                'tplParams'   => $tplParams,
+                'isTest'      => $isTest,
+            	'PDFFilename' => 'receipt.pdf',
             );
 
             require_once 'CRM/Core/BAO/MessageTemplates.php';
