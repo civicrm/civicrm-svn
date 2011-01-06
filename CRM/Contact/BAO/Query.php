@@ -3436,19 +3436,14 @@ SELECT COUNT( civicrm_contribution.total_amount ) as total_count,
        civicrm_contribution.currency              as currency";
 
         // make sure contribution is completed - CRM-4989
-        $additionalWhere = "civicrm_contribution.contribution_status_id = 1";
-
-        if ( ! empty( $where ) ) {
-            $newWhere = "$where AND $additionalWhere";
-        } else {
-            $newWhere = " AND $additionalWhere";
-        }
+        $where .= " AND civicrm_contribution.contribution_status_id = 1 
+                    AND contact_a.is_deleted = 0 ";
 
         $summary = array( );
         $summary['total'] = array( );
         $summary['total']['count'] = $summary['total']['amount'] = $summary['total']['avg'] = "n/a";
 
-        $query  = "$select $from $newWhere GROUP BY currency";
+        $query  = "$select $from $where GROUP BY currency";
         $params = array( );
 
         $dao =& CRM_Core_DAO::executeQuery( $query, $params );
@@ -3475,14 +3470,10 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
        AVG(   civicrm_contribution.total_amount ) as cancel_avg,
        civicrm_contribution.currency              as currency";
 
-        $additionalWhere = "civicrm_contribution.cancel_date IS NOT NULL";
-        if ( ! empty( $where ) ) {
-            $newWhere = "$where AND $additionalWhere";
-        } else {
-            $newWhere = " AND $additionalWhere";
-        }
-
-        $query = "$select $from $newWhere GROUP BY currency";
+        $where .= " AND civicrm_contribution.cancel_date IS NOT NULL
+                    AND contact_a.is_deleted = 0 ";
+        
+        $query = "$select $from $where GROUP BY currency";
         $dao =& CRM_Core_DAO::executeQuery( $query, $params );
 
         if ($dao->N <= 1 ) {
