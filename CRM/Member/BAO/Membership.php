@@ -1221,9 +1221,10 @@ AND civicrm_membership.is_test = %2";
 
         // check is it pending. - CRM-4555
         $pending = false;
-        if ( ( $form->_contributeMode == 'notify' || 
-               $form->_params['is_pay_later']     || 
-               ( $form->_params['is_recur']  && $form->_contributeMode == 'direct' ) ) &&
+        $contributeMode = isset( $form->_contributeMode ) ? $form->_contributeMode : null;
+        if ( ( $contributeMode == 'notify' || 
+               CRM_Utils_Array::value( 'is_pay_later', $form->_params ) || 
+               ( CRM_Utils_Array::value( 'is_recur', $form->_params ) && $contributeMode == 'direct' ) ) &&
              ( $form->_values['is_monetary'] && $form->_amount > 0.0 ) ) {
             $pending = true;
         }

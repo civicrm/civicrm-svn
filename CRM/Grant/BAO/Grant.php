@@ -208,7 +208,7 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant
     {
         require_once 'CRM/Utils/Hook.php';
 
-        if ( CRM_Utils_Array::value( 'grant', $ids ) ) {
+        if ( CRM_Utils_Array::value( 'grant_id', $ids ) ) {
             CRM_Utils_Hook::pre( 'edit', 'Grant', $ids['grant_id'], $params );
         } else {
             CRM_Utils_Hook::pre( 'create', 'Grant', null, $params ); 
