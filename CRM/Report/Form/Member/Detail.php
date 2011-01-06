@@ -60,7 +60,20 @@ class CRM_Report_Form_Member_Detail extends CRM_Report_Form {
                                         'no_repeat'  => true ),
                                  'id'           => 
                                  array( 'no_display' => true, 
-                                        'required'   => true ), ),
+                                        'required'   => true ), 
+                                 'first_name' => 
+                                 array( 'title'      => ts( 'First Name' ),
+                                        'no_repeat'  => true ),
+                                 'id'           => 
+                                 array( 'no_display' => true, 
+                                        'required'   => true ), 
+                                 
+                                 'last_name' => 
+                                 array( 'title'      => ts( 'Last Name' ),
+                                        'no_repeat'  => true ),
+                                 'id'           => 
+                                 array( 'no_display' => true, 
+                                        'required'   => true ),),
                           
                           'filters'  =>
                           array('sort_name'     => 
