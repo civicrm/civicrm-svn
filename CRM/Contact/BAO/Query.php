@@ -3424,7 +3424,7 @@ WHERE  id IN ( $groupIDs )
         $this->_skipPermission = $val;
     }
 
-    function &summaryContribution( )
+    function &summaryContribution( $context = NULL )
     {
         list( $select, $from, $where, $having ) = $this->query( true );
 
@@ -3436,8 +3436,10 @@ SELECT COUNT( civicrm_contribution.total_amount ) as total_count,
        civicrm_contribution.currency              as currency";
 
         // make sure contribution is completed - CRM-4989
-        $where .= " AND civicrm_contribution.contribution_status_id = 1 
-                    AND contact_a.is_deleted = 0 ";
+        $where .= " AND civicrm_contribution.contribution_status_id = 1 ";
+        if ( $context == 'search' ) {
+            $where .=" AND contact_a.is_deleted = 0 ";
+        }
 
         $summary = array( );
         $summary['total'] = array( );
@@ -3470,8 +3472,10 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
        AVG(   civicrm_contribution.total_amount ) as cancel_avg,
        civicrm_contribution.currency              as currency";
 
-        $where .= " AND civicrm_contribution.cancel_date IS NOT NULL
-                    AND contact_a.is_deleted = 0 ";
+        $where .= " AND civicrm_contribution.cancel_date IS NOT NULL ";
+        if ( $context == 'search' ) {
+            $where .=" AND contact_a.is_deleted = 0 ";
+        }
         
         $query = "$select $from $where GROUP BY currency";
         $dao =& CRM_Core_DAO::executeQuery( $query, $params );
