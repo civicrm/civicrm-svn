@@ -171,7 +171,7 @@ require_once 'CRM/Mailing/BAO/Mailing.php';
       */
      public static function formRule( $params, $files, $self ) 
      {
-         if ( $params['_qf_Schedule_submit'] ) {
+         if ( CRM_Utils_Array::value( '_qf_Schedule_submit', $params ) ) {
              //when user perform mailing from search context 
              //redirect it to search result CRM-3711.
              $ssID = $self->get( 'ssID' );

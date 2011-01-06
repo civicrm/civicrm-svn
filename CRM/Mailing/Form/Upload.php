@@ -395,7 +395,7 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
         require_once 'CRM/Mailing/BAO/Mailing.php';
         CRM_Mailing_BAO_Mailing::create($params, $ids);
      
-        if ( $this->_submitValues['_qf_Upload_upload_save'] == 'Save & Continue Later' ) {
+        if ( CRM_Utils_Array::value( '_qf_Upload_upload_save', $this->_submitValues ) == 'Save & Continue Later' ) {
             //when user perform mailing from search context 
             //redirect it to search result CRM-3711.
             $ssID    = $this->get( 'ssID' );
