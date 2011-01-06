@@ -457,11 +457,12 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 
 			require_once 'CRM/Core/Transaction.php';
 			$transaction = new CRM_Core_Transaction( );
-				
-			$this->_contactId = CRM_Contact_BAO_Contact::createProfileContact($params, $this->_contactProfileFields,
-																	   $this->_contactId, $this->_addToGroupID,
-																	   $this->_contactProfileId, $this->_ctype,
-																	   true );
+			
+            $addToGroupID = isset($this->_addToGroupID) ? $this->_addToGroupID : null;
+			$this->_contactId = CRM_Contact_BAO_Contact::createProfileContact( $params, $this->_contactProfileFields,
+                                                                               $this->_contactId, $addToGroupID,
+                                                                               $this->_contactProfileId, $this->_ctype,
+                                                                               true );
 
 			// get additional custom activity profile field data 
 			// to save with new signature activity record
