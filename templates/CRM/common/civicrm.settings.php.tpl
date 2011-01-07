@@ -26,7 +26,7 @@
 */
 
 /**
- * CiviCRM Configuration File - v3.1
+ * CiviCRM Configuration File
  */
 
 /**
