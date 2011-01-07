@@ -219,6 +219,10 @@ class CRM_Admin_Page_AJAX
         
         $tags = array( );
         
+        // always add current search term as possible tag
+        $tags[] = array( 'name' => $name,
+                         'id'   => $name );            
+        
         $query = "SELECT id, name FROM civicrm_tag WHERE parent_id = {$parentId} and name LIKE '%{$name}%'";
         $dao = CRM_Core_DAO::executeQuery( $query );
         
@@ -227,12 +231,8 @@ class CRM_Admin_Page_AJAX
                              'id'   => $dao->id );
         }
         
-        if ( empty( $tags ) ) {
-            $tags[] = array( 'name' => $name,
-                             'id'   => $name );            
-        }
         
-        echo json_encode( $tags ); 
+        echo json_encode($tags);         
         CRM_Utils_System::civiExit( );
     }
     
