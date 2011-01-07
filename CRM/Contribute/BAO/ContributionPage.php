@@ -313,12 +313,13 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
      * @param int     $contactID    contact id for contributor
      * @param int     $pageID       contribution page id
      * @param object  $recur        object of recurring contribution table
+     * @param object  $autoRenewMembership   is it a auto renew membership.
      *
      * @return void
      * @access public
      * @static
      */
-    static function recurringNofify( $type, $contactID, $pageID , $recur ) 
+    static function recurringNofify( $type, $contactID, $pageID , $recur, $autoRenewMembership = false ) 
     {
         $value = array( );
         if ( $pageID ) {
@@ -359,7 +360,8 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
                                                             'recur_txnType'            => $type,
                                                             'displayName'              => $displayName,
                                                             'receipt_from_name'        => $receiptFromName,
-                                                            'receipt_from_email'       => $receiptFromEmail ),
+                                                            'receipt_from_email'       => $receiptFromEmail,
+                                                            'auto_renew_membership'    => $autoRenewMembership ),
                                       'from'    => $receiptFrom,
                                       'toName'  => $displayName,
                                       'toEmail' => $email,
