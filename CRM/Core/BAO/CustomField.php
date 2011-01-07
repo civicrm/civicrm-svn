@@ -573,7 +573,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                               CRM_Utils_Array::value( 2, $match ) );
             } 
         }
-        return $all ? array( null, null ) ? null;
+        return $all ? array( null, null ) : null;
     }
     
     
