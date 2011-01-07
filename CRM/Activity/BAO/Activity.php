@@ -546,7 +546,10 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
                     $title =  $activitySubject . ' - ';
                 }
                 
-                $title = $title . $recentContactDisplay .' (' . $activityTypes[$activity->activity_type_id] . ')';
+                $title = $title . $recentContactDisplay;
+                if ( CRM_Utils_Array::value($activity->activity_type_id, $activityTypes) ) {
+                    $title .= ' (' . $activityTypes[$activity->activity_type_id] . ')';  
+                }
                 
                 CRM_Utils_Recent::add( $title,
                                        $url,

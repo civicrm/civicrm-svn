@@ -905,7 +905,7 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
         if ( ( !$self->_id && 
                !CRM_Utils_Array::value( 'total_amount', $values ) && 
                empty( $self->_values['line_items'] ) ) || 
-             ( $self->_id && !$self->_paymentId && is_array( $self->_values['line_items'] ) ) ) {
+             ( $self->_id && !$self->_paymentId && isset($self->_values['line_items']) && is_array( $self->_values['line_items'] ) ) ) {
             if ( $priceSetId = CRM_Utils_Array::value( 'priceSetId', $values ) ) {
                 require_once 'CRM/Price/BAO/Field.php';
                 CRM_Price_BAO_Field::priceSetValidation( $priceSetId, $values, $errorMsg );
