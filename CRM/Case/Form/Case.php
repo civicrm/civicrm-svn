@@ -291,7 +291,7 @@ class CRM_Case_Form_Case extends CRM_Core_Form
     {
         // check if dedupe button, if so return.
         $buttonName = $this->controller->getButtonName( );
-        if ( $buttonName == $this->_dedupeButtonName ) {
+        if ( isset( $this->_dedupeButtonName ) && $buttonName == $this->_dedupeButtonName ) {
             return;
         }
 
