@@ -598,25 +598,25 @@ function _civicrm_validate_formatted_contact(&$params)
 
 /**
  *
- * @param <type> $params
- * @param <type> $values
- * @param <type> $extends
- * @param <type> $entityId 
+ * @param array $params
+ * @param array $values
+ * @param string $extends entity that this custom field extends (e.g. contribution, event, contact)
+ * @param string $entityId ID of entity per $extends
  */
 function _civicrm_custom_format_params( &$params, &$values, $extends, $entityId = null )
 {
     $values['custom'] = array();
-    require_once 'CRM/Core/BAO/CustomField.php' ;    
-    $customFields = CRM_Core_BAO_CustomField::getFields( $extends );
         
     require_once 'CRM/Core/BAO/CustomField.php';
     foreach ($params as $key => $value) {
-        if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
+        list( $customFieldID, $customValueID ) = CRM_Core_BAO_CustomField::getKeyID($key, true );
+        if ( $customFieldID ) {
             CRM_Core_BAO_CustomField::formatCustomField( $customFieldID, $values['custom'], 
-                                                         $value, $extends, null, $entityId );
+                                                         $value, $extends, $customValueID, $entityId );
         }
     }
 }
+
 
 
 /**
