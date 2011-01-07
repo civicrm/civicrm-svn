@@ -157,7 +157,10 @@ class CRM_Utils_REST
         if ( CRM_Utils_Array::value( 'json', $_REQUEST ) ) {
             header( 'Content-Type: text/javascript' );
             $json = json_encode(array_merge($result));
-            return str_replace (",{","\n,{",$json);
+            if (CRM_Utils_Array::value( 'debug', $_REQUEST )) {
+               return CRM_Utils_REST::jsonFormated($json);
+            }
+            return $json;
         }
         
         $xml = "<?xml version=\"1.0\"?>
@@ -177,6 +180,56 @@ class CRM_Utils_REST
         return $xml;
     }
 
+
+    function jsonFormated($json) {
+      $tabcount = 0;
+      $result = '';
+      $inquote = false;
+      $ignorenext = false;
+     
+      $tab = "\t";
+      $newline = "\n";
+     
+      for($i = 0; $i < strlen($json); $i++) {
+          $char = $json[$i];
+         
+          if ($ignorenext) {
+              $result .= $char;
+              $ignorenext = false;
+          } else {
+              switch($char) {
+                  case '{':
+                      $tabcount++;
+                      $result .= $char . $newline . str_repeat($tab, $tabcount);
+                      break;
+
+                  case '}':
+                      $tabcount--;
+                      $result = trim($result) . $newline . str_repeat($tab, $tabcount) . $char;
+                      break;
+                  case ',':
+                      if (!$inquote) 
+                          $result .= $char . $newline . str_repeat($tab, $tabcount);
+                      else 
+                          $result .= $char;
+                      break;
+                  case '"':
+                      $inquote = !$inquote;
+                      $result .= $char;
+                      break;
+                  case '\\':
+                      if ($inquote) $ignorenext = true;
+                      $result .= $char;
+                      break;
+                  default:
+                      $result .= $char;
+              }
+          }
+      }
+     
+      return $result;
+    }
+ 
     function handle( $config ) {
         
         // Get the function name being called from the q parameter in the query string
