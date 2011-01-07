@@ -101,13 +101,13 @@ define('CIVICRM_LOGGING_DSN', CIVICRM_DSN);
  * and your web server must have read/write access to these directories.
  *
  *
- * EXAMPLE - CivicSpace / Drupal:
- * If the path to the CivicSpace or Drupal home directory is /var/www/htdocs/civicspace
+ * EXAMPLE - Drupal:
+ * If the path to the Drupal home directory is /var/www/htdocs/drupal
  * the $civicrm_root setting would be:
- *      $civicrm_root = '/var/www/htdocs/civicspace/modules/civicrm/';
+ *      $civicrm_root = '/var/www/htdocs/drupal/sites/all/modules/civicrm/';
  *
  * the CIVICRM_TEMPLATE_COMPILEDIR would be:
- *      define( 'CIVICRM_TEMPLATE_COMPILEDIR', '/var/www/htdocs/civicspace/files/civicrm/templates_c/' );
+ *      define( 'CIVICRM_TEMPLATE_COMPILEDIR', '/var/www/htdocs/drupal/sites/default/files/civicrm/templates_c/' );
  *
  * EXAMPLE - Joomla Installations:
  * If the path to the Joomla home directory is /var/www/htdocs/joomla
@@ -117,13 +117,6 @@ define('CIVICRM_LOGGING_DSN', CIVICRM_DSN);
  * the CIVICRM_TEMPLATE_COMPILEDIR would be:
  *      define( 'CIVICRM_TEMPLATE_COMPILEDIR', '/var/www/htdocs/joomla/media/civicrm/templates_c/' );
  *
- * EXAMPLE - Standalone Installations:
- * If the path to the Standalone home directory is /var/www/htdocs/civicrm
- * the $civicrm_root setting would be:
- *      $civicrm_root = '/var/www/htdocs/civicrm/';
- *
- * the CIVICRM_TEMPLATE_COMPILEDIR might be:
- *      define( 'CIVICRM_TEMPLATE_COMPILEDIR', '/var/www/htdocs/civicrm/standalone/files/templates_c/' );
  */
 
 global $civicrm_root;
@@ -155,11 +148,6 @@ define( 'CIVICRM_TEMPLATE_COMPILEDIR', '%%templateCompileDir%%' );
  * Front-end site:
  *      define( 'CIVICRM_UF_BASEURL' , 'http://www.example.com/joomla/' );
  *
- * EXAMPLE - Standalone Installations:
- * If your site's home url is http://www.example.com/civicrm/
- *
- * CIVICRM_UF_BASEURL - home URL for your site:
- *      define( 'CIVICRM_UF_BASEURL' , 'http://www.example.com/civicrm/standalone/' );
  */
 define( 'CIVICRM_UF_BASEURL'      , '%%baseURL%%' );
 
