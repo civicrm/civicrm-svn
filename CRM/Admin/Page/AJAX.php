@@ -227,10 +227,10 @@ class CRM_Admin_Page_AJAX
         $dao = CRM_Core_DAO::executeQuery( $query );
         
         while( $dao->fetch( ) ) {
-            $tags[] = array( 'name' => $dao->name,
+                                       // escape double quotes, which break results js
+            $tags[] = array( 'name' =>  addcslashes($dao->name, '"'),
                              'id'   => $dao->id );
         }
-        
         
         echo json_encode($tags);         
         CRM_Utils_System::civiExit( );
