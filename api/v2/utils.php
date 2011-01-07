@@ -370,7 +370,7 @@ function _civicrm_add_formatted_param(&$values, &$params)
     }
     
     foreach ($values as $key => $value) {
-        if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
+        if ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
             /* check if it's a valid custom field id */
             if (!array_key_exists($customFieldID, $fields['custom'])) {
                 return civicrm_create_error('Invalid custom field ID');
@@ -611,9 +611,10 @@ function _civicrm_custom_format_params( &$params, &$values, $extends, $entityId 
         
     require_once 'CRM/Core/BAO/CustomField.php';
     foreach ($params as $key => $value) {
-        if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
+        list( $customFieldID, $customValueID ) = CRM_Core_BAO_CustomField::getKeyID($key, true );
+        if ( $customFieldID ) {
             CRM_Core_BAO_CustomField::formatCustomField( $customFieldID, $values['custom'], 
-                                                         $value, $extends, null, $entityId );
+                                                         $value, $extends, $customValueID, $entityId );
         }
     }
 }
