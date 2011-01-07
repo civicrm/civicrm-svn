@@ -115,6 +115,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
                                'entity_table' => 'civicrm_survey',   
                                'module'       => 'CiviCampaign' );
         $this->_ufGroupId = CRM_Core_BAO_UFJoin::findUFGroupId( $ufJoinParams );
+        $this->assign( 'ufGroupId', $this->_ufGroupId );
         
         //validate all voters for required activity.
         //get the survey activities for given voters.

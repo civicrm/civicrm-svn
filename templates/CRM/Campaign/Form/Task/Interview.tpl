@@ -43,6 +43,8 @@
    <div id='survey_instructions' class='help'>{ts 1=$surveyValues.instructions}%1{/ts}</div>
 {/if}
 
+<div id='responseErrors' class = "hiddenElement messages crm-error"></div>
+
 <div id='help'>
     {if $votingTab}
     {ts}Click <strong>record response</strong> button to update values for each respondent as needed.{/ts}
@@ -159,7 +161,10 @@
 
     function registerInterview( voterId )
     {
-    	var data = new Object;
+        //reset all errors.   
+        cj( '#responseErrors' ).hide( ).html( '' );
+    	
+	var data = new Object;
     	var fieldName = 'field_' + voterId + '_custom_';
 	cj( '[id^="'+ fieldName +'"]' ).each( function( ) {
 	    if( cj(this).attr( 'type' ) == 'select-multiple' ) {
@@ -206,7 +211,8 @@
 	data['result']           = cj( '#field_' + voterId + '_result' ).val( ); 
 	data['note']             = cj( '#field_' + voterId + '_note' ).val( );
 	data['surveyTitle']      = {/literal}'{$surveyValues.title|escape:javascript}'{literal};
-
+	data['ufGroupId']        = {/literal}'{$ufGroupId}'{literal};	
+	
 	var dataUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Campaign_Page_AJAX&fnName=registerInterview' }"{literal}	          
 	
 	//post data to create interview.
@@ -216,6 +222,15 @@
 		 cj( '#restmsg_vote_' + voterId ).fadeIn("slow").fadeOut("slow");
 		 cj( '#interview_voter_button_' + voterId ).html(updateVote);
 		 cj( '#release_voter_button_' + voterId ).hide( );
+	       } else if ( interview.status == 'fail' && interview.errors ) {
+		 var errorList = '';
+		 for ( error in interview.errors ) {
+		    if ( interview.errors[error] ) errorList =  errorList + '<li>' + interview.errors[error] + '</li>';
+	         }
+		 if ( errorList ) {
+		      var allErrors = '<div class = "icon red-icon alert-icon"></div>Please correct the following errors in the form fields below:' + '<ul>' + errorList + '</ul>';
+		    cj( '#responseErrors' ).show( ).html( allErrors );   
+		 }
 	       }		 
 	}, 'json' );
     }
