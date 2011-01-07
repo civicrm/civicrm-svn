@@ -184,10 +184,10 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
                 case  'join_date': 
                     if( CRM_Utils_Date::convertToDefaultDate( $params, $dateType, $key )) {
                         if (! CRM_Utils_Rule::date($params[$key])) {
-                            CRM_Import_Parser_Contact::addToErrorMsg('Member since', $errorMessage);
+                            CRM_Import_Parser_Contact::addToErrorMsg('Member Since', $errorMessage);
                         }
                     } else {
-                        CRM_Import_Parser_Contact::addToErrorMsg('Member since', $errorMessage);
+                        CRM_Import_Parser_Contact::addToErrorMsg('Member Since', $errorMessage);
                     } 
                     break;
                 case  'membership_start_date': 

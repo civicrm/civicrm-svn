@@ -376,7 +376,7 @@ class CRM_Member_BAO_Query
 
         $form->addElement( 'text', 'member_source', ts( 'Source' ) );
  
-        $form->addDate( 'member_join_date_low', ts('Join Date - From'), false, array( 'formatType' => 'searchDate') );
+        $form->addDate( 'member_join_date_low', ts('Member Since - From'), false, array( 'formatType' => 'searchDate') );
         $form->addDate( 'member_join_date_high', ts('To'), false, array( 'formatType' => 'searchDate') );
 
         $form->addDate( 'member_start_date_low', ts('Start Date - From'), false, array( 'formatType' => 'searchDate') );

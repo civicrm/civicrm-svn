@@ -436,7 +436,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                 
         $this->applyFilter('__ALL__', 'trim');
         
-        $this->addDate( 'join_date', ts('Join Date'), false, array( 'formatType' => 'activityDate') );
+        $this->addDate( 'join_date', ts('Member Since'), false, array( 'formatType' => 'activityDate') );
         $this->addDate( 'start_date', ts('Start Date'), false, array( 'formatType' => 'activityDate') );
         $endDate = $this->addDate( 'end_date', ts('End Date'), false, array( 'formatType' => 'activityDate') );
         if ( $endDate ) {
