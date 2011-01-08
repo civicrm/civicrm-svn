@@ -65,7 +65,7 @@ function civicrm_contact_create( &$params )
   try {
     civicrm_api_check_permission(__FUNCTION__, $params, true);
     $create_new = true;
-    return civicrm_contact_update( $params, $create_new );
+    return _civicrm_contact_update( $params, $create_new );
   } catch (Exception $e) {
     return civicrm_create_error( $e->getMessage() );
   }
@@ -77,7 +77,118 @@ function civicrm_contact_create( &$params )
  * @todo Erik Hommel 16 dec 2010 check for required fields with utils function civicrm_verify_mandatory
  * @todo Erik Hommel 16 dec 2010 introduce version as param
  */
-function civicrm_contact_update( &$params, $create_new = false )
+
+
+
+
+
+/**
+ * Retrieve one or more contacts, given a set of search params
+ *
+ * @param  mixed[]  (reference ) input parameters
+ *
+ * @return array (reference )        array of properties, if error an array with an error id and error message
+ * @static void
+ * @access public
+ *
+ * @todo Erik Hommel 16 dec 2010 Check that all DB fields are returned
+ * @todo Erik Hommel 16 dec 2010 fix custom data (CRM-7231)
+ * @todo Erik Hommel 16 dec 2010 Introduce version as param and get rid of $deprecated_behaviour
+ * @todo Erik Hommel 16 dec 2010 Use civicrm_return_success / error ?
+ * @todo EM 6 Jan 11 no handling for empty params or params that are not an array: Invalid argument supplied for foreach() C:\utils\eclipseworkspace\api-civicrm\api\v3\Contact.php:332
+ */
+function civicrm_contact_get( &$params )
+{
+    _civicrm_initialize( );
+    
+
+    $inputParams      = array( );
+    $returnProperties = array( );
+    $otherVars = array( 'sort', 'offset', 'rowCount', 'smartGroupCache' );
+
+    $sort            = null;
+    $offset          = 0;
+    $rowCount        = 25;
+    $smartGroupCache = false;
+    foreach ( $params as $n => $v ) {
+        if ( substr( $n, 0, 6 ) == 'return' ) {
+            $returnProperties[ substr( $n, 7 ) ] = $v;
+        } elseif ( in_array( $n, $otherVars ) ) {
+            $$n = $v;
+        } else {
+            $inputParams[$n] = $v;
+        }
+    }
+
+    if ( empty( $returnProperties ) ) {
+        $returnProperties = null;
+    }
+
+    require_once 'CRM/Contact/BAO/Query.php';
+    $newParams =& CRM_Contact_BAO_Query::convertFormValues( $inputParams );
+    list( $contacts, $options ) = CRM_Contact_BAO_Query::apiQuery( $newParams,
+                                                                   $returnProperties,
+                                                                   null,
+                                                                   $sort,
+                                                                   $offset,
+                                                                   $rowCount,
+                                                                   $smartGroupCache );
+    return $contacts;
+}
+
+
+/**
+ * Delete a contact with given contact id
+ *
+ * @param  array   	  $params (reference ) input parameters, contact_id element required
+ *
+ * @return boolean        true if success, else false
+ * @static void
+ * @access public
+ */
+function civicrm_contact_delete( &$params )
+{
+    require_once 'CRM/Contact/BAO/Contact.php';
+
+    $contactID = CRM_Utils_Array::value( 'contact_id', $params );
+    if ( ! $contactID ) {
+        return civicrm_create_error( ts( 'Could not find contact_id in input parameters' ) );
+    }
+
+    $session =& CRM_Core_Session::singleton( );
+    if ( $contactID ==  $session->get( 'userID' ) ) {
+        return civicrm_create_error( ts( 'This contact record is linked to the currently logged in user account - and cannot be deleted.' ) );
+    }
+    $restore      = CRM_Utils_Array::value( 'restore', $params ) ? $params['restore'] : false;
+    $skipUndelete = CRM_Utils_Array::value( 'skip_undelete', $params ) ? $params['skip_undelete'] : false;
+    if ( CRM_Contact_BAO_Contact::deleteContact( $contactID , $restore, $skipUndelete) ) {
+        return civicrm_create_success( );
+    } else {
+        return civicrm_create_error( ts( 'Could not delete contact' ) );
+    }
+}
+
+
+/**
+ * Ensure that we have the right input parameters
+ *
+ * @todo We also need to make sure we run all the form rules on the params list
+ *       to ensure that the params are valid
+ *
+ * @param array   $params          Associative array of property name/value
+ *                                 pairs to insert in new contact.
+ * @param boolean $dupeCheck       Should we check for duplicate contacts
+ * @param boolean $dupeErrorArray  Should we return values of error
+ *                                 object in array foramt
+ * @param boolean $requiredCHeck   Should we check if required params
+ *                                 are present in params array
+ *
+ * @return null on success, error message otherwise
+ * @access public
+ *
+ * @todo Erik Hommel 16 dec 2010 required check should be incorporated in utils function civicrm_verify_mandatory
+ */
+function _civicrm_contact_update( &$params, $create_new = false )
 {
     _civicrm_initialize();
     try {
@@ -89,7 +200,7 @@ function civicrm_contact_update( &$params, $create_new = false )
     $contactID = CRM_Utils_Array::value( 'contact_id', $params );
 
     $dupeCheck = CRM_Utils_Array::value( 'dupe_check', $params, false );
-    $values    = civicrm_contact_check_params( $params, $dupeCheck );
+    $values    = _civicrm_contact_check_params( $params, $dupeCheck );
     if ( $values ) {
         return $values;
     }
@@ -158,7 +269,7 @@ function civicrm_contact_update( &$params, $create_new = false )
         $csType = CRM_Contact_BAO_Contact::getContactSubType( $entityId );
     }
     
-    $customValue = civicrm_contact_check_custom_params( $params, $csType ); 
+    $customValue = _civicrm_contact_check_custom_params( $params, $csType ); 
 
     if ( $customValue ) {
         return $customValue;
@@ -179,7 +290,231 @@ function civicrm_contact_update( &$params, $create_new = false )
 
     return $values;
 }
+function _civicrm_contact_check_params( &$params, $dupeCheck = true, $dupeErrorArray = false, $requiredCheck = true )
+{
+    if ( $requiredCheck ) {
+        $required = array(
+                          'Individual'   => array(
+                                                  array( 'first_name', 'last_name' ),
+                                                  'email',
+                                                  ),
+                          'Household'    => array(
+                                                  'household_name',
+                                                  ),
+                          'Organization' => array(
+                                                  'organization_name',
+                                                  ),
+                          );
+        
+        // cannot create a contact with empty params
+        if ( empty( $params ) ) {
+            return civicrm_create_error( 'Input Parameters empty' );
+        }
+        
+        if ( ! array_key_exists( 'contact_type', $params ) ) {
+            return civicrm_create_error( 'Contact Type not specified' );
+        }
+        
+        // contact_type has a limited number of valid values
+        $fields = CRM_Utils_Array::value( $params['contact_type'], $required );
+        if ( $fields == null ) {
+            return civicrm_create_error( "Invalid Contact Type: {$params['contact_type']}" );
+        }
+        
+        if ( $csType = CRM_Utils_Array::value('contact_sub_type', $params) ) {
+            if ( !(CRM_Contact_BAO_ContactType::isExtendsContactType($csType, $params['contact_type'])) ) {
+                return civicrm_create_error( "Invalid or Mismatched Contact SubType: {$csType}" );
+            }
+        }
 
+        if ( !CRM_Utils_Array::value( 'contact_id', $params ) ) { 
+            $valid = false;
+            $error = '';
+            foreach ( $fields as $field ) {
+                if ( is_array( $field ) ) {
+                    $valid = true;
+                    foreach ( $field as $element ) {
+                        if ( ! CRM_Utils_Array::value( $element, $params ) ) {
+                            $valid = false;
+                            $error .= $element; 
+                            break;
+                        }
+                    }
+                } else {
+                    if ( CRM_Utils_Array::value( $field, $params ) ) {
+                        $valid = true;
+                    }
+                }
+                if ( $valid ) {
+                    break;
+                }
+            }
+            
+            if ( ! $valid ) {
+                return civicrm_create_error( "Required fields not found for {$params['contact_type']} : $error" );
+            }
+        }
+    }
+    
+    if ( $dupeCheck ) {
+        // check for record already existing
+        require_once 'CRM/Dedupe/Finder.php';
+        $dedupeParams = CRM_Dedupe_Finder::formatParams($params, $params['contact_type']);
+
+        // CRM-6431
+        // setting 'check_permission' here means that the dedupe checking will be carried out even if the 
+        // person does not have permission to carry out de-dupes
+        // this is similar to the front end form
+        if (isset($params['check_permission'])){
+            $dedupeParams['check_permission'] = $fields['check_permission'];
+        }
+
+        $ids = implode(',', CRM_Dedupe_Finder::dupesByParams($dedupeParams, $params['contact_type']));
+        
+        if ( $ids != null ) {
+            if ( $dupeErrorArray ) {
+                $error = CRM_Core_Error::createError( "Found matching contacts: $ids",
+                                                      CRM_Core_Error::DUPLICATE_CONTACT, 
+                                                      'Fatal', $ids );
+                return civicrm_create_error( $error->pop( ) );
+            }
+            
+            return civicrm_create_error( "Found matching contacts: $ids", $ids );
+        }
+    }
+
+    //check for organisations with same name
+    if ( CRM_Utils_Array::value( 'current_employer', $params ) ) {
+        $organizationParams = array();
+        $organizationParams['organization_name'] = $params['current_employer'];
+        
+        require_once 'CRM/Dedupe/Finder.php';
+        $dedupParams = CRM_Dedupe_Finder::formatParams($organizationParams, 'Organization');
+        
+        $dedupParams['check_permission'] = false;            
+        $dupeIds = CRM_Dedupe_Finder::dupesByParams($dedupParams, 'Organization', 'Fuzzy');
+        
+        // check for mismatch employer name and id
+        if ( CRM_Utils_Array::value( 'employer_id', $params )
+             && !in_array( $params['employer_id'] ,$dupeIds ) ) {
+            return civicrm_create_error('Employer name and Employer id Mismatch');
+        }
+        
+        // show error if multiple organisation with same name exist
+        if ( !CRM_Utils_Array::value( 'employer_id', $params )
+             && (count($dupeIds) > 1) ) {
+            return civicrm_create_error('Found more than one Organisation with same Name.');
+        }
+    }
+    
+    return null;
+}
+
+
+/** 
+ * Takes an associative array and creates a contact object and all the associated 
+ * derived objects (i.e. individual, location, email, phone etc) 
+ * 
+ * @param array $params (reference ) an assoc array of name/value pairs 
+ * @param  int     $contactID        if present the contact with that ID is updated
+ * 
+ * @return object CRM_Contact_BAO_Contact object  
+ * @access public 
+ * @static 
+ */ 
+function _civicrm_contact_update( &$params, $contactID = null )
+{
+    require_once 'CRM/Core/Transaction.php';
+    $transaction = new CRM_Core_Transaction( );
+
+    if ( $contactID ) {
+        $params['contact_id'] = $contactID;
+    }
+    require_once 'CRM/Contact/BAO/Contact.php';
+    
+    $contact = CRM_Contact_BAO_Contact::create( $params );
+
+    $transaction->commit( );
+
+    return $contact;
+}
+
+/**
+ * @todo Move this to ContactFormat.php 
+ * @todo What does this do? I think it should go & we can revive a corrected version from v2 if need be
+ */
+function civicrm_contact_format_create( &$params )
+{
+    _civicrm_initialize( );
+
+    CRM_Core_DAO::freeResult( );
+
+    // return error if we have no params
+    if ( empty( $params ) ) {
+        return civicrm_create_error( 'Input Parameters empty' );
+    }
+
+    $error = _civicrm_required_formatted_contact($params);
+    if (civicrm_error( $error, 'CRM_Core_Error')) {
+        return $error;
+    }
+    
+    $error = _civicrm_validate_formatted_contact($params);
+    if (civicrm_error( $error, 'CRM_Core_Error')) {
+        return $error;
+    }
+
+    //get the prefix id etc if exists
+    require_once 'CRM/Contact/BAO/Contact.php';
+    CRM_Contact_BAO_Contact::resolveDefaults($params, true);
+
+    require_once 'CRM/Import/Parser.php';
+    if ( CRM_Utils_Array::value('onDuplicate', $params) != CRM_Import_Parser::DUPLICATE_NOCHECK) {
+        CRM_Core_Error::reset( );
+        $error = _civicrm_duplicate_formatted_contact($params);
+        if (civicrm_error( $error, 'CRM_Core_Error')) {
+            return $error;
+        }
+    }
+    
+    $contact = CRM_Contact_BAO_Contact::create( $params, 
+                                                CRM_Utils_Array::value( 'fixAddress',  $params ) );
+    
+    _civicrm_object_to_array($contact, $contactArray);
+    return $contactArray;
+}
+
+/**
+ * Ensure that we have the right input parameters for custom data
+ *
+ * @param array   $params          Associative array of property name/value
+ *                                 pairs to insert in new contact.
+ * @param string  $csType          contact subtype if exists/passed.
+ *
+ * @return null on success, error message otherwise
+ * @access public
+ */
+function _civicrm_contact_check_custom_params( $params, $csType = null )
+{
+    empty($csType) ? $onlyParent = true : $onlyParent = false;
+    
+    require_once 'CRM/Core/BAO/CustomField.php';
+    $customFields = CRM_Core_BAO_CustomField::getFields( $params['contact_type'], false, false, $csType, null, $onlyParent );
+    
+    foreach ($params as $key => $value) {
+        if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
+            /* check if it's a valid custom field id */
+            if ( !array_key_exists($customFieldID, $customFields)) {
+
+                $errorMsg = ts("Invalid Custom Field Contact Type: {$params['contact_type']}");
+                if ( $csType ) {
+                    $errorMsg .= ts(" or Mismatched SubType: {$csType}.");  
+                }
+                return civicrm_create_error( $errorMsg );  
+            }
+        }
+    }
+}
 
 /**
  * Validate the addressee or email or postal greetings 
@@ -300,426 +635,3 @@ function _civicrm_greeting_format_params( &$params )
         }
     }
 }
-
-/**
- * Retrieve one or more contacts, given a set of search params
- *
- * @param  mixed[]  (reference ) input parameters
- *
- * @return array (reference )        array of properties, if error an array with an error id and error message
- * @static void
- * @access public
- *
- * @todo Erik Hommel 16 dec 2010 Check that all DB fields are returned
- * @todo Erik Hommel 16 dec 2010 fix custom data (CRM-7231)
- * @todo Erik Hommel 16 dec 2010 Introduce version as param and get rid of $deprecated_behaviour
- * @todo Erik Hommel 16 dec 2010 Use civicrm_return_success / error ?
- * @todo EM 6 Jan 11 no handling for empty params or params that are not an array: Invalid argument supplied for foreach() C:\utils\eclipseworkspace\api-civicrm\api\v3\Contact.php:332
- */
-function civicrm_contact_get( &$params )
-{
-    _civicrm_initialize( );
-    
-
-    $inputParams      = array( );
-    $returnProperties = array( );
-    $otherVars = array( 'sort', 'offset', 'rowCount', 'smartGroupCache' );
-
-    $sort            = null;
-    $offset          = 0;
-    $rowCount        = 25;
-    $smartGroupCache = false;
-    foreach ( $params as $n => $v ) {
-        if ( substr( $n, 0, 6 ) == 'return' ) {
-            $returnProperties[ substr( $n, 7 ) ] = $v;
-        } elseif ( in_array( $n, $otherVars ) ) {
-            $$n = $v;
-        } else {
-            $inputParams[$n] = $v;
-        }
-    }
-
-    if ( empty( $returnProperties ) ) {
-        $returnProperties = null;
-    }
-
-    require_once 'CRM/Contact/BAO/Query.php';
-    $newParams =& CRM_Contact_BAO_Query::convertFormValues( $inputParams );
-    list( $contacts, $options ) = CRM_Contact_BAO_Query::apiQuery( $newParams,
-                                                                   $returnProperties,
-                                                                   null,
-                                                                   $sort,
-                                                                   $offset,
-                                                                   $rowCount,
-                                                                   $smartGroupCache );
-    return $contacts;
-}
-
-
-/**
- * Delete a contact with given contact id
- *
- * @param  array   	  $params (reference ) input parameters, contact_id element required
- *
- * @return boolean        true if success, else false
- * @static void
- * @access public
- */
-function civicrm_contact_delete( &$params )
-{
-    require_once 'CRM/Contact/BAO/Contact.php';
-
-    $contactID = CRM_Utils_Array::value( 'contact_id', $params );
-    if ( ! $contactID ) {
-        return civicrm_create_error( ts( 'Could not find contact_id in input parameters' ) );
-    }
-
-    $session =& CRM_Core_Session::singleton( );
-    if ( $contactID ==  $session->get( 'userID' ) ) {
-        return civicrm_create_error( ts( 'This contact record is linked to the currently logged in user account - and cannot be deleted.' ) );
-    }
-    $restore      = CRM_Utils_Array::value( 'restore', $params ) ? $params['restore'] : false;
-    $skipUndelete = CRM_Utils_Array::value( 'skip_undelete', $params ) ? $params['skip_undelete'] : false;
-    if ( CRM_Contact_BAO_Contact::deleteContact( $contactID , $restore, $skipUndelete) ) {
-        return civicrm_create_success( );
-    } else {
-        return civicrm_create_error( ts( 'Could not delete contact' ) );
-    }
-}
-
-/**
- * Retrieve a set of contacts, given a set of input params
- *
- * @deprecated deprecated since version 2.2.3
- *
- * @param  array   $params           (reference ) input parameters
- * @param array    $returnProperties Which properties should be included in the
- *                                   returned Contact object. If NULL, the default
- *                                   set of properties will be included.
- *
- * @return array (reference )        array of contacts, if error an array with an error id and error message
- * @static void
- * @access public
- *
- * @todo Erik Hommel 16 dec 2010 hmmm we here have a civicrm_contact_get_deprecated and a contact search. Really both of them should disappear, and possibly act on the version param
- *     
- */
-function &civicrm_contact_search( &$params )
-{
-    _civicrm_initialize( );
-
-    $inputParams = $returnProperties = array( );
-    $otherVars = array( 'sort', 'offset', 'rowCount', 'smartGroupCache' );
-    
-    $sort            = null;
-    $offset          = 0;
-    $rowCount        = 25;
-    $smartGroupCache = false;
-    foreach ( $params as $n => $v ) {
-        if ( substr( $n, 0, 6 ) == 'return' ) {
-            $returnProperties[ substr( $n, 7 ) ] = $v;
-        } elseif ( in_array( $n, $otherVars ) ) {
-            $$n = $v;
-        } else {
-            $inputParams[$n] = $v;
-        }
-    }
-
-    if ( empty( $returnProperties ) ) {
-        $returnProperties = null;
-    }
-
-    require_once 'CRM/Contact/BAO/Query.php';
-    $newParams =& CRM_Contact_BAO_Query::convertFormValues( $inputParams );
-    list( $contacts, $options ) = CRM_Contact_BAO_Query::apiQuery( $newParams,
-                                                                   $returnProperties,
-                                                                   null,
-                                                                   $sort,
-                                                                   $offset,
-                                                                   $rowCount,
-                                                                   $smartGroupCache );
-    return $contacts;
-}
-
-/**
- * Ensure that we have the right input parameters
- *
- * @todo We also need to make sure we run all the form rules on the params list
- *       to ensure that the params are valid
- *
- * @param array   $params          Associative array of property name/value
- *                                 pairs to insert in new contact.
- * @param boolean $dupeCheck       Should we check for duplicate contacts
- * @param boolean $dupeErrorArray  Should we return values of error
- *                                 object in array foramt
- * @param boolean $requiredCHeck   Should we check if required params
- *                                 are present in params array
- *
- * @return null on success, error message otherwise
- * @access public
- *
- * @todo Erik Hommel 16 dec 2010 required check should be incorporated in utils function civicrm_verify_mandatory
- */
-function civicrm_contact_check_params( &$params, $dupeCheck = true, $dupeErrorArray = false, $requiredCheck = true )
-{
-    if ( $requiredCheck ) {
-        $required = array(
-                          'Individual'   => array(
-                                                  array( 'first_name', 'last_name' ),
-                                                  'email',
-                                                  ),
-                          'Household'    => array(
-                                                  'household_name',
-                                                  ),
-                          'Organization' => array(
-                                                  'organization_name',
-                                                  ),
-                          );
-        
-        // cannot create a contact with empty params
-        if ( empty( $params ) ) {
-            return civicrm_create_error( 'Input Parameters empty' );
-        }
-        
-        if ( ! array_key_exists( 'contact_type', $params ) ) {
-            return civicrm_create_error( 'Contact Type not specified' );
-        }
-        
-        // contact_type has a limited number of valid values
-        $fields = CRM_Utils_Array::value( $params['contact_type'], $required );
-        if ( $fields == null ) {
-            return civicrm_create_error( "Invalid Contact Type: {$params['contact_type']}" );
-        }
-        
-        if ( $csType = CRM_Utils_Array::value('contact_sub_type', $params) ) {
-            if ( !(CRM_Contact_BAO_ContactType::isExtendsContactType($csType, $params['contact_type'])) ) {
-                return civicrm_create_error( "Invalid or Mismatched Contact SubType: {$csType}" );
-            }
-        }
-
-        if ( !CRM_Utils_Array::value( 'contact_id', $params ) ) { 
-            $valid = false;
-            $error = '';
-            foreach ( $fields as $field ) {
-                if ( is_array( $field ) ) {
-                    $valid = true;
-                    foreach ( $field as $element ) {
-                        if ( ! CRM_Utils_Array::value( $element, $params ) ) {
-                            $valid = false;
-                            $error .= $element; 
-                            break;
-                        }
-                    }
-                } else {
-                    if ( CRM_Utils_Array::value( $field, $params ) ) {
-                        $valid = true;
-                    }
-                }
-                if ( $valid ) {
-                    break;
-                }
-            }
-            
-            if ( ! $valid ) {
-                return civicrm_create_error( "Required fields not found for {$params['contact_type']} : $error" );
-            }
-        }
-    }
-    
-    if ( $dupeCheck ) {
-        // check for record already existing
-        require_once 'CRM/Dedupe/Finder.php';
-        $dedupeParams = CRM_Dedupe_Finder::formatParams($params, $params['contact_type']);
-
-        // CRM-6431
-        // setting 'check_permission' here means that the dedupe checking will be carried out even if the 
-        // person does not have permission to carry out de-dupes
-        // this is similar to the front end form
-        if (isset($params['check_permission'])){
-            $dedupeParams['check_permission'] = $fields['check_permission'];
-        }
-
-        $ids = implode(',', CRM_Dedupe_Finder::dupesByParams($dedupeParams, $params['contact_type']));
-        
-        if ( $ids != null ) {
-            if ( $dupeErrorArray ) {
-                $error = CRM_Core_Error::createError( "Found matching contacts: $ids",
-                                                      CRM_Core_Error::DUPLICATE_CONTACT, 
-                                                      'Fatal', $ids );
-                return civicrm_create_error( $error->pop( ) );
-            }
-            
-            return civicrm_create_error( "Found matching contacts: $ids", $ids );
-        }
-    }
-
-    //check for organisations with same name
-    if ( CRM_Utils_Array::value( 'current_employer', $params ) ) {
-        $organizationParams = array();
-        $organizationParams['organization_name'] = $params['current_employer'];
-        
-        require_once 'CRM/Dedupe/Finder.php';
-        $dedupParams = CRM_Dedupe_Finder::formatParams($organizationParams, 'Organization');
-        
-        $dedupParams['check_permission'] = false;            
-        $dupeIds = CRM_Dedupe_Finder::dupesByParams($dedupParams, 'Organization', 'Fuzzy');
-        
-        // check for mismatch employer name and id
-        if ( CRM_Utils_Array::value( 'employer_id', $params )
-             && !in_array( $params['employer_id'] ,$dupeIds ) ) {
-            return civicrm_create_error('Employer name and Employer id Mismatch');
-        }
-        
-        // show error if multiple organisation with same name exist
-        if ( !CRM_Utils_Array::value( 'employer_id', $params )
-             && (count($dupeIds) > 1) ) {
-            return civicrm_create_error('Found more than one Organisation with same Name.');
-        }
-    }
-    
-    return null;
-}
-
-/**
- * @todo What does this do? If it's still useful, figure out where it should live and what it should be named.
- *
- * @deprecated deprecated since version 2.2.3
- */
-function civicrm_replace_contact_formatted( $contactId, &$params, &$fields )
-{
-    //$contact = civcrm_get_contact(array('contact_id' => $contactId));
-    
-    $delContact = array( 'contact_id' => $contactId );
-    
-    civicrm_contact_delete($delContact);
-    
-    $cid = CRM_Contact_BAO_Contact::createProfileContact( $params, $fields, 
-                                                          null, null, null, 
-                                                          $params['contact_type'] );
-    return civicrm_create_success( $cid );
-}
-
-
-/** 
- * Takes an associative array and creates a contact object and all the associated 
- * derived objects (i.e. individual, location, email, phone etc) 
- * 
- * @param array $params (reference ) an assoc array of name/value pairs 
- * @param  int     $contactID        if present the contact with that ID is updated
- * 
- * @return object CRM_Contact_BAO_Contact object  
- * @access public 
- * @static 
- */ 
-function _civicrm_contact_update( &$params, $contactID = null )
-{
-    require_once 'CRM/Core/Transaction.php';
-    $transaction = new CRM_Core_Transaction( );
-
-    if ( $contactID ) {
-        $params['contact_id'] = $contactID;
-    }
-    require_once 'CRM/Contact/BAO/Contact.php';
-    
-    $contact = CRM_Contact_BAO_Contact::create( $params );
-
-    $transaction->commit( );
-
-    return $contact;
-}
-
-/**
- * @todo Move this to ContactFormat.php 
- */
-function civicrm_contact_format_create( &$params )
-{
-    _civicrm_initialize( );
-
-    CRM_Core_DAO::freeResult( );
-
-    // return error if we have no params
-    if ( empty( $params ) ) {
-        return civicrm_create_error( 'Input Parameters empty' );
-    }
-
-    $error = _civicrm_required_formatted_contact($params);
-    if (civicrm_error( $error, 'CRM_Core_Error')) {
-        return $error;
-    }
-    
-    $error = _civicrm_validate_formatted_contact($params);
-    if (civicrm_error( $error, 'CRM_Core_Error')) {
-        return $error;
-    }
-
-    //get the prefix id etc if exists
-    require_once 'CRM/Contact/BAO/Contact.php';
-    CRM_Contact_BAO_Contact::resolveDefaults($params, true);
-
-    require_once 'CRM/Import/Parser.php';
-    if ( CRM_Utils_Array::value('onDuplicate', $params) != CRM_Import_Parser::DUPLICATE_NOCHECK) {
-        CRM_Core_Error::reset( );
-        $error = _civicrm_duplicate_formatted_contact($params);
-        if (civicrm_error( $error, 'CRM_Core_Error')) {
-            return $error;
-        }
-    }
-    
-    $contact = CRM_Contact_BAO_Contact::create( $params, 
-                                                CRM_Utils_Array::value( 'fixAddress',  $params ) );
-    
-    _civicrm_object_to_array($contact, $contactArray);
-    return $contactArray;
-}
-
-/** 
- * Returns the number of Contact objects which match the search criteria specified in $params.
- *
- * @deprecated deprecated since version 2.2.3; civicrm_contact_get now returns a record_count value
- *
- * @param array  $params
- *
- * @return int
- * @access public
- */
-function civicrm_contact_search_count( &$params )
-{
-    // convert the params to new format
-    require_once 'CRM/Contact/Form/Search.php';
-    $newP =& CRM_Contact_BAO_Query::convertFormValues( $params );
-    $query = new CRM_Contact_BAO_Query( $newP );
-    return $query->searchQuery( 0, 0, null, true );
-}
-
-/**
- * Ensure that we have the right input parameters for custom data
- *
- * @param array   $params          Associative array of property name/value
- *                                 pairs to insert in new contact.
- * @param string  $csType          contact subtype if exists/passed.
- *
- * @return null on success, error message otherwise
- * @access public
- */
-function civicrm_contact_check_custom_params( $params, $csType = null )
-{
-    empty($csType) ? $onlyParent = true : $onlyParent = false;
-    
-    require_once 'CRM/Core/BAO/CustomField.php';
-    $customFields = CRM_Core_BAO_CustomField::getFields( $params['contact_type'], false, false, $csType, null, $onlyParent );
-    
-    foreach ($params as $key => $value) {
-        if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
-            /* check if it's a valid custom field id */
-            if ( !array_key_exists($customFieldID, $customFields)) {
-
-                $errorMsg = ts("Invalid Custom Field Contact Type: {$params['contact_type']}");
-                if ( $csType ) {
-                    $errorMsg .= ts(" or Mismatched SubType: {$csType}.");  
-                }
-                return civicrm_create_error( $errorMsg );  
-            }
-        }
-    }
-}
-
