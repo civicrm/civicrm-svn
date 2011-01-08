@@ -1820,7 +1820,8 @@ WHERE      ( f.label = %1 OR f.name = %1 )
     /**
      * Validate custom data.
      *
-     * @param array  custom data submitted by form.
+     * @param array $params custom data submitted.
+     * ie array( 'custom_1' => 'validate me' );
      *
      * @return array $errors validation errors.
      * @static
@@ -1828,17 +1829,18 @@ WHERE      ( f.label = %1 OR f.name = %1 )
     static function validateCustomData( $params ) 
     {
         $errors = array( );
-        if ( !is_array( $params ) || empty( $params )  ) {
+        if ( !is_array( $params ) || empty( $params ) ) {
             return $errors;
         }
         
-        $ufGroupId = CRM_Utils_Array::value( 'ufGroupId', $params );
         require_once 'CRM/Utils/Rule.php';
-        require_once 'CRM/Core/BAO/UFGroup.php';
-        $profileFields = array( );
+        require_once 'CRM/Core/DAO/CustomField.php';
         
-        //here we do take care of required form rule.
+        //pick up profile fields.
+        $profileFields = array( );
+        $ufGroupId = CRM_Utils_Array::value( 'ufGroupId', $params );
         if ( $ufGroupId ) {
+            require_once 'CRM/Core/BAO/UFGroup.php';
             $profileFields = CRM_Core_BAO_UFGroup::getFields( $ufGroupId, 
                                                               false, 
                                                               CRM_Core_Action::VIEW );
@@ -1853,18 +1855,18 @@ WHERE      ( f.label = %1 OR f.name = %1 )
             $field = new CRM_Core_DAO_CustomField( );
             $field->id = $customFieldID;
             if ( !$field->find( true ) ) continue;
+            $dataType = $field->data_type;
             
-            $profileFieldValue = CRM_Utils_Array::value( $key, $profileFields, array( ) );
-            $fieldTitle = CRM_Utils_Array::value( 'title', $profileFieldValue );
-            $isRequired = CRM_Utils_Array::value( 'is_required', $profileFieldValue );
-            $dataType   = $field->data_type;
-            if ( !$fieldTitle ) $fieldTitle = $field->label;  
+            $profileField = CRM_Utils_Array::value( $key, $profileFields, array( ) );
+            $fieldTitle = CRM_Utils_Array::value( 'title',       $profileField );
+            $isRequired = CRM_Utils_Array::value( 'is_required', $profileField );
+            if ( !$fieldTitle ) $fieldTitle = $field->label;
             
             //no need to validate.
-            if ( $value == null && !$isRequired ) continue;  
+            if ( CRM_Utils_System::isNull( $value ) && !$isRequired ) continue;  
             
             //lets validate first for required field.
-            if ( $isRequired ) {
+            if ( $isRequired && CRM_Utils_System::isNull( $value ) ) {
                 $errors[$key] = ts( '%1 is a required field.', array( 1 => $fieldTitle ) ); 
                 continue;
             }
@@ -1872,6 +1874,12 @@ WHERE      ( f.label = %1 OR f.name = %1 )
             //now time to take care of custom field form rules. 
             $ruleName = $errorMsg = null;
             switch ( $dataType ) {
+            case 'Int' :
+                $ruleName = 'integer';
+                $errorMsg = ts( '%1 must be an integer (whole number).', 
+                                array( 1 => $fieldTitle ) );
+                break;
+                
             case 'Money' :
                 $ruleName = 'money';
                 $errorMsg = ts( '%1 must in proper money format. (decimal point/comma/space is allowed).', 
@@ -1883,13 +1891,19 @@ WHERE      ( f.label = %1 OR f.name = %1 )
                 $errorMsg = ts('%1 must be a number (with or without decimal point).', 
                                array( 1 => $fieldTitle ) );
                 break;
+                
+            case 'Link':
+                $ruleName = 'wikiURL';
+                $errorMsg = ts( '%1 must be valid Website.', 
+                                array( 1 => $fieldTitle ) );
+                break;
             }
             
-            if ( $ruleName && $value != null ) {
-                $valid  = null;
+            if ( $ruleName && !CRM_Utils_System::isNull( $value ) ) {
+                $valid   = false;
                 $funName = "CRM_Utils_Rule::{$ruleName}";
                 if ( is_callable( $funName ) ) {
-                    $valid = call_user_func( "CRM_Utils_Rule::{$ruleName}", $value ); 
+                    $valid = call_user_func( $funName, $value );
                 }
                 if ( !$valid ) $errors[$key] = $errorMsg; 
             }

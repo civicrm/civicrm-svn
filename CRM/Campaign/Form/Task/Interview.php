@@ -240,6 +240,16 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
                                                                     false, CRM_Core_Action::VIEW );
         }
         
+        //don't load these fields in grid.
+        $removeFields = array( 'File', 'Autocomplete-Select', 'RichTextEditor' );
+        require_once 'CRM/Core/BAO/CustomField.php';
+        foreach ( $this->_surveyFields as $name => $field ) {
+            if ( CRM_Core_BAO_CustomField::getKeyID( $name ) && 
+                 in_array( $field['html_type'], $removeFields ) ) {
+                unset( $this->_surveyFields[$name] );
+            }
+        }
+        
         //build all fields.
         $exposedSurveyFields = array( );
         foreach ( $this->_contactIds as $contactId ) {

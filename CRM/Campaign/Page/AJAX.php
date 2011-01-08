@@ -67,12 +67,11 @@ class CRM_Campaign_Page_AJAX
             }
         }
         
-        if ( isset($_POST['field']) &&
-             CRM_Utils_Array::value( $voterId, $_POST['field']) ) {
+        if ( isset( $_POST['field'] ) &&
+             CRM_Utils_Array::value( $voterId, $_POST['field'] ) && 
+             is_array( $_POST['field'][$voterId] ) ) {
             foreach( $_POST['field'][$voterId] as $fieldKey => $value ) {
-                if ( !empty($value) ) {
-                    $params[$fieldKey] = $value;
-                }
+                $params[$fieldKey] = $value;
             }
         }
         
@@ -90,6 +89,7 @@ class CRM_Campaign_Page_AJAX
             CRM_Utils_System::civiExit( );
         }
         
+        //process the response/interview data.
         require_once 'CRM/Campaign/Form/Task/Interview.php';
         $activityId = CRM_Campaign_Form_Task_Interview::registerInterview( $params );
         if ( $activityId ) $result['status'] = 'success'; 
@@ -101,7 +101,7 @@ class CRM_Campaign_Page_AJAX
     }
     
     static function loadOptionGroupDetails( ) {
-
+        
         $id       = CRM_Utils_Array::value( 'option_group_id', $_POST );
         $status   = 'fail';
         $opValues = array( );
