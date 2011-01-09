@@ -77,7 +77,7 @@ function &civicrm_contribution_create( &$params ) {
     }
     $contribution = CRM_Contribute_BAO_Contribution::create( $values, $ids );
     if ( is_a( $contribution, 'CRM_Core_Error' ) ) {
-        return civicrm_create_error( ts( $contribution->_errors[0]['message'] ) );
+        return civicrm_create_error(  $contribution->_errors[0]['message']  );
     }
 
     _civicrm_object_to_array($contribution, $contributeArray);
@@ -98,7 +98,7 @@ function civicrm_contribution_delete( &$params ) {
     _civicrm_initialize( );
     $contributionID = CRM_Utils_Array::value( 'contribution_id', $params );
     if ( ! $contributionID ) {
-        return civicrm_create_error( ts( 'Could not find contribution_id in input parameters' ) );
+        return civicrm_create_error(  'Could not find contribution_id in input parameters' );
     }
 
     require_once 'CRM/Contribute/BAO/Contribution.php';
@@ -125,7 +125,7 @@ function &civicrm_contribution_get( &$params ) {
     _civicrm_initialize( );
 
     if ( ! is_array( $params ) ) {
-        return civicrm_create_error( ts( 'Input parameters is not an array' ) );
+        return civicrm_create_error(  'Input parameters is not an array'  );
     }
 
     $inputParams      = array( );
@@ -235,7 +235,7 @@ function _civicrm_contribute_check_params( &$params ) {
     
     // params should be an array
     if ( ! is_array( $params ) ) {
-        return civicrm_create_error( ts( 'Input parameters is not an array' ) );
+        return civicrm_create_error( 'Input parameters is not an array'  );
     }
 
     // cannot create a contribution with empty params
@@ -252,7 +252,7 @@ function _civicrm_contribute_check_params( &$params ) {
         $contributor     = new CRM_Contribute_BAO_Contribution();
         $contributor->id = $params['id'];
         if ( !$contributor->find( true ) ) {
-            return civicrm_create_error( ts( 'Contribution id is not valid' ));
+            return civicrm_create_error( 'Contribution id is not valid'));
         }
         // do not check other field during update
         return array();
@@ -434,11 +434,11 @@ function civicrm_contribution_transact($params) {
   civicrm_initialize( );
 
   if ( empty( $params ) ) {
-    return civicrm_create_error( ts( 'No input parameters present' ) );
+    return civicrm_create_error(  'No input parameters present'  );
   }
   
   if ( ! is_array( $params ) ) {
-    return civicrm_create_error( ts( 'Input parameters is not an array' ) );
+    return civicrm_create_error(  'Input parameters is not an array'  );
   }
   
   $values  = array( );

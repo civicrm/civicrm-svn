@@ -82,7 +82,7 @@ function civicrm_mailer_event_bounce($params)
         return civicrm_create_success( );
     }
 
-    return civicrm_create_error( ts( 'Queue event could not be found' ) );
+    return civicrm_create_error(  'Queue event could not be found'  );
 }
 
 
@@ -135,7 +135,7 @@ function civicrm_mailer_event_domain_unsubscribe($params)
     $unsubs = CRM_Mailing_Event_BAO_Unsubscribe::unsub_from_domain($job,$queue,$hash);
 
     if ( !$unsubs ) {
-        return civicrm_create_error( ts( 'Queue event could not be found' ) );
+        return civicrm_create_error( 'Queue event could not be found'  );
     }
 
     CRM_Mailing_Event_BAO_Unsubscribe::send_unsub_response($queue, null, true, $job);
@@ -167,7 +167,7 @@ function civicrm_mailer_event_resubscribe($params)
         return civicrm_create_success( );
     }
 
-    return civicrm_create_error( ts( 'Queue event could not be found' ) );
+    return civicrm_create_error(  'Queue event could not be found' ) ;
 }
 
 /**
@@ -192,7 +192,7 @@ function civicrm_mailer_event_subscribe($params)
     $group->is_active = 1;
     $group->id = (int)$group_id;
     if ( !$group->find(true) ) {
-        return civicrm_create_error( ts( 'Invalid Group id' ) );
+        return civicrm_create_error( 'Invalid Group id'  );
     }
         
     $subscribe =& CRM_Mailing_Event_BAO_Subscribe::subscribe($group_id, $email, $contact_id);
@@ -210,7 +210,7 @@ function civicrm_mailer_event_subscribe($params)
         return $values;
     }
 
-    return civicrm_create_error( ts( 'Subscription failed' ) );
+    return civicrm_create_error( 'Subscription failed'  );
 }
 
 /**
@@ -234,7 +234,7 @@ function civicrm_mailer_event_confirm($params)
     $confirm = CRM_Mailing_Event_BAO_Confirm::confirm($contact_id, $subscribe_id, $hash) !== false;
     
     if ( !$confirm ) {
-        return civicrm_create_error( ts( 'Confirmation failed' ) );
+        return civicrm_create_error( 'Confirmation failed'  );
     }
     
     return civicrm_create_success( );
@@ -266,7 +266,7 @@ function civicrm_mailer_event_reply($params)
     $mailing =& CRM_Mailing_Event_BAO_Reply::reply($job, $queue, $hash, $replyto);
 
     if (empty($mailing)) {
-        return civicrm_create_error( ts( 'Queue event could not be found' ) );
+        return civicrm_create_error( 'Queue event could not be found'  );
     }
 
     CRM_Mailing_Event_BAO_Reply::send($queue, $mailing, $bodyTxt, $replyto, $bodyHTML, $fullEmail);
@@ -301,7 +301,7 @@ function civicrm_mailer_event_forward($params)
         return civicrm_create_success( );
     }
     
-    return civicrm_create_error( ts( 'Queue event could not be found' ) );
+    return civicrm_create_error( 'Queue event could not be found'  );
 }
 
 
@@ -351,7 +351,7 @@ function civicrm_mailer_event_open($params)
     $success = CRM_Mailing_Event_BAO_Opened::open( $queue );
 
     if ( !$success ) {
-        return civicrm_create_error( ts( 'mailer open event failed' ) );
+        return civicrm_create_error( 'mailer open event failed'  );
     }
 
     return civicrm_create_success( );
@@ -370,16 +370,16 @@ function _civicrm_mailer_check_params ( &$params, $required  )
 {
     // return error if we do not get any params
     if ( empty( $params ) ) {
-        return civicrm_create_error( ts( 'Input Parameters empty' ) );
+        return civicrm_create_error( 'Input Parameters empty'  );
     }
 
     if ( ! is_array( $params ) ) {
-        return civicrm_create_error( ts( 'Input parameter is not an array' ) );
+        return civicrm_create_error(  'Input parameter is not an array'  );
     }
 
     foreach ( $required as $name ) {
         if ( !array_key_exists($name, $params) || !$params[$name] ) {
-            return civicrm_create_error( ts( 'Required parameter missing: "%1"', array( 1 => $name ) ) );
+            return civicrm_create_error(  "Required parameter missing: $name"  );
         }
     }
 

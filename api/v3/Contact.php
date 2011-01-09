@@ -155,19 +155,19 @@ function civicrm_contact_delete( &$params )
 
     $contactID = CRM_Utils_Array::value( 'contact_id', $params );
     if ( ! $contactID ) {
-        return civicrm_create_error( ts( 'Could not find contact_id in input parameters' ) );
+        return civicrm_create_error(  'Could not find contact_id in input parameters'  );
     }
 
     $session =& CRM_Core_Session::singleton( );
     if ( $contactID ==  $session->get( 'userID' ) ) {
-        return civicrm_create_error( ts( 'This contact record is linked to the currently logged in user account - and cannot be deleted.' ) );
+        return civicrm_create_error(  'This contact record is linked to the currently logged in user account - and cannot be deleted.'  );
     }
     $restore      = CRM_Utils_Array::value( 'restore', $params ) ? $params['restore'] : false;
     $skipUndelete = CRM_Utils_Array::value( 'skip_undelete', $params ) ? $params['skip_undelete'] : false;
     if ( CRM_Contact_BAO_Contact::deleteContact( $contactID , $restore, $skipUndelete) ) {
         return civicrm_create_success( );
     } else {
-        return civicrm_create_error( ts( 'Could not delete contact' ) );
+        return civicrm_create_error(  'Could not delete contact'  );
     }
 }
 
@@ -506,9 +506,9 @@ function _civicrm_contact_check_custom_params( $params, $csType = null )
             /* check if it's a valid custom field id */
             if ( !array_key_exists($customFieldID, $customFields)) {
 
-                $errorMsg = ts("Invalid Custom Field Contact Type: {$params['contact_type']}");
+                $errorMsg = "Invalid Custom Field Contact Type: {$params['contact_type']}";
                 if ( $csType ) {
-                    $errorMsg .= ts(" or Mismatched SubType: {$csType}.");  
+                    $errorMsg .= " or Mismatched SubType: {$csType}.";  
                 }
                 return civicrm_create_error( $errorMsg );  
             }

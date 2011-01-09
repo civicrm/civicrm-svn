@@ -58,7 +58,7 @@ function civicrm_group_nesting_get( &$params )
     
     if ( ! array_key_exists( 'child_group_id', $params ) &&
          ! array_key_exists( 'parent_group_id', $params ) ) {
-        return civicrm_create_error( ts( 'At least one of child_group_id or parent_group_id is a required field' ) );
+        return civicrm_create_error(  'At least one of child_group_id or parent_group_id is a required field'  );
     }
 
     require_once 'CRM/Contact/DAO/GroupNesting.php';
@@ -108,7 +108,7 @@ function civicrm_group_nesting_create( &$params )
 
     if ( ! array_key_exists( 'child_group_id', $params ) &&
          ! array_key_exists( 'parent_group_id', $params ) ) {
-        return civicrm_create_error( ts( 'You need to define parent_group_id and child_group_id in params.' ) );
+        return civicrm_create_error(  'You need to define parent_group_id and child_group_id in params.'  );
     }
 
     CRM_Contact_BAO_GroupNesting::add( $params['parent_group_id'], $params['child_group_id'] );

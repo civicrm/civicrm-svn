@@ -47,7 +47,7 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_entity_tag_get( &$params ) {
     if ( !is_array($params) ) {
-        return civicrm_create_error( ts( 'params should be an array.' ) );
+        return civicrm_create_error( 'params should be an array.'  );
     }
     
     $entityID    = null;
@@ -58,7 +58,7 @@ function civicrm_entity_tag_get( &$params ) {
     }
     
     if ( empty($entityID) ) {
-        return civicrm_create_error( ts( 'entity_id is a required field.' ) );  
+        return civicrm_create_error(  'entity_id is a required field.'  );  
     }
 
     if ( CRM_Utils_Array::value( 'entity_table', $params ) ) {
@@ -82,7 +82,7 @@ function civicrm_entity_tag_get( &$params ) {
  */
 function civicrm_entity_tag_display( &$params ) {
     if ( !is_array($params) ) {
-        return civicrm_create_error( ts( 'params should be an array.' ) );
+        return civicrm_create_error( 'params should be an array.'  );
     }
     
     $entityID    = null;
@@ -93,7 +93,7 @@ function civicrm_entity_tag_display( &$params ) {
     }
     
     if ( empty($entityID) ) {
-        return civicrm_create_error( ts( 'entity_id is a required field.' ) );  
+        return civicrm_create_error( 'entity_id is a required field.'  );  
     }
 
     if ( CRM_Utils_Array::value( 'entity_table', $params ) ) {
@@ -166,11 +166,11 @@ function civicrm_entity_tag_common( &$params, $op = 'add' ) {
         }
     }
     if ( empty( $entityIDs ) ) {
-        return civicrm_create_error( ts( 'contact_id is a required field' ) );
+        return civicrm_create_error(  'contact_id is a required field'  );
     }
 
     if ( empty( $tagIDs ) ) {
-        return civicrm_create_error( ts( 'tag_id is a required field' ) );
+        return civicrm_create_error(  'tag_id is a required field'  );
     }
   
     require_once 'CRM/Core/BAO/EntityTag.php';

@@ -200,7 +200,7 @@ function civicrm_case_get( &$params )
     if( $client = $params['client_id'] ) {
         
     	if( !is_numeric( $client ) ) {
-            return civicrm_create_error( ts( 'Invalid parameter: client_id. Must provide a numeric value.' ) );
+            return civicrm_create_error( 'Invalid parameter: client_id. Must provide a numeric value.'  );
         }
         
         $ids = CRM_Case_BAO_Case::retrieveCaseIdsByContactId( $client, TRUE );
@@ -220,7 +220,7 @@ function civicrm_case_get( &$params )
     if( $act = $params['activity_id'] ) {
         
         if( !is_numeric( $act ) ) {
-            return civicrm_create_error( ts( 'Invalid parameter: activity_id. Must provide a numeric value.' ) );
+            return civicrm_create_error(  'Invalid parameter: activity_id. Must provide a numeric value.'  );
         }
         
         $sql = "SELECT case_id FROM civicrm_case_activity WHERE activity_id = $act";
@@ -240,7 +240,7 @@ function civicrm_case_get( &$params )
     //search by contacts
     if( $contact = $params['contact_id'] ) {
         if( !is_numeric( $contact ) ) {
-            return civicrm_create_error( ts( 'Invalid parameter: contact_id.  Must provide a numeric value.' ) );
+            return civicrm_create_error(  'Invalid parameter: contact_id.  Must provide a numeric value.'  );
         }
         
         $sql = "
@@ -260,7 +260,7 @@ SELECT DISTINCT case_id
         return civicrm_create_success( $cases );
     }
     
-	return civicrm_create_error( ts( 'Missing required parameter. Must provide case_id, client_id, activity_id, or contact_id.' ) );
+	return civicrm_create_error( 'Missing required parameter. Must provide case_id, client_id, activity_id, or contact_id.'  );
 }
 
 

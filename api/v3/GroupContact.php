@@ -106,7 +106,7 @@ function civicrm_group_contact_pending( &$params )
 function civicrm_group_contact_common( &$params, $op = 'add' ) 
 {
     if ( ! is_array( $params ) ) {
-        return civicrm_create_error( ts( 'input parameter should be an array' ) );
+        return civicrm_create_error(  'input parameter should be an array'  );
     }
 
     $contactIDs = array( );
@@ -120,7 +120,7 @@ function civicrm_group_contact_common( &$params, $op = 'add' )
     }
 
     if ( empty( $contactIDs ) ) {
-        return civicrm_create_error( ts( 'contact_id is a required field' ) );
+        return civicrm_create_error( 'contact_id is a required field'  );
     }
 
     if ( empty( $groupIDs ) ) {
