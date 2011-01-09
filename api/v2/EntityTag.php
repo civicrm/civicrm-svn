@@ -129,8 +129,17 @@ function civicrm_tag_entities_get( &$params )
  *
  * @param <type> $params
  * @return <type>
+ * @deprecated
  */
 function civicrm_entity_tag_add( &$params ) {
+    return civicrm_entity_tag_common( $params, 'add' );
+}
+/**
+ *
+ * @param <type> $params
+ * @return <type>
+ */
+function civicrm_entity_tag_create( &$params ) {
     return civicrm_entity_tag_common( $params, 'add' );
 }
 
@@ -138,8 +147,18 @@ function civicrm_entity_tag_add( &$params ) {
  *
  * @param <type> $params
  * @return <type>
+ * @deprecated
  */
 function civicrm_entity_tag_remove( &$params ) {
+    return civicrm_entity_tag_common( $params, 'remove' );
+}
+
+/**
+ *
+ * @param array $params
+ * @return <type>
+ */
+function civicrm_entity_tag_delete( &$params ) {
     return civicrm_entity_tag_common( $params, 'remove' );
 }
 

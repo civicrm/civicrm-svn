@@ -52,7 +52,7 @@ require_once 'CRM/Contribute/PseudoConstant.php';
  * @static void
  * @access public
  */
-function &civicrm_contribution_add( &$params ) {
+function &civicrm_contribution_create( &$params ) {
     _civicrm_initialize( );
     
     $error = _civicrm_contribute_check_params( $params );
@@ -83,6 +83,14 @@ function &civicrm_contribution_add( &$params ) {
     _civicrm_object_to_array($contribution, $contributeArray);
     
     return $contributeArray;
+}
+/*
+ * Deprecated wrapper function
+ * @deprecated
+ */
+function civicrm_contribution_add(&$params){
+  $result = civicrm_contribution_create( &$params );
+  return $result;
 }
 
 /**
