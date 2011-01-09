@@ -11,7 +11,9 @@
  * @todo write me properly - I'm just a pretend function @ the moment
  * @todo I could do the throw & catch thing here while I'm at it because I'm just that kind of a function
  * @todo send a case of warm beer to the API team
- * /*
+ */
+
+/*
  * 
 usage
 $result = civicrm_api('civicrm_contact_get', 'Contact', $params);
@@ -20,15 +22,22 @@ from a security standpoint you might want to have some checks.
 At the least don't allow ".." or path separators in them. And function_exists($function).
 */
 
+/*
+ * @param string $function name of API function
+ * @param string $class name of file
+ * @param array $params array to be passed to function
+ */
 
 
-function civicm_api($function, $class, $params){
+function civicrm_api($function, $class, $params){
 if (empty($params['version'])){
  $params['version'] = 2;
 }
-
-require_once 'civicrm/api/v' . $params['version'] . '/' . $class .'.php';
-$function($params);
+print_r($function);
+print_r($params);
+require_once 'api/v' . $params['version'] . '/' . $class .'.php';
+$result = $function($params);
+return $result;
 }
 
 
