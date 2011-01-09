@@ -54,9 +54,9 @@ class api_v3_GroupOrganizationTest extends CiviUnitTestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->_groupID = $this->groupCreate();
+        $this->_groupID = $this->groupCreate(null,3);
 
-        $this->_orgID   = $this->organizationCreate( );
+        $this->_orgID   = $this->organizationCreate(null,3 );
 
     }
 

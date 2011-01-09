@@ -30,9 +30,11 @@ require_once 'CiviTest/CiviUnitTestCase.php';
 
 class api_v3_TagTest extends CiviUnitTestCase 
 {
-    
+    protected $_apiversion;
+
     function setUp() 
     {
+        $this->_apiversion = 3;
         parent::setUp();
     }
 
@@ -80,7 +82,7 @@ class api_v3_TagTest extends CiviUnitTestCase
      */
     public function testGet()
     {   
-        $tag = $this->tagCreate();
+        $tag = $this->tagCreate(null,$this->_apiversion);
         $this->assertEquals( 0, $tag['is_error'], 'In line ' . __LINE__ );
         
         $params = array( 'id' => $tag['id'],
@@ -195,7 +197,7 @@ class api_v3_TagTest extends CiviUnitTestCase
      */  
     function testTagDelete( )
     {
-        $tagID = $this->tagCreate(null); 
+        $tagID = $this->tagCreate(null,$this->_apiversion); 
         $params = array('tag_id'=> $tagID);
         $result = civicrm_tag_delete($params ); 
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );

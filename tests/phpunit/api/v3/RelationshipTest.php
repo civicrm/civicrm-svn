@@ -56,8 +56,8 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
     {
         parent::setUp();
         
-        $this->_cId_a  = $this->individualCreate( );
-        $this->_cId_b  = $this->organizationCreate( );
+        $this->_cId_a  = $this->individualCreate(null,3 );
+        $this->_cId_b  = $this->organizationCreate(null,3 );
 
         //Create a relationship type
         $relTypeParams = array(
@@ -69,7 +69,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
                                'is_reserved'    => 1,
                                'is_active'      => 1
                                );
-        $this->_relTypeID = $this->relationshipTypeCreate($relTypeParams );        
+        $this->_relTypeID = $this->relationshipTypeCreate($relTypeParams,3 );        
     }
 
     function tearDown() 

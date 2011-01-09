@@ -38,6 +38,7 @@ require_once 'CiviTest/CiviUnitTestCase.php';
  */
 class api_v3_MembershipContactTest extends CiviUnitTestCase {
 
+      protected $_apiversion;
     
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -48,11 +49,11 @@ class api_v3_MembershipContactTest extends CiviUnitTestCase {
     protected function setUp( ) 
     {
         parent::setUp();
-
-        $this->_contactID           = $this->individualCreate( ) ;
-        $this->_orgContact          = $this->organizationCreate( );
-        $this->_membershipTypeID    = $this->membershipTypeCreate( $this->_orgContact );
-        $this->_membershipStatusID  = $this->membershipStatusCreate( 'test status' );                
+        $this->_apiversion = 3;
+        $this->_contactID           = $this->individualCreate( null,$this->_apiversion) ;
+        $this->_orgContact          = $this->organizationCreate(null,$this->_apiversion );
+        $this->_membershipTypeID    = $this->membershipTypeCreate( $this->_orgContact,$this->_apiversion );
+        $this->_membershipStatusID  = $this->membershipStatusCreate( 'test status' ,$this->_apiversion);                
 
         $params = array(
                         'contact_id'         => $this->_contactID,

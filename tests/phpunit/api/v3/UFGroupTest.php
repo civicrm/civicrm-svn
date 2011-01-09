@@ -436,7 +436,7 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
     public function testFindUFJoinWrongParamsType()
     {
         $params = 'a string';
-        $result = civicrm_uf_join_add($params);
+        $result = civicrm_uf_join_create($params);
 
         $this->assertEquals( $result['is_error'], 1 );
         $this->assertEquals( $result['error_message'], 'params is not an array' );
@@ -445,7 +445,7 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
     public function testFindUFJoinEmptyParams()
     {
         $params = array();
-        $result = civicrm_uf_join_add($params);
+        $result = civicrm_uf_join_create($params);
 
         $this->assertEquals( $result['is_error'], 1 );
         $this->assertEquals( $result['error_message'], 'params is an empty array' );
@@ -460,7 +460,7 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
             'weight'       => 1,
             'is_active'    => 1
         );
-        $result = civicrm_uf_join_add($params);
+        $result = civicrm_uf_join_create($params);
 
         $this->assertEquals( $result['is_error'], 1 );
         $this->assertEquals( $result['error_message'], 'uf_group_id is required field' );
@@ -479,12 +479,12 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
             'uf_group_id'  => $this->_ufGroupId,
             'is_active'    => 1,
         );
-        $ufJoin       = civicrm_uf_join_add($params);
+        $ufJoin       = civicrm_uf_join_create($params);
         $searchParams = array(
             'entity_table' => 'civicrm_contribution_page',
             'entity_id'    => 1,
         );
-        $ufJoinId = civicrm_uf_join_id_find($searchParams);
+        $ufJoinId = civicrm_uf_join_id_get($searchParams);
         $this->assertEquals($ufJoinId, $ufJoin['id']);
     }
 
@@ -502,12 +502,12 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
             'uf_group_id'  => $this->_ufGroupId,
             'is_active'    => 1,
         );
-        $ufJoin       = civicrm_uf_join_add($params);
+        $ufJoin       = civicrm_uf_join_create($params);
         $searchParams = array(
             'entity_table' => 'civicrm_contribution_page',
             'entity_id'    => 1,
         );
-        $ufGroupId = civicrm_uf_join_UFGroupId_find($searchParams);
+        $ufGroupId = civicrm_uf_join_UFGroupId_get($searchParams);
         $this->assertEquals($ufGroupId, $this->_ufGroupId);
     }
 

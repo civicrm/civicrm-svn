@@ -37,14 +37,15 @@ require_once 'CRM/Member/BAO/Membership.php';
 
 class api_v3_MembershipContributionLinkTest extends CiviUnitTestCase 
 {
-    
+    protected $_apiversion;   
     function setUp() 
     {
         parent::setUp();
-        $this->_contactID           = $this->organizationCreate( ) ;
-        $this->_contributionTypeID  = $this->contributionTypeCreate();
-        $this->_membershipTypeID    = $this->membershipTypeCreate( $this->_contactID );
-        $this->_membershipStatusID  = $this->membershipStatusCreate( 'test status' );
+        $this->_apiversion = 3;
+        $this->_contactID           = $this->organizationCreate( null,3) ;
+        $this->_contributionTypeID  = $this->contributionTypeCreate(null,3);
+        $this->_membershipTypeID    = $this->membershipTypeCreate( $this->_contactID,3 );
+        $this->_membershipStatusID  = $this->membershipStatusCreate( 'test status',3 );
         
     }
     

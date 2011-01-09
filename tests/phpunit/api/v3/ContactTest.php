@@ -80,7 +80,7 @@ class api_v3_ContactTest extends CiviUnitTestCase
                         'last_name'    => 'xyz1'
                         );
 
-        $contact =& civicrm_contact_add($params);
+        $contact =& civicrm_contact_create($params);
         $this->assertEquals( 0, $contact['is_error'], "In line " . __LINE__ );
         $this->assertEquals( 1, $contact['contact_id'], "In line " . __LINE__ );
 
@@ -375,7 +375,7 @@ class api_v3_ContactTest extends CiviUnitTestCase
     function testCheckParamsWithNoParams()
     {
         $params = array();
-        $contact =& civicrm_contact_check_params($params, false );
+        $contact =& _civicrm_contact_check_params($params, false );
         $this->assertEquals( 1, $contact['is_error'] );
 
         // delete the contact
@@ -388,7 +388,7 @@ class api_v3_ContactTest extends CiviUnitTestCase
     function testCheckParamsWithNoCheckss()
     {
         $params = array();
-        $contact =& civicrm_contact_check_params($params, false, false, false );
+        $contact =& _civicrm_contact_check_params($params, false, false, false );
         $this->assertNull( $contact );
     }
     
@@ -398,7 +398,7 @@ class api_v3_ContactTest extends CiviUnitTestCase
     function testCheckParamsWithNoContactType()
     {
         $params = array( 'foo' => 'bar' );
-        $contact =& civicrm_contact_check_params($params, false );
+        $contact =& _civicrm_contact_check_params($params, false );
         $this->assertEquals( 1, $contact['is_error'] );
     }
     
@@ -422,7 +422,7 @@ class api_v3_ContactTest extends CiviUnitTestCase
                          'last_name'  => 'Contact',
                          'email'      => 'TestContact@example.com',
                          'contact_type' => 'Individual' );
-        $contact =& civicrm_contact_check_params($params, true );
+        $contact =& _civicrm_contact_check_params($params, true );
         $this->assertEquals( 1, $contact['is_error'] );
         $this->assertRegexp( "/matching contacts.*17/s",
                              CRM_Utils_Array::value('error_message', $contact) );
@@ -449,7 +449,7 @@ class api_v3_ContactTest extends CiviUnitTestCase
                          'last_name'  => 'Contact',
                          'email'      => 'TestContact@example.com',
                          'contact_type' => 'Individual' );
-        $contact =& civicrm_contact_check_params($params, true, true );
+        $contact =& _civicrm_contact_check_params($params, true, true );
         $this->assertEquals( 1, $contact['is_error'] );
         $this->assertRegexp( "/matching contacts.*17/s",
                              $contact['error_message']['message'] );
@@ -675,12 +675,12 @@ class api_v3_ContactTest extends CiviUnitTestCase
     }
     
     /**
-     *  Test civicrm_contact_get(,true) with empty params 
+     *  Test civicrm_contact_get) with empty params 
      */
-    public function testContactGetOldEmptyParams()
+    public function testContactGetEmptyParams()
     {
         $params = array();
-        $result = civicrm_contact_get( $params, true );
+        $result = civicrm_contact_get( $params);
         $this->assertTrue( is_array( $result ) );
         $this->assertEquals( 1, $result['is_error'] );
         $this->assertRegexp( "/No.*parameters/s",
@@ -690,7 +690,7 @@ class api_v3_ContactTest extends CiviUnitTestCase
     /**
      *  Test civicrm_contact_get(,true) with params not array
      */
-    public function testContactGetOldParamsNotArray()
+    public function testContactGetParamsNotArray()
     {
         $params = 17;
         $result = civicrm_contact_get( $params, true );
@@ -736,63 +736,10 @@ class api_v3_ContactTest extends CiviUnitTestCase
         $result = civicrm_contact_get( $params, true );
         $this->assertTrue( is_array( $result ) );
         $this->assertFalse( array_key_exists( 'is_error', $result ) );
-        $this->assertEquals( 17, $result['contact_id'] );
-    }
-    
-    /**
-     *  Test civicrm_contact_search() return only first name
-     */
-    public function testContactSearchRetFirst()
-    {
-        //  Insert a row in civicrm_contact creating contact 17
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                             dirname(__FILE__)
-                             . '/dataset/contact_17.xml') );
-        $params = array( 'contact_id'       => 17,
-                         'return_first_name' => true,
-                         'sort'              => 'first_name' );
-        $result = civicrm_contact_search( $params );
-        $this->assertEquals( 2, count( $result[17] ) );
         $this->assertEquals( 17, $result[17]['contact_id'] );
-        $this->assertEquals( 'Test', $result[17]['first_name'] );
     }
     
-    /**
-     *  Test civicrm_contact_search() with default return properties
-     */
-    public function testContactSearchDefaultRet()
-    {
-        //  Insert a row in civicrm_contact creating contact 17
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                             dirname(__FILE__)
-                             . '/dataset/contact_17.xml') );
-        $params = array( 'contact_id' => 17,
-                         'sort'       => 'first_name' );
-        $result = civicrm_contact_search( $params );
-        $this->assertEquals( 17, $result[17]['contact_id'] );
-        $this->assertEquals( 'Test', $result[17]['first_name'] );
-    }
-    
-    /**
-     *  Test civicrm_contact_search_count()
-     */
-    public function testContactSearchCount()
-    {
-        //  Insert a row in civicrm_contact creating contact 17
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                             dirname(__FILE__)
-                             . '/dataset/contact_17.xml') );
-        $params = array( 'contact_id' => 17 );
-        $result = civicrm_contact_search_count( $params );
-        $this->assertEquals( '1', $result );
-    }
-    
+
     /**
      *  Test civicrm_contact_search_count()
      */
@@ -810,7 +757,7 @@ class api_v3_ContactTest extends CiviUnitTestCase
         $this->assertEquals( 1, $contact['contact_id'], "In line " . __LINE__ );
 
         $params = array( 'email' => 'man2' );
-        $result = civicrm_contact_search( $params );
+        $result = civicrm_contact_get( $params );
 
         $this->assertEquals( 1, $result[1]['contact_id'] );
         $this->assertEquals( 'man2@yahoo.com', $result[1]['email'] );
@@ -841,27 +788,7 @@ class api_v3_ContactTest extends CiviUnitTestCase
         $this->assertTrue( is_array( $result ) );
     }
     
-    /**
-     *  Test civicrm_replace_contact_formatted()
-     */
-    public function testReplaceContactFormatted()
-    {
-        //  Insert a row in civicrm_contact creating contact 17
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                             dirname(__FILE__)
-                             . '/dataset/contact_17.xml') );
-
-        $params = array( 'contact_type' => 'Individual',
-                         'first_name'   => 'Fred',
-                         'last_name'    => 'Figby' );
-        $fields = array();
-        $result = civicrm_replace_contact_formatted( 17, $params, $fields );
-        $this->assertTrue( is_array( $result ) );
-        $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
-                           . " error message: " . CRM_Utils_Array::value('error_message', $result) );
-    }
+ 
 
     function testContactCreationPermissions()
     {
@@ -893,6 +820,7 @@ class api_v3_ContactTest extends CiviUnitTestCase
         $result = civicrm_contact_update($params);
         $this->assertEquals(0, $result['is_error'], 'overfluous permissions should be enough to update a contact');
     }
+
 } // class api_v3_ContactTest
 
 // -- set Emacs parameters --

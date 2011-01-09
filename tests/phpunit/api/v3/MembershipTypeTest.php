@@ -46,7 +46,7 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase
     {
         parent::setUp();
 
-        $this->_contactID           = $this->organizationCreate( ) ;
+        $this->_contactID           = $this->organizationCreate(null,3 ) ;
     }
 
     function tearDown() 
@@ -281,7 +281,7 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase
 			'organization_name' => 'New membership organisation',
 			'contact_type'      => 'Organization'
 		);
-        $newMembOrgID = $this->organizationCreate($newMembOrgParams); // create a new contact to update this membership type to
+        $newMembOrgID = $this->organizationCreate($newMembOrgParams,3); // create a new contact to update this membership type to
 
         $params = array(
                         'id'                        => $id,
@@ -331,7 +331,7 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase
 
     function testDelete( ) 
     {
-        $orgID = $this->organizationCreate( );
+        $orgID = $this->organizationCreate(null,3 );
         $membershipTypeID = $this->membershipTypeCreate( $orgID );
         $params['id'] = $membershipTypeID;
         $membershiptype = civicrm_membership_type_delete( $params );

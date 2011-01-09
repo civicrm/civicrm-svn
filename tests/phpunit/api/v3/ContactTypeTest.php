@@ -75,7 +75,7 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
                                'contact_type'     => 'Individual',
                                'contact_sub_type' => $this->subTypeIndividual
                                );  
-        $contact =& civicrm_contact_add( $contactParams );
+        $contact =& civicrm_contact_create( $contactParams );
         $this->assertEquals( $contact['is_error'], 0, "In line " . __LINE__ );
         
         $params      = array( 'contact_id' => $contact['contact_id'] );
@@ -93,7 +93,7 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
                                'contact_type'      => 'Organization',
                                'contact_sub_type'  => $this->subTypeOrganization 
                                 );
-        $contact =& civicrm_contact_add( $contactParams );
+        $contact =& civicrm_contact_create( $contactParams );
         $this->assertEquals( $contact['is_error'], 0, "In line " . __LINE__ );
         
         $params      = array( 'contact_id' => $contact['contact_id'] );
@@ -117,7 +117,7 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
                                'contact_type'     => 'Individual',
                                'contact_sub_type' => $this->subTypeHousehold
                                );  
-        $contact =& civicrm_contact_add( $contactParams );
+        $contact =& civicrm_contact_create( $contactParams );
         $this->assertEquals( $contact['is_error'], 1, "In line " . __LINE__ );
         
         // check for Type:Organization Subtype:sub_individual
@@ -126,7 +126,7 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
                                'contact_type'      => 'Organization',
                                'contact_sub_type'  => $this->subTypeIndividual 
                                 );
-        $contact =& civicrm_contact_add( $contactParams );
+        $contact =& civicrm_contact_create( $contactParams );
         $this->assertEquals( $contact['is_error'], 1, "In line " . __LINE__ );
         
     }
@@ -145,7 +145,7 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
                                'last_name'        => 'Grant',
                                'contact_type'     => 'Individual',
                                );  
-        $contact =& civicrm_contact_add( $contactParams );
+        $contact =& civicrm_contact_create( $contactParams );
         // subype:sub_individual
         $updateParams = array(
                               'first_name'        => 'John',
@@ -154,7 +154,7 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
                               'contact_type'      => 'Individual',
                               'contact_sub_type'  => $this->subTypeIndividual 
                               );
-        $updateContact =& civicrm_contact_add( $updateParams );
+        $updateContact =& civicrm_contact_create( $updateParams );
 
         $this->assertEquals( $updateContact['is_error'], 0, "In line " . __LINE__ );
         $this->assertEquals( $updateContact['contact_id'], $contact['contact_id'], "In line " . __LINE__ );
@@ -174,7 +174,7 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
                                'organization_name' => 'Compumentor' ,     
                                'contact_type'      => 'Organization'
                                );  
-        $contact =& civicrm_contact_add( $contactParams );
+        $contact =& civicrm_contact_create( $contactParams );
         
         // subype:sub_organization
         $updateParams = array(
@@ -183,7 +183,7 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
                               'contact_type'      => 'Organization',
                               'contact_sub_type'  => $this->subTypeOrganization 
                               );
-        $updateContact =& civicrm_contact_add( $updateParams );
+        $updateContact =& civicrm_contact_create( $updateParams );
 
         $this->assertEquals( $updateContact['is_error'], 0, "In line " . __LINE__ );
         $this->assertEquals( $updateContact['contact_id'], $contact['contact_id'], "In line " . __LINE__ );
@@ -210,7 +210,7 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
                                'last_name'        => 'Grant',
                                'contact_type'     => 'Individual',
                                );  
-        $contact =& civicrm_contact_add( $contactParams );
+        $contact =& civicrm_contact_create( $contactParams );
 
         // subype:sub_household
         $updateParams = array(
@@ -220,7 +220,7 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
                               'contact_type'      => 'Individual',
                               'contact_sub_type'  => $this->subTypeHousehold 
                               );
-        $updateContact =& civicrm_contact_add( $updateParams );
+        $updateContact =& civicrm_contact_create( $updateParams );
 
         $this->assertEquals( $updateContact['is_error'], 1, "In line " . __LINE__ );
         $params = array('contact_id' => $contact['contact_id'] );
@@ -231,7 +231,7 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
                                'organization_name' => 'Compumentor' ,     
                                'contact_type'      => 'Organization',
                                );  
-        $contact =& civicrm_contact_add( $contactParams );
+        $contact =& civicrm_contact_create( $contactParams );
         
         $updateParams = array(
                               'organization_name' => 'Intel Arts' , 
@@ -239,7 +239,7 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
                               'contact_type'      => 'Organization',
                               'contact_sub_type'  => $this->subTypeIndividual 
                               );
-        $updateContact =& civicrm_contact_add( $updateParams );
+        $updateContact =& civicrm_contact_create( $updateParams );
 
         $this->assertEquals( $updateContact['is_error'], 1, "In line " . __LINE__ );
         $params = array('contact_id' => $contact['contact_id'] );
@@ -267,7 +267,7 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
                                'contact_type'     => 'Individual',
                                'contact_sub_type' => $this->subTypeIndividual
                                );  
-        $contact =& civicrm_contact_add( $contactParams );
+        $contact =& civicrm_contact_create( $contactParams );
         // subype:sub2_individual
         $updateParams = array(
                               'first_name'        => 'John',
@@ -276,7 +276,7 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
                               'contact_type'      => 'Individual',
                               'contact_sub_type'  => $subtype
                               );
-        $updateContact =& civicrm_contact_add( $updateParams );
+        $updateContact =& civicrm_contact_create( $updateParams );
      
         $this->assertEquals( $updateContact['is_error'], 0, "In line " . __LINE__ );
         $this->assertEquals( $updateContact['contact_id'], $contact['contact_id'], "In line " . __LINE__ );
@@ -306,7 +306,7 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
                                'contact_type'      => 'Organization',
                                'contact_sub_type'  => $this->subTypeOrganization 
                                );  
-        $contact =& civicrm_contact_add( $contactParams );
+        $contact =& civicrm_contact_create( $contactParams );
         
         // subype:sub2_organization
         $updateParams = array(
@@ -315,7 +315,7 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
                               'contact_type'      => 'Organization',
                               'contact_sub_type'  => $subtype
                               );
-        $updateContact =& civicrm_contact_add( $updateParams );
+        $updateContact =& civicrm_contact_create( $updateParams );
         
         $this->assertEquals( $updateContact['is_error'], 0, "In line " . __LINE__ );
         $this->assertEquals( $updateContact['contact_id'], $contact['contact_id'], "In line " . __LINE__ );
@@ -342,7 +342,7 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
                                'contact_type'     => 'Individual',
                                'contact_sub_type' => $this->subTypeIndividual
                                );  
-        $contact =& civicrm_contact_add( $contactParams );
+        $contact =& civicrm_contact_create( $contactParams );
         
         // subype:sub_household
         $updateParams = array(
@@ -352,7 +352,7 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
                               'contact_type'      => 'Individual',
                               'contact_sub_type'  => $this->subTypeHousehold 
                               );
-        $updateContact =& civicrm_contact_add( $updateParams );
+        $updateContact =& civicrm_contact_create( $updateParams );
 
         $this->assertEquals( $updateContact['is_error'], 1, "In line " . __LINE__ );
         $params = array('contact_id' => $contact['contact_id'] );
@@ -364,14 +364,14 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
                                'contact_type'      => 'Organization',
                                'contact_sub_type'  => $this->subTypeOrganization 
                                );  
-        $contact =& civicrm_contact_add( $contactParams );
+        $contact =& civicrm_contact_create( $contactParams );
         
         $updateParams = array(
                               'organization_name' => 'Intel Arts' , 
                               'contact_id'        => $contact['contact_id'],
                               'contact_sub_type'  => $this->subTypeIndividual
                               );
-        $updateContact =& civicrm_contact_add( $updateParams );
+        $updateContact =& civicrm_contact_create( $updateParams );
 
         $this->assertEquals( $updateContact['is_error'], 1, "In line " . __LINE__ );
         $params = array('contact_id' => $contact['contact_id'] );

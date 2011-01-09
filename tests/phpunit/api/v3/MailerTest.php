@@ -39,6 +39,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
 {
     protected $_groupID;
     protected $_email;
+    protected $_apiversion;   
     
     function get_info( ) 
     {
@@ -52,7 +53,8 @@ class api_v3_MailerTest extends CiviUnitTestCase
     function setUp( ) 
     {
         parent::setUp();
-        $this->_groupID = $this->groupCreate();
+        $this->_apiversion = 3; 
+        $this->_groupID = $this->groupCreate(null,$this->_apiversion);
         $this->_email = 'test@test.test';
     }
     

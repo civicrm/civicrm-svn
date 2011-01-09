@@ -56,7 +56,7 @@ class api_v3_NoteTest extends CiviUnitTestCase
         //  Connect to the database
         parent::setUp();
 
-        $this->_contactID = $this->organizationCreate( );
+        $this->_contactID = $this->organizationCreate(null,3 );
         
         $this->_params = array(
                                'entity_table'  => 'civicrm_contact',
@@ -67,7 +67,7 @@ class api_v3_NoteTest extends CiviUnitTestCase
                                'subject'       => 'Test Note', 
                                );
 
-        $this->_note      = $this->noteCreate( $this->_contactID );
+        $this->_note      = $this->noteCreate( $this->_contactID,3 );
         $this->_noteID    = $this->_note['id'];
     }
 

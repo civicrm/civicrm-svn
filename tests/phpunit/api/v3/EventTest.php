@@ -210,7 +210,7 @@ class api_v3_EventTest extends CiviUnitTestCase
     function testSearchWrongParamsType()
     {
         $params = 'a string';
-        $result =& civicrm_event_search($params);
+        $result =& civicrm_event_get($params);
 
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Input parameters is not an array.', 'In line ' . __LINE__ );
@@ -224,7 +224,7 @@ class api_v3_EventTest extends CiviUnitTestCase
          $event  = civicrm_event_create( $this->_params );
 
          $params = array( );
-         $result =& civicrm_event_search($params);
+         $result =& civicrm_event_get($params);
          $res    = $result[$event['event_id']];
 
          $this->assertEquals( $res['id'], $event['event_id'], 'In line ' . __LINE__ );
@@ -245,7 +245,7 @@ class api_v3_EventTest extends CiviUnitTestCase
                     'return.id'            => 1,
                     'return.start_date'    => 1,
                     );
-          $result =& civicrm_event_search($params);
+          $result =& civicrm_event_get($params);
 
           $this->assertEquals( $result[$this->_eventId]['id'], $this->_eventId , 'In line ' . __LINE__ );
           $this->assertEquals( $result[$this->_eventId]['title'], 'Annual CiviCRM meet' , 'In line ' . __LINE__ );
@@ -276,7 +276,7 @@ class api_v3_EventTest extends CiviUnitTestCase
                          'return.offset'      => 2,
                          'return.max_results' => 2
                          );
-         $result =& civicrm_event_search($params);
+         $result =& civicrm_event_get($params);
          $this->assertEquals( count($result), 2 , 'In line ' . __LINE__ ); 
      }
 

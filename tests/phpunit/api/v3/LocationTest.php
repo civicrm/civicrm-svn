@@ -33,7 +33,7 @@ require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v3_LocationTest extends CiviUnitTestCase 
 {
     protected $_contactID;
-
+    protected $_apiversion;
     function get_info( )
     {
         return array(
@@ -46,9 +46,9 @@ class api_v3_LocationTest extends CiviUnitTestCase
     function setUp() 
     {
         parent::setUp();
-    
-        $this->_contactID    = $this->organizationCreate( );
-        $this->_locationType = $this->locationTypeCreate( );        
+        $this->_apiversion = 3;    
+        $this->_contactID    = $this->organizationCreate(null, $this->_apiversion );
+        $this->_locationType = $this->locationTypeCreate(null, $this->_apiversion );        
     }
     
     function tearDown() 

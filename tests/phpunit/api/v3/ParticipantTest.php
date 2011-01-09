@@ -52,14 +52,14 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
         $event = $this->eventCreate();
         $this->_eventID = $event['event_id'];
         
-        $this->_contactID = $this->individualCreate( ) ;
-        $this->_createdParticipants = array( );
-        $this->_individualId = $this->individualCreate();        
+        $this->_contactID = $this->individualCreate(null,3 ) ;
+        $this->_createdParticipants = array( null,3);
+        $this->_individualId = $this->individualCreate(null,3);        
         
-        $this->_participantID = $this->participantCreate( array('contactID' => $this->_contactID,'eventID' => $this->_eventID  ));
-        $this->_contactID2 = $this->individualCreate( ) ;
-        $this->_participantID2 = $this->participantCreate( array('contactID' => $this->_contactID2,'eventID' => $this->_eventID ));
-        $this->_participantID3 = $this->participantCreate( array ('contactID' => $this->_contactID2, 'eventID' => $this->_eventID ) );
+        $this->_participantID = $this->participantCreate( array('contactID' => $this->_contactID,'eventID' => $this->_eventID ,3 ));
+        $this->_contactID2 = $this->individualCreate( null,3) ;
+        $this->_participantID2 = $this->participantCreate( array('contactID' => $this->_contactID2,'eventID' => $this->_eventID,3 ));
+        $this->_participantID3 = $this->participantCreate( array ('contactID' => $this->_contactID2, 'eventID' => $this->_eventID,3 ) );
     }
     
     function tearDown()

@@ -33,6 +33,7 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
    
     protected $_contactId;
     protected $_contactId1;
+    protected $_apiversion;    
 
     function get_info( )
     {
@@ -47,13 +48,13 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
     {
         parent::setUp();
 
-        $this->_contactId = $this->individualCreate();
+        $this->_contactId = $this->individualCreate(null,3);
 
-        $this->_groupId1  = $this->groupCreate( );
+        $this->_groupId1  = $this->groupCreate( null,3);
         $params = array( 'contact_id.1' => $this->_contactId,
                          'group_id'     => $this->_groupId1 );
         
-        civicrm_group_contact_add( $params );
+        civicrm_group_contact_create( $params );
         
         $group = array(
                        'name'        => 'Test Group 2',
@@ -63,11 +64,11 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
                        'is_active'   => 1,
                        'visibility'  => 'User and User Admin Only',
                        );
-        $this->_groupId2  = $this->groupCreate( $group );
+        $this->_groupId2  = $this->groupCreate( $group,3 );
         $params = array( 'contact_id.1' => $this->_contactId,
                          'group_id'     =>  $this->_groupId2  );
         
-        civicrm_group_contact_add( $params );
+        civicrm_group_contact_create( $params );
         
         $this->_group = array($this->_groupId1  => array( 'title'      => 'New Test Group Created',
                                                           'visibility' => 'Public Pages',
@@ -118,7 +119,7 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
     function testCreateWithWrongParamsType()
     {
         $params  = 1;
-        $groups = civicrm_group_contact_add( $params );
+        $groups = civicrm_group_contact_create( $params );
 
         $this->assertEquals( $groups['is_error'], 1 );
         $this->assertEquals( $groups['error_message'], 'input parameter should be an array' );
@@ -127,7 +128,7 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
     function testCreateWithEmptyParams( ) 
     {
         $params = array( );
-        $groups = civicrm_group_contact_add( $params );
+        $groups = civicrm_group_contact_create( $params );
         
         $this->assertEquals( $groups['is_error'], 1 );
         $this->assertEquals( $groups['error_message'], 'contact_id is a required field' );
@@ -139,7 +140,7 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
                         'contact_id.1' => $this->_contactId,
                         );
         
-        $groups = civicrm_group_contact_add( $params );
+        $groups = civicrm_group_contact_create( $params );
         
         $this->assertEquals( $groups['is_error'], 1 );
         $this->assertEquals( $groups['error_message'], 'group_id is a required field' );
@@ -150,7 +151,7 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
         $params = array(
                         'group_id' => $this->_groupId1
                         );
-        $groups = civicrm_group_contact_add( $params );
+        $groups = civicrm_group_contact_create( $params );
         
         $this->assertEquals( $groups['is_error'], 1 );
         $this->assertEquals( $groups['error_message'], 'contact_id is a required field' );        
@@ -172,7 +173,7 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
                         'contact_id.2' => $this->_contactId1,
                         'group_id'     => $this->_groupId1 );
         
-        $groups = civicrm_group_contact_add( $params );
+        $groups = civicrm_group_contact_create( $params );
         
         $this->assertEquals( $groups['is_error'], 0 );
         $this->assertEquals( $groups['not_added'], 1 );

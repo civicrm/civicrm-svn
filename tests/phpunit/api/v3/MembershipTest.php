@@ -31,15 +31,16 @@ require_once 'CiviTest/CiviUnitTestCase.php';
 
 class api_v3_MembershipTest extends CiviUnitTestCase
 {
-
+    protected $_apiversion;
+    
     public function setUp()
     {
         //  Connect to the database
         parent::setUp();
 
-        $this->_contactID           = $this->individualCreate( ) ;
-        $this->_membershipTypeID    = $this->membershipTypeCreate( $this->_contactID  );        
-        $this->_membershipStatusID  = $this->membershipStatusCreate( 'test status' );                
+        $this->_contactID           = $this->individualCreate(null,3 ) ;
+        $this->_membershipTypeID    = $this->membershipTypeCreate( $this->_contactID ,3 );        
+        $this->_membershipStatusID  = $this->membershipStatusCreate( 'test status' ,3);                
 
         $params = array(
                         'contact_id'         => $this->_contactID,  
