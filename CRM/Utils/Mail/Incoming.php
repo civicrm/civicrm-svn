@@ -223,8 +223,9 @@ class CRM_Utils_Mail_Incoming {
 
     function parseMailingObject( &$mail ) {
         require_once 'CRM/Core/Config.php';
-        require_once 'api/v2/Activity.php';
-        require_once 'api/v2/Contact.php';
+        //these cause conflicts & I can't see anywhere they are needed-> commenting out
+        //require_once 'api/v2/Activity.php';
+        //require_once 'api/v2/Contact.php';
         
         $config = CRM_Core_Config::singleton();
 
