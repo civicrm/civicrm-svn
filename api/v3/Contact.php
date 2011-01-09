@@ -64,8 +64,10 @@ function civicrm_contact_create( &$params )
   _civicrm_initialize( true );
   try {
     civicrm_api_check_permission(__FUNCTION__, $params, true);
-    $create_new = true;
-    return _civicrm_contact_update( $params, $create_new );
+    if(empty($params['contact_id'])){
+      $create_new = true;
+    }
+    return civicrm_contact_update( $params, $create_new );
   } catch (Exception $e) {
     return civicrm_create_error( $e->getMessage() );
   }
@@ -95,6 +97,7 @@ function civicrm_contact_create( &$params )
  * @todo Erik Hommel 16 dec 2010 fix custom data (CRM-7231)
  * @todo Erik Hommel 16 dec 2010 Introduce version as param and get rid of $deprecated_behaviour
  * @todo Erik Hommel 16 dec 2010 Use civicrm_return_success / error ?
+ * @todo EM 7 Jan 11 - does this return the number of contacts if required (replacement for deprecated contact_search_count function - if so is this tested?
  * @todo EM 6 Jan 11 no handling for empty params or params that are not an array: Invalid argument supplied for foreach() C:\utils\eclipseworkspace\api-civicrm\api\v3\Contact.php:332
  */
 function civicrm_contact_get( &$params )
@@ -174,21 +177,18 @@ function civicrm_contact_delete( &$params )
  *
  * @todo We also need to make sure we run all the form rules on the params list
  *       to ensure that the params are valid
+ * @todo Eileen McNaughton 7 Jan 11 update isn't part of our standard - my preference is to rename to _ & copy the small amount of code in existing _ function into this one
+ * @todo Eileen McNaughton 7 Jan 11 Would be good to have some clarity on what is done on e-mails when create_new is set & why not for updates
  *
  * @param array   $params          Associative array of property name/value
  *                                 pairs to insert in new contact.
- * @param boolean $dupeCheck       Should we check for duplicate contacts
- * @param boolean $dupeErrorArray  Should we return values of error
- *                                 object in array foramt
- * @param boolean $requiredCHeck   Should we check if required params
- *                                 are present in params array
  *
  * @return null on success, error message otherwise
  * @access public
  *
  * @todo Erik Hommel 16 dec 2010 required check should be incorporated in utils function civicrm_verify_mandatory
  */
-function _civicrm_contact_update( &$params, $create_new = false )
+function civicrm_contact_update( &$params, $create_new = false )
 {
     _civicrm_initialize();
     try {
@@ -441,7 +441,7 @@ function _civicrm_contact_update( &$params, $contactID = null )
 
 /**
  * @todo Move this to ContactFormat.php 
- * @todo What does this do? I think it should go & we can revive a corrected version from v2 if need be
+ * @todo Eileen McNaughton 7/01/11 What does this do? I think it should go & we can revive a corrected version from v2 if need be
  */
 function civicrm_contact_format_create( &$params )
 {

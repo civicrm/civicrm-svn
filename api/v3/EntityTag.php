@@ -78,6 +78,7 @@ function civicrm_entity_tag_get( &$params ) {
  *
  * @param <type> $params
  * @return <type>
+ * @todo EM 7 Jan 2011 - believe this should be deleted
  */
 function civicrm_entity_tag_display( &$params ) {
     if ( !is_array($params) ) {

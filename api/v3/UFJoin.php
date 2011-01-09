@@ -79,6 +79,7 @@ function civicrm_uf_join_create($params)
  *
  * @return array  updated CRM_Core_DAO_UFJoin Array
  * @access public
+ * @todo EM 7 Jan 11 This should be deleted & create should be used
  * 
  */
 function civicrm_uf_join_edit($params) 
@@ -108,6 +109,7 @@ function civicrm_uf_join_edit($params)
  * 
  * @return int or null
  * @access public
+ * @todo EM 7 Jan 11 - not sure this is correctly named but don't understand how this relates to the find function
  * 
  */
 
@@ -138,7 +140,7 @@ function civicrm_uf_join_id_get(&$params)
  * @access public
  * 
  */
-function civicrm_uf_join_UFGroupId_find(&$params) 
+function civicrm_uf_join_UFGroupId_get(&$params) 
 {
     if ( ! is_array($params) || empty($params)) {
         return civicrm_create_error("$params is not valid array");

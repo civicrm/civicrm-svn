@@ -63,6 +63,7 @@ require_once 'CRM/Case/PseudoConstant.php';
  *
  * @todo Erik Hommel 16 dec 2010 use utils function civicrm_verify_mandatory to check for required params
  * @todo Erik Hommel 16 dec 2010 check if function processes update as per standard
+ * @todo Eileen McNaughton 7 Jan 2011 No unit test
  * @todo Erik Hommel 16 dec 2010 check for permission using util function civicrm_api_permission_check
  * @todo Erik Hommel 16 dec 2010 introduce version as param
  * @todo Erik Hommel 16 dec 2010 check if civicrm_return_success does not cause error in REST (should be fixed in civicrm_return_success)
@@ -128,8 +129,8 @@ function civicrm_case_create( &$params )
     // Do it! :-D
     $xmlProcessor->run( $params['case_type'], $xmlProcessorParams );
     
-    // status msg
-    $params['statusMsg'] = ts('Case opened successfully.');
+    // status msg  - commented out as API should not change $params
+    //$params['statusMsg'] = ts('Case opened successfully.');
     
     // return case
     $details = _civicrm_case_read( $case->id );

@@ -182,6 +182,7 @@ function &civicrm_contribution_get( &$params ) {
  *
  * @param <type> $params
  * @return <type> 
+ * @todo - EM 7 / Jan 11 - I believe this function should be deleted - is not called internally
  */
 function &civicrm_contribution_format_create( &$params ) {
     _civicrm_initialize( );
@@ -429,7 +430,7 @@ function _civicrm_contribute_format_params( &$params, &$values, $create=false ) 
  * @access public
  * 
  */
-function civicrm_contribute_transact($params) {
+function civicrm_contribution_transact($params) {
   civicrm_initialize( );
 
   if ( empty( $params ) ) {

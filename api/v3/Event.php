@@ -66,7 +66,11 @@ function civicrm_event_create( &$params )
       $ids['eventTypeId'] = (int) $params['event_type_id'];
       $ids['startDate'  ] = $params['start_date'];
       $ids['event_id']    = CRM_Utils_Array::value( 'event_id', $params );
-      
+
+      //format custom fields so they can be added
+      $value = array();
+      _civicrm_custom_format_params( $params, $values, 'Event' );
+      $params = array_merge($values,$params);     
       require_once 'CRM/Event/BAO/Event.php';
       $eventBAO = CRM_Event_BAO_Event::create($params, $ids);
       
