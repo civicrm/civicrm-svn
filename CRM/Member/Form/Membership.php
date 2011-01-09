@@ -85,11 +85,10 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             $this->_memType = CRM_Core_DAO::getFieldValue( "CRM_Member_DAO_Membership", $this->_id, 
                                                            "membership_type_id");
         } 
-        $this->_mode      = CRM_Utils_Request::retrieve( 'mode', 'String', $this );
-       
+        $this->_mode = CRM_Utils_Request::retrieve( 'mode', 'String', $this );
+        $this->assign( 'membershipMode', $this->_mode );
+        
         if ( $this->_mode ) {
-            $this->assign( 'membershipMode', $this->_mode );
-            
             $this->_paymentProcessor = array( 'billing_mode' => 1 );
             $validProcessors         = array( );
             $processors = CRM_Core_PseudoConstant::paymentProcessor( false, false, "billing_mode IN ( 1, 3 )" );
@@ -386,47 +385,55 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             $selOrgMemType[$index] = $orgMembershipType;
         }
         
-        $js = array( 'onChange' => "buildCustomData( 'Membership', this.value );");
+        $memTypeJs = array( 'onChange' => "buildCustomData( 'Membership', this.value );");
         
         //build the form for auto renew.
-        $recurProcessor = array( );
+        $recurProcessor = $autoRenew = array( );
         if ( $this->_mode || ( $this->_action & CRM_Core_Action::UPDATE ) ) {
-            //get the valid recurring processors.
-            $recurring = CRM_Core_PseudoConstant::paymentProcessor( false, false, 'is_recur = 1' );
-            $recurProcessor = array_intersect_assoc( $this->_processors, $recurring );
-            if ( !empty( $recurProcessor ) ) {
+            $autoRenewElement = $this->addElement( 'checkbox', 
+                                                   'auto_renew', 
+                                                   ts('Membership renewed automatically'),
+                                                   null, 
+                                                   array( 'onclick' => "buildReceiptANDNotice( );" ) );
+            
+            if ( $this->_mode ) {
+                //get the valid recurring processors.
+                $recurring = CRM_Core_PseudoConstant::paymentProcessor( false, false, 'is_recur = 1' );
+                $recurProcessor = array_intersect_assoc( $this->_processors, $recurring );
                 $autoRenew = array( );
-                if ( !empty( $membershipType ) ) {
-                    $sql = '
+                if ( !empty( $recurProcessor ) ) {
+                    if ( !empty( $membershipType ) ) {
+                        $sql = '
 SELECT  id, 
         auto_renew,
         duration_unit,
         duration_interval
  FROM   civicrm_membership_type
 WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';  
-                    $recurMembershipTypes = CRM_Core_DAO::executeQuery( $sql );
-                    while ( $recurMembershipTypes->fetch( ) ) {
-                        $autoRenew[$recurMembershipTypes->id] = $recurMembershipTypes->auto_renew;
-                        foreach ( array( 'id', 'auto_renew', 'duration_unit', 'duration_interval' ) as $fld ) {  
-                            $this->_recurMembershipTypes[$recurMembershipTypes->id][$fld] = $recurMembershipTypes->$fld;
+                        $recurMembershipTypes = CRM_Core_DAO::executeQuery( $sql );
+                        while ( $recurMembershipTypes->fetch( ) ) {
+                            $autoRenew[$recurMembershipTypes->id] = $recurMembershipTypes->auto_renew;
+                            foreach ( array( 'id', 'auto_renew', 'duration_unit', 'duration_interval' ) as $fld ) {  
+                                $this->_recurMembershipTypes[$recurMembershipTypes->id][$fld] = $recurMembershipTypes->$fld;
+                            }
                         }
                     }
+                    $memTypeJs = array( 'onChange' => 
+                                        "buildCustomData( 'Membership', this.value ); buildAutoRenew(this.value, null );");
                 }
-                $js = array( 'onChange' => "buildCustomData( 'Membership', this.value ); buildAutoRenew(this.value);");
-                $this->assign( 'autoRenew', json_encode($autoRenew) );
-            }
-            $autoRenewElement = $this->addElement('checkbox', 'auto_renew', ts('Membership renewed automatically'),
-                                                  null, array( 'onclick' => "showHideByValue('auto_renew','','send-receipt','table-row','radio',true); showHideNotice( );") );
-            if ( $this->_action & CRM_Core_Action::UPDATE ) {
-                $autoRenewElement->freeze();
+                
             }
         }
-        $this->assign( 'recurProcessor', json_encode( $recurProcessor ) );
-        $this->assign( 'allowAutoRenew', empty( $recurProcessor ) ? false : true );
+        $allowAutoRenew = false;
+        if ( $this->_mode && empty( $recurProcessor ) ) $allowAutoRenew = true;  
+        $this->assign( 'allowAutoRenew',   $allowAutoRenew );
+        $this->assign( 'autoRenewOptions', json_encode($autoRenew) );
+        $this->assign( 'recurProcessor',   json_encode( $recurProcessor ) );
         
         $sel =& $this->addElement('hierselect', 
                                   'membership_type_id', 
-                                  ts('Membership Organization and Type'), $js );
+                                  ts('Membership Organization and Type'), 
+                                  $memTypeJs );
         
         $sel->setOptions(array($selMemTypeOrg,  $selOrgMemType));
         $elements = array( );
@@ -498,10 +505,11 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                           array('onclick' =>"return showHideByValue('send_receipt','','notice','table-row','radio',false);") );
         $this->add('textarea', 'receipt_text_signup', ts('Receipt Message') );
         if ( $this->_mode ) {
-        
+            
             $this->add( 'select', 'payment_processor_id',
                         ts( 'Payment Processor' ),
-                        $this->_processors, true, array( 'onChange' => "checkProcessor(this.value);" ) );
+                        $this->_processors, true, 
+                        array( 'onChange' => "buildAutoRenew( null, this.value );") );
             require_once 'CRM/Core/Payment/Form.php';
             CRM_Core_Payment_Form::buildCreditCard( $this, true );
         }
@@ -529,11 +537,11 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                                    CRM_Utils_System::url( 'civicrm/contribute/unsubscribe', "reset=1&mid={$this->_id}" ) );
                 }
                 foreach ( $elements as $elem ) {
-                        $elem->freeze( );
+                    $elem->freeze( );
                 }
             }
         }
-
+        
         $this->addFormRule(array('CRM_Member_Form_Membership', 'formRule'), $this );
         
         require_once "CRM/Core/BAO/Preferences.php";
@@ -706,7 +714,8 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         $params = $ids = array( );
         
         //take the required membership recur values.
-        if ( CRM_Utils_Array::value( 'auto_renew', $this->_params ) ) {
+        if ( $this->_mode && 
+             CRM_Utils_Array::value( 'auto_renew', $this->_params ) ) {
             $params['is_recur'] = $this->_params['is_recur'] = $formValues['is_recur'] = true;
             $mapping = array( 'frequency_interval'  => 'duration_interval',
                               'frequency_unit' => 'duration_unit'  );

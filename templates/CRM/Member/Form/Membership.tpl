@@ -88,7 +88,7 @@
 	<td>{if $isRecur && $endDate}{$endDate|crmDate}{else}{include file="CRM/common/jcalendar.tpl" elementName=end_date}{/if}
 		<br />
         <span class="description">{ts}Latest membership period expiration date. End Date will be automatically set based on Membership Type if you don't select a date.{/ts}</span></td></tr>
-        <tr id="autorenew" class="crm-membership-form-block-auto_renew">
+        <tr id="autoRenew" class="crm-membership-form-block-auto_renew">
            <td class="label"> {$form.auto_renew.label} </td>
            <td> {$form.auto_renew.html} </td>
         </tr>
@@ -98,19 +98,17 @@
 
     {if ! $membershipMode}
     {* Show read-only Status block - when action is UPDATE and is_override is FALSE *}
+       	<tr id="memberStatus_show">    
         {if $action eq 2}
-        <tr id="memberStatus_show">
             <td class="label">{$form.status_id.label}</td><td class="view-value">{$membershipStatus}</td>
-        </tr>
-	<tr class="crm-membership-form-block-auto_renew">
-           <td class="label"> {$form.auto_renew.label} </td>
-           <td> {$form.auto_renew.html} </td>
-        </tr>
-        {else}{* Show editable status field when is_override is TRUE *}
+        {/if}
+	</tr>
+
+	{* Show editable status field when is_override is TRUE *}
         <tr id="memberStatus"><td class="label">{$form.status_id.label}</td><td>{$form.status_id.html}<br />
             <span class="description">{ts}If <strong>Status Override</strong> is checked, the selected status will remain in force (it will NOT be modified by the automated status update script).{/ts}</span></td></tr>
-        {/if}
-    {elseif $membershipMode}
+
+	{elseif $membershipMode}
         <tr class="crm-membership-form-block-billing"><td colspan="2">
         {include file='CRM/Core/BillingBlock.tpl'}
         </td></tr>
@@ -255,32 +253,23 @@ cj( function( ) {
     invert              = 0
 }
 {/if}
-{include file="CRM/common/showHideByFieldValue.tpl" 
-    trigger_field_id    ="auto_renew"
-    trigger_value       =""
-    target_element_id   ="send-receipt" 
-    target_element_type ="table-row"
-    field_type          ="radio"
-    invert              = 1
-}
 {literal}
-<script type="text/javascript">
-{/literal}
-{if !$membershipMode && !$isRecur}
-{literal}
-showHideMemberStatus();
 
+<script type="text/javascript">
+
+{/literal}{if !$membershipMode}{literal}
+showHideMemberStatus();
 function showHideMemberStatus() {
-	if (document.getElementsByName("is_override")[0].checked == true) {
-	   cj('#memberStatus').show( );
-       cj('#memberStatus_show').hide( );
-	} else {
-	   cj('#memberStatus').hide( );
-       cj('#memberStatus_show').show( );
-	}
+    if ( cj( "#is_override" ).attr('checked' ) ) {
+	 cj('#memberStatus').show( );
+         cj('#memberStatus_show').hide( );
+    } else {
+	 cj('#memberStatus').hide( );
+         cj('#memberStatus_show').show( );
+    }
 }
-{/literal}
-{/if}
+{/literal}{/if}
+	
 {literal}
 function setPaymentBlock( ) {
     var memType = cj('#membership_type_id\\[1\\]').val( );
@@ -329,10 +318,9 @@ function checkEmail( ) {
 }
 {/literal}
 {/if}
-{if $autoRenew}
+
+{if $allowAutoRenew}
 {literal}
-   var renew = {/literal}{$autoRenew}{literal};
-   
    //keep read only always checked.
    cj( function( ) {
       var allowAutoRenew = {/literal}'{$allowAutoRenew}'{literal};
@@ -347,61 +335,78 @@ function checkEmail( ) {
 {/literal}
 {/if}
 
+
+{if $membershipMode or $action eq 2}
 {literal}
-cj("#autorenew").hide( );
 
-function checkProcessor( Id ) {
-  var recur = {/literal}{$recurProcessor}{literal};	 
+buildAutoRenew( null, null );
 
-  if( recur && !recur[Id] ) {
-    cj("#autorenew").hide( );
-    return false;
-  } else {
-    memType = cj('#membership_type_id\\[1\\]').val( );
-    buildAutoRenew( memType );
+function buildAutoRenew( membershipType, processorId ) {
+  var mode   = {/literal}'{$membershipMode}'{literal};
+  var action = {/literal}'{$action}'{literal};
+  
+  //for update lets hide it when not already recurring.
+  if ( action == 2 && !cj("#auto_renew").attr( 'checked' ) ) {
+      cj("#autoRenew").hide( );
   }
-}
+ 
+  //we should do all auto renew for cc memberships.
+  if ( !mode ) return; 
 
-function buildAutoRenew( memType ) {
-  var recur = {/literal}{$recurProcessor}{literal};
-  var processor = cj("#payment_processor_id").val();
-  if ( !recur[processor] ) {
-      cj("#autorenew").hide( );
-      return false;
-  }
-  if ( renew ) {
-     if ( renew[memType] == 1 || renew[memType] == 2 ) {
-        cj("#autorenew").show( );
-        if ( renew[memType] == 2 ) {
-           cj("#auto_renew").attr( 'checked', true );
-           cj("#auto_renew").attr( 'readonly', true );
-        } else {
-           cj("#auto_renew").attr( 'checked', false );
-           cj("#auto_renew").removeAttr( 'readonly' );
-        }
-     } else {
-        cj("#autorenew").hide( );
-	cj("#auto_renew").attr( 'checked', false );
-        cj("#send-receipt").show( );
-        return;
-     } 
+  //get the required values in case missing.
+  if ( !processorId )  processorId = cj( '#payment_processor_id' ).val( );  
+  if ( !membershipType ) membershipType = parseInt( cj('#membership_type_id\\[1\\]').val( ) );
+  
+  //we don't have both required values.
+  if ( !processorId || !membershipType ) {
+     cj("#auto_renew").attr( 'checked', false );
+     cj("#autoRenew").hide( );
+     return;
   }
 
+  var recurProcessors  = {/literal}{$recurProcessor}{literal};  
+  var autoRenewOptions = {/literal}{$autoRenewOptions}{literal};
+  var currentOption    = autoRenewOptions[membershipType];
+    
+  if ( !currentOption || !recurProcessors[processorId] ) {
+     cj("#auto_renew").attr( 'checked', false );
+     cj("#autoRenew").hide( );
+     return;
+  }
+    
+  if ( currentOption == 1 ) {
+     cj("#autoRenew").show( );
+     cj("#auto_renew").removeAttr( 'readonly' );
+  } else if ( currentOption == 2 ) {
+     cj("#auto_renew").attr( 'checked', true );
+     cj("#auto_renew").attr( 'readonly', true );
+  }
+
+  //play w/ receipt option.
   if ( cj("#auto_renew").attr( 'checked' ) ) {
-      cj("#send_receipt").attr( 'checked', false );
-      cj("#send-receipt").hide( );
-      cj("#notice").hide( );
+     cj("#notice").hide( );
+     cj("#send_receipt").attr( 'checked', false );
+     cj("#send-receipt").hide( );
   } else {
-      cj("#send-receipt").show( );
+     cj("#send-receipt").show( );
+     if ( cj("#send_receipt").attr( 'checked' ) ) { 
+        cj("#notice").show( );
+     }
   }
 }
+{/literal}
+{/if}
 
-function showHideNotice( )
-{
+{literal}
+function buildReceiptANDNotice( ) {
    if ( cj("#auto_renew").attr( 'checked' ) ) {
        cj("#notice").hide( );
-   } else if ( cj("#send_receipt").attr( 'checked' ) ) {
+       cj("#send-receipt").hide( );
+   } else {
+     cj("#send-receipt").show( );
+     if ( cj("#send_receipt").attr( 'checked' ) ) {
        cj("#notice").show( );
+     }
    }
 }
 </script>
