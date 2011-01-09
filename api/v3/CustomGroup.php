@@ -48,6 +48,7 @@ require_once 'api/v3/utils.php';
  *
  * @param array $params           an associative array used in construction
  * retrieval of the object
+ * @todo missing get function
  *
  *
  */
@@ -114,6 +115,7 @@ function civicrm_custom_group_create( $params )
     }
     if ( CRM_Utils_Array::value( 'html_type', $params ) ){
         $params['custom_group_id'] = $customGroup->id;
+        require_once 'api/v3/CustomField.php';
         $fieldValues = civicrm_custom_field_create( $params );
         $values      = array_merge( $values, $fieldValues['result'] );
     }
@@ -150,99 +152,4 @@ function civicrm_custom_group_delete($params)
     $result = CRM_Core_BAO_CustomGroup::deleteGroup($values);  
     return $result ? civicrm_create_success( ): civicrm_error('Error while deleting custom group');
 }
-
-/**
- * Defines 'custom field' within a group.
- *
- *
- * @param $params       array  Associative array of property name/value pairs to create new custom field.
- *
- * @return Newly created custom_field id array
- *
- * @access public 
- *
- */
-
-function civicrm_custom_field_create( $params )
-{
-    _civicrm_initialize( );
-    
-    if (! is_array($params) ) {                      
-        return civicrm_create_error("params is not an array ");
-    }
-    
-    if ( ! CRM_Utils_Array::value( 'custom_group_id', $params ) ) {                        
-        return civicrm_create_error("Missing Required field :custom_group_id");
-    }
-    
-    if ( !( CRM_Utils_Array::value( 'label', $params ) ) ) {                                     
-        return civicrm_create_error("Missing Required field :label");
-    }
-    
-    if ( !( CRM_Utils_Array::value('option_type', $params ) ) ) {
-        if( CRM_Utils_Array::value('id', $params ) ){
-            $params['option_type'] = 2;
-        } else {
-            $params['option_type'] = 1;
-        }
-    }
-         
-    $error = _civicrm_check_required_fields($params, 'CRM_Core_DAO_CustomField');
-    if (is_a($error, 'CRM_Core_Error')) {
-        return civicrm_create_error( $error->_errors[0]['message'] );
-    }
-
-    // Array created for passing options in params
-    if ( isset( $params['option_values'] ) && is_array( $params['option_values'] ) ) {
-        foreach ( $params['option_values'] as $key => $value ){
-            $params['option_label'][$value['weight']]  = $value['label'];
-            $params['option_value'][$value['weight']]  = $value['value'];
-            $params['option_status'][$value['weight']] = $value['is_active'];
-            $params['option_weight'][$value['weight']] = $value['weight'];
-        }
-    }
-    require_once 'CRM/Core/BAO/CustomField.php';
-    $customField = CRM_Core_BAO_CustomField::create($params);  
-        
-    $values['customFieldId'] = $customField->id;
-
-    if ( is_a( $customField, 'CRM_Core_Error' ) && is_a( $column, 'CRM_Core_Error' )  ) {
-        return civicrm_create_error( $customField->_errors[0]['message'] );
-    } else {
-        return civicrm_create_success($values);
-    }
-}
-
-/**
- * Use this API to delete an existing custom group field.
- *
- * @param $params     Array id of the field to be deleted
- *
- *       
- * @access public
- **/
-function civicrm_custom_field_delete( $params ) 
-{
-    _civicrm_initialize( );
-    
-    if ( !is_array( $params ) ) {
-        return civicrm_create_error( 'Params is not an array' );
-    }
-    
-    if ( ! CRM_Utils_Array::value( 'customFieldId', $params['result'] ) ) {
-        return civicrm_create_error( 'Invalid or no value for Custom Field ID' );
-    }
-
-    require_once 'CRM/Core/DAO/CustomField.php';
-    $field = new CRM_Core_DAO_CustomField( );
-    $field->id = $params['result']['customFieldId'];
-    $field->find(true);
-    
-    require_once 'CRM/Core/BAO/CustomField.php';
-    $customFieldDelete = CRM_Core_BAO_CustomField::deleteField( $field ); 
-    return $customFieldDelete ?
-        civicrm_create_error('Error while deleting custom field') :
-        civicrm_create_success( );
-}
-
 
