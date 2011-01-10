@@ -84,7 +84,6 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form
             if ( ! CRM_Core_Permission::check( 'schedule mailings' ) &&
                  CRM_Core_Permission::check( 'create mailings' ) ) {
                 $name = ts('Inform Scheduler');
-                
             }
         }
         
@@ -105,7 +104,7 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form
             $buttons = array( array(  'type'  => 'back',
                                       'name'  => ts('<< Previous')),
                               array(  'type'  => 'next',
-                                      'name'  => ts('Next >>'),
+                                      'name'  => $name,
                                       'spacing' => '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;',
                                       'isDefault' => true ),
                               array(  'type'  => 'cancel',
@@ -116,10 +115,14 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form
         if ( CRM_Mailing_Info::workflowEnabled( ) ) {
             if ( ! CRM_Core_Permission::check( 'schedule mailings' ) &&
                  CRM_Core_Permission::check( 'create mailings' ) ) {
-                unset($buttons[2]);
+                foreach ( $buttons as $key => $value ) {
+                    if ( $value['type'] == 'submit' ) {
+                        unset($buttons[$key]);
+                    }
+                }
             }
         }
-        
+
         $this->addButtons( $buttons );
               
         $mailingID = $this->get( 'mailing_id' );
