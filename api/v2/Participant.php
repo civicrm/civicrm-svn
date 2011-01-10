@@ -184,9 +184,9 @@ function &civicrm_participant_search( &$params ) {
 
     $newParams =& CRM_Contact_BAO_Query::convertFormValues( $params);
     $query = new CRM_Contact_BAO_Query( $newParams, $returnProperties, null );
-    list( $select, $from, $where ) = $query->query( );
+    list( $select, $from, $where, $having ) = $query->query( );
     
-    $sql = "$select $from $where";  
+    $sql = "$select $from $where $having";  
 
     if ( ! empty( $sort ) ) {
         $sql .= " ORDER BY $sort ";

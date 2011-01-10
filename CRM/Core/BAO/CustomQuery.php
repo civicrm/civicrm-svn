@@ -99,6 +99,13 @@ class CRM_Core_BAO_CustomQuery
     public $_fields;
 
     /**
+     * Searching for contacts?
+     *    
+     * @var boolean    
+     */ 
+    protected $_contactSearch;
+
+    /**
      * This stores custom data group types and tables that it extends
      *
      * @var array    
@@ -131,7 +138,7 @@ class CRM_Core_BAO_CustomQuery
      *
      * @access public
      */
-    function __construct( $ids ) 
+    function __construct( $ids, $contactSearch = false ) 
     {
         $this->_ids    =& $ids;
 
@@ -144,6 +151,7 @@ class CRM_Core_BAO_CustomQuery
         $this->_options      = array( );
 
         $this->_fields       = array( );
+        $this->_contactSearch = $contactSearch;
 
         if ( empty( $this->_ids ) ) {
             return;
@@ -283,6 +291,9 @@ SELECT label, value
                 }
                 if ( $joinTable != 'contact_a' ) {
                     $this->_whereTables[$joinTable] = $this->_tables[$joinTable] = 1;
+                } else if ( $this->_contactSearch ) {
+                    require_once 'CRM/Contact/BAO/Query.php';
+                    CRM_Contact_BAO_Query::$_openedPanes['Custom Fields'] = true;
                 }
             }
         }

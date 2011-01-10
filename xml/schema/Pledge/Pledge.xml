@@ -38,6 +38,7 @@
   </foreignKey>
   <field>  
       <name>contribution_type_id</name> 
+      <uniqueName>pledge_contribution_type_id</uniqueName> 
       <export>false</export>
       <type>int unsigned</type>  
       <comment>FK to Contribution Type. This is propagated to contribution record when pledge payments are made.</comment>

@@ -271,7 +271,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
      * Function to calculate start date and end date for new membership 
      * 
      * @param int  $membershipTypeId membership type id
-     * @param date $joinDate join date ( in mysql date format ) 
+     * @param date $joinDate member since ( in mysql date format ) 
      * @param date $startDate start date ( in mysql date format ) 
      *
      * @return array associated array with  start date, end date and join date for the membership

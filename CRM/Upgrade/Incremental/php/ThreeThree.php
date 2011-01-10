@@ -307,5 +307,46 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id )
                                         true, null, false, false );
         }
     }
+
+    function upgrade_3_3_2( $rev ) 
+    {    
+        $dropMailingIndex = false;
+        $indexes = CRM_Core_DAO::executeQuery( 'SHOW INDEXES FROM civicrm_mailing_job' );
+        while ( $indexes->fetch( ) ) {
+            if( $indexes->Key_name == 'parent_id' ){
+                $dropMailingIndex = true;
+                break;
+            }
+        }
+        //CRM-7137
+        require_once 'CRM/Member/DAO/MembershipBlock.php';
+        // get membership type for each membership block.
+        $sql = "SELECT id, membership_types FROM civicrm_membership_block ";
+        $dao = CRM_Core_DAO::executeQuery( $sql );
+        while( $dao->fetch( ) ){
+            $memType = explode(',', $dao->membership_types );
+            
+            $memTypeSerialize = array();
+            foreach( $memType as $k => $v ) {
+                $memTypeSerialize[$v] = 0;
+            }
+            
+            // save membership type as an serialized array along w/ auto_renew defalt value zero.
+            $memBlock = new CRM_Member_DAO_MembershipBlock();
+            $memBlock->id = $dao->id;
+            $memBlock->membership_types = serialize( $memTypeSerialize );
+            $memBlock->save( );
+        }
+                
+        //CRM-7172
+        require_once 'CRM/Mailing/Info.php';
+        if ( CRM_Mailing_Info::workflowEnabled( ) ) {
+            db_query( "UPDATE {permission} SET perm = REPLACE( perm, 'access CiviMail', 'access CiviMail, create mailings, approve mailings, schedule mailings' )" );
+        }
+
+        $upgrade =& new CRM_Upgrade_Form( );
+        $upgrade->assign( 'dropMailingIndex', $dropMailingIndex );
+        $upgrade->processSQL( $rev );
+    }
     
   }

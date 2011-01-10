@@ -297,7 +297,7 @@ invert              = 0
 
     function showRuleFields( ruleFields ) 
     {	   
-        var errorMsg = '{/literal}{ts 1="' + ruleFields + '"}In order to allow multiple registrations with the same email address, the default "Fuzzy" Dedupe Rule will be used to check for matching contact records and prevent duplicate registrations. This rule currently uses the following fields: %1{/ts}{literal}';
+        var errorMsg = '{/literal}{ts 1="' + ruleFields + '"}In order to allow multiple registrations with the same email address, the default "Fuzzy" Dedupe Rule will be used to check for matching contact records and prevent duplicate registrations. This rule currently uses the following fields: %1. First and Last Name will be used to check for matches among the multiple participants being registered.{/ts}{literal}';
 
         //display error message.
         var imageIcon = "<a href='#' onclick='cj( \"#restmsg\" ).hide( ); return false;'>" + '<div class="ui-icon ui-icon-close" style="float:left"></div>' + '</a>';

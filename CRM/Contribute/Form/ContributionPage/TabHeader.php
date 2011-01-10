@@ -100,7 +100,7 @@ class CRM_Contribute_Form_ContributionPage_TabHeader
                                                'active'  => false,
                                                'current' => false,
                                                ),
-                      'widget'       => array( 'title'   => ts( 'Widget' ),
+                      'widget'       => array( 'title'   => ts( 'Widgets' ),
                                                'link'    => null,
                                                'valid'   => false,
                                                'active'  => false,
@@ -129,7 +129,8 @@ class CRM_Contribute_Form_ContributionPage_TabHeader
         }
 
         $qfKey = $form->get( 'qfKey' );
-        
+        $form->assign( 'qfKey', $qfKey );
+
         if ( array_key_exists( $class, $tabs ) ) {
             $tabs[$class]['current'] = true;
         }

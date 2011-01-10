@@ -34,8 +34,9 @@
  *
  */
 
+require_once 'CRM/Utils/Money.php';
+require_once 'CRM/Contribute/PseudoConstant.php';
 require_once 'CRM/Contribute/DAO/Contribution.php';
-
 require_once 'CRM/Core/BAO/CustomField.php';
 require_once 'CRM/Core/BAO/CustomValue.php';
 
@@ -213,9 +214,22 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
             }
         }
 
+        if ( CRM_Utils_Array::value( 'contribution', $ids ) && 
+             !CRM_Utils_Array::value( 'softID', $params ) ) {
+            if ( $softID = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionSoft', $ids['contribution'], 'id', 'contribution_id') ) {
+                $params['softID'] = $softID;
+            }
+        }
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
 
+        if ( CRM_Utils_Array::value( 'contribution', $ids ) && 
+             ( !CRM_Utils_Array::value( 'soft_credit_to', $params ) ) &&
+             CRM_Utils_Array::value( 'softID', $params ) ) {
+            $softCredit = new CRM_Contribute_DAO_ContributionSoft( );
+            $softCredit->id = $params['softID'];
+            $softCredit->delete( );
+        }
         $contribution = self::add($params, $ids);
 
         if ( is_a( $contribution, 'CRM_Core_Error') ) {
@@ -253,14 +267,14 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
 
         // check if activity record exist for this contribution, if
         // not add activity
-        require_once "CRM/Activity/DAO/Activity.php";
+        require_once 'CRM/Activity/DAO/Activity.php';
         $activity = new CRM_Activity_DAO_Activity( );
         $activity->source_record_id = $contribution->id;
         $activity->activity_type_id = CRM_Core_OptionGroup::getValue( 'activity_type',
                                                                       'Contribution',
                                                                       'name' );
         if ( ! $activity->find( ) ) {
-            require_once "CRM/Activity/BAO/Activity.php";
+            require_once 'CRM/Activity/BAO/Activity.php';
             CRM_Activity_BAO_Activity::addActivity( $contribution, 'Offline' );
         }
 
@@ -443,7 +457,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
                     
                     $tmpConatctField[trim($value)] = $contactFields[trim($value)];
                     if (!$status) {
-                        $title = $tmpConatctField[trim($value)]['title']." (match to contact)" ;
+                        $title = $tmpConatctField[trim($value)]['title']. ' '. ts('(match to contact)') ;
                     } else {
                         $title = $tmpConatctField[trim($value)]['title'];
                     }
@@ -453,8 +467,8 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
             }
 
             $tmpConatctField['external_identifier'] = $contactFields['external_identifier'];
-            $tmpConatctField['external_identifier']['title'] = $contactFields['external_identifier']['title'] . " (match to contact)";
-            $tmpFields['contribution_contact_id']['title']   = $tmpFields['contribution_contact_id']['title'] . " (match to contact)";
+            $tmpConatctField['external_identifier']['title'] = $contactFields['external_identifier']['title'] . ' '. ts('(match to contact)') ;
+            $tmpFields['contribution_contact_id']['title']   = $tmpFields['contribution_contact_id']['title'] . ' '. ts('(match to contact)') ;
             $fields = array_merge($fields, $tmpConatctField);
             $fields = array_merge($fields, $tmpFields);
             $fields = array_merge($fields, $note);
@@ -572,7 +586,7 @@ INNER JOIN  civicrm_contact contact ON ( contact.id = civicrm_contribution.conta
         
         $results = null;
         //delete activity record
-        require_once "CRM/Activity/BAO/Activity.php";
+        require_once 'CRM/Activity/BAO/Activity.php';
         $params = array( 'source_record_id' => $id,
                          'activity_type_id' => 6 );// activity type id for contribution
 
@@ -761,13 +775,13 @@ GROUP BY p.id
      */
     function createHonorContact( &$params, $honorId = null ) 
     {
-        $honorParams = array( 'first_name'    => $params["honor_first_name"],
-                              'last_name'     => $params["honor_last_name"], 
-                              'prefix_id'     => $params["honor_prefix_id"],
-                              'email-Primary' => $params["honor_email"] );
+        $honorParams = array( 'first_name'    => $params['honor_first_name'],
+                              'last_name'     => $params['honor_last_name'], 
+                              'prefix_id'     => $params['honor_prefix_id'],
+                              'email-Primary' => $params['honor_email'] );
         if ( !$honorId ) {
-            require_once "CRM/Core/BAO/UFGroup.php";
-            $honorParams['email'] = $params["honor_email"];
+            require_once 'CRM/Core/BAO/UFGroup.php';
+            $honorParams['email'] = $params['honor_email'];
 
             require_once 'CRM/Dedupe/Finder.php';
             $dedupeParams = CRM_Dedupe_Finder::formatParams($honorParams, 'Individual');
@@ -954,7 +968,7 @@ GROUP BY currency
      */
     static function getContributionDetails( $exportMode, $componentIds )
     {
-        require_once "CRM/Export/Form/Select.php";
+        require_once 'CRM/Export/Form/Select.php';
 
         $paymentDetails = array( );
         $componentClause = ' IN ( ' . implode( ',', $componentIds ) . ' ) ';
@@ -1014,12 +1028,11 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
      */
     static function createAddress( &$params, $billingLocationTypeID ) 
     {
-
-        $billingFields = array( "street_address",
-                                "city",
-                                "state_province_id",
-                                "postal_code",
-                                "country_id"
+        $billingFields = array( 'street_address',
+                                'city',
+                                'state_province_id',
+                                'postal_code',
+                                'country_id'
                                 );
 
         //build address array 
@@ -1032,7 +1045,7 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
             $addressParams[$value] = $params["billing_{$value}-{$billingLocationTypeID}"];
         }
 
-        require_once "CRM/Core/BAO/Address.php";
+        require_once 'CRM/Core/BAO/Address.php';
         $address = CRM_Core_BAO_Address::add( $addressParams, false );
 
         return $address->id;
@@ -1122,7 +1135,7 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
                   WHERE cc.is_test = {$isTest} AND ccs.contact_id = " . $contact_id;
        
         $cs = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
-        require_once "CRM/Contribute/PseudoConstant.php";
+        require_once 'CRM/Contribute/PseudoConstant.php';
         $contributionStatus = CRM_Contribute_Pseudoconstant::contributionStatus( );
         $result = array();
         while( $cs->fetch( ) ) {
@@ -1210,7 +1223,7 @@ WHERE ( $contributionCond  OR $contactCond )";
         $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
         
         while( $dao->fetch( ) ) {
-            require_once "CRM/Core/BAO/Block.php";
+            require_once 'CRM/Core/BAO/Block.php';
             $params = array ( 'id' => $dao->id );
             CRM_Core_BAO_Block::blockDelete( 'Address', $params );
         }
@@ -1378,7 +1391,9 @@ LEFT JOIN  civicrm_contribution contribution ON ( componentPayment.contribution_
        
         if( $participant ) {
             $participantStatuses = CRM_Event_PseudoConstant::participantStatus( );
-            $oldStatus           = CRM_Core_DAO::getFieldValue( "CRM_Event_DAO_Participant", $participant->id, 'status_id' );
+            $oldStatus           = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Participant', 
+                                                                $participant->id, 
+                                                                'status_id' );
         }
         // we might want to process contribution object.
         $processContribution = false;
@@ -1633,7 +1648,7 @@ WHERE     c.id = $contributionId";
         
         require_once 'CRM/Core/PseudoConstant.php';
         $activityTypeIds = CRM_Core_PseudoConstant::activityType( true, false, false, 'name' );
-        $activityTypeId  = array_search( "Contribution", $activityTypeIds );
+        $activityTypeId  = array_search( 'Contribution', $activityTypeIds );
         
         if ( $activityTypeId && $contributorId ) {
             $activityQuery  = "

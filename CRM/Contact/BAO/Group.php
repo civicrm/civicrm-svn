@@ -94,9 +94,10 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
 	
         // added for CRM-1631 and CRM-1794
         // delete all subscribed mails with the selected group id
-        require_once 'CRM/Mailing/Event/BAO/Subscribe.php';
-        $subscribe = new CRM_Mailing_Event_BAO_Subscribe( );
-        $subscribe->deleteGroup($id);
+        require_once 'CRM/Mailing/Event/DAO/Subscribe.php';
+        $subscribe = new CRM_Mailing_Event_DAO_Subscribe( );
+        $subscribe->group_id = $id;
+        $subscribe->delete( );
 
         // delete all Subscription  records with the selected group id
         $subHistory = new CRM_Contact_DAO_SubscriptionHistory( );
@@ -111,10 +112,21 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
 
         // make all the 'add_to_group_id' field of 'civicrm_uf_group table', pointing to this group, as null
         $params = array( 1 => array( $id, 'Integer' ) );
-        $query = "update civicrm_uf_group SET `add_to_group_id`= NULL where `add_to_group_id` = %1";
+        $query = "UPDATE civicrm_uf_group SET `add_to_group_id`= NULL WHERE `add_to_group_id` = %1";
         CRM_Core_DAO::executeQuery( $query, $params );
 
-        $query = "update civicrm_uf_group SET `limit_listings_group_id`= NULL where `limit_listings_group_id` = %1";
+        $query = "UPDATE civicrm_uf_group SET `limit_listings_group_id`= NULL WHERE `limit_listings_group_id` = %1";
+        CRM_Core_DAO::executeQuery( $query, $params );
+
+        // make sure u delete all the entries from civicrm_mailing_group and civicrm_campaign_group
+        // CRM-6186
+        $query = "DELETE FROM civicrm_mailing_group where entity_table = 'civicrm_group' AND entity_id = %1";
+        CRM_Core_DAO::executeQuery( $query, $params );
+
+        $query = "DELETE FROM civicrm_campaign_group where entity_table = 'civicrm_group' AND entity_id = %1";
+        CRM_Core_DAO::executeQuery( $query, $params );
+
+        $query = "DELETE FROM civicrm_acl_entity_role where entity_table = 'civicrm_group' AND entity_id = %1";
         CRM_Core_DAO::executeQuery( $query, $params );
 
         if ( defined( 'CIVICRM_MULTISITE' ) && CIVICRM_MULTISITE ) {

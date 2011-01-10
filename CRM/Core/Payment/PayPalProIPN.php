@@ -83,7 +83,6 @@ class CRM_Core_Payment_PayPalProIPN extends CRM_Core_Payment_BaseIPN {
 
     function recur( &$input, &$ids, &$objects, $first ) 
     {
-        
         if ( ! isset( $input['txnType'] ) ) {
             CRM_Core_Error::debug_log_message( "Could not find txn_type in input request" );
             echo "Failure: Invalid parameters<p>";
@@ -178,10 +177,18 @@ class CRM_Core_Payment_PayPalProIPN extends CRM_Core_Payment_BaseIPN {
         $recur->save( );
 
         if ( $sendNotification ) {
+            $autoRenewMembership = false;
+            if ( $recur->id && 
+                 isset( $ids['membership'] ) && $ids['membership'] ) {
+                $autoRenewMembership = true;
+            }
             //send recurring Notification email for user
             require_once 'CRM/Contribute/BAO/ContributionPage.php';
-            CRM_Contribute_BAO_ContributionPage::recurringNofify( $subscriptionPaymentStatus, $ids['contact'], 
-                                                                  $ids['contributionPage'], $recur );
+            CRM_Contribute_BAO_ContributionPage::recurringNofify( $subscriptionPaymentStatus, 
+                                                                  $ids['contact'], 
+                                                                  $ids['contributionPage'], 
+                                                                  $recur,
+                                                                  $autoRenewMembership );
         }
 
         if ( $txnType != 'recurring_payment' ) {
@@ -293,7 +300,21 @@ class CRM_Core_Payment_PayPalProIPN extends CRM_Core_Payment_BaseIPN {
             $ids['related_contact']     = self::retrieve('relatedContactID' , 'Integer', 'GET', false );
             $ids['onbehalf_dupe_alert'] = self::retrieve('onBehalfDupeAlert', 'Integer', 'GET', false );
         }
-        
+
+        if ( !$ids['membership'] && $ids['contributionRecur'] ) {
+            $sql = "
+    SELECT m.id 
+      FROM civicrm_membership m
+INNER JOIN civicrm_membership_payment mp ON m.id = mp.membership_id AND mp.contribution_id = %1
+     WHERE m.contribution_recur_id = %2
+     LIMIT 1";
+            $sqlParams = array( 1 => array( $ids['contribution'],      'Integer' ),
+                                2 => array( $ids['contributionRecur'], 'Integer' ) );
+            if ( $membershipId = CRM_Core_DAO::singleValueQuery( $sql, $sqlParams ) ) {
+                $ids['membership'] = $membershipId;
+            }
+        }
+
         if ( ! $this->validateData( $input, $ids, $objects ) ) {
             return false;
         }

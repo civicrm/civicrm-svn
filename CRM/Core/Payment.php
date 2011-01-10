@@ -88,13 +88,13 @@ abstract class CRM_Core_Payment {
      * @static  
      *  
      */  
-    static function &singleton( $mode = 'test', &$paymentProcessor, &$paymentForm = null ) {        
-        if ( self::$_singleton === null ) {
-            $config       = CRM_Core_Config::singleton( );
-
+    static function &singleton( $mode = 'test', &$paymentProcessor, &$paymentForm = null, $force = false ) 
+    {        
+        $cacheKey = "{$mode}_{$paymentProcessor['id']}_".(int)isset( $paymentForm );
+        if ( !isset( self::$_singleton[$cacheKey] ) || $force ) {
+            $config = CRM_Core_Config::singleton( );
             require_once 'CRM/Core/Extensions.php';
             $ext = new CRM_Core_Extensions();
-            
             if ( $ext->isExtensionKey( $paymentProcessor['class_name'] ) ) {
                 $paymentClass = $ext->keyToClass( $paymentProcessor['class_name'], 'payment' );
                 require_once( $ext->classToPath( $paymentClass ) );
@@ -102,14 +102,17 @@ abstract class CRM_Core_Payment {
                 $paymentClass = "CRM_Core_" . $paymentProcessor['class_name'];
                 require_once( str_replace( '_', DIRECTORY_SEPARATOR , $paymentClass ) . '.php' );
             }
-
-            self::$_singleton = eval( 'return ' . $paymentClass . '::singleton( $mode, $paymentProcessor );' );
             
+            //load the object.
+            self::$_singleton[$cacheKey] = eval( 'return ' . $paymentClass . '::singleton( $mode, $paymentProcessor );' );
+            
+            //load the payment form for required processor.
             if ( $paymentForm !== null ) {
-                self::$_singleton->setForm( $paymentForm );
+                self::$_singleton[$cacheKey]->setForm( $paymentForm );
             }
         }
-        return self::$_singleton;
+        
+        return self::$_singleton[$cacheKey];
     }
     
     /**
@@ -185,6 +188,17 @@ abstract class CRM_Core_Payment {
         return false;
     }
 
+    /**
+     * Function to check whether the method is present for the payment processor  
+     *
+     * @param  object $paymentObject Object of the payment processor.
+     * @return boolean
+     * @public
+     */
+    static function isCancelSupported( &$paymentObject ) 
+    {
+        return method_exists( CRM_Utils_System::getClassName( $paymentObject ), 'cancelSubscription' );
+    }
 }
 
 

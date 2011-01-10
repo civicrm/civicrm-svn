@@ -83,7 +83,7 @@ class api_v2_TagTest extends CiviUnitTestCase
         $tag = $this->tagCreate();
         $this->assertEquals( 0, $tag['is_error'], 'In line ' . __LINE__ );
         
-        $params = array( 'id' => $tag['id'],
+        $params = array( 'id' => $tag['tag_id'],
                          'name' => $tag['name'] );
         $result = civicrm_tag_get($params);
 

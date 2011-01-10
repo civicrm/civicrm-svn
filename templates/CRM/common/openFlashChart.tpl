@@ -52,6 +52,9 @@
 			
 function save_image( divName ) {
       var divId = {/literal}"{$contriChart}"{literal} ? 'open_flash_chart_'+divName : {/literal}"{$divId}"{literal};
+          if( !divId ) { 
+               divId = 'open_flash_'+divName;
+        }
       OFC.jquery.popup( divId );
 }
 

@@ -182,11 +182,25 @@ class CRM_Dedupe_Finder
         $flat = array();
         CRM_Utils_Array::flatten($fields, $flat);
 
+        $replace_these = array (
+                       'individual_prefix'     => 'prefix_id',
+                       'individual_suffix'     => 'suffix_id',
+                       'gender'                => 'gender_id',
+        );         
+        //handle for individual_suffix, individual_prefix, gender
+        foreach(array('individual_suffix','individual_prefix','gender') as $name) {
+            if ( CRM_Utils_Array::value( $name, $fields ) ) {
+                $flat[$replace_these[$name]] = $flat[$name];
+                unset($flat[$name]);
+            }
+        }
+    
         // handle {birth,deceased}_date
         foreach(array('birth_date', 'deceased_date') as $date) {
             if ( CRM_Utils_Array::value( $date, $fields ) ) {
                 $flat[$date] = $fields[$date];
                 if (is_array($flat[$date])) $flat[$date] = CRM_Utils_Date::format($flat[$date]);
+                $flat[$date] = CRM_Utils_Date::processDate( $flat[$date] );
             }
         }
         

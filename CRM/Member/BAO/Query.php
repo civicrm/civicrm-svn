@@ -113,6 +113,11 @@ class CRM_Member_BAO_Query
                 $query->_select['owner_membership_id']  = "civicrm_membership.owner_membership_id as owner_membership_id";
                 $query->_element['owner_membership_id'] = 1;
             }
+            //add recur id w/o taking contribution table in join.
+            if ( CRM_Utils_Array::value( 'membership_recur_id', $query->_returnProperties ) ) {
+                $query->_select['membership_recur_id']  = "civicrm_membership.contribution_recur_id as membership_recur_id";
+                $query->_element['membership_recur_id'] = 1;
+            }
         }
     }
 
@@ -149,7 +154,7 @@ class CRM_Member_BAO_Query
         case 'member_join_date_high':
             $query->dateQueryBuilder( $values,
                                       'civicrm_membership', 'member_join_date', 'join_date',
-                                      'Join Date' );
+                                      'Member Since' );
             return;
         case 'member_start_date_low':
         case 'member_start_date_high':
@@ -219,6 +224,18 @@ class CRM_Member_BAO_Query
             $query->_tables['civicrm_membership'] = $query->_whereTables['civicrm_membership'] = 1;
             return;
             
+        case 'member_auto_renew':
+            $op = "!=";
+            if ( $value ) {
+                 $query->_where[$grouping][] = " civicrm_membership.contribution_recur_id IS NOT NULL";
+                 $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "ccr.contribution_status_id", 
+                                                                                   $op,
+                                                                                   CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionValue', 'Cancelled', 'value', 'label'),
+                                                                                   "Integer" );
+                 $query->_qill[$grouping][] = ts( "Find Auto-renew Memberships" );
+            }
+            $query->_tables['civicrm_membership'] = $query->_whereTables['civicrm_membership'] = 1;
+            return;
         case 'member_pay_later':
             $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_membership.is_pay_later", 
                                                                               $op,
@@ -285,7 +302,8 @@ class CRM_Member_BAO_Query
         switch ( $name ) {
         
         case 'civicrm_membership':
-            $from = " $side JOIN civicrm_membership ON civicrm_membership.contact_id = contact_a.id ";
+            $from  = " $side JOIN civicrm_membership ON civicrm_membership.contact_id = contact_a.id ";
+            $from .= " $side JOIN civicrm_contribution_recur ccr ON ( civicrm_membership.contribution_recur_id = ccr.id )";
             break;
     
         case 'civicrm_membership_type':
@@ -329,7 +347,8 @@ class CRM_Member_BAO_Query
                                 'membership_source'      => 1,
                                 'membership_status'      => 1,
                                 'membership_id'          => 1,
-                                'owner_membership_id'    => 1
+                                'owner_membership_id'    => 1,
+                                'membership_recur_id'    => 1
                                 );
 
             // also get all the custom membership properties
@@ -363,7 +382,7 @@ class CRM_Member_BAO_Query
 
         $form->addElement( 'text', 'member_source', ts( 'Source' ) );
  
-        $form->addDate( 'member_join_date_low', ts('Join Date - From'), false, array( 'formatType' => 'searchDate') );
+        $form->addDate( 'member_join_date_low', ts('Member Since - From'), false, array( 'formatType' => 'searchDate') );
         $form->addDate( 'member_join_date_high', ts('To'), false, array( 'formatType' => 'searchDate') );
 
         $form->addDate( 'member_start_date_low', ts('Start Date - From'), false, array( 'formatType' => 'searchDate') );
@@ -374,6 +393,7 @@ class CRM_Member_BAO_Query
 
         $form->addElement( 'checkbox', 'member_test' , ts( 'Find Test Memberships?' ) );
         $form->addElement( 'checkbox', 'member_pay_later', ts( 'Find Pay Later Memberships?' ) );
+        $form->addElement( 'checkbox', 'member_auto_renew', ts( 'Find Auto-renew Memberships?' ) );
 
         // add all the custom  searchable fields
         require_once 'CRM/Custom/Form/CustomData.php';

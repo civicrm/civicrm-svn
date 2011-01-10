@@ -449,7 +449,7 @@ ORDER BY modified_date desc";
      */
     private static function buildNoteTree( $parentId, $maxDepth = 0, $snippet = FALSE, &$tree = array(), $depth = 0 )
     {
-        if ( $maxDepth && $depth > $max_depth ) {
+        if ( $maxDepth && $depth > $maxDepth  ) {
             return;
         }
 
@@ -468,7 +468,7 @@ ORDER BY modified_date desc";
                 require_once 'CRM/Contact/DAO/Contact.php';
                 require_once 'CRM/Core/Smarty/plugins/modifier.mb_truncate.php';
                 $contact =  new CRM_Contact_DAO_Contact( );
-                $createdById = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Note', $parentId, 'entity_id' );
+                $createdById = $note->contact_id;
                 $contact->id = $createdById;
                 $contact->find( );
                 $contact->fetch( );

@@ -88,6 +88,7 @@ CRM/Standalone/OpenID/DAO
 bin/setup.sh
 civicrm-version.txt
 civicrm.config.php
+install/langs.php
 l10n
 packages/.channels
 packages/.depdb

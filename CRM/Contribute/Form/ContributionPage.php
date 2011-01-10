@@ -95,6 +95,7 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
         // current contribution page id
         $this->_id = CRM_Utils_Request::retrieve('id', 'Positive',
                                                  $this, false, 0);
+        $this->assign( 'contributionPageID', $this->_id );
         
         // get the requested action
         $this->_action = CRM_Utils_Request::retrieve('action', 'String',
@@ -104,13 +105,9 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
         if ( $this->_id ) {
             $title = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage', $this->_id, 'title' );
             
-            $url = CRM_Utils_System::url( 'civicrm/admin/contribute', 'reset=1' ); 
-            
             if ($this->_action == CRM_Core_Action::UPDATE) {
                 $this->_single = true;
             }
-            
-            $this->assign( 'contribPageId', $this->_id );
         }
 
         // set up tabs

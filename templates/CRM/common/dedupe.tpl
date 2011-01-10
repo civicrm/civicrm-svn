@@ -40,7 +40,8 @@ function processDupes( cid, oid, oper, context, reloadURL ) {
 			        saveProcessDupes( cid, oid, oper, context );
 			        cj(this).dialog( 'close' );
 				if ( context == 'merge-contact' && reloadURL ) {
-				     window.location.href = reloadURL;  
+                                     // redirect after a small delay
+                                     setTimeout("window.location.href = '" + reloadURL + "'", 500);
 				}
 			}
 		} 
