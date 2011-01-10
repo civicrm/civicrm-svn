@@ -93,10 +93,10 @@
   <!--<p>{$form.moveBelongings.html} {$form.moveBelongings.label}</p>-->
   <!--<p>{$form.deleteOther.html} {$form.deleteOther.label}</p>-->
 </div>
-<div class="form-item">
+<div class="message status">
     <p><strong>{ts}WARNING: The duplicate contact record WILL BE DELETED after the merge is complete.{/ts}</strong></p>
     {if $user}
-      <p><strong>{ts}There are Drupal user accounts associated with both the original and duplicate contacts. If you continue with the merge, the user record associated with the duplicate contact will not be deleted, but will be un-linked from the associated contact record (which will be deleted). If that user logs in again, a new contact record will be created for them.{/ts}</strong></p>
+      <p><strong>{ts 1=$config->userFramework}There are %1 user accounts associated with both the original and duplicate contacts. If you continue with the merge, the user record associated with the duplicate contact will not be deleted, but will be un-linked from the associated contact record (which will be deleted). If that user logs in again, a new contact record will be created for them.{/ts}</strong></p>
     {/if}
     {if $other_contact_subtype}
       <p><strong>The duplicate contact (the one that will be deleted) is a <em>{$other_contact_subtype}</em>. Any data related to this will be lost forever (there is no undo) if you complete the merge.</strong></p>
