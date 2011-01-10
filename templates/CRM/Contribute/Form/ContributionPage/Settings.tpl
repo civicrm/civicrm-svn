@@ -40,7 +40,7 @@
 	<tr class="crm-contribution-contributionpage-settings-form-block-contribution_type_id"><td class="label">{$form.contribution_type_id.label}</td><td>{$form.contribution_type_id.html}<br />	
             <span class="description">{ts}Select the corresponding contribution type for contributions made using this page.{/ts}</span> {help id="id-contribution_type"}</td>
 	</tr>
-	<tr class="crm-contribution-contributionpage-settings-form-block-is_organization"><td>&nbsp;</td><td>{$form.is_organization.html} {$form.is_organization.label}</td></tr>
+	<tr class="crm-contribution-contributionpage-settings-form-block-is_organization"><td>&nbsp;</td><td>{$form.is_organization.html} {$form.is_organization.label} {help id="id-is_organization"}</td></tr>
 	<tr id="for_org_option" class="crm-contribution-form-block-is_organization">
         <td>&nbsp;</td>
         <td>

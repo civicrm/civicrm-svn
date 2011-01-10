@@ -674,7 +674,12 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
     {
         // get price info
         require_once 'CRM/Price/BAO/Set.php';
-        $price = CRM_Price_BAO_Set::initSet( $form, $eventID, 'civicrm_event' );
+        
+        $validFieldsOnly = true;
+        if ( CRM_Utils_System::getClassName($form) == 'CRM_Event_Form_Participant' ) {
+            $validFieldsOnly = false;
+        }
+        $price = CRM_Price_BAO_Set::initSet( $form, $eventID, 'civicrm_event', $validFieldsOnly );
         
         if ( $price == false ) {
             require_once 'CRM/Core/OptionGroup.php'; 

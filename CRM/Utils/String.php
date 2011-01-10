@@ -186,7 +186,7 @@ class CRM_Utils_String {
      * @static
      */
     static function isAscii( $str, $utf8 = true ) {
-        if( ! function_exists( mb_detect_encoding ) ) {
+        if( ! function_exists( 'mb_detect_encoding' ) ) {
             $str = preg_replace( '/\s+/', '', $str ); // eliminate all white space from the string
             /* FIXME:  This is a pretty brutal hack to make utf8 and 8859-1 work.
              */

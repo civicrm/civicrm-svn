@@ -108,8 +108,6 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
             if ($this->_action == CRM_Core_Action::UPDATE) {
                 $this->_single = true;
             }
-            
-            $this->assign( 'contribPageId', $this->_id );
         }
 
         // set up tabs

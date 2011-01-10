@@ -35,6 +35,7 @@
  */
 
 require_once 'CRM/Core/Form.php';
+require_once "CRM/Mailing/Info.php";
 require_once "CRM/Custom/Form/CustomData.php";
 require_once 'CRM/Contact/BAO/GroupNesting.php';
 require_once 'CRM/Core/BAO/Domain.php';
@@ -224,7 +225,8 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
             unset( $groupTypes['Access Control'] );
         }
         
-        if ( ! CRM_Core_Permission::access( 'CiviMail' ) ) {
+        $accessCiviMail = ( ( CRM_Core_Permission::check( 'access CiviMail' ) ) || ( CRM_Mailing_Info::workflowEnabled( ) && CRM_Core_Permission::check( 'create mailings' ) ) );
+        if ( !$accessCiviMail ) {
             unset( $groupTypes['Mailing List'] );
         }
 

@@ -118,7 +118,8 @@ ORDER BY civicrm_phone.is_primary DESC,  phone_id ASC ";
                              'is_primary'     => $dao->is_primary,
                              'id'             => $dao->phone_id,
                              'phone'          => $dao->phone,
-                             'locationTypeId' => $dao->locationTypeId );
+                             'locationTypeId' => $dao->locationTypeId,
+                             'phoneTypeId'    => $dao->phoneTypeId );
             
             if ( $updateBlankLocInfo ) {
                 $numbers[$count++] = $values;

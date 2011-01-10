@@ -60,6 +60,20 @@ class CRM_Report_Form_Member_Lapse extends CRM_Report_Form {
                                  'id' =>
                                  array( 'no_display' => true,
                                         'required'   => true, ),
+                                'first_name'  => 
+                                 array( 'title'      => ts( 'First Name' ),
+                                        'no_repeat'  => true ),
+                                 'id'           => 
+                                 array( 'no_display' => true, 
+                                        'required'   => true ), 
+                                 
+                                 'last_name' => 
+                                 array( 'title'      => ts( 'Last Name' ),
+                                        'no_repeat'  => true ),
+                                 'id'           => 
+                                 array( 'no_display' => true, 
+                                        'required'   => true ),
+                                 
                                  ), 
                           'grouping'  => 'contact-fields',
                           ),

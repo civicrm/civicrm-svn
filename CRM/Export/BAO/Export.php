@@ -308,7 +308,7 @@ class CRM_Export_BAO_Export
         }
 
         $query = new CRM_Contact_BAO_Query( 0, $returnProperties, null, false, false, $queryMode );
-        list( $select, $from, $where ) = $query->query( );
+        list( $select, $from, $where, $having ) = $query->query( );
         
         if ( $mergeSameHousehold == 1 ) {
             if ( !$returnProperties['id'] ) {
@@ -337,7 +337,7 @@ class CRM_Export_BAO_Export
                 // build Query for each relationship
                 $relationQuery[$rel] = new CRM_Contact_BAO_Query( 0, $relationReturnProperties,
                                                                   null, false, false, $queryMode );
-                list( $relationSelect, $relationFrom, $relationWhere ) = $relationQuery[$rel]->query( );
+                list( $relationSelect, $relationFrom, $relationWhere, $relationHaving ) = $relationQuery[$rel]->query( );
                 
                 list( $id, $direction ) = explode( '_', $rel, 2 );
                 // identify the relationship direction
@@ -395,7 +395,7 @@ class CRM_Export_BAO_Export
                 $relationWhere       = " WHERE contact_a.is_deleted = 0 {$relationshipClause}";
                 $relationGroupBy     = " GROUP BY crel.{$contactA}";
                 $relationSelect      = "{$relationSelect}, {$contactA} as refContact ";
-                $relationQueryString = "$relationSelect $relationFrom $relationWhere $relationGroupBy";                
+                $relationQueryString = "$relationSelect $relationFrom $relationWhere $relationHaving $relationGroupBy";                
 
                 $allRelContactDAO    = CRM_Core_DAO::executeQuery( $relationQueryString );
                 while ( $allRelContactDAO->fetch() ) {
@@ -429,7 +429,7 @@ class CRM_Export_BAO_Export
             }
         }
 
-        $queryString = "$select $from $where";
+        $queryString = "$select $from $where $having";
 
         $groupBy = "";
         if ( CRM_Utils_Array::value( 'tags'  , $returnProperties ) || 

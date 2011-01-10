@@ -44,7 +44,7 @@ class CRM_Mailing_Form_Approve extends CRM_Core_Form
 
     public function redirectToListing( )
     {
-        $url = CRM_Utils_System::url( 'civicrm/mailing/browse/unscheduled', 'reset=1&scheduled=false' );
+        $url = CRM_Utils_System::url( 'civicrm/mailing/browse/scheduled', 'reset=1&scheduled=true' );
         CRM_Utils_System::redirect( $url );
     }
 

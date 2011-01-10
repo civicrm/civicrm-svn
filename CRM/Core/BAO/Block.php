@@ -280,10 +280,29 @@ class CRM_Core_BAO_Block
                         }
                     } else {
                         if ( $blockValue['locationTypeId'] == $value['location_type_id'] ) {
-                            //assigned id as first come first serve basis 
-                            $value['id'] = $blockValue['id'];
-                            unset( $blockIds[$blockId] );
-                            break;
+                            $valueId = false;
+                            
+                            if ( $blockName == 'phone' ) {
+                                if ( $blockValue['phoneTypeId'] == $value['phone_type_id'] ) {
+                                    $valueId = true;
+                                }
+                            } else if ( $blockName == 'im' ) {
+                                if ( $blockValue['providerId'] == $value['provider_id'] ) {
+                                    $valueId = true;
+                                }
+                            } else {
+                                $valueId = true;
+                            }
+ 	 	 		            
+                            if ( $valueId ) {
+                                //assigned id as first come first serve basis 
+                                $value['id'] = $blockValue['id'];
+                                if ( !$primaryId && CRM_Utils_Array::value( 'is_primary', $blockValue ) ) {
+                                    $value['is_primary'] = $blockValue['is_primary'];
+                                }
+                                unset( $blockIds[$blockId] );
+                                break;
+                            }
                         }
                     }
                 }

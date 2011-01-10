@@ -157,6 +157,14 @@ class CRM_Contact_BAO_Query
      */
     public $_simpleFromClause;
 
+    /**   
+     * the having values
+     *
+     * @var string
+     *
+     */
+    public $_having;
+
     /** 
      * The english language version of the query 
      *   
@@ -404,6 +412,7 @@ class CRM_Contact_BAO_Query
         $this->_options     = array( );
         $this->_cfIDs       = array( );
         $this->_paramLookup = array( );
+        $this->_having 		= array( );
 
         $this->_customQuery = null; 
         
@@ -1076,7 +1085,17 @@ class CRM_Contact_BAO_Query
             $where = "WHERE {$this->_whereClause}";
         }
 
-        return array( $select, $from, $where );
+		$having = '';
+        if ( ! empty( $this->_having ) ) {
+            foreach ( $this->_having as $havingsets ) {
+				foreach ( $havingsets as $havingset ) {
+					$havingvalue[] = $havingset;
+				}
+			}
+			$having = ' HAVING ' . implode( ' AND ', $havingvalue );
+        }
+		
+        return array( $select, $from, $where, $having );
     }
 
     function &getWhereValues( $name, $grouping ) 
@@ -2646,6 +2665,7 @@ WHERE  id IN ( $groupIDs )
             } else {
                 $value = "'$value%'";
             }
+            $op = 'LIKE';
             $this->_where[$grouping][] = " ( LOWER(civicrm_address.street_address) $op $value )";
             $this->_qill[$grouping][]  = ts( 'Street' ) . " $op '$n'";
         } else {
@@ -3121,9 +3141,9 @@ WHERE  id IN ( $groupIDs )
     static function getQuery( $params = null, $returnProperties = null, $count = false ) 
     {
         $query = new CRM_Contact_BAO_Query( $params, $returnProperties );
-        list( $select, $from, $where ) = $query->query( );
+        list( $select, $from, $where, $having ) = $query->query( );
         
-        return "$select $from $where";
+        return "$select $from $where $having";
     }
 
     /**
@@ -3150,9 +3170,9 @@ WHERE  id IN ( $groupIDs )
                                              null, true, false, 1,
                                              false, true, $smartGroupCache );
  
-        list( $select, $from, $where ) = $query->query( );
+        list( $select, $from, $where, $having ) = $query->query( );
         $options = $query->_options;
-        $sql = "$select $from $where";
+        $sql = "$select $from $where $having";
         if ( ! empty( $sort ) ) {
             $sql .= " ORDER BY $sort ";
         }
@@ -3246,7 +3266,7 @@ WHERE  id IN ( $groupIDs )
             }
         }
         
-        list( $select, $from, $where ) = $this->query( $count, $sortByChar, $groupContacts );
+        list( $select, $from, $where, $having ) = $this->query( $count, $sortByChar, $groupContacts );
         
         if ( empty( $where ) ) {
             $where = "WHERE $permission";
@@ -3375,7 +3395,7 @@ WHERE  id IN ( $groupIDs )
             $groupBy = 'GROUP BY civicrm_activity.id ';
         }
 
-        $query = "$select $from $where $groupBy $order $limit";
+        $query = "$select $from $where $having $groupBy $order $limit";
         // CRM_Core_Error::debug('query', $query);
         // CRM_Core_Error::debug('query', $where);
 
@@ -3405,9 +3425,9 @@ WHERE  id IN ( $groupIDs )
         $this->_skipPermission = $val;
     }
 
-    function &summaryContribution( )
+    function &summaryContribution( $context = NULL )
     {
-        list( $select, $from, $where ) = $this->query( true );
+        list( $select, $from, $where, $having ) = $this->query( true );
 
         // hack $select
         $select = "
@@ -3417,19 +3437,16 @@ SELECT COUNT( civicrm_contribution.total_amount ) as total_count,
        civicrm_contribution.currency              as currency";
 
         // make sure contribution is completed - CRM-4989
-        $additionalWhere = "civicrm_contribution.contribution_status_id = 1";
-
-        if ( ! empty( $where ) ) {
-            $newWhere = "$where AND $additionalWhere";
-        } else {
-            $newWhere = " AND $additionalWhere";
+        $where .= " AND civicrm_contribution.contribution_status_id = 1 ";
+        if ( $context == 'search' ) {
+            $where .=" AND contact_a.is_deleted = 0 ";
         }
 
         $summary = array( );
         $summary['total'] = array( );
         $summary['total']['count'] = $summary['total']['amount'] = $summary['total']['avg'] = "n/a";
 
-        $query  = "$select $from $newWhere GROUP BY currency";
+        $query  = "$select $from $where GROUP BY currency";
         $params = array( );
 
         $dao =& CRM_Core_DAO::executeQuery( $query, $params );
@@ -3456,14 +3473,12 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
        AVG(   civicrm_contribution.total_amount ) as cancel_avg,
        civicrm_contribution.currency              as currency";
 
-        $additionalWhere = "civicrm_contribution.cancel_date IS NOT NULL";
-        if ( ! empty( $where ) ) {
-            $newWhere = "$where AND $additionalWhere";
-        } else {
-            $newWhere = " AND $additionalWhere";
+        $where .= " AND civicrm_contribution.cancel_date IS NOT NULL ";
+        if ( $context == 'search' ) {
+            $where .=" AND contact_a.is_deleted = 0 ";
         }
-
-        $query = "$select $from $newWhere GROUP BY currency";
+        
+        $query = "$select $from $where GROUP BY currency";
         $dao =& CRM_Core_DAO::executeQuery( $query, $params );
 
         if ($dao->N <= 1 ) {

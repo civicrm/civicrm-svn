@@ -176,8 +176,6 @@ class CRM_Mailing_BAO_Mailing extends CRM_Mailing_DAO_Mailing
                                         $mg.mailing_id = {$mailing_id}
                         AND             $g2contact.status = 'Removed'
                         AND             $mg.group_type = 'Base'";
-        
-        
         $mailingGroup->query($unSubscribeBaseGroup);
         
         /* Add all the (intended) recipients of an excluded prior mailing to
@@ -195,33 +193,37 @@ class CRM_Mailing_BAO_Mailing extends CRM_Mailing_DAO_Mailing
                         AND             $mg.group_type = 'Exclude'";
         $mailingGroup->query($excludeSubMailing);
         
-        $ss = new CRM_Core_DAO();
-        $ss->query(
-                "SELECT             $group.saved_search_id as saved_search_id,
-                                    $group.id as id
-                FROM                $group
-                INNER JOIN          $mg
-                        ON          $mg.entity_id = $group.id
-                WHERE               $mg.entity_table = '$group'
-                    AND             $mg.group_type = 'Exclude'
-                    AND             $mg.mailing_id = {$mailing_id}
-                    AND             $group.saved_search_id IS NOT null");
+        // get all the saved searches AND hierarchical groups
+        // and load them in the cache
+        $sql = "
+SELECT     $group.id, $group.cache_date, $group.saved_search_id, $group.children
+FROM       $group
+INNER JOIN $mg ON $mg.entity_id = $group.id
+WHERE      $mg.entity_table = '$group'
+  AND      $mg.group_type = 'Exclude'
+  AND      $mg.mailing_id = {$mailing_id}
+  AND      ( saved_search_id != 0
+   OR        saved_search_id IS NOT NULL
+   OR        children IS NOT NULL )
+";
 
-        $whereTables = array( );
-        while ( $ss->fetch( ) ) {
-            /* run the saved search query and dump result contacts into the temp
-             * table */
-            $tables = array($contact => 1);
-            $sql = CRM_Contact_BAO_SavedSearch::contactIDsSQL( $ss->saved_search_id );
-            $sql = $sql. " AND contact_a.id NOT IN ( 
-                              SELECT contact_id FROM $g2contact 
-                              WHERE $g2contact.group_id = {$ss->id} AND $g2contact.status = 'Removed')"; 
-            
-            $mailingGroup->query( "INSERT IGNORE INTO X_$job_id (contact_id) $sql" );
+        $groupDAO = CRM_Core_DAO::executeQuery( $sql );
+        while ( $groupDAO->fetch( ) ) {
+            if ( $groupDAO->cache_date == null ) {
+                require_once 'CRM/Contact/BAO/GroupContactCache.php';
+                CRM_Contact_BAO_GroupContactCache::load( $group );
+            }
+
+            $smartGroupExclude = "
+INSERT IGNORE INTO X_$job_id (contact_id) 
+SELECT c.contact_id
+FROM   civicrm_group_contact_cache c
+WHERE  c.group_id = {$groupDAO->id}
+";
+            $mailingGroup->query($smartGroupExclude);
         }
 
         /* Get all the group contacts we want to include */
-        
         $mailingGroup->query(
             "CREATE TEMPORARY TABLE I_$job_id 
             (email_id int, contact_id int primary key)
@@ -234,6 +236,7 @@ class CRM_Mailing_BAO_Mailing extends CRM_Mailing_DAO_Mailing
         /* Get the emails with no override */
         
         $query =    "REPLACE INTO       I_$job_id (email_id, contact_id)
+
                     SELECT DISTINCT     $email.id as email_id,
                                         $contact.id as contact_id
                     FROM                $email
@@ -289,46 +292,44 @@ class CRM_Mailing_BAO_Mailing extends CRM_Mailing_DAO_Mailing
                         AND             X_$job_id.contact_id IS null
                     ORDER BY $email.is_bulkmail");
 
-        /* Construct the saved-search queries */
-        $ss->query("SELECT          $group.saved_search_id as saved_search_id,
-                                    $group.id as id
-                    FROM            $group
-                    INNER JOIN      $mg
-                            ON      $mg.entity_id = $group.id
-                                AND $mg.entity_table = '$group'
-                    WHERE               
-                                    $mg.group_type = 'Include'
-                        AND         $mg.search_id IS NULL
-                        AND         $mg.mailing_id = {$mailing_id}
-                        AND         $group.saved_search_id IS NOT null");
+        
+        $sql = "
+SELECT     $group.id, $group.cache_date, $group.saved_search_id, $group.children
+FROM       $group
+INNER JOIN $mg ON $mg.entity_id = $group.id
+WHERE      $mg.entity_table = '$group'
+  AND      $mg.group_type = 'Include'
+  AND      $mg.search_id IS NULL
+  AND      $mg.mailing_id = {$mailing_id}
+  AND      ( saved_search_id != 0
+   OR        saved_search_id IS NOT NULL
+   OR        children IS NOT NULL )
+";
 
-        $whereTables = array( );
-        while ($ss->fetch()) {
-            $tables = array($contact => 1, $location => 1, $email => 1);
-            list( $from, $where ) = CRM_Contact_BAO_SavedSearch::fromWhereEmail( $ss->saved_search_id );
-            $where = trim( $where );
-            if ( $where ) {
-                $where = " AND $where ";
+        $groupDAO = CRM_Core_DAO::executeQuery( $sql );
+        while ( $groupDAO->fetch( ) ) {
+            if ( $groupDAO->cache_date == null ) {
+                require_once 'CRM/Contact/BAO/GroupContactCache.php';
+                CRM_Contact_BAO_GroupContactCache::load( $group );
             }
-            $ssq = "INSERT IGNORE INTO  I_$job_id (email_id, contact_id)
-                    SELECT DISTINCT     $email.id as email_id,
-                                        contact_a.id as contact_id 
-                    $from
-                    LEFT JOIN           X_$job_id
-                            ON          contact_a.id = X_$job_id.contact_id
-                    WHERE           
-                                        contact_a.do_not_email = 0
-                        AND             contact_a.is_opt_out = 0
-                        AND             contact_a.is_deceased = 0
-                        AND             ($email.is_bulkmail = 1 OR $email.is_primary = 1)
-                        AND             $email.on_hold = 0
-                                        $where
-                        AND             contact_a.id NOT IN ( 
-                                          SELECT contact_id FROM $g2contact 
-                                          WHERE $g2contact.group_id = {$ss->id} AND $g2contact.status = 'Removed') 
-                        AND             X_$job_id.contact_id IS null
-                    ORDER BY $email.is_bulkmail";
-            $mailingGroup->query($ssq);
+
+            $smartGroupInclude = "
+INSERT IGNORE INTO I_$job_id (email_id, contact_id) 
+SELECT     e.id as email_id, c.id as contact_id
+FROM       civicrm_contact c
+INNER JOIN civicrm_email e                ON e.contact_id         = c.id
+INNER JOIN civicrm_group_contact_cache gc ON gc.contact_id        = c.id
+LEFT  JOIN X_$job_id                      ON X_$job_id.contact_id = c.id
+WHERE      gc.group_id = {$groupDAO->id}
+  AND      c.do_not_email = 0
+  AND      c.is_opt_out = 0
+  AND      c.is_deceased = 0
+  AND      (e.is_bulkmail = 1 OR e.is_primary = 1)
+  AND      e.on_hold = 0
+  AND      X_$job_id.contact_id IS null
+ORDER BY   e.is_bulkmail
+";
+            $mailingGroup->query($smartGroupInclude);
         }
 
         /**
@@ -1759,12 +1760,11 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
             $selectClause = ( $count ) ? 'COUNT( DISTINCT m.id) as count' : 'DISTINCT( m.id ) as id';
             // get all the mailings that are in this subset of groups
             $query = "
-SELECT $selectClause 
-  FROM civicrm_mailing m,
-       civicrm_mailing_group g
- WHERE g.mailing_id   = m.id
-   AND g.entity_table = 'civicrm_group'
-   AND g.entity_id IN ( $groupIDs )
+SELECT    $selectClause 
+  FROM    civicrm_mailing m
+LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
+ WHERE ( ( g.entity_table = 'civicrm_group' AND g.entity_id IN ( $groupIDs ) )
+    OR   ( g.entity_table IS NULL AND g.entity_id IS NULL ) )
    $condition";
             $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
             if ( $count ) {

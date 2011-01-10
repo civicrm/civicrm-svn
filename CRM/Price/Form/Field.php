@@ -273,8 +273,8 @@ class CRM_Price_Form_Field extends CRM_Core_Form
 
         // active_on
         $date_options = array(
-            //'format' => 'dmY His',
-            'minYear' => date('Y'),
+            'format' => 'dmY His',
+            'minYear' => date('Y') - 1,
             'maxYear' => date('Y') + 5,
             'addEmptyOption' => true
         );

@@ -370,7 +370,7 @@ function _civicrm_add_formatted_param(&$values, &$params)
     }
     
     foreach ($values as $key => $value) {
-        if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
+        if ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
             /* check if it's a valid custom field id */
             if (!array_key_exists($customFieldID, $fields['custom'])) {
                 return civicrm_create_error('Invalid custom field ID');
@@ -598,22 +598,21 @@ function _civicrm_validate_formatted_contact(&$params)
 
 /**
  *
- * @param <type> $params
- * @param <type> $values
- * @param <type> $extends
- * @param <type> $entityId 
+ * @param array $params
+ * @param array $values
+ * @param string $extends entity that this custom field extends (e.g. contribution, event, contact)
+ * @param string $entityId ID of entity per $extends
  */
 function _civicrm_custom_format_params( &$params, &$values, $extends, $entityId = null )
 {
     $values['custom'] = array();
-    require_once 'CRM/Core/BAO/CustomField.php' ;    
-    $customFields = CRM_Core_BAO_CustomField::getFields( $extends );
         
     require_once 'CRM/Core/BAO/CustomField.php';
     foreach ($params as $key => $value) {
-        if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
+        list( $customFieldID, $customValueID ) = CRM_Core_BAO_CustomField::getKeyID($key, true );
+        if ( $customFieldID ) {
             CRM_Core_BAO_CustomField::formatCustomField( $customFieldID, $values['custom'], 
-                                                         $value, $extends, null, $entityId );
+                                                         $value, $extends, $customValueID, $entityId );
         }
     }
 }
@@ -703,40 +702,8 @@ function _civicrm_participant_formatted_param( &$params, &$values, $create=false
         }
 
         //Handling Custom Data
-        if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
-            $values[$key] = $value;
-            $type = $customFields[$customFieldID]['html_type'];
-            if( $type == 'CheckBox' || $type == 'Multi-Select' ) {
-                $mulValues = explode( ',' , $value );
-                $customOption = CRM_Core_BAO_CustomOption::getCustomOption($customFieldID, true);
-                $values[$key] = array();
-                foreach( $mulValues as $v1 ) {
-                    foreach($customOption as $customValueID => $customLabel) {
-                        $customValue = $customLabel['value'];
-                        if (( strtolower(trim($customLabel['label'])) == strtolower(trim($v1)) ) ||
-                            ( strtolower(trim($customValue)) == strtolower(trim($v1)) )) { 
-                            if ( $type == 'CheckBox' ) {
-                                $values[$key][$customValue] = 1;
-                            } else {
-                                $values[$key][] = $customValue;
-                            }
-                        }
-                    }
-                }
-            } else if ( $type == 'Select' || $type == 'Radio' ) {
-                $customOption = CRM_Core_BAO_CustomOption::getCustomOption($customFieldID, true);
-                foreach( $customOption as $customFldID => $customValue ) {
-                    $val   = CRM_Utils_Array::value( 'value', $customValue );
-                    $label = CRM_Utils_Array::value( 'label', $customValue );
-                    $label = strtolower( $label );
-                    $value = strtolower( trim( $value ) );
-                    if ( ( $value == $label ) || ( $value == strtolower( $val ) ) ) {
-                        $values[$key] = $val;
-                    }
-                }
-            }
-        }
-        
+        _civicrm_generic_handle_custom_data( $key, $value, $values, $customFields );
+
         switch ($key) {
         case 'participant_contact_id':
             if (!CRM_Utils_Rule::integer($value)) {
@@ -856,41 +823,7 @@ function _civicrm_contribute_formatted_param( &$params, &$values, $create=false 
         }
 
         //Handling Custom Data
-        if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
-            $values[$key] = $value;
-            $type = $customFields[$customFieldID]['html_type'];
-            if( $type == 'CheckBox' || $type == 'Multi-Select' ) {
-                $mulValues = explode( ',' , $value );
-                $customOption = CRM_Core_BAO_CustomOption::getCustomOption($customFieldID, true);
-                $values[$key] = array();
-                foreach( $mulValues as $v1 ) {
-                    foreach($customOption as $customValueID => $customLabel) {
-                        $customValue = $customLabel['value'];
-                        if (( strtolower($customLabel['label']) == strtolower(trim($v1)) ) ||
-                            ( strtolower($customValue) == strtolower(trim($v1)) )) { 
-                            if ( $type == 'CheckBox' ) {
-                                $values[$key][$customValue] = 1;
-                            } else {
-                                $values[$key][] = $customValue;
-                            }
-                        }
-                    }
-                }
-            } else if ( $type == 'Select' || $type == 'Radio' || 
-                        ( $type == 'Autocomplete-Select' && 
-                          $customFields[$customFieldID]['data_type'] == 'String' ) ) {
-                $customOption = CRM_Core_BAO_CustomOption::getCustomOption($customFieldID, true);
-                foreach( $customOption as $customFldID => $customValue ) {
-                    $val   = CRM_Utils_Array::value( 'value', $customValue );
-                    $label = CRM_Utils_Array::value( 'label', $customValue );
-                    $label = strtolower( $label );
-                    $value = strtolower( trim( $value ) );
-                    if ( ( $value == $label ) || ( $value == strtolower( $val ) ) ) {
-                        $values[$key] = $val;
-                    }
-                }
-            }
-        }
+        _civicrm_generic_handle_custom_data( $key, $value, $values, $customFields );
 
         switch ($key) {
 
@@ -1209,39 +1142,7 @@ function _civicrm_membership_formatted_param( &$params, &$values, $create=false)
         }
         
         //Handling Custom Data
-        if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
-            $values[$key] = $value;
-            $type = $customFields[$customFieldID]['html_type'];
-            if( $type == 'CheckBox' || $type == 'Multi-Select' ) {
-                $mulValues = explode( ',' , $value );
-                $customOption = CRM_Core_BAO_CustomOption::getCustomOption($customFieldID, true);
-                $values[$key] = array();
-                foreach( $mulValues as $v1 ) {
-                    foreach($customOption as $customValueID => $customLabel) {
-                        $customValue = $customLabel['value'];
-                        if (( strtolower($customLabel['label']) == strtolower(trim($v1)) ) ||
-                            ( strtolower($customValue) == strtolower(trim($v1)) )) { 
-                            if ( $type == 'CheckBox' ) {
-                                $values[$key][$customValue] = 1;
-                            } else {
-                                $values[$key][] = $customValue;
-                            }
-                        }
-                    }
-                }
-            } else if ( $type == 'Select' || $type == 'Radio' ) {
-                $customOption = CRM_Core_BAO_CustomOption::getCustomOption($customFieldID, true);
-                foreach( $customOption as $customFldID => $customValue ) {
-                    $val   = CRM_Utils_Array::value( 'value', $customValue );
-                    $label = CRM_Utils_Array::value( 'label', $customValue );
-                    $label = strtolower( $label );
-                    $value = strtolower( trim( $value ) );
-                    if ( ( $value == $label ) || ( $value == strtolower( $val ) ) ) {
-                        $values[$key] = $val;
-                    }
-                }
-            }
-        }
+        _civicrm_generic_handle_custom_data( $key, $value, $values, $customFields );
 
         switch ($key) {
         case 'membership_contact_id':
@@ -1332,39 +1233,9 @@ function _civicrm_activity_formatted_param( &$params, &$values, $create=false)
         }
 
         //Handling Custom Data
-        if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
-            $values[$key] = $value;
-            $type = $customFields[$customFieldID]['html_type'];
-            if( $type == 'CheckBox' || $type == 'Multi-Select' ) {
-                $mulValues = explode( ',' , $value );
-                $customOption = CRM_Core_BAO_CustomOption::getCustomOption($customFieldID, true);
-                $values[$key] = array();
-                foreach( $mulValues as $v1 ) {
-                    foreach($customOption as $customValueID => $customLabel) {
-                        $customValue = $customLabel['value'];
-                        if (( strtolower($customLabel['label']) == strtolower(trim($v1)) ) ||
-                            ( strtolower($customValue) == strtolower(trim($v1)) )) { 
-                            if ( $type == 'CheckBox' ) {
-                                $values[$key][$customValue] = 1;
-                            } else {
-                                $values[$key][] = $customValue;
-                            }
-                        }
-                    }
-                }
-            } else if ( $type == 'Select' || $type == 'Radio' ) {
-                $customOption = CRM_Core_BAO_CustomOption::getCustomOption($customFieldID, true);
-                foreach( $customOption as $customFldID => $customValue ) {
-                    $val   = CRM_Utils_Array::value( 'value', $customValue );
-                    $label = CRM_Utils_Array::value( 'label', $customValue );
-                    $label = strtolower( $label );
-                    $value = strtolower( trim( $value ) );
-                    if ( ( $value == $label ) || ( $value == strtolower( $val ) ) ) {
-                        $values[$key] = $val;
-                    }
-                }
-            }
-        } else if ( $key == 'target_contact_id' ) {
+        _civicrm_generic_handle_custom_data( $key, $value, $values, $customFields );
+
+        if ( $key == 'target_contact_id' ) {
             if ( !CRM_Utils_Rule::integer( $value ) ) {
                 return civicrm_create_error("contact_id not valid: $value");
             }
@@ -1474,4 +1345,47 @@ function civicrm_api_check_permission($api, $params, $throw = false)
         }
     }
     return true;
+}
+
+
+// at some point we should unify this with
+// _civicrm_custom_format_params
+// seems like there are some differences that i dont understand, so taking the first
+// step in a cleanup: CRM-7337
+function _civicrm_generic_handle_custom_data( $key, $value, &$values, &$customFields ) {
+
+    //Handling Custom Data
+    if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
+        $values[$key] = $value;
+        $type = $customFields[$customFieldID]['html_type'];
+        if( $type == 'CheckBox' || $type == 'Multi-Select' ) {
+            $mulValues = explode( ',' , $value );
+            $customOption = CRM_Core_BAO_CustomOption::getCustomOption($customFieldID, true);
+            $values[$key] = array();
+            foreach( $mulValues as $v1 ) {
+                foreach($customOption as $customValueID => $customLabel) {
+                    $customValue = $customLabel['value'];
+                    if (( strtolower(trim($customLabel['label'])) == strtolower(trim($v1)) ) ||
+                        ( strtolower(trim($customValue)) == strtolower(trim($v1)) )) { 
+                        if ( $type == 'CheckBox' ) {
+                            $values[$key][$customValue] = 1;
+                        } else {
+                            $values[$key][] = $customValue;
+                        }
+                    }
+                }
+            }
+        } else if ( $type == 'Select' || $type == 'Radio' ) {
+            $customOption = CRM_Core_BAO_CustomOption::getCustomOption($customFieldID, true);
+            foreach( $customOption as $customFldID => $customValue ) {
+                $val   = CRM_Utils_Array::value( 'value', $customValue );
+                $label = CRM_Utils_Array::value( 'label', $customValue );
+                $label = strtolower( $label );
+                $value = strtolower( trim( $value ) );
+                if ( ( $value == $label ) || ( $value == strtolower( $val ) ) ) {
+                    $values[$key] = $val;
+                }
+            }
+        }
+    }
 }
