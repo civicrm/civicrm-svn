@@ -35,8 +35,8 @@
  */
 
 require_once 'CRM/Core/Form.php';
-require_once "CRM/Mailing/Info.php";
-require_once "CRM/Custom/Form/CustomData.php";
+require_once 'CRM/Mailing/Info.php';
+require_once 'CRM/Custom/Form/CustomData.php';
 require_once 'CRM/Contact/BAO/GroupNesting.php';
 require_once 'CRM/Core/BAO/Domain.php';
 
@@ -151,7 +151,8 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
      * @access public
      * @return None
      */
-    function setDefaultValues( ) {
+    function setDefaultValues( )
+    {
         $defaults = array( );
 
         if ( isset( $this->_id ) ) {
@@ -225,8 +226,8 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
             unset( $groupTypes['Access Control'] );
         }
         
-        $accessCiviMail = ( ( CRM_Core_Permission::check( 'access CiviMail' ) ) || ( CRM_Mailing_Info::workflowEnabled( ) && CRM_Core_Permission::check( 'create mailings' ) ) );
-        if ( !$accessCiviMail ) {
+        if ( !( ( CRM_Core_Permission::check( 'access CiviMail' ) ) || 
+                ( CRM_Mailing_Info::workflowEnabled( ) && CRM_Core_Permission::check( 'create mailings' ) ) ) ) {
             unset( $groupTypes['Mailing List'] );
         }
 
