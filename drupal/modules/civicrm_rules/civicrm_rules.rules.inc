@@ -344,7 +344,7 @@ function civicrm_rules_data_type_info() {
                                     'savable' => FALSE,
                                     'identifiable' => TRUE,
                                     ),
-                 'contact' => array(
+                 'mailing' => array(
                                     'label' => t('Mailing'),
                                     'class' => 'rules_data_type_mailing',
                                     'savable' => FALSE,
