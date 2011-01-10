@@ -377,13 +377,20 @@ function buildAutoRenew( membershipType, processorId ) {
      cj("#autoRenew").hide( );
      return;
   }
-    
+  
   if ( currentOption == 1 ) {
      cj("#autoRenew").show( );
-     cj("#auto_renew").removeAttr( 'readonly' );
+     if ( cj("#auto_renew").attr( 'readonly' ) ) { 
+     	cj("#auto_renew").attr('checked', false );	  
+	cj("#auto_renew").removeAttr( 'readonly' );
+     }
   } else if ( currentOption == 2 ) {
+     cj("#autoRenew").show( );
      cj("#auto_renew").attr( 'checked', true );
      cj("#auto_renew").attr( 'readonly', true );
+  } else {
+     cj("#auto_renew").attr( 'checked', false );
+     cj("#autoRenew").hide( );
   }
 
   //play w/ receipt option.
