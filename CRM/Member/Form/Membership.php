@@ -601,7 +601,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             }
             if ( $startDate && CRM_Utils_Array::value( 'period_type', $membershipDetails ) == 'rolling' ) {
                 if ( $startDate < $joinDate ) {
-                    $errors['start_date'] = ts( 'Start date must be the same or later than join date.' );
+                    $errors['start_date'] = ts( 'Start date must be the same or later than Member since.' );
                 }
             }
             
@@ -659,7 +659,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                 }
             }
         } else {
-            $errors['join_date'] = ts('Please enter the join date.');
+            $errors['join_date'] = ts('Please enter the Member Since.');
         }
         
         if ( isset( $params['is_override'] ) &&
