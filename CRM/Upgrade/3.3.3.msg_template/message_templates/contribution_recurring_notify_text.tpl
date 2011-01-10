@@ -6,6 +6,7 @@
 
 
 {ts 1=$recur_frequency_interval 2=$recur_frequency_unit}This membership will be automatically renewed every %1 %2(s).{/ts}
+
 {else}
 
 {ts}Thanks for your recurring contribution sign-up.{/ts}
