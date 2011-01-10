@@ -945,6 +945,12 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                 $params['contribution_recur_id']      = $paymentParams['contributionRecurID'];
                 $params['status_id']                  = array_search( 'Pending', $allStatus );
                 $params['skipStatusCal']              = true;
+                
+                //as membership is pending set dates to null.
+                $memberDates = array( 'join_date'  => 'joinDate',
+                                      'start_date' => 'startDate',
+                                      'end_date'   => 'endDate' );
+                foreach ( $memberDates as $dp => $dv ) $params[$dp] = $$dv = null;
             }
             
             $payment =& CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this );
@@ -1154,6 +1160,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         
         //end date can be modified by hooks, so if end date is set then use it. 
         $endDate = ( $membership->end_date ) ? $membership->end_date : $endDate ;
+        
         if ( ( $this->_action & CRM_Core_Action::UPDATE ) ) {
             $statusMsg = ts('Membership for %1 has been updated.', array(1 => $this->_memberDisplayName));
             if ( $endDate ) {
@@ -1170,7 +1177,9 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             $statusMsg = ts('%1 membership for %2 has been added.', array(1 => $memType, 2 => $this->_memberDisplayName));
             
             //get the end date from calculated dates. 
-            $endDate = ( $endDate ) ? $endDate : CRM_Utils_Array::value( 'end_date', $calcDates ); 
+            if ( !$endDate && !CRM_Utils_Array::value( 'is_recur', $params ) ) {
+                $endDate = CRM_Utils_Array::value( 'end_date', $calcDates ); 
+            }
             
             if ( $endDate ) {
                 $endDate=CRM_Utils_Date::customFormat($endDate);
