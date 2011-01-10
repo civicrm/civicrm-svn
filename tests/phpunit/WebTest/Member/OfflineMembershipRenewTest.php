@@ -62,7 +62,7 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
       $sourceText = 'Offline Membership Renewal Webtest';
       $this->type('source', $sourceText);
 
-      // Fill Join Date
+      // Fill Member Since
       $this->webtestFillDate('join_date', '-2 year');
 
       // Let Start Date and End Date be auto computed
@@ -108,7 +108,7 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
                                              'Membership Type' => 'General',
                                              'Status'          => 'Current',
                                              'Source'          => $sourceText,
-                                             'Join date'       => $joinDate,
+                                             'Member Since'    => $joinDate,
                                              'Start date'      => $startDate,
                                              'End date'        => $endDate,
                                              )
@@ -213,7 +213,7 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
                                              'Membership Type' => 'General',
                                              'Status'          => 'New',
                                              'Source'          => $sourceText,
-                                             'Join date'       => $joinDate,
+                                             'Member Since'    => $joinDate,
                                              'Start date'      => $startDate,
                                              'End date'        => $endDate,
                                              )
