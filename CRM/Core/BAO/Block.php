@@ -297,6 +297,9 @@ class CRM_Core_BAO_Block
                             if ( $valueId ) {
                                 //assigned id as first come first serve basis 
                                 $value['id'] = $blockValue['id'];
+                                if ( !$primaryId && CRM_Utils_Array::value( 'is_primary', $blockValue ) ) {
+                                    $value['is_primary'] = $blockValue['is_primary'];
+                                }
                                 unset( $blockIds[$blockId] );
                                 break;
                             }
