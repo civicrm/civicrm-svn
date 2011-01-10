@@ -445,7 +445,7 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
             if ( $isMembershipType ) { 
                 $graphRows['value'] = $display;
                 $chartInfo          = array( 'legend' => 'Membership Summary',
-                                             'xname'  => 'Join Date / Member Type',
+                                             'xname'  => 'Member Since / Member Type',
                                              'yname'  => 'Fees' );                
                 CRM_Utils_OpenFlashChart::reportChart( $graphRows, $this->_params['charts'], $interval, $chartInfo );
             } else {                
