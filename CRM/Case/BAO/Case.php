@@ -1293,6 +1293,8 @@ GROUP BY cc.id';
         
         $receiptFrom = "$name <$address>";   
         
+        $recordedActivityParams = array();
+        
         foreach ( $contacts as $mail => $info ) {
             $tplParams['contact'] = $info;
             self::buildPermissionLinks( $tplParams, $activityParams );
@@ -1319,21 +1321,35 @@ GROUP BY cc.id';
 
             $activityParams['subject']           = $activitySubject.' - copy sent to '.$displayName;
             $activityParams['details']           = $message;
-            $activityParams['target_contact_id'] = $info['contact_id'];
             
             if ($result[$info['contact_id']]) {
-                $activity = CRM_Activity_BAO_Activity::create( $activityParams );
-                
-                //create case_activity record if its case activity.
-                if ( $caseId ) {
-                    $caseParams = array( 'activity_id' => $activity->id,
-                                         'case_id'     => $caseId );
-                    self::processCaseActivity( $caseParams );
+            	/*
+            	 * Really only need to record one activity with all the targets combined.
+            	 * Originally the template was going to possibly have different content, e.g. depending on permissions,
+            	 * but it's always the same content at the moment.
+            	 */
+                if ( empty( $recordedActivityParams ) ) {
+                    $recordedActivityParams = $activityParams;
+                } else {
+                	$recordedActivityParams['subject'] .= "; $displayName";
                 }
+                $recordedActivityParams['target_contact_id'][] = $info['contact_id'];
             } else {
                 unset($result[$info['contact_id']]);  
             }
         }
+
+        if ( ! empty( $recordedActivityParams ) ) {
+	        $activity = CRM_Activity_BAO_Activity::create( $recordedActivityParams );
+	                
+	        //create case_activity record if its case activity.
+	        if ( $caseId ) {
+	            $caseParams = array( 'activity_id' => $activity->id,
+	                                 'case_id'     => $caseId );
+	            self::processCaseActivity( $caseParams );
+	        }
+        }
+        
         return $result;
     }
     
