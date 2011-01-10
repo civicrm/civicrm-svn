@@ -252,7 +252,7 @@ function _civicrm_contribute_check_params( &$params ) {
         $contributor     = new CRM_Contribute_BAO_Contribution();
         $contributor->id = $params['id'];
         if ( !$contributor->find( true ) ) {
-            return civicrm_create_error( 'Contribution id is not valid'));
+            return civicrm_create_error( 'Contribution id is not valid');
         }
         // do not check other field during update
         return array();
