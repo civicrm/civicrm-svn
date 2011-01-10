@@ -319,12 +319,12 @@ function checkEmail( ) {
 {/literal}
 {/if}
 
-{if $allowAutoRenew}
 {literal}
    //keep read only always checked.
    cj( function( ) {
-      var allowAutoRenew = {/literal}'{$allowAutoRenew}'{literal};
-      if ( allowAutoRenew ) {
+      var allowAutoRenew   = {/literal}'{$allowAutoRenew}'{literal};
+      var alreadyAutoRenew = {/literal}'{$alreadyAutoRenew}'{literal};
+      if ( allowAutoRenew || alreadyAutoRenew ) {
           cj( "#auto_renew" ).click(function( ) {
               if ( cj(this).attr( 'readonly' ) ) { 
                  cj(this).attr( 'checked', true );
@@ -333,7 +333,6 @@ function checkEmail( ) {
        }
     }); 
 {/literal}
-{/if}
 
 
 {if $membershipMode or $action eq 2}
@@ -346,10 +345,15 @@ function buildAutoRenew( membershipType, processorId ) {
   var action = {/literal}'{$action}'{literal};
   
   //for update lets hide it when not already recurring.
-  if ( action == 2 && !cj("#auto_renew").attr( 'checked' ) ) {
-      cj("#autoRenew").hide( );
+  if ( action == 2 ) {
+     //user can't cancel auto renew by unchecking.
+     if ( cj("#auto_renew").attr( 'checked' ) ) {
+     	cj("#auto_renew").attr( 'readonly', true );
+     } else {
+        cj("#autoRenew").hide( );
+     }  
   }
- 
+  
   //we should do all auto renew for cc memberships.
   if ( !mode ) return; 
 

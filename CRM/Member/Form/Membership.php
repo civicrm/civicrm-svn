@@ -236,10 +236,14 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         if ( CRM_Utils_Array::value( 'id' , $defaults ) ) {
             $subscriptionCancelled = CRM_Member_BAO_Membership::isSubscriptionCancelled( $this->_id );
         }
+        
+        $alreadyAutoRenew = false;
         if ( CRM_Utils_Array::value( 'contribution_recur_id', $defaults ) && !$subscriptionCancelled ) {
             $defaults['auto_renew'] = 1;
+            $alreadyAutoRenew = true;
         }
-
+        $this->assign( 'alreadyAutoRenew', $alreadyAutoRenew );
+        
         $this->assign( "member_is_test", CRM_Utils_Array::value('member_is_test',$defaults) );
         
         $this->assign( 'membership_status_id', CRM_Utils_Array::value('status_id',$defaults) );
@@ -425,7 +429,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             }
         }
         $allowAutoRenew = false;
-        if ( $this->_mode && empty( $recurProcessor ) ) $allowAutoRenew = true;  
+        if ( $this->_mode && !empty( $recurProcessor ) ) $allowAutoRenew = true;  
         $this->assign( 'allowAutoRenew',   $allowAutoRenew );
         $this->assign( 'autoRenewOptions', json_encode($autoRenew) );
         $this->assign( 'recurProcessor',   json_encode( $recurProcessor ) );
@@ -525,12 +529,12 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             
         }
         
+        $isRecur = false;
         if ( $this->_action & CRM_Core_Action::UPDATE ) {
             $recurContributionId = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_Membership', $this->_id,
                                                                 'contribution_recur_id' );
             if ( $recurContributionId ) {
-                $this->assign( 'isRecur', true );
-
+                $isRecur = true;
                 require_once 'CRM/Member/BAO/Membership.php'; 
                 if ( CRM_Member_BAO_Membership::isCancelSubscriptionSupported( $this->_id ) ) {
                     $this->assign( 'cancelAutoRenew', 
@@ -541,6 +545,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                 }
             }
         }
+        $this->assign( 'isRecur', $isRecur );
         
         $this->addFormRule(array('CRM_Member_Form_Membership', 'formRule'), $this );
         
