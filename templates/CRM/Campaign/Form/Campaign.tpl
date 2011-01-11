@@ -67,6 +67,14 @@
 	    <td class="label">{$form.status_id.label}</td>
 	    <td class="view-value">{$form.status_id.html}</td>
 	</tr>
+	<tr class="crm-campaign-form-block-goal_general">
+	    <td class="label">{$form.goal_general.label}</td>
+	    <td class="view-value">{$form.goal_general.html}</td>
+	</tr>
+	<tr class="crm-campaign-form-block-goal_revenue">
+	    <td class="label">{$form.goal_revenue.label}</td>
+	    <td class="view-value">{$form.goal_revenue.html}</td>
+	</tr>
 	<tr class="crm-campaign-form-block-external_identifier">
 	    <td class="label">{$form.external_identifier.label}</td>
 	    <td class="view-value">{$form.external_identifier.html}</td>

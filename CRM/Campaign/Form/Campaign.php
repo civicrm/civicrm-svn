@@ -221,6 +221,12 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         $inG->setButtonAttributes ('add'   , array('value' => ts('Add >>'   )));
         $inG->setButtonAttributes ('remove', array('value' => ts('<< Remove')));
         
+        $this->addWysiwyg( 'goal_general', ts( 'Campaign Goals' ), array( 'rows' => 2, 'cols' => 40 ) );
+        $this->add('text', 'goal_revenue', ts('Revenue Goal'), array( 'size' => 8, 'maxlength' => 12 ) ); 
+        require_once 'CRM/Utils/Money.php';
+        $this->addRule('goal_revenue', ts('Please enter a valid money value (e.g. %1).', 
+                                          array(1 => CRM_Utils_Money::format('99.99', ' '))), 'money');
+        
         // is this Campaign active
         $this->addElement('checkbox', 'is_active', ts('Is Active?') );
         
