@@ -111,17 +111,6 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form
                                       'name'  => ts('Cancel') ),
                               );
         }
-        require_once 'CRM/Mailing/Info.php';
-        if ( CRM_Mailing_Info::workflowEnabled( ) ) {
-            if ( ! CRM_Core_Permission::check( 'schedule mailings' ) &&
-                 CRM_Core_Permission::check( 'create mailings' ) ) {
-                foreach ( $buttons as $key => $value ) {
-                    if ( $value['type'] == 'submit' ) {
-                        unset($buttons[$key]);
-                    }
-                }
-            }
-        }
 
         $this->addButtons( $buttons );
               
