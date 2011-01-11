@@ -358,25 +358,53 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                     $errorMsg['confirm_from_email'] = ts('Please enter Confirmation Email FROM Email Address.');
                 }
             }
-
+            $additionalCustomPreId = $additionalCustomPostId = null;
+            $isPreError = $isPostError = false;
             if ( CRM_Utils_Array::value( 'allow_same_participant_emails', $values ) &&
                  CRM_Utils_Array::value( 'is_multiple_registrations', $values ) ) {
                 $types     = array_merge( array( 'Individual' ), CRM_Contact_BAO_ContactType::subTypes( 'Individual' ) );
                 $profiles  = CRM_Core_BAO_UFGroup::getProfiles( $types );
 
-                $profileId = 
-                    CRM_Utils_Array::value( 'custom_pre_id', $values ) ? $values['custom_pre_id'] : 
-                    CRM_Utils_Array::value( 'custom_post_id', $values );
-
-                $additionalProfileId = 
-                    CRM_Utils_Array::value( 'additional_custom_pre_id', $values ) ? $values['additional_custom_pre_id'] : 
-                    CRM_Utils_Array::value( 'additional_custom_post_id', $values );
-                
-                if ( ( !$additionalProfileId && !$profileId ) || 
-                     ( $additionalProfileId && !array_key_exists( $additionalProfileId, $profiles ) ) ) {
+                //check for additional custom pre profile
+                $additionalCustomPreId = CRM_Utils_Array::value( 'additional_custom_pre_id', $values );
+                if ( !empty( $additionalCustomPreId ) ) {
+                    if ( !( $additionalCustomPreId == 'none' ) ) {
+                        $customPreId = $additionalCustomPreId;
+                    } 
+                } else { 
+                    $customPreId = CRM_Utils_Array::value( 'custom_pre_id', $values ) ? $values['custom_pre_id'] : null; 
+                }
+                //check whether the additional custom pre profile is of type 'Individual'
+                if ( !empty( $customPreId ) ) {
+                    $profileTypes = CRM_Core_BAO_UFGroup::profileGroups( $customPreId );
+                    if ( !in_array( 'Individual', $profileTypes ) ) {
+                        $isPreError = true; 
+                    }
+                }
+                //check for additional custom post profile
+                $additionalCustomPostId = CRM_Utils_Array::value( 'additional_custom_post_id', $values );
+                if ( !empty( $additionalCustomPostId ) ) {
+                    if ( !( $additionalCustomPostId == 'none' ) ) {
+                        $customPostId = $additionalCustomPreId;
+                    }
+                } else { 
+                    $customPostId = CRM_Utils_Array::value( 'custom_post_id', $values ) ? $values['custom_post_id'] : null; 
+                }
+                //check whether the additional custom post profile is of type 'Individual'
+                if ( !empty( $customPostId ) ) {
+                    $profileTypes = CRM_Core_BAO_UFGroup::profileGroups( $customPostId );
+                    if ( !in_array( 'Individual', $profileTypes ) ) {
+                        $isPostError = true; 
+                    }
+                }
+                if ( $isPreError == true ) {
                     $errorMsg['additional_custom_pre_id'] = ts("Allow multiple registrations from the same email address requires a profile of type 'Individual'");
                 }
-            }
+                if ( $isPostError == true ) {
+                    $errorMsg['additional_custom_post_id'] = ts("Allow multiple registrations from the same email address requires a profile of type 'Individual'");
+                }
+            }  
+            
         }
         
         if ( !empty($errorMsg) ) {
