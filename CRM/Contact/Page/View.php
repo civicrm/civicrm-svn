@@ -122,6 +122,14 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
                                                           'url'   => self::getSearchURL( ) ) ) );
 
         if ( $image_URL  = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $this->_contactId , 'image_URL') ) {
+            
+            //CRM-7265 --time being fix. 
+            $config = CRM_Core_Config::singleton( );
+            $image_URL = str_replace( 'https://', 'http://', $image_URL );
+            if ( isset( $config->enableSSL ) && $config->enableSSL ) {
+                $image_URL = str_replace( 'http://', 'https://', $image_URL );    
+            }
+            
             list( $imageWidth, $imageHeight ) = getimagesize( $image_URL );
             list( $imageThumbWidth, $imageThumbHeight ) = CRM_Contact_BAO_Contact::getThumbSize( $imageWidth, $imageHeight );
             $this->assign( "imageWidth", $imageWidth );
