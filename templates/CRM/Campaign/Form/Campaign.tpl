@@ -24,8 +24,14 @@
  +--------------------------------------------------------------------+
 *}
 <div class="crm-block crm-form-block crm-campaign-form-block">
+
+{* load the custom data *}
+{if $cdType} 
+    {include file="CRM/Custom/Form/CustomData.tpl"} 
+{else} 
+
 <div class="crm-submit-buttons">
-        {include file="CRM/common/formButtons.tpl" location="top"}
+     {include file="CRM/common/formButtons.tpl" location="top"}
 </div>
 {if $action eq 8}
   <table class="form-layout">
@@ -89,11 +95,32 @@
 	</tr>
     </table>
 
+    <div id="customData"></div>
+
 {/if}
 <div class="crm-submit-buttons">
-        {include file="CRM/common/formButtons.tpl" location="bottom"}
+     {include file="CRM/common/formButtons.tpl" location="bottom"}
 </div>
 </div>
+
+{* include custom data js *}
+{include file="CRM/common/customData.tpl"}
+
+{literal}
+<script type="text/javascript">
+cj( document ).ready( function( ) {
+    {/literal}{if $customDataSubType} 
+		 buildCustomData( '{$customDataType}', {$customDataSubType} );
+	      {else}
+		 buildCustomData( '{$customDataType}' );
+	      {/if}
+    {literal}
+});
+</script>
+{/literal}
+
+
+{/if} {* load custom data *}
 
 {if $context eq 'dialog'}
 {literal}

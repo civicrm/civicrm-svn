@@ -36,9 +36,10 @@
 
 require_once 'CRM/Core/Form.php';
 require_once 'CRM/Campaign/BAO/Campaign.php';
+require_once 'CRM/Custom/Form/CustomData.php';
 require_once 'CRM/Campaign/PseudoConstant.php';
 require_once 'CRM/Campaign/DAO/CampaignGroup.php';
-     
+
 /**
  * This class generates form components for processing a campaign 
  * 
@@ -61,6 +62,13 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
     protected $_context;
     
     /**
+     * object values.
+     *
+     * @var array
+     */
+    protected $_values;
+    
+    /**
      * the id of the campaign we are proceessing
      *
      * @var int
@@ -74,7 +82,15 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         if ( !CRM_Campaign_BAO_Campaign::accessCampaignDashboard( ) ) {
             CRM_Utils_System::permissionDenied( );
         }
-
+        
+        //check for custom data type.
+        $this->_cdType = CRM_Utils_Array::value( 'type', $_GET );
+        $this->assign( 'cdType', false );
+        if ( $this->_cdType ) {
+            $this->assign( 'cdType', true );
+            return CRM_Custom_Form_CustomData::preProcess( $this );
+        }
+        
         $this->_context = CRM_Utils_Request::retrieve( 'context', 'String', $this );
         
         if ( $this->_context ) {
@@ -95,8 +111,34 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         
         $session = CRM_Core_Session::singleton();
         $session->pushUserContext( CRM_Utils_System::url('civicrm/campaign', 'reset=1&subPage=campaign') );
-
         $this->assign( 'action', $this->_action );
+
+        //load the values;
+        $this->_values = $this->get( 'values' );
+        if ( !is_array( $this->_values ) ) {
+            $this->_values = array( );
+            
+            // if we are editing
+            if ( isset( $this->_campaignId ) && $this->_campaignId ) {
+                $params = array( 'id' => $this->_campaignId );
+                CRM_Campaign_BAO_Campaign::retrieve( $params, $this->_values );
+            }
+            
+            //lets use current object session.
+            $this->set( 'values', $this->_values );
+        }
+        
+        // when custom data is included in form.
+        if ( CRM_Utils_Array::value( 'hidden_custom', $_POST ) ) {
+            $this->set('type',     'Campaign');
+            $this->set('subType',  CRM_Utils_Array::value( 'campaign_type_id', $_POST ) );
+            $this->set('entityId', $this->_campaignId );
+            
+            CRM_Custom_Form_Customdata::preProcess( $this );
+            CRM_Custom_Form_Customdata::buildQuickForm( $this );
+            CRM_Custom_Form_Customdata::setDefaultValues( $this );
+        }
+        
     }
     
     /**
@@ -108,13 +150,11 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
      */
     function setDefaultValues( ) 
     {
-        $defaults = array();
+        $defaults = $this->_values;
         
-        // if we are editing
-        if ( isset( $this->_campaignId ) ) {
-            $params = array( 'id' => $this->_campaignId );
-            require_once 'CRM/Campaign/BAO/Campaign.php';
-            CRM_Campaign_BAO_Campaign::retrieve( $params, $defaults );
+        //load only custom data defaults.
+        if ( $this->_cdType ) {
+            return CRM_Custom_Form_CustomData::setDefaultValues( $this );
         }
         
         if ( isset( $defaults['start_date'] ) ) { 
@@ -173,8 +213,25 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         }
 
         $this->applyFilter('__ALL__','trim');
+
+        
+        if ( $this->_cdType ) {
+            return CRM_Custom_Form_CustomData::buildQuickForm( $this );
+        }
+        
+        //campaign types.
+        $campaignTypes = CRM_Campaign_PseudoConstant::campaignType( );
+        
+        //lets assign custom data type and subtype.
+        $this->assign( 'customDataType', 'Campaign' );
+        if ( CRM_Utils_Array::value( 'campaig_type_id', $this->_values ) &&
+             CRM_Utils_Array::value( $this->_values['campaig_type_id'], $campaignTypes ) ) {
+            $this->assign('customDataSubType', $campaignTypes[$this->_values['campaig_type_id']] );
+        }
+        $this->assign('entityId',  $this->_campaignId );
+        
         $attributes = CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Campaign');
-       
+        
         // add comaign title.
         $this->add('text', 'title', ts('Title'), $attributes['title'], true );
         
@@ -188,12 +245,14 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         $this->addDateTime('end_date', ts('End Date'), false, array( 'formatType' => 'activityDateTime') );
         
         // add campaign type
-        $campaignType = CRM_Campaign_PseudoConstant::campaignType();
-        $this->add('select', 'campaign_type_id', ts('Campaign Type'), array( '' => ts( '- select -' ) ) + $campaignType, true );
+        $this->add('select', 'campaign_type_id', ts('Campaign Type'), 
+                   array( '' => ts( '- select -' ) ) + $campaignTypes, true,
+                   array( 'onChange' => "buildCustomData( 'Campaign', this.value );") );
         
         // add campaign status
         $campaignStatus = CRM_Campaign_PseudoConstant::campaignStatus();
-        $this->addElement('select', 'status_id', ts('Campaign Status'), array('' => ts( '- select -' )) + $campaignStatus );
+        $this->addElement('select', 'status_id', ts('Campaign Status'), 
+                          array('' => ts( '- select -' )) + $campaignStatus );
            
         // add External Identifire Element
         $this->add('text', 'external_identifier', ts('External Id'), 
