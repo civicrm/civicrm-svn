@@ -115,24 +115,23 @@ function civicrm_tag_delete( &$params )
  * This api is used for finding an existing tag.
  * Either id or name of tag are required parameters for this api.
  * 
- * @param  array $params  an associative array of name/value pairs.
+ * @param  array $params  an associative array of name/value pairs. Either name or id is required
  *
  * @return  array details of found tag else error
  * @access public
+ * @todo EM 11 Jan 2010 - shouldn't return error if none found
+ * @todo EM 11 Jan 2010 - why are only 'id' & 'name' options - surely 'used_for' is valid too?
  */
 
 function civicrm_tag_get($params) 
-{
+{   
+    $keyoptions = array('id', 'name');
+    civicrm_verify_one_mandatory (&$params, null, $keyoptions = array() );  
     _civicrm_initialize( );
+
     require_once 'CRM/Core/BAO/Tag.php';
     $tagBAO = new CRM_Core_BAO_Tag();
-    
-    if ( ! is_array($params) ) {
-        return civicrm_create_error('Params is not an array.');
-    }
-    if ( ! isset($params['id']) && ! isset($params['name']) ) {
-        return civicrm_create_error('Required parameters missing.');
-    }
+
     
     $properties = array('id', 'name', 'description', 'parent_id','is_selectable','is_hidden',
                         'is_reserved','used_for');

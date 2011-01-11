@@ -144,7 +144,7 @@ function civicrm_activity_get( $params ) {
 
 /**
  * Delete a specified Activity.
- * @param CRM_Activity $activity Activity object to be deleted
+ * @param array $params array holding 'id' of activity to be deleted
  *
  * @return void|CRM_Core_Error  An error if 'activityName or ID' is invalid,
  *                         permissions are insufficient, etc.
@@ -359,6 +359,7 @@ SELECT  count(*)
 
 /**
  * Convert an email file to an activity
+ * @todo EM  change inputs to an array
  */
 function civicrm_activity_processemail( $file, $activityTypeID, $result = array( ) ) {
   

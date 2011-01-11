@@ -49,6 +49,34 @@ function _civicrm_initialize($useException = false )
   }
 }
 
+/*
+ * Wrapper Function for civicrm_verify_mandatory to make it simple to pass either / or fields for checking
+ * 
+ * @param array $params array of fields to check
+ * @param array $daoName string DAO to check for required fields (create functions only)
+ * @param array $keys list of required fields options. One of the options is required
+ * @return null or throws error if there the required fields not present
+ 
+ * @
+ *
+ */
+function civicrm_verify_one_mandatory (&$params, $daoName = null, $keyoptions = array() ) {
+  foreach ($keyoptions as $key){
+    $keys[0][] = $key;
+  }
+  civicrm_verify_mandatory ($params, $daoName, $keys  );
+}
+
+
+
+/*
+ * Function to check mandatory fields are included
+ * 
+ * @param array $params array of fields to check
+ * @param array $daoName string DAO to check for required fields (create functions only)
+ * @param array $keys list of required fields. A value can be an array denoting that either this or that is required.
+ * @return null or throws error if there the required fields not present
+ */
 function civicrm_verify_mandatory (&$params, $daoName = null, $keys = array() ) {
   if ( ! is_array( $params ) ) {
      throw new Exception ('Input parameters is not an array');
@@ -59,6 +87,20 @@ function civicrm_verify_mandatory (&$params, $daoName = null, $keys = array() ) 
   }
 
   foreach ($keys as $key) {
+    if(is_array($key)){
+      $match = 0;
+      $unmatched = array();
+      foreach($key as $subkey){
+        if ( array_key_exists ($subkey, $params)) {
+           $match =1;          
+        }else{
+          $unmatched[] = $subkey;
+        }
+      }
+      if (!$match){
+         throw new Exception ("Mandatory param missing: ". implode(",",$unmatched));
+      }
+    }
     if ( !array_key_exists ($key, $params))
       throw new Exception ("Mandatory param missing: ". $key);
   }
