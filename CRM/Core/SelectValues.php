@@ -259,7 +259,7 @@ class CRM_Core_SelectValues
                                         'Pledge'       => ts('Pledges'),
                                         'Grant'        => ts('Grants'),
                                         'Address'      => ts('Addresses'),
-                                        'Campaign'     => ts( 'Campaign' ),
+                                        'Campaign'     => ts('Campaigns'),
                                         );
             $contactTypes = self::contactType( );
             unset( $contactTypes[''] ); 

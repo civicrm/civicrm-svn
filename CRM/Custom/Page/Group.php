@@ -248,11 +248,13 @@ class CRM_Custom_Page_Group extends CRM_Core_Page {
         require_once "CRM/Member/BAO/MembershipType.php";
 		require_once "CRM/Event/PseudoConstant.php";
         require_once 'CRM/Contact/BAO/ContactType.php';
-                
+        require_once 'CRM/Campaign/PseudoConstant.php';
+        
         $subTypes['Activity']     = CRM_Core_PseudoConstant::activityType( false, true );
         $subTypes['Contribution'] = CRM_Contribute_PseudoConstant::contributionType( );
         $subTypes['Membership']   = CRM_Member_BAO_MembershipType::getMembershipTypes( false );
         $subTypes['Event']        = CRM_Core_OptionGroup::values('event_type');
+        $subTypes['Campaign']     = CRM_Campaign_PseudoConstant::campaignType( );
         $subTypes['Participant']  = array( );
 		$subTypes['ParticipantRole'     ] = CRM_Core_OptionGroup::values( 'participant_role' );;
 	    $subTypes['ParticipantEventName'] = CRM_Event_PseudoConstant::event( );

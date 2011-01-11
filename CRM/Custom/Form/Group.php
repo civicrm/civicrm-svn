@@ -260,6 +260,7 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
 
         $sel2['Event']                = $eventType;
         $sel2['Activity']             = $activityType;
+        $sel2['Campaign']             = $campaignTypes;
         $sel2['Membership']           = $membershipType;
         $sel2['ParticipantRole']      = $participantRole;
         $sel2['ParticipantEventName'] = 
