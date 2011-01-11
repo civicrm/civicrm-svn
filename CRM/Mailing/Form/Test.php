@@ -144,13 +144,17 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form
         $this->assign( 'preview', $preview );
         //Token Replacement of Subject in preview mailing
         $options = array( );
-        $session->getVars( $options, "CRM_Mailing_Controller_Send_$qfKey" );
+        $prefix  = "CRM_Mailing_Controller_Send_$qfKey";
+        if ( $this->_searchBasedMailing ) {
+            $prefix = "CRM_Contact_Controller_Search_$qfKey";
+        }
+        $session->getVars( $options, $prefix );
         
         require_once 'CRM/Mailing/BAO/Mailing.php';
         $mailing = new CRM_Mailing_BAO_Mailing( );
         $mailing->id = $options['mailing_id'];
         $mailing->find( true );
-        $fromEmail   = $mailing->from_email;
+        $fromEmail = $mailing->from_email;
         
         require_once 'CRM/Core/BAO/File.php';
         $attachments =& CRM_Core_BAO_File::getEntityFile( 'civicrm_mailing',
