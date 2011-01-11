@@ -360,6 +360,18 @@ INNER JOIN  civicrm_option_value ov ON ( ca.case_type_id=ov.value AND ov.option_
         }
         
         if ( $result ) {
+            // CRM-7364
+            require_once 'CRM/Contact/BAO/Relationship.php';
+            $contactIds = self::retrieveContactIdsByCaseId( $caseId );
+            if (! empty( $contactIds ) ) {
+	            foreach ( $contactIds as $cid ) {
+	                $roles = self::getCaseRoles( $cid, $caseId );
+	                foreach ( $roles as $r => $dummy ) {
+	                	CRM_Contact_BAO_Relationship::setIsActive( $r, 0 );
+	                }
+	            }
+            }
+        	
             // remove case from recent items.
             $caseRecent = array(
                                 'id'   => $caseId,
@@ -1564,6 +1576,19 @@ AND civicrm_case.is_deleted     = {$cases['case_deleted']}";
         $case->id = $caseId; 
         $case->is_deleted = 0;
         $case->save( );
+        
+        // CRM-7364
+        $contactIds = self::retrieveContactIdsByCaseId( $caseId );
+        if (! empty( $contactIds ) ) {
+	        foreach ( $contactIds as $cid ) {
+	            $roles = self::getCaseRoles( $cid, $caseId );
+	            foreach ( $roles as $r => $dummy ) {
+	            	require_once 'CRM/Contact/BAO/Relationship.php';
+	                CRM_Contact_BAO_Relationship::setIsActive( $r, 1 );
+	            }
+	        }
+        }
+        
         return true;
     }
     
