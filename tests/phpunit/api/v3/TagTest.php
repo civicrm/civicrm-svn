@@ -52,7 +52,7 @@ class api_v3_TagTest extends CiviUnitTestCase
         $params ='is_string';
         $result = civicrm_tag_get($params);
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
-        $this->assertEquals( 'Params is not an array.', $result['error_message'], 'In line ' . __LINE__ );
+        $this->assertEquals( 'Input parameters is not an array', $result['error_message'], 'In line ' . __LINE__ );
     }
 
     /**
@@ -63,7 +63,7 @@ class api_v3_TagTest extends CiviUnitTestCase
         $params = array( );
         $result = civicrm_tag_get( $params );
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
-        $this->assertEquals( 'Required parameters missing.', $result['error_message'], 'In line ' . __LINE__ );
+        $this->assertEquals( 'Mandatory param missing - one required of: id, name', $result['error_message'], 'In line ' . __LINE__ );
     }
 
     /** 
@@ -71,7 +71,7 @@ class api_v3_TagTest extends CiviUnitTestCase
      */
     public function testGetWrongParams()
     {
-        $params = array( 'name' => 'Wrong Tag Name' );
+        $params = array( 'name' => 'Wrong Tag Name' , 'version' => $this->_apiversion );
         $result = civicrm_tag_get($params);
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
         $this->assertEquals( 'Exact match not found.', $result['error_message'], 'In line ' . __LINE__ );
@@ -86,7 +86,8 @@ class api_v3_TagTest extends CiviUnitTestCase
         $this->assertEquals( 0, $tag['is_error'], 'In line ' . __LINE__ );
         
         $params = array( 'id' => $tag['id'],
-                         'name' => $tag['name'] );
+                         'name' => $tag['name'],
+                         'version' => $this->_apiversion  );
         $result = civicrm_tag_get($params);
 
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );

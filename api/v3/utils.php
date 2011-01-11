@@ -85,7 +85,9 @@ function civicrm_verify_mandatory (&$params, $daoName = null, $keys = array() ) 
   if ($daoName != null) {
     _civicrm_check_required_fields( $params, $daoName, true);
   }
-
+  
+  $keys[] = 'version';//required from v3 onwards
+ 
   foreach ($keys as $key) {
     if(is_array($key)){
       $match = 0;
@@ -98,11 +100,12 @@ function civicrm_verify_mandatory (&$params, $daoName = null, $keys = array() ) 
         }
       }
       if (!$match){
-         throw new Exception ("Mandatory param missing: ". implode(",",$unmatched));
+         throw new Exception ("Mandatory param missing - one required of: ". implode(", ",$unmatched));
       }
-    }
+    }else{
     if ( !array_key_exists ($key, $params))
       throw new Exception ("Mandatory param missing: ". $key);
+    }
   }
 }
 

@@ -33,8 +33,9 @@ function civicrm_api($function, $class, $params){
 if (empty($params['version'])){
  $params['version'] = 2;
 }
-print_r($function);
-print_r($params);
+
+//print_r($function);
+//print_r($params);
 require_once 'api/v' . $params['version'] . '/' . $class .'.php';
 $result = $function($params);
 return $result;
