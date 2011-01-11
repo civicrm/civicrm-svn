@@ -109,14 +109,23 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
             $assignee_contact_names = CRM_Activity_BAO_ActivityAssignment::getAssigneeNames( $activity->id );
       
             $defaults['assignee_contact_value'] = implode('; ', $assignee_contact_names);
-            
-            if ($activity->activity_type_id != CRM_Core_OptionGroup::getValue( 'activity_type', 'Bulk Email', 'name' ) ) {  
+            $showTargetContacts = ( CRM_Mailing_Info::workflowEnabled( ) && 
+                                    ( CRM_Core_Permission::check( 'create mailings' )  
+                                      || CRM_Core_Permission::check( 'schedule mailings' ) 
+                                      || CRM_Core_Permission::check( 'approve mailings' ) ) );
+            if ( ( $activity->activity_type_id != CRM_Core_OptionGroup::getValue( 'activity_type', 'Bulk Email', 'name' ) )
+                 || ( !CRM_Core_Permission::check('access CiviMail') && $showTargetContacts ) ) {  
                 require_once 'CRM/Activity/BAO/ActivityTarget.php';
                 $defaults['target_contact'] = CRM_Activity_BAO_ActivityTarget::retrieveTargetIdsByActivityId( $activity->id );
-                $target_contact_names = CRM_Activity_BAO_ActivityTarget::getTargetNames( $activity->id );
-                
-                $defaults['target_contact_value'] = implode('; ', $target_contact_names);
-            } else if ( CRM_Core_Permission::check('access CiviMail') || ( CRM_Mailing_Info::workflowEnabled( ) && CRM_Core_Permission::check( 'create mailings' ) ) ) {
+                $targetContactNames = CRM_Activity_BAO_ActivityTarget::getTargetNames( $activity->id );
+                foreach ( $targetContactNames as $key => $value ) {
+                    $url = CRM_Utils_System::url( 'civicrm/contact/view/',
+                                                  "reset=1&cid=$key" );
+                    $targetContacts[$key] = "<a href={$url}>{$value}</a>";
+                }               
+                $defaults['target_contact_value'] = implode('; ', $targetContacts);
+                $defaults['showMessage'] = true;
+            } else if ( CRM_Core_Permission::check('access CiviMail') ) {
                 $defaults['mailingId'] = CRM_Utils_System::url( 'civicrm/mailing/report', 
                                                                 "mid={$activity->source_record_id}&reset=1&atype={$activity->activity_type_id}&aid={$activity->id}&cid={$activity->source_contact_id}&context=activity" );
             } else {

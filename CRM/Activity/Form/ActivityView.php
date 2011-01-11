@@ -81,7 +81,7 @@ class CRM_Activity_Form_ActivityView extends CRM_Core_Form
         $this->assign( 'activityTypeName', $activityTypeName );
         $this->assign( 'activityTypeDescription', $activityTypeDescription );
         
-        if (  CRM_Utils_Array::value('mailingId', $defaults) ) {
+        if ( CRM_Utils_Array::value( 'mailingId', $defaults ) || CRM_Utils_Array::value( 'showMessage', $defaults ) ) {
             $this->_mailing_id = CRM_Utils_Array::value( 'source_record_id', $defaults );
             require_once 'CRM/Mailing/BAO/Mailing.php';
             $mailingReport =& CRM_Mailing_BAO_Mailing::report( $this->_mailing_id, true );
