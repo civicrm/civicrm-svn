@@ -223,6 +223,7 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
         require_once "CRM/Contact/BAO/Relationship.php";
         require_once 'CRM/Core/OptionGroup.php';
         require_once 'CRM/Contact/BAO/ContactType.php';
+        require_once 'CRM/Campaign/PseudoConstant.php';
         $contactTypes = array( 'Contact', 'Individual', 'Household', 'Organization' );
         $this->assign( 'contactTypes', json_encode($contactTypes) );
               
@@ -231,6 +232,7 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
         $activityType = CRM_Core_PseudoConstant::activityType( false, true, false, 'label', true );
         
         $eventType       = CRM_Core_OptionGroup::values( 'event_type' );
+        $campaignTypes   = CRM_Campaign_PseudoConstant::campaignType( );
         $membershipType  = CRM_Member_BAO_MembershipType::getMembershipTypes( false );
         $participantRole = CRM_Core_OptionGroup::values( 'participant_role' );
         $relTypeInd      = CRM_Contact_BAO_Relationship::getContactRelationshipType( null, 'null', null, 'Individual' );
@@ -240,6 +242,7 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
         ksort( $sel1 );
         asort( $activityType );
         asort( $eventType );
+        asort( $campaignTypes );
         asort( $membershipType );
         asort( $participantRole );
         $allRelationshipType = array();

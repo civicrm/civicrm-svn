@@ -1397,6 +1397,9 @@ SELECT $select
         case 'Address':
             return 'civicrm_address';    
 
+        case 'Campaign':
+            return 'civicrm_campaign'; 
+            
         default:
             $query   = "
 SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 0 )";
