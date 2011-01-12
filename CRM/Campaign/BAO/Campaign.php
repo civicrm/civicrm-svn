@@ -205,20 +205,30 @@ SELECT  camp.id, camp.title
         
         static $validCampaigns;
         if ( !isset( $validCampaigns[$cacheKey] ) ) {
-            $isValid = true;
-            $validCampaigns[$cacheKey] = array( );
+            $isValid   = true;
+            $campaigns = array( 'campaigns'         => array( ),
+                                'hasAccessCampaign' => false,
+                                'isCampaignEnabled' => false );
             
             //do check for component.
             if ( $doCheckForComponent ) {
                 $config = CRM_Core_Config::singleton( );
-                if ( !in_array( 'CiviCampaign', $config->enableComponents ) ) $isValid = false;
+                $isValid = false;
+                if ( in_array( 'CiviCampaign', $config->enableComponents ) ) $isValid = true; 
+                $campaigns['isCampaignEnabled'] = $isValid;
             }
             
             //do check for permissions.
-            if ( $isValid && $doCheckForPermissions ) $isValid = self::accessCampaign( );
+            if ( $doCheckForPermissions ) {
+                $isValid = self::accessCampaign( );
+                $campaigns['hasAccessCampaign'] = $isValid;
+            }
             
             //finally retrieve campaigns from db.
-            if ( $isValid ) $validCampaigns[$cacheKey] = self::getCampaigns( $includeId, $excludeId, $onlyActive );  
+            if ( $isValid ) $campaigns['campaigns'] = self::getCampaigns( $includeId, $excludeId, $onlyActive );  
+            
+            //store in cache.
+            $validCampaigns[$cacheKey] = $campaigns;
         }
         
         return $validCampaigns[$cacheKey];
@@ -299,4 +309,42 @@ SELECT  camp.id, camp.title
         
         return $allow;
     }
+    
+    /*
+     * Add select element for campaign 
+     * and assign needful info to templates.
+     *
+     */
+    public static function addCampaign( &$form, $connectedCampaignId = null ) 
+    {
+        $campaignDetails = self::getPermissionedCampaigns( $connectedCampaignId );
+        $fields = array( 'campaigns', 'hasAccessCampaign', 'isCampaignEnabled' );
+        foreach ( $fields as $fld ) $$fld = CRM_Utils_Array::value( $fld, $campaignDetails ); 
+        $hasCampaigns = false;
+        if ( !empty( $campaigns ) ) $hasCampaigns = true;
+        
+        $showAddCampaign = false;
+        if ( $connectedCampaignId || ( $isCampaignEnabled && $hasAccessCampaign ) ) {
+            $showAddCampaign = true;
+            $campaign =& $form->add( 'select', 
+                                     'campaign_id', 
+                                     ts( 'Campaign' ), 
+                                     array( '' => ts( '- select -' ) ) + $campaigns );
+            //lets freeze when user does not has access or campaign is disabled. 
+            if ( !$isCampaignEnabled || !$hasAccessCampaign ) $campaign->freeze( ); 
+        }
+        
+        $addCampaignURL = null;
+        if ( empty( $campaigns ) && $hasAccessCampaign && $isCampaignEnabled ) {
+            $addCampaignURL = CRM_Utils_System::url( 'civicrm/campaign/add', 'reset=1' );
+        }
+        $infoFields = array( 'hasCampaigns', 
+                             'addCampaignURL', 
+                             'showAddCampaign', 
+                             'hasAccessCampaign', 
+                             'isCampaignEnabled' );
+        foreach ( $infoFields as $fld ) $campaignInfo[$fld] = $$fld; 
+        $form->assign( 'campaignInfo', $campaignInfo );
+    }
+    
 }
