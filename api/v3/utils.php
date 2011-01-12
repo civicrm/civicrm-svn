@@ -125,11 +125,24 @@ function &civicrm_create_error( $msg, $data = null )
  * @param <type> $result
  * @return <type>
  */
-function civicrm_create_success( $result = 1 ) 
+function civicrm_create_success( $params = 1 )
 {
-    return CRM_Core_Error::createAPISuccess( $result );
-}
+    $result = array();
+    $result['is_error'] = 0;
 
+    if (is_array($params)) {
+        $result['count'] = count($params);
+
+    } else {
+        if (!empty($params)) {
+            $result['count'] = 1;
+        } else {
+            $result['count'] = 0;
+        }
+    }
+    $result['values'] = $params;
+    return $result;
+}
 /**
  *  function to check if an error is actually a duplicate contact error
  *  
