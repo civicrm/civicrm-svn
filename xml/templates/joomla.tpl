@@ -30,6 +30,8 @@
       <filename>toolbar.civicrm.php</filename>
       <filename>toolbar.civicrm.html.php</filename>
       <filename>configure.php</filename>
+      <filename>access.xml</filename>
+      <filename>config.xml</filename>
 {if $pkgType eq 'alt'}
       <folder>civicrm</folder>
 {else}
