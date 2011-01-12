@@ -141,31 +141,49 @@ Class CRM_Campaign_BAO_Campaign extends CRM_Campaign_DAO_Campaign
         }
         return null;  
     }
-
-    public function getAllCampaign( $id=null ) 
+    
+    /**
+     * Return the all eligible campaigns w/ cache.
+     *
+     * @param int      $includeId  lets inlcude this campaign by force.
+     * @param int      $excludeId  do not include this campaign.
+     * @param boolean  $onlyActive consider only active campaigns.
+     *
+     * @return $campaigns a set of campaigns.
+     * @access public
+     */
+    public function getCampaigns( $includeId = null, $excludeId = null, $onlyActive = true ) 
     {
-        $campaigns = array( );
-        $whereClause = null;
-        if ( $id ) {
-            $whereClause = " AND c.id != ".$id;
-        }
-        $campaignParent = array();
-        $sql = "
-SELECT c.id as id, c.title as title
-FROM  civicrm_campaign c
-WHERE c.title IS NOT NULL" . $whereClause;
-        
-        $dao =& CRM_Core_DAO::executeQuery( $sql );
-        while ( $dao->fetch() ) {
-           $campaigns[$dao->id] = $dao->title;
-           
+        static $campaigns;
+        foreach ( array( 'includeId', 'excludeId', 'onlyActive' ) as $param ) {
+            $cacheParam = $$param;
+            if ( !$cacheParam ) $cacheParam = (int)$cacheParam; 
+            $cacheKey .= $cacheParam . '_';
         }
         
-        return  $campaigns ;
-
+        if ( !isset( $campaigns[$cacheKey] ) ) {
+            $where = array( '( camp.title IS NOT NULL )' );
+            if ( $excludeId  ) $where[] = "( camp.id != $excludeId )";
+            if ( $onlyActive ) $where[] = '( camp.is_active = 1 )';
+            $whereClause = implode( ' AND ', $where );
+            if ( $includeId ) $whereClause .= " OR ( camp.id = $includeId )"; 
+                                  
+            $query = "
+SELECT  camp.id, camp.title
+  FROM  civicrm_campaign camp
+ WHERE  {$whereClause}";
+            
+            $campaign = CRM_Core_DAO::executeQuery( $query );
+            $campaigns[$cacheKey] = array( );
+            while ( $campaign->fetch( ) ) {
+                $campaigns[$cacheKey][$campaign->id] = $campaign->title;
+            }
+        }
+        
+        return $campaigns[$cacheKey];
     }
-
-     /**
+    
+    /**
      * Function to get Campaigns 
      *
      * @param $all boolean true if campaign is active else returns camapign 

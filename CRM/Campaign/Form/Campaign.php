@@ -252,7 +252,7 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         
         // add Campaign Parent Id
         require_once 'CRM/Campaign/BAO/Campaign.php';
-        $campaigns = CRM_Campaign_BAO_Campaign::getAllCampaign( $this->_campaignId );
+        $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, $this->_campaignId );
         
         if ( $campaigns ) {
             $this->addElement('select', 'parent_id', ts('Parent Id'), 
