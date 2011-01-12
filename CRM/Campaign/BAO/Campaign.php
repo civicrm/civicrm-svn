@@ -155,10 +155,11 @@ Class CRM_Campaign_BAO_Campaign extends CRM_Campaign_DAO_Campaign
     public function getCampaigns( $includeId = null, $excludeId = null, $onlyActive = true ) 
     {
         static $campaigns;
+        $cacheKey = 0;
         foreach ( array( 'includeId', 'excludeId', 'onlyActive' ) as $param ) {
             $cacheParam = $$param;
             if ( !$cacheParam ) $cacheParam = (int)$cacheParam; 
-            $cacheKey .= $cacheParam . '_';
+            $cacheKey .= '_' . $cacheParam;
         }
         
         if ( !isset( $campaigns[$cacheKey] ) ) {
