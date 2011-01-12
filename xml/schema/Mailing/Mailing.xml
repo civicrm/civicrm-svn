@@ -249,5 +249,17 @@
        <default>'User and User Admin Only'</default> 
        <comment>In what context(s) is the mailing contents visible (online viewing)</comment> 
        <add>3.3</add> 
+  </field>
+  <field> 
+       <name>campaign_id</name> 
+       <type>int unsigned</type>                 
+       <comment>The campaign for which this mailing has been initiated.</comment> 
+       <add>3.4</add> 
   </field> 
+  <foreignKey> 
+       <name>campaign_id</name> 
+       <table>civicrm_campaign</table> 
+       <key>id</key> 
+       <onDelete>SET NULL</onDelete>
+  </foreignKey>
 </table>
