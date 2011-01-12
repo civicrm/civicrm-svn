@@ -152,13 +152,13 @@ Class CRM_Campaign_BAO_Campaign extends CRM_Campaign_DAO_Campaign
      * @return $campaigns a set of campaigns.
      * @access public
      */
-    public function getCampaigns( $includeId = null, $excludeId = null, $onlyActive = true ) 
+    public static function getCampaigns( $includeId = null, $excludeId = null, $onlyActive = true ) 
     {
         static $campaigns;
         $cacheKey = 0;
         foreach ( array( 'includeId', 'excludeId', 'onlyActive' ) as $param ) {
             $cacheParam = $$param;
-            if ( !$cacheParam ) $cacheParam = (int)$cacheParam; 
+            if ( !$cacheParam ) $cacheParam = 0;
             $cacheKey .= '_' . $cacheParam;
         }
         
@@ -182,6 +182,46 @@ SELECT  camp.id, camp.title
         }
         
         return $campaigns[$cacheKey];
+    }
+    
+    /**
+     * Wrapper to self::getCampaigns( )
+     * w/ permissions and component check.
+     *
+     */
+    public static function getPermissionedCampaigns( $includeId  = null, 
+                                                     $excludeId  = null, 
+                                                     $onlyActive = true,
+                                                     $doCheckForComponent   = true,
+                                                     $doCheckForPermissions = true  ) {
+        $cacheKey = 0;
+        $cachekeyParams = array( 'includeId', 'excludeId', 'onlyActive', 
+                                 'doCheckForComponent', 'doCheckForPermissions' );
+        foreach ( $cachekeyParams as $param ) {
+            $cacheKeyParam = $$param;
+            if ( !$cacheKeyParam ) $cacheKeyParam = 0;
+            $cacheKey .= '_' . $cacheKeyParam;
+        }
+        
+        static $validCampaigns;
+        if ( !isset( $validCampaigns[$cacheKey] ) ) {
+            $isValid = true;
+            $validCampaigns[$cacheKey] = array( );
+            
+            //do check for component.
+            if ( $doCheckForComponent ) {
+                $config = CRM_Core_Config::singleton( );
+                if ( !in_array( 'CiviCampaign', $config->enableComponents ) ) $isValid = false;
+            }
+            
+            //do check for permissions.
+            if ( $isValid && $doCheckForPermissions ) $isValid = self::accessCampaign( );
+            
+            //finally retrieve campaigns from db.
+            if ( $isValid ) $validCampaigns[$cacheKey] = self::getCampaigns( $includeId, $excludeId, $onlyActive );  
+        }
+        
+        return $validCampaigns[$cacheKey];
     }
     
     /**
@@ -250,7 +290,7 @@ SELECT  camp.id, camp.title
         return CRM_Core_DAO::setFieldValue( 'CRM_Campaign_DAO_Campaign', $id, 'is_active', $is_active );
     }
     
-    static function accessCampaignDashboard( ) {
+    static function accessCampaign( ) {
         $allow = false;
         if ( CRM_Core_Permission::check( 'manage campaign' ) ||
              CRM_Core_Permission::check( 'administer CiviCampaign' ) ) {

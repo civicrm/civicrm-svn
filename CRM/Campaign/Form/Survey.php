@@ -87,7 +87,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
     public function preProcess()
     {
         require_once 'CRM/Campaign/BAO/Campaign.php';
-        if ( !CRM_Campaign_BAO_Campaign::accessCampaignDashboard( ) ) {
+        if ( !CRM_Campaign_BAO_Campaign::accessCampaign( ) ) {
             CRM_Utils_System::permissionDenied( );
         }
         

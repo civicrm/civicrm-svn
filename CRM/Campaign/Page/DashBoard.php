@@ -309,7 +309,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
     function run( ) 
     {
         require_once 'CRM/Campaign/BAO/Campaign.php';
-        if ( !CRM_Campaign_BAO_Campaign::accessCampaignDashboard( ) ) {
+        if ( !CRM_Campaign_BAO_Campaign::accessCampaign( ) ) {
             CRM_Utils_System::permissionDenied( );
         }
         
