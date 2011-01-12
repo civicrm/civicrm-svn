@@ -96,18 +96,14 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         if ( $this->_context ) {
             $this->assign( 'context', $this->_context );
         }
-
-        $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this );
         
-        if ( $this->_action & ( CRM_Core_Action::UPDATE | $this->_action & CRM_Core_Action::DELETE ) ) {
-            $this->_campaignId = CRM_Utils_Request::retrieve('id', 'Positive', $this , true);
-
-            if ( $this->_action & CRM_Core_Action::UPDATE ) {
-                CRM_Utils_System::setTitle( ts('Edit Campaign') ); 
-            } else {
-                CRM_Utils_System::setTitle( ts('Delete Campaign') ); 
-            }
-        }
+        $this->_action     = CRM_Utils_Request::retrieve('action', 'String', $this );
+        $this->_campaignId = CRM_Utils_Request::retrieve('id', 'Positive', $this );
+        
+        $title = null;
+        if ( $this->_action & CRM_Core_Action::UPDATE ) $title = ts('Edit Campaign');
+        if ( $this->_action & CRM_Core_Action::DELETE ) $title = ts('Delete Campaign');
+        if ( $title ) CRM_Utils_System::setTitle( $title );
         
         $session = CRM_Core_Session::singleton();
         $session->pushUserContext( CRM_Utils_System::url('civicrm/campaign', 'reset=1&subPage=campaign') );
@@ -214,7 +210,6 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
 
         $this->applyFilter('__ALL__','trim');
 
-        
         if ( $this->_cdType ) {
             return CRM_Custom_Form_CustomData::buildQuickForm( $this );
         }
@@ -223,12 +218,9 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         $campaignTypes = CRM_Campaign_PseudoConstant::campaignType( );
         
         //lets assign custom data type and subtype.
-        $this->assign( 'customDataType', 'Campaign' );
-        if ( CRM_Utils_Array::value( 'campaig_type_id', $this->_values ) &&
-             CRM_Utils_Array::value( $this->_values['campaig_type_id'], $campaignTypes ) ) {
-            $this->assign('customDataSubType', $campaignTypes[$this->_values['campaig_type_id']] );
-        }
-        $this->assign('entityId',  $this->_campaignId );
+        $this->assign( 'customDataType',    'Campaign' );
+        $this->assign( 'entityID',          $this->_campaignId );
+        $this->assign( 'customDataSubType', $this->_values['campaign_type_id'] );
         
         $attributes = CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Campaign');
         
@@ -379,6 +371,14 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         while ( $dao->fetch() ) {
             $dao->delete( );
         }
+        
+        //process custom data.
+        $customFields = CRM_Core_BAO_CustomField::getFields( 'Campaign', false, false, 
+                                                             CRM_Utils_Array::value( 'campaign_type_id', $params ) );
+        $params['custom'] = CRM_Core_BAO_CustomField::postProcess( $params,
+                                                                   $customFields,
+                                                                   $this->_id,
+                                                                   'Campaign' );
         
         require_once 'CRM/Campaign/BAO/Campaign.php';
         $result = CRM_Campaign_BAO_Campaign::create( $params );

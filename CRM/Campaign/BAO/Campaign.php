@@ -81,18 +81,26 @@ Class CRM_Campaign_BAO_Campaign extends CRM_Campaign_DAO_Campaign
         $groupTableName   = CRM_Contact_BAO_Group::getTableName( );
         require_once 'CRM/Campaign/DAO/CampaignGroup.php';
         $dao = new CRM_Campaign_DAO_CampaignGroup();
-       
-        if( CRM_Utils_Array::value( 'include', $params['groups'] ) && is_array( $params['groups']['include'] ) ) {                    
-             foreach( $params['groups']['include'] as $entityId ) {
-                        $dao->reset( );
-                        $dao->campaign_id  = $campaign->id;
-                        $dao->entity_table = $groupTableName;
-                        $dao->entity_id    = $entityId;
-                        $dao->group_type   = 'include';
-                        $dao->save( );
-                    }
+        
+        if ( CRM_Utils_Array::value( 'include', $params['groups'] ) && 
+             is_array( $params['groups']['include'] ) ) {                    
+            foreach( $params['groups']['include'] as $entityId ) {
+                $dao->reset( );
+                $dao->campaign_id  = $campaign->id;
+                $dao->entity_table = $groupTableName;
+                $dao->entity_id    = $entityId;
+                $dao->group_type   = 'include';
+                $dao->save( );
+            }
         }
-              
+        
+        //store custom data
+        if ( CRM_Utils_Array::value( 'custom', $params ) &&
+             is_array( $params['custom'] ) ) {
+            require_once 'CRM/Core/BAO/CustomValueTable.php';
+            CRM_Core_BAO_CustomValueTable::store( $params['custom'], 'civicrm_campaign', $campaign->id );
+        }
+        
         return $campaign;
     }
    
