@@ -1166,7 +1166,7 @@ class CRM_Contact_BAO_Query
             }
 
             $result = array( $id, 'IN', $values, 0, 0 );
-        } else if ( $id == 'contact_tags' ) {
+        } else if ( $id == 'contact_tags' || $id == 'tag' ) {
             if (! is_array( $values ) ) {
                 $tagIds = explode( ',', $values );
                 unset( $values );
