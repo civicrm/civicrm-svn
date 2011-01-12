@@ -1730,6 +1730,13 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
 
             $retValue = null;
             foreach ( $options as $optionValue => $optionLabel ) {
+                if ( $dataType == 'Money') {
+                    require_once 'CRM/Utils/Money.php';
+                    foreach ( $customData as $k => $v ){
+                        $customData[] = CRM_Utils_Money::format( $v, null, '%a');
+                    }
+                }  
+                
                 //to show only values that are checked
                 if ( in_array ( (string) $optionValue, $customData ) ) {
                     $checked = in_array ( $optionValue, $customData ) ? $freezeStringChecked : $freezeString;
