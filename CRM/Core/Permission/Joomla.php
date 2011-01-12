@@ -96,7 +96,14 @@ class CRM_Core_Permission_Joomla {
         if ( $config->userFrameworkFrontend && in_array( $str, $adminPerm ) ) {
             return false;
         }
-        return true;
+
+        require_once 'CRM/Utils/String.php';
+        $permissionStr = 'civicrm.' . CRM_Utils_String::munge( strtolower( $str ) );
+        $permission = JFactory::getUser()->authorise( $permissionStr,
+                                                      'com_civicrm' );
+
+        // echo "{$permissionStr}:{$permission}:<p>";
+        return $permission;
     }
 
 }

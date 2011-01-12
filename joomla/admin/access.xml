@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<access component="com_civicrm">
-	<section name="component">
-		<action name="civicrm.access_civicrm" title="Access CiviCRM" description="" />
-		<action name="civicrm.administer_civicrm" title="Administer CiviCRM" description="" />
-		<action name="civicrm.view_all_contacts" title="View All Contacts" description="" />
-		<action name="civicrm.edit_all_contacts" title="Edit All Contacts" description="" />
-	</section>
-</access>

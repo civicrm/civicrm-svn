@@ -26,7 +26,8 @@ if( isset( $GLOBALS['_SERVER']['DM_PKGTYPE'] ) ) {
     $pkgType = $argv[4];
 }
 
-ini_set('include_path', ini_get('include_path') . ":$sourceCheckoutDir/packages");
+ini_set('include_path', 
+        ini_get('include_path') . ":{$sourceCheckoutDir}:{$sourceCheckoutDir}/packages");
 require_once "$sourceCheckoutDir/civicrm.config.php";
 require_once 'Smarty/Smarty.class.php';
 
@@ -64,5 +65,26 @@ function generateJoomlaConfig( $version ) {
     $fd = fopen( $output, "w" );
     fputs( $fd, $xml );
     fclose( $fd );
+
+    require_once 'CRM/Core/Config.php';
+    $config =& CRM_Core_Config::singleton( );
+
+    require_once 'CRM/Core/Permission.php';
+    require_once 'CRM/Utils/String.php';
+    $permissions =& CRM_Core_Permission::basicPermissions( true );
+    print_r( $permissions );
+    $perms_array = array();
+    foreach ($permissions as $perm => $title) {
+        //order matters here, but we deal with that later
+        $perms_array[CRM_Utils_String::munge( strtolower( $perm) )] = $title;
+    }
+    $smarty->assign( 'permissions', $perms_array );
+
+    $output = $targetDir . '/admin/access.xml';
+    $xml = $smarty->fetch( 'access.tpl' );
+    $fd = fopen( $output, "w" );
+    fputs( $fd, $xml );
+    fclose( $fd );
+
     
 }
