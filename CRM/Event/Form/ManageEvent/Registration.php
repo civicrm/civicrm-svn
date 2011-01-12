@@ -402,7 +402,6 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                 //check whether the additional custom post profile is of type 'Individual' and its subtypes
                 if ( !empty( $customPostId ) ) {
                     $profileTypes = CRM_Core_BAO_UFGroup::profileGroups( $customPostId );
-                    CRM_Core_Error::debug( '$customPostId', $customPostId );
                     foreach ( $types as $individualTypes ) { 
                         if ( in_array( $individualTypes, $profileTypes ) ) {
                             $isPostError = false;
