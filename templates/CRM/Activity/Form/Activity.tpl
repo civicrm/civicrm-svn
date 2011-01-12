@@ -177,6 +177,26 @@
              <tr class="crm-activity-form-block-subject">
                 <td class="label">{$form.subject.label}</td><td class="view-value">{$form.subject.html|crmReplace:class:huge}</td>
              </tr>
+	     
+	     {* add campaigns to activity CRM-7362 *}
+	     {if $campaignInfo.showAddCampaign}
+	        <tr class="crm-activity-form-block-campaign_id">
+                  <td class="label">{$form.campaign_id.label}</td>
+		      {* lets decide, do we like to have select drop-down or add campaign url *}
+		      <td class="view-value">
+		      {if $campaignInfo.hasCampaigns}
+		          {$form.campaign_id.html}
+		      {else}
+			  {ts}There are currently no Campaigns.{/ts}
+			  {if $campaignInfo.addCampaignURL}
+			      {ts 1=$campaignInfo.addCampaignURL}If you want to associate this record with a campaign, 
+			      you can <a href="%1">create a campaign here</a>.{/ts}
+			  {/if}
+		      {/if}
+		      </td>
+                </tr>
+	     {/if}
+	     
              <tr class="crm-activity-form-block-location">
                 <td class="label">{$form.location.label}</td><td class="view-value">{$form.location.html|crmReplace:class:huge}</td>
              </tr> 
