@@ -62,7 +62,9 @@
                               <td>
                                   {$mailingReport.mailing.body_text|mb_truncate:30|escape|nl2br}
                                   <br />
-                                  <strong><a href='{$textViewURL}'>&raquo; {ts}View complete message{/ts}</a></strong>
+                                  {if $values.mailingId}
+                                    <strong><a href='{$textViewURL}'>&raquo; {ts}View complete message{/ts}</a></strong>
+                                  {/if}
                               </td>
                           </tr>
                       {/if}
@@ -73,7 +75,9 @@
                               <td>
                                   {$mailingReport.mailing.body_html|mb_truncate:30|escape|nl2br}
                                   <br/>                         
-                                  <strong><a href='{$htmlViewURL}'>&raquo; {ts}View complete message{/ts}</a></strong>
+                                  {if $values.mailingId}
+                                    <strong><a href='{$htmlViewURL}'>&raquo; {ts}View complete message{/ts}</a></strong>
+                                  {/if}
                               </td>
                           </tr>
                       {/if}
