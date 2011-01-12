@@ -385,6 +385,8 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                             break;
                         } 
                     }
+                } else {
+                    $isPreError = false;  
                 }
                 //check for additional custom post profile
                 $additionalCustomPostId = CRM_Utils_Array::value( 'additional_custom_post_id', $values );
@@ -400,12 +402,15 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                 //check whether the additional custom post profile is of type 'Individual' and its subtypes
                 if ( !empty( $customPostId ) ) {
                     $profileTypes = CRM_Core_BAO_UFGroup::profileGroups( $customPostId );
+                    CRM_Core_Error::debug( '$customPostId', $customPostId );
                     foreach ( $types as $individualTypes ) { 
                         if ( in_array( $individualTypes, $profileTypes ) ) {
                             $isPostError = false;
                             break;
                         }
                     }
+                } else {
+                    $isPostError = false; 
                 }
                 if ( $isPreError == true ) {
                     $errorMsg['additional_custom_pre_id'] = ts("Allow multiple registrations from the same email address requires a profile of type 'Individual'");
