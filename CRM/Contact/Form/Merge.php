@@ -331,8 +331,10 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         // add the related tables and unset the ones that don't sport any of the duplicate contact's info
         $relTables = CRM_Dedupe_Merger::relTables();
         $activeRelTables = CRM_Dedupe_Merger::getActiveRelTables($oid);
+        $activeMainRelTables = CRM_Dedupe_Merger::getActiveRelTables($cid);
         foreach ($relTables as $name => $null) {
-            if (!in_array($name, $activeRelTables)) {
+            if ( !in_array( $name, $activeRelTables ) &&  
+                 !( ( $name == 'rel_table_users' ) && in_array( $name, $activeMainRelTables ) ) ) {
                 unset($relTables[$name]);
                 continue;
             }

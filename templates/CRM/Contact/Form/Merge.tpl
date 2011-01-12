@@ -80,7 +80,7 @@
   {foreach from=$rel_tables item=params key=paramName}
     {if $paramName eq 'move_rel_table_users'}
       <tr class="{cycle values="even-row,odd-row"}">
-      <th>{ts}Move related...{/ts}</th><td><a href="{$params.other_url}">{$params.other_title}</a></td><td style='white-space: nowrap'>{if $otherUfId}=={$form.$paramName.html}==&gt;{/if}</td><td>{if $mainUfId}<a href="{$params.main_url}">{$params.main_title}</a>{/if}</td>
+      <th>{ts}Move related...{/ts}</th><td>{if $otherUfId}<a href="{$params.other_url}">{$params.other_title}</a></td><td style='white-space: nowrap'>=={$form.$paramName.html}==&gt;{else}<td style='white-space: nowrap'></td>{/if}</td><td>{if $mainUfId}<a href="{$params.main_url}">{$params.main_title}</a>{/if}</td>
     </tr>
     {else}
     <tr class="{cycle values="even-row,odd-row"}">
