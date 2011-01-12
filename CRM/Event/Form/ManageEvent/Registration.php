@@ -359,7 +359,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                 }
             }
             $additionalCustomPreId = $additionalCustomPostId = null;
-            $isPreError = $isPostError = false;
+            $isPreError = $isPostError = true;
             if ( CRM_Utils_Array::value( 'allow_same_participant_emails', $values ) &&
                  CRM_Utils_Array::value( 'is_multiple_registrations', $values ) ) {
                 $types     = array_merge( array( 'Individual' ), CRM_Contact_BAO_ContactType::subTypes( 'Individual' ) );
@@ -370,15 +370,20 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                 if ( !empty( $additionalCustomPreId ) ) {
                     if ( !( $additionalCustomPreId == 'none' ) ) {
                         $customPreId = $additionalCustomPreId;
-                    } 
+                    } else {
+                        $isPreError = false;
+                    }
                 } else { 
                     $customPreId = CRM_Utils_Array::value( 'custom_pre_id', $values ) ? $values['custom_pre_id'] : null; 
                 }
-                //check whether the additional custom pre profile is of type 'Individual'
+                //check whether the additional custom pre profile is of type 'Individual' and its subtypes
                 if ( !empty( $customPreId ) ) {
                     $profileTypes = CRM_Core_BAO_UFGroup::profileGroups( $customPreId );
-                    if ( !in_array( 'Individual', $profileTypes ) ) {
-                        $isPreError = true; 
+                    foreach ( $types as $individualTypes ) { 
+                        if ( in_array( $individualTypes, $profileTypes ) ) {
+                            $isPreError = false;
+                            break;
+                        } 
                     }
                 }
                 //check for additional custom post profile
@@ -386,15 +391,20 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                 if ( !empty( $additionalCustomPostId ) ) {
                     if ( !( $additionalCustomPostId == 'none' ) ) {
                         $customPostId = $additionalCustomPreId;
+                    } else {
+                        $isPostError = false;
                     }
                 } else { 
                     $customPostId = CRM_Utils_Array::value( 'custom_post_id', $values ) ? $values['custom_post_id'] : null; 
                 }
-                //check whether the additional custom post profile is of type 'Individual'
+                //check whether the additional custom post profile is of type 'Individual' and its subtypes
                 if ( !empty( $customPostId ) ) {
                     $profileTypes = CRM_Core_BAO_UFGroup::profileGroups( $customPostId );
-                    if ( !in_array( 'Individual', $profileTypes ) ) {
-                        $isPostError = true; 
+                    foreach ( $types as $individualTypes ) { 
+                        if ( in_array( $individualTypes, $profileTypes ) ) {
+                            $isPostError = false;
+                            break;
+                        }
                     }
                 }
                 if ( $isPreError == true ) {
