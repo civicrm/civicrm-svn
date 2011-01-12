@@ -1379,6 +1379,11 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
             $tmpConatctField = array();
             if( is_array($fieldsArray) ) {
                 foreach ( $fieldsArray as $value) {
+                    $customFieldId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomField',
+                                                                  $value,
+                                                                  'id',
+                                                                  'column_name' );
+                    $value =  $customFieldId ? 'custom_'.$customFieldId : $value;
                     $tmpConatctField[trim($value)] = $contactFields[trim($value)];
                     $tmpConatctField[trim($value)]['title'] = $tmpConatctField[trim($value)]['title']." (match to contact)" ;
                 }

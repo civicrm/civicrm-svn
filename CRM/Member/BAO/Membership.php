@@ -847,6 +847,11 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
             $tmpContactField = array();
             if( is_array($fieldsArray) ) {
                 foreach ( $fieldsArray as $value) {
+                    $customFieldId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomField',
+                                                                  $value,
+                                                                  'id',
+                                                                  'column_name' );
+                    $value =  $customFieldId ? 'custom_'.$customFieldId : $value;
                     $tmpContactField[trim($value)] = CRM_Utils_Array::value(trim($value),$contactFields);
                     if (!$status) {
                         $title = $tmpContactField[trim($value)]['title']." " . ts("(match to contact)") ;
