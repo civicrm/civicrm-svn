@@ -45,7 +45,16 @@ class CRM_Admin_Page_Access extends CRM_Core_Page
     function run( ) {
         $config = CRM_Core_Config::singleton( );
 
-        $this->assign('ufAccessURL', CRM_Utils_System::url( 'admin/people/permissions' ) );
+        if ( $config->userFramework == 'Drupal' ) {
+            $this->assign('ufAccessURL', CRM_Utils_System::url( 'admin/people/permissions' ) );
+        } else {
+            $url = 
+                $config->userFrameworkBaseURL .
+                "index.php?option=com_config&view=component&component=com_civicrm&tmpl=component";
+                
+            $this->assign('ufAccessURL', 
+                          $url );
+        }
         return parent::run();
     }
 }
