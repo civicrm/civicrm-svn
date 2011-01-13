@@ -50,7 +50,7 @@ class CRM_Admin_Page_Access extends CRM_Core_Page
         } else {
             $url = 
                 $config->userFrameworkBaseURL .
-                "index.php?option=com_config&view=component&component=com_civicrm&tmpl=component";
+                "index.php?option=com_config&view=component&component=com_civicrm";
                 
             $this->assign('ufAccessURL', 
                           $url );

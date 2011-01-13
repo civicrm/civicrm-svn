@@ -72,7 +72,7 @@ function generateJoomlaConfig( $version ) {
     require_once 'CRM/Core/Permission.php';
     require_once 'CRM/Utils/String.php';
     $permissions =& CRM_Core_Permission::basicPermissions( true );
-    print_r( $permissions );
+
     $perms_array = array();
     foreach ($permissions as $perm => $title) {
         //order matters here, but we deal with that later
