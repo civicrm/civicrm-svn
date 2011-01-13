@@ -170,6 +170,7 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
                         );
         
         $contact =& civicrm_contact_create( $params );
+        print_r($contact);
         $this->assertEquals( $contact['error_message'], 'Invalid Custom Field Contact Type: Organization or Mismatched SubType: Sponsor.' );
     }
     

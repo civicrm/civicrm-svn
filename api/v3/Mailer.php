@@ -66,7 +66,8 @@ require_once 'CRM/Mailing/Event/BAO/TrackableURLOpen.php';
  * @return array
  */
 function civicrm_mailer_event_bounce($params)
-{    
+{   
+    _civicrm_initialize();
     $errors = _civicrm_mailer_check_params( $params, array('job_id', 'event_queue_id', 'hash', 'body') ) ;
   
     if ( !empty( $errors ) ) {

@@ -120,18 +120,17 @@ function civicrm_tag_delete( &$params )
  * @return  array details of found tag else error
  * @access public
  * @todo EM 11 Jan 2010 - shouldn't return error if none found
- * @todo EM 11 Jan 2010 - why are only 'id' & 'name' options - surely 'used_for' is valid too?
+ * @todo EM 11 Jan 2010 - why are only 'id' & 'name' options - surely 'used_for' etc is valid too?
  */
 
 function civicrm_tag_get($params) 
 {   
-    $keyoptions = array('id', 'name');
-    civicrm_verify_one_mandatory (&$params, null, $keyoptions = array() );  
+   try {
     _civicrm_initialize( );
+    civicrm_verify_one_mandatory ($params, null, array('id', 'name'));  
 
     require_once 'CRM/Core/BAO/Tag.php';
     $tagBAO = new CRM_Core_BAO_Tag();
-
     
     $properties = array('id', 'name', 'description', 'parent_id','is_selectable','is_hidden',
                         'is_reserved','used_for');
@@ -148,4 +147,10 @@ function civicrm_tag_get($params)
     _civicrm_object_to_array($tagBAO, $tag);
     $tag['is_error'] = 0;    
     return $tag;
+  } catch (PEAR_Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  }
+  
 }

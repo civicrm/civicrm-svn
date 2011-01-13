@@ -51,7 +51,7 @@ require_once 'api/v3/utils.php';
  * @static void
  * @access public
  */
-function &civicrm_membershipcontributionlink_create( &$params ) {
+function &civicrm_membership_payment_create( &$params ) {
     _civicrm_initialize( );
 
     if ( empty( $params ) ) {
@@ -92,12 +92,13 @@ function &civicrm_membershipcontributionlink_create( &$params ) {
  * membership / contrbution.
  *
  * @param  array   $params           (reference ) input parameters
+ * @todo missing delete function
  *
  * @return array (reference )        array of properties, if error an array with an error id and error message
  * @static void
  * @access public
  */
-function &civicrm_membershipcontributionlink_get( &$params ) {
+function &civicrm_membership_payment_get( &$params ) {
     _civicrm_initialize( );
 
     if ( empty( $params ) ) {

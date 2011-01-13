@@ -700,7 +700,50 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         }
         return ;
     }
+      /**
+     * Function to create contribution  
+     * 
+     * @param int $cID      contact_id
+     * @param int $cTypeID  id of contribution type
+     *
+     * @return int id of created contribution
+     */
+    function pledgeCreate($cID)
+    {
+        require_once 'api/v2/Pledge.php';
+        $params = array(
+                        'contact_id'             => $cID,
+                        'pledge_create_date'    => date('Ymd'),
+                        'start_date'    => date('Ymd'),
+                        'scheduled_date'    => date('Ymd'),   
+                        'pledge_amount'         => 100.00,
+                        'pledge_status_id'         => '2',
+                        'contribution_type_id'  => '1',
+                        'pledge_original_installment_amount' => 20,
+                        'frequency_interval'             => 5,
+                        'frequency_unit'             => 'year',
+                        'frequency_day'            => 15,
+                        'installments'            =>5,
+                        );
+        
+        $pledge =& civicrm_pledge_add($params);
+
+        return $pledge['id'];
+        
+    }
     
+    /**
+     * Function to delete contribution  
+     * 
+     * @param int $contributionId
+     */
+    function pledgeDelete($pledgeId)
+    {
+        require_once 'api/v2/Pledge.php';
+        $params = array( 'pledge_id' => $pledgeId );
+        $val =& civicrm_pledge_delete( $params );
+    }
+      
     /**
      * Function to create contribution  
      * 

@@ -53,7 +53,8 @@ require_once 'api/v3/utils.php';
  *
  */
 function civicrm_relationship_type_create( &$params ) {
-    
+  
+     _civicrm_initialize();   
     if ( empty( $params ) ) {
         return civicrm_create_error(  'No input parameters present' );
     }
@@ -134,6 +135,7 @@ function civicrm_relationship_type_get( $params = null )
  */
 function civicrm_relationship_type_delete( &$params ) {
 
+    _civicrm_initialize();
     if( ! CRM_Utils_Array::value( 'id',$params )  ) {
         return civicrm_create_error( 'Missing required parameter' );
     }

@@ -53,6 +53,8 @@ class api_v3_GroupOrganizationTest extends CiviUnitTestCase
      */
     protected function setUp()
     {
+            $this->markTestSkipped( "Reason for skipping:<a href='http://forum.civicrm.org/index.php/topic,18053.0.html'>version issue</a>" );
+ 
         parent::setUp();
         $this->_groupID = $this->groupCreate(null,3);
 

@@ -78,36 +78,3 @@ function civicrm_membership_delete($params)
     
     return $result ? civicrm_create_success( ) : civicrm_create_error('Error while deleting Membership');
 }
-
-
-/**
- *
- * @param <type> $params
- * @return <type>
- * @todo wrapper fuunction - delete?
- */
-function civicrm_contact_membership_create(&$params)
-{
-    return civicrm_membership_contact_create($params);
-}
-
-/**
- *
- * @param  $params array
- * @return <type>
- * @todo  wrapper fuunction - delete?
- */
-function civicrm_membership_types_get(&$params) {
-    return civicrm_membership_type_get($params);
-}
-
-/**
- *
- * @param  $params array
- * @return <type> 
- * @todo  wrapper fuunction - delete?
- */
-function civicrm_membership_statuses_get(&$params) {
-    return civicrm_membership_status_get($params);
-}
-
