@@ -151,14 +151,6 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
 
         // seed caches with civicrm_contact titles/values
         if (!isset($titles['log_civicrm_contact']) or !isset($values['log_civicrm_contact'])) {
-            $titles['log_civicrm_contact'] = array(
-                'gender_id'                      => ts('Gender'),
-                'preferred_communication_method' => ts('Preferred Communication Method'),
-                'preferred_language'             => ts('Preferred Language'),
-                'prefix_id'                      => ts('Prefix'),
-                'suffix_id'                      => ts('Suffix'),
-            );
-
             // FIXME: these should be populated with pseudo constants as they
             // were at the time of logging rather than their current values
             $values['log_civicrm_contact'] = array(
@@ -172,9 +164,7 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
             require_once 'CRM/Contact/DAO/Contact.php';
             $dao = new CRM_Contact_DAO_Contact;
             foreach ($dao->fields() as $field) {
-                if (!isset($titles['log_civicrm_contact'][$field['name']])) {
-                    $titles['log_civicrm_contact'][$field['name']] = $field['title'];
-                }
+                $titles['log_civicrm_contact'][$field['name']] = $field['title'];
                 if ($field['type'] == CRM_Utils_Type::T_BOOLEAN) {
                     $values['log_civicrm_contact'][$field['name']] = array('0' => ts('false'), '1' => ts('true'));
                 }
@@ -249,6 +239,7 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         $rows = array();
 
         // populate $rows with only the differences between $changed and $original (skipping certain columns and NULL ↔ empty changes)
+        // FIXME: explode preferred_communication_method on CRM_Core_DAO::VALUE_SEPARATOR and handle properly somehow
         $skipped = array('contact_id', 'entity_id', 'id', 'log_action', 'log_conn_id', 'log_date', 'log_user_id');
         foreach (array_keys(array_diff_assoc($changed, $original)) as $diff) {
             if (in_array($diff, $skipped))                              continue;
