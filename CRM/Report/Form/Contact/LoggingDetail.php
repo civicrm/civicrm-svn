@@ -108,7 +108,7 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         $rows = $this->diffsInTable('log_civicrm_contact');
 
         // add custom data changes
-        $dao = CRM_Core_DAO::executeQuery("SHOW TABLES FROM `{$this->loggingDB}` LIKE 'log_civicrm_value_%'");
+        $dao =& CRM_Core_DAO::executeQuery("SHOW TABLES FROM `{$this->loggingDB}` LIKE 'log_civicrm_value_%'");
         while ($dao->fetch()) {
             $table = $dao->toValue("Tables_in_{$this->loggingDB}_(log_civicrm_value_%)");
             $rows  = array_merge($rows, $this->diffsInTable($table));
