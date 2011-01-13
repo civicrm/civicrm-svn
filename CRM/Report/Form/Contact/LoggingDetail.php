@@ -115,10 +115,13 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         }
 
         // add email changes by fetching all email ids affected in the ±10 s interval (for the given connection id)
-        $sql = "SELECT DISTINCT id FROM `{$this->loggingDB}`.log_civicrm_email WHERE log_conn_id = %1 AND log_date BETWEEN DATE_SUB(%2, INTERVAL 10 SECOND) AND DATE_ADD(%2, INTERVAL 10 SECOND)";
-        $dao =& CRM_Core_DAO::executeQuery($sql, $params);
-        while ($dao->fetch()) {
-            $rows = array_merge($rows, $this->diffsInTable('log_civicrm_email', $dao->id));
+        $tables = array('log_civicrm_email', 'log_civicrm_phone');
+        foreach ($tables as $table) {
+            $sql = "SELECT DISTINCT id FROM `{$this->loggingDB}`.`$table` WHERE log_conn_id = %1 AND log_date BETWEEN DATE_SUB(%2, INTERVAL 10 SECOND) AND DATE_ADD(%2, INTERVAL 10 SECOND)";
+            $dao =& CRM_Core_DAO::executeQuery($sql, $params);
+            while ($dao->fetch()) {
+                $rows = array_merge($rows, $this->diffsInTable($table, $dao->id));
+            }
         }
     }
 
@@ -171,20 +174,23 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
             }
         }
 
-        // email titles/values
-        // FIXME: call this only if we’re actually checking email
-        if (!isset($titles['log_civicrm_email']) or !isset($values['log_civicrm_email'])) {
-            // FIXME: these should be populated with pseudo constants as they
-            // were at the time of logging rather than their current values
-            $values['log_civicrm_email'] = array(
-                'location_type_id' => CRM_Core_PseudoConstant::locationType(),
-            );
-            require_once 'CRM/Core/DAO/Email.php';
-            $dao = new CRM_Core_DAO_Email;
-            foreach ($dao->fields() as $field) {
-                $titles['log_civicrm_email'][$field['name']] = $field['title'];
-                if ($field['type'] == CRM_Utils_Type::T_BOOLEAN) {
-                    $values['log_civicrm_email'][$field['name']] = array('0' => ts('false'), '1' => ts('true'));
+        // email/phone titles/values
+        // FIXME: call this only if we’re actually checking the relevant table
+        foreach (array('email', 'phone') as $type) {
+            if (!isset($titles["log_civicrm_$type"]) or !isset($values["log_civicrm_$type"])) {
+                // FIXME: these should be populated with pseudo constants as they
+                // were at the time of logging rather than their current values
+                $values["log_civicrm_$type"] = array(
+                    'location_type_id' => CRM_Core_PseudoConstant::locationType(),
+                );
+                $class = ucfirst($type);
+                require_once "CRM/Core/DAO/$class.php";
+                eval("\$dao = new CRM_Core_DAO_$class;");
+                foreach ($dao->fields() as $field) {
+                    $titles["log_civicrm_$type"][$field['name']] = $field['title'];
+                    if ($field['type'] == CRM_Utils_Type::T_BOOLEAN) {
+                        $values["log_civicrm_$type"][$field['name']] = array('0' => ts('false'), '1' => ts('true'));
+                    }
                 }
             }
         }
