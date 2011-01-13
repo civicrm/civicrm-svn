@@ -215,8 +215,9 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         // populate $rows with only the differences between $changed and $original (skipping certain columns and NULL ↔ empty changes)
         $skipped = array('entity_id', 'id', 'log_action', 'log_conn_id', 'log_date', 'log_user_id');
         foreach (array_keys(array_diff_assoc($changed, $original)) as $diff) {
-            if (in_array($diff, $skipped))           continue;
-            if ($original[$diff] == $changed[$diff]) continue;
+            if (in_array($diff, $skipped))                              continue;
+            if ($original[$diff] == $changed[$diff])                    continue;
+            if ($original[$diff] == false and $changed[$diff] == false) continue; // only in PHP: '0' == false and null == false but '0' != null
             $rows[] = array(
                 'field' => isset($titles[$table][$diff]) ? $titles[$table][$diff] : substr($table, 4) . ".$diff",
                 'from'  => isset($values[$table][$diff][$original[$diff]]) ? $values[$table][$diff][$original[$diff]] : $original[$diff],
