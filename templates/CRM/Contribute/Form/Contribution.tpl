@@ -128,6 +128,10 @@
 
         <tr  class="crm-contribution-form-block-source"><td class="label">{$form.source.label}</td><td{$valueStyle}>{$form.source.html} {help id="id-contrib_source"}</td></tr>
 
+	{* CRM-7362 --add campaign to contributions *}
+	{include file="CRM/Campaign/Form/addCampaignToComponent.tpl" 
+	campaignTrClass="crm-contribution-form-block-campaign_id"}
+
         {if $contributionMode}
             {if $email and $outBound_option != 2}
                 <tr class="crm-contribution-form-block-is_email_receipt"><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html}</td></tr>
