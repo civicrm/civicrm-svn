@@ -163,7 +163,8 @@ Class CRM_Campaign_BAO_Campaign extends CRM_Campaign_DAO_Campaign
         }
         
         if ( !isset( $campaigns[$cacheKey] ) ) {
-            $where = array( '( camp.title IS NOT NULL )' );
+            $where = array( '( camp.title IS NOT NULL )',
+                            '( camp.end_date IS NULL OR camp.end_date >= CURDATE() )');
             if ( $excludeId  ) $where[] = "( camp.id != $excludeId )";
             if ( $onlyActive ) $where[] = '( camp.is_active = 1 )';
             $whereClause = implode( ' AND ', $where );
