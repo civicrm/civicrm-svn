@@ -769,7 +769,15 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
                 $element->freeze();
             }
         }
-       
+        
+        //CRM-7362 --add campaigns.
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        $campaignId = null;
+        if ( $this->_id ) {
+            $campaignId = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Participant', $this->_id, 'campaign_id' ); 
+        }
+        CRM_Campaign_BAO_Campaign::addCampaign( $this, $campaignId );
+        
         $this->addDateTime( 'register_date', ts('Registration Date'), true, array( 'formatType' => 'activityDateTime') );
         
 		if ( $this->_id ) {

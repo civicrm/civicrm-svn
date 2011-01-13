@@ -78,6 +78,11 @@
         <span class="description">{ts}Select Membership Organization and then Membership Type.{/ts}</span></td></tr>	
     <tr class="crm-membership-form-block-source"><td class="label">{$form.source.label}</td><td>&nbsp;{$form.source.html}<br />
         <span class="description">{ts}Source of this membership. This value is searchable.{/ts}</span></td></tr>
+		
+	{* CRM-7362 --add campaign to membership *}
+	{include file="CRM/Campaign/Form/addCampaignToComponent.tpl"
+	campaignTrClass="crm-membership-form-block-campaign_id"}
+
 	<tr class="crm-membership-form-block-join_date"><td class="label">{$form.join_date.label}</td><td>{include file="CRM/common/jcalendar.tpl" elementName=join_date}
 		<br />
         <span class="description">{ts}When did this contact first become a member?{/ts}</span></td></tr>

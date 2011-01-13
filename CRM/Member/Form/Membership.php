@@ -457,6 +457,14 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         $this->add('text', 'source', ts('Source'), 
                    CRM_Core_DAO::getAttribute( 'CRM_Member_DAO_Membership', 'source' ) );
         
+        //CRM-7362 --add campaigns.
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        $campaignId = null;
+        if ( $this->_id ) {
+            $campaignId = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_Membership', $this->_id, 'campaign_id' ); 
+        }
+        CRM_Campaign_BAO_Campaign::addCampaign( $this, $campaignId );
+        
         if ( !$this->_mode ) {
             $this->add('select', 'status_id', ts( 'Membership Status' ), 
                        array('' =>ts('- select -')) + CRM_Member_PseudoConstant::membershipStatus(null, null, 'label'));
@@ -745,11 +753,11 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         
         $params['contact_id'] = $this->_contactID;
         
-        $fields = array( 
-                        'status_id',
-                        'source',
-                        'is_override'
-                        );
+        $fields = array( 'status_id',
+                         'source',
+                         'is_override',
+                         'campaign_id'
+                         );
         
         foreach ( $fields as $f ) {
             $params[$f] = CRM_Utils_Array::value( $f, $formValues );

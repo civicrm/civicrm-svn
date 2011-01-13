@@ -163,6 +163,15 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
                     CRM_Core_DAO::getAttribute( 'CRM_Mailing_DAO_Mailing', 'name' ),
                     true );
         
+        //CRM-7362 --add campaigns.
+        $mailingId = CRM_Utils_Request::retrieve('mid', 'Integer', $this, false, null );
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        $campaignId = null;
+        if ( $mailingId ) {
+            $campaignId = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_Membership', $mailingId, 'campaign_id' ); 
+        }
+        CRM_Campaign_BAO_Campaign::addCampaign( $this, $campaignId );
+        
         //get the mailing groups.
         $groups =& CRM_Core_PseudoConstant::group('Mailing');
 

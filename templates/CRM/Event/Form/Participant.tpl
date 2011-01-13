@@ -212,6 +212,11 @@
     				{/if}
                 </td>
             </tr> 
+	    
+	    {* CRM-7362 --add campaign *}
+	    {include file="CRM/Campaign/Form/addCampaignToComponent.tpl"
+	    campaignTrClass="crm-participant-form-block-campaign_id"}
+
             <tr class="crm-participant-form-block-role_id"><td class="label">{$form.role_id.label}</td><td>{$form.role_id.html}</td></tr>
             <tr class="crm-participant-form-block-register_date">
                 <td class="label">{$form.register_date.label}</td>
