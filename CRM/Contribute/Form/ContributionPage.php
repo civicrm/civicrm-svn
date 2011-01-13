@@ -83,6 +83,8 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
      * @access protected  
      */  
     protected $_priceSetID = null;
+
+    protected $_values;
     
     /**
      * Function to set variables up before form is built
@@ -120,7 +122,18 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
             CRM_Utils_System::setTitle(ts('Preview Page - %1', array(1 => $title)));
         } else if ($this->_action == CRM_Core_Action::DELETE) {
             CRM_Utils_System::setTitle(ts('Delete Page - %1', array(1 => $title)));
-        } 
+        }
+
+        //cache values.
+        $this->_values = $this->get( 'values' );
+        if ( !is_array( $this->_values ) ) {
+            $this->_values = array( );
+            if ( isset( $this->_id ) && $this->_id ) {
+                $params = array('id' => $this->_id );
+                CRM_Core_DAO::commonRetrieve( 'CRM_Contribute_DAO_ContributionPage', $params, $this->_values );
+            }
+            $this->set( 'values', $this->_values );
+        }
     }
 
     /**
@@ -179,12 +192,21 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
      * @return void
      */
     function setDefaultValues()
-    {
-        $defaults = array();
+    {        
+        //some child classes calling setdefaults directly w/o preprocess.
+        $this->_values = $this->get( 'values' );
+        if ( !is_array( $this->_values ) ) {
+            $this->_values = array( );
+            if ( isset( $this->_id ) && $this->_id ) {
+                $params = array('id' => $this->_id );
+                CRM_Core_DAO::commonRetrieve( 'CRM_Contribute_DAO_ContributionPage', $params, $this->_values );
+            }
+            $this->set( 'values', $this->_values );
+        }
+        $defaults = $this->_values;
+        
         $config   = CRM_Core_Config::singleton();
         if (isset($this->_id)) {
-            $params = array('id' => $this->_id);
-            CRM_Core_DAO::commonRetrieve( 'CRM_Contribute_DAO_ContributionPage', $params, $defaults);
             
             //set defaults for pledgeBlock values.
             require_once 'CRM/Pledge/BAO/PledgeBlock.php';
