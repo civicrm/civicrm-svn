@@ -36,7 +36,8 @@
            <tr>
                 <td class="label">{ts}With Contact{/ts}</td><td class="view-value">{$values.target_contact_value}</td>
            </tr>
-       {else if $values.mailingId}
+       {/if}
+       {if $values.mailingId}
            <tr>
                 <td class="label">{ts}With Contact{/ts}</td><td class="view-value"><a href="{$values.mailingId}" title="{ts}View Mailing Report{/ts}">&raquo;{ts}Mailing Report{/ts}</a></td>
            </tr>
@@ -47,7 +48,7 @@
         <tr>
             <td class="label">{ts}Date and Time{/ts}</td><td class="view-value">{$values.activity_date_time|crmDate }</td>
         </tr> 
-        {if $values.mailingId or $values.showMessage}
+        {if $values.mailingId}
             <tr>
                 <td class="label">{ts}Details{/ts}</td>
                 <td class="view-value report">
