@@ -36,8 +36,7 @@ class Com_CiviCRMInstallerScript {
         require_once'CRM/Core/Config.php';
         $config = CRM_Core_Config::singleton( );
 
-        $script = $config->userFrameworkVersion > 1.5 ? 'index.php' :'index2.php';
-    
+        $script          = 'index.php';
         $liveSite        = substr_replace(JURI::root(), '', -1, 1);
         $configTaskUrl   = $liveSite . "/administrator/{$script}?option=com_civicrm&task=civicrm/admin/configtask&reset=1";
         $upgradeUrl      = $liveSite . "/administrator/{$script}?option=com_civicrm&task=civicrm/upgrade&reset=1";
@@ -112,6 +111,7 @@ class Com_CiviCRMInstallerScript {
     }
 
     function update($parent) {
+        $this->install($parent);
     }
 
     function preflight($type, $parent) {
@@ -127,9 +127,10 @@ class Com_CiviCRMInstallerScript {
         // only set if its empty
         $db = JFactory::getDbo();
         $db->setQuery('SELECT rules FROM #__assets WHERE name = ' . $db->quote('com_civicrm'));
-        $assetRules = (string ) $db->loadResult();
+        $assetRules = json_decode( (string ) $db->loadResult() );
 
-        if ( ! empty( $assetRules ) ) {
+
+        if ( count( $assetRules ) > 1 ) {
             return;
         }
 
@@ -160,6 +161,8 @@ class Com_CiviCRMInstallerScript {
                                    'view event participants',
                                    )
                              );
+
+        require_once 'CRM/Utils/String.php';
 
         $newPerms = array( );
         foreach ( $permissions as $group => $perms ) {
@@ -207,6 +210,15 @@ class Com_CiviCRMInstallerScript {
             }
 
             $rules->$perm = (object ) $rulesArray;
+        }
+
+        $rulesString = json_encode( $rules );
+        $db->setQuery('UPDATE #__assets SET rules = ' .
+                      $db->quote( $rulesString ) .
+                      ' WHERE name = ' . 
+                      $db->quote('com_civicrm'));
+        if ( ! $db->query()) {
+            echo 'Seems like setting default actions failed<p>';
         }
     }
 
