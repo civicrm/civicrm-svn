@@ -151,8 +151,15 @@ class CRM_Contribute_Form_ContributionView extends CRM_Core_Form
         $this->assign( 'lineItem', empty( $lineItems ) ? false : $lineItems );
         $values['totalAmount'] = $values['total_amount'];
         
+        //do check for campaigns
+        if ( $campaignId = CRM_Utils_Array::value( 'campaign_id', $values ) ) {
+            require_once 'CRM/Campaign/BAO/Campaign.php';
+            $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( $campaignId );
+            $values['campaign'] = $campaigns[$campaignId];
+        }
+        
 		// assign values to the template
-        $this->assign( $values ); 
+        $this->assign( $values );
         
         // add viewed contribution to recent items list
         require_once 'CRM/Utils/Recent.php';
