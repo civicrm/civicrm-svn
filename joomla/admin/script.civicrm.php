@@ -26,20 +26,24 @@
 class Com_CiviCRMInstallerScript {
 
     function install($parent) {
-        require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'configure.php';
-        require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'civicrm'. DIRECTORY_SEPARATOR .'CRM' . DIRECTORY_SEPARATOR . 'Utils' . DIRECTORY_SEPARATOR . 'System.php';
+        require_once 
+            dirname(__FILE__) . DIRECTORY_SEPARATOR .
+            'admin'           . DIRECTORY_SEPARATOR .
+            'configure.php';
 
         global $civicrmUpgrade;
     
-        $liveSite      = substr_replace(JURI::root(), '', -1, 1);
         require_once'CRM/Core/Config.php';
         $config = CRM_Core_Config::singleton( );
+
         $script = $config->userFrameworkVersion > 1.5 ? 'index.php' :'index2.php';
     
-        $configTaskUrl = $liveSite . "/administrator/{$script}?option=com_civicrm&task=civicrm/admin/configtask&reset=1";
-        $upgradeUrl    = $liveSite . "/administrator/{$script}?option=com_civicrm&task=civicrm/upgrade&reset=1";
+        $liveSite        = substr_replace(JURI::root(), '', -1, 1);
+        $configTaskUrl   = $liveSite . "/administrator/{$script}?option=com_civicrm&task=civicrm/admin/configtask&reset=1";
+        $upgradeUrl      = $liveSite . "/administrator/{$script}?option=com_civicrm&task=civicrm/upgrade&reset=1";
         $registerSiteURL = "http://civicrm.org/civicrm/profile/create?reset=1&gid=15";
-    
+
+        require_once 'CRM/Utils/System.php';
         if ( $civicrmUpgrade ) {
             $docLink = CRM_Utils_System::docURL2( 'Installation and Upgrades', true, 'Upgrade Guide' );    
             // UPGRADE successful status and links
@@ -114,7 +118,102 @@ class Com_CiviCRMInstallerScript {
     }
 
     function postflight($type, $parent) {
-        // An example of setting a redirect to a new location after the install is completed
-        //$parent->getParent()->set('redirect_url', 'http://www.google.com');
+        // set the default permissions
+        $this->setDefaultPermissions( );
     }
+
+    function setDefaultPermissions( ) {
+        // get the current perms from the assets table and 
+        // only set if its empty
+        $db = JFactory::getDbo();
+        $db->setQuery('SELECT rules FROM #__assets WHERE name = ' . $db->quote('com_civicrm'));
+        $assetRules = (string ) $db->loadResult();
+
+        if ( ! empty( $assetRules ) ) {
+            return;
+        }
+
+        $rules = new stdClass;
+
+        $permissions = array(
+                             'Public' => 
+                             array(
+                                   'access CiviMail subscribe/unsubscribe pages',
+                                   'access all custom data',
+                                   'access uploaded files',
+                                   'make online contributions',
+                                   'profile listings and forms',
+                                   'register for events',
+                                   'view event info',
+                                   'view event participants',
+                                   ),
+
+                             'Registered' => 
+                             array(
+                                   'access CiviMail subscribe/unsubscribe pages',
+                                   'access all custom data',
+                                   'access uploaded files',
+                                   'make online contributions',
+                                   'profile listings and forms',
+                                   'register for events',
+                                   'view event info',
+                                   'view event participants',
+                                   )
+                             );
+
+        $newPerms = array( );
+        foreach ( $permissions as $group => $perms ) {
+
+            // get user group ID
+            $userGroupID = $this->getJoomlaUserGroupID( $group );
+            if ( empty( $userGroupID ) ) {
+                // since we cant resolve this, we move on
+                continue;
+            }
+
+
+            foreach ( $perms as $perm ) {
+                $permString = 'civicrm.' . CRM_Utils_String::munge( strtolower( $perm ) );
+                if ( ! array_key_exists( $permString, $newPerms ) ) {
+                    $newPerms[$permString] = array( );
+                }
+                $newPerms[$permString][] = $userGroupID;
+            }
+        }
+
+        if ( empty( $newPerms ) ) {
+            return;
+        }
+
+        // now merge the two newPerms and rules
+        foreach ( $newPerms as $perm => $groups ) {
+            if ( empty( $rules->$perm ) ) {
+                $rulesArray = array( );
+            } else {
+                $rulesArray = (array ) $rules->$perm;
+            }
+
+            foreach ( $groups as $group ) {
+                $present = false;
+                foreach ( $rulesArray as $key => $val ) {
+                    if ( (int ) $key == $group ) {
+                        $present = true;
+                        break;
+                    }
+                }
+                if ( ! $present ) {
+                    $rulesArray[(string ) $group] = 1;
+                }
+            }
+
+            $rules->$perm = (object ) $rulesArray;
+        }
+    }
+
+    function getJoomlaUserGroupID( $title ) {
+        $db = JFactory::getDbo();
+        $db->setQuery('SELECT id FROM #__usergroups where title = ' . $db->quote($title));
+        return (int) $db->loadResult();
+	}
+
 }
