@@ -360,18 +360,9 @@ INNER JOIN  civicrm_option_value ov ON ( ca.case_type_id=ov.value AND ov.option_
         }
         
         if ( $result ) {
-            // CRM-7364
-            require_once 'CRM/Contact/BAO/Relationship.php';
-            $contactIds = self::retrieveContactIdsByCaseId( $caseId );
-            if (! empty( $contactIds ) ) {
-	            foreach ( $contactIds as $cid ) {
-	                $roles = self::getCaseRoles( $cid, $caseId );
-	                foreach ( $roles as $r => $dummy ) {
-	                	CRM_Contact_BAO_Relationship::setIsActive( $r, 0 );
-	                }
-	            }
-            }
-        	
+            // CRM-7364, disable relationships
+            self::enableDisableCaseRelationships( $caseId, false );            
+       	
             // remove case from recent items.
             $caseRecent = array(
                                 'id'   => $caseId,
@@ -384,6 +375,32 @@ INNER JOIN  civicrm_option_value ov ON ( ca.case_type_id=ov.value AND ov.option_
         
         return false;
     }
+
+    /**
+     * Function to enable disable case related relationships
+     *
+     *  @param int      $caseId case id
+     *  @param boolean  $enable action 
+     *  
+     *  @return void
+     *  @access public
+     *  @static
+     */
+    static function enableDisableCaseRelationships( $caseId, $enable ) {
+        $contactIds = self::retrieveContactIdsByCaseId( $caseId );
+        if ( !empty( $contactIds ) ) {
+            foreach ( $contactIds as $cid ) {
+                $roles = self::getCaseRoles( $cid, $caseId );
+                if ( !empty( $roles ) ) {
+                    $relationshipIds = implode( ',', array_keys( $roles ) );
+                    $enable = (int)$enable;
+                    $query = "UPDATE civicrm_relationship SET is_active = {$enable}
+                        WHERE id IN ( {$relationshipIds} )";
+                    CRM_Core_DAO::executeQuery( $query );
+                }
+            }
+        }
+    }  
 
     /**                                                           
      * Delete the activities related to case
@@ -1578,18 +1595,8 @@ AND civicrm_case.is_deleted     = {$cases['case_deleted']}";
         $case->is_deleted = 0;
         $case->save( );
         
-        // CRM-7364
-        $contactIds = self::retrieveContactIdsByCaseId( $caseId );
-        if (! empty( $contactIds ) ) {
-	        foreach ( $contactIds as $cid ) {
-	            $roles = self::getCaseRoles( $cid, $caseId );
-	            foreach ( $roles as $r => $dummy ) {
-	            	require_once 'CRM/Contact/BAO/Relationship.php';
-	                CRM_Contact_BAO_Relationship::setIsActive( $r, 1 );
-	            }
-	        }
-        }
-        
+        //CRM-7364, enable relationships
+        self::enableDisableCaseRelationships( $caseId, true );            
         return true;
     }
     
