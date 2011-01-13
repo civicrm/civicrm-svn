@@ -174,10 +174,6 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         // email titles/values
         // FIXME: call this only if we’re actually checking email
         if (!isset($titles['log_civicrm_email']) or !isset($values['log_civicrm_email'])) {
-            $titles['log_civicrm_email'] = array(
-                'location_type_id' => ts('Location Type'),
-            );
-
             // FIXME: these should be populated with pseudo constants as they
             // were at the time of logging rather than their current values
             $values['log_civicrm_email'] = array(
@@ -186,9 +182,7 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
             require_once 'CRM/Core/DAO/Email.php';
             $dao = new CRM_Core_DAO_Email;
             foreach ($dao->fields() as $field) {
-                if (!isset($titles['log_civicrm_email'][$field['name']])) {
-                    $titles['log_civicrm_email'][$field['name']] = $field['title'];
-                }
+                $titles['log_civicrm_email'][$field['name']] = $field['title'];
                 if ($field['type'] == CRM_Utils_Type::T_BOOLEAN) {
                     $values['log_civicrm_email'][$field['name']] = array('0' => ts('false'), '1' => ts('true'));
                 }
