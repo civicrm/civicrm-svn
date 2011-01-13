@@ -112,11 +112,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         $this->assign( 'otherUfId', $otherUfId );
         $this->assign( 'otherUfName', $otherUser->name );
         
-        $cmsUser = false;
-        if ( $mainUfId || $otherUfId ) {
-            $cmsUser = true;  
-        }
-        
+        $cmsUser = ( $mainUfId && $otherUfId ) ? true : false;  
         $this->assign( 'user', $cmsUser );
                 
         $session = CRM_Core_Session::singleton( );
