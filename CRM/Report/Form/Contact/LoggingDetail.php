@@ -40,6 +40,7 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
 {
     private $loggingDB;
 
+    private $contact_id;
     private $log_conn_id;
     private $log_date;
 
@@ -96,6 +97,9 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         $this->assign('who_name',  $dao->who_name);
         $this->assign('whom_name', $dao->whom_name);
         $this->assign('log_date',  $this->log_date);
+
+        // track who’s changes being monitored
+        $this->contact_id = $dao->whom_id;
 
         // link back to summary report
         require_once 'CRM/Report/Utils/Report.php';
