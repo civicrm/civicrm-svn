@@ -115,7 +115,7 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         }
 
         // add changes by fetching all ids affected in the ±10 s interval (for the given connection id)
-        $tables = array('log_civicrm_email', 'log_civicrm_phone', 'log_civicrm_im', 'log_civicrm_address');
+        $tables = array('log_civicrm_email', 'log_civicrm_phone', 'log_civicrm_im', 'log_civicrm_openid', 'log_civicrm_address');
         foreach ($tables as $table) {
             $sql = "SELECT DISTINCT id FROM `{$this->loggingDB}`.`$table` WHERE log_conn_id = %1 AND log_date BETWEEN DATE_SUB(%2, INTERVAL 10 SECOND) AND DATE_ADD(%2, INTERVAL 10 SECOND)";
             $dao =& CRM_Core_DAO::executeQuery($sql, $params);
@@ -174,14 +174,14 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
             }
         }
 
-        foreach (array('address', 'email', 'im', 'phone') as $type) {
+        foreach (array('Address', 'Email', 'IM', 'OpenID', 'Phone') as $class) {
+            $type = strtolower($class);
             if (!isset($titles["log_civicrm_$type"]) or !isset($values["log_civicrm_$type"])) {
                 // FIXME: these should be populated with pseudo constants as they
                 // were at the time of logging rather than their current values
                 $values["log_civicrm_$type"] = array(
                     'location_type_id' => CRM_Core_PseudoConstant::locationType(),
                 );
-                $class = $type == 'im' ? 'IM' : ucfirst($type);
                 require_once "CRM/Core/DAO/$class.php";
                 eval("\$dao = new CRM_Core_DAO_$class;");
                 foreach ($dao->fields() as $field) {
