@@ -152,7 +152,10 @@ Class CRM_Campaign_BAO_Campaign extends CRM_Campaign_DAO_Campaign
      * @return $campaigns a set of campaigns.
      * @access public
      */
-    public static function getCampaigns( $includeId = null, $excludeId = null, $onlyActive = true ) 
+    public static function getCampaigns( $includeId = null, 
+                                         $excludeId = null, 
+                                         $onlyActive = true, 
+                                         $forceAll = false ) 
     {
         static $campaigns;
         $cacheKey = 0;
@@ -169,7 +172,10 @@ Class CRM_Campaign_BAO_Campaign extends CRM_Campaign_DAO_Campaign
             if ( $onlyActive ) $where[] = '( camp.is_active = 1 )';
             $whereClause = implode( ' AND ', $where );
             if ( $includeId ) $whereClause .= " OR ( camp.id = $includeId )"; 
-                                  
+            
+            //lets force all.
+            if ( $forceAll ) $whereClause = '( 1 )'; 
+            
             $query = "
 SELECT  camp.id, camp.title
   FROM  civicrm_campaign camp
@@ -213,16 +219,12 @@ SELECT  camp.id, camp.title
             
             //do check for component.
             if ( $doCheckForComponent ) {
-                $config = CRM_Core_Config::singleton( );
-                $isValid = false;
-                if ( in_array( 'CiviCampaign', $config->enableComponents ) ) $isValid = true; 
-                $campaigns['isCampaignEnabled'] = $isValid;
+                $campaigns['isCampaignEnabled'] = $isValid = self::isCampaignEnable( );
             }
             
             //do check for permissions.
             if ( $doCheckForPermissions ) {
-                $isValid = self::accessCampaign( );
-                $campaigns['hasAccessCampaign'] = $isValid;
+                $campaigns['hasAccessCampaign'] = $isValid = self::accessCampaign( );
             }
             
             //finally retrieve campaigns from db.
@@ -233,6 +235,21 @@ SELECT  camp.id, camp.title
         }
         
         return $validCampaigns[$cacheKey];
+    }
+    
+    /*
+     * Is CiviCampaign enabled.
+     *
+     */
+    public static function isCampaignEnable( ) 
+    {
+        $isEnable = false;
+        $config = CRM_Core_Config::singleton( );
+        if ( in_array( 'CiviCampaign', $config->enableComponents ) ) {
+            $isEnable = true;
+        }
+        
+        return $isEnable;
     }
     
     /**

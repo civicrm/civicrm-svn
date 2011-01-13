@@ -35,6 +35,7 @@
  */
 
 require_once 'CRM/Core/Page.php';
+require_once 'CRM/Campaign/BAO/Campaign.php';
 require_once 'CRM/Contribute/BAO/ContributionPage.php';
 
 /**
@@ -444,6 +445,9 @@ ORDER BY title asc
 
         $dao = CRM_Core_DAO::executeQuery( $query, $params, true, 'CRM_Contribute_DAO_ContributionPage' );
         
+        //get all campaigns.
+        $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, true );
+        
         //get configure actions links.
         $configureActionLinks = self::configureActionLinks( );
         
@@ -506,11 +510,14 @@ ORDER BY title asc
                                            array('id' => $dao->id),
                                            ts( 'more' ),
                                            true );
+            
+            //show campaigns on selector.
+            $contribution[$dao->id]['campaign'] = CRM_Utils_Array::value( $dao->campaign_id, $allCampaigns );
         }
         
         if (isset($contribution)) {
             $this->assign('rows', $contribution);
-        }     
+        }
     }
     
     function search( )
