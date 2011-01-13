@@ -61,10 +61,13 @@
             <th>{ts}Public?{/ts}</th>
             <th>{ts}Starts{/ts}</th>
             <th>{ts}Ends{/ts}</th>
-	        <th>{ts}Active?{/ts}</th>
-    		<th></th>
-    		<th class="hiddenElement"></th>
-    		<th class="hiddenElement"></th>	
+            {if call_user_func(array('CRM_Campaign_BAO_Campaign','isCampaignEnable'))}
+	    <th>{ts}Campaign{/ts}</th>
+	    {/if}
+	    <th>{ts}Active?{/ts}</th>
+    	    <th></th>
+    	    <th class="hiddenElement"></th>
+    	    <th class="hiddenElement"></th>	
          </tr>
          </thead>
         {foreach from=$rows item=row}
@@ -75,6 +78,9 @@
             <td class="crm-event-is_public">{if $row.is_public eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>    
             <td class="crm-event-start_date">{$row.start_date|crmDate:"%b %d, %Y %l:%M %P"}</td>
             <td class="crm-event-end_date">{$row.end_date|crmDate:"%b %d, %Y %l:%M %P"}</td>
+	    {if call_user_func(array('CRM_Campaign_BAO_Campaign','isCampaignEnable'))}
+	    <td class="crm-event-campaign">{$row.campaign}</td>
+	    {/if}
             <td class="crm-event_status" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
     	    <td class="crm-event-actions right nowrap">
         	    <div class="crm-configure-actions">

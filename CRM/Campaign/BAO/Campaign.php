@@ -243,10 +243,14 @@ SELECT  camp.id, camp.title
      */
     public static function isCampaignEnable( ) 
     {
-        $isEnable = false;
-        $config = CRM_Core_Config::singleton( );
-        if ( in_array( 'CiviCampaign', $config->enableComponents ) ) {
-            $isEnable = true;
+        static $isEnable = null;
+        
+        if ( !isset( $isEnable ) ) { 
+            $isEnable = false;
+            $config = CRM_Core_Config::singleton( );
+            if ( in_array( 'CiviCampaign', $config->enableComponents ) ) {
+                $isEnable = true;
+            }
         }
         
         return $isEnable;
