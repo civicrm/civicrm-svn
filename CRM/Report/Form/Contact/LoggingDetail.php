@@ -115,7 +115,7 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         }
 
         // add email changes by fetching all email ids affected in the ±10 s interval (for the given connection id)
-        $tables = array('log_civicrm_email', 'log_civicrm_phone');
+        $tables = array('log_civicrm_address', 'log_civicrm_email', 'log_civicrm_phone');
         foreach ($tables as $table) {
             $sql = "SELECT DISTINCT id FROM `{$this->loggingDB}`.`$table` WHERE log_conn_id = %1 AND log_date BETWEEN DATE_SUB(%2, INTERVAL 10 SECOND) AND DATE_ADD(%2, INTERVAL 10 SECOND)";
             $dao =& CRM_Core_DAO::executeQuery($sql, $params);
@@ -176,7 +176,11 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
 
         // email/phone titles/values
         // FIXME: call this only if we’re actually checking the relevant table
-        foreach (array('email', 'phone') as $type) {
+        $values['log_civicrm_address'] = array(
+            'country_id'        => CRM_Core_PseudoConstant::country(),
+            'state_province_id' => CRM_Core_PseudoConstant::stateProvince(),
+        );
+        foreach (array('address', 'email', 'phone') as $type) {
             if (!isset($titles["log_civicrm_$type"]) or !isset($values["log_civicrm_$type"])) {
                 // FIXME: these should be populated with pseudo constants as they
                 // were at the time of logging rather than their current values
