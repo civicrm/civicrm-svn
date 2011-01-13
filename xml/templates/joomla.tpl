@@ -21,8 +21,7 @@
       <queries>
       </queries>
   </uninstall>
-  <installfile>install.civicrm.php</installfile>
-  <uninstallfile>uninstall.civicrm.php</uninstallfile>
+  <scriptfile>script.civicrm.php</scriptfile>
   <administration>
     <menu task="civicrm/dashboard&amp;reset=1">CiviCRM</menu>
     <files folder="admin">

@@ -89,13 +89,6 @@ class CRM_Core_Permission_Joomla {
      */
     static function check( $str ) {
         $config = CRM_Core_Config::singleton( );
-        $adminPerm = array( 'administer users',
-                            'edit all contacts',
-                            'view all contacts' );
-        
-        if ( $config->userFrameworkFrontend && in_array( $str, $adminPerm ) ) {
-            return false;
-        }
 
         require_once 'CRM/Utils/String.php';
         $permissionStr = 'civicrm.' . CRM_Utils_String::munge( strtolower( $str ) );

@@ -23,27 +23,27 @@
  +--------------------------------------------------------------------+
 */
 
-defined('_JEXEC') or die('No direct access allowed'); 
+class Com_CiviCRMInstallerScript {
 
-function com_install() {
-    require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'configure.php';
-    require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'civicrm'. DIRECTORY_SEPARATOR .'CRM' . DIRECTORY_SEPARATOR . 'Utils' . DIRECTORY_SEPARATOR . 'System.php';
+    function install($parent) {
+        require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'configure.php';
+        require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'civicrm'. DIRECTORY_SEPARATOR .'CRM' . DIRECTORY_SEPARATOR . 'Utils' . DIRECTORY_SEPARATOR . 'System.php';
 
-    global $civicrmUpgrade;
+        global $civicrmUpgrade;
     
-    $liveSite      = substr_replace(JURI::root(), '', -1, 1);
-    require_once'CRM/Core/Config.php';
-    $config = CRM_Core_Config::singleton( );
-    $script = $config->userFrameworkVersion > 1.5 ? 'index.php' :'index2.php';
+        $liveSite      = substr_replace(JURI::root(), '', -1, 1);
+        require_once'CRM/Core/Config.php';
+        $config = CRM_Core_Config::singleton( );
+        $script = $config->userFrameworkVersion > 1.5 ? 'index.php' :'index2.php';
     
-    $configTaskUrl = $liveSite . "/administrator/{$script}?option=com_civicrm&task=civicrm/admin/configtask&reset=1";
-    $upgradeUrl    = $liveSite . "/administrator/{$script}?option=com_civicrm&task=civicrm/upgrade&reset=1";
-    $registerSiteURL = "http://civicrm.org/civicrm/profile/create?reset=1&gid=15";
+        $configTaskUrl = $liveSite . "/administrator/{$script}?option=com_civicrm&task=civicrm/admin/configtask&reset=1";
+        $upgradeUrl    = $liveSite . "/administrator/{$script}?option=com_civicrm&task=civicrm/upgrade&reset=1";
+        $registerSiteURL = "http://civicrm.org/civicrm/profile/create?reset=1&gid=15";
     
-    if ( $civicrmUpgrade ) {
-        $docLink = CRM_Utils_System::docURL2( 'Installation and Upgrades', true, 'Upgrade Guide' );    
-        // UPGRADE successful status and links
-        $content = '
+        if ( $civicrmUpgrade ) {
+            $docLink = CRM_Utils_System::docURL2( 'Installation and Upgrades', true, 'Upgrade Guide' );    
+            // UPGRADE successful status and links
+            $content = '
   <center>
   <table width="100%" border="0">
     <tr>
@@ -56,15 +56,15 @@ function com_install() {
   </table>
   </center>';
 
-    } else {
-        $docLink = CRM_Utils_System::docURL2( 'Installation and Upgrades', false, 'Installation Guide' );
+        } else {
+            $docLink = CRM_Utils_System::docURL2( 'Installation and Upgrades', false, 'Installation Guide' );
         
-        $frontEnd = CRM_Utils_System::docURL2( 'Configuring Front-end Profile Listings and Forms in Joomla! Sites', false, 'Create front-end forms and searchable directories using Profiles' );
-        $contri   = CRM_Utils_System::docURL2( 'Displaying Online Contribution Pages in Joomla! Frontend Sites', false, 'Create online contribution pages' );
-        $event    = CRM_Utils_System::docURL2( 'Configuring Front-end Event Info and Registration in Joomla! Sites', false, 'Create events with online event registration' );
+            $frontEnd = CRM_Utils_System::docURL2( 'Configuring Front-end Profile Listings and Forms in Joomla! Sites', false, 'Create front-end forms and searchable directories using Profiles' );
+            $contri   = CRM_Utils_System::docURL2( 'Displaying Online Contribution Pages in Joomla! Frontend Sites', false, 'Create online contribution pages' );
+            $event    = CRM_Utils_System::docURL2( 'Configuring Front-end Event Info and Registration in Joomla! Sites', false, 'Create events with online event registration' );
         
-        // INSTALL successful status and links
-        $content = '
+            // INSTALL successful status and links
+            $content = '
   <center>
   <table width="100%" border="0">
     <tr>
@@ -84,7 +84,37 @@ function com_install() {
     </tr>
   </table>
   </center>';
-    }
+        }
     
-    echo $content;
+        echo $content;
+    }
+
+    function uninstall($parent) {
+        $uninstall = false;
+        // makes it easier if folks want to really uninstall
+        if ( $uninstall ) {
+            require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'civicrm.settings.php';
+    
+            require_once 'CRM/Core/Config.php';
+            $config = CRM_Core_Config::singleton( );
+    
+            require_once 'CRM/Core/DAO.php';
+            CRM_Core_DAO::dropAllTables( );
+    
+            echo "You have uninstalled CiviCRM. All CiviCRM related tables have been dropped from the database.";
+        } else {
+            echo "You have uninstalled CiviCRM.";
+        }
+    }
+
+    function update($parent) {
+    }
+
+    function preflight($type, $parent) {
+    }
+
+    function postflight($type, $parent) {
+        // An example of setting a redirect to a new location after the install is completed
+        //$parent->getParent()->set('redirect_url', 'http://www.google.com');
+    }
 }
