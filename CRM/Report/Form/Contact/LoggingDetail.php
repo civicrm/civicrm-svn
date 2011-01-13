@@ -166,7 +166,7 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         }
 
         // add custom data titles/values for the given table
-        if (!isset($titles[$table]) or !isset($values[$table])) {
+        if (substr($table, 0, 18) == 'log_civicrm_value_' and (!isset($titles[$table]) or !isset($values[$table]))) {
             $titles[$table] = array();
             $values[$table] = array();
 
