@@ -142,6 +142,9 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
                 'prefix_id'                      => ts('Prefix'),
                 'suffix_id'                      => ts('Suffix'),
             );
+
+            // FIXME: these should be populated with pseudo constants as they
+            // were at the time of logging rather than their current values
             $values['log_civicrm_contact'] = array(
                 'gender_id'                      => CRM_Core_PseudoConstant::gender(),
                 'preferred_communication_method' => CRM_Core_PseudoConstant::pcm(),
@@ -149,6 +152,7 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
                 'prefix_id'                      => CRM_Core_PseudoConstant::individualPrefix(),
                 'suffix_id'                      => CRM_Core_PseudoConstant::individualSuffix(),
             );
+
             require_once 'CRM/Contact/DAO/Contact.php';
             $dao = new CRM_Contact_DAO_Contact;
             foreach ($dao->fields() as $field) {
