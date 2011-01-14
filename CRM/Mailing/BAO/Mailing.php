@@ -1798,6 +1798,10 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
 
         $mailingACL = self::mailingACL( );
 
+        //get all campaigns.
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, true );
+        
         // we only care about parent jobs, since that holds all the info on
         // the mailing
         $query = "
@@ -1812,7 +1816,8 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
                         scheduledContact.sort_name as scheduled_by,
                         $mailing.created_id as created_id, 
                         $mailing.scheduled_id as scheduled_id,
-                        $mailing.is_archived as archived
+                        $mailing.is_archived as archived,
+                        campaign_id
             FROM        $mailing
             LEFT JOIN   $job ON ( $job.mailing_id = $mailing.id AND $job.is_test = 0 AND $job.parent_id IS NULL )
             LEFT JOIN   civicrm_contact createdContact ON ( civicrm_mailing.created_id = createdContact.id )
@@ -1852,7 +1857,9 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
                             'created_id'    => $dao->created_id,
                             'scheduled_id'  => $dao->scheduled_id,
                             'archived'      => $dao->archived,
-                            'approval_status_id' => $dao->approval_status_id
+                            'approval_status_id' => $dao->approval_status_id,
+                            'campaign_id'   => $dao->campaign_id,
+                            'campaign'      => $allCampaigns[$dao->campaign_id]
                             );
         }
         return $rows;

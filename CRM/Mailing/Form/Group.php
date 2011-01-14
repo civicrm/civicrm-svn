@@ -87,15 +87,15 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
         
         $defaults = array( );
         
-        if ( $mailingID && $continue ) {
-            $defaults['name'] = CRM_Core_DAO::getFieldValue('CRM_Mailing_DAO_Mailing', $mailingID, 'name', 'id');
-            $this->set('mailing_id', $mailingID);
-        } elseif ( $mailingID && !$continue ) {
-            $defaults['name'] = ts('Copy of %1',
-                                   array(1 => CRM_Core_DAO::getFieldValue('CRM_Mailing_DAO_Mailing',
-                                                                          $mailingID,
-                                                                          'name', 
-                                                                          'id')));
+        if ( $mailingID ) {
+            $mailing = new CRM_Mailing_DAO_Mailing( );
+            $mailing->id = $mailingID;
+            $mailing->addSelect( 'name', 'campaign_id' );
+            $mailing->find( true );
+            
+            $defaults['name'] = $mailing->name;
+            if ( !$continue ) $defaults['name'] = ts('Copy of %1', array( 1 => $mailing->name ) ); 
+            $defaults['campaign_id'] = $mailing->campaign_id;
         }
         
         if ( $mailingID ) { 
@@ -310,7 +310,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
             $values['includeGroups'][] = $smartGroupId;
         }
         
-        foreach ( array( 'name', 'group_id', 'search_id', 'search_args' ) as $n ) {
+        foreach ( array( 'name', 'group_id', 'search_id', 'search_args', 'campaign_id' ) as $n ) {
             if ( CRM_Utils_Array::value( $n, $values ) ) {
                 $params[$n] = $values[$n];
             }

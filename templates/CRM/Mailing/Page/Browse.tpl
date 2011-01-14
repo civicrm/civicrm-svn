@@ -59,6 +59,9 @@
         <td class="crm-mailing-scheduled">{$row.scheduled}</td>
         <td class="crm-mailing-start">{$row.start}</td>
         <td class="crm-mailing-end">{$row.end}</td>
+	{if call_user_func(array('CRM_Campaign_BAO_Campaign','isCampaignEnable'))}
+	<td class="crm-mailing-campaign">{$row.campaign}</td>
+	{/if}
         <td>{$row.action|replace:'xx':$row.id}</td>
       </tr>
       {/foreach}
