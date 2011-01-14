@@ -26,7 +26,7 @@
 
 require_once 'CiviTest/CiviSeleniumTestCase.php';
 
-class WebTest_Mailing_AddNewMailingComponent extends CiviSeleniumTestCase {
+class WebTest_Mailing_AddNewMailingComponentTest extends CiviSeleniumTestCase {
     
     protected $captureScreenshotOnFailure = TRUE;
     protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';
