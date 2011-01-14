@@ -32,7 +32,7 @@ require_once 'api/v3/Contact.php';
 
 class api_v3_ActivityContactTest extends CiviUnitTestCase
 {
-
+    protected $_apiversion;
     public function setUp()
     {
         //  Connect to the database

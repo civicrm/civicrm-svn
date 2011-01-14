@@ -44,6 +44,7 @@ require_once 'Utils.php';
  */
 class api_v3_ActivityTest extends CiviUnitTestCase
 {
+      protected $_apiversion;
     /**
      *  Test setup for every test
      *

@@ -204,7 +204,8 @@ class api_v3_ContactTest extends CiviUnitTestCase
         $params = array(
                         'first_name'   => 'abc1',
                         'contact_type' => 'Individual',
-                        'last_name'    => 'xyz1'
+                        'last_name'    => 'xyz1',
+                        'version'			=>  3,
                         );
 
         $contact =& civicrm_contact_create($params);
