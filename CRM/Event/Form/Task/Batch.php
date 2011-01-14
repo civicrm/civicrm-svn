@@ -178,7 +178,7 @@ class CRM_Event_Form_Task_Batch extends CRM_Event_Form_Task
                 if ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID( $name ) ) {
                     $customValue = CRM_Utils_Array::value( $customFieldID, $this->_customFields );
                     if ( CRM_Utils_Array::value( 'extends_entity_column_value', $customValue ) ) {
-                        $entityColumnValue = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, 
+                        $entityColumnValue = explode( CRM_Core_DAO::VALUE_SEPARATOR, 
                                                       $customValue['extends_entity_column_value'] );
                     }
                     if ( ( $this->_roleCustomDataTypeID == $customValue['extends_entity_column_id'] ) &&

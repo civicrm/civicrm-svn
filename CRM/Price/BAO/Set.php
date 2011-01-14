@@ -653,9 +653,9 @@ WHERE  id = %1";
         
         require_once 'CRM/Core/BAO/CustomOption.php';
         $params['amount_level'] =
-            CRM_Core_BAO_CustomOption::VALUE_SEPERATOR .
-            implode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, $amount_level ) . $displayParticipantCount .
-            CRM_Core_BAO_CustomOption::VALUE_SEPERATOR; 
+            CRM_Core_DAO::VALUE_SEPARATOR .
+            implode( CRM_Core_DAO::VALUE_SEPARATOR, $amount_level ) . $displayParticipantCount .
+            CRM_Core_DAO::VALUE_SEPARATOR; 
         $params['amount']       = $totalPrice;
     }
     

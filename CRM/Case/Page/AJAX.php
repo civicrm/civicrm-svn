@@ -130,7 +130,8 @@ class CRM_Case_Page_AJAX
         $dao = CRM_Core_DAO::executeQuery( $sql , array( 1 => array( $caseId,  'Integer' ) ) );
         
         while ( $dao->fetch( ) ) {
-             $caseType = CRM_Case_BAO_Case::getCaseType( ( str_replace( CRM_Case_BAO_Case::VALUE_SEPERATOR, "", 
+            $caseType = CRM_Case_BAO_Case::getCaseType( ( str_replace( CRM_Core_DAO::VALUE_SEPARATOR,
+                                                                        "", 
                                                                         $dao->case_type_id) ) );
              $caseStatuses = CRM_Case_PseudoConstant::caseStatus();
              $cs = $caseStatuses[$dao->status_id];

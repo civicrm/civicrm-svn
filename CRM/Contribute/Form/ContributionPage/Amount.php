@@ -392,7 +392,7 @@ SELECT id
         if ( $params['is_recur'] ) {
             require_once 'CRM/Core/BAO/CustomOption.php';
             $params['recur_frequency_unit'] = 
-                implode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, 
+                implode( CRM_Core_DAO::VALUE_SEPARATOR,
                          array_keys( $params['recur_frequency_unit'] ) );
             $params['is_recur_interval'] = CRM_Utils_Array::value( 'is_recur_interval', $params ,false );
         }

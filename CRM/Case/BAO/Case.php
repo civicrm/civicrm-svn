@@ -52,12 +52,6 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
      */
     static $_exportableFields = null;
 
-    /**  
-     * value seletor for multi-select
-     **/ 
-   
-    const VALUE_SEPERATOR = "";
-    
     function __construct()
     {
         parent::__construct();
@@ -810,7 +804,7 @@ AND civicrm_case.status_id != $closedId";
             $myGroupByClause   = " GROUP BY CONCAT(case_relationship.case_id,'-',case_relationship.contact_id_b)";
         }
         
-        $seperator = self::VALUE_SEPERATOR;
+        $seperator = CRM_Core_DAO::VALUE_SEPARATOR;
    
         $query = "
 SELECT case_status.label AS case_status, status_id, case_type.label AS case_type, 
@@ -2676,7 +2670,8 @@ WHERE id IN ('. implode( ',', $copiedActivityIds ) . ')';
             $dao = CRM_Core_DAO::executeQuery( $query );
             $caseTypeIds = array( );
             while ( $dao->fetch( ) ) {
-                $typeId        = explode( CRM_Case_BAO_Case::VALUE_SEPERATOR, $dao->case_type_id );
+                $typeId        = explode( CRM_Core_DAO::VALUE_SEPARATOR,
+                                          $dao->case_type_id );
                 $caseTypeIds[] = $typeId[1];
             }  
         }

@@ -2045,7 +2045,7 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
                     
                     // communication Prefferance
                     require_once 'CRM/Core/BAO/CustomOption.php';
-                    $contactPcm = explode(CRM_Core_BAO_CustomOption::VALUE_SEPERATOR,
+                    $contactPcm = explode(CRM_Core_DAO::VALUE_SEPARATOR,
                                           $contactDetails[$contactID]['preferred_communication_method']);
                     $result = array( );
                     foreach ( $contactPcm as $key => $val) {

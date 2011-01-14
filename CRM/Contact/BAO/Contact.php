@@ -135,9 +135,9 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
             $prefComm =  $newPref;
             if ( is_array($prefComm) && !empty($prefComm) ) {
                 $prefComm =
-                    CRM_Core_BAO_CustomOption::VALUE_SEPERATOR .
-                    implode(CRM_Core_BAO_CustomOption::VALUE_SEPERATOR,array_keys($prefComm)) .
-                    CRM_Core_BAO_CustomOption::VALUE_SEPERATOR;
+                    CRM_Core_DAO::VALUE_SEPARATOR .
+                    implode( CRM_Core_DAO::VALUE_SEPARATOR, array_keys( $prefComm ) ) .
+                    CRM_Core_DAO::VALUE_SEPARATOR;
                 $contact->preferred_communication_method = $prefComm;
             } else {
                 $contact->preferred_communication_method = '';
@@ -1801,7 +1801,8 @@ ORDER BY civicrm_email.is_primary DESC";
             $specialFields = array( 'educational_interest','college_type','college_interest','test_tutoring' );
             foreach( $specialFields as $field ) {
                 if ( $params[$field] ) {
-                    $params[$field] = implode(CRM_Core_BAO_CustomOption::VALUE_SEPERATOR,array_keys($params[$field]));
+                    $params[$field] = implode(CRM_Core_DAO::VALUE_SEPARATOR,
+                                              array_keys($params[$field]));
                 }
             }
             
@@ -2042,7 +2043,8 @@ UNION
             
             // communication Prefferance
             $preffComm = $comm = array();
-            $comm =explode(CRM_Core_BAO_CustomOption::VALUE_SEPERATOR,$contact->preferred_communication_method);
+            $comm =explode(CRM_Core_DAO::VALUE_SEPARATOR,
+                           $contact->preferred_communication_method);
             foreach( $comm as $value ) {
                 $preffComm[$value] = 1; 
             }

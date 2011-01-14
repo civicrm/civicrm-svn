@@ -2892,8 +2892,8 @@ WHERE  id IN ( $groupIDs )
         if ( !is_array($value) ) {
             $v = array( );
             
-            if ( strpos( $value, CRM_Core_BAO_CustomOption::VALUE_SEPERATOR ) !== false ) {
-                $v = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, $value );
+            if ( strpos( $value, CRM_Core_DAO::VALUE_SEPARATOR ) !== false ) {
+                $v = explode( CRM_Core_DAO::VALUE_SEPARATOR, $value );
             } else{
                 $v = explode( ",", $value );
             }
@@ -2917,7 +2917,12 @@ WHERE  id IN ( $groupIDs )
         $sqlValue = array( ) ;
         $sql = "contact_a.preferred_communication_method";
         foreach ( $pref as $val ) { 
-            $sqlValue[] = "( $sql like '%" . CRM_Core_BAO_CustomOption::VALUE_SEPERATOR . $val . CRM_Core_BAO_CustomOption::VALUE_SEPERATOR . "%' ) ";
+            $sqlValue[] = 
+                "( $sql like '%" . 
+                CRM_Core_DAO::VALUE_SEPARATOR .
+                $val . 
+                CRM_Core_DAO::VALUE_SEPARATOR . 
+                "%' ) ";
             $showValue[] =  $commPref[$val];
         }
         $this->_where[$grouping][] = "( ". implode( ' OR ', $sqlValue ). " )"; 

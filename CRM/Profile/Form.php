@@ -830,7 +830,7 @@ class CRM_Profile_Form extends CRM_Core_Form
                     }
                     $groupTypes = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Group',
                                                                $key, 'group_type', 'id' );
-                    $groupType = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, 
+                    $groupType = explode( CRM_Core_DAO::VALUE_SEPARATOR, 
                                           substr( $groupTypes, 1, -1 ) );
                     //filter group of mailing type and unset it from params
                     if ( in_array( 2, $groupType ) ) {

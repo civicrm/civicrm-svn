@@ -225,7 +225,7 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
             require_once 'CRM/Core/BAO/CustomOption.php';
             if ( CRM_Utils_Array::value( 'pledge_frequency_unit', $pledgeBlockDefaults ) ) {
                 $defaults['pledge_frequency_unit'] = 
-                    array_fill_keys( explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, 
+                    array_fill_keys( explode( CRM_Core_DAO::VALUE_SEPARATOR,
                                               $pledgeBlockDefaults['pledge_frequency_unit'] ), '1' );
             }
 
@@ -260,7 +260,7 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
         if ( CRM_Utils_Array::value( 'recur_frequency_unit',$defaults ) ) {
             require_once 'CRM/Core/BAO/CustomOption.php';
             $defaults['recur_frequency_unit'] = 
-                array_fill_keys( explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, 
+                array_fill_keys( explode( CRM_Core_DAO::VALUE_SEPARATOR,
                                           $defaults['recur_frequency_unit'] ), '1' );
         } else {
             require_once 'CRM/Core/OptionGroup.php';

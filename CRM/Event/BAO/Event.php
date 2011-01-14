@@ -1254,7 +1254,7 @@ WHERE civicrm_event.is_active = 1
 
                 //handle fee_level for price set
                 if ( isset( $values[$fields['participant_fee_level']['title']] ) ) {
-                    $feeLevel = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, 
+                    $feeLevel = explode( CRM_Core_DAO::VALUE_SEPARATOR, 
                                          $values[$fields['participant_fee_level']['title']] );
                     foreach ( $feeLevel as $key => $val ) {
                         if ( ! $val ) {
