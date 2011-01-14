@@ -541,7 +541,9 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
         
         //lets allow user to override campaign. 
         $campID = CRM_Utils_Request::retrieve( 'campID', 'Positive', $this );
-        if ( $campID ) $this->_values['campaign_id'] = $campID;
+        if ( $campID && CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Campaign', $campID ) ) {
+            $this->_values['campaign_id'] = $campID;
+        }
     }
 
     /** 

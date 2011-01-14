@@ -492,10 +492,12 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
         $config->defaultCurrency = CRM_Utils_Array::value( 'currency', 
                                                            $this->_values['event'], 
                                                            $config->defaultCurrency );
-
+        
         //lets allow user to override campaign. 
         $campID = CRM_Utils_Request::retrieve( 'campID', 'Positive', $this );
-        if ( $campID ) $this->_values['event']['campaign_id'] = $campID;
+        if ( $campID && CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Campaign', $campID ) ) {
+            $this->_values['event']['campaign_id'] = $campID;
+        }
     }
 
     /** 
