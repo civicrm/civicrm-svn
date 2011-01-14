@@ -482,6 +482,9 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
         //user submitted params.
         $params = $this->controller->exportValues( $this->_name );
         
+        //carry campaign to partcipants.
+        $params['campaign_id'] = CRM_Utils_Array::value( 'campaign_id', $this->_values['event'] );
+        
         // if waiting is enabled
         if ( !$this->_allowConfirmation && 
              is_numeric( $this->_availableRegistrations ) ) {

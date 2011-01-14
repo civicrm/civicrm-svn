@@ -707,7 +707,7 @@ SELECT civicrm_custom_group.name as name,
         } else {
             $events = CRM_Event_BAO_Event::getEvents( );
         }
-        
+                
         if ( $this->_mode ) {
             //unset the event which are not monetary when credit card
             //event registration is used
@@ -732,12 +732,21 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
         }
         $eventAndTypeMapping = json_encode($eventAndTypeMapping);
         // building of mapping ends --
-
-
+        
+        //inherit the campaign from event.
+        $eventCampaigns = array( );
+        $allEventIds = array_keys( $events );
+        if ( !empty( $allEventIds ) ) {
+            CRM_Core_PseudoConstant::populate( $eventCampaigns,
+                                               'CRM_Event_DAO_Event',
+                                               true, 'campaign_id' );
+        }
+        $eventCampaigns = json_encode( $eventCampaigns );
+        
         $element = $this->add('select', 'event_id',  ts( 'Event' ),  
                               array( '' => ts( '- select -' ) ) + $events,
                               true,
-                              array('onchange' => "buildFeeBlock( this.value ); buildCustomData( 'Participant', this.value, {$this->_eventNameCustomDataTypeID} ); buildParticipantRole( this.value ); buildEventTypeCustomData( this.value, {$this->_eventTypeCustomDataTypeID}, '{$eventAndTypeMapping}' );", 'class' => 'huge' ) 
+                              array('onchange' => "buildFeeBlock( this.value ); buildCustomData( 'Participant', this.value, {$this->_eventNameCustomDataTypeID} ); buildParticipantRole( this.value ); buildEventTypeCustomData( this.value, {$this->_eventTypeCustomDataTypeID}, '{$eventAndTypeMapping}' ); loadCampaign( this.value, {$eventCampaigns} );", 'class' => 'huge' ) 
                               );
 
         // CRM-6111

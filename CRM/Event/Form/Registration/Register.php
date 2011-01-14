@@ -811,6 +811,9 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             CRM_Contact_BAO_Contact::processImageParams( $params ) ;
         }
         
+        //carry campaign to partcipants.
+        $params['campaign_id'] = CRM_Utils_Array::value( 'campaign_id', $this->_values['event'] );
+        
         //hack to allow group to register w/ waiting
         $primaryParticipantCount = self::getParticipantCount( $this, $params );
         

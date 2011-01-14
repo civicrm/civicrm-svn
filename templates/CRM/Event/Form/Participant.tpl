@@ -574,6 +574,11 @@
          var mapping = eval('(' + eventAndTypeMapping + ')');
          buildCustomData( 'Participant', mapping[eventID], eventTypeCustomDataTypeID );
     }
+
+    function loadCampaign( eventId, campaigns ) {
+       cj( "#campaign_id" ).val( campaigns[eventId] );
+    }
+    
 {/literal}
 </script>
 {literal}

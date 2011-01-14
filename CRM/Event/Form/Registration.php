@@ -804,7 +804,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
     public function addParticipant( $params, $contactID ) 
     {
         require_once 'CRM/Core/Transaction.php';
-      
+        
         $transaction = new CRM_Core_Transaction( );
         
         $groupName = "participant_role";
@@ -847,7 +847,8 @@ WHERE  v.option_group_id = g.id
                                    'fee_amount'    => CRM_Utils_Array::value( 'fee_amount', $params ),
                                    'registered_by_id' => CRM_Utils_Array::value( 'registered_by_id', $params ),
                                    'discount_id'      => CRM_Utils_Array::value( 'discount_id', $params ),
-                                   'fee_currency'     => CRM_Utils_Array::value( 'currencyID', $params )
+                                   'fee_currency'     => CRM_Utils_Array::value( 'currencyID', $params ),
+                                   'campaign_id'      => CRM_Utils_Array::value( 'campaign_id', $params )
                                    );
        
         if ( $this->_action & CRM_Core_Action::PREVIEW || CRM_Utils_Array::value( 'mode', $params ) == 'test' ) {
