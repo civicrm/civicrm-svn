@@ -189,7 +189,9 @@
   </foreignKey>
   <field> 
     <name>campaign_id</name> 
-    <type>int unsigned</type>                 
+    <type>int unsigned</type>
+    <title>Campaign ID</title>
+    <import>true</import> 
     <comment>The campaign for which this membership is attached.</comment> 
     <add>3.4</add> 
   </field> 
