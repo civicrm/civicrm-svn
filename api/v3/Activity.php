@@ -71,6 +71,7 @@ require_once 'CRM/Core/DAO/OptionGroup.php';
  * @todo Erik Hommel 16 dec 2010 check permissions with utils function civicrm_api_permission_check
  * @todo Erik Hommel 16 dec 2010 introduce version as param
  * @example example/ActivityCreate.php
+ * {@example}
  * 
  */
 function &civicrm_activity_create( &$params ) 

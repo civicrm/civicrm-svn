@@ -270,6 +270,17 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                              "In line " . __LINE__ );
     }
 
+     /**
+     *  Test civicrm_activity_create() with valid parameters
+     */
+    function testActivityCreateExample( )
+    {
+      require_once 'api/v3/example/ActivityCreate.php';
+      $result = api_testActivityCreate( );
+      $expectedResult = api_v3_ActivityCreateExpectedResult();
+  
+      $this->assertEquals($result,$expectedResult);
+    }
     /**
      *  Test civicrm_activity_create() with valid parameters
      */
@@ -287,6 +298,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         );
         
         $result = & civicrm_activity_create( $params );
+
         $this->assertEquals( $result['is_error'], 0,
                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
         $this->assertEquals( $result['source_contact_id'], 17 );
