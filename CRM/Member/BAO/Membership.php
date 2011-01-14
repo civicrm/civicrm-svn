@@ -1399,6 +1399,13 @@ AND civicrm_membership.is_test = %2";
         } else {
             $ids['userId'] = $contactID;
         }
+
+        //inherit campaign from contirb page.
+        if ( is_array( $form->_values ) && !empty( $form->_values )  ) {
+            $campaignId = CRM_Utils_Array::value( 'campaign_id', $form->_params );
+            if ( !$campaignId ) $campaignId = CRM_Utils_Array::value( 'campaign_id', $form->_values );
+            $memParams['campaign_id'] = $campaignId;
+        }
         
         $membership =& self::create( $memParams, $ids, false, $activityType );
         // not sure why this statement is here, seems quite odd :( - Lobo: 12/26/2010

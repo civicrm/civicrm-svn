@@ -578,6 +578,10 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             } else {
                 $membershipParams['cms_contactID'] = $contactID;
             } 
+            
+            //inherit campaign from contirb page.
+            $membershipParams['campaign_id'] = CRM_Utils_Array::value( 'campaign_id', $this->_values );
+            
             require_once 'CRM/Member/BAO/Membership.php';
             CRM_Member_BAO_Membership::postProcessMembership( $membershipParams, $contactID,
                                                               $this, $premiumParams );                       
@@ -763,12 +767,14 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         }
         
         //get the contrib page id.
-        $contributionPageId = null;
+        $campaignId = $contributionPageId = null;
         if ( $online ) {
             $contributionPageId = $form->_id;
+            $campaignId = CRM_Utils_Array::value( 'campaign_id',$form->_values  );
         } else {
             //also for offline we do support - CRM-7290
             $contributionPageId = CRM_Utils_Array::value( 'contribution_page_id', $params );
+            $campaignId = CRM_Utils_Array::value( 'campaign_id', $params  );
         }
         
         // first create the contribution record
@@ -790,6 +796,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                                'cancel_reason'         => CRM_Utils_Array::value( 'cancel_reason', $params, 0),
                                'cancel_date'           => isset( $params['cancel_date'] ) ? CRM_Utils_Date::format( $params['cancel_date'] ) : null,
                                'thankyou_date'         => isset( $params['thankyou_date'] ) ? CRM_Utils_Date::format( $params['thankyou_date'] ) : null,
+                               'campaign_id'           => $campaignId,
                                );
         if ( ! $online && isset($params['thankyou_date'] ) ) {
             $contribParams['thankyou_date'] = $params['thankyou_date'];
@@ -937,7 +944,10 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                 $pledgeParams['is_test'                ] = $contribution->is_test;
                 $pledgeParams['acknowledge_date'       ] = date( 'Ymd' );
                 $pledgeParams['original_installment_amount'] = $pledgeParams['installment_amount'] ;
-
+                
+                //inherit campaign from contirb page. 
+                $pledgeParams['campaign_id']             = $campaignId;
+                
                 require_once 'CRM/Pledge/BAO/Pledge.php';
                 $pledge = CRM_Pledge_BAO_Pledge::create( $pledgeParams );
                 
