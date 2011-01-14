@@ -82,7 +82,8 @@ class CRM_Pledge_Selector_Search extends CRM_Core_Selector_Base
                                 'pledge_status_id',
                                 'pledge_status',
                                 'pledge_is_test',
-                                'pledge_contribution_page_id'
+                                'pledge_contribution_page_id',
+                                'pledge_campaign_id'
                                  );
 
     /** 
@@ -290,6 +291,10 @@ class CRM_Pledge_Selector_Search extends CRM_Core_Selector_Base
          $pledgeStatuses = CRM_Core_OptionGroup::values( 'contribution_status', 
                                                        false, false, false, null, 'name', false );
          
+         //get all campaigns.
+         require_once 'CRM/Campaign/BAO/Campaign.php';
+         $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, true );
+         
          //4418 check for view, edit and delete
          $permissions = array( CRM_Core_Permission::VIEW );
          if ( CRM_Core_Permission::check( 'edit pledges' ) ) {
@@ -309,6 +314,10 @@ class CRM_Pledge_Selector_Search extends CRM_Core_Selector_Base
                  }
              }
 
+             //carry campaign on selectors.
+             $row['campaign'] = CRM_Utils_Array::value( $result->pledge_campaign_id, $allCampaigns );
+             $row['campaign_id'] = $result->pledge_campaign_id;
+             
              // add pledge status name
              $row['pledge_status_name'] = CRM_Utils_Array::value( $row['pledge_status_id'],
                                                                   $pledgeStatuses );
@@ -339,6 +348,7 @@ class CRM_Pledge_Selector_Search extends CRM_Core_Selector_Base
              $rows[] = $row;
              
          }
+         
          return $rows;
      }
      

@@ -651,7 +651,8 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
                            'activity_type_id'          => 'int unsigned',
                            'activity_type'             => 'varchar(128)',
                            'case_id'                   => 'int unsigned',
-                           'case_subject'              => 'varchar(255)'
+                           'case_subject'              => 'varchar(255)',
+                           'campaign_id'               => 'int unsigned',
                           );
 
         $sql = "CREATE TEMPORARY TABLE {$activityTempTable} ( ";
@@ -768,6 +769,10 @@ LEFT JOIN  civicrm_case_activity ON ( civicrm_case_activity.activity_id = {$acti
         $mailingIDs =& CRM_Mailing_BAO_Mailing::mailingACLIDs( );
         $accessCiviMail = ( ( CRM_Core_Permission::check( 'access CiviMail' ) ) || ( CRM_Mailing_Info::workflowEnabled( ) && CRM_Core_Permission::check( 'create mailings' ) ) );
         
+        //get all campaigns.
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, true );
+        
         $values = array( );
         while( $dao->fetch() ) {
             $activityID = $dao->activity_id;
@@ -780,6 +785,8 @@ LEFT JOIN  civicrm_case_activity ON ( civicrm_case_activity.activity_id = {$acti
             $values[$activityID]['subject']             = $dao->subject; 
             $values[$activityID]['source_contact_name'] = $dao->source_contact_name;
             $values[$activityID]['source_contact_id']   = $dao->source_contact_id;
+            $values[$activityID]['campaign_id']         = $dao->campaign_id;
+            $values[$activityID]['campaign']            = $allCampaigns[$dao->campaign_id];
             
             if ( $bulkActivityTypeID != $dao->activity_type_id ) {
                 // build array of target / assignee names
@@ -943,7 +950,8 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
                 sourceContact.sort_name as source_contact_name,
                 civicrm_option_value.value as activity_type_id,
                 civicrm_option_value.label as activity_type,
-                null as case_id, null as case_subject
+                null as case_id, null as case_subject,
+                civicrm_activity.campaign_id as campaign_id
             ';
             
             $sourceJoin = ' 
@@ -978,11 +986,12 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
                 civicrm_activity.status_id, 
                 civicrm_activity.subject,
                 civicrm_activity.source_contact_id,
-                civicrm_activity.source_record_id, 
+                civicrm_activity.source_record_id,
                 sourceContact.sort_name as source_contact_name,
                 civicrm_option_value.value as activity_type_id,
                 civicrm_option_value.label as activity_type,
-                null as case_id, null as case_subject
+                null as case_id, null as case_subject,
+                civicrm_activity.campaign_id as campaign_id
             ';
         }
           
@@ -1039,11 +1048,12 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
                 civicrm_activity.status_id, 
                 civicrm_activity.subject,
                 civicrm_activity.source_contact_id,
-                civicrm_activity.source_record_id, 
+                civicrm_activity.source_record_id,
                 sourceContact.sort_name as source_contact_name,
                 civicrm_option_value.value as activity_type_id,
                 civicrm_option_value.label as activity_type,
-                null as case_id, null as case_subject ';
+                null as case_id, null as case_subject,
+                civicrm_activity.campaign_id as campaign_id';
             }
             
             $caseClause = "

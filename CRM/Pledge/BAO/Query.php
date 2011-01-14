@@ -183,6 +183,11 @@ class CRM_Pledge_BAO_Query
             $query->_element['pledge_is_test'] = 1;
             $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
         }
+        if ( CRM_Utils_Array::value( 'pledge_campaign_id', $query->_returnProperties ) ) {
+            $query->_select['pledge_campaign_id'] = 'civicrm_pledge.campaign_id as pledge_campaign_id';
+            $query->_element['pledge_campaign_id'] = 1;
+            $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
+        }
     }
     
     static function where( &$query ) 
@@ -469,8 +474,9 @@ class CRM_Pledge_BAO_Query
                                 'pledge_is_test'                  => 1,
                                 'pledge_contribution_page_id'     => 1,
                                 'pledge_frequency_interval'       => 1,
-                                'pledge_frequency_unit'           => 1
-                                );
+                                'pledge_frequency_unit'           => 1,
+                                'pledge_campaign_id'              => 1
+                                 );
         }
         return $properties;
     }
@@ -493,8 +499,8 @@ class CRM_Pledge_BAO_Query
                                 'pledge_payment_reminder_date'    => 1,
                                 'pledge_payment_reminder_count'   => 1,
                                 'pledge_payment_status_id'        => 1,
-                                'pledge_payment_status'           => 1
-                                );
+                                'pledge_payment_status'           => 1,
+                                 );
             
             // also get all the custom pledge properties
             require_once "CRM/Core/BAO/CustomField.php";
