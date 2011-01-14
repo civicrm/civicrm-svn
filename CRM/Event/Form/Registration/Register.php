@@ -175,6 +175,11 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
 
         //set custom field defaults
         if ( ! empty( $this->_fields ) ) {
+            //load default campaign from page.
+            if ( array_key_exists( 'campaign_id', $this->_fields ) ) {
+                $this->_defaults['campaign_id'] = CRM_Utils_Array::value( 'campaign_id', $this->_values['event'] );
+            }
+            
             require_once "CRM/Core/BAO/CustomField.php";
             foreach ( $this->_fields as $name => $field ) {
                 if ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID($name) ) {
@@ -812,7 +817,9 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         }
         
         //carry campaign to partcipants.
-        $params['campaign_id'] = CRM_Utils_Array::value( 'campaign_id', $this->_values['event'] );
+        if ( !array_key_exists( 'campaign_id', $params ) ) {
+            $params['campaign_id'] = CRM_Utils_Array::value( 'campaign_id', $this->_values['event'] );
+        }
         
         //hack to allow group to register w/ waiting
         $primaryParticipantCount = self::getParticipantCount( $this, $params );

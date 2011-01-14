@@ -160,7 +160,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
 
             require_once "CRM/Core/BAO/UFGroup.php";
             CRM_Core_BAO_UFGroup::setProfileDefaults( $contactID, $fields, $this->_defaults );
-
+            
             // use primary email address if billing email address is empty
             if ( empty( $this->_defaults["email-{$this->_bltID}"] ) &&
                  ! empty( $this->_defaults["email-Primary"] ) ) {
@@ -176,6 +176,11 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         
         //set custom field defaults set by admin if value is not set
         if ( ! empty( $this->_fields ) ) {
+            //load default campaign from page.
+            if ( array_key_exists( 'campaign_id', $this->_fields ) ) {
+                $this->_defaults['campaign_id'] = CRM_Utils_Array::value( 'campaign_id', $this->_values );
+            }
+            
             //set custom field defaults
             require_once "CRM/Core/BAO/CustomField.php";
             foreach ( $this->_fields as $name => $field ) {

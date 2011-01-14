@@ -580,7 +580,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             } 
             
             //inherit campaign from contirb page.
-            $membershipParams['campaign_id'] = CRM_Utils_Array::value( 'campaign_id', $this->_values );
+            if ( !array_key_exists( 'campaign_id', $membershipParams ) ) {
+                $membershipParams['campaign_id'] = CRM_Utils_Array::value( 'campaign_id', $this->_values );
+            }
             
             require_once 'CRM/Member/BAO/Membership.php';
             CRM_Member_BAO_Membership::postProcessMembership( $membershipParams, $contactID,
@@ -770,7 +772,10 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         $campaignId = $contributionPageId = null;
         if ( $online ) {
             $contributionPageId = $form->_id;
-            $campaignId = CRM_Utils_Array::value( 'campaign_id',$form->_values  );
+            $campaignId = CRM_Utils_Array::value( 'campaign_id', $params );
+            if ( !array_key_exists( 'campaign_id', $params ) ) {
+                $campaignId = CRM_Utils_Array::value( 'campaign_id', $form->_values );
+            }
         } else {
             //also for offline we do support - CRM-7290
             $contributionPageId = CRM_Utils_Array::value( 'contribution_page_id', $params );

@@ -156,6 +156,11 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
         if ( !empty( $unsetSubmittedOptions ) && empty( $_POST ) ) {
             $this->resetElementValue( $unsetSubmittedOptions );
         }
+
+        //load default campaign from page.
+        if ( array_key_exists( 'campaign_id', $this->_fields ) ) {
+            $defaults['campaign_id'] = CRM_Utils_Array::value( 'campaign_id', $this->_values['event'] );
+        }
         
         return $defaults;
     }  
@@ -483,7 +488,9 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
         $params = $this->controller->exportValues( $this->_name );
         
         //carry campaign to partcipants.
-        $params['campaign_id'] = CRM_Utils_Array::value( 'campaign_id', $this->_values['event'] );
+        if ( !array_key_exists( 'campaign_id', $params ) ) {
+            $params['campaign_id'] = CRM_Utils_Array::value( 'campaign_id', $this->_values['event'] );
+        }
         
         // if waiting is enabled
         if ( !$this->_allowConfirmation && 

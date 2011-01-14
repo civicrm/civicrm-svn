@@ -1180,6 +1180,19 @@ WHERE civicrm_event.is_active = 1
                     $params[] = array( 'participant_test', '=', 1, 0, 0 );
                 }
                 
+                //display campaign on thankyou page.
+                if ( array_key_exists( 'campaign_id', $fields ) ) {
+                    if ( $participantId ) {
+                        $campaignId = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Participant',
+                                                                   $participantId,
+                                                                   'campaign_id' );
+                        require_once 'CRM/Campaign/BAO/Campaign.php';
+                        $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( $campaignId );
+                        $values[$fields['campaign_id']['title']] = CRM_Utils_Array::value( $campaignId, $campaigns );
+                    }
+                    unset($fields['campaign_id']);
+                }
+                
                 $groupTitles = array( );
                 $groupTitle = null;
                 foreach( $fields as $k => $v  ) {
@@ -1396,6 +1409,10 @@ WHERE civicrm_event.is_active = 1
                 } else if ( 'participant_status_id' == $name ) {
                     $status = CRM_Event_PseudoConstant::participantStatus( );
                     $values[$index] = $status[$params[$name]];
+                } else if ( $name == 'campaign_id' ) {
+                    require_once 'CRM/Campaign/BAO/Campaign.php';
+                    $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( $params[$name] );
+                    $values[$index] = CRM_Utils_Array::value( $params[$name], $campaigns );
                 } else if ( strpos( $name, '-' ) !== false ) {
                     list( $fieldName, $id ) = CRM_Utils_System::explode( '-', $name, 2 );
                     $detailName = str_replace( ' ', '_', $name );

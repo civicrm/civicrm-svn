@@ -1403,7 +1403,9 @@ AND civicrm_membership.is_test = %2";
         //inherit campaign from contirb page.
         if ( is_array( $form->_values ) && !empty( $form->_values )  ) {
             $campaignId = CRM_Utils_Array::value( 'campaign_id', $form->_params );
-            if ( !$campaignId ) $campaignId = CRM_Utils_Array::value( 'campaign_id', $form->_values );
+            if ( !array_key_exists( 'campaign_id', $form->_params ) ) {
+                $campaignId = CRM_Utils_Array::value( 'campaign_id', $form->_values );
+            }
             $memParams['campaign_id'] = $campaignId;
         }
         
