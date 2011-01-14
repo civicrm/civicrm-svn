@@ -146,6 +146,14 @@ class CRM_Activity_Form_Task_Batch extends CRM_Activity_Form_Task {
         $this->assign( 'componentIds', $this->_activityHolderIds );
         $fileFieldExists = false;
         
+        //load all campaigns.
+        if ( array_key_exists( 'campaign_id', $this->_fields ) ) {
+            $this->_componentCampaigns = array( );
+            CRM_Core_PseudoConstant::populate( $this->_componentCampaigns,
+                                               'CRM_Activity_DAO_Activity',
+                                               true, 'campaign_id', 'id', 
+                                               ' id IN ('. implode(' , ',array_values($this->_activityHolderIds)) .' ) ');
+        }
         
         require_once "CRM/Core/BAO/CustomField.php";
         $customFields = CRM_Core_BAO_CustomField::getFields( 'Activity' );

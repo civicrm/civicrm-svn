@@ -323,10 +323,14 @@ SELECT  camp.id, camp.title
     }
     
     static function accessCampaign( ) {
-        $allow = false;
-        if ( CRM_Core_Permission::check( 'manage campaign' ) ||
-             CRM_Core_Permission::check( 'administer CiviCampaign' ) ) {
-            $allow = true;
+        static $allow = null;
+        
+        if ( !isset( $allow ) ) {
+            $allow = false;
+            if ( CRM_Core_Permission::check( 'manage campaign' ) ||
+                 CRM_Core_Permission::check( 'administer CiviCampaign' ) ) {
+                $allow = true;
+            }
         }
         
         return $allow;
