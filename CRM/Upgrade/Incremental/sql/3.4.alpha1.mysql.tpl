@@ -42,3 +42,15 @@ ADD CONSTRAINT FK_civicrm_mailing_domain_id FOREIGN KEY (domain_id) REFERENCES c
 
 -- done w/ CRM-7345
 
+-- CRM-7223
+CREATE TABLE civicrm_mailing_recipients (
+     id int unsigned NOT NULL AUTO_INCREMENT  ,
+     mailing_id int unsigned NOT NULL   COMMENT 'The ID of the mailing this Job will send.',
+     contact_id int unsigned NOT NULL   COMMENT 'FK to Contact',
+     email_id int unsigned NOT NULL   COMMENT 'FK to Email',
+     PRIMARY KEY ( id ),
+     CONSTRAINT FK_civicrm_mailing_recipients_mailing_id FOREIGN KEY (mailing_id) REFERENCES civicrm_mailing(id) ON DELETE CASCADE,      
+     CONSTRAINT FK_civicrm_mailing_recipients_contact_id FOREIGN KEY (contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE,      
+     CONSTRAINT FK_civicrm_mailing_recipients_email_id FOREIGN KEY (email_id) REFERENCES civicrm_email(id) ON DELETE CASCADE  
+)  ENGINE=InnoDB DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci  ;
+

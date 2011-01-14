@@ -79,7 +79,8 @@ require_once 'CRM/Mailing/BAO/Mailing.php';
      {
          $defaults = array( );
          if ( $this->_scheduleFormOnly ) {
-             $count = CRM_Mailing_BAO_Mailing::getRecipientsCount( true, false, $this->_mailingID );
+             require_once 'CRM/Mailing/BAO/Recipients.php';
+             $count = CRM_Mailing_BAO_Recipients::mailingSize( $this->_mailingID );
          } else {
              $count = $this->get( 'count' );
          }

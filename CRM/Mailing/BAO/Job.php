@@ -349,7 +349,9 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 	// Split the parent job into n number of child job based on an offset
 	// If null or 0 , we create only one child job
 	public function split_job($offset = 200) {
-		$recipient_count = $this->getMailingSize();
+        require_once 'CRM/Mailing/BAO/Recipients.php';
+        $recipient_count = CRM_Mailing_BAO_Recipients::mailingSize( $this->mailing_id );
+
 		$jobTable = CRM_Mailing_DAO_Job::getTableName();
 		
 		require_once('CRM/Core/DAO.php');
@@ -394,7 +396,8 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
         } else {
 			// We are still getting all the recipients from the parent job 
 			// (The original so we don't mess with the include/exclude) logic
-            $recipients = $mailing->getRecipientsObject($this->parent_id, false, $this->job_offset, $this->job_limit);
+            require_once 'CRM/Mailing/BAO/Recipients.php';
+            $recipients = CRM_Mailing_BAO_Recipients::mailingQuery($this->mailing_id, $this->job_offset, $this->job_limit);
 
 			// Here we will use the parent jobid to fetch the receipents, except 
 			// We will introduce the limit and offset from the child job DAO object
@@ -411,25 +414,6 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
         }
     }
     
-    /**
-     * Number of mailings of a job.
-     *
-     * @return int
-     * @access public
-     */
-    public function getMailingSize() {
-        require_once 'CRM/Mailing/BAO/Mailing.php';
-        $mailing = new CRM_Mailing_BAO_Mailing();
-        $mailing->id = $this->mailing_id;
-
-        $recipients =& $mailing->getRecipientsObject($this->id, true);
-        $mailingSize = 0;
-        while ($recipients->fetch()) {
-            $mailingSize ++;
-        }
-        return $mailingSize;
-    }
-
     /**
      * Send the mailing
      *

@@ -105,27 +105,14 @@ class CRM_Mailing_BAO_Mailing extends CRM_Mailing_DAO_Mailing
         parent::__construct( );
     }
 
-    /**
-     * Find all intended recipients of a mailing
-     *
-     * @param int  $job_id            Job ID
-     * @param bool $includeDelivered  Whether to include the recipients who already got the mailing
-     * @return object                 A DAO loaded with results of the form (email_id, contact_id)
-     */
-    function &getRecipientsObject($job_id, $includeDelivered = false, $offset = NULL, $limit = NULL) 
+    function &getRecipientsCount($job_id, $mailing_id = null) 
     {
-        $eq = self::getRecipients($job_id, $includeDelivered, $this->id, $offset, $limit);
-        return $eq;
+        CRM_Core_Error::fatal( ts('this function is obsolete and should not be called' ) );
     }
     
-    function &getRecipientsCount($job_id, $includeDelivered = false, $mailing_id = null) 
-    {
-        $eq = self::getRecipients($job_id, $includeDelivered, $mailing_id);
-        return $eq->N;
-    }
-    
-    function &getRecipients($job_id, $includeDelivered = false, $mailing_id = null,
-                            $offset = NULL, $limit = NULL) 
+    function &getRecipients($job_id, $mailing_id = null,
+                            $offset = NULL, $limit = NULL,
+                            $storeRecipients = false) 
     {
         $mailingGroup = new CRM_Mailing_DAO_Group();
         
@@ -420,13 +407,37 @@ AND    $mg.mailing_id = {$mailing_id}
             $limitString = "LIMIT $offset, $limit";
         }
 
-        $eq->query("SELECT i.contact_id, i.email_id 
-                    FROM  civicrm_contact contact_a
-                    INNER JOIN I_$job_id i ON contact_a.id = i.contact_id
-                    {$aclFrom}
-                    {$aclWhere}
-                    ORDER BY i.contact_id, i.email_id
-                    $limitString");
+        if ( $storeRecipients &&
+             $mailing_id ) {
+            $sql = "
+DELETE 
+FROM   civicrm_mailing_recipients
+WHERE  mailing_id = %1
+";
+            $params = array( 1 => array( $mailing_id, 'Integer' ) );
+            CRM_Core_DAO::executeQuery( $sql, $params );
+
+            $sql = "
+INSERT INTO civicrm_mailing_recipients ( mailing_id, contact_id, email_id )
+SELECT %1, i.contact_id, i.email_id
+FROM       civicrm_contact contact_a
+INNER JOIN I_$job_id i ON contact_a.id = i.contact_id
+           {$aclFrom}
+           {$aclWhere}
+ORDER BY   i.contact_id, i.email_id
+";
+            CRM_Core_DAO::executeQuery( $sql, $params );
+        }
+
+        $eq->query("
+SELECT     i.contact_id, i.email_id 
+FROM       civicrm_contact contact_a
+INNER JOIN I_$job_id i ON contact_a.id = i.contact_id
+           {$aclFrom}
+           {$aclWhere}
+ORDER BY   i.contact_id, i.email_id
+           $limitString
+");
 
         /* Delete the temp table */
         $mailingGroup->reset();
@@ -1616,7 +1627,9 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
             }
             $report['jobs'][] = $row;
         }
-        $report['event_totals']['queue'] = self::getRecipientsCount( $mailing_id, false, $mailing_id );
+        
+        require_once 'CRM/Mailing/BAO/Recipients.php';
+        $report['event_totals']['queue'] = CRM_Mailing_BAO_Recipients::mailingSize( $mailing_id );
 
         if (CRM_Utils_Array::value('queue',$report['event_totals'] )) {
             $report['event_totals']['delivered_rate'] = (100.0 * $report['event_totals']['delivered']) / $report['event_totals']['queue'];
