@@ -76,6 +76,7 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
         } else {
             $currentTime = date( 'YmdHis' );
             $mailingACL  = CRM_Mailing_BAO_Mailing::mailingACL( 'm' );
+            $domainID    = CRM_Core_Config::domainID( );
 
 			// SELECT THE First Child Job that's scheduled
 			// CRM-6835
@@ -83,7 +84,7 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 			SELECT   j.*
 			  FROM   $jobTable     j,
 					 $mailingTable m
-			 WHERE   m.id = j.mailing_id
+			 WHERE   m.id = j.mailing_id AND m.domain_id = {$domainID}
                      $workflowClause
 			   AND   j.is_test = 0
 			   AND   ( ( j.start_date IS null
@@ -196,12 +197,13 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 
 		$currentTime = date( 'YmdHis' );
 		$mailingACL  = CRM_Mailing_BAO_Mailing::mailingACL( 'm' );
+        $domainID    = CRM_Core_Config::domainID( );
 
 		$query = "
 		SELECT   j.*
 		  FROM   $jobTable     j,
 				 $mailingTable m
-		 WHERE   m.id = j.mailing_id
+		 WHERE   m.id = j.mailing_id AND m.domain_id = {$domainID}
 		   AND   j.is_test = 0
 		   AND       j.scheduled_date <= $currentTime
 		   AND       j.status = 'Running'
@@ -279,13 +281,15 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
             }
         }
 
+        $domainID = CRM_Core_Config::domainID( );
+
 		// Select all the mailing jobs that are created from 
 		// when the mailing is submitted or scheduled.
 		$query = "
 		SELECT   j.*
 		  FROM   $jobTable     j,
 				 $mailingTable m
-		 WHERE   m.id = j.mailing_id
+		 WHERE   m.id = j.mailing_id AND m.domain_id = {$domainID}
                  $workflowClause
 		   AND   j.is_test = 0
 		   AND   ( ( j.start_date IS null

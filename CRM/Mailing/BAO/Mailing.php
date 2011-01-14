@@ -211,7 +211,7 @@ WHERE      $mg.entity_table = '$group'
         while ( $groupDAO->fetch( ) ) {
             if ( $groupDAO->cache_date == null ) {
                 require_once 'CRM/Contact/BAO/GroupContactCache.php';
-                CRM_Contact_BAO_GroupContactCache::load( $group );
+                CRM_Contact_BAO_GroupContactCache::load( $groupDAO );
             }
 
             $smartGroupExclude = "
@@ -310,7 +310,7 @@ WHERE      $mg.entity_table = '$group'
         while ( $groupDAO->fetch( ) ) {
             if ( $groupDAO->cache_date == null ) {
                 require_once 'CRM/Contact/BAO/GroupContactCache.php';
-                CRM_Contact_BAO_GroupContactCache::load( $group );
+                CRM_Contact_BAO_GroupContactCache::load( $groupDAO );
             }
 
             $smartGroupInclude = "
@@ -1268,6 +1268,7 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
         
         $mailing = new CRM_Mailing_DAO_Mailing( );
         $mailing->id = CRM_Utils_Array::value( 'mailing_id', $ids );
+        $mailing->domain_id = CRM_Utils_Array::value( 'domain_id', $params, CRM_Core_Config::domainID( ) );
         
         if (  ! isset( $params['replyto_email'] ) &&
               isset( $params['from_email'] ) ) {

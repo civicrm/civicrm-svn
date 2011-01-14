@@ -15,6 +15,19 @@
        <autoincrement>true</autoincrement>
   </primaryKey>
   <field>
+      <name>domain_id</name>
+      <type>int unsigned</type>
+      <comment>Which site is this mailing for</comment>
+      <add>3.4</add>
+  </field>
+  <foreignKey>
+       <name>domain_id</name>
+       <table>civicrm_domain</table>
+       <key>id</key>
+       <onDelete>SET NULL</onDelete>
+       <add>3.4</add>
+  </foreignKey>
+  <field>
       <name>header_id</name>
       <type>int unsigned</type>
       <comment>FK to the header component.</comment>
