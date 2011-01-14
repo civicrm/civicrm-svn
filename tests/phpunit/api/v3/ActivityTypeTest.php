@@ -37,7 +37,7 @@ require_once 'api/v3/ActivityType.php';
 
 class api_v3_ActivityTypeTest extends CiviUnitTestCase 
 {
- 
+     protected $_apiversion;
     function get_info( ) 
     {
         return array(

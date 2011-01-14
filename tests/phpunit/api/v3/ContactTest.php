@@ -42,6 +42,8 @@ require_once 'api/v3/Contact.php';
  */
 class api_v3_ContactTest extends CiviUnitTestCase
 {
+ 
+      protected $_apiversion;
     /**
      *  Constructor
      *

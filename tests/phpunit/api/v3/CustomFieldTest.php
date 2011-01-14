@@ -13,6 +13,7 @@ require_once 'api/v3/CustomField.php';
  */
 class api_v3_CustomFieldTest extends CiviUnitTestCase
 {
+     protected $_apiversion;
     
     function get_info( )
     {

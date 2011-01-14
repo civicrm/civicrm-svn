@@ -134,9 +134,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
     }
     function testCreatePledge()
     {
-                  $this->markTestSkipped( "Reason for skipping:<a href='http://forum.civicrm.org/index.php/topic,18053.0.html'>version issue</a>" );
- 
-        $dayaftertomorrow = mktime(0, 0, 0, date("m"), date("d")+2, date("y"));
+       $dayaftertomorrow = mktime(0, 0, 0, date("m"), date("d")+2, date("y"));
         $params = array(
                         'contact_id'             => $this->_individualId,
                         'pledge_create_date'    => date('Ymd'),
@@ -174,11 +172,9 @@ class api_v3_PledgeTest extends CiviUnitTestCase
     //To Update Pledge
     function testCreateUpdatePledge()
     {
-                        $this->markTestSkipped( "Reason for skipping:<a href='http://forum.civicrm.org/index.php/topic,18053.0.html'>version issue</a>" );
- 
- 
+
   // we test 'sequential' param here too     
-        $pledgeID = $this->pledgeCreate($this->_individualId);
+        $pledgeID = $this->pledgeCreate($this->_individualId,$this->_apiversion);
         $old_params = array(
                             'id' => $pledgeID,  
                             'sequential' =>1,  
@@ -225,8 +221,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
 
     function testDeleteEmptyParamsPledge()
     {
-                              $this->markTestSkipped( "Reason for skipping:<a href='http://forum.civicrm.org/index.php/topic,18053.0.html'>version issue</a>" );
- 
+
         $params = array( );
         $pledge = civicrm_pledge_delete($params);
         $this->assertEquals( $pledge['is_error'], 1 );
@@ -254,8 +249,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
     
     function testDeletePledge()
     {
-        $this->markTestSkipped( "Might work now but I just wanted the damn thing to pass" );
- 
+
         $pledgeID = $this->pledgeCreate( $this->_individualId , $this->_apiversion );
         $params         = array( 'pledge_id' => $pledgeID );
         $pledge   = civicrm_pledge_delete( $params );
