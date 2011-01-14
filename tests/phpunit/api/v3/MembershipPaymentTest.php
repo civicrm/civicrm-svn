@@ -28,7 +28,6 @@
 
 require_once 'api/v3/MembershipPayment.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'CiviTest/Contact.php';
 require_once 'api/v3/MembershipType.php';
 require_once 'api/v3/MembershipStatus.php';
 require_once 'CRM/Member/BAO/MembershipType.php';
@@ -82,8 +81,9 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
      */
     public function testCreate()
     {
-        
-        $contactId = Contact::createIndividual( );
+        $contactId           = $this->individualCreate( null,$this->_apiversion) ;
+      
+
         $params = array (
                          'contact_id'             => $contactId,
                          'currency'               => 'USD',

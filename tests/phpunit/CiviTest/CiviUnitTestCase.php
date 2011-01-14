@@ -41,6 +41,7 @@ require_once 'PHPUnit/Extensions/Database/DataSet/FlatXmlDataSet.php';
 require_once 'PHPUnit/Extensions/Database/DataSet/XmlDataSet.php';
 require_once 'PHPUnit/Extensions/Database/DataSet/QueryDataSet.php';
 require_once 'tests/phpunit/Utils.php';
+require_once 'api/api.php';
 
 /**
  *  Base class for CiviCRM unit tests
@@ -486,20 +487,22 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    
 
     
-    function contactMembershipCreate( $params ) 
+    function contactMembershipCreate( $params, $apiversion = 2 ) 
     {
         $pre = array('join_date'   => '2007-01-21',
                      'start_date'  => '2007-01-21',
                      'end_date'    => '2007-12-21',
-                     'source'      => 'Payment'  );
+                     'source'      => 'Payment' ,
+                     'version'     => $apiversion, );
         foreach ( $pre as $key => $val ) {
             if ( ! isset( $params[$key] ) ) {
                 $params[$key] = $val;
             }
         }
         
-        $result = civicrm_contact_membership_create( $params );
-        
+        require_once 'api/api.php';
+        $result = civicrm_api( 'civicrm_membership_contact_create','MembershipContact',$params );
+
         if ( CRM_Utils_Array::value( 'is_error', $result ) ||
              ! CRM_Utils_Array::value( 'id', $result) ) {
             if ( CRM_Utils_Array::value( 'error_message', $result ) ) {
@@ -598,7 +601,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      *
      * @return int $id of participant created
      */    
-    function participantCreate( $params ) 
+    function participantCreate( $params,$apiversion=2 ) 
     { 
         $params = array(
                         'contact_id'    => $params['contactID'],
@@ -708,9 +711,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      *
      * @return int id of created contribution
      */
-    function pledgeCreate($cID)
+    function pledgeCreate($cID,$apiversion=2)
     {
-        require_once 'api/v2/Pledge.php';
+
         $params = array(
                         'contact_id'             => $cID,
                         'pledge_create_date'    => date('Ymd'),
@@ -724,9 +727,11 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         'frequency_unit'             => 'year',
                         'frequency_day'            => 15,
                         'installments'            =>5,
+                        'version'                 =>$apiversion
                         );
-        
-        $pledge =& civicrm_pledge_add($params);
+        $result = civicrm_api( 'civicrm_pledge_create','Pledge',$params );
+                        
+ 
 
         return $pledge['id'];
         
@@ -737,11 +742,14 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      * 
      * @param int $contributionId
      */
-    function pledgeDelete($pledgeId)
+    function pledgeDelete($pledgeId,$apiversion =2)
     {
-        require_once 'api/v2/Pledge.php';
+     
+
         $params = array( 'pledge_id' => $pledgeId );
-        $val =& civicrm_pledge_delete( $params );
+        $result = civicrm_api( 'civicrm_pledge_delete','Pledge',$params );
+ 
+
     }
       
     /**
@@ -772,6 +780,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         'contribution_status_id' => 1,
                      // 'note'                   => 'Donating for Nobel Cause', *Fixme
                         );
+
         $result = civicrm_api( 'civicrm_contribution_create','Contribution',$params );
 
         return $result['id'];
@@ -1077,15 +1086,16 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     function activityCreate( $params = null, $apiversion = 2 )
     {
         if ( $params === null ) { 
-            $individualSourceID    = $this->individualCreate( );
+            $individualSourceID    = $this->individualCreate(null,$apiversion );
 
             $contactParams = array( 'first_name'       => 'Julia',
                                     'Last_name'        => 'Anderson',
                                     'prefix'           => 'Ms',
                                     'email'            => 'julia_anderson@civicrm.org',
-                                    'contact_type'     => 'Individual');
+                                    'contact_type'     => 'Individual',
+                                    'version'					 => $apiversion,);
 
-            $individualTargetID    = $this->individualCreate( $contactParams );
+            $individualTargetID    = $this->individualCreate( $contactParams,$apiversion );
 
             $params = array(
                             'source_contact_id'   => $individualSourceID,

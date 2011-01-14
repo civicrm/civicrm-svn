@@ -50,7 +50,7 @@ require_once 'api/v3/utils.php';
  *
  * @access public
  */
-function civicrm_location_add( &$params ) {
+function civicrm_location_create( &$params ) {
     _civicrm_initialize( );
     
     $error = _civicrm_location_check_params( $params );

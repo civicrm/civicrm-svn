@@ -56,6 +56,9 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_file_create( $params ) 
 {
+    try{
+      
+
     if ( ! is_array($params) ) {
         return civicrm_create_error('Params is not an array.');
     }
@@ -85,6 +88,11 @@ function civicrm_file_create( $params )
     _civicrm_object_to_array($fileDAO, $file);
     
     return $file;
+        } catch (PEAR_Exception $e) {
+      return civicrm_create_error( $e->getMessage() );
+    } catch (Exception $e) {
+      return civicrm_create_error( $e->getMessage() );
+    }
 }
 
 /**

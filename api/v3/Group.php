@@ -58,22 +58,30 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_group_create( &$params )
 {
-    _civicrm_initialize( );
+  _civicrm_initialize( );
+  try{
+     
+
     if ( is_null( $params ) || !is_array( $params ) ||  empty ( $params ) ) {
-        return civicrm_create_error( 'Required parameter missing' );
+      return civicrm_create_error( 'Required parameter missing' );
     }
-    
+
     if ( ! CRM_Utils_Array::value('title', $params ) ) {
-        return civicrm_create_error( 'Required parameter title missing' );
+      return civicrm_create_error( 'Required parameter title missing' );
     }
-    
+
     $group = CRM_Contact_BAO_Group::create( $params );
-    
+
     if ( is_null( $group ) ) {
-        return civicrm_create_error( 'Group not created' );
+      return civicrm_create_error( 'Group not created' );
     } else {
-        return civicrm_create_success( $group->id );
+      return civicrm_create_success( $group->id );
     }
+  } catch (PEAR_Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  }
 }
 
 /**
@@ -88,6 +96,8 @@ function civicrm_group_create( &$params )
  */
 function civicrm_group_get( &$params )
 {
+    try{
+
     _civicrm_initialize( );
     if ( !is_null( $params ) && !is_array( $params ) ) {
         return civicrm_create_error( 'Params should be array' );
@@ -116,6 +126,11 @@ function civicrm_group_get( &$params )
     }
     
     return $groups;
+    } catch (PEAR_Exception $e) {
+      return civicrm_create_error( $e->getMessage() );
+    } catch (Exception $e) {
+      return civicrm_create_error( $e->getMessage() );
+    }
 }
 
 /**

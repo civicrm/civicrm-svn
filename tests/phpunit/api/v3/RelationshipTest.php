@@ -29,6 +29,7 @@
 require_once 'api/v3/Relationship.php';
 require_once 'api/v3/CustomGroup.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
+require_once ('api/api.php');
 
 /**
  * Class contains api test cases for "civicrm_relationship"
@@ -36,6 +37,7 @@ require_once 'CiviTest/CiviUnitTestCase.php';
  */
 class api_v3_RelationshipTest extends CiviUnitTestCase 
 {
+    protected $_apiversion;
     protected $_cId_a;
     protected $_cId_b;
     protected $_relTypeID;
@@ -55,7 +57,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
     function setUp() 
     {
         parent::setUp();
-        
+        $this->_apiversion = 3;      
         $this->_cId_a  = $this->individualCreate(null,3 );
         $this->_cId_b  = $this->organizationCreate(null,3 );
 
@@ -299,10 +301,13 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
                         'weight'          => 1,
                         'is_required'     => 1,
                         'is_searchable'   => 0,
-                        'is_active'       => 1
+                        'is_active'       => 1,
+                        'version' => $this->_apiversion,
                          );
         
-        $customField =& civicrm_custom_field_create( $params );
+
+        $result = civicrm_api( 'civicrm_custom_field_create','CustomField',$params );
+  
         $customField = null;
         $ids[] = $customField['result']['customFieldId'];
         
@@ -607,7 +612,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
                                'contact_type_a' => 'Individual',
                                'contact_type_b' => 'Organization'
                                );
-        $result =& civicrm_relationship_type_add( $relTypeParams );
+        $result =& civicrm_relationship_type_create( $relTypeParams );
         $this->assertEquals( $result['is_error'], 1 );
         $this->assertEquals( $result['error_message'], 'Invalid value for relationship type ID' );
     } 
@@ -623,7 +628,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         $contact_b = array( 'contact_id' => $this->_cId_b );
         
         //no relationship has been created
-        $result =& civicrm_get_relationships( $contact_a, $contact_b, null , 'asc' );
+        $result =& civicrm_relationship_get( $contact_a, $contact_b, null , 'asc' );
         $this->assertEquals( $result['is_error'], 1 );
         $this->assertEquals( $result['error_message'], 'Invalid Data' );
     } 
@@ -648,7 +653,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         $contact_a = array( 'contact_id' => $this->_cId_a );
         $contact_b = array( 'contact_id' => $this->_cId_b );
 
-        $result =& civicrm_get_relationships( $contact_a, $contact_b, null, 'desc' );
+        $result =& civicrm_relationship_get( $contact_a, $contact_b, null, 'desc' );
         $this->assertEquals( $result['is_error'], 0 );
 
         $params['id'] = $relationship['result']['id'] ;
@@ -675,7 +680,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         $contact_a = array( 'contact_id' => $this->_cId_a );
         $relationshipTypes = array('Relation 1 for delete');
 
-        $result =& civicrm_get_relationships( $contact_a, null, $relationshipTypes, 'desc' );
+        $result =& civicrm_relationship_get( $contact_a, null, $relationshipTypes, 'desc' );
 
         $this->assertEquals( $result['is_error'], 0 );
 

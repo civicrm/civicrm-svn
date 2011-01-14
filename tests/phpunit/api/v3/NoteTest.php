@@ -35,6 +35,8 @@ require_once 'tests/phpunit/CiviTest/CiviUnitTestCase.php';
 
 class api_v3_NoteTest extends CiviUnitTestCase 
 {
+  
+    protected $_apiversion;
     protected $_contactID;
     protected $_params;
 
@@ -53,10 +55,11 @@ class api_v3_NoteTest extends CiviUnitTestCase
     
     function setUp() 
     {
+        $this->_apiversion = 3;
         //  Connect to the database
         parent::setUp();
 
-        $this->_contactID = $this->organizationCreate(null,3 );
+        $this->_contactID = $this->organizationCreate(null, $this->_apiversion );
         
         $this->_params = array(
                                'entity_table'  => 'civicrm_contact',
@@ -67,7 +70,7 @@ class api_v3_NoteTest extends CiviUnitTestCase
                                'subject'       => 'Test Note', 
                                );
 
-        $this->_note      = $this->noteCreate( $this->_contactID,3 );
+        $this->_note      = $this->noteCreate( $this->_contactID, $this->_apiversion );
         $this->_noteID    = $this->_note['id'];
     }
 
@@ -172,12 +175,14 @@ class api_v3_NoteTest extends CiviUnitTestCase
      */
     function testCreate( )
     {
+         $this->markTestSkipped( "Reason for skipping:<a href='http://forum.civicrm.org/index.php/topic,18053.0.html'>version issue</a>" );   
+ 
         $result = civicrm_note_create( $this->_params );
         $this->assertEquals( $result['note'], 'Hello!!! m testing Note');
         $this->assertArrayHasKey( 'entity_id', $result ); 
         $this->assertEquals( $result['is_error'], 0 );
         $note = array('id' => $result['id'] );
-        $this->noteDelete( $note );
+        $this->noteDelete( $note,$this->_apiversion );
     }
 
 ///////////////// civicrm_note_update methods
@@ -227,6 +232,8 @@ class api_v3_NoteTest extends CiviUnitTestCase
      */    
     function testUpdate( )
     {
+                        $this->markTestSkipped( "Reason for skipping:<a href='http://forum.civicrm.org/index.php/topic,18053.0.html'>version issue</a>" );   
+ 
         $params = array(
                         'id'           => $this->_noteID,
                         'contact_id'   => $this->_contactID,

@@ -52,6 +52,8 @@ class api_v3_MailerTest extends CiviUnitTestCase
     
     function setUp( ) 
     {
+                  $this->markTestSkipped( "Reason for skipping:<a href='http://forum.civicrm.org/index.php/topic,18053.0.html'>version issue</a>" );   
+ 
         parent::setUp();
         $this->_apiversion = 3; 
         $this->_groupID = $this->groupCreate(null,$this->_apiversion);
@@ -60,6 +62,8 @@ class api_v3_MailerTest extends CiviUnitTestCase
     
     function tearDown( ) 
     {
+        $this->markTestSkipped( "Reason for skipping:<a href='http://forum.civicrm.org/index.php/topic,18053.0.html'>version issue</a>" );   
+ 
         $this-> groupDelete( $this->_groupID );
     }
     

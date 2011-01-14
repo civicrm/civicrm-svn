@@ -54,7 +54,9 @@ require_once 'CRM/Contribute/PseudoConstant.php';
  */
 function &civicrm_contribution_create( &$params ) {
     _civicrm_initialize( );
-    
+    try {   
+    civicrm_verify_mandatory ($params,'CRM_Contribute_DAO_Contribution',array ('contact_id','total_amount',array('contribution_type_id' , 'contribution_type')));  
+      
     $error = _civicrm_contribute_check_params( $params );
     if ( civicrm_error( $error ) ) {
         return $error;
@@ -83,6 +85,11 @@ function &civicrm_contribution_create( &$params ) {
     _civicrm_object_to_array($contribution, $contributeArray);
     
     return $contributeArray;
+  } catch (PEAR_Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  }
 }
 
 /**
@@ -96,6 +103,7 @@ function &civicrm_contribution_create( &$params ) {
  */
 function civicrm_contribution_delete( &$params ) {
     _civicrm_initialize( );
+    try{
     $contributionID = CRM_Utils_Array::value( 'contribution_id', $params );
     if ( ! $contributionID ) {
         return civicrm_create_error(  'Could not find contribution_id in input parameters' );
@@ -107,6 +115,11 @@ function civicrm_contribution_delete( &$params ) {
     } else {
         return civicrm_create_error(  'Could not delete contribution' );
     }
+  } catch (PEAR_Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  }    
 }
 
 /**
@@ -123,6 +136,7 @@ function civicrm_contribution_delete( &$params ) {
  */
 function &civicrm_contribution_get( &$params ) {
     _civicrm_initialize( );
+    try { 
 
     if ( ! is_array( $params ) ) {
         return civicrm_create_error(  'Input parameters is not an array'  );
@@ -176,6 +190,11 @@ function &civicrm_contribution_get( &$params ) {
     $dao->free( );
     
     return $contribution;
+  } catch (PEAR_Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  }
 }
 
 /**
@@ -229,22 +248,7 @@ function &civicrm_contribution_format_create( &$params ) {
  * @access private
  */
 function _civicrm_contribute_check_params( &$params ) {
-    static $required = array( 'contact_id'           => null, 
-                              'total_amount'         => null, 
-                              'contribution_type_id' => 'contribution_type' );
     
-    // params should be an array
-    if ( ! is_array( $params ) ) {
-        return civicrm_create_error( 'Input parameters is not an array'  );
-    }
-
-    // cannot create a contribution with empty params
-    if ( empty( $params ) ) {
-        return civicrm_create_error( 'Input Parameters empty' );
-    }
-    
-    $valid = true;
-    $error = '';
     
     // check params for contribution id during update
     if ( CRM_Utils_Array::value( 'id', $params ) ) {
@@ -258,20 +262,6 @@ function _civicrm_contribute_check_params( &$params ) {
         return array();
     }
     
-    foreach ( $required as $field => $eitherField ) {
-        if ( !CRM_Utils_Array::value( $field, $params ) ) {
-            if ( $eitherField && CRM_Utils_Array::value( $eitherField, $params ) ) {
-                continue;
-            }
-            $valid = false;
-            $error .= $field;
-            break;
-        }
-    }
-    
-    if ( ! $valid ) {
-        return civicrm_create_error( "Required fields not found for contribution $error" );
-    }
     
     return array();
 }

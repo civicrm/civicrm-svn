@@ -31,6 +31,8 @@ require_once 'CiviTest/CiviUnitTestCase.php';
 
 class api_v3_ParticipantTest extends CiviUnitTestCase 
 {
+  
+    protected $_apiversion;
     protected $_contactID;
     protected $_createdParticipants;
     protected $_participantID;
@@ -47,19 +49,22 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
     
     function setUp() 
     {
+            $this->markTestSkipped( "Reason for skipping:<a href='http://forum.civicrm.org/index.php/topic,18053.0.html'>version issue</a>" );
+ 
+        $this->_apiversion = 3;
         parent::setUp();
     
-        $event = $this->eventCreate();
+        $event = $this->eventCreate(null, $this->_apiversion);
         $this->_eventID = $event['event_id'];
         
-        $this->_contactID = $this->individualCreate(null,3 ) ;
-        $this->_createdParticipants = array( null,3);
-        $this->_individualId = $this->individualCreate(null,3);        
+        $this->_contactID = $this->individualCreate(null,$this->_apiversion ) ;
+        $this->_createdParticipants = array( null,$this->_apiversion);
+        $this->_individualId = $this->individualCreate(null,$this->_apiversion);        
         
-        $this->_participantID = $this->participantCreate( array('contactID' => $this->_contactID,'eventID' => $this->_eventID ,3 ));
+        $this->_participantID = $this->participantCreate( array('contactID' => $this->_contactID,'eventID' => $this->_eventID ,$this->_apiversion ));
         $this->_contactID2 = $this->individualCreate( null,3) ;
-        $this->_participantID2 = $this->participantCreate( array('contactID' => $this->_contactID2,'eventID' => $this->_eventID,3 ));
-        $this->_participantID3 = $this->participantCreate( array ('contactID' => $this->_contactID2, 'eventID' => $this->_eventID,3 ) );
+        $this->_participantID2 = $this->participantCreate( array('contactID' => $this->_contactID2,'eventID' => $this->_eventID,$this->_apiversion));
+        $this->_participantID3 = $this->participantCreate( array ('contactID' => $this->_contactID2, 'eventID' => $this->_eventID,$this->_apiversion ) );
     }
     
     function tearDown()

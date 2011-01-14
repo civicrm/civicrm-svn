@@ -184,6 +184,7 @@ function civicrm_activity_delete( &$params )
  * @todo this should probably be merged into main function
  * @return array (reference)  activity object
  * @access public
+ * @example C:\utils\eclipseworkspace\api-civicrm\api\v3\ActivityContact.php
  *
  */
 function _civicrm_activity_get( $activityId, $returnCustom = true ) {

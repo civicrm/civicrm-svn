@@ -77,19 +77,13 @@ require_once 'CRM/Utils/Rule.php';
  */
 function &civicrm_pledge_create( &$params ) {
     _civicrm_initialize( );
-    if ( empty( $params ) ) {
-        return civicrm_create_error(  'No input parameters present'  );
+    if ($params['pledge_amount']){
+      //acceptable in unique format or DB format but change to unique format here
+      $params['amount'] = $params['pledge_amount'];
     }
-
-    if ( ! is_array( $params ) ) {
-        return civicrm_create_error(  'Input parameters is not an array'  );
-    }
-    //check for required fields
-    $error = _civicrm_pledge_check_params( $params );
-    if ( civicrm_error( $error ) ) {
-        return $error;
-    }
-  
+    $required =  array('contact_id', 'amount', 'contribution_type_id' , 'installments','start_date');
+    civicrm_verify_mandatory ($params,'CRM_Pledge_DAO_Pledge',$required);  
+     
     $values  = array( );
     require_once 'CRM/Pledge/BAO/Pledge.php';
     //check that fields are in appropriate format. Dates will be formatted (within reason) by this function
@@ -210,45 +204,6 @@ function &civicrm_pledge_get( &$params ) {
     return $pledge;
 }
 
-/**
- * This function ensures that we have the required input pledge parameters
- *
- * We also run format the parameters with the format_params function
- *
- * @param array  $params       Associative array of property name/value
- *                             pairs to insert in new pledge.
- *
- * @return bool|CRM_Utils_Error
- * @access private
- */
-function _civicrm_pledge_check_params( &$params ) {
-    static $required = array( 'contact_id', 'amount', 'contribution_type_id' , 'installments','start_date');
-    if ($params['pledge_amount']){
-      //can be in unique format or DB format but change to unique format here
-      $params['amount'] = $params['pledge_amount'];
-    }
-   
-    // cannot create a pledge with empty params
-    if ( empty( $params ) ) {
-        return civicrm_create_error( 'Input Parameters empty' );
-    }
-
-    $valid = true;
-    $error = '';
-    foreach ( $required as $field ) {
-        if ( ! CRM_Utils_Array::value( $field, $params ) ) {
-            $valid = false;
-            $error .= $field;
-            break;
-        }
-    }
-    
-    if ( ! $valid ) {
-        return civicrm_create_error( "Required fields not found for pledge $error" );
-    }
-    
-    return array();
-}
 /**
  * This function returns possible values for this api
  *
