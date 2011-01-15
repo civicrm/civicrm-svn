@@ -254,6 +254,11 @@ function civicrm_mailer_event_reply($params)
     if ( !empty( $errors ) ) {
         return $errors;
     }
+
+    // CRM-7333: we can’t require fullEmail for backwards compatibility, but we should require either it or bodyTxt
+    if (empty($params['fullEmail']) and empty($params['bodyTxt'])) {
+        return civicrm_create_error('Required parameter missing: either "fullEmail" or "bodyTxt" is required');
+    }
           
     $job       = $params['job_id']; 
     $queue     = $params['event_queue_id']; 
