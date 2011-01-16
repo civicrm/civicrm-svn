@@ -159,6 +159,11 @@ define( 'CIVICRM_UF_BASEURL'      , '%%baseURL%%' );
  */
 define( 'CIVICRM_SITE_KEY', null );
 
+/* 
+ * If you want to keep the previous version of API, set it to 2, but beware that it will not be maintained forever
+ */
+define( 'CIVICRM_API_VERSION', '3' );
+
 /*
  * If you want to disable IDS, set this to 0.
  */

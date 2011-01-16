@@ -346,9 +346,17 @@ class CRM_Utils_REST
                 $fnGroup[1] = ucfirst( $fnGroup[1] );
                 $fnGroup    = implode( '', $fnGroup );
             }
-            $apiFile = "api/v2/{$fnGroup}.php";
+            $version = '3';
+            if (defined('CIVICRM_API_VERSION')) {
+              $version = CIVICRM_API_VERSION;
+            }
+            if ($params['version']) {
+              $params['version'] = (int) $params['version'];
+              $version = $params['version'];
+            }
+            $apiFile = "api/v".$version."/{$fnGroup}.php";
         }
-
+        
         if ( $restInterface ) {
             $apiPath = substr( $_SERVER['SCRIPT_FILENAME'] , 0 ,-15 );
             // check to ensure file exists, else die
@@ -364,11 +372,14 @@ class CRM_Utils_REST
         if ( ! function_exists( $fnName ) ) {
             return self::error( "Unknown function called: $fnName" );
         }
-	
+        
         // trap all fatal errors
         CRM_Core_Error::setCallback( array( 'CRM_Utils_REST', 'fatal' ) );
         $result = $fnName( $params );
         CRM_Core_Error::setCallback( );
+	      if ($version == 2) {
+           $result['deprecated'] = "Please upgrade to API v3";
+        }
 
         if ( $result === false ) {
             return self::error( 'Unknown error.' );
