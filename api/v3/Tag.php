@@ -43,10 +43,9 @@ require_once 'api/v3/utils.php';
 /**
  *  Add a Tag. Tags are used to classify CRM entities (including Contacts, Groups and Actions).
  *
- * @param   array   $params          an associative array used in
- *                                   construction / retrieval of the
- *                                   object
- * 
+ * Allowed @params array keys are:
+ * {@schema Core/Tag.xml}
+
  * @return array of newly created tag property values.
  * @access public
  */
@@ -54,7 +53,6 @@ function civicrm_tag_create( &$params )
 {
   _civicrm_initialize( true );
   try {
-    
     civicrm_verify_mandatory ($params,'CRM_Core_DAO_Tag',array ('name'));
 
     if ( !array_key_exists ('used_for', $params)) {
@@ -74,11 +72,8 @@ function civicrm_tag_create( &$params )
     } else {
         $values = array( );
         _civicrm_object_to_array($tagBAO, $values);
-        $tag = array( );
-        $tag['tag_id']   = $values['id'];
-        $tag['is_error'] = 0;
+        return civicrm_create_success($values);
     }
-    return $tag;
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );
   } catch (Exception $e) {
@@ -115,19 +110,16 @@ function civicrm_tag_delete( &$params )
  * This api is used for finding an existing tag.
  * Either id or name of tag are required parameters for this api.
  * 
- * @param  array $params  an associative array of name/value pairs. Either name or id is required
+ * @param  array $params  an associative array of name/value pairs.
  *
- * @return  array details of found tag else error
+ * @return  array details of found tags else error
  * @access public
- * @todo EM 11 Jan 2010 - shouldn't return error if none found
- * @todo EM 11 Jan 2010 - why are only 'id' & 'name' options - surely 'used_for' etc is valid too?
  */
 
 function civicrm_tag_get($params) 
 {   
    try {
     _civicrm_initialize( );
-    civicrm_verify_one_mandatory ($params, null, array('id', 'name'));  
 
     require_once 'CRM/Core/BAO/Tag.php';
     $tagBAO = new CRM_Core_BAO_Tag();
@@ -141,16 +133,16 @@ function civicrm_tag_get($params)
     }
     
     if ( ! $tagBAO->find(true) ) {
-        return civicrm_create_error('Exact match not found.');
+        return civicrm_create_success(array());
     }
-
-    _civicrm_object_to_array($tagBAO, $tag);
-    $tag['is_error'] = 0;    
-    return $tag;
+    _civicrm_object_to_array($tagBAO, $tag[]);
+    while ($tagBAO->fetch()) {
+      _civicrm_object_to_array($tagBAO, $tag[]);
+    }
+    return civicrm_create_success($tag);
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );
   } catch (Exception $e) {
     return civicrm_create_error( $e->getMessage() );
   }
-  
 }
