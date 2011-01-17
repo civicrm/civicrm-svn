@@ -113,6 +113,11 @@ function civicrm_contact_get( &$params )
     $offset          = 0;
     $rowCount        = 25;
     $smartGroupCache = false;
+    if ( array_key_exists ('return',$params)) {// handle the format return =sort_name, display_name...
+      $returnProperties = explode (',',$params['return']);
+      $returnProperties = array_flip ($returnProperties); 
+      $returnProperties[key($returnProperties)] = 1; 
+    }
     foreach ( $params as $n => $v ) {
         if ( substr( $n, 0, 6 ) == 'return' ) {
             $returnProperties[ substr( $n, 7 ) ] = $v;

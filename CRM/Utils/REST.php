@@ -392,15 +392,13 @@ class CRM_Utils_REST
 
         $skipVars = array( 'q'   => 1,
                            'json' => 1,
-                           'return' => 1,
                            'key' => 1 );
         foreach ( $_REQUEST as $n => $v ) {
             if ( ! array_key_exists( $n, $skipVars ) ) {
                 $params[$n] = $v;
             }
         }
-
-        if (array_key_exists('return',$_REQUEST)) {
+        if (array_key_exists('return',$_REQUEST) && is_array($_REQUEST['return'])) {
             foreach ( $_REQUEST['return'] as $key => $v) 
                 $params['return.'.$key]=1;
         }
