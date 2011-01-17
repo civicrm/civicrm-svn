@@ -31,6 +31,7 @@
   </foreignKey>
   <field>
       <name>location_type_id</name>
+      <title>OpenID Location Type</title>
       <type>int unsigned</type>
       <comment>Which Location does this email belong to.</comment>
        <add>2.0</add>
@@ -42,6 +43,7 @@
   </index>
   <field>
        <name>openid</name>
+       <title>OpenID</title>
        <type>varchar</type>
        <length>255</length>
        <import>true</import>
@@ -68,6 +70,7 @@
   </field>
   <field>
        <name>is_primary</name>
+       <title>Is OpenID Primary?</title>
        <type>boolean</type>
        <default>0</default>
        <comment>Is this the primary email for this contact and location.</comment>

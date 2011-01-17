@@ -247,9 +247,9 @@ class CRM_Case_PseudoConstant extends CRM_Core_PseudoConstant
             $caseTypeIds = CRM_Core_DAO::getFieldValue( 'CRM_Case_DAO_Case',
                                                         $caseId,
                                                         'case_type_id' );
-            $caseTypeId  = explode( CRM_Case_BAO_Case::VALUE_SEPERATOR, 
+            $caseTypeId  = explode( CRM_Core_DAO::VALUE_SEPARATOR,
                                     trim($caseTypeIds, 
-                                         CRM_Case_BAO_Case::VALUE_SEPERATOR) );
+                                         CRM_Core_DAO::VALUE_SEPARATOR ) );
             $caseTypeId  = $caseTypeId[0];
             
             self::$caseTypePair[$caseId][$column] = array( 'id'   => $caseTypeId,

@@ -1195,7 +1195,7 @@ class CRM_Contact_BAO_Query
             }
 
             $result = array( $id, 'IN', $values, 0, 0 );
-        } else if ( $id == 'contact_tags' ) {
+        } else if ( $id == 'contact_tags' || $id == 'tag' ) {
             if (! is_array( $values ) ) {
                 $tagIds = explode( ',', $values );
                 unset( $values );
@@ -2403,24 +2403,28 @@ WHERE  id IN ( $groupIDs )
     function tag( &$values ) 
     {
         list( $name, $op, $value, $grouping, $wildcard ) = $values;
-        
-        if ( count( $value ) > 1 ) {
-            $this->_useDistinct = true;
+                
+        $tagNames = CRM_Core_PseudoConstant::tag( );
+        if ( is_array( $value ) ) {
+            if ( count( $value ) > 1 ) {
+                $this->_useDistinct = true;
+            }
+            foreach ( $value as $id => $dontCare ) {
+                $names[] = $tagNames[$id];
+            }
+            $names = implode( ' ' . ts('or') . ' ', $names );
+            $value = implode( ',', array_keys( $value ) );
+        } else {
+            $names = CRM_Utils_Array::value( $value, $tagNames );
         }
-
-        $etTable = "`civicrm_entity_tag-" .implode( ',', array_keys($value) ) ."`";
+                
+        $etTable = "`civicrm_entity_tag-" . $value ."`";
         $this->_tables[$etTable] = $this->_whereTables[$etTable] =
             " LEFT JOIN civicrm_entity_tag {$etTable} ON ( {$etTable}.entity_id = contact_a.id  AND 
                         {$etTable}.entity_table = 'civicrm_contact' ) ";
        
-        $names = array( );
-        $tagNames =& CRM_Core_PseudoConstant::tag( );
-        foreach ( $value as $id => $dontCare ) {
-            $names[] = $tagNames[$id];
-        }
-
-        $this->_where[$grouping][] = "{$etTable}.tag_id $op (". implode( ',', array_keys( $value ) ) . ')';
-        $this->_qill[$grouping][]  = ts('Tagged %1', array( 1 => $op ) ) . ' ' . implode( ' ' . ts('or') . ' ', $names ); 
+        $this->_where[$grouping][] = "{$etTable}.tag_id $op (". $value . ')';
+        $this->_qill[$grouping][]  = ts('Tagged %1', array( 1 => $op ) ). ' ' . $names;
     } 
 
     /**
@@ -2892,8 +2896,8 @@ WHERE  id IN ( $groupIDs )
         if ( !is_array($value) ) {
             $v = array( );
             
-            if ( strpos( $value, CRM_Core_BAO_CustomOption::VALUE_SEPERATOR ) !== false ) {
-                $v = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, $value );
+            if ( strpos( $value, CRM_Core_DAO::VALUE_SEPARATOR ) !== false ) {
+                $v = explode( CRM_Core_DAO::VALUE_SEPARATOR, $value );
             } else{
                 $v = explode( ",", $value );
             }
@@ -2917,7 +2921,12 @@ WHERE  id IN ( $groupIDs )
         $sqlValue = array( ) ;
         $sql = "contact_a.preferred_communication_method";
         foreach ( $pref as $val ) { 
-            $sqlValue[] = "( $sql like '%" . CRM_Core_BAO_CustomOption::VALUE_SEPERATOR . $val . CRM_Core_BAO_CustomOption::VALUE_SEPERATOR . "%' ) ";
+            $sqlValue[] = 
+                "( $sql like '%" . 
+                CRM_Core_DAO::VALUE_SEPARATOR .
+                $val . 
+                CRM_Core_DAO::VALUE_SEPARATOR . 
+                "%' ) ";
             $showValue[] =  $commPref[$val];
         }
         $this->_where[$grouping][] = "( ". implode( ' OR ', $sqlValue ). " )"; 

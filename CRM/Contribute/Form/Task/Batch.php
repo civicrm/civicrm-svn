@@ -144,6 +144,15 @@ class CRM_Contribute_Form_Task_Batch extends CRM_Contribute_Form_Task {
         $this->assign( 'profileTitle', $this->_title );
         $this->assign( 'componentIds', $this->_contributionIds );
         $fileFieldExists = false;
+ 
+        //load all campaigns.
+        if ( array_key_exists( 'campaign_id', $this->_fields ) ) {
+            $this->_componentCampaigns = array( );
+            CRM_Core_PseudoConstant::populate( $this->_componentCampaigns,
+                                               'CRM_Contribute_DAO_Contribution',
+                                               true, 'campaign_id', 'id', 
+                                               ' id IN ('. implode(' , ',array_values( $this->_contributionIds ) ) .' ) ');
+        }
         
         //fix for CRM-2752
         require_once "CRM/Core/BAO/CustomField.php";
@@ -154,7 +163,7 @@ class CRM_Contribute_Form_Task_Batch extends CRM_Contribute_Form_Task {
                 if ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID( $name ) ) {
                     $customValue = CRM_Utils_Array::value( $customFieldID, $customFields );
                     if ( CRM_Utils_Array::value( 'extends_entity_column_value', $customValue ) ) {
-                        $entityColumnValue = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, 
+                        $entityColumnValue = explode( CRM_Core_DAO::VALUE_SEPARATOR,
                                                       $customValue['extends_entity_column_value'] );
                     }
 

@@ -312,6 +312,10 @@ class CRM_Contact_Form_Search_Criteria {
 
         $form->addDate( 'modified_date_low', ts('Modified Between'), false, array( 'formatType' => 'searchDate') );
         $form->addDate( 'modified_date_high', ts('and'), false, array( 'formatType' => 'searchDate') );
+        
+        // block for contact added date
+        $form->addDate( 'added_date_low', ts('Added Between'), false, array( 'formatType' => 'searchDate') );
+        $form->addDate( 'added_date_high', ts('and'), false, array( 'formatType' => 'searchDate') );
     }
 
     static function task( &$form ) {

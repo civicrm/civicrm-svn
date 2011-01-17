@@ -60,6 +60,11 @@
 			<td>{$form.event_type_id.html}<br />
 			<span class="description">{ts}After selecting an Event Type, this page will display any custom event fields for that type.{/ts}</td>
 		</tr>
+
+	        {* CRM-7362 --add campaign *}
+	        {include file="CRM/Campaign/Form/addCampaignToComponent.tpl"
+	        campaignTrClass="crm-event-manage-eventinfo-form-block-campaign_id"}
+
 		<tr class="crm-event-manage-eventinfo-form-block-default_role_id">
 			<td class="label">{$form.default_role_id.label}</td>
 			<td>{$form.default_role_id.html}<br />

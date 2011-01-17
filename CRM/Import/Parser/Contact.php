@@ -144,6 +144,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         
         //CRM-5125
         //supporting import for contact subtypes
+        $csType = null;
         if ( !empty($this->_contactSubType) ) { 
             //custom fields for sub type
             $subTypeFields = CRM_Core_BAO_CustomField::getFieldsForImport( $this->_contactSubType );
@@ -1069,14 +1070,21 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         
         $customFields = CRM_Core_BAO_CustomField::getFields( $params['contact_type'], false, false, $csType );
         
+        $addressCustomFields = CRM_Core_BAO_CustomField::getFields( 'Address' );
+        $customFields = $customFields + $addressCustomFields;
         foreach ($params as $key => $value) {
             if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
                 /* check if it's a valid custom field id */
                 if ( !array_key_exists($customFieldID, $customFields)) {
                     self::addToErrorMsg(ts('field ID'), $errorMessage);
                 }
+                //For address custom fields, we do get actual custom field value as an inner array of 
+                //values so need to modify 
+                if( array_key_exists( $customFieldID, $addressCustomFields ) ) {
+                    $value = $value[0][$key];   
+                }
                 /* validate the data against the CF type */
-     
+                
                 if ( $value ) {
                     if ($customFields[$customFieldID]['data_type'] == 'Date') {
                         if( CRM_Utils_Date::convertToDefaultDate( $params, $dateType, $key )) {
@@ -1091,7 +1099,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                         }
                     }
                     // need not check for label filed import
-                    $htmlType = array('CheckBox','Multi-Select','AdvMulti-Select','Select','Radio','Multi-Select State/Province' ,'Multi-Select Country' );
+                    $htmlType = array('CheckBox','Multi-Select','AdvMulti-Select','Select','Radio','Multi-Select State/Province' ,'Multi-Select Country','Text' );
                     if ( ! in_array( $customFields[$customFieldID]['html_type'], $htmlType ) ||
                          $customFields[$customFieldID]['data_type'] =='Boolean' || 
                          $customFields[$customFieldID]['data_type'] == 'ContactReference' ) {
@@ -1730,6 +1738,9 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         }
         
         $customFields = CRM_Core_BAO_CustomField::getFields( $formatted['contact_type'], false, false, $csType );
+        
+        $addressCustomFields = CRM_Core_BAO_CustomField::getFields( 'Address' );
+        $customFields = $customFields + $addressCustomFields;
         
         //if a Custom Email Greeting, Custom Postal Greeting or Custom Addressee is mapped, and no "Greeting / Addressee Type ID" is provided, then automatically set the type = Customized, CRM-4575
         $elements = array( 'email_greeting_custom' => 'email_greeting', 

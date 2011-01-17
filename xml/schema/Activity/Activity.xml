@@ -342,4 +342,18 @@
        <fieldName>is_deleted</fieldName>
        <add>2.2</add>
   </index>
+  <field> 
+       <name>campaign_id</name> 
+       <type>int unsigned</type>
+       <title>Campaign ID</title>
+       <import>true</import> 
+       <comment>The campaign for which this activity has been triggered.</comment> 
+       <add>3.4</add> 
+  </field> 
+  <foreignKey> 
+       <name>campaign_id</name> 
+       <table>civicrm_campaign</table> 
+       <key>id</key> 
+       <onDelete>SET NULL</onDelete>
+  </foreignKey>
 </table>

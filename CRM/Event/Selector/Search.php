@@ -88,7 +88,8 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
                                  'participant_fee_amount',
                                  'participant_fee_currency',
                                  'participant_status',
-                                 'participant_role'
+                                 'participant_role',
+                                 'participant_campaign_id'
                                  );
 
     /** 
@@ -327,6 +328,10 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
          $participantRoles = CRM_Event_PseudoConstant::participantRole( ) ;
          $sep              = CRM_Core_DAO::VALUE_SEPARATOR;
 
+         //get all campaigns.
+         require_once 'CRM/Campaign/BAO/Campaign.php';
+         $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, true );
+         
          while ( $result->fetch( ) ) {
              $row = array();
              // the columns we are interested in
@@ -335,7 +340,11 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
                      $row[$property] = $result->$property;
                  }
              }
-
+             
+             //carry campaign on selectors.
+             $row['campaign'] = CRM_Utils_Array::value( $result->participant_campaign_id, $allCampaigns );
+             $row['campaign_id'] = $result->participant_campaign_id; 
+                 
              // gross hack to show extra information for pending status
              $statusClass = null;
              if ( ( isset( $row['participant_status_id'] ) ) &&

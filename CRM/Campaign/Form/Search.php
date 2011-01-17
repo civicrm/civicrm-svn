@@ -230,7 +230,7 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         
         //append breadcrumb to survey dashboard.
         require_once 'CRM/Campaign/BAO/Campaign.php';
-        if ( CRM_Campaign_BAO_Campaign::accessCampaignDashboard( ) ) {
+        if ( CRM_Campaign_BAO_Campaign::accessCampaign( ) ) {
             $url = CRM_Utils_System::url( 'civicrm/campaign', 'reset=1&subPage=survey' );
             CRM_Utils_System::appendBreadCrumb( array( array( 'title' => ts('Survey(s)'), 'url' => $url ) ) );
         }

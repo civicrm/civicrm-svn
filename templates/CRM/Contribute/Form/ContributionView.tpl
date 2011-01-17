@@ -125,6 +125,14 @@
 	    <td class="label">{ts}Source{/ts}</td>
     	<td>{$source}</td>
 	</tr>
+
+	{if $campaign}
+	<tr>
+	    <td class="label">{ts}Campaign{/ts}</td>
+    	    <td>{$campaign}</td>
+	</tr>
+	{/if}
+	
 	{if $contribution_page_title}
         <tr>
             <td class="label">{ts}Online Contribution Page{/ts}</td>

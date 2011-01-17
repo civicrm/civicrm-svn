@@ -932,6 +932,10 @@ WHERE  contribution_id = {$this->_id}
             $element->freeze( );
         }
         
+        //CRM-7362 --add campaigns.
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        CRM_Campaign_BAO_Campaign::addCampaign( $this, CRM_Utils_Array::value( 'campaign_id', $this->_values ) );        
+        
         $dataUrl = CRM_Utils_System::url( 'civicrm/ajax/rest', 
                                           "className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=contact&reset=1&context=softcredit&id={$this->_id}",
                                           false, null, false );

@@ -76,6 +76,14 @@
 	    	<a href="{crmURL p='civicrm/event/manage/eventInfo' q="action=update&reset=1&id=$event_id"}" title="{ts}Configure this event{/ts}">{$event}</a>
 	    </td>
 	</tr>
+
+    {if $campaign}		
+    <tr class="crm-event-participantview-form-block-campaign">
+	    <td class="label">{ts}Campaign{/ts}</td>
+	    <td>{$campaign}</td>
+    </tr>		
+    {/if}
+     
     <tr class="crm-event-participantview-form-block-role">
 	    <td class="label">{ts}Participant Role{/ts}</td>
 	    <td>{$role}</td></tr>

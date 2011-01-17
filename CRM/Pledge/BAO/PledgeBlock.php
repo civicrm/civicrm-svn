@@ -135,7 +135,7 @@ class CRM_Pledge_BAO_PledgeBlock extends CRM_Pledge_DAO_PledgeBlock
             
             $freqUnits =  $newFreqUnits;
             if ( is_array($freqUnits) && !empty($freqUnits) ) {
-                $freqUnits = implode(CRM_Core_BAO_CustomOption::VALUE_SEPERATOR,array_keys($freqUnits));
+                $freqUnits = implode(CRM_Core_DAO::VALUE_SEPARATOR,array_keys($freqUnits));
                 $pledgeBlock->pledge_frequency_unit = $freqUnits;
             } else {
                 $pledgeBlock->pledge_frequency_unit = '';
@@ -285,7 +285,7 @@ class CRM_Pledge_BAO_PledgeBlock extends CRM_Pledge_DAO_PledgeBlock
                 $form->add( 'hidden', 'pledge_frequency_interval', 1 ); 
             }
             //Frequency unit drop-down label suffixes switch from *ly to *(s)
-            $freqUnitVals  = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, $pledgeBlock['pledge_frequency_unit'] );
+            $freqUnitVals  = explode( CRM_Core_DAO::VALUE_SEPARATOR, $pledgeBlock['pledge_frequency_unit'] );
             $freqUnits = array( );
             $frequencyUnits = CRM_Core_OptionGroup::values( 'recur_frequency_units' );
             foreach ( $freqUnitVals as $key => $val ) {

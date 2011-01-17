@@ -159,6 +159,14 @@ class CRM_Mailing_Selector_Browse   extends CRM_Core_Selector_Base
                                                 'direction' => CRM_Utils_Sort::DESCENDING,
                                                 )
                                           );
+            
+            require_once 'CRM/Campaign/BAO/Campaign.php';
+            if ( CRM_Campaign_BAO_Campaign::isCampaignEnable( ) ) {
+                self::$_columnHeaders[] = array( 'name' => ts('Campaign'),
+                                                 'sort' => 'campaign_id',
+                                                 'direction' => CRM_Utils_Sort::DONTCARE );
+            }
+            
             if ( $output != CRM_Core_Selector_Controller::EXPORT ) {
                 self::$_columnHeaders[] = array( 'name' => ts('Action') );
             }
@@ -311,8 +319,7 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
             foreach ( $rows as $key => $row ) {
                 $actionMask = null;
                 if ( !( $row['status'] == 'Not scheduled' ) ) {
-                    if ( $allAccess || 
-                         ( $showApprovalLinks && $showCreateLinks && $showScheduleLinks ) ) {
+                    if ( $allAccess || $showCreateLinks ) {
                         $actionMask = CRM_Core_Action::VIEW;
                     }
                     

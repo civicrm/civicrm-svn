@@ -242,7 +242,7 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
          require_once 'CRM/Mailing/BAO/Mailing.php';
          require_once 'CRM/Mailing/Info.php';
          $mailingIDs =& CRM_Mailing_BAO_Mailing::mailingACLIDs( );
-         $accessCiviMail = ( ( CRM_Core_Permission::check( 'access CiviMail' ) ) || ( CRM_Mailing_Info::workflowEnabled( ) && CRM_Core_Permission::check( 'create mailings' ) ) );
+         $accessCiviMail = CRM_Core_Permission::check( 'access CiviMail' );
          
          while ( $result->fetch( ) ) {
              $row = array( );

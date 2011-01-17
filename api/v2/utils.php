@@ -454,6 +454,18 @@ function _civicrm_add_formatted_location_blocks( &$values, &$params )
             $params['address'][$addressCnt][$field] = $values[$field];
         }
     }
+    //Handle Address Custom data
+    $fields['address_custom'] = CRM_Core_BAO_CustomField::getFields( 'Address' );
+    foreach ( $values as $key => $value ) {
+        if ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID( $key ) ) {
+            /* check if it's a valid custom field id */
+            if ( array_key_exists( $customFieldID, $fields['address_custom'] ) ) {
+                $params['address'][$addressCnt][$key] = $values[$key];
+            } else {
+                return civicrm_create_error( 'Invalid custom field ID' );
+            }
+        }
+    }
     
     if ( $addressCnt == 1 ) $params['address'][$addressCnt]['is_primary'] = true;
     

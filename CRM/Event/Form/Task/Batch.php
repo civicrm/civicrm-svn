@@ -148,6 +148,15 @@ class CRM_Event_Form_Task_Batch extends CRM_Event_Form_Task
         $this->assign( 'componentIds', $this->_participantIds );
         $fileFieldExists = false;
         
+        //load all campaigns.
+        if ( array_key_exists( 'campaign_id', $this->_fields ) ) {
+            $this->_componentCampaigns = array( );
+            CRM_Core_PseudoConstant::populate( $this->_componentCampaigns,
+                                               'CRM_Event_DAO_Participant',
+                                               true, 'campaign_id', 'id', 
+                                               ' id IN ('. implode(' , ',array_values( $this->_participantIds ) ) .' ) ');
+        }
+        
         //fix for CRM-2752
         require_once "CRM/Core/BAO/CustomField.php";
         // get the option value for custom data type 	
@@ -169,7 +178,7 @@ class CRM_Event_Form_Task_Batch extends CRM_Event_Form_Task
                 if ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID( $name ) ) {
                     $customValue = CRM_Utils_Array::value( $customFieldID, $this->_customFields );
                     if ( CRM_Utils_Array::value( 'extends_entity_column_value', $customValue ) ) {
-                        $entityColumnValue = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, 
+                        $entityColumnValue = explode( CRM_Core_DAO::VALUE_SEPARATOR, 
                                                       $customValue['extends_entity_column_value'] );
                     }
                     if ( ( $this->_roleCustomDataTypeID == $customValue['extends_entity_column_id'] ) &&

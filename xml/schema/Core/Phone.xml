@@ -33,6 +33,7 @@
   </foreignKey>
   <field>
       <name>location_type_id</name>
+      <title>Phone Location Type</title>
       <type>int unsigned</type>
       <comment>Which Location does this phone belong to.</comment>
        <add>2.0</add>
@@ -44,6 +45,7 @@
   </index>
   <field>
        <name>is_primary</name>
+       <title>Is Phone Primary?</title>
        <type>boolean</type>
        <default>0</default>
        <comment>Is this the primary phone for this contact and location.</comment>
@@ -99,6 +101,7 @@
   </field>
   <field>
       <name>phone_type_id</name>
+      <title>Phone Type</title>
       <type>int unsigned</type>
       <comment>Which type of phone does this number belongs.</comment>
       <add>2.2</add>

@@ -118,9 +118,15 @@ class CRM_Member_BAO_Query
                 $query->_select['membership_recur_id']  = "civicrm_membership.contribution_recur_id as membership_recur_id";
                 $query->_element['membership_recur_id'] = 1;
             }
+            
+            //add campaign id.
+            if ( CRM_Utils_Array::value( 'membership_campaign_id', $query->_returnProperties ) ) {
+                $query->_select['membership_campaign_id']  = 'civicrm_membership.campaign_id as membership_campaign_id';
+                $query->_element['membership_campaign_id'] = 1;
+            }
         }
     }
-
+    
     static function where( &$query ) 
     {
         $isTest   = false;
@@ -348,7 +354,8 @@ class CRM_Member_BAO_Query
                                 'membership_status'      => 1,
                                 'membership_id'          => 1,
                                 'owner_membership_id'    => 1,
-                                'membership_recur_id'    => 1
+                                'membership_recur_id'    => 1,
+                                'membership_campaign_id' => 1
                                 );
 
             // also get all the custom membership properties

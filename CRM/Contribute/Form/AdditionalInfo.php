@@ -253,6 +253,7 @@ class CRM_Contribute_Form_AdditionalInfo
                          'net_amount',
                          'trxn_id',
                          'invoice_id',
+                         'campaign_id',
                          'honor_type_id',
                          'contribution_page_id'
                          );

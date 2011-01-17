@@ -120,7 +120,7 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         $this->assertEquals( CRM_Utils_Date::processDate( $params['deceased_date'] ), 
                             $contact->deceased_date, 'Check for deceased_date creation.' ); 
         require_once 'CRM/Core/BAO/CustomOption.php';
-        $dbPrefComm = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR,
+        $dbPrefComm = explode( CRM_Core_DAO::VALUE_SEPARATOR,
                                $contact->preferred_communication_method );
         $checkPrefComm = array( );
         foreach( $dbPrefComm as $key => $value ) {
@@ -205,7 +205,7 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         $this->assertEquals( CRM_Utils_Date::processDate( $updateParams['deceased_date'] ), 
                             $contact->deceased_date, 'Check for deceased_date creation.' ); 
         require_once 'CRM/Core/BAO/CustomOption.php';
-        $dbPrefComm = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR,
+        $dbPrefComm = explode( CRM_Core_DAO::VALUE_SEPARATOR,
                                $contact->preferred_communication_method );
         $checkPrefComm = array( );
         foreach( $dbPrefComm as $key => $value ) {
@@ -766,7 +766,7 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
                                       'id', $params['deceased_date'],'Check for deceased_date creation.');
         
         require_once 'CRM/Core/BAO/CustomOption.php';
-        $dbPrefComm = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR,
+        $dbPrefComm = explode( CRM_Core_DAO::VALUE_SEPARATOR,
                                CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $contactId, 'preferred_communication_method' ) );
         $checkPrefComm = array( );
         foreach( $dbPrefComm as $key => $value ) {
@@ -956,7 +956,7 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
                                       $updateCParams['deceased_date'],'Check for deceased_date creation.');
         
         require_once 'CRM/Core/BAO/CustomOption.php';
-        $dbPrefComm = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR,
+        $dbPrefComm = explode( CRM_Core_DAO::VALUE_SEPARATOR,
                                CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $contactId, 'preferred_communication_method' ) );
         $checkPrefComm = array( );
         foreach( $dbPrefComm as $key => $value ) {

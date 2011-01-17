@@ -204,6 +204,12 @@ class CRM_Event_BAO_Query
                 $query->_whereTables['civicrm_discount']          = 1;
                 $query->_whereTables['participant_discount_name'] = 1;
             }
+            
+            //carry campaign id to selectors.
+            if ( CRM_Utils_Array::value( 'participant_campaign_id', $query->_returnProperties ) ) {
+                $query->_select['participant_campaign_id']  = 'civicrm_participant.campaign_id as participant_campaign_id';
+                $query->_element['participant_campaign_id'] = 1;
+            }
         }
     }
 
@@ -511,8 +517,9 @@ class CRM_Event_BAO_Query
                                 'participant_fee_amount'    => 1,
                                 'participant_discount_name' => 1,
                                 'participant_fee_currency'  => 1,
-                                'participant_registered_by_id' => 1
-                                );
+                                'participant_registered_by_id' => 1,
+                                'participant_campaign_id'      => 1
+                                  );
        
             // also get all the custom participant properties
             require_once "CRM/Core/BAO/CustomField.php";

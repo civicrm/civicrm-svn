@@ -202,4 +202,18 @@
       <comment>3 character string, value derived from config setting.</comment>   
       <add>3.0</add>
   </field>
+  <field> 
+      <name>campaign_id</name> 
+      <type>int unsigned</type>
+      <title>Campaign ID</title>
+      <import>true</import> 
+      <comment>The campaign for which this participant has been registered.</comment> 
+      <add>3.4</add> 
+  </field> 
+  <foreignKey> 
+      <name>campaign_id</name> 
+      <table>civicrm_campaign</table> 
+      <key>id</key> 
+      <onDelete>SET NULL</onDelete>
+  </foreignKey>
 </table>

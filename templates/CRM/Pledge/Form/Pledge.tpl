@@ -105,6 +105,11 @@
             <span class="description">{ts}Date when an acknowledgment of the pledge was sent.{/ts}</span></td></tr>
             <tr class="crm-pledge-form-block-contribution_type_id"><td class="label">{$form.contribution_type_id.label}</td><td>{$form.contribution_type_id.html}<br />
             <span class="description">{ts}Sets the default contribution type for payments against this pledge.{/ts}</span></td></tr>
+
+	    {* CRM-7362 --add campaign *}
+	    {include file="CRM/Campaign/Form/addCampaignToComponent.tpl"
+	    campaignTrClass="crm-pledge-form-block-campaign_id"}
+
 	    <tr class="crm-pledge-form-block-contribution_page_id"><td class="label">{$form.contribution_page_id.label}</td><td>{$form.contribution_page_id.html}<br />
             <span class="description">{ts}Select an Online Contribution page that the user can access to make self-service pledge payments. (Only Online Contribution pages configured to include the Pledge option are listed.){/ts}</span></td></tr>
         

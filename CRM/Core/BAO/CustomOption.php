@@ -41,8 +41,6 @@
  */
 class CRM_Core_BAO_CustomOption {
 
-    const VALUE_SEPERATOR = "";
-
     /**
      * Takes a bunch of params that are needed to match certain criteria and
      * retrieves the relevant objects. Typically the valid params are only

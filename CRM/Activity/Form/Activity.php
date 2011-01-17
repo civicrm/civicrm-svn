@@ -112,6 +112,8 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
      * @var boolean
      */
     protected $_isSurveyActivity;
+    
+    protected $_values = array( );
 
     /**
      * The _fields var can be used by sub class to set/unset/edit the 
@@ -433,6 +435,16 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         if ( $this->_activityTypeFile ) {
             eval("CRM_{$this->_crmDir}_Form_Activity_{$this->_activityTypeFile}::preProcess( \$this );");
         }
+        
+        $this->_values = $this->get( 'values' );
+        if ( !is_array( $this->_values ) ) {
+            $this->_values = array( );
+            if ( isset( $this->_activityId ) && $this->_activityId ) {
+                $params = array( 'id' => $this->_activityId );
+                CRM_Activity_BAO_Activity::retrieve( $params, $this->_values );
+            }
+            $this->set( 'values', $this->_values );
+        }
     }
     
     /**
@@ -448,17 +460,15 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             return CRM_Custom_Form_CustomData::setDefaultValues( $this );
         }
         
-        $defaults = array( );
+        $defaults = $this->_values;
         $params   = array( );
         $config   = CRM_Core_Config::singleton( );
 
         // if we're editing...
         if ( isset( $this->_activityId ) ) {
-            $params = array( 'id' => $this->_activityId );
-            CRM_Activity_BAO_Activity::retrieve( $params, $defaults );
             $defaults['source_contact_qid'] = $defaults['source_contact_id'];
             $defaults['source_contact_id']  = $defaults['source_contact'];
-
+            
             if ( !CRM_Utils_Array::crmIsEmptyArray( $defaults['target_contact'] ) ) {
                 $target_contact_value = explode(';', trim($defaults['target_contact_value'] ) );
                 $this->assign( 'target_contact', array_combine( array_unique( $defaults['target_contact'] ), $target_contact_value ) );
@@ -611,7 +621,11 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
                 }
             }
         }
-
+        
+        //CRM-7362 --add campaigns.
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        CRM_Campaign_BAO_Campaign::addCampaign( $this, CRM_Utils_Array::value( 'campaign_id', $this->_values ) );
+        
         $this->addRule('duration', 
                        ts('Please enter the duration as number of minutes (integers only).'), 'positiveInteger');  
         

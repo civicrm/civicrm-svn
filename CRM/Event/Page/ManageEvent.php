@@ -36,6 +36,7 @@
 
 require_once 'CRM/Core/Page.php';
 require_once 'CRM/Event/BAO/Event.php';
+require_once 'CRM/Campaign/BAO/Campaign.php';
 
 /**
  * Page for displaying list of events
@@ -209,6 +210,9 @@ ORDER BY start_date desc
         
         $dao = CRM_Core_DAO::executeQuery( $query, $params, true, 'CRM_Event_DAO_Event' );
         $permissions = CRM_Event_BAO_Event::checkPermission( );
+        
+        //get all campaigns.
+        $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, true );
 
         while ($dao->fetch()) {
             if ( in_array( $dao->id, $permissions[CRM_Core_Permission::VIEW] ) ) {
@@ -254,6 +258,9 @@ ORDER BY start_date desc
                 if ( isset( $defaults['location']['address'][1]['state_province_id'] )) {
                     $manageEvent[$dao->id]['state_province'] = CRM_Core_PseudoConstant::stateProvince($defaults['location']['address'][1]['state_province_id']);
                 }
+                
+                //show campaigns on selector.
+                $manageEvent[$dao->id]['campaign'] = CRM_Utils_Array::value( $dao->campaign_id, $allCampaigns );
             }
         }
         $this->assign('rows', $manageEvent);

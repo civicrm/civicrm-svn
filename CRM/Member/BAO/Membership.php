@@ -847,6 +847,11 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
             $tmpContactField = array();
             if( is_array($fieldsArray) ) {
                 foreach ( $fieldsArray as $value) {
+                    $customFieldId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomField',
+                                                                  $value,
+                                                                  'id',
+                                                                  'column_name' );
+                    $value =  $customFieldId ? 'custom_'.$customFieldId : $value;
                     $tmpContactField[trim($value)] = CRM_Utils_Array::value(trim($value),$contactFields);
                     if (!$status) {
                         $title = $tmpContactField[trim($value)]['title']." " . ts("(match to contact)") ;
@@ -1393,6 +1398,15 @@ AND civicrm_membership.is_test = %2";
             $memParams['is_for_organization'] = true; 
         } else {
             $ids['userId'] = $contactID;
+        }
+
+        //inherit campaign from contirb page.
+        if ( is_array( $form->_values ) && !empty( $form->_values )  ) {
+            $campaignId = CRM_Utils_Array::value( 'campaign_id', $form->_params );
+            if ( !array_key_exists( 'campaign_id', $form->_params ) ) {
+                $campaignId = CRM_Utils_Array::value( 'campaign_id', $form->_values );
+            }
+            $memParams['campaign_id'] = $campaignId;
         }
         
         $membership =& self::create( $memParams, $ids, false, $activityType );

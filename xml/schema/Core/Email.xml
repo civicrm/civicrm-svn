@@ -33,6 +33,7 @@
   </foreignKey>
   <field>
       <name>location_type_id</name>
+      <title>Email Location Type</title>
       <type>int unsigned</type>
       <comment>Which Location does this email belong to.</comment>
        <add>2.0</add>

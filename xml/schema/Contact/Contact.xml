@@ -202,6 +202,7 @@
   </field>
   <field>
        <name>preferred_communication_method</name>
+       <title>Preferred Communication Method</title>
        <type>varchar</type>
        <length>255</length>
        <import>true</import>
@@ -217,6 +218,7 @@
   </index>
   <field>
       <name>preferred_language</name>
+      <title>Preferred Language</title>
       <type>varchar</type>
       <length>5</length>
       <comment>Which language is preferred for communication. FK to languages in civicrm_option_value.</comment>
@@ -318,6 +320,7 @@
   </index>
   <field>
       <name>prefix_id</name>
+      <title>Individual Prefix</title>
       <type>int unsigned</type>
       <comment>Prefix or Title for name (Ms, Mr...). FK to prefix ID</comment>
       <headerPattern>/^(prefix|title)/i</headerPattern>
@@ -331,6 +334,7 @@
   </index>
   <field>
       <name>suffix_id</name>
+      <title>Individual Suffix</title>
       <type>int unsigned</type>
       <comment>Suffix for name (Jr, Sr...). FK to suffix ID</comment>
       <headerPattern>/^suffix$/i</headerPattern>
@@ -452,6 +456,7 @@
   </field>
   <field>
       <name>gender_id</name>
+      <title>Gender</title>
       <type>int unsigned</type>
       <headerPattern>/^gender$/i</headerPattern>
       <comment>FK to gender ID</comment>

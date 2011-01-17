@@ -37,5 +37,15 @@
                 {include file="CRM/common/jcalendar.tpl" elementName=modified_date_high}
             </td>
         </tr>
+	<tr>
+            <td>
+            </td>
+            <td>
+                {$form.added_date_low.label}<br />
+	            {include file="CRM/common/jcalendar.tpl" elementName=added_date_low}&nbsp;
+	               	{$form.added_date_high.label}&nbsp; 
+                {include file="CRM/common/jcalendar.tpl" elementName=added_date_high}
+            </td>
+        </tr>
     </table>
  </div>

@@ -774,7 +774,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                 } else if ( $name === 'preferred_communication_method' ) {
                     $communicationFields = CRM_Core_PseudoConstant::pcm();
                     $pref = $compref = array();
-                    $pref = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, $details->$name );
+                    $pref = explode( CRM_Core_DAO::VALUE_SEPARATOR, $details->$name );
                     
                     foreach ( $pref as $k ) {
                         if ( $k ) {
@@ -968,7 +968,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                         $url =  $params[$index] ;
                     } else if ( in_array( $htmlType, array( 'CheckBox', 'Multi-Select', 'AdvMulti-Select', 
                                                             'Multi-Select State/Province', 'Multi-Select Country' ) ) ) {   
-                        $valSeperator    = CRM_Core_BAO_CustomOption::VALUE_SEPERATOR ;
+                        $valSeperator    = CRM_Core_DAO::VALUE_SEPARATOR ;
                         $selectedOptions = explode( $valSeperator, $params[$index] );
                         
                         foreach ( $selectedOptions as $key => $multiOption ) {
@@ -1684,6 +1684,17 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             $form->addWysiwyg( $name, $title, CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email', $fieldName) );
         } else if ($fieldName == 'signature_text' ) {
             $form->add('textarea', $name, $title, CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email', $fieldName) );
+        } else if ( $fieldName == 'campaign_id' ) { 
+            require_once 'CRM/Campaign/BAO/Campaign.php';
+            $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( CRM_Utils_Array::value( $contactId, 
+                                                                                          $form->_componentCampaigns ) );
+            $campaign =& $form->add( 'select', $name, $title,
+                                     array( '' => ts( '- select -' ) ) + $campaigns, $required );
+            //don't allow to play w/ campaign.
+            if ( !CRM_Campaign_BAO_Campaign::accessCampaign( ) ||
+                 !CRM_Campaign_BAO_Campaign::isCampaignEnable( ) ) {
+                $campaign->freeze( );
+            }
         } else {
             $processed = false;
             if ( CRM_Core_Permission::access( 'Quest', false ) ) {
@@ -1790,7 +1801,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                         $defaults[$fldName] = $details['addressee_id'];
                         $defaults['addressee_custom'] = $details['addressee_custom'];
                     } else if ($name == 'preferred_communication_method') {
-                        $v = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, $details[$name] );
+                        $v = explode( CRM_Core_DAO::VALUE_SEPARATOR, $details[$name] );
                         foreach ( $v as $item ) {
                             if ($item) {
                                 $defaults[$fldName."[$item]"] = 1;
@@ -1814,7 +1825,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                         case 'Multi-Select Country':
                         case 'AdvMulti-Select':
                         case 'Multi-Select':
-                            $v = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, $details[$name] );
+                            $v = explode( CRM_Core_DAO::VALUE_SEPARATOR, $details[$name] );
                             foreach ( $v as $item ) {
                                 if ($item) {
                                     $defaults[$fldName][$item] = $item;
@@ -1823,7 +1834,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                             break;
                             
                         case 'CheckBox':
-                            $v = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, $details[$name] );
+                            $v = explode( CRM_Core_DAO::VALUE_SEPARATOR, $details[$name] );
                             foreach ( $v as $item ) {
                                 if ($item) {
                                     $defaults[$fldName][$item] = 1;
@@ -1956,7 +1967,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                         $studentFields = array( 'educational_interest','college_type','college_interest','test_tutoring');
                         foreach( $studentFields as $fld ) {
                             if ( $studentDefaults[$fld] ) {
-                                $values = explode(CRM_Core_BAO_CustomOption::VALUE_SEPERATOR , $studentDefaults[$fld] );
+                                $values = explode(CRM_Core_DAO::VALUE_SEPARATOR , $studentDefaults[$fld] );
                             }
                             
                             $studentDefaults[$fld] = array();
@@ -2302,7 +2313,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                         if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
                             //fix checkbox
                             if ( $customFields[$customFieldID]['html_type'] == 'CheckBox' ) {
-                                $value = implode(CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, array_keys($value));
+                                $value = implode(CRM_Core_DAO::VALUE_SEPARATOR, array_keys($value));
                             }
                             // fix the date field 
                             if ( $customFields[$customFieldID]['data_type'] == 'Date' ) {
@@ -2608,7 +2619,7 @@ SELECT  group_id
                 continue;
 	        }
             
-            $groupTypes = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR,
+            $groupTypes = explode( CRM_Core_DAO::VALUE_SEPARATOR,
                                    CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Group', $groupId, 'group_type', 'id' ) );
             //get only mailing type group and unset it from params
 	        if ( in_array( $mailingListGroupType, $groupTypes ) && !in_array( $groupId, $contactGroups ) ) {

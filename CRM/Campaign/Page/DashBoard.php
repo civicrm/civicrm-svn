@@ -215,7 +215,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
         //get the survey.
         $surveys = CRM_Campaign_BAO_Petition::getPetition( true );
         if ( !empty( $surveys ) ) {
-            $campaigns     = CRM_Campaign_BAO_Campaign::getAllCampaign( );
+            $campaigns     = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false );
             $surveyType    = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
             foreach( $surveys as $sid => $survey ) {
                 $surveysData[$sid] = $survey;
@@ -253,7 +253,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
         //get the survey.
         $surveys = CRM_Campaign_BAO_Survey::getSurvey( true );
         if ( !empty( $surveys ) ) {
-            $campaigns     = CRM_Campaign_BAO_Campaign::getAllCampaign( );
+            $campaigns     = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false );
             $surveyType    = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
             foreach( $surveys as $sid => $survey ) {
                 $surveysData[$sid] = $survey;
@@ -309,7 +309,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
     function run( ) 
     {
         require_once 'CRM/Campaign/BAO/Campaign.php';
-        if ( !CRM_Campaign_BAO_Campaign::accessCampaignDashboard( ) ) {
+        if ( !CRM_Campaign_BAO_Campaign::accessCampaign( ) ) {
             CRM_Utils_System::permissionDenied( );
         }
         
