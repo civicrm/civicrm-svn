@@ -373,4 +373,17 @@ SELECT  camp.id, camp.title
         $form->assign( 'campaignInfo', $campaignInfo );
     }
     
+    /*
+     * Add campaign in compoent search.
+     * and assign needful info to templates.
+     *
+     */
+    public static function addCampaignInComponentSearch( &$form ) 
+    {
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( );
+        $form->add( 'select', 'campaign_id',  ts( 'Campaigns' ), $campaigns, false, 
+                    array( 'id' => 'campaigns',  'multiple' => 'multiple', 'title' => ts('- select -') ));
+    }
+    
 }

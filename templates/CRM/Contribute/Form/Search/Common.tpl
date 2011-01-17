@@ -81,6 +81,10 @@
 	<td><label>{ts}Currency{/ts}</label> <br />
 	{$form.contribution_currency_type.html}</td>
 </tr>
+
+{* campaign in contribution search *}
+{include file="CRM/Campaign/Form/addCampaignToComponent.tpl" campaignContext="search" campaignTrClass='' campaignTdClass=''}
+
 {if $contributeGroupTree}
 <tr>
 	<td colspan="2">
