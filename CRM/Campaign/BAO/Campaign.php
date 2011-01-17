@@ -199,11 +199,13 @@ SELECT  camp.id, camp.title
     public static function getPermissionedCampaigns( $includeId  = null, 
                                                      $excludeId  = null, 
                                                      $onlyActive = true,
+                                                     $forceAll   = false,
                                                      $doCheckForComponent   = true,
-                                                     $doCheckForPermissions = true  ) {
+                                                     $doCheckForPermissions = true ) 
+    {
         $cacheKey = 0;
         $cachekeyParams = array( 'includeId', 'excludeId', 'onlyActive', 
-                                 'doCheckForComponent', 'doCheckForPermissions' );
+                                 'doCheckForComponent', 'doCheckForPermissions', 'forceAll' );
         foreach ( $cachekeyParams as $param ) {
             $cacheKeyParam = $$param;
             if ( !$cacheKeyParam ) $cacheKeyParam = 0;
@@ -228,7 +230,7 @@ SELECT  camp.id, camp.title
             }
             
             //finally retrieve campaigns from db.
-            if ( $isValid ) $campaigns['campaigns'] = self::getCampaigns( $includeId, $excludeId, $onlyActive );  
+            if ( $isValid ) $campaigns['campaigns'] = self::getCampaigns($includeId, $excludeId, $onlyActive,$forceAll);  
             
             //store in cache.
             $validCampaigns[$cacheKey] = $campaigns;
@@ -378,12 +380,24 @@ SELECT  camp.id, camp.title
      * and assign needful info to templates.
      *
      */
-    public static function addCampaignInComponentSearch( &$form ) 
+    public static function addCampaignInComponentSearch( &$form, $elementName ) 
     {
-        require_once 'CRM/Campaign/BAO/Campaign.php';
-        $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( );
-        $form->add( 'select', 'campaign_id',  ts( 'Campaigns' ), $campaigns, false, 
-                    array( 'id' => 'campaigns',  'multiple' => 'multiple', 'title' => ts('- select -') ));
+        $campaignInfo = array( );
+        $campaignDetails = self::getPermissionedCampaigns( null, null, false, true );
+        $fields = array( 'campaigns', 'hasAccessCampaign', 'isCampaignEnabled' );
+        foreach ( $fields as $fld ) $$fld = CRM_Utils_Array::value( $fld, $campaignDetails ); 
+        $showCampaignInSearch = false;
+        if ( $isCampaignEnabled && $hasAccessCampaign && !empty( $campaigns ) ) {
+            $showCampaignInSearch = true;
+            $form->add( 'select', $elementName,  ts( 'Campaigns' ), $campaigns, false, 
+                        array( 'id' => 'campaigns',  'multiple' => 'multiple', 'title' => ts('- select -') ));
+        }
+        $infoFields = array( 'elementName',
+                             'hasAccessCampaign', 
+                             'isCampaignEnabled',
+                             'showCampaignInSearch' );
+        foreach ( $infoFields as $fld ) $campaignInfo[$fld] = $$fld; 
+        $form->assign( 'campaignInfo', $campaignInfo );
     }
     
 }

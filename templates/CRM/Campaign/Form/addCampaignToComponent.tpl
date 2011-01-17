@@ -4,8 +4,10 @@
 
 {* add campaign in component search *}
 <tr class="{$campaignTrClass}">
-    <td class="{$campaignTdClass}">{$form.campaign_id.label}<br />
-    <div class="crm-select-container">{$form.campaign_id.html}</div>
+    {assign var=elementName value=$campaignInfo.elementName}
+
+    <td class="{$campaignTdClass}">{$form.$elementName.label}<br />
+    <div class="crm-select-container">{$form.$elementName.html}</div>
        {literal}
        <script type="text/javascript">
        cj("select[multiple]").crmasmSelect({

@@ -418,7 +418,16 @@ class CRM_Contribute_BAO_Query
             $query->_qill[$grouping][]  = ts( 'Currency Type - %1', array( 1 => $currencySymbol[$value] ) );
             $query->_tables['civicrm_contribution'] = $query->_whereTables['civicrm_contribution'] = 1;
             return;
-
+            
+        case 'contribution_campaign_id':
+            require_once 'CRM/Campaign/BAO/Query.php';
+            $campParams = array( 'op'          => $op,
+                                 'campaign'    => $value,
+                                 'grouping'    => $grouping,
+                                 'tableName'   => 'civicrm_contribution' );
+            CRM_Campaign_BAO_Query::componentSearchClause( $campParams, $query );
+            return;
+            
         default: 
             //all other elements are handle in this case
             $fldName    = substr($name, 13 );
