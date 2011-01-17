@@ -646,8 +646,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         }
         
         $units    = array( );
-        $unitVals = explode( CRM_Core_DAO::VALUE_SEPARATOR,
-                             $frUnits );
+        $unitVals = explode( CRM_Core_DAO::VALUE_SEPARATOR, $frUnits );
         $frequencyUnits = CRM_Core_OptionGroup::values( 'recur_frequency_units' );
         foreach ( $unitVals as $key => $val ) {
             if ( array_key_exists( $val, $frequencyUnits ) ) {

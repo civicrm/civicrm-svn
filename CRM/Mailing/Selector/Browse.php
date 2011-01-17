@@ -319,8 +319,7 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
             foreach ( $rows as $key => $row ) {
                 $actionMask = null;
                 if ( !( $row['status'] == 'Not scheduled' ) ) {
-                    if ( $allAccess || 
-                         ( $showApprovalLinks && $showCreateLinks && $showScheduleLinks ) ) {
+                    if ( $allAccess || $showCreateLinks ) {
                         $actionMask = CRM_Core_Action::VIEW;
                     }
                     
