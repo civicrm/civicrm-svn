@@ -394,12 +394,12 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
         $now           = date( 'YmdHis' );
         $config        = CRM_Core_Config::singleton( );
         $session       = CRM_Core_Session::singleton( );
-        if ( CRM_Utils_Array::value( 'contact_id', $value ) ) {
-            $contactID = $value['contact_id'];
+        $this->_params = $this->get( 'params' );
+        if ( CRM_Utils_Array::value( 'contact_id', $this->_params[0] ) ) {
+            $contactID = $this->_params[0]['contact_id'];
         } else {
             $contactID = parent::getContactID( );
         }
-        $this->_params = $this->get( 'params' );
         
         // if a discount has been applied, lets now deduct it from the amount
         // and fix the fee level
