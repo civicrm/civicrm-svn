@@ -746,10 +746,20 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                 }
             } 
             
+            $isZeroAmount = false;
+            if ( CRM_Utils_Array::value( 'priceSetId', $fields ) ) {
+                if ( CRM_Utils_Array::value( 'amount', $fields ) == 0 ) {
+                    $isZeroAmount = true;
+                }
+            } else if ( CRM_Utils_Array::value( 'amount', $fields ) &&
+                        ( CRM_Utils_Array::value( 'value',  $self->_values['fee'][$fields['amount']] ) == 0 ) ) {
+                $isZeroAmount = true; 
+            }
+
             // also return if paylater mode or zero fees for valid members
             if ( CRM_Utils_Array::value( 'is_pay_later', $fields ) ||
                  CRM_Utils_Array::value( 'bypass_payment', $fields ) ||
-                 ( CRM_Utils_Array::value( 'priceSetId', $fields ) && $fields['amount'] == '0' ) ||
+                 $isZeroAmount ||
                  ( !$self->_allowConfirmation && ( $self->_requireApproval || $self->_allowWaitlist ) ) ) {
                 return empty( $errors ) ? true : $errors;
             }
