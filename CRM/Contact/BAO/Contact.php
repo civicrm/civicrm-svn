@@ -1500,9 +1500,9 @@ ORDER BY civicrm_email.is_primary DESC";
         }
         
         if ( $ctype == "Organization" ) {
-            $data["organization_name"] = $contactDetails["organization_name"];
+            $data["organization_name"] = CRM_Utils_Array::value( 'organization_name', $contactDetails ) ? $contactDetails['organization_name'] : null;
         } else if ( $ctype == "Household" ) {
-            $data["household_name"] = $contactDetails["household_name"];
+            $data["household_name"] = CRM_Utils_Array::value( 'household_name', $contactDetails ) ? $contactDetails['household_name'] : null;
         }
 
         $locationType = array( );
