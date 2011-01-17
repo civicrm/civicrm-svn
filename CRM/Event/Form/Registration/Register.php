@@ -746,7 +746,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                 }
             } 
             
-            $isZeroAmount = false;
+            $isZeroAmount = $skipPayementValidation = false;
             if ( CRM_Utils_Array::value( 'priceSetId', $fields ) ) {
                 if ( CRM_Utils_Array::value( 'amount', $fields ) == 0 ) {
                     $isZeroAmount = true;
@@ -756,10 +756,13 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                 $isZeroAmount = true; 
             }
 
+            if ( $isZeroAmount && !($self->_forcePayement && CRM_Utils_Array::value( 'additional_participants', $fields ) ) ) {
+                $skipPayementValidation = true;
+            }
             // also return if paylater mode or zero fees for valid members
             if ( CRM_Utils_Array::value( 'is_pay_later', $fields ) ||
                  CRM_Utils_Array::value( 'bypass_payment', $fields ) ||
-                 $isZeroAmount ||
+                 $skipPayementValidation || 
                  ( !$self->_allowConfirmation && ( $self->_requireApproval || $self->_allowWaitlist ) ) ) {
                 return empty( $errors ) ? true : $errors;
             }
