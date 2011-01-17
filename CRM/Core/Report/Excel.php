@@ -101,10 +101,10 @@ class CRM_Core_Report_Excel {
                     if ($enclosed == '') {
                         $schema_insert .= $value;
                     } else {
-                        if ( ( substr( $value, 0, 1 ) == CRM_Core_BAO_CustomOption::VALUE_SEPERATOR )&& 
-                             ( substr( $value, -1, 1 ) == CRM_Core_BAO_CustomOption::VALUE_SEPERATOR ) ) {
+                        if ( ( substr( $value, 0, 1 ) == CRM_Core_DAO::VALUE_SEPARATOR )&& 
+                             ( substr( $value, -1, 1 ) == CRM_Core_DAO::VALUE_SEPARATOR ) ) {
                             
-                            $strArray = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, $value );
+                            $strArray = explode( CRM_Core_DAO::VALUE_SEPARATOR, $value );
                             
                             foreach( $strArray as $key => $val ) {
                                 if ( trim( $val ) == '' ) {

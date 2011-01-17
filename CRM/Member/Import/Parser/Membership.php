@@ -171,7 +171,7 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
 
         
         //To check whether start date or join date is provided
-        if( !$params['membership_start_date'] && !$params['join_date']) {
+        if ( !CRM_Utils_Array::value( 'membership_start_date', $params )  && !CRM_Utils_Array::value( 'join_date', $params ) ) {
             $errorMessage = "Membership Start Date is required to create a memberships.";
             CRM_Import_Parser_Contact::addToErrorMsg('Start Date', $errorMessage);
         } 

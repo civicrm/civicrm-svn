@@ -218,9 +218,9 @@
       <add>2.1</add>
   </field>
   <index>
-    <name>index_status</name>
-    <fieldName>status_id</fieldName>
-    <add>2.1</add>
+      <name>index_status</name>
+      <fieldName>status_id</fieldName>
+      <add>2.1</add>
   </index>
   <field>     
       <name>is_test</name>  
@@ -230,4 +230,16 @@
       <type>boolean</type>
       <default>0</default>
   </field>
+  <field> 
+      <name>campaign_id</name> 
+      <type>int unsigned</type>                 
+      <comment>The campaign for which this pledge has been initiated.</comment> 
+      <add>3.4</add> 
+  </field> 
+  <foreignKey> 
+      <name>campaign_id</name> 
+      <table>civicrm_campaign</table> 
+      <key>id</key> 
+      <onDelete>SET NULL</onDelete>
+  </foreignKey>
 </table>

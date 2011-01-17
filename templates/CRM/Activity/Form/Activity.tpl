@@ -177,6 +177,11 @@
              <tr class="crm-activity-form-block-subject">
                 <td class="label">{$form.subject.label}</td><td class="view-value">{$form.subject.html|crmReplace:class:huge}</td>
              </tr>
+	     
+	     {* CRM-7362 --add campaign to activities *}
+	     {include file="CRM/Campaign/Form/addCampaignToComponent.tpl" 
+	     campaignTrClass="crm-activity-form-block-campaign_id"}
+	     
              <tr class="crm-activity-form-block-location">
                 <td class="label">{$form.location.label}</td><td class="view-value">{$form.location.html|crmReplace:class:huge}</td>
              </tr> 

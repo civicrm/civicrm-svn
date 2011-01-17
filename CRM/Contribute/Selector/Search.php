@@ -90,6 +90,7 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
                                  'receipt_date',
                                  'membership_id',
                                  'currency',
+                                 'contribution_campaign_id'
                                  );
 
     /** 
@@ -329,6 +330,10 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
         $contributionStatuses = CRM_Core_OptionGroup::values( 'contribution_status', 
                                                               false, false, false, null, 'name', false );
         
+        //get all campaigns.
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, true );
+        
         While ($result->fetch()) {
             $row = array();
             // the columns we are interested in
@@ -338,6 +343,10 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
                 }         
             }
 
+            //carry campaign on selectors.
+            $row['campaign'] = CRM_Utils_Array::value( $result->contribution_campaign_id, $allCampaigns );
+            $row['campaign_id'] = $result->contribution_campaign_id;
+            
             // add contribution status name
             $row['contribution_status_name'] = CRM_Utils_Array::value( $row['contribution_status_id'],
                                                                        $contributionStatuses );
@@ -378,8 +387,8 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
             
             $rows[] = $row;
         }
+        
         return $rows;
-
     }    
     
     /**

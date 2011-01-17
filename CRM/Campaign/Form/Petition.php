@@ -127,7 +127,7 @@ class CRM_Campaign_Form_Petition extends CRM_Campaign_Form_Survey
         
         // Campaign id
         require_once 'CRM/Campaign/BAO/Campaign.php';
-        $campaigns = CRM_Campaign_BAO_Campaign::getAllCampaign( );
+        $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( CRM_Utils_Array::value( 'campaign_id', $this->_values ) );
         $this->add('select', 'campaign_id', ts('Campaign'), array( '' => ts('- select -') ) + $campaigns );
 
         $customContactProfiles = CRM_Core_BAO_UFGroup::getProfiles( array('Individual') );

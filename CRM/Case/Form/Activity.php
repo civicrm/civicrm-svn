@@ -576,8 +576,10 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
         $caseParams['id'] = $this->_caseId;
         
         if ( CRM_Utils_Array::value('case_type_id', $caseParams ) ) {
-            $caseParams['case_type_id'] = CRM_Case_BAO_Case::VALUE_SEPERATOR .
-                $caseParams['case_type_id'] . CRM_Case_BAO_Case::VALUE_SEPERATOR;
+            $caseParams['case_type_id'] = 
+                CRM_Core_DAO::VALUE_SEPARATOR .
+                $caseParams['case_type_id'] . 
+                CRM_Core_DAO::VALUE_SEPARATOR;
         }
         if ( CRM_Utils_Array::value('case_status_id', $caseParams) ) {
             $caseParams['status_id'] = $caseParams['case_status_id'];

@@ -87,15 +87,15 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
         
         $defaults = array( );
         
-        if ( $mailingID && $continue ) {
-            $defaults['name'] = CRM_Core_DAO::getFieldValue('CRM_Mailing_DAO_Mailing', $mailingID, 'name', 'id');
-            $this->set('mailing_id', $mailingID);
-        } elseif ( $mailingID && !$continue ) {
-            $defaults['name'] = ts('Copy of %1',
-                                   array(1 => CRM_Core_DAO::getFieldValue('CRM_Mailing_DAO_Mailing',
-                                                                          $mailingID,
-                                                                          'name', 
-                                                                          'id')));
+        if ( $mailingID ) {
+            $mailing = new CRM_Mailing_DAO_Mailing( );
+            $mailing->id = $mailingID;
+            $mailing->addSelect( 'name', 'campaign_id' );
+            $mailing->find( true );
+            
+            $defaults['name'] = $mailing->name;
+            if ( !$continue ) $defaults['name'] = ts('Copy of %1', array( 1 => $mailing->name ) ); 
+            $defaults['campaign_id'] = $mailing->campaign_id;
         }
         
         if ( $mailingID ) { 
@@ -162,6 +162,15 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
         $this->add( 'text', 'name', ts('Name Your Mailing'),
                     CRM_Core_DAO::getAttribute( 'CRM_Mailing_DAO_Mailing', 'name' ),
                     true );
+        
+        //CRM-7362 --add campaigns.
+        $mailingId = CRM_Utils_Request::retrieve('mid', 'Integer', $this, false, null );
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        $campaignId = null;
+        if ( $mailingId ) {
+            $campaignId = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_Membership', $mailingId, 'campaign_id' ); 
+        }
+        CRM_Campaign_BAO_Campaign::addCampaign( $this, $campaignId );
         
         //get the mailing groups.
         $groups =& CRM_Core_PseudoConstant::group('Mailing');
@@ -301,7 +310,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
             $values['includeGroups'][] = $smartGroupId;
         }
         
-        foreach ( array( 'name', 'group_id', 'search_id', 'search_args' ) as $n ) {
+        foreach ( array( 'name', 'group_id', 'search_id', 'search_args', 'campaign_id' ) as $n ) {
             if ( CRM_Utils_Array::value( $n, $values ) ) {
                 $params[$n] = $values[$n];
             }
@@ -382,8 +391,15 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
         require_once 'CRM/Mailing/BAO/Mailing.php';
         $mailing = CRM_Mailing_BAO_Mailing::create($params, $ids);
         $this->set('mailing_id', $mailing->id);
-        
-        $count = CRM_Mailing_BAO_Mailing::getRecipientsCount(true, false, $mailing->id);
+
+
+        // also compute the recipients and store them in the mailing recipients table
+        CRM_Mailing_BAO_Mailing::getRecipients( $mailing->id, $mailing->id,
+                                                null, null,
+                                                true );
+
+        require_once 'CRM/Mailing/BAO/Recipients.php';
+        $count = CRM_Mailing_BAO_Recipients::mailingSize( $mailing->id );
         $this->set   ('count'   , $count   );
         $this->assign('count'   , $count   );
         $this->set   ('groups'  , $groups  );

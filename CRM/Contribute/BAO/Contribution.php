@@ -454,7 +454,11 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
                     if ( $value == 'none' ) {
                         continue;
                     }
-                    
+                    $customFieldId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomField',
+                                                                  $value,
+                                                                  'id',
+                                                                  'column_name' );
+                    $value =  $customFieldId ? 'custom_'.$customFieldId : $value;
                     $tmpConatctField[trim($value)] = $contactFields[trim($value)];
                     if (!$status) {
                         $title = $tmpConatctField[trim($value)]['title']. ' '. ts('(match to contact)') ;

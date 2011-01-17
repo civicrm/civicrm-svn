@@ -41,6 +41,17 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
 {
 
     /**
+     * Function to set variables up before form is built
+     *
+     * @return void
+     * @access public
+     */
+    public function preProcess()
+    {
+        parent::preProcess( );
+    }
+    
+    /**
      * This function sets the default values for the form. Note that in edit/view mode
      * the default values are retrieved from the database
      *
@@ -81,6 +92,10 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
                    ts( 'Contribution Type' ),
                    CRM_Contribute_PseudoConstant::contributionType( ),
                    true );
+        
+        //CRM-7362 --add campaigns.
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        CRM_Campaign_BAO_Campaign::addCampaign( $this, CRM_Utils_Array::value( 'campaign_id', $this->_values ) );
         
         $this->addWysiwyg( 'intro_text', ts('Introductory Message'), $attributes['intro_text'] );
 

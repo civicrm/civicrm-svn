@@ -49,11 +49,11 @@ class CRM_Core_Payment_BaseIPN {
         $contact = new CRM_Contact_DAO_Contact( );
         $contact->id = $ids['contact'];
         if ( ! $contact->find( true ) ) {
-            CRM_Core_Error::debug_log_message( "Could not find contact record: $contactID" );
-            echo "Failure: Could not find contact record: $contactID<p>";
+            CRM_Core_Error::debug_log_message( "Could not find contact record: {$ids['contact']}" );
+            echo "Failure: Could not find contact record: {$ids['contact']}<p>";
             return false;
         }
-
+        
         // make sure contribution exists and is valid
         require_once 'CRM/Contribute/DAO/Contribution.php';
         $contribution = new CRM_Contribute_DAO_Contribution( );
@@ -398,8 +398,12 @@ class CRM_Core_Payment_BaseIPN {
                 //updating the membership log
                 $membershipLog = array();
                 $membershipLog = $formatedParams;
-                $logStartDate  = CRM_Utils_Date::customFormat( $dates['log_start_date'], $format );
-                $logStartDate  = ($logStartDate) ? CRM_Utils_Date::isoToMysql( $logStartDate ) : $formatedParams['start_date'];
+                
+                $logStartDate  = $formatedParams['start_date'];
+                if ( CRM_Utils_Array::value( 'log_start_date', $dates ) ) {
+                    $logStartDate = CRM_Utils_Date::customFormat( $dates['log_start_date'], $format ); 
+                    $logStartDate = CRM_Utils_Date::isoToMysql( $logStartDate );
+                }
                 
                 $membershipLog['start_date']    = $logStartDate;
                 $membershipLog['membership_id'] = $membership->id;

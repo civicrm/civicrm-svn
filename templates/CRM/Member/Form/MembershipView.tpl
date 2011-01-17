@@ -52,6 +52,7 @@
         <tr><td class="label">{ts}Membership Type{/ts}</td><td>{$membership_type}</td></tr>
         <tr><td class="label">{ts}Status{/ts}</td><td>{$status}</td></tr>
         <tr><td class="label">{ts}Source{/ts}</td><td>{$source}</td></tr>
+	{if $campaign}<tr><td class="label">{ts}Campaign{/ts}</td><td>{$campaign}</td></tr>{/if}
         <tr><td class="label">{ts}Member Since{/ts}</td><td>{$join_date|crmDate}</td></tr>
         <tr><td class="label">{ts}Start date{/ts}</td><td>{$start_date|crmDate}</td></tr>
         <tr><td class="label">{ts}End date{/ts}</td><td>{$end_date|crmDate}</td></tr>

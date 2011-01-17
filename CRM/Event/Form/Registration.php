@@ -184,6 +184,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
     public $_lineItemParticipantsCount;
     public $_availableRegistrations;
     
+    public $_forcePayement;
     /** 
      * Function to set variables up before form is built 
      *                                                           
@@ -223,7 +224,9 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
         
         // check for waitlisting.
         $this->_allowWaitlist = $this->get( 'allowWaitlist' );
-        
+
+        $this->_forcePayement = $this->get( 'forcePayement' );
+
         //get the additional participant ids.
         $this->_additionalParticipantIds = $this->get( 'additionalParticipantIds' );
         
@@ -243,6 +246,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
             // get all the values from the dao object
             $this->_values = array( );
             $this->_fields = array( );
+            $this->_forcePayement = false;
 
             // get the participant values, CRM-4320
             $this->_allowConfirmation = false;
@@ -492,6 +496,12 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
         $config->defaultCurrency = CRM_Utils_Array::value( 'currency', 
                                                            $this->_values['event'], 
                                                            $config->defaultCurrency );
+        
+        //lets allow user to override campaign. 
+        $campID = CRM_Utils_Request::retrieve( 'campID', 'Positive', $this );
+        if ( $campID && CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Campaign', $campID ) ) {
+            $this->_values['event']['campaign_id'] = $campID;
+        }
     }
 
     /** 
@@ -804,7 +814,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
     public function addParticipant( $params, $contactID ) 
     {
         require_once 'CRM/Core/Transaction.php';
-      
+        
         $transaction = new CRM_Core_Transaction( );
         
         $groupName = "participant_role";
@@ -849,7 +859,8 @@ WHERE  v.option_group_id = g.id
                                    'fee_amount'    => CRM_Utils_Array::value( 'fee_amount', $params ),
                                    'registered_by_id' => CRM_Utils_Array::value( 'registered_by_id', $params ),
                                    'discount_id'      => CRM_Utils_Array::value( 'discount_id', $params ),
-                                   'fee_currency'     => CRM_Utils_Array::value( 'currencyID', $params )
+                                   'fee_currency'     => CRM_Utils_Array::value( 'currencyID', $params ),
+                                   'campaign_id'      => CRM_Utils_Array::value( 'campaign_id', $params )
                                    );
        
         if ( $this->_action & CRM_Core_Action::PREVIEW || CRM_Utils_Array::value( 'mode', $params ) == 'test' ) {

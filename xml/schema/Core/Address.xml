@@ -33,6 +33,7 @@
   </foreignKey>
   <field>
       <name>location_type_id</name>
+      <title>Address Location Type</title>
       <type>int unsigned</type>
       <comment>Which Location does this address belong to.</comment>
        <add>2.0</add>
@@ -44,6 +45,7 @@
   </index>
   <field>
        <name>is_primary</name>
+       <title>Is Address Primary?</title>
        <type>boolean</type>
        <default>0</default>
        <comment>Is this the primary address.</comment>
@@ -68,6 +70,7 @@
   </index>
   <field>
        <name>street_address</name>
+       <title>Street Address</title>
        <type>varchar</type>
        <length>96</length>
        <import>true</import>
@@ -136,6 +139,7 @@
   </field>
   <field>
        <name>supplemental_address_1</name>
+       <title>Additional Address 1</title>
        <type>varchar</type>
        <length>96</length>
        <import>true</import>
@@ -147,6 +151,7 @@
   </field>
   <field>
        <name>supplemental_address_2</name>
+       <title>Additional Address 2</title>
        <type>varchar</type>
        <length>96</length>
        <import>true</import>
@@ -166,6 +171,7 @@
   </field>
   <field>
        <name>city</name>
+       <title>City</title>
        <type>varchar</type>
        <length>64</length>
        <import>true</import>
@@ -198,6 +204,7 @@
   </foreignKey>
   <field>
       <name>state_province_id</name>
+      <title>State</title>
       <type>int unsigned</type>
       <comment>Which State_Province does this address belong to.</comment>
       <add>1.1</add>
@@ -214,6 +221,7 @@
   </foreignKey>
  <field>
        <name>postal_code_suffix</name>
+       <title>Postal Code Suffix</title>
        <type>varchar</type>
        <length>12</length>
        <import>true</import>
@@ -224,6 +232,7 @@
   </field> 
  <field>
        <name>postal_code</name>
+       <title>Postal Code</title>
        <type>varchar</type>
        <length>12</length>
        <import>true</import>
@@ -241,6 +250,7 @@
   </field>
   <field>
       <name>country_id</name>
+      <title>Country</title>
       <type>int unsigned</type>
       <comment>Which Country does this address belong to.</comment>
        <add>1.1</add>

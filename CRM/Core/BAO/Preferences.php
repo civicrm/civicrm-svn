@@ -163,7 +163,7 @@ class CRM_Core_BAO_Preferences extends CRM_Core_DAO_Preferences {
         
         if ( $optionValue && !empty( $groupValues ) ) {
             require_once 'CRM/Core/BAO/CustomOption.php';
-            $dbValues = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR,
+            $dbValues = explode( CRM_Core_DAO::VALUE_SEPARATOR,
                                  substr( $optionValue, 1, -1 ) ); 
             
             if ( !empty( $dbValues ) ) { 
@@ -203,10 +203,10 @@ class CRM_Core_BAO_Preferences extends CRM_Core_DAO_Preferences {
 
             if ( ! empty( $cbValues ) ) {
                 $object->$name = 
-                    CRM_Core_BAO_CustomOption::VALUE_SEPERATOR .
-                    implode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR,
+                    CRM_Core_DAO::VALUE_SEPARATOR .
+                    implode( CRM_Core_DAO::VALUE_SEPARATOR,
                              array_keys( $cbValues ) ) .
-                    CRM_Core_BAO_CustomOption::VALUE_SEPERATOR;
+                    CRM_Core_DAO::VALUE_SEPARATOR;
             } else {
                 $object->$name = 'NULL';
             }

@@ -281,7 +281,8 @@ class CRM_Core_BAO_Setting
                 require_once 'CRM/Utils/System.php';
                 $lcMessages = CRM_Utils_System::getUFLocale();
                 require_once 'CRM/Core/BAO/CustomOption.php';
-                if ($domain->locales and !in_array($lcMessages, explode(CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, $domain->locales))) {
+                if ($domain->locales and !in_array($lcMessages, explode(CRM_Core_DAO::VALUE_SEPARATOR,
+                                                                        $domain->locales))) {
                     $lcMessages = null;
                 }
             }

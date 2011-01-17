@@ -651,6 +651,11 @@ GROUP BY  participant.event_id
                 
                 if( is_array($fieldsArray) ) {
                     foreach ( $fieldsArray as $value) {
+                        $customFieldId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomField',
+                                                                      $value,
+                                                                      'id',
+                                                                      'column_name' );
+                        $value =  $customFieldId ? 'custom_'.$customFieldId : $value;
                         $tmpContactField[trim($value)] = CRM_Utils_Array::value(trim($value),$contactFields);
                         if (!$status) {
                             $title = $tmpContactField[trim($value)]['title']." (match to contact)" ;
@@ -910,18 +915,18 @@ WHERE  civicrm_participant.id = {$participantId}
     static function fixEventLevel( &$eventLevel )
     {
         require_once 'CRM/Core/BAO/CustomOption.php';
-        if ( ( substr( $eventLevel, 0, 1) == CRM_Core_BAO_CustomOption::VALUE_SEPERATOR ) &&
-             ( substr( $eventLevel, -1, 1) == CRM_Core_BAO_CustomOption::VALUE_SEPERATOR ) ) {
-            $eventLevel = implode( ', ', explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, 
+        if ( ( substr( $eventLevel, 0, 1) == CRM_Core_DAO::VALUE_SEPARATOR ) &&
+             ( substr( $eventLevel, -1, 1) == CRM_Core_DAO::VALUE_SEPARATOR ) ) {
+            $eventLevel = implode( ', ', explode( CRM_Core_DAO::VALUE_SEPARATOR, 
                                                   substr( $eventLevel, 1, -1) ) );
             if ($pos = strrpos($eventLevel, "(multiple participants)", 0) ) {
                 $eventLevel = substr_replace($eventLevel, "", $pos-3, 1) ;
             }
-        } elseif ( ( substr( $eventLevel, 0, 1) == CRM_Core_BAO_CustomOption::VALUE_SEPERATOR ) ) {
-            $eventLevel = implode( ', ', explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, 
+        } elseif ( ( substr( $eventLevel, 0, 1) == CRM_Core_DAO::VALUE_SEPARATOR ) ) {
+            $eventLevel = implode( ', ', explode( CRM_Core_DAO::VALUE_SEPARATOR, 
                                                   substr( $eventLevel, 0, 1) ) );
-        } elseif ( ( substr( $eventLevel, -1, 1) == CRM_Core_BAO_CustomOption::VALUE_SEPERATOR ) ) {
-            $eventLevel = implode( ', ', explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, 
+        } elseif ( ( substr( $eventLevel, -1, 1) == CRM_Core_DAO::VALUE_SEPARATOR ) ) {
+            $eventLevel = implode( ', ', explode( CRM_Core_DAO::VALUE_SEPARATOR, 
                                                   substr( $eventLevel, 0, -1) ) );            
         }
     }

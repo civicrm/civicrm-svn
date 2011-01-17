@@ -446,5 +446,46 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
         return $voterClause;
     }
     
+    /**
+     * Build the campaign clause for component serach.
+     *
+     **/
+    public static function componentSearchClause( &$params, &$query ) 
+    {
+        $op = CRM_Utils_Array::value( 'op', $params, '=' );
+        $campaign  = CRM_Utils_Array::value( 'campaign', $params );
+        $tableName = CRM_Utils_Array::value( 'tableName', $params );
+        $grouping  = CRM_Utils_Array::value( 'grouping',  $params );
+        if ( CRM_Utils_System::isNull( $campaign ) || empty( $tableName ) ) {
+            return; 
+        }
+        
+        require_once 'CRM/Contact/BAO/Query.php';
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, true );
+        
+        $campaignIds = $campaignTitles = array( );
+        if ( is_array( $campaign ) ) {
+            foreach ( $campaign as $campId ) {
+                $campaignIds[$campId] = $campId;   
+                $campaignTitles[$campId] = $allCampaigns[$campId];
+            }
+            if ( count( $campaignIds ) > 1 ) {
+                $op = 'IN';
+                $campaignIds = '(' . implode( ',', $campaignIds ) . ')';
+            }
+        } else {
+            $campaignIds = $campaign;
+            $campaignTitles[$campId] = $allCampaigns[$value];
+        }
+        $query->_qill[$grouping][] = ts( 'Campaigns %1', 
+                                         array( 1 => $op ) ) . ' ' . implode( ' ' . ts('or') . ' ', $campaignTitles );
+        $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "{$tableName}.campaign_id", 
+                                                                          $op,
+                                                                          $campaignIds,
+                                                                          'Integer' );
+        $query->_tables[$tableName] = $query->_whereTables[$tableName] = 1;
+    }
+    
 }
 

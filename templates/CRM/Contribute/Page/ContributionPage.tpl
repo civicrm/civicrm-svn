@@ -53,6 +53,9 @@
                  <th id="sortable">{ts}Title{/ts}</th>
             	 <th>{ts}ID{/ts}</th>
             	 <th>{ts}Enabled?{/ts}</th>
+		 {if call_user_func(array('CRM_Campaign_BAO_Campaign','isCampaignEnable'))}
+		 <th>{ts}Campaign{/ts}</th>
+		 {/if}
 		 <th></th>
                </tr>
                </thead>
@@ -61,6 +64,9 @@
                      <td><strong>{$row.title}</strong></td>
                      <td>{$row.id}</td>
                      <td id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+		     {if call_user_func(array('CRM_Campaign_BAO_Campaign','isCampaignEnable'))}
+		     <td>{$row.campaign}</td>
+		     {/if}
 		     <td class="crm-contribution-page-actions right nowrap">
 		
 			{if $row.configureActionLinks}	

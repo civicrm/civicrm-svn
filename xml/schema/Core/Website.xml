@@ -43,6 +43,7 @@
   </field>
   <field>
       <name>website_type_id</name>
+      <title>Website Type</title>
       <type>int unsigned</type>
       <comment>Which Website type does this website belong to.</comment>
       <add>3.2</add>

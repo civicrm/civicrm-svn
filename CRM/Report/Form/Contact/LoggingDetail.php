@@ -40,6 +40,7 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
 {
     private $loggingDB;
 
+    private $contact_id;
     private $log_conn_id;
     private $log_date;
 
@@ -97,6 +98,9 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         $this->assign('whom_name', $dao->whom_name);
         $this->assign('log_date',  $this->log_date);
 
+        // track who’s changes being monitored
+        $this->contact_id = $dao->whom_id;
+
         // link back to summary report
         require_once 'CRM/Report/Utils/Report.php';
         $this->assign('summaryReportURL', CRM_Report_Utils_Report::getNextUrl('logging/contact/summary', 'reset=1', false, true));
@@ -104,10 +108,20 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         $rows = $this->diffsInTable('log_civicrm_contact');
 
         // add custom data changes
-        $dao = CRM_Core_DAO::executeQuery("SHOW TABLES FROM `{$this->loggingDB}` LIKE 'log_civicrm_value_%'");
+        $dao =& CRM_Core_DAO::executeQuery("SHOW TABLES FROM `{$this->loggingDB}` LIKE 'log_civicrm_value_%'");
         while ($dao->fetch()) {
             $table = $dao->toValue("Tables_in_{$this->loggingDB}_(log_civicrm_value_%)");
             $rows  = array_merge($rows, $this->diffsInTable($table));
+        }
+
+        // add changes by fetching all ids affected in the ±10 s interval (for the given connection id)
+        $tables = array('log_civicrm_email', 'log_civicrm_phone', 'log_civicrm_im', 'log_civicrm_openid', 'log_civicrm_website', 'log_civicrm_address');
+        foreach ($tables as $table) {
+            $sql = "SELECT DISTINCT id FROM `{$this->loggingDB}`.`$table` WHERE log_conn_id = %1 AND log_date BETWEEN DATE_SUB(%2, INTERVAL 10 SECOND) AND DATE_ADD(%2, INTERVAL 10 SECOND)";
+            $dao =& CRM_Core_DAO::executeQuery($sql, $params);
+            while ($dao->fetch()) {
+                $rows = array_merge($rows, $this->diffsInTable($table, $dao->id));
+            }
         }
     }
 
@@ -115,7 +129,7 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
     {
     }
 
-    private function diffsInTable($table)
+    private function diffsInTable($table, $id = null)
     {
         // caches for pretty field titles and value mappings
         static $titles = null;
@@ -127,21 +141,21 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         );
 
         // we look for the last change in the given connection that happended less than 10 seconds later than log_date to catch multi-query changes
-        $changedSQL = "SELECT * FROM `{$this->loggingDB}`.`$table` WHERE log_conn_id = %1 AND log_date < DATE_ADD(%2, INTERVAL 10 SECOND) ORDER BY log_date DESC LIMIT 1";
-        $changed    = $this->sqlToArray($changedSQL, $params);
+        if ($id) {
+            $params[3]  = array($id, 'Integer');
+            $changedSQL = "SELECT * FROM `{$this->loggingDB}`.`$table` WHERE log_conn_id = %1 AND log_date < DATE_ADD(%2, INTERVAL 10 SECOND) AND id = %3 ORDER BY log_date DESC LIMIT 1";
+        } else {
+            $changedSQL = "SELECT * FROM `{$this->loggingDB}`.`$table` WHERE log_conn_id = %1 AND log_date < DATE_ADD(%2, INTERVAL 10 SECOND) ORDER BY log_date DESC LIMIT 1";
+        }
+        $changed = $this->sqlToArray($changedSQL, $params);
 
         // return early if nothing found
         if (empty($changed)) return array();
 
         // seed caches with civicrm_contact titles/values
         if (!isset($titles['log_civicrm_contact']) or !isset($values['log_civicrm_contact'])) {
-            $titles['log_civicrm_contact'] = array(
-                'gender_id'                      => ts('Gender'),
-                'preferred_communication_method' => ts('Preferred Communication Method'),
-                'preferred_language'             => ts('Preferred Language'),
-                'prefix_id'                      => ts('Prefix'),
-                'suffix_id'                      => ts('Suffix'),
-            );
+            // FIXME: these should be populated with pseudo constants as they
+            // were at the time of logging rather than their current values
             $values['log_civicrm_contact'] = array(
                 'gender_id'                      => CRM_Core_PseudoConstant::gender(),
                 'preferred_communication_method' => CRM_Core_PseudoConstant::pcm(),
@@ -149,20 +163,44 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
                 'prefix_id'                      => CRM_Core_PseudoConstant::individualPrefix(),
                 'suffix_id'                      => CRM_Core_PseudoConstant::individualSuffix(),
             );
+
             require_once 'CRM/Contact/DAO/Contact.php';
             $dao = new CRM_Contact_DAO_Contact;
             foreach ($dao->fields() as $field) {
-                if (!isset($titles['log_civicrm_contact'][$field['name']])) {
-                    $titles['log_civicrm_contact'][$field['name']] = $field['title'];
-                }
+                $titles['log_civicrm_contact'][$field['name']] = $field['title'];
                 if ($field['type'] == CRM_Utils_Type::T_BOOLEAN) {
                     $values['log_civicrm_contact'][$field['name']] = array('0' => ts('false'), '1' => ts('true'));
                 }
             }
         }
 
+        foreach (array('Address', 'Email', 'IM', 'OpenID', 'Phone', 'Website') as $class) {
+            $type = strtolower($class);
+            if (!isset($titles["log_civicrm_$type"]) or !isset($values["log_civicrm_$type"])) {
+                // FIXME: these should be populated with pseudo constants as they
+                // were at the time of logging rather than their current values
+                $values["log_civicrm_$type"] = array(
+                    'location_type_id' => CRM_Core_PseudoConstant::locationType(),
+                );
+                require_once "CRM/Core/DAO/$class.php";
+                eval("\$dao = new CRM_Core_DAO_$class;");
+                foreach ($dao->fields() as $field) {
+                    $titles["log_civicrm_$type"][$field['name']] = $field['title'];
+                    if ($field['type'] == CRM_Utils_Type::T_BOOLEAN) {
+                        $values["log_civicrm_$type"][$field['name']] = array('0' => ts('false'), '1' => ts('true'));
+                    }
+                }
+            }
+        }
+
+        // FIXME: call this only if we’re actually checking the relevant table
+        $values['log_civicrm_address']['country_id']        = CRM_Core_PseudoConstant::country();
+        $values['log_civicrm_address']['state_province_id'] = CRM_Core_PseudoConstant::stateProvince();
+        $values['log_civicrm_im']['provider_id']            = CRM_Core_PseudoConstant::IMProvider();
+        $values['log_civicrm_website']['website_type_id']   = CRM_Core_PseudoConstant::websiteType();
+
         // add custom data titles/values for the given table
-        if (!isset($titles[$table]) or !isset($values[$table])) {
+        if (substr($table, 0, 18) == 'log_civicrm_value_' and (!isset($titles[$table]) or !isset($values[$table]))) {
             $titles[$table] = array();
             $values[$table] = array();
 
@@ -205,12 +243,16 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         $rows = array();
 
         // populate $rows with only the differences between $changed and $original (skipping certain columns and NULL ↔ empty changes)
-        $skipped = array('entity_id', 'id', 'log_action', 'log_conn_id', 'log_date', 'log_user_id');
+        // FIXME: explode preferred_communication_method on CRM_Core_DAO::VALUE_SEPARATOR and handle properly somehow
+        $skipped = array('contact_id', 'entity_id', 'id', 'log_action', 'log_conn_id', 'log_date', 'log_user_id');
         foreach (array_keys(array_diff_assoc($changed, $original)) as $diff) {
-            if (in_array($diff, $skipped))           continue;
-            if ($original[$diff] == $changed[$diff]) continue;
+            if (in_array($diff, $skipped))                              continue;
+            if ($original[$diff] == $changed[$diff])                    continue;
+            if ($original[$diff] == false and $changed[$diff] == false) continue; // only in PHP: '0' == false and null == false but '0' != null
+            $field = isset($titles[$table][$diff]) ? $titles[$table][$diff] : substr($table, 4) . ".$diff";
+            if ($id) $field .= " (id: $id)";
             $rows[] = array(
-                'field' => isset($titles[$table][$diff]) ? $titles[$table][$diff] : substr($table, 4) . ".$diff",
+                'field' => $field,
                 'from'  => isset($values[$table][$diff][$original[$diff]]) ? $values[$table][$diff][$original[$diff]] : $original[$diff],
                 'to'    => isset($values[$table][$diff][$changed[$diff]])  ? $values[$table][$diff][$changed[$diff]]  : $changed[$diff],
             );

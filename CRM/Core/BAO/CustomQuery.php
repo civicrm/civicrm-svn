@@ -358,7 +358,12 @@ SELECT label, value
                                         continue;
                                     }
                                 
-                                    $sqlValue[] = "( $sql like '%" . CRM_Core_BAO_CustomOption::VALUE_SEPERATOR . $k . CRM_Core_BAO_CustomOption::VALUE_SEPERATOR . "%' ) ";
+                                    $sqlValue[] = 
+                                        "( $sql like '%" . 
+                                        CRM_Core_DAO::VALUE_SEPARATOR .
+                                        $k . 
+                                        CRM_Core_DAO::VALUE_SEPARATOR .
+                                        "%' ) ";
                                 }
                             }
                             //if user check only 'CiviCRM_OP_OR' check box
@@ -375,7 +380,12 @@ SELECT label, value
                                     continue;
                                 }
                                 $v = CRM_Core_DAO::escapeString($v);
-                                $sqlValue[] = "( $sql like '%" . CRM_Core_BAO_CustomOption::VALUE_SEPERATOR . $v . CRM_Core_BAO_CustomOption::VALUE_SEPERATOR . "%' ) ";
+                                $sqlValue[] = 
+                                    "( $sql like '%" .
+                                    CRM_Core_DAO::VALUE_SEPARATOR .
+                                    $v .
+                                    CRM_Core_DAO::VALUE_SEPARATOR .
+                                    "%' ) ";
                             }
                             //if user select only 'CiviCRM_OP_OR' value
                             //of custom multi select field, then ignore this field.
@@ -531,7 +541,12 @@ SELECT label, value
                                 $sqlOPlabel = ts('match ANY');
                                 continue;
                             }
-                            $sqlValue[] = "( $fieldName like '%" . CRM_Core_BAO_CustomOption::VALUE_SEPERATOR . $v . CRM_Core_BAO_CustomOption::VALUE_SEPERATOR . "%' ) ";
+                            $sqlValue[] = 
+                                "( $fieldName like '%" .
+                                CRM_Core_DAO::VALUE_SEPARATOR .
+                                $v .
+                                CRM_Core_DAO::VALUE_SEPARATOR .
+                                "%' ) ";
                         }
 
                         //if user select only 'CiviCRM_OP_OR' value

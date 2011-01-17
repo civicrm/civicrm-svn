@@ -138,9 +138,9 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
             if ( ! empty( $defaultArray ) ) {
                 // also add the seperator before and after the value per new conventio (CRM-1604)
                 $params['default_value'] = 
-                    CRM_Core_BAO_CustomOption::VALUE_SEPERATOR .
-                    implode(CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, $defaultArray) .
-                    CRM_Core_BAO_CustomOption::VALUE_SEPERATOR;
+                    CRM_Core_DAO::VALUE_SEPARATOR .
+                    implode( CRM_Core_DAO::VALUE_SEPARATOR, $defaultArray) .
+                    CRM_Core_DAO::VALUE_SEPARATOR;
             }
         } else {
             if ( CRM_Utils_Array::value( 'default_option', $params ) 
@@ -216,7 +216,8 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                 $defaultValue = self::getOptionGroupDefault( $params['option_group_id'],
                                                              $params['html_type'] );
                 
-                if ( !CRM_Utils_System::isNull( explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, $defaultValue ) ) ) { 
+                if ( !CRM_Utils_System::isNull( explode( CRM_Core_DAO::VALUE_SEPARATOR,
+                                                         $defaultValue ) ) ) { 
                     $params['default_value'] = $defaultValue;
                 }
             }
@@ -967,7 +968,8 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
             if ( is_array( $value ) ) {
                 $checkedData = $value;
             } else {
-                $checkedData = explode(CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, substr($value,1,-1));
+                $checkedData = explode(CRM_Core_DAO::VALUE_SEPARATOR,
+                                       substr($value,1,-1));
                 if ( $html_type == 'CheckBox' ) {
                     $newData = array( );
                     foreach ( $checkedData as $v) {
@@ -1020,7 +1022,8 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
             if ( is_array( $value ) ) {    
                 $checkedData = $value;
             } else {
-                $checkedData = explode(CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, substr($value,1,-1));
+                $checkedData = explode(CRM_Core_DAO::VALUE_SEPARATOR,
+                                       substr($value,1,-1));
             }
 
             $states = CRM_Core_PseudoConstant::stateProvince( );
@@ -1045,7 +1048,8 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
             if ( is_array( $value ) ) {    
                 $checkedData = $value;
             } else {
-                $checkedData = explode(CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, substr($value,1,-1));
+                $checkedData = explode(CRM_Core_DAO::VALUE_SEPARATOR,
+                                       substr($value,1,-1));
             }
 
             $countries = CRM_Core_PseudoConstant::country( );
@@ -1151,7 +1155,8 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
         case 'Multi-Select':
             $customOption = CRM_Core_BAO_CustomOption::getCustomOption($customFieldId, false);
             $defaults[$elementName] = array();
-            $checkedValue = explode(CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, substr($value,1,-1));
+            $checkedValue = explode(CRM_Core_DAO::VALUE_SEPARATOR,
+                                    substr($value,1,-1));
             foreach($customOption as $val) {
                 if ( in_array($val['value'], $checkedValue) ) {
                     if ( $customField->html_type == 'CheckBox' ) {
@@ -1316,11 +1321,11 @@ SELECT id
                     $selectedValues = null;
                     foreach ( $value as $selId => $val ) {
                         if ( $val ) {
-                            $selectedValues .= $selId . CRM_Core_BAO_CustomOption::VALUE_SEPERATOR;
+                            $selectedValues .= $selId . CRM_Core_DAO::VALUE_SEPARATOR;
                         }
                     }
                     if ( $selectedValues ) {
-                        $value = CRM_Core_BAO_CustomOption::VALUE_SEPERATOR . $selectedValues;
+                        $value = CRM_Core_DAO::VALUE_SEPARATOR . $selectedValues;
                     } else {
                         $value = '';
                     }
@@ -1335,10 +1340,10 @@ SELECT id
                 // and you can directly use value, CRM-4385
                 if ( is_array( $value ) ) {
                     $value = 
-                        CRM_Core_BAO_CustomOption::VALUE_SEPERATOR . 
-                        implode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR,
+                        CRM_Core_DAO::VALUE_SEPARATOR .
+                        implode( CRM_Core_DAO::VALUE_SEPARATOR,
                                  array_values( $value ) ) .
-                        CRM_Core_BAO_CustomOption::VALUE_SEPERATOR;
+                        CRM_Core_DAO::VALUE_SEPARATOR;
                 }
             } else {
                 $value = '';
@@ -1699,13 +1704,13 @@ ORDER BY html_type";
         if ( ( $htmlType == 'CheckBox' || $htmlType == 'Multi-Select' ) &&
              ( $defaultHTMLType != 'CheckBox' && $defaultHTMLType != 'Multi-Select' ) ) {
             $defaultValue =
-                CRM_Core_BAO_CustomOption::VALUE_SEPERATOR .
+                CRM_Core_DAO::VALUE_SEPARATOR .
                 $defaultValue .
-                CRM_Core_BAO_CustomOption::VALUE_SEPERATOR;
+                CRM_Core_DAO::VALUE_SEPARATOR;
         } else if ( ( $defaultHTMLType == 'CheckBox' || $defaultHTMLType == 'Multi-Select' ) &&
                     ( $htmlType != 'CheckBox' && $htmlType != 'Multi-Select' ) ) {
             $defaultValue = substr( $defaultValue, 1, -1 );
-            $values = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR,
+            $values = explode( CRM_Core_DAO::VALUE_SEPARATOR,
                                substr($defaultValue, 1, -1 ) );
             $defaultValue = $values[0];
         }

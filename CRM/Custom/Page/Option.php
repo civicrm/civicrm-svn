@@ -136,7 +136,7 @@ class CRM_Custom_Page_Option extends CRM_Core_Page {
         } else {
             CRM_Core_Error::fatal( );
         }
-        $defVal = explode(CRM_Core_BAO_CustomOption::VALUE_SEPERATOR,
+        $defVal = explode(CRM_Core_DAO::VALUE_SEPARATOR,
                           substr( $defaultValue, 1, -1 ) );
 
         // get the option group id

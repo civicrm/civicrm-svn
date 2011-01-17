@@ -477,8 +477,8 @@ WHERE      a.id = %1
                     
                     // Note: this is already taken care in getDisplayValue above, but sometimes 
                     // strings like '^A^A' creates problem. So to fix this special case -
-                    if ( strstr($value, CRM_Core_BAO_CustomOption::VALUE_SEPERATOR) ) {
-                        $value = trim($value, CRM_Core_BAO_CustomOption::VALUE_SEPERATOR);
+                    if ( strstr($value, CRM_Core_DAO::VALUE_SEPARATOR) ) {
+                        $value = trim($value, CRM_Core_DAO::VALUE_SEPARATOR);
                     }
                     if ( CRM_Utils_Array::value('type', $typeValue) == 'String' ||
                          CRM_Utils_Array::value('type', $typeValue) == 'Memo' ) {

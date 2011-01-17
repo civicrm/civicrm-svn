@@ -520,7 +520,7 @@ class CRM_GCD {
         // custom data - gotv
         require_once 'CRM/Core/BAO/CustomOption.php';
         foreach ($sampleData->gotv->status as $status) {
-            $this->gotv[] = CRM_Core_BAO_CustomOption::VALUE_SEPERATOR.trim($status).CRM_Core_BAO_CustomOption::VALUE_SEPERATOR; 
+            $this->gotv[] = CRM_Core_DAO::VALUE_SEPARATOR.trim($status).CRM_Core_DAO::VALUE_SEPARATOR; 
         }
 
         // custom data - marital_status
@@ -654,7 +654,7 @@ class CRM_GCD {
             $contact->do_not_email = mt_rand(0, 1);
             $contact->do_not_post  = mt_rand(0, 1);
             $contact->do_not_trade = mt_rand(0, 1);
-            $contact->preferred_communication_method = CRM_Core_BAO_CustomOption::VALUE_SEPERATOR. $this->_getRandomElement($this->preferredCommunicationMethod) . CRM_Core_BAO_CustomOption::VALUE_SEPERATOR;
+            $contact->preferred_communication_method = CRM_Core_DAO::VALUE_SEPARATOR. $this->_getRandomElement($this->preferredCommunicationMethod) . CRM_Core_DAO::VALUE_SEPARATOR;
             $this->_insert($contact);
         }
     }

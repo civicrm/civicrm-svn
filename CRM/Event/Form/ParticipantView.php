@@ -134,6 +134,14 @@ class CRM_Event_Form_ParticipantView extends CRM_Core_Form
         if ( ! CRM_Utils_Array::value( 'event', $values[$participantID] ) ) {
             $values[$participantID]['event'] = $eventTitle;
         }
+        
+        //do check for campaigns
+        if ( $campaignId = CRM_Utils_Array::value( 'campaign_id', $values[$participantID] ) ) {
+            require_once 'CRM/Campaign/BAO/Campaign.php';
+            $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( $campaignId );
+            $values[$participantID]['campaign'] = $campaigns[$campaignId];
+        }
+        
         $this->assign( $values[$participantID] );
         
         // add viewed participant to recent items list

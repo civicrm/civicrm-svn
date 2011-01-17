@@ -202,6 +202,14 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
                    array('' => ts('- select -')) + $event,
                    true, 
                    array('onChange' => "buildCustomData( 'Event', this.value );") );
+
+        //CRM-7362 --add campaigns.
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        $campaignId = null;
+        if ( $this->_id ) {
+            $campaignId = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $this->_id, 'campaign_id' ); 
+        }
+        CRM_Campaign_BAO_Campaign::addCampaign( $this, $campaignId );
         
         $participantRole = CRM_Core_OptionGroup::values('participant_role');
         $this->add('select',

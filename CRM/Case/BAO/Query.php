@@ -282,10 +282,11 @@ class CRM_Case_BAO_Query
             }
             
             require_once 'CRM/Case/BAO/Case.php';
-            $value = CRM_Case_BAO_Case::VALUE_SEPERATOR . 
-                implode( CRM_Case_BAO_Case::VALUE_SEPERATOR . "%' OR civicrm_case.case_type_id LIKE '%" .
-                         CRM_Case_BAO_Case::VALUE_SEPERATOR, $val) . 
-                CRM_Case_BAO_Case::VALUE_SEPERATOR;
+            $value = 
+                CRM_Core_DAO::VALUE_SEPARATOR . 
+                implode( CRM_Core_DAO::VALUE_SEPARATOR . "%' OR civicrm_case.case_type_id LIKE '%" .
+                         CRM_Core_DAO::VALUE_SEPARATOR, $val) . 
+                CRM_Core_DAO::VALUE_SEPARATOR;
            
             $query->_where[$grouping][] = "(civicrm_case.case_type_id LIKE '%{$value}%')";
             
