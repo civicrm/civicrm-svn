@@ -144,6 +144,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         
         //CRM-5125
         //supporting import for contact subtypes
+        $csType = null;
         if ( !empty($this->_contactSubType) ) { 
             //custom fields for sub type
             $subTypeFields = CRM_Core_BAO_CustomField::getFieldsForImport( $this->_contactSubType );

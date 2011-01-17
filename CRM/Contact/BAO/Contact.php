@@ -1713,7 +1713,7 @@ ORDER BY civicrm_email.is_primary DESC";
         $privacy = CRM_Core_SelectValues::privacy( );
         foreach ($privacy as $key => $value) {
             if (array_key_exists($key, $fields)) {
-                if ($params[$key]) {
+                if ( CRM_Utils_Array::value( $key, $params ) ) {
                     $data[$key] = $params[$key];
                 } else {
                     $data[$key] = 0;

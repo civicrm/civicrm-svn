@@ -445,6 +445,7 @@ class CRM_Member_Import_Form_MapField extends CRM_Core_Form {
                     $weightSum += $ruleFields[$val];
                 }
             }
+            $fieldMessage = '';
             foreach ($ruleFields as $field => $weight) {
                 $fieldMessage .= ' '.$field.'(weight '.$weight.')';
             }
@@ -528,13 +529,13 @@ class CRM_Member_Import_Form_MapField extends CRM_Core_Form {
             $mapper[$i]     = $this->_mapperFields[$mapperKeys[$i][0]];
             $mapperKeysMain[$i] = $mapperKeys[$i][0];
             
-            if (is_numeric($mapperKeys[$i][1])) {
+            if ( CRM_Utils_Array::value( 1, $mapperKeys[$i] ) && is_numeric( $mapperKeys[$i][1] ) ) {
                 $mapperLocType[$i] = $mapperKeys[$i][1];
             } else {
                 $mapperLocType[$i] = null;
             }
 
-            if ( !is_numeric($mapperKeys[$i][2])) {
+            if ( CRM_Utils_Array::value( 2, $mapperKeys[$i] ) && ( !is_numeric( $mapperKeys[$i][2] ) ) ) {
                 $mapperPhoneType[$i] = $mapperKeys[$i][2];
             } else {
                 $mapperPhoneType[$i] = null;
