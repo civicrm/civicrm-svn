@@ -1489,6 +1489,9 @@ function civicrm_api_check_permission($api, $params, $throw = false)
 
 function _civicrm_add_custom_formatted_param( $customFieldID, $key, $field, &$formatted, $type ) 
 {
+    require_once 'CRM/Core/BAO/CustomOption.php';
+    require_once 'CRM/Core/PseudoConstant.php';
+
     if ( empty( $type ) ) {
         return;
     }
@@ -1503,7 +1506,6 @@ function _civicrm_add_custom_formatted_param( $customFieldID, $key, $field, &$fo
     case 'Multi-Select':
         
         $mulValues       = explode( ',', $field );
-        
         $customOption    = CRM_Core_BAO_CustomOption::getCustomOption( $customFieldID, true );
         $formatted[$key] = array( );
         foreach ( $mulValues as $v1 ) {
