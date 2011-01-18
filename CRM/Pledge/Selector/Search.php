@@ -83,6 +83,7 @@ class CRM_Pledge_Selector_Search extends CRM_Core_Selector_Base
                                 'pledge_status',
                                 'pledge_is_test',
                                 'pledge_contribution_page_id',
+                                'pledge_contribution_type',
                                 'pledge_campaign_id'
                                  );
 
@@ -390,6 +391,11 @@ class CRM_Pledge_Selector_Search extends CRM_Core_Selector_Base
                                                 ),
                                           array(
                                                 'name'      => ts('Balance'),
+                                                ),
+                                          array(
+                                                'name'      => ts('Pledged For'),
+                                                'sort'      => 'pledge_contribution_type',
+                                                'direction' => CRM_Utils_Sort::ASCENDING,
                                                 ),
                                           array(
                                                 'name'      => ts('Pledge Made'),
