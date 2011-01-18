@@ -402,7 +402,16 @@ class CRM_Pledge_BAO_Query
         case 'pledge_frequency_unit':
             $query->_where[$grouping][] = "civicrm_pledge.frequency_unit $op $value";
             $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
-            return; 
+            return;
+
+        case 'pledge_campaign_id':
+            require_once 'CRM/Campaign/BAO/Query.php';
+            $campParams = array( 'op'          => $op,
+                                 'campaign'    => $value,
+                                 'grouping'    => $grouping,
+                                 'tableName'   => 'civicrm_pledge' );
+            CRM_Campaign_BAO_Query::componentSearchClause( $campParams, $query );
+            return;
         }
     }
 
@@ -612,6 +621,9 @@ class CRM_Pledge_BAO_Query
             }
         }
         
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        CRM_Campaign_BAO_Campaign::addCampaignInComponentSearch( $form, 'pledge_campaign_id' );        
+
         $form->assign( 'validCiviPledge', true );
     }
     
