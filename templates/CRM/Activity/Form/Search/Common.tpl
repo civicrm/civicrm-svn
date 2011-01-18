@@ -86,6 +86,12 @@
           {$form.activity_status.html} 
    </td>
 </tr>
+
+
+{* campaign in activity search *}
+{include file="CRM/Campaign/Form/addCampaignToComponent.tpl" 
+campaignContext="componentSearch" campaignTrClass='' campaignTdClass=''}
+
 {if $activityGroupTree}
 <tr id="activityCustom">
    <td id="activityCustomData" colspan="2">
