@@ -317,6 +317,12 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page
             $clauses[] = 'name LIKE %2';
             $params[2] = array( $this->_sortByCharacter . '%', 'String' );
         }
+        
+        $campainIds = $this->get( 'campaign_id' );
+        if ( !CRM_Utils_System::isNull( $campainIds ) ) {
+            if ( !is_array( $campainIds ) ) $campaignIds = array( $campaignIds );
+            $clauses[] = '( campaign_id IN ( ' . implode( ' , ', array_values( $campainIds ) ). ' ) )';
+        }
 
         return implode( ' AND ', $clauses );
     }
