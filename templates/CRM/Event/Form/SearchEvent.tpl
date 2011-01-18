@@ -58,6 +58,11 @@
         </tr>
       </table> 
     </td></tr>  
+
+    {* campaign in event search *}
+    {include file="CRM/Campaign/Form/addCampaignToComponent.tpl" campaignContext="componentSearch" 
+    campaignTrClass='crm-event-searchevent-form-block-campaign_id' campaignTdClass=''}
+
   </table>
 </div>
 

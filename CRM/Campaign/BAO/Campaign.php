@@ -380,7 +380,7 @@ SELECT  camp.id, camp.title
      * and assign needful info to templates.
      *
      */
-    public static function addCampaignInComponentSearch( &$form, $elementName ) 
+    public static function addCampaignInComponentSearch( &$form, $elementName = 'campaign_id' ) 
     {
         $campaignInfo = array( );
         $campaignDetails = self::getPermissionedCampaigns( null, null, false, true );
