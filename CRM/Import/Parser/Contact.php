@@ -1795,10 +1795,16 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
             }
             
             if ( is_array( $field ) ) {
+                $isAddressCustomField = false;
                 foreach ( $field as $value ) {
                     $break = false;
                     if ( is_array( $value ) ) {
                         foreach ( $value as $name => $testForEmpty ) {
+                            if ( $addressCustomFieldID = CRM_Core_BAO_CustomField::getKeyID( $name ) && 
+                                 array_key_exists( $addressCustomFieldID, $addressCustomFields ) ) {
+                                $isAddressCustomField = true;
+                                break;
+                            }
                            // check if $value does not contain IM provider or phoneType 
                             if ( ( $name !== 'phone_type_id' || $name !== 'provider_id' ) 
                                  && ( $testForEmpty === '' || $testForEmpty == null ) ) {
@@ -1814,11 +1820,13 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                         _civicrm_add_formatted_param( $value, $formatted );
                     }
                 }
-                continue;
+                if ( !$isAddressCustomField ) {
+                    continue;
+                }
             }
             
             $formatValues = array( $key => $field );
-            
+                        
             if ( ( $key !== 'preferred_communication_method' ) && 
                  ( array_key_exists( $key, $contactFields   ) ) ) {
                 // due to merging of individual table and
@@ -1839,84 +1847,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                 
                 //get the html type.
                 $type = $customFields[$customFieldID]['html_type'];
-                
-                switch ( $type ) {
-                case 'CheckBox':
-                case 'AdvMulti-Select':
-                case 'Multi-Select':
-                    
-                    $mulValues       = explode( ',' , $field );
-                    $customOption    = CRM_Core_BAO_CustomOption::getCustomOption( $customFieldID, true );
-                    $formatted[$key] = array( );
-                    
-                    foreach ( $mulValues as $v1 ) {
-                        foreach ( $customOption as $v2 ) {
-                            if ( ( strtolower( $v2['label'] ) == strtolower( trim( $v1 ) ) ) || 
-                                 ( strtolower( $v2['value'] ) == strtolower( trim( $v1 ) ) ) ) { 
-                                
-                                if ( $type == 'CheckBox' ) {
-                                    $formatted[$key][$v2['value']] = 1;
-                                } else {
-                                    $formatted[$key][] = $v2['value'];
-                                }
-                            }
-                        }
-                    }
-                    break;
-                    
-                case 'Select':
-                case 'Radio':
-                    
-                    $customOption = CRM_Core_BAO_CustomOption::getCustomOption( $customFieldID, true );
-                    foreach ( $customOption as $v2 ) {
-                        if ( ( strtolower( $v2['label'] ) == strtolower( trim( $field ) ) ) ||
-                             ( strtolower( $v2['value'] ) == strtolower( trim( $field ) ) ) ) {
-                            $formatted[$key] = $v2['value'];
-                        }
-                    }
-                    break;
-                    
-                case 'Multi-Select State/Province':
-                    
-                    $mulValues       = explode( ',' , $field );
-                    $stateAbbr       = CRM_Core_PseudoConstant::stateProvinceAbbreviation();
-                    $stateName       = CRM_Core_PseudoConstant::stateProvince();
-                    $formatted[$key] = $stateValues = array( );
-                    
-                    foreach( $mulValues as $values ) {
-                        if ( $val = CRM_Utils_Array::key( $values,$stateAbbr ) ) { 
-                            $formatted[$key][] = $val;
-                        }else if ( $val = CRM_Utils_Array::key( $values,$stateName ) ) { 
-                            $formatted[$key][] = $val;
-                        }
-                    } 
-                    break;
-                    
-                case 'Multi-Select Country' :
-                    
-                    $config          = CRM_Core_Config::singleton( );
-                    $limitCodes      = $config->countryLimit( );
-                    $mulValues       = explode( ',' , $field );
-                    $formatted[$key] = array( );
-                    
-                    CRM_Core_PseudoConstant::populate( $countryNames, 'CRM_Core_DAO_Country', 
-                                                       true, 'name', 'is_active' );
-                    CRM_Core_PseudoConstant::populate( $countryIsoCodes, 
-                                                       'CRM_Core_DAO_Country',true, 
-                                                       'iso_code');
-                    
-                    foreach( $mulValues as $values ) {
-                        if ( $val = CRM_Utils_Array::key( $values, $countryNames ) ) { 
-                            $formatted[$key][] = $val;
-                        } else if ($val = CRM_Utils_Array::key( $values, $countryIsoCodes ) ) { 
-                            $formatted[$key][] = $val;
-                        } else if ($val = CRM_Utils_Array::key( $values, $limitCodes ) ) { 
-                            $formatted[$key][] = $val;
-                        }
-                    }
-                    break;
-                }
-                
+                _civicrm_add_custom_formatted_param( $customFieldID, $key, $field, $formatted, $type );
             }
         }
         // check for primary location type, whether it is already present for the contact or not, CRM-4423
@@ -1957,7 +1888,6 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                 }
             }
         }
-        
     }
     
     /**
