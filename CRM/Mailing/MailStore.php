@@ -96,6 +96,13 @@ class CRM_Mailing_MailStore
     }
 
     /**
+     * Expunge the messages marked for deletion; stub function to be redefined by IMAP store
+     */
+    function expunge()
+    {
+    }
+
+    /**
      * Return the next X messages from the mail store
      *
      * @param int $count  number of messages to fetch (0 to fetch all)

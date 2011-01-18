@@ -290,6 +290,7 @@ class EmailProcessor {
                             
                 $store->markProcessed($key);
             }
+            $store->expunge();   // CRM-7356 – used by IMAP only
         }
     }
 
