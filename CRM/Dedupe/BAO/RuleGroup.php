@@ -144,6 +144,9 @@ class CRM_Dedupe_BAO_RuleGroup extends CRM_Dedupe_DAO_RuleGroup
     }
 
     function fillTable( ) {
+        // get the list of queries handy
+        $tableQueries = $this->tableQuery( );
+
         if ( $this->params && !$this->noRules ) { 
             $tempTableQuery = "CREATE TEMPORARY TABLE dedupe (id1 int, weight int, UNIQUE UI_id1 (id1))";
             $insertClause   = "INSERT INTO dedupe (id1, weight)";
@@ -162,8 +165,7 @@ class CRM_Dedupe_BAO_RuleGroup extends CRM_Dedupe_DAO_RuleGroup
         $dao = new CRM_Core_DAO();
         $dao->query( $tempTableQuery );
 
-        // get the list of queries handy
-        $tableQueries = $this->tableQuery( );
+  
         CRM_Utils_Hook::dupeQuery( $this, 'table', $tableQueries );
 
         while ( !empty($tableQueries) ) {
@@ -308,6 +310,7 @@ class CRM_Dedupe_BAO_RuleGroup extends CRM_Dedupe_DAO_RuleGroup
                 WHERE contact_type = '{$this->contact_type}' {$this->_aclWhere}
                 AND weight >= {$this->threshold}";
         } else {
+            $this->_aclWhere = ' AND c1.is_deleted = 0 AND c2.is_deleted = 0';
             if ( $checkPermission ) {
                 list( $this->_aclFrom, $this->_aclWhere ) = 
                     CRM_Contact_BAO_Contact_Permission::cacheClause( array('c1', 'c2') );
