@@ -573,20 +573,26 @@ ORDER BY title asc
          }
          
          if ( $sortBy &&
-             $this->_sortByCharacter ) {
-            $clauses[] = 'title LIKE %3';
-            $params[3] = array( $this->_sortByCharacter . '%', 'String' );
-        }
-        
-        if ( empty( $clauses ) ) {
-            // Let template know if user has run a search or not
-            $this->assign('isSearch', 0);
+              $this->_sortByCharacter ) {
+             $clauses[] = 'title LIKE %3';
+             $params[3] = array( $this->_sortByCharacter . '%', 'String' );
+         }
+         
+         $campainIds = $this->get( 'campaign_id' );
+         if ( !CRM_Utils_System::isNull( $campainIds ) ) {
+             if ( !is_array( $campainIds ) ) $campaignIds = array( $campaignIds );
+             $clauses[] = '( campaign_id IN ( ' . implode( ' , ', array_values( $campainIds ) ). ' ) )';
+         }
+         
+         if ( empty( $clauses ) ) {
+             // Let template know if user has run a search or not
+             $this->assign('isSearch', 0);
             return 1;
-        } else {
-            $this->assign('isSearch', 1);
-        }
-            
-        return implode( ' AND ', $clauses );
+         } else {
+             $this->assign('isSearch', 1);
+         }
+         
+         return implode( ' AND ', $clauses );
     }
 
      function pager( $whereClause, $whereParams )

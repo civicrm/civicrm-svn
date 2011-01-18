@@ -382,8 +382,8 @@ ORDER BY start_date desc
         
         $campainIds = $this->get( 'campaign_id' );
         if ( !CRM_Utils_System::isNull( $campainIds ) ) {
-            if ( is_array( $campainIds ) ) $campaignIds = array_values( $campainIds );
-            $clauses[] = '( campaign_id IN ( ' . implode( ' , ', $campaignIds ). ' ) )';
+            if ( !is_array( $campainIds ) ) $campaignIds = array( $campaignIds );
+            $clauses[] = '( campaign_id IN ( ' . implode( ' , ', array_values( $campainIds ) ). ' ) )';
         }
         
         // dont do a the below assignment when doing a 
