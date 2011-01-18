@@ -242,7 +242,6 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
         ksort( $sel1 );
         asort( $activityType );
         asort( $eventType );
-        asort( $campaignTypes );
         asort( $membershipType );
         asort( $participantRole );
         $allRelationshipType = array();
