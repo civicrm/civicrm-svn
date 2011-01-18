@@ -1787,7 +1787,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                 $params[$key] = $this->checkGender( $val ); 
             }
         }
-        
+       
         //now format custom data.
         foreach ( $params as $key => $field ) {
             if ( $field == null || $field === '' ) {
@@ -1800,8 +1800,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     $break = false;
                     if ( is_array( $value ) ) {
                         foreach ( $value as $name => $testForEmpty ) {
-                            if ( $addressCustomFieldID = CRM_Core_BAO_CustomField::getKeyID( $name ) && 
-                                 array_key_exists( $addressCustomFieldID, $addressCustomFields ) ) {
+                            if ( $addressCustomFieldID = CRM_Core_BAO_CustomField::getKeyID( $name ) ) {
                                 $isAddressCustomField = true;
                                 break;
                             }
