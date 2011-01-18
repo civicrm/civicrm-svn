@@ -120,9 +120,9 @@ class CRM_Member_BAO_Query
             }
             
             //add campaign id.
-            if ( CRM_Utils_Array::value( 'membership_campaign_id', $query->_returnProperties ) ) {
-                $query->_select['membership_campaign_id']  = 'civicrm_membership.campaign_id as membership_campaign_id';
-                $query->_element['membership_campaign_id'] = 1;
+            if ( CRM_Utils_Array::value( 'member_campaign_id', $query->_returnProperties ) ) {
+                $query->_select['member_campaign_id']  = 'civicrm_membership.campaign_id as member_campaign_id';
+                $query->_element['member_campaign_id'] = 1;
             }
         }
     }
@@ -298,7 +298,15 @@ class CRM_Member_BAO_Query
             }
             $query->_tables['civicrm_membership'] = $query->_whereTables['civicrm_membership'] = 1;
             return;
-
+            
+        case 'member_campaign_id':
+            require_once 'CRM/Campaign/BAO/Query.php';
+            $campParams = array( 'op'          => $op,
+                                 'campaign'    => $value,
+                                 'grouping'    => $grouping,
+                                 'tableName'   => 'civicrm_membership' );
+            CRM_Campaign_BAO_Query::componentSearchClause( $campParams, $query );
+            return;
         }
     }
 
@@ -355,7 +363,7 @@ class CRM_Member_BAO_Query
                                 'membership_id'          => 1,
                                 'owner_membership_id'    => 1,
                                 'membership_recur_id'    => 1,
-                                'membership_campaign_id' => 1
+                                'member_campaign_id'     => 1
                                 );
 
             // also get all the custom membership properties
@@ -420,6 +428,10 @@ class CRM_Member_BAO_Query
                 }
             }
         }
+        
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        CRM_Campaign_BAO_Campaign::addCampaignInComponentSearch( $form, 'member_campaign_id' );
+        
         $form->assign( 'validCiviMember', true );
     }
 
