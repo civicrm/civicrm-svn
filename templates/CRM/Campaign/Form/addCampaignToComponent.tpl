@@ -15,7 +15,21 @@
            animate: true,
            highlight: true,
            sortable: true,
-           respectParents: true
+           respectParents: true,
+	   selectClass:'crmasmSelectCampaigns'
+       });
+
+       //lets disable the current and past campaign options.
+       cj(function(){
+              cj( 'select[id^="'+ 'crmasmSelectCampaigns' +'"] option' ).each( function( ) {
+                   value = cj(this).val();
+                   if ( value == 'current_campaign' || value == 'past_campaign' ) {
+                        cj(this).css( 'color', 'black' );    
+                        cj(this).attr( 'disabled', true );    
+			cj(this).attr( 'selected', false);
+                        cj(this).addClass( 'asmOptionDisabled' );
+                   } 
+              });
        });
        </script>
        {/literal}
