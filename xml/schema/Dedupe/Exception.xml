@@ -51,4 +51,11 @@
      <unique>true</unique>
      <add>3.3</add>
   </index>
-</table>
+  <field>
+      <name>cacheKey</name>
+      <type>varchar</type>
+      <length>255</length>
+      <comment>Unique path name for cache element of the searched dedupe(If NULL implies an exception)</comment>
+      <add>3.4</add>
+  </field>
+ </table>
