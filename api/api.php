@@ -25,7 +25,7 @@ $result = civicrm_api('civicrm_contact_get', 'Contact', $params);
  */
 
 
-function civicrm_api($entity,$action, $class, $params){
+function civicrm_api($function, $class, $params){
   require_once 'CRM/Utils/String.php';
   $version = 3;
   if (defined('CIVICRM_API_VERSION')) {
@@ -39,7 +39,8 @@ function civicrm_api($entity,$action, $class, $params){
   $function = CRM_Utils_String::munge( $function );
 
   require_once 'api/v' . $version . '/' . $class .'.php';
-  $function($params);
+  $result = $function($params);
+  return $result;
 }
 
 
