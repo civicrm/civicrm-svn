@@ -43,55 +43,63 @@
 require_once 'api/v3/utils.php'; 
 require_once 'CRM/Core/BAO/UFGroup.php';
 
-
 /**
- * Use this API to create a new group. See the CRM Data Model for uf_group property definitions
+ * Most API functions take in associative arrays ( name => value pairs
+ * as parameters. Some of the most commonly used parameters are
+ * described below
  *
- * @param $params  array   Associative array of property name/value pairs to insert in group.
+ * @param array $params           an associative array used in construction
+ *                                / retrieval of the object
+ * @param array $returnProperties the limited set of object properties that
+ *                                need to be returned to the caller
  *
- * @return   Newly create $ufGroupArray array
- *
- * @access public 
+ * @todo several functions here that don't take array. naming conventions don't match filename
+ * 
+ * @todo is this the right way to group these functions? UF_id (get user ID) seems more logically to be a return value on the contact api
  */
-function civicrm_uf_group_create($params, $groupId = null)
+
+
+
+/** 
+ * get the contact_id given a uf_id 
+ * 
+ * @param array $params
+ * 
+ * @return int contact_id 
+ * @access public    
+ * @static 
+ */ 
+function civicrm_uf_match_get($ufID)
 {
-    if (!is_array($params) or empty($params) or (int) $groupId < 1) {
-        return civicrm_create_error('Params must be a non-empty array and a positive integer.');
+    if ((int) $ufID > 0) {
+        require_once 'CRM/Core/BAO/UFMatch.php';
+        return CRM_Core_BAO_UFMatch::getContactId($ufID);
+    } else {
+        return civicrm_create_error('Param needs to be a positive integer.');
     }
-    
-    _civicrm_initialize( );
-    
-    $ids = array();
-    $ids['ufgroup'] = $groupId;
-    
-    require_once 'CRM/Core/BAO/UFGroup.php';
-    
-    $ufGroup = CRM_Core_BAO_UFGroup::add( $params,$ids );
-    _civicrm_object_to_array( $ufGroup, $ufGroupArray);
-    
-    return $ufGroupArray;
 }
 
-
-
-/**
- * Delete uf group
+/**  
+ * get the uf_id given a contact_id  
  *  
- * @param $groupId int  Valid uf_group id that to be deleted
- *
- * @return true on successful delete or return error
- *
+ * @param int $contactID
+ *  
+ * @return int ufID
  * @access public
- *
- */
-function civicrm_uf_group_delete( $groupId ) {
-    _civicrm_initialize( );
-    
-    if(! isset( $groupId ) ) {
-        return civicrm_create_error("provide a valid groupId.");
+ * @todo function doesn't accept or return arrays
+ * @todo does this function belong here? Would be useful as a return option on contact id     
+ * @static  
+ */  
+function civicrm_uf_id_get($contactID)
+{
+    if ((int) $contactID > 0) {
+        require_once 'CRM/Core/BAO/UFMatch.php';
+        return CRM_Core_BAO_UFMatch::getUFId($contactID);
+    } else {
+        return civicrm_create_error('Param needs to be a positive integer.');
     }
-    
-    require_once 'CRM/Core/BAO/UFGroup.php';
-    return CRM_Core_BAO_UFGroup::del($groupId);
+} 
 
-}
+
+
+

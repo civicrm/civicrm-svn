@@ -42,6 +42,7 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
     protected $_ufFieldId;
     protected $_contactId = 69;
     protected $_apiversion; 
+
     protected function setUp()
     {
         parent::setUp();
@@ -103,124 +104,80 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
 
 
 
+
+
  
+
     /**
-     * updating group
+     * create / updating field
      */
-    public function testUpdateUFGroup()
+    public function testCreateUFField()
     {
         $params = array(
-            'title'     => 'Edited Test Profile',
-            'help_post' => 'Profile Pro help text.',
-            'is_active' => 1,
+            'field_name'       => 'country',
+            'field_type'       => 'Contact',
+            'visibility'       => 'Public Pages and Listings',
+            'weight'           => 1,
+            'label'            => 'Test Country',
+            'is_searchable'    => 1,
+            'is_active'        => 1,
+        );
+        $ufField          = civicrm_uf_field_create($this->_ufGroupId, $params);
+        $this->_ufFieldId = $ufField['id'];
+        foreach ($params as $key => $value) {
+            $this->assertEquals($ufField[$key], $params[$key]);
+        }
+
+        $params = array(
+            'field_name'       => 'country',
+            'label'            => 'Edited Test Country',
+            'weight'           => 1,
+            'is_active'        => 1,
         );
 
-        $updatedGroup = civicrm_uf_group_create($params, $this->_ufGroupId);
+        $updatedField = civicrm_uf_field_update($params,$ufField['id']);
         foreach ($params as $key => $value) {
-            $this->assertEquals($updatedGroup[$key], $params[$key]);
+            $this->assertEquals($updatedField[$key], $params[$key]);
         }
     }
 
+    function testCreateUFFieldWithEmptyParams()
+    {
+        $result = civicrm_uf_field_create($this->_ufGroupId, array());
+        $this->assertEquals($result['is_error'], 1);
+    }
 
-  
+    function testCreateUFFieldWithWrongParams()
+    {
+        $result = civicrm_uf_field_create('a string', array('field_name' => 'test field'));
+        $this->assertEquals($result['is_error'], 1);
+        $result = civicrm_uf_field_create($this->_ufGroupId, 'a string');
+        $this->assertEquals($result['is_error'], 1);
+        $result = civicrm_uf_field_create($this->_ufGroupId, array('label' => 'name-less field'));
+        $this->assertEquals($result['is_error'], 1);
+    }
 
-
-   
-
-
-
-
-    function testUFGroupCreate()
+    /**
+     * deleting field
+     */
+    public function testDeleteUFField()
     {
         $params = array(
-            'add_captcha'          => 1,
-            'add_contact_to_group' => 2,
-            'cancel_URL'           => 'http://example.org/cancel',
-            'created_date'         => '2009-06-27',
-            'created_id'           => 69,
-            'group'                => 2,
-            'group_type'           => 'Individual,Contact',
-            'help_post'            => 'help post',
-            'help_pre'             => 'help pre',
-            'is_active'            => 0,
-            'is_cms_user'          => 1,
-            'is_edit_link'         => 1,
-            'is_map'               => 1,
-            'is_reserved'          => 1,
-            'is_uf_link'           => 1,
-            'is_update_dupe'       => 1,
-            'name'                 => 'Test_Group',
-            'notify'               => 'admin@example.org',
-            'post_URL'             => 'http://example.org/post',
-            'title'                => 'Test Group',
+            'field_name'       => 'country',
+            'field_type'       => 'Contact',
+            'visibility'       => 'Public Pages and Listings',
+            'weight'           => 1,
+            'location_type_id' => 1,
+            'label'            => 'Test Country',
+            'is_searchable'    => 1,
+            'is_active'        => 1,
         );
-        $group = civicrm_uf_group_create($params);
+        $ufField          = civicrm_uf_field_create($this->_ufGroupId, $params);
+        $this->_ufFieldId = $ufField['id'];
         foreach ($params as $key => $value) {
-            if ($key == 'add_contact_to_group' or $key == 'group') continue;
-            $this->assertEquals($group[$key], $params[$key]);
+            $this->assertEquals($ufField[$key], $params[$key]);
         }
-        $this->assertEquals($group['add_to_group_id'],         $params['add_contact_to_group']);
-        $this->assertEquals($group['limit_listings_group_id'], $params['group']);
-    }
-
-    function testUFGroupCreateWithEmptyParams()
-    {
-        $result = civicrm_uf_group_create(array());
-        $this->assertEquals($result['is_error'], 1);
-    }
-
-    function testUFGroupCreateWithWrongParams()
-    {
-        $result = civicrm_uf_group_create('a string');
-        $this->assertEquals($result['is_error'], 1);
-        $result = civicrm_uf_group_create(array('name' => 'A title-less group'));
-        $this->assertEquals($result['is_error'], 1);
-    }
-
-    function testUFGroupUpdate()
-    {
-        $params = array(
-            'add_captcha'          => 1,
-            'add_contact_to_group' => 2,
-            'cancel_URL'           => 'http://example.org/cancel',
-            'created_date'         => '2009-06-27',
-            'created_id'           => 69,
-            'group'                => 2,
-            'group_type'           => 'Individual,Contact',
-            'help_post'            => 'help post',
-            'help_pre'             => 'help pre',
-            'is_active'            => 0,
-            'is_cms_user'          => 1,
-            'is_edit_link'         => 1,
-            'is_map'               => 1,
-            'is_reserved'          => 1,
-            'is_uf_link'           => 1,
-            'is_update_dupe'       => 1,
-            'name'                 => 'test_group',
-            'notify'               => 'admin@example.org',
-            'post_URL'             => 'http://example.org/post',
-            'title'                => 'Test Group',
-        );
-        $group = civicrm_uf_group_create($params, $this->_ufGroupId);
-        foreach ($params as $key => $value) {
-            if ($key == 'add_contact_to_group' or $key == 'group') continue;
-            $this->assertEquals($group[$key], $params[$key]);
-        }
-        $this->assertEquals($group['add_to_group_id'],         $params['add_contact_to_group']);
-        $this->assertEquals($group['limit_listings_group_id'], $params['group']);
-    }
-
-    function testUFGroupUpdateWithEmptyParams()
-    {
-        $result = civicrm_uf_group_create(array(), $this->_ufGroupId);
-        $this->assertEquals($result['is_error'], 1);
-    }
-
-    function testUFGroupUpdateWithWrongParams()
-    {
-        $result = civicrm_uf_group_create('a string', $this->_ufGroupId);
-        $this->assertEquals($result['is_error'], 1);
-        $result = civicrm_uf_group_create(array('title' => 'Title'), 'a string');
-        $this->assertEquals($result['is_error'], 1);
+        $result = civicrm_uf_field_delete($ufField['id']);
+        $this->assertEquals($result, true);
     }
 }

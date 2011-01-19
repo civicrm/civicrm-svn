@@ -27,7 +27,7 @@
 
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'api/v3/UFGroup.php';
-require_once 'api/v3/UFField.php';
+require_once 'api/v3/UFJoin.php';
 
 /**
  * Test class for UFGroup API - civicrm_uf_*
@@ -103,124 +103,152 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
 
 
 
- 
     /**
-     * updating group
+     * find uf join group id
      */
-    public function testUpdateUFGroup()
+    public function testFindUFGroupId()
+    {
+        $params =  array(
+            'module'       => 'CiviContribute',
+            'entity_table' => 'civicrm_contribution_page',
+            'entity_id'    => 1,
+            'weight'       => 1,
+            'uf_group_id'  => $this->_ufGroupId,
+            'is_active'    => 1,
+        );
+        $ufJoin       = civicrm_uf_join_create($params);
+        $searchParams = array(
+            'entity_table' => 'civicrm_contribution_page',
+            'entity_id'    => 1,
+        );
+        $ufGroupId = civicrm_uf_join_UFGroupId_get($searchParams);
+        $this->assertEquals($ufGroupId, $this->_ufGroupId);
+    }
+    
+
+    public function testUFJoinEditWrongParamsType()
+    {
+        $params = 'a string';
+        $result = civicrm_uf_join_edit($params);
+
+        $this->assertEquals( $result['is_error'], 1 );
+        $this->assertEquals( $result['error_message'], 'params is not an array' );
+    }
+    
+    public function testUFJoinEditEmptyParams()
+    {
+        $params = array();
+        $result = civicrm_uf_join_edit($params);
+
+        $this->assertEquals( $result['is_error'], 1 );
+        $this->assertEquals( $result['error_message'], 'params is an empty array' );
+    }
+
+    public function testUFJoinEditWithoutUFGroupId()
     {
         $params = array(
-            'title'     => 'Edited Test Profile',
-            'help_post' => 'Profile Pro help text.',
-            'is_active' => 1,
-        );
+            'module'       => 'CiviContribute',
+            'entity_table' => 'civicrm_contribution_page',
+            'entity_id'    => 1,
+            'weight'       => 1,
+            'is_active'    => 1 );
+        $result = civicrm_uf_join_edit($params);
 
-        $updatedGroup = civicrm_uf_group_create($params, $this->_ufGroupId);
+        $this->assertEquals( $result['is_error'], 1 );
+        $this->assertEquals( $result['error_message'], 'uf_group_id is required field' );
+    }
+
+
+
+ 
+
+    /**
+     * create/update uf join
+     */
+    public function testEditUFJoin()
+    {
+        $params =  array(
+            'module'       => 'CiviContribute',
+            'entity_table' => 'civicrm_contribution_page',
+            'entity_id'    => 1,
+            'weight'       => 1,
+            'uf_group_id'  => $this->_ufGroupId,
+            'is_active'    => 1,
+        );
+        $ufJoin = civicrm_uf_join_edit($params);
         foreach ($params as $key => $value) {
-            $this->assertEquals($updatedGroup[$key], $params[$key]);
+            $this->assertEquals($ufJoin[$key], $params[$key]);
+        }
+        $params =  array(
+            'id'           => $ufJoin['id'],
+            'module'       => 'CiviContribute',
+            'entity_table' => 'civicrm_contribution_page',
+            'entity_id'    => 1,
+            'weight'       => 1,
+            'uf_group_id'  => $this->_ufGroupId,
+            'is_active'    => 0,
+        );
+        $ufJoinUpdated = civicrm_uf_join_edit($params);
+        foreach ($params as $key => $value) {
+            $this->assertEquals($ufJoinUpdated[$key], $params[$key]);
         }
     }
 
 
-  
+    public function testFindUFJoinWrongParamsType()
+    {
+        $params = 'a string';
+        $result = civicrm_uf_join_create($params);
 
+        $this->assertEquals( $result['is_error'], 1 );
+        $this->assertEquals( $result['error_message'], 'params is not an array' );
+    }
+    
+    public function testFindUFJoinEmptyParams()
+    {
+        $params = array();
+        $result = civicrm_uf_join_create($params);
 
-   
+        $this->assertEquals( $result['is_error'], 1 );
+        $this->assertEquals( $result['error_message'], 'params is an empty array' );
+    }
 
-
-
-
-    function testUFGroupCreate()
+    public function testFindUFJoinWithoutUFGroupId()
     {
         $params = array(
-            'add_captcha'          => 1,
-            'add_contact_to_group' => 2,
-            'cancel_URL'           => 'http://example.org/cancel',
-            'created_date'         => '2009-06-27',
-            'created_id'           => 69,
-            'group'                => 2,
-            'group_type'           => 'Individual,Contact',
-            'help_post'            => 'help post',
-            'help_pre'             => 'help pre',
-            'is_active'            => 0,
-            'is_cms_user'          => 1,
-            'is_edit_link'         => 1,
-            'is_map'               => 1,
-            'is_reserved'          => 1,
-            'is_uf_link'           => 1,
-            'is_update_dupe'       => 1,
-            'name'                 => 'Test_Group',
-            'notify'               => 'admin@example.org',
-            'post_URL'             => 'http://example.org/post',
-            'title'                => 'Test Group',
+            'module'       => 'CiviContribute',
+            'entity_table' => 'civicrm_contribution_page',
+            'entity_id'    => 1,
+            'weight'       => 1,
+            'is_active'    => 1
         );
-        $group = civicrm_uf_group_create($params);
-        foreach ($params as $key => $value) {
-            if ($key == 'add_contact_to_group' or $key == 'group') continue;
-            $this->assertEquals($group[$key], $params[$key]);
-        }
-        $this->assertEquals($group['add_to_group_id'],         $params['add_contact_to_group']);
-        $this->assertEquals($group['limit_listings_group_id'], $params['group']);
-    }
+        $result = civicrm_uf_join_create($params);
 
-    function testUFGroupCreateWithEmptyParams()
-    {
-        $result = civicrm_uf_group_create(array());
-        $this->assertEquals($result['is_error'], 1);
+        $this->assertEquals( $result['is_error'], 1 );
+        $this->assertEquals( $result['error_message'], 'uf_group_id is required field' );
     }
-
-    function testUFGroupCreateWithWrongParams()
-    {
-        $result = civicrm_uf_group_create('a string');
-        $this->assertEquals($result['is_error'], 1);
-        $result = civicrm_uf_group_create(array('name' => 'A title-less group'));
-        $this->assertEquals($result['is_error'], 1);
-    }
-
-    function testUFGroupUpdate()
+    
+    /**
+     * find uf join id
+     */
+    public function testFindUFJoinId()
     {
         $params = array(
-            'add_captcha'          => 1,
-            'add_contact_to_group' => 2,
-            'cancel_URL'           => 'http://example.org/cancel',
-            'created_date'         => '2009-06-27',
-            'created_id'           => 69,
-            'group'                => 2,
-            'group_type'           => 'Individual,Contact',
-            'help_post'            => 'help post',
-            'help_pre'             => 'help pre',
-            'is_active'            => 0,
-            'is_cms_user'          => 1,
-            'is_edit_link'         => 1,
-            'is_map'               => 1,
-            'is_reserved'          => 1,
-            'is_uf_link'           => 1,
-            'is_update_dupe'       => 1,
-            'name'                 => 'test_group',
-            'notify'               => 'admin@example.org',
-            'post_URL'             => 'http://example.org/post',
-            'title'                => 'Test Group',
+            'module'       => 'CiviContribute',
+            'entity_table' => 'civicrm_contribution_page',
+            'entity_id'    => 1,
+            'weight'       => 1,
+            'uf_group_id'  => $this->_ufGroupId,
+            'is_active'    => 1,
         );
-        $group = civicrm_uf_group_create($params, $this->_ufGroupId);
-        foreach ($params as $key => $value) {
-            if ($key == 'add_contact_to_group' or $key == 'group') continue;
-            $this->assertEquals($group[$key], $params[$key]);
-        }
-        $this->assertEquals($group['add_to_group_id'],         $params['add_contact_to_group']);
-        $this->assertEquals($group['limit_listings_group_id'], $params['group']);
+        $ufJoin       = civicrm_uf_join_create($params);
+        $searchParams = array(
+            'entity_table' => 'civicrm_contribution_page',
+            'entity_id'    => 1,
+        );
+        $ufJoinId = civicrm_uf_join_id_get($searchParams);
+        $this->assertEquals($ufJoinId, $ufJoin['id']);
     }
 
-    function testUFGroupUpdateWithEmptyParams()
-    {
-        $result = civicrm_uf_group_create(array(), $this->_ufGroupId);
-        $this->assertEquals($result['is_error'], 1);
-    }
 
-    function testUFGroupUpdateWithWrongParams()
-    {
-        $result = civicrm_uf_group_create('a string', $this->_ufGroupId);
-        $this->assertEquals($result['is_error'], 1);
-        $result = civicrm_uf_group_create(array('title' => 'Title'), 'a string');
-        $this->assertEquals($result['is_error'], 1);
-    }
 }
