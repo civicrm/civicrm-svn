@@ -49,7 +49,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
     
     function setUp() 
     {
-            $this->markTestSkipped( "Reason for skipping:<a href='http://forum.civicrm.org/index.php/topic,18053.0.html'>version issue</a>" );
+           $this->markTestSkipped( "Reason for skipping:<a href='http://forum.civicrm.org/index.php/topic,18053.0.html'>version issue</a>" );
  
         $this->_apiversion = 3;
         parent::setUp();
@@ -58,11 +58,12 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
         $this->_eventID = $event['event_id'];
         
         $this->_contactID = $this->individualCreate(null,$this->_apiversion ) ;
-        $this->_createdParticipants = array( null,$this->_apiversion);
+
+        $this->_createdParticipants = array( );
         $this->_individualId = $this->individualCreate(null,$this->_apiversion);        
         
         $this->_participantID = $this->participantCreate( array('contactID' => $this->_contactID,'eventID' => $this->_eventID ,$this->_apiversion ));
-        $this->_contactID2 = $this->individualCreate( null,3) ;
+        $this->_contactID2 = $this->individualCreate( null,$this->_apiversion) ;
         $this->_participantID2 = $this->participantCreate( array('contactID' => $this->_contactID2,'eventID' => $this->_eventID,$this->_apiversion));
         $this->_participantID3 = $this->participantCreate( array ('contactID' => $this->_contactID2, 'eventID' => $this->_eventID,$this->_apiversion ) );
     }
@@ -144,7 +145,16 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
         $this->assertEquals('Wimbeldon',          $participant['participant_source'], 
                             "In line " . __LINE__);
     }
-    
+     /* 
+      Test civicrm_partipant_get() using example code
+     */
+    function testParticipantGetExample( )
+    {
+      require_once 'api/v3/examples/ParticipantGet.php';
+      $result = api_testParticipantGet( );
+      $expectedResult = api_v3_ActivityCreateExpectedResult();
+      $this->assertEquals($result,$expectedResult);
+    }
     /**
      * check with event_id
      * fetch first record

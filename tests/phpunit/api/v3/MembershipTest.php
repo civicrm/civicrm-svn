@@ -73,16 +73,14 @@ class api_v3_MembershipTest extends CiviUnitTestCase
                              "In line " . __LINE__ );   
     }
 
-    /**
-     * check civicrm_membership_delete() with empty parameter
-     */
-    function testMembershipDeleteEmpty( )
+    
+    function testMembershipDeleteEmpty( ) 
     {
-        $membershipId = null;
-        $result = civicrm_membership_delete($membershipId);
-        $this->assertEquals( $result['is_error'], 1,
-                             "In line " . __LINE__ );
+        $params = array( );
+        $result = civicrm_membership_delete( $params );
+        $this->assertEquals( $result['is_error'], 1 );
     }
+
 
 
     /**
@@ -130,12 +128,349 @@ class api_v3_MembershipTest extends CiviUnitTestCase
                               "In line " . __LINE__ );         
      }
     
-     function testMembershipStatusesGet()
-     {
-         $this->assertTrue( function_exists(civicrm_membership_statuses_get) );
-         $params = 'wrong type';
-         $result = civicrm_membership_statuses_get( $params );
-         $this->assertEquals( 1, $result['is_error'],
-                              "In line " . __LINE__ );         
-     }
-} 
+
+        /**
+     * Test civicrm_contact_memberships_get with empty params.
+     * Error expected.
+     */
+    function testGetWithEmptyParams()
+    {
+        $params = array();
+        $result = & civicrm_contact_memberships_get( $params );
+        $this->assertEquals( $result['is_error'], 1,
+                             "In line " . __LINE__ );
+    }
+
+    /**
+     * Test civicrm_contact_memberships_get with params with wrong type.
+     * Gets treated as contact_id, memberships expected.
+     */
+    function testGetWithWrongParamsType()
+    {
+        $params = 'a string';
+        $result = & civicrm_contact_memberships_get( $params );
+        $this->assertEquals( $result['is_error'], 1,
+                             "In line " . __LINE__ );
+    }
+
+
+    /**
+     * Test civicrm_contact_memberships_get with params not array.
+     * Gets treated as contact_id, memberships expected.
+     */
+    function testGetWithParamsContactId()
+    {
+        $membership =& civicrm_contact_memberships_get( $this->_contactID );
+
+        $result = $membership[$this->_contactID][$this->_membershipID];
+
+        $this->assertEquals($result['contact_id'],         $this->_contactID, "In line " . __LINE__);
+        $this->assertEquals($result['membership_type_id'], $this->_membershipTypeID, "In line " . __LINE__);
+        $this->assertEquals($result['status_id'],          $this->_membershipStatusID, "In line " . __LINE__);
+        $this->assertEquals($result['join_date'],          '2009-01-21', "In line " . __LINE__);
+        $this->assertEquals($result['start_date'],         '2009-01-21', "In line " . __LINE__);
+        $this->assertEquals($result['end_date'],           '2009-12-21', "In line " . __LINE__);
+        $this->assertEquals($result['source'],             'Payment', "In line " . __LINE__);
+        $this->assertEquals($result['is_override'],         1, "In line " . __LINE__);        
+    }
+        
+    /**
+     * Test civicrm_contact_memberships_get with proper params.
+     * Memberships expected.
+     */
+    function testGet()
+    {
+        $params = array ( 'contact_id' => $this->_contactID );
+
+        $membership =& civicrm_contact_memberships_get( $params );
+
+        $result = $membership[$this->_contactID][$this->_membershipID];
+
+        $this->assertEquals($result['contact_id'],         $this->_contactID, "In line " . __LINE__);
+        $this->assertEquals($result['membership_type_id'], $this->_membershipTypeID, "In line " . __LINE__);
+        $this->assertEquals($result['status_id'],          $this->_membershipStatusID, "In line " . __LINE__);
+        $this->assertEquals($result['join_date'],          '2009-01-21', "In line " . __LINE__);
+        $this->assertEquals($result['start_date'],         '2009-01-21', "In line " . __LINE__);
+        $this->assertEquals($result['end_date'],           '2009-12-21', "In line " . __LINE__);
+        $this->assertEquals($result['source'],             'Payment', "In line " . __LINE__);
+        $this->assertEquals($result['is_override'],         1, "In line " . __LINE__);        
+    }
+
+    /**
+     * Test civicrm_contact_memberships_get for only active.
+     * Memberships expected.
+     */
+    function testGetOnlyActive()
+    {
+        $params = array ( 'contact_id'  => $this->_contactID,
+                          'active_only' => 1);
+
+        $membership =& civicrm_contact_memberships_get( $params );
+        $result = $membership[$this->_contactID][$this->_membershipID];
+
+        $this->assertEquals($result['status_id'], $this->_membershipStatusID, "In line " . __LINE__);
+        $this->assertEquals($result['contact_id'], $this->_contactID, "In line " . __LINE__);
+    }
+
+    /**
+     * Test civicrm_contact_memberships_get for non exist contact.
+     * empty Memberships.
+     */
+    function testGetNoContactExists()
+    {
+        $params = array ( 'contact_id'  => 'NoContact' );
+                          
+        $membership =& civicrm_contact_memberships_get( $params );
+        $this->assertEquals($membership['record_count'], 0, "In line " . __LINE__);
+    }
+
+    /**
+     * Test civicrm_contact_memberships_get with relationship.
+     * get Memberships.
+     */
+    function testGetWithRelationship()
+    {
+
+        $membershipOrgId = $this->organizationCreate(null,$this->_apiversion  );
+        $memberContactId = $this->individualCreate(null,$this->_apiversion ) ;
+
+        $relTypeParams = array(
+                               'name_a_b'       => 'Relation 1',
+                               'name_b_a'       => 'Relation 2',
+                               'description'    => 'Testing relationship type',
+                               'contact_type_a' => 'Organization',
+                               'contact_type_b' => 'Individual',
+                               'is_reserved'    => 1,
+                               'is_active'      => 1
+                               );
+        $relTypeID = $this->relationshipTypeCreate( $relTypeParams );
+
+        $params = array( 'name'                   => 'test General',
+                         'duration_unit'          => 'year',
+                         'duration_interval'      => 1,
+                         'period_type'            => 'rolling',
+                         'member_of_contact_id'   => $membershipOrgId,
+                         'domain_id'		  => 1,
+                         'contribution_type_id'   => 1,
+                         'relationship_type_id'   => $relTypeID,
+                         'relationship_direction' => 'b_a',
+                         'is_active'              => 1 );        
+        $memType = civicrm_membership_type_create( $params );
+        // in order to reload static caching -
+        CRM_Member_PseudoConstant::membershipType( null, true );
+
+        $params = array(
+                        'contact_id'         => $memberContactId,
+                        'membership_type_id' => $memType['id'],
+                        'join_date'          => '2009-01-21',
+                        'start_date'         => '2009-01-21',
+                        'end_date'           => '2009-12-21',
+                        'source'             => 'Payment',
+                        'is_override'        => 1,
+                        'status_id'          => $this->_membershipStatusID
+                        );
+        $membershipID = $this->contactMembershipCreate( $params ,$this->_apiversion);
+
+        $params = array ( 'contact_id'  => $memberContactId ,
+                          'membership_type_id' => $memType['id'] );
+                          
+        $result =& civicrm_membership_contact_get( $params );
+        
+        $this->assertArrayHasKey( $memberContactId, $result,
+                                  "In line " . __LINE__ );
+
+        // extra one for the record county key
+        $this->assertEquals( 2, count( $result ),
+                             "In line " . __LINE__ );
+
+        $membership = $result[$memberContactId][$membershipID];
+        $this->assertEquals( $this->_membershipStatusID, $membership['status_id'], 
+                             "In line " . __LINE__);
+    }
+
+///////////////// civicrm_membership_contact_create methods
+
+    /**
+     * Test civicrm_contact_memberships_create with empty params.
+     * Error expected.
+     */    
+    function testCreateWithEmptyParams() 
+    {
+        $params = array();
+        $result = civicrm_membership_contact_create( $params );
+        $this->assertEquals( $result['is_error'], 1 );
+    }
+
+    /**
+     * Test civicrm_contact_memberships_create with params with wrong type.
+     * Error expected.
+     */
+    function testCreateWithParamsString()
+    {
+        $params = 'a string';
+        $result = & civicrm_contact_membership_create( $params );
+        $this->assertEquals( $result['is_error'], 1,
+                             "In line " . __LINE__ );
+    }
+
+    function testMembershipCreateMissingRequired( ) 
+    {
+        $params = array(
+                        'membership_type_id' => '1',
+                        'join_date'          => '2006-01-21',
+                        'start_date'         => '2006-01-21',
+                        'end_date'           => '2006-12-21',
+                        'source'             => 'Payment',
+                        'status_id'          => '2'                       
+                        );
+        
+        $result = civicrm_contact_membership_create( $params );
+        $this->assertEquals( $result['is_error'], 1 );
+    }
+    
+    function testMembershipCreate( ) 
+    {
+        $params = array(
+                        'contact_id'         => $this->_contactID,  
+                        'membership_type_id' => $this->_membershipTypeID,
+                        'join_date'          => '2006-01-21',
+                        'start_date'         => '2006-01-21',
+                        'end_date'           => '2006-12-21',
+                        'source'             => 'Payment',
+                        'is_override'        => 1,
+                        'status_id'          => $this->_membershipStatusID                       
+                        );
+
+        $result = civicrm_contact_membership_create( $params );
+        $this->assertEquals( $result['is_error'], 0 );
+        $this->assertNotNull( $result['id'] );
+    }
+
+    /**
+     * Test civicrm_contact_memberships_create with membership id (edit
+     * membership).
+     * success expected.
+     */
+    function testMembershipCreateWithId( ) 
+    {
+        $params = array(
+                        'id'                 => $this->_membershipID,
+                        'contact_id'         => $this->_contactID,  
+                        'membership_type_id' => $this->_membershipTypeID,
+                        'join_date'          => '2006-01-21',
+                        'start_date'         => '2006-01-21',
+                        'end_date'           => '2006-12-21',
+                        'source'             => 'Payment',
+                        'is_override'        => 1,
+                        'status_id'          => $this->_membershipStatusID                       
+                        );
+
+        $result = civicrm_contact_membership_create( $params );
+        $this->assertEquals( $result['is_error'], 0 );
+        $this->assertEquals( $result['id'] , $this->_membershipID );
+    }
+
+    /**
+     * Test civicrm_contact_memberships_create Invalid membership data
+     * Error expected.
+     */
+    function testMembershipCreateInvalidMemData( ) 
+    {
+        //membership_contact_id as string
+        $params = array(
+                        'membership_contact_id' => 'Invalid',
+                        'contact_id'         => $this->_contactID,  
+                        'membership_type_id' => $this->_membershipTypeID,
+                        'join_date'          => '2011-01-21',
+                        'start_date'         => '2010-01-21',
+                        'end_date'           => '2008-12-21',
+                        'source'             => 'Payment',
+                        'is_override'        => 1,
+                        'status_id'          => $this->_membershipStatusID                       
+                        );
+
+        $result = civicrm_contact_membership_create( $params );
+        $this->assertEquals( $result['is_error'], 1 );
+        
+        //membership_contact_id which is no in contact table
+        $params['membership_contact_id'] = 999;
+        $result = civicrm_contact_membership_create( $params );
+        $this->assertEquals( $result['is_error'], 1 );
+
+        //invalid join date
+        unset( $params['membership_contact_id'] );
+        $params['join_date'] = "invalid";
+        $result = civicrm_contact_membership_create( $params );
+        $this->assertEquals( $result['is_error'], 1 );
+    }
+    
+    /**
+     * Test civicrm_contact_memberships_create with membership_contact_id
+     * membership).
+     * Success expected.
+     */
+    function testMembershipCreateWithMemContact( ) 
+    {
+            
+        $params = array(
+                        'membership_contact_id' => $this->_contactID,
+                        'contact_id'            => $this->_contactID,  
+                        'membership_type_id'    => $this->_membershipTypeID,
+                        'join_date'             => '2011-01-21',
+                        'start_date'            => '2010-01-21',
+                        'end_date'              => '2008-12-21',
+                        'source'                => 'Payment',
+                        'is_override'           => 1,
+                        'status_id'             => $this->_membershipStatusID                       
+                        );
+
+        $result = civicrm_contact_membership_create( $params );
+
+        $this->assertEquals( $result['is_error'], 0 );
+        
+    }
+
+///////////////// civicrm_membership_delete methods
+
+    /**
+     * Test civicrm_contact_memberships_delete with params with wrong type.
+     * Error expected.
+     */
+    function testDeleteWithParamsString()
+    {
+        $params = 'a string';
+        $result = & civicrm_contact_membership_create( $params );
+        $this->assertEquals( $result['is_error'], 1,
+                             "In line " . __LINE__ );
+    }
+    
+
+
+
+
+ ///////////////// _civicrm_membership_format_params with $create 
+ 
+    function testMemebershipFormatParamsWithCreate( ) 
+    {
+
+        $params = array(
+                        'contact_id'            => $this->_contactID,  
+                        'membership_type_id'    => $this->_membershipTypeID,
+                        'join_date'             => '2006-01-21',
+                        'membership_start_date' => '2006-01-21',
+                        'membership_end_date'   => '2006-12-21',
+                        'source'                => 'Payment',
+                        'is_override'           => 1,
+                        'status_id'             => $this->_membershipStatusID                       
+                        );
+
+        $values = array( );
+        _civicrm_membership_format_params( $params , $values, true);
+        
+        $this->assertEquals( $values['start_date'], $params['membership_start_date'] );
+        $this->assertEquals( $values['end_date'], $params['membership_end_date'] );
+    }
+
+}
+
+     

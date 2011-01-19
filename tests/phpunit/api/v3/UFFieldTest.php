@@ -35,7 +35,7 @@ require_once 'api/v3/UFField.php';
  *
  *  @package   CiviCRM
  */
-class api_v3_UFGroupTest extends CiviUnitTestCase
+class api_v3_UFFieldTest extends CiviUnitTestCase
 {
     // ids from the uf_group_test.xml fixture
     protected $_ufGroupId = 11;

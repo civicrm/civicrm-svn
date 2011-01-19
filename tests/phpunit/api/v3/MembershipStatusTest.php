@@ -98,6 +98,14 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
          
          $this->assertEquals( $result[$this->_membershipStatusID]['name'], "test status", "In line " . __LINE__ );
      }
+     function testMembershipStatusesGet()
+     {
+         $this->assertTrue( function_exists(civicrm_membership_statuses_get) );
+         $params = 'wrong type';
+         $result = civicrm_membership_statuses_get( $params );
+         $this->assertEquals( 1, $result['is_error'],
+                              "In line " . __LINE__ );         
+     }
 
 ///////////////// civicrm_membership_status_create methods
 

@@ -35,7 +35,7 @@ require_once 'api/v3/UFJoin.php';
  *
  *  @package   CiviCRM
  */
-class api_v3_UFGroupTest extends CiviUnitTestCase
+class api_v3_UFJoinTest extends CiviUnitTestCase
 {
     // ids from the uf_group_test.xml fixture
     protected $_ufGroupId = 11;
@@ -129,7 +129,7 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
     public function testUFJoinEditWrongParamsType()
     {
         $params = 'a string';
-        $result = civicrm_uf_join_edit($params);
+        $result = civicrm_uf_join_create($params);
 
         $this->assertEquals( $result['is_error'], 1 );
         $this->assertEquals( $result['error_message'], 'params is not an array' );
@@ -138,7 +138,7 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
     public function testUFJoinEditEmptyParams()
     {
         $params = array();
-        $result = civicrm_uf_join_edit($params);
+        $result = civicrm_uf_join_create($params);
 
         $this->assertEquals( $result['is_error'], 1 );
         $this->assertEquals( $result['error_message'], 'params is an empty array' );
@@ -152,7 +152,7 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
             'entity_id'    => 1,
             'weight'       => 1,
             'is_active'    => 1 );
-        $result = civicrm_uf_join_edit($params);
+        $result = civicrm_uf_join_create($params);
 
         $this->assertEquals( $result['is_error'], 1 );
         $this->assertEquals( $result['error_message'], 'uf_group_id is required field' );
@@ -175,7 +175,7 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
             'uf_group_id'  => $this->_ufGroupId,
             'is_active'    => 1,
         );
-        $ufJoin = civicrm_uf_join_edit($params);
+        $ufJoin = civicrm_uf_join_create($params);
         foreach ($params as $key => $value) {
             $this->assertEquals($ufJoin[$key], $params[$key]);
         }
@@ -188,7 +188,7 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
             'uf_group_id'  => $this->_ufGroupId,
             'is_active'    => 0,
         );
-        $ufJoinUpdated = civicrm_uf_join_edit($params);
+        $ufJoinUpdated = civicrm_uf_join_create($params);
         foreach ($params as $key => $value) {
             $this->assertEquals($ufJoinUpdated[$key], $params[$key]);
         }
@@ -246,7 +246,7 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
             'entity_table' => 'civicrm_contribution_page',
             'entity_id'    => 1,
         );
-        $ufJoinId = civicrm_uf_join_id_get($searchParams);
+        $ufJoinId = civicrm_uf_join_get($searchParams);
         $this->assertEquals($ufJoinId, $ufJoin['id']);
     }
 

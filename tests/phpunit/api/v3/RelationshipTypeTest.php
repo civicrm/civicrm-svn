@@ -74,7 +74,7 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
         $result =& civicrm_relationship_type_create( $params );
         
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'No input parameters present' );
+        $this->assertEquals( $result['error_message'], '-Required fields contact_id_a,contact_id_b,relationship_type_id for CRM_Contact_DAO_Relationship are not present' );
     }
     
     /**
