@@ -1,5 +1,6 @@
 <?php
-    function api_testActivityCreate( )
+
+    function test_api_v3_activity_create( )
     {
         $params = array(
                         'source_contact_id'   => 17,
@@ -17,7 +18,7 @@
         return $result;
     }
     
-    function api_v3_ActivityCreateExpectedResult(){
+    function test_api_v3_activity_create_expectedresult(){
       
       $expectedResult = array(
         						'is_error'           => 0,

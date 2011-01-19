@@ -271,14 +271,13 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     }
 
      /**
-     *  Test civicrm_activity_create() with valid parameters
+     *  Test civicrm_activity_create() using example code
      */
     function testActivityCreateExample( )
     {
-      require_once 'api/v3/example/ActivityCreate.php';
-      $result = api_testActivityCreate( );
-      $expectedResult = api_v3_ActivityCreateExpectedResult();
-  
+      require_once 'api/v3/examples/ActivityCreate.php';
+      $result = test_api_v3_activity_create();
+      $expectedResult = test_api_v3_activity_create_expectedresult();
       $this->assertEquals($result,$expectedResult);
     }
     /**
