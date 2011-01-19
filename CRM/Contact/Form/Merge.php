@@ -641,6 +641,15 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
                 CRM_Core_DAO::executeQuery( $query );
             }
             civicrm_contact_delete($otherParams);
+
+            //clear cache
+            //FIXME : introduce the cacheKey check too
+            $cacheQuery = "DELETE FROM civicrm_prevnext_cache
+                           WHERE  entity_table = 'civicrm_contact' AND
+                                  ( entity_id1 = {$this->_oid} OR
+                                    entity_id2 = {$this->_oid} )";
+
+            CRM_Core_DAO::executeQuery( $cacheQuery );
         } else {
             CRM_Core_Session::setStatus(ts('Do not have sufficient permission to delete duplicate contact.'));
         }
