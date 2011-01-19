@@ -154,22 +154,25 @@ Class CRM_Campaign_BAO_Campaign extends CRM_Campaign_DAO_Campaign
      */
     public static function getCampaigns( $includeId = null, 
                                          $excludeId = null, 
-                                         $onlyActive = true, 
+                                         $onlyActive = true,
+                                         $onlyCurrent = true,
                                          $forceAll = false ) 
     {
         static $campaigns;
         $cacheKey = 0;
-        foreach ( array( 'includeId', 'excludeId', 'onlyActive', 'forceAll' ) as $param ) {
+        $cacheKeyParams = array( 'includeId', 'excludeId', 
+                                 'onlyActive', 'onlyCurrent', 'forceAll' ); 
+        foreach ( $cacheKeyParams as $param ) {
             $cacheParam = $$param;
             if ( !$cacheParam ) $cacheParam = 0;
             $cacheKey .= '_' . $cacheParam;
         }
         
         if ( !isset( $campaigns[$cacheKey] ) ) {
-            $where = array( '( camp.title IS NOT NULL )',
-                            '( camp.end_date IS NULL OR camp.end_date >= CURDATE() )');
+            $where = array( '( camp.title IS NOT NULL )' );
             if ( $excludeId  ) $where[] = "( camp.id != $excludeId )";
             if ( $onlyActive ) $where[] = '( camp.is_active = 1 )';
+            if ( $onlyCurrent ) $where[] = '( camp.end_date IS NULL OR camp.end_date >= CURDATE() )'; 
             $whereClause = implode( ' AND ', $where );
             if ( $includeId ) $whereClause .= " OR ( camp.id = $includeId )"; 
             
@@ -196,15 +199,16 @@ SELECT  camp.id, camp.title
      * w/ permissions and component check.
      *
      */
-    public static function getPermissionedCampaigns( $includeId  = null, 
-                                                     $excludeId  = null, 
-                                                     $onlyActive = true,
-                                                     $forceAll   = false,
+    public static function getPermissionedCampaigns( $includeId   = null, 
+                                                     $excludeId   = null, 
+                                                     $onlyActive  = true,
+                                                     $onlyCurrent = true,
+                                                     $forceAll    = false,
                                                      $doCheckForComponent   = true,
                                                      $doCheckForPermissions = true ) 
     {
         $cacheKey = 0;
-        $cachekeyParams = array( 'includeId', 'excludeId', 'onlyActive', 
+        $cachekeyParams = array( 'includeId', 'excludeId', 'onlyActive', 'onlyCurrent',
                                  'doCheckForComponent', 'doCheckForPermissions', 'forceAll' );
         foreach ( $cachekeyParams as $param ) {
             $cacheKeyParam = $$param;
@@ -230,7 +234,13 @@ SELECT  camp.id, camp.title
             }
             
             //finally retrieve campaigns from db.
-            if ( $isValid ) $campaigns['campaigns'] = self::getCampaigns($includeId, $excludeId, $onlyActive,$forceAll);  
+            if ( $isValid ) {
+                $campaigns['campaigns'] = self::getCampaigns( $includeId, 
+                                                              $excludeId, 
+                                                              $onlyActive,
+                                                              $onlyCurrent,
+                                                              $forceAll ); 
+            }
             
             //store in cache.
             $validCampaigns[$cacheKey] = $campaigns;
@@ -383,7 +393,7 @@ SELECT  camp.id, camp.title
     public static function addCampaignInComponentSearch( &$form, $elementName = 'campaign_id' ) 
     {
         $campaignInfo = array( );
-        $campaignDetails = self::getPermissionedCampaigns( null, null, false, true );
+        $campaignDetails = self::getPermissionedCampaigns( null, null, false, false, true );
         $fields = array( 'campaigns', 'hasAccessCampaign', 'isCampaignEnabled' );
         foreach ( $fields as $fld ) $$fld = CRM_Utils_Array::value( $fld, $campaignDetails ); 
         $showCampaignInSearch = false;

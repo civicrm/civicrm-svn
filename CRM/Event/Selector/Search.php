@@ -330,7 +330,7 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
 
          //get all campaigns.
          require_once 'CRM/Campaign/BAO/Campaign.php';
-         $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, true );
+         $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, true );
          
          while ( $result->fetch( ) ) {
              $row = array();

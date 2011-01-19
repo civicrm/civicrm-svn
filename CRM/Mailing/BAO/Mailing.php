@@ -1814,7 +1814,7 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
 
         //get all campaigns.
         require_once 'CRM/Campaign/BAO/Campaign.php';
-        $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, true );
+        $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, true );
         
         // we only care about parent jobs, since that holds all the info on
         // the mailing
