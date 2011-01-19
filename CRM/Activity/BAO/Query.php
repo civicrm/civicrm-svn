@@ -121,10 +121,16 @@ class CRM_Activity_BAO_Query
             $query->_element['source_record_id'] = 1;
 			$query->_tables['civicrm_activity'] = $query->_whereTables['civicrm_activity'] = 1;
         }
-
+        
         if ( CRM_Utils_Array::value( 'activity_is_test', $query->_returnProperties ) ) {
             $query->_select['activity_is_test']  = "civicrm_activity.is_test as activity_is_test";
             $query->_element['activity_is_test'] = 1;
+            $query->_tables['civicrm_activity'] = $query->_whereTables['civicrm_activity'] = 1;
+        }
+        
+        if ( CRM_Utils_Array::value( 'activity_campaign_id', $query->_returnProperties ) ) {
+            $query->_select['activity_campaign_id']  = 'civicrm_activity.campaign_id as activity_campaign_id';
+            $query->_element['activity_campaign_id'] = 1;
             $query->_tables['civicrm_activity'] = $query->_whereTables['civicrm_activity'] = 1;
         }
     }
@@ -307,6 +313,14 @@ class CRM_Activity_BAO_Query
             
             break;
             
+        case 'activity_campaign_id':
+            require_once 'CRM/Campaign/BAO/Query.php';
+            $campParams = array( 'op'          => $op,
+                                 'campaign'    => $value,
+                                 'grouping'    => $grouping,
+                                 'tableName'   => 'civicrm_activity' );
+            CRM_Campaign_BAO_Query::componentSearchClause( $campParams, $query );
+            return;
         }
         
     }
@@ -441,6 +455,9 @@ class CRM_Activity_BAO_Query
                 }
             }
         }
+        
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        CRM_Campaign_BAO_Campaign::addCampaignInComponentSearch( $form, 'activity_campaign_id' );    
     }
 
     static function addShowHide( &$showHide ) 
@@ -468,7 +485,8 @@ class CRM_Activity_BAO_Query
                                 'activity_status'     => 1,
                                 'source_contact_id'   => 1,
                                 'source_record_id'    => 1,
-                                'activity_is_test'    => 1
+                                'activity_is_test'    => 1,
+                                'activity_campaign_id' => 1
                                 );
 
             // also get all the custom activity properties

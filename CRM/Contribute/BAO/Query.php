@@ -695,7 +695,7 @@ class CRM_Contribute_BAO_Query
         }
 
         require_once 'CRM/Campaign/BAO/Campaign.php';
-        CRM_Campaign_BAO_Campaign::addCampaignInComponentSearch( $form );
+        CRM_Campaign_BAO_Campaign::addCampaignInComponentSearch( $form, 'contribution_campaign_id' );
         
         $form->assign( 'validCiviContribute', true );
     }

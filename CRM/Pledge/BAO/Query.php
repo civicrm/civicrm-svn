@@ -103,6 +103,12 @@ class CRM_Pledge_BAO_Query
             $query->_element['pledge_outstanding_amount'] = 1;
         }
         
+        if ( CRM_Utils_Array::value( 'pledge_contribution_type', $query->_returnProperties ) ) {
+            $query->_select['pledge_contribution_type']  = "(SELECT civicrm_contribution_type.name FROM civicrm_contribution_type WHERE civicrm_contribution_type.id = civicrm_pledge.contribution_type_id) as pledge_contribution_type";
+            $query->_element['pledge_contribution_type'] = 1;
+            $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
+        }
+
         if ( CRM_Utils_Array::value( 'pledge_contribution_page_id', $query->_returnProperties ) ) {
             $query->_select['pledge_contribution_page_id']  = "civicrm_pledge.contribution_page_id as pledge_contribution_page_id";
             $query->_element['pledge_contribution_page_id'] = 1;
@@ -396,7 +402,16 @@ class CRM_Pledge_BAO_Query
         case 'pledge_frequency_unit':
             $query->_where[$grouping][] = "civicrm_pledge.frequency_unit $op $value";
             $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
-            return; 
+            return;
+
+        case 'pledge_campaign_id':
+            require_once 'CRM/Campaign/BAO/Query.php';
+            $campParams = array( 'op'          => $op,
+                                 'campaign'    => $value,
+                                 'grouping'    => $grouping,
+                                 'tableName'   => 'civicrm_pledge' );
+            CRM_Campaign_BAO_Query::componentSearchClause( $campParams, $query );
+            return;
         }
     }
 
@@ -473,6 +488,7 @@ class CRM_Pledge_BAO_Query
                                 'pledge_status_id'                => 1,
                                 'pledge_is_test'                  => 1,
                                 'pledge_contribution_page_id'     => 1,
+                                'pledge_contribution_type'        => 1,
                                 'pledge_frequency_interval'       => 1,
                                 'pledge_frequency_unit'           => 1,
                                 'pledge_campaign_id'              => 1
@@ -605,6 +621,9 @@ class CRM_Pledge_BAO_Query
             }
         }
         
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        CRM_Campaign_BAO_Campaign::addCampaignInComponentSearch( $form, 'pledge_campaign_id' );        
+
         $form->assign( 'validCiviPledge', true );
     }
     

@@ -57,7 +57,10 @@ class CRM_Contribute_Form_SearchContribution extends CRM_Core_Form
         foreach($contribution_type as $contributionId => $contributionName) {
             $this->addElement('checkbox', "contribution_type_id[$contributionId]", 'Contribution Type', $contributionName);
         }
-       
+        
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        CRM_Campaign_BAO_Campaign::addCampaignInComponentSearch( $this );
+        
         $this->addButtons(array( 
                                 array ('type'      => 'refresh', 
                                        'name'      => ts('Search'), 
@@ -72,7 +75,7 @@ class CRM_Contribute_Form_SearchContribution extends CRM_Core_Form
         $parent = $this->controller->getParent( );
         $parent->set( 'searchResult', 1 );
         if ( ! empty( $params ) ) {
-            $fields = array( 'title', 'contribution_type_id' );
+            $fields = array( 'title', 'contribution_type_id', 'campaign_id' );
             foreach ( $fields as $field ) {
                 if ( isset( $params[$field] ) &&
                      ! CRM_Utils_System::isNull( $params[$field] ) ) {

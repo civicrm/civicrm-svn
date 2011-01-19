@@ -478,6 +478,12 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
             $params[5] = array( $createdId, 'Integer' );
         }
         
+        $campainIds = $this->_parent->get( 'campaign_id' );
+        if ( !CRM_Utils_System::isNull( $campainIds ) ) {
+            if ( !is_array( $campainIds ) ) $campaignIds = array( $campaignIds );
+            $clauses[] = '( campaign_id IN ( ' . implode( ' , ', array_values( $campainIds ) ). ' ) )';
+        }
+        
         if ( empty( $clauses ) ) {
             return 1;
         }

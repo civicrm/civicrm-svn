@@ -67,6 +67,29 @@ class EmailProcessor {
     }
 
     /**
+     * Delete old files from a given directory (recursively)
+     *
+     * @param string $dir  directory to cleanup
+     * @param int    $age  files older than this many seconds will be deleted (default: 60 days)
+     * @return void
+     */
+    static function cleanupDir($dir, $age = 5184000)
+    {
+        // return early if we can’t read/write the dir
+        if (!is_writable($dir) or !is_readable($dir) or !is_dir($dir)) return;
+
+        foreach (scandir($dir) as $file) {
+
+            // don’t go up the directory stack and skip new files/dirs
+            if ($file == '.' or $file == '..')           continue;
+            if (filemtime("$dir/$file") > time() - $age) continue;
+
+            // it’s an old file/dir, so delete/recurse
+            is_dir("$dir/$file") ? self::cleanupDir("$dir/$file", $age) : unlink("$dir/$file");
+        }
+    }
+
+    /**
      * Process the mailboxes that aren't default (ie. that aren't used by civiMail for the bounce)
      *
      * @return void
@@ -115,30 +138,22 @@ class EmailProcessor {
             CRM_Core_Error::fatal( ts( 'Could not find a valid Activity Type ID for Inbound Email' ) );
         }
 
+        $config = CRM_Core_Config::singleton();
+        $verpSeperator = preg_quote( $config->verpSeparator );
+        $twoDigitStringMin = $verpSeperator . '(\d+)' . $verpSeperator . '(\d+)';
+        $twoDigitString    = $twoDigitStringMin . $verpSeperator;
+        $threeDigitString  = $twoDigitString . '(\d+)' . $verpSeperator;
 
         // FIXME: legacy regexen to handle CiviCRM 2.1 address patterns, with domain id and possible VERP part
-        $commonRegex = 
-            '/^' . 
-            preg_quote($dao->localpart) . '(b|bounce|c|confirm|o|optOut|r|reply|re|e|resubscribe|u|unsubscribe)\.(\d+)\.(\d+)\.(\d+)\.([0-9a-f]{16})(-.*)?@' .
-            preg_quote($dao->domain) .
-            '$/';
+        $commonRegex = '/^' . preg_quote($dao->localpart) . '(b|bounce|c|confirm|o|optOut|r|reply|re|e|resubscribe|u|unsubscribe)' . $threeDigitString . '([0-9a-f]{16})(-.*)?@' . preg_quote($dao->domain) . '$/';
+        $subscrRegex = '/^' . preg_quote($dao->localpart) . '(s|subscribe)' . $twoDigitStringMin . '@' . preg_quote($dao->domain) . '$/';
 
-
-        $subscrRegex = 
-            '/^' . 
-            preg_quote($dao->localpart) . 
-            '(s|subscribe)\.(\d+)\.(\d+)@' . 
-            preg_quote($dao->domain) .
-            '$/';
-        
         // a common-for-all-actions regex to handle CiviCRM 2.2 address patterns
-        $regex = 
-            '/^' . 
-            preg_quote($dao->localpart) . 
-            '(b|c|e|o|r|u)\.(\d+)\.(\d+)\.([0-9a-f]{16})@' . 
-            preg_quote($dao->domain) . 
-            '$/';
-        
+        $regex = '/^' . preg_quote($dao->localpart) . '(b|c|e|o|r|u)' . $twoDigitString . '([0-9a-f]{16})@' . preg_quote($dao->domain) . '$/';
+
+        // a tighter regex for finding bounce info in soft bounces’ mail bodies
+        $rpRegex = '/Return-Path: ' . preg_quote($dao->localpart) . '(b)' . $twoDigitString . '([0-9a-f]{16})@' . preg_quote($dao->domain) . '/';
+
         // retrieve the emails
         require_once 'CRM/Mailing/MailStore.php';
         $store = CRM_Mailing_MailStore::getStore($dao->name);
@@ -168,6 +183,18 @@ class EmailProcessor {
                             break;
                         }
                     }
+
+                    // CRM-5471: if $matches is empty, it still might be a soft bounce sent
+                    // to another address, so scan the body for ‘Return-Path: …bounce-pattern…’
+                    if (!$matches and preg_match($rpRegex, $mail->generateBody(), $matches)) {
+                        list($match, $action, $job, $queue, $hash) = $matches;
+                    }
+
+                    // if all else fails, check Delivered-To for possible pattern
+                    if (!$matches and preg_match($regex, $mail->getHeader('Delivered-To'), $matches)) {
+                        list($match, $action, $job, $queue, $hash) = $matches;
+                    }
+
                 }
 
                 // preseve backward compatibility
@@ -213,10 +240,19 @@ class EmailProcessor {
                         if ($mail->body instanceof ezcMailText) {
                             $text = $mail->body->text;
                         } elseif ($mail->body instanceof ezcMailMultipart) {
-                            foreach ($mail->body->getParts() as $part) {
-                                if (isset($part->subType) and $part->subType == 'plain') {
-                                    $text = $part->text;
-                                    break;
+                            if ($mail->body instanceof ezcMailMultipartRelated) {
+                                foreach ($mail->body->getRelatedParts() as $part) {
+                                    if (isset($part->subType) and $part->subType == 'plain') {
+                                        $text = $part->text;
+                                        break;
+                                    }
+                                }
+                            } else {
+                                foreach ($mail->body->getParts() as $part) {
+                                    if (isset($part->subType) and $part->subType == 'plain') {
+                                        $text = $part->text;
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -290,6 +326,7 @@ class EmailProcessor {
                             
                 $store->markProcessed($key);
             }
+            $store->expunge();   // CRM-7356 – used by IMAP only
         }
     }
 
@@ -341,6 +378,10 @@ if ($lock->isAcquired()) {
         set_time_limit(0);
     }
     
+    // cleanup directories with old mail files (if they exist): CRM-4452
+    EmailProcessor::cleanupDir($config->customFileUploadDir . DIRECTORY_SEPARATOR . 'CiviMail.ignored');
+    EmailProcessor::cleanupDir($config->customFileUploadDir . DIRECTORY_SEPARATOR . 'CiviMail.processed');
+
     // check if the script is being used for civimail processing or email to 
     // activity processing.
     $isCiviMail = CRM_Utils_Array::value( 'emailtoactivity', $_REQUEST ) ? false : true;

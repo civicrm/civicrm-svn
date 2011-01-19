@@ -435,6 +435,14 @@ class CRM_Event_BAO_Query
             $query->_tables['civicrm_event'] = $query->_whereTables['civicrm_event'] = 1;
             return;
 
+        case 'participant_campaign_id':
+            require_once 'CRM/Campaign/BAO/Query.php';
+            $campParams = array( 'op'          => $op,
+                                 'campaign'    => $value,
+                                 'grouping'    => $grouping,
+                                 'tableName'   => 'civicrm_participant' );
+            CRM_Campaign_BAO_Query::componentSearchClause( $campParams, $query );
+            return;
         }
     }
 
@@ -598,7 +606,10 @@ class CRM_Event_BAO_Query
                 }
             }
         }
-
+        
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        CRM_Campaign_BAO_Campaign::addCampaignInComponentSearch( $form, 'participant_campaign_id' );
+        
         $form->assign( 'validCiviEvent', true );
     }
     

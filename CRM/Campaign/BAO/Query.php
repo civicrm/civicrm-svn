@@ -456,6 +456,11 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
         $campaign  = CRM_Utils_Array::value( 'campaign', $params );
         $tableName = CRM_Utils_Array::value( 'tableName', $params );
         $grouping  = CRM_Utils_Array::value( 'grouping',  $params );
+        foreach ( array( 'current_campaign', 'past_campaign' ) as $ignore ) {
+            $index = array_search( $ignore, $campaign );
+            if ( $index !== false ) unset( $campaign[$index] );
+        }
+        
         if ( CRM_Utils_System::isNull( $campaign ) || empty( $tableName ) ) {
             return; 
         }
@@ -473,6 +478,8 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
             if ( count( $campaignIds ) > 1 ) {
                 $op = 'IN';
                 $campaignIds = '(' . implode( ',', $campaignIds ) . ')';
+            } else {
+                $campaignIds = reset( $campaignIds );
             }
         } else {
             $campaignIds = $campaign;

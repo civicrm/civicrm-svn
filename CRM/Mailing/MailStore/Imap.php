@@ -73,6 +73,14 @@ class CRM_Mailing_MailStore_Imap extends CRM_Mailing_MailStore
     }
 
     /**
+     * Expunge the messages marked for deletion, CRM-7356
+     */
+    function expunge()
+    {
+        $this->_transport->expunge();
+    }
+
+    /**
      * Move the specified message to the ignored folder
      *
      * @param integer $nr  number of the message to move

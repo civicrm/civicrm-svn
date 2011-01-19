@@ -83,7 +83,8 @@
 </tr>
 
 {* campaign in contribution search *}
-{include file="CRM/Campaign/Form/addCampaignToComponent.tpl" campaignContext="search" campaignTrClass='' campaignTdClass=''}
+{include file="CRM/Campaign/Form/addCampaignToComponent.tpl" campaignContext="componentSearch" 
+	 campaignTrClass='' campaignTdClass=''}
 
 {if $contributeGroupTree}
 <tr>

@@ -1306,6 +1306,7 @@ class CRM_Contact_BAO_Query
         case 'activity_tags': 
         case 'activity_test':   
         case 'activity_contact_name':
+        case 'activity_campaign_id':
             CRM_Activity_BAO_Query::whereClauseSingle( $values, $this );
             return;
 

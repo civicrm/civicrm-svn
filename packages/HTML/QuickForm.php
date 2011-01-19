@@ -1981,8 +1981,16 @@ class HTML_QuickForm extends HTML_Common
 					//filter the value across XSS vulnerability issues.
 					$fldName = $this->_elements[$key]->_attributes['name'];                
 				}
-                if ( in_array( $this->_elements[$key]->_type, array('text', 'textarea') ) 
-                     && !in_array( $fldName, $skipFields ) ) {
+                if (
+                    // if not a text/textarea…
+                    !in_array($this->_elements[$key]->_type, array('text', 'textarea'))
+                    // …or should be skipped…
+                    or in_array($fldName, $skipFields)
+                    // …or is multilingual and after cutting off _xx_YY should be skipped (CRM-7230)…
+                    or (preg_match('/_[a-z][a-z]_[A-Z][A-Z]$/', $fldName) and in_array(substr($fldName, 0, -6), $skipFields))
+                ) {
+                    // …don’t filter, otherwise filter (else clause below)
+                } else {
                     //here value might be array or single value.
                     //so we should iterate and get filtered value.
                     $this->filterValue( $value );
