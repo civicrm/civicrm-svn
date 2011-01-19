@@ -64,7 +64,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         require_once 'CRM/Core/BAO/CustomGroup.php';
         require_once 'CRM/Core/OptionGroup.php';
         require_once 'CRM/Core/OptionValue.php';
-       if ( ! CRM_Core_Permission::check( 'merge duplicate contacts' ) ) {
+        if ( ! CRM_Core_Permission::check( 'merge duplicate contacts' ) ) {
             CRM_Core_Error::fatal( ts( 'You do not have access to this page' ) );
         }
 
@@ -77,8 +77,8 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         
         // Block access if user does not have EDIT permissions for both contacts.
         require_once 'CRM/Contact/BAO/Contact/Permission.php';
-        if ( ! ( CRM_Contact_BAO_Contact_Permission::allow( $cid, CRM_Core_Permission::EDIT ) 
-                 && CRM_Contact_BAO_Contact_Permission::allow( $oid, CRM_Core_Permission::EDIT ) ) ) {
+        if ( ! ( CRM_Contact_BAO_Contact_Permission::allow( $cid, CRM_Core_Permission::EDIT ) && 
+                 CRM_Contact_BAO_Contact_Permission::allow( $oid, CRM_Core_Permission::EDIT ) ) ) {
             CRM_Utils_System::permissionDenied( );
         }
         
