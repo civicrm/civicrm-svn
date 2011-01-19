@@ -108,21 +108,13 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
                 $ruleGroup->find(true);
                 
                 $session = CRM_Core_Session::singleton();
-                $session->setStatus("No possible duplicates were found using {$ruleGroup->name} rule.");
+                $session->setStatus( ts('No possible duplicates were found using %1 rule.', array( 1 => $ruleGroup->name ) ) );
                 $url = CRM_Utils_System::url('civicrm/contact/deduperules', 'reset=1');
-                if ( $context == 'search' )  $url = $session->readUserContext( ); 
+                if ( $context == 'search' ) {
+                    $url = $session->readUserContext( ); 
+                }
                 CRM_Utils_System::redirect( $url );
             } else {
-                //calculate the $contactType
-                if ( $rgid ) {
-                    $contactType = CRM_Core_DAO::getFieldValue( 'CRM_Dedupe_BAO_RuleGroup', 
-                                                                $rgid,
-                                                                'contact_type' );                }
-                $cacheKeyString  = "merge $contactType";
-                $cacheKeyString .= $rgid ? "_{$rgid}" : '_0';
-                $cacheKeyString .= $gid ? "_{$gid}" : '_0';
-
-                $setCacheQuery = "INSERT INTO civicrm_dedupe_exception ( contact_id1 , contact_id2 , cacheKey ) VALUES \n";
                 $cids = array( );
                 foreach ( $foundDupes as $dupe ) {
                     $cids[$dupe[0]] = 1;
@@ -151,7 +143,7 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
                         $srcID = $dupes[1];
                         $dstID = $dupes[0];
                     }
-                    $valuesCache[] = " ( $srcID, $dstID, '$cacheKeyString' ) ";
+
                     $canMerge = ( CRM_Contact_BAO_Contact_Permission::allow( $dstID, CRM_Core_Permission::EDIT )
                                   && CRM_Contact_BAO_Contact_Permission::allow( $srcID, CRM_Core_Permission::EDIT ) );
                     
@@ -166,16 +158,14 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
                 if ($gid) $this->_gid = $gid;
                 $this->_rgid = $rgid;
                 $this->_mainContacts = $mainContacts;
-                $cacheQuery = $setCacheQuery. implode( ",\n ", $valuesCache );
-                CRM_Core_DAO::executeQuery( $cacheQuery );
-                
+
                 $session = CRM_Core_Session::singleton( );
-                if ($this->_cid) {
-                    $session->pushUserContext(CRM_Utils_System::url('civicrm/contact/deduperules', 
-                                                                    "action=update&rgid={$this->_rgid}&gid={$this->_gid}&cid={$this->_cid}"));
+                if ( $this->_cid ) {
+                    $session->pushUserContext( CRM_Utils_System::url( 'civicrm/contact/deduperules', 
+                                                                     "action=update&rgid={$this->_rgid}&gid={$this->_gid}&cid={$this->_cid}") );
                 } else {
-                    $session->pushUserContext(CRM_Utils_System::url('civicrm/contact/dedupefind', 
-                                                                    "reset=1&action=update&rgid={$this->_rgid}"));
+                    $session->pushUserContext( CRM_Utils_System::url( 'civicrm/contact/dedupefind', 
+                                                                      "reset=1&action=update&rgid={$this->_rgid}") );
                 }
             }
             $this->assign('action', $this->action);

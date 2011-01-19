@@ -641,13 +641,6 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
                 CRM_Core_DAO::executeQuery( $query );
             }
             civicrm_contact_delete($otherParams);
-
-            //clear cache
-            $cacheQuery = "DELETE FROM civicrm_dedupe_exception 
-                           WHERE  contact_id1 = {$this->_oid} OR
-                                  contact_id2 = {$this->_oid}";
-            CRM_Core_DAO::executeQuery( $cacheQuery );
-
         } else {
             CRM_Core_Session::setStatus(ts('Do not have sufficient permission to delete duplicate contact.'));
         }
@@ -667,7 +660,6 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         $exception = new CRM_Dedupe_DAO_Exception( );
         $exception->contact_id1 = $cid;
         $exception->contact_id2 = $oid;
-        $exception->cacheKey    = 'null';
         //make sure contact2 > contact1.
         if ( $cid > $oid ) {
             $exception->contact_id1 = $oid;
