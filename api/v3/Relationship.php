@@ -52,6 +52,8 @@ require_once 'CRM/Contact/BAO/RelationshipType.php';
  * @return array (reference) id of created or updated record
  * @static void
  * @access public
+ * @todo date handling is 'funky' check difference in tests between update & create. current create test won't work if end_date is same format as start_date
+ * @todo create should handle update.
  */
 function civicrm_relationship_create( &$params ) {
   _civicrm_initialize( );
@@ -179,6 +181,7 @@ function civicrm_relationship_update( $params ) {
            }
        }
        $params = array_merge($current_values, $params);
+
        $params['start_date'] = date("Ymd", strtotime($params['start_date']));
        $params['end_date'] = date("Ymd", strtotime($params['end_date']));
        
@@ -376,7 +379,12 @@ function _civicrm_relationship_format_params( &$params, &$values ) {
     return array();
 }
 function _civicrm_relationship_check_params( &$params ) {
-
+    if(is_array($params['end_date'])){
+     $params['end_date'] = date("Ymd", strtotime($params['end_date']));
+    }  
+    if(is_array($params['start_date'])){ 
+     $params['start_date'] = date("Ymd", strtotime($params['start_date']));
+    }
     // check params for validity of Relationship id
     if ( CRM_Utils_Array::value( 'id', $params ) ) {
         require_once 'CRM/Contact/BAO/Relationship.php';

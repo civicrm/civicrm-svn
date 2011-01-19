@@ -224,6 +224,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
                          'contact_id_b'         => $this->_cId_b,
                          'relationship_type_id' => $this->_relTypeID,
                          'start_date'           => array('d'=>'10','M'=>'1','Y'=>'2008'),
+                         'end_date'             => array('d'=>'10','M'=>'1','Y'=>'2009'),
                          'is_active'            => 1,
                          'note'                 => 'note',
                          'version'							=> $this->_apiversion,
@@ -524,8 +525,8 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
                                'contact_id_a'         => $this->_cId_a,
                                'contact_id_b'         => $this->_cId_b,
                                'relationship_type_id' => $this->_relTypeID,
-                               'start_date'           => array('d'=>'10','M'=>'1','Y'=>'2008'),
-                               'end_date'             => array('d'=>'10','M'=>'1','Y'=>'2009'),
+                               'start_date'           => '20081214',
+                               'end_date'             => '20091214',
                                'is_active'            => 1,
                                'version'							=> $this->_apiversion,
                                );
@@ -540,15 +541,15 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
                         'contact_id_a'         => $this->_cId_a,
                         'contact_id_b'         => $this->_cId_b,
                         'relationship_type_id' => $this->_relTypeID,
-                        'start_date'           => array('d'=>'10','M'=>'1','Y'=>'2008'),
-                        'end_date'             => array('d'=>'10','M'=>'1','Y'=>'2009'),
-                        'is_active'            => 0,
+                        'start_date'           => '20081214',
+                        'end_date'             => '20091214',                       'is_active'            => 0,
                         'version'							 => $this->_apiversion,
                         );
         
         $result = & civicrm_relationship_update( $params );
-      
+        
         $this->assertEquals( $result['is_error'], 1 );
+        $this->assertEquals( $result['error_message'], 'Relationship already exists' );
         //delete created relationship
         $params = array();
         $params['id']=$this->_relationID;
