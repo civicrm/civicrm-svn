@@ -421,4 +421,26 @@ class CRM_Campaign_Page_AJAX
         CRM_Utils_System::civiExit( );
     }
     
+    function allActiveCampaigns( ) 
+    {
+        require_once 'CRM/Utils/JSON.php';
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, true, false );
+        $options   = array( array( 'value' => '',
+                                   'title'  => ts('- select -') ) );
+        foreach ( $campaigns as $value => $title ) {
+            $options[] = array( 'value' => $value,
+                                'title' => $title );
+        }
+        $status = 'fail';
+        if ( count( $options ) > 1 ) $status = 'success';  
+        
+        $results = array( 'status'    => $status,
+                          'campaigns' => $options );
+        
+        echo json_encode( $results );
+        
+        CRM_Utils_System::civiExit( );
+    }
+
 }

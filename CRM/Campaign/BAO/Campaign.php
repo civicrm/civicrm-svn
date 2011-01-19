@@ -358,8 +358,16 @@ SELECT  camp.id, camp.title
         $campaignDetails = self::getPermissionedCampaigns( $connectedCampaignId );
         $fields = array( 'campaigns', 'hasAccessCampaign', 'isCampaignEnabled' );
         foreach ( $fields as $fld ) $$fld = CRM_Utils_Array::value( $fld, $campaignDetails ); 
+        
+        //lets see do we have past campaigns.
+        $hasPastCampaigns = false;
+        $allActiveCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, true, false );
+        if ( count( $allActiveCampaigns ) > count( $campaigns ) ) {
+            $hasPastCampaigns = true;
+        }
         $hasCampaigns = false;
         if ( !empty( $campaigns ) ) $hasCampaigns = true;
+        if ( !$hasCampaigns && $hasPastCampaigns ) $hasCampaigns = true;  
         
         $showAddCampaign = false;
         if ( $connectedCampaignId || ( $isCampaignEnabled && $hasAccessCampaign ) ) {
@@ -376,11 +384,22 @@ SELECT  camp.id, camp.title
         if ( empty( $campaigns ) && $hasAccessCampaign && $isCampaignEnabled ) {
             $addCampaignURL = CRM_Utils_System::url( 'civicrm/campaign/add', 'reset=1' );
         }
-        $infoFields = array( 'hasCampaigns', 
+        
+        $includePastCampaignURL = null;
+        if ( $hasPastCampaigns ) {
+            $includePastCampaignURL = CRM_Utils_System::url( 'civicrm/ajax/rest', 
+                                                             'className=CRM_Campaign_Page_AJAX&fnName=allActiveCampaigns',
+                                                             false, null, false ); 
+        }
+        
+        //carry this info to templates.
+        $infoFields = array( 'hasCampaigns',
                              'addCampaignURL', 
                              'showAddCampaign', 
+                             'hasPastCampaigns',
                              'hasAccessCampaign', 
-                             'isCampaignEnabled' );
+                             'isCampaignEnabled',
+                             'includePastCampaignURL' );
         foreach ( $infoFields as $fld ) $campaignInfo[$fld] = $$fld; 
         $form->assign( 'campaignInfo', $campaignInfo );
     }
