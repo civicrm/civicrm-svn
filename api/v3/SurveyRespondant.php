@@ -23,7 +23,7 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*/
+ */
 
 /**
  * File for the CiviCRM APIv3 Petition Signatures functions
@@ -49,18 +49,19 @@ require_once 'CRM/Campaign/BAO/Petition.php';
  * @access public
  */
 function &civicrm_survey_respondant_get( &$params ) {
-    _civicrm_initialize( );
+  _civicrm_initialize( );
+  try{
 
     if ( empty( $params ) ) {
-        return civicrm_create_error( ts( 'No input parameters present' ) );
+      return civicrm_create_error( ts( 'No input parameters present' ) );
     }
 
     if ( ! is_array( $params ) ) {
-        return civicrm_create_error( ts( 'Input parameters is not an array' ) );
+      return civicrm_create_error( ts( 'Input parameters is not an array' ) );
     }
-   
+     
     if ( !array_key_exists ( 'survey_id', $params ) ) {
-       return ( civicrm_create_error( 'survey_id mandatory' ) );
+      return ( civicrm_create_error( 'survey_id mandatory' ) );
     }
 
     if (array_key_exists ( 'status_id', $params ) ) {
@@ -68,14 +69,22 @@ function &civicrm_survey_respondant_get( &$params ) {
     } else {
       $status_id=null;
     }
-    
+
     $petition = new CRM_Campaign_BAO_Petition();
     $signatures = $petition->getPetitionSignature($params['survey_id'],$status_id);
     return ($signatures);
+
+  } catch (PEAR_Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  }
 }
 
 function &civicrm_survey_respondant_count( &$params ) {
-    _civicrm_initialize( );
+  _civicrm_initialize( );
+  try{
+
     $petition = new CRM_Campaign_BAO_Petition();
     if (array_key_exists ('groupby',$params) && $params['groupby'] == 'country' ) {
       $signaturesCount = $petition->getPetitionSignatureTotalbyCountry($params['survey_id']);
@@ -83,4 +92,10 @@ function &civicrm_survey_respondant_count( &$params ) {
       $signaturesCount = $petition->getPetitionSignatureTotal($params['survey_id']);
     }
     return ($signaturesCount);
+
+  } catch (PEAR_Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  }
 }
