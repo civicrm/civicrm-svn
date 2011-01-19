@@ -52,6 +52,9 @@ class CRM_Mailing_Form_Search extends CRM_Core_Form {
         $this->add( 'text', 'sort_name', ts( 'Created or Sent by' ), 
                     CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'sort_name') );
         
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        CRM_Campaign_BAO_Campaign::addCampaignInComponentSearch( $this );
+        
         $this->addButtons(array( 
                                 array ('type'      => 'refresh', 
                                        'name'      => ts('Search'), 
@@ -64,16 +67,16 @@ class CRM_Mailing_Form_Search extends CRM_Core_Form {
         
         $parent = $this->controller->getParent( );
         if ( ! empty( $params ) ) {
-            $fields = array( 'mailing_name', 'mailing_from', 'mailing_to', 'sort_name' );
+            $fields = array( 'mailing_name', 'mailing_from', 'mailing_to', 'sort_name', 'campaign_id' );
             foreach ( $fields as $field ) {
                 if ( isset( $params[$field] ) &&
                      ! CRM_Utils_System::isNull( $params[$field] ) ) { 
-                         if ( substr( $field, -4 ) != 'name' ) { 
-                             $time = ( $field == 'mailing_to' ) ? '235959' : null;
-                             $parent->set( $field, CRM_Utils_Date::processDate( $params[$field], $time ) );
-                         } else {
-                            $parent->set( $field, $params[$field] );
-                        }
+                    if ( in_array( $field, array( 'mailing_from', 'mailing_to' ) ) ) { 
+                        $time = ( $field == 'mailing_to' ) ? '235959' : null;
+                        $parent->set( $field, CRM_Utils_Date::processDate( $params[$field], $time ) );
+                    } else {
+                        $parent->set( $field, $params[$field] );
+                    }
                 } else {
                     $parent->set( $field, null );
                 }

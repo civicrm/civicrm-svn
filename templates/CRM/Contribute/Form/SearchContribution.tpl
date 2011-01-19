@@ -45,5 +45,10 @@
             </div>
         </td>
     </tr>
+
+    {* campaign in contribution page search *}
+    {include file="CRM/Campaign/Form/addCampaignToComponent.tpl" 
+    campaignContext="componentSearch" campaignTrClass='' campaignTdClass=''}
+
  </table>
 </div>

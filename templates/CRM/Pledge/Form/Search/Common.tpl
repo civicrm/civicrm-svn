@@ -114,6 +114,11 @@
      {$form.pledge_frequency_unit.html}
     </td>
  </tr>
+
+{* campaign in pledge search *}
+{include file="CRM/Campaign/Form/addCampaignToComponent.tpl" 
+campaignContext="componentSearch" campaignTrClass='' campaignTdClass=''}
+
 {if $pledgeGroupTree}
  <tr>
     <td colspan="2">

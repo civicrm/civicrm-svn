@@ -83,7 +83,7 @@ class CRM_Campaign_PseudoConstant extends CRM_Core_PseudoConstant
                                                                                $returnColumn );
             }
         }
-        
+        asort( self::$activityType[$cacheKey] );
         return self::$activityType[$cacheKey];
     }
 
@@ -103,6 +103,7 @@ class CRM_Campaign_PseudoConstant extends CRM_Core_PseudoConstant
             require_once 'CRM/Core/OptionGroup.php';
             self::$campaignType = CRM_Core_OptionGroup::values('campaign_type');
         }
+        asort( self::$campaignType );
         return self::$campaignType;
     }
     
@@ -122,6 +123,7 @@ class CRM_Campaign_PseudoConstant extends CRM_Core_PseudoConstant
             require_once 'CRM/Core/OptionGroup.php';
             self::$campaignStatus = CRM_Core_OptionGroup::values('campaign_status');
         }
+        asort( self::$campaignStatus );
         return self::$campaignStatus;
     }
     

@@ -353,6 +353,13 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
                     $year = $year + 1;
                 } 
                 
+                //CRM-7392 --now we have all dates in hand,
+                //in case join date is less than fixed start and 
+                //calculated roll over date, lets reduce year by one 
+                if ( ( $joinDate < $fixedStartDate ) && ( $joinDate < $actualRolloverDate ) ) {
+                    $year = $year - 1;
+                }
+                
                 $actualStartDate = date( 'Y-m-d', mktime( 0, 0, 0, $startMonth, $startDay, $year ) );
                 if ( !$startDate ) {
                     $startDate = $actualStartDate;

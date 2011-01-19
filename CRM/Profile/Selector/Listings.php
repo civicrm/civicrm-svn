@@ -504,7 +504,11 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
         if ( $this->_linkToUF ) {
             require_once 'api/v2/UFGroup.php';
         }
-        
+
+        // we need to determine of overlay profile should be shown
+        require_once 'CRM/Core/BAO/UFGroup.php';
+        $showProfileOverlay = CRM_Core_BAO_UFGroup::showOverlayProfile( );
+
         $imProviders  = CRM_Core_PseudoConstant::IMProvider( );
         $websiteTypes = CRM_Core_PseudoConstant::websiteType( );
         $languages    = CRM_Core_PseudoConstant::languages( );
@@ -520,7 +524,8 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
             $row[] = CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_sub_type ? 
                                                               $result->contact_sub_type : $result->contact_type,
                                                               false,
-                                                              $result->contact_id );
+                                                              $result->contact_id,
+                                                              $showProfileOverlay );
             if ( $result->sort_name ) {
                 $row['sort_name'] = $result->sort_name;
                 $empty            = false;

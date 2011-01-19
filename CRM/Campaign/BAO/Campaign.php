@@ -379,7 +379,7 @@ SELECT  camp.id, camp.title
      * and assign needful info to templates.
      *
      */
-    public static function addCampaignInComponentSearch( &$form, $elementName ) 
+    public static function addCampaignInComponentSearch( &$form, $elementName = 'campaign_id' ) 
     {
         $campaignInfo = array( );
         $campaignDetails = self::getPermissionedCampaigns( null, null, false, true );
@@ -387,8 +387,23 @@ SELECT  camp.id, camp.title
         foreach ( $fields as $fld ) $$fld = CRM_Utils_Array::value( $fld, $campaignDetails ); 
         $showCampaignInSearch = false;
         if ( $isCampaignEnabled && $hasAccessCampaign && !empty( $campaigns ) ) {
+            //get the current campaign only.
+            $currentCampaigns = self::getCampaigns( null, null, false );
+            $pastCampaigns    = array_diff( $campaigns, $currentCampaigns );
+            $allCampaigns = array( );
+            if ( !empty( $currentCampaigns ) ) {
+                $allCampaigns = array( 'current_campaign' => ts( 'Current Campaigns' ) );
+                foreach ( $currentCampaigns as &$camp ) $camp = "&nbsp;&nbsp;&nbsp;{$camp}"; 
+                $allCampaigns += $currentCampaigns;
+            }
+            if ( !empty( $pastCampaigns ) ) {
+                $allCampaigns += array( 'past_campaign' => ts( 'Past Campaigns' ) );
+                foreach ( $pastCampaigns as &$camp ) $camp = "&nbsp;&nbsp;&nbsp;{$camp}"; 
+                $allCampaigns += $pastCampaigns;
+            }
+            
             $showCampaignInSearch = true;
-            $form->add( 'select', $elementName,  ts( 'Campaigns' ), $campaigns, false, 
+            $form->add( 'select', $elementName,  ts( 'Campaigns' ), $allCampaigns, false, 
                         array( 'id' => 'campaigns',  'multiple' => 'multiple', 'title' => ts('- select -') ));
         }
         $infoFields = array( 'elementName',

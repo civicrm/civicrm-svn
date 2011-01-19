@@ -39,13 +39,16 @@ class CRM_Contact_BAO_Contact_Utils
     /**
      * given a contact type, get the contact image
      *
-     * @param string $contact_type
+     * @param string  $contactType contact type
+     * @param boolean $urlOnly  if we need to return only image url
+     * @param int     $contactId contact id
+     * @param boolean $addProfileOverlay  if profile overlay class should be added
      *
      * @return string
      * @access public
      * @static
      */
-    static function getImage( $contactType, $urlOnly = false, $contactId = null ) 
+    static function getImage( $contactType, $urlOnly = false, $contactId = null, $addProfileOverlay = true ) 
     {
         static $imageInfo = array( );
         if ( ! array_key_exists( $contactType, $imageInfo ) ) {
@@ -83,12 +86,16 @@ class CRM_Contact_BAO_Contact_Utils
             }
         }
         
-        $summaryOverlayProfileId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 'summary_overlay', 'id', 'name' );
+        if ( $addProfileOverlay ) {
+            $summaryOverlayProfileId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 'summary_overlay', 'id', 'name' );
         
-        $profileURL = CRM_Utils_System::url('civicrm/profile/view', "reset=1&gid={$summaryOverlayProfileId}&id={$contactId}&snippet=4");
+            $profileURL = CRM_Utils_System::url('civicrm/profile/view', "reset=1&gid={$summaryOverlayProfileId}&id={$contactId}&snippet=4");
         
-        $imageInfo[$contactType]['summary-link'] = '<a href="'.$profileURL.'" class="crm-summary-link">'.$imageInfo[$contactType]["image"].'</a>';
-        
+            $imageInfo[$contactType]['summary-link'] = '<a href="'.$profileURL.'" class="crm-summary-link">'.$imageInfo[$contactType]["image"].'</a>';
+        } else {
+            $imageInfo[$contactType]['summary-link'] = $imageInfo[$contactType]['image'];
+        }
+
         return $urlOnly ? $imageInfo[$contactType]['url'] : $imageInfo[$contactType]['summary-link'];
     }
     

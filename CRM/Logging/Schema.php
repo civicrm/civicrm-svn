@@ -240,7 +240,7 @@ COLS;
      */
     function createTriggersFor($table)
     {
-        if (!$this->isEnabled()) return;
+        if ($table != 'civicrm_contact' and !$this->isEnabled()) return;
 
         $columns = $this->columnsOf($table);
 

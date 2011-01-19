@@ -2684,4 +2684,30 @@ SELECT  group_id
         }
         return $mixProfile;
     }
+
+    /**
+     * Funtion to determine of we show overlay profile or not
+     *
+     * @return boolean true if profile should be shown else false
+     * @static
+     * @access public
+     */
+    static function showOverlayProfile( ) {
+        $showOverlay = true;
+        
+        // get the id of overlay profile
+        $overlayProfileId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 'summary_overlay', 'id', 'name' );
+        $query = "SELECT count(id) FROM civicrm_uf_field WHERE uf_group_id = {$overlayProfileId} AND visibility IN ('Public Pages', 'Public Pages and Listings') ";
+
+        $count = CRM_Core_DAO::singleValueQuery( $query );
+
+        //check if there are no public fields and use is anonymous 
+        $session  = CRM_Core_Session::singleton( );
+        if ( !$count && !$session->get( 'userID' ) ) {
+            $showOverlay = false;
+        }
+
+        return $showOverlay;
+    }
+
 }

@@ -84,7 +84,7 @@ class CRM_Member_Selector_Search extends CRM_Core_Selector_Base implements CRM_C
                                  'member_is_test',
                                  'owner_membership_id',
                                  'membership_status',
-                                 'membership_campaign_id'
+                                 'member_campaign_id'
                                  );
 
     /** 
@@ -365,8 +365,8 @@ class CRM_Member_Selector_Search extends CRM_Core_Selector_Base implements CRM_C
              }
              
              //carry campaign on selectors.
-             $row['campaign'] = CRM_Utils_Array::value( $result->membership_campaign_id, $allCampaigns );
-             $row['campaign_id'] = $result->membership_campaign_id;
+             $row['campaign'] = CRM_Utils_Array::value( $result->member_campaign_id, $allCampaigns );
+             $row['campaign_id'] = $result->member_campaign_id;
              
              if ( CRM_Utils_Array::value('member_is_test', $row) ) {
                  $row['membership_type'] = $row['membership_type'] . " (test)";

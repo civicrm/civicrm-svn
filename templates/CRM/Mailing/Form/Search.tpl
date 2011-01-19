@@ -41,6 +41,11 @@
             {$form.sort_name.html|crmReplace:class:big} {help id="id-create_sort_name"}
         </td>
     </tr>
+
+    {* campaign in mailing search *}
+    {include file="CRM/Campaign/Form/addCampaignToComponent.tpl" 
+    campaignContext="componentSearch" campaignTrClass='' campaignTdClass=''}
+
     <tr>
         <td>{$form.buttons.html}</td><td colspan="2"></td>
     </tr>

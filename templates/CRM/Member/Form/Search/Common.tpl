@@ -91,6 +91,11 @@
      {include file="CRM/common/jcalendar.tpl" elementName=member_end_date_high}
     </td> 
 </tr> 
+
+{* campaign in membership search *}
+{include file="CRM/Campaign/Form/addCampaignToComponent.tpl" campaignContext="componentSearch" 
+campaignTrClass='' campaignTdClass=''}
+
 {if $membershipGroupTree}
 <tr>
     <td colspan="4">
