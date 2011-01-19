@@ -440,7 +440,6 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     private function _contactCreate( $params ) {
         require_once 'api/api.php';
         $result = civicrm_api( 'civicrm_contact_create','Contact',$params );
-
         if ( CRM_Utils_Array::value( 'is_error', $result ) ||
              ! CRM_Utils_Array::value( 'contact_id', $result ) ) {
             throw new Exception( 'Could not create test contact.' );
@@ -610,7 +609,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         'role_id'       => 1,
                         'register_date' => 20070219,
                         'source'        => 'Wimbeldon',
-                        'event_level'   => 'Payment'
+                        'event_level'   => 'Payment',
+                        'version'				=> $apiversion
                         );
         
         $result = civicrm_participant_create( $params );
@@ -811,7 +811,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     {
         // if no contact was passed, make up a dummy event creator
         if (!isset($params['contact_id'])) {
-            $params['contact_id'] = $this->_contactCreate(array('contact_type' => 'Individual', 'first_name' => 'Event', 'last_name' => 'Creator'));
+            $params['contact_id'] = $this->_contactCreate(array('contact_type' => 'Individual', 'first_name' => 'Event', 'last_name' => 'Creator','version' => $apiversion));
         }
         // set defaults for missing params
         $params = array_merge(array(

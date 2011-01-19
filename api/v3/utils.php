@@ -724,9 +724,9 @@ function _civicrm_check_required_fields( &$params, $daoName, $throwException = f
 
     if (!empty($missing)) {
         if ($throwException) {
-          throw new Exception ("Required fields ". implode(',', $missing) . " for $daoName are not found");
+          throw new Exception ("Required fields ". implode(',', $missing) . " for $daoName are not present");
         }
-        return civicrm_create_error(ts("Required fields ". implode(',', $missing) . " for $daoName are not found"));
+        return civicrm_create_error(ts("Required fields ". implode(',', $missing) . " for $daoName are not present"));
     }
 
     return true;

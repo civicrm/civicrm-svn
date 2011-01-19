@@ -54,13 +54,16 @@ require_once 'CRM/Contact/BAO/RelationshipType.php';
  * @access public
  */
 function civicrm_relationship_create( &$params ) {
-    _civicrm_initialize( );
-
+  _civicrm_initialize( );
+  try{
+        
     // check params for required fields (add/update)
-    $error = _civicrm_relationship_check_params( $params );
-    if ( civicrm_error( $error ) ) {
-        return $error;
-    }
+    static $required = array( 'contact_id_a', 
+                              'contact_id_b',
+                              array('relationship_type_id' , 'relationship_type'));
+    civicrm_verify_mandatory($params,'CRM_Contact_DAO_Relationship',$required);
+    // check entities exist
+    _civicrm_relationship_check_params( $params );
     $values = array( );
     require_once 'CRM/Contact/BAO/Relationship.php';
     $error = _civicrm_relationship_format_params( $params, $values );
@@ -95,6 +98,11 @@ function civicrm_relationship_create( &$params ) {
     CRM_Contact_BAO_Relationship::relatedMemberships( $params['contact_id_a'], $values, $ids, $action );
 
     return civicrm_create_success( array( 'id' => implode( ',', $relationshipBAO[4] ) ) );
+  } catch (PEAR_Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  }
 }
 
 /**
@@ -142,7 +150,7 @@ function civicrm_relationship_delete( $params ) {
  * @param  array $params   Associative array of property name/value pairs to update the relationship
  *
  * @return array Array with relationship information
- *
+ * @todo update is not in our crud scheme
  * @access public
  *
  */
@@ -189,24 +197,6 @@ function civicrm_relationship_update( $params ) {
 /**
  * Function to get the relationship
  *
- * @param array   $params          (reference ) input parameters 
-         param['contact_id'] is mandatory
- * @return        Array of all relationship.
- *
- * @access  public
- */
-function civicrm_relationship_get( $params ) {
-    if ( !isset( $params['contact_id'] ) ) {
-        return civicrm_create_error(  'Could not find contact_id in input parameters.'  );
-    }
-
-    return civicrm_contact_relationship_get( $params );
-}
-
-
-/**
- * Function to get the relationship
- *
  * @param array   $contact_a          (reference ) input parameters.
  * @param array   $contact_b          (reference ) input parameters.
  * @param array   $relationshipTypes  an array of Relationship Type Name.
@@ -216,7 +206,7 @@ function civicrm_relationship_get( $params ) {
  *
  * @access  public
  */
-function civicrm_contact_relationship_get( $contact_a, $contact_b = null, $relationshipTypes = null, $sort = null ) 
+function civicrm_relationship_get( $contact_a, $contact_b = null, $relationshipTypes = null, $sort = null ) 
 {
     if ( ! is_array( $contact_a ) ) {
         return civicrm_create_error(  'Input parameter is not an array'  );
@@ -385,33 +375,8 @@ function _civicrm_relationship_format_params( &$params, &$values ) {
     
     return array();
 }
-
-
-/**
- * This function ensures that we have the right input parameters
- *
- * We also need to make sure we run all the form rules on the params list
- * to ensure that the params are valid
- *
- * @param array  $params       Associative array of property name/value
- *                             pairs to insert in new relationship.
- *
- * @return bool|CRM_Utils_Error
- * @access private
- */
 function _civicrm_relationship_check_params( &$params ) {
-    static $required = array( 'contact_id_a'          => null, 
-                              'contact_id_b'          => null,
-                              'relationship_type_id'  => 'relationship_type');
-    
-    // params should be an array
-    if ( ! is_array( $params ) ) {
-        return civicrm_create_error( 'Input parameter is not an array' );
-    }
-    // cannot create with empty params
-    if ( empty( $params ) ) {
-        return civicrm_create_error( 'Input Parameters empty' );
-    }
+
     // check params for validity of Relationship id
     if ( CRM_Utils_Array::value( 'id', $params ) ) {
         require_once 'CRM/Contact/BAO/Relationship.php';
@@ -427,21 +392,7 @@ function _civicrm_relationship_check_params( &$params ) {
         }
     }
     
-    $valid = true;
-    $error = '';
-    foreach ( $required as $field => $eitherField ) {
-        if ( ! CRM_Utils_Array::value( $field, $params ) ) {
-            if ( $eitherField && CRM_Utils_Array::value( $eitherField, $params ) ) {
-                continue;
-            }
-            $valid  = false;
-            $error .= " $field";
-        }
-    }
-    
-    if ( ! $valid ) {
-        return civicrm_create_error( 'Required fields not found' . $error );
-    }
+ 
     
     return array();
 }
