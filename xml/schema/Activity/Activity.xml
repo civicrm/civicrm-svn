@@ -345,7 +345,7 @@
   <field> 
        <name>campaign_id</name> 
        <type>int unsigned</type>
-       <title>Campaign ID</title>
+       <title>Campaign</title>
        <import>true</import> 
        <comment>The campaign for which this activity has been triggered.</comment> 
        <add>3.4</add> 
