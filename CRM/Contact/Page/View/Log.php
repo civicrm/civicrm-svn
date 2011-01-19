@@ -45,6 +45,29 @@ class CRM_Contact_Page_View_Log extends CRM_Core_Page {
      * @access public
      */
     function browse( ) {
+        
+        $useLogging = false;
+
+        require_once 'CRM/Logging/Schema.php';
+        $loggingSchema = new CRM_Logging_Schema( );
+        if ( $loggingSchema->isEnabled() ) {
+            require_once 'CRM/Report/BAO/Instance.php';
+            $params   = array( 'report_id' => 'logging/contact/summary' );
+            $instance = array( );
+            CRM_Report_BAO_Instance::retrieve($params, $instance);
+            
+            if ( !empty($instance) ) {
+                $this->assign( 'instanceUrl',  CRM_Utils_System::url( "civicrm/report/instance/{$instance['id']}", 'reset=1&force=1&snippet=4&section=2&id_op=eq&id_value='.$this->_contactId, false, null, false ) );
+                $useLogging = true;
+            }
+            
+        }
+        $this->assign( 'useLogging', $useLogging );
+        
+        if ( $useLogging ) {
+            return;
+        }
+        
         require_once 'CRM/Core/DAO/Log.php';
 
         $log = new CRM_Core_DAO_Log( );

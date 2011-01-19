@@ -100,6 +100,11 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
                         'title'        => ts('Action'),
                         'type'         => CRM_Utils_Type::T_STRING,
                     ),
+                    'id' => array(
+                                  'no_display' => true,
+                                  'type'       => CRM_Utils_Type::T_INT 
+                                  ),
+
                 ),
             ),
             'civicrm_contact' => array(
@@ -201,37 +206,6 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
     {
         parent::where();
         $this->_where .= " AND (log_action != 'Initialization')";
-        $clauses = array( );
-        foreach ( $this->_columns as $tableName => $table ) {
-            if ( array_key_exists('filters', $table) ) { 
-                foreach ( $table['filters'] as $fieldName => $field ) {                    
-                    $clause = null;
-                    if ( CRM_Utils_Array::value( 'type', $field ) & CRM_Utils_Type::T_DATE ) {
-                        $relative = CRM_Utils_Array::value( "{$fieldName}_relative", $this->_params );
-                        $from     = CRM_Utils_Array::value( "{$fieldName}_from"    , $this->_params );
-                        $to       = CRM_Utils_Array::value( "{$fieldName}_to"      , $this->_params );
-                        
-                        if ( $relative || $from || $to ) {
-                            $clause = $this->dateClause( $field['name'], $relative, $from, $to, $field['type'] );
-                        }
-                    } else { 
-                        $op = CRM_Utils_Array::value( "{$fieldName}_op", $this->_params );
-                        if ( $op ) {
-                            $clause = 
-                                $this->whereClause( $field,
-                                                    $op,
-                                                    CRM_Utils_Array::value( "{$fieldName}_value", $this->_params ),
-                                                    CRM_Utils_Array::value( "{$fieldName}_min", $this->_params ),
-                                                    CRM_Utils_Array::value( "{$fieldName}_max", $this->_params ) );
-                        }
-                    }
-                    if ( ! empty( $clause ) ) {
-                        $clauses[] = $clause;
-                        $this->_where = "WHERE " . implode( ' AND ', $clauses ); 
-                    }
-                    
-                }
-            }
-        } 
     }
+
 }

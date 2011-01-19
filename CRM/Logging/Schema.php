@@ -311,7 +311,7 @@ COLS;
     /**
      * Predicate whether logging is enabled.
      */
-    private function isEnabled()
+    public function isEnabled()
     {
         return $this->tablesExist() and $this->triggersExist();
     }
