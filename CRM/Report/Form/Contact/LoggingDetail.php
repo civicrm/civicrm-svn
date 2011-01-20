@@ -150,8 +150,7 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         // return early if nothing found
         if (empty($diffs)) return array();
 
-        $titles = $differ->titlesForTable($table);
-        $values = $differ->valuesForTable($table);
+        list($titles, $values) = $differ->titlesAndValuesForTable($table);
 
         $rows = array();
 

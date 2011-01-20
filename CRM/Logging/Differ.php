@@ -89,35 +89,9 @@ class CRM_Logging_Differ
         return $rows;
     }
 
-    function titlesForTable($table)
+    function titlesAndValuesForTable($table)
     {
         $titles = array();
-
-        $daos = array(
-            'log_civicrm_address' => 'CRM_Core_DAO_Address',
-            'log_civicrm_contact' => 'CRM_Contact_DAO_Contact',
-            'log_civicrm_email'   => 'CRM_Core_DAO_Email',
-            'log_civicrm_im'      => 'CRM_Core_DAO_IM',
-            'log_civicrm_openid'  => 'CRM_Core_DAO_OpenID',
-            'log_civicrm_phone'   => 'CRM_Core_DAO_Phone',
-            'log_civicrm_website' => 'CRM_Core_DAO_Website',
-        );
-
-        if (in_array($table, array_keys($daos))) {
-            require_once str_replace('_', DIRECTORY_SEPARATOR, $daos[$table]) . '.php';
-            eval("\$dao = new $daos[$table];");
-            foreach ($dao->fields() as $field) {
-                $titles[$field['name']] = $field['title'];
-            }
-        } elseif (substr($table, 0, 18) == 'log_civicrm_value_') {
-            $titles = $this->titlesForCustomDataTable($table);
-        }
-
-        return $titles;
-    }
-
-    function valuesForTable($table)
-    {
         $values = array();
 
         $daos = array(
@@ -130,35 +104,37 @@ class CRM_Logging_Differ
             'log_civicrm_website' => 'CRM_Core_DAO_Website',
         );
 
-        // FIXME: these should be populated with pseudo constants as they
-        // were at the time of logging rather than their current values
-        $values = array(
-            'country_id'                     => CRM_Core_PseudoConstant::country(),
-            'gender_id'                      => CRM_Core_PseudoConstant::gender(),
-            'location_type_id'               => CRM_Core_PseudoConstant::locationType(),
-            'phone_type_id'                  => CRM_Core_PseudoConstant::phoneType(),
-            'preferred_communication_method' => CRM_Core_PseudoConstant::pcm(),
-            'preferred_language'             => CRM_Core_PseudoConstant::languages(),
-            'prefix_id'                      => CRM_Core_PseudoConstant::individualPrefix(),
-            'provider_id'                    => CRM_Core_PseudoConstant::IMProvider(),
-            'state_province_id'              => CRM_Core_PseudoConstant::stateProvince(),
-            'suffix_id'                      => CRM_Core_PseudoConstant::individualSuffix(),
-            'website_type_id'                => CRM_Core_PseudoConstant::websiteType(),
-        );
-
         if (in_array($table, array_keys($daos))) {
+            // FIXME: these should be populated with pseudo constants as they
+            // were at the time of logging rather than their current values
+            $values = array(
+                'country_id'                     => CRM_Core_PseudoConstant::country(),
+                'gender_id'                      => CRM_Core_PseudoConstant::gender(),
+                'location_type_id'               => CRM_Core_PseudoConstant::locationType(),
+                'phone_type_id'                  => CRM_Core_PseudoConstant::phoneType(),
+                'preferred_communication_method' => CRM_Core_PseudoConstant::pcm(),
+                'preferred_language'             => CRM_Core_PseudoConstant::languages(),
+                'prefix_id'                      => CRM_Core_PseudoConstant::individualPrefix(),
+                'provider_id'                    => CRM_Core_PseudoConstant::IMProvider(),
+                'state_province_id'              => CRM_Core_PseudoConstant::stateProvince(),
+                'suffix_id'                      => CRM_Core_PseudoConstant::individualSuffix(),
+                'website_type_id'                => CRM_Core_PseudoConstant::websiteType(),
+            );
+
             require_once str_replace('_', DIRECTORY_SEPARATOR, $daos[$table]) . '.php';
             eval("\$dao = new $daos[$table];");
             foreach ($dao->fields() as $field) {
+                $titles[$field['name']] = $field['title'];
+
                 if ($field['type'] == CRM_Utils_Type::T_BOOLEAN) {
                     $values[$field['name']] = array('0' => ts('false'), '1' => ts('true'));
                 }
             }
         } elseif (substr($table, 0, 18) == 'log_civicrm_value_') {
-            $values = array_merge($values, $this->valuesForCustomDataTable($table));
+            list($titles, $values) = $this->titlesAndValuesForCustomDataTable($table);
         }
 
-        return $values;
+        return array($titles, $values);
     }
 
     private function sqlToArray($sql, $params)
@@ -168,9 +144,10 @@ class CRM_Logging_Differ
         return $dao->toArray();
     }
 
-    private function titlesForCustomDataTable($table)
+    private function titlesAndValuesForCustomDataTable($table)
     {
         $titles = array();
+        $values = array();
 
         $params = array(
             1 => array($this->log_conn_id, 'Integer'),
@@ -188,30 +165,7 @@ class CRM_Logging_Differ
 
         while ($cfDao->fetch()) {
             $titles[$cfDao->column_name] = "{$cgDao->title}: {$cfDao->label}";
-        }
 
-        return $titles;
-    }
-
-    private function valuesForCustomDataTable($table)
-    {
-        $values = array();
-
-        $params = array(
-            1 => array($this->log_conn_id, 'Integer'),
-            2 => array($this->log_date,    'String'),
-            3 => array(substr($table, 4),  'String'),
-        );
-
-        $sql = "SELECT id FROM `{$this->db}`.log_civicrm_custom_group WHERE log_date <= %2 AND table_name = %3 ORDER BY log_date DESC LIMIT 1";
-        $cgDao =& CRM_Core_DAO::executeQuery($sql, $params);
-        $cgDao->fetch();
-
-        $params[3] = array($cgDao->id, 'Integer');
-        $sql = "SELECT column_name, data_type, label, name FROM `{$this->db}`.log_civicrm_custom_field WHERE log_date <= %2 AND custom_group_id = %3 ORDER BY log_date";
-        $cfDao =& CRM_Core_DAO::executeQuery($sql, $params);
-
-        while ($cfDao->fetch()) {
             switch ($cfDao->data_type) {
             case 'Boolean':
                 $values[$cfDao->column_name] = array('0' => ts('false'), '1' => ts('true'));
@@ -232,6 +186,6 @@ class CRM_Logging_Differ
             }
         }
 
-        return $values;
+        return array($titles, $values);
     }
 }
