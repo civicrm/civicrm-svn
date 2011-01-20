@@ -2502,6 +2502,10 @@ span.icon {
     background       : white url('../i/loading.gif') no-repeat right center;
 }
 
+#crm-container .ac_loading {
+    background       : white url('../i/loading.gif') no-repeat right center;
+}
+
 /* Pop-up help icon - eliminate forced line break */
 div.helpicon {
     background  : transparent url(../i/quiz.png) no-repeat;
