@@ -33,6 +33,6 @@
     </div>
   {/if}
   <div class="action-link">
-      <a href="{$summaryReportURL}" class="button"><span><div class="icon back-icon"></div>{ts}Back to Logging Summary{/ts}</span></a>
+      <a href="{$backURL}" class="button"><span><div class="icon back-icon"></div>{ts}Back to Logging Summary{/ts}</span></a>
   </div>
 </div>

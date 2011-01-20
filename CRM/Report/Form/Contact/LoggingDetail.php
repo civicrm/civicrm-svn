@@ -43,6 +43,7 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
     private $contact_id;
     private $log_conn_id;
     private $log_date;
+    public  $cid;
 
     function __construct()
     {
@@ -53,6 +54,7 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
 
         $this->log_conn_id = CRM_Utils_Request::retrieve('log_conn_id', 'Integer', CRM_Core_DAO::$_nullObject);
         $this->log_date    = CRM_Utils_Request::retrieve('log_date',    'String',  CRM_Core_DAO::$_nullObject);
+        $this->cid         = CRM_Utils_Request::retrieve('cid',         'Integer', CRM_Core_DAO::$_nullObject);
 
         // make sure the report works even without the params
         if (!$this->log_conn_id or !$this->log_date) {
@@ -101,9 +103,14 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         // track who’s changes being monitored
         $this->contact_id = $dao->whom_id;
 
-        // link back to summary report
-        require_once 'CRM/Report/Utils/Report.php';
-        $this->assign('summaryReportURL', CRM_Report_Utils_Report::getNextUrl('logging/contact/summary', 'reset=1', false, true));
+        if ( $this->cid ) {
+            // link back to contact summary
+            $this->assign('backURL', CRM_Utils_System::url('civicrm/contact/view',  'reset=1&selectedChild=log&cid='.$this->cid, false, null, false ) );
+        } else {
+            // link back to summary report
+            require_once 'CRM/Report/Utils/Report.php';
+            $this->assign('backURL', CRM_Report_Utils_Report::getNextUrl('logging/contact/summary', 'reset=1', false, true));
+        }
 
         $rows = $this->diffsInTable('log_civicrm_contact');
 

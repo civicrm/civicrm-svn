@@ -56,8 +56,10 @@ class CRM_Contact_Page_View_Log extends CRM_Core_Page {
             $instance = array( );
             CRM_Report_BAO_Instance::retrieve($params, $instance);
             
-            if ( !empty($instance) ) {
-                $this->assign( 'instanceUrl',  CRM_Utils_System::url( "civicrm/report/instance/{$instance['id']}", 'reset=1&force=1&snippet=4&section=2&id_op=eq&id_value='.$this->_contactId, false, null, false ) );
+            if ( !empty($instance) &&
+                 ( !CRM_Utils_Array::value('permission', $instance) ||
+                   ( CRM_Utils_Array::value('permission', $instance) && CRM_Core_Permission::check( $instance['permission'] ) ) ) ) {
+                $this->assign( 'instanceUrl',  CRM_Utils_System::url( "civicrm/report/instance/{$instance['id']}", "reset=1&force=1&snippet=4&section=2&id_op=eq&id_value={$this->_contactId}&cid={$this->_contactId}", false, null, false ) );
                 $useLogging = true;
             }
             
