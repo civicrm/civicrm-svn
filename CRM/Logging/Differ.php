@@ -91,10 +91,11 @@ class CRM_Logging_Differ
 
     function titlesAndValuesForTable($table)
     {
-        $titles = array();
-        $values = array();
+        // static caches for subsequent calls with the same $table
+        static $titles = array();
+        static $values = array();
 
-        $daos = array(
+        static $daos = array(
             'log_civicrm_address' => 'CRM_Core_DAO_Address',
             'log_civicrm_contact' => 'CRM_Contact_DAO_Contact',
             'log_civicrm_email'   => 'CRM_Core_DAO_Email',
@@ -104,37 +105,40 @@ class CRM_Logging_Differ
             'log_civicrm_website' => 'CRM_Core_DAO_Website',
         );
 
-        if (in_array($table, array_keys($daos))) {
-            // FIXME: these should be populated with pseudo constants as they
-            // were at the time of logging rather than their current values
-            $values = array(
-                'country_id'                     => CRM_Core_PseudoConstant::country(),
-                'gender_id'                      => CRM_Core_PseudoConstant::gender(),
-                'location_type_id'               => CRM_Core_PseudoConstant::locationType(),
-                'phone_type_id'                  => CRM_Core_PseudoConstant::phoneType(),
-                'preferred_communication_method' => CRM_Core_PseudoConstant::pcm(),
-                'preferred_language'             => CRM_Core_PseudoConstant::languages(),
-                'prefix_id'                      => CRM_Core_PseudoConstant::individualPrefix(),
-                'provider_id'                    => CRM_Core_PseudoConstant::IMProvider(),
-                'state_province_id'              => CRM_Core_PseudoConstant::stateProvince(),
-                'suffix_id'                      => CRM_Core_PseudoConstant::individualSuffix(),
-                'website_type_id'                => CRM_Core_PseudoConstant::websiteType(),
-            );
+        if (!isset($titles[$table]) or !isset($values[$table])) {
 
-            require_once str_replace('_', DIRECTORY_SEPARATOR, $daos[$table]) . '.php';
-            eval("\$dao = new $daos[$table];");
-            foreach ($dao->fields() as $field) {
-                $titles[$field['name']] = $field['title'];
+            if (in_array($table, array_keys($daos))) {
+                // FIXME: these should be populated with pseudo constants as they
+                // were at the time of logging rather than their current values
+                $values[$table] = array(
+                    'country_id'                     => CRM_Core_PseudoConstant::country(),
+                    'gender_id'                      => CRM_Core_PseudoConstant::gender(),
+                    'location_type_id'               => CRM_Core_PseudoConstant::locationType(),
+                    'phone_type_id'                  => CRM_Core_PseudoConstant::phoneType(),
+                    'preferred_communication_method' => CRM_Core_PseudoConstant::pcm(),
+                    'preferred_language'             => CRM_Core_PseudoConstant::languages(),
+                    'prefix_id'                      => CRM_Core_PseudoConstant::individualPrefix(),
+                    'provider_id'                    => CRM_Core_PseudoConstant::IMProvider(),
+                    'state_province_id'              => CRM_Core_PseudoConstant::stateProvince(),
+                    'suffix_id'                      => CRM_Core_PseudoConstant::individualSuffix(),
+                    'website_type_id'                => CRM_Core_PseudoConstant::websiteType(),
+                );
 
-                if ($field['type'] == CRM_Utils_Type::T_BOOLEAN) {
-                    $values[$field['name']] = array('0' => ts('false'), '1' => ts('true'));
+                require_once str_replace('_', DIRECTORY_SEPARATOR, $daos[$table]) . '.php';
+                eval("\$dao = new $daos[$table];");
+                foreach ($dao->fields() as $field) {
+                    $titles[$table][$field['name']] = $field['title'];
+
+                    if ($field['type'] == CRM_Utils_Type::T_BOOLEAN) {
+                        $values[$table][$field['name']] = array('0' => ts('false'), '1' => ts('true'));
+                    }
                 }
+            } elseif (substr($table, 0, 18) == 'log_civicrm_value_') {
+                list($titles[$table], $values[$table]) = $this->titlesAndValuesForCustomDataTable($table);
             }
-        } elseif (substr($table, 0, 18) == 'log_civicrm_value_') {
-            list($titles, $values) = $this->titlesAndValuesForCustomDataTable($table);
         }
 
-        return array($titles, $values);
+        return array($titles[$table], $values[$table]);
     }
 
     private function sqlToArray($sql, $params)
