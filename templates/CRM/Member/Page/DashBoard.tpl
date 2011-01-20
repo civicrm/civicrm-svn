@@ -52,15 +52,26 @@
         <tr>
             <td><strong>{$row.month.name}</strong></td>
             {if $preMonth}
-                <td class="label"><a href="{$row.premonth.url}" title="view details">{$row.premonth.count}</a></td> {* member/search?reset=1&force=1&membership_type_id=1&current=1&start=20060601000000&end=20060612174244 *}
+                <td class="label">
+                  <a href="{$row.premonth.url}" title="view details">{$row.premonth.count}</a>&nbsp;
+                  [ <a href="{$row.premonth_owner.url}" title="view details">{$row.premonth_owner.count}</a> ]
+                </td> {* member/search?reset=1&force=1&membership_type_id=1&current=1&start=20060601000000&end=20060612174244 *}
             {/if}
-            <td class="label"><a href="{$row.month.url}" title="view details">{$row.month.count}</a></td> {* member/search?reset=1&force=1&membership_type_id=1&current=1&start=20060601000000&end=20060612174244 *}
-            <td class="label"><a href="{$row.year.url}" title="view details">{$row.year.count}</a></td> {* member/search?reset=1&force=1&membership_type_id=1&current=1&start=20060101000000&end=20060612174244 *} 
+            <td class="label">
+              <a href="{$row.month.url}" title="view details">{$row.month.count}</a>&nbsp;
+              [ <a href="{$row.month_owner.url}" title="view details">{$row.month_owner.count}</a> ]
+            </td> {* member/search?reset=1&force=1&membership_type_id=1&current=1&start=20060601000000&end=20060612174244 *}
+            <td class="label">
+              <a href="{$row.year.url}" title="view details">{$row.year.count}</a>&nbsp;
+              [ <a href="{$row.year_owner.url}" title="view details">{$row.year_owner.count}</a> ]
+            </td> {* member/search?reset=1&force=1&membership_type_id=1&current=1&start=20060101000000&end=20060612174244 *} 
             <td class="label">
                 {if $isCurrent}
-                    <a href="{$row.current.url}" title="view details">{$row.current.count}</a>
+                    <a href="{$row.current.url}" title="view details">{$row.current.count}</a>&nbsp;
+                    [ <a href="{$row.current_owner.url}" title="view details">{$row.current_owner.count}</a> ]
                 {else}
-                    <a href="{$row.total.url}" title="view details">{$row.total.count}
+                    <a href="{$row.total.url}" title="view details">{$row.total.count}</a>&nbsp;
+                    [ <a href="{$row.total_owner.url}" title="view details">{$row.total_owner.count}</a> ]
                 {/if}
             </td> {* member/search?reset=1&force=1&membership_type_id=1&current=1 *}  
         </tr>
@@ -69,18 +80,32 @@
     <tr class="columnfooter">
         <td><strong>{ts}Totals (all types){/ts}</strong></td>
         {if $preMonth}
-            <td class="label"><a href="{$totalCount.premonth.url}" title="view details">{$totalCount.premonth.count}</a></td> {* member/search?reset=1&force=1&current=1&start=20060601000000&end=20060612174244 *}
+            <td class="label">
+              <a href="{$totalCount.premonth.url}" title="view details">{$totalCount.premonth.count}</a>&nbsp;
+              [ <a href="{$totalCount.premonth_owner.url}" title="view details">{$totalCount.premonth_owner.count}</a> ]
+            </td> {* member/search?reset=1&force=1&current=1&start=20060601000000&end=20060612174244 *}
         {/if}
-        <td class="label"><a href="{$totalCount.month.url}" title="view details">{$totalCount.month.count}</a></td> {* member/search?reset=1&force=1&current=1&start=20060601000000&end=20060612174244 *}
-        <td class="label"><a href="{$totalCount.year.url}" title="view details">{$totalCount.year.count}</a></td> {* member/search?reset=1&force=1&current=1&start=20060101000000&end=20060612174244 *}
+        <td class="label">
+          <a href="{$totalCount.month.url}" title="view details">{$totalCount.month.count}</a>&nbsp;
+          [ <a href="{$totalCount.month_owner.url}" title="view details">{$totalCount.month_owner.count}</a> ]
+        </td> {* member/search?reset=1&force=1&current=1&start=20060601000000&end=20060612174244 *}
+        <td class="label">
+          <a href="{$totalCount.year.url}" title="view details">{$totalCount.year.count}</a>&nbsp;
+          [ <a href="{$totalCount.year_owner.url}" title="view details">{$totalCount.year_owner.count}</a> ]
+        </td> {* member/search?reset=1&force=1&current=1&start=20060101000000&end=20060612174244 *}
         <td class="label">
             {if $isCurrent}
-                <a href="{$row.total.url}" title="view details">{$totalCount.current.count}</a>
+                <a href="{$row.total.url}" title="view details">{$totalCount.current.count}</a>&nbsp;
+                [ <a href="{$row.total_owner.url}" title="view details">{$totalCount.current_owner.count}</a> ]
             {else}
-                <a href="{$totalCount.total.url}" title="view details">{$totalCount.total.count}</a>
+                <a href="{$totalCount.total.url}" title="view details">{$totalCount.total.count}</a>&nbsp;
+                [ <a href="{$totalCount.total_owner.url}" title="view details">{$totalCount.total_owner.count}</a> ]
             {/if}
         </td> {* member/search?reset=1&force=1&current=1 *}
     </tr>
+    <tr><td colspan="5">
+      Primary member counts (those who "own" the membership rather than receiving via relationship) are in [brackets].
+    </td></tr>
 </table>
 
 <div class="spacer"></div>
