@@ -41,64 +41,41 @@
  * Files required for this package
  */
 require_once 'api/v3/utils.php'; 
-require_once 'CRM/Core/BAO/UFGroup.php';
-
-/**
- * Most API functions take in associative arrays ( name => value pairs
- * as parameters. Some of the most commonly used parameters are
- * described below
- *
- * @param array $params           an associative array used in construction
- *                                / retrieval of the object
- * @param array $returnProperties the limited set of object properties that
- *                                need to be returned to the caller
- *
- * @todo several functions here that don't take array. naming conventions don't match filename
- * 
- * @todo is this the right way to group these functions? UF_id (get user ID) seems more logically to be a return value on the contact api
- */
-
-
+require_once 'CRM/Core/BAO/UFMatch.php';
 
 /** 
- * get the contact_id given a uf_id 
+ * get the contact_id given a uf_id or vice versa
  * 
  * @param array $params
  * 
- * @return int contact_id 
+ * @return array $result 
  * @access public    
  * @static 
+ * @example UFMatchGet.php
+ * @todo this class is missing delete & create functions (do after exisitng functions upgraded to v3)
+ * @todo this should really return the whole record using a find function but that's for v4. 
  */ 
-function civicrm_uf_match_get($ufID)
+function civicrm_uf_match_get(&$params)
 {
-    if ((int) $ufID > 0) {
-        require_once 'CRM/Core/BAO/UFMatch.php';
-        return CRM_Core_BAO_UFMatch::getContactId($ufID);
-    } else {
-        return civicrm_create_error('Param needs to be a positive integer.');
+    _civicrm_initialize();
+    try{
+      civicrm_verify_one_mandatory($params,null,array('uf_id','contact_id'));
+      if ((int) $params['uf_id'] > 0) {
+        $result['contact_id']=CRM_Core_BAO_UFMatch::getContactId($params['uf_id']);
+        return civicrm_create_success($result);
+      } elseif ((int) $params['contact_id'] > 0){
+        $result['uf_id']= CRM_Core_BAO_UFMatch::getUFId($params['contact_id']);
+        return civicrm_create_success($result);
+      }else{
+        return civicrm_create_error('How did I get here?.');
+      }
+            
+    } catch (PEAR_Exception $e) {
+      return civicrm_create_error( $e->getMessage() );
+    } catch (Exception $e) {
+      return civicrm_create_error( $e->getMessage() );
     }
 }
-
-/**  
- * get the uf_id given a contact_id  
- *  
- * @param int $contactID
- *  
- * @return int ufID
- * @access public
- * @todo function doesn't accept or return arrays
- * @todo does this function belong here? Would be useful as a return option on contact id     
- * @static  
- */  
-function civicrm_uf_id_get($contactID)
-{
-    if ((int) $contactID > 0) {
-        require_once 'CRM/Core/BAO/UFMatch.php';
-        return CRM_Core_BAO_UFMatch::getUFId($contactID);
-    } else {
-        return civicrm_create_error('Param needs to be a positive integer.');
-    }
-} 
 
 
 

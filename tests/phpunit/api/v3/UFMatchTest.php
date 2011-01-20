@@ -26,7 +26,7 @@
 */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/v3/UFGroup.php';
+
 require_once 'api/v3/UFMatch.php';
 
 /**
@@ -101,20 +101,22 @@ class api_v3_UFMatchTest extends CiviUnitTestCase
     }
 
 
-
-
     /**
      * fetch contact id by uf id
      */
     public function testGetUFMatchID()
-    {
-        $ufMatchId = civicrm_uf_match_get(42);
-        $this->assertEquals($ufMatchId, 69);
+    {   
+        $params   = array('uf_id' => 42,
+                           'version' => $this->_apiversion);
+        $result = civicrm_uf_match_get($params);
+        $this->assertEquals($result['values']['contact_id'], 69);
+        $this->assertEquals($result['is_error'], 0);
     }
 
     function testGetUFMatchIDWrongParam()
     {
-        $result = civicrm_uf_match_get('a string');
+        $params = 'a string';
+        $result = civicrm_uf_match_get($params);
         $this->assertEquals($result['is_error'], 1);
     }
 
@@ -123,18 +125,30 @@ class api_v3_UFMatchTest extends CiviUnitTestCase
      */
     public function testGetUFID()
     {
-        $ufIdFetced = civicrm_uf_id_get(69);
-        $this->assertEquals($ufIdFetced, 42);
+        $params   = array('contact_id' => 69,
+                           'version' => $this->_apiversion);
+        $result = civicrm_uf_match_get($params);
+        $this->assertEquals($result['values']['uf_id'], 42);
+        $this->assertEquals($result['is_error'], 0);
+
     }
 
     function testGetUFIDWrongParam()
     {
-        $result = civicrm_uf_id_get('a string');
+        $params = 'a string';
+        $result = civicrm_uf_match_get($params);
         $this->assertEquals($result['is_error'], 1);
     }
 
-
-  
-
+     /**
+     *  Test civicrm_activity_create() using example code
+     */
+    function testUFMatchGetExample( )
+    {
+      require_once 'api/v3/examples/UFMatchGet.php';
+      $result = test_api_v3_UF_match_get();
+      $expectedResult = test_api_v3_UF_match_get_expectedresult();
+      $this->assertEquals($result,$expectedResult);
+    }
 
 }
