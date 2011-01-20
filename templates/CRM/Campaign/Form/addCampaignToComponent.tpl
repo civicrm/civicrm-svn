@@ -46,7 +46,7 @@
 	    {* lets take a call, either show campaign select drop-down or show add campaign link *}		 
             {if $campaignInfo.hasCampaigns}
 		{$form.campaign_id.html}
-		{if $action eq 1 and $campaignInfo.includePastCampaignURL}
+		{if $action eq 1 and !$campaignInfo.alreadyIncludedPastCampaigns and $campaignInfo.includePastCampaignURL}
 		<br />
 		    <a id='include-past-campaigns' href='#' onClick='includePastCampaigns( "campaign_id" ); return false;'>
 		       &raquo;
@@ -77,10 +77,14 @@ function includePastCampaigns()
 	     	 if ( data.status != 'success' ) return;
 
 	     	 //first reset all select options.
+		 cj( "#campaign_id" ).val( '' );		 		 		 
                  cj( "#campaign_id" ).html( '' );
-		 		 		 
+		 cj('input[name=included_past_campaigns]').val( 1 );
+		 				 
 		 var campaigns = data.campaigns;      			
-    	     	 for ( campaign in campaigns ) {
+    	     	 
+		 //build the new options.
+		 for ( campaign in campaigns ) {
 		      title = campaigns[campaign].title;
 		      value = campaigns[campaign].value;
 		      if ( !title ) continue;

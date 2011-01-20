@@ -367,11 +367,20 @@ SELECT  camp.id, camp.title
         }
         $hasCampaigns = false;
         if ( !empty( $campaigns ) ) $hasCampaigns = true;
-        if ( !$hasCampaigns && $hasPastCampaigns ) $hasCampaigns = true;  
+        if ( $hasPastCampaigns ) {
+            $hasCampaigns = true;  
+            $form->add( 'hidden', 'included_past_campaigns' );
+        }
         
         $showAddCampaign = false;
+        $alreadyIncludedPastCampaigns = false;
         if ( $connectedCampaignId || ( $isCampaignEnabled && $hasAccessCampaign ) ) {
             $showAddCampaign = true;
+            //lets add past campaigns as options to quick-form element.
+            if ( $hasPastCampaigns && $form->getElementValue( 'included_past_campaigns' ) ) {
+                $campaigns = $allActiveCampaigns;
+                $alreadyIncludedPastCampaigns = true;
+            }
             $campaign =& $form->add( 'select', 
                                      'campaign_id', 
                                      ts( 'Campaign' ), 
@@ -399,7 +408,8 @@ SELECT  camp.id, camp.title
                              'hasPastCampaigns',
                              'hasAccessCampaign', 
                              'isCampaignEnabled',
-                             'includePastCampaignURL' );
+                             'includePastCampaignURL',
+                             'alreadyIncludedPastCampaigns' );
         foreach ( $infoFields as $fld ) $campaignInfo[$fld] = $$fld; 
         $form->assign( 'campaignInfo', $campaignInfo );
     }
