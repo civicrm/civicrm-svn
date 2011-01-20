@@ -144,10 +144,12 @@ class CRM_Campaign_Page_AJAX
     function voterList( ) 
     {
         $searchParams = array( 'city',
+                               'group',
                                'sort_name', 
                                'street_unit',
                                'street_name',
                                'postal_code',
+                               'contact_type',
                                'street_number', 
                                'street_address', 
                                'survey_interviewer_id', 
@@ -158,6 +160,15 @@ class CRM_Campaign_Page_AJAX
         foreach ( $searchParams as $param ) {
             if ( CRM_Utils_Array::value( $param, $_POST ) ) {
                 $params[$param] = $_POST[$param];
+            }
+        }
+        
+        //format the contact type and group params.
+        foreach ( array( 'contact_type', 'group' ) as $fld ) {
+            $fldValue = CRM_Utils_Array::value( $fld, $params );
+            if ( $fldValue && !is_array( $fldValue ) ) {
+                unset( $params[$fld] );
+                $params[$fld][$fldValue] = 1;
             }
         }
         
