@@ -183,6 +183,12 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
             $this->assign('rowsUploaded', $rowsUpl );
         }
 
+        require_once 'CRM/Core/Extensions.php';
+        $ext = new CRM_Core_Extensions();
+        $rowsRemote = $ext->grabPublicList();
+        
+        $this->assign('rowsRemote', $rowsRemote);
+
     }
     
     /**

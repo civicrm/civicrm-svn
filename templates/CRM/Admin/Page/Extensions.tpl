@@ -141,6 +141,55 @@
               </div>    
           {/if}
 
+
+    <h3>{ts}Publically available extensions{/ts}</h3>
+          {if $rowsRemote}
+            <div id="extensionsRemote">
+              {strip}
+              {* handle enable/disable actions*} 
+              <table id="uploaded-extensions" class="display">
+                <thead>
+                  <tr>
+                    <th>{ts}Extension name{/ts}</th>
+                    <th>{ts}Version{/ts}</th>
+                    <th>{ts}Enabled?{/ts}</th>
+                    <th>{ts}Type{/ts}</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>                
+                  {assign var='rowCount' value = 1}    
+                  {foreach from=$rowsRemote item=row}
+                  <tr id="uploaded-row_{$rowCount}" class="crm-uploaded-extensions crm-uploaded-extensions_{$rowCount}">
+                    <td class="crm-uploaded-extensions-label"> <a class="collapsed" href="#"></a>&nbsp;{$row.label} ( {$row.key} )
+                        <span class="hiddenElement description"><br/><br/>{$row.description}</span>
+                    </td>
+                    <td class="crm-uploaded-extensions-label">{$row.version}</td>	
+                    <td class="crm-uploaded-extensions-is_active" id="uploaded-row_{$rowCount}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+                    <td class="crm-uploaded-extensions-description">{$row.type|capitalize}</td>
+                    <td>{$row.action|replace:'xx':$rowCount}</td>
+                  </tr>
+                  <tr class="hiddenElement" id="crm-uploaded-extensions-details-{$row.id}">
+                      <td>
+                          {include file="CRM/Admin/Page/ExtensionDetails.tpl" extension=$row}
+                      </td>
+                      <td></td><td></td><td></td><td></td>
+                  </tr>                  
+                  {assign var='rowCount' value = $rowCount+1} 
+                  {/foreach}
+                </tbody>
+              </table>
+              {/strip}
+            </div>
+          {else}
+              <div class="messages status">
+                   <div class="icon inform-icon"></div>
+                  {ts}There are no uploaded extensions to be installed.{/ts}
+              </div>    
+          {/if}
+
+
+
           {if $action ne 1 and $action ne 2}
               <div class="action-link">
                 <a href="{crmURL q="reset=1"}" id="new" class="button"><span><div class="icon refresh-icon"></div>{ts}Refresh{/ts}</span></a>

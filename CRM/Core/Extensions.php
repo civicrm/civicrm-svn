@@ -444,7 +444,7 @@ class CRM_Core_Extensions
             $ln = fgets ($handl, 1024);
             if (preg_match ("@\<li\>(.*)\</li\>@i", $ln, $out)) {
                 $extsRaw[] = $out;// success
-                $exts[] = strip_tags($out[1]);
+                $exts[] = array( 'key' => strip_tags($out[1]) );
             } else {
                 //fail
             }
