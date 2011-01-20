@@ -286,12 +286,17 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
             $status[] = ts( 'Reservation did not add for %1 Contact(s).', 
                             array( 1 => ( count($this->_contactIds) - $countVoters) ) );
         }
-        if ( !empty($status) ) {
-            CRM_Core_Session::setStatus( implode('&nbsp;&nbsp;', $status) );
-        }
         
         //add reserved voters to groups.
         $groupAdditions = $this->_addRespondentToGroup( $reservedVoterIds );
+        if ( !empty( $groupAdditions )  ) {
+            $status[] = ts( '<br />Respondent(s) has been added to %1 group(s).', 
+                            array( 1 => implode( ', ', $groupAdditions ) ) );
+        }
+        
+        if ( !empty($status) ) {
+            CRM_Core_Session::setStatus( implode('&nbsp;&nbsp;', $status) );
+        }
         
         //get ready to jump to voter interview form.
         $buttonName = $this->controller->getButtonName( );
@@ -333,7 +338,7 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
             $existingGroups = CRM_Core_PseudoConstant::group( );
             foreach ( $groups as $groupId ) {
                 $addCount = CRM_Contact_BAO_GroupContact::addContactsToGroup( $contactIds, $groupId );
-                $totalCount = $addCount[1];
+                $totalCount = CRM_Utils_Array::value( 1, $addCount );
                 if ( $groupId == $newGroupId ) {
                     $name = $newGroupName;
                     $new = true;
@@ -341,13 +346,11 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
                     $name = $existingGroups[$groupId];
                     $new = false;
                 }
-                $url = CRM_Utils_System::url( 'civicrm/group/search',
-                                              'reset=1&force=1&context=smog&gid=' . $groupId );
-                $groupAdditions[] = array( 'url'      => $url,
-                                           'name'     => $name,
-                                           'added'    => $totalCount,
-                                           'notAdded' => $addCount[2],
-                                           'new'      => $new );
+                if ( $totalCount ) {
+                    $url = CRM_Utils_System::url( 'civicrm/group/search',
+                                                  'reset=1&force=1&context=smog&gid=' . $groupId );
+                    $groupAdditions[] =  '<a href="' . $url .'">'. $name. '</a>';
+                }
             }
         }
         

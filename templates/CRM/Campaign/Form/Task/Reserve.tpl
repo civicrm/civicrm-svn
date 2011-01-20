@@ -65,7 +65,7 @@
  <div class="crm-accordion-wrapper crm-existing_group-accordion {if $hasExistingGroups}crm-accordion-open{else}crm-accordion-closed{/if}">
  <div class="crm-accordion-header">
   <div class="icon crm-accordion-pointer"></div>
-  {$form.groups.label}
+  {ts}Add respondent(s) to existing group(s){/ts}
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">
   
