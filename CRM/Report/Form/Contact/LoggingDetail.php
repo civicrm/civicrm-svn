@@ -34,6 +34,7 @@
  *
  */
 
+require_once 'CRM/Logging/Differ.php';
 require_once 'CRM/Report/Form.php';
 
 class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
@@ -147,17 +148,11 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
             2 => array($this->log_date,    'String'),
         );
 
-        // we look for the last change in the given connection that happended less than 10 seconds later than log_date to catch multi-query changes
-        if ($id) {
-            $params[3]  = array($id, 'Integer');
-            $changedSQL = "SELECT * FROM `{$this->loggingDB}`.`$table` WHERE log_conn_id = %1 AND log_date < DATE_ADD(%2, INTERVAL 10 SECOND) AND id = %3 ORDER BY log_date DESC LIMIT 1";
-        } else {
-            $changedSQL = "SELECT * FROM `{$this->loggingDB}`.`$table` WHERE log_conn_id = %1 AND log_date < DATE_ADD(%2, INTERVAL 10 SECOND) ORDER BY log_date DESC LIMIT 1";
-        }
-        $changed = $this->sqlToArray($changedSQL, $params);
+        $differ = new CRM_Logging_Differ($this->log_conn_id, $this->log_date);
+        $diffs  = $differ->diffsInTable($table, $id);
 
         // return early if nothing found
-        if (empty($changed)) return array();
+        if (empty($diffs)) return array();
 
         // seed caches with civicrm_contact titles/values
         if (!isset($titles['log_civicrm_contact']) or !isset($values['log_civicrm_contact'])) {
@@ -242,36 +237,24 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
             }
         }
 
-        // we look for the previous state (different log_conn_id) of the found id
-        $params[3]   = array($changed['id'], 'Integer');
-        $originalSQL = "SELECT * FROM `{$this->loggingDB}`.`$table` WHERE log_conn_id != %1 AND log_date < %2 AND id = %3 ORDER BY log_date DESC LIMIT 1";
-        $original    = $this->sqlToArray($originalSQL, $params);
-
         $rows = array();
 
         // populate $rows with only the differences between $changed and $original (skipping certain columns and NULL ↔ empty changes)
         // FIXME: explode preferred_communication_method on CRM_Core_DAO::VALUE_SEPARATOR and handle properly somehow
-        $skipped = array('contact_id', 'entity_id', 'id', 'log_action', 'log_conn_id', 'log_date', 'log_user_id');
-        foreach (array_keys(array_diff_assoc($changed, $original)) as $diff) {
-            if (in_array($diff, $skipped))                              continue;
-            if ($original[$diff] == $changed[$diff])                    continue;
-            if ($original[$diff] == false and $changed[$diff] == false) continue; // only in PHP: '0' == false and null == false but '0' != null
-            $field = isset($titles[$table][$diff]) ? $titles[$table][$diff] : substr($table, 4) . ".$diff";
+        $skipped = array('contact_id', 'entity_id', 'id');
+        foreach ($diffs as $diff) {
+            if (in_array($diff['field'], $skipped))              continue;
+            if ($diff['from'] == $diff['to'])                    continue;
+            if ($diff['from'] == false and $diff['to'] == false) continue; // only in PHP: '0' == false and null == false but '0' != null
+            $field = isset($titles[$table][$diff['field']]) ? $titles[$table][$diff['field']] : substr($table, 4) . '.' . $diff['field'];
             if ($id) $field .= " (id: $id)";
             $rows[] = array(
                 'field' => $field,
-                'from'  => isset($values[$table][$diff][$original[$diff]]) ? $values[$table][$diff][$original[$diff]] : $original[$diff],
-                'to'    => isset($values[$table][$diff][$changed[$diff]])  ? $values[$table][$diff][$changed[$diff]]  : $changed[$diff],
+                'from'  => isset($values[$table][$diff['field']][$diff['from']]) ? $values[$table][$diff['field']][$diff['from']] : $diff['from'],
+                'to'    => isset($values[$table][$diff['field']][$diff['to']])   ? $values[$table][$diff['field']][$diff['to']]   : $diff['to'],
             );
         }
 
         return $rows;
-    }
-
-    private function sqlToArray($sql, $params)
-    {
-        $dao =& CRM_Core_DAO::executeQuery($sql, $params);
-        $dao->fetch();
-        return $dao->toArray();
     }
 }
