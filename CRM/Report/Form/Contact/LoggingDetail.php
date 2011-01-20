@@ -100,7 +100,7 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         $this->assign('whom_name', $dao->whom_name);
         $this->assign('log_date',  $this->log_date);
 
-        // track who’s changes being monitored
+        // track whose changes are being monitored
         $this->contact_id = $dao->whom_id;
 
         if ( $this->cid ) {
