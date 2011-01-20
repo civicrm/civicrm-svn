@@ -65,43 +65,51 @@
               <td>			
 		  {$form.sort_name.html|crmReplace:class:'twenty'}
               </td>
-
-              <td class="font-size12pt">
+	      <td class="font-size12pt">
+                  {$form.contact_type.label}&nbsp
+		  {$form.contact_type.html}
+	      </td>
+	      <td class="font-size12pt">
+                  {$form.group.label}&nbsp
+		  {$form.group.html}
+	      </td>
+          </tr>
+	  <tr>
+	      <td class="font-size12pt">
                   {$form.street_address.label}
 	      </td>
               <td>
                   {$form.street_address.html}
-              </td>       
-          </tr>
-	  <tr>
+              </td>  	
 	      <td class="font-size12pt">
                   {$form.street_name.label}
        	      </td>
               <td>	
                   {$form.street_name.html}
               </td>
-              <td class="font-size12pt">
+	  </tr>	
+          <tr>
+	      <td class="font-size12pt">
                   {$form.street_unit.label}
 	      </td>
               <td>
                   {$form.street_unit.html}
               </td> 
-	  </tr>	
-          <tr>
               <td class="font-size12pt">
                   {$form.city.label}
               </td>
               <td>
                   {$form.city.html}
               </td>
-	      <td class="font-size12pt">
+	  </tr>
+          <tr>
+              <td class="font-size12pt">
                   {$form.street_number.label}
        	      </td>
               <td>	
                   {$form.street_number.html}
               </td>
-	  </tr>
-          <tr>
+		
 	      <td class="font-size12pt">
                   {$form.postal_code.label}
        	      </td>

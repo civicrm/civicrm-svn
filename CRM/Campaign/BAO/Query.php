@@ -288,7 +288,10 @@ INNER JOIN civicrm_activity_assignment ON ( civicrm_activity.id = civicrm_activi
      */ 
     static function buildSearchForm( &$form ) 
     {
+        require_once 'CRM/Core/PseudoConstant.php';
         require_once 'CRM/Campaign/BAO/Survey.php';
+        require_once 'CRM/Contact/BAO/ContactType.php';
+        
         $attributes = CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_Address' );
         $className = CRM_Utils_System::getClassName( $form );
         
@@ -300,6 +303,11 @@ INNER JOIN civicrm_activity_assignment ON ( civicrm_activity.id = civicrm_activi
         $form->add( 'text', 'street_address',  ts( 'Street Address' ), $attributes['street_address'] );
         $form->add( 'text', 'city',            ts( 'City'           ), $attributes['city']           );
         $form->add( 'text', 'postal_code',     ts('Zip / Postal Code'), $attributes['postal_code']   );
+        
+        $contactTypes = array( '' => ts('- any contact type -') ) + CRM_Contact_BAO_ContactType::getSelectElements( );
+        $form->add( 'select', 'contact_type', ts('is...'), $contactTypes );
+        $groups = array('' => ts('- any group -')) + CRM_Core_PseudoConstant::group( );
+        $form->add( 'select', 'group', ts( 'in' ), $groups );
         
         $showInterviewer = false;
         if ( CRM_Core_Permission::check( 'administer CiviCampaign' ) ) {
@@ -315,7 +323,7 @@ INNER JOIN civicrm_activity_assignment ON ( civicrm_activity.id = civicrm_activi
                                               false, null, false );
             
             $form->assign( 'dataUrl',$dataUrl );
-            $form->add( 'text',   'survey_interviewer_name', ts( 'Select Interviewer' ) );
+            $form->add( 'text',   'survey_interviewer_name', ts( 'Interviewer' ) );
             $form->add( 'hidden', 'survey_interviewer_id', '',array( 'id' => 'survey_interviewer_id' ) );
             
             $userId = null;

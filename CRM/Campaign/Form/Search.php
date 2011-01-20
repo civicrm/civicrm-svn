@@ -435,6 +435,17 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
                                                                                          'id' );
         }
         
+        $contactType = CRM_Utils_Array::value( 'contact_type', $this->_formValues );
+        if ( $contactType && !is_array( $contactType ) ) {
+            unset( $this->_formValues['contact_type'] );
+            $this->_formValues['contact_type'][$contactType] = 1;
+        }
+        $group = CRM_Utils_Array::value( 'group', $this->_formValues );
+        if ( $group && !is_array( $group ) ) {
+            unset( $this->_formValues['group'] );
+            $this->_formValues['group'][$group] = 1;
+        }
+        
         if ( $this->_operation == 'reserve' ) {
             if ( CRM_Utils_Array::value( 'campaign_survey_id', $this->_formValues ) ) {
                 $campaignId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey',  
