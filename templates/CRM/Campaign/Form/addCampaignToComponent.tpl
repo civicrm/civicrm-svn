@@ -10,7 +10,7 @@
     <div class="crm-select-container">{$form.$elementName.html}</div>
        {literal}
        <script type="text/javascript">
-       cj("select[multiple]").crmasmSelect({
+       cj('select[name='+ {/literal}'{$elementName}'+"[]"{literal} +' ]').crmasmSelect({
            addItemTarget: 'bottom',
            animate: true,
            highlight: true,
