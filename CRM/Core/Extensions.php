@@ -44,6 +44,11 @@ class CRM_Core_Extensions
 {
 
     /**
+     * An URL for public extensions repository
+     */
+    const PUBLIC_EXTENSIONS_REPOSITORY = 'http://extdir.civicrm.org/';
+
+    /**
      * The option group name
      */
     const OPTION_GROUP_NAME = 'system_extensions';
@@ -408,13 +413,13 @@ class CRM_Core_Extensions
 
     /**
     * Given the key, fires off appropriate CRM_Core_Extensions_Extension object's 
-	* uninstall method.
-	*
-	* @todo change method signature, drop $id, work with $key only
+    * uninstall method.
+    *
+    * @todo change method signature, drop $id, work with $key only
     * 
     * @access public
     * @param int $id id of option value record
-	* @param string $key extension key
+    * @param string $key extension key
     * @return void
     */
     public function uninstall( $id, $key ) {
@@ -422,6 +427,32 @@ class CRM_Core_Extensions
         $e = $this->getExtensionsByKey( );
         $ext = $e[$key];
         $ext->uninstall();
+    }
+
+    /**
+     * Connects to public serwer and grabs the list of publically available 
+     * extensions.
+     *
+     * @access public
+     * @return Array list of extension names
+     */
+    public function grabPublicList() {
+
+        $handl = fopen ( self::PUBLIC_EXTENSIONS_REPOSITORY , "r");
+
+        while (!feof ($handl)) {
+            $ln = fgets ($handl, 1024);
+            if (preg_match ("@\<li\>(.*)\</li\>@i", $ln, $out)) {
+                $extsRaw[] = $out;// success
+                $exts[] = strip_tags($out[1]);
+            } else {
+                //fail
+            }
+        }
+
+        fclose($handl);
+        
+        return $exts;
     }
 
 }
