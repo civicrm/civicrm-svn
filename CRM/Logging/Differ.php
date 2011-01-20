@@ -56,13 +56,13 @@ class CRM_Logging_Differ
         );
 
         // we look for the last change in the given connection that happended less than 10 seconds later than log_date to catch multi-query changes
+        $where = array('log_conn_id = %1', 'log_date < DATE_ADD(%2, INTERVAL 10 SECOND)');
         if ($id) {
-            $params[3]  = array($id, 'Integer');
-            $changedSQL = "SELECT * FROM `{$this->db}`.`$table` WHERE log_conn_id = %1 AND log_date < DATE_ADD(%2, INTERVAL 10 SECOND) AND id = %3 ORDER BY log_date DESC LIMIT 1";
-        } else {
-            $changedSQL = "SELECT * FROM `{$this->db}`.`$table` WHERE log_conn_id = %1 AND log_date < DATE_ADD(%2, INTERVAL 10 SECOND) ORDER BY log_date DESC LIMIT 1";
+            $params[3] = array($id, 'Integer');
+            $where[]   = 'id = %3';
         }
-        $changed = $this->sqlToArray($changedSQL, $params);
+        $changedSQL = "SELECT * FROM `{$this->db}`.`$table` WHERE " . implode(' AND ', $where) . ' ORDER BY log_date DESC LIMIT 1';
+        $changed    = $this->sqlToArray($changedSQL, $params);
 
         // return early if nothing found
         if (empty($changed)) return array();
