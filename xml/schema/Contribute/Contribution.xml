@@ -346,7 +346,8 @@
     <add>2.2</add>
   </index>
   <field> 
-    <name>campaign_id</name> 
+    <name>campaign_id</name>
+    <uniqueName>contribution_campaign_id</uniqueName>
     <type>int unsigned</type>
     <title>Campaign</title>
     <import>true</import> 

@@ -204,6 +204,7 @@
   </field>
   <field> 
       <name>campaign_id</name> 
+      <uniqueName>participant_campaign_id</uniqueName>
       <type>int unsigned</type>
       <title>Campaign</title>
       <import>true</import> 
