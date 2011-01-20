@@ -89,10 +89,62 @@ class CRM_Logging_Differ
         return $rows;
     }
 
+    function titlesForTable($table)
+    {
+        $titles = array();
+
+        $daos = array(
+            'log_civicrm_address' => 'CRM_Core_DAO_Address',
+            'log_civicrm_contact' => 'CRM_Contact_DAO_Contact',
+            'log_civicrm_email'   => 'CRM_Core_DAO_Email',
+            'log_civicrm_im'      => 'CRM_Core_DAO_IM',
+            'log_civicrm_openid'  => 'CRM_Core_DAO_OpenID',
+            'log_civicrm_phone'   => 'CRM_Core_DAO_Phone',
+            'log_civicrm_website' => 'CRM_Core_DAO_Website',
+        );
+
+        if (in_array($table, array_keys($daos))) {
+            require_once str_replace('_', DIRECTORY_SEPARATOR, $daos[$table]) . '.php';
+            eval("\$dao = new $daos[$table];");
+            foreach ($dao->fields() as $field) {
+                $titles[$field['name']] = $field['title'];
+            }
+        } elseif (substr($table, 0, 18) == 'log_civicrm_value_') {
+            $titles = $this->titlesForCustomDataTable($table);
+        }
+
+        return $titles;
+    }
+
     private function sqlToArray($sql, $params)
     {
         $dao =& CRM_Core_DAO::executeQuery($sql, $params);
         $dao->fetch();
         return $dao->toArray();
+    }
+
+    private function titlesForCustomDataTable($table)
+    {
+        $titles = array();
+
+        $params = array(
+            1 => array($this->log_conn_id, 'Integer'),
+            2 => array($this->log_date,    'String'),
+            3 => array(substr($table, 4),  'String'),
+        );
+
+        $sql = "SELECT id, title FROM `{$this->db}`.log_civicrm_custom_group WHERE log_date <= %2 AND table_name = %3 ORDER BY log_date DESC LIMIT 1";
+        $cgDao =& CRM_Core_DAO::executeQuery($sql, $params);
+        $cgDao->fetch();
+
+        $params[3] = array($cgDao->id, 'Integer');
+        $sql = "SELECT column_name, data_type, label, name FROM `{$this->db}`.log_civicrm_custom_field WHERE log_date <= %2 AND custom_group_id = %3 ORDER BY log_date";
+        $cfDao =& CRM_Core_DAO::executeQuery($sql, $params);
+
+        while ($cfDao->fetch()) {
+            $titles[$cfDao->column_name] = "{$cgDao->title}: {$cfDao->label}";
+        }
+
+        return $titles;
     }
 }
