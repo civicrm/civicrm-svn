@@ -105,7 +105,7 @@
         {elseif $n eq 'email_greeting' or  $n eq 'postal_greeting' or $n eq 'addressee'}
                {include file="CRM/Profile/Form/GreetingType.tpl"}  
         {elseif ( $field.data_type eq 'Date' AND $element.skip_calendar NEQ true ) or
-                ( $n eq 'birth_date' ) or ( $n eq 'deceased_date' ) or ( $field.name eq 'activity_date_time' )  } 
+                ( $n|substr:-5:5 eq '_date' ) or ( $field.name eq 'activity_date_time' )  } 
                {include file="CRM/common/jcalendar.tpl" elementName=$form.$n.name}
         {else}
             {if $n|substr:0:4 eq 'url-'}
