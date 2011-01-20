@@ -39,7 +39,7 @@ require_once 'CRM/Report/Form.php';
 
 class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
 {
-    private $loggingDB;
+    private $db;
 
     private $contact_id;
     private $log_conn_id;
@@ -51,7 +51,7 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         $this->_add2groupSupported = false; // don’t display the ‘Add these Contacts to Group’ button
 
         $dsn = defined('CIVICRM_LOGGING_DSN') ? DB::parseDSN(CIVICRM_LOGGING_DSN) : DB::parseDSN(CIVICRM_DSN);
-        $this->loggingDB = $dsn['database'];
+        $this->db = $dsn['database'];
 
         $this->log_conn_id = CRM_Utils_Request::retrieve('log_conn_id', 'Integer', CRM_Core_DAO::$_nullObject);
         $this->log_date    = CRM_Utils_Request::retrieve('log_date',    'String',  CRM_Core_DAO::$_nullObject);
@@ -60,7 +60,7 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         // make sure the report works even without the params
         if (!$this->log_conn_id or !$this->log_date) {
             $dao = new CRM_Core_DAO;
-            $dao->query("SELECT log_conn_id, log_date FROM `{$this->loggingDB}`.log_civicrm_contact WHERE log_action = 'Update' ORDER BY log_date DESC LIMIT 1");
+            $dao->query("SELECT log_conn_id, log_date FROM `{$this->db}`.log_civicrm_contact WHERE log_action = 'Update' ORDER BY log_date DESC LIMIT 1");
             $dao->fetch();
             $this->log_conn_id = $dao->log_conn_id;
             $this->log_date    = $dao->log_date;
@@ -88,7 +88,7 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         // let the template know who updated whom when
         $sql = "
             SELECT who.id who_id, who.display_name who_name, whom.id whom_id, whom.display_name whom_name, l.is_deleted
-            FROM `{$this->loggingDB}`.log_civicrm_contact l
+            FROM `{$this->db}`.log_civicrm_contact l
             JOIN civicrm_contact who ON (l.log_user_id = who.id)
             JOIN civicrm_contact whom ON (l.id = whom.id)
             WHERE log_action = 'Update' AND log_conn_id = %1 AND log_date = %2 ORDER BY log_date DESC LIMIT 1
@@ -116,16 +116,16 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         $rows = $this->diffsInTable('log_civicrm_contact');
 
         // add custom data changes
-        $dao =& CRM_Core_DAO::executeQuery("SHOW TABLES FROM `{$this->loggingDB}` LIKE 'log_civicrm_value_%'");
+        $dao =& CRM_Core_DAO::executeQuery("SHOW TABLES FROM `{$this->db}` LIKE 'log_civicrm_value_%'");
         while ($dao->fetch()) {
-            $table = $dao->toValue("Tables_in_{$this->loggingDB}_(log_civicrm_value_%)");
+            $table = $dao->toValue("Tables_in_{$this->db}_(log_civicrm_value_%)");
             $rows  = array_merge($rows, $this->diffsInTable($table));
         }
 
         // add changes by fetching all ids affected in the ±10 s interval (for the given connection id)
         $tables = array('log_civicrm_email', 'log_civicrm_phone', 'log_civicrm_im', 'log_civicrm_openid', 'log_civicrm_website', 'log_civicrm_address');
         foreach ($tables as $table) {
-            $sql = "SELECT DISTINCT id FROM `{$this->loggingDB}`.`$table` WHERE log_conn_id = %1 AND log_date BETWEEN DATE_SUB(%2, INTERVAL 10 SECOND) AND DATE_ADD(%2, INTERVAL 10 SECOND)";
+            $sql = "SELECT DISTINCT id FROM `{$this->db}`.`$table` WHERE log_conn_id = %1 AND log_date BETWEEN DATE_SUB(%2, INTERVAL 10 SECOND) AND DATE_ADD(%2, INTERVAL 10 SECOND)";
             $dao =& CRM_Core_DAO::executeQuery($sql, $params);
             while ($dao->fetch()) {
                 $rows = array_merge($rows, $this->diffsInTable($table, $dao->id));
