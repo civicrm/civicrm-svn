@@ -158,7 +158,8 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
                                                                                 'name'  => ts('Sign'),
                                                                                 'url'   => 'civicrm/petition/sign',
                                                                                 'qs'    => 'sid=%%id%%&reset=1',
-                                                                                'title' => ts('Sign Petition')
+                                                                                'title' => ts('Sign Petition'),
+                                                                                'fe'    => true,
                                                                                 );//CRM_Core_Action::PROFILE is used because there isn't a specific action for sign
              self::$_petitionActionLinks [CRM_Core_Action::BROWSE]  = array(
                                                                                 'name'  => ts('Signatures'),
