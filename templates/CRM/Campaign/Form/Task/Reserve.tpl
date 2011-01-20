@@ -38,5 +38,63 @@
   </tr>
   <tr><td colspan=2>{include file="CRM/Contact/Form/Task.tpl"}</td></tr>
 </table>
+
+{* Group options *}
+ {* New Group *}
+ <div id="new-group" class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
+ <div class="crm-accordion-header">
+ <div class="icon crm-accordion-pointer"></div> 
+ {ts}Add respondent(s) to a new group{/ts}
+ </div><!-- /.crm-accordion-header -->
+ <div class="crm-accordion-body">
+            <table class="form-layout-compressed">
+             <tr>
+               <td class="description label">{$form.newGroupName.label}</td>
+               <td>{$form.newGroupName.html}</td>
+             </tr>
+             <tr>
+               <td class="description label">{$form.newGroupDesc.label}</td>
+               <td>{$form.newGroupDesc.html}</td>
+             </tr>
+            </table>
+ </div><!-- /.crm-accordion-body -->
+ </div><!-- /.crm-accordion-wrapper -->
+
+
+ {* Existing Group *}
+ <div class="crm-accordion-wrapper crm-existing_group-accordion {if $hasExistingGroups}crm-accordion-open{else}crm-accordion-closed{/if}">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div>
+  {$form.groups.label}
+ </div><!-- /.crm-accordion-header -->
+ <div class="crm-accordion-body">
+  
+        <div class="form-item">
+        <table><tr><td style="width: 14em;"></td><td>{$form.groups.html}</td></tr></table>
+        </div>
+ </div><!-- /.crm-accordion-body -->
+ </div><!-- /.crm-accordion-wrapper -->
+{* End of group options *}
+
+
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>
+
+{literal}
+<script type="text/javascript">
+
+ cj(function() {
+   cj().crmaccordions(); 
+ });
+
+
+ {/literal}
+ {if $invalidGroupName}
+ {literal}
+   cj("#new-group").removeClass( 'crm-accordion-closed' ).addClass( 'crm-accordion-open' );
+ {/literal}
+ {/if}
+ {literal}
+
+</script>
+{/literal} 
