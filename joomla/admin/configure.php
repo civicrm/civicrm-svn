@@ -196,6 +196,7 @@ function civicrm_config( $frontend = false ) {
                     'CMSdbPass'  => $jConfig->password,
                     'CMSdbHost'  => $jConfig->host,
                     'CMSdbName'  => $jConfig->db,
+                    'siteKey'    => md5( uniqid( '', true ) . $liveSite );
                     );
 
     if ( $frontend ) {
