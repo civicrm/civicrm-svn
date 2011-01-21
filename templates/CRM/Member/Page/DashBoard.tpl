@@ -143,7 +143,7 @@
             {/if}
         </td> {* member/search?reset=1&force=1&current=1 *}
     </tr>
-    <tr><td colspan="5">
+    <tr><td colspan='11'>
       Primary member counts (those who "own" the membership rather than receiving via relationship) are in [brackets].
     </td></tr>
 </table>
