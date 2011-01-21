@@ -89,7 +89,7 @@ class CRM_Logging_Differ
         return $diffs;
     }
 
-    function diffsInTableForId($table, $id)
+    private function diffsInTableForId($table, $id)
     {
         $diffs = array();
 
@@ -116,6 +116,7 @@ class CRM_Logging_Differ
             if (in_array($diff, $skipped))            continue;
             if ($original[$diff] === $changed[$diff]) continue;
             $diffs[] = array(
+                'id'    => $id,
                 'field' => $diff,
                 'from'  => $original[$diff],
                 'to'    => $changed[$diff],

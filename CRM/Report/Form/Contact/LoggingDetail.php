@@ -125,11 +125,7 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         // add changes by fetching all ids affected in the ±10 s interval (for the given connection id)
         $tables = array('log_civicrm_email', 'log_civicrm_phone', 'log_civicrm_im', 'log_civicrm_openid', 'log_civicrm_website', 'log_civicrm_address');
         foreach ($tables as $table) {
-            $sql = "SELECT DISTINCT id FROM `{$this->db}`.`$table` WHERE log_conn_id = %1 AND log_date BETWEEN DATE_SUB(%2, INTERVAL 10 SECOND) AND DATE_ADD(%2, INTERVAL 10 SECOND)";
-            $dao =& CRM_Core_DAO::executeQuery($sql, $params);
-            while ($dao->fetch()) {
-                $rows = array_merge($rows, $this->diffsInTable($table, $dao->id));
-            }
+            $rows = array_merge($rows, $this->diffsInTable($table));
         }
     }
 
@@ -137,12 +133,12 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
     {
     }
 
-    private function diffsInTable($table, $id = null)
+    private function diffsInTable($table)
     {
         $rows = array();
 
         $differ = new CRM_Logging_Differ($this->log_conn_id, $this->log_date);
-        $diffs  = $id ? $differ->diffsInTableForId($table, $id) : $differ->diffsInTable($table);
+        $diffs  = $differ->diffsInTable($table);
 
         // return early if nothing found
         if (empty($diffs)) return $rows;
@@ -157,9 +153,8 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
             if ($diff['from'] == $diff['to'])                    continue;
             if ($diff['from'] == false and $diff['to'] == false) continue; // only in PHP: '0' == false and null == false but '0' != null
             $field = isset($titles[$diff['field']]) ? $titles[$diff['field']] : substr($table, 4) . '.' . $diff['field'];
-            if ($id) $field .= " (id: $id)";
             $rows[] = array(
-                'field' => $field,
+                'field' => $field . " (id: {$diff['id']})",
                 'from'  => isset($values[$diff['field']][$diff['from']]) ? $values[$diff['field']][$diff['from']] : $diff['from'],
                 'to'    => isset($values[$diff['field']][$diff['to']])   ? $values[$diff['field']][$diff['to']]   : $diff['to'],
             );
