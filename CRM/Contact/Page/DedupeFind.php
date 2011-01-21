@@ -117,7 +117,7 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
             } else {
                 //calculate the $contactType
                 if ( $rgid ) {
-                    $contactType = CRM_Core_DAO::getFieldValue( 'CRM_Dedupe_BAO_RuleGroup', 
+                    $contactType = CRM_Core_DAO::getFieldValue( 'CRM_Dedupe_DAO_RuleGroup', 
                                                                 $rgid,
                                                                 'contact_type' );                }
                 $cacheKeyString  = "merge $contactType";

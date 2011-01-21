@@ -68,13 +68,17 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
             CRM_Core_Error::fatal( ts( 'You do not have access to this page' ) );
         }
 
-        $cid   = CRM_Utils_Request::retrieve('cid', 'Positive', $this, true);
-        $oid   = CRM_Utils_Request::retrieve('oid', 'Positive', $this, true);
-        $rgid  = CRM_Utils_Request::retrieve('rgid','Positive', $this, false);
-        $gid   = CRM_Utils_Request::retrieve('gid','Positive', $this, false);
-        
+        $cid   = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
+        $oid   = CRM_Utils_Request::retrieve( 'oid', 'Positive', $this, true );
+        $rgid  = CRM_Utils_Request::retrieve( 'rgid','Positive', $this, false );
+        $gid   = CRM_Utils_Request::retrieve( 'gid', 'Positive', $this, false );
+        $mergeId = CRM_Utils_Request::retrieve( 'mergeId', 'Positive', $this, false );
+
         self::validateContacts( $cid, $oid );
-        
+
+        //load cache mechanism 
+        $pos = self::loadCache( $rgid, $gid, $cid, $oid, $mergeId );
+ 
         // Block access if user does not have EDIT permissions for both contacts.
         require_once 'CRM/Contact/BAO/Contact/Permission.php';
         if ( ! ( CRM_Contact_BAO_Contact_Permission::allow( $cid, CRM_Core_Permission::EDIT ) && 
@@ -88,7 +92,6 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         $viewUser = CRM_Core_Permission::check('access user profiles');
         $mainUfId = CRM_Core_BAO_UFMatch::getUFId( $cid );
         if ( $mainUfId ) {
-           
             if ( $config->userFramework == 'Drupal' ) {
                 $mainUser = user_load( $mainUfId );
             } else if ( $config->userFramework == 'Joomla' ) {
@@ -98,9 +101,27 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         
         $this->assign( 'mainUfId', $mainUfId );
         $this->assign( 'mainUfName', $mainUser->name );
-        
+
+        foreach (array('prev', 'next') as $position) {
+            if ( !empty( $pos[$position] ) ) {
+                if ( $pos[$position]['id1'] && $pos[$position]['id2']) {
+                    $urlParam = "reset=1&cid={$pos[$position]['id1']}&oid={$pos[$position]['id2']}&mergeId={$pos[$position]['mergeId']}&action=update";
+                    if ( $rgid ) {
+                        $urlParam .= "&rgid={$rgid}";
+                    }
+                    if ( $gid ) {
+                        $urlParam .= "&gid={$gid}";
+                    }
+                    
+                    $$position = CRM_Utils_system::url( 'civicrm/contact/merge', $urlParam );
+                    $this->assign( $position, $$position );
+                }
+            }
+        }
+
         // get user info of other contact.
         $otherUfId = CRM_Core_BAO_UFMatch::getUFId( $oid );
+
         if ( $otherUfId ) {
             if ( $config->userFramework == 'Drupal' ) {
                 $otherUser = user_load( $otherUfId );
@@ -679,4 +700,45 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
             CRM_Core_Error::fatal( ts( 'Oops, these contacts seems to be marked as non duplicates.' ) );
         }
     }
+
+    function loadCache( $rgid, $gid, $cid, $oid, &$mergeId = null ) 
+    {
+        $contactType = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $cid, 'contact_type' );
+        $cacheKey  = "merge $contactType";
+        $cacheKey .= $rgid ? "_{$rgid}" : '_0';
+        $cacheKey .= $gid ? "_{$gid}" : '_0';
+        
+        if ( $mergeId == null ) {
+            $query = "
+SELECT id 
+FROM   civicrm_prevnext_cache
+WHERE  entity_id1 = $cid AND
+       entity_id2 = $oid AND
+       entity_table = 'civicrm_contact' AND
+       cacheKey     = '$cacheKey'
+";
+            $mergeId = CRM_Core_DAO::singleValueQuery( $query );
+        }
+        
+        $pos = array( );
+        if ( $mergeId ) {
+            $sqlPrev = "SELECT * FROM civicrm_prevnext_cache WHERE id < $mergeId ORDER BY ID DESC LIMIT 1";
+            $dao = CRM_Core_DAO::executeQuery( $sqlPrev, CRM_Core_DAO::$_nullArray );
+            if ( $dao->fetch() ) {
+                $pos['prev']['id1']     = $dao->entity_id1;
+                $pos['prev']['id2']     = $dao->entity_id2;
+                $pos['prev']['mergeId'] = $dao->id;
+            }
+            
+            $sqlNext = "SELECT * FROM civicrm_prevnext_cache WHERE id > $mergeId ORDER BY ID ASC LIMIT 1";
+            $dao = CRM_Core_DAO::executeQuery( $sqlNext, CRM_Core_DAO::$_nullArray );
+            if ( $dao->fetch() ) {
+                $pos['next']['id1']     = $dao->entity_id1;
+                $pos['next']['id2']     = $dao->entity_id2;
+                $pos['next']['mergeId'] = $dao->id;
+            }
+        }   
+        return $pos;
+    }
+
 }
