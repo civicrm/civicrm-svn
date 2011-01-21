@@ -106,6 +106,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
             if ( !empty( $pos[$position] ) ) {
                 if ( $pos[$position]['id1'] && $pos[$position]['id2']) {
                     $urlParam = "reset=1&cid={$pos[$position]['id1']}&oid={$pos[$position]['id2']}&mergeId={$pos[$position]['mergeId']}&action=update";
+
                     if ( $rgid ) {
                         $urlParam .= "&rgid={$rgid}";
                     }
@@ -113,8 +114,8 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
                         $urlParam .= "&gid={$gid}";
                     }
                     
-                    $$position = CRM_Utils_system::url( 'civicrm/contact/merge', $urlParam );
-                    $this->assign( $position, $$position );
+                    $this->$position = CRM_Utils_system::url( 'civicrm/contact/merge', $urlParam );
+                    $this->assign( $position, $this->$position );
                 }
             }
         }
@@ -193,7 +194,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         $this->_contactType = $main['contact_type'];
         $this->addElement('checkbox', 'toggleSelect', null, null, array('onclick' => "return toggleCheckboxVals('move_',this);"));
 
-        require_once "CRM/Contact/DAO/Contact.php";
+        require_once 'CRM/Contact/DAO/Contact.php';
         $fields =& CRM_Contact_DAO_Contact::fields();
 
         // FIXME: there must be a better way
@@ -390,11 +391,17 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
 
     public function buildQuickForm()
     {
-        CRM_Utils_System::setTitle(ts('Merge Contacts'));
-        $this->addButtons(array(
-            array('type' => 'next',   'name' => ts('Merge'), 'isDefault' => true),
-            array('type' => 'cancel', 'name' => ts('Cancel')),
-        ));
+        CRM_Utils_System::setTitle( ts('Merge Contacts') );
+
+        $name = ts('Merge');
+        if ( $this->next ) {
+            $name = ts('Merge and Goto Next Pair');
+        }
+
+        $this->addButtons( array(
+                                 array( 'type' => 'next',   'name' => $name, 'isDefault' => true ),
+                                 array( 'type' => 'cancel', 'name' => ts('Cancel') ),
+                                 ) );
     }
 
     public function postProcess()
@@ -409,9 +416,8 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         }
         
         $relTables =& CRM_Dedupe_Merger::relTables();
-        $moveTables = $locBlocks = array( );
-        $tableOperations = array( );
-        foreach ($formValues as $key => $value) {
+        $moveTables = $locBlocks = $tableOperations = array( );
+        foreach ( $formValues as $key => $value ) {
             if ($value == $this->_qfZeroBug) $value = '0';
             if ((in_array(substr($key, 5), CRM_Dedupe_Merger::$validFields) or 
                  substr($key, 0, 12) == 'move_custom_') and $value != null) {
@@ -502,35 +508,39 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         }
         
         // FIXME: fix gender, prefix and postfix, so they're edible by createProfileContact()
-        $names['gender']            = array('newName' => 'gender_id',          'groupName' => 'gender');
-        $names['individual_prefix'] = array('newName' => 'prefix_id',          'groupName' => 'individual_prefix');
-        $names['individual_suffix'] = array('newName' => 'suffix_id',          'groupName' => 'individual_suffix');
-        $names['addressee']         = array('newName' => 'addressee_id',       'groupName' => 'addressee');
-        $names['email_greeting']    = array('newName' => 'email_greeting_id',  'groupName' => 'email_greeting');
-        $names['postal_greeting']   = array('newName' => 'postal_greeting_id', 'groupName' => 'postal_greeting');
-        CRM_Core_OptionGroup::lookupValues($submitted, $names, true);
+        $names['gender']            = array( 'newName' => 'gender_id',          'groupName' => 'gender' );
+        $names['individual_prefix'] = array( 'newName' => 'prefix_id',          'groupName' => 'individual_prefix' );
+        $names['individual_suffix'] = array( 'newName' => 'suffix_id',          'groupName' => 'individual_suffix' );
+        $names['addressee']         = array( 'newName' => 'addressee_id',       'groupName' => 'addressee' );
+        $names['email_greeting']    = array( 'newName' => 'email_greeting_id',  'groupName' => 'email_greeting' );
+        $names['postal_greeting']   = array( 'newName' => 'postal_greeting_id', 'groupName' => 'postal_greeting' );
+        CRM_Core_OptionGroup::lookupValues( $submitted, $names, true );
 
         // FIXME: fix custom fields so they're edible by createProfileContact()
-        $cgTree =& CRM_Core_BAO_CustomGroup::getTree($this->_contactType, $this, null, -1);
+        $cgTree =& CRM_Core_BAO_CustomGroup::getTree( $this->_contactType, $this, null, -1 );
         
         $cFields = array( );
-        foreach ($cgTree as $key => $group) {
+        foreach ( $cgTree as $key => $group ) {
             if (!isset($group['fields'])) continue;
-            foreach ($group['fields'] as $fid => $field) {
+            foreach ( $group['fields'] as $fid => $field ) {
                 $cFields[$fid]['attributes'] = $field;
             }
         }
         
-        if (!isset($submitted)) $submitted = array();
-        foreach ($submitted as $key => $value) {
-            if (substr($key, 0, 7) == 'custom_') {
+        if ( !isset( $submitted ) ) {
+            $submitted = array();
+        }
+        foreach ( $submitted as $key => $value ) {
+            if ( substr( $key, 0, 7 ) == 'custom_' ) {
                 $fid = (int) substr($key, 7);
                 $htmlType = $cFields[$fid]['attributes']['html_type'];
                 switch ( $htmlType ) {
+                    
                 case 'File':
                     $customFiles[] = $fid;
                     unset($submitted["custom_$fid"]);
                     break;
+
                 case 'Select Country':
                 case 'Select State/Province':
                     $submitted[$key] = CRM_Core_BAO_CustomField::getDisplayValue($value, $fid, $cFields);
@@ -596,8 +606,8 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         }
 
         // handle the related tables
-        if (isset($moveTables)) {
-            CRM_Dedupe_Merger::moveContactBelongings($this->_cid, $this->_oid, $moveTables, $tableOperations);
+        if ( isset( $moveTables ) ) {
+            CRM_Dedupe_Merger::moveContactBelongings( $this->_cid, $this->_oid, $moveTables, $tableOperations );
         }
         
         // move file custom fields
@@ -610,9 +620,11 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         require_once 'CRM/Core/DAO/EntityFile.php';
         require_once 'CRM/Core/Config.php';
 
-        if (!isset($customFiles)) $customFiles = array();
-        foreach ($customFiles as $customId) {
-            list($tableName, $columnName, $groupID) = CRM_Core_BAO_CustomField::getTableColumnGroup($customId);
+        if ( !isset( $customFiles ) ) {
+            $customFiles = array();
+        }
+        foreach ( $customFiles as $customId ) {
+            list( $tableName, $columnName, $groupID ) = CRM_Core_BAO_CustomField::getTableColumnGroup( $customId );
 
             // get the contact_id -> file_id mapping
             $fileIds = array();
@@ -652,10 +664,11 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         }
         
         // move other's belongings and delete the other contact
-        CRM_Dedupe_Merger::moveContactBelongings($this->_cid, $this->_oid);
-        $otherParams = array('contact_id' => $this->_oid);
+        CRM_Dedupe_Merger::moveContactBelongings( $this->_cid, $this->_oid );
+        $otherParams = array( 'contact_id' => $this->_oid );
 
-        if ( CRM_Core_Permission::check( 'merge duplicate contacts' ) && CRM_Core_Permission::check( 'delete contacts' )) {
+        if ( CRM_Core_Permission::check( 'merge duplicate contacts' ) && 
+             CRM_Core_Permission::check( 'delete contacts' ) ) {
             // if ext id is submitted then set it null for contact to be deleted
             if ( CRM_Utils_Array::value( 'external_identifier', $submitted ) ) {
                 $query = "UPDATE civicrm_contact SET external_identifier = null WHERE id = {$this->_oid}";
@@ -672,19 +685,23 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
 
             CRM_Core_DAO::executeQuery( $cacheQuery );
         } else {
-            CRM_Core_Session::setStatus(ts('Do not have sufficient permission to delete duplicate contact.'));
+            CRM_Core_Session::setStatus( ts('Do not have sufficient permission to delete duplicate contact.') );
         }
         
-        if (isset($submitted)) {
+        if ( isset( $submitted ) ) {
             $submitted['contact_id'] = $this->_cid;
-            CRM_Contact_BAO_Contact::createProfileContact($submitted, CRM_Core_DAO::$_nullArray, $this->_cid);
+            CRM_Contact_BAO_Contact::createProfileContact( $submitted, CRM_Core_DAO::$_nullArray, $this->_cid );
         }
-        CRM_Core_Session::setStatus(ts('The contacts have been merged.'));
+        CRM_Core_Session::setStatus( ts('The contacts have been merged.') );
         $url = CRM_Utils_System::url( 'civicrm/contact/view', "reset=1&cid={$this->_cid}" );
-        CRM_Utils_System::redirect($url);
+        if ( $this->next ) {
+            $url = $this->next;
+        }
+        CRM_Utils_System::redirect( $url );
     }
     
-    function validateContacts( $cid, $oid ) {
+    function validateContacts( $cid, $oid )
+    {
         if ( !$cid || !$oid ) return; 
         require_once 'CRM/Dedupe/DAO/Exception.php';
         $exception = new CRM_Dedupe_DAO_Exception( );
