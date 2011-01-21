@@ -1892,4 +1892,74 @@ LEFT JOIN civicrm_membership_payment cmp ON ( con.id = cmp.contribution_id )
         if ( $status == 'Cancelled' ) return true;
         return false;
     }
+
+    
+    /**
+     * Function to get membership joins for a specified membership
+     * type.  Specifically, retrieves a count of still current memberships whose 
+     * join_date and start_date
+     * are within a specified date range.  Dates match the regexp
+     * "yyyy(mm(dd)?)?".  Omitted portions of a date match the earliest start
+     * date or latest end date, i.e., 200803 is March 1st as a start date and
+     * March 31st as an end date.
+     * 
+     * @param int    $membershipTypeId  membership type id
+     * @param int    $startDate         date on which to start counting
+     * @param int    $endDate           date on which to end counting
+     * @param bool   $isTest            if true, membership is for a test site
+     *
+     * @return returns the number of members of type $membershipTypeId 
+     *         whose join_date is between $startDate and $endDate and 
+     *         whose start_date is between $startDate and $endDate
+     */
+    function getMembershipJoins( $membershipTypeId, $startDate, $endDate, $isTest = 0 ) 
+    {
+        $query = "SELECT count(civicrm_membership.id) as member_count
+  FROM   civicrm_membership left join civicrm_membership_status on ( civicrm_membership.status_id = civicrm_membership_status.id )
+WHERE  membership_type_id = %1 
+AND join_date >= '$startDate' AND join_date <= '$endDate' 
+AND start_date >= '$startDate' AND start_date <= '$endDate' 
+AND civicrm_membership_status.is_current_member = 1
+AND civicrm_membership.contact_id NOT IN (SELECT id FROM civicrm_contact WHERE is_deleted = 1)
+AND is_test = %2";
+        $params = array(1 => array($membershipTypeId, 'Integer'),
+                        2 => array($isTest, 'Boolean') );
+        $memberCount = CRM_Core_DAO::singleValueQuery( $query, $params );
+        return (int)$memberCount;
+    }
+    
+    
+    /**
+     * Function to get membership renewals for a specified membership
+     * type.  Specifically, retrieves a count of still current memberships whose 
+     * join_date is before and start_date
+     * is within a specified date range.  Dates match the regexp
+     * "yyyy(mm(dd)?)?".  Omitted portions of a date match the earliest start
+     * date or latest end date, i.e., 200803 is March 1st as a start date and
+     * March 31st as an end date.
+     * 
+     * @param int    $membershipTypeId  membership type id
+     * @param int    $startDate         date on which to start counting
+     * @param int    $endDate           date on which to end counting
+     * @param bool   $isTest            if true, membership is for a test site
+     *
+     * @return returns the number of members of type $membershipTypeId 
+     *         whose join_date is before $startDate and 
+     *         whose start_date is between $startDate and $endDate
+     */
+    function getMembershipRenewals( $membershipTypeId, $startDate, $endDate, $isTest = 0 ) 
+    {
+        $query = "SELECT count(civicrm_membership.id) as member_count
+  FROM   civicrm_membership left join civicrm_membership_status on ( civicrm_membership.status_id = civicrm_membership_status.id )
+WHERE  membership_type_id = %1 
+AND join_date < '$startDate' 
+AND start_date >= '$startDate' AND start_date <= '$endDate' 
+AND civicrm_membership_status.is_current_member = 1
+AND civicrm_membership.contact_id NOT IN (SELECT id FROM civicrm_contact WHERE is_deleted = 1)
+AND is_test = %2";
+        $params = array(1 => array($membershipTypeId, 'Integer'),
+                        2 => array($isTest, 'Boolean') );
+        $memberCount = CRM_Core_DAO::singleValueQuery( $query, $params );
+        return (int)$memberCount;
+    }
 }
