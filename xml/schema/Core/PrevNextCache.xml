@@ -44,4 +44,10 @@
     <comment>Unique path name for cache element of the searched item</comment>
     <add>3.4</add>
   </field>
+  <field>
+    <name>data</name>
+    <type>longtext</type>
+    <comment>cached snapshot of the serialized data</comment>
+    <add>3.4</add>
+  </field>
 </table>

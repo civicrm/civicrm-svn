@@ -153,23 +153,26 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
                         $srcID = $dupes[1];
                         $dstID = $dupes[0];
                     }
-                    $values[] = " ( 'civicrm_contact', $srcID, $dstID, '$cacheKeyString' ) ";
+                    
                     $canMerge = ( CRM_Contact_BAO_Contact_Permission::allow( $dstID, CRM_Core_Permission::EDIT )
                                   && CRM_Contact_BAO_Contact_Permission::allow( $srcID, CRM_Core_Permission::EDIT ) );
                     
-                    $mainContacts[]  = array( 'srcID'   => $srcID,
-                                              'srcName' => $displayNames[$srcID],
-                                              'dstID'   => $dstID,
-                                              'dstName' => $displayNames[$dstID],
-                                              'weight'  => $dupes[2],
-                                              'canMerge'=> $canMerge );
+                    $mainContacts[] = $row = array( 'srcID'   => $srcID,
+                                                    'srcName' => $displayNames[$srcID],
+                                                    'dstID'   => $dstID,
+                                                    'dstName' => $displayNames[$dstID],
+                                                    'weight'  => $dupes[2],
+                                                    'canMerge'=> $canMerge );
+                    
+                    $data = serialize( $row );
+                    $values[] = " ( 'civicrm_contact', $srcID, $dstID, '$cacheKeyString', '$data' ) ";
                 }
                 if ($cid) $this->_cid = $cid;
                 if ($gid) $this->_gid = $gid;
                 $this->_rgid = $rgid;
                 $this->_mainContacts = $mainContacts;
-
-                $insert = "INSERT INTO civicrm_prevnext_cache ( entity_table, entity_id1, entity_id2, cacheKey ) VALUES \n";
+                
+                $insert = "INSERT INTO civicrm_prevnext_cache ( entity_table, entity_id1, entity_id2, cacheKey, data ) VALUES \n";
                 $query  = $insert . implode( ",\n ", $values );
 
                 //dump the dedupe matches in the prevnext_cache table
@@ -206,7 +209,7 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
     function browse()
     {
         $this->assign('main_contacts', $this->_mainContacts);
-       
+     
         if ($this->_cid) $this->assign('cid', $this->_cid);
         if (isset($this->_gid) || $this->_gid) $this->assign('gid', $this->_gid);
         $this->assign('rgid', $this->_rgid);
