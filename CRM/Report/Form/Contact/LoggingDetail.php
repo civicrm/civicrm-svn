@@ -150,10 +150,13 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         $skipped = array('contact_id', 'entity_id', 'id');
         foreach ($diffs as $diff) {
             if (in_array($diff['field'], $skipped))              continue;
-            if ($diff['from'] == $diff['to'])                    continue;
+            if ($diff['from'] == $diff['to'])                    continue; // $differ filters out === values; for presentation hide changes like 42 → '42'
             if ($diff['from'] == false and $diff['to'] == false) continue; // only in PHP: '0' == false and null == false but '0' != null
+
             $field = isset($titles[$diff['field']]) ? $titles[$diff['field']] : substr($table, 4) . '.' . $diff['field'];
-            if ($diff['action'] == 'Insert') $diff['from'] = '[NONEXISTENT]';
+
+            if ($diff['action'] == 'Insert') $diff['from'] = ts('[NONEXISTENT]');
+
             $rows[] = array(
                 'field' => $field . " (id: {$diff['id']})",
                 'from'  => isset($values[$diff['field']][$diff['from']]) ? $values[$diff['field']][$diff['from']] : $diff['from'],
