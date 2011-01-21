@@ -2122,7 +2122,7 @@ class  Cpdf {
       //Because of potential trouble with php safe mode, expect that the folder already exists.
       //If not existing, this will hit performance because of missing cached results.
       if ( is_dir(substr($fontcache,0,-1)) ) {
-        file_put_contents($fontcache . $cache_name,  '$this->fonts[$font]=' . var_export($data,  true)  . ';');
+        @file_put_contents($fontcache . $cache_name,  '$this->fonts[$font]=' . var_export($data,  true)  . ';');
       }
     }
     

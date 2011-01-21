@@ -330,7 +330,7 @@ if (!defined("DOMPDF_ENABLE_PHP")) {
  * @var bool
  */
 if (!defined("DOMPDF_ENABLE_REMOTE")) {
-  define("DOMPDF_ENABLE_REMOTE", false);
+  define("DOMPDF_ENABLE_REMOTE", true);
 }
  
 /**
