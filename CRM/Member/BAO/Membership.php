@@ -1914,20 +1914,26 @@ LEFT JOIN civicrm_membership_payment cmp ON ( con.id = cmp.contribution_id )
      */
     function getMembershipJoins( $membershipTypeId, $startDate, $endDate, $isTest = 0 ) 
     {
-        $query = "SELECT count(civicrm_membership.id) as member_count
-  FROM   civicrm_membership left join civicrm_membership_status on ( civicrm_membership.status_id = civicrm_membership_status.id )
-WHERE  membership_type_id = %1 
-AND join_date >= '$startDate' AND join_date <= '$endDate' 
-AND start_date >= '$startDate' AND start_date <= '$endDate' 
-AND civicrm_membership_status.is_current_member = 1
-AND civicrm_membership.contact_id NOT IN (SELECT id FROM civicrm_contact WHERE is_deleted = 1)
-AND is_test = %2";
-        $params = array(1 => array($membershipTypeId, 'Integer'),
-                        2 => array($isTest, 'Boolean') );
+        $testClause = 'membership.is_test = 1';
+        if ( !$isTest ) {
+            $testClause = '( membership.is_test IS NULL OR membership.is_test = 0 )';  
+        }
+        
+        $query = "
+    SELECT  count( membership.id ) as member_count
+      FROM  civicrm_membership membership
+INNER JOIN  civicrm_membership_status status ON ( membership.status_id = status.id AND status.is_current_member = 1 )
+INNER JOIN  civicrm_contact contact ON ( membership.contact_id = contact.id AND contact.is_deleted = 0 )
+     WHERE  membership.membership_type_id = %1
+       AND  membership.join_date >= '$startDate'  AND membership.join_date <= '$endDate' 
+       AND  membership.start_date >= '$startDate' AND membership.start_date <= '$endDate' 
+       AND  {$testClause}";
+        
+        $params = array( 1 => array( $membershipTypeId, 'Integer') );
         $memberCount = CRM_Core_DAO::singleValueQuery( $query, $params );
+        
         return (int)$memberCount;
     }
-    
     
     /**
      * Function to get membership renewals for a specified membership
@@ -1949,17 +1955,24 @@ AND is_test = %2";
      */
     function getMembershipRenewals( $membershipTypeId, $startDate, $endDate, $isTest = 0 ) 
     {
-        $query = "SELECT count(civicrm_membership.id) as member_count
-  FROM   civicrm_membership left join civicrm_membership_status on ( civicrm_membership.status_id = civicrm_membership_status.id )
-WHERE  membership_type_id = %1 
-AND join_date < '$startDate' 
-AND start_date >= '$startDate' AND start_date <= '$endDate' 
-AND civicrm_membership_status.is_current_member = 1
-AND civicrm_membership.contact_id NOT IN (SELECT id FROM civicrm_contact WHERE is_deleted = 1)
-AND is_test = %2";
-        $params = array(1 => array($membershipTypeId, 'Integer'),
-                        2 => array($isTest, 'Boolean') );
+        $testClause = 'membership.is_test = 1';
+        if ( !$isTest ) {
+            $testClause = '( membership.is_test IS NULL OR membership.is_test = 0 )';  
+        }
+        
+        $query = "
+    SELECT  count(membership.id) as member_count
+      FROM  civicrm_membership membership 
+INNER JOIN  civicrm_membership_status status ON ( membership.status_id = status.id AND status.is_current_member = 1 )
+INNER JOIN  civicrm_contact contact ON ( contact.id = membership.contact_id AND contact.is_deleted = 0 ) 
+     WHERE  membership.membership_type_id = %1
+       AND  membership.join_date < '$startDate'
+       AND  membership.start_date >= '$startDate' AND membership.start_date <= '$endDate' 
+       AND  {$testClause}";
+        
+        $params = array( 1 => array( $membershipTypeId, 'Integer' ) );
         $memberCount = CRM_Core_DAO::singleValueQuery( $query, $params );
+        
         return (int)$memberCount;
     }
 }
