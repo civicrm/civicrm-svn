@@ -117,6 +117,11 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
      * Do we want to parse street address. 
      */
     private $_parseStreetAddress; 
+     
+    /**
+     * check contact has a subtype or not 
+     */
+    public $_isContactSubType;
     
     /**
      * build all the data structures needed to build the form
@@ -146,7 +151,10 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                 CRM_Core_Error::statusBounce( ts('Could not get a contact id and/or contact type') );
             }
             
-            $this->_contactSubType = CRM_Utils_Request::retrieve( 'cst','String', $this );
+            $this->_isContactSubType = false;
+            if( $this->_contactSubType = CRM_Utils_Request::retrieve( 'cst','String', $this ) ) {
+                $this->_isContactSubType = true;
+            }
             
             if ( $this->_contactSubType && !(CRM_Contact_BAO_ContactType::isExtendsContactType($this->_contactSubType, $this->_contactType, true)) ) { 
                 CRM_Core_Error::statusBounce(ts("Could not get a valid contact subtype for contact type '%1'", array(1 => $this->_contactType)));
@@ -575,7 +583,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
     static function formRule( $fields, &$errors, $contactId = null )
     {
         $config = CRM_Core_Config::singleton( );
-        
+       
         // validations.
         //1. for each block only single value can be marked as is_primary = true.
         //2. location type id should be present if block data present.
@@ -817,9 +825,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         if ( isset( $params['current_employer_id'] ) ) unset( $params['current_employer_id'] ); 
         
         $params['contact_type'] = $this->_contactType;
-        if ( $this->_contactSubType && 
-             !CRM_Utils_Array::value( 'contact_sub_type', $params ) ) {
-            $params['contact_sub_type'] = $this->_contactSubType; 
+        if ( !CRM_Utils_Array::value( 'contact_sub_type', $params ) && $this->_isContactSubType ) {
+            $params['contact_sub_type'] = $this->_contactSubType;
         }
         
         if ( $this->_contactId ) {
