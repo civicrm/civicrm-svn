@@ -64,6 +64,10 @@ class CRM_Contact_Page_AJAX
                 $select[] = ( $value == 'address' ) ? $selectText : $value;
                 $from[$value] = "LEFT JOIN civicrm_{$value} {$suffix} ON ( cc.id = {$suffix}.contact_id AND {$suffix}.is_primary = 1 ) ";
                 break;
+
+            case 'nick_name' :
+                $select[] = $value;
+                break;
                 
             case 'country':
             case 'state_province':
@@ -118,12 +122,17 @@ class CRM_Contact_Page_AJAX
         } else {
            $strSearch = "$name%";
         }
-        $includeEmailFrom ='';
+        $includeEmailFrom = $includeNickName = '';
         if( $config->includeEmailInName ) {
             if( !in_array( 'email', $list ) ) {
                 $includeEmailFrom ="LEFT JOIN civicrm_email eml ON ( cc.id = eml.contact_id AND eml.is_primary = 1 )" ;  
             }
-            $whereClause = " WHERE ( email LIKE '$strSearch' || sort_name LIKE '$strSearch' ) {$where} "; 
+            if ( $config->includeNickNameInName ) {
+                $includeNickName = " || nick_name LIKE '$strSearch'";
+            }
+            $whereClause = " WHERE ( email LIKE '$strSearch' || sort_name LIKE '$strSearch' {$includeNickName} ) {$where} ";
+        } else if ( $config->includeNickNameInName ) {
+            $whereClause = " WHERE ( nick_name LIKE '$strSearch' || sort_name LIKE '$strSearch' ) {$where} ";
         } else {
             $whereClause = " WHERE sort_name LIKE '$strSearch' {$where} ";
         }
