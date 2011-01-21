@@ -46,32 +46,15 @@ class CRM_Contact_Page_View_Log extends CRM_Core_Page {
      */
     function browse( ) {
         
-        $useLogging = false;
+        require_once 'CRM/Core/BAO/Log.php';
+        $loggingReport = CRM_Core_BAO_Log::useLoggingReport( );
+        $this->assign( 'useLogging', $loggingReport );
 
-        require_once 'CRM/Logging/Schema.php';
-        $loggingSchema = new CRM_Logging_Schema( );
-        if ( $loggingSchema->isEnabled() ) {
-            require_once 'CRM/Report/BAO/Instance.php';
-            $params   = array( 'report_id' => 'logging/contact/summary' );
-            $instance = array( );
-            CRM_Report_BAO_Instance::retrieve($params, $instance);
-            
-            if ( !empty($instance) &&
-                 ( !CRM_Utils_Array::value('permission', $instance) ||
-                   ( CRM_Utils_Array::value('permission', $instance) && CRM_Core_Permission::check( $instance['permission'] ) ) ) ) {
-                $this->assign( 'instanceUrl',  CRM_Utils_System::url( "civicrm/report/instance/{$instance['id']}", "reset=1&force=1&snippet=4&section=2&id_op=eq&id_value={$this->_contactId}&cid={$this->_contactId}", false, null, false ) );
-                $useLogging = true;
-            }
-            
-        }
-        $this->assign( 'useLogging', $useLogging );
-        
-        if ( $useLogging ) {
+        if ( $loggingReport ) {
+            $this->assign( 'instanceUrl',  CRM_Utils_System::url( "civicrm/report/instance/{$loggingReport}", "reset=1&force=1&snippet=4&section=2&id_op=eq&id_value={$this->_contactId}&cid={$this->_contactId}", false, null, false ) );
             return;
         }
         
-        require_once 'CRM/Core/DAO/Log.php';
-
         $log = new CRM_Core_DAO_Log( );
         
         $log->entity_table = 'civicrm_contact';

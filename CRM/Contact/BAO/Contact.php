@@ -2125,6 +2125,9 @@ UNION
             
         case 'log' :
             require_once 'CRM/Core/BAO/Log.php';
+            if ( CRM_Core_BAO_Log::useLoggingReport( ) ) {
+                return false;
+            }
             return CRM_Core_BAO_Log::getContactLogCount( $contactId );
         
         case 'note':
