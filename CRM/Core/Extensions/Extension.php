@@ -87,8 +87,17 @@ class CRM_Core_Extensions_Extension
         return $arr;
     }
 
-    public function readXMLInfo( ) {
-        $info = $this->_parseXMLFile( $this->path . 'info.xml' );
+    public function readXMLInfo( $xml = false ) {
+        if( $xml === false ) {
+            $info = $this->_parseXMLFile( $this->path . 'info.xml' );
+        } else {
+            $info = $this->_parseXMLString( $xml );
+        }
+        
+        if ( $info == false ) {
+            $this->name = 'Invalid extension';
+        } else {
+        
         $this->type = (string) $info->attributes()->type;
         $this->file = (string) $info->file;
         $this->label = (string) $info->name;
@@ -110,6 +119,11 @@ class CRM_Core_Extensions_Extension
                 $this->$attr = $this->xmlObjToArray( $val );
             }
         }
+        }
+    }
+
+    private function _parseXMLString( $string ) {
+        return simplexml_load_string( $string, 'SimpleXMLElement');
     }
 
     private function _parseXMLFile( $file ) {

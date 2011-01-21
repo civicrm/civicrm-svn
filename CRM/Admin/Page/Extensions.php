@@ -185,7 +185,11 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
 
         require_once 'CRM/Core/Extensions.php';
         $ext = new CRM_Core_Extensions();
-        $rowsRemote = $ext->grabPublicList();
+        $rowsRemote = array();
+        $rem  = $ext->_discoverRemote();
+        foreach( $rem as $id => $obj ) {
+            $rowsRemote[$id] = (array) $obj;
+        }
         
         $this->assign('rowsRemote', $rowsRemote);
 

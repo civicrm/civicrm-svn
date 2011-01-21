@@ -223,9 +223,27 @@ class CRM_Core_Extensions
                                                       $entry['label'], $entry['description'], $entry['is_active'] );
             $ext->setId($id);
             if( $fullInfo ) {
-                $ext->readXMLInfo();            
+                $ext->readXMLInfo();
             }
             $result[$id] = $ext;
+        }
+        return $result;
+    }
+
+
+    public function _discoverRemote( ) {
+        $remoties = $this->grabRemoteKeyList();
+
+        require_once 'CRM/Core/Extensions/Extension.php';
+        foreach( $remoties as $id => $rext ) {
+            $ext = new CRM_Core_Extensions_Extension( $rext['key'] );
+//            CRM_Core_Error::debug( $this->grabRemoteInfoFile( $rext['key'] ) );
+            $xml = $this->grabRemoteInfoFile( $rext['key'] );
+            if( $xml != false ) {
+                $ext->readXMLInfo( $xml );
+                $result[] = $ext;                            
+            }
+
         }
         return $result;
     }
@@ -436,15 +454,19 @@ class CRM_Core_Extensions
      * @access public
      * @return Array list of extension names
      */
-    public function grabPublicList() {
+    public function grabRemoteKeyList() {
 
         $handl = fopen ( self::PUBLIC_EXTENSIONS_REPOSITORY , "r");
 
         while (!feof ($handl)) {
-            $ln = fgets ($handl, 1024);
+            $ln = fgets ($handl, 2048);
             if (preg_match ("@\<li\>(.*)\</li\>@i", $ln, $out)) {
                 $extsRaw[] = $out;// success
-                $exts[] = array( 'key' => strip_tags($out[1]) );
+                $key = strip_tags($out[1]);
+                if( substr( $key, -4 ) == '.xml' ) {
+                    $exts[] = array( 'key' => trim( $key, '.xml' ) );
+                }
+                
             } else {
                 //fail
             }
@@ -453,6 +475,31 @@ class CRM_Core_Extensions
         fclose($handl);
         
         return $exts;
+    }
+
+    public function grabRemoteInfoFile( $key ) {
+
+        if ($handl = fopen ( self::PUBLIC_EXTENSIONS_REPOSITORY . '/' . $key . '.xml'  , "r") ) {
+            while(!feof($handl)) {
+                $contents = fread( $handl, 1024 );
+            }
+        } else {
+            //fail
+        }
+
+        //parse just in case
+        $check = simplexml_load_string( $contents );
+
+        if (!$check) {
+            foreach(libxml_get_errors() as $error) {
+                CRM_Core_Error::debug( 'xmlError', $error );
+            }
+            return;
+        }
+        
+        fclose( $handl );
+
+        return $contents;
     }
 
 }
