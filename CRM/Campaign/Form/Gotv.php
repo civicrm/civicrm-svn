@@ -120,6 +120,7 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
         $this->_searchParams = array( );
         foreach  ( $this->_elements as $element ) {
             $name = $element->_attributes['name'];
+            if ( $name == 'qfKey' ) continue;
             $this->_searchParams[$name] = $name;
         }
         $this->set( 'searchParams',    $this->_searchParams );

@@ -143,18 +143,8 @@ class CRM_Campaign_Page_AJAX
     
     function voterList( ) 
     {
-        $searchParams = array( 'city',
-                               'group',
-                               'sort_name', 
-                               'street_unit',
-                               'street_name',
-                               'postal_code',
-                               'contact_type',
-                               'street_number', 
-                               'street_address', 
-                               'survey_interviewer_id', 
-                               'campaign_survey_id',
-                               'campaign_search_voter_for' );
+        //get the search criteria params.
+        $searchParams = explode( ',', CRM_Utils_Array::value( 'searchCriteria', $_POST ) );
         
         $params = $searchRows = array( );
         foreach ( $searchParams as $param ) {
