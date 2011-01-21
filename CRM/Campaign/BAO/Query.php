@@ -315,10 +315,12 @@ INNER JOIN civicrm_activity_assignment ON ( civicrm_activity.id = civicrm_activi
         $form->add( 'text', 'city',            ts( 'City'           ), $attributes['city']           );
         $form->add( 'text', 'postal_code',     ts('Zip / Postal Code'), $attributes['postal_code']   );
         
-        $contactTypes = array( '' => ts('- any contact type -') ) + CRM_Contact_BAO_ContactType::getSelectElements( );
-        $form->add( 'select', 'contact_type', ts('is...'), $contactTypes );
-        $groups = array('' => ts('- any group -')) + CRM_Core_PseudoConstant::group( );
-        $form->add( 'select', 'group', ts( 'in' ), $groups );
+        $contactTypes = CRM_Contact_BAO_ContactType::getSelectElements( );
+        $form->add( 'select', 'contact_type',  ts( 'Contact Type(s)' ), $contactTypes, false,
+                    array( 'id' => 'contact_type',  'multiple'=> 'multiple', 'title' => ts('- select -') ));
+        $groups = CRM_Core_PseudoConstant::group( );
+        $form->add( 'select', 'group',  ts( 'Groups' ), $groups, false, 
+                    array( 'id' => 'group',  'multiple'=> 'multiple', 'title' => ts('- select -') ) );
         
         $showInterviewer = false;
         if ( CRM_Core_Permission::check( 'administer CiviCampaign' ) ) {

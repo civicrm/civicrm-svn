@@ -65,14 +65,34 @@
               <td>			
 		  {$form.sort_name.html|crmReplace:class:'twenty'}
               </td>
-	      <td class="font-size12pt">
-                  {$form.contact_type.label}&nbsp
-		  {$form.contact_type.html}
-	      </td>
-	      <td class="font-size12pt">
-                  {$form.group.label}&nbsp
-		  {$form.group.html}
-	      </td>
+	      <td><label>{ts}Contact Type(s){/ts}</label><br />
+                  {$form.contact_type.html}
+                  {literal}
+	            <script type="text/javascript">
+                	cj("select#contact_type").crmasmSelect({
+			    addItemTarget: 'bottom',
+			    animate: false,
+			    highlight: true,
+     			    sortable: true,
+			    respectParents: true
+			});
+		    </script>
+		   {/literal}
+              </td>
+              <td><label>{ts}Group(s){/ts}</label>
+                  {$form.group.html}
+                  {literal}
+                    <script type="text/javascript">
+                        cj("select#group").crmasmSelect({
+                           addItemTarget: 'bottom',
+                           animate: false,
+                           highlight: true,
+                           sortable: true,
+                           respectParents: true
+                        });
+                    </script>
+                {/literal}
+              </td>
           </tr>
 	  <tr>
 	      <td class="font-size12pt">
