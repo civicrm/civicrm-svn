@@ -122,17 +122,12 @@ class CRM_Contact_Page_AJAX
         } else {
            $strSearch = "$name%";
         }
-        $includeEmailFrom = $includeNickName = '';
+        $includeEmailFrom = '';
         if( $config->includeEmailInName ) {
             if( !in_array( 'email', $list ) ) {
                 $includeEmailFrom ="LEFT JOIN civicrm_email eml ON ( cc.id = eml.contact_id AND eml.is_primary = 1 )" ;  
             }
-            if ( $config->includeNickNameInName ) {
-                $includeNickName = " || nick_name LIKE '$strSearch'";
-            }
-            $whereClause = " WHERE ( email LIKE '$strSearch' || sort_name LIKE '$strSearch' {$includeNickName} ) {$where} ";
-        } else if ( $config->includeNickNameInName ) {
-            $whereClause = " WHERE ( nick_name LIKE '$strSearch' || sort_name LIKE '$strSearch' ) {$where} ";
+            $whereClause = " WHERE ( email LIKE '$strSearch' || sort_name LIKE '$strSearch' ) {$where} ";
         } else {
             $whereClause = " WHERE sort_name LIKE '$strSearch' {$where} ";
         }
