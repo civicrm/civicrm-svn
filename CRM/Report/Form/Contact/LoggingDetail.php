@@ -139,11 +139,6 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
 
     private function diffsInTable($table, $id = null)
     {
-        $params = array(
-            1 => array($this->log_conn_id, 'Integer'),
-            2 => array($this->log_date,    'String'),
-        );
-
         $differ = new CRM_Logging_Differ($this->log_conn_id, $this->log_date);
         $diffs  = $differ->diffsInTable($table, $id);
 

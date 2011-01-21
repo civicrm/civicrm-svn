@@ -34,6 +34,8 @@
  *
  */
 
+require_once 'CRM/Core/PseudoConstant.php';
+
 class CRM_Logging_Differ
 {
     private $db;
