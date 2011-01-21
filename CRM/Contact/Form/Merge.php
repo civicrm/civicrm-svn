@@ -674,16 +674,9 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
                 $query = "UPDATE civicrm_contact SET external_identifier = null WHERE id = {$this->_oid}";
                 CRM_Core_DAO::executeQuery( $query );
             }
-            civicrm_contact_delete($otherParams);
-
-            //clear cache
-            //FIXME : introduce the cacheKey check too
-            $cacheQuery = "DELETE FROM civicrm_prevnext_cache
-                           WHERE  entity_table = 'civicrm_contact' AND
-                                  ( entity_id1 = {$this->_oid} OR
-                                    entity_id2 = {$this->_oid} )";
-
-            CRM_Core_DAO::executeQuery( $cacheQuery );
+            civicrm_contact_delete( $otherParams );
+            
+            self::clearCache( $this->_oid );
         } else {
             CRM_Core_Session::setStatus( ts('Do not have sufficient permission to delete duplicate contact.') );
         }
@@ -756,6 +749,18 @@ WHERE  entity_id1 = $cid AND
             }
         }   
         return $pos;
+    }
+
+    function clearCache( $id )
+    {
+        //clear cache
+        //FIXME : introduce the cacheKey check too
+        $sql = "DELETE FROM civicrm_prevnext_cache
+                           WHERE  entity_table = 'civicrm_contact' AND
+                                  ( entity_id1 = {$id} OR
+                                    entity_id2 = {$id} )";
+        
+        CRM_Core_DAO::executeQuery( $sql );
     }
 
 }

@@ -119,19 +119,18 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
                 if ( $rgid ) {
                     $contactType = CRM_Core_DAO::getFieldValue( 'CRM_Dedupe_DAO_RuleGroup', 
                                                                 $rgid,
-                                                                'contact_type' );                }
+                                                                'contact_type' );
+                }
                 $cacheKeyString  = "merge $contactType";
                 $cacheKeyString .= $rgid ? "_{$rgid}" : '_0';
                 $cacheKeyString .= $gid ? "_{$gid}" : '_0';
-
-                $setCacheQuery = "INSERT INTO civicrm_prevnext_cache ( entity_table, entity_id1, entity_id2, cacheKey ) VALUES \n";
-
+                
                 $cids = array( );
                 foreach ( $foundDupes as $dupe ) {
                     $cids[$dupe[0]] = 1;
                     $cids[$dupe[1]] = 1;
                 }
-                $cidString = implode(', ', array_keys($cids));
+                $cidString = implode( ', ', array_keys( $cids ) );
                 $sql = "SELECT id, display_name FROM civicrm_contact WHERE id IN ($cidString) ORDER BY sort_name";
                 $dao = new CRM_Core_DAO();
                 $dao->query($sql);
@@ -154,7 +153,7 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
                         $srcID = $dupes[1];
                         $dstID = $dupes[0];
                     }
-                    $valuesCache[] = " ( 'civicrm_contact', $srcID, $dstID, '$cacheKeyString' ) ";
+                    $values[] = " ( 'civicrm_contact', $srcID, $dstID, '$cacheKeyString' ) ";
                     $canMerge = ( CRM_Contact_BAO_Contact_Permission::allow( $dstID, CRM_Core_Permission::EDIT )
                                   && CRM_Contact_BAO_Contact_Permission::allow( $srcID, CRM_Core_Permission::EDIT ) );
                     
@@ -169,8 +168,12 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
                 if ($gid) $this->_gid = $gid;
                 $this->_rgid = $rgid;
                 $this->_mainContacts = $mainContacts;
-                $cacheQuery = $setCacheQuery. implode( ",\n ", $valuesCache );
-                CRM_Core_DAO::executeQuery( $cacheQuery );
+
+                $insert = "INSERT INTO civicrm_prevnext_cache ( entity_table, entity_id1, entity_id2, cacheKey ) VALUES \n";
+                $query  = $insert . implode( ",\n ", $values );
+
+                //dump the dedupe matches in the prevnext_cache table
+                CRM_Core_DAO::executeQuery( $query );
 
                 $session = CRM_Core_Session::singleton( );
                 if ( $this->_cid ) {
