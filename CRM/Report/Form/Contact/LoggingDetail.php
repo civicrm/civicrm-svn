@@ -139,15 +139,15 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
 
     private function diffsInTable($table, $id = null)
     {
+        $rows = array();
+
         $differ = new CRM_Logging_Differ($this->log_conn_id, $this->log_date);
-        $diffs  = $differ->diffsInTable($table, $id);
+        $diffs  = $id ? $differ->diffsInTableForId($table, $id) : $differ->diffsInTable($table);
 
         // return early if nothing found
-        if (empty($diffs)) return array();
+        if (empty($diffs)) return $rows;
 
         list($titles, $values) = $differ->titlesAndValuesForTable($table);
-
-        $rows = array();
 
         // populate $rows with only the differences between $changed and $original (skipping certain columns and NULL ↔ empty changes)
         // FIXME: explode preferred_communication_method on CRM_Core_DAO::VALUE_SEPARATOR and handle properly somehow

@@ -50,45 +50,79 @@ class CRM_Logging_Differ
         $this->log_date    = $log_date;
     }
 
-    function diffsInTable($table, $id = null)
+    function diffs($tables = array())
     {
+        $diffs = array();
+
+        // populate $tables with all log tables if it’s empty
+        if (empty($tables)) {
+            $dao = CRM_Core_DAO::executeQuery("SHOW TABLES FROM `{$this->db}` LIKE 'log_civicrm_%'");
+            while ($dao->fetch()) {
+                $tables[] = $dao->toValue("Tables_in_{$this->db}_(log_civicrm_%)");
+            }
+        }
+
+        foreach ($tables as $table) {
+            $diff = $this->diffsInTable($table);
+            if (!empty($diff)) $diffs[$table] = $diff;
+        }
+
+        return $diffs;
+    }
+
+    function diffsInTable($table)
+    {
+        $diffs = array();
+
         $params = array(
             1 => array($this->log_conn_id, 'Integer'),
             2 => array($this->log_date,    'String'),
         );
 
-        // we look for the last change in the given connection that happended less than 10 seconds later than log_date to catch multi-query changes
-        $where = array('log_conn_id = %1', 'log_date < DATE_ADD(%2, INTERVAL 10 SECOND)');
-        if ($id) {
-            $params[3] = array($id, 'Integer');
-            $where[]   = 'id = %3';
+        // find ids in this table that were affected in the given connection (based on connection id and a ±10 s time period around the date)
+        $sql = "SELECT DISTINCT id FROM `{$this->db}`.`$table` WHERE log_conn_id = %1 AND log_date BETWEEN DATE_SUB(%2, INTERVAL 10 SECOND) AND DATE_ADD(%2, INTERVAL 10 SECOND)";
+        $dao =& CRM_Core_DAO::executeQuery($sql, $params);
+        while ($dao->fetch()) {
+            $diffs = array_merge($diffs, $this->diffsInTableForId($table, $dao->id));
         }
-        $changedSQL = "SELECT * FROM `{$this->db}`.`$table` WHERE " . implode(' AND ', $where) . ' ORDER BY log_date DESC LIMIT 1';
+
+        return $diffs;
+    }
+
+    function diffsInTableForId($table, $id)
+    {
+        $diffs = array();
+
+        $params = array(
+            1 => array($this->log_conn_id, 'Integer'),
+            2 => array($this->log_date,    'String'),
+            3 => array($id,                'Integer'),
+        );
+
+        // look for the last change in the given connection that happended less than 10 seconds later than log_date to the given id to catch multi-query changes
+        $changedSQL = "SELECT * FROM `{$this->db}`.`$table` WHERE log_conn_id = %1 AND log_date < DATE_ADD(%2, INTERVAL 10 SECOND) AND id = %3 ORDER BY log_date DESC LIMIT 1";
         $changed    = $this->sqlToArray($changedSQL, $params);
 
         // return early if nothing found
         if (empty($changed)) return array();
 
-        // we look for the previous state (different log_conn_id) of the found id
-        $params[3]   = array($changed['id'], 'Integer');
+        // look for the previous state (different log_conn_id) of the given id
         $originalSQL = "SELECT * FROM `{$this->db}`.`$table` WHERE log_conn_id != %1 AND log_date < %2 AND id = %3 ORDER BY log_date DESC LIMIT 1";
         $original    = $this->sqlToArray($originalSQL, $params);
 
-        $rows = array();
-
-        // populate $rows with only the differences between $changed and $original
+        // populate $diffs with only the differences between $changed and $original
         $skipped = array('log_action', 'log_conn_id', 'log_date', 'log_user_id');
         foreach (array_keys(array_diff_assoc($changed, $original)) as $diff) {
             if (in_array($diff, $skipped))            continue;
             if ($original[$diff] === $changed[$diff]) continue;
-            $rows[] = array(
+            $diffs[] = array(
                 'field' => $diff,
                 'from'  => $original[$diff],
                 'to'    => $changed[$diff],
             );
         }
 
-        return $rows;
+        return $diffs;
     }
 
     function titlesAndValuesForTable($table)
