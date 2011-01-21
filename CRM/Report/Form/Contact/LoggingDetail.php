@@ -153,6 +153,7 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
             if ($diff['from'] == $diff['to'])                    continue;
             if ($diff['from'] == false and $diff['to'] == false) continue; // only in PHP: '0' == false and null == false but '0' != null
             $field = isset($titles[$diff['field']]) ? $titles[$diff['field']] : substr($table, 4) . '.' . $diff['field'];
+            if ($diff['action'] == 'Insert') $diff['from'] = '[NONEXISTENT]';
             $rows[] = array(
                 'field' => $field . " (id: {$diff['id']})",
                 'from'  => isset($values[$diff['field']][$diff['from']]) ? $values[$diff['field']][$diff['from']] : $diff['from'],

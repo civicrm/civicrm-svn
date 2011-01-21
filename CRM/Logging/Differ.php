@@ -116,10 +116,11 @@ class CRM_Logging_Differ
             if (in_array($diff, $skipped))            continue;
             if ($original[$diff] === $changed[$diff]) continue;
             $diffs[] = array(
-                'id'    => $id,
-                'field' => $diff,
-                'from'  => $original[$diff],
-                'to'    => $changed[$diff],
+                'action' => $changed['log_action'],
+                'id'     => $id,
+                'field'  => $diff,
+                'from'   => $original[$diff],
+                'to'     => $changed[$diff],
             );
         }
 
