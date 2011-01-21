@@ -84,17 +84,19 @@
 <script type="text/javascript">
 
  cj(function() {
-   cj().crmaccordions(); 
+   cj().crmaccordions();
+   setDefaultGroup( );
  });
 
-
- {/literal}
- {if $invalidGroupName}
- {literal}
-   cj("#new-group").removeClass( 'crm-accordion-closed' ).addClass( 'crm-accordion-open' );
- {/literal}
- {/if}
- {literal}
-
+ function setDefaultGroup( ) 
+ {
+    var invalidGroupName = {/literal}'{$invalidGroupName}'{literal};	  	  
+    if ( invalidGroupName ) {
+       cj("#new-group").removeClass( 'crm-accordion-closed' ).addClass( 'crm-accordion-open' );
+    } else {
+       cj("#newGroupName").val( '' );
+       cj("#newGroupDesc").val( '' );
+    }
+ }
 </script>
 {/literal} 
