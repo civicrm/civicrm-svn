@@ -46,11 +46,21 @@ class CRM_Core_Extensions_Extension
      */
     const OPTION_GROUP_NAME = 'system_extensions';
 
+    const STATUS_INSTALLED = 'installed';
+    
+    const STATUS_LOCAL = 'local';
+    
+    const STATUS_REMOTE = 'remote';
+
     public $type = null;
     
     public $path = null;
     
-    function __construct( $key, $type = null, $name = null, $label = null, $file = null, $is_active = 0 ) {
+    public $upgradable = false;
+    
+    public $upgradeVersion = null;    
+    
+    function __construct( $key, $type = null, $name = null, $label = null, $file = null, $is_active = 1 ) {
         $this->key = $key;
         $this->type = $type;
         $this->name = $name;
@@ -64,6 +74,34 @@ class CRM_Core_Extensions_Extension
 
     public function setId( $id ) {
         $this->id = $id;
+    }
+
+    public function setUpgradable( ) {
+        $this->upgradable = true;
+    }
+    
+    public function setUpgradeVersion( $version ) {
+        $this->upgradeVersion = $version;
+    }    
+
+    public function setInstalled( ) {
+        $this->setStatus( self::STATUS_INSTALLED );
+    }
+    
+    public function setLocal( ) {
+        $this->setStatus( self::STATUS_LOCAL );
+    }
+    
+    public function setRemote( ) {
+        $this->setStatus( self::STATUS_REMOTE );
+    }
+
+    public function setStatus( $status ) {
+        $labels = array( self::STATUS_INSTALLED => ts('Installed'),
+                         self::STATUS_LOCAL     => ts('Local only'),
+                         self::STATUS_REMOTE	=> ts('Available') );
+        $this->status = $status;
+        $this->statusLabel = $labels[$status];
     }
 
     public function xmlObjToArray($obj)

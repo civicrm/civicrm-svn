@@ -203,6 +203,63 @@ class CRM_Core_Extensions
         return $result;                
     }    
 
+    public function getExtensions( $fullInfo = FALSE ) {
+
+        // Workflow for extensions:
+        // * Remote (made available on public server)
+        // * Local (downloaded, code available locally)
+        // * Installed /+Enabled/ (downloaded, entry in db, is_active = 1)
+        // * Installed /+Disabled/ (downloadded, entry in db, is_active = 0)
+        // * Outdated (Local or Installed with newer version available Remotely)
+
+        $exts = array();
+
+        // locally available extensions first (those which are installed
+        // will be overwritten later on)
+        $local = $this->_discoverAvailable( TRUE );
+        foreach( $local as $dc => $e ) {
+            if( array_key_exists( $e->key, $exts ) ) {
+                
+            }
+            $exts[$e->key] = $e;
+        }
+
+        // now those which are available on public directory
+        $remote = $this->_discoverRemote();
+        foreach( $remote as $dc => $e ) {
+            $exts[$e->key] = $e;
+        }
+        
+        // get installed extensions at the end, they overwrite everything
+        $installed = $this->_discoverInstalled( TRUE );
+        foreach( $installed as $dc => $e ) {
+            $exts[$e->key] = $e;
+        }
+
+        // now check for upgrades - rolling over installed, since
+        // those that we care to upgrade
+        foreach( $installed as $dc => $i ) {
+            $key = $i->key;
+            foreach( $remote as $dc => $r ) {
+                if( $key == $r->key ) {
+                    $installedVersion = explode('.', $i->version);
+                    $remoteVersion = explode('.', $r->version);
+                    for ($y = 0; $y < 2; $y++) {
+                        if( CRM_Utils_Array::value( $y, $installedVersion ) > CRM_Utils_Array::value( $y,$remoteVersion ) ) {
+                            $outdated = false;
+                        } elseif( CRM_Utils_Array::value($y,$installedVersion) < CRM_Utils_Array::value($y,$remoteVersion) ) {
+                            $outdated = true;
+                        }
+                    }
+                    $upg = $exts[$key];
+                    if( $outdated ) { $upg->setUpgradable(); $upg->setUpgradeVersion( $r->version ); }
+                }
+            }
+        }
+        
+        return $exts;
+    }
+
 
     /**
      * Searches for and returnes installed extensions.
@@ -221,6 +278,7 @@ class CRM_Core_Extensions
         foreach( $ov as $id => $entry ) {
             $ext = new CRM_Core_Extensions_Extension( $entry['value'], $entry['grouping'], $entry['name'], 
                                                       $entry['label'], $entry['description'], $entry['is_active'] );
+            $ext->setInstalled();
             $ext->setId($id);
             if( $fullInfo ) {
                 $ext->readXMLInfo();
@@ -237,7 +295,7 @@ class CRM_Core_Extensions
         require_once 'CRM/Core/Extensions/Extension.php';
         foreach( $remoties as $id => $rext ) {
             $ext = new CRM_Core_Extensions_Extension( $rext['key'] );
-//            CRM_Core_Error::debug( $this->grabRemoteInfoFile( $rext['key'] ) );
+            $ext->setRemote();
             $xml = $this->grabRemoteInfoFile( $rext['key'] );
             if( $xml != false ) {
                 $ext->readXMLInfo( $xml );
@@ -250,9 +308,9 @@ class CRM_Core_Extensions
 
     /**
      * Retrieve all the extension information for all the extensions
-	 * in extension directory. Beware, we're relying on scandir's 
-	 * extension retrieval order here, array indices will be used as 
-	 * ids for extensions that are not installed later on.
+     * in extension directory. Beware, we're relying on scandir's 
+     * extension retrieval order here, array indices will be used as 
+     * ids for extensions that are not installed later on.
      * 
      * @access private
      * @return array list of extensions
@@ -266,6 +324,7 @@ class CRM_Core_Extensions
             $infoFile = $dir . DIRECTORY_SEPARATOR . self::EXT_INFO_FILENAME;
             if( is_dir( $dir ) && file_exists( $infoFile ) ) {
                 $ext = new CRM_Core_Extensions_Extension( $name );
+                $ext->setLocal();
                 $ext->readXMLInfo();
                 $result[] = $ext;
             }
