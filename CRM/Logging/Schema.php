@@ -67,6 +67,14 @@ class CRM_Logging_Schema
     }
 
     /**
+     * Return logging custom data tables.
+     */
+    function customDataLogTables()
+    {
+        return preg_grep('/^log_civicrm_value_/', $this->logs);
+    }
+
+    /**
      * Disable logging by dropping the triggers (but keep the log tables intact).
      */
     function disableLogging()
