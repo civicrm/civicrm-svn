@@ -50,26 +50,6 @@ class CRM_Logging_Differ
         $this->log_date    = $log_date;
     }
 
-    function diffs($tables = array())
-    {
-        $diffs = array();
-
-        // populate $tables with all log tables if it’s empty
-        if (empty($tables)) {
-            $dao = CRM_Core_DAO::executeQuery("SHOW TABLES FROM `{$this->db}` LIKE 'log_civicrm_%'");
-            while ($dao->fetch()) {
-                $tables[] = $dao->toValue("Tables_in_{$this->db}_(log_civicrm_%)");
-            }
-        }
-
-        foreach ($tables as $table) {
-            $diff = $this->diffsInTable($table);
-            if (!empty($diff)) $diffs[$table] = $diff;
-        }
-
-        return $diffs;
-    }
-
     function diffsInTable($table)
     {
         $diffs = array();
