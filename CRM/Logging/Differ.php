@@ -50,6 +50,16 @@ class CRM_Logging_Differ
         $this->log_date    = $log_date;
     }
 
+    function diffsInTables($tables)
+    {
+        $diffs = array();
+        foreach ($tables as $table) {
+            $diff = $this->diffsInTable($table);
+            if (!empty($diff)) $diffs[$table] = $diff;
+        }
+        return $diffs;
+    }
+
     function diffsInTable($table)
     {
         $diffs = array();
