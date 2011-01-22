@@ -162,9 +162,9 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
                 if ($from == $to)                    continue; // $differ filters out === values; for presentation hide changes like 42 → '42'
                 if ($from == false and $to == false) continue; // only in PHP: '0' == false and null == false but '0' != null
 
-                if (isset($titles[$field]))        $field = $titles[$field];
                 if (isset($values[$field][$from])) $from  = $values[$field][$from];
                 if (isset($values[$field][$to]))   $to    = $values[$field][$to];
+                if (isset($titles[$field]))        $field = $titles[$field];
                 if ($diff['action'] == 'Insert')   $from  = ts('[NONEXISTENT]');
             }
 
