@@ -70,6 +70,14 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         $this->tables[] = 'log_civicrm_website';
         $this->tables[] = 'log_civicrm_address';
 
+        if (CRM_Utils_Request::retrieve('revert', 'Boolean', CRM_Core_DAO::$_nullObject)) {
+            require_once 'CRM/Logging/Reverter.php';
+            $reverter = new CRM_Logging_Reverter($this->log_conn_id, $this->log_date);
+            $reverter->revert($this->tables);
+            CRM_Core_Session::setStatus(ts('The changes have been reverted.'));
+            CRM_Utils_System::redirect(CRM_Report_Utils_Report::getNextUrl('logging/contact/summary', 'reset=1', false, true));
+        }
+
         // make sure the report works even without the params
         if (!$this->log_conn_id or !$this->log_date) {
             $dao = new CRM_Core_DAO;
@@ -124,6 +132,13 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
             // link back to summary report
             require_once 'CRM/Report/Utils/Report.php';
             $this->assign('backURL', CRM_Report_Utils_Report::getNextUrl('logging/contact/summary', 'reset=1', false, true));
+        }
+
+        $q = "reset=1&log_conn_id={$this->log_conn_id}&log_date={$this->log_date}";
+        if ($this->raw) {
+            $this->assign('revertURL', CRM_Report_Utils_Report::getNextUrl('logging/contact/detail', "$q&revert=1", false, true));
+        } else {
+            $this->assign('revertURL', CRM_Report_Utils_Report::getNextUrl('logging/contact/detail', "$q&raw=1", false, true));
         }
     }
 

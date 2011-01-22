@@ -123,6 +123,7 @@ class CRM_Logging_Differ
         static $titles = array();
         static $values = array();
 
+        // FIXME: split off the table → DAO mapping to a GenCode-generated class
         static $daos = array(
             'log_civicrm_address' => 'CRM_Core_DAO_Address',
             'log_civicrm_contact' => 'CRM_Contact_DAO_Contact',
