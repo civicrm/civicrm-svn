@@ -35,6 +35,7 @@
  */
 
 require_once 'CRM/Logging/Differ.php';
+require_once 'CRM/Logging/Schema.php';
 require_once 'CRM/Report/Form.php';
 
 class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
@@ -44,6 +45,7 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
     private $log_conn_id;
     private $log_date;
     private $raw;
+    private $tables = array();
 
     function __construct()
     {
@@ -56,6 +58,17 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         $this->log_date    = CRM_Utils_Request::retrieve('log_date',    'String',  CRM_Core_DAO::$_nullObject);
         $this->cid         = CRM_Utils_Request::retrieve('cid',         'Integer', CRM_Core_DAO::$_nullObject);
         $this->raw         = CRM_Utils_Request::retrieve('raw',         'Boolean', CRM_Core_DAO::$_nullObject);
+
+        // set the tables concerning this report: contact, custom data and contact-related
+        $logging = new CRM_Logging_Schema;
+        $this->tables[] = 'log_civicrm_contact';
+        $this->tables   = array_merge($this->tables, $logging->customDataLogTables());
+        $this->tables[] = 'log_civicrm_email';
+        $this->tables[] = 'log_civicrm_phone';
+        $this->tables[] = 'log_civicrm_im';
+        $this->tables[] = 'log_civicrm_openid';
+        $this->tables[] = 'log_civicrm_website';
+        $this->tables[] = 'log_civicrm_address';
 
         // make sure the report works even without the params
         if (!$this->log_conn_id or !$this->log_date) {
@@ -119,18 +132,9 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         // safeguard for when there aren’t any log entries yet
         if (!$this->log_conn_id or !$this->log_date) return;
 
-        $rows = $this->diffsInTable('log_civicrm_contact');
+        if (empty($rows)) $rows = array();
 
-        // add custom data changes
-        $dao =& CRM_Core_DAO::executeQuery("SHOW TABLES FROM `{$this->db}` LIKE 'log_civicrm_value_%'");
-        while ($dao->fetch()) {
-            $table = $dao->toValue("Tables_in_{$this->db}_(log_civicrm_value_%)");
-            $rows  = array_merge($rows, $this->diffsInTable($table));
-        }
-
-        // add changes by fetching all ids affected in the ±10 s interval (for the given connection id)
-        $tables = array('log_civicrm_email', 'log_civicrm_phone', 'log_civicrm_im', 'log_civicrm_openid', 'log_civicrm_website', 'log_civicrm_address');
-        foreach ($tables as $table) {
+        foreach ($this->tables as $table) {
             $rows = array_merge($rows, $this->diffsInTable($table));
         }
     }
