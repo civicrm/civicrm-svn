@@ -39,12 +39,11 @@ require_once 'CRM/Report/Form.php';
 
 class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
 {
+    private $cid;
     private $db;
-
-    private $contact_id;
     private $log_conn_id;
     private $log_date;
-    public  $cid;
+    private $raw;
 
     function __construct()
     {
@@ -76,10 +75,13 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         parent::__construct();
     }
 
-    function buildRows($sql, &$rows)
+    function buildQuery()
     {
-        // safeguard for when there aren’t any log entries yet
-        if (!$this->log_conn_id or !$this->log_date) return;
+    }
+
+    function buildQuickForm()
+    {
+        parent::buildQuickForm();
 
         $params = array(
             1 => array($this->log_conn_id, 'Integer'),
@@ -102,17 +104,20 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         $this->assign('whom_name', $dao->whom_name);
         $this->assign('log_date',  $this->log_date);
 
-        // track whose changes are being monitored
-        $this->contact_id = $dao->whom_id;
-
-        if ( $this->cid ) {
+        if ($this->cid) {
             // link back to contact summary
-            $this->assign('backURL', CRM_Utils_System::url('civicrm/contact/view',  'reset=1&selectedChild=log&cid='.$this->cid, false, null, false ) );
+            $this->assign('backURL', CRM_Utils_System::url('civicrm/contact/view', "reset=1&selectedChild=log&cid={$this->cid}", false, null, false));
         } else {
             // link back to summary report
             require_once 'CRM/Report/Utils/Report.php';
             $this->assign('backURL', CRM_Report_Utils_Report::getNextUrl('logging/contact/summary', 'reset=1', false, true));
         }
+    }
+
+    function buildRows($sql, &$rows)
+    {
+        // safeguard for when there aren’t any log entries yet
+        if (!$this->log_conn_id or !$this->log_date) return;
 
         $rows = $this->diffsInTable('log_civicrm_contact');
 
@@ -128,10 +133,6 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         foreach ($tables as $table) {
             $rows = array_merge($rows, $this->diffsInTable($table));
         }
-    }
-
-    function buildQuery()
-    {
     }
 
     private function diffsInTable($table)
