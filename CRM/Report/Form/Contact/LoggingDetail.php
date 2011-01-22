@@ -56,6 +56,7 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         $this->log_conn_id = CRM_Utils_Request::retrieve('log_conn_id', 'Integer', CRM_Core_DAO::$_nullObject);
         $this->log_date    = CRM_Utils_Request::retrieve('log_date',    'String',  CRM_Core_DAO::$_nullObject);
         $this->cid         = CRM_Utils_Request::retrieve('cid',         'Integer', CRM_Core_DAO::$_nullObject);
+        $this->raw         = CRM_Utils_Request::retrieve('raw',         'Boolean', CRM_Core_DAO::$_nullObject);
 
         // make sure the report works even without the params
         if (!$this->log_conn_id or !$this->log_date) {
@@ -145,23 +146,28 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
 
         list($titles, $values) = $differ->titlesAndValuesForTable($table);
 
-        // populate $rows with only the differences between $changed and $original (skipping certain columns and NULL ↔ empty changes)
+        // populate $rows with only the differences between $changed and $original (skipping certain columns and NULL ↔ empty changes unless raw requested)
         // FIXME: explode preferred_communication_method on CRM_Core_DAO::VALUE_SEPARATOR and handle properly somehow
         $skipped = array('contact_id', 'entity_id', 'id');
         foreach ($diffs as $diff) {
-            if (in_array($diff['field'], $skipped))              continue;
-            if ($diff['from'] == $diff['to'])                    continue; // $differ filters out === values; for presentation hide changes like 42 → '42'
-            if ($diff['from'] == false and $diff['to'] == false) continue; // only in PHP: '0' == false and null == false but '0' != null
+            $field = $diff['field'];
+            $from  = $diff['from'];
+            $to    = $diff['to'];
 
-            $field = isset($titles[$diff['field']]) ? $titles[$diff['field']] : substr($table, 4) . '.' . $diff['field'];
+            if ($this->raw) {
+                $field = substr($table, 4) . '.' . $field;
+            } else {
+                if (in_array($field, $skipped))      continue;
+                if ($from == $to)                    continue; // $differ filters out === values; for presentation hide changes like 42 → '42'
+                if ($from == false and $to == false) continue; // only in PHP: '0' == false and null == false but '0' != null
 
-            if ($diff['action'] == 'Insert') $diff['from'] = ts('[NONEXISTENT]');
+                if (isset($titles[$field]))        $field = $titles[$field];
+                if (isset($values[$field][$from])) $from  = $values[$field][$from];
+                if (isset($values[$field][$to]))   $to    = $values[$field][$to];
+                if ($diff['action'] == 'Insert')   $from  = ts('[NONEXISTENT]');
+            }
 
-            $rows[] = array(
-                'field' => $field . " (id: {$diff['id']})",
-                'from'  => isset($values[$diff['field']][$diff['from']]) ? $values[$diff['field']][$diff['from']] : $diff['from'],
-                'to'    => isset($values[$diff['field']][$diff['to']])   ? $values[$diff['field']][$diff['to']]   : $diff['to'],
-            );
+            $rows[] = array('field' => $field . " (id: {$diff['id']})", 'from' => $from, 'to' => $to);
         }
 
         return $rows;
