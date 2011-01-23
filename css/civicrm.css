@@ -3078,9 +3078,9 @@ div#crm-toolTip
  }
 
 .extension-upgradable {
-    background-color:#FFFFCC;
+    background-color:#FFFFCC !important;
 }
 
 .extension-installed {
-    background-color:#DDFFDD;
+    background-color:#DDFFDD !important;
 }

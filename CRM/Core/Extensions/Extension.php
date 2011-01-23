@@ -175,13 +175,60 @@ class CRM_Core_Extensions_Extension
     }
     
     public function install( ) {
+        $this->download();
+        $this->installFiles();
         $this->_registerExtensionByType();
         $this->_createExtensionEntry();
     }
     
     public function uninstall( ) {
+        $this->removeFiles();    
         $this->_removeExtensionByType();
         $this->_removeExtensionEntry();
+    }
+
+    public function removeFiles() {
+        require_once 'CRM/Utils/File.php';
+        require_once 'CRM/Core/Config.php';
+        $config =& CRM_Core_Config::singleton( );
+        CRM_Utils_File::cleanDir( $config->extensionsDir . DIRECTORY_SEPARATOR . $this->key, true );
+    }
+    
+    public function installFiles() {
+        require_once 'CRM/Utils/File.php';
+        require_once 'CRM/Core/Config.php';
+        $config =& CRM_Core_Config::singleton( );
+        
+        $zip = new ZipArchive;
+        $res = $zip->open( $this->tmpFile );
+        if ($res === TRUE) {
+            $path = $config->extensionsDir . DIRECTORY_SEPARATOR . 'tmp';        
+            $zip->extractTo( $path );
+            $zip->close();
+        } else {
+            CRM_Core_Error::fatal( 'Unable to extract the extension.' );
+        }
+        
+        CRM_Utils_File::copyDir( $path . DIRECTORY_SEPARATOR . $this->key,
+                                 $config->extensionsDir . DIRECTORY_SEPARATOR . $this->key );
+        
+        
+    }
+    
+    public function download( ) {
+        require_once 'CRM/Core/Config.php';
+        $config =& CRM_Core_Config::singleton( );
+        
+        $path = $config->extensionsDir . DIRECTORY_SEPARATOR . 'tmp';
+        $filename = $path . DIRECTORY_SEPARATOR . $this->key . '.zip';
+
+        if( !$this->downloadUrl ) {
+            CRM_Core_Error::fatal( 'Cannot install this extension - downloadUrl is not set!' );
+        }
+        
+        file_put_contents( $filename, file_get_contents( $this->downloadUrl ) );
+        
+        $this->tmpFile = $filename;
     }    
 
     public function enable( ) {

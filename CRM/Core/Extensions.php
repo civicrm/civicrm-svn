@@ -97,6 +97,8 @@ class CRM_Core_Extensions
     private $_extByKey = null;
 
 
+    private $_remotesDiscovered = null;
+
     /**
      * Constructor - we're not initializing information here
      * since we don't want any database hits upon object
@@ -112,7 +114,12 @@ class CRM_Core_Extensions
         }
         if( ! empty( $this->_extDir ) ) {
             $this->enabled = TRUE;
-        }        
+            $tmp = $this->_extDir . DIRECTORY_SEPARATOR . 'tmp';
+            $cache = $this->_extDir . DIRECTORY_SEPARATOR . 'cache';
+            require_once 'CRM/Utils/File.php';
+            if( !file_exists( $tmp ) ) { CRM_Utils_File::createDir( $tmp ); }
+            if( !file_exists( $cache ) ) { CRM_Utils_File::createDir( $cache ); }
+        }
     }
 
     /**
@@ -226,6 +233,7 @@ class CRM_Core_Extensions
 
         // now those which are available on public directory
         $remote = $this->_discoverRemote();
+        
         foreach( $remote as $dc => $e ) {
             $exts[$e->key] = $e;
         }
@@ -244,14 +252,20 @@ class CRM_Core_Extensions
                 if( $key == $r->key ) {
                     $installedVersion = explode('.', $i->version);
                     $remoteVersion = explode('.', $r->version);
+
                     for ($y = 0; $y < 2; $y++) {
-                        if( CRM_Utils_Array::value( $y, $installedVersion ) > CRM_Utils_Array::value( $y,$remoteVersion ) ) {
+                        if( CRM_Utils_Array::value( $y, $installedVersion ) == CRM_Utils_Array::value( $y,$remoteVersion ) ) {
+                            $outdated = false;
+                        } elseif( CRM_Utils_Array::value( $y, $installedVersion ) > CRM_Utils_Array::value( $y,$remoteVersion ) ) {
                             $outdated = false;
                         } elseif( CRM_Utils_Array::value($y,$installedVersion) < CRM_Utils_Array::value($y,$remoteVersion) ) {
                             $outdated = true;
                         }
                     }
                     $upg = $exts[$key];
+                    
+
+                    
                     if( $outdated ) { $upg->setUpgradable(); $upg->setUpgradeVersion( $r->version ); }
                 }
             }
@@ -288,22 +302,50 @@ class CRM_Core_Extensions
         return $result;
     }
 
-
-    public function _discoverRemote( ) {
-        $remoties = $this->grabRemoteKeyList();
-
-        require_once 'CRM/Core/Extensions/Extension.php';
-        foreach( $remoties as $id => $rext ) {
-            $ext = new CRM_Core_Extensions_Extension( $rext['key'] );
-            $ext->setRemote();
-            $xml = $this->grabRemoteInfoFile( $rext['key'] );
-            if( $xml != false ) {
-                $ext->readXMLInfo( $xml );
-                $result[] = $ext;                            
-            }
-
+    public function getRemoteByKey( ) {
+        $re = $this->_discoverRemote();
+        $result = array();
+        foreach( $re as $id => $ext ) {
+            $result[$ext->key] = $ext;
         }
         return $result;
+    }
+
+    public function _discoverRemote( ) {
+
+        require_once 'CRM/Core/Config.php';
+        $config =& CRM_Core_Config::singleton( );
+        $tsPath = $config->extensionsDir . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'timestamp.txt';
+        $timestamp = false;
+
+        if( file_exists( $tsPath ) ) {
+            $timestamp =  file_get_contents( $tsPath );
+        }
+
+        // 3 minutes ago for now
+        $outdated = (int) $timestamp < ( time() - 180) ? true : false;
+        
+        if( !$timestamp || $outdated ) {
+            $remoties = $this->grabRemoteKeyList();
+            $cached = false;
+        } else {
+            $remoties = $this->grabCachedKeyList();
+            $cached = true;
+        }
+
+            require_once 'CRM/Core/Extensions/Extension.php';
+            foreach( $remoties as $id => $rext ) {
+                $ext = new CRM_Core_Extensions_Extension( $rext['key'] );
+                $ext->setRemote();
+                $xml = $this->grabRemoteInfoFile( $rext['key'], $cached );
+                if( $xml != false ) {
+                    $ext->readXMLInfo( $xml );
+                    $this->_remotesDiscovered[] = $ext;
+                }
+            }
+            file_put_contents( $tsPath, (string) time() );
+
+        return $this->_remotesDiscovered;
     }
 
     /**
@@ -472,7 +514,7 @@ class CRM_Core_Extensions
     }
 
     /**
-     * Given the id from selector (generated in $this->_discoverAvailable),
+     * Given the key,
      * fires off appropriate CRM_Core_Extensions_Extension object's install method.
      *
      * @todo change method signature, drop $id, work with $key only
@@ -483,8 +525,8 @@ class CRM_Core_Extensions
      * @return void
      */
     public function install( $id, $key ) {
-        $e = $this->getNotInstalled();
-        $ext = $e[$id];
+        $e = $this->getExtensions();
+        $ext = $e[$key];
         $ext->install();
     }
 
@@ -501,19 +543,58 @@ class CRM_Core_Extensions
     */
     public function uninstall( $id, $key ) {
         $this->populate();
-        $e = $this->getExtensionsByKey( );
+        $e = $this->getExtensions( );
         $ext = $e[$key];
         $ext->uninstall();
     }
 
+
     /**
-     * Connects to public serwer and grabs the list of publically available 
+    * Given the key, fires off appropriate CRM_Core_Extensions_Extension object's 
+    * upgrade method.
+    *
+    * @todo change method signature, drop $id, work with $key only
+    * 
+    * @access public
+    * @param int $id id of option value record
+    * @param string $key extension key
+    * @return void
+    */
+    public function upgrade( $id, $key ) {
+        $this->populate();
+        // get installed and uninstall
+        $e = $this->getExtensionsByKey( true );
+        $ext = $e[$key];
+        $ext->uninstall();
+        // get fresh scope and install
+        $e = $this->getExtensions( );        
+        $ext = $e[$key];        
+        $ext->install();
+    }
+
+
+    public function grabCachedKeyList( ) {
+        require_once 'CRM/Core/Config.php';
+        $result = array();
+        $config =& CRM_Core_Config::singleton( );
+        $cachedPath = $config->extensionsDir . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR;
+        $files = scandir( $cachedPath );
+        foreach( $files as $dc => $fname ) {
+            if( substr( $fname, -4 ) == '.xml' ) {
+                $result[] = array( 'key' => trim( $fname, '.xml' ) );
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Connects to public server and grabs the list of publically available 
      * extensions.
      *
      * @access public
      * @return Array list of extension names
      */
-    public function grabRemoteKeyList() {
+    public function grabRemoteKeyList( ) {
 
         $handl = fopen ( self::PUBLIC_EXTENSIONS_REPOSITORY , "r");
 
@@ -536,15 +617,19 @@ class CRM_Core_Extensions
         return $exts;
     }
 
-    public function grabRemoteInfoFile( $key ) {
+    public function grabRemoteInfoFile( $key, $cached = false ) {
+        require_once 'CRM/Core/Config.php';
+        $config =& CRM_Core_Config::singleton( );
+        
+        $path = $config->extensionsDir . DIRECTORY_SEPARATOR . 'cache';
+        $filename = $path . DIRECTORY_SEPARATOR . $key . '.xml';
+        $url = self::PUBLIC_EXTENSIONS_REPOSITORY . '/' . $key . '.xml';
 
-        if ($handl = fopen ( self::PUBLIC_EXTENSIONS_REPOSITORY . '/' . $key . '.xml'  , "r") ) {
-            while(!feof($handl)) {
-                $contents = fread( $handl, 1024 );
-            }
-        } else {
-            //fail
+        if( ! $cached ) {
+            file_put_contents( $filename, file_get_contents( $url ) );
         }
+
+        $contents = file_get_contents( $filename );
 
         //parse just in case
         $check = simplexml_load_string( $contents );
@@ -556,8 +641,6 @@ class CRM_Core_Extensions
             return;
         }
         
-        fclose( $handl );
-
         return $contents;
     }
 
