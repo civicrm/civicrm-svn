@@ -68,10 +68,10 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
             CRM_Core_Error::fatal( ts( 'You do not have access to this page' ) );
         }
 
-        $cid   = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
-        $oid   = CRM_Utils_Request::retrieve( 'oid', 'Positive', $this, true );
-        $rgid  = CRM_Utils_Request::retrieve( 'rgid','Positive', $this, false );
-        $gid   = CRM_Utils_Request::retrieve( 'gid', 'Positive', $this, false );
+        $cid = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
+        $oid = CRM_Utils_Request::retrieve( 'oid', 'Positive', $this, true );
+        $this->_rgid = $rgid = CRM_Utils_Request::retrieve( 'rgid','Positive', $this, false );
+        $this->_gid  = $gid  = CRM_Utils_Request::retrieve( 'gid', 'Positive', $this, false );
         $mergeId = CRM_Utils_Request::retrieve( 'mergeId', 'Positive', $this, false );
 
         self::validateContacts( $cid, $oid );
@@ -142,7 +142,9 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         // context fixed.
         if ( $rgid ) {
             $urlParam = "reset=1&action=browse&rgid={$rgid}";
-            if ( $gid ) $urlParam .= "&gid={$gid}";
+            if ( $gid ) {
+                $urlParam .= "&gid={$gid}";
+            }
             $session->pushUserContext( CRM_Utils_system::url( 'civicrm/contact/dedupefind', $urlParam ) );
         }
         
@@ -205,7 +207,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
                                                                      'groupName' => 'preferred_communication_method'));
             CRM_Core_OptionGroup::lookupValues($specialValues[$moniker], $names);
         }
-        foreach (CRM_Core_OptionValue::getFields() as $field => $params) {
+        foreach ( CRM_Core_OptionValue::getFields() as $field => $params ) {
             $fields[$field]['title'] = $params['title'];
         }
 
@@ -214,23 +216,31 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
             foreach (array('main', 'other') as $moniker) {
                 $contact =& $$moniker;
                 $value = CRM_Utils_Array::value( $field, $contact );
-                $label = isset($specialValues[$moniker][$field]) ? $specialValues[$moniker]["{$field}_display"] : $value;
-                if ($fields[$field]['type'] == CRM_Utils_Type::T_DATE) {
+                $label = isset( $specialValues[$moniker][$field] ) ? $specialValues[$moniker]["{$field}_display"] : $value;
+                if ( $fields[$field]['type'] == CRM_Utils_Type::T_DATE ) {
                     if ( $value ) {
-                        $value = str_replace('-', '', $value);
-                        $label = CRM_Utils_Date::customFormat($label);
+                        $value = str_replace( '-', '', $value );
+                        $label = CRM_Utils_Date::customFormat( $label );
                     } else {
                         $value = "null";
                     }
-                } elseif ($fields[$field]['type'] == CRM_Utils_Type::T_BOOLEAN) {
-                    if ($label === '0') $label = ts('[ ]');
-                    if ($label === '1') $label = ts('[x]');
+                } elseif ( $fields[$field]['type'] == CRM_Utils_Type::T_BOOLEAN ) {
+                    if ( $label === '0' ) {
+                        $label = ts('[ ]');
+                    }
+                    if ( $label === '1' ) {
+                        $label = ts('[x]');
+                    }
                 }
                 $rows["move_$field"][$moniker] = $label;
-                if ($moniker == 'other') {
-                    if ($value === null) $value = 'null';
-                    if ($value === 0 or $value === '0') $value = $this->_qfZeroBug;
-                    $this->addElement('advcheckbox', "move_$field", null, null, null, $value);
+                if ( $moniker == 'other' ) {
+                    if ( $value === null ) {
+                        $value = 'null';
+                    }
+                    if ( $value === 0 or $value === '0' ) {
+                        $value = $this->_qfZeroBug;
+                    }
+                    $this->addElement( 'advcheckbox', "move_$field", null, null, null, $value );
                 }
             }
             $rows["move_$field"]['title'] = $fields[$field]['title'];
@@ -240,8 +250,8 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         require_once 'api/v2/Location.php';
         $mainParams['version'] = $otherParams['version'] = '3.0';
         
-        $locations['main']  =& civicrm_location_get($mainParams);
-        $locations['other'] =& civicrm_location_get($otherParams);
+        $locations['main']  =& civicrm_location_get( $mainParams );
+        $locations['other'] =& civicrm_location_get( $otherParams );
         $allLocationTypes   = CRM_Core_PseudoConstant::locationType( );
         
         $mainLocAddress = array();
@@ -252,14 +262,13 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
                 
                 if ( empty( $blockValue ) ) {
                     $locValue[$moniker][$name] = 0;
-                    $locLabel[$moniker][$name] = array( );
-                    $locTypes[$moniker][$name] = array( );
+                    $locLabel[$moniker][$name] = $locTypes[$moniker][$name] = array( );
                 } else {
                     $locValue[$moniker][$name] = true; 
                     foreach ( $blockValue as $count => $blkValues ) {
                         $fldName   = $name;
                         $locTypeId = $blkValues['location_type_id'];
-                        if ( $name == 'im'      ) $fldName = 'name';
+                        if ( $name == 'im' ) $fldName = 'name';
                         if ( $name == 'address' ) $fldName = 'display';
                         $locLabel[$moniker][$name][$count] = $blkValues[$fldName];
                         $locTypes[$moniker][$name][$count] = $locTypeId;
@@ -400,6 +409,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
 
         $this->addButtons( array(
                                  array( 'type' => 'next',   'name' => $name, 'isDefault' => true ),
+                                 array( 'type' => 'submit', 'name' => ts('Merge and Goto Listing') ),
                                  array( 'type' => 'cancel', 'name' => ts('Cancel') ),
                                  ) );
     }
@@ -687,6 +697,17 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         }
         CRM_Core_Session::setStatus( ts('The contacts have been merged.') );
         $url = CRM_Utils_System::url( 'civicrm/contact/view', "reset=1&cid={$this->_cid}" );
+        if ( CRM_Utils_Array::value('_qf_Merge_submit',$formValues) ) {
+            $listParamsURL =  "reset=1&action=update&rgid={$this->_rgid}";
+            if ( $this->_gid ) {
+                $listParamsURL .= "&gid={$this->_gid}";
+            }
+            $lisitingURL = CRM_Utils_System::url( 'civicrm/contact/dedupefind', 
+                                                  $listParamsURL
+                                                  );
+            CRM_Utils_System::redirect( $lisitingURL );
+        }
+      
         if ( $this->next ) {
             $url = $this->next;
         }
@@ -754,7 +775,6 @@ WHERE  entity_id1 = $cid AND
     function clearCache( $id )
     {
         //clear cache
-        //FIXME : introduce the cacheKey check too
         $sql = "DELETE FROM civicrm_prevnext_cache
                            WHERE  entity_table = 'civicrm_contact' AND
                                   ( entity_id1 = {$id} OR
