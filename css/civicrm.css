@@ -3061,3 +3061,11 @@ div#crm-toolTip
     background-color:#00CC00;
     color:white;
  }
+
+.extension-upgradable {
+    background-color:#FFFFCC !important;
+}
+
+.extension-installed {
+    background-color:#DDFFDD !important;
+}
