@@ -6,9 +6,9 @@ class CiviSeleniumSettings {
 
 	var $browser = '*firefox';
 
-	var $sandboxURL = 'http://tests.dev.civicrm.org';
+	var $sandboxURL = 'http://devel.drupal.tests.dev.civicrm.org';
 
-	var $sandboxPATH = '/drupal/';
+	var $sandboxPATH = '';
 	
 	var $username = 'demo';
 
