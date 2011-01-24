@@ -233,13 +233,14 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
         require_once 'CRM/Contact/DAO/Group.php';
         require_once 'CRM/Contact/BAO/GroupContact.php';
         $campGrps = CRM_Campaign_BAO_Campaign::getCampaignGroups( $campaignId );
-        foreach ( $campGrps as $grpId => $grpVals ) {
+        foreach ( $campGrps as $grpId => $grpTitle ) {
             $group = new CRM_Contact_DAO_Group();
-            $group->id = $grpVals['entity_id'];
+            $group->id = $grpId;
             $contacts  = CRM_Contact_BAO_GroupContact::getGroupContacts( $group );
             foreach ( $contacts as $contact ) {
                 $campContacts[$contact->contact_id] = $contact->contact_id;
             }
+            $group->free( );
         }
         
         //add reservation.

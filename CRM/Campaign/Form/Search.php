@@ -39,6 +39,7 @@
  */
 
 require_once 'CRM/Campaign/BAO/Survey.php';
+require_once 'CRM/Campaign/BAO/Campaign.php';
 require_once 'CRM/Campaign/Selector/Search.php';
 require_once 'CRM/Core/Selector/Controller.php';
 
@@ -452,13 +453,8 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
                                                            $this->_formValues['campaign_survey_id'], 
                                                            'campaign_id');
                 if ( $campaignId ) {
-                    require_once 'CRM/Campaign/BAO/Campaign.php';
-                    $campaignGroups = CRM_Campaign_BAO_Campaign::getCampaignGroups($campaignId);
-                    foreach( $campaignGroups as $id => $group ) {
-                        if ( $group['entity_table'] == 'civicrm_group' ) {
-                            $this->_formValues['group'][$group['entity_id']] = 1;
-                        }
-                    }
+                    $campGroups = CRM_Campaign_BAO_Campaign::getCampaignGroups( $campaignId );
+                    foreach ( $campGroups as $id => $title ) $this->_formValues['group'][$id] = 1; 
                 }
                 
                 //carry servey id w/ this.

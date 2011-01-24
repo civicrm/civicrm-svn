@@ -184,11 +184,7 @@ class CRM_Campaign_Page_AJAX
                 if ( $campaignId ) {
                     require_once 'CRM/Campaign/BAO/Campaign.php';
                     $campaignGroups = CRM_Campaign_BAO_Campaign::getCampaignGroups($campaignId);
-                    foreach( $campaignGroups as $id => $group ) {
-                        if ( $group['entity_table'] == 'civicrm_group' ) {
-                            $params['group'][$group['entity_id']] = 1;
-                        }
-                    }
+                    foreach( $campaignGroups as $id => $group ) $params['group'][$id] = 1;
                 }
                 unset( $params['campaign_survey_id'] );
             }

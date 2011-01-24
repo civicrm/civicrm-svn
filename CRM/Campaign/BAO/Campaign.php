@@ -304,22 +304,29 @@ SELECT  camp.id, camp.title
      */
     static function getCampaignGroups( $campaignId ) 
     {
-        $campaignGroups = array( ); 
-        if ( !$campaignId ) return $campaignGroups; 
+        static $campaignGroups;
+        if ( !$campaignId ) return array( );  
         
-        require_once 'CRM/Campaign/DAO/CampaignGroup.php';
-        $campGrp = new CRM_Campaign_DAO_CampaignGroup( );
-        $campGrp->campaign_id = $campaignId;
-        $campGrp->group_type  = 'Include'; 
-        $campGrp->find( );
-        while ( $campGrp->fetch() ) {
-            CRM_Core_DAO::storeValues( $campGrp, $campaignGroups[$campGrp->id] );
+        if ( !isset( $campaignGroups[$campaignId] ) ) {
+            $campaignGroups[$campaignId] = array( );
+            
+            $query = "
+    SELECT  grp.title, grp.id 
+      FROM  civicrm_campaign_group campgrp 
+INNER JOIN  civicrm_group grp ON ( grp.id = campgrp.entity_id ) 
+     WHERE  campgrp.group_type = 'Include'
+       AND  campgrp.entity_table = 'civicrm_group'
+       AND  campgrp.campaign_id = %1";
+            
+            $groups = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $campaignId, 'Positive' ) ) );
+            while ( $groups->fetch( ) ) {
+                $campaignGroups[$campaignId][$groups->id] = $groups->title;
+            }
         }
         
-        return $campaignGroups;
+        return $campaignGroups[$campaignId];
     }
     
-
     /**
      * update the is_active flag in the db
      *
