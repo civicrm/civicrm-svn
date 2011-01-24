@@ -28,16 +28,16 @@
  * the case, you can obtain a copy at http://www.php.net/license/3_0.txt.
  *
  * The latest version of DOMPDF might be available at:
- * http://www.digitaljunkies.ca/dompdf
+ * http://www.dompdf.com/
  *
- * @link http://www.digitaljunkies.ca/dompdf
+ * @link http://www.dompdf.com/
  * @copyright 2004 Benj Carson
  * @author Benj Carson <benjcarson@digitaljunkies.ca>
  * @package dompdf
- * @version 0.5.1
+
  */
 
-/* $Id: frame_tree.cls.php,v 1.10 2006/07/07 21:31:03 benjcarson Exp $ */
+/* $Id: frame_tree.cls.php 216 2010-03-11 22:49:18Z ryan.masten $ */
 
 /**
  * Represents an entire document as a tree of frames
@@ -74,6 +74,13 @@ class Frame_Tree {
    * @var Frame
    */
   protected $_root;
+
+  /**
+   * Subtrees of absolutely positioned elements
+   *
+   * @var array of Frames
+   */
+  protected $_absolute_frames;
 
   /**
    * A mapping of {@link Frame} objects to DomNode objects
@@ -171,40 +178,46 @@ class Frame_Tree {
     foreach ($children as $child) {
       // Skip non-displaying nodes
       if ( in_array( mb_strtolower($child->nodeName), self::$_HIDDEN_TAGS) )  {
-        if ( mb_strtolower($child->nodeName) != "head" &&
-             mb_strtolower($child->nodeName) != "style" ) 
+        if ( mb_strtolower($child->nodeName) !== "head" &&
+             mb_strtolower($child->nodeName) !== "style" ) 
           $child->parentNode->removeChild($child);
         continue;
       }
 
       // Skip empty text nodes
-      if ( $child->nodeName == "#text" && $child->nodeValue == "" ) {
+      if ( $child->nodeName === "#text" && $child->nodeValue == "" ) {
         $child->parentNode->removeChild($child);
         continue;
       }
-      
+
+      // Skip empty image nodes
+      if ( $child->nodeName === "img" && $child->getAttribute("src") == "" ) {
+        $child->parentNode->removeChild($child);
+        continue;
+      }
+
       // Add a container frame for images
-      if ( $child->nodeName == "img" ) {
+      if ( $child->nodeName === "img" ) {
         $img_node = $child->ownerDocument->createElement("img_inner");
      
         // Move attributes to inner node        
         foreach ( $child->attributes as $attr => $attr_node ) {
           // Skip style, but move all other attributes
-          if ( $attr == "style" )
+          if ( $attr === "style" )
             continue;
        
           $img_node->setAttribute($attr, $attr_node->value);
         }
 
         foreach ( $child->attributes as $attr => $node ) {
-          if ( $attr == "style" )
+          if ( $attr === "style" )
             continue;
           $child->removeAttribute($attr);
         }
 
         $child->appendChild($img_node);
       }
-   
+      
       $frame->append_child($this->_build_tree_r($child), false);
 
     }
@@ -212,5 +225,3 @@ class Frame_Tree {
     return $frame;
   }
 }
-
-?>

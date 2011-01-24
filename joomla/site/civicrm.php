@@ -135,7 +135,15 @@ function civicrm_check_permission( $args ) {
             return true;
         }
     }
-    
+
+    // allow petition sign in, CRM-7401
+    if ( in_array( 'CiviCampaign', $config->enableComponents ) ) {
+        if ( $arg1 == 'petition' &&
+             $arg2 == 'sign' ) {
+            return true;
+        }
+    }
+
     return false;
 }
 

@@ -28,16 +28,16 @@
  * the case, you can obtain a copy at http://www.php.net/license/3_0.txt.
  *
  * The latest version of DOMPDF might be available at:
- * http://www.digitaljunkies.ca/dompdf
+ * http://www.dompdf.com/
  *
- * @link http://www.digitaljunkies.ca/dompdf
+ * @link http://www.dompdf.com/
  * @copyright 2004 Benj Carson
  * @author Benj Carson <benjcarson@digitaljunkies.ca>
  * @package dompdf
- * @version 0.5.1
+
  */
 
-/* $Id: block_renderer.cls.php,v 1.5 2006/07/07 21:31:02 benjcarson Exp $ */
+/* $Id: block_renderer.cls.php 216 2010-03-11 22:49:18Z ryan.masten $ */
 
 /**
  * Renders block frames
@@ -81,7 +81,7 @@ class Block_Renderer extends Abstract_Renderer {
     foreach ($bp as $side => $props) {
       list($x, $y, $w, $h) = $bbox;
 
-      if ( !$props["style"] || $props["style"] == "none" || $props["width"] <= 0 )
+      if ( !$props["style"] || $props["style"] === "none" || $props["width"] <= 0 )
         continue;
 
 
@@ -112,5 +112,3 @@ class Block_Renderer extends Abstract_Renderer {
     }
   }
 }
-
-?>

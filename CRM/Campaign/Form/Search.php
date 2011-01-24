@@ -39,6 +39,7 @@
  */
 
 require_once 'CRM/Campaign/BAO/Survey.php';
+require_once 'CRM/Campaign/BAO/Campaign.php';
 require_once 'CRM/Campaign/Selector/Search.php';
 require_once 'CRM/Core/Selector/Controller.php';
 
@@ -166,6 +167,8 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
             $this->_operation = 'reserve';
             $this->set( 'op', $this->_operation );
         }
+        $this->set( 'searchVoterFor', $this->_operation );
+        $this->assign( 'searchVoterFor', $this->_operation );
         
         //do check permissions.
         if ( !CRM_Core_Permission::check( 'administer CiviCampaign' ) &&
@@ -435,19 +438,30 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
                                                                                          'id' );
         }
         
+        //format multi-select group and contact types.
+        foreach ( array( 'group', 'contact_type' ) as $param ) {
+            $paramValue = CRM_Utils_Array::value( $param, $this->_formValues );
+            if ( $paramValue && is_array( $paramValue ) ) {
+                unset( $this->_formValues[$param] );
+                foreach ( $paramValue as $key => $value ) {
+                    $this->_formValues[$param][$value] = 1;
+                }
+            }
+        }
+        
         if ( $this->_operation == 'reserve' ) {
             if ( CRM_Utils_Array::value( 'campaign_survey_id', $this->_formValues ) ) {
                 $campaignId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey',  
                                                            $this->_formValues['campaign_survey_id'], 
                                                            'campaign_id');
-                if ( $campaignId ) {
-                    require_once 'CRM/Campaign/BAO/Campaign.php';
-                    $campaignGroups = CRM_Campaign_BAO_Campaign::getCampaignGroups($campaignId);
-                    foreach( $campaignGroups as $id => $group ) {
-                        if ( $group['entity_table'] == 'civicrm_group' ) {
-                            $this->_formValues['group'][$group['entity_id']] = 1;
-                        }
-                    }
+                
+                //allow voter search in sub-part of given constituents,
+                //but make sure in case user does not select any group.
+                //get all associated campaign groups in where filter, CRM-7406
+                $groups = CRM_Utils_Array::value( 'group', $this->_formValues );
+                if ( $campaignId && CRM_Utils_System::isNull( $groups ) ) {
+                    $campGroups = CRM_Campaign_BAO_Campaign::getCampaignGroups( $campaignId );
+                    foreach ( $campGroups as $id => $title ) $this->_formValues['group'][$id] = 1; 
                 }
                 
                 //carry servey id w/ this.

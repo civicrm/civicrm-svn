@@ -143,21 +143,25 @@ class CRM_Campaign_Page_AJAX
     
     function voterList( ) 
     {
-        $searchParams = array( 'city',
-                               'sort_name', 
-                               'street_unit',
-                               'street_name',
-                               'postal_code',
-                               'street_number', 
-                               'street_address', 
-                               'survey_interviewer_id', 
-                               'campaign_survey_id',
-                               'campaign_search_voter_for' );
+        //get the search criteria params.
+        $searchParams = explode( ',', CRM_Utils_Array::value( 'searchCriteria', $_POST ) );
         
         $params = $searchRows = array( );
         foreach ( $searchParams as $param ) {
             if ( CRM_Utils_Array::value( $param, $_POST ) ) {
                 $params[$param] = $_POST[$param];
+            }
+        }
+        
+        //format multi-select group and contact types.
+        foreach ( array( 'group', 'contact_type' ) as $param ) {
+            $paramValue = CRM_Utils_Array::value( $param, $params );
+            if ( $paramValue ) {
+                unset( $params[$param] );
+                $paramValue = explode( ',', $paramValue );
+                foreach ( $paramValue as $key => $value ) {
+                    $params[$param][$value] = 1;
+                }
             }
         }
         
@@ -177,14 +181,15 @@ class CRM_Campaign_Page_AJAX
                 $survey->find( true );
                 $campaignId   = $survey->campaign_id;
                 $surveyTypeId = $survey->activity_type_id;
-                if ( $campaignId ) {
+                
+                //allow voter search in sub-part of given constituents,
+                //but make sure in case user does not select any group.
+                //get all associated campaign groups in where filter, CRM-7406
+                $groups = CRM_Utils_Array::value( 'group', $params );
+                if ( $campaignId && CRM_Utils_System::isNull( $groups ) ) {
                     require_once 'CRM/Campaign/BAO/Campaign.php';
                     $campaignGroups = CRM_Campaign_BAO_Campaign::getCampaignGroups($campaignId);
-                    foreach( $campaignGroups as $id => $group ) {
-                        if ( $group['entity_table'] == 'civicrm_group' ) {
-                            $params['group'][$group['entity_id']] = 1;
-                        }
-                    }
+                    foreach( $campaignGroups as $id => $group ) $params['group'][$id] = 1;
                 }
                 unset( $params['campaign_survey_id'] );
             }
@@ -418,6 +423,63 @@ class CRM_Campaign_Page_AJAX
         }
 
         echo json_encode( array( 'status' => $status ) );
+        CRM_Utils_System::civiExit( );
+    }
+    
+    function allActiveCampaigns( ) 
+    {
+        require_once 'CRM/Utils/JSON.php';
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, true, false );
+        $options   = array( array( 'value' => '',
+                                   'title'  => ts('- select -') ) );
+        foreach ( $campaigns as $value => $title ) {
+            $options[] = array( 'value' => $value,
+                                'title' => $title );
+        }
+        $status = 'fail';
+        if ( count( $options ) > 1 ) $status = 'success';  
+        
+        $results = array( 'status'    => $status,
+                          'campaigns' => $options );
+        
+        echo json_encode( $results );
+        
+        CRM_Utils_System::civiExit( );
+    }
+
+    function campaignGroups( ) 
+    {
+        require_once 'CRM/Utils/JSON.php';
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        $surveyId = CRM_Utils_Request::retrieve( 'survey_id', 'Positive', 
+                                                 CRM_Core_DAO::$_nullObject, false, null, 'POST' );
+        $campGroups = array( );
+        if ( $surveyId ) {
+            $campaignId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', $surveyId, 'campaign_id' );
+            if ( $campaignId ) {
+                require_once 'CRM/Campaign/BAO/Campaign.php';
+                $campGroups = CRM_Campaign_BAO_Campaign::getCampaignGroups( $campaignId );
+            }
+        }
+        
+        //CRM-7406 --If there is no campaign or no group associated with
+        //campaign of given survey, lets allow to search across all groups.
+        if ( empty( $campGroups ) ) {
+            require_once 'CRM/Core/PseudoConstant.php';
+            $campGroups = CRM_Core_PseudoConstant::group( ); 
+        }
+        $groups = array( array( 'value' => '',
+                                'title'  => ts('- select -') ) );
+        foreach ( $campGroups as $grpId => $title ) {
+            $groups[] = array( 'value' => $grpId,
+                               'title' => $title );
+        }
+        $results = array( 'status' => 'success',
+                          'groups' => $groups );
+        
+        echo json_encode( $results );
+        
         CRM_Utils_System::civiExit( );
     }
     

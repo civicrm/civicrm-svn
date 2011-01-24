@@ -186,6 +186,7 @@ function civicrm_config( &$config ) {
     $params['CMSdbPass']  = $config['drupal']['password'];
     $params['CMSdbHost']  = $config['drupal']['server'];
     $params['CMSdbName']  = $config['drupal']['database'];
+    $params['siteKey']    = md5(uniqid( '', true ) . $params['baseURL']);
 
     $str = file_get_contents( $tplPath . 'civicrm.settings.php.tpl' );
     foreach ( $params as $key => $value ) { 

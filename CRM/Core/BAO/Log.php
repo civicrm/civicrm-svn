@@ -147,5 +147,36 @@ UPDATE civicrm_log
          $query = "SELECT count(*) FROM civicrm_log 
                    WHERE civicrm_log.entity_table = 'civicrm_contact' AND civicrm_log.entity_id = {$contactID}";
          return CRM_Core_DAO::singleValueQuery( $query );
-     }    
+     }  
+
+     /**
+     * Function for find out whether to use logging schema entries for contact
+     * summary, instead of normal log entries.
+     *
+     * @return int report id of Contact Logging Report (Summary) / false
+     * @access public
+     * @static
+     */
+     static function useLoggingReport( ) {
+         
+         require_once 'CRM/Logging/Schema.php';
+         $loggingSchema = new CRM_Logging_Schema( );
+         
+         if ( $loggingSchema->isEnabled() ) {
+             require_once 'CRM/Report/BAO/Instance.php';
+             $params   = array( 'report_id' => 'logging/contact/summary' );
+             $instance = array( );
+             CRM_Report_BAO_Instance::retrieve($params, $instance);
+             
+             if ( !empty($instance) &&
+                  ( !CRM_Utils_Array::value('permission', $instance) ||
+                    ( CRM_Utils_Array::value('permission', $instance) && CRM_Core_Permission::check( $instance['permission'] ) ) ) ) {
+                 return $instance['id'];
+             }
+             
+         }
+         
+         return false;
+     }  
+     
 }

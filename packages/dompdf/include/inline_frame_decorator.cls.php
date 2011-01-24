@@ -28,16 +28,22 @@
  * the case, you can obtain a copy at http://www.php.net/license/3_0.txt.
  *
  * The latest version of DOMPDF might be available at:
- * http://www.digitaljunkies.ca/dompdf
+ * http://www.dompdf.com/
  *
- * @link http://www.digitaljunkies.ca/dompdf
+ * @link http://www.dompdf.com/
  * @copyright 2004 Benj Carson
  * @author Benj Carson <benjcarson@digitaljunkies.ca>
+ * @contributor Helmut Tischer <htischer@weihenstephan.org>
  * @package dompdf
- * @version 0.5.1
+
+ *
+ * Changes
+ * @contributor Helmut Tischer <htischer@weihenstephan.org>
+ * @version 20090610
+ * - don't repeat non repeatable background images after a line break
  */
 
-/* $Id: inline_frame_decorator.cls.php,v 1.4 2006/07/07 21:31:03 benjcarson Exp $ */
+/* $Id: inline_frame_decorator.cls.php 216 2010-03-11 22:49:18Z ryan.masten $ */
 
 /**
  * Decorates frames for inline layout
@@ -62,13 +68,28 @@ class Inline_Frame_Decorator extends Frame_Decorator {
     $split = $this->copy( $this->_frame->get_node()->cloneNode() ); 
     $this->get_parent()->insert_child_after($split, $this);
 
+    // Unset the current node's right style properties
+    $style = $this->_frame->get_style();
+    $style->margin_right = "0";
+    $style->padding_right = "0";
+    $style->border_right_width = "0";
+
     // Unset the split node's left style properties since we don't want them
     // to propagate
     $style = $split->get_style();
     $style->margin_left = "0";
     $style->padding_left = "0";
     $style->border_left_width = "0";
-    
+
+    //On continuation of inline element on next line,
+    //don't repeat non-vertically repeatble background images
+    //See e.g. in testcase image_variants, long desriptions
+    if ( ($url = $style->background_image) && $url !== "none"
+         && ($repeat = $style->background_repeat) && $repeat !== "repeat" &&  $repeat !== "repeat-y"
+       ) {
+      $style->background_image = "none";
+    }           
+
     // Add $frame and all following siblings to the new split node
     $iter = $frame;
     while ($iter) {
@@ -80,4 +101,3 @@ class Inline_Frame_Decorator extends Frame_Decorator {
   }
   
 } 
-?>

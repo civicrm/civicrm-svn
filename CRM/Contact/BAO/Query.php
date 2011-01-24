@@ -2285,7 +2285,9 @@ class CRM_Contact_BAO_Query
             // check if smart group, if so we can get rid of that one additional
             // left join
             $groupIDs = array_keys( $value );
-            if ( CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Group',
+            
+            if ( CRM_Utils_Array::value( 0, $groupIDs ) && 
+                 CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Group',
                                               $groupIDs[0],
                                               'saved_search_id' ) ) {
                 $skipGroup = true;

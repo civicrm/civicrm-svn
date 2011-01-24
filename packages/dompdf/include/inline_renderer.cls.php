@@ -28,16 +28,16 @@
  * the case, you can obtain a copy at http://www.php.net/license/3_0.txt.
  *
  * The latest version of DOMPDF might be available at:
- * http://www.digitaljunkies.ca/dompdf
+ * http://www.dompdf.com/
  *
- * @link http://www.digitaljunkies.ca/dompdf
+ * @link http://www.dompdf.com/
  * @copyright 2004 Benj Carson
  * @author Benj Carson <benjcarson@digitaljunkies.ca>
  * @package dompdf
- * @version 0.5.1
+
  */
 
-/* $Id: inline_renderer.cls.php,v 1.6 2006/07/07 21:31:03 benjcarson Exp $ */
+/* $Id: inline_renderer.cls.php 216 2010-03-11 22:49:18Z ryan.masten $ */
 
 /**
  * Renders inline frames
@@ -69,7 +69,7 @@ class Inline_Renderer extends Abstract_Renderer {
     $h = 0;
 //     $x += $widths[3];
 //     $y += $widths[0];
-    
+
     $first_row = true;
 
     foreach ($frame->get_children() as $child) {
@@ -77,6 +77,11 @@ class Inline_Renderer extends Abstract_Renderer {
       $child_h += $widths[2];
       
       if ( !is_null($w) && $child_x < $x + $w ) {
+        //This branch seems to be supposed to being called on the first part
+        //of an inline html element, and the part after the if clause for the
+        //parts after a line break.
+        //But because $w initially mostly is 0, and gets updated only on the next
+        //round, this seem to be never executed and the common close always.
 
         // The next child is on another line.  Draw the background &
         // borders on this line.
@@ -88,11 +93,11 @@ class Inline_Renderer extends Abstract_Renderer {
         if ( ($url = $style->background_image) && $url !== "none" ) {
           $this->_background_image($url, $x, $y, $w, $h, $style);
         }
-        
+
         // If this is the first row, draw the left border
         if ( $first_row ) {
 
-          if ( $bp["left"]["style"] != "none" && $bp["left"]["width"] > 0 ) {
+          if ( $bp["left"]["style"] !== "none" && $bp["left"]["width"] > 0 ) {
             $method = "_border_" . $bp["left"]["style"];            
             $this->$method($x, $y, $h + $widths[0] + $widths[2], $bp["left"]["color"], $widths, "left");
           }
@@ -100,18 +105,18 @@ class Inline_Renderer extends Abstract_Renderer {
         }
 
         // Draw the top & bottom borders
-        if ( $bp["top"]["style"] != "none" && $bp["top"]["width"] > 0 ) {
+        if ( $bp["top"]["style"] !== "none" && $bp["top"]["width"] > 0 ) {
           $method = "_border_" . $bp["top"]["style"];
           $this->$method($x, $y, $w + $widths[1] + $widths[3], $bp["top"]["color"], $widths, "top");
         }
         
-        if ( $bp["bottom"]["style"] != "none" && $bp["bottom"]["width"] > 0 ) {
+        if ( $bp["bottom"]["style"] !== "none" && $bp["bottom"]["width"] > 0 ) {
           $method = "_border_" . $bp["bottom"]["style"];
           $this->$method($x, $y + $h + $widths[0] + $widths[2], $w + $widths[1] + $widths[3], $bp["bottom"]["color"], $widths, "bottom");
         }
 
         // Handle anchors & links
-        if ( $frame->get_node()->nodeName == "a" ) {
+        if ( $frame->get_node()->nodeName === "a" ) {
                     
           if ( $href = $frame->get_node()->getAttribute("href") )
             $this->_canvas->add_link($href, $x, $y, $w, $h);
@@ -138,39 +143,52 @@ class Inline_Renderer extends Abstract_Renderer {
     if ( ($bg = $style->background_color) !== "transparent" ) 
       $this->_canvas->filled_rectangle( $x + $widths[3], $y + $widths[0], $w, $h, $style->background_color);
 
+    //On continuation lines (after line break) of inline elements, the style got copied.
+    //But a non repeatable background image should not be repeated on the next line.
+    //But removing the background image above has never an effect, and removing it below
+    //removes it always, even on the initial line.
+    //Need to handle it elsewhere, e.g. on certain ...clone()... usages.    
+    // Repeat not given: default is Style::__construct
+    // ... && (!($repeat = $style->background_repeat) || $repeat === "repeat" ...
+    //different position? $this->_background_image($url, $x, $y, $w, $h, $style);
     if ( ($url = $style->background_image) && $url !== "none" )           
       $this->_background_image($url, $x + $widths[3], $y + $widths[0], $w, $h, $style);
-
         
     // Add the border widths
     $w += $widths[1] + $widths[3];
     $h += $widths[0] + $widths[2];
 
+    // make sure the border and background start inside the left margin
+    $left_margin = $style->length_in_pt($style->margin_left);
+    $x += $left_margin;
+
     // If this is the first row, draw the left border too
-    if ( $first_row && $bp["left"]["style"] != "none" && $widths[3] > 0 ) {
+    if ( $first_row && $bp["left"]["style"] !== "none" && $widths[3] > 0 ) {
       $method = "_border_" . $bp["left"]["style"];
       $this->$method($x, $y, $h, $bp["left"]["color"], $widths, "left");
     }
     
     // Draw the top & bottom borders
-    if ( $bp["top"]["style"] != "none" && $widths[0] > 0 ) {
+    if ( $bp["top"]["style"] !== "none" && $widths[0] > 0 ) {
       $method = "_border_" . $bp["top"]["style"];
       $this->$method($x, $y, $w, $bp["top"]["color"], $widths, "top");
     }
     
-    if ( $bp["bottom"]["style"] != "none" && $widths[2] > 0 ) {
+    if ( $bp["bottom"]["style"] !== "none" && $widths[2] > 0 ) {
       $method = "_border_" . $bp["bottom"]["style"];
       $this->$method($x, $y + $h, $w, $bp["bottom"]["color"], $widths, "bottom");
     }
-    
-    // Draw the right border
-    if ( $bp["right"]["style"] != "none" && $widths[1] > 0 ) {
+
+    //    pre_var_dump(get_class($frame->get_next_sibling()));
+    //    $last_row = get_class($frame->get_next_sibling()) !== 'Inline_Frame_Decorator';
+    // Draw the right border if this is the last row
+    if ( $bp["right"]["style"] !== "none" && $widths[1] > 0 ) {
       $method = "_border_" . $bp["right"]["style"];
       $this->$method($x + $w, $y, $h, $bp["right"]["color"], $widths, "right");
     }
 
     // Handle anchors & links
-    if ( $frame->get_node()->nodeName == "a" ) {
+    if ( $frame->get_node()->nodeName === "a" ) {
 
       if ( $name = $frame->get_node()->getAttribute("name") )
         $this->_canvas->add_named_dest($name);
@@ -180,4 +198,3 @@ class Inline_Renderer extends Abstract_Renderer {
     }
   }
 }
-?>

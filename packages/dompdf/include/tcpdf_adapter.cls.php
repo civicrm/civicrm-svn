@@ -28,16 +28,16 @@
  * the case, you can obtain a copy at http://www.php.net/license/3_0.txt.
  *
  * The latest version of DOMPDF might be available at:
- * http://www.digitaljunkies.ca/dompdf
+ * http://www.dompdf.com/
  *
- * @link http://www.digitaljunkies.ca/dompdf
+ * @link http://www.dompdf.com/
  * @copyright 2004 Benj Carson
  * @author Benj Carson <benjcarson@digitaljunkies.ca>
  * @package dompdf
- * @version 0.5.1
+
  */
 
-/* $Id$ */
+/* $Id: tcpdf_adapter.cls.php 217 2010-03-11 23:03:57Z ryan.masten $ */
 
 require_once(DOMPDF_LIB_DIR . '/tcpdf/tcpdf.php');
 
@@ -145,7 +145,7 @@ class TCPDF_Adapter implements Canvas {
     else
       $size = self::$PAPER_SIZE["letter"];
 
-    if ( mb_strtolower($orientation) == "landscape" ) {
+    if ( mb_strtolower($orientation) === "landscape" ) {
       $a = $size[3];
       $size[3] = $size[2];
       $size[2] = $a;
@@ -395,6 +395,8 @@ class TCPDF_Adapter implements Canvas {
    */
   function text($x, $y, $text, $font, $size, $color = array(0,0,0), $adjust = 0);
 
+  function javascript($code);
+  
   /**
    * Add a named destination (similar to <a name="foo">...</a> in html)
    *
@@ -461,4 +463,3 @@ class TCPDF_Adapter implements Canvas {
     
 // Workaround for idiotic limitation on statics...
 PDFLib_Adapter::$PAPER_SIZES = CPDF_Adapter::$PAPER_SIZES;
-?>

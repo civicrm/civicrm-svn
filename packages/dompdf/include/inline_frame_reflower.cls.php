@@ -28,16 +28,16 @@
  * the case, you can obtain a copy at http://www.php.net/license/3_0.txt.
  *
  * The latest version of DOMPDF might be available at:
- * http://www.digitaljunkies.ca/dompdf
+ * http://www.dompdf.com/
  *
- * @link http://www.digitaljunkies.ca/dompdf
+ * @link http://www.dompdf.com/
  * @copyright 2004 Benj Carson
  * @author Benj Carson <benjcarson@digitaljunkies.ca>
  * @package dompdf
- * @version 0.5.1
+
  */
 
-/* $Id: inline_frame_reflower.cls.php,v 1.3 2006/07/07 21:31:03 benjcarson Exp $ */
+/* $Id: inline_frame_reflower.cls.php 216 2010-03-11 22:49:18Z ryan.masten $ */
 
 /**
  * Reflows inline frames
@@ -63,7 +63,7 @@ class Inline_Frame_Reflower extends Frame_Reflower {
       $f->get_style()->padding_left = $style->padding_left;
       $f->get_style()->border_left = $style->border_left;
     }
-    
+
     if ( ($l = $this->_frame->get_last_child()) && $l instanceof Text_Frame_Decorator ) {
       $f->get_style()->margin_right = $style->margin_right;
       $f->get_style()->padding_right = $style->padding_right;
@@ -73,9 +73,9 @@ class Inline_Frame_Reflower extends Frame_Reflower {
     // Set the containing blocks and reflow each child.  The containing
     // block is not changed by line boxes.
     foreach ( $this->_frame->get_children() as $child ) {
+      
       $child->set_containing_block($cb);
       $child->reflow();
     }
   }
 }
-?>

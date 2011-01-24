@@ -154,6 +154,18 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
      */
     function buildQuickForm( ) 
     {
+        // allow to add contact to either new or existing group.
+        $this->addElement( 'text', 'newGroupName', ts( 'Name for new group' ) );
+        $this->addElement( 'text', 'newGroupDesc', ts( 'Description of new group' ) );
+        $groups = CRM_Core_PseudoConstant::group( );
+        $hasExistingGroups = false;
+        if ( is_array( $groups ) && !empty( $groups ) ) {
+            $hasExistingGroups = true;
+            $this->addElement( 'select', 'groups', ts( 'Add respondent(s) to existing group(s)' ), 
+                               $groups, array('multiple' => "multiple", 'size' => 5));
+        }
+        $this->assign( 'hasExistingGroups', $hasExistingGroups );
+        
         $buttons = array( array ( 'type'      => 'done',
                                   'name'      => ts('Reserve'),
                                   'subName'   => 'reserve',
@@ -170,6 +182,36 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
                              'name'      => ts('Cancel') );
         
         $this->addButtons( $buttons );
+        $this->addFormRule( array( 'CRM_Campaign_Form_Task_Reserve', 'formRule' ), $this );
+    }
+    
+    /**
+     * global validation rules for the form
+     *
+     * @param array $fields posted values of the form
+     *
+     * @return array list of errors to be posted back to the form
+     * @static
+     * @access public
+     */
+    static function formRule( $fields, $files, $self ) 
+    {
+        $errors = array( );
+        $invalidGroupName = false;
+        if ( CRM_Utils_Array::value( 'newGroupName', $fields ) ) {
+            $title = trim( $fields['newGroupName'] );
+            $name  = CRM_Utils_String::titleToVar( $title );
+            $query  = 'select count(*) from civicrm_group where name like %1 OR title like %2';
+            $grpCnt = CRM_Core_DAO::singleValueQuery( $query, array( 1 => array( $name,  'String' ),
+                                                                     2 => array( $title, 'String' ) ) );
+            if ( $grpCnt ) {
+                $invalidGroupName = true;
+                $errors['newGroupName'] = ts( 'Group \'%1\' already exists.', array( 1 => $fields['newGroupName']));
+            }
+        }
+        $self->assign( 'invalidGroupName', $invalidGroupName );
+        
+        return empty( $errors ) ? true : $errors;
     }
     
     /**
@@ -191,13 +233,14 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
         require_once 'CRM/Contact/DAO/Group.php';
         require_once 'CRM/Contact/BAO/GroupContact.php';
         $campGrps = CRM_Campaign_BAO_Campaign::getCampaignGroups( $campaignId );
-        foreach ( $campGrps as $grpId => $grpVals ) {
+        foreach ( $campGrps as $grpId => $grpTitle ) {
             $group = new CRM_Contact_DAO_Group();
-            $group->id = $grpVals['entity_id'];
+            $group->id = $grpId;
             $contacts  = CRM_Contact_BAO_GroupContact::getGroupContacts( $group );
             foreach ( $contacts as $contact ) {
                 $campContacts[$contact->contact_id] = $contact->contact_id;
             }
+            $group->free( );
         }
         
         //add reservation.
@@ -244,6 +287,14 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
             $status[] = ts( 'Reservation did not add for %1 Contact(s).', 
                             array( 1 => ( count($this->_contactIds) - $countVoters) ) );
         }
+        
+        //add reserved voters to groups.
+        $groupAdditions = $this->_addRespondentToGroup( $reservedVoterIds );
+        if ( !empty( $groupAdditions )  ) {
+            $status[] = ts( '<br />Respondent(s) has been added to %1 group(s).', 
+                            array( 1 => implode( ', ', $groupAdditions ) ) );
+        }
+        
         if ( !empty($status) ) {
             CRM_Core_Session::setStatus( implode('&nbsp;&nbsp;', $status) );
         }
@@ -258,6 +309,53 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
             $this->controller->set( 'reserveToInterview', true );
         }
         
+    }
+    
+    private function _addRespondentToGroup( $contactIds ) 
+    {
+        $groupAdditions = array( );
+        if ( empty( $contactIds ) ) return $groupAdditions;
+        
+        $params       = $this->controller->exportValues( $this->_name );
+        $groups       = CRM_Utils_Array::value( 'groups',       $params, array( ) );
+        $newGroupName = CRM_Utils_Array::value( 'newGroupName', $params );
+        $newGroupDesc = CRM_Utils_Array::value( 'newGroupDesc', $params );
+        
+        $newGroupId = null;
+        //create new group. 
+        if ( $newGroupName ) {
+            $grpParams = array( 'title'         => $newGroupName,
+                                'description'   => $newGroupDesc,
+                                'is_active'     => true  );
+            require_once 'CRM/Contact/BAO/Group.php';
+            $group = CRM_Contact_BAO_Group::create( $grpParams );
+            $groups[] = $newGroupId = $group->id;
+        }
+        
+        //add the respondents to groups.
+        if ( is_array( $groups ) ) {
+            require_once 'CRM/Core/PseudoConstant.php';
+            require_once 'CRM/Contact/BAO/GroupContact.php';
+            $existingGroups = CRM_Core_PseudoConstant::group( );
+            foreach ( $groups as $groupId ) {
+                $addCount = CRM_Contact_BAO_GroupContact::addContactsToGroup( $contactIds, $groupId );
+                $totalCount = CRM_Utils_Array::value( 1, $addCount );
+                if ( $groupId == $newGroupId ) {
+                    $name = $newGroupName;
+                    $new = true;
+                } else {
+                    $name = $existingGroups[$groupId];
+                    $new = false;
+                }
+                if ( $totalCount ) {
+                    $url = CRM_Utils_System::url( 'civicrm/group/search',
+                                                  'reset=1&force=1&context=smog&gid=' . $groupId );
+                    $groupAdditions[] =  '<a href="' . $url .'">'. $name. '</a>';
+                }
+            }
+        }
+        
+        return $groupAdditions;
     }
     
 }

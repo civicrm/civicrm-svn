@@ -60,6 +60,7 @@ CRM/Core/DAO/Persistent.php
 CRM/Core/DAO/Phone.php
 CRM/Core/DAO/Preferences.php
 CRM/Core/DAO/PreferencesDate.php
+CRM/Core/DAO/PrevNextCache.php
 CRM/Core/DAO/PriceField.php
 CRM/Core/DAO/PriceSet.php
 CRM/Core/DAO/PriceSetEntity.php

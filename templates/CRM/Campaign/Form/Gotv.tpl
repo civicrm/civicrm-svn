@@ -138,6 +138,9 @@ function loadVoterList( )
 	
 		"fnServerData": function ( sSource, aoData, fnCallback ) {
 			var dataLength = aoData.length;
+
+			var count = 1;
+			var searchCriteria = new Array( 'campaign_search_voter_for' ); 
 		       		
 			//get the search criteria.
                         var searchParams = {/literal}{$searchParams}{literal};
@@ -145,10 +148,14 @@ function loadVoterList( )
                             if ( val = cj( '#' + param ).val( ) ) {
 			      aoData[dataLength++] = {name: param , value: val };
 			    } 
+			    searchCriteria[count++] = param;
                         } 
 
 			//do search to reserve voters.			
 			aoData[dataLength++] = {name: 'campaign_search_voter_for', value: searchVoterFor};
+			
+			//lets transfer search criteria.
+			aoData[dataLength++] = {name: 'searchCriteria', value:searchCriteria.join(',')};
 			
 			cj.ajax( {
 				"dataType": 'json', 

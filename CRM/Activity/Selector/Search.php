@@ -84,7 +84,8 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
                                 'source_contact_name',
                                 'activity_type_id',
                                 'activity_type',
-                                'activity_is_test'
+                                'activity_is_test',
+                                'activity_campaign_id'
                                 );
     
     /** 
@@ -244,9 +245,13 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
          $mailingIDs =& CRM_Mailing_BAO_Mailing::mailingACLIDs( );
          $accessCiviMail = CRM_Core_Permission::check( 'access CiviMail' );
          
+         //get all campaigns.
+         require_once 'CRM/Campaign/BAO/Campaign.php';
+         $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, true );
+         
          while ( $result->fetch( ) ) {
              $row = array( );
-
+             
              // ignore rows where we dont have an activity id
              if ( empty( $result->activity_id ) ) {
                  continue;
@@ -305,6 +310,11 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
                                                         array( 'id'  => $result->activity_id,
                                                                'cid' => $contactId,
                                                                'cxt' => $this->_context ) );
+            
+            //carry campaign to selector.
+            $row['campaign'] = CRM_Utils_Array::value( $result->activity_campaign_id, $allCampaigns );
+            $row['campaign_id'] = $result->activity_campaign_id;
+            
             $rows[] = $row;
          }
          

@@ -168,7 +168,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
         require_once 'CRM/Campaign/BAO/Campaign.php';
         $campaignId = null;
         if ( $mailingId ) {
-            $campaignId = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_Membership', $mailingId, 'campaign_id' ); 
+            $campaignId = CRM_Core_DAO::getFieldValue( 'CRM_Mailing_DAO_Mailing', $mailingId, 'campaign_id' ); 
         }
         CRM_Campaign_BAO_Campaign::addCampaign( $this, $campaignId );
         

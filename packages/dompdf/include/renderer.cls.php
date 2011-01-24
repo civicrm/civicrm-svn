@@ -28,16 +28,16 @@
  * the case, you can obtain a copy at http://www.php.net/license/3_0.txt.
  *
  * The latest version of DOMPDF might be available at:
- * http://www.digitaljunkies.ca/dompdf
+ * http://www.dompdf.com/
  *
- * @link http://www.digitaljunkies.ca/dompdf
+ * @link http://www.dompdf.com/
  * @copyright 2004 Benj Carson
  * @author Benj Carson <benjcarson@digitaljunkies.ca>
  * @package dompdf
- * @version 0.5.1
+
  */
 
-/* $Id: renderer.cls.php,v 1.7 2006/07/07 21:31:04 benjcarson Exp $ */
+/* $Id: renderer.cls.php 217 2010-03-11 23:03:57Z ryan.masten $ */
 
 /**
  * Concrete renderer
@@ -58,6 +58,13 @@ class Renderer extends Abstract_Renderer {
   protected $_renderers;
     
   /**
+   * Cache of the callbacks array
+   * 
+   * @var array
+   */
+  private $_callbacks;
+    
+  /**
    * Advance the canvas to the next page
    */  
   function new_page() {
@@ -75,13 +82,14 @@ class Renderer extends Abstract_Renderer {
     if ( $_dompdf_debug ) {
       echo $frame;
       flush();
-    }                      
+    }
 
     $display = $frame->get_style()->display;
     
     switch ($display) {
       
     case "block":
+    case "list-item":
     case "inline-block":
     case "table":
     case "table-row-group":
@@ -92,7 +100,7 @@ class Renderer extends Abstract_Renderer {
       break;
 
     case "inline":
-      if ( $frame->get_node()->nodeName == "#text" )
+      if ( $frame->get_node()->nodeName === "#text" )
         $this->_render_frame("text", $frame);
       else
         $this->_render_frame("inline", $frame);
@@ -113,11 +121,18 @@ class Renderer extends Abstract_Renderer {
     case "none":
       $node = $frame->get_node();
           
-      if ( $node->nodeName == "script" &&
-           ( $node->getAttribute("type") == "text/php" ||
-             $node->getAttribute("language") == "php" ) ) {
-        // Evaluate embedded php scripts
-        $this->_render_frame("php", $frame);
+      if ( $node->nodeName === "script" ) {
+        if ( $node->getAttribute("type") === "text/php" ||
+             $node->getAttribute("language") === "php" ) {
+          // Evaluate embedded php scripts
+          $this->_render_frame("php", $frame);
+        }
+        
+        elseif ( $node->getAttribute("type") === "text/javascript" ||
+             $node->getAttribute("language") === "javascript" ) {
+          // Insert JavaScript
+          $this->_render_frame("javascript", $frame);
+        }
       }
 
       // Don't render children, so skip to next iter
@@ -128,9 +143,43 @@ class Renderer extends Abstract_Renderer {
 
     }
 
+    // Check for begin frame callback
+    $this->_check_callbacks("begin_frame", $frame);
+    
     foreach ($frame->get_children() as $child)
       $this->render($child);
 
+    // Check for end frame callback
+    $this->_check_callbacks("end_frame", $frame);
+    
+  }
+  
+  /**
+   * Check for callbacks that need to be performed when a given event
+   * gets triggered on a frame
+   *
+   * @param string $event the type of event
+   * @param Frame $frame the frame that event is triggered on
+   */
+  protected function _check_callbacks($event, $frame) {
+    if (!isset($this->_callbacks)) {
+      $this->_callbacks = $this->_dompdf->get_callbacks();
+    }
+    
+    if (is_array($this->_callbacks) && isset($this->_callbacks[$event])) {
+      $info = array(0 => $this->_canvas, "canvas" => $this->_canvas,
+                    1 => $frame, "frame" => $frame);
+      $fs = $this->_callbacks[$event];
+      foreach ($fs as $f) {
+        if (is_callable($f)) {
+          if (is_array($f)) {
+            $f[0]->$f[1]($info);
+          } else {
+            $f($info);
+          }
+        }
+      }
+    }
   }
 
   /**
@@ -174,6 +223,10 @@ class Renderer extends Abstract_Renderer {
         $this->_renderers["php"] = new PHP_Evaluator($this->_canvas);
         break;
 
+      case "javascript":
+        $this->_renderers["javascript"] = new Javascript_Embedder($this->_dompdf);
+        break;
+        
       }
     }
     
@@ -181,5 +234,3 @@ class Renderer extends Abstract_Renderer {
 
   }
 }
-
-?>

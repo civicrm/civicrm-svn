@@ -28,21 +28,21 @@
  * the case, you can obtain a copy at http://www.php.net/license/3_0.txt.
  *
  * The latest version of DOMPDF might be available at:
- * http://www.digitaljunkies.ca/dompdf
+ * http://www.dompdf.com/
  *
- * @link http://www.digitaljunkies.ca/dompdf
+ * @link http://www.dompdf.com/
  * @copyright 2004 Benj Carson
  * @author Benj Carson <benjcarson@digitaljunkies.ca>
  * @package dompdf
- * @version 0.5.1
+
  */
 
-/* $Id: canvas.cls.php,v 1.7 2006/07/07 21:31:02 benjcarson Exp $ */
+/* $Id: canvas.cls.php 216 2010-03-11 22:49:18Z ryan.masten $ */
 
 /**
  * Main rendering interface
  *
- * Currently only {@link CPDF_Adapter} and {@link PDFLib_Adapter}
+ * Currently {@link CPDF_Adapter}, {@link PDFLib_Adapter}, {@link TCPDF_Adapter}, and {@link GD_Adapter}
  * implement this interface.
  *
  * Implementations should measure x and y increasing to the left and down,
@@ -258,4 +258,3 @@ interface Canvas {
   function output($options = null);
   
 }
-?>

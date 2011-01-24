@@ -25,6 +25,16 @@
 *}
 <div class="crm-block crm-content-block crm-report-form-block">
   {if $rows}
+    {if $raw}
+      <div class="status">
+        <dl>
+          <dt><div class="icon inform-icon"></div></dt>
+          <dd>
+            {ts}WARNING: Are you sure you want to revert the below changes?{/ts}
+          </dd>
+        </dl>
+      </div>
+    {/if}
     <p>{ts 1=$whom_url 2=$whom_name 3=$who_url 4=$who_name 5=$log_date}Change to <a href='%1'>%2</a> made by <a href='%3'>%4</a> on %5:{/ts}</p>
     {include file="CRM/Report/Form/Layout/Table.tpl"}
   {else}
@@ -33,6 +43,7 @@
     </div>
   {/if}
   <div class="action-link">
-      <a href="{$summaryReportURL}" class="button"><span><div class="icon back-icon"></div>{ts}Back to Logging Summary{/ts}</span></a>
+      <a href="{$backURL}"   class="button"><span><div class="icon back-icon"></div>{ts}Back to Logging Summary{/ts}</span></a>
+      <a href="{$revertURL}" class="button"><span><div class="icon delete-icon"></div>{ts}Revert These Changes{/ts}</span></a>
   </div>
 </div>

@@ -294,7 +294,7 @@ class CRM_Pledge_Selector_Search extends CRM_Core_Selector_Base
          
          //get all campaigns.
          require_once 'CRM/Campaign/BAO/Campaign.php';
-         $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, true );
+         $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, true );
          
          //4418 check for view, edit and delete
          $permissions = array( CRM_Core_Permission::VIEW );

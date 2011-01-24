@@ -86,7 +86,7 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
 
         //get all campaigns.
         require_once 'CRM/Campaign/BAO/Campaign.php';
-        $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, true );
+        $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, true );
         
         //checks membership of contact itself
         while ($dao->fetch()) {
