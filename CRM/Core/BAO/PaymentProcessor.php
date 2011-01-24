@@ -225,7 +225,6 @@ INNER JOIN civicrm_contribution       con ON ( mp.contribution_id = con.id )
  LEFT JOIN civicrm_contribution_recur cr  ON ( mem.contribution_recur_id = cr.id )
  LEFT JOIN civicrm_contribution_page  cp  ON ( con.contribution_page_id  = cp.id )
      WHERE mp.membership_id = %1";
-
         } else if ( $component == 'contribute' ) {
             $sql = " 
     SELECT cr.payment_processor_id as ppID1, cp.payment_processor_id as ppID2, con.is_test 
@@ -237,18 +236,19 @@ INNER JOIN civicrm_contribution       con ON ( mp.contribution_id = con.id )
 
         $params = array( 1 => array( $entityID, 'Integer' ) );
         $dao    = CRM_Core_DAO::executeQuery( $sql, $params );
-        $dao->fetch();
 
-        $ppID = $dao->ppID1 ? $dao->ppID1 : $dao->ppID2;
-        $mode = ( $dao->is_test ) ? 'test' : 'live';
-
-        if ( !$ppID || $type == 'id' ) {
-            return $ppID;
-        } else if ( $type == 'info' ) {
-            return CRM_Core_BAO_PaymentProcessor::getPayment( $ppID, $mode );
-        } else if ( $type == 'obj' ) {
-            $payment = CRM_Core_BAO_PaymentProcessor::getPayment( $ppID, $mode );
-            return CRM_Core_Payment::singleton( $mode, $payment );
+        if ( $dao->find( true ) ) {
+            $ppID = $dao->ppID1 ? $dao->ppID1 : $dao->ppID2;
+            $mode = ( $dao->is_test ) ? 'test' : 'live';
+            
+            if ( !$ppID || $type == 'id' ) {
+                return $ppID;
+            } else if ( $type == 'info' ) {
+                return CRM_Core_BAO_PaymentProcessor::getPayment( $ppID, $mode );
+            } else if ( $type == 'obj' ) {
+                $payment = CRM_Core_BAO_PaymentProcessor::getPayment( $ppID, $mode );
+                return CRM_Core_Payment::singleton( $mode, $payment );
+            }
         }
         return null;
     }
