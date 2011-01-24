@@ -88,7 +88,8 @@
                            animate: false,
                            highlight: true,
                            sortable: true,
-                           respectParents: true
+                           respectParents: true,
+			   selectClass:'campaignGroupsSelect'
                         });
                     </script>
                 {/literal}
@@ -182,6 +183,7 @@
     {/literal}{if !$doNotReloadCRMAccordion}{literal}	
     cj(function() {
       cj().crmaccordions(); 
+      buildCampaignGroups( );
     });
     {/literal}{/if}{literal}
 
@@ -200,6 +202,54 @@
                                                          }).bind( 'click', function( ) { 
                                                               cj( "#survey_interviewer_id" ).val(''); 
                                                          });
+
+
+function buildCampaignGroups( surveyId ) 
+{
+    if ( !surveyId ) surveyId = cj("#campaign_survey_id").val( ); 
+
+    var operation = {/literal}'{$searchVoterFor}'{literal};
+    if ( !surveyId || operation != 'reserve' ) return; 
+
+    var grpUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Campaign_Page_AJAX&fnName=campaignGroups'}"
+                 {literal};
+
+    cj.post( grpUrl, 
+             {survey_id:surveyId}, 
+             function( data ) {
+	     	 if ( data.status != 'success' ) return;
+
+		 var selectName         = 'campaignGroupsSelect';
+		 var groupSelect        = cj("select[id^=" + selectName + "]");
+		 var groupSelectCountId	= cj( groupSelect ).attr( 'id' ).replace( selectName, '' ); 
+		 
+		 //first remove all groups for given survey.
+		 cj( "#group" ).find('option').remove( );
+		 cj( groupSelect ).find('option').remove( );
+		 cj( '#crmasmContainer' + groupSelectCountId ).find( 'span' ).remove( );
+		 cj( '#crmasmList' + groupSelectCountId ).find( 'li' ).remove( );		
+								
+		 var groups = data.groups;      			
+    	     	 
+		 //build the new group options.
+		 var optCount = 0;
+		 for ( group in groups ) {
+		      title = groups[group].title;
+		      value = groups[group].value;
+		      if ( !title ) continue;
+		      var crmOptCount = 'asm' + groupSelectCountId + 'option' + optCount;
+		      
+		      //add options to main group select.
+		      cj( "#group" ).append( cj('<option></option>').val( value ).html( title ).attr( 'id', crmOptCount ) );
+		      
+		      //add option to crm multi select ul.
+		      cj( groupSelect ).append( cj('<option></option>').val(value).html(title).attr( 'rel', crmOptCount ) );
+
+		      optCount++;
+		 }
+    	     }, 
+    	     'json');
+}
 
 </script>
 {/literal}

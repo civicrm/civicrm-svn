@@ -167,6 +167,8 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
             $this->_operation = 'reserve';
             $this->set( 'op', $this->_operation );
         }
+        $this->set( 'searchVoterFor', $this->_operation );
+        $this->assign( 'searchVoterFor', $this->_operation );
         
         //do check permissions.
         if ( !CRM_Core_Permission::check( 'administer CiviCampaign' ) &&
@@ -452,7 +454,12 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
                 $campaignId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey',  
                                                            $this->_formValues['campaign_survey_id'], 
                                                            'campaign_id');
-                if ( $campaignId ) {
+                
+                //allow voter search in sub-part of given constituents,
+                //but make sure in case user does not select any group.
+                //get all associated campaign groups in where filter, CRM-7406
+                $groups = CRM_Utils_Array::value( 'group', $this->_formValues );
+                if ( $campaignId && CRM_Utils_System::isNull( $groups ) ) {
                     $campGroups = CRM_Campaign_BAO_Campaign::getCampaignGroups( $campaignId );
                     foreach ( $campGroups as $id => $title ) $this->_formValues['group'][$id] = 1; 
                 }

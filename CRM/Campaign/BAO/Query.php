@@ -390,7 +390,16 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
                                                                  'reset=1&action=add' ) );
         }
         
-        $form->add( 'select', 'campaign_survey_id', ts('Survey'), $surveys, true );
+        //CRM-7406 -- 
+        //If survey had associated campaign and
+        //campaign has some contact groups, don't
+        //allow to search the contacts those are not
+        //in given campaign groups ( ie not in constituents )
+        $groupJs = null;
+        if ( $form->get( 'searchVoterFor' ) == 'reserve' ) {
+            $groupJs = array( 'onChange' => "buildCampaignGroups( );return false;" );
+        }
+        $form->add( 'select', 'campaign_survey_id', ts('Survey'), $surveys, true, $groupJs );
     }
     
     /*

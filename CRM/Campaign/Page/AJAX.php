@@ -181,7 +181,12 @@ class CRM_Campaign_Page_AJAX
                 $survey->find( true );
                 $campaignId   = $survey->campaign_id;
                 $surveyTypeId = $survey->activity_type_id;
-                if ( $campaignId ) {
+                
+                //allow voter search in sub-part of given constituents,
+                //but make sure in case user does not select any group.
+                //get all associated campaign groups in where filter, CRM-7406
+                $groups = CRM_Utils_Array::value( 'group', $params );
+                if ( $campaignId && CRM_Utils_System::isNull( $groups ) ) {
                     require_once 'CRM/Campaign/BAO/Campaign.php';
                     $campaignGroups = CRM_Campaign_BAO_Campaign::getCampaignGroups($campaignId);
                     foreach( $campaignGroups as $id => $group ) $params['group'][$id] = 1;
@@ -443,4 +448,39 @@ class CRM_Campaign_Page_AJAX
         CRM_Utils_System::civiExit( );
     }
 
+    function campaignGroups( ) 
+    {
+        require_once 'CRM/Utils/JSON.php';
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        $surveyId = CRM_Utils_Request::retrieve( 'survey_id', 'Positive', 
+                                                 CRM_Core_DAO::$_nullObject, false, null, 'POST' );
+        $campGroups = array( );
+        if ( $surveyId ) {
+            $campaignId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', $surveyId, 'campaign_id' );
+            if ( $campaignId ) {
+                require_once 'CRM/Campaign/BAO/Campaign.php';
+                $campGroups = CRM_Campaign_BAO_Campaign::getCampaignGroups( $campaignId );
+            }
+        }
+        
+        //CRM-7406 --If there is no campaign or no group associated with
+        //campaign of given survey, lets allow to search across all groups.
+        if ( empty( $campGroups ) ) {
+            require_once 'CRM/Core/PseudoConstant.php';
+            $campGroups = CRM_Core_PseudoConstant::group( ); 
+        }
+        $groups = array( array( 'value' => '',
+                                'title'  => ts('- select -') ) );
+        foreach ( $campGroups as $grpId => $title ) {
+            $groups[] = array( 'value' => $grpId,
+                               'title' => $title );
+        }
+        $results = array( 'status' => 'success',
+                          'groups' => $groups );
+        
+        echo json_encode( $results );
+        
+        CRM_Utils_System::civiExit( );
+    }
+    
 }
