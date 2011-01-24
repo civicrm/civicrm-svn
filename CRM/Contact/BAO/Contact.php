@@ -757,7 +757,7 @@ WHERE id={$id}; ";
     public static function getRelativePath( $absolutePath )
     {
         $relativePath = null;
-        $config = CRM_Core_Config::singleton( );
+        $config =& CRM_Core_Config::singleton( );
         if ( $config->userFramework == 'Joomla' ) {
             $userFrameworkBaseURL = trim( str_replace( '/administrator/', '', $config->userFrameworkBaseURL ) );
             $customFileUploadDirectory = strstr( str_replace('\\', '/', $absolutePath), '/media' );
@@ -766,19 +766,20 @@ WHERE id={$id}; ";
             require_once 'CRM/Utils/System/Drupal.php';
             $rootPath = CRM_Utils_System_Drupal::cmsRootPath( );
             $baseUrl = $config->userFrameworkBaseURL;
-            if ( module_exists('locale') && $mode = variable_get( 'language_negotiation', LANGUAGE_NEGOTIATION_NONE ) ) {
+            if ( module_exists('locale') && 
+                 $mode = variable_get( 'language_negotiation', LANGUAGE_NEGOTIATION_NONE ) ) {
                 global $language;
-                if( isset( $language->prefix ) ) {
-                    $baseUrl=  str_replace( $language->prefix.'/', '', $config->userFrameworkBaseURL );
+                if( isset( $language->prefix ) &&
+                    ! empty( $language->prefix ) ) {
+                    $baseUrl=  str_replace( $language->prefix . '/',
+                                            '', 
+                                            $config->userFrameworkBaseURL );
                 }
-            }  
-            
-            $relativePath = str_replace( "$rootPath/", $baseUrl, str_replace('\\', '/', $absolutePath ) );
-        } else if ( $config->userFramework == 'Standalone' ) {
-            $absolutePathStr = strstr( $absolutePath, 'files');
-            $relativePath = $config->userFrameworkBaseURL . str_replace('\\', '/', $absolutePathStr );
+            }
+            $relativePath = str_replace( "{$rootPath}/",
+                                         $baseUrl, 
+                                         str_replace('\\', '/', $absolutePath ) );
         }
-        
         return $relativePath;
     }
  	
