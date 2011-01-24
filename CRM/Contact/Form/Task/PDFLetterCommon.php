@@ -203,13 +203,13 @@ class CRM_Contact_Form_Task_PDFLetterCommon
             civicrm_smarty_register_string_resource( );
         }
 
-        $first = TRUE;
-
+        $first        = TRUE;
+        $skipOnHold   = isset( $form->skipOnHold ) ? $form->skipOnHold : false;
+        $skipDeceased = isset( $form->skipDeceased ) ? $form->skipDeceased : true;
         foreach ($form->_contactIds as $item => $contactId) {
             $params  = array( 'contact_id'  => $contactId );
-
-			list( $contact ) = $mailing->getDetails($params, $returnProperties, false );
             
+			list( $contact ) = $mailing->getDetails($params, $returnProperties, $skipOnHold, $skipDeceased );
             if ( civicrm_error( $contact ) ) {
                 $notSent[] = $contactId;
                 continue;

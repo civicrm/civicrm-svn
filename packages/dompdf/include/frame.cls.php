@@ -28,16 +28,16 @@
  * the case, you can obtain a copy at http://www.php.net/license/3_0.txt.
  *
  * The latest version of DOMPDF might be available at:
- * http://www.digitaljunkies.ca/dompdf
+ * http://www.dompdf.com/
  *
- * @link http://www.digitaljunkies.ca/dompdf
+ * @link http://www.dompdf.com/
  * @copyright 2004 Benj Carson
  * @author Benj Carson <benjcarson@digitaljunkies.ca>
  * @package dompdf
- * @version 0.5.1
+
  */
 
-/* $Id: frame.cls.php,v 1.11 2006/07/07 21:31:03 benjcarson Exp $ */
+/* $Id: frame.cls.php 216 2010-03-11 22:49:18Z ryan.masten $ */
 
 /**
  * The main Frame class
@@ -68,6 +68,11 @@ class Frame {
    */
   protected $_id;
 
+  /**
+   * Unique id counter
+   */
+  static protected $ID_COUNTER = 0;
+  
   /**
    * This frame's calculated style
    *
@@ -166,7 +171,7 @@ class Frame {
 
     $this->_decorator = null;
 
-    $this->set_id( uniqid(rand()) );
+    $this->set_id( self::$ID_COUNTER++ );
   }
 
   /**
@@ -287,8 +292,8 @@ class Frame {
   function get_padding_box() {
     $x = $this->_position["x"] +
       $this->_style->length_in_pt(array($this->_style->margin_left,
-                                $this->_style->border_left_width),
-                          $this->_containing_block["w"]);
+                                        $this->_style->border_left_width),
+                                  $this->_containing_block["w"]);
     $y = $this->_position["y"] +
       $this->_style->length_in_pt(array($this->_style->margin_top,
                                 $this->_style->border_top_width),
@@ -365,8 +370,11 @@ class Frame {
   }
   
   function set_containing_block($x = null, $y = null, $w = null, $h = null) {
-    if ( is_array($x) ) 
-      extract($x);
+    if ( is_array($x) ){
+  		foreach($x AS $key => $val){
+			$$key = $val;
+		}
+    }
     
     if (is_numeric($x)) {
       $this->_containing_block[0] = $x;
@@ -569,34 +577,34 @@ class Frame {
   function __toString() {
 
     // Skip empty text frames
-    if ( $this->_node->nodeName == "#text" &&
-         preg_replace("/\s/", "", $this->_node->data) === "" )
-      return "";
+//     if ( $this->_node->nodeName === "#text" &&
+//          preg_replace("/\s/", "", $this->_node->data) === "" )
+//       return "";
     
     
     $str = "<b>" . $this->_node->nodeName . ":</b><br/>";
-    $str .= (string)$this->_node . "<br/>";
+    //$str .= spl_object_hash($this->_node) . "<br/>";
     $str .= "Id: " .$this->get_id() . "<br/>";
     $str .= "Class: " .get_class($this) . "<br/>";
     
-    if ( $this->_node->nodeName == "#text" ) {
+    if ( $this->_node->nodeName === "#text" ) {
       $tmp = htmlspecialchars($this->_node->nodeValue);
       $str .= "<pre>'" .  mb_substr($tmp,0,70) .
         (mb_strlen($tmp) > 70 ? "..." : "") . "'</pre>";
     }
     if ( $this->_parent )
       $str .= "\nParent:" . $this->_parent->_node->nodeName .
-        " (" . (string)$this->_parent->_node . ") " .
+        " (" . spl_object_hash($this->_parent->_node) . ") " .
         "<br/>";
 
     if ( $this->_prev_sibling )
       $str .= "Prev: " . $this->_prev_sibling->_node->nodeName .
-        " (" . (string)$this->_prev_sibling->_node . ") " .
+        " (" . spl_object_hash($this->_prev_sibling->_node) . ") " .
         "<br/>";
 
     if ( $this->_next_sibling )
       $str .= "Next: " . $this->_next_sibling->_node->nodeName .
-        " (" . (string)$this->_next_sibling->_node . ") " .
+        " (" . spl_object_hash($this->_next_sibling->_node) . ") " .
         "<br/>";
 
     $d = $this->get_decorator();
@@ -618,9 +626,9 @@ class Frame {
         foreach ($line["frames"] as $frame) {
           if ($frame instanceof Text_Frame_Decorator) {
             $str .= "\ntext: ";          
-            $str .= htmlspecialchars($frame->get_text());
+            $str .= "'". htmlspecialchars($frame->get_text()) ."'";
           } else {
-            $str .= "\nBlock: " . $frame->get_node()->nodeName . " (" . (string)$frame->get_node() . ")";
+            $str .= "\nBlock: " . $frame->get_node()->nodeName . " (" . spl_object_hash($frame->get_node()) . ")";
           }
         }
         
@@ -633,7 +641,7 @@ class Frame {
       $str .= "</pre>";
     }
     $str .= "\n";
-    if ( php_sapi_name() == "cli" )
+    if ( php_sapi_name() === "cli" )
       $str = strip_tags(str_replace(array("<br/>","<b>","</b>"),
                                     array("\n","",""),
                                     $str));
@@ -762,5 +770,3 @@ class FrameTreeIterator implements Iterator {
     return $b;
   }
 }
-
-?>

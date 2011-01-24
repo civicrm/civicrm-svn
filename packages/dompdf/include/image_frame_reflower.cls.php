@@ -28,16 +28,23 @@
  * the case, you can obtain a copy at http://www.php.net/license/3_0.txt.
  *
  * The latest version of DOMPDF might be available at:
- * http://www.digitaljunkies.ca/dompdf
+ * http://www.dompdf.com/
  *
- * @link http://www.digitaljunkies.ca/dompdf
+ * @link http://www.dompdf.com/
  * @copyright 2004 Benj Carson
  * @author Benj Carson <benjcarson@digitaljunkies.ca>
+ * @contributor Helmut Tischer <htischer@weihenstephan.org>
  * @package dompdf
- * @version 0.5.1
+ *
+ * Changes
+ * @contributor Helmut Tischer <htischer@weihenstephan.org>
+ * @version 0.5.1.htischer.20090507
+ * - Fix image size as percent of wrapping box
+ * - Fix arithmetic rounding of image size
+ * - Time consuming additional image file scan only when really needed
  */
 
-/* $Id: image_frame_reflower.cls.php,v 1.9 2006/07/07 21:31:03 benjcarson Exp $ */
+/* $Id: image_frame_reflower.cls.php 216 2010-03-11 22:49:18Z ryan.masten $ */
 
 /**
  * Image reflower class
@@ -60,41 +67,84 @@ class Image_Frame_Reflower extends Frame_Reflower {
 
   function get_min_max_width() {
 
-    // We need to grab our *parent's* style because images are wrapped...
-    $style = $this->_frame->get_parent()->get_style();
-    
-    $width = $style->width;
-    $height = $style->height;
-    
-    // Determine the image's size
-    list($img_width, $img_height, $type) = getimagesize($this->_frame->get_image_url());
-
-    if ( is_percent($width) )
-      $width = ((float)rtrim($width,"%")) * $img_width / 100;
-
-    if ( is_percent($height) )
-      $height = ((float)rtrim($height,"%")) * $img_height / 100;
-                 
-    $width = $style->length_in_pt($width);
-    $height = $style->length_in_pt($height);
-
-    if ( $width === "auto" && $height === "auto" ) {
-      $width = $img_width;
-      $height = $img_height;
-      
-    } else if ( $width === "auto" && $height !== "auto" ) {
-      $width = (float)$height / $img_height * $img_width;
-      
-    } else if ( $width !== "auto" && $height === "auto" ) {
-      $height = (float)$width / $img_width * $img_height;
-      
-    } 
-    
-    // Resample images if the sizes were auto
-    if ( $style->width === "auto" && $style->height === "auto" ) {
-      $width = ((float)rtrim($width, "px")) * 72 / DOMPDF_DPI;
-      $height = ((float)rtrim($height, "px")) * 72 / DOMPDF_DPI;
+    if (DEBUGPNG) {
+      // Determine the image's size. Time consuming. Only when really needed?
+      list($img_width, $img_height) = getimagesize($this->_frame->get_image_url());
+      print "get_min_max_width() ".
+        $this->_frame->get_style()->width.' '.
+        $this->_frame->get_style()->height.';'.
+        $this->_frame->get_parent()->get_style()->width." ".
+        $this->_frame->get_parent()->get_style()->height.";".
+        $this->_frame->get_parent()->get_parent()->get_style()->width.' '.
+        $this->_frame->get_parent()->get_parent()->get_style()->height.';'.
+        $img_width. ' '.
+        $img_height.'|' ;
     }
+
+    // We need to check both the *parent's* style as well as the current node's because images are wrapped...
+    $style = $this->_frame->get_style();
+    $stylep = $this->_frame->get_parent()->get_style();
+
+    //own style auto or invalid value: use natural size in px
+    //own style value: ignore suffix text including unit, use given number as px
+    //own style %: walk up parent chain until found available space in pt; fill available space
+    //
+    //special ignored unit: e.g. 10ex: e treated as exponent; x ignored; 10e completely invalid ->like auto
+
+    $width = ($style->width > 0 ? $style->width : ($stylep->width > 0 ? $stylep->width : 0));
+    if ( is_percent($width) ) {
+      $t = 0.0;
+      for ($f = $this->_frame->get_parent(); $f; $f = $f->get_parent()) {
+        $t = (float)($f->get_style()->width); //always in pt
+        if ((float)$t != 0) {
+        	break;
+        }
+      }
+      $width = ((float)rtrim($width,"%") * $t)/100; //maybe 0
+    } else {
+      // Don't set image original size if "%" branch was 0 or size not given.
+      // Otherwise aspect changed on %/auto combination for width/height
+      // Resample according to px per inch
+      // See also List_Bullet_Image_Frame_Decorator::__construct
+      $width = (float)($width * 72) / DOMPDF_DPI;
+    }
+
+    $height = ($style->height > 0 ? $style->height : ($stylep->height > 0 ? $stylep->height : 0));
+    if ( is_percent($height) ) {
+      $t = 0.0;
+      for ($f = $this->_frame->get_parent(); $f; $f = $f->get_parent()) {
+        $t = (float)($f->get_style()->height); //always in pt
+        if ((float)$t != 0) {
+        	break;
+        }
+      }
+      $height = ((float)rtrim($height,"%") * $t)/100; //maybe 0
+    } else {
+      // Don't set image original size if "%" branch was 0 or size not given.
+      // Otherwise aspect changed on %/auto combination for width/height
+      // Resample according to px per inch
+      // See also List_Bullet_Image_Frame_Decorator::__construct
+      $height = (float)($height * 72) / DOMPDF_DPI;
+    }
+
+    if ($width == 0 || $height == 0) {
+      // Determine the image's size. Time consuming. Only when really needed!
+      list($img_width, $img_height) = getimagesize($this->_frame->get_image_url());
+      // don't treat 0 as error. Can be downscaled or can be catched elsewhere if image not readable.
+      // Resample according to px per inch
+      // See also List_Bullet_Image_Frame_Decorator::__construct
+      
+      if ($width == 0 && $height == 0) {
+        $width = (float)($img_width * 72) / DOMPDF_DPI;
+        $height = (float)($img_height * 72) / DOMPDF_DPI;
+      } elseif ($height == 0 && $width != 0) {
+        $height = ($width / $img_width) * $img_height; //keep aspect ratio
+      } elseif ($width == 0 && $height != 0) {
+        $width = ($height / $img_height) * $img_width; //keep aspect ratio
+      }
+    }
+
+    if (DEBUGPNG) print $width.' '.$height.';';
 
     // Synchronize the styles
     $inner_style = $this->_frame->get_style();
@@ -125,4 +175,3 @@ class Image_Frame_Reflower extends Frame_Reflower {
     
   }
 }
-?>

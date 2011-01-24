@@ -28,16 +28,27 @@
  * the case, you can obtain a copy at http://www.php.net/license/3_0.txt.
  *
  * The latest version of DOMPDF might be available at:
- * http://www.digitaljunkies.ca/dompdf
+ * http://www.dompdf.com/
  *
- * @link http://www.digitaljunkies.ca/dompdf
+ * @link http://www.dompdf.com/
  * @copyright 2004 Benj Carson
  * @author Benj Carson <benjcarson@digitaljunkies.ca>
+ * @contributor Helmut Tischer <htischer@weihenstephan.org>
  * @package dompdf
- * @version 0.5.1
+ *
+ * Changes
+ * @contributor Helmut Tischer <htischer@weihenstephan.org>
+ * @version 0.5.1.htischer.20090507
+ * - Specifity of css selector chain was too small because leading whitespace
+ *   to be counted as number of elements was removed
+ * - On parsing css properties accept and register !important attribute
+ * - Add optional debug output
+ * @version 20090610
+ * - _parse_properties on style property name and value remove augmenting superflous
+ *   space for consistent parsing, in particular combined values like background
  */
 
-/* $Id: stylesheet.cls.php,v 1.16 2006/07/07 21:31:04 benjcarson Exp $ */
+/* $Id: stylesheet.cls.php 216 2010-03-11 22:49:18Z ryan.masten $ */
 
 /**
  * The location of the default built-in CSS file.
@@ -57,12 +68,12 @@ define('__DEFAULT_STYLESHEET', DOMPDF_LIB_DIR . DIRECTORY_SEPARATOR . "res" . DI
  * @package dompdf
  */
 class Stylesheet {
-  
-  
+
+
 
   /**
    * the location of the default built-in CSS file.
-   * 
+   *
    */
   const DEFAULT_STYLESHEET = __DEFAULT_STYLESHEET; // Hack: can't
                                                    // concatenate stuff in
@@ -81,7 +92,7 @@ class Stylesheet {
    *
    * Used to handle relative urls.
    *
-   * @var string 
+   * @var string
    */
   private $_protocol;
 
@@ -101,9 +112,9 @@ class Stylesheet {
    */
   private $_base_path;
 
-  
+
   /**
-   * the style defined by @page rules 
+   * the style defined by @page rules
    *
    * @var Style
    */
@@ -116,13 +127,23 @@ class Stylesheet {
    * @var array
    */
   private $_loaded_files;
-  
+
   /**
-   * accepted CSS media types 
+   * accepted CSS media types
+   * List of types and parsing rules for future extensions:
+   * http://www.w3.org/TR/REC-html40/types.html
+   *   screen, tty, tv, projection, handheld, print, braille, aural, all
+   * The following are non standard extensions for undocumented specific environments.
+   *   static, visual, bitmap, paged
+   * Note, even though the generated pdf file is intended for print output,
+   * the desired content might be different (e.g. screen or projection view of html file).
+   * Therefore allow specification of content by dompdf setting DOMPDF_DEFAULT_MEDIA_TYPE.
+   * If given, replace media "print" by DOMPDF_DEFAULT_MEDIA_TYPE.
+   * (Previous version $ACCEPTED_MEDIA_TYPES = $ACCEPTED_GENERIC_MEDIA_TYPES + $ACCEPTED_DEFAULT_MEDIA_TYPE)
    */
-  static $ACCEPTED_MEDIA_TYPES = array("all", "static", "visual",
-                                       "bitmap", "paged", "print");
-  
+  static $ACCEPTED_DEFAULT_MEDIA_TYPE = "print";
+  static $ACCEPTED_GENERIC_MEDIA_TYPES = array("all", "static", "visual", "bitmap", "paged");
+
   /**
    * The class constructor.
    *
@@ -178,7 +199,7 @@ class Stylesheet {
    * @return string
    */
   function get_base_path() { return $this->_base_path; }
-  
+
   /**
    * add a new Style object to the stylesheet
    *
@@ -211,7 +232,7 @@ class Stylesheet {
   function lookup($key) {
     if ( !isset($this->_styles[$key]) )
       return null;
-    
+
     return $this->_styles[$key];
   }
 
@@ -224,7 +245,7 @@ class Stylesheet {
   function create_style($parent = null) {
     return new Style($this, $parent);
   }
-  
+
 
   /**
    * load and parse a CSS string
@@ -241,7 +262,7 @@ class Stylesheet {
    */
   function load_css_file($file) {
     global $_dompdf_warnings;
-    
+
     // Prevent circular references
     if ( isset($this->_loaded_files[$file]) )
       return;
@@ -250,19 +271,19 @@ class Stylesheet {
     $parsed_url = explode_url($file);
 
     list($this->_protocol, $this->_base_host, $this->_base_path, $filename) = $parsed_url;
-    
+
     if ( !DOMPDF_ENABLE_REMOTE &&
-         ($this->_protocol != "" && $this->_protocol != "file://") ) {
+         ($this->_protocol != "" && $this->_protocol !== "file://") ) {
       record_warnings(E_USER_WARNING, "Remote CSS file '$file' requested, but DOMPDF_ENABLE_REMOTE is false.", __FILE__, __LINE__);
-      return; 
+      return;
     }
-    
+
     // Fix submitted by Nick Oostveen for aliased directory support:
     if ( $this->_protocol == "" )
       $file = $this->_base_path . $filename;
     else
       $file = build_url($this->_protocol, $this->_base_host, $this->_base_path, $filename);
-    
+
     set_error_handler("record_warnings");
     $css = file_get_contents($file);
     restore_error_handler();
@@ -271,7 +292,7 @@ class Stylesheet {
       record_warnings(E_USER_WARNING, "Unable to load css file $file", __FILE__, __LINE__);;
       return;
     }
-    
+
     $this->_parse_css($css);
 
   }
@@ -284,16 +305,34 @@ class Stylesheet {
    */
   private function _specificity($selector) {
     // http://www.w3.org/TR/CSS21/cascade.html#specificity
+    // ignoring the ":" pseudoclass modifyers
+    // also ignored in _css_selector_to_xpath
 
     $a = ($selector === "!style attribute") ? 1 : 0;
-    
+
     $b = min(mb_substr_count($selector, "#"), 255);
 
     $c = min(mb_substr_count($selector, ".") +
              mb_substr_count($selector, ">") +
              mb_substr_count($selector, "+"), 255);
-    
+
     $d = min(mb_substr_count($selector, " "), 255);
+
+    //If a normal element name is at the begining of the string,
+    //a leading whitespace might have been removed on whitespace collapsing and removal
+    //therefore there might be one whitespace less as selected element names
+    //this can lead to a too small specificity
+    //see _css_selector_to_xpath
+
+    if ( !in_array($selector[0], array(" ", ">", ".", "#", "+", ":", "[")) ) {
+    	$d++;
+    }
+
+    if (DEBUGCSS) {
+      /*DEBUGCSS*/	print "<pre>\n";
+      /*DEBUGCSS*/	printf("_specificity(): 0x%08x \"%s\"\n", ($a << 24) | ($b << 16) | ($c << 8) | ($d), $selector);
+      /*DEBUGCSS*/	print "</pre>";
+    }
 
     return ($a << 24) | ($b << 16) | ($c << 8) | ($d);
   }
@@ -311,52 +350,52 @@ class Stylesheet {
 //     $search = array("/\\s+/", "/\\s+([.>#+:])\\s+/");
 //     $replace = array(" ", "\\1");
 //     $selector = preg_replace($search, $replace, trim($selector));
-    
+
     // Initial query (non-absolute)
     $query = "//";
-    
-    // Parse the selector     
+
+    // Parse the selector
     //$s = preg_split("/([ :>.#+])/", $selector, -1, PREG_SPLIT_DELIM_CAPTURE);
 
     $delimiters = array(" ", ">", ".", "#", "+", ":", "[");
 
     // Add an implicit space at the beginning of the selector if there is no
     // delimiter there already.
-    if ( !in_array($selector{0}, $delimiters) )
+    if ( !in_array($selector[0], $delimiters) )
       $selector = " $selector";
 
     $tok = "";
     $len = mb_strlen($selector);
     $i = 0;
-                   
+
     while ( $i < $len ) {
 
-      $s = $selector{$i};
+      $s = $selector[$i];
       $i++;
 
       // Eat characters up to the next delimiter
       $tok = "";
 
       while ($i < $len) {
-        if ( in_array($selector{$i}, $delimiters) )
+        if ( in_array($selector[$i], $delimiters) )
           break;
-        $tok .= $selector{$i++};
+        $tok .= $selector[$i++];
       }
 
       switch ($s) {
-        
+
       case " ":
       case ">":
         // All elements matching the next token that are direct children of
         // the current token
-        $expr = $s == " " ? "descendant" : "child";
+        $expr = $s === " " ? "descendant" : "child";
 
-        if ( mb_substr($query, -1, 1) != "/" )
+        if ( mb_substr($query, -1, 1) !== "/" )
           $query .= "/";
 
         if ( !$tok )
           $tok = "*";
-        
+
         $query .= "$expr::$tok";
         $tok = "";
         break;
@@ -366,19 +405,19 @@ class Stylesheet {
         // All elements matching the current token with a class/id equal to
         // the _next_ token.
 
-        $attr = $s == "." ? "class" : "id";
+        $attr = $s === "." ? "class" : "id";
 
         // empty class/id == *
-        if ( mb_substr($query, -1, 1) == "/" )
+        if ( mb_substr($query, -1, 1) === "/" )
           $query .= "*";
 
         // Match multiple classes: $tok contains the current selected
         // class.  Search for class attributes with class="$tok",
         // class=".* $tok .*" and class=".* $tok"
-        
+
         // This doesn't work because libxml only supports XPath 1.0...
         //$query .= "[matches(@$attr,\"^${tok}\$|^${tok}[ ]+|[ ]+${tok}\$|[ ]+${tok}[ ]+\")]";
-        
+
         // Query improvement by Michael Sheakoski <michael@mjsdigital.com>:
         $query .= "[contains(concat(' ', @$attr, ' '), concat(' ', '$tok', ' '))]";
         $tok = "";
@@ -386,7 +425,7 @@ class Stylesheet {
 
       case "+":
         // All sibling elements that folow the current token
-        if ( mb_substr($query, -1, 1) != "/" )
+        if ( mb_substr($query, -1, 1) !== "/" )
           $query .= "/";
 
         $query .= "following-sibling::$tok";
@@ -398,6 +437,8 @@ class Stylesheet {
         switch ($tok) {
 
         case "first-child":
+          $query .= "[1]";
+          $tok = "";
           break;
 
         case "link":
@@ -416,37 +457,37 @@ class Stylesheet {
 
         case "after":
           break;
-        
+
         }
-        
+
         break;
-        
+
       case "[":
         // Attribute selectors.  All with an attribute matching the following token(s)
         $attr_delimiters = array("=", "]", "~", "|");
         $tok_len = mb_strlen($tok);
         $j = 0;
-        
+
         $attr = "";
         $op = "";
         $value = "";
-        
+
         while ( $j < $tok_len ) {
-          if ( in_array($tok{$j}, $attr_delimiters) )
+          if ( in_array($tok[$j], $attr_delimiters) )
             break;
-          $attr .= $tok{$j++};
+          $attr .= $tok[$j++];
         }
-        
-        switch ( $tok{$j} ) {
+
+        switch ( $tok[$j] ) {
 
         case "~":
         case "|":
-          $op .= $tok{$j++};
+          $op .= $tok[$j++];
 
-          if ( $tok{$j} != "=" )
+          if ( $tok[$j] !== "=" )
             throw new DOMPDF_Exception("Invalid CSS selector syntax: invalid attribute selector: $selector");
 
-          $op .= $tok{$j};
+          $op .= $tok[$j];
           break;
 
         case "=":
@@ -454,17 +495,17 @@ class Stylesheet {
           break;
 
         }
-       
+
         // Read the attribute value, if required
         if ( $op != "" ) {
           $j++;
           while ( $j < $tok_len ) {
-            if ( $tok{$j} == "]" )
+            if ( $tok[$j] === "]" )
               break;
-            $value .= $tok{$j++};
-          }            
+            $value .= $tok[$j++];
+          }
         }
-       
+
         if ( $attr == "" )
           throw new DOMPDF_Exception("Invalid CSS selector syntax: missing attribute name");
 
@@ -473,7 +514,7 @@ class Stylesheet {
         case "":
           $query .=  "[@$attr]";
           break;
-         
+
         case "=":
           $query .= "[@$attr$op\"$value\"]";
           break;
@@ -484,9 +525,9 @@ class Stylesheet {
           $values = explode(" ", $value);
           $query .=  "[";
 
-          foreach ( $values as $val ) 
+          foreach ( $values as $val )
             $query .= "@$attr=\"$val\" or ";
-         
+
           $query = rtrim($query, " or ") . "]";
           break;
 
@@ -499,39 +540,39 @@ class Stylesheet {
 
           $query = rtrim($query, " or ") . "]";
           break;
-         
+
         }
-     
+
         break;
       }
     }
     $i++;
-      
+
 //       case ":":
 //         // Pseudo selectors: ignore for now.  Partially handled directly
 //         // below.
 
 //         // Skip until the next special character, leaving the token as-is
 //         while ( $i < $len ) {
-//           if ( in_array($selector{$i}, $delimiters) )
+//           if ( in_array($selector[$i], $delimiters) )
 //             break;
 //           $i++;
 //         }
 //         break;
-        
+
 //       default:
 //         // Add the character to the token
-//         $tok .= $selector{$i++};
+//         $tok .= $selector[$i++];
 //         break;
 //       }
 
 //    }
-    
-    
+
+
     // Trim the trailing '/' from the query
     if ( mb_strlen($query) > 2 )
       $query = rtrim($query, "/");
-    
+
     return $query;
   }
 
@@ -548,7 +589,7 @@ class Stylesheet {
 
     // Use XPath to select nodes.  This would be easier if we could attach
     // Frame objects directly to DOMNodes using the setUserData() method, but
-    // we can't do that just yet.  Instead, we set a _node attribute_ in 
+    // we can't do that just yet.  Instead, we set a _node attribute_ in
     // Frame->set_id() and use that as a handle on the Frame object via
     // Frame_Tree::$_registry.
 
@@ -556,7 +597,7 @@ class Stylesheet {
     // styles have been assigned, we order the cached styles by specificity
     // and create a final style object to assign to the frame.
 
-    // FIXME: this is not particularly robust...    
+    // FIXME: this is not particularly robust...
 
     $styles = array();
     $xp = new DOMXPath($tree->get_dom());
@@ -568,8 +609,8 @@ class Stylesheet {
 //       pre_var_dump($selector);
 //       pre_var_dump($query);
 //        echo ($style);
-      
-      // Retrieve the nodes      
+
+      // Retrieve the nodes
       $nodes = $xp->query($query);
 
       foreach ($nodes as $node) {
@@ -577,7 +618,7 @@ class Stylesheet {
         // Retrieve the node id
         if ( $node->nodeType != 1 ) // Only DOMElements get styles
           continue;
-        
+
         $id = $node->getAttribute("frame_id");
 
         // Assign the current style to the scratch array
@@ -591,20 +632,18 @@ class Stylesheet {
     $root_flg = false;
     foreach ($tree->get_frames() as $frame) {
       // pre_r($frame->get_node()->nodeName . ":");
-            
       if ( !$root_flg && $this->_page_style ) {
         $style = $this->_page_style;
         $root_flg = true;
-
-      } else 
+      } else
         $style = $this->create_style();
 
       // Find nearest DOMElement parent
-      $p = $frame;      
+      $p = $frame;
       while ( $p = $p->get_parent() )
         if ($p->get_node()->nodeType == 1 )
           break;
-      
+
       // Styles can only be applied directly to DOMElements; anonymous
       // frames inherit from their parent
       if ( $frame->get_node()->nodeType != 1 ) {
@@ -618,61 +657,97 @@ class Stylesheet {
 
       // Handle HTML 4.0 attributes
       Attribute_Translator::translate_attributes($frame);
-    
-      // Locate any additional style attributes      
+
+      // Locate any additional style attributes
       if ( ($str = $frame->get_node()->getAttribute("style")) !== "" ) {
         $spec = $this->_specificity("!style attribute");
         $styles[$id][$spec][] = $this->_parse_properties($str);
       }
-      
+
       // Grab the applicable styles
       if ( isset($styles[$id]) ) {
-        
+
         $applied_styles = $styles[ $frame->get_id() ];
 
         // Sort by specificity
         ksort($applied_styles);
 
+        if (DEBUGCSS) {
+          $debug_nodename = $frame->get_node()->nodeName;
+          print "<pre>\n[$debug_nodename\n";
+          foreach ($applied_styles as $spec => $arr) {
+            printf("specificity: 0x%08x\n",$spec);
+            foreach ($arr as $s) {
+              print "[\n";
+              $s->debug_print();
+              print "]\n";
+            }
+          }
+        }
+        
         // Merge the new styles with the inherited styles
         foreach ($applied_styles as $arr) {
-          foreach ($arr as $s) 
+          foreach ($arr as $s)
             $style->merge($s);
         }
       }
 
       // Inherit parent's styles if required
       if ( $p ) {
+
+        if (DEBUGCSS) {
+          print "inherit:\n";
+          print "[\n";
+          $p->get_style()->debug_print();
+          print "]\n";
+        }
+
         $style->inherit( $p->get_style() );
       }
 
-//       pre_r($frame->get_node()->nodeName . ":");
-//      echo "<pre>";
-//      echo $style;
-//      echo "</pre>";
+      if (DEBUGCSS) {
+        print "DomElementStyle:\n";
+        print "[\n";
+        $style->debug_print();
+        print "]\n";
+        print "/$debug_nodename]\n</pre>";
+      }
+
+      /*DEBUGCSS print: see below different print debugging method
+      pre_r($frame->get_node()->nodeName . ":");
+      echo "<pre>";
+      echo $style;
+      echo "</pre>";*/
       $frame->set_style($style);
-      
+
     }
-    
+
     // We're done!  Clean out the registry of all styles since we
     // won't be needing this later.
     foreach ( array_keys($this->_styles) as $key ) {
       unset($this->_styles[$key]);
     }
-    
+
   }
-  
+
 
   /**
    * parse a CSS string using a regex parser
    *
-   * Called by {@link Stylesheet::parse_css()} 
+   * Called by {@link Stylesheet::parse_css()}
    *
-   * @param string $str 
+   * @param string $str
    */
   private function _parse_css($str) {
 
-    // Destroy comments
-    $css = preg_replace("'/\*.*?\*/'si", "", $str);
+    $str = trim($str);
+    
+    // Destroy comments and remove HTML comments
+    $css = preg_replace(array(
+      "'/\*.*?\*/'si", 
+      "/^<!--/",
+      "/-->$/"
+    ), "", $str);
 
     // FIXME: handle '{' within strings, e.g. [attr="string {}"]
 
@@ -689,7 +764,7 @@ class Stylesheet {
       "|                                      # Branch to match regular rules (not preceeded by '@')\n".
       "([^{]*{[^}]*}))                        # Parse normal rulesets\n".
       "/xs";
-     
+
     if ( preg_match_all($re, $css, $matches, PREG_SET_ORDER) === false )
       // An error occured
       throw new DOMPDF_Exception("Error parsing css file: preg_match_all() failed.");
@@ -713,24 +788,49 @@ class Stylesheet {
         // Handle @rules
         switch ($match[2]) {
 
-        case "import":          
+        case "import":
           $this->_parse_import($match[3]);
           break;
 
         case "media":
-          if ( in_array(mb_strtolower(trim($match[3])), self::$ACCEPTED_MEDIA_TYPES ) ) {
+          $acceptedmedia = self::$ACCEPTED_GENERIC_MEDIA_TYPES;
+          if ( defined("DOMPDF_DEFAULT_MEDIA_TYPE") ) {
+            $acceptedmedia[] = DOMPDF_DEFAULT_MEDIA_TYPE;
+          } else {
+            $acceptedmedia[] = self::$ACCEPTED_DEFAULT_MEDIA_TYPE;
+          }
+          if ( in_array(mb_strtolower(trim($match[3])), $acceptedmedia ) ) {
             $this->_parse_sections($match[5]);
           }
           break;
 
         case "page":
+          //This handles @page to be applied to page oriented media
+          //Note: This has a reduced syntax:
+          //@page { margin:1cm; color:blue; }
+          //Not a sequence of styles like a full.css, but only the properties
+          //of a single style, which is applied to the very first "root" frame before
+          //processing other styles of the frame.
+          //Working properties:
+          // margin (for margin around edge of paper)
+          // font-family (default font of pages)
+          // color (default text color of pages)
+          //Non working properties:
+          // border
+          // padding
+          // background-color
+          //Todo:Reason is unknown
+          //Other properties (like further font or border attributes) not tested.
+          //If a border or background color around each paper sheet is desired,
+          //assign it to the <body> tag, possibly only for the css of the correct media type.
+
           // Store the style for later...
           if ( is_null($this->_page_style) )
             $this->_page_style = $this->_parse_properties($match[5]);
           else
             $this->_page_style->merge($this->_parse_properties($match[5]));
           break;
-          
+
         default:
           // ignore everything else
           break;
@@ -739,55 +839,104 @@ class Stylesheet {
         continue;
       }
 
-      if ( $match[7] !== "" ) 
+      if ( $match[7] !== "" )
         $this->_parse_sections($match[7]);
-      
+
     }
   }
 
-  
+  /* See also style.cls Style::_image(), refactoring?, works also for imported css files */
+  protected function _image($val) {
+    $DEBUGCSS=DEBUGCSS;
+    
+    if ( mb_strpos($val, "url") === false ) {
+      $path = "none"; //Don't resolve no image -> otherwise would prefix path and no longer recognize as none
+    }
+    else {
+      $val = preg_replace("/url\(['\"]?([^'\")]+)['\"]?\)/","\\1", trim($val));
+
+      // Resolve the url now in the context of the current stylesheet
+      $parsed_url = explode_url($val);
+      if ( $parsed_url["protocol"] == "" && $this->get_protocol() == "" ) {
+        if ($parsed_url["path"]{0} === '/' || $parsed_url["path"]{0} === '\\' ) {
+          $path = $_SERVER["DOCUMENT_ROOT"].'/';
+        } else {
+          $path = $this->get_base_path();
+        }
+        $path .= $parsed_url["path"] . $parsed_url["file"];
+        $path = realpath($path);
+        // If realpath returns FALSE then specifically state that there is no background image
+        if (!$path) { $path = 'none'; }
+      } else {
+        $path = build_url($this->get_protocol(),
+                          $this->get_host(),
+                          $this->get_base_path(),
+                          $val);
+      }
+    }
+    if ($DEBUGCSS) {
+      print "<pre>[_image\n";
+      print_r($parsed_url);
+      print $this->get_protocol()."\n".$this->get_base_path()."\n".$path."\n";
+      print "_image]</pre>";;
+    }
+    return $path;
+  }
+
   /**
    * parse @import{} sections
    *
    * @param string $url  the url of the imported CSS file
    */
   private function _parse_import($url) {
-    $arr = preg_split("/[\s\n]/", $url);
-    $url = array_pop($arr);
+    $arr = preg_split("/[\s\n,]/", $url,-1, PREG_SPLIT_NO_EMPTY);
+    $url = array_shift($arr);
     $accept = false;
-    
+
     if ( count($arr) > 0 ) {
-      
+
+      $acceptedmedia = self::$ACCEPTED_GENERIC_MEDIA_TYPES;
+      if ( defined("DOMPDF_DEFAULT_MEDIA_TYPE") ) {
+        $acceptedmedia[] = DOMPDF_DEFAULT_MEDIA_TYPE;
+      } else {
+        $acceptedmedia[] = self::$ACCEPTED_DEFAULT_MEDIA_TYPE;
+      }
+              
       // @import url media_type [media_type...]
       foreach ( $arr as $type ) {
-        if ( in_array($type, self::$ACCEPTED_MEDIA_TYPES) ) {
+        if ( in_array(mb_strtolower(trim($type)), $acceptedmedia) ) {
           $accept = true;
           break;
         }
       }
-      
-    } else
+
+    } else {
       // unconditional import
       $accept = true;
-    
+    }
+
     if ( $accept ) {
-      $url = str_replace(array('"',"url", "(", ")"), "", $url);
       // Store our current base url properties in case the new url is elsewhere
       $protocol = $this->_protocol;
       $host = $this->_base_host;
       $path = $this->_base_path;
-
+      
+      // $url = str_replace(array('"',"url", "(", ")"), "", $url);
       // If the protocol is php, assume that we will import using file://
-      $url = build_url($protocol == "php://" ? "file://" : $protocol, $host, $path, $url);
+      // $url = build_url($protocol == "php://" ? "file://" : $protocol, $host, $path, $url);
+      // Above does not work for subfolders and absolute urls.
+      // Todo: As above, do we need to replace php or file to an empty protocol for local files?
+      
+      $url = $this->_image($url);
       
       $this->load_css_file($url);
-      
+
       // Restore the current base url
       $this->_protocol = $protocol;
       $this->_base_host = $host;
       $this->_base_path = $path;
     }
-    
+
   }
 
   /**
@@ -802,24 +951,66 @@ class Stylesheet {
   private function _parse_properties($str) {
     $properties = explode(";", $str);
 
+    if (DEBUGCSS) print '[_parse_properties';
+
     // Create the style
     $style = new Style($this);
     foreach ($properties as $prop) {
+      //A css property can have " ! important" appended (whitespace optional)
+      //strip this off to decode core of the property correctly.
+      //Pass on in the style to allow proper handling:
+      //!important properties can only be overridden by other !important ones.
+      //$style->$prop_name = is a shortcut of $style->__set($prop_name,$value);.
+      //If no specific set function available, set _props["prop_name"]
+      //style is always copied completely, or $_props handled separately
+      //Therefore set a _important_props["prop_name"]=true to indicate the modifier
 
+      /* Instead of short code, prefer the typical case with fast code
+	  $important = preg_match("/(.*?)!\s*important/",$prop,$match);
+      if ( $important ) {
+      	$prop = $match[1];
+      }
       $prop = trim($prop);
+      */
+      if (DEBUGCSS) print '(';
+ 	  $important = false;
+      $prop = trim($prop);
+      if (substr($prop,-9) === 'important') {
+      	$prop_tmp = rtrim(substr($prop,0,-9));
+      	if (substr($prop_tmp,-1) === '!') {
+      		$prop = rtrim(substr($prop_tmp,0,-1));
+      		$important = true;
+      	}
+      }
 
-      if ($prop == "")
+      if ($prop == "") {
+        if (DEBUGCSS) print 'empty)';
         continue;
+      }
 
       $i = mb_strpos($prop, ":");
-      if ( $i === false )
+      if ( $i === false ) {
+        if (DEBUGCSS) print 'novalue'.$prop.')';
         continue;
+      }
 
-      $prop_name = mb_strtolower(mb_substr($prop, 0, $i));
-      $value = mb_substr($prop, $i+1);
+      $prop_name = rtrim(mb_strtolower(mb_substr($prop, 0, $i)));
+      $value = ltrim(mb_substr($prop, $i+1));
+      if (DEBUGCSS) print $prop_name.':='.$value.($important?'!IMPORTANT':'').')';
+      //New style, anyway empty
+      //if ($important || !$style->important_get($prop_name) ) {
+      //$style->$prop_name = array($value,$important);
+      //assignment might be replaced by overloading through __set,
+      //and overloaded functions might check _important_props,
+      //therefore set _important_props first.
+      if ($important) {
+        $style->important_set($prop_name);
+      }
+      //For easier debugging, don't use overloading of assignments with __set
       $style->$prop_name = $value;
-
+      //$style->props_set($prop_name, $value);
     }
+    if (DEBUGCSS) print '_parse_properties]';
 
     return $style;
   }
@@ -832,29 +1023,37 @@ class Stylesheet {
   private function _parse_sections($str) {
     // Pre-process: collapse all whitespace and strip whitespace around '>',
     // '.', ':', '+', '#'
-    
+
     $patterns = array("/[\\s\n]+/", "/\\s+([>.:+#])\\s+/");
     $replacements = array(" ", "\\1");
     $str = preg_replace($patterns, $replacements, $str);
 
     $sections = explode("}", $str);
+    if (DEBUGCSS) print '[_parse_sections';
     foreach ($sections as $sect) {
       $i = mb_strpos($sect, "{");
 
       $selectors = explode(",", mb_substr($sect, 0, $i));
+      if (DEBUGCSS) print '[section';
       $style = $this->_parse_properties(trim(mb_substr($sect, $i+1)));
-
+      
       // Assign it to the selected elements
       foreach ($selectors as $selector) {
         $selector = trim($selector);
-        
-        if ($selector == "")
+
+        if ($selector == "") {
+          if (DEBUGCSS) print '#empty#';
           continue;
-        
+        }
+        if (DEBUGCSS) print '#'.$selector.'#';
+        //if (DEBUGCSS) { if (strpos($selector,'p') !== false) print '!!!p!!!#'; }
+
         $this->add_style($selector, $style);
       }
+      if (DEBUGCSS) print 'section]';
     }
-  }  
+    if (DEBUGCSS) print '_parse_sections]';
+  }
 
   /**
    * dumps the entire stylesheet as a string
@@ -866,10 +1065,9 @@ class Stylesheet {
    */
   function __toString() {
     $str = "";
-    foreach ($this->_styles as $selector => $style) 
+    foreach ($this->_styles as $selector => $style)
       $str .= "$selector => " . $style->__toString() . "\n";
 
     return $str;
   }
 }
-?>

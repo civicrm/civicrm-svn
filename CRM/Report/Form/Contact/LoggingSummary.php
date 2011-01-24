@@ -40,12 +40,17 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
 {
     private $loggingDB;
 
+    public  $cid;
+
     function __construct()
     {
         $this->_add2groupSupported = false; // don’t display the ‘Add these Contacts to Group’ button
 
         $dsn = defined('CIVICRM_LOGGING_DSN') ? DB::parseDSN(CIVICRM_LOGGING_DSN) : DB::parseDSN(CIVICRM_DSN);
         $this->loggingDB = $dsn['database'];
+        
+        // used for redirect back to contact summary
+        $this->cid = CRM_Utils_Request::retrieve('cid', 'Integer', CRM_Core_DAO::$_nullObject);
 
         $this->_columns = array(
             'log_civicrm_contact' => array(
@@ -100,6 +105,11 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
                         'title'        => ts('Action'),
                         'type'         => CRM_Utils_Type::T_STRING,
                     ),
+                    'id' => array(
+                                  'no_display' => true,
+                                  'type'       => CRM_Utils_Type::T_INT 
+                                  ),
+
                 ),
             ),
             'civicrm_contact' => array(
@@ -146,6 +156,8 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
 
             if ($row['log_civicrm_contact_log_action'] == 'Update') {
                 $q = "reset=1&log_conn_id={$row['log_civicrm_contact_log_conn_id']}&log_date={$row['log_civicrm_contact_log_date']}";
+                if ( $this->cid ) $q .= '&cid='.$this->cid;
+
                 $url = CRM_Report_Utils_Report::getNextUrl('logging/contact/detail', $q, false, true);
                 $row['log_civicrm_contact_log_action_link'] = $url;
                 $row['log_civicrm_contact_log_action_hover'] = ts("View details for this update");
@@ -201,37 +213,6 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
     {
         parent::where();
         $this->_where .= " AND (log_action != 'Initialization')";
-        $clauses = array( );
-        foreach ( $this->_columns as $tableName => $table ) {
-            if ( array_key_exists('filters', $table) ) { 
-                foreach ( $table['filters'] as $fieldName => $field ) {                    
-                    $clause = null;
-                    if ( CRM_Utils_Array::value( 'type', $field ) & CRM_Utils_Type::T_DATE ) {
-                        $relative = CRM_Utils_Array::value( "{$fieldName}_relative", $this->_params );
-                        $from     = CRM_Utils_Array::value( "{$fieldName}_from"    , $this->_params );
-                        $to       = CRM_Utils_Array::value( "{$fieldName}_to"      , $this->_params );
-                        
-                        if ( $relative || $from || $to ) {
-                            $clause = $this->dateClause( $field['name'], $relative, $from, $to, $field['type'] );
-                        }
-                    } else { 
-                        $op = CRM_Utils_Array::value( "{$fieldName}_op", $this->_params );
-                        if ( $op ) {
-                            $clause = 
-                                $this->whereClause( $field,
-                                                    $op,
-                                                    CRM_Utils_Array::value( "{$fieldName}_value", $this->_params ),
-                                                    CRM_Utils_Array::value( "{$fieldName}_min", $this->_params ),
-                                                    CRM_Utils_Array::value( "{$fieldName}_max", $this->_params ) );
-                        }
-                    }
-                    if ( ! empty( $clause ) ) {
-                        $clauses[] = $clause;
-                        $this->_where = "WHERE " . implode( ' AND ', $clauses ); 
-                    }
-                    
-                }
-            }
-        } 
     }
+
 }

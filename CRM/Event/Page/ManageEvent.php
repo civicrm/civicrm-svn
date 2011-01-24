@@ -212,7 +212,7 @@ ORDER BY start_date desc
         $permissions = CRM_Event_BAO_Event::checkPermission( );
         
         //get all campaigns.
-        $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, true );
+        $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, true );
 
         while ($dao->fetch()) {
             if ( in_array( $dao->id, $permissions[CRM_Core_Permission::VIEW] ) ) {

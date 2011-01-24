@@ -390,7 +390,10 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
                 $tafParams['entity_id'] = $params['template_id'];
                 if (CRM_Friend_BAO_Friend::getValues($tafParams)) {
                     $tafParams['entity_id'] = $event->id;
-                    CRM_Friend_BAO_Friend::addTellAFriend($tafParams);
+                    if ( isset( $tafParams['id'] ) ) {
+                        unset( $tafParams['id'] );
+                    }
+                    CRM_Friend_BAO_Friend::addTellAFriend( $tafParams, $isTemplatePresent );
                 }
             }
         }

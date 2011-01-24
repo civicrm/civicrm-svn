@@ -392,7 +392,13 @@ class CRM_Utils_System_Drupal {
     static function cmsRootPath( ) 
     {
         $cmsRoot  = $valid = null;
-        $pathVars = explode( '/', str_replace( '\\', '/', $_SERVER['SCRIPT_FILENAME'] ) );
+        $path = '';
+        if ( function_exists( 'drush_get_context' ) ) {
+            $path = drush_get_context('DRUSH_DRUPAL_ROOT');
+        } else {
+            $path = $_SERVER['SCRIPT_FILENAME'];
+        }
+        $pathVars = explode( '/', str_replace( '\\', '/', $path ) );
         
         //might be windows installation.
         $firstVar = array_shift( $pathVars );

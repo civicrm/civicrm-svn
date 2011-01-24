@@ -28,16 +28,16 @@
  * the case, you can obtain a copy at http://www.php.net/license/3_0.txt.
  *
  * The latest version of DOMPDF might be available at:
- * http://www.digitaljunkies.ca/dompdf
+ * http://www.dompdf.com/
  *
- * @link http://www.digitaljunkies.ca/dompdf
+ * @link http://www.dompdf.com/
  * @copyright 2004 Benj Carson
  * @author Benj Carson <benjcarson@digitaljunkies.ca>
  * @package dompdf
- * @version 0.5.1
+
  */
 
-/* $Id: text_frame_reflower.cls.php,v 1.8 2006/07/07 21:31:05 benjcarson Exp $ */
+/* $Id: text_frame_reflower.cls.php 216 2010-03-11 22:49:18Z ryan.masten $ */
 
 /**
  * Reflows text frames.
@@ -52,14 +52,34 @@ class Text_Frame_Reflower extends Frame_Reflower {
   function __construct(Text_Frame_Decorator $frame) {
     parent::__construct($frame);
     $this->_block_parent = null;
+
+    // Handle text transform
+    $transform = $this->_frame->get_style()->text_transform;
+    switch ( strtolower($transform) ) {
+    case "capitalize":
+      $this->_frame->set_text( ucwords($this->_frame->get_text()) );
+      break;
+
+    case "uppercase":
+      $this->_frame->set_text( strtoupper($this->_frame->get_text()) );
+      break;
+
+    case "lowercase":
+      $this->_frame->set_text( strtolower($this->_frame->get_text()) );
+      break;
+
+    default:
+      // Do nothing
+      break;
+    }
   }
 
   //........................................................................
 
   protected function _collapse_white_space($text) {
     //$text = $this->_frame->get_text();
-    if ( $this->_block_parent->get_current_line("w") == 0 )
-      $text = ltrim($text, " \n\r\t");
+//     if ( $this->_block_parent->get_current_line("w") == 0 )
+//       $text = ltrim($text, " \n\r\t");
     return preg_replace("/[\s\n]+/u", " ", $text);
   }
 
@@ -167,6 +187,28 @@ class Text_Frame_Reflower extends Frame_Reflower {
     $split = false;
     $add_line = false;
 
+    // Handle text transform:
+    // http://www.w3.org/TR/CSS21/text.html#propdef-text-transform
+
+    switch ($style->text_transform) {
+
+    default:
+      break;
+
+    case "capitalize":
+      $text = mb_convert_case($text, MB_CASE_TITLE, 'UTF-8');
+      break;
+
+    case "uppercase":
+      $text = mb_convert_case($text, MB_CASE_UPPER, 'UTF-8');
+      break;
+
+    case "lowercase":
+      $text = mb_convert_case($text, MB_CASE_LOWER, 'UTF-8');
+      break;
+
+    }
+    
     // Handle white-space property:
     // http://www.w3.org/TR/CSS21/text.html#propdef-white-space
 
@@ -227,7 +269,7 @@ class Text_Frame_Reflower extends Frame_Reflower {
     if ( $split !== false) {
 
       // Handle edge cases
-      if ( $split == 0 && $text == " " ) {
+      if ( $split == 0 && $text === " " ) {
         $this->_frame->set_text("");
         return;
       }
@@ -251,7 +293,7 @@ class Text_Frame_Reflower extends Frame_Reflower {
         // Remove any trailing newlines
         $t = $this->_frame->get_text();
 
-        if ( $split > 1 && $t{$split-1} == "\n" )
+        if ( $split > 1 && $t[$split-1] === "\n" )
           $this->_frame->set_text( mb_substr($t, 0, -1) );
 
       }
@@ -262,13 +304,11 @@ class Text_Frame_Reflower extends Frame_Reflower {
       }
 
       // Set our new width
-      $width = Font_Metrics::get_text_width($this->_frame->get_text(), $font, $size, $word_spacing);
-      $style->width = $width;
+      $this->_frame->recalculate_width();
 
     } else {
-      // Add the current frame to the line
-      $width = Font_Metrics::get_text_width($text, $font, $size, $word_spacing);
-      $style->width = $width;
+
+      $this->_frame->recalculate_width();
 
     }
   }
@@ -279,6 +319,14 @@ class Text_Frame_Reflower extends Frame_Reflower {
 
     $this->_block_parent = $this->_frame->find_block_parent();
 
+    // Left trim the text if this is the first text on the line and we're
+    // collapsing white space
+//     if ( $this->_block_parent->get_current_line("w") == 0 &&
+//          ($this->_frame->get_style()->white_space !== "pre" ||
+//           $this->_frame->get_style()->white_space !== "pre-wrap") ) {
+//       $this->_frame->set_text( ltrim( $this->_frame->get_text() ) );
+//     }
+    
     $this->_frame->position();
 
     $this->_layout_line();
@@ -375,4 +423,3 @@ class Text_Frame_Reflower extends Frame_Reflower {
   }
 
 }
-?>

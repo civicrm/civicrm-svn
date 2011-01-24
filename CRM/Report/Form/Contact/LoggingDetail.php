@@ -34,30 +34,54 @@
  *
  */
 
+require_once 'CRM/Logging/Differ.php';
+require_once 'CRM/Logging/Schema.php';
 require_once 'CRM/Report/Form.php';
 
 class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
 {
-    private $loggingDB;
-
-    private $contact_id;
+    private $cid;
+    private $db;
     private $log_conn_id;
     private $log_date;
+    private $raw;
+    private $tables = array();
 
     function __construct()
     {
         $this->_add2groupSupported = false; // don’t display the ‘Add these Contacts to Group’ button
 
         $dsn = defined('CIVICRM_LOGGING_DSN') ? DB::parseDSN(CIVICRM_LOGGING_DSN) : DB::parseDSN(CIVICRM_DSN);
-        $this->loggingDB = $dsn['database'];
+        $this->db = $dsn['database'];
 
         $this->log_conn_id = CRM_Utils_Request::retrieve('log_conn_id', 'Integer', CRM_Core_DAO::$_nullObject);
         $this->log_date    = CRM_Utils_Request::retrieve('log_date',    'String',  CRM_Core_DAO::$_nullObject);
+        $this->cid         = CRM_Utils_Request::retrieve('cid',         'Integer', CRM_Core_DAO::$_nullObject);
+        $this->raw         = CRM_Utils_Request::retrieve('raw',         'Boolean', CRM_Core_DAO::$_nullObject);
+
+        // set the tables concerning this report: contact, custom data and contact-related
+        $logging = new CRM_Logging_Schema;
+        $this->tables[] = 'log_civicrm_contact';
+        $this->tables   = array_merge($this->tables, $logging->customDataLogTables());
+        $this->tables[] = 'log_civicrm_email';
+        $this->tables[] = 'log_civicrm_phone';
+        $this->tables[] = 'log_civicrm_im';
+        $this->tables[] = 'log_civicrm_openid';
+        $this->tables[] = 'log_civicrm_website';
+        $this->tables[] = 'log_civicrm_address';
+
+        if (CRM_Utils_Request::retrieve('revert', 'Boolean', CRM_Core_DAO::$_nullObject)) {
+            require_once 'CRM/Logging/Reverter.php';
+            $reverter = new CRM_Logging_Reverter($this->log_conn_id, $this->log_date);
+            $reverter->revert($this->tables);
+            CRM_Core_Session::setStatus(ts('The changes have been reverted.'));
+            CRM_Utils_System::redirect(CRM_Report_Utils_Report::getNextUrl('logging/contact/summary', 'reset=1', false, true));
+        }
 
         // make sure the report works even without the params
         if (!$this->log_conn_id or !$this->log_date) {
             $dao = new CRM_Core_DAO;
-            $dao->query("SELECT log_conn_id, log_date FROM `{$this->loggingDB}`.log_civicrm_contact WHERE log_action = 'Update' ORDER BY log_date DESC LIMIT 1");
+            $dao->query("SELECT log_conn_id, log_date FROM `{$this->db}`.log_civicrm_contact WHERE log_action = 'Update' ORDER BY log_date DESC LIMIT 1");
             $dao->fetch();
             $this->log_conn_id = $dao->log_conn_id;
             $this->log_date    = $dao->log_date;
@@ -72,10 +96,13 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         parent::__construct();
     }
 
-    function buildRows($sql, &$rows)
+    function buildQuery()
     {
-        // safeguard for when there aren’t any log entries yet
-        if (!$this->log_conn_id or !$this->log_date) return;
+    }
+
+    function buildQuickForm()
+    {
+        parent::buildQuickForm();
 
         $params = array(
             1 => array($this->log_conn_id, 'Integer'),
@@ -85,7 +112,7 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         // let the template know who updated whom when
         $sql = "
             SELECT who.id who_id, who.display_name who_name, whom.id whom_id, whom.display_name whom_name, l.is_deleted
-            FROM `{$this->loggingDB}`.log_civicrm_contact l
+            FROM `{$this->db}`.log_civicrm_contact l
             JOIN civicrm_contact who ON (l.log_user_id = who.id)
             JOIN civicrm_contact whom ON (l.id = whom.id)
             WHERE log_action = 'Update' AND log_conn_id = %1 AND log_date = %2 ORDER BY log_date DESC LIMIT 1
@@ -98,173 +125,71 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
         $this->assign('whom_name', $dao->whom_name);
         $this->assign('log_date',  $this->log_date);
 
-        // track who’s changes being monitored
-        $this->contact_id = $dao->whom_id;
-
-        // link back to summary report
-        require_once 'CRM/Report/Utils/Report.php';
-        $this->assign('summaryReportURL', CRM_Report_Utils_Report::getNextUrl('logging/contact/summary', 'reset=1', false, true));
-
-        $rows = $this->diffsInTable('log_civicrm_contact');
-
-        // add custom data changes
-        $dao =& CRM_Core_DAO::executeQuery("SHOW TABLES FROM `{$this->loggingDB}` LIKE 'log_civicrm_value_%'");
-        while ($dao->fetch()) {
-            $table = $dao->toValue("Tables_in_{$this->loggingDB}_(log_civicrm_value_%)");
-            $rows  = array_merge($rows, $this->diffsInTable($table));
-        }
-
-        // add changes by fetching all ids affected in the ±10 s interval (for the given connection id)
-        $tables = array('log_civicrm_email', 'log_civicrm_phone', 'log_civicrm_im', 'log_civicrm_openid', 'log_civicrm_website', 'log_civicrm_address');
-        foreach ($tables as $table) {
-            $sql = "SELECT DISTINCT id FROM `{$this->loggingDB}`.`$table` WHERE log_conn_id = %1 AND log_date BETWEEN DATE_SUB(%2, INTERVAL 10 SECOND) AND DATE_ADD(%2, INTERVAL 10 SECOND)";
-            $dao =& CRM_Core_DAO::executeQuery($sql, $params);
-            while ($dao->fetch()) {
-                $rows = array_merge($rows, $this->diffsInTable($table, $dao->id));
-            }
-        }
-    }
-
-    function buildQuery()
-    {
-    }
-
-    private function diffsInTable($table, $id = null)
-    {
-        // caches for pretty field titles and value mappings
-        static $titles = null;
-        static $values = null;
-
-        $params = array(
-            1 => array($this->log_conn_id, 'Integer'),
-            2 => array($this->log_date,    'String'),
-        );
-
-        // we look for the last change in the given connection that happended less than 10 seconds later than log_date to catch multi-query changes
-        if ($id) {
-            $params[3]  = array($id, 'Integer');
-            $changedSQL = "SELECT * FROM `{$this->loggingDB}`.`$table` WHERE log_conn_id = %1 AND log_date < DATE_ADD(%2, INTERVAL 10 SECOND) AND id = %3 ORDER BY log_date DESC LIMIT 1";
+        if ($this->cid) {
+            // link back to contact summary
+            $this->assign('backURL', CRM_Utils_System::url('civicrm/contact/view', "reset=1&selectedChild=log&cid={$this->cid}", false, null, false));
         } else {
-            $changedSQL = "SELECT * FROM `{$this->loggingDB}`.`$table` WHERE log_conn_id = %1 AND log_date < DATE_ADD(%2, INTERVAL 10 SECOND) ORDER BY log_date DESC LIMIT 1";
-        }
-        $changed = $this->sqlToArray($changedSQL, $params);
-
-        // return early if nothing found
-        if (empty($changed)) return array();
-
-        // seed caches with civicrm_contact titles/values
-        if (!isset($titles['log_civicrm_contact']) or !isset($values['log_civicrm_contact'])) {
-            // FIXME: these should be populated with pseudo constants as they
-            // were at the time of logging rather than their current values
-            $values['log_civicrm_contact'] = array(
-                'gender_id'                      => CRM_Core_PseudoConstant::gender(),
-                'preferred_communication_method' => CRM_Core_PseudoConstant::pcm(),
-                'preferred_language'             => CRM_Core_PseudoConstant::languages(),
-                'prefix_id'                      => CRM_Core_PseudoConstant::individualPrefix(),
-                'suffix_id'                      => CRM_Core_PseudoConstant::individualSuffix(),
-            );
-
-            require_once 'CRM/Contact/DAO/Contact.php';
-            $dao = new CRM_Contact_DAO_Contact;
-            foreach ($dao->fields() as $field) {
-                $titles['log_civicrm_contact'][$field['name']] = $field['title'];
-                if ($field['type'] == CRM_Utils_Type::T_BOOLEAN) {
-                    $values['log_civicrm_contact'][$field['name']] = array('0' => ts('false'), '1' => ts('true'));
-                }
-            }
+            // link back to summary report
+            require_once 'CRM/Report/Utils/Report.php';
+            $this->assign('backURL', CRM_Report_Utils_Report::getNextUrl('logging/contact/summary', 'reset=1', false, true));
         }
 
-        foreach (array('Address', 'Email', 'IM', 'OpenID', 'Phone', 'Website') as $class) {
-            $type = strtolower($class);
-            if (!isset($titles["log_civicrm_$type"]) or !isset($values["log_civicrm_$type"])) {
-                // FIXME: these should be populated with pseudo constants as they
-                // were at the time of logging rather than their current values
-                $values["log_civicrm_$type"] = array(
-                    'location_type_id' => CRM_Core_PseudoConstant::locationType(),
-                );
-                require_once "CRM/Core/DAO/$class.php";
-                eval("\$dao = new CRM_Core_DAO_$class;");
-                foreach ($dao->fields() as $field) {
-                    $titles["log_civicrm_$type"][$field['name']] = $field['title'];
-                    if ($field['type'] == CRM_Utils_Type::T_BOOLEAN) {
-                        $values["log_civicrm_$type"][$field['name']] = array('0' => ts('false'), '1' => ts('true'));
-                    }
-                }
-            }
+        $q = "reset=1&log_conn_id={$this->log_conn_id}&log_date={$this->log_date}";
+        if ($this->raw) {
+            $this->assign('revertURL', CRM_Report_Utils_Report::getNextUrl('logging/contact/detail', "$q&revert=1", false, true));
+        } else {
+            $this->assign('revertURL', CRM_Report_Utils_Report::getNextUrl('logging/contact/detail', "$q&raw=1", false, true));
         }
+    }
 
-        // FIXME: call this only if we’re actually checking the relevant table
-        $values['log_civicrm_address']['country_id']        = CRM_Core_PseudoConstant::country();
-        $values['log_civicrm_address']['state_province_id'] = CRM_Core_PseudoConstant::stateProvince();
-        $values['log_civicrm_im']['provider_id']            = CRM_Core_PseudoConstant::IMProvider();
-        $values['log_civicrm_website']['website_type_id']   = CRM_Core_PseudoConstant::websiteType();
+    function buildRows($sql, &$rows)
+    {
+        // safeguard for when there aren’t any log entries yet
+        if (!$this->log_conn_id or !$this->log_date) return;
 
-        // add custom data titles/values for the given table
-        if (substr($table, 0, 18) == 'log_civicrm_value_' and (!isset($titles[$table]) or !isset($values[$table]))) {
-            $titles[$table] = array();
-            $values[$table] = array();
+        if (empty($rows)) $rows = array();
 
-            $params[3] = array(substr($table, 4), 'String');
-            $sql = "SELECT id, title FROM `{$this->loggingDB}`.log_civicrm_custom_group WHERE log_date <= %2 AND table_name = %3 ORDER BY log_date DESC LIMIT 1";
-            $cgDao =& CRM_Core_DAO::executeQuery($sql, $params);
-            $cgDao->fetch();
-
-            $params[3] = array($cgDao->id, 'Integer');
-            $sql = "SELECT column_name, data_type, label, name FROM `{$this->loggingDB}`.log_civicrm_custom_field WHERE log_date <= %2 AND custom_group_id = %3 ORDER BY log_date";
-            $cfDao =& CRM_Core_DAO::executeQuery($sql, $params);
-            while ($cfDao->fetch()) {
-                $titles[$table][$cfDao->column_name] = "{$cgDao->title}: {$cfDao->label}";
-                switch ($cfDao->data_type) {
-                case 'Boolean':
-                    $values[$table][$cfDao->column_name] = array('0' => ts('false'), '1' => ts('true'));
-                    break;
-                case 'String':
-                    $values[$table][$cfDao->column_name] = array();
-                    $params[3] = array("custom_{$cfDao->name}", 'String');
-                    $sql = "SELECT id FROM `{$this->loggingDB}`.log_civicrm_option_group WHERE log_date <= %2 AND name = %3 ORDER BY log_date DESC LIMIT 1";
-                    $ogId = CRM_Core_DAO::singleValueQuery($sql, $params);
-
-                    $params[3] = array($ogId, 'Integer');
-                    $sql = "SELECT label, value FROM `{$this->loggingDB}`.log_civicrm_option_value WHERE log_date <= %2 AND option_group_id = %3 ORDER BY log_date";
-                    $ovDao =& CRM_Core_DAO::executeQuery($sql, $params);
-                    while ($ovDao->fetch()) {
-                        $values[$table][$cfDao->column_name][$ovDao->value] = $ovDao->label;
-                    }
-                    break;
-                }
-            }
+        foreach ($this->tables as $table) {
+            $rows = array_merge($rows, $this->diffsInTable($table));
         }
+    }
 
-        // we look for the previous state (different log_conn_id) of the found id
-        $params[3]   = array($changed['id'], 'Integer');
-        $originalSQL = "SELECT * FROM `{$this->loggingDB}`.`$table` WHERE log_conn_id != %1 AND log_date < %2 AND id = %3 ORDER BY log_date DESC LIMIT 1";
-        $original    = $this->sqlToArray($originalSQL, $params);
-
+    private function diffsInTable($table)
+    {
         $rows = array();
 
-        // populate $rows with only the differences between $changed and $original (skipping certain columns and NULL ↔ empty changes)
+        $differ = new CRM_Logging_Differ($this->log_conn_id, $this->log_date);
+        $diffs  = $differ->diffsInTable($table);
+
+        // return early if nothing found
+        if (empty($diffs)) return $rows;
+
+        list($titles, $values) = $differ->titlesAndValuesForTable($table);
+
+        // populate $rows with only the differences between $changed and $original (skipping certain columns and NULL ↔ empty changes unless raw requested)
         // FIXME: explode preferred_communication_method on CRM_Core_DAO::VALUE_SEPARATOR and handle properly somehow
-        $skipped = array('contact_id', 'entity_id', 'id', 'log_action', 'log_conn_id', 'log_date', 'log_user_id');
-        foreach (array_keys(array_diff_assoc($changed, $original)) as $diff) {
-            if (in_array($diff, $skipped))                              continue;
-            if ($original[$diff] == $changed[$diff])                    continue;
-            if ($original[$diff] == false and $changed[$diff] == false) continue; // only in PHP: '0' == false and null == false but '0' != null
-            $field = isset($titles[$table][$diff]) ? $titles[$table][$diff] : substr($table, 4) . ".$diff";
-            if ($id) $field .= " (id: $id)";
-            $rows[] = array(
-                'field' => $field,
-                'from'  => isset($values[$table][$diff][$original[$diff]]) ? $values[$table][$diff][$original[$diff]] : $original[$diff],
-                'to'    => isset($values[$table][$diff][$changed[$diff]])  ? $values[$table][$diff][$changed[$diff]]  : $changed[$diff],
-            );
+        $skipped = array('contact_id', 'entity_id', 'id');
+        foreach ($diffs as $diff) {
+            $field = $diff['field'];
+            $from  = $diff['from'];
+            $to    = $diff['to'];
+
+            if ($this->raw) {
+                $field = substr($table, 4) . '.' . $field;
+            } else {
+                if (in_array($field, $skipped))      continue;
+                if ($from == $to)                    continue; // $differ filters out === values; for presentation hide changes like 42 → '42'
+                if ($from == false and $to == false) continue; // only in PHP: '0' == false and null == false but '0' != null
+
+                if (isset($values[$field][$from])) $from  = $values[$field][$from];
+                if (isset($values[$field][$to]))   $to    = $values[$field][$to];
+                if (isset($titles[$field]))        $field = $titles[$field];
+                if ($diff['action'] == 'Insert')   $from  = ts('[NONEXISTENT]');
+            }
+
+            $rows[] = array('field' => $field . " (id: {$diff['id']})", 'from' => $from, 'to' => $to);
         }
 
         return $rows;
-    }
-
-    private function sqlToArray($sql, $params)
-    {
-        $dao =& CRM_Core_DAO::executeQuery($sql, $params);
-        $dao->fetch();
-        return $dao->toArray();
     }
 }

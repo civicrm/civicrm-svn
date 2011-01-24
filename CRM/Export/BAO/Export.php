@@ -294,8 +294,10 @@ class CRM_Export_BAO_Export
                 $returnProperties['last_name' ] = 1;
                 $drop = 'last_name';
             }
-            $returnProperties['household_name'] = 1;
-            $returnProperties['street_address'] = 1;
+            $returnProperties['household_name']    = 1;
+            $returnProperties['street_address']    = 1;
+			$returnProperties['city']              = 1;
+			$returnProperties['state_province_id'] = 1;
         }
         
         if ( $moreReturnProperties ) {
@@ -1125,6 +1127,7 @@ CREATE TABLE {$exportTempTable} (
     static function mergeSameAddress( $tableName, &$headerRows, &$sqlColumns, $drop = false)
     {
         // find all the records that have the same street address BUT not in a household
+		//  require match on city and state as well
         $sql = "
 SELECT    r1.id as master_id,
           r1.last_name as last_name,
@@ -1133,7 +1136,9 @@ SELECT    r1.id as master_id,
           r2.last_name as copy_last_name,
           r2.addressee as copy_addressee
 FROM      $tableName r1
-LEFT JOIN $tableName r2 ON r1.street_address = r2.street_address
+LEFT JOIN $tableName r2 ON ( r1.street_address = r2.street_address AND
+							 r1.city = r2.city AND
+							 r1.state_province_id = r2.state_province_id )
 WHERE     ( r1.household_name IS NULL OR r1.household_name = '' )
 AND       ( r2.household_name IS NULL OR r2.household_name = '' )
 AND       ( r1.street_address != '' )

@@ -83,6 +83,7 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
         $this->assign( 'searchParams',   json_encode( $this->get( 'searchParams' ) ) );
         $this->assign( 'buildSelector',  $this->_search );
         $this->assign( 'searchVoterFor', $this->_searchVoterFor );
+        $this->set(    'searchVoterFor', $this->_searchVoterFor );
         $this->assign( 'doNotReloadCRMAccordion', $this->get( 'doNotReloadCRMAccordion' ) );
         
         $surveyTitle = null;
@@ -120,6 +121,7 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
         $this->_searchParams = array( );
         foreach  ( $this->_elements as $element ) {
             $name = $element->_attributes['name'];
+            if ( $name == 'qfKey' ) continue;
             $this->_searchParams[$name] = $name;
         }
         $this->set( 'searchParams',    $this->_searchParams );

@@ -28,16 +28,21 @@
  * the case, you can obtain a copy at http://www.php.net/license/3_0.txt.
  *
  * The latest version of DOMPDF might be available at:
- * http://www.digitaljunkies.ca/dompdf
+ * http://www.dompdf.com/
  *
- * @link http://www.digitaljunkies.ca/dompdf
+ * @link http://www.dompdf.com/
  * @copyright 2004 Benj Carson
  * @author Benj Carson <benjcarson@digitaljunkies.ca>
+ * @contributor Helmut Tischer <htischer@weihenstephan.org>
  * @package dompdf
- * @version 0.5.1
+ *
+ * Changes
+ * @contributor Helmut Tischer <htischer@weihenstephan.org>
+ * @version 0.5.1.htischer.20090507
+ * - add optional debug output
  */
 
-/* $Id: image_frame_decorator.cls.php,v 1.11 2006/07/07 21:31:03 benjcarson Exp $ */
+/* $Id: image_frame_decorator.cls.php 216 2010-03-11 22:49:18Z ryan.masten $ */
 
 /**
  * Decorates frames for image layout and rendering
@@ -47,14 +52,6 @@
  */
 class Image_Frame_Decorator extends Frame_Decorator {
 
-  /**
-   * Array of downloaded images.  Cached so that identical images are
-   * not needlessly downloaded.
-   *
-   * @var array
-   */
-  static protected $_cache = array();
- 
   /**
    * The path to the image file (note that remote images are
    * downloaded locally to DOMPDF_TEMP_DIR).
@@ -81,6 +78,9 @@ class Image_Frame_Decorator extends Frame_Decorator {
     
     parent::__construct($frame, $dompdf);
     $url = $frame->get_node()->getAttribute("src");
+      
+    //debugpng
+    if (DEBUGPNG) print '[__construct '.$url.']';
 
     list($this->_image_url, $this->_image_ext) = Image_Cache::resolve_url($url,
                                                                           $dompdf->get_protocol(),
@@ -107,15 +107,4 @@ class Image_Frame_Decorator extends Frame_Decorator {
     return $this->_image_ext;
   }
   
-  /**
-   * Unlink all cached images (i.e. temporary images either downloaded
-   * or converted)
-   */
-  static function clear_image_cache() {
-    if ( count(self::$_cache) ) {
-      foreach (self::$_cache as $file)
-        unlink($file);
-    }
-  }
 }
-?>

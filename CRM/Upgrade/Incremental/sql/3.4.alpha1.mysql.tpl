@@ -54,3 +54,14 @@ CREATE TABLE civicrm_mailing_recipients (
      CONSTRAINT FK_civicrm_mailing_recipients_email_id FOREIGN KEY (email_id) REFERENCES civicrm_email(id) ON DELETE CASCADE  
 )  ENGINE=InnoDB DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci  ;
 
+
+-- CRM-3825
+SELECT @option_group_id_acsOpt := max(id) FROM civicrm_option_group WHERE name = 'contact_autocomplete_options';
+SELECT @value_acsOpt := max(value), @weight_acsOpt := max(weight) 
+  FROM civicrm_option_value 
+ WHERE civicrm_option_value.option_group_id = @option_group_id_acsOpt;
+
+INSERT INTO 
+       `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
+VALUES
+	(@option_group_id_acsOpt, '{ts escape="sql"}Nick Name{/ts}', @value_acsOpt+1, 'nick_name', NULL, 0, NULL, @weight_acsOpt+1, NULL, 0, 0, 1, NULL, NULL);

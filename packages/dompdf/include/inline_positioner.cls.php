@@ -28,16 +28,16 @@
  * the case, you can obtain a copy at http://www.php.net/license/3_0.txt.
  *
  * The latest version of DOMPDF might be available at:
- * http://www.digitaljunkies.ca/dompdf
+ * http://www.dompdf.com/
  *
- * @link http://www.digitaljunkies.ca/dompdf
+ * @link http://www.dompdf.com/
  * @copyright 2004 Benj Carson
  * @author Benj Carson <benjcarson@digitaljunkies.ca>
  * @package dompdf
- * @version 0.5.1
+
  */
 
-/* $Id: inline_positioner.cls.php,v 1.3 2006/07/07 21:31:03 benjcarson Exp $ */
+/* $Id: inline_positioner.cls.php 216 2010-03-11 22:49:18Z ryan.masten $ */
 /**
  * Positions inline frames
  *
@@ -59,8 +59,8 @@ class Inline_Positioner extends Positioner {
     // Debugging code:
 
 //     pre_r("\nPositioning:");
-//     pre_r("Me: " . $this->_frame->get_node()->nodeName . " (" . (string)$this->_frame->get_node() . ")");
-//     pre_r("Parent: " . $p->get_node()->nodeName . " (" . (string)$p->get_node() . ")");
+//     pre_r("Me: " . $this->_frame->get_node()->nodeName . " (" . spl_object_hash($this->_frame->get_node()) . ")");
+//     pre_r("Parent: " . $p->get_node()->nodeName . " (" . spl_object_hash($p->get_node()) . ")");
 
     // End debugging
 
@@ -73,4 +73,3 @@ class Inline_Positioner extends Positioner {
 
   }
 }
-?>

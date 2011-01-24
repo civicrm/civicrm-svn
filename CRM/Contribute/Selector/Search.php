@@ -332,7 +332,7 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
         
         //get all campaigns.
         require_once 'CRM/Campaign/BAO/Campaign.php';
-        $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, true );
+        $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, true );
         
         While ($result->fetch()) {
             $row = array();

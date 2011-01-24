@@ -50,7 +50,10 @@
      <br />{$form.member_source.html}
     </td>
     <td>
-     {$form.member_is_primary.html} {help id="id-member_is_primary" file="CRM/Member/Form/Search.hlp"}<br />
+     {$form.member_is_primary.html} 
+     <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('member_is_primary', '{$form.formName}'); return false;" >{ts}clear{/ts}</a>)</span>     
+     {help id="id-member_is_primary" file="CRM/Member/Form/Search.hlp"}
+     <br />
      {$form.member_pay_later.html}&nbsp;{$form.member_pay_later.label}<br />
      {$form.member_test.html}&nbsp;{$form.member_test.label}<br />
      {$form.member_auto_renew.html}&nbsp;{$form.member_auto_renew.label}

@@ -446,7 +446,7 @@ ORDER BY title asc
         $dao = CRM_Core_DAO::executeQuery( $query, $params, true, 'CRM_Contribute_DAO_ContributionPage' );
         
         //get all campaigns.
-        $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, true );
+        $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, true );
         
         //get configure actions links.
         $configureActionLinks = self::configureActionLinks( );

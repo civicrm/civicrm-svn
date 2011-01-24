@@ -448,7 +448,13 @@ class CRM_Member_Form_Search extends CRM_Core_Form
         
         $this->_limit = CRM_Utils_Request::retrieve( 'limit', 'Positive',
                                                      $this );
-    }
+    
+		//LCD also allow restrictions to membership owner via GET
+		$owner = CRM_Utils_Request::retrieve( 'owner', 'String', CRM_Core_DAO::$_nullObject );
+		if ( $owner ) {
+			$this->_formValues['member_is_primary'] = $this->_defaults['member_is_primary'] = 2;
+		}
+	}
 
     /**
      * Return a descriptive name for the page, used in wizard header

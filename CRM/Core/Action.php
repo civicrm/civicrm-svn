@@ -218,16 +218,15 @@ class CRM_Core_Action {
         $firstLink = true;
         foreach ( $links as $m => $link ) {
             if ( ! $mask || ( $mask & $m ) ) {
-                $extra = null;
-                if ( isset( $link['extra'] ) ) {
-                    $extra = self::replace( CRM_Utils_Array::value( 'extra', $link, '' ),  $values );
-                }
+                $extra = isset( $link['extra'] ) ?
+                    self::replace( CRM_Utils_Array::value( 'extra', $link, '' ),  $values ) :
+                    null;
                 
-                $frontend = false;
-                if ( isset( $link['fe'] ) ) $frontend = true;
+                $frontend = ( isset( $link['fe'] ) ) ? true : false;
                 
                 $urlPath = null;
-                if ( CRM_Utils_Array::value( 'qs', $link ) && !CRM_Utils_System::isNull( $link['qs'] ) ) {
+                if ( CRM_Utils_Array::value( 'qs', $link ) &&
+                     ! CRM_Utils_System::isNull( $link['qs'] ) ) {
                     $urlPath = CRM_Utils_System::url( self::replace( $link['url'], $values ),
                                                       self::replace( $link['qs'], $values ), true, null, true, $frontend );
                 } else {

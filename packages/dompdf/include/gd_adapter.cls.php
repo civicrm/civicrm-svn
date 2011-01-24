@@ -28,16 +28,16 @@
  * the case, you can obtain a copy at http://www.php.net/license/3_0.txt.
  *
  * The latest version of DOMPDF might be available at:
- * http://www.digitaljunkies.ca/dompdf
+ * http://www.dompdf.com/
  *
- * @link http://www.digitaljunkies.ca/dompdf
+ * @link http://www.dompdf.com/
  * @copyright 2004 Benj Carson
  * @author Benj Carson <benjcarson@digitaljunkies.ca>
  * @package dompdf
- * @version 0.5.1
+
  */
 
-/* $Id */
+/* $Id: gd_adapter.cls.php 217 2010-03-11 23:03:57Z ryan.masten $ */
 
 /**
  * Image rendering interface
@@ -110,7 +110,7 @@ class GD_Adapter implements Canvas {
     
     }
 
-    if ( strtolower($orientation) == "landscape" ) {
+    if ( strtolower($orientation) === "landscape" ) {
       list($size[2],$size[3]) = array($size[3],$size[2]);
     }
 
@@ -537,8 +537,9 @@ class GD_Adapter implements Canvas {
    * @param float $size the font size, in points
    * @param array $color
    * @param float $adjust word spacing adjustment
+   * @param float $angle Text angle
    */
-  function text($x, $y, $text, $font, $size, $color = array(0,0,0), $adjust = 0) {
+  function text($x, $y, $text, $font, $size, $color = array(0,0,0), $adjust = 0, $angle = 0) {
 
     // Scale by the AA factor
     $x *= $this->_aa_factor;
@@ -553,8 +554,12 @@ class GD_Adapter implements Canvas {
       $font .= ".ttf";
 
     // FIXME: word spacing
-    imagettftext($this->_img, $size, 0, $x, $y + $h, $c, $font, $text);
+    imagettftext($this->_img, $size, $angle, $x, $y + $h, $c, $font, $text);
     
+  }
+  
+  function javascript($code) {
+    // Not implemented
   }
 
   /**
@@ -726,4 +731,3 @@ class GD_Adapter implements Canvas {
   
   
 }
-?>

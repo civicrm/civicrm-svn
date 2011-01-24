@@ -343,9 +343,10 @@
        <add>2.2</add>
   </index>
   <field> 
-       <name>campaign_id</name> 
+       <name>campaign_id</name>
+       <uniqueName>activity_campaign_id</uniqueName>
        <type>int unsigned</type>
-       <title>Campaign ID</title>
+       <title>Campaign</title>
        <import>true</import> 
        <comment>The campaign for which this activity has been triggered.</comment> 
        <add>3.4</add> 

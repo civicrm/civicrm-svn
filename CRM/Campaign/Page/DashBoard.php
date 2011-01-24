@@ -158,7 +158,8 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
                                                                                 'name'  => ts('Sign'),
                                                                                 'url'   => 'civicrm/petition/sign',
                                                                                 'qs'    => 'sid=%%id%%&reset=1',
-                                                                                'title' => ts('Sign Petition')
+                                                                                'title' => ts('Sign Petition'),
+                                                                                'fe'    => true,
                                                                                 );//CRM_Core_Action::PROFILE is used because there isn't a specific action for sign
              self::$_petitionActionLinks [CRM_Core_Action::BROWSE]  = array(
                                                                                 'name'  => ts('Signatures'),
@@ -215,7 +216,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
         //get the survey.
         $surveys = CRM_Campaign_BAO_Petition::getPetition( true );
         if ( !empty( $surveys ) ) {
-            $campaigns     = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false );
+            $campaigns     = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, true );
             $surveyType    = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
             foreach( $surveys as $sid => $survey ) {
                 $surveysData[$sid] = $survey;
@@ -253,7 +254,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
         //get the survey.
         $surveys = CRM_Campaign_BAO_Survey::getSurvey( true );
         if ( !empty( $surveys ) ) {
-            $campaigns     = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false );
+            $campaigns     = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, true );
             $surveyType    = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
             foreach( $surveys as $sid => $survey ) {
                 $surveysData[$sid] = $survey;
