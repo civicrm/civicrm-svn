@@ -67,17 +67,21 @@ class CRM_Member_Page_DashBoard extends CRM_Core_Page
         $today = getdate();
         $date    = CRM_Utils_Date::getToday();
         $isCurrentMonth = 0;
-        if ( ($ym = CRM_Utils_Array::value('date', $_GET)) ) {
-            if ( preg_match('/^\d{6}$/', $ym) == 0 || ! checkdate(substr($ym, 4, 2), 1, substr($ym, 0, 4)) || substr($ym, 0, 1) == 0) {
+        
+        $ym = CRM_Utils_Array::value( 'date', $_GET );
+        if ( $ym ) {
+            if ( preg_match( '/^\d{6}$/', $ym ) == 0 || 
+                 !checkdate( substr( $ym, 4, 2 ), 1, substr( $ym, 0, 4 ) ) || 
+                 substr( $ym, 0, 1 ) == 0 ) {
                 CRM_Core_Error::fatal( ts('Invalid date query "%1" in URL (valid syntax is yyyymm).', array(1 => $ym)) );
             }
+            
             $isPreviousMonth = 0;
             $isCurrentMonth = substr($ym, 0, 4) == $today['year'] && substr($ym, 4, 2) == $today['mon'];
             $ymd = date('Ymd', mktime(0, 0, -1, substr($ym, 4, 2)+1, 1, substr($ym, 0, 4)));
             $monthStartTs = mktime(0, 0, 0, substr($ym, 4, 2), 1, substr($ym, 0, 4));
             $current = CRM_Utils_Date::customFormat( $date, '%Y%m%d' );
-        }
-        else {
+        } else {
             $ym  = sprintf("%04d%02d",     $today['year'], $today['mon']);
             $ymd = sprintf("%04d%02d%02d", $today['year'], $today['mon'], $today['mday']);
             $monthStartTs = mktime(0, 0, 0, $today['mon'], 1, $today['year']);
@@ -87,7 +91,7 @@ class CRM_Member_Page_DashBoard extends CRM_Core_Page
         }
         $monthStart = $ym . '01';
         $yearStart = substr($ym, 0, 4) . '0101';
-
+        
         // $preMonthStart is the day before $monthStart
         $preMonthStart = CRM_Utils_Date::customFormat( date( "Y-m-t", 
                                                              mktime(0, 0, 0, substr($ym, 4, 2) - 1, 01, substr($ym, 0, 4))),
