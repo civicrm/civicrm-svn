@@ -151,6 +151,8 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
         $this->assign('extEnabled', FALSE );
         if( self::$_extensions ) {
             $this->assign('extEnabled', TRUE );
+        } else {
+            return;
         }
 
         $extensionRows = array();

@@ -566,6 +566,7 @@ class CRM_Core_Extensions
         $e = $this->getExtensionsByKey( true );
         $ext = $e[$key];
         $ext->uninstall();
+        
         // get fresh scope and install
         $e = $this->getExtensions( );        
         $ext = $e[$key];        

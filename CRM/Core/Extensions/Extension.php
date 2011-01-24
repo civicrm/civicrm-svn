@@ -208,6 +208,15 @@ class CRM_Core_Extensions_Extension
         } else {
             CRM_Core_Error::fatal( 'Unable to extract the extension.' );
         }
+
+        $filename = $path . DIRECTORY_SEPARATOR . $this->key . DIRECTORY_SEPARATOR . 'info.xml';
+        $newxml = file_get_contents( $filename );
+        require_once 'CRM/Core/Extensions/Extension.php';
+        $check = new CRM_Core_Extensions_Extension( $this->key . ".newversion" );
+        $check->readXMLInfo( $newxml );
+        if( $check->version != $this->version ) {
+            CRM_Core_Error::fatal( 'Cannot install - there are differences between extdir XML file and archive XML file!' );
+        }
         
         CRM_Utils_File::copyDir( $path . DIRECTORY_SEPARATOR . $this->key,
                                  $config->extensionsDir . DIRECTORY_SEPARATOR . $this->key );
