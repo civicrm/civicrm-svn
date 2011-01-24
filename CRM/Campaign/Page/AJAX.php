@@ -153,12 +153,15 @@ class CRM_Campaign_Page_AJAX
             }
         }
         
-        //format the contact type and group params.
-        foreach ( array( 'contact_type', 'group' ) as $fld ) {
-            $fldValue = CRM_Utils_Array::value( $fld, $params );
-            if ( $fldValue && !is_array( $fldValue ) ) {
-                unset( $params[$fld] );
-                $params[$fld][$fldValue] = 1;
+        //format multi-select group and contact types.
+        foreach ( array( 'group', 'contact_type' ) as $param ) {
+            $paramValue = CRM_Utils_Array::value( $param, $params );
+            if ( $paramValue ) {
+                unset( $params[$param] );
+                $paramValue = explode( ',', $paramValue );
+                foreach ( $paramValue as $key => $value ) {
+                    $params[$param][$value] = 1;
+                }
             }
         }
         

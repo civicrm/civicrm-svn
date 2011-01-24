@@ -435,15 +435,15 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
                                                                                          'id' );
         }
         
-        $contactType = CRM_Utils_Array::value( 'contact_type', $this->_formValues );
-        if ( $contactType && !is_array( $contactType ) ) {
-            unset( $this->_formValues['contact_type'] );
-            $this->_formValues['contact_type'][$contactType] = 1;
-        }
-        $group = CRM_Utils_Array::value( 'group', $this->_formValues );
-        if ( $group && !is_array( $group ) ) {
-            unset( $this->_formValues['group'] );
-            $this->_formValues['group'][$group] = 1;
+        //format multi-select group and contact types.
+        foreach ( array( 'group', 'contact_type' ) as $param ) {
+            $paramValue = CRM_Utils_Array::value( $param, $this->_formValues );
+            if ( $paramValue && is_array( $paramValue ) ) {
+                unset( $this->_formValues[$param] );
+                foreach ( $paramValue as $key => $value ) {
+                    $this->_formValues[$param][$value] = 1;
+                }
+            }
         }
         
         if ( $this->_operation == 'reserve' ) {
