@@ -1316,8 +1316,8 @@ class CRM_Contact_BAO_Query
         case 'deceased_date_high':   
             $this->demographics( $values );
             return;
-        case 'modified_date_low':
-        case 'modified_date_high':
+        case 'log_date_low':
+        case 'log_date_high':
             $this->modifiedDates( $values );
             return;
                         
@@ -2848,14 +2848,28 @@ WHERE  id IN ( $groupIDs )
         $this->_tables['civicrm_log'] = $this->_whereTables['civicrm_log'] = 1; 
         $this->_qill[$grouping][] = ts('Changed by') . ": $name";
     }
-
+    
     function modifiedDates( $values )
     {
         $this->_useDistinct = true;
+        foreach ( array_keys( $this->_params ) as $id ) {  
+            if( $this->_params[$id][0] == 'log_date') {
+                if( $this->_params[$id][2] == 1 ) {
+                    $changeDate = 'added_log_date';
+                    $values[0]  = 'added_'.$values[0];
+                    $fieldTitle = 'Added Date';
+                } else if( $this->_params[$id][2] == 2 ){
+                    $changeDate = 'modified_log_date';
+                    $values[0]  = 'modified_'.$values[0];
+                    $fieldTitle = 'Modified Date';
+                }
+            }
+        }
+        
         $this->dateQueryBuilder( $values,
-                                 'civicrm_log', 'modified_date', 'modified_date', 'Modified Date' );
+                                 'civicrm_log', $changeDate, 'modified_date', $fieldTitle );
     }
-
+    
     
     function demographics( &$values ) 
     {
@@ -3615,7 +3629,7 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
                                $appendTimeStamp = true ) 
     {
         list( $name, $op, $value, $grouping, $wildcard ) = $values;
-
+        
         if ( $name == $fieldName . '_low' ) {
             $op     = '>=';
             $phrase = 'greater than or equal to';

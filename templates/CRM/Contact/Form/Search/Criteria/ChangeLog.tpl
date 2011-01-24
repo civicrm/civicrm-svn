@@ -24,28 +24,19 @@
  +--------------------------------------------------------------------+
 *}
 <div id="changelog" class="form-item">
-    <table class="form-layout">
-        <tr>
-            <td>
-                {$form.changed_by.label}<br />
-                {$form.changed_by.html}
-            </td>
-            <td>
-                {$form.modified_date_low.label}<br />
-	            {include file="CRM/common/jcalendar.tpl" elementName=modified_date_low}&nbsp;
-		        {$form.modified_date_high.label}&nbsp; 
-                {include file="CRM/common/jcalendar.tpl" elementName=modified_date_high}
-            </td>
-        </tr>
-	<tr>
-            <td>
-            </td>
-            <td>
-                {$form.added_date_low.label}<br />
-	            {include file="CRM/common/jcalendar.tpl" elementName=added_date_low}&nbsp;
-	               	{$form.added_date_high.label}&nbsp; 
-                {include file="CRM/common/jcalendar.tpl" elementName=added_date_high}
-            </td>
-        </tr>
+   <table class="form-layout">
+     <tr>
+        <td>
+          {$form.changed_by.label}<br />
+          {$form.changed_by.html}
+        </td>
+	<td>
+	  {$form.log_date.html}<span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('log_date', '{$form.formName}'); return false;" >{ts}clear{/ts}</a>)</span><br />
+        </td>
+	<td>
+          <br />
+	   {$form.log_date_low.label}&nbsp;{include file="CRM/common/jcalendar.tpl" elementName=log_date_low}&nbsp;{$form.log_date_high.label}&nbsp;{include file="CRM/common/jcalendar.tpl" elementName=log_date_high}
+        </td>
+     </tr>
     </table>
  </div>
