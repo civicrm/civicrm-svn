@@ -443,7 +443,7 @@ function showHideSignature( blockId ) {
 </script>
 {/literal}
 
-{if $isAddressCustomPresent}
+{if !empty($isAddressCustomPresent)}
     {literal}
         <script type="text/javascript">
             cj(function() {
