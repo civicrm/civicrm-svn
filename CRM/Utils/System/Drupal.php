@@ -364,7 +364,7 @@ class CRM_Utils_System_Drupal {
         //CRM-7429 --do check for upper most 'includes' dir,
         //which would effectually work for multisite installation.
         do {
-            $cmsRoot = '/'.implode( '/', $pathVars );
+            $cmsRoot = $firstVar . '/'.implode( '/', $pathVars );
             $cmsIncludePath = "$cmsRoot/includes";
             //stop as we found bootstrap.
             if ( @opendir( $cmsIncludePath ) && 
@@ -375,9 +375,6 @@ class CRM_Utils_System_Drupal {
             //remove one directory level.
             array_pop( $pathVars );
         } while ( count( $pathVars ) > 1 ); 
-        
-        //lets get back firstVar for windows installation.
-        if ( $firstVar ) $cmsRoot = "{$firstVar}{$cmsRoot}";
         
         return ( $valid ) ? $cmsRoot : null;
     }
