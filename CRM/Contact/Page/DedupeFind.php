@@ -101,8 +101,9 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
             $cacheKeyString  = "merge $contactType";
             $cacheKeyString .= $rgid ? "_{$rgid}" : '_0';
             $cacheKeyString .= $gid ? "_{$gid}" : '_0';
-            
-            $this->_mainContacts = self::reloadCache( $cacheKeyString );
+
+            require_once 'CRM/Core/BAO/PrevNextCache.php';
+            $this->_mainContacts = CRM_Core_BAO_PrevNextCache::reloadCache( $cacheKeyString );
             if ( empty( $this->_mainContacts ) ) {
                 if ( $gid ) {
                     $foundDupes = $this->get( "dedupe_dupes_$gid" );
@@ -172,7 +173,7 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
                         if ( !array_key_exists( $dstID, $permission ) ) {
                             $permission[$dstID] = CRM_Contact_BAO_Contact_Permission::allow( $dstID, CRM_Core_Permission::EDIT );
                         }
-                        $canMerge = ( $permission[$dstID] &&  $permission[$srcID] );
+                        $canMerge = ( $permission[$dstID] && $permission[$srcID] );
                         
                         $mainContacts[] = $row = array( 'srcID'   => $srcID,
                                                         'srcName' => $displayNames[$srcID],
@@ -279,23 +280,6 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
     function userContext( $mode = null )
     {
         return 'civicrm/contact/dedupefind';
-    }
-
-
-    function reloadCache( $cacheKey ) 
-    {
-        $query = "
-SELECT data 
-FROM   civicrm_prevnext_cache
-WHERE  cacheKey = '$cacheKey'
-";
-        
-        $dao = CRM_Core_DAO::executeQuery( $query );
-        while ( $dao->fetch() ) {
-            $main[] = unserialize( $dao->data );
-        }
-
-        return $main;
     }
 
 }
