@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* Relationship tab within View Contact - browse, and view relationships for a contact *}
-{if $cdType }
+{if !empty($cdType) }
   {include file="CRM/Custom/Form/CustomData.tpl"}
 {else}
  <div class="view-content">
@@ -175,7 +175,7 @@
 </div>
 {/if} {* close of custom data else*}
 
-{if $searchRows }
+{if !empty($searchRows) }
  {*include custom data js file*}
  {include file="CRM/common/customData.tpl"}
 {/if}
