@@ -827,7 +827,7 @@ WHERE  contribution_id = {$this->_id}
         $this->addElement( 'checkbox','is_email_receipt', ts('Send Receipt?'), null,
                            array( 'onclick' => "showHideByValue( 'is_email_receipt', '', 'receiptDate', 'table-row', 'radio', true); showHideByValue( 'is_email_receipt', '', 'fromEmail', 'table-row', 'radio', false );" ) );
 
-        $this->add( 'select', 'from_email_address', ts('From'), $this->_fromEmails );
+        $this->add( 'select', 'from_email_address', ts('Receipt From'), $this->_fromEmails );
 
         $status = CRM_Contribute_PseudoConstant::contributionStatus(  );
         // supressing contribution statuses that are NOT relevant to pledges (CRM-5169)
