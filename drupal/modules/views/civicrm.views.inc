@@ -904,7 +904,7 @@ function civicrm_views_data() {
                                                 );
 
     //Address name
-    $link = l(t('In Global Settings'), 'civicrm/admin/setting/preferences/address', array('query' => 'reset=1'));
+    $link = l(t('In Global Settings'), 'civicrm/admin/setting/preferences/address', array('query' => array('reset=1')));
     $data['civicrm_address']['name'] = array(
                                              'title' => t('Address Name'),
                                              'help' => t('Be sure addres name is enabled %link', array('%link' => $link)),
@@ -4972,26 +4972,29 @@ function civicrm_views_href( $text, $path, $query ) {
 function civicrm_views_add_fields( &$fields, &$data, &$skipFields, $tableName ) {
     foreach ( $fields as $name => $value ) {
         if ( CRM_Utils_Array::value( $name, $skipFields ) ||
+             !isset( $value['where'] ) ||
              substr( $value['where'], 0, strlen( $tableName ) + 1 ) != "{$tableName}." ) {
             continue;
         }
 
-        $data[$value['name']] = array(
+        $type = CRM_Utils_Array::value( 'type', $value );
+
+        $data[CRM_Utils_Array::value('name', $value)] = array(
                              'title' => $value['title'],
                              'help'  => $value['title'],
                              'field' => array( 
-                                              'handler' => civicrm_get_field_handler  ( $value['type'] ),
+                                              'handler' => civicrm_get_field_handler  ( $type ),
                                               'click sortable' => true,
                                               ),
                              'sort'  => array(
-                                              'handler' => civicrm_get_sort_handler   ( $value['type'] ),
+                                              'handler' => civicrm_get_sort_handler   ( $type ),
                                               ),
                              'filter' => array(
-                                               'handler' => civicrm_get_filter_handler( $value['type'] ),
+                                               'handler' => civicrm_get_filter_handler( $type ),
                                                ),
                              );
-     //For date fields add in 6 arguments
-     if ( $value['type'] == 4 ){
+        //For date fields add in 6 arguments
+     if ( $type == 4 ){
          civicrm_views_add_date_arguments($data,$value);
      }
     }
@@ -5067,6 +5070,7 @@ function civicrm_views_custom_data_cache($data, $entity_type, $groupID, $subType
         $tree = CRM_Core_BAO_CustomGroup::getTree( $entity_type, CRM_Core_DAO::$_nullObject, null, $groupID);
     }
 
+    $jointable = null;
     switch ($entity_type) {
              
     case "Contact":
@@ -5114,7 +5118,7 @@ function civicrm_views_custom_data_cache($data, $entity_type, $groupID, $subType
                                   'Select State/Province', 'Select Country', 'Multi-Select Country',
                                   'Multi-Select State/Province', 'Autocomplete-Select' );
         foreach ($currentgroupfields as $key => $currentfield) {
-            if ($currentfield['help_post'] == '' || $currentfield['help_post'] == null) { 
+            if ( !CRM_Utils_Array::value( 'help_post', $currentfield) ) { 
                 $currentfield['help_post'] = t('Custom Data Field');
             } // Populates help text so there isn't miles of error: Missing Help
 
@@ -5126,7 +5130,7 @@ function civicrm_views_custom_data_cache($data, $entity_type, $groupID, $subType
                 $handler = civicrm_get_field_handler( $currentfield['data_type'] );
             }
             
-            if ( $currentfield['option_group_id'] ) {
+            if ( CRM_Utils_Array::value( 'option_group_id', $currentfield ) ) {
                 $filter_handler = 'civicrm_handler_filter_custom_option';
             } else {
                 $filter_handler = civicrm_get_filter_handler( $currentfield['data_type'] );

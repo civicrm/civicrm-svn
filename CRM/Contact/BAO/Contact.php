@@ -1198,9 +1198,9 @@ WHERE id={$id}; ";
                                                             'tags'   => array( 'title'  => ts( 'Tag(s)'  ) ),
                                                             'notes'  => array( 'title'  => ts( 'Note(s)' ) ) ) );
                 } else { 
-                    $fields = array_merge( $fields, array ( 'group'  => array( 'title' => ts( 'Group(s)' ) ),
-                                                            'tag'    => array( 'title'  => ts( 'Tag(s)'  ) ),
-                                                            'note'   => array( 'title'  => ts( 'Note(s)' ) ) ) );
+                    $fields = array_merge( $fields, array ( 'group'  => array( 'title' => ts( 'Group(s)' ), 'name' => 'groups' ),
+                                                            'tag'    => array( 'title'  => ts( 'Tag(s)'  ), 'name' => 'tag' ),
+                                                            'note'   => array( 'title'  => ts( 'Note(s)' ), 'name' => 'note' ) ) );
                 }
             
                 //Sorting fields in alphabetical order(CRM-1507)
