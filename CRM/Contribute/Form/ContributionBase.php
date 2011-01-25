@@ -733,7 +733,8 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
                 
                 $fields = array_diff_assoc( $fields, $this->_fields );
                 $this->assign( $name, $fields );
-                
+                require_once 'CRM/Core/BAO/Address.php';
+                CRM_Core_BAO_Address::checkContactSharedAddressFields( $fields, $contactID );
                 $addCaptcha = false;
                 foreach($fields as $key => $field) {
                     if ( $viewOnly &&

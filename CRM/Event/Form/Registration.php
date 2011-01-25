@@ -635,6 +635,8 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
             }
             $addCaptcha = false;
             $fields = array_diff_assoc( $fields, $this->_fields );
+            require_once 'CRM/Core/BAO/Address.php';
+            CRM_Core_BAO_Address::checkContactSharedAddressFields( $fields, $contactID );
             $this->assign( $name, $fields );
             if ( is_array( $fields ) ) {
                 foreach($fields as $key => $field) {
