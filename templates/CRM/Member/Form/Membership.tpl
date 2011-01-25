@@ -57,9 +57,10 @@
    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
     {if $action eq 8}
       <div class="messages status">
-          <div class="icon inform-icon"></div>       
-          {ts}WARNING: Deleting this membership will also delete related membership log and payment records.{/ts} {ts}This action cannot be undone.{/ts} {ts}Consider modifying the membership status instead if you want to maintain a record of this membership.{/ts}
-          {ts}Do you want to continue?{/ts}    
+          <div class="icon inform-icon"></div>&nbsp;       
+          <span class="font-red bold">{ts}WARNING: Deleting this membership will also delete any related payment (contribution) records.{/ts} {ts}This action cannot be undone.{/ts}</span>
+          <p>{ts}Consider modifying the membership status instead if you want to maintain an audit trail and avoid losing payment data. You can set the status to Cancelled by editing the membership and clicking the Status Override checkbox.{/ts}</p>
+          <p>{ts}Click 'Delete' if you want to continue.{/ts}</p>    
       </div>
     {else}
     <table class="form-layout-compressed">
