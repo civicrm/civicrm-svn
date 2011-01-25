@@ -78,14 +78,13 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
             $mailingACL  = CRM_Mailing_BAO_Mailing::mailingACL( 'm' );
             $domainID    = CRM_Core_Config::domainID( );
 
-			// SELECT THE First Child Job that's scheduled
+			// Select the first child job that is scheduled
 			// CRM-6835
             $query = "
 			SELECT   j.*
 			  FROM   $jobTable     j,
 					 $mailingTable m
 			 WHERE   m.id = j.mailing_id AND m.domain_id = {$domainID}
-                     $workflowClause
 			   AND   j.is_test = 0
 			   AND   ( ( j.start_date IS null
 			   AND       j.scheduled_date <= $currentTime
