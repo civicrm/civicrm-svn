@@ -772,15 +772,23 @@ WHERE  entity_id1 = $cid AND
         return $pos;
     }
 
-    function clearCache( $id )
+    function clearCache( $id = null, $cacheKey = null )
     {
         //clear cache
         $sql = "DELETE FROM civicrm_prevnext_cache
-                           WHERE  entity_table = 'civicrm_contact' AND
-                                  ( entity_id1 = {$id} OR
-                                    entity_id2 = {$id} )";
+                           WHERE  entity_table = 'civicrm_contact'";
         
+        if ( is_numeric( $id ) ) {
+            $sql .= " AND ( entity_id1 = {$id} OR
+                            entity_id2 = {$id} )";
+        }
+        
+        if ( isset( $cacheKey ) ) {
+            $sql .= " AND cacheKey LIKE '%$cacheKey%'";
+        }
+
         CRM_Core_DAO::executeQuery( $sql );
+
     }
 
 }
