@@ -102,9 +102,8 @@ function civicrm_contact_create( &$params )
  */
 function civicrm_contact_get( &$params )
 {
-    _civicrm_initialize( );
-    
-
+  _civicrm_initialize( );
+  try {
     $inputParams      = array( );
     $returnProperties = array( );
     $otherVars = array( 'sort', 'offset', 'rowCount', 'smartGroupCache' );
@@ -113,13 +112,13 @@ function civicrm_contact_get( &$params )
     $offset          = 0;
     $rowCount        = 25;
     $smartGroupCache = false;
-    if ( array_key_exists ('return',$params)) {// handle the format return =sort_name, display_name...
+    if ( array_key_exists ('return',$params)) {// handle the format return =sort_name,display_name...
       $returnProperties = explode (',',$params['return']);
       $returnProperties = array_flip ($returnProperties); 
       $returnProperties[key($returnProperties)] = 1; 
     }
     foreach ( $params as $n => $v ) {
-        if ( substr( $n, 0, 6 ) == 'return' ) {
+        if ( substr( $n, 0, 6 ) == 'return' ) { // handle the format return.sort_name=1,return.display_name=1
             $returnProperties[ substr( $n, 7 ) ] = $v;
         } elseif ( in_array( $n, $otherVars ) ) {
             $$n = $v;
@@ -141,7 +140,15 @@ function civicrm_contact_get( &$params )
                                                                    $offset,
                                                                    $rowCount,
                                                                    $smartGroupCache );
-    return $contacts;
+    if (array_key_exists ('sequential',$params)) {
+      return civicrm_create_success(array_merge($contacts,array()));
+    }
+    return civicrm_create_success($contacts);
+  } catch (PEAR_Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  }
 }
 
 
