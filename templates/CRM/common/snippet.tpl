@@ -48,7 +48,7 @@
     {/if}
 
     <!-- .tpl file invoked: {$tplFile}. Call via form.tpl if we have a form in the page. -->
-    {if $isForm}
+    {if !empty($isForm)}
         {include file="CRM/Form/default.tpl"}
     {else}
         {include file=$tplFile}
