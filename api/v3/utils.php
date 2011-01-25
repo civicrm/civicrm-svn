@@ -37,8 +37,9 @@
  */
 
 /**
- * @todo Write documentation
+ * Initialize CiviCRM - should be run at the start of each API function
  *
+ * $useException boolean raise exception if set
  */
 function _civicrm_initialize($useException = false ) 
 {
@@ -79,7 +80,7 @@ function civicrm_verify_one_mandatory (&$params, $daoName = null, $keyoptions = 
  */
 function civicrm_verify_mandatory (&$params, $daoName = null, $keys = array() ) {
   if ( ! is_array( $params ) ) {
-     throw new Exception ('Input parameters is not an array');
+     throw new Exception ('Input variable `params` is not an array');
   }
 
   if ($daoName != null) {
@@ -121,9 +122,9 @@ function &civicrm_create_error( $msg, $data = null )
 }
 
 /**
- *
- * @param <type> $result
- * @return <type>
+ * Format array in result output styple
+ * @param array $params
+ * @return array $result
  */
 function civicrm_create_success( $params = 1 )
 {
