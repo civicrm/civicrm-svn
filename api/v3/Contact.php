@@ -141,7 +141,7 @@ function civicrm_contact_get( &$params )
                                                                    $rowCount,
                                                                    $smartGroupCache );
     if (array_key_exists ('sequential',$params)) {
-      return civicrm_create_success(array_merge($contacts,array()));
+      return civicrm_create_success(array_merge($contacts));
     }
     return civicrm_create_success($contacts);
   } catch (PEAR_Exception $e) {
