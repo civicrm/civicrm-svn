@@ -212,10 +212,11 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor
      */
     static function getProcessorForEntity( $entityID, $component = 'contribute', $type = 'id' ) 
     {
+        $result = null;
         if ( ! in_array( $component, array('membership', 'contribute') ) ) {
-            return null;
+            return $result;
         }
-
+        
         if ( $component == 'membership' ) {
             $sql = " 
     SELECT cr.payment_processor_id as ppID1, cp.payment_processor_id as ppID2, con.is_test 
@@ -233,23 +234,26 @@ INNER JOIN civicrm_contribution       con ON ( mp.contribution_id = con.id )
  LEFT JOIN civicrm_contribution_page  cp  ON ( con.contribution_page_id  = cp.id )
      WHERE con.id = %1";
         }
-
+        
+        //we are interesting in single record.
+        $sql .= ' LIMIT 1'; 
+        
         $params = array( 1 => array( $entityID, 'Integer' ) );
-        $dao    = CRM_Core_DAO::executeQuery( $sql, $params );
-
-        if ( $dao->find( true ) ) {
-            $ppID = $dao->ppID1 ? $dao->ppID1 : $dao->ppID2;
-            $mode = ( $dao->is_test ) ? 'test' : 'live';
-            
-            if ( !$ppID || $type == 'id' ) {
-                return $ppID;
-            } else if ( $type == 'info' ) {
-                return CRM_Core_BAO_PaymentProcessor::getPayment( $ppID, $mode );
-            } else if ( $type == 'obj' ) {
-                $payment = CRM_Core_BAO_PaymentProcessor::getPayment( $ppID, $mode );
-                return CRM_Core_Payment::singleton( $mode, $payment );
-            }
+        $dao = CRM_Core_DAO::executeQuery( $sql, $params );
+        
+        if ( !$dao->fetch( ) ) return $result;
+        
+        $ppID = $dao->ppID1 ? $dao->ppID1 : $dao->ppID2;
+        $mode = ( $dao->is_test ) ? 'test' : 'live';
+        if ( !$ppID || $type == 'id' ) {
+            $result = $ppID;
+        } else if ( $type == 'info' ) {
+            $result = CRM_Core_BAO_PaymentProcessor::getPayment( $ppID, $mode );
+        } else if ( $type == 'obj' ) {
+            $payment = CRM_Core_BAO_PaymentProcessor::getPayment( $ppID, $mode );
+            $result  = CRM_Core_Payment::singleton( $mode, $payment );
         }
-        return null;
+        
+        return $result;
     }
 }
