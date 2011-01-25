@@ -33,7 +33,7 @@ var useClass  = 'display';
 
 var tcount =1;
 if ( useAjax ) {
- sourceUrl = {/literal}"{$sourceUrl}"{literal};
+ {/literal}{if isset($sourceUrl)}sourceUrl = "{$sourceUrl}";{/if}{literal}
  useClass = 'pagerDisplay';
  tcount =5;
 } 
@@ -129,7 +129,7 @@ eval('tableId =[' + tableId + ']');
 	   	"bServerSide": true,
 	   	"sAjaxSource": sourceUrl,
 
-		{/literal}{if $callBack}{literal}
+		{/literal}{if !empty($callBack)}{literal}
 		"fnDrawCallback": function() { checkSelected(); },
 		{/literal}{/if}{literal}
 
@@ -197,7 +197,7 @@ return optionId;
 }
 
 //plugin to sort on currency
-var symbol = "{/literal}{$config->defaultCurrencySymbol($config->defaultSymbol)}{literal}";
+var symbol = "{/literal}{$config->defaultCurrencySymbol(isset($config->defaultSymbol) ? $config->defaultSymbol : NULL)}{literal}";
 cj.fn.dataTableExt.oSort['currency-asc']  = function(a,b) {
 	var x = (a == "-") ? 0 : a.replace( symbol, "" );
 	var y = (b == "-") ? 0 : b.replace( symbol, "" );
