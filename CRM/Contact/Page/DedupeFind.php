@@ -136,10 +136,6 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
                     }
                     CRM_Utils_System::redirect( $url );
                 } else {
-                    $cacheKeyString  = "merge $contactType";
-                    $cacheKeyString .= $rgid ? "_{$rgid}" : '_0';
-                    $cacheKeyString .= $gid ? "_{$gid}" : '_0';
-                    
                     $cids = array( );
                     foreach ( $foundDupes as $dupe ) {
                         $cids[$dupe[0]] = 1;
@@ -160,7 +156,8 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
                     // so the more likely dupes are sorted first
                     $session = CRM_Core_Session::singleton();
                     $userId  = $session->get( 'userID' );
-                    $mainContacts = array();
+                    $mainContacts = $permission = array();
+                    
                     foreach ( $foundDupes as $dupes ) {
                         $srcID = $dupes[0];
                         $dstID = $dupes[1];
@@ -169,8 +166,13 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
                             $dstID = $dupes[0];
                         }
                         
-                        $canMerge = ( CRM_Contact_BAO_Contact_Permission::allow( $dstID, CRM_Core_Permission::EDIT )
-                                      && CRM_Contact_BAO_Contact_Permission::allow( $srcID, CRM_Core_Permission::EDIT ) );
+                        if ( !array_key_exists( $srcID, $permission ) ) {
+                            $permission[$srcID] = CRM_Contact_BAO_Contact_Permission::allow( $srcID, CRM_Core_Permission::EDIT );
+                        }
+                        if ( !array_key_exists( $dstID, $permission ) ) {
+                            $permission[$dstID] = CRM_Contact_BAO_Contact_Permission::allow( $dstID, CRM_Core_Permission::EDIT );
+                        }
+                        $canMerge = ( $permission[$dstID] &&  $permission[$srcID] );
                         
                         $mainContacts[] = $row = array( 'srcID'   => $srcID,
                                                         'srcName' => $displayNames[$srcID],
