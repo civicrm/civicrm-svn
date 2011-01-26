@@ -77,7 +77,6 @@ class CRM_Logging_Reverter
         $deletes = array();
         $reverts = array();
         foreach ($diffs as $table => $changes) {
-            $table = substr($table, 4);   // drop the ‘log_’ prefix
             foreach ($changes as $change) {
                 switch ($change['action']) {
                 case 'Delete':

@@ -61,14 +61,14 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
 
         // set the tables concerning this report: contact, custom data and contact-related
         $logging = new CRM_Logging_Schema;
-        $this->tables[] = 'log_civicrm_contact';
-        $this->tables   = array_merge($this->tables, $logging->customDataLogTables());
-        $this->tables[] = 'log_civicrm_email';
-        $this->tables[] = 'log_civicrm_phone';
-        $this->tables[] = 'log_civicrm_im';
-        $this->tables[] = 'log_civicrm_openid';
-        $this->tables[] = 'log_civicrm_website';
-        $this->tables[] = 'log_civicrm_address';
+        $this->tables[] = 'civicrm_contact';
+        $this->tables   = array_merge($this->tables, array_keys($logging->customDataLogTables()));
+        $this->tables[] = 'civicrm_email';
+        $this->tables[] = 'civicrm_phone';
+        $this->tables[] = 'civicrm_im';
+        $this->tables[] = 'civicrm_openid';
+        $this->tables[] = 'civicrm_website';
+        $this->tables[] = 'civicrm_address';
 
         if (CRM_Utils_Request::retrieve('revert', 'Boolean', CRM_Core_DAO::$_nullObject)) {
             require_once 'CRM/Logging/Reverter.php';
@@ -175,7 +175,7 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Report_Form
             $to    = $diff['to'];
 
             if ($this->raw) {
-                $field = substr($table, 4) . '.' . $field;
+                $field = "$table.$field";
             } else {
                 if (in_array($field, $skipped))      continue;
                 if ($from == $to)                    continue; // $differ filters out === values; for presentation hide changes like 42 → '42'
