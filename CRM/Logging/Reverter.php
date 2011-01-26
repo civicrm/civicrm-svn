@@ -62,6 +62,15 @@ class CRM_Logging_Reverter
             'civicrm_phone'   => 'CRM_Core_DAO_Phone',
             'civicrm_website' => 'CRM_Core_DAO_Website',
         );
+
+        // get custom data tables, columns and types
+        $ctypes = array();
+        $dao =& CRM_Core_DAO::executeQuery('SELECT table_name, column_name, data_type FROM civicrm_custom_group cg JOIN civicrm_custom_field cf ON (cf.custom_group_id = cg.id)');
+        while ($dao->fetch()) {
+            if (!isset($ctypes[$dao->table_name])) $ctypes[$dao->table_name] = array();
+            $ctypes[$dao->table_name][$dao->column_name] = $dao->data_type;
+        }
+
         $differ = new CRM_Logging_Differ($this->log_conn_id, $this->log_date);
         $diffs  = $differ->diffsInTables($tables);
 
@@ -92,10 +101,11 @@ class CRM_Logging_Reverter
             CRM_Core_DAO::executeQuery("DELETE FROM `$table` WHERE id IN (" . implode(', ', array_unique($ids)) . ')');
         }
 
-        // revert updates by updating to ‘from’ values
-        // FIXME: handle custom data tables
+        // revert updates by updating to previous values
         foreach ($reverts as $table => $row) {
-            if (in_array($table, array_keys($daos))) {
+            switch (true) {
+            // DAO-based tables
+            case in_array($table, array_keys($daos)):
                 require_once str_replace('_', DIRECTORY_SEPARATOR, $daos[$table]) . '.php';
                 eval("\$dao = new {$daos[$table]};");
                 foreach ($row as $id => $changes) {
@@ -106,6 +116,23 @@ class CRM_Logging_Reverter
                     $dao->save();
                     $dao->reset();
                 }
+                break;
+            // custom data tables
+            case in_array($table, array_keys($ctypes)):
+                foreach ($row as $id => $changes) {
+                    $sets    = array();
+                    $params  = array(1 => array($id, 'Integer'));
+                    $counter = 2;
+                    foreach ($changes as $field => $value) {
+                        if (!isset($ctypes[$table][$field])) continue;   // don’t try reverting a field that’s no longer there
+                        $sets[] = "$field = %$counter";
+                        $params[$counter] = array($value, $ctypes[$table][$field]);
+                        $counter++;
+                    }
+                    $sql = "UPDATE `$table` SET " . implode(', ', $sets) . ' WHERE id = %1';
+                    CRM_Core_DAO::executeQuery($sql, $params);
+                }
+                break;
             }
         }
     }
