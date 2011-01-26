@@ -51,7 +51,6 @@
         <tr>
             <th>{ts}Relationship{/ts}</th>
             <th></th>
-            <th>{ts}Permissioned? <span id="permission" class="crm-marker permission-relationship"> *</span>{/ts}</th>
             <th>{ts}Start{/ts}</th>
             <th>{ts}End{/ts}</th>
             <th>{ts}City{/ts}</th>
@@ -74,21 +73,22 @@
             {if $relationshipTabContext}
                 <td class="bold">
                    <a href="{crmURL p='civicrm/contact/view/rel' q="action=view&reset=1&selectedChild=rel&cid=`$contactId`&id=`$rel.id`&rtype=`$rel.rtype`"}">{$rel.relation}</a>
+			{if ($rel.cid eq $rel.contact_id_a and $rel.is_permission_a_b eq 1) OR
+			    ($rel.cid eq $rel.contact_id_b and $rel.is_permission_b_a eq 1) }
+		            <span id="permission-b-a" class="crm-marker permission-relationship"> *</span>
+		        {/if}
 		</td>
                 <td>
 		   <a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$rel.cid`"}">{$rel.name}</a>
+		        {if ($contactId eq $rel.contact_id_a and $rel.is_permission_a_b eq 1) OR
+			    ($contactId eq $rel.contact_id_b and $rel.is_permission_b_a eq 1) } 
+		    	    <span id="permission-a-b" class="crm-marker permission-relationship"> *</span>
+		        {/if}
 		</td>
             {else}
                 <td class="bold">{$rel.relation}</strong></td>
                 <td>{$rel.name}</td>
             {/if}
-             {if $rel.is_permission_a_b eq '1' and $rel.rtype eq 'b_a'}
-             	  <td>{ts}Yes{/ts}</td>
-             {elseif $rel.is_permission_b_a eq '1' and $rel.rtype eq 'a_b'}
-             	  <td>{ts}Yes{/ts}</td>
-             {else}
-                  <td>&nbsp;</td>
-             {/if}
                 <td>{$rel.start_date|crmDate}</td>
                 <td>{$rel.end_date|crmDate}</td>
                 <td>{$rel.city}</td>
@@ -101,10 +101,10 @@
         </table>
         {/strip}
         </div>
-        <div id="permission-legend" class="crm-content-block">
-             <span class="crm-marker">* </span>{ts}Indicates a permissioned relationship. This contact can be viewed and updated by the other.{/ts}
-        </div>
 
+        <div id="permission-legend" class="crm-content-block">
+	     <span class="crm-marker">* </span>{ts}Indicates a permissioned relationship. This contact can be viewed and updated by the other.{/ts}
+        </div>
 {/if}
 {* end of code to show current relationships *}
 
