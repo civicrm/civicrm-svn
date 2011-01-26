@@ -80,7 +80,7 @@ class CRM_Logging_Reverter
                 case 'Update':
                     if (!isset($reverts[$table]))                $reverts[$table] = array();
                     if (!isset($reverts[$table][$change['id']])) $reverts[$table][$change['id']] = array();
-                    $reverts[$table][$change['id']][] = $change;
+                    $reverts[$table][$change['id']][$change['field']] = $change['from'];
                     break;
                 }
             }
@@ -99,8 +99,8 @@ class CRM_Logging_Reverter
                 eval("\$dao = new {$daos[$table]};");
                 foreach ($row as $id => $changes) {
                     $dao->id = $id;
-                    foreach ($changes as $change) {
-                        $dao->$change['field'] = $change['from'];
+                    foreach ($changes as $field => $value) {
+                        $dao->$field = $value;
                     }
                     $dao->save();
                     $dao->reset();
