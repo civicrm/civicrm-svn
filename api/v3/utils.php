@@ -130,7 +130,7 @@ function civicrm_create_success( $params = 1 )
 {
     $result = array();
     $result['is_error'] = 0;
-
+    $result['version'] =3;
     if (is_array($params)) {
         $result['count'] = count($params);
 

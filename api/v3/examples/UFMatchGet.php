@@ -4,7 +4,7 @@
     {
         $params   = array('uf_id' => 42,
                           'version' => 3);
-        $result = civicrm_api( 'civicrm_UF_Match_get','UFMatch',$params );
+        $result = civicrm_api( 'civicrm_UF_match_get','UFMatch',$params );
         return $result;
     }
     
@@ -13,10 +13,8 @@
       $expectedResult = array(
                     'is_error'           => 0,
                     'count' => 1,
-                    'values' => Array  (
-                                        'contact_id' => 69
-                                        ),
-
+      							'version' => 3,
+                    'values' => Array  ('contact_id' => 69),
                      );
 
         return $expectedResult  ;

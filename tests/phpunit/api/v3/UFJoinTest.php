@@ -115,14 +115,22 @@ class api_v3_UFJoinTest extends CiviUnitTestCase
             'weight'       => 1,
             'uf_group_id'  => $this->_ufGroupId,
             'is_active'    => 1,
+            'version'			 => $this->_apiversion,
+
         );
         $ufJoin       = civicrm_uf_join_create($params);
+ 
         $searchParams = array(
             'entity_table' => 'civicrm_contribution_page',
             'entity_id'    => 1,
+            'version'			 => $this->_apiversion,       
+     
         );
-        $ufGroupId = civicrm_uf_join_UFGroupId_get($searchParams);
-        $this->assertEquals($ufGroupId, $this->_ufGroupId);
+        $result = civicrm_uf_join_get($searchParams);
+
+        foreach($result['values'] as $key => $value){
+          $this->assertEquals($value['uf_group_id'], $this->_ufGroupId, 'In line ' . __LINE__ );
+        }
     }
     
 
@@ -131,8 +139,8 @@ class api_v3_UFJoinTest extends CiviUnitTestCase
         $params = 'a string';
         $result = civicrm_uf_join_create($params);
 
-        $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'params is not an array' );
+        $this->assertEquals( $result['is_error'], 1 , 'In line ' . __LINE__ );
+        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array', 'In line ' . __LINE__  );
     }
     
     public function testUFJoinEditEmptyParams()
@@ -140,8 +148,8 @@ class api_v3_UFJoinTest extends CiviUnitTestCase
         $params = array();
         $result = civicrm_uf_join_create($params);
 
-        $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'params is an empty array' );
+        $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__  );
+        $this->assertEquals( $result['error_message'], 'Required fields module,weight,uf_group_id for CRM_Core_DAO_UFJoin are not present', 'In line ' . __LINE__  );
     }
 
     public function testUFJoinEditWithoutUFGroupId()
@@ -151,11 +159,11 @@ class api_v3_UFJoinTest extends CiviUnitTestCase
             'entity_table' => 'civicrm_contribution_page',
             'entity_id'    => 1,
             'weight'       => 1,
-            'is_active'    => 1 );
+            'is_active'    => 1 ,
+            'version'			 => $this->_apiversion,);
         $result = civicrm_uf_join_create($params);
-
-        $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'uf_group_id is required field' );
+        $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__  );
+        $this->assertEquals( $result['error_message'], 'Required fields uf_group_id for CRM_Core_DAO_UFJoin are not present', 'In line ' . __LINE__  );
     }
 
 
@@ -174,11 +182,14 @@ class api_v3_UFJoinTest extends CiviUnitTestCase
             'weight'       => 1,
             'uf_group_id'  => $this->_ufGroupId,
             'is_active'    => 1,
+            'version'			 => $this->_apiversion,
+            'sequential'	 => 1,
         );
         $ufJoin = civicrm_uf_join_create($params);
-        foreach ($params as $key => $value) {
-            $this->assertEquals($ufJoin[$key], $params[$key]);
-        }
+        $this->assertEquals($ufJoin['values'][0]['module'], $params['module'],'In line ' . __LINE__ );
+        $this->assertEquals($ufJoin['values'][0]['uf_group_id'], $params['uf_group_id'],'In line ' . __LINE__ );
+        $this->assertEquals($ufJoin['values'][0]['is_active'], $params['is_active'],'In line ' . __LINE__ );
+        
         $params =  array(
             'id'           => $ufJoin['id'],
             'module'       => 'CiviContribute',
@@ -187,11 +198,13 @@ class api_v3_UFJoinTest extends CiviUnitTestCase
             'weight'       => 1,
             'uf_group_id'  => $this->_ufGroupId,
             'is_active'    => 0,
+            'version'			 => $this->_apiversion,
+            'sequential'	 => 1,
         );
         $ufJoinUpdated = civicrm_uf_join_create($params);
-        foreach ($params as $key => $value) {
-            $this->assertEquals($ufJoinUpdated[$key], $params[$key]);
-        }
+        $this->assertEquals($ufJoinUpdated['values'][0]['module'], $params['module'],'In line ' . __LINE__ );
+        $this->assertEquals($ufJoinUpdated['values'][0]['uf_group_id'], $params['uf_group_id'],'In line ' . __LINE__ );
+        $this->assertEquals($ufJoinUpdated['values'][0]['is_active'], $params['is_active'],'In line ' . __LINE__ );
     }
 
 
@@ -201,7 +214,7 @@ class api_v3_UFJoinTest extends CiviUnitTestCase
         $result = civicrm_uf_join_create($params);
 
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'params is not an array' );
+        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array' ,'In line ' . __LINE__ );
     }
     
     public function testFindUFJoinEmptyParams()
@@ -209,8 +222,8 @@ class api_v3_UFJoinTest extends CiviUnitTestCase
         $params = array();
         $result = civicrm_uf_join_create($params);
 
-        $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'params is an empty array' );
+        $this->assertEquals( $result['is_error'], 1 ,'In line ' . __LINE__ );
+        $this->assertEquals( $result['error_message'], 'Required fields module,weight,uf_group_id for CRM_Core_DAO_UFJoin are not present' ,'In line ' . __LINE__ );
     }
 
     public function testFindUFJoinWithoutUFGroupId()
@@ -220,12 +233,13 @@ class api_v3_UFJoinTest extends CiviUnitTestCase
             'entity_table' => 'civicrm_contribution_page',
             'entity_id'    => 1,
             'weight'       => 1,
-            'is_active'    => 1
+            'is_active'    => 1,
+            'version'			 => $this->_apiversion,
         );
         $result = civicrm_uf_join_create($params);
 
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'uf_group_id is required field' );
+        $this->assertEquals( $result['error_message'], 'Required fields uf_group_id for CRM_Core_DAO_UFJoin are not present','In line ' . __LINE__  );
     }
     
     /**
@@ -240,15 +254,36 @@ class api_v3_UFJoinTest extends CiviUnitTestCase
             'weight'       => 1,
             'uf_group_id'  => $this->_ufGroupId,
             'is_active'    => 1,
+            'version'			 => $this->_apiversion,
+           
         );
+        
         $ufJoin       = civicrm_uf_join_create($params);
         $searchParams = array(
             'entity_table' => 'civicrm_contribution_page',
             'entity_id'    => 1,
+            'version'			 => $this->_apiversion,
+            'sequential'   =>1,
+
         );
-        $ufJoinId = civicrm_uf_join_get($searchParams);
-        $this->assertEquals($ufJoinId, $ufJoin['id']);
+
+        $result = civicrm_uf_join_get($searchParams);
+        $this->assertEquals($result['values'][0]['module'],$params['module'] ,'In line ' . __LINE__ );
+        $this->assertEquals($result['values'][0]['uf_group_id'],$params['uf_group_id'] ,'In line ' . __LINE__ );
+        $this->assertEquals($result['values'][0]['entity_id'],$params['entity_id'] ,'In line ' . __LINE__ );
+        
+    }
+     /**
+     *  Test civicrm_activity_create() using example code
+     */
+    function testUFJoinCreateExample( )
+    {
+      require_once 'api/v3/examples/UFJoinCreate.php';
+      $result = test_api_v3_UF_join_create();
+      $expectedResult = test_api_v3_UF_join_create_expectedresult();
+      $this->assertEquals($result,$expectedResult);
     }
 
-
 }
+    
+

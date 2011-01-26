@@ -50,17 +50,19 @@ require_once 'CRM/Core/BAO/UFJoin.php';
  *
  * @return array CRM_Core_DAO_UFJoin Array
  * @access public
+ * @example UFJoinCreate.php
  *
  */
-function civicrm_uf_join_create($params)
+function civicrm_uf_join_create(&$params)
 {
   _civicrm_initialize();
   try{
     civicrm_verify_one_mandatory($params,'CRM_Core_DAO_UFJoin',array('uf_group_id'));
 
     $ufJoin = CRM_Core_BAO_UFJoin::create($params);
-    _civicrm_object_to_array( $ufJoin, $ufJoinArray);
-    return civicrm_create_success($ufJoinArray);
+    _civicrm_object_to_array( $ufJoin, $ufJoinArray[]);
+    $reindex = ($params['sequential']?  0:REINDEX_BY_ID);
+    return civicrm_create_success($ufJoinArray,$reindex);
 
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );
@@ -94,16 +96,21 @@ function civicrm_uf_join_get(&$params)
             $ufJoinDAO->$name = $params[$name];
         }
     }
-    
-    if ( ! $ufJoinDAO->find(true) ) {
+
+    if ( ! $ufJoinDAO->find() ) {
         return civicrm_create_success(array());
     }
-    _civicrm_object_to_array($ufJoinDAO, $ufJoin[]);
+
     while ($ufJoinDAO->fetch()) {
-      _civicrm_object_to_array($ufJoinDAO, $ufJoin[]);
+      _civicrm_object_to_array($ufJoinDAO, $ufJoin[$ufJoinDAO->id]);
     }
-    return civicrm_create_success($ufJoin);
-   
+    $ufJoinDAO->free;
+  
+    if (array_key_exists ('sequential',$params)) {
+      return civicrm_create_success(array_merge($ufJoin));
+    }else{
+      return civicrm_create_success($ufJoin);
+    }
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );
   } catch (Exception $e) {
