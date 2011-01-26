@@ -116,7 +116,7 @@
         </ul>
 
         <div title="Summary" id="contact-summary" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
-            {if isset($hookContentPlacement) and $hookContentPlacement neq 3}
+            {if ! isset($hookContentPlacement) or $hookContentPlacement neq 3}
                 
                 {if !empty($hookContent) and isset($hookContentPlacement) and $hookContentPlacement eq 2}
                     {include file="CRM/Contact/Page/View/SummaryHook.tpl"}
