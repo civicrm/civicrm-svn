@@ -34,24 +34,12 @@
  *
  */
 
-require_once 'CRM/Report/Form.php';
+require_once 'CRM/Logging/ReportSummary.php';
 
-class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
+class CRM_Report_Form_Contact_LoggingSummary extends CRM_Logging_ReportSummary
 {
-    private $loggingDB;
-
-    public  $cid;
-
     function __construct()
     {
-        $this->_add2groupSupported = false; // don’t display the ‘Add these Contacts to Group’ button
-
-        $dsn = defined('CIVICRM_LOGGING_DSN') ? DB::parseDSN(CIVICRM_LOGGING_DSN) : DB::parseDSN(CIVICRM_DSN);
-        $this->loggingDB = $dsn['database'];
-
-        // used for redirect back to contact summary
-        $this->cid = CRM_Utils_Request::retrieve('cid', 'Integer', CRM_Core_DAO::$_nullObject);
-
         $this->_columns = array(
             'log_civicrm_contact' => array(
                 'dao' => 'CRM_Contact_DAO_Contact',
@@ -169,27 +157,6 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
         }
     }
 
-    function select( ) {
-        $select = array( );
-        $this->_columnHeaders = array( );
-        foreach ( $this->_columns as $tableName => $table ) {
-            if ( array_key_exists('fields', $table) ) {
-                foreach ( $table['fields'] as $fieldName => $field ) {
-                    if ( CRM_Utils_Array::value( 'required', $field ) ||
-                        CRM_Utils_Array::value( $fieldName, $this->_params['fields'] ) ) {
-                            $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
-                            $this->_columnHeaders["{$tableName}_{$fieldName}"]['type']  = CRM_Utils_Array::value( 'type', $field );
-                            $this->_columnHeaders["{$tableName}_{$fieldName}"]['no_display']  = CRM_Utils_Array::value( 'no_display', $field );
-
-                            $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = $field['title'];
-                        }
-                }
-            }
-        }
-
-        $this->_select = "SELECT " . implode( ', ', $select ) . " ";
-    }
-
     function from()
     {
         $this->_from = "
@@ -198,21 +165,4 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
             ON ({$this->_aliases['log_civicrm_contact']}.log_user_id = {$this->_aliases['civicrm_contact']}.id)
         ";
     }
-
-    function groupBy()
-    {
-        $this->_groupBy = 'GROUP BY log_conn_id, log_user_id, EXTRACT(DAY_MINUTE FROM log_date)';
-    }
-
-    function orderBy()
-    {
-        $this->_orderBy = 'ORDER BY log_date DESC';
-    }
-
-    function where()
-    {
-        parent::where();
-        $this->_where .= " AND (log_action != 'Initialization')";
-    }
-
 }
