@@ -133,12 +133,25 @@ AND    $operationClause
         $from       = CRM_Contact_BAO_Query::fromClause( $whereTables );
 
         $query = "
-REPLACE INTO civicrm_acl_contact_cache ( user_id, contact_id, operation )
-SELECT $userID, contact_a.id, '{$operation}'
+SELECT DISTINCT(contact_a.id) as id
        $from
 WHERE $permission
 ";
 
+        $values = array( );
+        $dao = CRM_Core_DAO::executeQuery( $query );
+        while ( $dao->fetch( ) ) {
+            $values[] = "( {$userID}, {$dao->id}, '{$operation}' )";
+        }
+
+        // now store this in the table
+        while ( ! empty( $values ) ) {
+            $processed = true;
+            $input = array_splice( $values, 0, self::NUM_CONTACTS_TO_INSERT );
+            $str   = implode( ',', $input );
+            $sql = "REPLACE INTO civicrm_acl_contact_cache ( user_id, contact_id, operation ) VALUES $str;";
+            CRM_Core_DAO::executeQuery( $sql );
+        }
         CRM_Core_DAO::executeQuery('DELETE FROM civicrm_acl_contact_cache WHERE contact_id IN (SELECT id FROM civicrm_contact WHERE is_deleted = 1)');
 
         $_processed[$userID] = 1;
