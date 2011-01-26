@@ -123,10 +123,9 @@ function civicrm_tag_get($params)
 
     require_once 'CRM/Core/BAO/Tag.php';
     $tagBAO = new CRM_Core_BAO_Tag();
-    
-    $properties = array('id', 'name', 'description', 'parent_id','is_selectable','is_hidden',
-                        'is_reserved','used_for');
-    foreach ( $properties as $name) {
+    $fields = array_keys($tagBAO->fields());
+
+    foreach ( $fields as $name) {
         if (array_key_exists($name, $params)) {
             $tagBAO->$name = $params[$name];
         }
