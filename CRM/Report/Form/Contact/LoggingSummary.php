@@ -48,7 +48,7 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
 
         $dsn = defined('CIVICRM_LOGGING_DSN') ? DB::parseDSN(CIVICRM_LOGGING_DSN) : DB::parseDSN(CIVICRM_DSN);
         $this->loggingDB = $dsn['database'];
-        
+
         // used for redirect back to contact summary
         $this->cid = CRM_Utils_Request::retrieve('cid', 'Integer', CRM_Core_DAO::$_nullObject);
 
@@ -58,16 +58,16 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
                 'fields' => array(
                     'id' => array(
                         'no_display' => true,
-                        'required'   => true
+                        'required'   => true,
                     ),
                     'log_user_id' => array(
                         'no_display' => true,
-                        'required'   => true
+                        'required'   => true,
                     ),
                     'log_date' => array(
                         'default'  => true,
                         'required' => true,
-                        'type' => CRM_Utils_Type::T_TIME,
+                        'type'     => CRM_Utils_Type::T_TIME,
                         'title'    => ts('When'),
                     ),
                     'altered_contact' => array(
@@ -75,7 +75,7 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
                         'name'    => 'display_name',
                         'title'   => ts('Altered Contact'),
                     ),
-                   'log_conn_id' => array(
+                    'log_conn_id' => array(
                        'no_display' => true,
                        'required'   => true
                     ),
@@ -106,9 +106,9 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
                         'type'         => CRM_Utils_Type::T_STRING,
                     ),
                     'id' => array(
-                                  'no_display' => true,
-                                  'type'       => CRM_Utils_Type::T_INT 
-                                  ),
+                        'no_display' => true,
+                        'type'       => CRM_Utils_Type::T_INT,
+                    ),
 
                 ),
             ),
@@ -180,7 +180,7 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Report_Form
                             $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
                             $this->_columnHeaders["{$tableName}_{$fieldName}"]['type']  = CRM_Utils_Array::value( 'type', $field );
                             $this->_columnHeaders["{$tableName}_{$fieldName}"]['no_display']  = CRM_Utils_Array::value( 'no_display', $field );
- 
+
                             $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = $field['title'];
                         }
                 }
