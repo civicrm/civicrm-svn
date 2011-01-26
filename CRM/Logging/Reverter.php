@@ -54,13 +54,13 @@ class CRM_Logging_Reverter
     {
         // FIXME: split off the table → DAO mapping to a GenCode-generated class
         $daos = array(
-            'log_civicrm_address' => 'CRM_Core_DAO_Address',
-            'log_civicrm_contact' => 'CRM_Contact_DAO_Contact',
-            'log_civicrm_email'   => 'CRM_Core_DAO_Email',
-            'log_civicrm_im'      => 'CRM_Core_DAO_IM',
-            'log_civicrm_openid'  => 'CRM_Core_DAO_OpenID',
-            'log_civicrm_phone'   => 'CRM_Core_DAO_Phone',
-            'log_civicrm_website' => 'CRM_Core_DAO_Website',
+            'civicrm_address' => 'CRM_Core_DAO_Address',
+            'civicrm_contact' => 'CRM_Contact_DAO_Contact',
+            'civicrm_email'   => 'CRM_Core_DAO_Email',
+            'civicrm_im'      => 'CRM_Core_DAO_IM',
+            'civicrm_openid'  => 'CRM_Core_DAO_OpenID',
+            'civicrm_phone'   => 'CRM_Core_DAO_Phone',
+            'civicrm_website' => 'CRM_Core_DAO_Website',
         );
         $differ = new CRM_Logging_Differ($this->log_conn_id, $this->log_date);
         $diffs  = $differ->diffsInTables($tables);
@@ -68,6 +68,7 @@ class CRM_Logging_Reverter
         $deletes = array();
         $reverts = array();
         foreach ($diffs as $table => $changes) {
+            $table = substr($table, 4);   // drop the ‘log_’ prefix
             foreach ($changes as $change) {
                 switch ($change['action']) {
                 case 'Delete':
@@ -88,7 +89,7 @@ class CRM_Logging_Reverter
 
         // revert inserts by deleting
         foreach ($deletes as $table => $ids) {
-            CRM_Core_DAO::executeQuery('DELETE FROM `' . substr($table, 4) . '` WHERE id IN (' . implode(', ', array_unique($ids)) . ')');
+            CRM_Core_DAO::executeQuery("DELETE FROM `$table` WHERE id IN (" . implode(', ', array_unique($ids)) . ')');
         }
 
         // revert updates by updating to ‘from’ values
