@@ -92,7 +92,7 @@ class CRM_Logging_Schema
     {
         if ($this->isEnabled()) return;
 
-        foreach (array_diff($this->tables, array_keys($this->logs)) as $table) {
+        foreach ($this->tables as $table) {
             $this->createLogTableFor($table);
         }
         $this->createTriggers();
