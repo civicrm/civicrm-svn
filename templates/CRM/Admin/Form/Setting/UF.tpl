@@ -29,10 +29,6 @@
 </div>
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
       <table class="form-layout-compressed">
-         <tr class="crm-uf-form-block-userFrameworkVersion">
-            <td class="label">{$form.userFrameworkVersion.label}</td>
-            <td>{$form.userFrameworkVersion.html}</td>
-         </tr>
          <tr class="crm-uf-form-block-userFrameworkUsersTableName">
             <td class="label">{$form.userFrameworkUsersTableName.label}</td>
             <td>{$form.userFrameworkUsersTableName.html}</td>
