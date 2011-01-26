@@ -353,6 +353,21 @@ function civicrm_contact_get( &$params, $deprecated_behavior = false )
     if ($deprecated_behavior) {
         return _civicrm_contact_get_deprecated($params);
     }
+    
+    // fix for CRM-7384 cater for soft deleted contacts
+    if (!isset($params['showAll'])) {
+        $params['contact_is_deleted'] = 0;
+    } else {
+        if ($params['showAll'] == 0) {
+            $params['contact_is_deleted'] = 0;
+        }
+        if ($params['showAll'] == 2) {
+            $params['contact_is_deleted'] = 1;
+        }
+        if ($params['showAll'] == 1 && isset($params['contact_is_deleted'])) {
+            unset($params['contact_is_deleted']);
+        }
+    }
 
     $inputParams      = array( );
     $returnProperties = array( );
