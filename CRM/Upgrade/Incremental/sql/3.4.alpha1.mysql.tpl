@@ -65,3 +65,14 @@ INSERT INTO
        `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
 VALUES
 	(@option_group_id_acsOpt, '{ts escape="sql"}Nick Name{/ts}', @value_acsOpt+1, 'nick_name', NULL, 0, NULL, @weight_acsOpt+1, NULL, 0, 0, 1, NULL, NULL);
+
+
+
+-- CRM-7352 add logging report templates
+SELECT @option_group_id_report := MAX(id)     FROM civicrm_option_group WHERE name = 'report_template';
+SELECT @weight                 := MAX(weight) FROM civicrm_option_value WHERE option_group_id = @option_group_id_report;
+SELECT @contributeCompId       := MAX(id)     FROM civicrm_component where name = 'CiviContribute';
+INSERT INTO civicrm_option_value
+  (option_group_id,         {localize field='label'}label{/localize},                   value,                        name,                                        weight,                 {localize field='description'}description{/localize},                                              is_active, component_id) VALUES
+  (@option_group_id_report, {localize}'Contribute Logging Report (Summary)'{/localize}, 'logging/contribute/summary', 'CRM_Report_Form_Contribute_LoggingSummary', @weight := @weight + 1, {localize}'Contribution modification report for the logging infrastructure (summary).'{/localize}, 0,         @contributeCompId),
+  (@option_group_id_report, {localize}'Contribute Logging Report (Detail)'{/localize},  'logging/contribute/detail',  'CRM_Report_Form_Contribute_LoggingDetail',  @weight := @weight + 1, {localize}'Contribute modification report for the logging infrastructure (detail).'{/localize},    0,         @contributeCompId);

@@ -34,6 +34,7 @@
  *
  */
 
+require_once 'CRM/Contribute/PseudoConstant.php';
 require_once 'CRM/Core/PseudoConstant.php';
 
 class CRM_Logging_Differ
@@ -125,13 +126,14 @@ class CRM_Logging_Differ
 
         // FIXME: split off the table → DAO mapping to a GenCode-generated class
         static $daos = array(
-            'civicrm_address' => 'CRM_Core_DAO_Address',
-            'civicrm_contact' => 'CRM_Contact_DAO_Contact',
-            'civicrm_email'   => 'CRM_Core_DAO_Email',
-            'civicrm_im'      => 'CRM_Core_DAO_IM',
-            'civicrm_openid'  => 'CRM_Core_DAO_OpenID',
-            'civicrm_phone'   => 'CRM_Core_DAO_Phone',
-            'civicrm_website' => 'CRM_Core_DAO_Website',
+            'civicrm_address'      => 'CRM_Core_DAO_Address',
+            'civicrm_contact'      => 'CRM_Contact_DAO_Contact',
+            'civicrm_email'        => 'CRM_Core_DAO_Email',
+            'civicrm_im'           => 'CRM_Core_DAO_IM',
+            'civicrm_openid'       => 'CRM_Core_DAO_OpenID',
+            'civicrm_phone'        => 'CRM_Core_DAO_Phone',
+            'civicrm_website'      => 'CRM_Core_DAO_Website',
+            'civicrm_contribution' => 'CRM_Contribute_DAO_Contribution',
         );
 
         if (!isset($titles[$table]) or !isset($values[$table])) {
@@ -140,6 +142,8 @@ class CRM_Logging_Differ
                 // FIXME: these should be populated with pseudo constants as they
                 // were at the time of logging rather than their current values
                 $values[$table] = array(
+                    'contribution_type_id'           => CRM_Contribute_PseudoConstant::contributionType(),
+                    'contribution_status_id'         => CRM_Contribute_PseudoConstant::contributionStatus(),
                     'country_id'                     => CRM_Core_PseudoConstant::country(),
                     'gender_id'                      => CRM_Core_PseudoConstant::gender(),
                     'location_type_id'               => CRM_Core_PseudoConstant::locationType(),

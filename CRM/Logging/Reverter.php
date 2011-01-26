@@ -54,13 +54,14 @@ class CRM_Logging_Reverter
     {
         // FIXME: split off the table → DAO mapping to a GenCode-generated class
         $daos = array(
-            'civicrm_address' => 'CRM_Core_DAO_Address',
-            'civicrm_contact' => 'CRM_Contact_DAO_Contact',
-            'civicrm_email'   => 'CRM_Core_DAO_Email',
-            'civicrm_im'      => 'CRM_Core_DAO_IM',
-            'civicrm_openid'  => 'CRM_Core_DAO_OpenID',
-            'civicrm_phone'   => 'CRM_Core_DAO_Phone',
-            'civicrm_website' => 'CRM_Core_DAO_Website',
+            'civicrm_address'      => 'CRM_Core_DAO_Address',
+            'civicrm_contact'      => 'CRM_Contact_DAO_Contact',
+            'civicrm_email'        => 'CRM_Core_DAO_Email',
+            'civicrm_im'           => 'CRM_Core_DAO_IM',
+            'civicrm_openid'       => 'CRM_Core_DAO_OpenID',
+            'civicrm_phone'        => 'CRM_Core_DAO_Phone',
+            'civicrm_website'      => 'CRM_Core_DAO_Website',
+            'civicrm_contribution' => 'CRM_Contribute_DAO_Contribution',
         );
 
         // get custom data tables, columns and types
