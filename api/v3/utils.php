@@ -78,13 +78,15 @@ function civicrm_verify_one_mandatory (&$params, $daoName = null, $keyoptions = 
  * @param array $keys list of required fields. A value can be an array denoting that either this or that is required.
  * @return null or throws error if there the required fields not present
  */
+
 function civicrm_verify_mandatory (&$params, $daoName = null, $keys = array() ) {
   if ( ! is_array( $params ) ) {
      throw new Exception ('Input variable `params` is not an array');
   }
 
   if ($daoName != null) {
-    _civicrm_check_required_fields( $params, $daoName, true);
+       if(is_array($unmatched =_civicrm_check_required_fields( $params, $daoName, true))){
+       }
   }
   
   $keys[] = 'version';//required from v3 onwards
@@ -92,22 +94,26 @@ function civicrm_verify_mandatory (&$params, $daoName = null, $keys = array() ) 
   foreach ($keys as $key) {
     if(is_array($key)){
       $match = 0;
-      $unmatched = array();
+      $optionset = array();
       foreach($key as $subkey){
-        if ( array_key_exists ($subkey, $params)) {
-           $match =1;          
+        if ( !array_key_exists ($subkey, $params)) {
+          $optionset[] = $subkey;
         }else{
-          $unmatched[] = $subkey;
+          $match = 1;//as long as there is one match then we don't need to rtn anything
         }
       }
-      if (!$match){
-         throw new Exception ("Mandatory param missing - one required of: ". implode(", ",$unmatched));
+      if (empty($match) &&!empty($optionset)){
+        $unmatched[] = "one of (". implode(", ",$optionset) . ")";
       }
     }else{
     if ( !array_key_exists ($key, $params))
-      throw new Exception ("Mandatory param missing: ". $key);
+      $unmatched[] = $key;
     }
+
   }
+    if(is_array($unmatched)){
+      throw new Exception("Mandatory key(s) missing from params array: " . implode(", ",$unmatched));
+    }
 }
 
 /**
@@ -231,6 +237,7 @@ function _civicrm_object_to_array( &$dao, &$values )
         }
     }
 }
+
 
 /**
  * This function adds the contact variable in $values to the
@@ -686,12 +693,14 @@ function _civicrm_custom_format_params( &$params, &$values, $extends, $entityId 
  *
  * @param array  $params       Associative array of property name/value
  *                             pairs to insert in new history.
+ * @daoName string DAO to check params agains
+ * @return bool should the missing fields be returned as an array (core error created as default)
  *                           
  *
- * @return bool true if success false otherwise
+ * @return bool true if all fields present, depending on $result a core error is created of an array of missing fields is returned
  * @access public
  */
-function _civicrm_check_required_fields( &$params, $daoName, $throwException = false)
+function _civicrm_check_required_fields( &$params, $daoName, $return = FALSE)
 {
     if ( isset($params['extends'] ) ) {
         if ( ( $params['extends'] == 'Activity' || 
@@ -724,10 +733,11 @@ function _civicrm_check_required_fields( &$params, $daoName, $throwException = f
     }
 
     if (!empty($missing)) {
-        if ($throwException) {
-          throw new Exception ("Required fields ". implode(',', $missing) . " for $daoName are not present");
+        if (!empty($return)) {
+          return $missing;
+        }else{
+          return civicrm_create_error(ts("Required fields ". implode(',', $missing) . " for $daoName are not present"));
         }
-        return civicrm_create_error(ts("Required fields ". implode(',', $missing) . " for $daoName are not present"));
     }
 
     return true;
