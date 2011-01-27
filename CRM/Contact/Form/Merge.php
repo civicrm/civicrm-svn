@@ -90,7 +90,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         // get user info of main contact.
         $config = CRM_Core_Config::singleton( );
         require_once 'CRM/Core/Permission.php';
-        $viewUser = CRM_Core_Permission::check('access user profiles');
+        $viewUser = CRM_Core_Permission::check( 'access user profiles' );
         $mainUfId = CRM_Core_BAO_UFMatch::getUFId( $cid );
         if ( $mainUfId ) {
             if ( $config->userFramework == 'Drupal' ) {
@@ -401,8 +401,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
 
     public function buildQuickForm()
     {
-        CRM_Utils_System::setTitle( ts('Merge Contacts') );
-
+        CRM_Utils_System::setTitle( ts( 'Merge %1s', array( 1 => $this->_contactType ) ) );
         $name = ts('Merge');
         if ( $this->next ) {
             $name = ts('Merge and Goto Next Pair');

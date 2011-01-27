@@ -118,4 +118,12 @@ WHERE  cacheKey = '$cacheKey'
         return $main;
     }
 
+    function dumpCache( $values )
+    {
+        $insert = "INSERT INTO civicrm_prevnext_cache ( entity_table, entity_id1, entity_id2, cacheKey, data ) VALUES \n";
+        $query  = $insert . implode( ",\n ", $values );
+        
+        //dump the dedupe matches in the prevnext_cache table
+        CRM_Core_DAO::executeQuery( $query );
+    }
 }
