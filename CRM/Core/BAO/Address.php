@@ -852,8 +852,9 @@ SELECT location_type_id
         foreach ( $fields as $key => $value ) {
             $val = null;
             if ( is_array( $value ) ) {
-                $val = strstr($value['name'],'-', true);
-                if ( in_array( $val , $addressFields ) && in_array( CRM_Utils_Array::value( 'location_type_id', $value, 0), $sharedLocations )  ) {
+                $val = explode( '-', $value['name'] );
+                if ( in_array( $val[0] , $addressFields ) 
+                     && in_array( CRM_Utils_Array::value( 'location_type_id', $value, 0 ), $sharedLocations )  ) {
                     $fields[$key]['is_shared'] = true;
                 }
             }
