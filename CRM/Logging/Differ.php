@@ -97,9 +97,23 @@ class CRM_Logging_Differ
         // return early if nothing found
         if (empty($changed)) return array();
 
-        // look for the previous state (different log_conn_id) of the given id
-        $originalSQL = "SELECT * FROM `{$this->db}`.`log_$table` WHERE log_conn_id != %1 AND log_date < %2 AND id = %3 ORDER BY log_date DESC LIMIT 1";
-        $original    = $this->sqlToArray($originalSQL, $params);
+        switch ($changed['log_action']) {
+        case 'Delete':
+            // the previous state is kept in the current state, current should keep the keys and clear the values
+            $original = $changed;
+            foreach ($changed as &$val) $val = null;
+            $changed['log_action'] = 'Delete';
+            break;
+        case 'Insert':
+            // the previous state does not exist
+            $original = array();
+            break;
+        case 'Update':
+            // look for the previous state (different log_conn_id) of the given id
+            $originalSQL = "SELECT * FROM `{$this->db}`.`log_$table` WHERE log_conn_id != %1 AND log_date < %2 AND id = %3 ORDER BY log_date DESC LIMIT 1";
+            $original    = $this->sqlToArray($originalSQL, $params);
+            break;
+        }
 
         // populate $diffs with only the differences between $changed and $original
         $skipped = array('log_action', 'log_conn_id', 'log_date', 'log_user_id');

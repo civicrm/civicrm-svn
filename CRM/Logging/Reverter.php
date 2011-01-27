@@ -68,7 +68,7 @@ class CRM_Logging_Reverter
         $ctypes = array();
         $dao =& CRM_Core_DAO::executeQuery('SELECT table_name, column_name, data_type FROM civicrm_custom_group cg JOIN civicrm_custom_field cf ON (cf.custom_group_id = cg.id)');
         while ($dao->fetch()) {
-            if (!isset($ctypes[$dao->table_name])) $ctypes[$dao->table_name] = array();
+            if (!isset($ctypes[$dao->table_name])) $ctypes[$dao->table_name] = array('entity_id' => 'Integer');
             $ctypes[$dao->table_name][$dao->column_name] = $dao->data_type;
         }
 
@@ -80,16 +80,14 @@ class CRM_Logging_Reverter
         foreach ($diffs as $table => $changes) {
             foreach ($changes as $change) {
                 switch ($change['action']) {
-                case 'Delete':
-                    // FIXME: handle Delete actions
-                    break;
                 case 'Insert':
                     if (!isset($deletes[$table])) $deletes[$table] = array();
                     $deletes[$table][] = $change['id'];
                     break;
+                case 'Delete':
                 case 'Update':
                     if (!isset($reverts[$table]))                $reverts[$table] = array();
-                    if (!isset($reverts[$table][$change['id']])) $reverts[$table][$change['id']] = array();
+                    if (!isset($reverts[$table][$change['id']])) $reverts[$table][$change['id']] = array('log_action' => $change['action']);
                     $reverts[$table][$change['id']][$change['field']] = $change['from'];
                     break;
                 }
@@ -111,25 +109,40 @@ class CRM_Logging_Reverter
                 foreach ($row as $id => $changes) {
                     $dao->id = $id;
                     foreach ($changes as $field => $value) {
+                        if ($field == 'log_action') continue;
                         $dao->$field = $value;
                     }
-                    $dao->save();
+                    $changes['log_action'] == 'Delete' ? $dao->insert() : $dao->update();
                     $dao->reset();
                 }
                 break;
             // custom data tables
             case in_array($table, array_keys($ctypes)):
                 foreach ($row as $id => $changes) {
-                    $sets    = array();
+                    $inserts = array('id' => '%1');
+                    $updates = array();
                     $params  = array(1 => array($id, 'Integer'));
                     $counter = 2;
                     foreach ($changes as $field => $value) {
                         if (!isset($ctypes[$table][$field])) continue;   // don’t try reverting a field that’s no longer there
-                        $sets[] = "$field = %$counter";
+                        switch ($ctypes[$table][$field]) {
+                        case 'Date':
+                            $value = substr(CRM_Utils_Date::isoToMysql($value), 0, 8);
+                            break;
+                        case 'Timestamp':
+                            $value = CRM_Utils_Date::isoToMysql($value);
+                            break;
+                        }
+                        $inserts[$field]  = "%$counter";
+                        $updates[]        = "$field = %$counter";
                         $params[$counter] = array($value, $ctypes[$table][$field]);
                         $counter++;
                     }
-                    $sql = "UPDATE `$table` SET " . implode(', ', $sets) . ' WHERE id = %1';
+                    if ($changes['log_action'] == 'Delete') {
+                        $sql = "INSERT INTO `$table` (" . implode(', ', array_keys($inserts)) . ') VALUES (' . implode(', ', $inserts) . ')';
+                    } else {
+                        $sql = "UPDATE `$table` SET " . implode(', ', $updates) . ' WHERE id = %1';
+                    }
                     CRM_Core_DAO::executeQuery($sql, $params);
                 }
                 break;
