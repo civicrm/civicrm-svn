@@ -248,6 +248,15 @@ WHERE  id = %1
         if ( $savedSearchID ) {
             require_once 'CRM/Contact/BAO/SavedSearch.php';
             $ssParams =& CRM_Contact_BAO_SavedSearch::getSearchParams($savedSearchID);
+
+            // rectify params to what proximity search expects if there is a value for prox_distance
+            // CRM-7021
+            if ( !empty( $ssParams ) ) { 
+                require_once 'CRM/Contact/BAO/ProximityQuery.php';
+                CRM_Contact_BAO_ProximityQuery::fixInputParams( $ssParams );
+            }
+
+            
             $returnProperties = array();
             if (CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_SavedSearch',
                                              $savedSearchID,
