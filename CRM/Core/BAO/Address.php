@@ -820,11 +820,11 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
      */
     static function checkContactSharedAddressFields( &$fields, $contactId  ) {
         
-        if ( empty( $fields ) ) {
+        if ( empty( $fields ) or !isset ($contactId) ) {
             return;
         }
         
-        $sharedLocatoions = array( );
+        $sharedLocations = array( );
         $query = "
 SELECT location_type_id
   FROM civicrm_address 
@@ -833,7 +833,7 @@ SELECT location_type_id
         $dao = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $contactId, 'Integer' ) ) );
         
         while( $dao->fetch( ) ) {
-            $sharedLocatoions[] =  $dao->location_type_id;
+            $sharedLocations[] =  $dao->location_type_id;
         }
         $masterAddressId = null;
         $addressFields = array ( 'street_address',
@@ -853,7 +853,7 @@ SELECT location_type_id
             $val = null;
             if ( is_array( $value ) ) {
                 $val = strstr($value['name'],'-', true);
-                if ( in_array( $val , $addressFields ) && in_array( CRM_Utils_Array::value( 'location_type_id', $value, 0), $sharedLocatoions )  ) {
+                if ( in_array( $val , $addressFields ) && in_array( CRM_Utils_Array::value( 'location_type_id', $value, 0), $sharedLocations )  ) {
                     $fields[$key]['is_shared'] = true;
                 }
             }
