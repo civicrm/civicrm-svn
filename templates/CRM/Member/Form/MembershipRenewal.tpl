@@ -24,6 +24,9 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for renewing memberships for a contact  *}
+{if $cdType }
+  {include file="CRM/Custom/Form/CustomData.tpl"}
+{else}
 {if $membershipMode == 'test' }
     {assign var=registerMode value="TEST"}
 {elseif $membershipMode == 'live'}
@@ -62,7 +65,14 @@
         <tr class="crm-member-membershiprenew-form-block-org_name">  
             <td class="label">{ts}Membership Organization and Type{/ts}</td>
             <td class="html-adjust">{$orgName}&nbsp;&nbsp;-&nbsp;&nbsp;{$memType}
-                {if $member_is_test} {ts}(test){/ts}{/if}</td>
+                {if $member_is_test} {ts}(test){/ts}{/if}
+                &nbsp; <a id="changeMembershipOrgType" href='#' onclick='adjustMembershipOrgType(); return false;'>{ts}change membership type{/ts}</a></td>
+        </tr>
+        <tr id="membershipOrgType" class="crm-member-membershiprenew-form-block-renew_org_name">
+			<td class="label">{$form.membership_type_id.label}</td>
+			<td>{$form.membership_type_id.html}
+    {if $member_is_test} {ts}(test){/ts}{/if}<br />
+        <span class="description">{ts}Select Membership Organization and then Membership Type.{/ts}</span></td>
         </tr> 
         <tr class="crm-member-membershiprenew-form-block-membership_status">  
             <td class="label">{ts}Membership Status{/ts}</td>
@@ -121,7 +131,6 @@
 	 </tr> 
 	 {/if}  
     </table>
-    
     {if $membershipMode}
      	<div class="spacer"></div>
      	{include file='CRM/Core/BillingBlock.tpl'}
@@ -145,7 +154,10 @@
 	     </tr>
      </table>
      {/if}
-         
+     <div id="customData"></div>
+     {*include custom data js file*}
+     {include file="CRM/common/customData.tpl"}
+     
      <div>{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
    
    <div class="spacer"></div>
@@ -190,6 +202,15 @@
 {/if}
 {literal}
 <script type="text/javascript">
+cj(document).ready(function() {
+	cj('#membershipOrgType').hide(); 
+	{/literal}
+		buildCustomData( '{$customDataType}' );
+		{if $customDataSubType}
+			buildCustomData( '{$customDataType}', {$customDataSubType} );
+		{/if}
+	{literal}
+});
 function checkPayment()
 {
     showHideByValue('record_contribution','','recordContribution','table-row','radio',false);
@@ -203,5 +224,39 @@ function checkPayment()
     showHideByValue('send_receipt','','notice','table-row','radio',false);  
     {/literal}{/if}{literal}
 }        
+function adjustMembershipOrgType( ) 
+{
+	cj('#membershipOrgType').show();		    	    
+	cj('#changeMembershipOrgType').hide();
+}
+cj( function( ) {
+    cj('#record_contribution').click( function( ) {
+        if ( cj(this).attr('checked') ) {
+            cj('#recordContribution').show( );
+            setPaymentBlock( );
+        } else {
+            cj('#recordContribution').hide( );
+        }
+    });
+    
+    cj('#membership_type_id\\[1\\]').change( function( ) {
+        setPaymentBlock( );
+    });
+});
+function setPaymentBlock( ) {
+    var memType = cj('#membership_type_id\\[1\\]').val( );
+    
+    if ( !memType ) {
+        return;
+    }
+    
+    var dataUrl = {/literal}"{crmURL p='civicrm/ajax/memType' h=0}"{literal};
+    
+    cj.post( dataUrl, {mtype: memType}, function( data ) {
+        cj("#contribution_type_id").val( data.contribution_type_id );
+        cj("#total_amount").val( data.total_amount );
+    }, 'json');    
+}
 </script>
 {/literal}
+{/if}{* closing of custom data if *}

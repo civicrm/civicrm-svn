@@ -1314,7 +1314,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                                        'end_date'              => CRM_Utils_Date::isoToMysql( $dao->end_date ),
                                        'renewal_reminder_date' => CRM_Utils_Date::isoToMysql( $dao->reminder_date ), 
                                        'modified_id'           => $userId,
-                                       'modified_date'         => date('Ymd')
+                                       'modified_date'         => date('Ymd'),
+                					   'membership_type_id'	   => $dao->membership_type_id 
                                        );
                 
                 

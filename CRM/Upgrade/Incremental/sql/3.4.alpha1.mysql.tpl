@@ -76,3 +76,11 @@ INSERT INTO civicrm_option_value
   (option_group_id,         {localize field='label'}label{/localize},                   value,                        name,                                        weight,                 {localize field='description'}description{/localize},                                              is_active, component_id) VALUES
   (@option_group_id_report, {localize}'Contribute Logging Report (Summary)'{/localize}, 'logging/contribute/summary', 'CRM_Report_Form_Contribute_LoggingSummary', @weight := @weight + 1, {localize}'Contribution modification report for the logging infrastructure (summary).'{/localize}, 0,         @contributeCompId),
   (@option_group_id_report, {localize}'Contribute Logging Report (Detail)'{/localize},  'logging/contribute/detail',  'CRM_Report_Form_Contribute_LoggingDetail',  @weight := @weight + 1, {localize}'Contribute modification report for the logging infrastructure (detail).'{/localize},    0,         @contributeCompId);
+
+-- CRM-7297 Membership Upsell
+ALTER TABLE civicrm_membership_log ADD membership_type_id  INT UNSIGNED COMMENT 'FK to Membership Type.', 
+ADD CONSTRAINT FK_civicrm_membership_log_membership_type_id FOREIGN KEY (membership_type_id) REFERENCES civicrm_membership_type(id) 
+ON DELETE SET NULL;
+
+UPDATE civicrm_membership_log cml INNER JOIN civicrm_membership cm 
+ON cml.membership_id=cm.id SET cml.membership_type_id=cm.membership_type_id;

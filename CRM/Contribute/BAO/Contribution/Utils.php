@@ -264,7 +264,7 @@ class CRM_Contribute_BAO_Contribution_Utils
             return $membershipResult;
         }
         //Do not send an email if Recurring contribution is done via Direct Mode
-        //Email will we send once the IPN will receive.
+        //We will send email once the IPN is received.
         if ( $paymentParams['is_recur'] && $form->_contributeMode == 'direct' ) {
             return true;
         }
