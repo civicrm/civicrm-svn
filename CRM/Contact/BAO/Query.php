@@ -376,7 +376,7 @@ class CRM_Contact_BAO_Query
             $this->_skipPermission = true;
         } else {
             require_once 'CRM/Contact/BAO/Contact.php';
-            $this->_fields = CRM_Contact_BAO_Contact::exportableFields( 'All', false, true );
+            $this->_fields = CRM_Contact_BAO_Contact::exportableFields( 'All', false, true, true );
          
             require_once 'CRM/Core/Component.php';
             $fields =& CRM_Core_Component::getQueryFields( );

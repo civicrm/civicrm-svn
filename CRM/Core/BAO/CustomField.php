@@ -511,13 +511,17 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
      *
      * @param int      $contactType   Contact type
      * @param boolean  $showAll       If true returns all fields (includes disabled fields)
+     * @param boolean  $onlyParent    return fields ONLY related to basic types
+     * @param boolean  $search        when called from search and multiple records need to be returned
      *
      * @return array   $fields - 
      *
      * @access public
      * @static
      */
-    public static function &getFieldsForImport( $contactType = 'Individual', $showAll = false, $onlyParent = false ) 
+    public static function &getFieldsForImport( $contactType = 'Individual',
+                                                $showAll = false, $onlyParent = false,
+                                                $search = false ) 
     {
         // Note: there are situations when we want getFieldsForImport() return fields related 
         // ONLY to basic contact types, but NOT subtypes. And thats where $onlyParent is helpful
@@ -526,9 +530,11 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
         $importableFields = array();
         foreach ($fields as $id => $values) {
             // for now we should not allow multiple fields in profile / export etc, hence unsetting
-            if ( CRM_Utils_Array::value('is_multiple', $values) ) {
+            if ( ! $search &&
+                 CRM_Utils_Array::value('is_multiple', $values) ) {
                 continue;
             }
+
             /* generate the key for the fields array */
             $key = "custom_$id";
 
