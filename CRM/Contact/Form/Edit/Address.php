@@ -345,11 +345,16 @@ class CRM_Contact_Form_Edit_Address
             
         if ( $countryID &&
              isset( $form->_elementIndex[$stateElementName] ) ) {
-            $form->addElement( 'select',
-                               $stateElementName,
-                               $stateTitle,
-                               array( '' => ts( '- select -' ) ) +
-                               CRM_Core_PseudoConstant::stateProvinceForCountry( $countryID ) );
+            $stateSelect =& $form->addElement( 'select',
+                                               $stateElementName,
+                                               $stateTitle,
+                                               array( '' => ts( '- select -' ) ) +
+                                               CRM_Core_PseudoConstant::stateProvinceForCountry( $countryID ) );
+            
+            // CRM-7296 freeze the select for state if address is shared with household 
+            if ( CRM_Utils_Array::value( 'is_shared', $form->_fields[$stateElementName] ) ) {
+                $stateSelect->freeze( );
+            }
         }
     }
 
