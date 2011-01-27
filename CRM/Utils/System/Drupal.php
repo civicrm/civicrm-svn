@@ -361,6 +361,9 @@ class CRM_Utils_System_Drupal {
         //need to get back for windows.
         $firstVar = array_shift( $pathVars );
         
+        //lets remove sript name to reduce one iteration.
+        array_pop( $pathVars );
+        
         //CRM-7429 --do check for upper most 'includes' dir,
         //which would effectually work for multisite installation.
         do {
@@ -374,7 +377,7 @@ class CRM_Utils_System_Drupal {
             }
             //remove one directory level.
             array_pop( $pathVars );
-        } while ( count( $pathVars ) > 1 ); 
+        } while ( count( $pathVars ) ); 
         
         return ( $valid ) ? $cmsRoot : null;
     }
