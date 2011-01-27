@@ -510,6 +510,10 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
     }
 
     public function deliverGroup ( &$fields, &$mailing, &$mailer, &$job_date, &$attachments ) {
+        if ( ! is_object( $mailer ) ) {
+            CRM_Core_Error::fatal( );
+        }
+
         // get the return properties
         $returnProperties = $mailing->getReturnProperties( );
         $params       = array( );
@@ -542,25 +546,20 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
                 CRM_Core_Error::ignoreException();
             }
 
-            if ( is_object( $mailer ) ) {
-                
-                // hack to stop mailing job at run time, CRM-4246.
-                $mailingJob = new CRM_Mailing_DAO_Job( ); 
-                $mailingJob->mailing_id = $mailing->id;
-                if ( $mailingJob->find( true ) ) {
-                    // mailing have been canceled at run time.
-                    if ( $mailingJob->status == 'Canceled' ) {
-                        return false;
-                    }
-                } else {
-                    // mailing have been deleted at run time. 
-                    return false;
-                }
-                $mailingJob->free( );
-                
-                $result = $mailer->send($recipient, $headers, $body, $this->id);
+            // hack to stop mailing job at run time, CRM-4246.
+            $status =  CRM_Core_DAO::getFieldValue( 'CRM_Mailing_DAO_Job',
+                                                    $this->id,
+                                                    'status' );
+            if ( $status != 'Running' ) {
+                return false;
+            }
+             
+            $result = $mailer->send($recipient, $headers, $body, $this->id);
+
+            if ($job_date) {
                 CRM_Core_Error::setCallback();
             }
+
             $params = array( 'event_queue_id' => $field['id'],
                              'job_id'         => $this->id,
                              'hash'           => $field['hash'] );
@@ -632,17 +631,39 @@ AND    civicrm_activity.source_record_id = %2";
      * @static
      */
     public static function cancel($mailingId) {
-        $job = new CRM_Mailing_BAO_Job();
-        $job->mailing_id = $mailingId;
-        // test mailing should not be included during Cancellation
-        $job->is_test    = 0;
-        if ($job->find(true) and in_array($job->status, array('Scheduled', 'Running', 'Paused'))) {
-            // fix MySQL dates...
-            $job->scheduled_date = CRM_Utils_Date::isoToMysql($job->scheduled_date);
-            $job->start_date     = CRM_Utils_Date::isoToMysql($job->start_date);
-            $job->end_date       = CRM_Utils_Date::isoToMysql($job->end_date);
-            $job->status         = 'Canceled';
-            $job->save();
+        $sql = "
+SELECT *
+FROM   civicrm_mailing_job
+WHERE  mailing_id = %1
+AND    is_test = 0
+AND    ( ( job_type IS NULL ) OR
+           job_type <> 'child' )
+";
+        $params = array( 1 => array( $mailingId, 'Integer' ) );
+        $job = CRM_Core_DAO::executeQuery( $sql, $params );
+        if ( $job->fetch( ) &&
+             in_array($job->status, array('Scheduled', 'Running', 'Paused'))) {
+
+            $newJob = new CRM_Mailing_BAO_Job( );
+            $newJob->id       = $job->id;
+            $newJob->end_date = date( 'YmdHis' );
+            $newJob->status   = 'Canceled';
+            $newJob->save();
+
+            // also cancel all child jobs
+            $sql = "
+UPDATE civicrm_mailing_job
+SET    status = 'Canceled',
+       end_date = %2
+WHERE  parent_id = %1
+AND    is_test = 0
+AND    job_type = 'child'
+AND    status IN ( 'Scheduled', 'Running', 'Paused' )
+";
+            $params = array( 1 => array( $job->id, 'Integer' ),
+                             2 => array( date( 'YmdHis' ), 'Timestamp' ) );
+            CRM_Core_DAO::executeQuery( $sql, $params );
+            
             CRM_Core_Session::setStatus(ts('The mailing has been canceled.'));
         }
     }
