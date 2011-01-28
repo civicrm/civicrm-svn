@@ -495,6 +495,10 @@ class CRM_Member_Selector_Search extends CRM_Core_Selector_Base implements CRM_C
         return self::$_columnHeaders;
     }
     
+    function alphabetQuery( ) {
+        return $this->_query->searchQuery( null, null, null, false, false, true );
+    }
+    
     function &getQuery( ) {
         return $this->_query;
     }
@@ -508,7 +512,8 @@ class CRM_Member_Selector_Search extends CRM_Core_Selector_Base implements CRM_C
      function getExportFileName( $output = 'csv') { 
          return ts('CiviCRM Member Search'); 
      } 
-
+     
+     
 }//end of class
 
 

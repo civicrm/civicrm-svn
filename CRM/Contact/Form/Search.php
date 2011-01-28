@@ -288,6 +288,20 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                                    'resultFile'    => 'CRM/Activity/Form/Selector.tpl',
                                    'resultContext' => 'Search',
                                    'taskClassName' => 'CRM_Activity_Task' ),
+                       5 => array( 'selectorName'  => 'CRM_Member_Selector_Search',
+                                   'selectorLabel' => ts( 'Memberships' ),
+                                   'taskFile'      => "CRM/common/searchResultTasks.tpl",
+                                   'taskContext'   => null,
+                                   'resultFile'    => 'CRM/Member/Form/Selector.tpl',
+                                   'resultContext' => 'Search',
+                                   'taskClassName' => 'CRM_Member_Task' ),
+                       6 => array( 'selectorName'  => 'CRM_Case_Selector_Search',
+                                   'selectorLabel' => ts( 'Cases' ),
+                                   'taskFile'      => "CRM/common/searchResultTasks.tpl",
+                                   'taskContext'   => null,
+                                   'resultFile'    => 'CRM/Case/Form/Selector.tpl',
+                                   'resultContext' => 'Search',
+                                   'taskClassName' => 'CRM_Case_Task' ),
                        );
         }
     }        
