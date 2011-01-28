@@ -299,7 +299,18 @@ function civicrm_menu( )
                                     'page callback'    => 'civicrm_invoke',
                                     'type'             => 4,
                                     'weight'           => 0,
-                                    )
+                                    ),
+                 // administration section for civicrm integration modules.
+                 'admin/config/civicrm' => array(
+                                                'title'            => 'CiviCRM',
+                                                'description'      => 'Configure CiviCRM integration modules.',
+                                                'position'         => 'left',
+                                                'weight'           => -10,
+                                                'page callback'    => 'system_admin_menu_block_page',
+                                                'access arguments' => array('access administration pages'),
+                                                'file'             => 'system.admin.inc',
+                                                'file path'        => drupal_get_path('module', 'system'),
+                                               )
                  );
 }
 
