@@ -323,8 +323,8 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form
                 CRM_Pledge_BAO_Pledge::getValues( $pledgeParams, $this->_pledgeValues, $ids );
                 $this->assign('ppID', $this->_ppID );
             } else {
-                // Not making a pledge payment, so check if pledge payment(s) are due for this contact so we can alert the user. CRM-5206
-                if (isset( $this->_contactID )) {
+                // Not making a pledge payment, so if adding a new contribution we should check if pledge payment(s) are due for this contact so we can alert the user. CRM-5206
+                if ( isset( $this->_contactID ) ) {
                     $contactPledges = array();
                     $contactPledges = CRM_Pledge_BAO_Pledge::getContactPledges( $this->_contactID );
     
@@ -360,7 +360,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form
                                 $ppUrl = CRM_Utils_System::url( 'civicrm/contact/view/contribution',
                                                                 "reset=1&action=add&cid={$this->_contactID}&ppid={$payments['id']}&context=pledge" );
                             }
-                            CRM_Core_Session::setStatus( ts('This contact has a pending or overdue pledge payment of %2 which is scheduled for %3. <a href="%1">Click here to apply this contribution as a pledge payment</a>.', array( 1 => $ppUrl, 2 => $ppAmountDue, 3 => $ppSchedDate ) ) );
+                            CRM_Core_Session::setStatus( ts('This contact has a pending or overdue pledge payment of %2 which is scheduled for %3. <a href="%1">Click here to enter a pledge payment</a>.', array( 1 => $ppUrl, 2 => $ppAmountDue, 3 => $ppSchedDate ) ) );
                         }                    
                     }
             
