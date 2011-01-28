@@ -51,18 +51,18 @@ require_once 'CRM/Core/BAO/UFJoin.php';
  * @return array CRM_Core_DAO_UFJoin Array
  * @access public
  * @example UFJoinCreate.php
+ *  {@schema Core/UFJoin.xml}
  *
  */
 function civicrm_uf_join_create(&$params)
 {
   _civicrm_initialize();
   try{
-    civicrm_verify_one_mandatory($params,'CRM_Core_DAO_UFJoin',array('uf_group_id'));
+    civicrm_verify_mandatory($params,'CRM_Core_DAO_UFJoin',array());
 
     $ufJoin = CRM_Core_BAO_UFJoin::create($params);
     _civicrm_object_to_array( $ufJoin, $ufJoinArray[]);
-    $reindex = ($params['sequential']?  0:REINDEX_BY_ID);
-    return civicrm_create_success($ufJoinArray,$reindex);
+    return civicrm_create_success($ufJoinArray,$params);
 
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );
@@ -106,11 +106,8 @@ function civicrm_uf_join_get(&$params)
     }
     $ufJoinDAO->free;
   
-    if (array_key_exists ('sequential',$params)) {
-      return civicrm_create_success(array_merge($ufJoin));
-    }else{
-      return civicrm_create_success($ufJoin);
-    }
+    return civicrm_create_success($ufJoin,$params);
+    
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );
   } catch (Exception $e) {

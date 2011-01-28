@@ -146,8 +146,8 @@ class api_v3_UFMatchTest extends CiviUnitTestCase
     function testUFMatchGetExample( )
     {
       require_once 'api/v3/examples/UFMatchGet.php';
-      $result = test_api_v3_UF_match_get();
-      $expectedResult = test_api_v3_UF_match_get_expectedresult();
+      $result = UF_match_get_example();
+      $expectedResult = UF_match_get_expectedresult();
       $this->assertEquals($result,$expectedResult);
     }
 
