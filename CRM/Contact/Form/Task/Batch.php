@@ -140,8 +140,11 @@ class CRM_Contact_Form_Task_Batch extends CRM_Contact_Form_Task
                                         'organization_name',
                                         'household_name');
 
-        foreach ($this->_contactIds as $contactId) {
-            foreach ($this->_fields as $name => $field ) {
+        require_once 'CRM/Core/BAO/Address.php';
+        foreach ( $this->_contactIds as $contactId ) {
+            $profileFields = $this->_fields;
+            CRM_Core_BAO_Address::checkContactSharedAddressFields( $profileFields, $contactId );
+            foreach ( $profileFields as $name => $field ) {
                 CRM_Core_BAO_UFGroup::buildProfile($this, $field, null, $contactId );
 
                 if ( in_array($field['name'], $preserveDefaultsArray ) ) {
