@@ -197,7 +197,7 @@ return optionId;
 }
 
 //plugin to sort on currency
-var symbol = "{/literal}{$config->defaultCurrencySymbol(isset($config->defaultSymbol) ? $config->defaultSymbol : NULL)}{literal}";
+var symbol = "{/literal}{$config->defaultCurrencySymbol($config->defaultSymbol)}{literal}";
 cj.fn.dataTableExt.oSort['currency-asc']  = function(a,b) {
 	var x = (a == "-") ? 0 : a.replace( symbol, "" );
 	var y = (b == "-") ? 0 : b.replace( symbol, "" );
