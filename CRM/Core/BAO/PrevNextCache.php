@@ -37,13 +37,12 @@
 require_once 'CRM/Core/DAO/PrevNextCache.php';
 
 /**
- * BAO object for crm_log table
+ * BAO object for civicrm_prevnext_cache table
  */
 
 class CRM_Core_BAO_PrevNextCache extends CRM_Core_DAO_PrevNextCache
 {
-
-    function loadCache( $rgid, $gid, $cid, $oid, &$mergeId = null ) 
+    function getPositions( $rgid, $gid, $cid, $oid, &$mergeId = null ) 
     {
         $contactType = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $cid, 'contact_type' );
         $cacheKey  = "merge $contactType";
@@ -83,7 +82,7 @@ WHERE  entity_id1 = $cid AND
         return $pos;
     }
 
-    function clearCache( $id = null, $cacheKey = null )
+    function deleteItem( $id = null, $cacheKey = null )
     {
         //clear cache
         $sql = "DELETE FROM civicrm_prevnext_cache
@@ -100,8 +99,8 @@ WHERE  entity_id1 = $cid AND
 
         CRM_Core_DAO::executeQuery( $sql );
     }
-    
-    function reloadCache( $cacheKey ) 
+
+    function retrieve( $cacheKey ) 
     {
         $main = array();
         $query = "
@@ -118,7 +117,7 @@ WHERE  cacheKey = '$cacheKey'
         return $main;
     }
 
-    function dumpCache( $values )
+    function setItem( $values )
     {
         $insert = "INSERT INTO civicrm_prevnext_cache ( entity_table, entity_id1, entity_id2, cacheKey, data ) VALUES \n";
         $query  = $insert . implode( ",\n ", $values );

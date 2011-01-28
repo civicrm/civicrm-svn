@@ -78,7 +78,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
 
         //load cache mechanism 
         require_once 'CRM/Core/BAO/PrevNextCache.php';
-        $pos = CRM_Core_BAO_PrevNextCache::loadCache( $rgid, $gid, $cid, $oid, $mergeId );
+        $pos = CRM_Core_BAO_PrevNextCache::getPositions( $rgid, $gid, $cid, $oid, $mergeId );
  
         // Block access if user does not have EDIT permissions for both contacts.
         require_once 'CRM/Contact/BAO/Contact/Permission.php';
@@ -685,7 +685,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
                 CRM_Core_DAO::executeQuery( $query );
             }
             civicrm_contact_delete( $otherParams );
-            CRM_Core_BAO_PrevNextCache::clearCache( $this->_oid );
+            CRM_Core_BAO_PrevNextCache::deleteItem( $this->_oid );
         } else {
             CRM_Core_Session::setStatus( ts('Do not have sufficient permission to delete duplicate contact.') );
         }

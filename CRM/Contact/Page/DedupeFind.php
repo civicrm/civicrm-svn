@@ -104,7 +104,7 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
             $cacheKeyString .= $gid ? "_{$gid}" : '_0';
             
             require_once 'CRM/Core/BAO/PrevNextCache.php';
-            $this->_mainContacts = CRM_Core_BAO_PrevNextCache::reloadCache( $cacheKeyString );
+            $this->_mainContacts = CRM_Core_BAO_PrevNextCache::retrieve( $cacheKeyString );
             if ( empty( $this->_mainContacts ) ) {
                 if ( $gid ) {
                     $foundDupes = $this->get( "dedupe_dupes_$gid" );
@@ -197,7 +197,7 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
                     $this->_rgid = $rgid;
                     $this->_mainContacts = $mainContacts;
 
-                    CRM_Core_BAO_PrevNextCache::dumpCache( $values );
+                    CRM_Core_BAO_PrevNextCache::setItem( $values );
                     $session = CRM_Core_Session::singleton( );
                     if ( $this->_cid ) {
                         $session->pushUserContext( CRM_Utils_System::url( 'civicrm/contact/deduperules', 
