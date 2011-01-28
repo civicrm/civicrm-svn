@@ -637,7 +637,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
             $addCaptcha = false;
             $fields = array_diff_assoc( $fields, $this->_fields );
             if ( !CRM_Utils_Array::value( 'additional_participants', $this->_params[0] ) && 
-                 ( $cid != 0 ) ) {
+                 is_null( $cid ) ) {
                 require_once 'CRM/Core/BAO/Address.php';
                 CRM_Core_BAO_Address::checkContactSharedAddressFields( $fields, $contactID );
             }
