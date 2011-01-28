@@ -164,11 +164,8 @@ class CRM_Logging_ReportDetail extends CRM_Report_Form
         $this->assign('log_date',  $this->log_date);
 
         $q = "reset=1&log_conn_id={$this->log_conn_id}&log_date={$this->log_date}";
-        if ($this->raw) {
-            $this->assign('revertURL', CRM_Report_Utils_Report::getNextUrl($this->detail, "$q&revert=1", false, true));
-        } else {
-            $this->assign('revertURL', CRM_Report_Utils_Report::getNextUrl($this->detail, "$q&raw=1", false, true));
-        }
+        $this->assign('revertURL', CRM_Report_Utils_Report::getNextUrl($this->detail, "$q&revert=1", false, true));
+        $this->assign('revertConfirm', ts('Are you sure you want to revert all these changes?'));
     }
 
     // redefine this accordingly in ancestors for buildQuickForm()’s sake

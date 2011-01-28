@@ -44,6 +44,6 @@
   {/if}
   <div class="action-link">
       <a href="{$backURL}"   class="button"><span><div class="icon back-icon"></div>{ts}Back to Logging Summary{/ts}</span></a>
-      <a href="{$revertURL}" class="button"><span><div class="icon delete-icon"></div>{ts}Revert These Changes{/ts}</span></a>
+      <a href="{$revertURL}" class="button" onclick="return confirm('{$revertConfirm}');"><span><div class="icon delete-icon"></div>{ts}Revert These Changes{/ts}</span></a>
   </div>
 </div>
