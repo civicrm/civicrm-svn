@@ -459,7 +459,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         return;
     }
     
-    function membershipTypeCreate( $contactID, $contributionTypeID = 1 ) 
+    function membershipTypeCreate( $contactID, $contributionTypeID = 1,$version =2 ) 
     {
         $params = array( 'name'                 => 'General',
                          'duration_unit'        => 'year',
@@ -471,16 +471,24 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                          // FIXME: when we load all the data, we'll need to address this to
                          // FIXME: avoid hunting numbers around.
                          'contribution_type_id' => 1,
-                         'is_active'            => 1 );
+                         'is_active'            => 1 ,
+                         'version'							=> $version, 
+                        'sequential'						=> 1 ,
+                        'visibility'             =>1, );
         
+
         $result = civicrm_membership_type_create( $params );
-        
-        if ( CRM_Utils_Array::value( 'is_error', $result ) ||
-             ! CRM_Utils_Array::value( 'id', $result) ) {
-            throw new Exception( 'Could not create membership type' );
+  
+        if ( CRM_Utils_Array::value( 'is_error', $result ) || 
+             (! CRM_Utils_Array::value( 'id', $result)&&  ! CRM_Utils_Array::value( 'id', $result['values'][0]))) {
+             throw new Exception( 'Could not create membership type' . print_r(  $result,true) );
         }
-        
-        return $result['id'];
+        if ($version ==2){
+          return $result['id'];        
+        }else{
+          return $result['values'][0]['id'];          
+        }
+
     }
 
    
@@ -519,9 +527,11 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      * 
      * @param int $membershipTypeID
      */
-    function membershipTypeDelete( $membershipTypeID )
+    function membershipTypeDelete( $params, $version =2 )
     {
-        $params['id'] = $membershipTypeID;
+        if(empty($params['version'])){
+          $params['version'] =$version;
+        }
         $result = civicrm_membership_type_delete( $params );
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
             throw new Exception( 'Could not delete membership type' );

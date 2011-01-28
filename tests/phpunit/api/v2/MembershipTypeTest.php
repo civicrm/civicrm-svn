@@ -100,7 +100,7 @@ class api_v2_MembershipTypeTest extends CiviUnitTestCase
         $this->assertEquals($membershiptype[$id]['duration_unit'],'year');
         $this->assertEquals($membershiptype[$id]['duration_interval'],'1');
         $this->assertEquals($membershiptype[$id]['period_type'],'rolling');
-        $this->membershipTypeDelete( $membershiptype[$id]['id'] );
+        $this->membershipTypeDelete( $params );
     }
 
 ///////////////// civicrm_membership_type_create methods

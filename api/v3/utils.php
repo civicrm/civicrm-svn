@@ -85,7 +85,8 @@ function civicrm_verify_mandatory (&$params, $daoName = null, $keys = array() ) 
   }
 
   if ($daoName != null) {
-       if(is_array($unmatched =_civicrm_check_required_fields( $params, $daoName, true))){
+       if(!is_array($unmatched =_civicrm_check_required_fields( $params, $daoName, true))){
+         unset($unmatched);
        }
   }
   
@@ -132,22 +133,27 @@ function &civicrm_create_error( $msg, $data = null )
  * @param array $params
  * @return array $result
  */
-function civicrm_create_success( $params = 1 )
+function civicrm_create_success( $values = 1,&$params=null )
 {
     $result = array();
     $result['is_error'] = 0;
     $result['version'] =3;
-    if (is_array($params)) {
-        $result['count'] = count($params);
+    if (is_array( $values)) {
+        $result['count'] = count( $values);
 
     } else {
-        if (!empty($params)) {
+        if (!empty( $values)) {
             $result['count'] = 1;
         } else {
             $result['count'] = 0;
         }
     }
-    $result['values'] = $params;
+
+    if(isset($params['sequential']) && $params['sequential'] ==1){
+      $result['values'] =  array_merge($values);
+    }else{
+     $result['values'] =  $values;
+    }
     return $result;
 }
 /**
@@ -218,26 +224,36 @@ function _civicrm_store_values( &$fields, &$params, &$values )
  *
  * @param  object   $dao           (reference )object to convert
  * @param  array    $dao           (reference )array
+ * @param array  $uniqueFields
  * @return array
  * @static void
  * @access public
  */
-function _civicrm_object_to_array( &$dao, &$values )
+function _civicrm_object_to_array( &$dao, &$values,$uniqueFields = FALSE )
 {
     $tmpFields = $dao->fields();
     $fields = array();
     //rebuild $fields array to fix unique name of the fields
-    foreach( $tmpFields as $key => $val ) {
+    if(!empty($uniqueFields)){
+      $fields = array_keys($tmpFields);
+    }else{
+      foreach( $tmpFields as $key => $val ) {
         $fields[$val["name"]]  = $val;
+      }
     }
-    
+
     foreach( $fields as $key => $value ) {
         if (array_key_exists($key, $dao)) {
             $values[$key] = $dao->$key;
         }
     }
 }
-
+/*
+ * Wrapper for _civicrm_object_to_array when api supports unique fields
+ */
+function _civicrm_object_to_array_unique_fields( &$dao, &$values){
+ return _civicrm_object_to_array(&$dao, &$values,TRUE);
+}
 
 /**
  * This function adds the contact variable in $values to the

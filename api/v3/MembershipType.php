@@ -48,49 +48,39 @@ require_once 'api/v3/utils.php';
  * This API is used for creating a Membership Type
  * 
  * @param   array  $params  an associative array of name/value property values of civicrm_membership_type
- * 
+ * @todo - should different fields (only 'id') be mandatory for update? Probably 'yes' for ALL apis so build into check_mandatory
  * @return array of newly created membership type property values.
  * @access public
  */
 function civicrm_membership_type_create(&$params) 
 {
-    _civicrm_initialize();
-    if ( ! is_array($params) ) {
-        return civicrm_create_error('Params need to be of type array!');
-    }
-    if( empty($params) ) {
-        return civicrm_create_error( 'No input parameters present' );
-    }
-
-    if ( ! isset( $params['name'] ) ||
-         ! isset( $params['duration_unit'] ) ||
-         ! isset( $params['duration_interval'] ) ) {
-        return civicrm_create_error('Missing require fileds ( name, duration unit,duration interval)');
-    }
-    
-    $error = _civicrm_check_required_fields( $params, 'CRM_Member_DAO_MembershipType' );
-    if ($error['is_error']) {
-        return civicrm_create_error( $error['error_message'] );
-    }
-    
+  _civicrm_initialize();
+  try{
+    civicrm_verify_mandatory($params,'CRM_Member_DAO_MembershipType' ,array('name',  'duration_unit','duration_interval'));
+     
     $ids['membershipType']   = CRM_Utils_Array::value( 'id', $params );
     $ids['memberOfContact']  = CRM_Utils_Array::value( 'member_of_contact_id', $params );
     $ids['contributionType'] = CRM_Utils_Array::value( 'contribution_type_id', $params );
-    
-    require_once 'CRM/Member/BAO/MembershipType.php';
-    $membershipTypeBAO = CRM_Member_BAO_MembershipType::add($params, $ids);
-
-    if ( is_a( $membershipTypeBAO, 'CRM_Core_Error' ) ) {
-        return civicrm_create_error( "Membership is not created" );
-    } else {
-        $membershipType = array();
-        _civicrm_object_to_array( $membershipTypeBAO, $membershipType );
-        $values = array( );
-        $values['id']       = $membershipType['id'];
-        $values['is_error'] = 0;
+    $membershipType = array();
+    $values = $params;
+    if(!empty($params['id'])){
+     $getparams = array('id' => $params['id'],'version' => 3);
+     $result = civicrm_membership_type_get($getparams);
+     $values = array_merge($result['values'][$params['id']],$params);  
     }
+
+    require_once 'CRM/Member/BAO/MembershipType.php';
+    $membershipTypeBAO = CRM_Member_BAO_MembershipType::add($values, $ids);
     
-    return $values;
+    _civicrm_object_to_array( $membershipTypeBAO, $membershipType[$membershipTypeBAO->id] );
+    $membershipTypeBAO->free;
+    return civicrm_create_success($membershipType,$params);
+
+  } catch (PEAR_Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  }
 }
 
 /**
@@ -105,78 +95,37 @@ function civicrm_membership_type_create(&$params)
  */
 function civicrm_membership_type_get(&$params) 
 {
-    _civicrm_initialize();
+  _civicrm_initialize();
+  try{
 
-    if ( ! is_array($params) ) {
-        return civicrm_create_error('Params need to be of type array!');
-    }
-   if( empty($params) ) {
-        return civicrm_create_error( 'No input parameters present' );
-    } 
+    civicrm_verify_mandatory($params);
+
     require_once 'CRM/Member/BAO/MembershipType.php';
     $membershipTypeBAO = new CRM_Member_BAO_MembershipType();
-    
+
     $properties = array_keys($membershipTypeBAO->fields());
-    
+
     foreach ($properties as $name) {
-        if (array_key_exists($name, $params)) {
-            $membershipTypeBAO->$name = $params[$name];
-        }
+      if (array_key_exists($name, $params)) {
+        $membershipTypeBAO->$name = $params[$name];
+      }
     }
-    
+
     if ( $membershipTypeBAO->find() ) {
-        $membershipType = array();
-        while ( $membershipTypeBAO->fetch() ) {
-            _civicrm_object_to_array( clone($membershipTypeBAO), $membershipType );
-            $membershipTypes[$membershipTypeBAO->id] = $membershipType;
-        }
+      $membershipType = array();
+      while ( $membershipTypeBAO->fetch() ) {
+        _civicrm_object_to_array( clone($membershipTypeBAO), $membershipType );
+        $membershipTypes[$membershipTypeBAO->id] = $membershipType;
+      }
     } else {
-        return civicrm_create_error('Exact match not found');
+      return civicrm_create_error('Exact match not found');
     }
-    return $membershipTypes;
-}
-
-
-/**
- * Update an existing membership type
- *
- * This api is used for updating an existing membership type.
- * Required parrmeters : id of a membership type
- * 
- * @param  Array   $params  an associative array of name/value property values of civicrm_membership_type
- * 
- * @return array of updated membership type property values
- * @access public
- */
-function &civicrm_membership_type_update( &$params ) {
-    if ( !is_array( $params ) ) {
-        return civicrm_create_error( 'Params need to be of type array!' );
-    }
-    if( empty($params) ) {
-        return civicrm_create_error( 'No input parameters present' );
-    }
-    if ( !isset($params['id']) ) {
-        return civicrm_create_error( 'Required parameter missing' );
-    }
-    
-    require_once 'CRM/Member/BAO/MembershipType.php';
-    $membershipTypeBAO = new CRM_Member_BAO_MembershipType( );
-    $membershipTypeBAO->id = $params['id'];
-    if ($membershipTypeBAO->find(true)) {
-        $fields = $membershipTypeBAO->fields(); 
-        
-        foreach ( $fields as $name => $field) {
-            if (array_key_exists($field['name'], $params)) {
-                $membershipTypeBAO->$field['name'] = $params[$field['name']];
-            }
-        }
-        $membershipTypeBAO->save();
-    }
-    
-    $membershipType = array();
-    _civicrm_object_to_array( $membershipTypeBAO, $membershipType );
-    $membershipTypeBAO->free( );
-    return $membershipType;
+    return civicrm_create_success($membershipTypes);
+  } catch (PEAR_Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  }
 }
 
 /**
@@ -191,20 +140,21 @@ function &civicrm_membership_type_update( &$params ) {
  * @access public
  */
 function civicrm_membership_type_delete( &$params ) {
-    if ( !is_array( $params ) ) {
-        return civicrm_create_error( 'Params need to be of type array!' );
-    }
-    if( empty($params) ) {
-        return civicrm_create_error( 'No input parameters present' );
-    }
-    if ( ! CRM_Utils_Array::value( 'id', $params ) ) {
-        return civicrm_create_error( 'Invalid or no value for membershipTypeID' );
-    }
-    
+  _civicrm_initialize();
+  try{
+
+
+    civicrm_verify_mandatory($params,null,array('id'));
+
     require_once 'CRM/Member/BAO/MembershipType.php';
     $memberDelete = CRM_Member_BAO_MembershipType::del( $params['id'] );
-    
-    return $memberDelete ? 
-        civicrm_create_success( "Given Membership Type have been deleted" ) : 
-        civicrm_create_error('Error while deleting membership type');
+
+    return $memberDelete ?
+    civicrm_create_success( $params['id'] ) :
+    civicrm_create_error('Error while deleting membership type. id : ' . $params['id']);
+  } catch (PEAR_Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  }
 }
