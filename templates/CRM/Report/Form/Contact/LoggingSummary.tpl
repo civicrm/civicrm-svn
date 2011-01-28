@@ -23,4 +23,4 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{include file="CRM/Report/Form.tpl"}
+{include file="CRM/Logging/ReportSummary.tpl"}
