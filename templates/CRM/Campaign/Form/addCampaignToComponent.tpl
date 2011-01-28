@@ -26,7 +26,7 @@
                    if ( value == 'current_campaign' || value == 'past_campaign' ) {
                         cj(this).css( 'color', 'black' );    
                         cj(this).attr( 'disabled', true );    
-			cj(this).attr( 'selected', false);
+			            cj(this).attr( 'selected', false);
                         cj(this).addClass( 'asmOptionDisabled' );
                    } 
               });
