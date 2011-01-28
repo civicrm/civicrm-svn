@@ -163,13 +163,15 @@ div#crm-container {
 
 .crmasmContainer,
 .crmasmSelect,
+.crmasmSelectCampaigns,
 .crmtagContainer,
 .crmtagSelect {
     width:160px;
 }
 
 .crmasmSelect,
-.crmtagSelect {
+.crmtagSelect,
+.crmasmSelectCampaigns {
     padding:2px;	
 }
 
