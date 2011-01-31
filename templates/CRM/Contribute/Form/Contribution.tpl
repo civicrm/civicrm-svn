@@ -217,7 +217,7 @@
         <tr id="pcpID" class="crm-contribution-form-block-pcp_made_through_id">
             <td class="label">{$form.pcp_made_through_id.label}</td>
             <td>
-                {$form.pcp_made_through_id.html} &nbsp;
+                {$form.pcp_made_through_id.html|crmReplace:class:twenty} &nbsp;
 	            <span class="showSoftCreditLink">{ts}<a onclick='showSoftCredit();'>unlink from personal campaign page</a>{/ts}</span>
                 <div class="spacer"></div>
                 <div class="crm-contribution-form-block-pcp_details">

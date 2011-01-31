@@ -941,7 +941,9 @@ WHERE  contribution_id = {$this->_id}
 
 
         // CRM-7368 allow user to set or edit PCP link for contributions
-        $siteHasPCPs = CRM_Contribute_PseudoConstant::pcPage( );
+        require_once 'CRM/Contribute/BAO/PCP.php';
+        $siteHasPCPs = CRM_Contribute_BAO_PCP::getPcpPagesWithSupporter( );
+        // $siteHasPCPs = CRM_Contribute_PseudoConstant::pcPage( );
         if ( !CRM_Utils_Array::crmIsEmptyArray( $siteHasPCPs ) ) {
             $this->assign( 'siteHasPCPs', 1 );
             $this->addElement('select', 'pcp_made_through_id', 
@@ -959,7 +961,7 @@ WHERE  contribution_id = {$this->_id}
                                           false, null, false );
         $this->assign('dataUrl',$dataUrl );
         $this->addElement( 'text', 'soft_credit_to', ts('Soft Credit To') );
-        // Tell tpl to freeze Soft Credit field if contribution linked to a PCP Page
+        // Tell tpl to hide Soft Credit field if contribution is linked directly to a PCP Page
         if ( CRM_Utils_Array::value('pcp_made_through_id', $this->_values ) ){
             $this->assign( 'pcpLinked', 1 );
         }
