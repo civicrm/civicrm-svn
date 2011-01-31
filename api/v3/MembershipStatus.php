@@ -53,25 +53,19 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_membership_status_create(&$params) 
 {
-    _civicrm_initialize();
-    if ( ! is_array($params) ) {
-        return civicrm_create_error('Params is not an array.');
-    }
-    
-    if ( empty($params) ) {
-        return civicrm_create_error('Params can not be empty.');
-    }
-    
-    $name = CRM_Utils_Array::value( 'name', $params );
-    if ( !$name ) $name = CRM_Utils_Array::value( 'label', $params );  
-    if ( !$name ) {
-        return civicrm_create_error('Missing required fields');
-    }
+    _civicrm_initialize(true);
+      try{
+ 
+      civicrm_verify_one_mandatory($params,'CRM_Member_DAO_MembershipStatus',array('name','label'));  
+      //move before verifiy? DAO check requires?
+      if ( empty($params['name']) ){
+         $params['name'] = CRM_Utils_Array::value( 'label', $params );  
+      }
     
     //don't allow duplicate names.
     require_once 'CRM/Member/DAO/MembershipStatus.php';
     $status = new CRM_Member_DAO_MembershipStatus( );
-    $status->name = $name;
+    $status->name = $params['name'];
     if ( $status->find( true ) ) {
         return civicrm_create_error( ts( 'A membership status with this name already exists.' ) ); 
     }
@@ -85,8 +79,13 @@ function civicrm_membership_status_create(&$params)
         $values             = array( );
         $values['id']       = $membershipStatusBAO->id;
         $values['is_error'] = 0;
-        return $values;
+        return civicrm_create_success($values,$params);
     }
+            } catch (PEAR_Exception $e) {
+        return civicrm_create_error( $e->getMessage() );
+      } catch (Exception $e) {
+        return civicrm_create_error( $e->getMessage() );
+      }
 }
 
 

@@ -23,7 +23,7 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*/
+ */
 
 /**
  * File for CiviCRM APIv3 pseudoconstants
@@ -46,7 +46,7 @@ require_once 'api/v3/utils.php';
  * pseudo constants used in CiviCRM
  *
  *  @param  string  Name of a public static method of
- *                  CRM_Core_PseudoContant: one of 
+ *                  CRM_Core_PseudoContant: one of
  *  <ul>
  *    <li>activityStatus</li>
  *    <li>activityType</li>
@@ -90,23 +90,30 @@ require_once 'api/v3/utils.php';
  *    <li>wysiwygEditor</li>
  *  </ul>
  */
-function civicrm_constant_get($name, $params = array()) 
+function civicrm_constant_get($name, $params = array())
 {
+  _civicrm_initialize(true);
+  try{
 
     require_once 'CRM/Core/PseudoConstant.php';
     $className = 'CRM_Core_PseudoConstant';
     $callable  = "$className::$name";
      
     if (is_callable($callable)) {
-        if (empty($params)) {
-            $values = call_user_func( array( $className, $name ) );
-        } else {
-            $values = call_user_func_array( array( $className, $name ), $params );
-        }
-        return $values;
+      if (empty($params)) {
+        $values = call_user_func( array( $className, $name ) );
+      } else {
+        $values = call_user_func_array( array( $className, $name ), $params );
+      }
+      return civicrm_create_success($values,$params);
     }
 
     return civicrm_create_error('Unknown civicrm constant or method not callable');
+  } catch (PEAR_Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  }
 }
 
 

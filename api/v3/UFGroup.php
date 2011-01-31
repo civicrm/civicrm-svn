@@ -53,23 +53,26 @@ require_once 'CRM/Core/BAO/UFGroup.php';
  *
  * @access public 
  */
-function civicrm_uf_group_create($params, $groupId = null)
+function civicrm_uf_group_create($params)
 {
-    if (!is_array($params) or empty($params) or (int) $groupId < 1) {
-        return civicrm_create_error('Params must be a non-empty array and a positive integer.');
-    }
-    
-    _civicrm_initialize( );
+    _civicrm_initialize(true );
+    try{
+    civicrm_verify_mandatory($params,'CRM_Core_DAO_UFGroup',array('id'));        
     
     $ids = array();
-    $ids['ufgroup'] = $groupId;
+    $ids['ufgroup'] = $params['id'];
     
     require_once 'CRM/Core/BAO/UFGroup.php';
     
     $ufGroup = CRM_Core_BAO_UFGroup::add( $params,$ids );
-    _civicrm_object_to_array( $ufGroup, $ufGroupArray);
+    _civicrm_object_to_array( $ufGroup, $ufGroupArray[$params['id']]);
     
-    return $ufGroupArray;
+    return civicrm_create_success($ufGroupArray,$params);
+    } catch (PEAR_Exception $e) {
+       return civicrm_create_error( $e->getMessage() );
+    } catch (Exception $e) {
+        return civicrm_create_error( $e->getMessage() );
+    }
 }
 
 
@@ -80,18 +83,20 @@ function civicrm_uf_group_create($params, $groupId = null)
  * @param $groupId int  Valid uf_group id that to be deleted
  *
  * @return true on successful delete or return error
- *
+ * @todo doesnt rtn success or error properly
  * @access public
  *
  */
-function civicrm_uf_group_delete( $groupId ) {
-    _civicrm_initialize( );
-    
-    if(! isset( $groupId ) ) {
-        return civicrm_create_error("provide a valid groupId.");
-    }
-    
+function civicrm_uf_group_delete( $params) {
+    _civicrm_initialize( true);
+    try{
+            
     require_once 'CRM/Core/BAO/UFGroup.php';
-    return CRM_Core_BAO_UFGroup::del($groupId);
+    return CRM_Core_BAO_UFGroup::del($params['id']);
+    } catch (PEAR_Exception $e) {
+        return civicrm_create_error( $e->getMessage() );
+    } catch (Exception $e) {
+        return civicrm_create_error( $e->getMessage() );
+    }  
 
 }

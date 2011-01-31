@@ -51,18 +51,7 @@ require_once 'CRM/Campaign/BAO/Petition.php';
 function &civicrm_survey_respondant_get( &$params ) {
   _civicrm_initialize( );
   try{
-
-    if ( empty( $params ) ) {
-      return civicrm_create_error( ts( 'No input parameters present' ) );
-    }
-
-    if ( ! is_array( $params ) ) {
-      return civicrm_create_error( ts( 'Input parameters is not an array' ) );
-    }
-     
-    if ( !array_key_exists ( 'survey_id', $params ) ) {
-      return ( civicrm_create_error( 'survey_id mandatory' ) );
-    }
+    civicrm_verify_mandatory($params,'CRM_Campaign_BAO_Petition',array('survey_id'));
 
     if (array_key_exists ( 'status_id', $params ) ) {
       $status_id=$params['status_id'];

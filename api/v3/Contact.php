@@ -177,7 +177,8 @@ function civicrm_contact_get( &$params )
  * @access public
  */
 function civicrm_contact_delete( &$params )
-{
+{    
+    _civicrm_initialize(true);
     require_once 'CRM/Contact/BAO/Contact.php';
 
     $contactID = CRM_Utils_Array::value( 'contact_id', $params );

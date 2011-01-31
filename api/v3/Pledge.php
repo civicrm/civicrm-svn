@@ -76,7 +76,7 @@ require_once 'CRM/Utils/Rule.php';
  * @access public
  */
 function &civicrm_pledge_create( &$params ) {
-  _civicrm_initialize( );
+  _civicrm_initialize(true );
   try{
 
 
@@ -85,7 +85,7 @@ function &civicrm_pledge_create( &$params ) {
       $params['amount'] = $params['pledge_amount'];
     }
     $required =  array('contact_id', 'amount', 'contribution_type_id' , 'installments','start_date');
-    civicrm_verify_mandatory ($params,'CRM_Pledge_DAO_Pledge',$required);
+    civicrm_verify_mandatory ($params,null,$required);
      
     $values  = array( );
     require_once 'CRM/Pledge/BAO/Pledge.php';
@@ -122,7 +122,7 @@ function &civicrm_pledge_create( &$params ) {
  * @access public
  */
 function civicrm_pledge_delete( &$params ) {
-  _civicrm_initialize( );
+  _civicrm_initialize(true);
   try{
 
 
@@ -159,7 +159,7 @@ function civicrm_pledge_delete( &$params ) {
  * @access public
  */
 function &civicrm_pledge_get( &$params ) {
-  _civicrm_initialize( );
+  _civicrm_initialize(true );
   try{
 
 

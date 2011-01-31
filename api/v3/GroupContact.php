@@ -53,18 +53,19 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_group_contact_get( &$params ) 
 {
-    if ( ! is_array( $params ) ) {
-        return civicrm_create_error(  'input parameter should be an array'  );
-    }
-
-    if ( ! array_key_exists( 'contact_id', $params ) ) {
-        return civicrm_create_error(  'contact_id is a required field'  );
-    }
-
+  _civicrm_initialize(true);
+    try{
+      
+    civicrm_verify_mandatory($params,null,array('contact_id'));
     $status = CRM_Utils_Array::value( 'status', $params, 'Added' );
     require_once 'CRM/Contact/BAO/GroupContact.php';
     $values =& CRM_Contact_BAO_GroupContact::getContactGroup( $params['contact_id'], $status, null, false, true );
-    return $values;
+    return civicrm_create_success($values,$params);
+       } catch (PEAR_Exception $e) {
+      return civicrm_create_error( $e->getMessage() );
+    } catch (Exception $e) {
+      return civicrm_create_error( $e->getMessage() );
+    }
 }
 
 /**
@@ -74,7 +75,9 @@ function civicrm_group_contact_get( &$params )
  */
 function civicrm_group_contact_create( &$params ) 
 {
-    return civicrm_group_contact_common( $params, 'add' );
+  civicrm_verify_mandatory($params,'CRM_Contact_BAO_GroupContact');
+ 
+  return civicrm_group_contact_common( $params, 'add' );
 }
 
 /**
@@ -82,9 +85,16 @@ function civicrm_group_contact_create( &$params )
  * @param <type> $params
  * @return <type>
  */
-function civicrm_group_contact_remove( &$params ) 
-{
-    return civicrm_group_contact_common( $params, 'remove' );
+function civicrm_group_contact_delete( &$params ) 
+{  
+    try{
+       return civicrm_group_contact_common( $params, 'remove' );
+    } catch (PEAR_Exception $e) {
+      return civicrm_create_error( $e->getMessage() );
+    } catch (Exception $e) {
+      return civicrm_create_error( $e->getMessage() );
+    }
+
 }
 
 /**

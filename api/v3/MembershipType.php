@@ -43,35 +43,31 @@
 require_once 'api/v3/utils.php';
 
 /**
- * Create a Membership Type
+ * API to Create or update a Membership Type
  *  
- * This API is used for creating a Membership Type
- * 
  * @param   array  $params  an associative array of name/value property values of civicrm_membership_type
- * @todo - should different fields (only 'id') be mandatory for update? Probably 'yes' for ALL apis so build into check_mandatory
- * @return array of newly created membership type property values.
+ * @return array $result newly created or updated membership type property values.
  * @access public
  */
 function civicrm_membership_type_create(&$params) 
 {
   _civicrm_initialize();
   try{
-    civicrm_verify_mandatory($params,'CRM_Member_DAO_MembershipType' ,array('name',  'duration_unit','duration_interval'));
-     
-    $ids['membershipType']   = CRM_Utils_Array::value( 'id', $params );
-    $ids['memberOfContact']  = CRM_Utils_Array::value( 'member_of_contact_id', $params );
-    $ids['contributionType'] = CRM_Utils_Array::value( 'contribution_type_id', $params );
-    $membershipType = array();
     $values = $params;
     if(!empty($params['id'])){
      $getparams = array('id' => $params['id'],'version' => 3);
      $result = civicrm_membership_type_get($getparams);
      $values = array_merge($result['values'][$params['id']],$params);  
     }
+    civicrm_verify_mandatory($values,'CRM_Member_DAO_MembershipType' ,array('name',  'duration_unit','duration_interval'));
+     
+    $ids['membershipType']   = CRM_Utils_Array::value( 'id', $params );
+    $ids['memberOfContact']  = CRM_Utils_Array::value( 'member_of_contact_id', $params );
+    $ids['contributionType'] = CRM_Utils_Array::value( 'contribution_type_id', $params );
 
     require_once 'CRM/Member/BAO/MembershipType.php';
     $membershipTypeBAO = CRM_Member_BAO_MembershipType::add($values, $ids);
-    
+    $membershipType = array();    
     _civicrm_object_to_array( $membershipTypeBAO, $membershipType[$membershipTypeBAO->id] );
     $membershipTypeBAO->free;
     return civicrm_create_success($membershipType,$params);

@@ -46,9 +46,10 @@ require_once 'api/v3/utils.php';
  * @return <type>
  */
 function civicrm_entity_tag_get( &$params ) {
-    if ( !is_array($params) ) {
-        return civicrm_create_error( 'params should be an array.'  );
-    }
+  _civicrm_initialize(true);
+
+  try{
+    civicrm_verify_mandatory($params);
     
     $entityID    = null;
     $entityTable = 'civicrm_contact';
@@ -71,7 +72,13 @@ function civicrm_entity_tag_get( &$params ) {
     foreach ( $values as $v ) {
         $result[] = array( 'tag_id' => $v );
     }
-    return $result;
+    return civicrm_create_success($result,$params);
+
+      } catch (PEAR_Exception $e) {
+        return civicrm_create_error( $e->getMessage() );
+      } catch (Exception $e) {
+        return civicrm_create_error( $e->getMessage() );
+      }
 }
 
 /**

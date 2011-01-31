@@ -147,4 +147,32 @@ function civicrm_custom_field_delete( $params )
         civicrm_create_success( );
 }
 
+/**
+ * Use this API to get existing custom fields.
+ *
+ * @param array $params Array to search on    
+ *
+ * @todo copied from elsewhere but needs tidying up to use DAO->Find
+ * @access public
+ **/
+function civicrm_custom_field_get($params) 
+{   
+   try {
+    _civicrm_initialize( );
 
+    require_once 'CRM/Core/BAO/CustomField.php';
+    $customfieldBAO = new CRM_Core_BAO_CustomField();
+    $fields = ($customfieldBAO->getFields($params['entity']));
+
+    foreach ($fields as $key=>$value){
+      $result[$key] = $value['label'];
+      
+    }
+    return $result;
+ 
+  } catch (PEAR_Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  }
+}

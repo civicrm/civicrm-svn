@@ -59,7 +59,7 @@ require_once 'CRM/Utils/Rule.php';
  * @access public
  */
 function &civicrm_pledge_payment_create( &$params ) {
-  _civicrm_initialize( );
+  _civicrm_initialize(true );
   try{
 
 
@@ -168,7 +168,7 @@ LIMIT 0, 1
  * @access public
  */
 function civicrm_pledge_payment_delete( &$params ) {
-  _civicrm_initialize( );
+  _civicrm_initialize(true );
   try{
 
     $pledgeID = CRM_Utils_Array::value( 'pledge_id', $params );
@@ -203,7 +203,7 @@ function civicrm_pledge_payment_delete( &$params ) {
  * @access public
  */
 function &civicrm_pledge_payment_get( &$params ) {
-  _civicrm_initialize( );
+  _civicrm_initialize(true );
   try{
 
     // copied from contribute code - not touched at all to make work for pledge or tested
@@ -271,8 +271,8 @@ function &civicrm_pledge_payment_get( &$params ) {
  * @param <type> $params
  * @return <type>
  */
-function &civicrm_pledge_payment_format_create( &$params ) {
-  _civicrm_initialize( );
+function &_civicrm_pledge_payment_format_create( &$params ) {
+
    
   // return error if we have no params
   if ( empty( $params ) ) {

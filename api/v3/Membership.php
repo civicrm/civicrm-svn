@@ -400,15 +400,7 @@ function _civicrm_membership_format_params( &$params, &$values, $create=false)
  */
 function _civicrm_membership_check_params( &$params ) {
 
-  // params should be an array
-  if ( !is_array( $params ) ) {
-    return civicrm_create_error( 'Params is not an array' );
-  }
-
-  // cannot create a membership with empty params
-  if ( empty( $params ) ) {
-    return civicrm_create_error( 'Input Parameters empty' );
-  }
+  civicrm_verify_mandatory($params);
 
   $valid = true;
   $error = '';

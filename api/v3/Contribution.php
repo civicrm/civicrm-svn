@@ -55,7 +55,7 @@ require_once 'CRM/Contribute/PseudoConstant.php';
 function &civicrm_contribution_create( &$params ) {
     _civicrm_initialize( );
     try {   
-    civicrm_verify_mandatory ($params,'CRM_Contribute_DAO_Contribution',array ('contact_id','total_amount',array('contribution_type_id' , 'contribution_type')));  
+    civicrm_verify_mandatory ($params,null,array ('contact_id','total_amount',array('contribution_type_id' , 'contribution_type')));  
       
     $error = _civicrm_contribute_check_params( $params );
     if ( civicrm_error( $error ) ) {

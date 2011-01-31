@@ -41,7 +41,7 @@
  *
  * $useException boolean raise exception if set
  */
-function _civicrm_initialize($useException = false ) 
+function _civicrm_initialize($useException = true ) 
 {
   require_once 'CRM/Core/Config.php';
   $config = CRM_Core_Config::singleton( );
@@ -712,7 +712,7 @@ function _civicrm_custom_format_params( &$params, &$values, $extends, $entityId 
  * @daoName string DAO to check params agains
  * @return bool should the missing fields be returned as an array (core error created as default)
  *                           
- *
+ * @todo the check for required fields unsets the ID as that isn't required for create but potentially also unsets other ID fields, note also the DAO might be a bit 'harsh' in it's required fields as the BAO handles some
  * @return bool true if all fields present, depending on $result a core error is created of an array of missing fields is returned
  * @access public
  */
@@ -737,7 +737,7 @@ function _civicrm_check_required_fields( &$params, $daoName, $return = FALSE)
  
     $missing = array();
     foreach ($fields as $k => $v) {
-        if ($k == 'id') {
+        if ($v['name'] == 'id') {
             continue;
         }
 

@@ -56,7 +56,7 @@ require_once 'CRM/Contact/BAO/RelationshipType.php';
  * @todo create should handle update.
  */
 function civicrm_relationship_create( &$params ) {
-  _civicrm_initialize( );
+  _civicrm_initialize(true );
   try{
         
     // check params for required fields (add/update)
@@ -118,7 +118,8 @@ function civicrm_relationship_create( &$params ) {
  */
 
 function civicrm_relationship_delete( $params ) {
-     
+    _civicrm_initialize(true );
+  try{   
     if ( empty( $params ) ) { 
         return civicrm_create_error( 'No input parameter present' );
     }
@@ -143,7 +144,11 @@ function civicrm_relationship_delete( $params ) {
         $relationBAO->del( $params['id'] );
         return civicrm_create_success(  'Deleted relationship successfully'  );
     }
-
+    } catch (PEAR_Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  }
 }
 
 /**
@@ -211,6 +216,8 @@ function civicrm_relationship_update( $params ) {
  */
 function civicrm_relationship_get( $contact_a, $contact_b = null, $relationshipTypes = null, $sort = null ) 
 {
+    _civicrm_initialize(true );
+  try{
     if ( ! is_array( $contact_a ) ) {
         return civicrm_create_error(  'Input parameter is not an array'  );
     }
@@ -279,6 +286,11 @@ function civicrm_relationship_get( $contact_a, $contact_b = null, $relationshipT
     } else {
         return civicrm_create_error(  'Invalid Data'  );
     }
+    } catch (PEAR_Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  }
 }
 
 /**

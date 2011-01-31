@@ -61,15 +61,7 @@ function civicrm_group_create( &$params )
   _civicrm_initialize( );
   try{
      
-
-    if ( is_null( $params ) || !is_array( $params ) ||  empty ( $params ) ) {
-      return civicrm_create_error( 'Required parameter missing' );
-    }
-
-    if ( ! CRM_Utils_Array::value('title', $params ) ) {
-      return civicrm_create_error( 'Required parameter title missing' );
-    }
-
+    civicrm_verify_mandatory($params,'CRM_Contact_BAO_Group',array('title'));
     $group = CRM_Contact_BAO_Group::create( $params );
 
     if ( is_null( $group ) ) {
@@ -99,9 +91,7 @@ function civicrm_group_get( &$params )
     try{
 
     _civicrm_initialize( );
-    if ( !is_null( $params ) && !is_array( $params ) ) {
-        return civicrm_create_error( 'Params should be array' );
-    }
+    civicrm_verify_mandatory($params);
 
     $returnProperties = array( );
     foreach ( $params as $n => $v ) {
@@ -149,11 +139,16 @@ function civicrm_group_get( &$params )
  */
 function civicrm_group_delete( &$params )
 {
-    _civicrm_initialize( );
-    if ( is_null( $params ) || !is_array( $params ) || !CRM_Utils_Array::value( 'id', $params ) ) {
-        return civicrm_create_error( 'Required parameter missing' );
-    }
-    
+    _civicrm_initialize( true);
+      try{
+      civicrm_verify_mandatory($params,null,array('id'));  
+
+
     CRM_Contact_BAO_Group::discard( $params['id'] );
     return civicrm_create_success( true );
+            } catch (PEAR_Exception $e) {
+        return civicrm_create_error( $e->getMessage() );
+      } catch (Exception $e) {
+        return civicrm_create_error( $e->getMessage() );
+      }
 }

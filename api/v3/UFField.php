@@ -49,11 +49,12 @@
  */
 function civicrm_uf_field_create($groupId, $params)
 {
+    _civicrm_initialize( true);
     if (!is_array($params) or !isset($params['field_name']) or (int) $groupId < 1) {
         return civicrm_create_error('Params must be a field_name-carrying array and a positive integer.');
     }
 
-    _civicrm_initialize( );
+
     
     $field_type       = CRM_Utils_Array::value ( 'field_type'       , $params );
     $field_name       = CRM_Utils_Array::value ( 'field_name'       , $params );

@@ -57,9 +57,16 @@ require_once 'api/v3/utils.php';
  * @todo Erik Hommel 16 dec 2010 Introduce version as param
  */
 function civicrm_activity_type_get( ) {
+  _civicrm_initialize(true);
+    try{
     require_once 'CRM/Core/OptionGroup.php';
     $activityTypes = CRM_Core_OptionGroup::values( 'activity_type' );
     return $activityTypes;
+        } catch (PEAR_Exception $e) {
+      return civicrm_create_error( $e->getMessage() );
+    } catch (Exception $e) {
+      return civicrm_create_error( $e->getMessage() );
+    }
 }
 
 /**
@@ -77,12 +84,11 @@ function civicrm_activity_type_get( ) {
  */
  
 function civicrm_activity_type_create( &$params ) {
+    _civicrm_initialize(true);
+    try{
+    civicrm_verify_mandatory($params,null,array('label','weight'));
     require_once 'CRM/Core/OptionGroup.php';
-    
-    if ( ! isset( $params['label'] ) || ! isset( $params['weight'] ) ) {
-        return civicrm_create_error(  'Required parameter "label / weight" not found' );
-    }
-        
+   
     $action = 1;
     $groupParams = array ( 'name' => 'activity_type' );
 
@@ -95,6 +101,11 @@ function civicrm_activity_type_create( &$params ) {
     $activityType = array();
     _civicrm_object_to_array( $activityObject, $activityType );
     return $activityType;
+    } catch (PEAR_Exception $e) {
+      return civicrm_create_error( $e->getMessage() );
+    } catch (Exception $e) {
+      return civicrm_create_error( $e->getMessage() );
+    }
 }
 
 /**
@@ -109,13 +120,17 @@ function civicrm_activity_type_create( &$params ) {
  * @todo Erik Hommel 16 dec 2010 Use utils function civicrm_verify_mandatory to check required fields
  */
 function civicrm_activity_type_delete( $params ) {
-
-    if ( ! isset( $params['activity_type_id'] ) ) {
-        return civicrm_create_error( 'Required parameter "activity_type_id" not found' );
-    } 
+    _civicrm_initialize(true);
+    try{
+      civicrm_verify_mandatory($params,null,array('activity_type_id'));
 
     $activityTypeId = $params['activity_type_id'];
     require_once 'CRM/Core/BAO/OptionValue.php';
 
     return CRM_Core_BAO_OptionValue::del( $activityTypeId );
+    } catch (PEAR_Exception $e) {
+      return civicrm_create_error( $e->getMessage() );
+    } catch (Exception $e) {
+      return civicrm_create_error( $e->getMessage() );
+    }
 }

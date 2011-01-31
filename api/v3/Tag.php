@@ -119,7 +119,7 @@ function civicrm_tag_delete( &$params )
 function civicrm_tag_get($params) 
 {   
    try {
-    _civicrm_initialize( );
+  _civicrm_initialize( true );
 
     require_once 'CRM/Core/BAO/Tag.php';
     $tagBAO = new CRM_Core_BAO_Tag();

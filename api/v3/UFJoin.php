@@ -56,7 +56,7 @@ require_once 'CRM/Core/BAO/UFJoin.php';
  */
 function civicrm_uf_join_create(&$params)
 {
-  _civicrm_initialize();
+  _civicrm_initialize(true);
   try{
     civicrm_verify_mandatory($params,'CRM_Core_DAO_UFJoin',array());
 
@@ -85,7 +85,7 @@ function civicrm_uf_join_create(&$params)
 
 function civicrm_uf_join_get(&$params)
 { 
-  _civicrm_initialize();
+  _civicrm_initialize(true);
   try{
     civicrm_verify_one_mandatory($params,null,array('id','entity_table','entity_id','weight'));
     $ufJoinDAO = new CRM_Core_DAO_UFJoin();

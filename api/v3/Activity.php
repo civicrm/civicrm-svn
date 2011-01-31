@@ -24,7 +24,7 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*/
+ */
 
 /**
  * File for the CiviCRM APIv3 activity functions
@@ -53,7 +53,7 @@ require_once 'CRM/Core/DAO/OptionGroup.php';
  *
  * Properties which have administratively assigned sets of values
  * If an unrecognized value is passed, an error
- * will be returned. 
+ * will be returned.
  *
  * Modules may invoke crm_get_contact_values($contactID) to
  * retrieve a list of currently available values for a given
@@ -63,7 +63,7 @@ require_once 'CRM/Core/DAO/OptionGroup.php';
  * @param string $activity_type Which class of contact is being created.
  *            Valid values = 'SMS', 'Meeting', 'Event', 'PhoneCall'.
  * {@schema Activity/Activity.xml}
- *                            
+ *
  * @return CRM_Activity|CRM_Error Newly created Activity object
  *
  * @todo Erik Hommel 16 dec 2010 check if create function processes update correctly when activity_id is passed
@@ -72,12 +72,12 @@ require_once 'CRM/Core/DAO/OptionGroup.php';
  * @todo Erik Hommel 16 dec 2010 introduce version as param
  * @example ActivityCreate.php
  * {@example ActivityCreate.php}
- * 
+ *
  */
-function &civicrm_activity_create( &$params ) 
+function &civicrm_activity_create( &$params )
 {
-    _civicrm_initialize( );
-    
+  _civicrm_initialize( true );
+  try{
     $errors = array( );
     $addmode = True;
     if (!empty($params['id']) || !empty($params['activity_id'])){
@@ -87,28 +87,30 @@ function &civicrm_activity_create( &$params )
     $errors = _civicrm_activity_check_params( $params, $addmode ) ;
 
     if ( !empty( $errors ) ) {
-        return $errors;
+      return $errors;
     }
-    
+
     // processing for custom data
     $values = array();
     _civicrm_custom_format_params( $params, $values, 'Activity' );
     if ( ! empty($values['custom']) ) {
-        $params['custom'] = $values['custom'];
+      $params['custom'] = $values['custom'];
     }
 
     // create activity
     $activity = CRM_Activity_BAO_Activity::create( $params );
-    
-    if ( !is_a( $activity, 'CRM_Core_Error' ) && isset( $activity->id ) ) {
-        $activityArray = array( 'is_error' => 0 ); 
-    } else {
-        $activityArray = array( 'is_error' => 1 ); 
-    }
-    
+
+    if ( isset( $activity->id ) ) {
     _civicrm_object_to_array( $activity, $activityArray);
-    
-    return $activityArray;
+    return civicrm_create_success($activityArray,$params);
+    }
+
+
+  } catch (PEAR_Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  }
 }
 
 /**
@@ -122,26 +124,33 @@ function &civicrm_activity_create( &$params )
  * @todo Erik Hommel 16 dec 2010 check if civicrm_create_success is handled correctly with REST (should be fixed in utils function civicrm_create_success)
  * @todo Erik Hommel 16 dec 2010 introduce version as param
  */
- 
+
 function civicrm_activity_get( $params ) {
-    _civicrm_initialize( );
-    
+  _civicrm_initialize( true );
+  try{
+
+
     $activityId = CRM_Utils_Array::value( 'activity_id', $params );
     if ( empty( $activityId ) ) {
-        return civicrm_create_error( "Required parameter not found"  );
+      return civicrm_create_error( "Required parameter not found"  );
     }
-    
+
     if ( !is_numeric( $activityId ) ) {
-        return civicrm_create_error( "Invalid activity Id"  );
+      return civicrm_create_error( "Invalid activity Id"  );
     }
-    
+
     $activity = _civicrm_activity_get( $activityId );
-    
+
     if ( $activity ) {
-        return civicrm_create_success( $activity );
+      return civicrm_create_success( $activity );
     } else {
-        return civicrm_create_error(  'Invalid Data'  );
+      return civicrm_create_error(  'Invalid Data'  );
     }
+  } catch (PEAR_Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  }
 }
 
 /**
@@ -159,24 +168,31 @@ function civicrm_activity_get( $params ) {
  * @todo Erik Hommel 16 dec 2010 check if civicrm_create_success is handled correctly with REST (should be fixed in utils function civicrm_create_success)
  *
  */
-function civicrm_activity_delete( &$params ) 
+function civicrm_activity_delete( &$params )
 {
-    _civicrm_initialize( );
-    
+  _civicrm_initialize( );
+  try{
+
+
     $errors = array( );
-    
+
     //check for various error and required conditions
     $errors = _civicrm_activity_check_params( $params ) ;
-  
+
     if ( !empty( $errors ) ) {
-        return $errors;
+      return $errors;
     }
-          
+
     if ( CRM_Activity_BAO_Activity::deleteActivity( $params ) ) {
-        return civicrm_create_success( );
+      return civicrm_create_success( );
     } else {
-        return civicrm_create_error(  'Could not delete activity'  );
+      return civicrm_create_error(  'Could not delete activity'  );
     }
+  } catch (PEAR_Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  }
 }
 
 /**
@@ -190,23 +206,23 @@ function civicrm_activity_delete( &$params )
  *
  */
 function _civicrm_activity_get( $activityId, $returnCustom = true ) {
-    $dao = new CRM_Activity_BAO_Activity();
-    $dao->id = $activityId;
-    if( $dao->find( true ) ) {
-        $activity = array();
-        _civicrm_object_to_array( $dao, $activity );
+  $dao = new CRM_Activity_BAO_Activity();
+  $dao->id = $activityId;
+  if( $dao->find( true ) ) {
+    $activity = array();
+    _civicrm_object_to_array( $dao, $activity );
 
-        //also return custom data if needed.
-        if ( $returnCustom && !empty( $activity ) ) {
-            $customdata = _civicrm_activity_custom_get( array( 'activity_id'      => $activityId, 
+    //also return custom data if needed.
+    if ( $returnCustom && !empty( $activity ) ) {
+      $customdata = _civicrm_activity_custom_get( array( 'activity_id'      => $activityId,
                                                               'activity_type_id' => $activity['activity_type_id']  )  );
-            $activity = array_merge( $activity, $customdata );
-        }
-    
-        return $activity;
-    } else {
-        return false;
+      $activity = array_merge( $activity, $customdata );
     }
+
+    return $activity;
+  } else {
+    return false;
+  }
 }
 
 /**
@@ -217,147 +233,147 @@ function _civicrm_activity_get( $activityId, $returnCustom = true ) {
  *
  * @return array $error array with errors
  */
-function _civicrm_activity_check_params ( &$params, $addMode = false ) 
+function _civicrm_activity_check_params ( &$params, $addMode = false )
 {
-    // return error if we do not get any params
-    if ( empty( $params ) ) {
-        return civicrm_create_error(  'Input Parameters empty'  );
-    }
-    
-    $contactIds = array( 'source'   => CRM_Utils_Array::value( 'source_contact_id', $params ),
+  // return error if we do not get any params
+  if ( empty( $params ) ) {
+    return civicrm_create_error(  'Input Parameters empty'  );
+  }
+
+  $contactIds = array( 'source'   => CRM_Utils_Array::value( 'source_contact_id', $params ),
                          'assignee' => CRM_Utils_Array::value( 'assignee_contact_id', $params ),
                          'target'   => CRM_Utils_Array::value( 'target_contact_id', $params )
-                         );
-    
-    foreach ( $contactIds as $key => $value ) {
-        if ( empty( $value ) ) {
-            continue;
-        }
-        $valueIds = array( $value );
-        if ( is_array( $value ) ) {
-            $valueIds = array( );
-            foreach ( $value as $id ) {
-                if ( $id ) $valueIds[$id] = $id;
-            }
-        }
-        if ( empty( $valueIds ) ) {
-            continue;
-        }
-        
-        $sql = '
+  );
+
+  foreach ( $contactIds as $key => $value ) {
+    if ( empty( $value ) ) {
+      continue;
+    }
+    $valueIds = array( $value );
+    if ( is_array( $value ) ) {
+      $valueIds = array( );
+      foreach ( $value as $id ) {
+        if ( $id ) $valueIds[$id] = $id;
+      }
+    }
+    if ( empty( $valueIds ) ) {
+      continue;
+    }
+
+    $sql = '
 SELECT  count(*) 
   FROM  civicrm_contact 
  WHERE  id IN (' . implode( ', ', $valueIds ) . ' )';
-        if ( count( $valueIds ) !=  CRM_Core_DAO::singleValueQuery( $sql ) ) {
-            return civicrm_create_error(  'Invalid %1 Contact Id', array( 1 => ucfirst( $key ) )  );
-        }
+    if ( count( $valueIds ) !=  CRM_Core_DAO::singleValueQuery( $sql ) ) {
+      return civicrm_create_error(  'Invalid %1 Contact Id', array( 1 => ucfirst( $key ) )  );
     }
-    
-    $activityIds = array( 'activity' => CRM_Utils_Array::value( 'id', $params ),
+  }
+
+  $activityIds = array( 'activity' => CRM_Utils_Array::value( 'id', $params ),
                           'parent'   => CRM_Utils_Array::value( 'parent_id', $params ),
                           'original' => CRM_Utils_Array::value( 'original_id', $params )
-                          );
-    
-    foreach ( $activityIds as $id => $value ) {
-        if (  $value &&
-              !CRM_Core_DAO::getFieldValue( 'CRM_Activity_DAO_Activity', $value, 'id' ) ) {
-            return civicrm_create_error(  'Invalid ' . ucfirst( $id ) . ' Id' );
-        }
+  );
+
+  foreach ( $activityIds as $id => $value ) {
+    if (  $value &&
+    !CRM_Core_DAO::getFieldValue( 'CRM_Activity_DAO_Activity', $value, 'id' ) ) {
+      return civicrm_create_error(  'Invalid ' . ucfirst( $id ) . ' Id' );
     }
-    /*
-     * @todo unique name for subject is activity subject - subject won't be supported in v4
-     */
-    // check for activity subject if add mode
-    if ( $addMode && ! isset( $params['subject']) && ! isset( $params['activity_subject'] ) ) {
-        return civicrm_create_error( 'Missing Subject'  );
-    }
+  }
   /*
-     * @todo unique name for id is activity id - id won't be supported in v4
-     */
-    if ( ! $addMode && ! isset( $params['id'] )&& ! isset( $params['activity_id'] )) {
-        return civicrm_create_error(  'Required parameter "id" not found'  );
-    }
-
-    if ( ! $addMode && $params['id'] && (! is_numeric ( $params['id'] )) || ($params['id'] && ! is_numeric ( $params['id'] ) )) {
-        return civicrm_create_error(  'Invalid activity "id"'  );
-    }
-    
-    require_once 'CRM/Core/PseudoConstant.php';
-    $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, true, 'name' );
-
-    // check if activity type_id is passed in
-    if ( $addMode && !isset( $params['activity_name'] )  && !isset( $params['activity_type_id'] ) ) {
-        //when name AND id are both absent
-        return civicrm_create_error(  'Missing Activity Type'  );
-    } else {
-        $activityName   = CRM_Utils_Array::value( 'activity_name', $params );
-        $activityTypeId = CRM_Utils_Array::value( 'activity_type_id', $params );
-        
-        if ( $activityName ) {
-            $activityNameId = array_search( ucfirst( $activityName ), $activityTypes );
-            
-            if ( !$activityNameId ) {
-                return civicrm_create_error(  'Invalid Activity Name'  ); 
-            } else if ( $activityTypeId && ( $activityTypeId != $activityNameId ) ) {
-                return civicrm_create_error(  'Mismatch in Activity'  );
-            }
-            $params['activity_type_id'] = $activityNameId;
-        } else if ( $activityTypeId &&
-                    !array_key_exists( $activityTypeId, $activityTypes ) ) {
-            return civicrm_create_error( 'Invalid Activity Type ID' );
-        }
-    }
+   * @todo unique name for subject is activity subject - subject won't be supported in v4
+   */
+  // check for activity subject if add mode
+  if ( $addMode && ! isset( $params['subject']) && ! isset( $params['activity_subject'] ) ) {
+    return civicrm_create_error( 'Missing Subject'  );
+  }
   /*
-     * @todo unique name for status_id is activity status id - status id won't be supported in v4
-     */
-    if (!empty($params['status_id'])){
-      $params['activity_status_id'] = $params['status_id'];
-    }
-    // check for activity status is passed in
-    if ( isset( $params['activity_status_id'] ) ) {
-        require_once "CRM/Core/PseudoConstant.php";
-        $activityStatus = CRM_Core_PseudoConstant::activityStatus( );
-        
-        if ( is_numeric( $params['activity_status_id'] ) && !array_key_exists( $params['activity_status_id'], $activityStatus ) ) {             
-            return civicrm_create_error( 'Invalid Activity Status' );
-        } elseif ( !is_numeric( $params['activity_status_id'] ) ) {
-            $statusId = array_search( $params['activity_status_id'], $activityStatus );            
-            
-            if ( !is_numeric( $statusId ) ) {
-                return civicrm_create_error( 'Invalid Activity Status' );
-            }
-        }
-    }
-    
-    if ( isset( $params['priority_id'] ) && is_numeric( $params['priority_id'] ) ) { 
-        require_once "CRM/Core/PseudoConstant.php";
-        $activityPriority = CRM_Core_PseudoConstant::priority( );
-        
-        if ( !array_key_exists( $params['priority_id'], $activityStatus ) ) { 
-            return civicrm_create_error( 'Invalid Priority' );
-        }
-    }
+   * @todo unique name for id is activity id - id won't be supported in v4
+   */
+  if ( ! $addMode && ! isset( $params['id'] )&& ! isset( $params['activity_id'] )) {
+    return civicrm_create_error(  'Required parameter "id" not found'  );
+  }
 
-    // check for activity duration minutes
-    if ( isset( $params['duration_minutes'] ) && !is_numeric( $params['duration_minutes'] ) ) {
-        return civicrm_create_error('Invalid Activity Duration (in minutes)' );
-    }
-        
-    // check for source contact id
-    if ( $addMode && empty( $params['source_contact_id'] ) ) {
-        return  civicrm_create_error( 'Missing Source Contact' );
-    } 
+  if ( ! $addMode && $params['id'] && (! is_numeric ( $params['id'] )) || ($params['id'] && ! is_numeric ( $params['id'] ) )) {
+    return civicrm_create_error(  'Invalid activity "id"'  );
+  }
 
-    if ( $addMode && 
-         !CRM_Utils_Array::value( 'activity_date_time', $params ) ) {
-        $params['activity_date_time'] = CRM_Utils_Date::processDate( date( 'Y-m-d H:i:s' ) );
-    } else { 
-        if ( CRM_Utils_Array::value( 'activity_date_time', $params ) ) {
-            $params['activity_date_time'] = CRM_Utils_Date::processDate( $params['activity_date_time'] );
-        }
+  require_once 'CRM/Core/PseudoConstant.php';
+  $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, true, 'name' );
+
+  // check if activity type_id is passed in
+  if ( $addMode && !isset( $params['activity_name'] )  && !isset( $params['activity_type_id'] ) ) {
+    //when name AND id are both absent
+    return civicrm_create_error(  'Missing Activity Type'  );
+  } else {
+    $activityName   = CRM_Utils_Array::value( 'activity_name', $params );
+    $activityTypeId = CRM_Utils_Array::value( 'activity_type_id', $params );
+
+    if ( $activityName ) {
+      $activityNameId = array_search( ucfirst( $activityName ), $activityTypes );
+
+      if ( !$activityNameId ) {
+        return civicrm_create_error(  'Invalid Activity Name'  );
+      } else if ( $activityTypeId && ( $activityTypeId != $activityNameId ) ) {
+        return civicrm_create_error(  'Mismatch in Activity'  );
+      }
+      $params['activity_type_id'] = $activityNameId;
+    } else if ( $activityTypeId &&
+    !array_key_exists( $activityTypeId, $activityTypes ) ) {
+      return civicrm_create_error( 'Invalid Activity Type ID' );
     }
-        
-    return null;
+  }
+  /*
+   * @todo unique name for status_id is activity status id - status id won't be supported in v4
+   */
+  if (!empty($params['status_id'])){
+    $params['activity_status_id'] = $params['status_id'];
+  }
+  // check for activity status is passed in
+  if ( isset( $params['activity_status_id'] ) ) {
+    require_once "CRM/Core/PseudoConstant.php";
+    $activityStatus = CRM_Core_PseudoConstant::activityStatus( );
+
+    if ( is_numeric( $params['activity_status_id'] ) && !array_key_exists( $params['activity_status_id'], $activityStatus ) ) {
+      return civicrm_create_error( 'Invalid Activity Status' );
+    } elseif ( !is_numeric( $params['activity_status_id'] ) ) {
+      $statusId = array_search( $params['activity_status_id'], $activityStatus );
+
+      if ( !is_numeric( $statusId ) ) {
+        return civicrm_create_error( 'Invalid Activity Status' );
+      }
+    }
+  }
+
+  if ( isset( $params['priority_id'] ) && is_numeric( $params['priority_id'] ) ) {
+    require_once "CRM/Core/PseudoConstant.php";
+    $activityPriority = CRM_Core_PseudoConstant::priority( );
+
+    if ( !array_key_exists( $params['priority_id'], $activityStatus ) ) {
+      return civicrm_create_error( 'Invalid Priority' );
+    }
+  }
+
+  // check for activity duration minutes
+  if ( isset( $params['duration_minutes'] ) && !is_numeric( $params['duration_minutes'] ) ) {
+    return civicrm_create_error('Invalid Activity Duration (in minutes)' );
+  }
+
+  // check for source contact id
+  if ( $addMode && empty( $params['source_contact_id'] ) ) {
+    return  civicrm_create_error( 'Missing Source Contact' );
+  }
+
+  if ( $addMode &&
+  !CRM_Utils_Array::value( 'activity_date_time', $params ) ) {
+    $params['activity_date_time'] = CRM_Utils_Date::processDate( date( 'Y-m-d H:i:s' ) );
+  } else {
+    if ( CRM_Utils_Array::value( 'activity_date_time', $params ) ) {
+      $params['activity_date_time'] = CRM_Utils_Date::processDate( $params['activity_date_time'] );
+    }
+  }
+
+  return null;
 }
 
 /**
@@ -365,25 +381,25 @@ SELECT  count(*)
  * @todo EM  change inputs to an array
  */
 function civicrm_activity_processemail( $file, $activityTypeID, $result = array( ) ) {
-  
+
   // do not parse if result array already passed (towards EmailProcessor..)
-    if ( empty($result) ) {
-        // might want to check that email is ok here
-        if ( ! file_exists( $file ) ||
-             ! is_readable( $file ) ) {
-                 //TODO we don't like creating core errors!
-            return CRM_Core_Error::createAPIError(  "File $file does not exist or is not readable");
-        }
+  if ( empty($result) ) {
+    // might want to check that email is ok here
+    if ( ! file_exists( $file ) ||
+    ! is_readable( $file ) ) {
+      //TODO we don't like creating core errors!
+      return CRM_Core_Error::createAPIError(  "File $file does not exist or is not readable");
     }
+  }
 
-    require_once 'CRM/Utils/Mail/Incoming.php';
-    $result = CRM_Utils_Mail_Incoming::parse( $file );
-    if ( $result['is_error'] ) {
-        return $result;
-    }
+  require_once 'CRM/Utils/Mail/Incoming.php';
+  $result = CRM_Utils_Mail_Incoming::parse( $file );
+  if ( $result['is_error'] ) {
+    return $result;
+  }
 
-    $params = _civicrm_activity_buildmailparams( $result, $activityTypeID );
-    return civicrm_activity_create( $params );
+  $params = _civicrm_activity_buildmailparams( $result, $activityTypeID );
+  return civicrm_activity_create( $params );
 }
 
 /**
@@ -393,76 +409,154 @@ function civicrm_activity_processemail( $file, $activityTypeID, $result = array(
  * @return <type>
  */
 function _civicrm_activity_buildmailparams( $result, $activityTypeID ) {
-    // get ready for collecting data about activity to be created
-    $params = array();
+  // get ready for collecting data about activity to be created
+  $params = array();
 
-    $params['activity_type_id']   = $activityTypeID;
-    $params['status_id']          = 2;
-    $params['source_contact_id']  = $params['assignee_contact_id'] = $result['from']['id'];
-    $params['target_contact_id']  = array( );
-    $keys = array( 'to', 'cc', 'bcc' );
-    foreach ( $keys as $key ) {
-        if ( is_array( $result[$key] ) ) {
-            foreach ( $result[$key] as $key => $keyValue ) {
-                $params['target_contact_id'][]  = $keyValue['id'];
-            }
-        }
+  $params['activity_type_id']   = $activityTypeID;
+  $params['status_id']          = 2;
+  $params['source_contact_id']  = $params['assignee_contact_id'] = $result['from']['id'];
+  $params['target_contact_id']  = array( );
+  $keys = array( 'to', 'cc', 'bcc' );
+  foreach ( $keys as $key ) {
+    if ( is_array( $result[$key] ) ) {
+      foreach ( $result[$key] as $key => $keyValue ) {
+        $params['target_contact_id'][]  = $keyValue['id'];
+      }
     }
-    $params['subject']            = $result['subject'];
-    $params['activity_date_time'] = $result['date'];
-    $params['details']            = $result['body'];
+  }
+  $params['subject']            = $result['subject'];
+  $params['activity_date_time'] = $result['date'];
+  $params['details']            = $result['body'];
 
-    for ( $i = 1; $i <= 5; $i++ ) {
-        if ( isset( $result["attachFile_$i"] ) ) {
-            $params["attachFile_$i"] = $result["attachFile_$i"];
-        }
+  for ( $i = 1; $i <= 5; $i++ ) {
+    if ( isset( $result["attachFile_$i"] ) ) {
+      $params["attachFile_$i"] = $result["attachFile_$i"];
     }
+  }
 
-    return $params;
+  return $params;
 }
 
 
 /**
  * Function retrieve activity custom data.
  * @param  array  $params key => value array.
- * @return array  $customData activity custom data 
+ * @return array  $customData activity custom data
  * @todo is this an internal function? should be just returned / available by 'return' param?
  *
  * @access public
  */
 function _civicrm_activity_custom_get( $params ) {
-    
-    $customData = array( );
-    if ( !CRM_Utils_Array::value( 'activity_id', $params ) ) {
-        return $customData;
-    }
-    
-    require_once 'CRM/Core/BAO/CustomGroup.php';
-    $groupTree =& CRM_Core_BAO_CustomGroup::getTree( 'Activity', 
-                                                     CRM_Core_DAO::$_nullObject, 
-                                                     $params['activity_id'], 
-                                                     null,
-                                                     CRM_Utils_Array::value( 'activity_type_id', $params )
-                                                     );
-    //get the group count.
-    $groupCount = 0;
-    foreach ( $groupTree as $key => $value ) {
-        if ( $key === 'info' ) {
-            continue;
-        }
-        $groupCount++;
-    }
-    $formattedGroupTree = CRM_Core_BAO_CustomGroup::formatGroupTree( $groupTree, 
-                                                                     $groupCount, 
-                                                                     CRM_Core_DAO::$_nullObject );
-    $defaults = array( );
-    CRM_Core_BAO_CustomGroup::setDefaults( $formattedGroupTree, $defaults );
-    if ( !empty( $defaults ) ) {
-        foreach ( $defaults as $key => $val ) {
-            $customData[$key] = $val;
-        }
-    }
-    
+
+  $customData = array( );
+  if ( !CRM_Utils_Array::value( 'activity_id', $params ) ) {
     return $customData;
+  }
+
+  require_once 'CRM/Core/BAO/CustomGroup.php';
+  $groupTree =& CRM_Core_BAO_CustomGroup::getTree( 'Activity',
+  CRM_Core_DAO::$_nullObject,
+  $params['activity_id'],
+  null,
+  CRM_Utils_Array::value( 'activity_type_id', $params )
+  );
+  //get the group count.
+  $groupCount = 0;
+  foreach ( $groupTree as $key => $value ) {
+    if ( $key === 'info' ) {
+      continue;
+    }
+    $groupCount++;
+  }
+  $formattedGroupTree = CRM_Core_BAO_CustomGroup::formatGroupTree( $groupTree,
+  $groupCount,
+  CRM_Core_DAO::$_nullObject );
+  $defaults = array( );
+  CRM_Core_BAO_CustomGroup::setDefaults( $formattedGroupTree, $defaults );
+  if ( !empty( $defaults ) ) {
+    foreach ( $defaults as $key => $val ) {
+      $customData[$key] = $val;
+    }
+  }
+
+  return $customData;
+}
+
+/**
+ * Retrieve a set of Activities specific to given contact Id.
+ * @param int $contactID.
+ *
+ * @return array (reference)  array of activities.
+ * @access public
+ *
+ * @todo Erik Hommel 16 dec 2010 Incoming params have to be array
+ * @todo Erik Hommel 16 dec 2010 test mandatory contactId with utils function civicrm_verify_mandatory
+ * @todo Erik Hommel 16 dec 2010 check permission with utils function civicrm_api_permission_check
+ * @todo Erik Hommel 16 dec 2010 should function civicrm_activity_custom_get be separate? or with params['custom_date'] => 1?
+ */
+function &_civicrm_activities_get( $contactID, $type = 'all' )
+{
+  $activities = CRM_Activity_BAO_Activity::getContactActivity( $contactID );
+
+  //get the custom data.
+  if ( is_array( $activities ) && !empty( $activities ) ) {
+    require_once 'api/v3/Activity.php';
+    foreach ( $activities as $activityId => $values ) {
+      $customParams =  array( 'activity_id'      => $activityId,
+                                    'activity_type_id' => CRM_Utils_Array::value( 'activity_type_id', $values ) );
+
+      $customData = _civicrm_activity_custom_get( $customParams );
+
+      if ( is_array( $customData ) && !empty( $customData ) ) {
+        $activities[$activityId] = array_merge( $activities[$activityId], $customData );
+      }
+    }
+  }
+
+  return $activities;
+}
+
+/**
+ * Retrieve a set of activities, specific to given input params.
+ *
+ * @param  array  $params (reference ) input parameters.
+ *
+ * @return array (reference)  array of activities / error message.
+ * @access public
+ *
+ * @todo Erik Hommel 16 dec 2010 test mandatory contactId with utils function civicrm_verify_mandatory
+ * @todo Erik Hommel 16 dec 2010 check if all DB fields are retrieved with get
+ * @todo Erik Hommel 16 dec 2010 check permission with utils function civicrm_api_permission_check
+ * @todo Erik Hommel 16 dec 2010 introduce version parameter
+ * @todo Erik Hommel 16 dec 2010 check uniform error messages (inventarization to be done first)
+ * @deprecated
+ * @todo get rid of me but activity_create should take contact_id as a $param - & mimic this function
+ */
+
+function civicrm_activity_contact_get( &$params ) {
+  _civicrm_initialize( );
+
+  $contactId = CRM_Utils_Array::value( 'contact_id', $params );
+  if ( empty( $contactId ) ) {
+    return civicrm_create_error(  "Required parameter not found"  );
+  }
+
+  //check if $contactId is valid
+  if ( !is_numeric( $contactId ) || !preg_match( '/^\d+$/', $contactId ) ) {
+    return civicrm_create_error(  "Invalid contact Id"  );
+  }
+
+  $activities =  & _civicrm_activities_get( $contactId );
+   
+  //show success for empty $activities array
+  if ( empty( $activities ) ) {
+    return civicrm_create_success(  "0 activity record matching input params"  );
+  }
+   
+  if ( $activities ) {
+    return civicrm_create_success( $activities );
+  } else {
+    return civicrm_create_error(  'Invalid Data'  );
+  }
 }
 

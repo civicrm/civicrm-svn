@@ -56,16 +56,10 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_file_create( $params ) 
 {
+    _civicrm_initialize(true);
     try{
       
-
-    if ( ! is_array($params) ) {
-        return civicrm_create_error('Params is not an array.');
-    }
-    
-    if ( ! isset($params['file_type_id']) ) {
-        return civicrm_create_error('Required parameter missing.');
-    }
+    civicrm_verify_mandatory($params,'CRM_Core_DAO_File',array('file_type_id'));
     
     if ( !isset($params['upload_date']) ) {
         $params['upload_date'] = date("Ymd");

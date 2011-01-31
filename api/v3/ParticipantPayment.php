@@ -56,17 +56,10 @@ require_once 'api/v3/utils.php';
  */
 function &civicrm_participant_payment_create(&$params)
 {
-    _civicrm_initialize();
-    if ( !is_array( $params ) ) {
-        $error = civicrm_create_error( 'Params is not an array' );
-        return $error;
-    }
-    
-    if ( !isset($params['participant_id']) || !isset($params['contribution_id']) ) {
-        $error = civicrm_create_error( 'Required parameter missing' );
-        return $error;
-    }
-   
+    _civicrm_initialize(true);
+      try{
+     civicrm_verify_mandatory($params,'CRM_Event_BAO_ParticipantPayment',array('participant_id','contribution_id')) ;  
+
     $ids= array();
     if( CRM_Utils_Array::value( 'id', $params ) ) {
         $ids['id'] = $params['id']; 
@@ -82,8 +75,12 @@ function &civicrm_participant_payment_create(&$params)
         $payment['id'] = $participantPayment->id;
         $payment['is_error']   = 0;
     }
-    return $payment;
-   
+    return civicrm_create_success($payment);
+      } catch (PEAR_Exception $e) {
+        return civicrm_create_error( $e->getMessage() );
+      } catch (Exception $e) {
+        return civicrm_create_error( $e->getMessage() );
+      }
 }
 
 /**
