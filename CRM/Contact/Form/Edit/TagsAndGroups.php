@@ -185,7 +185,7 @@ class CRM_Contact_Form_Edit_TagsandGroups
             $contactGroup =& CRM_Contact_BAO_GroupContact::getContactGroup( $id, 'Added', null, false, true );  
             if ( $contactGroup ) {  
                 foreach ( $contactGroup as $group ) {  
-                    $defaults[$fName ."[". $group['group_id'] ."]"] = 1;  
+                    $defaults[$fName .'['. $group['group_id'] .']'] = 1;  
                 } 
             }
         }
@@ -200,7 +200,7 @@ class CRM_Contact_Form_Edit_TagsandGroups
             $contactTag =& CRM_Core_BAO_EntityTag::getTag($id);  
             if ( $contactTag ) {  
                 foreach ( $contactTag as $tag ) {  
-                    $defaults[$fName ."[" . $tag . "]" ] = 1;  
+                    $defaults[$fName .'[' . $tag . ']' ] = 1;  
                 }  
             }  
         }

@@ -159,7 +159,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
         if ( !$this->_rtype ) {
             $this->_rtype = str_replace( $this->_relationshipTypeId . '_', '', $this->_rtypeId );
         }
-        $this->assign( "rtype", $this->_rtype );
+        $this->assign( 'rtype', $this->_rtype );
         
         require_once 'CRM/Core/PseudoConstant.php';
         
@@ -167,7 +167,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
         $this->_allRelationshipNames = CRM_Core_PseudoConstant::relationshipType( 'name' );
         
         // when custom data is included in this page
-        if ( CRM_Utils_Array::value( "hidden_custom", $_POST ) ) {
+        if ( CRM_Utils_Array::value( 'hidden_custom', $_POST ) ) {
             CRM_Custom_Form_Customdata::preProcess( $this );
             CRM_Custom_Form_Customdata::buildQuickForm( $this );
             CRM_Custom_Form_Customdata::setDefaultValues( $this );
@@ -333,10 +333,10 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
                           );
 
         // add a ajax facility for searching contacts
-		$dataUrl = CRM_Utils_System::url( "civicrm/ajax/search", "reset=1", true, null, false );
+		$dataUrl = CRM_Utils_System::url( 'civicrm/ajax/search', 'reset=1', true, null, false );
 		$this->assign('dataUrl',$dataUrl );
         $this->add('text', 'rel_contact', ts('Find Target Contact') );
-        $this->add('hidden', "rel_contact_id" );
+        $this->add('hidden', 'rel_contact_id' );
         $this->addDate( 'start_date', ts('Start Date'), false, array( 'formatType' => 'searchDate' ) );
         $this->addDate( 'end_date'  , ts('End Date')  , false, array( 'formatType' => 'searchDate' ) );
         $this->addElement('advcheckbox', 'is_active', ts('Enabled?'), null, 'setChecked()');
@@ -518,10 +518,10 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
             }
         } elseif ( $quickSave ) {
             if ( $params['add_current_employee'] &&
-                 $this->_allRelationshipNames[$relationshipTypeId]["name_a_b"] == 'Employee of' ) {
+                 $this->_allRelationshipNames[$relationshipTypeId]['name_a_b'] == 'Employee of' ) {
                 $params['employee_of'] = $params['rel_contact_id'];
             } elseif ( $params['add_current_employer'] &&
-                       $this->_allRelationshipNames[$relationshipTypeId]["name_b_a"] == 'Employer of' ) {
+                       $this->_allRelationshipNames[$relationshipTypeId]['name_b_a'] == 'Employer of' ) {
                 $params['employer_of'] = array( $params['rel_contact_id'] => 1 );
             }
             if ( !$this->_rtype ) {
@@ -548,7 +548,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
         // if this is called from case view, 
         //create an activity for case role removal.CRM-4480
         if ( $this->_caseId ) {
-            require_once "CRM/Case/BAO/Case.php";
+            require_once 'CRM/Case/BAO/Case.php';
             CRM_Case_BAO_Case::createCaseRoleActivity( $this->_caseId, $relationshipIds , $params['contact_check'], $this->_contactId );
         }
 
@@ -572,7 +572,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
         $noteIds = array();
         if ( $note->find(true) ) {
             $id            = $note->id;    
-            $noteIds["id"] = $id;
+            $noteIds['id'] = $id;
         }
         
         $noteParams = array(

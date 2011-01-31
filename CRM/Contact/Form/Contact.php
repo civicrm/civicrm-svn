@@ -347,7 +347,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         // set defaults for blocks ( custom data, address, communication preference, notes, tags and groups )
         foreach( $this->_editOptions as $name => $label ) {                
             if ( !in_array( $name, array( 'Address', 'Notes' ) ) ) {
-                require_once(str_replace('_', DIRECTORY_SEPARATOR, "CRM_Contact_Form_Edit_" . $name ) . ".php");
+                require_once(str_replace('_', DIRECTORY_SEPARATOR, 'CRM_Contact_Form_Edit_' . $name ) . '.php');
                 eval( 'CRM_Contact_Form_Edit_' . $name . '::setDefaultValues( $this, $defaults );' );
             }
         }
@@ -434,11 +434,11 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         if ( CRM_Utils_Array::value( 'image_URL', $defaults  ) ) {
             list( $imageWidth, $imageHeight ) = getimagesize( $defaults['image_URL'] );
             list( $imageThumbWidth, $imageThumbHeight ) = CRM_Contact_BAO_Contact::getThumbSize( $imageWidth, $imageHeight );
-            $this->assign( "imageWidth", $imageWidth );
-            $this->assign( "imageHeight", $imageHeight );
-            $this->assign( "imageThumbWidth", $imageThumbWidth );
-            $this->assign( "imageThumbHeight", $imageThumbHeight );
-            $this->assign( "imageURL", $defaults['image_URL'] );                                            
+            $this->assign( 'imageWidth', $imageWidth );
+            $this->assign( 'imageHeight', $imageHeight );
+            $this->assign( 'imageThumbWidth', $imageThumbWidth );
+            $this->assign( 'imageThumbHeight', $imageThumbHeight );
+            $this->assign( 'imageURL', $defaults['image_URL'] );                                            
         }
         
         //set location type and country to default for each block
@@ -490,7 +490,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                 $updateMode = true;
             }
             
-            for ( $instance = 1; $instance <= $this->get( $blockName ."_Block_Count" ); $instance++ ) {
+            for ( $instance = 1; $instance <= $this->get( $blockName .'_Block_Count' ); $instance++ ) {
                 
                 // make we require one primary block, CRM-5505
                 if ( $updateMode ) {
@@ -704,7 +704,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
     {
         //load form for child blocks
         if ( $this->_addBlockName ) {
-            require_once( str_replace('_', DIRECTORY_SEPARATOR, "CRM_Contact_Form_Edit_" . $this->_addBlockName ) . ".php");
+            require_once( str_replace('_', DIRECTORY_SEPARATOR, 'CRM_Contact_Form_Edit_' . $this->_addBlockName ) . '.php');
             return eval( 'CRM_Contact_Form_Edit_' . $this->_addBlockName . '::buildQuickForm( $this );' );
         }
         
@@ -728,7 +728,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         }
         
         //build contact type specific fields
-        require_once(str_replace('_', DIRECTORY_SEPARATOR, "CRM_Contact_Form_Edit_" . $this->_contactType) . ".php");
+        require_once(str_replace('_', DIRECTORY_SEPARATOR, 'CRM_Contact_Form_Edit_' . $this->_contactType) . '.php');
         eval( 'CRM_Contact_Form_Edit_' . $this->_contactType . '::buildQuickForm( $this, $this->_action );' );
         
         // build Custom data if Custom data present in edit option
@@ -758,7 +758,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                 $this->_blocks['Address'] = $this->_editOptions['Address'];
                 continue;
             }
-            require_once(str_replace('_', DIRECTORY_SEPARATOR, "CRM_Contact_Form_Edit_" . $name ) . ".php");
+            require_once(str_replace('_', DIRECTORY_SEPARATOR, 'CRM_Contact_Form_Edit_' . $name ) . '.php');
             eval( 'CRM_Contact_Form_Edit_' . $name . '::buildQuickForm( $this );' );
         }
         

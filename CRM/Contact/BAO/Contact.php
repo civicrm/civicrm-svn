@@ -982,9 +982,9 @@ WHERE id={$id}; ";
         }
         
         $cacheKeyString  = "importableFields $contactType";
-        $cacheKeyString .= $status    ? "_1" : "_0";
-        $cacheKeyString .= $showAll   ? "_1" : "_0";
-        $cacheKeyString .= $isProfile ? "_1" : "_0";
+        $cacheKeyString .= $status    ? '_1' : '_0';
+        $cacheKeyString .= $showAll   ? '_1' : '_0';
+        $cacheKeyString .= $isProfile ? '_1' : '_0';
 
         if ( ! self::$_importableFields || ! CRM_Utils_Array::value( $cacheKeyString, self::$_importableFields ) ) {
             if ( ! self::$_importableFields ) {
@@ -1106,9 +1106,9 @@ WHERE id={$id}; ";
         }
         
         $cacheKeyString  = "exportableFields $contactType";
-        $cacheKeyString .= $export ? "_1" : "_0";
-        $cacheKeyString .= $status ? "_1" : "_0";
-        $cacheKeyString .= $search ? "_1" : "_0";
+        $cacheKeyString .= $export ? '_1' : '_0';
+        $cacheKeyString .= $status ? '_1' : '_0';
+        $cacheKeyString .= $search ? '_1' : '_0';
 
         if ( ! self::$_exportableFields || ! CRM_Utils_Array::value( $cacheKeyString, self::$_exportableFields ) ) {
             if ( ! self::$_exportableFields ) {
