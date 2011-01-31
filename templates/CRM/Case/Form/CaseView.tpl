@@ -311,7 +311,8 @@ function addClient( ) {
 
 			cj(this).dialog("close"); 
 			cj(this).dialog("destroy");
-			window.location.reload();
+	                //due to caching issues we use redirection rather than reload
+	                document.location = {/literal}'{crmURL q="action=view&reset=1&id=$caseID&cid=$contactID&context=$context" h=0 }'{literal};
 		},
 
 		"Cancel": function() { 
@@ -725,10 +726,6 @@ function addTags() {
         overlay: { 
             opacity: 0.5, 
             background: "black" 
-        },
-
-        beforeclose: function(event, ui) {
-            cj(this).dialog("destroy");
         },
 
         open:function() {
