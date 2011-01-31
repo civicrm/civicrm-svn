@@ -86,8 +86,8 @@ function civicrm_member_roles_menu()
 function civicrm_member_roles_permission() 
 {
     return array(
-                 'access settings' => 
-                 array( 'title' => t('Access Settings'), 
+                 'access civicrm member role setting' => 
+                 array( 'title' => t('Access CiviCRM member role setting'), 
                         'description' => t('Access Civicrm member roles synchronization.'),
                         )
                  );
