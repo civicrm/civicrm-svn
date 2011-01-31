@@ -120,7 +120,6 @@ class CRM_Contact_Form_CustomData extends CRM_Core_Form
      */
     function preProcess()
     {
-
         $this->_cdType = CRM_Utils_Array::value( 'type', $_GET );
         
         $this->assign('cdType', false);
@@ -132,7 +131,7 @@ class CRM_Contact_Form_CustomData extends CRM_Core_Form
 		$this->_groupID = CRM_Utils_Request::retrieve( 'groupId', 'Positive', $this, true );
 		$this->_tableID  = CRM_Utils_Request::retrieve( 'tableId', 'Positive', $this, true );
 
-		require_once "CRM/Contact/BAO/Contact.php";
+		require_once 'CRM/Contact/BAO/Contact.php';
 		$this->_contactType = CRM_Contact_BAO_Contact::getContactType($this->_tableID);
 		$this->_contactSubType = CRM_Contact_BAO_Contact::getContactSubType($this->_tableID);
 		$this->assign( 'contact_type', $this->_contactType);
@@ -141,7 +140,7 @@ class CRM_Contact_Form_CustomData extends CRM_Core_Form
         CRM_Utils_System::setTitle( $displayName, $contactImage . ' ' . $displayName );
 	
         // when custom data is included in this page
-        if ( CRM_Utils_Array::value( "hidden_custom", $_POST ) ) {
+        if ( CRM_Utils_Array::value( 'hidden_custom', $_POST ) ) {
             for ( $i; $i <= $_POST['hidden_custom_group_count'][$this->_groupID]; $i++ )  {
                 CRM_Custom_Form_CustomData::preProcess( $this, null, null, $i );
                 CRM_Custom_Form_CustomData::buildQuickForm( $this );
@@ -197,7 +196,7 @@ class CRM_Contact_Form_CustomData extends CRM_Core_Form
                                                          $this->_groupID,
                                                          $this->_contactSubType );
                                                      
-        if ( !CRM_Utils_Array::value( "hidden_custom_group_count", $_POST ) ) { 
+        if ( !CRM_Utils_Array::value( 'hidden_custom_group_count', $_POST ) ) { 
             // custom data building in edit mode (required to handle multi-value)
             $groupTree =& CRM_Core_BAO_CustomGroup::getTree( $this->_contactType, $this, $this->_tableID, 
                                                              $this->_groupID, $this->_contactSubType   );
@@ -206,7 +205,7 @@ class CRM_Contact_Form_CustomData extends CRM_Core_Form
             $customValueCount = $_POST['hidden_custom_group_count'][$this->_groupID];
         }
         
-        $this->assign("customValueCount", $customValueCount );
+        $this->assign('customValueCount', $customValueCount );
 	    
         $defaults = array();
         return $defaults;

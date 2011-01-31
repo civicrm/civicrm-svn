@@ -169,6 +169,7 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         }
         $this->set( 'searchVoterFor', $this->_operation );
         $this->assign( 'searchVoterFor', $this->_operation );
+        $this->assign( 'isFormSubmitted', $this->isSubmitted( ) );
         
         //do check permissions.
         if ( !CRM_Core_Permission::check( 'administer CiviCampaign' ) &&
@@ -369,7 +370,7 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         
         require_once 'CRM/Contact/BAO/Query.php';
         $this->_queryParams = CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
-       
+        
         $this->set( 'formValues' , $this->_formValues  );
         $this->set( 'queryParams', $this->_queryParams );
         
@@ -440,6 +441,7 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         
         //format multi-select group and contact types.
         foreach ( array( 'group', 'contact_type' ) as $param ) {
+            if ( $this->_force ) continue; 
             $paramValue = CRM_Utils_Array::value( $param, $this->_formValues );
             if ( $paramValue && is_array( $paramValue ) ) {
                 unset( $this->_formValues[$param] );

@@ -328,7 +328,7 @@ class WebTest_Generic_GeneralClickAroundTest extends CiviSeleniumTestCase {
       $this->assertTextPresent("Membership Signup");
   }
 
-  function testRelionshipTypes( )
+  function testRelationshipTypes( )
   {
       $this->login();
 

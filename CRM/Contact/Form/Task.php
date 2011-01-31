@@ -158,7 +158,7 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
 
             $fv          = $form->get( 'formValues' );
             $customClass = $form->get( 'customSearchClass' );
-            require_once "CRM/Core/BAO/Mapping.php";
+            require_once 'CRM/Core/BAO/Mapping.php';
             $returnProperties = CRM_Core_BAO_Mapping::returnProperties( $values);
 
             eval( '$selector   = new ' .
@@ -237,7 +237,7 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
         //CRM-5521
         if ( $selectedTypes = CRM_Utils_Array::value( 'contact_type' , $values ) ) {
             if( !is_array( $selectedTypes ) ) {
-                $selectedTypes  = explode( " ", $selectedTypes );
+                $selectedTypes  = explode( ' ', $selectedTypes );
             }
             foreach( $selectedTypes as $ct => $dontcare ) {
                 if ( strpos($ct, CRM_Core_DAO::VALUE_SEPARATOR) === false ) {

@@ -275,7 +275,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
         }
 
         if ( $userFramework == 'Joomla' ) {
-            $this->userFrameworkVersion = '1.5';
+            $this->userFrameworkVersion = 'Unknown';
             if ( class_exists('JVersion') ) {
                 $version = new JVersion;
                 $this->userFrameworkVersion = $version->getShortVersion();

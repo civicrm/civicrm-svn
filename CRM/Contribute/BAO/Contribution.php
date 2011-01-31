@@ -223,8 +223,10 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
 
+        // delete the soft credit record if no soft credit contact ID AND no PCP is set in the form
         if ( CRM_Utils_Array::value( 'contribution', $ids ) && 
-             ( !CRM_Utils_Array::value( 'soft_credit_to', $params ) ) &&
+             ( !CRM_Utils_Array::value( 'soft_credit_to', $params ) &&
+             !CRM_Utils_Array::value( 'pcp_made_through_id', $params ) ) &&
              CRM_Utils_Array::value( 'softID', $params ) ) {
             $softCredit = new CRM_Contribute_DAO_ContributionSoft( );
             $softCredit->id = $params['softID'];
@@ -278,20 +280,31 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
             CRM_Activity_BAO_Activity::addActivity( $contribution, 'Offline' );
         }
 
-
-        if ( CRM_Utils_Array::value( 'soft_credit_to', $params ) ) {
+        // Handle soft credit and / or link to personal campaign page
+        if ( CRM_Utils_Array::value( 'soft_credit_to', $params ) ||
+             CRM_Utils_Array::value( 'pcp_made_through_id', $params ) ) {
             $csParams = array();
             if ( $id = CRM_Utils_Array::value( 'softID', $params ) ) {
                 $csParams['id'] = $params['softID'];
             }
+
             $csParams['pcp_display_in_roll'] = $params['pcp_display_in_roll']? 1 : 0;
-            foreach ( array ( 'pcp_roll_nickname', 'pcp_personal_note' ) as $val ) {
-                if ( CRM_Utils_Array::value( $val, $params ) ) {
-                    $csParams[$val] = $params[$val];
-                }
+            foreach ( array ('pcp_roll_nickname', 'pcp_personal_note' ) as $val ) {
+                $csParams[$val] = $params[$val];
             }
             $csParams['contribution_id'] = $contribution->id;
-            $csParams['contact_id'] = $params['soft_credit_to'];
+            // If pcp_made_through_id set, we define soft_credit_to contact based on selected PCP,
+            // else use passed soft_credit_to
+            if ( CRM_Utils_Array::value( 'pcp_made_through_id', $params ) ) {
+                $csParams['pcp_id'] = CRM_Utils_Array::value( 'pcp_made_through_id', $params );
+                require_once 'CRM/Core/DAO.php';
+                $csParams['contact_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_PCP',
+                                                                        $csParams['pcp_id'], 'contact_id' );
+            } else {
+                $csParams['contact_id'] = $params['soft_credit_to'];
+                $csParams['pcp_id'] = '';                
+            }
+
             // first stage: we register whole amount as credited to given person
             $csParams['amount'] = $contribution->total_amount;
 
@@ -1068,11 +1081,11 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
         $softContribution = new CRM_Contribute_DAO_ContributionSoft();
         $softContribution->copyValues($params);
 
-	// set currency for CRM-1496
-	if ( ! isset( $softContribution->currency ) ) {
-	  $config =& CRM_Core_Config::singleton( );
-	  $softContribution->currency = $config->defaultCurrency;
-	}
+    	// set currency for CRM-1496
+    	if ( ! isset( $softContribution->currency ) ) {
+    	  $config =& CRM_Core_Config::singleton( );
+    	  $softContribution->currency = $config->defaultCurrency;
+    	}
 
         return $softContribution->save();
     } 
@@ -1507,6 +1520,7 @@ LEFT JOIN  civicrm_contribution contribution ON ( componentPayment.contribution_
                 $membershipLog['membership_id'] = $membership->id;
                 $membershipLog['modified_id']   = $membership->contact_id;
                 $membershipLog['modified_date'] = date('Ymd');
+                $membershipLog['membership_type_id'] = $membership->membership_type_id;
                 
                 require_once 'CRM/Member/BAO/MembershipLog.php';
                 CRM_Member_BAO_MembershipLog::add( $membershipLog, CRM_Core_DAO::$_nullArray );

@@ -89,4 +89,17 @@
       <comment>The day we sent a renewal reminder</comment>  
       <add>1.6</add>  
   </field>
+  <field>
+       <name>membership_type_id</name>
+       <type>int unsigned</type>
+       <comment>FK to Membership Type.</comment>
+       <add>3.4</add>
+  </field>
+  <foreignKey>
+       <name>membership_type_id</name>
+       <table>civicrm_membership_type</table>
+       <key>id</key>
+       <add>3.4</add>
+       <onDelete>SET NULL</onDelete>
+  </foreignKey>
 </table>

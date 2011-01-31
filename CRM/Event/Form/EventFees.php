@@ -533,7 +533,7 @@ SELECT  id, html_type
                           ts('Send Confirmation?'), null, 
                           array('onclick' =>"showHideByValue('send_receipt','','notice','table-row','radio',false); showHideByValue('send_receipt','','from-email','table-row','radio',false);") );
 
-        $form->add( 'select', 'from_email_address', ts('From'), $form->_fromEmails['from_email_id'] );
+        $form->add( 'select', 'from_email_address', ts('Receipt From'), $form->_fromEmails['from_email_id'] );
         
         $form->add('textarea', 'receipt_text', ts('Confirmation Message') );
         

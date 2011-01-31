@@ -74,7 +74,7 @@ class CRM_Contact_BAO_Contact_Utils
                                $typeInfo['parent_id'] ) ? true : false;
 
                 if ( $isSubtype ) { 
-                    $type = CRM_Contact_BAO_ContactType::getBasicType( $typeInfo['name'] ) . "-subtype";
+                    $type = CRM_Contact_BAO_ContactType::getBasicType( $typeInfo['name'] ) . '-subtype';
                 } else {
                     $type = $typeInfo['name'];
                 }
@@ -91,7 +91,7 @@ class CRM_Contact_BAO_Contact_Utils
         
             $profileURL = CRM_Utils_System::url('civicrm/profile/view', "reset=1&gid={$summaryOverlayProfileId}&id={$contactId}&snippet=4");
         
-            $imageInfo[$contactType]['summary-link'] = '<a href="'.$profileURL.'" class="crm-summary-link">'.$imageInfo[$contactType]["image"].'</a>';
+            $imageInfo[$contactType]['summary-link'] = '<a href="'.$profileURL.'" class="crm-summary-link">'.$imageInfo[$contactType]['image'].'</a>';
         } else {
             $imageInfo[$contactType]['summary-link'] = $imageInfo[$contactType]['image'];
         }
@@ -472,12 +472,12 @@ WHERE id={$contactId}; ";
 
             if ( !$contactEditMode && $contactID && ( count($employers) >= 1 ) ) {
                 
-                $locDataURL = CRM_Utils_System::url( 'civicrm/ajax/permlocation', "cid=", 
+                $locDataURL = CRM_Utils_System::url( 'civicrm/ajax/permlocation', 'cid=', 
                                                      false, null, false );
                 $form->assign( 'locDataURL', $locDataURL );
                 
                 $dataURL = CRM_Utils_System::url( 'civicrm/ajax/employer', 
-                                                  "cid=" . $contactID, 
+                                                  'cid=' . $contactID, 
                                                   false, null, false );
                 $form->assign( 'employerDataURL', $dataURL );
                 
@@ -520,13 +520,13 @@ WHERE id={$contactId}; ";
 
         //Primary Phone 
         $form->addElement('text',
-                          "phone[1][phone]", 
+                          'phone[1][phone]', 
                           ts('Primary Phone'),
                           CRM_Core_DAO::getAttribute('CRM_Core_DAO_Phone',
                                                      'phone'));
         //Primary Email
         $form->addElement('text', 
-                          "email[1][email]",
+                          'email[1][email]',
                           ts('Primary Email'),
                           CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email',
                                                      'email'));
@@ -536,8 +536,8 @@ WHERE id={$contactId}; ";
         
         // also fix the state country selector
         CRM_Contact_Form_Edit_Address::fixStateSelect( $form,
-                                                       "address[1][country_id]",
-                                                       "address[1][state_province_id]",
+                                                       'address[1][country_id]',
+                                                       'address[1][state_province_id]',
                                                        $countryID );
     }
 
@@ -654,7 +654,7 @@ LEFT JOIN  civicrm_email ce ON ( ce.contact_id=c.id AND ce.is_primary = 1 )
         	    }
         	    if ( $rgid && isset( $dao->id ) ) {
         	        //get an url to merge the contact
-	    	        $contactLinks['rows'][$i]['merge'] = '<a class="action-item" href="' . CRM_Utils_System::url( 'civicrm/contact/merge', "reset=1&cid=" . $originalId . "&oid=" . $dao->id . "&action=update&rgid=" . $rgid  ) .
+	    	        $contactLinks['rows'][$i]['merge'] = '<a class="action-item" href="' . CRM_Utils_System::url( 'civicrm/contact/merge', "reset=1&cid=" . $originalId . '&oid=' . $dao->id . '&action=update&rgid=' . $rgid  ) .
                         '">'.ts('Merge').'</a>'; 
                     $contactLinks['msg'] = 'merge';
         	    }
@@ -708,7 +708,7 @@ LEFT JOIN  civicrm_email ce ON ( ce.contact_id=c.id AND ce.is_primary = 1 )
             case 'sort_name' :
                 $select[] = "$property as $property";
                 if ( $componentName == 'Activity' )  { 
-                    $from[$value] ="INNER JOIN civicrm_contact contact ON ( contact.id = $compTable.source_contact_id )";  
+                    $from[$value] = "INNER JOIN civicrm_contact contact ON ( contact.id = $compTable.source_contact_id )";  
                 } else {
                     $from[$value] = "INNER JOIN civicrm_contact contact ON ( contact.id = $compTable.contact_id )"; 
                 }

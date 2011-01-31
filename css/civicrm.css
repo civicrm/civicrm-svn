@@ -163,13 +163,15 @@ div#crm-container {
 
 .crmasmContainer,
 .crmasmSelect,
+.crmasmSelectCampaigns,
 .crmtagContainer,
 .crmtagSelect {
     width:160px;
 }
 
 .crmasmSelect,
-.crmtagSelect {
+.crmtagSelect,
+.crmasmSelectCampaigns {
     padding:2px;	
 }
 
@@ -3091,4 +3093,9 @@ div#crm-toolTip
 
 .extension-installed {
     background-color:#DDFFDD !important;
+}
+
+/* table row highlightng */
+#crm-container .crm-row-highlight {
+    background-color: #ffdc87 !important;
 }

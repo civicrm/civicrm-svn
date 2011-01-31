@@ -146,6 +146,18 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
     {
         $this->applyFilter('__ALL__', 'trim');
 
+        $session =& CRM_Core_Session::singleton( );
+        $this->_cancelURL = CRM_Utils_Array::value( 'cancelURL', $_POST );
+        
+        if ( !$this->_cancelURL ) {
+            $this->_cancelURL = CRM_Utils_System::url( 'civicrm/admin/contribute', 'reset=1' );
+        }
+        
+        if ( $this->_cancelURL ) {
+            $this->addElement( 'hidden', 'cancelURL', $this->_cancelURL );
+        }
+        
+
         if ( $this->_single ) {
             $this->addButtons(array(
                                     array ( 'type'      => 'next',
@@ -177,6 +189,7 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
             $this->addButtons( $buttons );
         }
 
+        $session->replaceUserContext( $this->_cancelURL );
         // views are implemented as frozen form
         if ($this->_action & CRM_Core_Action::VIEW) {
             $this->freeze();

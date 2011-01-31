@@ -235,7 +235,7 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
         $numContactsRemoved    = 0;
         $numContactsNotRemoved = 0;
         
-        require_once "CRM/Contact/DAO/Group.php";
+        require_once 'CRM/Contact/DAO/Group.php';
         $group = new CRM_Contact_DAO_Group();
         $group->id = $groupId;
         $group->find(true);
@@ -421,11 +421,11 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
                 } 
                 $values[$id][$prefix . 'date']            = $dao->date; 
                 $values[$id][$prefix . 'method']          = $dao->method; 
-                if ( $status == "Removed" ) {
+                if ( $status == 'Removed' ) {
                     $query = "SELECT `date` as `date_added` FROM civicrm_subscription_history WHERE id = (SELECT max(id) FROM civicrm_subscription_history WHERE contact_id = %1 AND status = \"Added\" AND group_id = $dao->group_id )";
                     $dateDAO =& CRM_Core_DAO::executeQuery( $query, $params );
                     if ($dateDAO->fetch() ) {
-                        $values[$id]["date_added"]          = $dateDAO->date_added; 
+                        $values[$id]['date_added']          = $dateDAO->date_added; 
                     }
                     
                 }

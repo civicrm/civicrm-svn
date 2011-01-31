@@ -1512,7 +1512,7 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
             
             $subject = "{$membershipType}";
             
-            if ( $activity->source != 'null' ) {
+            if ( $activity->source != 'null' && !empty($activity->source) ) {
                 $subject .= " - {$activity->source}";
             }
             

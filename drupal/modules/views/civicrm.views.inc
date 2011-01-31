@@ -4973,7 +4973,9 @@ function civicrm_views_add_fields( &$fields, &$data, &$skipFields, $tableName ) 
     foreach ( $fields as $name => $value ) {
         if ( CRM_Utils_Array::value( $name, $skipFields ) ||
              !isset( $value['where'] ) ||
-             substr( $value['where'], 0, strlen( $tableName ) + 1 ) != "{$tableName}." ) {
+             ( isset($value['where']) &&
+               substr( $value['where'], 0, strlen( $tableName ) + 1 ) != "{$tableName}."
+           ) ) {
             continue;
         }
 
@@ -5118,7 +5120,7 @@ function civicrm_views_custom_data_cache($data, $entity_type, $groupID, $subType
                                   'Select State/Province', 'Select Country', 'Multi-Select Country',
                                   'Multi-Select State/Province', 'Autocomplete-Select' );
         foreach ($currentgroupfields as $key => $currentfield) {
-            if ( !CRM_Utils_Array::value( 'help_post', $currentfield) ) { 
+            if (empty($currentfield['help_post'])) { 
                 $currentfield['help_post'] = t('Custom Data Field');
             } // Populates help text so there isn't miles of error: Missing Help
 
@@ -5130,7 +5132,7 @@ function civicrm_views_custom_data_cache($data, $entity_type, $groupID, $subType
                 $handler = civicrm_get_field_handler( $currentfield['data_type'] );
             }
             
-            if ( CRM_Utils_Array::value( 'option_group_id', $currentfield ) ) {
+            if ( !empty($currentfield['option_group_id']) ) {
                 $filter_handler = 'civicrm_handler_filter_custom_option';
             } else {
                 $filter_handler = civicrm_get_filter_handler( $currentfield['data_type'] );

@@ -34,6 +34,7 @@
  *
  */
 
+require_once 'CRM/Contribute/PseudoConstant.php';
 require_once 'CRM/Core/PseudoConstant.php';
 
 class CRM_Logging_Differ
@@ -70,7 +71,7 @@ class CRM_Logging_Differ
         );
 
         // find ids in this table that were affected in the given connection (based on connection id and a ±10 s time period around the date)
-        $sql = "SELECT DISTINCT id FROM `{$this->db}`.`$table` WHERE log_conn_id = %1 AND log_date BETWEEN DATE_SUB(%2, INTERVAL 10 SECOND) AND DATE_ADD(%2, INTERVAL 10 SECOND)";
+        $sql = "SELECT DISTINCT id FROM `{$this->db}`.`log_$table` WHERE log_conn_id = %1 AND log_date BETWEEN DATE_SUB(%2, INTERVAL 10 SECOND) AND DATE_ADD(%2, INTERVAL 10 SECOND)";
         $dao =& CRM_Core_DAO::executeQuery($sql, $params);
         while ($dao->fetch()) {
             $diffs = array_merge($diffs, $this->diffsInTableForId($table, $dao->id));
@@ -90,15 +91,29 @@ class CRM_Logging_Differ
         );
 
         // look for the last change in the given connection that happended less than 10 seconds later than log_date to the given id to catch multi-query changes
-        $changedSQL = "SELECT * FROM `{$this->db}`.`$table` WHERE log_conn_id = %1 AND log_date < DATE_ADD(%2, INTERVAL 10 SECOND) AND id = %3 ORDER BY log_date DESC LIMIT 1";
+        $changedSQL = "SELECT * FROM `{$this->db}`.`log_$table` WHERE log_conn_id = %1 AND log_date < DATE_ADD(%2, INTERVAL 10 SECOND) AND id = %3 ORDER BY log_date DESC LIMIT 1";
         $changed    = $this->sqlToArray($changedSQL, $params);
 
         // return early if nothing found
         if (empty($changed)) return array();
 
-        // look for the previous state (different log_conn_id) of the given id
-        $originalSQL = "SELECT * FROM `{$this->db}`.`$table` WHERE log_conn_id != %1 AND log_date < %2 AND id = %3 ORDER BY log_date DESC LIMIT 1";
-        $original    = $this->sqlToArray($originalSQL, $params);
+        switch ($changed['log_action']) {
+        case 'Delete':
+            // the previous state is kept in the current state, current should keep the keys and clear the values
+            $original = $changed;
+            foreach ($changed as &$val) $val = null;
+            $changed['log_action'] = 'Delete';
+            break;
+        case 'Insert':
+            // the previous state does not exist
+            $original = array();
+            break;
+        case 'Update':
+            // look for the previous state (different log_conn_id) of the given id
+            $originalSQL = "SELECT * FROM `{$this->db}`.`log_$table` WHERE log_conn_id != %1 AND log_date < %2 AND id = %3 ORDER BY log_date DESC LIMIT 1";
+            $original    = $this->sqlToArray($originalSQL, $params);
+            break;
+        }
 
         // populate $diffs with only the differences between $changed and $original
         $skipped = array('log_action', 'log_conn_id', 'log_date', 'log_user_id');
@@ -125,13 +140,14 @@ class CRM_Logging_Differ
 
         // FIXME: split off the table → DAO mapping to a GenCode-generated class
         static $daos = array(
-            'log_civicrm_address' => 'CRM_Core_DAO_Address',
-            'log_civicrm_contact' => 'CRM_Contact_DAO_Contact',
-            'log_civicrm_email'   => 'CRM_Core_DAO_Email',
-            'log_civicrm_im'      => 'CRM_Core_DAO_IM',
-            'log_civicrm_openid'  => 'CRM_Core_DAO_OpenID',
-            'log_civicrm_phone'   => 'CRM_Core_DAO_Phone',
-            'log_civicrm_website' => 'CRM_Core_DAO_Website',
+            'civicrm_address'      => 'CRM_Core_DAO_Address',
+            'civicrm_contact'      => 'CRM_Contact_DAO_Contact',
+            'civicrm_email'        => 'CRM_Core_DAO_Email',
+            'civicrm_im'           => 'CRM_Core_DAO_IM',
+            'civicrm_openid'       => 'CRM_Core_DAO_OpenID',
+            'civicrm_phone'        => 'CRM_Core_DAO_Phone',
+            'civicrm_website'      => 'CRM_Core_DAO_Website',
+            'civicrm_contribution' => 'CRM_Contribute_DAO_Contribution',
         );
 
         if (!isset($titles[$table]) or !isset($values[$table])) {
@@ -140,9 +156,12 @@ class CRM_Logging_Differ
                 // FIXME: these should be populated with pseudo constants as they
                 // were at the time of logging rather than their current values
                 $values[$table] = array(
+                    'contribution_status_id'         => CRM_Contribute_PseudoConstant::contributionStatus(),
+                    'contribution_type_id'           => CRM_Contribute_PseudoConstant::contributionType(),
                     'country_id'                     => CRM_Core_PseudoConstant::country(),
                     'gender_id'                      => CRM_Core_PseudoConstant::gender(),
                     'location_type_id'               => CRM_Core_PseudoConstant::locationType(),
+                    'payment_instrument_id'          => CRM_Contribute_PseudoConstant::paymentInstrument(),
                     'phone_type_id'                  => CRM_Core_PseudoConstant::phoneType(),
                     'preferred_communication_method' => CRM_Core_PseudoConstant::pcm(),
                     'preferred_language'             => CRM_Core_PseudoConstant::languages(),
@@ -162,7 +181,7 @@ class CRM_Logging_Differ
                         $values[$table][$field['name']] = array('0' => ts('false'), '1' => ts('true'));
                     }
                 }
-            } elseif (substr($table, 0, 18) == 'log_civicrm_value_') {
+            } elseif (substr($table, 0, 14) == 'civicrm_value_') {
                 list($titles[$table], $values[$table]) = $this->titlesAndValuesForCustomDataTable($table);
             }
         }
@@ -185,7 +204,7 @@ class CRM_Logging_Differ
         $params = array(
             1 => array($this->log_conn_id, 'Integer'),
             2 => array($this->log_date,    'String'),
-            3 => array(substr($table, 4),  'String'),
+            3 => array($table,             'String'),
         );
 
         $sql = "SELECT id, title FROM `{$this->db}`.log_civicrm_custom_group WHERE log_date <= %2 AND table_name = %3 ORDER BY log_date DESC LIMIT 1";

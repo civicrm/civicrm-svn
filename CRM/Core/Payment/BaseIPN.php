@@ -409,6 +409,7 @@ class CRM_Core_Payment_BaseIPN {
                 $membershipLog['membership_id'] = $membership->id;
                 $membershipLog['modified_id']   = $membership->contact_id;
                 $membershipLog['modified_date'] = date('Ymd');
+                $membershipLog['membership_type_id'] = $membership->membership_type_id;
                 
                 require_once 'CRM/Member/BAO/MembershipLog.php';
                 CRM_Member_BAO_MembershipLog::add( $membershipLog, CRM_Core_DAO::$_nullArray);

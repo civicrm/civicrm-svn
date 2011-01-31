@@ -575,7 +575,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
         $mappingId = null;
         if ( $params['search_context'] == 'builder' ) {
             //save the mapping for search builder
-            require_once "CRM/Core/BAO/Mapping.php";
+            require_once 'CRM/Core/BAO/Mapping.php';
             if ( !$ssId ) {
                 //save record in mapping table
                 $temp          = array( );
@@ -584,7 +584,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
                 $mappingId     = $mapping->id;                 
             } else {
                 //get the mapping id from saved search
-                require_once "CRM/Contact/BAO/SavedSearch.php";
+                require_once 'CRM/Contact/BAO/SavedSearch.php';
                 $savedSearch     = new CRM_Contact_BAO_SavedSearch();
                 $savedSearch->id = $ssId;
                 $savedSearch->find(true);

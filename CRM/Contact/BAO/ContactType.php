@@ -160,7 +160,7 @@ WHERE  parent_id IS NULL
 
         $argString = $all ? 'CRM_CT_STI_1_' : 'CRM_CT_STI_0_';
         if ( ! empty( $contactType ) ) {
-            $argString .= implode( "_" , $contactType );
+            $argString .= implode( '_' , $contactType );
         }
 
         if ( (!array_key_exists( $argString, $_cache )) || $ignoreCache ) {
@@ -431,7 +431,7 @@ AND   ( p.is_active = 1 OR p.id IS NULL )
             $subType = array( $subType );
             $isArray = false;
         }
-        $argString = implode( "_" , $subType );
+        $argString = implode( '_' , $subType );
 
         if ( ! array_key_exists( $argString, $_cache ) ) {
             $_cache[$argString] = array( );
@@ -496,12 +496,12 @@ WHERE  subtype.name IN ('".implode("','",$subType)."' )";
         foreach( $contactTypes as $key => $value ) {
             if( $key ) {
                 $typeValue = explode( CRM_Core_DAO::VALUE_SEPARATOR, $key );
-                $typeUrl   = "ct=" . CRM_Utils_Array::value( '0', $typeValue );
+                $typeUrl   = 'ct=' . CRM_Utils_Array::value( '0', $typeValue );
                 if( $csType = CRM_Utils_Array::value( '1', $typeValue ) ) { 
                     $typeUrl .= "&cst=$csType";
                 }
                 $shortCuts[]  = array(
-                                      'path'  => "civicrm/contact/add",
+                                      'path'  => 'civicrm/contact/add',
                                       'query' => "$typeUrl&reset=1",
                                       'ref'   => "new-$value",
                                       'title' => $value,
@@ -615,7 +615,7 @@ WHERE name = %1";
                                 'label'   => "New $contact",
                                 'name'    => "New $contactName",
                                 'url'     => "civicrm/contact/add&ct=$name&cst=$contactName&reset=1",
-                                'permission' => "add contacts",
+                                'permission' => 'add contacts',
                                 'parent_id'  => $navinfo['id'],
                                 'is_active'  => $active
                                 ); 

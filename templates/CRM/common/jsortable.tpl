@@ -33,7 +33,7 @@ var useClass  = 'display';
 
 var tcount =1;
 if ( useAjax ) {
- sourceUrl = {/literal}"{$sourceUrl}"{literal};
+ {/literal}{if isset($sourceUrl)}sourceUrl = "{$sourceUrl}";{/if}{literal}
  useClass = 'pagerDisplay';
  tcount =5;
 } 
@@ -129,7 +129,7 @@ eval('tableId =[' + tableId + ']');
 	   	"bServerSide": true,
 	   	"sAjaxSource": sourceUrl,
 
-		{/literal}{if $callBack}{literal}
+		{/literal}{if !empty($callBack)}{literal}
 		"fnDrawCallback": function() { checkSelected(); },
 		{/literal}{/if}{literal}
 

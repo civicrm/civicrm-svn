@@ -344,20 +344,20 @@ AND       CEF.entity_id    = %2";
         $config = CRM_Core_Config::singleton( );
         $numAttachments = $config->maxAttachments;
 
+        $now = date( 'Ymdhis' );
+
         // setup all attachments
         for ( $i = 1; $i <= $numAttachments; $i++ ) {
             $attachName = "attachFile_$i";
             if ( isset( $formValues[$attachName] ) &&
                  ! empty( $formValues[$attachName] ) ) {
-                // ensure file is not empty
-                $contents = file_get_contents( $formValues[$attachName]['name'] );
-                if ( $contents ) {
-                    $fileParams = array( 'uri'        => $formValues[$attachName]['name'],
-                                         'type'       => $formValues[$attachName]['type'],
-                                         'upload_date'=> date( 'Ymdhis' ),
-                                         'location'   => $formValues[$attachName]['name'] );
-                    $params[$attachName] = $fileParams;
-                }
+                // we dont care if the file is empty or not
+                // CRM-7448
+                $fileParams = array( 'uri'         => $formValues[$attachName]['name'],
+                                     'type'        => $formValues[$attachName]['type'],
+                                     'location'    => $formValues[$attachName]['name'],
+                                     'upload_date' => $now );
+                $params[$attachName] = $fileParams;
             }
         }
     }

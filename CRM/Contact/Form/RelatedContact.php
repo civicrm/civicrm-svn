@@ -83,7 +83,7 @@ class CRM_Contact_Form_RelatedContact extends CRM_Core_Form
         $rcid = CRM_Utils_Request::retrieve( 'rcid', 'Positive', $this );
         $rcid = $rcid ? "&id={$rcid}" : '';
         $session = CRM_Core_Session::singleton( );
-        $session->pushUserContext(CRM_Utils_System::url( "civicrm/user","reset=1{$rcid}" ));
+        $session->pushUserContext(CRM_Utils_System::url( 'civicrm/user',"reset=1{$rcid}" ));
 
         if ( $this->_contactId ) {
             require_once 'CRM/Contact/BAO/Contact.php';
@@ -163,7 +163,7 @@ class CRM_Contact_Form_RelatedContact extends CRM_Core_Form
         // store the submitted values in an array
         $params = $this->controller->exportValues( $this->_name );
         
-        require_once "CRM/Core/BAO/LocationType.php";
+        require_once 'CRM/Core/BAO/LocationType.php';
         $locType = CRM_Core_BAO_LocationType::getDefault();
         foreach ( array('phone', 'email', 'address') as $locFld ) {
             if ( ! empty($this->_defaults[$locFld]) && $this->_defaults[$locFld][1]['location_type_id'] ) {

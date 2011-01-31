@@ -1425,6 +1425,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         $view       = $field['is_view'];
         $required = ( $mode == CRM_Profile_Form::MODE_SEARCH ) ? false : $field['is_required'];
         $search   = ( $mode == CRM_Profile_Form::MODE_SEARCH ) ? true : false;
+        $isShared = CRM_Utils_Array::value( 'is_shared', $field, 0 ); 
 
         // do not display view fields in drupal registration form
         // CRM-4632
@@ -1723,7 +1724,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                 $hiddenSubtype = true;
             }
         
-        if ($view && $mode != CRM_Profile_Form::MODE_SEARCH) {
+        if ( ( $view && $mode != CRM_Profile_Form::MODE_SEARCH ) || $isShared ) {
             $form->freeze($name);
         }
         

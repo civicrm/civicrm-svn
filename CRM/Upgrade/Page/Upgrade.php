@@ -159,6 +159,13 @@ SELECT  count( id ) as statusCount
                 if ( $count < count( $statuses ) ) {
                     $message .= '<br />' . ts( "One or more Membership Status Rules was disabled during the upgrade because it did not match a recognized status name. if custom membership status rules were added to this site - review the disabled statuses and re-enable any that are still needed (Administer > CiviMember > Membership Status Rules)." );
                 }
+            } else if ( $latestVer == '3.4.alpha1' ) {
+                $renamedBinScripts = array( 'ParticipantProcessor.php',
+                                            'RespondentProcessor.php',
+                                            'UpdateGreeting.php',
+                                            'UpdateMembershipRecord.php',
+                                            'UpdatePledgeRecord.php ' );
+                $message .= '<br />' . ts( 'The following files have been renamed to have a ".php" extension instead of a ".php.txt" extension' ) . ': ' . implode( ', ', $renamedBinScripts );
             }
             
             $template->assign( 'currentVersion',  $currentVer);

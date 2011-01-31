@@ -55,7 +55,6 @@ class CRM_Admin_Form_Setting_UF extends CRM_Admin_Form_Setting
         CRM_Utils_System::setTitle( ts( 'Settings - %1 Integration',
                                         array( 1 => $uf ) ) );
 
-        $this->addElement('text','userFrameworkVersion' ,ts('%1 Version', array( 1 => $uf )));  
         $this->addElement('text','userFrameworkUsersTableName', ts('%1 Users Table Name', array( 1 => $uf )));
         if ( function_exists('module_exists') &&
              module_exists('views')           &&

@@ -85,7 +85,8 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
             $this->assign( 'backURL', $session->readUserContext( ) );
         }
         
-        if ( $action & CRM_Core_Action::UPDATE || $action & CRM_Core_Action::BROWSE ) {
+        if ( $action & CRM_Core_Action::UPDATE || 
+             $action & CRM_Core_Action::BROWSE ) {
             $cid  = CRM_Utils_Request::retrieve( 'cid',  'Positive', $this, false, 0 );
             $rgid = CRM_Utils_Request::retrieve( 'rgid', 'Positive', $this, false, 0 );
             $this->action = CRM_Core_Action::UPDATE;
@@ -102,7 +103,8 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
             $cacheKeyString .= $rgid ? "_{$rgid}" : '_0';
             $cacheKeyString .= $gid ? "_{$gid}" : '_0';
             
-            $this->_mainContacts = self::reloadCache( $cacheKeyString );
+            require_once 'CRM/Core/BAO/PrevNextCache.php';
+            $this->_mainContacts = CRM_Core_BAO_PrevNextCache::retrieve( $cacheKeyString );
             if ( empty( $this->_mainContacts ) ) {
                 if ( $gid ) {
                     $foundDupes = $this->get( "dedupe_dupes_$gid" );
@@ -121,7 +123,7 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
                     if ( !$foundDupes ) {
                         $foundDupes = CRM_Dedupe_Finder::dupes( $rgid );
                     }
-                    $this->set('dedupe_dupes', $foundDupes);
+                    $this->set( 'dedupe_dupes', $foundDupes );
                 }
                 if ( !$foundDupes ) {
                     $ruleGroup = new CRM_Dedupe_BAO_RuleGroup();
@@ -129,17 +131,14 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
                     $ruleGroup->find(true);
                     
                     $session = CRM_Core_Session::singleton();
-                    $session->setStatus( ts('No possible duplicates were found using %1 rule.', array( 1 => $ruleGroup->name ) ) );
-                    $url = CRM_Utils_System::url('civicrm/contact/deduperules', 'reset=1');
+                    $session->setStatus( ts('No possible duplicates were found using %1 rule.', 
+                                            array( 1 => $ruleGroup->name ) ) );
+                    $url = CRM_Utils_System::url( 'civicrm/contact/deduperules', 'reset=1' );
                     if ( $context == 'search' ) {
                         $url = $session->readUserContext( ); 
                     }
                     CRM_Utils_System::redirect( $url );
                 } else {
-                    $cacheKeyString  = "merge $contactType";
-                    $cacheKeyString .= $rgid ? "_{$rgid}" : '_0';
-                    $cacheKeyString .= $gid ? "_{$gid}" : '_0';
-                    
                     $cids = array( );
                     foreach ( $foundDupes as $dupe ) {
                         $cids[$dupe[0]] = 1;
@@ -160,7 +159,8 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
                     // so the more likely dupes are sorted first
                     $session = CRM_Core_Session::singleton();
                     $userId  = $session->get( 'userID' );
-                    $mainContacts = array();
+                    $mainContacts = $permission = array();
+                    
                     foreach ( $foundDupes as $dupes ) {
                         $srcID = $dupes[0];
                         $dstID = $dupes[1];
@@ -169,9 +169,15 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
                             $dstID = $dupes[0];
                         }
                         
-                        $canMerge = ( CRM_Contact_BAO_Contact_Permission::allow( $dstID, CRM_Core_Permission::EDIT )
-                                      && CRM_Contact_BAO_Contact_Permission::allow( $srcID, CRM_Core_Permission::EDIT ) );
+                        if ( !array_key_exists( $srcID, $permission ) ) {
+                            $permission[$srcID] = CRM_Contact_BAO_Contact_Permission::allow( $srcID, CRM_Core_Permission::EDIT );
+                        }
+                        if ( !array_key_exists( $dstID, $permission ) ) {
+                            $permission[$dstID] = CRM_Contact_BAO_Contact_Permission::allow( $dstID, CRM_Core_Permission::EDIT );
+                        }
                         
+                        $canMerge = ( $permission[$dstID] && $permission[$srcID] );
+
                         $mainContacts[] = $row = array( 'srcID'   => $srcID,
                                                         'srcName' => $displayNames[$srcID],
                                                         'dstID'   => $dstID,
@@ -190,13 +196,8 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
                     }
                     $this->_rgid = $rgid;
                     $this->_mainContacts = $mainContacts;
-                    
-                    $insert = "INSERT INTO civicrm_prevnext_cache ( entity_table, entity_id1, entity_id2, cacheKey, data ) VALUES \n";
-                    $query  = $insert . implode( ",\n ", $values );
-                    
-                    //dump the dedupe matches in the prevnext_cache table
-                    CRM_Core_DAO::executeQuery( $query );
-                    
+
+                    CRM_Core_BAO_PrevNextCache::setItem( $values );
                     $session = CRM_Core_Session::singleton( );
                     if ( $this->_cid ) {
                         $session->pushUserContext( CRM_Utils_System::url( 'civicrm/contact/deduperules', 
@@ -277,23 +278,6 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
     function userContext( $mode = null )
     {
         return 'civicrm/contact/dedupefind';
-    }
-
-
-    function reloadCache( $cacheKey ) 
-    {
-        $query = "
-SELECT data 
-FROM   civicrm_prevnext_cache
-WHERE  cacheKey = '$cacheKey'
-";
-        
-        $dao = CRM_Core_DAO::executeQuery( $query );
-        while ( $dao->fetch() ) {
-            $main[] = unserialize( $dao->data );
-        }
-
-        return $main;
     }
 
 }

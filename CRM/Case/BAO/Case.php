@@ -1334,11 +1334,7 @@ GROUP BY cc.id';
             $tplParams['contact'] = $info;
             self::buildPermissionLinks( $tplParams, $activityParams );
 
-            if ( !CRM_Utils_Array::value('sort_name', $info) ) {
-                $info['sort_name'] = $info['display_name'];   
-            }
-            
-            $displayName = $info['sort_name'];
+            $displayName = $info['display_name'];
 
             require_once 'CRM/Core/BAO/MessageTemplates.php';
             list ($result[$info['contact_id']], $subject, $message, $html) = CRM_Core_BAO_MessageTemplates::sendTemplate(

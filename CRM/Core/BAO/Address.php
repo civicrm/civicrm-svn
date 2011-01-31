@@ -810,6 +810,58 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
     }
 
     /**
+     * Function to check if current address fields are shared with any other address
+     *
+     * @param array    $fields    address fields in profile
+     * @param int      $contactId contact id
+     *
+     * @access public
+     * @static
+     */
+    static function checkContactSharedAddressFields( &$fields, $contactId  ) {
+        
+        if ( !$contactId || !is_array( $fields ) || empty( $fields ) ) {
+            return;
+        }
+        
+        $sharedLocations = array( );
+        $query = "
+SELECT location_type_id
+  FROM civicrm_address 
+ WHERE contact_id = %1 
+   AND master_id IS NOT NULL";
+        $dao = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $contactId, 'Integer' ) ) );
+        
+        while( $dao->fetch( ) ) {
+            $sharedLocations[] =  $dao->location_type_id;
+        }
+        $masterAddressId = null;
+        $addressFields = array ( 'street_address',
+                                 'supplemental_address_1',
+                                 'supplemental_address_2',
+                                 'city',
+                                 'postal_code',
+                                 'postal_code_suffix',
+                                 'geo_code_1',
+                                 'geo_code_2',
+                                 'state_province',
+                                 'country',
+                                 'county',
+                                 'address_name' );
+        
+        foreach ( $fields as $key => $value ) {
+            $val = null;
+            if ( is_array( $value ) ) {
+                $val = explode( '-', $value['name'] );
+                if ( in_array( $val[0] , $addressFields ) 
+                     && in_array( CRM_Utils_Array::value( 'location_type_id', $value, 0 ), $sharedLocations )  ) {
+                    $fields[$key]['is_shared'] = true;
+                }
+            }
+        }
+    }
+    
+     /**
      * Function to update the shared addresses if master address is modified
      *
      * @param int    $addressId address id

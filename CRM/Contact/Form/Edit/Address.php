@@ -71,7 +71,7 @@ class CRM_Contact_Form_Edit_Address
                           ts( 'Location Type' ),
                           array( '' => ts( '- select -' ) ) + CRM_Core_PseudoConstant::locationType( ), $js );
         
-        $js = array( 'id' => "Address_".$blockId."_IsPrimary", 'onClick' => 'singleSelect( this.id );');
+        $js = array( 'id' => 'Address_'.$blockId.'_IsPrimary', 'onClick' => 'singleSelect( this.id );');
         $form->addElement(
                           'checkbox', 
                           "address[$blockId][is_primary]", 
@@ -79,7 +79,7 @@ class CRM_Contact_Form_Edit_Address
                           ts('Primary location for this contact'), 
                           $js );
         
-        $js = array( 'id' => "Address_".$blockId."_IsBilling", 'onClick' => 'singleSelect( this.id );');
+        $js = array( 'id' => 'Address_'.$blockId.'_IsBilling', 'onClick' => 'singleSelect( this.id );');
         $form->addElement(
                           'checkbox', 
                           "address[$blockId][is_billing]", 
@@ -159,7 +159,7 @@ class CRM_Contact_Form_Edit_Address
                                        $selectOptions );
                 } else {
                     if ( $name == 'address_name' ) {
-                        $name = "name";
+                        $name = 'name';
                     }
                     
                     $form->addElement( 'text',
@@ -213,14 +213,14 @@ class CRM_Contact_Form_Edit_Address
 
             // we setting the prefix to 'dnc_' below, so that we don't overwrite smarty's grouptree var. 
             // And we can't set it to 'address_' because we want to set it in a slightly different format.
-            CRM_Core_BAO_CustomGroup::buildQuickForm( $form, $groupTree, false, 1, "dnc_" );
+            CRM_Core_BAO_CustomGroup::buildQuickForm( $form, $groupTree, false, 1, 'dnc_' );
 
             $template  =& CRM_Core_Smarty::singleton( );
             $tplGroupTree = $template->get_template_vars( 'address_groupTree' );
             $tplGroupTree = empty($tplGroupTree) ? array() : $tplGroupTree;
 
-            $form->assign( "address_groupTree", $tplGroupTree + array( $blockId => $groupTree ) );
-            $form->assign( "dnc_groupTree", null ); // unset the temp smarty var that got created
+            $form->assign( 'address_groupTree', $tplGroupTree + array( $blockId => $groupTree ) );
+            $form->assign( 'dnc_groupTree', null ); // unset the temp smarty var that got created
         }
         // address custom data processing ends ..
         
@@ -345,11 +345,16 @@ class CRM_Contact_Form_Edit_Address
             
         if ( $countryID &&
              isset( $form->_elementIndex[$stateElementName] ) ) {
-            $form->addElement( 'select',
-                               $stateElementName,
-                               $stateTitle,
-                               array( '' => ts( '- select -' ) ) +
-                               CRM_Core_PseudoConstant::stateProvinceForCountry( $countryID ) );
+            $stateSelect =& $form->addElement( 'select',
+                                               $stateElementName,
+                                               $stateTitle,
+                                               array( '' => ts( '- select -' ) ) +
+                                               CRM_Core_PseudoConstant::stateProvinceForCountry( $countryID ) );
+            
+            // CRM-7296 freeze the select for state if address is shared with household 
+            if ( CRM_Utils_Array::value( 'is_shared', $form->_fields[$stateElementName] ) ) {
+                $stateSelect->freeze( );
+            }
         }
     }
 

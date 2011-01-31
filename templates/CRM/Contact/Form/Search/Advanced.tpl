@@ -122,6 +122,16 @@ cj(function() {
             loadPanes('activity');
             break;
 
+            case '5':
+            cj('.crm-CiviMember-accordion').removeClass('crm-accordion-closed').addClass('crm-accordion-open') ;
+            loadPanes('CiviMember');
+            break;
+
+            case '6':
+            cj('.crm-CiviCase-accordion').removeClass('crm-accordion-closed').addClass('crm-accordion-open') ;
+            loadPanes('CiviCase');
+            break;
+
             default:
         } 
     });
