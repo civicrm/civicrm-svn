@@ -71,3 +71,12 @@ ON DELETE SET NULL;
 
 UPDATE civicrm_membership_log cml INNER JOIN civicrm_membership cm 
 ON cml.membership_id=cm.id SET cml.membership_type_id=cm.membership_type_id;
+
+-- CRM-7445 add client to case
+SELECT @option_group_id_act            := max(id) from civicrm_option_group where name = 'activity_type';
+SELECT @weight                 := MAX(weight) FROM civicrm_option_value WHERE option_group_id = @option_group_id_act;
+SELECT @value                 := MAX(value) FROM civicrm_option_value WHERE option_group_id = @option_group_id_act;
+SELECT @caseCompId       := max(id) FROM civicrm_component where name = 'CiviCase';
+INSERT INTO civicrm_option_value
+  (option_group_id,         {localize field='label'}label{/localize},                   value,                        name,                                        weight,                 {localize field='description'}description{/localize}, is_active, component_id) VALUES
+  (@option_group_id_act,   '{localize}Add Client To Case{/localize}',                   @value,                       'Add Client To Case'                         @weight,                NULL,                                               , 1,         @caseCompId ;
