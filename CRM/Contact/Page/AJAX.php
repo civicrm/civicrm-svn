@@ -65,10 +65,6 @@ class CRM_Contact_Page_AJAX
                 $from[$value] = "LEFT JOIN civicrm_{$value} {$suffix} ON ( cc.id = {$suffix}.contact_id AND {$suffix}.is_primary = 1 ) ";
                 break;
 
-            case 'nick_name' :
-                $select[] = $value;
-                break;
-                
             case 'country':
             case 'state_province':
                 $select[] = "{$suffix}.name";
