@@ -47,6 +47,7 @@
         -khtml-border-radius: 	4px;
         border-radius:			4px;
         margin-bottom:.8em;
+        text-align:left;
     }
     .crm-contribute-widget .crm-amount-fill {
         background-color:#2786C2;
@@ -56,6 +57,7 @@
         -webkit-border-radius: 	4px 0px 0px 4px;
         -khtml-border-radius: 	4px 0px 0px 4px;
         border-radius:			4px 0px 0px 4px;
+        text-align:left;
     }
     .crm-contribute-widget .crm-amount-raised-wrapper {
         margin-bottom:.8em;
