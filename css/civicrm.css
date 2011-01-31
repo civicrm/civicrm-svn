@@ -106,7 +106,7 @@ table.crm-table-group-summary tbody {
     margin: 0px;
     padding: 3px 0px 3px 0px;
     clear: none;
-    background-color: #FAFAD2;
+    background-color: #FFFFCC;
 }
 
 
@@ -2791,7 +2791,7 @@ tbody.scrollContent tr.alternateRow {
     background-color: #F5F5F5;
 }
 #crm-container .row-selected {
-    background-color: #FAFAD2;
+    background-color: #FFFFCC;
 }
 
 #crm-container tr.columnheader a.sorting {
@@ -3093,5 +3093,5 @@ div#crm-toolTip
 
 /* table row highlightng */
 #crm-container .crm-row-highlight {
-    background-color: #ffdc87 !important;
+    background-color: #FFFFCC !important;
 }
