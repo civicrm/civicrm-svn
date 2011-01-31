@@ -519,7 +519,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                            ts('Send Confirmation and Receipt?'), null, 
                            array( 'onclick' => "showHideByValue( 'send_receipt', '', 'notice', 'table-row', 'radio', false); showHideByValue( 'send_receipt', '', 'fromEmail', 'table-row', 'radio', false);" ) );
 
-        $this->add( 'select', 'from_email_address', ts('From'), $this->_fromEmails );
+        $this->add( 'select', 'from_email_address', ts('Receipt From'), $this->_fromEmails );
 
         $this->add('textarea', 'receipt_text_signup', ts('Receipt Message') );
         if ( $this->_mode ) {

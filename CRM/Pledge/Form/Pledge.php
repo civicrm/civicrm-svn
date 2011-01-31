@@ -415,7 +415,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
             $this->addElement( 'checkbox', 'is_acknowledge', ts('Send Acknowledgment?'), null, 
                                array( 'onclick' => "showHideByValue( 'is_acknowledge', '', 'acknowledgeDate', 'table-row', 'radio', true); showHideByValue( 'is_acknowledge', '', 'fromEmail', 'table-row', 'radio', false );" ) );
 
-            $this->add( 'select', 'from_email_address', ts('From'), $this->_fromEmails );
+            $this->add( 'select', 'from_email_address', ts('Receipt From'), $this->_fromEmails );
         }
 
         $this->addDate( 'acknowledge_date', ts('Acknowledgment Date') );

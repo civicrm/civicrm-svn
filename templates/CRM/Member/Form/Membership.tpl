@@ -178,7 +178,7 @@
             <span class="description">{ts}Automatically email a membership confirmation and receipt to {/ts}<span id="email-address"></span>?</span></td>
         </tr>
     {/if}
-        <tr id="fromEmail" >
+        <tr id="fromEmail" style="display:none;">
             <td class="label">{$form.from_email_address.label}</td>
             <td>{$form.from_email_address.html}</td>
         </tr>    
