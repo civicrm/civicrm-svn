@@ -139,14 +139,17 @@ class CRM_Contact_Page_AJAX
         } else {
            $strSearch = "$name%";
         }
-        $includeEmailFrom = '';
+        $includeEmailFrom = $includeNickName = '';
+        if ( $config->includeNickNameInName ) {
+            $includeNickName = " OR nick_name LIKE '$strSearch'";
+        }
         if( $config->includeEmailInName ) {
             if( !in_array( 'email', $list ) ) {
                 $includeEmailFrom ="LEFT JOIN civicrm_email eml ON ( cc.id = eml.contact_id AND eml.is_primary = 1 )" ;  
             }
-            $whereClause = " WHERE ( email LIKE '$strSearch' || sort_name LIKE '$strSearch' ) {$where} ";
+            $whereClause = " WHERE ( email LIKE '$strSearch' OR sort_name LIKE '$strSearch' $includeNickName ) {$where} ";
         } else {
-            $whereClause = " WHERE sort_name LIKE '$strSearch' {$where} ";
+            $whereClause = " WHERE ( sort_name LIKE '$strSearch' $includeNickName ) {$where} ";
         }
         $additionalFrom = '';
         if ( $relType ) {
