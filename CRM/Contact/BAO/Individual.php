@@ -64,7 +64,7 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
             return;
         }
 
-        $sortName   = $displayName = "";
+        $sortName   = $displayName = '';
         $firstName  = CRM_Utils_Array::value('first_name'   , $params, '');
         $middleName = CRM_Utils_Array::value('middle_name'  , $params, '');
         $lastName   = CRM_Utils_Array::value('last_name'    , $params, '');

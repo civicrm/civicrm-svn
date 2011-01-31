@@ -68,7 +68,7 @@ class CRM_Contact_BAO_Contact_Permission {
         require_once 'CRM/ACL/API.php';
         $permission = CRM_ACL_API::whereClause( $type, $tables, $whereTables );
 
-        require_once "CRM/Contact/BAO/Query.php";
+        require_once 'CRM/Contact/BAO/Query.php';
         $from       = CRM_Contact_BAO_Query::fromClause( $whereTables );
 
         $query = "
@@ -129,7 +129,7 @@ AND    $operationClause
         require_once 'CRM/ACL/API.php';
         $permission = CRM_ACL_API::whereClause( $type, $tables, $whereTables, $userID );
 
-        require_once "CRM/Contact/BAO/Query.php";
+        require_once 'CRM/Contact/BAO/Query.php';
         $from       = CRM_Contact_BAO_Query::fromClause( $whereTables );
 
         $query = "

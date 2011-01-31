@@ -757,7 +757,7 @@ WHERE id={$id}; ";
     public static function getRelativePath( $absolutePath )
     {
         $relativePath = null;
-        $config = CRM_Core_Config::singleton( );
+        $config =& CRM_Core_Config::singleton( );
         if ( $config->userFramework == 'Joomla' ) {
             $userFrameworkBaseURL = trim( str_replace( '/administrator/', '', $config->userFrameworkBaseURL ) );
             $customFileUploadDirectory = strstr( str_replace('\\', '/', $absolutePath), '/media' );
@@ -766,19 +766,20 @@ WHERE id={$id}; ";
             require_once 'CRM/Utils/System/Drupal.php';
             $rootPath = CRM_Utils_System_Drupal::cmsRootPath( );
             $baseUrl = $config->userFrameworkBaseURL;
-            if ( module_exists('locale') && $mode = variable_get( 'language_negotiation', LANGUAGE_NEGOTIATION_NONE ) ) {
+            if ( module_exists('locale') && 
+                 $mode = variable_get( 'language_negotiation', LANGUAGE_NEGOTIATION_NONE ) ) {
                 global $language;
-                if( isset( $language->prefix ) ) {
-                    $baseUrl=  str_replace( $language->prefix.'/', '', $config->userFrameworkBaseURL );
+                if( isset( $language->prefix ) &&
+                    ! empty( $language->prefix ) ) {
+                    $baseUrl=  str_replace( $language->prefix . '/',
+                                            '', 
+                                            $config->userFrameworkBaseURL );
                 }
-            }  
-            
-            $relativePath = str_replace( "$rootPath/", $baseUrl, str_replace('\\', '/', $absolutePath ) );
-        } else if ( $config->userFramework == 'Standalone' ) {
-            $absolutePathStr = strstr( $absolutePath, 'files');
-            $relativePath = $config->userFrameworkBaseURL . str_replace('\\', '/', $absolutePathStr );
+            }
+            $relativePath = str_replace( "{$rootPath}/",
+                                         $baseUrl, 
+                                         str_replace('\\', '/', $absolutePath ) );
         }
-        
         return $relativePath;
     }
  	
@@ -981,9 +982,9 @@ WHERE id={$id}; ";
         }
         
         $cacheKeyString  = "importableFields $contactType";
-        $cacheKeyString .= $status    ? "_1" : "_0";
-        $cacheKeyString .= $showAll   ? "_1" : "_0";
-        $cacheKeyString .= $isProfile ? "_1" : "_0";
+        $cacheKeyString .= $status    ? '_1' : '_0';
+        $cacheKeyString .= $showAll   ? '_1' : '_0';
+        $cacheKeyString .= $isProfile ? '_1' : '_0';
 
         if ( ! self::$_importableFields || ! CRM_Utils_Array::value( $cacheKeyString, self::$_importableFields ) ) {
             if ( ! self::$_importableFields ) {
@@ -1091,21 +1092,23 @@ WHERE id={$id}; ";
      * currentlty we are using importable fields as exportable fields
      *
      * @param int     $contactType contact Type
-     * $param boolean $status true while exporting primary contacts
-     * $param boolean $export true when used during export
+     * @param boolean $status true while exporting primary contacts
+     * @param boolean $export true when used during export
+     * @param boolean $search true when used during search, might conflict with export param?
      *
      * @return array array of exportable Fields
      * @access public
      */
-    function &exportableFields( $contactType = 'Individual', $status = false, $export = false ) 
+    function &exportableFields( $contactType = 'Individual', $status = false, $export = false, $search = false ) 
         {
         if ( empty( $contactType ) ) {
             $contactType = 'All';
         }
         
         $cacheKeyString  = "exportableFields $contactType";
-        $cacheKeyString .= $export ? "_1" : "_0";
-        $cacheKeyString .= $status ? "_1" : "_0";
+        $cacheKeyString .= $export ? '_1' : '_0';
+        $cacheKeyString .= $status ? '_1' : '_0';
+        $cacheKeyString .= $search ? '_1' : '_0';
 
         if ( ! self::$_exportableFields || ! CRM_Utils_Array::value( $cacheKeyString, self::$_exportableFields ) ) {
             if ( ! self::$_exportableFields ) {
@@ -1183,12 +1186,12 @@ WHERE id={$id}; ";
                 
                 if ( $contactType != 'All' ) { 
                     $fields = array_merge($fields,
-                                          CRM_Core_BAO_CustomField::getFieldsForImport($contactType, $status, true) );
+                                          CRM_Core_BAO_CustomField::getFieldsForImport($contactType, $status, true, $search ) );
                     
                 } else {
                     foreach ( array( 'Individual', 'Household', 'Organization' ) as $type ) { 
                         $fields = array_merge( $fields, 
-                                               CRM_Core_BAO_CustomField::getFieldsForImport($type));     
+                                               CRM_Core_BAO_CustomField::getFieldsForImport($type, false, false, $search ));     
                     }
                 }
                 

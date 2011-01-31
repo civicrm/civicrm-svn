@@ -130,7 +130,10 @@ class CRM_Case_Form_Case extends CRM_Core_Form
             require_once 'CRM/Core/OptionGroup.php';
             $this->_activityTypeId = CRM_Core_OptionGroup::getValue( 'activity_type',
                                                                      'Open Case',
-                                                                     'name' );  
+                                                                     'name' );
+            if ( !$this->_activityTypeId ) {
+                CRM_Core_Error::fatal( ts('The Open Case activity type is missing or disabled. Please have your site administrator check Administer > Option Lists > Activity Types for the CiviCase component.') );
+            }  
         }
         
         //check for case permissions.

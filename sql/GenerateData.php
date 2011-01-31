@@ -1381,6 +1381,7 @@ VALUES
                 $membershipLog->end_date      = self::repairDate($membership->end_date);
                 $membershipLog->modified_id   = $membership->contact_id;
                 $membershipLog->modified_date = date("Ymd");
+                $membershipLog->membership_type_id = $membership->membership_type_id;
                 $membershipLog->save();
             }
             $membershipLog = null;

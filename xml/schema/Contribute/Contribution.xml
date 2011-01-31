@@ -57,6 +57,7 @@
   </foreignKey> 
   <field>  
       <name>contribution_type_id</name>  
+      <title>Contribution Type</title>
       <export>false</export>
       <type>int unsigned</type>
       <comment>FK to Contribution Type</comment>
@@ -83,6 +84,7 @@
   </foreignKey>
   <field>   
       <name>payment_instrument_id</name>
+      <title>Payment Instrument</title>
       <type>int unsigned</type>
       <comment>FK to Payment Instrument</comment>   
       <add>1.3</add>   
@@ -292,7 +294,7 @@
   </field>
   <field>
       <name>contribution_status_id</name>
-      <title>Contribution Status Id</title>
+      <title>Contribution Status</title>
       <type>int unsigned</type>
       <default>1</default>
       <import>true</import>

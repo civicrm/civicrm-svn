@@ -174,9 +174,7 @@ class CRM_Member_Selector_Search extends CRM_Core_Selector_Base implements CRM_C
         $this->_action = $action;
         $this->_query = new CRM_Contact_BAO_Query( $this->_queryParams, null, null, false, false,
                                                     CRM_Contact_BAO_Query::MODE_MEMBER );
-        // CRM_Core_Error::debug( 'q', $this->_query );
-       
-
+        $this->_query->_distinctComponentClause = " DISTINCT(civicrm_membership.id)";
     }//end of constructor
 
 
@@ -495,6 +493,10 @@ class CRM_Member_Selector_Search extends CRM_Core_Selector_Base implements CRM_C
         return self::$_columnHeaders;
     }
     
+    function alphabetQuery( ) {
+        return $this->_query->searchQuery( null, null, null, false, false, true );
+    }
+    
     function &getQuery( ) {
         return $this->_query;
     }
@@ -508,7 +510,8 @@ class CRM_Member_Selector_Search extends CRM_Core_Selector_Base implements CRM_C
      function getExportFileName( $output = 'csv') { 
          return ts('CiviCRM Member Search'); 
      } 
-
+     
+     
 }//end of class
 
 

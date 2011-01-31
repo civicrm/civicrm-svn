@@ -26,7 +26,7 @@
                    if ( value == 'current_campaign' || value == 'past_campaign' ) {
                         cj(this).css( 'color', 'black' );    
                         cj(this).attr( 'disabled', true );    
-			cj(this).attr( 'selected', false);
+			            cj(this).attr( 'selected', false);
                         cj(this).addClass( 'asmOptionDisabled' );
                    } 
               });
@@ -45,20 +45,22 @@
         <td class="view-value">
 	    {* lets take a call, either show campaign select drop-down or show add campaign link *}		 
             {if $campaignInfo.hasCampaigns}
-		{$form.campaign_id.html}
-		{if $action eq 1 and !$campaignInfo.alreadyIncludedPastCampaigns and $campaignInfo.includePastCampaignURL}
-		<br />
-		    <a id='include-past-campaigns' href='#' onClick='includePastCampaigns( "campaign_id" ); return false;'>
-		       &raquo;
-		       {ts}include past campaign(s).{/ts}
-		    </a>
-		{/if}
+		        {$form.campaign_id.html} {help id="id-campaign_id" file="CRM/Campaign/Form/addCampaignToComponent.hlp"}
+        		{if !$campaignInfo.alreadyIncludedPastCampaigns and $campaignInfo.includePastCampaignURL}
+        		<br />
+        		    <a id='include-past-campaigns' href='#' onClick='includePastCampaigns( "campaign_id" ); return false;'>
+        		       &raquo;
+        		       {ts}Show past campaign(s) in this select list.{/ts}
+        		    </a>
+        		{/if}
             {else}
-		{ts}There are currently no Campaigns.{/ts}
-		{if $campaignInfo.addCampaignURL}
-		    {ts 1=$campaignInfo.addCampaignURL}If you want to associate this record with a campaign, you can <a href="%1">create a campaign here</a>.{/ts}
-		{/if}
-	    {/if}
+        		<div class="messages status">
+        		{ts}There are currently no active Campaigns.{/ts}
+        		{if $campaignInfo.addCampaignURL}
+        		    {ts 1=$campaignInfo.addCampaignURL}If you want to associate this record with a campaign, you can <a href="%1">create a campaign here</a>.{/ts}
+        		{/if} {help id="id-campaign_id" file="CRM/Campaign/Form/addCampaignToComponent.hlp"}
+        		</div>
+	        {/if}
         </td>
     </tr>
 

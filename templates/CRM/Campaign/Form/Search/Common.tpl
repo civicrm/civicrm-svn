@@ -176,14 +176,19 @@
 </div>
 </div>
 </div>
-    
+
 {literal}
 <script type="text/javascript">
 
     {/literal}{if !$doNotReloadCRMAccordion}{literal}	
     cj(function() {
-      cj().crmaccordions(); 
+      cj().crmaccordions();
+
+      {/literal}
+      {if !$isFormSubmitted} 
       buildCampaignGroups( );
+      {/if}
+      {literal}
     });
     {/literal}{/if}{literal}
 

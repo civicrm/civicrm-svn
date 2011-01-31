@@ -519,7 +519,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                            ts('Send Confirmation and Receipt?'), null, 
                            array( 'onclick' => "showHideByValue( 'send_receipt', '', 'notice', 'table-row', 'radio', false); showHideByValue( 'send_receipt', '', 'fromEmail', 'table-row', 'radio', false);" ) );
 
-        $this->add( 'select', 'from_email_address', ts('From'), $this->_fromEmails );
+        $this->add( 'select', 'from_email_address', ts('Receipt From'), $this->_fromEmails );
 
         $this->add('textarea', 'receipt_text_signup', ts('Receipt Message') );
         if ( $this->_mode ) {
@@ -1102,7 +1102,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             }
             $members = array( array( 'member_id', '=', $membership->id, 0, 0 ) );
             // check whether its a test drive 
-            if ( $this->_mode ) {
+            if ( $this->_mode == 'test' ) {
                 $members[] = array( 'member_test', '=', 1, 0, 0 ); 
             } 
             CRM_Core_BAO_UFGroup::getValues( $this->_contactID, $customFields, $customValues , false, $members );

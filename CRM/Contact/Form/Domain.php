@@ -151,7 +151,7 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
         $this->add('text', 'email_name', ts('FROM Name'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email','email'), true);
 
         $this->add('text', 'email_address', ts('FROM Email Address'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email','email'), true);
-        $this->addRule( "email_address", ts('Domain Email Address must use a valid email address format (e.g. \'info@example.org\').'), 'email' );
+        $this->addRule( 'email_address', ts('Domain Email Address must use a valid email address format (e.g. \'info@example.org\').'), 'email' );
 
         //build location blocks.
         CRM_Contact_Form_Location::buildQuickForm( $this );

@@ -90,7 +90,7 @@ class CRM_Utils_Mail
 
         $headers = array( );  
         $headers['From']                      = $params['from'];
-        $headers['To']                        = "{$params['toName']} <{$params['toEmail']}>";
+        $headers['To']                        = self::formatRFC822Email( $params['toName'], $params['toEmail'], false );
         $headers['Cc']                        = CRM_Utils_Array::value( 'cc', $params );
         $headers['Bcc']                       = CRM_Utils_Array::value( 'bcc', $params );
         $headers['Subject']                   = CRM_Utils_Array::value( 'subject', $params );
@@ -112,11 +112,9 @@ class CRM_Utils_Mail
         // quote FROM, if comma is detected AND is not already quoted. CRM-7053
         if ( strpos( $headers['From'], ',' )  !== false ) {
             $from = explode( ' <', $headers['From'] );
-            if ( substr( $from[0],  0,  1 ) != '"' || 
-                 substr( $from[0], -1,  1 ) != '"' ) {
-                $from[0] = str_replace( '"', '\"', $from[0] );
-                $headers['From'] = "\"{$from[0]}\" <{$from[1]}";
-            }
+            $headers['From'] = self::formatRFC822Email( $from[0],
+                                                        substr( $from[1], 0, -1 ),
+                                                        true );
         }
 
         require_once 'Mail/mime.php';
@@ -277,6 +275,35 @@ class CRM_Utils_Mail
             $params = $mimeParams;
         }
         return $message->get( $params );
+    }
+
+    static function formatRFC822Email( $name, $email, $useQuote = false ) {
+        $result = null;
+
+        $name = trim( $name );
+
+        // strip out double quotes if present at the beginning AND end
+        if ( substr( $name,  0,  1 ) == '"' &&
+             substr( $name, -1,  1 ) == '"' ) {
+            $name = substr( $name, 1, -1 );
+        }
+            
+        if ( ! empty( $name ) ) {
+            // escape the special characters
+            $name = str_replace( array( '<' , '"' , '>'  ),
+                                 array( '\<', '\"', '\>' ),
+                                 $name );
+            if ( strpos( $name, ',' ) !== false ||
+                 $useQuote ) {
+                // quote the string if it has a comma
+                $name = '"' . $name . '"';
+            }
+
+            $result = "$name ";
+        }
+
+        $result .= "<{$email}>";
+        return $result;
     }
 
 }

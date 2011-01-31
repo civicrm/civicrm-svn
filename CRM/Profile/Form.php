@@ -330,6 +330,8 @@ class CRM_Profile_Form extends CRM_Core_Form
         $return = false;
         $statusMessage = null;
         
+        require_once 'CRM/Core/BAO/Address.php';
+        CRM_Core_BAO_Address::checkContactSharedAddressFields( $this->_fields, $this->_id );
         //we should not allow component and mix profiles in search mode
         if ( $this->_mode != self::MODE_REGISTER ) {
             //check for mix profile fields (eg:  individual + other contact type)

@@ -449,11 +449,14 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
      * Function to calculate start date and end date for renewal membership 
      * 
      * @param int $membershipId 
+     * @param $changeToday 
+     * @param int $membershipTypeID - if provided, overrides the membership type of the $membershipID membership
      *
+     * CRM-7297 Membership Upsell - Added $membershipTypeID param to facilitate calculations of dates when membership type changes
      * @return Array array fo the start date, end date and join date of the membership
      * @static
      */
-    function getRenewalDatesForMembershipType( $membershipId, $changeToday = null ) 
+    function getRenewalDatesForMembershipType( $membershipId, $changeToday = null, $membershipTypeID = null ) 
     {
         require_once 'CRM/Member/BAO/Membership.php';
         require_once 'CRM/Member/BAO/MembershipStatus.php';
@@ -467,12 +470,24 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
         
         $membershipDetails = CRM_Member_BAO_Membership::getValues( $params, $values );
         $statusID          = $membershipDetails[$membershipId]->status_id;
-        $membershipTypeDetails = self::getMembershipTypeDetails( $membershipDetails[$membershipId]->membership_type_id );
+        // CRM-7297 Membership Upsell
+        if ( is_null( $membershipTypeID ) ) {
+	        $membershipTypeDetails = self::getMembershipTypeDetails( $membershipDetails[$membershipId]->membership_type_id );
+        } else {
+        	$membershipTypeDetails = self::getMembershipTypeDetails( $membershipTypeID );
+        }
         $statusDetails  = CRM_Member_BAO_MembershipStatus::getMembershipStatus($statusID);
         
         if ( $statusDetails['is_current_member'] == 1 ) {
             $startDate    = $membershipDetails[$membershipId]->start_date;
-            $date         = explode('-', $membershipDetails[$membershipId]->end_date);
+            // CRM=7297 Membership Upsell: we need to handle null end_date in case we are switching 
+            // from a lifetime to a different membership type
+            if ( is_null( $membershipDetails[$membershipId]->end_date ) ) {
+            	$date = date('Y-m-d');
+            } else {
+            	$date = $membershipDetails[$membershipId]->end_date;
+            }
+            $date = explode('-', $date );
             $logStartDate = date('Y-m-d', mktime( 0, 0, 0,
                                                   (double) $date[1],
                                                   (double) ($date[2] + 1),

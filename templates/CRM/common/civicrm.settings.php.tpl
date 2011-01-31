@@ -37,22 +37,19 @@
  * Settings for Drupal 6.x:
  *      define( 'CIVICRM_UF'        , 'Drupal' );
  *
- * Settings for 1.5.x:
+ * Settings for Joomla 1.5.x:
  *      define( 'CIVICRM_UF'        , 'Joomla' );
- *
- * Settings for Standalone:
- *		define( 'CIVICRM_UF'	, 'Standalone');
  *
  * You may have issues with images in CiviCRM. If this is the case, be sure
  * to update the CiviCRM Resource URL field (in Administer CRM: Global
- * Settings: Resource URLS) to your CiviCRM root directory.
+ * Settings: Resource URLs) to your CiviCRM root directory.
  */
 define( 'CIVICRM_UF'               , '%%cms%%'        );
 
 /**
  * Content Management System (CMS) Datasource:
  *
- * Update this setting with your CMS (Drupal or Joomla) database username, server and DB name. Comment it out if using CiviCRM standalone.
+ * Update this setting with your CMS (Drupal or Joomla) database username, server and DB name.
  * Datasource (DSN) format:
  *      define( 'CIVICRM_UF_DSN', 'mysql://cms_db_username:cms_db_password@db_server/cms_database?new_link=true');
  */

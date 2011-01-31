@@ -97,7 +97,7 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
             $membership[$dao->id]['campaign'] = CRM_Utils_Array::value( $dao->campaign_id, $allCampaigns );
             
             //get the membership status and type values.
-            $statusANDType = CRM_Member_BAO_Membership::getStatusANDTypeVaues( $dao->id );
+            $statusANDType = CRM_Member_BAO_Membership::getStatusANDTypeValues( $dao->id );
             foreach ( array( 'status', 'membership_type' ) as $fld ) {
                 $membership[$dao->id][$fld] = CRM_Utils_Array::value( $fld, $statusANDType[$dao->id] );
             }

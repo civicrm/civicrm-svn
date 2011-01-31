@@ -87,7 +87,7 @@ class CRM_Case_Form_Task extends CRM_Core_Form
     {
         $form->_caseIds = array( );
         
-        $values = $form->controller->exportValues( 'Search' );
+        $values = $form->controller->exportValues( $form->get( 'searchFormName' ) );
 
         $form->_task = $values['task'];
         $caseTasks = CRM_Case_Task::tasks();
@@ -125,8 +125,13 @@ class CRM_Case_Form_Task extends CRM_Core_Form
         $urlParams = 'force=1';
         if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
         
-        $session = CRM_Core_Session::singleton( );
-        $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/case/search', $urlParams ) );
+        $searchFormName = strtolower( $form->get( 'searchFormName' ) );
+        if ( $searchFormName == 'search' ) {
+            $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/case/search', $urlParams ) );
+        } else {
+            $session->replaceUserContext( CRM_Utils_System::url( "civicrm/contact/search/$searchFormName",
+                                                                 $urlParams ) );
+        }
     }
 
     /**

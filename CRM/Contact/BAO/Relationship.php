@@ -1045,7 +1045,7 @@ LEFT JOIN  civicrm_country ON (civicrm_address.country_id = civicrm_country.id)
             return;
         }
         
-        $rel = explode( "_", $params['relationship_type_id'] );
+        $rel = explode( '_', $params['relationship_type_id'] );
         
         $relTypeId     = $rel[0];
         $relDirection  = "_{$rel[1]}_{$rel[2]}";
@@ -1162,7 +1162,7 @@ SELECT relationship_type_id, relationship_direction
                 $relTypeIds    = explode( CRM_Core_DAO::VALUE_SEPARATOR,$membershipType['relationship_type_id'] );
                 $relDirections = explode( CRM_Core_DAO::VALUE_SEPARATOR,$membershipType['relationship_direction'] );
                 foreach( $relTypeIds as $key => $value ) {
-                    $relTypeDirs[] = $value."_".$relDirections[$key];
+                    $relTypeDirs[] = $value.'_'.$relDirections[$key];
                 }
                 $relTypeDir = $details['relationshipTypeId'].$details['relationshipTypeDirection'];
                 if ( in_array( $relTypeDir, $relTypeDirs ) ) {

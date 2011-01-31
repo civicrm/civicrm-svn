@@ -376,7 +376,7 @@ class CRM_Contact_BAO_Query
             $this->_skipPermission = true;
         } else {
             require_once 'CRM/Contact/BAO/Contact.php';
-            $this->_fields = CRM_Contact_BAO_Contact::exportableFields( 'All', false, true );
+            $this->_fields = CRM_Contact_BAO_Contact::exportableFields( 'All', false, true, true );
          
             require_once 'CRM/Core/Component.php';
             $fields =& CRM_Core_Component::getQueryFields( );
@@ -1315,8 +1315,8 @@ class CRM_Contact_BAO_Query
         case 'deceased_date_high':   
             $this->demographics( $values );
             return;
-        case 'modified_date_low':
-        case 'modified_date_high':
+        case 'log_date_low':
+        case 'log_date_high':
             $this->modifiedDates( $values );
             return;
                         
@@ -2847,14 +2847,28 @@ WHERE  id IN ( $groupIDs )
         $this->_tables['civicrm_log'] = $this->_whereTables['civicrm_log'] = 1; 
         $this->_qill[$grouping][] = ts('Changed by') . ": $name";
     }
-
+    
     function modifiedDates( $values )
     {
         $this->_useDistinct = true;
+        foreach ( array_keys( $this->_params ) as $id ) {  
+            if( $this->_params[$id][0] == 'log_date') {
+                if( $this->_params[$id][2] == 1 ) {
+                    $changeDate = 'added_log_date';
+                    $values[0]  = 'added_'.$values[0];
+                    $fieldTitle = 'Added Date';
+                } else if( $this->_params[$id][2] == 2 ){
+                    $changeDate = 'modified_log_date';
+                    $values[0]  = 'modified_'.$values[0];
+                    $fieldTitle = 'Modified Date';
+                }
+            }
+        }
+        
         $this->dateQueryBuilder( $values,
-                                 'civicrm_log', 'modified_date', 'modified_date', 'Modified Date' );
+                                 'civicrm_log', $changeDate, 'modified_date', $fieldTitle );
     }
-
+    
     
     function demographics( &$values ) 
     {
@@ -3615,7 +3629,7 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
                                $appendTimeStamp = true ) 
     {
         list( $name, $op, $value, $grouping, $wildcard ) = $values;
-
+        
         if ( $name == $fieldName . '_low' ) {
             $op     = '>=';
             $phrase = 'greater than or equal to';
@@ -3648,6 +3662,13 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
             
             if ( $date ) {
                 $this->_where[$grouping][] = "{$tableName}.{$dbFieldName} $op '$date'";
+                if ( $tableName == 'civicrm_log' &&
+                     $fieldName == 'added_log_date' ) {
+                    //CRM-6903 --hack to check modified date of first record.
+                    //as added date means first modified date of object.
+                    $addedDateQuery = 'select id from civicrm_log group by entity_id order by id';
+                    $this->_where[$grouping][] = "civicrm_log.id IN ( {$addedDateQuery} )";
+                }
             } else {
                 $this->_where[$grouping][] = "{$tableName}.{$dbFieldName} $op";
             }

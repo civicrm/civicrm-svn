@@ -95,7 +95,7 @@ class CRM_Contact_Form_DedupeRules extends CRM_Admin_Form
                 }
             }
         }
-        asort($this->_fields);
+        asort( $this->_fields );
     }
     
     /**
@@ -126,9 +126,9 @@ class CRM_Contact_Form_DedupeRules extends CRM_Admin_Form
         }
         $this->add('text', 'threshold', ts("Weight Threshold to Consider Contacts 'Matching':"), array('class' => 'two', 'style' => 'text-align: right'));
         $this->addButtons(array(
-            array('type' => 'next',   'name' => ts('Save'), 'isDefault' => true),
-            array('type' => 'cancel', 'name' => ts('Cancel')),
-        ));
+                                array('type' => 'next',   'name' => ts('Save'), 'isDefault' => true),
+                                array('type' => 'cancel', 'name' => ts('Cancel')),
+                                ));
         $this->assign('contact_type', $this->_contactType);
     }
 
@@ -212,6 +212,13 @@ UPDATE civicrm_dedupe_rule_group
         // CRM-3837
         require_once 'CRM/Core/BAO/SchemaHandler.php';
         CRM_Core_BAO_SchemaHandler::createIndexes( $tables, 'dedupe_index', $substrLenghts );
+        
+        //need to clear cache of deduped contacts 
+        //based on the previous rule
+        $cacheKey = "merge {$this->_contactType}_{$this->_rgid}";
+        
+        require_once 'CRM/Core/BAO/PrevNextCache.php';
+        CRM_Core_BAO_PrevNextCache::deleteItem( null, $cacheKey );
                 
     }
     

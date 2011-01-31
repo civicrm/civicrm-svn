@@ -74,10 +74,12 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         $this->_gid  = $gid  = CRM_Utils_Request::retrieve( 'gid', 'Positive', $this, false );
         $mergeId = CRM_Utils_Request::retrieve( 'mergeId', 'Positive', $this, false );
 
-        self::validateContacts( $cid, $oid );
+        require_once 'CRM/Dedupe/BAO/Rule.php';
+        CRM_Dedupe_BAO_Rule::validateContacts( $cid, $oid );
 
         //load cache mechanism 
-        $pos = self::loadCache( $rgid, $gid, $cid, $oid, $mergeId );
+        require_once 'CRM/Core/BAO/PrevNextCache.php';
+        $pos = CRM_Core_BAO_PrevNextCache::getPositions( $rgid, $gid, $cid, $oid, $mergeId );
  
         // Block access if user does not have EDIT permissions for both contacts.
         require_once 'CRM/Contact/BAO/Contact/Permission.php';
@@ -89,7 +91,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         // get user info of main contact.
         $config = CRM_Core_Config::singleton( );
         require_once 'CRM/Core/Permission.php';
-        $viewUser = CRM_Core_Permission::check('access user profiles');
+        $viewUser = CRM_Core_Permission::check( 'access user profiles' );
         $mainUfId = CRM_Core_BAO_UFMatch::getUFId( $cid );
         if ( $mainUfId ) {
             if ( $config->userFramework == 'Drupal' ) {
@@ -400,8 +402,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
 
     public function buildQuickForm()
     {
-        CRM_Utils_System::setTitle( ts('Merge Contacts') );
-
+        CRM_Utils_System::setTitle( ts( 'Merge %1s', array( 1 => $this->_contactType ) ) );
         $name = ts('Merge');
         if ( $this->next ) {
             $name = ts('Merge and Goto Next Pair');
@@ -685,8 +686,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
                 CRM_Core_DAO::executeQuery( $query );
             }
             civicrm_contact_delete( $otherParams );
-            
-            self::clearCache( $this->_oid );
+            CRM_Core_BAO_PrevNextCache::deleteItem( $this->_oid );
         } else {
             CRM_Core_Session::setStatus( ts('Do not have sufficient permission to delete duplicate contact.') );
         }
@@ -713,74 +713,5 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         }
         CRM_Utils_System::redirect( $url );
     }
-    
-    function validateContacts( $cid, $oid )
-    {
-        if ( !$cid || !$oid ) return; 
-        require_once 'CRM/Dedupe/DAO/Exception.php';
-        $exception = new CRM_Dedupe_DAO_Exception( );
-        $exception->contact_id1 = $cid;
-        $exception->contact_id2 = $oid;
-        //make sure contact2 > contact1.
-        if ( $cid > $oid ) {
-            $exception->contact_id1 = $oid;
-            $exception->contact_id2 = $cid;
-        }
         
-        if ( $exception->find( true ) ) {
-            CRM_Core_Error::fatal( ts( 'Oops, these contacts seems to be marked as non duplicates.' ) );
-        }
-    }
-
-    function loadCache( $rgid, $gid, $cid, $oid, &$mergeId = null ) 
-    {
-        $contactType = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $cid, 'contact_type' );
-        $cacheKey  = "merge $contactType";
-        $cacheKey .= $rgid ? "_{$rgid}" : '_0';
-        $cacheKey .= $gid ? "_{$gid}" : '_0';
-        
-        if ( $mergeId == null ) {
-            $query = "
-SELECT id 
-FROM   civicrm_prevnext_cache
-WHERE  entity_id1 = $cid AND
-       entity_id2 = $oid AND
-       entity_table = 'civicrm_contact' AND
-       cacheKey     = '$cacheKey'
-";
-            $mergeId = CRM_Core_DAO::singleValueQuery( $query );
-        }
-        
-        $pos = array( );
-        if ( $mergeId ) {
-            $sqlPrev = "SELECT * FROM civicrm_prevnext_cache WHERE id < $mergeId ORDER BY ID DESC LIMIT 1";
-            $dao = CRM_Core_DAO::executeQuery( $sqlPrev, CRM_Core_DAO::$_nullArray );
-            if ( $dao->fetch() ) {
-                $pos['prev']['id1']     = $dao->entity_id1;
-                $pos['prev']['id2']     = $dao->entity_id2;
-                $pos['prev']['mergeId'] = $dao->id;
-            }
-            
-            $sqlNext = "SELECT * FROM civicrm_prevnext_cache WHERE id > $mergeId ORDER BY ID ASC LIMIT 1";
-            $dao = CRM_Core_DAO::executeQuery( $sqlNext, CRM_Core_DAO::$_nullArray );
-            if ( $dao->fetch() ) {
-                $pos['next']['id1']     = $dao->entity_id1;
-                $pos['next']['id2']     = $dao->entity_id2;
-                $pos['next']['mergeId'] = $dao->id;
-            }
-        }   
-        return $pos;
-    }
-
-    function clearCache( $id )
-    {
-        //clear cache
-        $sql = "DELETE FROM civicrm_prevnext_cache
-                           WHERE  entity_table = 'civicrm_contact' AND
-                                  ( entity_id1 = {$id} OR
-                                    entity_id2 = {$id} )";
-        
-        CRM_Core_DAO::executeQuery( $sql );
-    }
-
 }

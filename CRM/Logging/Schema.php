@@ -43,6 +43,13 @@ class CRM_Logging_Schema
 
     private $db;
 
+    private $reports = array(
+        'logging/contact/detail',
+        'logging/contact/summary',
+        'logging/contribute/detail',
+        'logging/contribute/summary',
+    );
+
     /**
      * Populate $this->tables and $this->logs with current db state.
      */
@@ -92,7 +99,7 @@ class CRM_Logging_Schema
     {
         if ($this->isEnabled()) return;
 
-        foreach (array_diff($this->tables, array_keys($this->logs)) as $table) {
+        foreach ($this->tables as $table) {
             $this->createLogTableFor($table);
         }
         $this->createTriggers();
@@ -158,31 +165,30 @@ class CRM_Logging_Schema
 
     private function addReports()
     {
+        $titles = array(
+            'logging/contact/detail'     => ts('Contact Logging Report (Detail)'),
+            'logging/contact/summary'    => ts('Contact Logging Report (Summary)'),
+            'logging/contribute/detail'  => ts('Contribution Logging Report (Detail)'),
+            'logging/contribute/summary' => ts('Contribution Logging Report (Summary)'),
+        );
         // enable logging templates
-        $dao =& CRM_Core_DAO::executeQuery("UPDATE civicrm_option_value SET is_active = 1 WHERE value = 'logging/contact/summary' OR value = 'logging/contact/detail'");
-
-        // return early if the logging report templates are missing
-        require_once 'CRM/Core/OptionGroup.php';
-        $templates = CRM_Core_OptionGroup::values('report_template');
-        if (!isset($templates['logging/contact/summary']) or
-            !isset($templates['logging/contact/detail'])) return;
+        CRM_Core_DAO::executeQuery("
+            UPDATE civicrm_option_value
+            SET is_active = 1
+            WHERE value IN ('" . implode("', '", $this->reports) . "')
+        ");
 
         // add report instances
-        require_once 'CRM/Report/BAO/Instance.php';
-
-        $bao = new CRM_Report_BAO_Instance;
-        $bao->domain_id  = CRM_Core_Config::domainID();
-        $bao->title      = ts('Contact Logging Report (Summary)');
-        $bao->report_id  = 'logging/contact/summary';
-        $bao->permission = 'administer CiviCRM';
-        $bao->insert();
-
-        $bao = new CRM_Report_BAO_Instance;
-        $bao->domain_id  = CRM_Core_Config::domainID();
-        $bao->title      = ts('Contact Logging Report (Detail)');
-        $bao->report_id  = 'logging/contact/detail';
-        $bao->permission = 'administer CiviCRM';
-        $bao->insert();
+        require_once 'CRM/Report/DAO/Instance.php';
+        $domain_id = CRM_Core_Config::domainID();
+        foreach ($this->reports as $report) {
+            $dao = new CRM_Report_DAO_Instance;
+            $dao->domain_id  = $domain_id;
+            $dao->report_id  = $report;
+            $dao->title      = $titles[$report];
+            $dao->permission = 'administer CiviCRM';
+            $dao->insert();
+        }
     }
 
     /**
@@ -287,20 +293,21 @@ COLS;
     private function deleteReports()
     {
         // disable logging templates
-        $dao =& CRM_Core_DAO::executeQuery("UPDATE civicrm_option_value SET is_active = 0 WHERE value = 'logging/contact/summary' OR value = 'logging/contact/detail'");
+        CRM_Core_DAO::executeQuery("
+            UPDATE civicrm_option_value
+            SET is_active = 0
+            WHERE value IN ('" . implode("', '", $this->reports) . "')
+        ");
 
         // delete report instances
         require_once 'CRM/Report/DAO/Instance.php';
-
-        $bao = new CRM_Report_DAO_Instance;
-        $bao->domain_id = CRM_Core_Config::domainID();
-        $bao->report_id = 'logging/contact/summary';
-        $bao->delete();
-
-        $bao = new CRM_Report_DAO_Instance;
-        $bao->domain_id = CRM_Core_Config::domainID();
-        $bao->report_id = 'logging/contact/details';
-        $bao->delete();
+        $domain_id = CRM_Core_Config::domainID();
+        foreach($this->reports as $report) {
+            $dao = new CRM_Report_DAO_Instance;
+            $dao->domain_id = $domain_id;
+            $dao->report_id = $report;
+            $dao->delete();
+        }
     }
 
     /**

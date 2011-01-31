@@ -349,22 +349,25 @@ class CRM_Utils_System_Drupal {
     
     static function cmsRootPath( ) 
     {
-        $cmsRoot  = $valid = null;
-        $path = '';
+        $cmsRoot = $valid = null;
+        
+        $path = $_SERVER['SCRIPT_FILENAME'];
         if ( function_exists( 'drush_get_context' ) ) {
             $path = drush_get_context('DRUSH_DRUPAL_ROOT');
-        } else {
-            $path = $_SERVER['SCRIPT_FILENAME'];
         }
         $pathVars = explode( '/', str_replace( '\\', '/', $path ) );
         
-        //might be windows installation.
+        //lets store first var,
+        //need to get back for windows.
         $firstVar = array_shift( $pathVars );
-        if ( $firstVar ) $cmsRoot = $firstVar;
         
-        //start w/ csm dir search.
-        foreach ( $pathVars as $var ) {
-            $cmsRoot .= "/$var";
+        //lets remove sript name to reduce one iteration.
+        array_pop( $pathVars );
+        
+        //CRM-7429 --do check for upper most 'includes' dir,
+        //which would effectually work for multisite installation.
+        do {
+            $cmsRoot = $firstVar . '/'.implode( '/', $pathVars );
             $cmsIncludePath = "$cmsRoot/includes";
             //stop as we found bootstrap.
             if ( @opendir( $cmsIncludePath ) && 
@@ -372,9 +375,11 @@ class CRM_Utils_System_Drupal {
                 $valid = true;
                 break;
             }
-        }
+            //remove one directory level.
+            array_pop( $pathVars );
+        } while ( count( $pathVars ) ); 
         
-        return ( $valid ) ? $cmsRoot : null; 
+        return ( $valid ) ? $cmsRoot : null;
     }
     
     /**
