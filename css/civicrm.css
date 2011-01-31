@@ -3090,3 +3090,8 @@ div#crm-toolTip
 .extension-installed {
     background-color:#DDFFDD !important;
 }
+
+/* table row highlightng */
+#crm-container .crm-row-highlight {
+    background-color: #ffdc87 !important;
+}
