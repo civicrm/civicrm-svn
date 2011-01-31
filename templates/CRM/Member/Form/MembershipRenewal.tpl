@@ -129,6 +129,12 @@
                </fieldset>
             </td>
 	 </tr> 
+	 {else}	
+	 <tr class="crm-member-membershiprenew-form-block-total_amount">
+		<td class="label">{$form.total_amount.label}</td>
+		<td>{$form.total_amount.html}<br />
+		<span class="description">{ts}Membership payment amount. A contribution record will be created for this amount.{/ts}</span></td>
+	 </tr>	 
 	 {/if}  
     </table>
     {if $membershipMode}
@@ -163,42 +169,50 @@
    <div class="spacer"></div>
    </div>
 {if $accessContribution and ! $membershipMode}
-{include file="CRM/common/showHideByFieldValue.tpl" 
-    trigger_field_id    ="record_contribution"
-    trigger_value       =""
-    target_element_id   ="recordContribution" 
-    target_element_type ="table-row"
-    field_type          ="radio"
-    invert              = 0
-}
+    {include file="CRM/common/showHideByFieldValue.tpl" 
+        trigger_field_id    ="record_contribution"
+        trigger_value       =""
+        target_element_id   ="recordContribution" 
+        target_element_type ="table-row"
+        field_type          ="radio"
+        invert              = 0
+    }
 {/if}
 {if $email and $outBound_option != 2}
-{include file="CRM/common/showHideByFieldValue.tpl" 
-    trigger_field_id    ="send_receipt"
-    trigger_value       =""
-    target_element_id   ="notice" 
-    target_element_type ="table-row"
-    field_type          ="radio"
-    invert              = 0
-}
+    {include file="CRM/common/showHideByFieldValue.tpl" 
+        trigger_field_id    ="send_receipt"
+        trigger_value       =""
+        target_element_id   ="notice" 
+        target_element_type ="table-row"
+        field_type          ="radio"
+        invert              = 0
+    }
+    {include file="CRM/common/showHideByFieldValue.tpl" 
+        trigger_field_id    ="send_receipt"
+        trigger_value       =""
+        target_element_id   ="fromEmail" 
+        target_element_type ="table-row"
+        field_type          ="radio"
+        invert              = 0
+    }
 {/if}
 {if !$membershipMode}
-{include file="CRM/common/showHideByFieldValue.tpl" 
-    trigger_field_id    ="payment_instrument_id"
-    trigger_value       = '4'
-    target_element_id   ="checkNumber" 
-    target_element_type ="table-row"
-    field_type          ="select"
-    invert              = 0
-}
-{include file="CRM/common/showHideByFieldValue.tpl" 
-    trigger_field_id    ="send_receipt"
-    trigger_value       =""
-    target_element_id   ="fromEmail" 
-    target_element_type ="table-row"
-    field_type          ="radio"
-    invert              = 0
-}
+    {include file="CRM/common/showHideByFieldValue.tpl" 
+        trigger_field_id    ="payment_instrument_id"
+        trigger_value       = '4'
+        target_element_id   ="checkNumber" 
+        target_element_type ="table-row"
+        field_type          ="select"
+        invert              = 0
+    }
+    {include file="CRM/common/showHideByFieldValue.tpl" 
+        trigger_field_id    ="send_receipt"
+        trigger_value       =""
+        target_element_id   ="fromEmail" 
+        target_element_type ="table-row"
+        field_type          ="radio"
+        invert              = 0
+    }
 {/if}
 {literal}
 <script type="text/javascript">
@@ -218,6 +232,7 @@ function checkPayment()
     var record_contribution = document.getElementsByName('record_contribution');
     if ( record_contribution[0].checked ) {
         document.getElementsByName('send_receipt')[0].checked = true;
+        show('fromEmail', 'table-row');
     } else {
         document.getElementsByName('send_receipt')[0].checked = false;
     }

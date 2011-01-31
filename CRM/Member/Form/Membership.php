@@ -1102,7 +1102,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             }
             $members = array( array( 'member_id', '=', $membership->id, 0, 0 ) );
             // check whether its a test drive 
-            if ( $this->_mode ) {
+            if ( $this->_mode == 'test' ) {
                 $members[] = array( 'member_test', '=', 1, 0, 0 ); 
             } 
             CRM_Core_BAO_UFGroup::getValues( $this->_contactID, $customFields, $customValues , false, $members );

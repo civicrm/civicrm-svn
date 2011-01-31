@@ -1531,7 +1531,7 @@ AND civicrm_membership.is_test = %2";
                                 'end_date'              => CRM_Utils_Date::customFormat(
                                                                         $currentMembership['end_date'],
                                                                         $format ),
-                                'modified_id'           => $this->get( 'userID' ), 
+                                'modified_id'           => $currentMembership['contact_id'], 
                                 'modified_date'         => CRM_Utils_Date::customFormat( 
                                                                         $currentMembership['today_date'],
                                                                         $format ),

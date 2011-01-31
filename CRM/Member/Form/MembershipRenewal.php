@@ -384,6 +384,8 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             
             $this->add( 'text', 'check_number', ts('Check Number'), 
                         CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_Contribution', 'check_number' ) );
+        } else {
+            $this->add('text', 'total_amount', ts('Amount'));
         }
         $this->addElement( 'checkbox', 'send_receipt', ts('Send Confirmation and Receipt?'), null, 
                            array( 'onclick' => "showHideByValue( 'send_receipt', '', 'notice', 'table-row', 'radio', false ); showHideByValue( 'send_receipt', '', 'fromEmail', 'table-row', 'radio',false);" ) );
@@ -432,20 +434,20 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         $errors = array( );
         
         if ( $params['membership_type_id'][0] == 0 ) {
-        	$errors['membership_type_id'] = ts('Please enter a Membership Organization.');
+        	$errors['membership_type_id'] = ts('Oops. It looks like you are trying to change the membership type while renewing the membership. Please click the "change membership type" link, and select a Membership Organization.');
         }
         if ( $params['membership_type_id'][1] == 0 ) {
-        	$errors['membership_type_id'] = ts('Please enter a Membership Type.');
+        	$errors['membership_type_id'] = ts('Oops. It looks like you are trying to change the membership type while renewing the membership. Please click the "change membership type" link and select a Membership Type from the list.');
         }
        
         //total amount condition arise when membership type having no
         //minimum fee
         if ( isset( $params['record_contribution'] ) ) { 
             if ( ! $params['contribution_type_id'] ) {
-                $errors['contribution_type_id'] = ts('Please enter the contribution Type.');
+                $errors['contribution_type_id'] = ts('Please select a Contribution Type.');
             } 
             if ( !$params['total_amount'] ) {
-                $errors['total_amount'] = ts('Please enter the contribution.'); 
+                $errors['total_amount'] = ts('Please enter a Contribution Amount.'); 
             }
         }
         return empty($errors) ? true : $errors;
@@ -463,10 +465,8 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         require_once 'CRM/Member/BAO/MembershipType.php';
         require_once 'CRM/Member/BAO/MembershipStatus.php'; 
 
-                                                                         
         $ids    = array( );
         $config = CRM_Core_Config::singleton();
-        $params['contact_id']  = $this->_contactID;
         
         // get the submitted form values.  
         $this->_params = $formValues = $this->controller->exportValues( $this->_name );
@@ -621,7 +621,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             $contributionParams = array( );
             $config = CRM_Core_Config::singleton();
             $contributionParams['currency'             ] = $config->defaultCurrency;
-            $contributionParams['contact_id'           ] = $params['contact_id'];
+            $contributionParams['contact_id'           ] = $this->_contactID;
             $contributionParams['source'               ] = "{$memType} Membership: Offline membership renewal (by {$userName})";
             $contributionParams['non_deductible_amount'] = 'null';
             $contributionParams['receive_date'         ] = date( 'Y-m-d H:i:s' );
@@ -667,7 +667,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         if ( CRM_Utils_Array::value( 'send_receipt', $formValues ) ) {
             require_once 'CRM/Core/DAO.php';
             CRM_Core_DAO::setFieldValue( 'CRM_Member_DAO_MembershipType', 
-                                         CRM_Utils_Array::value( 'membership_type_id', $params ),
+                                         $formValues['membership_type_id'][1],
                                          'receipt_text_renewal',
                                          $formValues['receipt_text_renewal'] );
         }
@@ -698,9 +698,9 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                     $customFields["custom_{$k}"] = $field;
                 }
             }
-            $members = array( array( 'member_id', '=', $membership->id, 0, 0 ) );
+            $members = array( array( 'member_id', '=', $this->_membershipId, 0, 0 ) );
             // check whether its a test drive 
-            if ( $this->_mode ) {
+            if ( $this->_mode == 'test' ) {
                 $members[] = array( 'member_test', '=', 1, 0, 0 ); 
             } 
             CRM_Core_BAO_UFGroup::getValues( $this->_contactID, $customFields, $customValues , false, $members );
