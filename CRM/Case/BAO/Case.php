@@ -1607,7 +1607,6 @@ AND civicrm_case.is_deleted     = {$cases['case_deleted']}";
     	
    		require_once 'CRM/Case/XMLProcessor/Settings.php';
    		require_once 'CRM/Contact/BAO/Group.php';
-   		require_once 'api/v2/Contact.php';
    		$settingsProcessor = new CRM_Case_XMLProcessor_Settings();
    		$settings = $settingsProcessor->run();
    		if (! empty($settings)) {
@@ -1619,14 +1618,10 @@ AND civicrm_case.is_deleted     = {$cases['case_deleted']}";
 				if ($results) {
 					$groupInfo['id'] = $results['id'];
 					$groupInfo['title'] = $results['title'];
-					$searchParams = array( 'group' => array($groupInfo['id'] => 1),
-                                           'return.sort_name'     => 1,
-                                           'return.display_name'  => 1,
-                                           'return.email'         => 1,
-                                           'return.phone'         => 1
-                                           );
-        
-					$globalContacts = civicrm_contact_search( $searchParams );
+          require_once 'RM/Contact/BAO/Query.php';
+          $searchParams = array(array('group', 'IN', array($groupInfo['id'] => 1), 0, 0));
+          $returnProperties = array('sort_name', 'display_name', 'email', 'phone');
+          list($globalContacts, $_) = CRM_Contact_BAO_Query::apiQuery($params, $returnProperties);
 				}
 
    			}

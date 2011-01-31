@@ -101,21 +101,12 @@ WHERE      g.id IN ( {$groupID} ) AND ( g.saved_search_id IS NOT NULL OR g.child
             $groupID = array( $groupID );
         }
 
-        $params['return.contact_id'] = 1;
-        $params['offset']            = 0;
-        $params['rowCount']          = 0;
-        $params['sort']              = null;
-        $params['smartGroupCache']   = false;
-
-        require_once 'api/v2/Contact.php';
-        
-        $values = array( );
-        foreach ( $groupID as $gid ) {
-            $params['group'] = array( );
-            $params['group'][$gid] = 1;
-
+        require_once 'CRM/Contact/BAO/Query.php';
+        $returnProperties = array('contact_id');
+        foreach ($groupID as $gid) {
+            $params = array(array('group', 'IN', array($gid => 1), 0, 0));
             // the below call update the cache table as a byproduct of the query
-            $contacts = civicrm_contact_search( $params );
+            CRM_Contact_BAO_Query::apiQuery($params, $returnProperties, null, null, 0, 0, false);
         }
     }
 
