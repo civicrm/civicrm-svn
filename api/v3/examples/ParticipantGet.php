@@ -1,19 +1,19 @@
 <?php
-    function api_testParticipantGet( )
-    {
+function participant_get_example( )
+{
 
-        $params = array(
+  $params = array(
                         'contact_id'      => $this->_contactID,
-                        );
+  );
 
-        $result = civicrm_api( 'civicrm_participant_get','Participant',$params );
+  $result = civicrm_api( 'civicrm_participant_get','Participant',$params );
 
-        return $result;
-    }
-    
-    function api_v3_ParticipantGetExpectedResult(){
-      
-      $expectedResult = array(
+  return $result;
+}
+
+function participant_get_expectedresult(){
+
+  $expectedResult = array(
         						'is_error'           => 0,
                     'id'      		       =>1,
                     'source_contact_id'	 =>17,
@@ -38,8 +38,8 @@
                     'result'             =>null,
                     'is_deleted'         =>null,
 
-        );
+  );
 
-        return $expectedResult  ;
-    }
-    ?>
+  return $expectedResult  ;
+}
+?>

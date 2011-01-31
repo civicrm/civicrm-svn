@@ -270,16 +270,8 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                              "In line " . __LINE__ );
     }
 
-     /**
-     *  Test civicrm_activity_create() using example code
-     */
-    function testActivityCreateExample( )
-    {
-      require_once 'api/v3/examples/ActivityCreate.php';
-      $result = test_api_v3_activity_create();
-      $expectedResult = test_api_v3_activity_create_expectedresult();
-      $this->assertEquals($result,$expectedResult);
-    }
+
+
     /**
      *  Test civicrm_activity_create() with valid parameters
      */
@@ -297,7 +289,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         );
         
         $result = & civicrm_activity_create( $params );
-
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( $result['is_error'], 0,
                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
         $this->assertEquals( $result['source_contact_id'], 17 );
@@ -307,6 +299,17 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         $this->assertEquals( $result['location'], 'Pensulvania' );
         $this->assertEquals( $result['details'], 'a test activity' );
         $this->assertEquals( $result['status_id'], 1 );
+
+    }
+    function testActivityCreateExample( )
+    {
+     /**
+     *  Test civicrm_activity_create() using example code
+     */
+      require_once 'api/v3/examples/ActivityCreate.php';
+      $result = activity_create_example();
+      $expectedResult = activity_create_expectedresult();
+      $this->assertEquals($result,$expectedResult);
     }
     /**
      *  Test civicrm_activity_create() with valid parameters
@@ -655,8 +658,10 @@ class api_v3_ActivityTest extends CiviUnitTestCase
 
         //  Retrieve the test value
         $params = array( 'activity_id' => 4,
-                         'activity_type_id' => 5 );
+                         'activity_type_id' => 5,
+                         'version' =>3, );
         $result = civicrm_activity_get( $params, true );
+                $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( 0, $result['is_error'],
                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
         $this->assertEquals( 4, $result['result']['id'],
@@ -731,9 +736,11 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                              dirname(__FILE__)
                              . '/dataset/activity_4_13.xml') );
         $params = array( 'id' => 13,
-                         'activity_type_id' => 1 );
+                         'activity_type_id' => 1 ,
+                         'version' => $this->_apiversion,);
         
         $result =& civicrm_activity_delete($params);
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( $result['is_error'], 0,
                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
     }
@@ -1171,8 +1178,96 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                              "In line " . __LINE__ );
     }
 
-} // class api_v3_ActivityTest
 
+
+
+    /**
+     *  Test civicrm_activities_contact_get()
+     */
+    function testActivitiesContactGet()
+    {
+
+        //  Get activities associated with contact 17
+        $params = array( 'contact_id' => 17 );
+        $result = civicrm_activity_contact_get( $params );
+        $this->assertEquals( 0, $result['is_error'],
+                             "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
+        $this->assertEquals( 2, count( $result['result'] ),
+                             'In line ' . __LINE__ );
+        $this->assertEquals( 1, $result['result'][4]['activity_type_id'] ,
+                             'In line ' . __LINE__ );
+        $this->assertEquals( 'Test activity type',
+                             $result['result'][4]['activity_name'],
+                             'In line ' . __LINE__ );
+        $this->assertEquals( 'Test activity type',
+                             $result['result'][13]['activity_name'],
+                             'In line ' . __LINE__ );
+    }
+
+    /**
+     * check civicrm_activities_contact_get() with empty array
+     */
+    function testActivityContactGetEmpty( )
+    {
+        $params = array( );
+        $result = civicrm_activity_contact_get( $params );
+        $this->assertEquals( $result['is_error'], 1,
+                             "In line " . __LINE__ );
+    }
+   
+    /**
+     *  Test  civicrm_activity_contact_get() with missing source_contact_id
+     */
+    function testActivitiesContactGetWithInvalidParameter( )
+    {
+        $params = null;
+        $result = civicrm_activity_contact_get( $params );
+        $this->assertEquals( $result['is_error'], 1,
+                             "In line " . __LINE__ );
+    }
+
+    /**
+     *  Test civicrm_activity_contact_get() with invalid Contact Id
+     */
+    function testActivitiesContactGetWithInvalidContactId( )
+    {
+        $params = array( 'contact_id' => null );
+        $result = civicrm_activity_contact_get( $params );
+        $this->assertEquals( $result['is_error'], 1,
+                             "In line " . __LINE__ );
+
+        $params = array( 'contact_id' => 'contact' );
+        $result = civicrm_activity_contact_get( $params );
+        $this->assertEquals( $result['is_error'], 1,
+                             "In line " . __LINE__ );
+        
+        $params = array( 'contact_id' => 2.4 );
+        $result = civicrm_activity_contact_get( $params );
+        $this->assertEquals( $result['is_error'], 1,
+                             "In line " . __LINE__ );
+    }
+
+    /**
+     *  Test civicrm_activity_contact_get() with contact having no Activity
+     */
+    function testActivitiesContactGetHavingNoActivity( )
+    {
+        $params = array(
+                        'first_name'    => 'dan',
+                        'last_name'     => 'conberg',
+                        'email'         => 'dan.conberg@w.co.in',
+                        'contact_type'  => 'Individual'
+                        );
+        require_once 'api/v3/Contact.php';
+        $contact =&civicrm_contact_create( $params );
+        $params  = array( 'contact_id' => $contact['contact_id'] );
+        $result  = civicrm_activity_contact_get( $params );
+        $this->assertEquals( $result['is_error'], 0 );
+        $this->assertEquals( $result['result'],
+                             '0 activity record matching input params');        
+    }
+
+}
 // -- set Emacs parameters --
 // Local variables:
 // mode: php;

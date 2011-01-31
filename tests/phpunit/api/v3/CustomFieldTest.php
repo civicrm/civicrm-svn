@@ -26,6 +26,7 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
     
     function setUp() 
     {
+        $this->_apiversion = 3;
         parent::setUp();
     }
     
@@ -44,7 +45,7 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
                
         $customField =& civicrm_custom_field_create($fieldParams);
         $this->assertEquals($customField['is_error'], 1);
-        $this->assertEquals( $customField['error_message'],'params is not an array ' );
+        $this->assertEquals( $customField['error_message'],'Input variable `params` is not an array' );
     }    
 
     /**
@@ -135,7 +136,8 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
                         'weight'          => 4,
                         'is_required'     => 1,
                         'is_searchable'   => 0,
-                        'is_active'       => 1
+                        'is_active'       => 1, 
+                         'version'					=> $this->_apiversion,
                         );
         
         $customField =& civicrm_custom_field_create($params);
@@ -160,15 +162,27 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
                         'weight'          => 4,
                         'is_required'     => 1,
                         'is_searchable'   => 0,
-                        'is_active'       => 1
+                        'is_active'       => 1,
+                        'version'					=> $this->_apiversion,
                         );
-        $customField =& civicrm_custom_field_create($params);
-        $this->assertEquals($customField['is_error'],0);
-        $this->assertNotNull($customField['result']['customFieldId']);
-        $this->customFieldDelete($customField['result']['customFieldId']);
+        $result =& civicrm_custom_field_create($params);
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__);        
+        $this->assertEquals($result['is_error'],0);
+        $this->assertNotNull($result['result']['customFieldId']);
+        $this->customFieldDelete($result['result']['customFieldId']);
         $this->customGroupDelete($customGroup['id']); 
-    } 
 
+    } 
+            /**
+     *  Test  using example code
+     */
+    function testCustomFieldCreateExample( )
+    {
+     require_once 'api/v3/examples/CustomFieldCreate.php';
+     $result = custom_field_create_example();
+     $expectedResult = custom_field_create_expectedresult();
+     $this->assertEquals($result,$expectedResult);
+    }
     /**
      * check with data type - Country array
      */
@@ -184,7 +198,8 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
                         'weight'          => 4,
                         'is_required'     => 1,
                         'is_searchable'   => 0,
-                        'is_active'       => 1
+                        'is_active'       => 1,
+                         'version'					=> $this->_apiversion,
                         );
                
         $customField =& civicrm_custom_field_create($params);
@@ -209,7 +224,8 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
                         'weight'          => 4,
                         'is_required'     => 1,
                         'is_searchable'   => 0,
-                        'is_active'       => 1
+                        'is_active'       => 1,
+                         'version'					=> $this->_apiversion,
                         );
         
         $customField =& civicrm_custom_field_create($params);
@@ -405,7 +421,7 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
         $params = null; 
         $customField =& civicrm_custom_field_delete($params); 
         $this->assertEquals($customField['is_error'], 1);
-        $this->assertEquals($customField['error_message'], 'Params is not an array');
+        $this->assertEquals($customField['error_message'], 'Input variable `params` is not an array');
     }    
     /**
      * check without Field ID
@@ -426,11 +442,13 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
         $customGroup = $this->customGroupCreate('Individual','test_group',3);
         $customField = $this->customFieldCreate($customGroup['id'],'test_name', 3); 
         $this->assertNotNull($customField['result']['customFieldId']);
-        $customField =& civicrm_custom_field_delete( $customField );
+        $params = array('version'					=> $this->_apiversion,
+                         'id'							=> $customField );
+        $customField =& civicrm_custom_field_delete( $params );
         $this->assertEquals($customField['is_error'], 0);
         $this->customGroupDelete($customGroup['id']);
-    } 
-
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__);   } 
+      
     /**
      * check for Option Value
      */    
@@ -438,6 +456,8 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
     {
         $customGroup = $this->customGroupCreate('Contact','ABC',3 );  
         $customOptionValueFields = $this->customFieldOptionValueCreate($customGroup,'fieldABC',3 );
+        $params = array('version'					=> $this->_apiversion,
+                         'id'							=> $customOptionValueFields);
         $customField =& civicrm_custom_field_delete($customOptionValueFields);
         $this->assertEquals($customField['is_error'], 0);
         $this->customGroupDelete($customGroup['id']); 

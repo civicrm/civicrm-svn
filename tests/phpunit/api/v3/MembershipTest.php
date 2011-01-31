@@ -39,7 +39,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase
         parent::setUp();
         $this->_apiversion =3;
         $this->_contactID           = $this->individualCreate(null,3 ) ;
-           $this->markTestSkipped( "Reason for skipping:<a href='http://forum.civicrm.org/index.php/topic,18053.0.html'>version issue</a>" );
+        $this->markTestSkipped( "Reason for skipping:<a href='http://forum.civicrm.org/index.php/topic,18053.0.html'>version issue</a>" );
  
         $this->_membershipTypeID    = $this->membershipTypeCreate( $this->_contactID ,3 );        
         $this->_membershipStatusID  = $this->membershipStatusCreate( 'test status' ,3);                
@@ -64,8 +64,10 @@ class api_v3_MembershipTest extends CiviUnitTestCase
      */
     function testMembershipDelete()
     {
-        $result = civicrm_membership_delete($this->_membershipID);
-
+        $params=array('id' 			 => $this->_membershipID,
+                      'version'  => $this->_apiversion,);
+        $result = civicrm_membership_delete($params);
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( $result['is_error'], 0,
                              "In line " . __LINE__ );      
    
@@ -103,9 +105,9 @@ class api_v3_MembershipTest extends CiviUnitTestCase
      
      function testContactMembershipsGet()
      {
-         $this->assertTrue( function_exists(civicrm_contact_memberships_get) );
+         $this->assertTrue( function_exists(civicrm_membership_get) );
          $params = array();
-         $result = civicrm_contact_memberships_get( $params );
+         $result = civicrm_membership_get( $params );
          $this->assertEquals( 1, $result['is_error'],
                               "In line " . __LINE__ );
      }
@@ -148,7 +150,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase
     function testGetWithWrongParamsType()
     {
         $params = 'a string';
-        $result = & civicrm_contact_memberships_get( $params );
+        $result = & civicrm_membership_get( $params );
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
     }
@@ -160,7 +162,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase
      */
     function testGetWithParamsContactId()
     {
-        $membership =& civicrm_contact_memberships_get( $this->_contactID );
+        $membership =& civicrm_membership_get( $this->_contactID );
 
         $result = $membership[$this->_contactID][$this->_membershipID];
 
@@ -180,12 +182,13 @@ class api_v3_MembershipTest extends CiviUnitTestCase
      */
     function testGet()
     {
-        $params = array ( 'contact_id' => $this->_contactID );
+        $params = array ( 'contact_id' => $this->_contactID,
+                          'version'		=> $this->_apiversion, );
 
-        $membership =& civicrm_contact_memberships_get( $params );
+        $membership =& civicrm_membership_get( $params );
 
         $result = $membership[$this->_contactID][$this->_membershipID];
-
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals($result['contact_id'],         $this->_contactID, "In line " . __LINE__);
         $this->assertEquals($result['membership_type_id'], $this->_membershipTypeID, "In line " . __LINE__);
         $this->assertEquals($result['status_id'],          $this->_membershipStatusID, "In line " . __LINE__);
@@ -205,7 +208,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase
         $params = array ( 'contact_id'  => $this->_contactID,
                           'active_only' => 1);
 
-        $membership =& civicrm_contact_memberships_get( $params );
+        $membership =& civicrm_membership_get( $params );
         $result = $membership[$this->_contactID][$this->_membershipID];
 
         $this->assertEquals($result['status_id'], $this->_membershipStatusID, "In line " . __LINE__);
@@ -220,7 +223,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase
     {
         $params = array ( 'contact_id'  => 'NoContact' );
                           
-        $membership =& civicrm_contact_memberships_get( $params );
+        $membership =& civicrm_membership_get( $params );
         $this->assertEquals($membership['record_count'], 0, "In line " . __LINE__);
     }
 
@@ -241,7 +244,8 @@ class api_v3_MembershipTest extends CiviUnitTestCase
                                'contact_type_a' => 'Organization',
                                'contact_type_b' => 'Individual',
                                'is_reserved'    => 1,
-                               'is_active'      => 1
+                               'is_active'      => 1,
+                               'version'				=> $this->_apiversion,
                                );
         $relTypeID = $this->relationshipTypeCreate( $relTypeParams );
 
@@ -254,7 +258,8 @@ class api_v3_MembershipTest extends CiviUnitTestCase
                          'contribution_type_id'   => 1,
                          'relationship_type_id'   => $relTypeID,
                          'relationship_direction' => 'b_a',
-                         'is_active'              => 1 );        
+                         'is_active'              => 1,
+                         'version'				=> $this->_apiversion, );        
         $memType = civicrm_membership_type_create( $params );
         // in order to reload static caching -
         CRM_Member_PseudoConstant::membershipType( null, true );
@@ -267,12 +272,14 @@ class api_v3_MembershipTest extends CiviUnitTestCase
                         'end_date'           => '2009-12-21',
                         'source'             => 'Payment',
                         'is_override'        => 1,
-                        'status_id'          => $this->_membershipStatusID
+                        'status_id'          => $this->_membershipStatusID,
+                        'version'				=> $this->_apiversion,
                         );
         $membershipID = $this->contactMembershipCreate( $params ,$this->_apiversion);
 
         $params = array ( 'contact_id'  => $memberContactId ,
-                          'membership_type_id' => $memType['id'] );
+                          'membership_type_id' => $memType['id'],
+                          'version'				=> $this->_apiversion, );
                           
         $result =& civicrm_membership_contact_get( $params );
         
@@ -321,7 +328,8 @@ class api_v3_MembershipTest extends CiviUnitTestCase
                         'start_date'         => '2006-01-21',
                         'end_date'           => '2006-12-21',
                         'source'             => 'Payment',
-                        'status_id'          => '2'                       
+                        'status_id'          => '2' ,
+                        'version'				=> $this->_apiversion,                      
                         );
         
         $result = civicrm_contact_membership_create( $params );
@@ -338,10 +346,11 @@ class api_v3_MembershipTest extends CiviUnitTestCase
                         'end_date'           => '2006-12-21',
                         'source'             => 'Payment',
                         'is_override'        => 1,
-                        'status_id'          => $this->_membershipStatusID                       
-                        );
+                        'status_id'          => $this->_membershipStatusID ,                      
+                        'version'				=> $this->_apiversion,                        );
 
         $result = civicrm_contact_membership_create( $params );
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( $result['is_error'], 0 );
         $this->assertNotNull( $result['id'] );
     }
@@ -362,7 +371,8 @@ class api_v3_MembershipTest extends CiviUnitTestCase
                         'end_date'           => '2006-12-21',
                         'source'             => 'Payment',
                         'is_override'        => 1,
-                        'status_id'          => $this->_membershipStatusID                       
+                        'status_id'          => $this->_membershipStatusID,
+                       'version'				=> $this->_apiversion,                       
                         );
 
         $result = civicrm_contact_membership_create( $params );
@@ -386,7 +396,8 @@ class api_v3_MembershipTest extends CiviUnitTestCase
                         'end_date'           => '2008-12-21',
                         'source'             => 'Payment',
                         'is_override'        => 1,
-                        'status_id'          => $this->_membershipStatusID                       
+                        'status_id'          => $this->_membershipStatusID,
+                        'version'				=> $this->_apiversion,                       
                         );
 
         $result = civicrm_contact_membership_create( $params );
@@ -421,8 +432,8 @@ class api_v3_MembershipTest extends CiviUnitTestCase
                         'end_date'              => '2008-12-21',
                         'source'                => 'Payment',
                         'is_override'           => 1,
-                        'status_id'             => $this->_membershipStatusID                       
-                        );
+                        'status_id'             => $this->_membershipStatusID   ,                    
+                        'version'				=> $this->_apiversion,                        );
 
         $result = civicrm_contact_membership_create( $params );
 
@@ -461,7 +472,8 @@ class api_v3_MembershipTest extends CiviUnitTestCase
                         'membership_end_date'   => '2006-12-21',
                         'source'                => 'Payment',
                         'is_override'           => 1,
-                        'status_id'             => $this->_membershipStatusID                       
+                        'status_id'             => $this->_membershipStatusID ,
+                        'version'				=> $this->_apiversion,                      
                         );
 
         $values = array( );

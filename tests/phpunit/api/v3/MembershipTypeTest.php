@@ -93,10 +93,10 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase
     {       
          $id =  $this->membershipTypeCreate( $this->_contactID,1,$this->_apiversion  );
         
-       print('id ' . $id);
         $params = array( 'id'=> $id,
                           'version' => $this->_apiversion );        
         $membershiptype = & civicrm_membership_type_get( $params );
+        $this->documentMe($params,$membershiptype,__FUNCTION__,__FILE__); 
         $this->assertEquals($membershiptype['is_error'],'0', 'In line ' . __LINE__ );       
         $this->assertEquals($membershiptype['values'][$id]['name'],'General', 'In line ' . __LINE__ );
         $this->assertEquals($membershiptype['values'][$id]['member_of_contact_id'],$this->_contactID, 'In line ' . __LINE__ );
@@ -264,7 +264,7 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase
                         );
 	
         $membershiptype = & civicrm_membership_type_create($params); 
-
+        $this->documentMe($params,$membershiptype,__FUNCTION__,__FILE__); 
         $this->assertEquals( $membershiptype['is_error'], 0 );
         $this->assertNotNull( $membershiptype['values']);  
 
@@ -381,8 +381,9 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase
                           'version' => $this->_apiversion,
                         );
         
-        $membershiptype = civicrm_membership_type_delete( $params );
-        $this->assertEquals( $membershiptype['is_error'], 0 );
+        $result = civicrm_membership_type_delete( $params );
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+        $this->assertEquals( $result['is_error'], 0 );
     }
     
 

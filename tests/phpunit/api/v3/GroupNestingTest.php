@@ -35,7 +35,7 @@ require_once 'api/v3/GroupNesting.php';
  */
 class api_v3_GroupNestingTest extends CiviUnitTestCase
 {
-
+    protected $_apiversion;
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
@@ -45,7 +45,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
     protected function setUp()
     {
             $this->markTestSkipped( "Reason for skipping:<a href='http://forum.civicrm.org/index.php/topic,18053.0.html'>version issue</a>" );
- 
+         $this->_apiversion =3;
         parent::setUp();
 
         //  Insert a row in civicrm_group creating option group

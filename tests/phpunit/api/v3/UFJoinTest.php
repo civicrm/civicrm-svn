@@ -173,7 +173,7 @@ class api_v3_UFJoinTest extends CiviUnitTestCase
     /**
      * create/update uf join
      */
-    public function testEditUFJoin()
+    public function testCreateUFJoin()
     {
         $params =  array(
             'module'       => 'CiviContribute',
@@ -186,6 +186,7 @@ class api_v3_UFJoinTest extends CiviUnitTestCase
             'sequential'	 => 1,
         );
         $ufJoin = civicrm_uf_join_create($params);
+        $this->documentMe($params,$ufJoin,__FUNCTION__,__FILE__); 
         $this->assertEquals($ufJoin['values'][0]['module'], $params['module'],'In line ' . __LINE__ );
         $this->assertEquals($ufJoin['values'][0]['uf_group_id'], $params['uf_group_id'],'In line ' . __LINE__ );
         $this->assertEquals($ufJoin['values'][0]['is_active'], $params['is_active'],'In line ' . __LINE__ );
@@ -245,7 +246,7 @@ class api_v3_UFJoinTest extends CiviUnitTestCase
     /**
      * find uf join id
      */
-    public function testFindUFJoinId()
+    public function testGetUFJoinId()
     {
         $params = array(
             'module'       => 'CiviContribute',
@@ -268,6 +269,7 @@ class api_v3_UFJoinTest extends CiviUnitTestCase
         );
 
         $result = civicrm_uf_join_get($searchParams);
+        $this->documentMe($searchParams,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals($result['values'][0]['module'],$params['module'] ,'In line ' . __LINE__ );
         $this->assertEquals($result['values'][0]['uf_group_id'],$params['uf_group_id'] ,'In line ' . __LINE__ );
         $this->assertEquals($result['values'][0]['entity_id'],$params['entity_id'] ,'In line ' . __LINE__ );

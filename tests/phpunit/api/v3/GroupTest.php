@@ -5,7 +5,7 @@ require_once 'CiviTest/CiviUnitTestCase.php';
 
 class api_v3_GroupTest extends CiviUnitTestCase 
 {
-  
+    protected $_apiversion;
     protected $_groupID;
     
     
@@ -20,6 +20,7 @@ class api_v3_GroupTest extends CiviUnitTestCase
     
     function setUp() 
     {
+        $this->_apiversion = 3;
         $this->markTestSkipped( "Reason for skipping:<a href='http://forum.civicrm.org/index.php/topic,18053.0.html'>version issue</a>" );
  
         parent::setUp();

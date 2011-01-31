@@ -28,6 +28,7 @@
 
 require_once 'api/v3/Membership.php';
 require_once 'api/v3/MembershipStatus.php';
+require_once 'api/v3/MembershipType.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 
 class api_v3_MembershipStatusTest extends CiviUnitTestCase {
@@ -93,16 +94,17 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
      */
      function testGet()
      {
-         $params = array( 'name' => 'test status');
+         $params = array( 'name' => 'test status',
+                          'version'			=>  $this->_apiversion,);
          $result =& civicrm_membership_status_get($params);
-         
+         $this->documentMe($params,$result,__FUNCTION__,__FILE__);            
          $this->assertEquals( $result[$this->_membershipStatusID]['name'], "test status", "In line " . __LINE__ );
      }
      function testMembershipStatusesGet()
      {
-         $this->assertTrue( function_exists(civicrm_membership_statuses_get) );
+         $this->assertTrue( function_exists(civicrm_membership_status_get) );
          $params = 'wrong type';
-         $result = civicrm_membership_statuses_get( $params );
+         $result = civicrm_membership_status_get( $params );
          $this->assertEquals( 1, $result['is_error'],
                               "In line " . __LINE__ );         
      }
@@ -129,8 +131,13 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
     }
 
     function testCreate( ) {
-        $params = array( 'name' => 'test membership status' );
+        $params = array( 'name' => 'test membership status',
+                         'version' =>$this->_apiversion,
+        
+                         );
         $result = civicrm_membership_status_create( $params );
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__);     
+ 
         $this->assertEquals( $result['is_error'], 0 );
         $this->assertNotNull( $result['id'] );
         $this->membershipStatusDelete( $result['id'] );
@@ -163,6 +170,7 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
         $membershipStatusID = $this->membershipStatusCreate( );
         $params = array( 'id'   => $membershipStatusID,
                          'name' => 'new member',
+                          'version' =>$this->_apiversion,
                          );
         $result = civicrm_membership_status_update( $params );
         $this->assertEquals( $result['is_error'], 0 );
@@ -196,7 +204,7 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
     
     function testCalculateStatus( )
     {
-            $this->markTestSkipped( "Reason for skipping:<a href='http://forum.civicrm.org/index.php/topic,18053.0.html'>version issue</a>" );
+       $this->markTestSkipped( "Reason for skipping:<a href='http://forum.civicrm.org/index.php/topic,18053.0.html'>version issue</a>" );
  
         $join_date = new DateTime();
         $start_date = new DateTime();
@@ -244,7 +252,8 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
 
     function testDelete( ) {
         $membershipID = $this->membershipStatusCreate( );
-        $params = array( 'id' => $membershipID );
+        $params = array( 'id' => $membershipID ,
+                          'version' =>$this->_apiversion,);
         $result = civicrm_membership_status_delete( $params );
         $this->assertEquals( $result['is_error'], 0 );
     }        

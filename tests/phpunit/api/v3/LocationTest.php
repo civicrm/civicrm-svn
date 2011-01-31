@@ -103,7 +103,7 @@ class api_v3_LocationTest extends CiviUnitTestCase
     }
 
 
-    function testAddOrganizationWithAddress()
+    function testCreateOrganizationWithAddress()
     {
         $params = array('contact_id'             => $this->_contactID,
                         'location_type'          => 'New Location Type',
@@ -114,11 +114,12 @@ class api_v3_LocationTest extends CiviUnitTestCase
                         'state_province'         => 'Michigan',
                         'street_address'         => 'B 103, Ram Maruti Road',
                         'supplemental_address_1' => 'Hallmark Ct', 
-                        'supplemental_address_2' => 'Jersey Village'
+                        'supplemental_address_2' => 'Jersey Village',
+                        'version' =>$this->_apiversion,
                         );
         
-        $location = & civicrm_location_create($params);
-              
+        $result = & civicrm_location_create($params);
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__);                 
         $match    = array( );
         $match['address'][0] = array( 'contact_id'             => $this->_contactID,
                                       'location_type_id'       => $this->_locationType->id,
@@ -128,7 +129,7 @@ class api_v3_LocationTest extends CiviUnitTestCase
                                       'supplemental_address_1' => 'Hallmark Ct',
                                       'supplemental_address_2' => 'Jersey Village' );
         
-        $this->_checkResult( $location['result'], $match );
+        $this->_checkResult( $result['result'], $match );
     }
 
     function testAddWithoutStreetAddress()
@@ -141,7 +142,8 @@ class api_v3_LocationTest extends CiviUnitTestCase
                         'country'                => 'United States', 
                         'state_province'         => 'Michigan',
                         'supplemental_address_1' => 'Hallmark Ct', 
-                        'supplemental_address_2' => 'Jersey Village'
+                        'supplemental_address_2' => 'Jersey Village',
+                        'version'								 =>$this->_apiversion,
                         );
         
         $location = & civicrm_location_create($params);
@@ -207,7 +209,8 @@ class api_v3_LocationTest extends CiviUnitTestCase
                         'supplemental_address_1' => 'Near Wenna Lake',
                         'is_primary'             => 1,
                         'im'                     => $im,
-                        'email'                  => $email
+                        'email'                  => $email,
+                        'version'								 =>$this->_apiversion,
                         );
         
         $location = & civicrm_location_create($params); 
@@ -297,7 +300,8 @@ class api_v3_LocationTest extends CiviUnitTestCase
     function testDeleteWithNoMatch( )
     {
         $params    = array( 'contact_id'    =>  $this->_contactID,
-                            'location_type' => 10 );
+                            'location_type' => 10,
+                            'version'								 =>$this->_apiversion, );
         $locationDelete =& civicrm_location_delete( $params );
         
         $this->assertEquals( $locationDelete['is_error'], 1 );
@@ -309,7 +313,8 @@ class api_v3_LocationTest extends CiviUnitTestCase
     {
         $location  = $this->locationAdd(  $this->_contactID ,$this->_apiversion);
         
-        $params = array( 'contact_id'    => $this->_contactID,
+        $params = array( 'version'								 =>$this->_apiversion,
+        								'contact_id'    => $this->_contactID,
                          'location_type' => $location['result']['location_type_id'] );
         $locationDelete =& civicrm_location_delete( $params );
         
@@ -348,6 +353,7 @@ class api_v3_LocationTest extends CiviUnitTestCase
     function testGetWithEmptyLocationType() {
         // location_type an empty array
         $params = array('contact_id' => $this->_contactId, 
+                         'version'								 =>$this->_apiversion,
                         'location_type' => array() );
         
         $result =& civicrm_location_get( $params );
@@ -364,6 +370,7 @@ class api_v3_LocationTest extends CiviUnitTestCase
             'state_province_id'      => 1021,
             'supplemental_address_1' => 'Hallmark Ct',
             'supplemental_address_2' => 'Jersey Village',
+            'version'								 =>$this->_apiversion,
         );
         $result = civicrm_location_get(array('contact_id' => $this->_contactId));
         foreach ($result as $location) {
@@ -375,25 +382,6 @@ class api_v3_LocationTest extends CiviUnitTestCase
         }
     }
 
-    function testGetTwoSeriesCompliance()
-    {
-        $location = $this->locationAdd( $this->_contactID,$this->_apiversion );
-        $params = array('contact_id'             => $this->_contactID,
-                        'location_type'          => 'Home',
-                        'name'                   => 'Saint Helie',
-                        'country'                => 'United States', 
-                        'state_province'         => 'Michigan',
-                        'supplemental_address_1' => 'Hallmark ', 
-                        'supplemental_address_2' => 'Jersey Village'
-                        );
-        $locationHome = civicrm_location_create( $params );
-        $result = civicrm_location_get( array('contact_id' => $params['contact_id']));
-        foreach ($result as $location) {
-            if ( CRM_Utils_Array::value( 'address', $location ) ) {
-                $this->assertEquals($location['address']['contact_id'], $this->_contactID);
-            } 
-        }
-    }
     
 ///////////////// civicrm_location_update methods
 
@@ -454,8 +442,9 @@ class api_v3_LocationTest extends CiviUnitTestCase
                         'city'                  => 'Mumbai',
                         'email'                 => $emails,
                         'contact_id'            => $this->_contactID,
-                        'location_type_id'      => $location['result']['location_type_id']
-                        );
+                        'location_type_id'      => $location['result']['location_type_id'],
+                        'version'								 =>$this->_apiversion,
+                                );
         
         $locationUpdate =& civicrm_location_update( $params );
         

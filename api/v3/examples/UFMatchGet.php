@@ -1,21 +1,33 @@
-<?php
+<?php 
 
-function UF_match_get_example( )
-{
-  $params   = array('uf_id' => 42,
-                          'version' => 3);
-  $result = civicrm_api( 'civicrm_UF_match_get','UFMatch',$params );
+function uf_match_get_example(){
+    $params = array(
+    
+                  'contact_id' 		=> '69',
+                  'version' 		=> '3',
+
+  );
+  require_once 'api/api.php';
+  $result = civicrm_api( 'civicrm_uf_match_get','UFMatch',$params );
+
   return $result;
 }
 
-function UF_match_get_expectedresult(){
+/*
+ * Function returns array of result expected from previous function
+ */
+function uf_match_get_expectedresult(){
 
-  $expectedResult = array(
-                    'is_error'           => 0,
-                    'count' => 1,
-      							'version' => 3,
-                    'values' => Array  ('contact_id' => 69),
+  $expectedResult = 
+            array(
+                  'is_error' 		=> '0',
+                  'version' 		=> '3',
+                  'count' 		=> '1',
+                  'values' 		=>                   array('uf_id' => '42',                        ),
+
   );
 
   return $expectedResult  ;
 }
+
+

@@ -121,8 +121,10 @@ class api_v3_UFFieldTest extends CiviUnitTestCase
             'label'            => 'Test Country',
             'is_searchable'    => 1,
             'is_active'        => 1,
+            'version'					 => $this->_apiversion,
         );
         $ufField          = civicrm_uf_field_create($this->_ufGroupId, $params);
+        $this->documentMe($params,$ufField ,__FUNCTION__,__FILE__); 
         $this->_ufFieldId = $ufField['id'];
         foreach ($params as $key => $value) {
             $this->assertEquals($ufField[$key], $params[$key]);
@@ -171,6 +173,7 @@ class api_v3_UFFieldTest extends CiviUnitTestCase
             'label'            => 'Test Country',
             'is_searchable'    => 1,
             'is_active'        => 1,
+            'version'					 => $this->_apiversion,
         );
         $ufField          = civicrm_uf_field_create($this->_ufGroupId, $params);
         $this->_ufFieldId = $ufField['id'];
@@ -178,6 +181,8 @@ class api_v3_UFFieldTest extends CiviUnitTestCase
             $this->assertEquals($ufField[$key], $params[$key]);
         }
         $result = civicrm_uf_field_delete($ufField['id']);
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__);        
+        
         $this->assertEquals($result, true);
     }
 }

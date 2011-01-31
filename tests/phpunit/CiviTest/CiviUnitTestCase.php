@@ -548,13 +548,15 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         return;
     }
     
-    function membershipStatusCreate( $name = 'test member status' ) 
+    function membershipStatusCreate( $name = 'test member status',$apiversion =2 ) 
     {
         $params['name'] = $name;
         $params['start_event'] = 'start_date';
         $params['end_event'] = 'end_date';
         $params['is_current_member'] = 1;
         $params['is_active'] = 1;
+        $params['version'] = $apiversion;
+        
         $result = civicrm_membership_status_create( $params );
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
             throw new Exception( 'Could not create membership status' );
@@ -576,12 +578,15 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     function relationshipTypeCreate( &$params = null,$apiversion =2) 
     {   
         $params['version'] = $apiversion;
+        $params['sequential'] = 1;
         require_once 'api/api.php';
         $result = civicrm_api( 'civicrm_relationship_type_create','RelationshipType',$params );
-      
-        if ( civicrm_error( $params ) ) {
+        if ( civicrm_error( $params ) || $result['is_error'] ==1) {
             throw new Exception( 'Could not create relationship type' );
         }
+        if ($apiversion ==3){
+          return $result['values']['id'];
+        } 
         return $result['id'];
     }
     
@@ -1250,7 +1255,32 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
        return $result;
     }
-    
+function documentMe($params,$result,$function,$filename){
+        $entity = substr ( basename($filename) ,0, strlen(basename($filename))-8 );
+        if (strstr($function, 'Create')){
+          $action = 'Create';
+        }elseif(strstr($function, 'Get')){
+          $action = 'Get';
+        }elseif(strstr($function, 'Delete')){
+          $action = 'Delete';
+        }
+        if (strstr($entity,'UF')){// a cleverer person than me would do it in a single regex
+         $fnPrefix = strtolower(preg_replace('/(?<! )(?<!^)(?<=UF)[A-Z]/','_$0', $entity));          
+        }else{
+        $fnPrefix = strtolower(preg_replace('/(?<! )(?<!^)[A-Z]/','_$0', $entity)); 
+        }   
+        $function = $fnPrefix . "_" .strtolower($action);
+        require_once 'CRM/Core/Smarty.php';
+        $smarty =& CRM_Core_Smarty::singleton();
+        $smarty->assign('function',$function);
+        $smarty->assign('params',$params);   
+        $smarty->assign('entity',$entity);         
+        $smarty->assign('result',$result);  
+        //$f = fopen("c:\\utils\\eclipseworkspace\\api-civicrm\\api\\v3\\examples\\$entity$action.php", "w");
+        //fwrite($f,$smarty->fetch('c:\\utils\\eclipseworkspace\\api-civicrm\\tests\\templates\\documentFunction.tpl'));
+        fclose($f); 
+    }
+  
     /**
      * Function to delete note
      * 
@@ -1312,6 +1342,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         }
         return $result;    
     }      
+
 }
 
 // -- set Emacs parameters --

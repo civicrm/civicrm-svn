@@ -66,18 +66,18 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
      * test add methods with valid data
      * success expected
      */
-    function testContactAdd() {
-        
+    function testContactCreate() {
+
         // check for Type:Individual Subtype:sub_individual
         $contactParams = array(
                                'first_name'       => 'Anne',
                                'last_name'        => 'Grant',
                                'contact_type'     => 'Individual',
-                               'contact_sub_type' => $this->subTypeIndividual
+                               'contact_sub_type' => $this->subTypeIndividual,
+                               'version'					=> $this->_apiversion,
                                );  
         $contact =& civicrm_contact_create( $contactParams );
         $this->assertEquals( $contact['is_error'], 0, "In line " . __LINE__ );
-        
         $params      = array( 'contact_id' => $contact['contact_id'] );
         $getContacts = civicrm_contact_get( $params );
         $result      = $getContacts[$contact['contact_id']];
@@ -103,7 +103,8 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
         $this->assertEquals( $result['contact_type'], $contactParams['contact_type'], "In line " . __LINE__ );
         $this->assertEquals( $result['contact_sub_type'], $contactParams['contact_sub_type'], "In line " . __LINE__ ); 
         civicrm_contact_delete( $params ); 
-    }
+  }
+
     
     /*
      * test add with invalid data

@@ -119,10 +119,12 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
         $params = array(
                         'contribution_id'    => $contribution->id,  
                         'membership_id'      => $membership->id,
+                        'version'						 => $this->_apiversion,
                         );
-        $Create = civicrm_membershipPayment_create($params);
-        $this->assertEquals( $Create['membership_id'],$membership->id ,'Check Membership Id');
-        $this->assertEquals( $Create['contribution_id'],$contribution->id ,'Check Contribution Id');
+        $result = civicrm_membershipPayment_create($params);
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+        $this->assertEquals( $result['membership_id'],$membership->id ,'Check Membership Id');
+        $this->assertEquals( $result['contribution_id'],$contribution->id ,'Check Contribution Id');
         
     }    
     
@@ -165,6 +167,7 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
                          'payment_instrument_id'  => 1,
                          'id'                     => null,                         
                          'total_amount'           => 200.00,
+                         'version'								=> $this->_apiversion,
                          );
         
         require_once 'CRM/Contribute/BAO/Contribution.php';
@@ -174,7 +177,8 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
                         'membership_type_id' => $this->_membershipTypeID,
                         'source'             => 'Payment',
                         'is_override'        => 1,
-                        'status_id'          => $this->_membershipStatusID
+                        'status_id'          => $this->_membershipStatusID,
+                        'version'						 => $this->_apiversion,
                         );
         $ids = array();
         $membership = CRM_Member_BAO_Membership::create( $params, $ids );
@@ -182,13 +186,14 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
         $params = array(
                         'contribution_id'    => $contribution->id,  
                         'membership_id'      => $membership->id,
+                        'version'						 => $this->_apiversion,
                         );
         $Create = civicrm_membershipPayment_create($params);
      
-        $GetParams = civicrm_membershipPayment_get($params);
-        
-        $this->assertEquals( $GetParams[$Create['id']]['membership_id'],$membership->id ,'Check Membership Id');
-        $this->assertEquals( $GetParams[$Create['id']]['contribution_id'],$contribution->id ,'Check Contribution Id');
+        $result = civicrm_membershipPayment_get($params);
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__);        
+        $this->assertEquals( $GetParams[$result['id']]['membership_id'],$membership->id ,'Check Membership Id');
+        $this->assertEquals( $GetParams[$result['id']]['contribution_id'],$contribution->id ,'Check Contribution Id');
         
     }    
    

@@ -113,6 +113,7 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
             'title'     => 'Edited Test Profile',
             'help_post' => 'Profile Pro help text.',
             'is_active' => 1,
+            'version'					 => $this->_apiversion,
         );
 
         $updatedGroup = civicrm_uf_group_create($params, $this->_ufGroupId);
@@ -153,8 +154,10 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
             'notify'               => 'admin@example.org',
             'post_URL'             => 'http://example.org/post',
             'title'                => 'Test Group',
+            'version'					 => $this->_apiversion,
         );
         $group = civicrm_uf_group_create($params);
+        $this->documentMe($params,$group,__FUNCTION__,__FILE__); 
         foreach ($params as $key => $value) {
             if ($key == 'add_contact_to_group' or $key == 'group') continue;
             $this->assertEquals($group[$key], $params[$key]);
@@ -200,6 +203,7 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
             'notify'               => 'admin@example.org',
             'post_URL'             => 'http://example.org/post',
             'title'                => 'Test Group',
+            'version'					 => $this->_apiversion,
         );
         $group = civicrm_uf_group_create($params, $this->_ufGroupId);
         foreach ($params as $key => $value) {

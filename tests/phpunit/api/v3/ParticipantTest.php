@@ -371,10 +371,12 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'role_id'       => 1,
                         'register_date' => '2007-07-21',
                         'source'        => 'Online Event Registration: API Testing',
-                        'event_level'   => 'Tenor'                        
+                        'event_level'   => 'Tenor',  
+                        'version'				=> $this->_apiversion,                      
                         );
         
         $participant = & civicrm_participant_create($params);
+        $this->documentMe($params,$participant ,__FUNCTION__,__FILE__); 
         $this->assertNotEquals( $participant['is_error'],1 );
         $this->_participantID = $participant['result'];
         if ( ! $participant['is_error'] ) {
@@ -833,9 +835,11 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
         
         $this->_participantPaymentID = $this->participantPaymentCreate( $this->_participantID, $contributionID );
         
-        $params = array( 'id' => $this->_participantPaymentID );         
-        $deletePayment = & civicrm_participant_payment_delete( $params );   
-        $this->assertEquals( $deletePayment['is_error'], 0 );
+        $params = array( 'id' => $this->_participantPaymentID,
+                          'version'				=> $this->_apiversion, );         
+        $result = & civicrm_participant_payment_delete( $params );  
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__);      
+        $this->assertEquals( $result['is_error'], 0 );
         
     }    
 

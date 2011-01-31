@@ -14,6 +14,7 @@ require_once 'api/v3/CustomGroup.php';
 class api_v3_CustomGroupTest extends CiviUnitTestCase
 {
     protected $_apiversion;
+    protected $_entity;
         
     function get_info( )
     {
@@ -25,7 +26,9 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
     }
     
     function setUp() 
-    {
+    {   
+        $this->_apiversion =3;
+        $this->_entity = 'CustomGroup';
         parent::setUp();
     }
     
@@ -134,13 +137,14 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
                          'style'            => 'Inline',
                          'help_pre'         => 'This is Pre Help For Test Group 1',
                          'help_post'        => 'This is Post Help For Test Group 1',
-                         'is_active'        => 1
+                         'is_active'        => 1,
+                         'version'					=>$this->_apiversion,
                          );
         
-        $customGroup =& civicrm_custom_group_create($params);
-        $this->assertEquals($customGroup['is_error'], 0);
-        $this->assertNotNull($customGroup['id']);
-        $this->assertEquals($customGroup['extends'], 'Individual');
+        $result =& civicrm_custom_group_create($params);
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__);         $this->assertEquals($result['is_error'], 0);
+        $this->assertNotNull($result['id']);
+        $this->assertEquals($result['extends'], 'Individual');
         $this->customGroupDelete($customGroup['id']);
 
         unset( $params['style'] );
@@ -159,7 +163,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
         $params = null;
         $customGroup =& civicrm_custom_group_create($params);
         $this->assertEquals($customGroup['is_error'], 1);
-        $this->assertEquals($customGroup['error_message'],'params is not an array');
+        $this->assertEquals($customGroup['error_message'],'Input variable `params` is not an array' );
     }
 
     /**
@@ -172,7 +176,8 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
                         'collapse_display' => 1,
                         'style'            => 'Tab',
                         'help_pre'         => 'This is Pre Help For Test Group 2',
-                        'help_post'        => 'This is Post Help For Test Group 2'
+                        'help_post'        => 'This is Post Help For Test Group 2',
+                        'version'					 => $this->_apiversion,
                         );
         
         $customGroup =& civicrm_custom_group_create($params);
@@ -192,7 +197,8 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
                         'style'            => 'Tab',
                         'help_pre'         => 'This is Pre Help For Test Group 3',
                         'help_post'        => 'This is Post Help For Test Group 3',
-                        'is_active'        => 1
+                        'is_active'        => 1,
+                        'version'					 => $this->_apiversion,
                         );
         
         $customGroup =& civicrm_custom_group_create($params);
@@ -216,7 +222,8 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
                         'style'            => 'Inline',
                         'help_pre'         => 'This is Pre Help For Test Group 6',
                         'help_post'        => 'This is Post Help For Test Group 6',
-                        'is_active'        => 1 
+                        'is_active'        => 1,
+                        'version'					 => $this->_apiversion, 
                         );
         
         $customGroup =& civicrm_custom_group_create($params);
@@ -294,7 +301,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
         $params = null;
         $customGroup =& civicrm_custom_group_delete($params);
         $this->assertEquals($customGroup['is_error'], 1);
-        $this->assertEquals($customGroup['error_message'],'Params is not an array');
+        $this->assertEquals($customGroup['error_message'],'Input variable `params` is not an array' );
     }    
     /**
      * check with valid custom group id
@@ -303,8 +310,9 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
     {
         $customGroup = $this->customGroupCreate('Individual', 'test_group',3); 
         $params = array('id' => $customGroup['id']);                         
-        $customGroup =& civicrm_custom_group_delete($params);
-        $this->assertEquals($customGroup['is_error'], 0);
+        $result =& civicrm_custom_group_delete($params);
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+        $this->assertEquals($result ['is_error'], 0);
     } 
     
 }

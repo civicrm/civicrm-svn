@@ -66,7 +66,7 @@ class api_v3_ConstantTest extends CiviUnitTestCase
     {
         //  Connect to the database
         parent::setUp();
-
+        $this->_apiversion = 3;
         //  Truncate the tables
         $op = new PHPUnit_Extensions_Database_Operation_Truncate( );
         $op->execute( $this->_dbconn,

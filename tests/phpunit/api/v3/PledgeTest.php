@@ -86,23 +86,26 @@ class api_v3_PledgeTest extends CiviUnitTestCase
                         'frequency_unit'             => 'month',
                         'frequency_day'            => 1,
                         'installments'            =>5,
+                        'version'						=>$this->_apiversion,
           
                   );                        
         $this->_pledge =& civicrm_pledge_create($p);
 
         $params = array('pledge_id'=>$this->_pledge['id']);        
-        $pledge =& civicrm_pledge_get($params);
-        $this->assertEquals($pledge[$this->_pledge['id']]['contact_id'],$this->_individualId); 
-        $this->assertEquals($pledge[$this->_pledge['id']]['pledge_id'],$this->_pledge['id']); 
-        $this->assertEquals($pledge[$this->_pledge['id']]['pledge_create_date'],date('Y-m-d').' 00:00:00'); 
-        $this->assertEquals($pledge[$this->_pledge['id']]['pledge_amount'],100.00);
-        $this->assertEquals($pledge[$this->_pledge['id']]['pledge_status'],'Pending');
-        $this->assertEquals($pledge[$this->_pledge['id']]['pledge_frequency_interval'],1);
-        $this->assertEquals($pledge[$this->_pledge['id']]['pledge_frequency_unit'],'month');
-        $this->assertEquals($pledge[$this->_pledge['id']]['pledge_next_pay_date'],date('Y-m-d',$dayaftertomorrow).' 00:00:00');
-        $this->assertEquals($pledge[$this->_pledge['id']]['pledge_next_pay_amount'],20.00);
+        $result =& civicrm_pledge_get($params);
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+        $this->assertEquals($result['values'][$this->_pledge['id']]['contact_id'],$this->_individualId); 
+        $this->assertEquals($result['values'][$this->_pledge['id']]['pledge_id'],$this->_pledge['id']); 
+        $this->assertEquals($result['values'][$this->_pledge['id']]['pledge_create_date'],date('Y-m-d').' 00:00:00'); 
+        $this->assertEquals($result['values'][$this->_pledge['id']]['pledge_amount'],100.00);
+        $this->assertEquals($result['values'][$this->_pledge['id']]['pledge_status'],'Pending');
+        $this->assertEquals($result['values'][$this->_pledge['id']]['pledge_frequency_interval'],1);
+        $this->assertEquals($result['values'][$this->_pledge['id']]['pledge_frequency_unit'],'month');
+        $this->assertEquals($result['values'][$this->_pledge['id']]['pledge_next_pay_date'],date('Y-m-d',$dayaftertomorrow).' 00:00:00');
+        $this->assertEquals($result['values'][$this->_pledge['id']]['pledge_next_pay_amount'],20.00);
         
-        $params2 = array( 'pledge_id' => $this->_pledge['id'] );
+        $params2 = array( 'pledge_id' => $this->_pledge['id'],
+                           'version'  =>$this->_apiversion, );
         $pledge   =& civicrm_pledge_delete($params2);
     }
 
@@ -122,7 +125,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
         $params = 'contact_id= 1';                            
         $pledge =& civicrm_pledge_create($params);
         $this->assertEquals( $pledge['is_error'], 1 );
-        $this->assertEquals( $pledge['error_message'], 'Input parameters is not an array' );
+        $this->assertEquals( $pledge['error_message'], 'Input variable `params` is not an array' );
     }
     
     function testCreateParamsWithoutRequiredKeys()
@@ -130,7 +133,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
         $params = array( 'no_required' => 1 );
         $pledge =& civicrm_pledge_create($params);
         $this->assertEquals( $pledge['is_error'], 1 );
-        $this->assertEquals( $pledge['error_message'], 'Required fields not found for pledge contact_id' );
+        $this->assertEquals( $pledge['error_message'], 'Mandatory key(s) missing from params array: pledge_contact_id, pledge_amount, pledge_original_installment_amount, frequency_interval, frequency_day, start_date, version' );
     }
     function testCreatePledge()
     {
@@ -148,22 +151,25 @@ class api_v3_PledgeTest extends CiviUnitTestCase
                         'frequency_unit'             => 'year',
                         'frequency_day'            => 15,
                         'installments'            =>5,
+                        'sequential'						  =>1,
+                        'version'									=>$this->_apiversion,
           
                   );                        
-        $pledge =& civicrm_pledge_create($params);
-        $this->assertEquals($pledge['amount']     ,100.00, 'In line ' . __LINE__); 
-        $this->assertEquals($pledge['installments'] ,5, 'In line ' . __LINE__); 
-        $this->assertEquals($pledge['frequency_unit'],'year', 'In line ' . __LINE__);
-        $this->assertEquals($pledge['frequency_interval'],5, 'In line ' . __LINE__);
-        $this->assertEquals($pledge['frequency_day'],15, 'In line ' . __LINE__);
-        $this->assertEquals($pledge['original_installment_amount'],20, 'In line ' . __LINE__);
-        $this->assertEquals($pledge['contribution_type_id'],1, 'In line ' . __LINE__);
-        $this->assertEquals($pledge['status_id'],2, 'In line ' . __LINE__);
-        $this->assertEquals($pledge['create_date'],date('Ymd'), 'In line ' . __LINE__);
-        $this->assertEquals($pledge['start_date'],date('Ymd'), 'In line ' . __LINE__);        
-        $this->assertEquals($pledge['is_error'], 0 , 'In line ' . __LINE__);
+        $result=& civicrm_pledge_create($params);
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+        $this->assertEquals($result['values'][0]['amount']     ,100.00, 'In line ' . __LINE__); 
+        $this->assertEquals($result['values'][0]['installments'] ,5, 'In line ' . __LINE__); 
+        $this->assertEquals($result['values'][0]['frequency_unit'],'year', 'In line ' . __LINE__);
+        $this->assertEquals($result['values'][0]['frequency_interval'],5, 'In line ' . __LINE__);
+        $this->assertEquals($result['values'][0]['frequency_day'],15, 'In line ' . __LINE__);
+        $this->assertEquals($result['values'][0]['original_installment_amount'],20, 'In line ' . __LINE__);
+        $this->assertEquals($result['values'][0]['contribution_type_id'],1, 'In line ' . __LINE__);
+        $this->assertEquals($result['values'][0]['status_id'],2, 'In line ' . __LINE__);
+        $this->assertEquals($result['values'][0]['create_date'],date('Ymd'), 'In line ' . __LINE__);
+        $this->assertEquals($result['values'][0]['start_date'],date('Ymd'), 'In line ' . __LINE__);        
+        $this->assertEquals($result['values'][0]['is_error'], 0 , 'In line ' . __LINE__);
 
-        $pledgeID = array( 'pledge_id' => $pledge['pledge_id'] );
+        $pledgeID = array( 'pledge_id' => $result['values'][0]['pledge_id'] );
         $pledge   =& civicrm_pledge_delete($pledgeID);
 
     }
@@ -251,9 +257,11 @@ class api_v3_PledgeTest extends CiviUnitTestCase
     {
 
         $pledgeID = $this->pledgeCreate( $this->_individualId , $this->_apiversion );
-        $params         = array( 'pledge_id' => $pledgeID );
-        $pledge   = civicrm_pledge_delete( $params );
-        $this->assertEquals( $pledge['is_error'], 0 );
+        $params         = array( 'pledge_id' => $pledgeID,
+                                  'version'  => $this->_apiversion );
+        $result   = civicrm_pledge_delete( $params );
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+        $this->assertEquals( $result['is_error'], 0 );
 
     }
 

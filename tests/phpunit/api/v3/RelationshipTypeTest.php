@@ -51,6 +51,7 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
     
     function setUp( ) 
     { 
+
         parent::setUp();
         $this->_apiversion = 3;
         $this->_cId_a  = $this->individualCreate(null,$this->_apiversion);
@@ -74,7 +75,7 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
         $result =& civicrm_relationship_type_create( $params );
         
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], '-Required fields contact_id_a,contact_id_b,relationship_type_id for CRM_Contact_DAO_Relationship are not present' );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: contact_type_a, contact_type_b, name_a_b, name_b_a, version' );
     }
     
     /**
@@ -86,7 +87,7 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
         $result =& civicrm_relationship_type_create( $params );                  
         
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Parameter is not an array' );
+        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array' );
     }
     
     /**
@@ -102,7 +103,7 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
         
         $this->assertEquals( $result['is_error'], 1 );
         $this->assertEquals( $result['error_message'], 
-                             'Missing some required parameters (contact_types_a contact_types_b name_a_b name b_a)' );
+                             'Mandatory key(s) missing from params array: name_a_b, name_b_a, version' );
     }
     
     /**
@@ -112,14 +113,14 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
     {
         $relTypeParams = array(
                                'name_a_b' => 'Relation 1 without contact type',
-                               'name_b_a' => 'Relation 2 without contact type'
+                               'name_b_a' => 'Relation 2 without contact type',
+                               'version'  =>$this->_apiversion,
                                );
         $result = & civicrm_relationship_type_create( $relTypeParams ); 
         
-        $this->assertNotNull( $result['id'] );
-        
-        // assertDBState compares expected values in $result to actual values in the DB          
-        $this->assertDBState( 'CRM_Contact_DAO_RelationshipType', $result['id'],  $relTypeParams ); 
+        $this->assertEquals( $result['is_error'], 1 );
+        $this->assertEquals( $result['error_message'], 
+                             'Mandatory key(s) missing from params array: contact_type_a, contact_type_b' );
     }
     
     /**
@@ -127,20 +128,34 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
      */
     function testRelationshipTypeCreate( )
     {
-        $relTypeParams = array(
+        $params = array(
                                'name_a_b'       => 'Relation 1 for relationship type create',
                                'name_b_a'       => 'Relation 2 for relationship type create',
                                'contact_type_a' => 'Individual',
                                'contact_type_b' => 'Organization',
                                'is_reserved'    => 1,
-                               'is_active'      => 1
+                               'is_active'      => 1,
+                               'version'  =>$this->_apiversion,
+                               'sequential' =>    1,
                                );
-        $relationshiptype =& civicrm_relationship_type_create( $relTypeParams );
+        $result =& civicrm_relationship_type_create( $params  );
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+        $this->assertNotNull( $result['values'][0]['id'] );   
         
-        $this->assertNotNull( $relationshiptype['id'] );   
-        
-        // assertDBState compares expected values in $result to actual values in the DB          
-        $this->assertDBState( 'CRM_Contact_DAO_RelationshipType', $relationshiptype['id'],  $relTypeParams ); 
+        //assertDBState compares expected values in $result to actual values in the DB          
+        $this->assertDBState( 'CRM_Contact_DAO_RelationshipType', $relationshiptype['id'],  $relTypeParams); 
+
+    }
+    /**
+     *  Test  using example code
+     */
+  
+    function testRelationshipTypeCreateExample( )
+    {
+      require_once 'api/v3/examples/RelationshipTypeCreate.php';
+      $result = relationship_type_create_example();
+      $expectedResult = relationship_type_create_expectedresult();
+      $this->assertEquals($result,$expectedResult);
     }
 
 ///////////////// civicrm_relationship_type_delete methods
@@ -183,7 +198,7 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
         $result =& civicrm_relationship_type_delete( $params );
         
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Missing required parameter' );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: id, version' );
     }
     
     /**
@@ -198,7 +213,8 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
                         'contact_type_a' => 'Individual',
                         'contact_type_b' => 'Individual',
                         'is_reserved'    => 0,
-                        'is_active'      => 0
+                        'is_active'      => 0,
+                        'version'				 => $this->_apiversion,
                         );
         
         $result =& civicrm_relationship_type_delete( $params );
@@ -213,8 +229,9 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
     function testRelationshipTypeDelete( )
     {
         // create sample relationship type.
-        $params['id'] = $this->_relationshipTypeCreate(null,3 );
-        
+        $params = array('id' => $this->_relationshipTypeCreate(null,3 ),
+                                'version'  =>$this->_apiversion,      
+          );
         $result = & civicrm_relationship_type_delete( $params );
         
         $this->assertEquals( $result['is_error'], 0 );
@@ -231,7 +248,7 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
         $result =& civicrm_relationship_type_create( $params );
         
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'No input parameters present' );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: contact_type_a, contact_type_b, name_a_b, name_b_a, version' );
     }
     
     /**
@@ -243,7 +260,7 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
         $result =& civicrm_relationship_type_create( $params );
         
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Parameter is not an array' );
+        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array' );
     }
     
     /**
@@ -287,7 +304,8 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
                                'contact_type_a' => 'Individual',
                                'contact_type_b' => 'Individual',
                                'is_reserved'    => 0,
-                               'is_active'      => 0
+                               'is_active'      => 0,
+                               'version'  =>$this->_apiversion,
                                );
         
         $result = & civicrm_relationship_type_create( $relTypeParams );  

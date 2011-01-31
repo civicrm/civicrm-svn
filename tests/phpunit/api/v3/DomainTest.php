@@ -66,8 +66,10 @@ class api_v3_DomainTest extends CiviUnitTestCase
      */
     public function testGet()
     {
-        $result = civicrm_domain_get();
-
+        $params = array('version' => 3);
+        $result = civicrm_domain_get($params);
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__);     
+ 
         $this->assertType( 'array', $result, 'In line' . __LINE__ );
 
         foreach( $result as $domain ) {
@@ -92,10 +94,13 @@ class api_v3_DomainTest extends CiviUnitTestCase
     public function testCreate()
     {
         $params = array( 'name' => 'New Domain', 
-                         'description' => 'Description of a new domain'
+                         'description' => 'Description of a new domain',
+                         'version'		=>3,
                           );
 
         $result =& civicrm_domain_create($params);
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__);     
+        
         $this->assertType( 'array', $result );
         $this->assertDBState( 'CRM_Core_DAO_Domain', $result['id'], $params );
     }    

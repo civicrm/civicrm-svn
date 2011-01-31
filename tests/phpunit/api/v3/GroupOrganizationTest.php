@@ -35,7 +35,7 @@ require_once 'api/v3/GroupOrganization.php';
  */
 class api_v3_GroupOrganizationTest extends CiviUnitTestCase
 {
-
+    protected $_apiversion;
     function get_info( )
     {
         return array(
@@ -54,7 +54,7 @@ class api_v3_GroupOrganizationTest extends CiviUnitTestCase
     protected function setUp()
     {
             $this->markTestSkipped( "Reason for skipping:<a href='http://forum.civicrm.org/index.php/topic,18053.0.html'>version issue</a>" );
- 
+         $this->_apiversion =3;
         parent::setUp();
         $this->_groupID = $this->groupCreate(null,3);
 
@@ -81,7 +81,8 @@ class api_v3_GroupOrganizationTest extends CiviUnitTestCase
     {
 
         $params = array( 'organization_id' => $this->_orgID,
-                         'group_id'        => $this->_groupID
+                         'group_id'        => $this->_groupID,
+                         'version'			 => $this->_apiversion,
                          );
         $result =& civicrm_group_organization_create( $params );
 
@@ -98,7 +99,8 @@ class api_v3_GroupOrganizationTest extends CiviUnitTestCase
     {
 
         $params = array( 'organization_id' => $this->_orgID,
-                         'group_id'        => $this->_groupID
+                         'group_id'        => $this->_groupID,
+                         'version'			 => $this->_apiversion,
                          );
         $result =& civicrm_group_organization_create( $params );
 
@@ -152,7 +154,8 @@ class api_v3_GroupOrganizationTest extends CiviUnitTestCase
     public function testGroupOrganizationCreate()
     {
         $params = array( 'organization_id' => $this->_orgID,
-                         'group_id'        => $this->_groupID
+                         'group_id'        => $this->_groupID,
+                         'version'			 => $this->_apiversion,
                          );
         $result =& civicrm_group_organization_create($params);
 
@@ -228,14 +231,16 @@ class api_v3_GroupOrganizationTest extends CiviUnitTestCase
      */
     public function testGroupOrganizationRemove()
     {   
-        $params = array( 'organization_id' => $this->_orgID,
-                         'group_id'        => $this->_groupID
+        $paramsC = array( 'organization_id' => $this->_orgID,
+                         'group_id'        => $this->_groupID,
+                         'version'			 => $this->_apiversion,
                          );
-        $result =& civicrm_group_organization_create( $params );
+        $result =& civicrm_group_organization_create( $paramsC );
 
-        $paramsDelete = array( 'id' => $result['result']['id']  );
-        $result =& civicrm_group_organization_remove( $paramsDelete );
-
+        $params = array( 'id' => $result['result']['id'],
+                                'version'			 => $this->_apiversion,  );
+        $result =& civicrm_group_organization_delete( $paramsDelete );
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( $result['is_error'], 0 );
 
     }

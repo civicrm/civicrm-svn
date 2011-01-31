@@ -48,7 +48,8 @@ class api_v3_ActivityTypeTest extends CiviUnitTestCase
     }
     
     function setUp( ) 
-    {
+    {  
+        $this->_apiversion = 3;
         parent::setUp();
     }
     
@@ -66,17 +67,29 @@ class api_v3_ActivityTypeTest extends CiviUnitTestCase
     /**
      *  Test civicrm_activity_type_create with no label()
      */
-    function testActivityTypecreate( ) {
+    function testActivityTypeCreate( ) {
         
         $params = array(
                         'weight'=> '2',
+                        'label' => 'send out letters',
+                        'version' => $this->_apiversion,
                         );
-        $activitycreate = & civicrm_activity_type_create($params);
-        $this->assertEquals( $activitycreate['is_error'], 1);
-        $this->assertEquals( $activitycreate['error_message'],'Required parameter "label / weight" not found');
+        $result = & civicrm_activity_type_create($params);
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+        $this->assertEquals( $result['is_error'], 1);
+        $this->assertEquals( $result['error_message'],'Required parameter "label / weight" not found');
         
     }
-    
+            /**
+     *  Test  using example code
+     */
+    function testActivityTypeCreateExample( )
+    {
+      require_once 'api/v3/examples/ActivityTypeCreate.php';
+      $result = activity_type_create_example();
+      $expectedResult = activity_type_create_expectedresult();
+      $this->assertEquals($result,$expectedResult);
+    }   
     /**
      *  Test civicrm_activity_type_create - check id
      */
@@ -85,6 +98,7 @@ class api_v3_ActivityTypeTest extends CiviUnitTestCase
         $params = array(
                         'label' => 'type_create',
                         'weight'=> '2',
+                        'version'=> $this->_apiversion,
                         );
         $activitycreate = & civicrm_activity_type_create($params);
         $activityID = $activitycreate['id'];
@@ -101,10 +115,13 @@ class api_v3_ActivityTypeTest extends CiviUnitTestCase
         $params = array(
                         'label' => 'type_create_delete',
                         'weight'=> '2',
+                        'version'=> $this->_apiversion,
                         );
-        $activitycreate = & civicrm_activity_type_create($params);
-        $params = array( 'activity_type_id' => $activitycreate['id'] );
-        $activitydelete = & civicrm_activity_type_delete($params);
+        $activitycreate = & civicrm_activity_type_create($params);      
+        $params = array( 'activity_type_id' => $activitycreate['id'],
+                          'version'=>  $this->_apiversion );
+        $result = & civicrm_activity_type_delete($params);
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals($activitydelete, 1 , 'In line ' . __LINE__);
     }
 }

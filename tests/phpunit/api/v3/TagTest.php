@@ -89,7 +89,7 @@ class api_v3_TagTest extends CiviUnitTestCase
                          'name' => $tag['name'],
                          'version' => $this->_apiversion  );
         $result = civicrm_tag_get($params);
-
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
         $this->assertEquals( $tag['description'], $result['description'], 'In line ' . __LINE__ );
         $this->assertEquals( $tag['name'], $result['name'], 'In line ' . __LINE__ ); 
@@ -139,9 +139,11 @@ class api_v3_TagTest extends CiviUnitTestCase
     function testCreate()
     {
         $params = array( 'name'        => 'New Tag3',
-                         'description' => 'This is description for New Tag 02' );
+                         'description' => 'This is description for New Tag 02' ,
+                          'version'    => $this->_apiversion);
         
         $result = civicrm_tag_create($params); 
+                $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__);
         $this->assertNotNull( $result['tag_id'], 'In line ' . __LINE__ );
     }
@@ -190,7 +192,7 @@ class api_v3_TagTest extends CiviUnitTestCase
         $params = array( 'tag_id' => 'incorrect value');
         $result = civicrm_tag_delete( $tag );
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
-        $this->assertEquals( 'Input parameters is not an array', $result['error_message'], 'In line ' . __LINE__ );
+        $this->assertEquals( 'Input variable `params` is not an array', $result['error_message'], 'In line ' . __LINE__ );
     }  
 
     /**
@@ -199,8 +201,10 @@ class api_v3_TagTest extends CiviUnitTestCase
     function testTagDelete( )
     {
         $tagID = $this->tagCreate(null,$this->_apiversion); 
-        $params = array('tag_id'=> $tagID);
-        $result = civicrm_tag_delete($params ); 
+        $params = array('tag_id'=> $tagID,
+                        'version' => $this->_apiversion);
+        $result = civicrm_tag_delete($params );
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__);  
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
     }
     
