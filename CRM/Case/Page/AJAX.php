@@ -122,6 +122,7 @@ class CRM_Case_Page_AJAX
         echo 'true';
         CRM_Utils_System::civiExit( );
     }
+
     function caseDetails( ) {
         $caseId    = CRM_Utils_Type::escape( $_GET['caseId'], 'Integer' );
         $contactId = CRM_Utils_Type::escape( $_GET['contactId'], 'Integer' );
@@ -136,12 +137,26 @@ class CRM_Case_Page_AJAX
              $cs = $caseStatuses[$dao->status_id];
              $caseDetails = "<html><table><tr><td>Case Subject</td><td>$dao->subject</td></tr>
                                           <tr><td>Case Type</td><td>$caseType</td></tr> 
-                                          <tr><td> Case Status</td><td>$cs</td></tr>
+                                          <tr><td>Case Status</td><td>$cs</td></tr>
                                           <tr><td>Case Start Date</td><td>$dao->start_date</td></tr>
                                           <tr><td>Case End Date</td><td></td></tr>$dao->end_date</table></html>";        
              echo $caseDetails;
          }
          
     }
+
+
+    function addClient( ) {
+
+        $params = array(
+            'case_id'    => CRM_Utils_Type::escape( $_POST['caseID'], 'Integer' ),
+            'contact_id' => CRM_Utils_Type::escape( $_POST['contactID'], 'Integer' )
+        );
+        
+        require_once 'CRM/Case/BAO/Case.php';
+        $result = CRM_Case_BAO_Case::addCaseToContact( $params );
+        echo json_encode( true );
+        CRM_Utils_System::civiExit( );        
+    }    
     
 }
