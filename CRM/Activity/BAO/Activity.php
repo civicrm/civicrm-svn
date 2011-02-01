@@ -1526,7 +1526,8 @@ SELECT  display_name
             
             require_once 'CRM/Member/DAO/MembershipStatus.php';
             $subject .= " - Status: " . CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipStatus', $activity->status_id );
-            $date = $activity->start_date;
+			// CRM-72097 changed from start date to today
+            $date = date('YmdHis');
             $component = 'Membership';
 
         } else if ( $activity->__table == 'civicrm_participant' ) {

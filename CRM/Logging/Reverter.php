@@ -110,6 +110,7 @@ class CRM_Logging_Reverter
                     $dao->id = $id;
                     foreach ($changes as $field => $value) {
                         if ($field == 'log_action') continue;
+                        if (empty($value) and $value !== 0 and $value !== '0') $value = 'null';
                         $dao->$field = $value;
                     }
                     $changes['log_action'] == 'Delete' ? $dao->insert() : $dao->update();

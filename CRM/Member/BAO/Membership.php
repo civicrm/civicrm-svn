@@ -122,11 +122,18 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
                                'start_date'    => $logStartDate,
                                'end_date'      => $membership->end_date,
                                'renewal_reminder_date' => $membership->reminder_date, 
-                               'modified_id'   => CRM_Utils_Array::value( 'userId', $ids ),
                                'modified_date' => date('Ymd'),
         					   'membership_type_id' => $values[$membership->id]['membership_type_id']
                                );
-                               
+                
+        $session = CRM_Core_Session::singleton();
+        // If we have an authenticated session, set modified_id to that user's contact_id, else set to membership.contact_id
+		if ( $session->get( 'userID' ) ){
+		    $membershipLog['modified_id'] = $session->get( 'userID' );
+		} else {
+			$membershipLog['modified_id'] = $ids['userId'];
+		}
+
         require_once 'CRM/Member/BAO/MembershipLog.php';
         CRM_Member_BAO_MembershipLog::add($membershipLog, CRM_Core_DAO::$_nullArray);
         
@@ -1523,6 +1530,7 @@ AND civicrm_membership.is_test = %2";
                                                       $currentMembership['status_id'],
                                                       'is_current_member' );
             $format = '%Y%m%d';
+            
             $logParams = array( 'membership_id'         => $currentMembership['id'],
                                 'status_id'             => $status['id'],
                                 'start_date'            => CRM_Utils_Date::customFormat( 
@@ -1531,7 +1539,6 @@ AND civicrm_membership.is_test = %2";
                                 'end_date'              => CRM_Utils_Date::customFormat(
                                                                         $currentMembership['end_date'],
                                                                         $format ),
-                                'modified_id'           => $currentMembership['contact_id'], 
                                 'modified_date'         => CRM_Utils_Date::customFormat( 
                                                                         $currentMembership['today_date'],
                                                                         $format ),
@@ -1540,7 +1547,14 @@ AND civicrm_membership.is_test = %2";
                                                                         $format ),
                                 'membership_type_id'	=> $currentMembership['membership_type_id']
                                 );
-                                
+
+	        $session = CRM_Core_Session::singleton();
+            // If we have an authenticated session, set modified_id to that user's contact_id, else set to membership.contact_id
+			if ( $session->get( 'userID' ) ){
+			    $logParams['modified_id'] = $session->get( 'userID' );
+			} else {
+				$logParams['modified_id'] = $currentMembership['contact_id'];
+			}
             require_once 'CRM/Member/BAO/MembershipLog.php';
             CRM_Member_BAO_MembershipLog::add( $logParams, CRM_Core_DAO::$_nullArray );
         }

@@ -72,6 +72,7 @@
   </foreignKey>  
   <field> 
       <name>contribution_page_id</name> 
+      <title>Contribution Page</title>
       <type>int unsigned</type>                 
       <comment>The Contribution Page which triggered this contribution</comment> 
       <add>1.5</add> 
@@ -266,6 +267,7 @@
   </foreignKey>
   <field>   
       <name>honor_contact_id</name>   
+      <title>Honor Contact</title>
       <type>int unsigned</type>   
       <comment>FK to contact ID</comment>   
       <add>1.3</add>   
