@@ -212,7 +212,7 @@ class CRM_Logging_Differ
         $cgDao->fetch();
 
         $params[3] = array($cgDao->id, 'Integer');
-        $sql = "SELECT column_name, data_type, label, name FROM `{$this->db}`.log_civicrm_custom_field WHERE log_date <= %2 AND custom_group_id = %3 ORDER BY log_date";
+        $sql = "SELECT column_name, data_type, label, name, option_group_id FROM `{$this->db}`.log_civicrm_custom_field WHERE log_date <= %2 AND custom_group_id = %3 ORDER BY log_date";
         $cfDao =& CRM_Core_DAO::executeQuery($sql, $params);
 
         while ($cfDao->fetch()) {
@@ -224,11 +224,7 @@ class CRM_Logging_Differ
                 break;
             case 'String':
                 $values[$cfDao->column_name] = array();
-                $params[3] = array("custom_{$cfDao->name}", 'String');
-                $sql = "SELECT id FROM `{$this->db}`.log_civicrm_option_group WHERE log_date <= %2 AND name = %3 ORDER BY log_date DESC LIMIT 1";
-                $ogId = CRM_Core_DAO::singleValueQuery($sql, $params);
-
-                $params[3] = array($ogId, 'Integer');
+                $params[3] = array($cfDao->option_group_id, 'Integer');
                 $sql = "SELECT label, value FROM `{$this->db}`.log_civicrm_option_value WHERE log_date <= %2 AND option_group_id = %3 ORDER BY log_date";
                 $ovDao =& CRM_Core_DAO::executeQuery($sql, $params);
                 while ($ovDao->fetch()) {
