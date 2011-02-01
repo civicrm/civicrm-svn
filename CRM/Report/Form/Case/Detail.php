@@ -439,7 +439,7 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
             $this->_worldRegionField = true;
         }
         if ( $this->_params['activity_date_time_relative'] || $this->_params['activity_date_time_from'] 
-             || $this->_params['activity_date_time_from'] ) {     
+             || $this->_params['activity_date_time_to'] ) {     
             $this->_activityField = true;
             $this->_params['fields']['activity_subject'] = 1;
         }
