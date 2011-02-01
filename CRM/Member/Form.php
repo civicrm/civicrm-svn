@@ -109,24 +109,15 @@ class CRM_Member_Form extends CRM_Core_Form
     public function buildQuickForm( ) 
     {
         if ( $this->_action & CRM_Core_Action::RENEW ) {
-            $name = ts('Renew');
-        } else {
-            $name = ts('Save');
-        }
-
-        $this->addButtons( array(
+        	$this->addButtons( array(
                                  array ( 'type'      => 'upload',
-                                         'name'      => $name,
+                                         'name'      => ts('Renew'),
                                          'isDefault' => true   ),
-                                 array ( 'type'      => 'upload',
-                                         'name'      => ts('Save and New'), 
-                                         'subName'   => 'new' ),
                                  array ( 'type'      => 'cancel',
                                          'name'      => ts('Cancel') ),
                                  )
                            );
-     
-        if ( $this->_action & CRM_Core_Action::DELETE ) {
+        } elseif ( $this->_action & CRM_Core_Action::DELETE ) {
             $this->addButtons(array(
                                     array ('type'      => 'next',
                                            'name'      => ts('Delete'),
@@ -135,8 +126,19 @@ class CRM_Member_Form extends CRM_Core_Form
                                            'name'      => ts('Cancel')),
                                     )
                               );
+        } else {
+            $this->addButtons( array(
+                             array ( 'type'      => 'upload',
+                                     'name'      => ts('Save'),
+                                     'isDefault' => true   ),
+                             array ( 'type'      => 'upload',
+                                     'name'      => ts('Save and New'), 
+                                     'subName'   => 'new' ),
+                             array ( 'type'      => 'cancel',
+                                     'name'      => ts('Cancel') ),
+                             )
+                       );
         }
-   
     }
 
 }
