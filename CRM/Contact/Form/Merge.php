@@ -407,14 +407,28 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         if ( $this->next ) {
             $name = ts('Merge and Goto Next Pair');
         }
-
-        $this->addButtons( array(
-                                 array( 'type' => 'next',   'name' => $name, 'isDefault' => true ),
-                                 array( 'type' => 'submit', 'name' => ts('Merge and Goto Listing') ),
-                                 array( 'type' => 'cancel', 'name' => ts('Cancel') ),
-                                 ) );
+        
+        if ( $this->next || $this->prev ) {
+            $button = array(                                 
+                            array( 'type' => 'next',   
+                                   'name' => $name,
+                                   'isDefault' => true ),
+                            array( 'type' => 'submit',
+                                   'name' => ts('Merge and Goto Listing') ),  
+                            array( 'type' => 'cancel',
+                                   'name' => ts('Cancel') ) );
+        } else {
+            $button = array(                                 
+                            array( 'type' => 'next',   
+                                   'name' => $name,
+                                   'isDefault' => true ),
+                            array( 'type' => 'cancel',
+                                   'name' => ts('Cancel') ) );
+        }
+        
+        $this->addButtons( $button );
     }
-
+    
     public function postProcess()
     {
         $formValues = $this->exportValues();
