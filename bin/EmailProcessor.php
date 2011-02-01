@@ -156,7 +156,15 @@ class EmailProcessor {
 
         // retrieve the emails
         require_once 'CRM/Mailing/MailStore.php';
-        $store = CRM_Mailing_MailStore::getStore($dao->name);
+        try {
+            $store = CRM_Mailing_MailStore::getStore($dao->name);
+        } catch ( Exception $e ) {
+            $message  = ts( 'Could not connect to MailStore' ) . '<p>';
+            $message .= ts( 'Error message: ' );
+            $message .= '<pre>' . $e->getMessage( ) . '</pre><p>';
+            CRM_Core_Error::fatal( $message );
+        }
+
         
         require_once 'api/v2/Mailer.php';
         require_once 'CRM/Utils/Hook.php';

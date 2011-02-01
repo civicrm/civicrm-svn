@@ -63,7 +63,7 @@ WHERE  entity_id1 = $cid AND
         
         $pos = array( );
         if ( $mergeId ) {
-            $sqlPrev = "SELECT * FROM civicrm_prevnext_cache WHERE id < $mergeId ORDER BY ID DESC LIMIT 1";
+            $sqlPrev = "SELECT id, entity_id1, entity_id2 FROM civicrm_prevnext_cache WHERE id < $mergeId ORDER BY ID DESC LIMIT 1";
             $dao = CRM_Core_DAO::executeQuery( $sqlPrev, CRM_Core_DAO::$_nullArray );
             if ( $dao->fetch() ) {
                 $pos['prev']['id1']     = $dao->entity_id1;
@@ -71,7 +71,7 @@ WHERE  entity_id1 = $cid AND
                 $pos['prev']['mergeId'] = $dao->id;
             }
             
-            $sqlNext = "SELECT * FROM civicrm_prevnext_cache WHERE id > $mergeId ORDER BY ID ASC LIMIT 1";
+            $sqlNext = "SELECT id, entity_id1, entity_id2 FROM civicrm_prevnext_cache WHERE id > $mergeId ORDER BY ID ASC LIMIT 1";
             $dao = CRM_Core_DAO::executeQuery( $sqlNext, CRM_Core_DAO::$_nullArray );
             if ( $dao->fetch() ) {
                 $pos['next']['id1']     = $dao->entity_id1;
@@ -102,14 +102,14 @@ WHERE  entity_id1 = $cid AND
 
     function retrieve( $cacheKey ) 
     {
-        $main = array();
         $query = "
 SELECT data 
 FROM   civicrm_prevnext_cache
 WHERE  cacheKey = '$cacheKey'
 ";
         
-        $dao = CRM_Core_DAO::executeQuery( $query );
+        $dao  = CRM_Core_DAO::executeQuery( $query );
+        $main = array();
         while ( $dao->fetch() ) {
             $main[] = unserialize( $dao->data );
         }
