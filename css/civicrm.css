@@ -96,10 +96,11 @@ table.crm-table-group-summary tbody {
     border-collapse: collapse;
 }
 
-#crm-container .row-selected {
+#crm-container .crm-row-selected {
     margin: 0px;
     padding: 3px 0px 3px 0px;
     clear: none;
+    background-color: #FFFFCC !important;
 }
 
 #crm-container .row-highlighted {
@@ -108,8 +109,6 @@ table.crm-table-group-summary tbody {
     clear: none;
     background-color: #FFFFCC;
 }
-
-
 
 /*
 ** Size input fields in crm-container by class. Classes are assigned by the
@@ -2790,13 +2789,10 @@ tbody.scrollContent {
 tbody.scrollContent tr.alternateRow {
     background-color: #F5F5F5;
 }
-#crm-container .row-selected {
-    background-color: #FFFFCC;
-}
 
 #crm-container tr.columnheader a.sorting {
 	color:#a7a7a7;
-	}
+}
 
 #crm-container a.sorting { color:#A7A7A7; }
 #crm-container a.sorting_desc, 

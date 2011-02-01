@@ -262,7 +262,7 @@ class CRM_Event_Form_Search extends CRM_Core_Form
                 if ( !$this->_single ) {
                     $this->addElement( 'checkbox', $row['checkbox'], 
                                        null, null, 
-                                       array( 'onclick' => "toggleTaskAction( true ); return checkSelectedBox('" . $row['checkbox'] . "', '" . $this->getName() . "');" )
+                                       array( 'onclick' => "toggleTaskAction( true ); return checkSelectedBox('" . $row['checkbox'] . "');" )
                                        ); 
                 }
                 if ( CRM_Event_BAO_Event::usesPriceSet( $row['event_id'] ) ) {
