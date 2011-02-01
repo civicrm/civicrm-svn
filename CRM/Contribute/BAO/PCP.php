@@ -616,6 +616,7 @@ WHERE pcp.id = %1";
         return CRM_Core_DAO::singleValueQuery( $query, $params );
     }
 
+
     /**
      * Function to get pcp block & entity id given pcp id
      * 

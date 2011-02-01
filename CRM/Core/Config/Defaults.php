@@ -90,7 +90,14 @@ class CRM_Core_Config_Defaults
             $this->profileDoubleOptIn = defined( 'CIVICRM_PROFILE_DOUBLE_OPTIN' ) ? (bool) CIVICRM_PROFILE_DOUBLE_OPTIN : true;
         }
 
-        //email notifications to activity Assignees
+        $this->profileAddToGroupDoubleOptIn = false;
+        // enable profile add to group double Opt-In if Civimail enabled
+        if ( in_array( 'CiviMail', $this->enableComponents ) ) {
+            // set defined value for Profile add to group double Opt-In from civicrm settings file else true 
+            $this->profileAddToGroupDoubleOptIn = defined( 'CIVICRM_PROFILE_ADD_TO_GROUP_DOUBLE_OPTIN' ) ? (bool) CIVICRM_PROFILE_ADD_TO_GROUP_DOUBLE_OPTIN : true;
+        }
+
+       //email notifications to activity Assignees
         $this->activityAssigneeNotification = defined( 'CIVICRM_ACTIVITY_ASSIGNEE_MAIL' ) ? (bool) CIVICRM_ACTIVITY_ASSIGNEE_MAIL : true;
 
         // IDS enablement

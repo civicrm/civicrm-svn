@@ -802,14 +802,16 @@ class CRM_Profile_Form extends CRM_Core_Form
         //if the profile double option in is enabled
         $mailingType = array( );
         $config = CRM_Core_Config::singleton( );
-        if ( $config->profileDoubleOptIn && CRM_Utils_Array::value( 'group', $params ) ) {
-            $result = null;
-            foreach ( $params as $name => $values ) {
-                if ( substr( $name, 0, 6 ) == 'email-' ) {
-                    $result['email'] = $values ;
-                }
+
+        $result = null;
+        foreach ( $params as $name => $values ) {
+            if ( substr( $name, 0, 6 ) == 'email-' ) {
+                $result['email'] = $values ;
             }
-            $groupSubscribed = array( );
+        }
+
+        if ( $config->profileDoubleOptIn && CRM_Utils_Array::value( 'group', $params ) ) {
+           $groupSubscribed = array( );
             if ( CRM_Utils_Array::value( 'email' , $result ) ) {
                 require_once 'CRM/Contact/DAO/Group.php';
                 //array of group id, subscribed by contact
@@ -850,23 +852,28 @@ class CRM_Profile_Form extends CRM_Core_Form
         if ( CRM_Utils_Array::value( 'add_to_group', $params ) ) {
             $addToGroupId = $params['add_to_group'];
 
-            // since we are directly adding contact to group lets unset it from mailing
-            if ( $key = array_search( $addToGroupId, $mailingType ) ) {
-                unset( $mailingType[$key] );
+            if ( !$config->profileAddToGroupDoubleOptIn ) {   
+                // since we are directly adding contact to group lets unset it from mailing
+                if ( $key = array_search( $addToGroupId, $mailingType ) ) {
+                    unset( $mailingType[$key] );
+                }
+            } else {
+                $mailingType[] = $addToGroupId;
+                $addToGroupId = null;
             }            
         }
         
         if ( $this->_grid ){
             $params['group'] = $groupSubscribed;
         }
-        
+
         // commenting below code, since we potentially
         // triggered maximum name field formatting cases during CRM-4430.
         // CRM-4343
         // $params['preserveDBName'] = true;
 
         $this->_id = CRM_Contact_BAO_Contact::createProfileContact($params, $this->_fields,
-                                                                   $this->_id, $this->_addToGroupID,
+                                                                   $this->_id, $addToGroupId,
                                                                    $this->_gid, $this->_ctype,
                                                                    true );
         //mailing type group
