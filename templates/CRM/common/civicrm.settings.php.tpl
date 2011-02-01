@@ -192,6 +192,12 @@ define( 'CIVICRM_EVENT_PRICE_SET_DOMAIN_ID', 0 );
  define( 'CIVICRM_PROFILE_DOUBLE_OPTIN', 1 );
 
 /**
+ * Setting to disable or enable profile double optini for add to group in profile
+ * This is disabled by default and functions only if Civimail is enabled.
+ */
+ define( 'CIVICRM_PROFILE_ADD_TO_GROUP_DOUBLE_OPTIN', 0 );
+
+/**
  * If set, makes CiviMail default to tracking replies (i.e., using VERP-ed Reply-To:)
  */
 define('CIVICRM_TRACK_CIVIMAIL_REPLIES', false);
