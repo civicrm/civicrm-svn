@@ -5293,8 +5293,8 @@ function civicrm_get_sort_handler($type) {
     }
 }
 
-//Implementation of hook_date_api_fields
-function civicrm_date_api_fields($field) {
+//Implementation of hook_date_views_fields().
+function civicrm_date_views_fields($field) {
   $values = array(
     // The type of date: DATE_UNIX, DATE_ISO, DATE_DATETIME.
     'sql_type' => DATE_DATETIME,
@@ -5328,7 +5328,7 @@ function civicrm_date_api_fields($field) {
 /**
  * Implement hook_date_api_tables().
  */
-function civicrm_date_api_tables() {
+function civicrm_date_views_tables() {
   return array('civicrm_mailing_job',
                'civicrm_event',
                'civicrm_activity');
@@ -5546,7 +5546,7 @@ function civicrm_views_handlers() {
                        
                        // ARGUMENT HANDLERS
                        'civicrm_handler_argument_date_api_contact' => array(
-                                                                            'parent' => 'date_api_argument_handler',
+                                                                            'parent' => 'date_views_argument_handler',
                                                                             ),
                        'views_handler_argument_civicrm_fulldate' => array(
                                                                             'parent' => 'views_handler_argument_date'

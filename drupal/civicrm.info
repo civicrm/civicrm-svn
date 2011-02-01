@@ -9,6 +9,9 @@ files[] = civicrm.install
 files[] = civicrm_user.inc
 
 ; views handlers
+files[] = modules/views/civicrm.views.inc
+files[] = modules/views/civicrm.views_default.inc
+
 ; field handlers
 files[] = modules/views/civicrm/civicrm_handler_field.inc
 files[] = modules/views/civicrm/civicrm_handler_field_activity.inc
