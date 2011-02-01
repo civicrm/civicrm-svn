@@ -211,6 +211,59 @@ class CRM_Contact_Page_AJAX
     } 
     
     /**
+     * Function to fetch PCP ID by PCP Supporter sort_name, also displays PCP title and associated Contribution Page title
+     */
+    static function getPCPList( ) 
+    {
+        $name   = CRM_Utils_Array::value( 's', $_GET );
+        $name   = CRM_Utils_Type::escape( $name, 'String' );
+        $limit  = '10';
+
+        $where = ' AND pcp.contribution_page_id = cp.id AND pcp.contact_id = cc.id';
+        
+        $config = CRM_Core_Config::singleton( );
+        if ( $config->includeWildCardInName ) {
+           $strSearch = "%$name%";
+        } else {
+           $strSearch = "$name%";
+        }
+        $includeEmailFrom = $includeNickName = '';
+        if ( $config->includeNickNameInName ) {
+            $includeNickName = " OR nick_name LIKE '$strSearch'";
+        }
+        if( $config->includeEmailInName ) {
+            $includeEmailFrom ="LEFT JOIN civicrm_email eml ON ( cc.id = eml.contact_id AND eml.is_primary = 1 )" ;  
+            $whereClause = " WHERE ( email LIKE '$strSearch' OR sort_name LIKE '$strSearch' $includeNickName ) {$where} ";
+        } else {
+            $whereClause = " WHERE ( sort_name LIKE '$strSearch' $includeNickName ) {$where} ";
+        }
+        
+        if ( CRM_Utils_Array::value( 'limit', $_GET) ) {
+            $limit = CRM_Utils_Type::escape( $_GET['limit'], 'Positive' );
+        }
+        
+        $select = 'cc.sort_name, pcp.title, cp.title'; 
+        $query = "
+        SELECT id, data
+        FROM (
+            SELECT pcp.id as id, CONCAT_WS( ' :: ', {$select} ) as data, sort_name
+            FROM civicrm_pcp pcp, civicrm_contribution_page cp, civicrm_contact cc
+            {$includeEmailFrom}
+            {$whereClause}
+            LIMIT 0, {$limit}
+            ) t
+        ORDER BY sort_name
+        ";
+
+        $dao = CRM_Core_DAO::executeQuery( $query );
+
+        while ( $dao->fetch( ) ) {
+            echo $pcpList = "$dao->data|$dao->id\n";
+        }
+
+        CRM_Utils_System::civiExit( );
+    }    
+    /**
      * Function to fetch the values 
      */
     static function autocomplete( ) 

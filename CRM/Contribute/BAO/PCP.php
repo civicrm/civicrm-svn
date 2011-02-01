@@ -616,38 +616,7 @@ WHERE pcp.id = %1";
         return CRM_Core_DAO::singleValueQuery( $query, $params );
     }
 
-    /**
-     * Function gets an array keyed on civicrm_pcp.id with pcp.title, associated contrib page.title and supporter
-     * (used for select field on back-office contribution form)
-     * 
-     * @param (TBD will pass in sort_name search filter)
-     *
-     * @return array
-     * @access public
-     * @static
-     *
-     */
-    public static function getPcpPagesWithSupporter(  ) 
-    {
-        $params = array();
-        $pcpSupporters = array();
-        
-        $query = "
-        SELECT pcp.id as id, pcp.title as pcp_title, cp.title as cp_title, contact.sort_name, pcp.is_active as active
-        FROM civicrm_pcp pcp, civicrm_contribution_page cp, civicrm_contact contact
-        WHERE
-            pcp.contribution_page_id = cp.id AND
-            pcp.contact_id = contact.id
-        ORDER BY contact.sort_name";
-    
-        $dao = CRM_Core_DAO::executeQuery( $query, $params );
 
-        while ( $dao->fetch( ) ) {
-            $pcpSupporters[$dao->id] = $dao->sort_name . " | " . $dao->pcp_title . " | " . $dao->cp_title;
-        }
-        
-        return $pcpSupporters;
-    }
     /**
      * Function to get pcp block & entity id given pcp id
      * 

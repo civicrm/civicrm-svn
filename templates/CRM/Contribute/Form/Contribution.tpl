@@ -209,16 +209,17 @@
             <td {$valueStyle}>
                 {$form.soft_credit_to.html} {help id="id-soft_credit"}
         	    {if $siteHasPCPs}
-        	        <div id="showPCPLink">{ts}<a href='#' onclick='showPCP();'>credit this contribution to a personal campaign page</a>{/ts}{help id="id-link_pcp"}</div>
+        	        <div id="showPCPLink">{ts}<a href='#' onclick='showPCP(); return false;'>credit this contribution to a personal campaign page</a>{/ts}{help id="id-link_pcp"}</div>
         	    {/if}
             </td>
         </tr>
         {* Credit contribution to PCP. *}
         <tr id="pcpID" class="crm-contribution-form-block-pcp_made_through_id">
-            <td class="label">{$form.pcp_made_through_id.label}</td>
+            <td class="label">{$form.pcp_made_through.label}</td>
             <td>
-                {$form.pcp_made_through_id.html|crmReplace:class:twenty} &nbsp;
-	            <span class="showSoftCreditLink">{ts}<a onclick='showSoftCredit();'>unlink from personal campaign page</a>{/ts}</span>
+                {$form.pcp_made_through.html} &nbsp;
+	            <span class="showSoftCreditLink">{ts}<a href="#" onclick='showSoftCredit(); return false;'>unlink from personal campaign page</a>{/ts}</span><br />
+	            <span class="description">{ts}Search for the Personal Campaign Page by the fund-raiser's last name or email address.{/ts}</span>
                 <div class="spacer"></div>
                 <div class="crm-contribution-form-block-pcp_details">
                 <table class="crm-contribution-form-table-credit_to_pcp">
@@ -395,16 +396,6 @@ function loadPanes( id ) {
             }
         {/if}
     {/if} 
-    {if $siteHasPCPs}
-        {include file="CRM/common/showHideByFieldValue.tpl" 
-            trigger_field_id    ="pcp_made_through_id"
-            trigger_value       = ''
-            target_element_id   ="pcpID" 
-            target_element_type ="table-row"
-            field_type          ="select"
-            invert              = 1
-        }
-    {/if}
 {/if} {* not delete mode if*}      
 
     {* include jscript to warn if unsaved form field changes *}
@@ -430,24 +421,38 @@ cj(function() {
 {if $buildPriceSet}{literal}buildAmount( );{/literal}{/if}
 
 {if $siteHasPCPs}
-    {if $pcpLinked} {* hide soft credit on load *}{literal}hideSoftCredit( );{/literal}{/if}
-{literal}
-function hideSoftCredit ( ){
-    cj("#softCreditID").hide();
-}
-function showPCP( ) {
-    cj('#pcpID').show();
-    cj("#softCreditID").hide();
-}
-function showSoftCredit( ) {
-    cj('#pcp_made_through_id').val('');
-    cj('#pcp_roll_nickname').val('');
-    cj('#pcp_personal_note').val('');
-    cj('#pcp_display_in_roll').attr('checked', false);
-    cj("#pcpID").hide();
-    cj('#softCreditID').show();
-}
-{/literal}
+    {literal}
+    var pcpUrl = "{/literal}{$pcpDataUrl}{literal}";
+
+    cj('#pcp_made_through').autocomplete( pcpUrl, { width : 360, selectFirst : false, matchContains: true
+        }).result( function(event, data, formatted) { cj( "#pcp_made_through_id" ).val( data[1] );
+    });
+    {/literal}
+    
+    {if $pcpLinked}
+        {literal}hideSoftCredit( );{/literal}{* hide soft credit on load if we have PCP linkage *}
+    {else}
+        {literal}cj('#pcpID').hide();{/literal}{* hide PCP section *}
+    {/if}
+    
+    {literal}
+    function hideSoftCredit ( ){
+        cj("#softCreditID").hide();
+    }
+    function showPCP( ) {
+        cj('#pcpID').show();
+        cj("#softCreditID").hide();
+    }
+    function showSoftCredit( ) {
+        cj('#pcp_made_through_id').val('');
+        cj('#pcp_made_through').val('');
+        cj('#pcp_roll_nickname').val('');
+        cj('#pcp_personal_note').val('');
+        cj('#pcp_display_in_roll').attr('checked', false);
+        cj("#pcpID").hide();
+        cj('#softCreditID').show();
+    }
+    {/literal}
 {/if}
 
 {literal}

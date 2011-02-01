@@ -428,11 +428,19 @@ WHERE  contribution_id = {$this->_id}
             $this->_values['soft_credit_to' ] = CRM_Utils_Array::value( 'sort_name',      $softCredit);
             $this->_values['softID'         ] = CRM_Utils_Array::value( 'soft_credit_id', $softCredit);
             $this->_values['soft_contact_id'] = CRM_Utils_Array::value( 'soft_credit_to', $softCredit);
-            
-            $this->_values['pcp_made_through_id']  = CRM_Utils_Array::value( 'pcp_id',              $softCredit);
-            $this->_values['pcp_display_in_roll' ] = CRM_Utils_Array::value( 'pcp_display_in_roll', $softCredit);
-            $this->_values['pcp_roll_nickname' ]   = CRM_Utils_Array::value( 'pcp_roll_nickname',   $softCredit);
-            $this->_values['pcp_personal_note' ]   = CRM_Utils_Array::value( 'pcp_personal_note',   $softCredit);
+
+            if ( CRM_Utils_Array::value('pcp_id', $softCredit ) ){
+                $pcpId = CRM_Utils_Array::value('pcp_id', $softCredit );
+                $pcpTitle = CRM_Core_DAO::getFieldValue ( 'CRM_Contribute_DAO_PCP', $pcpId, 'title' );
+                require_once 'CRM/Contribute/BAO/PCP.php';
+                $contributionPageTitle = CRM_Contribute_BAO_PCP::getPcpContributionPageTitle( $pcpId );
+                $this->_values['pcp_made_through' ]    = CRM_Utils_Array::value( 'sort_name',           $softCredit) . " :: " .
+                                                         $pcpTitle . " :: " . $contributionPageTitle;
+                $this->_values['pcp_made_through_id']  = CRM_Utils_Array::value( 'pcp_id',              $softCredit);
+                $this->_values['pcp_display_in_roll' ] = CRM_Utils_Array::value( 'pcp_display_in_roll', $softCredit);
+                $this->_values['pcp_roll_nickname' ]   = CRM_Utils_Array::value( 'pcp_roll_nickname',   $softCredit);
+                $this->_values['pcp_personal_note' ]   = CRM_Utils_Array::value( 'pcp_personal_note',   $softCredit);
+            }
             
             //display check number field only if its having value or its offline mode.
             if ( CRM_Utils_Array::value( 'payment_instrument_id', 
@@ -941,15 +949,16 @@ WHERE  contribution_id = {$this->_id}
 
 
         // CRM-7368 allow user to set or edit PCP link for contributions
-        require_once 'CRM/Contribute/BAO/PCP.php';
-        $siteHasPCPs = CRM_Contribute_BAO_PCP::getPcpPagesWithSupporter( );
-        // $siteHasPCPs = CRM_Contribute_PseudoConstant::pcPage( );
+        require_once 'CRM/Contribute/PseudoConstant.php';
+        $siteHasPCPs = CRM_Contribute_PseudoConstant::pcPage( );
         if ( !CRM_Utils_Array::crmIsEmptyArray( $siteHasPCPs ) ) {
             $this->assign( 'siteHasPCPs', 1 );
-            $this->addElement('select', 'pcp_made_through_id', 
-                                         ts( 'Credit to Personal Campaign Page' ),
-                                         array( '' => ts( '- select -' ) ) +
-                                         $siteHasPCPs );
+            $pcpDataUrl = CRM_Utils_System::url( 'civicrm/ajax/rest', 
+                                              "className=CRM_Contact_Page_AJAX&fnName=getPCPList&json=1&context=contact&reset=1",
+                                              false, null, false );
+            $this->assign('pcpDataUrl',$pcpDataUrl );
+            $this->addElement( 'text', 'pcp_made_through', ts('Credit to a Personal Campaign Page') );
+            $this->addElement( 'hidden', 'pcp_made_through_id', '', array( 'id' => 'pcp_made_through_id' ) );
             $this->addElement('checkbox','pcp_display_in_roll', ts('Display in Honor Roll?'), null );
             $this->addElement('text', 'pcp_roll_nickname', ts('Name (for Honor Roll)') );
             $this->addElement('textarea', 'pcp_personal_note', ts('Personal Note (for Honor Roll)'));
@@ -1046,7 +1055,7 @@ WHERE  contribution_id = {$this->_id}
             if ( CRM_Utils_Array::value( 'pcp_display_in_roll', $fields ) ||
                  CRM_Utils_Array::value( 'pcp_roll_nickname', $fields ) ||
                  CRM_Utils_Array::value( 'pcp_personal_note', $fields ) ) {
-                     $errors['pcp_made_through_id'] = ts( 'Please select a Personal Campaign Page, OR uncheck Display in Honor Roll and clear both the Honor Roll Name and the Personal Note field.' );                     
+                     $errors['pcp_made_through'] = ts( 'Please select a Personal Campaign Page, OR uncheck Display in Honor Roll and clear both the Honor Roll Name and the Personal Note field.' );                     
                  }
         }
         
