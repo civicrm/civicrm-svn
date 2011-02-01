@@ -156,6 +156,7 @@ class CRM_Logging_Differ
                 // FIXME: these should be populated with pseudo constants as they
                 // were at the time of logging rather than their current values
                 $values[$table] = array(
+                    'contribution_page_id'           => CRM_Contribute_PseudoConstant::contributionPage(),
                     'contribution_status_id'         => CRM_Contribute_PseudoConstant::contributionStatus(),
                     'contribution_type_id'           => CRM_Contribute_PseudoConstant::contributionType(),
                     'country_id'                     => CRM_Core_PseudoConstant::country(),
