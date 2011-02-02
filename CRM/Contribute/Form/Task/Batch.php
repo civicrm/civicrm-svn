@@ -146,7 +146,7 @@ class CRM_Contribute_Form_Task_Batch extends CRM_Contribute_Form_Task {
         $fileFieldExists = false;
  
         //load all campaigns.
-        if ( array_key_exists( 'campaign_id', $this->_fields ) ) {
+        if ( array_key_exists( 'contribution_campaign_id', $this->_fields ) ) {
             $this->_componentCampaigns = array( );
             CRM_Core_PseudoConstant::populate( $this->_componentCampaigns,
                                                'CRM_Contribute_DAO_Contribution',

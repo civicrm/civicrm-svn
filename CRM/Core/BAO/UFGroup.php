@@ -1685,7 +1685,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             $form->addWysiwyg( $name, $title, CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email', $fieldName) );
         } else if ($fieldName == 'signature_text' ) {
             $form->add('textarea', $name, $title, CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email', $fieldName) );
-        } else if ( $fieldName == 'campaign_id' ) { 
+        } else if ( substr( $fieldName, -11 ) == 'campaign_id' ) { 
             require_once 'CRM/Campaign/BAO/Campaign.php';
             $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( CRM_Utils_Array::value( $contactId, 
                                                                                           $form->_componentCampaigns ) );
