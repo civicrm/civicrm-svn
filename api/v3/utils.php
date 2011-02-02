@@ -140,6 +140,11 @@ function civicrm_create_success( $values = 1,&$params=null )
     $result['version'] =3;
     if (is_array( $values)) {
         $result['count'] = count( $values);
+        if ($result['count']==1){
+          list($result['id']) = (array_keys($values));
+        }elseif(!empty($values['id'])){
+          $result['id']= $values['id'];
+        }
 
     } else {
         if (!empty( $values)) {
@@ -235,7 +240,7 @@ function _civicrm_object_to_array( &$dao, &$values,$uniqueFields = FALSE )
     $fields = array();
     //rebuild $fields array to fix unique name of the fields
     if(!empty($uniqueFields)){
-      $fields = array_keys($tmpFields);
+      $fields = $tmpFields;
     }else{
       foreach( $tmpFields as $key => $val ) {
         $fields[$val["name"]]  = $val;
