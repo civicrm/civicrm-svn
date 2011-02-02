@@ -106,7 +106,7 @@ class api_v3_TagTest extends CiviUnitTestCase
         $params = 'a string';
         $result = civicrm_tag_create( $params );
         $this->assertEquals( 1, $result['is_error'], "In line " . __LINE__ );
-        $this->assertEquals( 'Input parameters is not an array', $result['error_message'], 'In line ' . __LINE__ );
+        $this->assertEquals( 'Input variable `params` is not an array', $result['error_message'], 'In line ' . __LINE__ );
     }
 
     /**
@@ -117,7 +117,7 @@ class api_v3_TagTest extends CiviUnitTestCase
         $params = array( );
         $result = civicrm_tag_create( $params ); 
         $this->assertEquals( 1, $result['is_error'], "In line " . __LINE__ );
-        $this->assertEquals( 'Mandatory param missing: name', $result['error_message'], 'In line ' . __LINE__ );
+        $this->assertEquals( 'Mandatory key(s) missing from params array: name, version', $result['error_message'], 'In line ' . __LINE__ );
     }  
 
     /**
@@ -158,7 +158,7 @@ class api_v3_TagTest extends CiviUnitTestCase
         $tag = 'is string';
         $result = civicrm_tag_delete( $tag );
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__  );
-        $this->assertEquals( 'Input parameters is not an array', $result['error_message'], 'In line ' . __LINE__ );
+        $this->assertEquals( 'Input variable `params` is not an array', $result['error_message'], 'In line ' . __LINE__ );
     }
 
     /**
@@ -169,7 +169,7 @@ class api_v3_TagTest extends CiviUnitTestCase
         $tag = array( );
         $result = civicrm_tag_delete( $tag );
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
-        $this->assertEquals( 'Mandatory param missing: tag_id', $result['error_message'], 'In line ' . __LINE__ );
+        $this->assertEquals( 'Mandatory key(s) missing from params array: tag_id, version', $result['error_message'], 'In line ' . __LINE__ );
     }
 
     /**
@@ -177,11 +177,11 @@ class api_v3_TagTest extends CiviUnitTestCase
      */
     function testDeleteWithoutTagId()
     {
-        $tag = array( 'some_other_key' => 1 );
+        $tag = array( 'version' => 3 );
         
         $result = civicrm_tag_delete($tag); 
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ ); 
-        $this->assertEquals( 'Mandatory param missing: tag_id', $result['error_message'], 'In line ' . __LINE__ );            
+        $this->assertEquals( 'Mandatory key(s) missing from params array: tag_id', $result['error_message'], 'In line ' . __LINE__ );            
     }
 
     /**

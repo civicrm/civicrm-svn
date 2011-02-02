@@ -114,7 +114,7 @@ class api_v3_NoteTest extends CiviUnitTestCase
         $params = array( 'entity_table' => 'civicrm_contact' );
         $note   =& civicrm_note_get( $params );
         $this->assertEquals( $note['is_error'], 1 ); 
-        $this->assertEquals( $note['error_message'], 'Invalid entity ID' );
+        $this->assertEquals( $note['error_message'], 'Mandatory key(s) missing from params array: entity_id' );
     }
 
     /**
@@ -145,7 +145,7 @@ class api_v3_NoteTest extends CiviUnitTestCase
         $result =& civicrm_note_create( $params );
         $this->assertEquals( $result['is_error'], 1, 
                              "In line " . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Params is not an array' );                             
+        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array' );                             
     } 
     
     /**
@@ -157,7 +157,7 @@ class api_v3_NoteTest extends CiviUnitTestCase
         $params = array( );
         $result = civicrm_note_create( $params );     
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Required parameter missing' );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: entity_table, entity_id, version' );
     }
 
     /**
@@ -213,7 +213,7 @@ class api_v3_NoteTest extends CiviUnitTestCase
         $params = array();        
         $note   =& civicrm_note_create( $params );
         $this->assertEquals( $note['is_error'], 1 );
-        $this->assertEquals( $note['error_message'], '-Mandatory key(s) missing from params array: entity_table, entity_id, version' );
+        $this->assertEquals( $note['error_message'], 'Mandatory key(s) missing from params array: entity_table, entity_id, version' );
     }
 
     /**

@@ -1005,8 +1005,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         }
         require_once 'api/api.php';
         $result = civicrm_api( 'civicrm_group_create','Group',$params );
+
         
-        return $result['result'];
+        return $result['id'];
     }    
     /** 
      * Function to delete a Group
@@ -1276,9 +1277,9 @@ function documentMe($params,$result,$function,$filename){
         $smarty->assign('params',$params);   
         $smarty->assign('entity',$entity);         
         $smarty->assign('result',$result);  
-        //$f = fopen("c:\\utils\\eclipseworkspace\\api-civicrm\\api\\v3\\examples\\$entity$action.php", "w");
-        //fwrite($f,$smarty->fetch('c:\\utils\\eclipseworkspace\\api-civicrm\\tests\\templates\\documentFunction.tpl'));
-        fclose($f); 
+       // $f = fopen("c:\\utils\\eclipseworkspace\\api-civicrm\\api\\v3\\examples\\$entity$action.php", "w");
+       // fwrite($f,$smarty->fetch('c:\\utils\\eclipseworkspace\\api-civicrm\\tests\\templates\\documentFunction.tpl'));
+       // fclose($f); 
     }
   
     /**

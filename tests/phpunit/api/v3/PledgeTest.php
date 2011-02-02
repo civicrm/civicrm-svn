@@ -116,7 +116,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
         $params = array();
         $pledge =& civicrm_pledge_create($params);
         $this->assertEquals( $pledge['is_error'], 1 );
-        $this->assertEquals( $pledge['error_message'], 'No input parameters present' );
+        $this->assertEquals( $pledge['error_message'], 'Mandatory key(s) missing from params array: contact_id, amount, contribution_type_id, installments, start_date, version' );
     }
     
 
@@ -133,7 +133,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
         $params = array( 'no_required' => 1 );
         $pledge =& civicrm_pledge_create($params);
         $this->assertEquals( $pledge['is_error'], 1 );
-        $this->assertEquals( $pledge['error_message'], 'Mandatory key(s) missing from params array: pledge_contact_id, pledge_amount, pledge_original_installment_amount, frequency_interval, frequency_day, start_date, version' );
+        $this->assertEquals( $pledge['error_message'], 'Mandatory key(s) missing from params array: contact_id, amount, contribution_type_id, installments, start_date, version' );
     }
     function testCreatePledge()
     {

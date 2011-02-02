@@ -39,7 +39,7 @@ class api_v3_GroupTest extends CiviUnitTestCase
         $this->assertEquals( $group['error_message'] , 'Mandatory key(s) missing from params array: title, version' );        
     }
     
-    function testgroupAddNoTitle( )
+    function testgroupCreateNoTitle( )
     {
         $params = array(
                         'name'        => 'Test Group No title ',

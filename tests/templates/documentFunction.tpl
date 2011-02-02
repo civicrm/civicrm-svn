@@ -24,8 +24,10 @@ function {$function}_expectedresult(){literal}{{/literal}
 {foreach from=$result key=k item=v}
                   '{$k}' 		=> {if is_array($v)}
                   array({foreach from=$v key=subkey item=subvalue}
-                  '{$subkey}' => {if is_array($subvalue)} array({foreach from=$subvalue key=subsubkey item=subsubvalue}'{$subsubkey}' => '{$subsubvalue}'
-                  ,{/foreach}){else}'{$subvalue}',{/if}
+                  '{$subkey}' => {if is_array($subvalue)} array(
+                  {foreach from=$subvalue key=subsubkey item=subsubvalue}
+                  '{$subsubkey}' => '{$subsubvalue}'
+                  ,{/foreach}),{else}'{$subvalue}',{/if}
                   {/foreach}),{else}'{$v}',{/if}
 
 {/foreach}

@@ -53,8 +53,7 @@ class api_v3_GroupOrganizationTest extends CiviUnitTestCase
      */
     protected function setUp()
     {
-            $this->markTestSkipped( "Reason for skipping:<a href='http://forum.civicrm.org/index.php/topic,18053.0.html'>version issue</a>" );
-         $this->_apiversion =3;
+        $this->_apiversion =3;
         parent::setUp();
         $this->_groupID = $this->groupCreate(null,3);
 
@@ -87,7 +86,7 @@ class api_v3_GroupOrganizationTest extends CiviUnitTestCase
         $result =& civicrm_group_organization_create( $params );
 
         $paramsGet = array( 'organization_id' => $result['result']['organization_id']  );
-        
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__);         
         $result    = civicrm_group_organization_get($paramsGet);
         $this->assertEquals( $result['is_error'], 0);
     }
@@ -158,7 +157,7 @@ class api_v3_GroupOrganizationTest extends CiviUnitTestCase
                          'version'			 => $this->_apiversion,
                          );
         $result =& civicrm_group_organization_create($params);
-
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( $result['is_error'], 0);
     }    
 
@@ -203,10 +202,10 @@ class api_v3_GroupOrganizationTest extends CiviUnitTestCase
     /**
      *  Test civicrm_group_organization_remove with params not an array.
      */
-    public function testGroupOrganizationRemoveParamsNotArray()
+    public function testGroupOrganizationDeleteParamsNotArray()
     {
         $params = 'delete';
-        $result =& civicrm_group_organization_remove($params);
+        $result =& civicrm_group_organization_delete($params);
         
         $this->assertEquals( $result['is_error'], 1);
         $this->assertEquals( $result['error_message'], 'Input parameter is not an array' );
@@ -217,10 +216,10 @@ class api_v3_GroupOrganizationTest extends CiviUnitTestCase
     /**
      * Test civicrm_group_organization_remove with empty params.
      */
-    public function testGroupOrganizationRemoveWithEmptyParams()
+    public function testGroupOrganizationDeleteWithEmptyParams()
     {
         $params = array( );
-        $result =& civicrm_group_organization_remove($params);
+        $result =& civicrm_group_organization_delete($params);
 
         $this->assertEquals( $result['is_error'], 1 );
         $this->assertEquals( $result['error_message'], 'No input parameter present' );
@@ -229,7 +228,7 @@ class api_v3_GroupOrganizationTest extends CiviUnitTestCase
     /**
      *  Test civicrm_group_organization_remove with valid params.
      */
-    public function testGroupOrganizationRemove()
+    public function testGroupOrganizationDelete()
     {   
         $paramsC = array( 'organization_id' => $this->_orgID,
                          'group_id'        => $this->_groupID,
@@ -237,7 +236,7 @@ class api_v3_GroupOrganizationTest extends CiviUnitTestCase
                          );
         $result =& civicrm_group_organization_create( $paramsC );
 
-        $params = array( 'id' => $result['result']['id'],
+        $params = array( 'id' => $result['id'],
                                 'version'			 => $this->_apiversion,  );
         $result =& civicrm_group_organization_delete( $paramsDelete );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
@@ -248,10 +247,10 @@ class api_v3_GroupOrganizationTest extends CiviUnitTestCase
     /**
      *  Test civicrm_group_organization_remove with invalid params key.
      */
-    public function testGroupOrganizationRemoveWithInvalidKey()
+    public function testGroupOrganizationDeleteWithInvalidKey()
     {   
         $paramsDelete = array( 'invalid_key' => 1 );
-        $result =& civicrm_group_organization_remove( $paramsDelete );
+        $result =& civicrm_group_organization_delete( $paramsDelete );
  
         $this->assertEquals( $result['is_error'], 1 );
         $this->assertEquals( $result['error_message'], 'Invalid or no value for Group Organization ID' );

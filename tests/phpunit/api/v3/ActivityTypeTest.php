@@ -56,16 +56,18 @@ class api_v3_ActivityTypeTest extends CiviUnitTestCase
     /**
      *  Test civicrm_activity_type_get()
      */
-    function testActivityTypeCheckValues()
+    function testActivityTypeGetValues()
     {
-        $activitytypes = & civicrm_activity_type_get();
-        $this->assertEquals($activitytypes['1'],'Meeting', 'In line ' . __LINE__ );
-        $this->assertEquals($activitytypes['13'],'Open Case', 'In line ' . __LINE__ );
+        $params = array('version' => $this->_apiversion);
+        $result = & civicrm_activity_type_get($params);
+         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+        $this->assertEquals($result['1'],'Meeting', 'In line ' . __LINE__ );
+        $this->assertEquals($result['13'],'Open Case', 'In line ' . __LINE__ );
         
     }
     
     /**
-     *  Test civicrm_activity_type_create with no label()
+     *  Test civicrm_activity_type_create()
      */
     function testActivityTypeCreate( ) {
         
@@ -73,12 +75,15 @@ class api_v3_ActivityTypeTest extends CiviUnitTestCase
                         'weight'=> '2',
                         'label' => 'send out letters',
                         'version' => $this->_apiversion,
+                        'filter' => 0,
+                        'is_active' =>1,
+        								'is_optgroup' =>1,
+                        'is_default' => 0, 
                         );
         $result = & civicrm_activity_type_create($params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
-        $this->assertEquals( $result['is_error'], 1);
-        $this->assertEquals( $result['error_message'],'Required parameter "label / weight" not found');
-        
+        $this->assertEquals( $result['is_error'], 0);
+       
     }
             /**
      *  Test  using example code
@@ -122,6 +127,6 @@ class api_v3_ActivityTypeTest extends CiviUnitTestCase
                           'version'=>  $this->_apiversion );
         $result = & civicrm_activity_type_delete($params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
-        $this->assertEquals($activitydelete, 1 , 'In line ' . __LINE__);
+        $this->assertEquals($result , 1 , 'In line ' . __LINE__);
     }
 }

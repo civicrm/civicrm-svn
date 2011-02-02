@@ -89,7 +89,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         $params = array( );
         $result =& civicrm_relationship_create( $params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: contact_id_a, contact_id_b, relationship_type), version' );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: contact_id_a, contact_id_b, relationship_type_id, contact_id_a, contact_id_b, one of (relationship_type_id, relationship_type), version' );
     }
     
     /**
@@ -116,7 +116,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         
         $result =& civicrm_relationship_create($params);
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: contact_id_a, contact_id_b, relationship_type), version' );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: contact_id_a, contact_id_b, relationship_type_id, contact_id_a, contact_id_b, one of (relationship_type_id, relationship_type), version' );
     }
     
     /**
@@ -611,7 +611,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         $params = array( 'contact_id' => $this->_cId_b );
         $result =& civicrm_relationship_get( $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
-        $this->assertEquals( $result['is_error'], 0 );
+        $this->assertEquals( $result['is_error'], 0,'in line ' .__LINE__ );
     }
     
    ///////////////// civicrm_relationship_type_add methods
@@ -630,8 +630,8 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
                                'version'				=>$this->_apiversion,
                                );
         $result =& civicrm_relationship_type_create( $relTypeParams );
-        $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Invalid value for relationship type ID' );
+        $this->assertEquals( $result['is_error'], 1 ,'in line ' .__LINE__);
+        $this->assertEquals( $result['error_message'], 'Invalid value for relationship type ID', 'in line ' .__LINE__);
     } 
 
     ///////////////// civicrm_get_relationships

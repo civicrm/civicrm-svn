@@ -44,8 +44,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
      */
     protected function setUp()
     {
-            $this->markTestSkipped( "Reason for skipping:<a href='http://forum.civicrm.org/index.php/topic,18053.0.html'>version issue</a>" );
-         $this->_apiversion =3;
+        $this->_apiversion =3;
         parent::setUp();
 
         //  Insert a row in civicrm_group creating option group
@@ -92,10 +91,11 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
     public function testGet()
     {
         $params = array( 'parent_group_id' => 1,
-                         'child_group_id' => 2 );
+                         'child_group_id' => 2,
+                          'version'				=>$this->_apiversion );
 
         $result =& civicrm_group_nesting_get($params);                         
-
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         // expected data loaded in setUp
         $expected = array( 1 => array( 'id' => 1, 
                                        'child_group_id' => 2, 
@@ -110,7 +110,8 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
      */
     public function testGetWithChildGroupId()
     {
-        $params = array( 'child_group_id' => 4 );
+        $params = array( 'child_group_id' => 4,
+                          'version'				=>$this->_apiversion );
 
         $result =& civicrm_group_nesting_get($params);
         
@@ -131,7 +132,8 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
      */
     public function testGetWithParentGroupId()
     {
-        $params = array( 'parent_group_id' => 1 );
+        $params = array( 'parent_group_id' => 1,
+                          'version'				=>_apiversion );
 
         $result =& civicrm_group_nesting_get($params);
 
@@ -199,9 +201,11 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
     {
         // groups id=1 and id=2 loaded in setUp
         $params = array( 'parent_group_id' => 1,
-                         'child_group_id' => 3 );
+                         'child_group_id' => 3,
+                         'version'				=>$this->_apiversion  );
 
         $result = civicrm_group_nesting_create( $params );
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( $result['is_error'], 0 );
 
         // we have 4 group nesting records in the example
@@ -241,13 +245,15 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
     /**
      * Test civicrm_group_nesting_remove.
      */
-    public function testRemove()
+    public function testDelete()
     {
         // groups id=1 and id=2 loaded in setUp
         $params = array( 'parent_group_id' => 1,
-                         'child_group_id' => 2 );
+                         'child_group_id' => 2,
+                         'version'  =>$this->_apiversion );
 
-        $result =& civicrm_group_nesting_remove($params);
+        $result =& civicrm_group_nesting_delete($params);
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( $result['is_error'], 0 );
 
         // group nesting record with above combo of params
@@ -261,11 +267,11 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
      * Test civicrm_group_nesting_remove with empty parameter array.
      * Error expected.
      */
-    public function testRemoveWithEmptyParams()
+    public function testDeleteWithEmptyParams()
     {
         $params = array( );
 
-        $result =& civicrm_group_nesting_remove($params);
+        $result =& civicrm_group_nesting_delete($params);
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
     }
@@ -274,11 +280,11 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
      * Test civicrm_group_nesting_remove with wrong parameter type.
      * Error expected.
      */
-    public function testRemoveWithWrongParamsType()
+    public function testDeleteWithWrongParamsType()
     {
         $params = 'a string';
 
-        $result =& civicrm_group_nesting_remove($params);
+        $result =& civicrm_group_nesting_delete($params);
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
     }    
