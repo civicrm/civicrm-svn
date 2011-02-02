@@ -430,12 +430,18 @@ class CRM_Campaign_Page_AJAX
     {
         require_once 'CRM/Utils/JSON.php';
         require_once 'CRM/Campaign/BAO/Campaign.php';
+        $currentCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( );
         $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, true, false, true );
         $options   = array( array( 'value' => '',
                                    'title'  => ts('- select -') ) );
         foreach ( $campaigns as $value => $title ) {
+            $class = null;
+            if ( !array_key_exists( $value, $currentCampaigns ) ) {
+                $class = 'status-past';
+            }
             $options[] = array( 'value' => $value,
-                                'title' => $title );
+                                'title' => $title,
+                                'class' => $class );
         }
         $status = 'fail';
         if ( count( $options ) > 1 ) $status = 'success';  

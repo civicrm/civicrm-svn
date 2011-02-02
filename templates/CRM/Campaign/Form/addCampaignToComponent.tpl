@@ -89,8 +89,9 @@ function includePastCampaigns()
 		 for ( campaign in campaigns ) {
 		      title = campaigns[campaign].title;
 		      value = campaigns[campaign].value;
+		      class = campaigns[campaign].class;
 		      if ( !title ) continue;
-		      cj('#campaign_id').append( cj('<option></option>').val(value).html(title) );
+		      cj('#campaign_id').append( cj('<option></option>').val(value).html(title).addClass(class) );
 		 }
     	     }, 
     	     'json');
