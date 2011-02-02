@@ -14,7 +14,10 @@ function generateQuery () {
     var action = $('#action').val();
     var debug = "";
     if ($('#debug').attr('checked'))
-      debug= "&debug=1";
+      debug= "debug=1&";
+    var json = "";
+    if ($('#json').attr('checked'))
+      json= "json=1&";
     query="";
     if (entity == '') {query= "Choose an entity. "};
     if (action == '') {query=query + "Choose an action.";}
@@ -22,7 +25,7 @@ function generateQuery () {
       $('#query').val (query);
       return;
     }
-    query = restURL+'?json=1'+debug+'&version='+version+'&entity='+entity+'&action='+action;
+    query = restURL+"?"+json+debug+'version='+version+'&entity='+entity+'&action='+action;
     $('#query').val (query);
     runQuery (query);
 }
@@ -54,6 +57,7 @@ cj(function ($) {
   $('#action').change (function() { generateQuery();  });
   $('#version').change (function() { generateQuery();  });
   $('#debug').change (function() { generateQuery();  });
+  $('#json').change (function() { generateQuery();  });
   $('#explorer').submit(function() {runQuery($('#query').val()); return false; });
 });
 {/literal}
@@ -83,6 +87,8 @@ cj(function ($) {
 </select>
 <label>debug</label>
 <input type="checkbox" id="debug" checked="checked">
+<label>json</label>
+<input type="checkbox" id="json" checked="checked">
 <br>
 <input size="90" id="query" value="/civicrm/ajax/rest?json=1&debug=on&entity=contact&action=get&sequential=1&return=display_name,email,phone"/>
 <div id="link"></div>
