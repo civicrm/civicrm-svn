@@ -31,7 +31,7 @@
 <div class="crm-submit-buttons">{if $prev}<a href="{$prev}" class="button"><span>{ts}<< Prev{/ts}</span></a>{/if}{include file="CRM/common/formButtons.tpl" location="top"}{if $next}<a href="{$next}" class="button"><span>{ts}Next >>{/ts}</span></a>{/if}</div>
 
 <div class="action-link">
-    	<a href="{crmURL q="reset=1&cid=$other_cid&oid=$main_cid"}">&raquo; {ts}Flip between original and duplicate contacts.{/ts}</a>
+    	<a href="{$flip}">&raquo; {ts}Flip between original and duplicate contacts.{/ts}</a>
 </div>
 
 <div class="action-link">

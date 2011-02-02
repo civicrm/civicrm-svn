@@ -42,13 +42,16 @@ require_once 'CRM/Core/DAO/PrevNextCache.php';
 
 class CRM_Core_BAO_PrevNextCache extends CRM_Core_DAO_PrevNextCache
 {
-    function getPositions( $rgid, $gid, $cid, $oid, &$mergeId = null ) 
+    function getPositions( $rgid, $gid, $cid, $oid, &$mergeId = null, $flip = false ) 
     {
         $contactType = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $cid, 'contact_type' );
         $cacheKey  = "merge $contactType";
         $cacheKey .= $rgid ? "_{$rgid}" : '_0';
         $cacheKey .= $gid ? "_{$gid}" : '_0';
         
+        if ( $flip ) {
+            list($cid, $oid) = array($oid, $cid);
+        }
         if ( $mergeId == null ) {
             $query = "
 SELECT id 
