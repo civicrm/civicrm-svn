@@ -1856,6 +1856,10 @@ AND cl.modified_id  = c.id
             if ( $name == 'Activity' ) {
 	            require_once 'CRM/Activity/DAO/Activity.php'; 
                 $exportableFields = CRM_Activity_DAO_Activity::export( );
+                if ( isset( $exportableFields['activity_campaign_id'] ) ) {
+                    $exportableFields['activity_campaign'] = array( 'title' => ts( 'Campaign Title' ) );
+                }
+                
                 $Activityfields   = array( 
                                           'activity_type'     => array( 'title' => ts('Activity Type'),           'type' => CRM_Utils_Type::T_STRING ),
                                           'activity_status'   => array( 'title' => ts('Activity Status'),         'type' => CRM_Utils_Type::T_STRING ) 

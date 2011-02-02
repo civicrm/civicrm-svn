@@ -76,7 +76,10 @@ class CRM_Export_BAO_Export
         $primary    = $paymentFields    = false;
         $origFields = $fields;
         $queryMode  = null; 
-
+        
+        $allCampaigns = array( );
+        $exportCampaign = false;
+        
         $phoneTypes  = CRM_Core_PseudoConstant::phoneType();
         $imProviders = CRM_Core_PseudoConstant::IMProvider();
         $contactRelationshipTypes = CRM_Contact_BAO_Relationship::getContactRelationshipType( 
@@ -141,6 +144,8 @@ class CRM_Export_BAO_Export
                     $phoneTypeId = CRM_Utils_Array::value( 3, $value );
                 } else if ( $fieldName == 'im' ) { 
                     $imProviderId = CRM_Utils_Array::value( 3, $value );
+                } else if ( substr( $fieldName, -8 ) == 'campaign' ) {
+                    $exportCampaign = true;
                 }
                 
                 if ( array_key_exists ( $relationshipTypes, $contactRelationshipTypes ) ) {
@@ -200,6 +205,12 @@ class CRM_Export_BAO_Export
                         $returnProperties['event_title'] = 1;
                     } else {
                         $returnProperties[$fieldName] = 1;
+
+                        //campaign field export.
+                        if ( substr( $fieldName, -8 ) == 'campaign' ) {
+                            $fldNames = explode( '_', $fieldName );
+                            $returnProperties["{$fldNames[0]}_campaign_id"] = 1;
+                        }
                     }
                 }
             }
@@ -310,6 +321,7 @@ class CRM_Export_BAO_Export
         }
 
         $query = new CRM_Contact_BAO_Query( 0, $returnProperties, null, false, false, $queryMode );
+        
         list( $select, $from, $where, $having ) = $query->query( );
         
         if ( $mergeSameHousehold == 1 ) {
@@ -481,6 +493,12 @@ class CRM_Export_BAO_Export
             $nullContributionDetails = array_fill_keys($paymentHeaders,null);    
         }
 
+        //get all campaigns.
+        if ( $exportCampaign ) {
+            require_once 'CRM/Campaign/BAO/Campaign.php';
+            $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, true );
+        }
+        
         $componentDetails = $headerRows = $sqlColumns = array( );
         $setHeader = true;
 
@@ -759,6 +777,9 @@ class CRM_Export_BAO_Export
                                 break;
                             }
                         }
+                    } else if ( substr( $field, -8 ) == 'campaign' ) {
+                        $campIdFld = "{$field}_id";
+                        $row[$field] = CRM_Utils_Array::value( $dao->$campIdFld, $allCampaigns, '' );
                     } else {
                         // if field is empty or null
                         $row[$field] = '';             

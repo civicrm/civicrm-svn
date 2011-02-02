@@ -232,7 +232,10 @@
   </field>
   <field> 
       <name>campaign_id</name> 
-      <type>int unsigned</type>                 
+      <uniqueName>pledge_campaign_id</uniqueName>
+      <type>int unsigned</type> 
+      <title>Campaign ID</title>
+      <import>true</import> 
       <comment>The campaign for which this pledge has been initiated.</comment> 
       <add>3.4</add> 
   </field> 

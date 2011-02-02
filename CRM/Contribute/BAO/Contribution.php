@@ -527,8 +527,10 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
                                                                              'where' => 'civicrm_contribution.contribution_recur_id',
                                                                              'data_type' => CRM_Utils_Type::T_INT ) );
             
+            $campaign = array( 'contribution_campaign' => array( 'title' => ts( 'Campaign Title' ) ) );
+            
             $fields = array_merge( $impFields, $typeField, $contributionStatus, $optionField, $expFieldProduct,
-                                   $expFieldsContrib, $contributionNote, $contributionRecurId, 
+                                   $expFieldsContrib, $contributionNote, $contributionRecurId, $campaign, 
                                    CRM_Core_BAO_CustomField::getFieldsForImport('Contribution') );
             
             self::$_exportableFields = $fields;
@@ -751,6 +753,8 @@ INNER JOIN  civicrm_contact contact ON ( contact.id = civicrm_contribution.conta
         foreach ($contributionFields as $key => $var) {
             if ($key == 'contribution_contact_id') {
                 continue;
+            } else if ( $key == 'contribution_campaign_id' ) {
+                $var['title'] = ts( 'Campaign' );
             }
             $fields[$key] = $var;
         }

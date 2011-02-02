@@ -685,6 +685,11 @@ WHERE  $whereCond
             require_once 'CRM/Pledge/DAO/Pledge.php';
             $fields = CRM_Pledge_DAO_Pledge::export( );
             
+            //export campaign title.
+            if ( isset( $fields['pledge_campaign_id'] ) ) {
+                $fields['pledge_campaign'] = array( 'title' => ts( 'Campaign Title' ) ); 
+            }
+            
             require_once 'CRM/Pledge/DAO/Payment.php';
             $fields = array_merge( $fields, CRM_Pledge_DAO_Payment::export( ) );
             

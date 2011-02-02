@@ -129,6 +129,15 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         
         $this->_fields =& CRM_Contact_BAO_Contact::importableFields( 'All', true, true, true );
         $this->_fields = array_merge( CRM_Activity_BAO_Activity::exportableFields( 'Activity' ), $this->_fields );
+        
+        //unset campaign related fields.
+        if ( isset( $this->_fields['activity_campaign_id'] ) ) {
+            $this->_fields['activity_campaign_id']['title'] = ts( 'Campaign' );
+            if ( isset( $this->_fields['activity_campaign'] ) ) {
+                unset( $this->_fields['activity_campaign'] ); 
+            }
+        }
+        
         if ( CRM_Core_Permission::access( 'CiviContribute' ) ) {
             require_once "CRM/Contribute/BAO/Contribution.php";
             $this->_fields = array_merge ( CRM_Contribute_BAO_Contribution::getContributionFields(), $this->_fields );
@@ -136,7 +145,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
 
         if ( CRM_Core_Permission::access( 'CiviMember' ) ) {
             require_once 'CRM/Member/BAO/Membership.php';
-            $this->_fields = array_merge ( CRM_Member_BAO_Membership::getMembershipFields(), $this->_fields ); 
+            $this->_fields = array_merge ( CRM_Member_BAO_Membership::getMembershipFields(), $this->_fields );
         }
 
         if ( CRM_Core_Permission::access( 'CiviEvent' ) ) {
@@ -342,6 +351,12 @@ class CRM_UF_Form_Field extends CRM_Core_Form
                 unset($participantFields['participant_fee_level'] );
                 unset($participantFields['participant_id'] );
                 unset($participantFields['participant_is_pay_later'] );
+                if ( isset( $participantFields['participant_campaign_id'] ) ) {
+                    $participantFields['participant_campaign_id']['title'] = ts( 'Campaign' );
+                    if ( isset( $participantFields['participant_campaign'] ) ) {
+                        unset( $participantFields['participant_campaign'] );
+                    }
+                }
                 $fields['Participant'] =& $participantFields;
             }
         }
@@ -369,6 +384,15 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             unset( $activityFields['activity_type_id'] );
             unset( $activityFields['is_current_revision'] );
             unset( $activityFields['is_deleted'] );
+
+            //unset campaign related fields.
+            if ( isset( $activityFields['activity_campaign_id'] ) ) {
+                $activityFields['activity_campaign_id']['title'] = ts( 'Campaign' );
+                if ( isset( $activityFields['activity_campaign'] ) ) {
+                    unset( $activityFields['activity_campaign'] ); 
+                }
+            }
+            
             $fields['Activity'] = $activityFields;
         }
         
