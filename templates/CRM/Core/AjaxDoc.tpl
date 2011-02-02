@@ -28,7 +28,7 @@ function generateQuery () {
 }
 
 function runQuery(query) {
-    var vars = [], hash,smarty = "{crmAPI ",php = "$params = array (";
+    var vars = [], hash,smarty = '{crmAPI var="results" ',php = "$params = array (";
     $.get(query,function(data) {
       $('#result').text(data);
     },'text');
@@ -38,7 +38,8 @@ function runQuery(query) {
     for(var i = 0; i < hashes.length; i++) {
        
         hash = hashes[i].split('=');
-        smarty = smarty+ hash[0] + "="+hash[1]+ " ";
+        if (hash[0] == 'debug' || hash[0] == 'json') continue;
+        smarty = smarty+ hash[0] + '="'+hash[1]+ '" ';
         php = php+"'"+ hash[0] +"' =>'"+hash[1]+ "', ";
 
         vars.push(hash[0]);
@@ -83,7 +84,7 @@ cj(function ($) {
 <label>debug</label>
 <input type="checkbox" id="debug" checked="checked">
 <br>
-<input size="80" id="query" value="/civicrm/ajax/rest?json=1&debug=on&entity=contact&action=get&sequential=1"/>
+<input size="90" id="query" value="/civicrm/ajax/rest?json=1&debug=on&entity=contact&action=get&sequential=1&return=display_name,email,phone"/>
 <div id="link"></div>
 <div id="smarty" title='smarty syntax (mostly works for get actions)'></div>
 <div id="php" title='php syntax, crm_api needs a few more coding to work as advertised'></div>
