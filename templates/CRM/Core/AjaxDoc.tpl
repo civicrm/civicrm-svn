@@ -1,5 +1,10 @@
 <html>
 <title>REST API explorer</title>
+<style>
+{literal}
+#result {background:lightgrey;}
+{/literal}
+</style>
 <script>
 restURL = '{crmURL p="civicrm/ajax/rest"}';
 {literal}
@@ -7,7 +12,9 @@ function generateQuery () {
     var version = $('#version').val();
     var entity = $('#entity').val();
     var action = $('#action').val();
-    var debug = $('#debug').val();
+    var debug = "";
+    if ($('#debug').attr('checked'))
+      debug= "&debug=1";
     query="";
     if (entity == '') {query= "Choose an entity. "};
     if (action == '') {query=query + "Choose an action.";}
@@ -15,16 +22,30 @@ function generateQuery () {
       $('#query').val (query);
       return;
     }
-    query = restURL+'?json=1&debug='+debug+'&version='+version+'&entity='+entity+'&action='+action;
+    query = restURL+'?json=1'+debug+'&version='+version+'&entity='+entity+'&action='+action;
     $('#query').val (query);
     runQuery (query);
 }
 
 function runQuery(query) {
+    var vars = [], hash,smarty = "{crmAPI ",php = "$params = array (";
     $.get(query,function(data) {
       $('#result').text(data);
     },'text');
-    $("#link").html("<a href='"+query+"' title='open in a new tab' target='_blank'>link to the REST query</a>")
+    $("#link").html("<a href='"+query+"' title='open in a new tab' target='_blank'>link to the REST query</a>");
+
+    var hashes = query.slice(query.indexOf('?') + 1).split('&');
+    for(var i = 0; i < hashes.length; i++) {
+       
+        hash = hashes[i].split('=');
+        smarty = smarty+ hash[0] + "="+hash[1]+ " ";
+        php = php+"'"+ hash[0] +"' =>'"+hash[1]+ "', ";
+
+        vars.push(hash[0]);
+        vars[hash[0]] = hash[1];
+    }
+    $('#php').html("<hr>require_once ('api/api.php');<br/>"+ php + '};<br>$results=crm_api($params);</hr>');
+    $('#smarty').text(smarty + '}');
 }
 
 cj(function ($) {
@@ -64,6 +85,8 @@ cj(function ($) {
 <br>
 <input size="80" id="query" value="/civicrm/ajax/rest?json=1&debug=on&entity=contact&action=get&sequential=1"/>
 <div id="link"></div>
+<div id="smarty" title='smarty syntax (mostly works for get actions)'></div>
+<div id="php" title='php syntax, crm_api needs a few more coding to work as advertised'></div>
 <pre id="result">
 </pre>
 </body>

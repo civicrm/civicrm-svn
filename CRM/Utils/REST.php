@@ -424,6 +424,8 @@ class CRM_Utils_REST
     }
 
     static function ajaxDoc ( ) {
+
+      CRM_Utils_System::setTitle ("API explorer and generator");
       $template = CRM_Core_Smarty::singleton( );
       return $template->fetch( 'CRM/Core/AjaxDoc.tpl' );
     }
