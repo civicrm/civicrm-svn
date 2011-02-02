@@ -73,6 +73,12 @@ function civicrm_contact_create( &$params )
   }
 }
 
+function civicrm_contact_getfields( &$params ) {
+    require_once 'CRM/Contact/BAO/Contact.php';
+    $contact = new CRM_Contact_BAO_Contact();
+    return ($contact->fields());
+}
+
 /**
  * @todo Write sth
  * @todo Serious FIXMES in the code! File issues.

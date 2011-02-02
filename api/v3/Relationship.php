@@ -44,6 +44,11 @@ require_once 'CRM/Contact/BAO/Relationship.php';
 require_once 'CRM/Contact/BAO/RelationshipType.php';
 
 
+function civicrm_relationship_getfields( &$params ) {
+    $bao = new CRM_Contact_BAO_Relationship();
+    return ($bao->fields());
+}
+
 /**
  * Add or update a relationship
  *

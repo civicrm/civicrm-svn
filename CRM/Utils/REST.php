@@ -119,6 +119,7 @@ class CRM_Utils_REST
     
     // Generates values needed for error messages
     function error( $message = 'Unknown Error' ) {
+
         $values =
             array( 'error_message' => $message,
                    'is_error'      => 1 );
@@ -308,7 +309,6 @@ class CRM_Utils_REST
         $params =& self::buildParamList( );
         $params['check_permissions'] = true;
         $fnName = $apiFile = null;
-
         require_once 'CRM/Utils/String.php';
         // clean up all function / class names. they should be alphanumeric and _ only
         for ( $i = 1 ; $i <= 3; $i++ ) {
@@ -423,13 +423,30 @@ class CRM_Utils_REST
         CRM_Utils_System::civiExit( );
     }
 
+    static function ajaxDoc ( ) {
+      $template = CRM_Core_Smarty::singleton( );
+      return $template->fetch( 'CRM/Core/AjaxDoc.tpl' );
+    }
+
     static function ajax( ) {
         // this is driven by the menu system, so we can use permissioning to
         // restrict calls to this etc
 
         $q = CRM_Utils_Array::value( 'fnName', $_REQUEST );
-        $args = explode( '/', $q );
-        
+        if (!$q) {
+          $entity = CRM_Utils_Array::value( 'entity', $_REQUEST );
+          $action = CRM_Utils_Array::value( 'action', $_REQUEST );
+          if (!$entity || !$action) {
+            $config = CRM_Core_Config::singleton( );
+            $err = array ('error_message' => 'missing mandatory params "entity=" or "action="' , 'is_error'=> 1 );
+            echo self::output( $config, $err);
+            CRM_Utils_System::civiExit( );
+          }
+          $args = array ( 'civicrm', $entity, $action);
+        } else {
+          $args = explode( '/', $q );
+        }
+       
         // get the class name, since all ajax functions pass className
         $className = CRM_Utils_Array::value( 'className', $_REQUEST );
         
