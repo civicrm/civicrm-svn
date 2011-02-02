@@ -3,7 +3,7 @@
 function contribution_get_example(){
     $params = array(
     
-                  'contribution_id' 		=> '',
+                  'contribution_id' 		=> '1',
 
   );
   require_once 'api/api.php';
@@ -20,7 +20,7 @@ function contribution_get_expectedresult(){
   $expectedResult = 
             array(
                   'is_error' 		=> '1',
-                  'error_message' 		=> 'DB Error: no such field',
+                  'error_message' 		=> 'Mandatory key(s) missing from params array: version',
 
   );
 

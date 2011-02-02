@@ -3,7 +3,7 @@
 function contribution_delete_example(){
     $params = array(
     
-                  'contribution_id' 		=> '',
+                  'contribution_id' 		=> '1',
                   'version' 		=> '3',
 
   );

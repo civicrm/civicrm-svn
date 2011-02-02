@@ -137,10 +137,7 @@ function civicrm_contribution_delete( &$params ) {
 function &civicrm_contribution_get( &$params ) {
     _civicrm_initialize( );
     try { 
-
-    if ( ! is_array( $params ) ) {
-        return civicrm_create_error(  'Input parameters is not an array'  );
-    }
+    civicrm_verify_mandatory($params);
 
     $inputParams      = array( );
     $returnProperties = array( );

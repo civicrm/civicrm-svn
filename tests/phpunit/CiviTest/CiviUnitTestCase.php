@@ -508,7 +508,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         }
         
         require_once 'api/api.php';
-        $result = civicrm_api( 'civicrm_membership_contact_create','MembershipContact',$params );
+        $result = civicrm_api( 'civicrm_membership_create','Membership',$params );
 
         if ( CRM_Utils_Array::value( 'is_error', $result ) ||
              ! CRM_Utils_Array::value( 'id', $result) ) {
@@ -1277,9 +1277,9 @@ function documentMe($params,$result,$function,$filename){
         $smarty->assign('params',$params);   
         $smarty->assign('entity',$entity);         
         $smarty->assign('result',$result);  
-       // $f = fopen("c:\\utils\\eclipseworkspace\\api-civicrm\\api\\v3\\examples\\$entity$action.php", "w");
-       // fwrite($f,$smarty->fetch('c:\\utils\\eclipseworkspace\\api-civicrm\\tests\\templates\\documentFunction.tpl'));
-       // fclose($f); 
+       $f = fopen("c:\\utils\\eclipseworkspace\\api-civicrm\\api\\v3\\examples\\$entity$action.php", "w");
+        fwrite($f,$smarty->fetch('c:\\utils\\eclipseworkspace\\api-civicrm\\tests\\templates\\documentFunction.tpl'));
+        fclose($f); 
     }
   
     /**

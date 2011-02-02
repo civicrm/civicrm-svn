@@ -60,7 +60,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
         $contribution =& civicrm_contribution_get($params);
 
         $this->assertEquals( $contribution['is_error'], 1 );
-        $this->assertEquals( $contribution['error_message'], 'No input parameters present' );
+        $this->assertEquals( $contribution['error_message'], 'Mandatory key(s) missing from params array: version' );
     }
     
     
@@ -75,7 +75,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
 
     function testGetContribution()
     {        
-   $this->markTestSkipped('clash with v2 on core call to activity create');
+
         $p = array(
                         'contact_id'             => $this->_individualId,
                         'receive_date'           => date('Ymd'),
@@ -90,21 +90,24 @@ class api_v3_ContributionTest extends CiviUnitTestCase
                         'contribution_status_id' => 1,
                         'version'								=> $this->_apiversion,
                         );
-        
         $this->_contribution =& civicrm_contribution_create($p);
-        $params = array('contribution_id'=>$this->_contribution['id']);        
+        print_r($p);
+        $this->assertEquals( $this->_contribution['is_error'], 0 ,'In line ' . __LINE__ );        
+        
+        $params = array('contribution_id'=>$this->_contribution['id'],
+                         'version'								=> $this->_apiversion,                         );        
         $contribution =& civicrm_contribution_get($params);
         $this->documentMe($params,$contribution,__FUNCTION__,__FILE__); 
-        $this->assertEquals($contribution['contact_id'],$this->_individualId); 
+        $this->assertEquals($contribution['contact_id'],$this->_individualId,'In line ' . __LINE__ ); 
         $this->assertEquals($contribution['contribution_type_id'],$this->_contributionTypeId);        
-        $this->assertEquals($contribution['total_amount'],100.00);
-        $this->assertEquals($contribution['non_deductible_amount'],10.00);
-        $this->assertEquals($contribution['fee_amount'],51.00);
-        $this->assertEquals($contribution['net_amount'],91.00);
-        $this->assertEquals($contribution['trxn_id'],23456);
-        $this->assertEquals($contribution['invoice_id'],78910);
-        $this->assertEquals($contribution['contribution_source'],'SSF');
-        $this->assertEquals($contribution['contribution_status'], 'Completed' );
+        $this->assertEquals($contribution['total_amount'],100.00,'In line ' . __LINE__ );
+        $this->assertEquals($contribution['non_deductible_amount'],10.00,'In line ' . __LINE__ );
+        $this->assertEquals($contribution['fee_amount'],51.00,'In line ' . __LINE__ );
+        $this->assertEquals($contribution['net_amount'],91.00,'In line ' . __LINE__ );
+        $this->assertEquals($contribution['trxn_id'],23456,'In line ' . __LINE__ );
+        $this->assertEquals($contribution['invoice_id'],78910,'In line ' . __LINE__ );
+        $this->assertEquals($contribution['contribution_source'],'SSF','In line ' . __LINE__ );
+        $this->assertEquals($contribution['contribution_status'], 'Completed','In line ' . __LINE__  );
        
         $params2 = array( 'contribution_id' => $this->_contribution['id'] );
     }
@@ -113,12 +116,12 @@ class api_v3_ContributionTest extends CiviUnitTestCase
      
     function testCreateEmptyParamsContribution()
     {
-   $this->markTestSkipped('clash with v2 on core call to activity create');
+
     
       $params = array( );
         $contribution = civicrm_contribution_create($params);
-        $this->assertEquals( $contribution['is_error'], 1 );
-        $this->assertEquals( $contribution['error_message'], 'Input Parameters empty' );
+        $this->assertEquals( $contribution['is_error'], 1 ,'In line ' . __LINE__ );
+        $this->assertEquals( $contribution['error_message'], 'Mandatory key(s) missing from params array: contact_id, total_amount, one of (contribution_type_id, contribution_type), version','In line ' . __LINE__  );
     }
     
 
@@ -140,8 +143,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
     }
     function testCreateContribution()
     {
-  $this->markTestSkipped('clash with v2 on core call to activity create');
-        $params = array(
+       $params = array(
                         'contact_id'             => $this->_individualId,                              
                         'receive_date'           => date('Ymd'),
                         'total_amount'           => 100.00,
@@ -158,7 +160,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
                         );
         
         $contribution =& civicrm_contribution_create($params);
-         $this->documentMe($params, $contribution,__FUNCTION__,__FILE__);        
+        $this->documentMe($params, $contribution,__FUNCTION__,__FILE__);        
         $this->assertEquals($contribution['contact_id'], $this->_individualId, 'In line ' . __LINE__ );                              
         $this->assertEquals($contribution['receive_date'],date('Ymd'), 'In line ' . __LINE__ );
         $this->assertEquals($contribution['total_amount'],100.00, 'In line ' . __LINE__ );
@@ -173,11 +175,12 @@ class api_v3_ContributionTest extends CiviUnitTestCase
         $this->assertEquals($contribution['contribution_status_id'], 1, 'In line ' . __LINE__ );
         $this->_contribution = $contribution;
 
-        $contributionID = array( 'contribution_id' => $contribution['id'] );
+        $contributionID = array( 'contribution_id' => $contribution['id'] ,
+                                  'version'        =>$this->_apiversion);
         $contribution   =& civicrm_contribution_delete($contributionID);
         
-        $this->assertEquals( $contribution['is_error'], 0 );
-        $this->assertEquals( $contribution['result'], 1 );
+        $this->assertEquals( $contribution['is_error'], 0 ,'In line ' . __LINE__ );
+        $this->assertEquals( $contribution['result'], 1 ,'In line ' . __LINE__ );
         $entity = strstrafter(__FUNCTION__, 'Create');
     }
     
@@ -186,7 +189,6 @@ class api_v3_ContributionTest extends CiviUnitTestCase
      */
     function testContributionCreateExample( )
     {
-  $this->markTestSkipped('clash with v2 on core call to activity create');
     
       require_once 'api/v3/examples/ContributionCreate.php';
       $result = contribution_create_example();
@@ -198,11 +200,11 @@ class api_v3_ContributionTest extends CiviUnitTestCase
     //CHANGE: we require the API to do an incremental update
     function testCreateUpdateContribution()
     {
-  $this->markTestSkipped('clash with v2 on core call to activity create');
   
         $contributionID = $this->contributionCreate($this->_individualId,$this->_contributionTypeId,$this->_apiversion);
         $old_params = array(
-                            'contribution_id' => $contributionID,    
+                            'contribution_id' => $contributionID,   
+                            'version'					=> $this->_apiversion, 
                             );
         $original =& civicrm_contribution_get($old_params);
         //Make sure it came back
@@ -296,15 +298,14 @@ class api_v3_ContributionTest extends CiviUnitTestCase
     
     function testDeleteContribution()
     {
-   $this->markTestSkipped('clash with v2 on core call to activity create');
-      
+     
         $contributionID = $this->contributionCreate( $this->_individualId , $this->_contributionTypeId,$this->_apiversion );
         $params         = array( 'contribution_id' => $contributionID ,
                                   'version'        => $this->_apiversion,);
         $contribution   = civicrm_contribution_delete( $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
-        $this->assertEquals( $contribution['is_error'], 0 );
-        $this->assertEquals( $contribution['result'], 1 );
+        $this->assertEquals( $contribution['is_error'], 0, 'In line ' . __LINE__ );
+        $this->assertEquals( $contribution['result'], 1, 'In line ' . __LINE__ );
     }
 
 ///////////////// civicrm_contribution_search methods
@@ -318,7 +319,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
         $result =& civicrm_contribution_get($params);
 
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Input parameters is not an array', 'In line ' . __LINE__ );
+        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array', 'In line ' . __LINE__ );
     }
 
     /**
@@ -327,7 +328,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
      */
      function testSearchEmptyParams()
      {
-        $params = array();
+        $params = array('version' => $this->_apiversion);
 
         $p = array(
                   'contact_id'             => $this->_individualId,
@@ -340,7 +341,8 @@ class api_v3_ContributionTest extends CiviUnitTestCase
                   'trxn_id'                => 23456,
                   'invoice_id'             => 78910,
                   'source'                 => 'SSF',
-                  'contribution_status_id' => 1
+                  'contribution_status_id' => 1,
+                  'version'								 =>$this->_apiversion,
                   );         
         $contribution =& civicrm_contribution_create($p);
 
@@ -366,7 +368,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
      */
      function testSearch()
      {
-  $this->markTestSkipped('clash with v2 on core call to activity create');
+
         
          $p1 = array(
                      'contact_id'             => $this->_individualId,
@@ -394,7 +396,8 @@ class api_v3_ContributionTest extends CiviUnitTestCase
                      );    
          $contribution2 =& civicrm_contribution_create($p2);
          
-         $params = array( 'contribution_id'=> $contribution2['id'] );
+         $params = array( 'contribution_id'=> $contribution2['id'] ,
+         									'version' => $this->_apiversion);
          $result =& civicrm_contribution_get($params);
          $res    = $result[$contribution2['id']];
          
@@ -418,8 +421,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
      */
     function testFormatCreateEmptyParams()
     {
-                  $this->markTestSkipped( "Reason for skipping:<a href='http://forum.civicrm.org/index.php/topic,18053.0.html'>version issue</a>" );   
- 
+
         $params = array( );
         $result =& civicrm_contribution_format_create($params);
 
@@ -432,8 +434,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
      */
     function testFormatCreateParamsType()
     {
-        $this->markTestSkipped( "Reason for skipping:function has version issues but probably will be deprecated anyway <a href='http://forum.civicrm.org/index.php/topic,18053.0.html'>version issue</a>" );   
- 
+
         $params = 'a string';
         $result =& civicrm_contribution_format_create($params);
 
@@ -445,8 +446,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
      */
     function testFormatCreateInvalidData()
     {
-        $this->markTestSkipped( "Reason for skipping:function has version issues but probably will be deprecated anyway <a href='http://forum.civicrm.org/index.php/topic,18053.0.html'>version issue</a>" );
-         require_once 'CRM/Contribute/DAO/Contribution.php';
+        require_once 'CRM/Contribute/DAO/Contribution.php';
         $validParams = array( 'contact_id'   => $this->_individualId,
                               'receive_date' => date('Ymd'),
                               'total_amount'           => 100.00,
@@ -484,7 +484,6 @@ class api_v3_ContributionTest extends CiviUnitTestCase
      */
     function testFormatCreate()
     {
-        $this->markTestSkipped( "Reason for skipping:function has version issues but probably will be deprecated anyway <a href='http://forum.civicrm.org/index.php/topic,18053.0.html'>version issue</a>" ); 
         require_once 'CRM/Contribute/DAO/Contribution.php';
         require_once 'CRM/Contribute/PseudoConstant.php';
 
