@@ -13,27 +13,27 @@ function custom_field_create_example(){
                   'is_required' 		=> '1',
                   'is_searchable' 		=> '0',
                   'is_active' 		=> '1',
-                  'version' 		=> '',
+                  'version' 		=> '3',
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_custom_field_create','Activity',$params );
+  $result = civicrm_api( 'civicrm_custom_field_create','CustomField',$params );
 
   return $result;
-
-
 }
 
-
-
+/*
+ * Function returns array of result expected from previous function
+ */
 function custom_field_create_expectedresult(){
 
-  $expectedResult = array(
+  $expectedResult = 
+            array(
                   'is_error' 		=> '0',
                   'version' 		=> '3',
                   'count' 		=> '1',
-                  'values' 		=> array('customFieldId' => '1',
-                        )
+                  'id' 		=> 'customFieldId',
+                  'values' 		=>                   array(                  'customFieldId' => '1',                  ),
 
   );
 

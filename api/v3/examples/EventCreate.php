@@ -21,7 +21,8 @@ function event_create_expectedresult(){
                   'is_error' 		=> '0',
                   'version' 		=> '3',
                   'count' 		=> '1',
-                  'values' 		=>                   array('event_id' => '2',                        ),
+                  'id' 		=> 'event_id',
+                  'values' 		=>                   array(                  'event_id' => '2',                  ),
 
   );
 

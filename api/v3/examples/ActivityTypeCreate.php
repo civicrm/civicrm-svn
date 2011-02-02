@@ -6,13 +6,13 @@ function activity_type_create_example(){
                   'weight' 		=> '2',
                   'label' 		=> 'send out letters',
                   'version' 		=> '3',
-                  'is_active' 		=> '',
+                  'filter' 		=> '0',
+                  'is_active' 		=> '1',
+                  'is_optgroup' 		=> '1',
+                  'is_default' 		=> '0',
                   'option_group_id' 		=> '2',
                   'value' 		=> '32',
                   'name' 		=> 'send out letters',
-                  'is_default' 		=> '',
-                  'is_optgroup' 		=> '',
-                  'filter' 		=> '',
 
   );
   require_once 'api/api.php';
@@ -28,22 +28,11 @@ function activity_type_create_expectedresult(){
 
   $expectedResult = 
             array(
+                  'is_error' 		=> '0',
+                  'version' 		=> '3',
+                  'count' 		=> '16',
                   'id' 		=> '554',
-                  'option_group_id' 		=> '2',
-                  'label' 		=> 'send out letters',
-                  'value' 		=> '32',
-                  'name' 		=> 'send out letters',
-                  'grouping' 		=> '',
-                  'filter' 		=> '',
-                  'is_default' 		=> '',
-                  'weight' 		=> '2',
-                  'description' 		=> '',
-                  'is_optgroup' 		=> '',
-                  'is_reserved' 		=> '',
-                  'is_active' 		=> '',
-                  'component_id' 		=> '',
-                  'domain_id' 		=> '',
-                  'visibility_id' 		=> '',
+                  'values' 		=>                   array(                  'id' => '554',                                    'option_group_id' => '2',                                    'label' => 'send out letters',                                    'value' => '32',                                    'name' => 'send out letters',                                    'grouping' => '',                                    'filter' => '0',                                    'is_default' => '0',                                    'weight' => '2',                                    'description' => '',                                    'is_optgroup' => '1',                                    'is_reserved' => '',                                    'is_active' => '1',                                    'component_id' => '',                                    'domain_id' => '',                                    'visibility_id' => '',                  ),
 
   );
 

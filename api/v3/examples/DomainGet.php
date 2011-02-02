@@ -20,9 +20,20 @@ function domain_get_expectedresult(){
 
   $expectedResult = 
             array(
-                  '1' 		=>                   array('id' => '1',                        'domain_name' => 'Default Domain Name',                        'description' => '',                        'domain_email' => '',                        'domain_phone' =>                   array('0' => 'domain_phone',
-                  ),                        'domain_address' =>                   array('0' => 'domain_address',
-                  ),                        'from_email' => 'info@FIXME.ORG',                        'from_name' => 'FIXME',                        ),
+                  '1' 		=>                   array(                  'id' => '1',                                    'domain_name' => 'Default Domain Name',                                    'description' => '',                                    'domain_email' => '',                                    'domain_phone' =>  array(
+                                    'phone_type' => ''
+                  ,                  'phone' => ''
+                  ,)                                    'domain_address' =>  array(
+                                    'street_address' => ''
+                  ,                  'supplemental_address_1' => ''
+                  ,                  'supplemental_address_2' => ''
+                  ,                  'city' => ''
+                  ,                  'state_province_id' => ''
+                  ,                  'postal_code' => ''
+                  ,                  'country_id' => ''
+                  ,                  'geo_code_1' => ''
+                  ,                  'geo_code_2' => ''
+                  ,)                                    'from_email' => 'info@FIXME.ORG',                                    'from_name' => 'FIXME',                  ),
 
   );
 

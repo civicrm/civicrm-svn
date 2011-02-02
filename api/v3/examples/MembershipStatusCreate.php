@@ -28,7 +28,8 @@ function membership_status_create_expectedresult(){
                   'is_error' 		=> '0',
                   'version' 		=> '3',
                   'count' 		=> '2',
-                  'values' 		=>                   array('id' => '9',                        'is_error' => '0',                        ),
+                  'id' 		=> '9',
+                  'values' 		=>                   array(                  'id' => '9',                                    'is_error' => '0',                  ),
 
   );
 

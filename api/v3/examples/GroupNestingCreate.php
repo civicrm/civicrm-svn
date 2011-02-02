@@ -1,14 +1,15 @@
 <?php 
 
-function uf_match_get_example(){
+function group_nesting_create_example(){
     $params = array(
     
-                  'contact_id' 		=> '69',
+                  'parent_group_id' 		=> '1',
+                  'child_group_id' 		=> '3',
                   'version' 		=> '3',
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_uf_match_get','UFMatch',$params );
+  $result = civicrm_api( 'civicrm_group_nesting_create','GroupNesting',$params );
 
   return $result;
 }
@@ -16,15 +17,15 @@ function uf_match_get_example(){
 /*
  * Function returns array of result expected from previous function
  */
-function uf_match_get_expectedresult(){
+function group_nesting_create_expectedresult(){
 
   $expectedResult = 
             array(
                   'is_error' 		=> '0',
                   'version' 		=> '3',
                   'count' 		=> '1',
-                  'id' 		=> 'uf_id',
-                  'values' 		=>                   array(                  'uf_id' => '42',                  ),
+                  'id' 		=> 'is_error',
+                  'values' 		=>                   array(                  'is_error' => '0',                  ),
 
   );
 
