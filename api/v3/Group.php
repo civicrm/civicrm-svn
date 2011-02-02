@@ -23,7 +23,7 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*/
+ */
 
 /**
  * File for the CiviCRM APIv3 group functions
@@ -42,32 +42,34 @@ require_once 'api/v3/utils.php';
 
 /**
  * create/update group
- * 
+ *
  * This API is used to create new group or update any of the existing
  * In case of updating existing group, id of that particular grop must
  * be in $params array. Either id or name is required field in the
  * $params array
- * 
+ *
  * @param array $params  (referance) Associative array of property
  *                       name/value pairs to insert in new 'group'
- * 
+ *
  * @return array   returns id of the group created if success,
  *                 error message otherwise
- * 
+ *
  * @access public
  */
 function civicrm_group_create( &$params )
 {
-  _civicrm_initialize( );
+  _civicrm_initialize(true );
   try{
      
-    civicrm_verify_mandatory($params,'CRM_Contact_BAO_Group',array('title'));
+    civicrm_verify_mandatory($params,null,array('title'));
     $group = CRM_Contact_BAO_Group::create( $params );
 
     if ( is_null( $group ) ) {
       return civicrm_create_error( 'Group not created' );
     } else {
-      return civicrm_create_success( $group->id );
+      $values = array();
+      _civicrm_object_to_array_unique_fields($group, $values[$group->id]);
+      return civicrm_create_success($values,$params,TRUE );
     }
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );
@@ -78,49 +80,49 @@ function civicrm_group_create( &$params )
 
 /**
  * Returns array of groups  matching a set of one or more group properties
- * 
+ *
  * @param array $params  (referance) Array of one or more valid
  *                       property_name=>value pairs. If $params is set
  *                       as null, all groups will be returned
- * 
+ *
  * @return array  (referance) Array of matching groups
  * @access public
  */
 function civicrm_group_get( &$params )
 {
-    try{
+  try{
 
-    _civicrm_initialize( );
+    _civicrm_initialize(true );
     civicrm_verify_mandatory($params);
 
     $returnProperties = array( );
     foreach ( $params as $n => $v ) {
-        if ( substr( $n, 0, 7 ) == 'return.' ) {
-            $returnProperties[] = substr( $n, 7 );
-        } 
+      if ( substr( $n, 0, 7 ) == 'return.' ) {
+        $returnProperties[] = substr( $n, 7 );
+      }
     }
-    
+
     if( !empty($returnProperties) ){
-        $returnProperties[] = 'id';
+      $returnProperties[] = 'id';
     }
-    
+
     $groupObjects = CRM_Contact_BAO_Group::getGroups( $params, $returnProperties );
-    
+
     if ( count( $groupObjects ) == 0 ) {
-        return civicrm_create_error( 'No such group exists' );
+      return civicrm_create_error( 'No such group exists' );
     }
-    
+
     $groups       = array( );
     foreach( $groupObjects as $group ) {
-        _civicrm_object_to_array( $group, $groups[$group->id] );
+      _civicrm_object_to_array( $group, $groups[$group->id] );
     }
-    
+
     return $groups;
-    } catch (PEAR_Exception $e) {
-      return civicrm_create_error( $e->getMessage() );
-    } catch (Exception $e) {
-      return civicrm_create_error( $e->getMessage() );
-    }
+  } catch (PEAR_Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  }
 }
 
 /**
@@ -131,24 +133,22 @@ function civicrm_group_get( &$params )
  *
  * @param array $params  (referance) array containing id of the group
  *                       to be deleted
- * 
+ *
  * @return array  (referance) returns flag true if successfull, error
- *                message otherwise 
- * 
+ *                message otherwise
+ *
  * @access public
  */
 function civicrm_group_delete( &$params )
 {
-    _civicrm_initialize( true);
-      try{
-      civicrm_verify_mandatory($params,null,array('id'));  
-
-
+  _civicrm_initialize( true);
+  try{
+    civicrm_verify_mandatory($params,null,array('id'));
     CRM_Contact_BAO_Group::discard( $params['id'] );
     return civicrm_create_success( true );
-            } catch (PEAR_Exception $e) {
-        return civicrm_create_error( $e->getMessage() );
-      } catch (Exception $e) {
-        return civicrm_create_error( $e->getMessage() );
-      }
+  } catch (PEAR_Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  }
 }

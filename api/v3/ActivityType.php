@@ -100,7 +100,7 @@ function civicrm_activity_type_create( &$params ) {
     $activityObject = CRM_Core_OptionValue::addOptionValue( $params, $groupParams, $action, $optionValueID );
     $activityType = array();
     _civicrm_object_to_array( $activityObject, $activityType );
-    return $activityType;
+    return civicrm_create_success($activityType,$params);
     } catch (PEAR_Exception $e) {
       return civicrm_create_error( $e->getMessage() );
     } catch (Exception $e) {
