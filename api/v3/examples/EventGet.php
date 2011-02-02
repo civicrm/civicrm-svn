@@ -45,7 +45,7 @@ function event_get_expectedresult(){
                   ,                  'is_multiple_registrations' => '0'
                   ,                  'allow_same_participant_emails' => '0'
                   ,                  'is_template' => '0'
-                  ,)                  ),
+                  ,),                  ),
 
   );
 

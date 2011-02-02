@@ -40,7 +40,7 @@ function contact_get_expectedresult(){
                   ,                  'email_id' => '2'
                   ,                  'email' => 'man2@yahoo.com'
                   ,                  'on_hold' => '0'
-                  ,)                  ),
+                  ,),                  ),
 
   );
 

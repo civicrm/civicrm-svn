@@ -34,7 +34,7 @@ function uf_join_get_expectedresult(){
                   ,                  'entity_id' => '1'
                   ,                  'weight' => '1'
                   ,                  'uf_group_id' => '11'
-                  ,)                  ),
+                  ,),                  ),
 
   );
 

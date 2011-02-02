@@ -28,7 +28,7 @@ function group_nesting_get_expectedresult(){
                                     'id' => '1'
                   ,                  'child_group_id' => '2'
                   ,                  'parent_group_id' => '1'
-                  ,)                                    'is_error' => '0',                  ),
+                  ,),                                    'is_error' => '0',                  ),
 
   );
 
