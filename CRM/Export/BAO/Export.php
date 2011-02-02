@@ -496,7 +496,7 @@ class CRM_Export_BAO_Export
         //get all campaigns.
         if ( $exportCampaign ) {
             require_once 'CRM/Campaign/BAO/Campaign.php';
-            $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, true );
+            $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, false, true );
         }
         
         $componentDetails = $headerRows = $sqlColumns = array( );

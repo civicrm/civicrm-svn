@@ -156,12 +156,13 @@ Class CRM_Campaign_BAO_Campaign extends CRM_Campaign_DAO_Campaign
                                          $excludeId = null, 
                                          $onlyActive = true,
                                          $onlyCurrent = true,
+                                         $appendDatesToTitle = false,
                                          $forceAll = false ) 
     {
         static $campaigns;
         $cacheKey = 0;
-        $cacheKeyParams = array( 'includeId', 'excludeId', 
-                                 'onlyActive', 'onlyCurrent', 'forceAll' ); 
+        $cacheKeyParams = array( 'includeId', 'excludeId', 'onlyActive', 
+                                 'onlyCurrent', 'appendDatesToTitle', 'forceAll', ); 
         foreach ( $cacheKeyParams as $param ) {
             $cacheParam = $$param;
             if ( !$cacheParam ) $cacheParam = 0;
@@ -180,14 +181,30 @@ Class CRM_Campaign_BAO_Campaign extends CRM_Campaign_DAO_Campaign
             if ( $forceAll ) $whereClause = '( 1 )'; 
             
             $query = "
-SELECT  camp.id, camp.title
-  FROM  civicrm_campaign camp
- WHERE  {$whereClause}";
+  SELECT  camp.id, 
+          camp.title,
+          camp.start_date,
+          camp.end_date
+    FROM  civicrm_campaign camp
+   WHERE  {$whereClause}
+Order By  camp.title";
             
             $campaign = CRM_Core_DAO::executeQuery( $query );
             $campaigns[$cacheKey] = array( );
             while ( $campaign->fetch( ) ) {
-                $campaigns[$cacheKey][$campaign->id] = $campaign->title;
+                $title = $campaign->title;
+                if ( $appendDatesToTitle ) {
+                    $dates = array( );
+                    foreach ( array( 'start_date', 'end_date' ) as $date ) {
+                        if ( $campaign->$date ) {
+                            $dates[] = CRM_Utils_Date::customFormat( $campaign->$date, '%b%e,%Y' );
+                        }
+                    }
+                    if ( !empty( $dates ) ) {
+                        $title .= ' (' . implode( '-', $dates ) . ')';  
+                    }
+                }
+                $campaigns[$cacheKey][$campaign->id] = $title;
             }
         }
         
@@ -203,13 +220,14 @@ SELECT  camp.id, camp.title
                                                      $excludeId   = null, 
                                                      $onlyActive  = true,
                                                      $onlyCurrent = true,
+                                                     $appendDatesToTitle = false,
                                                      $forceAll    = false,
                                                      $doCheckForComponent   = true,
                                                      $doCheckForPermissions = true ) 
     {
         $cacheKey = 0;
         $cachekeyParams = array( 'includeId', 'excludeId', 'onlyActive', 'onlyCurrent',
-                                 'doCheckForComponent', 'doCheckForPermissions', 'forceAll' );
+                                 'appendDatesToTitle', 'doCheckForComponent', 'doCheckForPermissions', 'forceAll' );
         foreach ( $cachekeyParams as $param ) {
             $cacheKeyParam = $$param;
             if ( !$cacheKeyParam ) $cacheKeyParam = 0;
@@ -239,6 +257,7 @@ SELECT  camp.id, camp.title
                                                               $excludeId, 
                                                               $onlyActive,
                                                               $onlyCurrent,
+                                                              $appendDatesToTitle,
                                                               $forceAll ); 
             }
             
@@ -362,7 +381,7 @@ INNER JOIN  civicrm_group grp ON ( grp.id = campgrp.entity_id )
      */
     public static function addCampaign( &$form, $connectedCampaignId = null ) 
     {
-        $campaignDetails = self::getPermissionedCampaigns( $connectedCampaignId );
+        $campaignDetails = self::getPermissionedCampaigns( $connectedCampaignId, null, true, true, true );
         $fields = array( 'campaigns', 'hasAccessCampaign', 'isCampaignEnabled' );
         foreach ( $fields as $fld ) $$fld = CRM_Utils_Array::value( $fld, $campaignDetails ); 
         
@@ -429,7 +448,7 @@ INNER JOIN  civicrm_group grp ON ( grp.id = campgrp.entity_id )
     public static function addCampaignInComponentSearch( &$form, $elementName = 'campaign_id' ) 
     {
         $campaignInfo = array( );
-        $campaignDetails = self::getPermissionedCampaigns( null, null, false, false, true );
+        $campaignDetails = self::getPermissionedCampaigns( null, null, false, false, false, true );
         $fields = array( 'campaigns', 'hasAccessCampaign', 'isCampaignEnabled' );
         foreach ( $fields as $fld ) $$fld = CRM_Utils_Array::value( $fld, $campaignDetails ); 
         $showCampaignInSearch = false;

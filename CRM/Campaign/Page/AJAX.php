@@ -430,7 +430,7 @@ class CRM_Campaign_Page_AJAX
     {
         require_once 'CRM/Utils/JSON.php';
         require_once 'CRM/Campaign/BAO/Campaign.php';
-        $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, true, false );
+        $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, true, false, true );
         $options   = array( array( 'value' => '',
                                    'title'  => ts('- select -') ) );
         foreach ( $campaigns as $value => $title ) {
