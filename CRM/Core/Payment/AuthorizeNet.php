@@ -114,6 +114,8 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
                                                      $authorizeNetFields );
 
         foreach ( $authorizeNetFields as $field => $value ) {
+            // CRM-7419, since double quote is used as enclosure while doing csv parsing
+            $value = ($field == 'x_description') ? str_replace( '"', "'", $value ) : $value;
             $postFields[] = $field . '=' . urlencode( $value );
         }
 
