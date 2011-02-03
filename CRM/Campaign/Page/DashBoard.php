@@ -180,7 +180,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
     {
         $campaignsData = array( );
         //get the campaigns.
-        $campaigns = CRM_Campaign_BAO_Campaign::getCampaign( true );
+        $campaigns = CRM_Campaign_BAO_Campaign::getCampaignSummary( );
         if ( !empty( $campaigns ) ) {
             $campaignType    = CRM_Campaign_PseudoConstant::campaignType( );
             $campaignStatus  = CRM_Campaign_PseudoConstant::campaignStatus( );

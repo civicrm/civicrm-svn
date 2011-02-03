@@ -288,29 +288,38 @@ Order By  camp.title";
     }
     
     /**
-     * Function to get Campaigns 
-     *
-     * @param $all boolean true if campaign is active else returns camapign 
+     * Function to retrieve campaigns for dashboard.
      *
      * @static
      */
-    static function getCampaign( $all = false, $id = false) 
+    static function getCampaignSummary( ) 
     {
-       $campaign = array( );
-       $dao = new CRM_Campaign_DAO_Campaign( );
-       if ( !$all ) {
-           $dao->is_active = 1;
-       }
-       
-       if ( $id ) {
-           $dao->id = $id;  
-       }
-       $dao->find( );
-       while ( $dao->fetch() ) {
-           CRM_Core_DAO::storeValues($dao, $campaign[$dao->id]);
-       }
-       
-       return $campaign;
+        $campaigns = array( );
+        
+        $query = '
+  SELECT  campaign.id               as id,
+          campaign.name             as name,
+          campaign.title            as title,
+          campaign.is_active        as is_active,
+          campaign.status_id        as status_id,
+          campaign.end_date         as end_date,
+          campaign.start_date       as start_date,
+          campaign.description      as description,
+          campaign.campaign_type_id as campaign_type_id
+    FROM  civicrm_campaign campaign
+ORDER BY  campaign.start_date desc';
+        
+        $properties = array( 'id', 'name', 'title', 'status_id', 'description', 
+                             'campaign_type_id', 'is_active', 'start_date', 'end_date' );
+        
+        $campaign = CRM_Core_DAO::executeQuery( $query );
+        while ( $campaign->fetch( ) ) {
+            foreach ( $properties as $property ) {
+                $campaigns[$campaign->id][$property] = $campaign->$property;
+            }
+        }
+        
+        return $campaigns;
     }
     
     
