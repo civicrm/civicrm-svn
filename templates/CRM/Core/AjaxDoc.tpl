@@ -75,6 +75,7 @@ cj(function ($) {
   <option value="contact">Contact</option>
   <option value="relationship">Relationship</option>
   <option value="tag">Tag</option>
+  <option value="note">Note</option>
   <option value="group">Group</option>
 </select>
 <label>action</label>
