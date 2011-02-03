@@ -107,10 +107,10 @@ WHERE  entity_id1 = $cid AND
     {
         $query = "
 SELECT data 
-FROM   civicrm_prevnext_cache
+FROM   civicrm_prevnext_cache pn
+JOIN   civicrm_dedupe_exception de ON ! ( pn.entity_id1 = de.contact_id1 AND pn.entity_id2 = de.contact_id2 )
 WHERE  cacheKey = '$cacheKey'
 ";
-        
         $dao  = CRM_Core_DAO::executeQuery( $query );
         $main = array();
         while ( $dao->fetch() ) {

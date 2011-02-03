@@ -106,8 +106,11 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         $this->assign( 'mainUfId', $mainUfId );
         $this->assign( 'mainUfName', $mainUser->name );
 
-        $flipUrl = CRM_Utils_system::url( 'civicrm/contact/merge', "reset=1&action=update&cid={$oid}&oid={$cid}&rgid={$rgid}&gid={$gid}" );
-        if ( !$flip) $flipUrl .= '&flip=1';
+        $flipUrl = CRM_Utils_system::url( 'civicrm/contact/merge', 
+                                          "reset=1&action=update&cid={$oid}&oid={$cid}&rgid={$rgid}&gid={$gid}" );
+        if ( !$flip ) {
+            $flipUrl .= '&flip=1';
+        }
         $this->assign( 'flip', $flipUrl );
 
         foreach (array('prev', 'next') as $position) {
