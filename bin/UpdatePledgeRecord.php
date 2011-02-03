@@ -89,7 +89,6 @@ SELECT  pledge.contact_id              as contact_id,
         pledge.status_id               as pledge_status,
         payment.status_id              as payment_status,
         pledge.is_test                 as is_test,
-        pledge.campaign_id             as campaign_id,
         SUM(payment.scheduled_amount)  as amount_due,
         ( SELECT sum(civicrm_pledge_payment.actual_amount) 
         FROM civicrm_pledge_payment 
@@ -127,8 +126,7 @@ SELECT  pledge.contact_id              as contact_id,
                                                       'additional_reminder_day' => $dao->additional_reminder_day,
                                                       'pledge_status'           => $dao->pledge_status,
                                                       'payment_status'          => $dao->payment_status,
-                                                      'is_test'                 => $dao->is_test,
-                                                      'campaign_id'             => $dao->campaign_id
+                                                      'is_test'                 => $dao->is_test
                                                       );
             
             $contactIds[$dao->contact_id] = $dao->contact_id;
@@ -165,6 +163,11 @@ SELECT  pledge.contact_id              as contact_id,
             foreach( $tokens['domain'] as $token ){ 
                 $domainValues[$token] = CRM_Utils_Token::getDomainTokenReplacement( $token, $domain );
             }
+            
+            //get the domain email address, since we don't carry w/ object.
+            require_once 'CRM/Core/BAO/Domain.php';
+            $domainValue = CRM_Core_BAO_Domain::getNameAndEmail( );
+            $domainValues['email'] = $domainValue[1];
             
             // retrieve contact tokens
             require_once 'CRM/Mailing/BAO/Mailing.php';
@@ -253,8 +256,7 @@ SELECT  pledge.contact_id              as contact_id,
                                                      'activity_date_time' => CRM_Utils_Date::isoToMysql( $now ),
                                                      'due_date_time'      => CRM_Utils_Date::isoToMysql( $details['scheduled_date'] ),
                                                      'is_test'            => $details['is_test'],
-                                                     'status_id'          => 2,
-                                                     'campaign_id'        => $details['campaign_id']
+                                                     'status_id'          => 2
                                                      );
                             require_once 'api/v2/Activity.php';
                             if ( is_a( civicrm_activity_create( $activityParams ), 'CRM_Core_Error' ) ) {
