@@ -660,7 +660,8 @@ WHERE  $whereCond
                                      'activity_date_time' => CRM_Utils_Date::isoToMysql( $params['acknowledge_date'] ),
                                      'is_test'            => $params['is_test'],
                                      'status_id'          => 2,
-                                     'details'            => $details
+                                     'details'            => $details,
+                                     'campaign_id'        => CRM_Utils_Array::value( 'campaign_id', $params )
                                      );
             require_once 'api/v2/Activity.php';
             if ( is_a( civicrm_activity_create( $activityParams ), 'CRM_Core_Error' ) ) {
@@ -684,6 +685,11 @@ WHERE  $whereCond
             
             require_once 'CRM/Pledge/DAO/Pledge.php';
             $fields = CRM_Pledge_DAO_Pledge::export( );
+            
+            //export campaign title.
+            if ( isset( $fields['pledge_campaign_id'] ) ) {
+                $fields['pledge_campaign'] = array( 'title' => ts( 'Campaign Title' ) ); 
+            }
             
             require_once 'CRM/Pledge/DAO/Payment.php';
             $fields = array_merge( $fields, CRM_Pledge_DAO_Payment::export( ) );

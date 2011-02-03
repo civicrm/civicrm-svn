@@ -595,6 +595,7 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
                               'subject'              => $mailing->subject,
                               'status_id'            => 2,
                               'deleteActivityTarget' => false,
+                              'campaign_id'          => $mailing->campaign_id
                               );
 
             //check whether activity is already created for this mailing.

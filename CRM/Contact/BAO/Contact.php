@@ -308,7 +308,7 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
             require_once 'CRM/ACL/BAO/Cache.php';
             CRM_ACL_BAO_Cache::resetCache( );
         }
-
+        
         //add location Block data
         $blocks = CRM_Core_BAO_Location::create( $params, $fixAddress );
         foreach ( $blocks as $name => $value )  {

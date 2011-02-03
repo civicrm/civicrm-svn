@@ -1425,7 +1425,14 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
         foreach (array_keys(self::fields()) as $field) {
             $report['mailing'][$field] = $mailing->$field;
         }
-
+        
+        //get the campaign
+        if ( $campaignId = CRM_Utils_Array::value( 'campaign_id', $report['mailing'] ) ) {
+            require_once 'CRM/Campaign/BAO/Campaign.php';
+            $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( $campaignId );
+            $report['mailing']['campaign'] = $campaigns[$campaignId];
+        }
+        
         //mailing report is called by activity
         //we dont need all detail report
         if ( $skipDetails ) {
@@ -1814,7 +1821,7 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
 
         //get all campaigns.
         require_once 'CRM/Campaign/BAO/Campaign.php';
-        $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, true );
+        $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, false, true );
         
         // we only care about parent jobs, since that holds all the info on
         // the mailing

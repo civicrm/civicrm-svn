@@ -527,8 +527,10 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
                                                                              'where' => 'civicrm_contribution.contribution_recur_id',
                                                                              'data_type' => CRM_Utils_Type::T_INT ) );
             
+            $campaign = array( 'contribution_campaign' => array( 'title' => ts( 'Campaign Title' ) ) );
+            
             $fields = array_merge( $impFields, $typeField, $contributionStatus, $optionField, $expFieldProduct,
-                                   $expFieldsContrib, $contributionNote, $contributionRecurId, 
+                                   $expFieldsContrib, $contributionNote, $contributionRecurId, $campaign, 
                                    CRM_Core_BAO_CustomField::getFieldsForImport('Contribution') );
             
             self::$_exportableFields = $fields;
@@ -751,6 +753,8 @@ INNER JOIN  civicrm_contact contact ON ( contact.id = civicrm_contribution.conta
         foreach ($contributionFields as $key => $var) {
             if ($key == 'contribution_contact_id') {
                 continue;
+            } else if ( $key == 'contribution_campaign_id' ) {
+                $var['title'] = ts( 'Campaign' );
             }
             $fields[$key] = $var;
         }
@@ -1554,7 +1558,7 @@ LEFT JOIN  civicrm_contribution contribution ON ( componentPayment.contribution_
         if ( $processContribution ) {
             require_once 'CRM/Contribute/BAO/Contribution.php';
             $contributionParams = array( );
-            $fields = array( 'contact_id', 'total_amount', 'receive_date', 'is_test',
+            $fields = array( 'contact_id', 'total_amount', 'receive_date', 'is_test', 'campaign_id',
                              'payment_instrument_id', 'trxn_id', 'invoice_id', 'contribution_type_id', 
                              'contribution_status_id', 'non_deductible_amount', 'receipt_date', 'check_number' );
             foreach ( $fields as $field ) {

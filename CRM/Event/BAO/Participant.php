@@ -620,7 +620,7 @@ GROUP BY  participant.event_id
             
             require_once 'CRM/Core/DAO/Note.php';
             $tmpFields         = CRM_Event_DAO_Participant::import( );
-
+            
             $note              = array( 'participant_note'   => array( 'title'         => 'Participant Note',
                                                                        'name'          => 'participant_note',
                                                                        'headerPattern' => '/(participant.)?note$/i' ) );
@@ -670,7 +670,12 @@ GROUP BY  participant.event_id
             $tmpContactField['external_identifier'] = CRM_Utils_Array::value('external_identifier',$contactFields);
             $tmpContactField['external_identifier']['title'] = $contactFields['external_identifier']['title'] . " (match to contact)";
             $tmpFields['participant_contact_id']['title']    = $tmpFields['participant_contact_id']['title'] . " (match to contact)";
-
+            
+            //campaign fields.
+            if ( isset( $tmpFields['participant_campaign_id'] ) ) {
+                $tmpFields['participant_campaign'] = array( 'title' => ts( 'Campaign Title' ) );
+            }
+            
             $fields = array_merge($fields, $tmpContactField);
             $fields = array_merge($fields, $tmpFields);
             $fields = array_merge($fields, $note, $participantStatus, $participantRole, $eventType );
@@ -709,7 +714,12 @@ GROUP BY  participant.event_id
 
             $participantRole   = array( 'participant_role'   => array( 'title' => 'Participant Role',
                                                                        'name'  => 'participant_role' ) );
-
+            
+            //campaign fields.
+            if ( isset( $participantFields['participant_campaign_id'] ) ) {
+                $participantFields['participant_campaign'] = array( 'title' => ts( 'Campaign Title' ) );
+            }
+            
             require_once 'CRM/Core/DAO/Discount.php';
             $discountFields  = CRM_Core_DAO_Discount::export( );
 

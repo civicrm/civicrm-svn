@@ -178,6 +178,7 @@ class CRM_Core_BAO_CustomValueTable
                            $type = 'Timestamp';
                         }
                         break;
+
                     case 'ContactReference':
                         if ( $value == null ) {
                             $type  = 'Timestamp'; 
@@ -230,8 +231,7 @@ class CRM_Core_BAO_CustomValueTable
                         $query = "$sqlOP SET $setClause $where";
                     }
                     $dao = CRM_Core_DAO::executeQuery( $query, $params );
-                   
-                    $dao->free( );
+
                     require_once 'CRM/Utils/Hook.php';
                     CRM_Utils_Hook::custom( $hookOP,
                                             $hookID,

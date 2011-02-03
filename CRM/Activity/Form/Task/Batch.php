@@ -147,7 +147,7 @@ class CRM_Activity_Form_Task_Batch extends CRM_Activity_Form_Task {
         $fileFieldExists = false;
         
         //load all campaigns.
-        if ( array_key_exists( 'campaign_id', $this->_fields ) ) {
+        if ( array_key_exists( 'activity_campaign_id', $this->_fields ) ) {
             $this->_componentCampaigns = array( );
             CRM_Core_PseudoConstant::populate( $this->_componentCampaigns,
                                                'CRM_Activity_DAO_Activity',

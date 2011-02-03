@@ -176,8 +176,9 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         //set custom field defaults
         if ( ! empty( $this->_fields ) ) {
             //load default campaign from page.
-            if ( array_key_exists( 'campaign_id', $this->_fields ) ) {
-                $this->_defaults['campaign_id'] = CRM_Utils_Array::value( 'campaign_id', $this->_values['event'] );
+            if ( array_key_exists( 'participant_campaign_id', $this->_fields ) ) {
+                $this->_defaults['participant_campaign_id'] = CRM_Utils_Array::value( 'campaign_id', 
+                                                                                      $this->_values['event'] );
             }
             
             require_once "CRM/Core/BAO/CustomField.php";
@@ -835,7 +836,9 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         }
         
         //carry campaign to partcipants.
-        if ( !array_key_exists( 'campaign_id', $params ) ) {
+        if ( CRM_Utils_Array::value( 'participant_campaign_id', $params ) ) {
+            $params['campaign_id'] = $params['participant_campaign_id'];
+        } else {
             $params['campaign_id'] = CRM_Utils_Array::value( 'campaign_id', $this->_values['event'] );
         }
         

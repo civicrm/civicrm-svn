@@ -402,6 +402,50 @@ ADD UNIQUE INDEX `unique_entity_id` ( `entity_id` )";
         }
     }
 
+    static function alterFieldLength( $customFieldID, $tableName, $columnName, $length ) {
+        // first update the custom field tables
+        $sql = "
+UPDATE civicrm_custom_field
+SET    text_length = %1
+WHERE  id = %2
+";
+        $params = array( 1 => array( $length       , 'Integer' ),
+                         2 => array( $customFieldID, 'Integer' ) );
+        CRM_Core_DAO::executeQuery( $sql, $params );
+
+        $sql = "
+SELECT is_required, default_value
+FROM   civicrm_custom_field
+WHERE  id = %2
+";
+        $dao = CRM_Core_DAO::executeQuery( $sql, $params );
+
+        if ( $dao->fetch( ) ) {
+            $clause = '';
+
+            if ( $dao->is_required ) {
+                $clause = " NOT NULL";
+            }
+
+            if ( ! empty( $dao->default_value ) ) {
+                $clause .= " DEFAULT '{$dao->default_value}'";
+            }
+            // now modify the column
+            $sql = "
+ALTER TABLE {$tableName}
+MODIFY      {$columnName} varchar( $length )
+            $clause
+";
+            CRM_Core_DAO::executeQuery( $sql );
+        }
+        else {
+            CRM_Core_Error::fatal( ts( 'Could Not Find Custom Field Details for %1, %2, %3',
+                                       array( 1 => $tableName ,
+                                              2 => $columnName,
+                                              3 => $customFieldID ) ) );
+        }
+    }
+
 }
 
 

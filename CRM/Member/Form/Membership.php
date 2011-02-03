@@ -217,8 +217,14 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             $contributionParams   = array( 'id' => $defaults['record_contribution'] );
             $contributionIds      = array( );
             
+            //keep main object campaign in hand.
+            $memberCampaignId = CRM_Utils_Array::value( 'campaign_id', $defaults );
+            
             require_once "CRM/Contribute/BAO/Contribution.php";
             CRM_Contribute_BAO_Contribution::getValues( $contributionParams, $defaults, $contributionIds );
+            
+            //get back original object campaign id.
+            $defaults['campaign_id'] = $memberCampaignId;
             
             list( $defaults['receive_date'] ) = CRM_Utils_Date::setDateDefaults( $defaults['receive_date'] );
             
@@ -829,7 +835,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
 
         if ( CRM_Utils_Array::value( 'record_contribution', $formValues ) ) {
             $recordContribution = array( 'total_amount', 'contribution_type_id', 'payment_instrument_id', 
-                                         'trxn_id', 'contribution_status_id', 'check_number' );
+                                         'trxn_id', 'contribution_status_id', 'check_number', 'campaign_id' );
             
             foreach ( $recordContribution as $f ) {
                 $params[$f] = CRM_Utils_Array::value( $f, $formValues );

@@ -247,7 +247,7 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
          
          //get all campaigns.
          require_once 'CRM/Campaign/BAO/Campaign.php';
-         $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, true );
+         $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, false, true );
          
          while ( $result->fetch( ) ) {
              $row = array( );

@@ -346,7 +346,7 @@
        <name>campaign_id</name>
        <uniqueName>activity_campaign_id</uniqueName>
        <type>int unsigned</type>
-       <title>Campaign</title>
+       <title>Campaign ID</title>
        <import>true</import> 
        <comment>The campaign for which this activity has been triggered.</comment> 
        <add>3.4</add> 

@@ -254,13 +254,14 @@ FROM civicrm_navigation WHERE domain_id = $domainID {$whereClause} ORDER BY pare
     /**
      * Function to build navigation tree
      * 
-     * @param array $navigationTree nested array of menus
-     * @param int   $parentID       parent id 
+     * @param array   $navigationTree nested array of menus
+     * @param int     $parentID       parent id 
+     * @param boolean $navigationMenu true when called for building top navigation menu
      *
      * @return array $navigationTree nested array of menus
      * @static
      */
-    static function buildNavigationTree( &$navigationTree, $parentID, $cleanNavUrl = false ) 
+    static function buildNavigationTree( &$navigationTree, $parentID, $navigationMenu = true, $cleanNavUrl = false ) 
     {
 
         $whereClause = " parent_id IS NULL";
@@ -286,9 +287,14 @@ ORDER BY parent_id, weight";
             if ( $config->userFramework == 'Joomla' &&  $navigation->name == 'Access Control' ) {
                 continue;
             }
-             
+
+            $label = $navigation->label;
+            if ( !$navigationMenu ) {
+                $label = addcslashes( $label, '"' );
+            }
+
             // for each menu get their children
-            $navigationTree[$navigation->id] = array( 'attributes' => array( 'label'      => $navigation->label,
+            $navigationTree[$navigation->id] = array( 'attributes' => array( 'label'      => $label,
                                                                              'name'       => $navigation->name,
                                                                              'url'        => $cleanNavUrl ? CRM_Utils_System::cleanUrl($navigation->url) : $navigation->url,
                                                                              'permission' => $navigation->permission,
@@ -297,7 +303,7 @@ ORDER BY parent_id, weight";
                                                                              'parentID'   => $navigation->parent_id,
                                                                              'navID'      => $navigation->id,
                                                                              'active'     => $navigation->is_active ));
-            self::buildNavigationTree( $navigationTree[$navigation->id]['child'], $navigation->id, $cleanNavUrl );
+            self::buildNavigationTree( $navigationTree[$navigation->id]['child'], $navigation->id, $navigationMenu, $cleanNavUrl );
         }
 
         return $navigationTree;
@@ -307,11 +313,12 @@ ORDER BY parent_id, weight";
      * Function to build menu 
      * 
      * @param boolean $json by default output is html
+     * @param boolean $navigationMenu true when called for building top navigation menu
      * 
      * @return returns html or json object
      * @static
      */
-    static function buildNavigation( $json = false ) 
+    static function buildNavigation( $json = false, $navigationMenu = true ) 
     {
         $cleanNavUrl = false;
         $config   = CRM_Core_Config::singleton();
@@ -322,7 +329,7 @@ ORDER BY parent_id, weight";
         }
         
         $navigations = array( );
-        self::buildNavigationTree( $navigations, $parent = NULL, $cleanNavUrl );
+        self::buildNavigationTree( $navigations, $parent = NULL, $navigationMenu, $cleanNavUrl );
         $navigationString = null;
 
         // run the Navigation  through a hook so users can modify it

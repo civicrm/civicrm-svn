@@ -621,7 +621,12 @@ WHERE  contribution_id = {$this->_id}
                                                                     CRM_Utils_Array::value( 'receive_date_time', $defaults ) ) );
         $this->assign( 'currency', CRM_Utils_Array::value( 'currency', $defaults ) );
         $this->assign( 'totalAmount', CRM_Utils_Array::value( 'total_amount', $defaults ) );
-
+        
+        //inherit campaign from pledge.
+        if ( $this->_ppID && CRM_Utils_Array::value( 'campaign_id', $this->_pledgeValues ) ) {
+            $defaults['campaign_id'] = $this->_pledgeValues['campaign_id'];
+        }
+        
         return $defaults;
     }
     

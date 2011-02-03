@@ -546,6 +546,8 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
                     $typeName = $websiteTypes[$result->$typeId];
                     if ( $typeName ) { 
                         $row[] = "<a href=\"$url\">{$result->$name} (${typeName})</a>";
+                    } else {
+                        $row[] = "<a href=\"$url\">{$result->$name}</a>";
                     }
                 } else if ( $name == 'preferred_language' ) {
                     $row[] = $languages[$result->$name];

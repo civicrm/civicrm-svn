@@ -149,7 +149,7 @@ class CRM_Event_Form_Task_Batch extends CRM_Event_Form_Task
         $fileFieldExists = false;
         
         //load all campaigns.
-        if ( array_key_exists( 'campaign_id', $this->_fields ) ) {
+        if ( array_key_exists( 'participant_campaign_id', $this->_fields ) ) {
             $this->_componentCampaigns = array( );
             CRM_Core_PseudoConstant::populate( $this->_componentCampaigns,
                                                'CRM_Event_DAO_Participant',

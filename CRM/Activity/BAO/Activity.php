@@ -774,7 +774,7 @@ LEFT JOIN  civicrm_case_activity ON ( civicrm_case_activity.activity_id = {$acti
         
         //get all campaigns.
         require_once 'CRM/Campaign/BAO/Campaign.php';
-        $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, true );
+        $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, false, true );
         
         $values = array( );
         while( $dao->fetch() ) {
@@ -1529,7 +1529,8 @@ SELECT  display_name
             
             require_once 'CRM/Member/DAO/MembershipStatus.php';
             $subject .= " - Status: " . CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipStatus', $activity->status_id );
-            $date = $activity->start_date;
+			// CRM-72097 changed from start date to today
+            $date = date('YmdHis');
             $component = 'Membership';
 
         } else if ( $activity->__table == 'civicrm_participant' ) {
@@ -1580,7 +1581,8 @@ SELECT  display_name
                                  'status_id'          => CRM_Core_OptionGroup::getValue( 'activity_status', 
                                                                                          'Completed', 
                                                                                          'name' ),
-                                 'skipRecentView'     => true
+                                 'skipRecentView'     => true,
+                                 'campaign_id'        => $activity->campaign_id
                                  );
         
         //CRM-4027
@@ -1858,6 +1860,10 @@ AND cl.modified_id  = c.id
             if ( $name == 'Activity' ) {
 	            require_once 'CRM/Activity/DAO/Activity.php'; 
                 $exportableFields = CRM_Activity_DAO_Activity::export( );
+                if ( isset( $exportableFields['activity_campaign_id'] ) ) {
+                    $exportableFields['activity_campaign'] = array( 'title' => ts( 'Campaign Title' ) );
+                }
+                
                 $Activityfields   = array( 
                                           'activity_type'     => array( 'title' => ts('Activity Type'),           'type' => CRM_Utils_Type::T_STRING ),
                                           'activity_status'   => array( 'title' => ts('Activity Status'),         'type' => CRM_Utils_Type::T_STRING ) 

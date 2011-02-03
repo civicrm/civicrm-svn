@@ -104,7 +104,9 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
             $cacheKeyString .= $gid ? "_{$gid}" : '_0';
             
             require_once 'CRM/Core/BAO/PrevNextCache.php';
-            $this->_mainContacts = CRM_Core_BAO_PrevNextCache::retrieve( $cacheKeyString );
+            $join = " JOIN civicrm_dedupe_exception de ON ! ( pn.entity_id1 = de.contact_id1 AND 
+                                                              pn.entity_id2 = de.contact_id2 )";
+            $this->_mainContacts = CRM_Core_BAO_PrevNextCache::retrieve( $cacheKeyString, $join );
             if ( empty( $this->_mainContacts ) ) {
                 if ( $gid ) {
                     $foundDupes = $this->get( "dedupe_dupes_$gid" );

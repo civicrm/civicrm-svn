@@ -206,6 +206,12 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             }
         }
         $this->_params['invoiceID'] = $this->get( 'invoiceID' );
+        
+        //carry campaign from profile.
+        if ( CRM_Utils_Array::value( 'contribution_campaign_id', $this->_params ) ) {
+            $this->_params['campaign_id'] = $this->_params['contribution_campaign_id'];
+        }
+        
         $this->set( 'params', $this->_params );
     }
 
@@ -273,7 +279,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         
 
         if ( $this->_paymentProcessor['payment_processor_type'] == 'Google_Checkout' 
-             && !$this->_params['is_pay_later']) {
+             && !$this->_params['is_pay_later'] && ! ( $this->_amount == 0 ) ) {
             $this->_checkoutButtonName = $this->getButtonName( 'next', 'checkout' );
             $this->add('image',
                        $this->_checkoutButtonName,

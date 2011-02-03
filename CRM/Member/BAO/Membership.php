@@ -122,11 +122,18 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
                                'start_date'    => $logStartDate,
                                'end_date'      => $membership->end_date,
                                'renewal_reminder_date' => $membership->reminder_date, 
-                               'modified_id'   => CRM_Utils_Array::value( 'userId', $ids ),
                                'modified_date' => date('Ymd'),
         					   'membership_type_id' => $values[$membership->id]['membership_type_id']
                                );
-                               
+                
+        $session = CRM_Core_Session::singleton();
+        // If we have an authenticated session, set modified_id to that user's contact_id, else set to membership.contact_id
+		if ( $session->get( 'userID' ) ){
+		    $membershipLog['modified_id'] = $session->get( 'userID' );
+		} else {
+			$membershipLog['modified_id'] = $ids['userId'];
+		}
+
         require_once 'CRM/Member/BAO/MembershipLog.php';
         CRM_Member_BAO_MembershipLog::add($membershipLog, CRM_Core_DAO::$_nullArray);
         
@@ -276,7 +283,9 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
             $contributionParams['receipt_date'] = ( CRM_Utils_Array::value('receipt_date', $params) ) ? $params['receipt_date'] : 'null';
             $contributionParams['source']       = CRM_Utils_Array::value('contribution_source', $params);
             $contributionParams['non_deductible_amount'] = 'null';
-            $recordContribution = array( 'contact_id', 'total_amount', 'receive_date', 'contribution_type_id', 'payment_instrument_id', 'trxn_id', 'invoice_id', 'is_test', 'contribution_status_id', 'check_number' );
+            $recordContribution = array( 'contact_id', 'total_amount', 'receive_date', 'contribution_type_id', 
+                                         'payment_instrument_id', 'trxn_id', 'invoice_id', 'is_test', 
+                                         'contribution_status_id', 'check_number', 'campaign_id' );
             foreach ( $recordContribution as $f ) {
                 $contributionParams[$f] = CRM_Utils_Array::value( $f, $params );
             }
@@ -912,6 +921,11 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
     { 
         require_once 'CRM/Member/DAO/MembershipType.php';
         $expFieldMembership = CRM_Member_DAO_Membership::export( );
+        //campaign fields.
+        if ( isset( $expFieldMembership['member_campaign_id'] ) ) {
+            $expFieldMembership['member_campaign'] = array( 'title' => ts( 'Campaign Title' ) );
+        }
+        
         $expFieldsMemType   = CRM_Member_DAO_MembershipType::export( );
         $fields = array_merge($expFieldMembership, $expFieldsMemType);
         $fields = array_merge($fields, $expFieldMembership );
@@ -1524,6 +1538,7 @@ AND civicrm_membership.is_test = %2";
                                                       $currentMembership['status_id'],
                                                       'is_current_member' );
             $format = '%Y%m%d';
+            
             $logParams = array( 'membership_id'         => $currentMembership['id'],
                                 'status_id'             => $status['id'],
                                 'start_date'            => CRM_Utils_Date::customFormat( 
@@ -1532,7 +1547,6 @@ AND civicrm_membership.is_test = %2";
                                 'end_date'              => CRM_Utils_Date::customFormat(
                                                                         $currentMembership['end_date'],
                                                                         $format ),
-                                'modified_id'           => $currentMembership['contact_id'], 
                                 'modified_date'         => CRM_Utils_Date::customFormat( 
                                                                         $currentMembership['today_date'],
                                                                         $format ),
@@ -1541,7 +1555,14 @@ AND civicrm_membership.is_test = %2";
                                                                         $format ),
                                 'membership_type_id'	=> $currentMembership['membership_type_id']
                                 );
-                                
+
+	        $session = CRM_Core_Session::singleton();
+            // If we have an authenticated session, set modified_id to that user's contact_id, else set to membership.contact_id
+			if ( $session->get( 'userID' ) ){
+			    $logParams['modified_id'] = $session->get( 'userID' );
+			} else {
+				$logParams['modified_id'] = $currentMembership['contact_id'];
+			}
             require_once 'CRM/Member/BAO/MembershipLog.php';
             CRM_Member_BAO_MembershipLog::add( $logParams, CRM_Core_DAO::$_nullArray );
         }
@@ -1630,9 +1651,19 @@ SELECT c.contribution_page_id as pageID
      * @static
      * @access public
      */
-    static function getMembershipFields( ) 
+    static function getMembershipFields( $mode = null ) 
     {
         $fields = CRM_Member_DAO_Membership::export( );
+        
+        //campaign fields.
+        if ( isset( $fields['member_campaign_id'] ) ) {
+            require_once 'CRM/Export/Form/Select.php';
+            if ( $mode == CRM_Export_Form_Select::MEMBER_EXPORT ) {
+                $fields['member_campaign'] = array( 'title' => ts( 'Campaign Title' ) );
+            } else {
+                $fields['member_campaign_id']['title'] = ts( 'Campaign' ); 
+            }
+        }
         
         unset( $fields['membership_contact_id'] );
         $fields = array_merge($fields, CRM_Core_BAO_CustomField::getFieldsForImport('Membership'));
