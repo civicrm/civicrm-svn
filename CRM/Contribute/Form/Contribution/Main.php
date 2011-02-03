@@ -177,8 +177,8 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         //set custom field defaults set by admin if value is not set
         if ( ! empty( $this->_fields ) ) {
             //load default campaign from page.
-            if ( array_key_exists( 'campaign_id', $this->_fields ) ) {
-                $this->_defaults['campaign_id'] = CRM_Utils_Array::value( 'campaign_id', $this->_values );
+            if ( array_key_exists( 'contribution_campaign_id', $this->_fields ) ) {
+                $this->_defaults['contribution_campaign_id'] = CRM_Utils_Array::value( 'campaign_id', $this->_values );
             }
             
             //set custom field defaults
@@ -959,6 +959,11 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
 
         // get the submitted form values. 
         $params = $this->controller->exportValues( $this->_name );
+        
+        //carry campaign from profile.
+        if ( CRM_Utils_Array::value( 'contribution_campaign_id', $params ) ) {
+            $params['campaign_id'] = $params['contribution_campaign_id'];
+        }
         
         if ( CRM_Utils_Array::value( 'onbehalfof_id', $params ) ) {
             $params['organization_id'] = $params['onbehalfof_id'];
