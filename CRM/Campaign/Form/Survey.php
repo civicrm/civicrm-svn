@@ -176,7 +176,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
             $defaults["option_weight[{$i}]"] = $i;
         }
                 
-        $defaultSurveys = CRM_Campaign_BAO_Survey::getSurvey(false, false, true);
+        $defaultSurveys = CRM_Campaign_BAO_Survey::getSurveys( true, true );
         if ( !isset($defaults['is_default'] ) && empty($defaultSurveys) ) {
             $defaults['is_default'] = 1;  
         }

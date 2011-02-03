@@ -109,39 +109,47 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
     }
     
     /**
-     * Function to get Petition Details 
+     * Function to retrieve surveys for dashboard.
      * 
-     * @param boolean $all
-     * @param int $id
      * @static
      */
-    static function getSurvey( $all = false, 
-                               $id = null, 
-                               $defaultOnly = false ) {
-        
-		require_once 'CRM/Core/OptionGroup.php';
+    static function getSurveySummary( ) 
+    {
+        //we only have activity type as a 
+        //difference between survey and petition.
+        require_once 'CRM/Core/OptionGroup.php';
         $petitionTypeID = CRM_Core_OptionGroup::getValue( 'activity_type', 'petition',  'name' );
-        
-        $survey = array( );
-        $dao = new CRM_Campaign_DAO_Survey( );
-        
-        if ( !$all ) {
-            $dao->is_active = 1;
-        } 
-        if ( $id ) {
-            $dao->id = $id;  
-        }
-        if ( $defaultOnly ) {
-            $dao->is_default = 1;   
+        $whereClause    = '( 1 )';
+        if ( $petitionTypeID ) {
+            $whereClause = "( activity_type_id != $petitionTypeID )";
         }
         
-        $dao->whereAdd ("activity_type_id != $petitionTypeID");   
-        $dao->find( );
-        while ( $dao->fetch() ) {
-            CRM_Core_DAO::storeValues($dao, $survey[$dao->id]);
+        $query = "
+SELECT  survey.id                         as id,
+        survey.title                      as title,
+        survey.is_active                  as is_active,
+        survey.result_id                  as result_id,
+        survey.is_default                 as is_default,
+        survey.campaign_id                as campaign_id,
+        survey.activity_type_id           as activity_type_id,
+        survey.release_frequency          as release_frequency,
+        survey.max_number_of_contacts     as max_number_of_contacts,
+        survey.default_number_of_contacts as default_number_of_contacts
+  FROM  civicrm_survey survey
+ WHERE  {$whereClause}";
+        
+        $surveys    = array( );
+        $properties = array( 'id', 'title', 'campaign_id', 'is_active', 'is_default', 'result_id', 'activity_type_id',
+                             'release_frequency', 'max_number_of_contacts', 'default_number_of_contacts' );
+        
+        $survey = CRM_Core_DAO::executeQuery( $query );
+        while ( $survey->fetch( ) ) {
+            foreach ( $properties as $property ) {
+                $surveys[$survey->id][$property] = $survey->$property;
+            }
         }
         
-        return $survey;
+        return $surveys;
     }
     
     /**

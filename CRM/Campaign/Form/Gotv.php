@@ -130,7 +130,7 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
         $defaults = array( );
         
         if ( !$this->_surveyId ) {
-            $this->_surveyId = key( CRM_Campaign_BAO_Survey::getSurvey( false, null, true ) );
+            $this->_surveyId = key( CRM_Campaign_BAO_Survey::getSurveys( true, true ) );
         }
         
         if ( $this->_force || $this->_votingTab ) {
