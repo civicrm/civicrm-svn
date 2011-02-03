@@ -84,7 +84,7 @@ WHERE  entity_id1 = $cid AND
     {
         //clear cache
         $sql = "DELETE FROM civicrm_prevnext_cache
-                           WHERE  entity_table = {$entityTable}";
+                           WHERE  entity_table = '{$entityTable}'";
         
         if ( is_numeric( $id ) ) {
             $sql .= " AND ( entity_id1 = {$id} OR
