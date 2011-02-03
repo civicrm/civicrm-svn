@@ -83,6 +83,10 @@ function civicrm_group_roles_user($op, $edit, &$user, $category = NULL)
             //find the contact record
             $contact = civicrm_uf_match_id_get( $user->uid );
 
+            if ( empty( $contact ) ) {
+                return;
+            }
+
             $params  = array( 'contact_id' => $contact );
             //find the groups for contact
             $groups  = civicrm_group_contact_get( $params );
