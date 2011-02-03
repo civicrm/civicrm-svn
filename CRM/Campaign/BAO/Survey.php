@@ -121,7 +121,7 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
         $petitionTypeID = CRM_Core_OptionGroup::getValue( 'activity_type', 'petition',  'name' );
         $whereClause    = '( 1 )';
         if ( $petitionTypeID ) {
-            $whereClause = "( activity_type_id != $petitionTypeID )";
+            $whereClause = "( survey.activity_type_id != $petitionTypeID )";
         }
         
         $query = "
