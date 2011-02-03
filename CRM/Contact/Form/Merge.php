@@ -81,7 +81,11 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
 
         //load cache mechanism 
         require_once 'CRM/Core/BAO/PrevNextCache.php';
-        $pos = CRM_Core_BAO_PrevNextCache::getPositions( $rgid, $gid, $cid, $oid, $mergeId, $flip);
+        $contactType = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $cid, 'contact_type' );
+        $cacheKey  = "merge $contactType";
+        $cacheKey .= $rgid ? "_{$rgid}" : '_0';
+        $cacheKey .= $gid  ? "_{$gid}"  : '_0';
+        $pos = CRM_Core_BAO_PrevNextCache::getPositions( $cacheKey, $cid, $oid, $mergeId, $flip );
  
         // Block access if user does not have EDIT permissions for both contacts.
         require_once 'CRM/Contact/BAO/Contact/Permission.php';
@@ -113,9 +117,9 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         }
         $this->assign( 'flip', $flipUrl );
 
-        foreach (array('prev', 'next') as $position) {
+        foreach ( array( 'prev', 'next' ) as $position ) {
             if ( !empty( $pos[$position] ) ) {
-                if ( $pos[$position]['id1'] && $pos[$position]['id2']) {
+                if ( $pos[$position]['id1'] && $pos[$position]['id2'] ) {
                     $urlParam = "reset=1&cid={$pos[$position]['id1']}&oid={$pos[$position]['id2']}&mergeId={$pos[$position]['mergeId']}&action=update";
 
                     if ( $rgid ) {

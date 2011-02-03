@@ -42,15 +42,10 @@ require_once 'CRM/Core/DAO/PrevNextCache.php';
 
 class CRM_Core_BAO_PrevNextCache extends CRM_Core_DAO_PrevNextCache
 {
-    function getPositions( $rgid, $gid, $cid, $oid, &$mergeId = null, $flip = false ) 
-    {
-        $contactType = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $cid, 'contact_type' );
-        $cacheKey  = "merge $contactType";
-        $cacheKey .= $rgid ? "_{$rgid}" : '_0';
-        $cacheKey .= $gid ? "_{$gid}" : '_0';
-        
+    function getPositions( $cacheKey, $cid, $oid, &$mergeId = null, $flip = false ) 
+    {        
         if ( $flip ) {
-            list($cid, $oid) = array($oid, $cid);
+            list( $cid, $oid ) = array( $oid, $cid );
         }
         if ( $mergeId == null ) {
             $query = "
@@ -85,11 +80,11 @@ WHERE  entity_id1 = $cid AND
         return $pos;
     }
 
-    function deleteItem( $id = null, $cacheKey = null )
+    function deleteItem( $id = null, $cacheKey = null, $entityTable = 'civicrm_contact' )
     {
         //clear cache
         $sql = "DELETE FROM civicrm_prevnext_cache
-                           WHERE  entity_table = 'civicrm_contact'";
+                           WHERE  entity_table = {$entityTable}";
         
         if ( is_numeric( $id ) ) {
             $sql .= " AND ( entity_id1 = {$id} OR
@@ -103,12 +98,12 @@ WHERE  entity_id1 = $cid AND
         CRM_Core_DAO::executeQuery( $sql );
     }
 
-    function retrieve( $cacheKey ) 
+    function retrieve( $cacheKey, $join = null ) 
     {
         $query = "
 SELECT data 
 FROM   civicrm_prevnext_cache pn
-JOIN   civicrm_dedupe_exception de ON ! ( pn.entity_id1 = de.contact_id1 AND pn.entity_id2 = de.contact_id2 )
+{$join}
 WHERE  cacheKey = '$cacheKey'
 ";
         $dao  = CRM_Core_DAO::executeQuery( $query );
