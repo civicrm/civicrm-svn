@@ -381,7 +381,13 @@ INNER JOIN  civicrm_group grp ON ( grp.id = campgrp.entity_id )
      */
     public static function addCampaign( &$form, $connectedCampaignId = null ) 
     {
-        $campaignDetails = self::getPermissionedCampaigns( $connectedCampaignId, null, true, true, true );
+        //some forms do set default and freeze.
+        $appendDates = true;
+        if ( $form->_action & CRM_Core_Action::VIEW ) {
+            $appendDates = false;
+        }
+        
+        $campaignDetails = self::getPermissionedCampaigns( $connectedCampaignId, null, true, true, $appendDates );
         $fields = array( 'campaigns', 'hasAccessCampaign', 'isCampaignEnabled' );
         foreach ( $fields as $fld ) $$fld = CRM_Utils_Array::value( $fld, $campaignDetails ); 
         
