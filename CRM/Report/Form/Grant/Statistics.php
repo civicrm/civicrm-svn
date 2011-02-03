@@ -302,8 +302,6 @@ class CRM_Report_Form_Grant_Statistics extends CRM_Report_Form {
     function alterDisplay( &$rows ) 
     {
         $awardedGrantsAmount = $grantsReceived = $totalAmount = $awardedGrants = $grantReportsReceived = 0;
-        CRM_Core_Error::debug( '$rows', $rows );
-        exit;
         
         $grantTypes      = CRM_Grant_PseudoConstant::grantType( );
         $countries       = CRM_Core_PseudoConstant::country( );
