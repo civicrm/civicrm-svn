@@ -106,7 +106,7 @@ SELECT  pledge.contact_id              as contact_id,
         require_once 'CRM/Contact/BAO/Contact/Utils.php';
         require_once 'CRM/Utils/Date.php';
         $now = date('Ymd');
-        $pledgeDetails = $contactIds = $pledgePayments = array( );
+        $pledgeDetails = $contactIds = $pledgePayments = $pledgeStatus = array( );
         while ( $dao->fetch( ) ) {
             $checksumValue = CRM_Contact_BAO_Contact_Utils::generateChecksum( $dao->contact_id );
             
@@ -130,6 +130,7 @@ SELECT  pledge.contact_id              as contact_id,
                                                       );
             
             $contactIds[$dao->contact_id] = $dao->contact_id;
+            $pledgeStatus[$dao->pledge_id] = $dao->pledge_status;
             
             if ( CRM_Utils_Date::overdue( CRM_Utils_Date::customFormat( $dao->scheduled_date, '%Y%m%d'),
                                           $now ) && $dao->payment_status != array_search( 'Overdue', $allStatus ) ) { 
@@ -139,12 +140,14 @@ SELECT  pledge.contact_id              as contact_id,
         
         require_once 'CRM/Pledge/BAO/Payment.php';
         // process the updating script...
+    
         foreach ( $pledgePayments as $pledgeId => $paymentIds ) {
             // 1. update the pledge /pledge payment status. returns new status when an update happens
-            echo "<br />Checking status for Pledge Id: {$pledgeId}";
+            echo "<br />Checking if status updated is needed for Pledge Id: {$pledgeId} (current status is {$allStatus[$pledgeStatus[$pledgeId]]})";
+
             $newStatus = CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $pledgeId, $paymentIds,
                                                                             array_search( 'Overdue', $allStatus ), null, 0, false, true );
-            if ( $newStatus ) {
+            if ( $newStatus != $pledgeStatus[$pledgeId] ) {
                 echo "<br />- status updated to: {$allStatus[$newStatus]}";
                 $updateCnt += 1;
             }           
@@ -190,18 +193,17 @@ SELECT  pledge.contact_id              as contact_id,
                     continue;
                 }
                 
-                $firstReminderDate = new DateTime($details['scheduled_date']);
-                $nextReminderDate  = new DateTime($details['reminder_date']);
-                
-                $firstReminderDate->modify("-". $details['initial_reminder_day'] ."day");
-                $nextReminderDate->modify("+". $details['additional_reminder_day']."day");
-                
-                $firstReminderDate = $firstReminderDate->format("Ymd");
-                $nextReminderDate  = $nextReminderDate->format("Ymd");
-                
+                if ( empty( $details['reminder_date'] ) ) {
+                    $nextReminderDate = new DateTime($details['scheduled_date']);
+                    $nextReminderDate->modify("-". $details['initial_reminder_day'] ."day");
+                    $nextReminderDate = $nextReminderDate->format("Ymd");
+                } else {
+                    $nextReminderDate  = new DateTime($details['reminder_date']);
+                    $nextReminderDate->modify("+". $details['additional_reminder_day']."day");
+                    $nextReminderDate  = $nextReminderDate->format("Ymd");
+                }
                 if ( ( $details['reminder_count'] < $details['max_reminders'] ) 
-                     && ( ( empty( $details['reminder_date'] ) && $firstReminderDate <= $now ) 
-                          || $nextReminderDate <= $now  ) ) {
+                     && ( $nextReminderDate <= $now ) ) {
                     
                     $toEmail = $doNotEmail = $onHold = null;
                     
@@ -275,5 +277,5 @@ SELECT  pledge.contact_id              as contact_id,
 $obj = new CRM_UpdatePledgeRecord( );
 echo "Updating<br />";
 $obj->updatePledgeStatus( );
-echo "<br />Pledge records updated. (Done)";
+echo "<br />Pledge records update script finished.";
 ?>
