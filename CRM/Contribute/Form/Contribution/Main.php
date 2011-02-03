@@ -961,7 +961,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         $params = $this->controller->exportValues( $this->_name );
         
         //carry campaign from profile.
-        if ( CRM_Utils_Array::value( 'contribution_campaign_id', $params ) ) {
+        if ( array_key_exists( 'contribution_campaign_id', $params ) ) {
             $params['campaign_id'] = $params['contribution_campaign_id'];
         }
         
