@@ -42,35 +42,46 @@ require_once 'CRM/Core/DAO/PrevNextCache.php';
 
 class CRM_Core_BAO_PrevNextCache extends CRM_Core_DAO_PrevNextCache
 {
-    function getPositions( $cacheKey, $cid, $oid, &$mergeId = null, $flip = false ) 
+    function getPositions( $cacheKey, $id1, $id2, &$mergeId = null, $flip = false ) 
     {        
         if ( $flip ) {
-            list( $cid, $oid ) = array( $oid, $cid );
+            list( $id1, $id2 ) = array( $id2, $id1 );
         }
         if ( $mergeId == null ) {
             $query = "
 SELECT id 
 FROM   civicrm_prevnext_cache
-WHERE  entity_id1 = $cid AND
-       entity_id2 = $oid AND
+WHERE  entity_id1 = %1 AND
+       entity_id2 = %2 AND
        entity_table = 'civicrm_contact' AND
-       cacheKey     = '$cacheKey'
+       cacheKey     = %3
 ";
-            $mergeId = CRM_Core_DAO::singleValueQuery( $query );
+            
+            $params = array( 1 => array( $id1, 'Integer' ),
+                             2 => array( $id2, 'Integer' ),
+                             3 => array( $cacheKey, 'String' ) );
+
+            $mergeId = CRM_Core_DAO::singleValueQuery( $query, $params );
         }
         
         $pos = array( );
         if ( $mergeId ) {
-            $sqlPrev = "SELECT id, entity_id1, entity_id2 FROM civicrm_prevnext_cache WHERE id < $mergeId ORDER BY ID DESC LIMIT 1";
-            $dao = CRM_Core_DAO::executeQuery( $sqlPrev, CRM_Core_DAO::$_nullArray );
+            $p         = array( 1 => array( $mergeId, 'Integer' ) );
+            $sql       = 'SELECT id, entity_id1, entity_id2 FROM civicrm_prevnext_cache ';
+            $wherePrev = " WHERE id < %1 ORDER BY ID DESC LIMIT 1";
+            $sqlPrev   = $sql . $wherePrev;
+
+            $dao = CRM_Core_DAO::executeQuery( $sqlPrev, $p );
             if ( $dao->fetch() ) {
                 $pos['prev']['id1']     = $dao->entity_id1;
                 $pos['prev']['id2']     = $dao->entity_id2;
                 $pos['prev']['mergeId'] = $dao->id;
             }
             
-            $sqlNext = "SELECT id, entity_id1, entity_id2 FROM civicrm_prevnext_cache WHERE id > $mergeId ORDER BY ID ASC LIMIT 1";
-            $dao = CRM_Core_DAO::executeQuery( $sqlNext, CRM_Core_DAO::$_nullArray );
+            $whereNext = " WHERE id > %1 ORDER BY ID ASC LIMIT 1";
+            $sqlNext   = $sql . $whereNext;
+
+            $dao = CRM_Core_DAO::executeQuery( $sqlNext, $p );
             if ( $dao->fetch() ) {
                 $pos['next']['id1']     = $dao->entity_id1;
                 $pos['next']['id2']     = $dao->entity_id2;
@@ -84,18 +95,21 @@ WHERE  entity_id1 = $cid AND
     {
         //clear cache
         $sql = "DELETE FROM civicrm_prevnext_cache
-                           WHERE  entity_table = '{$entityTable}'";
-        
+                           WHERE  entity_table = %1";
+        $params = array( 1 => array( $entityTable, 'String' ) );
+
         if ( is_numeric( $id ) ) {
-            $sql .= " AND ( entity_id1 = {$id} OR
-                            entity_id2 = {$id} )";
+            $sql .= " AND ( entity_id1 = %2 OR
+                            entity_id2 = %2 )";
+            $params[2] = array( $id, 'Integer' );
         }
         
         if ( isset( $cacheKey ) ) {
-            $sql .= " AND cacheKey LIKE '%$cacheKey%'";
+            $sql .= " AND cacheKey LIKE %3";
+            $params[3] = array( $cacheKey, 'String' );
         }
 
-        CRM_Core_DAO::executeQuery( $sql );
+        CRM_Core_DAO::executeQuery( $sql, $params );
     }
 
     function retrieve( $cacheKey, $join = null ) 
@@ -106,7 +120,9 @@ FROM   civicrm_prevnext_cache pn
 {$join}
 WHERE  cacheKey = '$cacheKey'
 ";
-        $dao  = CRM_Core_DAO::executeQuery( $query );
+        $params = array( 1 => array( $cacheKey, 'String' ) );
+        $dao  = CRM_Core_DAO::executeQuery( $query, $params );
+
         $main = array();
         while ( $dao->fetch() ) {
             $main[] = unserialize( $dao->data );
@@ -123,4 +139,6 @@ WHERE  cacheKey = '$cacheKey'
         //dump the dedupe matches in the prevnext_cache table
         CRM_Core_DAO::executeQuery( $query );
     }
+
+
 }
