@@ -46,7 +46,9 @@
 	    {* lets take a call, either show campaign select drop-down or show add campaign link *}		 
             {if $campaignInfo.hasCampaigns}
 		        {$form.campaign_id.html} {help id="id-campaign_id" file="CRM/Campaign/Form/addCampaignToComponent.hlp"}
-        		{if !$campaignInfo.alreadyIncludedPastCampaigns and $campaignInfo.includePastCampaignURL}
+        		{* show for add and edit actions *}
+			{if ( $action eq 1 or $action eq 2 ) 
+			    and !$campaignInfo.alreadyIncludedPastCampaigns and $campaignInfo.includePastCampaignURL}
         		<br />
         		    <a id='include-past-campaigns' href='#' onClick='includePastCampaigns( "campaign_id" ); return false;'>
         		       &raquo;

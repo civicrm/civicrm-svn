@@ -1425,7 +1425,14 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
         foreach (array_keys(self::fields()) as $field) {
             $report['mailing'][$field] = $mailing->$field;
         }
-
+        
+        //get the campaign
+        if ( $campaignId = CRM_Utils_Array::value( 'campaign_id', $report['mailing'] ) ) {
+            require_once 'CRM/Campaign/BAO/Campaign.php';
+            $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( $campaignId );
+            $report['mailing']['campaign'] = $campaigns[$campaignId];
+        }
+        
         //mailing report is called by activity
         //we dont need all detail report
         if ( $skipDetails ) {
