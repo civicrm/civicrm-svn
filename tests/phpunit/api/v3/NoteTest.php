@@ -177,7 +177,6 @@ class api_v3_NoteTest extends CiviUnitTestCase
      */
     function testCreate( )
     {
-         $this->markTestSkipped( "Reason for skipping:<a href='http://forum.civicrm.org/index.php/topic,18053.0.html'>version issue</a>" );   
  
         $result = civicrm_note_create( $this->_params );
         $this->documentMe( $this->_params,$result,__FUNCTION__,__FILE__); 
@@ -237,9 +236,7 @@ class api_v3_NoteTest extends CiviUnitTestCase
      */    
     function testUpdate( )
     {
-                        $this->markTestSkipped( "Reason for skipping:<a href='http://forum.civicrm.org/index.php/topic,18053.0.html'>version issue</a>" );   
- 
-        $params = array(
+       $params = array(
                         'id'           => $this->_noteID,
                         'contact_id'   => $this->_contactID,
                         'entity_id'    => $this->_contactID,

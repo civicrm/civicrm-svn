@@ -58,23 +58,23 @@ require_once 'CRM/Utils/Array.php';
 function civicrm_membership_delete($params)
 {
   _civicrm_initialize();
-  try{
+    _civicrm_initialize(true);
+      try{ 
+   
+    civicrm_verify_one_mandatory($params,null,array('id','membership_id'));
+    $membershipID = empty($params['id']) ?$params['id'] :$params['membership_id'];
 
-
-    if (empty($params['membership_id'])) {
-      return civicrm_create_error('Membership ID cannot be empty.');
-    }
 
     // membershipID should be numeric
-    if ( ! is_numeric( $params['membership_id']) ) {
+    if ( ! is_numeric( $membershipID) ) {
       return civicrm_create_error( 'Input parameter should be numeric' );
     }
 
     require_once 'CRM/Member/BAO/Membership.php';
-    CRM_Member_BAO_Membership::deleteRelatedMemberships( $params['membership_id'] );
+    CRM_Member_BAO_Membership::deleteRelatedMemberships( $membershipID );
 
     $membership = new CRM_Member_BAO_Membership();
-    $result = $membership->deleteMembership($params['membership_id']);
+    $result = $membership->deleteMembership($membershipID);
 
     return $result ? civicrm_create_success( ) : civicrm_create_error('Error while deleting Membership');
   } catch (PEAR_Exception $e) {

@@ -204,8 +204,7 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
     
     function testCalculateStatus( )
     {
-       $this->markTestSkipped( "Reason for skipping:<a href='http://forum.civicrm.org/index.php/topic,18053.0.html'>version issue</a>" );
- 
+
         $join_date = new DateTime();
         $start_date = new DateTime();
         $end_date = new DateTime();

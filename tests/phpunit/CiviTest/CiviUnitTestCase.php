@@ -424,7 +424,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     function householdCreate( $params = null,$apiversion = 2 ) {
         if ( $params === null ) {    
             $params = array( 'household_name' => 'Unit Test household',
-                             'contact_type'      => 'Household' );
+                             'contact_type'      => 'Household',
+                              'version'					=>$apiversion, );
           
         }
         $params['version'] = $apiversion;
@@ -1277,9 +1278,9 @@ function documentMe($params,$result,$function,$filename){
         $smarty->assign('params',$params);   
         $smarty->assign('entity',$entity);         
         $smarty->assign('result',$result);  
-       $f = fopen("c:\\utils\\eclipseworkspace\\api-civicrm\\api\\v3\\examples\\$entity$action.php", "w");
-        fwrite($f,$smarty->fetch('c:\\utils\\eclipseworkspace\\api-civicrm\\tests\\templates\\documentFunction.tpl'));
-        fclose($f); 
+     //  $f = fopen("c:\\utils\\eclipseworkspace\\api-civicrm\\api\\v3\\examples\\$entity$action.php", "w");
+     //   fwrite($f,$smarty->fetch('c:\\utils\\eclipseworkspace\\api-civicrm\\tests\\templates\\documentFunction.tpl'));
+    //   fclose($f); 
     }
   
     /**

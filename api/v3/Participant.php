@@ -58,13 +58,13 @@ function civicrm_participant_create(&$params)
   _civicrm_initialize(true);
   try{
     if ( !isset($params['status_id'] )) {
-      $params['status_id'] = 1;
+      $params['membership_status_id']= $params['status_id'] = 1;
     }
 
     if ( !isset($params['register_date'] )) {
       $params['register_date']= date( 'YmdHis' );
     }
-    civicrm_verify_mandatory($params,'CRM_Event_BAO_Participant',array('event_id','contact_id')) ;
+    civicrm_verify_mandatory($params,null,array('event_id','contact_id')) ;
 
 
 

@@ -52,8 +52,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
     
     function setUp( ) 
     {
-                  $this->markTestSkipped( "Reason for skipping:<a href='http://forum.civicrm.org/index.php/topic,18053.0.html'>version issue</a>" );   
- 
+
         parent::setUp();
         $this->_apiversion = 3; 
         $this->_groupID = $this->groupCreate(null,$this->_apiversion);
@@ -62,9 +61,8 @@ class api_v3_MailerTest extends CiviUnitTestCase
     
     function tearDown( ) 
     {
-        $this->markTestSkipped( "Reason for skipping:<a href='http://forum.civicrm.org/index.php/topic,18053.0.html'>version issue</a>" );   
- 
-        $this-> groupDelete( $this->_groupID );
+
+        $this-> groupDelete( $this->_groupID,$this->_apiversion );
     }
     
     //---------- civicrm_mailer_event_subscribe methods ---------
@@ -117,13 +115,15 @@ class api_v3_MailerTest extends CiviUnitTestCase
         $params = array( 'first_name'       => 'Test',
                          'last_name'        => 'Test',
                          'email'            => $this->_email,
-                         'contact_type'     => 'Individual' );
-        $contactID = $this->individualCreate($params);
+                         'contact_type'     => 'Individual',
+                          'version'					=>$this->_apiversion );
+        $contactID = $this->individualCreate($params,$this->_apiversion);
 
         $params = array(
                         'email'        => $this->_email,
                         'group_id'     => $this->_groupID,
                         'contact_id'   => $contactID,
+                         'version'					=>$this->_apiversion
                         );
         $result =& civicrm_mailer_event_subscribe($params);
         $this->assertEquals($result['is_error'], 0);
@@ -476,6 +476,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
      */
     public function testMailerProcess( )
     {   
+      $this->markTestSkipped(' CRM_Mailing_Event_BAO_Subscribe = conflict');
         $params = array(
                         'email'        => $this->_email,
                         'group_id'     => $this->_groupID,
