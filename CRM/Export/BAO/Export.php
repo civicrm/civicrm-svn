@@ -279,6 +279,17 @@ class CRM_Export_BAO_Export
             
             if ( $queryMode != CRM_Contact_BAO_Query::MODE_CONTACTS ) {
                 $componentReturnProperties = CRM_Contact_BAO_Query::defaultReturnProperties( $queryMode );
+                
+                $campaignReturnProperties  = array( );;
+                foreach ( $componentReturnProperties as $fld => $true ) {
+                    $campaignReturnProperties[$fld] = $true; 
+                    if ( substr( $fld, -11 ) == 'campaign_id' ) {
+                        $exportCampaign = true;
+                        $campaignReturnProperties[substr( $fld, 0, -3 )] = 1;
+                    }
+                }
+                $componentReturnProperties = $campaignReturnProperties;
+
                 $returnProperties          = array_merge( $returnProperties, $componentReturnProperties );
         
                 if ( !empty( $extraReturnProperties ) ) {
