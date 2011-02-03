@@ -40,6 +40,14 @@
  */
 require_once 'api/v3/utils.php';
 
+function civicrm_tag_getfields( &$params ) {
+    require_once 'CRM/Core/BAO/Tag.php';
+    $bao = new CRM_Core_BAO_Tag();
+    //function &exportableFields( $contactType = 'Individual', $status = false, $export = false, $search = false )
+    return ($bao->fields());
+    //return ($contact->fields());
+}
+
 /**
  *  Add a Tag. Tags are used to classify CRM entities (including Contacts, Groups and Actions).
  *
