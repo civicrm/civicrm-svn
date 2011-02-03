@@ -43,40 +43,51 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
        parent::__construct();
        $this->cookieExpire = (1 * 60 * 60 * 24); // expire cookie in one day
     }
-		
-     /**
-     * Function to get Petition Details 
-     * 
-     * @param boolean $all
-     * @param int $id
+    
+    /**
+     * Function to get Petition Details for dashboard. 
+     *
      * @static
      */
-    static function getPetition( $all = false, $id = false, $defaultOnly = false ) {
-
+    static function getPetitionSummary( ) 
+    {
+        //we only have activity type as a 
+        //difference between survey and petition.
+        require_once 'CRM/Core/OptionGroup.php';
         $petitionTypeID = CRM_Core_OptionGroup::getValue( 'activity_type', 'petition',  'name' );
-
-        $survey = array( );
-        $dao = new CRM_Campaign_DAO_Survey( );
-
-        if ( !$all ) {
-            $dao->is_active = 1;
-        } 
-        if ( $id ) {
-            $dao->id = $id;  
-        }
-        if ( $defaultOnly ) {
-            $dao->is_default = 1;   
-        }
-       
-        $dao->whereAdd ( "activity_type_id = $petitionTypeID");   
-        $dao->find( );
-        while ( $dao->fetch() ) {
-            CRM_Core_DAO::storeValues($dao, $survey[$dao->id]);
+        $whereClause    = '( 1 )';
+        if ( $petitionTypeID ) {
+            $whereClause = "( petition.activity_type_id = {$petitionTypeID} )";
         }
         
-        return $survey;
+        $query = "
+SELECT  petition.id                         as id,
+        petition.title                      as title,
+        petition.is_active                  as is_active,
+        petition.result_id                  as result_id,
+        petition.is_default                 as is_default,
+        petition.campaign_id                as campaign_id,
+        petition.activity_type_id           as activity_type_id,
+        petition.release_frequency          as release_frequency,
+        petition.max_number_of_contacts     as max_number_of_contacts,
+        petition.default_number_of_contacts as default_number_of_contacts
+  FROM  civicrm_survey petition
+ WHERE  {$whereClause}";
+        
+        $petitions  = array( );
+        $properties = array( 'id', 'title', 'campaign_id', 'is_active', 'is_default', 'result_id', 'activity_type_id',
+                             'release_frequency', 'max_number_of_contacts', 'default_number_of_contacts' );
+        
+        $petition = CRM_Core_DAO::executeQuery( $query );
+        while ( $petition->fetch( ) ) {
+            foreach ( $properties as $property ) {
+                $petitions[$petition->id][$property] = $petition->$property;
+            }
+        }
+        
+        return $petitions;
     }
-
+    
     /**
      * takes an associative array and creates a petition signature activity
      *
