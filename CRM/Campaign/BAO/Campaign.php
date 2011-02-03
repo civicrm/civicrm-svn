@@ -383,7 +383,7 @@ INNER JOIN  civicrm_group grp ON ( grp.id = campgrp.entity_id )
     {
         //some forms do set default and freeze.
         $appendDates = true;
-        if ( $form->_action & CRM_Core_Action::VIEW ) {
+        if ( $form->get( 'action' ) & CRM_Core_Action::VIEW ) {
             $appendDates = false;
         }
         
