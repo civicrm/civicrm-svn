@@ -1578,7 +1578,8 @@ SELECT  display_name
                                  'status_id'          => CRM_Core_OptionGroup::getValue( 'activity_status', 
                                                                                          'Completed', 
                                                                                          'name' ),
-                                 'skipRecentView'     => true
+                                 'skipRecentView'     => true,
+                                 'campaign_id'        => $activity->campaign_id
                                  );
         
         //CRM-4027
