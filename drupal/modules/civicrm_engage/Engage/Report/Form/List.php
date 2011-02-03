@@ -436,8 +436,8 @@ ORDER BY ov.label
                         }
                         
                         $select[] = "{$table['alias']}.{$fieldName} as {$tableName}_{$fieldName}";
-                        $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = $field['title'];
-                        $this->_columnHeaders["{$tableName}_{$fieldName}"]['type']  = $field['type'];
+                        $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = CRM_Utils_Array::value( 'title', $field );
+                        $this->_columnHeaders["{$tableName}_{$fieldName}"]['type']  = CRM_Utils_Array::value( 'type', $field );
                     }
                 }
             }
@@ -545,7 +545,7 @@ ORDER BY ov.label
             $age = $nowYear - $dobYear;
         } elseif ( $dobMonth == $nowMonth ) {
             //  Born in this month
-            if ( $dobday <= $nowDay ) {
+            if ( $dobDay <= $nowDay ) {
                 // Born before or on this day
                 $age = $nowYear - $dobYear;
             } else {

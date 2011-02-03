@@ -186,7 +186,7 @@ class Engage_Report_Form_CallList extends Engage_Report_Form_List {
                     //echo "&nbsp;&nbsp;&nbsp;field name $fieldName<br>";
                     $clause = null;
 
-                    if ( $field['type'] & CRM_Utils_Type::T_DATE ) {
+                    if ( CRM_Utils_Array::value( 'type', $field ) & CRM_Utils_Type::T_DATE ) {
                         $relative = CRM_Utils_Array::value( "{$fieldName}_relative", $this->_params );
                         $from     = CRM_Utils_Array::value( "{$fieldName}_from"    , $this->_params );
                         $to       = CRM_Utils_Array::value( "{$fieldName}_to"      , $this->_params );
