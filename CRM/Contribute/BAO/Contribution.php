@@ -1558,7 +1558,7 @@ LEFT JOIN  civicrm_contribution contribution ON ( componentPayment.contribution_
         if ( $processContribution ) {
             require_once 'CRM/Contribute/BAO/Contribution.php';
             $contributionParams = array( );
-            $fields = array( 'contact_id', 'total_amount', 'receive_date', 'is_test',
+            $fields = array( 'contact_id', 'total_amount', 'receive_date', 'is_test', 'campaign_id',
                              'payment_instrument_id', 'trxn_id', 'invoice_id', 'contribution_type_id', 
                              'contribution_status_id', 'non_deductible_amount', 'receipt_date', 'check_number' );
             foreach ( $fields as $field ) {

@@ -283,7 +283,9 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
             $contributionParams['receipt_date'] = ( CRM_Utils_Array::value('receipt_date', $params) ) ? $params['receipt_date'] : 'null';
             $contributionParams['source']       = CRM_Utils_Array::value('contribution_source', $params);
             $contributionParams['non_deductible_amount'] = 'null';
-            $recordContribution = array( 'contact_id', 'total_amount', 'receive_date', 'contribution_type_id', 'payment_instrument_id', 'trxn_id', 'invoice_id', 'is_test', 'contribution_status_id', 'check_number' );
+            $recordContribution = array( 'contact_id', 'total_amount', 'receive_date', 'contribution_type_id', 
+                                         'payment_instrument_id', 'trxn_id', 'invoice_id', 'is_test', 
+                                         'contribution_status_id', 'check_number', 'campaign_id' );
             foreach ( $recordContribution as $f ) {
                 $contributionParams[$f] = CRM_Utils_Array::value( $f, $params );
             }
