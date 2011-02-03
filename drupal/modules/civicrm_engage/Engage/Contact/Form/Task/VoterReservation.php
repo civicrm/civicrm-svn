@@ -111,7 +111,7 @@ class Engage_Contact_Form_Task_VoterReservation extends CRM_Contact_Form_Task {
      */
     function buildQuickForm( ) {
        
-        $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
+        $surveys = CRM_Campaign_BAO_Survey::getSurveys( );
         $this->add('select', 'survey_id', ts('Survey'), array('' => ts('- select -') ) + $surveys, true );
         $this->addDefaultButtons( ts('Add Voter Reservation') );
     }

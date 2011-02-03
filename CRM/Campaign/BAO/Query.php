@@ -380,7 +380,7 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
         }
         $form->assign( 'customSearchFields',  $customSearchFields );
         
-        $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
+        $surveys = CRM_Campaign_BAO_Survey::getSurveys( );
         
         if ( empty( $surveys ) && 
              ($className == 'CRM_Campaign_Form_Search') ) {

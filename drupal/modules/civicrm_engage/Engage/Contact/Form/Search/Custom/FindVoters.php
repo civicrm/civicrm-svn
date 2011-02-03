@@ -72,7 +72,7 @@ class Engage_Contact_Form_Search_Custom_FindVoters
         $form->add( 'text', 'street_address', ts( 'Street Address' ), true );
         $form->add( 'text', 'city', ts( 'City' ), true );
         
-        $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
+        $surveys = CRM_Campaign_BAO_Survey::getSurveys( );
         $form->add('select', 'survey_id', ts('Survey'), array('' => ts('- select -') ) + $surveys );
         
         $form->add('checkbox', 'status_id', ts('Is Held'), null, false );

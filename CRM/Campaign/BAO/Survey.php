@@ -107,8 +107,8 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
 
         return $dao;
     }
-
-     /**
+    
+    /**
      * Function to get Petition Details 
      * 
      * @param boolean $all
@@ -121,10 +121,10 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
         
 		require_once 'CRM/Core/OptionGroup.php';
         $petitionTypeID = CRM_Core_OptionGroup::getValue( 'activity_type', 'petition',  'name' );
-
+        
         $survey = array( );
         $dao = new CRM_Campaign_DAO_Survey( );
-
+        
         if ( !$all ) {
             $dao->is_active = 1;
         } 
@@ -143,30 +143,56 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
         
         return $survey;
     }
-
+    
     /**
      * Function to get Surveys
      * 
-     * @param boolean $all
-     * @param int $id
+     * @param boolean $onlyActive  retrieve only active surveys.
+     * @param boolean $onlyDefault retrieve only default survey.
+     * @param boolean $forceAll    retrieve all surveys.
+     *
      * @static
      */
-    static function getSurveyList( $all = false ) {
-        require_once 'CRM/Campaign/BAO/Campaign.php';
-
-        $survey = array( );
-        $dao = new CRM_Campaign_DAO_Survey( );
-        
-        if ( !$all ) {
-            $dao->is_active = 1;
-        }   
-        
-        $dao->find( );
-        while ( $dao->fetch() ) {
-            $survey[$dao->id] = $dao->title;
+    static function getSurveys( $onlyActive  = true,
+                                $onlyDefault = false,
+                                $forceAll    = false ) 
+    {
+        $cacheKey = 0;
+        $cacheKeyParams = array(  'onlyActive', 'onlyDefault', 'forceAll' ); 
+        foreach ( $cacheKeyParams as $param ) {
+            $cacheParam = $$param;
+            if ( !$cacheParam ) $cacheParam = 0;
+            $cacheKey .= '_' . $cacheParam;
         }
         
-        return $survey;
+        static $surveys;
+        
+        if ( !isset( $surveys[$cacheKey] ) ) {
+            
+            //we only have activity type as a 
+            //difference between survey and petition.
+            require_once 'CRM/Core/OptionGroup.php';
+            $petitionTypeID = CRM_Core_OptionGroup::getValue( 'activity_type', 'petition',  'name' );
+            
+            $where = array( );
+            if ( $petitionTypeID ) $where[] =  "( survey.activity_type_id != {$petitionTypeID} )"; 
+            if ( !$forceAll && $onlyActive  ) $where[] = '( survey.is_active  = 1 )';
+            if ( !$forceAll && $onlyDefault ) $where[] = '( survey.is_default = 1 )';
+            $whereClause = implode( ' AND ', $where );
+            
+            $query = "
+SELECT  survey.id    as id,
+        survey.title as title
+  FROM  civicrm_survey as survey
+ WHERE  {$whereClause}";
+            
+            $survey = CRM_Core_DAO::executeQuery( $query );
+            while ( $survey->fetch( ) ) {
+                $surveys[$cacheKey][$survey->id] = $survey->title;
+            }
+        }
+        
+        return $surveys[$cacheKey];
     }
     
     /**

@@ -165,7 +165,7 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
         }
         
         require_once 'CRM/Campaign/BAO/Survey.php';
-        $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
+        $surveys = CRM_Campaign_BAO_Survey::getSurveys( );
         if ( empty( $surveys ) ) {
             $errorMessages[] = ts( "Oops, It looks like there is no survey created. <a href='%1'>Click here to create new.</a>", array( 1 => CRM_Utils_System::url( 'civicrm/survey/add', 'reset=1&action=add'  ) ) );
         }
