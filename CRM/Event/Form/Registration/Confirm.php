@@ -816,6 +816,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                                'currency'              => $params['currencyID'],
                                'source'                => $params['description'],
                                'is_pay_later'          => CRM_Utils_Array::value( 'is_pay_later', $params, 0 ),
+                               'campaign_id'           => CRM_Utils_Array::value( 'campaign_id', $params )
                                );
         
         if ( ! CRM_Utils_Array::value( 'is_pay_later', $params ) ) {

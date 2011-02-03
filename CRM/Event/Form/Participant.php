@@ -1320,7 +1320,7 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
                 $recordContribution = array( 'contact_id', 'contribution_type_id',
                                              'payment_instrument_id', 'trxn_id', 
                                              'contribution_status_id', 'receive_date', 
-                                             'check_number' );
+                                             'check_number', 'campaign_id' );
                 
                 foreach ( $recordContribution as $f ) {
                     $contributionParams[$f] = CRM_Utils_Array::value( $f, $params );

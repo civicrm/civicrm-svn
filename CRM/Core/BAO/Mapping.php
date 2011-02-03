@@ -410,7 +410,7 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
         if ( ( $mappingType == 'Search Builder' ) || ( $exportMode == CRM_Export_Form_Select::MEMBER_EXPORT ) ) {
             if ( CRM_Core_Permission::access( 'CiviMember' ) ) {
                 require_once 'CRM/Member/BAO/Membership.php';
-                $fields['Membership'] =& CRM_Member_BAO_Membership::getMembershipFields();
+                $fields['Membership'] =& CRM_Member_BAO_Membership::getMembershipFields( $exportMode );
                 unset($fields['Membership']['membership_contact_id']);
                 $compArray['Membership'] = ts('Membership');
             }

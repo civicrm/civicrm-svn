@@ -283,7 +283,9 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
             $contributionParams['receipt_date'] = ( CRM_Utils_Array::value('receipt_date', $params) ) ? $params['receipt_date'] : 'null';
             $contributionParams['source']       = CRM_Utils_Array::value('contribution_source', $params);
             $contributionParams['non_deductible_amount'] = 'null';
-            $recordContribution = array( 'contact_id', 'total_amount', 'receive_date', 'contribution_type_id', 'payment_instrument_id', 'trxn_id', 'invoice_id', 'is_test', 'contribution_status_id', 'check_number' );
+            $recordContribution = array( 'contact_id', 'total_amount', 'receive_date', 'contribution_type_id', 
+                                         'payment_instrument_id', 'trxn_id', 'invoice_id', 'is_test', 
+                                         'contribution_status_id', 'check_number', 'campaign_id' );
             foreach ( $recordContribution as $f ) {
                 $contributionParams[$f] = CRM_Utils_Array::value( $f, $params );
             }
@@ -919,6 +921,11 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
     { 
         require_once 'CRM/Member/DAO/MembershipType.php';
         $expFieldMembership = CRM_Member_DAO_Membership::export( );
+        //campaign fields.
+        if ( isset( $expFieldMembership['member_campaign_id'] ) ) {
+            $expFieldMembership['member_campaign'] = array( 'title' => ts( 'Campaign Title' ) );
+        }
+        
         $expFieldsMemType   = CRM_Member_DAO_MembershipType::export( );
         $fields = array_merge($expFieldMembership, $expFieldsMemType);
         $fields = array_merge($fields, $expFieldMembership );
@@ -1643,9 +1650,19 @@ SELECT c.contribution_page_id as pageID
      * @static
      * @access public
      */
-    static function getMembershipFields( ) 
+    static function getMembershipFields( $mode = null ) 
     {
         $fields = CRM_Member_DAO_Membership::export( );
+        
+        //campaign fields.
+        if ( isset( $fields['member_campaign_id'] ) ) {
+            require_once 'CRM/Export/Form/Select.php';
+            if ( $mode == CRM_Export_Form_Select::MEMBER_EXPORT ) {
+                $fields['member_campaign'] = array( 'title' => ts( 'Campaign Title' ) );
+            } else {
+                $fields['member_campaign_id']['title'] = ts( 'Campaign' ); 
+            }
+        }
         
         unset( $fields['membership_contact_id'] );
         $fields = array_merge($fields, CRM_Core_BAO_CustomField::getFieldsForImport('Membership'));

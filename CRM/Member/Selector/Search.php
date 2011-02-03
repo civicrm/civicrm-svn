@@ -331,7 +331,7 @@ class CRM_Member_Selector_Search extends CRM_Core_Selector_Base implements CRM_C
          
          //get all campaigns.
          require_once 'CRM/Campaign/BAO/Campaign.php';
-         $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, true );
+         $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, false, true );
         
          $result = $this->_query->searchQuery( $offset, $rowCount, $sort,
                                                false, false, 

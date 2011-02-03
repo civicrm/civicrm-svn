@@ -36,7 +36,7 @@
 
 require_once 'CRM/Report/Form.php';
 require_once 'CRM/Grant/PseudoConstant.php';
-class CRM_Report_Form_Grant extends CRM_Report_Form {
+class CRM_Report_Form_Grant_Detail extends CRM_Report_Form {
     
     protected $_addressField = false;
     
@@ -52,6 +52,10 @@ class CRM_Report_Form_Grant extends CRM_Report_Form {
                                 array( 'title'     => ts( 'Contact Name' ),
                                        'required'  => true,
                                        'no_repeat' => true ),
+                                'id' => 
+                                array( 'no_display' => true,
+                                       'required'  => true, 
+                                       ), 
                                 ),
                          'grouping'=> 'contact-fields',
                          'filters' =>             
@@ -63,6 +67,10 @@ class CRM_Report_Form_Grant extends CRM_Report_Form {
                                       'operatorType' => CRM_Report_Form::OP_MULTISELECT,
                                       'options' => CRM_Core_PseudoConstant::gender( ),
                                       ),
+                               'id' => 
+                                array( 'title'      => ts( 'Contact ID' ),
+                                       'no_display' => true 
+                                       ), 
                                ),
                          ),
                   'civicrm_address' =>
@@ -288,6 +296,18 @@ class CRM_Report_Form_Grant extends CRM_Report_Form {
         // custom code to alter rows
         $entryFound = false;
         foreach ( $rows as $rowNum => $row ) {
+            // convert display name to links
+            if ( array_key_exists( 'civicrm_contact_display_name', $row ) && 
+                 array_key_exists( 'civicrm_contact_id', $row ) ) {
+                $url = CRM_Utils_System::url( 'civicrm/contact/view', 
+                                              'reset=1&cid=' . 
+                                              $row['civicrm_contact_id'] );
+                $rows[$rowNum]['civicrm_contact_display_name_link'] = $url;
+                $rows[$rowNum]['civicrm_contact_display_name_hover'] = 
+                    ts("View contact details for this record.");
+                $entryFound = true;
+            }
+
             if ( array_key_exists('civicrm_grant_grant_type_id', $row) ) {
                 if ( $value = $row['civicrm_grant_grant_type_id'] ) {
                     $rows[$rowNum]['civicrm_grant_grant_type_id'] = CRM_Grant_PseudoConstant::grantType( $value );

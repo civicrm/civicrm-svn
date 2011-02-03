@@ -45,6 +45,13 @@
         <tr>
             <td class="label">{ts}Subject{/ts}</td><td class="view-value">{$values.subject}</td>
         </tr>  
+
+	{if $values.campaign}
+        <tr>
+            <td class="label">{ts}Campaign{/ts}</td><td class="view-value">{$values.campaign}</td>
+        </tr>
+        {/if}
+
         <tr>
             <td class="label">{ts}Date and Time{/ts}</td><td class="view-value">{$values.activity_date_time|crmDate }</td>
         </tr> 

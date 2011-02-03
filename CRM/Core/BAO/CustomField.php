@@ -429,7 +429,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                 $query ="SELECT $cfTable.id, $cfTable.label,
                             $cgTable.title,
                             $cfTable.data_type, $cfTable.html_type,
-                            $cfTable.options_per_line,
+                            $cfTable.options_per_line, $cfTable.text_length,
                             $cgTable.extends, $cfTable.is_search_range,
                             $cgTable.extends_entity_column_value,
                             $cgTable.extends_entity_column_id,
@@ -484,6 +484,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                     $fields[$dao->id]['groupTitle']                  = $dao->title;
                     $fields[$dao->id]['data_type']                   = $dao->data_type;
                     $fields[$dao->id]['html_type']                   = $dao->html_type;
+                    $fields[$dao->id]['text_length']                 = $dao->text_length;
                     $fields[$dao->id]['options_per_line']            = $dao->options_per_line;
                     $fields[$dao->id]['extends']                     = $dao->extends;
                     $fields[$dao->id]['is_search_range']             = $dao->is_search_range;
@@ -1320,25 +1321,29 @@ SELECT id
         }
 
         //fix checkbox, now check box always submits values
-        if ( $customFields[$customFieldId]['html_type'] == 'CheckBox' ) {                
+        if ( $customFields[$customFieldId]['html_type'] == 'CheckBox' ) {
             if ( $value ) {
                 // Note that only during merge this is not an array, and you can directly use value
-                if ( is_array( $value ) ) { 
-                    $selectedValues = null;
+                if ( is_array( $value ) ) {
+                    $selectedValues = array( );
                     foreach ( $value as $selId => $val ) {
                         if ( $val ) {
-                            $selectedValues .= $selId . CRM_Core_DAO::VALUE_SEPARATOR;
+                            $selectedValues[] = $selId;
                         }
                     }
-                    if ( $selectedValues ) {
-                        $value = CRM_Core_DAO::VALUE_SEPARATOR . $selectedValues;
+                    if ( ! empty( $selectedValues ) ) {
+                        $value = 
+                            CRM_Core_DAO::VALUE_SEPARATOR . 
+                            implode( CRM_Core_DAO::VALUE_SEPARATOR,
+                                     $selectedValues ) .
+                            CRM_Core_DAO::VALUE_SEPARATOR;
                     } else {
                         $value = '';
                     }
                 }
             }
-        }  
-        
+        }
+
         if ( $customFields[$customFieldId]['html_type'] == 'Multi-Select' ||
              $customFields[$customFieldId]['html_type'] == 'AdvMulti-Select' ) {
             if ( $value ) {
@@ -1356,6 +1361,31 @@ SELECT id
             }
         }
         
+        if ( ( $customFields[$customFieldId]['html_type'] == 'Multi-Select'    ||
+               $customFields[$customFieldId]['html_type'] == 'AdvMulti-Select' ||
+               $customFields[$customFieldId]['html_type'] == 'CheckBox' ) &&
+             $customFields[$customFieldId]['data_type'] == 'String' &&
+             ! empty( $customFields[$customFieldId]['text_length'] ) &&
+             ! empty( $value ) ) {
+            // lets make sure that value is less than the length, else we'll
+            // be losing some data, CRM-7481
+            if ( strlen( $value ) >= $customFields[$customFieldId]['text_length'] ) {
+                // need to do a few things here
+
+                // 1. lets find a new length
+                $newLength = $customFields[$customFieldId]['text_length'];
+                $minLength = strlen( $value );
+                while ( $newLength < $minLength ) {
+                    $newLength = $newLength * 2;
+                }
+
+                // set the custom field meta data to have a length larger than value
+                // alter the custom value table column to match this length
+                require_once 'CRM/Core/BAO/SchemaHandler.php';
+                CRM_Core_BAO_SchemaHandler::alterFieldLength( $customFieldId, $tableName, $columnName, $newLength );
+            }
+        }
+
         $date = null;
         if ( $customFields[$customFieldId]['data_type'] == 'Date' ) {
             if ( ! CRM_Utils_System::isNull( $value ) ) {

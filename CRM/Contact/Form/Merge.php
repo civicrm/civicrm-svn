@@ -68,8 +68,10 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
             CRM_Core_Error::fatal( ts( 'You do not have access to this page' ) );
         }
 
-        $cid = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
-        $oid = CRM_Utils_Request::retrieve( 'oid', 'Positive', $this, true );
+        $cid  = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
+        $oid  = CRM_Utils_Request::retrieve( 'oid', 'Positive', $this, true );
+        $flip = CRM_Utils_Request::retrieve( 'flip', 'Positive', $this, false );
+
         $this->_rgid = $rgid = CRM_Utils_Request::retrieve( 'rgid','Positive', $this, false );
         $this->_gid  = $gid  = CRM_Utils_Request::retrieve( 'gid', 'Positive', $this, false );
         $mergeId = CRM_Utils_Request::retrieve( 'mergeId', 'Positive', $this, false );
@@ -79,7 +81,11 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
 
         //load cache mechanism 
         require_once 'CRM/Core/BAO/PrevNextCache.php';
-        $pos = CRM_Core_BAO_PrevNextCache::getPositions( $rgid, $gid, $cid, $oid, $mergeId );
+        $contactType = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $cid, 'contact_type' );
+        $cacheKey  = "merge $contactType";
+        $cacheKey .= $rgid ? "_{$rgid}" : '_0';
+        $cacheKey .= $gid  ? "_{$gid}"  : '_0';
+        $pos = CRM_Core_BAO_PrevNextCache::getPositions( $cacheKey, $cid, $oid, $mergeId, $flip );
  
         // Block access if user does not have EDIT permissions for both contacts.
         require_once 'CRM/Contact/BAO/Contact/Permission.php';
@@ -104,9 +110,16 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         $this->assign( 'mainUfId', $mainUfId );
         $this->assign( 'mainUfName', $mainUser->name );
 
-        foreach (array('prev', 'next') as $position) {
+        $flipUrl = CRM_Utils_system::url( 'civicrm/contact/merge', 
+                                          "reset=1&action=update&cid={$oid}&oid={$cid}&rgid={$rgid}&gid={$gid}" );
+        if ( !$flip ) {
+            $flipUrl .= '&flip=1';
+        }
+        $this->assign( 'flip', $flipUrl );
+
+        foreach ( array( 'prev', 'next' ) as $position ) {
             if ( !empty( $pos[$position] ) ) {
-                if ( $pos[$position]['id1'] && $pos[$position]['id2']) {
+                if ( $pos[$position]['id1'] && $pos[$position]['id2'] ) {
                     $urlParam = "reset=1&cid={$pos[$position]['id1']}&oid={$pos[$position]['id2']}&mergeId={$pos[$position]['mergeId']}&action=update";
 
                     if ( $rgid ) {

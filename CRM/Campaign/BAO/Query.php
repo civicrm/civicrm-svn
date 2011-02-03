@@ -497,7 +497,7 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
         
         require_once 'CRM/Contact/BAO/Query.php';
         require_once 'CRM/Campaign/BAO/Campaign.php';
-        $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, true );
+        $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, false, true );
         
         $campaignIds = $campaignTitles = array( );
         if ( is_array( $campaign ) ) {

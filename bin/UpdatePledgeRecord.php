@@ -109,7 +109,7 @@ SELECT  pledge.contact_id              as contact_id,
         $pledgeDetails = $contactIds = $pledgePayments = array( );
         while ( $dao->fetch( ) ) {
             $checksumValue = CRM_Contact_BAO_Contact_Utils::generateChecksum( $dao->contact_id );
-                     
+            
             $pledgeDetails[$dao->payment_id] = array( 'scheduled_date'          => $dao->scheduled_date,
                                                       'amount_due'              => $dao->amount_due,
                                                       'amount'                  => $dao->amount,
@@ -163,6 +163,11 @@ SELECT  pledge.contact_id              as contact_id,
             foreach( $tokens['domain'] as $token ){ 
                 $domainValues[$token] = CRM_Utils_Token::getDomainTokenReplacement( $token, $domain );
             }
+            
+            //get the domain email address, since we don't carry w/ object.
+            require_once 'CRM/Core/BAO/Domain.php';
+            $domainValue = CRM_Core_BAO_Domain::getNameAndEmail( );
+            $domainValues['email'] = $domainValue[1];
             
             // retrieve contact tokens
             require_once 'CRM/Mailing/BAO/Mailing.php';
