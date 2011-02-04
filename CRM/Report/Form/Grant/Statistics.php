@@ -347,7 +347,7 @@ SELECT COUNT(id) as count , SUM(amount_total) as totalAmount
                     round( ( $grantStatistics['grant_type']['value'][$grantType]['count'] / $awardedGrants ) * 100 );
             }
             
-            if ( CRM_Utils_Array::value( 'civicrm_address_country_id', $values ) ) {
+            if ( array_key_exists( 'civicrm_address_country_id', $values ) ) {
                 $grantStatistics['country']['title'] = ts( 'Country' );
                 if ( $values['civicrm_address_country_id'] ) {
                     $country = CRM_Utils_Array::value( $values['civicrm_address_country_id'], $countries );
@@ -369,7 +369,7 @@ SELECT COUNT(id) as count , SUM(amount_total) as totalAmount
                 }
             }
             
-            if ( CRM_Utils_Array::value( 'civicrm_world_region_name', $values ) ) {
+            if ( array_key_exists( 'civicrm_world_region_name', $values ) ) {
                 $grantStatistics['world_region']['title'] = ts( 'Regions' );
                 if ( $region = $values['civicrm_world_region_name'] ) {
                     $grantStatistics['world_region']['value'][$region]['currency'][$currency]['value'] += 
