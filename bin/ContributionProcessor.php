@@ -63,6 +63,8 @@ class CiviContributeProcessor {
                                      'l_name0'          => 'source',
                                      'ordertime'        => 'receive_date',
                                      'note'             => 'note',
+                                     'custom'           => 'note',
+                                     'l_number0'        => 'note',
                                      'is_test'          => 'is_test',
                                      'transactiontype'  => 'trxn_type',
                                      'recurrences'      => 'installments',
