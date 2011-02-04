@@ -43,6 +43,13 @@
 require_once 'api/v3/utils.php';
 require_once 'CRM/Core/BAO/Note.php';
 
+function civicrm_note_getfields( &$params ) {
+    $bao = new CRM_Core_BAO_Note();
+    //function &exportableFields( $contactType = 'Individual', $status = false, $export = false, $search = false )
+    return ($bao->fields());
+}
+
+
 /**
  * Create Note
  *
@@ -58,20 +65,14 @@ function &civicrm_note_create(&$params)
 {
   _civicrm_initialize(true);
   try{
-    civicrm_verify_mandatory($params,'CRM_Core_BAO_Note');
-
-
-
-    if ( ! CRM_Utils_Array::value( 'id', $params ) ) {
-      if ( !isset($params['entity_table']) ||
-      !isset($params['entity_id'])    ||
-      !isset($params['note'])         ||
-      !isset($params['contact_id'] ) ) {
-        return civicrm_create_error( 'Required parameter missing' );
-      }
-    } else if ( !isset( $params['id'] ) && !isset( $params['contact_id'] ) ) {
-      return civicrm_create_error( 'Required parameter missing' );
+    
+    if(!isset($params['entity_table'])){
+    	$params['entity_table'] = "civicrm_contact";
     }
+    	
+    civicrm_verify_mandatory($params,'CRM_Core_BAO_Note', array('note'));
+
+
 
     $contactID = CRM_Utils_Array::value( 'contact_id', $params );
 
@@ -82,7 +83,7 @@ function &civicrm_note_create(&$params)
     $ids = array( );
     $ids = array( 'id' => CRM_Utils_Array::value( 'id', $params ) );
     $noteBAO = CRM_Core_BAO_Note::add( $params, $ids );
-     
+    
     if ( is_a( $noteBAO, 'CRM_Core_Error' ) ) {
       $error = civicrm_create_error( "Note could not be created" );
       return $error;
@@ -116,16 +117,7 @@ function civicrm_note_delete( &$params )
   try{
     civicrm_verify_mandatory($params,null,array('id'));
 
-    if ( !is_array( $params ) ) {
-      $error = civicrm_create_error( 'Params is not an array' );
-      return $error;
-    }
-
-    if ( ! CRM_Utils_Array::value( 'id', $params ) ) {
-      $error = civicrm_create_error( 'Invalid or no value for Note ID' );
-      return $error;
-    }
-
+    
     $result = new CRM_Core_BAO_Note();
     return $result->del( $params['id'] ) ? civicrm_create_success( ) : civicrm_create_error('Error while deleting Note');
   } catch (PEAR_Exception $e) {
@@ -150,20 +142,31 @@ function civicrm_note_delete( &$params )
 function &civicrm_note_get( &$params ) {
   _civicrm_initialize( true);
   try{
-    civicrm_verify_mandatory($params,null,array('entity_id','entity_table'));
-    $values = array( );
-
-     
-    if ( ! CRM_Utils_Array::value( 'entity_id', $params ) || ( CRM_Utils_Array::value( 'entity_id', $params ) && ( !is_numeric( $params['entity_id'] ) ) ) ) {
-      return civicrm_create_error( ts ( "Invalid entity ID" ) );
+    
+     if(!isset($params['entity_table'])){
+    	$params['entity_table'] = "civicrm_contact";
     }
+    
+    civicrm_verify_mandatory($params,'CRM_Core_BAO_Note');
 
-    $note = CRM_Core_BAO_Note::getNote($params['entity_id'],$params['entity_table']);
+    $entity_id = (int)$params['entity_id'];
+    $noteBAO = new CRM_Core_BAO_Note();
+    $fields = array_keys($noteBAO->fields());
 
-
-    $note = array_values( $note );
-
-    return civicrm_create_success($note,$params);
+    foreach ( $fields as $name) {
+        if (array_key_exists($name, $params)) {
+            $noteBAO->$name = $params[$name];
+        }
+    }
+    
+    if ( ! $noteBAO->find(true) ) {
+        return civicrm_create_success(array());
+    }
+    _civicrm_object_to_array($noteBAO, $note[]);
+    while ($noteBAO->fetch()) {
+      _civicrm_object_to_array($noteBAO, $note[]);
+    }
+    return civicrm_create_success($note);
 
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );
