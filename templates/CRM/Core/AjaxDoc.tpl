@@ -7,6 +7,10 @@
 </style>
 <script>
 restURL = '{crmURL p="civicrm/ajax/rest"}';
+if (restURL.indexOf('?') == -1 )
+  restURL = restURL + '?';
+else 
+  restURL = restURL + '&';
 {literal}
 function generateQuery () {
     var version = $('#version').val();
@@ -25,7 +29,7 @@ function generateQuery () {
       $('#query').val (query);
       return;
     }
-    query = restURL+"?"+json+debug+'version='+version+'&entity='+entity+'&action='+action;
+    query = restURL+json+debug+'version='+version+'&entity='+entity+'&action='+action;
     $('#query').val (query);
     runQuery (query);
 }
@@ -91,7 +95,7 @@ cj(function ($) {
 <label>json</label>
 <input type="checkbox" id="json" checked="checked">
 <br>
-<input size="90" id="query" value="/civicrm/ajax/rest?json=1&debug=on&entity=contact&action=get&sequential=1&return=display_name,email,phone"/>
+<input size="90" id="query" value="{crmURL p="civicrm/ajax/rest" q="json=1&debug=on&entity=contact&action=get&sequential=1&return=display_name,email,phone"}"/>
 <div id="link"></div>
 <div id="smarty" title='smarty syntax (mostly works for get actions)'></div>
 <div id="php" title='php syntax, crm_api needs a few more coding to work as advertised'></div>
