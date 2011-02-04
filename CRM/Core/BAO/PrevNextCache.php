@@ -42,11 +42,10 @@ require_once 'CRM/Core/DAO/PrevNextCache.php';
 
 class CRM_Core_BAO_PrevNextCache extends CRM_Core_DAO_PrevNextCache
 {
-    function getPositions( $cacheKey, $id1, $id2, &$mergeId = null, $flip = false ) 
-    {        
-        if ( $flip ) {
-            list( $id1, $id2 ) = array( $id2, $id1 );
-        }
+    function getPositions( $cacheKey, $id1, $id2, &$mergeId = null, $join = null, $where = null, $flip = false ) 
+    {               
+        if ( $flip ) list( $id1, $id2 ) = array( $id2, $id1 );
+
         if ( $mergeId == null ) {
             $query = "
 SELECT id 
@@ -66,10 +65,13 @@ WHERE  entity_id1 = %1 AND
         
         $pos = array( );
         if ( $mergeId ) {
-            $p         = array( 1 => array( $mergeId, 'Integer' ) );
-            $sql       = 'SELECT id, entity_id1, entity_id2 FROM civicrm_prevnext_cache ';
-            $wherePrev = " WHERE id < %1 ORDER BY ID DESC LIMIT 1";
+            if ( $where ) $where = " AND {$where}";
+            $p         = array( 1 => array( $mergeId, 'Integer' ),
+                                2 => array( $cacheKey,'String' ) );
+            $sql       = "SELECT pn.id, pn.entity_id1, pn.entity_id2 FROM civicrm_prevnext_cache pn {$join} ";
+            $wherePrev = " WHERE pn.id < %1 AND pn.cacheKey = %2 {$where} ORDER BY ID DESC LIMIT 1";
             $sqlPrev   = $sql . $wherePrev;
+
 
             $dao = CRM_Core_DAO::executeQuery( $sqlPrev, $p );
             if ( $dao->fetch() ) {
@@ -78,7 +80,7 @@ WHERE  entity_id1 = %1 AND
                 $pos['prev']['mergeId'] = $dao->id;
             }
             
-            $whereNext = " WHERE id > %1 ORDER BY ID ASC LIMIT 1";
+            $whereNext = " WHERE pn.id > %1 AND pn.cacheKey = %2 {$where} ORDER BY ID ASC LIMIT 1";
             $sqlNext   = $sql . $whereNext;
 
             $dao = CRM_Core_DAO::executeQuery( $sqlNext, $p );
@@ -112,15 +114,19 @@ WHERE  entity_id1 = %1 AND
         CRM_Core_DAO::executeQuery( $sql, $params );
     }
 
-    function retrieve( $cacheKey, $join = null ) 
+    function retrieve( $cacheKey, $join = null, $where = null, $offset = 0, $rowCount = 0 ) 
     {
         $query = "
 SELECT data 
 FROM   civicrm_prevnext_cache pn
 {$join}
-WHERE  cacheKey = '$cacheKey'
+WHERE  cacheKey = %1
 ";
         $params = array( 1 => array( $cacheKey, 'String' ) );
+        
+        if ( $where    ) $query .= " AND {$where}";
+        if ( $rowCount ) $query .= " LIMIT {$offset}, {$rowCount}";
+            
         $dao  = CRM_Core_DAO::executeQuery( $query, $params );
 
         $main = array();
@@ -140,5 +146,17 @@ WHERE  cacheKey = '$cacheKey'
         CRM_Core_DAO::executeQuery( $query );
     }
 
+    function  getCount( $cacheKey, $join = null, $where = null ) {
+        
+        $query = "
+SELECT COUNT(*) FROM civicrm_prevnext_cache pn 
+{$join}
+WHERE cacheKey = %1
+";
+        if ( $where )  $query .= " AND {$where}";  
+        $params = array( 1 => array( $cacheKey, 'String' ) ); 
+
+        return CRM_Core_DAO::singleValueQuery( $query, $params);
+    }
 
 }

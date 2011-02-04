@@ -98,15 +98,22 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
                                                             'contact_type' );
             }
             
+            $sourceParams = 'snippet=4';
+            if ( $gid )  $sourceParams .= "&gid={$gid}";
+            if ( $rgid )  $sourceParams .= "&rgid={$rgid}";
+
+            $this->assign( 'sourceUrl', CRM_Utils_System::url( 'civicrm/ajax/dedupefind', $sourceParams, false, null, false ) );
+
             //reload from cache table
             $cacheKeyString  = "merge $contactType";
             $cacheKeyString .= $rgid ? "_{$rgid}" : '_0';
             $cacheKeyString .= $gid ? "_{$gid}" : '_0';
             
             require_once 'CRM/Core/BAO/PrevNextCache.php';
-            $join = " JOIN civicrm_dedupe_exception de ON ! ( pn.entity_id1 = de.contact_id1 AND 
-                                                              pn.entity_id2 = de.contact_id2 )";
-            $this->_mainContacts = CRM_Core_BAO_PrevNextCache::retrieve( $cacheKeyString, $join );
+            $join  = "LEFT JOIN civicrm_dedupe_exception de ON ( pn.entity_id1 = de.contact_id1 AND 
+                                                                 pn.entity_id2 = de.contact_id2 )";
+            $where = "de.id IS NULL";     
+            $this->_mainContacts = CRM_Core_BAO_PrevNextCache::retrieve( $cacheKeyString, $join, $where );
             if ( empty( $this->_mainContacts ) ) {
                 if ( $gid ) {
                     $foundDupes = $this->get( "dedupe_dupes_$gid" );

@@ -116,7 +116,7 @@ eval('tableId =[' + tableId + ']');
   	    }
 	}
 	
-    var oTable = null;
+    oTable = null;
     if ( useAjax ) {
       oTable = cj(tabId).dataTable({
     	        "bFilter"    : false,
