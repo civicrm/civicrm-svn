@@ -1580,18 +1580,25 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
                                                                                          
         $freezeString = "";
         $freezeStringChecked = "";
-
+ 
         switch ( $dataType ) {
 
         case 'Date':
             $customTimeFormat = '';
             $customFormat     = null;
-            if ( $timeFormat == 1) {
-                $customTimeFormat = '%l:%M %P';
-            } else if ( $timeFormat == 2 ) {
-                $customTimeFormat = '%H:%M';
-            }
 
+            switch ( $timeFormat ) {
+            case 1:
+                $customTimeFormat = '%l:%M %P';
+                break;
+            case 2:
+                $customTimeFormat = '%H:%M';
+                break;
+            default:
+                // if time is not selected remove time from value
+                $value = substr( $value, 0, 10 );
+            }
+            
             $supportableFormats = array(
                                         'mm/dd'   => "%B %E%f $customTimeFormat",
                                         'dd-mm'   => "%E%f %B $customTimeFormat",
@@ -1602,7 +1609,7 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
                     $customFormat = $supportableFormats["$format"];
                 }
             }
-
+            
             $retValue = CRM_Utils_Date::customFormat( $value, $customFormat );
             break;	
 
