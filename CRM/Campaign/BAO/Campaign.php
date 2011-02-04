@@ -197,7 +197,7 @@ Order By  camp.title";
                     $dates = array( );
                     foreach ( array( 'start_date', 'end_date' ) as $date ) {
                         if ( $campaign->$date ) {
-                            $dates[] = CRM_Utils_Date::customFormat( $campaign->$date, '%b%e,%Y' );
+                            $dates[] = CRM_Utils_Date::customFormat( $campaign->$date, '%b%e, %Y' );
                         }
                     }
                     if ( !empty( $dates ) ) {

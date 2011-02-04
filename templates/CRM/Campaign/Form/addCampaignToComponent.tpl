@@ -45,11 +45,11 @@
         <td class="view-value">
 	    {* lets take a call, either show campaign select drop-down or show add campaign link *}		 
             {if $campaignInfo.hasCampaigns}
-		        {$form.campaign_id.html} {help id="id-campaign_id" file="CRM/Campaign/Form/addCampaignToComponent.hlp"}
+		        {$form.campaign_id.html|crmReplace:class:huge} {help id="id-campaign_id" file="CRM/Campaign/Form/addCampaignToComponent.hlp"}
         		{* show for add and edit actions *}
-			{if ( $action eq 1 or $action eq 2 ) 
-			    and !$campaignInfo.alreadyIncludedPastCampaigns and $campaignInfo.includePastCampaignURL}
-        		<br />
+			    {if ( $action eq 1 or $action eq 2 ) 
+			        and !$campaignInfo.alreadyIncludedPastCampaigns and $campaignInfo.includePastCampaignURL}
+        		    <br />
         		    <a id='include-past-campaigns' href='#' onClick='includePastCampaigns( "campaign_id" ); return false;'>
         		       &raquo;
         		       {ts}Show past campaign(s) in this select list.{/ts}
@@ -81,20 +81,20 @@ function includePastCampaigns()
 	     	 if ( data.status != 'success' ) return;
 
 	     	 //first reset all select options.
-		 cj( "#campaign_id" ).val( '' );		 		 		 
-                 cj( "#campaign_id" ).html( '' );
-		 cj('input[name=included_past_campaigns]').val( 1 );
+		     cj( "#campaign_id" ).val( '' );		 		 		 
+             cj( "#campaign_id" ).html( '' );
+		     cj('input[name=included_past_campaigns]').val( 1 );
 		 				 
-		 var campaigns = data.campaigns;      			
+		     var campaigns = data.campaigns;      			
     	     	 
-		 //build the new options.
-		 for ( campaign in campaigns ) {
-		      title = campaigns[campaign].title;
-		      value = campaigns[campaign].value;
-		      class = campaigns[campaign].class;
-		      if ( !title ) continue;
-		      cj('#campaign_id').append( cj('<option></option>').val(value).html(title).addClass(class) );
-		 }
+		     //build the new options.
+		     for ( campaign in campaigns ) {
+    		      title = campaigns[campaign].title;
+    		      value = campaigns[campaign].value;
+    		      class = campaigns[campaign].class;
+    		      if ( !title ) continue;
+    		      cj('#campaign_id').append( cj('<option></option>').val(value).html(title).addClass(class) );
+		      }
     	     }, 
     	     'json');
 } 

@@ -2943,7 +2943,8 @@ del,
 #crm-container .disabled, 
 #crm-container .status-overdue,
 #crm-container .status-fatal, 
-#crm-container .status-hold {
+#crm-container .status-hold,
+#crm-container .status-past {
     color:#E43D2B!important;
 }
 

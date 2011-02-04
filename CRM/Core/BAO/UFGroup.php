@@ -1687,14 +1687,11 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             $form->add('textarea', $name, $title, CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email', $fieldName) );
         } else if ( substr( $fieldName, -11 ) == 'campaign_id' ) { 
             require_once 'CRM/Campaign/BAO/Campaign.php';
-            $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( CRM_Utils_Array::value( $contactId, 
-                                                                                          $form->_componentCampaigns ) );
-            $campaign =& $form->add( 'select', $name, $title,
-                                     array( '' => ts( '- select -' ) ) + $campaigns, $required );
-            //don't allow to play w/ campaign.
-            if ( !CRM_Campaign_BAO_Campaign::accessCampaign( ) ||
-                 !CRM_Campaign_BAO_Campaign::isCampaignEnable( ) ) {
-                $campaign->freeze( );
+            if ( CRM_Campaign_BAO_Campaign::isCampaignEnable( ) ) {
+                $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( CRM_Utils_Array::value( $contactId, 
+                                                                                              $form->_componentCampaigns ) );
+                $campaign =& $form->add( 'select', $name, $title,
+                                         array( '' => ts( '- select -' ) ) + $campaigns, $required );                
             }
         } else {
             $processed = false;
