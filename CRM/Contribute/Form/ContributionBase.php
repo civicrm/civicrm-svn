@@ -370,6 +370,11 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
                 //authenticate pledge user for pledge payment.
                 if ( $pledgeId ) {
                     $this->_values['pledge_id'] = $pledgeId;
+                    
+                    //lets override w/ pledge campaign.
+                    $this->_values['campaign_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_Pledge', 
+                                                                                 $pledgeId,
+                                                                                 'campaign_id' );
                     self::authenticatePledgeUser( );
                 }
             }
