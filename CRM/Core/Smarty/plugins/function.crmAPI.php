@@ -49,8 +49,16 @@ function smarty_function_crmAPI( $params, &$smarty ) {
     if ( $fnGroup == 'Contribution' ) {
         $fnGroup = 'Contribute';
     }
-    
-    $apiFile = "api/v2/{$fnGroup}.php";
+    $version = '3';
+    if (defined('CIVICRM_API_VERSION')) {
+      $version = CIVICRM_API_VERSION;
+    }
+    if ($params['version']) {
+      $params['version'] = (int) $params['version'];
+      $version = $params['version'];
+    }
+    $apiFile = "api/v".$version."/{$fnGroup}.php";
+        
     require_once $apiFile;
     $fnName = "civicrm_{$params['entity']}_{$params['action']}";
     if ( ! function_exists( $fnName ) ) {
