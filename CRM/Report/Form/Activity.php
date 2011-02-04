@@ -53,13 +53,11 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                                              array( 'name'       => 'id',
                                                     'alias'      => 'contact_civireport',
                                                     'no_display' => true, 
-                                                    'required'   => true, 
                                                     ),
                                              'contact_source'    =>
                                               array( 'name'      => 'display_name' ,
                                                      'title'     => ts( 'Source Contact Name' ),
                                                      'alias'     => 'contact_civireport',
-                                                     'required'  => true,
                                                      'no_repeat' => true ),
                                               'contact_assignee' =>
                                               array( 'name'      => 'display_name' ,
