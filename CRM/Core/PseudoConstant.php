@@ -1131,9 +1131,9 @@ WHERE  id = %1";
      * @return array - array reference of all Currency Symbols
      * @static
      */
-    public static function &currencySymbols( $name = 'symbol' )
+    public static function &currencySymbols( $name = 'symbol', $key = 'id' )
     {
-        self::populate( self::$currencySymbols, 'CRM_Core_DAO_Currency', true, $name, null, null, 'name');
+        self::populate( self::$currencySymbols, 'CRM_Core_DAO_Currency', true, $name, null, null, 'name', $key );
         return self::$currencySymbols;
     }
 

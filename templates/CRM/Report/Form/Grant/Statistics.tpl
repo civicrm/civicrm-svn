@@ -51,7 +51,8 @@
     </div>
 {/if}
 
-<table class="report-layout">
+{if $totalStatistics}
+<table class="report-layout display">
   <th class="statistics" scope="row">Label</th>
   <th class="statistics" scope="row">Count</th>
   <th class="statistics" scope="row">Amount</th>
@@ -63,8 +64,10 @@
        </tr>      
     {/foreach}
 </table>
+{/if}
 
-<table class="report-layout">
+{if $grantStatistics}
+<table class="report-layout display">
   {foreach from=$grantStatistics item=values key=key}
     <th class="statistics" scope="row">{$values.title}</th>
     <th class="statistics" scope="row">Count</th>
@@ -82,3 +85,4 @@
        {/foreach}
   {/foreach}
 </table>
+{/if}

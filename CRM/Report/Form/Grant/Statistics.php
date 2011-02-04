@@ -332,98 +332,79 @@ SELECT COUNT(id) as count , SUM(amount_total) as totalAmount
                 $grantReportsReceived ++;
             }
             
-            $currency = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Currency', $values['civicrm_grant_currency'], 
-                                                     'symbol', 'name' );
-                        
             if ( CRM_Utils_Array::value( 'civicrm_grant_grant_type_id', $values ) ) {
                 $grantType = CRM_Utils_Array::value( $values['civicrm_grant_grant_type_id'], $grantTypes );
-                $grantStatistics['grant_type']['title'] = ts( 'Grant Types' );
-                $grantStatistics['grant_type']['value'][$grantType]['currency'][$currency]['value'] += 
-                    $values['civicrm_grant_amount_total'];
-                $grantStatistics['grant_type']['value'][$grantType]['currency'][$currency]['percentage'] = 
-                    round( ( $grantStatistics['grant_type']['value'][$grantType]['currency'][$currency]['value'] / $awardedGrantsAmount ) * 100 );
-                $grantStatistics['grant_type']['value'][$grantType]['count'] ++;
-                $grantStatistics['grant_type']['value'][$grantType]['percentage'] = 
-                    round( ( $grantStatistics['grant_type']['value'][$grantType]['count'] / $awardedGrants ) * 100 );
+                $grantStatistics['civicrm_grant_grant_type_id']['title'] = ts( 'Grant Types' );
+                self::getStatistics( $grantStatistics['civicrm_grant_grant_type_id'], $grantType, $values, 
+                                     $awardedGrants, $awardedGrantsAmount );
             }
             
             if ( array_key_exists( 'civicrm_address_country_id', $values ) ) {
-                $grantStatistics['country']['title'] = ts( 'Country' );
-                if ( $values['civicrm_address_country_id'] ) {
-                    $country = CRM_Utils_Array::value( $values['civicrm_address_country_id'], $countries );
-                    $grantStatistics['country']['value'][$country]['currency'][$currency]['value'] += 
-                        $values['civicrm_grant_amount_total'];
-                    $grantStatistics['country']['value'][$country]['currency'][$currency]['percentage'] = 
-                        round( ( $grantStatistics['country']['value'][$country]['currency'][$currency]['value'] / $awardedGrantsAmount ) * 100 );
-                    $grantStatistics['country']['value'][$country]['count'] ++;
-                    $grantStatistics['country']['value'][$country]['percentage'] = 
-                        round( ( $grantStatistics['country']['value'][$country]['count'] / $awardedGrants ) * 100 );
-                } else {
-                    $grantStatistics['country']['value']['Unassigned']['currency'][$currency]['value'] += 
-                        $values['civicrm_grant_amount_total'];
-                    $grantStatistics['country']['value']['Unassigned']['currency'][$currency]['percentage'] = 
-                        round( ( $grantStatistics['country']['value']['Unassigned']['currency'][$currency]['value'] / $awardedGrantsAmount ) * 100 );
-                    $grantStatistics['country']['value']['Unassigned']['count'] ++;
-                    $grantStatistics['country']['value']['Unassigned']['percentage'] = 
-                        round( ( $grantStatistics['country']['value']['Unassigned']['count'] / $awardedGrants ) * 100 );
-                }
+                $country = CRM_Utils_Array::value( $values['civicrm_address_country_id'], $countries );
+                $country = ( $country ) ? $country : 'Unassigned';
+                $grantStatistics['civicrm_address_country_id']['title'] = ts( 'Country' );
+                self::getStatistics( $grantStatistics['civicrm_address_country_id'], $country, $values, 
+                                     $awardedGrants, $awardedGrantsAmount );
             }
             
             if ( array_key_exists( 'civicrm_world_region_name', $values ) ) {
-                $grantStatistics['world_region']['title'] = ts( 'Regions' );
-                if ( $region = $values['civicrm_world_region_name'] ) {
-                    $grantStatistics['world_region']['value'][$region]['currency'][$currency]['value'] += 
-                        $values['civicrm_grant_amount_total'];
-                    $grantStatistics['world_region']['value'][$region]['currency'][$currency]['percentage'] = 
-                        round( ( $grantStatistics['world_region']['value'][$region]['currency'][$currency]['value'] / $awardedGrantsAmount ) * 100 );
-                    $grantStatistics['world_region']['value'][$region]['count'] ++;
-                    $grantStatistics['world_region']['value'][$region]['percentage'] = 
-                        round( ( $grantStatistics['world_region']['value'][$region]['count'] / $awardedGrants ) * 100 );
-                } else {
-                    $grantStatistics['world_region']['value']['Unassigned']['currency'][$currency]['value'] += 
-                        $values['civicrm_grant_amount_total'];
-                    $grantStatistics['world_region']['value']['Unassigned']['currency'][$currency]['percentage'] = 
-                        round( ( $grantStatistics['world_region']['value']['Unassigned']['currency'][$currency]['value'] / $awardedGrantsAmount ) * 100 );
-                    $grantStatistics['world_region']['value']['Unassigned']['count'] ++;
-                    $grantStatistics['world_region']['value']['Unassigned']['percentage'] = 
-                        round( ( $grantStatistics['world_region']['value']['Unassigned']['count'] / $awardedGrants ) * 100 );
+                $region = CRM_Utils_Array::value( 'civicrm_world_region_name', $values );
+                $region = ( $region ) ? $region : 'Unassigned';
+                $grantStatistics['civicrm_world_region_name']['title'] = ts( 'Regions' );
+                self::getStatistics( $grantStatistics['civicrm_world_region_name'], $region, $values, 
+                                     $awardedGrants, $awardedGrantsAmount );
+            }
+            
+            if ( $type = CRM_Utils_Array::value( 'civicrm_contact_contact_type', $values ) ) {
+                $grantStatistics['civicrm_contact_contact_type']['title'] = ts( 'Contact Type' );
+                $title = "Total Number of {$type}(s)";
+                self::getStatistics( $grantStatistics['civicrm_contact_contact_type'], $title, $values, 
+                                     $awardedGrants, $awardedGrantsAmount );
+            }
+            
+            if ( array_key_exists( 'civicrm_contact_gender_id', $values ) ) {
+                $genderLabel = CRM_Utils_Array::value( $values['civicrm_contact_gender_id'], $gender );
+                $genderLabel = ( $genderLabel ) ? $genderLabel : 'Unassigned';
+                $grantStatistics['civicrm_contact_gender_id']['title'] = ts( 'Gender' );
+                self::getStatistics( $grantStatistics['civicrm_contact_gender_id'], $genderLabel, $values, 
+                                     $awardedGrants, $awardedGrantsAmount );
+            }
+            
+            foreach ( $values as $customField => $customValue ) {
+                if ( $customValue && strstr( $customField, 'civicrm_value_' ) ) {
+                    $customGroupTitle  = explode( '_custom', strstr( $customField, 'civicrm_value_' ) );
+                    $customGroupTitle  = $this->_columns[$customGroupTitle[0]]['group_title'];
+                    $customFieldTitle  = CRM_Utils_Array::value( 'title', $this->_columnHeaders[$customField] );
+
+                    $grantStatistics[$customGroupTitle]['title'] = ts( "{$customGroupTitle}" );
+                    self::getStatistics( $grantStatistics[$customGroupTitle], $customFieldTitle, $values, 
+                                         $awardedGrants, $awardedGrantsAmount );
                 }
-            }
-            
-            if ( CRM_Utils_Array::value( 'civicrm_contact_contact_type', $values ) ) {
-                $title = "Total Number of {$values['civicrm_contact_contact_type']}(s)";
-                $grantStatistics['contacts']['title'] = ts( 'Contact Type' );
-                $grantStatistics['contacts']['value'][$title]['currency'][$currency]['value'] += 
-                    $values['civicrm_grant_amount_total'];
-                $grantStatistics['contacts']['value'][$title]['currency'][$currency]['percentage'] = 
-                    round( ( $grantStatistics['contacts']['value'][$title]['currency'][$currency]['value'] / $awardedGrantsAmount ) * 100 );
-                $grantStatistics['contacts']['value'][$title]['count'] ++;
-                $grantStatistics['contacts']['value'][$title]['percentage'] = 
-                    round( ( $grantStatistics['contacts']['value'][$title]['count'] / $awardedGrants ) * 100 );
-            }
-            
-            if ( $genderId = CRM_Utils_Array::value( 'civicrm_contact_gender_id', $values ) ) {
-                $genderLabel = CRM_Utils_Array::value( $genderId, $gender );
-                $grantStatistics['gender']['title'] = ts( 'Gender' );
-                $grantStatistics['gender']['value'][$genderLabel]['currency'][$currency]['value'] += 
-                    $values['civicrm_grant_amount_total'];
-                $grantStatistics['gender']['value'][$genderLabel]['currency'][$currency]['percentage'] = 
-                    round( ( $grantStatistics['gender']['value'][$genderLabel]['currency'][$currency]['value'] / $awardedGrantsAmount ) * 100 );
-                $grantStatistics['gender']['value'][$genderLabel]['count'] ++;
-                $grantStatistics['gender']['value'][$genderLabel]['percentage'] = 
-                    round( ( $grantStatistics['gender']['value'][$genderLabel]['count'] / $awardedGrants ) * 100 );
             }
         }
         
-        $statistics['grants_received']        = array( 'title'  => 'Total Number of grants received',
-                                                       'count'  => $grantsReceived,
-                                                       'amount' => $totalAmount );
-        $statistics['grants_awarded']         = array( 'title'  => 'Total Number of grants awarded',
-                                                       'count'  => $awardedGrants,
-                                                       'amount' => $awardedGrantsAmount );
-        $statistics['grants_report_received'] = array( 'title'  => 'Total Number of grant reports received',
-                                                       'count'  => $grantReportsReceived );
+        $statistics = array( 'grants_received'        => array( 'title'  => 'Total Number of grants received',
+                                                                'count'  => $grantsReceived,
+                                                                'amount' => $totalAmount ),
+                             'grants_awarded'         => array( 'title'  => 'Total Number of grants awarded',
+                                                                'count'  => $awardedGrants,
+                                                                'amount' => $awardedGrantsAmount ),
+                             'grants_report_received' => array( 'title'  => 'Total Number of grant reports received',
+                                                                'count'  => $grantReportsReceived ), );
         $this->assign( 'totalStatistics', $statistics );
         $this->assign( 'grantStatistics', $grantStatistics );
+    }
+
+    static function getStatistics( &$grantStatistics, $fieldValue, $values, $awardedGrants, $awardedGrantsAmount )
+    {
+        $currencies = CRM_Core_PseudoConstant::currencySymbols( 'symbol', 'name' );
+        $currency   = $currencies[$values['civicrm_grant_currency']];
+                                        
+        $grantStatistics['value'][$fieldValue]['currency'][$currency]['value'] += $values['civicrm_grant_amount_total'];
+        $grantStatistics['value'][$fieldValue]['currency'][$currency]['percentage'] =
+            round( ( $grantStatistics['value'][$fieldValue]['currency'][$currency]['value'] / $awardedGrantsAmount ) * 100 );
+        $grantStatistics['value'][$fieldValue]['count'] ++;
+        $grantStatistics['value'][$fieldValue]['percentage'] = 
+            round( ( $grantStatistics['value'][$fieldValue]['count'] / $awardedGrants ) * 100 );
     }
 }
