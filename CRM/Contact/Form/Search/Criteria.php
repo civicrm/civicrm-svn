@@ -1,4 +1,4 @@
-<?php
+o<?php
 
 /*
  +--------------------------------------------------------------------+
@@ -379,6 +379,13 @@ class CRM_Contact_Form_Search_Criteria {
 
         $form->addDate( 'deceased_date_low', ts('Deceased Dates - From'), false, array( 'formatType' => 'birth') );
         $form->addDate( 'deceased_date_high', ts('To'), false, array( 'formatType' => 'birth') );
+
+		
+		// radio button for is_deceased
+        $deceasedOptions = array( );
+        $deceasedOptions[1] = HTML_QuickForm::createElement('radio', null, ts('Deceased'), 'Yes', 1);
+		$deceasedOptions[0] = HTML_QuickForm::createElement('radio', null, ts('Deceased'), 'No', 0);
+        $form->addGroup( $deceasedOptions, 'is_deceased', ts('Deceased'));
     }
     
     static function notes( &$form ) {
