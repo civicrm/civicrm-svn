@@ -51,7 +51,7 @@ class CRM_Report_Form_Contact_Summary extends CRM_Report_Form {
             array( 'civicrm_contact' =>
                    array( 'dao'       => 'CRM_Contact_DAO_Contact',
                           'fields'    =>
-                          array( 'display_name' => 
+                          array( 'sort_name' => 
                                  array( 'title'     => ts( 'Contact Name' ),
                                         'required'  => true,
                                         'no_repeat' => true ),
@@ -190,9 +190,10 @@ class CRM_Report_Form_Contact_Summary extends CRM_Report_Form {
         }   
     }
 
-    function groupBy( ) {
-        $this->_groupBy = "GROUP BY {$this->_aliases['civicrm_contact']}.id";
+    function orderBy( ) {
+        $this->_orderBy = " ORDER BY {$this->_aliases['civicrm_contact']}.sort_name ";
     }
+    
     
     function postProcess( ) {
 
@@ -216,14 +217,14 @@ class CRM_Report_Form_Contact_Summary extends CRM_Report_Form {
         $entryFound = false;
         foreach ( $rows as $rowNum => $row ) {
             // make count columns point to detail report
-            // convert display name to links
-            if ( array_key_exists('civicrm_contact_display_name', $row) && 
+            // convert sort name to links
+            if ( array_key_exists('civicrm_contact_sort_name', $row) && 
                  array_key_exists('civicrm_contact_id', $row) ) {
                 $url = CRM_Report_Utils_Report::getNextUrl( 'contact/detail', 
                                               'reset=1&force=1&id_op=eq&id_value=' . $row['civicrm_contact_id'],
                                               $this->_absoluteUrl, $this->_id );
-                $rows[$rowNum]['civicrm_contact_display_name_link' ] = $url;
-                $rows[$rowNum]['civicrm_contact_display_name_hover'] = ts("View Contact details for this contact.");
+                $rows[$rowNum]['civicrm_contact_sort_name_link' ] = $url;
+                $rows[$rowNum]['civicrm_contact_sort_name_hover'] = ts("View Constituent Detail Report for this contact.");
                 $entryFound = true;
             }
 
