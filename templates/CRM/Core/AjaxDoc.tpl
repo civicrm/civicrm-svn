@@ -45,14 +45,32 @@ function runQuery(query) {
     for(var i = 0; i < hashes.length; i++) {
        
         hash = hashes[i].split('=');
-        if (hash[0] == 'debug' || hash[0] == 'json') continue;
+        switch (hash[0]) {
+           case 'debug':
+           case 'json':
+             break;
+           case 'action':
+             var action= hash[1];
+             break;
+           case 'entity':
+             var entity= hash[1];
+             break;
+           default:
+             smarty = smarty+ hash[0] + '="'+hash[1]+ '" ';
+             php = php+"'"+ hash[0] +"' =>'"+hash[1]+ "', ";
+        }
+/*        if (hash[0] == 'debug' || hash[0] == 'json') continue;
+        if (hash[0] == "action")
+          var action= +hash[1];
+        else 
         smarty = smarty+ hash[0] + '="'+hash[1]+ '" ';
         php = php+"'"+ hash[0] +"' =>'"+hash[1]+ "', ";
 
         vars.push(hash[0]);
         vars[hash[0]] = hash[1];
+*/           
     }
-    $('#php').html("<hr>require_once ('api/api.php');<br/>"+ php + '};<br>$results=crm_api($params);</hr>');
+    $('#php').html("<hr>require_once ('api/api.php');<br/>"+ php + '};<br>$results=civicrm_api("'+entity+'","'+action+'",$params);</hr>');
     $('#smarty').text(smarty + '}');
 }
 
