@@ -270,13 +270,16 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
         if ( !$params['target_contact_id'] ) {
             return;
         }
+
         require_once 'CRM/Activity/BAO/ActivityTarget.php';
         $target              = new CRM_Activity_BAO_ActivityTarget( );
         $target->activity_id = $params['activity_id'];
         $target->target_contact_id = $params['target_contact_id'];
-        // avoid duplicate entries
-        $target->find(true);
-        $target->save( );
+        // avoid duplicate entries, CRM-7484
+        // happens if sending email to the same contact with different email addresses
+        if ( ! $target->find(true) ) {
+            $target->save( );
+        }
     }
     
     /**
