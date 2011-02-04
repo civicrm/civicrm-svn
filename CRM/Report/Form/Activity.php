@@ -154,8 +154,7 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                                               ),
                                        'group_bys' =>             
                                        array( 'source_contact_id'  =>
-                                              array('title'    => ts( 'Source Contact' ),
-                                                    'default'  => true ),
+                                              array('title'    => ts( 'Source Contact' ) ),
                                               'activity_date_time' => 
                                               array( 'title'   => ts( 'Activity Date' ) ),
                                               'activity_type_id'   =>
