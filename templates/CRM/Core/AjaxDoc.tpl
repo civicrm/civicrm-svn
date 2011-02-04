@@ -35,7 +35,7 @@ function generateQuery () {
 }
 
 function runQuery(query) {
-    var vars = [], hash,smarty = '{crmAPI var="results" ',php = "$params = array (";
+    var vars = [], hash,smarty = '',php = "<hr>$params = array (";
     $.get(query,function(data) {
       $('#result').text(data);
     },'text');
@@ -59,19 +59,12 @@ function runQuery(query) {
              smarty = smarty+ hash[0] + '="'+hash[1]+ '" ';
              php = php+"'"+ hash[0] +"' =>'"+hash[1]+ "', ";
         }
-/*        if (hash[0] == 'debug' || hash[0] == 'json') continue;
-        if (hash[0] == "action")
-          var action= +hash[1];
-        else 
-        smarty = smarty+ hash[0] + '="'+hash[1]+ '" ';
-        php = php+"'"+ hash[0] +"' =>'"+hash[1]+ "', ";
-
-        vars.push(hash[0]);
-        vars[hash[0]] = hash[1];
-*/           
     }
-    $('#php').html("<hr>require_once ('api/api.php');<br/>"+ php + '};<br>$results=civicrm_api("'+entity+'","'+action+'",$params);</hr>');
-    $('#smarty').text(smarty + '}');
+    $('#php').html(php + '};<br>$results=civicrm_api("'+entity+'","'+action+'",$params);</hr>');
+    if (action == "get") {//using smarty only make sense for get action
+      $('#smarty').html('{crmAPI var="'+entity+'S" entity="'+entity+'" action="'+action+'" '+smarty+'}<br>{foreach from=$'+entity+'S.values item='+entity+'}<br/>  &lt;li&gt;{$'+entity+'.example}&lt;/li&gt;<br>{/foreach}');
+    }
+
 }
 
 cj(function ($) {
@@ -94,19 +87,18 @@ cj(function ($) {
 <label>entity</label>
 <select id="entity">
   <option value="" selected="selected">Choose...</option>
-  <option value="contact">Contact</option>
-  <option value="relationship">Relationship</option>
-  <option value="tag">Tag</option>
-  <option value="note">Note</option>
-  <option value="group">Group</option>
+{crmAPI entity="entity" action="get" var="entities"}
+{foreach from=$entities.values item=entity}
+  <option value="{$entity}">{$entity}</option>
+{/foreach}
 </select>
 <label>action</label>
 <select id="action">
   <option value="" selected="selected">Choose...</option>
   <option value="get">get</option>
-  <option value="create">Create</option>
-  <option value="delete">Delete</option>
-  <option value="getfields">get fields</option>
+  <option value="create">create</option>
+  <option value="delete">delete</option>
+  <option value="getfields">getfields</option>
 </select>
 <label>debug</label>
 <input type="checkbox" id="debug" checked="checked">
