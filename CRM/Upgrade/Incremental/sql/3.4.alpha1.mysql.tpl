@@ -92,3 +92,11 @@ CREATE TABLE civicrm_prevnext_cache (
   PRIMARY KEY ( id )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
+
+-- CRM-7494
+    UPDATE  civicrm_option_value value 
+INNER JOIN  civicrm_option_group grp ON ( grp.id = value.option_group_id )
+       SET  value.name = 'CRM_Report_Form_Walklist_Walklist'
+     WHERE  grp.name = 'report_template' 
+       AND  value.name = 'CRM_Report_Form_Walklist';
+
