@@ -111,7 +111,8 @@ class api_v3_NoteTest extends CiviUnitTestCase
      */
     function testGetWithoutEntityId( )
     {   
-        $params = array( 'entity_table' => 'civicrm_contact' );
+        $params = array( 'entity_table' => 'civicrm_contact',
+                         'version'			=>3 );
         $note   =& civicrm_note_get( $params );
         $this->assertEquals( $note['is_error'], 1 ); 
         $this->assertEquals( $note['error_message'], 'Mandatory key(s) missing from params array: entity_id' );
@@ -169,7 +170,7 @@ class api_v3_NoteTest extends CiviUnitTestCase
         unset($this->_params['entity_id']);
         $result = civicrm_note_create( $this->_params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Required parameter missing' );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: entity_id' );
     }
 
     /**
