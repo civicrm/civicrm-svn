@@ -51,6 +51,7 @@ require_once 'CRM/Contribute/PseudoConstant.php';
  * @return array (reference )        contribution_id of created or updated record
  * @static void
  * @access public
+ * @example ContributionCreate.php
  */
 function &civicrm_contribution_create( &$params ) {
     _civicrm_initialize( );
@@ -82,9 +83,9 @@ function &civicrm_contribution_create( &$params ) {
         return civicrm_create_error(  $contribution->_errors[0]['message']  );
     }
 
-    _civicrm_object_to_array($contribution, $contributeArray);
+    _civicrm_object_to_array($contribution, $contributeArray[$contribution->id]);
     
-    return $contributeArray;
+    return civicrm_create_success($contributeArray,$params);
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );
   } catch (Exception $e) {
@@ -104,10 +105,8 @@ function &civicrm_contribution_create( &$params ) {
 function civicrm_contribution_delete( &$params ) {
     _civicrm_initialize( );
     try{
+    civicrm_verify_mandatory($params,null,array('contribution_id'));
     $contributionID = CRM_Utils_Array::value( 'contribution_id', $params );
-    if ( ! $contributionID ) {
-        return civicrm_create_error(  'Could not find contribution_id in input parameters' );
-    }
 
     require_once 'CRM/Contribute/BAO/Contribution.php';
     if ( CRM_Contribute_BAO_Contribution::deleteContribution( $contributionID ) ) {
@@ -186,7 +185,7 @@ function &civicrm_contribution_get( &$params ) {
     }
     $dao->free( );
     
-    return $contribution;
+    return civicrm_create_success($contribution,$params);
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );
   } catch (Exception $e) {
