@@ -328,7 +328,6 @@
       <type>varchar</type>   
       <length>3</length>
       <default>NULL</default>
-      <import>true</import>
       <headerPattern>/cur(rency)?/i</headerPattern>
       <dataPattern>/^[A-Z]{3}$/i</dataPattern>
       <comment>3 character string, value from config setting or input via user.</comment>

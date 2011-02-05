@@ -1646,6 +1646,10 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             require_once 'CRM/Contribute/PseudoConstant.php';
             $form->add('select', $name, $title,
                        array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::contributionStatus( ), $required);
+       } else if ($fieldName == 'contribution_page_id' ) {
+           require_once 'CRM/Contribute/PseudoConstant.php';
+           $form->add('select', $name, $title,
+                      array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::contributionPage( ), $required, 'class="big"');
         } else if ($fieldName == 'participant_register_date' ) {
             $form->addDateTime( $name, $title, $required, array( 'formatType' => 'activityDateTime') );
         } else if ($fieldName == 'activity_status_id') {
@@ -1691,7 +1695,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                 $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( CRM_Utils_Array::value( $contactId, 
                                                                                               $form->_componentCampaigns ) );
                 $campaign =& $form->add( 'select', $name, $title,
-                                         array( '' => ts( '- select -' ) ) + $campaigns, $required );                
+                                         array( '' => ts( '- select -' ) ) + $campaigns, $required, 'class="big"' );                
             }
         } else {
             $processed = false;

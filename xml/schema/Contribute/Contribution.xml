@@ -73,7 +73,8 @@
   <field> 
       <name>contribution_page_id</name> 
       <title>Contribution Page</title>
-      <type>int unsigned</type>                 
+      <type>int unsigned</type>
+      <import>true</import>
       <comment>The Contribution Page which triggered this contribution</comment> 
       <add>1.5</add> 
   </field> 
