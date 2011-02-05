@@ -4,6 +4,7 @@ function contact_get_example(){
     $params = array(
     
                   'email' 		=> 'man2',
+                  'version' 		=> '3',
                   'contact_is_deleted' 		=> '0',
 
   );
@@ -37,6 +38,7 @@ function contact_get_expectedresult(){
                   ,                  'is_opt_out' => '0'
                   ,                  'preferred_mail_format' => 'Both'
                   ,                  'is_deceased' => '0'
+                  ,                  'contact_is_deleted' => '0'
                   ,                  'email_id' => '2'
                   ,                  'email' => 'man2@yahoo.com'
                   ,                  'on_hold' => '0'

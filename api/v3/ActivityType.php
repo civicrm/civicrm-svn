@@ -79,6 +79,7 @@ function civicrm_activity_type_get( ) {
  *
  * @access public
  *
+ *{@schema Activity/ActivityType.xml}
  * @todo Erik Hommel 16 dec 2010 Check permission with utils function civicrm_api_permission_check
  * @todo Erik Hommel 16 dec 2010 Check if function processes update according to standards
  * @example ActivityTypeCreate.php

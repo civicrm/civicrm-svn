@@ -52,7 +52,7 @@ require_once 'CRM/Contact/BAO/Contact.php';
  * Allowed @params array keys are:
  * {@schema Contact/Contact.xml}
  * {@schema Core/Address.xml}}
- *
+ * @example ContactCreate.php
  * @return array (reference )        contact_id of created or updated contact
  *
  * @static void
@@ -103,6 +103,7 @@ function civicrm_contact_getfields( &$params ) {
  * @todo Erik Hommel 16 dec 2010 fix custom data (CRM-7231)
  * @todo Erik Hommel 16 dec 2010 Introduce version as param and get rid of $deprecated_behaviour
  * @todo Erik Hommel 16 dec 2010 Use civicrm_return_success / error ?
+ * @example ContactGet.php
  * @todo EM 7 Jan 11 - does this return the number of contacts if required (replacement for deprecated contact_search_count function - if so is this tested?
  * @todo EM 6 Jan 11 no handling for empty params or params that are not an array: Invalid argument supplied for foreach() C:\utils\eclipseworkspace\api-civicrm\api\v3\Contact.php:332
  */
@@ -110,7 +111,7 @@ function civicrm_contact_get( &$params )
 {
   _civicrm_initialize( );
   try {
-
+    civicrm_verify_mandatory($params);
         // fix for CRM-7384 cater for soft deleted contacts
     $params['contact_is_deleted'] = 0;
     if (isset($params['showAll'])) {
@@ -161,10 +162,8 @@ function civicrm_contact_get( &$params )
                                                                    $offset,
                                                                    $rowCount,
                                                                    $smartGroupCache );
-    if (array_key_exists ('sequential',$params)) {
-      return civicrm_create_success(array_merge($contacts));
-    }
-    return civicrm_create_success($contacts);
+
+    return civicrm_create_success($contacts,$params);
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );
   } catch (Exception $e) {
@@ -181,6 +180,7 @@ function civicrm_contact_get( &$params )
  * @return boolean        true if success, else false
  * @static void
  * @access public
+ * @example ContactDelete.php
  */
 function civicrm_contact_delete( &$params )
 {    
