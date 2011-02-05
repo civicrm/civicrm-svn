@@ -1429,7 +1429,7 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
         while ( $dao->fetch( ) ) {
             $activities[$dao->activity_id]['targets'][$contactId] = $contactId;
         }
-        
+ 
         // Then get activities where contactId is an asignee
         $query = "SELECT activity_id FROM civicrm_activity_assignment
                   WHERE  assignee_contact_id = $contactId";

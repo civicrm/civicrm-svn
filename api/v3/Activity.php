@@ -69,7 +69,7 @@ require_once 'CRM/Core/DAO/OptionGroup.php';
  * @todo Erik Hommel 16 dec 2010 check if create function processes update correctly when activity_id is passed
  * @todo Erik Hommel 16 dec 2010 check for mandatory fields with utils function civicrm_verify_mandatory
  * @todo Erik Hommel 16 dec 2010 check permissions with utils function civicrm_api_permission_check
- * @todo Erik Hommel 16 dec 2010 introduce version as param
+ * @todo Eileen 2 Feb - I am not sure custom data stuff is working - test doesn't seem to really test for it
  * @example ActivityCreate.php
  * {@example ActivityCreate.php}
  *
@@ -100,7 +100,7 @@ function &civicrm_activity_create( &$params )
     $activity = CRM_Activity_BAO_Activity::create( $params );
 
     if ( isset( $activity->id ) ) {
-    _civicrm_object_to_array( $activity, $activityArray);
+    _civicrm_object_to_array( $activity, $activityArray[$activity->id]);
     return civicrm_create_success($activityArray,$params);
     }
 
@@ -117,31 +117,26 @@ function &civicrm_activity_create( &$params )
  * @param array $params
  * @return array
  *
- * @todo Erik Hommel 16 dec 2010 check for mandatory fields with utils function civicrm_verify_mandatory
  * @todo Erik Hommel 16 dec 2010 check permissions with utils function civicrm_api_permission_check
  * @todo Erik Hommel 16 dec 2010 check if all DB fields are returned
  * @todo Erik Hommel 16 dec 2010 check if civicrm_create_success is handled correctly with REST (should be fixed in utils function civicrm_create_success)
- * @todo Erik Hommel 16 dec 2010 introduce version as param
+ * @todo - this is a very limited GET not a search
  */
 
 function civicrm_activity_get( $params ) {
   _civicrm_initialize( true );
   try{
 
-
+    civicrm_verify_one_mandatory($params,'',array('contact_id','activity_id'));
+    if (!empty($params['contact_id'])){
+     $activities = _civicrm_activities_get_by_contact($params['contact_id']);
+     return civicrm_create_success($activities,$params);
+    }
     $activityId = CRM_Utils_Array::value( 'activity_id', $params );
-    if ( empty( $activityId ) ) {
-      return civicrm_create_error( "Required parameter not found"  );
-    }
-
-    if ( !is_numeric( $activityId ) ) {
-      return civicrm_create_error( "Invalid activity Id"  );
-    }
-
     $activity = _civicrm_activity_get( $activityId );
 
     if ( $activity ) {
-      return civicrm_create_success( $activity );
+      return civicrm_create_success( $activity ,$params);
     } else {
       return civicrm_create_error(  'Invalid Data'  );
     }
@@ -161,7 +156,7 @@ function civicrm_activity_get( $params ) {
  *
  * @access public
  *
- * @todo Erik Hommel 16 dec 2010 check for mandatory fields with utils function civicrm_verify_mandatory
+ * @todo what are required mandatory fields? id?
  * @todo Erik Hommel 16 dec 2010 check permissions with utils function civicrm_api_permission_check
  * @todo Erik Hommel 16 dec 2010 introduce version as a param
  * @todo Erik Hommel 16 dec 2010 check if civicrm_create_success is handled correctly with REST (should be fixed in utils function civicrm_create_success)
@@ -172,7 +167,7 @@ function civicrm_activity_delete( &$params )
   _civicrm_initialize( );
   try{
 
-
+    civicrm_verify_mandatory($params);
     $errors = array( );
 
     //check for various error and required conditions
@@ -201,23 +196,21 @@ function civicrm_activity_delete( &$params )
  * @todo this should probably be merged into main function
  * @return array (reference)  activity object
  * @access public
- * @example C:\utils\eclipseworkspace\api-civicrm\api\v3\ActivityContact.php
- *
- */
+ *  */
 function _civicrm_activity_get( $activityId, $returnCustom = true ) {
   $dao = new CRM_Activity_BAO_Activity();
   $dao->id = $activityId;
   if( $dao->find( true ) ) {
     $activity = array();
-    _civicrm_object_to_array( $dao, $activity );
-
+    _civicrm_object_to_array( $dao, $activity[$dao->id] );
     //also return custom data if needed.
     if ( $returnCustom && !empty( $activity ) ) {
       $customdata = _civicrm_activity_custom_get( array( 'activity_id'      => $activityId,
                                                               'activity_type_id' => $activity['activity_type_id']  )  );
+     if ( is_array( $customData ) && !empty( $customData ) ) {
       $activity = array_merge( $activity, $customdata );
+      }
     }
-
     return $activity;
   } else {
     return false;
@@ -234,10 +227,7 @@ function _civicrm_activity_get( $activityId, $returnCustom = true ) {
  */
 function _civicrm_activity_check_params ( &$params, $addMode = false )
 {
-  // return error if we do not get any params
-  if ( empty( $params ) ) {
-    return civicrm_create_error(  'Input Parameters empty'  );
-  }
+
 
   $contactIds = array( 'source'   => CRM_Utils_Array::value( 'source_contact_id', $params ),
                          'assignee' => CRM_Utils_Array::value( 'assignee_contact_id', $params ),
@@ -378,6 +368,7 @@ SELECT  count(*)
 /**
  * Convert an email file to an activity
  * @todo EM  change inputs to an array
+ * @todo - can we make this v3 happy - is this documented?
  */
 function civicrm_activity_processemail( $file, $activityTypeID, $result = array( ) ) {
 
@@ -398,6 +389,7 @@ function civicrm_activity_processemail( $file, $activityTypeID, $result = array(
   }
 
   $params = _civicrm_activity_buildmailparams( $result, $activityTypeID );
+  $params['version'] =3;
   return civicrm_activity_create( $params );
 }
 
@@ -474,7 +466,7 @@ function _civicrm_activity_custom_get( $params ) {
   CRM_Core_BAO_CustomGroup::setDefaults( $formattedGroupTree, $defaults );
   if ( !empty( $defaults ) ) {
     foreach ( $defaults as $key => $val ) {
-      $customData[$key] = $val;
+      $customData[  $params['activity_id']][$key] = $val;
     }
   }
 
@@ -493,9 +485,10 @@ function _civicrm_activity_custom_get( $params ) {
  * @todo Erik Hommel 16 dec 2010 check permission with utils function civicrm_api_permission_check
  * @todo Erik Hommel 16 dec 2010 should function civicrm_activity_custom_get be separate? or with params['custom_date'] => 1?
  */
-function &_civicrm_activities_get( $contactID, $type = 'all' )
+function &_civicrm_activities_get_by_contact( $contactID, $type = 'all' )
 {
   $activities = CRM_Activity_BAO_Activity::getContactActivity( $contactID );
+
 
   //get the custom data.
   if ( is_array( $activities ) && !empty( $activities ) ) {
@@ -515,47 +508,4 @@ function &_civicrm_activities_get( $contactID, $type = 'all' )
   return $activities;
 }
 
-/**
- * Retrieve a set of activities, specific to given input params.
- *
- * @param  array  $params (reference ) input parameters.
- *
- * @return array (reference)  array of activities / error message.
- * @access public
- *
- * @todo Erik Hommel 16 dec 2010 test mandatory contactId with utils function civicrm_verify_mandatory
- * @todo Erik Hommel 16 dec 2010 check if all DB fields are retrieved with get
- * @todo Erik Hommel 16 dec 2010 check permission with utils function civicrm_api_permission_check
- * @todo Erik Hommel 16 dec 2010 introduce version parameter
- * @todo Erik Hommel 16 dec 2010 check uniform error messages (inventarization to be done first)
- * @deprecated
- * @todo get rid of me but activity_create should take contact_id as a $param - & mimic this function
- */
-
-function civicrm_activity_contact_get( &$params ) {
-  _civicrm_initialize( );
-
-  $contactId = CRM_Utils_Array::value( 'contact_id', $params );
-  if ( empty( $contactId ) ) {
-    return civicrm_create_error(  "Required parameter not found"  );
-  }
-
-  //check if $contactId is valid
-  if ( !is_numeric( $contactId ) || !preg_match( '/^\d+$/', $contactId ) ) {
-    return civicrm_create_error(  "Invalid contact Id"  );
-  }
-
-  $activities =  & _civicrm_activities_get( $contactId );
-   
-  //show success for empty $activities array
-  if ( empty( $activities ) ) {
-    return civicrm_create_success(  "0 activity record matching input params"  );
-  }
-   
-  if ( $activities ) {
-    return civicrm_create_success( $activities );
-  } else {
-    return civicrm_create_error(  'Invalid Data'  );
-  }
-}
 
