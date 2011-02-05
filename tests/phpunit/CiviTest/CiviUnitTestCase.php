@@ -628,8 +628,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         'event_level'   => 'Payment',
                         'version'				=> $apiversion
                         );
-        
-        $result = civicrm_participant_create( $params );
+       $result = civicrm_api( 'civicrm_participant_create','Participant',$params );
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
             throw new Exception( 'Could not create participant' );
         }
@@ -923,7 +922,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $params = array( 'id' => $paymentID,
                           'version' => $apiversion, ); 
       
-        require_once 'api/api.php';
+
         $result = civicrm_api( 'civicrm_participant_payment_delete','ParticipantPayment',$params );
 
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
@@ -1278,9 +1277,9 @@ function documentMe($params,$result,$function,$filename){
         $smarty->assign('params',$params);   
         $smarty->assign('entity',$entity);         
         $smarty->assign('result',$result);  
-     //  $f = fopen("c:\\utils\\eclipseworkspace\\api-civicrm\\api\\v3\\examples\\$entity$action.php", "w");
-     //   fwrite($f,$smarty->fetch('c:\\utils\\eclipseworkspace\\api-civicrm\\tests\\templates\\documentFunction.tpl'));
-    //   fclose($f); 
+       $f = fopen("c:\\utils\\eclipseworkspace\\api-civicrm\\api\\v3\\examples\\$entity$action.php", "w");
+        fwrite($f,$smarty->fetch('c:\\utils\\eclipseworkspace\\api-civicrm\\tests\\templates\\documentFunction.tpl'));
+       fclose($f); 
     }
   
     /**

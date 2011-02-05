@@ -11,7 +11,7 @@ function activity_type_create_example(){
                   'is_optgroup' 		=> '1',
                   'is_default' 		=> '0',
                   'option_group_id' 		=> '2',
-                  'value' 		=> '32',
+                  'value' 		=> '33',
                   'name' 		=> 'send out letters',
 
   );
@@ -30,9 +30,26 @@ function activity_type_create_expectedresult(){
             array(
                   'is_error' 		=> '0',
                   'version' 		=> '3',
-                  'count' 		=> '16',
-                  'id' 		=> '554',
-                  'values' 		=>                   array(                  'id' => '554',                                    'option_group_id' => '2',                                    'label' => 'send out letters',                                    'value' => '32',                                    'name' => 'send out letters',                                    'grouping' => '',                                    'filter' => '0',                                    'is_default' => '0',                                    'weight' => '2',                                    'description' => '',                                    'is_optgroup' => '1',                                    'is_reserved' => '',                                    'is_active' => '1',                                    'component_id' => '',                                    'domain_id' => '',                                    'visibility_id' => '',                  ),
+                  'count' 		=> '1',
+                  'id' 		=> '561',
+                  'values' 		=>                   array(                  '561' =>  array(
+                                    'id' => '561'
+                  ,                  'option_group_id' => '2'
+                  ,                  'label' => 'send out letters'
+                  ,                  'value' => '33'
+                  ,                  'name' => 'send out letters'
+                  ,                  'grouping' => ''
+                  ,                  'filter' => '0'
+                  ,                  'is_default' => '0'
+                  ,                  'weight' => '2'
+                  ,                  'description' => ''
+                  ,                  'is_optgroup' => '1'
+                  ,                  'is_reserved' => ''
+                  ,                  'is_active' => '1'
+                  ,                  'component_id' => ''
+                  ,                  'domain_id' => ''
+                  ,                  'visibility_id' => ''
+                  ,),                  ),
 
   );
 

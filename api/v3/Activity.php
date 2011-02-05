@@ -121,6 +121,7 @@ function &civicrm_activity_create( &$params )
  * @todo Erik Hommel 16 dec 2010 check if all DB fields are returned
  * @todo Erik Hommel 16 dec 2010 check if civicrm_create_success is handled correctly with REST (should be fixed in utils function civicrm_create_success)
  * @todo - this is a very limited GET not a search
+ * @example ActivityGet.php
  */
 
 function civicrm_activity_get( $params ) {
@@ -160,7 +161,7 @@ function civicrm_activity_get( $params ) {
  * @todo Erik Hommel 16 dec 2010 check permissions with utils function civicrm_api_permission_check
  * @todo Erik Hommel 16 dec 2010 introduce version as a param
  * @todo Erik Hommel 16 dec 2010 check if civicrm_create_success is handled correctly with REST (should be fixed in utils function civicrm_create_success)
- *
+ * @example ActivityDelete.php
  */
 function civicrm_activity_delete( &$params )
 {

@@ -45,11 +45,12 @@ function activity_type_get_expectedresult(){
                   '24' 		=> 'Reassigned Case',
                   '25' 		=> 'Link Cases',
                   '26' 		=> 'Change Case Tags',
-                  '27' 		=> 'Survey',
-                  '28' 		=> 'Canvass',
-                  '29' 		=> 'PhoneBank',
-                  '30' 		=> 'WalkList',
-                  '31' 		=> 'Petition',
+                  '27' 		=> 'Add Client To Case',
+                  '28' 		=> 'Survey',
+                  '29' 		=> 'Canvass',
+                  '30' 		=> 'PhoneBank',
+                  '31' 		=> 'WalkList',
+                  '32' 		=> 'Petition',
 
   );
 

@@ -55,6 +55,8 @@ require_once 'api/v3/utils.php';
  * @todo Erik Hommel 16 dec 2010 Check if get function returns all DB fields
  * @todo Erik Hommel 16 dec 2010 Check permission with utils function civicrm_api_permission_check
  * @todo Erik Hommel 16 dec 2010 Introduce version as param
+ * 
+ * @example ActivityTypeGet.php
  */
 function civicrm_activity_type_get( ) {
   _civicrm_initialize(true);
@@ -78,9 +80,8 @@ function civicrm_activity_type_get( ) {
  * @access public
  *
  * @todo Erik Hommel 16 dec 2010 Check permission with utils function civicrm_api_permission_check
- * @todo Erik Hommel 16 dec 2010 Introduce version as param
  * @todo Erik Hommel 16 dec 2010 Check if function processes update according to standards
- * @todo Erik Hommel 16 dec 2010 Use utils function civicrm_verify_mandatory to check required fields
+ * @example ActivityTypeCreate.php
  */
  
 function civicrm_activity_type_create( &$params ) {
@@ -99,7 +100,7 @@ function civicrm_activity_type_create( &$params ) {
     require_once 'CRM/Core/OptionValue.php';  
     $activityObject = CRM_Core_OptionValue::addOptionValue( $params, $groupParams, $action, $optionValueID );
     $activityType = array();
-    _civicrm_object_to_array( $activityObject, $activityType );
+    _civicrm_object_to_array( $activityObject, $activityType[ $activityObject->id] );
     return civicrm_create_success($activityType,$params);
     } catch (PEAR_Exception $e) {
       return civicrm_create_error( $e->getMessage() );
@@ -116,8 +117,8 @@ function civicrm_activity_type_create( &$params ) {
  * @access public
  *
  * @todo Erik Hommel 16 dec 2010 Check permission with utils function civicrm_api_permission_check
- * @todo Erik Hommel 16 dec 2010 Introduce version as param
- * @todo Erik Hommel 16 dec 2010 Use utils function civicrm_verify_mandatory to check required fields
+ * 
+ * @example ActivityTypeDeletephp
  */
 function civicrm_activity_type_delete( $params ) {
     _civicrm_initialize(true);
