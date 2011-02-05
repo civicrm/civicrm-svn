@@ -113,12 +113,14 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
             'title'     => 'Edited Test Profile',
             'help_post' => 'Profile Pro help text.',
             'is_active' => 1,
+            'id'				=> $this->_ufGroupId,
             'version'					 => $this->_apiversion,
         );
 
-        $updatedGroup = civicrm_uf_group_create($params, $this->_ufGroupId);
+        $result = civicrm_uf_group_create($params);
+                unset($params['version']);
         foreach ($params as $key => $value) {
-            $this->assertEquals($updatedGroup[$key], $params[$key]);
+            $this->assertEquals($result['values'][$result['id']][$key], $value);
         }
     }
 
@@ -156,14 +158,17 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
             'title'                => 'Test Group',
             'version'					 => $this->_apiversion,
         );
-        $group = civicrm_uf_group_create($params);
-        $this->documentMe($params,$group,__FUNCTION__,__FILE__); 
+        $result = civicrm_uf_group_create($params);
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+
+        $this->assertEquals($result['values'][$result['id']]['add_to_group_id'],         $params['add_contact_to_group'],'in line ' . __LINE__);
+        $this->assertEquals($result['values'][$result['id']]['limit_listings_group_id'], $params['group'],'in line ' . __LINE__);
+        unset($params['version']);
         foreach ($params as $key => $value) {
             if ($key == 'add_contact_to_group' or $key == 'group') continue;
-            $this->assertEquals($group[$key], $params[$key]);
+            $this->assertEquals($result['values'][$result['id']][$key], $params[$key]);
         }
-        $this->assertEquals($group['add_to_group_id'],         $params['add_contact_to_group']);
-        $this->assertEquals($group['limit_listings_group_id'], $params['group']);
+    
     }
 
     function testUFGroupCreateWithEmptyParams()
@@ -183,6 +188,7 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
     function testUFGroupUpdate()
     {
         $params = array(
+            'id'									=>  $this->_ufGroupId,
             'add_captcha'          => 1,
             'add_contact_to_group' => 2,
             'cancel_URL'           => 'http://example.org/cancel',
@@ -205,13 +211,15 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
             'title'                => 'Test Group',
             'version'					 => $this->_apiversion,
         );
-        $group = civicrm_uf_group_create($params, $this->_ufGroupId);
+        $result = civicrm_uf_group_create($params);
+        unset($params['version']);
         foreach ($params as $key => $value) {
             if ($key == 'add_contact_to_group' or $key == 'group') continue;
-            $this->assertEquals($group[$key], $params[$key]);
+            $this->assertEquals($result['values'][$result['id']][$key], $params[$key],$key . " doesn't match  " . $value);
         }
-        $this->assertEquals($group['add_to_group_id'],         $params['add_contact_to_group']);
-        $this->assertEquals($group['limit_listings_group_id'], $params['group']);
+
+        $this->assertEquals($result['values'][$this->_ufGroupId]['add_to_group_id'], $params['add_contact_to_group'],'in line ' . __LINE__);
+        $this->assertEquals($result['values'][$result['id']]['limit_listings_group_id'], $params['group'],'in line '. __LINE__);
     }
 
     function testUFGroupUpdateWithEmptyParams()

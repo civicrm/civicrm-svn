@@ -57,7 +57,7 @@ function civicrm_uf_group_create($params)
 {
     _civicrm_initialize(true );
     try{
-    civicrm_verify_mandatory($params,'CRM_Core_DAO_UFGroup',array('id'));        
+    civicrm_verify_mandatory($params,'CRM_Core_DAO_UFGroup');        
     
     $ids = array();
     $ids['ufgroup'] = $params['id'];
@@ -65,7 +65,7 @@ function civicrm_uf_group_create($params)
     require_once 'CRM/Core/BAO/UFGroup.php';
     
     $ufGroup = CRM_Core_BAO_UFGroup::add( $params,$ids );
-    _civicrm_object_to_array( $ufGroup, $ufGroupArray[$params['id']]);
+    _civicrm_object_to_array( $ufGroup, $ufGroupArray[$ufGroup->id]);
     
     return civicrm_create_success($ufGroupArray,$params);
     } catch (PEAR_Exception $e) {
