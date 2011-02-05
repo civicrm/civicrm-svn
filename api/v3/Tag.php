@@ -53,7 +53,7 @@ function civicrm_tag_getfields( &$params ) {
  *
  * Allowed @params array keys are:
  * {@schema Core/Tag.xml}
-
+ * {@example TagCreate.php}
  * @return array of newly created tag property values.
  * @access public
  */
@@ -79,8 +79,8 @@ function civicrm_tag_create( &$params )
         return civicrm_create_error( "Tag is not created" );
     } else {
         $values = array( );
-        _civicrm_object_to_array($tagBAO, $values);
-        return civicrm_create_success($values);
+        _civicrm_object_to_array($tagBAO, $values[$tagBAO->id]);
+        return civicrm_create_success($values,$params);
     }
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );
@@ -94,6 +94,7 @@ function civicrm_tag_create( &$params )
  *
  * @param  array  $params
  * 
+ * {@example TagDelete.php 0}
  * @return boolean | error  true if successfull, error otherwise
  * @access public
  */
@@ -118,6 +119,7 @@ function civicrm_tag_delete( &$params )
  * This api is used for finding an existing tag.
  * Either id or name of tag are required parameters for this api.
  * 
+ * {@example TagGet.php 0}
  * @param  array $params  an associative array of name/value pairs.
  *
  * @return  array details of found tags else error
@@ -128,7 +130,7 @@ function civicrm_tag_get($params)
 {   
    try {
   _civicrm_initialize( true );
-
+    civicrm_verify_mandatory($params);
     require_once 'CRM/Core/BAO/Tag.php';
     $tagBAO = new CRM_Core_BAO_Tag();
     $fields = array_keys($tagBAO->fields());
@@ -142,11 +144,12 @@ function civicrm_tag_get($params)
     if ( ! $tagBAO->find(true) ) {
         return civicrm_create_success(array());
     }
-    _civicrm_object_to_array($tagBAO, $tag[]);
+
+    $tag = array();
     while ($tagBAO->fetch()) {
-      _civicrm_object_to_array($tagBAO, $tag[]);
+      _civicrm_object_to_array($tagBAO, $tag[$tagBAO->id]);
     }
-    return civicrm_create_success($tag);
+    return civicrm_create_success($tag,$params);
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );
   } catch (Exception $e) {

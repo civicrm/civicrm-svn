@@ -52,7 +52,7 @@ class api_v3_TagTest extends CiviUnitTestCase
         $params ='is_string';
         $result = civicrm_tag_get($params);
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
-        $this->assertEquals( 'Input parameters is not an array', $result['error_message'], 'In line ' . __LINE__ );
+        $this->assertEquals( 'Input variable `params` is not an array', $result['error_message'], 'In line ' . __LINE__ );
     }
 
     /**
@@ -63,7 +63,7 @@ class api_v3_TagTest extends CiviUnitTestCase
         $params = array( );
         $result = civicrm_tag_get( $params );
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
-        $this->assertEquals( 'Mandatory param missing - one required of: id, name', $result['error_message'], 'In line ' . __LINE__ );
+        $this->assertEquals( 'Mandatory key(s) missing from params array: version', $result['error_message'], 'In line ' . __LINE__ );
     }
 
     /** 
@@ -73,8 +73,8 @@ class api_v3_TagTest extends CiviUnitTestCase
     {
         $params = array( 'name' => 'Wrong Tag Name' , 'version' => $this->_apiversion );
         $result = civicrm_tag_get($params);
-        $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
-        $this->assertEquals( 'Exact match not found.', $result['error_message'], 'In line ' . __LINE__ );
+        $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
+        $this->assertEquals( 0, $result['count'], 'In line ' . __LINE__ );
     }
     
     /**
@@ -91,8 +91,8 @@ class api_v3_TagTest extends CiviUnitTestCase
         $result = civicrm_tag_get($params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
-        $this->assertEquals( $tag['description'], $result['description'], 'In line ' . __LINE__ );
-        $this->assertEquals( $tag['name'], $result['name'], 'In line ' . __LINE__ ); 
+        $this->assertEquals( $tag['description'], $result['values'][$tag['id']]['description'], 'In line ' . __LINE__ );
+        $this->assertEquals( $tag['name'], $result['values'][$tag['id']]['name'], 'In line ' . __LINE__ ); 
     }  
     
 
@@ -127,9 +127,10 @@ class api_v3_TagTest extends CiviUnitTestCase
     {
         $params = array( 'tag'         => 10,
                          'name'        => 'New Tag23',
-                         'description' => 'This is description for New Tag 02' );
+                         'description' => 'This is description for New Tag 02',
+                         'version'		  => $this->_apiversion );
         $result = civicrm_tag_create($params);
-        $this->assertEquals( 10, $result['tag_id'], 'In line ' . __LINE__ );
+        $this->assertEquals( 10, $result['id'], 'In line ' . __LINE__ );
        
     }  
 
@@ -145,7 +146,7 @@ class api_v3_TagTest extends CiviUnitTestCase
         $result = civicrm_tag_create($params); 
                 $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__);
-        $this->assertNotNull( $result['tag_id'], 'In line ' . __LINE__ );
+        $this->assertNotNull( $result['id'], 'In line ' . __LINE__ );
     }
 
 ///////////////// civicrm_tag_delete methods

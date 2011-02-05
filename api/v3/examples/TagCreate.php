@@ -24,9 +24,18 @@ function tag_create_expectedresult(){
             array(
                   'is_error' 		=> '0',
                   'version' 		=> '3',
-                  'count' 		=> '8',
+                  'count' 		=> '1',
                   'id' 		=> '6',
-                  'values' 		=>                   array(                  'id' => '6',                                    'name' => 'New Tag3',                                    'description' => 'This is description for New Tag 02',                                    'parent_id' => '',                                    'is_selectable' => '',                                    'is_reserved' => '',                                    'is_tagset' => '',                                    'used_for' => 'civicrm_contact',                  ),
+                  'values' 		=>                   array(                  '6' =>  array(
+                                    'id' => '6'
+                  ,                  'name' => 'New Tag3'
+                  ,                  'description' => 'This is description for New Tag 02'
+                  ,                  'parent_id' => ''
+                  ,                  'is_selectable' => ''
+                  ,                  'is_reserved' => ''
+                  ,                  'is_tagset' => ''
+                  ,                  'used_for' => 'civicrm_contact'
+                  ,),                  ),
 
   );
 
