@@ -78,12 +78,10 @@ function civicrm_event_create( &$params )
       return civicrm_create_error( "Event is not created" );
     } else {
       $event = array();
-      _civicrm_object_to_array($eventBAO, $event);
-      $values = array( );
-      $values['event_id'] = $event['id'];
+      _civicrm_object_to_array($eventBAO, $event[$eventBAO->id]);
     }
 
-    return civicrm_create_success($values,$params);
+    return civicrm_create_success($event,$params);
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );
   } catch (Exception $e) {

@@ -72,7 +72,7 @@ class api_v3_EventTest extends CiviUnitTestCase
                         );
 
         $this->_event   = civicrm_event_create($params);
-        $this->_eventId = $this->_event['values']['event_id'];
+        $this->_eventId = $this->_event['id'];
     }
 
     function tearDown() 
@@ -91,7 +91,7 @@ class api_v3_EventTest extends CiviUnitTestCase
         $result = civicrm_event_get( $params );
 
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Input parameters is not an array.' );
+        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array' );
     }
 
 
@@ -101,7 +101,7 @@ class api_v3_EventTest extends CiviUnitTestCase
         $result = civicrm_event_get( $params );
 
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Params cannot be empty.' );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: version' );
     }
     
     function testGetEventById( )
@@ -109,7 +109,7 @@ class api_v3_EventTest extends CiviUnitTestCase
         $params = array( 'id' => $this->_event['event_id'],
                          'version'				=>$this->_apiversion, );
         $result = civicrm_event_get( $params );
-        $this->assertEquals( $result['event_title'], 'Annual CiviCRM meet' );
+        $this->assertEquals( $result['values'][$this->_eventId]['event_title'], 'Annual CiviCRM meet' );
     }
     
     function testGetEventByEventTitle( )
@@ -120,7 +120,7 @@ class api_v3_EventTest extends CiviUnitTestCase
         
         $result = civicrm_event_get( $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
-        $this->assertEquals( $result['id'], $this->_event['event_id'] );
+        $this->assertEquals( $result['id'], $this->_eventId );
     }
 
 ///////////////// civicrm_event_create methods
@@ -130,7 +130,7 @@ class api_v3_EventTest extends CiviUnitTestCase
         $params = null;
         $result = civicrm_event_create( $params );
         $this->assertEquals( 1, $result['is_error'] );
-        $this->assertEquals( 'Input parameters is not an array', $result['error_message'], 'In line ' . __LINE__ );
+        $this->assertEquals( 'Input variable `params` is not an array', $result['error_message'], 'In line ' . __LINE__ );
     }    
     
     function testCreateEventEmptyParams( )
@@ -138,7 +138,7 @@ class api_v3_EventTest extends CiviUnitTestCase
         $params = array( );
         $result = civicrm_event_create( $params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( 'Mandatory param missing: start_date', $result['error_message'], 'In line ' . __LINE__ );
+        $this->assertEquals( 'Mandatory key(s) missing from params array: start_date, event_type_id, title, version', $result['error_message'], 'In line ' . __LINE__ );
     }
     
     function testCreateEventParamsWithoutTitle( )
@@ -146,7 +146,7 @@ class api_v3_EventTest extends CiviUnitTestCase
         unset($this->_params['title']);
         $result = civicrm_event_create( $this->_params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( 'Mandatory param missing: title', $result['error_message'], 'In line ' . __LINE__ );
+        $this->assertEquals( 'Mandatory key(s) missing from params array: title', $result['error_message'], 'In line ' . __LINE__ );
     }
     
     function testCreateEventParamsWithoutEventTypeId( )
@@ -154,7 +154,7 @@ class api_v3_EventTest extends CiviUnitTestCase
         unset($this->_params['event_type_id']);
         $result = civicrm_event_create( $this->_params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( 'Mandatory param missing: event_type_id', $result['error_message'], 'In line ' . __LINE__ );
+        $this->assertEquals( 'Mandatory key(s) missing from params array: event_type_id', $result['error_message'], 'In line ' . __LINE__ );
     }
     
     function testCreateEventParamsWithoutStartDate( )
@@ -162,7 +162,7 @@ class api_v3_EventTest extends CiviUnitTestCase
         unset($this->_params['start_date']);
         $result = civicrm_event_create( $this->_params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( 'Mandatory param missing: start_date', $result['error_message'], 'In line ' . __LINE__ );
+        $this->assertEquals( 'Mandatory key(s) missing from params array: start_date', $result['error_message'], 'In line ' . __LINE__ );
     }
     
     function testCreateEvent( )
@@ -170,7 +170,7 @@ class api_v3_EventTest extends CiviUnitTestCase
         $result = civicrm_event_create( $this->_params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( $result['is_error'], 0 );
-        $this->assertArrayHasKey( 'event_id', $result, 'In line ' . __LINE__  );
+        $this->assertArrayHasKey( 'id', $result['values'][$result['id']], 'In line ' . __LINE__  );
     }
 
 ///////////////// civicrm_event_delete methods
@@ -181,7 +181,7 @@ class api_v3_EventTest extends CiviUnitTestCase
         $result =& civicrm_event_delete($params);
 
         $this->assertEquals($result['is_error'], 1);        
-        $this->assertEquals( $result['error_message'], 'Invalid value for eventID');
+        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array');
     }
 
     function testDeleteEmptyParams( )
@@ -221,7 +221,7 @@ class api_v3_EventTest extends CiviUnitTestCase
         $result =& civicrm_event_get($params);
 
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Input parameters is not an array.', 'In line ' . __LINE__ );
+        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array', 'In line ' . __LINE__ );
     }
 
     /**
@@ -231,14 +231,13 @@ class api_v3_EventTest extends CiviUnitTestCase
      {
          $event  = civicrm_event_create( $this->_params );
 
-         $params = array( );
-         $result =& civicrm_event_get($params);
-         $res    = $result[$event['event_id']];
-
-         $this->assertEquals( $res['id'], $event['event_id'], 'In line ' . __LINE__ );
-         $this->assertEquals( $res['title'], $this->_params['title'] , 'In line ' . __LINE__ );
+         $getparams = array('version' => $this->_apiversion,
+                         'sequential' => 1, );
+         $result =& civicrm_event_get($getparams);
+         $res    = $result['values'][$result['id']];
+         $this->assertEquals($result['count'],2, 'In line ' . __LINE__);
+         $this->assertArrayKeyExists('title', $res, 'In line ' . __LINE__ );
          $this->assertEquals( $res['event_type_id'], $this->_params['event_type_id'] , 'In line ' . __LINE__ );
-         $this->assertEquals( $res['is_online_registration'], $this->_params['is_online_registration'] , 'In line ' . __LINE__ );
         
      }
 
@@ -256,8 +255,8 @@ class api_v3_EventTest extends CiviUnitTestCase
                     );
           $result =& civicrm_event_get($params);
 
-          $this->assertEquals( $result[$this->_eventId]['id'], $this->_eventId , 'In line ' . __LINE__ );
-          $this->assertEquals( $result[$this->_eventId]['title'], 'Annual CiviCRM meet' , 'In line ' . __LINE__ );
+          $this->assertEquals( $result['values'][$this->_eventId]['id'], $this->_eventId , 'In line ' . __LINE__ );
+          $this->assertEquals( $result['values'][$this->_eventId]['title'], 'Annual CiviCRM meet' , 'In line ' . __LINE__ );
      }
 
     /**
@@ -292,7 +291,8 @@ class api_v3_EventTest extends CiviUnitTestCase
     function testEventCreationPermissions()
     {
         require_once 'CRM/Core/Permission/UnitTests.php';
-        $params = array('event_type_id' => 1, 'start_date' => '2010-10-03', 'title' => 'le cake is a tie', 'check_permissions' => true);
+        $params = array('event_type_id' => 1, 'start_date' => '2010-10-03', 'title' => 'le cake is a tie', 'check_permissions' => true,
+                        'version' => $this->_apiversion);
 
         CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM');
         $result = civicrm_event_create($params);
