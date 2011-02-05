@@ -48,16 +48,8 @@ require_once 'CRM/Core/DAO/OptionGroup.php';
  * Create a new Activity.
  *
  * Creates a new Activity record and returns the newly created
- * activity object (including the contact_id property). Minimum
- * required data values for the various contact_type are:
+ * activity object (including the contact_id property). 
  *
- * Properties which have administratively assigned sets of values
- * If an unrecognized value is passed, an error
- * will be returned.
- *
- * Modules may invoke crm_get_contact_values($contactID) to
- * retrieve a list of currently available values for a given
- * property.
  * @param array  $params       Associative array of property name/value
  *                             pairs to insert in new contact.
  * @param string $activity_type Which class of contact is being created.
@@ -70,8 +62,8 @@ require_once 'CRM/Core/DAO/OptionGroup.php';
  * @todo Erik Hommel 16 dec 2010 check for mandatory fields with utils function civicrm_verify_mandatory
  * @todo Erik Hommel 16 dec 2010 check permissions with utils function civicrm_api_permission_check
  * @todo Eileen 2 Feb - I am not sure custom data stuff is working - test doesn't seem to really test for it
- * @example ActivityCreate.php
- * {@example ActivityCreate.php}
+ * 
+ * {@example ActivityCreate.php 0} 
  *
  */
 function &civicrm_activity_create( &$params )
@@ -121,7 +113,8 @@ function &civicrm_activity_create( &$params )
  * @todo Erik Hommel 16 dec 2010 check if all DB fields are returned
  * @todo Erik Hommel 16 dec 2010 check if civicrm_create_success is handled correctly with REST (should be fixed in utils function civicrm_create_success)
  * @todo - this is a very limited GET not a search
- * @example ActivityGet.php
+ * 
+ * {@example ActivityGet.php 0}
  */
 
 function civicrm_activity_get( $params ) {
@@ -159,9 +152,8 @@ function civicrm_activity_get( $params ) {
  *
  * @todo what are required mandatory fields? id?
  * @todo Erik Hommel 16 dec 2010 check permissions with utils function civicrm_api_permission_check
- * @todo Erik Hommel 16 dec 2010 introduce version as a param
  * @todo Erik Hommel 16 dec 2010 check if civicrm_create_success is handled correctly with REST (should be fixed in utils function civicrm_create_success)
- * @example ActivityDelete.php
+ * {@example ActivityDelete.php 0}
  */
 function civicrm_activity_delete( &$params )
 {

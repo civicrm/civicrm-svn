@@ -19,8 +19,7 @@ function pledge_get_expectedresult(){
 
   $expectedResult = 
             array(
-                  'is_error' 		=> '1',
-                  'error_message' 		=> 'DB Error: no such field',
+                  '1' 		=>                   array(                  'contact_id' => '1',                                    'contact_type' => 'Individual',                                    'sort_name' => 'Anderson, Anthony',                                    'display_name' => 'Mr. Anthony Anderson II',                                    'pledge_id' => '1',                                    'pledge_amount' => '100.00',                                    'pledge_create_date' => '2011-02-05 00:00:00',                                    'pledge_status' => 'Pending',                                    'pledge_next_pay_date' => '2011-02-07 00:00:00',                                    'pledge_next_pay_amount' => '20.00',                                    'pledge_frequency_interval' => '1',                                    'pledge_frequency_unit' => 'month',                                    'pledge_is_test' => '0',                  ),
 
   );
 

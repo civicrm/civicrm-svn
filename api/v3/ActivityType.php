@@ -54,13 +54,13 @@ require_once 'api/v3/utils.php';
  *
  * @todo Erik Hommel 16 dec 2010 Check if get function returns all DB fields
  * @todo Erik Hommel 16 dec 2010 Check permission with utils function civicrm_api_permission_check
- * @todo Erik Hommel 16 dec 2010 Introduce version as param
  * 
  * @example ActivityTypeGet.php
  */
 function civicrm_activity_type_get( ) {
   _civicrm_initialize(true);
     try{
+      civicrm_verify_mandatory($params);
     require_once 'CRM/Core/OptionGroup.php';
     $activityTypes = CRM_Core_OptionGroup::values( 'activity_type' );
     return $activityTypes;
@@ -80,9 +80,10 @@ function civicrm_activity_type_get( ) {
  * @access public
  *
  *{@schema Activity/ActivityType.xml}
+ *
+ * {@example ActivityTypeCreate.php 0}
  * @todo Erik Hommel 16 dec 2010 Check permission with utils function civicrm_api_permission_check
  * @todo Erik Hommel 16 dec 2010 Check if function processes update according to standards
- * @example ActivityTypeCreate.php
  */
  
 function civicrm_activity_type_create( &$params ) {
@@ -119,7 +120,7 @@ function civicrm_activity_type_create( &$params ) {
  *
  * @todo Erik Hommel 16 dec 2010 Check permission with utils function civicrm_api_permission_check
  * 
- * @example ActivityTypeDeletephp
+ * {@example ActivityTypeDelete.php 0}
  */
 function civicrm_activity_type_delete( $params ) {
     _civicrm_initialize(true);

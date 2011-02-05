@@ -4,7 +4,6 @@ function note_delete_example(){
     $params = array(
     
                   'id' 		=> '1',
-                  'entity_id' 		=> '',
                   'version' 		=> '3',
 
   );

@@ -51,7 +51,6 @@ require_once 'CRM/Utils/Array.php';
  *
  * @param  $params array  array holding membership_id - Id of the contact membership to be deleted
  * @todo should this really return null if successful - should be array
- * @todo should function be in here or membershp contact? This whole file is probably deprecated
  * @return null if successfull, object of CRM_Core_Error otherwise
  * @access public
  */

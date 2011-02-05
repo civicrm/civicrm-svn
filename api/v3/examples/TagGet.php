@@ -4,7 +4,7 @@ function tag_get_example(){
     $params = array(
     
                   'id' 		=> '6',
-                  'name' 		=> 'New Tag32429',
+                  'name' 		=> 'New Tag326644',
                   'version' 		=> '3',
 
   );
@@ -27,8 +27,8 @@ function tag_get_expectedresult(){
                   'id' 		=> '0',
                   'values' 		=>                   array(                  '0' =>  array(
                                     'id' => '6'
-                  ,                  'name' => 'New Tag32429'
-                  ,                  'description' => 'This is description for New Tag 20594'
+                  ,                  'name' => 'New Tag326644'
+                  ,                  'description' => 'This is description for New Tag 6333'
                   ,                  'parent_id' => ''
                   ,                  'is_selectable' => '1'
                   ,                  'is_reserved' => '0'

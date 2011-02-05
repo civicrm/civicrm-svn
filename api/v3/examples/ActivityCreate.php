@@ -1,4 +1,4 @@
-<?php 
+
 
 function activity_create_example(){
     $params = array(

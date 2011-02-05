@@ -6,8 +6,8 @@ function relationship_create_example(){
                   'contact_id_a' 		=> '1',
                   'contact_id_b' 		=> '2',
                   'relationship_type_id' 		=> '10',
-                  'start_date' 		=> 'Array',
-                  'end_date' 		=> 'Array',
+                  'start_date' 		=> '2010-10-30',
+                  'end_date' 		=> '2010-12-30',
                   'is_active' 		=> '1',
                   'note' 		=> 'note',
                   'version' 		=> '3',
@@ -26,8 +26,11 @@ function relationship_create_expectedresult(){
 
   $expectedResult = 
             array(
-                  'is_error' 		=> '1',
-                  'error_message' 		=> 'strtotime() expects parameter 1 to be string, array given',
+                  'is_error' 		=> '0',
+                  'version' 		=> '3',
+                  'count' 		=> '1',
+                  'id' 		=> 'id',
+                  'values' 		=>                   array(                  'id' => '1',                  ),
 
   );
 

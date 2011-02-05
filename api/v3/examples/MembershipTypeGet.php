@@ -45,6 +45,8 @@ function membership_type_get_expectedresult(){
                   ,                  'renewal_reminder_day' => ''
                   ,                  'receipt_text_signup' => ''
                   ,                  'receipt_text_renewal' => ''
+                  ,                  'autorenewal_msg_id' => ''
+                  ,                  'auto_renew' => '0'
                   ,                  'is_active' => '1'
                   ,),                  ),
 

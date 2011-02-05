@@ -53,7 +53,8 @@ function civicrm_relationship_getfields( &$params ) {
  * Add or update a relationship
  *
  * @param  array   $params   (reference ) input parameters
- *
+ * 
+ * {@example RelationshipTypeCreate.php 0}
  * @return array (reference) id of created or updated record
  * @static void
  * @access public
@@ -125,17 +126,8 @@ function civicrm_relationship_create( &$params ) {
 function civicrm_relationship_delete( $params ) {
     _civicrm_initialize(true );
   try{   
-    if ( empty( $params ) ) { 
-        return civicrm_create_error( 'No input parameter present' );
-    }
+    civicrm_verify_mandatory($params,null,array('id'));
 
-    if ( ! is_array( $params ) ) {
-        return civicrm_create_error(  'Input parameter is not an array'  );
-    }
-        
-    if( ! CRM_Utils_Array::value( 'id',$params )  ) {
-        return civicrm_create_error( 'Missing required parameter' );
-    }
     require_once 'CRM/Utils/Rule.php';
     if( $params['id'] != null && ! CRM_Utils_Rule::integer( $params['id'] ) ) {
         return civicrm_create_error( 'Invalid value for relationship ID' );
@@ -219,14 +211,12 @@ function civicrm_relationship_update( $params ) {
  *
  * @access  public
  */
-function civicrm_relationship_get( $contact_a, $contact_b = null, $relationshipTypes = null, $sort = null ) 
+function civicrm_relationship_get($params) 
 {
     _civicrm_initialize(true );
   try{
-    if ( ! is_array( $contact_a ) ) {
-        return civicrm_create_error(  'Input parameter is not an array'  );
-    }
-    
+    civicrm_verify_mandatory($params,null);
+   
     if ( !isset( $contact_a['contact_id'] ) ) {
         return civicrm_create_error(  'Could not find contact_id in input parameters.'  );
     }

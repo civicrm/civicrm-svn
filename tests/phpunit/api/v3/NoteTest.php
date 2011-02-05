@@ -55,6 +55,7 @@ class api_v3_NoteTest extends CiviUnitTestCase
     
     function setUp() 
     {
+        $this->_noteID;
         $this->_apiversion = 3;
         //  Connect to the database
         parent::setUp();
@@ -72,7 +73,7 @@ class api_v3_NoteTest extends CiviUnitTestCase
                                );
 
         $this->_note      = $this->noteCreate( $this->_contactID, $this->_apiversion );
-        $this->_noteID    = $this->_note['values']['id'];
+        $this->_noteID    = $this->_note['id'];
     }
 
     function tearDown( ) 
@@ -102,7 +103,7 @@ class api_v3_NoteTest extends CiviUnitTestCase
         $params = array( );
         $note   =& civicrm_note_get( $params );
         $this->assertEquals( $note['is_error'], 1 );
-        $this->assertEquals( $note['error_message'], 'Mandatory key(s) missing from params array: entity_id, entity_table, version' );
+        $this->assertEquals( $note['error_message'], 'Mandatory key(s) missing from params array: entity_id, version' );
     } 
 
     /**
@@ -123,14 +124,15 @@ class api_v3_NoteTest extends CiviUnitTestCase
      */
     function testGet( )
     { 
-        $entityId = $this->_note['entity_id'];
+        $entityId = $this->_noteID;
         $params   = array(
                           'entity_table'  => 'civicrm_contact',
                           'entity_id'     => $entityId,
                           'version'			 =>$this->_apiversion,
                           ); 
-        $result = civicrm_note_get( $params );
-        $this->assertEquals( $result['is_error'], 0 );
+        $result = civicrm_note_get($params);
+        $this->documentMe( $this->_params,$result,__FUNCTION__,__FILE__); 
+        $this->assertEquals( $result['is_error'], 0,'in line ' . __LINE__ );
     }
 
 
@@ -181,9 +183,9 @@ class api_v3_NoteTest extends CiviUnitTestCase
  
         $result = civicrm_note_create( $this->_params );
         $this->documentMe( $this->_params,$result,__FUNCTION__,__FILE__); 
-        $this->assertEquals( $result['note'], 'Hello!!! m testing Note');
-        $this->assertArrayHasKey( 'entity_id', $result ); 
-        $this->assertEquals( $result['is_error'], 0 );
+        $this->assertEquals( $result['values'][$result['id']]['note'], 'Hello!!! m testing Note','in line ' . __LINE__);
+        $this->assertArrayHasKey( 'id', $result,'in line ' . __LINE__ ); 
+        $this->assertEquals( $result['is_error'], 0,'in line ' . __LINE__ );
         $note = array('id' => $result['id'],
                       'version' => $this->_apiversion );
         $this->noteDelete( $note,$this->_apiversion );
@@ -243,15 +245,16 @@ class api_v3_NoteTest extends CiviUnitTestCase
                         'entity_id'    => $this->_contactID,
                         'entity_table' => 'civicrm_contribution',
                         'note'         => 'Note1',
-                        'subject'      => 'Hello World'
+                        'subject'      => 'Hello World',
+                        'version'			=> $this->_apiversion,
                         );
         
         //Update Note
         $note =& civicrm_note_create( $params );
-        
-        $this->assertEquals( $note['id'],$this->_noteID );
-        $this->assertEquals( $note['entity_id'],$this->_contactID );
-        $this->assertEquals( $note['entity_table'],'civicrm_contribution' );
+        print_r($note);
+        $this->assertEquals( $note['id'],$this->_noteID,'in line ' . __LINE__ );
+        $this->assertEquals( $note['entity_id'],$this->_contactID,'in line ' . __LINE__ );
+        $this->assertEquals( $note['entity_table'],'civicrm_contribution','in line ' . __LINE__ );
     }
 
 ///////////////// civicrm_note_delete methods
@@ -299,14 +302,13 @@ class api_v3_NoteTest extends CiviUnitTestCase
     function testDelete( )
     {
         $params = array( 'id'        => $this->_noteID,
-                         'entity_id' => $this->_note['entity_id'],
                          'version'   => $this->_apiversion,
                          ); 
        
         $result  =& civicrm_note_delete( $params );  
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);        
-        $this->assertEquals( $result['is_error'], 0 );
-        $this->assertEquals( $result['result'], 1 );
+        $this->assertEquals( $result['is_error'], 0,'in line ' . __LINE__ );
+        $this->assertEquals( $result['result'], 1 ,'in line ' . __LINE__);
     }
     
 
