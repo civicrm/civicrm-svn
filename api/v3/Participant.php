@@ -233,27 +233,25 @@ function &civicrm_participant_update(&$params)
  */
 function &civicrm_participant_delete( &$params )
 {
-  _civicrm_initialize();
+  _civicrm_initialize(true);
+  try{
+    civicrm_verify_mandatory($params,null,array('id'));
 
-  if ( !is_array( $params ) ) {
-    $error = civicrm_create_error( 'Params is not an array' );
-    return $error;
-  }
+    require_once 'CRM/Event/BAO/Participant.php';
+    $participant = new CRM_Event_BAO_Participant();
+    $result = $participant->deleteParticipant( $params['id'] );
 
-  if ( !isset($params['id'])) {
-    $error = civicrm_create_error( 'Required parameter missing' );
-    return $error;
+    if ( $result ) {
+      $values = civicrm_create_success( );
+    } else {
+      $values = civicrm_create_error('Error while deleting participant');
+    }
+    return $values;
+  } catch (PEAR_Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
   }
-  require_once 'CRM/Event/BAO/Participant.php';
-  $participant = new CRM_Event_BAO_Participant();
-  $result = $participant->deleteParticipant( $params['id'] );
-
-  if ( $result ) {
-    $values = civicrm_create_success( );
-  } else {
-    $values = civicrm_create_error('Error while deleting participant');
-  }
-  return $values;
 }
 
 

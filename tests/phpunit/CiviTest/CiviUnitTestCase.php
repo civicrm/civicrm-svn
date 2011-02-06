@@ -471,7 +471,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                          // FIXME: I know it's 1, cause it was loaded directly to the db.
                          // FIXME: when we load all the data, we'll need to address this to
                          // FIXME: avoid hunting numbers around.
-                         'contribution_type_id' => 1,
+                         'contribution_type_id' =>$contributionTypeID,
                          'is_active'            => 1 ,
                          'version'							=> $version, 
                         'sequential'						=> 1 ,
@@ -906,7 +906,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         );
       $participantPayment = civicrm_api( 'civicrm_participant_payment_create','ParticipantPayment',$params );        
 
-        
+        print_r($participantPayment);
         if ( CRM_Utils_Array::value( 'is_error', $participantPayment ) ||
              ! CRM_Utils_Array::value( 'id', $participantPayment ) ) {
             throw new Exception( 'Could not create participant payment' );

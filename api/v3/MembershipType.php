@@ -53,17 +53,13 @@ function civicrm_membership_type_create(&$params)
 {
   _civicrm_initialize();
   try{
-    $values = $params;
-    if(!empty($params['id'])){
-     $getparams = array('id' => $params['id'],'version' => 3);
-     $result = civicrm_membership_type_get($getparams);
-     $values = array_merge($result['values'][$params['id']],$params);  
-    }
+    
+    $values = civicrm_update_get_existing($params, __FUNCTION__);
     civicrm_verify_mandatory($values,'CRM_Member_DAO_MembershipType' ,array('name',  'duration_unit','duration_interval'));
      
-    $ids['membershipType']   = CRM_Utils_Array::value( 'id', $params );
-    $ids['memberOfContact']  = CRM_Utils_Array::value( 'member_of_contact_id', $params );
-    $ids['contributionType'] = CRM_Utils_Array::value( 'contribution_type_id', $params );
+    $ids['membershipType']   = CRM_Utils_Array::value( 'id', $values );
+    $ids['memberOfContact']  = CRM_Utils_Array::value( 'member_of_contact_id', $values );
+    $ids['contributionType'] = CRM_Utils_Array::value( 'contribution_type_id', $values );
 
     require_once 'CRM/Member/BAO/MembershipType.php';
     $membershipTypeBAO = CRM_Member_BAO_MembershipType::add($values, $ids);

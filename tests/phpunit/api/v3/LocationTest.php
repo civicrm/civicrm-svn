@@ -45,6 +45,7 @@ class api_v3_LocationTest extends CiviUnitTestCase
 
     function setUp() 
     {
+      $this->markTestSkipped('location to be replaced with phone etc api');
         parent::setUp();
         $this->_apiversion = 3;    
         $this->_contactID    = $this->organizationCreate(null, $this->_apiversion );

@@ -266,13 +266,16 @@ function _civicrm_object_to_array_unique_fields( &$dao, &$values){
  * @return array $valuse params with existing values from contact
  */
 
-function  civicrm_update_get_existing($params,$function, $filename){
+function  civicrm_update_get_existing($params, $function){
+    $function = str_replace ( 'create' , 'get', $function );
     $values = $params;
     if(!empty($params['id'])){
-     $getparams = array('id' => $params['id'],'version' => 3);
-     $result = civicrm_membership_type_get($getparams);
-     $values = array_merge($result['values'][$params['id']],$params); 
+      $getparams = array('id' => $params['id'],'version' => 3);
+      $result = $function($getparams);
+      $values = array_merge($result['values'][$params['id']],$params); 
+
     }
+   
     return $values;
 }   
 /**
