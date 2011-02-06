@@ -215,7 +215,7 @@ function civicrm_relationship_get($params)
 {
     _civicrm_initialize(true );
   try{
-    civicrm_verify_mandatory($params,null);
+    civicrm_verify_mandatory($params);
    
     if ( !isset( $contact_a['contact_id'] ) ) {
         return civicrm_create_error(  'Could not find contact_id in input parameters.'  );
@@ -277,7 +277,7 @@ function civicrm_relationship_get($params)
     }
     
     if ( $relationships ) {
-        return civicrm_create_success( $relationships );
+        return civicrm_create_success( $relationships ,$params);
     } else {
         return civicrm_create_error(  'Invalid Data'  );
     }

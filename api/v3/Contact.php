@@ -66,6 +66,7 @@ function civicrm_contact_create( &$params )
   _civicrm_initialize( true );
   try {
     civicrm_api_check_permission(__FUNCTION__, $params, true);
+    $params['contact_id'] = !empty($params['contact_id']) ? $params['contact_id'] :$params['id'] ;
     if(empty($params['contact_id'])){
       $create_new = true;
     }
@@ -312,11 +313,11 @@ function civicrm_contact_update( &$params, $create_new = false )
         return civicrm_create_error( $contact->_errors[0]['message'] );
     } else {
         $values = array( );
-        $values['contact_id'] = $contact->id;
-        $values['is_error']   = 0;
+        _civicrm_object_to_array_unique_fields($contact, $values[$contact->id]);
+     
     }
 
-    return $values;
+    return civicrm_create_success($values,$params);
 }
 function _civicrm_contact_check_params( &$params, $dupeCheck = true, $dupeErrorArray = false, $requiredCheck = true )
 {

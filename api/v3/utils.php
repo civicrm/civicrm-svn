@@ -259,7 +259,22 @@ function _civicrm_object_to_array( &$dao, &$values,$uniqueFields = FALSE )
 function _civicrm_object_to_array_unique_fields( &$dao, &$values){
  return _civicrm_object_to_array(&$dao, &$values,TRUE);
 }
+/*
+ * Function to get existing values when an 'id' is passed into a Create api
+ * 
+ * @params array $params input params
+ * @return array $valuse params with existing values from contact
+ */
 
+function  civicrm_update_get_existing($params,$function, $filename){
+    $values = $params;
+    if(!empty($params['id'])){
+     $getparams = array('id' => $params['id'],'version' => 3);
+     $result = civicrm_membership_type_get($getparams);
+     $values = array_merge($result['values'][$params['id']],$params); 
+    }
+    return $values;
+}   
 /**
  * This function adds the contact variable in $values to the
  * parameter list $params.  For most cases, $values should have length 1.  If

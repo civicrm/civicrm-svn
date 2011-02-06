@@ -91,13 +91,15 @@ function civicrm_relationship_type_create( &$params ) {
 /**
  * Function to get all relationship type
  * retruns  An array of Relationship_type
- * * @access  public
+ * @access  public
+ * {@example RelationshipType.php 0}
+ * @example RelationshipType.php
  */
 function civicrm_relationship_type_get( $params = null )
 {
   _civicrm_initialize(true);
   try{
-
+    civicrm_verify_mandatory($params);
     require_once 'CRM/Contact/DAO/RelationshipType.php';
     $relationshipTypes = array();
     $relationshipType  = array();

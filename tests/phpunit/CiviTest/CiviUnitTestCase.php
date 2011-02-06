@@ -441,11 +441,11 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     private function _contactCreate( $params ) {
         require_once 'api/api.php';
         $result = civicrm_api( 'civicrm_contact_create','Contact',$params );
-        if ( CRM_Utils_Array::value( 'is_error', $result ) ||
-             ! CRM_Utils_Array::value( 'contact_id', $result ) ) {
+        if ( CRM_Utils_Array::value( 'is_error', $result ) ||(
+             ! CRM_Utils_Array::value( 'contact_id', $result ) &&! CRM_Utils_Array::value( 'id', $result )) ) {
             throw new Exception( 'Could not create test contact.' );
         }
-        return $result['contact_id'];
+        return isset($result['contact_id'])?$result['contact_id']:$result['id'];
     }
     
     function contactDelete( $contactID,$apiversion = 2 ) 
@@ -626,11 +626,13 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         'register_date' => 20070219,
                         'source'        => 'Wimbeldon',
                         'event_level'   => 'Payment',
-                        'version'				=> $apiversion
+                        'version'				=> $apiversion,
                         );
+
        $result = civicrm_api( 'civicrm_participant_create','Participant',$params );
-        if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
-            throw new Exception( 'Could not create participant' );
+        if ( CRM_Utils_Array::value( 'is_error', $result ) && $result['is_error'] ==1) {
+          throw new Exception( 'Could not create participant ' . $result['error_message'] );
+            
         }
         return $result['result'];
     }
@@ -682,7 +684,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $result = civicrm_api( 'civicrm_tag_create','Tag',$params );
 
         
-        return array_merge( $params, $result );
+        return  $result ;
     }
     
     /** 
@@ -849,7 +851,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         ), $params);
         require_once 'api/api.php';
         $result = civicrm_api( 'civicrm_event_create','Event',$params );
-       
+        if ($result['is_error'] ==1){
+          throw new Exception($result['error_message']);
+        }
         return $result;
     }
     
@@ -898,7 +902,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $params = array(
                         'participant_id'       => $participantID,
                         'contribution_id'      => $contributionID,
-                        'version'							 => 2,
+                        'version'							 =>  $apiversion,
                         );
       $participantPayment = civicrm_api( 'civicrm_participant_payment_create','ParticipantPayment',$params );        
 
@@ -1155,10 +1159,10 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         );
         require_once 'api/api.php';
         $result = civicrm_api( 'civicrm_custom_group_create','CustomGroup',$params );
-    
+
         if ( CRM_Utils_Array::value( 'is_error', $result ) ||
              ! CRM_Utils_Array::value( 'id', $result) ) {
-            throw new Exception( 'Could not create Custom Group' );
+            throw new Exception( 'Could not create Custom Group' . $result['error_message']);
         }
         return $result;    
     }
@@ -1168,9 +1172,10 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      * 
      * @param int    $customGroupID
      */
-    function customGroupDelete( $customGroupID ) 
+    function customGroupDelete( $customGroupID ,$apiversion = 2) 
     { 
         $params['id'] = $customGroupID;
+        $params['version'] = $apiversion;
         $result = & civicrm_custom_group_delete($params);
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
             throw new Exception( 'Could not delete custom group' );
@@ -1207,11 +1212,13 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         }
         require_once 'api/api.php';
         $result = civicrm_api( 'civicrm_custom_field_create',$filename,$params );
-     
-        
+        if ($result['is_error'] ==0 && isset($result['id'])){
+          return $result;          
+        }
+
         if ( civicrm_error( $result ) 
              || !( CRM_Utils_Array::value( 'customFieldId' , $result['result'] ) ) ) {
-            throw new Exception( 'Could not create Custom Field' );
+            throw new Exception( 'Could not create Custom Field' . print_r($result) );
         }
         return $result;    
     }
@@ -1221,11 +1228,18 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      * 
      * @param int $customFieldID
      */
-    function customFieldDelete( $customFieldID ) 
+    function customFieldDelete( $customFieldID,$apiversion = 2 ) 
     {
         //$this->fail( 'civicrm_custom_field_delete seems to be broken!');
-        $params['result']['customFieldId'] = $customFieldID;
-        $result = & civicrm_custom_field_delete($params);
+        $params['id'] = $customFieldID;
+        $params['version']  =$apiversion;
+        if ($apiversion ==2){
+          $filename = 'CustomGroup';
+        }else{
+           $filename = 'CustomField';         
+        }
+        $result = civicrm_api( 'civicrm_custom_field_delete',$filename,$params );
+
         if ( civicrm_error( $result ) ) {
             throw new Exception( 'Could not delete custom field' );
         }
@@ -1277,9 +1291,9 @@ function documentMe($params,$result,$function,$filename){
         $smarty->assign('params',$params);   
         $smarty->assign('entity',$entity);         
         $smarty->assign('result',$result);  
-       $f = fopen("c:\\utils\\eclipseworkspace\\api-civicrm\\api\\v3\\examples\\$entity$action.php", "w");
-        fwrite($f,$smarty->fetch('c:\\utils\\eclipseworkspace\\api-civicrm\\tests\\templates\\documentFunction.tpl'));
-       fclose($f); 
+       //$f = fopen("c:\\utils\\eclipseworkspace\\api-civicrm\\api\\v3\\examples\\$entity$action.php", "w");
+        //fwrite($f,$smarty->fetch('c:\\utils\\eclipseworkspace\\api-civicrm\\tests\\templates\\documentFunction.tpl'));
+       //fclose($f); 
     }
   
     /**
@@ -1336,7 +1350,9 @@ function documentMe($params,$result,$function,$filename){
         $params = array_merge( $fieldParams, $optionGroup, $optionValue );
         require_once 'api/api.php';
         $result = civicrm_api( 'civicrm_custom_field_create','CustomGroup',$params );      
-
+        if ($result['is_error'] ==0 && isset($result['id'])){
+          return $result;
+        }
         if ( civicrm_error( $result ) 
              || !( CRM_Utils_Array::value( 'customFieldId', $result['result'] ) ) ) {
             throw new Exception( 'Could not create Custom Field' );

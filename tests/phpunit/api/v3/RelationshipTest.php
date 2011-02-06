@@ -436,17 +436,18 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         $params = array(
                         'contact_id_a'         => $this->_cId_a,
                         'contact_id_b'         => $this->_cId_b,
-                        'relationship_type_id' => 'Breaking Relationship'
+                        'relationship_type_id' => 'Breaking Relationship',
+                        'version'							 => $this->_apiversion,
                         );
         
         $result =& civicrm_relationship_delete( $params );
-        $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: id, version' );
+        $this->assertEquals( $result['is_error'], 1,'in line ' . __LINE__  );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: id','in line ' . __LINE__ );
 
         $params['id'] = "Invalid";
         $result =& civicrm_relationship_delete( $params );
-        $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Invalid value for relationship ID' ); 
+        $this->assertEquals( $result['is_error'], 1,'in line ' . __LINE__  );
+        $this->assertEquals( $result['error_message'], 'Invalid value for relationship ID','in line ' . __LINE__  ); 
     }
 
     /**
@@ -574,7 +575,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         $params = array( );
         $result =& civicrm_relationship_get( $params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Could not find contact_id in input parameters.' );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: version' );
     }
     
     /**

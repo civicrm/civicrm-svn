@@ -61,14 +61,14 @@ require_once 'api/v3/utils.php';
  *
  *
  * @return   Newly create custom_group object
- *
+ * @todo $params['extends'] is array format - is that std compatible
  * @access public 
  */
 function civicrm_custom_group_create( $params )
 {
-    _civicrm_initialize( );
+    _civicrm_initialize(true );
     try{
-    civicrm_verify_mandatory($params,null,null);  
+    civicrm_verify_one_mandatory($params,null,array('extends','class_name'));  
     
     // Require either param['class_name'] (string) - for backwards compatibility - OR parm['extends'] (array)
     // If passing extends array - set class_name (e.g. 'Contact', 'Participant'...) as extends[0]. You may optionally
@@ -97,23 +97,18 @@ function civicrm_custom_group_create( $params )
         $params['style'] = 'Inline';
     }
         
-    if (is_a($error, 'CRM_Core_Error')) {
-        return civicrm_create_error( $error->_errors[0]['message'] );
-    }
     
     require_once 'CRM/Core/BAO/CustomGroup.php';
     $customGroup = CRM_Core_BAO_CustomGroup::create($params);                             
 
-    _civicrm_object_to_array( $customGroup, $values );
+    _civicrm_object_to_array( $customGroup, $values[$customGroup->id] );
     
-    if ( is_a( $customGroup, 'CRM_Core_Error' ) ) { 
-        return civicrm_create_error( $customGroup->_errors[0]['message'] );
-    } 
     if ( CRM_Utils_Array::value( 'html_type', $params ) ){
-        $params['custom_group_id'] = $customGroup->id;
+        $fparams = array('custom_group_id' => $customGroup->id,
+                        'version'         => $params['version'],);
         require_once 'api/v3/CustomField.php';
-        $fieldValues = civicrm_custom_field_create( $params );
-        $values      = array_merge( $values, $fieldValues['result'] );
+        $fieldValues = civicrm_custom_field_create( $fparams );
+        $values      = array_merge( $values[$customGroup->id] , $fieldValues['values'][$fieldValues['id']] );
     }
     return civicrm_create_success($values,$params);
     } catch (PEAR_Exception $e) {
@@ -134,7 +129,7 @@ function civicrm_custom_group_create( $params )
  **/
 function civicrm_custom_group_delete($params)
 {    
-    _civicrm_initialize( );
+    _civicrm_initialize(true );
     try{     
     civicrm_verify_mandatory($params,null,array('id'));
     // convert params array into Object

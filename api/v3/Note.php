@@ -60,6 +60,8 @@ function civicrm_note_getfields( &$params ) {
  *
  * @return array note id if note is created otherwise is_error = 1
  * @access public
+ * @example NoteCreate.php
+ * {@example NoteCreate.php
  */
 function &civicrm_note_create(&$params)
 {
@@ -89,7 +91,7 @@ function &civicrm_note_create(&$params)
       return $error;
     } else {
       $note = array( );
-      _civicrm_object_to_array( $noteBAO, $note );
+      _civicrm_object_to_array( $noteBAO, $note[$noteBAO->id] );
 
     }
     return civicrm_create_success($note,$params);

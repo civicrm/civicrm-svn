@@ -34,7 +34,7 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
                                    'style'       => 'Inline',
                                    'is_active'   => 1
     );
-    $this->CustomGroupIndividual = $this->customGroupCreate($groupIndividual,"Custom Group",$this->_apiversion );
+    $this->CustomGroupIndividual = $this->customGroupCreate('Individual',"Custom Group",$this->_apiversion );
 
     $params = array(
                          'custom_group_id' => $this->CustomGroupIndividual->id,

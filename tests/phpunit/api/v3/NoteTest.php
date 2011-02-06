@@ -160,7 +160,7 @@ class api_v3_NoteTest extends CiviUnitTestCase
         $params = array( );
         $result = civicrm_note_create( $params );     
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: entity_table, entity_id, version' );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: note, version' );
     }
 
     /**
@@ -215,7 +215,7 @@ class api_v3_NoteTest extends CiviUnitTestCase
         $params = array();        
         $note   =& civicrm_note_create( $params );
         $this->assertEquals( $note['is_error'], 1 );
-        $this->assertEquals( $note['error_message'], 'Mandatory key(s) missing from params array: entity_table, entity_id, version' );
+        $this->assertEquals( $note['error_message'], 'Mandatory key(s) missing from params array: note, version' );
     }
 
     /**
@@ -231,7 +231,7 @@ class api_v3_NoteTest extends CiviUnitTestCase
                         );        
         $note   =& civicrm_note_create( $params );
         $this->assertEquals( $note['is_error'], 1 );
-        $this->assertEquals( $note['error_message'], 'Required parameter missing' );
+        $this->assertEquals( $note['error_message'], 'Mandatory key(s) missing from params array: note' );
     }
 
     /**
@@ -251,10 +251,10 @@ class api_v3_NoteTest extends CiviUnitTestCase
         
         //Update Note
         $note =& civicrm_note_create( $params );
-        print_r($note);
         $this->assertEquals( $note['id'],$this->_noteID,'in line ' . __LINE__ );
-        $this->assertEquals( $note['entity_id'],$this->_contactID,'in line ' . __LINE__ );
-        $this->assertEquals( $note['entity_table'],'civicrm_contribution','in line ' . __LINE__ );
+        $this->assertEquals( $note['is_error'],0,'in line ' . __LINE__ );       
+        $this->assertEquals( $note['values'][$this->_contactID]['entity_id'],$this->_contactID,'in line ' . __LINE__ );
+        $this->assertEquals( $note['values'][$this->_contactID]['entity_table'],'civicrm_contribution','in line ' . __LINE__ );
     }
 
 ///////////////// civicrm_note_delete methods
@@ -293,7 +293,7 @@ class api_v3_NoteTest extends CiviUnitTestCase
                              'version' => $this->_apiversion, );        
         $deleteNote = & civicrm_note_delete( $params ); 
         $this->assertEquals( $deleteNote['is_error'], 1 );
-        $this->assertEquals( $deleteNote['error_message'], 'Invalid or no value for Note ID');
+        $this->assertEquals( $deleteNote['error_message'], 'Error while deleting Note');
     }
 
     /**
@@ -308,7 +308,6 @@ class api_v3_NoteTest extends CiviUnitTestCase
         $result  =& civicrm_note_delete( $params );  
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);        
         $this->assertEquals( $result['is_error'], 0,'in line ' . __LINE__ );
-        $this->assertEquals( $result['result'], 1 ,'in line ' . __LINE__);
     }
     
 

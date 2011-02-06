@@ -42,7 +42,7 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
         parent::setUp();
         $this->_apiversion = 3;
         $this->_contactID           = $this->organizationCreate( null,3) ;
-        $this->_contributionTypeID  = $this->contributionTypeCreate(null,3);
+        $this->_contributionTypeID  = $this->contributionTypeCreate(3);
         $this->_membershipTypeID    = $this->membershipTypeCreate( $this->_contactID,3 );
         $this->_membershipStatusID  = $this->membershipStatusCreate( 'test status',3 );
         
@@ -52,32 +52,32 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
     {
     }
     
-    ///////////////// civicrm_membershipPayment_create methods
+    ///////////////// civicrm_membership_payment_create methods
     
     /**
-     * Test civicrm_membershipPayment_create with wrong params type.
+     * Test civicrm_membership_payment_create with wrong params type.
      */
     public function testCreateWrongParamsType()
     {
         
         $params = 'eeee';
-        $CreateWrongParamsType = civicrm_membershipPayment_create($params);
-        $this->assertEquals( $CreateWrongParamsType['error_message'],'Input parameters is not an array');
+        $CreateWrongParamsType = civicrm_membership_payment_create($params);
+        $this->assertEquals( $CreateWrongParamsType['error_message'],'Input variable `params` is not an array');
      
     }
     
     /**
-     * Test civicrm_membershipPayment_create with empty params.
+     * Test civicrm_membership_payment_create with empty params.
      */
     public function testCreateEmptyParams()
     {  
         $params = array();
-        $CreateEmptyParams = civicrm_membershipPayment_create($params);
+        $CreateEmptyParams = civicrm_membership_payment_create($params);
         $this->assertEquals( $CreateEmptyParams['error_message'],'No input parameters present');
     }
     
     /**
-     * Test civicrm_membershipPayment_create - success expected.
+     * Test civicrm_membership_payment_create - success expected.
      */
     public function testCreate()
     {
@@ -121,7 +121,7 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
                         'membership_id'      => $membership->id,
                         'version'						 => $this->_apiversion,
                         );
-        $result = civicrm_membershipPayment_create($params);
+        $result = civicrm_membership_payment_create($params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( $result['membership_id'],$membership->id ,'Check Membership Id');
         $this->assertEquals( $result['contribution_id'],$contribution->id ,'Check Contribution Id');
@@ -137,8 +137,8 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
     public function testGetWrongParamsType()
     { 
         $params = 'eeee';
-        $GetWrongParamsType = civicrm_membershipPayment_get($params);
-        $this->assertEquals( $GetWrongParamsType['error_message'],'Input parameters is not an array');
+        $GetWrongParamsType = civicrm_membership_payment_get($params);
+        $this->assertEquals( $GetWrongParamsType['error_message'],'Input variable `params` is not an array');
     }
 
     /**
@@ -147,7 +147,7 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
     public function testGetEmptyParams()
     {
         $params = array();
-        $GetEmptyParams = civicrm_membershipPayment_get($params);
+        $GetEmptyParams = civicrm_membership_payment_get($params);
         $this->assertEquals( $GetEmptyParams['error_message'],'No input parameters present');
         
     }
@@ -157,7 +157,7 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
      */
     public function testGet()
     {
-        $contactId = Contact::createIndividual( );
+        $contactId = $this->individualCreate(null,$this->_apiversion );
         $params = array (
                          'contact_id'             => $contactId,
                          'currency'               => 'USD',
@@ -188,9 +188,9 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
                         'membership_id'      => $membership->id,
                         'version'						 => $this->_apiversion,
                         );
-        $Create = civicrm_membershipPayment_create($params);
+        $Create = civicrm_membership_payment_create($params);
      
-        $result = civicrm_membershipPayment_get($params);
+        $result = civicrm_membership_payment_get($params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);        
         $this->assertEquals( $GetParams[$result['id']]['membership_id'],$membership->id ,'Check Membership Id');
         $this->assertEquals( $GetParams[$result['id']]['contribution_id'],$contribution->id ,'Check Contribution Id');

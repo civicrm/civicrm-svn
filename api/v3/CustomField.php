@@ -24,7 +24,7 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*/
+ */
 
 /**
  * File for the CiviCRM APIv3 custom group functions
@@ -48,7 +48,6 @@ require_once 'api/v3/utils.php';
  *
  * @param array $params           an associative array used in construction
  * retrieval of the object
- * @todo EM 7 Jan 11 missing get function
  *
  */
 
@@ -61,104 +60,100 @@ require_once 'api/v3/utils.php';
  *
  * @return Newly created custom_field id array
  *
- * @access public 
+ * @access public
+ * 
+ * @example CustomFieldCreate.php
+ * 
+ * {@example CustomFieldCreate.php 0}
  *
  */
 
 function civicrm_custom_field_create( $params )
 {
-    _civicrm_initialize( );
-    
-    if (! is_array($params) ) {                      
-        return civicrm_create_error("params is not an array ");
-    }
-    
-    if ( ! CRM_Utils_Array::value( 'custom_group_id', $params ) ) {                        
-        return civicrm_create_error("Missing Required field :custom_group_id");
-    }
-    
-    if ( !( CRM_Utils_Array::value( 'label', $params ) ) ) {                                     
-        return civicrm_create_error("Missing Required field :label");
-    }
-    
+  _civicrm_initialize(true );
+  try{
+    civicrm_verify_mandatory($params,null,array('custom_group_id','label'));
+
     if ( !( CRM_Utils_Array::value('option_type', $params ) ) ) {
-        if( CRM_Utils_Array::value('id', $params ) ){
-            $params['option_type'] = 2;
-        } else {
-            $params['option_type'] = 1;
-        }
+      if( CRM_Utils_Array::value('id', $params ) ){
+        $params['option_type'] = 2;
+      } else {
+        $params['option_type'] = 1;
+      }
     }
-         
+     
     $error = _civicrm_check_required_fields($params, 'CRM_Core_DAO_CustomField');
     if (is_a($error, 'CRM_Core_Error')) {
-        return civicrm_create_error( $error->_errors[0]['message'] );
+      return civicrm_create_error( $error->_errors[0]['message'] );
     }
 
     // Array created for passing options in params
     if ( isset( $params['option_values'] ) && is_array( $params['option_values'] ) ) {
-        foreach ( $params['option_values'] as $key => $value ){
-            $params['option_label'][$value['weight']]  = $value['label'];
-            $params['option_value'][$value['weight']]  = $value['value'];
-            $params['option_status'][$value['weight']] = $value['is_active'];
-            $params['option_weight'][$value['weight']] = $value['weight'];
-        }
+      foreach ( $params['option_values'] as $key => $value ){
+        $params['option_label'][$value['weight']]  = $value['label'];
+        $params['option_value'][$value['weight']]  = $value['value'];
+        $params['option_status'][$value['weight']] = $value['is_active'];
+        $params['option_weight'][$value['weight']] = $value['weight'];
+      }
     }
     require_once 'CRM/Core/BAO/CustomField.php';
-    $customField = CRM_Core_BAO_CustomField::create($params);  
-        
-    $values['customFieldId'] = $customField->id;
-
-    if ( is_a( $customField, 'CRM_Core_Error' ) && is_a( $column, 'CRM_Core_Error' )  ) {
-        return civicrm_create_error( $customField->_errors[0]['message'] );
-    } else {
-        return civicrm_create_success($values);
-    }
+    $customField = CRM_Core_BAO_CustomField::create($params);
+    _civicrm_object_to_array_unique_fields($customField , $values[$customField->id]);
+    return civicrm_create_success($values,$params);
+    
+  } catch (PEAR_Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  }
 }
 
 /**
  * Use this API to delete an existing custom group field.
  *
  * @param $params     Array id of the field to be deleted
- *
- *       
+ * @example CustomFieldDelete.php
+ * 
+ * {@example CustomFieldDelete.php 0}
  * @access public
  **/
-function civicrm_custom_field_delete( $params ) 
+function civicrm_custom_field_delete( $params )
 {
-    _civicrm_initialize( );
-    
-    if ( !is_array( $params ) ) {
-        return civicrm_create_error( 'Params is not an array' );
-    }
-    
-    if ( ! CRM_Utils_Array::value( 'customFieldId', $params['result'] ) ) {
-        return civicrm_create_error( 'Invalid or no value for Custom Field ID' );
-    }
+  _civicrm_initialize( true);
+  try{
+    civicrm_verify_mandatory($params,null,array('id'));
 
     require_once 'CRM/Core/DAO/CustomField.php';
     $field = new CRM_Core_DAO_CustomField( );
-    $field->id = $params['result']['customFieldId'];
+    $field->id = $params['id'];
     $field->find(true);
-    
+
     require_once 'CRM/Core/BAO/CustomField.php';
-    $customFieldDelete = CRM_Core_BAO_CustomField::deleteField( $field ); 
+    $customFieldDelete = CRM_Core_BAO_CustomField::deleteField( $field );
     return $customFieldDelete ?
-        civicrm_create_error('Error while deleting custom field') :
-        civicrm_create_success( );
+    civicrm_create_error('Error while deleting custom field') :
+    civicrm_create_success( );
+  } catch (PEAR_Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  }
 }
 
 /**
  * Use this API to get existing custom fields.
  *
- * @param array $params Array to search on    
+ * @param array $params Array to search on
  *
  * @todo copied from elsewhere but needs tidying up to use DAO->Find
  * @access public
+ * 
  **/
-function civicrm_custom_field_get($params) 
-{   
-   try {
-    _civicrm_initialize( );
+function civicrm_custom_field_get($params)
+{
+  try {
+    _civicrm_initialize(true );
+    civicrm_verify_mandatory($params);
 
     require_once 'CRM/Core/BAO/CustomField.php';
     $customfieldBAO = new CRM_Core_BAO_CustomField();
@@ -166,10 +161,10 @@ function civicrm_custom_field_get($params)
 
     foreach ($fields as $key=>$value){
       $result[$key] = $value['label'];
-      
+
     }
     return $result;
- 
+
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );
   } catch (Exception $e) {

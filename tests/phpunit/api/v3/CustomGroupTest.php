@@ -62,11 +62,12 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
                          'style'            => 'Tab',
                          'help_pre'         => 'This is Pre Help For Test Group 1',
                          'help_post'        => 'This is Post Help For Test Group 1',
-                         'is_active'        => 1
+                         'is_active'        => 1,
+        
                          );
         
         $customGroup =& civicrm_custom_group_create($params);
-        $this->assertEquals($customGroup['error_message'],'Params must include either \'class_name\' (string) or \'extends\' (array).');
+        $this->assertEquals($customGroup['error_message'],'Mandatory key(s) missing from params array: version');
         $this->assertEquals($customGroup['is_error'],1);
     }
 
@@ -121,7 +122,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
         $this->assertNotNull($customGroup['id']);
         $this->assertNotNull($customGroup['customFieldId']);
         $this->assertEquals($customGroup['extends'], 'Individual');
-        $this->customGroupDelete($customGroup['id']);
+        $this->customGroupDelete($customGroup['id'],$this->_apiversion);
     }
 
     /**
@@ -145,14 +146,14 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);         $this->assertEquals($result['is_error'], 0);
         $this->assertNotNull($result['id']);
         $this->assertEquals($result['extends'], 'Individual');
-        $this->customGroupDelete($customGroup['id']);
+        $this->customGroupDelete($customGroup['id'],$this->_apiversion);
 
         unset( $params['style'] );
         $customGroup =& civicrm_custom_group_create($params);
         $this->assertEquals($customGroup['is_error'], 0);
         $this->assertNotNull($customGroup['id']);
         $this->assertEquals($customGroup['style'], 'Inline');
-        $this->customGroupDelete($customGroup['id']);
+        $this->customGroupDelete($customGroup['id'],$this->_apiversion);
     } 
     
     /**
@@ -206,7 +207,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
         $this->assertNotNull($customGroup['id']);
         $this->assertEquals($customGroup['extends'], 'Household');
         $this->assertEquals($customGroup['style'], 'Tab');
-        $this->customGroupDelete($customGroup['id']);
+        $this->customGroupDelete($customGroup['id'],$this->_apiversion);
     }
     
     /**
@@ -230,7 +231,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
         $this->assertEquals($customGroup['is_error'], 0);
         $this->assertNotNull($customGroup['id']);
         $this->assertEquals($customGroup['extends'], 'Contribution');
-        $this->customGroupDelete($customGroup['id']);
+        $this->customGroupDelete($customGroup['id'],$this->_apiversion);
     }
 
     /**
@@ -254,7 +255,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
         $this->assertEquals($customGroup['is_error'], 0);
         $this->assertNotNull($customGroup['id']);
         $this->assertEquals($customGroup['extends'], 'Group');
-        $this->customGroupDelete($customGroup['id']);
+        $this->customGroupDelete($customGroup['id'],$this->_apiversion);
     }
     
     /**
@@ -277,7 +278,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
         $this->assertEquals($customGroup['is_error'], 0);
         $this->assertNotNull($customGroup['id']);
         $this->assertEquals($customGroup['extends'], 'Activity');
-        $this->customGroupDelete($customGroup['id']);
+        $this->customGroupDelete($customGroup['id'],$this->_apiversion);
     }
 
 ///////////////// civicrm_custom_group_delete methods   
@@ -308,8 +309,9 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
      */    
     function testCustomGroupDelete( )
     {
-        $customGroup = $this->customGroupCreate('Individual', 'test_group',3); 
-        $params = array('id' => $customGroup['id']);                         
+        $customGroup = $this->customGroupCreate('Individual', 'test_group',$this->_apiversion); 
+        $params = array('id' => $customGroup['id'],
+                         'version'  =>$this->_apiversion);                         
         $result =& civicrm_custom_group_delete($params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals($result ['is_error'], 0);
