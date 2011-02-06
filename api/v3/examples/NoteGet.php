@@ -7,7 +7,7 @@ function note_get_example(){
                   'entity_id' 		=> '1',
                   'note' 		=> 'Hello!!! m testing Note',
                   'contact_id' 		=> '1',
-                  'modified_date' 		=> '20110205',
+                  'modified_date' 		=> '20110206',
                   'subject' 		=> 'Test Note',
                   'version' 		=> '3',
 
@@ -35,7 +35,7 @@ function note_get_expectedresult(){
                   ,                  'entity_id' => '1'
                   ,                  'note' => 'hello I am testing Note'
                   ,                  'contact_id' => '1'
-                  ,                  'modified_date' => '2011-02-05'
+                  ,                  'modified_date' => '2011-02-06'
                   ,                  'subject' => 'Test Note'
                   ,                  'privacy' => '0'
                   ,),                  ),

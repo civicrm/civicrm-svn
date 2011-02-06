@@ -1,11 +1,11 @@
-
+<?php 
 
 function activity_create_example(){
     $params = array(
     
                   'source_contact_id' 		=> '17',
                   'subject' 		=> 'Make-it-Happen Meeting',
-                  'activity_date_time' 		=> '20110205000000',
+                  'activity_date_time' 		=> '20110206000000',
                   'duration' 		=> '120',
                   'location' 		=> 'Pensulvania',
                   'details' 		=> 'a test activity',
@@ -39,7 +39,7 @@ function activity_create_expectedresult(){
                   ,                  'source_record_id' => ''
                   ,                  'activity_type_id' => '1'
                   ,                  'subject' => 'Make-it-Happen Meeting'
-                  ,                  'activity_date_time' => '20110205000000'
+                  ,                  'activity_date_time' => '20110206000000'
                   ,                  'duration' => '120'
                   ,                  'location' => 'Pensulvania'
                   ,                  'phone_id' => ''

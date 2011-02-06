@@ -1,14 +1,14 @@
 <?php 
 
-function custom_group_delete_example(){
+function group_contact_get_example(){
     $params = array(
     
-                  'id' 		=> '1',
+                  'contact_id' 		=> '1',
                   'version' 		=> '3',
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_custom_group_delete','CustomGroup',$params );
+  $result = civicrm_api( 'civicrm_group_contact_get','GroupContact',$params );
 
   return $result;
 }
@@ -16,14 +16,14 @@ function custom_group_delete_example(){
 /*
  * Function returns array of result expected from previous function
  */
-function custom_group_delete_expectedresult(){
+function group_contact_get_expectedresult(){
 
   $expectedResult = 
             array(
                   'is_error' 		=> '0',
                   'version' 		=> '3',
-                  'count' 		=> '1',
-                  'values' 		=> '1',
+                  'count' 		=> '0',
+                  'values' 		=>                   array(),
 
   );
 

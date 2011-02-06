@@ -1,14 +1,14 @@
 <?php 
 
-function custom_group_delete_example(){
+function custom_field_delete_example(){
     $params = array(
     
-                  'id' 		=> '1',
                   'version' 		=> '3',
+                  'id' 		=> 'Array',
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_custom_group_delete','CustomGroup',$params );
+  $result = civicrm_api( 'civicrm_custom_field_delete','CustomField',$params );
 
   return $result;
 }
@@ -16,7 +16,7 @@ function custom_group_delete_example(){
 /*
  * Function returns array of result expected from previous function
  */
-function custom_group_delete_expectedresult(){
+function custom_field_delete_expectedresult(){
 
   $expectedResult = 
             array(
