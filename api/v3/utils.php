@@ -69,6 +69,22 @@ function civicrm_verify_one_mandatory (&$params, $daoName = null, $keyoptions = 
 }
 
 
+/*
+ * Function to return the DAO of the function or Entity
+ * @param  $name is either a function of the api (civicrm_{entity}_create or the entity name 
+ * return the DAO name to manipulate this function
+ * eg. "civicrm_contact_create" or "Contact" will return "CRM_Contact_BAO_Contact"
+ */
+
+function civicrm_get_DAO ($name) {
+  require_once ('CRM/Core/DAO/.listAll.php');
+  if (strpos($name, 'civicrm_') !== false) {
+    $last = strrpos ($name, '_') ;
+    $name = substr ($name, 8, $last -8);// len ('civicrm_') == 8
+    $name = ucfirst ($name);
+  }
+  return $dao[$name];
+}
 
 /*
  * Function to check mandatory fields are included
