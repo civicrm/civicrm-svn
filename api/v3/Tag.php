@@ -40,6 +40,9 @@
  */
 require_once 'api/v3/utils.php';
 
+/**
+ *  returns all the fields on this entity.
+ */
 function civicrm_tag_getfields( &$params ) {
     require_once 'CRM/Core/BAO/Tag.php';
     $bao = new CRM_Core_BAO_Tag();
@@ -61,7 +64,7 @@ function civicrm_tag_create( &$params )
 {
   _civicrm_initialize( true );
   try {
-    civicrm_verify_mandatory ($params,'CRM_Core_DAO_Tag',array ('name'));
+    civicrm_verify_mandatory ($params,civicrm_get_DAO (__FUNCTION__),array ('name'));
 
     if ( !array_key_exists ('used_for', $params)) {
       $params ['used_for'] = "civicrm_contact";
