@@ -511,6 +511,10 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
                 // set the localhost value, CRM-3153
                 $params['localhost'] = $_SERVER['SERVER_NAME'];
 
+                // also set the timeout value, lets set it to 30 seconds
+                // CRM-7510
+                $params['timeout'] = 30;
+
                 self::$_mail =& Mail::factory( 'smtp', $params );
             } elseif ($mailingInfo['outBound_option'] == 1) {
                 if ( $mailingInfo['sendmail_path'] == '' ||
