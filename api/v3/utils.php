@@ -107,7 +107,7 @@ function civicrm_verify_mandatory (&$params, $daoName = null, $keys = array() ) 
   }
   
   $keys[] = 'version';//required from v3 onwards
- 
+  $unmatched = array();
   foreach ($keys as $key) {
     if(is_array($key)){
       $match = 0;
@@ -128,7 +128,7 @@ function civicrm_verify_mandatory (&$params, $daoName = null, $keys = array() ) 
     }
 
   }
-    if(is_array($unmatched)){
+    if(!empty($unmatched)){
       throw new Exception("Mandatory key(s) missing from params array: " . implode(", ",$unmatched));
     }
 }
