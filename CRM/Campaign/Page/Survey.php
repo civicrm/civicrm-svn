@@ -85,7 +85,7 @@ class CRM_Campaign_Page_Survey extends CRM_Core_Page
     function browse( ) {
         require_once 'CRM/Core/Permission.php';
 
-        $surveys = CRM_Campaign_BAO_Survey::getSurvey( true );
+        $surveys = CRM_Campaign_BAO_Survey::getSurveySummary( );
         
         if ( !empty($surveys) ) {
             require_once 'CRM/Campaign/BAO/Campaign.php';

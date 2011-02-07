@@ -247,7 +247,7 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
     { 
         //load the default survey for all actions.
         if ( empty( $this->_defaults ) ) {
-            $defaultSurveyId = key( CRM_Campaign_BAO_Survey::getSurvey( false, null, true ) );
+            $defaultSurveyId = key( CRM_Campaign_BAO_Survey::getSurveys( true, true ) );
             if ( $defaultSurveyId ) $this->_defaults['campaign_survey_id'] = $defaultSurveyId; 
         }
         
@@ -504,7 +504,7 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
             $surveyId = CRM_Utils_Type::escape( $surveyId, 'Integer' );
         } else {
             // use default survey id
-            $surveyId = key( CRM_Campaign_BAO_Survey::getSurvey( false, null, true ) );
+            $surveyId = key( CRM_Campaign_BAO_Survey::getSurveys( true, true ) );
         }
         if ( !$surveyId ) {
             CRM_Core_Error::fatal('Could not find valid Survey Id.');

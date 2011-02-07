@@ -180,7 +180,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
     {
         $campaignsData = array( );
         //get the campaigns.
-        $campaigns = CRM_Campaign_BAO_Campaign::getCampaign( true );
+        $campaigns = CRM_Campaign_BAO_Campaign::getCampaignSummary( );
         if ( !empty( $campaigns ) ) {
             $campaignType    = CRM_Campaign_PseudoConstant::campaignType( );
             $campaignStatus  = CRM_Campaign_PseudoConstant::campaignStatus( );
@@ -211,10 +211,10 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
         $this->assign( 'addCampaignUrl', CRM_Utils_System::url( 'civicrm/campaign/add', 'reset=1&action=add' ) );
     }
    
-    function browsePetition () {
+    function browsePetition( ) {
         $surveysData = array( );
         //get the survey.
-        $surveys = CRM_Campaign_BAO_Petition::getPetition( true );
+        $surveys = CRM_Campaign_BAO_Petition::getPetitionSummary( );
         if ( !empty( $surveys ) ) {
             $campaigns     = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, false, true );
             $surveyType    = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
@@ -252,7 +252,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
     {
         $surveysData = array( );
         //get the survey.
-        $surveys = CRM_Campaign_BAO_Survey::getSurvey( true );
+        $surveys = CRM_Campaign_BAO_Survey::getSurveySummary( );
         if ( !empty( $surveys ) ) {
             $campaigns     = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, false, true );
             $surveyType    = CRM_Campaign_BAO_Survey::getSurveyActivityType( );

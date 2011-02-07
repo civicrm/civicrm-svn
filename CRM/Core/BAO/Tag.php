@@ -290,6 +290,13 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag
         } else {
             CRM_Utils_Hook::pre( 'create', 'Tag', null, $tag );
         }
+    
+        // save creator id and time
+        if ( !$tag->id ) {
+            $session =& CRM_Core_Session::singleton( );
+            $tag->created_id   = $session->get('userID');
+            $tag->created_date = date('YmdHis'); 
+        }
 
         $tag->save( );
         

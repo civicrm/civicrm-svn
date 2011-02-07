@@ -969,5 +969,57 @@ LIMIT {$offset}, {$rowCount}
         echo json_encode( array( 'status' => ($status) ? $oper:$status ) );
         CRM_Utils_System::civiExit( );
     }
+ 
+  static function getDedupes( ) {
+
+        $sEcho       = CRM_Utils_Type::escape($_POST['sEcho'], 'Integer');
+        $offset      = isset($_POST['iDisplayStart'])? CRM_Utils_Type::escape($_POST['iDisplayStart'], 'Integer'):0;
+        $rowCount    = isset($_POST['iDisplayLength'])? CRM_Utils_Type::escape($_POST['iDisplayLength'], 'Integer'):25; 
+        $sort        = isset($_REQUEST['iSortCol_0'] )? $sortMapper[CRM_Utils_Type::escape($_REQUEST['iSortCol_0'],'Integer')]: 'sort_name';
+        $sortOrder   = isset($_REQUEST['sSortDir_0'] )? CRM_Utils_Type::escape($_REQUEST['sSortDir_0'], 'String'):'asc';
+
+        $gid  = isset($_REQUEST['gid']) ? CRM_Utils_Type::escape($_REQUEST['gid'], 'Integer'): 0;
+        $rgid = isset($_REQUEST['rgid']) ? CRM_Utils_Type::escape($_REQUEST['rgid'], 'Integer'): 0; 
+        $contactType = '';
+        if ( $rgid ) {
+           $contactType = CRM_Core_DAO::getFieldValue( 'CRM_Dedupe_DAO_RuleGroup', $rgid, 'contact_type' );
+        }
+         
+        $cacheKeyString    = "merge {$contactType}_{$rgid}_{$gid}";
+        $searchRows        = array( );
+        $selectorElements  = array( 'src', 'dst', 'weight', 'actions' );
+
+        require_once 'CRM/Core/BAO/PrevNextCache.php';
+
+        $join  = "LEFT JOIN civicrm_dedupe_exception de ON ( pn.entity_id1 = de.contact_id1 AND 
+                                                             pn.entity_id2 = de.contact_id2 )";
+        $where = "de.id IS NULL";     
+
+        $iFilteredTotal = $iTotal = CRM_Core_BAO_PrevNextCache::getCount( $cacheKeyString, $join, $where );
+        $mainContacts   = CRM_Core_BAO_PrevNextCache::retrieve( $cacheKeyString, $join, $where, $offset, $rowCount );
+
+       foreach( $mainContacts as $mainId => $main ) {
+           $searchRows[$mainId]['src']    = CRM_Utils_System::href( $main['srcName'], 'civicrm/contact/view', "reset=1&cid={$main['srcID']}" );
+           $searchRows[$mainId]['dst']    = CRM_Utils_System::href( $main['dstName'], 'civicrm/contact/view', "reset=1&cid={$main['dstID']}" );
+           $searchRows[$mainId]['weight'] = CRM_Utils_Array::value( 'weight', $main );
+
+           if ( CRM_Utils_Array::value( 'canMerge', $main ) ) {
+              $mergeParams = "reset=1&cid={$main['srcID']}&oid={$main['dstID']}&action=update&rgid={$rgid}";
+              if ( $gid ) $mergeParams .= "&gid={$gid}";
+
+              $searchRows[$mainId]['actions']  = CRM_Utils_System::href( ts('merge'), 'civicrm/contact/merge', $mergeParams );
+              $searchRows[$mainId]['actions'] .= "&nbsp;|&nbsp; <a id='notDuplicate' href='#' onClick=\"processDupes( {$main['srcID']}, {$main['dstID']}, 'dupe-nondupe', 'dupe-listing'); return false;\">".ts('not a duplicate')."</a>";   
+                                                
+           } else {
+                  $searchRows[$mainId]['actions'] = '<em>' . ts('Insufficient access rights - cannot merge') .'</em>';
+           }
+       }
+
+       require_once 'CRM/Utils/JSON.php';
+       echo CRM_Utils_JSON::encodeDataTableSelector( $searchRows, $sEcho, $iTotal, $iFilteredTotal, $selectorElements );
+
+       CRM_Utils_System::civiExit( );
+  
+    }
 
 }

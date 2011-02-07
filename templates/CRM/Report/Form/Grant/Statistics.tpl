@@ -23,34 +23,72 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{include file="CRM/Report/Form.tpl"}
+{if $section eq 1}
+    <div class="crm-block crm-content-block crm-report-layoutGraph-form-block">
+        {*include the graph*}
+        {include file="CRM/Report/Form/Layout/Graph.tpl"}
+    </div>
+{else}
+    <div class="crm-block crm-form-block crm-report-field-form-block">
+        {include file="CRM/Report/Form/Fields.tpl" componentName='Grant'}
+    </div>
+    
+    <div class="crm-block crm-content-block crm-report-form-block">
+        {*include actions*}
+        {include file="CRM/Report/Form/Actions.tpl"}
 
-<table class="report-layout">
-{foreach from=$grantStatistics key=key item=val}
-  <tr>
-     {if $val.count}
-         <th class="statistics" scope="row">{$val.title}</th>
-     {else}
-         <th class="statistics" scope="row">{$val.title}</th>
-     {/if}
-     <td>
-       <table>
-         {if $val.count}
+        {*include the graph*}
+        {include file="CRM/Report/Form/Layout/Graph.tpl"}
+    
+        <br />
+        
+        {include file="CRM/Report/Form/ErrorMessage.tpl"}
+    </div>
+{/if}
+
+{if $totalStatistics}
+<table class="report-layout display">
+  <th class="statistics" scope="row">Label</th>
+  <th class="statistics" scope="row">Count</th>
+  <th class="statistics" scope="row">Amount</th>
+    {foreach from=$totalStatistics key=key item=val}
+       <tr>
+          <td>{$val.title}</td>
+          <td>{$val.count}</td>
+	  <td>{$val.amount}</td>
+       </tr>      
+    {/foreach}
+</table>
+{/if}
+
+{if $grantStatistics}
+<table class="report-layout display">
+  {foreach from=$grantStatistics item=values key=key}
+    <th class="statistics" scope="row">{$values.title}</th>
+    <th class="statistics" scope="row">Number of Grants (%)</th>
+    <th class="statistics" scope="row">Total Amount (%)</th>
+       {foreach from=$values.value item=row key=field}
            <tr>
-             <td>{$val.count}</td>  
+              <td>{$field}</td>
+              <td>{$row.count} ({$row.percentage}%)</td>
+              <td>
+                {foreach from=$row.currency key=fld item=val}
+                   {$fld} {$val.value} ({$val.percentage}%)&nbsp;&nbsp;
+                {/foreach} 
+              </td>
+           </tr>
+         {if $row.unassigned_count}
+           <tr>
+              <td>{$field} (Unassigned)</td>
+              <td>{$row.unassigned_count} ({$row.unassigned_percentage}%)</td>
+              <td>
+                {foreach from=$row.unassigned_currency key=fld item=val}
+                   {$fld} {$val.value} ({$val.percentage}%)&nbsp;&nbsp;
+                {/foreach} 
+              </td>
            </tr>
          {/if}
-           {foreach from=$val.value key=type item=row}
-            <tr>
-               <td>{$type} : {$row.count} Grants, &nbsp;&nbsp;
-                   {foreach from=$row.currency item=values key=field}
-                      {$field} {$values}
-		   {/foreach}
-	       </td>
-            </tr>
-           {/foreach}
-       </table>
-     </td>
-  </tr>      
-{/foreach}
+       {/foreach}
+  {/foreach}
 </table>
+{/if}

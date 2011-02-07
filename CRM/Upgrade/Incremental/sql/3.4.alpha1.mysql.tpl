@@ -79,7 +79,7 @@ SELECT @value                 := MAX(value) FROM civicrm_option_value WHERE opti
 SELECT @caseCompId       := max(id) FROM civicrm_component where name = 'CiviCase';
 INSERT INTO civicrm_option_value
   (option_group_id,         {localize field='label'}label{/localize},                   value,                        name,                                        weight,                 {localize field='description'}description{/localize}, is_active, component_id) VALUES
-  (@option_group_id_act,   '{localize}Add Client To Case{/localize}',                   @value,                       'Add Client To Case'                         @weight,                NULL,                                               , 1,         @caseCompId ;
+  (@option_group_id_act,   '{localize}Add Client To Case{/localize}',                   @value,                       'Add Client To Case',                         @weight,                NULL,                                               1,         @caseCompId );
 
 -- CRM-7317
 CREATE TABLE civicrm_prevnext_cache (
@@ -92,3 +92,24 @@ CREATE TABLE civicrm_prevnext_cache (
   PRIMARY KEY ( id )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
+-- CRM-7489
+ALTER TABLE `civicrm_tag`
+ADD `created_date` DATETIME NULL DEFAULT NULL COMMENT 'Date and time that tag was created.',
+ADD `created_id` int(10) unsigned default NULL COMMENT 'FK to civicrm_contact, who created this tag',
+ADD CONSTRAINT FK_civicrm_tag_created_id FOREIGN KEY (created_id) REFERENCES civicrm_contact(id) ON DELETE SET NULL;
+
+-- CRM-7494
+    UPDATE  civicrm_option_value value 
+INNER JOIN  civicrm_option_group grp ON ( grp.id = value.option_group_id )
+       SET  value.name = 'CRM_Report_Form_Walklist_Walklist'
+     WHERE  grp.name = 'report_template' 
+       AND  value.name = 'CRM_Report_Form_Walklist';
+
+SELECT @campaignCompId     := max(id) FROM civicrm_component where name = 'CiviCampaign';
+SELECT @reportOptGrpId     := MAX(id) FROM civicrm_option_group WHERE name = 'report_template';
+SELECT @reportOptValMaxWt  := MAX(ROUND(weight)) FROM civicrm_option_value WHERE option_group_id = @reportOptGrpId;
+
+INSERT INTO civicrm_option_value
+  (option_group_id, {localize field='label'}label{/localize}, value, name, grouping, filter, is_default, weight,{localize field='description'} description{/localize}, is_optgroup,is_reserved, is_active, component_id, visibility_id ) 
+VALUES
+    (@reportOptGrpId, {localize}'{ts escape="sql"}Walk List Survey Report{/ts}'{/localize}, 'walklist/survey', 'CRM_Report_Form_Walklist_Survey', NULL, 0, 0,  @reportOptValMaxWt+1, {localize}'{ts escape="sql"}Provides a detailed report for your walk list survey{/ts}'{/localize}, 0, 0, 1, @campaignCompId, NULL );

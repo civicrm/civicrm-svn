@@ -1024,8 +1024,8 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
         
         if ( $required ) {
             $this->addRule( $name, ts('Please select %1', array(1 => $label)), 'required');
-            if ( CRM_Utils_Array::value( 'addTime', $attributes ) ) {
-                $this->addRule( $elementName, ts('Please select Time'), 'required'); 
+            if ( CRM_Utils_Array::value( 'addTime', $attributes ) && CRM_Utils_Array::value( 'addTimeRequired', $attributes ) ) {
+                $this->addRule( $elementName, ts('Please enter a time.'), 'required'); 
             }
         }
     }
