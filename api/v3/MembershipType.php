@@ -65,7 +65,7 @@ function civicrm_membership_type_create(&$params)
     $membershipTypeBAO = CRM_Member_BAO_MembershipType::add($values, $ids);
     $membershipType = array();    
     _civicrm_object_to_array( $membershipTypeBAO, $membershipType[$membershipTypeBAO->id] );
-    $membershipTypeBAO->free;
+    $membershipTypeBAO->free();
     return civicrm_create_success($membershipType,$params);
 
   } catch (PEAR_Exception $e) {
@@ -140,10 +140,8 @@ function civicrm_membership_type_delete( &$params ) {
 
     require_once 'CRM/Member/BAO/MembershipType.php';
     $memberDelete = CRM_Member_BAO_MembershipType::del( $params['id'] );
-
-    return $memberDelete ?
-    civicrm_create_success( $params['id'] ) :
-    civicrm_create_error('Error while deleting membership type. id : ' . $params['id']);
+    _civicrm_object_to_array($memberDelete , $result[$memberDelete->id ]);
+    civicrm_create_success( $result,$params ) ;
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );
   } catch (Exception $e) {
