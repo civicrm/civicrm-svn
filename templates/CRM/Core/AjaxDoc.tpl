@@ -3,6 +3,8 @@
 <style>
 {literal}
 #result {background:lightgrey;}
+#selector a {margin-right:10px;}
+.required {font-weight:bold;}
 {/literal}
 </style>
 <script>
@@ -12,6 +14,48 @@ if (restURL.indexOf('?') == -1 )
 else 
   restURL = restURL + '&';
 {literal}
+
+function toggleField (name,label,type) {
+  h = '<div><label>'+label+'</label><input name='+name+ ' id="'+name+ ' /></div>';
+  if ( $('#extra #'+ name).length > 0) {
+    $('#extra #'+ name).parent().remove();
+  }
+  $('#extra').append (h);
+
+}
+
+function buildForm (entity, action) {
+  id = entity+ '_id';
+  h = '<label>'+id+'</label><input id="'+id+ '" size="3" maxlength="20" />';
+  if (action == 'delete') {
+    $('#extra').html(h);
+    return;
+  }
+  query = restURL+'json=1&version=3&entity='+entity+'&action=getFields';
+  $.getJSON(query,function(data) {
+      h='<i>Available fields:</i>';
+      $.each(data, function(key, value) { 
+        name =value.name;
+        if (name == 'id') 
+          name = entity+'_id';
+        if (value.title == undefined) {
+          value.title = value.name;
+        }
+        if (value.required == true) {
+          required = " required";
+        } else {
+          required = "";
+        }
+        h= h + "<a id='"+name+"' class='type_"+ value.type +  required +"'>"+value.title+"</a>";
+        //h= h + "<label>"+data[key].title+"</label>"+"<input id='"+data[key].name+"' />";
+      });
+      $('#selector').html(h).find ('a').click (function(){
+        toggleField (this.id,this.innerHTML,this.class);
+      });
+      
+  });
+}
+
 function generateQuery () {
     var version = $('#version').val();
     var entity = $('#entity').val();
@@ -29,8 +73,23 @@ function generateQuery () {
       $('#query').val (query);
       return;
     }
-    query = restURL+json+debug+'version='+version+'&entity='+entity+'&action='+action;
+    extra ="";
+    $('#extra input').each (function (i) {
+      val = $(this).val();
+      if (val) {
+        extra = extra + "&" +this.id +"="+val;
+      }
+    });
+    query = restURL+json+debug+'version='+version+'&entity='+entity+'&action='+action+extra;
     $('#query').val (query);
+    if (action == 'delete' && $('#selector a').length == 0) {
+      buildForm (entity, action); 
+      return; 
+    }
+    if ( action =='create' && $('#selector a').length == 0) {
+      buildForm (entity, action); 
+      return; 
+    }
     runQuery (query);
 }
 
@@ -68,12 +127,16 @@ function runQuery(query) {
 }
 
 cj(function ($) {
-  $('#entity').change (function() { generateQuery();  });
-  $('#action').change (function() { generateQuery();  });
+  $('#entity').change (function() { $("#selector").empty();generateQuery();  });
+  $('#action').change (function() { $("#selector").empty();generateQuery();  });
   $('#version').change (function() { generateQuery();  });
   $('#debug').change (function() { generateQuery();  });
   $('#json').change (function() { generateQuery();  });
   $('#explorer').submit(function() {runQuery($('#query').val()); return false; });
+
+  $('#extra').live ('change',function () {
+    generateQuery();
+  });
 });
 {/literal}
 </script>
@@ -105,6 +168,8 @@ cj(function ($) {
 <label>json</label>
 <input type="checkbox" id="json" checked="checked">
 <br>
+<div id="selector"></div>
+<div id="extra"></div>
 <input size="90" id="query" value="{crmURL p="civicrm/ajax/rest" q="json=1&debug=on&entity=contact&action=get&sequential=1&return=display_name,email,phone"}"/>
 <div id="link"></div>
 <div id="smarty" title='smarty syntax (mostly works for get actions)'></div>
