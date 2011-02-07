@@ -474,6 +474,7 @@ INNER JOIN   civicrm_contact contact ON ( contact.id = contrib.contact_id )
                     case 'custom'   :
                     case 'l_number0':
                         if ( $val ) {
+                            $val = "[PayPal_field:{$detail}] {$val}";
                             $transaction[$mapper['transaction'][$detail]] = 
                                 !empty( $transaction[$mapper['transaction'][$detail]] ) ? 
                                 $transaction[$mapper['transaction'][$detail]] . " <br/> " . $val : $val;
