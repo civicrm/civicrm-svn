@@ -79,7 +79,7 @@ SELECT @value                 := MAX(value) FROM civicrm_option_value WHERE opti
 SELECT @caseCompId       := max(id) FROM civicrm_component where name = 'CiviCase';
 INSERT INTO civicrm_option_value
   (option_group_id,         {localize field='label'}label{/localize},                   value,                        name,                                        weight,                 {localize field='description'}description{/localize}, is_active, component_id) VALUES
-  (@option_group_id_act,   '{localize}Add Client To Case{/localize}',                   @value,                       'Add Client To Case',                         @weight,                NULL,                                               1,         @caseCompId ;
+  (@option_group_id_act,   '{localize}Add Client To Case{/localize}',                   @value,                       'Add Client To Case',                         @weight,                NULL,                                               1,         @caseCompId );
 
 -- CRM-7317
 CREATE TABLE civicrm_prevnext_cache (
@@ -96,7 +96,7 @@ CREATE TABLE civicrm_prevnext_cache (
 ALTER TABLE `civicrm_tag`
 ADD `created_date` DATETIME NULL DEFAULT NULL COMMENT 'Date and time that tag was created.',
 ADD `created_id` int(10) unsigned default NULL COMMENT 'FK to civicrm_contact, who created this tag',
-ADD CONSTRAINT FK_civicrm_tag_created_id FOREIGN KEY (created_id) REFERENCES civicrm_contact(id) ON DELETE SET NULL; 
+ADD CONSTRAINT FK_civicrm_tag_created_id FOREIGN KEY (created_id) REFERENCES civicrm_contact(id) ON DELETE SET NULL;
 
 -- CRM-7494
     UPDATE  civicrm_option_value value 
