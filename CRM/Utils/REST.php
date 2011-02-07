@@ -342,18 +342,11 @@ class CRM_Utils_REST
         }
         
         $version = civicrm_get_api_version($params);
-        
-        $include_error = civicrm_api_include($args[1], $restInterface);
-        
-        $fnName = civicrm_api_get_function_name($args[1], $args[2]);
-        
-        if ( ! function_exists( $fnName ) ) {
-            return self::error( "Unknown function called: $fnName" );
-        }
+        $params ['version'] = $version; 
         
         // trap all fatal errors
         CRM_Core_Error::setCallback( array( 'CRM_Utils_REST', 'fatal' ) );
-        $result = $fnName( $params );
+        $result = civicrm_api ($args[1], $args[2],$params);
         CRM_Core_Error::setCallback( );
 	      if ($version == 2) {
            $result['deprecated'] = "Please upgrade to API v3";
