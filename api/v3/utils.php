@@ -102,12 +102,11 @@ function civicrm_verify_mandatory (&$params, $daoName = null, $keys = array() ) 
 
   if ($daoName != null) {
        if(!is_array($unmatched =_civicrm_check_required_fields( $params, $daoName, true))){
-         unset($unmatched);
+         $unmatched = array();
        }
   }
-  
   $keys[] = 'version';//required from v3 onwards
-  $unmatched = array();
+
   foreach ($keys as $key) {
     if(is_array($key)){
       $match = 0;
