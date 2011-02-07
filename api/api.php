@@ -60,7 +60,15 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
       return $d->fields();
     }
     if ( strtolower($action) == "update") {
-      return civicrm_create_error("coming soon");
+      $key_id = strtolower ($entity)."_id";
+      if (!array_key_exists ($key_id,$params)) 
+        return civicrm_create_error( "Mandatory parameter missing $key_id" );
+      $seek = array ($key_id => $params[$key_id], 'version' => $version);
+      $existing = civicrm_api ($entity, 'get',$seek);
+      if ($existing['is_error'])
+        return $existing;
+      print_r(array_pop($existing['values']));
+      array_merge ();
     }
     return civicrm_create_error( "API ($entity,$action) does not exist (join the API team and implement $function" );
   }

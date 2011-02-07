@@ -162,6 +162,7 @@ cj(function ($) {
   <option value="create">create</option>
   <option value="delete">delete</option>
   <option value="getfields">getfields</option>
+  <option value="update">update</option>
 </select>
 <label>debug</label>
 <input type="checkbox" id="debug" checked="checked">
