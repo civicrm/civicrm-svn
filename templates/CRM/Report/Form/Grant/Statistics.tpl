@@ -30,23 +30,18 @@
     </div>
 {else}
     <div class="crm-block crm-form-block crm-report-field-form-block">
-        {include file="CRM/Report/Form/Fields.tpl"}
+        {include file="CRM/Report/Form/Fields.tpl" componentName='Grant'}
     </div>
     
     <div class="crm-block crm-content-block crm-report-form-block">
         {*include actions*}
         {include file="CRM/Report/Form/Actions.tpl"}
 
-        {*Statistics at the Top of the page*}
-        {include file="CRM/Report/Form/Statistics.tpl" top=true}
-    
         {*include the graph*}
         {include file="CRM/Report/Form/Layout/Graph.tpl"}
     
         <br />
-        {*Statistics at the bottom of the page*}
-        {include file="CRM/Report/Form/Statistics.tpl" bottom=true}    
-    
+        
         {include file="CRM/Report/Form/ErrorMessage.tpl"}
     </div>
 {/if}
@@ -70,8 +65,8 @@
 <table class="report-layout display">
   {foreach from=$grantStatistics item=values key=key}
     <th class="statistics" scope="row">{$values.title}</th>
-    <th class="statistics" scope="row">Count</th>
-    <th class="statistics" scope="row">Amount</th>
+    <th class="statistics" scope="row">Number of Grants (%)</th>
+    <th class="statistics" scope="row">Total Amount (%)</th>
        {foreach from=$values.value item=row key=field}
            <tr>
               <td>{$field}</td>
@@ -82,6 +77,17 @@
                 {/foreach} 
               </td>
            </tr>
+         {if $row.unassigned_count}
+           <tr>
+              <td>{$field} (Unassigned)</td>
+              <td>{$row.unassigned_count} ({$row.unassigned_percentage}%)</td>
+              <td>
+                {foreach from=$row.unassigned_currency key=fld item=val}
+                   {$fld} {$val.value} ({$val.percentage}%)&nbsp;&nbsp;
+                {/foreach} 
+              </td>
+           </tr>
+         {/if}
        {/foreach}
   {/foreach}
 </table>

@@ -91,13 +91,13 @@ class CRM_Report_Form_Grant_Statistics extends CRM_Report_Form {
                                        ),
                                 'money_transfer_date' =>
                                 array( 'name'          => 'money_transfer_date' ,
-                                       'title'         => ts( 'Money Transfer Date' ),
+                                       'title'         => ts( 'Money Transferred' ),
                                        'operatorType'  => CRM_Report_Form::OP_DATE,
                                        'type'          => CRM_Utils_Type::T_DATE,
                                        ),
                                 'grant_due_date' =>
                                 array( 'name'          => 'grant_due_date' ,
-                                       'title'         => ts( 'Grant Due Date' ),
+                                       'title'         => ts( 'Grant Report Due' ),
                                        'operatorType'  => CRM_Report_Form::OP_DATE,
                                        'type'          => CRM_Utils_Type::T_DATE,
                                        ),
@@ -124,47 +124,13 @@ class CRM_Report_Form_Grant_Statistics extends CRM_Report_Form {
                                        ),
                                 'grant_report_received'=>
                                 array( 'name'          => 'grant_report_received',
-                                       'title'         => ts( 'Grant Report Received' ), 
+                                       'title'         => ts( 'Report Received' ), 
                                        'operatorType'  => CRM_Report_Form::OP_SELECT,
                                        'options'       => array( '' => ts('- select -'), 
                                                                  0  => ts('No'), 
                                                                  1  => ts('Yes'),
                                                                  ),
                                        ),
-                                ),
-                         ),
-                  'civicrm_contact'=>
-                  array( 'dao'     => 'CRM_Contact_DAO_Contact',
-                         'fields'  =>
-                         array( 'id' =>
-                                array( 'required'      => true,  
-                                       'no_display'    => true,
-                                       ), 
-                                'gender_id' =>  
-                                array( 'name'          => 'gender_id',
-                                       'title'         => ts( 'By Gender' ),
-                                       ),
-                                'contact_type' =>
-                                array( 'name'          => 'contact_type',
-                                       'title'         => ts( 'By Contact Type' ),
-                                       ),
-                                ),
-                         'grouping'=> 'contact-fields',
-                         ),
-                  'civicrm_address' =>
-                  array( 'dao' => 'CRM_Core_DAO_Address',
-                         'fields' =>
-                         array( 'country_id' => 
-                                array( 'name'          => 'country_id',
-                                       'title'         => ts( 'By Country' ), 
-                                       ),
-                                ),
-                         'filters' =>             
-                         array( 'country_id' => 
-                                array( 'title'         => ts( 'Country' ), 
-                                       'operatorType'  => CRM_Report_Form::OP_MULTISELECT,
-                                       'options'       => CRM_Core_PseudoConstant::country( ),
-                                       ), 
                                 ),
                          ),
                   'civicrm_world_region' => 
@@ -186,6 +152,40 @@ class CRM_Report_Form_Grant_Statistics extends CRM_Report_Form {
                                        'options'       => CRM_Core_PseudoConstant::worldRegion( ),
                                        ),
                                 ),
+                         ),
+                  'civicrm_address' =>
+                  array( 'dao' => 'CRM_Core_DAO_Address',
+                         'fields' =>
+                         array( 'country_id' => 
+                                array( 'name'          => 'country_id',
+                                       'title'         => ts( 'By Country' ), 
+                                       ),
+                                ),
+                         'filters' =>             
+                         array( 'country_id' => 
+                                array( 'title'         => ts( 'Country' ), 
+                                       'operatorType'  => CRM_Report_Form::OP_MULTISELECT,
+                                       'options'       => CRM_Core_PseudoConstant::country( ),
+                                       ), 
+                                ),
+                         ),
+                  'civicrm_contact'=>
+                  array( 'dao'     => 'CRM_Contact_DAO_Contact',
+                         'fields'  =>
+                         array( 'id' =>
+                                array( 'required'      => true,  
+                                       'no_display'    => true,
+                                       ), 
+                                'gender_id' =>  
+                                array( 'name'          => 'gender_id',
+                                       'title'         => ts( 'By Gender' ),
+                                       ),
+                                'contact_type' =>
+                                array( 'name'          => 'contact_type',
+                                       'title'         => ts( 'By Contact Type' ),
+                                       ),
+                                ),
+                         'grouping'=> 'contact-fields',
                          ),
                    ); 
         parent::__construct( );
@@ -258,6 +258,11 @@ class CRM_Report_Form_Grant_Statistics extends CRM_Report_Form {
                         }
                     } else { 
                         $op = CRM_Utils_Array::value( "{$fieldName}_op", $this->_params );
+                        if ( ( $fieldName == 'grant_report_received' ) && 
+                             ( CRM_Utils_Array::value( "{$fieldName}_value", $this->_params ) === 0 ) ) {
+                            $op = 'nll';
+                            $this->_params["{$fieldName}_value"] = NULL;
+                        }
                         if ( $op ) {
                             $clause = 
                                 $this->whereClause( $field,
@@ -371,14 +376,15 @@ SELECT COUNT(id) as count , SUM(amount_total) as totalAmount
             }
             
             foreach ( $values as $customField => $customValue ) {
-                if ( $customValue && strstr( $customField, 'civicrm_value_' ) ) {
+                if ( strstr( $customField, 'civicrm_value_' ) ) {
+                    $customFieldTitle  = CRM_Utils_Array::value( 'title', $this->_columnHeaders[$customField] );
                     $customGroupTitle  = explode( '_custom', strstr( $customField, 'civicrm_value_' ) );
                     $customGroupTitle  = $this->_columns[$customGroupTitle[0]]['group_title'];
-                    $customFieldTitle  = CRM_Utils_Array::value( 'title', $this->_columnHeaders[$customField] );
-
                     $grantStatistics[$customGroupTitle]['title'] = ts( "{$customGroupTitle}" );
+                    
+                    $customData = ( $customValue ) ? false : true;
                     self::getStatistics( $grantStatistics[$customGroupTitle], $customFieldTitle, $values, 
-                                         $awardedGrants, $awardedGrantsAmount );
+                                         $awardedGrants, $awardedGrantsAmount, $customData );
                 }
             }
         }
@@ -395,16 +401,26 @@ SELECT COUNT(id) as count , SUM(amount_total) as totalAmount
         $this->assign( 'grantStatistics', $grantStatistics );
     }
 
-    static function getStatistics( &$grantStatistics, $fieldValue, $values, $awardedGrants, $awardedGrantsAmount )
+    static function getStatistics( &$grantStatistics, $fieldValue, $values, 
+                                   $awardedGrants, $awardedGrantsAmount, $customData = false )
     {
         $currencies = CRM_Core_PseudoConstant::currencySymbols( 'symbol', 'name' );
         $currency   = $currencies[$values['civicrm_grant_currency']];
-                                        
-        $grantStatistics['value'][$fieldValue]['currency'][$currency]['value'] += $values['civicrm_grant_amount_total'];
-        $grantStatistics['value'][$fieldValue]['currency'][$currency]['percentage'] =
-            round( ( $grantStatistics['value'][$fieldValue]['currency'][$currency]['value'] / $awardedGrantsAmount ) * 100 );
-        $grantStatistics['value'][$fieldValue]['count'] ++;
-        $grantStatistics['value'][$fieldValue]['percentage'] = 
-            round( ( $grantStatistics['value'][$fieldValue]['count'] / $awardedGrants ) * 100 );
+        
+        if ( !$customData ) {
+            $grantStatistics['value'][$fieldValue]['currency'][$currency]['value'] += $values['civicrm_grant_amount_total'];
+            $grantStatistics['value'][$fieldValue]['currency'][$currency]['percentage'] =
+                round( ( $grantStatistics['value'][$fieldValue]['currency'][$currency]['value'] / $awardedGrantsAmount ) * 100 );
+            $grantStatistics['value'][$fieldValue]['count'] ++;
+            $grantStatistics['value'][$fieldValue]['percentage'] = 
+                round( ( $grantStatistics['value'][$fieldValue]['count'] / $awardedGrants ) * 100 );
+        } else {
+            $grantStatistics['value'][$fieldValue]['unassigned_currency'][$currency]['value'] += $values['civicrm_grant_amount_total'];
+            $grantStatistics['value'][$fieldValue]['unassigned_currency'][$currency]['percentage'] =
+                round( ( $grantStatistics['value'][$fieldValue]['unassigned_currency'][$currency]['value'] / $awardedGrantsAmount ) * 100 );
+            $grantStatistics['value'][$fieldValue]['unassigned_count'] ++;
+            $grantStatistics['value'][$fieldValue]['unassigned_percentage'] = 
+                round( ( $grantStatistics['value'][$fieldValue]['unassigned_count'] / $awardedGrants ) * 100 );
+        }
     }
 }
