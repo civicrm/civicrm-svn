@@ -492,8 +492,10 @@ function checkPerformAction (fldPrefix, form, taskButton) {
 function checkSelectedBox( chkName ) {
     var checkElement = cj('#' + chkName );
     if ( checkElement.attr('checked') ) {
+	 cj('input[value=ts_sel]:radio').attr('checked',true );
         checkElement.parents('tr').addClass('crm-row-selected');
     } else {
+	 cj('input[value=ts_sel]:radio').attr('checked',false );
         checkElement.parents('tr').removeClass('crm-row-selected');
     }
 }
