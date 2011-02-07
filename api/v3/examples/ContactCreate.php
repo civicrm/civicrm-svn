@@ -9,10 +9,10 @@ function contact_create_example(){
                   'contact_type' 		=> 'Individual',
                   'location_type_id' 		=> '1',
                   'version' 		=> '3',
-                  'contact_id' 		=> '1',
                   'custom' 		=> 'Array',
                   'preferred_language' 		=> 'en_US',
                   'is_deceased' 		=> '',
+                  'contact_id' 		=> '1',
                   'website' 		=> '',
 
   );
@@ -53,7 +53,7 @@ function contact_create_expectedresult(){
                   ,                  'preferred_communication_method' => ''
                   ,                  'preferred_language' => 'en_US'
                   ,                  'preferred_mail_format' => ''
-                  ,                  'hash' => '715bbb5e33531f2cad266692c12ab1fa'
+                  ,                  'hash' => '66e8f25329cdb9a184295762cce22392'
                   ,                  'api_key' => ''
                   ,                  'first_name' => 'abc4'
                   ,                  'middle_name' => ''

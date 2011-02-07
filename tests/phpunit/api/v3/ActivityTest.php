@@ -53,6 +53,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
      */
     public function setUp()
     {
+        $this->_apiversion =3;
         //  Connect to the database
         parent::setUp();
 
@@ -285,7 +286,8 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'location'            => 'Pensulvania',
                         'details'             => 'a test activity',
                         'status_id'           => 1,
-                        'activity_name'       => 'Test activity type'
+                        'activity_name'       => 'Test activity type',
+                        'version'							=> $this->_apiversion,
                         );
         
         $result = & civicrm_activity_create( $params );
@@ -418,6 +420,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                 'status_id'           => 1,
                  'version'						=> $this->_apiversion,
                 'activity_name'       => 'Test activity type',
+                 'version'							=> $this->_apiversion,
                 'custom'              => array( array(
                  array( 'value' => 'bite my test data',
                         'type'  => 'String',

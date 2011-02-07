@@ -5,7 +5,7 @@ function activity_delete_example(){
     
                   'id' 		=> '13',
                   'activity_type_id' 		=> '1',
-                  'version' 		=> '',
+                  'version' 		=> '3',
 
   );
   require_once 'api/api.php';
