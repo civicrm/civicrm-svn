@@ -134,14 +134,14 @@ function civicrm_membership_type_get(&$params)
 function civicrm_membership_type_delete( &$params ) {
   _civicrm_initialize();
   try{
-
-
     civicrm_verify_mandatory($params,null,array('id'));
 
     require_once 'CRM/Member/BAO/MembershipType.php';
     $memberDelete = CRM_Member_BAO_MembershipType::del( $params['id'] );
     _civicrm_object_to_array($memberDelete , $result[$memberDelete->id ]);
-    civicrm_create_success( $result,$params ) ;
+    return $memberDelete ?
+    civicrm_create_success( $result,$params ) :
+    civicrm_create_error('Error while deleting membership type. id : ' . $params['id']);
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );
   } catch (Exception $e) {
