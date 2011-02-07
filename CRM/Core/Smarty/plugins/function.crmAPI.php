@@ -39,7 +39,7 @@
 function smarty_function_crmAPI( $params, &$smarty ) {
     
     civicrm_api_include($params['entity']);
-    $fnName = civicrm_api_get_function($params['entity'], $params['action']);
+    $fnName = civicrm_api_get_function_name($params['entity'], $params['action']);
     if ( ! function_exists( $fnName ) ) {
         $smarty->trigger_error("Unknown function called: $fnName");
         return;
