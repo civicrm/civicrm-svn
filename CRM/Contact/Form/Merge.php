@@ -60,7 +60,6 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
 
     function preProcess()
     {
-        require_once 'api/v2/Contact.php';
         require_once 'CRM/Core/BAO/CustomGroup.php';
         require_once 'CRM/Core/OptionGroup.php';
         require_once 'CRM/Core/OptionValue.php';
@@ -185,14 +184,14 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         foreach (CRM_Dedupe_Merger::$validFields as $field) {
             $mainParams["return.$field"] = $otherParams["return.$field"] = 1;
         }
-        $main  =& civicrm_contact_get($mainParams);
+        $main  =& civicrm_api('contact', 'get', $mainParams);
         //CRM-4524
         $main  = reset( $main );
         if ( $main['contact_id'] != $cid ) {
             CRM_Core_Error::fatal( ts( 'The main contact record does not exist' ) );
         }
 
-        $other =& civicrm_contact_get($otherParams);
+        $other =& civicrm_api('contact', 'get', $otherParams);
         //CRM-4524
         $other = reset( $other );
         if ( $other['contact_id'] != $oid ) {
@@ -267,11 +266,10 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         }
         
         // handle location blocks.
-        require_once 'api/v2/Location.php';
         $mainParams['version'] = $otherParams['version'] = '3.0';
         
-        $locations['main']  =& civicrm_location_get( $mainParams );
-        $locations['other'] =& civicrm_location_get( $otherParams );
+        $locations['main']  =& civicrm_api('location', 'get', $mainParams);
+        $locations['other'] =& civicrm_api('location', 'get', $otherParams);
         $allLocationTypes   = CRM_Core_PseudoConstant::locationType( );
         
         $mainLocAddress = array();
@@ -717,7 +715,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
                 $query = "UPDATE civicrm_contact SET external_identifier = null WHERE id = {$this->_oid}";
                 CRM_Core_DAO::executeQuery( $query );
             }
-            civicrm_contact_delete( $otherParams );
+            civicrm_api('contact', 'delete', $otherParams);
             CRM_Core_BAO_PrevNextCache::deleteItem( $this->_oid );
         } else {
             CRM_Core_Session::setStatus( ts('Do not have sufficient permission to delete duplicate contact.') );

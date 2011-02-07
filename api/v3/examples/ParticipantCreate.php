@@ -15,7 +15,7 @@ function participant_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_participant_create','Participant',$params );
+  $result = civicrm_api_legacy( 'civicrm_participant_create','Participant',$params );
 
   return $result;
 }

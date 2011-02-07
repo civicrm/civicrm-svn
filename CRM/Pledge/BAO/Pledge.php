@@ -663,8 +663,7 @@ WHERE  $whereCond
                                      'details'            => $details,
                                      'campaign_id'        => CRM_Utils_Array::value( 'campaign_id', $params )
                                      );
-            require_once 'api/v2/Activity.php';
-            if ( is_a( civicrm_activity_create( $activityParams ), 'CRM_Core_Error' ) ) {
+            if ( is_a( civicrm_api('activity', 'create', $activityParams ), 'CRM_Core_Error' ) ) {
                 CRM_Core_Error::fatal("Failed creating Activity for acknowledgment");
             }
         }

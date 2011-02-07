@@ -260,8 +260,7 @@ SELECT  pledge.contact_id              as contact_id,
                                                      'is_test'            => $details['is_test'],
                                                      'status_id'          => 2
                                                      );
-                            require_once 'api/v2/Activity.php';
-                            if ( is_a( civicrm_activity_create( $activityParams ), 'CRM_Core_Error' ) ) {
+                            if ( is_a( civicrm_api('activity', 'create', $activityParams ), 'CRM_Core_Error' ) ) {
                                 CRM_Core_Error::fatal("Failed creating Activity for acknowledgment");
                             }
                             echo "<br />Payment reminder sent to: {$pledgerName} - {$toEmail}";

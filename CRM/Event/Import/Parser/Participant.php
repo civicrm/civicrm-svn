@@ -338,7 +338,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
         }
         
         $formatError = _civicrm_participant_formatted_param( $formatValues, $formatted, true );
-        require_once "api/v2/Participant.php";
+        civicrm_api_include('participant');
 
         if ( $formatError ) {
             array_unshift($values, $formatError['error_message']);
@@ -357,7 +357,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
                                                                           'Participant' );
         } else {
             if ( $formatValues['participant_id'] ) {
-                require_once 'CRM/Event/BAO/Participant.php';
+                civicrm_api_include('participant');
                 $dao =  new CRM_Event_BAO_Participant();
                 $dao->id = $formatValues['participant_id'];
                 

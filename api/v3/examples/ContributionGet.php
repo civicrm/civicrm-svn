@@ -8,7 +8,7 @@ function contribution_get_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_contribution_get','Contribution',$params );
+  $result = civicrm_api_legacy( 'civicrm_contribution_get','Contribution',$params );
 
   return $result;
 }

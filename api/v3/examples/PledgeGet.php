@@ -7,7 +7,7 @@ function pledge_get_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_pledge_get','Pledge',$params );
+  $result = civicrm_api_legacy( 'civicrm_pledge_get','Pledge',$params );
 
   return $result;
 }

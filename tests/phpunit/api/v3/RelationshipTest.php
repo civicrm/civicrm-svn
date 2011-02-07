@@ -313,7 +313,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
                          );
         
 
-        $result = civicrm_api( 'civicrm_custom_field_create','CustomField',$params );
+        $result = civicrm_api_legacy( 'civicrm_custom_field_create','CustomField',$params );
   
         $customField = null;
         $ids[] = $customField['result']['customFieldId'];

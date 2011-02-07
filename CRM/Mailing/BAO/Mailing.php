@@ -966,7 +966,6 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
                              $email, &$recipient, $test, 
                              $contactDetails, &$attachments, $isForward = false, $fromEmail = null ) 
     {
-        
         require_once 'CRM/Utils/Token.php';
         require_once 'CRM/Activity/BAO/Activity.php';
         $config = CRM_Core_Config::singleton( );

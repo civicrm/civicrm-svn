@@ -9,7 +9,7 @@ function group_organization_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_group_organization_create','GroupOrganization',$params );
+  $result = civicrm_api_legacy( 'civicrm_group_organization_create','GroupOrganization',$params );
 
   return $result;
 }

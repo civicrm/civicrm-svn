@@ -187,7 +187,7 @@ WHERE civicrm_case.id=  %1";
         	$oldActivity = $abao->retrieve( $oldParams, $oldActivityDefaults );
 
             // save the old values
-        	require_once 'api/v2/utils.php';
+          civicrm_api_include('utils');
         	$openCaseParams = array();
         	_civicrm_object_to_array($oldActivity, $openCaseParams);
 

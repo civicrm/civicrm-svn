@@ -9,7 +9,7 @@ function group_nesting_get_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_group_nesting_get','GroupNesting',$params );
+  $result = civicrm_api_legacy( 'civicrm_group_nesting_get','GroupNesting',$params );
 
   return $result;
 }

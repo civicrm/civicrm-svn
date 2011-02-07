@@ -14,7 +14,7 @@ function relationship_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_relationship_create','Relationship',$params );
+  $result = civicrm_api_legacy( 'civicrm_relationship_create','Relationship',$params );
 
   return $result;
 }

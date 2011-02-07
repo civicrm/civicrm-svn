@@ -2,7 +2,6 @@
 
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'CiviTest/Contact.php';
-require_once 'api/v2/Contact.php';
 require_once 'CRM/Contact/BAO/ContactType.php';
 
 class CRM_Contact_BAO_ContactType_ContactSearchTest extends CiviUnitTestCase 
@@ -96,7 +95,7 @@ class CRM_Contact_BAO_ContactType_ContactSearchTest extends CiviUnitTestCase
          */
         $defaults = array( );
         $params   = array( array( 'contact_type' => 'Individual' ) );
-        $result   =& civicrm_contact_search( $params );
+        $result   =& civicrm_api('contact', 'get', $params );
         
         $individual    = $result[$this->individual];
         $indiviStudent = $result[$this->indiviStudent];
@@ -124,7 +123,7 @@ class CRM_Contact_BAO_ContactType_ContactSearchTest extends CiviUnitTestCase
          * for type:Organization
          */
         $params   = array( array( 'contact_type' => 'Organization') );
-        $result   =& civicrm_contact_search( $params );
+        $result   =& civicrm_api('contact', 'get', $params );
         
         $organization  = $result[$this->organization];
         $orgSponsor    = $result[$this->orgSponsor];
@@ -145,7 +144,7 @@ class CRM_Contact_BAO_ContactType_ContactSearchTest extends CiviUnitTestCase
          * for type:Household
          */
         $params   = array( array( 'contact_type' => 'Household' ) );
-        $result   =& civicrm_contact_search( $params );
+        $result   =& civicrm_api('contact', 'get', $params );
         
         $household  = $result[$this->household];
 
@@ -168,7 +167,7 @@ class CRM_Contact_BAO_ContactType_ContactSearchTest extends CiviUnitTestCase
          */
         $defaults = array( );
         $params   = array( 'contact_sub_type' => $this->student );
-        $result   =& civicrm_contact_search( $params );
+        $result   =& civicrm_api('contact', 'get', $params );
         
         $indiviStudent = $result[$this->indiviStudent];
         
@@ -190,7 +189,7 @@ class CRM_Contact_BAO_ContactType_ContactSearchTest extends CiviUnitTestCase
          * for subtype:Sponsor
          */
         $params   = array( 'contact_sub_type' => $this->sponsor );
-        $result   =& civicrm_contact_search( $params );
+        $result   =& civicrm_api('contact', 'get', $params );
         
         $orgSponsor = $result[$this->orgSponsor];
          
@@ -221,7 +220,7 @@ class CRM_Contact_BAO_ContactType_ContactSearchTest extends CiviUnitTestCase
          */
         $defaults = array( );
         $params   = array( 'contact_sub_type' => $this->student );
-        $result   =& civicrm_contact_search( $params );
+        $result   =& civicrm_api('contact', 'get', $params );
         
         $indiviStudent = $result[$this->indiviStudent];
         
@@ -243,7 +242,7 @@ class CRM_Contact_BAO_ContactType_ContactSearchTest extends CiviUnitTestCase
          * for type:Organization subtype:Sponsor
          */
         $params   = array( 'contact_sub_type' => $this->sponsor );
-        $result   =& civicrm_contact_search( $params );
+        $result   =& civicrm_api('contact', 'get', $params );
         
         $orgSponsor = $result[$this->orgSponsor];
          
@@ -271,31 +270,31 @@ class CRM_Contact_BAO_ContactType_ContactSearchTest extends CiviUnitTestCase
         // for invalid type 
         $defaults = array( );
         $params   = array( 'contact_type' => 'Invalid'. CRM_Core_DAO::VALUE_SEPARATOR. 'Invalid' );
-        $result   =& civicrm_contact_search( $params );
+        $result   =& civicrm_api('contact', 'get', $params );
         $this->assertEquals( empty($result), true, 'In line '. __LINE__ );
         
         
         // for invalid subtype 
         $params   = array( 'contact_sub_type' => 'Invalid' );
-        $result   =& civicrm_contact_search( $params );
+        $result   =& civicrm_api('contact', 'get', $params );
         $this->assertEquals( empty($result), true, 'In line '. __LINE__ );
 
         
         // for invalid contact type as well as subtype
         $params   = array( 'contact_type'     => 'Invalid'. CRM_Core_DAO::VALUE_SEPARATOR. 'Invalid');
-        $result   =& civicrm_contact_search( $params );
+        $result   =& civicrm_api('contact', 'get', $params );
         $this->assertEquals( empty($result), true, 'In line '. __LINE__ );
 
         
         // for valid type and invalid subtype
         $params   = array( 'contact_type'     => 'Individual'. CRM_Core_DAO::VALUE_SEPARATOR. 'Invalid' );
-        $result   =& civicrm_contact_search( $params );
+        $result   =& civicrm_api('contact', 'get', $params );
         $this->assertEquals( empty($result), true, 'In line '. __LINE__ ); 
 
         
         // for invalid type and valid subtype
         $params   = array( 'contact_type'     => 'Invalid'. CRM_Core_DAO::VALUE_SEPARATOR . 'indivi_student' );
-        $result   =& civicrm_contact_search( $params );
+        $result   =& civicrm_api('contact', 'get', $params );
         $this->assertEquals( empty($result), true, 'In line '. __LINE__ ); 
     }
     
@@ -307,24 +306,24 @@ class CRM_Contact_BAO_ContactType_ContactSearchTest extends CiviUnitTestCase
         // for type:Individual subtype:Sponsor 
         $defaults = array( );
         $params   = array( 'contact_type' => 'Individual'. CRM_Core_DAO::VALUE_SEPARATOR . $this->sponsor );
-        $result   =& civicrm_contact_search( $params );
+        $result   =& civicrm_api('contact', 'get', $params );
         $this->assertEquals( empty($result), true, 'In line '. __LINE__ );
         
         // for type:Orgaization subtype:Parent
         $params   = array( 'contact_type' => 'Orgaization'. CRM_Core_DAO::VALUE_SEPARATOR . $this->parent );
-        $result   =& civicrm_contact_search( $params, $defaults );
+        $result   =& civicrm_api('contact', 'get', $params, $defaults );
         $this->assertEquals( empty($result), true, 'In line '. __LINE__ );
 
         
         // for type:Household subtype:Sponsor
         $params   = array( 'contact_type' => 'Household'. CRM_Core_DAO::VALUE_SEPARATOR . $this->sponsor );
-        $result   =& civicrm_contact_search( $params, $defaults );
+        $result   =& civicrm_api('contact', 'get', $params, $defaults );
         $this->assertEquals( empty($result), true, 'In line '. __LINE__ );
 
         
         // for type:Household subtype:Student
         $params   = array( 'contact_type' => 'Household'. CRM_Core_DAO::VALUE_SEPARATOR . $this->student );
-        $result   =& civicrm_contact_search( $params, $defaults );
+        $result   =& civicrm_api('contact', 'get', $params, $defaults );
         $this->assertEquals( empty($result), true, 'In line '. __LINE__ ); 
         
     }

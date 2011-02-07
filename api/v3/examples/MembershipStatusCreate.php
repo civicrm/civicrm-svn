@@ -13,7 +13,7 @@ function membership_status_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_membership_status_create','MembershipStatus',$params );
+  $result = civicrm_api_legacy( 'civicrm_membership_status_create','MembershipStatus',$params );
 
   return $result;
 }

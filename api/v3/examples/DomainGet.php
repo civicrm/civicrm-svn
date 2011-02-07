@@ -8,7 +8,7 @@ function domain_get_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_domain_get','Domain',$params );
+  $result = civicrm_api_legacy( 'civicrm_domain_get','Domain',$params );
 
   return $result;
 }

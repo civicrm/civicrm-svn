@@ -8,7 +8,7 @@ function pledge_delete_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_pledge_delete','Pledge',$params );
+  $result = civicrm_api_legacy( 'civicrm_pledge_delete','Pledge',$params );
 
   return $result;
 }

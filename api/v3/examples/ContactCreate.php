@@ -17,7 +17,7 @@ function contact_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_contact_create','Contact',$params );
+  $result = civicrm_api_legacy( 'civicrm_contact_create','Contact',$params );
 
   return $result;
 }

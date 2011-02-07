@@ -14,7 +14,7 @@ function uf_join_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_uf_join_create','UFJoin',$params );
+  $result = civicrm_api_legacy( 'civicrm_uf_join_create','UFJoin',$params );
 
   return $result;
 }

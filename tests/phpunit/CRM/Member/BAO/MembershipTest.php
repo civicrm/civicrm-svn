@@ -31,8 +31,6 @@ require_once 'CiviTest/Custom.php';
 require_once 'CRM/Member/BAO/Membership.php';
 require_once 'CiviTest/ContributionPage.php';
 require_once 'CiviTest/Membership.php';
-require_once 'api/v2/MembershipType.php';
-require_once 'api/v2/MembershipStatus.php';
 require_once 'CRM/Member/BAO/MembershipType.php';
 
 class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase

@@ -6,7 +6,7 @@ function participant_get_example( )
                         'contact_id'      => $this->_contactID,
   );
 
-  $result = civicrm_api( 'civicrm_participant_get','Participant',$params );
+  $result = civicrm_api_legacy( 'civicrm_participant_get','Participant',$params );
 
   return $result;
 }

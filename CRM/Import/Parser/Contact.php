@@ -36,7 +36,7 @@
 
 require_once 'CRM/Import/Parser.php';
 
-require_once 'api/v2/utils.php';
+civicrm_api_include('utils');
 
 /**
  * class to parse contact csv files
@@ -1556,7 +1556,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         //get the prefix id etc if exists
         CRM_Contact_BAO_Contact::resolveDefaults($formatted, true);
         
-        require_once 'api/v2/Contact.php';
+        civicrm_api_include('contact');
         // setting required check to false, CRM-2839
         // plus we do our own required check in import
         $error = civicrm_contact_check_params( $formatted, $dupeCheck, true, false );

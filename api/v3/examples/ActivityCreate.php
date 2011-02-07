@@ -17,7 +17,7 @@ function activity_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_activity_create','Activity',$params );
+  $result = civicrm_api_legacy( 'civicrm_activity_create','Activity',$params );
 
   return $result;
 }

@@ -327,8 +327,7 @@ function rules_action_civicrm_contact_create($first_name, $last_name, $email) {
                      'last_name'  => $last_name ,
                      'email'      => $email );
     
-    require_once 'api/v2/Contact.php';
-    $contact = civicrm_contact_create( $params );
+    $contact = civicrm_api('contact', 'create', $params);
 
     if ( ! $contact['is_error'] ) {
         return array( 'contact' => _civicrm_rules_load_contact( $contact['id'] ) );

@@ -10,7 +10,7 @@ function tag_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_tag_create','Tag',$params );
+  $result = civicrm_api_legacy( 'civicrm_tag_create','Tag',$params );
 
   return $result;
 }

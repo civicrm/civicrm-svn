@@ -14,7 +14,7 @@ function note_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_note_create','Note',$params );
+  $result = civicrm_api_legacy( 'civicrm_note_create','Note',$params );
 
   return $result;
 }

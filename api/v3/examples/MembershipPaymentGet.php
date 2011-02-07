@@ -9,7 +9,7 @@ function membership_payment_get_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_membership_payment_get','MembershipPayment',$params );
+  $result = civicrm_api_legacy( 'civicrm_membership_payment_get','MembershipPayment',$params );
 
   return $result;
 }

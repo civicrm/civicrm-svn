@@ -6,7 +6,7 @@ function event_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_event_create','Event',$params );
+  $result = civicrm_api_legacy( 'civicrm_event_create','Event',$params );
 
   return $result;
 }

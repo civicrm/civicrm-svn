@@ -10,7 +10,7 @@ function uf_join_get_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_uf_join_get','UFJoin',$params );
+  $result = civicrm_api_legacy( 'civicrm_uf_join_get','UFJoin',$params );
 
   return $result;
 }

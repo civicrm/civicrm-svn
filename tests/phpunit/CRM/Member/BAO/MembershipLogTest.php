@@ -30,8 +30,6 @@ require_once 'CiviTest/Contact.php';
 require_once 'CiviTest/Membership.php';
 require_once 'CRM/Member/BAO/Membership.php';
 require_once 'CRM/Member/BAO/MembershipType.php';
-require_once 'api/v2/MembershipType.php';
-require_once 'api/v2/MembershipStatus.php';
 
 /**
  *  Test CRM/Member/BAO Membership Log add , delete functions

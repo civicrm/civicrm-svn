@@ -13,7 +13,7 @@ function note_get_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_note_get','Note',$params );
+  $result = civicrm_api_legacy( 'civicrm_note_get','Note',$params );
 
   return $result;
 }

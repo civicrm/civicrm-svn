@@ -339,36 +339,14 @@ class CRM_Utils_REST
             }
 
             return call_user_func( array( $params['className'], $params['fnName'] ), $params );
-	    } else {
-            $fnGroup = ucfirst($args[1]);
-            if ( strpos( $fnGroup, '_' ) ) {
-                $fnGroup    = explode( '_', $fnGroup );
-                $fnGroup[1] = ucfirst( $fnGroup[1] );
-                $fnGroup    = implode( '', $fnGroup );
-            }
-            $version = '3';
-            if (defined('CIVICRM_API_VERSION')) {
-              $version = CIVICRM_API_VERSION;
-            }
-            if ($params['version']) {
-              $params['version'] = (int) $params['version'];
-              $version = $params['version'];
-            }
-            $apiFile = "api/v".$version."/{$fnGroup}.php";
         }
         
-        if ( $restInterface ) {
-            $apiPath = substr( $_SERVER['SCRIPT_FILENAME'] , 0 ,-15 );
-            // check to ensure file exists, else die
-            if ( ! file_exists( $apiPath . $apiFile ) ) {
-                return self::error( 'Unknown function invocation.' );
-            }
-        } else {
-            $apiPath = null;
-        }
-
-        require_once $apiPath . $apiFile;
-        $fnName = "civicrm_{$args[1]}_{$args[2]}";
+        $version = civicrm_get_api_version($params);
+        
+        $include_error = civicrm_api_include($args[1], $restInterface);
+        
+        $fnName = civicrm_api_get_function_name($args[1], $args[2]);
+        
         if ( ! function_exists( $fnName ) ) {
             return self::error( "Unknown function called: $fnName" );
         }

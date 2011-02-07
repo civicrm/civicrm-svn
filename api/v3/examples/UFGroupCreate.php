@@ -27,7 +27,7 @@ function uf_group_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_uf_group_create','UFGroup',$params );
+  $result = civicrm_api_legacy( 'civicrm_uf_group_create','UFGroup',$params );
 
   return $result;
 }

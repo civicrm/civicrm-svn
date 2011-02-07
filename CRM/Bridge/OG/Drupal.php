@@ -70,12 +70,11 @@ class CRM_Bridge_OG_Drupal {
         $params['id'] = CRM_Bridge_OG_Utils::groupID( $params['source'], $params['title'], $abort );
 
         if ( $op == 'add' ) {
-            require_once 'api/v2/Group.php';
             if ( $groupType ) {
                 $params['group_type'] = $groupType;
             }
             
-            $group = civicrm_group_add( $params );
+            $group = civicrm_api('group', 'add', $params );
             if ( ! civicrm_error( $group ) ) {
                 $params['group_id'] = $group['result'];
             }
@@ -199,13 +198,12 @@ SELECT v.id
         $groupParams = array( 'contact_id' => $contactID,
                               'group_id'   => $groupID  );
 
-        require_once 'api/v2/GroupContact.php';
         if ( $op == 'add' ) {
             $groupParams['status'] = $params['is_active'] ? 'Added' : 'Pending';
-            civicrm_group_contact_add( $groupParams );
+            civicrm_api('group_contact', 'create', $groupParams );
         } else {
             $groupParams['status'] = 'Removed';
-            civicrm_group_contact_remove( $groupParams );
+            civicrm_api('group_contact', 'delete', $groupParams );
         }
 
         if ( CRM_Bridge_OG_Utils::aclEnabled( ) &&

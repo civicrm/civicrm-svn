@@ -8,7 +8,7 @@ function tag_delete_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_tag_delete','Tag',$params );
+  $result = civicrm_api_legacy( 'civicrm_tag_delete','Tag',$params );
 
   return $result;
 }

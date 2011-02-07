@@ -16,7 +16,7 @@ function contact_type_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_contact_type_create','ContactType',$params );
+  $result = civicrm_api_legacy( 'civicrm_contact_type_create','ContactType',$params );
 
   return $result;
 

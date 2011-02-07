@@ -9,7 +9,7 @@ function tag_get_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_tag_get','Tag',$params );
+  $result = civicrm_api_legacy( 'civicrm_tag_get','Tag',$params );
 
   return $result;
 }

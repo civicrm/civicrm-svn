@@ -16,7 +16,7 @@ function custom_group_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_custom_group_create','CustomGroup',$params );
+  $result = civicrm_api_legacy( 'civicrm_custom_group_create','CustomGroup',$params );
 
   return $result;
 }

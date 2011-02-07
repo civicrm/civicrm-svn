@@ -9,7 +9,7 @@ function group_contact__example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_group_contact_','GroupContact',$params );
+  $result = civicrm_api_legacy( 'civicrm_group_contact_','GroupContact',$params );
 
   return $result;
 }

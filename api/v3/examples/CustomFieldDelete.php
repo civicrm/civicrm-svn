@@ -8,7 +8,7 @@ function custom_field_delete_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_custom_field_delete','CustomField',$params );
+  $result = civicrm_api_legacy( 'civicrm_custom_field_delete','CustomField',$params );
 
   return $result;
 }

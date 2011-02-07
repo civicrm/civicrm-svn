@@ -9,7 +9,7 @@ function activity_delete_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_activity_delete','Activity',$params );
+  $result = civicrm_api_legacy( 'civicrm_activity_delete','Activity',$params );
 
   return $result;
 }

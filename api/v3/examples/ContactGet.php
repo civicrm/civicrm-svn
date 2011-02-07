@@ -9,7 +9,7 @@ function contact_get_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'civicrm_contact_get','Contact',$params );
+  $result = civicrm_api_legacy( 'civicrm_contact_get','Contact',$params );
 
   return $result;
 }
