@@ -351,7 +351,7 @@ WHERE     pledge_id = %1
         }
         
         // if payment ids are passed, we update payment table first, since payments statuses are not dependent on pledge status
-        if ( ( !empty( $paymentIDs ) || $pledgeStatusID == array_search( 'Cancelled', $allStatus ) ) && !$editScheduled ) {
+        if ( ( !empty( $paymentIDs ) || $pledgeStatusID == array_search( 'Cancelled', $allStatus ) ) && ( !$editScheduled || $isScriptUpdate) ) {
             if ( $pledgeStatusID == array_search( 'Cancelled', $allStatus ) ) {
                 $paymentStatusID = $pledgeStatusID ;
             }
