@@ -52,7 +52,7 @@ class civicrm_handler_field_link_relationship extends views_handler_field {
     $options = parent::option_definition();
     $options['link_to_civicrm_relationship'] = array('default' => 'view');
     $options['custom_link'] = array('default' => '');
-    $options['link_text'] = array('default' => '');
+    $options['link_text'] = array('default' => 'View Relationship');
     return $options;
   }
 
