@@ -51,10 +51,9 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_membership_type_create(&$params) 
 {
-  _civicrm_initialize();
+  _civicrm_initialize(true);
   try{
-    
-    $values = civicrm_update_get_existing($params, __FUNCTION__);
+    $values = $params;
     civicrm_verify_mandatory($values,'CRM_Member_DAO_MembershipType' ,array('name',  'duration_unit','duration_interval'));
      
     $ids['membershipType']   = CRM_Utils_Array::value( 'id', $values );
@@ -87,7 +86,7 @@ function civicrm_membership_type_create(&$params)
  */
 function civicrm_membership_type_get(&$params) 
 {
-  _civicrm_initialize();
+  _civicrm_initialize(true);
   try{
 
     civicrm_verify_mandatory($params);
@@ -132,7 +131,7 @@ function civicrm_membership_type_get(&$params)
  * @access public
  */
 function civicrm_membership_type_delete( &$params ) {
-  _civicrm_initialize();
+  _civicrm_initialize(true);
   try{
     civicrm_verify_mandatory($params,null,array('id'));
 
