@@ -857,7 +857,7 @@ WHERE  civicrm_participant.id = {$participantId}
         $transaction->commit( );
 
         CRM_Utils_Hook::post( 'delete', 'Participant', $participant->id, $participant );
-        
+
         // delete the recently created Participant
         require_once 'CRM/Utils/Recent.php';
         $participantRecent = array(
