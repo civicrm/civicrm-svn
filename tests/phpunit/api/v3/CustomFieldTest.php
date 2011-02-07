@@ -448,8 +448,8 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
      */
     function testCustomFieldDelete( )
     {
-        $customGroup = $this->customGroupCreate('Individual','test_group',3);
-        $customField = $this->customFieldCreate($customGroup['id'],'test_name', 3); 
+        $customGroup = $this->customGroupCreate('Individual','test_group',$this->_apiversion);
+        $customField = $this->customFieldCreate($customGroup['id'],'test_name', $this->_apiversion); 
         $this->assertNotNull($customField['id'],'in line ' .__LINE__);
         $params = array('version'					=> $this->_apiversion,
                          'id'							=> $customField );
@@ -457,7 +457,7 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);   
 
         $this->assertEquals($result['is_error'], 0,'in line ' .__LINE__);
-        $this->customGroupDelete($customGroup['id'],$this->apiversion);
+        $this->customGroupDelete($customGroup['id'],$this->_apiversion);
 
     } 
       

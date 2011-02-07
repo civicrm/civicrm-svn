@@ -1262,7 +1262,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         }else{
            $filename = 'CustomField';         
         }
-        $result = civicrm_api( 'civicrm_custom_field_delete',$filename,$params );
+        $result = civicrm_api_legacy( 'civicrm_custom_field_delete',$filename,$params );
 
         if ( civicrm_error( $result ) ) {
             throw new Exception( 'Could not delete custom field' );
@@ -1315,10 +1315,12 @@ function documentMe($params,$result,$function,$filename){
         $smarty->assign('function',$function);
         $smarty->assign('params',$params);   
         $smarty->assign('entity',$entity);         
-        $smarty->assign('result',$result);  
-       //$f = fopen("c:\\utils\\eclipseworkspace\\api-civicrm\\api\\v3\\examples\\$entity$action.php", "w");
-        //fwrite($f,$smarty->fetch('c:\\utils\\eclipseworkspace\\api-civicrm\\tests\\templates\\documentFunction.tpl'));
-       //fclose($f); 
+        $smarty->assign('result',$result); 
+        if (file_exists ( "../api/v3/examples/$entity$action.php" ) && file_exists('../templates/documentFunction.tpl')) {
+          $f = fopen("../api/v3/examples/$entity$action.php", "w");
+          fwrite($f,$smarty->fetch('../templates/documentFunction.tpl'));
+          fclose($f); 
+        }
     }
   
     /**
