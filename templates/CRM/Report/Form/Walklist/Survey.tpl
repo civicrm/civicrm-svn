@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -23,22 +23,4 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<h3>
-{ts}Add Voter Reservation(s){/ts}
-</h3>
-<div class="crm-form-block crm-block crm-contact-task-voterreservation-form-block">
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
-<table class="form-layout-compressed">
-  <tr class="crm-contact-task-voterreservation-form-block-surveytitle">
-    <td class="label"> 
-      {$form.survey_id.label}
-    </td>
-    <td>
-      {$form.survey_id.html}
-    </td>      
-  </tr>
-
-    <tr><td colspan=2>{include file="CRM/Contact/Form/Task.tpl"}</td></tr>
-</table>
-    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
-</div>
+{include file="CRM/Report/Form.tpl"}

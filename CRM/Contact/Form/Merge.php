@@ -74,7 +74,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
 
         $this->_rgid = $rgid = CRM_Utils_Request::retrieve( 'rgid','Positive', $this, false );
         $this->_gid  = $gid  = CRM_Utils_Request::retrieve( 'gid', 'Positive', $this, false );
-        $mergeId = CRM_Utils_Request::retrieve( 'mergeId', 'Positive', $this, false );
+        $this->_mergeId      = CRM_Utils_Request::retrieve( 'mergeId', 'Positive', $this, false );
 
         require_once 'CRM/Dedupe/BAO/Rule.php';
         CRM_Dedupe_BAO_Rule::validateContacts( $cid, $oid );
@@ -85,7 +85,12 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         $cacheKey  = "merge $contactType";
         $cacheKey .= $rgid ? "_{$rgid}" : '_0';
         $cacheKey .= $gid  ? "_{$gid}"  : '_0';
-        $pos = CRM_Core_BAO_PrevNextCache::getPositions( $cacheKey, $cid, $oid, $mergeId, $flip );
+        
+        $join  = "LEFT JOIN civicrm_dedupe_exception de ON ( pn.entity_id1 = de.contact_id1 AND 
+                                                             pn.entity_id2 = de.contact_id2 )";
+        $where = "de.id IS NULL";   
+
+        $pos = CRM_Core_BAO_PrevNextCache::getPositions( $cacheKey, $cid, $oid, $this->_mergeId, $join, $where, $flip  );
  
         // Block access if user does not have EDIT permissions for both contacts.
         require_once 'CRM/Contact/BAO/Contact/Permission.php';
@@ -735,9 +740,29 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
             CRM_Utils_System::redirect( $lisitingURL );
         }
       
-        if ( $this->next ) {
-            $url = $this->next;
+        if ( $this->next && $this->_mergeId ) {
+            $cacheKey  = "merge {$this->_contactType}";
+            $cacheKey .= $this->_rgid ? "_{$this->_rgid}" : '_0';
+            $cacheKey .= $this->_gid  ? "_{$this->_gid}"  : '_0';
+        
+            $join  = "LEFT JOIN civicrm_dedupe_exception de ON ( pn.entity_id1 = de.contact_id1 AND 
+                                                             pn.entity_id2 = de.contact_id2 )";
+            $where = "de.id IS NULL";   
+
+            $pos = CRM_Core_BAO_PrevNextCache::getPositions( $cacheKey, null, null, $this->_mergeId, $join, $where );
+
+            if ( !empty($pos) &&
+                 $pos['next']['id1'] && 
+                 $pos['next']['id2'] ) {
+
+                $urlParam = "reset=1&cid={$pos['next']['id1']}&oid={$pos['next']['id2']}&mergeId={$pos['next']['mergeId']}&action=update";
+                if ( $this->_rgid ) $urlParam .= "&rgid={$this->_rgid}";
+                if ( $this->_gid )  $urlParam .= "&gid={$this->_gid}";
+                
+                $url  = CRM_Utils_system::url( 'civicrm/contact/merge', $urlParam );
+            }
         }
+
         CRM_Utils_System::redirect( $url );
     }
         

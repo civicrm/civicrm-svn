@@ -541,6 +541,9 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
      */
     static function deleteMembership( $membershipId ) 
     {
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::pre( 'delete', 'Membership', $membershipId, CRM_Core_DAO::$_nullArray );
+
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
         
@@ -564,6 +567,8 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
         $membership->id = $membershipId;
         $results = $membership->delete( );
         $transaction->commit( );
+
+        CRM_Utils_Hook::post( 'delete', 'Membership', $membership->id, $membership );
 
         // delete the recently created Membership
         require_once 'CRM/Utils/Recent.php';

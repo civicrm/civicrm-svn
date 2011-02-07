@@ -470,6 +470,16 @@ INNER JOIN   civicrm_contact contact ON ( contact.id = contrib.contact_id )
                             $unix_timestamp = strtotime($val);
                             $transaction[$mapper['transaction'][$detail]] = date('YmdHis', $unix_timestamp);
                             break;
+                    case 'note'     :
+                    case 'custom'   :
+                    case 'l_number0':
+                        if ( $val ) {
+                            $val = "[PayPal_field:{$detail}] {$val}";
+                            $transaction[$mapper['transaction'][$detail]] = 
+                                !empty( $transaction[$mapper['transaction'][$detail]] ) ? 
+                                $transaction[$mapper['transaction'][$detail]] . " <br/> " . $val : $val;
+                        }
+                        break;
                         default:
                             $transaction[$mapper['transaction'][$detail]] = $val;
                     }

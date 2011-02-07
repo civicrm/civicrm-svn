@@ -836,7 +836,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         }
         
         //carry campaign to partcipants.
-        if ( CRM_Utils_Array::value( 'participant_campaign_id', $params ) ) {
+        if ( array_key_exists( 'participant_campaign_id', $params ) ) {
             $params['campaign_id'] = $params['participant_campaign_id'];
         } else {
             $params['campaign_id'] = CRM_Utils_Array::value( 'campaign_id', $this->_values['event'] );

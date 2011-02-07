@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -36,7 +36,7 @@
 
 require_once 'CRM/Report/Form.php';
 
-class CRM_Report_Form_Walklist extends CRM_Report_Form {
+class CRM_Report_Form_Walklist_Survey extends CRM_Report_Form {
     protected $_addressField = false;
 
     protected $_emailField   = false;

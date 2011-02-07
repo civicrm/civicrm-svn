@@ -31,8 +31,6 @@
 
   <civicrm_preferences_date />
 
-  <civicrm_tag />
-
   <civicrm_worldregion />
 
   <civicrm_component />
@@ -137,8 +135,6 @@
 
   <civicrm_entity_financial_trxn />
 
-  <civicrm_entity_tag />
-
   <civicrm_im />
 
   <civicrm_log />
@@ -156,6 +152,8 @@
   <civicrm_preferences />
 
   <civicrm_state_province />
+
+  <civicrm_tag />
 
   <civicrm_uf_match />
 
@@ -242,6 +240,8 @@
   <civicrm_line_item />
 
   <civicrm_county />
+
+  <civicrm_entity_tag />
 
   <civicrm_uf_group />
 

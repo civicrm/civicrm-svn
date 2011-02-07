@@ -763,6 +763,7 @@ cj('#event_id').val( '{$this->_eID}' );
 buildFeeBlock( {$this->_eID} ); 
 buildCustomData( 'Participant', {$this->_eID}, {$this->_eventNameCustomDataTypeID} );
 buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{$eventAndTypeMapping}' );
+loadCampaign( {$this->_eID}, {$eventCampaigns} );
 });
 ";
             }

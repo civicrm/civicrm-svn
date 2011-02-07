@@ -208,7 +208,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         $this->_params['invoiceID'] = $this->get( 'invoiceID' );
         
         //carry campaign from profile.
-        if ( CRM_Utils_Array::value( 'contribution_campaign_id', $this->_params ) ) {
+        if ( array_key_exists( 'contribution_campaign_id', $this->_params ) ) {
             $this->_params['campaign_id'] = $this->_params['contribution_campaign_id'];
         }
         
