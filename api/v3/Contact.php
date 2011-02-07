@@ -66,7 +66,7 @@ function civicrm_contact_create( &$params )
   _civicrm_initialize( true );
   try {
     civicrm_api_check_permission(__FUNCTION__, $params, true);
-    $params['contact_id'] = !empty($params['contact_id']) ? $params['contact_id'] :$params['id'] ;
+
     if(empty($params['contact_id'])){
       $create_new = true;
     }
