@@ -47,48 +47,51 @@
 {/if}
 
 {if $totalStatistics}
+<h3>{ts}Summary{/ts}</h2>
 <table class="report-layout display">
-  <th class="statistics" scope="row">Label</th>
-  <th class="statistics" scope="row">Count</th>
-  <th class="statistics" scope="row">Amount</th>
+  <th class="statistics" scope="row"></th>
+  <th class="statistics right" scope="row">Count</th>
+  <th class="statistics right" scope="row">Amount</th>
     {foreach from=$totalStatistics key=key item=val}
        <tr>
           <td>{$val.title}</td>
-          <td>{$val.count}</td>
-	  <td>{$val.amount}</td>
+          <td class="right">{$val.count}</td>
+	      <td class="right">{$val.amount|crmMoney}</td>
        </tr>      
     {/foreach}
 </table>
 {/if}
 
+<h3>{ts}Statistics Breakdown{/ts}</h2>
 {if $grantStatistics}
 <table class="report-layout display">
   {foreach from=$grantStatistics item=values key=key}
     <th class="statistics" scope="row">{$values.title}</th>
-    <th class="statistics" scope="row">Number of Grants (%)</th>
-    <th class="statistics" scope="row">Total Amount (%)</th>
+    <th class="statistics right" scope="row">Number of Grants (%)</th>
+    <th class="statistics right" scope="row">Total Amount (%)</th>
        {foreach from=$values.value item=row key=field}
            <tr>
               <td>{$field}</td>
-              <td>{$row.count} ({$row.percentage}%)</td>
-              <td>
+              <td class="right">{$row.count} ({$row.percentage}%)</td>
+              <td class="right">
                 {foreach from=$row.currency key=fld item=val}
-                   {$fld} {$val.value} ({$val.percentage}%)&nbsp;&nbsp;
+                   {$fld} {$val.value|crmMoney} ({$val.percentage}%)&nbsp;&nbsp;
                 {/foreach} 
               </td>
            </tr>
          {if $row.unassigned_count}
            <tr>
               <td>{$field} (Unassigned)</td>
-              <td>{$row.unassigned_count} ({$row.unassigned_percentage}%)</td>
-              <td>
+              <td class="right">{$row.unassigned_count} ({$row.unassigned_percentage}%)</td>
+              <td class="right">
                 {foreach from=$row.unassigned_currency key=fld item=val}
-                   {$fld} {$val.value} ({$val.percentage}%)&nbsp;&nbsp;
+                   {$fld} {$val.value|crmMoney} ({$val.percentage}%)&nbsp;&nbsp;
                 {/foreach} 
               </td>
            </tr>
          {/if}
        {/foreach}
+       <tr><td colspan="3" style="border: none;">&nbsp;</td></tr>
   {/foreach}
 </table>
 {/if}
