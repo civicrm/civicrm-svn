@@ -451,7 +451,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
              ! CRM_Utils_Array::value( 'contact_id', $result ) &&! CRM_Utils_Array::value( 'id', $result )) ) {
             throw new Exception( 'Could not create test contact.' );
         }
-        return isset($result['contact_id'])?$result['contact_id']:$result['id'];
+        return isset($result['contact_id'])?$result['contact_id']:CRM_Utils_Array::value( 'id', $result );
     }
     
     function contactDelete( $contactID, $apiversion = NULL ) 
@@ -644,7 +644,11 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
           throw new Exception( 'Could not create participant ' . $result['error_message'] );
             
         }
-        return $result['result'];
+        if (isset($result['result'])){
+        return $result['result'];//v2 format
+        }
+        return $result['id'];
+        
     }
     
     /** 
@@ -828,7 +832,6 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     function contributionDelete($contributionId, $apiversion = NULL )
     {
         $apiversion = civicrm_get_api_version($apiversion);
-        require_once 'api/api.php';
         $params = array( 'contribution_id' => $contributionId ,
                           'version'        => $apiversion,);
         $result = civicrm_api_legacy( 'civicrm_contribution_delete','Contribution',$params );
@@ -867,7 +870,6 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
             'version'                 => $apiversion,
             'is_show_location'        => 0,
         ), $params);
-        require_once 'api/api.php';
         $result = civicrm_api_legacy( 'civicrm_event_create','Event',$params );
         if ($result['is_error'] ==1){
           throw new Exception($result['error_message']);
@@ -1027,7 +1029,6 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                             'version'			=> $apiversion,
                             );
         }
-        require_once 'api/api.php';
         $result = civicrm_api_legacy( 'civicrm_group_create','Group',$params );
 
         
@@ -1316,9 +1317,9 @@ function documentMe($params,$result,$function,$filename){
         $smarty->assign('entity',$entity);         
         $smarty->assign('result',$result); 
         $smarty->assign('action',$action); 
-        if (file_exists ( "../api/v3/examples/$entity$action.php" ) && file_exists('../templates/documentFunction.tpl')) {
+        if (file_exists ( "../api/v3/examples/$entity$action.php" ) && file_exists('../tests/templates/documentFunction.tpl')) {
           $f = fopen("../api/v3/examples/$entity$action.php", "w");
-          fwrite($f,$smarty->fetch('../templates/documentFunction.tpl'));
+          fwrite($f,$smarty->fetch('../tests/templates/documentFunction.tpl'));
           fclose($f); 
         }
     }

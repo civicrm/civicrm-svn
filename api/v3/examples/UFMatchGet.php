@@ -8,7 +8,7 @@ function uf_match_get_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_uf_match_get','UFMatch',$params );
+  $result = civicrm_api( 'UFMatch','get',$params );
 
   return $result;
 }

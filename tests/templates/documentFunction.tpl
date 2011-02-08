@@ -9,7 +9,7 @@ function {/literal}{$function}_example(){literal}{{/literal}
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_{$function}','{$entity}',$params );
+  $result = civicrm_api( '{$entity}','{$action}',$params );
 
   return $result;
 {literal}}{/literal}
