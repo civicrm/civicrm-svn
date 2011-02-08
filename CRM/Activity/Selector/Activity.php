@@ -190,10 +190,17 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
                                     );
         
         if ( $showUpdate ) {
+            $updateUrl = 'civicrm/activity/add';
+            if ( $activityTypeId == $activityTypeIds['Email'] ) {
+                $updateUrl = 'civicrm/activity/email/add';
+            } else if ( $activityTypeId == $activityTypeIds['Print PDF Letter'] ) {
+                $updateUrl = 'civicrm/activity/pdf/add';
+            }
+
             self::$_actionLinks = self::$_actionLinks +  array ( CRM_Core_Action::UPDATE => 
                                                                  array(
                                                                        'name'     => ts('Edit'),
-                                                                       'url'      => $url,
+                                                                       'url'      => $updateUrl,
                                                                        'qs'       => $qsUpdate,
                                                                        'title'    => ts('Update Activity') ) );
         }

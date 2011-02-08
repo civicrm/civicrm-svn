@@ -372,7 +372,6 @@ function civicrm_invoke( )
  */
 function civicrm_user( $type, &$edit, &$user, $category = NULL ) 
 {
-
     if ( $type == 'load' ) {
         return;
     }			
@@ -454,7 +453,7 @@ function civicrm_user( $type, &$edit, &$user, $category = NULL )
                 }
             }
         }
-        
+
         // only return a form to drupal my account page
         if ( $inCategory      &&
              arg(0) == 'user' &&
@@ -591,6 +590,23 @@ function civicrm_form_data($edit, &$user, $category, $reset, $doNotProcess = fal
 	if ( ! $userID ) {
         // we get into this scenario if we do not like the email address supplied by the user
         return;
+    }
+
+    // check for permission
+    // CRM-7509
+    $session = CRM_Core_Session::singleton();
+    $sessionUserID = $session->get( 'userID' );
+
+    require_once 'CRM/Contact/BAO/Contact/Utils.php';
+    if ( $sessionUserID != $userID ) {
+        // do not allow edit for anon users in joomla frontend, CRM-4668, unless u have checksum CRM-5228
+        require_once 'CRM/Contact/BAO/Contact/Permission.php';
+        $config = CRM_Core_Config::singleton( );
+        if ( $config->userFrameworkFrontend ) {
+            CRM_Contact_BAO_Contact_Permission::validateOnlyChecksum( $userID, $this );
+        } else {
+            CRM_Contact_BAO_Contact_Permission::validateChecksumContact( $userID, $this );
+        }
     }
 
     $ctype = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $userID, 'contact_type' );
