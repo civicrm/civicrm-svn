@@ -193,7 +193,7 @@ SELECT  survey.id    as id,
         survey.title as title
   FROM  civicrm_survey as survey
  WHERE  {$whereClause}";
-            
+            $surveys[$cacheKey] = array( );
             $survey = CRM_Core_DAO::executeQuery( $query );
             while ( $survey->fetch( ) ) {
                 $surveys[$cacheKey][$survey->id] = $survey->title;

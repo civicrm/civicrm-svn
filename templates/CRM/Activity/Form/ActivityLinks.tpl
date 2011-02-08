@@ -30,17 +30,17 @@
 {/if}
 
 {if $as_select} {* on 3.2, the activities can be either a drop down select (on the activity tab) or a list (on the action menu) *}
-<select onchange="if (this.value) window.location='{$url}'+ this.value; else return false" name="other_activity" id="other_activity" class="form-select">
+<select onchange="if (this.value) window.location=''+ this.value; else return false" name="other_activity" id="other_activity" class="form-select">
   <option value="">{ts}- new activity -{/ts}</option>
 {foreach from=$activityTypes key=k item=link}
-  <option value="{$k}">{$link}</option>
+  <option value="{$urls.$k}">{$link}</option>
 {/foreach}
 </select>
 
 {else}
 <ul>
 {foreach from=$activityTypes key=k item=link}
-<li class="crm-activity-type_{$k}"><a href="{$url}{$k}">{$link}</a></li>
+<li class="crm-activity-type_{$k}"><a href="{$urls.$k}">{$link}</a></li>
 {/foreach}</ul>
 
 {/if}

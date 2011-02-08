@@ -235,15 +235,27 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         $session = CRM_Core_Session::singleton( );
         $this->_currentUserId = $session->get( 'userID' );
         
+        $this->_currentlyViewedContactId = $this->get('contactId');
+        if ( ! $this->_currentlyViewedContactId ) {
+            $this->_currentlyViewedContactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
+        }
+        if ( $this->_currentlyViewedContactId ) {
+            require_once 'CRM/Contact/Page/View.php';
+            CRM_Contact_Page_View::setTitle( $this->_currentlyViewedContactId );
+        }
+
         //give the context.
-        if ( !$this->_context ) {
+        if ( !isset($this->_context) ) {
             $this->_context = CRM_Utils_Request::retrieve( 'context', 'String', $this );
             require_once 'CRM/Contact/Form/Search.php';
             if ( CRM_Contact_Form_Search::isSearchContext( $this->_context ) ) {
                 $this->_context = 'search';
+            } else if ( $this->_currentlyViewedContactId  ) {
+                $this->_context = 'activity';
             }
             $this->_compContext = CRM_Utils_Request::retrieve( 'compContext', 'String', $this );
         }
+
         $this->assign( 'context', $this->_context );
         
         $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this );
@@ -263,11 +275,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         if ( $this->_action != CRM_Core_Action::ADD && 
              get_class( $this->controller ) != 'CRM_Contact_Controller_Search' ) {
             $this->_activityId = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
-        }
-        
-        $this->_currentlyViewedContactId = $this->get('contactId');
-        if ( ! $this->_currentlyViewedContactId ) {
-            $this->_currentlyViewedContactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
         }
         
         $this->_activityTypeId = CRM_Utils_Request::retrieve( 'atype', 'Positive', $this );
@@ -367,7 +374,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         //validate the qfKey
         require_once 'CRM/Utils/Rule.php';
         if ( !CRM_Utils_Rule::qfKey( $qfKey ) ) $qfKey = null;
-        
+
         if ( $this->_context == 'fulltext' ) {
             $keyName   = '&qfKey';
             $urlParams = 'force=1';
@@ -387,12 +394,15 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             if ( $qfKey ) $urlParams .= "&qfKey=$qfKey"; 
             if ( $this->_compContext == 'advanced' ) {
                 $urlString = 'civicrm/contact/search/advanced';
+            } else {
+                $urlString = 'civicrm/activity/search';
             }
             $this->assign( 'searchKey',  $qfKey );
         } else if ( $this->_context != 'caseActivity' ) {
             $urlParams = "action=browse&reset=1&cid={$this->_currentlyViewedContactId}&selectedChild=activity";
             $urlString = 'civicrm/contact/view';
         }
+
         if ( $urlString ) {
             $session->pushUserContext( CRM_Utils_System::url( $urlString, $urlParams ) );
         }

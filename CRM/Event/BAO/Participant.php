@@ -1670,19 +1670,51 @@ UPDATE  civicrm_participant
              return $totalSeats;
          }
          
-         $sql ="
+         $batch    = 100;
+         $pIdCount = count( $participantIds );
+         
+         //use static cache at first level.
+         static $eventSeats;
+         $cacheKey = null;
+         if ( $pIdCount < 100 ) {
+             $pIds = $participantIds;
+             sort( $pIds );
+             $cacheKey = implode( '_', array_values( $pIds ) );
+             if ( isset( $eventSeats[$cacheKey] ) ) {
+                 return $eventSeats[$cacheKey]; 
+             }
+         }
+         
+         //lets fill participant id in temp table and apply the inner join.
+         $tempTableName = 'temp_participant_total_event_seats';
+         CRM_Core_DAO::executeQuery( "DROP TABLE IF EXISTS {$tempTableName}" );
+         $query = "CREATE TEMPORARY TABLE {$tempTableName}(participant_id INT(10) UNSIGNED)";
+         CRM_Core_DAO::executeQuery( $query );
+         $insertedCount = 0;
+         do {
+             $processIds = $participantIds;
+             $insertIds  = array_splice( $processIds, $insertedCount, $batch );
+             if ( !empty( $insertIds ) ) {
+                 $insertSQL = "INSERT IGNORE INTO {$tempTableName}( participant_id ) 
+                     VALUES (" . implode( '),(', $insertIds ) . ');';
+                 CRM_Core_DAO::executeQuery( $insertSQL );
+             }
+             $insertedCount += $batch;
+         } while ( $insertedCount < $pIdCount );  
+         
+         $query ="
     SELECT  line.id as lineId,
             line.entity_id as entity_id,
             line.qty,
             value.count,
             field.html_type
       FROM  civicrm_line_item line
+INNER JOIN  {$tempTableName} tmp ON ( tmp.participant_id = line.entity_id )  
 INNER JOIN  civicrm_price_field_value value ON ( value.id = line.price_field_value_id )
 INNER JOIN  civicrm_price_field field ON ( value.price_field_id = field.id )   
-     WHERE  line.entity_table = 'civicrm_participant'
-       AND  line.entity_id IN (" . implode( ', ', $participantIds ) .' )';
+     WHERE  line.entity_table = 'civicrm_participant'";
          
-         $lineItem = CRM_Core_DAO::executeQuery( $sql );
+         $lineItem = CRM_Core_DAO::executeQuery( $query );
          $countDetails = array( );
          while ( $lineItem->fetch( ) ) {
              $count = $lineItem->count;
@@ -1696,6 +1728,11 @@ INNER JOIN  civicrm_price_field field ON ( value.price_field_id = field.id )
              if ( is_array( $optCounts ) ) $count = array_sum( $optCounts );
              if ( !$count ) $count = 1;
              $totalSeats += $count;
+         }
+         
+         //in case of static cache, hold this seats.
+         if ( $cacheKey ) {
+             $eventSeats[$cacheKey] = $totalSeats;
          }
          
          return $totalSeats;
