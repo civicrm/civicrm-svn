@@ -40,50 +40,51 @@
         {*include the graph*}
         {include file="CRM/Report/Form/Layout/Graph.tpl"}
     
-        <br />
-        
-        {include file="CRM/Report/Form/ErrorMessage.tpl"}
-    </div>
-{/if}
-
-{if $printOnly}
+            
+    {if $printOnly}
         <h1>{$reportTitle}</h1>
         <div id="report-date">{$reportDate}</div>
-{/if}
+    {/if}
 
-{if $totalStatistics}
-{foreach from=$statistics.filters item=row}
- <table class="report-layout statistics-table">
-   <tr>
-      <th class="statistics" scope="row">{$row.title}</th>
-      <td>{$row.value}</td>
-   </tr>
- </table>
-{/foreach}
+    {if $totalStatistics}
+      {if $outputMode eq 'html'}
+        {foreach from=$totalStatistics.filters item=row}
+          <table class="report-layout statistics-table">
+            <tr>
+              <th class="statistics" scope="row">{$row.title}</th>
+              <td>{$row.value}</td>
+            </tr>
+          </table>
+        {/foreach}
+      {/if}
 
-<h3>{ts}Summary{/ts}</h2>
-<table class="report-layout display">
-  <th class="statistics" scope="row"></th>
-  <th class="statistics right" scope="row">Count</th>
-  <th class="statistics right" scope="row">Amount</th>
-    {foreach from=$totalStatistics.total_statistics key=key item=val}
+    <h3>{ts}Summary{/ts}</h2>
+    <table class="report-layout display">
+      <tr> 
+        <th class="statistics" scope="row"></th>
+        <th class="statistics right" scope="row">Count</th>
+        <th class="statistics right" scope="row">Amount</th>
+      </tr>
+        {foreach from=$totalStatistics.total_statistics key=key item=val}
+           <tr>
+             <td>{$val.title}</td>
+             <td class="right">{$val.count}</td>
+             <td class="right">{$val.amount|crmMoney}</td>
+           </tr>      
+        {/foreach}
+    </table>
+    {/if}
+ 
+    <h3>{ts}Statistics Breakdown{/ts}</h2>
+    {if $grantStatistics}
+    <table class="report-layout display">
+      {foreach from=$grantStatistics item=values key=key}
        <tr>
-          <td>{$val.title}</td>
-          <td class="right">{$val.count}</td>
-	      <td class="right">{$val.amount|crmMoney}</td>
-       </tr>      
-    {/foreach}
-</table>
-{/if}
-
-<h3>{ts}Statistics Breakdown{/ts}</h2>
-{if $grantStatistics}
-<table class="report-layout display">
-  {foreach from=$grantStatistics item=values key=key}
-    <th class="statistics" scope="row">{$values.title}</th>
-    <th class="statistics right" scope="row">Number of Grants (%)</th>
-    <th class="statistics right" scope="row">Total Amount (%)</th>
-       {foreach from=$values.value item=row key=field}
+         <th class="statistics" scope="row">{$values.title}</th>
+         <th class="statistics right" scope="row">Number of Grants (%)</th>
+         <th class="statistics right" scope="row">Total Amount (%)</th>
+       </tr>
+         {foreach from=$values.value item=row key=field}
            <tr>
               <td>{$field}</td>
               <td class="right">{$row.count} ({$row.percentage}%)</td>
@@ -104,8 +105,13 @@
               </td>
            </tr>
          {/if}
-       {/foreach}
-       <tr><td colspan="3" style="border: none;">&nbsp;</td></tr>
-  {/foreach}
-</table>
+        {/foreach}
+        <tr><td colspan="3" style="border: none;">&nbsp;</td></tr>
+      {/foreach}
+    </table>
+    {/if}
+
+    <br />
+        {include file="CRM/Report/Form/ErrorMessage.tpl"}
+    </div>
 {/if}
