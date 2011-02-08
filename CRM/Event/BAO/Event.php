@@ -597,12 +597,27 @@ LIMIT      0, 10
             $sqlClause = ' AND ( ' . implode( $operator, $clause ) . ' )';
         }
         
-        $eventLimit = 10;
-        if ( is_array( $eventIds ) && !empty( $eventIds ) ) {
-            $eventLimit = null;
-            $sqlClause .= ' AND civicrm_event.id IN (' . implode( ',', $eventIds ) . ')';
+        //get event ids in hand and consider only 10 at a time.
+        if ( !is_array( $eventIds ) || empty( $eventIds ) ) {
+            $eventIds = array( );
+            $eventIdSql = '
+  SELECT  id 
+    FROM  civicrm_event 
+ORDER BY  civicrm_event.end_date DESC
+   LIMIT  10';
+            $event = CRM_Core_DAO::executeQuery( $eventIdSql );
+            while ( $event->fetch( ) ) {
+                $eventIds[$event->id] = $event->id;
+            }
+        }
+        $participantIds = $participantCount = array( );
+        
+        if ( !is_array( $eventIds ) || empty( $eventIds ) ) {
+            return $participantCount;
         }
         
+        $sqlClause .= ' AND civicrm_event.id IN (' . implode( ',', $eventIds ) . ')';
+
         $select = '
     SELECT   civicrm_event.id as id, 
              civicrm_participant.id as participantId';
@@ -622,17 +637,9 @@ INNER JOIN   civicrm_participant_status_type status_type ON ( civicrm_participan
        AND   civicrm_event.is_active = 1
              {$sqlClause}";
         
-        $orderBy = 'Order By civicrm_event.end_date DESC';
-        $participantIds = $participantCount = array( );
-        
-        $query = "$select $from $where $orderBy";
+        $query = "$select $from $where";
         $event = CRM_Core_DAO::executeQuery( $query );
         while ( $event->fetch( ) ) {
-            //we are interested in first 10 events only.
-            if ( $eventLimit && 
-                 count( array_keys( $participantIds ) ) > $eventLimit ) {
-                break;
-            }
             if ( $countWithStatus ) {
                 $participantIds[$event->id][$event->statusId]['pIds'][$event->participantId] = $event->participantId;
                 $participantIds[$event->id][$event->statusId]['statusClass'] = $event->statusClass;
@@ -640,9 +647,6 @@ INNER JOIN   civicrm_participant_status_type status_type ON ( civicrm_participan
                 $participantIds[$event->id][$event->participantId] = $event->participantId;
             }
         }
-        
-        //poped last 11th events participants.
-        if ( $eventLimit && count( array_keys( $participantIds ) ) > $eventLimit ) array_pop( $participantIds );
         
         //pickup event seats
         foreach ( $participantIds as $eventId => $pInfo ) { 
