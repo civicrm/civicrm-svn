@@ -523,8 +523,13 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
                 $q = "action=view&reset=1&id={$activity->id}&atype={$activity->activity_type_id}&cid={$activity->source_contact_id}&context=home";
                 if ( $activity->activity_type_id != CRM_Core_OptionGroup::getValue( 'activity_type', 'Email', 'name' ) ) {
                     $url = CRM_Utils_System::url( 'civicrm/contact/view/activity', $q );
-                    $recentOther['editUrl'] = CRM_Utils_System::url( 'civicrm/contact/view/activity', 
-                                                                     "action=update&reset=1&id={$activity->id}&atype={$activity->activity_type_id}&cid={$activity->source_contact_id}&context=home" );
+                    if ( $activity->activity_type_id == CRM_Core_OptionGroup::getValue( 'activity_type', 'Print PDF Letter', 'name' ) ) {
+                        $recentOther['editUrl'] = CRM_Utils_System::url( 'civicrm/activity/add', 
+                                                                         "action=update&reset=1&id={$activity->id}&atype={$activity->activity_type_id}&cid={$activity->source_contact_id}&context=home" );
+                    } else {
+                        $recentOther['editUrl'] = CRM_Utils_System::url( 'civicrm/activity/pdf/add', 
+                                                                         "action=update&reset=1&id={$activity->id}&atype={$activity->activity_type_id}&cid={$activity->source_contact_id}&context=home" );
+                    }
                     require_once 'CRM/Core/Permission.php';
                     if ( CRM_Core_Permission::check("delete activities") ) {
                         $recentOther['deleteUrl'] = CRM_Utils_System::url( 'civicrm/contact/view/activity', 

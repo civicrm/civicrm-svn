@@ -355,7 +355,7 @@ class CRM_Core_Block {
             }
             
             // new email (select recipients)
-            $shortCuts = array_merge($shortCuts, array( array( 'path'  => 'civicrm/activity/add',
+            $shortCuts = array_merge($shortCuts, array( array( 'path'  => 'civicrm/activity/email/add',
                                                                'query' => 'atype=3&action=add&reset=1&context=standalone',
                                                                'ref'   => 'new-email',
                                                                'title' => ts('Email') ) ));
