@@ -18,7 +18,7 @@ UPDATE civicrm_option_value
        description = '{ts escape="sql"}Grant Report Detail{/ts}'
  WHERE value       = 'grant';
 
-SELECT @domainID        := id FROM civicrm_domain WHERE name = 'Default Domain Name';
+SELECT @domainID        := MIN(id) FROM civicrm_domain;
 SELECT @reportlastID    := id FROM civicrm_navigation WHERE name = 'Reports';
 SELECT @ogrID           := MAX(id) FROM civicrm_option_group WHERE name = 'report_template';
 SELECT @nav_max_weight  := MAX(ROUND(weight)) FROM civicrm_navigation WHERE parent_id = @reportlastID;
