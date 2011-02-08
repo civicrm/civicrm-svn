@@ -459,7 +459,10 @@ class CRM_Core_PseudoConstant
                 $condition    = 'AND filter = 0';
             } 
             $componentClause  = " v.component_id IS NULL";
-
+            if ( $onlyComponentActivities ) {
+                $componentClause  = " v.component_id IS NOT NULL";
+            }
+            
             $componentIds = array( );
             require_once 'CRM/Core/Component.php';
             $compInfo     = CRM_Core_Component::getEnabledComponents( );
@@ -484,7 +487,7 @@ class CRM_Core_PseudoConstant
                 $componentIds     = implode( ',', $componentIds );
                 $componentClause  = " ($componentClause OR v.component_id IN ($componentIds))";
                 if ( $onlyComponentActivities ) {
-                    $componentClause  = " ( v.component_id IS NOT NULL OR v.component_id IN ($componentIds))";
+                    $componentClause  = " ( v.component_id IN ($componentIds ) )";
                 }
             }
             $condition = $condition . ' AND ' . $componentClause;
