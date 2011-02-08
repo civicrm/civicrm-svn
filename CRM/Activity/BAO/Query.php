@@ -186,17 +186,27 @@ class CRM_Activity_BAO_Query
         
         case 'activity_type_id':
             $types  = CRM_Core_PseudoConstant::activityType( true, true );
+            
+            //get the component activity types.
+            $compActTypes = CRM_Core_PseudoConstant::activityType( true, true, false, 'label', true, true );
+            
             $clause = array( );
             if ( is_array( $value ) ) {
                 foreach ( $value as $id => $dontCare ) {
                     if ( array_key_exists( $id, $types ) && $dontCare ) {
                         $clause[] = "'" . CRM_Utils_Type::escape( $types[$id], 'String' ) . "'";
+                        if ( array_key_exists( $id, $compActTypes ) ) {
+                            CRM_Contact_BAO_Query::$_considerCompActivities = true;
+                        }
                     }
                 } 
                 $activityTypes = implode( ',', array_keys( $value ) );
             } else {
                 $clause[] = "'" . CRM_Utils_Type::escape( $value, 'String' ) . "'";
                 $activityTypes = $value;
+                if ( array_key_exists( $value, $compActTypes ) ) {
+                    CRM_Contact_BAO_Query::$_considerCompActivities = true;
+                }
             }
             $query->_where[$grouping][] = ' civicrm_activity.activity_type_id IN (' . $activityTypes . ')';
             $query->_qill [$grouping][]  = ts('Activity Type') . ' ' . implode( ' ' . ts('or') . ' ', $clause );
@@ -346,10 +356,25 @@ class CRM_Activity_BAO_Query
             }
             */
             
-            $from .= " $side JOIN civicrm_activity_target ON civicrm_activity_target.target_contact_id = contact_a.id ";
-            $from .= " $side JOIN civicrm_activity ON ( civicrm_activity.id = civicrm_activity_target.activity_id 
-                             AND civicrm_activity.is_deleted = 0 AND civicrm_activity.is_current_revision = 1 )";
+            //CRM-7480 we are going to civicrm_activitty table either 
+            //from civicrm_activity_target or civicrm_activity_assignment.
+            //as component specific activities does not have entry in
+            //activity target table so lets consider civicrm_activity_assignment. 
             
+            if ( CRM_Contact_BAO_Query::$_considerCompActivities ) {
+                $from .= " $side JOIN civicrm_activity_target 
+                                      ON ( civicrm_activity_target.target_contact_id = contact_a.id ) ";
+                $from .= " $side JOIN civicrm_activity_assignment 
+                                      ON ( civicrm_activity_assignment.assignee_contact_id = contact_a.id )";
+                $from .= " $side JOIN civicrm_activity 
+                                      ON ( ( ( civicrm_activity.id = civicrm_activity_assignment.activity_id ) 
+                                               OR ( civicrm_activity.id = civicrm_activity_target.activity_id ) )  
+                                      AND civicrm_activity.is_deleted = 0 AND civicrm_activity.is_current_revision = 1 )";
+            } else {
+                $from .= " $side JOIN civicrm_activity_target ON civicrm_activity_target.target_contact_id = contact_a.id ";
+                $from .= " $side JOIN civicrm_activity ON ( civicrm_activity.id = civicrm_activity_target.activity_id 
+                             AND civicrm_activity.is_deleted = 0 AND civicrm_activity.is_current_revision = 1 )";
+            }
             break;
             
 		case 'civicrm_activity_contact':

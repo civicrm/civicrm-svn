@@ -46,13 +46,27 @@
     </div>
 {/if}
 
+{if $printOnly}
+        <h1>{$reportTitle}</h1>
+        <div id="report-date">{$reportDate}</div>
+{/if}
+
 {if $totalStatistics}
+{foreach from=$statistics.filters item=row}
+ <table class="report-layout statistics-table">
+   <tr>
+      <th class="statistics" scope="row">{$row.title}</th>
+      <td>{$row.value}</td>
+   </tr>
+ </table>
+{/foreach}
+
 <h3>{ts}Summary{/ts}</h2>
 <table class="report-layout display">
   <th class="statistics" scope="row"></th>
   <th class="statistics right" scope="row">Count</th>
   <th class="statistics right" scope="row">Amount</th>
-    {foreach from=$totalStatistics key=key item=val}
+    {foreach from=$totalStatistics.total_statistics key=key item=val}
        <tr>
           <td>{$val.title}</td>
           <td class="right">{$val.count}</td>
@@ -75,7 +89,7 @@
               <td class="right">{$row.count} ({$row.percentage}%)</td>
               <td class="right">
                 {foreach from=$row.currency key=fld item=val}
-                   {$fld} {$val.value|crmMoney} ({$val.percentage}%)&nbsp;&nbsp;
+                   {$val.value|crmMoney:$fld} ({$val.percentage}%)&nbsp;&nbsp;
                 {/foreach} 
               </td>
            </tr>
@@ -85,7 +99,7 @@
               <td class="right">{$row.unassigned_count} ({$row.unassigned_percentage}%)</td>
               <td class="right">
                 {foreach from=$row.unassigned_currency key=fld item=val}
-                   {$fld} {$val.value|crmMoney} ({$val.percentage}%)&nbsp;&nbsp;
+                   {$val.value|crmMoney:$fld} ({$val.percentage}%)&nbsp;&nbsp;
                 {/foreach} 
               </td>
            </tr>
