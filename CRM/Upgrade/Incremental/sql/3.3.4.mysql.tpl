@@ -20,7 +20,7 @@ UPDATE civicrm_option_value
 {foreach from=$locales item=loc}
  
 UPDATE civicrm_navigation
-   SET label_{$loc} = '{ts escape="sql"}Grant Report (Detail){/ts}',
+   SET label_{$loc} = '{ts escape="sql"}Grant Report (Detail){/ts}'
  WHERE name         = '{ts escape="sql"}Grant Report (Detail){/ts}';
 
 UPDATE civicrm_option_value
