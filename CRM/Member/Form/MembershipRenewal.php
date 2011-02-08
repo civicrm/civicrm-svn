@@ -198,9 +198,10 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form
                                                                          $this->_memType, 
                                                                          'contribution_type_id' );
         
-		$defaults['total_amount'] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
+        require_once 'CRM/Utils/Money.php';
+        $defaults['total_amount'] = CRM_Utils_Money::format( CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
                                                                  $this->_memType, 
-                                                                 'minimum_fee' );
+                                                                 'minimum_fee' ), null, '%a');
         
                                                                  
         $defaults['record_contribution'] = 0;        
