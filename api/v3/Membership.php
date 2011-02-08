@@ -56,7 +56,6 @@ require_once 'CRM/Utils/Array.php';
  */
 function civicrm_membership_delete($params)
 {
-  _civicrm_initialize();
     _civicrm_initialize(true);
       try{ 
    
@@ -98,7 +97,7 @@ function civicrm_membership_delete($params)
  */
 function civicrm_membership_create($params)
 {
-  _civicrm_initialize();
+  _civicrm_initialize(true);
   try{
 
 
@@ -169,9 +168,8 @@ function civicrm_membership_create($params)
  */
 function civicrm_membership_get(&$params)
 {
-  _civicrm_initialize();
+  _civicrm_initialize(true);
   try{
-
 
     $contactID = $activeOnly = $membershipTypeId = $membershipType = null;
     if ( is_array( $params ) ) {

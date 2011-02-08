@@ -139,7 +139,15 @@ function civicrm_tag_entities_get( &$params )
  * @return array
  */
 function civicrm_entity_tag_create( &$params ) {
+  _civicrm_initialize(true);
+    try{
     return civicrm_entity_tag_common( $params, 'add' );
+          
+    } catch (PEAR_Exception $e) {
+      return civicrm_create_error( $e->getMessage() );
+    } catch (Exception $e) {
+      return civicrm_create_error( $e->getMessage() );
+    }
 }
 
 /**

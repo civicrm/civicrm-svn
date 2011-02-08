@@ -54,7 +54,7 @@ require_once 'CRM/Contribute/PseudoConstant.php';
  * @example ContributionCreate.php
  */
 function &civicrm_contribution_create( &$params ) {
-    _civicrm_initialize( );
+    _civicrm_initialize( true);
     try {   
     civicrm_verify_mandatory ($params,null,array ('contact_id','total_amount',array('contribution_type_id' , 'contribution_type')));  
       
@@ -103,7 +103,7 @@ function &civicrm_contribution_create( &$params ) {
  * @access public
  */
 function civicrm_contribution_delete( &$params ) {
-    _civicrm_initialize( );
+    _civicrm_initialize( true);
     try{
     civicrm_verify_mandatory($params,null,array('contribution_id'));
     $contributionID = CRM_Utils_Array::value( 'contribution_id', $params );
@@ -134,7 +134,7 @@ function civicrm_contribution_delete( &$params ) {
  * @access public
  */
 function &civicrm_contribution_get( &$params ) {
-    _civicrm_initialize( );
+    _civicrm_initialize(true );
     try { 
     civicrm_verify_mandatory($params);
 

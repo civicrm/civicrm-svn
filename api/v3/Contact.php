@@ -104,7 +104,7 @@ function civicrm_contact_getfields( &$params ) {
 
 function civicrm_contact_get( &$params )
 {
-  _civicrm_initialize( );
+  _civicrm_initialize(true );
   try {
     civicrm_verify_mandatory($params);
         // fix for CRM-7384 cater for soft deleted contacts
@@ -175,30 +175,37 @@ function civicrm_contact_get( &$params )
  * @return boolean        true if success, else false
  * @static void
  * @access public
- * 
+ *
  * @example ContactDelete.php
  */
 function civicrm_contact_delete( &$params )
-{    
-    _civicrm_initialize(true);
+{
+  _civicrm_initialize(true);
+  try{
+
     require_once 'CRM/Contact/BAO/Contact.php';
 
     $contactID = CRM_Utils_Array::value( 'contact_id', $params );
     if ( ! $contactID ) {
-        return civicrm_create_error(  'Could not find contact_id in input parameters'  );
+      return civicrm_create_error(  'Could not find contact_id in input parameters'  );
     }
 
     $session =& CRM_Core_Session::singleton( );
     if ( $contactID ==  $session->get( 'userID' ) ) {
-        return civicrm_create_error(  'This contact record is linked to the currently logged in user account - and cannot be deleted.'  );
+      return civicrm_create_error(  'This contact record is linked to the currently logged in user account - and cannot be deleted.'  );
     }
     $restore      = CRM_Utils_Array::value( 'restore', $params ) ? $params['restore'] : false;
     $skipUndelete = CRM_Utils_Array::value( 'skip_undelete', $params ) ? $params['skip_undelete'] : false;
     if ( CRM_Contact_BAO_Contact::deleteContact( $contactID , $restore, $skipUndelete) ) {
-        return civicrm_create_success( );
+      return civicrm_create_success( );
     } else {
-        return civicrm_create_error(  'Could not delete contact'  );
+      return civicrm_create_error(  'Could not delete contact'  );
     }
+  } catch (PEAR_Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  }
 }
 
 

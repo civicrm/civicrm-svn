@@ -158,7 +158,7 @@ function civicrm_activity_get( $params ) {
  */
 function civicrm_activity_delete( &$params )
 {
-  _civicrm_initialize( );
+  _civicrm_initialize(true );
   try{
 
     civicrm_verify_mandatory($params);

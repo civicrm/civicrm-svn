@@ -115,7 +115,7 @@ function &civicrm_note_create(&$params)
  */
 function civicrm_note_delete( &$params )
 {
-  _civicrm_initialize();
+  _civicrm_initialize(true);
   try{
     civicrm_verify_mandatory($params,null,array('id'));
 

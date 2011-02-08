@@ -187,7 +187,7 @@ function civicrm_case_get( &$params )
         $contacts         = CRM_Case_BAO_Case::getcontactNames( $caseId );
         $relations        = CRM_Case_BAO_Case::getRelatedContacts( $caseId );
         $case['contacts'] = array_merge( $contacts, $relations );
-        	
+         
         //get case activities
 
         $query = "SELECT activity_id FROM civicrm_case_activity WHERE case_id = $caseId";
@@ -306,26 +306,34 @@ SELECT DISTINCT case_id
  */
 function civicrm_case_activity_create( &$params )
 {
-  _civicrm_initialize( );
+  _civicrm_initialize(true );
+  try{
 
-  //check parameters
-  $errors = _civicrm_case_check_params( $params, 'activity' ) ;
 
-  _civicrm_case_format_params( $params, 'activity' );
 
-  if ( $errors ) {
-    return $errors;
-  }
-  require_once 'CRM/Activity/BAO/Activity.php';
+    //check parameters
+    $errors = _civicrm_case_check_params( $params, 'activity' ) ;
 
-  $activity = CRM_Activity_BAO_Activity::create( $params );
+    _civicrm_case_format_params( $params, 'activity' );
 
-  $caseParams = array( 'activity_id' => $activity->id,
+    if ( $errors ) {
+      return $errors;
+    }
+    require_once 'CRM/Activity/BAO/Activity.php';
+
+    $activity = CRM_Activity_BAO_Activity::create( $params );
+
+    $caseParams = array( 'activity_id' => $activity->id,
                          'case_id'     => $params['case_id']   );
 
-  CRM_Case_BAO_Case::processCaseActivity( $caseParams );
+    CRM_Case_BAO_Case::processCaseActivity( $caseParams );
 
-  return civicrm_create_success( $activity->id );
+    return civicrm_create_success( $activity->id );
+  } catch (PEAR_Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_create_error( $e->getMessage() );
+  }
 }
 
 
