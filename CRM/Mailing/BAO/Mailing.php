@@ -107,9 +107,14 @@ class CRM_Mailing_BAO_Mailing extends CRM_Mailing_DAO_Mailing
 
     function &getRecipientsCount($job_id, $mailing_id = null) 
     {
-        CRM_Core_Error::fatal( ts('this function is obsolete and should not be called' ) );
+        // need this for backward compatibility, so we can get count for old mailings
+        // please do not use this function if possible
+        $eq = self::getRecipients($job_id, $mailing_id);
+        return $eq->N;
     }
-    
+
+    // note that $job_id is used only as a variable in the temp table construction
+    // and does not play a role in the queries generated
     function &getRecipients($job_id, $mailing_id = null,
                             $offset = NULL, $limit = NULL,
                             $storeRecipients = false) 
@@ -1636,7 +1641,15 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
         }
         
         require_once 'CRM/Mailing/BAO/Recipients.php';
-        $report['event_totals']['queue'] = CRM_Mailing_BAO_Recipients::mailingSize( $mailing_id );
+        $newTableSize = CRM_Mailing_BAO_Recipients::mailingSize( $mailing_id );
+
+        // we need to do this for backward compatibility, since old mailings did not
+        // use the mailing_recipients table
+        if ( $newTableSize > 0 ) {
+            $report['event_totals']['queue'] = $newTableSize;
+        } else {
+            $report['event_totals']['queue'] = self::getRecipientsCount( $mailing_id, $mailing_id );
+        }
 
         if (CRM_Utils_Array::value('queue',$report['event_totals'] )) {
             $report['event_totals']['delivered_rate'] = (100.0 * $report['event_totals']['delivered']) / $report['event_totals']['queue'];
