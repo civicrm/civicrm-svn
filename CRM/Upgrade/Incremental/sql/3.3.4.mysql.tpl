@@ -13,7 +13,7 @@ UPDATE civicrm_navigation
 
 UPDATE civicrm_option_value
    SET value       = 'grant/detail', 
-       name        = 'CRM_Report_Form_Grant_Detail',
+       name        = 'CRM_Report_Form_Grant_Detail'
  WHERE value       = 'grant'
    AND name        = 'CRM_Report_Form_Grant';
  
