@@ -7,10 +7,6 @@ UPDATE civicrm_report_instance
  WHERE report_id   = 'grant';
 
 {if $multilingual}
-UPDATE civicrm_navigation
-   SET  name       = '{ts escape="sql"}Grant Report (Detail){/ts}'
- WHERE  name       = '{ts escape="sql"}Grant Report{/ts}';
-
 UPDATE civicrm_option_value
    SET value       = 'grant/detail', 
        name        = 'CRM_Report_Form_Grant_Detail'
@@ -18,11 +14,6 @@ UPDATE civicrm_option_value
    AND name        = 'CRM_Report_Form_Grant';
  
 {foreach from=$locales item=loc}
- 
-UPDATE civicrm_navigation
-   SET label_{$loc} = '{ts escape="sql"}Grant Report (Detail){/ts}'
- WHERE name         = '{ts escape="sql"}Grant Report (Detail){/ts}';
-
 UPDATE civicrm_option_value
    SET label_{$loc}       = '{ts escape="sql"}Grant Report (Detail){/ts}',
        description_{$loc} = '{ts escape="sql"}Grant Report Detail{/ts}'
@@ -32,11 +23,6 @@ UPDATE civicrm_option_value
 
 {else}
 
-UPDATE civicrm_navigation
-   SET label       = '{ts escape="sql"}Grant Report (Detail){/ts}',
-        name       = '{ts escape="sql"}Grant Report (Detail){/ts}'
- WHERE  name       = '{ts escape="sql"}Grant Report{/ts}';
-
 UPDATE civicrm_option_value
    SET label       = '{ts escape="sql"}Grant Report (Detail){/ts}',
        value       = 'grant/detail', 
@@ -45,6 +31,12 @@ UPDATE civicrm_option_value
  WHERE value       = 'grant'
    AND name        = 'CRM_Report_Form_Grant';
 {/if}
+
+UPDATE civicrm_navigation
+   SET label       = '{ts escape="sql"}Grant Report (Detail){/ts}',
+        name       = '{ts escape="sql"}Grant Report (Detail){/ts}'
+ WHERE  name       = '{ts escape="sql"}Grant Report{/ts}';
+
 
 SELECT @domainID        := MIN(id) FROM civicrm_domain;
 SELECT @reportlastID    := id FROM civicrm_navigation WHERE name = 'Reports';
@@ -65,8 +57,8 @@ VALUES
 
 SET @instanceID:=LAST_INSERT_ID();
 INSERT INTO civicrm_navigation
-    ( domain_id, url, {localize field='label'}label{/localize}, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
+    ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES
-    ( @domainID, CONCAT('civicrm/report/instance/', @instanceID,'&reset=1'), {localize}'{ts escape="sql"}Grant Report (Statistics){/ts}{/localize}', '{literal}Grant Report (Statistics){/literal}', 'access CiviGrant', '',@reportlastID, '1', NULL, @nav_max_weight+1 );
+    ( @domainID, CONCAT('civicrm/report/instance/', @instanceID,'&reset=1'), '{ts escape="sql"}Grant Report (Statistics){/ts}', '{ts}Grant Report (Statistics){/ts}', 'access CiviGrant', '',@reportlastID, '1', NULL, @nav_max_weight+1 );
 
 UPDATE civicrm_report_instance SET navigation_id = LAST_INSERT_ID() WHERE id = @instanceID;
