@@ -65,8 +65,8 @@ VALUES
 
 SET @instanceID:=LAST_INSERT_ID();
 INSERT INTO civicrm_navigation
-    ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
+    ( domain_id, url, {localize field='label'}label{/localize}, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES
-    ( @domainID, CONCAT('civicrm/report/instance/', @instanceID,'&reset=1'), '{ts escape="sql"}Grant Report (Statistics){/ts}', '{literal}Grant Report (Statistics){/literal}', 'access CiviGrant', '',@reportlastID, '1', NULL, @nav_max_weight+1 );
+    ( @domainID, CONCAT('civicrm/report/instance/', @instanceID,'&reset=1'), {localize}'{ts escape="sql"}Grant Report (Statistics){/ts}{/localize}', '{literal}Grant Report (Statistics){/literal}', 'access CiviGrant', '',@reportlastID, '1', NULL, @nav_max_weight+1 );
 
 UPDATE civicrm_report_instance SET navigation_id = LAST_INSERT_ID() WHERE id = @instanceID;
