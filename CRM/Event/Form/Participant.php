@@ -786,6 +786,12 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
         if ( $this->_id ) {
             $campaignId = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Participant', $this->_id, 'campaign_id' ); 
         }
+        if ( !$campaignId ) {
+            $eventId = CRM_Utils_Request::retrieve( 'eid', 'Positive', $this ); 
+            if ( $eventId ) {
+                $campaignId = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $eventId, 'campaign_id' );
+            }
+        }
         CRM_Campaign_BAO_Campaign::addCampaign( $this, $campaignId );
         
         $this->addDateTime( 'register_date', ts('Registration Date'), true, array( 'formatType' => 'activityDateTime') );
