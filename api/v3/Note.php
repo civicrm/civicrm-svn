@@ -63,7 +63,7 @@ function civicrm_note_getfields( &$params ) {
  * @example NoteCreate.php
  * {@example NoteCreate.php
  */
-function &civicrm_note_create(&$params)
+function civicrm_note_create(&$params)
 {
   _civicrm_initialize(true);
   try{
@@ -73,8 +73,6 @@ function &civicrm_note_create(&$params)
     }
     	
     civicrm_verify_mandatory($params,'CRM_Core_BAO_Note', array('note'));
-
-
 
     $contactID = CRM_Utils_Array::value( 'contact_id', $params );
 
@@ -94,6 +92,7 @@ function &civicrm_note_create(&$params)
       _civicrm_object_to_array( $noteBAO, $note[$noteBAO->id] );
 
     }
+    $result = civicrm_create_success($note,$params);
     return civicrm_create_success($note,$params);
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );
@@ -141,7 +140,7 @@ function civicrm_note_delete( &$params )
  * @access public
  */
 
-function &civicrm_note_get( &$params ) {
+function civicrm_note_get( &$params ) {
   _civicrm_initialize( true);
   try{
     

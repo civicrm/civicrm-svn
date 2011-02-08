@@ -1292,7 +1292,6 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         );
        require_once 'api/api.php';
        $result = civicrm_api_legacy( 'civicrm_note_create','Note',$params );
-
        return $result;
     }
 function documentMe($params,$result,$function,$filename){

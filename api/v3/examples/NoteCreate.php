@@ -7,14 +7,14 @@ function note_create_example(){
                   'entity_id' 		=> '1',
                   'note' 		=> 'Hello!!! m testing Note',
                   'contact_id' 		=> '1',
-                  'modified_date' 		=> '20110206',
+                  'modified_date' 		=> '20110209',
                   'subject' 		=> 'Test Note',
                   'version' 		=> '3',
                   'privacy' 		=> '0',
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_note_create','Note',$params );
+  $result = civicrm_api( 'Note','create',$params );
 
   return $result;
 }
@@ -36,7 +36,7 @@ function note_create_expectedresult(){
                   ,                  'entity_id' => '1'
                   ,                  'note' => 'Hello!!! m testing Note'
                   ,                  'contact_id' => '1'
-                  ,                  'modified_date' => '20110206'
+                  ,                  'modified_date' => '20110209'
                   ,                  'subject' => 'Test Note'
                   ,                  'privacy' => '0'
                   ,),                  ),
