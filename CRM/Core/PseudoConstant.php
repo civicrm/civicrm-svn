@@ -445,10 +445,12 @@ class CRM_Core_PseudoConstant
                                           $includeCaseActivities = false, 
                                           $reset = false,
                                           $returnColumn = 'label',
-                                          $includeCampaignActivities = false )
+                                          $includeCampaignActivities = false,
+                                          $onlyComponentActivities = false )
     {
         $index = (int) $all . '_' . $returnColumn . '_' . (int) $includeCaseActivities;
         $index .= '_' . (int)$includeCampaignActivities;
+        $index .= '_' . (int)$onlyComponentActivities;
         
         if ( ! array_key_exists( $index, self::$activityType ) || $reset ) {
             require_once 'CRM/Core/OptionGroup.php';
@@ -481,6 +483,9 @@ class CRM_Core_PseudoConstant
             if ( count($componentIds) ) {
                 $componentIds     = implode( ',', $componentIds );
                 $componentClause  = " ($componentClause OR v.component_id IN ($componentIds))";
+                if ( $onlyComponentActivities ) {
+                    $componentClause  = " ( v.component_id IS NOT NULL OR v.component_id IN ($componentIds))";
+                }
             }
             $condition = $condition . ' AND ' . $componentClause;
             

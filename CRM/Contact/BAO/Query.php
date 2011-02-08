@@ -273,7 +273,16 @@ class CRM_Contact_BAO_Query
      * @static
      */
     static $_activityRole;
-
+    
+    /**
+     * Consider the component activity type
+     * during activity search.
+     *
+     * @var array
+     * @static
+     */
+    static $_considerCompActivities;
+    
     /**
      * use distinct component clause for component searches
      *
@@ -418,6 +427,7 @@ class CRM_Contact_BAO_Query
         
         //reset cache, CRM-5803
         self::$_activityRole = null;
+        self::$_considerCompActivities = null;
         
         $this->_select['contact_id']      = 'contact_a.id as contact_id';
         $this->_element['contact_id']     = 1; 
