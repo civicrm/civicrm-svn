@@ -639,7 +639,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         'version'				=> $apiversion,
                         );
 
-       $result = civicrm_api( 'civicrm_participant_create','Participant',$params );
+       $result = civicrm_api_legacy( 'civicrm_participant_create','Participant',$params );
         if ( CRM_Utils_Array::value( 'is_error', $result ) && $result['is_error'] ==1) {
           throw new Exception( 'Could not create participant ' . $result['error_message'] );
             
@@ -925,7 +925,6 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         );
       $participantPayment = civicrm_api_legacy( 'civicrm_participant_payment_create','ParticipantPayment',$params );        
 
-        print_r($participantPayment);
         if ( CRM_Utils_Array::value( 'is_error', $participantPayment ) ||
              ! CRM_Utils_Array::value( 'id', $participantPayment ) ) {
             throw new Exception( 'Could not create participant payment' );
@@ -1298,11 +1297,11 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 function documentMe($params,$result,$function,$filename){
         $entity = substr ( basename($filename) ,0, strlen(basename($filename))-8 );
         if (strstr($function, 'Create')){
-          $action = 'Create';
+          $action = 'create';
         }elseif(strstr($function, 'Get')){
-          $action = 'Get';
+          $action = 'get';
         }elseif(strstr($function, 'Delete')){
-          $action = 'Delete';
+          $action = 'delete';
         }
         if (strstr($entity,'UF')){// a cleverer person than me would do it in a single regex
          $fnPrefix = strtolower(preg_replace('/(?<! )(?<!^)(?<=UF)[A-Z]/','_$0', $entity));          
@@ -1316,6 +1315,7 @@ function documentMe($params,$result,$function,$filename){
         $smarty->assign('params',$params);   
         $smarty->assign('entity',$entity);         
         $smarty->assign('result',$result); 
+        $smarty->assign('action',$action); 
         if (file_exists ( "../api/v3/examples/$entity$action.php" ) && file_exists('../templates/documentFunction.tpl')) {
           $f = fopen("../api/v3/examples/$entity$action.php", "w");
           fwrite($f,$smarty->fetch('../templates/documentFunction.tpl'));
