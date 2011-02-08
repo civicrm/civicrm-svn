@@ -100,7 +100,7 @@ $tables   =& getTables( $dbXML, $database );
 resolveForeignKeys( $tables, $classNames );
 $tables = orderTables( $tables );
 
-$allDAO = "<?\n\$dao = array ();";
+$allDAO = "<?php\n\$dao = array ();";
 foreach ($tables as $table) {
    $base  = $table['base']  . $table['objectName'];
    $allDAO  .= "\n\$dao['".$table['objectName']."'] = '". str_replace( '/', '_', $base ) ."';"; 
