@@ -162,7 +162,7 @@ class CRM_Report_Form_Grant_Statistics extends CRM_Report_Form {
                             array( 'name'          => 'contact_type',
                                    'title'         => ts('Contact Type' ),
                                    'operatorType'  => CRM_Report_Form::OP_MULTISELECT,
-                                   'options'       => CRM_Contact_BAO_ContactType::basicTypes( ),
+                                   'options'       => CRM_Contact_BAO_ContactType::basicTypePairs( ),
                                    ),
                             ),
                         'grouping'=> 'contact-fields',
@@ -258,7 +258,11 @@ class CRM_Report_Form_Grant_Statistics extends CRM_Report_Form {
     function where( ) 
     {
         $granted = array_search( 'Granted', CRM_Grant_PseudoConstant::grantStatus( ) );
-        $clauses[] = "status_id = {$granted}";
+        $whereClause  = " 
+WHERE {$this->_aliases['civicrm_grant']}.amount_total IS NOT NULL 
+  AND {$this->_aliases['civicrm_grant']}.amount_total > 0";
+        $this->_where = $whereClause . " AND {$this->_aliases['civicrm_grant']}.status_id = {$granted} ";
+
         foreach ( $this->_columns as $tableName => $table ) {
             if ( array_key_exists('filters', $table) ) { 
                 foreach ( $table['filters'] as $fieldName => $field ) {
@@ -290,9 +294,9 @@ class CRM_Report_Form_Grant_Statistics extends CRM_Report_Form {
                     }
                     if ( ! empty( $clause ) ) {
                         $clauses[] = $clause;
-                        $this->_where = "WHERE " . implode( ' AND ', $clauses );
+                        $this->_where .= " AND " . implode( ' AND ', $clauses );
+                        $this->_whereClause = $whereClause . " AND " . implode( ' AND ', $clauses );
                     }
-                    
                 }
             }
         }
@@ -322,27 +326,27 @@ class CRM_Report_Form_Grant_Statistics extends CRM_Report_Form {
 
     function alterDisplay( &$rows ) 
     {
+        $totalStatistics['filters'] = parent::statistics( $rows );
         $awardedGrantsAmount = $grantsReceived = $totalAmount = $awardedGrants = $grantReportsReceived = 0;
         
         $grantTypes      = CRM_Grant_PseudoConstant::grantType( );
         $countries       = CRM_Core_PseudoConstant::country( );
         $gender          = CRM_Core_PseudoConstant::gender( );
 
-        $query = "
-SELECT COUNT(id) as count , SUM(amount_total) as totalAmount 
-  FROM civicrm_grant";
+        $query = $sql = "
+SELECT COUNT({$this->_aliases['civicrm_grant']}.id) as count , 
+         SUM({$this->_aliases['civicrm_grant']}.amount_total) as totalAmount 
+  {$this->_from} ";
         
+        $query .= " {$this->_whereClause}";
         $result = CRM_Core_DAO::executeQuery( $query );
         while ( $result->fetch( ) ) {
             $grantsReceived = $result->count;
             $totalAmount    = $result->totalAmount;
         }
         
-        $query  .= " WHERE status_id = %1 GROUP BY status_id";
-        $granted = array_search( 'Granted', CRM_Grant_PseudoConstant::grantStatus( ) );
-        $params  = array( 1 => array( $granted, 'Integer' ) );
-                
-        $values = CRM_Core_DAO::executeQuery( $query, $params );
+        $sql   .= " {$this->_where}";
+        $values = CRM_Core_DAO::executeQuery( $sql );
         while ( $values->fetch( ) ) {
             $awardedGrants       = $values->count;
             $awardedGrantsAmount = $values->totalAmount;
@@ -405,16 +409,50 @@ SELECT COUNT(id) as count , SUM(amount_total) as totalAmount
             }
         }
         
-        $statistics = array( 'grants_received'        => array( 'title'  => 'Grant Requests Received',
-                                                                'count'  => $grantsReceived,
-                                                                'amount' => $totalAmount ),
-                             'grants_awarded'         => array( 'title'  => 'Grants Awarded',
-                                                                'count'  => $awardedGrants,
-                                                                'amount' => $awardedGrantsAmount ),
-                             'grants_report_received' => array( 'title'  => 'Grant Reports Received',
-                                                                'count'  => $grantReportsReceived ), );
-        $this->assign( 'totalStatistics', $statistics );
+        $totalStatistics['total_statistics'] = 
+            array( 'grants_received'        => array( 'title'  => 'Grant Requests Received',
+                                                      'count'  => $grantsReceived,
+                                                      'amount' => $totalAmount ),
+                   'grants_awarded'         => array( 'title'  => 'Grants Awarded',
+                                                      'count'  => $awardedGrants,
+                                                      'amount' => $awardedGrantsAmount ),
+                   'grants_report_received' => array( 'title'  => 'Grant Reports Received',
+                                                      'count'  => $grantReportsReceived ), );
+        
+        $this->assign( 'totalStatistics', $totalStatistics );
         $this->assign( 'grantStatistics', $grantStatistics );
+        
+        if ( $this->_outputMode == 'csv' || 
+             $this->_outputMode == 'pdf' ) {
+            $this->_columnHeaders = array( 'civicrm_grant_total_grants' => array( 'title' => 'Summary', ),
+                                           'civicrm_grant_count'        => array( 'title' => 'Count', ),
+                                           'civicrm_grant_amount'       => array( 'title' => 'Amount', ),
+                                           );
+            foreach ( $totalStatistics['total_statistics'] as $title => $value ) {
+                $row[]= array( 'civicrm_grant_total_grants' => $value['title'],
+                               'civicrm_grant_count'        => $value['count'],
+                               'civicrm_grant_amount'       => $value['amount'] );
+            }
+            $row[] = $totalAmount = array( );
+            foreach ( $grantStatistics as $key => $value ) {
+                $row[] = array( 'civicrm_grant_total_grants' => $value['title'],
+                                'civicrm_grant_count'        => 'Number of Grants (%)',
+                                'civicrm_grant_amount'       => 'Total Amount (%)' );
+                
+                foreach ( $value['value'] as $field => $values ) {
+                    foreach ( $values['currency'] as $currency => $amount ) {
+                        $totalAmount[$currency] = $currency . $amount['value'] . "({$values['percentage']}%)";
+                    }
+                    $totalAmt = implode( ', ', $totalAmount );
+                    $count = $values['count'] . " ({$values['percentage']}%)";
+                    $row[] = array( 'civicrm_grant_total_grants' => $field,
+                                    'civicrm_grant_count'        => $count,
+                                    'civicrm_grant_amount'       => $totalAmt );
+                }
+                $row[] = array( );
+            }
+            $rows = $row;
+        }
     }
 
     static function getStatistics( &$grantStatistics, $fieldValue, $values, 
