@@ -239,7 +239,8 @@ class CRM_Campaign_Page_AJAX
         $queryParams = CRM_Contact_BAO_Query::convertFormValues( $params );
         $query       = new CRM_Contact_BAO_Query( $queryParams,
                                                   null, null, false, false, 
-                                                  CRM_Contact_BAO_Query::MODE_CAMPAIGN );
+                                                  CRM_Contact_BAO_Query::MODE_CAMPAIGN,
+                                                  true );
         
         //get the voter clause to restrict and validate search.
         require_once 'CRM/Campaign/BAO/Query.php';
