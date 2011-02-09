@@ -265,7 +265,6 @@ function _civicrm_object_to_array( &$dao, &$values,$uniqueFields = FALSE )
     //rebuild $fields array to fix unique name of the fields
     if(!empty($uniqueFields)){
       $fields = $tmpFields;
-      print_r($fields);
     }else{
       foreach( $tmpFields as $key => $val ) {
         $fields[$val["name"]]  = $val;
