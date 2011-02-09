@@ -185,7 +185,7 @@ class CRM_Activity_BAO_Query
         switch ( $name ) {
         
         case 'activity_type_id':
-            $types  = CRM_Core_PseudoConstant::activityType( true, true );
+            $types  = CRM_Core_PseudoConstant::activityType( true, true, false, 'label', true );
             
             //get the component activity types.
             $compActTypes = CRM_Core_PseudoConstant::activityType( true, true, false, 'label', true, true );
