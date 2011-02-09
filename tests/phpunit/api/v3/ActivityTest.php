@@ -1254,7 +1254,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         );
         require_once 'api/v3/Contact.php';
         $contact =&civicrm_contact_create( $params );
-        $params  = array( 'contact_id' => $contact['contact_id'] ,
+        $params  = array( 'contact_id' => $contact['id'] ,
                         'version'				=> $this->_apiversion,        );
         $result  = civicrm_activity_get( $params );
         $this->assertEquals( $result['is_error'], 0,'in line ' . __LINE__ );
