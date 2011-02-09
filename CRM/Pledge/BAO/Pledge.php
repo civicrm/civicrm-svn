@@ -663,6 +663,12 @@ WHERE  $whereCond
                                      'details'            => $details,
                                      'campaign_id'        => CRM_Utils_Array::value( 'campaign_id', $params )
                                      );
+            
+            //lets insert assignee record.
+            if ( CRM_Utils_Array::value( 'contact_id', $params ) ) {
+                $activityParams['assignee_contact_id'] = $params['contact_id'];
+            }
+            
             require_once 'api/v2/Activity.php';
             if ( is_a( civicrm_activity_create( $activityParams ), 'CRM_Core_Error' ) ) {
                 CRM_Core_Error::fatal("Failed creating Activity for acknowledgment");
