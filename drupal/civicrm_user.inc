@@ -231,6 +231,17 @@ function civicrm_user_view( $user, $view_mode ){
     return;
 }
 
+/**
+ * Implementation of hook_user_logout
+ *
+ */
+function civicrm_user_logout( $account ) {
+    if ( ! civicrm_initialize( ) ) {
+        return;
+    }
+    $session = CRM_Core_Session::singleton();
+    $session->reset();
+}
 
 /**
  * Validation functions so CiviCRM can get at these items

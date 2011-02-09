@@ -161,30 +161,6 @@ function civicrm_help($section)
 }
 
 /**
- * Implementation of hook_perm(). (D6 only)
- *
- * Since the access to our new custom pages will be granted based on
- * special permissions, we need to define what those permissions are here.
- * This ensures that they are available to enable on the user role
- * administration pages.
- * 
- */
-function civicrm_perm()
-{
-    // make sure the system is initialized
-    if ( ! civicrm_initialize( ) ) {
-        return;
-    }
-
-    $config =& CRM_Core_Config::singleton();
-
-    require_once 'CRM/Core/Permission.php';
-    $permissions =& CRM_Core_Permission::basicPermissions( );
-	return array_keys( $permissions );
-}
-
-
-/**
  * Implementation of hook_permissions(). (D7 and after)
  *
  * Since the access to our new custom pages will be granted based on
@@ -210,38 +186,6 @@ function civicrm_permission()
       $perms_array[$perm] = array('title' => $title);
     }
 	return $perms_array;
-}
-
-
-
-/**
- * Implementation of hook_block(). (D6 only)
- *
- * This hook both declares to Drupal what blocks are provided by the module, and
- * generates the contents of the blocks themselves.
- */
-
-function civicrm_block($op='list', $delta='0')
-{
-    if ( $op == 'configure' ) {
-        return;
-    }
-
-    if ( ! civicrm_initialize( ) ) {
-        return;
-    }
-
-    // The $op parameter determines what piece of information is being requested.
-    require_once 'CRM/Core/Block.php';
-    
-    // CRM_Core_Error::backtrace( "$op, $delta" );
-
-    if ($op == 'list') {
-        $block = CRM_Core_Block::getInfo();
-    } else {
-        $block = CRM_Core_Block::getContent ($delta);
-    }
-    return $block;
 }
 
 /**
@@ -461,108 +405,6 @@ function civicrm_invoke( )
         $pageContent = $printedContent;
     }
     return $pageContent;
-}
-
-/**
- * User hook for civicrm module
- *
- * Note that we ignore the edit field and do not follow the drupal protocol
- * of extracting values from the edit field. We extract the fields directly
- * from $_POST. This is because the underlying form package that we use
- * (HTML_QuickForm) does the form value extraction and validation.
- *
- * @param string $type     Type of operation being performed
- * @param array  $edit     The array of form values submitted by the user.
- * @param object $user     The user object on which the operation is being performed.
- * @param object $category The active category of user information being edited.
- *
- * @return mixed           depends on the operation being performed
- */
-function civicrm_user( $type, &$edit, &$user, $category = NULL ) 
-{
-    if ( $type == 'load' ) {
-        return;
-    }			
-
-    if ( ! civicrm_initialize( ) ) {
-        return;
-    }
-	
-    switch ( $type ) {
-
-    case 'login':
-        require_once 'CRM/Core/BAO/UFMatch.php';
-        return CRM_Core_BAO_UFMatch::synchronize( $user, false, 'Drupal',
-                                                  civicrm_get_ctype( 'Individual' ), true );
-    case 'register':
-        $config =& CRM_Core_Config::singleton( );
-        if ( $config->inCiviCRM ) {
-            return;
-        }
- 
-        if ( empty( $_POST ) ) {
-            return civicrm_register_data($edit, $user, $category, true, false );
-        } else {
-            return civicrm_register_data( $edit, $user, $category, false, true );
-        }
-        break;
-
-    case 'update':
-        // this always comes in via user hook, so udpate email only if it has changed
-        if ( isset( $edit['mail'] ) &&
-             trim( $edit['mail'] ) != trim( $user->mail ) ) {
-            require_once 'CRM/Core/BAO/UFMatch.php';
-            $contactID = CRM_Core_BAO_UFMatch::getContactId( $user->uid );
-
-            // cant find the contactID, so lets skip
-            if ( ! $contactID ) {
-                return;
-            }
-            CRM_Core_BAO_UFMatch::updateContactEmail( $contactID,
-                                                      trim( $edit['mail'] ) );
-        }
-        break;
-        
-    case 'after_update':
-        // ensure preferences navigation is cleared so new role perms are reflected
-        // CRM-7450
-        require_once 'CRM/Core/BAO/Navigation.php';
-        CRM_Core_BAO_Navigation::resetNavigation( );
-        break;
-
-    case 'form':
-        $inCategory = true;
-        if ( $category ) {
-            $inCategory = false;
-            $categories = civicrm_user_categories( );
-            foreach ( $categories as $cat ) {
-                if ( $category == $cat['name'] ) {
-                    $inCategory = true;
-                    break;
-                }
-            }
-        }
-
-        // only return a form to drupal my account page
-        if ( $inCategory      &&
-             arg(0) == 'user' &&
-             arg(2) == 'edit' &&
-             arg(3) ) {
-            return civicrm_form_data($edit, $user, $category, true );
-        }
-        break;
-
-    case 'validate':
-        return civicrm_validate_data($edit, $user, $category);
-        
-    case 'categories':
-        return civicrm_user_categories( );
-
-	case 'delete':
-        require_once 'CRM/Core/BAO/UFMatch.php';
-        return CRM_Core_BAO_UFMatch::deleteUser( $user->uid );
-    }
-
 }
 
 /**
