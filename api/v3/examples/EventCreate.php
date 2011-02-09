@@ -3,10 +3,27 @@
 function event_create_example(){
     $params = array(
     
+                  'custom' 		=> 'Array',
+                  'title' 		=> 'Annual CiviCRM meet',
+                  'summary' 		=> 'If you have any CiviCRM realted issues or want to track where CiviCRM is heading, Sign up now',
+                  'description' 		=> 'This event is intended to give brief idea about progess of CiviCRM and giving solutions to common user issues',
+                  'event_type_id' 		=> '1',
+                  'is_public' 		=> '1',
+                  'start_date' 		=> '20081021',
+                  'end_date' 		=> '20081023',
+                  'is_online_registration' 		=> '1',
+                  'registration_start_date' 		=> '20080601',
+                  'registration_end_date' 		=> '20081015',
+                  'max_participants' 		=> '100',
+                  'event_full_text' 		=> 'Sorry! We are already full',
+                  'is_monetory' 		=> '0',
+                  'is_active' 		=> '1',
+                  'is_show_location' 		=> '0',
+                  'version' 		=> '3',
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_event_create','Event',$params );
+  $result = civicrm_api( 'Event','create',$params );
 
   return $result;
 }
