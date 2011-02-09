@@ -108,20 +108,12 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
                 $statusIds[] = $statusId;
             }
         }
-
-        // these are the activities that are linked to the current interviewer and current contact list
-        // not the list of ALL survey activities
-        $this->_surveyActivities = CRM_Campaign_BAO_Survey::getSurveyActivities( $this->_surveyId,
-                                                                                 $this->_interviewerId,
-                                                                                 $statusIds,
-                                                                                 $this->_contactIds,
-                                                                                 false );
-        //validate the selected survey.
-        $this->_numVoters = CRM_Campaign_BAO_Survey::getSurveyActivities( $this->_surveyId, 
-                                                                          $this->_interviewerId,
-                                                                          $statusIds,
-                                                                          null, 
-                                                                          true );
+        
+        //get the number of voters to validate across max.
+        $this->_numVoters = CRM_Campaign_BAO_Survey::getSurveyActivityCount( $this->_surveyId,
+                                                                             $this->_interviewerId,
+                                                                             $statusIds );
+        
         //validate the selected survey.
         $this->validateSurvey( );
         $this->assign( 'surveyTitle', $this->_surveyDetails['title'] );
@@ -196,10 +188,6 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
     public function postProcess( ) 
     {
         $existingVoterIds = $reservedVoterIds = array( );
-        foreach ( $this->_surveyActivities as $actId => $actVals ) {
-            $voterId = $actVals['voter_id'];
-            $existingVoterIds[$voterId] = $voterId; 
-        }
         
         //add reservation.
         require_once 'CRM/Core/PseudoConstant.php';

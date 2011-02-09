@@ -400,6 +400,41 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
         return $activityDetails;
     }
     
+    public static function getSurveyActivityCount( $surveyId, $interviewerId = null, $statusIds = array( ) ) 
+    {
+        $activityCount = 0;
+        if ( !$surveyId ) return $activities; 
+        
+        $where = array( );
+        if ( is_array( $statusIds ) && !empty( $statusIds ) ) {
+            $where[] = '( activity.status_id IN ( '. implode( ',', array_values( $statusIds ) ) . ' ) )';
+        }
+        if ( $interviewerId ) {
+            $where[] = "( activityAssignment.assignee_contact_id =  $interviewerId )";
+        }
+        $whereClause = null;
+        if ( !empty( $where ) ) {
+            $whereClause = ' AND ( '. implode( ' AND ', $where ) . ' )';
+        }
+        
+        $actTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', $surveyId, 'activity_type_id' ); 
+        if ( !$actTypeId ) return $activities;
+        
+        $query = "
+    SELECT  count( activity.id ) as activityCount 
+      FROM  civicrm_activity activity
+INNER JOIN  civicrm_activity_target activityTarget ON ( activityTarget.activity_id = activity.id )
+INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignment.activity_id = activity.id )
+     WHERE  activity.source_record_id = %1
+       AND  activity.activity_type_id = %2
+       AND  ( activity.is_deleted IS NULL OR activity.is_deleted = 0 )
+            $whereClause";
+        
+        $dbActivityCount = CRM_Core_DAO::singleValueQuery( $query, array( 1 => array( $surveyId,  'Integer'),
+                                                                         2 => array( $actTypeId, 'Integer' ) ) );
+        return ($dbActivityCount) ? $dbActivityCount : 0;
+    }
+    
     /**
      * This function retrieve survey related activities.
      *
