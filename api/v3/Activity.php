@@ -92,11 +92,11 @@ function civicrm_activity_create( &$params )
       $params['custom'] = $values['custom'];
     }
     // create activity
-    $activity = CRM_Activity_BAO_Activity::create( $params );
+    $activityBAO = CRM_Activity_BAO_Activity::create( $params );
 
-    if ( isset( $activity->id ) ) {
-    _civicrm_object_to_array( $activity, $activityArray[$activity->id]);
-    return civicrm_create_success($activityArray,$params);
+    if ( isset( $activityBAO->id ) ) {
+    _civicrm_object_to_array( $activityBAO, $activityArray[$activityBAO->id]);
+    return civicrm_create_success($activityArray,$params,$activityBAO);
     }
 
 
@@ -201,9 +201,10 @@ function _civicrm_activity_get( $activityId, $returnCustom = true ) {
     _civicrm_object_to_array( $dao, $activity[$dao->id] );
     //also return custom data if needed.
     if ( $returnCustom && !empty( $activity ) ) {
+      $customdata = array();
       $customdata = _civicrm_activity_custom_get( array( 'activity_id'      => $activityId,
-                                                              'activity_type_id' => $activity['activity_type_id']  )  );
-     if ( is_array( $customData ) && !empty( $customData ) ) {
+                                                         'activity_type_id' => CRM_Utils_Array::value('activity_type_id',$activity[$dao->id]  ))  );
+     if ( is_array( $customdata ) && !empty( $customdata ) ) {
       $activity = array_merge( $activity, $customdata );
       }
     }

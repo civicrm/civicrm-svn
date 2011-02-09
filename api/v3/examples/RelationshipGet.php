@@ -8,7 +8,7 @@ function relationship_get_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_relationship_get','Relationship',$params );
+  $result = civicrm_api( 'Relationship','get',$params );
 
   return $result;
 }
