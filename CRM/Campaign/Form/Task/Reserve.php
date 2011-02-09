@@ -115,7 +115,7 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
                                                                                  $this->_interviewerId,
                                                                                  $statusIds,
                                                                                  $this->_contactIds,
-                                                                                 true );
+                                                                                 false );
         //validate the selected survey.
         $this->_numVoters = CRM_Campaign_BAO_Survey::getSurveyActivities( $this->_surveyId, 
                                                                           $this->_interviewerId,
