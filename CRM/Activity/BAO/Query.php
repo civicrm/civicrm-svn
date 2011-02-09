@@ -463,9 +463,10 @@ class CRM_Activity_BAO_Query
             }
         }
         require_once ('CRM/Campaign/BAO/Survey.php');
-        $surveys = array('' => ts('- none -')) + CRM_Campaign_BAO_Survey::getSurveys( );
-        $form->add( 'select', 'activity_survey_id', ts('Survey'), $surveys, false );
-
+        $surveys = CRM_Campaign_BAO_Survey::getSurveys( );
+        if( $surveys ) $form->add( 'select', 'activity_survey_id', ts('Survey'), 
+                                   array('' => ts('- none -')) + $surveys, false );
+        
         require_once 'CRM/Core/BAO/CustomGroup.php';
         $extends = array( 'Activity' );
         $groupDetails = CRM_Core_BAO_CustomGroup::getGroupDetail( null, true, $extends );
