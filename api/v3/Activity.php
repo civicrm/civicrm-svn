@@ -67,7 +67,7 @@ require_once 'CRM/Core/DAO/OptionGroup.php';
  * {@example ActivityCreate.php 0} 
  *
  */
-function &civicrm_activity_create( &$params )
+function civicrm_activity_create( &$params )
 {
   _civicrm_initialize( true );
   try{
@@ -76,6 +76,7 @@ function &civicrm_activity_create( &$params )
     if (!empty($params['id']) || !empty($params['activity_id'])){
       $addmode = False;
     }
+
     // check for various error and required conditions
     $errors = _civicrm_activity_check_params( $params, $addmode ) ;
 
@@ -86,6 +87,7 @@ function &civicrm_activity_create( &$params )
     // processing for custom data
     $values = array();
     _civicrm_custom_format_params( $params, $values, 'Activity' );
+
     if ( ! empty($values['custom']) ) {
       $params['custom'] = $values['custom'];
     }
@@ -273,11 +275,12 @@ SELECT  count(*)
   /*
    * @todo unique name for id is activity id - id won't be supported in v4
    */
+
   if ( ! $addMode && ! isset( $params['id'] )&& ! isset( $params['activity_id'] )) {
     return civicrm_create_error(  'Required parameter "id" not found'  );
   }
 
-  if ( ! $addMode && $params['id'] && (! is_numeric ( $params['id'] )) || ($params['id'] && ! is_numeric ( $params['id'] ) )) {
+  if ( ! $addMode && isset($params['id']) && (! is_numeric ( $params['id'] )) || (isset($params['id']) && ! is_numeric ( $params['id'] ) )) {
     return civicrm_create_error(  'Invalid activity "id"'  );
   }
 

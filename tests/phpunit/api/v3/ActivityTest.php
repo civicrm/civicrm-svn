@@ -945,7 +945,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'version'							=>$this->_apiversion,
                         );
 
-        $result =& civicrm_activity_create( $params );
+        $result = civicrm_activity_create( $params );
 
         //  civicrm_activity should show new values
         $expected = new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
@@ -1107,7 +1107,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'version'							=>$this->_apiversion,
                         );
 
-        $result =& civicrm_activity_create( $params );
+        $result = civicrm_activity_create( $params );
 
         //  civicrm_activity should show new values except date
         $expected = new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
@@ -1161,7 +1161,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'version'					 =>$this->_apiversion,
                         );
 
-        $result =& civicrm_activity_create( $params );
+        $result = civicrm_activity_create( $params );
         $this->assertNotContains( 'is_error', $result );
         $this->assertEquals( $result['id'] , 4, "In line " . __LINE__ );
         $this->assertEquals( $result['values'][4]['source_contact_id'] , 17,
