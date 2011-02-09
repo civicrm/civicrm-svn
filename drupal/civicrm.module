@@ -472,6 +472,11 @@ function civicrm_user( $type, &$edit, &$user, $category = NULL )
 	case 'delete':
         require_once 'CRM/Core/BAO/UFMatch.php';
         return CRM_Core_BAO_UFMatch::deleteUser( $user->uid );
+        
+    case 'logout':
+        $session = CRM_Core_Session::singleton();
+        $session->reset();
+        return;
     }
 
 }
