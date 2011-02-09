@@ -14,7 +14,7 @@ function note_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'Note','create',$params );
+  $result = civicrm_api( 'note','create',$params );
 
   return $result;
 }
@@ -25,23 +25,22 @@ function note_create_example(){
 function note_create_expectedresult(){
 
   $expectedResult = 
-            array(
-                  'is_error' 		=> '0',
-                  'version' 		=> '3',
-                  'count' 		=> '1',
-                  'id' 		=> '2',
-                  'values' 		=>                   array(                  '2' =>  array(
-                                    'id' => '2'
-                  ,                  'entity_table' => 'civicrm_contact'
-                  ,                  'entity_id' => '1'
-                  ,                  'note' => 'Hello!!! m testing Note'
-                  ,                  'contact_id' => '1'
-                  ,                  'modified_date' => '20110209'
-                  ,                  'subject' => 'Test Note'
-                  ,                  'privacy' => '0'
-                  ,),                  ),
-
-  );
+     array(
+           'is_error' 		=> '0',
+           'version' 		=> '3',
+           'count' 		=> '1',
+           'id' 		=> '2',
+           'values' 		=>            array(           '2' =>  array(
+                      'id' => '2',
+                      'entity_table' => 'civicrm_contact',
+                      'entity_id' => '1',
+                      'note' => 'Hello!!! m testing Note',
+                      'contact_id' => '1',
+                      'modified_date' => '20110209',
+                      'subject' => 'Test Note',
+                      'privacy' => '0',
+           ),           ),
+      );
 
   return $expectedResult  ;
 }

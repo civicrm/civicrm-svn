@@ -16,7 +16,7 @@ function participant_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'Participant','create',$params );
+  $result = civicrm_api( 'participant','create',$params );
 
   return $result;
 }
@@ -27,30 +27,29 @@ function participant_create_example(){
 function participant_create_expectedresult(){
 
   $expectedResult = 
-            array(
-                  'is_error' 		=> '0',
-                  'version' 		=> '3',
-                  'count' 		=> '1',
-                  'id' 		=> '4',
-                  'values' 		=>                   array(                  '4' =>  array(
-                                    'id' => '4'
-                  ,                  'contact_id' => '2'
-                  ,                  'event_id' => '1'
-                  ,                  'status_id' => '1'
-                  ,                  'role_id' => '1'
-                  ,                  'register_date' => '20070721'
-                  ,                  'source' => 'Online Event Registration: API Testing'
-                  ,                  'fee_level' => ''
-                  ,                  'is_test' => ''
-                  ,                  'is_pay_later' => ''
-                  ,                  'fee_amount' => ''
-                  ,                  'registered_by_id' => ''
-                  ,                  'discount_id' => ''
-                  ,                  'fee_currency' => ''
-                  ,                  'campaign_id' => ''
-                  ,),                  ),
-
-  );
+     array(
+           'is_error' 		=> '0',
+           'version' 		=> '3',
+           'count' 		=> '1',
+           'id' 		=> '4',
+           'values' 		=>            array(           '4' =>  array(
+                      'id' => '4',
+                      'contact_id' => '2',
+                      'event_id' => '1',
+                      'status_id' => '1',
+                      'role_id' => '1',
+                      'register_date' => '20070721',
+                      'source' => 'Online Event Registration: API Testing',
+                      'fee_level' => '',
+                      'is_test' => '',
+                      'is_pay_later' => '',
+                      'fee_amount' => '',
+                      'registered_by_id' => '',
+                      'discount_id' => '',
+                      'fee_currency' => '',
+                      'campaign_id' => '',
+           ),           ),
+      );
 
   return $expectedResult  ;
 }

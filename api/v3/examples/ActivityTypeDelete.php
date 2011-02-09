@@ -19,10 +19,9 @@ function activity_type_delete_example(){
 function activity_type_delete_expectedresult(){
 
   $expectedResult = 
-            array(
-                  '0' 		=> '1',
-
-  );
+     array(
+           '0' 		=> '1',
+      );
 
   return $expectedResult  ;
 }

@@ -15,7 +15,7 @@ function uf_field_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'UFField','create',$params );
+  $result = civicrm_api( 'uf_field','create',$params );
 
   return $result;
 }
@@ -26,32 +26,31 @@ function uf_field_create_example(){
 function uf_field_create_expectedresult(){
 
   $expectedResult = 
-            array(
-                  'is_error' 		=> '0',
-                  'version' 		=> '3',
-                  'count' 		=> '1',
-                  'id' 		=> '35',
-                  'values' 		=>                   array(                  '35' =>  array(
-                                    'id' => '35'
-                  ,                  'uf_group_id' => '11'
-                  ,                  'field_name' => 'country'
-                  ,                  'is_active' => '1'
-                  ,                  'is_view' => ''
-                  ,                  'is_required' => ''
-                  ,                  'weight' => '1'
-                  ,                  'help_post' => ''
-                  ,                  'help_pre' => ''
-                  ,                  'visibility' => 'Public Pages and Listings'
-                  ,                  'in_selector' => ''
-                  ,                  'is_searchable' => '1'
-                  ,                  'location_type_id' => 'null'
-                  ,                  'phone_type_id' => ''
-                  ,                  'label' => 'Test Country'
-                  ,                  'field_type' => 'Contact'
-                  ,                  'is_reserved' => ''
-                  ,),                  ),
-
-  );
+     array(
+           'is_error' 		=> '0',
+           'version' 		=> '3',
+           'count' 		=> '1',
+           'id' 		=> '35',
+           'values' 		=>            array(           '35' =>  array(
+                      'id' => '35',
+                      'uf_group_id' => '11',
+                      'field_name' => 'country',
+                      'is_active' => '1',
+                      'is_view' => '',
+                      'is_required' => '',
+                      'weight' => '1',
+                      'help_post' => '',
+                      'help_pre' => '',
+                      'visibility' => 'Public Pages and Listings',
+                      'in_selector' => '',
+                      'is_searchable' => '1',
+                      'location_type_id' => 'null',
+                      'phone_type_id' => '',
+                      'label' => 'Test Country',
+                      'field_type' => 'Contact',
+                      'is_reserved' => '',
+           ),           ),
+      );
 
   return $expectedResult  ;
 }

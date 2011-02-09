@@ -27,7 +27,7 @@ function uf_group_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'UFGroup','create',$params );
+  $result = civicrm_api( 'uf_group','create',$params );
 
   return $result;
 }
@@ -38,11 +38,10 @@ function uf_group_create_example(){
 function uf_group_create_expectedresult(){
 
   $expectedResult = 
-            array(
-                  'is_error' 		=> '1',
-                  'error_message' 		=> 'Undefined index: id',
-
-  );
+     array(
+           'is_error' 		=> '1',
+           'error_message' 		=> 'Undefined index: id',
+      );
 
   return $expectedResult  ;
 }

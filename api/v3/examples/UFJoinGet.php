@@ -10,7 +10,7 @@ function uf_join_get_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'UFJoin','get',$params );
+  $result = civicrm_api( 'uf_join','get',$params );
 
   return $result;
 }
@@ -21,11 +21,10 @@ function uf_join_get_example(){
 function uf_join_get_expectedresult(){
 
   $expectedResult = 
-            array(
-                  'is_error' 		=> '1',
-                  'error_message' 		=> 'Undefined variable: dao',
-
-  );
+     array(
+           'is_error' 		=> '1',
+           'error_message' 		=> 'Undefined variable: dao',
+      );
 
   return $expectedResult  ;
 }

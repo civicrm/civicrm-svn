@@ -8,7 +8,7 @@ function membership_delete_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'Membership','delete',$params );
+  $result = civicrm_api( 'membership','delete',$params );
 
   return $result;
 }
@@ -19,11 +19,10 @@ function membership_delete_example(){
 function membership_delete_expectedresult(){
 
   $expectedResult = 
-            array(
-                  'is_error' 		=> '1',
-                  'error_message' 		=> 'Undefined index: membership_id',
-
-  );
+     array(
+           'is_error' 		=> '1',
+           'error_message' 		=> 'Undefined index: membership_id',
+      );
 
   return $expectedResult  ;
 }

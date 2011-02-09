@@ -21,7 +21,7 @@ function pledge_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'Pledge','create',$params );
+  $result = civicrm_api( 'pledge','create',$params );
 
   return $result;
 }
@@ -32,11 +32,10 @@ function pledge_create_example(){
 function pledge_create_expectedresult(){
 
   $expectedResult = 
-            array(
-                  'is_error' 		=> '1',
-                  'error_message' 		=> 'Undefined index: create_date',
-
-  );
+     array(
+           'is_error' 		=> '1',
+           'error_message' 		=> 'Undefined index: create_date',
+      );
 
   return $expectedResult  ;
 }
