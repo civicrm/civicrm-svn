@@ -239,7 +239,8 @@ class CRM_Campaign_Page_AJAX
         $queryParams = CRM_Contact_BAO_Query::convertFormValues( $params );
         $query       = new CRM_Contact_BAO_Query( $queryParams,
                                                   null, null, false, false, 
-                                                  CRM_Contact_BAO_Query::MODE_CAMPAIGN );
+                                                  CRM_Contact_BAO_Query::MODE_CAMPAIGN,
+                                                  true );
         
         //get the voter clause to restrict and validate search.
         require_once 'CRM/Campaign/BAO/Query.php';
@@ -365,20 +366,25 @@ class CRM_Campaign_Page_AJAX
                 $activityStatus    = CRM_Core_PseudoConstant::activityStatus( 'name' );
                 $scheduledStatusId = array_search( 'Scheduled', $activityStatus ); 
                 if ( $isReserved ) {
-                    $activityTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey',
-                                                                   $activityParams['source_record_id'],
-                                                                   'activity_type_id' );
+                    $surveyValues = array( );
+                    $surveyParams = array( 'id' => $activityParams['source_record_id'] );
+                    CRM_Core_DAO::commonRetrieve( 'CRM_Campaign_DAO_Survey',
+                                                  $surveyParams, 
+                                                  $surveyValues,
+                                                  array( 'title', 'activity_type_id', 'campaign_id' ) );
+                    
+                    $activityTypeId =  $surveyValues['activity_type_id'];
+                    
                     $surveytitle = CRM_Utils_Array::value( 'surveyTitle', $_POST );
-                    if ( !$surveytitle ) {
-                        $surveytitle = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', 
-                                                                    $activityParams['source_record_id'], 'title' );
-                    }
+                    if ( !$surveytitle ) $surveytitle = $surveyValues['title'];
+                    
                     $subject =  ts( '%1', array( 1 => $surveytitle ) ). ' - ' . ts( 'Respondent Reservation' );
                     $activityParams['subject']            = $subject;
                     $activityParams['status_id']          = $scheduledStatusId;
                     $activityParams['skipRecentView']     = 1;
                     $activityParams['activity_date_time'] = date('YmdHis');
                     $activityParams['activity_type_id']   = $activityTypeId;
+                    $activityParams['campaign_id']        = $surveyValues['campaign_id'];
                     
                     require_once 'CRM/Activity/BAO/Activity.php';
                     $activity = CRM_Activity_BAO_Activity::create( $activityParams );

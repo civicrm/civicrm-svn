@@ -617,7 +617,7 @@ ORDER BY  civicrm_event.end_date DESC
         }
         
         $sqlClause .= ' AND civicrm_event.id IN (' . implode( ',', $eventIds ) . ')';
-
+        
         $select = '
     SELECT   civicrm_event.id as id, 
              civicrm_participant.id as participantId';

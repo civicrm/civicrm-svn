@@ -44,6 +44,8 @@ class CRM_Report_Form_Grant_Statistics extends CRM_Report_Form {
 
     protected $_customGroupExtends = array( 'Grant' );
 
+    protected $_report = 'Grant';
+
     function __construct( ) 
     {
         $this->_columns = 
@@ -326,7 +328,7 @@ WHERE {$this->_aliases['civicrm_grant']}.amount_total IS NOT NULL
 
     function alterDisplay( &$rows ) 
     {
-        $totalStatistics['filters'] = parent::statistics( $rows );
+        $totalStatistics = parent::statistics( $rows );
         $awardedGrantsAmount = $grantsReceived = $totalAmount = $awardedGrants = $grantReportsReceived = 0;
         
         $grantTypes      = CRM_Grant_PseudoConstant::grantType( );

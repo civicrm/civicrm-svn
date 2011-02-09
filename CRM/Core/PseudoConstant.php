@@ -1141,8 +1141,13 @@ WHERE  id = %1";
      */
     public static function &currencySymbols( $name = 'symbol', $key = 'id' )
     {
-        self::populate( self::$currencySymbols, 'CRM_Core_DAO_Currency', true, $name, null, null, 'name', $key );
-        return self::$currencySymbols;
+        $cacheKey = "{$name}_{$key}";
+        if ( !isset( self::$currencySymbols[$cacheKey] ) ) {
+            self::populate( self::$currencySymbols[$cacheKey], 
+                            'CRM_Core_DAO_Currency', true, $name, null, null, 'name', $key );
+        }
+        
+        return self::$currencySymbols[$cacheKey];
     }
 
     /**
