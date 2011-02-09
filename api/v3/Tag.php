@@ -64,7 +64,7 @@ function civicrm_tag_create( &$params )
 {
   _civicrm_initialize( true );
   try {
-    civicrm_verify_mandatory ($params,civicrm_get_DAO (__FUNCTION__),array ('name'));
+    civicrm_verify_mandatory ($params,null,array ('name'));
 
     if ( !array_key_exists ('used_for', $params)) {
       $params ['used_for'] = "civicrm_contact";
@@ -129,7 +129,7 @@ function civicrm_tag_delete( &$params )
  * @access public
  */
 
-function civicrm_tag_get($params) 
+function civicrm_tag_get(&$params) 
 {   
    try {
   _civicrm_initialize( true );
@@ -144,15 +144,17 @@ function civicrm_tag_get($params)
         }
     }
     
-    if ( ! $tagBAO->find(true) ) {
-        return civicrm_create_success(array());
+    if ( $tagBAO->find() ) {
+      $tags = array();
+      while ( $tagBAO->fetch() ) {
+        _civicrm_object_to_array( $tagBAO, $tag );
+        $tags[$tagBAO->id] = $tag;
+      }
+      return civicrm_create_success($tags,$params,$tagBAO);
+    } else {
+      return civicrm_create_success(array(),$params,$tagBAO);
     }
 
-    $tag = array();
-    while ($tagBAO->fetch()) {
-      _civicrm_object_to_array($tagBAO, $tag[$tagBAO->id]);
-    }
-    return civicrm_create_success($tag,$params);
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );
   } catch (Exception $e) {

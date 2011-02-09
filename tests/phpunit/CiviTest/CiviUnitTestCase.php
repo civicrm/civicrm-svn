@@ -638,11 +638,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         'event_level'   => 'Payment',
                         'version'				=> $apiversion,
                         );
-
-       $result = civicrm_api_legacy( 'civicrm_participant_create','Participant',$params );
+        $result = civicrm_api_legacy( 'civicrm_participant_create','Participant',$params );
         if ( CRM_Utils_Array::value( 'is_error', $result ) && $result['is_error'] ==1) {
-          throw new Exception( 'Could not create participant ' . $result['error_message'] );
-            
+          throw new Exception( 'Could not create participant ' . $result['error_message'] );          
         }
         if (isset($result['result'])){
         return $result['result'];//v2 format

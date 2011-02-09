@@ -10,7 +10,7 @@ function tag_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_tag_create','Tag',$params );
+  $result = civicrm_api( 'Tag','create',$params );
 
   return $result;
 }
@@ -35,6 +35,8 @@ function tag_create_expectedresult(){
                   ,                  'is_reserved' => ''
                   ,                  'is_tagset' => ''
                   ,                  'used_for' => 'civicrm_contact'
+                  ,                  'created_id' => ''
+                  ,                  'created_date' => '20110209133822'
                   ,),                  ),
 
   );
