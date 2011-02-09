@@ -8,7 +8,7 @@ function activity_type_delete_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'ActivityType','delete',$params );
+  $result = civicrm_api( 'activity_type','delete',$params );
 
   return $result;
 }

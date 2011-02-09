@@ -1310,6 +1310,7 @@ function documentMe($params,$result,$function,$filename){
         require_once 'CRM/Core/Smarty.php';
         $smarty =& CRM_Core_Smarty::singleton();
         $smarty->assign('function',$function);
+        $smarty->assign('fnPrefix',$fnPrefix);
         $smarty->assign('params',$params);   
         $smarty->assign('entity',$entity);         
         $smarty->assign('result',$result); 

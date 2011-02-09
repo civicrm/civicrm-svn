@@ -9,7 +9,7 @@ function {/literal}{$function}_example(){literal}{{/literal}
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( '{$entity}','{$action}',$params );
+  $result = civicrm_api( '{$fnPrefix}','{$action}',$params );
 
   return $result;
 {literal}}{/literal}
@@ -26,8 +26,8 @@ function {$function}_expectedresult(){literal}{{/literal}
                   array({foreach from=$v key=subkey item=subvalue}
                   '{$subkey}' => {if is_array($subvalue)} array(
                   {foreach from=$subvalue key=subsubkey item=subsubvalue}
-                  '{$subsubkey}' => '{$subsubvalue}'
-                  ,{/foreach}),{else}'{$subvalue}',{/if}
+                  '{$subsubkey}' => '{$subsubvalue}',
+                  {/foreach}),{else}'{$subvalue}',{/if}
                   {/foreach}),{else}'{$v}',{/if}
 
 {/foreach}

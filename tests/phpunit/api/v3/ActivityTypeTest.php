@@ -59,10 +59,10 @@ class api_v3_ActivityTypeTest extends CiviUnitTestCase
     function testActivityTypeGetValues()
     {
         $params = array('version' => $this->_apiversion);
-        $result = & civicrm_activity_type_get($params);
-         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
-        $this->assertEquals($result['1'],'Meeting', 'In line ' . __LINE__ );
-        $this->assertEquals($result['13'],'Open Case', 'In line ' . __LINE__ );
+        $result =  civicrm_activity_type_get($params);
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+        $this->assertEquals($result['values']['1'],'Meeting', 'In line ' . __LINE__ );
+        $this->assertEquals($result['values']['13'],'Open Case', 'In line ' . __LINE__ );
         
     }
     

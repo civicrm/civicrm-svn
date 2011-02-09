@@ -54,16 +54,16 @@ require_once 'api/v3/utils.php';
  *
  * @todo Erik Hommel 16 dec 2010 Check if get function returns all DB fields
  * @todo Erik Hommel 16 dec 2010 Check permission with utils function civicrm_api_permission_check
- * 
+ * @todo - this just returns all - not a search
  * @example ActivityTypeGet.php
  */
-function civicrm_activity_type_get( ) {
+function civicrm_activity_type_get($params ) {
   _civicrm_initialize(true);
     try{
       civicrm_verify_mandatory($params);
     require_once 'CRM/Core/OptionGroup.php';
     $activityTypes = CRM_Core_OptionGroup::values( 'activity_type' );
-    return $activityTypes;
+    return civicrm_create_success($activityTypes,$param);
         } catch (PEAR_Exception $e) {
       return civicrm_create_error( $e->getMessage() );
     } catch (Exception $e) {
