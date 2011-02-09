@@ -245,7 +245,9 @@ class CRM_Campaign_Page_AJAX
                                             true, false, 
                                             false, false, 
                                             false, 
-                                            $voterClause );
+                                            CRM_Utils_Array::value( 'whereClause', $voterClause ),
+                                            null,
+                                            CRM_Utils_Array::value( 'fromClause', $voterClause ) );
         
         $iTotal      = $searchCount;
         
@@ -268,8 +270,9 @@ class CRM_Campaign_Page_AJAX
                                            false, false,
                                            false, false, 
                                            false, 
-                                           $voterClause, 
-                                           $sortOrder );
+                                           CRM_Utils_Array::value( 'whereClause', $voterClause ), 
+                                           $sortOrder,
+                                           CRM_Utils_Array::value( 'fromClause', $voterClause ) );
             while( $result->fetch() ) {
                 $contactID  = $result->contact_id;
                 $typeImage  = CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_sub_type ? 
