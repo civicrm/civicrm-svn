@@ -109,7 +109,7 @@ function civicrm_contribution_delete( &$params ) {
 
     require_once 'CRM/Contribute/BAO/Contribution.php';
     if ( CRM_Contribute_BAO_Contribution::deleteContribution( $contributionID ) ) {
-        return civicrm_create_success( );
+        return civicrm_create_success( array($contributionID =>1));
     } else {
         return civicrm_create_error(  'Could not delete contribution' );
     }
