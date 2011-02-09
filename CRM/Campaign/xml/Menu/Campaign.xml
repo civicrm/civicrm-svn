@@ -74,7 +74,7 @@
     <title>Release Respondents</title>
     <path_arguments>op=release</path_arguments>
     <page_callback>CRM_Campaign_Controller_Search</page_callback>
-    <access_arguments>administer CiviCampaign;manage campaign;reserve campaign contacts</access_arguments>
+    <access_arguments>administer CiviCampaign;manage campaign;release campaign contacts</access_arguments>
     <component>CiviCampaign</component>
   </item>
   <item>
