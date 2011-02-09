@@ -400,41 +400,6 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
         return $activityDetails;
     }
     
-    public static function getSurveyActivityCount( $surveyId, $interviewerId = null, $statusIds = array( ) ) 
-    {
-        $activityCount = 0;
-        if ( !$surveyId ) return $activities; 
-        
-        $where = array( );
-        if ( is_array( $statusIds ) && !empty( $statusIds ) ) {
-            $where[] = '( activity.status_id IN ( '. implode( ',', array_values( $statusIds ) ) . ' ) )';
-        }
-        if ( $interviewerId ) {
-            $where[] = "( activityAssignment.assignee_contact_id =  $interviewerId )";
-        }
-        $whereClause = null;
-        if ( !empty( $where ) ) {
-            $whereClause = ' AND ( '. implode( ' AND ', $where ) . ' )';
-        }
-        
-        $actTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', $surveyId, 'activity_type_id' ); 
-        if ( !$actTypeId ) return $activities;
-        
-        $query = "
-    SELECT  count( activity.id ) as activityCount 
-      FROM  civicrm_activity activity
-INNER JOIN  civicrm_activity_target activityTarget ON ( activityTarget.activity_id = activity.id )
-INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignment.activity_id = activity.id )
-     WHERE  activity.source_record_id = %1
-       AND  activity.activity_type_id = %2
-       AND  ( activity.is_deleted IS NULL OR activity.is_deleted = 0 )
-            $whereClause";
-        
-        $dbActivityCount = CRM_Core_DAO::singleValueQuery( $query, array( 1 => array( $surveyId,  'Integer'),
-                                                                         2 => array( $actTypeId, 'Integer' ) ) );
-        return ($dbActivityCount) ? $dbActivityCount : 0;
-    }
-    
     /**
      * This function retrieve survey related activities.
      *
@@ -443,28 +408,31 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
      * @return $activities an array of survey activity.
      * @static
      */
-    static function getSurveyActivities( $surveyId, $interviewerId = null, 
-                                         $statusIds = null, $voterIds = null, 
-                                         $count = false ) 
+    static function getSurveyActivities( $surveyId, 
+                                         $interviewerId = null, 
+                                         $statusIds     = null, 
+                                         $voterIds      = null, 
+                                         $onlyCount     = false ) 
     {
         $activities = array( );
+        $surveyActivityCount = 0;
         if ( ! $surveyId ) {
-            return $activities;
+            return ( $onlyCount ) ? 0 : $activities;
         }
         
         $where = array( );
         if ( ! empty( $statusIds ) ) {
             $where[] = '( activity.status_id IN ( '. implode( ',', array_values( $statusIds ) ) . ' ) )';
         }
-
+        
         if ( $interviewerId ) {
             $where[] = "( activityAssignment.assignee_contact_id =  $interviewerId )";
         }
-
+        
         if ( ! empty( $voterIds ) ) {
             $where[] = "( activityTarget.target_contact_id IN ( " . implode( ',', $voterIds ) . " ) )";
         }
-
+        
         $whereClause = null;
         if ( ! empty( $where ) ) {
             $whereClause = ' AND ( '. implode( ' AND ', $where ) . ' )';
@@ -474,8 +442,8 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
         if ( !$actTypeId ) {
             return $activities;
         }
-
-        if ( $count ) {
+        
+        if ( $onlyCount ) {
             $select = "SELECT count(activity.id)";
         } else {
             $select = "
@@ -483,10 +451,9 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
             activityTarget.target_contact_id as voter_id,
             activityAssignment.assignee_contact_id as interviewer_id,
             activity.result as result,
-            activity.activity_date_time as activity_date_time
-";
+            activity.activity_date_time as activity_date_time";
         }
-
+        
         $query = "
             $select
       FROM  civicrm_activity activity
@@ -496,16 +463,17 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
        AND  activity.activity_type_id = %2
        AND  ( activity.is_deleted IS NULL OR activity.is_deleted = 0 )
             $whereClause";
-
+        
         $params = array( 1 => array( $surveyId,  'Integer'),
                          2 => array( $actTypeId, 'Integer' ) );
-
-        if ( $count ) {
-            return CRM_Core_DAO::singleValueQuery( $query, $params );
+        
+        if ( $onlyCount ) {
+            $dbCount = CRM_Core_DAO::singleValueQuery( $query, $params );
+            return ( $dbCount ) ? $dbCount : 0; 
         }
-
+        
         $activity = CRM_Core_DAO::executeQuery( $query, $params );
-    
+        
         while ( $activity->fetch( ) ) {
             $activities[$activity->id] = array( 'id'                 => $activity->id,
                                                 'voter_id'           => $activity->voter_id,

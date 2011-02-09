@@ -64,8 +64,6 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
      */
     protected $_surveyDetails;
 
-    protected $_surveyActivities;
-
     /**
      * number of voters
      *
@@ -109,11 +107,13 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
             }
         }
         
-        //get the number of voters to validate across max.
-        $this->_numVoters = CRM_Campaign_BAO_Survey::getSurveyActivityCount( $this->_surveyId,
-                                                                             $this->_interviewerId,
-                                                                             $statusIds );
-        
+        // these are the activities count that are linked to the current 
+        // interviewer and current contact list not the list of ALL survey activities
+        $this->_numVoters = CRM_Campaign_BAO_Survey::getSurveyActivities( $this->_surveyId,
+                                                                          $this->_interviewerId,
+                                                                          $statusIds,
+                                                                          null, 
+                                                                          true );
         //validate the selected survey.
         $this->validateSurvey( );
         $this->assign( 'surveyTitle', $this->_surveyDetails['title'] );
