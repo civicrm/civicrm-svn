@@ -442,6 +442,7 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
             //lets dump these ids in tmp table and 
             //use appropriate join depend on operator.
             if ( !empty( $voterIds ) ) {
+                $voterIdCount  = count( $voterIds );
                 $tempTableName = 'temporary_survey_contact_ids_'.time();
                 CRM_Core_DAO::executeQuery( "DROP TABLE IF EXISTS {$tempTableName}" );
                 $query = "CREATE TEMPORARY TABLE {$tempTableName}(survey_contact_id INT(10) UNSIGNED)";
@@ -457,7 +458,7 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
                         CRM_Core_DAO::executeQuery( $insertSQL );
                     }
                     $insertedCount += $batch;
-                } while ( $insertedCount < $pIdCount );  
+                } while ( $insertedCount < $voterIdCount );  
                 
                 if ( $operator == 'IN' ) {
                     $fromClause  = " INNER JOIN {$tempTableName} ON ( {$tempTableName}.survey_contact_id = contact_a.id )"; 
