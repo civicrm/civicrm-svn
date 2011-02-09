@@ -10,7 +10,7 @@ function activity_get_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_activity_get','Activity',$params );
+  $result = civicrm_api( 'Activity','get',$params );
 
   return $result;
 }

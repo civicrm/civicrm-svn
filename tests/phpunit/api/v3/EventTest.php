@@ -80,7 +80,7 @@ class api_v3_EventTest extends CiviUnitTestCase
         if ( $this->_eventId ) {
             $this->eventDelete( $this->_eventId );
         }        
-        $this->eventDelete( $this->_event['event_id'] );	
+        $this->eventDelete( $this->_event['id'] );	
     }
 
 ///////////////// civicrm_event_get methods

@@ -17,7 +17,7 @@ function contact_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_contact_create','Contact',$params );
+  $result = civicrm_api( 'Contact','create',$params );
 
   return $result;
 }
@@ -53,7 +53,7 @@ function contact_create_expectedresult(){
                   ,                  'preferred_communication_method' => ''
                   ,                  'preferred_language' => 'en_US'
                   ,                  'preferred_mail_format' => ''
-                  ,                  'hash' => '66e8f25329cdb9a184295762cce22392'
+                  ,                  'hash' => '927ef26dceb4046760f28b5cdb45aa99'
                   ,                  'api_key' => ''
                   ,                  'first_name' => 'abc4'
                   ,                  'middle_name' => ''

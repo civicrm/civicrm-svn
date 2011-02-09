@@ -8,7 +8,7 @@ function group_organization_delete_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_group_organization_delete','GroupOrganization',$params );
+  $result = civicrm_api( 'GroupOrganization','delete',$params );
 
   return $result;
 }

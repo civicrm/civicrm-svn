@@ -10,7 +10,7 @@ function uf_join_get_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_uf_join_get','UFJoin',$params );
+  $result = civicrm_api( 'UFJoin','get',$params );
 
   return $result;
 }
@@ -22,19 +22,8 @@ function uf_join_get_expectedresult(){
 
   $expectedResult = 
             array(
-                  'is_error' 		=> '0',
-                  'version' 		=> '3',
-                  'count' 		=> '1',
-                  'id' 		=> '10',
-                  'values' 		=>                   array(                  '0' =>  array(
-                                    'id' => '10'
-                  ,                  'is_active' => '1'
-                  ,                  'module' => 'CiviContribute'
-                  ,                  'entity_table' => 'civicrm_contribution_page'
-                  ,                  'entity_id' => '1'
-                  ,                  'weight' => '1'
-                  ,                  'uf_group_id' => '11'
-                  ,),                  ),
+                  'is_error' 		=> '1',
+                  'error_message' 		=> 'Undefined variable: dao',
 
   );
 

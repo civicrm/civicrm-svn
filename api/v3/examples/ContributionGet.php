@@ -8,7 +8,7 @@ function contribution_get_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_contribution_get','Contribution',$params );
+  $result = civicrm_api( 'Contribution','get',$params );
 
   return $result;
 }
@@ -31,7 +31,7 @@ function contribution_get_expectedresult(){
                   ,                  'display_name' => 'Mr. Anthony Anderson II'
                   ,                  'contribution_id' => '1'
                   ,                  'currency' => 'USD'
-                  ,                  'receive_date' => '2011-02-06 00:00:00'
+                  ,                  'receive_date' => '2011-02-09 00:00:00'
                   ,                  'non_deductible_amount' => '10.00'
                   ,                  'total_amount' => '100.00'
                   ,                  'fee_amount' => '51.00'

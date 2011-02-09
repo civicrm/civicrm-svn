@@ -1240,7 +1240,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
         if ( civicrm_error( $result ) 
              || !( CRM_Utils_Array::value( 'customFieldId' , $result['result'] ) ) ) {
-            throw new Exception( 'Could not create Custom Field' . print_r($result) );
+            throw new Exception( 'Could not create Custom Field'  );
         }
         return $result;    
     }

@@ -10,7 +10,7 @@ function group_contact_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_group_contact_create','GroupContact',$params );
+  $result = civicrm_api( 'GroupContact','create',$params );
 
   return $result;
 }

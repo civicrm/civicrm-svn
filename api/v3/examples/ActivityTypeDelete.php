@@ -3,12 +3,12 @@
 function activity_type_delete_example(){
     $params = array(
     
-                  'activity_type_id' 		=> '561',
+                  'activity_type_id' 		=> '562',
                   'version' 		=> '3',
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_activity_type_delete','ActivityType',$params );
+  $result = civicrm_api( 'ActivityType','delete',$params );
 
   return $result;
 }

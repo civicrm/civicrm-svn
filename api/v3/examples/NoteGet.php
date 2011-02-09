@@ -7,13 +7,13 @@ function note_get_example(){
                   'entity_id' 		=> '1',
                   'note' 		=> 'Hello!!! m testing Note',
                   'contact_id' 		=> '1',
-                  'modified_date' 		=> '20110206',
+                  'modified_date' 		=> '20110209',
                   'subject' 		=> 'Test Note',
                   'version' 		=> '3',
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_note_get','Note',$params );
+  $result = civicrm_api( 'Note','get',$params );
 
   return $result;
 }
@@ -35,7 +35,7 @@ function note_get_expectedresult(){
                   ,                  'entity_id' => '1'
                   ,                  'note' => 'hello I am testing Note'
                   ,                  'contact_id' => '1'
-                  ,                  'modified_date' => '2011-02-06'
+                  ,                  'modified_date' => '2011-02-09'
                   ,                  'subject' => 'Test Note'
                   ,                  'privacy' => '0'
                   ,),                  ),

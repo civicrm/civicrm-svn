@@ -16,7 +16,7 @@ function activity_type_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_activity_type_create','ActivityType',$params );
+  $result = civicrm_api( 'ActivityType','create',$params );
 
   return $result;
 }
@@ -31,9 +31,9 @@ function activity_type_create_expectedresult(){
                   'is_error' 		=> '0',
                   'version' 		=> '3',
                   'count' 		=> '1',
-                  'id' 		=> '561',
-                  'values' 		=>                   array(                  '561' =>  array(
-                                    'id' => '561'
+                  'id' 		=> '562',
+                  'values' 		=>                   array(                  '562' =>  array(
+                                    'id' => '562'
                   ,                  'option_group_id' => '2'
                   ,                  'label' => 'send out letters'
                   ,                  'value' => '33'

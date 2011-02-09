@@ -8,7 +8,7 @@ function group_get_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_group_get','Group',$params );
+  $result = civicrm_api( 'Group','get',$params );
 
   return $result;
 }

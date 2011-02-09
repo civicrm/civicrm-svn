@@ -8,7 +8,7 @@ function membership_type_delete_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_membership_type_delete','MembershipType',$params );
+  $result = civicrm_api( 'MembershipType','delete',$params );
 
   return $result;
 }

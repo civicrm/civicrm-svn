@@ -8,7 +8,7 @@ function membership_status_get_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_membership_status_get','MembershipStatus',$params );
+  $result = civicrm_api( 'MembershipStatus','get',$params );
 
   return $result;
 }

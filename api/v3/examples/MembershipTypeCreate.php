@@ -17,7 +17,7 @@ function membership_type_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_membership_type_create','MembershipType',$params );
+  $result = civicrm_api( 'MembershipType','create',$params );
 
   return $result;
 }

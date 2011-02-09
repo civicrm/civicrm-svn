@@ -9,7 +9,7 @@ function domain_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_domain_create','Domain',$params );
+  $result = civicrm_api( 'Domain','create',$params );
 
   return $result;
 }

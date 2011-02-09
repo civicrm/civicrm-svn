@@ -8,7 +8,7 @@ function event_get_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_event_get','Event',$params );
+  $result = civicrm_api( 'Event','get',$params );
 
   return $result;
 }

@@ -5,7 +5,7 @@ function activity_create_example(){
     
                   'source_contact_id' 		=> '17',
                   'subject' 		=> 'Make-it-Happen Meeting',
-                  'activity_date_time' 		=> '20110208',
+                  'activity_date_time' 		=> '20110209',
                   'duration' 		=> '120',
                   'location' 		=> 'Pensulvania',
                   'details' 		=> 'a test activity',
@@ -15,7 +15,7 @@ function activity_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_activity_create','Activity',$params );
+  $result = civicrm_api( 'Activity','create',$params );
 
   return $result;
 }

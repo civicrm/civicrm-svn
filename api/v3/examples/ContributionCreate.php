@@ -4,7 +4,7 @@ function contribution_create_example(){
     $params = array(
     
                   'contact_id' 		=> '1',
-                  'receive_date' 		=> '20110206',
+                  'receive_date' 		=> '20110209',
                   'total_amount' 		=> '100',
                   'contribution_type_id' 		=> '1',
                   'payment_instrument_id' 		=> '1',
@@ -19,7 +19,7 @@ function contribution_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_contribution_create','Contribution',$params );
+  $result = civicrm_api( 'Contribution','create',$params );
 
   return $result;
 }
@@ -41,7 +41,7 @@ function contribution_create_expectedresult(){
                   ,                  'contribution_type_id' => '1'
                   ,                  'contribution_page_id' => ''
                   ,                  'payment_instrument_id' => '1'
-                  ,                  'receive_date' => '20110206'
+                  ,                  'receive_date' => '20110209'
                   ,                  'non_deductible_amount' => '10'
                   ,                  'total_amount' => '100'
                   ,                  'fee_amount' => '50'

@@ -8,7 +8,7 @@ function contact_delete_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_contact_delete','Contact',$params );
+  $result = civicrm_api( 'Contact','delete',$params );
 
   return $result;
 }
