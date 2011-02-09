@@ -105,7 +105,6 @@ function civicrm_relationship_create( &$params ) {
     }
     CRM_Contact_BAO_Relationship::relatedMemberships( $params['contact_id_a'], $values, $ids, $action );
     $relationships = array($relationshipBAO[4] => array('id' => $relationshipBAO[4]));
-    print_r(relationships);
     return civicrm_create_success( array( 'id' => implode( ',', $relationshipBAO[4] ) ) );
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );
