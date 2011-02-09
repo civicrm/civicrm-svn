@@ -55,11 +55,11 @@ require_once 'api/v3/utils.php';
  * @return array of newly created payment property values.
  * @access public
  */
-function &civicrm_participant_payment_create(&$params)
+function civicrm_participant_payment_create(&$params)
 {
   _civicrm_initialize(true);
   try{
-    civicrm_verify_mandatory($params,'CRM_Event_BAO_ParticipantPayment',array('participant_id','contribution_id')) ;
+    civicrm_verify_mandatory($params,null,array('participant_id','contribution_id')) ;
 
     $ids= array();
     if( CRM_Utils_Array::value( 'id', $params ) ) {

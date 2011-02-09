@@ -162,7 +162,6 @@ function civicrm_uf_field_delete(&$params ) {
     $fieldId  = $params['field_id'];
     require_once 'CRM/Core/BAO/UFField.php';
     $result = CRM_Core_BAO_UFField::del($fieldId);
-    print_r($result);
     return civicrm_create_success($result,$params);
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );
