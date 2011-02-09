@@ -57,7 +57,7 @@ function civicrm_relationship_type_create( &$params ) {
   _civicrm_initialize(true);
   try{
      
-    civicrm_verify_mandatory($params,civicrm_get_DAO (__FUNCTION__),array('contact_type_a','contact_type_b','name_a_b','name_b_a'));
+    civicrm_verify_mandatory($params,null,array('contact_type_a','contact_type_b','name_a_b','name_b_a'));
 
     if (! isset( $params['label_a_b']) )
     $params['label_a_b'] = $params['name_a_b'];
