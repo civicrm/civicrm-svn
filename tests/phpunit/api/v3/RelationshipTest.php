@@ -232,7 +232,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         
         $result = & civicrm_relationship_create( $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
-        $this->assertNotNull( $result['values']['id'] );   
+        $this->assertNotNull( $result['id'],'in line ' . __LINE__ );   
         
         $relationParams = array(
                                 'id' => CRM_Utils_Array::value('id', $result['values'])
@@ -397,7 +397,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         $params = array( );
         $result =& civicrm_relationship_delete( $params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'No input parameter present' );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: id, version' );
     }
     
     /**
@@ -587,7 +587,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         
         $result =& civicrm_relationship_get( $params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Input parameter is not an array' );
+        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array' );
     }
     
     /**
