@@ -62,6 +62,7 @@ require_once 'api/v3/utils.php';
  *
  * @return   Newly create custom_group object
  * @todo $params['extends'] is array format - is that std compatible
+ * @todo review custom field create if 'html' approx line 110
  * @access public 
  */
 function civicrm_custom_group_create( $params )
@@ -105,7 +106,8 @@ function civicrm_custom_group_create( $params )
     
     if ( CRM_Utils_Array::value( 'html_type', $params ) ){
         $fparams = array('custom_group_id' => $customGroup->id,
-                        'version'         => $params['version'],);
+                        'version'         => $params['version'],
+                        'label'           => 'api created field');// should put something cleverer here but this will do for now
         require_once 'api/v3/CustomField.php';
         $fieldValues = civicrm_custom_field_create( $fparams );
         $values      = array_merge( $values[$customGroup->id] , $fieldValues['values'][$fieldValues['id']] );

@@ -32,7 +32,7 @@ function custom_group_create_expectedresult(){
            'version' 		=> '3',
            'count' 		=> '1',
            'id' 		=> '1',
-           'values' 		=>            array(           '1' =>  array(
+           'values' 		=> array(           '1' =>  array(
                       'id' => '1',
                       'name' => 'Test_Group_1',
                       'title' => 'Test_Group_1',

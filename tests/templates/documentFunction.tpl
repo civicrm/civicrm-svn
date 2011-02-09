@@ -20,19 +20,17 @@ function {/literal}{$function}_example(){literal}{{/literal}
 function {$function}_expectedresult(){literal}{{/literal}
 
   $expectedResult = 
-            array(
+     array(
 {foreach from=$result key=k item=v}
-                  '{$k}' 		=> {if is_array($v)}
-                  array({foreach from=$v key=subkey item=subvalue}
-                  '{$subkey}' => {if is_array($subvalue)} array(
-                  {foreach from=$subvalue key=subsubkey item=subsubvalue}
-                  '{$subsubkey}' => '{$subsubvalue}',
-                  {/foreach}),{else}'{$subvalue}',{/if}
-                  {/foreach}),{else}'{$v}',{/if}
+           '{$k}' 		=> {if is_array($v)}array({foreach from=$v key=subkey item=subvalue}
+           '{$subkey}' => {if is_array($subvalue)} array(
+           {foreach from=$subvalue key=subsubkey item=subsubvalue}
+           '{$subsubkey}' => '{$subsubvalue}',
+           {/foreach}),{else}'{$subvalue}',{/if}
+           {/foreach}),{else}'{$v}',{/if}
 
 {/foreach}
-
-  );
+      );
 
   return $expectedResult  ;
 {literal}}{/literal}
