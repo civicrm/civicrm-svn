@@ -108,7 +108,7 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
         }
         
         // these are the activities count that are linked to the current 
-        // interviewer and current contact list not the list of ALL survey activities
+        // interviewer and current survey and not the list of ALL survey activities
         $this->_numVoters = CRM_Campaign_BAO_Survey::getSurveyActivities( $this->_surveyId,
                                                                           $this->_interviewerId,
                                                                           $statusIds,
