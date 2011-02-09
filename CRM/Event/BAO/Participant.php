@@ -1709,7 +1709,7 @@ UPDATE  civicrm_participant
             value.count,
             field.html_type
       FROM  civicrm_line_item line
-INNER JOIN  {$tempTableName} tmp ON ( tmp.participant_id = line.entity_id )  
+INNER JOIN  {$tempTableName} tmp ON ( tmp.participant_id = line.entity_id )
 INNER JOIN  civicrm_price_field_value value ON ( value.id = line.price_field_value_id )
 INNER JOIN  civicrm_price_field field ON ( value.price_field_id = field.id )   
      WHERE  line.entity_table = 'civicrm_participant'";

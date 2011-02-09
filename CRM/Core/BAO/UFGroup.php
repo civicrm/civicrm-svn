@@ -687,16 +687,20 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
      * @param array   $values         the values for the above fields
      * @param boolean $searchable     searchable or not
      * @param array   $componentWhere component condition
+     * @param boolean $absolute       return urls in absolute form (useful when sending an email)
      *
      * @return void
      * @access public
      * @static
      */
-    public static function getValues( $cid, &$fields, &$values, $searchable = true, $componentWhere = null ) 
+    public static function getValues( $cid, &$fields, &$values, 
+                                      $searchable = true, $componentWhere = null,
+                                      $absolute = false ) 
     {
         if ( empty ( $cid ) ) {
             return null;
         }
+
         $options = $studentFields = array( );
         if ( CRM_Core_Permission::access( 'Quest', false ) ) {
             //student fields ( check box ) 
@@ -842,7 +846,9 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
 
                                 if ( $htmlType == 'File') {
                                     $fileURL = CRM_Core_BAO_CustomField::getFileURL( $cid,
-                                                                                     $cfID );
+                                                                                     $cfID,
+                                                                                     null, 
+                                                                                     $absolute );
                                     $params[$index] = $values[$index] = $fileURL['file_url'];
                                 } else {
                                     $customVal = null;
@@ -2191,25 +2197,22 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             if ( CRM_Core_BAO_UFGroup::filterUFGroups($gid, $cid) ){
                 $values = array( );
                 $fields = CRM_Core_BAO_UFGroup::getFields( $gid, false, CRM_Core_Action::VIEW );
-                CRM_Core_BAO_UFGroup::getValues( $cid, $fields, $values , false, $params );
+                CRM_Core_BAO_UFGroup::getValues( $cid, $fields, $values , false, $params, true );
 
-                $count = 0;//checks for array with only keys and not values
-                foreach ($values as $value) {
-                    if ($value) {
-                        $count++;
-                    }
-                } 
-                
                 $email = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $gid, 'notify' );
-                $val = array(
-                             'id'     => $gid,
-                             'values' => $values,
-                             'email'  => $email
-                             );
-                
-                return $val;
+
+                if ( ! empty( $values ) &&
+                     ! empty( $email ) ) {
+                    $val = array(
+                                 'id'     => $gid,
+                                 'values' => $values,
+                                 'email'  => $email
+                                 );
+                    return $val;
+                }
             }
-        } 
+        }
+        return null;
     }
 
     /**  

@@ -177,7 +177,8 @@ class CRM_Campaign_Selector_Search extends CRM_Core_Selector_Base implements CRM
         
         $this->_query = new CRM_Contact_BAO_Query( $this->_queryParams, 
                                                    null, null, false, false,
-                                                   CRM_Contact_BAO_Query::MODE_CAMPAIGN );
+                                                   CRM_Contact_BAO_Query::MODE_CAMPAIGN,
+                                                   true );
     }//end of constructor
     
     /**

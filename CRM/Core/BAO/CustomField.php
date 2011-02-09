@@ -1204,7 +1204,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
         }
     }
 
-    static function getFileURL( $contactID, $cfID, $fileID = NULL ) 
+    static function getFileURL( $contactID, $cfID, $fileID = null, $absolute = false ) 
     {
         if ( $contactID ) {
             if ( ! $fileID ) {
@@ -1244,14 +1244,18 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                     list( $path ) = CRM_Core_BAO_File::path( $fileID, $entityId, null, null);
                     list( $imageWidth, $imageHeight ) = getimagesize( $path );
                     list( $imageThumbWidth, $imageThumbHeight ) = CRM_Contact_BAO_Contact::getThumbSize( $imageWidth, $imageHeight );
-                    $url = CRM_Utils_System::url( 'civicrm/file', "reset=1&id=$fileID&eid=$contactID" );
+                    $url = CRM_Utils_System::url( 'civicrm/file',
+                                                  "reset=1&id=$fileID&eid=$contactID",
+                                                  $absolute, null, true, true );
                     $result['file_url'] = "<a href='javascript:imagePopUp(\"$url\");'><img src=\"$url\" width=$imageThumbWidth height=$imageThumbHeight/></a>";
                 } else { // for non image files
                     $uri = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_File',
                                                          $fileID,
                                                          'uri'
                                                         );
-                    $url = CRM_Utils_System::url( 'civicrm/file', "reset=1&id=$fileID&eid=$contactID" );
+                    $url = CRM_Utils_System::url( 'civicrm/file',
+                                                  "reset=1&id=$fileID&eid=$contactID",
+                                                  $absolute, null, true, true );
                     $result['file_url'] = "<a href=\"$url\">{$uri}</a>";
                 }                                    
             }

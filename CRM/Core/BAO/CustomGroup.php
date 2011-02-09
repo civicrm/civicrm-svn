@@ -85,7 +85,7 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
             $group->extends = $params['extends'][0];
         }
 
-        $group->extends_entity_column_id = null;
+        $group->extends_entity_column_id = 'null';
         if ( $params['extends'][0] == 'ParticipantRole' ||
              $params['extends'][0] == 'ParticipantEventName' ||
              $params['extends'][0] == 'ParticipantEventType' ) {
@@ -1386,6 +1386,9 @@ SELECT $select
             return 'civicrm_membership';
         
         case 'Participant':
+        case 'ParticipantRole':
+        case 'ParticipantEventName':
+        case 'ParticipantEventType':
             return 'civicrm_participant';
             
         case 'Grant':
