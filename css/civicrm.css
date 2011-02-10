@@ -1069,7 +1069,7 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 .block-civicrm div#recently-viewed ul li.crm-recently-viewed ul {
     position:absolute;
     z-index : 99;
-    background-color:FFFFCC;
+    background-color:#FFFFCC;
     overflow:visible;
     list-style-type:none;
     margin:0px;
@@ -1799,7 +1799,7 @@ div.grippie {
 
 #crm-container div.contact_panel td, 
 #crm-container div#contactTopBar td  {
-    padding:4px
+    padding:4px;
     vertical-align : top;
     border-bottom: 1px solid #E2E2E2;
 }
@@ -2540,7 +2540,7 @@ div.statusicon {
     width:16px;
     height:16px;
     overflow:hidden;
-    text-indent: -10000;
+    text-indent: -10000px;
 }
 
 
@@ -2692,7 +2692,7 @@ div#civicrm-dashboard form {
 .ui-widget-header  {
     color: #3e3e3e;
     border:0px solid transparent;
-    border-color:none;
+    border-color:transparent;
 }	
 
 /* ui dialog state */ 

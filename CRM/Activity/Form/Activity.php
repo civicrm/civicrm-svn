@@ -287,6 +287,10 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
              !CRM_Activity_BAO_Activity::checkPermission( $this->_activityId, $this->_action ) ) {
             CRM_Core_Error::fatal( ts( 'You do not have permission to access this page.' ) );
         }
+        if ( ( $this->_action & CRM_Core_Action::VIEW ) &&
+             CRM_Activity_BAO_Activity::checkPermission( $this->_activityId, CRM_Core_Action::UPDATE ) ) {
+            $this->assign('permission', 'edit');
+        }
         
         if ( !$this->_activityTypeId && $this->_activityId ) {
             $this->_activityTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Activity_DAO_Activity',
@@ -734,8 +738,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             if ( isset( $this->_groupTree ) ) {
 				CRM_Core_BAO_CustomGroup::buildCustomDataView( $this, $this->_groupTree );
             }
-
-			$buttons  = array( );
+			$buttons = array( );
             // do check for permissions 
             require_once 'CRM/Case/BAO/Case.php';
             if ( CRM_Case_BAO_Case::checkPermission( $this->_activityId, 'File On Case', $this->_activityTypeId ) ) {

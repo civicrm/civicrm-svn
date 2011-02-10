@@ -3244,6 +3244,7 @@ WHERE  id IN ( $groupIDs )
      * @param boolean  $groupContacts if true, use a single mysql group_concat statement to get the contact ids
      * @param boolean  $returnQuery   should we return the query as a string
      * @param string   $additionalWhereClause if the caller wants to further restrict the search (used for components)
+     * @param string   $additionalFromClause should be clause with proper joins, effective to reduce where clause load.
      *
      * @return CRM_Contact_DAO_Contact 
      * @access public
@@ -3252,7 +3253,8 @@ WHERE  id IN ( $groupIDs )
                           $count = false, $includeContactIds = false,
                           $sortByChar = false, $groupContacts = false,
                           $returnQuery = false,
-                          $additionalWhereClause = null, $sortOrder = null ) 
+                          $additionalWhereClause = null, $sortOrder = null,
+                          $additionalFromClause = null ) 
     {
         require_once 'CRM/Core/Permission.php';
 
@@ -3303,6 +3305,11 @@ WHERE  id IN ( $groupIDs )
         }
         
         list( $select, $from, $where, $having ) = $this->query( $count, $sortByChar, $groupContacts );
+
+        //additional from clause should be w/ proper joins.
+        if ( $additionalFromClause ) {
+            $from .= "\n" . $additionalFromClause;
+        }
         
         if ( empty( $where ) ) {
             $where = "WHERE $permission";

@@ -346,7 +346,7 @@ class CRM_Contact_Form_Search_Custom_DateAdded
             $from .= " INNER JOIN Ig_{$this->_tableName} temptable1 ON (contact_a.id = temptable1.contact_id)";
         }
         //this makes smart groups using this search compatible w/ CiviMail
-        $from .= " LEFT JOIN civicrm_email ON (contact_a.id = civicrm_email.contact_id)";
+        $from .= " LEFT JOIN civicrm_email ON (contact_a.id = civicrm_email.contact_id AND civicrm_email.is_primary = 1)";
         
         return $from;
     }
