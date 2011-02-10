@@ -401,24 +401,16 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
          */
         require_once 'CRM/Campaign/Form/Petition/Signature.php';
 
-        // define constant CIVICRM_PETITION_CONTACTS, if not exist in civicrm.settings.php
-        if ( !defined('CIVICRM_PETITION_CONTACTS') ) {
-            define('CIVICRM_PETITION_CONTACTS','Petition Contacts');
-        }
-
         // check if the group defined by CIVICRM_PETITION_CONTACTS exists, else create it
-        $group_params['title'] = CIVICRM_PETITION_CONTACTS;
-        $groups = civicrm_api('group', 'get', $group_params);
-        if ( ( CRM_Utils_Array::value('is_error', $groups) == 1 ) && ( CRM_Utils_Array::value('error_message', $groups) == 'No such group exists' ) ) {
-            $group_params['is_active'] = 1;
-            $group_params['visibility'] = 'Public Pages';
-            $newgroup = civicrm_api('group', 'create', $group_params);
-            if ($newgroup['is_error'] == 0) {
-                $group_id[0] = $newgroup['result'];
-            }
-        } else {
-            $group_id = array_keys($groups);
+        require_once 'CRM/Contact/DAO/Group.php';
+        $dao = CRM_Contact_DAO_Group;
+        $dao->title = defined('CIVICRM_PETITION_CONTACTS') ? CIVICRM_PETITION_CONTACTS : 'Petition Contacts';
+        if (!$dao->find(true)) {
+            $dao->is_active = 1;
+            $dao->visibility = 'Public Pages';
+            $dao->save();
         }
+        $group_id = $dao->id;
 
         // get petition info
         $petitionParams['id'] = $params['sid'];
@@ -449,10 +441,9 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
         switch ($sendEmailMode) {
         case CRM_Campaign_Form_Petition_Signature::EMAIL_THANK:
 
-            //add this contact to the CIVICRM_PETITION_CONTACTS group
-            $params['group_id'] = $group_id[0];
-            $params['contact_id'] = $params['contactId'];
-            civicrm_api('group_contact', 'create', $params);
+            // add this contact to the CIVICRM_PETITION_CONTACTS group
+            require_once 'CRM/Contact/BAO/GroupContact.php';
+            CRM_Contact_BAO_GroupContact::addContactsToGroup(array($params['contactId']), $group_id, 'API');
 
             require_once 'CRM/Core/BAO/MessageTemplates.php';
             if ($params['email-Primary']) {
@@ -477,7 +468,7 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
             // create mailing event subscription record for this contact
             // this will allow using a hash key to confirm email address by sending a url link
             require_once 'CRM/Mailing/Event/BAO/Subscribe.php';
-            $se = CRM_Mailing_Event_BAO_Subscribe::subscribe( $group_id[0],
+            $se = CRM_Mailing_Event_BAO_Subscribe::subscribe( $group_id,
                 $params['email-Primary'] ,
                 $params['contactId'] );
 
