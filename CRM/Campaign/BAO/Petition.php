@@ -45,13 +45,13 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
     }
 
     /**
-     * Function to get Petition Details for dashboard. 
+     * Function to get Petition Details for dashboard.
      *
      * @static
      */
-    static function getPetitionSummary( ) 
+    static function getPetitionSummary( )
     {
-        //we only have activity type as a 
+        //we only have activity type as a
         //difference between survey and petition.
         require_once 'CRM/Core/OptionGroup.php';
         $petitionTypeID = CRM_Core_OptionGroup::getValue( 'activity_type', 'petition',  'name' );
@@ -97,7 +97,7 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
      * @access public
      * @static
      */
-    function createSignature( &$params ) 
+    function createSignature( &$params )
     {
         if ( empty( $params ) ) {
             return;
@@ -105,27 +105,27 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
 
         if ( !isset( $params['sid'] ) ) {
             $statusMsg = ts( 'No survey sid parameter. Cannot process signature.' );
-            CRM_Core_Session::setStatus( $statusMsg );			
+            CRM_Core_Session::setStatus( $statusMsg );
             return;
         }
 
         if ( isset( $params['contactId'] ) ) {
 
             // add signature as activity with survey id as source id
-            // get the activity type id associated with this survey        	
+            // get the activity type id associated with this survey
             $surveyInfo = CRM_Campaign_BAO_Petition::getSurveyInfo($params['sid']);
 
             require_once 'CRM/Activity/BAO/Activity.php';
-            // create activity 
+            // create activity
             // activity status id (from /civicrm/admin/optionValue?reset=1&action=browse&gid=25)
             // 1-Schedule, 2-Completed
 
             $activityParams = array ( 'source_contact_id'  => $params['contactId'],
-                'target_contact_id'  => $params['contactId'],	
+                'target_contact_id'  => $params['contactId'],
                 'source_record_id'   => $params['sid'],
                 'subject'            => $surveyInfo['title'],
                 'activity_type_id'   => $surveyInfo['activity_type_id'],
-                'activity_date_time' => date("YmdHis"), 
+                'activity_date_time' => date("YmdHis"),
                 'status_id'          => $params['statusId'] );
 
             //activity creation
@@ -140,7 +140,7 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
                 }
 
             // set permanent cookie to indicate this petition already signed on the computer
-            setcookie('signed_'.$params['sid'], $activity->id, time() + $this->cookieExpire, '/');       	
+            setcookie('signed_'.$params['sid'], $activity->id, time() + $this->cookieExpire, '/');
 
         }
 
@@ -148,9 +148,9 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
     }
 
     function confirmSignature($activity_id,$contact_id,$petition_id) {
-        //change activity status to completed (status_id=2)	
-        $query = "UPDATE civicrm_activity SET status_id = 2 
-            WHERE 	id = $activity_id 
+        //change activity status to completed (status_id=2)
+        $query = "UPDATE civicrm_activity SET status_id = 2
+            WHERE 	id = $activity_id
             AND  	source_contact_id = $contact_id";
         CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
 
@@ -163,39 +163,39 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
         // Check if contact 'email confirmed' tag exists, else create one
         // This should be in the petition module initialise code to create a default tag for this
         $tag_params['name'] = CIVICRM_TAG_UNCONFIRMED;
-        $tag = civicrm_api('tag', 'get', $tag_params); 
+        $tag = civicrm_api('tag', 'get', $tag_params);
 
         unset($tag_params);
         $tag_params['contact_id'] = $contact_id;
-        $tag_params['tag_id'] = $tag['id'];			
-        $tag_value = civicrm_api('entity_tag', 'delete', $tag_params);	
+        $tag_params['tag_id'] = $tag['id'];
+        $tag_value = civicrm_api('entity_tag', 'delete', $tag_params);
 
         // set permanent cookie to indicate this users email address now confirmed
-        setcookie('confirmed_'.$petition_id, $activity_id, time() + $this->cookieExpire, '/');						
+        setcookie('confirmed_'.$petition_id, $activity_id, time() + $this->cookieExpire, '/');
 
         return true;
-    }    
+    }
 
 
     /**
-     * Function to get Petition Signature Total 
-     * 
+     * Function to get Petition Signature Total
+     *
      * @param boolean $all
      * @param int $id
      * @static
      */
     static function getPetitionSignatureTotalbyCountry ( $surveyId ) {
-        $countries = array( );	
+        $countries = array( );
         $sql = "
             SELECT count(civicrm_address.country_id) as total,
                 IFNULL(country_id,'') as country_id,IFNULL(iso_code,'') as country_iso, IFNULL(civicrm_country.name,'') as country
                 FROM  	civicrm_activity a, civicrm_survey, civicrm_contact
-                LEFT JOIN civicrm_address ON civicrm_address.contact_id = civicrm_contact.id AND civicrm_address.is_primary = 1 
+                LEFT JOIN civicrm_address ON civicrm_address.contact_id = civicrm_contact.id AND civicrm_address.is_primary = 1
                 LEFT JOIN civicrm_country ON civicrm_address.country_id = civicrm_country.id
-                WHERE 
+                WHERE
                 a.source_contact_id = civicrm_contact.id AND
                 a.activity_type_id = civicrm_survey.activity_type_id AND
-                civicrm_survey.id =  $surveyId AND  
+                civicrm_survey.id =  $surveyId AND
                 a.source_record_id =  $surveyId  ";
         if ($status_id)
             $sql .= " AND status_id = ". (int) $status_id;
@@ -210,11 +210,11 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
             $countries [] = $row;
         }
         return $countries;
-    }    
+    }
 
     /**
-     * Function to get Petition Signature Total 
-     * 
+     * Function to get Petition Signature Total
+     *
      * @param boolean $all
      * @param int $id
      * @static
@@ -222,17 +222,17 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
     static function getPetitionSignatureTotal( $surveyId ) {
         $surveyInfo = CRM_Campaign_BAO_Petition::getSurveyInfo((int) $surveyId);
         //$activityTypeID = $surveyInfo['activity_type_id'];
-        $signature = array( );	
+        $signature = array( );
 
         $sql = "
-            SELECT 
+            SELECT
             status_id,count(id) as total
             FROM  	civicrm_activity
-            WHERE 
-            source_record_id = " . (int) $surveyId  . 
-            " AND activity_type_id = " . (int)  $surveyInfo['activity_type_id'] . 
+            WHERE
+            source_record_id = " . (int) $surveyId  .
+            " AND activity_type_id = " . (int)  $surveyInfo['activity_type_id'] .
             " GROUP BY status_id";
-        require_once 'CRM/Contact/BAO/Contact.php'; 
+        require_once 'CRM/Contact/BAO/Contact.php';
 
         $statusTotal = array();$total =0;
         $dao =& CRM_Core_DAO::executeQuery( $sql );
@@ -242,15 +242,15 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
         }
         $statusTotal['count']=$total;
         return $statusTotal;
-    }    
+    }
 
 
-    public function getSurveyInfo( $surveyId=null ) 
+    public function getSurveyInfo( $surveyId=null )
     {
         $surveyInfo = array( );
 
         $sql = "
-            SELECT 	activity_type_id, 
+            SELECT 	activity_type_id,
             campaign_id,
             title,
             ov.label AS activity_type
@@ -261,20 +261,20 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
             AND og.name = 'activity_type'";
 
         $dao =& CRM_Core_DAO::executeQuery( $sql );
-        while ( $dao->fetch() ) {      
-            //$survey['campaign_id'] = $dao->campaign_id;  
-            //$survey['campaign_name'] = $dao->campaign_name; 
-            $surveyInfo['activity_type'] = $dao->activity_type; 
-            $surveyInfo['activity_type_id'] = $dao->activity_type_id;   
-            $surveyInfo['title'] = $dao->title; 
+        while ( $dao->fetch() ) {
+            //$survey['campaign_id'] = $dao->campaign_id;
+            //$survey['campaign_name'] = $dao->campaign_name;
+            $surveyInfo['activity_type'] = $dao->activity_type;
+            $surveyInfo['activity_type_id'] = $dao->activity_type_id;
+            $surveyInfo['title'] = $dao->title;
         }
 
         return $surveyInfo ;
     }
 
     /**
-     * Function to get Petition Signature Details 
-     * 
+     * Function to get Petition Signature Details
+     *
      * @param boolean $all
      * @param int $id
      * @static
@@ -282,7 +282,7 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
     static function getPetitionSignature( $surveyId, $status_id=null ) {
 
         $surveyId = (int)$surveyId;// sql injection protection
-        $signature = array( );	
+        $signature = array( );
 
         $sql = "
             SELECT 	a.id,
@@ -298,12 +298,12 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
             IFNULL(state_province_id,'') AS state_province_id,
             IFNULL(country_id,'') as country_id,IFNULL(iso_code,'') as country_iso, IFNULL(civicrm_country.name,'') as country
             FROM  	civicrm_activity a, civicrm_survey, civicrm_contact
-            LEFT JOIN civicrm_address ON civicrm_address.contact_id = civicrm_contact.id  AND civicrm_address.is_primary = 1 
+            LEFT JOIN civicrm_address ON civicrm_address.contact_id = civicrm_contact.id  AND civicrm_address.is_primary = 1
             LEFT JOIN civicrm_country ON civicrm_address.country_id = civicrm_country.id
-            WHERE 
+            WHERE
             a.source_contact_id = civicrm_contact.id AND
             a.activity_type_id = civicrm_survey.activity_type_id AND
-            civicrm_survey.id =  $surveyId AND  
+            civicrm_survey.id =  $surveyId AND
             a.source_record_id =  $surveyId  ";
         if ($status_id)
             $sql .= " AND status_id = ". (int) $status_id;
@@ -319,11 +319,11 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
             $signature [] = $row;
         }
         return $signature;
-    }    
+    }
 
     /**
      * This function returns all entities assigned to a specific tag
-     * 
+     *
      * @param object  $tag    an object of a tag.
      *
      * @return  array   $contactIds    array of contact ids
@@ -346,7 +346,7 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
 
     /**
      * Function to check if contact has signed this petition
-     * 
+     *
      * @param int $surveyId
      * @param int $contactId
      * @static
@@ -354,7 +354,7 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
     static function checkSignature( $surveyId, $contactId ) {
 
         $surveyInfo = CRM_Campaign_BAO_Petition::getSurveyInfo($surveyId);
-        $signature = array( );	
+        $signature = array( );
 
         $sql = "
             SELECT 	a.id AS id,
@@ -363,21 +363,21 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
             a.activity_date_time AS activity_date_time,
             a.activity_type_id AS activity_type_id,
             a.status_id AS status_id," .
-            "'" . $surveyInfo['title'] . "'" ." AS survey_title 
+            "'" . $surveyInfo['title'] . "'" ." AS survey_title
             FROM  	civicrm_activity a
-            WHERE 	a.source_record_id = " . $surveyId . " 
+            WHERE 	a.source_record_id = " . $surveyId . "
             AND a.activity_type_id = " . $surveyInfo['activity_type_id'] . "
             AND a.source_contact_id = " . $contactId;
 
-        require_once 'CRM/Contact/BAO/Contact.php'; 
+        require_once 'CRM/Contact/BAO/Contact.php';
 
         $dao =& CRM_Core_DAO::executeQuery( $sql );
         while ( $dao->fetch() ) {
-            $signature[$dao->id]['id'] = $dao->id;     
+            $signature[$dao->id]['id'] = $dao->id;
             $signature[$dao->id]['source_record_id'] = $dao->source_record_id;
             $signature[$dao->id]['source_contact_id'] = CRM_Contact_BAO_Contact::displayName($dao->source_contact_id);
             $signature[$dao->id]['activity_date_time'] = $dao->activity_date_time;
-            $signature[$dao->id]['activity_type_id'] = $dao->activity_type_id;   
+            $signature[$dao->id]['activity_type_id'] = $dao->activity_type_id;
             $signature[$dao->id]['status_id'] = $dao->status_id;
             $signature[$dao->id]['survey_title'] = $dao->survey_title;
             $signature[$dao->id]['contactId'] = $dao->source_contact_id;
@@ -392,7 +392,7 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
      *
      * @param array  $params (reference ) an assoc array of name/value pairs
      *
-     * @return 
+     * @return
      * @access public
      * @static
      */
@@ -406,13 +406,13 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
          *  	or login using fb connect - thank you + click to add msg to fb wall
          *
          * CRM_Campaign_Form_Petition_Signature::EMAIL_CONFIRM
-         *		send a confirmation request email     
+         *		send a confirmation request email
          */
         require_once 'CRM/Campaign/Form/Petition/Signature.php';
 
         // define constant CIVICRM_PETITION_CONTACTS, if not exist in civicrm.settings.php
         if ( !defined('CIVICRM_PETITION_CONTACTS') ) {
-            define('CIVICRM_PETITION_CONTACTS','Petition Contacts'); 
+            define('CIVICRM_PETITION_CONTACTS','Petition Contacts');
         }
 
         // check if the group defined by CIVICRM_PETITION_CONTACTS exists, else create it
@@ -435,28 +435,28 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
         CRM_Campaign_BAO_Survey::retrieve($petitionParams,$petitionInfo);
         if (empty($petitionInfo)) {
             CRM_Core_Error::fatal( 'Petition doesn\'t exist.' );
-        } 	
+        }
 
         require_once 'CRM/Core/BAO/Domain.php';
         //get the default domain email address.
-        list( $domainEmailName, $domainEmailAddress ) = CRM_Core_BAO_Domain::getNameAndEmail( );		
+        list( $domainEmailName, $domainEmailAddress ) = CRM_Core_BAO_Domain::getNameAndEmail( );
 
         require_once 'CRM/Core/BAO/MailSettings.php';
         $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
 
         require_once 'CRM/Contact/BAO/Contact.php';
-        $toName = CRM_Contact_BAO_Contact::displayName($params['contactId']);		
+        $toName = CRM_Contact_BAO_Contact::displayName($params['contactId']);
 
         $replyTo = "do-not-reply@$emailDomain";
 
         // set additional general message template params (custom tokens to use in email msg templates)
-        // tokens then available in msg template as {$petition.title}, etc		
+        // tokens then available in msg template as {$petition.title}, etc
         $petitionTokens['title'] = $petitionInfo['title'];
-        $petitionTokens['petitionId'] = $params['sid'];	
+        $petitionTokens['petitionId'] = $params['sid'];
         $tplParams['petition'] = $petitionTokens;
 
         switch ($sendEmailMode) {
-        case CRM_Campaign_Form_Petition_Signature::EMAIL_THANK:	
+        case CRM_Campaign_Form_Petition_Signature::EMAIL_THANK:
 
             //add this contact to the CIVICRM_PETITION_CONTACTS group
             $params['group_id'] = $group_id[0];
@@ -479,16 +479,16 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
                         'petitionTitle' => $petitionInfo['title'],
                     )
                 );
-            }							
+            }
             break;
 
         case CRM_Campaign_Form_Petition_Signature::EMAIL_CONFIRM:
             // create mailing event subscription record for this contact
             // this will allow using a hash key to confirm email address by sending a url link
             require_once 'CRM/Mailing/Event/BAO/Subscribe.php';
-            $se = CRM_Mailing_Event_BAO_Subscribe::subscribe( $group_id[0], 
-                $params['email-Primary'] , 
-                $params['contactId'] );			
+            $se = CRM_Mailing_Event_BAO_Subscribe::subscribe( $group_id[0],
+                $params['email-Primary'] ,
+                $params['contactId'] );
 
             //				require_once 'CRM/Core/BAO/Domain.php';
             //				$domain =& CRM_Core_BAO_Domain::getDomain();
@@ -501,12 +501,12 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
                 $se->contact_id,
                 $se->id,
                 $se->hash)
-            ) . "@$emailDomain";			
+            ) . "@$emailDomain";
 
 
             $confirmUrl = CRM_Utils_System::url( 'civicrm/petition/confirm',
                 "reset=1&cid={$se->contact_id}&sid={$se->id}&h={$se->hash}&a={$params['activityId']}&p={$params['sid']}",
-                true );				
+                true );
             $confirmUrlPlainText = CRM_Utils_System::url( 'civicrm/petition/confirm',
                 "reset=1&cid={$se->contact_id}&sid={$se->id}&h={$se->hash}&a={$params['activityId']}&p={$params['sid']}",
                 true,
@@ -516,10 +516,10 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
             // set email specific message template params and assign to tplParams
             $petitionTokens['confirmUrl'] = $confirmUrl;
             $petitionTokens['confirmUrlPlainText'] = $confirmUrlPlainText;
-            $tplParams['petition'] = $petitionTokens;		
+            $tplParams['petition'] = $petitionTokens;
 
             require_once 'CRM/Core/BAO/MessageTemplates.php';
-            if ($params['email-Primary']) {					
+            if ($params['email-Primary']) {
                 CRM_Core_BAO_MessageTemplates::sendTemplate(
                     array(
                         'groupName' => 'msg_tpl_workflow_petition',
@@ -534,9 +534,9 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
                         'petitionTitle' => $petitionInfo['title'],
                         'confirmUrl' => $confirmUrl
                     )
-                );					
-            }						
-            break;    			
+                );
+            }
+            break;
         }
     }
 
