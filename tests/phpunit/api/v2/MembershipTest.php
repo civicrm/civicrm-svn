@@ -102,7 +102,7 @@ class api_v2_MembershipTest extends CiviUnitTestCase
      
      function testContactMembershipsGet()
      {
-         $this->assertTrue( function_exists(civicrm_contact_memberships_get) );
+         $this->assertTrue( function_exists('civicrm_contact_memberships_get') );
          $params = array();
          $result = civicrm_contact_memberships_get( $params );
          $this->assertEquals( 1, $result['is_error'],
@@ -111,7 +111,7 @@ class api_v2_MembershipTest extends CiviUnitTestCase
      
      function testContactMembershipCreate()
      {
-         $this->assertTrue( function_exists(civicrm_contact_membership_create) );
+         $this->assertTrue( function_exists('civicrm_contact_membership_create') );
          $params = array();
          $result = civicrm_contact_membership_create( $params );
          $this->assertEquals( 1, $result['is_error'],
@@ -120,7 +120,7 @@ class api_v2_MembershipTest extends CiviUnitTestCase
 
      function testContactMembershipGet()
      {
-         $this->assertTrue( function_exists(civicrm_membership_types_get) );
+         $this->assertTrue( function_exists('civicrm_membership_types_get') );
          $params = array();
          $result = civicrm_membership_types_get( $params );
          $this->assertEquals( 1, $result['is_error'],
@@ -129,7 +129,7 @@ class api_v2_MembershipTest extends CiviUnitTestCase
     
      function testMembershipStatusesGet()
      {
-         $this->assertTrue( function_exists(civicrm_membership_statuses_get) );
+         $this->assertTrue( function_exists('civicrm_membership_statuses_get') );
          $params = 'wrong type';
          $result = civicrm_membership_statuses_get( $params );
          $this->assertEquals( 1, $result['is_error'],
