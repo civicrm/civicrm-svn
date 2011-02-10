@@ -26,7 +26,7 @@
 {* Report form criteria section *}
     {if $colGroups}
         {if $componentName eq 'Grant'}
-            <h3>Report Sections</h3>
+            <h3>{ts}Include these Statistics{/ts}</h3>
         {else}
 	    <h3>Display Columns</h3>
         {/if}
