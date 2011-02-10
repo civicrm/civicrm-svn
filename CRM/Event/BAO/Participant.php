@@ -404,7 +404,7 @@ INNER JOIN  civicrm_event event ON ( event.id = participant.event_id )
                 }
             }
             if ( !empty( $participantIds ) ) {
-                return ( !$returnWaitingCount ) ? $eventFullText : self::totalEventSeats( $participantIds );
+                return ( !$returnWaitingCount ) ? $eventFullText : self::totalEventSeats( $eventId, $participantIds );
             }
         }
         
@@ -436,7 +436,7 @@ INNER JOIN  civicrm_event event ON ( event.id = participant.event_id )
         }
         
         //get the total event seats occupied by these participants.
-        $eventRegisteredSeats = self::totalEventSeats( $participantIds );
+        $eventRegisteredSeats = self::totalEventSeats( $eventId, $participantIds );
         
         if ( $eventRegisteredSeats ) {
             if ( $eventRegisteredSeats >= $eventMaxSeats ) {
@@ -1639,16 +1639,17 @@ UPDATE  civicrm_participant
      /**
       * Function to calculate event seats for given participant ids.
       *
+      * @param int    $eventId       event id.
       * @param array  $paticipantIds an array of participant ids.
       *
       * @return int $totalSeats  total number if event seats.
       * @access public
       * @static
       */
-     static function totalEventSeats( $participantIds ) 
+     static function totalEventSeats( $eventId, $participantIds = array( ) ) 
      {
          $totalSeats = 0;
-         if ( !is_array( $participantIds ) || empty( $participantIds ) ) {
+         if ( empty( $eventId ) ) {
              return $totalSeats;
          }
          

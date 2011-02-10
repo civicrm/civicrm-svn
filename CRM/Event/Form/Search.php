@@ -277,7 +277,7 @@ class CRM_Event_Form_Search extends CRM_Core_Form
             //get actual count only when we are dealing w/ single event.
             $participantCount = 0;
             if ( count( $eventIds ) == 1 ) {
-                $participantCount = CRM_Event_BAO_Participant::totalEventSeats( $participantIds ); 
+                $participantCount = CRM_Event_BAO_Participant::totalEventSeats( array_pop( $eventIds ), $participantIds ); 
             }
             $this->assign( 'participantCount', $participantCount );
             $this->assign( 'lineItems', $lineItems );

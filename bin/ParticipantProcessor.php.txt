@@ -174,7 +174,7 @@ LEFT JOIN  civicrm_event event ON ( event.id = participant.event_id )
                             
                             $allIds = array( $participantId );
                             if ( !empty( $additionalIds ) ) $allIds = array_merge( $allIds, $additionalIds );
-                            $requiredSpaces = CRM_Event_BAO_Participant::totalEventSeats( $allIds );
+                            $requiredSpaces = CRM_Event_BAO_Participant::totalEventSeats( $values['event_id'], $allIds );
                             
                             //need to check as to see if event has enough speces
                             if ( ( $requiredSpaces <= $eventOpenSpaces ) || ( $eventOpenSpaces === null ) ) {
