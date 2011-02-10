@@ -35,9 +35,8 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
                                    'is_active'   => 1
     );
     $this->CustomGroupIndividual = $this->customGroupCreate('Individual',"Custom Group",$this->_apiversion );
-
     $params = array(
-                         'custom_group_id' => $this->CustomGroupIndividual->id,
+                         'custom_group_id' => $this->CustomGroupIndividual['id'],
                          'label'           => 'Individual School Score',
                          'html_type'       => 'Text',
                          'data_type'       => 'String',
@@ -47,8 +46,7 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
                          'is_active'       => 1
     );
 
-    $this->IndividualField = $this->customFieldCreate($params ,"Custom Field",$this->_apiversion);
-
+    $this->IndividualField = $this->customFieldCreate($this->CustomGroupIndividual['id'] ,"Custom Field",$this->_apiversion);
     //  Create Group For Individual-Student  Contact Sub  Type
     $groupIndiStudent   = array(
                                     'title'       => 'TestGroup For Individual - Student',
@@ -59,9 +57,8 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
                                     'is_active'   => 1
     );
     $this->CustomGroupIndiStudent = $this->customGroupCreate($groupIndiStudent ,"Custom Group",$this->_apiversion);
-
     $params = array(
-                        'custom_group_id' => $this->CustomGroupIndiStudent->id,
+                        'custom_group_id' => $this->CustomGroupIndiStudent['id'],
                         'label'           => 'Individual-Student College',
                         'html_type'       => 'Text',
                         'data_type'       => 'String',
@@ -71,15 +68,16 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
                         'is_active'       => 1
     );
 
-    $this->IndiStudentField = $this->customFieldCreate($params ,"Custom Field",$this->_apiversion);
+    $this->IndiStudentField = $this->customFieldCreate($this->CustomGroupIndiStudent['id'] ,"Custom Field",$this->_apiversion);
 
     $params = array( 'first_name'   => 'Mathev',
                          'last_name'    => 'Adison',
                          'contact_type' => 'Individual',
                          'addressee'    => 1
     );
+   
     $this->individual = $this->individualCreate( $params );
-
+    
     $params = array( 'first_name'   => 'Steve',
                          'last_name'    => 'Tosun',
                          'contact_type' => 'Individual',
@@ -108,6 +106,7 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
                          'addressee'    => 1
     );
     $this->organizationSponsor = $this->organizationCreate( $params );
+
   }
 
   /**
