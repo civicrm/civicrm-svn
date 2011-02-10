@@ -763,9 +763,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         );
         $result = civicrm_api_legacy( 'civicrm_pledge_create','Pledge',$params );
                         
- 
-
-        return $pledge['id'];
+        return $result['id'];
         
     }
     

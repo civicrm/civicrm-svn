@@ -9,7 +9,7 @@ function membership_payment_get_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_membership_payment_get','MembershipPayment',$params );
+  $result = civicrm_api( 'membership_payment','get',$params );
 
   return $result;
 }
@@ -20,18 +20,17 @@ function membership_payment_get_example(){
 function membership_payment_get_expectedresult(){
 
   $expectedResult = 
-            array(
-                  'is_error' 		=> '0',
-                  'version' 		=> '3',
-                  'count' 		=> '1',
-                  'id' 		=> '1',
-                  'values' 		=>                   array(                  '1' =>  array(
-                                    'membership_id' => '1'
-                  ,                  'contribution_id' => '1'
-                  ,                  'membership_contribution_id' => '1'
-                  ,),                  ),
-
-  );
+     array(
+           'is_error' 		=> '0',
+           'version' 		=> '3',
+           'count' 		=> '1',
+           'id' 		=> '1',
+           'values' 		=> array(           '1' =>  array(
+                      'membership_id' => '1',
+                      'contribution_id' => '1',
+                      'membership_contribution_id' => '1',
+           ),           ),
+      );
 
   return $expectedResult  ;
 }

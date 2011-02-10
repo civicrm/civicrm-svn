@@ -3,12 +3,12 @@
 function pledge_delete_example(){
     $params = array(
     
-                  'pledge_id' 		=> '',
+                  'pledge_id' 		=> '1',
                   'version' 		=> '3',
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_pledge_delete','Pledge',$params );
+  $result = civicrm_api( 'pledge','delete',$params );
 
   return $result;
 }
@@ -19,11 +19,13 @@ function pledge_delete_example(){
 function pledge_delete_expectedresult(){
 
   $expectedResult = 
-            array(
-                  'is_error' 		=> '1',
-                  'error_message' 		=> 'Could not find pledge_id in input parameters',
-
-  );
+     array(
+           'is_error' 		=> '0',
+           'version' 		=> '3',
+           'count' 		=> '1',
+           'id' 		=> '1',
+           'values' 		=> array(           '1' => '1',           ),
+      );
 
   return $expectedResult  ;
 }
