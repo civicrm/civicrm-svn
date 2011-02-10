@@ -147,28 +147,19 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
         return $activity;
     }
 
-    function confirmSignature($activity_id,$contact_id,$petition_id) {
-        //change activity status to completed (status_id=2)
-        $query = "UPDATE civicrm_activity SET status_id = 2
-            WHERE  id = $activity_id
-            AND   source_contact_id = $contact_id";
-        CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
-
-        // define constant CIVICRM_TAG_UNCONFIRMED, if not exist in civicrm.settings.php
-        if ( !defined('CIVICRM_TAG_UNCONFIRMED') ) {
-            define('CIVICRM_TAG_UNCONFIRMED', 'Unconfirmed');
-        }
+    function confirmSignature($activity_id, $contact_id, $petition_id)
+    {
+        // change activity status to completed (status_id = 2)
+        // I wonder why do we need contact_id when we have activity_id anyway? [chastell]
+        $sql = 'UPDATE civicrm_activity SET status_id = 2 WHERE id = %1 AND source_contact_id = %2';
+        $params = array(1 => array($activity_id, 'Integer'), 2 => array($contact_id, 'Integer'));
+        CRM_Core_DAO::executeQuery($sql, $params);
 
         // remove 'Unconfirmed' tag for this contact
-        // Check if contact 'email confirmed' tag exists, else create one
-        // This should be in the petition module initialise code to create a default tag for this
-        $tag_params['name'] = CIVICRM_TAG_UNCONFIRMED;
-        $tag = civicrm_api('tag', 'get', $tag_params);
-
-        unset($tag_params);
-        $tag_params['contact_id'] = $contact_id;
-        $tag_params['tag_id'] = $tag['id'];
-        $tag_value = civicrm_api('entity_tag', 'delete', $tag_params);
+        $tag_name = defined('CIVICRM_TAG_UNCONFIRMED') ? CIVICRM_TAG_UNCONFIRMED : 'Unconfirmed';
+        $sql = "DELETE FROM civicrm_entity_tag WHERE entity_table = 'civicrm_contact' AND entity_id = %1 AND tag_id = (SELECT id FROM civicrm_tag WHERE name = %2)";
+        $params = array(1 => array($contact_id, 'Integer'), 2 => array($tag_name, 'String'));
+        CRM_Core_DAO::executeQuery($sql, $params);
 
         // set permanent cookie to indicate this users email address now confirmed
         setcookie('confirmed_'.$petition_id, $activity_id, time() + $this->cookieExpire, '/');
