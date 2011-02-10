@@ -30,7 +30,7 @@
     {if $config->userFramework EQ 'Drupal'}
         <p>{ts 1=$ufAccessURL}Use <a href='%1'>Drupal Access Control</a> to manage basic access to CiviCRM components and menu items. Use CiviCRM ACLs to control access to specific CiviCRM contact groups. You can also configure ACLs to grant or deny access to specific Profiles, and/or Custom Data Fields.{/ts}</p>
     {elseif $config->userFramework EQ 'Joomla'}
-        <p>{ts 1=$ufAccessURL}Use <a href='%1'>Joomla Access Control</a> to manage basic access to CiviCRM components and menu items. Use CiviCRM ACLs to control access to specific CiviCRM contact groups. You can also configure ACLs to grant or deny access to specific Profiles, and/or Custom Data Fields.{/ts}</p>    {/if}
+        <p>{ts 1=$ufAccessURL 2=$jAccessParams}Use <a href='%1' %2>Joomla Access Control</a> to manage basic access to CiviCRM components and menu items. Use CiviCRM ACLs to control access to specific CiviCRM contact groups. You can also configure ACLs to grant or deny access to specific Profiles, and/or Custom Data Fields.{/ts}</p>    {/if}
 </div>
 
 <table class="report"> 
@@ -38,7 +38,7 @@
 {if $config->userFramework EQ 'Drupal'}
         <td class="nowrap"><a href="{$ufAccessURL}" id="adminAccess">&raquo; {ts}Drupal Access Control{/ts}</a></td>
 {else}
-        <td class="nowrap"><a href="{$ufAccessURL}" id="adminAccess">&raquo; {ts}Joomla Access Control{/ts}</a></td>
+        <td class="nowrap"><a href="{$ufAccessURL}" {$jAccessParams} id="adminAccess">&raquo; {ts}Joomla Access Control{/ts}</a></td>
 {/if}
         <td>{ts}Grant access to CiviCRM components and access to view or edit contacts using <strong>Drupal roles</strong>.{/ts}</td>
     </tr>

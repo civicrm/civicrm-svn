@@ -48,12 +48,12 @@ class CRM_Admin_Page_Access extends CRM_Core_Page
         if ( $config->userFramework == 'Drupal' ) {
             $this->assign('ufAccessURL', CRM_Utils_System::url( 'admin/people/permissions' ) );
         } else {
-            $url = 
-                $config->userFrameworkBaseURL .
-                "index.php?option=com_config&view=component&component=com_civicrm";
-                
-            $this->assign('ufAccessURL', 
-                          $url );
+            JHTML::_( 'behavior.modal' );
+			$url = $config->userFrameworkBaseURL .
+                   "index.php?option=com_config&view=component&component=com_civicrm&tmpl=component";
+            $jparams = 'rel="{handler: \'iframe\', size: {x: 875, y: 550}, onClose: function() {}}" class="modal"';
+			$this->assign('ufAccessURL', $url );
+			$this->assign('jAccessParams', $jparams );
         }
         return parent::run();
     }
