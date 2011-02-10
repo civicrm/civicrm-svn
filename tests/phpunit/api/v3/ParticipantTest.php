@@ -380,7 +380,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
 
     $participant = & civicrm_participant_create($params);
     $this->documentMe($params,$participant ,__FUNCTION__,__FILE__);
-    $this->assertNotEquals( $participant['is_error'],1 );
+    $this->assertNotEquals( $participant['is_error'],1 ,'in line ' . __LINE__);
     $this->_participantID = $participant['id'];
     if ( ! $participant['is_error'] ) {
       $this->_createdParticipants[] = CRM_Utils_Array::value('values', $participant);
@@ -552,6 +552,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
   {
     $params = array(
                         'id' => $this->_participantID,
+                        'version' =>$this->_apiversion,
     );
     $participant = & civicrm_participant_delete($params);
     $this->assertNotEquals( $participant['is_error'],1 );
