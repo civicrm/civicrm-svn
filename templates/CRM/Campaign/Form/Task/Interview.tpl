@@ -228,7 +228,7 @@
 	data['surveyTitle']      = {/literal}'{$surveyValues.title|escape:javascript}'{literal};
 	data['ufGroupId']        = {/literal}'{$ufGroupId}'{literal};	
 	
-	var dataUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Campaign_Page_AJAX&fnName=registerInterview' }"{literal}	          
+	var dataUrl = {/literal}"{crmURL p='civicrm/campaign/registerInterview' h=0}"{literal}	          
 	
 	//post data to create interview.
 	cj.post( dataUrl, data, function( interview ) {

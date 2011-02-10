@@ -35,14 +35,17 @@
  */
 
 require_once 'CRM/Report/Form.php';
+require_once 'CRM/Campaign/BAO/Survey.php';
 
 class CRM_Report_Form_Walklist_Survey extends CRM_Report_Form {
     protected $_addressField = false;
-
+    
     protected $_emailField   = false;
     
     protected $_phoneField   = false;
-
+    
+    protected $_activityField = false;
+    
     protected $_summary      = null;
     
     protected $_customGroupExtends = array( 'Contact', 'Individual', 'Household', 'Organization' );
@@ -95,6 +98,23 @@ class CRM_Report_Form_Walklist_Survey extends CRM_Report_Form {
                           'fields'    => array( 'phone' => null ),
                           'grouping'  => 'location-fields',
                           ),
+                   
+                   'civicrm_activity' =>
+                   array( 'dao'       => 'CRM_Activity_DAO_Activity',
+                          'alias'     => 'survey_activity',
+                          'fields'    => array( 'name'  =>  array( 'name'    => 'result',
+                                                                   'title'   => ts('Status'),
+                                                                   'default' => true ) ),
+                          
+                          'filters'   => array( 'sid' => array( 'name'         => 'source_record_id',
+                                                                'title'        => ts( 'Survey' ),
+                                                                'type'         => CRM_Utils_Type::T_INT,
+                                                                'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+                                                                'options'      => 
+                                                                CRM_Campaign_BAO_Survey::getSurveys( ) ) ),
+                          'grouping' => 'survey-activity-fields',
+                          ),
+                   
                    );
         parent::__construct( );
     }
@@ -102,7 +122,7 @@ class CRM_Report_Form_Walklist_Survey extends CRM_Report_Form {
     function preProcess( ) {
         parent::preProcess( );
     }
-
+    
     function select( ) {
         $select = array( );
 
@@ -111,13 +131,9 @@ class CRM_Report_Form_Walklist_Survey extends CRM_Report_Form {
             foreach ( $table['fields'] as $fieldName => $field ) {
                 if ( CRM_Utils_Array::value( 'required', $field ) ||
                      CRM_Utils_Array::value( $fieldName, $this->_params['fields'] ) ) {
-                    if ( $tableName == 'civicrm_address' ) {
-                        $this->_addressField = true;
-                    } else if ( $tableName == 'civicrm_email' ) {
-                        $this->_emailField = true;
-                    } else if ( $tableName == 'civicrm_phone' ) {
-                        $this->_phoneField = true;
-                    }
+                    
+                    $fieldsName = CRM_Utils_Array::value( 1, explode( '_', $tableName ) );
+                    if ( $fieldsName ) $this->{"_$fieldsName".'Field'} = true;
                     
                     $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
                     $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = $field['title'];
@@ -145,6 +161,12 @@ FROM       civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom
         
         if ( $this->_phoneField ) {
             $this->_from .= "LEFT JOIN civicrm_phone {$this->_aliases['civicrm_phone']} ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_phone']}.contact_id AND {$this->_aliases['civicrm_phone']}.is_primary = 1\n";
+        }
+        
+        //get the survey clause in.
+        if ( $this->_activityField ) {
+            $this->_from .= "LEFT JOIN civicrm_activity_assignment civicrm_activity_assignment ON ( {$this->_aliases['civicrm_contact']}.id = civicrm_activity_assignment.assignee_contact_id )\n";
+            $this->_from .= "LEFT JOIN civicrm_activity {$this->_aliases['civicrm_activity']} ON ( {$this->_aliases['civicrm_activity']}.id = civicrm_activity_assignment.activity_id )\n";
         }
     }
     
@@ -188,10 +210,10 @@ FROM       civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom
         
         if ( $this->_aclWhere ) {
             $this->_where .= " AND {$this->_aclWhere} ";
-        }      
+        }
     }
     
-    
+
     function orderBy( ) {
         $this->_orderBy = "";
         foreach ( $this->_columns as $tableName => $table ) {

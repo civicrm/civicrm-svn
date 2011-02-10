@@ -159,12 +159,12 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
                    $activityTypeId == CRM_Utils_Array::value( 'Change Case Status', $activityTypeIds ) ||
                    $activityTypeId == CRM_Utils_Array::value( 'Change Case Start Date', $activityTypeIds ) ) {
             $showUpdate =  $showDelete = false;
-            $url      = 'civicrm/contact/view/activity';
+            $url      = 'civicrm/activity';
             $qsView   = "atype={$activityTypeId}&action=view&reset=1&id=%%id%%&cid=%%cid%%&context=%%cxt%%{$extraParams}";
             $qsUpdate = "atype={$activityTypeId}&action=update&reset=1&id=%%id%%&cid=%%cid%%&context=%%cxt%%{$extraParams}";
         } else {
             $showUpdate = $showDelete = true;
-            $url      = 'civicrm/contact/view/activity';
+            $url      = 'civicrm/activity';
             $qsView   = "atype={$activityTypeId}&action=view&reset=1&id=%%id%%&cid=%%cid%%&context=%%cxt%%{$extraParams}";
             $qsUpdate = "atype={$activityTypeId}&action=update&reset=1&id=%%id%%&cid=%%cid%%&context=%%cxt%%{$extraParams}";
         }

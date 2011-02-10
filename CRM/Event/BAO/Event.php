@@ -654,11 +654,11 @@ INNER JOIN   civicrm_participant_status_type status_type ON ( civicrm_participan
             if ( $countWithStatus ) {
                 foreach ( $pInfo as $statusId => $values ) {
                     $participantCount[$eventId][$statusId]['count'] = 
-                        CRM_Event_BAO_Participant::totalEventSeats( $values['pIds'] ); 
+                        CRM_Event_BAO_Participant::totalEventSeats( $eventId, $values['pIds'] ); 
                     $participantCount[$eventId][$statusId]['class'] = $values['statusClass'];
                 }
             } else {
-                $participantCount[$eventId] = CRM_Event_BAO_Participant::totalEventSeats( $pIds );
+                $participantCount[$eventId] = CRM_Event_BAO_Participant::totalEventSeats( $eventId, $pIds );
             }
         }
         

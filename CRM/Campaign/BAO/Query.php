@@ -412,7 +412,8 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
      */
     function voterClause( $params ) 
     {
-        $voterClause = null;
+        $voterClause = array( );
+        $fromClause  = $whereClause = null;
         if ( !is_array( $params ) || empty( $params ) ) {
             return $voterClause;
         }
@@ -468,10 +469,37 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
                 }
             }
             
+            //lets dump these ids in tmp table and 
+            //use appropriate join depend on operator.
             if ( !empty( $voterIds ) ) {
-                $voterClause = "( contact_a.id $operator ( ".  implode( ', ', $voterIds  ). ' ) )';
+                $voterIdCount  = count( $voterIds );
+                $tempTableName = 'temporary_survey_contact_ids_'.time();
+                CRM_Core_DAO::executeQuery( "DROP TABLE IF EXISTS {$tempTableName}" );
+                $query = "CREATE TEMPORARY TABLE {$tempTableName}(survey_contact_id INT(10) UNSIGNED)";
+                CRM_Core_DAO::executeQuery( $query );
+                $batch = 100;
+                $insertedCount = 0;
+                do {
+                    $processIds = $voterIds;
+                    $insertIds  = array_splice( $processIds, $insertedCount, $batch );
+                    if ( !empty( $insertIds ) ) {
+                        $insertSQL = "INSERT IGNORE INTO {$tempTableName}( survey_contact_id ) 
+                     VALUES (" . implode( '),(', $insertIds ) . ');';
+                        CRM_Core_DAO::executeQuery( $insertSQL );
+                    }
+                    $insertedCount += $batch;
+                } while ( $insertedCount < $voterIdCount );  
+                
+                if ( $operator == 'IN' ) {
+                    $fromClause  = " INNER JOIN {$tempTableName} ON ( {$tempTableName}.survey_contact_id = contact_a.id )"; 
+                } else {
+                    $fromClause  = " LEFT JOIN {$tempTableName} ON ( {$tempTableName}.survey_contact_id = contact_a.id )";
+                    $whereClause = "( {$tempTableName}.survey_contact_id IS NULL )";
+                }
             }
         }
+        $voterClause = array( 'fromClause'  => $fromClause,
+                              'whereClause' => $whereClause );
         
         return $voterClause;
     }
