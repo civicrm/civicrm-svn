@@ -54,7 +54,8 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
                                     'extends'     => array( 'Individual', array('Student') ),
 
                                     'style'       => 'Inline',
-                                    'is_active'   => 1
+                                    'is_active'   => 1,
+                                    'version'			=>$this->_apiversion,
     );
     $this->CustomGroupIndiStudent = $this->customGroupCreate($groupIndiStudent ,"Custom Group",$this->_apiversion);
     $params = array(
@@ -65,7 +66,8 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
                         'weight'          => 4,
                         'is_required'     => 1,
                         'is_searchable'   => 0,
-                        'is_active'       => 1
+                        'is_active'       => 1,
+                        'version'					=> $this->_apiversion,
     );
 
     $this->IndiStudentField = $this->customFieldCreate($this->CustomGroupIndiStudent['id'] ,"Custom Field",$this->_apiversion);
@@ -73,37 +75,37 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
     $params = array( 'first_name'   => 'Mathev',
                          'last_name'    => 'Adison',
                          'contact_type' => 'Individual',
-                         'addressee'    => 1
+                         'version'			=> $this->_apiversion,
     );
    
-    $this->individual = $this->individualCreate( $params );
+    $this->individual = $this->individualCreate( $params,$this->_apiversion );
     
     $params = array( 'first_name'   => 'Steve',
                          'last_name'    => 'Tosun',
                          'contact_type' => 'Individual',
                          'contact_sub_type' => 'Student',
-                         'addressee'    => 1
+                         'version'			=> $this->_apiversion,
     );
-    $this->individualStudent = $this->individualCreate( $params );
+    $this->individualStudent = $this->individualCreate( $params,$this->_apiversion  );
 
     $params = array( 'first_name'   => 'Mark',
                          'last_name'    => 'Dawson',
                          'contact_type' => 'Individual',
                          'contact_sub_type' => 'Parent',
-                         'addressee'    => 1
+                         'version'			=> $this->_apiversion,
     );
     $this->individualParent = $this->individualCreate( $params );
 
     $params = array( 'organization_name' => 'Wellspring' ,
                          'contact_type'      => 'Organization',
-                         'addressee'    => 1
+                         'version'			=> $this->_apiversion,
     );
     $this->organization = $this->organizationCreate( $params );
 
     $params = array( 'organization_name' => 'SubUrban' ,
                          'contact_type'      => 'Organization',
                          'contact_sub_type'  => 'Sponsor',
-                         'addressee'    => 1
+                         'version'			=> $this->_apiversion,
     );
     $this->organizationSponsor = $this->organizationCreate( $params );
 
@@ -117,7 +119,7 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
     $params = array(
                         'contact_id'           => $this->organization ,
                         'contact_type'      => 'Organization',
-                        "custom_{$this->IndividualField->id}" => 'Test String', 
+                        "custom_{$this->IndividualField[id]}" => 'Test String', 
                         'version'		=>$this->_apiversion, 
     );
 
@@ -146,17 +148,17 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
     $params = array(
                         'contact_id'           => $this->individual ,
                         'contact_type' => 'Individual',
-                        "custom_{$this->IndividualField->id}" => 'Test String',  
+                        "custom_{$this->IndividualField[id]}" => 'Test String',  
                         'version'		=>$this->_apiversion, 
     );
     $contact =& civicrm_contact_create( $params );
 
-    $this->assertNotNull( $contact['contact_id'] , 'In line '. __LINE__ );
+    $this->assertNotNull( $contact['id'] , 'In line '. __LINE__ );
     $entityValues =  CRM_Core_BAO_CustomValueTable::getEntityValues( $this->individual);
-    $elements["custom_{$this->IndividualField->id}"] = $entityValues["{$this->IndividualField->id}"];
+    $elements["custom_{$this->IndividualField[id]}"] = $entityValues["{$this->IndividualField[id]}"];
 
     // Check the Value in Database
-    $this->assertEquals( $elements["custom_{$this->IndividualField->id}"], 'Test String' );
+    $this->assertEquals( $elements["custom_{$this->IndividualField[id]}"], 'Test String', 'In line '. __LINE__  );
   }
 
   /**
@@ -167,12 +169,13 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
     $params = array(
                         'contact_id'           => $this->organizationSponsor ,
                         'contact_type'      => 'Organization',
-                        "custom_{$this->IndiStudentField->id}" => 'Test String',  
-                	'version'		=>$this->_apiversion, 
+                        "custom_{$this->IndiStudentField[id]}" => 'Test String',  
+                				'version'		=>$this->_apiversion, 
     );
 
     $contact =& civicrm_contact_create( $params );
-    $this->assertEquals( $contact['error_message'], 'Invalid Custom Field Contact Type: Organization or Mismatched SubType: Sponsor.' );
+
+    $this->assertEquals( $contact['error_message'], 'Invalid Custom Field Contact Type: Organization or Mismatched SubType: Sponsor.', 'In line '. __LINE__  );
   }
 
   /**
@@ -183,13 +186,13 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
     $params = array(
                         'contact_id'           => $this->individualStudent ,
                         'contact_type' => 'Individual',
-                        "custom_{$this->IndiStudentField->id}" => 'Test String',
+                        "custom_{$this->IndiStudentField[id]}" => 'Test String',
                         'version'		=>$this->_apiversion, 
     );
 
     $result =& civicrm_contact_create( $params );
     $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
-    $this->assertNotNull(  $result['contact_id'] , 'In line '. __LINE__ );
+    $this->assertNotNull(  $result['id'] , 'In line '. __LINE__ );
     $entityValues =  CRM_Core_BAO_CustomValueTable::getEntityValues( $this->individualStudent);
     $elements["custom_{$this->IndiStudentField->id}"] = $entityValues["{$this->IndiStudentField->id}"];
 
@@ -206,11 +209,11 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
     $params = array(
                         'contact_id'           => $this->individual ,
                         'contact_type' => 'Individual',
-                        "custom_{$this->IndiStudentField->id}" => 'Test String',
+                        "custom_{$this->IndiStudentField[id]}" => 'Test String',
     );
 
     $contact =& civicrm_contact_create( $params );
-    $this->assertEquals( $contact['error_message'], 'Invalid Custom Field Contact Type: Individual' );
+    $this->assertEquals( $contact['error_message'], 'Invalid Custom Field Contact Type: Individual' , 'In line '. __LINE__ );
   }
 
   /**
@@ -221,7 +224,7 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
     $params = array(
                         'contact_id'           => $this->individualParent ,
                         'contact_type' => 'Individual',
-                        "custom_{$this->IndiStudentField->id}" => 'Test String',
+                        "custom_{$this->IndiStudentField[id]}" => 'Test String',
                 'version'		=>$this->_apiversion, 
     );
 
@@ -241,19 +244,18 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
     $params = array(
                         'contact_id'           => $this->individual,
                         'contact_type' => 'Individual',
-                        "custom_{$this->IndividualField->id}" => 'Test String',  
+                        "custom_". $this->IndividualField['id'] => 'Test String',  
                 'version'		=>$this->_apiversion, 
     );
     $contact =& civicrm_contact_create( $params );
     $params = array(
                         'contact_id'           => $this->individual ,
                         'contact_type' => 'Individual',
-                        "return.custom_{$this->IndividualField->id}"  => 1,
+                        "return.custom_{$this->IndividualField[id]}"  => 1,
                 				'version'		=>$this->_apiversion, 
     );
     $getContact = civicrm_contact_get( $params );
-
-    $this->assertEquals( $getContact[$this->individual][ "custom_{$this->IndividualField->id}"], 'Test String', 'In line ' . __LINE__ );
+    $this->assertEquals( $getContact['values'][$this->individual][ "custom_".$this->IndividualField[id]], 'Test String', 'In line ' . __LINE__ );
   }
 
   /**
@@ -262,22 +264,24 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
   function testRetrieveValidCustomDataToIndividualStudent() {
 
     $params = array(
-                        'contact_id'           => $this->individualStudent ,
+                        'contact_id'           =>  $this->individualStudent['id'] ,
                         'contact_type' => 'Individual',
                         'contact_sub_type'     => 'Student',
-                        "custom_{$this->IndiStudentField->id}" => 'Test String',  
-                'version'		=>$this->_apiversion, 
+                        "custom_{$this->IndiStudentField[id]}" => 'Test String',  
+                				'version'		=>$this->_apiversion, 
     );
     $contact =& civicrm_contact_create( $params );
     $params = array(
                         'contact_id'           => $this->individualStudent ,
                         'contact_type'         => 'Individual',
                         'contact_sub_type'     => 'Student',
-                        "return.custom_{$this->IndiStudentField->id}"  => 1,
+                     
                         'version'		=>$this->_apiversion, 
     );
-    $getContact = civicrm_contact_get( $params, false );
-    $this->assertEquals( $getContact[$this->individualStudent][ "custom_{$this->IndiStudentField->id}"], 'Test String', 'In line ' . __LINE__ );
+    $getContact = civicrm_contact_get( $params);
+
+    echo " $this->individualStudent ";
+    $this->assertEquals( $getContact[$this->individualStudent][ "custom_{$this->IndiStudentField[id]}"], 'Test String', 'In line ' . __LINE__ );
   }
 
 }

@@ -1170,6 +1170,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     function customGroupCreate( $className,$title, $apiversion = NULL) {
         $apiversion = civicrm_get_api_version($apiversion);
+        
          $params = array(
                         'title'      => $title,
                         'class_name' => $className,
@@ -1178,6 +1179,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         'is_active'  => 1,
                         'version'		 => $apiversion,
                         );
+        if(is_array($className)){
+          $params = $className;
+        }
         require_once 'api/api.php';
         $result = civicrm_api_legacy( 'civicrm_custom_group_create','CustomGroup',$params );
 
@@ -1214,6 +1218,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     
     function customFieldCreate( $customGroupID, $name, $apiversion = NULL ) 
     {
+
         $apiversion = civicrm_get_api_version($apiversion);
         $params = array(
                              'label'           => $name,

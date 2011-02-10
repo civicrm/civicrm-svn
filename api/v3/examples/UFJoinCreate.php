@@ -30,7 +30,7 @@ function uf_join_create_expectedresult(){
            'version' 		=> '3',
            'count' 		=> '1',
            'id' 		=> '0',
-           'values' 		=>            array(           '0' =>  array(
+           'values' 		=> array(           '0' =>  array(
                       'id' => '10',
                       'is_active' => '1',
                       'module' => 'CiviContribute',

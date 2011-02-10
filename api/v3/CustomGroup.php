@@ -74,7 +74,8 @@ function civicrm_custom_group_create( $params )
     // Require either param['class_name'] (string) - for backwards compatibility - OR parm['extends'] (array)
     // If passing extends array - set class_name (e.g. 'Contact', 'Participant'...) as extends[0]. You may optionally
     // pass an extends_entity_column_value as extends[1] (e.g. an Activity Type ID).
-    if( isset( $params['class_name'] ) && trim( $params['class_name'] ) ) {
+
+    if( isset( $params['class_name'] ) && is_string($params['class_name'] ) && trim( $params['class_name'] ) ) {
         $params['extends'][0] = trim( $params['class_name'] );
     } else {
         if ( ! isset( $params['extends'] ) || ! is_array( $params['extends'] ) ) { 
