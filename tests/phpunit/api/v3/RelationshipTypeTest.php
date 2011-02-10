@@ -232,8 +232,9 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
         $params = array('id' => $this->_relationshipTypeCreate(null,3 ),
                                 'version'  =>$this->_apiversion,      
           );
+          
         $result = & civicrm_relationship_type_delete( $params );
-        
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__);        
         $this->assertEquals( $result['is_error'], 0 );
     }
 
