@@ -615,8 +615,8 @@ AND    civicrm_activity.source_record_id = %2";
                 $activity['id'] = $activityID;  
             }
             
-            $isError = civicrm_api('activity', 'create', $activity);
-            if ( civicrm_error( $isError ) ) {
+            require_once 'CRM/Activity/BAO/Activity.php';
+            if (is_a(CRM_Activity_BAO_Activity::create($activity), 'CRM_Core_Error')) {
                 return false;
             }
         }
