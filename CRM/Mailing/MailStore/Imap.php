@@ -68,8 +68,9 @@ class CRM_Mailing_MailStore_Imap extends CRM_Mailing_MailStore
 
         if ($this->_debug) print 'mailboxes found: ' . implode(', ', $boxes) . "\n";
 
-        if (!in_array($this->_ignored,   $boxes)) $this->_transport->createMailbox($this->_ignored);
-        if (!in_array($this->_processed, $boxes)) $this->_transport->createMailbox($this->_processed);
+        if (!in_array(strtolower($this->_ignored), array_map('strtolower', $boxes))) $this->_transport->createMailbox($this->_ignored);
+        if (!in_array(strtolower($this->_processed), array_map('strtolower', $boxes))) $this->_transport->createMailbox($this->_processed);
+
     }
 
     /**
