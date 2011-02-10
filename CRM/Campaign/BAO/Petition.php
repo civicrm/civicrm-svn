@@ -150,8 +150,8 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
     function confirmSignature($activity_id,$contact_id,$petition_id) {
         //change activity status to completed (status_id=2)
         $query = "UPDATE civicrm_activity SET status_id = 2
-            WHERE 	id = $activity_id
-            AND  	source_contact_id = $contact_id";
+            WHERE  id = $activity_id
+            AND   source_contact_id = $contact_id";
         CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
 
         // define constant CIVICRM_TAG_UNCONFIRMED, if not exist in civicrm.settings.php
@@ -189,7 +189,7 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
         $sql = "
             SELECT count(civicrm_address.country_id) as total,
                 IFNULL(country_id,'') as country_id,IFNULL(iso_code,'') as country_iso, IFNULL(civicrm_country.name,'') as country
-                FROM  	civicrm_activity a, civicrm_survey, civicrm_contact
+                FROM   civicrm_activity a, civicrm_survey, civicrm_contact
                 LEFT JOIN civicrm_address ON civicrm_address.contact_id = civicrm_contact.id AND civicrm_address.is_primary = 1
                 LEFT JOIN civicrm_country ON civicrm_address.country_id = civicrm_country.id
                 WHERE
@@ -227,7 +227,7 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
         $sql = "
             SELECT
             status_id,count(id) as total
-            FROM  	civicrm_activity
+            FROM   civicrm_activity
             WHERE
             source_record_id = " . (int) $surveyId  .
             " AND activity_type_id = " . (int)  $surveyInfo['activity_type_id'] .
@@ -250,7 +250,7 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
         $surveyInfo = array( );
 
         $sql = "
-            SELECT 	activity_type_id,
+            SELECT  activity_type_id,
             campaign_id,
             title,
             ov.label AS activity_type
@@ -285,7 +285,7 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
         $signature = array( );
 
         $sql = "
-            SELECT 	a.id,
+            SELECT  a.id,
             a.source_record_id as survey_id,
             a.activity_date_time,
             a.status_id,
@@ -297,7 +297,7 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
             IFNULL(gender_id,'') AS gender_id,
             IFNULL(state_province_id,'') AS state_province_id,
             IFNULL(country_id,'') as country_id,IFNULL(iso_code,'') as country_iso, IFNULL(civicrm_country.name,'') as country
-            FROM  	civicrm_activity a, civicrm_survey, civicrm_contact
+            FROM   civicrm_activity a, civicrm_survey, civicrm_contact
             LEFT JOIN civicrm_address ON civicrm_address.contact_id = civicrm_contact.id  AND civicrm_address.is_primary = 1
             LEFT JOIN civicrm_country ON civicrm_address.country_id = civicrm_country.id
             WHERE
@@ -357,15 +357,15 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
         $signature = array( );
 
         $sql = "
-            SELECT 	a.id AS id,
+            SELECT  a.id AS id,
             a.source_record_id AS source_record_id,
             a.source_contact_id AS source_contact_id,
             a.activity_date_time AS activity_date_time,
             a.activity_type_id AS activity_type_id,
             a.status_id AS status_id," .
             "'" . $surveyInfo['title'] . "'" ." AS survey_title
-            FROM  	civicrm_activity a
-            WHERE 	a.source_record_id = " . $surveyId . "
+            FROM   civicrm_activity a
+            WHERE  a.source_record_id = " . $surveyId . "
             AND a.activity_type_id = " . $surveyInfo['activity_type_id'] . "
             AND a.source_contact_id = " . $contactId;
 
@@ -401,12 +401,12 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
 
         /* sendEmailMode
          * CRM_Campaign_Form_Petition_Signature::EMAIL_THANK
-         * 		connected user via login/pwd - thank you
-         * 	 	or dedupe contact matched who doesn't have a tag CIVICRM_TAG_UNCONFIRMED - thank you
-         *  	or login using fb connect - thank you + click to add msg to fb wall
+         *   connected user via login/pwd - thank you
+         *    or dedupe contact matched who doesn't have a tag CIVICRM_TAG_UNCONFIRMED - thank you
+         *   or login using fb connect - thank you + click to add msg to fb wall
          *
          * CRM_Campaign_Form_Petition_Signature::EMAIL_CONFIRM
-         *		send a confirmation request email
+         *  send a confirmation request email
          */
         require_once 'CRM/Campaign/Form/Petition/Signature.php';
 
@@ -490,8 +490,8 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
                 $params['email-Primary'] ,
                 $params['contactId'] );
 
-            //				require_once 'CRM/Core/BAO/Domain.php';
-            //				$domain =& CRM_Core_BAO_Domain::getDomain();
+            //    require_once 'CRM/Core/BAO/Domain.php';
+            //    $domain =& CRM_Core_BAO_Domain::getDomain();
             $config = CRM_Core_Config::singleton();
             $localpart   = CRM_Core_BAO_MailSettings::defaultLocalpart();
 
