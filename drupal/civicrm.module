@@ -34,20 +34,6 @@ require_once 'civicrm_user.inc';
  */
 
 /**
- * Drupal Major Version
- *
- * @return int 6 or 7, depending on version
- */
-function civicrm_drupal_major_version() {
-    static $version;
-    //for now, just check for the new DB manager
-    if (empty($version)) {
-        $version = function_exists('db_select') ? 7 : 6; 
-    }
-    return $version;
-}
-
-/**
  * Provides a link to the CSS stylesheet associated with this module.
  * and the javascript files needed by this module
  *
@@ -123,14 +109,10 @@ function civicrm_help($section)
 {	
     switch ($section) {
     case 'admin/help#civicrm':
-        //TODO -- url() has different argument conventions in D7
-        if (civicrm_drupal_major_version() == 7)
-          break;
-        if ( ! civicrm_initialize( ) ) {
-    	    return;
-        }
+        return;
 
-	return;
+        // FIXME - should not invoke any civicrm stuff here
+        // way too expensive
         require_once 'CRM/Utils/System.php';
         $docLinkAdmin = CRM_Utils_System::docURL2( "Administrator's Guide", true );
         $docLinkAccess = CRM_Utils_System::docURL2( "Access Control", true );
@@ -154,6 +136,7 @@ function civicrm_help($section)
         $output .= '</ul>';
         $output .= '<p>'. t('For more information please refer to the <a href="!1">CiviCRM web-site</a> which includes project information, documentation and support resources and more.', array('!1' => 'http://civicrm.org')) .'</p>';
         return $output;
+
     case 'admin/modules#description':
         // This description is shown in the listing at admin/modules.
         return t('Constituent Relationship Management (CiviCRM !1). Allows sites to manage contacts, relationships and groups, and track contact activities, contributions, memberships and events. For more information please refer to the <a href="!2">CiviCRM web-site</a> which includes project information, documentation and support resources and more.', array('!1' => '2.2', '!2' => 'http://civicrm.org/'));
@@ -326,9 +309,7 @@ function civicrm_initialize( )
         // Add module-specific header elements
         $header = civicrm_html_head();
         if ( ! empty( $header ) ) {
-            civicrm_drupal_major_version() <= 7 ?
-                drupal_set_html_head($header) :  
-                drupal_add_html_head($header);
+            drupal_add_html_head($header);
         }
     }
 
@@ -467,17 +448,10 @@ function civicrm_register_data($edit, &$user, $category, $reset, $doNotProcess =
     if ( $html ) {
         $html = civicrm_add_jquery( $html );
         $index = empty( $category ) ? 'civicrm-profile-register' : $category;
-        if (civicrm_drupal_major_version() <= 6) {
-            $output[$index] = array( '#title' => $category,
-                                     '#value' => $html,
-                                     '#weight' => 1 );
-        } else {
-           //Drupal 7 style markup fields
-           $output[$index] = array( '#title'  => $category,
-                                    '#type'   => 'item',
-                                    '#markup' => $html,
-                                    '#weight' => 1 );
-        }
+        $output[$index] = array( '#title'  => $category,
+                                 '#type'   => 'item',
+                                 '#markup' => $html,
+                                 '#weight' => 1 );
     }
     return $output;
 }
@@ -543,19 +517,10 @@ function civicrm_form_data($edit, &$user, $category, $reset, $doNotProcess = fal
         $output[$index][] = array( '#title' => $category,
                                    '#value' => $html,
                                    '#weight' => 1 );
-        if (civicrm_drupal_major_version() == 6) {
-            $output[$index][] = array( '#title' => $category,
-                                       '#value' => $html,
-                                       '#weight' => 1 );
-        }
-        else {
-            //Drupal 7 style markup fields
-            $output[$index][] = array( '#title' => $category,
-                                       '#type' => 'item',
-                                       '#markup' => $html,
-                                       '#weight' => 1 );
-          
-        }
+        $output[$index][] = array( '#title' => $category,
+                                   '#type' => 'item',
+                                   '#markup' => $html,
+                                   '#weight' => 1 );
     }
 
     return $output;
@@ -602,12 +567,7 @@ function civicrm_user_form_validate($form, &$form_state) {
 * Disable the drupal cache for all civicrm pages which should not be cached
 */
 function civicrm_cache_disable( ) {
-    if ( civicrm_drupal_major_version( ) <= 6 ) {
-        global $conf;
-        $conf['cache'] = CACHE_DISABLED;
-    } else {
-        drupal_page_is_cacheable( false );
-    }
+    drupal_page_is_cacheable( false );
 }
 
 /**
