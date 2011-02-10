@@ -403,11 +403,6 @@ function civicrm_invoke( )
     if ( empty( $pageContent ) AND 
          ! empty( $printedContent ) ) {
         $pageContent = $printedContent;
-        
-    case 'logout':
-        $session = CRM_Core_Session::singleton();
-        $session->reset();
-        return;
     }
     return $pageContent;
 }
