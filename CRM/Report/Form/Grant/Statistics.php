@@ -366,19 +366,19 @@ SELECT COUNT({$this->_aliases['civicrm_grant']}.id) as count ,
                                      $awardedGrants, $awardedGrantsAmount );
             }
             
-            if ( array_key_exists( 'civicrm_address_country_id', $values ) ) {
-                $country = CRM_Utils_Array::value( $values['civicrm_address_country_id'], $countries );
-                $country = ( $country ) ? $country : 'Unassigned';
-                $grantStatistics['civicrm_address_country_id']['title'] = ts( 'By Country' );
-                self::getStatistics( $grantStatistics['civicrm_address_country_id'], $country, $values, 
-                                     $awardedGrants, $awardedGrantsAmount );
-            }
-            
             if ( array_key_exists( 'civicrm_world_region_name', $values ) ) {
                 $region = CRM_Utils_Array::value( 'civicrm_world_region_name', $values );
                 $region = ( $region ) ? $region : 'Unassigned';
                 $grantStatistics['civicrm_world_region_name']['title'] = ts( 'By Region' );
                 self::getStatistics( $grantStatistics['civicrm_world_region_name'], $region, $values, 
+                                     $awardedGrants, $awardedGrantsAmount );
+            }
+            
+            if ( array_key_exists( 'civicrm_address_country_id', $values ) ) {
+                $country = CRM_Utils_Array::value( $values['civicrm_address_country_id'], $countries );
+                $country = ( $country ) ? $country : 'Unassigned';
+                $grantStatistics['civicrm_address_country_id']['title'] = ts( 'By Country' );
+                self::getStatistics( $grantStatistics['civicrm_address_country_id'], $country, $values, 
                                      $awardedGrants, $awardedGrantsAmount );
             }
             

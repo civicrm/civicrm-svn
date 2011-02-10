@@ -37,8 +37,8 @@
         {if $qill}
             {include file="CRM/common/displaySearchCriteria.tpl"}
         {/if}
-    {if $context == 'Event' && ( $pager->_totalItems ne $participantCount ) }
-    {ts}Actual Registered participant count{/ts} : {$participantCount}
+    {if $context == 'Event' && $participantCount && ( $pager->_totalItems ne $participantCount ) }
+    {ts}Actual participant count{/ts} : {$participantCount}
     {/if}
     </td>
   </tr>

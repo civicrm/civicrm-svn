@@ -93,8 +93,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     function __construct($name = NULL, array $data = array(), $dataName = '' ) {
         parent::__construct($name, $data, $dataName);
 
-        // we need full error reporting
-        error_reporting ( E_ALL & ~E_NOTICE );
+        error_reporting( E_ALL & ~E_NOTICE );
 
         //  create test database
         self::$utils = new Utils( $GLOBALS['mysql_host'],

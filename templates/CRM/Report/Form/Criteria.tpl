@@ -27,7 +27,7 @@
     {if $colGroups}
 	    <div id="col-groups" class="civireport-criteria" >
         {if $componentName eq 'Grant'}
-            <h3>Report Sections</h3>
+            <h3>{ts}Include these Statistics{/ts}</h3>
         {else}
             <h3>Display Columns</h3>
         {/if}
