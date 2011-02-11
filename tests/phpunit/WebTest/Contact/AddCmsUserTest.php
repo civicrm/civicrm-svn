@@ -113,11 +113,12 @@ class WebTest_Contact_AddCmsUserTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("_qf_Basic_refresh");
       $this->type("sort_name", $emailId);
       $this->click("_qf_Basic_refresh");
-      $this->waitForTextPresent($emailId);
+      $this->waitForPageToLoad( "30000" );
+
+      $this->assertTrue( $this->isTextPresent( $emailId ) );
       $this->assertTrue( $this->isTextPresent( $lastName . ', ' . $firstName ) );
       $this->assertTrue( $this->isTextPresent( "902C El Camino Way SW" ) );
       $this->assertTrue( $this->isTextPresent( "Dumfries" ) );
       $this->assertTrue( $this->isTextPresent( "1234" ) );
   }  
 }
-?>
