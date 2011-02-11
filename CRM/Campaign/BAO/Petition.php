@@ -403,7 +403,7 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
 
         // check if the group defined by CIVICRM_PETITION_CONTACTS exists, else create it
         require_once 'CRM/Contact/DAO/Group.php';
-        $dao = CRM_Contact_DAO_Group;
+        $dao = new CRM_Contact_DAO_Group();
         $dao->title = defined('CIVICRM_PETITION_CONTACTS') ? CIVICRM_PETITION_CONTACTS : 'Petition Contacts';
         if (!$dao->find(true)) {
             $dao->is_active = 1;
@@ -443,7 +443,8 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
 
             // add this contact to the CIVICRM_PETITION_CONTACTS group
             require_once 'CRM/Contact/BAO/GroupContact.php';
-            CRM_Contact_BAO_GroupContact::addContactsToGroup(array($params['contactId']), $group_id, 'API');
+            $p = array($params['contactId']);//Cannot pass parameter 1 by reference 
+            CRM_Contact_BAO_GroupContact::addContactsToGroup($p, $group_id, 'API');
 
             require_once 'CRM/Core/BAO/MessageTemplates.php';
             if ($params['email-Primary']) {
