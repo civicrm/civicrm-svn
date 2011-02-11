@@ -275,11 +275,27 @@ class CRM_Event_Form_Search extends CRM_Core_Form
             //get actual count only when we are dealing w/ single event.
             $participantCount = 0;
             if ( count( $eventIds ) == 1 ) {
-                $participantCount = CRM_Event_BAO_Participant::totalEventSeats( array_pop( $eventIds ) ); 
+                //convert form values to clause.
+                $seatClause = array( );
+                $clauseParams = array( 'participant_status_id', 'participant_role_id' );
+                if ( CRM_Utils_Array::value( 'participant_status_id', $this->_formValues ) ) {
+                    $statuses = array_keys( $this->_formValues['participant_status_id'] );
+                    
+                    $seatClause[] = '( participant.status_id IN ( ' .implode( ' , ', $statuses ) .' ) )';
+                }
+                if ( CRM_Utils_Array::value( 'participant_role_id', $this->_formValues ) ) {
+                    $roles = array_keys( $this->_formValues['participant_role_id'] );
+                    $seatClause[] = '( participant.status_id IN ( ' .implode( ' , ', $roles ) .' ) )';
+                }
+                $clause = null;
+                if ( !empty( $seatClause ) ) {
+                    $clause = implode( ' AND ', $seatClause );
+                }
+                $participantCount = CRM_Event_BAO_Event::eventTotalSeats( array_pop( $eventIds ), $clause );
             }
             $this->assign( 'participantCount', $participantCount );
             $this->assign( 'lineItems', $lineItems );
-
+            
             $total = $cancel = 0;
 
             require_once "CRM/Core/Permission.php";
