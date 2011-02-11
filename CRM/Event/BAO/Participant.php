@@ -1736,20 +1736,50 @@ INNER JOIN  civicrm_price_field field ON ( value.price_field_id = field.id )
      WHERE  line.entity_table = 'civicrm_participant'
        AND  participant.event_id = %1";
          
-         $lineItem = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $eventId, 'Positive' ) ) );
+         $queryParams  = array( 1 => array( $eventId, 'Positive' ) );
+         $lineItem     = CRM_Core_DAO::executeQuery( $query, $queryParams );
          $countDetails = array( );
+         
+         $weDoHaveLineItems = false;
+         
          while ( $lineItem->fetch( ) ) {
+             $weDoHaveLineItems = true;
              $count = $lineItem->count;
              if ( !$count ) $count = 0; 
              if ( $lineItem->html_type == 'Text' ) $count *= $lineItem->qty;  
              $countDetails[$lineItem->entity_id][$lineItem->lineId] = $count;
          }
-         foreach ( $participantIds as $pId ) {
-             $count = 1;
-             $optCounts = CRM_Utils_Array::value( $pId, $countDetails );
-             if ( is_array( $optCounts ) ) $count = array_sum( $optCounts );
-             if ( !$count ) $count = 1;
-             $totalSeats += $count;
+         
+         //first check do we have line items.
+         if ( $weDoHaveLineItems ) {
+             //hey its seems like user does not pass participant ids,
+             //lets pull all participant for given event from participant table.
+             if ( empty( $participantIds ) ) {
+                 $participant = CRM_Core_DAO::executeQuery( 'select id from civicrm_participant where event_id = %1',
+                                                            array( 1 => array( $eventId, 'Positive' ) ) );
+                 while ( $participant->fetch( ) ) {
+                     $participantIds[$participant->id] = $participant->id; 
+                 }
+             }
+             
+             //finally calculate actual count for participants.
+             foreach ( $participantIds as $pId ) {
+                 $count = 1;
+                 $optCounts = CRM_Utils_Array::value( $pId, $countDetails );
+                 if ( is_array( $optCounts ) ) $count = array_sum( $optCounts );
+                 if ( !$count ) $count = 1;
+                 $totalSeats += $count;
+             }
+         } else {
+             if ( empty( $participantIds ) ) {
+                 $query = '
+SELECT  count(*) 
+  FROM  civicrm_participant
+ WHERE  event_id = %1';
+                 $totalSeats = CRM_Core_DAO::singleValueQuery( $query, $queryParams );
+             } else {
+                 $totalSeats = count( $participantIds );
+             }
          }
          
          //in case of static cache of participants, hold this seats.

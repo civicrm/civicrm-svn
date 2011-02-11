@@ -247,7 +247,7 @@ class CRM_Event_Form_Search extends CRM_Core_Form
          */ 
         $rows = $this->get( 'rows' );
         if ( is_array( $rows ) ) {
-            $lineItems = $participantIds = $eventIds = array( );
+            $lineItems = $eventIds = array( );
             require_once 'CRM/Event/BAO/Event.php';
             require_once 'CRM/Event/BAO/Participant.php';
             if ( !$this->_single ) {
@@ -259,8 +259,6 @@ class CRM_Event_Form_Search extends CRM_Core_Form
             }
             foreach ( $rows as $row ) { 
                 $eventIds[$row['event_id']] = $row['event_id'];
-                $participantIds[$row['participant_id']] = $row['participant_id'];
-                
                 if ( !$this->_single ) {
                     $this->addElement( 'checkbox', $row['checkbox'], 
                                        null, null, 
@@ -277,7 +275,7 @@ class CRM_Event_Form_Search extends CRM_Core_Form
             //get actual count only when we are dealing w/ single event.
             $participantCount = 0;
             if ( count( $eventIds ) == 1 ) {
-                $participantCount = CRM_Event_BAO_Participant::totalEventSeats( array_pop( $eventIds ), $participantIds ); 
+                $participantCount = CRM_Event_BAO_Participant::totalEventSeats( array_pop( $eventIds ) ); 
             }
             $this->assign( 'participantCount', $participantCount );
             $this->assign( 'lineItems', $lineItems );
