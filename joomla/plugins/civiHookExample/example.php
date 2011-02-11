@@ -12,7 +12,7 @@ defined('_JEXEC') or die;
 
 jimport('joomla.plugin.plugin');
 
-class plgCiviCRMExample extends JPlugin
+class plgCiviCRMHookExample extends JPlugin
 {
 
 /**
