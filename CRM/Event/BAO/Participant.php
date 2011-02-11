@@ -357,6 +357,7 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
         // It might be case there are some empty spaces and still event
         // is full, as waitlist might represent group require spaces > empty.
         
+        require_once 'CRM/Event/BAO/Event.php';
         require_once 'CRM/Event/PseudoConstant.php';
         $participantRoles   = CRM_Event_PseudoConstant::participantRole(   null, 'filter = 1' ); 
         $countedStatuses    = CRM_Event_PseudoConstant::participantStatus( null, "is_counted = 1" );
@@ -384,6 +385,7 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
             //build the where clause.
             $whereClause  = ' WHERE ' . implode( ' AND ', $where );
             $whereClause .= " AND participant.status_id = $onWaitlistStatusId ";
+            $eventSeatsWhere = implode( ' AND ', $where ) . " AND ( participant.status_id = $onWaitlistStatusId )";
             
             $query = "
     SELECT  participant.id id,
@@ -392,26 +394,22 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
 INNER JOIN  civicrm_event event ON ( event.id = participant.event_id )
             {$whereClause}";
             
-            $participantIds = array( );
             $eventFullText  = ts( 'This event is full !!!' );
             $participants   = CRM_Core_DAO::executeQuery( $query, $eventParams );
             while ( $participants->fetch( ) ) {
-                $participantIds[$participants->id] = $participants->id;
                 //oops here event is full and we don't want waiting count.
-                if ( !$returnWaitingCount ) {
-                    $eventFullText = $participants->event_full_text;
-                    break;
+                if ( $returnWaitingCount ) {
+                    return CRM_Event_BAO_Event::eventTotalSeats( $eventId, $eventSeatsWhere );
+                } else {
+                    return ( $participants->event_full_text ) ? $participants->event_full_text : $eventFullText; 
                 }
-            }
-            if ( !empty( $participantIds ) ) {
-                return ( !$returnWaitingCount ) ? $eventFullText : CRM_Event_BAO_Event::eventTotalSeats( $eventId, 
-                                                                                                         $whereClause );
             }
         }
         
         //consider only counted participants.
         $where[] = ' participant.status_id IN ( ' . implode( ', ', array_keys( $countedStatuses ) ) . ' ) ';
         $whereClause = ' WHERE ' . implode( ' AND ', $where );
+        $eventSeatsWhere = implode( ' AND ', $where );
         
         $query = "
     SELECT  participant.id id,
@@ -422,14 +420,11 @@ INNER JOIN  civicrm_event event ON ( event.id = participant.event_id )
             {$whereClause}";
         
         $eventMaxSeats  = null; 
-        $participantIds = array( );
         $eventFullText  = ts( 'This event is full !!!' );
         $participants   = CRM_Core_DAO::executeQuery( $query, $eventParams );
         while ( $participants->fetch( ) ) {
             $eventFullText = $participants->event_full_text;
             $eventMaxSeats = $participants->max_participants;
-            $participantIds[$participants->id] = $participants->id;
-            
             //don't have limit for event seats.
             if ( $participants->max_participants == null ) {
                 return $result;
@@ -437,7 +432,7 @@ INNER JOIN  civicrm_event event ON ( event.id = participant.event_id )
         }
         
         //get the total event seats occupied by these participants.
-        $eventRegisteredSeats = CRM_Event_BAO_Event::eventTotalSeats( $eventId, $whereClause );
+        $eventRegisteredSeats = CRM_Event_BAO_Event::eventTotalSeats( $eventId, $eventSeatsWhere );
         
         if ( $eventRegisteredSeats ) {
             if ( $eventRegisteredSeats >= $eventMaxSeats ) {

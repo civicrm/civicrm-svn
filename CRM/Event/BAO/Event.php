@@ -1778,7 +1778,6 @@ WHERE  ce.loc_block_id = $locBlockId";
         
         $extraWhereClause = trim( $extraWhereClause );
         if ( !empty( $extraWhereClause ) ) {
-            $extraWhereClause  = preg_replace( '/where\s/i', '', $extraWhereClause );
             $extraWhereClause  = " AND ( {$extraWhereClause} )";
         }
         
