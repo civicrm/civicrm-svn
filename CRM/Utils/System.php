@@ -143,13 +143,8 @@ class CRM_Utils_System {
                 drupal_set_breadcrumb( '' );
                 drupal_maintenance_theme();
             }
-            if ( civicrm_drupal_major_version( ) <= 6 ) {
-              //drupal 6
-              $out = theme( $type, $content, $args );
-            } else {
-                $out = $content;
-                $ret = true;
-            }
+            $out = $content;
+            $ret = true;
         } else {
             $out = $content;
         }

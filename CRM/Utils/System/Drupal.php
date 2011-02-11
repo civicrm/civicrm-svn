@@ -54,12 +54,7 @@ class CRM_Utils_System_Drupal {
                 $pageTitle = $title;
             }
 
-            //set drupal title 
-            if ( civicrm_drupal_major_version( ) <= 6 ) {
-                drupal_set_title( $pageTitle );
-            } else {
-                drupal_set_title( $pageTitle, PASS_THROUGH );
-            }
+            drupal_set_title( $pageTitle, PASS_THROUGH );
         }
     }
     
@@ -119,9 +114,7 @@ class CRM_Utils_System_Drupal {
      */
     static function addHTMLHead( $header ) {
         if ( ! empty( $header ) ) { 
-            civicrm_drupal_major_version() <= 7 ?
-                drupal_set_html_head($header) :  
-                drupal_add_html_head($header);
+            drupal_add_html_head($header);
         }
     }
 

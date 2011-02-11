@@ -188,12 +188,8 @@ class CRM_Core_Page {
                                             self::$_template->fetch( 'CRM/common/'. strtolower($config->userFramework) .'.tpl' ),
                                             true,
                                             $this->_print );
-        if( $config->userFramework == 'Drupal' ) {
-            if ( civicrm_drupal_major_version( ) <= 6 ) {
-                echo $content;
-            } else {
-                return $content;
-            }
+        if ( $config->userFramework == 'Drupal' ) {
+            return $content;
         }
     }
     
