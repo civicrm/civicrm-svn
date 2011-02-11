@@ -573,20 +573,14 @@ WHERE name = %1";
      */
     static function add( $params ) {
 
-        // null if empty params or doesn't contain parent_id
-        if ( !CRM_Utils_Array::value( 'parent_id', $params ) ) {
-            return;
-        }
-
         // label or name
         if ( !CRM_Utils_Array::value( 'label', $params ) ) {
             return;
-        }        
-
-        // parent_id
-        if ( !CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_ContactType', $params['parent_id'] ) ) {
-            return;
         }
+        if ( CRM_Utils_Array::value( 'parent_id', $params ) &&
+             !CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_ContactType', $params['parent_id'] ) ) {
+            return;
+        }  
         
         $contactType = new CRM_Contact_DAO_ContactType( );
         $contactType->copyValues( $params );
@@ -607,8 +601,9 @@ WHERE name = %1";
             $newParams = array ( 'label' => "New $contact",
                                  'is_active'=> $active );
             CRM_Core_BAO_Navigation::processUpdate( $params ,$newParams );
-        } else if( CRM_Utils_Array::value( 'parent_id', $params ) ) {
+        } else {
             $name = self::getBasicType( $contactName );    
+            if( !$name ) return;
             $value = array( 'name' => "New $name" );
             CRM_Core_BAO_Navigation::retrieve( $value ,$navinfo );
             $navigation = array(
