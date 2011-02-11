@@ -327,13 +327,14 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
      */
     public function postProcess() 
     {		
-    
+       
 		if (defined('CIVICRM_TAG_UNCONFIRMED')) {
 			// Check if contact 'email confirmed' tag exists, else create one
 			// This should be in the petition module initialise code to create a default tag for this
 			$tag_params['name'] = CIVICRM_TAG_UNCONFIRMED;
-			$tag = civicrm_tag_get($tag_params); 
-			if ($tag['is_error'] == 1) {				
+			$tag_params['version'] = 3;
+			$tag = civicrm_api('tag','get',$tag_params); 
+			if ($tag['count'] == 0) {				
 				//create tag
 				$tag_params['description'] = CIVICRM_TAG_UNCONFIRMED;
 				$tag_params['is_reserved'] = 1;
@@ -343,6 +344,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 			} else {
 				$this->_tagId = $tag['id'];
 			}
+
 		}
 		
 		// export the field values to be used for saving the profile form
