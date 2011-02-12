@@ -1782,7 +1782,7 @@ WHERE  ce.loc_block_id = $locBlockId";
         }
         
         $query ="
-    SELECT  SUM( IF ( lineItem.id, value.count*lineItem.qty, 1 ) ) as eventTotalSeats
+    SELECT  participant.id, SUM( IF ( lineItem.id, value.count*lineItem.qty, 1 ) ) as seats
       FROM  civicrm_participant participant
 INNER JOIN  civicrm_event event ON ( event.id = participant.event_id ) 
  LEFT JOIN  civicrm_line_item lineItem ON ( lineItem.entity_id    = participant.id 
@@ -1790,8 +1790,16 @@ INNER JOIN  civicrm_event event ON ( event.id = participant.event_id )
  LEFT JOIN  civicrm_price_field_value value ON ( value.id = lineItem.price_field_value_id )
      WHERE  ( participant.event_id = %1 )
             {$extraWhereClause}
-  GROUP BY  participant.event_id";
+  GROUP BY  participant.id";
         
-        return (int)CRM_Core_DAO::singleValueQuery( $query, array( 1 => array( $eventId, 'Positive' ) ) );
+        $totalSeats  = 0;
+        $participant = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $eventId, 'Positive' ) ) );
+        while ( $participant->fetch( ) ) {
+            $seats = $participant->seats;
+            if ( !$seats ) $seats = 1; 
+            $totalSeats += $seats;
+        }
+        
+        return $totalSeats;
     }
 }
