@@ -509,7 +509,7 @@ LIMIT      0, 10
                 $class = $statusValue['class'];
                 $statusCount = self::eventTotalSeats( $dao->id, "( participant.status_id = {$statusId} )" );
                 if ( $statusCount ) {
-                    $urlString  = "reset=1&force=1&event=$eventId&status=$statusId"; 
+                    $urlString  = "reset=1&force=1&event={$dao->id}&status=$statusId"; 
                     $statusInfo =  array( 'url'   => CRM_Utils_System::url( 'civicrm/event/search', $urlString ),
                                           'name'  => $statusValue['name'],
                                           'count' => $statusCount );                
