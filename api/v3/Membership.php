@@ -60,7 +60,7 @@ function civicrm_membership_delete($params)
       try{ 
    
     civicrm_verify_one_mandatory($params,null,array('id','membership_id'));
-    $membershipID = empty($params['id']) ?$params['id'] :$params['membership_id'];
+    $membershipID = empty($params['id']) ?$params['membership_id'] :$params['id'];
 
 
     // membershipID should be numeric
