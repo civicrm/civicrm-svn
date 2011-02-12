@@ -122,9 +122,9 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
         $customGroup =& civicrm_custom_group_create($params);
         $this->assertEquals($customGroup['is_error'], 0);
 
-        $this->assertNotNull($customGroup['id']);
-        $this->assertNotNull($customGroup['values'][$customGroup['id']]['customFieldId']);
-        $this->assertEquals($customGroup['values'][$customGroup['id']]['extends'], 'Individual');
+        $this->assertNotNull($customGroup['id'], 'in line ' . __LINE__);
+        $this->assertNotNull($customGroup['values'][$customGroup['id']]['customFieldId'], 'in line ' . __LINE__);
+        $this->assertEquals($customGroup['values'][$customGroup['id']]['extends'], 'Individual', 'in line ' . __LINE__);
         $this->customGroupDelete($customGroup['id'],$this->_apiversion);
     }
 
