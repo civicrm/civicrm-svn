@@ -818,50 +818,65 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
      * @access public
      * @static
      */
-    static function checkContactSharedAddressFields( &$fields, $contactId  ) {
-        
+    static function checkContactSharedAddressFields( &$fields, $contactId  ) 
+    {
         if ( !$contactId || !is_array( $fields ) || empty( $fields ) ) {
             return;
         }
         
         $sharedLocations = array( );
+        
         $query = "
-SELECT location_type_id
+SELECT is_primary,
+       location_type_id
   FROM civicrm_address 
  WHERE contact_id = %1 
    AND master_id IS NOT NULL";
-        $dao = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $contactId, 'Integer' ) ) );
         
+        $dao = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $contactId, 'Positive' ) ) );
         while( $dao->fetch( ) ) {
-            $sharedLocations[] =  $dao->location_type_id;
+            $sharedLocations[$dao->location_type_id] = $dao->location_type_id;
+            if ( $dao->is_primary ) $sharedLocations['Primary'] = 'Primary';
         }
-        $masterAddressId = null;
-        $addressFields = array ( 'street_address',
-                                 'supplemental_address_1',
-                                 'supplemental_address_2',
-                                 'city',
-                                 'postal_code',
-                                 'postal_code_suffix',
-                                 'geo_code_1',
-                                 'geo_code_2',
-                                 'state_province',
-                                 'country',
-                                 'county',
-                                 'address_name' );
         
-        foreach ( $fields as $key => $value ) {
-            $val = null;
-            if ( is_array( $value ) ) {
-                $val = explode( '-', $value['name'] );
-                if ( in_array( $val[0] , $addressFields ) 
-                     && in_array( CRM_Utils_Array::value( 'location_type_id', $value, 0 ), $sharedLocations )  ) {
-                    $fields[$key]['is_shared'] = true;
-                }
+        //no need to process further.
+        if ( empty( $sharedLocations ) ) {
+            return;
+        }
+        
+        $addressFields = array( 'city',
+                                'county',
+                                'country',
+                                'geo_code_1',
+                                'geo_code_2',
+                                'postal_code',
+                                'address_name',
+                                'state_province',
+                                'street_address',
+                                'postal_code_suffix',
+                                'supplemental_address_1',
+                                'supplemental_address_2' );
+        
+        foreach ( $fields as $name => &$values ) {
+            if ( !is_array( $values ) || empty( $values ) ) {
+                continue;
+            }
+            
+            $nameVal  = explode( '-', $values['name'] ); 
+            $fldName  = CRM_Utils_Array::value( 0, $nameVal );
+            $locType  = CRM_Utils_Array::value( 1, $nameVal );
+            if ( CRM_Utils_Array::value( 'location_type_id', $values ) ) {
+                $locType = $values['location_type_id'];
+            }
+            
+            if ( in_array( $fldName, $addressFields ) && 
+                 in_array( $locType, $sharedLocations ) ) {
+                $values['is_shared'] = true;
             }
         }
     }
     
-     /**
+    /**
      * Function to update the shared addresses if master address is modified
      *
      * @param int    $addressId address id
