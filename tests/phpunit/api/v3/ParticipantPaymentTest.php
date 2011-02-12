@@ -29,7 +29,7 @@
 require_once 'api/v3/Participant.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'api/v3/ParticipantPayment.php';
-class api_v3_ParticipantTest extends CiviUnitTestCase
+class api_v3_ParticipantPaymentTest extends CiviUnitTestCase
 {
 
   protected $_apiversion;
