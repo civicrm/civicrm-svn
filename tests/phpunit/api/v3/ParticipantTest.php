@@ -412,10 +412,10 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
    */
   function testUpdateEmptyParams()
   {
-    $params = array();
+    $params = array('version' => $this->_apiversion);
     $participant = & civicrm_participant_create($params);
     $this->assertEquals( $participant['is_error'],1 );
-    $this->assertEquals( $participant['error_message'],'Required parameter missing' );
+    $this->assertEquals( $participant['error_message'],'Mandatory key(s) missing from params array: event_id, contact_id' );
   }
 
   /**
@@ -479,7 +479,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
     );
     $participant = & civicrm_participant_create($params);
     $this->assertEquals( $participant['is_error'], 1 );
-    $this->assertEquals( $participant['error_message'],'Contact id is not valid' );
+    $this->assertEquals( $participant['error_message'],'Mandatory key(s) missing from params array: event_id' );
     $result = $this->participantDelete( $participantId,  $this->_apiversion );
   }
 
