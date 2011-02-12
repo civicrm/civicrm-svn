@@ -1781,6 +1781,27 @@ WHERE  ce.loc_block_id = $locBlockId";
             $extraWhereClause  = " AND ( {$extraWhereClause} )";
         }
         
+        //event seats calculation :
+        //1. consider event seat as a single when participant does not have line item.
+        //2. consider event seat as a single when participant has line items but does not 
+        //   have count for corresponding price field value ( ie price field value does not carry any seat )  
+        //3. consider event seat as a sum of all seats from line items in case price field value carries count. 
         
+        $query = "
+    SELECT  IF ( SUM( value.count*lineItem.qty ),
+                 SUM( value.count*lineItem.qty ) + 
+                 COUNT( DISTINCT participant.id ) -
+                 COUNT( DISTINCT IF ( value.count, participant.id, NULL ) ),
+                 COUNT( DISTINCT participant.id ) ) 
+      FROM  civicrm_participant participant
+INNER JOIN  civicrm_event event ON ( event.id = participant.event_id ) 
+LEFT  JOIN  civicrm_line_item lineItem ON ( lineItem.entity_id    = participant.id 
+                                       AND  lineItem.entity_table = 'civicrm_participant' ) 
+LEFT  JOIN  civicrm_price_field_value value ON ( value.id = lineItem.price_field_value_id AND value.count )    
+     WHERE  ( participant.event_id = %1 )
+            {$extraWhereClause}
+  GROUP BY  participant.event_id";
+        
+        return (int)CRM_Core_DAO::singleValueQuery( $query, array( 1 => array( $eventId, 'Positive' ) ) );
     }
 }
