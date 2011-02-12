@@ -24,7 +24,7 @@ function participant_get_expectedresult(){
            'version' 		=> '3',
            'count' 		=> '1',
            'id' 		=> '1',
-           'values' 		=>            array(           '1' =>  array(
+           'values' 		=> array(           '1' =>  array(
                       'contact_id' => '2',
                       'contact_type' => 'Individual',
                       'sort_name' => 'Anderson, Anthony',

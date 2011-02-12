@@ -20,7 +20,7 @@ function domain_get_expectedresult(){
 
   $expectedResult = 
      array(
-           '1' 		=>            array(           'id' => '1',                      'domain_name' => 'Default Domain Name',                      'description' => '',                      'domain_email' => '',                      'domain_phone' =>  array(
+           '1' 		=> array(           'id' => '1',                      'domain_name' => 'Default Domain Name',                      'description' => '',                      'domain_email' => '',                      'domain_phone' =>  array(
                       'phone_type' => '',
                       'phone' => '',
            ),                      'domain_address' =>  array(

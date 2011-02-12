@@ -33,7 +33,7 @@ function membership_type_create_expectedresult(){
            'version' 		=> '3',
            'count' 		=> '1',
            'id' 		=> '1',
-           'values' 		=>            array(           '1' =>  array(
+           'values' 		=> array(           '1' =>  array(
                       'id' => '1',
                       'domain_id' => '1',
                       'name' => '40+ Membership',

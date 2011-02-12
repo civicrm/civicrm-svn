@@ -37,7 +37,7 @@ function custom_group_create_expectedresult(){
                       'name' => 'Test_Group_1',
                       'title' => 'Test_Group_1',
                       'extends' => 'Individual',
-                      'extends_entity_column_id' => '',
+                      'extends_entity_column_id' => 'null',
                       'extends_entity_column_value' => 'null',
                       'style' => 'Inline',
                       'collapse_display' => '1',

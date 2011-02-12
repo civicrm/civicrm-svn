@@ -25,7 +25,7 @@ function contact_get_expectedresult(){
            'version' 		=> '3',
            'count' 		=> '1',
            'id' 		=> '1',
-           'values' 		=>            array(           '1' =>  array(
+           'values' 		=> array(           '1' =>  array(
                       'contact_id' => '1',
                       'contact_type' => 'Individual',
                       'sort_name' => 'man2@yahoo.com',

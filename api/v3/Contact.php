@@ -97,8 +97,6 @@ function civicrm_contact_getfields( &$params ) {
  * 
  * @todo Erik Hommel 16 dec 2010 Check that all DB fields are returned
  * @todo Erik Hommel 16 dec 2010 fix custom data (CRM-7231)
- * @todo Erik Hommel 16 dec 2010 Introduce version as param and get rid of $deprecated_behaviour
- * @todo Erik Hommel 16 dec 2010 Use civicrm_return_success / error ?
  * @todo EM 7 Jan 11 - does this return the number of contacts if required (replacement for deprecated contact_search_count function - if so is this tested?
  */
 

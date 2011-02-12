@@ -4,7 +4,7 @@ function contribution_create_example(){
     $params = array(
     
                   'contact_id' 		=> '1',
-                  'receive_date' 		=> '20110209',
+                  'receive_date' 		=> '20110212',
                   'total_amount' 		=> '100',
                   'contribution_type_id' 		=> '1',
                   'payment_instrument_id' 		=> '1',
@@ -35,13 +35,13 @@ function contribution_create_expectedresult(){
            'version' 		=> '3',
            'count' 		=> '1',
            'id' 		=> '1',
-           'values' 		=>            array(           '1' =>  array(
+           'values' 		=> array(           '1' =>  array(
                       'id' => '1',
                       'contact_id' => '1',
                       'contribution_type_id' => '1',
                       'contribution_page_id' => '',
                       'payment_instrument_id' => '1',
-                      'receive_date' => '20110209',
+                      'receive_date' => '20110212',
                       'non_deductible_amount' => '10',
                       'total_amount' => '100',
                       'fee_amount' => '50',

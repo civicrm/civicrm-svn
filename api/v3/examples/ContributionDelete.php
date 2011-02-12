@@ -24,7 +24,7 @@ function contribution_delete_expectedresult(){
            'version' 		=> '3',
            'count' 		=> '1',
            'id' 		=> '1',
-           'values' 		=>            array(           '1' => '1',           ),
+           'values' 		=> array(           '1' => '1',           ),
       );
 
   return $expectedResult  ;

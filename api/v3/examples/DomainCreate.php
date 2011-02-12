@@ -25,7 +25,7 @@ function domain_create_expectedresult(){
            'version' 		=> '3',
            'count' 		=> '8',
            'id' 		=> '2',
-           'values' 		=>            array(           'id' => '2',                      'name' => 'New Domain',                      'description' => 'Description of a new domain',                      'config_backend' => '',                      'version' => '3',                      'loc_block_id' => '',                      'locales' => '',                      'locale_custom_strings' => '',           ),
+           'values' 		=> array(           'id' => '2',                      'name' => 'New Domain',                      'description' => 'Description of a new domain',                      'config_backend' => '',                      'version' => '3',                      'loc_block_id' => '',                      'locales' => '',                      'locale_custom_strings' => '',           ),
       );
 
   return $expectedResult  ;

@@ -29,7 +29,7 @@ function membership_status_create_expectedresult(){
            'version' 		=> '3',
            'count' 		=> '2',
            'id' 		=> '9',
-           'values' 		=>            array(           'id' => '9',                      'is_error' => '0',           ),
+           'values' 		=> array(           'id' => '9',                      'is_error' => '0',           ),
       );
 
   return $expectedResult  ;

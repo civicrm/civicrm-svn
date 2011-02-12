@@ -32,7 +32,7 @@ function activity_type_create_expectedresult(){
            'version' 		=> '3',
            'count' 		=> '1',
            'id' 		=> '562',
-           'values' 		=>            array(           '562' =>  array(
+           'values' 		=> array(           '562' =>  array(
                       'id' => '562',
                       'option_group_id' => '2',
                       'label' => 'send out letters',

@@ -25,7 +25,7 @@ function relationship_delete_expectedresult(){
   $expectedResult = 
      array(
            'is_error' 		=> '1',
-           'error_message' 		=> 'Undefined index: end_date',
+           'error_message' 		=> 'Illegal offset type',
       );
 
   return $expectedResult  ;

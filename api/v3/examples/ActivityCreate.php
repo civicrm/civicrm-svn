@@ -5,7 +5,7 @@ function activity_create_example(){
     
                   'source_contact_id' 		=> '17',
                   'subject' 		=> 'Make-it-Happen Meeting',
-                  'activity_date_time' 		=> '20110209000000',
+                  'activity_date_time' 		=> '20110212000000',
                   'duration' 		=> '120',
                   'location' 		=> 'Pensulvania',
                   'details' 		=> 'a test activity',
@@ -34,13 +34,13 @@ function activity_create_expectedresult(){
            'version' 		=> '3',
            'count' 		=> '1',
            'id' 		=> '1',
-           'values' 		=>            array(           '1' =>  array(
+           'values' 		=> array(           '1' =>  array(
                       'id' => '1',
                       'source_contact_id' => '17',
                       'source_record_id' => '',
                       'activity_type_id' => '1',
                       'subject' => 'Make-it-Happen Meeting',
-                      'activity_date_time' => '20110209000000',
+                      'activity_date_time' => '20110212000000',
                       'duration' => '120',
                       'location' => 'Pensulvania',
                       'phone_id' => '',

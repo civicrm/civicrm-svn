@@ -27,7 +27,7 @@ function relationship_create_expectedresult(){
   $expectedResult = 
      array(
            'is_error' 		=> '1',
-           'error_message' 		=> 'Undefined index: Ymd',
+           'error_message' 		=> 'Illegal offset type',
       );
 
   return $expectedResult  ;

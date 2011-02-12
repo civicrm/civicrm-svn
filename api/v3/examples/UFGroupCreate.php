@@ -39,8 +39,34 @@ function uf_group_create_expectedresult(){
 
   $expectedResult = 
      array(
-           'is_error' 		=> '1',
-           'error_message' 		=> 'Undefined index: id',
+           'is_error' 		=> '0',
+           'version' 		=> '3',
+           'count' 		=> '1',
+           'id' 		=> '12',
+           'values' 		=> array(           '12' =>  array(
+                      'id' => '12',
+                      'is_active' => '0',
+                      'group_type' => 'Individual,Contact',
+                      'title' => 'Test Group',
+                      'help_pre' => 'help pre',
+                      'help_post' => 'help post',
+                      'limit_listings_group_id' => '2',
+                      'post_URL' => 'http://example.org/post',
+                      'add_to_group_id' => '2',
+                      'add_captcha' => '1',
+                      'is_map' => '1',
+                      'is_edit_link' => '1',
+                      'is_uf_link' => '1',
+                      'is_update_dupe' => '1',
+                      'cancel_URL' => 'http://example.org/cancel',
+                      'is_cms_user' => '1',
+                      'notify' => 'admin@example.org',
+                      'is_reserved' => '1',
+                      'name' => 'Test_Group',
+                      'created_id' => '69',
+                      'created_date' => '2009-06-27',
+                      'is_proximity_search' => '',
+           ),           ),
       );
 
   return $expectedResult  ;

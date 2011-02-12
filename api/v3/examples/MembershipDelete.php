@@ -21,7 +21,7 @@ function membership_delete_expectedresult(){
   $expectedResult = 
      array(
            'is_error' 		=> '1',
-           'error_message' 		=> 'Undefined index: membership_id',
+           'error_message' 		=> 'Input parameter should be numeric',
       );
 
   return $expectedResult  ;

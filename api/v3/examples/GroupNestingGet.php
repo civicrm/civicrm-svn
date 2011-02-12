@@ -24,7 +24,7 @@ function group_nesting_get_expectedresult(){
            'is_error' 		=> '0',
            'version' 		=> '3',
            'count' 		=> '2',
-           'values' 		=>            array(           '1' =>  array(
+           'values' 		=> array(           '1' =>  array(
                       'id' => '1',
                       'child_group_id' => '2',
                       'parent_group_id' => '1',
