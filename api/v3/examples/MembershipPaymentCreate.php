@@ -23,9 +23,13 @@ function membership_payment_create_expectedresult(){
      array(
            'is_error' 		=> '0',
            'version' 		=> '3',
-           'count' 		=> '3',
+           'count' 		=> '1',
            'id' 		=> '1',
-           'values' 		=> array(           'id' => '1',                      'membership_id' => '1',                      'contribution_id' => '1',           ),
+           'values' 		=> array(           '1' =>  array(
+                      'id' => '1',
+                      'membership_id' => '1',
+                      'contribution_id' => '1',
+           ),           ),
       );
 
   return $expectedResult  ;
