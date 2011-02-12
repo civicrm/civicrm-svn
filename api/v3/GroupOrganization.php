@@ -111,7 +111,7 @@ function civicrm_group_organization_create( &$params )
  *
  * This API is used for deleting a Group Organization
  *
- * @param  Array  $params  ID of the Group Organization to be deleted
+ * @param  array  $params  ID of the Group Organization to be deleted
  *
  * @return null if successfull, array with is_error = 1 otherwise
  * @access public
