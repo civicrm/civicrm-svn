@@ -120,15 +120,6 @@ class api_v3_MembershipTest extends CiviUnitTestCase
                               "In line " . __LINE__ );
      }
 
-     function testContactMembershipGet()
-     {
-         $this->assertTrue( function_exists(civicrm_membership_types_get) );
-         $params = array('version' => $this->_apiversion);
-         $result = civicrm_membership_types_get( $params );
-         $this->assertEquals( 1, $result['is_error'],
-                              "In line " . __LINE__ );         
-     }
-    
 
         /**
      * Test civicrm_membership_get with empty params.
