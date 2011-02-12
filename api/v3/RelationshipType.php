@@ -78,9 +78,9 @@ function civicrm_relationship_type_create( &$params ) {
     $relationType = CRM_Contact_BAO_RelationshipType::add( $params, $ids );
 
     $relType = array( );
-    _civicrm_object_to_array( $relationType, $relType );
+    _civicrm_object_to_array( $relationType, $relType[$relationType->id] );
 
-    return civicrm_create_success($relType,$params);
+    return civicrm_create_success($relType,$params, $relationType);
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );
   } catch (Exception $e) {
