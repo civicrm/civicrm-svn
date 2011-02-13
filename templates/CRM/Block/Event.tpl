@@ -37,6 +37,6 @@
     	     </p>
          {/foreach} 
      {else}
-	 <p>{ts}No events currently scheduled.{/ts}</p>
+	 <p>{ts}There are no upcoming events.{/ts}</p>
      {/if}
 </div>
