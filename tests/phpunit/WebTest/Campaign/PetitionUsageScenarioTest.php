@@ -116,7 +116,7 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
       $title = substr(sha1(rand()), 0, 7);
       $this->type("title", "$title Petition");
 
-      // fill introdyction 
+      // fill introduction 
       //$this->type("cke_instructions", "This is introduction of $title Petition");
       
       // select campaign 
@@ -129,13 +129,11 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
       $this->click("_qf_Petition_next-bottom");
       $this->waitForPageToLoad("30000");
 
+
       $this->assertTrue($this->isTextPresent("Petition has been saved."));
       $this->waitForElementPresent("xpath=//table/tbody//tr//td[1][text()='$title Petition']/../td[5]/span[2][text()='more ']/ul/li/a[text()='Sign']");
-      $this->click("xpath=//table/tbody//tr//td[1][text()='$title Petition']/../td[5]/span[2][text()='more ']/ul/li/a[text()='Sign']");
+      $url = $this->getAttribute( "xpath=//table/tbody//tr//td[1][text()='$title Petition']/../td[5]/span[2][text()='more ']/ul/li/a[text()='Sign']/@href" );
       
-      $this->waitForPageToLoad("30000");
-      $url = $this->getLocation();
-     
       ////////////// Retrieve Sign Petition Url /////////////////////////
       
       // let's give permission 'sign CiviCRM Petition' to anonymous user.
@@ -155,7 +153,8 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
       $this->assertTrue($this->isTextPresent("The changes have been saved."));
       
       // logout and sign as anonymous.
-      $this->open( $this->sboxPath ."civicrm/logout&reset=1" );
+      $this->open( $this->sboxPath ."logout" );
+      $this->waitForElementPresent("op");
       
       // go to the link that you will be sign as anonymous
       $this->open($url);
