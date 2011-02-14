@@ -1794,6 +1794,7 @@ WHERE  ce.loc_block_id = $locBlockId";
                  COUNT( DISTINCT IF ( value.count, participant.id, NULL ) ),
                  COUNT( DISTINCT participant.id ) ) 
       FROM  civicrm_participant participant
+INNER JOIN  civicrm_contact contact ON ( contact.id = participant.contact_id AND contact.is_deleted = 0 ) 
 INNER JOIN  civicrm_event event ON ( event.id = participant.event_id ) 
 LEFT  JOIN  civicrm_line_item lineItem ON ( lineItem.entity_id    = participant.id 
                                        AND  lineItem.entity_table = 'civicrm_participant' ) 
