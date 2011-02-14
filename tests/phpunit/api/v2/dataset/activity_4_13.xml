@@ -48,6 +48,7 @@
       <null />   <!--  original_id  -->
       <null />   <!--  result  -->      
       <null />   <!--  is_deleted  -->
+      <null />   <!--  campaign_id  -->
     </row>
     <row>
       <value>13</value>                      <!--  id  -->
