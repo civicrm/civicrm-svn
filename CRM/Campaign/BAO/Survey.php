@@ -685,10 +685,18 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
      */
     public Static function getSurveyResponseFields( $surveyId, $surveyTypeId = null ) 
     {
-        $responseFields = array( );
         if ( empty( $surveyId ) ) {
-            return $responseFields;
+            return array( );
         }
+        
+        static $responseFields;
+        $cacheKey = "{$surveyId}_{$surveyTypeId}";
+        
+        if ( isset( $responseFields[$cacheKey] ) ) {
+            return $responseFields[$cacheKey];
+        }
+        
+        $responseFields[$cacheKey] = array( );
         
         //get the profile id.
         require_once 'CRM/Core/BAO/UFJoin.php'; 
@@ -718,12 +726,12 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
                 // the activty type same of that selected survey.
                 $valueType = CRM_Utils_Array::value( 'extends_entity_column_value', $customValue );
                 if ( empty( $valueType ) || ( $valueType == $surveyTypeId ) ) {
-                    $responseFields[$name] = $field;
+                    $responseFields[$cacheKey][$name] = $field;
                 }
             }
         }
         
-        return $responseFields;
+        return $responseFields[$cacheKey];
     }
     
 }

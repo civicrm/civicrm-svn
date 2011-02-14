@@ -102,20 +102,23 @@ class CRM_Report_Form_Walklist_Survey extends CRM_Report_Form {
                    'civicrm_activity' =>
                    array( 'dao'       => 'CRM_Activity_DAO_Activity',
                           'alias'     => 'survey_activity',
-                          'fields'    => array( 'name'  =>  array( 'name'    => 'result',
-                                                                   'title'   => ts('Status'),
-                                                                   'default' => true ) ),
+                          'fields'    => array( 'result'           =>  array( 'name'    => 'result',
+                                                                              'title'   => ts('Status'),
+                                                                              'default' => true ),
+                                                'survey_response'  =>  array( 'title'   => ts( 'Response Codes' ),
+                                                                              'default' => true ) ),
                           
-                          'filters'   => array( 'sid' => array( 'name'         => 'source_record_id',
-                                                                'title'        => ts( 'Survey' ),
-                                                                'type'         => CRM_Utils_Type::T_INT,
-                                                                'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-                                                                'options'      => 
-                                                                CRM_Campaign_BAO_Survey::getSurveys( ) ) ),
+                          'filters'   => array( 'survey_id' => array( 'name'         => 'source_record_id',
+                                                                      'title'        => ts( 'Survey' ),
+                                                                      'type'         => CRM_Utils_Type::T_INT,
+                                                                      'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+                                                                      'options'      => 
+                                                                      CRM_Campaign_BAO_Survey::getSurveys( ) ) ),
                           'grouping' => 'survey-activity-fields',
                           ),
                    
                    );
+        
         parent::__construct( );
     }
     
@@ -125,7 +128,7 @@ class CRM_Report_Form_Walklist_Survey extends CRM_Report_Form {
     
     function select( ) {
         $select = array( );
-
+        
         $this->_columnHeaders = array( );
         foreach ( $this->_columns as $tableName => $table ) {
             foreach ( $table['fields'] as $fieldName => $field ) {
@@ -135,9 +138,20 @@ class CRM_Report_Form_Walklist_Survey extends CRM_Report_Form {
                     $fieldsName = CRM_Utils_Array::value( 1, explode( '_', $tableName ) );
                     if ( $fieldsName ) $this->{"_$fieldsName".'Field'} = true;
                     
-                    $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
-                    $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = $field['title'];
-                    $this->_columnHeaders["{$tableName}_{$fieldName}"]['type']  = $field['type'];
+                    //need to pickup custom data/survey response fields.
+                    if ( $fieldName == 'survey_response' ) {
+                        //get the user submitted survey response fields.
+                        $surveyResponseFields = self::getsurveyResponseFields( $this->_params );
+                        foreach ( $surveyResponseFields as $name => $fldVal ) {
+                            $fldTitle = CRM_Utils_Array::value( 'title', $fldVal );
+                            if ( empty( $fldTitle ) ) continue; 
+                            $this->_columnHeaders["{$tableName}_{$name}"]['title'] = $fldTitle;
+                        }
+                    } else {
+                        $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
+                        $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = $field['title'];
+                        $this->_columnHeaders["{$tableName}_{$fieldName}"]['type']  = $field['type'];
+                    }
                 }
             }
         }
@@ -272,4 +286,19 @@ FROM       civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom
             }
         }
     }
+
+    public static function getSurveyResponseFields( $params ) 
+    {
+        $responseFields = array( );
+        $surveyIds = CRM_Utils_Array::value( 'survey_id_value', $params );
+        if ( CRM_Utils_System::isNull( $surveyIds ) ) return $responseFields;
+        
+        require_once 'CRM/Campaign/BAO/Survey.php';
+        foreach ( $surveyIds as $surveyId ) {
+            $responseFields += CRM_Campaign_BAO_survey::getSurveyResponseFields( $surveyId );
+        }
+        
+        return $responseFields; 
+    }
+    
 }
