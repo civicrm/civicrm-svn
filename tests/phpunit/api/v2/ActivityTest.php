@@ -755,31 +755,6 @@ class api_v2_ActivityTest extends CiviUnitTestCase
     }
 
     /**
-     *  Test civicrm_activity_processmail()
-     */
-    function testActivityProcess_EMail()
-    {
-        //  Give contact 17 an email address
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                             dirname(__FILE__)
-                             . '/dataset/email_contact_17.xml') );
-        
-        $result = civicrm_activity_process_email(
-                   dirname( __FILE__ ) . '/dataset/activity_email' , 5 );
-
-        //  civicrm_activity should show the new activity
-        $expected = new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                 dirname( __FILE__ )
-                 . '/dataset/activity_1_emailed.xml' );
-        $actual = new PHPUnit_Extensions_Database_DataSet_QueryDataset(
-                                       $this->_dbconn );
-        $actual->addTable( 'civicrm_activity' );
-        $expected->assertEquals( $actual );
-    }
-
-    /**
      *  Test civicrm_activity_processmail() with non-existent file
      */
     function testActivityProcessEMailNoFile()
