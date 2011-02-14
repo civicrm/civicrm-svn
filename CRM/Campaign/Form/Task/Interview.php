@@ -62,8 +62,6 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
     
     private $_interviewerId;
     
-    private $_ufGroupId;
-    
     private $_surveyActivityIds;
     
     private $_votingTab = false;
@@ -107,13 +105,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         $returnProperties  = array_fill_keys( array_keys( $readOnlyFields ), 1 );
         $returnProperties['contact_sub_type'] = true;
         
-        //get the profile id.
-        require_once 'CRM/Core/BAO/UFJoin.php'; 
-        $ufJoinParams = array( 'entity_id'    => $this->_surveyId,
-                               'entity_table' => 'civicrm_survey',   
-                               'module'       => 'CiviCampaign' );
-        $this->_ufGroupId = CRM_Core_BAO_UFJoin::findUFGroupId( $ufJoinParams );
-        $this->assign( 'ufGroupId', $this->_ufGroupId );
+        
         
         //validate all voters for required activity.
         //get the survey activities for given voters.
@@ -231,38 +223,12 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         $this->assign( 'surveyTypeId', $this->_surveyTypeId );
         
         //pickup the uf fields.
-        $this->_surveyFields = array( );
-        if ( $this->_ufGroupId ) {
-            require_once 'CRM/Core/BAO/UFGroup.php';
-            $this->_surveyFields = CRM_Core_BAO_UFGroup::getFields( $this->_ufGroupId, 
-                                                                    false, CRM_Core_Action::VIEW );
-        }
-        
-        //don't load these fields in grid.
-        $removeFields = array( 'File', 'Autocomplete-Select', 'RichTextEditor' );
-        require_once 'CRM/Core/BAO/CustomField.php';
-        foreach ( $this->_surveyFields as $name => $field ) {
-            if ( CRM_Core_BAO_CustomField::getKeyID( $name ) && 
-                 in_array( $field['html_type'], $removeFields ) ) {
-                unset( $this->_surveyFields[$name] );
-            }
-        }
-        
-        //build all fields.
-        $exposedSurveyFields = array( );
+        $this->_surveyFields = CRM_Campaign_BAO_survey::getSurveyResponseFields( $this->_surveyId,
+                                                                                 $this->_surveyTypeId );
         foreach ( $this->_contactIds as $contactId ) {
             //build the profile fields.
             foreach ( $this->_surveyFields as $name => $field ) {
-                if ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID( $name ) ) {
-                    $customValue = CRM_Utils_Array::value( $customFieldID, $customFields );
-                    // allow custom fields from profile which are having
-                    // the activty type same of that selected survey.
-                    $valueType = CRM_Utils_Array::value( 'extends_entity_column_value', $customValue );
-                    if ( !$valueType || ( $valueType == $this->_surveyTypeId ) ) {
-                        CRM_Core_BAO_UFGroup::buildProfile( $this, $field, null, $contactId );
-                        $exposedSurveyFields[$name] = $field;
-                    }
-                }
+                CRM_Core_BAO_UFGroup::buildProfile( $this, $field, null, $contactId );
             }
             
             //build the result field.
@@ -281,7 +247,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
                                    array('id'=>"field_{$contactId}_is_release_or_reserve") );
             }
         }
-        $this->assign( 'surveyFields', empty( $exposedSurveyFields ) ? false : $exposedSurveyFields );
+        $this->assign( 'surveyFields', empty( $this->_surveyFields ) ? false : $this->_surveyFields );
         
         //no need to get qf buttons.
         if ( $this->_votingTab ) return;  
