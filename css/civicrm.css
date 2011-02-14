@@ -2834,6 +2834,12 @@ table.crm-info-panel .label  {
 }
 
 .disabled { text-decoration:line-through; }
+    #mainTabContainer li.disabled {
+        text-decoration: none;
+    }
+    #mainTabContainer li.disabled a:link {
+        color: #999999 !important;
+    }
 
 #crm-container table.selector td {
     border-right:1px dotted #DDDDDD;
