@@ -2085,8 +2085,17 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
         
         if ( !empty( $this->_params['fields'] ) ) {
             foreach( array_keys($prop['fields']) as $fieldAlias ) {
-                if ( array_key_exists( $fieldAlias, $this->_params['fields'] ) && CRM_Core_BAO_CustomField::getKeyID($fieldAlias) ) {
-                    return true;
+                $customFieldId = CRM_Core_BAO_CustomField::getKeyID( $fieldAlias );
+                if ( $customFieldId ) {
+                    if ( array_key_exists( $fieldAlias, $this->_params['fields'] ) ) {
+                        return true;
+                    }
+                    
+                    //might be survey response field.
+                    if ( CRM_Utils_Array::value( 'survey_response', $this->_params['fields'] ) &&
+                         CRM_Utils_Array::value( 'isSurveyResponseField', $prop['fields'][$fieldAlias] ) ) {
+                        return true;
+                    }
                 }
             }
         }

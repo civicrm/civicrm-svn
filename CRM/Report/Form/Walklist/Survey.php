@@ -129,6 +129,9 @@ class CRM_Report_Form_Walklist_Survey extends CRM_Report_Form {
     function select( ) {
         $select = array( );
         
+        //add the survey response fields.
+        $this->_addSurveyResponseColumns( );
+        
         $this->_columnHeaders = array( );
         foreach ( $this->_columns as $tableName => $table ) {
             foreach ( $table['fields'] as $fieldName => $field ) {
@@ -139,19 +142,11 @@ class CRM_Report_Form_Walklist_Survey extends CRM_Report_Form {
                     if ( $fieldsName ) $this->{"_$fieldsName".'Field'} = true;
                     
                     //need to pickup custom data/survey response fields.
-                    if ( $fieldName == 'survey_response' ) {
-                        //get the user submitted survey response fields.
-                        $surveyResponseFields = self::getsurveyResponseFields( $this->_params );
-                        foreach ( $surveyResponseFields as $name => $fldVal ) {
-                            $fldTitle = CRM_Utils_Array::value( 'title', $fldVal );
-                            if ( empty( $fldTitle ) ) continue; 
-                            $this->_columnHeaders["{$tableName}_{$name}"]['title'] = $fldTitle;
-                        }
-                    } else {
-                        $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
-                        $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = $field['title'];
-                        $this->_columnHeaders["{$tableName}_{$fieldName}"]['type']  = $field['type'];
-                    }
+                    if ( $fieldName == 'survey_response' ) continue;
+                    
+                    $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
+                    $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = $field['title'];
+                    $this->_columnHeaders["{$tableName}_{$fieldName}"]['type']  = $field['type'];
                 }
             }
         }
@@ -287,18 +282,79 @@ FROM       civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom
         }
     }
 
-    public static function getSurveyResponseFields( $params ) 
+    private function _addSurveyResponseColumns( ) 
     {
-        $responseFields = array( );
-        $surveyIds = CRM_Utils_Array::value( 'survey_id_value', $params );
-        if ( CRM_Utils_System::isNull( $surveyIds ) ) return $responseFields;
+        $surveyIds = CRM_Utils_Array::value( 'survey_id_value', $this->_params );
+        if ( CRM_Utils_System::isNull( $surveyIds ) ||
+             !CRM_Utils_Array::value( 'survey_response',  $this->_params['fields'] ) ) {
+            return;
+        }
         
         require_once 'CRM/Campaign/BAO/Survey.php';
+        require_once 'CRM/Core/BAO/CustomField.php';
+        $responseFields = array( );
         foreach ( $surveyIds as $surveyId ) {
             $responseFields += CRM_Campaign_BAO_survey::getSurveyResponseFields( $surveyId );
         }
         
-        return $responseFields; 
+        $responseFieldIds = array( );
+        foreach ( array_keys( $responseFields ) as $key ) {
+            $cfId = CRM_Core_BAO_CustomField::getKeyID( $key );
+            if ( $cfId ) $responseFieldIds[$cfId] = $cfId;
+        }
+        
+        if ( empty( $responseFieldIds ) ) return;
+        
+        $query ='
+     SELECT  cg.extends, 
+             cf.data_type, 
+             cf.html_type,  
+             cg.table_name,       
+             cf.column_name,
+             cf.time_format,
+             cf.id as cfId,
+             cf.option_group_id
+       FROM  civicrm_custom_group cg 
+INNER  JOIN  civicrm_custom_field cf ON ( cg.id = cf.custom_group_id )
+      WHERE  cf.id IN ( '. implode( ' , ',  $responseFieldIds ).' )';   
+        $response = CRM_Core_DAO::executeQuery( $query );
+        while ( $response->fetch( ) ) {
+            $resTable  = $response->table_name;
+            $fieldName = "custom_{$response->cfId}";
+            
+            //need to check does these custom data already included.
+
+            if ( !array_key_exists( $resTable, $this->_columns ) ) {
+                $this->_columns[$resTable]['dao']     = 'CRM_Contact_DAO_Contact'; 
+                $this->_columns[$resTable]['extends'] = $response->extends;
+                $this->_columns[$resTable]['alias']   = $tableAlias;
+            }
+            if ( !CRM_Utils_Array::value( 'alias', $this->_columns[$resTable] ) ) {
+                $this->_columns[$resTable]['alias'] = "{$resTable}_survey_response"; 
+            }
+            if ( !is_array( $this->_columns[$resTable]['fields'] ) ) {
+                $this->_columns[$resTable]['fields'] = array( );
+            }
+            if ( array_key_exists( $fieldName, $this->_columns[$resTable]['fields'] ) ) {
+                $this->_columns[$resTable]['fields'][$fieldName]['required'] = true;
+                continue;
+            }
+            
+            $fldType = 'CRM_Utils_Type::T_STRING';
+            if ( $response->time_format ) $fldType = CRM_Utils_Type::T_TIMESTAMP;
+            $field = array( 'name'     => $response->column_name,
+                            'type'     => $fldType,
+                            'title'    => $responseFields[$fieldName]['title'],
+                            'dataType' => $response->data_type,
+                            'htmlType' => $response->html_type,
+                            'required' => true,
+                            'alias'    => $this->_columns[$resTable]['alias'],
+                            'dbAlias'  => $this->_columns[$resTable]['alias'].'.'.$response->column_name,
+                            'isSurveyResponseField' => true );
+            
+            $this->_columns[$resTable]['fields'][$fieldName] = $field;
+            $this->_aliases[$resTable] = $this->_columns[$resTable]['alias'];
+        }
     }
     
 }
