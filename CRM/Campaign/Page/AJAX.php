@@ -45,7 +45,6 @@ class CRM_Campaign_Page_AJAX
     {
         $fields = array( 'result',
                          'voter_id',
-                         'ufGroupId',
                          'activity_id',
                          'surveyTitle',
                          'interviewer_id',

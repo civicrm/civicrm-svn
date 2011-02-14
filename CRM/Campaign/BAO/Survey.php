@@ -675,4 +675,55 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
         return $menuLinks;
     }
     
+    /* Get the valid survey response fields those 
+     * are configured with profile and custom fields.
+     *
+     * @param int $surveyId     survey id.
+     * @param int $surveyTypeId survey activity type id.
+     *
+     * @return an array of valid survey response fields. 
+     */
+    public Static function getSurveyResponseFields( $surveyId, $surveyTypeId = null ) 
+    {
+        $responseFields = array( );
+        if ( empty( $surveyId ) ) {
+            return $responseFields;
+        }
+        
+        //get the profile id.
+        require_once 'CRM/Core/BAO/UFJoin.php'; 
+        $ufJoinParams = array( 'entity_id'    => $surveyId,
+                               'entity_table' => 'civicrm_survey',   
+                               'module'       => 'CiviCampaign' );
+        $profileId = CRM_Core_BAO_UFJoin::findUFGroupId( $ufJoinParams );
+        
+        if ( !$profileId ) return $responseFields;
+        if ( !$surveyTypeId ) {
+            $surveyTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', $surveyId, 'activity_type_id' );
+        }
+        
+        require_once 'CRM/Core/BAO/UFGroup.php';
+        $profileFields = CRM_Core_BAO_UFGroup::getFields( $profileId, 
+                                                          false, CRM_Core_Action::VIEW );
+        
+        //don't load these fields in grid.
+        $removeFields = array( 'File', 'Autocomplete-Select', 'RichTextEditor' );
+        require_once 'CRM/Core/BAO/CustomField.php';
+        foreach ( $profileFields as $name => $field ) {
+            if ( CRM_Core_BAO_CustomField::getKeyID( $name ) &&
+                 !in_array( $field['html_type'], $removeFields ) ) {
+                
+                $customValue = CRM_Utils_Array::value( $customFieldID, $customFields );
+                // allow custom fields from profile which are having
+                // the activty type same of that selected survey.
+                $valueType = CRM_Utils_Array::value( 'extends_entity_column_value', $customValue );
+                if ( empty( $valueType ) || ( $valueType == $surveyTypeId ) ) {
+                    $responseFields[$name] = $field;
+                }
+            }
+        }
+        
+        return $responseFields;
+    }
+    
 }
