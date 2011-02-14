@@ -193,7 +193,7 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
       $this->waitForPageToLoad("30000");
 
       //Is custom group created?
-      $this->assertTrue($this->isTextPresent("Your custom field set '$customGroupTitle' has been added. You can add it custom fields now."));
+      $this->assertTrue($this->isTextPresent("Your custom field set '$customGroupTitle' has been added. You can add custom fields now."));
 
       //add custom field - alphanumeric checkbox
       $checkboxFieldLabel = 'custom_field'.substr(sha1(rand()), 0, 4);
