@@ -165,8 +165,8 @@ FROM       civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom
         
         //get the survey clause in.
         if ( $this->_activityField ) {
-            $this->_from .= "LEFT JOIN civicrm_activity_assignment civicrm_activity_assignment ON ( {$this->_aliases['civicrm_contact']}.id = civicrm_activity_assignment.assignee_contact_id )\n";
-            $this->_from .= "LEFT JOIN civicrm_activity {$this->_aliases['civicrm_activity']} ON ( {$this->_aliases['civicrm_activity']}.id = civicrm_activity_assignment.activity_id )\n";
+            $this->_from .= "INNER JOIN civicrm_activity_target civicrm_activity_target ON ( {$this->_aliases['civicrm_contact']}.id = civicrm_activity_target.target_contact_id )\n";
+            $this->_from .= "INNER JOIN civicrm_activity {$this->_aliases['civicrm_activity']} ON ( {$this->_aliases['civicrm_activity']}.id = civicrm_activity_target.activity_id )\n";
         }
     }
     
