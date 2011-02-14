@@ -8,7 +8,7 @@ function contribution_delete_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_contribution_delete','Contribution',$params );
+  $result = civicrm_api( 'contribution','delete',$params );
 
   return $result;
 }
@@ -19,9 +19,13 @@ function contribution_delete_example(){
 function contribution_delete_expectedresult(){
 
   $expectedResult = 
-            array(
-
-  );
+     array(
+           'is_error' 		=> '0',
+           'version' 		=> '3',
+           'count' 		=> '1',
+           'id' 		=> '1',
+           'values' 		=>            array(           '1' => '1',           ),
+      );
 
   return $expectedResult  ;
 }

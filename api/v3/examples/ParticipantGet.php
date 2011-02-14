@@ -1,45 +1,51 @@
-<?php
-function participant_get_example( )
-{
+<?php 
 
-  $params = array(
-                        'contact_id'      => $this->_contactID,
+function participant_get_example(){
+    $params = array(
+    
+                  'version' 		=> '3',
+                  'participant_id' 		=> '1',
+
   );
-
-  $result = civicrm_api_legacy( 'civicrm_participant_get','Participant',$params );
+  require_once 'api/api.php';
+  $result = civicrm_api( 'participant','get',$params );
 
   return $result;
 }
 
+/*
+ * Function returns array of result expected from previous function
+ */
 function participant_get_expectedresult(){
 
-  $expectedResult = array(
-        						'is_error'           => 0,
-                    'id'      		       =>1,
-                    'source_contact_id'	 =>17,
-             				'source_record_id'   => null,
-    								'activity_type_id'   => 1,
-    								'subject'            => 'Make-it-Happen Meeting',
-                    'activity_date_time' => '20110115000000',
-    								'duration'           => 120,
-    								'location'           => 'Pensulvania',
-                    'phone_id'           => null,
-                    'phone_number'       =>null,
-                    'details'            => 'a test activity',
-                    'status_id'          => 1,
-                    'priority_id'        => null,
-                    'parent_id'          =>null,
-                    'is_test'            =>null,
-                    'medium_id'          =>null,
-                    'is_auto'            =>null,
-                    'relationship_id'    =>null,
-                    'is_current_revision'=>null,
-                    'original_id'        =>null,
-                    'result'             =>null,
-                    'is_deleted'         =>null,
-
-  );
+  $expectedResult = 
+     array(
+           'is_error' 		=> '0',
+           'version' 		=> '3',
+           'count' 		=> '1',
+           'id' 		=> '1',
+           'values' 		=>            array(           '1' =>  array(
+                      'contact_id' => '2',
+                      'contact_type' => 'Individual',
+                      'sort_name' => 'Anderson, Anthony',
+                      'display_name' => 'Mr. Anthony Anderson II',
+                      'event_id' => '1',
+                      'event_title' => 'Annual CiviCRM meet',
+                      'event_start_date' => '2008-10-21 00:00:00',
+                      'event_end_date' => '2008-10-23 00:00:00',
+                      'participant_id' => '1',
+                      'event_type' => 'Conference',
+                      'participant_status_id' => '1',
+                      'participant_status' => 'Registered',
+                      'participant_role_id' => '1',
+                      'participant_register_date' => '2007-02-19 00:00:00',
+                      'participant_source' => 'Wimbeldon',
+                      'participant_is_pay_later' => '0',
+                      'participant_is_test' => '0',
+           ),           ),
+      );
 
   return $expectedResult  ;
 }
-?>
+
+

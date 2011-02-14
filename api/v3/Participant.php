@@ -57,8 +57,8 @@ function civicrm_participant_create(&$params)
 {
   _civicrm_initialize(true);
   try{
-    if ( !isset($params['status_id'] )) {
-      $params['membership_status_id']= $params['status_id'] = 1;
+    if ( isset($params['status_id'] )) {
+      $params['participant_status_id']= $params['status_id'] = 1;
     }
 
     if ( !isset($params['register_date'] )) {
@@ -74,13 +74,10 @@ function civicrm_participant_create(&$params)
     }
      
     require_once 'CRM/Event/BAO/Participant.php';
-    $participant = CRM_Event_BAO_Participant::create($params);
-
-    if ( is_a( $participant, 'CRM_Core_Error' ) ) {
-      return civicrm_create_error( "Participant is not created" );
-    } else {
-      return civicrm_create_success( $participant->id );
-    }
+    $participantBAO = CRM_Event_BAO_Participant::create($params);
+     _civicrm_object_to_array($participantBAO , $participant[$participantBAO->id]);
+     return civicrm_create_success( $participant );
+    
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );
   } catch (Exception $e) {
@@ -99,11 +96,11 @@ function civicrm_participant_create(&$params)
  * @static void
  * @access public
  */
-function &civicrm_participant_get( &$params ) {
+function civicrm_participant_get( &$params ) {
   _civicrm_initialize(true );
   try{
     $values = array( );
-    civicrm_verify_mandatory($params,'CRM_Event_BAO_Participant');
+    civicrm_verify_mandatory($params);
 
     if ( isset ( $params['id'] ) ) {
       $params['participant_id' ] = $params['id'];
@@ -112,9 +109,7 @@ function &civicrm_participant_get( &$params ) {
 
     $participant  =& _civicrm_participant_search( $params );
 
-
-    $participant = array_values( $participant );
-    return civicrm_create_success($participant[0],$params);
+    return civicrm_create_success($participant,$params);
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );
   } catch (Exception $e) {

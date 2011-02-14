@@ -172,8 +172,8 @@ function civicrm_event_get( &$params )
         }
       }
     }//end of the loop
-    $eventDAO->free( );
-    return civicrm_create_success($event,$params);
+
+    return civicrm_create_success($event,$params,$eventDAO);
 
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );

@@ -94,7 +94,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     function __construct($name = NULL, array $data = array(), $dataName = '' ) {
         parent::__construct($name, $data, $dataName);
 
-        error_reporting( E_ALL & ~E_NOTICE );
+        // we need full error reporting
+        error_reporting (E_ALL & ~E_NOTICE);
 
         //  create test database
         self::$utils = new Utils( $GLOBALS['mysql_host'],
@@ -450,7 +451,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
              ! CRM_Utils_Array::value( 'contact_id', $result ) &&! CRM_Utils_Array::value( 'id', $result )) ) {
             throw new Exception( 'Could not create test contact.' );
         }
-        return isset($result['contact_id'])?$result['contact_id']:$result['id'];
+        return isset($result['contact_id'])?$result['contact_id']:CRM_Utils_Array::value( 'id', $result );
     }
     
     function contactDelete( $contactID, $apiversion = NULL ) 
@@ -637,13 +638,15 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         'event_level'   => 'Payment',
                         'version'				=> $apiversion,
                         );
-
-       $result = civicrm_api_legacy( 'civicrm_participant_create','Participant',$params );
+        $result = civicrm_api_legacy( 'civicrm_participant_create','Participant',$params );
         if ( CRM_Utils_Array::value( 'is_error', $result ) && $result['is_error'] ==1) {
-          throw new Exception( 'Could not create participant ' . $result['error_message'] );
-            
+          throw new Exception( 'Could not create participant ' . $result['error_message'] );          
         }
-        return $result['result'];
+        if (isset($result['result'])){
+        return $result['result'];//v2 format
+        }
+        return $result['id'];
+        
     }
     
     /** 
@@ -827,7 +830,6 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     function contributionDelete($contributionId, $apiversion = NULL )
     {
         $apiversion = civicrm_get_api_version($apiversion);
-        require_once 'api/api.php';
         $params = array( 'contribution_id' => $contributionId ,
                           'version'        => $apiversion,);
         $result = civicrm_api_legacy( 'civicrm_contribution_delete','Contribution',$params );
@@ -866,7 +868,6 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
             'version'                 => $apiversion,
             'is_show_location'        => 0,
         ), $params);
-        require_once 'api/api.php';
         $result = civicrm_api_legacy( 'civicrm_event_create','Event',$params );
         if ($result['is_error'] ==1){
           throw new Exception($result['error_message']);
@@ -1026,7 +1027,6 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                             'version'			=> $apiversion,
                             );
         }
-        require_once 'api/api.php';
         $result = civicrm_api_legacy( 'civicrm_group_create','Group',$params );
 
         
@@ -1170,6 +1170,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     function customGroupCreate( $className,$title, $apiversion = NULL) {
         $apiversion = civicrm_get_api_version($apiversion);
+        
          $params = array(
                         'title'      => $title,
                         'class_name' => $className,
@@ -1178,6 +1179,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         'is_active'  => 1,
                         'version'		 => $apiversion,
                         );
+        if(is_array($className)){
+          $params = $className;
+        }
         require_once 'api/api.php';
         $result = civicrm_api_legacy( 'civicrm_custom_group_create','CustomGroup',$params );
 
@@ -1214,6 +1218,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     
     function customFieldCreate( $customGroupID, $name, $apiversion = NULL ) 
     {
+
         $apiversion = civicrm_get_api_version($apiversion);
         $params = array(
                              'label'           => $name,
@@ -1240,7 +1245,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
         if ( civicrm_error( $result ) 
              || !( CRM_Utils_Array::value( 'customFieldId' , $result['result'] ) ) ) {
-            throw new Exception( 'Could not create Custom Field' . print_r($result) );
+            throw new Exception( 'Could not create Custom Field'  );
         }
         return $result;    
     }
@@ -1290,7 +1295,6 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         );
        require_once 'api/api.php';
        $result = civicrm_api_legacy( 'civicrm_note_create','Note',$params );
-
        return $result;
     }
 function documentMe($params,$result,$function,$filename){
@@ -1311,13 +1315,14 @@ function documentMe($params,$result,$function,$filename){
         require_once 'CRM/Core/Smarty.php';
         $smarty =& CRM_Core_Smarty::singleton();
         $smarty->assign('function',$function);
+        $smarty->assign('fnPrefix',$fnPrefix);
         $smarty->assign('params',$params);   
         $smarty->assign('entity',$entity);         
         $smarty->assign('result',$result); 
         $smarty->assign('action',$action); 
-        if (file_exists ( "../api/v3/examples/$entity$action.php" ) && file_exists('../templates/documentFunction.tpl')) {
+        if (file_exists ( "../api/v3/examples/$entity$action.php" ) && file_exists('../tests/templates/documentFunction.tpl')) {
           $f = fopen("../api/v3/examples/$entity$action.php", "w");
-          fwrite($f,$smarty->fetch('../templates/documentFunction.tpl'));
+          fwrite($f,$smarty->fetch('../tests/templates/documentFunction.tpl'));
           fclose($f); 
         }
     }

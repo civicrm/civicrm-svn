@@ -14,7 +14,7 @@ function relationship_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_relationship_create','Relationship',$params );
+  $result = civicrm_api( 'relationship','create',$params );
 
   return $result;
 }
@@ -25,14 +25,10 @@ function relationship_create_example(){
 function relationship_create_expectedresult(){
 
   $expectedResult = 
-            array(
-                  'is_error' 		=> '0',
-                  'version' 		=> '3',
-                  'count' 		=> '1',
-                  'id' 		=> 'id',
-                  'values' 		=>                   array(                  'id' => '1',                  ),
-
-  );
+     array(
+           'is_error' 		=> '1',
+           'error_message' 		=> 'Undefined index: Ymd',
+      );
 
   return $expectedResult  ;
 }

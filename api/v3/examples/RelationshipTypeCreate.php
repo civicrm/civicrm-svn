@@ -16,7 +16,7 @@ function relationship_type_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_relationship_type_create','RelationshipType',$params );
+  $result = civicrm_api( 'relationship_type','create',$params );
 
   return $result;
 }
@@ -27,14 +27,13 @@ function relationship_type_create_example(){
 function relationship_type_create_expectedresult(){
 
   $expectedResult = 
-            array(
-                  'is_error' 		=> '0',
-                  'version' 		=> '3',
-                  'count' 		=> '12',
-                  'id' 		=> '10',
-                  'values' 		=>                   array(                  'id' => '10',                                    'name_a_b' => 'Relation 1 for relationship type create',                                    'label_a_b' => 'Relation 1 for relationship type create',                                    'name_b_a' => 'Relation 2 for relationship type create',                                    'label_b_a' => 'Relation 2 for relationship type create',                                    'description' => '',                                    'contact_type_a' => 'Individual',                                    'contact_type_b' => 'Organization',                                    'contact_sub_type_a' => '',                                    'contact_sub_type_b' => '',                                    'is_reserved' => '1',                                    'is_active' => '1',                  ),
-
-  );
+     array(
+           'is_error' 		=> '0',
+           'version' 		=> '3',
+           'count' 		=> '12',
+           'id' 		=> '10',
+           'values' 		=>            array(           'id' => '10',                      'name_a_b' => 'Relation 1 for relationship type create',                      'label_a_b' => 'Relation 1 for relationship type create',                      'name_b_a' => 'Relation 2 for relationship type create',                      'label_b_a' => 'Relation 2 for relationship type create',                      'description' => '',                      'contact_type_a' => 'Individual',                      'contact_type_b' => 'Organization',                      'contact_sub_type_a' => '',                      'contact_sub_type_b' => '',                      'is_reserved' => '1',                      'is_active' => '1',           ),
+      );
 
   return $expectedResult  ;
 }

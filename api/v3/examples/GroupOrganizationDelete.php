@@ -8,7 +8,7 @@ function group_organization_delete_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_group_organization_delete','GroupOrganization',$params );
+  $result = civicrm_api( 'group_organization','delete',$params );
 
   return $result;
 }
@@ -19,11 +19,10 @@ function group_organization_delete_example(){
 function group_organization_delete_expectedresult(){
 
   $expectedResult = 
-            array(
-                  'is_error' 		=> '1',
-                  'error_message' 		=> 'Input parameter is not an array',
-
-  );
+     array(
+           'is_error' 		=> '1',
+           'error_message' 		=> 'Input parameter is not an array',
+      );
 
   return $expectedResult  ;
 }

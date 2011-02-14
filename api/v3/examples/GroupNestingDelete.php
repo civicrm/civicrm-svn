@@ -9,7 +9,7 @@ function group_nesting_delete_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_group_nesting_delete','GroupNesting',$params );
+  $result = civicrm_api( 'group_nesting','delete',$params );
 
   return $result;
 }
@@ -20,10 +20,9 @@ function group_nesting_delete_example(){
 function group_nesting_delete_expectedresult(){
 
   $expectedResult = 
-            array(
-                  'is_error' 		=> '0',
-
-  );
+     array(
+           'is_error' 		=> '0',
+      );
 
   return $expectedResult  ;
 }

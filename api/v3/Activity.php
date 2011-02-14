@@ -67,7 +67,7 @@ require_once 'CRM/Core/DAO/OptionGroup.php';
  * {@example ActivityCreate.php 0} 
  *
  */
-function &civicrm_activity_create( &$params )
+function civicrm_activity_create( &$params )
 {
   _civicrm_initialize( true );
   try{
@@ -76,6 +76,7 @@ function &civicrm_activity_create( &$params )
     if (!empty($params['id']) || !empty($params['activity_id'])){
       $addmode = False;
     }
+
     // check for various error and required conditions
     $errors = _civicrm_activity_check_params( $params, $addmode ) ;
 
@@ -86,15 +87,16 @@ function &civicrm_activity_create( &$params )
     // processing for custom data
     $values = array();
     _civicrm_custom_format_params( $params, $values, 'Activity' );
+
     if ( ! empty($values['custom']) ) {
       $params['custom'] = $values['custom'];
     }
     // create activity
-    $activity = CRM_Activity_BAO_Activity::create( $params );
+    $activityBAO = CRM_Activity_BAO_Activity::create( $params );
 
-    if ( isset( $activity->id ) ) {
-    _civicrm_object_to_array( $activity, $activityArray[$activity->id]);
-    return civicrm_create_success($activityArray,$params);
+    if ( isset( $activityBAO->id ) ) {
+    _civicrm_object_to_array( $activityBAO, $activityArray[$activityBAO->id]);
+    return civicrm_create_success($activityArray,$params,$activityBAO);
     }
 
 
@@ -199,9 +201,10 @@ function _civicrm_activity_get( $activityId, $returnCustom = true ) {
     _civicrm_object_to_array( $dao, $activity[$dao->id] );
     //also return custom data if needed.
     if ( $returnCustom && !empty( $activity ) ) {
+      $customdata = array();
       $customdata = _civicrm_activity_custom_get( array( 'activity_id'      => $activityId,
-                                                              'activity_type_id' => $activity['activity_type_id']  )  );
-     if ( is_array( $customData ) && !empty( $customData ) ) {
+                                                         'activity_type_id' => CRM_Utils_Array::value('activity_type_id',$activity[$dao->id]  ))  );
+     if ( is_array( $customdata ) && !empty( $customdata ) ) {
       $activity = array_merge( $activity, $customdata );
       }
     }
@@ -273,11 +276,12 @@ SELECT  count(*)
   /*
    * @todo unique name for id is activity id - id won't be supported in v4
    */
+
   if ( ! $addMode && ! isset( $params['id'] )&& ! isset( $params['activity_id'] )) {
     return civicrm_create_error(  'Required parameter "id" not found'  );
   }
 
-  if ( ! $addMode && $params['id'] && (! is_numeric ( $params['id'] )) || ($params['id'] && ! is_numeric ( $params['id'] ) )) {
+  if ( ! $addMode && isset($params['id']) && (! is_numeric ( $params['id'] )) || (isset($params['id']) && ! is_numeric ( $params['id'] ) )) {
     return civicrm_create_error(  'Invalid activity "id"'  );
   }
 

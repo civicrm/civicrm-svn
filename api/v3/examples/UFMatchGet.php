@@ -8,7 +8,7 @@ function uf_match_get_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_uf_match_get','UFMatch',$params );
+  $result = civicrm_api( 'uf_match','get',$params );
 
   return $result;
 }
@@ -19,14 +19,13 @@ function uf_match_get_example(){
 function uf_match_get_expectedresult(){
 
   $expectedResult = 
-            array(
-                  'is_error' 		=> '0',
-                  'version' 		=> '3',
-                  'count' 		=> '1',
-                  'id' 		=> 'uf_id',
-                  'values' 		=>                   array(                  'uf_id' => '42',                  ),
-
-  );
+     array(
+           'is_error' 		=> '0',
+           'version' 		=> '3',
+           'count' 		=> '1',
+           'id' 		=> 'uf_id',
+           'values' 		=>            array(           'uf_id' => '42',           ),
+      );
 
   return $expectedResult  ;
 }

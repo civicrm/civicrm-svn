@@ -8,7 +8,7 @@ function custom_group_delete_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_custom_group_delete','CustomGroup',$params );
+  $result = civicrm_api( 'custom_group','delete',$params );
 
   return $result;
 }
@@ -19,13 +19,12 @@ function custom_group_delete_example(){
 function custom_group_delete_expectedresult(){
 
   $expectedResult = 
-            array(
-                  'is_error' 		=> '0',
-                  'version' 		=> '3',
-                  'count' 		=> '1',
-                  'values' 		=> '1',
-
-  );
+     array(
+           'is_error' 		=> '0',
+           'version' 		=> '3',
+           'count' 		=> '1',
+           'values' 		=> '1',
+      );
 
   return $expectedResult  ;
 }

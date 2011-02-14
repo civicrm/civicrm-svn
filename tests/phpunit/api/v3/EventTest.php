@@ -80,7 +80,7 @@ class api_v3_EventTest extends CiviUnitTestCase
         if ( $this->_eventId ) {
             $this->eventDelete( $this->_eventId );
         }        
-        $this->eventDelete( $this->_event['event_id'] );	
+        $this->eventDelete( $this->_event['id'] );	
     }
 
 ///////////////// civicrm_event_get methods
@@ -106,7 +106,7 @@ class api_v3_EventTest extends CiviUnitTestCase
     
     function testGetEventById( )
     {
-        $params = array( 'id' => $this->_event['event_id'],
+        $params = array( 'id' => $this->_event['id'],
                          'version'				=>$this->_apiversion, );
         $result = civicrm_event_get( $params );
         $this->assertEquals( $result['values'][$this->_eventId]['event_title'], 'Annual CiviCRM meet' );
@@ -168,7 +168,7 @@ class api_v3_EventTest extends CiviUnitTestCase
     function testCreateEvent( )
     {
         $result = civicrm_event_create( $this->_params );
-        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+        $this->documentMe($this->_params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( $result['is_error'], 0 );
         $this->assertArrayHasKey( 'id', $result['values'][$result['id']], 'In line ' . __LINE__  );
     }
@@ -234,8 +234,8 @@ class api_v3_EventTest extends CiviUnitTestCase
          $getparams = array('version' => $this->_apiversion,
                          'sequential' => 1, );
          $result =& civicrm_event_get($getparams);
-         $res    = $result['values'][$result['id']];
          $this->assertEquals($result['count'],2, 'In line ' . __LINE__);
+         $res    = $result['values'][0];
          $this->assertArrayKeyExists('title', $res, 'In line ' . __LINE__ );
          $this->assertEquals( $res['event_type_id'], $this->_params['event_type_id'] , 'In line ' . __LINE__ );
         

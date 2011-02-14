@@ -157,6 +157,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
                   );                        
         $result=& civicrm_pledge_create($params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+        $this->assertEquals(0, $result['is_error'], "in line " . __LINE__);
         $this->assertEquals($result['values'][0]['amount']     ,100.00, 'In line ' . __LINE__); 
         $this->assertEquals($result['values'][0]['installments'] ,5, 'In line ' . __LINE__); 
         $this->assertEquals($result['values'][0]['frequency_unit'],'year', 'In line ' . __LINE__);

@@ -62,6 +62,7 @@ require_once 'api/v3/utils.php';
  *
  * @return   Newly create custom_group object
  * @todo $params['extends'] is array format - is that std compatible
+ * @todo review custom field create if 'html' approx line 110
  * @access public 
  */
 function civicrm_custom_group_create( $params )
@@ -73,7 +74,8 @@ function civicrm_custom_group_create( $params )
     // Require either param['class_name'] (string) - for backwards compatibility - OR parm['extends'] (array)
     // If passing extends array - set class_name (e.g. 'Contact', 'Participant'...) as extends[0]. You may optionally
     // pass an extends_entity_column_value as extends[1] (e.g. an Activity Type ID).
-    if( isset( $params['class_name'] ) && trim( $params['class_name'] ) ) {
+
+    if( isset( $params['class_name'] ) && is_string($params['class_name'] ) && trim( $params['class_name'] ) ) {
         $params['extends'][0] = trim( $params['class_name'] );
     } else {
         if ( ! isset( $params['extends'] ) || ! is_array( $params['extends'] ) ) { 
@@ -105,7 +107,8 @@ function civicrm_custom_group_create( $params )
     
     if ( CRM_Utils_Array::value( 'html_type', $params ) ){
         $fparams = array('custom_group_id' => $customGroup->id,
-                        'version'         => $params['version'],);
+                        'version'         => $params['version'],
+                        'label'           => 'api created field');// should put something cleverer here but this will do for now
         require_once 'api/v3/CustomField.php';
         $fieldValues = civicrm_custom_field_create( $fparams );
         $values      = array_merge( $values[$customGroup->id] , $fieldValues['values'][$fieldValues['id']] );

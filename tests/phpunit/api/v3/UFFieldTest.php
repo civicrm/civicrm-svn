@@ -122,43 +122,35 @@ class api_v3_UFFieldTest extends CiviUnitTestCase
             'is_searchable'    => 1,
             'is_active'        => 1,
             'version'					 => $this->_apiversion,
+            'uf_group_id'				 =>$this->_ufGroupId, 
         );
-        $ufField          = civicrm_uf_field_create($this->_ufGroupId, $params);
+        $ufField          = civicrm_uf_field_create($params);
         $this->documentMe($params,$ufField ,__FUNCTION__,__FILE__); 
         unset ($params['version']);
+        unset ($params[ 'uf_group_id']);
         $this->_ufFieldId = $ufField['id'];
+        $this->assertEquals(0, $ufField['is_error'], " in line " . __LINE__ );
         foreach ($params as $key => $value) {
-            $this->assertEquals($ufField[$key], $params[$key]);
+           $this->assertEquals($ufField['values'][$ufField['id']][$key], $params[$key]);
         }
 
-        $params = array(
-            'field_name'       => 'country',
-            'label'            => 'Edited Test Country',
-            'weight'           => 1,
-            'is_active'        => 1,
-            'version'					 => $this->_apiversion,
-        );
 
-        $updatedField = civicrm_uf_field_update($params,$ufField['id']);
-        unset ($params['version']);
-        foreach ($params as $key => $value) {
-            $this->assertEquals($updatedField[$key], $params[$key]);
-        }
     }
 
     function testCreateUFFieldWithEmptyParams()
     {
-        $result = civicrm_uf_field_create($this->_ufGroupId, array());
+        $params = array();
+        $result = civicrm_uf_field_create(  $params );
         $this->assertEquals($result['is_error'], 1);
     }
 
     function testCreateUFFieldWithWrongParams()
     {
-        $result = civicrm_uf_field_create('a string', array('field_name' => 'test field'));
+        $result = civicrm_uf_field_create( array('field_name' => 'test field'));
         $this->assertEquals($result['is_error'], 1);
-        $result = civicrm_uf_field_create($this->_ufGroupId, 'a string');
+        $result = civicrm_uf_field_create( 'a string');
         $this->assertEquals($result['is_error'], 1);
-        $result = civicrm_uf_field_create($this->_ufGroupId, array('label' => 'name-less field'));
+        $result = civicrm_uf_field_create( array('label' => 'name-less field'));
         $this->assertEquals($result['is_error'], 1);
     }
 
@@ -177,13 +169,16 @@ class api_v3_UFFieldTest extends CiviUnitTestCase
             'is_searchable'    => 1,
             'is_active'        => 1,
             'version'					 => $this->_apiversion,
+            'uf_group_id'				 => $this->_ufGroupId,
         );
-        $ufField          = civicrm_uf_field_create($this->_ufGroupId, $params);
+
+        $ufField          = civicrm_uf_field_create($params);
+        $this->assertEquals($ufField['is_error'], 0,'in line' . __LINE__);
         $this->_ufFieldId = $ufField['id'];
-        $this->assertEquals($ufField['is_error'], 1);
-        $result = civicrm_uf_field_delete($ufField['id']);
+        $params = array('version'	 => $this->_apiversion,
+                        'field_id'  => $ufField['id']);
+        $result = civicrm_uf_field_delete($params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);        
-        
-        $this->assertEquals($result['is_error'], 1);
+        $this->assertEquals($result['is_error'], 0,'in line' . __LINE__);
     }
 }

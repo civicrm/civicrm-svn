@@ -4,9 +4,9 @@ function pledge_create_example(){
     $params = array(
     
                   'contact_id' 		=> '1',
-                  'pledge_create_date' 		=> '20110206',
-                  'start_date' 		=> '20110206',
-                  'scheduled_date' 		=> '20110208',
+                  'pledge_create_date' 		=> '20110209',
+                  'start_date' 		=> '20110209',
+                  'scheduled_date' 		=> '20110211',
                   'pledge_amount' 		=> '100',
                   'pledge_status_id' 		=> '2',
                   'contribution_type_id' 		=> '1',
@@ -21,7 +21,7 @@ function pledge_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_pledge_create','Pledge',$params );
+  $result = civicrm_api( 'pledge','create',$params );
 
   return $result;
 }
@@ -32,35 +32,10 @@ function pledge_create_example(){
 function pledge_create_expectedresult(){
 
   $expectedResult = 
-            array(
-                  'id' 		=> '1',
-                  'contact_id' 		=> '1',
-                  'contribution_type_id' 		=> '',
-                  'contribution_page_id' 		=> '',
-                  'amount' 		=> '100',
-                  'original_installment_amount' 		=> '20',
-                  'currency' 		=> 'USD',
-                  'frequency_unit' 		=> 'year',
-                  'frequency_interval' 		=> '5',
-                  'frequency_day' 		=> '15',
-                  'installments' 		=> '5',
-                  'start_date' 		=> '20110206',
-                  'create_date' 		=> '20110206',
-                  'acknowledge_date' 		=> '',
-                  'modified_date' 		=> '',
-                  'cancel_date' 		=> '',
-                  'end_date' 		=> '',
-                  'honor_contact_id' 		=> '',
-                  'honor_type_id' 		=> '',
-                  'max_reminders' 		=> '',
-                  'initial_reminder_day' 		=> '',
-                  'additional_reminder_day' 		=> '',
-                  'status_id' 		=> '2',
-                  'is_test' 		=> '',
-                  'campaign_id' 		=> '',
-                  'is_error' 		=> '0',
-
-  );
+     array(
+           'is_error' 		=> '1',
+           'error_message' 		=> 'Undefined index: create_date',
+      );
 
   return $expectedResult  ;
 }

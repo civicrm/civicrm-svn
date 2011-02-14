@@ -10,7 +10,7 @@ function group_contact_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_group_contact_create','GroupContact',$params );
+  $result = civicrm_api( 'group_contact','create',$params );
 
   return $result;
 }
@@ -21,11 +21,10 @@ function group_contact_create_example(){
 function group_contact_create_expectedresult(){
 
   $expectedResult = 
-            array(
-                  'is_error' 		=> '1',
-                  'error_message' 		=> 'Mandatory key(s) missing from params array: contact_id',
-
-  );
+     array(
+           'is_error' 		=> '1',
+           'error_message' 		=> 'Mandatory key(s) missing from params array: contact_id',
+      );
 
   return $expectedResult  ;
 }

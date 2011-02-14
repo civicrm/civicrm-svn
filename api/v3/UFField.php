@@ -47,12 +47,13 @@
  * @access public
  *
  */
-function civicrm_uf_field_create($groupId, $params)
+function civicrm_uf_field_create( $params)
 {
   _civicrm_initialize( true);
   try{
-
-    if (!is_array($params) or !isset($params['field_name']) or (int) $groupId < 1) {
+    civicrm_verify_one_mandatory($params,null,array('field_name', 'uf_group_id'));
+    $groupId = CRM_Utils_Array::value('uf_group_id',$params);
+    if ((int) $groupId < 1) {
       return civicrm_create_error('Params must be a field_name-carrying array and a positive integer.');
     }
 
@@ -78,9 +79,8 @@ function civicrm_uf_field_create($groupId, $params)
     }
 
     $ufField = CRM_Core_BAO_UFField::add( $params,$ids );
-    _civicrm_object_to_array( $ufField, $ufFieldArray);
-
-    return $ufFieldArray;
+    _civicrm_object_to_array( $ufField, $ufFieldArray[$ufField->id]);
+    return civicrm_create_success($ufFieldArray,$params);
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );
   } catch (Exception $e) {
@@ -155,15 +155,14 @@ function civicrm_uf_field_update( $params , $fieldId ) {
  * @access public
  *
  */
-function civicrm_uf_field_delete( $fieldId ) {
+function civicrm_uf_field_delete(&$params ) {
   _civicrm_initialize(true );
   try{
-    if(! isset( $fieldId ) ) {
-      return civicrm_create_error("provide a valid fieldId.");
-    }
-
+    civicrm_verify_mandatory($params,null,array('field_id'));
+    $fieldId  = $params['field_id'];
     require_once 'CRM/Core/BAO/UFField.php';
-    return CRM_Core_BAO_UFField::del($fieldId);
+    $result = CRM_Core_BAO_UFField::del($fieldId);
+    return civicrm_create_success($result,$params);
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );
   } catch (Exception $e) {

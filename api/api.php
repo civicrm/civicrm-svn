@@ -183,8 +183,8 @@ function civicrm_api_get_camel_name($entity) {
     $fragment = ucfirst($fragment);
   }
   // Special case: UFGroup, UFJoin, UFMatch, UFField
-  if ($fragment[0] === 'Uf') {
-    $fragment[0] = 'UF';
+  if ($fragments[0] === 'Uf') {
+    $fragments[0] = 'UF';
   }
   return implode('', $fragments);
 }

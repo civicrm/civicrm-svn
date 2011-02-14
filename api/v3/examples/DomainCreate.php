@@ -9,7 +9,7 @@ function domain_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_domain_create','Domain',$params );
+  $result = civicrm_api( 'domain','create',$params );
 
   return $result;
 }
@@ -20,14 +20,13 @@ function domain_create_example(){
 function domain_create_expectedresult(){
 
   $expectedResult = 
-            array(
-                  'is_error' 		=> '0',
-                  'version' 		=> '3',
-                  'count' 		=> '8',
-                  'id' 		=> '2',
-                  'values' 		=>                   array(                  'id' => '2',                                    'name' => 'New Domain',                                    'description' => 'Description of a new domain',                                    'config_backend' => '',                                    'version' => '3',                                    'loc_block_id' => '',                                    'locales' => '',                                    'locale_custom_strings' => '',                  ),
-
-  );
+     array(
+           'is_error' 		=> '0',
+           'version' 		=> '3',
+           'count' 		=> '8',
+           'id' 		=> '2',
+           'values' 		=>            array(           'id' => '2',                      'name' => 'New Domain',                      'description' => 'Description of a new domain',                      'config_backend' => '',                      'version' => '3',                      'loc_block_id' => '',                      'locales' => '',                      'locale_custom_strings' => '',           ),
+      );
 
   return $expectedResult  ;
 }

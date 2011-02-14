@@ -304,9 +304,9 @@ class api_v3_ContributionTest extends CiviUnitTestCase
         $contributionID = $this->contributionCreate( $this->_individualId , $this->_contributionTypeId,$this->_apiversion );
         $params         = array( 'contribution_id' => $contributionID ,
                                   'version'        => $this->_apiversion,);
-        $contribution   = civicrm_contribution_delete( $params );
+        $result   = civicrm_contribution_delete( $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
-        $this->assertEquals( $contribution['is_error'], 0, 'In line ' . __LINE__ );
+        $this->assertEquals( $result['is_error'], 0, 'In line ' . __LINE__ );
     }
 
 ///////////////// civicrm_contribution_search methods
@@ -378,7 +378,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
                      'contribution_type_id'   => $this->_contributionTypeId,
                      'non_deductible_amount'  => 10.00,
                      'contribution_status_id' => 1,
-                     'version'								=>$this->apiversion,
+                     'version'								=>$this->_apiversion,
                      );       
          $contribution1 =& civicrm_contribution_create($p1);
          
@@ -393,7 +393,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
                      'fee_amount'             => 50.00,
                      'net_amount'             => 60.00,
                      'contribution_status_id' => 2,
-                     'version'								=>$this->apiversion,
+                     'version'								=>$this->_apiversion,
                      );    
          $contribution2 =& civicrm_contribution_create($p2);
          

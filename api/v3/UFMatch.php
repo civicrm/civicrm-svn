@@ -60,7 +60,7 @@ function civicrm_uf_match_get(&$params)
   _civicrm_initialize( true );
   try{
     civicrm_verify_one_mandatory($params,null,array('uf_id','contact_id'));
-    if ((int) $params['uf_id'] > 0) {
+    if ((int) CRM_Utils_Array::value('uf_id', $params)> 0) {
       $result['contact_id']=CRM_Core_BAO_UFMatch::getContactId($params['uf_id']);
       return civicrm_create_success($result);
     } elseif ((int) $params['contact_id'] > 0){

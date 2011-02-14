@@ -86,13 +86,13 @@ class api_v3_TagTest extends CiviUnitTestCase
         $this->assertEquals( 0, $tag['is_error'], 'In line ' . __LINE__ );
         
         $params = array( 'id' => $tag['id'],
-                         'name' => $tag['name'],
+                         'name' => $tag['values'][$tag['id']]['name'],
                          'version' => $this->_apiversion  );
         $result = civicrm_tag_get($params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
-        $this->assertEquals( $tag['description'], $result['values'][$tag['id']]['description'], 'In line ' . __LINE__ );
-        $this->assertEquals( $tag['name'], $result['values'][$tag['id']]['name'], 'In line ' . __LINE__ ); 
+        $this->assertEquals( $tag['values'][$tag['id']]['description'], $result['values'][$tag['id']]['description'], 'In line ' . __LINE__ );
+        $this->assertEquals( $tag['values'][$tag['id']]['name'], $result['values'][$tag['id']]['name'], 'In line ' . __LINE__ ); 
     }  
     
 
@@ -141,10 +141,10 @@ class api_v3_TagTest extends CiviUnitTestCase
     {
         $params = array( 'name'        => 'New Tag3',
                          'description' => 'This is description for New Tag 02' ,
-                          'version'    => $this->_apiversion);
+                         'version'    => $this->_apiversion);
         
         $result = civicrm_tag_create($params); 
-                $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__);
         $this->assertNotNull( $result['id'], 'In line ' . __LINE__ );
     }

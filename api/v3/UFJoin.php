@@ -104,9 +104,8 @@ function civicrm_uf_join_get(&$params)
     while ($ufJoinDAO->fetch()) {
       _civicrm_object_to_array($ufJoinDAO, $ufJoin[$ufJoinDAO->id]);
     }
-    $ufJoinDAO->free;
   
-    return civicrm_create_success($ufJoin,$params);
+    return civicrm_create_success($ufJoin,$params,$dao);
     
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );

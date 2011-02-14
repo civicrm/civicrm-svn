@@ -101,7 +101,6 @@ function civicrm_membership_type_get(&$params)
         $membershipTypeBAO->$name = $params[$name];
       }
     }
-
     if ( $membershipTypeBAO->find() ) {
       $membershipType = array();
       while ( $membershipTypeBAO->fetch() ) {
@@ -109,9 +108,9 @@ function civicrm_membership_type_get(&$params)
         $membershipTypes[$membershipTypeBAO->id] = $membershipType;
       }
     } else {
-      return civicrm_create_error('Exact match not found');
+      return civicrm_create_success(array(),$params,$membershipTypeBAO);
     }
-    return civicrm_create_success($membershipTypes);
+    return civicrm_create_success($membershipTypes,$params,$membershipTypeBAO);
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );
   } catch (Exception $e) {

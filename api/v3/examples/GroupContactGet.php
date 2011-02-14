@@ -8,7 +8,7 @@ function group_contact_get_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_group_contact_get','GroupContact',$params );
+  $result = civicrm_api( 'group_contact','get',$params );
 
   return $result;
 }
@@ -19,13 +19,20 @@ function group_contact_get_example(){
 function group_contact_get_expectedresult(){
 
   $expectedResult = 
-            array(
-                  'is_error' 		=> '0',
-                  'version' 		=> '3',
-                  'count' 		=> '0',
-                  'values' 		=>                   array(),
-
-  );
+     array(
+           'is_error' 		=> '0',
+           'version' 		=> '3',
+           'count' 		=> '1',
+           'id' 		=> '1',
+           'values' 		=>            array(           '1' =>  array(
+                      'id' => '1',
+                      'group_id' => '1',
+                      'title' => 'New Test Group Created',
+                      'visibility' => 'Public Pages',
+                      'in_date' => '2011-02-09 20:43:01',
+                      'in_method' => 'API',
+           ),           ),
+      );
 
   return $expectedResult  ;
 }

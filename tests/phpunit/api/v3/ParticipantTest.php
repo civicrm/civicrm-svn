@@ -105,10 +105,11 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'participant_id'      => $this->_participantID,
                         'version'							=> $this->_apiversion,
     );
-    $participant = & civicrm_participant_get($params);
-    $this->assertEquals($participant['values'][$this->_participantID]['event_id'], $this->_eventID);
-    $this->assertEquals($participant['values'][$this->_participantID]['participant_register_date'], '2007-02-19 00:00:00');
-    $this->assertEquals($participant['values'][$this->_participantID]['participant_source'],'Wimbeldon');
+    $result =  civicrm_participant_get($params);
+      
+    $this->assertEquals($result['values'][$this->_participantID]['event_id'], $this->_eventID);
+    $this->assertEquals($result['values'][$this->_participantID]['participant_register_date'], '2007-02-19 00:00:00');
+    $this->assertEquals($result['values'][$this->_participantID]['participant_source'],'Wimbeldon');
   }
 
   /**
@@ -120,10 +121,12 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'id'      => $this->_participantID,
                          'version'							=> $this->_apiversion,
     );
-    $participant = & civicrm_participant_get($params);
-    $this->assertEquals($participant['values'][$this->_participantID]['event_id'], $this->_eventID);
-    $this->assertEquals($participant['values'][$this->_participantID]['participant_register_date'], '2007-02-19 00:00:00');
-    $this->assertEquals($participant['values'][$this->_participantID]['participant_source'],'Wimbeldon');
+    $result = & civicrm_participant_get($params);
+    $this->documentMe($params,$result ,__FUNCTION__,__FILE__);
+    $this->assertEquals($result['is_error'], 0);
+    $this->assertEquals($result['values'][$this->_participantID]['event_id'], $this->_eventID);
+    $this->assertEquals($result['values'][$this->_participantID]['participant_register_date'], '2007-02-19 00:00:00');
+    $this->assertEquals($result['values'][$this->_participantID]['participant_source'],'Wimbeldon');
   }
 
 
@@ -138,13 +141,13 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
     );
     $participant = & civicrm_participant_get($params);
 
-    $this->assertEquals($this->_participantID, $participant['participant_id'],
+    $this->assertEquals($this->_participantID, $participant['id'],
                             "In line " . __LINE__);
-    $this->assertEquals($this->_eventID,       $participant['event_id'],
+    $this->assertEquals($this->_eventID,       $participant['values'][$participant['id']]['event_id'],
                             "In line " . __LINE__);
-    $this->assertEquals('2007-02-19 00:00:00', $participant['participant_register_date'],
+    $this->assertEquals('2007-02-19 00:00:00', $participant['values'][$participant['id']]['participant_register_date'],
                             "In line " . __LINE__);
-    $this->assertEquals('Wimbeldon',          $participant['participant_source'],
+    $this->assertEquals('Wimbeldon',          $participant['values'][$participant['id']]['participant_source'],
                             "In line " . __LINE__);
   }
 
@@ -156,30 +159,28 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
   {
     $params = array(
                         'event_id'      => $this->_eventID,
-                        'returnFirst'   => 1,
-                         'version'							=> $this->_apiversion,
+                        'rowCount'   => 1,
+                        'version'							=> $this->_apiversion,
     );
 
     $participant = & civicrm_participant_get($params);
-
     $this->assertNotNull($participant['id']);
      
   }
 
   /**
    * check with event_id
-   * This should return an error because there will be at least 2 participants.
+   * in v3 this should return all participants
    */
   function testGetMultiMatchNoReturnFirst()
   {
     $params = array(
                         'event_id'      => $this->_eventID,
-                             'version'							=> $this->_apiversion,
+                         'version'							=> $this->_apiversion,
     );
     $participant = & civicrm_participant_get($params);
-
-    $this->assertEquals( $participant['is_error'],1 );
-    $this->assertNotNull($participant['error_message']);
+    $this->assertEquals( $participant['is_error'],0 );
+    $this->assertNotNull($participant['count'],3);
   }
 
   ///////////////// civicrm_participant_get methods
@@ -201,7 +202,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
    */
   function testSearchEmptyParams()
   {
-    $params = array();
+    $params = array('version' =>$this->_apiversion);
     $result = & civicrm_participant_get($params);
 
     // expecting 3 participant records
@@ -231,7 +232,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
     // Should get 2 participant records for this contact.
     $params = array(
                         'contact_id'      => $this->_contactID2,
-                         'version'							=> $this->_apiversion,
+                        'version'							=> $this->_apiversion,
     );
     $participant = & civicrm_participant_get($params);
 
@@ -248,7 +249,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'event_id'      => $this->_eventID,
                         'return.last_name' => 1,
                         'return.event_title' => 1,
-                             'version'							=> $this->_apiversion,
+                        'version'							=> $this->_apiversion,
     );
     $participant = & civicrm_participant_get($params);
     if (  $participant['count']  < 3 ) {
@@ -348,13 +349,13 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
     );
     $participant = & civicrm_participant_create($params);
     $this->assertNotEquals( $participant['is_error'],1 );
-    $this->_participantID = $participant['result'];
+    $this->_participantID = $participant['id'];
 
     if ( ! $participant['is_error'] ) {
       $this->_createdParticipants[] = CRM_Utils_Array::value('result', $participant);
       // Create $match array with DAO Field Names and expected values
       $match = array(
-                           'id' => CRM_Utils_Array::value('result', $participant)
+                           'id' => CRM_Utils_Array::value('values', $participant)
       );
       // assertDBState compares expected values in $match to actual values in the DB
       $this->assertDBState( 'CRM_Event_DAO_Participant', $participant['result'], $match );
@@ -380,13 +381,13 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
     $participant = & civicrm_participant_create($params);
     $this->documentMe($params,$participant ,__FUNCTION__,__FILE__);
     $this->assertNotEquals( $participant['is_error'],1 );
-    $this->_participantID = $participant['result'];
+    $this->_participantID = $participant['id'];
     if ( ! $participant['is_error'] ) {
-      $this->_createdParticipants[] = CRM_Utils_Array::value('result', $participant);
+      $this->_createdParticipants[] = CRM_Utils_Array::value('values', $participant);
 
       // Create $match array with DAO Field Names and expected values
       $match = array(
-                           'id'         => CRM_Utils_Array::value('result', $participant)
+                           'id'         => CRM_Utils_Array::value('id', $participant)
       );
       // assertDBState compares expected values in $match to actual values in the DB
       $this->assertDBState( 'CRM_Event_DAO_Participant', $participant['values'][$this->_participantID], $match );

@@ -39,6 +39,7 @@ class api_v3_NoteTest extends CiviUnitTestCase
     protected $_apiversion;
     protected $_contactID;
     protected $_params;
+    protected $_noteID;
 
     function __construct( ) {
         parent::__construct( );
@@ -55,13 +56,13 @@ class api_v3_NoteTest extends CiviUnitTestCase
     
     function setUp() 
     {
-        $this->_noteID;
+       
         $this->_apiversion = 3;
         //  Connect to the database
         parent::setUp();
 
         $this->_contactID = $this->organizationCreate(null, $this->_apiversion );
-        
+
         $this->_params = array(
                                'entity_table'  => 'civicrm_contact',
                                'entity_id'     => $this->_contactID,
@@ -71,7 +72,6 @@ class api_v3_NoteTest extends CiviUnitTestCase
                                'subject'       => 'Test Note', 
                                'version'			 =>$this->_apiversion, 
                                );
-
         $this->_note      = $this->noteCreate( $this->_contactID, $this->_apiversion );
         $this->_noteID    = $this->_note['id'];
     }
@@ -160,7 +160,7 @@ class api_v3_NoteTest extends CiviUnitTestCase
         $params = array( );
         $result = civicrm_note_create( $params );     
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: note, version' );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: entity_id, note, version' );
     }
 
     /**
@@ -215,7 +215,7 @@ class api_v3_NoteTest extends CiviUnitTestCase
         $params = array();        
         $note   =& civicrm_note_create( $params );
         $this->assertEquals( $note['is_error'], 1 );
-        $this->assertEquals( $note['error_message'], 'Mandatory key(s) missing from params array: note, version' );
+        $this->assertEquals( $note['error_message'], 'Mandatory key(s) missing from params array: entity_id, note, version' );
     }
 
     /**
@@ -313,4 +313,13 @@ class api_v3_NoteTest extends CiviUnitTestCase
 
 }
 
-
+     /**
+     *  Test civicrm_activity_create() using example code
+     */
+    function testNoteCreateExample( )
+    {
+      require_once 'api/v3/examples/NoteCreate.php';
+      $result = UF_match_get_example();
+      $expectedResult = UF_match_get_expectedresult();
+      $this->assertEquals($result,$expectedResult);
+    }

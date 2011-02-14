@@ -136,20 +136,28 @@ function civicrm_verify_mandatory (&$params, $daoName = null, $keys = array() ) 
  *
  * @param <type> $msg
  * @param <type> $data
+ * @param object $dao DAO / BAO object to be freed here
  * @return <type>
  */
-function &civicrm_create_error( $msg, $data = null ) 
+function &civicrm_create_error( $msg, $data = null,$dao = null ) 
 {
+   if(is_object ($dao)){
+    $dao->free(); 
+   }
     return CRM_Core_Error::createAPIError( $msg, $data );
 }
 
 /**
  * Format array in result output styple
  * @param array $params
+ * @dao object DAO object to be freed here
  * @return array $result
  */
-function civicrm_create_success( $values = 1,&$params=null )
+function civicrm_create_success( $values = 1,&$params=null,$dao = null )
 {
+   if(is_object ($dao)){
+    $dao->free(); 
+   }
     $result = array();
     $result['is_error'] = 0;
     $result['version'] =3;
@@ -174,6 +182,7 @@ function civicrm_create_success( $values = 1,&$params=null )
     }else{
      $result['values'] =  $values;
     }
+
     return $result;
 }
 /**

@@ -53,7 +53,7 @@ require_once 'CRM/Contribute/PseudoConstant.php';
  * @access public
  * @example ContributionCreate.php
  */
-function &civicrm_contribution_create( &$params ) {
+function civicrm_contribution_create( &$params ) {
     _civicrm_initialize( true);
     try {   
     civicrm_verify_mandatory ($params,null,array ('contact_id','total_amount',array('contribution_type_id' , 'contribution_type')));  
@@ -82,7 +82,6 @@ function &civicrm_contribution_create( &$params ) {
     if ( is_a( $contribution, 'CRM_Core_Error' ) ) {
         return civicrm_create_error(  $contribution->_errors[0]['message']  );
     }
-
     _civicrm_object_to_array($contribution, $contributeArray[$contribution->id]);
     
     return civicrm_create_success($contributeArray,$params);
@@ -110,7 +109,7 @@ function civicrm_contribution_delete( &$params ) {
 
     require_once 'CRM/Contribute/BAO/Contribution.php';
     if ( CRM_Contribute_BAO_Contribution::deleteContribution( $contributionID ) ) {
-        return civicrm_create_success( );
+        return civicrm_create_success( array($contributionID =>1));
     } else {
         return civicrm_create_error(  'Could not delete contribution' );
     }
@@ -133,7 +132,7 @@ function civicrm_contribution_delete( &$params ) {
  * @static void
  * @access public
  */
-function &civicrm_contribution_get( &$params ) {
+function civicrm_contribution_get( &$params ) {
     _civicrm_initialize(true );
     try { 
     civicrm_verify_mandatory($params);

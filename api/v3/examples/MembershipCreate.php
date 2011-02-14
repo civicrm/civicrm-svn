@@ -15,7 +15,7 @@ function membership_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_membership_create','Membership',$params );
+  $result = civicrm_api( 'membership','create',$params );
 
   return $result;
 }
@@ -26,11 +26,10 @@ function membership_create_example(){
 function membership_create_expectedresult(){
 
   $expectedResult = 
-            array(
-                  'id' 		=> '2',
-                  'is_error' 		=> '0',
-
-  );
+     array(
+           'id' 		=> '2',
+           'is_error' 		=> '0',
+      );
 
   return $expectedResult  ;
 }

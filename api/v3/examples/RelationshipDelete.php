@@ -12,7 +12,7 @@ function relationship_delete_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_relationship_delete','Relationship',$params );
+  $result = civicrm_api( 'relationship','delete',$params );
 
   return $result;
 }
@@ -23,14 +23,10 @@ function relationship_delete_example(){
 function relationship_delete_expectedresult(){
 
   $expectedResult = 
-            array(
-                  'is_error' 		=> '0',
-                  'version' 		=> '3',
-                  'count' 		=> '1',
-                  'id' 		=> 'id',
-                  'values' 		=>                   array(                  'id' => '1',                  ),
-
-  );
+     array(
+           'is_error' 		=> '1',
+           'error_message' 		=> 'Undefined index: end_date',
+      );
 
   return $expectedResult  ;
 }

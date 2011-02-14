@@ -8,7 +8,7 @@ function relationship_get_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_relationship_get','Relationship',$params );
+  $result = civicrm_api( 'relationship','get',$params );
 
   return $result;
 }
@@ -19,11 +19,10 @@ function relationship_get_example(){
 function relationship_get_expectedresult(){
 
   $expectedResult = 
-            array(
-                  'is_error' 		=> '1',
-                  'error_message' 		=> 'Could not find contact_id in input parameters.',
-
-  );
+     array(
+           'is_error' 		=> '1',
+           'error_message' 		=> 'Could not find contact_id in input parameters.',
+      );
 
   return $expectedResult  ;
 }

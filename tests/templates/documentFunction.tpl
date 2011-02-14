@@ -9,7 +9,7 @@ function {/literal}{$function}_example(){literal}{{/literal}
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_{$function}','{$entity}',$params );
+  $result = civicrm_api( '{$fnPrefix}','{$action}',$params );
 
   return $result;
 {literal}}{/literal}
@@ -20,19 +20,17 @@ function {/literal}{$function}_example(){literal}{{/literal}
 function {$function}_expectedresult(){literal}{{/literal}
 
   $expectedResult = 
-            array(
+     array(
 {foreach from=$result key=k item=v}
-                  '{$k}' 		=> {if is_array($v)}
-                  array({foreach from=$v key=subkey item=subvalue}
-                  '{$subkey}' => {if is_array($subvalue)} array(
-                  {foreach from=$subvalue key=subsubkey item=subsubvalue}
-                  '{$subsubkey}' => '{$subsubvalue}'
-                  ,{/foreach}),{else}'{$subvalue}',{/if}
-                  {/foreach}),{else}'{$v}',{/if}
+           '{$k}' 		=> {if is_array($v)}array({foreach from=$v key=subkey item=subvalue}
+           '{$subkey}' => {if is_array($subvalue)} array(
+           {foreach from=$subvalue key=subsubkey item=subsubvalue}
+           '{$subsubkey}' => '{$subsubvalue}',
+           {/foreach}),{else}'{$subvalue}',{/if}
+           {/foreach}),{else}'{$v}',{/if}
 
 {/foreach}
-
-  );
+      );
 
   return $expectedResult  ;
 {literal}}{/literal}

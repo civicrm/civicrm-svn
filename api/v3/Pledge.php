@@ -75,10 +75,9 @@ require_once 'CRM/Utils/Rule.php';
  * @static void
  * @access public
  */
-function &civicrm_pledge_create( &$params ) {
+function civicrm_pledge_create( &$params ) {
   _civicrm_initialize(true );
   try{
-
 
     if ($params['pledge_amount']){
       //acceptable in unique format or DB format but change to unique format here

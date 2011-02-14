@@ -9,7 +9,7 @@ function group_nesting_get_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_group_nesting_get','GroupNesting',$params );
+  $result = civicrm_api( 'group_nesting','get',$params );
 
   return $result;
 }
@@ -20,17 +20,16 @@ function group_nesting_get_example(){
 function group_nesting_get_expectedresult(){
 
   $expectedResult = 
-            array(
-                  'is_error' 		=> '0',
-                  'version' 		=> '3',
-                  'count' 		=> '2',
-                  'values' 		=>                   array(                  '1' =>  array(
-                                    'id' => '1'
-                  ,                  'child_group_id' => '2'
-                  ,                  'parent_group_id' => '1'
-                  ,),                                    'is_error' => '0',                  ),
-
-  );
+     array(
+           'is_error' 		=> '0',
+           'version' 		=> '3',
+           'count' 		=> '2',
+           'values' 		=>            array(           '1' =>  array(
+                      'id' => '1',
+                      'child_group_id' => '2',
+                      'parent_group_id' => '1',
+           ),                      'is_error' => '0',           ),
+      );
 
   return $expectedResult  ;
 }

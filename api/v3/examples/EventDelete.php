@@ -8,7 +8,7 @@ function event_delete_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_event_delete','Event',$params );
+  $result = civicrm_api( 'event','delete',$params );
 
   return $result;
 }
@@ -19,13 +19,12 @@ function event_delete_example(){
 function event_delete_expectedresult(){
 
   $expectedResult = 
-            array(
-                  'is_error' 		=> '0',
-                  'version' 		=> '3',
-                  'count' 		=> '1',
-                  'values' 		=> '1',
-
-  );
+     array(
+           'is_error' 		=> '0',
+           'version' 		=> '3',
+           'count' 		=> '1',
+           'values' 		=> '1',
+      );
 
   return $expectedResult  ;
 }

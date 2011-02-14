@@ -152,12 +152,12 @@ class api_v3_EntityTagTest extends CiviUnitTestCase
         
         $this->assertEquals( $entity['is_error'], 1,
                              "In line " . __LINE__  );
-        $this->assertEquals( $entity['error_message'], 'params should be an array.' );
+        $this->assertEquals( $entity['error_message'], 'Input variable `params` is not an array' );
     }
 
     function testIndividualEntityTagGetWithoutContactID( )
     {
-        $paramsEntity = array( );
+        $paramsEntity = array( 'version' => $this->_apiversion);
         $entity       =& civicrm_entity_tag_get( $paramsEntity ); 
         $this->assertEquals( $entity['is_error'], 1 );
         $this->assertNotNull( $entity['error_message'] );
@@ -305,6 +305,7 @@ class api_v3_EntityTagTest extends CiviUnitTestCase
                         );
                 
         $result = civicrm_entity_tag_delete( $params );
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( $result['removed'], 1 );
     }
     
@@ -353,12 +354,14 @@ class api_v3_EntityTagTest extends CiviUnitTestCase
     {
         $entityTagParams = array(
                                  'contact_id' => $this->_individualID,
-                                 'tag_id'     => $this->_tagID
+                                 'tag_id'     => $this->_tagID,
+                                 'version'		=> $this->_apiversion,
                                  );
         $this->entityTagAdd( $entityTagParams );
         
         $params = array(
-                        'contact_id' => $this->_individualID
+                        'contact_id' => $this->_individualID,
+                        'version'		=> $this->_apiversion,
                         );
         
         $result = civicrm_entity_tag_display( $params );
@@ -372,7 +375,8 @@ class api_v3_EntityTagTest extends CiviUnitTestCase
     {
         $params    = array(
                            'contact_id' =>  $this->_individualID,
-                           'tag_id'     =>  $this->_tagID );
+                           'tag_id'     =>  $this->_tagID,
+                           'version'		=> $this->_apiversion, );
         
         $individualEntity = civicrm_entity_tag_create( $params ); 
         

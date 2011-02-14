@@ -9,7 +9,7 @@ function group_organization_create_example(){
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_group_organization_create','GroupOrganization',$params );
+  $result = civicrm_api( 'group_organization','create',$params );
 
   return $result;
 }
@@ -20,14 +20,13 @@ function group_organization_create_example(){
 function group_organization_create_expectedresult(){
 
   $expectedResult = 
-            array(
-                  'is_error' 		=> '0',
-                  'version' 		=> '3',
-                  'count' 		=> '3',
-                  'id' 		=> '1',
-                  'values' 		=>                   array(                  'id' => '1',                                    'group_id' => '1',                                    'organization_id' => '1',                  ),
-
-  );
+     array(
+           'is_error' 		=> '0',
+           'version' 		=> '3',
+           'count' 		=> '3',
+           'id' 		=> '1',
+           'values' 		=>            array(           'id' => '1',                      'group_id' => '1',                      'organization_id' => '1',           ),
+      );
 
   return $expectedResult  ;
 }
