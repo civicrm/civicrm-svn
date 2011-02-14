@@ -79,7 +79,8 @@ class WebTest_Grant_StandaloneAddTest extends CiviSeleniumTestCase {
       // Let's start filling the form with values.
       
       // create new contact using dialog
-      $this->webtestNewDialogContact( );
+      $firstName = substr(sha1(rand()), 0, 7);
+      $this->webtestNewDialogContact( $firstName, "Grantor", $firstName . "@example.com" );
       
       // select grant Status
       $this->select("status_id", "value=1");
@@ -116,12 +117,28 @@ class WebTest_Grant_StandaloneAddTest extends CiviSeleniumTestCase {
       
       // Clicking save.
       $this->click("_qf_Grant_upload");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad("15000");
       
-      // click through to the Grant view screen
-      $this->waitForElementPresent("link=View");
+      // verify if Grant is created
+      $this->waitForElementPresent( "xpath=//div[@id='Grants']//table//tbody/tr[1]/td[8]/span/a[text()='View']" );
       
-      $this->click('link=View');
-      $this->waitForPageToLoad('30000');
+      //click through to the Grant view screen
+      $this->click( "xpath=//div[@id='Grants']//table/tbody/tr[1]/td[8]/span/a[text()='View']" );
+
+      $this->waitForElementPresent("_qf_GrantView_cancel-bottom");
+
+      $expected = array(
+                        2   => 'Pending', 
+                        3   => 'Emergency',
+                        8   => '$ 100.00',
+                        10  => '$ 90.00',
+                        13  => 'Grant Note',
+                        );
+
+      foreach ( $expected as $label => $value ) {
+          $this->verifyText("xpath=id('GrantView')/div[2]/table[1]/tbody/tr[$label]/td[2]", preg_quote($value));
+      }
+
   }
+
 }

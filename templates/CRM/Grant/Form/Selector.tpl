@@ -29,6 +29,7 @@
 
 {strip}
 <table class="selector">
+  <thead class="sticky">
   <tr class="columnheader">
   {if ! $single and $context eq 'Search' }
      <th scope="col" title="Select Rows">{$form.toggleSelect.html}</th> 
@@ -44,6 +45,7 @@
     </th>
   {/foreach}
   </tr>
+  </thead>
 
   {counter start=0 skip=1 print=false}
   {foreach from=$rows item=row}  
