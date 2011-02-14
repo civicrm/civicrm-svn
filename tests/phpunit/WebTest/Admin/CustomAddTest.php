@@ -71,7 +71,7 @@ class WebTest_Admin_CustomAddTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad( "30000" );
 
         //Is custom group created?
-        $this->assertTrue( $this->isTextPresent( "Your custom field set '$customGroupTitle' has been added. You can add it custom fields now." ) );
+        $this->assertTrue( $this->isTextPresent( "Your custom field set '$customGroupTitle' has been added. You can add custom fields now." ) );
         //add custom field - alphanumeric text
         $textFieldLabel = 'test_text_field' .substr( sha1( rand( ) ), 0, 3 );
         $this->click( "header" );
