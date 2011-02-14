@@ -24,6 +24,7 @@
     <column>original_id</column>
     <column>result</column>    
     <column>is_deleted</column>
+    <column>campaign_id</column>
     <row>
       <value>4</value>                      <!--  id  -->
       <value>17</value>                      <!--  source_contact_id  -->
@@ -47,6 +48,7 @@
       <null />   <!--  original_id  -->
       <null />   <!--  result  -->
       <null />   <!--  is_deleted  -->
+      <null />   <!--  campaign_id  -->
     </row>
     <row>
       <value>13</value>                      <!--  id  -->
@@ -71,6 +73,7 @@
       <null />   <!--  original_id  -->
       <null />   <!--  result  -->
       <null />   <!--  is_deleted  -->
+      <null />   <!--  campaign  -->
     </row>
   </table>
 </dataset>
