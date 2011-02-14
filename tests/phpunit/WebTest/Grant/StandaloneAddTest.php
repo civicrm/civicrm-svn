@@ -117,7 +117,7 @@ class WebTest_Grant_StandaloneAddTest extends CiviSeleniumTestCase {
       
       // Clicking save.
       $this->click("_qf_Grant_upload");
-      $this->waitForPageToLoad("15000");
+      $this->waitForPageToLoad("30000");
       
       // verify if Grant is created
       $this->waitForElementPresent( "xpath=//div[@id='Grants']//table//tbody/tr[1]/td[8]/span/a[text()='View']" );
