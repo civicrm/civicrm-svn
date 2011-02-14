@@ -1084,7 +1084,6 @@ class CRM_Contact_BAO_Query
             if ( isset( $this->_distinctComponentClause)  ) {
                 $select .= "{$this->_distinctComponentClause}, ";
             }
-            
             $select .= implode( ', ', $this->_select );
             $from = $this->_fromClause;
 
@@ -3141,6 +3140,7 @@ WHERE  id IN ( $groupIDs )
                                                                'do_not_phone'           => 1,
                                                                'do_not_trade'           => 1,
                                                                'is_opt_out'             => 1,
+							       'contact_is_deleted'	=> 1,
                                                                ); 
             }
         }

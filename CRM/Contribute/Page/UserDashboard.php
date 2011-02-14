@@ -80,7 +80,7 @@ class CRM_Contribute_Page_UserDashboard extends CRM_Contact_Page_View_UserDashBo
         $recurStatus = CRM_Contribute_PseudoConstant::contributionStatus( );
 
         require_once 'CRM/Core/Payment.php';
-        require_once 'api/v2/utils.php';
+        civicrm_api_include('utils');
         $recurRow = array();
         $recurIDs = array();
         while( $recur->fetch() ) {

@@ -1438,7 +1438,7 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
         while ( $dao->fetch( ) ) {
             $activities[$dao->activity_id]['targets'][$contactId] = $contactId;
         }
-        
+ 
         // Then get activities where contactId is an asignee
         $query = "SELECT activity_id FROM civicrm_activity_assignment
                   WHERE  assignee_contact_id = $contactId";
@@ -1604,8 +1604,7 @@ SELECT  display_name
             $activityParams['assignee_contact_id'] = $activity->contact_id;
         }
 
-        require_once 'api/v2/Activity.php';
-        if ( is_a( civicrm_activity_create( $activityParams ), 'CRM_Core_Error' ) ) {
+        if (is_a(self::create($activityParams), 'CRM_Core_Error')) {
             CRM_Core_Error::fatal("Failed creating Activity for $component of id {$activity->id}");
             return false;
         }

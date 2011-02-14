@@ -162,15 +162,13 @@ SELECT  petition.id                         as id,
         // remove 'Unconfirmed' tag for this contact
         // Check if contact 'email confirmed' tag exists, else create one
         // This should be in the petition module initialise code to create a default tag for this
-        require_once 'api/v2/Tag.php';	
         $tag_params['name'] = CIVICRM_TAG_UNCONFIRMED;
-        $tag = civicrm_tag_get($tag_params); 
-		
-        require_once 'api/v2/EntityTag.php';				
+        $tag = civicrm_api('tag', 'get', $tag_params); 
+				
         unset($tag_params);
         $tag_params['contact_id'] = $contact_id;
         $tag_params['tag_id'] = $tag['id'];			
-        $tag_value = civicrm_entity_tag_remove($tag_params);	
+        $tag_value = civicrm_api('entity_tag', 'delete', $tag_params);	
 		
 		// set permanent cookie to indicate this users email address now confirmed
 		setcookie('confirmed_'.$petition_id, $activity_id, time() + $this->cookieExpire, '/');						
@@ -418,13 +416,12 @@ WHERE 	a.source_record_id = " . $surveyId . "
         }
 			
         // check if the group defined by CIVICRM_PETITION_CONTACTS exists, else create it
-        require_once 'api/v2/Group.php';
         $group_params['title'] = CIVICRM_PETITION_CONTACTS;
-        $groups = civicrm_group_get($group_params);
+        $groups = civicrm_api('group', 'get', $group_params);
         if ( ( CRM_Utils_Array::value('is_error', $groups) == 1 ) && ( CRM_Utils_Array::value('error_message', $groups) == 'No such group exists' ) ) {
             $group_params['is_active'] = 1;
             $group_params['visibility'] = 'Public Pages';
-            $newgroup = civicrm_group_add($group_params);
+            $newgroup = civicrm_api('group', 'create', $group_params);
             if ($newgroup['is_error'] == 0) {
                 $group_id[0] = $newgroup['result'];
             }
@@ -462,10 +459,9 @@ WHERE 	a.source_record_id = " . $surveyId . "
 			case CRM_Campaign_Form_Petition_Signature::EMAIL_THANK:	
 
 				//add this contact to the CIVICRM_PETITION_CONTACTS group
-				require_once 'api/v2/GroupContact.php';
 				$params['group_id'] = $group_id[0];
 				$params['contact_id'] = $params['contactId'];
-				civicrm_group_contact_add($params);
+				civicrm_api('group_contact', 'create', $params);
 				
 				require_once 'CRM/Core/BAO/MessageTemplates.php';
 				if ($params['email-Primary']) {

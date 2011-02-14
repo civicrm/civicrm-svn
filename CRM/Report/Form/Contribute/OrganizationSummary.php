@@ -309,18 +309,17 @@ class CRM_Report_Form_Contribute_OrganizationSummary extends CRM_Report_Form {
     }
 
     function validRelationships( ) {
-        require_once("api/v2/RelationshipType.php");
         $this->relationTypes = $relationTypes = array( );
         
         $params = array( 'contact_type_b' => 'Organization' );
-        $typesA =& civicrm_relationship_types_get( $params );
+        $typesA =& civicrm_api('relationship_type', 'get', $params);
         foreach( $typesA as $rel) {
             $relationTypes[ $rel['id'] ][ $rel['id'].'_b_a' ] = $rel['label_b_a'];
             //$this->relationTypes[$rel['id'].'_b_a'] = $rel['label_b_a'];
         }
         
         $params = array( 'contact_type_a' => 'Organization' );
-        $typesB =& civicrm_relationship_types_get( $params );
+        $typesB =& civicrm_api('relationship_type', 'get', $params);
         foreach( $typesB as $rel) {
             $relationTypes[ $rel['id'] ][ $rel['id'].'_a_b' ] = $rel['label_a_b'];
             //$this->relationTypes[$rel['id'].'_a_b'] = $rel['label_a_b'];

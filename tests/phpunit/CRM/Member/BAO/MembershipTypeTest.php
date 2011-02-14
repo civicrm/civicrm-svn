@@ -27,7 +27,6 @@
 
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'CRM/Member/BAO/MembershipType.php';
-require_once 'api/v2/MembershipStatus.php';
 
 class CRM_Member_BAO_MembershipTypeTest extends CiviUnitTestCase
 {

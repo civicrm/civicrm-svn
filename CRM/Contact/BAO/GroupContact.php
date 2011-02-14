@@ -688,11 +688,12 @@ AND civicrm_group_contact.group_id = %2";
             return false;
         }
 
-        $params = array( 'group'      => array( $groupID => 1 ),
-                         'contact_id' => $contactID,
-                         'return.contact_id' => 1 );
-        require_once 'api/v2/Contact.php';
-        $contacts = civicrm_contact_search( $params );
+        require_once 'CRM/Contact/BAO/Query.php';
+        $params = array(
+            array('group',      'IN', array($groupID => 1), 0, 0),
+            array('contact_id', '=',  $contactID,           0, 0),
+        );
+        list($contacts, $_) = CRM_Contact_BAO_Query::apiQuery($params, array('contact_id'));
 
         if ( ! empty( $contacts ) ) {
             return true;

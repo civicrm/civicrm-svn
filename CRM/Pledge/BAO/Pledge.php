@@ -669,8 +669,7 @@ WHERE  $whereCond
                 $activityParams['assignee_contact_id'] = $params['contact_id'];
             }
             
-            require_once 'api/v2/Activity.php';
-            if ( is_a( civicrm_activity_create( $activityParams ), 'CRM_Core_Error' ) ) {
+            if ( is_a( civicrm_api('activity', 'create', $activityParams ), 'CRM_Core_Error' ) ) {
                 CRM_Core_Error::fatal("Failed creating Activity for acknowledgment");
             }
         }

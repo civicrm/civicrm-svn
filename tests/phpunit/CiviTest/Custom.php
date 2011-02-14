@@ -33,8 +33,7 @@ class Custom extends CiviUnitTestCase
             }
         }
 
-        require_once 'api/v2/CustomGroup.php';
-        $result = civicrm_custom_group_create( $group );
+        $result = civicrm_api('custom_group', 'create', $group );
 
         if ( $result['is_error'] ) {
             return null;
@@ -71,8 +70,8 @@ class Custom extends CiviUnitTestCase
                             'is_active'       => 1
                             );
         }
-        require_once 'api/v2/CustomGroup.php';
-        $result = civicrm_custom_field_create( $params );
+        
+        $result = civicrm_api('custom_field', 'create', $params );
 
         if ( $result['is_error'] ) {
             return null;

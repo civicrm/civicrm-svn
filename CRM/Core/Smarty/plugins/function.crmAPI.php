@@ -37,22 +37,9 @@
 /**
  */
 function smarty_function_crmAPI( $params, &$smarty ) {
-
-    //  $mandatorypVars = array( 'entity', 'method','assign');
-    $fnGroup = ucfirst($params['entity']);
-    if ( strpos( $fnGroup, '_' ) ) {
-        $fnGroup    = explode( '_', $fnGroup );
-        $fnGroup[1] = ucfirst( $fnGroup[1] );
-        $fnGroup    = implode( '', $fnGroup );
-    }
     
-    if ( $fnGroup == 'Contribution' ) {
-        $fnGroup = 'Contribute';
-    }
-    
-    $apiFile = "api/v2/{$fnGroup}.php";
-    require_once $apiFile;
-    $fnName = "civicrm_{$params['entity']}_{$params['action']}";
+    civicrm_api_include($params['entity']);
+    $fnName = civicrm_api_get_function_name($params['entity'], $params['action']);
     if ( ! function_exists( $fnName ) ) {
         $smarty->trigger_error("Unknown function called: $fnName");
         return;

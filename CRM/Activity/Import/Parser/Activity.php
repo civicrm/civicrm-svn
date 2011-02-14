@@ -35,8 +35,8 @@
  */
 
 require_once 'CRM/Activity/Import/Parser.php';
-require_once 'api/v2/utils.php';
-require_once 'api/v2/Activity.php';
+
+civicrm_api_include('utils');
 
 /**
  * class to parse activity csv files
@@ -262,7 +262,7 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
             }
         }
         //date-Format part ends
-        
+        civicrm_api_include('activity');
         $formatError = _civicrm_activity_formatted_param( $params, $params, true );
         
         if ( $formatError ) {
@@ -290,7 +290,7 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
                 } else {
                     $cid = $matchedIDs[0];
                     $params['target_contact_id'] = $cid;
-                    $newActivity = civicrm_activity_create( $params ); 
+                    $newActivity = civicrm_api('activity', 'create', $params); 
                     if ( CRM_Utils_Array::value( 'is_error', $newActivity ) ) {
                         array_unshift($values, $newActivity['error_message']);
                         return CRM_Activity_Import_Parser::ERROR;
@@ -349,7 +349,7 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
                 }
             }
             
-            $newActivity = civicrm_activity_create( $params );
+            $newActivity = civicrm_api('activity', 'create', $params );
             if ( CRM_Utils_Array::value( 'is_error', $newActivity ) ) {
                 array_unshift($values, $newActivity['error_message']);
                 return CRM_Activity_Import_Parser::ERROR;

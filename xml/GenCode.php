@@ -80,6 +80,7 @@ if ( isset( $argv[1] ) && ! empty( $argv[1] ) ) {
     $file = 'schema/Schema.xml';
 }
 
+$CoreDAOCodePath = '../CRM/Core/DAO/';
 $sqlCodePath = '../sql/';
 $phpCodePath = '../';
 $tplCodePath = '../templates/';
@@ -98,6 +99,19 @@ echo "Extracting table information\n";
 $tables   =& getTables( $dbXML, $database );
 resolveForeignKeys( $tables, $classNames );
 $tables = orderTables( $tables );
+
+$allDAO = "<?php\n\$dao = array ();";
+foreach ($tables as $table) {
+   $base  = $table['base']  . $table['objectName'];
+   $allDAO  .= "\n\$dao['".$table['objectName']."'] = '". str_replace( '/', '_', $base ) ."';"; 
+//
+}
+
+// TODO deal with the BAO's too ?
+$fd = fopen( $CoreDAOCodePath . ".listAll.php", "w" );
+fputs( $fd, $allDAO );
+fclose($fd);
+
 
 //echo "\n\n\n\n\n*****************************************************************************\n\n";
 //print_r(array_keys($tables));

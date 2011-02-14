@@ -81,7 +81,7 @@ class CRM_UpdateMembershipRecord {
         require_once 'CRM/Member/BAO/MembershipType.php';
         require_once 'CRM/Utils/Date.php';
         require_once 'CRM/Utils/System.php';
-        require_once 'api/v2/Membership.php';
+        civicrm_api_include('membership');
         require_once 'CRM/Member/PseudoConstant.php';
         require_once 'CRM/Contact/BAO/Contact.php';
         require_once 'CRM/Activity/BAO/Activity.php';

@@ -16,11 +16,6 @@ function run( $argc, $argv ) {
 
     session_start( );
     require_once '../civicrm.config.php';
-    require_once 'api/v2/Domain.php';
-    require_once 'api/v2/Group.php';
-    require_once 'api/v2/GroupNesting.php';
-    require_once 'api/v2/GroupOrganization.php';
-    require_once 'api/v2/Contact.php';
 
     if ($argc < 3 || $argc > 4) {
         #var_dump($argv);
@@ -38,10 +33,11 @@ function run( $argc, $argv ) {
     CRM_Utils_System::loadBootStrap(  );
     
     # create the domain
-    $existing_domain = civicrm_domain_get( );
+    $empty_params = array();
+    $existing_domain = civicrm_api('domain', 'get', $empty_params);
     $domain_params = array('name' => $org_name, 'description' => $org_desc,
         'version' => $existing_domain['version']);
-    $domain = civicrm_domain_create( $domain_params );
+    $domain = civicrm_api('domain', 'create', $domain_params);
     if ($debug) {
         print "Create domain result: ".var_export($domain)."\n";
     }
@@ -51,7 +47,7 @@ function run( $argc, $argv ) {
     if (! is_null($argv[3])) {
         $parent_group_name = $argv[3];
         $parent_group_params = array('title' => $parent_group_name);
-        $parent_groups = civicrm_group_get( $parent_group_params );
+        $parent_groups = civicrm_api('group', 'get', $parent_group_params );
         if ($debug) {
             print "Find parent group result: ".var_export($parent_groups)."\n";
         }
@@ -62,7 +58,7 @@ function run( $argc, $argv ) {
     # create the group
     $group_params = array('title' => $org_name, 'description' => $org_desc,
         'is_active' => 1);
-    $group = civicrm_group_add( $group_params );
+    $group = civicrm_api('group', 'create', $group_params );
     if ($debug) {
         print "Create group result: ".var_export($group)."\n";
     }
@@ -72,7 +68,7 @@ function run( $argc, $argv ) {
     if (! is_null($parent_group_id)) {
         $group_nesting_params = array('parent_group_id' => $parent_group_id,
             'child_group_id' => $group_id);
-        $group_nesting = civicrm_group_nesting_create( $group_nesting_params );
+        $group_nesting = civicrm_api('group_nesting', 'create', $group_nesting_params );
         if ($debug) {
             print "Create group nesting result: ".var_export($group_nesting)."\n";
         }
@@ -81,7 +77,7 @@ function run( $argc, $argv ) {
     # create the org contact
     $org_params = array('organization_name' => $org_name,
         'contact_type' => 'Organization');
-    $org = civicrm_contact_create( $org_params );
+    $org = civicrm_api('contact', 'create', $org_params);
     if ($debug) {
         print "Create org contact result: ".var_export($org)."\n";
     }
@@ -90,7 +86,7 @@ function run( $argc, $argv ) {
     # associate the two
     $group_org_params = array('group_id' => $group_id,
         'organization_id' => $org_id);
-    $group_org_id = civicrm_group_organization_create( $group_org_params );
+    $group_org_id = civicrm_api('group_organization', 'create', $group_org_params);
     if ($debug) {
         print "Create group-org association result: ".var_export($group_org_id)."\n";
     }

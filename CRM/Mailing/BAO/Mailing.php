@@ -971,8 +971,6 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
                              $email, &$recipient, $test, 
                              $contactDetails, &$attachments, $isForward = false, $fromEmail = null ) 
     {
-        
-        require_once 'api/v2/Contact.php';
         require_once 'CRM/Utils/Token.php';
         require_once 'CRM/Activity/BAO/Activity.php';
         $config = CRM_Core_Config::singleton( );
@@ -998,8 +996,8 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
         if ( $contactDetails ) {
             $contact = $contactDetails;
         } else {
-            $params  = array( 'contact_id' => $contactId );
-            $contact =& civicrm_contact_get( $params );
+            $params = array(array('contact_id', '=', $contactId, 0, 0));
+            list($contact, $_) = CRM_Contact_BAO_Query::apiQuery($params);
             
             //CRM-4524
             $contact = reset( $contact );

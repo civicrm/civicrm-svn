@@ -1601,37 +1601,31 @@ AND civicrm_case.is_deleted     = {$cases['case_deleted']}";
         return true;
     }
     
-    static function getGlobalContacts( &$groupInfo )
+    static function getGlobalContacts(&$groupInfo)
     {
-    	$globalContacts = array();
-    	
-   		require_once 'CRM/Case/XMLProcessor/Settings.php';
-   		require_once 'CRM/Contact/BAO/Group.php';
-   		require_once 'api/v2/Contact.php';
-   		$settingsProcessor = new CRM_Case_XMLProcessor_Settings();
-   		$settings = $settingsProcessor->run();
-   		if (! empty($settings)) {
-   			$groupInfo['name'] = $settings['groupname'];
-   			if ($groupInfo['name']) {
-				$searchParams = array('name' => $groupInfo['name']);   				
-				$results = array();
-   				CRM_Contact_BAO_Group::retrieve($searchParams, $results);
-				if ($results) {
-					$groupInfo['id'] = $results['id'];
-					$groupInfo['title'] = $results['title'];
-					$searchParams = array( 'group' => array($groupInfo['id'] => 1),
-                                           'return.sort_name'     => 1,
-                                           'return.display_name'  => 1,
-                                           'return.email'         => 1,
-                                           'return.phone'         => 1
-                                           );
-        
-					$globalContacts = civicrm_contact_search( $searchParams );
-				}
+        $globalContacts = array();
 
-   			}
-   		}
-   		return $globalContacts;
+        require_once 'CRM/Case/XMLProcessor/Settings.php';
+        require_once 'CRM/Contact/BAO/Group.php';
+        $settingsProcessor = new CRM_Case_XMLProcessor_Settings();
+        $settings = $settingsProcessor->run();
+        if (!empty($settings)) {
+            $groupInfo['name'] = $settings['groupname'];
+            if ($groupInfo['name']) {
+                $searchParams = array('name' => $groupInfo['name']);
+                $results = array();
+                CRM_Contact_BAO_Group::retrieve($searchParams, $results);
+                if ($results) {
+                    $groupInfo['id']    = $results['id'];
+                    $groupInfo['title'] = $results['title'];
+                    require_once 'RM/Contact/BAO/Query.php';
+                    $params = array(array('group', 'IN', array($groupInfo['id'] => 1), 0, 0));
+                    $return = array('sort_name', 'display_name', 'email', 'phone');
+                    list($globalContacts, $_) = CRM_Contact_BAO_Query::apiQuery($params, $return);
+                }
+            }
+        }
+        return $globalContacts;
     }
 
 	/* 

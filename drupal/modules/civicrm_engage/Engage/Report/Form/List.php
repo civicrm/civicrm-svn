@@ -36,7 +36,6 @@
 
 require_once 'CRM/Report/Form.php';
 require_once 'CRM/Core/DAO.php';
-require_once 'api/v2/Group.php';
 
 /**
  *  Generate a walk list

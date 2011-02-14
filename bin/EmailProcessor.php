@@ -165,8 +165,7 @@ class EmailProcessor {
             CRM_Core_Error::fatal( $message );
         }
 
-        
-        require_once 'api/v2/Mailer.php';
+        civicrm_api_include('mailer');
         require_once 'CRM/Utils/Hook.php';
 
         // process fifty at a time, CRM-4002
@@ -211,9 +210,9 @@ class EmailProcessor {
                     require_once 'CRM/Utils/Mail/Incoming.php';
                     $mailParams = CRM_Utils_Mail_Incoming::parseMailingObject( $mail );
                     
-                    require_once 'api/v2/Activity.php';
+                    civicrm_api_include('activity');
                     $params = _civicrm_activity_buildmailparams( $mailParams, $emailActivityTypeId );
-                    $result = civicrm_activity_create( $params );
+                    $result = civicrm_api('activity', 'create' $params);
                     
                     if ( $result['is_error'] ) {
                         $matches = false;

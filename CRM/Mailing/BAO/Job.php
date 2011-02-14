@@ -615,8 +615,7 @@ AND    civicrm_activity.source_record_id = %2";
                 $activity['id'] = $activityID;  
             }
             
-            require_once 'api/v2/Activity.php';
-            $isError = civicrm_activity_create( $activity );
+            $isError = civicrm_api('activity', 'create', $activity);
             if ( civicrm_error( $isError ) ) {
                 return false;
             }

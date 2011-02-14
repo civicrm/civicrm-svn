@@ -75,7 +75,13 @@ function civicrm_group_add( &$params )
         return civicrm_create_success( $group->id );
     }
 }
-
+/*
+ * Wrapper for civicrm_group_add so function can take new (v3) name
+ */
+function civicrm_group_create( &$params ){
+  $result =  civicrm_group_add( &$params );
+return $result;
+}
 /**
  * Returns array of groups  matching a set of one or more group properties
  * 

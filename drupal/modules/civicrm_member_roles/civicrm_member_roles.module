@@ -485,7 +485,7 @@ function _civicrm_member_roles_sync( $ext_uid = NULL, $cid = NULL )
         if ( empty( $uid ) ) continue;
         
         //Get all memberships of contact
-        require_once 'api/v2/Membership.php';
+        civicrm_api_include('membership');
         $memberships = civicrm_contact_memberships_get( $cid );
         $contactMemberships = CRM_Utils_Array::value( $cid, $memberships, array( ) );
         $addRoles = array();
