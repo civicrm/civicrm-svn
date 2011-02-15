@@ -8,6 +8,7 @@
 {/literal}
 </style>
 <script>
+resourceBase = '{$config->resourceBase}';
 restURL = '{crmURL p="civicrm/ajax/rest"}';
 if (restURL.indexOf('?') == -1 )
   restURL = restURL + '?';
@@ -31,29 +32,29 @@ function buildForm (entity, action) {
     $('#extra').html(h);
     return;
   }
-  query = restURL+'json=1&version=3&entity='+entity+'&action=getFields';
-  $.getJSON(query,function(data) {
-      h='<i>Available fields:</i>';
-      $.each(data, function(key, value) { 
-        name =value.name;
-        if (name == 'id') 
-          name = entity+'_id';
-        if (value.title == undefined) {
-          value.title = value.name;
-        }
-        if (value.required == true) {
-          required = " required";
-        } else {
-          required = "";
-        }
-        h= h + "<a id='"+name+"' class='type_"+ value.type +  required +"'>"+value.title+"</a>";
-        //h= h + "<label>"+data[key].title+"</label>"+"<input id='"+data[key].name+"' />";
-      });
-      $('#selector').html(h).find ('a').click (function(){
-        toggleField (this.id,this.innerHTML,this.class);
-      });
-      
-  });
+
+  $().crmAPI (entity,'getFields',{version : 3}
+             ,{ success:function (data){
+                  h='<i>Available fields (click on it to add it to the query):</i>';
+                  $.each(data, function(key, value) { 
+                    name =value.name;
+                    if (name == 'id') 
+                      name = entity+'_id';
+                    if (value.title == undefined) {
+                      value.title = value.name;
+                    }
+                    if (value.required == true) {
+                      required = " required";
+                    } else {
+                      required = "";
+                    }
+                    h= h + "<a id='"+name+"' class='type_"+ value.type +  required +"'>"+value.title+"</a>";
+                  });
+                  $('#selector').html(h).find ('a').click (function(){
+                    toggleField (this.id,this.innerHTML,this.class);
+                  });
+                }
+              });
 }
 
 function generateQuery () {
@@ -94,11 +95,14 @@ function generateQuery () {
 }
 
 function runQuery(query) {
-    var vars = [], hash,smarty = '',php = "<hr>$params = array (";
+    var vars = [], hash,smarty = '',php = "params = array (",json = "{", link ="";
+    $('#result').html('<i>Loading...</i>');
     $.get(query,function(data) {
       $('#result').text(data);
     },'text');
-    $("#link").html("<a href='"+query+"' title='open in a new tab' target='_blank'>link to the REST query</a>");
+    link="<a href='"+query+"' title='open in a new tab' target='_blank'>ajax query</a>&nbsp;";
+    var RESTquery = resourceBase +"/extern/rest.php?"+ query.substring(restURL.length,query.length) + "&user={youruser}&pwd={password}&key={yourkey}";
+    $("#link").html(link+"<a href='"+RESTquery+"' title='open in a new tab' target='_blank'>REST query</a>");
 
     var hashes = query.slice(query.indexOf('?') + 1).split('&');
     for(var i = 0; i < hashes.length; i++) {
@@ -117,16 +121,23 @@ function runQuery(query) {
            default:
              smarty = smarty+ hash[0] + '="'+hash[1]+ '" ';
              php = php+"'"+ hash[0] +"' =>'"+hash[1]+ "', ";
+             json = json+"'"+ hash[0] +"' :'"+hash[1]+ "', ";
         }
     }
-    $('#php').html(php + '};<br>$results=civicrm_api("'+entity+'","'+action+'",$params);</hr>');
+    $('#php').html(php + '};<br>$results=civicrm_api("'+entity+'","'+action+'",$params);');
+    $('#jQuery').html ("$().crmAPI ('"+entity+"','"+action+"',"+json+"}<br>&nbsp;&nbsp;,{ success:function (data){&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.each(data, function(key, value) {// do something  });<br> &nbsp;&nbsp;&nbsp;&nbsp;}<br> });");
+
     if (action == "get") {//using smarty only make sense for get action
       $('#smarty').html('{crmAPI var="'+entity+'S" entity="'+entity+'" action="'+action+'" '+smarty+'}<br>{foreach from=$'+entity+'S.values item='+entity+'}<br/>  &lt;li&gt;{$'+entity+'.example}&lt;/li&gt;<br>{/foreach}');
+    } else {
+      $('#smarty').html("smarty uses only 'get' actions");
     }
+    $('#generated').show();
 
 }
 
 cj(function ($) {
+  window.location.hash="explorer"; //to be sure to display the result under the generated code in the viewport
   $('#entity').change (function() { $("#selector").empty();generateQuery();  });
   $('#action').change (function() { $("#selector").empty();generateQuery();  });
   $('#version').change (function() { generateQuery();  });
@@ -150,7 +161,7 @@ cj(function ($) {
 <label>entity</label>
 <select id="entity">
   <option value="" selected="selected">Choose...</option>
-{crmAPI entity="entity" action="get" var="entities"}
+{crmAPI entity="entity" action="get" var="entities" version=3}
 {foreach from=$entities.values item=entity}
   <option value="{$entity}">{$entity}</option>
 {/foreach}
@@ -172,10 +183,21 @@ cj(function ($) {
 <div id="selector"></div>
 <div id="extra"></div>
 <input size="90" id="query" value="{crmURL p="civicrm/ajax/rest" q="json=1&debug=on&entity=contact&action=get&sequential=1&return=display_name,email,phone"}"/>
-<div id="link"></div>
-<div id="smarty" title='smarty syntax (mostly works for get actions)'></div>
-<div id="php" title='php syntax, crm_api needs a few more coding to work as advertised'></div>
+<table id="generated" border=1 style="display:none;">
+<caption>Generated codes for this api call</caption>
+<tr><td>URL<td><div id="link"></div></td></tr>
+<tr><td>smarty<td><div id="smarty" title='smarty syntax (mostly works for get actions)'></div></td></tr>
+<tr><td>php<td><div id="php" title='php syntax'></div></td></tr>
+<tr><td>jQuery<td><div id="jQuery" title='jQuery syntax'></div></td></tr>
+</table>
 <pre id="result">
+You can choose an entity and an action (eg Tag Get to retrieve a list of the tags)
+Or your can directly modify the url in the field above and press enter.
+
+When you use the create method, it displays the list of existing fields for this entity. 
+click on the name of the fields you want to populate, fill the value(s) and press enter
+
+The result of the ajax calls are displayed in this grey area.
 </pre>
 </body>
 </html>
