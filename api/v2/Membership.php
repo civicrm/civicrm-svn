@@ -100,6 +100,13 @@ function civicrm_contact_membership_create(&$params)
 }
 
 /**
+ * wrapper function according to new api standards 
+ */
+function civicrm_membership_create( &$params ) {
+    return civicrm_membership_contact_create($params);
+}
+
+/**
  *
  * @param <type> $params
  * @return <type>
