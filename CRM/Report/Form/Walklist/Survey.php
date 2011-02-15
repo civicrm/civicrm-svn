@@ -212,7 +212,7 @@ FROM       civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom
         }
         
         //apply survey activity types filter.
-        $surveyActivityTypes = CRM_Campaign_BAO_survey::getSurveyActivityType( );
+        $surveyActivityTypes = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
         if ( !empty( $surveyActivityTypes ) ) {
             $clauses[] = "( {$this->_aliases['civicrm_activity']}.activity_type_id IN ( ". 
                 implode( ' , ', array_keys(  $surveyActivityTypes ) ) . ' ) )';
@@ -287,8 +287,99 @@ FROM       civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom
                 break;
             }
         }
+        
+        //format the survey response data.
+        $this->_formatSurveyResponseData( $rows );
     }
-
+    
+    private function _formatSurveyResponseData( &$rows ) 
+    {
+        $surveyIds = CRM_Utils_Array::value( 'survey_id_value', $this->_params );
+        if ( CRM_Utils_System::isNull( $surveyIds ) ||
+             !CRM_Utils_Array::value( 'survey_response',  $this->_params['fields'] ) ) {
+            return;
+        }
+        
+        $surveyResponseFields   = array( );
+        $surveyResponseFieldIds = array( );
+        foreach ( $this->_columns as $tableName => $values ) {
+            if ( !is_array( $values['fields'] ) ) continue;
+            foreach ( $values['fields'] as $name => $field ) {
+                if ( CRM_Utils_Array::value( 'isSurveyResponseField', $field ) ) {
+                    $fldId = substr( $name, 7 );
+                    $surveyResponseFields[$name]    = "{$tableName}_{$name}";
+                    $surveyResponseFieldIds[$fldId] = $fldId;
+                }
+            }
+        }
+        
+        $hasResponseData = false;
+        foreach ( $surveyResponseFields as $fldName ) {
+            foreach ( $rows as $row ) {
+                if ( CRM_Utils_Array::value( $fldName, $row ) ) {
+                    $hasResponseData = true;
+                    break;
+                }
+            }
+        }
+        if ( !$hasResponseData ) return; 
+        
+        //start response data fomatting.
+        $query = ' 
+    SELECT  cf.id,
+            cf.data_type,
+            cf.html_type,
+            cg.table_name, 
+            cf.column_name,
+            ov.value, ov.label,
+            cf.option_group_id
+      FROM  civicrm_custom_field cf      
+INNER JOIN  civicrm_custom_group cg ON ( cg.id = cf.custom_group_id )        
+ LEFT JOIN  civicrm_option_value ov ON ( cf.option_group_id = ov.option_group_id )
+     WHERE  cf.id IN ( '. implode( ' , ', $surveyResponseFieldIds ) . ' )';
+        
+        $responseFields = array( );
+        $fieldValueMap  = array( ); 
+        $properties = array(  'id', 
+                              'data_type', 
+                              'html_type', 
+                              'column_name', 
+                              'option_group_id', );
+        
+        $responseField = CRM_Core_DAO::executeQuery( $query );
+        while ( $responseField->fetch( ) ) {
+            $reponseFldName = $responseField->table_name . '_custom_'. $responseField->id;
+            foreach( $properties as $prop ) {
+                $responseFields[$reponseFldName][$prop] = $responseField->$prop;
+            }
+            if ( $responseField->option_group_id ) {
+                $fieldValueMap[$responseField->option_group_id][$responseField->value] = $responseField->label;
+            }
+        }
+        $responseField->free( );
+        
+        //actual data formatting.
+        $hasData = false;
+        foreach ( $rows as &$row ) {
+            if ( !is_array( $row ) ) {
+                continue; 
+            }
+            
+            foreach ( $row as $name => &$value ) {
+                if ( !array_key_exists( $name, $responseFields ) ) {
+                    continue;
+                }
+                
+                $hasData = true;
+                $value = $this->formatCustomValues( $value, 
+                                                    $responseFields[$name],
+                                                    $fieldValueMap );
+            }
+            
+            if ( !$hasData ) break;  
+        }
+    }
+    
     private function _addSurveyResponseColumns( ) 
     {
         $surveyIds = CRM_Utils_Array::value( 'survey_id_value', $this->_params );
