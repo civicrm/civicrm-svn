@@ -37,34 +37,31 @@
 /**
  */
 function smarty_function_crmAPI( $params, &$smarty ) {
-    
-    civicrm_api_include($params['entity']);
-    $fnName = civicrm_api_get_function_name($params['entity'], $params['action']);
-    if ( ! function_exists( $fnName ) ) {
-        $smarty->trigger_error("Unknown function called: $fnName");
+    require_once 'CRM/Utils/REST.php';
+    if ( array_key_exists('action',$params) && !array_key_exists('action',$params) ) 
+       $params['action'] = $params['method'];
+    if (empty($params['var'])) {
+        $smarty->trigger_error("assign: missing 'var' parameter");
         return;
     }
-    // trap all fatal errors
-    require_once 'CRM/Utils/REST.php';
+    if (empty($params['action'])) {
+        $smarty->trigger_error("assign: missing 'action' parameter");
+        return;
+    }
+    if (empty($params['entity'])) {
+        $smarty->trigger_error("assign: missing 'action' parameter");
+        return;
+    }
     CRM_Core_Error::setCallback( array( 'CRM_Utils_REST', 'fatal' ) );
+    $action = $params ['action'];
+    $entity = $params ['entity'];
     unset ($params ['entity']);
     unset ($params ['method']);
     unset ($params ['assign']);
-    if (!empty($params['return'])) {
-        $return= explode(",", $params['return']);
-        foreach ($return as $r) {
-            $params ["return.".trim($r)] = 1;
-        }
-        unset ($params ['return']);
-    }
-    $result = $fnName( $params );
+    $result = civicrm_api ($entity, $action,$params); 
     CRM_Core_Error::setCallback( );
     if ( $result === false ) {
         $smarty->trigger_error("Unkown error");
-        return;
-    }
-    if (empty($params['var'])) {
-        $smarty->trigger_error("assign: missing 'var' parameter");
         return;
     }
 
