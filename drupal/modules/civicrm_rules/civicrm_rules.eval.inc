@@ -10,20 +10,28 @@
  */
 require_once 'utils.inc';
 
-function civicrm_rules_rules_action_mailing_send_email( $mailing, $settings ) {
-    if( $mailing->id ) {
+function civicrm_rules_rules_action_mailing_send_email( $to, $subject, $message, $from = NULL, $settings, RulesState $state, RulesPlugin $element ) {
+    if( isset($state->variables['mailing']) && $state->variables['mailing']->id ) {
+        $to       = str_replace( array( "\r", "\n" ), ',', $to );
+        $toEmails = explode( ',', $to );
+        if ( empty( $toEmails ) ) { 
+            return;
+        }
         require_once 'CRM/Utils/Token.php';
         $tokens['mailing'] = array( 'mailing.editUrl',
                                     'mailing.scheduleUrl', 
                                     'mailing.html', 
                                     'mailing.creatorEmail', 
                                     'mailing.creator' );
-        $settings['toEmail'] = CRM_Utils_Token::replaceMailingTokens( $settings['to'],      $mailing, null, $tokens );
-        $settings['html']    = CRM_Utils_Token::replaceMailingTokens( $settings['message'], $mailing, null, $tokens );
-        $settings['subject'] = CRM_Utils_Token::replaceMailingTokens( $settings['subject'], $mailing, null, $tokens );
 
-        CRM_Utils_Mail::send( $settings );
-        return array('mailing' => $mailing );
+        $params = array( );
+        $params['from']    = !empty( $from ) ? str_replace( array( "\r", "\n" ), '', $from ) : 'Admin';
+        $params['subject'] = CRM_Utils_Token::replaceMailingTokens( $subject, $state->variables['mailing'], null, $tokens );
+        $params['html']  = CRM_Utils_Token::replaceMailingTokens( $message, $state->variables['mailing'], null, $tokens );
+        foreach ( $toEmails as $toEmail ) {
+            $params['toEmail']    = CRM_Utils_Token::replaceMailingTokens( $toEmail, $state->variables['mailing'], null, $tokens );
+            CRM_Utils_Mail::send( $params );
+        }
     }
 }
 
@@ -32,7 +40,7 @@ function civicrm_rules_rules_action_contact_send_email( $to, $subject, $message,
     require_once 'CRM/Contact/BAO/Contact.php';
     $to       = str_replace( array( "\r", "\n" ), ',', $to );
     $toEmails = explode( ',', $to );
-    if ( !empty( $toEmails ) ) { 
+    if ( empty( $toEmails ) ) { 
         return;
     }
     foreach( $toEmails as $toEmail ) {
