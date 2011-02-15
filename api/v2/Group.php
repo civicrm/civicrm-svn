@@ -72,7 +72,7 @@ function civicrm_group_add( &$params )
     if ( is_null( $group ) ) {
         return civicrm_create_error( 'Group not created' );
     } else {
-        return civicrm_create_success( $group->id );
+        return civicrm_create_success( $group );
     }
 }
 /*

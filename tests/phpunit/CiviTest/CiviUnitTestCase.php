@@ -1027,10 +1027,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                             'version'			=> $apiversion,
                             );
         }
-        $result = civicrm_api_legacy( 'civicrm_group_create','Group',$params );
-
         
-        return $result['id'];
+        $result = civicrm_api_legacy( 'civicrm_group_create','Group',$params );
+        return $result['result']->id;
     }    
     /** 
      * Function to delete a Group
