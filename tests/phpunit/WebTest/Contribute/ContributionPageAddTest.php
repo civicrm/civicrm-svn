@@ -61,9 +61,9 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
 
         // go to step 2
         $this->click('_qf_Settings_next');
-
+        
         $this->waitForElementPresent("_qf_Amount_next-bottom"); 
-
+        
         // fill in step 2 (Amounts)
         $this->click('is_pay_later');
         $this->type('pay_later_text',    "Pay later label $hash");
@@ -85,20 +85,31 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
 
         // go to step 3
         $this->click('_qf_Amount_next');
+        
+        $this->waitForElementPresent("_qf_Amount_next-bottom"); 
 
+        $this->waitForPageToLoad("30000");
+        $this->click("link=Memberships");
+        
         $this->waitForElementPresent("_qf_MembershipBlock_next-bottom");
 
         // fill in step 3 (Memberships)
         $this->click('is_active');
         $this->type('new_title',     "Title - New Membership $hash");
         $this->type('renewal_title', "Title - Renewals $hash");
+        
         // FIXME: handle Introductory Message - New Memberships/Renewals
-        $this->click('membership_type[2]');
+        $this->click('membership_type[1]');
+        
         $this->click('is_required');
 
         // go to step 4
         $this->click('_qf_MembershipBlock_next');
-
+        $this->waitForPageToLoad("30000");
+        $this->waitForElementPresent("_qf_MembershipBlock_next-bottom");
+        
+        
+        $this->click("link=Receipt");
         $this->waitForElementPresent("_qf_ThankYou_next-bottom");
 
         // fill in step 4 (Thanks and Receipt)
@@ -112,7 +123,10 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
 
         // go to step 5
         $this->click('_qf_ThankYou_next');
+        $this->waitForElementPresent("_qf_ThankYou_next-bottom");
 
+        $this->waitForPageToLoad("30000");
+        $this->click("link=Tell a Friend");
         $this->waitForElementPresent("_qf_Contribute_next-bottom"); 
         // fill in step 5 (Tell a Friend)
         $this->click('tf_is_active');
@@ -125,7 +139,10 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
 
         // go to step 6
         $this->click('_qf_Contribute_next');
-
+        $this->waitForElementPresent("_qf_Contribute_next-bottom"); 
+        
+        $this->waitForPageToLoad("30000");
+        $this->click("link=Profiles");
         $this->waitForElementPresent("_qf_Custom_next-bottom");
         // fill in step 6 (Include Profiles)
         $this->select('custom_pre_id',  'value=1');
@@ -133,7 +150,10 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
       
         // go to step 7
         $this->click('_qf_Custom_next');
-
+        $this->waitForElementPresent("_qf_Custom_next-bottom");
+        
+        $this->waitForPageToLoad("30000");
+        $this->click("link=Premiums");
         $this->waitForElementPresent("_qf_Premium_next-bottom");
         // fill in step 7 (Premiums)
         $this->click('premiums_active');
@@ -142,11 +162,16 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         $this->type('premiums_contact_email', "$hash@example.info");
         $this->type('premiums_contact_phone', rand(100000000, 999999999));
         $this->click('premiums_display_min_contribution');
-
+        
         // go to step 8
         $this->click('_qf_Premium_next');
-
+        $this->waitForElementPresent("_qf_Premium_next-bottom");
+        
+        $this->waitForPageToLoad("30000");
+        $this->click("link=Widgets");
+        
         $this->waitForElementPresent("_qf_Widget_next-bottom");
+        
         // fill in step 8 (Widget Settings)
         $this->click('is_active');
         $this->type('url_logo',     "URL to Logo Image $hash");
@@ -155,9 +180,13 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
 
         // go to step 9
         $this->click('_qf_Widget_next');
+        $this->waitForElementPresent("_qf_Widget_next-bottom");
 
+        $this->waitForPageToLoad("30000");
+        $this->click("link=Personal Campaigns");
         $this->waitForElementPresent("_qf_PCP_next-bottom");
         // fill in step 9 (Enable Personal Campaign Pages)
+        $this->waitForPageToLoad("30000");
         $this->click('is_active');
         $this->click('is_approval_needed');
         $this->type('notify_email', "$hash@example.name");
@@ -167,7 +196,9 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
 
         // submit new contribution page
         $this->click('_qf_PCP_next');
-
+        $this->waitForElementPresent("_qf_PCP_next-bottom");
+        $this->waitForPageToLoad("30000");
+        
         $this->open($this->sboxPath . 'civicrm/admin/contribute&reset=1');
         $this->waitForPageToLoad();        
 
