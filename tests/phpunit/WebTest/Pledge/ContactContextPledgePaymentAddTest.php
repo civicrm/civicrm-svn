@@ -107,9 +107,9 @@ class WebTest_Pledge_ContactContextPledgePaymentAddTest extends CiviSeleniumTest
         
         $this->assertTrue( $this->isTextPresent( "Pledge has been recorded and the payment schedule has been created." ) );
 
-        $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[9]/span/a[text()='View']" );
+        $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[10]/span/a[text()='View']" );
         //click through to the Pledge view screen
-        $this->click( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[9]/span/a[text()='View']" );
+        $this->click( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[10]/span/a[text()='View']" );
         $this->waitForElementPresent( "_qf_PledgeView_next-bottom" );
         $pledgeDate = date('F jS, Y', strtotime('now'));
         
@@ -131,7 +131,7 @@ class WebTest_Pledge_ContactContextPledgePaymentAddTest extends CiviSeleniumTest
         $this->click( "_qf_PledgeView_next-bottom" );
         $this->waitForPageToLoad( "30000" );
         
-        $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[9]/span/a[text()='View']" );
+        $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[10]/span/a[text()='View']" );
         $this->click( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[1]/span/a" );
         $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody//tr//td/table/tbody/tr[2]/td[8]/a[text()='Record Payment (Check, Cash, EFT ...)']" );
         $this->click( "xpath=//div[@id='Pledges']//table//tbody//tr//td/table/tbody/tr[2]/td[8]/a[text()='Record Payment (Check, Cash, EFT ...)']" );
@@ -141,7 +141,7 @@ class WebTest_Pledge_ContactContextPledgePaymentAddTest extends CiviSeleniumTest
         $this->type( "total_amount", "15" );
         $this->click( "_qf_Contribution_upload" );
 
-        $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[9]/span/a[text()='View']" );
+        $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[10]/span/a[text()='View']" );
         $this->click( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[1]/span/a" );
         
         $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody//tr//td/table/tbody/tr[3]/td[1][text()='$ 5.00']" );
@@ -159,9 +159,9 @@ class WebTest_Pledge_ContactContextPledgePaymentAddTest extends CiviSeleniumTest
 
         $this->click( "_qf_Contribution_upload" );
 
-        $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[9]/span/a[text()='View']" );
+        $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[10]/span/a[text()='View']" );
         //click through to the Pledge view screen
-        $this->click( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[9]/span/a[text()='View']" );
+        $this->click( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[10]/span/a[text()='View']" );
         $this->waitForElementPresent( "_qf_PledgeView_next-bottom" );
         $pledgeDate = date('F jS, Y', strtotime('now'));
         
@@ -182,7 +182,7 @@ class WebTest_Pledge_ContactContextPledgePaymentAddTest extends CiviSeleniumTest
           
         $this->click( "_qf_PledgeView_next-bottom" );
      
-        $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[9]/span/a[text()='View']" );
+        $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[10]/span/a[text()='View']" );
         $this->click( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[1]/span/a" );
         
         $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody//tr//td/table/tbody/tr[4]/td[8]/a[text()='Record Payment (Check, Cash, EFT ...)']" );
@@ -194,8 +194,8 @@ class WebTest_Pledge_ContactContextPledgePaymentAddTest extends CiviSeleniumTest
         $this->waitForElementPresent("_qf_Contribution_upload");
         $this->click( "_qf_Contribution_upload" );
         
-        $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[9]/span/a[text()='View']" );
-        $this->click( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[9]/span/a[text()='View']" );
+        $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[10]/span/a[text()='View']" );
+        $this->click( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[10]/span/a[text()='View']" );
         
         $this->waitForElementPresent( "_qf_PledgeView_next-bottom" );
         $this->webtestVerifyTabularData( array(
