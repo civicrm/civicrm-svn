@@ -2791,7 +2791,7 @@ tbody.scrollContent {
 }
 #crm-container .even-row, 
 tbody.scrollContent tr.alternateRow {
-    background-color: #F5F5F5;
+    background-color: #EFEFEF;
 }
 
 #crm-container tr.columnheader a.sorting {
