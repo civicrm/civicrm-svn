@@ -218,6 +218,13 @@ FROM       civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom
                 implode( ' , ', array_keys(  $surveyActivityTypes ) ) . ' ) )';
         }
         
+        //show only completed survey activities.
+        require_once 'CRM/Core/PseudoConstant.php';
+        $completedStatusId = array_search( 'Completed', CRM_Core_PseudoConstant::activityStatus( 'name' ) );
+        if ( $completedStatusId ) {
+            $clauses[] = "( {$this->_aliases['civicrm_activity']}.status_id = {$completedStatusId} ) ";
+        }
+        
         if ( empty( $clauses ) ) {
             $this->_where = "WHERE ( 1 ) ";
         } else {
@@ -232,6 +239,12 @@ FROM       civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom
 
     function orderBy( ) {
         $this->_orderBy = "";
+        
+        //if user does not select any survey, make order by survey.
+        if ( CRM_Utils_System::isNull( $this->_params['survey_id_value'] ) ) {
+            $this->_orderBy[] = " {$this->_aliases['civicrm_activity']}.source_record_id ";
+        }
+        
         foreach ( $this->_columns as $tableName => $table ) {
             if ( array_key_exists('order_bys', $table) ) {
                 foreach ( $table['order_bys'] as $fieldName => $field ) {
@@ -239,7 +252,10 @@ FROM       civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom
                 }
             }
         }
-        $this->_orderBy = "ORDER BY " . implode( ', ', $this->_orderBy ) . " ";
+        
+        if ( is_array( $this->_orderBy ) && !empty( $this->_orderBy ) ) {
+            $this->_orderBy = "ORDER BY " . implode( ', ', $this->_orderBy ) . " ";
+        }
     }
     
     function postProcess( ) {
