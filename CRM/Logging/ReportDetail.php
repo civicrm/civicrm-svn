@@ -135,8 +135,8 @@ class CRM_Logging_ReportDetail extends CRM_Report_Form
                 if (isset($values[$field][$from])) $from  = $values[$field][$from];
                 if (isset($values[$field][$to]))   $to    = $values[$field][$to];
                 if (isset($titles[$field]))        $field = $titles[$field];
-                if ($diff['action'] == 'Insert')   $from  = ts('[NONEXISTENT]');
-                if ($diff['action'] == 'Delete')   $to    = ts('[NONEXISTENT]');
+                if ($diff['action'] == 'Insert')   $from  = '';
+                if ($diff['action'] == 'Delete')   $to    = '';
             }
 
             $rows[] = array('field' => $field . " (id: {$diff['id']})", 'from' => $from, 'to' => $to);
