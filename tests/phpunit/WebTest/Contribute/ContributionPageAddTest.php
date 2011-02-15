@@ -99,7 +99,7 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         $this->type('renewal_title', "Title - Renewals $hash");
         
         // FIXME: handle Introductory Message - New Memberships/Renewals
-        $this->click('membership_type[1]');
+        $this->click('membership_type[2]');
         
         $this->click('is_required');
 
@@ -176,18 +176,18 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         $this->click('is_active');
         $this->type('url_logo',     "URL to Logo Image $hash");
         $this->type('button_title', "Button Title $hash");
-        $this->type('about',        "About $hash");
-
+        $this->type("about",        "About $hash");
+        
         // go to step 9
         $this->click('_qf_Widget_next');
         $this->waitForElementPresent("_qf_Widget_next-bottom");
-
+        
         $this->waitForPageToLoad("30000");
         $this->click("link=Personal Campaigns");
         $this->waitForElementPresent("_qf_PCP_next-bottom");
+        
         // fill in step 9 (Enable Personal Campaign Pages)
-        $this->waitForPageToLoad("30000");
-        $this->click('is_active');
+        $this->click('pcp_active');
         $this->click('is_approval_needed');
         $this->type('notify_email', "$hash@example.name");
         $this->select('supporter_profile_id', 'value=2');
