@@ -211,6 +211,13 @@ FROM       civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom
             }
         }
         
+        //apply survey activity types filter.
+        $surveyActivityTypes = CRM_Campaign_BAO_survey::getSurveyActivityType( );
+        if ( !empty( $surveyActivityTypes ) ) {
+            $clauses[] = "( {$this->_aliases['civicrm_activity']}.activity_type_id IN ( ". 
+                implode( ' , ', array_keys(  $surveyActivityTypes ) ) . ' ) )';
+        }
+        
         if ( empty( $clauses ) ) {
             $this->_where = "WHERE ( 1 ) ";
         } else {

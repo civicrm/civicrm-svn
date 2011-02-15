@@ -209,14 +209,20 @@ SELECT  survey.id    as id,
      *
      * @static
      */
-    static function getSurveyActivityType( ) {
-        require_once 'CRM/Core/OptionGroup.php';
-        $activityTypes = array( );
-
-        $campaignCompId = CRM_Core_Component::getComponentID('CiviCampaign');
-        if ( $campaignCompId ) {
-            $activityTypes = CRM_Core_OptionGroup::values( 'activity_type', false, false, false, " AND v.component_id={$campaignCompId}" , 'name' );
+    static function getSurveyActivityType( ) 
+    {
+        static $activityTypes;
+        
+        if ( !isset( $activityTypes ) ) {
+            $activityTypes = array( );
+            $campaignCompId = CRM_Core_Component::getComponentID('CiviCampaign');
+            if ( $campaignCompId ) {
+                require_once 'CRM/Core/OptionGroup.php';
+                $activityTypes = CRM_Core_OptionGroup::values( 'activity_type', false, false, false, 
+                                                               " AND v.component_id={$campaignCompId}" , 'name' );
+            }
         }
+        
         return $activityTypes;
     }
     
