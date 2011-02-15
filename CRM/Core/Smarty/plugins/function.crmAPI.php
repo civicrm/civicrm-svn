@@ -49,7 +49,7 @@ function smarty_function_crmAPI( $params, &$smarty ) {
         return;
     }
     if (empty($params['entity'])) {
-        $smarty->trigger_error("assign: missing 'action' parameter");
+        $smarty->trigger_error("assign: missing 'entity' parameter");
         return;
     }
     CRM_Core_Error::setCallback( array( 'CRM_Utils_REST', 'fatal' ) );
