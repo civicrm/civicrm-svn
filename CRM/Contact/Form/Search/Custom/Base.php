@@ -70,11 +70,11 @@ class CRM_Contact_Form_Search_Custom_Base {
                   $includeContactIDs = false,
                   $groupBy = null ) {
 
-        $sql =
-            "SELECT $selectClause "     .
-            $this->from ( )             .
-            " WHERE "                   .
-            $this->where( )             ;
+        $sql = "SELECT $selectClause ".$this->from ( );
+        if (!empty($this->where)) {
+			$sql .= " WHERE ".$this->where();
+	}	
+
 
         if ( $includeContactIDs ) {
             $this->includeContactIDs( $sql,
