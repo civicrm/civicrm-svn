@@ -866,3 +866,16 @@ VALUES
     ( @domainID, CONCAT('civicrm/report/instance/', @instanceID,'&reset=1'), '{ts escape="sql" skip="true"}Mail Clickthrough Report{/ts}', '{literal}Mail Clickthrough Report{/literal}', 'access CiviMail', '',@reportlastID, '1', NULL, 31 );
 
 UPDATE civicrm_report_instance SET navigation_id = LAST_INSERT_ID() WHERE id = @instanceID;
+
+-- walk list survey report.
+INSERT INTO `civicrm_report_instance`
+    ( `domain_id`, `title`, `report_id`, `description`, `permission`, `form_values`)
+VALUES
+    (  @domainID, 'Walk List Survey Report', 'walklist/survey', 'Provides a detailed report for your walk list survey', '', '{literal}a:27:{s:6:"fields";a:5:{s:12:"display_name";s:1:"1";s:17:"state_province_id";s:1:"1";s:5:"email";s:1:"1";s:6:"result";s:1:"1";s:15:"survey_response";s:1:"1";}s:12:"sort_name_op";s:3:"has";s:15:"sort_name_value";s:0:"";s:17:"street_number_min";s:0:"";s:17:"street_number_max";s:0:"";s:16:"street_number_op";s:3:"lte";s:19:"street_number_value";s:0:"";s:17:"street_address_op";s:3:"has";s:20:"street_address_value";s:0:"";s:7:"city_op";s:3:"has";s:10:"city_value";s:0:"";s:12:"survey_id_op";s:2:"in";s:15:"survey_id_value";a:0:{}s:11:"custom_1_op";s:2:"in";s:14:"custom_1_value";a:0:{}s:11:"custom_2_op";s:2:"in";s:14:"custom_2_value";a:0:{}s:17:"custom_3_relative";s:1:"0";s:13:"custom_3_from";s:0:"";s:11:"custom_3_to";s:0:"";s:11:"description";s:52:"Provides a detailed report for your walk list survey";s:13:"email_subject";s:0:"";s:8:"email_to";s:0:"";s:8:"email_cc";s:0:"";s:10:"permission";s:1:"0";s:6:"groups";s:0:"";s:9:"domain_id";i:1;}{/literal}');
+SET @instanceID:=LAST_INSERT_ID();
+INSERT INTO civicrm_navigation
+    ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
+VALUES
+    ( @domainID, CONCAT('civicrm/report/instance/', @instanceID, '&reset=1'), '{ts escape="sql" skip="true"}Walk List Survey Report{/ts}', 'Walk List Survey Report', 'administer CiviCampaign,manage campaign,interview campaign contacts', 'OR', @reportlastID, '1', NULL, 32 );
+UPDATE civicrm_report_instance SET navigation_id = LAST_INSERT_ID() WHERE id = @instanceID;
+
