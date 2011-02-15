@@ -79,7 +79,7 @@ class Custom extends CiviUnitTestCase
 
         // this is done for backward compatibility
         // with tests older than 3.2.3
-        $customField =& new CRM_Core_DAO_CustomField();
+        $customField = new CRM_Core_DAO_CustomField();
         $customField->id = $result['result']['customFieldId'];
         $customField->find( true );
 
