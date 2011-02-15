@@ -133,7 +133,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       $this->waitForPageToLoad("30000");
       
       $this->assertTrue($this->isTextPresent("Campaign Campaign $title has been saved."), 
-                        "Status message didn't show up after saving!");
+                        "Status message didn't show up after saving campaign!");
 
       // create a custom data set for activities -> survey
       $this->open($this->sboxPath . "civicrm/admin/custom/group?action=add&reset=1");
@@ -145,13 +145,13 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       // select the group this custom data set extends
       $this->select("extends[0]", "value=Activity");
       $this->waitForElementPresent("extends[1]");
-      $this->select("extends[1]", "value=27");
+      $this->select("extends[1]", "label=Survey");
       
       // save the custom group
       $this->click("_qf_Group_next-bottom");
 
       $this->waitForElementPresent("_qf_Field_next_new-bottom");
-      $this->assertTrue($this->isTextPresent("Your custom field set 'Group $title' has been added. You can add it custom fields now."), "Status message didn't show up after saving!");
+      $this->assertTrue($this->isTextPresent("Your custom field set 'Group $title' has been added. You can add custom fields now."), "Status message didn't show up after saving custom field set!");
 
       // add a custom field to the custom group
       $this->type("label", "Field $title");
@@ -172,7 +172,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
 
       $this->waitForElementPresent("newCustomField");
       $this->assertTrue($this->isTextPresent("Your custom field 'Field $title' has been saved."), 
-                        "Status message didn't show up after saving!");
+                        "Status message didn't show up after saving custom field!");
 
       // create a profile for campaign
       $this->open($this->sboxPath . "civicrm/admin/uf/group/add?action=add&reset=1");
@@ -186,7 +186,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       $this->click("_qf_Group_next-bottom");
 
       $this->waitForElementPresent("_qf_Field_next-bottom");
-      $this->assertTrue($this->isTextPresent("Your CiviCRM Profile 'Profile $title' has been added. You can add fields to this profile now."), "Status message didn't show up after saving!");
+      $this->assertTrue($this->isTextPresent("Your CiviCRM Profile 'Profile $title' has been added. You can add fields to this profile now."), "Status message didn't show up after saving profile!");
 
       // add a profile field for activity
       $this->select("field_name[0]", "value=Activity");
@@ -195,7 +195,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       
       $this->click("_qf_Field_next-bottom");
       $this->waitForPageToLoad("30000");
-      $this->assertTrue($this->isTextPresent("Your CiviCRM Profile Field 'Field $title' has been saved to 'Profile $title'."), "Status message didn't show up after saving!");
+      $this->assertTrue($this->isTextPresent("Your CiviCRM Profile Field 'Field $title' has been saved to 'Profile $title'."), "Status message didn't show up after saving profile field!");
 
       // create a survey
       $this->open($this->sboxPath . "civicrm/survey/add&reset=1");
@@ -209,7 +209,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       $this->select("campaign_id", "label=Campaign $title");
       
       // select the activity type
-      $this->select("activity_type_id", "value=27");
+      $this->select("activity_type_id", "label=Survey");
 
       // select the profile created for the survey
       $this->select("profile_id", "label=Profile $title");
@@ -233,7 +233,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       $this->click("_qf_Survey_next-bottom");
       $this->waitForPageToLoad("30000");
       $this->assertTrue($this->isTextPresent("Survey Survey $title has been saved."), 
-                        "Status message didn't show up after saving!");
+                        "Status message didn't show up after saving survey!");
 
       // Reserve Respondents
       $this->open($this->sboxPath . "civicrm/survey/search&reset=1&op=reserve");
@@ -253,7 +253,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       $this->click("_qf_Reserve_done_reserve-bottom");
       $this->waitForPageToLoad("30000");
       $this->assertTrue($this->isTextPresent("Reservation has been added for 2 Contact(s)."),
-                        "Status message didn't show up after saving!");
+                        "Status message didn't show up after adding reservation for 2 contacts!");
 
       // Interview Respondents
       $this->open($this->sboxPath . "civicrm/survey/search&reset=1&op=interview");
@@ -272,12 +272,12 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("_qf_Interview_cancel_interview");
 
       $this->click("CIVICRM_QFID_1_2");
-      $this->select("xpath=//div[@id='voterRecords_wrapper']//table/tbody/tr[1]/td[6]/select", "value=Label $title 1");
-      $this->click("xpath=//div[@id='voterRecords_wrapper']//table/tbody/tr[1]/td[7]/a");
+      $this->select("css=#voterRecords .odd .result select", "value=Label $title 1");
+      $this->click("css=#voterRecords .odd td a");
 
       $this->click("CIVICRM_QFID_2_8");
-      $this->select("xpath=//div[@id='voterRecords_wrapper']//table/tbody/tr[2]/td[6]/select", "value=Label $title 2");
-      $this->click("xpath=//div[@id='voterRecords_wrapper']//table/tbody/tr[2]/td[7]/a");
+      $this->select("css=#voterRecords .even .result select", "value=Label $title 2");
+      $this->click("css=#voterRecords .even td a");
 
       $this->click("_qf_Interview_cancel_interview");
       $this->waitForPageToLoad("30000");
@@ -317,7 +317,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       $this->click("_qf_Reserve_done_reserve-bottom");
       $this->waitForPageToLoad("30000");
       $this->assertTrue($this->isTextPresent("Reservation has been added for 3 Contact(s)."),
-                        "Status message didn't show up after saving!");
+                        "Status message didn't show up after adding reservation for 3 contacts!");
       
       // Release Respondents
       $this->open($this->sboxPath . "civicrm/survey/search&reset=1&op=release");
@@ -340,7 +340,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       $this->click("_qf_Release_done-bottom");
       $this->waitForPageToLoad("30000");
       $this->assertTrue($this->isTextPresent("1 respondent(s) have been released."),
-                        "Status message didn't show up after saving!");  
+                        "Status message didn't show up after releasing respondents!");
 
       // check whether contact is available for reserving again
       $this->open($this->sboxPath . "civicrm/survey/search&reset=1&op=reserve");
@@ -352,7 +352,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
 
       $this->click("_qf_Search_refresh");
       $this->waitForPageToLoad("30000");
-      $this->assertTrue($this->isTextPresent(" 1 Result"), "Status message didn't show up after saving!");
+      $this->assertTrue($this->isTextPresent(" Results"), "Result didn't show up after saving!");
   }
 
   function addGroup( $groupName = 'New Group' ) {
