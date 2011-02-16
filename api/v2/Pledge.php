@@ -372,7 +372,9 @@ function _civicrm_pledge_format_params( &$params, &$values, $create=false ) {
     }elseif (array_key_exists( 'start_date', $params )){
            $values['scheduled_date'] = $params['start_date'];        
     }
-            
+    if( CRM_Utils_Array::value( 'contribution_type_id', $params ) ) {
+        $values['contribution_type_id'] = $params['contribution_type_id']; 
+    } 
     foreach ($values as $key => $value) {
         // ignore empty values or empty arrays etc
         if ( CRM_Utils_System::isNull( $value ) ) {
@@ -428,6 +430,12 @@ function _civicrm_pledge_format_params( &$params, &$values, $create=false ) {
                 return civicrm_create_error("currency not a valid code: $value");
             }
             break;
+        case 'contribution_type_id':
+            require_once 'CRM/Contribute/PseudoConstant.php';
+            $typeId = CRM_Contribute_PseudoConstant::contributionType( $value );
+            if ( !CRM_Utils_Rule::integer( $value ) ||  !$typeId ) {
+                return civicrm_create_error( "contribution type id is not valid: $value" );
+            }
         default:
             break;
         }
