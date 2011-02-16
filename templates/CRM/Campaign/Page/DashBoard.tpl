@@ -31,7 +31,6 @@
 <div id="campaign-dialog" class='hiddenElement'></div>
 {if $campaigns} 
   <div class="action-link">
-      <!--a href="#" onclick="createCampaign( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Campaign{/ts}</span></a-->
       <a href="{crmURL p='civicrm/campaign/add' q='reset=1' h=0 }" class="button"><span><div class="icon add-icon"></div>{ts}Add Campaign{/ts}</span></a>
   </div>
 
@@ -73,9 +72,7 @@
     </div>
 {/if}
 <div class="action-link">
-   <!--a href="#" onclick="createCampaign( );"  class="button"><span><div class="icon add-icon"></div>{ts}Add Campaign{/ts}</span></a-->
-<a href="{crmURL p='civicrm/campaign/add' q='reset=1' h=0 }" class="button"><span><div class="icon add-icon"></div>{ts}Add Campaign{/ts}</span></a>
- 
+   <a href="{crmURL p='civicrm/campaign/add' q='reset=1' h=0 }" class="button"><span><div class="icon add-icon"></div>{ts}Add Campaign{/ts}</span></a>
 </div>
 
 {* build the survey selector *}
@@ -84,8 +81,7 @@
 <div id="survey-dialog" class='hiddenElement'></div>
 {if $surveys} 
   <div class="action-link">
-    <!--a href="#" onclick="createSurvey( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Survey{/ts}</span></a-->
-<a href="{crmURL p='civicrm/survey/add' q='reset=1' h=0 }" class="button"><span><div class="icon add-icon"></div>{ts}Add Survey{/ts}</span></a>
+  <a href="{crmURL p='civicrm/survey/add' q='reset=1' h=0 }" class="button"><span><div class="icon add-icon"></div>{ts}Add Survey{/ts}</span></a>
  
 </div>
  <div id="survey-response-dialog" class="hiddenElement"></div>
@@ -143,8 +139,7 @@
   </div> 
 {/if}
 <div class="action-link">
-   <!--a href="#" onclick="createSurvey( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Survey{/ts}</span></a-->
-<a href="{crmURL p='civicrm/survey/add' q='reset=1' h=0 }" class="button"><span><div class="icon add-icon"></div>{ts}Add Survey{/ts}</span></a> 
+   <a href="{crmURL p='civicrm/survey/add' q='reset=1' h=0 }" class="button"><span><div class="icon add-icon"></div>{ts}Add Survey{/ts}</span></a> 
 </div>
 
 {* build normal page *}
@@ -153,7 +148,6 @@
 <div id="petition-dialog" class='hiddenElement'></div>
 {if $surveys} 
   <div class="action-link">
-    <!--a href="#" onclick="createPetition( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Petition{/ts}</span></a-->
     <a href="{crmURL p='civicrm/petition/add' q='reset=1' h=0 }" class="button"><span><div class="icon add-icon"></div>{ts}Add Petition{/ts}</span></a>
  
   </div>
@@ -201,7 +195,6 @@
   </div> 
 {/if}
 <div class="action-link">
-   <!--a href="#" onclick="createPetition( );" class="button"><span><div class="icon add-icon"></div>{ts}Add Petition{/ts}</span></a-->
     <a href="{crmURL p='civicrm/petition/add' q='reset=1' h=0 }" class="button"><span><div class="icon add-icon"></div>{ts}Add Petition{/ts}</span></a>
 </div>
 
@@ -252,47 +245,6 @@ cj(document).ready( function( ) {
 {literal}
 <script type="text/javascript">
  
-  function createPetition ( ) {
-    var dataURL   = {/literal}"{crmURL p='civicrm/petition/add' q='reset=1&snippet=5&context=dialog' h=0 }"{literal};
-    var formTitle = {/literal}"{ts}Create New Petition{/ts}"{literal};
-    openModal( dataURL, cj("#petition-dialog"), formTitle, 830 );	
-  }
-
-  function createSurvey ( ) {
-    var dataURL   = {/literal}"{crmURL p='civicrm/survey/add' q='reset=1&snippet=5&context=dialog' h=0 }"{literal};
-    var formTitle = {/literal}"{ts}Create New Survey{/ts}"{literal};
-    openModal( dataURL, cj("#survey-dialog"), formTitle, 830 );	
-  }
-
-  function createCampaign(  ) {
-    var dataURL = {/literal}"{crmURL p='civicrm/campaign/add' q='reset=1&snippet=5&context=dialog' h=0 }"{literal};
-    var formTitle = {/literal}"{ts}Create New Campaign{/ts}"{literal};
-    openModal( dataURL, cj("#campaign-dialog"), formTitle, 730 );	
-  }
-	
-  function openModal( dataURL, modalElement, formTitle, formWidth ) {
-     cj.ajax({
-         url: dataURL,
-         success: function( content ) {
-             content = '<div id="crm-container">'+content+'</div>';
-             cj(modalElement).show( ).html( content ).dialog({
-         	    	title: formTitle,
-             		modal: true,
-             		width: formWidth, 
-			position: ['center',75],
-             		overlay: { 
-             			opacity: 0.5, 
-             			background: "black" 
-             		},
-                 beforeclose: function(event, ui) {
-                     cj(this).dialog("destroy");
-                 }
-             });
-         }
-      });
-  }    
-
-
 {/literal}{if $subPageType eq 'survey' and $surveys }{literal}
 
 function displayResponses( surveyId, surveyTitle, OptionGroupId ) {
