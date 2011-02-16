@@ -80,6 +80,11 @@ class CRM_Contribute_Form_PCP_PCPAccount extends CRM_Core_Form
                 $this->_pageId = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_PCP', $this->_id, 'contribution_page_id' );
             }
         }
+        
+        if ( !$this->_pageId ) {
+            CRM_Core_Error::fatal( ts( 'Could not find contribution page id.' ) );
+        }
+        
         //redirect back to online Contribution page, we allow only logged in
         //user to configure the PCP account and Page in standalone installation.
         if ( $config->userFramework == 'Standalone' && !$this->_contactID ) {
