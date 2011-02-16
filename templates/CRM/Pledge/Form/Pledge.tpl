@@ -58,6 +58,9 @@
    {else}
       <table class="form-layout-compressed">
         {if $context eq 'standalone'}
+	    {if !$email and $outBound_option != 2}
+	      {assign var='profileCreateCallback' value=1 }
+	    {/if}
             {include file="CRM/Contact/Form/NewContact.tpl"}
         {else}
           <tr class="crm-pledge-form-block-displayName">
@@ -243,7 +246,13 @@ cj(function() {
                     }
                 }
             );
-        }
+        } else {
+	  cj("#acknowledgment-receipt").hide( );
+	}
+    }
+    
+    function profileCreateCallback( blockNo ) {
+        checkEmail( );
     }
     {/literal}
     {/if}
