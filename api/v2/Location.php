@@ -82,10 +82,9 @@ function civicrm_location_add( &$params ) {
  * Correctly named wrapper for 'add' function
  */
 function civicrm_location_create($params){
-  $params['version'] = 3;
-  $result = civicrm_location_add( $params );
-  return $result;
-  
+    $result = civicrm_location_add( $params );
+    return $result;
+    
 }
 /**
  *  Update a specified location with the provided property values.
