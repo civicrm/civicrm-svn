@@ -39,7 +39,7 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
       parent::setUp();
   }
   
-  function testSurveyUsageScenario()
+  function testPetitionUsageScenario()
   {
       // This is the path where our testing install resides. 
       // The rest of URL is defined in CiviSeleniumTestCase base class, in
