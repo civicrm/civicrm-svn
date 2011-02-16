@@ -24,7 +24,7 @@ function uf_match_get_expectedresult(){
            'version' 		=> '3',
            'count' 		=> '1',
            'id' 		=> 'uf_id',
-           'values' 		=>            array(           'uf_id' => '42',           ),
+           'values' 		=> array(           'uf_id' => '42',           ),
       );
 
   return $expectedResult  ;

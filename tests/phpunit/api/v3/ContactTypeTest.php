@@ -161,7 +161,6 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
                               'version'					 =>$this->_apiversion, 
                               );
         $updateContact =& civicrm_contact_create( $updateParams );
-print_r( $updateContact);
         $this->assertEquals( $updateContact['is_error'], 0, "In line " . __LINE__ );
         $this->assertEquals( $updateContact['id'], $contact['id'], "In line " . __LINE__ );
 

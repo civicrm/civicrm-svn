@@ -94,7 +94,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
      */
     function testActivityCreateEmpty( )
     {
-        $params = array( );
+        $params = array('version' => $this->_apiversion );
         $result = & civicrm_activity_create($params);
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
@@ -107,7 +107,8 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     {
         $params = array(
                         'subject'             => 'this case should fail',
-                        'scheduled_date_time' => date('Ymd')
+                        'scheduled_date_time' => date('Ymd'),
+                        'version' => $this->_apiversion
                         );
         
         $result = & civicrm_activity_create($params);
@@ -128,7 +129,8 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'details'             => 'a test activity',
                         'status_id'           => 1,
                         'activity_name'       => 'Test activity type',
-                        'scheduled_date_time' => date('Ymd')
+                        'scheduled_date_time' => date('Ymd'),
+                        'version' => $this->_apiversion
                         );
         
         $result = civicrm_activity_create($params);
@@ -152,7 +154,8 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'status_id'           => 1,
                         'activity_name'       => 'Fubar activity type',
                         'activity_type_id'    => 5,
-                        'scheduled_date_time' => date('Ymd')
+                        'scheduled_date_time' => date('Ymd'),
+                        'version' => $this->_apiversion
                         );
 
         $result = civicrm_activity_create($params);
@@ -172,7 +175,8 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'location'            => 'Pensulvania',
                         'details'             => 'a test activity',
                         'status_id'           => 1,
-                        'activity_name'       => 'Test activity type'
+                        'activity_name'       => 'Test activity type',
+                        'version' => $this->_apiversion
                         );
 
         $result = & civicrm_activity_create($params);
@@ -194,7 +198,8 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'location'            => 'Pensulvania',
                         'details'             => 'a test activity',
                         'status_id'           => 1,
-                        'activity_name'       => 'Test activity type'
+                        'activity_name'       => 'Test activity type',
+                        'version' => $this->_apiversion
                         );
 
         $result = & civicrm_activity_create($params);
@@ -240,7 +245,8 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'location'            => 'Pensulvania',
                         'details'             => 'a test activity',
                         'status_id'           => 1,
-                        'activity_type_id'    => 'Test activity type'
+                        'activity_type_id'    => 'Test activity type',
+        								'version' => $this->_apiversion
                         );
 
         $result = civicrm_activity_create($params);
@@ -262,7 +268,8 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'location'            => 'Pensulvania',
                         'details'             => 'a test activity',
                         'status_id'           => 1,
-                        'activity_type_id'    => 6
+                        'activity_type_id'    => 6,
+                        'version' => $this->_apiversion
                         );
 
         $result = & civicrm_activity_create($params);
@@ -564,7 +571,8 @@ class api_v3_ActivityTest extends CiviUnitTestCase
      */
     function testActivityGetNonNumericID()
     {
-        $params = array( 'activity_id' => 'fubar' );
+        $params = array( 'activity_id' => 'fubar',
+                        'version' => $this->_apiversion );
         $result = civicrm_activity_get( $params );
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
     }
@@ -574,7 +582,8 @@ class api_v3_ActivityTest extends CiviUnitTestCase
      */
     function testActivityGetBadID()
     {
-        $params = array( 'activity_id' => 42 );
+        $params = array( 'activity_id' => 42,
+                         'version' => $this->_apiversion );
         $result = civicrm_activity_get( $params );        
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
     }
@@ -676,7 +685,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
      */
     function testDeleteActivityForEmptyParams( )
     {
-        $params = array( );
+        $params = array('version' => $this->_apiversion );
         $result =& civicrm_activity_delete($params);
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
@@ -687,7 +696,8 @@ class api_v3_ActivityTest extends CiviUnitTestCase
      */
     function testDeleteActivityWithoutId( )
     {
-        $params = array('activity_name' => 'Meeting');
+        $params = array('activity_name' => 'Meeting',
+        'version' => $this->_apiversion);
         $result =& civicrm_activity_delete($params);
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
@@ -914,7 +924,8 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'id'                  => 1,
                         'activity_name'       => 'Test Activity',
                         'subject'             => 'this case should fail',
-                        'scheduled_date_time' => date('Ymd')
+                        'scheduled_date_time' => date('Ymd'),
+                        'version'							=> $this->_apiversion,
                         );
 
         $result =& civicrm_activity_create($params);

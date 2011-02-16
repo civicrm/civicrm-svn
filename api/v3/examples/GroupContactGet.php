@@ -24,12 +24,12 @@ function group_contact_get_expectedresult(){
            'version' 		=> '3',
            'count' 		=> '1',
            'id' 		=> '1',
-           'values' 		=>            array(           '1' =>  array(
+           'values' 		=> array(           '1' =>  array(
                       'id' => '1',
                       'group_id' => '1',
                       'title' => 'New Test Group Created',
                       'visibility' => 'Public Pages',
-                      'in_date' => '2011-02-09 20:43:01',
+                      'in_date' => '2011-02-12 17:29:23',
                       'in_method' => 'API',
            ),           ),
       );

@@ -1,15 +1,15 @@
 <?php 
 
-function group_nesting_get_example(){
+function participant_payment_create_example(){
     $params = array(
     
-                  'parent_group_id' 		=> '1',
-                  'child_group_id' 		=> '2',
+                  'participant_id' 		=> '1',
+                  'contribution_id' 		=> '1',
                   'version' 		=> '3',
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'group_nesting','get',$params );
+  $result = civicrm_api( 'participant_payment','create',$params );
 
   return $result;
 }
@@ -17,18 +17,19 @@ function group_nesting_get_example(){
 /*
  * Function returns array of result expected from previous function
  */
-function group_nesting_get_expectedresult(){
+function participant_payment_create_expectedresult(){
 
   $expectedResult = 
      array(
            'is_error' 		=> '0',
            'version' 		=> '3',
-           'count' 		=> '2',
+           'count' 		=> '1',
+           'id' 		=> '1',
            'values' 		=> array(           '1' =>  array(
                       'id' => '1',
-                      'child_group_id' => '2',
-                      'parent_group_id' => '1',
-           ),                      'is_error' => '0',           ),
+                      'participant_id' => '1',
+                      'contribution_id' => '1',
+           ),           ),
       );
 
   return $expectedResult  ;

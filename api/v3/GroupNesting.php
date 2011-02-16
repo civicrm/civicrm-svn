@@ -52,7 +52,7 @@ function civicrm_group_nesting_get( &$params )
 {
   _civicrm_initialize(true);
   try{
-    civicrm_verify_mandatory($params);
+    civicrm_verify_one_mandatory($params);
 
 
     if ( ! array_key_exists( 'child_group_id', $params ) &&

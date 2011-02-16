@@ -3,8 +3,7 @@
 function group_contact_create_example(){
     $params = array(
     
-                  'contact_id.1' 		=> '1',
-                  'contact_id.2' 		=> '2',
+                  'contact_id' 		=> '1',
                   'group_id' 		=> '1',
                   'version' 		=> '3',
 
@@ -22,8 +21,10 @@ function group_contact_create_expectedresult(){
 
   $expectedResult = 
      array(
-           'is_error' 		=> '1',
-           'error_message' 		=> 'Mandatory key(s) missing from params array: contact_id',
+           'is_error' 		=> '0',
+           'version' 		=> '3',
+           'count' 		=> '4',
+           'values' 		=> array(           'is_error' => '0',                      'not_added' => '1',                      'added' => '0',                      'total_count' => '1',           ),
       );
 
   return $expectedResult  ;

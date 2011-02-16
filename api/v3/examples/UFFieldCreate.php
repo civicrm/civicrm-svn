@@ -31,7 +31,7 @@ function uf_field_create_expectedresult(){
            'version' 		=> '3',
            'count' 		=> '1',
            'id' 		=> '35',
-           'values' 		=>            array(           '35' =>  array(
+           'values' 		=> array(           '35' =>  array(
                       'id' => '35',
                       'uf_group_id' => '11',
                       'field_name' => 'country',

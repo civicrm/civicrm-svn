@@ -33,7 +33,7 @@ function contact_create_expectedresult(){
            'version' 		=> '3',
            'count' 		=> '1',
            'id' 		=> '1',
-           'values' 		=>            array(           '1' =>  array(
+           'values' 		=> array(           '1' =>  array(
                       'id' => '1',
                       'contact_type' => 'Individual',
                       'contact_sub_type' => '',
@@ -53,7 +53,7 @@ function contact_create_expectedresult(){
                       'preferred_communication_method' => '',
                       'preferred_language' => 'en_US',
                       'preferred_mail_format' => '',
-                      'hash' => 'f7f6b3d6719812ed8a258f8e86199907',
+                      'hash' => 'bcd3cfa693721f533b818cc27afad303',
                       'api_key' => '',
                       'first_name' => 'abc4',
                       'middle_name' => '',

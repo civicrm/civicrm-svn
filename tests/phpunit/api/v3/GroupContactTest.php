@@ -102,16 +102,16 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
         $groups = civicrm_group_contact_get( $params );
 
         $this->assertEquals( $groups['is_error'], 1 );
-        $this->assertEquals( $groups['error_message'], 'input parameter should be an array' );
+        $this->assertEquals( $groups['error_message'], 'Input variable `params` is not an array' );
     }
 
     function testGetWithEmptyParams( ) 
     {
-        $params = array( );
+        $params = array( 'version'=>$this->_apiversion );
         $groups = civicrm_group_contact_get( $params );
         
         $this->assertEquals( $groups['is_error'], 1 );
-        $this->assertEquals( $groups['error_message'], 'contact_id is a required field' );
+        $this->assertEquals( $groups['error_message'], 'Mandatory key(s) missing from params array: contact_id' );
     }
     
     function testGet( ) 
@@ -135,7 +135,7 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
         $groups = civicrm_group_contact_create( $params );
 
         $this->assertEquals( $groups['is_error'], 1 );
-        $this->assertEquals( $groups['error_message'], 'input parameter should be an array' );
+        $this->assertEquals( $groups['error_message'], 'Input variable `params` is not an array' );
     }
     
     function testCreateWithEmptyParams( ) 
@@ -144,30 +144,32 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
         $groups = civicrm_group_contact_create( $params );
         
         $this->assertEquals( $groups['is_error'], 1 );
-        $this->assertEquals( $groups['error_message'], 'contact_id is a required field' );
+        $this->assertEquals( $groups['error_message'], 'Mandatory key(s) missing from params array: group_id, contact_id, version' );
     }
 
     function testCreateWithoutGroupIdParams( ) 
     {
        $params = array(
-                        'contact_id.1' => $this->_contactId,
+                        'contact_id' => $this->_contactId,
+                        'version'		=> $this->_apiversion,
                         );
         
         $groups = civicrm_group_contact_create( $params );
         
         $this->assertEquals( $groups['is_error'], 1 );
-        $this->assertEquals( $groups['error_message'], 'group_id is a required field' );
+        $this->assertEquals( $groups['error_message'], 'Mandatory key(s) missing from params array: group_id' );
     }
 
     function testCreateWithoutContactIdParams( )     
     {
        $params = array(
-                        'group_id' => $this->_groupId1
+                        'group_id' => $this->_groupId1,
+                         'version' => $this->_apiversion,
                         );
         $groups = civicrm_group_contact_create( $params );
         
         $this->assertEquals( $groups['is_error'], 1 );
-        $this->assertEquals( $groups['error_message'], 'contact_id is a required field' );        
+        $this->assertEquals( $groups['error_message'], 'Mandatory key(s) missing from params array: contact_id' );        
     }
     
     function testCreate( ) 
@@ -183,17 +185,16 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
         
         $this->_contactId1 = $this->individualCreate( $cont, $this->_apiversion );
         $params = array(
-                        'contact_id.1' => $this->_contactId,
-                        'contact_id.2' => $this->_contactId1,
+                        'contact_id' => $this->_contactId,
                         'group_id'     => $this->_groupId1,
                         'version'			=> $this->_apiversion, );
         
         $result = civicrm_group_contact_create( $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);        
-        $this->assertEquals( $result ['is_error'], 0 );
-        $this->assertEquals( $result ['not_added'], 1 );
-        $this->assertEquals( $result ['added'], 1 );
-        $this->assertEquals( $result ['total_count'], 2 );
+        $this->assertEquals( $result ['is_error'], 0,"in line " . __LINE__ );
+        $this->assertEquals( $result ['not_added'], 1,"in line " . __LINE__ );
+        $this->assertEquals( $result ['added'], 1,"in line " . __LINE__ );
+        $this->assertEquals( $result ['total_count'], 2,"in line " . __LINE__ );
         
     }
 
@@ -205,58 +206,56 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
         $groups = civicrm_group_contact_delete( $params );
 
         $this->assertEquals( $groups['is_error'], 1 );
-        $this->assertEquals( $groups['error_message'], 'input parameter should be an array' );
+        $this->assertEquals( $groups['error_message'], 'Input variable `params` is not an array' );
     }
     
-    function testRemoveWithEmptyParams( ) 
+    function testDeleteWithEmptyParams( ) 
     {
-        $params = array( );
+        $params = array('version' => $this->_apiversion );
         $groups = civicrm_group_contact_delete( $params );
        
         $this->assertEquals( $groups['is_error'], 1 );
-        $this->assertEquals( $groups['error_message'], 'contact_id is a required field' );
+        $this->assertEquals( $groups['error_message'], 'Mandatory key(s) missing from params array: contact_id, group_id' );
     }
 
     function testRemoveWithoutGroupIdParams( ) 
     {
-        $params = array( );
-        $params = array(
-                        'contact_id.1' => $this->_contactId,
+        $params = array('version'		=> $this->_apiversion,
+                        'contact_id' => $this->_contactId,
                         );
         
         $groups = civicrm_group_contact_delete( $params );
               
         $this->assertEquals( $groups['is_error'], 1 );
-        $this->assertEquals( $groups['error_message'], 'group_id is a required field' );
+        $this->assertEquals( $groups['error_message'], 'Mandatory key(s) missing from params array: group_id' );
     }
     
-    function testRemoveWithoutContactIdParams( ) 
+    function testDeleteWithoutContactIdParams( ) 
     {
-        $params = array( );
-        $params = array(
+        $params = array('version'	=> $this->_apiversion,
                         'group_id' => $this->_groupId1,
                         );
         
         $groups = civicrm_group_contact_delete( $params );
               
         $this->assertEquals( $groups['is_error'], 1 );
-        $this->assertEquals( $groups['error_message'], 'contact_id is a required field' );
+        $this->assertEquals( $groups['error_message'], 'Mandatory key(s) missing from params array: contact_id' );
     }    
     
     
-    function testRemove( ) 
+    function testDelete( ) 
     {
         $params = array(
-                        'contact_id.1' => $this->_contactId,
+                        'contact_id' => $this->_contactId,
                         'group_id'     => 1 ,
                         'version'      =>$this->_apiversion,);
         
         
        $result = civicrm_group_contact_delete( $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);             
-        $this->assertEquals( $result['is_error'], 0 );
-        $this->assertEquals( $result['removed'], 1 );
-        $this->assertEquals( $result['total_count'], 1 );
+        $this->assertEquals( $result['is_error'], 0, "in line " . __LINE__ );
+        $this->assertEquals( $result['removed'], 1, "in line " . __LINE__  );
+        $this->assertEquals( $result['total_count'], 1, "in line " . __LINE__  );
 
     }
   

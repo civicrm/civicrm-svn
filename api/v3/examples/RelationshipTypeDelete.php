@@ -1,14 +1,14 @@
 <?php 
 
-function membership_delete_example(){
+function relationship_type_delete_example(){
     $params = array(
     
-                  'id' 		=> '1',
+                  'id' 		=> '10',
                   'version' 		=> '3',
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'membership','delete',$params );
+  $result = civicrm_api( 'relationship_type','delete',$params );
 
   return $result;
 }
@@ -16,14 +16,12 @@ function membership_delete_example(){
 /*
  * Function returns array of result expected from previous function
  */
-function membership_delete_expectedresult(){
+function relationship_type_delete_expectedresult(){
 
   $expectedResult = 
      array(
-           'is_error' 		=> '0',
-           'version' 		=> '3',
-           'count' 		=> '1',
-           'values' 		=> '1',
+           'is_error' 		=> '1',
+           'error_message' 		=> 'Could not delete relationship type',
       );
 
   return $expectedResult  ;

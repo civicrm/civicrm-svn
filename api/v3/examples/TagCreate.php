@@ -26,7 +26,7 @@ function tag_create_expectedresult(){
            'version' 		=> '3',
            'count' 		=> '1',
            'id' 		=> '6',
-           'values' 		=>            array(           '6' =>  array(
+           'values' 		=> array(           '6' =>  array(
                       'id' => '6',
                       'name' => 'New Tag3',
                       'description' => 'This is description for New Tag 02',
@@ -36,7 +36,7 @@ function tag_create_expectedresult(){
                       'is_tagset' => '',
                       'used_for' => 'civicrm_contact',
                       'created_id' => '',
-                      'created_date' => '20110209210924',
+                      'created_date' => '20110212175636',
            ),           ),
       );
 

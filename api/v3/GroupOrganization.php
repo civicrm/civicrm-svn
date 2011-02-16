@@ -56,19 +56,7 @@ function civicrm_group_organization_get( &$params )
   _civicrm_initialize( true);
   try{
 
-
-    if ( ! is_array( $params ) ) {
-      return civicrm_create_error(  'Input parameter is not an array'  );
-    }
-
-    if ( empty( $params ) ) {
-      return civicrm_create_error( 'No input parameter present' );
-    }
-
-    if ( ! array_key_exists( 'organization_id', $params ) &&
-    ! array_key_exists( 'group_id', $params ) ) {
-      return civicrm_create_error(  'at least one of organization_id or group_id is a required field'  );
-    }
+    civicrm_verify_one_mandatory($params,null,array('organization_id','group_id'));
 
     require_once 'CRM/Contact/DAO/GroupOrganization.php';
     $dao = new CRM_Contact_DAO_GroupOrganization();
@@ -100,18 +88,8 @@ function civicrm_group_organization_create( &$params )
 
   try{
 
-    if ( ! is_array( $params ) ) {
-      return civicrm_create_error(  'Input parameter is not an array'  );
-    }
-
-    if ( empty( $params ) ) {
-      return civicrm_create_error( 'No input parameter present' );
-    }
-
-    if ( ! array_key_exists( 'organization_id', $params ) ||
-    ! array_key_exists( 'group_id', $params ) ) {
-      return civicrm_create_error( 'organization_id and group_id are required field' );
-    }
+    civicrm_verify_mandatory($params,null,array('organization_id','group_id'));
+    
 
     require_once 'CRM/Contact/BAO/GroupOrganization.php';
     $groupOrgBAO = CRM_Contact_BAO_GroupOrganization::add( $params );
@@ -133,7 +111,7 @@ function civicrm_group_organization_create( &$params )
  *
  * This API is used for deleting a Group Organization
  *
- * @param  Array  $params  ID of the Group Organization to be deleted
+ * @param  array  $params  ID of the Group Organization to be deleted
  *
  * @return null if successfull, array with is_error = 1 otherwise
  * @access public
@@ -144,19 +122,7 @@ function civicrm_group_organization_delete( &$params )
   _civicrm_initialize( true);
   try{
 
-    if ( !is_array( $params ) ) {
-      $error = civicrm_create_error( 'Input parameter is not an array' );
-      return $error;
-    }
-
-    if ( empty( $params ) ) {
-      return civicrm_create_error( 'No input parameter present' );
-    }
-
-    if ( ! CRM_Utils_Array::value( 'id', $params ) ) {
-      $error = civicrm_create_error( 'Invalid or no value for Group Organization ID' );
-      return $error;
-    }
+    civicrm_verify_mandatory($params,null,array('id'));  
     require_once 'CRM/Contact/BAO/GroupOrganization.php';
     $result = CRM_Contact_BAO_GroupOrganization::delete( $params['id'] );
     return $result ? civicrm_create_success(  'Deleted Group Organization successfully'  ):civicrm_create_error(  'Could not delete Group Organization'  );

@@ -71,9 +71,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( $result['is_error'], 0,
                              "In line " . __LINE__ );      
-   
-        $this->assertEquals( $result['result'], 1,
-                             "In line " . __LINE__ );   
+  
     }
 
     
@@ -107,7 +105,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase
      function testContactMembershipsGet()
      {
          $this->assertTrue( function_exists(civicrm_membership_get) );
-         $params = array();
+         $params = array('version' => $this->_apiversion);
          $result = civicrm_membership_get( $params );
          $this->assertEquals( 1, $result['is_error'],
                               "In line " . __LINE__ );
@@ -122,15 +120,6 @@ class api_v3_MembershipTest extends CiviUnitTestCase
                               "In line " . __LINE__ );
      }
 
-     function testContactMembershipGet()
-     {
-         $this->assertTrue( function_exists(civicrm_membership_types_get) );
-         $params = array();
-         $result = civicrm_membership_types_get( $params );
-         $this->assertEquals( 1, $result['is_error'],
-                              "In line " . __LINE__ );         
-     }
-    
 
         /**
      * Test civicrm_membership_get with empty params.

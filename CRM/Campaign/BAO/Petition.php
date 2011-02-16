@@ -147,28 +147,19 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
         return $activity;
     }
 
-    function confirmSignature($activity_id,$contact_id,$petition_id) {
-        //change activity status to completed (status_id=2)
-        $query = "UPDATE civicrm_activity SET status_id = 2
-            WHERE  id = $activity_id
-            AND   source_contact_id = $contact_id";
-        CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
-
-        // define constant CIVICRM_TAG_UNCONFIRMED, if not exist in civicrm.settings.php
-        if ( !defined('CIVICRM_TAG_UNCONFIRMED') ) {
-            define('CIVICRM_TAG_UNCONFIRMED', 'Unconfirmed');
-        }
+    function confirmSignature($activity_id, $contact_id, $petition_id)
+    {
+        // change activity status to completed (status_id = 2)
+        // I wonder why do we need contact_id when we have activity_id anyway? [chastell]
+        $sql = 'UPDATE civicrm_activity SET status_id = 2 WHERE id = %1 AND source_contact_id = %2';
+        $params = array(1 => array($activity_id, 'Integer'), 2 => array($contact_id, 'Integer'));
+        CRM_Core_DAO::executeQuery($sql, $params);
 
         // remove 'Unconfirmed' tag for this contact
-        // Check if contact 'email confirmed' tag exists, else create one
-        // This should be in the petition module initialise code to create a default tag for this
-        $tag_params['name'] = CIVICRM_TAG_UNCONFIRMED;
-        $tag = civicrm_api('tag', 'get', $tag_params);
-
-        unset($tag_params);
-        $tag_params['contact_id'] = $contact_id;
-        $tag_params['tag_id'] = $tag['id'];
-        $tag_value = civicrm_api('entity_tag', 'delete', $tag_params);
+        $tag_name = defined('CIVICRM_TAG_UNCONFIRMED') ? CIVICRM_TAG_UNCONFIRMED : 'Unconfirmed';
+        $sql = "DELETE FROM civicrm_entity_tag WHERE entity_table = 'civicrm_contact' AND entity_id = %1 AND tag_id = (SELECT id FROM civicrm_tag WHERE name = %2)";
+        $params = array(1 => array($contact_id, 'Integer'), 2 => array($tag_name, 'String'));
+        CRM_Core_DAO::executeQuery($sql, $params);
 
         // set permanent cookie to indicate this users email address now confirmed
         setcookie('confirmed_'.$petition_id, $activity_id, time() + $this->cookieExpire, '/');
@@ -410,24 +401,16 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
          */
         require_once 'CRM/Campaign/Form/Petition/Signature.php';
 
-        // define constant CIVICRM_PETITION_CONTACTS, if not exist in civicrm.settings.php
-        if ( !defined('CIVICRM_PETITION_CONTACTS') ) {
-            define('CIVICRM_PETITION_CONTACTS','Petition Contacts');
-        }
-
         // check if the group defined by CIVICRM_PETITION_CONTACTS exists, else create it
-        $group_params['title'] = CIVICRM_PETITION_CONTACTS;
-        $groups = civicrm_api('group', 'get', $group_params);
-        if ( ( CRM_Utils_Array::value('is_error', $groups) == 1 ) && ( CRM_Utils_Array::value('error_message', $groups) == 'No such group exists' ) ) {
-            $group_params['is_active'] = 1;
-            $group_params['visibility'] = 'Public Pages';
-            $newgroup = civicrm_api('group', 'create', $group_params);
-            if ($newgroup['is_error'] == 0) {
-                $group_id[0] = $newgroup['result'];
-            }
-        } else {
-            $group_id = array_keys($groups);
+        require_once 'CRM/Contact/DAO/Group.php';
+        $dao = new CRM_Contact_DAO_Group();
+        $dao->title = defined('CIVICRM_PETITION_CONTACTS') ? CIVICRM_PETITION_CONTACTS : 'Petition Contacts';
+        if (!$dao->find(true)) {
+            $dao->is_active = 1;
+            $dao->visibility = 'Public Pages';
+            $dao->save();
         }
+        $group_id = $dao->id;
 
         // get petition info
         $petitionParams['id'] = $params['sid'];
@@ -458,10 +441,10 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
         switch ($sendEmailMode) {
         case CRM_Campaign_Form_Petition_Signature::EMAIL_THANK:
 
-            //add this contact to the CIVICRM_PETITION_CONTACTS group
-            $params['group_id'] = $group_id[0];
-            $params['contact_id'] = $params['contactId'];
-            civicrm_api('group_contact', 'create', $params);
+            // add this contact to the CIVICRM_PETITION_CONTACTS group
+            require_once 'CRM/Contact/BAO/GroupContact.php';
+            $p = array($params['contactId']);//Cannot pass parameter 1 by reference 
+            CRM_Contact_BAO_GroupContact::addContactsToGroup($p, $group_id, 'API');
 
             require_once 'CRM/Core/BAO/MessageTemplates.php';
             if ($params['email-Primary']) {
@@ -486,7 +469,7 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
             // create mailing event subscription record for this contact
             // this will allow using a hash key to confirm email address by sending a url link
             require_once 'CRM/Mailing/Event/BAO/Subscribe.php';
-            $se = CRM_Mailing_Event_BAO_Subscribe::subscribe( $group_id[0],
+            $se = CRM_Mailing_Event_BAO_Subscribe::subscribe( $group_id,
                 $params['email-Primary'] ,
                 $params['contactId'] );
 

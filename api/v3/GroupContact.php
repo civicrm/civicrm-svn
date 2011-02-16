@@ -96,6 +96,7 @@ function civicrm_group_contact_delete( &$params )
 {
   _civicrm_initialize(true);
   try{
+  civicrm_verify_mandatory($params,null,array('contact_id', 'group_id'));
     return civicrm_group_contact_common( $params, 'remove' );
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );
@@ -123,9 +124,6 @@ function civicrm_group_contact_pending( &$params )
  */
 function civicrm_group_contact_common( &$params, $op = 'add' )
 {
-  if ( ! is_array( $params ) ) {
-    return civicrm_create_error(  'input parameter should be an array'  );
-  }
 
   $contactIDs = array( );
   $groupIDs = array( );
@@ -178,7 +176,7 @@ function civicrm_group_contact_common( &$params, $op = 'add' )
       $values['not_removed'] += $nr;
     }
   }
-  return $values;
+  return civicrm_create_success($values);
 }
 
 function civicrm_group_contact_update_status ( &$params ) {

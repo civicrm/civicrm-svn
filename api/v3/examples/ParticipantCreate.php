@@ -32,7 +32,7 @@ function participant_create_expectedresult(){
            'version' 		=> '3',
            'count' 		=> '1',
            'id' 		=> '4',
-           'values' 		=>            array(           '4' =>  array(
+           'values' 		=> array(           '4' =>  array(
                       'id' => '4',
                       'contact_id' => '2',
                       'event_id' => '1',

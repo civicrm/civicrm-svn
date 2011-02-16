@@ -39,7 +39,7 @@ function event_create_expectedresult(){
            'version' 		=> '3',
            'count' 		=> '1',
            'id' 		=> '2',
-           'values' 		=>            array(           '2' =>  array(
+           'values' 		=> array(           '2' =>  array(
                       'id' => '2',
                       'title' => 'Annual CiviCRM meet',
                       'summary' => 'If you have any CiviCRM realted issues or want to track where CiviCRM is heading, Sign up now',

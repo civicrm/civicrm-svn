@@ -588,14 +588,13 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     {
         $apiversion = civicrm_get_api_version($apiversion);
         $params['version'] = $apiversion;
-        $params['sequential'] = 1;
         require_once 'api/api.php';
         $result = civicrm_api_legacy( 'civicrm_relationship_type_create','RelationshipType',$params );
         if ( civicrm_error( $params ) || $result['is_error'] ==1) {
             throw new Exception( 'Could not create relationship type' );
         }
         if ($apiversion ==3){
-          return $result['values']['id'];
+          return $result['id'];
         } 
         return $result['id'];
     }
@@ -764,9 +763,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         );
         $result = civicrm_api_legacy( 'civicrm_pledge_create','Pledge',$params );
                         
- 
-
-        return $pledge['id'];
+        return $result['id'];
         
     }
     
@@ -1300,10 +1297,13 @@ function documentMe($params,$result,$function,$filename){
         $entity = substr ( basename($filename) ,0, strlen(basename($filename))-8 );
         if (strstr($function, 'Create')){
           $action = 'create';
+          $entityAction = 'Create';
         }elseif(strstr($function, 'Get')){
           $action = 'get';
+          $entityAction = 'Get';
         }elseif(strstr($function, 'Delete')){
           $action = 'delete';
+          $entityAction = 'Delete';
         }
         if (strstr($entity,'UF')){// a cleverer person than me would do it in a single regex
          $fnPrefix = strtolower(preg_replace('/(?<! )(?<!^)(?<=UF)[A-Z]/','_$0', $entity));          
@@ -1319,10 +1319,14 @@ function documentMe($params,$result,$function,$filename){
         $smarty->assign('entity',$entity);         
         $smarty->assign('result',$result); 
         $smarty->assign('action',$action); 
-        if (file_exists ( "../api/v3/examples/$entity$action.php" ) && file_exists('../tests/templates/documentFunction.tpl')) {
-          $f = fopen("../api/v3/examples/$entity$action.php", "w");
+        if(DOCUMENT_ME ==1){ 
+
+        
+       if ( file_exists('../tests/templates/documentFunction.tpl')) {
+          $f = fopen("../api/v3/examples/$entity$entityAction.php", "w");
           fwrite($f,$smarty->fetch('../tests/templates/documentFunction.tpl'));
           fclose($f); 
+        }
         }
     }
   

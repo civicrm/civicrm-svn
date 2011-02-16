@@ -205,6 +205,10 @@ function &civicrm_contribution_format_create( &$params ) {
     if ( empty( $params ) ) {
         return civicrm_create_error( 'Input Parameters empty' );
     }
+
+    if (!is_array($params)) {
+        return civicrm_create_error('Input parameters is not an array');
+    }
     
     $error = _civicrm_contribute_check_params($params);
     if ( civicrm_error( $error ) ) {
@@ -300,6 +304,7 @@ function _civicrm_contribute_duplicate_check( &$params ) {
 function _civicrm_contribute_format_params( &$params, &$values, $create=false ) {
     // copy all the contribution fields as is
    
+    require_once 'CRM/Contribute/DAO/Contribution.php';
     $fields =& CRM_Contribute_DAO_Contribution::fields( );
 
     _civicrm_store_values( $fields, $params, $values );

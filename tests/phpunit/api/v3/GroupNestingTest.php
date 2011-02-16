@@ -101,7 +101,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
                                        'child_group_id' => 2, 
                                        'parent_group_id' => 1 ) );
         $expected['is_error'] = 0;        
-        $this->assertEquals( $expected, $result );                         
+        $this->assertEquals( $expected, $result['values'] );                         
     }
 
     /**
@@ -123,7 +123,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
                                        'child_group_id' => 4, 
                                        'parent_group_id' => 2) );
         $expected['is_error'] = 0;        
-        $this->assertEquals( $expected, $result );
+        $this->assertEquals( $expected, $result['values'] );
     }
     
     /**
@@ -148,7 +148,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
                                        'child_group_id' => 4, 
                                        'parent_group_id' => 1) );
         $expected['is_error'] = 0;
-        $this->assertEquals( $expected, $result );
+        $this->assertEquals( $expected, $result['values']  );
     }    
     
     /**

@@ -26,7 +26,7 @@ function activity_get_expectedresult(){
            'version' 		=> '3',
            'count' 		=> '1',
            'id' 		=> '4',
-           'values' 		=>            array(           '0' =>  array(
+           'values' 		=> array(           '0' =>  array(
                       'id' => '4',
                       'source_contact_id' => '17',
                       'source_record_id' => '',

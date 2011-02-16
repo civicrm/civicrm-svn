@@ -4,12 +4,11 @@ function group_organization_get_example(){
     $params = array(
     
                   'organization_id' 		=> '1',
-                  'group_id' 		=> '1',
                   'version' 		=> '3',
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api_legacy( 'civicrm_group_organization_get','GroupOrganization',$params );
+  $result = civicrm_api( 'group_organization','get',$params );
 
   return $result;
 }
@@ -20,14 +19,12 @@ function group_organization_get_example(){
 function group_organization_get_expectedresult(){
 
   $expectedResult = 
-            array(
-                  'is_error' 		=> '0',
-                  'version' 		=> '3',
-                  'count' 		=> '3',
-                  'id' 		=> '1',
-                  'values' 		=>                   array(                  'id' => '1',                                    'group_id' => '1',                                    'organization_id' => '1',                  ),
-
-  );
+     array(
+           'is_error' 		=> '0',
+           'version' 		=> '3',
+           'count' 		=> '3',
+           'values' 		=> array(           'id' => '',                      'group_id' => '',                      'organization_id' => '1',           ),
+      );
 
   return $expectedResult  ;
 }

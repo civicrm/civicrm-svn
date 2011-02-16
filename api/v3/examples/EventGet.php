@@ -24,7 +24,7 @@ function event_get_expectedresult(){
            'version' 		=> '3',
            'count' 		=> '1',
            'id' 		=> '1',
-           'values' 		=>            array(           '1' =>  array(
+           'values' 		=> array(           '1' =>  array(
                       'id' => '1',
                       'title' => 'Annual CiviCRM meet',
                       'event_title' => 'Annual CiviCRM meet',

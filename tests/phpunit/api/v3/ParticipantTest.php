@@ -256,8 +256,8 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
       $this->fail("Event search returned less than expected miniumum of 3 records.");
     }
 
-    $this->assertEquals($participant[$this->_participantID]['last_name'],'Anderson');
-    $this->assertEquals($participant[$this->_participantID]['event_title'],'Annual CiviCRM meet');
+    $this->assertEquals($participant['values'][$this->_participantID]['last_name'],'Anderson');
+    $this->assertEquals($participant['values'][$this->_participantID]['event_title'],'Annual CiviCRM meet');
   }
 
   /**
@@ -378,9 +378,9 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'version'				=> $this->_apiversion,                      
     );
 
-    $participant = & civicrm_participant_create($params);
+    $participant =  civicrm_participant_create($params);
     $this->documentMe($params,$participant ,__FUNCTION__,__FILE__);
-    $this->assertNotEquals( $participant['is_error'],1 );
+    $this->assertNotEquals( $participant['is_error'],1 ,'in line ' . __LINE__);
     $this->_participantID = $participant['id'];
     if ( ! $participant['is_error'] ) {
       $this->_createdParticipants[] = CRM_Utils_Array::value('values', $participant);
@@ -412,10 +412,10 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
    */
   function testUpdateEmptyParams()
   {
-    $params = array();
+    $params = array('version' => $this->_apiversion);
     $participant = & civicrm_participant_create($params);
     $this->assertEquals( $participant['is_error'],1 );
-    $this->assertEquals( $participant['error_message'],'Required parameter missing' );
+    $this->assertEquals( $participant['error_message'],'Mandatory key(s) missing from params array: event_id, contact_id' );
   }
 
   /**
@@ -435,7 +435,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
     );
     $participant = & civicrm_participant_create($params);
     $this->assertEquals( $participant['is_error'], 1 );
-    $this->assertEquals( $participant['error_message'],'Required parameter missing' );
+    $this->assertEquals( $participant['error_message'],'Mandatory key(s) missing from params array: event_id' );
     // Cleanup created participant records.
     $result = $this->participantDelete( $participantId ,     $this->_apiversion);
   }
@@ -479,7 +479,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
     );
     $participant = & civicrm_participant_create($params);
     $this->assertEquals( $participant['is_error'], 1 );
-    $this->assertEquals( $participant['error_message'],'Contact id is not valid' );
+    $this->assertEquals( $participant['error_message'],'Mandatory key(s) missing from params array: event_id' );
     $result = $this->participantDelete( $participantId,  $this->_apiversion );
   }
 
@@ -552,6 +552,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
   {
     $params = array(
                         'id' => $this->_participantID,
+                        'version' =>$this->_apiversion,
     );
     $participant = & civicrm_participant_delete($params);
     $this->assertNotEquals( $participant['is_error'],1 );
@@ -627,236 +628,4 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
     $participant = & civicrm_participant_check_params( $params );
     $this->assertEquals( $participant, true , 'Check the returned True');
   }
-
-  ///////////////// civicrm_participant_payment_create methods
-
-  /**
-   * Test civicrm_participant_payment_create with wrong params type
-   */
-  function testPaymentCreateWrongParamsType()
-  {
-    $params = 'a string';
-    $result = & civicrm_participant_payment_create($params);
-
-    $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
-  }
-
-  /**
-   * Test civicrm_participant_payment_create with empty params
-   */
-  function testPaymentCreateEmptyParams()
-  {
-    $params = array();
-    $result = & civicrm_participant_payment_create($params);
-
-    $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
-  }
-
-  /**
-   * check without participant_id
-   */
-  function testPaymentCreateMissingParticipantId( )
-  {
-    $contributionTypeID = 1;
-
-    //Create Contribution & get entity ID
-    $contributionID = $this->contributionCreate( $this->_contactID , $contributionTypeID ,$this->_apiversion );
-
-    //WithoutParticipantId
-    $params = array(
-                        'contribution_id'    => $contributionID,
-                             'version'							=> $this->_apiversion,
-    );
-    $participantPayment = & civicrm_participant_payment_create( $params );
-    $this->assertEquals( $participantPayment['is_error'], 1 );
-
-    //delete created contribution
-    $this->contributionDelete( $contributionID ,$this->_apiversion);
-
-    // delete created contribution type
-    $this->contributionTypeDelete( $contributionTypeID,$this->_apiversion );
-  }
-
-  /**
-   * check without contribution_id
-   */
-  function testPaymentCreateMissingContributionId( )
-  {
-    //Without Payment EntityID
-    $params = array(
-                        'participant_id'       => $this->_participantID,
-                        'version'							=>$this->_apiversion,
-    );
-    $participantPayment = & civicrm_participant_payment_create( $params );
-    $this->assertEquals( $participantPayment['is_error'], 1 );
-  }
-
-  /**
-   * check with valid array
-   */
-  function testPaymentCreate( )
-  {
-
-    $contributionTypeID = 1;
-
-    //Create Contribution & get contribution ID
-    $contributionID = $this->contributionCreate( $this->_contactID , $contributionTypeID ,$this->_apiversion );
-
-    //Create Participant Payment record With Values
-    $params = array(
-                        'participant_id'  => $this->_participantID,
-                        'contribution_id' => $contributionID,
-    );
-    $participantPayment = & civicrm_participant_payment_create( $params );
-    $this->assertEquals( $participantPayment['is_error'], 0,'in line '. __LINE__ );
-    $this->assertTrue( array_key_exists( 'id', $participantPayment ),'in line '. __LINE__ );
-
-    //delete created contribution
-    $this->contributionDelete( $contributionID );
-
-    // delete created contribution type
-    $this->contributionTypeDelete( $contributionTypeID );
-  }
-
-
-  ///////////////// civicrm_participant_payment_create methods
-
-  /**
-   * Test civicrm_participant_payment_create with wrong params type
-   */
-  function testPaymentUpdateWrongParamsType()
-  {
-    $params = 'a string';
-    $result = & civicrm_participant_payment_create($params);
-
-    $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
-    $this->assertEquals('Input variable `params` is not an array', $result['error_message'], 'In line ' . __LINE__);
-  }
-
-  /**
-   * check with empty array
-   */
-  function testPaymentUpdateEmpty()
-  {
-    $params = array();
-    $participantPayment = & civicrm_participant_payment_create( $params );
-    $this->assertEquals( $participantPayment['is_error'], 1 );
-  }
-
-  /**
-   * check with missing participant_id
-   */
-  function testPaymentUpdateMissingParticipantId()
-  {
-    //WithoutParticipantId
-    $params = array(
-                        'contribution_id' => '3',
-                         'version'				 =>$this->_apiversion,
-    );
-    $participantPayment = & civicrm_participant_payment_create( $params );
-    $this->assertEquals( $participantPayment['is_error'], 1 );
-  }
-
-  /**
-   * check with missing contribution_id
-   */
-  function testPaymentUpdateMissingContributionId()
-  {
-    $params = array(
-                        'participant_id' => $this->_participantID,
-                        'version'				 =>$this->_apiversion,
-    );
-    $participantPayment = & civicrm_participant_payment_create( $params );
-    $this->assertEquals( $participantPayment['is_error'], 1 );
-  }
-
-  /**
-   * check with complete array
-   */
-  function testPaymentUpdate()
-  {
-    $contributionTypeID = 1;
-
-    // create contribution
-    $contributionID     = $this->contributionCreate( $this->_contactID , $contributionTypeID,$this->_apiversion  );
-
-    $this->_participantPaymentID = $this->participantPaymentCreate( $this->_participantID, $contributionID ,$this->_apiversion );
-    $params = array(
-                        'id'              => $this->_participantPaymentID,
-                        'participant_id'  => $this->_participantID,
-                        'contribution_id' => $contributionID,
-                        'version'					=> $this->_apiversion,
-    );
-
-    // Update Payment
-    $participantPayment = & civicrm_participant_payment_create( $params );
-    $this->assertEquals( $participantPayment['id'],$this->_participantPaymentID );
-    $this->assertTrue ( array_key_exists( 'id', $participantPayment ) );
-
-    $params = array( 'id' => $this->_participantPaymentID ,
-                                 'version' => $this->_apiversion, );
-    $deletePayment = & civicrm_participant_payment_delete( $params );
-    $this->assertEquals( $deletePayment['is_error'], 0 );
-
-    $this->contributionDelete( $contributionID , $this->_apiversion );
-    $this->contributionTypeDelete( $contributionTypeID , $this->_apiversion );
-  }
-
-  ///////////////// civicrm_participant_payment_delete methods
-
-  /**
-   * Test civicrm_participant_payment_delete with wrong params type
-   */
-  function testPaymentDeleteWrongParamsType()
-  {
-    $params = 'a string';
-    $result = & civicrm_participant_payment_delete($params);
-
-    $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
-  }
-
-  /**
-   * check with empty array
-   */
-  function testPaymentDeleteWithEmptyParams()
-  {
-    $params = array();
-    $deletePayment = & civicrm_participant_payment_delete( $params );
-    $this->assertEquals( $deletePayment['is_error'], 1 );
-    $this->assertEquals( $deletePayment['error_message'], 'Mandatory key(s) missing from params array: id, version' );
-  }
-
-  /**
-   * check with wrong id
-   */
-  function testPaymentDeleteWithWrongID()
-  {
-    $params = array( 'id' => 0,
-                         'version' => $this->_apiversion, );        
-    $deletePayment = & civicrm_participant_payment_delete( $params );
-    $this->assertEquals( $deletePayment['is_error'], 1 );
-    $this->assertEquals( $deletePayment['error_message'], 'Error while deleting participantPayment' );
-  }
-
-  /**
-   * check with valid array
-   */
-  function testPaymentDelete()
-  {
-    $contributionTypeID = 1;
-
-    // create contribution
-    $contributionID     = $this->contributionCreate( $this->_contactID , $contributionTypeID ,$this->_apiversion );
-
-    $this->_participantPaymentID = $this->participantPaymentCreate( $this->_participantID, $contributionID,$this->_apiversion  );
-
-    $params = array( 'id' => $this->_participantPaymentID,
-                          'version'				=> $this->_apiversion, );         
-    $result = & civicrm_participant_payment_delete( $params );
-    $this->documentMe($params,$result,__FUNCTION__,__FILE__);
-    $this->assertEquals( $result['is_error'], 0 );
-
-  }
-
 }
-

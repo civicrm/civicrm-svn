@@ -69,7 +69,7 @@ function civicrm_participant_payment_create(&$params)
     $participantPayment = CRM_Event_BAO_ParticipantPayment::create($params, $ids);
 
     $payment = array( );
-    _civicrm_object_to_array_unique_fields($participantPayment, $payment[$participantPayment->id]);
+    _civicrm_object_to_array($participantPayment, $payment[$participantPayment->id]);
 
     return civicrm_create_success($payment,$params);
   } catch (PEAR_Exception $e) {

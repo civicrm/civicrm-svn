@@ -71,7 +71,7 @@ function &civicrm_membership_payment_create( &$params ) {
 
     $transaction->commit( );
 
-    _civicrm_object_to_array($mpDAO, $mpArray);
+    _civicrm_object_to_array($mpDAO, $mpArray[$mpDAO->id]);
 
     return civicrm_create_success($mpArray,$params);
   } catch (PEAR_Exception $e) {

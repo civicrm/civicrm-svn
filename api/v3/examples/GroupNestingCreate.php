@@ -25,7 +25,7 @@ function group_nesting_create_expectedresult(){
            'version' 		=> '3',
            'count' 		=> '1',
            'id' 		=> 'is_error',
-           'values' 		=>            array(           'is_error' => '0',           ),
+           'values' 		=> array(           'is_error' => '0',           ),
       );
 
   return $expectedResult  ;

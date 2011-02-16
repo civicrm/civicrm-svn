@@ -61,7 +61,7 @@ require_once 'CRM/Core/DAO/OptionGroup.php';
  * @todo Erik Hommel 16 dec 2010 check if create function processes update correctly when activity_id is passed
  * @todo Erik Hommel 16 dec 2010 check for mandatory fields with utils function civicrm_verify_mandatory
  * @todo Erik Hommel 16 dec 2010 check permissions with utils function civicrm_api_permission_check
- * @todo Eileen 2 Feb - I am not sure custom data stuff is working - test doesn't seem to really test for it
+ * @todo Eileen 2 Feb - custom data fields per test are non std
  * 
  * @example ActivityCreate.php
  * {@example ActivityCreate.php 0} 
@@ -71,6 +71,7 @@ function civicrm_activity_create( &$params )
 {
   _civicrm_initialize( true );
   try{
+    civicrm_verify_mandatory($params);
     $errors = array( );
     $addmode = True;
     if (!empty($params['id']) || !empty($params['activity_id'])){
