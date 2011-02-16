@@ -269,6 +269,10 @@ cj(document).ready(function(){
                    cj('input[name=contact_select_id[' + blockNo +']]').val( response.contactID );
                    cj('#contact-success-' + blockNo ).show( );
                    cj('#contact-dialog-' + blockNo ).dialog('close');
+
+		   {/literal}{ if $createCallback}{literal}
+        	       profileCreateCallback( blockNo );
+		   {/literal}{/if}{literal}			     
                }
            }
          }).responseText;

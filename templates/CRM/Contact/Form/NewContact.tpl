@@ -70,6 +70,9 @@
 
       var dataURL = {/literal}"{crmURL p='civicrm/profile/create' q="reset=1&snippet=5&context=dialog&blockNo=$blockNo" h=0 }"{literal};
       dataURL = dataURL + '&gid=' + gid;
+      {/literal}{if $profileCreateCallback}{literal}
+        dataURL = dataURL + '&createCallback=1';
+      {/literal}{/if}{literal}
       cj.ajax({
          url: dataURL,
          success: function( content ) {
