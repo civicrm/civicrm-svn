@@ -62,6 +62,11 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         // continue
         $this->click('_qf_Settings_next');
         $this->waitForPageToLoad();
+
+        // get page id for future use
+        $matches = array();
+        preg_match('/id=([0-9]+)/', $this->getLocation(), $matches);
+        $page_id = $matches[1];
         
         //this contribution page for membership signup
         $this->waitForElementPresent('payment_processor_id');
@@ -180,7 +185,7 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad();
         
         //get Url for Live Contribution Page
-        $registerUrl = $this->_testVerifyRegisterPage( $contributionTitle );
+        $registerUrl = "{$this->sboxPath}civicrm/contribute/transact?reset=1&id=$page_id";
         
         //logout
         $this->open($this->sboxPath . "civicrm/logout&reset=1");
@@ -243,8 +248,8 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         
         $this->waitForPageToLoad('30000');
         
-        $this->waitForElementPresent( "xpath=//div[@id='memberSearch']//table//tbody/tr[1]/td[10]/span/a[text()='View']" );
-        $this->click( "xpath=//div[@id='memberSearch']//table//tbody/tr[1]/td[10]/span/a[text()='View']" );
+        $this->waitForElementPresent('css=#memberSearch table tbody tr td span a.action-item-first');
+        $this->click('css=#memberSearch table tbody tr td span a.action-item-first');
         $this->waitForElementPresent( "_qf_MembershipView_cancel-bottom" );
         
         //View Membership Record
@@ -266,11 +271,4 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
                                                )
                                          );
     }  
-    function _testVerifyRegisterPage( $registerStrings ){
-        $this->waitForElementPresent("idLive");
-        $this->click("contributionLiveUrl");
-        $this->waitForElementPresent("_qf_Main_upload-bottom");
-        return $this->getLocation();
-    }
-    
 }
