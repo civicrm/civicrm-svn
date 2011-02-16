@@ -50,7 +50,7 @@ class WebTest_Report_AddTest extends CiviSeleniumTestCase {
       
       // create contact
       $firstName   = 'reportuser_'.substr(sha1(rand()), 0, 7);
-      $displayName = "$firstName Anderson";
+      $displayName = "Anderson, $firstName";
       $emailId     = "$firstName.anderson@example.org";
       $this->webtestAddContact( $firstName, "Anderson", $emailId );
       
