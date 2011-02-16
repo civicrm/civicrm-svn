@@ -33,8 +33,8 @@ class CRM_Contact_BAO_DupeContactTest extends CiviUnitTestCase
                          );
         // TODO: This is not an API test!!
         $result  = &civicrm_api('group', 'create', $params );
-        $groupId = $result['result'];
-
+        $group   = $result['result'];
+        $groupId = $group->id;
         // contact data set
         // FIXME: move create params to separate function
         $params = array(
