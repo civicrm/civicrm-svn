@@ -182,7 +182,7 @@ class CRM_Core_Block {
         if (!(self::$_properties)) {
             self::initProperties();
         }
-        return self::$_properties[$id][$property];
+        return isset( self::$_properties[$id][$property] ) ? self::$_properties[$id][$property] : null;
     }
 
     /**

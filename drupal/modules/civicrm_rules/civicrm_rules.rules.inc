@@ -168,7 +168,10 @@ The content of the email is:
 </pre>
 ';
     $settings['from'] = ( isset( $defaultAddress[1] ) ) ? $defaultAddress[1] : null;
-    $settings['subject'] = 'New Email: {mailing.subject}';
+
+    if ( !CRM_Utils_Array::value('subject', $settings ) ) {
+        $settings['subject'] = 'New Email: {mailing.subject}';
+    }
     
     $defaults = 
         array( 'parameter' => array( 'contact'       => array( 'type'  => 'contact',
@@ -199,7 +202,6 @@ The content of the email is:
                                      'subject' => array( 'type' => 'text',
                                                          'label' => t( 'Subject' ),
                                                          'description' => t( "The mail's subject." ),
-                                                         'default value' => $settings['subject'],
                                                          ),
                                      'message' => array( 'type' => 'text',
                                                          'label' => t( 'Message' ),
@@ -227,6 +229,7 @@ The content of the email is:
                                      'subject' => array( 'type' => 'text',
                                                          'label' => t( 'Subject' ),
                                                          'description' => t( "The mail's subject." ),
+                                                         'default value' => $settings['subject'],
                                                          ),
                                      'message' => array( 'type' => 'text',
                                                          'label' => t( 'Message' ),

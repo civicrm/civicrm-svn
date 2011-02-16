@@ -90,7 +90,9 @@ class CRM_Utils_Mail
 
         $headers = array( );  
         $headers['From']                      = $params['from'];
-        $headers['To']                        = self::formatRFC822Email( $params['toName'], $params['toEmail'], false );
+        $headers['To']                        = self::formatRFC822Email( CRM_Utils_Array::value( 'toName', $params ),
+                                                                         CRM_Utils_Array::value( 'toEmail', $params ),
+                                                                         false );
         $headers['Cc']                        = CRM_Utils_Array::value( 'cc', $params );
         $headers['Bcc']                       = CRM_Utils_Array::value( 'bcc', $params );
         $headers['Subject']                   = CRM_Utils_Array::value( 'subject', $params );

@@ -132,10 +132,10 @@ AND        q.contact_id = %2
         $params  = array( 'contact_id' => $this->_contactID );
 
         $details = $this->_mailing->getDetails( $params, $returnProperties );
-       
-        $mime =& $this->_mailing->compose( null, null, null, $this->_contactID, $fromEmail, $fromEmail,
+                       
+        $mime =& $this->_mailing->compose( null, null, null, $this->_contactID, null, null,
                                            true, $details[0][$this->_contactID], $attachments );
-
+        
         if ( isset( $this->_mailing->body_html ) ) {
             $header = 'Content-Type: text/html; charset=utf-8';
             $content = $mime->getHTMLBody();
