@@ -129,7 +129,7 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
                              "Medium"           => "In Person",
                              "Location"         => $location,
                              "Date and Time"    => $today,
-                             "Details"          => $details,
+                             //"Details"          => $details,
                              "Status"           => "Completed",
                              "Priority"         => "Normal",
                             );
