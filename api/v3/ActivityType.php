@@ -86,7 +86,7 @@ function civicrm_activity_type_get($params ) {
  * @todo Erik Hommel 16 dec 2010 Check if function processes update according to standards
  */
  
-function civicrm_activity_type_create( &$params ) {
+function civicrm_activity_type_create( $params ) {
     _civicrm_initialize(true);
     try{
     civicrm_verify_mandatory($params,null,array('label','weight'));

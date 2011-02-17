@@ -49,7 +49,7 @@ require_once 'api/v3/utils.php';
  * @return array $result newly created or updated membership type property values.
  * @access public
  */
-function civicrm_membership_type_create(&$params) 
+function civicrm_membership_type_create($params) 
 {
   _civicrm_initialize(true);
   try{
@@ -84,7 +84,7 @@ function civicrm_membership_type_create(&$params)
  * @return  Array of all found membership type property values.
  * @access public
  */
-function civicrm_membership_type_get(&$params) 
+function civicrm_membership_type_get($params) 
 {
   _civicrm_initialize(true);
   try{
@@ -129,7 +129,7 @@ function civicrm_membership_type_get(&$params)
  * @return boolean        true if success, else false
  * @access public
  */
-function civicrm_membership_type_delete( &$params ) {
+function civicrm_membership_type_delete( $params ) {
   _civicrm_initialize(true);
   try{
     civicrm_verify_mandatory($params,null,array('id'));

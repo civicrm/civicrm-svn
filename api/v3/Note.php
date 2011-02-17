@@ -43,7 +43,7 @@
 require_once 'api/v3/utils.php';
 require_once 'CRM/Core/BAO/Note.php';
 
-function civicrm_note_getfields( &$params ) {
+function civicrm_note_getfields( $params ) {
     $bao = new CRM_Core_BAO_Note();
     //function &exportableFields( $contactType = 'Individual', $status = false, $export = false, $search = false )
     return ($bao->fields());
@@ -63,7 +63,7 @@ function civicrm_note_getfields( &$params ) {
  * @example NoteCreate.php
  * {@example NoteCreate.php
  */
-function civicrm_note_create(&$params)
+function civicrm_note_create($params)
 {
   _civicrm_initialize(true);
   try{
@@ -112,7 +112,7 @@ function civicrm_note_create(&$params)
  * @return null
  * @access public
  */
-function civicrm_note_delete( &$params )
+function civicrm_note_delete( $params )
 {
   _civicrm_initialize(true);
   try{
@@ -140,7 +140,7 @@ function civicrm_note_delete( &$params )
  * @access public
  */
 
-function civicrm_note_get( &$params ) {
+function civicrm_note_get( $params ) {
   _civicrm_initialize( true);
   try{
     
@@ -181,7 +181,7 @@ function civicrm_note_get( &$params ) {
  * @param array $params Associative array; only required 'id' parameter is used
  * @return array Nested associative array beginning with direct children of given note.
  */
-function &civicrm_note_tree_get( &$params ) {
+function &civicrm_note_tree_get( $params ) {
 
   if ( empty( $params ) ) {
     return civicrm_create_error( ts( 'No input parameters present' ) );

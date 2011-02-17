@@ -68,7 +68,7 @@ require_once 'CRM/Case/PseudoConstant.php';
  * @todo Erik Hommel 16 dec 2010 introduce version as param
  * @todo Erik Hommel 16 dec 2010 check if civicrm_return_success does not cause error in REST (should be fixed in civicrm_return_success)
  */
-function civicrm_case_create( &$params )
+function civicrm_case_create( $params )
 {
   _civicrm_initialize(true );
   try{
@@ -166,7 +166,7 @@ function civicrm_case_create( &$params )
  * @todo Erik Hommel 16 dec 2010 Introduce version as param
  * @todo Erik Hommel 16 dec 2010 check if civicrm_return_success does not cause error in REST (should be fixed in civicrm_return_success)
  */
-function civicrm_case_get( &$params )
+function civicrm_case_get( $params )
 {
   _civicrm_initialize(true );
   try{
@@ -304,7 +304,7 @@ SELECT DISTINCT case_id
  * @todo Erik Hommel 16 dec 2010 check if civicrm_return_success does not cause error in REST (should be fixed in civicrm_return_success)
  *
  */
-function civicrm_case_activity_create( &$params )
+function civicrm_case_activity_create( $params )
 {
   _civicrm_initialize(true );
   try{
@@ -356,7 +356,7 @@ function civicrm_case_activity_create( &$params )
  * @todo Erik Hommel 16 dec 2010 function should be integrated in create as per standard
  *
  */
-function civicrm_case_update( &$params ) {
+function civicrm_case_update( $params ) {
   _civicrm_initialize( );
 
   $errors = array( );
@@ -433,7 +433,7 @@ function civicrm_case_update( &$params ) {
  * @todo Erik Hommel 16 dec 2010 introduce version as param
  * @todo Erik Hommel 16 dec 2010 check if civicrm_return_success does not cause error in REST (should be fixed in civicrm_return_success)
  */
-function civicrm_case_delete( &$params ) {
+function civicrm_case_delete( $params ) {
   _civicrm_initialize( );
   try{
 
@@ -494,7 +494,7 @@ function _civicrm_case_read( $caseId ) {
 /**
  * Internal function to format params for processing
  */
-function _civicrm_case_format_params( &$params, $mode )
+function _civicrm_case_format_params( $params, $mode )
 {
   switch( $mode ) {
 
@@ -538,7 +538,7 @@ SELECT  ov.name
 /**
  * Internal function to check for valid parameters
  */
-function _civicrm_case_check_params( &$params, $mode = NULL ) {
+function _civicrm_case_check_params( $params, $mode = NULL ) {
 
   // return error if we do not get any params
   if( is_null( $params ) || !is_array( $params ) || empty( $params ) ) {

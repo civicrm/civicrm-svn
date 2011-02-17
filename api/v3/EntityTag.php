@@ -45,7 +45,7 @@ require_once 'api/v3/utils.php';
  * @param array $params
  * @return <type>
  */
-function civicrm_entity_tag_get( &$params ) {
+function civicrm_entity_tag_get( $params ) {
   _civicrm_initialize(true);
 
   try{
@@ -87,7 +87,7 @@ function civicrm_entity_tag_get( &$params ) {
  * @return <type>
  * @todo EM 7 Jan 2011 - believe this should be deleted
  */
-function civicrm_entity_tag_display( &$params ) {
+function civicrm_entity_tag_display( $params ) {
     if ( !is_array($params) ) {
         return civicrm_create_error( 'params should be an array.'  );
     }
@@ -123,7 +123,7 @@ function civicrm_entity_tag_display( &$params ) {
  * @return $entities    Array   An array of entity ids.
  * @access public
  */
-function civicrm_tag_entities_get( &$params )
+function civicrm_tag_entities_get( $params )
 {
     require_once 'CRM/Core/BAO/Tag.php';
     require_once 'CRM/Core/BAO/EntityTag.php';
@@ -138,7 +138,7 @@ function civicrm_tag_entities_get( &$params )
  * @param array $params
  * @return array
  */
-function civicrm_entity_tag_create( &$params ) {
+function civicrm_entity_tag_create( $params ) {
   _civicrm_initialize(true);
     try{
     return civicrm_entity_tag_common( $params, 'add' );
@@ -155,7 +155,7 @@ function civicrm_entity_tag_create( &$params ) {
  * @param array $params
  * @return <type>
  */
-function civicrm_entity_tag_delete( &$params ) {
+function civicrm_entity_tag_delete( $params ) {
     return civicrm_entity_tag_common( $params, 'remove' );
 }
 
@@ -165,7 +165,7 @@ function civicrm_entity_tag_delete( &$params ) {
  * @param <type> $op
  * @return <type> 
  */
-function civicrm_entity_tag_common( &$params, $op = 'add' ) {
+function civicrm_entity_tag_common( $params, $op = 'add' ) {
     $entityIDs    = array( );
     $tagsIDs      = array( );
     $entityTable  = 'civicrm_contact';

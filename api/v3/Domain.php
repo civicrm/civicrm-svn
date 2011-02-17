@@ -47,7 +47,7 @@ require_once 'api/v3/utils.php';
  * @todo - think this returns all not a search
  *
  */
-function civicrm_domain_get(&$params ) {
+function civicrm_domain_get($params ) {
   _civicrm_initialize(true);
 
   try{
@@ -93,7 +93,7 @@ function civicrm_domain_get(&$params ) {
  * @return array
  * @example
  */
-function civicrm_domain_create( &$params ) {
+function civicrm_domain_create( $params ) {
   _civicrm_initialize(true);
   try{
     require_once 'CRM/Core/BAO/Domain.php';

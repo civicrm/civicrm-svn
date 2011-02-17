@@ -58,7 +58,7 @@ require_once 'CRM/Utils/Rule.php';
  * @static void
  * @access public
  */
-function &civicrm_pledge_payment_create( &$params ) {
+function &civicrm_pledge_payment_create( $params ) {
   _civicrm_initialize(true );
   try{
 
@@ -131,7 +131,7 @@ LIMIT 0, 1
  * @static void
  * @access public
 
- function &civicrm_pledge_payment_get( &$params ) {
+ function &civicrm_pledge_payment_get( $params ) {
  _civicrm_initialize( );
  // copied from contribute code - not touched at all to make work for pledge or tested
  $values = array( );
@@ -167,7 +167,7 @@ LIMIT 0, 1
  * @static void
  * @access public
  */
-function civicrm_pledge_payment_delete( &$params ) {
+function civicrm_pledge_payment_delete( $params ) {
   _civicrm_initialize(true );
   try{
 
@@ -202,7 +202,7 @@ function civicrm_pledge_payment_delete( &$params ) {
  * @static void
  * @access public
  */
-function &civicrm_pledge_payment_get( &$params ) {
+function &civicrm_pledge_payment_get( $params ) {
   _civicrm_initialize(true );
   try{
 
@@ -271,7 +271,7 @@ function &civicrm_pledge_payment_get( &$params ) {
  * @param <type> $params
  * @return <type>
  */
-function &_civicrm_pledge_payment_format_create( &$params ) {
+function &_civicrm_pledge_payment_format_create( $params ) {
 
    
   // return error if we have no params
@@ -315,7 +315,7 @@ function &_civicrm_pledge_payment_format_create( &$params ) {
  * @return bool|CRM_Utils_Error
  * @access private
  */
-function _civicrm_pledgepayment_check_params( &$params ) {
+function _civicrm_pledgepayment_check_params( $params ) {
   static $required = array( 'pledge_id',  );
 
   // cannot create a pledge with empty params
@@ -352,7 +352,7 @@ function _civicrm_pledgepayment_check_params( &$params ) {
 
 
 /* not yet looked at
- * function _civicrm_pledge_duplicate_check( &$params ) {
+ * function _civicrm_pledge_duplicate_check( $params ) {
  require_once 'CRM/Pledge/BAO/Pledge.php';
  $duplicates = array( );
  $result = CRM_Pledge_BAO_Pledge::checkDuplicate( $params,$duplicates );
@@ -379,7 +379,7 @@ function _civicrm_pledgepayment_check_params( &$params ) {
  * @return array|CRM_Error
  * @access public
  */
-function _civicrm_pledgepayment_format_params( &$params, &$values, $create=false ) {
+function _civicrm_pledgepayment_format_params( $params, &$values, $create=false ) {
   // copy all the pledge fields as is
   require_once 'CRM/Pledge/BAO/Payment.php';
   require_once 'CRM/Pledge/DAO/Pledge.php';

@@ -119,7 +119,7 @@ function civicrm_membership_contact_create($params)
  * @return  Array of all found membership property values.
  * @access public
  */
-function civicrm_membership_contact_get(&$params)
+function civicrm_membership_contact_get($params)
 {
     _civicrm_initialize();
 
@@ -243,7 +243,7 @@ function civicrm_membership_contact_get(&$params)
  * @return array|error
  * @access public
  */
-function _civicrm_membership_format_params( &$params, &$values, $create=false) 
+function _civicrm_membership_format_params( $params, &$values, $create=false) 
 {
     require_once "CRM/Member/DAO/Membership.php";
     require_once "CRM/Member/PseudoConstant.php";
@@ -342,7 +342,7 @@ function _civicrm_membership_format_params( &$params, &$values, $create=false)
  * @return bool|CRM_Utils_Error
  * @access private
  */
-function _civicrm_membership_check_params( &$params ) {
+function _civicrm_membership_check_params( $params ) {
     
     // params should be an array
     if ( !is_array( $params ) ) {

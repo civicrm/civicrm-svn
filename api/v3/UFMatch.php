@@ -55,7 +55,7 @@ require_once 'CRM/Core/BAO/UFMatch.php';
  * @todo this class is missing delete & create functions (do after exisitng functions upgraded to v3)
  * @todo this should really return the whole record using a find function but that's for v4.
  */
-function civicrm_uf_match_get(&$params)
+function civicrm_uf_match_get($params)
 {
   _civicrm_initialize( true );
   try{

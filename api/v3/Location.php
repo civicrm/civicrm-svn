@@ -50,7 +50,7 @@ require_once 'api/v3/utils.php';
  *
  * @access public
  */
-function civicrm_location_create( &$params ) {
+function civicrm_location_create( $params ) {
     _civicrm_initialize(true );
     
     $error = _civicrm_location_check_params( $params );
@@ -222,7 +222,7 @@ function civicrm_location_get( $contact ) {
  * @param <type> $locationTypeId
  * @return <type>
  */
-function _civicrm_location_add( &$params, $locationTypeId = null ) {
+function _civicrm_location_add( $params, $locationTypeId = null ) {
 
     
     // Get all existing location blocks.
@@ -540,7 +540,7 @@ function &_civicrm_location_get( $contact, $locationTypes = array( ) ) {
  * @return bool|CRM_Utils_Error
  * @access public
  */
-function _civicrm_location_check_params( &$params ) {
+function _civicrm_location_check_params( $params ) {
     if ( !is_array( $params ) ) {
         return civicrm_create_error( 'Params need to be of type array!' );
     }

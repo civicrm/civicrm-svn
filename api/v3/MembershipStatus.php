@@ -51,7 +51,7 @@ require_once 'api/v3/utils.php';
  * @return array of newly created membership status property values.
  * @access public
  */
-function civicrm_membership_status_create(&$params)
+function civicrm_membership_status_create($params)
 {
   _civicrm_initialize(true);
   try{
@@ -99,7 +99,7 @@ function civicrm_membership_status_create(&$params)
  * @return  Array of all found membership status property values.
  * @access public
  */
-function civicrm_membership_status_get(&$params)
+function civicrm_membership_status_get($params)
 {
   _civicrm_initialize(true);
   try{
@@ -147,7 +147,7 @@ function civicrm_membership_status_get(&$params)
  * @return array of updated membership status property values
  * @access public
  */
-function &civicrm_membership_status_update( &$params )
+function &civicrm_membership_status_update( $params )
 {
   _civicrm_initialize();
   if ( !is_array( $params ) ) {
@@ -197,7 +197,7 @@ function &civicrm_membership_status_update( &$params )
  * @return null if successfull, object of CRM_Core_Error otherwise
  * @access public
  */
-function civicrm_membership_status_delete( &$params ) {
+function civicrm_membership_status_delete( $params ) {
   if ( ! is_array( $params ) ) {
     return civicrm_create_error( 'Params is not an array' );
   }

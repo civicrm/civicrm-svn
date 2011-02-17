@@ -51,7 +51,7 @@ require_once 'api/v3/utils.php';
  * @static void
  * @access public
  */
-function &civicrm_membership_payment_create( &$params ) {
+function &civicrm_membership_payment_create( $params ) {
   _civicrm_initialize(true);
   try{
     civicrm_verify_mandatory($params,'CRM_Member_DAO_MembershipPayment',array('contribution_id','membership_id'));
@@ -92,7 +92,7 @@ function &civicrm_membership_payment_create( &$params ) {
  * @static void
  * @access public
  */
-function &civicrm_membership_payment_get( &$params ) {
+function &civicrm_membership_payment_get( $params ) {
   _civicrm_initialize(true);
   try{
     civicrm_verify_mandatory($params);

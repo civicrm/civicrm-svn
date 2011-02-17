@@ -59,7 +59,7 @@ require_once 'CRM/Activity/BAO/Activity.php';
  * @todo Erik Hommel 16 dec 2010 check uniform error messages (inventarization to be done first)
  */
 
-function civicrm_activity_contact_get( &$params ) {
+function civicrm_activity_contact_get( $params ) {
   _civicrm_initialize( );
   
   $contactId = CRM_Utils_Array::value( 'contact_id', $params ); 

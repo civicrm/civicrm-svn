@@ -54,7 +54,7 @@ require_once 'CRM/Core/BAO/UFJoin.php';
  *  {@schema Core/UFJoin.xml}
  *
  */
-function civicrm_uf_join_create(&$params)
+function civicrm_uf_join_create($params)
 {
   _civicrm_initialize(true);
   try{
@@ -83,7 +83,7 @@ function civicrm_uf_join_create(&$params)
  *
  */
 
-function civicrm_uf_join_get(&$params)
+function civicrm_uf_join_get($params)
 { 
   _civicrm_initialize(true);
   try{

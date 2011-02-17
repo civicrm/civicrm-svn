@@ -52,7 +52,7 @@ require_once 'api/v3/utils.php';
  * @access public
  * {@schema Contact/RelationshipType.xml}
  */
-function civicrm_relationship_type_create( &$params ) {
+function civicrm_relationship_type_create( $params ) {
 
   _civicrm_initialize(true);
   try{
@@ -136,7 +136,7 @@ function civicrm_relationship_type_get( $params = null )
  * @static void
  * @access public
  */
-function civicrm_relationship_type_delete( &$params ) {
+function civicrm_relationship_type_delete( $params ) {
 
   _civicrm_initialize(true);
   try{

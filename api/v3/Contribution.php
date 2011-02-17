@@ -53,7 +53,7 @@ require_once 'CRM/Contribute/PseudoConstant.php';
  * @access public
  * @example ContributionCreate.php
  */
-function civicrm_contribution_create( &$params ) {
+function civicrm_contribution_create( $params ) {
     _civicrm_initialize( true);
     try {   
     civicrm_verify_mandatory ($params,null,array ('contact_id','total_amount',array('contribution_type_id' , 'contribution_type')));  
@@ -101,7 +101,7 @@ function civicrm_contribution_create( &$params ) {
  * @static void
  * @access public
  */
-function civicrm_contribution_delete( &$params ) {
+function civicrm_contribution_delete( $params ) {
     _civicrm_initialize( true);
     try{
     civicrm_verify_mandatory($params,null,array('contribution_id'));
@@ -132,7 +132,7 @@ function civicrm_contribution_delete( &$params ) {
  * @static void
  * @access public
  */
-function civicrm_contribution_get( &$params ) {
+function civicrm_contribution_get( $params ) {
     _civicrm_initialize(true );
     try { 
     civicrm_verify_mandatory($params);
@@ -198,7 +198,7 @@ function civicrm_contribution_get( &$params ) {
  * @return <type> 
  * @todo - EM 7 / Jan 11 - I believe this function should be deleted - is not called internally
  */
-function &civicrm_contribution_format_create( &$params ) {
+function &civicrm_contribution_format_create( $params ) {
     _civicrm_initialize( );
    
     // return error if we have no params
@@ -246,7 +246,7 @@ function &civicrm_contribution_format_create( &$params ) {
  * @return bool|CRM_Utils_Error
  * @access private
  */
-function _civicrm_contribute_check_params( &$params ) {
+function _civicrm_contribute_check_params( $params ) {
     
     
     // check params for contribution id during update
@@ -274,7 +274,7 @@ function _civicrm_contribute_check_params( &$params ) {
  * @return array|CRM_Error
  * @access private
  */
-function _civicrm_contribute_duplicate_check( &$params ) {
+function _civicrm_contribute_duplicate_check( $params ) {
     require_once 'CRM/Contribute/BAO/Contribution.php';
     $duplicates = array( );
     $result = CRM_Contribute_BAO_Contribution::checkDuplicate( $params,$duplicates ); 
@@ -301,7 +301,7 @@ function _civicrm_contribute_duplicate_check( &$params ) {
  * @return array|CRM_Error
  * @access public
  */
-function _civicrm_contribute_format_params( &$params, &$values, $create=false ) {
+function _civicrm_contribute_format_params( $params, &$values, $create=false ) {
     // copy all the contribution fields as is
    
     require_once 'CRM/Contribute/DAO/Contribution.php';

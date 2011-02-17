@@ -44,7 +44,7 @@ require_once 'CRM/Contact/BAO/Relationship.php';
 require_once 'CRM/Contact/BAO/RelationshipType.php';
 
 
-function civicrm_relationship_getfields( &$params ) {
+function civicrm_relationship_getfields( $params ) {
     $bao = new CRM_Contact_BAO_Relationship();
     return ($bao->fields());
 }
@@ -61,7 +61,7 @@ function civicrm_relationship_getfields( &$params ) {
  * @todo date handling is 'funky' check difference in tests between update & create. current create test won't work if end_date is same format as start_date
  * @todo create should handle update.
  */
-function civicrm_relationship_create( &$params ) {
+function civicrm_relationship_create( $params ) {
   _civicrm_initialize(true );
   try{
         
@@ -299,7 +299,7 @@ function civicrm_relationship_get($params)
  * @return array|CRM_Error
  * @access public
  */
-function _civicrm_relationship_format_params( &$params, &$values ) {
+function _civicrm_relationship_format_params( $params, &$values ) {
     // copy all the relationship fields as is
    
     $fields =& CRM_Contact_DAO_Relationship::fields( );
@@ -385,7 +385,7 @@ function _civicrm_relationship_format_params( &$params, &$values ) {
     
     return array();
 }
-function _civicrm_relationship_check_params( &$params ) {
+function _civicrm_relationship_check_params( $params ) {
     if(is_array($params['end_date'])){
      $params['end_date'] = date("Ymd", strtotime($params['end_date']));
     }  
