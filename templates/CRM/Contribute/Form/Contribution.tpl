@@ -304,6 +304,8 @@ function loadPanes( id ) {
             checkEmail( );
         });
         checkEmail( );
+	showHideByValue( 'is_email_receipt', '', 'receiptDate', 'table-row', 'radio', true); 
+	showHideByValue( 'is_email_receipt', '', 'fromEmail', 'table-row', 'radio', false );
     });
     function checkEmail( ) {
         var contactID = cj("input[name=contact_select_id[1]]").val();

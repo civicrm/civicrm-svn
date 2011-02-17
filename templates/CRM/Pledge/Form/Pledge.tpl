@@ -231,6 +231,8 @@ cj(function() {
             checkEmail( );
         });
         checkEmail( );
+	showHideByValue( 'is_acknowledge', '', 'acknowledgeDate', 'table-row', 'radio', true); 
+	showHideByValue( 'is_acknowledge', '', 'fromEmail', 'table-row', 'radio', false );
     });
     function checkEmail( ) {
         var contactID = cj("input[name=contact_select_id[1]]").val();
