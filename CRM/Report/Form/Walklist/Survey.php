@@ -51,6 +51,18 @@ class CRM_Report_Form_Walklist_Survey extends CRM_Report_Form {
     protected $_customGroupExtends = array( 'Contact', 'Individual', 'Household', 'Organization' );
 
     function __construct( ) {
+        
+        //filter options for survey activity status.
+        $responseStatus = array( '' => ts('- select -') );
+        require_once 'CRM/Core/PseudoConstant.php';
+        $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
+        if ( $statusId = array_search( 'Scheduled', $activityStatus ) ) {
+            $responseStatus[$statusId] = ts( 'Reserved' );
+        }
+        if ( $statusId = array_search( 'Completed', $activityStatus ) ) {
+            $responseStatus[$statusId] = ts( 'Interviewed' );
+        }
+        
         $this->_columns = 
             array( 'civicrm_contact'  =>
                    array( 'dao'       => 'CRM_Contact_DAO_Contact',
@@ -113,7 +125,12 @@ class CRM_Report_Form_Walklist_Survey extends CRM_Report_Form {
                                                                       'type'         => CRM_Utils_Type::T_INT,
                                                                       'operatorType' => CRM_Report_Form::OP_MULTISELECT,
                                                                       'options'      => 
-                                                                      CRM_Campaign_BAO_Survey::getSurveys( ) ) ),
+                                                                      CRM_Campaign_BAO_Survey::getSurveys( ) ) ,
+                                                'status_id' => array( 'name'          => 'status_id',
+                                                                      'title'         => ts( 'Respondent Status' ), 
+                                                                      'type'          => CRM_Utils_Type::T_INT,
+                                                                      'operatorType'  => CRM_Report_Form::OP_SELECT,
+                                                                      'options'       => $responseStatus ) ),
                           'grouping' => 'survey-activity-fields',
                           ),
                    
@@ -176,6 +193,7 @@ FROM       civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom
         if ( $this->_activityField ) {
             $this->_from .= "INNER JOIN civicrm_activity_target civicrm_activity_target ON ( {$this->_aliases['civicrm_contact']}.id = civicrm_activity_target.target_contact_id )\n";
             $this->_from .= "INNER JOIN civicrm_activity {$this->_aliases['civicrm_activity']} ON ( {$this->_aliases['civicrm_activity']}.id = civicrm_activity_target.activity_id )\n";
+            $this->_from .= "INNER JOIN civicrm_activity_assignment civicrm_activity_assignment ON ( {$this->_aliases['civicrm_activity']}.id = civicrm_activity_assignment.activity_id )\n";
         }
     }
     
@@ -218,11 +236,14 @@ FROM       civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom
                 implode( ' , ', array_keys(  $surveyActivityTypes ) ) . ' ) )';
         }
         
-        //show only completed survey activities.
-        require_once 'CRM/Core/PseudoConstant.php';
-        $completedStatusId = array_search( 'Completed', CRM_Core_PseudoConstant::activityStatus( 'name' ) );
-        if ( $completedStatusId ) {
-            $clauses[] = "( {$this->_aliases['civicrm_activity']}.status_id = {$completedStatusId} ) ";
+        //apply filter of my voters.
+        $interviewerId = CRM_Utils_Request::retrieve( 'cid', 'Positive', CRM_Core_DAO::$_nullObject );
+        if ( !$interviewerId ) {
+            $session = CRM_Core_Session::singleton( );
+            $interviewerId = $session->get( 'userID' );
+        }
+        if ( $interviewerId ) {
+            $clauses[] = "( civicrm_activity_assignment.assignee_contact_id = {$interviewerId} )";
         }
         
         if ( empty( $clauses ) ) {
@@ -369,7 +390,11 @@ INNER JOIN  civicrm_custom_group cg ON ( cg.id = cf.custom_group_id )
                 $responseFields[$reponseFldName][$prop] = $responseField->$prop;
             }
             if ( $responseField->option_group_id ) {
-                $fieldValueMap[$responseField->option_group_id][$responseField->value] = $responseField->label;
+                //hiding labels for now
+                //$fieldValueMap[$responseField->option_group_id][$responseField->value] = $responseField->label;
+                
+                //lets use value, since interviewer uses the "cover sheet" to translate vlaue to label 
+                $fieldValueMap[$responseField->option_group_id][$responseField->value] = $responseField->value;
             }
         }
         $responseField->free( );
