@@ -101,6 +101,14 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
           $this->assertTrue($this->isTextPresent("Your changes have been saved."));    
       }
 
+      // add the required Drupal permission
+      $this->open("{$this->sboxPath}admin/user/permissions");
+      $this->waitForElementPresent('edit-submit');
+      $this->check('edit-2-administer-CiviCampaign');
+      $this->click('edit-submit');
+      $this->waitForPageToLoad();
+      $this->assertTrue($this->isTextPresent('The changes have been saved.'));
+
       // Go directly to the URL of the screen that you will be testing
       $this->open($this->sboxPath . "civicrm/campaign/add&reset=1");
 
