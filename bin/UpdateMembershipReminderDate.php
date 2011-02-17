@@ -94,7 +94,7 @@ class CRM_UpdateMembershipReminderDate
         $query = '
     UPDATE  civicrm_membership membership 
 INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_type_id )
-       SET  membership.reminder_date = DATE_SUB( membership.end_date, INTERVAL type.renewal_reminder_day DAY ) 
+       SET  membership.reminder_date = DATE_SUB( membership.end_date, INTERVAL type.renewal_reminder_day + 1 DAY ) 
      WHERE  membership.reminder_date IS NULL 
        AND  type.renewal_reminder_day IS NOT NULL 
        AND  membership.status_id IN ( ' . implode( ' , ', $statusIds ) .' )';
