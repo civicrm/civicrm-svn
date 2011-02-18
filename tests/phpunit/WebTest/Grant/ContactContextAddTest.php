@@ -64,6 +64,18 @@ class WebTest_Grant_ContactContextAddTest extends CiviSeleniumTestCase {
             $this->waitForElementPresent('css=div.messages');
             $this->assertTrue($this->isTextPresent('Your changes have been saved.'));          
         }
+
+        // let's give full CiviGrant permissions to demo user (registered user).
+        $this->open( $this->sboxPath ."admin/user/permissions");
+        $this->waitForElementPresent("edit-submit");
+        $this->check("edit-2-access-CiviGrant");
+        $this->check("edit-2-edit-grants");
+        $this->check("edit-2-delete-in-CiviGrant");
+
+        // save permissions
+        $this->click("edit-submit");
+        $this->waitForPageToLoad("30000");
+        $this->assertTrue($this->isTextPresent("The changes have been saved."));        
         
         // create unique name
         $name      = substr(sha1(rand()), 0, 7);
