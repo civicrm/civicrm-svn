@@ -33,7 +33,7 @@
  * $Id$
  *
  */
-require_once 'CRM/Core/Action.php';
+
 require_once 'CRM/Core/Page/Basic.php';
 
 /**
