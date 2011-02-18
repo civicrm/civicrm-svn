@@ -221,7 +221,7 @@ class CRM_Admin_Page_AJAX
         
         // always add current search term as possible tag
         $tags[] = array( 'name' => $name,
-                         'id'   => $name );            
+                         'id'   => $name. ":::value" );            
         
         $query = "SELECT id, name FROM civicrm_tag WHERE parent_id = {$parentId} and name LIKE '%{$name}%'";
         $dao = CRM_Core_DAO::executeQuery( $query );
@@ -253,9 +253,14 @@ class CRM_Admin_Page_AJAX
         if ( $_POST['skipEntityAction'] ) {
             $skipEntityAction = CRM_Utils_Type::escape( $_POST['skipEntityAction'], 'Integer' );
         }
-        
-        $tagID = $_POST['tagID' ];
-        
+            
+        $tagValue = explode( ':::', $_POST['tagID'] );
+            
+        $createNewTag = false;
+        $tagID  = $tagValue[0];
+        if ( isset( $tagValue[1] ) && $tagValue[1] == 'value' ) {
+            $createNewTag = true;
+        }          
         require_once 'CRM/Core/BAO/EntityTag.php';
         $tagInfo = array( );
         // if action is select
@@ -263,7 +268,7 @@ class CRM_Admin_Page_AJAX
             // check the value of tagID
             // if numeric that means existing tag
             // else create new tag
-            if ( !$skipTagCreate && !is_numeric( $tagID ) ) {
+            if ( !$skipTagCreate && $createNewTag ) {
                 $params = array( 'name'      => $tagID, 
                                  'parent_id' => $parentId );
 
