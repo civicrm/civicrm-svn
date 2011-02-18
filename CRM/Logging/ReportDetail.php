@@ -70,7 +70,11 @@ class CRM_Logging_ReportDetail extends CRM_Report_Form
             $reverter = new CRM_Logging_Reverter($this->log_conn_id, $this->log_date);
             $reverter->revert($this->tables);
             CRM_Core_Session::setStatus(ts('The changes have been reverted.'));
-            CRM_Utils_System::redirect(CRM_Report_Utils_Report::getNextUrl($this->summary, 'reset=1', false, true));
+            if ($this->cid) {
+                CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/contact/view', "reset=1&selectedChild=log&cid={$this->cid}", false, null, false));
+            } else {
+                CRM_Utils_System::redirect(CRM_Report_Utils_Report::getNextUrl($this->summary, 'reset=1', false, true));
+            }
         }
 
         // make sure the report works even without the params
