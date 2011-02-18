@@ -1665,7 +1665,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                        array(''=>ts( '- select -' )) + CRM_Core_PseudoConstant::activityStatus( ), $required );
         } else if ($fieldName == 'activity_date_time') {
             $form->addDateTime( $name, $title, $required, array( 'formatType' => 'activityDateTime') );
-        } else if ($fieldName == 'participant_status_id' ) {
+        } else if ($fieldName == 'participant_status' ) {
             require_once 'CRM/Event/PseudoConstant.php';
             $cond = null;
             if ( $online == true ) { 
@@ -1673,7 +1673,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             }            
             $form->add('select', $name, $title,
                        array(''=>ts( '- select -' )) + CRM_Event_PseudoConstant::participantStatus( null, $cond, 'label' ), $required);
-        } else if ($fieldName == 'participant_role_id' ) {
+        } else if ($fieldName == 'participant_role' ) {
             require_once 'CRM/Event/PseudoConstant.php';
             if ( CRM_Utils_Array::value( 'is_multiple', $field ) ) {
                 require_once 'CRM/Event/PseudoConstant.php';
