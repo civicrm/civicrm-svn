@@ -472,8 +472,6 @@ class CRM_Member_Selector_Search extends CRM_Core_Selector_Base implements CRM_C
                                          
                                           array(
                                                 'name'      => ts('Auto-renew?'),
-                                                'sort'      => 'auto_renew',
-                                                'direction' => CRM_Utils_Sort::DONTCARE,
                                                 ),
                                           array('desc' => ts('Actions') ),
                                           );
