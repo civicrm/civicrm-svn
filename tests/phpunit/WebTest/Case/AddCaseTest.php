@@ -62,6 +62,19 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
           $this->waitForPageToLoad("30000");          
       }
 
+        // let's give full CiviCase permissions to demo user (registered user).
+        $this->open( $this->sboxPath ."admin/user/permissions");
+        $this->waitForElementPresent("edit-submit");
+        $this->check("edit-2-access-all-cases-and-activities");
+        $this->check("edit-2-access-my-cases-and-activities");
+        $this->check("edit-2-administer-CiviCase");
+        $this->check("edit-2-delete-in-CiviCase");
+
+        // save permissions
+        $this->click("edit-submit");
+        $this->waitForPageToLoad("30000");
+        $this->assertTrue($this->isTextPresent("The changes have been saved."));
+
       // Go directly to the URL of the screen that you will be testing (New Case-standalone).
       $this->open($this->sboxPath . "civicrm/case/add&reset=1&action=add&atype=13&context=standalone");
 
