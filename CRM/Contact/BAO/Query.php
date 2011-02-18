@@ -3209,15 +3209,13 @@ WHERE  id IN ( $groupIDs )
         list( $select, $from, $where, $having ) = $query->query( );
         $options = $query->_options;
         $sql = "$select $from $where $having";
-        if ( ! empty( $sort ) ) {
-            $sql .= " ORDER BY $sort ";
-        }
-     
         // add group by
         if ( $query->_useGroupBy ) {
             $sql .= ' GROUP BY contact_a.id';
         }
-
+        if ( ! empty( $sort ) ) {
+            $sql .= " ORDER BY $sort ";
+        }
         if ( $row_count > 0 && $offset >= 0 ) {
             $sql .= " LIMIT $offset, $row_count ";
         }
