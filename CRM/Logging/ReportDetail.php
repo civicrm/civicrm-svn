@@ -122,7 +122,6 @@ class CRM_Logging_ReportDetail extends CRM_Report_Form
         list($titles, $values) = $differ->titlesAndValuesForTable($table);
 
         // populate $rows with only the differences between $changed and $original (skipping certain columns and NULL ↔ empty changes unless raw requested)
-        // FIXME: explode preferred_communication_method on CRM_Core_DAO::VALUE_SEPARATOR and handle properly somehow
         $skipped = array('contact_id', 'entity_id', 'id');
         foreach ($diffs as $diff) {
             $field = $diff['field'];
@@ -136,11 +135,22 @@ class CRM_Logging_ReportDetail extends CRM_Report_Form
                 if ($from == $to)                    continue; // $differ filters out === values; for presentation hide changes like 42 → '42'
                 if ($from == false and $to == false) continue; // only in PHP: '0' == false and null == false but '0' != null
 
+                // CRM-7251: special-case preferred_communication_method
+                if ($field == 'preferred_communication_method') {
+                    $froms = array();
+                    $tos   = array();
+                    foreach (explode(CRM_Core_DAO::VALUE_SEPARATOR, $from) as $val) $froms[] = $values[$field][$val];
+                    foreach (explode(CRM_Core_DAO::VALUE_SEPARATOR, $to)   as $val) $tos[]   = $values[$field][$val];
+                    $from = implode(', ', array_filter($froms));
+                    $to   = implode(', ', array_filter($tos));
+                }
+
                 if (isset($values[$field][$from])) $from  = $values[$field][$from];
                 if (isset($values[$field][$to]))   $to    = $values[$field][$to];
                 if (isset($titles[$field]))        $field = $titles[$field];
                 if ($diff['action'] == 'Insert')   $from  = '';
                 if ($diff['action'] == 'Delete')   $to    = '';
+
             }
 
             $rows[] = array('field' => $field . " (id: {$diff['id']})", 'from' => $from, 'to' => $to);
