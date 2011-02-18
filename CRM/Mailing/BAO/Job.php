@@ -581,7 +581,7 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
             unset( $result );
         }
 
-        if ( ! empty( $targetParams ) ) {
+        if ( !empty( $targetParams ) && !empty($mailing->scheduled_id) ) {
             // add activity record for every mail that is send
             $activityTypeID = CRM_Core_OptionGroup::getValue( 'activity_type',
                                                               'Bulk Email',
