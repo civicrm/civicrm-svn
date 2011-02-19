@@ -101,6 +101,13 @@ class CiviContributeProcessor {
                                      'timestamp'           => 'receive_date',
                                      'latest-charge-fee'   => 'fee_amount',
                                      'net-amount'          => 'net_amount',
+                                     'times'               => 'installments',
+                                     'period'              => 'frequency_unit',
+                                     'frequency_interval'  => 'frequency_interval',
+                                     'start_date'          => 'start_date',
+                                     'modified_date'       => 'modified_date',
+                                     'trxn_type'           => 'trxn_type',
+                                     'amount'              => 'amount',
                                      ),
               );
 
