@@ -355,7 +355,10 @@ class CRM_Utils_System_Drupal {
         if ( function_exists( 'drush_get_context' ) ) {
             $path = drush_get_context('DRUSH_DRUPAL_ROOT');
         }
-        $pathVars = explode( '/', str_replace( '\\', '/', $path ) );
+        // CRM-7582
+        $pathVars = explode( '/', 
+                             str_replace('//', '/', 
+                                         str_replace( '\\', '/', $path ) ) );
         
         //lets store first var,
         //need to get back for windows.
