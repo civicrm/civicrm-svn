@@ -33,7 +33,7 @@
  * Content Management System (CMS) Host:
  *
  * CiviCRM can be hosted in either Drupal or Joomla.
- * 
+ *
  * Settings for Drupal 6.x:
  *      define( 'CIVICRM_UF'        , 'Drupal' );
  *
@@ -127,11 +127,11 @@ define( 'CIVICRM_TEMPLATE_COMPILEDIR', '%%templateCompileDir%%' );
  * This section defines absolute and relative URLs to access the host CMS (Drupal or Joomla) resources.
  *
  * IMPORTANT: Trailing slashes should be used on all URL settings.
- * 
+ *
  *
  * EXAMPLE - Drupal Installations:
  * If your site's home url is http://www.example.com/drupal/
- * these variables would be set as below. Modify as needed for your install. 
+ * these variables would be set as below. Modify as needed for your install.
  *
  * CIVICRM_UF_BASEURL - home URL for your site:
  *      define( 'CIVICRM_UF_BASEURL' , 'http://www.example.com/drupal/' );
@@ -151,7 +151,7 @@ define( 'CIVICRM_UF_BASEURL'      , '%%baseURL%%' );
 /*
  * If you are using any CiviCRM script in the bin directory that
  * requires authentication, then you also need to set this key.
- * We recommend using a 16-32 bit alphanumeric/punctuation key. 
+ * We recommend using a 16-32 bit alphanumeric/punctuation key.
  * More info at http://wiki.civicrm.org/confluence/display/CRMDOC/Command-line+Script+Configuration
  */
 define( 'CIVICRM_SITE_KEY', '%%siteKey%%' );
@@ -182,13 +182,13 @@ define( 'CIVICRM_EVENT_PRICE_SET_DOMAIN_ID', 0 );
  * Setting to disable email notifications to activity assignees
  *
  */
- define( 'CIVICRM_ACTIVITY_ASSIGNEE_MAIL' , 1 ); 
+ define( 'CIVICRM_ACTIVITY_ASSIGNEE_MAIL' , 1 );
 
 /**
  * Setting to disable ajax check if similar contacts exist when creating a new contact
  *
  */
- define( 'CIVICRM_CONTACT_AJAX_CHECK_SIMILAR' , 1 ); 
+ define( 'CIVICRM_CONTACT_AJAX_CHECK_SIMILAR' , 1 );
 
 /**
  * Setting to disable or enable profile double optin.
@@ -215,12 +215,12 @@ define('CIVICRM_TRACK_CIVIMAIL_REPLIES', false);
 
 /**
  * For use with CiviCampaign Petitions
- * If set, contacts that are created when signing a petition are tagged with the 
+ * If set, contacts that are created when signing a petition are tagged with the
  * defined tag name (default below is 'Unconfirmed')
  */
 define('CIVICRM_TAG_UNCONFIRMED', 'Unconfirmed');
 
-/** 
+/**
  * Defines the group name containing all contacts that have signed a CiviCampaign petition.
  * Do not unset - required for email verification. Group will be created if it does not exist.
  */
@@ -233,13 +233,57 @@ define('CIVICRM_PETITION_CONTACTS','Petition Contacts');
 define('CIVICRM_CIVIMAIL_WORKFLOW', 0 );
 
 /**
- * 
+ * Settings to enable external caching using a Memcache server.  This is an
+ * advanced features, and you should read and understand the documentation
+ * before you turn it on.
+ *
+ * @see http://civicrm.org/node/126
+ */
+
+/**
+ * If you have a memcache server configured and want CiviCRM to make use of it,
+ * set the following to 1.  You should only set this once you have your memcache
+ * server up and working, because CiviCRM will not start up if your server is
+ * unavailable on the host and port that you specify.
+ */
+define( 'CIVICRM_USE_MEMCACHE', 0 );
+
+/**
+ * Change this to the IP address of your memcache server if it is not on the
+ * same machine (Unix).
+ */
+define( 'CIVICRM_MEMCACHE_HOST', 'localhost' );
+
+/**
+ * Change this if you are not using the standard port for memcache (11211)
+ */
+define( 'CIVICRM_MEMCACHE_PORT', 11211 );
+
+/**
+ * Items in cache will expire after the number of seconds specified here.
+ * Default value is 3600 (i.e., after an hour)
+ */
+define( 'CIVICRM_MEMCACHE_TIMEOUT', 3600 );
+
+/**
+ * If you are sharing the same memcache instance with more than one CiviCRM
+ * database, you will need to set a different value for the following argument
+ * so that each copy of CiviCRM will not interfere with other copies.  If you only
+ * have one copy of CiviCRM, you may leave this set to ''.  A good value for
+ * this if you have two servers might be 'server1_' for the first server, and
+ * 'server2_' for the second server.
+ */
+define( 'CIVICRM_MEMCACHE_PREFIX', '' );
+
+
+/**
+ *
  * Do not change anything below this line. Keep as is
  *
  */
 
 $include_path = '.'        . PATH_SEPARATOR .
-                $civicrm_root . PATH_SEPARATOR . 
+                $civicrm_root . PATH_SEPARATOR .
                 $civicrm_root . DIRECTORY_SEPARATOR . 'packages' . PATH_SEPARATOR .
                 get_include_path( );
 set_include_path( $include_path );
@@ -265,4 +309,3 @@ switch ($memLimitUnit) {
 if ($memLimit >= 0 and $memLimit < 67108864) {
     ini_set('memory_limit', '64M');
 }
-

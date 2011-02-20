@@ -65,21 +65,35 @@ class CRM_Utils_Cache_Memcache {
     protected $_cache;
 
     /**
+     * The prefix prepended to cache keys.
+     *
+     * If we are using the same memcache instance for multiple CiviCRM
+     * installs, we must have a unique prefix for each install to prevent
+     * the keys from clobbering each other.
+     *
+     * @var string
+     */
+    protected $_prefix;
+
+    /**
      * Constructor
      *
      * @param string  $host      the memcached server host
      * @param int     $port      the memcached server port
      * @param int     $timeout   the default timeout
+     * @param string  $prefix    the prefix prepended to a cache key
      *
      * @return void
      */
     function __construct( $host      = 'localhost',
                           $port      = 11211,
-                          $timeout   = 3600 ) {
+                          $timeout   = 3600,
+                          $prefix    = '' ) {
         $this->_host    = $host;
         $this->_port    = $port;
         $this->_timeout = $timeout;
-        
+        $this->_prefix  = $prefix;
+
         $this->_cache = new Memcache( );
         
         if ( ! $this->_cache->connect( $this->_host, $this->_port ) ) {
@@ -90,19 +104,19 @@ class CRM_Utils_Cache_Memcache {
     }
 
     function set( $key, &$value ) {
-        if ( ! $this->_cache->set( $key, $value, false, $this->_timeout ) ) {
+        if ( ! $this->_cache->set( $this->_prefix . $key, $value, false, $this->_timeout ) ) {
             return false;
         }
         return true;
     }
 
     function &get( $key ) {
-        $result =& $this->_cache->get( $key );
+        $result =& $this->_cache->get( $this->_prefix . $key );
         return $result;
     }
 
     function delete( $key ) {
-        return $this->_cache->delete( $key );
+        return $this->_cache->delete( $this->_prefix . $key );
     }
 
     function flush( ) {
