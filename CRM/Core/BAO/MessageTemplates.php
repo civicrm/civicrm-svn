@@ -175,9 +175,8 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
                 $body_text = CRM_Utils_String::htmlToText($body_html);
             }
             
-            $params  = array( 'contact_id' => $contactId );
-            require_once 'api/v2/Contact.php';
-            $contact =& civicrm_contact_get( $params );
+            $params = array(array('contact_id', '=', $contactId, 0, 0));
+            list($contact, $_) = CRM_Contact_BAO_Query::apiQuery($params);
 
             //CRM-4524
             $contact = reset( $contact );
@@ -400,7 +399,6 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
         // replace tokens in the three elements (in subject as if it was the text body)
         require_once 'CRM/Utils/Token.php';
         require_once 'CRM/Core/BAO/Domain.php';
-        require_once 'api/v2/Contact.php';
         require_once 'CRM/Mailing/BAO/Mailing.php';
 
         $domain = CRM_Core_BAO_Domain::getDomain();
@@ -470,8 +468,9 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
         $params['html'   ] = $html;
         
         if ($params['toEmail']) {
-            $contactParams = array('email' => $params['toEmail']);
-            $contact =& civicrm_contact_get($contactParams);
+            $contactParams = array(array('email', 'LIKE', 'chastell@devielle', 0, 1));
+            list($contact, $_) = CRM_Contact_BAO_Query::apiQuery($contactParams);
+
             $prefs = array_pop($contact);
 
             if ( isset($prefs['preferred_mail_format']) and $prefs['preferred_mail_format'] == 'HTML' ) {

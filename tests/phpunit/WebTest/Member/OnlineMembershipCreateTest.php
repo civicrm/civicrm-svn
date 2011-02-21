@@ -52,37 +52,51 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         
         $this->open($this->sboxPath . "civicrm/admin/contribute/add&reset=1&action=add");
         
-        // fill in step 1 (Title and Settings)
+        // fill in Title and Settings
         $contributionTitle = "Title $hash";
         $this->type('title',$contributionTitle );
         $this->select('contribution_type_id', 'value=1');
         $this->fillRichTextField('intro_text','This is Introductory Message','CKEditor');
         $this->fillRichTextField('footer_text','This is Footer Message','CKEditor');
         
-        // go to step 2
+        // continue
         $this->click('_qf_Settings_next');
         $this->waitForPageToLoad();
+
+        // get page id for future use
+        $matches = array();
+        preg_match('/id=([0-9]+)/', $this->getLocation(), $matches);
+        $page_id = $matches[1];
         
-        //this contribution page for membership signup 
+        //this contribution page for membership signup
+        $this->waitForElementPresent('payment_processor_id');
         $this->select("payment_processor_id", "label=" . $processorName);
         $this->click("amount_block_is_active");
         
-        // go to step 3
+        // save
         $this->click('_qf_Amount_next');
         $this->waitForPageToLoad();
         
-        // fill in step 3 (Memberships)
+        // go to Memberships
+        $this->click('css=#tab_membership a');
+
+        // fill in Memberships
+        $this->waitForElementPresent('is_active');
         $this->click('is_active');
         $this->type('new_title',     "Title - New Membership $hash");
         $this->type('renewal_title', "Title - Renewals $hash");
         $this->click('membership_type[2]');
         $this->click('is_required');
         
-        // go to step 4
+        // save
         $this->click('_qf_MembershipBlock_next');
         $this->waitForPageToLoad();
         
-        // fill in step 4 (Thanks and Receipt)
+        // go to Receipt
+        $this->click('css=#tab_thankYou a');
+
+        // fill in Receipt
+        $this->waitForElementPresent('thankyou_title');
         $this->type('thankyou_title',     "Thank-you Page Title $hash");
         $this->type('receipt_from_name',  "Receipt From Name $hash");
         $this->type('receipt_from_email', "$hash@example.org");
@@ -90,12 +104,16 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         $this->type('cc_receipt',         "$hash@example.net");
         $this->type('bcc_receipt',        "$hash@example.com");
         
-        // go to step 5
+        // save
         $this->click('_qf_ThankYou_next');
         $this->waitForPageToLoad();
-        $this->waitForElementPresent( "_qf_Contribute_cancel-bottom" );
         
-        // fill in step 5 (Tell a Friend)
+
+        // go to Tell a Friend
+        $this->click('css=#tab_friend a');
+
+        // fill Tell a Friend
+        $this->waitForElementPresent('tf_is_active');
         $this->click('tf_is_active');
         $this->type('tf_title',          "TaF Title $hash");
         $this->type('intro',             "TaF Introduction $hash");
@@ -104,19 +122,27 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         $this->type('thankyou_title',    "TaF Thank-you Title $hash");
         $this->type('thankyou_text',     "TaF Thank-you Message $hash");
         
-        // go to step 6
+        // save
         $this->click('_qf_Contribute_next');
         $this->waitForPageToLoad();
         
-        // fill in step 6 (Include Profiles)
+        // go to Profiles
+        $this->click('css=#tab_custom a');
+
+        // fill in Profiles
+        $this->waitForElementPresent('custom_pre_id');
         $this->select('custom_pre_id',  'value=1');
         
         
-        // go to step 7
+        // save
         $this->click('_qf_Custom_next');
         $this->waitForPageToLoad();
         
-        // fill in step 7 (Premiums)
+        // go to Premiums
+        $this->click('css=#tab_premium a');
+
+        // fill in Premiums
+        $this->waitForElementPresent('premiums_active');
         $this->click('premiums_active');
         $this->type('premiums_intro_title',   "Prem Title $hash");
         $this->type('premiums_intro_text',    "Prem Introductory Message $hash");
@@ -124,34 +150,42 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         $this->type('premiums_contact_phone', rand(100000000, 999999999));
         $this->click('premiums_display_min_contribution');
         
-        // go to step 8
+        // save
         $this->click('_qf_Premium_next');
         $this->waitForPageToLoad();
         
-        // fill in step 8 (Widget Settings)
+        // go to Widgets
+        $this->click('css=#tab_widget a');
+
+        // fill in Widgets
+        $this->waitForElementPresent('is_active');
         $this->click('is_active');
         $this->type('url_logo',     "URL to Logo Image $hash");
         $this->type('button_title', "Button Title $hash");
         $this->type('about',        "About $hash");
         
-        // go to step 9
+        // save
         $this->click('_qf_Widget_next');
         $this->waitForPageToLoad();
         
-        // fill in step 9 (Enable Personal Campaign Pages)
-        $this->click('is_active');
+        // go to Personal Campaigns
+        $this->click('css=#tab_pcp a');
+
+        // fill in Personal Campaigns
+        $this->waitForElementPresent('pcp_active');
+        $this->click('pcp_active');
         $this->click('is_approval_needed');
         $this->type('notify_email', "$hash@example.name");
         $this->select('supporter_profile_id', 'value=2');
         $this->type('tellfriend_limit', 7);
         $this->type('link_text', "'Create Personal Campaign Page' link text $hash");
         
-        // submit new contribution page
-        $this->click('_qf_PCP_next');
+        // save and done
+        $this->click('_qf_PCP_upload_done');
         $this->waitForPageToLoad();
         
         //get Url for Live Contribution Page
-        $registerUrl = $this->_testVerifyRegisterPage( $contributionTitle );
+        $registerUrl = "{$this->sboxPath}civicrm/contribute/transact?reset=1&id=$page_id";
         
         //logout
         $this->open($this->sboxPath . "civicrm/logout&reset=1");
@@ -214,8 +248,8 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         
         $this->waitForPageToLoad('30000');
         
-        $this->waitForElementPresent( "xpath=//div[@id='memberSearch']//table//tbody/tr[1]/td[10]/span/a[text()='View']" );
-        $this->click( "xpath=//div[@id='memberSearch']//table//tbody/tr[1]/td[10]/span/a[text()='View']" );
+        $this->waitForElementPresent('css=#memberSearch table tbody tr td span a.action-item-first');
+        $this->click('css=#memberSearch table tbody tr td span a.action-item-first');
         $this->waitForElementPresent( "_qf_MembershipView_cancel-bottom" );
         
         //View Membership Record
@@ -237,11 +271,4 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
                                                )
                                          );
     }  
-    function _testVerifyRegisterPage( $registerStrings ){
-        $this->waitForElementPresent("idLive");
-        $this->click("contributionLiveUrl");
-        $this->waitForElementPresent("_qf_Main_upload-bottom");
-        return $this->getLocation();
-    }
-    
 }

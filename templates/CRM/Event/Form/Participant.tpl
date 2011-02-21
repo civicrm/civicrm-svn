@@ -179,6 +179,9 @@
     			    <td class="font-size12pt view-value">{$displayName}&nbsp;</td>
     			</tr>
     	    {else}
+	        {if !$participantMode and !$email and $outBound_option != 2 }
+		    {assign var='profileCreateCallback' value=1} 
+		{/if} 
                 {include file="CRM/Contact/Form/NewContact.tpl"}
             {/if}
             {if $action EQ 2}
@@ -580,6 +583,15 @@
     }
     
 {/literal}
+{if $profileCreateCallback}
+{literal}
+function profileCreateCallback( blockNo ) {
+  if( cj('#event_id').val( ) &&  cj('#email-receipt').length > 0 ) {
+    checkEmail( );
+  }
+}
+{/literal}
+{/if}
 </script>
 {literal}
 <script type="text/javascript">

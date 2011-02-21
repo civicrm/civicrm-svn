@@ -101,7 +101,7 @@ define('_CRM_PROCESS_AUTHORIZE_REPORT_DEBUG', false);
 
 require_once '../civicrm.config.php';
 require_once 'CRM/Core/Config.php';
-require_once 'api/v2/utils.php';
+civicrm_api_include('utils');
 require_once 'CRM/Core/Payment/AuthorizeNet.php';
 
 require_once 'CRM/Core/DAO.php';

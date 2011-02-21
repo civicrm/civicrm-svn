@@ -103,7 +103,7 @@ class CRM_Contact_BAO_GroupContactTest extends CiviUnitTestCase
     {
         // create a parent group
         require_once 'CRM/Contact/BAO/Group.php';
-        require_once 'api/v2/Contact.php';
+        // TODO: This is not an API test!!
         $groupParams1 = array (
                                'title'       => 'Parent Group',
                                'description' => 'Parent Group',
@@ -149,7 +149,7 @@ class CRM_Contact_BAO_GroupContactTest extends CiviUnitTestCase
                                                   $parentGroup->id => 1 
                                                   ) 
                                  );
-        $result = civicrm_contact_get( $searchParams );
+        $result = civicrm_api('contact', 'get', $searchParams );
         $validContactIds = array( $parentContact, $childContact );
         $resultContactIds = array( );
         foreach ( $result as $k => $v ) {
@@ -165,7 +165,7 @@ class CRM_Contact_BAO_GroupContactTest extends CiviUnitTestCase
                                                   $childGroup->id => 1 
                                                   ) 
                                  );
-        $result = civicrm_contact_get( $searchParams );
+        $result = civicrm_api('contact', 'get', $searchParams );
         $validChildContactIds = array( $childContact );
         $resultChildContactIds = array( );
         foreach ( $result as $k => $v ) {

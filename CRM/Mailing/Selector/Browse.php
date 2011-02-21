@@ -139,6 +139,11 @@ class CRM_Mailing_Selector_Browse   extends CRM_Core_Selector_Base
                                                 'direction' => CRM_Utils_Sort::DONTCARE,
                                                 ),
                                           array(
+                                                'name'      => ts('Created Date'),
+                                                'sort'      => 'created_date',
+                                                'direction' => CRM_Utils_Sort::DONTCARE,
+                                                  ),
+                                          array(
                                                 'name'      => ts('Sent By'),
                                                 'sort'      => 'scheduled_by',
                                                 'direction' => CRM_Utils_Sort::DONTCARE,

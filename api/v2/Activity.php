@@ -69,7 +69,6 @@ require_once 'api/v2/ActivityContact.php';
  * {@schema Activity/Activity.xml}
  *                            
  * @return CRM_Activity|CRM_Error Newly created Activity object
- * 
  */
 function &civicrm_activity_create( &$params ) 
 {
@@ -146,7 +145,7 @@ function civicrm_activity_get_contact( $params ) {
  * Retrieve a set of activities, specific to given input params.
  *
  * @param  array  $params (reference ) input parameters.
- *
+ * @deprecated from 3.4 - use civicrm_activity_contact_get
  * @return array (reference)  array of activities / error message.
  * @access public
  */
@@ -459,6 +458,7 @@ function _civicrm_activity_buildmailparams( $result, $activityTypeID ) {
  * @param <type> $file
  * @param <type> $activityTypeID
  * @return <type>
+ * @deprecated since 3.4 use civicrm_activity_processemail
  */
 function civicrm_activity_process_email( $file, $activityTypeID ) {
     // TODO: Spit out deprecation warning here
@@ -466,8 +466,8 @@ function civicrm_activity_process_email( $file, $activityTypeID ) {
 }
 
 /**
- *
- * @return <type> 
+ * @deprecated since 3.4 use civicrm_activity_type_get
+ * @return <type>
  */
 function civicrm_activity_get_types( ) {
     // TODO: Spit out deprecation warning here
@@ -475,7 +475,7 @@ function civicrm_activity_get_types( ) {
 }
 
 /**
- * Function retrieve actiovity custom data.
+ * Function retrieve activity custom data.
  * @param  array  $params key => value array.
  * @return array  $customData activity custom data 
  *

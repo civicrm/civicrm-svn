@@ -77,7 +77,8 @@ class CRM_Profile_Form_Edit extends CRM_Profile_Form
         if ( $this->_blockNo ) {
             $this->assign( 'blockNo', $this->_blockNo );
         }
-
+        $this->assign( 'createCallback', CRM_Utils_Request::retrieve( 'createCallback', 'String', $this ) );
+        
         if ( $this->get( 'skipPermission' ) ) {
             $this->_skipPermission = true;
         }

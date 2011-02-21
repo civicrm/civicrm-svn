@@ -61,26 +61,62 @@ class CRM_Utils_Cache {
     /**
      * singleton function used to manage this object
      *
-     * @param string  $host      the memcached server host
-     * @param int     $port      the memcached server port
-     * @param int     $timeout   the default timeout
-     *
      * @return object
      * @static
      *
      */
-    static function &singleton( $host      = 'localhost',
-                                $port      = 11211,
-                                $timeout   = 3600 ) {
+    static function &singleton( ) {
         if (self::$_singleton === null ) {
-            if ( defined( 'CIVICRM_USE_MEMCACHE' ) && CIVICRM_USE_MEMCACHE) {
+            if ( defined( 'CIVICRM_USE_MEMCACHE' ) && CIVICRM_USE_MEMCACHE ) {
                 require_once 'CRM/Utils/Cache/Memcache.php';
-                self::$_singleton = new CRM_Utils_Cache_Memcache( $host, $port, $timeout );
+                $settings = self::getCacheSettings( );
+                self::$_singleton = new CRM_Utils_Cache_Memcache( $settings['host'],
+                                                                  $settings['port'],
+                                                                  $settings['timeout'],
+                                                                  $settings['prefix'] );
             } else {
                 self::$_singleton = new CRM_Utils_Cache( );
             }
         }
         return self::$_singleton;
+    }
+
+    /**
+     * Get cache relevant settings
+     *
+     * @return array
+     *   associative array of settings for the cache
+     * @static
+     */
+    static function getCacheSettings( ) {
+        if ( !defined( 'CIVICRM_USE_MEMCACHE' ) or !CIVICRM_USE_MEMCACHE ) {
+          return array();
+        }
+        $defaults =
+            array (
+            'host'    =>  'localhost',
+            'port'    =>  11211,
+            'timeout' =>  3600,
+            'prefix'  =>  ''
+            );
+
+        if ( defined(  'CIVICRM_MEMCACHE_HOST' ) ) {
+            $defaults['host'] = CIVICRM_MEMCACHE_HOST;
+        }
+
+        if ( defined(  'CIVICRM_MEMCACHE_PORT' ) ) {
+            $defaults['port'] = CIVICRM_MEMCACHE_PORT;
+        }
+
+        if ( defined(  'CIVICRM_MEMCACHE_TIMEOUT' ) ) {
+            $defaults['timeout'] = CIVICRM_MEMCACHE_TIMEOUT;
+        }
+
+        if ( defined(  'CIVICRM_MEMCACHE_PREFIX' ) ) {
+            $defaults['prefix'] = CIVICRM_MEMCACHE_PREFIX;
+        }
+
+        return $defaults;
     }
 
     function set( $key, &$value ) {
@@ -91,6 +127,7 @@ class CRM_Utils_Cache {
         return null;
     }
 
+
     function delete( $key ) {
         return false;
     }
@@ -100,5 +137,3 @@ class CRM_Utils_Cache {
     }
 
 }
-
-

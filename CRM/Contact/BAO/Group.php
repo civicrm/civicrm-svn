@@ -159,10 +159,10 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
      */
     static function getGroupContacts( $id ) 
     {
-        require_once 'api/v2/Contact.php';
-        $params = array( 'group'            => array( $id => 1 ),
-                         'return.contactId' => 1 );
-        return civicrm_contact_search( $params );
+        require_once 'CRM/Contact/BAO/Query.php';
+        $params = array(array('group', 'IN', array($id => 1), 0, 0));
+        list($contacts, $_) = CRM_Contact_BAO_Query::apiQuery($params, array('contact_id'));
+        return $contacts;
     }
 
     /**
@@ -224,15 +224,10 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
      */
     static function &getMember( $groupID, $useCache = true ) 
     {
-        $params['group'] = array( $groupID => 1 );
-        $params['return.contact_id'] = 1;
-        $params['offset']            = 0;
-        $params['rowCount']          = 0;
-        $params['sort']              = null;
-        $params['smartGroupCache']   = $useCache;
-
-        require_once 'api/v2/Contact.php';
-        $contacts = civicrm_contact_search( $params );
+        require_once 'CRM/Contact/BAO/Query.php';
+        $params = array(array('group', 'IN', array($groupID => 1), 0, 0));
+        $returnProperties = array('contact_id');
+        list ($contacts, $_) = CRM_Contact_BAO_Query::apiQuery($params, $returnProperties, null, null, 0, 0, $useCache);
 
         $aMembers = array( );
         foreach ( $contacts as $contact ) {

@@ -223,8 +223,6 @@ class CRM_Utils_Mail_Incoming {
 
     function parseMailingObject( &$mail ) {
         require_once 'CRM/Core/Config.php';
-        require_once 'api/v2/Activity.php';
-        require_once 'api/v2/Contact.php';
         
         $config = CRM_Core_Config::singleton();
 

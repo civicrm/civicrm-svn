@@ -79,7 +79,7 @@ SELECT @value                 := MAX(value) FROM civicrm_option_value WHERE opti
 SELECT @caseCompId       := max(id) FROM civicrm_component where name = 'CiviCase';
 INSERT INTO civicrm_option_value
   (option_group_id,         {localize field='label'}label{/localize},                   value,                        name,                                        weight,                 {localize field='description'}description{/localize}, is_active, component_id) VALUES
-  (@option_group_id_act,   '{localize}Add Client To Case{/localize}',                   @value,                       'Add Client To Case',                         @weight,                NULL,                                               1,         @caseCompId );
+  (@option_group_id_act,   {localize}'Add Client To Case'{/localize},                   @value,                       'Add Client To Case',                         @weight,               {localize}NULL{/localize},                             1,         @caseCompId );
 
 -- CRM-7317
 CREATE TABLE civicrm_prevnext_cache (

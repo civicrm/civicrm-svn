@@ -119,6 +119,7 @@ class CRM_Utils_REST
     
     // Generates values needed for error messages
     function error( $message = 'Unknown Error' ) {
+
         $values =
             array( 'error_message' => $message,
                    'is_error'      => 1 );
@@ -157,7 +158,10 @@ class CRM_Utils_REST
         if ( CRM_Utils_Array::value( 'json', $_REQUEST ) ) {
             header( 'Content-Type: text/javascript' );
             $json = json_encode(array_merge($result));
-            return str_replace (",{","\n,{",$json);
+            if (CRM_Utils_Array::value( 'debug', $_REQUEST )) {
+               return CRM_Utils_REST::jsonFormated($json);
+            }
+            return $json;
         }
         
         $xml = "<?xml version=\"1.0\"?>
@@ -177,6 +181,56 @@ class CRM_Utils_REST
         return $xml;
     }
 
+
+    function jsonFormated($json) {
+      $tabcount = 0;
+      $result = '';
+      $inquote = false;
+      $ignorenext = false;
+     
+      $tab = "\t";
+      $newline = "\n";
+     
+      for($i = 0; $i < strlen($json); $i++) {
+          $char = $json[$i];
+         
+          if ($ignorenext) {
+              $result .= $char;
+              $ignorenext = false;
+          } else {
+              switch($char) {
+                  case '{':
+                      $tabcount++;
+                      $result .= $char . $newline . str_repeat($tab, $tabcount);
+                      break;
+
+                  case '}':
+                      $tabcount--;
+                      $result = trim($result) . $newline . str_repeat($tab, $tabcount) . $char;
+                      break;
+                  case ',':
+                      if (!$inquote) 
+                          $result .= $char . $newline . str_repeat($tab, $tabcount);
+                      else 
+                          $result .= $char;
+                      break;
+                  case '"':
+                      $inquote = !$inquote;
+                      $result .= $char;
+                      break;
+                  case '\\':
+                      if ($inquote) $ignorenext = true;
+                      $result .= $char;
+                      break;
+                  default:
+                      $result .= $char;
+              }
+          }
+      }
+     
+      return $result;
+    }
+ 
     function handle( $config ) {
         
         // Get the function name being called from the q parameter in the query string
@@ -255,7 +309,6 @@ class CRM_Utils_REST
         $params =& self::buildParamList( );
         $params['check_permissions'] = true;
         $fnName = $apiFile = null;
-
         require_once 'CRM/Utils/String.php';
         // clean up all function / class names. they should be alphanumeric and _ only
         for ( $i = 1 ; $i <= 3; $i++ ) {
@@ -286,36 +339,18 @@ class CRM_Utils_REST
             }
 
             return call_user_func( array( $params['className'], $params['fnName'] ), $params );
-	    } else {
-            $fnGroup = ucfirst($args[1]);
-            if ( strpos( $fnGroup, '_' ) ) {
-                $fnGroup    = explode( '_', $fnGroup );
-                $fnGroup[1] = ucfirst( $fnGroup[1] );
-                $fnGroup    = implode( '', $fnGroup );
-            }
-            $apiFile = "api/v2/{$fnGroup}.php";
         }
-
-        if ( $restInterface ) {
-            $apiPath = substr( $_SERVER['SCRIPT_FILENAME'] , 0 ,-15 );
-            // check to ensure file exists, else die
-            if ( ! file_exists( $apiPath . $apiFile ) ) {
-                return self::error( 'Unknown function invocation.' );
-            }
-        } else {
-            $apiPath = null;
-        }
-
-        require_once $apiPath . $apiFile;
-        $fnName = "civicrm_{$args[1]}_{$args[2]}";
-        if ( ! function_exists( $fnName ) ) {
-            return self::error( "Unknown function called: $fnName" );
-        }
-	
+        
+        $version = civicrm_get_api_version($params);
+        $params ['version'] = $version; 
+        
         // trap all fatal errors
         CRM_Core_Error::setCallback( array( 'CRM_Utils_REST', 'fatal' ) );
-        $result = $fnName( $params );
+        $result = civicrm_api ($args[1], $args[2],$params);
         CRM_Core_Error::setCallback( );
+	      if ($version == 2) {
+           $result['deprecated'] = "Please upgrade to API v3";
+        }
 
         if ( $result === false ) {
             return self::error( 'Unknown error.' );
@@ -328,15 +363,13 @@ class CRM_Utils_REST
 
         $skipVars = array( 'q'   => 1,
                            'json' => 1,
-                           'return' => 1,
                            'key' => 1 );
         foreach ( $_REQUEST as $n => $v ) {
             if ( ! array_key_exists( $n, $skipVars ) ) {
                 $params[$n] = $v;
             }
         }
-
-        if (array_key_exists('return',$_REQUEST)) {
+        if (array_key_exists('return',$_REQUEST) && is_array($_REQUEST['return'])) {
             foreach ( $_REQUEST['return'] as $key => $v) 
                 $params['return.'.$key]=1;
         }
@@ -361,13 +394,32 @@ class CRM_Utils_REST
         CRM_Utils_System::civiExit( );
     }
 
+    static function ajaxDoc ( ) {
+
+      CRM_Utils_System::setTitle ("API explorer and generator");
+      $template = CRM_Core_Smarty::singleton( );
+      return $template->fetch( 'CRM/Core/AjaxDoc.tpl' );
+    }
+
     static function ajax( ) {
         // this is driven by the menu system, so we can use permissioning to
         // restrict calls to this etc
 
         $q = CRM_Utils_Array::value( 'fnName', $_REQUEST );
-        $args = explode( '/', $q );
-        
+        if (!$q) {
+          $entity = CRM_Utils_Array::value( 'entity', $_REQUEST );
+          $action = CRM_Utils_Array::value( 'action', $_REQUEST );
+          if (!$entity || !$action) {
+            $config = CRM_Core_Config::singleton( );
+            $err = array ('error_message' => 'missing mandatory params "entity=" or "action="' , 'is_error'=> 1 );
+            echo self::output( $config, $err);
+            CRM_Utils_System::civiExit( );
+          }
+          $args = array ( 'civicrm', $entity, $action);
+        } else {
+          $args = explode( '/', $q );
+        }
+       
         // get the class name, since all ajax functions pass className
         $className = CRM_Utils_Array::value( 'className', $_REQUEST );
         

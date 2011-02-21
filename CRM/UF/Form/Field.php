@@ -347,6 +347,8 @@ class CRM_UF_Form_Field extends CRM_Core_Form
                 unset($participantFields['external_identifier'] );
                 unset($participantFields['event_id'] );
                 unset($participantFields['participant_contact_id'] );
+                unset($participantFields['participant_role_id'] );
+                unset($participantFields['participant_status_id'] );
                 unset($participantFields['participant_is_test'] );
                 unset($participantFields['participant_fee_level'] );
                 unset($participantFields['participant_id'] );

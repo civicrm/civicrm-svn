@@ -31,15 +31,15 @@
     <td class="font-size12pt" style="width: 40%;">
     {if $savedSearch.name}{$savedSearch.name} ({ts}smart group{/ts}) - {/if}
     {ts count=$pager->_totalItems plural='%count Results'}%count Result{/ts}{if $selectorLabel}&nbsp;-&nbsp;{$selectorLabel}{/if}
+    {if $context == 'Event' && $participantCount && ( $pager->_totalItems ne $participantCount ) }
+        <br />{ts}Actual participant count{/ts} : {$participantCount} {help id="id-actual_participant_count" file="CRM/Event/Form/Search/Results.hlp"} &nbsp;
+    {/if}
     </td>
     <td>
         {* Search criteria are passed to tpl in the $qill array *}
         {if $qill}
             {include file="CRM/common/displaySearchCriteria.tpl"}
         {/if}
-    {if $context == 'Event' && $participantCount && ( $pager->_totalItems ne $participantCount ) }
-    {ts}Actual participant count{/ts} : {$participantCount}
-    {/if}
     </td>
   </tr>
 {if $context == 'Contribution'}

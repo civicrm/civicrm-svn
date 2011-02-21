@@ -36,7 +36,6 @@
 
 
 require_once 'CRM/Member/Import/Parser.php';
-require_once 'api/v2/Membership.php';
 
 /**
  * class to parse membership csv files
@@ -256,6 +255,8 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
      */
     function import( $onDuplicate, &$values) 
     {
+        civicrm_api_include('membership');
+    
         // first make sure this is a valid line
         $response = $this->summary( $values );
         if ( $response != CRM_Member_Import_Parser::VALID ) {

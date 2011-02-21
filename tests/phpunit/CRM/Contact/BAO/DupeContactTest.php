@@ -31,10 +31,10 @@ class CRM_Contact_BAO_DupeContactTest extends CiviUnitTestCase
                          'is_active'   => 1,
                          'visibility'  => 'Public Pages',
                          );
-        require_once 'api/v2/Group.php';
-        $result  = &civicrm_group_add( $params );
-        $groupId = $result['result'];
-
+        // TODO: This is not an API test!!
+        $result  = &civicrm_api('group', 'create', $params );
+        $group   = $result['result'];
+        $groupId = $group->id;
         // contact data set
         // FIXME: move create params to separate function
         $params = array(
@@ -75,15 +75,14 @@ class CRM_Contact_BAO_DupeContactTest extends CiviUnitTestCase
                          );
 
         $count = 1;
-        require_once 'api/v2/Contact.php';
-        require_once 'api/v2/GroupContact.php';
+        // TODO: This is not an API test!!
         foreach ( $params as $param ) {
-            $contact =& civicrm_contact_create( $param );
+            $contact =& civicrm_api('contact', 'create', $param );
             $contactIds[$count++] = $contact['contact_id'];
 
             $grpParams = array( 'contact_id.1' => $contact['contact_id'],
                                 'group_id'     => $groupId );
-            civicrm_group_contact_add( $grpParams );
+            civicrm_api('group_contact', 'create', $grpParams );
         }
 
         // verify that all contacts have been created separately
@@ -173,7 +172,7 @@ class CRM_Contact_BAO_DupeContactTest extends CiviUnitTestCase
         }
         // delete dupe group
         $params = array( 'id' => $groupId );
-        civicrm_group_delete( $params );
+        civicrm_api('group', 'delete', $params );
     }
 
     function testDupesByParams( )
@@ -229,9 +228,9 @@ class CRM_Contact_BAO_DupeContactTest extends CiviUnitTestCase
                          );
 
         $count = 1;
-        require_once 'api/v2/Contact.php';
+        // TODO: This is not an API test!!
         foreach ( $params as $param ) {
-            $contact =& civicrm_contact_create( $param );
+            $contact =& civicrm_api('contact', 'create', $param );
             $contactIds[$count++] = $contact['contact_id'];
         }
 

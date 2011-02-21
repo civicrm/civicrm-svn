@@ -303,8 +303,12 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
         $this->assign( 'subPageType', $subPageType );
         
         //give focus to proper tab.
-        $this->assign( 'selectedTabIndex', array_search( CRM_Utils_Array::value( 'subPage', $_GET, 'campaign' ), 
-                                                         array_keys( $this->_tabs ) ) ); 
+        $selectedTabIndex = array_search( strtolower( CRM_Utils_Array::value( 'subPage', $_GET, 'campaign' ) ), 
+                                          array_keys( $this->_tabs ) );
+        if ( !$selectedTabIndex ) {
+            $selectedTabIndex = array_search( 'campaign', array_keys( $this->_tabs ) );
+        }
+        $this->assign( 'selectedTabIndex', $selectedTabIndex );
     }
     
     function run( ) 

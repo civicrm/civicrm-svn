@@ -35,7 +35,7 @@
  */
 
 require_once 'CRM/Core/Form.php';
-require_once 'api/v2/Mailer.php';
+civicrm_api_include('mailer');
 
 class CRM_Mailing_Form_ForwardMailing extends CRM_Core_Form
 {

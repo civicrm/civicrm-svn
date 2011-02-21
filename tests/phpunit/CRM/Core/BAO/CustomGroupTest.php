@@ -340,7 +340,7 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
                              );
         
         require_once 'CRM/Core/BAO/CustomGroup.php';
-        $customGroupBAO =& new CRM_Core_BAO_CustomGroup();
+        $customGroupBAO = new CRM_Core_BAO_CustomGroup();
         $customGroupBAO->copyValues( $groupParams );
         $customGroup = $customGroupBAO->save();
         $tableName   = 'civicrm_value_test_group_'.$customGroup->id;

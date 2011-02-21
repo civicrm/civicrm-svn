@@ -99,7 +99,7 @@ class CRM_Mailing_Event_BAO_Forward extends CRM_Mailing_Event_DAO_Forward {
             return $successfulForward;
         }
 
-        require_once 'api/v2/Contact.php';
+        civicrm_api_include('contact');
         
         $contact_params = array('email' => $forward_email);
         $count = civicrm_contact_search_count($contact_params);

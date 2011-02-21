@@ -33,8 +33,7 @@ class Custom extends CiviUnitTestCase
             }
         }
 
-        require_once 'api/v2/CustomGroup.php';
-        $result = civicrm_custom_group_create( $group );
+        $result = civicrm_api('custom_group', 'create', $group );
 
         if ( $result['is_error'] ) {
             return null;
@@ -71,8 +70,8 @@ class Custom extends CiviUnitTestCase
                             'is_active'       => 1
                             );
         }
-        require_once 'api/v2/CustomGroup.php';
-        $result = civicrm_custom_field_create( $params );
+        
+        $result = civicrm_api('custom_field', 'create', $params );
 
         if ( $result['is_error'] ) {
             return null;
@@ -80,7 +79,7 @@ class Custom extends CiviUnitTestCase
 
         // this is done for backward compatibility
         // with tests older than 3.2.3
-        $customField =& new CRM_Core_DAO_CustomField();
+        $customField = new CRM_Core_DAO_CustomField();
         $customField->id = $result['result']['customFieldId'];
         $customField->find( true );
 

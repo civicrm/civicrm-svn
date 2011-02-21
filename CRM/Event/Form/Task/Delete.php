@@ -132,8 +132,8 @@ class CRM_Event_Form_Task_Delete extends CRM_Event_Form_Task
         if( $additionalCount ) $deletedParticipants += $additionalCount;
         
         $status = array(
-                        ts( 'Deleted Participation(s): %1',        array( 1 => $deletedParticipants ) ),
-                        ts( 'Total Selected Participation(s): %1', array( 1 => $deletedParticipants) ) );
+                        ts( 'Participant(s) Deleted: %1',        array( 1 => $deletedParticipants ) ),
+                        ts( 'Total Selected Participant(s): %1', array( 1 => $deletedParticipants) ) );
             
     
     if ( !empty( $participantLinks ) ) {

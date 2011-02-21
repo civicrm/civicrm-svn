@@ -268,8 +268,7 @@ WHERE  id = %1";
                 // Get Conatct ID 
                 $value['source_contact_id'] = $dao->source_contact_id;
                 
-                require_once 'api/v2/Activity.php';
-                $activityId = civicrm_activity_update( $value );
+                $activityId = civicrm_api('activity', 'update', $value);
                 
                 // add custom field values           
                 if ( CRM_Utils_Array::value( 'custom', $value ) &&

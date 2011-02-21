@@ -281,27 +281,17 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         // is this Campaign active
         $this->addElement('checkbox', 'is_active', ts('Is Active?') );
         
-        if ( $this->_context == 'dialog' )  {
-            $this->addButtons(array(
+        $this->addButtons(array(
                                 array ('type'      => 'next',
                                        'name'      => ts('Save'),
                                        'isDefault' => true),
-                                array ('type'      => 'cancel',
-                                       'name'      => ts('Cancel'),
-                                       'js'        => array( 'onclick' => "cj('#campaign-dialog').dialog('close'); return false;" ) ) ) );
-        } else {
-            $this->addButtons(array(
-                                    array ('type'      => 'next',
-                                           'name'      => ts('Save'),
-                                           'isDefault' => true),
-                                    array ('type'      => 'next',
-                                           'name'      => ts('Save and New'),
+                                array ('type'      => 'next',
+                                       'name'      => ts('Save and New'),
                                        'subName'   => 'new'),
-                                    array ('type'      => 'cancel',
-                                           'name'      => ts('Cancel')),
-                                    )
-                              ); 
-        }
+                                array ('type'      => 'cancel',
+                                       'name'      => ts('Cancel')),
+                                )
+                          );
         
     }
     
@@ -388,12 +378,6 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
             $session->pushUserContext(CRM_Utils_System::url('civicrm/campaign', 'reset=1&subPage=campaign'));
         }
         
-        if ( $this->_context == 'dialog' )  {
-            $returnArray = array( 'returnSuccess' => true );
-            echo json_encode( $returnArray );
-            CRM_Utils_System::civiExit( );
-        }
-
         $buttonName = $this->controller->getButtonName( );
         if ( $buttonName == $this->getButtonName( 'next', 'new' ) ) {
             CRM_Core_Session::setStatus(ts(' You can add another Campaign.'));

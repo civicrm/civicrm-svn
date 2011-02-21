@@ -51,17 +51,29 @@ class CRM_Report_Form_Walklist_Survey extends CRM_Report_Form {
     protected $_customGroupExtends = array( 'Contact', 'Individual', 'Household', 'Organization' );
 
     function __construct( ) {
+        
+        //filter options for survey activity status.
+        $responseStatus = array( '' => ts('- select -') );
+        require_once 'CRM/Core/PseudoConstant.php';
+        $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
+        if ( $statusId = array_search( 'Scheduled', $activityStatus ) ) {
+            $responseStatus[$statusId] = ts( 'Reserved' );
+        }
+        if ( $statusId = array_search( 'Completed', $activityStatus ) ) {
+            $responseStatus[$statusId] = ts( 'Interviewed' );
+        }
+        
         $this->_columns = 
             array( 'civicrm_contact'  =>
                    array( 'dao'       => 'CRM_Contact_DAO_Contact',
                           'fields'    =>  array( 'id'           => array( 'title'       => ts( 'Contact ID' ),
                                                                           'no_display'  => true, 
                                                                           'required'    => true),  
-                                                 'display_name' => array( 'title'       => ts( 'Contact Name' ),
+                                                 'display_name' => array( 'title'       => ts( 'Respondent Name' ),
                                                                           'required'    => true,
                                                                           'no_repeat'   => true ),
                                                  ),
-                          'filters'   =>  array('sort_name'     => array( 'title'       => ts( 'Contact Name' ),
+                          'filters'   =>  array('sort_name'     => array( 'title'       => ts( 'Respondent Name' ),
                                                                           'operator'    => 'like' ) ),
                           'grouping'  => 'contact-fields',
                           'order_bys' => array( 'display_name'  => array( 'title'       => ts( 'Contact Name' ),
@@ -113,7 +125,12 @@ class CRM_Report_Form_Walklist_Survey extends CRM_Report_Form {
                                                                       'type'         => CRM_Utils_Type::T_INT,
                                                                       'operatorType' => CRM_Report_Form::OP_MULTISELECT,
                                                                       'options'      => 
-                                                                      CRM_Campaign_BAO_Survey::getSurveys( ) ) ),
+                                                                      CRM_Campaign_BAO_Survey::getSurveys( ) ) ,
+                                                'status_id' => array( 'name'          => 'status_id',
+                                                                      'title'         => ts( 'Respondent Status' ), 
+                                                                      'type'          => CRM_Utils_Type::T_INT,
+                                                                      'operatorType'  => CRM_Report_Form::OP_SELECT,
+                                                                      'options'       => $responseStatus ) ),
                           'grouping' => 'survey-activity-fields',
                           ),
                    
@@ -176,6 +193,7 @@ FROM       civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom
         if ( $this->_activityField ) {
             $this->_from .= "INNER JOIN civicrm_activity_target civicrm_activity_target ON ( {$this->_aliases['civicrm_contact']}.id = civicrm_activity_target.target_contact_id )\n";
             $this->_from .= "INNER JOIN civicrm_activity {$this->_aliases['civicrm_activity']} ON ( {$this->_aliases['civicrm_activity']}.id = civicrm_activity_target.activity_id )\n";
+            $this->_from .= "INNER JOIN civicrm_activity_assignment civicrm_activity_assignment ON ( {$this->_aliases['civicrm_activity']}.id = civicrm_activity_assignment.activity_id )\n";
         }
     }
     
@@ -211,6 +229,23 @@ FROM       civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom
             }
         }
         
+        //apply survey activity types filter.
+        $surveyActivityTypes = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
+        if ( !empty( $surveyActivityTypes ) ) {
+            $clauses[] = "( {$this->_aliases['civicrm_activity']}.activity_type_id IN ( ". 
+                implode( ' , ', array_keys(  $surveyActivityTypes ) ) . ' ) )';
+        }
+        
+        //apply filter of my voters.
+        $interviewerId = CRM_Utils_Request::retrieve( 'cid', 'Positive', CRM_Core_DAO::$_nullObject );
+        if ( !$interviewerId ) {
+            $session = CRM_Core_Session::singleton( );
+            $interviewerId = $session->get( 'userID' );
+        }
+        if ( $interviewerId ) {
+            $clauses[] = "( civicrm_activity_assignment.assignee_contact_id = {$interviewerId} )";
+        }
+        
         if ( empty( $clauses ) ) {
             $this->_where = "WHERE ( 1 ) ";
         } else {
@@ -225,6 +260,12 @@ FROM       civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom
 
     function orderBy( ) {
         $this->_orderBy = "";
+        
+        //if user does not select any survey, make order by survey.
+        if ( CRM_Utils_System::isNull( $this->_params['survey_id_value'] ) ) {
+            $this->_orderBy[] = " {$this->_aliases['civicrm_activity']}.source_record_id ";
+        }
+        
         foreach ( $this->_columns as $tableName => $table ) {
             if ( array_key_exists('order_bys', $table) ) {
                 foreach ( $table['order_bys'] as $fieldName => $field ) {
@@ -232,7 +273,10 @@ FROM       civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom
                 }
             }
         }
-        $this->_orderBy = "ORDER BY " . implode( ', ', $this->_orderBy ) . " ";
+        
+        if ( is_array( $this->_orderBy ) && !empty( $this->_orderBy ) ) {
+            $this->_orderBy = "ORDER BY " . implode( ', ', $this->_orderBy ) . " ";
+        }
     }
     
     function postProcess( ) {
@@ -280,8 +324,103 @@ FROM       civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom
                 break;
             }
         }
+        
+        //format the survey response data.
+        $this->_formatSurveyResponseData( $rows );
     }
-
+    
+    private function _formatSurveyResponseData( &$rows ) 
+    {
+        $surveyIds = CRM_Utils_Array::value( 'survey_id_value', $this->_params );
+        if ( CRM_Utils_System::isNull( $surveyIds ) ||
+             !CRM_Utils_Array::value( 'survey_response',  $this->_params['fields'] ) ) {
+            return;
+        }
+        
+        $surveyResponseFields   = array( );
+        $surveyResponseFieldIds = array( );
+        foreach ( $this->_columns as $tableName => $values ) {
+            if ( !is_array( $values['fields'] ) ) continue;
+            foreach ( $values['fields'] as $name => $field ) {
+                if ( CRM_Utils_Array::value( 'isSurveyResponseField', $field ) ) {
+                    $fldId = substr( $name, 7 );
+                    $surveyResponseFields[$name]    = "{$tableName}_{$name}";
+                    $surveyResponseFieldIds[$fldId] = $fldId;
+                }
+            }
+        }
+        
+        $hasResponseData = false;
+        foreach ( $surveyResponseFields as $fldName ) {
+            foreach ( $rows as $row ) {
+                if ( CRM_Utils_Array::value( $fldName, $row ) ) {
+                    $hasResponseData = true;
+                    break;
+                }
+            }
+        }
+        if ( !$hasResponseData ) return; 
+        
+        //start response data fomatting.
+        $query = ' 
+    SELECT  cf.id,
+            cf.data_type,
+            cf.html_type,
+            cg.table_name, 
+            cf.column_name,
+            ov.value, ov.label,
+            cf.option_group_id
+      FROM  civicrm_custom_field cf      
+INNER JOIN  civicrm_custom_group cg ON ( cg.id = cf.custom_group_id )        
+ LEFT JOIN  civicrm_option_value ov ON ( cf.option_group_id = ov.option_group_id )
+     WHERE  cf.id IN ( '. implode( ' , ', $surveyResponseFieldIds ) . ' )';
+        
+        $responseFields = array( );
+        $fieldValueMap  = array( ); 
+        $properties = array(  'id', 
+                              'data_type', 
+                              'html_type', 
+                              'column_name', 
+                              'option_group_id', );
+        
+        $responseField = CRM_Core_DAO::executeQuery( $query );
+        while ( $responseField->fetch( ) ) {
+            $reponseFldName = $responseField->table_name . '_custom_'. $responseField->id;
+            foreach( $properties as $prop ) {
+                $responseFields[$reponseFldName][$prop] = $responseField->$prop;
+            }
+            if ( $responseField->option_group_id ) {
+                //hiding labels for now
+                //$fieldValueMap[$responseField->option_group_id][$responseField->value] = $responseField->label;
+                
+                //lets use value, since interviewer uses the "cover sheet" to translate vlaue to label 
+                $fieldValueMap[$responseField->option_group_id][$responseField->value] = $responseField->value;
+            }
+        }
+        $responseField->free( );
+        
+        //actual data formatting.
+        $hasData = false;
+        foreach ( $rows as &$row ) {
+            if ( !is_array( $row ) ) {
+                continue; 
+            }
+            
+            foreach ( $row as $name => &$value ) {
+                if ( !array_key_exists( $name, $responseFields ) ) {
+                    continue;
+                }
+                
+                $hasData = true;
+                $value = $this->formatCustomValues( $value, 
+                                                    $responseFields[$name],
+                                                    $fieldValueMap );
+            }
+            
+            if ( !$hasData ) break;  
+        }
+    }
+    
     private function _addSurveyResponseColumns( ) 
     {
         $surveyIds = CRM_Utils_Array::value( 'survey_id_value', $this->_params );

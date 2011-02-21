@@ -61,7 +61,7 @@ class WebTest_Activity_ContactContextAddTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("other_activity");
 
       // Select the activity type from the activity dropdown
-      $this->select("other_activity", "value=1");
+      $this->select("other_activity", "label=Meeting");
       
       // waitForPageToLoad is not always reliable. Below, we're waiting for the submit
       // button at the end of this page to show up, to make sure it's fully loaded.

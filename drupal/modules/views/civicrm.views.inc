@@ -567,7 +567,7 @@ function civicrm_views_data() {
                          'do_not_trade'      => 1,
                          'is_opt_out'        => 1,
                          'contact_type'      => 1,
-                         'organization_name' => 1
+                         'organization_name' => 1,
                          );
     civicrm_views_add_fields( $fields, $data['civicrm_contact'], $skipFields, 'civicrm_contact' );
 
@@ -1948,7 +1948,18 @@ function civicrm_views_data() {
                                                            'title' => t('CiviCRM Contributions'),
                                                            'help' => t("View displays CiviCRM Contributions, with relation to contacts."),
                                                            );
-
+                                                                  
+    //CiviCRM recurring contributions - make this available as a base table too
+    $data['civicrm_contribution_recur']['table']['base'] = array(
+                    								'field' => 'id',
+                                    'title' => t('CiviCRM Recurring Contribution profile'),
+                                    'help' => t("Recurring Contribution Profiles in CiviCRM."),
+                                     );
+     //this join makes Contribution data available in view based on recurring . A separate relationship is defined elsewhere to make recurring data available to view based on contributi
+    $data['civicrm_contribution']['table']['join']['civicrm_contribution_recur'] = array(
+                 										'left_field' => 'id',
+                 										'field' => 'contribution_recur_id',
+                                     );
     //TABLE JOINS FOR CIVICRM CONTRIBUTIONS GO HERE!
 
     $data['civicrm_contribution']['table']['join']['civicrm_participant'] = array(

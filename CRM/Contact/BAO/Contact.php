@@ -804,7 +804,7 @@ WHERE id={$id}; ";
             $imageThumbHeight = round( $thumbWidth / $imageRatio );
         } else {
             $imageThumbHeight = $thumbWidth;
-            $imageThumbWidth = $thumbWidth * $imageRatio;     
+            $imageThumbWidth = round( $thumbWidth * $imageRatio );
         }
  	 	
         return array( $imageThumbWidth, $imageThumbHeight );  

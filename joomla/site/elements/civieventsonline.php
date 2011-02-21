@@ -24,8 +24,7 @@ class JFormFieldCiviEventsOnline extends JFormField {
 		require_once JPATH_ROOT.'/'.'administrator/components/com_civicrm/civicrm.settings.php';
 		require_once 'CRM/Core/Config.php';
 		$config =& CRM_Core_Config::singleton( );
-        
-		require_once 'api/v2/Event.php';
+		
 		$params = array(
                   'is_online_registration'        => 1,
 				  'is_active'        			  => 1,
@@ -35,7 +34,7 @@ class JFormFieldCiviEventsOnline extends JFormField {
                   'return.end_date'               => 1,
                   'return.start_date' 			  => 1
                   );
-    	$events = civicrm_event_search( $params );
+    	$events = civicrm_api('event', 'get', $params);
 		$currentdate = date("Y-m-d H:i:s");
 		$options = array();
 		$options[] = JHTML::_('select.option', '', JText::_('- Select Event -') );

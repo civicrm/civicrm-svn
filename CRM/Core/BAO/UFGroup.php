@@ -1096,6 +1096,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
     static function add( &$params, &$ids ) 
     {
         require_once 'CRM/Utils/Array.php';
+        require_once 'CRM/Utils/String.php';
         $fields = array( 'is_active', 'add_captcha', 'is_map', 'is_update_dupe', 'is_edit_link', 'is_uf_link', 'is_cms_user' );
         foreach( $fields as $field ) {
             $params[$field] = CRM_Utils_Array::value( $field, $params, false );    
@@ -1664,7 +1665,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                        array(''=>ts( '- select -' )) + CRM_Core_PseudoConstant::activityStatus( ), $required );
         } else if ($fieldName == 'activity_date_time') {
             $form->addDateTime( $name, $title, $required, array( 'formatType' => 'activityDateTime') );
-        } else if ($fieldName == 'participant_status_id' ) {
+        } else if ($fieldName == 'participant_status' ) {
             require_once 'CRM/Event/PseudoConstant.php';
             $cond = null;
             if ( $online == true ) { 
@@ -1672,7 +1673,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             }            
             $form->add('select', $name, $title,
                        array(''=>ts( '- select -' )) + CRM_Event_PseudoConstant::participantStatus( null, $cond, 'label' ), $required);
-        } else if ($fieldName == 'participant_role_id' ) {
+        } else if ($fieldName == 'participant_role' ) {
             require_once 'CRM/Event/PseudoConstant.php';
             if ( CRM_Utils_Array::value( 'is_multiple', $field ) ) {
                 require_once 'CRM/Event/PseudoConstant.php';

@@ -45,7 +45,7 @@ class ContributionPage extends PHPUnit_Framework_Testcase
     function delete( $contributionPageId ) 
     {
         require_once "CRM/Contribute/DAO/ContributionPage.php";        
-        $cp     = & new CRM_Contribute_DAO_ContributionPage( );
+        $cp     = new CRM_Contribute_DAO_ContributionPage( );
         $cp->id = $contributionPageId; 
         if ( $cp->find( true ) ) {
             $result = $cp->delete( );

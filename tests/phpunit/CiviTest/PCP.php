@@ -18,7 +18,7 @@ class PCPBlock extends PHPUnit_Framework_Testcase
                                'is_cms_user' => 2
                                );
         
-        $ufGroup   = civicrm_uf_group_create ( $profileParams );
+        $ufGroup   = civicrm_api('uf_group', 'create', $profileParams );
         $profileId = $ufGroup['id'];
 
         $fieldsParams = array (
@@ -48,8 +48,17 @@ class PCPBlock extends PHPUnit_Framework_Testcase
                                       'is_active'        => 1 )
                                );
         
+        civicrm_api_include('uf_field');
         foreach( $fieldsParams as $value ){
-            $ufField   = civicrm_uf_field_create( $profileId , $value );
+            $api_version = civicrm_get_api_version();
+            if ($api_version === 2) {
+                $ufField = civicrm_uf_field_create($profileId , $value );
+            }
+            else {
+                // we assume api v3.
+                // TODO: Update this when api/v3/UFField.php is finished.
+                $ufField = civicrm_uf_field_create($profileId , $value );
+            }
         }
         $joinParams =  array(
                              'module'       => 'Profile',
@@ -59,8 +68,7 @@ class PCPBlock extends PHPUnit_Framework_Testcase
                              'uf_group_id'  => $profileId ,
                              'is_active'    => 1
                              );
-        require_once 'api/v2/UFJoin.php';
-        $ufJoin = civicrm_uf_join_add( $joinParams );
+        $ufJoin = civicrm_api('uf_join', 'create', $joinParams );
         
         $params = array(
                         'entity_table'          => 'civicrm_contribution_page',
@@ -88,8 +96,15 @@ class PCPBlock extends PHPUnit_Framework_Testcase
      */
     function delete( $params )
     {
-        require_once 'api/v2/UFGroup.php';
-        $resulProfile = civicrm_uf_group_delete( $params['profileId'] );
+        $api_version = civicrm_get_api_version();
+        if ($api_version === 2) {
+            civicrm_api_include('uf_group');
+            $resulProfile = civicrm_uf_group_delete($params['profileId']);
+        }
+        else {
+            $delete_params = array('id' => $params['profileId']);
+            $resulProfile = civicrm_api('uf_group', 'delete', $delete_params );
+        }
 
         require_once 'CRM/Contribute/DAO/PCPBlock.php';
         $dao     =& new CRM_Contribute_DAO_PCPBlock( );

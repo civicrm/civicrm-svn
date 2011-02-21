@@ -581,7 +581,7 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
             unset( $result );
         }
 
-        if ( ! empty( $targetParams ) ) {
+        if ( !empty( $targetParams ) && !empty($mailing->scheduled_id) ) {
             // add activity record for every mail that is send
             $activityTypeID = CRM_Core_OptionGroup::getValue( 'activity_type',
                                                               'Bulk Email',
@@ -615,9 +615,8 @@ AND    civicrm_activity.source_record_id = %2";
                 $activity['id'] = $activityID;  
             }
             
-            require_once 'api/v2/Activity.php';
-            $isError = civicrm_activity_create( $activity );
-            if ( civicrm_error( $isError ) ) {
+            require_once 'CRM/Activity/BAO/Activity.php';
+            if (is_a(CRM_Activity_BAO_Activity::create($activity), 'CRM_Core_Error')) {
                 return false;
             }
         }

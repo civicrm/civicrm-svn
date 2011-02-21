@@ -33,6 +33,7 @@
  * 
  * @copyright CiviCRM LLC (c) 2004-2010
  * @version $Id$
+ * @todo Erik Hommel 15/12/2010 version to be implemented
  */
 
 /**
@@ -49,6 +50,7 @@ require_once 'api/v2/utils.php';
  * 
  * @return array of newly created tag property values.
  * @access public
+ * @todo Erik Hommel 15/12/2010 : check if function is ok for update
  */
 function civicrm_tag_create( &$params ) 
 {
@@ -76,6 +78,7 @@ function civicrm_tag_create( &$params )
         _civicrm_object_to_array($tagBAO, $values);
         $tag = array( );
         $tag['tag_id']   = $values['id'];
+        $tag['name']     = $values['name'];
         $tag['is_error'] = 0;
     }
     return $tag;

@@ -1084,7 +1084,6 @@ class CRM_Contact_BAO_Query
             if ( isset( $this->_distinctComponentClause)  ) {
                 $select .= "{$this->_distinctComponentClause}, ";
             }
-            
             $select .= implode( ', ', $this->_select );
             $from = $this->_fromClause;
 
@@ -3141,6 +3140,7 @@ WHERE  id IN ( $groupIDs )
                                                                'do_not_phone'           => 1,
                                                                'do_not_trade'           => 1,
                                                                'is_opt_out'             => 1,
+							       'contact_is_deleted'	=> 1,
                                                                ); 
             }
         }
@@ -3209,15 +3209,13 @@ WHERE  id IN ( $groupIDs )
         list( $select, $from, $where, $having ) = $query->query( );
         $options = $query->_options;
         $sql = "$select $from $where $having";
-        if ( ! empty( $sort ) ) {
-            $sql .= " ORDER BY $sort ";
-        }
-     
         // add group by
         if ( $query->_useGroupBy ) {
             $sql .= ' GROUP BY contact_a.id';
         }
-
+        if ( ! empty( $sort ) ) {
+            $sql .= " ORDER BY $sort ";
+        }
         if ( $row_count > 0 && $offset >= 0 ) {
             $sql .= " LIMIT $offset, $row_count ";
         }

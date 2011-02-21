@@ -51,6 +51,7 @@ require_once 'CRM/Activity/BAO/Activity.php';
  *
  * @return array (reference)  array of activities / error message.
  * @access public
+
  */
 function civicrm_activity_contact_get( $params ) {
   _civicrm_initialize( );
@@ -85,6 +86,7 @@ function civicrm_activity_contact_get( $params ) {
  *
  * @return array (reference)  array of activities.
  * @access public
+ 
  */
 function &_civicrm_activities_get( $contactID, $type = 'all' ) 
 {

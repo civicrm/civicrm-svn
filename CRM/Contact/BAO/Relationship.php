@@ -1029,7 +1029,7 @@ LEFT JOIN  civicrm_country ON (civicrm_address.country_id = civicrm_country.id)
         $status = self::CURRENT;
         
         if ( ! empty( $params['end_date'] ) ) {
-            $endDate = CRM_Utils_Date::setDateDefaults( $params['end_date'], null, 'Ymd' );
+            $endDate = CRM_Utils_Date::setDateDefaults( CRM_Utils_Date::format( $params['end_date'] ), null, 'Ymd' );
             $today   = date('Ymd' );
             
             if ( $today > $endDate ) {

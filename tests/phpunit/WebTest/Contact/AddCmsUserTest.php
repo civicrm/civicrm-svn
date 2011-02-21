@@ -106,7 +106,7 @@ class WebTest_Contact_AddCmsUserTest extends CiviSeleniumTestCase {
       
       $this->click( "edit-submit" );
       $this->waitForPageToLoad( "30000" );
-      $this->assertTrue( $this->isTextPresent( "Your password and further instructions have been sent to your e-mail address." ) );
+      $this->assertTrue( $this->isTextPresent( "Thank you for applying for an account. Your account is currently pending approval by the site administrator." ) );
       $this->webtestLogin( );
       
       $this->open( $this->sboxPath . "civicrm/contact/search&reset=1" );

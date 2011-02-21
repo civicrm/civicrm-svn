@@ -957,7 +957,10 @@ SELECT $select
             foreach ( $group['fields'] as $field ) {
                 if ( CRM_Utils_Array::value( 'element_value', $field ) !== null ) {
                     $value = $field['element_value'];
-                } else if ( CRM_Utils_Array::value( 'default_value', $field ) !== null && $action != CRM_Core_Action::UPDATE ) {
+                } else if ( CRM_Utils_Array::value( 'default_value', $field ) !== null && 
+                            ( $action != CRM_Core_Action::UPDATE ||
+                              // CRM-7548
+                              ! array_key_exists( 'element_value', $field ) ) ) {
                     $value = $viewMode ? null : $field['default_value'];
                 } else {
                     continue;

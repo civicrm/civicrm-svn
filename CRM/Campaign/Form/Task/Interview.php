@@ -225,6 +225,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         //pickup the uf fields.
         $this->_surveyFields = CRM_Campaign_BAO_survey::getSurveyResponseFields( $this->_surveyId,
                                                                                  $this->_surveyTypeId );
+        require_once 'CRM/Core/BAO/UFGroup.php';
         foreach ( $this->_contactIds as $contactId ) {
             //build the profile fields.
             foreach ( $this->_surveyFields as $name => $field ) {
