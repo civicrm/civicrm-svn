@@ -126,16 +126,16 @@
 var widgetId = '';
 var fullscrn = '';
 cj(document).ready( function( ) {
-
-cj(window).bind("ajaxComplete", function() { 
-  cj('div.widget-controls').children('a.fullscreen-icon').each(function(){
-     cj(this).click(function(){
-        widgetId = cj(this).parents('li').attr('id'); 
-     });
-  });
+   setTimeout( 'getWidgetId()',500 );
 });
 
-});
+function getWidgetId( ) {
+ cj('div.widget-controls').children('a.fullscreen-icon').each( function( ){
+       cj(this).one( 'click', function( ){
+       widgetId = cj(this).parents('li').attr('id'); 
+    });
+ });
+}
 
 function {/literal}{$list}{literal}CaseDetails( caseId, contactId, type )
 {
