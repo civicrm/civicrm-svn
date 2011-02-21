@@ -59,9 +59,10 @@ function civicrm_rules_rules_action_contact_send_email( $to, $subject, $message,
  * Action contact: add a contact to a group
  */
 function civicrm_rules_rules_action_add_to_group( $contact, $settings ) {
-	if ( $contact->id ) {
+    $contactId = ( $contact->id ) ? $contact->id : $contact->getVar( '_contactId' );
+	if ( $contactId ) {
 		foreach ( $settings as $gid ) {
-			_civicrm_rules_group_contact( $contact->id, $gid );
+			_civicrm_rules_group_contact( $contactId, $gid );
 		}
 		return array( 'contact' => $contact );
 	}
@@ -71,9 +72,10 @@ function civicrm_rules_rules_action_add_to_group( $contact, $settings ) {
  * Action contact: remove a contact from a group
  */
 function civicrm_rules_rules_action_remove_from_group( $contact, $settings ) {
-	if ( $contact->id ) {
+    $contactId = ( $contact->id ) ? $contact->id : $contact->getVar( '_contactId' );
+	if ( $contactId ) {
 		foreach ( $settings as $gid ) {
-			_civicrm_rules_group_contact( $contact->id, $gid, 'remove' );
+			_civicrm_rules_group_contact( $contactId, $gid, 'remove' );
 		}
 		return array( 'contact' => $contact );
 	}
