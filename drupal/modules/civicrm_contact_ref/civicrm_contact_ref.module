@@ -161,12 +161,17 @@ function civicrm_contact_ref_allowed_values($field) {
  * Implements hook_field_widget_form().
  */
 function civicrm_contact_ref_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
-
+    $defaultValues = array( );
+    foreach ( $items as $item ) {
+        $sort_name       = _civicrm_contact_ref_titles( $item['contact_id'], 'sort_name' );
+        $defaultValues[] = "$sort_name [cid:{$item['contact_id']}]";
+    }
   $element += array(
     '#type'              => 'textfield',    
     '#autocomplete_path' => $instance['widget']['settings']['autocomplete_path'] . '/' . $field['field_name'],
     '#size'              => $instance['widget']['settings']['size'],
     '#maxlength'         => 1024,
+    '#default_value'     => empty($defaultValues)? '' : implode(', ', $defaultValues),
     '#element_validate'  => array('civicrm_contact_ref_autocomplete_validate'),
 
   );
@@ -222,12 +227,13 @@ function civicrm_contact_ref_autocomplete_validate($element, &$form_state) {
     $delta = $element['#delta'];
     $value = $element['#value'];
   
-    $cid = NULL;
+    $cids = array();
     if (!empty($value)) {
         preg_match('/^(?:\s*|(.*) )?\[\s*cid\s*:\s*(\d+)\s*\]$/', $value, $matches);
         if (!empty($matches)) {
             // Explicit [cid:n].
             list(, $title, $cid) = $matches;
+            $cids[] = $cid;
         }
         else {
             // No explicit cid.
@@ -240,12 +246,25 @@ function civicrm_contact_ref_autocomplete_validate($element, &$form_state) {
                 // the best thing would be to present the user with an additional form,
                 // allowing the user to choose between valid candidates with the same title
                 // ATM, we pick the first matching candidate...
-                $cid = array_shift(array_keys($cids));
+                $cids = array_shift(array_keys($cids));
             }
         }
     }
-           
-    form_set_value($element, array($cid), $form_state);
+    
+    form_set_value($element, $cids, $form_state);
+}
+
+function civicrm_contact_ref_form_field_ui_field_edit_form_alter(&$form, &$form_state, $form_id) {
+    // unset 'cardinality' field in case of autocomplete, and use
+    // cardinality = 1;
+    if ( isset($form['#field']) && isset($form['#instance']) &&
+         $form['#field']['module'] == 'civicrm_contact_ref' &&
+         $form['#instance']['widget']['type'] == 'civicrm_contact_ref_autocomplete' &&
+         isset($form['field']['cardinality']) ) {
+        $form['field']['cardinality'] = array( '#type'  => 'value',
+                                               '#value' => 1 );
+    }
+
 }
 
 /*
@@ -388,22 +407,22 @@ function _civicrm_contact_ref_potential_references_standard( $field, $string = '
  *
  * Store node titles collected in the curent request.
  */
-function _civicrm_contact_ref_titles($cid) 
+function _civicrm_contact_ref_titles($cid, $field = 'display_name' ) 
 {
     if ( ! civicrm_initialize( ) ) {
         return;
     }
     static $titles = array();
     
-    if ( ! isset( $titles[$cid] ) ) {
+    if ( ! isset( $titles["{$cid}_{$field}"] ) ) {
         $q = "
-SELECT display_name
+SELECT {$field}
 FROM   civicrm_contact
 WHERE  id = %1";
         $params = array(1 => array($cid, "Integer"));
         $dao =& CRM_Core_DAO::executeQuery( $q, $params );
 
-        $titles[$cid] = $dao->fetch() ? $dao->display_name : '';
+        $titles["{$cid}_{$field}"] = $dao->fetch() ? $dao->$field : '';
     }
-    return $titles[$cid];
+    return $titles["{$cid}_{$field}"];
 }
