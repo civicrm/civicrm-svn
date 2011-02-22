@@ -114,7 +114,11 @@ function civicrm_contact_ref_field_formatter_view($entity_type, $entity, $field,
               $title = _civicrm_contact_ref_titles($item['contact_id']);
               $element[$delta] = 
                   array(
-                        '#markup' => l($title, 'civicrm/contact/view', array('html' => TRUE, 'query' => array("reset=1&cid={$item['contact_id']}") ) )
+                        '#markup' => l($title, 
+                                       'civicrm/contact/view', 
+                                       array( 'query' => 
+                                              array('reset' => 1,
+                                                    'cid'   => "{$item['contact_id']}") ) )
                         );
           }
       }
