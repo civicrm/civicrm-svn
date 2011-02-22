@@ -230,13 +230,13 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $optionGroups = CRM_Campaign_BAO_Survey::getResultSets( );
 
         if ( empty($optionGroups) ) {
-            $optionTypes = array( '1' => ts( 'Create new response set' ));
+            $optionTypes = array( '1' => ts( 'Create new result set' ));
         } else {
-            $optionTypes = array( '1' => ts( 'Create a new response set' ),
-                                  '2' => ts( 'Use existing response set' ) );
+            $optionTypes = array( '1' => ts( 'Create a new result set' ),
+                                  '2' => ts( 'Use existing result set' ) );
             $this->add( 'select', 
                         'option_group_id', 
-                        ts( 'Select Response Set' ),
+                        ts( 'Select Result Set' ),
                         array( '' => ts( '- select -' ) ) + $optionGroups, false, 
                         array('onChange' => 'loadOptionGroup( )' ) );
         }
@@ -517,7 +517,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
             
             $optionGroup            = new CRM_Core_DAO_OptionGroup( );
             $optionGroup->name      =  $opGroupName;
-            $optionGroup->label     =  $params['title']. ' Response Set';
+            $optionGroup->label     =  $params['title']. ' Result Set';
             $optionGroup->is_active = 1;
             $optionGroup->save( );
 

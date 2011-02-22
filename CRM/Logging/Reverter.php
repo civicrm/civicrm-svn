@@ -149,5 +149,26 @@ class CRM_Logging_Reverter
                 break;
             }
         }
+
+        // CRM-7353: if nothing altered civicrm_contact, touch it; this will
+        // make sure there’s an entry in log_civicrm_contact for this revert
+        if (empty($diffs['civicrm_contact'])) {
+            $query  = "
+                SELECT id FROM `{$this->db}`.log_civicrm_contact
+                WHERE log_conn_id = %1 AND log_date < DATE_ADD(%2, INTERVAL 10 SECOND)
+                ORDER BY log_date DESC LIMIT 1
+            ";
+            $params = array(
+                1 => array($this->log_conn_id, 'Integer'),
+                2 => array($this->log_date,    'String'),
+            );
+            $cid = CRM_Core_DAO::singleValueQuery($query, $params);
+            if (!$cid) return;
+
+            require_once 'CRM/Contact/DAO/Contact.php';
+            $dao = new CRM_Contact_DAO_Contact;
+            $dao->id = $cid;
+            if ($dao->find(true)) $dao->save();
+        }
     }
 }

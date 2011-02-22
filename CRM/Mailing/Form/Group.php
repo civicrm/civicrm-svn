@@ -94,11 +94,14 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
             $mailing->find( true );
             
             $defaults['name'] = $mailing->name;
-            if ( !$continue ) $defaults['name'] = ts('Copy of %1', array( 1 => $mailing->name ) ); 
+            if ( ! $continue ) {
+                $defaults['name'] = ts('Copy of %1', array( 1 => $mailing->name ) );
+            } else {
+                // CRM-7590, reuse same mailing ID if we are continuing
+                $this->set('mailing_id', $mailingID);
+            }
             $defaults['campaign_id'] = $mailing->campaign_id;
-        }
         
-        if ( $mailingID ) { 
             require_once 'CRM/Mailing/DAO/Group.php';
             $dao =& new CRM_Mailing_DAO_Group();
             
@@ -110,9 +113,9 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
             }
             
             $defaults['includeGroups'] = $mailingGroups['civicrm_group']['Include'];
-            $defaults['excludeGroups'] = CRM_Utils_Array::value('Exclude',$mailingGroups['civicrm_group']);
+            $defaults['excludeGroups'] = CRM_Utils_Array::value('Exclude', $mailingGroups['civicrm_group']);
 
-            $defaults['includeMailings'] = CRM_Utils_Array::value('Include',$mailingGroups['civicrm_mailing']);
+            $defaults['includeMailings'] = CRM_Utils_Array::value('Include', $mailingGroups['civicrm_mailing']);
             $defaults['excludeMailings'] = $mailingGroups['civicrm_mailing']['Exclude'];
         }
         
