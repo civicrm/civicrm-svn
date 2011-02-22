@@ -146,11 +146,9 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
                                                                                  CRM_Core_PseudoConstant::country( ) ) ),
                           'group_bys' =>   array( 'street_name'       =>  array( 'title' => ts('Street Name') ),
                                                   'street_number'     =>  array( 'title' => 'Odd / Even Street Number' ) ),
-                           
-                          'order_bys' =>   array( 'street_name'       => array( 'title'    => ts( 'Street Name' ),
-                                                                                'default'  => true ),
-                                                  'street_number'     =>  array( 'title'   => 'Odd / Even Street Number',
-                                                                                 'default' => true ) ),
+                          
+                          'order_bys' =>   array( 'street_name'       => array( 'title'   => ts( 'Street Name' ) ),
+                                                  'street_number'     => array( 'title'   => 'Odd / Even Street Number' ) ),
                           
                           'grouping'  => 'location-fields',
                           ),
@@ -307,7 +305,8 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
             foreach ( $this->_columns as $tableName => $table ) {
                 if ( array_key_exists('group_bys', $table) ) {
                     foreach ( $table['group_bys'] as $fieldName => $field ) {
-                        if ( CRM_Utils_Array::value( $fieldName, $this->_params['group_bys'] ) ) {
+                        if ( !in_array( $fieldName, array( 'street_name', 'street_number' ) ) && 
+                             CRM_Utils_Array::value( $fieldName, $this->_params['group_bys'] ) ) {
                             $this->_groupBy[] = $field['dbAlias'];
                         }
                     }
@@ -316,28 +315,44 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
         }
         if ( is_array( $this->_groupBy ) && !empty( $this->_groupBy ) ) {
             $this->_groupBy = ' GROUP BY ' . implode( ', ', $this->_groupBy );
-        } else {
-            $this->_groupBy = " GROUP BY {$this->_aliases['civicrm_activity']}.source_record_id ";
         }
     }
     
     function orderBy( ) {
         $this->_orderBy = null;
         
-        //if user does not select any survey, make order by survey.
-        if ( CRM_Utils_System::isNull( $this->_params['survey_id_value'] ) ) {
-            $this->_orderBy[] = " {$this->_aliases['civicrm_activity']}.source_record_id ";
-        }
+        //group by as per street name and odd/even street number.
+        $groupBys = CRM_Utils_Array::value( 'group_bys', $this->_params, array( ) );
         
-        foreach ( $this->_columns as $tableName => $table ) {
-            if ( array_key_exists('order_bys', $table) ) {
-                foreach ( $table['order_bys'] as $fieldName => $field ) {
+        $specialOrderFields = array( 'street_name', 'street_number' );
+        foreach ( $specialOrderFields as $fldName ) {
+            if ( CRM_Utils_Array::value( $fldName, $groupBys ) ) {
+                $field = CRM_Utils_Array::value( $fldName, $this->_columns['civicrm_address']['group_bys'], array( ) );
+                if ( $fldName == 'street_number' ) {
+                    $this->_orderBy[] = "{$field['dbAlias']}%2";
+                } else {
                     $this->_orderBy[] = $field['dbAlias'];
                 }
             }
         }
         
+        foreach ( $this->_columns as $tableName => $table ) {
+            if ( array_key_exists('order_bys', $table) ) {
+                foreach ( $table['order_bys'] as $fieldName => $field ) {
+                    if ( !in_array( $fieldName, $specialOrderFields ) ) {
+                        $this->_orderBy[] = $field['dbAlias'];
+                    }
+                }
+            }
+        }
+        
+        //if user does not select any survey, make order by survey.
+        if ( CRM_Utils_System::isNull( $this->_params['survey_id_value'] ) ) {
+            $this->_orderBy[] = " {$this->_aliases['civicrm_activity']}.source_record_id ";
+        }
+        
         if ( is_array( $this->_orderBy ) && !empty( $this->_orderBy ) ) {
+            $this->_orderBy[] = " {$this->_aliases['civicrm_activity']}.id desc ";
             $this->_orderBy = "ORDER BY " . implode( ', ', $this->_orderBy ) . " ";
         }
     }
@@ -379,6 +394,16 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
                                                             $this->_absoluteUrl, $this->_id );
                 $rows[$rowNum]['civicrm_contact_display_name_link' ] = $url;
                 $entryFound = true;
+            }
+            if ( array_key_exists( 'civicrm_activity_assignment_assignee_contact_id', $row ) ) {
+                $rows[$rowNum]['civicrm_activity_assignment_assignee_contact_id' ] =
+                    CRM_Utils_Array::value( $row['civicrm_activity_assignment_assignee_contact_id'], 
+                                            CRM_Campaign_BAO_Survey::getInterviewers( ) );
+            }
+            if ( array_key_exists( 'civicrm_activity_survey_id', $row ) ) {
+                $rows[$rowNum]['civicrm_activity_survey_id']  = 
+                    CRM_Utils_Array::value( $row['civicrm_activity_survey_id'],
+                                            CRM_Campaign_BAO_Survey::getSurveys( ) ); 
             }
             
             // skip looking further in rows, if first row itself doesn't 
