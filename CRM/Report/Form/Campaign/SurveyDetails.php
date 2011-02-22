@@ -37,7 +37,7 @@
 require_once 'CRM/Report/Form.php';
 require_once 'CRM/Campaign/BAO/Survey.php';
 
-class CRM_Report_Form_Walklist_Survey extends CRM_Report_Form {
+class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
     protected $_addressField = false;
     
     protected $_emailField   = false;
