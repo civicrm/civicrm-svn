@@ -38,13 +38,10 @@ require_once 'CRM/Report/Form.php';
 require_once 'CRM/Campaign/BAO/Survey.php';
 
 class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
-    protected $_addressField = false;
     
     protected $_emailField   = false;
     
     protected $_phoneField   = false;
-    
-    protected $_activityField = false;
     
     protected $_summary      = null;
     
@@ -147,6 +144,14 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
                                                                                  CRM_Report_Form::OP_MULTISELECT,
                                                                                  'options'       => 
                                                                                  CRM_Core_PseudoConstant::country( ) ) ),
+                          'group_bys' =>   array( 'street_name'       =>  array( 'title' => ts('Street Name') ),
+                                                  'street_number'     =>  array( 'title' => 'Odd / Even Street Number' ) ),
+                           
+                          'order_bys' =>   array( 'street_name'       => array( 'title'    => ts( 'Street Name' ),
+                                                                                'default'  => true ),
+                                                  'street_number'     =>  array( 'title'   => 'Odd / Even Street Number',
+                                                                                 'default' => true ) ),
+                          
                           'grouping'  => 'location-fields',
                           ),
                    
@@ -226,14 +231,15 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
     }
     
     function from( ) {
-        $this->_from = null;
+        $this->_from = " FROM civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom} ";
         
-        $this->_from = "
-FROM       civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom}
-";
-        if ( $this->_addressField ) {
-            $this->_from .= "LEFT JOIN civicrm_address {$this->_aliases['civicrm_address']} ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_address']}.contact_id AND {$this->_aliases['civicrm_address']}.is_primary = 1\n";
-        }
+        //get the activity table joins.
+        $this->_from .= " INNER JOIN civicrm_activity_target {$this->_aliases['civicrm_activity_target']} ON ( {$this->_aliases['civicrm_contact']}.id = civicrm_activity_target.target_contact_id )\n";
+        $this->_from .= " INNER JOIN civicrm_activity {$this->_aliases['civicrm_activity']} ON ( {$this->_aliases['civicrm_activity']}.id = civicrm_activity_target.activity_id )\n";
+        $this->_from .= " INNER JOIN civicrm_activity_assignment {$this->_aliases['civicrm_activity_assignment']} ON ( {$this->_aliases['civicrm_activity']}.id = {$this->_aliases['civicrm_activity_assignment']}.activity_id )\n";
+        
+        //get the address table.
+        $this->_from .= " LEFT JOIN civicrm_address {$this->_aliases['civicrm_address']} ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_address']}.contact_id AND {$this->_aliases['civicrm_address']}.is_primary = 1\n";
         
         if ( $this->_emailField ) {
             $this->_from .= "LEFT JOIN civicrm_email {$this->_aliases['civicrm_email']} ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_email']}.contact_id AND {$this->_aliases['civicrm_email']}.is_primary = 1\n";
@@ -241,13 +247,6 @@ FROM       civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom
         
         if ( $this->_phoneField ) {
             $this->_from .= "LEFT JOIN civicrm_phone {$this->_aliases['civicrm_phone']} ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_phone']}.contact_id AND {$this->_aliases['civicrm_phone']}.is_primary = 1\n";
-        }
-        
-        //get the survey clause in.
-        if ( $this->_activityField ) {
-            $this->_from .= "INNER JOIN civicrm_activity_target {$this->_aliases['civicrm_activity_target']} ON ( {$this->_aliases['civicrm_contact']}.id = civicrm_activity_target.target_contact_id )\n";
-            $this->_from .= "INNER JOIN civicrm_activity {$this->_aliases['civicrm_activity']} ON ( {$this->_aliases['civicrm_activity']}.id = civicrm_activity_target.activity_id )\n";
-            $this->_from .= "INNER JOIN civicrm_activity_assignment {$this->_aliases['civicrm_activity_assignment']} ON ( {$this->_aliases['civicrm_activity']}.id = {$this->_aliases['civicrm_activity_assignment']}.activity_id )\n";
         }
     }
     
@@ -301,8 +300,29 @@ FROM       civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom
         }
     }
     
+    function groupBy( ) {
+        $this->_groupBy = null;
+        if ( !CRM_Utils_System::isNull( $this->_params['group_bys'] ) &&
+             is_array( $this->_params['group_bys'] ) ) {
+            foreach ( $this->_columns as $tableName => $table ) {
+                if ( array_key_exists('group_bys', $table) ) {
+                    foreach ( $table['group_bys'] as $fieldName => $field ) {
+                        if ( CRM_Utils_Array::value( $fieldName, $this->_params['group_bys'] ) ) {
+                            $this->_groupBy[] = $field['dbAlias'];
+                        }
+                    }
+                }
+            }
+        }
+        if ( is_array( $this->_groupBy ) && !empty( $this->_groupBy ) ) {
+            $this->_groupBy = ' GROUP BY ' . implode( ', ', $this->_groupBy );
+        } else {
+            $this->_groupBy = " GROUP BY {$this->_aliases['civicrm_activity']}.source_record_id ";
+        }
+    }
+    
     function orderBy( ) {
-        $this->_orderBy = "";
+        $this->_orderBy = null;
         
         //if user does not select any survey, make order by survey.
         if ( CRM_Utils_System::isNull( $this->_params['survey_id_value'] ) ) {
