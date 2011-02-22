@@ -193,10 +193,6 @@ class CRM_Core_BAO_Navigation extends CRM_Core_DAO_Navigation
         $whereClause    = '';
 
         $config = CRM_Core_Config::singleton( );
-        if ( $config->userFramework == 'Joomla' ) {
-            $whereClause = " AND name NOT IN ('Access Control') ";
-            $cacheKeyString .= "_1";
-        }
 
         // check if we can retrieve from database cache
         require_once 'CRM/Core/BAO/Cache.php'; 
@@ -283,11 +279,6 @@ ORDER BY parent_id, weight";
         $navigation = CRM_Core_DAO::executeQuery( $query );
         $config = CRM_Core_Config::singleton( );
         while ( $navigation->fetch() ) {
-            // CRM-5336
-            if ( $config->userFramework == 'Joomla' &&  $navigation->name == 'Access Control' ) {
-                continue;
-            }
-
             $label = $navigation->label;
             if ( !$navigationMenu ) {
                 $label = addcslashes( $label, '"' );
