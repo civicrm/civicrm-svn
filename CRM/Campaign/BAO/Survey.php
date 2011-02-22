@@ -740,4 +740,42 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
         return $responseFields[$cacheKey];
     }
     
+    /** 
+     * Get all interviewers of surveys.
+     *
+     * @return an array of valid survey response fields. 
+     */
+    public Static function getInterviewers( ) 
+    {
+        static $interviewers;
+        
+        if ( isset( $interviewers ) ) {
+            return $interviewers;
+        }
+        
+        $whereClause = null;
+        $activityTypes = self::getSurveyActivityType( );
+        if ( !empty( $activityTypes ) ) {
+            $whereClause = ' WHERE survey.activity_type_id IN ( '. implode( ' , ', array_keys( $activityTypes ) ) . ' )';
+        }
+        
+        $interviewers = array( );
+        
+        $query = "
+    SELECT  contact.id as id, 
+            contact.display_name as display_name
+      FROM  civicrm_contact contact 
+INNER JOIN  civicrm_activity_assignment assignment ON ( assignment.assignee_contact_id = contact.id )
+INNER JOIN  civicrm_activity activity ON ( activity.id = assignment.activity_id )
+INNER JOIN  civicrm_survey survey ON ( activity.source_record_id = survey.id )
+            {$whereClause}";
+        
+        $interviewer = CRM_Core_DAO::executeQuery( $query );
+        while ( $interviewer->fetch( ) ) {
+            $interviewers[$interviewer->id] = $interviewer->display_name;
+        }
+        
+        return $interviewers;
+    }
+    
 }

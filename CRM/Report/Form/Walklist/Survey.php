@@ -53,7 +53,7 @@ class CRM_Report_Form_Walklist_Survey extends CRM_Report_Form {
     function __construct( ) {
         
         //filter options for survey activity status.
-        $responseStatus = array( '' => ts('- select -') );
+        $responseStatus = array( );
         require_once 'CRM/Core/PseudoConstant.php';
         $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
         if ( $statusId = array_search( 'Scheduled', $activityStatus ) ) {
@@ -63,8 +63,23 @@ class CRM_Report_Form_Walklist_Survey extends CRM_Report_Form {
             $responseStatus[$statusId] = ts( 'Interviewed' );
         }
         
+        //get all interviewers.
+        $allSurveyInterviewers = CRM_Campaign_BAO_survey::getInterviewers( );
+        
         $this->_columns = 
-            array( 'civicrm_contact'  =>
+            array( 'civicrm_activity_assignment' => 
+                   array( 'dao'       => 'CRM_Activity_DAO_ActivityAssignment',
+                          'fields'    =>  array( 'assignee_contact_id' => array( 'title' => ts( 'Interviewer Name' ) ) ),
+                          'filters'   =>  array( 'assignee_contact_id' => array( 'name'   => 'assignee_contact_id',
+                                                                                 'title'  => ts( 'Interviewer Name' ),
+                                                                                 'type'          => CRM_Utils_Type::T_INT,
+                                                                                 'operatorType'  => 
+                                                                                 CRM_Report_Form::OP_SELECT,
+                                                                                 'options' => $allSurveyInterviewers ) ),
+                          'grouping'  => 'survey-interviewer-fields',
+                          ),
+                   
+                   'civicrm_contact'  =>
                    array( 'dao'       => 'CRM_Contact_DAO_Contact',
                           'fields'    =>  array( 'id'           => array( 'title'       => ts( 'Contact ID' ),
                                                                           'no_display'  => true, 
@@ -80,46 +95,84 @@ class CRM_Report_Form_Walklist_Survey extends CRM_Report_Form {
                                                                           'required'    => true ) ),
                           ),
                    
+                   'civicrm_phone'    => 
+                   array( 'dao'       => 'CRM_Core_DAO_Phone',
+                          'fields'    => array( 'phone'         =>  array( 'name'       => 'phone',
+                                                                           'title'      => ts( 'Phone' ) ) ),
+                          'grouping'  => 'location-fields',
+                          ),
+                   
                    'civicrm_address'  =>
                    array( 'dao'       => 'CRM_Core_DAO_Address',
-                          'fields'    => array( 'street_number'     => array( 'title' => ts( 'Street Number' ),
+                          'fields'    => array( 'street_number'     => array( 'name'  => 'street_number',
+                                                                              'title' => ts( 'Street Number' ),
                                                                               'type'  => 1 ),
-                                                'street_address'    => null,
-                                                'city'              => null,
-                                                'postal_code'       => null,
-                                                'state_province_id' => array( 'title'   => ts( 'State/Province' ), 
-                                                                              'default' => true ),
-                                                'country_id'        => array( 'title'   => ts( 'Country' ), ), ),
+                                                'street_unit'       => array( 'name'  => 'street_unit',
+                                                                              'title' => ts( 'Street Unit' ),
+                                                                              'type'  => 1 ),
+                                                'street_name'       => array( 'name'  => 'street_name',
+                                                                              'title' => ts( 'Street Name' ),
+                                                                              'type'  => 1 ),
+                                                'postal_code'       => array( 'name'  => 'postal_code',
+                                                                              'title' => ts( 'Postal Code' ),
+                                                                              'type'  => 1 ),
+                                                'city'              => array( 'name'  => 'city',
+                                                                              'title' => ts( 'City' ),
+                                                                              'type'  => 1 ),
+                                                'state_province_id' => array( 'name'    => 'state_province_id',
+                                                                              'title'   => ts( 'State/Province' ) ),
+                                                'country_id'        => array( 'name'    => 'country_id',
+                                                                              'title'   => ts( 'Country' ) ) ),
                           'filters'   =>   array( 'street_number'   => array( 'title'   => ts( 'Street Number' ),
                                                                               'type'    => 1,
                                                                               'name'    => 'street_number' ),
-                                                  'street_address'  => null,
-                                                  'city'            => null,
-                                                  ),
+                                                  'street_name'     => array( 'title'    => ts( 'Street Name' ),
+                                                                              'name'     => 'street_number',
+                                                                              'operator' => 'like' ),
+                                                  'postal_code'     => array( 'title'   => ts( 'Postal Code' ),
+                                                                              'type'    => 1,
+                                                                              'name'    => 'postal_code' ),
+                                                  'city'            => array( 'title'   => ts( 'City' ),
+                                                                              'operator' => 'like',
+                                                                              'name'    => 'city' ),
+                                                  'state_province_id' =>  array( 'name'  => 'state_province_id',
+                                                                                 'title' => ts( 'State/Province' ), 
+                                                                                 'operatorType' => 
+                                                                                 CRM_Report_Form::OP_MULTISELECT,
+                                                                                 'options'       => 
+                                                                                 CRM_Core_PseudoConstant::stateProvince()), 
+                                                  'country_id'        =>  array( 'name'         => 'country_id',
+                                                                                 'title'        => ts( 'Country' ), 
+                                                                                 'operatorType' => 
+                                                                                 CRM_Report_Form::OP_MULTISELECT,
+                                                                                 'options'       => 
+                                                                                 CRM_Core_PseudoConstant::country( ) ) ),
                           'grouping'  => 'location-fields',
                           ),
                    
                    'civicrm_email'    => 
                    array( 'dao'       => 'CRM_Core_DAO_Email',
-                          'fields'    =>  array( 'email' => array( 'default' => true ) ),
-                          'grouping'  => 'location-fields',
-                          ),
-                   
-                   'civicrm_phone'    => 
-                   array( 'dao'       => 'CRM_Core_DAO_Phone',
-                          'fields'    => array( 'phone' => null ),
+                          'fields'    =>  array( 'email' => array( 'name' => 'email',
+                                                                   'title' => ts( 'Email' ) ) ),
                           'grouping'  => 'location-fields',
                           ),
                    
                    'civicrm_activity' =>
                    array( 'dao'       => 'CRM_Activity_DAO_Activity',
                           'alias'     => 'survey_activity',
-                          'fields'    => array( 'result'           =>  array( 'name'    => 'result',
-                                                                              'title'   => ts('Status'),
-                                                                              'default' => true ),
-                                                'survey_response'  =>  array( 'title'   => ts( 'Response Codes' ),
-                                                                              'default' => true ) ),
-                          
+                          'fields'    => array( 'survey_id'        => array( 'name'         => 'source_record_id',
+                                                                             'title'        => ts( 'Survey' ),
+                                                                             'required'    => true,
+                                                                             'type'         => CRM_Utils_Type::T_INT,
+                                                                             'operatorType' => 
+                                                                             CRM_Report_Form::OP_MULTISELECT,
+                                                                             'options'      => 
+                                                                             CRM_Campaign_BAO_Survey::getSurveys( ) ),
+                                                'survey_response'  =>  array( 'name'     => 'survey_response',
+                                                                              'title'    => ts( 'Survey Responses' ) ), 
+                                                'result'           =>  array( 'name'     => 'result',
+                                                                              'required' => true,
+                                                                              'title'    => ts('Survey Result') ) ),
                           'filters'   => array( 'survey_id' => array( 'name'         => 'source_record_id',
                                                                       'title'        => ts( 'Survey' ),
                                                                       'type'         => CRM_Utils_Type::T_INT,
@@ -151,6 +204,7 @@ class CRM_Report_Form_Walklist_Survey extends CRM_Report_Form {
         
         $this->_columnHeaders = array( );
         foreach ( $this->_columns as $tableName => $table ) {
+            if ( !isset( $table['fields'] ) ) continue; 
             foreach ( $table['fields'] as $fieldName => $field ) {
                 if ( CRM_Utils_Array::value( 'required', $field ) ||
                      CRM_Utils_Array::value( $fieldName, $this->_params['fields'] ) ) {
@@ -191,9 +245,9 @@ FROM       civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom
         
         //get the survey clause in.
         if ( $this->_activityField ) {
-            $this->_from .= "INNER JOIN civicrm_activity_target civicrm_activity_target ON ( {$this->_aliases['civicrm_contact']}.id = civicrm_activity_target.target_contact_id )\n";
+            $this->_from .= "INNER JOIN civicrm_activity_target {$this->_aliases['civicrm_activity_target']} ON ( {$this->_aliases['civicrm_contact']}.id = civicrm_activity_target.target_contact_id )\n";
             $this->_from .= "INNER JOIN civicrm_activity {$this->_aliases['civicrm_activity']} ON ( {$this->_aliases['civicrm_activity']}.id = civicrm_activity_target.activity_id )\n";
-            $this->_from .= "INNER JOIN civicrm_activity_assignment civicrm_activity_assignment ON ( {$this->_aliases['civicrm_activity']}.id = civicrm_activity_assignment.activity_id )\n";
+            $this->_from .= "INNER JOIN civicrm_activity_assignment {$this->_aliases['civicrm_activity_assignment']} ON ( {$this->_aliases['civicrm_activity']}.id = {$this->_aliases['civicrm_activity_assignment']}.activity_id )\n";
         }
     }
     
@@ -236,16 +290,6 @@ FROM       civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom
                 implode( ' , ', array_keys(  $surveyActivityTypes ) ) . ' ) )';
         }
         
-        //apply filter of my voters.
-        $interviewerId = CRM_Utils_Request::retrieve( 'cid', 'Positive', CRM_Core_DAO::$_nullObject );
-        if ( !$interviewerId ) {
-            $session = CRM_Core_Session::singleton( );
-            $interviewerId = $session->get( 'userID' );
-        }
-        if ( $interviewerId ) {
-            $clauses[] = "( civicrm_activity_assignment.assignee_contact_id = {$interviewerId} )";
-        }
-        
         if ( empty( $clauses ) ) {
             $this->_where = "WHERE ( 1 ) ";
         } else {
@@ -257,7 +301,6 @@ FROM       civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom
         }
     }
     
-
     function orderBy( ) {
         $this->_orderBy = "";
         
@@ -391,10 +434,10 @@ INNER JOIN  civicrm_custom_group cg ON ( cg.id = cf.custom_group_id )
             }
             if ( $responseField->option_group_id ) {
                 //hiding labels for now
-                //$fieldValueMap[$responseField->option_group_id][$responseField->value] = $responseField->label;
+                $fieldValueMap[$responseField->option_group_id][$responseField->value] = $responseField->label;
                 
                 //lets use value, since interviewer uses the "cover sheet" to translate vlaue to label 
-                $fieldValueMap[$responseField->option_group_id][$responseField->value] = $responseField->value;
+                //$fieldValueMap[$responseField->option_group_id][$responseField->value] = $responseField->value;
             }
         }
         $responseField->free( );
@@ -462,7 +505,7 @@ INNER  JOIN  civicrm_custom_field cf ON ( cg.id = cf.custom_group_id )
             $fieldName = "custom_{$response->cfId}";
             
             //need to check does these custom data already included.
-
+            
             if ( !array_key_exists( $resTable, $this->_columns ) ) {
                 $this->_columns[$resTable]['dao']     = 'CRM_Contact_DAO_Contact'; 
                 $this->_columns[$resTable]['extends'] = $response->extends;
@@ -494,6 +537,7 @@ INNER  JOIN  civicrm_custom_field cf ON ( cg.id = cf.custom_group_id )
             $this->_columns[$resTable]['fields'][$fieldName] = $field;
             $this->_aliases[$resTable] = $this->_columns[$resTable]['alias'];
         }
+        
     }
     
 }

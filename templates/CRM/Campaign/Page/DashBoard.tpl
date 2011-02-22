@@ -114,7 +114,7 @@
           <td class="crm-survey-max_number_of_contacts">{$survey.max_number_of_contacts}</td>
           <td class="crm-survey-is_default">{if $survey.is_default}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Default{/ts}" /> {/if}</td>
           <td class="crm-survey-is_active" id="row_{$survey.id}_status">{if $survey.is_active}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}</td>
-	  <td class="crm-survey-resultset"> <a href="javascript:displayResponses({$survey.id}, '{$survey.title}', {$survey.result_id})">{ts}Response Set{/ts}</a> </td>
+	  <td class="crm-survey-resultset"> <a href="javascript:displayResponses({$survey.id}, '{$survey.title}', {$survey.result_id})">{ts}Result Set{/ts}</a> </td>
  	  <td class="crm-survey-action">{$survey.action}</td>
 	  <td class="crm-survey-voter_links">
 	  {if $survey.voterLinks}
