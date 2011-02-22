@@ -112,4 +112,4 @@ SELECT @reportOptValMaxWt  := MAX(ROUND(weight)) FROM civicrm_option_value WHERE
 INSERT INTO civicrm_option_value
   (option_group_id, {localize field='label'}label{/localize}, value, name, grouping, filter, is_default, weight,{localize field='description'} description{/localize}, is_optgroup,is_reserved, is_active, component_id, visibility_id ) 
 VALUES
-    (@reportOptGrpId, {localize}'{ts escape="sql"}Walk List Survey Report{/ts}'{/localize}, 'walklist/survey', 'CRM_Report_Form_Walklist_Survey', NULL, 0, 0,  @reportOptValMaxWt+1, {localize}'{ts escape="sql"}Provides a detailed report for your walk list survey{/ts}'{/localize}, 0, 0, 1, @campaignCompId, NULL );
+    (@reportOptGrpId, {localize}'{ts escape="sql"}Walk List Survey Report{/ts}'{/localize}, 'survey/detail', 'CRM_Report_Form_Campaign_SurveyDetails', NULL, 0, 0,  @reportOptValMaxWt+1, {localize}'{ts escape="sql"}Provides a detailed report for your walk list survey{/ts}'{/localize}, 0, 0, 1, @campaignCompId, NULL );
