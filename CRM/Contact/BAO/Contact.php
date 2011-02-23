@@ -1648,7 +1648,7 @@ ORDER BY civicrm_email.is_primary DESC";
                           $data['address'][$loc]['country'] = $value;
                         }
                     } else if ($fieldName === 'county') {
-                        $data['address'][$loc]['address']['county_id'] = $value;
+                        $data['address'][$loc]['county_id'] = $value;
                     } else if ($fieldName == 'address_name') {
                         $data['address'][$loc]['name'] = $value;
                     } else if ( substr($fieldName, 0, 14) === 'address_custom' ) {

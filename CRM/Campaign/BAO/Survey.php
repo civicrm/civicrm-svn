@@ -734,6 +734,10 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
                 if ( empty( $valueType ) || ( $valueType == $surveyTypeId ) ) {
                     $responseFields[$cacheKey][$name] = $field;
                 }
+            } else if ( in_array( 'Primary', explode( '-', $name ) ) ||
+                        CRM_Utils_Array::value( 'location_type_id', $field ) ) {
+                //get location related contact fields.
+                $responseFields[$cacheKey][$name] = $field;
             }
         }
         
@@ -763,7 +767,7 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
         
         $query = "
     SELECT  contact.id as id, 
-            contact.display_name as display_name
+            contact.sort_name as sort_name
       FROM  civicrm_contact contact 
 INNER JOIN  civicrm_activity_assignment assignment ON ( assignment.assignee_contact_id = contact.id )
 INNER JOIN  civicrm_activity activity ON ( activity.id = assignment.activity_id )
@@ -772,7 +776,7 @@ INNER JOIN  civicrm_survey survey ON ( activity.source_record_id = survey.id )
         
         $interviewer = CRM_Core_DAO::executeQuery( $query );
         while ( $interviewer->fetch( ) ) {
-            $interviewers[$interviewer->id] = $interviewer->display_name;
+            $interviewers[$interviewer->id] = $interviewer->sort_name;
         }
         
         return $interviewers;

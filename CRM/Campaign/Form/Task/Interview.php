@@ -223,7 +223,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         $this->assign( 'surveyTypeId', $this->_surveyTypeId );
         
         //pickup the uf fields.
-        $this->_surveyFields = CRM_Campaign_BAO_survey::getSurveyResponseFields( $this->_surveyId,
+        $this->_surveyFields = CRM_Campaign_BAO_Survey::getSurveyResponseFields( $this->_surveyId,
                                                                                  $this->_surveyTypeId );
         require_once 'CRM/Core/BAO/UFGroup.php';
         foreach ( $this->_contactIds as $contactId ) {
@@ -358,8 +358,36 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
                                                                $surveyFields,
                                                                $activityId,
                                                                'Activity' );
+        
         require_once 'CRM/Core/BAO/CustomValueTable.php';
         CRM_Core_BAO_CustomValueTable::store( $customParams, 'civicrm_activity', $activityId );
+        
+        //process contact data.
+        require_once 'CRM/Campaign/BAO/Survey.php';
+        $contactParams  = $fields = array( );
+        $responseFields = CRM_Campaign_BAO_Survey::getSurveyResponseFields( $params['survey_id'] );
+        if ( !empty( $responseFields ) ) {
+            foreach ( $params as $key => $value ) {
+                if ( array_key_exists( $key, $responseFields ) ) {
+                    $customFldId = CRM_Core_BAO_CustomField::getKeyID( $key );
+                    if ( $customFldId ) {
+                        if ( !array_key_exists( $customFldId, $customParams ) ) {
+                            $fields[$key] = $responseFields[$key];
+                            $contactParams[$key] = $value;
+                        }
+                    } else {
+                        $fields[$key] = $responseFields[$key];
+                        $contactParams[$key] = $value;
+                    }
+                }
+            }
+        }
+        
+        $contactId = CRM_Utils_Array::value( 'voter_id', $params );
+        if ( $contactId && !empty( $contactParams ) ) {
+            require_once 'CRM/Contact/BAO/Contact.php';
+            CRM_Contact_BAO_Contact::createProfileContact( $contactParams, $fields, $contactId );
+        }
         
         //update activity record.
         require_once 'CRM/Activity/DAO/Activity.php';
