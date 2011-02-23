@@ -23,7 +23,7 @@
   </uninstall>
   <scriptfile>script.civicrm.php</scriptfile>
   <administration>
-    <menu task="civicrm/dashboard&amp;reset=1">CiviCRM</menu>
+    <menu task="civicrm/dashboard&amp;reset=1">COM_CIVICRM_MENU</menu>
     <files folder="admin">
       <filename>admin.civicrm.php</filename>
       <filename>toolbar.civicrm.php</filename>
@@ -36,6 +36,10 @@
 {else}
       <filename>civicrm.zip</filename>
 {/if}
-    </files>
+    </files> 
+    <languages folder="admin">
+      <language tag="en-GB">language/en-GB/en-GB.com_civicrm.ini</language>
+      <language tag="en-GB">language/en-GB/en-GB.com_civicrm.sys.ini</language>
+    </languages>
   </administration>
 </extension>
