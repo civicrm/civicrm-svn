@@ -72,7 +72,7 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
                                                                                  'type'          => CRM_Utils_Type::T_INT,
                                                                                  'operatorType'  => 
                                                                                  CRM_Report_Form::OP_SELECT,
-                                                                                 'options' => $allSurveyInterviewers ) ),
+                                                                                 'options' => array( '' => ts( '- any interviewer -' ) ) + $allSurveyInterviewers ) ),
                           'grouping'  => 'survey-interviewer-fields',
                           ),
                    
@@ -104,11 +104,11 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
                           'fields'    => array( 'street_number'     => array( 'name'  => 'street_number',
                                                                               'title' => ts( 'Street Number' ),
                                                                               'type'  => 1 ),
-                                                'street_unit'       => array( 'name'  => 'street_unit',
-                                                                              'title' => ts( 'Street Unit' ),
-                                                                              'type'  => 1 ),
                                                 'street_name'       => array( 'name'  => 'street_name',
                                                                               'title' => ts( 'Street Name' ),
+                                                                              'type'  => 1 ),
+                                                'street_unit'       => array( 'name'  => 'street_unit',
+                                                                              'title' => ts( 'Street Unit' ),
                                                                               'type'  => 1 ),
                                                 'postal_code'       => array( 'name'  => 'postal_code',
                                                                               'title' => ts( 'Postal Code' ),
