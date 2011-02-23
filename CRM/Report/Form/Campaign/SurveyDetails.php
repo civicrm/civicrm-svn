@@ -61,7 +61,7 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
         }
         
         //get all interviewers.
-        $allSurveyInterviewers = CRM_Campaign_BAO_survey::getInterviewers( );
+        $allSurveyInterviewers = CRM_Campaign_BAO_Survey::getInterviewers( );
         
         $this->_columns = 
             array( 'civicrm_activity_assignment' => 
