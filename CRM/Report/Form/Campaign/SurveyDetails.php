@@ -329,9 +329,9 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
             if ( CRM_Utils_Array::value( $fldName, $groupBys ) ) {
                 $field = CRM_Utils_Array::value( $fldName, $this->_columns['civicrm_address']['group_bys'], array( ) );
                 if ( $fldName == 'street_number' ) {
-                    $this->_orderBy[] = "{$field['dbAlias']}%2";
+                    $this->_orderBy[] = "{$field['dbAlias']}%2 desc";
                 } else {
-                    $this->_orderBy[] = $field['dbAlias'];
+                    $this->_orderBy[] = "{$field['dbAlias']} desc";
                 }
             }
         }
@@ -478,11 +478,12 @@ INNER JOIN  civicrm_custom_group cg ON ( cg.id = cf.custom_group_id )
                 $responseFields[$reponseFldName][$prop] = $responseField->$prop;
             }
             if ( $responseField->option_group_id ) {
-                //hiding labels for now
-                $fieldValueMap[$responseField->option_group_id][$responseField->value] = $responseField->label;
-                
-                //lets use value, since interviewer uses the "cover sheet" to translate vlaue to label 
-                //$fieldValueMap[$responseField->option_group_id][$responseField->value] = $responseField->value;
+                //show value for print and pdf.
+                $value = $responseField->label;
+                if ( in_array( $this->_outputMode, array( 'print', 'pdf' ) ) ) {
+                    $value = $responseField->value;
+                }
+                $fieldValueMap[$responseField->option_group_id][$responseField->value] = $value;
             }
         }
         $responseField->free( );

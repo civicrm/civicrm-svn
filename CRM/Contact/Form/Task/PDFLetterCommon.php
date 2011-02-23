@@ -195,6 +195,7 @@ class CRM_Contact_Form_Task_PDFLetterCommon
             }
         }
                     
+        require_once 'api/v2/utils.php';
         require_once 'CRM/Mailing/BAO/Mailing.php';
         $mailing = new CRM_Mailing_BAO_Mailing();
         if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {

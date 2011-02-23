@@ -856,6 +856,9 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         
         case 'Contact' :
             if ( in_array( 'Activity', $groupType ) ) {
+                //CRM-5803 - do not allow activity + contact.
+                //CRM-7603 - need to support activity + contact. 
+                
                 //$errors['field_name'] = ts( 'Cannot add or update profile field type Contact with combination of Activity' ); 
             } else {
                 self::formRuleSubType( $fieldType, $groupType, $errors );
