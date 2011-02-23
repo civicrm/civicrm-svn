@@ -124,7 +124,7 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
                                                                               'type'    => 1,
                                                                               'name'    => 'street_number' ),
                                                   'street_name'     => array( 'title'    => ts( 'Street Name' ),
-                                                                              'name'     => 'street_number',
+                                                                              'name'     => 'street_name',
                                                                               'operator' => 'like' ),
                                                   'postal_code'     => array( 'title'   => ts( 'Postal Code' ),
                                                                               'type'    => 1,
