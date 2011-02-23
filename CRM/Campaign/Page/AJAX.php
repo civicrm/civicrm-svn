@@ -45,6 +45,7 @@ class CRM_Campaign_Page_AJAX
     {
         $fields = array( 'result',
                          'voter_id',
+                         'survey_id',
                          'activity_id',
                          'surveyTitle',
                          'interviewer_id',
@@ -71,6 +72,15 @@ class CRM_Campaign_Page_AJAX
              is_array( $_POST['field'][$voterId] ) ) {
             foreach( $_POST['field'][$voterId] as $fieldKey => $value ) {
                 $params[$fieldKey] = $value;
+            }
+        }
+        
+        //lets pickup contat related fields.
+        foreach ( $_POST as $key => $value ) {
+            if ( strpos( $key, "field_{$voterId}_" ) !== false &&
+                 strpos( $key, "field_{$voterId}_custom" ) === false ) {
+                $key = substr( $key, strlen( "field_{$voterId}_" ) );
+                $params[$key] = $value;
             }
         }
         

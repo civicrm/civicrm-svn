@@ -734,6 +734,10 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
                 if ( empty( $valueType ) || ( $valueType == $surveyTypeId ) ) {
                     $responseFields[$cacheKey][$name] = $field;
                 }
+            } else if ( in_array( 'Primary', explode( '-', $name ) ) ||
+                        CRM_Utils_Array::value( 'location_type_id', $field ) ) {
+                //get location related contact fields.
+                $responseFields[$cacheKey][$name] = $field;
             }
         }
         
