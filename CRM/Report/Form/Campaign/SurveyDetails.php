@@ -329,9 +329,9 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
             if ( CRM_Utils_Array::value( $fldName, $groupBys ) ) {
                 $field = CRM_Utils_Array::value( $fldName, $this->_columns['civicrm_address']['group_bys'], array( ) );
                 if ( $fldName == 'street_number' ) {
-                    $this->_orderBy[] = "{$field['dbAlias']}%2";
+                    $this->_orderBy[] = "{$field['dbAlias']}%2 desc";
                 } else {
-                    $this->_orderBy[] = $field['dbAlias'];
+                    $this->_orderBy[] = "{$field['dbAlias']} desc";
                 }
             }
         }
