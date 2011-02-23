@@ -402,7 +402,7 @@ SELECT COUNT({$this->_aliases['civicrm_grant']}.id) as count ,
                     $customFieldTitle  = CRM_Utils_Array::value( 'title', $this->_columnHeaders[$customField] );
                     $customGroupTitle  = explode( '_custom', strstr( $customField, 'civicrm_value_' ) );
                     $customGroupTitle  = $this->_columns[$customGroupTitle[0]]['group_title'];
-                    $grantStatistics[$customGroupTitle]['title'] = ts( "By {$customGroupTitle}" );
+                    $grantStatistics[$customGroupTitle]['title'] = ts('By %1', array(1 => $customGroupTitle));
                     
                     $customData = ( $customValue ) ? false : true;
                     self::getStatistics( $grantStatistics[$customGroupTitle], $customFieldTitle, $values, 
