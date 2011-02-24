@@ -155,7 +155,7 @@ class CRM_Logging_Reverter
         if (empty($diffs['civicrm_contact'])) {
             $query  = "
                 SELECT id FROM `{$this->db}`.log_civicrm_contact
-                WHERE log_conn_id = %1 AND log_date < DATE_ADD(%2, INTERVAL 10 SECOND)
+                WHERE log_conn_id = %1 AND log_date BETWEEN DATE_SUB(%2, INTERVAL 10 SECOND) AND DATE_ADD(%2, INTERVAL 10 SECOND)
                 ORDER BY log_date DESC LIMIT 1
             ";
             $params = array(
