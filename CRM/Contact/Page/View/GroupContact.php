@@ -111,6 +111,10 @@ class CRM_Contact_Page_View_GroupContact extends CRM_Core_Page {
     function run( ) {
         $this->preProcess( );
 
+        require_once 'CRM/Contact/BAO/Contact.php';
+        $displayName = CRM_Contact_BAO_Contact::displayName( $this->_contactId );
+        $this->assign( 'displayName', $displayName );
+
         if ( $this->_action == CRM_Core_Action::DELETE ) {
             $groupContactId = CRM_Utils_Request::retrieve( 'gcid', 'Positive',
                                                            CRM_Core_DAO::$_nullObject, true );

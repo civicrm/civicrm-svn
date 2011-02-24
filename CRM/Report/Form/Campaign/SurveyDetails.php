@@ -360,10 +360,160 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
     function postProcess( ) {
         // get the acl clauses built before we assemble the query
         $this->buildACLClause( $this->_aliases['civicrm_contact'] );
-        parent::postProcess();
+        
+        // get ready with post process params
+        $this->beginPostProcess( );
+        
+        // build query
+        $sql = $this->buildQuery( );
+        
+        // build array of result based on column headers. This method also allows 
+        // modifying column headers before using it to build result set i.e $rows.
+        $this->buildRows ( $sql, $rows );
+        
+        // format result set. 
+        $this->formatDisplay( $rows );
+        
+        //call local post process for only print and pdf.
+        //we do need special formatted o/p only when we do have grouping
+        $groupBys = CRM_Utils_Array::value( 'group_bys', $this->_params, array( ) );
+        if ( in_array( $this->_outputMode, array( 'print', 'pdf' ) ) &&
+             ( array_key_exists( 'street_name',   $groupBys ) || 
+               array_key_exists( 'street_number', $groupBys ) ) ) {
+            
+            $outPut          = array( );
+            $templateFile    = parent::getTemplateFileName( );
+            $grpBySteertName = CRM_Utils_Array::value( 'street_name',   $groupBys );
+            $grpBySteertNum  = CRM_Utils_Array::value( 'street_number', $groupBys );
+            
+            $pageCnt = 0;
+            $dataPerPage = array( );
+            $lastStreetName = $lastStreetNum = null;
+            foreach ( $rows as $row ) {
+                //do we need to take new page.
+                if ( $grpBySteertName && 
+                     ( $lastStreetName != CRM_Utils_Array::value( 'civicrm_address_street_name', $row ) ) ) {
+                    $pageCnt++;
+                } else if ( $grpBySteertNum && 
+                            ( $lastStreetNum != CRM_Utils_Array::value( 'civicrm_address_street_number', $row ) % 2 ) ) {
+                    $pageCnt++;
+                }
+                
+                //get the data per page.
+                $dataPerPage[$pageCnt][] = $row;
+                
+                $lastStreetName = CRM_Utils_Array::value( 'civicrm_address_street_name',   $row );
+                $lastStreetNum  = CRM_Utils_Array::value( 'civicrm_address_street_number', $row ) % 2;
+            }
+            
+            foreach ( $dataPerPage as $page ) {
+                // assign variables to templates
+                $this->doTemplateAssignment( $page );
+                $outPut[] = CRM_Core_Form::$_template->fetch( $templateFile );
+            }
+            
+            $header = $this->_formValues['report_header'];
+            $footer = $this->_formValues['report_footer'];
+            
+            //get the cover sheet.
+            $coverSheet  = $this->_surveyCoverSheet( );
+            $footerImage = preg_replace( '/<\/html>|<\/body>|<\/div>/i', '', $footer );
+            
+            $outPut = 
+                $header . 
+                $coverSheet . 
+                "<div style=\"page-break-after: always\"></div>" .
+                implode( $footerImage . 
+                         "<div style=\"page-break-after: always\"></div>",
+                         $outPut ) . 
+                $footer;
+            
+            if ( $this->_outputMode == 'print' ) {
+                echo $outPut;
+            } else {
+                require_once 'CRM/Utils/PDF/Utils.php';                     
+                CRM_Utils_PDF_Utils::html2pdf( $outPut, "CiviReport.pdf" );
+            }
+            
+            CRM_Utils_System::civiExit( );
+        } else {
+            $this->doTemplateAssignment( $rows );
+            $this->endPostProcess( $rows );
+        }
+    }
+    
+    private function _surveyCoverSheet( ) 
+    {
+        $coverSheet = null;
+        $surveyIds = CRM_Utils_Array::value( 'survey_id_value', $this->_params );
+        if ( CRM_Utils_System::isNull( $surveyIds ) ) {
+            return $coverSheet;
+        }
+        
+        $fieldIds = array( );
+        
+        $surveyResponseFields = array( );
+        foreach ( $this->_columns as $tableName => $values ) {
+            if ( !is_array( $values['fields'] ) ) continue;
+            foreach ( $values['fields'] as $name => $field ) {
+                if ( CRM_Utils_Array::value( 'isSurveyResponseField', $field ) ) {
+                    $fldId = substr( $name, 7 );
+                    $fieldIds[$fldId] = $fldId; 
+                    $surveyResponseFields[$name] = array( 'id'    => $fldId,
+                                                          'title' => $field['title'],
+                                                          'name'  => "{$tableName}_{$name}" );
+                }
+            }
+        }
+        
+        //now pickup all options.
+        $query = '
+    SELECT  field.id as id,
+            val.label as label,
+            val.value as value
+      FROM  civicrm_custom_field field
+INNER JOIN  civicrm_option_value val ON ( val.option_group_id = field.option_group_id )
+     WHERE  field.id IN (' . implode( ' , ', $fieldIds ) . ' )';
+        $field = CRM_Core_DAO::executeQuery( $query );
+        $options = array( );
+        while ( $field->fetch( ) ) {
+            $name =  "custom_{$field->id}";
+            $surveyResponseFields[$name]['options'][$field->value] = $field->label;
+        }
+        
+        //get the result values.
+        $query = '
+    SELECT  survey.id as id,
+            survey.title as title,
+            val.label as label,
+            val.value as value
+      FROM  civicrm_survey survey
+INNER JOIN  civicrm_option_value val ON ( val.option_group_id = survey.result_id ) 
+     WHERE  survey.id IN ( ' . implode( ' , ', array_values( $surveyIds ) ) .' )';
+        $resultSet = CRM_Core_DAO::executeQuery( $query );
+        $surveyResultFields = array( );
+        while ( $resultSet->fetch( ) ) {
+            $surveyResultFields[$resultSet->id]['title'] = $resultSet->title;
+            $surveyResultFields[$resultSet->id]['options'][$resultSet->value] = $resultSet->label;
+        }
+        
+        $this->assign( 'surveyResultFields',   $surveyResultFields );
+        $this->assign( 'surveyResponseFields', $surveyResponseFields );
+                
+        $templateFile = 'CRM/Report/Form/Campaign/SurveyCoverSheet.tpl';
+        $coverSheet = CRM_Core_Form::$_template->fetch( $templateFile );
+        
+        return $coverSheet; 
     }
     
     function alterDisplay( &$rows ) {
+        
+        //format the survey result data.
+        $this->_formatSurveyResult( $rows );
+        
+        //format the survey response data.
+        $this->_formatSurveyResponseData( $rows );
+        
         // custom code to alter rows
         $entryFound = false;
         foreach ( $rows as $rowNum => $row ) { 
@@ -413,8 +563,40 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
             }
         }
         
-        //format the survey response data.
-        $this->_formatSurveyResponseData( $rows );
+    }
+    
+    private function _formatSurveyResult( &$rows ) {
+        $surveyIds = CRM_Utils_Array::value( 'survey_id_value', $this->_params );
+        if ( CRM_Utils_System::isNull( $surveyIds ) ||
+             !CRM_Utils_Array::value( 'result',  $this->_params['fields'] ) ||
+             !in_array( $this->_outputMode, array( 'print', 'pdf' ) ) ) {
+            return;
+        }
+        
+        //swap the survey result label w/ value.
+        $query = '
+    SELECT  survey.id as id,
+            val.label as label, 
+            val.value as value
+      FROM  civicrm_option_value val
+INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id )
+INNER JOIN  civicrm_survey survey ON ( survey.result_id = grp.id ) 
+     WHERE  survey.id IN (' . implode( ' , ', array_values( $surveyIds ) ) .' )';
+        
+        $result = CRM_Core_DAO::executeQuery( $query );
+        $resultSet = array( );
+        while ( $result->fetch( ) ) {
+            $resultSet[$result->id][$result->value] = $result->label;
+        }
+        foreach ( $rows as &$row ) {
+            $resultLabel = CRM_Utils_Array::value( 'civicrm_activity_result', $row );
+            if ( $resultLabel ) {
+                $resultValue = array_search( $resultLabel, 
+                                             CRM_Utils_Array::value( $row['civicrm_activity_survey_id'], 
+                                                                     $resultSet, array( ) ) );
+                if ( $resultValue ) $row['civicrm_activity_result'] = $resultValue; 
+            }
+        }
     }
     
     private function _formatSurveyResponseData( &$rows ) 
@@ -449,7 +631,7 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
         }
         if ( !$hasResponseData ) return; 
         
-        //start response data fomatting.
+        //start response data formatting.
         $query = ' 
     SELECT  cf.id,
             cf.data_type,

@@ -103,16 +103,18 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
       $endDate  = date('F jS, Y', strtotime("+2 year -1 day"));
 
       // verify membership renewed
-      $this->webtestVerifyTabularData( array(
-                                             'Member'          => $contactName,
-                                             'Membership Type' => 'General',
-                                             'Status'          => 'Current',
-                                             'Source'          => $sourceText,
-                                             'Member Since'    => $joinDate,
-                                             'Start date'      => $startDate,
-                                             'End date'        => $endDate,
-                                             )
-                                       );
+      $verifyMembershipRenewData = array(
+                                         'Member'          => $contactName,
+                                         'Membership Type' => 'General',
+                                         'Status'          => 'Current',
+                                         'Source'          => $sourceText,
+                                         'Member Since'    => $joinDate,
+                                         'Start date'      => $startDate,
+                                         'End date'        => $endDate,
+                                         );
+      foreach ( $verifyMembershipRenewData as $label => $value ) {
+          $this->verifyText( "xpath=//form[@id='MembershipView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", preg_quote( $value ) );   
+      }
   }
 
   function testOfflineMemberRenewOverride( ) 
@@ -207,16 +209,100 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
       $startDate = date('F jS, Y', strtotime("+1 month"));
       $endDate   = date('F jS, Y', strtotime("+4 year 1 month -1 day"));
 
-      // verify membership renewed
-      $this->webtestVerifyTabularData( array(
-                                             'Member'          => $contactName,
-                                             'Membership Type' => 'General',
-                                             'Status'          => 'New',
-                                             'Source'          => $sourceText,
-                                             'Member Since'    => $joinDate,
-                                             'Start date'      => $startDate,
-                                             'End date'        => $endDate,
-                                             )
+      // verify membership renew override
+      $verifyMembershipRenewOverrideData =  array(
+                                                  'Member'          => $contactName,
+                                                  'Membership Type' => 'General',
+                                                  'Status'          => 'New',
+                                                  'Source'          => $sourceText,
+                                                  'Member Since'    => $joinDate,
+                                                  'Start date'      => $startDate,
+                                                  'End date'        => $endDate,
+                                                  );
+      foreach ( $verifyMembershipRenewOverrideData as $label => $value ) {
+          $this->verifyText( "xpath=//form[@id='MembershipView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", preg_quote( $value ) );   
+      }
+  }
+  
+  function testOfflineMembershipRenewChangeType( )
+  {
+      $this->open( $this->sboxPath );
+      $this->webtestLogin( );
+      
+      $firstName = substr( sha1( rand( ) ), 0, 7 );
+      $this->webtestAddContact( $firstName, "Memberson", "{$firstName}@memberson.com" );
+      $contactName = "$firstName Memberson";
+      
+      // click through to the membership tab
+      $this->click( 'css=li#tab_member a' );
+      
+      $this->waitForElementPresent( 'link=Add Membership' );
+      $this->click( 'link=Add Membership' );
+      
+      $this->waitForElementPresent( '_qf_Membership_cancel-bottom' );
+      
+      // fill in Membership Organization and Type
+      $this->select( 'membership_type_id[1]', 'value=1' );
+      
+      // fill in Source
+      $sourceText = 'Offline Membership Renewal Webtest';
+      $this->type( 'source', $sourceText );
+      
+      // Fill Member Since
+      $this->webtestFillDate( 'join_date', '-2 year' );
+
+      // Let Start Date and End Date be auto computed
+      
+      // Clicking save.
+      $this->click( '_qf_Membership_upload' );
+      $this->waitForPageToLoad( '30000' );
+      
+      // page was loaded
+      $this->waitForTextPresent( $sourceText );
+      
+      // Is status message correct?
+      $this->assertTrue( $this->isTextPresent( "General membership for $firstName Memberson has been added."), "Status message didn't show up after saving!" );
+
+      $this->waitForElementPresent( "xpath=//div[@id='Memberships']//table/tbody/tr/td[7]/span[2][text()='more ']/ul/li/a[text()='Renew']" );
+      
+      // click through to the Membership Renewal Link
+      $this->click( "xpath=//div[@id='Memberships']//table/tbody/tr/td[7]/span[2][text()='more ']/ul/li/a[text()='Renew']" );
+      
+      $this->waitForElementPresent( '_qf_MembershipRenewal_cancel-bottom' );
+      
+      //change membership type
+      $this->click( "changeMembershipOrgType" );
+      $this->select( 'membership_type_id[1]', 'value=2' );
+      // save the renewed membership
+      $this->click( '_qf_MembershipRenewal_upload-bottom' );
+
+      $this->waitForPageToLoad( '30000' );
+      
+      // page was loaded
+      $this->waitForTextPresent( $sourceText );
+      
+      $this->waitForElementPresent( "xpath=//div[@id='Memberships']//table/tbody/tr/td[7]/span/a[text()='View']" );
+      
+      // click through to the membership view screen
+      $this->click( "xpath=//div[@id='Memberships']//table/tbody/tr/td[7]/span/a[text()='View']" );
+
+      $this->waitForElementPresent( '_qf_MembershipView_cancel-bottom' );
+      
+      $joinDate = $startDate = date( 'F jS, Y', strtotime( "-2 year" ) );
+      $endDate  = date( 'F jS, Y', strtotime( "+1 year -1 day" ) );
+      
+      // verify membership renewed and the membership type is changed
+        $verifyMembershipData =  array(
+                                       'Member'          => $contactName,
+                                       'Membership Type' => 'Student',
+                                       'Status'          => 'Current',
+                                       'Source'          => $sourceText,
+                                       'Member Since'    => $joinDate,
+                                       'Start date'      => $startDate,
+                                       'End date'        => $endDate,
                                        );
+        foreach ( $verifyMembershipData as $label => $value ) {
+            $this->verifyText( "xpath=//form[@id='MembershipView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", preg_quote( $value ) );   
+        }
   }
 }
