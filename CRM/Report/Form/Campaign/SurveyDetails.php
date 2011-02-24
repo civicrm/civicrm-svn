@@ -381,20 +381,39 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
              ( array_key_exists( 'street_name',   $groupBys ) || 
                array_key_exists( 'street_number', $groupBys ) ) ) {
             
-            $outPut = array( );
-            $header = $this->_formValues['report_header'];
-            $footer = $this->_formValues['report_footer'];
-            $templateFile = parent::getTemplateFileName( );
+            $outPut          = array( );
+            $templateFile    = parent::getTemplateFileName( );
+            $grpBySteertName = CRM_Utils_Array::value( 'street_name',   $groupBys );
+            $grpBySteertNum  = CRM_Utils_Array::value( 'street_number', $groupBys );
             
+            $pageCnt = 0;
+            $dataPerPage = array( );
+            $lastStreetName = $lastStreetNum = null;
             foreach ( $rows as $row ) {
-                $values = array( $row );
+                //do we need to take new page.
+                if ( $grpBySteertName && 
+                     ( $lastStreetName != CRM_Utils_Array::value( 'civicrm_address_street_name', $row ) ) ) {
+                    $pageCnt++;
+                } else if ( $grpBySteertNum && 
+                            ( $lastStreetNum != CRM_Utils_Array::value( 'civicrm_address_street_number', $row ) % 2 ) ) {
+                    $pageCnt++;
+                }
                 
+                //get the data per page.
+                $dataPerPage[$pageCnt][] = $row;
+                
+                $lastStreetName = CRM_Utils_Array::value( 'civicrm_address_street_name',   $row );
+                $lastStreetNum  = CRM_Utils_Array::value( 'civicrm_address_street_number', $row ) % 2;
+            }
+            
+            foreach ( $dataPerPage as $page ) {
                 // assign variables to templates
-                $this->doTemplateAssignment( $values );
-                
+                $this->doTemplateAssignment( $page );
                 $outPut[] = CRM_Core_Form::$_template->fetch( $templateFile );
             }
             
+            $header = $this->_formValues['report_header'];
+            $footer = $this->_formValues['report_footer'];
             $footerImage = preg_replace( '/<\/html>|<\/body>|<\/div>/i', '', $footer );
             $outPut = $header . implode( $footerImage . 
                                          "<div style=\"page-break-after: always\"></div>",
