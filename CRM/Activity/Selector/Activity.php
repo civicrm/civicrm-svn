@@ -210,8 +210,8 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
             self::$_actionLinks = self::$_actionLinks +  array ( CRM_Core_Action::ADD =>
                                                                  array( 
                                                                        'name'     => ts('File On Case'),
-                                                                       'url'      => CRM_Utils_System::currentPath( ),
-                                                                       'extra'    => 'onClick="Javascript:fileOnCase( \'file\', \'%%id%%\' ); return false;"',
+                                                                       'url'      => '#',
+                                                                       'extra'    => 'onclick="javascript:fileOnCase( \'file\', \'%%id%%\' ); return false;"',
                                                                        'title'    => ts('File On Case') ) );
         }
 
