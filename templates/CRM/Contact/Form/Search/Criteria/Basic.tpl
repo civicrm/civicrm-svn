@@ -33,14 +33,14 @@
                 {$form.email.html|crmReplace:class:medium}
             </td>
             <td>
+                {$form.uf_group_id.label} {help id="id-search-views"}<br />{$form.uf_group_id.html}
+            </td>
+            <td>
                 {if $form.component_mode}  
                     {$form.component_mode.label} {help id="id-display-results"}<br />{$form.component_mode.html}
                 {else}
                     &nbsp;
                 {/if}
-            </td>
-            <td>
-                {$form.uf_group_id.label} {help id="id-search-views"}<br />{$form.uf_group_id.html}
             </td>
             <td class="label"><div class="crm-submit-buttons" style="margin-top:1em;">{$form.buttons.html}</div></td>       
         </tr>
@@ -86,7 +86,7 @@
 {/if}
 
 {if $form.contact_tags}
-            <td colspan="3"><label>{ts}Tag(s){/ts}</label>
+            <td><label>{ts}Tag(s){/ts}</label>
                 {$form.contact_tags.html}
                 {literal}
                 <script type="text/javascript">
@@ -99,12 +99,22 @@
                     respectParents: true
                 });
 
+
                 </script>
                 {/literal}   
             </td>
 {else}
-            <td colspan="3">&nbsp;</td>
+            <td>&nbsp;</td>
 {/if}
+
+{if $form.display_relationship_type}
+            <td colspan="2"><label>{$form.display_relationship_type.label}</label><br />
+                {$form.display_relationship_type.html}
+            </td>
+{else}
+            <td colspan="2">&nbsp;</td>
+{/if}
+	
 	    </tr>
         <tr>
             <td>
