@@ -66,13 +66,24 @@ function generateJoomlaConfig( $version ) {
     fputs( $fd, $xml );
     fclose( $fd );
 
-    require_once 'CRM/Core/Config.php';
-    $config =& CRM_Core_Config::singleton( );
-
     require_once 'CRM/Core/Permission.php';
     require_once 'CRM/Utils/String.php';
-    $permissions =& CRM_Core_Permission::basicPermissions( true );
+    $permissions =& CRM_Core_Permission::getCorePermissions( );
 
+    $crmFolderDir = $sourceCheckoutDir . 'CRM';
+    
+    require_once 'CRM/Core/Component.php';
+    $components = CRM_Core_Component::getComponentsFromFile( $crmFolderDir );
+    foreach ( $components as $comp ) {
+        $perm = $comp->getPermissions( );
+        if ( $perm ) {
+            $info = $comp->getInfo( );
+            foreach ( $perm as $p ) {
+                $permissions[$p] = $info['translatedName'] . ': ' . $p;
+            }
+        }
+    }
+ 
     $perms_array = array();
     foreach ($permissions as $perm => $title) {
         //order matters here, but we deal with that later

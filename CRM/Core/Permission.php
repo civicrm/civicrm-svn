@@ -364,34 +364,7 @@ class CRM_Core_Permission {
 
         if ( ! $permissions ) {
             $prefix = ts( 'CiviCRM' ) . ': ';
-            $permissions = 
-                array(
-                      'add contacts'                      => $prefix . ts( 'add contacts' ),
-                      'view all contacts'                 => $prefix . ts( 'view all contacts' ),
-                      'edit all contacts'                 => $prefix . ts( 'edit all contacts' ),
-                      'delete contacts'                   => $prefix . ts( 'delete contacts' ),
-                      'access deleted contacts'           => $prefix . ts( 'access deleted contacts' ),
-                      'import contacts'                   => $prefix . ts( 'import contacts' ),
-                      'edit groups'                       => $prefix . ts( 'edit groups' ),
-                      'administer CiviCRM'                => $prefix . ts( 'administer CiviCRM' ),
-                      'access uploaded files'             => $prefix . ts( 'access uploaded files' ),
-                      'profile listings and forms'        => $prefix . ts( 'profile listings and forms' ),
-                      'profile listings'                  => $prefix . ts( 'profile listings' ),
-                      'profile create'                    => $prefix . ts( 'profile create' ),
-                      'profile edit'                      => $prefix . ts( 'profile edit' ),
-                      'profile view'                      => $prefix . ts( 'profile view' ),
-                      'access all custom data'            => $prefix . ts( 'access all custom data' ),
-                      'view all activities'               => $prefix . ts( 'view all activities' ),
-                      'delete activities'                 => $prefix . ts( 'delete activities' ),
-                      'access CiviCRM'                    => $prefix . ts( 'access CiviCRM' ),
-                      'access Contact Dashboard'          => $prefix . ts( 'access Contact Dashboard' ),
-                      'translate CiviCRM'                 => $prefix . ts( 'translate CiviCRM' ),
-                      'administer Tagsets'                => $prefix . ts( 'administer Tagsets' ),
-                      'administer reserved tags'          => $prefix . ts( 'administer reserved tags' ),
-                      'administer dedupe rules'           => $prefix . ts( 'administer dedupe rules' ),
-                      'merge duplicate contacts'          => $prefix . ts( 'merge duplicate contacts' ),
-                      'view all notes'                    => $prefix . ts( 'view all notes' ),
-                      );
+            $permissions = self::getCorePermissions( ); 
 
             if ( defined( 'CIVICRM_MULTISITE' ) && CIVICRM_MULTISITE ) {
                 $permissions['administer Multiple Organizations'] = 
@@ -406,7 +379,7 @@ class CRM_Core_Permission {
             } else {
                 $components = CRM_Core_Component::getComponents( ); 
             }
-                
+
             foreach ( $components as $comp ) {
                 $perm = $comp->getPermissions( );
                 if ( $perm ) {
@@ -420,7 +393,41 @@ class CRM_Core_Permission {
 
         return $permissions;
     }
-    
+
+    static function getCorePermissions( ) {
+        $prefix = ts( 'CiviCRM' ) . ': ';
+        $permissions = 
+            array(
+                   'add contacts'                      => $prefix . ts( 'add contacts' ),
+                   'view all contacts'                 => $prefix . ts( 'view all contacts' ),
+                   'edit all contacts'                 => $prefix . ts( 'edit all contacts' ),
+                   'delete contacts'                   => $prefix . ts( 'delete contacts' ),
+                   'access deleted contacts'           => $prefix . ts( 'access deleted contacts' ),
+                   'import contacts'                   => $prefix . ts( 'import contacts' ),
+                   'edit groups'                       => $prefix . ts( 'edit groups' ),
+                   'administer CiviCRM'                => $prefix . ts( 'administer CiviCRM' ),
+                   'access uploaded files'             => $prefix . ts( 'access uploaded files' ),
+                   'profile listings and forms'        => $prefix . ts( 'profile listings and forms' ),
+                   'profile listings'                  => $prefix . ts( 'profile listings' ),
+                   'profile create'                    => $prefix . ts( 'profile create' ),
+                   'profile edit'                      => $prefix . ts( 'profile edit' ),
+                   'profile view'                      => $prefix . ts( 'profile view' ),
+                   'access all custom data'            => $prefix . ts( 'access all custom data' ),
+                   'view all activities'               => $prefix . ts( 'view all activities' ),
+                   'delete activities'                 => $prefix . ts( 'delete activities' ),
+                   'access CiviCRM'                    => $prefix . ts( 'access CiviCRM' ),
+                   'access Contact Dashboard'          => $prefix . ts( 'access Contact Dashboard' ),
+                   'translate CiviCRM'                 => $prefix . ts( 'translate CiviCRM' ),
+                   'administer Tagsets'                => $prefix . ts( 'administer Tagsets' ),
+                   'administer reserved tags'          => $prefix . ts( 'administer reserved tags' ),
+                   'administer dedupe rules'           => $prefix . ts( 'administer dedupe rules' ),
+                   'merge duplicate contacts'          => $prefix . ts( 'merge duplicate contacts' ),
+                   'view all notes'                    => $prefix . ts( 'view all notes' ),
+               );
+       
+        return $permissions;
+    }
+
     /** 
      * Validate user permission across 
      * edit or view or with supportable acls.
