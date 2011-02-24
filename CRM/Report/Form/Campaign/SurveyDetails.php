@@ -435,6 +435,13 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
     
     
     function alterDisplay( &$rows ) {
+        
+        //format the survey result data.
+        $this->_formatSurveyResult( $rows );
+        
+        //format the survey response data.
+        $this->_formatSurveyResponseData( $rows );
+        
         // custom code to alter rows
         $entryFound = false;
         foreach ( $rows as $rowNum => $row ) { 
@@ -484,8 +491,40 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
             }
         }
         
-        //format the survey response data.
-        $this->_formatSurveyResponseData( $rows );
+    }
+    
+    private function _formatSurveyResult( &$rows ) {
+        $surveyIds = CRM_Utils_Array::value( 'survey_id_value', $this->_params );
+        if ( CRM_Utils_System::isNull( $surveyIds ) ||
+             !CRM_Utils_Array::value( 'result',  $this->_params['fields'] ) ||
+             !in_array( $this->_outputMode, array( 'print', 'pdf' ) ) ) {
+            return;
+        }
+        
+        //swap the survey result label w/ value.
+        $query = '
+    SELECT  survey.id as id,
+            val.label as label, 
+            val.value as value
+      FROM  civicrm_option_value val
+INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id )
+INNER JOIN  civicrm_survey survey ON ( survey.result_id = grp.id ) 
+     WHERE  survey.id IN (' . implode( ' , ', array_values( $surveyIds ) ) .' )';
+        
+        $result = CRM_Core_DAO::executeQuery( $query );
+        $resultSet = array( );
+        while ( $result->fetch( ) ) {
+            $resultSet[$result->id][$result->value] = $result->label;
+        }
+        foreach ( $rows as &$row ) {
+            $resultLabel = CRM_Utils_Array::value( 'civicrm_activity_result', $row );
+            if ( $resultLabel ) {
+                $resultValue = array_search( $resultLabel, 
+                                             CRM_Utils_Array::value( $row['civicrm_activity_survey_id'], 
+                                                                     $resultSet, array( ) ) );
+                if ( $resultValue ) $row['civicrm_activity_result'] = $resultValue; 
+            }
+        }
     }
     
     private function _formatSurveyResponseData( &$rows ) 
