@@ -65,6 +65,9 @@ function generateJoomlaConfig( $version ) {
     $fd = fopen( $output, "w" );
     fputs( $fd, $xml );
     fclose( $fd );
+    
+    require_once 'CRM/Core/Config.php';
+    $config = CRM_Core_Config::singleton( );
 
     require_once 'CRM/Core/Permission.php';
     require_once 'CRM/Utils/String.php';
