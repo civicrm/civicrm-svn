@@ -175,6 +175,10 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
     static function &singleton($loadFromDB = true, $force = false)
     {
         if ( self::$_singleton === null || $force ) {
+            // goto a simple error handler
+            PEAR::setErrorHandling( PEAR_ERROR_CALLBACK,
+                                    array( 'CRM_Core_Error', 'simpleHandler' ) );
+            
             // lets ensure we set E_DEPRECATED to minimize errors
             // CRM-6327
             if ( defined( 'E_DEPRECATED' ) ) {
@@ -663,5 +667,6 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
         $this->userFramework       = $userFramework;
         $this->_setUserFrameworkConfig( $userFramework );
     }
-    
+
+
 } // end CRM_Core_Config

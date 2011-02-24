@@ -215,6 +215,27 @@ class CRM_Core_Error extends PEAR_ErrorStack {
         self::abend(1);
     }
 
+    // this function is used to trap and print errors
+    // during system initialization time. Hence the error
+    // message is quite ugly
+    public function simpleHandler( $pearError ) {
+
+        // create the error array
+        $error = array();
+        $error['callback']    = $pearError->getCallback();
+        $error['code']        = $pearError->getCode();
+        $error['message']     = $pearError->getMessage();
+        $error['mode']        = $pearError->getMode();
+        $error['debug_info']  = $pearError->getDebugInfo();
+        $error['type']        = $pearError->getType();
+        $error['user_info']   = $pearError->getUserInfo();
+        $error['to_string']   = $pearError->toString();
+
+        $errorDetails = CRM_Core_Error::debug( 'Initialization Error', $error );
+        CRM_Core_Error::backtrace( );
+        exit( 0 );
+    }
+
     /**
      * Handle errors raised using the PEAR Error Stack.
      *
@@ -490,7 +511,6 @@ class CRM_Core_Error extends PEAR_ErrorStack {
 
     /* used for the API, rise the exception instead of catching/fatal it */
     public static function setRaiseException( ) {
-        //deprecated        PEAR::setErrorHandling( PEAR_ERROR_EXCEPTION);
         PEAR::setErrorHandling( PEAR_ERROR_CALLBACK,  array( 'CRM_Core_Error', 'exceptionHandler' ) );
     }
 
@@ -504,15 +524,6 @@ class CRM_Core_Error extends PEAR_ErrorStack {
     }
     
     public static function exceptionHandler ($pearError) {
-        $error = array();
-        $error['code']        = $pearError->getCode();
-        $error['message']     = $pearError->getMessage();
-        $error['mode']        = $pearError->getMode();
-        $error['debug_info']  = $pearError->getDebugInfo();
-        $error['type']        = $pearError->getType();
-        $error['user_info']   = $pearError->getUserInfo();
-        $error['to_string']   = $pearError->toString();
-
         throw new PEAR_Exception($pearError->getMessage(),$pearError);   
     }
     
