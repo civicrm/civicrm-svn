@@ -58,7 +58,12 @@ var checkSimilar =  {$checkSimilar};
            }
            msg = msg+ '<table class="matching-contacts-actions">';
            cj.each(data, function(i,contact){
+	   if ( contact.contact_id ) {
+	     if ( !(contact.email) ) {
+	       contact.email = '';
+	     }
              msg = msg + '<tr><td><a href="'+viewIndividual+contact.contact_id+'">'+ contact.display_name +'</a></td><td>'+contact.email+'</td><td class="action-items"><a class="action-item action-item-first" href="'+viewIndividual+contact.contact_id+'">{/literal}{ts}View{/ts}{literal}</a><a class="action-item" href="'+editIndividual+contact.contact_id+'">{/literal}{ts}Edit{/ts}{literal}</a></td></tr>';
+	   }
            });
            msg = msg+ '</table>';
            cj('#last_name').parent().parent().after(msg+'</div><td></tr>');
