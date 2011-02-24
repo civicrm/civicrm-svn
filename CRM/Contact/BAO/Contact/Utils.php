@@ -538,7 +538,9 @@ WHERE id={$contactId}; ";
         CRM_Contact_Form_Edit_Address::fixStateSelect( $form,
                                                        'address[1][country_id]',
                                                        'address[1][state_province_id]',
-                                                       $countryID );
+                                                       "address[1][county_id]",
+                                                       $countryID,
+                                                       $stateID );
     }
 
     

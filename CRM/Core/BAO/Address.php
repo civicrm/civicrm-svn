@@ -493,7 +493,7 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
                         );
         
         if( isset( $this->county_id ) && $this->county_id ) {
-            $fields['county'] = CRM_Core_Pseudoconstant::county($this->county_id);
+            $fields['county'] = CRM_Core_PseudoConstant::county($this->county_id);
         } else {
             $fields['county'] = null;
         }
@@ -615,7 +615,11 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
                     CRM_Contact_Form_Edit_Address::fixStateSelect( $form,
                                                               $match['country'],
                                                               $match['state_province'],
+                                                              CRM_Utils_Array::value( 'county',
+                                                                                      $match ),
                                                               CRM_Utils_Array::value( $match['country'],
+                                                                                      $defaults ),
+                                                              CRM_Utils_Array::value( $match['state_province'],
                                                                                       $defaults ) );
                 } else {
                     unset( $config->stateCountryMap[$index] );

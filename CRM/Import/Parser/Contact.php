@@ -1373,10 +1373,12 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     break;
                 case 'county':
                     if ( !empty( $value ) ) {
-                        $countyNames = CRM_Core_PseudoConstant::county( );
                         foreach ( $value as $county ) {
-                            if ( !in_array( $county['county'], $countyNames ) ) {
-                                self::addToErrorMsg( ts('County input value not in county table: The County value appears to be invalid. It does not match any value in CiviCRM table of counties.'), $errorMessage );
+                            if( $county['county'] ) {
+                                $countyNames = CRM_Core_PseudoConstant::county( );
+                                if ( !in_array( $county['county'], $countyNames ) ) {
+                                    self::addToErrorMsg( ts('County input value not in county table: The County value appears to be invalid. It does not match any value in CiviCRM table of counties.'), $errorMessage );
+                                }
                             }
                         }
                     }

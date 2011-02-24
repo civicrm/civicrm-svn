@@ -540,9 +540,14 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
                                                       $reverse );
                     }
                     
+                    if ( ! empty( $values['state_province_id'] ) ) {
+                        $countyList = CRM_Core_PseudoConstant::countyForState( $values['state_province_id'] );
+                    } else {
+                        $countyList = CRM_Core_PseudoConstant::county( );
+                    }
                     CRM_Utils_Array::lookupValue( $values, 
                                                   'county', 
-                                                  CRM_Core_PseudoConstant::county( ), 
+                                                  $countyList, 
                                                   $reverse );
                 }
                 

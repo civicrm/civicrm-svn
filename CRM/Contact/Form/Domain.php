@@ -127,8 +127,10 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
                     CRM_Contact_Form_Edit_Address::fixStateSelect( $this,
                                                               "address[$key][country_id]",
                                                               "address[$key][state_province_id]",
+                                                              "address[$key][county_id]",
                                                               CRM_Utils_Array::value( 'country_id', $value,
-                                                                                      $config->defaultContactCountry ) );
+                                                                                      $config->defaultContactCountry ),
+                                                              CRM_Utils_Array::value( 'state_province_id', $value ) );
                 }
             }
         }

@@ -39,6 +39,19 @@ cj(function()
 });
 {/literal}
 {/if}
+{if $stateCountryMap.state_province && $stateCountryMap.county}
+{literal}
+cj(function()
+{
+{/literal}
+	    stateProvinceID = "#{$stateCountryMap.state_province}"
+        countyID       = "#{$stateCountryMap.county}"
+        callbackURL     = "{crmURL p='civicrm/ajax/jqCounty' h=0}"
+{literal}
+	cj(stateProvinceID).chainSelect(countyID, callbackURL, null );
+});
+{/literal}
+{/if}
 {/foreach}
 </script>
 {/if}
