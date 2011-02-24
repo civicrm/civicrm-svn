@@ -880,12 +880,28 @@ class CRM_Utils_System {
         }
     }
 
+    /*
+     * Get logged in user's IP address. 
+     * 
+     * Get IP address from HTTP Header. If the CMS is Drupal then use the Drupal function 
+     * as this also handles reverse proxies (based on proper configuration in settings.php)
+     * 
+     * @return string ip address of logged in user
+     */
     static function ipAddress( ) {
         $address = CRM_Utils_Array::value( 'REMOTE_ADDR', $_SERVER );
+
+        $config   = CRM_Core_Config::singleton( );
+        if ( $config->userFramework == 'Drupal' ) {
+            //drupal function handles the server being behind a proxy securely
+            return ip_address( );   
+        }
+        
         // hack for safari
         if ( $address == '::1' ) {
             $address = '127.0.0.1';
         }
+
         return $address;
     }
 
