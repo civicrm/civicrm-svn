@@ -360,8 +360,66 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
     function postProcess( ) {
         // get the acl clauses built before we assemble the query
         $this->buildACLClause( $this->_aliases['civicrm_contact'] );
-        parent::postProcess();
+        
+        // get ready with post process params
+        $this->beginPostProcess( );
+        
+        // build query
+        $sql = $this->buildQuery( );
+        
+        // build array of result based on column headers. This method also allows 
+        // modifying column headers before using it to build result set i.e $rows.
+        $this->buildRows ( $sql, $rows );
+        
+        // format result set. 
+        $this->formatDisplay( $rows );
+        
+        //call local post process for only print and pdf.
+        //we do need special formatted o/p only when we do have grouping
+        $groupBys = CRM_Utils_Array::value( 'group_bys', $this->_params, array( ) );
+        if ( in_array( $this->_outputMode, array( 'print', 'pdf' ) ) &&
+             ( array_key_exists( 'street_name',   $groupBys ) || 
+               array_key_exists( 'street_number', $groupBys ) ) ) {
+            
+            $outPut = array( );
+            $header = $this->_formValues['report_header'];
+            $footer = $this->_formValues['report_footer'];
+            $templateFile = parent::getTemplateFileName( );
+            
+            foreach ( $rows as $row ) {
+                $values = array( $row );
+                
+                // assign variables to templates
+                $this->doTemplateAssignment( $values );
+                
+                $data = CRM_Core_Form::$_template->fetch( $templateFile );
+                
+                if ( $this->_outputMode == 'print' ) {
+                    $outPut[0] = CRM_Utils_Array::value( 0, $outPut ) . $header . $data . $footer;
+                } else {
+                    $outPut[] = $data;
+                }
+            }
+            
+            if ( $this->_outputMode == 'print' ) {
+                echo array_pop( $outPut );
+            } else {
+                $footerImage = preg_replace( '/<\/html>|<\/body>|<\/div>/i', '', $footer ); 
+                $outPut = $header . implode( $footerImage . 
+                                             "<div style=\"page-break-after: always\"></div>",
+                                             $outPut ) . $footer;
+                
+                require_once 'CRM/Utils/PDF/Utils.php';                     
+                CRM_Utils_PDF_Utils::html2pdf( $outPut, "CiviReport.pdf" );
+            }
+            
+            CRM_Utils_System::civiExit( );
+        } else {
+            $this->doTemplateAssignment( $rows );
+            $this->endPostProcess( $rows );
+        }
     }
+    
     
     function alterDisplay( &$rows ) {
         // custom code to alter rows
