@@ -392,23 +392,17 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
                 // assign variables to templates
                 $this->doTemplateAssignment( $values );
                 
-                $data = CRM_Core_Form::$_template->fetch( $templateFile );
-                
-                if ( $this->_outputMode == 'print' ) {
-                    $outPut[0] = CRM_Utils_Array::value( 0, $outPut ) . $header . $data . $footer;
-                } else {
-                    $outPut[] = $data;
-                }
+                $outPut[] = CRM_Core_Form::$_template->fetch( $templateFile );
             }
             
+            $footerImage = preg_replace( '/<\/html>|<\/body>|<\/div>/i', '', $footer );
+            $outPut = $header . implode( $footerImage . 
+                                         "<div style=\"page-break-after: always\"></div>",
+                                         $outPut ) . $footer;
+            
             if ( $this->_outputMode == 'print' ) {
-                echo array_pop( $outPut );
+                echo $outPut;
             } else {
-                $footerImage = preg_replace( '/<\/html>|<\/body>|<\/div>/i', '', $footer ); 
-                $outPut = $header . implode( $footerImage . 
-                                             "<div style=\"page-break-after: always\"></div>",
-                                             $outPut ) . $footer;
-                
                 require_once 'CRM/Utils/PDF/Utils.php';                     
                 CRM_Utils_PDF_Utils::html2pdf( $outPut, "CiviReport.pdf" );
             }
