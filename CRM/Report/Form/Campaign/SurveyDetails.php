@@ -414,10 +414,19 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
             
             $header = $this->_formValues['report_header'];
             $footer = $this->_formValues['report_footer'];
+            
+            //get the cover sheet.
+            $coverSheet  = $this->_surveyCoverSheet( );
             $footerImage = preg_replace( '/<\/html>|<\/body>|<\/div>/i', '', $footer );
-            $outPut = $header . implode( $footerImage . 
-                                         "<div style=\"page-break-after: always\"></div>",
-                                         $outPut ) . $footer;
+            
+            $outPut = 
+                $header . 
+                $coverSheet . 
+                "<div style=\"page-break-after: always\"></div>" .
+                implode( $footerImage . 
+                         "<div style=\"page-break-after: always\"></div>",
+                         $outPut ) . 
+                $footer;
             
             if ( $this->_outputMode == 'print' ) {
                 echo $outPut;
@@ -433,6 +442,69 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
         }
     }
     
+    private function _surveyCoverSheet( ) 
+    {
+        $coverSheet = null;
+        $surveyIds = CRM_Utils_Array::value( 'survey_id_value', $this->_params );
+        if ( CRM_Utils_System::isNull( $surveyIds ) ) {
+            return $coverSheet;
+        }
+        
+        $fieldIds = array( );
+        
+        $surveyResponseFields = array( );
+        foreach ( $this->_columns as $tableName => $values ) {
+            if ( !is_array( $values['fields'] ) ) continue;
+            foreach ( $values['fields'] as $name => $field ) {
+                if ( CRM_Utils_Array::value( 'isSurveyResponseField', $field ) ) {
+                    $fldId = substr( $name, 7 );
+                    $fieldIds[$fldId] = $fldId; 
+                    $surveyResponseFields[$name] = array( 'id'    => $fldId,
+                                                          'title' => $field['title'],
+                                                          'name'  => "{$tableName}_{$name}" );
+                }
+            }
+        }
+        
+        //now pickup all options.
+        $query = '
+    SELECT  field.id as id,
+            val.label as label,
+            val.value as value
+      FROM  civicrm_custom_field field
+INNER JOIN  civicrm_option_value val ON ( val.option_group_id = field.option_group_id )
+     WHERE  field.id IN (' . implode( ' , ', $fieldIds ) . ' )';
+        $field = CRM_Core_DAO::executeQuery( $query );
+        $options = array( );
+        while ( $field->fetch( ) ) {
+            $name =  "custom_{$field->id}";
+            $surveyResponseFields[$name]['options'][$field->value] = $field->label;
+        }
+        
+        //get the result values.
+        $query = '
+    SELECT  survey.id as id,
+            survey.title as title,
+            val.label as label,
+            val.value as value
+      FROM  civicrm_survey survey
+INNER JOIN  civicrm_option_value val ON ( val.option_group_id = survey.result_id ) 
+     WHERE  survey.id IN ( ' . implode( ' , ', array_values( $surveyIds ) ) .' )';
+        $resultSet = CRM_Core_DAO::executeQuery( $query );
+        $surveyResultFields = array( );
+        while ( $resultSet->fetch( ) ) {
+            $surveyResultFields[$resultSet->id]['title'] = $resultSet->title;
+            $surveyResultFields[$resultSet->id]['options'][$resultSet->value] = $resultSet->label;
+        }
+        
+        $this->assign( 'surveyResultFields',   $surveyResultFields );
+        $this->assign( 'surveyResponseFields', $surveyResponseFields );
+                
+        $templateFile = 'CRM/Report/Form/Campaign/SurveyCoverSheet.tpl';
+        $coverSheet = CRM_Core_Form::$_template->fetch( $templateFile );
+        
+        return $coverSheet; 
+    }
     
     function alterDisplay( &$rows ) {
         
@@ -559,7 +631,7 @@ INNER JOIN  civicrm_survey survey ON ( survey.result_id = grp.id )
         }
         if ( !$hasResponseData ) return; 
         
-        //start response data fomatting.
+        //start response data formatting.
         $query = ' 
     SELECT  cf.id,
             cf.data_type,
