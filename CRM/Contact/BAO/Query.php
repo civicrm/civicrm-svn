@@ -1123,7 +1123,7 @@ class CRM_Contact_BAO_Query
                 $_rTypeProcessed = true;
                 
                 // create temp table with contact ids
-                $tableName = "CiviTransform_" . uniqid( );
+                $tableName = CRM_Core_DAO::createTempTableName( 'civicrm_transform', true );
                 $sql = "CREATE TEMPORARY TABLE $tableName ( contact_id int primary key) ENGINE=HEAP";
                 CRM_Core_DAO::executeQuery( $sql );
 
