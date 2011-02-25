@@ -364,7 +364,8 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
 
         // some tasks.. what do we want to do with the selected contacts ?
         $tasks = array( '' => ts('- actions -') );
-        if ( $this->_componentMode == 1 ) {
+        if ( $this->_componentMode == 1 ||
+             $this->_componentMode == 7 ) {
             $tasks += CRM_Contact_Task::permissionedTaskTitles( $permission, 
                                                                 CRM_Utils_Array::value( 'deleted_contacts',
                                                                                         $this->_formValues ) );

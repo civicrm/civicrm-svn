@@ -63,7 +63,7 @@ class CRM_Admin_Form_Setting_UF extends CRM_Admin_Form_Setting
             $tableNames    = CRM_Core_DAO::GetStorageValues(null, 0, 'Name');
             $tablePrefixes = '$db_prefix = array(';
             foreach ( $tableNames as $tableName => $value ) {
-                $tablePrefixes .= "\n  '" . str_pad($tableName . "'", 41) . " => '{$dsnArray['database']}.',";
+                $tablePrefixes .= "\n  '" . str_pad($tableName . "'", 41) . " => '`{$dsnArray['database']}`.',";
             }
             $tablePrefixes .= "\n);";
             $this->assign('tablePrefixes', $tablePrefixes);
