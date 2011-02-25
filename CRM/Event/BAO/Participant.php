@@ -241,32 +241,32 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
         $noteId = null;
         if ( CRM_Utils_Array::value( 'id', $params ) ) {
             require_once 'CRM/Core/BAO/Note.php';
-            $note = CRM_Core_BAO_Note::getNote( $params['id'], 'civicrm_participant', true );
+            $note = CRM_Core_BAO_Note::getNote( $params['id'], 'civicrm_participant' );
             $noteId = key( $note );
         }
         $noteValue = null;
+        $hasNoteField = false;
         foreach ( array( 'note', 'participant_note' ) as $noteFld ) {
-            if ( CRM_Utils_Array::value( $noteFld, $params ) ) {
+            if ( array_key_exists( $noteFld, $params ) ) {
                 $noteValue = $params[$noteFld];
+                $hasNoteField = true;
                 break;
             }
         }
         if ( $noteId || $noteValue ) {
-            $noteIDs = array( );
-            if ( $noteId ) {
-                $noteIDs['id'] = $noteId;
-                if ( !$noteValue ) {
-                    $noteValue = 'NULL';
-                }
+            if ( $noteValue ) {
+                $noteParams = array( 'entity_table'  => 'civicrm_participant',
+                                     'note'          => $noteValue,
+                                     'entity_id'     => $participant->id,
+                                     'contact_id'    => $id,
+                                     'modified_date' => date('Ymd') );
+                
+                require_once 'CRM/Core/BAO/Note.php';
+                CRM_Core_BAO_Note::add( $noteParams, $noteIDs );
+            } else if ( $noteId && $hasNoteField ) {
+                require_once 'CRM/Core/BAO/Note.php';
+                CRM_Core_BAO_Note::del( $noteId );
             }
-            $noteParams = array( 'entity_table'  => 'civicrm_participant',
-                                 'note'          => $noteValue,
-                                 'entity_id'     => $participant->id,
-                                 'contact_id'    => $id,
-                                 'modified_date' => date('Ymd') );
-            
-            require_once 'CRM/Core/BAO/Note.php';
-            CRM_Core_BAO_Note::add( $noteParams, $noteIDs );
         }
         
         // Log the information on successful add/edit of Participant data.
