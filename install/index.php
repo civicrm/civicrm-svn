@@ -839,8 +839,10 @@ class Installer extends InstallRequirements {
 
                 // rebuild modules, so that civicrm is added
                 system_rebuild_module_data();
+
                 // now enable civicrm module.
                 module_enable( array('civicrm') );
+
                 // clear block and page cache, to make sure civicrm link is present in navigation block
                 cache_clear_all();
                 
