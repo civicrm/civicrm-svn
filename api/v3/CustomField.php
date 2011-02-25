@@ -68,11 +68,11 @@ require_once 'api/v3/utils.php';
  *
  */
 
-function civicrm_custom_field_create( $params )
+function civicrm_api3_custom_field_create( $params )
 {
-  _civicrm_initialize(true );
+  _civicrm_api3_initialize(true );
   try{
-    civicrm_verify_mandatory($params,null,array('custom_group_id','label'));
+    civicrm_api3_verify_mandatory($params,null,array('custom_group_id','label'));
 
     if ( !( CRM_Utils_Array::value('option_type', $params ) ) ) {
       if( CRM_Utils_Array::value('id', $params ) ){
@@ -82,9 +82,9 @@ function civicrm_custom_field_create( $params )
       }
     }
      
-    $error = _civicrm_check_required_fields($params, 'CRM_Core_DAO_CustomField');
+    $error = _civicrm_api3_check_required_fields($params, 'CRM_Core_DAO_CustomField');
     if (is_a($error, 'CRM_Core_Error')) {
-      return civicrm_create_error( $error->_errors[0]['message'] );
+      return civicrm_api3_create_error( $error->_errors[0]['message'] );
     }
 
     // Array created for passing options in params
@@ -98,13 +98,13 @@ function civicrm_custom_field_create( $params )
     }
     require_once 'CRM/Core/BAO/CustomField.php';
     $customField = CRM_Core_BAO_CustomField::create($params);
-    _civicrm_object_to_array_unique_fields($customField , $values[$customField->id]);
-    return civicrm_create_success($values,$params);
+    _civicrm_api3_object_to_array_unique_fields($customField , $values[$customField->id]);
+    return civicrm_api3_create_success($values,$params);
     
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -117,11 +117,11 @@ function civicrm_custom_field_create( $params )
  * {@example CustomFieldDelete.php 0}
  * @access public
  **/
-function civicrm_custom_field_delete( $params )
+function civicrm_api3_custom_field_delete( $params )
 {
-  _civicrm_initialize( true);
+  _civicrm_api3_initialize( true);
   try{
-    civicrm_verify_mandatory($params,null,array('id'));
+    civicrm_api3_verify_mandatory($params,null,array('id'));
 
     require_once 'CRM/Core/DAO/CustomField.php';
     $field = new CRM_Core_DAO_CustomField( );
@@ -131,12 +131,12 @@ function civicrm_custom_field_delete( $params )
     require_once 'CRM/Core/BAO/CustomField.php';
     $customFieldDelete = CRM_Core_BAO_CustomField::deleteField( $field );
     return $customFieldDelete ?
-    civicrm_create_error('Error while deleting custom field') :
-    civicrm_create_success( );
+    civicrm_api3_create_error('Error while deleting custom field') :
+    civicrm_api3_create_success( );
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -149,11 +149,11 @@ function civicrm_custom_field_delete( $params )
  * @access public
  * 
  **/
-function civicrm_custom_field_get($params)
+function civicrm_api3_custom_field_get($params)
 {
   try {
-    _civicrm_initialize(true );
-    civicrm_verify_mandatory($params);
+    _civicrm_api3_initialize(true );
+    civicrm_api3_verify_mandatory($params);
 
     require_once 'CRM/Core/BAO/CustomField.php';
     $customfieldBAO = new CRM_Core_BAO_CustomField();
@@ -166,8 +166,8 @@ function civicrm_custom_field_get($params)
     return $result;
 
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }

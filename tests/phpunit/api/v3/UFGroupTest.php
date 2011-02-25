@@ -117,7 +117,7 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
             'version'					 => $this->_apiversion,
         );
 
-        $result = civicrm_uf_group_create($params);
+        $result = civicrm_api3_uf_group_create($params);
                 unset($params['version']);
         foreach ($params as $key => $value) {
             $this->assertEquals($result['values'][$result['id']][$key], $value);
@@ -158,7 +158,7 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
             'title'                => 'Test Group',
             'version'					 => $this->_apiversion,
         );
-        $result = civicrm_uf_group_create($params);
+        $result = civicrm_api3_uf_group_create($params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
 
         $this->assertEquals($result['values'][$result['id']]['add_to_group_id'],         $params['add_contact_to_group'],'in line ' . __LINE__);
@@ -173,15 +173,15 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
 
     function testUFGroupCreateWithEmptyParams()
     {
-        $result = civicrm_uf_group_create(array());
+        $result = civicrm_api3_uf_group_create(array());
         $this->assertEquals($result['is_error'], 1);
     }
 
     function testUFGroupCreateWithWrongParams()
     {
-        $result = civicrm_uf_group_create('a string');
+        $result = civicrm_api3_uf_group_create('a string');
         $this->assertEquals($result['is_error'], 1);
-        $result = civicrm_uf_group_create(array('name' => 'A title-less group'));
+        $result = civicrm_api3_uf_group_create(array('name' => 'A title-less group'));
         $this->assertEquals($result['is_error'], 1);
     }
 
@@ -211,7 +211,7 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
             'title'                => 'Test Group',
             'version'					 => $this->_apiversion,
         );
-        $result = civicrm_uf_group_create($params);
+        $result = civicrm_api3_uf_group_create($params);
         unset($params['version']);
         foreach ($params as $key => $value) {
             if ($key == 'add_contact_to_group' or $key == 'group') continue;
@@ -224,15 +224,15 @@ class api_v3_UFGroupTest extends CiviUnitTestCase
 
     function testUFGroupUpdateWithEmptyParams()
     {
-        $result = civicrm_uf_group_create(array(), $this->_ufGroupId);
+        $result = civicrm_api3_uf_group_create(array(), $this->_ufGroupId);
         $this->assertEquals($result['is_error'], 1);
     }
 
     function testUFGroupUpdateWithWrongParams()
     {
-        $result = civicrm_uf_group_create('a string', $this->_ufGroupId);
+        $result = civicrm_api3_uf_group_create('a string', $this->_ufGroupId);
         $this->assertEquals($result['is_error'], 1);
-        $result = civicrm_uf_group_create(array('title' => 'Title'), 'a string');
+        $result = civicrm_api3_uf_group_create(array('title' => 'Title'), 'a string');
         $this->assertEquals($result['is_error'], 1);
     }
 }

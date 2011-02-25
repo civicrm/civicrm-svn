@@ -48,10 +48,10 @@ require_once 'CRM/Campaign/BAO/Petition.php';
  * @static void
  * @access public
  */
-function &civicrm_survey_respondant_get( $params ) {
-  _civicrm_initialize(true );
+function &civicrm_api3_survey_respondant_get( $params ) {
+  _civicrm_api3_initialize(true );
   try{
-    civicrm_verify_mandatory($params,'CRM_Campaign_BAO_Petition',array('survey_id'));
+    civicrm_api3_verify_mandatory($params,'CRM_Campaign_BAO_Petition',array('survey_id'));
 
     if (array_key_exists ( 'status_id', $params ) ) {
       $status_id=$params['status_id'];
@@ -64,14 +64,14 @@ function &civicrm_survey_respondant_get( $params ) {
     return ($signatures);
 
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
-function &civicrm_survey_respondant_count( $params ) {
-  _civicrm_initialize(true );
+function &civicrm_api3_survey_respondant_count( $params ) {
+  _civicrm_api3_initialize(true );
   try{
 
     $petition = new CRM_Campaign_BAO_Petition();
@@ -83,8 +83,8 @@ function &civicrm_survey_respondant_count( $params ) {
     return ($signaturesCount);
 
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }

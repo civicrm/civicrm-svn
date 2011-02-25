@@ -75,8 +75,8 @@ require_once 'CRM/Utils/Rule.php';
  * @static void
  * @access public
  */
-function civicrm_pledge_create( $params ) {
-  _civicrm_initialize(true );
+function civicrm_api3_pledge_create( $params ) {
+  _civicrm_api3_initialize(true );
   try{
 
     if ($params['pledge_amount']){
@@ -84,29 +84,29 @@ function civicrm_pledge_create( $params ) {
       $params['amount'] = $params['pledge_amount'];
     }
     $required =  array('contact_id', 'amount', array('pledge_contribution_type_id','contribution_type_id') , 'installments','start_date');
-    civicrm_verify_mandatory ($params,null,$required);
+    civicrm_api3_verify_mandatory ($params,null,$required);
      
     $values  = array( );
     require_once 'CRM/Pledge/BAO/Pledge.php';
     //check that fields are in appropriate format. Dates will be formatted (within reason) by this function
-    $error = _civicrm_pledge_format_params( $params, $values,TRUE ); 
-    if ( civicrm_error( $error ) ) {
+    $error = _civicrm_api3_pledge_format_params( $params, $values,TRUE ); 
+    if ( civicrm_api3_error( $error ) ) {
         return $error;
     } 
 
     $pledge = CRM_Pledge_BAO_Pledge::create( $values );
    if ( is_a( $pledge, 'CRM_Core_Error' ) ) {
-        return civicrm_create_error(  $pledge->_errors[0]['message'] );
+        return civicrm_api3_create_error(  $pledge->_errors[0]['message'] );
     }else{
-         _civicrm_object_to_array($pledge, $pledgeArray[$pledge->id]);
+         _civicrm_api3_object_to_array($pledge, $pledgeArray[$pledge->id]);
 
     }
 
-    return civicrm_create_success($pledgeArray,$params,$pledge);
+    return civicrm_api3_create_success($pledgeArray,$params,$pledge);
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -119,11 +119,11 @@ function civicrm_pledge_create( $params ) {
  * @static void
  * @access public
  */
-function civicrm_pledge_delete( $params ) {
-  _civicrm_initialize(true);
+function civicrm_api3_pledge_delete( $params ) {
+  _civicrm_api3_initialize(true);
   try{
 
-    civicrm_verify_one_mandatory ($params,null,array('id', 'pledge_id'));
+    civicrm_api3_verify_one_mandatory ($params,null,array('id', 'pledge_id'));
     if (!empty($params['id'])){
       //handle field name or unique db name
       $params['pledge_id'] = $params['id'];
@@ -131,19 +131,19 @@ function civicrm_pledge_delete( $params ) {
 
     $pledgeID = CRM_Utils_Array::value( 'pledge_id', $params );
     if ( ! $pledgeID ) {
-      return civicrm_create_error(  'Could not find pledge_id in input parameters' );
+      return civicrm_api3_create_error(  'Could not find pledge_id in input parameters' );
     }
 
     require_once 'CRM/Pledge/BAO/Pledge.php';
     if ( CRM_Pledge_BAO_Pledge::deletePledge( $pledgeID ) ) {
-      return civicrm_create_success(array($pledgeID =>$pledgeID) );
+      return civicrm_api3_create_success(array($pledgeID =>$pledgeID) );
     } else {
-      return civicrm_create_error(  'Could not delete pledge'  );
+      return civicrm_api3_create_error(  'Could not delete pledge'  );
     }
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -156,10 +156,10 @@ function civicrm_pledge_delete( $params ) {
  * @static void
  * @access public
  */
-function civicrm_pledge_get( $params ) {
-  _civicrm_initialize(true );
+function civicrm_api3_pledge_get( $params ) {
+  _civicrm_api3_initialize(true );
   try{
-    civicrm_verify_mandatory ($params);
+    civicrm_api3_verify_mandatory ($params);
 
     $inputParams      = array( );
     $returnProperties = array( );
@@ -213,11 +213,11 @@ function civicrm_pledge_get( $params ) {
       }
     }
 
-    return civicrm_create_success($pledge,$params,$dao);
+    return civicrm_api3_create_success($pledge,$params,$dao);
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -232,7 +232,7 @@ function civicrm_pledge_get( $params ) {
  * @return array|CRM_Error
  * @access public
  */
-function _civicrm_pledge_format_params( $params, &$values, $create=false ) {
+function _civicrm_api3_pledge_format_params( $params, &$values, $create=false ) {
   // based on contribution apis - copy all the pledge fields - this function filters out non -valid fields but unfortunately
   // means we have to put them back where there are 2 names for the field (name in table & unique name)
   // since there is no clear std to use one or the other. Generally either works ? but not for create date
@@ -240,7 +240,7 @@ function _civicrm_pledge_format_params( $params, &$values, $create=false ) {
   // but at least the filter forces anomalies into the open. In several cases it turned out the unique names wouldn't work
   // even though they are 'generally' what is returned in the GET - implying they should
   $fields =& CRM_Pledge_DAO_Pledge::fields( );
-  _civicrm_store_values( $fields, $params, $values );
+  _civicrm_api3_store_values( $fields, $params, $values );
 
 
   //add back the fields we know of that got dropped by the previous function
@@ -310,14 +310,14 @@ function _civicrm_pledge_format_params( $params, &$values, $create=false ) {
 
       case 'pledge_contact_id':
         if (!CRM_Utils_Rule::integer($value)) {
-          return civicrm_create_error("contact_id not valid: $value");
+          return civicrm_api3_create_error("contact_id not valid: $value");
         }
         $dao = new CRM_Core_DAO();
         $qParams = array();
         $svq = $dao->singleValueQuery("SELECT id FROM civicrm_contact WHERE id = $value",
         $qParams);
         if (!$svq) {
-          return civicrm_create_error("Invalid Contact ID: There is no contact record with contact_id = $value.");
+          return civicrm_api3_create_error("Invalid Contact ID: There is no contact record with contact_id = $value.");
         }
 
         $values['contact_id'] = $values['pledge_contact_id'];
@@ -325,14 +325,14 @@ function _civicrm_pledge_format_params( $params, &$values, $create=false ) {
         break;
       case 'pledge_id':
         if (!CRM_Utils_Rule::integer($value)) {
-          return civicrm_create_error("contact_id not valid: $value");
+          return civicrm_api3_create_error("contact_id not valid: $value");
         }
         $dao = new CRM_Core_DAO();
         $qParams = array();
         $svq = $dao->singleValueQuery("SELECT id FROM civicrm_pledge WHERE id = $value",
         $qParams);
         if (!$svq) {
-          return civicrm_create_error("Invalid Contact ID: There is no contact record with contact_id = $value.");
+          return civicrm_api3_create_error("Invalid Contact ID: There is no contact record with contact_id = $value.");
         }
 
         break;
@@ -342,18 +342,18 @@ function _civicrm_pledge_format_params( $params, &$values, $create=false ) {
       case 'scheduled_date':
       case 'start_date':
         if (!CRM_Utils_Rule::datetime($value)) {
-          return civicrm_create_error("$key not a valid date: $value");
+          return civicrm_api3_create_error("$key not a valid date: $value");
         }
         break;
       case 'installment_amount':
       case 'amount':
         if (!CRM_Utils_Rule::money($value)) {
-          return civicrm_create_error("$key not a valid amount: $value");
+          return civicrm_api3_create_error("$key not a valid amount: $value");
         }
         break;
       case 'currency':
         if (!CRM_Utils_Rule::currencyCode($value)) {
-          return civicrm_create_error("currency not a valid code: $value");
+          return civicrm_api3_create_error("currency not a valid code: $value");
         }
         break;
       default:
@@ -362,7 +362,7 @@ function _civicrm_pledge_format_params( $params, &$values, $create=false ) {
   }
 
   //format the parameters
-  _civicrm_custom_format_params( $params, $values, 'Pledge' );
+  _civicrm_api3_custom_format_params( $params, $values, 'Pledge' );
 
 
   return array();

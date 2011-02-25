@@ -48,16 +48,16 @@ require_once 'api/v3/utils.php';
  *
  * @return  array  list of group nesting records
  */
-function civicrm_group_nesting_get( $params )
+function civicrm_api3_group_nesting_get( $params )
 {
-  _civicrm_initialize(true);
+  _civicrm_api3_initialize(true);
   try{
-    civicrm_verify_one_mandatory($params);
+    civicrm_api3_verify_one_mandatory($params);
 
 
     if ( ! array_key_exists( 'child_group_id', $params ) &&
     ! array_key_exists( 'parent_group_id', $params ) ) {
-      return civicrm_create_error(  'At least one of child_group_id or parent_group_id is a required field'  );
+      return civicrm_api3_create_error(  'At least one of child_group_id or parent_group_id is a required field'  );
     }
 
     require_once 'CRM/Contact/DAO/GroupNesting.php';
@@ -74,19 +74,19 @@ function civicrm_group_nesting_get( $params )
     if ( $dao->find() ) {
       while( $dao->fetch( ) ) {
         $temp = array();
-        _civicrm_object_to_array( $dao, $temp );
+        _civicrm_api3_object_to_array( $dao, $temp );
         $values[$dao->id] = $temp;
       }
       $values['is_error' ] = 0;
     } else {
-      return civicrm_create_error( 'No records found.' );
+      return civicrm_api3_create_error( 'No records found.' );
     }
 
-    return civicrm_create_success($values,$params);
+    return civicrm_api3_create_success($values,$params);
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -101,28 +101,28 @@ function civicrm_group_nesting_get( $params )
  *
  * @todo Work out the return value.
  */
-function civicrm_group_nesting_create( $params )
+function civicrm_api3_group_nesting_create( $params )
 {
-  _civicrm_initialize(true);
+  _civicrm_api3_initialize(true);
   try{
-    civicrm_verify_mandatory($params);
+    civicrm_api3_verify_mandatory($params);
 
   require_once 'CRM/Contact/BAO/GroupNesting.php';
 
   if ( ! array_key_exists( 'child_group_id', $params ) &&
   ! array_key_exists( 'parent_group_id', $params ) ) {
-    return civicrm_create_error(  'You need to define parent_group_id and child_group_id in params.'  );
+    return civicrm_api3_create_error(  'You need to define parent_group_id and child_group_id in params.'  );
   }
 
   CRM_Contact_BAO_GroupNesting::add( $params['parent_group_id'], $params['child_group_id'] );
 
   // FIXME: CRM_Contact_BAO_GroupNesting requires some work
   $result = array( 'is_error' => 0 );
-  return civicrm_create_success($result,$params);
+  return civicrm_api3_create_success($result,$params);
     } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -136,16 +136,16 @@ function civicrm_group_nesting_create( $params )
  *
  * @todo Work out the return value.
  */
-function civicrm_group_nesting_delete( $params )
+function civicrm_api3_group_nesting_delete( $params )
 {
-  _civicrm_initialize(true);
+  _civicrm_api3_initialize(true);
   try{
-    civicrm_verify_mandatory($params);
+    civicrm_api3_verify_mandatory($params);
   
 
   if ( ! array_key_exists( 'child_group_id', $params ) ||
   ! array_key_exists( 'parent_group_id', $params ) ) {
-    return civicrm_create_error('You need to define parent_group_id and child_group_id in params.'  );
+    return civicrm_api3_create_error('You need to define parent_group_id and child_group_id in params.'  );
   }
 
   require_once 'CRM/Contact/DAO/GroupNesting.php';
@@ -157,8 +157,8 @@ function civicrm_group_nesting_delete( $params )
   }
   return $result;
    } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }

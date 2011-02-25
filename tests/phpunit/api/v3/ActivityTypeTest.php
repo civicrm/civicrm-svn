@@ -59,7 +59,7 @@ class api_v3_ActivityTypeTest extends CiviUnitTestCase
     function testActivityTypeGetValues()
     {
         $params = array('version' => $this->_apiversion);
-        $result =  civicrm_activity_type_get($params);
+        $result =  civicrm_api3_activity_type_get($params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals($result['values']['1'],'Meeting', 'In line ' . __LINE__ );
         $this->assertEquals($result['values']['13'],'Open Case', 'In line ' . __LINE__ );
@@ -80,7 +80,7 @@ class api_v3_ActivityTypeTest extends CiviUnitTestCase
         								'is_optgroup' =>1,
                         'is_default' => 0, 
                         );
-        $result = & civicrm_activity_type_create($params);
+        $result = & civicrm_api3_activity_type_create($params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( $result['is_error'], 0);
        
@@ -105,7 +105,7 @@ class api_v3_ActivityTypeTest extends CiviUnitTestCase
                         'weight'=> '2',
                         'version'=> $this->_apiversion,
                         );
-        $activitycreate = & civicrm_activity_type_create($params);
+        $activitycreate = & civicrm_api3_activity_type_create($params);
         $activityID = $activitycreate['id'];
         $this->assertNotContains( 'is_error', $activitycreate );
         $this->assertArrayHasKey( 'id', $activitycreate );
@@ -122,10 +122,10 @@ class api_v3_ActivityTypeTest extends CiviUnitTestCase
                         'weight'=> '2',
                         'version'=> $this->_apiversion,
                         );
-        $activitycreate = & civicrm_activity_type_create($params);   
+        $activitycreate = & civicrm_api3_activity_type_create($params);   
         $params = array( 'activity_type_id' => $activitycreate['id'],
                           'version'=>  $this->_apiversion );
-        $result = & civicrm_activity_type_delete($params);
+        $result = & civicrm_api3_activity_type_delete($params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals($result , 1 , 'In line ' . __LINE__);
     }

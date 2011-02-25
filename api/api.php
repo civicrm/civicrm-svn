@@ -26,7 +26,9 @@ function civicrm_api_legacy($function, $class, $params){
   // clean up. they should be alphanumeric and _ only
   $class = CRM_Utils_String::munge( $class );
   $function = CRM_Utils_String::munge( $function );
-  
+  if ($version ==3){
+    $function = str_replace( 'civicrm', 'civicrm_api3',$function);
+  }
   require_once 'api/v' . $version . '/' . $class .'.php';
   $result = $function($params);
   return $result;
@@ -106,7 +108,7 @@ function civicrm_api_get_function_name($entity, $action) {
       }
     }
   }
-  return 'civicrm_'. $entity .'_'. $action;
+  return 'civicrm_api3_'. $entity .'_'. $action;
 }
 
 

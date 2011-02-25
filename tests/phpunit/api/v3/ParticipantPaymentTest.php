@@ -81,7 +81,7 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase
   function testPaymentCreateWrongParamsType()
   {
     $params = 'a string';
-    $result = & civicrm_participant_payment_create($params);
+    $result = & civicrm_api3_participant_payment_create($params);
 
     $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
   }
@@ -92,7 +92,7 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase
   function testPaymentCreateEmptyParams()
   {
     $params = array();
-    $result = & civicrm_participant_payment_create($params);
+    $result = & civicrm_api3_participant_payment_create($params);
 
     $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
   }
@@ -112,7 +112,7 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase
                         'contribution_id'    => $contributionID,
                              'version'							=> $this->_apiversion,
     );
-    $participantPayment = & civicrm_participant_payment_create( $params );
+    $participantPayment = & civicrm_api3_participant_payment_create( $params );
     $this->assertEquals( $participantPayment['is_error'], 1 );
 
     //delete created contribution
@@ -132,7 +132,7 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase
                         'participant_id'       => $this->_participantID,
                         'version'							=>$this->_apiversion,
     );
-    $participantPayment = & civicrm_participant_payment_create( $params );
+    $participantPayment = & civicrm_api3_participant_payment_create( $params );
     $this->assertEquals( $participantPayment['is_error'], 1 );
   }
 
@@ -153,7 +153,7 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase
                         'contribution_id' => $contributionID,
                         'version'					=> $this->_apiversion,
     );
-    $result  = & civicrm_participant_payment_create( $params );
+    $result  = & civicrm_api3_participant_payment_create( $params );
     $this->documentMe($params,$result ,__FUNCTION__,__FILE__);
     $this->assertEquals( $result ['is_error'], 0,'in line '. __LINE__ );
     $this->assertTrue( array_key_exists( 'id', $result ),'in line '. __LINE__ );
@@ -174,7 +174,7 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase
   function testPaymentUpdateWrongParamsType()
   {
     $params = 'a string';
-    $result = & civicrm_participant_payment_create($params);
+    $result = & civicrm_api3_participant_payment_create($params);
 
     $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
     $this->assertEquals('Input variable `params` is not an array', $result['error_message'], 'In line ' . __LINE__);
@@ -186,7 +186,7 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase
   function testPaymentUpdateEmpty()
   {
     $params = array();
-    $participantPayment = & civicrm_participant_payment_create( $params );
+    $participantPayment = & civicrm_api3_participant_payment_create( $params );
     $this->assertEquals( $participantPayment['is_error'], 1 );
   }
 
@@ -200,7 +200,7 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase
                         'contribution_id' => '3',
                          'version'				 =>$this->_apiversion,
     );
-    $participantPayment = & civicrm_participant_payment_create( $params );
+    $participantPayment = & civicrm_api3_participant_payment_create( $params );
     $this->assertEquals( $participantPayment['is_error'], 1 );
   }
 
@@ -213,7 +213,7 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase
                         'participant_id' => $this->_participantID,
                         'version'				 =>$this->_apiversion,
     );
-    $participantPayment = & civicrm_participant_payment_create( $params );
+    $participantPayment = & civicrm_api3_participant_payment_create( $params );
     $this->assertEquals( $participantPayment['is_error'], 1 );
   }
 
@@ -236,13 +236,13 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase
     );
 
     // Update Payment
-    $participantPayment = & civicrm_participant_payment_create( $params );
+    $participantPayment = & civicrm_api3_participant_payment_create( $params );
     $this->assertEquals( $participantPayment['id'],$this->_participantPaymentID );
     $this->assertTrue ( array_key_exists( 'id', $participantPayment ) );
 
     $params = array( 'id' => $this->_participantPaymentID ,
                                  'version' => $this->_apiversion, );
-    $deletePayment = & civicrm_participant_payment_delete( $params );
+    $deletePayment = & civicrm_api3_participant_payment_delete( $params );
     $this->assertEquals( $deletePayment['is_error'], 0 );
 
     $this->contributionDelete( $contributionID , $this->_apiversion );
@@ -257,7 +257,7 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase
   function testPaymentDeleteWrongParamsType()
   {
     $params = 'a string';
-    $result = & civicrm_participant_payment_delete($params);
+    $result = & civicrm_api3_participant_payment_delete($params);
 
     $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
   }
@@ -268,7 +268,7 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase
   function testPaymentDeleteWithEmptyParams()
   {
     $params = array();
-    $deletePayment = & civicrm_participant_payment_delete( $params );
+    $deletePayment = & civicrm_api3_participant_payment_delete( $params );
     $this->assertEquals( $deletePayment['is_error'], 1 );
     $this->assertEquals( $deletePayment['error_message'], 'Mandatory key(s) missing from params array: id, version' );
   }
@@ -280,7 +280,7 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase
   {
     $params = array( 'id' => 0,
                          'version' => $this->_apiversion, );        
-    $deletePayment = & civicrm_participant_payment_delete( $params );
+    $deletePayment = & civicrm_api3_participant_payment_delete( $params );
     $this->assertEquals( $deletePayment['is_error'], 1 );
     $this->assertEquals( $deletePayment['error_message'], 'Error while deleting participantPayment' );
   }
@@ -299,7 +299,7 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase
 
     $params = array( 'id' => $this->_participantPaymentID,
                           'version'				=> $this->_apiversion, );         
-    $result = & civicrm_participant_payment_delete( $params );
+    $result = & civicrm_api3_participant_payment_delete( $params );
     $this->documentMe($params,$result,__FUNCTION__,__FILE__);
     $this->assertEquals( $result['is_error'], 0 );
 

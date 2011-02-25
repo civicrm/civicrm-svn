@@ -62,7 +62,7 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
     {
        $params = array('version'	=>$this->_apiversion,
                        );                        
-        $result=& civicrm_pledge_payment_get($params);
+        $result=& civicrm_api3_pledge_payment_get($params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals(0, $result['is_error'], " in line " . __LINE__);
         $this->assertEquals(5, $result['count'], " in line " . __LINE__);
@@ -80,10 +80,10 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
                         'status_id'							 => 1,
           
                   );                        
-        $result= civicrm_pledge_payment_create($params);
+        $result= civicrm_api3_pledge_payment_create($params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);
         $this->assertEquals(0, $result['is_error'], " in line " . __LINE__);
-        civicrm_pledge_payment_delete($pledgeID);
+        civicrm_api3_pledge_payment_delete($pledgeID);
 
     }
     
@@ -99,8 +99,8 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase
                         'sequential'						 => 1,
           
                   );                        
-        $pledgePayment= civicrm_pledge_payment_create($params);
-        $result = civicrm_pledge_payment_delete($pledgePayment['values'][0]);
+        $pledgePayment= civicrm_api3_pledge_payment_create($params);
+        $result = civicrm_api3_pledge_payment_delete($pledgePayment['values'][0]);
         $this->documentMe($pledgePayment['values'],$result,__FUNCTION__,__FILE__);
         $this->assertEquals(0, $result['is_error'], " in line " . __LINE__);
         

@@ -54,20 +54,20 @@ require_once 'CRM/Core/BAO/UFJoin.php';
  *  {@schema Core/UFJoin.xml}
  *
  */
-function civicrm_uf_join_create($params)
+function civicrm_api3_uf_join_create($params)
 {
-  _civicrm_initialize(true);
+  _civicrm_api3_initialize(true);
   try{
-    civicrm_verify_mandatory($params,'CRM_Core_DAO_UFJoin',array());
+    civicrm_api3_verify_mandatory($params,'CRM_Core_DAO_UFJoin',array());
 
     $ufJoin = CRM_Core_BAO_UFJoin::create($params);
-    _civicrm_object_to_array( $ufJoin, $ufJoinArray[]);
-    return civicrm_create_success($ufJoinArray,$params);
+    _civicrm_api3_object_to_array( $ufJoin, $ufJoinArray[]);
+    return civicrm_api3_create_success($ufJoinArray,$params);
 
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -83,11 +83,11 @@ function civicrm_uf_join_create($params)
  *
  */
 
-function civicrm_uf_join_get($params)
+function civicrm_api3_uf_join_get($params)
 { 
-  _civicrm_initialize(true);
+  _civicrm_api3_initialize(true);
   try{
-    civicrm_verify_one_mandatory($params,null,array('id','entity_table','entity_id','weight'));
+    civicrm_api3_verify_one_mandatory($params,null,array('id','entity_table','entity_id','weight'));
     $ufJoinDAO = new CRM_Core_DAO_UFJoin();
     //get the unique name of fields from the schema 
     $fields = array_keys($ufJoinDAO->fields());
@@ -98,19 +98,19 @@ function civicrm_uf_join_get($params)
     }
 
     if ( ! $ufJoinDAO->find() ) {
-        return civicrm_create_success(array());
+        return civicrm_api3_create_success(array());
     }
 
     while ($ufJoinDAO->fetch()) {
-      _civicrm_object_to_array($ufJoinDAO, $ufJoin[$ufJoinDAO->id]);
+      _civicrm_api3_object_to_array($ufJoinDAO, $ufJoin[$ufJoinDAO->id]);
     }
   
-    return civicrm_create_success($ufJoin,$params,$dao);
+    return civicrm_api3_create_success($ufJoin,$params,$dao);
     
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 

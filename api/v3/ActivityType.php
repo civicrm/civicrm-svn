@@ -57,17 +57,17 @@ require_once 'api/v3/utils.php';
  * @todo - this just returns all - not a search
  * @example ActivityTypeGet.php
  */
-function civicrm_activity_type_get($params ) {
-  _civicrm_initialize(true);
+function civicrm_api3_activity_type_get($params ) {
+  _civicrm_api3_initialize(true);
     try{
-      civicrm_verify_mandatory($params);
+      civicrm_api3_verify_mandatory($params);
     require_once 'CRM/Core/OptionGroup.php';
     $activityTypes = CRM_Core_OptionGroup::values( 'activity_type' );
-    return civicrm_create_success($activityTypes,$params);
+    return civicrm_api3_create_success($activityTypes,$params);
         } catch (PEAR_Exception $e) {
-      return civicrm_create_error( $e->getMessage() );
+      return civicrm_api3_create_error( $e->getMessage() );
     } catch (Exception $e) {
-      return civicrm_create_error( $e->getMessage() );
+      return civicrm_api3_create_error( $e->getMessage() );
     }
 }
 
@@ -86,10 +86,10 @@ function civicrm_activity_type_get($params ) {
  * @todo Erik Hommel 16 dec 2010 Check if function processes update according to standards
  */
  
-function civicrm_activity_type_create( $params ) {
-    _civicrm_initialize(true);
+function civicrm_api3_activity_type_create( $params ) {
+    _civicrm_api3_initialize(true);
     try{
-    civicrm_verify_mandatory($params,null,array('label','weight'));
+    civicrm_api3_verify_mandatory($params,null,array('label','weight'));
     require_once 'CRM/Core/OptionGroup.php';
    
     $action = 1;
@@ -102,12 +102,12 @@ function civicrm_activity_type_create( $params ) {
     require_once 'CRM/Core/OptionValue.php';  
     $activityObject = CRM_Core_OptionValue::addOptionValue( $params, $groupParams, $action, $optionValueID );
     $activityType = array();
-    _civicrm_object_to_array( $activityObject, $activityType[ $activityObject->id] );
-    return civicrm_create_success($activityType,$params);
+    _civicrm_api3_object_to_array( $activityObject, $activityType[ $activityObject->id] );
+    return civicrm_api3_create_success($activityType,$params);
     } catch (PEAR_Exception $e) {
-      return civicrm_create_error( $e->getMessage() );
+      return civicrm_api3_create_error( $e->getMessage() );
     } catch (Exception $e) {
-      return civicrm_create_error( $e->getMessage() );
+      return civicrm_api3_create_error( $e->getMessage() );
     }
 }
 
@@ -122,18 +122,18 @@ function civicrm_activity_type_create( $params ) {
  * 
  * {@example ActivityTypeDelete.php 0}
  */
-function civicrm_activity_type_delete( $params ) {
-    _civicrm_initialize(true);
+function civicrm_api3_activity_type_delete( $params ) {
+    _civicrm_api3_initialize(true);
     try{
-      civicrm_verify_mandatory($params,null,array('activity_type_id'));
+      civicrm_api3_verify_mandatory($params,null,array('activity_type_id'));
 
     $activityTypeId = $params['activity_type_id'];
     require_once 'CRM/Core/BAO/OptionValue.php';
 
     return CRM_Core_BAO_OptionValue::del( $activityTypeId );
     } catch (PEAR_Exception $e) {
-      return civicrm_create_error( $e->getMessage() );
+      return civicrm_api3_create_error( $e->getMessage() );
     } catch (Exception $e) {
-      return civicrm_create_error( $e->getMessage() );
+      return civicrm_api3_create_error( $e->getMessage() );
     }
 }

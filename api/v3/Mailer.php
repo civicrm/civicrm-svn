@@ -65,10 +65,10 @@ require_once 'CRM/Mailing/Event/BAO/TrackableURLOpen.php';
  * @param array $params
  * @return array
  */
-function civicrm_mailer_event_bounce($params)
+function civicrm_api3_mailer_event_bounce($params)
 {   
-    _civicrm_initialize();
-    $errors = _civicrm_mailer_check_params( $params, array('job_id', 'event_queue_id', 'hash', 'body') ) ;
+    _civicrm_api3_initialize();
+    $errors = _civicrm_api3_mailer_check_params( $params, array('job_id', 'event_queue_id', 'hash', 'body') ) ;
   
     if ( !empty( $errors ) ) {
         return $errors;
@@ -80,10 +80,10 @@ function civicrm_mailer_event_bounce($params)
     $params += CRM_Mailing_BAO_BouncePattern::match($body);
     
     if (CRM_Mailing_Event_BAO_Bounce::create($params)) {
-        return civicrm_create_success( );
+        return civicrm_api3_create_success( );
     }
 
-    return civicrm_create_error(  'Queue event could not be found'  );
+    return civicrm_api3_create_error(  'Queue event could not be found'  );
 }
 
 
@@ -93,9 +93,9 @@ function civicrm_mailer_event_bounce($params)
  * @param array $params
  * @return array
  */
-function civicrm_mailer_event_unsubscribe($params) 
+function civicrm_api3_mailer_event_unsubscribe($params) 
 {
-    $errors = _civicrm_mailer_check_params( $params, array('job_id', 'event_queue_id', 'hash') ) ;
+    $errors = _civicrm_api3_mailer_check_params( $params, array('job_id', 'event_queue_id', 'hash') ) ;
   
     if ( !empty( $errors ) ) {
         return $errors;
@@ -109,10 +109,10 @@ function civicrm_mailer_event_unsubscribe($params)
 
     if (count($groups)) {
         CRM_Mailing_Event_BAO_Unsubscribe::send_unsub_response($queue, $groups, false, $job);
-        return civicrm_create_success( );
+        return civicrm_api3_create_success( );
     }
 
-    return civicrm_create_error( ts( 'Queue event could not be found' ) );
+    return civicrm_api3_create_error( ts( 'Queue event could not be found' ) );
 }
 
 /**
@@ -121,9 +121,9 @@ function civicrm_mailer_event_unsubscribe($params)
  * @param array $params
  * @return array
  */
-function civicrm_mailer_event_domain_unsubscribe($params) 
+function civicrm_api3_mailer_event_domain_unsubscribe($params) 
 {
-    $errors = _civicrm_mailer_check_params( $params, array('job_id', 'event_queue_id', 'hash') ) ;
+    $errors = _civicrm_api3_mailer_check_params( $params, array('job_id', 'event_queue_id', 'hash') ) ;
   
     if ( !empty( $errors ) ) {
         return $errors;
@@ -136,11 +136,11 @@ function civicrm_mailer_event_domain_unsubscribe($params)
     $unsubs = CRM_Mailing_Event_BAO_Unsubscribe::unsub_from_domain($job,$queue,$hash);
 
     if ( !$unsubs ) {
-        return civicrm_create_error( 'Queue event could not be found'  );
+        return civicrm_api3_create_error( 'Queue event could not be found'  );
     }
 
     CRM_Mailing_Event_BAO_Unsubscribe::send_unsub_response($queue, null, true, $job);
-    return civicrm_create_success( );
+    return civicrm_api3_create_success( );
 }
 
 /**
@@ -149,9 +149,9 @@ function civicrm_mailer_event_domain_unsubscribe($params)
  * @param array $params
  * @return array
  */
-function civicrm_mailer_event_resubscribe($params) 
+function civicrm_api3_mailer_event_resubscribe($params) 
 {
-    $errors = _civicrm_mailer_check_params( $params, array('job_id', 'event_queue_id', 'hash') ) ;
+    $errors = _civicrm_api3_mailer_check_params( $params, array('job_id', 'event_queue_id', 'hash') ) ;
   
     if ( !empty( $errors ) ) {
         return $errors;
@@ -165,10 +165,10 @@ function civicrm_mailer_event_resubscribe($params)
     
     if (count($groups)) {
         CRM_Mailing_Event_BAO_Resubscribe::send_resub_response($queue, $groups, false, $job);
-        return civicrm_create_success( );
+        return civicrm_api3_create_success( );
     }
 
-    return civicrm_create_error(  'Queue event could not be found' ) ;
+    return civicrm_api3_create_error(  'Queue event could not be found' ) ;
 }
 
 /**
@@ -177,9 +177,9 @@ function civicrm_mailer_event_resubscribe($params)
  * @param array $params
  * @return array
  */
-function civicrm_mailer_event_subscribe($params) 
+function civicrm_api3_mailer_event_subscribe($params) 
 {
-    $errors = _civicrm_mailer_check_params( $params, array('email', 'group_id') ) ;
+    $errors = _civicrm_api3_mailer_check_params( $params, array('email', 'group_id') ) ;
     
     if ( !empty( $errors ) ) {
         return $errors;
@@ -193,7 +193,7 @@ function civicrm_mailer_event_subscribe($params)
     $group->is_active = 1;
     $group->id = (int)$group_id;
     if ( !$group->find(true) ) {
-        return civicrm_create_error( 'Invalid Group id'  );
+        return civicrm_api3_create_error( 'Invalid Group id'  );
     }
         
     $subscribe =& CRM_Mailing_Event_BAO_Subscribe::subscribe($group_id, $email, $contact_id);
@@ -211,7 +211,7 @@ function civicrm_mailer_event_subscribe($params)
         return $values;
     }
 
-    return civicrm_create_error( 'Subscription failed'  );
+    return civicrm_api3_create_error( 'Subscription failed'  );
 }
 
 /**
@@ -220,9 +220,9 @@ function civicrm_mailer_event_subscribe($params)
  * @param array $params
  * @return array
  */
-function civicrm_mailer_event_confirm($params) 
+function civicrm_api3_mailer_event_confirm($params) 
 {
-    $errors = _civicrm_mailer_check_params( $params, array('contact_id', 'subscribe_id', 'hash') ) ;
+    $errors = _civicrm_api3_mailer_check_params( $params, array('contact_id', 'subscribe_id', 'hash') ) ;
   
     if ( !empty( $errors ) ) {
         return $errors;
@@ -235,10 +235,10 @@ function civicrm_mailer_event_confirm($params)
     $confirm = CRM_Mailing_Event_BAO_Confirm::confirm($contact_id, $subscribe_id, $hash) !== false;
     
     if ( !$confirm ) {
-        return civicrm_create_error( 'Confirmation failed'  );
+        return civicrm_api3_create_error( 'Confirmation failed'  );
     }
     
-    return civicrm_create_success( );
+    return civicrm_api3_create_success( );
 }
 
 
@@ -248,9 +248,9 @@ function civicrm_mailer_event_confirm($params)
  * @param array $params
  * @return array
  */
-function civicrm_mailer_event_reply($params)
+function civicrm_api3_mailer_event_reply($params)
 {
-    $errors = _civicrm_mailer_check_params( $params, array('job_id', 'event_queue_id', 'hash', 'bodyTxt', 'replyTo') ) ;
+    $errors = _civicrm_api3_mailer_check_params( $params, array('job_id', 'event_queue_id', 'hash', 'bodyTxt', 'replyTo') ) ;
   
     if ( !empty( $errors ) ) {
         return $errors;
@@ -267,12 +267,12 @@ function civicrm_mailer_event_reply($params)
     $mailing =& CRM_Mailing_Event_BAO_Reply::reply($job, $queue, $hash, $replyto);
 
     if (empty($mailing)) {
-        return civicrm_create_error( 'Queue event could not be found'  );
+        return civicrm_api3_create_error( 'Queue event could not be found'  );
     }
 
     CRM_Mailing_Event_BAO_Reply::send($queue, $mailing, $bodyTxt, $replyto, $bodyHTML, $fullEmail);
 
-    return civicrm_create_success( );
+    return civicrm_api3_create_success( );
 }
 
 /**
@@ -281,9 +281,9 @@ function civicrm_mailer_event_reply($params)
  * @param array $params
  * @return array
  */
-function civicrm_mailer_event_forward($params) 
+function civicrm_api3_mailer_event_forward($params) 
 {
-    $errors = _civicrm_mailer_check_params( $params, array('job_id', 'event_queue_id', 'hash', 'email') ) ;
+    $errors = _civicrm_api3_mailer_check_params( $params, array('job_id', 'event_queue_id', 'hash', 'email') ) ;
   
     if ( !empty( $errors ) ) {
         return $errors;
@@ -299,10 +299,10 @@ function civicrm_mailer_event_forward($params)
     $forward   = CRM_Mailing_Event_BAO_Forward::forward($job, $queue, $hash, $email, $fromEmail, $params );
     
     if ( $forward ) {
-        return civicrm_create_success( );
+        return civicrm_api3_create_success( );
     }
     
-    return civicrm_create_error( 'Queue event could not be found'  );
+    return civicrm_api3_create_error( 'Queue event could not be found'  );
 }
 
 
@@ -312,9 +312,9 @@ function civicrm_mailer_event_forward($params)
  * @param array $params
  * @return array
  */
-function civicrm_mailer_event_click($params) 
+function civicrm_api3_mailer_event_click($params) 
 {
-    $errors = _civicrm_mailer_check_params( $params, array('event_queue_id', 'url_id') ) ;
+    $errors = _civicrm_api3_mailer_check_params( $params, array('event_queue_id', 'url_id') ) ;
   
     if ( !empty( $errors ) ) {
         return $errors;
@@ -339,9 +339,9 @@ function civicrm_mailer_event_click($params)
  * @param array $params
  * @return array
  */
-function civicrm_mailer_event_open($params) 
+function civicrm_api3_mailer_event_open($params) 
 {
-    $errors = _civicrm_mailer_check_params( $params, array('event_queue_id') ) ;
+    $errors = _civicrm_api3_mailer_check_params( $params, array('event_queue_id') ) ;
   
     if ( !empty( $errors ) ) {
         return $errors;
@@ -352,10 +352,10 @@ function civicrm_mailer_event_open($params)
     $success = CRM_Mailing_Event_BAO_Opened::open( $queue );
 
     if ( !$success ) {
-        return civicrm_create_error( 'mailer open event failed'  );
+        return civicrm_api3_create_error( 'mailer open event failed'  );
     }
 
-    return civicrm_create_success( );
+    return civicrm_api3_create_success( );
 }
 
 
@@ -367,20 +367,20 @@ function civicrm_mailer_event_open($params)
  *
  * @return array  $error        array with errors, null if none
  */
-function _civicrm_mailer_check_params ( $params, $required  ) 
+function _civicrm_api3_mailer_check_params ( $params, $required  ) 
 {
     // return error if we do not get any params
     if ( empty( $params ) ) {
-        return civicrm_create_error( 'Input Parameters empty'  );
+        return civicrm_api3_create_error( 'Input Parameters empty'  );
     }
 
     if ( ! is_array( $params ) ) {
-        return civicrm_create_error(  'Input parameter is not an array'  );
+        return civicrm_api3_create_error(  'Input parameter is not an array'  );
     }
 
     foreach ( $required as $name ) {
         if ( !array_key_exists($name, $params) || !$params[$name] ) {
-            return civicrm_create_error(  "Required parameter missing: $name"  );
+            return civicrm_api3_create_error(  "Required parameter missing: $name"  );
         }
     }
 
