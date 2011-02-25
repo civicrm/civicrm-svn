@@ -30,28 +30,36 @@
 
 {* print survey result set option value and label *}
 {if $surveyResultFields}
+
 <h4>{ts}Result Set{/ts}</h4>
+<div id='survey_result_fields'>
 <table class="report-layout">
   {foreach from=$surveyResultFields key=surveyId item=result}     
       <tr><th scope="row">{ts 1=$result.title}Survey Title = %1{/ts}</th></tr>
       <tr><td>
+          <div id='survey_result_fields_options'>
           <table class="report-layout">
 	    {foreach from=$result.options key=value item=label}
 	       <tr><td>{$value} = {$label}</td></tr>
 	    {/foreach}
 	  </table>
+	  </div>
           </td>     
       </tr>
-  
+
   {/foreach}     
 </table>
+</div>
 {/if }
 
+<div style="page-break-after: always"></div>
 
 {* print survey response set option value and label *}
 {if $surveyResponseFields}
+
 <h4>{ts}Response Codes{/ts}</h4>
-<table class="report-layout statistics-table">
+<div id='survey_response_fields'>
+<table class="report-layout">
      
      {assign var=resFldCnt value=1}
      {foreach from=$surveyResponseFields key=id item=responseField}
@@ -61,11 +69,13 @@
 	 
 	 {if $responseField.options}
 	 <tr><td>
-              <table class="report-layout statistics-table">
+              <div id='survey_response_fields_codes'>
+	      <table class="report-layout">
 	        {foreach from=$responseField.options key=value item=label}
 	           <tr><td>{$value} = {$label}</td></tr>
 	        {/foreach}
 	      </table>
+	      </div>
 	     </td> 
          </tr>
 	 {/if}
@@ -74,5 +84,6 @@
      {/foreach}  
 
 </table>
+</div>
 {/if}
 
