@@ -99,6 +99,9 @@
 <script type="text/javascript">
 cj(function() { 
     cj().crmaccordions(); 
+    if ( cj('#component_mode').val() != '7' ) {
+      cj('#crm-display_relationship_type').hide( );
+    }
 
     cj('#component_mode').change( function( ) {
         // reset task dropdown if user changes component mode and it exists
@@ -109,30 +112,47 @@ cj(function() {
         switch ( selectedValue ) {
             case '2':
             cj('.crm-CiviContribute-accordion').removeClass('crm-accordion-closed').addClass('crm-accordion-open') ;
+            cj('#crm-display_relationship_type').hide( );
+	    cj('#display_relationship_type').val('');
             loadPanes('CiviContribute');
             break;
 
             case '3':
             cj('.crm-CiviEvent-accordion').removeClass('crm-accordion-closed').addClass('crm-accordion-open') ;
+	    cj('#display_relationship_type').val('');
+            cj('#crm-display_relationship_type').hide( );
             loadPanes('CiviEvent');
             break;
 
             case '4':
             cj('.crm-activity-accordion').removeClass('crm-accordion-closed').addClass('crm-accordion-open') ;
+	    cj('#display_relationship_type').val('');
+            cj('#crm-display_relationship_type').hide( );
             loadPanes('activity');
             break;
 
             case '5':
             cj('.crm-CiviMember-accordion').removeClass('crm-accordion-closed').addClass('crm-accordion-open') ;
+	    cj('#display_relationship_type').val('');
+            cj('#crm-display_relationship_type').hide( );
             loadPanes('CiviMember');
             break;
 
             case '6':
             cj('.crm-CiviCase-accordion').removeClass('crm-accordion-closed').addClass('crm-accordion-open') ;
+	    cj('#display_relationship_type').val('');
+            cj('#crm-display_relationship_type').hide( );
             loadPanes('CiviCase');
             break;
 
+	    case '7':
+            cj('#crm-display_relationship_type').show( );
+	    break;
+
             default:
+            cj('#crm-display_relationship_type').hide( );
+	    cj('#display_relationship_type').val('');
+	    break;
         } 
     });
 });

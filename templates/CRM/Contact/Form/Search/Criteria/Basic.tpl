@@ -37,7 +37,12 @@
             </td>
             <td>
                 {if $form.component_mode}  
-                    {$form.component_mode.label} {help id="id-display-results"}<br />{$form.component_mode.html}
+                    {$form.component_mode.label} {help id="id-display-results"}
+                    <br />
+                    {$form.component_mode.html}
+{if $form.display_relationship_type}
+            <span id="crm-display_relationship_type">{$form.display_relationship_type.html}</span>
+{/if}
                 {else}
                     &nbsp;
                 {/if}
@@ -86,7 +91,7 @@
 {/if}
 
 {if $form.contact_tags}
-            <td><label>{ts}Tag(s){/ts}</label>
+            <td colspan="3"><label>{ts}Tag(s){/ts}</label>
                 {$form.contact_tags.html}
                 {literal}
                 <script type="text/javascript">
@@ -104,17 +109,8 @@
                 {/literal}   
             </td>
 {else}
-            <td>&nbsp;</td>
+            <td colspan="3">&nbsp;</td>
 {/if}
-
-{if $form.display_relationship_type}
-            <td colspan="2"><label>{$form.display_relationship_type.label}</label><br />
-                {$form.display_relationship_type.html}
-            </td>
-{else}
-            <td colspan="2">&nbsp;</td>
-{/if}
-	
 	    </tr>
         <tr>
             <td>
