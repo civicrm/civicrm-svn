@@ -50,9 +50,11 @@
   {/foreach}     
 </table>
 </div>
+
+{* break the page *}
+<div style="page-break-after: always"></div>
 {/if }
 
-<div style="page-break-after: always"></div>
 
 {* print survey response set option value and label *}
 {if $surveyResponseFields}
@@ -65,7 +67,6 @@
      {foreach from=$surveyResponseFields key=id item=responseField}
 
      	 <tr><th>{ts 1=$resFldCnt 2=$responseField.title}Q%1 = %2{/ts}</th></tr>
-	 <tr><td></td></tr>	 
 	 
 	 {if $responseField.options}
 	 <tr><td>
@@ -79,6 +80,9 @@
 	     </td> 
          </tr>
 	 {/if}
+
+	 {* clean separation of each response question *}
+	 <tr><td><br /></td></tr>
 	 
      {assign var=resFldCnt value=`$resFldCnt+1`} 
      {/foreach}  
