@@ -1144,7 +1144,7 @@ SELECT contact_a.id
                     $relationshipTypeLabel = $rTypes[$this->_displayRelationshipType]['label_a_b'];
                     $_rTypeFrom = "
 INNER JOIN civicrm_relationship displayRelType ON ( displayRelType.contact_id_a = contact_a.id OR displayRelType.contact_id_b = contact_a.id )
-INNER JOIN $tableName contact_c ON ( contact_c.contact_id = displayRelType.contact_id_a OR contact_c.contact_id = displayRelType.contact_id_b )
+INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRelType.contact_id_a OR transform_temp.contact_id = displayRelType.contact_id_b )
 ";
                     $_rTypeWhere = " WHERE displayRelType.relationship_type_id = {$this->_displayRelationshipType} ";
                 } else {
@@ -1153,13 +1153,13 @@ INNER JOIN $tableName contact_c ON ( contact_c.contact_id = displayRelType.conta
                         $relationshipTypeLabel = $rTypes[$relType]['label_a_b'];
                         $_rTypeFrom .= "
 INNER JOIN civicrm_relationship displayRelType ON ( displayRelType.contact_id_a = contact_a.id )
-INNER JOIN $tableName contact_c ON ( contact_c.contact_id = displayRelType.contact_id_b )
+INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRelType.contact_id_b )
 ";
                     } else {
                         $relationshipTypeLabel = $rTypes[$relType]['label_b_a'];
                         $_rTypeFrom .= "
 INNER JOIN civicrm_relationship displayRelType ON ( displayRelType.contact_id_b = contact_a.id )
-INNER JOIN $tableName contact_c ON ( contact_c.contact_id = displayRelType.contact_id_a )
+INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRelType.contact_id_a )
 ";
                     }
                     $_rTypeWhere = " WHERE displayRelType.relationship_type_id = $relType ";
