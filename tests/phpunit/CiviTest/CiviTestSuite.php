@@ -92,11 +92,6 @@ class CiviTestSuite extends PHPUnit_Framework_TestSuite
             return;
         }
         
-        // just a temporary hack to skip v3 api's 
-        if ( $dirInfo->isDir( ) && $dirInfo->getFilename( ) == 'v3' ) {
-            return;
-        }
-
         //  Pass 1:  Check all *Tests.php files
         //echo "start Pass 1 on {$dirInfo->getRealPath()}\n";
         $dir = new DirectoryIterator( $dirInfo->getRealPath( ) );
