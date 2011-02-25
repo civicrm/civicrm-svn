@@ -362,18 +362,27 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note
      * @access public
      * @static
      */
-    public static function &getNote( $id, $entityTable = 'civicrm_relationship' )
+    public static function &getNote( $id, 
+                                     $entityTable = 'civicrm_relationship',
+                                     $includeNullNote = false )
     {
         $viewNote = array();
         
+        $nullNoteWhere = null;
+        if ( ! $includeNullNote ) {
+            $nullNoteWhere = 'AND  note is not null';
+        }
+        
         $query = "
-SELECT   id, note FROM civicrm_note
-WHERE    entity_table=\"{$entityTable}\"
-  AND    entity_id = %1
-  AND    note is not null
-ORDER BY modified_date desc";
+  SELECT  id, 
+          note 
+    FROM  civicrm_note
+   WHERE  entity_table=\"{$entityTable}\"
+     AND  entity_id = %1
+          {$nullNoteWhere}
+ORDER BY  modified_date desc";
         $params = array( 1 => array( $id, 'Integer' ) );
-
+        
         $dao =& CRM_Core_DAO::executeQuery( $query, $params );
 
         while ( $dao->fetch() ) {

@@ -231,39 +231,44 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
         }
         
         // add custom field values       
-         if ( CRM_Utils_Array::value( 'custom', $params ) &&
+        if ( CRM_Utils_Array::value( 'custom', $params ) &&
              is_array( $params['custom'] ) ) {
             require_once 'CRM/Core/BAO/CustomValueTable.php';
             CRM_Core_BAO_CustomValueTable::store( $params['custom'], 'civicrm_participant', $participant->id );
         }
         
-        if ( CRM_Utils_Array::value('note', $params) || CRM_Utils_Array::value('participant_note', $params)) {
-            if ( CRM_Utils_Array::value('note', $params) ) {
-                $note = CRM_Utils_Array::value('note', $params);
-            } else {
-                $note = CRM_Utils_Array::value('participant_note', $params);
-            }
-        
-            $noteDetails  = CRM_Core_BAO_Note::getNote( $participant->id, 'civicrm_participant' );
-            $noteIDs      = array( );
-            if ( ! empty( $noteDetails ) ) {
-                $noteIDs['id'] = array_pop( array_flip( $noteDetails ) );
-            }
-
-            if ( $note ) {
-                require_once 'CRM/Core/BAO/Note.php';
-                $noteParams = array(
-                                    'entity_table'  => 'civicrm_participant',
-                                    'note'          => $note,
-                                    'entity_id'     => $participant->id,
-                                    'contact_id'    => $id,
-                                    'modified_date' => date('Ymd')
-                                    );
-                
-                CRM_Core_BAO_Note::add( $noteParams, $noteIDs );
+        //process note, CRM-7634
+        $noteId = null;
+        if ( CRM_Utils_Array::value( 'id', $params ) ) {
+            require_once 'CRM/Core/BAO/Note.php';
+            $note = CRM_Core_BAO_Note::getNote( $params['id'], 'civicrm_participant', true );
+            $noteId = key( $note );
+        }
+        $noteValue = null;
+        foreach ( array( 'note', 'participant_note' ) as $noteFld ) {
+            if ( CRM_Utils_Array::value( $noteFld, $params ) ) {
+                $noteValue = $params[$noteFld];
+                break;
             }
         }
-
+        if ( $noteId || $noteValue ) {
+            $noteIDs = array( );
+            if ( $noteId ) {
+                $noteIDs['id'] = $noteId;
+                if ( !$noteValue ) {
+                    $noteValue = 'NULL';
+                }
+            }
+            $noteParams = array( 'entity_table'  => 'civicrm_participant',
+                                 'note'          => $noteValue,
+                                 'entity_id'     => $participant->id,
+                                 'contact_id'    => $id,
+                                 'modified_date' => date('Ymd') );
+            
+            require_once 'CRM/Core/BAO/Note.php';
+            CRM_Core_BAO_Note::add( $noteParams, $noteIDs );
+        }
+        
         // Log the information on successful add/edit of Participant data.
         require_once 'CRM/Core/BAO/Log.php';
         $logParams = array(
