@@ -547,8 +547,11 @@ function civicrm_user_form_validate($form, &$form_state) {
     require_once 'CRM/Core/BAO/UFMatch.php';
     require_once 'CRM/Core/BAO/UFGroup.php';
 
-    // check for either user/register or admin/user/user/create
-    $register = ( arg(1) == 'register' || arg(3) == 'create' ) ? true : false;
+    // check for either user/register or admin/people/create
+    $register = 
+        ( ( arg(0) == 'user' && arg(1) == 'register' ) || 
+          ( arg(0) == 'admin' && arg(1) == 'people' && arg(2) == 'create' ) ) 
+        ? true : false;
     $userID = null;
     if ( $form['#user'] ) {
         $userID = CRM_Core_BAO_UFMatch::getContactId( $form['#user']->uid );

@@ -812,7 +812,7 @@ class Installer extends InstallRequirements {
             }
             if ( $installType == 'drupal' ) {
                 $drupalURL     = civicrm_cms_base( );
-                $drupalPermissionsURL = "{$drupalURL}index.php?q=admin/user/permissions";
+                $drupalPermissionsURL = "{$drupalURL}index.php?q=admin/people/permissions";
                 $drupalURL .= "index.php?q=civicrm/admin/configtask&reset=1";
                 $registerSiteURL = "http://civicrm.org/civicrm/profile/create?reset=1&gid=15";
                 
