@@ -159,15 +159,16 @@ function civicrm_note_get( $params ) {
             $noteBAO->$name = $params[$name];
         }
     }
-    
+
     if ( ! $noteBAO->find(true) ) {
         return civicrm_create_success(array());
     }
-    _civicrm_object_to_array($noteBAO, $note[]);
+    $note = array();
+    _civicrm_object_to_array($noteBAO, $note[$noteBAO->id]);  
     while ($noteBAO->fetch()) {
-      _civicrm_object_to_array($noteBAO, $note[]);
+      _civicrm_object_to_array($noteBAO, $note[$noteBAO->id]);
     }
-    return civicrm_create_success($note);
+    return civicrm_create_success($note,$params,$noteBAO);
 
   } catch (PEAR_Exception $e) {
     return civicrm_create_error( $e->getMessage() );
