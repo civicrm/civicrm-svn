@@ -421,7 +421,7 @@ function _civicrm_contribute_format_params( $params, &$values, $create=false ) {
  * 
  */
 function civicrm_contribution_transact($params) {
-  civicrm_initialize( );
+  _civicrm_initialize( true);
 
   if ( empty( $params ) ) {
     return civicrm_create_error(  'No input parameters present'  );
