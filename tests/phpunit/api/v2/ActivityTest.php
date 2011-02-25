@@ -375,7 +375,7 @@ class api_v2_ActivityTest extends CiviUnitTestCase
         CRM_Core_BAO_CustomGroup::createTable( $group );
 
         //  Add column activity_custom_11 to the custom table
-        $customField =& new CRM_Core_DAO_CustomField();
+        $customField = new CRM_Core_DAO_CustomField();
         $customField->column_name = 'activity_custom_11';
         $customField->custom_group_id = 9;
         $customField->is_required = 0;
@@ -647,7 +647,7 @@ class api_v2_ActivityTest extends CiviUnitTestCase
         CRM_Core_BAO_CustomGroup::createTable( $group );
 
         //  Add column activity_custom_11 to the custom table
-        $customField =& new CRM_Core_DAO_CustomField();
+        $customField = new CRM_Core_DAO_CustomField();
         $customField->column_name = 'activity_custom_11';
         $customField->custom_group_id = 9;
         $customField->is_required = 0;
@@ -1005,7 +1005,7 @@ class api_v2_ActivityTest extends CiviUnitTestCase
         CRM_Core_BAO_CustomGroup::createTable( $group );
 
         //  Add column activity_custom_11 to the custom table
-        $customField =& new CRM_Core_DAO_CustomField();
+        $customField = new CRM_Core_DAO_CustomField();
         $customField->column_name = 'activity_custom_11';
         $customField->custom_group_id = 9;
         $customField->is_required = 0;

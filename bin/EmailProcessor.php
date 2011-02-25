@@ -212,7 +212,7 @@ class EmailProcessor {
                     
                     civicrm_api_include('activity');
                     $params = _civicrm_activity_buildmailparams( $mailParams, $emailActivityTypeId );
-                    $result = civicrm_api('activity', 'create' $params);
+                    $result = civicrm_api('activity', 'create', $params);
                     
                     if ( $result['is_error'] ) {
                         $matches = false;

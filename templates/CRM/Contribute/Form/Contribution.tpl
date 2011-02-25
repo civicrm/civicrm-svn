@@ -71,6 +71,9 @@
                 <td class="font-size12pt label"><strong><strong>{ts}Contributor{/ts}</strong></td><td class="font-size12pt"><strong>{$displayName}</strong></td>
             </tr>
         {else}
+	    {if !$contributionMode and !$email and $outBound_option != 2}
+	       {assign var='profileCreateCallback' value=1 }
+ 	    {/if}
             {include file="CRM/Contact/Form/NewContact.tpl"}
         {/if}
         {if $contributionMode}
@@ -301,6 +304,8 @@ function loadPanes( id ) {
             checkEmail( );
         });
         checkEmail( );
+	showHideByValue( 'is_email_receipt', '', 'receiptDate', 'table-row', 'radio', true); 
+	showHideByValue( 'is_email_receipt', '', 'fromEmail', 'table-row', 'radio', false );
     });
     function checkEmail( ) {
         var contactID = cj("input[name=contact_select_id[1]]").val();
@@ -316,8 +321,15 @@ function loadPanes( id ) {
                     }
                 }
             );
-        }
+        } else {
+	   cj("#email-receipt").hide( );
+	}
     }
+
+    function profileCreateCallback( blockNo ) {
+    	checkEmail( );     			    	    
+    }
+
     {/literal}
     {/if}
 </script>

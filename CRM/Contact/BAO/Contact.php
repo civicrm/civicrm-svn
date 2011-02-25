@@ -504,29 +504,50 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
                     }
                     
                     if ( ! CRM_Utils_Array::lookupValue( $values, 
-                                                         'state_province',
-                                                         CRM_Core_PseudoConstant::stateProvince( ), 
-                                                         $reverse ) && $reverse ) {
-                        
-                        CRM_Utils_Array::lookupValue( $values, 
-                                                      'state_province', 
-                                                      CRM_Core_PseudoConstant::stateProvinceAbbreviation( ), 
-                                                      $reverse );
-                    }
-                    
-                    if ( ! CRM_Utils_Array::lookupValue( $values, 
                                                          'country',
                                                          CRM_Core_PseudoConstant::country( ), 
-                                                         $reverse ) && $reverse ) {
-                        
+                                                         $reverse ) &&
+                         $reverse ) {
                         CRM_Utils_Array::lookupValue( $values, 
                                                       'country', 
                                                       CRM_Core_PseudoConstant::countryIsoCode( ), 
                                                       $reverse );
                     }
+
+                    // CRM-7597
+                    // if we find a country id above, we need to restrict it to that country
+                    // rather than the list of all countries
+
+                    if ( ! empty( $values['country_id'] ) ) {
+                        $stateProvinceList = CRM_Core_PseudoConstant::stateProvinceForCountry( $values['country_id'] );
+                    } else {
+                        $stateProvinceList = CRM_Core_PseudoConstant::stateProvince( );
+                    }
+                    if ( ! CRM_Utils_Array::lookupValue( $values, 
+                                                         'state_province',
+                                                         $stateProvinceList,
+                                                         $reverse ) && 
+                         $reverse ) {
+
+                        if ( ! empty( $values['country_id'] ) ) {
+                            $stateProvinceList = CRM_Core_PseudoConstant::stateProvinceForCountry( $values['country_id'], 'abbreviation' );
+                        } else {
+                            $stateProvinceList = CRM_Core_PseudoConstant::stateProvinceAbbreviation( );
+                        }
+                        CRM_Utils_Array::lookupValue( $values, 
+                                                      'state_province', 
+                                                      $stateProvinceList,
+                                                      $reverse );
+                    }
+                    
+                    if ( ! empty( $values['state_province_id'] ) ) {
+                        $countyList = CRM_Core_PseudoConstant::countyForState( $values['state_province_id'] );
+                    } else {
+                        $countyList = CRM_Core_PseudoConstant::county( );
+                    }
                     CRM_Utils_Array::lookupValue( $values, 
                                                   'county', 
-                                                  CRM_Core_PseudoConstant::county( ), 
+                                                  $countyList, 
                                                   $reverse );
                 }
                 
@@ -804,7 +825,7 @@ WHERE id={$id}; ";
             $imageThumbHeight = round( $thumbWidth / $imageRatio );
         } else {
             $imageThumbHeight = $thumbWidth;
-            $imageThumbWidth = $thumbWidth * $imageRatio;     
+            $imageThumbWidth = round( $thumbWidth * $imageRatio );
         }
  	 	
         return array( $imageThumbWidth, $imageThumbHeight );  
@@ -1632,7 +1653,7 @@ ORDER BY civicrm_email.is_primary DESC";
                           $data['address'][$loc]['country'] = $value;
                         }
                     } else if ($fieldName === 'county') {
-                        $data['address'][$loc]['address']['county_id'] = $value;
+                        $data['address'][$loc]['county_id'] = $value;
                     } else if ($fieldName == 'address_name') {
                         $data['address'][$loc]['name'] = $value;
                     } else if ( substr($fieldName, 0, 14) === 'address_custom' ) {

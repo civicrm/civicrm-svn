@@ -89,7 +89,7 @@ function &civicrm_contribution_create( &$params ) {
  * @deprecated
  */
 function civicrm_contribution_add(&$params){
-  $result = civicrm_contribution_create( &$params );
+  $result = civicrm_contribution_create( $params );
   return $result;
 }
 

@@ -155,7 +155,7 @@ function civicrm_uf_field_update( $params , $fieldId ) {
  * @access public
  *
  */
-function civicrm_uf_field_delete(&$params ) {
+function civicrm_uf_field_delete($params ) {
   _civicrm_initialize(true );
   try{
     civicrm_verify_mandatory($params,null,array('field_id'));

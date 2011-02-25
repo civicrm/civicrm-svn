@@ -63,6 +63,7 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Logging_ReportDetail
         if ($this->cid) {
             // link back to contact summary
             $this->assign('backURL', CRM_Utils_System::url('civicrm/contact/view', "reset=1&selectedChild=log&cid={$this->cid}", false, null, false));
+            $this->assign('revertURL', self::$_template->get_template_vars('revertURL') . "&cid={$this->cid}");
         } else {
             // link back to summary report
             require_once 'CRM/Report/Utils/Report.php';

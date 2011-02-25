@@ -39,7 +39,7 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
       parent::setUp();
   }
   
-  function testSurveyUsageScenario()
+  function testPetitionUsageScenario()
   {
       // This is the path where our testing install resides. 
       // The rest of URL is defined in CiviSeleniumTestCase base class, in
@@ -67,6 +67,32 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
           $this->waitForPageToLoad("30000");          
           $this->assertTrue($this->isTextPresent("Your changes have been saved."));    
       }
+
+      // handle permissions early
+
+      // let's give permission 'sign CiviCRM Petition' to anonymous user.
+      $this->open( $this->sboxPath ."admin/user/permissions");
+      $this->waitForElementPresent("edit-submit");
+      $this->check("edit-1-sign-CiviCRM-Petition");
+      // give profile related permision
+      $this->check("edit-1-profile-create");
+      $this->check("edit-1-profile-edit");
+      $this->check("edit-1-profile-listings");
+      $this->check("edit-1-profile-view");
+
+      // now give full permissions to CiviPetition to registered user
+      $this->check("edit-2-administer-CiviCampaign");
+      $this->check("edit-2-manage-campaign");
+      $this->check("edit-2-gotv-campaign-contacts");
+      $this->check("edit-2-interview-campaign-contacts");
+      $this->check("edit-2-release-campaign-contacts");
+      $this->check("edit-2-reserve-campaign-contacts");
+      $this->check("edit-2-sign-CiviCRM-Petition");
+      
+      // save permission
+      $this->click("edit-submit");
+      $this->waitForPageToLoad("30000");
+      $this->assertTrue($this->isTextPresent("The changes have been saved."));
 
       /////////////// Create Campaign ///////////////////////////////
       
@@ -116,7 +142,7 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
       $title = substr(sha1(rand()), 0, 7);
       $this->type("title", "$title Petition");
 
-      // fill introdyction 
+      // fill introduction 
       //$this->type("cke_instructions", "This is introduction of $title Petition");
       
       // select campaign 
@@ -129,33 +155,16 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
       $this->click("_qf_Petition_next-bottom");
       $this->waitForPageToLoad("30000");
 
+
       $this->assertTrue($this->isTextPresent("Petition has been saved."));
       $this->waitForElementPresent("xpath=//table/tbody//tr//td[1][text()='$title Petition']/../td[5]/span[2][text()='more ']/ul/li/a[text()='Sign']");
-      $this->click("xpath=//table/tbody//tr//td[1][text()='$title Petition']/../td[5]/span[2][text()='more ']/ul/li/a[text()='Sign']");
+      $url = $this->getAttribute( "xpath=//table/tbody//tr//td[1][text()='$title Petition']/../td[5]/span[2][text()='more ']/ul/li/a[text()='Sign']/@href" );
       
-      $this->waitForPageToLoad("30000");
-      $url = $this->getLocation();
-     
       ////////////// Retrieve Sign Petition Url /////////////////////////
       
-      // let's give permission 'sign CiviCRM Petition' to anonymous user.
-      $this->open( $this->sboxPath ."admin/user/permissions");
-      $this->waitForElementPresent("edit-submit");
-      $this->check("edit-1-sign-CiviCRM-Petition");
-      
-      // give profile related permision
-      $this->check("edit-1-profile-create");
-      $this->check("edit-1-profile-edit");
-      $this->check("edit-1-profile-listings");
-      $this->check("edit-1-profile-view");
-      
-      // save permission
-      $this->click("edit-submit");
-      $this->waitForPageToLoad("30000");
-      $this->assertTrue($this->isTextPresent("The changes have been saved."));
-      
       // logout and sign as anonymous.
-      $this->open( $this->sboxPath ."civicrm/logout&reset=1" );
+      $this->open( $this->sboxPath ."logout" );
+      $this->waitForElementPresent("op");
       
       // go to the link that you will be sign as anonymous
       $this->open($url);

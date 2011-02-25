@@ -43,7 +43,7 @@ require_once 'api/v3/utils.php';
 /**
  *  returns all the fields on this entity.
  */
-function civicrm_tag_getfields( &$params ) {
+function civicrm_tag_getfields( $params ) {
     require_once 'CRM/Core/BAO/Tag.php';
     $bao = new CRM_Core_BAO_Tag();
     //function &exportableFields( $contactType = 'Individual', $status = false, $export = false, $search = false )
@@ -60,7 +60,7 @@ function civicrm_tag_getfields( &$params ) {
  * @return array of newly created tag property values.
  * @access public
  */
-function civicrm_tag_create( &$params ) 
+function civicrm_tag_create( $params ) 
 {
   _civicrm_initialize( true );
   try {
@@ -101,7 +101,7 @@ function civicrm_tag_create( &$params )
  * @return boolean | error  true if successfull, error otherwise
  * @access public
  */
-function civicrm_tag_delete( &$params ) 
+function civicrm_tag_delete( $params ) 
 {
   _civicrm_initialize( true );
   try {
@@ -129,7 +129,7 @@ function civicrm_tag_delete( &$params )
  * @access public
  */
 
-function civicrm_tag_get(&$params) 
+function civicrm_tag_get($params) 
 {   
    try {
   _civicrm_initialize( true );

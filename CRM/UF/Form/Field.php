@@ -347,6 +347,8 @@ class CRM_UF_Form_Field extends CRM_Core_Form
                 unset($participantFields['external_identifier'] );
                 unset($participantFields['event_id'] );
                 unset($participantFields['participant_contact_id'] );
+                unset($participantFields['participant_role_id'] );
+                unset($participantFields['participant_status_id'] );
                 unset($participantFields['participant_is_test'] );
                 unset($participantFields['participant_fee_level'] );
                 unset($participantFields['participant_id'] );
@@ -854,8 +856,10 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         
         case 'Contact' :
             if ( in_array( 'Activity', $groupType ) ) {
-                $errors['field_name'] = 
-                    ts( 'Cannot add or update profile field type Contact with combination of Activity' ); 
+                //CRM-5803 - do not allow activity + contact.
+                //CRM-7603 - need to support activity + contact. 
+                
+                //$errors['field_name'] = ts( 'Cannot add or update profile field type Contact with combination of Activity' ); 
             } else {
                 self::formRuleSubType( $fieldType, $groupType, $errors );
             }

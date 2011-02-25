@@ -53,7 +53,7 @@ require_once 'api/v3/utils.php';
  * @return array participant id if participant is created/edited otherwise is_error = 1
  * @access public
  */
-function civicrm_participant_create(&$params)
+function civicrm_participant_create($params)
 {
   _civicrm_initialize(true);
   try{
@@ -96,7 +96,7 @@ function civicrm_participant_create(&$params)
  * @static void
  * @access public
  */
-function civicrm_participant_get( &$params ) {
+function civicrm_participant_get( $params ) {
   _civicrm_initialize(true );
   try{
     $values = array( );
@@ -128,7 +128,7 @@ function civicrm_participant_get( &$params ) {
  * @access public
  */
 
-function &_civicrm_participant_search( &$params ) {
+function &_civicrm_participant_search( $params ) {
 
   $inputParams      = array( );
   $returnProperties = array( );
@@ -191,7 +191,7 @@ function &_civicrm_participant_search( &$params ) {
  * @return array of updated participant property values
  * @access public
  */
-function &civicrm_participant_update(&$params)
+function &civicrm_participant_update($params)
 {
   _civicrm_initialize();
   if ( !is_array( $params ) ) {
@@ -226,7 +226,7 @@ function &civicrm_participant_update(&$params)
  * @return boolean        true if success, else false
  * @access public
  */
-function &civicrm_participant_delete( &$params )
+function &civicrm_participant_delete( $params )
 {
   _civicrm_initialize(true);
   try{
@@ -258,7 +258,7 @@ function &civicrm_participant_delete( &$params )
  * @param <type> $onDuplicate
  * @return <type>
  */
-function civicrm_create_participant_formatted( &$params , $onDuplicate )
+function civicrm_create_participant_formatted( $params , $onDuplicate )
 {
   _civicrm_initialize( );
 
@@ -284,7 +284,7 @@ function civicrm_create_participant_formatted( &$params , $onDuplicate )
  * @param <type> $params
  * @return <type>
  */
-function civicrm_participant_check_params( &$params ,$checkDuplicate = false )
+function civicrm_participant_check_params( $params ,$checkDuplicate = false )
 {
   require_once 'CRM/Event/BAO/Participant.php';
   //check if participant id is valid or not

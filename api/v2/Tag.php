@@ -78,6 +78,7 @@ function civicrm_tag_create( &$params )
         _civicrm_object_to_array($tagBAO, $values);
         $tag = array( );
         $tag['tag_id']   = $values['id'];
+        $tag['name']     = $values['name'];
         $tag['is_error'] = 0;
     }
     return $tag;

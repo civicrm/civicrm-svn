@@ -75,7 +75,7 @@ require_once 'CRM/Utils/Rule.php';
  * @static void
  * @access public
  */
-function civicrm_pledge_create( &$params ) {
+function civicrm_pledge_create( $params ) {
   _civicrm_initialize(true );
   try{
 
@@ -119,7 +119,7 @@ function civicrm_pledge_create( &$params ) {
  * @static void
  * @access public
  */
-function civicrm_pledge_delete( &$params ) {
+function civicrm_pledge_delete( $params ) {
   _civicrm_initialize(true);
   try{
 
@@ -156,7 +156,7 @@ function civicrm_pledge_delete( &$params ) {
  * @static void
  * @access public
  */
-function civicrm_pledge_get( &$params ) {
+function civicrm_pledge_get( $params ) {
   _civicrm_initialize(true );
   try{
     civicrm_verify_mandatory ($params);
@@ -232,7 +232,7 @@ function civicrm_pledge_get( &$params ) {
  * @return array|CRM_Error
  * @access public
  */
-function _civicrm_pledge_format_params( &$params, &$values, $create=false ) {
+function _civicrm_pledge_format_params( $params, &$values, $create=false ) {
   // based on contribution apis - copy all the pledge fields - this function filters out non -valid fields but unfortunately
   // means we have to put them back where there are 2 names for the field (name in table & unique name)
   // since there is no clear std to use one or the other. Generally either works ? but not for create date

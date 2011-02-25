@@ -79,6 +79,10 @@ class CRM_Contact_Page_View_Log extends CRM_Core_Page {
         $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
         $this->assign( 'contactId', $this->_contactId );
 
+        require_once 'CRM/Contact/BAO/Contact.php';
+        $displayName = CRM_Contact_BAO_Contact::displayName( $this->_contactId );
+        $this->assign( 'displayName', $displayName );
+
         // check logged in url permission
         require_once 'CRM/Contact/Page/View.php';
         CRM_Contact_Page_View::checkUserPermission( $this );

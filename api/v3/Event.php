@@ -56,7 +56,7 @@ require_once 'api/v3/utils.php';
  * @access public
  * @todo v2 Event API didn't create custom fields - I can see this has been 'touched up' but should check event custom fields can now be created & then remove this comment
  */
-function civicrm_event_create( &$params )
+function civicrm_event_create( $params )
 {
   _civicrm_initialize( true );
   try {
@@ -100,7 +100,7 @@ function civicrm_event_create( &$params )
  * @access public
  */
 
-function civicrm_event_get( &$params )
+function civicrm_event_get( $params )
 {
   _civicrm_initialize( true );
   try {
@@ -192,7 +192,7 @@ function civicrm_event_get( &$params )
  * @return boolean        true if success, error otherwise
  * @access public
  */
-function civicrm_event_delete( &$params )
+function civicrm_event_delete( $params )
 {
   _civicrm_initialize( true );
   try {

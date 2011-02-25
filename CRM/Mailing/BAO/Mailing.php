@@ -1849,6 +1849,7 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
                         $mailing.created_id as created_id, 
                         $mailing.scheduled_id as scheduled_id,
                         $mailing.is_archived as archived,
+                        $mailing.created_date as created_date,
                         campaign_id
             FROM        $mailing
             LEFT JOIN   $job ON ( $job.mailing_id = $mailing.id AND $job.is_test = 0 AND $job.parent_id IS NULL )
@@ -1880,6 +1881,7 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
                             'id'            => $dao->id,                            
                             'name'          => $dao->name, 
                             'status'        => $dao->status ? $dao->status : 'Not scheduled', 
+                            'created_date'  => CRM_Utils_Date::customFormat($dao->created_date),
                             'scheduled'     => CRM_Utils_Date::customFormat($dao->scheduled_date),
                             'scheduled_iso' => $dao->scheduled_date,
                             'start'         => CRM_Utils_Date::customFormat($dao->start_date), 

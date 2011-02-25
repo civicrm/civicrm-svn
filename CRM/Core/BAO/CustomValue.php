@@ -162,9 +162,9 @@ class CRM_Core_BAO_CustomValue extends CRM_Core_DAO
             return null;
         }
         foreach( array_keys( $formValues ) as $key ){
-            if ( substr($key,0,7) != 'custom_' ){
+            if ( substr($key,0,7) != 'custom_' ) {
                 continue;
-            }else if( empty($formValues[$key]) ){
+            } else if( empty($formValues[$key]) ){
                 continue;
             }
             

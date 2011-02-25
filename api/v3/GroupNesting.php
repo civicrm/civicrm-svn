@@ -48,7 +48,7 @@ require_once 'api/v3/utils.php';
  *
  * @return  array  list of group nesting records
  */
-function civicrm_group_nesting_get( &$params )
+function civicrm_group_nesting_get( $params )
 {
   _civicrm_initialize(true);
   try{
@@ -94,14 +94,14 @@ function civicrm_group_nesting_get( &$params )
  * Creates group nesting record for given parent and child id.
  * Parent and child groups need to exist.
  *
- * @param array &$params parameters array - allowed array keys include:
+ * @param array $params parameters array - allowed array keys include:
  * {@schema Contact/GroupNesting.xml}
  *
  * @return array TBD
  *
  * @todo Work out the return value.
  */
-function civicrm_group_nesting_create( &$params )
+function civicrm_group_nesting_create( $params )
 {
   _civicrm_initialize(true);
   try{
@@ -129,14 +129,14 @@ function civicrm_group_nesting_create( &$params )
 /**
  * Removes specific nesting records.
  *
- * @param array &$params parameters array - allowed array keys include:
+ * @param array $params parameters array - allowed array keys include:
  * {@schema Contact/GroupNesting.xml}
  *
  * @return array TBD
  *
  * @todo Work out the return value.
  */
-function civicrm_group_nesting_delete( &$params )
+function civicrm_group_nesting_delete( $params )
 {
   _civicrm_initialize(true);
   try{

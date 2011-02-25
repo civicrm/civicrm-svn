@@ -442,7 +442,6 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
             $operator = 'IN';
             $voterIds = array_keys( $voterActValues );
             if ( $searchVoterFor == 'reserve' ) {
-                $voterIds = array( );
                 $operator = 'NOT IN';
                 //filter out recontact survey contacts.
                 $recontactInterval = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', 
@@ -451,6 +450,7 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
                 if ( $surveyId && 
                      is_array( $recontactInterval ) && 
                      !empty( $recontactInterval ) ) {
+                    $voterIds = array( );
                     foreach ( $voterActValues as $values ) {
                         $numOfDays = CRM_Utils_Array::value( $values['result'], $recontactInterval );
                         if ( $numOfDays && 

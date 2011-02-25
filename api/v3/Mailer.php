@@ -367,7 +367,7 @@ function civicrm_mailer_event_open($params)
  *
  * @return array  $error        array with errors, null if none
  */
-function _civicrm_mailer_check_params ( &$params, $required  ) 
+function _civicrm_mailer_check_params ( $params, $required  ) 
 {
     // return error if we do not get any params
     if ( empty( $params ) ) {

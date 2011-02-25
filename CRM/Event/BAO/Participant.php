@@ -360,6 +360,7 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
         // It might be case there are some empty spaces and still event
         // is full, as waitlist might represent group require spaces > empty.
         
+        require_once 'CRM/Event/BAO/Event.php';
         require_once 'CRM/Event/PseudoConstant.php';
         $participantRoles   = CRM_Event_PseudoConstant::participantRole(   null, 'filter = 1' ); 
         $countedStatuses    = CRM_Event_PseudoConstant::participantStatus( null, "is_counted = 1" );
@@ -387,6 +388,7 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
             //build the where clause.
             $whereClause  = ' WHERE ' . implode( ' AND ', $where );
             $whereClause .= " AND participant.status_id = $onWaitlistStatusId ";
+            $eventSeatsWhere = implode( ' AND ', $where ) . " AND ( participant.status_id = $onWaitlistStatusId )";
             
             $query = "
     SELECT  participant.id id,
@@ -395,25 +397,22 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
 INNER JOIN  civicrm_event event ON ( event.id = participant.event_id )
             {$whereClause}";
             
-            $participantIds = array( );
             $eventFullText  = ts( 'This event is full !!!' );
             $participants   = CRM_Core_DAO::executeQuery( $query, $eventParams );
             while ( $participants->fetch( ) ) {
-                $participantIds[$participants->id] = $participants->id;
                 //oops here event is full and we don't want waiting count.
-                if ( !$returnWaitingCount ) {
-                    $eventFullText = $participants->event_full_text;
-                    break;
+                if ( $returnWaitingCount ) {
+                    return CRM_Event_BAO_Event::eventTotalSeats( $eventId, $eventSeatsWhere );
+                } else {
+                    return ( $participants->event_full_text ) ? $participants->event_full_text : $eventFullText; 
                 }
-            }
-            if ( !empty( $participantIds ) ) {
-                return ( !$returnWaitingCount ) ? $eventFullText : self::totalEventSeats( $eventId, $participantIds );
             }
         }
         
         //consider only counted participants.
         $where[] = ' participant.status_id IN ( ' . implode( ', ', array_keys( $countedStatuses ) ) . ' ) ';
         $whereClause = ' WHERE ' . implode( ' AND ', $where );
+        $eventSeatsWhere = implode( ' AND ', $where );
         
         $query = "
     SELECT  participant.id id,
@@ -424,14 +423,11 @@ INNER JOIN  civicrm_event event ON ( event.id = participant.event_id )
             {$whereClause}";
         
         $eventMaxSeats  = null; 
-        $participantIds = array( );
         $eventFullText  = ts( 'This event is full !!!' );
         $participants   = CRM_Core_DAO::executeQuery( $query, $eventParams );
         while ( $participants->fetch( ) ) {
             $eventFullText = $participants->event_full_text;
             $eventMaxSeats = $participants->max_participants;
-            $participantIds[$participants->id] = $participants->id;
-            
             //don't have limit for event seats.
             if ( $participants->max_participants == null ) {
                 return $result;
@@ -439,7 +435,7 @@ INNER JOIN  civicrm_event event ON ( event.id = participant.event_id )
         }
         
         //get the total event seats occupied by these participants.
-        $eventRegisteredSeats = self::totalEventSeats( $eventId, $participantIds );
+        $eventRegisteredSeats = CRM_Event_BAO_Event::eventTotalSeats( $eventId, $eventSeatsWhere );
         
         if ( $eventRegisteredSeats ) {
             if ( $eventRegisteredSeats >= $eventMaxSeats ) {
@@ -1652,147 +1648,6 @@ UPDATE  civicrm_participant
          }
          
          return $ids;
-     }
-     
-     /**
-      * Function to calculate event seats for given participant ids.
-      *
-      * @param int    $eventId       event id.
-      * @param array  $paticipantIds an array of participant ids.
-      *
-      * @return int $totalSeats  total number if event seats.
-      * @access public
-      * @static
-      */
-     static function totalEventSeats( $eventId, $participantIds = array( ) ) 
-     {
-         $totalSeats = 0;
-         if ( empty( $eventId ) ) {
-             return $totalSeats;
-         }
-         
-         //Calculate event seats occupied by participant registrations for given event.
-         //If participant ids passed, calculate seats occupied by given participants for given event.
-         
-         //use static cache at first level.
-         static $eventSeats;
-         $eventCacheKey = null;
-         $participantCacheKey = null;
-         
-         //when participant are not passed, lets see in event cache.
-         if ( empty( $participantIds ) ) {
-             $eventCacheKey = 'event_'.$eventId;
-             if ( isset( $eventSeats[$eventCacheKey] ) ) {
-                 return $eventSeats[$eventCacheKey];
-             }
-         }
-         
-         $pIdTmpTableClause = null;
-         if ( !empty( $participantIds ) ) {
-             $batch    = 100;
-             $pIdCount = count( $participantIds );
-             
-             //use static cache at first level.
-             if ( $pIdCount < 100 ) {
-                 $pIds = $participantIds;
-                 sort( $pIds );
-                 $participantCacheKey = 'participant_'. implode( '_', array_values( $pIds ) );
-                 if ( isset( $eventSeats[$participantCacheKey] ) ) {
-                     return $eventSeats[$participantCacheKey]; 
-                 }
-             }
-             
-             //lets fill participant id in temp table and apply the inner join.
-             $tempTableName = 'temp_participant_total_event_seats';
-             CRM_Core_DAO::executeQuery( "DROP TABLE IF EXISTS {$tempTableName}" );
-             $query = "CREATE TEMPORARY TABLE {$tempTableName}(participant_id INT(10) UNSIGNED)";
-             CRM_Core_DAO::executeQuery( $query );
-             $insertedCount = 0;
-             do {
-                 $processIds = $participantIds;
-                 $insertIds  = array_splice( $processIds, $insertedCount, $batch );
-                 if ( !empty( $insertIds ) ) {
-                     $insertSQL = "INSERT IGNORE INTO {$tempTableName}( participant_id ) 
-                     VALUES (" . implode( '),(', $insertIds ) . ');';
-                     CRM_Core_DAO::executeQuery( $insertSQL );
-                 }
-                 $insertedCount += $batch;
-             } while ( $insertedCount < $pIdCount );  
-             
-             $pIdTmpTableClause = " INNER JOIN  {$tempTableName} tmp ON ( tmp.participant_id = line.entity_id ) ";
-         }
-         
-         $query ="
-    SELECT  line.id as lineId,
-            line.entity_id as entity_id,
-            line.qty,
-            value.count,
-            field.html_type
-      FROM  civicrm_line_item line
-INNER JOIN  civicrm_participant participant ON ( participant.id = line.entity_id )
-            {$pIdTmpTableClause} 
-INNER JOIN  civicrm_price_field_value value ON ( value.id = line.price_field_value_id )
-INNER JOIN  civicrm_price_field field ON ( value.price_field_id = field.id )   
-     WHERE  line.entity_table = 'civicrm_participant'
-       AND  participant.event_id = %1";
-         
-         $queryParams  = array( 1 => array( $eventId, 'Positive' ) );
-         $lineItem     = CRM_Core_DAO::executeQuery( $query, $queryParams );
-         $countDetails = array( );
-         
-         $weDoHaveLineItems = false;
-         
-         while ( $lineItem->fetch( ) ) {
-             $weDoHaveLineItems = true;
-             $count = $lineItem->count;
-             if ( !$count ) $count = 0; 
-             if ( $lineItem->html_type == 'Text' ) $count *= $lineItem->qty;  
-             $countDetails[$lineItem->entity_id][$lineItem->lineId] = $count;
-         }
-         
-         //first check do we have line items.
-         if ( $weDoHaveLineItems ) {
-             //hey its seems like user does not pass participant ids,
-             //lets pull all participant for given event from participant table.
-             if ( empty( $participantIds ) ) {
-                 $participant = CRM_Core_DAO::executeQuery( 'select id from civicrm_participant where event_id = %1',
-                                                            array( 1 => array( $eventId, 'Positive' ) ) );
-                 while ( $participant->fetch( ) ) {
-                     $participantIds[$participant->id] = $participant->id; 
-                 }
-             }
-             
-             //finally calculate actual count for participants.
-             foreach ( $participantIds as $pId ) {
-                 $count = 1;
-                 $optCounts = CRM_Utils_Array::value( $pId, $countDetails );
-                 if ( is_array( $optCounts ) ) $count = array_sum( $optCounts );
-                 if ( !$count ) $count = 1;
-                 $totalSeats += $count;
-             }
-         } else {
-             if ( empty( $participantIds ) ) {
-                 $query = '
-SELECT  count(*) 
-  FROM  civicrm_participant
- WHERE  event_id = %1';
-                 $totalSeats = CRM_Core_DAO::singleValueQuery( $query, $queryParams );
-             } else {
-                 $totalSeats = count( $participantIds );
-             }
-         }
-         
-         //in case of static cache of participants, hold this seats.
-         if ( $participantCacheKey ) {
-             $eventSeats[$participantCacheKey] = $totalSeats;
-         }
-         
-         //in case of static cache for entire event.
-         if ( $eventCacheKey ) {
-             $eventSeats[$eventCacheKey] = $totalSeats;
-         }
-         
-         return $totalSeats;
      }
      
      /**

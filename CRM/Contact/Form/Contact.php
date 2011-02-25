@@ -538,8 +538,10 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                 CRM_Contact_Form_Edit_Address::fixStateSelect( $this,
                                                                "address[$blockId][country_id]",
                                                                "address[$blockId][state_province_id]",
+                                                               "address[$blockId][county_id]",
                                                                CRM_Utils_Array::value( 'country_id',
-                                                                                       $values, $config->defaultContactCountry ) );
+                                                                                       $values, $config->defaultContactCountry ),
+                                                               CRM_Utils_Array::value( 'state_province_id', $values ) );
                 
             }
         }

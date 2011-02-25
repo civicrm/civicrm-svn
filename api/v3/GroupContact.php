@@ -51,7 +51,7 @@ require_once 'api/v3/utils.php';
  *
  * @return  array  list of groups, given contact subsribed to
  */
-function civicrm_group_contact_get( &$params )
+function civicrm_group_contact_get( $params )
 {
   _civicrm_initialize(true);
   try{
@@ -73,7 +73,7 @@ function civicrm_group_contact_get( &$params )
  * @param array $params
  * @return <type>
  */
-function civicrm_group_contact_create( &$params )
+function civicrm_group_contact_create( $params )
 {
   _civicrm_initialize(true);
   try{
@@ -92,7 +92,7 @@ function civicrm_group_contact_create( &$params )
  * @param <type> $params
  * @return <type>
  */
-function civicrm_group_contact_delete( &$params )
+function civicrm_group_contact_delete( $params )
 {
   _civicrm_initialize(true);
   try{
@@ -111,7 +111,7 @@ function civicrm_group_contact_delete( &$params )
  * @param <type> $params
  * @return <type>
  */
-function civicrm_group_contact_pending( &$params )
+function civicrm_group_contact_pending( $params )
 {
   return civicrm_group_contact_common( $params, 'pending' );
 }
@@ -122,7 +122,7 @@ function civicrm_group_contact_pending( &$params )
  * @param <type> $op
  * @return <type>
  */
-function civicrm_group_contact_common( &$params, $op = 'add' )
+function civicrm_group_contact_common( $params, $op = 'add' )
 {
 
   $contactIDs = array( );
@@ -179,7 +179,7 @@ function civicrm_group_contact_common( &$params, $op = 'add' )
   return civicrm_create_success($values);
 }
 
-function civicrm_group_contact_update_status ( &$params ) {
+function civicrm_group_contact_update_status ( $params ) {
   if ( ! is_array( $params ) ) {
     return civicrm_create_error( ts( 'input parameter should be an array' ) );
   }

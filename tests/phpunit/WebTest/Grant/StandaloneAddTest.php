@@ -68,6 +68,18 @@ class WebTest_Grant_StandaloneAddTest extends CiviSeleniumTestCase {
           $this->waitForPageToLoad("30000");          
           $this->assertTrue($this->isTextPresent("Your changes have been saved."));          
       }
+
+        // let's give full CiviGrant permissions to demo user (registered user).
+        $this->open( $this->sboxPath ."admin/user/permissions");
+        $this->waitForElementPresent("edit-submit");
+        $this->check("edit-2-access-CiviGrant");
+        $this->check("edit-2-edit-grants");
+        $this->check("edit-2-delete-in-CiviGrant");
+
+        // save permissions
+        $this->click("edit-submit");
+        $this->waitForPageToLoad("30000");
+        $this->assertTrue($this->isTextPresent("The changes have been saved."));        
        
       // Go directly to the URL of the screen that you will be testing (New Contribution-standalone).
       $this->open($this->sboxPath . "civicrm/grant/add&reset=1&context=standalone");
@@ -79,7 +91,8 @@ class WebTest_Grant_StandaloneAddTest extends CiviSeleniumTestCase {
       // Let's start filling the form with values.
       
       // create new contact using dialog
-      $this->webtestNewDialogContact( );
+      $firstName = substr(sha1(rand()), 0, 7);
+      $this->webtestNewDialogContact( $firstName, "Grantor", $firstName . "@example.com" );
       
       // select grant Status
       $this->select("status_id", "value=1");
@@ -118,10 +131,26 @@ class WebTest_Grant_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->click("_qf_Grant_upload");
       $this->waitForPageToLoad("30000");
       
-      // click through to the Grant view screen
-      $this->waitForElementPresent("link=View");
+      // verify if Grant is created
+      $this->waitForElementPresent( "xpath=//div[@id='Grants']//table//tbody/tr[1]/td[8]/span/a[text()='View']" );
       
-      $this->click('link=View');
-      $this->waitForPageToLoad('30000');
+      //click through to the Grant view screen
+      $this->click( "xpath=//div[@id='Grants']//table/tbody/tr[1]/td[8]/span/a[text()='View']" );
+
+      $this->waitForElementPresent("_qf_GrantView_cancel-bottom");
+
+      $expected = array(
+                        2   => 'Pending', 
+                        3   => 'Emergency',
+                        8   => '$ 100.00',
+                        10  => '$ 90.00',
+                        13  => 'Grant Note',
+                        );
+
+      foreach ( $expected as $label => $value ) {
+          $this->verifyText("xpath=id('GrantView')/div[2]/table[1]/tbody/tr[$label]/td[2]", preg_quote($value));
+      }
+
   }
+
 }

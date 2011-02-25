@@ -1244,7 +1244,14 @@ SELECT contact_id
                     default:
                         if ( isset( $value['enumValues'] ) ) {
                             if (isset($value['default'])) $object->$dbName=$value['default'];
-                            else $object->$dbName=$value['enumValues'][0];
+                            else {
+                                if ( is_array($value['enumValues']) ) {
+                                    $object->$dbName=$value['enumValues'][0];
+                                } else {
+                                    $defaultValues = explode( ',', $value['enumValues'] );
+                                    $object->$dbName = $defaultValues[0];
+                                }
+                            }
                         } else {
                             $object->$dbName=$dbName.'_'.$counter;
                             $maxlength = CRM_Utils_Array::value( 'maxlength', $value );

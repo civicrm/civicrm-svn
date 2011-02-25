@@ -51,7 +51,7 @@ require_once 'api/v3/utils.php';
  *
  * @return  array  list of groups, given contact subsribed to
  */
-function civicrm_group_organization_get( &$params )
+function civicrm_group_organization_get( $params )
 {
   _civicrm_initialize( true);
   try{
@@ -82,7 +82,7 @@ function civicrm_group_organization_get( &$params )
  * @param $params array
  * @return <type>
  */
-function civicrm_group_organization_create( &$params )
+function civicrm_group_organization_create( $params )
 {
   _civicrm_initialize( true);
 
@@ -117,7 +117,7 @@ function civicrm_group_organization_create( &$params )
  * @access public
  */
 
-function civicrm_group_organization_delete( &$params )
+function civicrm_group_organization_delete( $params )
 {
   _civicrm_initialize( true);
   try{

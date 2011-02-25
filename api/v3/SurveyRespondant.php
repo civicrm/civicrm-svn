@@ -48,7 +48,7 @@ require_once 'CRM/Campaign/BAO/Petition.php';
  * @static void
  * @access public
  */
-function &civicrm_survey_respondant_get( &$params ) {
+function &civicrm_survey_respondant_get( $params ) {
   _civicrm_initialize(true );
   try{
     civicrm_verify_mandatory($params,'CRM_Campaign_BAO_Petition',array('survey_id'));
@@ -70,7 +70,7 @@ function &civicrm_survey_respondant_get( &$params ) {
   }
 }
 
-function &civicrm_survey_respondant_count( &$params ) {
+function &civicrm_survey_respondant_count( $params ) {
   _civicrm_initialize(true );
   try{
 

@@ -214,7 +214,18 @@
 	for ( radioName in allRadios ) {
 	   if ( !data.hasOwnProperty( radioName ) ) data[radioName] = '';  
 	}
-		
+	
+	//carry contact related profile field data.
+	fieldName = 'field_' + voterId;
+	cj( '[id^="'+ fieldName +'"]' ).each( function( ) {
+	    fldId = cj(this).attr( 'id' );
+	    if ( fldId.indexOf( '_custom_' ) == -1 &&
+	         fldId.indexOf( '_result' ) == -1  && 
+		 fldId.indexOf( '_note' ) == -1  ) {
+	       data[fldId] = cj( this ).val( );
+	    }
+        });
+	
 	var surveyActivityIds = {/literal}{$surveyActivityIds}{literal};
 	activityId =  eval( "surveyActivityIds.activity_id_" + voterId );
 	if ( !activityId ) return; 	
@@ -226,6 +237,7 @@
 	data['result']           = cj( '#field_' + voterId + '_result' ).val( ); 
 	data['note']             = cj( '#field_' + voterId + '_note' ).val( );
 	data['surveyTitle']      = {/literal}'{$surveyValues.title|escape:javascript}'{literal};
+	data['survey_id']        = {/literal}'{$surveyValues.id}'{literal};
 	
 	var dataUrl = {/literal}"{crmURL p='civicrm/campaign/registerInterview' h=0}"{literal}	          
 	

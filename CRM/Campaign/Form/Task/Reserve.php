@@ -228,23 +228,17 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
      * @return None
      */
     public function postProcess( ) 
-    {
-        $existingVoterIds = $reservedVoterIds = array( );
-        
+    {        
         //add reservation.
         require_once 'CRM/Core/PseudoConstant.php';
         $countVoters    = 0;
         $maxVoters      = $this->_surveyDetails['max_number_of_contacts'];
         $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
         $statusHeld     = array_search( 'Scheduled', $activityStatus );
-
+        
         require_once 'CRM/Activity/BAO/Activity.php';
+        $reservedVoterIds = array( );
         foreach ( $this->_contactIds as $cid ) {
-            //apply filter for existing voters
-            if ( in_array( $cid, $existingVoterIds ) ) {
-                continue;
-            }
-
             $subject =  ts( '%1', array( 1 =>  $this->_surveyDetails['title'] ) ). ' - ' . ts( 'Respondent Reservation' );
             $session =& CRM_Core_Session::singleton( );
             $activityParams = array( 'source_contact_id'   => $session->get( 'userID' ),

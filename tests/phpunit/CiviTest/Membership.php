@@ -66,7 +66,7 @@ class Membership extends PHPUnit_Framework_Testcase
                         'entity_id'               => $contributionPageId
                         );
         
-        $dao =& new CRM_Member_DAO_MembershipBlock();
+        $dao = new CRM_Member_DAO_MembershipBlock();
         $dao->copyValues($param);
         return $dao->save();
     }
@@ -77,7 +77,7 @@ class Membership extends PHPUnit_Framework_Testcase
 
     function deleteMembershipBlock( $blcokId ) 
     {
-        $dao =& new CRM_Member_DAO_MembershipBlock();
+        $dao = new CRM_Member_DAO_MembershipBlock();
         $dao->id = $blcokId;
         if ( $dao->find( true ) ) {
             $dao->delete( );

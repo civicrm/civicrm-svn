@@ -135,8 +135,10 @@ class CRM_Event_Form_ManageEvent_Location extends CRM_Event_Form_ManageEvent
                 CRM_Contact_Form_Edit_Address::fixStateSelect( $this,
                                                           "address[$key][country_id]",
                                                           "address[$key][state_province_id]",
+                                                          "address[$key][county_id]",
                                                           CRM_Utils_Array::value( 'country_id', $value,
-                                                                                  $config->defaultContactCountry ) );
+                                                                                  $config->defaultContactCountry ),
+                                                          CRM_Utils_Array::value( 'state_province_id', $value ) );
             }
         }
         $defaults['location_option'] = $this->_oldLocBlockId ? 2 : 1;

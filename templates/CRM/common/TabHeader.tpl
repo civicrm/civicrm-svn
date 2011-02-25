@@ -29,7 +29,7 @@
    {foreach from=$tabHeader key=tabName item=tabValue}
       <li id="tab_{$tabName}" class="crm-tab-button ui-corner-all {if !$tabValue.valid}disabled{/if}">
       {if $tabValue.link and $tabValue.active}
-         <a href="{$tabValue.link}" title="{$tabValue.title}{if !$tabValue.valid} ({ts}disabled{/ts}){/if}"><span> </span> {$tabValue.title}</a>
+         <a href="{$tabValue.link}" title="{$tabValue.title}{if !$tabValue.valid} ({ts}disabled{/ts}){/if}">{$tabValue.title}</a>
       {else}
          <span {if !$tabValue.valid}title="{ts}disabled{/ts}"{/if}>{$tabValue.title}</span>
       {/if}

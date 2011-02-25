@@ -61,7 +61,7 @@ function _civicrm_initialize($useException = true )
  * @
  *
  */
-function civicrm_verify_one_mandatory (&$params, $daoName = null, $keyoptions = array() ) {
+function civicrm_verify_one_mandatory ($params, $daoName = null, $keyoptions = array() ) {
   foreach ($keyoptions as $key){
     $keys[0][] = $key;
   }
@@ -95,7 +95,7 @@ function civicrm_get_DAO ($name) {
  * @return null or throws error if there the required fields not present
  */
 
-function civicrm_verify_mandatory (&$params, $daoName = null, $keys = array() ) {
+function civicrm_verify_mandatory ($params, $daoName = null, $keys = array() ) {
   if ( ! is_array( $params ) ) {
      throw new Exception ('Input variable `params` is not an array');
   }
@@ -153,7 +153,7 @@ function &civicrm_create_error( $msg, $data = null,$dao = null )
  * @dao object DAO object to be freed here
  * @return array $result
  */
-function civicrm_create_success( $values = 1,&$params=null,$dao = null )
+function civicrm_create_success( $values = 1,$params=null,$dao = null )
 {
    if(is_object ($dao)){
     $dao->free(); 
@@ -230,7 +230,7 @@ function civicrm_error( $params )
  * @param <type> $values
  * @return <type>
  */
-function _civicrm_store_values( &$fields, &$params, &$values ) 
+function _civicrm_store_values( &$fields, $params, &$values ) 
 {
     $valueFound = false;
     
@@ -314,7 +314,7 @@ function  civicrm_update_get_existing($params, $function){
  * @return bool|CRM_Utils_Error
  * @access public
  */
-function _civicrm_add_formatted_param(&$values, &$params) 
+function _civicrm_add_formatted_param(&$values, $params) 
 {
     /* Crawl through the possible classes: 
      * Contact 
@@ -519,7 +519,7 @@ function _civicrm_add_formatted_param(&$values, &$params)
  * @return bool
  * @access public
  */
-function _civicrm_add_formatted_location_blocks( &$values, &$params ) 
+function _civicrm_add_formatted_location_blocks( &$values, $params ) 
 {
     static $fields = null;
     if ( $fields == null ) {
@@ -598,7 +598,7 @@ function _civicrm_add_formatted_location_blocks( &$values, &$params )
  * @return bool|CRM_core_Error  Parameter list has all required fields
  * @access public
  */
-function _civicrm_required_formatted_contact(&$params) 
+function _civicrm_required_formatted_contact($params) 
 {
     
     if (! isset($params['contact_type'])) {
@@ -641,7 +641,7 @@ function _civicrm_required_formatted_contact(&$params)
  * @param <type> $params
  * @return <type>
  */
-function _civicrm_duplicate_formatted_contact(&$params) 
+function _civicrm_duplicate_formatted_contact($params) 
 {
     $id = CRM_Utils_Array::value( 'id', $params );
     $externalId = CRM_Utils_Array::value( 'external_identifier', $params );
@@ -685,7 +685,7 @@ function _civicrm_duplicate_formatted_contact(&$params)
  * @return bool|CRM_Core_Error
  * @access public
  */
-function _civicrm_validate_formatted_contact(&$params) 
+function _civicrm_validate_formatted_contact($params) 
 {
     /* Look for offending email addresses */
     if ( array_key_exists( 'email', $params ) ) {
@@ -732,7 +732,7 @@ function _civicrm_validate_formatted_contact(&$params)
  * @param string $extends entity that this custom field extends (e.g. contribution, event, contact)
  * @param string $entityId ID of entity per $extends
  */
-function _civicrm_custom_format_params( &$params, &$values, $extends, $entityId = null )
+function _civicrm_custom_format_params( $params, &$values, $extends, $entityId = null )
 {
     $values['custom'] = array();
         
@@ -763,7 +763,7 @@ function _civicrm_custom_format_params( &$params, &$values, $extends, $entityId 
  * @return bool true if all fields present, depending on $result a core error is created of an array of missing fields is returned
  * @access public
  */
-function _civicrm_check_required_fields( &$params, $daoName, $return = FALSE)
+function _civicrm_check_required_fields( $params, $daoName, $return = FALSE)
 {
     if ( isset($params['extends'] ) ) {
         if ( ( $params['extends'] == 'Activity' || 
@@ -820,7 +820,7 @@ function _civicrm_check_required_fields( &$params, $daoName, $return = FALSE)
  * @return array|CRM_Error
  * @access public
  */
-function _civicrm_participant_formatted_param( &$params, &$values, $create=false) 
+function _civicrm_participant_formatted_param( $params, &$values, $create=false) 
 {
     $fields =& CRM_Event_DAO_Participant::fields( );
     _civicrm_store_values( $fields, $params, $values );
@@ -970,7 +970,7 @@ function _civicrm_participant_formatted_param( &$params, &$values, $create=false
  * @return array|CRM_Error
  * @access public
  */
-function _civicrm_contribute_formatted_param( &$params, &$values, $create=false ) 
+function _civicrm_contribute_formatted_param( $params, &$values, $create=false ) 
 {
     // copy all the contribution fields as is
    
@@ -1324,7 +1324,7 @@ function _civicrm_contribute_formatted_param( &$params, &$values, $create=false 
  * @return array|CRM_Error
  * @access public
  */
-function _civicrm_membership_formatted_param( &$params, &$values, $create=false) 
+function _civicrm_membership_formatted_param( $params, &$values, $create=false) 
 {
     require_once "CRM/Member/DAO/Membership.php";
     $fields =& CRM_Member_DAO_Membership::fields( );
@@ -1449,7 +1449,7 @@ function _civicrm_membership_formatted_param( &$params, &$values, $create=false)
  * @return array|CRM_Error
  * @access public
  */
-function _civicrm_activity_formatted_param( &$params, &$values, $create=false) 
+function _civicrm_activity_formatted_param( $params, &$values, $create=false) 
 {
     $fields =& CRM_Activity_DAO_Activity::fields( );
     _civicrm_store_values( $fields, $params, $values );
@@ -1513,7 +1513,7 @@ function _civicrm_activity_formatted_param( &$params, &$values, $create=false)
 /**
  *  Function to check duplicate contacts based on de-deupe parameters
  */
-function civicrm_check_contact_dedupe( &$params ) {
+function civicrm_check_contact_dedupe( $params ) {
     static $cIndieFields = null;
     static $defaultLocationId = null;
     

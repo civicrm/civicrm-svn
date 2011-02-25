@@ -55,7 +55,7 @@ require_once 'api/v3/utils.php';
  * @return array of newly created payment property values.
  * @access public
  */
-function civicrm_participant_payment_create(&$params)
+function civicrm_participant_payment_create($params)
 {
   _civicrm_initialize(true);
   try{
@@ -89,7 +89,7 @@ function civicrm_participant_payment_create(&$params)
  * @return null if successfull, array with is_error=1 otherwise
  * @access public
  */
-function civicrm_participant_payment_delete( &$params )
+function civicrm_participant_payment_delete( $params )
 {
   _civicrm_initialize(true);
 

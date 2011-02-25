@@ -229,13 +229,13 @@ function civicrm_custom_field_delete( $params )
         return civicrm_create_error( 'Params is not an array' );
     }
     
-    if ( ! CRM_Utils_Array::value( 'customFieldId', $params['result'] ) ) {
+    if ( ! CRM_Utils_Array::value( 'id', $params ) ) {
         return civicrm_create_error( 'Invalid or no value for Custom Field ID' );
     }
 
     require_once 'CRM/Core/DAO/CustomField.php';
     $field = new CRM_Core_DAO_CustomField( );
-    $field->id = $params['result']['customFieldId'];
+    $field->id = $params['id'];
     $field->find(true);
     
     require_once 'CRM/Core/BAO/CustomField.php';

@@ -60,7 +60,7 @@ require_once 'CRM/Contact/BAO/Contact.php';
  * @static void
  * @access public
  */
-function civicrm_contact_create( &$params )
+function civicrm_contact_create( $params )
 {
     // call update and tell it to create a new contact
   _civicrm_initialize( true );
@@ -76,7 +76,7 @@ function civicrm_contact_create( &$params )
   }
 }
 
-function civicrm_contact_getfields( &$params ) {
+function civicrm_contact_getfields( $params ) {
     require_once 'CRM/Contact/BAO/Contact.php';
     $contact = new CRM_Contact_BAO_Contact();
     return ($contact->exportableFields('All'));
@@ -100,7 +100,7 @@ function civicrm_contact_getfields( &$params ) {
  * @todo EM 7 Jan 11 - does this return the number of contacts if required (replacement for deprecated contact_search_count function - if so is this tested?
  */
 
-function civicrm_contact_get( &$params )
+function civicrm_contact_get( $params )
 {
   _civicrm_initialize(true );
   try {
@@ -176,7 +176,7 @@ function civicrm_contact_get( &$params )
  *
  * @example ContactDelete.php
  */
-function civicrm_contact_delete( &$params )
+function civicrm_contact_delete( $params )
 {
   _civicrm_initialize(true);
   try{
@@ -223,7 +223,7 @@ function civicrm_contact_delete( &$params )
  *
  * @todo Erik Hommel 16 dec 2010 required check should be incorporated in utils function civicrm_verify_mandatory
  */
-function civicrm_contact_update( &$params, $create_new = false )
+function civicrm_contact_update( $params, $create_new = false )
 {
     _civicrm_initialize();
     try {
@@ -325,7 +325,7 @@ function civicrm_contact_update( &$params, $create_new = false )
 
     return civicrm_create_success($values,$params);
 }
-function _civicrm_contact_check_params( &$params, $dupeCheck = true, $dupeErrorArray = false, $requiredCheck = true )
+function _civicrm_contact_check_params( $params, $dupeCheck = true, $dupeErrorArray = false, $requiredCheck = true )
 {
     if ( $requiredCheck ) {
         $required = array(
@@ -457,7 +457,7 @@ function _civicrm_contact_check_params( &$params, $dupeCheck = true, $dupeErrorA
  * @access public 
  * @static 
  */ 
-function _civicrm_contact_update( &$params, $contactID = null )
+function _civicrm_contact_update( $params, $contactID = null )
 {
     require_once 'CRM/Core/Transaction.php';
     $transaction = new CRM_Core_Transaction( );
@@ -478,7 +478,7 @@ function _civicrm_contact_update( &$params, $contactID = null )
  * @todo Move this to ContactFormat.php 
  * @todo Eileen McNaughton 7/01/11 What does this do? I think it should go & we can revive a corrected version from v2 if need be
  */
-function civicrm_contact_format_create( &$params )
+function civicrm_contact_format_create( $params )
 {
     _civicrm_initialize( );
 
@@ -561,7 +561,7 @@ function _civicrm_contact_check_custom_params( $params, $csType = null )
  *
  * @access public
  */
-function _civicrm_greeting_format_params( &$params ) 
+function _civicrm_greeting_format_params( $params ) 
 {
     $greetingParams = array( '', '_id', '_custom' );
     foreach ( array( 'email', 'postal', 'addressee' ) as $key ) {

@@ -67,7 +67,7 @@ require_once 'CRM/Core/DAO/OptionGroup.php';
  * {@example ActivityCreate.php 0} 
  *
  */
-function civicrm_activity_create( &$params )
+function civicrm_activity_create( $params )
 {
   _civicrm_initialize( true );
   try{
@@ -159,7 +159,7 @@ function civicrm_activity_get( $params ) {
  * @todo Erik Hommel 16 dec 2010 check if civicrm_create_success is handled correctly with REST (should be fixed in utils function civicrm_create_success)
  * {@example ActivityDelete.php 0}
  */
-function civicrm_activity_delete( &$params )
+function civicrm_activity_delete( $params )
 {
   _civicrm_initialize(true );
   try{
@@ -223,7 +223,7 @@ function _civicrm_activity_get( $activityId, $returnCustom = true ) {
  *
  * @return array $error array with errors
  */
-function _civicrm_activity_check_params ( &$params, $addMode = false )
+function _civicrm_activity_check_params ( $params, $addMode = false )
 {
 
 

@@ -209,14 +209,20 @@ SELECT  survey.id    as id,
      *
      * @static
      */
-    static function getSurveyActivityType( ) {
-        require_once 'CRM/Core/OptionGroup.php';
-        $activityTypes = array( );
-
-        $campaignCompId = CRM_Core_Component::getComponentID('CiviCampaign');
-        if ( $campaignCompId ) {
-            $activityTypes = CRM_Core_OptionGroup::values( 'activity_type', false, false, false, " AND v.component_id={$campaignCompId}" , 'name' );
+    static function getSurveyActivityType( ) 
+    {
+        static $activityTypes;
+        
+        if ( !isset( $activityTypes ) ) {
+            $activityTypes = array( );
+            $campaignCompId = CRM_Core_Component::getComponentID('CiviCampaign');
+            if ( $campaignCompId ) {
+                require_once 'CRM/Core/OptionGroup.php';
+                $activityTypes = CRM_Core_OptionGroup::values( 'activity_type', false, false, false, 
+                                                               " AND v.component_id={$campaignCompId}" , 'name' );
+            }
         }
+        
         return $activityTypes;
     }
     
@@ -728,10 +734,52 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
                 if ( empty( $valueType ) || ( $valueType == $surveyTypeId ) ) {
                     $responseFields[$cacheKey][$name] = $field;
                 }
+            } else if ( in_array( 'Primary', explode( '-', $name ) ) ||
+                        CRM_Utils_Array::value( 'location_type_id', $field ) ) {
+                //get location related contact fields.
+                $responseFields[$cacheKey][$name] = $field;
             }
         }
         
         return $responseFields[$cacheKey];
+    }
+    
+    /** 
+     * Get all interviewers of surveys.
+     *
+     * @return an array of valid survey response fields. 
+     */
+    public Static function getInterviewers( ) 
+    {
+        static $interviewers;
+        
+        if ( isset( $interviewers ) ) {
+            return $interviewers;
+        }
+        
+        $whereClause = null;
+        $activityTypes = self::getSurveyActivityType( );
+        if ( !empty( $activityTypes ) ) {
+            $whereClause = ' WHERE survey.activity_type_id IN ( '. implode( ' , ', array_keys( $activityTypes ) ) . ' )';
+        }
+        
+        $interviewers = array( );
+        
+        $query = "
+    SELECT  contact.id as id, 
+            contact.sort_name as sort_name
+      FROM  civicrm_contact contact 
+INNER JOIN  civicrm_activity_assignment assignment ON ( assignment.assignee_contact_id = contact.id )
+INNER JOIN  civicrm_activity activity ON ( activity.id = assignment.activity_id )
+INNER JOIN  civicrm_survey survey ON ( activity.source_record_id = survey.id )
+            {$whereClause}";
+        
+        $interviewer = CRM_Core_DAO::executeQuery( $query );
+        while ( $interviewer->fetch( ) ) {
+            $interviewers[$interviewer->id] = $interviewer->sort_name;
+        }
+        
+        return $interviewers;
     }
     
 }

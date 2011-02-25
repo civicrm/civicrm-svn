@@ -289,14 +289,15 @@ class CRM_Profile_Form extends CRM_Core_Form
                     $url = CRM_Core_BAO_CustomField::getFileURL( $this->_id, $customFieldID );
                     
                     if ( $url ) {
-                        $customFiles[$field['name']]['displayURL'] = "Attached File : {$url['file_url']}";
+                        $customFiles[$field['name']]['displayURL'] = ts("Attached File") . ": {$url['file_url']}";
                         
-                        $deleteExtra = "Are you sure you want to delete attached file ?";
+                        $deleteExtra = ts("Are you sure you want to delete attached file?");
                         $fileId      = $url['file_id'];
                         $deleteURL   = CRM_Utils_System::url( 'civicrm/file',
                                                               "reset=1&id={$fileId}&eid=$this->_id&fid={$customFieldID}&action=delete" );
+                        $text = ts("Delete Attached File");
                         $customFiles[$field['name']]['deleteURL'] =
-                            "<a href=\"{$deleteURL}\" onclick = \"if (confirm( ' $deleteExtra ' )) this.href+='&amp;confirmed=1'; else return false;\">Delete Attached File</a>";
+                            "<a href=\"{$deleteURL}\" onclick = \"if (confirm( ' $deleteExtra ' )) this.href+='&amp;confirmed=1'; else return false;\">$text</a>";
                     }
                 } 
             }
@@ -449,7 +450,7 @@ class CRM_Profile_Form extends CRM_Core_Form
             }
             
             list( $prefixName, $index ) = CRM_Utils_System::explode( '-', $name, 2 );
-            if ( $prefixName == 'state_province' || $prefixName == 'country' ) {
+            if ( $prefixName == 'state_province' || $prefixName == 'country' || $prefixName == 'county' ) {
                 if ( ! array_key_exists( $index, $stateCountryMap ) ) {
                     $stateCountryMap[$index] = array( );
                 }

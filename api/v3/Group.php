@@ -56,7 +56,7 @@ require_once 'api/v3/utils.php';
  *
  * @access public
  */
-function civicrm_group_create( &$params )
+function civicrm_group_create( $params )
 {
   _civicrm_initialize(true );
   try{
@@ -88,7 +88,7 @@ function civicrm_group_create( &$params )
  * @return array  (referance) Array of matching groups
  * @access public
  */
-function civicrm_group_get( &$params )
+function civicrm_group_get( $params )
 {
   try{
 
@@ -139,7 +139,7 @@ function civicrm_group_get( &$params )
  *
  * @access public
  */
-function civicrm_group_delete( &$params )
+function civicrm_group_delete( $params )
 {
   _civicrm_initialize( true);
   try{

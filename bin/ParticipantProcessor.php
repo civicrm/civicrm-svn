@@ -172,8 +172,9 @@ LEFT JOIN  civicrm_event event ON ( event.id = participant.event_id )
                             
                             $allIds = array( $participantId );
                             if ( !empty( $additionalIds ) ) $allIds = array_merge( $allIds, $additionalIds );
-                            $requiredSpaces = CRM_Event_BAO_Participant::totalEventSeats( $allIds );
-                            
+                            $pClause = ' participant.id IN ( '. implode( ' , ', $allIds ).' )'; 
+                            $requiredSpaces = CRM_Event_BAO_Event::eventTotalSeats( $values['event_id'], $pClause );
+                                                        
                             //need to check as to see if event has enough speces
                             if ( ( $requiredSpaces <= $eventOpenSpaces ) || ( $eventOpenSpaces === null ) ) {
                                 require_once 'CRM/Core/Transaction.php';

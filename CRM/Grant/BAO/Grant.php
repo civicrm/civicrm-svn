@@ -370,6 +370,9 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant
         */
     static function del( $id )
     { 
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::pre( 'delete', 'Grant', $id, CRM_Core_DAO::$_nullArray );
+
         require_once 'CRM/Grant/DAO/Grant.php';
         $grant     = new CRM_Grant_DAO_Grant( );
         $grant->id = $id; 
@@ -384,8 +387,10 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant
                             );
         CRM_Utils_Recent::del( $grantRecent );
 
-        while ( $grant->fetch() ) {
-            return $grant->delete();
+        if ( $grant->fetch() ) {
+            $results = $grant->delete();
+            CRM_Utils_Hook::post( 'delete', 'Grant', $grant->id, $grant );
+            return $results;
         }
         return false;
     }

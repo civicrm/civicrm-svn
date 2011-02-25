@@ -57,6 +57,13 @@ class CRM_Report_Form_Contribute_LoggingSummary extends CRM_Logging_ReportSummar
                         'required'     => true,
                     ),
                 ),
+                'filters' => array( 
+                    'altered_contact' => array(
+                        'name'  => 'display_name',
+                        'title' => ts('Altered Contact'),
+                        'type'  => CRM_Utils_Type::T_STRING,
+                     ),
+                ),
             ),
             'log_civicrm_contribution' => array(
                 'dao' => 'CRM_Contribute_DAO_Contribution',
@@ -107,11 +114,6 @@ class CRM_Report_Form_Contribute_LoggingSummary extends CRM_Logging_ReportSummar
                         'title'        => ts('When'),
                         'operatorType' => CRM_Report_Form::OP_DATE,
                         'type' => CRM_Utils_Type::T_DATE,
-                    ),
-                    'altered_contact' => array(
-                        'name'  => 'display_name',
-                        'title' => ts('Altered Contact'),
-                        'type'  => CRM_Utils_Type::T_STRING,
                     ),
                     'log_action' => array(
                         'operatorType' => CRM_Report_Form::OP_MULTISELECT,

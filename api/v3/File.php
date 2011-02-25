@@ -153,7 +153,7 @@ function civicrm_file_get($params)
  * @return array of updated file object property values
  * @access public
  */
-function &civicrm_file_update( &$params ) {
+function &civicrm_file_update( $params ) {
   if ( !is_array( $params ) ) {
     return civicrm_create_error( 'Params is not an array' );
   }
@@ -328,7 +328,7 @@ function civicrm_files_by_entity_get( $entityID, $entityTable = 'civicrm_contact
  * @return  null if successfull, object of CRM_Core_Error otherwise
  * @access public
  */
-function civicrm_entity_file_delete( &$params )
+function civicrm_entity_file_delete( $params )
 {
   require_once 'CRM/Core/DAO/EntityFile.php';
 

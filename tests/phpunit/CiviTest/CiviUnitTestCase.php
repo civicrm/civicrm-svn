@@ -42,6 +42,8 @@ require_once 'PHPUnit/Extensions/Database/DataSet/XmlDataSet.php';
 require_once 'PHPUnit/Extensions/Database/DataSet/QueryDataSet.php';
 require_once 'tests/phpunit/Utils.php';
 require_once 'api/api.php';
+require_once 'api/v2/MembershipType.php';
+require_once 'api/v2/MembershipStatus.php';
 
 /**
  *  Base class for CiviCRM unit tests
@@ -94,7 +96,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     function __construct($name = NULL, array $data = array(), $dataName = '' ) {
         parent::__construct($name, $data, $dataName);
 
-        error_reporting( E_ALL & ~E_NOTICE );
+        // we need full error reporting
+        error_reporting (E_ALL & ~E_NOTICE);
 
         //  create test database
         self::$utils = new Utils( $GLOBALS['mysql_host'],
@@ -1023,10 +1026,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                             'version'			=> $apiversion,
                             );
         }
-        $result = civicrm_api_legacy( 'civicrm_group_create','Group',$params );
-
         
-        return $result['id'];
+        $result = civicrm_api_legacy( 'civicrm_group_create','Group',$params );
+        return $result['result']->id;
     }    
     /** 
      * Function to delete a Group
@@ -1193,8 +1195,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      * 
      * @param int    $customGroupID
      */
-    function customGroupDelete( $customGroupID ,$apiversion = 2) 
+    function customGroupDelete( $customGroupID, $apiversion = NULL ) 
     { 
+        $apiversion = civicrm_get_api_version($apiversion);
         $params['id'] = $customGroupID;
         $params['version'] = $apiversion;
         $result = & civicrm_custom_group_delete($params);
@@ -1251,18 +1254,18 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      * 
      * @param int $customFieldID
      */
-    function customFieldDelete( $customFieldID,$apiversion = 2 ) 
+    function customFieldDelete( $customFieldID, $apiversion = NULL ) 
     {
-        //$this->fail( 'civicrm_custom_field_delete seems to be broken!');
-        $params['id'] = $customFieldID;
-        $params['version']  =$apiversion;
-        if ($apiversion ==2){
-          $filename = 'CustomGroup';
-        }else{
-           $filename = 'CustomField';         
+        $apiversion        = civicrm_get_api_version($apiversion);
+        $params['id']      = $customFieldID;
+        $params['version'] = $apiversion;
+        if ( $apiversion == 2 ){
+            $filename = 'CustomGroup';
+        } else {
+            $filename = 'CustomField';         
         }
-        $result = civicrm_api_legacy( 'civicrm_custom_field_delete',$filename,$params );
-
+        $result = civicrm_api_legacy( 'civicrm_custom_field_delete', $filename, $params );
+        
         if ( civicrm_error( $result ) ) {
             throw new Exception( 'Could not delete custom field' );
         }

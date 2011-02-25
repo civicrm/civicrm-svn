@@ -133,7 +133,9 @@ AND        q.contact_id = %2
 
         $details = $this->_mailing->getDetails( $params, $returnProperties );
        
-        $mime =& $this->_mailing->compose( null, null, null, $this->_contactID, $fromEmail, $fromEmail,
+        $mime =& $this->_mailing->compose( null, null, null, $this->_contactID,
+                                           $this->_mailing->from_email,
+                                           $this->_mailing->from_email,
                                            true, $details[0][$this->_contactID], $attachments );
 
         if ( isset( $this->_mailing->body_html ) ) {

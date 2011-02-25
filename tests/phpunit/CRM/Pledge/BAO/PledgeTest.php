@@ -123,6 +123,7 @@ class CRM_Pledge_BAO_PledgeTest extends CiviUnitTestCase
                         'frequency_unit'       => 'month',
                         'frequency_interval'   => 1,
                         'frequency_day'        => 1,
+                        'original_installment_amount' => 25.00,
                         'installments'         => 12,
                         'contribution_type_id' => 1,
                         'create_date'          => '20100513000000',

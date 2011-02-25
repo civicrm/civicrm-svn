@@ -1618,7 +1618,7 @@ AND civicrm_case.is_deleted     = {$cases['case_deleted']}";
                 if ($results) {
                     $groupInfo['id']    = $results['id'];
                     $groupInfo['title'] = $results['title'];
-                    require_once 'RM/Contact/BAO/Query.php';
+                    require_once 'CRM/Contact/BAO/Query.php';
                     $params = array(array('group', 'IN', array($groupInfo['id'] => 1), 0, 0));
                     $return = array('sort_name', 'display_name', 'email', 'phone');
                     list($globalContacts, $_) = CRM_Contact_BAO_Query::apiQuery($params, $return);
