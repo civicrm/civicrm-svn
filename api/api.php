@@ -172,12 +172,14 @@ function civicrm_api_include($entity, $rest_interface = FALSE,$version = NULL) {
 }
 
 
-function civicrm_api_get_camel_name($entity) {
+function civicrm_api_get_camel_name($entity,$version) {
   static $_map = NULL;
   if (!isset($_map)) {
     $_map = array();
     $_map['utils'] = 'utils';
-    $version = civicrm_get_api_version();
+    if(empty($version)){
+      $version = civicrm_get_api_version();
+    }
     if ($version === 2) {
       // TODO: Check if $_map needs to contain anything.
       $_map['contribution'] = 'Contribute';
