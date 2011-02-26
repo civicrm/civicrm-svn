@@ -325,22 +325,29 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
         $groupBys = CRM_Utils_Array::value( 'group_bys', $this->_params, array( ) );
         
         $specialOrderFields = array( 'street_name', 'street_number' );
+        $hasSpecialGrouping = false;
         foreach ( $specialOrderFields as $fldName ) {
             if ( CRM_Utils_Array::value( $fldName, $groupBys ) ) {
                 $field = CRM_Utils_Array::value( $fldName, $this->_columns['civicrm_address']['group_bys'], array( ) );
                 if ( $fldName == 'street_number' ) {
-                    $this->_orderBy[] = "{$field['dbAlias']}%2 desc";
+                    $this->_orderBy[] = "{$field['dbAlias']}%2";
+                    $this->_orderBy[] = "{$field['dbAlias']}";
+                    $hasSpecialGrouping = true;
                 } else {
-                    $this->_orderBy[] = "{$field['dbAlias']} desc";
+                    $this->_orderBy[] = "{$field['dbAlias']}";
+                    $hasSpecialGrouping = true;
                 }
             }
         }
         
-        foreach ( $this->_columns as $tableName => $table ) {
-            if ( array_key_exists('order_bys', $table) ) {
-                foreach ( $table['order_bys'] as $fieldName => $field ) {
-                    if ( !in_array( $fieldName, $specialOrderFields ) ) {
-                        $this->_orderBy[] = $field['dbAlias'];
+        //in case of special grouping, lets bypass all orders.
+        if ( ! $hasSpecialGrouping ) {
+            foreach ( $this->_columns as $tableName => $table ) {
+                if ( array_key_exists('order_bys', $table) ) {
+                    foreach ( $table['order_bys'] as $fieldName => $field ) {
+                        if ( !in_array( $fieldName, $specialOrderFields ) ) {
+                            $this->_orderBy[] = $field['dbAlias'];
+                        }
                     }
                 }
             }
