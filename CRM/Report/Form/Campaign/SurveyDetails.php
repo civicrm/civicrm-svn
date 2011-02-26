@@ -46,18 +46,23 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
     protected $_summary      = null;
     
     protected $_customGroupExtends = array( 'Contact', 'Individual', 'Household', 'Organization' );
+    
+    private static $_surveyRespondentStatus;
 
     function __construct( ) {
         
         //filter options for survey activity status.
         $responseStatus = array( );
+        self::$_surveyRespondentStatus = array( );
         require_once 'CRM/Core/PseudoConstant.php';
         $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
         if ( $statusId = array_search( 'Scheduled', $activityStatus ) ) {
             $responseStatus[$statusId] = ts( 'Reserved' );
+            self::$_surveyRespondentStatus[$statusId] = 'Reserved';
         }
         if ( $statusId = array_search( 'Completed', $activityStatus ) ) {
             $responseStatus[$statusId] = ts( 'Interviewed' );
+            self::$_surveyRespondentStatus[$statusId] = 'Interviewed';
         }
         
         //get all interviewers.
@@ -591,19 +596,25 @@ INNER JOIN  civicrm_option_value val ON ( val.option_group_id = survey.result_id
       FROM  civicrm_option_value val
 INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id )
 INNER JOIN  civicrm_survey survey ON ( survey.result_id = grp.id ) 
-     WHERE  survey.id IN (' . implode( ' , ', array_values( $surveyIds ) ) .' )';
+     WHERE  survey.id IN (' . implode( ' , ', array_values( $surveyIds ) ) .' )
+  Order By  val.weight';
         
         $result = CRM_Core_DAO::executeQuery( $query );
         $resultSet = array( );
         while ( $result->fetch( ) ) {
             $resultSet[$result->id][$result->value] = $result->label;
         }
+        
+        $statusId = CRM_Utils_Array::value( 'status_id_value', $this->_params );
+        $respondentStatus = CRM_Utils_Array::value( $statusId, self::$_surveyRespondentStatus );
+        
         foreach ( $rows as &$row ) {
+            $result      = CRM_Utils_Array::value( $row['civicrm_activity_survey_id'], $resultSet, array( ) );
             $resultLabel = CRM_Utils_Array::value( 'civicrm_activity_result', $row );
-            if ( $resultLabel ) {
-                $resultValue = array_search( $resultLabel, 
-                                             CRM_Utils_Array::value( $row['civicrm_activity_survey_id'], 
-                                                                     $resultSet, array( ) ) );
+            if ( $respondentStatus == 'Reserved' ) {
+                $row['civicrm_activity_result'] = implode( ', ', array_keys( $result ) ); 
+            } else if ( $resultLabel ) {
+                $resultValue = array_search( $resultLabel, $result );
                 if ( $resultValue ) $row['civicrm_activity_result'] = $resultValue; 
             }
         }
@@ -639,7 +650,15 @@ INNER JOIN  civicrm_survey survey ON ( survey.result_id = grp.id )
                 }
             }
         }
-        if ( !$hasResponseData ) return; 
+        
+        //do check respondent status.
+        $statusId = CRM_Utils_Array::value( 'status_id_value', $this->_params );
+        $respondentStatus = CRM_Utils_Array::value( $statusId, self::$_surveyRespondentStatus );
+        
+        if ( !$hasResponseData && 
+             ( $respondentStatus != 'Reserved' ) ) {
+            return; 
+        }
         
         //start response data formatting.
         $query = ' 
@@ -653,7 +672,8 @@ INNER JOIN  civicrm_survey survey ON ( survey.result_id = grp.id )
       FROM  civicrm_custom_field cf      
 INNER JOIN  civicrm_custom_group cg ON ( cg.id = cf.custom_group_id )        
  LEFT JOIN  civicrm_option_value ov ON ( cf.option_group_id = ov.option_group_id )
-     WHERE  cf.id IN ( '. implode( ' , ', $surveyResponseFieldIds ) . ' )';
+     WHERE  cf.id IN ( '. implode( ' , ', $surveyResponseFieldIds ) . ' )
+  Order By  ov.weight';
         
         $responseFields = array( );
         $fieldValueMap  = array( ); 
@@ -679,7 +699,7 @@ INNER JOIN  civicrm_custom_group cg ON ( cg.id = cf.custom_group_id )
             }
         }
         $responseField->free( );
-        
+      
         //actual data formatting.
         $hasData = false;
         foreach ( $rows as &$row ) {
@@ -691,11 +711,17 @@ INNER JOIN  civicrm_custom_group cg ON ( cg.id = cf.custom_group_id )
                 if ( !array_key_exists( $name, $responseFields ) ) {
                     continue;
                 }
-                
                 $hasData = true;
-                $value = $this->formatCustomValues( $value, 
-                                                    $responseFields[$name],
-                                                    $fieldValueMap );
+                if ( $respondentStatus == 'Reserved' &&
+                     in_array( $this->_outputMode, array( 'print', 'pdf' ) ) ) {
+                    $optGrpId = CRM_Utils_Array::value( 'option_group_id', $responseFields[$name] );
+                    $options  = CRM_Utils_Array::value( $optGrpId, $fieldValueMap, array() );
+                    $value    = implode( ', ',array_keys( $options ) );
+                } else {
+                    $value = $this->formatCustomValues( $value, 
+                                                        $responseFields[$name],
+                                                        $fieldValueMap );
+                }
             }
             
             if ( !$hasData ) break;  
