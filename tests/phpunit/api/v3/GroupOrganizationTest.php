@@ -83,7 +83,7 @@ class api_v3_GroupOrganizationTest extends CiviUnitTestCase
                          'group_id'        => $this->_groupID,
                          'version'			 => $this->_apiversion,
                          );
-        $result =& civicrm_api3_group_organization_create( $params );
+        $result = civicrm_api3_group_organization_create( $params );
         $paramsGet = array( 'organization_id' => $result['id'] ,
                             'version'			 => $this->_apiversion, );       
         $result    = civicrm_api3_group_organization_get($paramsGet);

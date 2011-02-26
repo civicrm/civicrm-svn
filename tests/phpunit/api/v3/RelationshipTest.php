@@ -249,7 +249,6 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
      */
     function testRelationshipCreateWithCustomData( )
     {         
-      $this->markTestSkipped('relationship api not well converted');
         $customGroup = $this->createCustomGroup( );
         $this->_customGroupId = $customGroup['id'];
         $this->_ids  = $this->createCustomField( );     
@@ -314,7 +313,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
                          );
         
 
-        $result = civicrm_api_legacy( 'civicrm_custom_field_create','CustomField',$params );
+        $result = civicrm_api('CustomField','create',$params );
   
         $customField = null;
         $ids[] = $customField['result']['customFieldId'];

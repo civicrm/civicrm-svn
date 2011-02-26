@@ -729,7 +729,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     function entityTagAdd( $params )
     {
-        $result = civicrm_entity_tag_create( $params );
+        $params['version'] =3;
+        $result = civicrm_api( 'entity_tag','create',$params );
         
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
             throw new Exception( 'Error while creating entity tag' );
@@ -796,7 +797,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     function contributionCreate($cID,$cTypeID, $apiversion = NULL )
     {
         $apiversion = civicrm_get_api_version($apiversion);
-        require_once 'api/api.php';
+
         $params = array(
                         'domain_id'              => 1,
                         'contact_id'             => $cID,
@@ -881,8 +882,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     function eventDelete( $id )
     {
-        $params = array( 'event_id' => $id );
-        civicrm_event_delete( $params );
+        $params = array( 'event_id' => $id ,
+                          'version' => 3);
+        civicrm_api('event','delete', $params );
     }
     
     /**
@@ -894,7 +896,6 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     function participantDelete( $participantID, $apiversion = NULL )
     {
         $apiversion = civicrm_get_api_version($apiversion);
-       require_once 'api/api.php';
         $params = array( 'id' => $participantID,
                           'version' => $apiversion );
         $result = civicrm_api_legacy( 'civicrm_participant_delete','Participant',$params );
@@ -1010,9 +1011,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      *@return int groupId of created group
      * 
      */ 
-    function groupCreate( $params = null, $apiversion = NULL )
+    function groupCreate( $params = null, $apiversion = 3 )
     {
-        $apiversion = civicrm_get_api_version($apiversion);
+       $apiversion = civicrm_get_api_version($apiversion);
         if ( $params === null ) { 
             $params = array(
                             'name'        => 'Test Group 1',
@@ -1199,8 +1200,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     { 
         $apiversion = civicrm_get_api_version($apiversion);
         $params['id'] = $customGroupID;
-        $params['version'] = $apiversion;
-        $result = & civicrm_custom_group_delete($params);
+        $params['version'] = 3;
+        $result = civicrm_api('custom_group','delete',$params);
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
             throw new Exception( 'Could not delete custom group' );
         }

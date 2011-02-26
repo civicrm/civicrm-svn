@@ -88,16 +88,17 @@ function civicrm_api3_group_organization_create( $params )
 
   try{
 
-    civicrm_api3_verify_mandatory($params,null,array('organization_id','group_id'));
-    
+    civicrm_api3_verify_mandatory($params,null,array('organization_id','group_id'));  
 
     require_once 'CRM/Contact/BAO/GroupOrganization.php';
     $groupOrgBAO = CRM_Contact_BAO_GroupOrganization::add( $params );
-    if ( is_a( $groupOrgBAO, 'CRM_Core_Error' ) ) {
-      return civicrm_api3_create_error( "Group Organization can not be created" );
+
+    if (is_null($groupOrgBAO)){
+      return civicrm_api3_create_error("group organization not created");     
     }
+
     _civicrm_api3_object_to_array( $groupOrgBAO, $values );
-    return civicrm_api3_create_success( $values );
+    return civicrm_api3_create_success( $values,$params, $groupOrgBAO);
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {

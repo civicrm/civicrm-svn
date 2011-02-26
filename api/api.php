@@ -157,7 +157,7 @@ function civicrm_api_include($entity, $rest_interface = FALSE,$version = NULL) {
   if (empty($version)){
     $version = civicrm_get_api_version();
   }
-  $camel_name = civicrm_api_get_camel_name($entity);
+  $camel_name = civicrm_api_get_camel_name($entity,$version);
   $file = 'api/v'. $version .'/'. $camel_name .'.php';
   
   if ( $rest_interface ) {
@@ -172,7 +172,7 @@ function civicrm_api_include($entity, $rest_interface = FALSE,$version = NULL) {
 }
 
 
-function civicrm_api_get_camel_name($entity,$version) {
+function civicrm_api_get_camel_name($entity,$version = NULL) {
   static $_map = NULL;
   if (!isset($_map)) {
     $_map = array();
