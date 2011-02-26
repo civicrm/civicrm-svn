@@ -3211,7 +3211,7 @@ WHERE  id IN ( $groupIDs )
                                                                'do_not_phone'           => 1,
                                                                'do_not_trade'           => 1,
                                                                'is_opt_out'             => 1,
-							       'contact_is_deleted'	=> 1,
+                                                               'contact_is_deleted'	    => 1,
                                                                ); 
             }
         }
@@ -3370,6 +3370,17 @@ WHERE  id IN ( $groupIDs )
                 }
                 $this->_fromClause       = self::fromClause( $this->_tables     , null, null, $this->_primaryLocation, $this->_mode ); 
                 $this->_simpleFromClause = self::fromClause( $this->_whereTables, null, null, $this->_primaryLocation, $this->_mode );
+            }
+        } else {
+            // add delete clause if needed even if we are skipping permission
+            // CRM-7639
+            if ( ! $this->_skipDeleteClause ) {
+                if (CRM_Core_Permission::check('access deleted contacts') and $onlyDeleted) {
+                    $permission = '(contact_a.is_deleted)';
+                } else {
+                    // CRM-6181
+                    $permission = '(contact_a.is_deleted = 0)';
+                }
             }
         }
         
