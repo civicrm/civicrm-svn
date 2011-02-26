@@ -402,7 +402,7 @@ abstract class CRM_Import_Parser {
 ";
 
                     $json = new Services_JSON( ); 
-                    $contents = $json->encode( array( $processedPercent, $status ) );
+                    $contents = $json->encodeUnsafe( array( $processedPercent, $status ) );
 
                     file_put_contents( $statusFile, $contents );
 
