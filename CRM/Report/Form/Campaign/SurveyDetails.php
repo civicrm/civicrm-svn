@@ -459,8 +459,9 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
                 if ( CRM_Utils_Array::value( 'isSurveyResponseField', $field ) ) {
                     $fldId = substr( $name, 7 );
                     $fieldIds[$fldId] = $fldId; 
+                    $title = CRM_Utils_Array::value( 'label', $field, $field['title'] );
                     $surveyResponseFields[$name] = array( 'id'    => $fldId,
-                                                          'title' => $field['title'],
+                                                          'title' => $title,
                                                           'name'  => "{$tableName}_{$name}" );
                 }
             }
@@ -473,7 +474,8 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
             val.value as value
       FROM  civicrm_custom_field field
 INNER JOIN  civicrm_option_value val ON ( val.option_group_id = field.option_group_id )
-     WHERE  field.id IN (' . implode( ' , ', $fieldIds ) . ' )';
+     WHERE  field.id IN (' . implode( ' , ', $fieldIds ) . ' )
+  Order By  val.weight';
         $field = CRM_Core_DAO::executeQuery( $query );
         $options = array( );
         while ( $field->fetch( ) ) {
@@ -489,7 +491,8 @@ INNER JOIN  civicrm_option_value val ON ( val.option_group_id = field.option_gro
             val.value as value
       FROM  civicrm_survey survey
 INNER JOIN  civicrm_option_value val ON ( val.option_group_id = survey.result_id ) 
-     WHERE  survey.id IN ( ' . implode( ' , ', array_values( $surveyIds ) ) .' )';
+     WHERE  survey.id IN ( ' . implode( ' , ', array_values( $surveyIds ) ) .' )
+  Order By  val.weight';
         $resultSet = CRM_Core_DAO::executeQuery( $query );
         $surveyResultFields = array( );
         while ( $resultSet->fetch( ) ) {
@@ -728,6 +731,7 @@ INNER JOIN  civicrm_custom_group cg ON ( cg.id = cf.custom_group_id )
 INNER  JOIN  civicrm_custom_field cf ON ( cg.id = cf.custom_group_id )
       WHERE  cf.id IN ( '. implode( ' , ',  $responseFieldIds ).' )';   
         $response = CRM_Core_DAO::executeQuery( $query );
+        $fildCnt = 1;
         while ( $response->fetch( ) ) {
             $resTable  = $response->table_name;
             $fieldName = "custom_{$response->cfId}";
@@ -750,11 +754,18 @@ INNER  JOIN  civicrm_custom_field cf ON ( cg.id = cf.custom_group_id )
                 continue;
             }
             
+
+            $title = $responseFields[$fieldName]['title'];
+            if ( in_array( $this->_outputMode, array( 'print', 'pdf' ) ) ) {
+                $title = 'Q'.$fildCnt++;
+            }
+            
             $fldType = 'CRM_Utils_Type::T_STRING';
             if ( $response->time_format ) $fldType = CRM_Utils_Type::T_TIMESTAMP;
             $field = array( 'name'     => $response->column_name,
                             'type'     => $fldType,
-                            'title'    => $responseFields[$fieldName]['title'],
+                            'title'    => $title,
+                            'label'    => $responseFields[$fieldName]['title'],
                             'dataType' => $response->data_type,
                             'htmlType' => $response->html_type,
                             'required' => true,

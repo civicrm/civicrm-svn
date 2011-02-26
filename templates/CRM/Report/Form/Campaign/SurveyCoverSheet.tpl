@@ -51,8 +51,6 @@
 </table>
 </div>
 
-{* break the page *}
-<div style="page-break-after: always"></div>
 {/if }
 
 
