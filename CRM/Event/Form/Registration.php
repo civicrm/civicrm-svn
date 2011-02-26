@@ -64,7 +64,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
      * @var int
      * @protected
      */
-    protected $_participantIDs;
+    protected $_participantIDS;
     
     /**
      * the id of the participant we are proceessing

@@ -898,4 +898,86 @@ function civicrm_preprocess_page(&$variables) {
   	}
 }
 
+function civicrm_civicrm_buildForm( $formName, &$form ) {
+    if ( $formName == 'CRM_Event_Form_Registration_Register' &&
+         $form->getVar( '_eventId' ) == 1 ) {
+        $mainID = CRM_Utils_Request::retrieve( 'mainID', 'Integer', $form,
+                                               false, null, $_REQUEST );
+        if ( $mainID ) {
+            $rTypeID  = CRM_Utils_Request::retrieve( 'rTypeID', 'Integer', $form,
+                                                    false, null, $_REQUEST );
+            $rTypeDir = CRM_Utils_Request::retrieve( 'rTypeDir', 'String', $form,
+                                                     false, 'a_b', $_REQUEST );
+            if ( $rTypeID ) {
+                $form->set( 'mainID'  , $mainID   );
+                $form->set( 'rTypeID' , $rTypeID  );
+                $form->set( 'rTypeDir', $rTypeDir );
+            }
+        }
+    }
+}
 
+function civicrm_civicrm_postProcess( $class, &$form ) {
+    if ( is_a( $form, 'CRM_Event_Form_Registration_Confirm' ) ) {
+        return civicrm_civicrm_postProcess_regConfirm( $class, $form );
+    }
+
+    if ( is_a( $form, 'CRM_Profile_Form_Edit' ) ) {
+        return civicrm_civicrm_postProcess_profileEdit( $class, $form );
+    }
+}
+
+function civicrm_civicrm_postProcess_regConfirm( $class, &$form ) {
+    if ( $form->getVar( '_eventId' ) == 1 &&
+         $form->get( 'mainID' ) ) {
+        $mainID   = $form->get( 'mainID'   );
+        $rTypeID  = $form->get( 'rTypeID'  );
+        $rTypeDir = $form->get( 'rTypeDir' );
+
+        // get the participantIDS
+        $participantIDs = $form->getVar( '_participantIDS' );
+        
+        $pIDString = implode( ',', $participantIDs );
+
+        // get all the contactIDs for these participants
+        $sql = "
+SELECT contact_id
+FROM   civicrm_participant
+WHERE  id IN ( $pIDString )
+";
+
+        if ( $rTypeDir == 'a_b' ) {
+            $mainLabel  = 'a';
+            $otherLabel = 'b';
+        } else {
+            $mainLabel  = 'b';
+            $otherLabel = 'a';
+        }
+
+        $dao = CRM_Core_DAO::executeQuery( $sql );
+        require_once 'api/v2/Relationship.php';
+        while ( $dao->fetch( ) ) {
+            // create the relationship
+            $params = array( "contact_id_{$mainLabel}"  => $mainID,
+                             "contact_id_{$otherLabel}" => $dao->contact_id,
+                             'relationship_type_id'     => $rTypeID,
+                             'is_active'                => 1,
+                             );
+            civicrm_relationship_create( $params );
+        }
+    }
+}
+
+function civicrm_civicrm_postProcess_profileEdit( $class, &$form ) {
+    if ( $form->getVar( '_gid' ) == 9 ) {
+        // get the contactID of the newly created contact (or existing one)
+        // and redirect to event registration page
+        $mainID = $form->getVar( '_id' );
+
+        if ( $mainID ) {
+            $url = CRM_Utils_System::url( 'civicrm/event/register',
+                                          "reset=1&id=1&cid=0&mainID={$mainID}&rTypeID=1&rTypeDir=b_a" );
+            CRM_Utils_System::redirect( $url );
+        }
+    }
+}
