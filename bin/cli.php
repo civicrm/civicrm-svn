@@ -110,6 +110,8 @@ class civicrm_CLI {
         $_SERVER['SCRIPT_FILENAME' ] = $civicrm_root . "/bin/cli.php";
         if ( defined( 'CIVICRM_CONFDIR' ) ) {
             $_SERVER['SCRIPT_FILENAME' ] = CIVICRM_CONFDIR . "/sites/all/modules/civicrm/bin/cli.php";
+        } else {
+            die("\nUsage: Please define CIVICRM_CONFDIR in settings_location.php at the top level civicrm directory");
         }
         
         CRM_Core_Error::setCallback( array( 'civicrm_CLI', 'fatal' ) );
