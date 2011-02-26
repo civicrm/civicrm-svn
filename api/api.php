@@ -48,8 +48,8 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
   $entity = CRM_Utils_String::munge($entity);
   $action = CRM_Utils_String::munge($action);
   $version = civicrm_get_api_version($params);
-  $function = civicrm_api_get_function_name($entity, $action);
-  civicrm_api_include($entity);
+  $function = civicrm_api_get_function_name($entity, $action,$version);
+  civicrm_api_include($entity,null,$version);
   if ( !function_exists ($function )) {
     if ( strtolower($action) == "getfields" && $version ==3) {
       require_once ('api/v3/utils.php');
@@ -87,11 +87,14 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
 }
 
 
-function civicrm_api_get_function_name($entity, $action) {
+function civicrm_api_get_function_name($entity, $action,$version =NULL) {
   static $_map;
   if (!isset($_map)) {
     $_map = array();
-    $version = civicrm_get_api_version();
+    if(empty($version)){
+      $version = civicrm_get_api_version();
+    }
+
     if ($version === 2) {
       $_map['event']['get'] = 'civicrm_event_search';
       $_map['group_roles']['create'] = 'civicrm_group_roles_add_role';
@@ -122,8 +125,7 @@ function civicrm_api_get_function_name($entity, $action) {
  *   This allows to directly pass the $params array.
  */
 function civicrm_get_api_version($desired_version = NULL) {
-  static $_version;
-  if (!isset($_version)) {
+
     if (is_array($desired_version)) {
       // someone gave the full $params array.
       $params = $desired_version;
@@ -142,7 +144,6 @@ function civicrm_get_api_version($desired_version = NULL) {
       $_version = 2;
       // echo "\n".'version: '. $_version ." (default)\n";
     }
-  }
   return $_version;
 }
 
@@ -152,8 +153,10 @@ function civicrm_get_api_version($desired_version = NULL) {
  * @param $rest_interface : boolean
  *   In case of TRUE, we need to set the base path explicitly.
  */
-function civicrm_api_include($entity, $rest_interface = FALSE) {
-  $version = civicrm_get_api_version();
+function civicrm_api_include($entity, $rest_interface = FALSE,$version = NULL) {
+  if (empty($version)){
+    $version = civicrm_get_api_version();
+  }
   $camel_name = civicrm_api_get_camel_name($entity);
   $file = 'api/v'. $version .'/'. $camel_name .'.php';
   
@@ -165,7 +168,6 @@ function civicrm_api_include($entity, $rest_interface = FALSE) {
       }
       $file = $apiPath . $file;
   }
-  
   require_once $file;
 }
 
