@@ -155,7 +155,7 @@ cj(".selector tr").contextMenu({
         window.location = locationUrl + '&destination=' + encodeURIComponent(destination);
    });
 
-    cj().crmrowhighlighter( );
+    cj('.selector').crmrowhighlighter( );
 });
 
 cj('ul#contactMenu').mouseup( function(e){ 

@@ -25,7 +25,7 @@
 */ 
 (function($){ $.fn.crmrowhighlighter = function(){
     if ($('.crm-row-highlighter-processed').length == 0){
-        $('.selector tr').hover(function(){
+        $(this).find('tr').hover(function(){
             $(this).addClass('crm-row-highlight');
         },function(){
             $(this).removeClass('crm-row-highlight');
