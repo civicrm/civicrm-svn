@@ -44,7 +44,7 @@ require_once 'tests/phpunit/Utils.php';
 require_once 'api/api.php';
 require_once 'api/v2/MembershipType.php';
 require_once 'api/v2/MembershipStatus.php';
-
+define ('API_LATEST_VERSION',3);
 /**
  *  Base class for CiviCRM unit tests
  *
@@ -729,7 +729,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     function entityTagAdd( $params )
     {
-        $params['version'] =3;
+        $params['version'] =API_LATEST_VERSION;
         $result = civicrm_api( 'entity_tag','create',$params );
         
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
@@ -883,7 +883,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     function eventDelete( $id )
     {
         $params = array( 'event_id' => $id ,
-                          'version' => 3);
+                          'version' => API_LATEST_VERSION);
         civicrm_api('event','delete', $params );
     }
     
@@ -1013,7 +1013,6 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */ 
     function groupCreate( $params = null, $apiversion = 3 )
     {
-       $apiversion = civicrm_get_api_version($apiversion);
         if ( $params === null ) { 
             $params = array(
                             'name'        => 'Test Group 1',
@@ -1024,11 +1023,11 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                             'visibility'  => 'Public Pages',
                             'group_type'  => array( '1' => 1,
                                                     '2' => 1 ), 
-                            'version'			=> $apiversion,
+                            'version'			=> API_LATEST_VERSION,
                             );
         }
         
-        $result = civicrm_api_legacy( 'civicrm_group_create','Group',$params );
+        $result = civicrm_api( 'Group','create',$params );
         return $result['result']->id;
     }    
     /** 
@@ -1042,7 +1041,6 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $params = array('id' => $gid,
                         'version'	=> $apiversion );
         
-        require_once 'api/api.php';
         $result = civicrm_api_legacy( 'civicrm_group_delete','Group',$params );
 
     }

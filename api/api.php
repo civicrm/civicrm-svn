@@ -154,9 +154,8 @@ function civicrm_get_api_version($desired_version = NULL) {
  *   In case of TRUE, we need to set the base path explicitly.
  */
 function civicrm_api_include($entity, $rest_interface = FALSE,$version = NULL) {
-  if (empty($version)){
-    $version = civicrm_get_api_version();
-  }
+
+  $version = civicrm_get_api_version($version);
   $camel_name = civicrm_api_get_camel_name($entity,$version);
   $file = 'api/v'. $version .'/'. $camel_name .'.php';
   
