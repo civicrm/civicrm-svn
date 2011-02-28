@@ -561,12 +561,19 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             $eventFeeBlockValues = array();
             foreach ( $form->_feeBlock as $fee ) {
                 if ( is_array( $fee ) ) {
+                    
+                    //CRM-7632, CRM-6201
+                    $totalAmountJs = null;
+                    if ( $className == 'CRM_Event_Form_Participant' ) {
+                        $totalAmountJs = array( 'onClick' => "fillTotalAmount(".$fee['value'].")" ); 
+                    }
+                    
                     $eventFeeBlockValues['amount_id_'.$fee['amount_id']] = $fee['value'];
                     $elements[] =& $form->createElement('radio', null, '',
                                                         CRM_Utils_Money::format( $fee['value'] ) . ' ' .
                                                         $fee['label'],
                                                         $fee['amount_id'],
-                                                        array( 'onClick' => "fillTotalAmount(".$fee['value'].")" ) 
+                                                        $totalAmountJs
                                                         );
                 }
             }
