@@ -47,149 +47,57 @@ class WebTest_Member_OfflineAutoRenewMembershipTest extends CiviSeleniumTestCase
       $processorName = "Webtest AuthNet" . substr(sha1(rand()), 0, 7);
       $this->webtestAddPaymentProcessor($processorName, 'AuthNet');
 
-      // -- star creating a membership contribution page
-      $this->open($this->sboxPath . "civicrm/admin/contribute/add&reset=1&action=add");
+      // -- start updating membership types 
+      $this->open($this->sboxPath . "civicrm/admin/member/membershipType&action=update&id=1&reset=1");
 
-      // a random 7-char string and an even number to make this pass unique
-      $hash = substr(sha1(rand()), 0, 7);
+      $this->waitForElementPresent("CIVICRM_QFID_1_10");
+      $this->click("CIVICRM_QFID_1_10");
 
-      // fill in Title and Settings
-      $contributionTitle = "Title $hash";
-      $this->type('title',$contributionTitle );
-      $this->select('contribution_type_id', 'value=1');
-      $this->fillRichTextField('intro_text','This is Introductory Message','CKEditor');
-      $this->fillRichTextField('footer_text','This is Footer Message','CKEditor');
-        
-      // continue
-      $this->click('_qf_Settings_next');
-      $this->waitForPageToLoad();
+      $this->type("duration_interval", "1");
+      $this->select("duration_unit", "label=year");
 
-      // get page id for future use
-      $matches = array();
-      preg_match('/id=([0-9]+)/', $this->getLocation(), $matches);
-      $page_id = $matches[1];
-      
-      //this contribution page for membership signup
+      $this->click("_qf_MembershipType_upload-bottom");
+      $this->waitForPageToLoad("30000");
+
+      $this->open($this->sboxPath . "civicrm/admin/member/membershipType&action=update&id=1&reset=1");
+
+      $this->type("duration_interval", "6");
+      $this->select("duration_unit", "label=month");
+
+      $this->click("_qf_MembershipType_upload-bottom");
+      $this->waitForPageToLoad("30000");
+
+      // create a new contact for whom membership is to be created
+      $firstName = substr(sha1(rand()), 0, 7);
+      $this->webtestAddContact($firstName, "Memberson", "{$firstName}@memberson.com");
+      $contactName = "$firstName Memberson";
+
+      $this->click('css=li#tab_member a');
+
+      $this->waitForElementPresent('link=Submit Credit Card Membership');
+      $this->click('link=Submit Credit Card Membership');
+
       $this->waitForElementPresent('payment_processor_id');
-      $this->select("payment_processor_id", "label=" . $processorName);
-      $this->click("amount_block_is_active");
-        
-      // save
-      $this->click('_qf_Amount_next');
-      $this->waitForPageToLoad();
-        
-      // go to Memberships
-      $this->click('css=#tab_membership a');
+      $this->select("payment_processor_id",  "label={$processorName}");
+      $this->select("membership_type_id[1]", "label=General");
 
-      // fill in Memberships
-      $this->waitForElementPresent('is_active');
-      $this->click('is_active');
-      $this->type('new_title',     "Title - New Membership $hash");
-      $this->type('renewal_title', "Title - Renewals $hash");
-      $this->click('membership_type[2]');
-      $this->click('is_required');
-        
-      // save
-      $this->click('_qf_MembershipBlock_next');
-      $this->waitForPageToLoad();
-        
-      // go to Receipt
-      $this->click('css=#tab_thankYou a');
+      $this->click("auto_renew");
 
-      // fill in Receipt
-      $this->waitForElementPresent('thankyou_title');
-      $this->type('thankyou_title',     "Thank-you Page Title $hash");
-      $this->type('receipt_from_name',  "Receipt From Name $hash");
-      $this->type('receipt_from_email', "$hash@example.org");
-      $this->type('receipt_text',       "Receipt Message $hash");
-      $this->type('cc_receipt',         "$hash@example.net");
-      $this->type('bcc_receipt',        "$hash@example.com");
-        
-      // save
-      $this->click('_qf_ThankYou_next');
-      $this->waitForPageToLoad();
-      
-      
-      // go to Tell a Friend
-      $this->click('css=#tab_friend a');
-      
-      // fill Tell a Friend
-      $this->waitForElementPresent('tf_is_active');
-      $this->click('tf_is_active');
-      $this->type('tf_title',          "TaF Title $hash");
-      $this->type('intro',             "TaF Introduction $hash");
-      $this->type('suggested_message', "TaF Suggested Message $hash");
-      $this->type('general_link',      "TaF Info Page Link $hash");
-      $this->type('thankyou_title',    "TaF Thank-you Title $hash");
-      $this->type('thankyou_text',     "TaF Thank-you Message $hash");
-      
-      // save
-      $this->click('_qf_Contribute_next');
-      $this->waitForPageToLoad();
-      
-      // go to Profiles
-      $this->click('css=#tab_custom a');
-      
-      // fill in Profiles
-      $this->waitForElementPresent('custom_pre_id');
-      $this->select('custom_pre_id',  'value=1');
-      
-      
-      // save
-      $this->click('_qf_Custom_next');
-      $this->waitForPageToLoad();
-      
-      // go to Premiums
-      $this->click('css=#tab_premium a');
-      
-      // fill in Premiums
-      $this->waitForElementPresent('premiums_active');
-      $this->click('premiums_active');
-      $this->type('premiums_intro_title',   "Prem Title $hash");
-      $this->type('premiums_intro_text',    "Prem Introductory Message $hash");
-      $this->type('premiums_contact_email', "$hash@example.info");
-      $this->type('premiums_contact_phone', rand(100000000, 999999999));
-      $this->click('premiums_display_min_contribution');
-        
-      // save
-      $this->click('_qf_Premium_next');
-      $this->waitForPageToLoad();
-        
-      // go to Widgets
-      $this->click('css=#tab_widget a');
-      
-      // fill in Widgets
-      $this->waitForElementPresent('is_active');
-      $this->click('is_active');
-      $this->type('url_logo',     "URL to Logo Image $hash");
-      $this->type('button_title', "Button Title $hash");
-      $this->type('about',        "About $hash");
-        
-      // save
-      $this->click('_qf_Widget_next');
-      $this->waitForPageToLoad();
-      
-      // go to Personal Campaigns
-      $this->click('css=#tab_pcp a');
-      
-      // fill in Personal Campaigns
-      $this->waitForElementPresent('pcp_active');
-      $this->click('pcp_active');
-      $this->click('is_approval_needed');
-      $this->type('notify_email', "$hash@example.name");
-      $this->select('supporter_profile_id', 'value=2');
-      $this->type('tellfriend_limit', 7);
-      $this->type('link_text', "'Create Personal Campaign Page' link text $hash");
-      
-      // save and done
-      $this->click('_qf_PCP_upload_done');
-      $this->waitForPageToLoad();
-      
-      //get Url for Live Contribution Page
-      $registerUrl = "{$this->sboxPath}civicrm/contribute/transact?reset=1&id=$page_id";
-      
-      //logout
-      $this->open($this->sboxPath . "civicrm/logout&reset=1");
-      $this->waitForPageToLoad('30000');
+      $this->select("credit_card_type", "label=Visa");
+      $this->type("credit_card_number", "4111111111111111");
+      $this->type("cvv2", "123");
+      $this->select("credit_card_exp_date[M]", "label=Feb");
+      $this->select("credit_card_exp_date[Y]", "label=2014");
+
+      $this->type("billing_first_name", "$firstName");
+      $this->type("billing_last_name", "Memberson");
+      $this->type("billing_street_address-5", "99 ht");
+      $this->type("billing_city-5", "SF");
+      $this->select("billing_country_id-5", "label=United States");
+      $this->select("billing_state_province_id-5", "label=California");
+      $this->type("billing_postal_code-5", "919199");
+
+      $this->click("_qf_Membership_upload-bottom");
+      $this->waitForPageToLoad("30000");
   }
 }
