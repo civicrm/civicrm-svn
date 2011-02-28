@@ -384,12 +384,13 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
                  $lineItems[$row['participant_id']] = CRM_Price_BAO_LineItem::getLineItems( $row['participant_id'] );
              }
 
-             $viewRoles = array();
-             foreach ( explode( $sep, $row['participant_role_id'] ) as $k => $v ) {
-                 $viewRoles[] = $participantRoles[$v];
+             if (!empty($row['participant_role_id'])) {
+                 $viewRoles = array();
+                 foreach ( explode( $sep, $row['participant_role_id'] ) as $k => $v ) {
+                     $viewRoles[] = $participantRoles[$v];
+                 }
+                 $row['participant_role_id'] = implode( ', ', $viewRoles );
              }
-             $row['participant_role_id'] = implode( ', ', $viewRoles );
-
              $rows[] = $row;
          }
          CRM_Core_Selector_Controller::$_template->assign_by_ref( 'lineItems', $lineItems );
