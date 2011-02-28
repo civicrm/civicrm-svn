@@ -216,7 +216,7 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form
             if ( $error ) {
                 $url = CRM_Utils_System::url( $urlString, $urlParams );
                 CRM_Utils_System::redirect( $url );
-                return true;
+                return $error;
             }
         } 
         
@@ -255,7 +255,8 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form
         if ( CRM_Utils_Array::value( '_qf_Import_refresh', $_POST ) || 
              CRM_Utils_Array::value( '_qf_Test_next', $testParams ) ||
              !CRM_Utils_Array::value( 'sendtest', $testParams ) ) {
-            return true;
+            $error = true;
+            return $error;
         }
         
         require_once 'CRM/Mailing/BAO/Job.php';
@@ -335,8 +336,8 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form
             $url = CRM_Utils_System::url( $urlString, $urlParams );
             CRM_Utils_System::redirect( $url );
         }
-        
-        return true;
+        $error = true;
+        return $error;
     }
     
     /**
