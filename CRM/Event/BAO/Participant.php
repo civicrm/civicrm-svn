@@ -265,7 +265,7 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
                 CRM_Core_BAO_Note::add( $noteParams, $noteIDs );
             } else if ( $noteId && $hasNoteField ) {
                 require_once 'CRM/Core/BAO/Note.php';
-                CRM_Core_BAO_Note::del( $noteId );
+                CRM_Core_BAO_Note::del( $noteId, false );
             }
         }
         
@@ -832,6 +832,14 @@ WHERE  civicrm_participant.id = {$participantId}
         $participantsId =  self::getAdditionalParticipantIds($id);
         $participantsId[] = $id;
         CRM_Price_BAO_LineItem::deleteLineItems( $participantsId , 'civicrm_participant' );
+        
+        //delete note when participant deleted.
+        require_once 'CRM/Core/BAO/Note.php';
+        $note = CRM_Core_BAO_Note::getNote( $id, 'civicrm_participant' );
+        $noteId = key( $note );
+        if ( $noteId ) {
+            CRM_Core_BAO_Note::del( $noteId, false );
+        }
         
         $participant = new CRM_Event_DAO_Participant( );
         $participant->id = $id;
