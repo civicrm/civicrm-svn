@@ -122,6 +122,17 @@ class CRM_Mailing_Selector_Browse   extends CRM_Core_Selector_Base
         $job = CRM_Mailing_BAO_Job::getTableName();
         if ( ! isset( self::$_columnHeaders ) ) {
             
+            // Set different default sort depending on type of mailings (CRM-7652)
+            $unscheduledOrder = $scheduledOrder = $archivedOrder = CRM_Utils_Sort::DONTCARE;
+            if ( $this->_parent->get( 'unscheduled' ) ) {
+                $unscheduledOrder = CRM_Utils_Sort::DESCENDING;
+            } elseif ( $this->_parent->get( 'scheduled' ) ) {
+                $scheduledOrder = CRM_Utils_Sort::DESCENDING;
+            } else {
+                // sort by completed date for archived and undefined get
+                $completedOrder = CRM_Utils_Sort::DESCENDING;
+            }
+            
             self::$_columnHeaders = array( 
                                           array(
                                                 'name'      => ts('Mailing Name'),
@@ -136,12 +147,12 @@ class CRM_Mailing_Selector_Browse   extends CRM_Core_Selector_Base
                                           array(
                                                 'name'      => ts('Created By'),
                                                 'sort'      => 'created_by',
-                                                'direction' => CRM_Utils_Sort::DONTCARE,
+                                                'direction' =>  CRM_Utils_Sort::DONTCARE,
                                                 ),
                                           array(
                                                 'name'      => ts('Created Date'),
                                                 'sort'      => 'created_date',
-                                                'direction' => CRM_Utils_Sort::DONTCARE,
+                                                'direction' => $unscheduledOrder,
                                                   ),
                                           array(
                                                 'name'      => ts('Sent By'),
@@ -151,7 +162,7 @@ class CRM_Mailing_Selector_Browse   extends CRM_Core_Selector_Base
                                           array(
                                                 'name'      => ts('Scheduled'),
                                                 'sort'      => 'scheduled_date',
-                                                'direction' => CRM_Utils_Sort::DONTCARE,
+                                                'direction' => $scheduledOrder,
                                                 ), 
                                           array(
                                                 'name'      => ts('Started'),
@@ -161,7 +172,7 @@ class CRM_Mailing_Selector_Browse   extends CRM_Core_Selector_Base
                                           array(
                                                 'name'      => ts('Completed'),
                                                 'sort'      => 'end_date',
-                                                'direction' => CRM_Utils_Sort::DESCENDING,
+                                                'direction' => $completedOrder,
                                                 )
                                           );
             
