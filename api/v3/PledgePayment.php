@@ -50,8 +50,13 @@ require_once 'api/v3/utils.php';
 require_once 'CRM/Utils/Rule.php';
 
 /**
- * Add or update a plege payment
+ * Add or update a plege payment. Pledge Payment API doesn't actually add a pledge 
+ *  if the request is to 'create' and 'id' is not passed in
+ * the oldest pledge with no associated contribution is updated
  *
+ * @todo possibly add ability to add payment if there are less payments than pledge installments
+ * @todo possibily add ability to recalc dates if the schedule is changed
+ * 
  * @param  array   $params           (reference ) input parameters
  *
  * @return array (reference )        pledge_id of created or updated record
@@ -61,11 +66,14 @@ require_once 'CRM/Utils/Rule.php';
 function civicrm_api3_pledge_payment_create( $params ) {
   _civicrm_api3_initialize(true );
   try{
-    civicrm_api3_verify_mandatory($params,null,array('pledge_id','status_id'));
-    //GAP - update doesn't recalculate payment dates on existing payment schedule  - not the sure the code is in Civi to leverage
+    civicrm_api3_verify_mandatory($params,null,array('pledge_id','status_id', 'contribution_id'));
 
     require_once 'CRM/Pledge/BAO/Payment.php';
-    $dao = CRM_Pledge_BAO_Payment::add( $params );
+    if (empty($params['id'])){
+      $paymentDetails = CRM_Pledge_BAO_Payment::getOldestPledgePayment($params['pledge_id']);
+    } 
+    $paymentParams = array_merge($params,$paymentDetails);
+    $dao = CRM_Pledge_BAO_Payment::add( $paymentParams );
      _civicrm_api3_object_to_array($dao, $result[$dao->id]);
     
    
@@ -171,13 +179,18 @@ try {
     civicrm_api3_verify_mandatory($params);
     require_once 'CRM/Pledge/BAO/Payment.php';
     $bao = new CRM_Pledge_BAO_Payment();
+    print_r($fields);
     $fields = array_keys($bao->fields());
     foreach ( $fields as $name) {
         if (array_key_exists($name, $params)) {
             $bao->$name = $params[$name];
         }
     }
-    
+
+    if(empty($params['pledge_payment_id']) && isset($params['id'])){
+      $bao->id = $params['id'];   
+    }
+
     if ( $bao->find() ) {
       $results = array();
       while ( $bao->fetch() ) {
