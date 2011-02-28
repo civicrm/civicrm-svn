@@ -23,7 +23,7 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id )
        SET  val.label_{$loc}       = '{ts escape="sql"}Survey Report (Detail){/ts}',
             val.description_{$loc} = '{ts escape="sql"}Detailed report for canvassing, phone-banking, walk lists or other surveys.{/ts}'
      WHERE  val.name = 'CRM_Report_Form_Campaign_SurveyDetails' 
-       AND  grp.name = 'report_template';  
+       AND  grp.name = 'report_template';
 
   {/foreach}
 
