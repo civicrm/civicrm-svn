@@ -287,7 +287,21 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
      */
     function setDefaultValues( ) 
     {
-        return $defaults = array( );
+        //load default data for only contact fields.
+        $contactFields = $defaults = array( );
+        foreach ( $this->_surveyFields as $name => $field ) {
+            if ( $field['field_type'] == 'Contact' ) {
+                $contactFields[$name] = $field;
+            }
+        }
+        if ( !empty( $contactFields ) ) {
+            require_once 'CRM/Core/BAO/UFGroup.php';
+            foreach ( $this->_contactIds as $contactId ) {
+                CRM_Core_BAO_UFGroup::setProfileDefaults( $contactId, $contactFields, $defaults, false );
+            }
+        }
+        
+        return $defaults;
     }
     
     /**
