@@ -49,13 +49,13 @@
        <span class="labels">{$form.deceased_date.label}</span>
        <span class="fields">{include file="CRM/common/jcalendar.tpl" elementName=deceased_date}</span>
   </div> 
-  {foreach from=$demographics_groupTree item=cd_edit key=group_id}
+  {if isset($demographics_groupTree)}{foreach from=$demographics_groupTree item=cd_edit key=group_id}
      {foreach from=$cd_edit.fields item=element key=field_id}
         <table class="form-layout-compressed">
         {include file="CRM/Custom/Form/CustomField.tpl"}
         </table>
      {/foreach}
-  {/foreach}
+  {/foreach}{/if}
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
 
