@@ -1022,7 +1022,7 @@ SELECT $select
                     
                 case 'Select Date':
                     if ( isset( $value ) ) {
-                        if ( !$field[ 'time_format'] ) {
+                        if ( empty($field[ 'time_format']) ) {
                             list( $defaults[$elementName] ) = CRM_Utils_Date::setDateDefaults( $value, null, 
                                                                                                $field['date_format'] );
                         } else {
