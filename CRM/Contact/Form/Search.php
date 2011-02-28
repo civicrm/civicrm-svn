@@ -392,22 +392,25 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                 //$this->_groupElement->freeze( );
             }
             
-            // also set the group title
-            $groupValues = array( 'id' => $this->_groupID, 'title' => $this->_group[$this->_groupID] );
-            $this->assign_by_ref( 'group', $groupValues );
+            if ( ! empty( $this->_groupID ) ) {
+                // also set the group title
+                $groupValues = array( 'id' => $this->_groupID, 'title' => $this->_group[$this->_groupID] );
+                $this->assign_by_ref( 'group', $groupValues );
 
-            // also set ssID if this is a saved search
-            $ssID = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Group', $this->_groupID, 'saved_search_id' );
-            $this->assign( 'ssID', $ssID );
+                // also set ssID if this is a saved search
+                $ssID = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Group', $this->_groupID, 'saved_search_id' );
+                $this->assign( 'ssID', $ssID );
             
-            //get the saved search mapping id
-            if ( $ssID ) {
-                $ssMappingId = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_SavedSearch', $ssID, 'mapping_id' );
-            }
+                //get the saved search mapping id
+                if ( $ssID ) {
+                    $ssMappingId = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_SavedSearch', $ssID, 'mapping_id' );
+                }
             
-            if (isset ( $ssMappingId ) ) {
-                $this->assign( 'ssMappingID', $ssMappingId );
+                if (isset ( $ssMappingId ) ) {
+                    $this->assign( 'ssMappingID', $ssMappingId );
+                }
             }
+
             $group_contact_status = array();
             foreach(CRM_Core_SelectValues::groupContactStatus() as $k => $v) {
                 if (! empty($k)) {
@@ -425,16 +428,17 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
              *                  ts( 'Please select at least Group Status value.' ), 'required', null, 1 );
             */
 
-            // Set dynamic page title for 'Show Members of Group'
-            CRM_Utils_System::setTitle( ts( 'Contacts in Group: %1', array( 1 => $this->_group[$this->_groupID] ) ) );
+            $this->assign( 'permissionedForGroup', false );
+            if ( ! empty( $this->_groupID ) ) {
+                // Set dynamic page title for 'Show Members of Group'
+                CRM_Utils_System::setTitle( ts( 'Contacts in Group: %1', array( 1 => $this->_group[$this->_groupID] ) ) );
 
-            // check if user has permission to edit members of this group
-            require_once 'CRM/Contact/BAO/Group.php';
-            $permission = CRM_Contact_BAO_Group::checkPermission( $this->_groupID, $this->_group[$this->_groupID] );
-            if ( $permission && in_array(CRM_Core_Permission::EDIT, $permission) ) {
-                $this->assign( 'permissionedForGroup', true );
-            } else {
-                $this->assign( 'permissionedForGroup', false );
+                // check if user has permission to edit members of this group
+                require_once 'CRM/Contact/BAO/Group.php';
+                $permission = CRM_Contact_BAO_Group::checkPermission( $this->_groupID, $this->_group[$this->_groupID] );
+                if ( $permission && in_array(CRM_Core_Permission::EDIT, $permission) ) {
+                    $this->assign( 'permissionedForGroup', true );
+                }
             }
         }
         
