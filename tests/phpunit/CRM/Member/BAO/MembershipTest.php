@@ -508,12 +508,14 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
     function testStaleMembership( ) 
     {
         $contactId = Contact::createIndividual( );
+        $joinDate = $startDate = date( "Ymd", strtotime( date("Ymd") . " -1 year -15 days" ) );
+        $endDate = date( "Ymd", strtotime(  $joinDate . " +1 year -1 day" ) );
         $params = array(
                         'contact_id'         => $contactId,  
                         'membership_type_id' => '1',
-                        'join_date'          => '20100201000000',
-                        'start_date'         => '20100201000000',
-                        'end_date'           => '20110130000000',
+                        'join_date'          => $joinDate,
+                        'start_date'         => $startDate,
+                        'end_date'           => $endDate,
                         'source'             => 'Payment',
                         'is_override'        => 1,
                         'status_id'          => 3
