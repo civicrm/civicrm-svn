@@ -76,6 +76,11 @@ class WebTest_Member_OfflineAutoRenewMembershipTest extends CiviSeleniumTestCase
 
       $this->waitForElementPresent('link=Submit Credit Card Membership');
       $this->click('link=Submit Credit Card Membership');
+      $this->waitForPageToLoad("30000");
+
+      $url = $this->getLocation( );
+      $url = str_replace('mode=live', 'mode=test', $url);
+      $this->open($url);
 
       $this->waitForElementPresent('payment_processor_id');
       $this->select("payment_processor_id",  "label={$processorName}");
