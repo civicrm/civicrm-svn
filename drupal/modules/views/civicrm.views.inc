@@ -5004,7 +5004,7 @@ function civicrm_views_add_fields( &$fields, &$data, &$skipFields, $tableName ) 
                                                ),
                              );
      //For date fields add in 6 arguments
-     if ( $value['type'] == 4 ){
+	if ( isset($value['type']) && $value['type'] == 4 ){
          civicrm_views_add_date_arguments($data,$value);
      }
     }
