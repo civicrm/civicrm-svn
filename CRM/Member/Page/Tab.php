@@ -104,7 +104,7 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
             if ( CRM_Utils_Array::value( 'is_current_member', $statusANDType[$dao->id] ) ) {
                 $membership[$dao->id]['active'] = true;
             }
-            if ( ! $dao->owner_membership_id ) {
+            if ( empty($dao->owner_membership_id) ) {
                 // unset renew and followup link for deceased membership
                 $currentMask = $mask;
                 if ( $dao->status_id == $deceasedStatusId ) { 
