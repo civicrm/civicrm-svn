@@ -457,5 +457,44 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
         CRM_Member_BAO_Membership::deleteRelatedMemberships( $membershipId );
         
     }
+    
+    function testRenewMembership( ) 
+    {
+        $contactId = Contact::createIndividual( );
+        $params = array(
+                        'contact_id'         => $contactId,  
+                        'membership_type_id' => '1',
+                        'join_date'          => '20110225000000',
+                        'start_date'         => '20110225000000',
+                        'end_date'           => '20120224000000',
+                        'source'             => 'Payment',
+                        'is_override'        => 1,
+                        'status_id'          => $this->_membershipStatusID
+                        );
+        $ids = array( );
+        $membership = CRM_Member_BAO_Membership::create( $params, $ids );
+        $membershipId = $this->assertDBNotNull( 'CRM_Member_BAO_Membership', $contactId, 'id', 
+                                                'contact_id', 'Database check for created membership.' );
+        $this->assertDBNotNull( 'CRM_Member_BAO_MembershipLog', 
+                                $membership->id , 
+                                'membership_id', 
+                                'id', 
+                                'Database checked on membershiplog record.' );
+        $membershipType = Membership::createMembershipType( );
+        require_once 'CRM/Core/Controller.php';
+        require_once 'CRM/Core/Form.php';
+        $membershipRenewal = new CRM_Core_Form( );
+        $membershipRenewal->controller = new CRM_Core_Controller( );
+        $MembershipRenew = CRM_Member_BAO_Membership::renewMembership( $contactId, $membershipType->id, $isTestMembership = 0, $membershipRenewal, null, null );
+        $endDate = date( "Y-m-d", strtotime( $membership->end_date . " +1 year" ) );
+        
+        $this->assertDBNotNull( 'CRM_Member_BAO_MembershipLog', 
+                                $MembershipRenew->id , 
+                                'membership_id', 
+                                'id', 
+                                'Database checked on membershiplog record.' );
+        $this->assertEquals( $MembershipRenew->membership_type_id, $membershipType->id, 'Verify membership type is changed during renewal.' );
+        $this->assertEquals( $MembershipRenew->end_date, $endDate, 'Verify correct end date is calculated after membership renewal' );
+    }
 }
 ?>
