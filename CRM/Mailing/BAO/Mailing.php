@@ -1893,7 +1893,7 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
                             'archived'      => $dao->archived,
                             'approval_status_id' => $dao->approval_status_id,
                             'campaign_id'   => $dao->campaign_id,
-                            'campaign'      => $allCampaigns[$dao->campaign_id]
+                            'campaign'      => empty($dao->campaign_id) ? NULL : $allCampaigns[$dao->campaign_id],
                             );
         }
         return $rows;
