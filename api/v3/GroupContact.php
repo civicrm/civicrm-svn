@@ -140,7 +140,7 @@ function civicrm_api3_group_contact_common( $params, $op = 'add' )
   }
 
   if ( empty( $groupIDs ) ) {
-    return civicrm_api3_create_error( ts( 'group_id is a required field' ) );
+    return civicrm_api3_create_error( 'group_id is a required field'  );
   }
 
   $method     = CRM_Utils_Array::value( 'method'  , $params, 'API' );
@@ -154,7 +154,7 @@ function civicrm_api3_group_contact_common( $params, $op = 'add' )
   $tracking   = CRM_Utils_Array::value( 'tracking', $params );
 
   require_once 'CRM/Contact/BAO/GroupContact.php';
-  $values = array( 'is_error' => 0 );
+  $values = array( );
   if ( $op == 'add' || $op == 'pending') {
     $values['total_count'] = $values['added'] = $values['not_added'] = 0;
     foreach ( $groupIDs as $groupID ) {
