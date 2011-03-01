@@ -47,6 +47,22 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
     function setUp( ) 
     {
         parent::setUp();
+        // FIXME: something NULLs $GLOBALS['_HTML_QuickForm_registered_rules'] when the tests are ran all together
+        $GLOBALS['_HTML_QuickForm_registered_rules'] = array(
+            'required'      => array('html_quickform_rule_required', 'HTML/QuickForm/Rule/Required.php'),
+            'maxlength'     => array('html_quickform_rule_range',    'HTML/QuickForm/Rule/Range.php'),
+            'minlength'     => array('html_quickform_rule_range',    'HTML/QuickForm/Rule/Range.php'),
+            'rangelength'   => array('html_quickform_rule_range',    'HTML/QuickForm/Rule/Range.php'),
+            'email'         => array('html_quickform_rule_email',    'HTML/QuickForm/Rule/Email.php'),
+            'regex'         => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
+            'lettersonly'   => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
+            'alphanumeric'  => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
+            'numeric'       => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
+            'nopunctuation' => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
+            'nonzero'       => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
+            'callback'      => array('html_quickform_rule_callback', 'HTML/QuickForm/Rule/Callback.php'),
+            'compare'       => array('html_quickform_rule_compare',  'HTML/QuickForm/Rule/Compare.php')
+        );
         
         $this->_contactID           = $this->organizationCreate( ) ;
         $this->_membershipTypeID    = $this->membershipTypeCreate( $this->_contactID );
