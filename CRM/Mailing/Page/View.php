@@ -95,7 +95,7 @@ AND        q.contact_id = %2
      * 
      * @return void
      */ 
-    function run( $id = null, $contact_id = null, $print = true )
+    function run( $id = null, $contactID = null, $print = true )
     {               
         if ( is_numeric( $id ) ) {
             $this->_mailingID = $id;
@@ -106,10 +106,11 @@ AND        q.contact_id = %2
 		
 		
 		// # CRM-7651
-		// override contact_id from the function level if passed 
+		// override contactID from the function level if passed 
 		// in
-		if(isset($contact_id) && is_numeric($contact_id)) {
-			$this->_contactID = $contact_id;
+		if ( isset( $contactID ) &&
+             is_numeric( $contactID )) {
+			$this->_contactID = $contactID;
 		} else {
 			$session   =& CRM_Core_Session::singleton( );
 			$this->_contactID = $session->get( 'userID' );
