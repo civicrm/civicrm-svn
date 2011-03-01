@@ -47,6 +47,22 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
     function setUp( ) 
     {
         parent::setUp();
+        // FIXME: something NULLs $GLOBALS['_HTML_QuickForm_registered_rules'] when the tests are ran all together
+        $GLOBALS['_HTML_QuickForm_registered_rules'] = array(
+            'required'      => array('html_quickform_rule_required', 'HTML/QuickForm/Rule/Required.php'),
+            'maxlength'     => array('html_quickform_rule_range',    'HTML/QuickForm/Rule/Range.php'),
+            'minlength'     => array('html_quickform_rule_range',    'HTML/QuickForm/Rule/Range.php'),
+            'rangelength'   => array('html_quickform_rule_range',    'HTML/QuickForm/Rule/Range.php'),
+            'email'         => array('html_quickform_rule_email',    'HTML/QuickForm/Rule/Email.php'),
+            'regex'         => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
+            'lettersonly'   => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
+            'alphanumeric'  => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
+            'numeric'       => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
+            'nopunctuation' => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
+            'nonzero'       => array('html_quickform_rule_regex',    'HTML/QuickForm/Rule/Regex.php'),
+            'callback'      => array('html_quickform_rule_callback', 'HTML/QuickForm/Rule/Callback.php'),
+            'compare'       => array('html_quickform_rule_compare',  'HTML/QuickForm/Rule/Compare.php')
+        );
         
         $this->_contactID           = $this->organizationCreate( ) ;
         $this->_membershipTypeID    = $this->membershipTypeCreate( $this->_contactID );
@@ -456,6 +472,93 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
         
         CRM_Member_BAO_Membership::deleteRelatedMemberships( $membershipId );
         
+    }
+    
+    /*
+     * Function to renew membership with change in membership type
+     *
+     */
+    function testRenewMembership( ) 
+    {
+        $contactId = Contact::createIndividual( );
+        $params = array(
+                        'contact_id'         => $contactId,  
+                        'membership_type_id' => '1',
+                        'join_date'          => '20110225000000',
+                        'start_date'         => '20110225000000',
+                        'end_date'           => '20120224000000',
+                        'source'             => 'Payment',
+                        'is_override'        => 1,
+                        'status_id'          => $this->_membershipStatusID
+                        );
+        $ids = array( );
+        $membership = CRM_Member_BAO_Membership::create( $params, $ids );
+        $membershipId = $this->assertDBNotNull( 'CRM_Member_BAO_Membership', $contactId, 'id', 
+                                                'contact_id', 'Database check for created membership.' );
+        $this->assertDBNotNull( 'CRM_Member_BAO_MembershipLog', 
+                                $membership->id , 
+                                'membership_id', 
+                                'id', 
+                                'Database checked on membershiplog record.' );
+        $membershipType = Membership::createMembershipType( );
+        require_once 'CRM/Core/Controller.php';
+        require_once 'CRM/Core/Form.php';
+        $membershipRenewal = new CRM_Core_Form( );
+        $membershipRenewal->controller = new CRM_Core_Controller( );
+        $MembershipRenew = CRM_Member_BAO_Membership::renewMembership( $contactId, $membershipType->id, $isTestMembership = 0, $membershipRenewal, null, null );
+        $endDate = date( "Y-m-d", strtotime( $membership->end_date . " +1 year" ) );
+        
+        $this->assertDBNotNull( 'CRM_Member_BAO_MembershipLog', 
+                                $MembershipRenew->id , 
+                                'membership_id', 
+                                'id', 
+                                'Database checked on membershiplog record.' );
+        $this->assertEquals( $MembershipRenew->membership_type_id, $membershipType->id, 'Verify membership type is changed during renewal.' );
+        $this->assertEquals( $MembershipRenew->end_date, $endDate, 'Verify correct end date is calculated after membership renewal' );
+    }
+
+    /*
+     * Function to renew stale membership
+     *
+     */
+    function testStaleMembership( ) 
+    {
+        $contactId = Contact::createIndividual( );
+        $joinDate = $startDate = date( "Ymd", strtotime( date("Ymd") . " -1 year -15 days" ) );
+        $endDate = date( "Ymd", strtotime(  $joinDate . " +1 year -1 day" ) );
+        $params = array(
+                        'contact_id'         => $contactId,  
+                        'membership_type_id' => '1',
+                        'join_date'          => $joinDate,
+                        'start_date'         => $startDate,
+                        'end_date'           => $endDate,
+                        'source'             => 'Payment',
+                        'is_override'        => 1,
+                        'status_id'          => 3
+                        );
+        
+        $ids = array( );
+        $membership = CRM_Member_BAO_Membership::create( $params, $ids );
+        $membershipId = $this->assertDBNotNull( 'CRM_Member_BAO_Membership', $contactId, 'id', 
+                                                'contact_id', 'Database check for created membership.' );
+        $this->assertDBNotNull( 'CRM_Member_BAO_MembershipLog', 
+                                $membership->id , 
+                                'membership_id', 
+                                'id', 
+                                'Database checked on membershiplog record.' );
+        
+        require_once 'CRM/Core/Controller.php';
+        require_once 'CRM/Core/Form.php';
+        $membershipRenewal = new CRM_Core_Form( );
+        $membershipRenewal->controller = new CRM_Core_Controller( );
+        $membershipTypeId = 1;
+        $MembershipRenew = CRM_Member_BAO_Membership::renewMembership( $contactId, $membershipTypeId, $isTestMembership = 0, $membershipRenewal, null, null );
+       
+        $this->assertDBNotNull( 'CRM_Member_BAO_MembershipLog', 
+                                $MembershipRenew->id , 
+                                'membership_id', 
+                                'id', 
+                                'Database checked on membershiplog record.' );
     }
 }
 ?>

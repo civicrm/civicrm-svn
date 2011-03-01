@@ -1102,7 +1102,8 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                         }
                     }
                     // need not check for label filed import
-                    $htmlType = array('CheckBox','Multi-Select','AdvMulti-Select','Select','Radio','Multi-Select State/Province' ,'Multi-Select Country','Text' );
+                    $htmlType = array( 'CheckBox','Multi-Select','AdvMulti-Select','Select',
+                                       'Radio','Multi-Select State/Province' ,'Multi-Select Country' );
                     if ( ! in_array( $customFields[$customFieldID]['html_type'], $htmlType ) ||
                          $customFields[$customFieldID]['data_type'] =='Boolean' || 
                          $customFields[$customFieldID]['data_type'] == 'ContactReference' ) {
@@ -1375,10 +1376,12 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     break;
                 case 'county':
                     if ( !empty( $value ) ) {
-                        $countyNames = CRM_Core_PseudoConstant::county( );
                         foreach ( $value as $county ) {
-                            if ( !in_array( $county['county'], $countyNames ) ) {
-                                self::addToErrorMsg( ts('County input value not in county table: The County value appears to be invalid. It does not match any value in CiviCRM table of counties.'), $errorMessage );
+                            if( $county['county'] ) {
+                                $countyNames = CRM_Core_PseudoConstant::county( );
+                                if ( !in_array( $county['county'], $countyNames ) ) {
+                                    self::addToErrorMsg( ts('County input value not in county table: The County value appears to be invalid. It does not match any value in CiviCRM table of counties.'), $errorMessage );
+                                }
                             }
                         }
                     }

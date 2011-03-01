@@ -239,6 +239,13 @@ class CRM_Contact_BAO_Query
     public $_smartGroupCache = true;
 
     /**
+     * Should we display contacts with a specific relationship type
+     *
+     * @var string
+     */
+    public $_displayRelationshipType = null;
+
+    /**
      * reference to the query object for custom values
      *
      * @var Object
@@ -353,7 +360,7 @@ class CRM_Contact_BAO_Query
     function __construct( $params = null, $returnProperties = null, $fields = null,
                           $includeContactIds = false, $strict = false, $mode = 1,
                           $skipPermission = false, $searchDescendentGroups = true,
-                          $smartGroupCache = true ) 
+                          $smartGroupCache = true, $displayRelationshipType = null ) 
     {
         require_once 'CRM/Contact/BAO/Contact.php';
 
@@ -378,6 +385,7 @@ class CRM_Contact_BAO_Query
         $this->_mode                    = $mode;
         $this->_skipPermission          = $skipPermission;
         $this->_smartGroupCache         = $smartGroupCache;
+        $this->_displayRelationshipType = $displayRelationshipType;
 
         if ( $fields ) {
             $this->_fields =& $fields;
@@ -1034,15 +1042,15 @@ class CRM_Contact_BAO_Query
             $select = 'SELECT DISTINCT UPPER(LEFT(contact_a.sort_name, 1)) as sort_name';
             $from = $this->_simpleFromClause;
         } else if ( $groupContacts ) { 
-//CRM-5954 - changing SELECT DISTINCT( contact_a.id ) -> SELECT ... GROUP BY contact_a.id
-// but need to measure performance
+            // CRM-5954 - changing SELECT DISTINCT( contact_a.id ) -> SELECT ... GROUP BY contact_a.id
+            // but need to measure performance
             $select = ( $this->_useDistinct ) ?
                 'SELECT DISTINCT(contact_a.id) as id' :
                 'SELECT contact_a.id as id'; 
-//            $select = 'SELECT contact_a.id as id';
-//            if ( $this->_useDistinct ) {
-//                $this->_useGroupBy = true;
-//            }
+            // $select = 'SELECT contact_a.id as id';
+            // if ( $this->_useDistinct ) {
+            //     $this->_useGroupBy = true;
+            // }
 
             $from = $this->_simpleFromClause;
         } else {
@@ -1073,10 +1081,10 @@ class CRM_Contact_BAO_Query
             }
             if ( $this->_useDistinct && !isset( $this->_distinctComponentClause) ) {
                 if ( !( $this->_mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) ) {
-//CRM-5954
+                    // CRM-5954
                     $this->_select['contact_id'] = 'DISTINCT(contact_a.id) as contact_id';
-//                    $this->_useGroupBy = true;
-//                    $this->_select['contact_id'] ='contact_a.id as contact_id';
+                    // $this->_useGroupBy = true;
+                    // $this->_select['contact_id'] ='contact_a.id as contact_id';
                 }
             } 
 
@@ -1103,7 +1111,68 @@ class CRM_Contact_BAO_Query
 			}
 			$having = ' HAVING ' . implode( ' AND ', $havingvalue );
         }
-		
+
+        // if we are doing a transform, do it here
+        // use the $from, $where and $having to get the contact ID
+        if ( $this->_displayRelationshipType ) {
+            static $_rTypeProcessed = null;
+            static $_rTypeFrom      = null;
+            static $_rTypeWhere     = null;
+
+            if ( ! $_rTypeProcessed ) {
+                $_rTypeProcessed = true;
+                
+                // create temp table with contact ids
+                $tableName = CRM_Core_DAO::createTempTableName( 'civicrm_transform', true );
+                $sql = "CREATE TEMPORARY TABLE $tableName ( contact_id int primary key) ENGINE=HEAP";
+                CRM_Core_DAO::executeQuery( $sql );
+
+                $sql = "
+REPLACE INTO $tableName ( contact_id )
+SELECT contact_a.id
+       $from
+       $where
+       $having
+";
+                CRM_Core_DAO::executeQuery( $sql );
+
+
+                $qillMessage = ts( 'Contacts with a Relationship Type of: ' );
+                $rTypes  = CRM_Core_PseudoConstant::relationshipType( );
+            
+                if ( is_numeric( $this->_displayRelationshipType ) ) {
+                    $relationshipTypeLabel = $rTypes[$this->_displayRelationshipType]['label_a_b'];
+                    $_rTypeFrom = "
+INNER JOIN civicrm_relationship displayRelType ON ( displayRelType.contact_id_a = contact_a.id OR displayRelType.contact_id_b = contact_a.id )
+INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRelType.contact_id_a OR transform_temp.contact_id = displayRelType.contact_id_b )
+";
+                    $_rTypeWhere = " WHERE displayRelType.relationship_type_id = {$this->_displayRelationshipType} ";
+                } else {
+                    list( $relType, $dirOne, $dirTwo ) = explode( '_', $this->_displayRelationshipType );
+                    if ( $dirOne == 'a' ) {
+                        $relationshipTypeLabel = $rTypes[$relType]['label_a_b'];
+                        $_rTypeFrom .= "
+INNER JOIN civicrm_relationship displayRelType ON ( displayRelType.contact_id_a = contact_a.id )
+INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRelType.contact_id_b )
+";
+                    } else {
+                        $relationshipTypeLabel = $rTypes[$relType]['label_b_a'];
+                        $_rTypeFrom .= "
+INNER JOIN civicrm_relationship displayRelType ON ( displayRelType.contact_id_b = contact_a.id )
+INNER JOIN $tableName transform_temp ON ( transform_temp.contact_id = displayRelType.contact_id_a )
+";
+                    }
+                    $_rTypeWhere = " WHERE displayRelType.relationship_type_id = $relType ";
+                }
+            
+                $this->_qill[0][] = $qillMessage . "'" . $relationshipTypeLabel . "'";
+            }
+
+            $from .= $_rTypeFrom;
+            $where = $_rTypeWhere;
+            $having = null;
+        }
+
         return array( $select, $from, $where, $having );
     }
 
@@ -1166,7 +1235,9 @@ class CRM_Contact_BAO_Query
         }
 
         if  ( ! $skipWhere ) {
-            $skipWhere   = array( 'task', 'radio_ts', 'uf_group_id', 'component_mode', 'qfKey' );
+            $skipWhere   = array( 'task', 'radio_ts', 'uf_group_id',
+                                  'component_mode', 'qfKey',
+                                  'display_relationship_type' );
         }
 
         if ( in_array( $id, $skipWhere ) ||
@@ -3010,7 +3081,7 @@ WHERE  id IN ( $groupIDs )
         $targetName = $this->getWhereValues( 'relation_target_name', $grouping );
         $relStatus  = $this->getWhereValues( 'relation_status', $grouping );
         
-        $nameClause = null;
+        $nameClause = $name = null;
         if ( $targetName ) {
             $name = trim( $targetName[2] );
             if ( substr( $name, 0 , 1 ) == '"' &&
@@ -3140,7 +3211,7 @@ WHERE  id IN ( $groupIDs )
                                                                'do_not_phone'           => 1,
                                                                'do_not_trade'           => 1,
                                                                'is_opt_out'             => 1,
-							       'contact_is_deleted'	=> 1,
+                                                               'contact_is_deleted'	    => 1,
                                                                ); 
             }
         }
@@ -3299,6 +3370,17 @@ WHERE  id IN ( $groupIDs )
                 }
                 $this->_fromClause       = self::fromClause( $this->_tables     , null, null, $this->_primaryLocation, $this->_mode ); 
                 $this->_simpleFromClause = self::fromClause( $this->_whereTables, null, null, $this->_primaryLocation, $this->_mode );
+            }
+        } else {
+            // add delete clause if needed even if we are skipping permission
+            // CRM-7639
+            if ( ! $this->_skipDeleteClause ) {
+                if (CRM_Core_Permission::check('access deleted contacts') and $onlyDeleted) {
+                    $permission = '(contact_a.is_deleted)';
+                } else {
+                    // CRM-6181
+                    $permission = '(contact_a.is_deleted = 0)';
+                }
             }
         }
         

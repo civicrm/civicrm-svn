@@ -182,9 +182,9 @@ class CRM_Contact_Form_Task_AddToGroup extends CRM_Contact_Form_Task {
     {
         $errors = array( );
        
-        if ( CRM_Utils_Array::value( 'group_option', $params ) && ( !$params['title'] ) ) {
+        if ( !empty($params['group_option']) && empty($params['title']) ) {
             $errors['title'] = "Group Name is a required field";
-        } else if ( ( ! CRM_Utils_Array::value( 'group_option', $params ) ) && ( !$params['group_id'] ) ) {
+        } elseif ( empty($params['group_option']) && empty($params['group_id'])) {
             $errors['group_id'] = "Select Group is a required field.";
         }
         

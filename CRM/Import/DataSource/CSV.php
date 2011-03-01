@@ -73,7 +73,8 @@ class CRM_Import_DataSource_CSV extends CRM_Import_DataSource
     {
         $file = $params['uploadFile']['name'];
         
-        $result = self::_CsvToTable( $db, $file, $params['skipColumnHeader'],
+        $result = self::_CsvToTable( $db, $file, 
+                                     CRM_Utils_Array::value( 'skipColumnHeader', $params, false ),
                                      CRM_Utils_Array::value( 'import_table_name', $params ) );
         
         $this->set('originalColHeader', CRM_Utils_Array::value( 'original_col_header', $result ) );

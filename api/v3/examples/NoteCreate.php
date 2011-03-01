@@ -7,10 +7,9 @@ function note_create_example(){
                   'entity_id' 		=> '1',
                   'note' 		=> 'Hello!!! m testing Note',
                   'contact_id' 		=> '1',
-                  'modified_date' 		=> '20110212',
+                  'modified_date' 		=> '2011-01-31',
                   'subject' 		=> 'Test Note',
                   'version' 		=> '3',
-                  'privacy' 		=> '0',
 
   );
   require_once 'api/api.php';
@@ -36,7 +35,7 @@ function note_create_expectedresult(){
                       'entity_id' => '1',
                       'note' => 'Hello!!! m testing Note',
                       'contact_id' => '1',
-                      'modified_date' => '20110212',
+                      'modified_date' => '2011-01-31',
                       'subject' => 'Test Note',
                       'privacy' => '0',
            ),           ),

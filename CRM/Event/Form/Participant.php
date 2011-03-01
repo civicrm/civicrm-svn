@@ -947,7 +947,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
     {   
         // get the submitted form values.  
         $params = $this->controller->exportValues( $this->_name );
-     
+        
         if ( $this->_action & CRM_Core_Action::DELETE ) {
             require_once "CRM/Event/BAO/Participant.php";
             if(  CRM_Utils_Array::value( 'delete_participant', $params ) == 2 ) {
@@ -1259,11 +1259,6 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
 
         } else {
             $participants = array();
-            // fix note if deleted
-            if ( !$params['note'] ) {
-                $params['note'] = 'null';
-            }
-
             if ( $this->_single ) {
                 if ( $params['role_id'] ) {
                     foreach ( $params['role_id'] as $k => $v ) {

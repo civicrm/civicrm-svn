@@ -331,7 +331,9 @@ abstract class CRM_Import_Parser {
             $status = "<div class='description'>&nbsp; " . ts('No processing status reported yet.') . "</div>";
             require_once 'Services/JSON.php';
             $json = new Services_JSON( ); 
-            $contents = $json->encode( array( 0, $status ) );
+            
+            //do not force the browser to display the save dialog, CRM-7640 
+            $contents = $json->encodeUnsafe( array( 0, $status ) );
 
             file_put_contents( $statusFile, $contents );
 
@@ -400,7 +402,7 @@ abstract class CRM_Import_Parser {
 ";
 
                     $json = new Services_JSON( ); 
-                    $contents = $json->encode( array( $processedPercent, $status ) );
+                    $contents = $json->encodeUnsafe( array( $processedPercent, $status ) );
 
                     file_put_contents( $statusFile, $contents );
 

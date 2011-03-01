@@ -198,6 +198,8 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
             $this->_returnProperties['sort_name'   ] = 1;
         }
 
+        $displayRelationshipType = CRM_Utils_Array::value( 'display_relationship_type', $this->_formValues );
+
         // rectify params to what proximity search expects if there is a value for prox_distance
         // CRM-7021
         if ( !empty( $this->_params ) ) { 
@@ -212,7 +214,9 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                                                      false, 
                                                      CRM_Contact_BAO_Query::MODE_CONTACTS, 
                                                      false, 
-                                                     $searchDescendentGroups );
+                                                     $searchDescendentGroups,
+                                                     false,
+                                                     $displayRelationshipType );
         $this->_options =& $this->_query->_options;
     }//end of constructor
 

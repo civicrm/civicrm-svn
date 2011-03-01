@@ -341,21 +341,6 @@ class CRM_Activity_BAO_Query
         switch ( $name ) {
             
         case 'civicrm_activity':
-            /*
-        	if ( $mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) {
-		        $from = " FROM civicrm_activity 
-		                  LEFT JOIN civicrm_activity_target  ON ( civicrm_activity_target.activity_id = civicrm_activity.id 
-		                       AND civicrm_activity.is_deleted = 0 AND civicrm_activity.is_current_revision = 1  ) 
-                          LEFT JOIN civicrm_contact contact_a ON ( civicrm_activity_target.target_contact_id = contact_a.id AND contact_a.is_deleted = 0)
-                          LEFT JOIN civicrm_email ON (contact_a.id = civicrm_email.contact_id AND civicrm_email.is_primary = 1)";
-            } else {
-                $from .= " $side JOIN civicrm_activity_target ON civicrm_activity_target.target_contact_id = contact_a.id ";
-                $from .= " $side JOIN civicrm_activity ON ( civicrm_activity.id = civicrm_activity_target.activity_id 
-                                 AND civicrm_activity.is_deleted = 0 AND civicrm_activity.is_current_revision = 1 )";
-                
-            }
-            */
-            
             //CRM-7480 we are going to civicrm_activitty table either 
             //from civicrm_activity_target or civicrm_activity_assignment.
             //as component specific activities does not have entry in
@@ -378,18 +363,18 @@ class CRM_Activity_BAO_Query
             break;
             
 		case 'civicrm_activity_contact':
-		
             $activityRole = CRM_Contact_BAO_Query::$_activityRole;
             if ( $activityRole == 1 ) {
-                $from .= " $side JOIN civicrm_contact contact_b ON civicrm_activity.source_contact_id = contact_b.id
-                           LEFT JOIN civicrm_email email_b ON (contact_b.id = email_b.contact_id AND email_b.is_primary = 1)";
+                $from .= " $side JOIN civicrm_contact contact_activity_source ON civicrm_activity.source_contact_id = contact_activity_source.id
+                           LEFT JOIN civicrm_email email_activity_source ON (contact_activity_source.id = email_activity_source.contact_id AND email_activity_source.is_primary = 1)";
             } else if ( $activityRole == 2 ) {
                 $from .= " $side JOIN civicrm_activity_assignment ON civicrm_activity.id = civicrm_activity_assignment.activity_id ";
-                $from .= " $side JOIN civicrm_contact contact_b ON civicrm_activity_assignment.assignee_contact_id = contact_b.id
-                           LEFT JOIN civicrm_email email_b ON (contact_b.id = email_b.contact_id AND email_b.is_primary = 1)";
+                $from .= " $side JOIN civicrm_contact contact_activity_source ON civicrm_activity_assignment.assignee_contact_id = contact_activity_source.id
+                           LEFT JOIN civicrm_email email_activity_source ON (contact_activity_source.id = email_activity_source.contact_id AND email_activity_source.is_primary = 1)";
             }
 		
 			break;
+
         case 'activity_status':
             $from = " $side JOIN civicrm_option_group option_group_activity_status ON (option_group_activity_status.name = 'activity_status')";
             $from .= " $side JOIN civicrm_option_value activity_status ON (civicrm_activity.status_id = activity_status.value 

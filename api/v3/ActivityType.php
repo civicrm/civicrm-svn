@@ -63,7 +63,7 @@ function civicrm_activity_type_get($params ) {
       civicrm_verify_mandatory($params);
     require_once 'CRM/Core/OptionGroup.php';
     $activityTypes = CRM_Core_OptionGroup::values( 'activity_type' );
-    return civicrm_create_success($activityTypes,$param);
+    return civicrm_create_success($activityTypes,$params);
         } catch (PEAR_Exception $e) {
       return civicrm_create_error( $e->getMessage() );
     } catch (Exception $e) {

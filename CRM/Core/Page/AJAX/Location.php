@@ -120,6 +120,36 @@ class CRM_Core_Page_AJAX_Location
         echo json_encode( $elements );
         CRM_Utils_System::civiExit( );
     }
+    
+
+    function jqCounty( $config ) {
+        if ( ! isset( $_GET['_value'] ) ||
+        empty( $_GET['_value'] ) ) {
+            $elements = array( array( 'name'  => ts('- select state -'),
+                'value' => '' ) );
+        } else {
+
+            require_once 'CRM/Core/PseudoConstant.php';
+            $result =& CRM_Core_PseudoConstant::countyForState( $_GET['_value'] );
+
+            $elements = array( array( 'name'  => ts('- select -'),
+                'value' => '' ) );
+            foreach ( $result as $id => $name ) {
+                $elements[] = array( 'name'  => $name,
+                    'value' => $id );
+            }
+            
+            if ( $elements == array( array( 'name'  => ts('- select -'), 'value' => '' ) )) {
+                $elements = array( array( 'name'  => ts('- no counties -'),
+                    'value' => '' ) );
+            }
+
+        }
+        
+        require_once "CRM/Utils/JSON.php";
+        echo json_encode( $elements );
+        CRM_Utils_System::civiExit( ); 
+    }
 
     function getLocBlock( ) {
         // i wish i could retrieve loc block info based on loc_block_id, 

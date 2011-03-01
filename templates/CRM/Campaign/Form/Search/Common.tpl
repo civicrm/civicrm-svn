@@ -180,7 +180,6 @@
 {literal}
 <script type="text/javascript">
 
-    {/literal}{if !$doNotReloadCRMAccordion}{literal}	
     cj(function() {
       cj().crmaccordions();
 
@@ -190,7 +189,6 @@
       {/if}
       {literal}
     });
-    {/literal}{/if}{literal}
 
   //load interviewer autocomplete.
   var interviewerDataUrl = "{/literal}{$dataUrl}{literal}";

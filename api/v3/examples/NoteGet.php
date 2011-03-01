@@ -7,7 +7,7 @@ function note_get_example(){
                   'entity_id' 		=> '1',
                   'note' 		=> 'Hello!!! m testing Note',
                   'contact_id' 		=> '1',
-                  'modified_date' 		=> '20110212',
+                  'modified_date' 		=> '2011-01-31',
                   'subject' 		=> 'Test Note',
                   'version' 		=> '3',
 
@@ -28,14 +28,14 @@ function note_get_expectedresult(){
            'is_error' 		=> '0',
            'version' 		=> '3',
            'count' 		=> '1',
-           'id' 		=> '0',
-           'values' 		=> array(           '0' =>  array(
+           'id' 		=> '1',
+           'values' 		=> array(           '1' =>  array(
                       'id' => '1',
                       'entity_table' => 'civicrm_contact',
                       'entity_id' => '1',
                       'note' => 'hello I am testing Note',
                       'contact_id' => '1',
-                      'modified_date' => '2011-02-12',
+                      'modified_date' => '2011-02-25',
                       'subject' => 'Test Note',
                       'privacy' => '0',
            ),           ),

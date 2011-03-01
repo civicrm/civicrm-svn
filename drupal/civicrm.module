@@ -760,5 +760,3 @@ function civicrm_preprocess_page(&$variables) {
   		} 
   	}
 }
-
-

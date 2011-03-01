@@ -64,7 +64,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
      * @var int
      * @protected
      */
-    protected $_participantIDs;
+    protected $_participantIDS;
     
     /**
      * the id of the participant we are proceessing
@@ -660,7 +660,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
                     }
 
                     list( $prefixName, $index ) = CRM_Utils_System::explode( '-', $key, 2 );
-                    if ( $prefixName == 'state_province' || $prefixName == 'country' ) {
+                    if ( $prefixName == 'state_province' || $prefixName == 'country' || $prefixName == 'county' ) {
                         if ( ! array_key_exists( $index, $stateCountryMap ) ) {
                             $stateCountryMap[$index] = array( );
                         }

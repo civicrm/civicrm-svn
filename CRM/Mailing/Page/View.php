@@ -58,7 +58,8 @@ class CRM_Mailing_Page_View extends CRM_Core_Page
 
         // check for visibility, if visibility is user pages
         // return true
-        if ( $this->_mailing->visibility == 'Public Pages' ) {
+        // # CRM-7651
+        if ( $this->_mailing->visibility == 'Public User Pages' ) {
             return true;
         }
 
@@ -94,7 +95,7 @@ AND        q.contact_id = %2
      * 
      * @return void
      */ 
-    function run( $id = null, $print = true )
+    function run( $id = null, $contact_id = null, $print = true )
     {               
         if ( is_numeric( $id ) ) {
             $this->_mailingID = $id;
@@ -102,9 +103,17 @@ AND        q.contact_id = %2
             $print = true;
             $this->_mailingID = CRM_Utils_Request::retrieve( 'id', 'Integer', CRM_Core_DAO::$_nullObject, true );
         }        
-
-        $session   =& CRM_Core_Session::singleton( );
-        $this->_contactID = $session->get( 'userID' );
+		
+		
+		// # CRM-7651
+		// override contact_id from the function level if passed 
+		// in
+		if(isset($contact_id) && is_numeric($contact_id)) {
+			$this->_contactID = $contact_id;
+		} else {
+			$session   =& CRM_Core_Session::singleton( );
+			$this->_contactID = $session->get( 'userID' );
+        }
 
         require_once 'CRM/Mailing/BAO/Mailing.php';
         $this->_mailing     = new CRM_Mailing_BAO_Mailing();

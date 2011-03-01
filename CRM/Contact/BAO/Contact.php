@@ -195,11 +195,11 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
         }
 
         if ( $contact->contact_type == 'Individual' &&
-             (array_key_exists( 'current_employer', $params ) || 
-              array_key_exists( 'employer_id', $params )) ) {
+             (isset($params['current_employer']) || 
+              isset($params['employer_id'])) ) {
             // create current employer
             require_once 'CRM/Contact/BAO/Contact/Utils.php';
-            if ( CRM_Utils_Array::value( 'employer_id', $params ) ) {
+            if ( isset($params['employer_id'])  ) {
                 CRM_Contact_BAO_Contact_Utils::createCurrentEmployerRelationship( $contact->id, 
                                                                                   $params['employer_id'] );
             } elseif ( $params['current_employer'] ) {
@@ -540,9 +540,14 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
                                                       $reverse );
                     }
                     
+                    if ( ! empty( $values['state_province_id'] ) ) {
+                        $countyList = CRM_Core_PseudoConstant::countyForState( $values['state_province_id'] );
+                    } else {
+                        $countyList = CRM_Core_PseudoConstant::county( );
+                    }
                     CRM_Utils_Array::lookupValue( $values, 
                                                   'county', 
-                                                  CRM_Core_PseudoConstant::county( ), 
+                                                  $countyList, 
                                                   $reverse );
                 }
                 
@@ -778,7 +783,8 @@ WHERE id={$id}; ";
             $userFrameworkBaseURL = trim( str_replace( '/administrator/', '', $config->userFrameworkBaseURL ) );
             $customFileUploadDirectory = strstr( str_replace('\\', '/', $absolutePath), '/media' );
             $relativePath = $userFrameworkBaseURL . $customFileUploadDirectory;
-        } else if ( $config->userFramework == 'Drupal' ) {   
+        }
+	elseif ( $config->userFramework == 'Drupal' ) {   
             require_once 'CRM/Utils/System/Drupal.php';
             $rootPath = CRM_Utils_System_Drupal::cmsRootPath( );
             $baseUrl = $config->userFrameworkBaseURL;
@@ -798,7 +804,7 @@ WHERE id={$id}; ";
         }
         return $relativePath;
     }
- 	
+
     /**
      * function to return proportional height and width of the image
      *

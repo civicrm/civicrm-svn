@@ -68,7 +68,7 @@ class api_v3_NoteTest extends CiviUnitTestCase
                                'entity_id'     => $this->_contactID,
                                'note'          => 'Hello!!! m testing Note',
                                'contact_id'    => $this->_contactID,
-                               'modified_date' => date('Ymd'),
+                               'modified_date' => '2011-01-31',
                                'subject'       => 'Test Note', 
                                'version'			 =>$this->_apiversion, 
                                );

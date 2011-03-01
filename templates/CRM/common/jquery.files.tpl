@@ -31,9 +31,6 @@ packages/jquery/jquery.js
 packages/jquery/jquery-ui-1.8.5/js/jquery-ui-1.8.5.custom.min.js
 packages/jquery/jquery-ui-1.8.5/css/custom-theme/jquery-ui-1.8.5.custom.css
 
-packages/jquery/plugins/flexigrid.js
-packages/jquery/css/flexigrid.css
-
 packages/jquery/plugins/jquery.autocomplete.js
 packages/jquery/css/jquery.autocomplete.css
 

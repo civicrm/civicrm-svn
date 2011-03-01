@@ -538,8 +538,10 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                 CRM_Contact_Form_Edit_Address::fixStateSelect( $this,
                                                                "address[$blockId][country_id]",
                                                                "address[$blockId][state_province_id]",
+                                                               "address[$blockId][county_id]",
                                                                CRM_Utils_Array::value( 'country_id',
-                                                                                       $values, $config->defaultContactCountry ) );
+                                                                                       $values, $config->defaultContactCountry ),
+                                                               CRM_Utils_Array::value( 'state_province_id', $values ) );
                 
             }
         }
@@ -841,11 +843,13 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             $params['deceased_date'] = null;
         }
 
-        // process membership status for deceased contact
-        $deceasedParams = array( 'contact_id'    => CRM_Utils_Array::value( 'contact_id', $params ),
-                                 'is_deceased'   => CRM_Utils_Array::value( 'is_deceased', $params, false ),
-                                 'deceased_date' => CRM_Utils_Array::value( 'deceased_date', $params, null ) );
-        $updateMembershipMsg = $this->updateMembershipStatus( $deceasedParams );
+        if ( isset($params['contact_id']) ) {
+            // process membership status for deceased contact
+            $deceasedParams = array( 'contact_id'    => CRM_Utils_Array::value( 'contact_id', $params ),
+                                     'is_deceased'   => CRM_Utils_Array::value( 'is_deceased', $params, false ),
+                                     'deceased_date' => CRM_Utils_Array::value( 'deceased_date', $params, null ) );
+            $updateMembershipMsg = $this->updateMembershipStatus( $deceasedParams );
+        }
         
         // action is taken depending upon the mode
         require_once 'CRM/Utils/Hook.php';
@@ -926,10 +930,10 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         }
         
         $statusMsg = ts('Your %1 contact record has been saved.', array( 1 => $contact->contact_type_display ) );
-        if ( $parseStatusMsg ) {
+        if ( !empty($parseStatusMsg) ) {
             $statusMsg =  "$statusMsg <br > $parseStatusMsg";
         }
-        if ( $updateMembershipMsg ) {
+        if ( !empty($updateMembershipMsg) ) {
             $statusMsg = "$statusMsg <br > $updateMembershipMsg";
         }
 

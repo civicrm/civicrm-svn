@@ -724,6 +724,11 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
         $removeFields = array( 'File', 'Autocomplete-Select', 'RichTextEditor' );
         require_once 'CRM/Core/BAO/CustomField.php';
         foreach ( $profileFields as $name => $field ) {
+            //get only contact and activity fields.
+            //later stage we might going to consider contact type also.
+            if ( !in_array( $field['field_type'], array( 'Activity', 'Contact'  ) ) ) {
+                continue;
+            }
             if ( CRM_Core_BAO_CustomField::getKeyID( $name ) &&
                  !in_array( $field['html_type'], $removeFields ) ) {
                 

@@ -5006,8 +5006,8 @@ function civicrm_views_add_fields( &$fields, &$data, &$skipFields, $tableName ) 
                                                'handler' => civicrm_get_filter_handler( $type ),
                                                ),
                              );
-        //For date fields add in 6 arguments
-     if ( $type == 4 ){
+     //For date fields add in 6 arguments
+	if ( isset($value['type']) && $value['type'] == 4 ){
          civicrm_views_add_date_arguments($data,$value);
      }
     }

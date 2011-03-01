@@ -239,6 +239,8 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         if ( ! $this->_currentlyViewedContactId ) {
             $this->_currentlyViewedContactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
         }
+        $this->assign( 'contactId', $this->_currentlyViewedContactId );
+        
         if ( $this->_currentlyViewedContactId ) {
             require_once 'CRM/Contact/Page/View.php';
             CRM_Contact_Page_View::setTitle( $this->_currentlyViewedContactId );

@@ -291,7 +291,7 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note
      * @static
      * 
      */
-    static function del( $id ) 
+    static function del( $id, $showStatus = true ) 
     {
         $return   = null;
         $recent   = array( $id );
@@ -314,7 +314,9 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note
         }
         
         $return   = $note->delete( );
-        CRM_Core_Session::setStatus( $status );
+        if ( $showStatus ) {
+            CRM_Core_Session::setStatus( $status );
+        }
         
         // delete the recently created Note
         require_once 'CRM/Utils/Recent.php';
@@ -367,13 +369,15 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note
         $viewNote = array();
         
         $query = "
-SELECT   id, note FROM civicrm_note
-WHERE    entity_table=\"{$entityTable}\"
-  AND    entity_id = %1
-  AND    note is not null
-ORDER BY modified_date desc";
+  SELECT  id, 
+          note 
+    FROM  civicrm_note
+   WHERE  entity_table=\"{$entityTable}\"
+     AND  entity_id = %1
+     AND  note is not null
+ORDER BY  modified_date desc";
         $params = array( 1 => array( $id, 'Integer' ) );
-
+        
         $dao =& CRM_Core_DAO::executeQuery( $query, $params );
 
         while ( $dao->fetch() ) {

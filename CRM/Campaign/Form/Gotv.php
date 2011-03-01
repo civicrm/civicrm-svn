@@ -84,7 +84,6 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
         $this->assign( 'buildSelector',  $this->_search );
         $this->assign( 'searchVoterFor', $this->_searchVoterFor );
         $this->set(    'searchVoterFor', $this->_searchVoterFor );
-        $this->assign( 'doNotReloadCRMAccordion', $this->get( 'doNotReloadCRMAccordion' ) );
         
         $surveyTitle = null;
         if ( $this->_surveyId ) {
