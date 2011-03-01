@@ -48,11 +48,11 @@ class api_v2_GroupContactTest extends CiviUnitTestCase
         parent::setUp();
 
         $this->_contactId = $this->individualCreate();
-
         $this->_groupId1  = $this->groupCreate( );
         $params = array( 'contact_id.1' => $this->_contactId,
-                         'group_id'     => $this->_groupId1 );
-        
+                         'group_id'     => $this->_groupId1,
+                         'version'		=> 2, );
+
         civicrm_group_contact_add( $params );
         
         $group = array(
@@ -62,10 +62,14 @@ class api_v2_GroupContactTest extends CiviUnitTestCase
                        'description' => 'New Test Group2 Created',
                        'is_active'   => 1,
                        'visibility'  => 'User and User Admin Only',
+                       'version'		=> 2,
                        );
+
+                       
         $this->_groupId2  = $this->groupCreate( $group );
         $params = array( 'contact_id.1' => $this->_contactId,
-                         'group_id'     =>  $this->_groupId2  );
+                         'group_id'     =>  $this->_groupId2,
+                         'version'		=> 2,  );
         
         civicrm_group_contact_add( $params );
         
