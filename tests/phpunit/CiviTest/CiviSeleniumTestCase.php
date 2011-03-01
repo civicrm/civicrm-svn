@@ -360,7 +360,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       } elseif ( $processorType == 'AuthNet' ) {
           // FIXME: we 'll need to make a new separate account for testing
           $processorSettings = array( 'test_user_name' => '5ULu56ex',
-                                      'test_password'  => '64t793vhxFY46dDz',
+                                      'test_password'  => '7ARxW575w736eF5p',
                                       );
       } elseif ( empty( $processorSettings ) ) {
           $this->fail("webTestAddPaymentProcessor requires $processorSettings array if processorType is not Dummy.");

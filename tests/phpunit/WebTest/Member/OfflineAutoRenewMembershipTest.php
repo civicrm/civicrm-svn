@@ -59,7 +59,7 @@ class WebTest_Member_OfflineAutoRenewMembershipTest extends CiviSeleniumTestCase
       $this->click("_qf_MembershipType_upload-bottom");
       $this->waitForPageToLoad("30000");
 
-      $this->open($this->sboxPath . "civicrm/admin/member/membershipType&action=update&id=1&reset=1");
+      $this->open($this->sboxPath . "civicrm/admin/member/membershipType&action=update&id=2&reset=1");
 
       $this->type("duration_interval", "6");
       $this->select("duration_unit", "label=month");
@@ -68,9 +68,10 @@ class WebTest_Member_OfflineAutoRenewMembershipTest extends CiviSeleniumTestCase
       $this->waitForPageToLoad("30000");
 
       // create a new contact for whom membership is to be created
-      $firstName = substr(sha1(rand()), 0, 7);
-      $this->webtestAddContact($firstName, "Memberson", "{$firstName}@memberson.com");
-      $contactName = "$firstName Memberson";
+      $firstName = 'Apt'.substr( sha1( rand( ) ), 0, 4 );
+      $lastName  = 'Mem'.substr( sha1( rand( ) ), 0, 7 );
+      $this->webtestAddContact($firstName, $lastName, "{$firstName}@example.com");
+      $contactName = "$firstName $lastName";
 
       $this->click('css=li#tab_member a');
 
@@ -78,10 +79,12 @@ class WebTest_Member_OfflineAutoRenewMembershipTest extends CiviSeleniumTestCase
       $this->click('link=Submit Credit Card Membership');
       $this->waitForPageToLoad("30000");
 
+      // since we don't have live credentials we will switch to test mode
       $url = $this->getLocation( );
       $url = str_replace('mode=live', 'mode=test', $url);
       $this->open($url);
 
+      // start filling membership form
       $this->waitForElementPresent('payment_processor_id');
       $this->select("payment_processor_id",  "label={$processorName}");
       $this->select("membership_type_id[1]", "label=General");
@@ -94,15 +97,40 @@ class WebTest_Member_OfflineAutoRenewMembershipTest extends CiviSeleniumTestCase
       $this->select("credit_card_exp_date[M]", "label=Feb");
       $this->select("credit_card_exp_date[Y]", "label=2014");
 
+      $this->select("billing_country_id-5", "label=United States");
       $this->type("billing_first_name", "$firstName");
-      $this->type("billing_last_name", "Memberson");
+      $this->type("billing_last_name", $lastName);
       $this->type("billing_street_address-5", "99 ht");
       $this->type("billing_city-5", "SF");
-      $this->select("billing_country_id-5", "label=United States");
       $this->select("billing_state_province_id-5", "label=California");
       $this->type("billing_postal_code-5", "919199");
 
       $this->click("_qf_Membership_upload-bottom");
       $this->waitForPageToLoad("30000");
+
+      // Use Find Members to make sure membership exists
+      $this->open($this->sboxPath . "civicrm/member/search&reset=1");
+      $this->waitForElementPresent("member_end_date_high");
+
+      $this->type("sort_name", "$firstName $lastName" );
+      $this->click("member_test");
+      $this->click("_qf_Search_refresh");
+
+      $this->waitForPageToLoad('30000');
+
+      $this->waitForElementPresent('css=#memberSearch table tbody tr td span a.action-item-first');
+      $this->click('css=#memberSearch table tbody tr td span a.action-item-first');
+      $this->waitForElementPresent( "_qf_MembershipView_cancel-bottom" );
+
+      // View Membership Record
+      $this->webtestVerifyTabularData( array(
+                                             'Member'          => "$firstName $lastName",
+                                             'Membership Type' => 'General (test)',
+                                             'Source'          => 'Online Membership: Admin Interface',
+                                             'Status'          => 'Pending',
+                                             'Auto-renew'      => 'Yes',
+                                             )
+                                       );
+      $this->waitForElementPresent( "_qf_MembershipView_cancel-bottom" );
   }
 }
