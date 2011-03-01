@@ -83,17 +83,13 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
       $this->waitForPageToLoad( );
       
       $this->click("CIVICRM_QFID_2_4");
+
       $this->click("auto_renew");
-      $this->select("credit_card_type", "label=Visa");
-      $this->type("credit_card_number", "4807731747657838");
-      $this->type("cvv2", "000");
-      $this->select("credit_card_exp_date[M]", "label=Feb");
-      $this->select("credit_card_exp_date[Y]", "label=2019");
-      $this->type("billing_street_address-5", "Street Address");
-      $this->type("billing_city-5", "City");
-      $this->select("billing_state_province_id-5", "label=California");
-      $this->type("billing_postal_code-5", "12345");
-      
+
+      $this->webtestAddCreditCardDetails( );
+
+      list( $firstName, $middleName, $lastName ) = $this->webtestAddBillingDetails( );
+
       $this->click("_qf_Main_upload-bottom");
       $this->waitForPageToLoad("30000");
       $this->waitForElementPresent( "_qf_Confirm_next-bottom" );

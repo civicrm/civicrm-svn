@@ -374,7 +374,41 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $this->waitForPageToLoad("30000");
       // Is new processor created?
       $this->assertTrue($this->isTextPresent($processorName), "Processor name not found in selector after adding payment processor (webTestAddPaymentProcessor).");
-  }  
+  }
+
+  function webtestAddCreditCardDetails( ) {
+      $this->select("credit_card_type", "label=Visa");
+      $this->type("credit_card_number", "4807731747657838");
+      $this->type("cvv2", "123");
+      $this->select("credit_card_exp_date[M]", "label=Feb");
+      $this->select("credit_card_exp_date[Y]", "label=2019");
+  }
+
+  function webtestAddBillingDetails( $firstName = null, $middleName = null, $lastName = null ) {
+      if ( ! $firstName ) {
+          $firstName = 'John';
+      }
+
+      if ( ! $middleName ) {
+          $middleName = 'Apple';
+      }
+
+      if ( ! $lastName ) {
+          $lastName = 'Smith_' . substr(sha1(rand()), 0, 7);
+      }
+
+      $this->type("billing_first_name", $firstName );
+      $this->type("billing_middle_name", $middleName );
+      $this->type("billing_last_name", $lastName );
+
+      $this->type("billing_street_address-5", "234 Lincoln Ave");
+      $this->type("billing_city-5", "San Bernadino");
+      $this->select("billing_state_province_id-5", "label=California");
+      $this->type("billing_postal_code-5", "93245");
+
+      return array( $firstName, $middleName, $lastName );
+  }
+
   
   /**
    * Create new relationship type w/ user specified params or default. 
