@@ -106,7 +106,8 @@ function civicrm_api_get_function_name($entity, $action) {
       }
     }
   }
-  return 'civicrm_'. $entity .'_'. $action;
+  $function = strtolower(str_replace('U_F','uf', preg_replace('/(?=[A-Z])/','_$0', $entity)));// That's CamelCase, beside an odd UFCamel that is expected as uf_camel
+  return 'civicrm_'. $function .'_'. $action;
 }
 
 
