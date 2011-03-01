@@ -3,7 +3,7 @@
 function group_organization_delete_example(){
     $params = array(
     
-                  'id' 		=> '1',
+                  'id' 		=> '',
                   'version' 		=> '3',
 
   );
@@ -20,10 +20,8 @@ function group_organization_delete_expectedresult(){
 
   $expectedResult = 
      array(
-           'is_error' 		=> '0',
-           'version' 		=> '3',
-           'count' 		=> '1',
-           'values' 		=> 'Deleted Group Organization successfully',
+           'is_error' 		=> '1',
+           'error_message' 		=> 'DB_DataObject Error: delete: No condition specifed for query',
       );
 
   return $expectedResult  ;

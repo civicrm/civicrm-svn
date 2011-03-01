@@ -493,11 +493,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
              (! CRM_Utils_Array::value( 'id', $result)&&  ! CRM_Utils_Array::value( 'id', $result['values'][0]))) {
              throw new Exception( 'Could not create membership type' . print_r(  $result,true) );
         }
-        if ($version ==2){
+
           return $result['id'];        
-        }else{
-          return $result['values'][0]['id'];          
-        }
+
 
     }
 

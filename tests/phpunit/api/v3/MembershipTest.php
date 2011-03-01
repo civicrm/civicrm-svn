@@ -104,10 +104,10 @@ class api_v3_MembershipTest extends CiviUnitTestCase
      
      function testContactMembershipsGet()
      {
-         $this->assertTrue( function_exists(civicrm_membership_get) );
+         $this->assertTrue( function_exists(civicrm_api3_membership_get) );
          $params = array('version' => $this->_apiversion);
          $result = civicrm_api3_membership_get( $params );
-         $this->assertEquals( 1, $result['is_error'],
+         $this->assertEquals( 0, $result['is_error'],
                               "In line " . __LINE__ );
      }
      

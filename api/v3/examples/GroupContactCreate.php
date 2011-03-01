@@ -23,8 +23,8 @@ function group_contact_create_expectedresult(){
      array(
            'is_error' 		=> '0',
            'version' 		=> '3',
-           'count' 		=> '4',
-           'values' 		=> array(           'is_error' => '0',                      'not_added' => '1',                      'added' => '0',                      'total_count' => '1',           ),
+           'count' 		=> '3',
+           'values' 		=> array(           'not_added' => '1',                      'added' => '0',                      'total_count' => '1',           ),
       );
 
   return $expectedResult  ;

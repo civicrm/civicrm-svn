@@ -84,9 +84,9 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase
                         'version'							 => $this->_apiversion,
     );
 
-    $membershiptype = & civicrm_api3_membership_type_get( $params );
-    $this->assertEquals( $membershiptype['is_error'], 1 );
-    $this->assertEquals( $membershiptype['error_message'],'Exact match not found' );
+    $membershiptype = civicrm_api3_membership_type_get( $params );
+    $this->assertEquals( $membershiptype['is_error'], 0 );
+    $this->assertEquals( $membershiptype['count'],0 );
   }
 
   function testGet()
@@ -98,7 +98,7 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase
     $membershiptype = & civicrm_api3_membership_type_get( $params );
     $this->documentMe($params,$membershiptype,__FUNCTION__,__FILE__);
     $this->assertEquals($membershiptype['is_error'],'0', 'In line ' . __LINE__ );
-    $this->assertEquals($membershiptype['values'][$id]['name'],'General', 'In line ' . __LINE__ );
+    $this->assertEquals($membershiptype['values'][$id]['name'],'General', 'In line ' . __LINE__  . " id is " .$id  );
     $this->assertEquals($membershiptype['values'][$id]['member_of_contact_id'],$this->_contactID, 'In line ' . __LINE__ );
     $this->assertEquals($membershiptype['values'][$id]['contribution_type_id'],1, 'In line ' . __LINE__ );
     $this->assertEquals($membershiptype['values'][$id]['duration_unit'],'year', 'In line ' . __LINE__ );

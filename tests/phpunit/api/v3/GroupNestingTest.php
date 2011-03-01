@@ -211,6 +211,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
         // we have 4 group nesting records in the example
         // data, expecting next number to be the id for newly created
         $id = 5;
+        unset($params['version']);
         $this->assertDBState( 'CRM_Contact_DAO_GroupNesting', $id, $params );
     }
 
