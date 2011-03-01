@@ -45,19 +45,7 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
       
       //add payment processor.
       $processorName = "Webtest Auto Renew AuthNet" . substr(sha1(rand()), 0, 7);
-      $this->open($this->sboxPath . "civicrm/admin/paymentProcessor&reset=1");
-      $this->click("//a[@id='newPaymentProcessor']/span");
-      $this->waitForPageToLoad("30000");
-      $this->click("payment_processor_type");
-      $this->select("payment_processor_type", "label=Authorize.Net");
-      $this->waitForPageToLoad("30000");
-      $this->click("name");
-      $this->type("name", $processorName );
-      $this->type("test_user_name", "89C2wUpk");
-      $this->type("test_password",  "4c2T7XC95m8sP6x7");
-      $this->type("test_signature", "shambho");
-      $this->click("_qf_PaymentProcessor_next-bottom");
-      $this->waitForPageToLoad("30000");
+      $this->webtestAddPaymentProcessor( $processorName, 'AuthNet' );
       
       // -- start updating membership types 
       $this->open($this->sboxPath . "civicrm/admin/member/membershipType&action=update&id=2&reset=1");
