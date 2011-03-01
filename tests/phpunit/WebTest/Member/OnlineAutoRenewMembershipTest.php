@@ -77,7 +77,11 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
       $this->select("auto_renew_2", "label=Give option");
       $this->click("_qf_MembershipBlock_next");
       $this->waitForPageToLoad("30000");
-      
+
+      // now logout and do membership test that way
+      $this->open($this->sboxPath . "civicrm/logout&reset=1");
+      $this->waitForPageToLoad('30000');          
+
       //now do the test membership signup.
       $this->open($this->sboxPath . 'civicrm/contribute/transact?reset=1&action=preview&id=2' );        
       $this->waitForPageToLoad( );
@@ -89,6 +93,8 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
       $this->webtestAddCreditCardDetails( );
 
       list( $firstName, $middleName, $lastName ) = $this->webtestAddBillingDetails( );
+
+      $this->type( 'email-5', "{$lastName}@example.com" );
 
       $this->click("_qf_Main_upload-bottom");
       $this->waitForPageToLoad("30000");
