@@ -192,9 +192,9 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
         $result = civicrm_api3_group_contact_create( $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);        
         $this->assertEquals( $result ['is_error'], 0,"in line " . __LINE__ );
-        $this->assertEquals( $result ['not_added'], 1,"in line " . __LINE__ );
-        $this->assertEquals( $result ['added'], 1,"in line " . __LINE__ );
-        $this->assertEquals( $result ['total_count'], 2,"in line " . __LINE__ );
+        $this->assertEquals( $result ['values']['not_added'], 1,"in line " . __LINE__ );
+        $this->assertEquals( $result ['values']['added'], 1,"in line " . __LINE__ );
+        $this->assertEquals( $result ['values']['total_count'], 2,"in line " . __LINE__ );
         
     }
 
@@ -254,8 +254,8 @@ class api_v3_GroupContactTest extends CiviUnitTestCase
        $result = civicrm_api3_group_contact_delete( $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);             
         $this->assertEquals( $result['is_error'], 0, "in line " . __LINE__ );
-        $this->assertEquals( $result['removed'], 1, "in line " . __LINE__  );
-        $this->assertEquals( $result['total_count'], 1, "in line " . __LINE__  );
+        $this->assertEquals( $result['values']['removed'], 1, "in line " . __LINE__  );
+        $this->assertEquals( $result['values']['total_count'], 1, "in line " . __LINE__  );
 
     }
   
