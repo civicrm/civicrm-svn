@@ -34,6 +34,8 @@
  *
  */
 
+require_once 'CRM/Utils/String.php';
+
 /**
  * WordPress specific stuff goes here
  */

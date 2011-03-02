@@ -34,6 +34,8 @@
  *
  */
 
+require_once 'CRM/Utils/String.php';
+
 /**
  * Drupal specific stuff goes here
  */

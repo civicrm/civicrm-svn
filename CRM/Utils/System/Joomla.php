@@ -34,6 +34,7 @@
  *
  */
 
+require_once 'CRM/Utils/String.php';
 
 /**
  * Joomla specific stuff goes here
