@@ -533,25 +533,20 @@ SELECT username, email
      */
     static function createJoomlaUser( &$params, $mail ) 
     {
-        $userParams = &JComponentHelper::getParams('com_users');
-
-        // get the default usertype
-        $userType = $userParams->get('new_usertype');
-        if ( !$usertype ) {
-            $usertype = 'Registered';
-        }
-
-        $acl = &JFactory::getACL();
-
+        $userParams = &JComponentHelper::getParams( 'com_users' );
+        
+        $defaultUserGroup = $userParams->get( 'new_usertype', 2 );
+        
         // Prepare the values for a new Joomla! user.
-        $values                 = array();
-        $values['name']         = trim($params['cms_name']);
-        $values['username']     = trim($params['cms_name']);
+        $values                 = array( );
+        $values['name']         = trim( $params['cms_name'] );
+        $values['username']     = trim( $params['cms_name'] );
         $values['password']     = $params['cms_pass'];
         $values['password2']    = $params['cms_confirm_pass'];
-        $values['email']        = trim($params[$mail]);
-        $values['gid']          = $acl->get_group_id( '', $userType);
-        $values['sendEmail']    = 0; 
+        $values['email']        = trim( $params[$mail] );
+        $values['groups']       = array( $defaultUserGroup );
+        $values['usertype']     = 'deprecated';
+        $values['sendEmail']    = 0;
         
         $useractivation = $userParams->get( 'useractivation' );
         if ( $useractivation == 1 ) { 
@@ -563,25 +558,20 @@ SELECT username, email
             // don't block the user
             $values['block'] = 0; 
         }
-
+        
         // Get an empty JUser instance.
         $user =& JUser::getInstance( 0 );
         $user->bind( $values );
-
+        
         // Store the Joomla! user.
         if ( ! $user->save( ) ) {
             // Error can be accessed via $user->getError();
             return false;
         }
-        //since civicrm don't have own tokens to use in user
-        //activation email. we have to use com_user tokens, CRM-5809
-        $lang =& JFactory::getLanguage();
-        $lang->load( 'com_user' );
-        require_once 'components/com_user/controller.php';
-        UserController::_sendMail( $user, $user->password2 );
+        
         return $user->get('id');
     }
-
+    
     static function updateUFName( $ufID, $ufName ) 
     {
         $config = CRM_Core_Config::singleton( );
