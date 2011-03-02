@@ -167,6 +167,8 @@ class CRM_Utils_System_WordPress {
         $config = CRM_Core_Config::singleton( );
         $script =  'index.php';
 
+        $path = CRM_Utils_String::stripPathChars( $path );
+
         if (isset($fragment)) {
             $fragment = '#'. $fragment;
         }

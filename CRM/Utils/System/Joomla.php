@@ -181,6 +181,8 @@ class CRM_Utils_System_Joomla {
                  $frontend = false ) {
         $config        = CRM_Core_Config::singleton( );
 
+        $path = CRM_Utils_String::stripPathChars( $path );
+
         if ( $config->userFrameworkFrontend ) {
             $script = 'index.php';
         } else {

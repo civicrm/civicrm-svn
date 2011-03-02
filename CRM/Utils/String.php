@@ -451,13 +451,15 @@ class CRM_Utils_String {
      * used for postal/greeting/addressee
      * @param string  $string input string to be cleaned
      *
-     * @return cleaned string
+     * @return string the cleaned string
      * @access public
      * @static
      */
 	static function stripSpaces( $string ) 
 	{
-        if ( empty($string) ) return $string;
+        if ( empty($string) ) {
+            return $string;
+        }
         
         $pat = array( 0 => "/^\s+/",
                       1 =>  "/\s{2,}/", 
@@ -470,5 +472,46 @@ class CRM_Utils_String {
         return preg_replace( $pat, $rep, $string );
 	}
 
+    /**
+     * This function is used to clean the URL 'path' variable that we use 
+     * to construct CiviCRM urls by removing characters from the path variable
+     *
+     * @param string $string  the input string to be sanitized
+     * @param array  $search  the characters to be sanitized
+     * @param string $replace the character to replace it with
+     *
+     * @return string the sanitized string
+     * @access public
+     * @static
+     */
+    static function stripPathChars( $string,
+                                    $search  = null,
+                                    $replace = null ) {
+        static $_searchChars  = null;
+        static $_replaceChar  = null;
+
+        if ( empty( $string ) ) {
+            return $string;
+        }
+        
+        if ( $_searchChars == null ) {
+            $_searchChars = array( '&', ';', ',', '=', '$',
+                                   '"', "'", '\\',
+                                   '<', '>', '(', ')',
+                                   ' ', "\r", "\r\n", "\n", "\t" );
+            $_replaceChar = '_';
+        }
+                                   
+        
+        if ( $search == null ) {
+            $search = $_searchChars;
+        }
+
+        if ( $replace == null ) {
+            $replace = $_replaceChar;
+        }
+
+        return str_replace( $search, $replace, $string );
+    }
 }
 
