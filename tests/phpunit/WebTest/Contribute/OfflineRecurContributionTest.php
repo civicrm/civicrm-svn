@@ -27,7 +27,7 @@
 
 require_once 'CiviTest/CiviSeleniumTestCase.php';
 
-class WebTest_Member_OfflineAutoRenewMembershipTest extends CiviSeleniumTestCase {
+class WebTest_Contribute_OfflineRecurContributionTest extends CiviSeleniumTestCase {
 
   protected $captureScreenshotOnFailure = TRUE;
   protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';
@@ -38,7 +38,7 @@ class WebTest_Member_OfflineAutoRenewMembershipTest extends CiviSeleniumTestCase
       parent::setUp();
   }
 
-  function testOfflineAutoRenewMembership()
+  function testOfflineRecurContribution()
   {
       $this->open( $this->sboxPath );
       $this->webtestLogin();
@@ -47,36 +47,17 @@ class WebTest_Member_OfflineAutoRenewMembershipTest extends CiviSeleniumTestCase
       $processorName = "Webtest AuthNet" . substr(sha1(rand()), 0, 7);
       $this->webtestAddPaymentProcessor($processorName, 'AuthNet');
 
-      // -- start updating membership types 
-      $this->open($this->sboxPath . "civicrm/admin/member/membershipType&action=update&id=1&reset=1");
-
-      $this->waitForElementPresent("CIVICRM_QFID_1_10");
-      $this->click("CIVICRM_QFID_1_10");
-
-      $this->type("duration_interval", "1");
-      $this->select("duration_unit", "label=year");
-
-      $this->click("_qf_MembershipType_upload-bottom");
-      $this->waitForPageToLoad("30000");
-
-      $this->open($this->sboxPath . "civicrm/admin/member/membershipType&action=update&id=2&reset=1");
-
-      $this->type("duration_interval", "6");
-      $this->select("duration_unit", "label=month");
-
-      $this->click("_qf_MembershipType_upload-bottom");
-      $this->waitForPageToLoad("30000");
-
-      // create a new contact for whom membership is to be created
-      $firstName = 'Apt'.substr( sha1( rand( ) ), 0, 4 );
-      $lastName  = 'Mem'.substr( sha1( rand( ) ), 0, 7 );
+      // create a new contact for whom recurring contribution is to be created
+      $firstName = 'Jane'.substr( sha1( rand( ) ), 0, 7 );
+      $middleName = 'Middle';
+      $lastName  = 'Recuroff_'.substr( sha1( rand( ) ), 0, 7 );
       $this->webtestAddContact($firstName, $lastName, "{$firstName}@example.com");
       $contactName = "$firstName $lastName";
 
-      $this->click('css=li#tab_member a');
+      $this->click('css=li#tab_contribute a');
 
-      $this->waitForElementPresent('link=Submit Credit Card Membership');
-      $this->click('link=Submit Credit Card Membership');
+      $this->waitForElementPresent('link=Submit Credit Card Contribution');
+      $this->click('link=Submit Credit Card Contribution');
       $this->waitForPageToLoad("30000");
 
       // since we don't have live credentials we will switch to test mode
@@ -84,45 +65,51 @@ class WebTest_Member_OfflineAutoRenewMembershipTest extends CiviSeleniumTestCase
       $url = str_replace('mode=live', 'mode=test', $url);
       $this->open($url);
 
-      // start filling membership form
+      // start filling out contribution form
       $this->waitForElementPresent('payment_processor_id');
       $this->select("payment_processor_id",  "label={$processorName}");
-      $this->select("membership_type_id[1]", "label=General");
 
-      $this->click("auto_renew");
+      $this->click("contribution_type_id");
+      $this->select("contribution_type_id", "label=Donation");
+      $this->type("total_amount", "10");
 
-      $this->webtestAddCreditCardDetails();
+      // recurring contribution fields
+      $this->click("CIVICRM_QFID_1_8");
+      $this->type("frequency_interval", "1");
+      $this->select("frequency_unit", "label=month(s)");
+      $this->type("installments", "12");
 
-      // since country is not pre-selected for offline mode
-      $this->select("billing_country_id-5", "label=United States");
-      $this->webtestAddBillingDetails( $firstName, null, $lastName );
+      $this->click("is_email_receipt");
+      
+      // enter credit card info on form
+      $this->webtestAddCreditCardDetails( );
 
-      $this->click("_qf_Membership_upload-bottom");
+      // billing address
+      $this->webtestAddBillingDetails( $firstName, $middleName, $lastName );
+
+      $this->click("_qf_Contribution_upload-bottom");
       $this->waitForPageToLoad("30000");
 
-      // Use Find Members to make sure membership exists
-      $this->open($this->sboxPath . "civicrm/member/search&reset=1");
-      $this->waitForElementPresent("member_end_date_high");
+      // Use Find Contributions to make sure test recurring contribution exists
+      $this->open($this->sboxPath . "civicrm/contribute/search&reset=1");
+      $this->waitForElementPresent("contribution_currency_type");
 
       $this->type("sort_name", "$firstName $lastName" );
-      $this->click("member_test");
+      $this->click("contribution_test");
       $this->click("_qf_Search_refresh");
 
-      $this->waitForPageToLoad('30000');
+      $this->waitForElementPresent('css=#contributionSearch table tbody tr td span a.action-item-first');
+      $this->click('css=#contributionSearch table tbody tr td span a.action-item-first');
+      $this->waitForElementPresent( "_qf_ContributionView_cancel-bottom" );
 
-      $this->waitForElementPresent('css=#memberSearch table tbody tr td span a.action-item-first');
-      $this->click('css=#memberSearch table tbody tr td span a.action-item-first');
-      $this->waitForElementPresent( "_qf_MembershipView_cancel-bottom" );
-
-      // View Membership Record
+      // View Recurring Contribution Record
       $this->webtestVerifyTabularData( array(
-                                             'Member'          => "$firstName $lastName",
-                                             'Membership Type' => 'General (test)',
-                                             'Source'          => 'Online Membership: Admin Interface',
-                                             'Status'          => 'Pending',
-                                             'Auto-renew'      => 'Yes',
+                                             'From'                 => "$contactName",
+                                             'Contribution Type'    => 'Donation (test)',
+                                             'Total Amount'         => 'Installments: 12, Interval: 1 month(s)',
+                                             'Contribution Status'  => 'Pending : Incomplete Transaction',
+                                             'Paid By'              => 'Credit Card',
                                              )
                                        );
-      $this->waitForElementPresent( "_qf_MembershipView_cancel-bottom" );
   }
 }

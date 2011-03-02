@@ -90,9 +90,9 @@ require_once 'api/v3/utils.php';
  *    <li>wysiwygEditor</li>
  *  </ul>
  */
-function civicrm_constant_get($name, $params = array())
+function civicrm_api3_constant_get($name, $params = array())
 {
-  _civicrm_initialize(true);
+  _civicrm_api3_initialize(true);
   try{
 
     require_once 'CRM/Core/PseudoConstant.php';
@@ -105,14 +105,14 @@ function civicrm_constant_get($name, $params = array())
       } else {
         $values = call_user_func_array( array( $className, $name ), $params );
       }
-      return civicrm_create_success($values,$params);
+      return civicrm_api3_create_success($values,$params);
     }
 
-    return civicrm_create_error('Unknown civicrm constant or method not callable');
+    return civicrm_api3_create_error('Unknown civicrm constant or method not callable');
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 

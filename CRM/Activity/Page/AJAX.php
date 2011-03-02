@@ -146,6 +146,10 @@ class CRM_Activity_Page_AJAX
         $error_msg = $caseActivity->_lastError;
 		$caseActivity->free( ); 
         
+        // copy activity attachments ( if any )
+        require_once "CRM/Core/BAO/File.php";
+        CRM_Core_BAO_File::copyEntityFile( 'civicrm_activity', $activityID, 'civicrm_activity', $mainActivityId );
+            
         echo json_encode(array('error_msg' => $error_msg));
         CRM_Utils_System::civiExit( );
     }

@@ -246,16 +246,17 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
         
         $this->assign( 'allowRegistration', $allowRegistration );
         
-        if ( $eventFullMessage && ( $noFullMsg == 'false' ) ) {
+        $session = CRM_Core_Session::singleton( );
+        $params  = array( 'contact_id' => $session->get( 'userID' ),
+                          'event_id'   => CRM_Utils_Array::value( 'id', $values['event'] ),
+                          'role_id'    => CRM_Utils_Array::value( 'default_role_id', $values['event'] ) );   
+						     
+        if ( $eventFullMessage && ( $noFullMsg == 'false' ) || CRM_Event_BAO_Event::checkRegistration( $params ) ) {
             $statusMessage =  $eventFullMessage;
-            
-            $session = CRM_Core_Session::singleton( );
-            $params  = array( 'contact_id' => $session->get( 'userID' ),
-                              'event_id'   => CRM_Utils_Array::value( 'id', $values['event'] ),
-                              'role_id'    => CRM_Utils_Array::value( 'default_role_id', $values['event'] ) );
-            
             if ( CRM_Event_BAO_Event::checkRegistration( $params ) ) {
-                $statusMessage = ts( "Oops. It looks like you are already registered for this event. If you want to change your registration, or you feel that you've gotten this message in error, please contact the site administrator." );
+                if ( $noFullMsg == 'false' ) {
+                    $statusMessage = ts( "It looks like you are already registered for this event. If you want to change your registration, or you feel that you've gotten this message in error, please contact the site administrator." );
+                }
             } else if ( $hasWaitingList ) {
                 $statusMessage = CRM_Utils_Array::value( 'waitlist_text', $values['event'] );
                 if ( !$statusMessage ) {

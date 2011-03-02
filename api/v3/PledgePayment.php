@@ -50,33 +50,41 @@ require_once 'api/v3/utils.php';
 require_once 'CRM/Utils/Rule.php';
 
 /**
- * Add or update a plege payment
+ * Add or update a plege payment. Pledge Payment API doesn't actually add a pledge 
+ *  if the request is to 'create' and 'id' is not passed in
+ * the oldest pledge with no associated contribution is updated
  *
+ * @todo possibly add ability to add payment if there are less payments than pledge installments
+ * @todo possibily add ability to recalc dates if the schedule is changed
+ * 
  * @param  array   $params           (reference ) input parameters
  *
  * @return array (reference )        pledge_id of created or updated record
  * @static void
  * @access public
  */
-function &civicrm_pledge_payment_create( $params ) {
-  _civicrm_initialize(true );
+function civicrm_api3_pledge_payment_create( $params ) {
+  _civicrm_api3_initialize(true );
   try{
-    civicrm_verify_mandatory($params,null,array('pledge_id','status_id'));
-    //GAP - update doesn't recalculate payment dates on existing payment schedule  - not the sure the code is in Civi to leverage
+    civicrm_api3_verify_mandatory($params,null,array('pledge_id','status_id', 'contribution_id'));
 
     require_once 'CRM/Pledge/BAO/Payment.php';
-    $dao = CRM_Pledge_BAO_Payment::add( $params );
-     _civicrm_object_to_array($dao, $result[$dao->id]);
+    if (empty($params['id'])){
+      $paymentDetails = CRM_Pledge_BAO_Payment::getOldestPledgePayment($params['pledge_id']);
+    } 
+    $paymentParams = array_merge($params,$paymentDetails);
+    $dao = CRM_Pledge_BAO_Payment::add( $paymentParams );
+     _civicrm_api3_object_to_array($dao, $result[$dao->id]);
     
    
     //update pledge status
      CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $params['pledge_id']);
     
-    return civicrm_create_success( $result ,$params,$dao);
+    return civicrm_api3_create_success( $result ,$params,$dao);
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
    
 }
@@ -128,26 +136,26 @@ function &civicrm_pledge_payment_create( $params ) {
  * @static void
  * @access public
  */
-function civicrm_pledge_payment_delete( $params ) {
-  _civicrm_initialize(true );
+function civicrm_api3_pledge_payment_delete( $params ) {
+  _civicrm_api3_initialize(true );
   try{
 
     $pledgeID = CRM_Utils_Array::value( 'pledge_id', $params );
     if ( ! $pledgeID ) {
-      return civicrm_create_error( ts( 'Could not find pledge_id in input parameters' ) );
+      return civicrm_api3_create_error( ts( 'Could not find pledge_id in input parameters' ) );
     }
 
     require_once 'CRM/Pledge/BAO/Pledge.php';
     if ( CRM_Pledge_BAO_Pledge::deletePledge( $pledgeID ) ) {
-      return civicrm_create_success( );
+      return civicrm_api3_create_success( );
     } else {
-      return civicrm_create_error( ts( 'Could not delete pledge' ) );
+      return civicrm_api3_create_error( ts( 'Could not delete pledge' ) );
     }
 
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -163,43 +171,48 @@ function civicrm_pledge_payment_delete( $params ) {
  * @static void
  * @access public
  */
-function civicrm_pledge_payment_get( $params ) {
+function civicrm_api3_pledge_payment_get( $params ) {
 
 try {
-  _civicrm_initialize( true );
+  _civicrm_api3_initialize( true );
 
-    civicrm_verify_mandatory($params);
+    civicrm_api3_verify_mandatory($params);
     require_once 'CRM/Pledge/BAO/Payment.php';
     $bao = new CRM_Pledge_BAO_Payment();
+    print_r($fields);
     $fields = array_keys($bao->fields());
     foreach ( $fields as $name) {
         if (array_key_exists($name, $params)) {
             $bao->$name = $params[$name];
         }
     }
-    
+
+    if(empty($params['pledge_payment_id']) && isset($params['id'])){
+      $bao->id = $params['id'];   
+    }
+
     if ( $bao->find() ) {
       $results = array();
       while ( $bao->fetch() ) {
-        _civicrm_object_to_array( $bao, $result );
+        _civicrm_api3_object_to_array( $bao, $result );
         $results[$bao->id] = $result;
       }
  
-      return civicrm_create_success($results,$params,$bao);
+      return civicrm_api3_create_success($results,$params,$bao);
     } else {
-      return civicrm_create_success(array(),$params,$bao);
+      return civicrm_api3_create_success(array(),$params,$bao);
     }
 
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
 
 function updatePledgePayments( $pledgeId, $paymentStatusId, $paymentIds  ){
-  _civicrm_initialize( );
+  _civicrm_api3_initialize(true );
   require_once 'CRM/Pledge/BAO/Pledge.php';
   $result = updatePledgePayments( $pledgeId, $paymentStatusId, $paymentIds = null );
   return $result;

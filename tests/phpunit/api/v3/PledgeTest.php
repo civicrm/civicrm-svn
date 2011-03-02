@@ -89,11 +89,11 @@ class api_v3_PledgeTest extends CiviUnitTestCase
                         'version'										=>$this->_apiversion,
           
                   );                        
-        $this->_pledge =& civicrm_pledge_create($p);
+        $this->_pledge =& civicrm_api3_pledge_create($p);
 
         $params = array('pledge_id'=>$this->_pledge['id'],
                          'version'    => $this->_apiversion);        
-        $result = civicrm_pledge_get($params);
+        $result = civicrm_api3_pledge_get($params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals($result['values'][$this->_pledge['id']]['contact_id'],$this->_individualId, 'in line' . __LINE__); 
         $this->assertEquals($result['values'][$this->_pledge['id']]['pledge_id'],$this->_pledge['id'], 'in line' . __LINE__); 
@@ -107,7 +107,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
         
         $params2 = array( 'pledge_id' => $this->_pledge['id'],
                            'version'  =>$this->_apiversion, );
-        $pledge   =& civicrm_pledge_delete($params2);
+        $pledge   =& civicrm_api3_pledge_delete($params2);
     }
 
 ///////////////// civicrm_pledge_add
@@ -115,7 +115,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
     function testCreateEmptyParamsPledge()
     {
         $params = array();
-        $pledge =& civicrm_pledge_create($params);
+        $pledge =& civicrm_api3_pledge_create($params);
         $this->assertEquals( $pledge['is_error'], 1 );
         $this->assertEquals( $pledge['error_message'], 'Mandatory key(s) missing from params array: contact_id, amount, one of (pledge_contribution_type_id, contribution_type_id), installments, start_date, version' );
     }
@@ -124,7 +124,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
     function testCreateParamsNotArrayPledge()
     {
         $params = 'contact_id= 1';                            
-        $pledge =& civicrm_pledge_create($params);
+        $pledge =& civicrm_api3_pledge_create($params);
         $this->assertEquals( $pledge['is_error'], 1 );
         $this->assertEquals( $pledge['error_message'], 'Input variable `params` is not an array' );
     }
@@ -132,7 +132,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
     function testCreateParamsWithoutRequiredKeys()
     {
         $params = array( 'no_required' => 1 );
-        $pledge =& civicrm_pledge_create($params);
+        $pledge =& civicrm_api3_pledge_create($params);
         $this->assertEquals( $pledge['is_error'], 1 );
         $this->assertEquals( $pledge['error_message'], 'Mandatory key(s) missing from params array: contact_id, amount, one of (pledge_contribution_type_id, contribution_type_id), installments, start_date, version' );
     }
@@ -156,7 +156,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
                         'version'									=>$this->_apiversion,
           
                   );                        
-        $result=& civicrm_pledge_create($params);
+        $result=& civicrm_api3_pledge_create($params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals(0, $result['is_error'], "in line " . __LINE__);
         $this->assertEquals($result['values'][0]['amount']     ,100.00, 'In line ' . __LINE__); 
@@ -172,7 +172,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
         $this->assertEquals($result['is_error'], 0 , 'In line ' . __LINE__);
 
         $pledgeID = array( 'pledge_id' => $result['values'][0]['pledge_id'] );
-        $pledge   =& civicrm_pledge_delete($pledgeID);
+        $pledge   =& civicrm_api3_pledge_delete($pledgeID);
 
     }
     
@@ -188,7 +188,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
                             'sequential' =>1,  
                             'version'			 =>$this->_apiversion,
                             );
-        $original =& civicrm_pledge_get($old_params);
+        $original =& civicrm_api3_pledge_get($old_params);
         //Make sure it came back
         $this->assertEquals($original['values'][0]['pledge_id'], $pledgeID, 'In line ' . __LINE__);
         //set up list of old params, verify
@@ -214,16 +214,16 @@ class api_v3_PledgeTest extends CiviUnitTestCase
                         'version'			 =>$this->_apiversion,
                         );
         
-        $pledge =& civicrm_pledge_create($params); 
+        $pledge =& civicrm_api3_pledge_create($params); 
        $this->assertEquals( $pledge['is_error'], 0 );    
         $new_params = array(
                             'id' => $pledge['id'],   
                             'version'			 =>$this->_apiversion, 
                             );
-        $pledge =& civicrm_pledge_get($new_params);
+        $pledge =& civicrm_api3_pledge_get($new_params);
         $this->assertEquals($pledge['values'][$pledgeID]['contact_id'], $this->_individualId, 'In line ' . __LINE__);
         $this->assertEquals($pledge['values'][$pledgeID]['pledge_status'], 'Cancelled', 'In line ' . __LINE__);
-        $pledge   =& civicrm_pledge_delete($new_params);
+        $pledge   =& civicrm_api3_pledge_delete($new_params);
         $this->assertEquals( $pledge['is_error'], 0, 'In line ' . __LINE__ );
 
     }
@@ -234,7 +234,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
     {
 
         $params = array('version' =>$this->_apiversion );
-        $pledge = civicrm_pledge_delete($params);
+        $pledge = civicrm_api3_pledge_delete($params);
         $this->assertEquals( $pledge['is_error'], 1 );
         $this->assertEquals( $pledge['error_message'], 'Mandatory key(s) missing from params array: one of (id, pledge_id)' );
     }
@@ -243,7 +243,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
     function testDeleteParamsNotArrayPledge()
     {
         $params = 'pledge_id= 1';                            
-        $pledge = civicrm_pledge_delete($params);
+        $pledge = civicrm_api3_pledge_delete($params);
         $this->assertEquals( $pledge['is_error'], 1 );
         $this->assertEquals( $pledge['error_message'], 'Input variable `params` is not an array' );
     }
@@ -253,7 +253,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
     {
         $params = array( 'pledge_source' => 'SSF',
                          'version'			 =>$this->_apiversion );
-        $pledge =& civicrm_pledge_delete( $params );
+        $pledge =& civicrm_api3_pledge_delete( $params );
         $this->assertEquals($pledge['is_error'], 1);
         $this->assertEquals( $pledge['error_message'], 'Mandatory key(s) missing from params array: one of (id, pledge_id)' );
     }
@@ -265,7 +265,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase
         $pledgeID = $this->pledgeCreate( $this->_individualId , $this->_apiversion );
         $params         = array( 'pledge_id' => $pledgeID,
                                   'version'  => $this->_apiversion );
-        $result   = civicrm_pledge_delete( $params );
+        $result   = civicrm_api3_pledge_delete( $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( $result['is_error'], 0 );
 

@@ -54,18 +54,18 @@ require_once 'CRM/Utils/Array.php';
  * @return null if successfull, object of CRM_Core_Error otherwise
  * @access public
  */
-function civicrm_membership_delete($params)
+function civicrm_api3_membership_delete($params)
 {
-    _civicrm_initialize(true);
+    _civicrm_api3_initialize(true);
       try{ 
    
-    civicrm_verify_one_mandatory($params,null,array('id','membership_id'));
+    civicrm_api3_verify_one_mandatory($params,null,array('id','membership_id'));
     $membershipID = empty($params['id']) ?$params['membership_id'] :$params['id'];
 
 
     // membershipID should be numeric
     if ( ! is_numeric( $membershipID) ) {
-      return civicrm_create_error( 'Input parameter should be numeric' );
+      return civicrm_api3_create_error( 'Input parameter should be numeric' );
     }
 
     require_once 'CRM/Member/BAO/Membership.php';
@@ -74,11 +74,11 @@ function civicrm_membership_delete($params)
     $membership = new CRM_Member_BAO_Membership();
     $result = $membership->deleteMembership($membershipID);
 
-    return $result ? civicrm_create_success( ) : civicrm_create_error('Error while deleting Membership');
+    return $result ? civicrm_api3_create_success( ) : civicrm_api3_create_error('Error while deleting Membership');
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -95,20 +95,20 @@ function civicrm_membership_delete($params)
  * @return array of newly created membership property values.
  * @access public
  */
-function civicrm_membership_create($params)
+function civicrm_api3_membership_create($params)
 {
-  _civicrm_initialize(true);
+  _civicrm_api3_initialize(true);
   try{
 
 
-    $error = _civicrm_membership_check_params( $params );
-    if ( civicrm_error( $error ) ) {
+    $error = _civicrm_api3_membership_check_params( $params );
+    if ( civicrm_api3_error( $error ) ) {
       return $error;
     }
 
     $values  = array( );
-    $error = _civicrm_membership_format_params( $params, $values );
-    if ( civicrm_error( $error ) ) {
+    $error = _civicrm_api3_membership_format_params( $params, $values );
+    if ( civicrm_api3_error( $error ) ) {
       return $error;
     }
 
@@ -135,20 +135,20 @@ function civicrm_membership_create($params)
     if ( array_key_exists( 'is_error', $membershipBAO ) ) {
       // In case of no valid status for given dates, $membershipBAO
       // is going to contain 'is_error' => "Error Message"
-      return civicrm_create_error( ts( 'The membership can not be saved, no valid membership status for given dates' ) );
+      return civicrm_api3_create_error( ts( 'The membership can not be saved, no valid membership status for given dates' ) );
     }
 
     $membership = array();
-    _civicrm_object_to_array($membershipBAO, $membership);
+    _civicrm_api3_object_to_array($membershipBAO, $membership);
     $values = array( );
     $values['id'] = $membership['id'];
     $values['is_error']   = 0;
 
     return $values;
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -166,9 +166,9 @@ function civicrm_membership_create($params)
  * @return  Array of all found membership property values.
  * @access public
  */
-function civicrm_membership_get($params)
+function civicrm_api3_membership_get($params)
 {
-  _civicrm_initialize(true);
+  _civicrm_api3_initialize(true);
   try{
 
     $contactID = $activeOnly = $membershipTypeId = $membershipType = null;
@@ -188,11 +188,11 @@ function civicrm_membership_get($params)
     } elseif( CRM_Utils_Rule::integer($params) ) {
       $contactID = $params;
     } else {
-      return civicrm_create_error( 'Parameters can be only of type array or integer' );
+      return civicrm_api3_create_error( 'Parameters can be only of type array or integer' );
     }
 
     if ( empty($contactID) ) {
-      return civicrm_create_error( 'Invalid value for ContactID.' );
+      return civicrm_api3_create_error( 'Invalid value for ContactID.' );
     }
 
     // get the membership for the given contact ID
@@ -275,9 +275,9 @@ function civicrm_membership_get($params)
     $members['record_count'] = $recordCount;
     return $members;
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -296,12 +296,12 @@ function civicrm_membership_get($params)
  * @return array|error
  * @access public
  */
-function _civicrm_membership_format_params( $params, &$values, $create=false)
+function _civicrm_api3_membership_format_params( $params, &$values, $create=false)
 {
   require_once "CRM/Member/DAO/Membership.php";
   require_once "CRM/Member/PseudoConstant.php";
   $fields =& CRM_Member_DAO_Membership::fields( );
-  _civicrm_store_values( $fields, $params, $values );
+  _civicrm_api3_store_values( $fields, $params, $values );
 
   foreach ($params as $key => $value) {
     // ignore empty values or empty arrays etc
@@ -312,14 +312,14 @@ function _civicrm_membership_format_params( $params, &$values, $create=false)
     switch ($key) {
       case 'membership_contact_id':
         if (!CRM_Utils_Rule::integer($value)) {
-          return civicrm_create_error("contact_id not valid: $value");
+          return civicrm_api3_create_error("contact_id not valid: $value");
         }
         $dao = new CRM_Core_DAO();
         $qParams = array();
         $svq = $dao->singleValueQuery("SELECT id FROM civicrm_contact WHERE id = $value",
         $qParams);
         if (!$svq) {
-          return civicrm_create_error("Invalid Contact ID: There is no contact record with contact_id = $value.");
+          return civicrm_api3_create_error("Invalid Contact ID: There is no contact record with contact_id = $value.");
         }
         $values['contact_id'] = $values['membership_contact_id'];
         unset($values['membership_contact_id']);
@@ -328,12 +328,12 @@ function _civicrm_membership_format_params( $params, &$values, $create=false)
       case 'membership_start_date':
       case 'membership_end_date':
         if (!CRM_Utils_Rule::date($value)) {
-          return civicrm_create_error("$key not a valid date: $value");
+          return civicrm_api3_create_error("$key not a valid date: $value");
         }
         break;
       case 'membership_type_id':
         if ( !CRM_Utils_Array::value( $value, CRM_Member_PseudoConstant::membershipType( ) ) ) {
-          return civicrm_create_error( 'Invalid Membership Type Id' );
+          return civicrm_api3_create_error( 'Invalid Membership Type Id' );
         }
         $values[$key] = $value;
         break;
@@ -343,16 +343,16 @@ function _civicrm_membership_format_params( $params, &$values, $create=false)
         if ( $membershipTypeId ) {
           if ( CRM_Utils_Array::value( 'membership_type_id', $values ) &&
           $membershipTypeId != $values['membership_type_id'] ) {
-            return civicrm_create_error( 'Mismatched membership Type and Membership Type Id' );
+            return civicrm_api3_create_error( 'Mismatched membership Type and Membership Type Id' );
           }
         } else {
-          return civicrm_create_error( 'Invalid Membership Type' );
+          return civicrm_api3_create_error( 'Invalid Membership Type' );
         }
         $values['membership_type_id'] = $membershipTypeId;
         break;
       case 'status_id':
         if ( !CRM_Utils_Array::value( $value, CRM_Member_PseudoConstant::membershipStatus( ) ) ) {
-          return civicrm_create_error( 'Invalid Membership Status Id' );
+          return civicrm_api3_create_error( 'Invalid Membership Status Id' );
         }
         $values[$key] = $value;
         break;
@@ -361,7 +361,7 @@ function _civicrm_membership_format_params( $params, &$values, $create=false)
     }
   }
 
-  _civicrm_custom_format_params( $params, $values, 'Membership' );
+  _civicrm_api3_custom_format_params( $params, $values, 'Membership' );
 
 
   if ( $create ) {
@@ -395,9 +395,9 @@ function _civicrm_membership_format_params( $params, &$values, $create=false)
  * @return bool|CRM_Utils_Error
  * @access private
  */
-function _civicrm_membership_check_params( $params ) {
+function _civicrm_api3_membership_check_params( $params ) {
 
-  civicrm_verify_mandatory($params);
+  civicrm_api3_verify_mandatory($params);
 
   $valid = true;
   $error = '';
@@ -414,7 +414,7 @@ function _civicrm_membership_check_params( $params ) {
     $membership     = new CRM_Member_BAO_Membership();
     $membership->id = $params['id'];
     if ( !$membership->find( true ) ) {
-      return civicrm_create_error( ts( 'Membership id is not valid' ));
+      return civicrm_api3_create_error( ts( 'Membership id is not valid' ));
     }
   } else {
     // membership type id Or membership type is required during add
@@ -433,7 +433,7 @@ function _civicrm_membership_check_params( $params ) {
   }
 
   if ( ! $valid ) {
-    return civicrm_create_error( "Required fields not found for membership $error" );
+    return civicrm_api3_create_error( "Required fields not found for membership $error" );
   }
 
   return array();

@@ -28,7 +28,8 @@ class api_v2_CustomValueContactTypeTest  extends CiviUnitTestCase
                                    'name'        => 'testGroupIndividual',
                                    'extends'     => array( 'individual' ),
                                    'style'       => 'Inline',
-                                   'is_active'   => 1
+                                   'is_active'   => 1,
+                                   'version'		 => API_LATEST_VERSION,
                           );
         $this->CustomGroupIndividual = Custom::createGroup($groupIndividual );
         
@@ -40,7 +41,8 @@ class api_v2_CustomValueContactTypeTest  extends CiviUnitTestCase
                          'weight'          => 4,
                          'is_required'     => 1,
                          'is_searchable'   => 0,
-                         'is_active'       => 1
+                         'is_active'       => 1,
+                         'version'		 => API_LATEST_VERSION,
                         );
         
         $this->IndividualField = Custom::createField($params );
@@ -52,7 +54,8 @@ class api_v2_CustomValueContactTypeTest  extends CiviUnitTestCase
                                     'extends'     => array( 'Individual', array('Student') ),
                                     
                                     'style'       => 'Inline',
-                                    'is_active'   => 1
+                                    'is_active'   => 1,
+                                    'version'		 => API_LATEST_VERSION,
                                     );
         $this->CustomGroupIndiStudent = Custom::createGroup($groupIndiStudent );
         
@@ -64,7 +67,8 @@ class api_v2_CustomValueContactTypeTest  extends CiviUnitTestCase
                         'weight'          => 4,
                         'is_required'     => 1,
                         'is_searchable'   => 0,
-                        'is_active'       => 1
+                        'is_active'       => 1,
+                        'version'		 => API_LATEST_VERSION,
                         );
         
         $this->IndiStudentField = Custom::createField($params );
@@ -72,7 +76,8 @@ class api_v2_CustomValueContactTypeTest  extends CiviUnitTestCase
         $params = array( 'first_name'   => 'Mathev',     
                          'last_name'    => 'Adison',
                          'contact_type' => 'Individual',
-                         'addressee'    => 1
+                         'addressee'    => 1,
+                         'version'		 => API_LATEST_VERSION,
                          );
         $this->individual = Contact::create( $params );
         
@@ -80,7 +85,8 @@ class api_v2_CustomValueContactTypeTest  extends CiviUnitTestCase
                          'last_name'    => 'Tosun',
                          'contact_type' => 'Individual',
                          'contact_sub_type' => 'Student',
-                         'addressee'    => 1
+                         'addressee'    => 1,
+                         'version'		 => API_LATEST_VERSION,
                          );
         $this->individualStudent = Contact::create( $params );
         
@@ -88,20 +94,23 @@ class api_v2_CustomValueContactTypeTest  extends CiviUnitTestCase
                          'last_name'    => 'Dawson',
                          'contact_type' => 'Individual',
                          'contact_sub_type' => 'Parent',
-                         'addressee'    => 1
+                         'addressee'    => 1,
+                         'version'		 => API_LATEST_VERSION,
                          );
         $this->individualParent = Contact::create( $params );
         
         $params = array( 'organization_name' => 'Wellspring' ,     
                          'contact_type'      => 'Organization',
-                         'addressee'    => 1
+                         'addressee'    => 1,
+                          'version'		 => API_LATEST_VERSION,
                          );
         $this->organization = Contact::create( $params );
         
         $params = array( 'organization_name' => 'SubUrban' ,     
                          'contact_type'      => 'Organization',
                          'contact_sub_type'  => 'Sponsor',
-                         'addressee'    => 1
+                         'addressee'    => 1,
+                         'version'		 => API_LATEST_VERSION,
                          );
         $this->organizationSponsor = Contact::create( $params );
     }

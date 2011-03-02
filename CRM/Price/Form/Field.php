@@ -287,10 +287,10 @@ class CRM_Price_Form_Field extends CRM_Core_Form
             'maxYear' => date('Y') + 5,
             'addEmptyOption' => true
         );
-        $this->addDateTime( 'active_on', ts('Active On'), array( 'formatType' => 'activityDateTime' ) );
+        $this->addDateTime( 'active_on', ts('Active On'), false, array( 'formatType' => 'activityDateTime' ) );
 
         // expire_on
-        $this->addDateTime( 'expire_on', ts('Expire On'), array( 'formatType' => 'activityDateTime' ) );
+        $this->addDateTime( 'expire_on', ts('Expire On'), false, array( 'formatType' => 'activityDateTime' ) );
 
         // is required ?
         $this->add('checkbox', 'is_required', ts('Required?') );

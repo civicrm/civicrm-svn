@@ -317,7 +317,7 @@ cj( function( ) {
     checkEmail( );
 });
 function checkEmail( ) {
-    var contactID = cj("input[name=contact_select_id[1]]").val();
+    var contactID = cj("input[name='contact_select_id[1]']").val();
     if ( contactID ) {
         var postUrl = "{/literal}{crmURL p='civicrm/ajax/checkemail' h=0}{literal}";
         cj.post( postUrl, {contact_id: contactID},

@@ -94,7 +94,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
                          'child_group_id' => 2,
                           'version'				=>$this->_apiversion );
 
-        $result =& civicrm_group_nesting_get($params);                         
+        $result =& civicrm_api3_group_nesting_get($params);                         
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         // expected data loaded in setUp
         $expected = array( 1 => array( 'id' => 1, 
@@ -113,7 +113,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
         $params = array( 'child_group_id' => 4,
                           'version'				=>$this->_apiversion );
 
-        $result =& civicrm_group_nesting_get($params);
+        $result =& civicrm_api3_group_nesting_get($params);
         
         // expected data loaded in setUp
         $expected = array( 3 => array( 'id' => 3, 
@@ -135,7 +135,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
         $params = array( 'parent_group_id' => 1,
                           'version'				=>_apiversion );
 
-        $result =& civicrm_group_nesting_get($params);
+        $result =& civicrm_api3_group_nesting_get($params);
 
         // expected data loaded in setUp
         $expected = array( 1 => array( 'id' => 1, 
@@ -161,7 +161,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
         $params = array( 'parent_group_id' => 1,
                          'child_group_id' => 700 );
 
-        $result =& civicrm_group_nesting_get($params);
+        $result =& civicrm_api3_group_nesting_get($params);
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
     }    
@@ -174,7 +174,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
     {
         $params = array( );
 
-        $result =& civicrm_group_nesting_get($params);
+        $result =& civicrm_api3_group_nesting_get($params);
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
     }
@@ -187,7 +187,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
     {
         $params = 'a string';
 
-        $result =& civicrm_group_nesting_get($params);
+        $result =& civicrm_api3_group_nesting_get($params);
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
     }
@@ -204,13 +204,14 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
                          'child_group_id' => 3,
                          'version'				=>$this->_apiversion  );
 
-        $result = civicrm_group_nesting_create( $params );
+        $result = civicrm_api3_group_nesting_create( $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( $result['is_error'], 0 );
 
         // we have 4 group nesting records in the example
         // data, expecting next number to be the id for newly created
         $id = 5;
+        unset($params['version']);
         $this->assertDBState( 'CRM_Contact_DAO_GroupNesting', $id, $params );
     }
 
@@ -222,7 +223,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
     {
         $params = array( );
 
-        $result =& civicrm_group_nesting_create($params);
+        $result =& civicrm_api3_group_nesting_create($params);
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
     }
@@ -235,7 +236,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
     {
         $params = 'a string';
 
-        $result =& civicrm_group_nesting_create($params);
+        $result =& civicrm_api3_group_nesting_create($params);
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
     }
@@ -252,7 +253,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
                          'child_group_id' => 2,
                          'version'  =>$this->_apiversion );
 
-        $result =& civicrm_group_nesting_delete($params);
+        $result =& civicrm_api3_group_nesting_delete($params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( $result['is_error'], 0 );
 
@@ -271,7 +272,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
     {
         $params = array( );
 
-        $result =& civicrm_group_nesting_delete($params);
+        $result =& civicrm_api3_group_nesting_delete($params);
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
     }
@@ -284,7 +285,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
     {
         $params = 'a string';
 
-        $result =& civicrm_group_nesting_delete($params);
+        $result =& civicrm_api3_group_nesting_delete($params);
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
     }    

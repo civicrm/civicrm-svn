@@ -83,7 +83,7 @@ function includePastCampaigns()
 	     	 //first reset all select options.
 		     cj( "#campaign_id" ).val( '' );		 		 		 
              cj( "#campaign_id" ).html( '' );
-		     cj('input[name=included_past_campaigns]').val( 1 );
+		     cj('input[name="included_past_campaigns"]').val( 1 );
 		 				 
 		     var campaigns = data.campaigns;      			
     	     	 

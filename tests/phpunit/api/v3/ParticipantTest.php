@@ -80,7 +80,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
   function testGetWrongParamsType()
   {
     $params = 'a string';
-    $result = & civicrm_participant_get($params);
+    $result = & civicrm_api3_participant_get($params);
 
     $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
   }
@@ -91,7 +91,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
   function testGetEmptyParams()
   {
     $params = array();
-    $result = & civicrm_participant_get($params);
+    $result = & civicrm_api3_participant_get($params);
 
     $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
   }
@@ -105,7 +105,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'participant_id'      => $this->_participantID,
                         'version'							=> $this->_apiversion,
     );
-    $result =  civicrm_participant_get($params);
+    $result =  civicrm_api3_participant_get($params);
       
     $this->assertEquals($result['values'][$this->_participantID]['event_id'], $this->_eventID);
     $this->assertEquals($result['values'][$this->_participantID]['participant_register_date'], '2007-02-19 00:00:00');
@@ -121,7 +121,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'id'      => $this->_participantID,
                          'version'							=> $this->_apiversion,
     );
-    $result = & civicrm_participant_get($params);
+    $result = & civicrm_api3_participant_get($params);
     $this->documentMe($params,$result ,__FUNCTION__,__FILE__);
     $this->assertEquals($result['is_error'], 0);
     $this->assertEquals($result['values'][$this->_participantID]['event_id'], $this->_eventID);
@@ -139,7 +139,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'contact_id'      => $this->_contactID,
                              'version'							=> $this->_apiversion,
     );
-    $participant = & civicrm_participant_get($params);
+    $participant = & civicrm_api3_participant_get($params);
 
     $this->assertEquals($this->_participantID, $participant['id'],
                             "In line " . __LINE__);
@@ -163,7 +163,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'version'							=> $this->_apiversion,
     );
 
-    $participant = & civicrm_participant_get($params);
+    $participant = & civicrm_api3_participant_get($params);
     $this->assertNotNull($participant['id']);
      
   }
@@ -178,7 +178,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'event_id'      => $this->_eventID,
                          'version'							=> $this->_apiversion,
     );
-    $participant = & civicrm_participant_get($params);
+    $participant = & civicrm_api3_participant_get($params);
     $this->assertEquals( $participant['is_error'],0 );
     $this->assertNotNull($participant['count'],3);
   }
@@ -191,7 +191,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
   function testSearchWrongParamsType()
   {
     $params = 'a string';
-    $result = & civicrm_participant_get($params);
+    $result = & civicrm_api3_participant_get($params);
 
     $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
   }
@@ -203,7 +203,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
   function testSearchEmptyParams()
   {
     $params = array('version' =>$this->_apiversion);
-    $result = & civicrm_participant_get($params);
+    $result = & civicrm_api3_participant_get($params);
 
     // expecting 3 participant records
     $this->assertEquals( $result['count'] , 3 );
@@ -218,7 +218,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'participant_id'      => $this->_participantID,
                              'version'							=> $this->_apiversion,
     );
-    $participant = & civicrm_participant_get($params);
+    $participant = & civicrm_api3_participant_get($params);
     $this->assertEquals($participant['values'][$this->_participantID]['event_id'], $this->_eventID);
     $this->assertEquals($participant['values'][$this->_participantID]['participant_register_date'], '2007-02-19 00:00:00');
     $this->assertEquals($participant['values'][$this->_participantID]['participant_source'],'Wimbeldon');
@@ -234,7 +234,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'contact_id'      => $this->_contactID2,
                         'version'							=> $this->_apiversion,
     );
-    $participant = & civicrm_participant_get($params);
+    $participant = & civicrm_api3_participant_get($params);
 
     $this->assertEquals(  $participant['count'] , 2 );
   }
@@ -251,7 +251,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'return.event_title' => 1,
                         'version'							=> $this->_apiversion,
     );
-    $participant = & civicrm_participant_get($params);
+    $participant = & civicrm_api3_participant_get($params);
     if (  $participant['count']  < 3 ) {
       $this->fail("Event search returned less than expected miniumum of 3 records.");
     }
@@ -272,7 +272,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'rowCount'      => 3,
                              'version'							=> $this->_apiversion,
     );
-    $participant = & civicrm_participant_get($params);
+    $participant = & civicrm_api3_participant_get($params);
      
     $this->assertEquals(  $participant['count'], 3,'in line ' . __LINE__);
   }
@@ -285,7 +285,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
   function testCreateWrongParamsType()
   {
     $params = 'a string';
-    $result = & civicrm_participant_create($params);
+    $result = & civicrm_api3_participant_create($params);
 
     $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
   }
@@ -297,7 +297,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
   function testCreateEmptyParams()
   {
     $params = array();
-    $result = & civicrm_participant_create($params);
+    $result = & civicrm_api3_participant_create($params);
 
     $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
   }
@@ -311,7 +311,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'event_id'      => $this->_eventID,
                              'version'							=> $this->_apiversion,
     );
-    $participant = & civicrm_participant_create($params);
+    $participant = & civicrm_api3_participant_create($params);
     if ( CRM_Utils_Array::value('id', $participant) ) {
       $this->_createdParticipants[] = $participant['id'];
     }
@@ -329,7 +329,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'contact_id'    => $this->_contactID,
                              'version'							=> $this->_apiversion,
     );
-    $participant = & civicrm_participant_create($params);
+    $participant = & civicrm_api3_participant_create($params);
     if ( CRM_Utils_Array::value('id', $participant) ) {
       $this->_createdParticipants[] = $participant['id'];
     }
@@ -347,7 +347,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'event_id'      => $this->_eventID,
                              'version'							=> $this->_apiversion,
     );
-    $participant = & civicrm_participant_create($params);
+    $participant = & civicrm_api3_participant_create($params);
     $this->assertNotEquals( $participant['is_error'],1 );
     $this->_participantID = $participant['id'];
 
@@ -378,7 +378,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'version'				=> $this->_apiversion,                      
     );
 
-    $participant =  civicrm_participant_create($params);
+    $participant =  civicrm_api3_participant_create($params);
     $this->documentMe($params,$participant ,__FUNCTION__,__FILE__);
     $this->assertNotEquals( $participant['is_error'],1 ,'in line ' . __LINE__);
     $this->_participantID = $participant['id'];
@@ -402,7 +402,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
   function testUpdateWrongParamsType()
   {
     $params = 'a string';
-    $result = & civicrm_participant_create($params);
+    $result = & civicrm_api3_participant_create($params);
     $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
     $this->assertEquals( 'Input variable `params` is not an array', $result['error_message'], 'In line ' . __LINE__ );
   }
@@ -413,7 +413,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
   function testUpdateEmptyParams()
   {
     $params = array('version' => $this->_apiversion);
-    $participant = & civicrm_participant_create($params);
+    $participant = & civicrm_api3_participant_create($params);
     $this->assertEquals( $participant['is_error'],1 );
     $this->assertEquals( $participant['error_message'],'Mandatory key(s) missing from params array: event_id, contact_id' );
   }
@@ -433,7 +433,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'event_level'   => 'Donation' , 
                         'version'							=> $this->_apiversion,                      
     );
-    $participant = & civicrm_participant_create($params);
+    $participant = & civicrm_api3_participant_create($params);
     $this->assertEquals( $participant['is_error'], 1 );
     $this->assertEquals( $participant['error_message'],'Mandatory key(s) missing from params array: event_id' );
     // Cleanup created participant records.
@@ -454,7 +454,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'event_level'   => 'Donation',
                              'version'							=> $this->_apiversion,                        
     );
-    $participant = & civicrm_participant_create($params);
+    $participant = & civicrm_api3_participant_create($params);
     $this->assertEquals( $participant['is_error'], 1 );
     $this->assertEquals( $participant['error_message'],'Participant  id is not valid' );
 
@@ -477,7 +477,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'event_level'   => 'Donation',
                         'version'							=> $this->_apiversion,                        
     );
-    $participant = & civicrm_participant_create($params);
+    $participant = & civicrm_api3_participant_create($params);
     $this->assertEquals( $participant['is_error'], 1 );
     $this->assertEquals( $participant['error_message'],'Mandatory key(s) missing from params array: event_id' );
     $result = $this->participantDelete( $participantId,  $this->_apiversion );
@@ -500,7 +500,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'event_level'   => 'Donation' ,
                              'version'							=> $this->_apiversion,                       
     );
-    $participant = & civicrm_participant_create($params);
+    $participant = & civicrm_api3_participant_create($params);
     $this->assertNotEquals( $participant['is_error'],1 );
 
 
@@ -529,7 +529,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
   function testDeleteWrongParamsType()
   {
     $params = 'a string';
-    $result = & civicrm_participant_delete($params);
+    $result = & civicrm_api3_participant_delete($params);
 
     $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
   }
@@ -540,7 +540,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
   function testDeleteEmptyParams()
   {
     $params = array();
-    $result = & civicrm_participant_delete($params);
+    $result = & civicrm_api3_participant_delete($params);
 
     $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
   }
@@ -554,7 +554,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'id' => $this->_participantID,
                         'version' =>$this->_apiversion,
     );
-    $participant = & civicrm_participant_delete($params);
+    $participant = & civicrm_api3_participant_delete($params);
     $this->assertNotEquals( $participant['is_error'],1 );
     $this->assertDBState( 'CRM_Event_DAO_Participant', $this->_participantID, NULL, true );
 
@@ -571,7 +571,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'event_id'      => $this->_eventID,
                              'version'							=> $this->_apiversion,
     );
-    $participant = & civicrm_participant_delete($params);
+    $participant = & civicrm_api3_participant_delete($params);
     $this->assertEquals( $participant['is_error'],1 );
     $this->assertNotNull($participant['error_message']);
   }
@@ -584,7 +584,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
   {
     $params = array();
     $onDuplicate = array();
-    $participant = & civicrm_create_participant_formatted($params,$onDuplicate );
+    $participant = & civicrm_api3_create_participant_formatted($params,$onDuplicate );
     $this->assertEquals( $participant['error_message'] ,'Input Parameters empty' );
   }
 
@@ -597,7 +597,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
     );
     require_once 'CRM/Event/Import/Parser.php';
     $onDuplicate = CRM_Event_Import_Parser::DUPLICATE_NOCHECK;
-    $participant = & civicrm_create_participant_formatted($params,$onDuplicate );
+    $participant = & civicrm_api3_create_participant_formatted($params,$onDuplicate );
     $this->assertEquals( $participant['is_error'],0);
   }
 
@@ -612,7 +612,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'event_id'      => $this->_eventID,
     );
     $onDuplicate =11;
-    $participant = & civicrm_create_participant_formatted($params,$onDuplicate );
+    $participant = & civicrm_api3_create_participant_formatted($params,$onDuplicate );
     $this->assertEquals( $participant['is_error'],0);
   }
 
@@ -625,7 +625,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'event_id'      => $this->_eventID,
     );
     require_once 'CRM/Event/Import/Parser.php';
-    $participant = & civicrm_participant_check_params( $params );
+    $participant = & civicrm_api3_participant_check_params( $params );
     $this->assertEquals( $participant, true , 'Check the returned True');
   }
 }

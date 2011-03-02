@@ -21,7 +21,8 @@ class Custom extends CiviUnitTestCase
                            'extends'     => $extends,
                            'style'       => 'Inline',
                            'is_multiple' => $isMultiple,
-                           'is_active'   => 1
+                           'is_active'   => 1,
+                           'version'		 => 3,
                            );
             
         } else {
@@ -67,7 +68,8 @@ class Custom extends CiviUnitTestCase
                             'weight'          => 4,
                             'is_required'     => 1,
                             'is_searchable'   => 0,
-                            'is_active'       => 1
+                            'is_active'       => 1,
+                            'version'					=> 3,
                             );
         }
         

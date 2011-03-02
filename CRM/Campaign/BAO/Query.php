@@ -473,10 +473,19 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
             //use appropriate join depend on operator.
             if ( !empty( $voterIds ) ) {
                 $voterIdCount  = count( $voterIds );
+                
+                //create temporary table to store voter ids.
                 $tempTableName = 'temporary_survey_contact_ids_'.time();
                 CRM_Core_DAO::executeQuery( "DROP TABLE IF EXISTS {$tempTableName}" );
-                $query = "CREATE TEMPORARY TABLE {$tempTableName}(survey_contact_id INT(10) UNSIGNED)";
+                
+                $query = "
+     CREATE TEMPORARY TABLE {$tempTableName} (
+            id int unsigned NOT NULL AUTO_INCREMENT,
+            survey_contact_id int unsigned NOT NULL,  
+PRIMARY KEY ( id ),
+ CONSTRAINT FK_{$tempTableName} FOREIGN KEY (survey_contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE )";
                 CRM_Core_DAO::executeQuery( $query );
+                
                 $batch = 100;
                 $insertedCount = 0;
                 do {

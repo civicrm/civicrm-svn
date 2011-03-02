@@ -56,12 +56,12 @@ require_once 'api/v3/utils.php';
  * @access public
  * @todo v2 Event API didn't create custom fields - I can see this has been 'touched up' but should check event custom fields can now be created & then remove this comment
  */
-function civicrm_event_create( $params )
+function civicrm_api3_event_create( $params )
 {
-  _civicrm_initialize( true );
+  _civicrm_api3_initialize( true );
   try {
-    civicrm_api_check_permission(__FUNCTION__, $params, true);
-    civicrm_verify_mandatory ($params,'CRM_Event_DAO_Event',array ('start_date','event_type_id','title'));
+    civicrm_api3_api_check_permission(__FUNCTION__, $params, true);
+    civicrm_api3_verify_mandatory ($params,'CRM_Event_DAO_Event',array ('start_date','event_type_id','title'));
 
     $ids['eventTypeId'] = (int) $params['event_type_id'];
     $ids['startDate'  ] = $params['start_date'];
@@ -69,23 +69,23 @@ function civicrm_event_create( $params )
 
     //format custom fields so they can be added
     $value = array();
-    _civicrm_custom_format_params( $params, $values, 'Event' );
+    _civicrm_api3_custom_format_params( $params, $values, 'Event' );
     $params = array_merge($values,$params);
     require_once 'CRM/Event/BAO/Event.php';
     $eventBAO = CRM_Event_BAO_Event::create($params, $ids);
 
     if ( is_a( $eventBAO, 'CRM_Core_Error' ) ) {
-      return civicrm_create_error( "Event is not created" );
+      return civicrm_api3_create_error( "Event is not created" );
     } else {
       $event = array();
-      _civicrm_object_to_array($eventBAO, $event[$eventBAO->id]);
+      _civicrm_api3_object_to_array($eventBAO, $event[$eventBAO->id]);
     }
 
-    return civicrm_create_success($event,$params);
+    return civicrm_api3_create_success($event,$params);
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -100,11 +100,11 @@ function civicrm_event_create( $params )
  * @access public
  */
 
-function civicrm_event_get( $params )
+function civicrm_api3_event_get( $params )
 {
-  _civicrm_initialize( true );
+  _civicrm_api3_initialize( true );
   try {
-    civicrm_verify_mandatory($params);
+    civicrm_api3_verify_mandatory($params);
 
     $inputParams            = array( );
     $returnProperties       = array( );
@@ -173,12 +173,12 @@ function civicrm_event_get( $params )
       }
     }//end of the loop
 
-    return civicrm_create_success($event,$params,$eventDAO);
+    return civicrm_api3_create_success($event,$params,$eventDAO);
 
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -192,27 +192,27 @@ function civicrm_event_get( $params )
  * @return boolean        true if success, error otherwise
  * @access public
  */
-function civicrm_event_delete( $params )
+function civicrm_api3_event_delete( $params )
 {
-  _civicrm_initialize( true );
+  _civicrm_api3_initialize( true );
   try {
-    civicrm_verify_mandatory($params);
+    civicrm_api3_verify_mandatory($params);
 
     $eventID = null;
 
     $eventID = CRM_Utils_Array::value( 'event_id', $params );
 
     if ( ! isset( $eventID ) ) {
-      return civicrm_create_error(  'Invalid value for eventID'  );
+      return civicrm_api3_create_error(  'Invalid value for eventID'  );
     }
 
     require_once 'CRM/Event/BAO/Event.php';
 
-    return CRM_Event_BAO_Event::del( $eventID ) ?  civicrm_create_success( ) : civicrm_create_error(  'Error while deleting event' );
+    return CRM_Event_BAO_Event::del( $eventID ) ?  civicrm_api3_create_success( ) : civicrm_api3_create_error(  'Error while deleting event' );
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 

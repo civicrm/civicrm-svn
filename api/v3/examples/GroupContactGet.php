@@ -29,7 +29,7 @@ function group_contact_get_expectedresult(){
                       'group_id' => '1',
                       'title' => 'New Test Group Created',
                       'visibility' => 'Public Pages',
-                      'in_date' => '2011-02-12 17:29:23',
+                      'in_date' => '2011-03-01 13:54:25',
                       'in_method' => 'API',
            ),           ),
       );

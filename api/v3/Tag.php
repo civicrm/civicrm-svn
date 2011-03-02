@@ -43,7 +43,7 @@ require_once 'api/v3/utils.php';
 /**
  *  returns all the fields on this entity.
  */
-function civicrm_tag_getfields( $params ) {
+function civicrm_api3_tag_getfields( $params ) {
     require_once 'CRM/Core/BAO/Tag.php';
     $bao = new CRM_Core_BAO_Tag();
     //function &exportableFields( $contactType = 'Individual', $status = false, $export = false, $search = false )
@@ -60,11 +60,11 @@ function civicrm_tag_getfields( $params ) {
  * @return array of newly created tag property values.
  * @access public
  */
-function civicrm_tag_create( $params ) 
+function civicrm_api3_tag_create( $params ) 
 {
-  _civicrm_initialize( true );
+  _civicrm_api3_initialize( true );
   try {
-    civicrm_verify_mandatory ($params,null,array ('name'));
+    civicrm_api3_verify_mandatory ($params,null,array ('name'));
 
     if ( !array_key_exists ('used_for', $params)) {
       $params ['used_for'] = "civicrm_contact";
@@ -79,16 +79,16 @@ function civicrm_tag_create( $params )
     $tagBAO = CRM_Core_BAO_Tag::add($params, $ids);
 
     if ( is_a( $tagBAO, 'CRM_Core_Error' ) ) {
-        return civicrm_create_error( "Tag is not created" );
+        return civicrm_api3_create_error( "Tag is not created" );
     } else {
         $values = array( );
-        _civicrm_object_to_array($tagBAO, $values[$tagBAO->id]);
-        return civicrm_create_success($values,$params);
+        _civicrm_api3_object_to_array($tagBAO, $values[$tagBAO->id]);
+        return civicrm_api3_create_success($values,$params);
     }
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -101,18 +101,18 @@ function civicrm_tag_create( $params )
  * @return boolean | error  true if successfull, error otherwise
  * @access public
  */
-function civicrm_tag_delete( $params ) 
+function civicrm_api3_tag_delete( $params ) 
 {
-  _civicrm_initialize( true );
+  _civicrm_api3_initialize( true );
   try {
-    civicrm_verify_mandatory ($params,null,array ('tag_id'));
+    civicrm_api3_verify_mandatory ($params,null,array ('tag_id'));
     $tagID = CRM_Utils_Array::value( 'tag_id', $params );
 
     require_once 'CRM/Core/BAO/Tag.php';
-    return CRM_Core_BAO_Tag::del( $tagID ) ? civicrm_create_success( ) : civicrm_create_error(  ts( 'Could not delete tag' )  );
+    return CRM_Core_BAO_Tag::del( $tagID ) ? civicrm_api3_create_success( ) : civicrm_api3_create_error(  ts( 'Could not delete tag' )  );
   } catch (Exception $e) {
     if (CRM_Core_Error::$modeException) throw $e;
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -129,11 +129,11 @@ function civicrm_tag_delete( $params )
  * @access public
  */
 
-function civicrm_tag_get($params) 
+function civicrm_api3_tag_get($params) 
 {   
    try {
-  _civicrm_initialize( true );
-    civicrm_verify_mandatory($params);
+  _civicrm_api3_initialize( true );
+    civicrm_api3_verify_mandatory($params);
     require_once 'CRM/Core/BAO/Tag.php';
     $tagBAO = new CRM_Core_BAO_Tag();
     $fields = array_keys($tagBAO->fields());
@@ -147,17 +147,17 @@ function civicrm_tag_get($params)
     if ( $tagBAO->find() ) {
       $tags = array();
       while ( $tagBAO->fetch() ) {
-        _civicrm_object_to_array( $tagBAO, $tag );
+        _civicrm_api3_object_to_array( $tagBAO, $tag );
         $tags[$tagBAO->id] = $tag;
       }
-      return civicrm_create_success($tags,$params,$tagBAO);
+      return civicrm_api3_create_success($tags,$params,$tagBAO);
     } else {
-      return civicrm_create_success(array(),$params,$tagBAO);
+      return civicrm_api3_create_success(array(),$params,$tagBAO);
     }
 
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }

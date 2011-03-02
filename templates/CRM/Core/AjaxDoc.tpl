@@ -161,7 +161,7 @@ cj(function ($) {
 <label>entity</label>
 <select id="entity">
   <option value="" selected="selected">Choose...</option>
-{crmAPI entity="entity" action="get" var="entities" version=3}
+{crmAPI entity="Entity" action="get" var="entities" version=3}
 {foreach from=$entities.values item=entity}
   <option value="{$entity}">{$entity}</option>
 {/foreach}

@@ -47,11 +47,11 @@ require_once 'api/v3/utils.php';
  * @todo - think this returns all not a search
  *
  */
-function civicrm_domain_get($params ) {
-  _civicrm_initialize(true);
+function civicrm_api3_domain_get($params ) {
+  _civicrm_api3_initialize(true);
 
   try{
-    civicrm_verify_mandatory($params);
+    civicrm_api3_verify_mandatory($params);
     require_once 'CRM/Core/BAO/Domain.php';
     $dao = CRM_Core_BAO_Domain::getDomain();
     $values = array();
@@ -80,9 +80,9 @@ function civicrm_domain_get($params ) {
                     list( $domain[$dao->id]['from_name'], $domain[$dao->id]['from_email'] ) = CRM_Core_BAO_Domain::getNameAndEmail();
                     return $domain;
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -93,21 +93,21 @@ function civicrm_domain_get($params ) {
  * @return array
  * @example
  */
-function civicrm_domain_create( $params ) {
-  _civicrm_initialize(true);
+function civicrm_api3_domain_create( $params ) {
+  _civicrm_api3_initialize(true);
   try{
     require_once 'CRM/Core/BAO/Domain.php';
 
-    civicrm_verify_mandatory($params,'CRM_Core_BAO_Domain');
+    civicrm_api3_verify_mandatory($params,'CRM_Core_BAO_Domain');
 
     $domain = CRM_Core_BAO_Domain::create( $params );
     $domain_array = array( );
-    _civicrm_object_to_array( $domain, $domain_array );
-    return civicrm_create_success($domain_array,$params);
+    _civicrm_api3_object_to_array( $domain, $domain_array );
+    return civicrm_api3_create_success($domain_array,$params);
 
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }

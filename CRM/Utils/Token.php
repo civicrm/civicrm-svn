@@ -53,6 +53,7 @@ class CRM_Utils_Token
                                                       'subscribeUrl'
                                                       ),
                              'mailing'       => array(
+                             						  'id',
                                                       'name',
                                                       'group',
                                                       'subject',
@@ -372,6 +373,10 @@ class CRM_Utils_Token
     {
         $value = '';
         switch ( $token ) {
+        // CRM-7663
+        case 'id':
+        	$value = $mailing ? $mailing->id : 'undefined';
+        	break;
         case 'name':
             $value = $mailing ? $mailing->name : 'Mailing Name';
             break;

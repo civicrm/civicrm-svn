@@ -1,8 +1,8 @@
 /*
- * Alternate Select Multiple (crmasmSelect) 1.0.4 beta - jQuery Plugin
- * http://www.ryancramer.com/projects/crmasmSelect/
+ * Alternate Select Multiple (asmSelect) 1.0.4a beta - jQuery Plugin
+ * http://www.ryancramer.com/projects/asmselect/
  * 
- * Copyright (c) 2008 by Ryan Cramer - http://www.ryancramer.com
+ * Copyright (c) 2009 by Ryan Cramer - http://www.ryancramer.com
  * 
  * Dual licensed under the MIT (MIT-LICENSE.txt)
  * and GPL (GPL-LICENSE.txt) licenses.
@@ -61,6 +61,7 @@
 
 				$select = $("<select></select>")
 					.addClass(options.selectClass)
+					.attr('name', options.selectClass + index)
 					.attr('id', options.selectClass + index); 
 
 				$selectRemoved = $("<select></select>"); 
@@ -83,7 +84,7 @@
 
 				if(options.sortable) makeSortable();
 
-				if($.browser.msie) $ol.css('display', 'inline-block'); 
+				if($.browser.msie && $.browser.version < 8) $ol.css('display', 'inline-block'); // Thanks Matthew Hutton
 			}
 
 			function makeSortable() {
@@ -417,5 +418,3 @@
 	};
 
 })(jQuery); 
-
- 
