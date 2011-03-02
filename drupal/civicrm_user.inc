@@ -224,7 +224,7 @@ function civicrm_user_view( $user, $view_mode ){
         
         if ( $contactURL ) {
             $user->content['urls'] = 
-                array( '#value'  => $contactURL,
+                array( '#markup' => $contactURL,
                        '#weight' => $weight );
         }
     }
