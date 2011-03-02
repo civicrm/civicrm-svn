@@ -91,19 +91,11 @@ class WebTest_Member_OfflineAutoRenewMembershipTest extends CiviSeleniumTestCase
 
       $this->click("auto_renew");
 
-      $this->select("credit_card_type", "label=Visa");
-      $this->type("credit_card_number", "4111111111111111");
-      $this->type("cvv2", "123");
-      $this->select("credit_card_exp_date[M]", "label=Feb");
-      $this->select("credit_card_exp_date[Y]", "label=2014");
+      $this->webtestAddCreditCardDetails();
 
+      // since country is not pre-selected for offline mode
       $this->select("billing_country_id-5", "label=United States");
-      $this->type("billing_first_name", "$firstName");
-      $this->type("billing_last_name", $lastName);
-      $this->type("billing_street_address-5", "99 ht");
-      $this->type("billing_city-5", "SF");
-      $this->select("billing_state_province_id-5", "label=California");
-      $this->type("billing_postal_code-5", "919199");
+      $this->webtestAddBillingDetails( $firstName, null, $lastName );
 
       $this->click("_qf_Membership_upload-bottom");
       $this->waitForPageToLoad("30000");
