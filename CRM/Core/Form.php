@@ -954,7 +954,7 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
      *  @param string $label  label of the element
      *  @param array  $attributes key / value pair 
      *                
-     *  $arrtibutes = array ( 'addTime' => true, // if you need time 
+     *  $attributes = array ( 'addTime' => true, // if you need time 
      *                        'formatType' => 'relative' or 'birth' etc check advanced date settings    
      *                      );            
      *  @param boolean $required  true if required
