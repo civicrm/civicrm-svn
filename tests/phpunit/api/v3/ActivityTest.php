@@ -304,7 +304,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         $this->assertEquals( $result['values'][$result['id']]['source_contact_id'], 17,'in line ' . __LINE__);
         $this->assertEquals( $result['values'][$result['id']]['duration'], 120 ,'in line ' . __LINE__);
         $this->assertEquals( $result['values'][$result['id']]['subject'], 'Make-it-Happen Meeting','in line ' . __LINE__ );
-        $this->assertEquals( $result['values'][$result['id']]['activity_date_time'], date('Ymd') . '000000' ,'in line ' . __LINE__);
+        $this->assertEquals( $result['values'][$result['id']]['activity_date_time'], date('Ymd')  ,'in line ' . __LINE__);
         $this->assertEquals( $result['values'][$result['id']]['location'], 'Pensulvania','in line ' . __LINE__ );
         $this->assertEquals( $result['values'][$result['id']]['details'], 'a test activity' ,'in line ' . __LINE__);
         $this->assertEquals( $result['values'][$result['id']]['status_id'], 1,'in line ' . __LINE__ );
@@ -550,7 +550,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         $this->assertEquals( $result['values'][$result['id']]['source_contact_id'], 17 ,'in line ' . __LINE__);
         $this->assertEquals( $result['values'][$result['id']]['duration'], 120,'in line ' . __LINE__ );
         $this->assertEquals( $result['values'][$result['id']]['subject'], 'Make-it-Happen Meeting','in line ' . __LINE__ );
-        $this->assertEquals( $result['values'][$result['id']]['activity_date_time'], date('Ymd') . '000000','in line ' . __LINE__ );
+        $this->assertEquals( $result['values'][$result['id']]['activity_date_time'], date('Ymd') ,'in line ' . __LINE__ );
         $this->assertEquals( $result['values'][$result['id']]['location'], 'Pensulvania' ,'in line ' . __LINE__);
         $this->assertEquals( $result['values'][$result['id']]['details'], 'a test activity' ,'in line ' . __LINE__);
         $this->assertEquals( $result['values'][$result['id']]['status_id'], 'Scheduled' ,'in line ' . __LINE__);
