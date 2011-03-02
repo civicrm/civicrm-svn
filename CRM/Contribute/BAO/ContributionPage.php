@@ -184,6 +184,11 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
                 list( $displayName, $email ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $contactID );
             }
             
+            if ( empty( $displayName ) ) {
+                require_once 'CRM/Contact/BAO/Contact.php';
+                $displayName = CRM_Contact_BAO_Contact::displayName( $contactID );
+            }
+            
             //for display profile need to get individual contact id,  
             //hence get it from related_contact if on behalf of org true CRM-3767.
                        
