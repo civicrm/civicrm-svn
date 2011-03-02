@@ -56,25 +56,25 @@ require_once 'api/v3/utils.php';
  *
  * @access public
  */
-function civicrm_group_create( $params )
+function civicrm_api3_group_create( $params )
 {
-  _civicrm_initialize(true );
+  _civicrm_api3_initialize(true );
   try{
      
-    civicrm_verify_mandatory($params,null,array('title'));
+    civicrm_api3_verify_mandatory($params,null,array('title'));
     $group = CRM_Contact_BAO_Group::create( $params );
 
     if ( is_null( $group ) ) {
-      return civicrm_create_error( 'Group not created' );
+      return civicrm_api3_create_error( 'Group not created' );
     } else {
       $values = array();
-      _civicrm_object_to_array_unique_fields($group, $values[$group->id]);
-      return civicrm_create_success($values,$params,TRUE );
+      _civicrm_api3_object_to_array_unique_fields($group, $values[$group->id]);
+      return civicrm_api3_create_success($values,$params,TRUE );
     }
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -88,12 +88,12 @@ function civicrm_group_create( $params )
  * @return array  (referance) Array of matching groups
  * @access public
  */
-function civicrm_group_get( $params )
+function civicrm_api3_group_get( $params )
 {
   try{
 
-    _civicrm_initialize(true );
-    civicrm_verify_mandatory($params);
+    _civicrm_api3_initialize(true );
+    civicrm_api3_verify_mandatory($params);
 
     $returnProperties = array( );
     foreach ( $params as $n => $v ) {
@@ -109,19 +109,19 @@ function civicrm_group_get( $params )
     $groupObjects = CRM_Contact_BAO_Group::getGroups( $params, $returnProperties );
 
     if ( count( $groupObjects ) == 0 ) {
-      return civicrm_create_error( 'No such group exists' );
+      return civicrm_api3_create_error( 'No such group exists' );
     }
 
     $groups       = array( );
     foreach( $groupObjects as $group ) {
-      _civicrm_object_to_array( $group, $groups[$group->id] );
+      _civicrm_api3_object_to_array( $group, $groups[$group->id] );
     }
 
     return $groups;
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -139,16 +139,16 @@ function civicrm_group_get( $params )
  *
  * @access public
  */
-function civicrm_group_delete( $params )
+function civicrm_api3_group_delete( $params )
 {
-  _civicrm_initialize( true);
+  _civicrm_api3_initialize( true);
   try{
-    civicrm_verify_mandatory($params,null,array('id'));
+    civicrm_api3_verify_mandatory($params,null,array('id'));
     CRM_Contact_BAO_Group::discard( $params['id'] );
-    return civicrm_create_success( true );
+    return civicrm_api3_create_success( true );
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }

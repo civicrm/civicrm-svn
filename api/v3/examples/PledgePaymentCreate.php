@@ -8,6 +8,7 @@ function pledge_payment_create_example(){
                   'contribution_id' 		=> '1',
                   'version' 		=> '3',
                   'status_id' 		=> '1',
+                  'actual_amount' 		=> '20',
 
   );
   require_once 'api/api.php';
@@ -26,13 +27,13 @@ function pledge_payment_create_expectedresult(){
            'is_error' 		=> '0',
            'version' 		=> '3',
            'count' 		=> '1',
-           'id' 		=> '6',
-           'values' 		=> array(           '6' =>  array(
-                      'id' => '6',
+           'id' 		=> '1',
+           'values' 		=> array(           '1' =>  array(
+                      'id' => '1',
                       'pledge_id' => '1',
                       'contribution_id' => '1',
                       'scheduled_amount' => '',
-                      'actual_amount' => '',
+                      'actual_amount' => '20',
                       'currency' => 'USD',
                       'scheduled_date' => '',
                       'reminder_date' => '',

@@ -55,11 +55,11 @@ require_once 'api/v3/utils.php';
  * @return array of newly created payment property values.
  * @access public
  */
-function civicrm_participant_payment_create($params)
+function civicrm_api3_participant_payment_create($params)
 {
-  _civicrm_initialize(true);
+  _civicrm_api3_initialize(true);
   try{
-    civicrm_verify_mandatory($params,null,array('participant_id','contribution_id')) ;
+    civicrm_api3_verify_mandatory($params,null,array('participant_id','contribution_id')) ;
 
     $ids= array();
     if( CRM_Utils_Array::value( 'id', $params ) ) {
@@ -69,13 +69,13 @@ function civicrm_participant_payment_create($params)
     $participantPayment = CRM_Event_BAO_ParticipantPayment::create($params, $ids);
 
     $payment = array( );
-    _civicrm_object_to_array($participantPayment, $payment[$participantPayment->id]);
+    _civicrm_api3_object_to_array($participantPayment, $payment[$participantPayment->id]);
 
-    return civicrm_create_success($payment,$params);
+    return civicrm_api3_create_success($payment,$params);
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -89,20 +89,20 @@ function civicrm_participant_payment_create($params)
  * @return null if successfull, array with is_error=1 otherwise
  * @access public
  */
-function civicrm_participant_payment_delete( $params )
+function civicrm_api3_participant_payment_delete( $params )
 {
-  _civicrm_initialize(true);
+  _civicrm_api3_initialize(true);
 
   try{
-    civicrm_verify_mandatory($params,null,array('id'));
+    civicrm_api3_verify_mandatory($params,null,array('id'));
     require_once 'CRM/Event/BAO/ParticipantPayment.php';
     $participant = new CRM_Event_BAO_ParticipantPayment();
 
-    return $participant->deleteParticipantPayment( $params ) ? civicrm_create_success( ) : civicrm_create_error('Error while deleting participantPayment');
+    return $participant->deleteParticipantPayment( $params ) ? civicrm_api3_create_success( ) : civicrm_api3_create_error('Error while deleting participantPayment');
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 

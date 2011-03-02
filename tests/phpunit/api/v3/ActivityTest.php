@@ -95,7 +95,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     function testActivityCreateEmpty( )
     {
         $params = array('version' => $this->_apiversion );
-        $result = & civicrm_activity_create($params);
+        $result = & civicrm_api3_activity_create($params);
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
     }
@@ -111,7 +111,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'version' => $this->_apiversion
                         );
         
-        $result = & civicrm_activity_create($params);
+        $result = & civicrm_api3_activity_create($params);
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
     }
@@ -133,7 +133,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'version' => $this->_apiversion
                         );
         
-        $result = civicrm_activity_create($params);
+        $result = civicrm_api3_activity_create($params);
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
     }
@@ -158,7 +158,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'version' => $this->_apiversion
                         );
 
-        $result = civicrm_activity_create($params);
+        $result = civicrm_api3_activity_create($params);
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
     }
@@ -179,7 +179,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'version' => $this->_apiversion
                         );
 
-        $result = & civicrm_activity_create($params);
+        $result = & civicrm_api3_activity_create($params);
         
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
@@ -202,7 +202,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'version' => $this->_apiversion
                         );
 
-        $result = & civicrm_activity_create($params);
+        $result = & civicrm_api3_activity_create($params);
         
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
@@ -249,7 +249,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         								'version' => $this->_apiversion
                         );
 
-        $result = civicrm_activity_create($params);
+        $result = civicrm_api3_activity_create($params);
 
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
@@ -272,7 +272,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'version' => $this->_apiversion
                         );
 
-        $result = & civicrm_activity_create($params);
+        $result = & civicrm_api3_activity_create($params);
 
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
@@ -297,14 +297,14 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'version'							=> $this->_apiversion,
                         );
         
-        $result = & civicrm_activity_create( $params );
+        $result = & civicrm_api3_activity_create( $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( $result['is_error'], 0,
                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) .' in line ' . __LINE__ );
         $this->assertEquals( $result['values'][$result['id']]['source_contact_id'], 17,'in line ' . __LINE__);
         $this->assertEquals( $result['values'][$result['id']]['duration'], 120 ,'in line ' . __LINE__);
         $this->assertEquals( $result['values'][$result['id']]['subject'], 'Make-it-Happen Meeting','in line ' . __LINE__ );
-        $this->assertEquals( $result['values'][$result['id']]['activity_date_time'], date('Ymd') . '000000' ,'in line ' . __LINE__);
+        $this->assertEquals( $result['values'][$result['id']]['activity_date_time'], date('Ymd')  ,'in line ' . __LINE__);
         $this->assertEquals( $result['values'][$result['id']]['location'], 'Pensulvania','in line ' . __LINE__ );
         $this->assertEquals( $result['values'][$result['id']]['details'], 'a test activity' ,'in line ' . __LINE__);
         $this->assertEquals( $result['values'][$result['id']]['status_id'], 1,'in line ' . __LINE__ );
@@ -345,7 +345,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'version'							=> $this->_apiversion,
                         );
         
-        $result = & civicrm_activity_create( $params );
+        $result = & civicrm_api3_activity_create( $params );
         $this->assertEquals( $result['is_error'], 0,
                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
         /*
@@ -441,7 +441,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'file_id'         => null
                         ) ) )
                         );
-        $result = civicrm_activity_create( $params );
+        $result = civicrm_api3_activity_create( $params );
         $this->assertEquals( 0, $result['is_error'],
                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
         $this->assertEquals( 1, $result['id'],'In line ' . __LINE__ );
@@ -450,7 +450,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         $params = array( 'activity_id' => 1,
                          'activity_type_id' => 1 ,
                          'version'						=> $this->_apiversion,);
-        $result = civicrm_activity_get( $params );
+        $result = civicrm_api3_activity_get( $params );
 
         $this->assertEquals( 0, $result['is_error'],"Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
         $this->assertEquals( 1, $result['id'], 'In line ' . __LINE__ );
@@ -498,7 +498,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'version'						 => $this->_apiversion,
                         );
         
-        $result = civicrm_activity_create( $params );
+        $result = civicrm_api3_activity_create( $params );
         
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
@@ -544,13 +544,13 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'version'							=> $this->_apiversion,
                         );
         
-        $result = civicrm_activity_create( $params );
+        $result = civicrm_api3_activity_create( $params );
         $this->assertEquals( $result['is_error'], 0,
                            "Error message: " . CRM_Utils_Array::value( 'error_message', $result )  .' in line ' . __LINE__ );
         $this->assertEquals( $result['values'][$result['id']]['source_contact_id'], 17 ,'in line ' . __LINE__);
         $this->assertEquals( $result['values'][$result['id']]['duration'], 120,'in line ' . __LINE__ );
         $this->assertEquals( $result['values'][$result['id']]['subject'], 'Make-it-Happen Meeting','in line ' . __LINE__ );
-        $this->assertEquals( $result['values'][$result['id']]['activity_date_time'], date('Ymd') . '000000','in line ' . __LINE__ );
+        $this->assertEquals( $result['values'][$result['id']]['activity_date_time'], date('Ymd') ,'in line ' . __LINE__ );
         $this->assertEquals( $result['values'][$result['id']]['location'], 'Pensulvania' ,'in line ' . __LINE__);
         $this->assertEquals( $result['values'][$result['id']]['details'], 'a test activity' ,'in line ' . __LINE__);
         $this->assertEquals( $result['values'][$result['id']]['status_id'], 'Scheduled' ,'in line ' . __LINE__);
@@ -562,7 +562,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     function testActivityGetEmpty()
     {
         $params = array( );
-        $result = civicrm_activity_get( $params );
+        $result = civicrm_api3_activity_get( $params );
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
     }
 
@@ -573,7 +573,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     {
         $params = array( 'activity_id' => 'fubar',
                         'version' => $this->_apiversion );
-        $result = civicrm_activity_get( $params );
+        $result = civicrm_api3_activity_get( $params );
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
     }
 
@@ -584,7 +584,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     {
         $params = array( 'activity_id' => 42,
                          'version' => $this->_apiversion );
-        $result = civicrm_activity_get( $params );        
+        $result = civicrm_api3_activity_get( $params );        
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
     }
 
@@ -604,7 +604,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         $params = array( 'activity_id' => 13,
                           'version'			=> $this->_apiversion,
                           'sequential'  =>1, );
-        $result = civicrm_activity_get( $params );
+        $result = civicrm_api3_activity_get( $params );
         $this->assertEquals( 0, $result['is_error'],
                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
         $this->assertEquals( 13, $result['id'],  'In line ' . __LINE__ );
@@ -670,7 +670,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                          'activity_type_id' => 5,
                          'version' =>3, 
                           'sequential' =>1,);
-        $result = civicrm_activity_get( $params, true );
+        $result = civicrm_api3_activity_get( $params, true );
                 $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( 0, $result['is_error'], "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
         $this->assertEquals( 4, $result['id'], 'In line ' . __LINE__ );
@@ -686,7 +686,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     function testDeleteActivityForEmptyParams( )
     {
         $params = array('version' => $this->_apiversion );
-        $result =& civicrm_activity_delete($params);
+        $result =& civicrm_api3_activity_delete($params);
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
     }
@@ -698,7 +698,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     {
         $params = array('activity_name' => 'Meeting',
         'version' => $this->_apiversion);
-        $result =& civicrm_activity_delete($params);
+        $result =& civicrm_api3_activity_delete($params);
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
     }
@@ -709,7 +709,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     function testDeleteActivityWithoutActivityType( )
     {
         $params = array( 'id' => 1 );
-        $result =& civicrm_activity_delete( $params );
+        $result =& civicrm_api3_activity_delete( $params );
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
     }
@@ -723,7 +723,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                          'activity_name' => 'Test Activity'
                          );
 
-        $result =& civicrm_activity_delete( $params );
+        $result =& civicrm_api3_activity_delete( $params );
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
     }
@@ -744,7 +744,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                          'activity_type_id' => 1 ,
                          'version' => $this->_apiversion,);
         
-        $result =& civicrm_activity_delete($params);
+        $result =& civicrm_api3_activity_delete($params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( $result['is_error'], 0,
                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
@@ -762,7 +762,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                              dirname(__FILE__)
                              . '/dataset/email_contact_17.xml') );
         
-        $result = civicrm_activity_processemail(
+        $result = civicrm_api3_activity_processemail(
                    dirname( __FILE__ ) . '/dataset/activity_email' , 5 );
 
         //  civicrm_activity should show the new activity
@@ -780,7 +780,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
      */
     function testActivityProcessEMailNoFile()
     {
-        $result = civicrm_activity_processemail( 'no/such/file/nohow' , 5 );
+        $result = civicrm_api3_activity_processemail( 'no/such/file/nohow' , 5 );
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
     }
@@ -831,7 +831,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                              dirname(__FILE__)
                              . '/dataset/option_value_activity.xml') );
 
-        $result = civicrm_activity_processemail(
+        $result = civicrm_api3_activity_processemail(
                    dirname( __FILE__ ) . '/dataset/activity_email' , 5 );
 
         $this->assertEquals( $result['is_error'], 0,
@@ -863,7 +863,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     function testActivityUpdateEmpty( )
     {
         $params = array( );
-        $result =& civicrm_activity_create($params);
+        $result =& civicrm_api3_activity_create($params);
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
     }
@@ -878,7 +878,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'scheduled_date_time' => date('Ymd')
                         );
         
-        $result =& civicrm_activity_create($params);
+        $result =& civicrm_api3_activity_create($params);
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
     }
@@ -894,7 +894,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'scheduled_date_time' => date('Ymd')
                         );
 
-        $result =& civicrm_activity_create($params);
+        $result =& civicrm_api3_activity_create($params);
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
     }
@@ -910,7 +910,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                          'scheduled_date_time' => date('Ymd')
                          );
 
-        $result =& civicrm_activity_create($params);
+        $result =& civicrm_api3_activity_create($params);
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
     }
@@ -928,7 +928,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'version'							=> $this->_apiversion,
                         );
 
-        $result =& civicrm_activity_create($params);
+        $result =& civicrm_api3_activity_create($params);
         $this->assertEquals( $result['is_error'], 1, "In line " . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Invalid Activity Id' ,"In line " . __LINE__ );
     }
@@ -959,7 +959,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'version'							=>$this->_apiversion,
                         );
 
-        $result = civicrm_activity_create( $params );
+        $result = civicrm_api3_activity_create( $params );
 
         //  civicrm_activity should show new values
         $expected = new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
@@ -1043,7 +1043,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                 'version'							=> $this->_apiversion,
                 'custom_11'           => 'bite my test data', 
          );
-        $result = civicrm_activity_create( $params );
+        $result = civicrm_api3_activity_create( $params );
         $this->assertEquals( 0, $result['is_error'],
                               "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
         $this->assertEquals( 1, $result['id'],
@@ -1053,7 +1053,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
          $params = array( 'activity_id' => $activityId,
                           'activity_type_id' => 1,
                           'version'					 =>$this->_apiversion, );
-         $result = civicrm_activity_get( $params, true );
+         $result = civicrm_api3_activity_get( $params, true );
 
          $this->assertEquals( 0, $result['is_error'],
                               "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
@@ -1071,13 +1071,13 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                  'custom_11'           => 'Updated my test data',
                  'version'						 => $this->_apiversion,
                          );
-         $result = civicrm_activity_create( $params );
+         $result = civicrm_api3_activity_create( $params );
          
          //  Retrieve and check the activity created
          $params = array( 'activity_id' => $activityId,
                           'activity_type_id' => 1 ,
                           'version'					 =>$this->_apiversion,);
-         $result = civicrm_activity_get( $params, true );
+         $result = civicrm_api3_activity_get( $params, true );
          
          $this->assertEquals( 0, $result['is_error'],
                               "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
@@ -1121,7 +1121,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'version'							=>$this->_apiversion,
                         );
 
-        $result = civicrm_activity_create( $params );
+        $result = civicrm_api3_activity_create( $params );
 
         //  civicrm_activity should show new values except date
         $expected = new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
@@ -1175,7 +1175,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'version'					 =>$this->_apiversion,
                         );
 
-        $result = civicrm_activity_create( $params );
+        $result = civicrm_api3_activity_create( $params );
         $this->assertNotContains( 'is_error', $result );
         $this->assertEquals( $result['id'] , 4, "In line " . __LINE__ );
         $this->assertEquals( $result['values'][4]['source_contact_id'] , 17,
@@ -1203,7 +1203,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         //  Get activities associated with contact 17
         $params = array( 'contact_id' => 17 ,
                           'version'    => $this->_apiversion);
-        $result = civicrm_activity_get( $params );
+        $result = civicrm_api3_activity_get( $params );
 
         $this->assertEquals( 0, $result['is_error'], "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
         $this->assertEquals( 2, $result['count'],'In line ' . __LINE__ );
@@ -1218,7 +1218,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     function testActivityContactGetEmpty( )
     {
         $params = array( );
-        $result = civicrm_activity_get( $params );
+        $result = civicrm_api3_activity_get( $params );
         $this->assertEquals( $result['is_error'], 1,"In line " . __LINE__ );
     }
    
@@ -1228,7 +1228,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     function testActivitiesContactGetWithInvalidParameter( )
     {
         $params = null;
-        $result = civicrm_activity_get( $params );
+        $result = civicrm_api3_activity_get( $params );
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
     }
@@ -1239,17 +1239,17 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     function testActivitiesContactGetWithInvalidContactId( )
     {
         $params = array( 'contact_id' => null );
-        $result = civicrm_activity_get( $params );
+        $result = civicrm_api3_activity_get( $params );
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
 
         $params = array( 'contact_id' => 'contact' );
-        $result = civicrm_activity_get( $params );
+        $result = civicrm_api3_activity_get( $params );
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
         
         $params = array( 'contact_id' => 2.4 );
-        $result = civicrm_activity_get( $params );
+        $result = civicrm_api3_activity_get( $params );
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
     }
@@ -1266,11 +1266,11 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'contact_type'  => 'Individual',
                         'version'				=> $this->_apiversion,
                         );
-        require_once 'api/v3/Contact.php';
-        $contact =&civicrm_contact_create( $params );
+   
+        $contact = civicrm_api('contact', 'create', $params );
         $params  = array( 'contact_id' => $contact['id'] ,
                         'version'				=> $this->_apiversion,        );
-        $result  = civicrm_activity_get( $params );
+        $result  = civicrm_api3_activity_get( $params );
         $this->assertEquals( $result['is_error'], 0,'in line ' . __LINE__ );
         $this->assertEquals( $result['count'], 0,'in line ' . __LINE__ );
      }

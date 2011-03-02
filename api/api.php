@@ -26,7 +26,9 @@ function civicrm_api_legacy($function, $class, $params){
   // clean up. they should be alphanumeric and _ only
   $class = CRM_Utils_String::munge( $class );
   $function = CRM_Utils_String::munge( $function );
-  
+  if ($version ==3){
+    $function = str_replace( 'civicrm', 'civicrm_api3',$function);
+  }
   require_once 'api/v' . $version . '/' . $class .'.php';
   $result = $function($params);
   return $result;
@@ -46,8 +48,8 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
   $entity = CRM_Utils_String::munge($entity);
   $action = CRM_Utils_String::munge($action);
   $version = civicrm_get_api_version($params);
-  $function = civicrm_api_get_function_name($entity, $action);
-  civicrm_api_include($entity);
+  $function = civicrm_api_get_function_name($entity, $action,$version);
+  civicrm_api_include($entity,null,$version);
   if ( !function_exists ($function )) {
     if ( strtolower($action) == "getfields" && $version ==3) {
       require_once ('api/v3/utils.php');
@@ -85,11 +87,14 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
 }
 
 
-function civicrm_api_get_function_name($entity, $action) {
+function civicrm_api_get_function_name($entity, $action,$version =NULL) {
   static $_map;
   if (!isset($_map)) {
     $_map = array();
-    $version = civicrm_get_api_version();
+    if(empty($version)){
+      $version = civicrm_get_api_version();
+    }
+
     if ($version === 2) {
       $_map['event']['get'] = 'civicrm_event_search';
       $_map['group_roles']['create'] = 'civicrm_group_roles_add_role';
@@ -107,7 +112,7 @@ function civicrm_api_get_function_name($entity, $action) {
     }
   }
   $function = strtolower(str_replace('U_F','uf', preg_replace('/(?=[A-Z])/','_$0', $entity)));// That's CamelCase, beside an odd UFCamel that is expected as uf_camel
-  return 'civicrm'. $function .'_'. $action;
+  return 'civicrm_api3_'. $entity .'_'. $action;
 }
 
 
@@ -121,8 +126,7 @@ function civicrm_api_get_function_name($entity, $action) {
  *   This allows to directly pass the $params array.
  */
 function civicrm_get_api_version($desired_version = NULL) {
-  static $_version;
-  if (!isset($_version)) {
+
     if (is_array($desired_version)) {
       // someone gave the full $params array.
       $params = $desired_version;
@@ -141,7 +145,6 @@ function civicrm_get_api_version($desired_version = NULL) {
       $_version = 2;
       // echo "\n".'version: '. $_version ." (default)\n";
     }
-  }
   return $_version;
 }
 
@@ -151,9 +154,10 @@ function civicrm_get_api_version($desired_version = NULL) {
  * @param $rest_interface : boolean
  *   In case of TRUE, we need to set the base path explicitly.
  */
-function civicrm_api_include($entity, $rest_interface = FALSE) {
-  $version = civicrm_get_api_version();
-  $camel_name = civicrm_api_get_camel_name($entity);
+function civicrm_api_include($entity, $rest_interface = FALSE,$version = NULL) {
+
+  $version = civicrm_get_api_version($version);
+  $camel_name = civicrm_api_get_camel_name($entity,$version);
   $file = 'api/v'. $version .'/'. $camel_name .'.php';
   
   if ( $rest_interface ) {
@@ -164,17 +168,18 @@ function civicrm_api_include($entity, $rest_interface = FALSE) {
       }
       $file = $apiPath . $file;
   }
-  
   require_once $file;
 }
 
 
-function civicrm_api_get_camel_name($entity) {
+function civicrm_api_get_camel_name($entity,$version = NULL) {
   static $_map = NULL;
   if (!isset($_map)) {
     $_map = array();
     $_map['utils'] = 'utils';
-    $version = civicrm_get_api_version();
+    if(empty($version)){
+      $version = civicrm_get_api_version();
+    }
     if ($version === 2) {
       // TODO: Check if $_map needs to contain anything.
       $_map['contribution'] = 'Contribute';

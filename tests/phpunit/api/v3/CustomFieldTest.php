@@ -43,7 +43,7 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
     {
         $fieldParams = null;
                
-        $customField =& civicrm_custom_field_create($fieldParams);
+        $customField =& civicrm_api3_custom_field_create($fieldParams);
         $this->assertEquals($customField['is_error'], 1);
         $this->assertEquals( $customField['error_message'],'Input variable `params` is not an array' );
     }    
@@ -65,7 +65,7 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
                         'is_active'       => 1
                         );
         
-        $customField =& civicrm_custom_field_create($params);
+        $customField =& civicrm_api3_custom_field_create($params);
         $this->assertEquals($customField['is_error'],1);
         $this->assertEquals( $customField['error_message'],'Mandatory key(s) missing from params array: label, version' );
 
@@ -90,9 +90,9 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
                         'version'					=>$this->_apiversion,
                         );
         
-        $customField =& civicrm_custom_field_create($params);
+        $customField =& civicrm_api3_custom_field_create($params);
         $params['id'] = $customField['id'];
-        $customField =& civicrm_custom_field_create($params);
+        $customField =& civicrm_api3_custom_field_create($params);
 
         $this->assertEquals($customField['is_error'],0,'in line ' . __LINE__);
         $this->assertNotNull($customField['id'],'in line ' . __LINE__);
@@ -117,7 +117,7 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
                              'is_active'      => 1
                              );
                
-        $customField =& civicrm_custom_field_create($fieldParams);
+        $customField =& civicrm_api3_custom_field_create($fieldParams);
         $this->assertEquals($customField['is_error'], 1);
         $this->assertEquals( $customField['error_message'],'Mandatory key(s) missing from params array: custom_group_id, version' );
     }    
@@ -141,7 +141,7 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
                          'version'					=> $this->_apiversion,
                         );
         
-        $customField =& civicrm_custom_field_create($params);
+        $customField =& civicrm_api3_custom_field_create($params);
         $this->assertEquals($customField['is_error'],0,'in line' . __LINE__);
         $this->assertNotNull($customField['id'],'in line' . __LINE__);
         $this->customFieldDelete($customField['id'],$this->_apiversion); 
@@ -166,7 +166,7 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
                         'is_active'       => 1,
                         'version'					=> $this->_apiversion,
                         );
-        $result =& civicrm_custom_field_create($params);
+        $result =& civicrm_api3_custom_field_create($params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);        
         $this->assertEquals($result['is_error'],0);
         $this->assertNotNull($result['id']);
@@ -204,7 +204,7 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
                          'version'					=> $this->_apiversion,
                         );
                
-        $customField =& civicrm_custom_field_create($params);
+        $customField =& civicrm_api3_custom_field_create($params);
         $this->assertEquals($customField['is_error'],0);
         $this->assertNotNull($customField['id']);
         $this->customFieldDelete($customField['id'],$this->_apiversion);
@@ -230,7 +230,7 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
                          'version'					=> $this->_apiversion,
                         );
         
-        $customField =& civicrm_custom_field_create($params);
+        $customField =& civicrm_api3_custom_field_create($params);
         $this->assertEquals($customField['is_error'],0);
         $this->assertNotNull($customField['id']);
         $this->customFieldDelete($customField['id'],$this->_apiversion);
@@ -258,7 +258,7 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
                          'version'				 =>$this->_apiversion,
                          );
 
-        $customField =& civicrm_custom_field_create($params);
+        $customField =& civicrm_api3_custom_field_create($params);
 
         $this->assertEquals($customField['is_error'],0);
         $this->assertNotNull($customField['id']);
@@ -297,7 +297,7 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
                          'version'				 =>$this->_apiversion,
                          );
 
-        $customField =& civicrm_custom_field_create($params);
+        $customField =& civicrm_api3_custom_field_create($params);
 
         $this->assertEquals($customField['is_error'],0);
         $this->assertNotNull($customField['id']);
@@ -324,7 +324,7 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
                          'option_status'   => array( 1, 1),
                          'version'				 =>$this->_apiversion,
                          );
-        $customField =& civicrm_custom_field_create($params);    
+        $customField =& civicrm_api3_custom_field_create($params);    
 
         $this->assertEquals($customField['is_error'],0);
         $this->assertNotNull($customField['id']);
@@ -354,7 +354,7 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
                          'version'				 =>$this->_apiversion,
                          );
         
-        $customField =& civicrm_custom_field_create($params); 
+        $customField =& civicrm_api3_custom_field_create($params); 
 
         $this->assertEquals($customField['is_error'],0);
         $this->assertNotNull($customField['id']);
@@ -383,7 +383,7 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
                          'version'				 =>$this->_apiversion,
                          );
         
-        $customField =& civicrm_custom_field_create($params); 
+        $customField =& civicrm_api3_custom_field_create($params); 
 
         $this->assertEquals($customField['is_error'],0);
         $this->assertNotNull($customField['id']);
@@ -412,7 +412,7 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
                          'version'				 =>$this->_apiversion,
                          );
               
-        $customField =& civicrm_custom_field_create($params);    
+        $customField =& civicrm_api3_custom_field_create($params);    
 
         $this->assertEquals($customField['is_error'],0);
         $this->assertNotNull($customField['id']);
@@ -428,7 +428,7 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
     function testCustomFieldDeleteNoArray( )
     {
         $params = null; 
-        $customField =& civicrm_custom_field_delete($params); 
+        $customField =& civicrm_api3_custom_field_delete($params); 
         $this->assertEquals($customField['is_error'], 1);
         $this->assertEquals($customField['error_message'], 'Input variable `params` is not an array');
     }    
@@ -438,7 +438,7 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
     function testCustomFieldDeleteWithoutFieldID( )
     {
         $params = array( ); 
-        $customField =& civicrm_custom_field_delete($params); 
+        $customField =& civicrm_api3_custom_field_delete($params); 
         $this->assertEquals($customField['is_error'], 1);
         $this->assertEquals($customField['error_message'], 'Mandatory key(s) missing from params array: id, version');
     }    
@@ -453,7 +453,7 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
         $this->assertNotNull($customField['id'],'in line ' .__LINE__);
         $params = array('version'					=> $this->_apiversion,
                          'id'							=> $customField );
-        $result =& civicrm_custom_field_delete( $params );
+        $result =& civicrm_api3_custom_field_delete( $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);   
 
         $this->assertEquals($result['is_error'], 0,'in line ' .__LINE__);
@@ -472,7 +472,7 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase
         $params = array('version'					=> $this->_apiversion,
                          'id'							=> $customOptionValueFields);
         
-        $customField =& civicrm_custom_field_delete($customOptionValueFields);
+        $customField =& civicrm_api3_custom_field_delete($customOptionValueFields);
         $this->assertEquals($customField['is_error'], 0);
         $this->customGroupDelete($customGroup['id'],$this->_apiversion); 
     } 

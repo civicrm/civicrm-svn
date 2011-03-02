@@ -81,7 +81,7 @@ class api_v3_ConstantTest extends CiviUnitTestCase
      */
     public function testUnknownConstant()
     {
-        $result = civicrm_constant_get( 'thisTypeDoesNotExist' );
+        $result = civicrm_api3_constant_get( 'thisTypeDoesNotExist' );
         $this->assertEquals( 1, $result['is_error'], "In line " . __LINE__  );
     }
 
@@ -106,7 +106,7 @@ class api_v3_ConstantTest extends CiviUnitTestCase
                               dirname(__FILE__)
                               . '/dataset/option_value_activity.xml') );
 
-        $result = civicrm_constant_get( 'activityStatus' );
+        $result = civicrm_api3_constant_get( 'activityStatus' );
         $this->assertEquals( 3, count( $result ), "In line " . __LINE__  );
         $this->assertContains( 'Scheduled', $result, "In line " . __LINE__  );
         $this->assertContains( 'Completed', $result, "In line " . __LINE__  );
@@ -136,7 +136,7 @@ class api_v3_ConstantTest extends CiviUnitTestCase
                              . '/dataset/option_value_activity.xml') );
 
         $parameters = array( true, false, true );
-        $result = civicrm_constant_get( 'activityType', $parameters );
+        $result = civicrm_api3_constant_get( 'activityType', $parameters );
 
         $this->assertEquals( 2, count( $result ), "In line " . __LINE__  );
         $this->assertContains( 'Test activity type', $result, "In line " . __LINE__  );
@@ -164,7 +164,7 @@ class api_v3_ConstantTest extends CiviUnitTestCase
         $op = new PHPUnit_Extensions_Database_Operation_Insert( );
         $op->execute( $this->_dbconn, $dataset );
 
-        $result = civicrm_constant_get( 'locationType' );
+        $result = civicrm_api3_constant_get( 'locationType' );
         
         $this->assertEquals( 4, count( $result ), "In line " . __LINE__  );
         $this->assertContains( 'Home', $result, "In line " . __LINE__  );
@@ -186,7 +186,7 @@ class api_v3_ConstantTest extends CiviUnitTestCase
 
         //  Testing on default set provided by civicrm_data.mysql
         
-        $result = civicrm_constant_get( 'locationType', array( 'all' => true) );
+        $result = civicrm_api3_constant_get( 'locationType', array( 'all' => true) );
         
         $this->assertEquals( 5, count( $result ), "In line " . __LINE__  );
         $this->assertContains( 'Home', $result, "In line " . __LINE__  );
@@ -216,7 +216,7 @@ class api_v3_ConstantTest extends CiviUnitTestCase
                                                                           . '/dataset/option_value_phone_type.xml') );
         
         $parameters = array( true, false, true );
-        $result = civicrm_constant_get( 'phoneType', $parameters );
+        $result = civicrm_api3_constant_get( 'phoneType', $parameters );
         
         $this->assertEquals( 5, count( $result ), "In line " . __LINE__  );
         $this->assertContains( 'Phone', $result, "In line " . __LINE__  );
@@ -247,7 +247,7 @@ class api_v3_ConstantTest extends CiviUnitTestCase
                                                                           . '/dataset/option_value_mail_protocol.xml') );
         
         $parameters = array( true, false, true );
-        $result = civicrm_constant_get( 'mailProtocol', $parameters );
+        $result = civicrm_api3_constant_get( 'mailProtocol', $parameters );
         
         $this->assertEquals( 4, count( $result ), "In line " . __LINE__  );
         $this->assertContains( 'IMAP', $result, "In line " . __LINE__  );

@@ -51,10 +51,10 @@ require_once 'api/v3/utils.php';
  * @static void
  * @access public
  */
-function &civicrm_membership_payment_create( $params ) {
-  _civicrm_initialize(true);
+function &civicrm_api3_membership_payment_create( $params ) {
+  _civicrm_api3_initialize(true);
   try{
-    civicrm_verify_mandatory($params,'CRM_Member_DAO_MembershipPayment',array('contribution_id','membership_id'));
+    civicrm_api3_verify_mandatory($params,'CRM_Member_DAO_MembershipPayment',array('contribution_id','membership_id'));
 
     require_once 'CRM/Core/Transaction.php';
     $transaction = new CRM_Core_Transaction( );
@@ -66,18 +66,18 @@ function &civicrm_membership_payment_create( $params ) {
 
     if ( is_a( $result, 'CRM_Core_Error') ) {
       $transaction->rollback( );
-      return civicrm_create_error( $result->_errors[0]['message'] );
+      return civicrm_api3_create_error( $result->_errors[0]['message'] );
     }
 
     $transaction->commit( );
 
-    _civicrm_object_to_array($mpDAO, $mpArray[$mpDAO->id]);
+    _civicrm_api3_object_to_array($mpDAO, $mpArray[$mpDAO->id]);
 
-    return civicrm_create_success($mpArray,$params);
+    return civicrm_api3_create_success($mpArray,$params);
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -92,10 +92,10 @@ function &civicrm_membership_payment_create( $params ) {
  * @static void
  * @access public
  */
-function &civicrm_membership_payment_get( $params ) {
-  _civicrm_initialize(true);
+function &civicrm_api3_membership_payment_get( $params ) {
+  _civicrm_api3_initialize(true);
   try{
-    civicrm_verify_mandatory($params);
+    civicrm_api3_verify_mandatory($params);
 
 
     require_once 'CRM/Member/DAO/MembershipPayment.php';
@@ -106,16 +106,16 @@ function &civicrm_membership_payment_get( $params ) {
 
     $values = array( );
     while ( $mpDAO->fetch() ) {
-      _civicrm_object_to_array($mpDAO, $mpArray);
+      _civicrm_api3_object_to_array($mpDAO, $mpArray);
       $mpArray['membership_contribution_id'] = $mpDAO->id;
       unset($mpArray['id']);
       $values[$mpDAO->id] = $mpArray;
     }
 
-    return civicrm_create_success($values,$params);
+    return civicrm_api3_create_success($values,$params);
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }

@@ -68,25 +68,25 @@ require_once 'CRM/Case/PseudoConstant.php';
  * @todo Erik Hommel 16 dec 2010 introduce version as param
  * @todo Erik Hommel 16 dec 2010 check if civicrm_return_success does not cause error in REST (should be fixed in civicrm_return_success)
  */
-function civicrm_case_create( $params )
+function civicrm_api3_case_create( $params )
 {
-  _civicrm_initialize(true );
+  _civicrm_api3_initialize(true );
   try{
 
 
     //check parameters
-    $errors = _civicrm_case_check_params( $params, 'create' ) ;
+    $errors = _civicrm_api3_case_check_params( $params, 'create' ) ;
      
     if ( $errors )
     return $errors;
 
-    _civicrm_case_format_params( $params, 'create' );
+    _civicrm_api3_case_format_params( $params, 'create' );
     // If format_params didn't find what it was looking for, return error
     if( !$params['case_type_id'] ) {
-      return civicrm_create_error('Invalid case_type. No such case type exists.' );
+      return civicrm_api3_create_error('Invalid case_type. No such case type exists.' );
     }
     if( !$params['case_type'] ) {
-      return civicrm_create_error('Invalid case_type_id. No such case type exists.');
+      return civicrm_api3_create_error('Invalid case_type_id. No such case type exists.');
     }
 
     // format input with value separators
@@ -101,7 +101,7 @@ function civicrm_case_create( $params )
     $case =& CRM_Case_BAO_Case::create( $newParams );
 
     if ( !$case ) {
-      return civicrm_create_error('Case not created. Please check your input params.');
+      return civicrm_api3_create_error('Case not created. Please check your input params.');
     }
 
     // Add client role
@@ -135,12 +135,12 @@ function civicrm_case_create( $params )
     //$params['statusMsg'] = ts('Case opened successfully.');
 
     // return case
-    $details = _civicrm_case_read( $case->id );
-    return civicrm_create_success( $details );
+    $details = _civicrm_api3_case_read( $case->id );
+    return civicrm_api3_create_success( $details );
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -166,9 +166,9 @@ function civicrm_case_create( $params )
  * @todo Erik Hommel 16 dec 2010 Introduce version as param
  * @todo Erik Hommel 16 dec 2010 check if civicrm_return_success does not cause error in REST (should be fixed in civicrm_return_success)
  */
-function civicrm_case_get( $params )
+function civicrm_api3_case_get( $params )
 {
-  _civicrm_initialize(true );
+  _civicrm_api3_initialize(true );
   try{
 
 
@@ -177,10 +177,10 @@ function civicrm_case_get( $params )
     if( $caseId = $params['case_id'] ) {
       //validate param
       if( !is_numeric( $caseId ) ) {
-        return civicrm_create_error(  'Invalid parameter: case_id. Must provide a numeric value.' );
+        return civicrm_api3_create_error(  'Invalid parameter: case_id. Must provide a numeric value.' );
       }
 
-      $case = _civicrm_case_read( $caseId );
+      $case = _civicrm_api3_case_read( $caseId );
 
       if ( $case ) {
         //get case contacts
@@ -199,9 +199,9 @@ function civicrm_case_get( $params )
           $case['activities'][] = $dao->activity_id;
         }
 
-        return civicrm_create_success( $case );
+        return civicrm_api3_create_success( $case );
       } else {
-        return civicrm_create_success( array( ) );
+        return civicrm_api3_create_success( array( ) );
       }
     }
 
@@ -209,27 +209,27 @@ function civicrm_case_get( $params )
     if( $client = $params['client_id'] ) {
 
       if( !is_numeric( $client ) ) {
-        return civicrm_create_error( 'Invalid parameter: client_id. Must provide a numeric value.'  );
+        return civicrm_api3_create_error( 'Invalid parameter: client_id. Must provide a numeric value.'  );
       }
 
       $ids = CRM_Case_BAO_Case::retrieveCaseIdsByContactId( $client, TRUE );
 
       if( empty( $ids ) )
-      return civicrm_create_success( array( ) );
+      return civicrm_api3_create_success( array( ) );
 
       $cases = array( );
 
       foreach( $ids as $id ) {
-        $cases[$id] = _civicrm_case_read( $id );
+        $cases[$id] = _civicrm_api3_case_read( $id );
       }
-      return civicrm_create_success( $cases );
+      return civicrm_api3_create_success( $cases );
     }
 
     //search by activity
     if( $act = $params['activity_id'] ) {
 
       if( !is_numeric( $act ) ) {
-        return civicrm_create_error(  'Invalid parameter: activity_id. Must provide a numeric value.'  );
+        return civicrm_api3_create_error(  'Invalid parameter: activity_id. Must provide a numeric value.'  );
       }
 
       $sql = "SELECT case_id FROM civicrm_case_activity WHERE activity_id = $act";
@@ -237,19 +237,19 @@ function civicrm_case_get( $params )
       $caseId = CRM_Core_DAO::singleValueQuery( $sql );
 
       if( !$caseId ) {
-        return civicrm_create_success( array( ) );
+        return civicrm_api3_create_success( array( ) );
       }
 
-      $case = array( $caseId => _civicrm_case_read( $caseId ) );
+      $case = array( $caseId => _civicrm_api3_case_read( $caseId ) );
 
-      return civicrm_create_success( $case );
+      return civicrm_api3_create_success( $case );
 
     }
 
     //search by contacts
     if( $contact = $params['contact_id'] ) {
       if( !is_numeric( $contact ) ) {
-        return civicrm_create_error(  'Invalid parameter: contact_id.  Must provide a numeric value.'  );
+        return civicrm_api3_create_error(  'Invalid parameter: contact_id.  Must provide a numeric value.'  );
       }
 
       $sql = "
@@ -263,17 +263,17 @@ SELECT DISTINCT case_id
       $cases = array( );
 
       while ( $dao->fetch( ) ) {
-        $cases[$dao->case_id] = _civicrm_case_read( $dao->case_id );
+        $cases[$dao->case_id] = _civicrm_api3_case_read( $dao->case_id );
       }
 
-      return civicrm_create_success( $cases );
+      return civicrm_api3_create_success( $cases );
     }
 
-    return civicrm_create_error( 'Missing required parameter. Must provide case_id, client_id, activity_id, or contact_id.'  );
+    return civicrm_api3_create_error( 'Missing required parameter. Must provide case_id, client_id, activity_id, or contact_id.'  );
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -304,17 +304,17 @@ SELECT DISTINCT case_id
  * @todo Erik Hommel 16 dec 2010 check if civicrm_return_success does not cause error in REST (should be fixed in civicrm_return_success)
  *
  */
-function civicrm_case_activity_create( $params )
+function civicrm_api3_case_activity_create( $params )
 {
-  _civicrm_initialize(true );
+  _civicrm_api3_initialize(true );
   try{
 
 
 
     //check parameters
-    $errors = _civicrm_case_check_params( $params, 'activity' ) ;
+    $errors = _civicrm_api3_case_check_params( $params, 'activity' ) ;
 
-    _civicrm_case_format_params( $params, 'activity' );
+    _civicrm_api3_case_format_params( $params, 'activity' );
 
     if ( $errors ) {
       return $errors;
@@ -328,11 +328,11 @@ function civicrm_case_activity_create( $params )
 
     CRM_Case_BAO_Case::processCaseActivity( $caseParams );
 
-    return civicrm_create_success( $activity->id );
+    return civicrm_api3_create_success( $activity->id );
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -356,12 +356,12 @@ function civicrm_case_activity_create( $params )
  * @todo Erik Hommel 16 dec 2010 function should be integrated in create as per standard
  *
  */
-function civicrm_case_update( $params ) {
-  _civicrm_initialize( );
+function civicrm_api3_case_update( $params ) {
+  _civicrm_api3_initialize( );
 
   $errors = array( );
   //check for various error and required conditions
-  $errors = _civicrm_case_check_params( $params, 'update' ) ;
+  $errors = _civicrm_api3_case_check_params( $params, 'update' ) ;
 
   if ( !empty( $errors ) ) {
     return $errors;
@@ -369,7 +369,7 @@ function civicrm_case_update( $params ) {
 
   // return error if modifing creator id
   if ( array_key_exists('creator_id', $params) ) {
-    return civicrm_create_error(  'You have no provision to update creator id' );
+    return civicrm_api3_create_error(  'You have no provision to update creator id' );
   }
 
   $mCaseId = array();
@@ -384,9 +384,9 @@ function civicrm_case_update( $params ) {
   if ( count($origContactIds) > 1 ) {
     // check valid orig contact id
     if ( $params['orig_contact_id'] && !in_array( $params['orig_contact_id'], $origContactIds ) ) {
-      return civicrm_create_error(  'Invalid case contact id (orig_contact_id)' );
+      return civicrm_api3_create_error(  'Invalid case contact id (orig_contact_id)' );
     } else if ( !$params['orig_contact_id'] ) {
-      return civicrm_create_error( 'Case is linked with more than one contact id. Provide the required params orig_contact_id to be replaced' );
+      return civicrm_api3_create_error( 'Case is linked with more than one contact id. Provide the required params orig_contact_id to be replaced' );
     }
     $origContactId = $params['orig_contact_id'];
   }
@@ -409,9 +409,9 @@ function civicrm_case_update( $params ) {
 
   $case = array();
 
-  _civicrm_object_to_array( $dao, $case );
+  _civicrm_api3_object_to_array( $dao, $case );
 
-  return civicrm_create_success( $case );
+  return civicrm_api3_create_success( $case );
 }
 
 
@@ -433,27 +433,27 @@ function civicrm_case_update( $params ) {
  * @todo Erik Hommel 16 dec 2010 introduce version as param
  * @todo Erik Hommel 16 dec 2010 check if civicrm_return_success does not cause error in REST (should be fixed in civicrm_return_success)
  */
-function civicrm_case_delete( $params ) {
-  _civicrm_initialize( );
+function civicrm_api3_case_delete( $params ) {
+  _civicrm_api3_initialize( );
   try{
 
 
 
     //check parameters
-    $errors = _civicrm_case_check_params( $params, 'delete' ) ;
+    $errors = _civicrm_api3_case_check_params( $params, 'delete' ) ;
 
     if ( $errors )
     return $errors;
 
     if ( CRM_Case_BAO_Case::deleteCase( $params['case_id'], $params['move_to_trash'] ) ) {
-      return civicrm_create_success(  'Case Deleted' );
+      return civicrm_api3_create_success(  'Case Deleted' );
     } else {
-      return civicrm_create_error( 'Could not delete case.' );
+      return civicrm_api3_create_error( 'Could not delete case.' );
     }
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -472,13 +472,13 @@ function civicrm_case_delete( $params ) {
  * @return array (reference) case object
  *
  */
-function _civicrm_case_read( $caseId ) {
+function _civicrm_api3_case_read( $caseId ) {
 
   $dao = new CRM_Case_BAO_Case();
   $dao->id = $caseId;
   if( $dao->find( true ) ) {
     $case = array();
-    _civicrm_object_to_array( $dao, $case );
+    _civicrm_api3_object_to_array( $dao, $case );
 
     //handle multi-value case type
     $sep = CRM_Case_BAO_Case::VALUE_SEPERATOR;
@@ -494,7 +494,7 @@ function _civicrm_case_read( $caseId ) {
 /**
  * Internal function to format params for processing
  */
-function _civicrm_case_format_params( $params, $mode )
+function _civicrm_api3_case_format_params( $params, $mode )
 {
   switch( $mode ) {
 
@@ -538,11 +538,11 @@ SELECT  ov.name
 /**
  * Internal function to check for valid parameters
  */
-function _civicrm_case_check_params( $params, $mode = NULL ) {
+function _civicrm_api3_case_check_params( $params, $mode = NULL ) {
 
   // return error if we do not get any params
   if( is_null( $params ) || !is_array( $params ) || empty( $params ) ) {
-    return civicrm_create_error(  'Invalid or missing input parameters. Must provide an associative array.' );
+    return civicrm_api3_create_error(  'Invalid or missing input parameters. Must provide an associative array.' );
   }
 
   switch( $mode ) {
@@ -550,7 +550,7 @@ function _civicrm_case_check_params( $params, $mode = NULL ) {
     case 'create':
 
       if( !$params['case_type_id'] && !$params['case_type'] )
-      return civicrm_create_error(  'Missing input parameters. Must provide case_type or case_type_id.' );
+      return civicrm_api3_create_error(  'Missing input parameters. Must provide case_type or case_type_id.' );
 
       $required = array( 'contact_id' => 'num',
                            'status_id'  => 'num',
@@ -584,30 +584,30 @@ function _civicrm_case_check_params( $params, $mode = NULL ) {
   foreach( $required as $req => $type ){
 
     if( !$params[$req] )
-    return civicrm_create_error(  'Missing required parameter: %1.', array( 1 => $req ) );
+    return civicrm_api3_create_error(  'Missing required parameter: %1.', array( 1 => $req ) );
 
     if( $type == 'num' && !is_numeric( $params[$req] ) )
-    return civicrm_create_error(  'Invalid parameter: %1. Must provide a numeric value.', array( 1 => $req ) );
+    return civicrm_api3_create_error(  'Invalid parameter: %1. Must provide a numeric value.', array( 1 => $req ) );
 
     if( $type == 'str' && !is_string( $params[$req] ) )
-    return civicrm_create_error(  'Invalid parameter: %1. Must provide a string.', array( 1 => $req ) );
+    return civicrm_api3_create_error(  'Invalid parameter: %1. Must provide a string.', array( 1 => $req ) );
   }
 
   $caseTypes = CRM_Case_PseudoConstant::caseType( );
 
   if ( CRM_Utils_Array::value( 'case_type', $params ) && !in_array( $params['case_type'], $caseTypes ) ) {
-    return civicrm_create_error( 'Invalid Case Type' );
+    return civicrm_api3_create_error( 'Invalid Case Type' );
   }
 
   if ( CRM_Utils_Array::value( 'case_type_id', $params ) ) {
     if ( !array_key_exists( $params['case_type_id'], $caseTypes ) ) {
-      return civicrm_create_error( 'Invalid Case Type Id' );
+      return civicrm_api3_create_error( 'Invalid Case Type Id' );
     }
 
     // check case type miss match error
     if ( CRM_Utils_Array::value( 'case_type', $params ) &&
     $params['case_type_id'] != array_search( $params['case_type'], $caseTypes ) ) {
-      return civicrm_create_error( 'Case type and case type id mismatch' );
+      return civicrm_api3_create_error( 'Case type and case type id mismatch' );
     }
 
     $sep = CRM_Case_BAO_Case::VALUE_SEPARATOR;
@@ -620,14 +620,14 @@ function _civicrm_case_check_params( $params, $mode = NULL ) {
   $caseStatusIds = CRM_Case_PseudoConstant::caseStatus( );
   if ( CRM_Utils_Array::value( 'status_id', $params ) &&
   !array_key_exists( $params['status_id'], $caseStatusIds ) ) {
-    return civicrm_create_error( 'Invalid Case Status Id' );
+    return civicrm_api3_create_error( 'Invalid Case Status Id' );
   }
 
   // check for valid medium id
   $encounterMedium = CRM_Core_OptionGroup::values('encounter_medium');
   if ( CRM_Utils_Array::value( 'medium_id', $params ) &&
   !array_key_exists( $params['medium_id'], $encounterMedium ) ) {
-    return civicrm_create_error(  'Invalid Case Medium Id' );
+    return civicrm_api3_create_error(  'Invalid Case Medium Id' );
   }
 
   $contactIds = array( 'creator' => CRM_Utils_Array::value( 'creator_id', $params ),
@@ -635,7 +635,7 @@ function _civicrm_case_check_params( $params, $mode = NULL ) {
   foreach ( $contactIds as $key => $value ) {
     if ( $value &&
     !CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $value, 'id' ) ) {
-      return civicrm_create_error( 'Invalid %1 Id', array( 1 => ucfirst( $key ) ) );
+      return civicrm_api3_create_error( 'Invalid %1 Id', array( 1 => ucfirst( $key ) ) );
     }
   }
 }

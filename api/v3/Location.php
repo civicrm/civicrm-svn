@@ -50,18 +50,18 @@ require_once 'api/v3/utils.php';
  *
  * @access public
  */
-function civicrm_location_create( $params ) {
-    _civicrm_initialize(true );
+function civicrm_api3_location_create( $params ) {
+    _civicrm_api3_initialize(true );
     
-    $error = _civicrm_location_check_params( $params );
+    $error = _civicrm_api3_location_check_params( $params );
     
-    if ( civicrm_error( $error ) ) {
+    if ( civicrm_api3_error( $error ) ) {
         return $error;
     }
     
     $locationTypeId = CRM_Utils_Array::value( 'location_type_id', $params );
     
-    $location =& _civicrm_location_add( $params, $locationTypeId );
+    $location =& _civicrm_api3_location_add( $params, $locationTypeId );
     return $location;
 }
 
@@ -77,15 +77,15 @@ function civicrm_location_create( $params ) {
  *  @access public
  *
  */
-function civicrm_location_update( $params ) {
-    _civicrm_initialize( );
+function civicrm_api3_location_update( $params ) {
+    _civicrm_api3_initialize( );
 
     if ( !is_array( $params ) ) {
-        return civicrm_create_error( 'Params need to be of type array!' );
+        return civicrm_api3_create_error( 'Params need to be of type array!' );
     }
     
     if( ! isset( $params['contact_id'] ) ) {
-        return civicrm_create_error( '$contact is not valid contact datatype' );
+        return civicrm_api3_create_error( '$contact is not valid contact datatype' );
     } 
     
     $unsetVersion = false;
@@ -112,7 +112,7 @@ function civicrm_location_update( $params ) {
       //get all location types.
       foreach ( $locTypeIds as $locId ) {
           $name = CRM_Utils_Array::value( $locId, $allLocationTypes );
-          if ( !$name ) return civicrm_create_error( 'Invalid Location Type Id : %1', array( 1 => $locId ) ) ;
+          if ( !$name ) return civicrm_api3_create_error( 'Invalid Location Type Id : %1', array( 1 => $locId ) ) ;
           if ( !in_array( $name, $locationTypes ) ) $locationTypes[] = $name;
       }
     
@@ -122,7 +122,7 @@ function civicrm_location_update( $params ) {
         if ( !in_array( $name, $allLocationTypes ) ) $invalidTypes[$name] = $name; 
     }
     if ( !empty( $invalidTypes ) ) {
-        return civicrm_create_error(  "Invalid Location Type(s) : %1", array( 1 => implode( ', ', $invalidTypes ) )  );
+        return civicrm_api3_create_error(  "Invalid Location Type(s) : %1", array( 1 => implode( ', ', $invalidTypes ) )  );
     }
     
     //allow to swap locations.
@@ -131,22 +131,22 @@ function civicrm_location_update( $params ) {
     if ( !empty( $locationTypes ) ) {
         $params['location_type'] = $locationTypes;
     } else {
-        return civicrm_create_error( 'missing or invalid location_type_id' );
+        return civicrm_api3_create_error( 'missing or invalid location_type_id' );
     }
     
     //get location filter by loc type.
-    $locations =& civicrm_location_get( $params );
+    $locations =& civicrm_api3_location_get( $params );
     
     if ( $unsetVersion ) {
         unset( $params['version'] );
     }
     
     if ( CRM_Utils_System::isNull( $locations ) ) {
-        return civicrm_create_error(  "Invalid Location Type(s) : %1", 
+        return civicrm_api3_create_error(  "Invalid Location Type(s) : %1", 
                                          array( 1 => implode( ', ',CRM_Utils_Array::value( 'location_type',$params)))); 
     }
     
-    $location =& _civicrm_location_update( $params, $locations );
+    $location =& _civicrm_api3_location_update( $params, $locations );
     return $location ;
 }
 
@@ -162,25 +162,25 @@ function civicrm_location_update( $params ) {
  * @access public
  *
  */
-function civicrm_location_delete( &$contact ) {     
-    _civicrm_initialize( );
+function civicrm_api3_location_delete( &$contact ) {     
+    _civicrm_api3_initialize( );
 
     if ( !is_array( $contact ) ) {
-        return civicrm_create_error( 'Params need to be of type array!' );
+        return civicrm_api3_create_error( 'Params need to be of type array!' );
     }
     
     if( ! isset( $contact['contact_id'] ) ) {
-        return civicrm_create_error( '$contact is not valid contact datatype' );
+        return civicrm_api3_create_error( '$contact is not valid contact datatype' );
     } 
     
     require_once 'CRM/Utils/Rule.php';
     $locationTypeID = CRM_Utils_Array::value( 'location_type', $contact );
     if ( ! $locationTypeID ||
          ! CRM_Utils_Rule::integer( $locationTypeID ) ) {
-        return civicrm_create_error( 'missing or invalid location' );
+        return civicrm_api3_create_error( 'missing or invalid location' );
     }
     
-    $result =& _civicrm_location_delete( $contact );
+    $result =& _civicrm_api3_location_delete( $contact );
 
     return $result;
 }
@@ -194,24 +194,24 @@ function civicrm_location_delete( &$contact ) {
  *
  * @access public
  */
-function civicrm_location_get( $contact ) {
-    _civicrm_initialize( );
+function civicrm_api3_location_get( $contact ) {
+    _civicrm_api3_initialize( );
 
     if ( !is_array( $contact ) ) {
-        return civicrm_create_error( 'Params need to be of type array!' );
+        return civicrm_api3_create_error( 'Params need to be of type array!' );
     }
     
     if( ! isset( $contact['contact_id'] ) ) {
-        return civicrm_create_error('$contact is not valid contact datatype');
+        return civicrm_api3_create_error('$contact is not valid contact datatype');
     }
     
     $locationTypes = CRM_Utils_Array::value( 'location_type', $contact );
     
     if ( is_array($locationTypes) && !count($locationTypes) ) {
-        return civicrm_create_error('Location type array can not be empty');
+        return civicrm_api3_create_error('Location type array can not be empty');
     }
     
-    $location=& _civicrm_location_get( $contact, $locationTypes );
+    $location=& _civicrm_api3_location_get( $contact, $locationTypes );
     
     return $location;
 }
@@ -222,7 +222,7 @@ function civicrm_location_get( $contact ) {
  * @param <type> $locationTypeId
  * @return <type>
  */
-function _civicrm_location_add( $params, $locationTypeId = null ) {
+function _civicrm_api3_location_add( $params, $locationTypeId = null ) {
 
     
     // Get all existing location blocks.
@@ -321,7 +321,7 @@ function _civicrm_location_add( $params, $locationTypeId = null ) {
         }
         
         if ( $errorMsg ) {
-            return civicrm_create_error( $errorMsg  );  
+            return civicrm_api3_create_error( $errorMsg  );  
         }
         
         foreach ( $contact[$name] as $count => &$values ) {
@@ -341,7 +341,7 @@ function _civicrm_location_add( $params, $locationTypeId = null ) {
     $result = CRM_Core_BAO_Location::create( $contact );
     
     if ( empty( $result ) ) {
-        return civicrm_create_error( "Location not created"  );
+        return civicrm_api3_create_error( "Location not created"  );
     }
     
     $blocks = array( 'address', 'phone', 'email', 'im', 'openid' );
@@ -352,7 +352,7 @@ function _civicrm_location_add( $params, $locationTypeId = null ) {
     }
     
     
-    return civicrm_create_success( $locArray );
+    return civicrm_api3_create_success( $locArray );
 }
 
 /**
@@ -361,7 +361,7 @@ function _civicrm_location_add( $params, $locationTypeId = null ) {
  * @param <type> $locationArray
  * @return <type>
  */
-function _civicrm_location_update( $params, $locations ) {
+function _civicrm_api3_location_update( $params, $locations ) {
     
     
     $contact = array( 'contact_id' => $params['contact_id'] ); 
@@ -433,7 +433,7 @@ function _civicrm_location_update( $params, $locations ) {
         }
         
         if ( $errorMsg ) {
-            return civicrm_create_error( $errorMsg  );  
+            return civicrm_api3_create_error( $errorMsg  );  
         }
         
         foreach ( $contact[$name] as $count => &$values ) {
@@ -451,7 +451,7 @@ function _civicrm_location_update( $params, $locations ) {
     $location = CRM_Core_BAO_Location::create( $contact );
         
     if ( empty( $location ) ) {
-        return civicrm_create_error( "Location not created"  );
+        return civicrm_api3_create_error( "Location not created"  );
     }
     
     $locArray = array( );
@@ -466,7 +466,7 @@ function _civicrm_location_update( $params, $locations ) {
     }
     
     
-    return civicrm_create_success( $locArray );
+    return civicrm_api3_create_success( $locArray );
 }
 
 /**
@@ -474,13 +474,13 @@ function _civicrm_location_update( $params, $locations ) {
  * @param <type> $contact
  * @return <type>
  */
-function _civicrm_location_delete( &$contact ) {
+function _civicrm_api3_location_delete( &$contact ) {
     require_once 'CRM/Core/DAO/LocationType.php';
     $locationTypeDAO     = new CRM_Core_DAO_LocationType( );
     $locationTypeDAO->id = $contact['location_type'];
         
     if ( ! $locationTypeDAO->find( ) ) {
-        return civicrm_create_error( 'invalid location type' );
+        return civicrm_api3_create_error( 'invalid location type' );
     }
 
     require_once 'CRM/Core/BAO/Location.php';
@@ -495,7 +495,7 @@ function _civicrm_location_delete( &$contact ) {
  * @param <type> $locationTypes = array( 'Home', 'Work' ) else empty.
  * @return <type>
  */
-function &_civicrm_location_get( $contact, $locationTypes = array( ) ) {
+function &_civicrm_api3_location_get( $contact, $locationTypes = array( ) ) {
     $params = array( 'contact_id' => $contact['contact_id'],
                      'entity_id'  => $contact['contact_id'] ); 
     
@@ -540,14 +540,14 @@ function &_civicrm_location_get( $contact, $locationTypes = array( ) ) {
  * @return bool|CRM_Utils_Error
  * @access public
  */
-function _civicrm_location_check_params( $params ) {
+function _civicrm_api3_location_check_params( $params ) {
     if ( !is_array( $params ) ) {
-        return civicrm_create_error( 'Params need to be of type array!' );
+        return civicrm_api3_create_error( 'Params need to be of type array!' );
     }
 
     // cannot create a location with empty params
     if ( empty( $params ) ) {
-        return civicrm_create_error( 'Input Parameters empty' );
+        return civicrm_api3_create_error( 'Input Parameters empty' );
     }
     
     $errorField = null;
@@ -557,7 +557,7 @@ function _civicrm_location_check_params( $params ) {
     
     
     if ( $errorField ) {
-        return civicrm_create_error( "Required fields not found for location $errorField" ); 
+        return civicrm_api3_create_error( "Required fields not found for location $errorField" ); 
     }
     
     return array();

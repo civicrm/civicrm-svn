@@ -60,23 +60,23 @@ require_once 'CRM/Contact/BAO/Contact.php';
  * @static void
  * @access public
  */
-function civicrm_contact_create( $params )
+function civicrm_api3_contact_create( $params )
 {
     // call update and tell it to create a new contact
-  _civicrm_initialize( true );
+  _civicrm_api3_initialize( true );
   try {
-    civicrm_api_check_permission(__FUNCTION__, $params, true);
+    civicrm_api3_api_check_permission(__FUNCTION__, $params, true);
 
     if(empty($params['contact_id'])){
       $create_new = true;
     }
-    return civicrm_contact_update( $params, $create_new );
+    return civicrm_api3_contact_update( $params, $create_new );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
-function civicrm_contact_getfields( $params ) {
+function civicrm_api3_contact_getfields( $params ) {
     require_once 'CRM/Contact/BAO/Contact.php';
     $contact = new CRM_Contact_BAO_Contact();
     return ($contact->exportableFields('All'));
@@ -100,11 +100,11 @@ function civicrm_contact_getfields( $params ) {
  * @todo EM 7 Jan 11 - does this return the number of contacts if required (replacement for deprecated contact_search_count function - if so is this tested?
  */
 
-function civicrm_contact_get( $params )
+function civicrm_api3_contact_get( $params )
 {
-  _civicrm_initialize(true );
+  _civicrm_api3_initialize(true );
   try {
-    civicrm_verify_mandatory($params);
+    civicrm_api3_verify_mandatory($params);
         // fix for CRM-7384 cater for soft deleted contacts
     $params['contact_is_deleted'] = 0;
     if (isset($params['showAll'])) {
@@ -156,11 +156,11 @@ function civicrm_contact_get( $params )
                                                                    $rowCount,
                                                                    $smartGroupCache );
 
-    return civicrm_create_success($contacts,$params);
+    return civicrm_api3_create_success($contacts,$params);
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -176,33 +176,33 @@ function civicrm_contact_get( $params )
  *
  * @example ContactDelete.php
  */
-function civicrm_contact_delete( $params )
+function civicrm_api3_contact_delete( $params )
 {
-  _civicrm_initialize(true);
+  _civicrm_api3_initialize(true);
   try{
 
     require_once 'CRM/Contact/BAO/Contact.php';
 
     $contactID = CRM_Utils_Array::value( 'contact_id', $params );
     if ( ! $contactID ) {
-      return civicrm_create_error(  'Could not find contact_id in input parameters'  );
+      return civicrm_api3_create_error(  'Could not find contact_id in input parameters'  );
     }
 
     $session =& CRM_Core_Session::singleton( );
     if ( $contactID ==  $session->get( 'userID' ) ) {
-      return civicrm_create_error(  'This contact record is linked to the currently logged in user account - and cannot be deleted.'  );
+      return civicrm_api3_create_error(  'This contact record is linked to the currently logged in user account - and cannot be deleted.'  );
     }
     $restore      = CRM_Utils_Array::value( 'restore', $params ) ? $params['restore'] : false;
     $skipUndelete = CRM_Utils_Array::value( 'skip_undelete', $params ) ? $params['skip_undelete'] : false;
     if ( CRM_Contact_BAO_Contact::deleteContact( $contactID , $restore, $skipUndelete) ) {
-      return civicrm_create_success( );
+      return civicrm_api3_create_success( );
     } else {
-      return civicrm_create_error(  'Could not delete contact'  );
+      return civicrm_api3_create_error(  'Could not delete contact'  );
     }
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -223,19 +223,19 @@ function civicrm_contact_delete( $params )
  *
  * @todo Erik Hommel 16 dec 2010 required check should be incorporated in utils function civicrm_verify_mandatory
  */
-function civicrm_contact_update( $params, $create_new = false )
+function civicrm_api3_contact_update( $params, $create_new = false )
 {
-    _civicrm_initialize();
+    _civicrm_api3_initialize();
     try {
-        civicrm_api_check_permission(__FUNCTION__, $params, true);
+        civicrm_api3_api_check_permission(__FUNCTION__, $params, true);
     } catch (Exception $e) {
-        return civicrm_create_error($e->getMessage());
+        return civicrm_api3_create_error($e->getMessage());
     }
     require_once 'CRM/Utils/Array.php';
     $contactID = CRM_Utils_Array::value( 'contact_id', $params );
 
     $dupeCheck = CRM_Utils_Array::value( 'dupe_check', $params, false );
-    $values    = _civicrm_contact_check_params( $params, $dupeCheck );
+    $values    = _civicrm_api3_contact_check_params( $params, $dupeCheck );
     if ( $values ) {
         return $values;
     }
@@ -243,10 +243,10 @@ function civicrm_contact_update( $params, $create_new = false )
     if ( $create_new ) {
         // Make sure nothing is screwed up before we create a new contact
         if ( !empty( $contactID ) ) {
-            return civicrm_create_error( 'Cannot create new contact when contact_id is present' );
+            return civicrm_api3_create_error( 'Cannot create new contact when contact_id is present' );
         }
         if ( empty( $params[ 'contact_type' ] ) ) {
-            return civicrm_create_error( 'Contact Type not specified' );
+            return civicrm_api3_create_error( 'Contact Type not specified' );
         }
         
         // If we get here, we're ready to create a new contact
@@ -285,7 +285,7 @@ function civicrm_contact_update( $params, $create_new = false )
         $params['gender_id'] = array_search( $params['gender_id'] , CRM_Core_PseudoConstant::gender() );
     }
     
-    $error = _civicrm_greeting_format_params( $params );
+    $error = _civicrm_api3_greeting_format_params( $params );
     if ( $error['error_message'] ) {
         return $error['error_message'];
     }
@@ -304,28 +304,28 @@ function civicrm_contact_update( $params, $create_new = false )
         $csType = CRM_Contact_BAO_Contact::getContactSubType( $entityId );
     }
     
-    $customValue = _civicrm_contact_check_custom_params( $params, $csType ); 
+    $customValue = _civicrm_api3_contact_check_custom_params( $params, $csType ); 
 
     if ( $customValue ) {
         return $customValue;
     }
-    _civicrm_custom_format_params( $params, $values, $params['contact_type'], $entityId );
+    _civicrm_api3_custom_format_params( $params, $values, $params['contact_type'], $entityId );
 
     $params = array_merge( $params, $values );
 
-    $contact =& _civicrm_contact_update( $params, $contactID );
+    $contact =& _civicrm_api3_contact_update( $params, $contactID );
 
     if ( is_a( $contact, 'CRM_Core_Error' ) ) {
-        return civicrm_create_error( $contact->_errors[0]['message'] );
+        return civicrm_api3_create_error( $contact->_errors[0]['message'] );
     } else {
         $values = array( );
-        _civicrm_object_to_array_unique_fields($contact, $values[$contact->id]);
+        _civicrm_api3_object_to_array_unique_fields($contact, $values[$contact->id]);
      
     }
 
-    return civicrm_create_success($values,$params);
+    return civicrm_api3_create_success($values,$params);
 }
-function _civicrm_contact_check_params( $params, $dupeCheck = true, $dupeErrorArray = false, $requiredCheck = true )
+function _civicrm_api3_contact_check_params( $params, $dupeCheck = true, $dupeErrorArray = false, $requiredCheck = true )
 {
     if ( $requiredCheck ) {
         $required = array(
@@ -343,22 +343,22 @@ function _civicrm_contact_check_params( $params, $dupeCheck = true, $dupeErrorAr
         
         // cannot create a contact with empty params
         if ( empty( $params ) ) {
-            return civicrm_create_error( 'Input Parameters empty' );
+            return civicrm_api3_create_error( 'Input Parameters empty' );
         }
         
         if ( ! array_key_exists( 'contact_type', $params ) ) {
-            return civicrm_create_error( 'Contact Type not specified' );
+            return civicrm_api3_create_error( 'Contact Type not specified' );
         }
         
         // contact_type has a limited number of valid values
         $fields = CRM_Utils_Array::value( $params['contact_type'], $required );
         if ( $fields == null ) {
-            return civicrm_create_error( "Invalid Contact Type: {$params['contact_type']}" );
+            return civicrm_api3_create_error( "Invalid Contact Type: {$params['contact_type']}" );
         }
         
         if ( $csType = CRM_Utils_Array::value('contact_sub_type', $params) ) {
             if ( !(CRM_Contact_BAO_ContactType::isExtendsContactType($csType, $params['contact_type'])) ) {
-                return civicrm_create_error( "Invalid or Mismatched Contact SubType: {$csType}" );
+                return civicrm_api3_create_error( "Invalid or Mismatched Contact SubType: {$csType}" );
             }
         }
 
@@ -386,7 +386,7 @@ function _civicrm_contact_check_params( $params, $dupeCheck = true, $dupeErrorAr
             }
             
             if ( ! $valid ) {
-                return civicrm_create_error( "Required fields not found for {$params['contact_type']} : $error" );
+                return civicrm_api3_create_error( "Required fields not found for {$params['contact_type']} : $error" );
             }
         }
     }
@@ -411,10 +411,10 @@ function _civicrm_contact_check_params( $params, $dupeCheck = true, $dupeErrorAr
                 $error = CRM_Core_Error::createError( "Found matching contacts: $ids",
                                                       CRM_Core_Error::DUPLICATE_CONTACT, 
                                                       'Fatal', $ids );
-                return civicrm_create_error( $error->pop( ) );
+                return civicrm_api3_create_error( $error->pop( ) );
             }
             
-            return civicrm_create_error( "Found matching contacts: $ids", $ids );
+            return civicrm_api3_create_error( "Found matching contacts: $ids", $ids );
         }
     }
 
@@ -432,13 +432,13 @@ function _civicrm_contact_check_params( $params, $dupeCheck = true, $dupeErrorAr
         // check for mismatch employer name and id
         if ( CRM_Utils_Array::value( 'employer_id', $params )
              && !in_array( $params['employer_id'] ,$dupeIds ) ) {
-            return civicrm_create_error('Employer name and Employer id Mismatch');
+            return civicrm_api3_create_error('Employer name and Employer id Mismatch');
         }
         
         // show error if multiple organisation with same name exist
         if ( !CRM_Utils_Array::value( 'employer_id', $params )
              && (count($dupeIds) > 1) ) {
-            return civicrm_create_error('Found more than one Organisation with same Name.');
+            return civicrm_api3_create_error('Found more than one Organisation with same Name.');
         }
     }
     
@@ -457,7 +457,7 @@ function _civicrm_contact_check_params( $params, $dupeCheck = true, $dupeErrorAr
  * @access public 
  * @static 
  */ 
-function _civicrm_contact_update( $params, $contactID = null )
+function _civicrm_api3_contact_update( $params, $contactID = null )
 {
     require_once 'CRM/Core/Transaction.php';
     $transaction = new CRM_Core_Transaction( );
@@ -478,24 +478,24 @@ function _civicrm_contact_update( $params, $contactID = null )
  * @todo Move this to ContactFormat.php 
  * @todo Eileen McNaughton 7/01/11 What does this do? I think it should go & we can revive a corrected version from v2 if need be
  */
-function civicrm_contact_format_create( $params )
+function civicrm_api3_contact_format_create( $params )
 {
-    _civicrm_initialize( );
+    _civicrm_api3_initialize( );
 
     CRM_Core_DAO::freeResult( );
 
     // return error if we have no params
     if ( empty( $params ) ) {
-        return civicrm_create_error( 'Input Parameters empty' );
+        return civicrm_api3_create_error( 'Input Parameters empty' );
     }
 
-    $error = _civicrm_required_formatted_contact($params);
-    if (civicrm_error( $error, 'CRM_Core_Error')) {
+    $error = _civicrm_api3_required_formatted_contact($params);
+    if (civicrm_api3_error( $error, 'CRM_Core_Error')) {
         return $error;
     }
     
-    $error = _civicrm_validate_formatted_contact($params);
-    if (civicrm_error( $error, 'CRM_Core_Error')) {
+    $error = _civicrm_api3_validate_formatted_contact($params);
+    if (civicrm_api3_error( $error, 'CRM_Core_Error')) {
         return $error;
     }
 
@@ -506,8 +506,8 @@ function civicrm_contact_format_create( $params )
     require_once 'CRM/Import/Parser.php';
     if ( CRM_Utils_Array::value('onDuplicate', $params) != CRM_Import_Parser::DUPLICATE_NOCHECK) {
         CRM_Core_Error::reset( );
-        $error = _civicrm_duplicate_formatted_contact($params);
-        if (civicrm_error( $error, 'CRM_Core_Error')) {
+        $error = _civicrm_api3_duplicate_formatted_contact($params);
+        if (civicrm_api3_error( $error, 'CRM_Core_Error')) {
             return $error;
         }
     }
@@ -515,7 +515,7 @@ function civicrm_contact_format_create( $params )
     $contact = CRM_Contact_BAO_Contact::create( $params, 
                                                 CRM_Utils_Array::value( 'fixAddress',  $params ) );
     
-    _civicrm_object_to_array($contact, $contactArray);
+    _civicrm_api3_object_to_array($contact, $contactArray);
     return $contactArray;
 }
 
@@ -529,7 +529,7 @@ function civicrm_contact_format_create( $params )
  * @return null on success, error message otherwise
  * @access public
  */
-function _civicrm_contact_check_custom_params( $params, $csType = null )
+function _civicrm_api3_contact_check_custom_params( $params, $csType = null )
 {
     empty($csType) ? $onlyParent = true : $onlyParent = false;
     
@@ -545,7 +545,7 @@ function _civicrm_contact_check_custom_params( $params, $csType = null )
                 if ( $csType ) {
                     $errorMsg .= " or Mismatched SubType: {$csType}.";  
                 }
-                return civicrm_create_error( $errorMsg );  
+                return civicrm_api3_create_error( $errorMsg );  
             }
         }
     }
@@ -561,7 +561,7 @@ function _civicrm_contact_check_custom_params( $params, $csType = null )
  *
  * @access public
  */
-function _civicrm_greeting_format_params( $params ) 
+function _civicrm_api3_greeting_format_params( $params ) 
 {
     $greetingParams = array( '', '_id', '_custom' );
     foreach ( array( 'email', 'postal', 'addressee' ) as $key ) {
@@ -588,7 +588,7 @@ function _civicrm_greeting_format_params( $params )
     
         // format params
         if ( CRM_Utils_Array::value( 'contact_type', $params ) == 'Organization' && $key != 'addressee' ) {
-            return civicrm_create_error( 'You cannot use email/postal greetings for contact type %1.', 
+            return civicrm_api3_create_error( 'You cannot use email/postal greetings for contact type %1.', 
                                              array( 1 => $params['contact_type'] ) );
         }
         
@@ -607,31 +607,31 @@ function _civicrm_greeting_format_params( $params )
         
         if ( $customGreeting && $greetingId &&
              ( $greetingId != array_search( 'Customized', $greetings ) ) ) {
-            return civicrm_create_error( 'Provide either %1 greeting id and/or %1 greeting or custom %1 greeting',
+            return civicrm_api3_create_error( 'Provide either %1 greeting id and/or %1 greeting or custom %1 greeting',
                                              array( 1 => $key ) );
         }
         
         if ( $greetingVal && $greetingId &&
              ( $greetingId != CRM_Utils_Array::key( $greetingVal, $greetings ) ) ) {
-            return civicrm_create_error( 'Mismatch in %1 greeting id and %1 greeting',
+            return civicrm_api3_create_error( 'Mismatch in %1 greeting id and %1 greeting',
                                              array( 1 => $key ) );
         } 
         
         if ( $greetingId ) {
 
             if ( !array_key_exists( $greetingId, $greetings ) ) {
-                return civicrm_create_error( 'Invalid %1 greeting Id', array( 1 => $key ) );
+                return civicrm_api3_create_error( 'Invalid %1 greeting Id', array( 1 => $key ) );
             }
             
             if ( !$customGreeting && ( $greetingId == array_search( 'Customized', $greetings ) ) ) {
-                return civicrm_create_error( 'Please provide a custom value for %1 greeting', 
+                return civicrm_api3_create_error( 'Please provide a custom value for %1 greeting', 
                                                  array( 1 => $key ) );
             }
                         
         } else if ( $greetingVal ) {
 
             if ( !in_array( $greetingVal, $greetings ) ) {
-                return civicrm_create_error( 'Invalid %1 greeting', array( 1 => $key ) );
+                return civicrm_api3_create_error( 'Invalid %1 greeting', array( 1 => $key ) );
             }
 
             $greetingId = CRM_Utils_Array::key( $greetingVal, $greetings );

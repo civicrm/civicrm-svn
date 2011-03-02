@@ -51,12 +51,12 @@ require_once 'api/v3/utils.php';
  *
  * @return  array  list of groups, given contact subsribed to
  */
-function civicrm_group_organization_get( $params )
+function civicrm_api3_group_organization_get( $params )
 {
-  _civicrm_initialize( true);
+  _civicrm_api3_initialize( true);
   try{
 
-    civicrm_verify_one_mandatory($params,null,array('organization_id','group_id'));
+    civicrm_api3_verify_one_mandatory($params,null,array('organization_id','group_id'));
 
     require_once 'CRM/Contact/DAO/GroupOrganization.php';
     $dao = new CRM_Contact_DAO_GroupOrganization();
@@ -68,12 +68,12 @@ function civicrm_group_organization_get( $params )
     }
     $dao->find();
     $values = array( );
-    _civicrm_object_to_array( $dao, $values );
-    return civicrm_create_success( $values );
+    _civicrm_api3_object_to_array( $dao, $values );
+    return civicrm_api3_create_success( $values );
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -82,26 +82,27 @@ function civicrm_group_organization_get( $params )
  * @param $params array
  * @return <type>
  */
-function civicrm_group_organization_create( $params )
+function civicrm_api3_group_organization_create( $params )
 {
-  _civicrm_initialize( true);
+  _civicrm_api3_initialize( true);
 
   try{
 
-    civicrm_verify_mandatory($params,null,array('organization_id','group_id'));
-    
+    civicrm_api3_verify_mandatory($params,null,array('organization_id','group_id'));  
 
     require_once 'CRM/Contact/BAO/GroupOrganization.php';
     $groupOrgBAO = CRM_Contact_BAO_GroupOrganization::add( $params );
-    if ( is_a( $groupOrgBAO, 'CRM_Core_Error' ) ) {
-      return civicrm_create_error( "Group Organization can not be created" );
+
+    if (is_null($groupOrgBAO)){
+      return civicrm_api3_create_error("group organization not created");     
     }
-    _civicrm_object_to_array( $groupOrgBAO, $values );
-    return civicrm_create_success( $values );
+
+    _civicrm_api3_object_to_array( $groupOrgBAO, $values );
+    return civicrm_api3_create_success( $values,$params, $groupOrgBAO);
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -117,18 +118,18 @@ function civicrm_group_organization_create( $params )
  * @access public
  */
 
-function civicrm_group_organization_delete( $params )
+function civicrm_api3_group_organization_delete( $params )
 {
-  _civicrm_initialize( true);
+  _civicrm_api3_initialize( true);
   try{
 
-    civicrm_verify_mandatory($params,null,array('id'));  
+    civicrm_api3_verify_mandatory($params,null,array('id'));  
     require_once 'CRM/Contact/BAO/GroupOrganization.php';
     $result = CRM_Contact_BAO_GroupOrganization::delete( $params['id'] );
-    return $result ? civicrm_create_success(  'Deleted Group Organization successfully'  ):civicrm_create_error(  'Could not delete Group Organization'  );
+    return $result ? civicrm_api3_create_success(  'Deleted Group Organization successfully'  ):civicrm_api3_create_error(  'Could not delete Group Organization'  );
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }

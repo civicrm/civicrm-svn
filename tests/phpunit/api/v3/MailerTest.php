@@ -73,7 +73,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
     public function testMailerSubscribeWrongParamsType( )
     {
         $params ='is_string';
-        $result =& civicrm_mailer_event_subscribe($params);
+        $result =& civicrm_api3_mailer_event_subscribe($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Input parameter is not an array', 'In line ' . __LINE__ );       
     }
@@ -84,7 +84,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
     public function testMailerSubscribeEmptyParams( )
     {
         $params = array( );
-        $result =& civicrm_mailer_event_subscribe($params);
+        $result =& civicrm_api3_mailer_event_subscribe($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Input Parameters empty', 'In line ' . __LINE__ );
     }
@@ -98,7 +98,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
                         'email'        => $this->_email,
                         'group_id'     => 'Wrong Group ID',
                         );
-        $result =& civicrm_mailer_event_subscribe($params);
+        $result =& civicrm_api3_mailer_event_subscribe($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         if ( $result['error_message'] != 'Subscription failed' ) {
             $this->assertEquals( $result['error_message'], 'Invalid Group id', 'In line ' . __LINE__ );
@@ -125,7 +125,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
                         'contact_id'   => $contactID,
                          'version'					=>$this->_apiversion
                         );
-        $result =& civicrm_mailer_event_subscribe($params);
+        $result =& civicrm_api3_mailer_event_subscribe($params);
         $this->assertEquals($result['is_error'], 0);
         $this->assertEquals($result['contact_id'], $contactID);
 
@@ -140,7 +140,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
     public function testMailerConfirmWrongParamsType( )
     {
         $params ='is_string';
-        $result =& civicrm_mailer_event_confirm($params);
+        $result =& civicrm_api3_mailer_event_confirm($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Input parameter is not an array', 'In line ' . __LINE__ );       
     }
@@ -151,7 +151,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
     public function testMailerConfirmEmptyParams( )
     {
         $params = array( );
-        $result =& civicrm_mailer_event_confirm($params);
+        $result =& civicrm_api3_mailer_event_confirm($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Input Parameters empty', 'In line ' . __LINE__ );
     }
@@ -166,7 +166,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
                         'subscribe_id'  => 'Wrong ID',
                         'hash'          => 'Wrong Hash',
                         );
-        $result =& civicrm_mailer_event_confirm($params);
+        $result =& civicrm_api3_mailer_event_confirm($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Confirmation failed', 'In line ' . __LINE__ );
     }
@@ -180,7 +180,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
     public function testMailerBounceWrongParamsType( )
     {
         $params ='is_string';
-        $result =& civicrm_mailer_event_bounce($params);
+        $result =& civicrm_api3_mailer_event_bounce($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Input parameter is not an array', 'In line ' . __LINE__ );       
     }
@@ -191,7 +191,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
     public function testMailerBounceEmptyParams()
     {
         $params = array( );
-        $result =& civicrm_mailer_event_bounce($params);
+        $result =& civicrm_api3_mailer_event_bounce($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Input Parameters empty', 'In line ' . __LINE__ );
     }
@@ -207,7 +207,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
                         'hash'            => 'Wrong Hash',
                         'body'            => 'Body...',
                         );
-        $result =& civicrm_mailer_event_bounce($params);
+        $result =& civicrm_api3_mailer_event_bounce($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Queue event could not be found', 'In line ' . __LINE__ );
     }
@@ -223,7 +223,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
     public function testMailerUnsubscribeWrongParamsType( )
     {
         $params ='is_string';
-        $result =& civicrm_mailer_event_unsubscribe($params);
+        $result =& civicrm_api3_mailer_event_unsubscribe($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Input parameter is not an array', 'In line ' . __LINE__ );       
     }
@@ -234,7 +234,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
     public function testMailerUnsubscribeEmptyParams( )
     {
         $params = array( );
-        $result =& civicrm_mailer_event_unsubscribe($params);
+        $result =& civicrm_api3_mailer_event_unsubscribe($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Input Parameters empty', 'In line ' . __LINE__ );
     }
@@ -249,7 +249,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
                         'event_queue_id'  => 'Wrong ID',
                         'hash'            => 'Wrong Hash',
                         );
-        $result =& civicrm_mailer_event_unsubscribe($params);
+        $result =& civicrm_api3_mailer_event_unsubscribe($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Queue event could not be found', 'In line ' . __LINE__ );
     }
@@ -264,7 +264,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
     public function testMailerDomainUnsubscribeWrongParamsType( )
     {
         $params ='is_string';
-        $result =& civicrm_mailer_event_domain_unsubscribe($params);
+        $result =& civicrm_api3_mailer_event_domain_unsubscribe($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Input parameter is not an array', 'In line ' . __LINE__ );       
     }
@@ -275,7 +275,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
     public function testMailerDomainUnsubscribeEmptyParams( )
     {
         $params = array( );
-        $result =& civicrm_mailer_event_domain_unsubscribe($params);
+        $result =& civicrm_api3_mailer_event_domain_unsubscribe($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Input Parameters empty', 'In line ' . __LINE__ );
     }
@@ -290,7 +290,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
                         'event_queue_id'  => 'Wrong ID',
                         'hash'            => 'Wrong Hash',
                         );
-        $result =& civicrm_mailer_event_domain_unsubscribe($params);
+        $result =& civicrm_api3_mailer_event_domain_unsubscribe($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Queue event could not be found', 'In line ' . __LINE__ );
     }
@@ -304,7 +304,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
     public function testMailerResubscribeWrongParamsType( )
     {
         $params ='is_string';
-        $result =& civicrm_mailer_event_resubscribe($params);
+        $result =& civicrm_api3_mailer_event_resubscribe($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Input parameter is not an array', 'In line ' . __LINE__ );       
     }
@@ -315,7 +315,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
     public function testMailerResubscribeEmptyParams( )
     {
         $params = array( );
-        $result =& civicrm_mailer_event_resubscribe($params);
+        $result =& civicrm_api3_mailer_event_resubscribe($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Input Parameters empty', 'In line ' . __LINE__ );
     }
@@ -330,7 +330,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
                         'event_queue_id'  => 'Wrong ID',
                         'hash'            => 'Wrong Hash',
                         );
-        $result =& civicrm_mailer_event_resubscribe($params);
+        $result =& civicrm_api3_mailer_event_resubscribe($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Queue event could not be found', 'In line ' . __LINE__ );
     }
@@ -344,7 +344,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
     public function testMailerReplyWrongParamsType( )
     {
         $params ='is_string';
-        $result =& civicrm_mailer_event_reply($params);
+        $result =& civicrm_api3_mailer_event_reply($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Input parameter is not an array', 'In line ' . __LINE__ );       
     }
@@ -355,7 +355,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
     public function testMailerReplyEmptyParams( )
     {
         $params = array( );
-        $result =& civicrm_mailer_event_reply($params);
+        $result =& civicrm_api3_mailer_event_reply($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Input Parameters empty', 'In line ' . __LINE__ );
     }
@@ -372,7 +372,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
                         'bodyTxt'         => 'Body...',
                         'replyTo'         => $this->_email,
                         );
-        $result =& civicrm_mailer_event_reply($params);
+        $result =& civicrm_api3_mailer_event_reply($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Queue event could not be found', 'In line ' . __LINE__ );
     }
@@ -386,7 +386,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
     public function testMailerForwardWrongParamsType( )
     {
         $params ='is_string';
-        $result =& civicrm_mailer_event_forward($params);
+        $result =& civicrm_api3_mailer_event_forward($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Input parameter is not an array', 'In line ' . __LINE__ );       
     }
@@ -397,7 +397,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
     public function testMailerForwardEmptyParams( )
     {
         $params = array( );
-        $result =& civicrm_mailer_event_forward($params);
+        $result =& civicrm_api3_mailer_event_forward($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Input Parameters empty', 'In line ' . __LINE__ );
     }
@@ -413,7 +413,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
                         'hash'            => 'Wrong Hash',
                         'email'           => $this->_email,
                         );
-        $result =& civicrm_mailer_event_forward($params);
+        $result =& civicrm_api3_mailer_event_forward($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Queue event could not be found', 'In line ' . __LINE__ );
     }
@@ -427,7 +427,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
     public function testMailerClickWrongParamsType( )
     {
         $params ='is_string';
-        $result =& civicrm_mailer_event_click($params);
+        $result =& civicrm_api3_mailer_event_click($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Input parameter is not an array', 'In line ' . __LINE__ );       
     }
@@ -438,7 +438,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
     public function testMailerClickEmptyParams( )
     {
         $params = array( );
-        $result =& civicrm_mailer_event_click($params);
+        $result =& civicrm_api3_mailer_event_click($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Input Parameters empty', 'In line ' . __LINE__ );
     }
@@ -452,7 +452,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
     public function testMailerOpenWrongParamsType( )
     {
         $params ='is_string';
-        $result =& civicrm_mailer_event_open($params);
+        $result =& civicrm_api3_mailer_event_open($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Input parameter is not an array', 'In line ' . __LINE__ );       
     }
@@ -463,7 +463,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
     public function testMailerOpenEmptyParams( )
     {
         $params = array( );
-        $result =& civicrm_mailer_event_open($params);
+        $result =& civicrm_api3_mailer_event_open($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Input Parameters empty', 'In line ' . __LINE__ );
     }
@@ -481,7 +481,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
                         'email'        => $this->_email,
                         'group_id'     => $this->_groupID,
                         );
-        $result =& civicrm_mailer_event_subscribe($params);
+        $result =& civicrm_api3_mailer_event_subscribe($params);
         $this->assertEquals($result['is_error'], 0);
         
         $params = array(
@@ -489,7 +489,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
                         'subscribe_id'  => $result['subscribe_id'],
                         'hash'          => $result['hash'],
                         );
-        $result =& civicrm_mailer_event_confirm($params);
+        $result =& civicrm_api3_mailer_event_confirm($params);
         $this->assertEquals($result['is_error'], 0);
     }
 

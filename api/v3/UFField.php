@@ -47,14 +47,14 @@
  * @access public
  *
  */
-function civicrm_uf_field_create( $params)
+function civicrm_api3_uf_field_create( $params)
 {
-  _civicrm_initialize( true);
+  _civicrm_api3_initialize( true);
   try{
-    civicrm_verify_one_mandatory($params,null,array('field_name', 'uf_group_id'));
+    civicrm_api3_verify_one_mandatory($params,null,array('field_name', 'uf_group_id'));
     $groupId = CRM_Utils_Array::value('uf_group_id',$params);
     if ((int) $groupId < 1) {
-      return civicrm_create_error('Params must be a field_name-carrying array and a positive integer.');
+      return civicrm_api3_create_error('Params must be a field_name-carrying array and a positive integer.');
     }
 
 
@@ -75,16 +75,16 @@ function civicrm_uf_field_create( $params)
 
     require_once 'CRM/Core/BAO/UFField.php';
     if (CRM_Core_BAO_UFField::duplicateField($params, $ids) ) {
-      return civicrm_create_error("The field was not added. It already exists in this profile.");
+      return civicrm_api3_create_error("The field was not added. It already exists in this profile.");
     }
 
     $ufField = CRM_Core_BAO_UFField::add( $params,$ids );
-    _civicrm_object_to_array( $ufField, $ufFieldArray[$ufField->id]);
-    return civicrm_create_success($ufFieldArray,$params);
+    _civicrm_api3_object_to_array( $ufField, $ufFieldArray[$ufField->id]);
+    return civicrm_api3_create_success($ufFieldArray,$params);
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 
@@ -99,16 +99,16 @@ function civicrm_uf_field_create( $params)
  *
  * @access public
  */
-function civicrm_uf_field_update( $params , $fieldId ) {
+function civicrm_api3_uf_field_update( $params , $fieldId ) {
 
-  _civicrm_initialize( );
+  _civicrm_api3_initialize( );
 
   if(! isset( $fieldId ) ) {
-    return civicrm_create_error("parameter fieldId is not set");
+    return civicrm_api3_create_error("parameter fieldId is not set");
   }
 
   if(! is_array( $params ) ) {
-    return civicrm_create_error("params is not an array ");
+    return civicrm_api3_create_error("params is not an array ");
   }
 
   $field_type       = CRM_Utils_Array::value ( 'field_type'       , $params );
@@ -131,16 +131,16 @@ function civicrm_uf_field_update( $params , $fieldId ) {
   if ( $UFField->find(true) ) {
     $ids['uf_group'] =  $UFField->uf_group_id;
   } else {
-    return civicrm_create_error("there is no field for this fieldId");
+    return civicrm_api3_create_error("there is no field for this fieldId");
   }
   $ids['uf_field'] = $fieldId;
 
   if (CRM_Core_BAO_UFField::duplicateField($params, $ids) ) {
-    return civicrm_create_error("The field was not added. It already exists in this profile.");
+    return civicrm_api3_create_error("The field was not added. It already exists in this profile.");
   }
 
   $ufField = CRM_Core_BAO_UFField::add( $params,$ids );
-  _civicrm_object_to_array( $ufField, $ufFieldArray);
+  _civicrm_api3_object_to_array( $ufField, $ufFieldArray);
 
   return $ufFieldArray;
 }
@@ -155,18 +155,18 @@ function civicrm_uf_field_update( $params , $fieldId ) {
  * @access public
  *
  */
-function civicrm_uf_field_delete($params ) {
-  _civicrm_initialize(true );
+function civicrm_api3_uf_field_delete($params ) {
+  _civicrm_api3_initialize(true );
   try{
-    civicrm_verify_mandatory($params,null,array('field_id'));
+    civicrm_api3_verify_mandatory($params,null,array('field_id'));
     $fieldId  = $params['field_id'];
     require_once 'CRM/Core/BAO/UFField.php';
     $result = CRM_Core_BAO_UFField::del($fieldId);
-    return civicrm_create_success($result,$params);
+    return civicrm_api3_create_success($result,$params);
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 
 }

@@ -55,25 +55,25 @@ require_once 'CRM/Core/BAO/UFMatch.php';
  * @todo this class is missing delete & create functions (do after exisitng functions upgraded to v3)
  * @todo this should really return the whole record using a find function but that's for v4.
  */
-function civicrm_uf_match_get($params)
+function civicrm_api3_uf_match_get($params)
 {
-  _civicrm_initialize( true );
+  _civicrm_api3_initialize( true );
   try{
-    civicrm_verify_one_mandatory($params,null,array('uf_id','contact_id'));
+    civicrm_api3_verify_one_mandatory($params,null,array('uf_id','contact_id'));
     if ((int) CRM_Utils_Array::value('uf_id', $params)> 0) {
       $result['contact_id']=CRM_Core_BAO_UFMatch::getContactId($params['uf_id']);
-      return civicrm_create_success($result);
+      return civicrm_api3_create_success($result);
     } elseif ((int) $params['contact_id'] > 0){
       $result['uf_id']= CRM_Core_BAO_UFMatch::getUFId($params['contact_id']);
-      return civicrm_create_success($result);
+      return civicrm_api3_create_success($result);
     }else{
-      return civicrm_create_error('How did I get here?.');
+      return civicrm_api3_create_error('How did I get here?.');
     }
 
   } catch (PEAR_Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
-    return civicrm_create_error( $e->getMessage() );
+    return civicrm_api3_create_error( $e->getMessage() );
   }
 }
 

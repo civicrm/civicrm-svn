@@ -105,7 +105,7 @@ function civicrm_group_organization_create( &$params )
 
     require_once 'CRM/Contact/BAO/GroupOrganization.php';
     $groupOrgBAO = CRM_Contact_BAO_GroupOrganization::add( $params );
-    if ( is_a( $groupOrgBAO, 'CRM_Core_Error' ) ) {
+    if ( is_a( $groupOrgBAO, 'CRM_Core_Error' ) || is_null($groupOrgBAO)) {
         return civicrm_create_error( "Group Organization can not be created" );
     }
     _civicrm_object_to_array( $groupOrgBAO, $values );
