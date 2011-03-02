@@ -37,11 +37,120 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
   {
       parent::setUp( );
   }
-
-  function testOnlineAutoRenewMembership()
+  
+  function testOnlineAutoRenewMembershipAnonymous()
   {
+      //configure membership signup page.
+      $this->_configureMembershipPage( );
+
+      //now do the test membership signup.
+      $this->open($this->sboxPath . 'civicrm/contribute/transact?reset=1&action=preview&id=2' );        
+      $this->waitForPageToLoad( "3000" );
+      $this->waitForElementPresent("_qf_Main_upload-bottom");
+      
+      $this->click("CIVICRM_QFID_2_4");
+
+      $this->click("auto_renew");
+      
+      $this->webtestAddCreditCardDetails( );
+      
+      list( $firstName, $middleName, $lastName ) = $this->webtestAddBillingDetails( );
+      
+      $this->type( 'email-5', "{$lastName}@example.com" );
+      
+      $this->click("_qf_Main_upload-bottom");
+      $this->waitForPageToLoad("30000");
+      $this->waitForElementPresent( "_qf_Confirm_next-bottom" );
+      
+      $text = 'I want this membership to be renewed automatically every 1 year(s).';
+      $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
+      
+      $this->click("_qf_Confirm_next-bottom");
+      $this->waitForPageToLoad("30000");
+      
+      $text = 'This membership will be renewed automatically every 1 year(s).';
+      $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
+  }
+  
+  function testOnlineAutoRenewMembershipAuthenticated( )
+  {
+      //configure membership signup page.
+      $this->_configureMembershipPage( );
+      
       $this->open( $this->sboxPath );
-      $this->webtestLogin();
+      $this->webtestLogin( );
+      $this->waitForPageToLoad("30000");
+      
+      //now do the test membership signup.
+      $this->open($this->sboxPath . 'civicrm/contribute/transact?reset=1&action=preview&id=2' );        
+      $this->waitForPageToLoad( "3000" );
+      $this->waitForElementPresent("_qf_Main_upload-bottom");
+      
+      $this->click("CIVICRM_QFID_2_4");
+      
+      $this->click("auto_renew");
+      
+      $this->webtestAddCreditCardDetails( );
+      
+      list( $firstName, $middleName, $lastName ) = $this->webtestAddBillingDetails( );
+      
+      $this->type( 'email-5', "{$lastName}@example.com" );
+      
+      $this->click("_qf_Main_upload-bottom");
+      $this->waitForPageToLoad("30000");
+      $this->waitForElementPresent( "_qf_Confirm_next-bottom" );
+      
+      $text = 'I want this membership to be renewed automatically every 1 year(s).';
+      $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
+      
+      $this->click("_qf_Confirm_next-bottom");
+      $this->waitForPageToLoad("30000");
+      
+      $text = 'This membership will be renewed automatically every 1 year(s).';
+      $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
+  }
+  
+  function testOnlinePendingAutoRenewMembershipAnonymous( )
+  {
+      //configure membership signup page.
+      $this->_configureMembershipPage( );
+      
+      //now do the test membership signup.
+      $this->open($this->sboxPath . 'civicrm/contribute/transact?reset=1&action=preview&id=2' );        
+      $this->waitForPageToLoad( "3000" );
+      $this->waitForElementPresent("_qf_Main_upload-bottom");
+      
+      $this->click("CIVICRM_QFID_2_4");
+      
+      $this->click("auto_renew");
+      
+      $this->click("is_pay_later");
+
+      $lastName = 'Smith_' . substr(sha1(rand()), 0, 7);
+      
+      $this->type( 'email-5', "{$lastName}@example.com" );
+      
+      $this->click("_qf_Main_upload-bottom");
+      $this->waitForPageToLoad("30000");
+      $this->waitForElementPresent( "_qf_Confirm_next-bottom" );
+      
+      $text = 'I want this membership to be renewed automatically every 1 year(s).';
+      $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
+      
+      $PayLaterInstructions = 'Pay later instructions.';
+      $this->assertTrue( $this->isTextPresent( $PayLaterInstructions ), 'Missing text: ' . $PayLaterInstructions );
+      
+      $this->click("_qf_Confirm_next-bottom");
+      $this->waitForPageToLoad("30000");
+      
+      $text = 'This membership will be renewed automatically every 1 year(s).';
+      $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
+      $this->assertTrue( $this->isTextPresent( $PayLaterInstructions ), 'Missing text: ' . $PayLaterInstructions );
+  }
+  
+  function _configureMembershipPage( ) {
+      $this->open( $this->sboxPath );
+      $this->webtestLogin( );
       
       //add payment processor.
       $processorName = "Webtest Auto Renew AuthNet" . substr(sha1(rand()), 0, 7);
@@ -49,6 +158,7 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
       
       // -- start updating membership types 
       $this->open($this->sboxPath . "civicrm/admin/member/membershipType&action=update&id=2&reset=1");
+      $this->waitForPageToLoad("30000");
       
       $this->waitForElementPresent("CIVICRM_QFID_1_10");
       $this->click("CIVICRM_QFID_1_10");
@@ -66,6 +176,8 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
       //configure paymentr processor.
       $this->waitForElementPresent('payment_processor_id');
       $this->select("payment_processor_id",  "label={$processorName}");
+      $this->click("is_pay_later");
+      $this->type("pay_later_receipt", "Pay later instructions.");
       $this->click('_qf_Amount_next');
       
       $this->waitForElementPresent("_qf_Amount_next-bottom"); 
@@ -77,7 +189,7 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
       $this->select("auto_renew_2", "label=Give option");
       $this->click("_qf_MembershipBlock_next");
       $this->waitForPageToLoad("30000");
-
+      
       //make sure we do have required permissions.
       $this->open( $this->sboxPath ."admin/user/permissions");
       $this->waitForElementPresent("edit-submit");
@@ -87,33 +199,7 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
       
       // now logout and do membership test that way
       $this->open($this->sboxPath . "civicrm/logout&reset=1");
-      $this->waitForPageToLoad('30000');          
-
-      //now do the test membership signup.
-      $this->open($this->sboxPath . 'civicrm/contribute/transact?reset=1&action=preview&id=2' );        
-      $this->waitForPageToLoad( );
-      
-      $this->click("CIVICRM_QFID_2_4");
-
-      $this->click("auto_renew");
-
-      $this->webtestAddCreditCardDetails( );
-
-      list( $firstName, $middleName, $lastName ) = $this->webtestAddBillingDetails( );
-
-      $this->type( 'email-5', "{$lastName}@example.com" );
-
-      $this->click("_qf_Main_upload-bottom");
-      $this->waitForPageToLoad("30000");
-      $this->waitForElementPresent( "_qf_Confirm_next-bottom" );
-      
-      $text = 'I want this membership to be renewed automatically every 1 year(s).';
-      $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
-      
-      $this->click("_qf_Confirm_next-bottom");
-      $this->waitForPageToLoad("30000");
-      
-      $text = 'This membership will be renewed automatically every 1 year(s).';
-      $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
+      $this->waitForPageToLoad('30000'); 
   }
+  
 }
