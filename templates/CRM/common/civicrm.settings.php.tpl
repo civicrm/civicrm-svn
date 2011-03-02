@@ -157,7 +157,7 @@ define( 'CIVICRM_UF_BASEURL'      , '%%baseURL%%' );
 define( 'CIVICRM_SITE_KEY', '%%siteKey%%' );
 
 /* 
- * If you want to keep the previous version of API, set it to 2, but beware that it will not be maintained forever
+ * If you want to keep the previous version of API, set it to 2, but beware that it will be deprecated in a future release
  */
 define( 'CIVICRM_API_VERSION', '3' );
 
