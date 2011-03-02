@@ -124,7 +124,7 @@
                             cj('#relationship-refresh-save').hide();
 			     cj('#saveButtons').hide();
                             cj('#rel_contact').val('');
-                            cj("input[name=rel_contact_id]").val('');
+                            cj("input[name='rel_contact_id']").val('');
                             createRelation( );
                             changeCustomData( 'Relationship' );
                             setPermissionStatus( cj(this).val( ) ); 
@@ -137,17 +137,17 @@
                         var relContact = cj('#rel_contact');
                         if ( relType ) {
                              relContact.unbind( 'click' );
-                             cj("input[name=rel_contact_id]").val('');
+                             cj("input[name='rel_contact_id']").val('');
                              var dataUrl = {/literal}'{crmURL p="civicrm/ajax/rest" h=0 q="className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=relationship&rel="}'{literal} + relType;
                              relContact.autocomplete( dataUrl, { width : 180, selectFirst : false, matchContains: true });
                              relContact.result(function( event, data ) {
-                               	cj("input[name=rel_contact_id]").val(data[1]);
+                               	cj("input[name='rel_contact_id']").val(data[1]);
                                 cj('#relationship-refresh-save').show( );
                                 buildRelationFields( relType );
                              });
                         } else { 
                             relContact.unautocomplete( );
-                            cj("input[name=rel_contact_id]").val('');
+                            cj("input[name='rel_contact_id']").val('');
                             relContact.click( function() { alert( '{/literal}{ts}Please select a relationship type first.{/ts}{literal} ...' );});
                         }
                     }       
@@ -465,12 +465,12 @@ cj(document).ready(function(){
          if( e.keyCode == 9 || e.keyCode == 13 ) {
 	     return false;
 	     }
-         cj("input[name=rel_contact_id]").val('');
+         cj("input[name='rel_contact_id']").val('');
          cj('#relationship-refresh').show( );
          cj('#relationship-refresh-save').hide( );
     }); } else {
          cj('#rel_contact').focus( function() {
-         cj("input[name=rel_contact_id]").val('');
+         cj("input[name='rel_contact_id']").val('');
          cj('#relationship-refresh').show( );
          cj('#relationship-refresh-save').hide( ); 
 }); }

@@ -266,7 +266,7 @@ cj(document).ready(function(){
 				eval( 'addMultiClientOption' + blockNo + "( newToken,  blockNo )" );
                        }
                    }
-                   cj('input[name=contact_select_id[' + blockNo +']]').val( response.contactID );
+                   cj('input[name="contact_select_id[' + blockNo +']"]').val( response.contactID );
                    cj('#contact-success-' + blockNo ).show( );
                    cj('#contact-dialog-' + blockNo ).dialog('close');
 

@@ -120,7 +120,7 @@
            
     function alterCaseFilters( ) {
         var isChecked = 0;
-        cj("#case_search_form input[name=case_owner]").each( function( ) {
+        cj("#case_search_form input[name='case_owner']").each( function( ) {
             if ( (cj(this).attr('type') == 'radio' && cj(this).attr('checked') ) ) {
                 isChecked = 1;
             }    
@@ -131,7 +131,7 @@
         }
 
         if ( cj.inArray( 1, verifyCaseInput ) != -1 ) {
-            cj("#case_search_form input[name=case_owner]").each( function( ) {
+            cj("#case_search_form input[name='case_owner']").each( function( ) {
                 if ( (cj(this).attr('type') == 'radio' && cj(this).val( ) == 1) ) {
                     cj(this).click();
                 }    

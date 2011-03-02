@@ -271,7 +271,7 @@
           return;
        }
        if ( !autoRenewOpt ) {
-       	  autoRenewOpt = cj( 'input:radio[name=auto_renew]:checked').val();
+       	  autoRenewOpt = cj( 'input:radio[name="auto_renew"]:checked').val();
        }	     
        funName = 'hide();';
        if ( autoRenewOpt == 1 || autoRenewOpt == 2 ) funName = 'show();';

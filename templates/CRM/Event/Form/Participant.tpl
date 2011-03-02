@@ -284,7 +284,7 @@
                     cj( elementID ).get(0).add(new Option(response[i].name, response[i].value), document.all ? i : null);
                 }
                 cj('#past-event').hide( );
-                cj('input[name=past_event]').val(1);
+                cj('input[name="past_event"]').val(1);
                 cj("#feeBlock").html( '' );
             }
         );

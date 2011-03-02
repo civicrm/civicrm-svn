@@ -308,7 +308,7 @@ function loadPanes( id ) {
 	showHideByValue( 'is_email_receipt', '', 'fromEmail', 'table-row', 'radio', false );
     });
     function checkEmail( ) {
-        var contactID = cj("input[name=contact_select_id[1]]").val();
+        var contactID = cj("input[name='contact_select_id[1]']").val();
         if ( contactID ) {
             var postUrl = "{/literal}{crmURL p='civicrm/ajax/checkemail' h=0}{literal}";
             cj.post( postUrl, {contact_id: contactID},
@@ -488,11 +488,11 @@ function buildAmount( priceSetId ) {
   }
 
   //don't allow recurring w/ priceset.
-  if ( cj( "#is_recur" ) && cj( 'input:radio[name=is_recur]:checked').val( ) ) {
+  if ( cj( "#is_recur" ) && cj( 'input:radio[name="is_recur"]:checked').val( ) ) {
       //reset the values of recur block. 
       cj("#installments").val('');
       cj("#frequency_interval").val('');
-      cj( 'input:radio[name=is_recur]')[0].checked = true;
+      cj( 'input:radio[name="is_recur"]')[0].checked = true;
 
       cj( "#recurringPaymentBlock" ).hide( );
   }
