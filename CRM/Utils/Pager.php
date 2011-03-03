@@ -53,7 +53,7 @@ class CRM_Utils_Pager extends Pager_Sliding {
      * constants for static parameters of the pager
      */
     const
-        ROWCOUNT         = 5,
+        ROWCOUNT         = 50,
         PAGE_ID          = 'crmPID',
         PAGE_ID_TOP      = 'crmPID',
         PAGE_ID_BOTTOM   = 'crmPID_B',
@@ -137,6 +137,7 @@ class CRM_Utils_Pager extends Pager_Sliding {
         $this->_response['titleBottom']    = ts('Page %1 of %2', array(1 => '<input size="2" maxlength="3" name="' . self::PAGE_ID_BOTTOM . '" type="text" value="' . $this->_response['currentPage'] . '" />', 2 => $this->_response['numPages']));
         
     }
+    
     
     /**
      * helper function to assign remaining pager options as good default
