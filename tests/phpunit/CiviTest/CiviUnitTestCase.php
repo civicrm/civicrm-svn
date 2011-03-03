@@ -1273,10 +1273,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      * 
      * @return array $note
      */
-    function noteCreate( $cId ,$apiversion = NULL )
+    function noteCreate( $cId  )
     {
-        $apiversion = civicrm_get_api_version($apiversion);
-
         $params = array(
                         'entity_table'  => 'civicrm_contact',
                         'entity_id'     => $cId,
@@ -1284,9 +1282,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         'contact_id'    => $cId,
                         'modified_date' => date('Ymd'),
                         'subject'       =>'Test Note', 
-                        'version'				=> $apiversion,
+                        'version'				=> API_LATEST_VERSION,
         );
-       require_once 'api/api.php';
+
        $result = civicrm_api( 'Note','create',$params );
        return $result;
     }
