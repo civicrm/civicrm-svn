@@ -140,7 +140,14 @@ class CRM_Event_Form_Task_Badge extends CRM_Event_Form_Task
             $where .= " AND {$this->_componentClause}";
         }
         
-        $queryString = "$select $from $where $having";
+        $sortOrder = null;
+        if ( $this->get( CRM_Utils_Sort::SORT_ORDER  ) ) {
+            $sortOrder = $this->get( CRM_Utils_Sort::SORT_ORDER );
+            if ( ! empty( $sortOrder ) ) {
+                $sortOrder = " ORDER BY $sortOrder";
+            }
+        }
+        $queryString = "$select $from $where $having $sortOrder";
 
         $dao = CRM_Core_DAO::executeQuery( $queryString );
         $rows = array( );
