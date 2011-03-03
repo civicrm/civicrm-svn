@@ -626,7 +626,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */    
     function participantCreate( $params, $apiversion = NULL )
     {
-        $apiversion = civicrm_get_api_version($apiversion); 
+
         $params = array(
                         'contact_id'    => $params['contactID'],
                         'event_id'      => $params['eventID'],
@@ -635,14 +635,11 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         'register_date' => 20070219,
                         'source'        => 'Wimbeldon',
                         'event_level'   => 'Payment',
-                        'version'				=> $apiversion,
+                        'version'				=> API_LATEST_VERSION,
                         );
-        $result = civicrm_api_legacy( 'civicrm_participant_create','Participant',$params );
+        $result = civicrm_api( 'Participant','create',$params );
         if ( CRM_Utils_Array::value( 'is_error', $result ) && $result['is_error'] ==1) {
           throw new Exception( 'Could not create participant ' . $result['error_message'] );          
-        }
-        if (isset($result['result'])){
-        return $result['result'];//v2 format
         }
         return $result['id'];
         
