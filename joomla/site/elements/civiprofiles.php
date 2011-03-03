@@ -37,16 +37,15 @@ class JElementCiviprofiles extends JElement {
 	 */
 	var	$_name = 'CiviProfiles';
 	
-	function fetchElement($name, $value, &$node, $control_name)
+	function fetchElement( $name, $value, &$node, $control_name )
 	{
 		// Initiate CiviCRM
 		require_once JPATH_ROOT.'/'.'administrator/components/com_civicrm/civicrm.settings.php';
 		require_once 'CRM/Core/Config.php';
 		$config =& CRM_Core_Config::singleton( );
-		
-        civicrm_api_include('uf_group');
-        $ufGroups =civicrm_uf_profile_groups_get();
-        $options[] = JHTML::_('select.option', '', JText::_('- Select Profile -') );
+        
+        $ufGroups = CRM_Core_PseudoConstant::ufGroup( );
+        $options[] = JHTML::_( 'select.option', '', JText::_( '- Select Profile -' ) );
         foreach ( $ufGroups  as $key =>$values ) {
             $options[] = JHTML::_( 'select.option', $key, $values );
         }
