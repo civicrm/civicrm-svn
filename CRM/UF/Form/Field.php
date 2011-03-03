@@ -865,9 +865,18 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             }
             break;    
         case 'Individual' :
-            if ( in_array( 'Activity', $groupType ) || in_array( 'Household', $groupType ) || in_array( 'Organization', $groupType ) ) {
-                $errors['field_name'] = 
-                    ts( 'Cannot add or update profile field type Individual with combination of Household or Organization or Activity' ); 
+            if ( in_array( 'Activity', $groupType ) || 
+                 in_array( 'Household', $groupType ) || 
+                 in_array( 'Organization', $groupType ) ) {
+                
+                //CRM-7603 - need to support activity + individual. 
+                //$errors['field_name'] = 
+                //ts( 'Cannot add or update profile field type Individual with combination of Household or Organization or Activity' ); 
+                if ( in_array( 'Household', $groupType ) || 
+                     in_array( 'Organization', $groupType ) ) {
+                    $errors['field_name'] = 
+                        ts( 'Cannot add or update profile field type Individual with combination of Household or Organization' ); 
+                }
             } else {
                 self::formRuleSubType( $fieldType, $groupType, $errors );
             }
@@ -889,10 +898,22 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             }
             break;
         case 'Activity' :
-                if ( in_array( 'Individual', $groupType ) || in_array( 'Membership', $groupType ) || in_array( 'Contribution', $groupType )
-                 || in_array( 'Organization', $groupType ) || in_array( 'Household', $groupType ) || in_array( 'Participant', $groupType )) {
-                $errors['field_name'] = 
-                    ts( 'Cannot add or update profile field type Activity with combination Participant or Membership or Contribution or Household or Organization or Individual' ); 
+            if ( in_array( 'Individual', $groupType ) || 
+                 in_array( 'Membership', $groupType ) || 
+                 in_array( 'Contribution', $groupType ) || 
+                 in_array( 'Organization', $groupType ) || 
+                 in_array( 'Household', $groupType ) || 
+                 in_array( 'Participant', $groupType )) {
+                
+                //CRM-7603 - need to support activity + contact type.
+                //$errors['field_name'] = 
+                //ts( 'Cannot add or update profile field type Activity with combination Participant or Membership or Contribution or Household or Organization or Individual' ); 
+                if ( in_array( 'Membership', $groupType ) || 
+                     in_array( 'Contribution', $groupType ) || 
+                     in_array( 'Participant', $groupType )) {
+                    $errors['field_name'] = 
+                        ts( 'Cannot add or update profile field type Activity with combination Participant or Membership or Contribution' ); 
+                }
             } else {
                 self::formRuleSubType( $fieldType, $groupType, $errors );
             }

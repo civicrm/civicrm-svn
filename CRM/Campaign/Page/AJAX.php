@@ -200,6 +200,14 @@ class CRM_Campaign_Page_AJAX
                     $campaignGroups = CRM_Campaign_BAO_Campaign::getCampaignGroups($campaignId);
                     foreach( $campaignGroups as $id => $group ) $params['group'][$id] = 1;
                 }
+                
+                //apply filter of survey contact type for search.
+                require_once 'CRM/Campaign/BAO/Survey.php';
+                $contactType = CRM_Campaign_BAO_Survey::getSurveyContactType( $surveyId );
+                if ( $contactType ) {
+                    $params['contact_type'][$contactType] = 1 ;
+                }
+                
                 unset( $params['campaign_survey_id'] );
             }
             unset( $params['survey_interviewer_id'] );

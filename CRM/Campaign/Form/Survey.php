@@ -222,7 +222,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( CRM_Utils_Array::value( 'campaign_id', $this->_values ) );
         $this->add('select', 'campaign_id', ts('Campaign'), array( '' => ts('- select -') ) + $campaigns );
         
-        $customProfiles = CRM_Core_BAO_UFGroup::getProfiles( array('Activity') );
+        $customProfiles = CRM_Core_BAO_UFGroup::getProfiles( CRM_Campaign_BAO_Survey::surveyProfileTypes( ) );
         // custom group id
         $this->add('select', 'profile_id', ts('Profile'), 
                    array( '' => ts('- select -')) + $customProfiles );

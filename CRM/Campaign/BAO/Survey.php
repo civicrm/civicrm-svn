@@ -681,6 +681,67 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
         return $menuLinks;
     }
     
+    /**
+     * Function to retrieve survey associated profile id.
+     *
+     **/
+    public Static function getSurveyProfileId( $surveyId )
+    {
+        if ( ! $surveyId ) {
+            return null;
+        }
+        
+        static $ufIds = array( );
+        if ( !array_key_exists( $surveyId, $ufIds ) ) {
+            //get the profile id.
+            require_once 'CRM/Core/BAO/UFJoin.php'; 
+            $ufJoinParams = array( 'entity_id'    => $surveyId,
+                                   'entity_table' => 'civicrm_survey',   
+                                   'module'       => 'CiviCampaign' );
+            $ufIds[$surveyId] = CRM_Core_BAO_UFJoin::findUFGroupId( $ufJoinParams );
+        }
+        
+        return $ufIds[$surveyId];
+    }
+
+    /**
+     * Function to decides the contact type for given survey.
+     *
+     **/
+    public Static function getSurveyContactType( $surveyId )
+    {
+        $contactType = null;
+        
+        //apply filter of profile type on search.
+        $profileId = self::getSurveyProfileId( $surveyId );
+        if ( $profileId ) {
+            require_once 'CRM/Core/BAO/UFField.php';
+            require_once 'CRM/Contact/BAO/Contact.php';
+            $profileType = CRM_Core_BAO_UFField::getProfileType( $profileId );
+            if ( in_array( $profileType, CRM_Contact_BAO_ContactType::basicTypes( ) ) ) {
+                $contactType = $profileType;
+            }
+        }
+        
+        return $contactType;
+    }
+    
+    /**
+     * Function to get survey supportable profile types
+     *
+     **/
+    public Static function surveyProfileTypes( )
+    {
+        static $profileTypes;
+        
+        if ( !isset( $profileTypes ) ) {
+            require_once 'CRM/Contact/BAO/ContactType.php';
+            $profileTypes = array_merge( array( 'Activity', 'Contact' ), CRM_Contact_BAO_ContactType::basicTypes( ) ); 
+        }
+        
+        return $profileTypes;
+    }
+    
     /* Get the valid survey response fields those 
      * are configured with profile and custom fields.
      *
@@ -704,12 +765,7 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
         
         $responseFields[$cacheKey] = array( );
         
-        //get the profile id.
-        require_once 'CRM/Core/BAO/UFJoin.php'; 
-        $ufJoinParams = array( 'entity_id'    => $surveyId,
-                               'entity_table' => 'civicrm_survey',   
-                               'module'       => 'CiviCampaign' );
-        $profileId = CRM_Core_BAO_UFJoin::findUFGroupId( $ufJoinParams );
+        $profileId = self::getSurveyProfileId( $surveyId );
         
         if ( !$profileId ) return $responseFields;
         if ( !$surveyTypeId ) {
@@ -723,10 +779,14 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
         //don't load these fields in grid.
         $removeFields = array( 'File', 'Autocomplete-Select', 'RichTextEditor' );
         require_once 'CRM/Core/BAO/CustomField.php';
+        
+        require_once 'CRM/Contact/BAO/ContactType.php';
+        $supportableFieldTypes = self::surveyProfileTypes( );
+        
         foreach ( $profileFields as $name => $field ) {
             //get only contact and activity fields.
             //later stage we might going to consider contact type also.
-            if ( !in_array( $field['field_type'], array( 'Activity', 'Contact'  ) ) ) {
+            if ( !in_array( $field['field_type'], $supportableFieldTypes ) ) {
                 continue;
             }
             if ( CRM_Core_BAO_CustomField::getKeyID( $name ) &&
