@@ -311,14 +311,14 @@ class CRM_Report_Form_Contribute_OrganizationSummary extends CRM_Report_Form {
     function validRelationships( ) {
         $this->relationTypes = $relationTypes = array( );
         
-        $params = array( 'contact_type_b' => 'Organization' );
+        $params = array('contact_type_b' => 'Organization', 'version' => 3);
         $typesA =& civicrm_api('relationship_type', 'get', $params);
         foreach( $typesA as $rel) {
             $relationTypes[ $rel['id'] ][ $rel['id'].'_b_a' ] = $rel['label_b_a'];
             //$this->relationTypes[$rel['id'].'_b_a'] = $rel['label_b_a'];
         }
         
-        $params = array( 'contact_type_a' => 'Organization' );
+        $params = array('contact_type_a' => 'Organization', 'version' => 3);
         $typesB =& civicrm_api('relationship_type', 'get', $params);
         foreach( $typesB as $rel) {
             $relationTypes[ $rel['id'] ][ $rel['id'].'_a_b' ] = $rel['label_a_b'];

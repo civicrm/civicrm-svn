@@ -267,6 +267,9 @@ WHERE  id = %1";
                 
                 // Get Conatct ID 
                 $value['source_contact_id'] = $dao->source_contact_id;
+
+                // make call use API 3
+                $value['version'] = 3;
                 
                 $activityId = civicrm_api('activity', 'update', $value);
                 

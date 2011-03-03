@@ -467,8 +467,8 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
         $mailing->find(true);
 
         $session = CRM_Core_Session::singleton();
-        $values = array('contact_id' => $session->get('userID'));
-        $contact =& civicrm_api('contact', 'get', $values );
+        $values = array('contact_id' => $session->get('userID'), 'version' => 3);
+        $contact =& civicrm_api('contact', 'get', $values);
         
         //CRM-4524
         $contact = reset( $contact );

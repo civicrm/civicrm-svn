@@ -502,7 +502,7 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
         }
 
         if ( $this->_linkToUF ) {
-            civicrm_api_include('uf_group');
+            civicrm_api_include('uf_group', false, 3);
         }
 
         // we need to determine of overlay profile should be shown
