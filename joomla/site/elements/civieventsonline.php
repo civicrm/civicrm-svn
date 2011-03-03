@@ -26,14 +26,15 @@ class JFormFieldCiviEventsOnline extends JFormField {
 		$config =& CRM_Core_Config::singleton( );
 		
 		$params = array(
-                  'is_online_registration'        => 1,
-				  'is_active'        			  => 1,
-				  'isCurrent'					  => 1,
-				  'return.title'			  	  => 1,
-                  'return.id'                     => 1,
-                  'return.end_date'               => 1,
-                  'return.start_date' 			  => 1
-                  );
+                        'version'                 =>'3',
+                        'is_online_registration'  => 1,
+                        'is_active'        		  => 1,
+                        'isCurrent'				  => 1,
+                        'return.title'			  => 1,
+                        'return.id'               => 1,
+                        'return.end_date'         => 1,
+                        'return.start_date' 	  => 1
+                        );
     	$events = civicrm_api('event', 'get', $params);
 		$currentdate = date("Y-m-d H:i:s");
 		$options = array();

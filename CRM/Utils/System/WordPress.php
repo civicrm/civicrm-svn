@@ -34,6 +34,8 @@
  *
  */
 
+require_once 'CRM/Utils/String.php';
+
 /**
  * WordPress specific stuff goes here
  */
@@ -166,6 +168,8 @@ class CRM_Utils_System_WordPress {
                  $frontend = false ) {
         $config = CRM_Core_Config::singleton( );
         $script =  'index.php';
+
+        $path = CRM_Utils_String::stripPathChars( $path );
 
         if (isset($fragment)) {
             $fragment = '#'. $fragment;

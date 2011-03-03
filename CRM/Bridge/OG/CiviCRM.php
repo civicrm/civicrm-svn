@@ -91,7 +91,7 @@ class CRM_Bridge_OG_CiviCRM {
             return;
         }
 
-        civicrm_api_include('uf_group');
+        civicrm_api_include('uf_group', false, 3);
         foreach ( $contactIDs as $contactID ) {
             $drupalID = civicrm_uf_id_get( $contactID );
             if ( $drupalID ) {

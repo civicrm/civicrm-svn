@@ -466,7 +466,11 @@ ORDER BY parent_id, weight";
             if ( substr( $url, 0, 4 ) === 'http' ) {
                 $url = $url;
             } else {
-                $url = CRM_Utils_System::url( $url );
+                //CRM-7656 --make sure to separate out url path from url params,
+                //as we'r going to validate url path across cross-site scripting.
+                $urlVars = explode( '&amp;', $url, 2 );
+                $url = CRM_Utils_System::url( $urlVars[0],
+                                              CRM_Utils_Array::value( 1, $urlVars ) );
             }
             $makeLink = true;
         }

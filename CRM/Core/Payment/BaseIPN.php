@@ -456,13 +456,16 @@ class CRM_Core_Payment_BaseIPN {
             $participant->status_id = 1;
             $participant->save( );
         }
-        if ( $input['net_amount'] == 0 && $input['fee_amount'] != 0 ) {
+
+        if ( CRM_Utils_Array::value( 'net_amount', $input, 0 ) == 0 && 
+             CRM_Utils_Array::value( 'fee_amount', $input, 0 ) != 0 ) {
             $input['net_amount'] = $input['amount'] - $input['fee_amount'];
         }
+
         $contribution->contribution_status_id  = 1;
         $contribution->is_test      = $input['is_test'];
-        $contribution->fee_amount   = $input['fee_amount'];
-        $contribution->net_amount   = $input['net_amount'];
+        $contribution->fee_amount   = CRM_Utils_Array::value( 'fee_amount', $input, 0 );
+        $contribution->net_amount   = CRM_Utils_Array::value( 'net_amount', $input, 0 );
         $contribution->trxn_id      = $input['trxn_id'];
         $contribution->receive_date = CRM_Utils_Date::isoToMysql($contribution->receive_date);
         $contribution->cancel_date  = 'null';

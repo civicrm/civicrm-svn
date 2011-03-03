@@ -52,14 +52,16 @@ class CRM_Utils_System {
      * @return string the url fragment
      * @access public
      */
-    static function makeURL( $urlVar, $includeReset = false, $includeForce = true ) {
-        $config   = CRM_Core_Config::singleton( );
-
-        if ( ! isset( $_GET[$config->userFrameworkURLVar] ) ) {
-            return '';
+    static function makeURL( $urlVar, $includeReset = false, $includeForce = true, $path = null ) {
+        if ( empty( $path ) ) {
+            $config = CRM_Core_Config::singleton( );
+            $path   = CRM_Utils_Array::value( $config->userFrameworkURLVar, $_GET );
+            if ( empty( $path ) ) {
+                return '';
+            }
         }
 
-        return self::url( $_GET[$config->userFrameworkURLVar],
+        return self::url( $path,
                           CRM_Utils_System::getLinksUrl( $urlVar, $includeReset, $includeForce ) );
     }
 
@@ -75,7 +77,7 @@ class CRM_Utils_System {
      * @return string
      * @access public
      */
-    static function getLinksUrl( $urlVar, $includeReset = false, $includeForce = true ) {
+    static function getLinksUrl( $urlVar, $includeReset = false, $includeForce = true, $skipUFVar = true ) {
         // Sort out query string to prevent messy urls
         $querystring = array();
         $qs          = array();
@@ -107,11 +109,15 @@ class CRM_Utils_System {
         if ($includeForce ) {
             $qs['force'] = 1;
         }
-        foreach ($qs as $name => $value) {
-            if ( $name == 'snippet' ) {
-                continue;
-            }
 
+        unset( $qs['snippet'] );
+
+        if ( $skipUFVar ) {
+            $config = CRM_Core_Config::singleton( );
+            unset( $qs[$config->userFrameworkURLVar] );
+        }
+
+        foreach ($qs as $name => $value) {
             if ( $name != 'reset' || $includeReset ) {
                 $querystring[] = $name . '=' . $value;
             }

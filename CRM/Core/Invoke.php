@@ -129,6 +129,10 @@ class CRM_Core_Invoke
         $template->assign( 'formTpl'        , 'default' );
 
         if ( $item ) {
+            // CRM-7656 - make sure we send a clean sanitized path to create printer friendly url
+            $printerFriendly = CRM_Utils_System::makeURL( 'snippet', false, false, $item['path'] ) . '2';
+            $template->assign ( 'printerFriendly', $printerFriendly );
+
             if ( ! array_key_exists( 'page_callback', $item ) ) {
                 CRM_Core_Error::debug( 'Bad item', $item );
                 CRM_Core_Error::fatal( ts( 'Bad menu record in database' ) );

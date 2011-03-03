@@ -181,11 +181,6 @@ class CRM_Contact_Form_RelatedContact extends CRM_Core_Form
         require_once 'CRM/Contact/BAO/Contact.php';
         $contact =& CRM_Contact_BAO_Contact::create($params, true, false );
         
-        if ( $this->_contactType == 'Household' && ( $this->_action & CRM_Core_Action::UPDATE ) ) {
-            require_once 'CRM/Contact/Form/Household.php';
-            CRM_Contact_Form_Household::synchronizeIndividualAddresses( $contact->id );
-        }
-
         // set status message.
         CRM_Core_Session::setStatus(ts('Your %1 contact record has been saved.', 
                                        array(1 => $contact->contact_type_display)));

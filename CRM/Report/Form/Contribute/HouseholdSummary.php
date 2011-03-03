@@ -309,7 +309,7 @@ class CRM_Report_Form_Contribute_HouseholdSummary extends CRM_Report_Form {
     function validRelationships( ) {
         $this->relationTypes = $relationTypes = array( );
         
-        $params = array( 'contact_type_b' => 'Household' );
+        $params = array('contact_type_b' => 'Household', 'version' => 3);
         $typesA =& civicrm_api('relationship_type', 'get', $params );
         foreach( $typesA as $rel) {
             $relationTypes[ $rel['id'] ][ $rel['id'].'_b_a' ] = $rel['label_b_a'];

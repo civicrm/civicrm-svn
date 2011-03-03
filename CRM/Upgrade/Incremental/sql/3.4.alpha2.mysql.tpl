@@ -38,3 +38,7 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id )
 
 {/if}
 
+-- get rid of standalone tables CRM-7672
+DROP TABLE IF EXISTS civicrm_openid_associations;
+DROP TABLE IF EXISTS civicrm_openid_nonces;
+

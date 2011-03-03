@@ -214,9 +214,8 @@ class CRM_Core_BAO_File extends CRM_Core_DAO_File {
         $cfIDs  = array( );
         $cefIDs = array( );
         while ( $dao->fetch( ) ) {
-            unlink( $config->customFileUploadDir . DIRECTORY_SEPARATOR . $dao->uri );
-            $cfIDs[]  = $dao->cfID ;
-            $cefIDs[] = $dao->cefID;
+            $cfIDs[$dao->cfID]  = $dao->uri ;
+            $cefIDs[]           = $dao->cefID;
         }
 
         if ( ! empty( $cefIDs ) ) {
@@ -226,9 +225,20 @@ class CRM_Core_BAO_File extends CRM_Core_DAO_File {
         }
 
         if ( ! empty( $cfIDs ) ) {
-            $cfIDs = implode( ',', $cfIDs );
-            $sql = "DELETE FROM civicrm_file where id IN ( $cfIDs )";
-            CRM_Core_DAO::executeQuery( $sql );
+            // Delete file only if there no any entity using this file.
+            $deleteFiles = array( );
+            foreach ( $cfIDs as $fId => $fUri ) {
+                if ( !CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_EntityFile', $fId, 'id', 'file_id' ) ) {
+                    unlink( $config->customFileUploadDir . DIRECTORY_SEPARATOR . $fUri );
+                    $deleteFiles[$fId] = $fId;
+                }
+            }
+            
+            if ( !empty($deleteFiles) ) {
+                $deleteFiles = implode( ',', $deleteFiles );
+                $sql = "DELETE FROM civicrm_file where id IN ( $deleteFiles )";
+                CRM_Core_DAO::executeQuery( $sql );
+            }
         }
     }
 

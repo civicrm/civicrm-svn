@@ -74,6 +74,7 @@ class CRM_Bridge_OG_Drupal {
                 $params['group_type'] = $groupType;
             }
             
+            $params['version'] = 3;
             $group = civicrm_api('group', 'add', $params );
             if ( ! civicrm_error( $group ) ) {
                 $params['group_id'] = $group['result'];
@@ -195,8 +196,11 @@ SELECT v.id
         $groupID   = CRM_Bridge_OG_Utils::groupID( CRM_Bridge_OG_Utils::ogSyncName( $params['og_id'] ),
                                                    null, true );
         
-        $groupParams = array( 'contact_id' => $contactID,
-                              'group_id'   => $groupID  );
+        $groupParams = array(
+            'contact_id' => $contactID,
+            'group_id'   => $groupID,
+            'version'    => 3,
+        );
 
         if ( $op == 'add' ) {
             $groupParams['status'] = $params['is_active'] ? 'Added' : 'Pending';

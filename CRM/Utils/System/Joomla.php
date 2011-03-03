@@ -34,6 +34,7 @@
  *
  */
 
+require_once 'CRM/Utils/String.php';
 
 /**
  * Joomla specific stuff goes here
@@ -180,6 +181,8 @@ class CRM_Utils_System_Joomla {
                  $fragment = null, $htmlize = true,
                  $frontend = false ) {
         $config        = CRM_Core_Config::singleton( );
+
+        $path = CRM_Utils_String::stripPathChars( $path );
 
         if ( $config->userFrameworkFrontend || $config->userFrameworkVersion > 1.5 ) {
             $script = 'index.php';

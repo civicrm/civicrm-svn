@@ -44,8 +44,8 @@
  *
  */
 
-civicrm_api_include('utils');
-civicrm_api_include('mailer');
+civicrm_api_include('utils', false, 3);
+civicrm_api_include('mailer', false, 3);
 
 class CRM_Utils_SoapServer
 {
@@ -219,6 +219,7 @@ class CRM_Utils_SoapServer
     
     public function get_contact($key, $params) { 
         $this->verify($key);
+        $params['version'] = 3;
         return civicrm_api('contact', 'get', $params);
     }
 
