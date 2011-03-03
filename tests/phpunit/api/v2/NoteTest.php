@@ -69,6 +69,7 @@ class api_v2_NoteTest extends CiviUnitTestCase
 
         $this->_note      = $this->noteCreate( $this->_contactID );
         $this->_noteID    = $this->_note['id'];
+        print_r($this->_note );
     }
 
     function tearDown( ) 
@@ -118,10 +119,10 @@ class api_v2_NoteTest extends CiviUnitTestCase
      */
     function testGet( )
     { 
-        $entityId = $this->_note['entity_id'];
+
         $params   = array(
                           'entity_table'  => 'civicrm_contact',
-                          'entity_id'     => $entityId
+                          'entity_id'     => $this->_noteID,
                           ); 
         $result = civicrm_note_get( $params );
         $this->assertEquals( $result['is_error'], 0 );

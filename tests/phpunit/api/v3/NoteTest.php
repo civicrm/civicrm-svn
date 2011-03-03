@@ -72,7 +72,7 @@ class api_v3_NoteTest extends CiviUnitTestCase
                                'subject'       => 'Test Note', 
                                'version'			 =>$this->_apiversion, 
                                );
-        $this->_note      = $this->noteCreate( $this->_contactID, $this->_apiversion );
+        $this->_note      = $this->noteCreate( $this->_contactID );
         $this->_noteID    = $this->_note['id'];
     }
 
