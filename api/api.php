@@ -138,10 +138,6 @@ function civicrm_get_api_version($desired_version = NULL) {
         $_version = $desired_version;
         // echo "\n".'version: '. $_version ." (parameter)\n";
     }
-    else if (defined('CIVICRM_API_VERSION')) {
-        $_version = CIVICRM_API_VERSION;
-        // echo "\n".'version: '. $_version ." (CIVICRM_API_VERSION)\n";
-    }
     else {
         // we will set the default to version 3 as soon as we find that it works.
         $_version = 2;
