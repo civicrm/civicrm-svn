@@ -1287,7 +1287,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         'version'				=> $apiversion,
         );
        require_once 'api/api.php';
-       $result = civicrm( 'Note','create',$params );
+       $result = civicrm_api( 'Note','create',$params );
        return $result;
     }
 function documentMe($params,$result,$function,$filename){
