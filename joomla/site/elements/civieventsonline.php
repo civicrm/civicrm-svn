@@ -16,7 +16,7 @@ class JElementCivieventsonline extends JElement
 	 */
 	var	$_name = 'CiviEventsOnline';
 	
-	function fetchElement($name, $value, &$node, $control_name)
+	function fetchElement( $name, $value, &$node, $control_name )
 	{
 		// Initiate CiviCRM
 		require_once JPATH_ROOT.'/'.'administrator/components/com_civicrm/civicrm.settings.php';
@@ -24,14 +24,15 @@ class JElementCivieventsonline extends JElement
 		$config =& CRM_Core_Config::singleton( );
 		
 		$params = array(
-                  'is_online_registration'        => 1,
-				  'is_active'        			  => 1,
-				  'isCurrent'					  => 1,
-				  'return.title'			  	  => 1,
-                  'return.id'                     => 1,
-                  'return.end_date'               => 1,
-                  'return.start_date' 			  => 1
-                  );
+                        'version'                 =>'3',
+                        'is_online_registration'  => 1,
+                        'is_active'        		  => 1,
+                        'isCurrent'				  => 1,
+                        'return.title'			  => 1,
+                        'return.id'               => 1,
+                        'return.end_date'         => 1,
+                        'return.start_date' 	  => 1
+                        );
     	$events = civicrm_api('event', 'get', $params);
 		$currentdate = date("Y-m-d H:i:s");
 		$options = array();
@@ -44,7 +45,7 @@ class JElementCivieventsonline extends JElement
 		}
 		
 		return JHTML::_( 'select.genericlist', $options, ''.$control_name.'['.$name.']', null, 'value', 'text', $value, $control_name.$name );
-
+        
 	}
 }
 ?>

@@ -42,16 +42,17 @@ class JElementCivievents extends JElement {
 		require_once JPATH_ROOT.'/'.'administrator/components/com_civicrm/civicrm.settings.php';
 		require_once 'CRM/Core/Config.php';
 		$config =& CRM_Core_Config::singleton( );
-    
+        
 		$params = array(
-        'is_active'        	 => 1,
-        'return.isCurrent'   => 1,
-        'return.title'		 => 1,
-        'return.id'          => 1,
-        'return.end_date'    => 1,
-        'return.start_date'  => 1
-    );
-    $events = civicrm_api('event', 'get', $params );
+                        'version' 		     => '3',
+                        'is_active'        	 => 1,
+                        'return.isCurrent'   => 1,
+                        'return.title'		 => 1,
+                        'return.id'          => 1,
+                        'return.end_date'    => 1,
+                        'return.start_date'  => 1
+                        );
+        $events = civicrm_api('event', 'get', $params );
 		$currentdate = date("Y-m-d H:i:s");
 		$options = array();
 		$options[] = JHTML::_('select.option', '', JText::_('- Select Event -') );
@@ -61,7 +62,7 @@ class JElementCivievents extends JElement {
 				$options[] = JHTML::_( 'select.option', $event['id'], $event['event_title'] );
 			}
 		}
-
+        
 		return JHTML::_( 'select.genericlist', $options, ''.$control_name.'['.$name.']', null, 'value', 'text', $value, $control_name.$name );
         
 	}
