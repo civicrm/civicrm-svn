@@ -626,7 +626,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */    
     function participantCreate( $params, $apiversion = NULL )
     {
-
+ 
         $params = array(
                         'contact_id'    => $params['contactID'],
                         'event_id'      => $params['eventID'],
@@ -640,6 +640,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $result = civicrm_api( 'Participant','create',$params );
         if ( CRM_Utils_Array::value( 'is_error', $result ) && $result['is_error'] ==1) {
           throw new Exception( 'Could not create participant ' . $result['error_message'] );          
+        }
+        if (isset($result['result'])){
+        return $result['result'];//v2 format
         }
         return $result['id'];
         
@@ -680,19 +683,18 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */    
     function tagCreate( $params = null, $apiversion = NULL )
     {
-        $apiversion = civicrm_get_api_version($apiversion);
+
         if ( $params === null ) {
             $params = array(
                             'name'        => 'New Tag3' . rand(),
                             'description' => 'This is description for New Tag ' . rand(),
                             'domain_id'   => '1',
-                            'version'     => $apiversion,
+                            'version'     => API_LATEST_VERSION,
                             );
         }
         
         require_once 'api/api.php';
-        $result = civicrm_api_legacy( 'civicrm_tag_create','Tag',$params );
-
+        $result = civicrm_api( 'Tag','create',$params );
         
         return  $result ;
     }
@@ -704,16 +706,16 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */    
     function tagDelete( $tagId, $apiversion = NULL )
     {
-        $apiversion = civicrm_get_api_version($apiversion);
+
         require_once 'api/api.php';
         $params = array('tag_id' => $tagId,
-                        'version'  => $apiversion);
-        $result = civicrm_api_legacy( 'civicrm_tag_delete','Tag',$params );
+                        'version'  => API_LATEST_VERSION);
+        $result = civicrm_api('Tag','delete',$params );
         $result = civicrm_tag_delete( $params );
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
             throw new Exception( 'Could not delete tag' );
         }
-        return;
+        return $result['id'];
     }
     
     /** 
@@ -730,7 +732,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
             throw new Exception( 'Error while creating entity tag' );
         }
-        return ;
+        return $result['id'];
     }
       /**
      * Function to create contribution  
@@ -759,7 +761,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         'installments'            =>5,
                         'version'                 =>$apiversion
                         );
-        $result = civicrm_api_legacy( 'civicrm_pledge_create','Pledge',$params );
+        $result = civicrm_api( 'Pledge','create',$params );
                         
         return $result['id'];
         
@@ -771,12 +773,10 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      * @param int $contributionId
      */
     function pledgeDelete($pledgeId, $apiversion = NULL )
-    {
-        $apiversion = civicrm_get_api_version($apiversion);
-     
-
-        $params = array( 'pledge_id' => $pledgeId );
-        $result = civicrm_api_legacy( 'civicrm_pledge_delete','Pledge',$params );
+    {  
+        $params = array( 'pledge_id' => $pledgeId,
+                          'version'	=> API_LATEST_VERSION );
+        $result = civicrm_api( 'Pledge','delete',$params );
  
 
     }
@@ -791,7 +791,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     function contributionCreate($cID,$cTypeID, $apiversion = NULL )
     {
-        $apiversion = civicrm_get_api_version($apiversion);
+
 
         $params = array(
                         'domain_id'              => 1,
@@ -806,12 +806,12 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         'trxn_id'                => 12345,
                         'invoice_id'             => 67890,
                         'source'                 => 'SSF',
-                        'version'								 => $apiversion,
+                        'version'								 => API_LATEST_VERSION,
                         'contribution_status_id' => 1,
                      // 'note'                   => 'Donating for Nobel Cause', *Fixme
                         );
 
-        $result = civicrm_api_legacy( 'civicrm_contribution_create','Contribution',$params );
+        $result = civicrm_api( 'Contribution','create',$params );
 
         return $result['id'];
         
@@ -1287,7 +1287,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         'version'				=> $apiversion,
         );
        require_once 'api/api.php';
-       $result = civicrm_api_legacy( 'civicrm_note_create','Note',$params );
+       $result = civicrm( 'Note','create',$params );
        return $result;
     }
 function documentMe($params,$result,$function,$filename){
