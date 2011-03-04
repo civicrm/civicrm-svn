@@ -468,7 +468,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
         $params['html'   ] = $html;
         
         if ($params['toEmail']) {
-            $contactParams = array(array('email', 'LIKE', 'chastell@devielle', 0, 1));
+            $contactParams = array(array('email', 'LIKE', $params['toEmail'], 0, 1));
             list($contact, $_) = CRM_Contact_BAO_Query::apiQuery($contactParams);
 
             $prefs = array_pop($contact);
