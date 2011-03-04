@@ -136,6 +136,7 @@ AND    $operationClause
 SELECT DISTINCT(contact_a.id) as id
        $from
 WHERE $permission
+ORDER BY contact_a.id
 ";
 
         $values = array( );
