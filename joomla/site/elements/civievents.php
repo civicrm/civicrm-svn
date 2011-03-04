@@ -56,7 +56,7 @@ class JElementCivievents extends JElement {
 		$currentdate = date("Y-m-d H:i:s");
 		$options = array();
 		$options[] = JHTML::_('select.option', '', JText::_('- Select Event -') );
-		foreach ( $events as $event ) {
+		foreach ( $events['values'] as $event ) {
 			if ( strtotime($event['start_date']) >= strtotime($currentdate) || 
 			     strtotime($event['end_date']) >= strtotime($currentdate) ) {
 				$options[] = JHTML::_( 'select.option', $event['id'], $event['event_title'] );
