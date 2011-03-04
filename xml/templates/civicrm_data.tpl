@@ -647,9 +647,10 @@ VALUES
    (@option_group_id_currency, 'USD ($)',      'USD',     'USD',       NULL, 0, 1, 1, NULL, 0, 0, 1, NULL, NULL),
 
 -- event name badges
-  (@option_group_id_eventBadge, '{ts escape="sql"}Name Only{/ts}'     , 1, 'CRM_Event_Badge_Simple',  NULL, 0, 0, 1, '{ts escape="sql"}Simple Event Name Badge{/ts}', 0, 1, 1, NULL, NULL),
-  (@option_group_id_eventBadge, '{ts escape="sql"}Name Tent{/ts}'     , 2, 'CRM_Event_Badge_NameTent',  NULL, 0, 0, 2, '{ts escape="sql"}Name Tent{/ts}', 0, 1, 1, NULL, NULL),
-  (@option_group_id_eventBadge , '{ts escape="sql"}With Logo{/ts}'    , 3, 'CRM_Event_Badge_Logo', NULL, 0, 0, 3, '{ts escape="sql"}You can set your own background image{/ts}',  0, 1, 1, NULL, NULL ),
+  (@option_group_id_eventBadge,  '{ts escape="sql"}Name Only{/ts}'     , 1, 'CRM_Event_Badge_Simple'  ,  NULL, 0, 0, 1, '{ts escape="sql"}Simple Event Name Badge{/ts}', 0, 1, 1, NULL, NULL),
+  (@option_group_id_eventBadge,  '{ts escape="sql"}Name Tent{/ts}'     , 2, 'CRM_Event_Badge_NameTent',  NULL, 0, 0, 2, '{ts escape="sql"}Name Tent{/ts}', 0, 1, 1, NULL, NULL),
+  (@option_group_id_eventBadge , '{ts escape="sql"}With Logo{/ts}'     , 3, 'CRM_Event_Badge_Logo'    ,  NULL, 0, 0, 3, '{ts escape="sql"}You can set your own background image{/ts}',                               0, 1, 1, NULL, NULL ),
+  (@option_group_id_eventBadge , '{ts escape="sql"}5395 with Logo{/ts}', 4, 'CRM_Event_Badge_Logo5395',  NULL, 0, 0, 4, '{ts escape="sql"}Avery 5395 compatible labels with logo (4 up by 2, 59.2mm x 85.7mm){/ts}', 0, 1, 1, NULL, NULL ),
 
 -- note privacy levels
   (@option_group_id_notePrivacy, '{ts escape="sql"}None{/ts}'           , 0, '',  NULL, 0, 1, 1, NULL, 0, 1, 1, NULL, NULL),

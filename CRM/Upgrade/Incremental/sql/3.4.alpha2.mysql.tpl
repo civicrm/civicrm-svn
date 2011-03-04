@@ -42,3 +42,16 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id )
 DROP TABLE IF EXISTS civicrm_openid_associations;
 DROP TABLE IF EXISTS civicrm_openid_nonces;
 
+-- insert 5395 Logo style event name badge CRM-7695
+    SELECT @option_group_id_eventBadge := max(id) from civicrm_option_group where name = 'event_badge';
+    {if $multilingual}
+        INSERT INTO civicrm_option_value
+    	(option_group_id, {foreach from=$locales item=locale}label_{$locale}, description_{$locale}, {/foreach} value, name, weight, is_active, component_id )
+        VALUES
+            (@option_group_id_eventBadge , {foreach from=$locales item=locale}'5395 with Logo', 'Avery 5395 compatible labels with logo (4 up by 2, 59.2mm x 85.7mm)', {/foreach} '4', 'CRM_Event_Badge_Logo5395', 1,   1, NULL );
+    {else}
+        INSERT INTO civicrm_option_value
+    	(option_group_id, label, description, value, name, weight, is_active, component_id )
+        VALUES
+            (@option_group_id_eventBadge , '{ts escape="sql"}5395 with Logo{/ts}', '{ts escape="sql"}Avery 5395 compatible labels with logo (4 up by 2, 59.2mm x 85.7mm){/ts}', '4', 'CRM_Event_Badge_Logo5395', 1,   1, NULL );
+    {/if}
