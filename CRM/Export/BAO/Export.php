@@ -40,7 +40,10 @@
  */
 class CRM_Export_BAO_Export
 {
-    const EXPORT_ROW_COUNT = 100;
+    // increase this number a lot to avoid making too many queries
+    // LIMIT is not much faster than a no LIMIT query
+    // CRM-7675
+    const EXPORT_ROW_COUNT = 10000;
 
     /**
      * Function to get the list the export fields
@@ -513,8 +516,9 @@ class CRM_Export_BAO_Export
         $componentDetails = $headerRows = $sqlColumns = array( );
         $setHeader = true;
 
-        $rowCount = self::EXPORT_ROW_COUNT;
-        $offset   = 0;
+        $rowCount     = self::EXPORT_ROW_COUNT;
+        $offset       = 0;
+        $tempRowCount = 100; // we write to temp table often to avoid using too much memory
 
         $count = -1;
 
@@ -829,8 +833,8 @@ class CRM_Export_BAO_Export
                 // write the row to a file
                 $componentDetails[] = $row;
 
-                // output every $rowCount rows
-                if ( $count % $rowCount == 0 ) {
+                // output every $tempRowCount rows
+                if ( $count % $tempRowCount == 0 ) {
                     self::writeDetailsToTable( $exportTempTable, $componentDetails, $sqlColumns );
                     $componentDetails = array( );
                 }
