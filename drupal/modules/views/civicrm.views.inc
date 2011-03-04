@@ -1220,6 +1220,35 @@ function civicrm_views_data() {
                                                             ),
                                             );
 
+    //CONTACT ID contact this number belongs to
+    $data['civicrm_phone']['contact_id'] = array(
+                                            'title' => t('Contact ID'),
+                                            'help' => t('Contact phone number belongs to '),
+                                            'field' => array(
+                                                             'handler' => 'views_handler_field',
+                                                             'click sortable' => TRUE,
+                                                             ),
+
+                                            'argument' => array(
+                                                                'handler' => 'views_handler_argument',
+                                                                ),
+
+                                            'filter' => array(
+                                                              'handler' => 'views_handler_filter_string',
+                                                              'allow empty' => TRUE,
+                                                              ),
+
+                                            'sort' => array(
+                                                            'handler' => 'views_handler_sort',
+                                                            ),
+                                            'relationship' => array(
+                                                                      'base' => 'civicrm_contact',
+                                                                      'base field' => 'id',
+                                                                      'handler' => 'views_handler_relationship',
+                                                                      'label' => t('Related Phone')
+                                                                    )           
+                                            );
+											
     //TODO: Mobile Provider
 
     //PHONE TYPE  , Phone, Mobile, Fax or Pager
