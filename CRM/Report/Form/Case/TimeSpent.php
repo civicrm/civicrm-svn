@@ -289,33 +289,29 @@ $this->_groupBy .= "civicrm_activity_activity_date_time
         $entryFound     = false;
         foreach ( $rows as $rowNum => $row ) {
             
-            if ( array_key_exists('civicrm_activity_activity_type_id', $row ) ) {
+            if ( isset($row['civicrm_activity_activity_type_id']) ) {
                 $entryFound = true;
-                if ( $value = $row['civicrm_activity_activity_type_id'] ) {
-                    $rows[$rowNum]['civicrm_activity_activity_type_id'] = $this->activityTypes[$value];
-                }
+                $val = $row['civicrm_activity_activity_type_id'];
+                $rows[$rowNum]['civicrm_activity_activity_type_id'] =
+                  isset($this->activityTypes[$val]) ? $this->activityTypes[$val] : '';
             }
             
-            if ( array_key_exists('civicrm_activity_status_id', $row ) ) {
+            if ( isset($row['civicrm_activity_status_id']) ) {
                 $entryFound = true;
-                if ( $value = $row['civicrm_activity_status_id'] ) {
-                    $rows[$rowNum]['civicrm_activity_status_id'] = $this->activityStatuses[$value];
-                }
+                $val = $row['civicrm_activity_status_id'];
+                $rows[$rowNum]['civicrm_activity_status_id'] =
+                  isset($this->activityStatuses[$val]) ? $this->activityStatuses[$val] : '';
             }
 
             // The next two make it easier to make pivot tables after exporting to Excel
-            if ( array_key_exists('civicrm_activity_duration', $row ) ) {
+            if ( isset($row['civicrm_activity_duration']) ) {
                 $entryFound = true;
-                if ( $row['civicrm_activity_duration'] == '' ) {
-                    $rows[$rowNum]['civicrm_activity_duration'] = '0';
-                }
+                $rows[$rowNum]['civicrm_activity_duration'] = (int) $row['civicrm_activity_duration'];
             }
 
-            if ( array_key_exists('civicrm_case_activity_case_id', $row ) ) {
+            if ( isset($row['civicrm_case_activity_case_id']) ) {
                 $entryFound = true;
-                if ( $row['civicrm_case_activity_case_id'] == '' ) {
-                    $rows[$rowNum]['civicrm_case_activity_case_id'] = '0';
-                }
+                $rows[$rowNum]['civicrm_case_activity_case_id'] = (int) $row['civicrm_case_activity_case_id'];
             }
             
             if ( !$entryFound ) {
