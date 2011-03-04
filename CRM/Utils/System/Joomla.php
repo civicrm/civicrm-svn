@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Utils/String.php';
 
 /**
  * Joomla specific stuff goes here
@@ -182,6 +181,7 @@ class CRM_Utils_System_Joomla {
                  $frontend = false ) {
         $config        = CRM_Core_Config::singleton( );
 
+        require_once 'CRM/Utils/String.php';
         $path = CRM_Utils_String::stripPathChars( $path );
 
         if ( $config->userFrameworkFrontend ) {
