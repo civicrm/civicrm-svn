@@ -114,7 +114,11 @@ function civicrm_api_get_function_name($entity, $action,$version = NULL) {
                                        'uf', 
                                        // That's CamelCase, beside an odd UFCamel that is expected as uf_camel
                                        preg_replace('/(?=[A-Z])/','_$0', $entity)));
-    return 'civicrm_api3_'. $entity .'_'. $action;
+    if ( $version === 2 ) {
+        return 'civicrm_'. $entity .'_'. $action;
+    } else {
+        return 'civicrm_api3_'. $entity .'_'. $action;
+    }
 }
 
 
