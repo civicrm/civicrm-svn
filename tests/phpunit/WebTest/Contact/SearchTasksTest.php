@@ -1,0 +1,119 @@
+<?php
+
+/*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.3                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License along with this program; if not, contact CiviCRM LLC       |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*/
+
+require_once 'CiviTest/CiviSeleniumTestCase.php';
+
+
+
+class WebTest_Contact_SearchTasksTest extends CiviSeleniumTestCase {
+
+  protected function setUp()
+  {
+      parent::setUp();
+  }
+
+  function testAddContactsToGroup( )
+  {
+
+	  // Create a new group with a random name; included test provides login
+	  include_once('WebTest/Contact/GroupAddTest.php');
+	  $newGroupName = 'Group_'.substr(sha1(rand()), 0, 7);
+	  WebTest_Contact_GroupAddTest::testGroupAdd( array( 'name' => $newGroupName ) );
+
+	  // Create two new contacts with a common random string in email address
+	  include_once('WebTest/Contact/AddTest.php');
+	  $emailString =  substr(sha1(rand()), 0, 7) .'@example.com_';
+	  $cids = array( );
+	  for ( $i = 0; $i < 2; $i++ )
+	  {
+	      // logout before calling included test, to avoid impossible repeated login
+          $this->open( $this->sboxPath . "civicrm/logout&reset=1" );
+
+          // create new contact
+		  WebTest_Contact_AddTest::testIndividualAdd();
+
+		  // get cid of new contact
+          $locationUrl = $this->getLocation();
+          $urlQuery = parse_url($locationUrl, PHP_URL_QUERY);
+          parse_str($urlQuery, $queryParams);
+          $cids[] = $queryParams['cid'];
+
+          // update email of new contact
+		  $this->click("//ul[@id='actions']/li[3]/a/span/div");
+		  $this->waitForPageToLoad("30000");
+ 		  $this->type("email_1_email", $emailString . $i);
+		  $this->click("_qf_Contact_upload_view");
+		  $this->waitForPageToLoad("30000");
+      }
+
+	  // Search for those two contacts
+      $this->click("//ul[@id='civicrm-menu']/li[3]");
+      $this->click("//div[@id='root-menu-div']/div[2]/ul/li[2]/div/a");
+      $this->waitForPageToLoad("30000");
+      $this->type("email", $emailString);
+	  $this->click("_qf_Advanced_refresh");
+      $this->waitForPageToLoad("30000");
+
+      // Verify exactly two contacts found
+      $this->assertTrue($this->isTextPresent("2 Contacts"), 'Looking for 2 results with email like '. $emailString);
+
+	  // Click "check all" box and act on "Add to group" action
+	  $this->click("//form[@id='Advanced']/div[3]/div/div[2]/table/thead/tr/th[1]/input");
+	  $this->select("task", "label=Add Contacts to Group");
+	  $this->click("Go");
+      $this->waitForPageToLoad("30000");
+
+      // Select the new group and click to add
+      $this->click("group_id");
+	  $this->select("group_id", "label=". $newGroupName);
+	  $this->click("_qf_AddToGroup_next-bottom");
+      $this->waitForPageToLoad("30000");
+
+      // Check status messages are as expected
+	  $this->assertTrue($this->isTextPresent("Added Contact(s) to ". $newGroupName));
+	  $this->assertTrue($this->isTextPresent("Total Selected Contact(s): 2"));
+	  $this->assertTrue($this->isTextPresent("Total Contact(s) added to group: 2"));
+
+	  // Search by group membership in newly created group
+      $this->click("//ul[@id='civicrm-menu']/li[3]");
+      $this->click("//div[@id='root-menu-div']/div[2]/ul/li[2]/div/a");
+      $this->waitForPageToLoad("30000");
+      $this->select("group", "label=". $newGroupName);
+      $this->click("_qf_Advanced_refresh");
+      $this->waitForPageToLoad("30000");
+
+	  // Verify those two contacts (and only those two) are in the group
+	  if (! $this->isTextPresent( "2 Contacts" )) { die("nothing found for group $newGroupName"); }
+
+	  $this->assertTrue( $this->isTextPresent( "2 Contacts" ), 'Looking for 2 results belonging to group: ' . $newGroupName );
+      foreach ( $cids as $cid ) {
+  	      $this->assertTrue( $this->isElementPresent( 'rowid'. $cid ) );
+	  }
+  }
+
+}
+?>

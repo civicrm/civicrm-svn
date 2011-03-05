@@ -29,14 +29,14 @@ require_once 'CiviTest/CiviSeleniumTestCase.php';
 
 
 
-class WebTest_Contact_GroupAddTest extends CiviSeleniumTestCase {
+class WebTest_Contact_UpdateProfileTest extends CiviSeleniumTestCase {
 
   protected function setUp()
   {
       parent::setUp();
   }
 
-  function testGroupAdd( $params = array( ) )
+  function testUpdateProfile( )
   {
       // This is the path where our testing install resides.
       // The rest of URL is defined in CiviSeleniumTestCase base class, in
@@ -50,51 +50,48 @@ class WebTest_Contact_GroupAddTest extends CiviSeleniumTestCase {
       // page contents loaded and you can continue your test execution.
       $this->webtestLogin( );
 
-      // create a new group with given parameters
+	  // Create new via profile
+      include_once('WebTest/Contact/AddViaProfileTest.php');
+      WebTest_Contact_AddViaProfileTest::testAddViaCreateProfile( );
 
-      // Go directly to the URL of the screen that you will be testing (New Group).
-      $this->open($this->sboxPath . "civicrm/group/add&reset=1");
+      // Open profile for editing
+      $locationUrl = $this->getLocation();
+      $editUrl = str_replace('/view?', '/edit?', $locationUrl);
+      $this->open( $editUrl );
 
-      // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
-      // button at the end of this page to show up, to make sure it's fully loaded.
-      $this->waitForElementPresent("_qf_Edit_upload");
+      // Modify profile field values
+      // contact details section
+      // name fields
+      $firstName = 'Ma'.substr(sha1(rand()), 0, 4);
+      $lastName  = 'An'.substr(sha1(rand()), 0, 7);
 
-      // take group name
-      if ( empty( $params['name'] ) ) {
-          $params['name'] = 'group_'.substr(sha1(rand()), 0, 7);
-      }
+      $this->type( "first_name", $firstName );
+      $this->type( "last_name", $lastName );
 
-      // fill group name
-      $this->type("title", $params['name']);
-
-      // fill description
-      $this->type("description", "Adding new group.");
-
-      // check Access Control
-      if ( $params['type1'] !== FALSE ) {
-          $this->click("group_type[1]");
-      }
-
-      // check Mailing List
-      if ( $params['type2'] !== FALSE ) {
-          $this->click("group_type[2]");
-      }
-
-      // select Visibility as Public Pages
-      if ( empty( $params['visibility'] ) ) {
-          $params['visibility'] = 'Public Pages';
-      }
-
-      $this->select("visibility", "value={$params['visibility']}");
+      //Address Details
+      $street = substr(sha1(rand()), 0, 4) . ' Main St.';
+      $this->type( "street_address-1", $street );
+      $city = 'Ci '. substr(sha1(rand()), 0, 4);
+      $this->type( "city-1", $city );
+      $postalCode = substr(sha1(rand()), 0, 4);
+      $this->type( "postal_code-1", $postalCode );
+      // Hard-coding to Arkansas, not  sure best way to get random state.
+      $this->select( "state_province-1", "value=1003" );
 
       // Clicking save.
-      $this->click("_qf_Edit_upload");
-      $this->waitForPageToLoad("30000");
+      $this->click("_qf_Edit_next");
+      $this->waitForPageToLoad( "30000" );
 
-      // Is status message correct?
-      $this->assertTrue($this->isTextPresent("The Group '{$params['name']}' has been saved."));
+      // Confirm save was done.
+      $this->assertTrue( $this->isTextPresent( "Thank you. Your information has been saved."), 'In line ' . __LINE__ );
+      $this->assertTrue( $this->isTextPresent( $firstName ), 'In line ' . __LINE__ );
+      $this->assertTrue( $this->isTextPresent( $lastName ), 'In line ' . __LINE__ );
+      $this->assertTrue( $this->isTextPresent( $street ), 'In line ' . __LINE__ );
+      $this->assertTrue( $this->isTextPresent( $city ), 'In line ' . __LINE__ );
+      $this->assertTrue( $this->isTextPresent( $postalCode ), 'In line ' . __LINE__ );
+      $this->assertTrue( $this->isElementPresent("//div[@id='profilewrap1']/div[@id='crm-container']/div[7]/div[2]/a[text()='AR']"));
+
 
   }
-
 }
 ?>
