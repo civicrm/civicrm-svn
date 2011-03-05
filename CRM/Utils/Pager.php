@@ -90,8 +90,6 @@ class CRM_Utils_Pager extends Pager_Sliding {
             $params['status'] = ts('Contacts %%StatusMessage%%');
         }
 
-        $params['path'] = CRM_Utils_System::makeURL(CRM_Utils_System::currentPath());
-        
         $this->initialize( $params );
 
         $this->Pager_Sliding( $params);
@@ -111,10 +109,10 @@ class CRM_Utils_Pager extends Pager_Sliding {
         $params['status'] = str_replace( '%%StatusMessage%%', $statusMessage, $params['status'] );
 
         $this->_response = array(
-                                 'first'        => $this->_printFirstPage(),
-                                 'back'         => str_replace('&nbsp;', '', $this->_getBackLink()),
-                                 'next'         => str_replace('&nbsp;', '', $this->_getNextLink()),
-                                 'last'         => $this->_printLastPage(),
+                                 'first'        => $this->getFirstPageLink(),
+                                 'back'         => $this->getBackPageLink(),
+                                 'next'         => $this->getNextPageLink(),
+                                 'last'         => $this->getLastPageLink(),
                                  'currentPage'  => $this->getCurrentPageID(),
                                  'numPages'     => $this->numPages(),
                                  'csvString'    => CRM_Utils_Array::value( 'csvString',    $params ),
@@ -289,6 +287,55 @@ class CRM_Utils_Pager extends Pager_Sliding {
         return $link;
     }
 
+    function getFirstPageLink( ) {
+        if ( $this->isFirstPage( ) ) {
+            return '';
+        }
+
+        $href = CRM_Utils_System::makeURL( self::PAGE_ID ) . 1;
+        return sprintf('<a href="%s" title="%s">%s</a>',
+                       $href,
+                       str_replace('%d', 1, $this->_altFirst),
+                       $this->_firstPagePre . $this->_firstPageText . $this->_firstPagePost ) . $this->_spacesBefore . $this->_spacesAfter;
+    }
+
+    function getLastPageLink( ) {
+        if ( $this->isLastPage( ) ) {
+            return '';
+        }
+
+        $href = CRM_Utils_System::makeURL( self::PAGE_ID ) . $this->_totalPages;
+        return sprintf('<a href="%s" title="%s">%s</a>',
+                       $href,
+                       str_replace('%d', $this->_totalPages, $this->_altLast),
+                       $this->_lastPagePre . $this->_lastPageText . $this->_lastPagePost );
+    }
+
+    function getBackPageLink( ) {
+        if ($this->_currentPage > 1) {
+            $href = CRM_Utils_System::makeURL( self::PAGE_ID ) . $this->getPreviousPageID( );
+            return sprintf('<a href="%s" title="%s">%s</a>',
+                           $href,
+                           $this->_altPrev, $this->_prevImg ) .
+                $this->_spacesBefore . $this->_spacesAfter;
+        }
+        return '';
+    }
+
+    function getNextPageLink( ) {
+        if ($this->_currentPage < $this->_totalPages) {
+            $href = CRM_Utils_System::makeURL( self::PAGE_ID ) . $this->getNextPageID( );
+            return 
+                $this->_spacesAfter .
+                sprintf('<a href="%s" title="%s">%s</a>',
+                        $href,
+                        $this->_altNext, $this->_nextImg ) .
+                $this->_spacesBefore . $this->_spacesAfter;
+        }
+        return '';
+    }
+
 }
+
 
 
