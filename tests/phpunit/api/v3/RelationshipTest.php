@@ -58,8 +58,8 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
     {
         parent::setUp();
         $this->_apiversion = 3;      
-        $this->_cId_a  = $this->individualCreate(null,$this->_apiversion);
-        $this->_cId_b  = $this->organizationCreate(null,$this->_apiversion );
+        $this->_cId_a  = $this->individualCreate(null);
+        $this->_cId_b  = $this->organizationCreate(null );
 
         //Create a relationship type
         $relTypeParams = array(
@@ -72,7 +72,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
                                'is_active'      => 1,
                                'version'				=>$this->_apiversion,
                                );
-        $this->_relTypeID = $this->relationshipTypeCreate($relTypeParams,$this->_apiversion );        
+        $this->_relTypeID = $this->relationshipTypeCreate($relTypeParams );        
     }
 
     function tearDown() 
@@ -86,10 +86,10 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
      */
     function testRelationshipCreateEmpty( )
     {
-        $params = array( );
+        $params = array( 'version'  => $this->_apiversion);
         $result =& civicrm_api3_relationship_create( $params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: contact_id_a, contact_id_b, relationship_type_id, contact_id_a, contact_id_b, one of (relationship_type_id, relationship_type), version' );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: contact_id_a, contact_id_b, relationship_type_id, contact_id_a, contact_id_b, one of (relationship_type_id, relationship_type)' );
     }
     
     /**

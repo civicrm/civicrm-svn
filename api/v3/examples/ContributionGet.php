@@ -31,7 +31,7 @@ function contribution_get_expectedresult(){
                       'display_name' => 'Mr. Anthony Anderson II',
                       'contribution_id' => '1',
                       'currency' => 'USD',
-                      'receive_date' => '2011-02-12 00:00:00',
+                      'receive_date' => '2011-03-04 00:00:00',
                       'non_deductible_amount' => '10.00',
                       'total_amount' => '100.00',
                       'fee_amount' => '51.00',

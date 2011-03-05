@@ -55,14 +55,14 @@ class api_v3_MailerTest extends CiviUnitTestCase
 
         parent::setUp();
         $this->_apiversion = 3; 
-        $this->_groupID = $this->groupCreate(null,$this->_apiversion);
+        $this->_groupID = $this->groupCreate(null);
         $this->_email = 'test@test.test';
     }
     
     function tearDown( ) 
     {
 
-        $this-> groupDelete( $this->_groupID,$this->_apiversion );
+        $this-> groupDelete( $this->_groupID );
     }
     
     //---------- civicrm_mailer_event_subscribe methods ---------
@@ -117,7 +117,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
                          'email'            => $this->_email,
                          'contact_type'     => 'Individual',
                           'version'					=>$this->_apiversion );
-        $contactID = $this->individualCreate($params,$this->_apiversion);
+        $contactID = $this->individualCreate($params);
 
         $params = array(
                         'email'        => $this->_email,

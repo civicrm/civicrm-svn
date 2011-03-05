@@ -5,16 +5,13 @@ function activity_create_example(){
     
                   'source_contact_id' 		=> '17',
                   'subject' 		=> 'Make-it-Happen Meeting',
-                  'activity_date_time' 		=> '20110212000000',
+                  'activity_date_time' 		=> '20110304',
                   'duration' 		=> '120',
                   'location' 		=> 'Pensulvania',
                   'details' 		=> 'a test activity',
                   'status_id' 		=> '1',
                   'activity_name' 		=> 'Test activity type',
                   'version' 		=> '3',
-                  'activity_type_id' 		=> '1',
-                  'activity_status_id' 		=> '1',
-                  'priority_id' 		=> '',
 
   );
   require_once 'api/api.php';
@@ -38,9 +35,9 @@ function activity_create_expectedresult(){
                       'id' => '1',
                       'source_contact_id' => '17',
                       'source_record_id' => '',
-                      'activity_type_id' => '1',
+                      'activity_type_id' => '',
                       'subject' => 'Make-it-Happen Meeting',
-                      'activity_date_time' => '20110212000000',
+                      'activity_date_time' => '20110304',
                       'duration' => '120',
                       'location' => 'Pensulvania',
                       'phone_id' => '',

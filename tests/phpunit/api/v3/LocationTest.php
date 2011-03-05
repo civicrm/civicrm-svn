@@ -48,8 +48,8 @@ class api_v3_LocationTest extends CiviUnitTestCase
       $this->markTestSkipped('location to be replaced with phone etc api');
         parent::setUp();
         $this->_apiversion = 3;    
-        $this->_contactID    = $this->organizationCreate(null, $this->_apiversion );
-        $this->_locationType = $this->locationTypeCreate(null, $this->_apiversion );        
+        $this->_contactID    = $this->organizationCreate(null);
+        $this->_locationType = $this->locationTypeCreate(null);        
     }
     
     function tearDown() 
@@ -312,7 +312,7 @@ class api_v3_LocationTest extends CiviUnitTestCase
 
     function testDelete( )
     {
-        $location  = $this->locationAdd(  $this->_contactID ,$this->_apiversion);
+        $location  = $this->locationAdd(  $this->_contactID );
         
         $params = array( 'version'								 =>$this->_apiversion,
         								'contact_id'    => $this->_contactID,
@@ -363,7 +363,7 @@ class api_v3_LocationTest extends CiviUnitTestCase
 
     function testGet()
     {
-        $location  = $this->locationAdd(  $this->_contactID,$this->_apiversion ); 
+        $location  = $this->locationAdd(  $this->_contactID ); 
         
         $proper = array(
             'country_id'             => 1228,
@@ -425,7 +425,7 @@ class api_v3_LocationTest extends CiviUnitTestCase
 
     function testLocationUpdate()
     {
-        $location  = $this->locationAdd( $this->_contactID,$this->_apiversion ); 
+        $location  = $this->locationAdd( $this->_contactID); 
        
         $workPhone =array('phone' => '02327276048',
                           'phone_type' => 'Phone');

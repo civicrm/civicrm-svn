@@ -41,10 +41,10 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
     {
         parent::setUp();
         $this->_apiversion = 3;
-        $this->_contactID           = $this->organizationCreate( null,3) ;
-        $this->_contributionTypeID  = $this->contributionTypeCreate(3);
-        $this->_membershipTypeID    = $this->membershipTypeCreate( $this->_contactID,3 );
-        $this->_membershipStatusID  = $this->membershipStatusCreate( 'test status',3 );
+        $this->_contactID           = $this->organizationCreate( null) ;
+        $this->_contributionTypeID  = $this->contributionTypeCreate();
+        $this->_membershipTypeID    = $this->membershipTypeCreate( $this->_contactID );
+        $this->_membershipStatusID  = $this->membershipStatusCreate( 'test status' );
         
     }
     
@@ -81,7 +81,7 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
      */
     public function testCreate()
     {
-        $contactId           = $this->individualCreate( null,$this->_apiversion) ;
+        $contactId           = $this->individualCreate( null) ;
       
 
         $params = array (
@@ -157,7 +157,7 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
      */
     public function testGet()
     {
-        $contactId = $this->individualCreate(null,$this->_apiversion );
+        $contactId = $this->individualCreate(null );
         $params = array (
                          'contact_id'             => $contactId,
                          'currency'               => 'USD',

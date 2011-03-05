@@ -37,6 +37,8 @@ class api_v2_NoteTest extends CiviUnitTestCase
 {
     protected $_contactID;
     protected $_params;
+    protected $_note;
+    protected $_noteID; 
 
     function __construct( ) {
         parent::__construct( );
@@ -69,7 +71,7 @@ class api_v2_NoteTest extends CiviUnitTestCase
 
         $this->_note      = $this->noteCreate( $this->_contactID );
         $this->_noteID    = $this->_note['id'];
-        print_r($this->_note );
+
     }
 
     function tearDown( ) 

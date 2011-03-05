@@ -34,16 +34,20 @@ require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v3_MembershipTest extends CiviUnitTestCase
 {
     protected $_apiversion;
+    protected $_contactID;
+    protected $_membershipTypeID;
+    protected $_membershipStatusID ;
+    protected $__membershipID;
     
     public function setUp()
     {
         //  Connect to the database
         parent::setUp();
         $this->_apiversion =3;
-        $this->_contactID           = $this->individualCreate(null,3 ) ;
+        $this->_contactID           = $this->individualCreate(null ) ;
  
-        $this->_membershipTypeID    = $this->membershipTypeCreate( $this->_contactID ,3 );        
-        $this->_membershipStatusID  = $this->membershipStatusCreate( 'test status' ,3);                
+        $this->_membershipTypeID    = $this->membershipTypeCreate( $this->_contactID);        
+        $this->_membershipStatusID  = $this->membershipStatusCreate( 'test status' );                
  
         $params = array(
                         'contact_id'         => $this->_contactID,  
@@ -56,7 +60,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase
                         'status_id'          => $this->_membershipStatusID
                         );
         
-        $this->_membershipID = $this->contactMembershipCreate( $params,$this->_apiversion );
+        $this->_membershipID = $this->contactMembershipCreate( $params );
 
     }
 
@@ -224,8 +228,8 @@ class api_v3_MembershipTest extends CiviUnitTestCase
     function testGetWithRelationship()
     {
 
-        $membershipOrgId = $this->organizationCreate(null,$this->_apiversion  );
-        $memberContactId = $this->individualCreate(null,$this->_apiversion ) ;
+        $membershipOrgId = $this->organizationCreate(null  );
+        $memberContactId = $this->individualCreate(null ) ;
 
         $relTypeParams = array(
                                'name_a_b'       => 'Relation 1',
@@ -237,7 +241,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase
                                'is_active'      => 1,
                                'version'				=> $this->_apiversion,
                                );
-        $relTypeID = $this->relationshipTypeCreate( $relTypeParams ,$this->_apiversion);
+        $relTypeID = $this->relationshipTypeCreate( $relTypeParams );
 
         $params = array( 'name'                   => 'test General',
                          'duration_unit'          => 'year',
@@ -265,7 +269,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase
                         'status_id'          => $this->_membershipStatusID,
                         'version'				=> $this->_apiversion,
                         );
-        $membershipID = $this->contactMembershipCreate( $params ,$this->_apiversion);
+        $membershipID = $this->contactMembershipCreate( $params );
 
         $params = array ( 'contact_id'  => $memberContactId ,
                           'membership_type_id' => $memType['id'],

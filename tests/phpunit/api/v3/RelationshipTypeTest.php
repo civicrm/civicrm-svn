@@ -54,14 +54,15 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
 
         parent::setUp();
         $this->_apiversion = 3;
-        $this->_cId_a  = $this->individualCreate(null,$this->_apiversion);
-        $this->_cId_b  = $this->organizationCreate( null,$this->_apiversion);
+        $this->_cId_a  = $this->individualCreate(null);
+        $this->_cId_b  = $this->organizationCreate( null);
+        
     }
     
     function tearDown( ) 
     {
-        $this->contactDelete( $this->_cId_a ,$this->_apiversion);
-        $this->contactDelete( $this->_cId_b ,$this->_apiversion);
+        $this->contactDelete( $this->_cId_a );
+        $this->contactDelete( $this->_cId_b);
     }
 
 ///////////////// civicrm_relationship_type_add methods
@@ -97,13 +98,14 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
     {
         $relTypeParams = array(
                                'contact_type_a' => 'Individual',
-                               'contact_type_b' => 'Organization'
+                               'contact_type_b' => 'Organization',
+                               'version'				=> $this->_apiversion,
                                );
         $result =& civicrm_api3_relationship_type_create( $relTypeParams );
         
         $this->assertEquals( $result['is_error'], 1 );
         $this->assertEquals( $result['error_message'], 
-                             'Mandatory key(s) missing from params array: name_a_b, name_b_a, version' );
+                             'Mandatory key(s) missing from params array: name_a_b, name_b_a' );
     }
     
     /**
@@ -135,15 +137,16 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
                                'contact_type_b' => 'Organization',
                                'is_reserved'    => 1,
                                'is_active'      => 1,
-                               'version'  =>$this->_apiversion,
+                               'version' 				=> $this->_apiversion,
                                'sequential' =>    1,
                                );
         $result = civicrm_api3_relationship_type_create( $params  );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertNotNull( $result['values'][0]['id'], 'in line ' . __LINE__ );   
-        
+        unset($params['version']);
+        unset($params['sequential']);
         //assertDBState compares expected values in $result to actual values in the DB          
-        $this->assertDBState( 'CRM_Contact_DAO_RelationshipType', $result['id'],  $relTypeParams); 
+        $this->assertDBState( 'CRM_Contact_DAO_RelationshipType', $result['id'],  $params); 
 
     }
     /**
@@ -228,9 +231,11 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
      */
     function testRelationshipTypeDelete( )
     {
-        // create sample relationship type.
-        $params = array('id' => $this->_relationshipTypeCreate(null,3 ),
-                                'version'  =>$this->_apiversion,      
+      $rel = $this->_relationshipTypeCreate();
+       // create sample relationship type.
+        $params = array('id' => $rel,
+                                'version'  =>$this->_apiversion,  
+            
           );
         $result =  civicrm_api3_relationship_type_delete( $params );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);        
@@ -269,7 +274,7 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
     function testRelationshipTypeUpdateWithoutContactType( )
     {
         // create sample relationship type.
-        $this->_relTypeID = $this->_relationshipTypeCreate(null,3 );
+        $this->_relTypeID = $this->_relationshipTypeCreate(null);
         
         $relTypeParams = array(
                                'id'             => $this->_relTypeID,
@@ -280,9 +285,9 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
                                'is_active'      => 0,
                                'version'				=> $this->_apiversion,
                                );
-        
-        $result = & civicrm_api3_relationship_type_create( $relTypeParams );  
-        
+
+        $result =  civicrm_api3_relationship_type_create( $relTypeParams );  
+
         $this->assertNotNull( $result['id'] );   
         unset($relTypeParams['version']);
         // assertDBState compares expected values in $result to actual values in the DB          
@@ -295,7 +300,7 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
     function testRelationshipTypeUpdate( )
     {
         // create sample relationship type.
-        $this->_relTypeID = $this->_relationshipTypeCreate(null,3 );
+        $this->_relTypeID = $this->_relationshipTypeCreate(null );
         
         $params = array(
                                'id'             => $this->_relTypeID,
@@ -351,7 +356,7 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
         // create sample relationship types.
         foreach ( array( 'firstRelType', 'secondRelType' ) as $relType ) {
             $params = "{$relType}Params";
-            $relTypeIds["{$relType}Id"] = $this->_relationshipTypeCreate( $$params,$this->_apiversion );
+            $relTypeIds["{$relType}Id"] = $this->_relationshipTypeCreate( $$params );
         }
         
         //get relationship types from db.
@@ -415,14 +420,14 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
         // create sample relationship types.
         foreach ( array( 'firstRelType', 'secondRelType' ) as $relType ) {
             $params = "{$relType}Params";
-            $relTypeIds["{$relType}Id"] = $this->_relationshipTypeCreate( $$params,$this->_apiversion );
+            $relTypeIds["{$relType}Id"] = $this->_relationshipTypeCreate( $$params );
         }
         
         //get relationship types from db.
         $params = array('name_a_b' => 'Employee of',
                         'version'				=> $this->_apiversion,
    );        
-        $results =& civicrm_api3_relationship_type_get( $params );
+        $results =civicrm_api3_relationship_type_get( $params );
         
         $retrievedRelTypes  = array( );
         if ( is_array( $results ) ) {
@@ -480,7 +485,7 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
         // create sample relationship types.
         foreach ( array( 'firstRelType', 'secondRelType' ) as $relType ) {
             $params = "{$relType}Params";
-            $relTypeIds["{$relType}Id"] = $this->_relationshipTypeCreate( $$params,3 );
+            $relTypeIds["{$relType}Id"] = $this->_relationshipTypeCreate( $$params );
         }
         
         //get relationship types from db.
@@ -525,11 +530,11 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase
                             'contact_type_b' => 'Organization',
                             'is_reserved'    => 1,
                             'is_active'      => 1,
-                            'version'				 => $this->_apiversion,
+                            'version'				 => API_LATEST_VERSION,
                             );
         }
 
-        return $this->relationshipTypeCreate( $params ,$this->_apiversion);
+        return $this->relationshipTypeCreate( $params );
     }
 }
  

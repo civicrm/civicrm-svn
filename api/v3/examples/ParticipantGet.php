@@ -3,8 +3,8 @@
 function participant_get_example(){
     $params = array(
     
+                  'id' 		=> '1',
                   'version' 		=> '3',
-                  'participant_id' 		=> '1',
 
   );
   require_once 'api/api.php';

@@ -37,6 +37,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
   protected $_createdParticipants;
   protected $_participantID;
   protected $_eventID;
+  protected $_individualId;
 
   function get_info( )
   {
@@ -53,18 +54,18 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
     $this->_apiversion = 3;
     parent::setUp();
 
-    $event = $this->eventCreate(null, $this->_apiversion);
+    $event = $this->eventCreate(null);
     $this->_eventID = $event['id'];
 
-    $this->_contactID = $this->individualCreate(null,$this->_apiversion ) ;
+    $this->_contactID = $this->individualCreate(null ) ;
 
     $this->_createdParticipants = array( );
-    $this->_individualId = $this->individualCreate(null,$this->_apiversion);
+    $this->_individualId = $this->individualCreate(null);
 
-    $this->_participantID = $this->participantCreate( array('contactID' => $this->_contactID,'eventID' => $this->_eventID  ),$this->_apiversion);
-    $this->_contactID2 = $this->individualCreate( null,$this->_apiversion) ;
-    $this->_participantID2 = $this->participantCreate( array('contactID' => $this->_contactID2,'eventID' => $this->_eventID,'version' =>$this->_apiversion ),$this->_apiversion);
-    $this->_participantID3 = $this->participantCreate( array ('contactID' => $this->_contactID2, 'eventID' => $this->_eventID,'version' =>$this->_apiversion ),$this->_apiversion);
+    $this->_participantID = $this->participantCreate( array('contactID' => $this->_contactID,'eventID' => $this->_eventID  ));
+    $this->_contactID2 = $this->individualCreate( null) ;
+    $this->_participantID2 = $this->participantCreate( array('contactID' => $this->_contactID2,'eventID' => $this->_eventID,'version' =>$this->_apiversion ));
+    $this->_participantID3 = $this->participantCreate( array ('contactID' => $this->_contactID2, 'eventID' => $this->_eventID,'version' =>$this->_apiversion ));
   }
 
   function tearDown()
@@ -423,7 +424,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
    */
   function testUpdateWithoutEventId()
   {
-    $participantId = $this->participantCreate( array ('contactID' => $this->_individualId, 'eventID' => $this->_eventID  ) ,$this->_apiversion);
+    $participantId = $this->participantCreate( array ('contactID' => $this->_individualId, 'eventID' => $this->_eventID ,'version' =>$this->_apiversion ) );
     $params = array(
                         'contact_id'    => $this->_individualId,
                         'status_id'     => 3,
@@ -437,7 +438,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
     $this->assertEquals( $participant['is_error'], 1 );
     $this->assertEquals( $participant['error_message'],'Mandatory key(s) missing from params array: event_id' );
     // Cleanup created participant records.
-    $result = $this->participantDelete( $participantId ,     $this->_apiversion);
+    $result = $this->participantDelete( $participantId );
   }
 
   /**
@@ -480,7 +481,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
     $participant = & civicrm_api3_participant_create($params);
     $this->assertEquals( $participant['is_error'], 1 );
     $this->assertEquals( $participant['error_message'],'Mandatory key(s) missing from params array: event_id' );
-    $result = $this->participantDelete( $participantId,  $this->_apiversion );
+    $result = $this->participantDelete( $participantId );
   }
 
   /**
@@ -488,7 +489,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
    */
   function testUpdate()
   {
-    $participantId = $this->participantCreate( array ('contactID' => $this->_individualId,'eventID' => $this->_eventID ),$this->_apiversion );
+    $participantId = $this->participantCreate( array ('contactID' => $this->_individualId,'eventID' => $this->_eventID ,$this->_apiversion) );
     $params = array(
                         'id'            => $participantId,
                         'contact_id'    => $this->_individualId,
@@ -516,7 +517,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
 
     }
     // Cleanup created participant records.
-    $result = $this->participantDelete( $params['id'],$this->_apiversion );
+    $result = $this->participantDelete( $params['id'] );
   }
 
 
@@ -590,7 +591,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
 
   function testParticipantFormattedwithDuplicateParams()
   {
-    $participantContact = $this->individualCreate(null,$this->_apiversion );
+    $participantContact = $this->individualCreate(null );
     $params = array(
                         'contact_id'    => $participantContact,
                         'event_id'      => $this->_eventID,
@@ -606,7 +607,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
    */
   function testParticipantFormattedwithWrongDuplicateConstant()
   {
-    $participantContact = $this->individualCreate(null,$this->_apiversion );
+    $participantContact = $this->individualCreate(null );
     $params = array(
                         'contact_id'    => $participantContact,
                         'event_id'      => $this->_eventID,
@@ -619,7 +620,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
 
   function testParticipantcheckWithParams()
   {
-    $participantContact = $this->individualCreate( null,$this->_apiversion );
+    $participantContact = $this->individualCreate( null );
     $params = array(
                         'contact_id'    => $participantContact,
                         'event_id'      => $this->_eventID,

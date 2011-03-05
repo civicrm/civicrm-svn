@@ -5,7 +5,6 @@ function contact_get_example(){
     
                   'email' 		=> 'man2',
                   'version' 		=> '3',
-                  'contact_is_deleted' 		=> '0',
 
   );
   require_once 'api/api.php';

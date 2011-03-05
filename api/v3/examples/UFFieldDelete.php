@@ -1,14 +1,14 @@
 <?php 
 
-function group_organization_delete_example(){
+function uf_field_delete_example(){
     $params = array(
     
-                  'id' 		=> '1',
                   'version' 		=> '3',
+                  'field_id' 		=> '35',
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'group_organization','delete',$params );
+  $result = civicrm_api( 'uf_field','delete',$params );
 
   return $result;
 }
@@ -16,14 +16,14 @@ function group_organization_delete_example(){
 /*
  * Function returns array of result expected from previous function
  */
-function group_organization_delete_expectedresult(){
+function uf_field_delete_expectedresult(){
 
   $expectedResult = 
      array(
            'is_error' 		=> '0',
            'version' 		=> '3',
            'count' 		=> '1',
-           'values' 		=> 'Deleted Group Organization successfully',
+           'values' 		=> '1',
       );
 
   return $expectedResult  ;

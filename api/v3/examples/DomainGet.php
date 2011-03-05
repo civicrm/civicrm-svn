@@ -3,8 +3,7 @@
 function domain_get_example(){
     $params = array(
     
-                  'entity_id' 		=> '1',
-                  'entity_table' 		=> 'civicrm_domain',
+                  'version' 		=> '3',
 
   );
   require_once 'api/api.php';

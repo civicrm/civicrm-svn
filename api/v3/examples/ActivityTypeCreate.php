@@ -10,9 +10,6 @@ function activity_type_create_example(){
                   'is_active' 		=> '1',
                   'is_optgroup' 		=> '1',
                   'is_default' 		=> '0',
-                  'option_group_id' 		=> '2',
-                  'value' 		=> '33',
-                  'name' 		=> 'send out letters',
 
   );
   require_once 'api/api.php';
