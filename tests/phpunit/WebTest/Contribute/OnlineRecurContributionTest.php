@@ -74,7 +74,7 @@ class WebTest_Contribute_OnlineRecurContributionTest extends CiviSeleniumTestCas
 
       $this->click("amount_other");
       $this->type("amount_other", "10");
-      $this->click("CIVICRM_QFID_1_18");
+      $this->click("CIVICRM_QFID_1_14");
       $this->select("pledge_frequency_unit", "label=month");
       $this->type("pledge_installments", "12");
       $this->type("email-5", $email);
