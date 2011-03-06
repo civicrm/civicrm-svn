@@ -57,10 +57,8 @@ class WebTest_Contact_TaskActionTest extends CiviSeleniumTestCase {
 		  WebTest_Contact_AddTest::testIndividualAdd();
 
 		  // get cid of new contact
-          $locationUrl = $this->getLocation();
-          $urlQuery = parse_url($locationUrl, PHP_URL_QUERY);
-          parse_str($urlQuery, $queryParams);
-          $cids[] = $queryParams['cid'];
+		  $queryParams = $this->parseURL( );
+          $cids[] = $queryParams['queryString']['cid'];
 
           // update email of new contact
 		  $this->click("//ul[@id='actions']/li[3]/a/span/div");
