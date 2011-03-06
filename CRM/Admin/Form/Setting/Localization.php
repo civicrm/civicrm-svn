@@ -182,6 +182,11 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
              ! function_exists( trim( $fields['customTranslateFunction'] ) ) ) {
             $errors['customTranslateFunction'] = ts( 'Please define the custom translation function first.' );
         }
+
+        if ( ! in_array( $fields['defaultContactCountry'], $fields['countryLimit'] ) ) {
+                $errors['defaultContactCountry'] = ts( 'Please select a default country that is in the list of available countries.');
+        }
+
         return empty( $errors ) ? true : $errors;
     }
 
