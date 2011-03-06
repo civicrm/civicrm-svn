@@ -53,7 +53,7 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     if ( !function_exists ($function )) {
         if ( strtolower($action) == "getfields" && $version ==3) {
             require_once ('api/v3/utils.php');
-            $dao = civicrm_get_DAO ($entity);
+            $dao = civicrm_api3_get_DAO ($entity);
             if (empty($dao)) {
                 return $errorFnName("API for $entity does not exist (join the API team and implement $function" );
             }
