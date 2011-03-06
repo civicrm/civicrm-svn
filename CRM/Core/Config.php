@@ -636,8 +636,8 @@ SELECT TABLE_NAME as import_table
 FROM   INFORMATION_SCHEMA.TABLES
 WHERE  TABLE_SCHEMA = %1 
 AND    ( TABLE_NAME LIKE 'civicrm_import_job_%'
-OR       TABLE_NAME LIKE 'civicrm_export_temp_%'
-OR       TABLE_NAME LIKE 'civicrm_task_action_temp_%' )
+OR       TABLE_NAME LIKE 'civicrm_export_temp%'
+OR       TABLE_NAME LIKE 'civicrm_task_action_temp%' )
 ";
 
         $params = array( 1 => array( $dao->database(), 'String' ) );
