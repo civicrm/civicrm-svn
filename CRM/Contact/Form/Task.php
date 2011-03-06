@@ -136,7 +136,7 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
         $form->assign( 'taskName', CRM_Utils_Array::value( $form->_task, $crmContactTaskTasks ) );
        
         if ( $useTable ) {
-            $form->_componentTable = CRM_Core_DAO::createTempTableName( 'civicrm_task_action', true );
+            $form->_componentTable = CRM_Core_DAO::createTempTableName( 'civicrm_task_action', true, $qfKey );
             $sql = " DROP TABLE IF EXISTS {$form->_componentTable}";
             CRM_Core_DAO::executeQuery( $sql );
 

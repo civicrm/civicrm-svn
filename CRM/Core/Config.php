@@ -629,10 +629,9 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
      */
     function clearTempTables( ) {
         // CRM-5645
-        require_once 'CRM/Contact/DAO/Contact.php';
-        $dao = new CRM_Contact_DAO_Contact( );
+        $dao = new CRM_Core_DAO( );
         $query = "
-SELECT TABLE_NAME as import_table
+SELECT TABLE_NAME as tableName
 FROM   INFORMATION_SCHEMA.TABLES
 WHERE  TABLE_SCHEMA = %1 
 AND    ( TABLE_NAME LIKE 'civicrm_import_job_%'
@@ -642,16 +641,15 @@ OR       TABLE_NAME LIKE 'civicrm_task_action_temp%' )
 
         $params = array( 1 => array( $dao->database(), 'String' ) );
         $tableDAO = CRM_Core_DAO::executeQuery( $query, $params );
-        $importTables = array();
+        $tables = array();
         while ( $tableDAO->fetch() ) {
-            $importTables[] = $tableDAO->import_table;
+            $tables[] = $tableDAO->tableName;
         }
-        if ( !empty( $importTables ) ) {
-                $importTable = implode(',', $importTables);
-                // drop leftover import temporary tables
-                CRM_Core_DAO::executeQuery( "DROP TABLE $importTable" );
+        if ( !empty( $tables ) ) {
+            $table = implode(',', $tables);
+            // drop leftover temporary tables
+            CRM_Core_DAO::executeQuery( "DROP TABLE $table" );
         }
-
     }
     
     /**
