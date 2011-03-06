@@ -619,6 +619,9 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
         foreach ( $queries as $query ) {
             CRM_Core_DAO::executeQuery( $query );
         }
+
+        // also delete all the import and export temp tables
+        self::clearTempTables( );
     }
 
     /**
@@ -629,9 +632,14 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
         require_once 'CRM/Contact/DAO/Contact.php';
         $dao = new CRM_Contact_DAO_Contact( );
         $query = "
- SELECT TABLE_NAME as import_table
-   FROM INFORMATION_SCHEMA.TABLES
-  WHERE TABLE_SCHEMA = %1 AND TABLE_NAME LIKE 'civicrm_import_job_%'";
+SELECT TABLE_NAME as import_table
+FROM   INFORMATION_SCHEMA.TABLES
+WHERE  TABLE_SCHEMA = %1 
+AND    ( TABLE_NAME LIKE 'civicrm_import_job_%'
+OR       TABLE_NAME LIKE 'civicrm_export_temp_%'
+OR       TABLE_NAME LIKE 'civicrm_task_action_temp_%' )
+";
+
         $params = array( 1 => array( $dao->database(), 'String' ) );
         $tableDAO = CRM_Core_DAO::executeQuery( $query, $params );
         $importTables = array();

@@ -868,6 +868,10 @@ class CRM_Export_BAO_Export
         // now write the CSV file
         self::writeCSVFromTable( $exportTempTable, $headerRows, $sqlColumns, $exportMode );
 
+        // delete the export temp table and component table
+        $sql = "DROP TABLE IF EXISTS {$exportTempTable}";
+        CRM_Core_DAO::executeQuery( $sql );
+
         CRM_Utils_System::civiExit( );
     }
 
@@ -1126,7 +1130,7 @@ VALUES $sqlValueString
     static function createTempTable( &$sqlColumns )
     {
         //creating a temporary table for the search result that need be exported
-        $exportTempTable = CRM_Core_DAO::createTempTableName( 'civicrm_export', false );
+        $exportTempTable = CRM_Core_DAO::createTempTableName( 'civicrm_export', true );
 
         // also create the sql table
         $sql = "DROP TABLE IF EXISTS {$exportTempTable}";
