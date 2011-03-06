@@ -47,14 +47,16 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     $entity = CRM_Utils_String::munge($entity);
     $action = CRM_Utils_String::munge($action);
     $version = civicrm_get_api_version($params);
+    $errorFnName = ( $version == 2 ) ? 'civicrm_create_error' : 'civicrm_api3_create_error';
     $function = civicrm_api_get_function_name($entity, $action,$version);
     civicrm_api_include($entity,null,$version);
     if ( !function_exists ($function )) {
         if ( strtolower($action) == "getfields" && $version ==3) {
             require_once ('api/v3/utils.php');
             $dao = civicrm_get_DAO ($entity);
-            if (empty($dao)) 
-                return civicrm_create_error( "API for $entity does not exist (join the API team and implement $function" );
+            if (empty($dao)) {
+                return $errorFnName("API for $entity does not exist (join the API team and implement $function" );
+            }
             $file = str_replace ('_','/',$dao).".php";
             require_once ($file); 
             $d = new $dao();
@@ -63,23 +65,24 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
         if ( strtolower($action) == "update") {
             //$key_id = strtolower ($entity)."_id";
             $key_id = "id";
-            if (!array_key_exists ($key_id,$params)) 
-                return civicrm_create_error( "Mandatory parameter missing $key_id" );
+            if (!array_key_exists ($key_id,$params)) {
+                return $errorFnName( "Mandatory parameter missing $key_id" );
+            }
             $seek = array ($key_id => $params[$key_id], 'version' => $version);
             $existing = civicrm_api ($entity, 'get',$seek);
             if ($existing['is_error'])
                 return $existing;
             if ($existing['count'] > 1)
-                return civicrm_create_error( "More than one $entity with id ".$params[$key_id] );
+                return $errorFnName( "More than one $entity with id ".$params[$key_id] );
             if ($existing['count'] == 0)
-                return civicrm_create_error( "No $entity with id ".$params[$key_id] );
+                return $errorFnName( "No $entity with id ".$params[$key_id] );
        
             $existing= array_pop($existing['values'] ); 
             $p = array_merge ($params, $existing );
             return civicrm_api ($entity, 'create',$p);
 
         }
-        return civicrm_create_error( "API ($entity,$action) does not exist (join the API team and implement $function" );
+        return $errorFnName( "API ($entity,$action) does not exist (join the API team and implement $function" );
     }
     $result = isset($extra) ? $function($params, $extra) : $function($params);
     return $result;

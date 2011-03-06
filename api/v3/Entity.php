@@ -1,4 +1,5 @@
-<?
+<?php
+
 require_once 'api/v3/utils.php';
 
 /**
@@ -39,5 +40,3 @@ function civicrm_api3_entity_delete ($params) {
 function civicrm_api3_entity_getfields ($params) {
   return civicrm_api3_create_error ("entity_get only returns the list of entities you can access from the API, no fields");
 }
-
-?>
