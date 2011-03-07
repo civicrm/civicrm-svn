@@ -286,8 +286,8 @@ function civicrm_api3_contact_update( $params, $create_new = false )
     }
     
     $error = _civicrm_api3_greeting_format_params( $params );
-    if ( $error['error_message'] ) {
-        return $error['error_message'];
+    if ( civicrm_api3_error( $error, 'CRM_Core_Error' ) ) {
+        return $error;
     }
     
     $values   = array( );
@@ -588,8 +588,8 @@ function _civicrm_api3_greeting_format_params( $params )
     
         // format params
         if ( CRM_Utils_Array::value( 'contact_type', $params ) == 'Organization' && $key != 'addressee' ) {
-            return civicrm_api3_create_error( 'You cannot use email/postal greetings for contact type %1.', 
-                                             array( 1 => $params['contact_type'] ) );
+            return civicrm_api3_create_error( ts( 'You cannot use email/postal greetings for contact type %1.', 
+                                                  array( 1 => $params['contact_type'] ) ) );
         }
         
         $nullValue      = false; 
@@ -607,31 +607,31 @@ function _civicrm_api3_greeting_format_params( $params )
         
         if ( $customGreeting && $greetingId &&
              ( $greetingId != array_search( 'Customized', $greetings ) ) ) {
-            return civicrm_api3_create_error( 'Provide either %1 greeting id and/or %1 greeting or custom %1 greeting',
-                                             array( 1 => $key ) );
+            return civicrm_api3_create_error( ts( 'Provide either %1 greeting id and/or %1 greeting or custom %1 greeting',
+                                                  array( 1 => $key ) ) );
         }
         
         if ( $greetingVal && $greetingId &&
              ( $greetingId != CRM_Utils_Array::key( $greetingVal, $greetings ) ) ) {
-            return civicrm_api3_create_error( 'Mismatch in %1 greeting id and %1 greeting',
-                                             array( 1 => $key ) );
+            return civicrm_api3_create_error( ts( 'Mismatch in %1 greeting id and %1 greeting',
+                                                  array( 1 => $key ) ) );
         } 
         
         if ( $greetingId ) {
 
             if ( !array_key_exists( $greetingId, $greetings ) ) {
-                return civicrm_api3_create_error( 'Invalid %1 greeting Id', array( 1 => $key ) );
+                return civicrm_api3_create_error( ts( 'Invalid %1 greeting Id', array( 1 => $key ) ) );
             }
             
             if ( !$customGreeting && ( $greetingId == array_search( 'Customized', $greetings ) ) ) {
-                return civicrm_api3_create_error( 'Please provide a custom value for %1 greeting', 
-                                                 array( 1 => $key ) );
+                return civicrm_api3_create_error( ts( 'Please provide a custom value for %1 greeting', 
+                                                      array( 1 => $key ) ) );
             }
                         
         } else if ( $greetingVal ) {
 
             if ( !in_array( $greetingVal, $greetings ) ) {
-                return civicrm_api3_create_error( 'Invalid %1 greeting', array( 1 => $key ) );
+                return civicrm_api3_create_error( ts( 'Invalid %1 greeting', array( 1 => $key ) ) );
             }
 
             $greetingId = CRM_Utils_Array::key( $greetingVal, $greetings );
