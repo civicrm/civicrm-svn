@@ -189,7 +189,7 @@ class CRM_Utils_System_Joomla {
         if ( $config->userFrameworkFrontend ) {
             $script = 'index.php';
             if ( JRequest::getVar("Itemid") ) {
-                $Itemid = 'Itemid=' . JRequest::getVar("Itemid");
+                $Itemid = "{$separator}&Itemid=" . JRequest::getVar("Itemid");
             }
         } else {
             $script = 'index2.php';
@@ -206,9 +206,9 @@ class CRM_Utils_System_Joomla {
         $base = $absolute ? $config->userFrameworkBaseURL : $config->useFrameworkRelativeBase;
 
         if ( !empty ( $query ) ) {
-            $url = "{$base}{$script}?option=com_civicrm{$separator}task={$path}{$separator}{$query}{$separator}{$Itemid}{$fragment}";
+            $url = "{$base}{$script}?option=com_civicrm{$separator}task={$path}{$separator}{$query}{$Itemid}{$fragment}";
         } else {
-            $url ="{$base}{$script}?option=com_civicrm{$separator}task={$path}{$separator}{$Itemid}{$fragment}";
+            $url ="{$base}{$script}?option=com_civicrm{$separator}task={$path}{$Itemid}{$fragment}";
         }
 
         // gross hack for joomla, we are in the backend and want to send a frontend url
