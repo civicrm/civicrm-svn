@@ -288,7 +288,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         $params = array(
                         'source_contact_id'   => 17,
                         'subject'             => 'Make-it-Happen Meeting',
-                        'activity_date_time'  => date('Ymd'),
+                        'activity_date_time'  => '20110316',
                         'duration'            => 120,
                         'location'            => 'Pensulvania',
                         'details'             => 'a test activity',
