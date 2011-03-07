@@ -511,7 +511,8 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
             CRM_Core_BAO_CustomValueTable::store( $params['custom'], 'civicrm_activity', $result->id );
         }
 
-        $transaction->commit( );  
+        $transaction->commit( ); 
+        require_once 'CRM/Core/Permission.php'; 
         if ( ! CRM_Utils_Array::value( 'skipRecentView', $params ) ) {
             $recentOther = array( );
             require_once 'CRM/Utils/Recent.php';
@@ -530,7 +531,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
                         $recentOther['editUrl'] = CRM_Utils_System::url( 'civicrm/activity/add', 
                                                                          "action=update&reset=1&id={$activity->id}&atype={$activity->activity_type_id}&cid={$activity->source_contact_id}&context=home" );
                     }
-                    require_once 'CRM/Core/Permission.php';
+
                     if ( CRM_Core_Permission::check("delete activities") ) {
                         $recentOther['deleteUrl'] = CRM_Utils_System::url( 'civicrm/activity', 
                                                                            "action=delete&reset=1&id={$activity->id}&atype={$activity->activity_type_id}&cid={$activity->source_contact_id}&context=home" );
