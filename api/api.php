@@ -43,6 +43,7 @@ function civicrm_api_legacy($function, $class, $params) {
  *   array to be passed to function
  */
 function civicrm_api($entity, $action, $params, $extra = NULL) {
+    require_once ('api/v3/utils.php');
     require_once 'CRM/Utils/String.php';
     $entity = CRM_Utils_String::munge($entity);
     $action = CRM_Utils_String::munge($action);
@@ -52,7 +53,6 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     civicrm_api_include($entity,null,$version);
     if ( !function_exists ($function )) {
         if ( strtolower($action) == "getfields" && $version ==3) {
-            require_once ('api/v3/utils.php');
             $dao = civicrm_api3_get_DAO ($entity);
             if (empty($dao)) {
                 return $errorFnName("API for $entity does not exist (join the API team and implement $function" );
@@ -82,6 +82,9 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
             return civicrm_api ($entity, 'create',$p);
 
         }
+
+
+
         return $errorFnName( "API ($entity,$action) does not exist (join the API team and implement $function" );
     }
     $result = isset($extra) ? $function($params, $extra) : $function($params);
@@ -117,10 +120,11 @@ function civicrm_api_get_function_name($entity, $action,$version = NULL) {
                                        'uf', 
                                        // That's CamelCase, beside an odd UFCamel that is expected as uf_camel
                                        preg_replace('/(?=[A-Z])/','_$0', $entity)));
+
     if ( $version === 2 ) {
-        return 'civicrm_'. $entity .'_'. $action;
+        return 'civicrm'. $function .'_'. $action;
     } else {
-        return 'civicrm_api3_'. $entity .'_'. $action;
+        return 'civicrm_api3'. $function .'_'. $action;
     }
 }
 
@@ -164,7 +168,6 @@ function civicrm_api_include($entity, $rest_interface = FALSE,$version = NULL) {
     $version = civicrm_get_api_version($version);
     $camel_name = civicrm_api_get_camel_name($entity,$version);
     $file = 'api/v'. $version .'/'. $camel_name .'.php';
-  
     if ( $rest_interface ) {
         $apiPath = substr( $_SERVER['SCRIPT_FILENAME'], 0, -15 );
         // check to ensure file exists, else die
