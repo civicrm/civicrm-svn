@@ -295,6 +295,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'status_id'           => 1,
                         'activity_name'       => 'Test activity type',
                         'version'							=> $this->_apiversion,
+                        'priority_id'				  =>2,
                         );
         
         $result = & civicrm_api3_activity_create( $params );
@@ -304,7 +305,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         $this->assertEquals( $result['values'][$result['id']]['source_contact_id'], 17,'in line ' . __LINE__);
         $this->assertEquals( $result['values'][$result['id']]['duration'], 120 ,'in line ' . __LINE__);
         $this->assertEquals( $result['values'][$result['id']]['subject'], 'Make-it-Happen Meeting','in line ' . __LINE__ );
-        $this->assertEquals( $result['values'][$result['id']]['activity_date_time'], date('Ymd')  ,'in line ' . __LINE__);
+        $this->assertEquals( $result['values'][$result['id']]['activity_date_time'], '20110316'  ,'in line ' . __LINE__);
         $this->assertEquals( $result['values'][$result['id']]['location'], 'Pensulvania','in line ' . __LINE__ );
         $this->assertEquals( $result['values'][$result['id']]['details'], 'a test activity' ,'in line ' . __LINE__);
         $this->assertEquals( $result['values'][$result['id']]['status_id'], 1,'in line ' . __LINE__ );
@@ -1071,8 +1072,8 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                  'custom_11'           => 'Updated my test data',
                  'version'						 => $this->_apiversion,
                          );
-         $result = civicrm_api3_activity_create( $params );
-         
+         $result = civicrm_api('Activity','Update', $params );
+
          //  Retrieve and check the activity created
          $params = array( 'activity_id' => $activityId,
                           'activity_type_id' => 1 ,
