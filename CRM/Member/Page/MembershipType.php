@@ -158,10 +158,6 @@ class CRM_Member_Page_MembershipType extends CRM_Core_Page_Basic
             $membershipType[$dao->id] = array();
             CRM_Core_DAO::storeValues( $dao, $membershipType[$dao->id]);
             
-            // fix the display of the monetary value, CRM-4038
-            if ( CRM_Utils_Array::value( 'minimum_fee', $membershipType[$dao->id] ) ) {
-                $membershipType[$dao->id]['minimum_fee'] = CRM_Utils_Money::format($membershipType[$dao->id]['minimum_fee'], null, '%a');
-            }
             //adding column for relationship type label. CRM-4178.
             if ( $dao->relationship_type_id ) {
                 //If membership associated with 2 or more relationship then display all relationship with comma separated
