@@ -52,10 +52,10 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
     {
         parent::setUp();
 
-        $this->_contactID           = $this->individualCreate(null,3 ) ;
+        $this->_contactID           = $this->individualCreate(null ) ;
         $this->_apiversion = 3;
-        $this->_membershipTypeID    = $this->membershipTypeCreate( $this->_contactID , $this->_apiversion  );
-        $this->_membershipStatusID  = $this->membershipStatusCreate( 'test status',$this->_apiversion );
+        $this->_membershipTypeID    = $this->membershipTypeCreate( $this->_contactID   );
+        $this->_membershipStatusID  = $this->membershipStatusCreate( 'test status' );
     }
 
     function tearDown( ) 
@@ -219,7 +219,7 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
                          'start_date'  => $start_date->format('Y-m-d'),
                          'end_date'    => $end_date->format('Y-m-d') );
                          
-        $membershipID = $this->contactMembershipCreate( $params,$this->_apiversion );
+        $membershipID = $this->contactMembershipCreate( $params );
         $membershipStatusID = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_Membership',$membershipID,'status_id');
         $calcParams = array( 'membership_id' => $membershipID );
         $result = civicrm_api3_membership_status_calc( $calcParams );

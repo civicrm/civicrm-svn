@@ -54,14 +54,18 @@ function civicrm_invoke( ) {
         $menu       =& JSite::getMenu( );
         $item       =  $menu->getItems('componentid', $component->id, true);
         $params     =  $menu->getParams( $_GET['Itemid'] );
-        $args = array( 'task', 'id', 'gid', 'reset', 'pageId', 'action' ); 
-        foreach ( $args as $a ) { 
-            $val = $params->get( $a, null ); 
+        $args = array( 'task', 'id', 'gid', 'pageId', 'action' ); 
+		if ( CRM_Utils_Array::value( 'view', $_GET ) ) {
+			$args[] = 'reset';
+		}
+        foreach ( $args as $a ) {
+			$val = $params->get( $a, null ); 
             if ( $val !== null ) { 
                 $_GET[$a] = $val; 
             } 
-        } 
+        }
     }
+	
     $task = CRM_Utils_Array::value( 'task', $_GET, '' );
     $args = explode( '/', trim( $task ) );
 

@@ -150,8 +150,8 @@ function civicrm_contact_update( &$params, $create_new = false )
     }
     
     $error = _civicrm_greeting_format_params( $params );
-    if ( $error['error_message'] ) {
-        return $error['error_message'];
+    if ( civicrm_error( $error, 'CRM_Core_Error' ) ) {
+        return $error;
     }
     
     $values   = array( );

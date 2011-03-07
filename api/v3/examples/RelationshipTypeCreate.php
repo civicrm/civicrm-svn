@@ -11,8 +11,6 @@ function relationship_type_create_example(){
                   'is_active' 		=> '1',
                   'version' 		=> '3',
                   'sequential' 		=> '1',
-                  'label_a_b' 		=> 'Relation 1 for relationship type create',
-                  'label_b_a' 		=> 'Relation 2 for relationship type create',
 
   );
   require_once 'api/api.php';

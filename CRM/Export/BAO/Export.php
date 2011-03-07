@@ -40,7 +40,10 @@
  */
 class CRM_Export_BAO_Export
 {
-    const EXPORT_ROW_COUNT = 100;
+    // increase this number a lot to avoid making too many queries
+    // LIMIT is not much faster than a no LIMIT query
+    // CRM-7675
+    const EXPORT_ROW_COUNT = 10000;
 
     /**
      * Function to get the list the export fields
@@ -514,8 +517,9 @@ class CRM_Export_BAO_Export
         $componentDetails = $headerRows = $sqlColumns = array( );
         $setHeader = true;
 
-        $rowCount = self::EXPORT_ROW_COUNT;
-        $offset   = 0;
+        $rowCount     = self::EXPORT_ROW_COUNT;
+        $offset       = 0;
+        $tempRowCount = 100; // we write to temp table often to avoid using too much memory
 
         $count = -1;
 
@@ -830,8 +834,8 @@ class CRM_Export_BAO_Export
                 // write the row to a file
                 $componentDetails[] = $row;
 
-                // output every $rowCount rows
-                if ( $count % $rowCount == 0 ) {
+                // output every $tempRowCount rows
+                if ( $count % $tempRowCount == 0 ) {
                     self::writeDetailsToTable( $exportTempTable, $componentDetails, $sqlColumns );
                     $componentDetails = array( );
                 }
@@ -864,6 +868,10 @@ class CRM_Export_BAO_Export
         
         // now write the CSV file
         self::writeCSVFromTable( $exportTempTable, $headerRows, $sqlColumns, $exportMode );
+
+        // delete the export temp table and component table
+        $sql = "DROP TABLE IF EXISTS {$exportTempTable}";
+        CRM_Core_DAO::executeQuery( $sql );
 
         CRM_Utils_System::civiExit( );
     }
@@ -1123,7 +1131,7 @@ VALUES $sqlValueString
     static function createTempTable( &$sqlColumns )
     {
         //creating a temporary table for the search result that need be exported
-        $exportTempTable = CRM_Core_DAO::createTempTableName( 'civicrm_export', false );
+        $exportTempTable = CRM_Core_DAO::createTempTableName( 'civicrm_export', true );
 
         // also create the sql table
         $sql = "DROP TABLE IF EXISTS {$exportTempTable}";

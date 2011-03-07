@@ -36,6 +36,8 @@ class api_v2_ParticipantTest extends CiviUnitTestCase
     protected $_createdParticipants;
     protected $_participantID;
     protected $_eventID;
+    protected $_individualId;
+    protected $_contactID2;
 
     function get_info( )
     {
@@ -51,7 +53,7 @@ class api_v2_ParticipantTest extends CiviUnitTestCase
         parent::setUp();
     
         $event = $this->eventCreate();
-        $this->_eventID = $event['event_id'];
+        $this->_eventID = $event['id'];
         
         $this->_contactID = $this->individualCreate( ) ;
         $this->_createdParticipants = array( );
@@ -59,6 +61,7 @@ class api_v2_ParticipantTest extends CiviUnitTestCase
         
         $this->_participantID = $this->participantCreate( array('contactID' => $this->_contactID,'eventID' => $this->_eventID  ));
         $this->_contactID2 = $this->individualCreate( ) ;
+
         $this->_participantID2 = $this->participantCreate( array('contactID' => $this->_contactID2,'eventID' => $this->_eventID ));
         $this->_participantID3 = $this->participantCreate( array ('contactID' => $this->_contactID2, 'eventID' => $this->_eventID ) );
     }
@@ -76,7 +79,7 @@ class api_v2_ParticipantTest extends CiviUnitTestCase
     function testGetWrongParamsType()
     {
         $params = 'a string';
-        $result = & civicrm_participant_get($params);
+        $result = civicrm_participant_get($params);
         
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
     }

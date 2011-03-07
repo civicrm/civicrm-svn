@@ -40,6 +40,7 @@ class api_v3_NoteTest extends CiviUnitTestCase
     protected $_contactID;
     protected $_params;
     protected $_noteID;
+    protected $_note;
 
     function __construct( ) {
         parent::__construct( );
@@ -61,7 +62,7 @@ class api_v3_NoteTest extends CiviUnitTestCase
         //  Connect to the database
         parent::setUp();
 
-        $this->_contactID = $this->organizationCreate(null, $this->_apiversion );
+        $this->_contactID = $this->organizationCreate(null );
 
         $this->_params = array(
                                'entity_table'  => 'civicrm_contact',
@@ -70,7 +71,7 @@ class api_v3_NoteTest extends CiviUnitTestCase
                                'contact_id'    => $this->_contactID,
                                'modified_date' => '2011-01-31',
                                'subject'       => 'Test Note', 
-                               'version'			 =>$this->_apiversion, 
+                               'version'			 => $this->_apiversion, 
                                );
         $this->_note      = $this->noteCreate( $this->_contactID );
         $this->_noteID    = $this->_note['id'];
@@ -188,7 +189,7 @@ class api_v3_NoteTest extends CiviUnitTestCase
         $this->assertEquals( $result['is_error'], 0,'in line ' . __LINE__ );
         $note = array('id' => $result['id'],
                       'version' => $this->_apiversion );
-        $this->noteDelete( $note,$this->_apiversion );
+        $this->noteDelete( $note );
     }
 
 ///////////////// civicrm_note_update methods

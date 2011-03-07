@@ -4,7 +4,7 @@ function group_organization_create_example(){
     $params = array(
     
                   'organization_id' 		=> '1',
-                  'group_id' 		=> '',
+                  'group_id' 		=> '1',
                   'version' 		=> '3',
 
   );
@@ -21,8 +21,11 @@ function group_organization_create_expectedresult(){
 
   $expectedResult = 
      array(
-           'is_error' 		=> '1',
-           'error_message' 		=> 'group organization not created',
+           'is_error' 		=> '0',
+           'version' 		=> '3',
+           'count' 		=> '3',
+           'id' 		=> '1',
+           'values' 		=> array(           'id' => '1',                      'group_id' => '1',                      'organization_id' => '1',           ),
       );
 
   return $expectedResult  ;

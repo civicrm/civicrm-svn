@@ -6,7 +6,6 @@ function tag_create_example(){
                   'name' 		=> 'New Tag3',
                   'description' 		=> 'This is description for New Tag 02',
                   'version' 		=> '3',
-                  'used_for' 		=> 'civicrm_contact',
 
   );
   require_once 'api/api.php';
@@ -36,7 +35,7 @@ function tag_create_expectedresult(){
                       'is_tagset' => '',
                       'used_for' => 'civicrm_contact',
                       'created_id' => '',
-                      'created_date' => '20110212175636',
+                      'created_date' => '20110304230852',
            ),           ),
       );
 

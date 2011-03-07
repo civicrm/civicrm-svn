@@ -5,11 +5,6 @@ function membership_status_create_example(){
     
                   'name' 		=> 'test membership status',
                   'version' 		=> '3',
-                  'is_active' 		=> '',
-                  'is_current_member' 		=> '',
-                  'is_admin' 		=> '',
-                  'is_default' 		=> '',
-                  'label' 		=> 'test membership status',
 
   );
   require_once 'api/api.php';

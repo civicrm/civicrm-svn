@@ -82,7 +82,7 @@ class api_v3_TagTest extends CiviUnitTestCase
      */
     public function testGet()
     {   
-        $tag = $this->tagCreate(null,$this->_apiversion);
+        $tag = $this->tagCreate(null);
         $this->assertEquals( 0, $tag['is_error'], 'In line ' . __LINE__ );
         
         $params = array( 'id' => $tag['id'],
@@ -114,10 +114,10 @@ class api_v3_TagTest extends CiviUnitTestCase
      */    
     function testCreateEmptyParams()
     {
-        $params = array( );
+        $params = array('version' => $this->_apiversion );
         $result = civicrm_api3_tag_create( $params ); 
         $this->assertEquals( 1, $result['is_error'], "In line " . __LINE__ );
-        $this->assertEquals( 'Mandatory key(s) missing from params array: name, version', $result['error_message'], 'In line ' . __LINE__ );
+        $this->assertEquals( 'Mandatory key(s) missing from params array: name', $result['error_message'], 'In line ' . __LINE__ );
     }  
 
     /**
@@ -167,10 +167,10 @@ class api_v3_TagTest extends CiviUnitTestCase
      */
     function testDeleteEmptyParams()
     {
-        $tag = array( );
+        $tag = array('version' => $this->_apiversion );
         $result = civicrm_api3_tag_delete( $tag );
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
-        $this->assertEquals( 'Mandatory key(s) missing from params array: tag_id, version', $result['error_message'], 'In line ' . __LINE__ );
+        $this->assertEquals( 'Mandatory key(s) missing from params array: tag_id', $result['error_message'], 'In line ' . __LINE__ );
     }
 
     /**
@@ -201,7 +201,7 @@ class api_v3_TagTest extends CiviUnitTestCase
      */  
     function testTagDelete( )
     {
-        $tagID = $this->tagCreate(null,$this->_apiversion); 
+        $tagID = $this->tagCreate(null); 
         $params = array('tag_id'=> $tagID,
                         'version' => $this->_apiversion);
         $result = civicrm_api3_tag_delete($params );

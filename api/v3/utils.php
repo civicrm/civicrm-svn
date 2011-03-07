@@ -1,28 +1,28 @@
 <?php
 /*
- +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
- +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
- +--------------------------------------------------------------------+
- | This file is a part of CiviCRM.                                    |
- |                                                                    |
- | CiviCRM is free software; you can copy, modify, and distribute it  |
- | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
- |                                                                    |
- | CiviCRM is distributed in the hope that it will be useful, but     |
- | WITHOUT ANY WARRANTY; without even the implied warranty of         |
- | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
- | See the GNU Affero General Public License for more details.        |
- |                                                                    |
- | You should have received a copy of the GNU Affero General Public   |
- | License and the CiviCRM Licensing Exception along                  |
- | with this program; if not, contact CiviCRM LLC                     |
- | at info[AT]civicrm[DOT]org. If you have questions about the        |
- | GNU Affero General Public License or the licensing of CiviCRM,     |
- | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
- +--------------------------------------------------------------------+
+  +--------------------------------------------------------------------+
+  | CiviCRM version 3.3                                                |
+  +--------------------------------------------------------------------+
+  | Copyright CiviCRM LLC (c) 2004-2010                                |
+  +--------------------------------------------------------------------+
+  | This file is a part of CiviCRM.                                    |
+  |                                                                    |
+  | CiviCRM is free software; you can copy, modify, and distribute it  |
+  | under the terms of the GNU Affero General Public License           |
+  | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+  |                                                                    |
+  | CiviCRM is distributed in the hope that it will be useful, but     |
+  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+  | See the GNU Affero General Public License for more details.        |
+  |                                                                    |
+  | You should have received a copy of the GNU Affero General Public   |
+  | License and the CiviCRM Licensing Exception along                  |
+  | with this program; if not, contact CiviCRM LLC                     |
+  | at info[AT]civicrm[DOT]org. If you have questions about the        |
+  | GNU Affero General Public License or the licensing of CiviCRM,     |
+  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+  +--------------------------------------------------------------------+
 */
 
 /**
@@ -43,11 +43,11 @@
  */
 function _civicrm_api3_initialize($useException = true ) 
 {
-  require_once 'CRM/Core/Config.php';
-  $config = CRM_Core_Config::singleton( );
-  if ($useException) {
-    CRM_Core_Error::setRaiseException();
-  }
+    require_once 'CRM/Core/Config.php';
+    $config = CRM_Core_Config::singleton( );
+    if ($useException) {
+        CRM_Core_Error::setRaiseException();
+    }
 }
 
 /*
@@ -62,10 +62,10 @@ function _civicrm_api3_initialize($useException = true )
  *
  */
 function civicrm_api3_verify_one_mandatory ($params, $daoName = null, $keyoptions = array() ) {
-  foreach ($keyoptions as $key){
-    $keys[0][] = $key;
-  }
-  civicrm_api3_verify_mandatory ($params, $daoName, $keys  );
+    foreach ($keyoptions as $key){
+        $keys[0][] = $key;
+    }
+    civicrm_api3_verify_mandatory ($params, $daoName, $keys  );
 }
 
 
@@ -77,13 +77,13 @@ function civicrm_api3_verify_one_mandatory ($params, $daoName = null, $keyoption
  */
 
 function civicrm_api3_get_DAO ($name) {
-  require_once ('CRM/Core/DAO/.listAll.php');
-  if (strpos($name, 'civicrm_') !== false) {
-    $last = strrpos ($name, '_') ;
-    $name = substr ($name, 8, $last -8);// len ('civicrm_') == 8
-    $name = ucfirst ($name);
-  }
-  return $dao[$name];
+    require_once ('CRM/Core/DAO/.listAll.php');
+    if (strpos($name, 'civicrm_') !== false) {
+        $last = strrpos ($name, '_') ;
+        $name = substr ($name, 8, $last -8);// len ('civicrm_') == 8
+        $name = ucfirst ($name);
+    }
+    return $dao[$name];
 }
 
 /*
@@ -96,39 +96,39 @@ function civicrm_api3_get_DAO ($name) {
  */
 
 function civicrm_api3_verify_mandatory ($params, $daoName = null, $keys = array() ) {
-  if ( ! is_array( $params ) ) {
-     throw new Exception ('Input variable `params` is not an array');
-  }
-
-  if ($daoName != null) {
-       if(!is_array($unmatched =_civicrm_api3_check_required_fields( $params, $daoName, true))){
-         $unmatched = array();
-       }
-  }
-  $keys[] = 'version';//required from v3 onwards
-
-  foreach ($keys as $key) {
-    if(is_array($key)){
-      $match = 0;
-      $optionset = array();
-      foreach($key as $subkey){
-        if ( !array_key_exists ($subkey, $params)) {
-          $optionset[] = $subkey;
-        }else{
-          $match = 1;//as long as there is one match then we don't need to rtn anything
-        }
-      }
-      if (empty($match) &&!empty($optionset)){
-        $unmatched[] = "one of (". implode(", ",$optionset) . ")";
-      }
-    }else{
-    if ( !array_key_exists ($key, $params))
-      $unmatched[] = $key;
+    if ( ! is_array( $params ) ) {
+        throw new Exception ('Input variable `params` is not an array');
     }
 
-  }
+    if ($daoName != null) {
+        if(!is_array($unmatched =_civicrm_api3_check_required_fields( $params, $daoName, true))){
+            $unmatched = array();
+        }
+    }
+    $keys[] = 'version';//required from v3 onwards
+
+    foreach ($keys as $key) {
+        if(is_array($key)){
+            $match = 0;
+            $optionset = array();
+            foreach($key as $subkey){
+                if ( !array_key_exists ($subkey, $params)) {
+                    $optionset[] = $subkey;
+                }else{
+                    $match = 1;//as long as there is one match then we don't need to rtn anything
+                }
+            }
+            if (empty($match) &&!empty($optionset)){
+                $unmatched[] = "one of (". implode(", ",$optionset) . ")";
+            }
+        }else{
+            if ( !array_key_exists ($key, $params))
+                $unmatched[] = $key;
+        }
+
+    }
     if(!empty($unmatched)){
-      throw new Exception("Mandatory key(s) missing from params array: " . implode(", ",$unmatched));
+        throw new Exception("Mandatory key(s) missing from params array: " . implode(", ",$unmatched));
     }
 }
 
@@ -141,9 +141,9 @@ function civicrm_api3_verify_mandatory ($params, $daoName = null, $keys = array(
  */
 function &civicrm_api3_create_error( $msg, $data = null,$dao = null ) 
 {
-   if(is_object ($dao)){
-    $dao->free(); 
-   }
+    if(is_object ($dao)){
+        $dao->free(); 
+    }
     return CRM_Core_Error::createAPIError( $msg, $data );
 }
 
@@ -155,18 +155,18 @@ function &civicrm_api3_create_error( $msg, $data = null,$dao = null )
  */
 function civicrm_api3_create_success( $values = 1,$params=null,$dao = null )
 {
-   if(is_object ($dao)){
-    $dao->free(); 
-   }
+    if(is_object ($dao)){
+        $dao->free(); 
+    }
     $result = array();
     $result['is_error'] = 0;
     $result['version'] =3;
     if (is_array( $values)) {
         $result['count'] = count( $values);
         if ($result['count']==1){
-          list($result['id']) = (array_keys($values));
+            list($result['id']) = (array_keys($values));
         }elseif(!empty($values['id'])){
-          $result['id']= $values['id'];
+            $result['id']= $values['id'];
         }
 
     } else {
@@ -178,13 +178,14 @@ function civicrm_api3_create_success( $values = 1,$params=null,$dao = null )
     }
 
     if(isset($params['sequential']) && $params['sequential'] ==1){
-      $result['values'] =  array_merge($values);
+        $result['values'] =  array_merge($values);
     }else{
-     $result['values'] =  $values;
+        $result['values'] =  $values;
     }
 
     return $result;
 }
+
 /**
  *  function to check if an error is actually a duplicate contact error
  *  

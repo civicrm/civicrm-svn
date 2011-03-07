@@ -36,6 +36,7 @@ class api_v3_EntityTagTest extends CiviUnitTestCase
     protected $_organizationID;
     protected $_tagID;
     protected $_apiversion;
+    protected $_tag;
        
     function setUp( ) 
     {
@@ -47,11 +48,11 @@ class api_v3_EntityTagTest extends CiviUnitTestCase
                       new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
                              dirname(__FILE__) . '/../../CiviTest/truncate-tag.xml') );
 
-        $this->_individualID = $this->individualCreate(null,3 );
-        $this->_tag = $this->tagCreate(null,3 );
+        $this->_individualID = $this->individualCreate(null);
+        $this->_tag = $this->tagCreate(null );
         $this->_tagID = $this->_tag['id'];
-        $this->_householdID = $this->houseHoldCreate(null,3 );
-        $this->_organizationID = $this->organizationCreate(null,3 );
+        $this->_householdID = $this->houseHoldCreate(null);
+        $this->_organizationID = $this->organizationCreate(null );
     }
     
     function tearDown( ) 
@@ -366,7 +367,7 @@ class api_v3_EntityTagTest extends CiviUnitTestCase
         
         $result = civicrm_api3_entity_tag_display( $params );
         
-        $this->assertEquals( $this->_tag['name'], $result );
+        $this->assertEquals( $this->_tag['values'][$this->_tag['id']]['name'], $result );
     }
 
     ///////////////// civicrm_tag_entities_get methods

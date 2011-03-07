@@ -97,6 +97,7 @@
                         </span>  
                     {/if} 
                 {elseif $element.html_type eq 'Autocomplete-Select'}
+		    {assign var="element_name" value="address[$blockId][$element_name]" }
                     {include file="CRM/Custom/Form/AutoComplete.tpl"}
                 {/if}
             </td>

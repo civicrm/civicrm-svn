@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Utils/String.php';
 
 /**
  * Drupal specific stuff goes here
@@ -173,6 +172,7 @@ class CRM_Utils_System_Drupal {
         $config = CRM_Core_Config::singleton( );
         $script =  'index.php';
 
+        require_once 'CRM/Utils/String.php';
         $path = CRM_Utils_String::stripPathChars( $path );
 
         if (isset($fragment)) {

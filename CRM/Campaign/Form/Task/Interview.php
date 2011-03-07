@@ -483,14 +483,14 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
                 $voterIdCount = count( $this->_contactIds );
                 
                 //create temporary table to store voter ids.
-                $tempTableName = 'temporary_survey_respondent_ids_'.time();
+                $tempTableName = CRM_Core_DAO::createTempTableName( 'civicrm_survey_respondent' );
                 CRM_Core_DAO::executeQuery( "DROP TABLE IF EXISTS {$tempTableName}" );
                 $query = "
      CREATE TEMPORARY TABLE {$tempTableName} (
             id int unsigned NOT NULL AUTO_INCREMENT,
             survey_contact_id int unsigned NOT NULL,  
 PRIMARY KEY ( id ),
- CONSTRAINT FK_{$tempTableName} FOREIGN KEY (survey_contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE )";
+ CONSTRAINT FK_civicrm_survey_respondent FOREIGN KEY (survey_contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE )";
                 CRM_Core_DAO::executeQuery( $query );
                 $batch = 100;
                 $insertedCount = 0;

@@ -5,15 +5,10 @@ function contact_create_example(){
     
                   'first_name' 		=> 'abc4',
                   'last_name' 		=> 'xyz4',
-                  'email' 		=> 'Array',
+                  'email' 		=> 'man4@yahoo.com',
                   'contact_type' 		=> 'Individual',
                   'location_type_id' 		=> '1',
                   'version' 		=> '3',
-                  'custom' 		=> 'Array',
-                  'preferred_language' 		=> 'en_US',
-                  'is_deceased' 		=> '',
-                  'contact_id' 		=> '1',
-                  'website' 		=> '',
 
   );
   require_once 'api/api.php';
@@ -53,7 +48,7 @@ function contact_create_expectedresult(){
                       'preferred_communication_method' => '',
                       'preferred_language' => 'en_US',
                       'preferred_mail_format' => '',
-                      'hash' => 'bcd3cfa693721f533b818cc27afad303',
+                      'hash' => '99b335ada42568270179dc11347cbf35',
                       'api_key' => '',
                       'first_name' => 'abc4',
                       'middle_name' => '',

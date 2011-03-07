@@ -140,6 +140,7 @@ class CRM_Event_Form_Task_Badge extends CRM_Event_Form_Task
             $where .= " AND {$this->_componentClause}";
         }
         
+        require_once 'CRM/Utils/Sort.php';
         $sortOrder = null;
         if ( $this->get( CRM_Utils_Sort::SORT_ORDER  ) ) {
             $sortOrder = $this->get( CRM_Utils_Sort::SORT_ORDER );

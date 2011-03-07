@@ -29,7 +29,7 @@ class api_v3_GroupTest extends CiviUnitTestCase
     function tearDown() 
     {
  
-        $this-> groupDelete( $this->_groupID ,$this->_apiversion);
+        $this-> groupDelete( $this->_groupID );
     }
     
     function testgroupCreateEmptyParams( )

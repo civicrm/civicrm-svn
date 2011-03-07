@@ -44,7 +44,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
         parent::setUp();
         $this->_apiversion = 3;
         $this->_contributionTypeId = 1;
-        $this->_individualId = $this->individualCreate(null, $this->_apiversion);
+        $this->_individualId = $this->individualCreate(null);
     }
     
     function tearDown() 
@@ -119,10 +119,10 @@ class api_v3_ContributionTest extends CiviUnitTestCase
     {
 
     
-      $params = array( );
+      $params = array('version' => $this->_apiversion );
         $contribution = civicrm_api3_contribution_create($params);
         $this->assertEquals( $contribution['is_error'], 1 ,'In line ' . __LINE__ );
-        $this->assertEquals( $contribution['error_message'], 'Mandatory key(s) missing from params array: contact_id, total_amount, one of (contribution_type_id, contribution_type), version','In line ' . __LINE__  );
+        $this->assertEquals( $contribution['error_message'], 'Mandatory key(s) missing from params array: contact_id, total_amount, one of (contribution_type_id, contribution_type)', 'In line ' . __LINE__  );
     }
     
 
@@ -201,7 +201,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
     function testCreateUpdateContribution()
     {
   
-        $contributionID = $this->contributionCreate($this->_individualId,$this->_contributionTypeId,$this->_apiversion);
+        $contributionID = $this->contributionCreate($this->_individualId,$this->_contributionTypeId);
         $old_params = array(
                             'contribution_id' => $contributionID,   
                             'version'					=> $this->_apiversion, 
@@ -273,10 +273,10 @@ class api_v3_ContributionTest extends CiviUnitTestCase
 
     function testDeleteEmptyParamsContribution()
     {
-        $params = array( );
+        $params = array('version' => $this->_apiversion );
         $contribution = civicrm_api3_contribution_delete($params);
         $this->assertEquals( $contribution['is_error'], 1 );
-        $this->assertEquals( $contribution['error_message'], 'Mandatory key(s) missing from params array: contribution_id, version' );
+        $this->assertEquals( $contribution['error_message'], 'Mandatory key(s) missing from params array: contribution_id' );
     }
     
     
@@ -291,17 +291,18 @@ class api_v3_ContributionTest extends CiviUnitTestCase
      
     function testDeleteWrongParamContribution()
     {
-        $params = array( 'contribution_source' => 'SSF' );
+        $params = array( 'contribution_source' => 'SSF',
+                          'version'            =>$this->_apiversion );
         $contribution =& civicrm_api3_contribution_delete( $params );
         $this->assertEquals($contribution['is_error'], 1);
-        $this->assertEquals( $contribution['error_message'], 'Mandatory key(s) missing from params array: contribution_id, version' );
+        $this->assertEquals( $contribution['error_message'], 'Mandatory key(s) missing from params array: contribution_id' );
     }
     
     
     function testDeleteContribution()
     {
      
-        $contributionID = $this->contributionCreate( $this->_individualId , $this->_contributionTypeId,$this->_apiversion );
+        $contributionID = $this->contributionCreate( $this->_individualId , $this->_contributionTypeId );
         $params         = array( 'contribution_id' => $contributionID ,
                                   'version'        => $this->_apiversion,);
         $result   = civicrm_api3_contribution_delete( $params );

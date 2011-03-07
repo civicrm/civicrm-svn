@@ -48,7 +48,7 @@ class api_v2_EntityTagTest extends CiviUnitTestCase
 
         $this->_individualID = $this->individualCreate( );
         $this->_tag = $this->tagCreate( );
-        $this->_tagID = $this->_tag['tag_id'];
+        $this->_tagID = $this->_tag['id'];
         $this->_householdID = $this->houseHoldCreate( );
         $this->_organizationID = $this->organizationCreate( );
     }
@@ -356,7 +356,7 @@ class api_v2_EntityTagTest extends CiviUnitTestCase
         
         $result = civicrm_entity_tag_display( $params );
         
-        $this->assertEquals( $this->_tag['name'], $result );
+        $this->assertEquals( $this->_tag['values'][$this->_tagID]['name'], $result );
     }
 
     ///////////////// civicrm_tag_entities_get methods

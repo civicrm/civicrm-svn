@@ -46,7 +46,7 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase
   {
     parent::setUp();
     $this->_apiversion = 3;
-    $this->_contactID   = $this->organizationCreate(null,$this->_apiversion ) ;
+    $this->_contactID   = $this->organizationCreate(null) ;
   }
 
   function tearDown()
@@ -91,7 +91,7 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase
 
   function testGet()
   {
-    $id =  $this->membershipTypeCreate( $this->_contactID,1,$this->_apiversion  );
+    $id =  $this->membershipTypeCreate( $this->_contactID,1  );
 
     $params = array( 'id'=> $id,
                           'version' => $this->_apiversion );        
@@ -104,17 +104,17 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase
     $this->assertEquals($membershiptype['values'][$id]['duration_unit'],'year', 'In line ' . __LINE__ );
     $this->assertEquals($membershiptype['values'][$id]['duration_interval'],'1', 'In line ' . __LINE__ );
     $this->assertEquals($membershiptype['values'][$id]['period_type'],'rolling', 'In line ' . __LINE__ );
-    $this->membershipTypeDelete( $params, $this->_apiversion );
+    $this->membershipTypeDelete( $params);
   }
 
   ///////////////// civicrm_membership_type_create methods
 
   function testCreateWithEmptyParams()
   {
-    $params = array();
+    $params = array('version' =>$this->_apiversion);
     $membershiptype = & civicrm_api3_membership_type_create($params);
     $this->assertEquals( $membershiptype['is_error'], 1 );
-    $this->assertEquals( $membershiptype['error_message'], 'Mandatory key(s) missing from params array: domain_id, member_of_contact_id, contribution_type_id, name, duration_unit, duration_interval, version');
+    $this->assertEquals( $membershiptype['error_message'], 'Mandatory key(s) missing from params array: domain_id, member_of_contact_id, contribution_type_id, name, duration_unit, duration_interval');
 
   }
 
@@ -310,14 +310,14 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase
 
   function testUpdate()
   {
-    $id = $this->membershipTypeCreate( $this->_contactID,2,$this->_apiversion );
+    $id = $this->membershipTypeCreate( $this->_contactID,2 );
     $newMembOrgParams = array(
 			'organization_name' => 'New membership organisation',
 			'contact_type'      => 'Organization',
       'visibility'				=> 1,
 
     );
-    $newMembOrgID = $this->organizationCreate($newMembOrgParams,$this->_apiversion); // create a new contact to update this membership type to
+    $newMembOrgID = $this->organizationCreate($newMembOrgParams); // create a new contact to update this membership type to
 
     $params = array(
                         'id'                        => $id,
@@ -374,8 +374,8 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase
 
   function testDelete( )
   {
-    $orgID = $this->organizationCreate(null,3 );
-    $membershipTypeID = $this->membershipTypeCreate( $orgID, 1,$this->_apiversion);
+    $orgID = $this->organizationCreate(null);
+    $membershipTypeID = $this->membershipTypeCreate( $orgID, 1);
     $params  = array('id' => $membershipTypeID,
                           'version' => $this->_apiversion,
     );
