@@ -830,10 +830,13 @@ class Installer extends InstallRequirements {
 
                 drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
                 
-                // load user
-                global $user;
-                $user = user_load(1);
+                // prevent session information from being saved.
+                drupal_save_session(FALSE);
 
+                // Force the current user to anonymous.
+                $original_user   = $GLOBALS['user'];
+                $GLOBALS['user'] = drupal_anonymous_user();
+                
                 // explicitly setting error reporting, since we cannot handle drupal related notices
                 error_reporting(1);
 
@@ -848,6 +851,11 @@ class Installer extends InstallRequirements {
                 
                 //add basic drupal permissions
                 civicrm_install_set_drupal_perms();
+
+                // restore the user.
+                $GLOBALS['user'] = $original_user;
+                drupal_save_session(TRUE);
+
             } elseif ( $installType == 'standalone' ) {
                 $standaloneURL = civicrm_cms_base( ) . 'standalone/index.php';
                 $checkListURL  = $standaloneURL . "?q=civicrm/admin/configtask&reset=1";
