@@ -90,7 +90,7 @@ function civicrm_api3_case_create( $params )
     }
 
     // format input with value separators
-    $sep = CRM_Case_BAO_Case::VALUE_SEPERATOR;
+    $sep = CRM_Core_DAO::VALUE_SEPARATOR;
     $newParams = array( 'case_type_id'  => $sep . $params['case_type_id'] . $sep,
                         'creator_id'    => $params['creator_id'],
                         'status_id'     => $params['status_id'],
@@ -481,7 +481,7 @@ function _civicrm_api3_case_read( $caseId ) {
     _civicrm_api3_object_to_array( $dao, $case );
 
     //handle multi-value case type
-    $sep = CRM_Case_BAO_Case::VALUE_SEPERATOR;
+    $sep = CRM_Core_DAO::VALUE_SEPARATOR;
     $case['case_type_id'] = trim( str_replace($sep, ',', $case['case_type_id']), ',');
 
     return $case;
@@ -610,7 +610,7 @@ function _civicrm_api3_case_check_params( $params, $mode = NULL ) {
       return civicrm_api3_create_error( 'Case type and case type id mismatch' );
     }
 
-    $sep = CRM_Case_BAO_Case::VALUE_SEPARATOR;
+    $sep = CRM_Core_DAO::VALUE_SEPARATOR;
     $params['case_type']    = $caseTypes[$params['case_type_id']];
     $params['case_type_id'] = $sep . $params['case_type_id'] . $sep;
 
