@@ -339,7 +339,7 @@ class CRM_Core_Permission {
 
         // check whether the following Ajax requests submitted the right key
         // FIXME: this should be integrated into ACLs proper
-        if ( $item['page_type'] == 3 ) {
+        if ( CRM_Utils_Array::value( 'page_type', $item ) == 3 ) {
             require_once 'CRM/Core/Key.php';
             if (!CRM_Core_Key::validate($_REQUEST['key'], $item['path'])) {
                 return false;
