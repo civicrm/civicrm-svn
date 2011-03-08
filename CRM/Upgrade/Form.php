@@ -320,7 +320,7 @@ SET    version = '$version'
             
             if ( in_array($targetRev, $revisions) ) {
                 
-                $versionObject   = $upgrade->incrementalPhpObject( $targetRev );
+                $versionObject   = $this->incrementalPhpObject( $targetRev );
                 $phpFunctionName = 'upgrade_' . str_replace( '.', '_', $targetRev );
                 
                 if ( is_callable(array($versionObject, $phpFunctionName)) ) {
