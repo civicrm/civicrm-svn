@@ -623,6 +623,16 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                     $row[$property] = CRM_Utils_Array::value( $result->state_province_id, $provinces );
                 } elseif ($property == 'world_region') {
                     $row[$property] = $regions[$result->world_region_id];
+                } elseif ( strpos( $property, '-url' ) ) {
+                    $websiteUrl = '';
+                    $website = "website-1-url";
+                    if ( !empty( $result->$website ) ) {
+                        $websiteId = "website-1-website_type_id";
+                        $websiteTypes = CRM_Core_PseudoConstant::websiteType( );
+                        $websiteType = $websiteTypes[$result->$websiteId];
+                        $websiteUrl = "<a href=\"{$result->$website}\">{$result->$website}  ({$websiteType})</a>";
+                    }
+                    $row['Home-url'] = $websiteUrl;
                 } else {
                     $row[$property] = $result->$property;
                 }
