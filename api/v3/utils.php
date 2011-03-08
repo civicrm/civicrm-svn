@@ -249,6 +249,64 @@ function _civicrm_api3_store_values( &$fields, $params, &$values )
     return $valueFound;
 }
 
+function _civicrm_api3_dao_set_filter (&$dao,$params ) {
+  $result = array();
+  if ( !$dao->find() ) {
+     return array();
+  }
+
+  $fields = $dao->fields();
+  $fields = array_intersect(array_keys($fields),array_keys($params));
+  if (!$fields) 
+    return;
+  foreach ($fields as $field) {
+    $dao->$field = $params [$field];
+  }
+}
+
+/**
+ * Converts an DAO object to an array 
+ *
+ * @param  object   $dao           (reference )object to convert
+ * @params array of arrays (key = id) of array of fields
+ * @static void
+ * @access public
+ */
+function _civicrm_api3_dao_to_array (&$dao, $params = null) {
+  $result = array();
+  if ( !$dao->find() ) {
+     return array();
+  }
+
+  $tmpFields = $dao->fields();
+  $fields = array_keys($tmpFields);
+  if ($return) {
+    $fields = array_intersect($fields,$return);
+  }
+
+  //rebuild $fields array to fix unique name of the fields
+  if(!empty($uniqueFields)){
+    $fields = $tmpFields;
+  }else{
+    foreach( $tmpFields as $key => $val ) {
+      $fields[$val["name"]]  = $val;
+    }
+  }
+  while ( $dao->fetch() ) {
+    $tmp = array();
+    //_civicrm_api3_object_to_array( $bao, $tmp );
+    foreach( $fields as $key ) {
+      if (array_key_exists($key, $dao)) {
+        // not sure on that one 
+        if ($dao->$key !== null)
+          $tmp[$key] = $dao->$key;
+      }
+    }
+    $result[$dao->id] = $tmp;
+  }
+  return $result;
+}
+
 /**
  * Converts an object to an array 
  *
