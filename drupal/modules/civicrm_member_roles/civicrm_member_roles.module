@@ -84,7 +84,7 @@ function civicrm_member_roles_user($op, &$edit, &$account)
     if (variable_get('civicrm_member_roles_sync_method', 0) == 3) {
         if ($op == 'insert') {
             _civicrm_member_roles_sync($account->uid);
-}
+        }
     }
 }
 
