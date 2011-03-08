@@ -481,7 +481,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     array_unshift($values, $errorMessage);
                     $importRecordParams = array($statusFieldName => 'ERROR', "${statusFieldName}Msg" => $errorMessage);
                     $this->updateImportRecord( $values[count($values)-1], $importRecordParams );
-                    return CRM_Import_Parser::ERROR;
+                    return CRM_Import_Parser::DUPLICATE;
                 }
             }
         }
