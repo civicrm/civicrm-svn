@@ -179,6 +179,10 @@ SELECT  count( id ) as statusCount
             $template->assign( 'upgraded', false );
 
             if ( CRM_Utils_Array::value('upgrade', $_POST) ) {
+                
+                //hold all upgrade versions those we are going to run.
+                $upgradedVersions = array( );
+                
                 $revisions = $upgrade->getRevisionSequence();
                 foreach ( $revisions as $rev ) {
                     // proceed only if $currentVer < $rev
@@ -219,7 +223,7 @@ SELECT  count( id ) as statusCount
                             
                             // process respective 3.4 sql files and functions,
                             // effective from 4.0.aplha1 to 4.1.aplha1
-                            $upgrade->processUpgradeFor4_0( $rev, $revisions );
+                            $upgrade->processUpgradeFor4_0( $rev, $upgradedVersions, $revisions );
 
                             if ( is_callable(array($versionObject, $phpFunctionName)) ) {
                                 $versionObject->$phpFunctionName( $rev );
@@ -230,8 +234,18 @@ SELECT  count( id ) as statusCount
                         
                         // after an successful intermediate upgrade, set the complete version
                         $upgrade->setVersion( $rev );
+                        
+                        //store all processed upgrade versions.
+                        $upgradedVersions[] = $rev;
                     }
                 }
+                
+                //give special call when particular sql tpl is missing.
+                if ( !in_array( $latestVer, $upgradedVersions ) ) {
+                    $revisions[] = $latestVer;
+                    $upgrade->processUpgradeFor4_0( $latestVer, $upgradedVersions, $revisions );
+                }
+                
                 $upgrade->setVersion( $latestVer );
                 $template->assign( 'upgraded', true );
                 

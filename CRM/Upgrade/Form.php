@@ -301,34 +301,80 @@ SET    version = '$version'
      * Function to process respective 3.4 version function/sql file for 4.0
      * version series.
      */
-    function processUpgradeFor4_0( $rev, $revisions ) {
-        $config = CRM_Core_Config::singleton( );
-        if ( !isset($config->currentCivicrmVersion) ) {
+    function processUpgradeFor4_0( $currentRev, &$upgradedVersions, $allRevisions ) 
+    {   
+        //we are only interested in rev from 4.0.alpha1 onward.
+        if ( version_compare( $currentRev, '4.0.alpha1' ) < 0 ) {
             return;
         }
         
-        // execute previous version sql only if processing version 
-        // ( $rev ) is > 4.0.aplha1 and db version >= 4.0.alpha1.
-        if ( version_compare( $rev, '4.0.alpha1' ) > 0 &&
-             version_compare( $rev, '4.1.alpha1' ) < 0 && 
-             version_compare( $config->currentCivicrmVersion, '4.0.alpha1' ) >= 0 ) {
-            $revParts = explode( '.', $rev );
+        //make sure civicrm upgrade start from 4.0.alpha1 onward.
+        $config = CRM_Core_Config::singleton( );
+        if ( ! isset( $config->currentCivicrmVersion ) ||
+             version_compare( $config->currentCivicrmVersion, '4.0.alpha1' ) < 0 ||
+             version_compare( $config->currentCivicrmVersion, '4.1.alpha1' ) > 0 ) {
+            return;
+        }
+        
+        //get the mirror image of 3.4 rev.
+        $mirrorRev34From = str_replace( '4.0', '3.4', $config->currentCivicrmVersion );
+        
+        //upgrade sequence should be.
+        //4.0.alpha1 -> 3.4.alpah2 -> 4.0.alpha2 -> 3.4.alpha3 -> 4.0.alpha3 -> 3.4.beta1 -> 4.0.beta1
+        
+        //split the upgrade revisions. 
+        $upgrade34Series = $upgrade40Series = array( );
+        foreach ( $allRevisions as $revision ) {
+            if ( version_compare( $revision, $mirrorRev34From ) <= 0  ) {
+                continue;
+            }
+            if ( version_compare( $revision, '3.4.alpha1' ) > 0 &&
+                 version_compare( $revision, '4.0.alpha1' ) < 0 ) {
+                $upgrade34Series[] = $revision;
+            } else if ( version_compare( $revision, '4.0.alpha1' ) > 0 ) {
+                $upgrade40Series[] = $revision;
+            } else if ( version_compare( $revision, '4.1.alpha1' ) > 0 ) {
+                break;
+            }
+        }
+        
+        foreach ( $upgrade40Series as $rev40 ) {
+            if ( in_array( $rev40, $upgradedVersions ) ) {
+                continue;
+            }
             
-            // find and process 3.4 version sql files and function.
-            // eg: for 4.0.alpha2 we need to execute 3.4.alpha2
-            $targetRev = "3.4.{$revParts[2]}";
-            
-            if ( in_array($targetRev, $revisions) ) {
-                
-                $versionObject   = $this->incrementalPhpObject( $targetRev );
-                $phpFunctionName = 'upgrade_' . str_replace( '.', '_', $targetRev );
-                
-                if ( is_callable(array($versionObject, $phpFunctionName)) ) {
-                    $versionObject->$phpFunctionName( $targetRev );
-                } else {
-                    $this->processSQL( $targetRev );
+            $mirrorRev34 = str_replace( '4.0', '3.4', $rev40 );
+            foreach ( $upgrade34Series as $rev34 ) {
+                if ( in_array( $rev34, $upgradedVersions ) ) {
+                    continue;
                 }
-
+                
+                //run 34 upgrade revision related stuff here.
+                if ( version_compare( $rev34, $mirrorRev34 ) <= 0 ) {
+                    $versionObject   = $this->incrementalPhpObject( $rev34 );
+                    $phpFunctionName = 'upgrade_' . str_replace( '.', '_', $rev34 );
+                    if ( is_callable( array( $versionObject, $phpFunctionName ) ) ) {
+                        $versionObject->$phpFunctionName( $rev34 );
+                    } else {
+                        $this->processSQL( $rev34 );
+                    }
+                }
+            }
+            
+            //run 4.0 rev related stuff here.
+            $versionObject   = $this->incrementalPhpObject( $rev40 );
+            $phpFunctionName = 'upgrade_' . str_replace( '.', '_', $rev40 );
+            if ( is_callable( array( $versionObject, $phpFunctionName ) ) ) {
+                $versionObject->$phpFunctionName( $rev40 );
+            } else {
+                //make sure file is exists.
+                $sqlFile = implode( DIRECTORY_SEPARATOR, 
+                                    array(dirname(__FILE__), 'Incremental', 
+                                          'sql', $rev40 . '.mysql') );
+                $tplFile = "$sqlFile.tpl";
+                if ( file_exists( $sqlFile ) ) {
+                    $this->processSQL( $rev40 );
+                }
             }
         }
     }
