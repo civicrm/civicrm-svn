@@ -150,7 +150,7 @@ function civicrm_contact_update( &$params, $create_new = false )
     }
     
     $error = _civicrm_greeting_format_params( $params );
-    if ( civicrm_error( $error, 'CRM_Core_Error' ) ) {
+    if ( civicrm_error( $error ) ) {
         return $error;
     }
     
@@ -722,12 +722,12 @@ function civicrm_contact_format_create( &$params )
     }
 
     $error = _civicrm_required_formatted_contact($params);
-    if (civicrm_error( $error, 'CRM_Core_Error')) {
+    if ( civicrm_error( $error ) ) {
         return $error;
     }
     
     $error = _civicrm_validate_formatted_contact($params);
-    if (civicrm_error( $error, 'CRM_Core_Error')) {
+    if ( civicrm_error( $error ) ) {
         return $error;
     }
 
@@ -739,7 +739,7 @@ function civicrm_contact_format_create( &$params )
     if ( CRM_Utils_Array::value('onDuplicate', $params) != CRM_Import_Parser::DUPLICATE_NOCHECK) {
         CRM_Core_Error::reset( );
         $error = _civicrm_duplicate_formatted_contact($params);
-        if (civicrm_error( $error, 'CRM_Core_Error')) {
+        if ( civicrm_error( $error ) ) {
             return $error;
         }
     }

@@ -117,7 +117,7 @@ LEFT JOIN civicrm_email      ON contact_a.id = civicrm_email.contact_id
             $formatted['onDuplicate'] = CRM_Import_Parser::DUPLICATE_SKIP;
             $formatted['fixAddress'] = true;
             $contact =& civicrm_contact_format_create($formatted);
-            if (civicrm_error($contact, 'CRM_Core_Error')) {
+            if ( civicrm_error( $contact ) ) {
                 return $success;
             }
             $contact_id = $contact['id'];
