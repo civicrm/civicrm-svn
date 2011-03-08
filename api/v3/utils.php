@@ -139,7 +139,7 @@ function civicrm_api3_verify_mandatory ($params, $daoName = null, $keys = array(
  * @param object $dao DAO / BAO object to be freed here
  * @return <type>
  */
-function &civicrm_api3_create_error( $msg, $data = null,$dao = null ) 
+function &civicrm_api3_create_error( $msg, $data = null,&$dao = null ) 
 {
     if(is_object ($dao)){
         $dao->free(); 
@@ -153,7 +153,7 @@ function &civicrm_api3_create_error( $msg, $data = null,$dao = null )
  * @dao object DAO object to be freed here
  * @return array $result
  */
-function civicrm_api3_create_success( $values = 1,$params=null,$dao = null )
+function civicrm_api3_create_success( $values = 1,$params=null,&$dao = null )
 {
     if(is_object ($dao)){
         $dao->free(); 
