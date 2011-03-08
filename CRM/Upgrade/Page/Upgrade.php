@@ -60,7 +60,11 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
         if ( ! $latestVer ) {
             CRM_Core_Error::fatal( ts('Version information missing in civicrm codebase.') );
         }
-
+        
+        // hack to reuse current civicrm version in later process.
+        $config = CRM_Core_Config::singleton( );
+        $config->currentCivicrmVersion = $currentVer;
+        
         // hack to make past ver compatible /w new incremental upgrade process
         $convertVer = array( '2.1'      => '2.1.0',
                              '2.2'      => '2.2.alpha1',
@@ -213,13 +217,17 @@ SELECT  count( id ) as statusCount
                                 }
                             }
                             
+                            // process respective 3.4 sql files and functions,
+                            // effective from 4.0.aplha1 to 4.1.aplha1
+                            $upgrade->processUpgradeFor4_0( $rev, $revisions );
+
                             if ( is_callable(array($versionObject, $phpFunctionName)) ) {
                                 $versionObject->$phpFunctionName( $rev );
                             } else {
                                 $upgrade->processSQL( $rev );
                             }
                         }
-
+                        
                         // after an successful intermediate upgrade, set the complete version
                         $upgrade->setVersion( $rev );
                     }

@@ -296,6 +296,42 @@ SET    version = '$version'
             $this->source( $sqlFile );
         }
     }
+
+    /**
+     * Function to process respective 3.4 version function/sql file for 4.0
+     * version series.
+     */
+    function processUpgradeFor4_0( $rev, $revisions ) {
+        $config = CRM_Core_Config::singleton( );
+        if ( !isset($config->currentCivicrmVersion) ) {
+            return;
+        }
+        
+        // execute previous version sql only if processing version 
+        // ( $rev ) is > 4.0.aplha1 and db version >= 4.0.alpha1.
+        if ( version_compare( $rev, '4.0.alpha1' ) > 0 &&
+             version_compare( $rev, '4.1.alpha1' ) < 0 && 
+             version_compare( $config->currentCivicrmVersion, '4.0.alpha1' ) >= 0 ) {
+            $revParts = explode( '.', $rev );
+            
+            // find and process 3.4 version sql files and function.
+            // eg: for 4.0.alpha2 we need to execute 3.4.alpha2
+            $targetRev = "3.4.{$revParts[2]}";
+            
+            if ( in_array($targetRev, $revisions) ) {
+                
+                $versionObject   = $upgrade->incrementalPhpObject( $targetRev );
+                $phpFunctionName = 'upgrade_' . str_replace( '.', '_', $targetRev );
+                
+                if ( is_callable(array($versionObject, $phpFunctionName)) ) {
+                    $versionObject->$phpFunctionName( $targetRev );
+                } else {
+                    $this->processSQL( $targetRev );
+                }
+
+            }
+        }
+    }
 }
 
 
