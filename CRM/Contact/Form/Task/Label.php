@@ -66,7 +66,8 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
         CRM_Utils_System::setTitle( ts('Make Mailing Labels') );
 
         //add select for label
-        $label = array("5160" => "5160",
+        $label = array("3475" => "3475",
+	                "5160" => "5160",
                        "5161" => "5161",
                        "5162" => "5162", 
                        "5163" => "5163", 
