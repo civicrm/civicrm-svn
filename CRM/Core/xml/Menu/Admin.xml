@@ -332,7 +332,7 @@
      <weight>370</weight>
   </item>
   <item>
-     <path>civicrm/admin/options/language</path>
+     <path>civicrm/admin/options/languages</path>
      <title>Preferred Languages</title>
      <desc>Options for contact languages.</desc>
      <path_arguments>group=languages</path_arguments>
