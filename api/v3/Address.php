@@ -63,7 +63,7 @@ function civicrm_api3_address_create( &$params )
 {
   _civicrm_api3_initialize( true );
   try {
-    civicrm_api3_verify_mandatory ($params, null, array ('contact_id'));
+    civicrm_api3_verify_mandatory ($params, null, array ('contact_id', 'location_type_id'));
     
     require_once 'CRM/Core/BAO/Address.php';
 
