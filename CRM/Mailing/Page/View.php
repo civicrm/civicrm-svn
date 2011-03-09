@@ -60,7 +60,7 @@ class CRM_Mailing_Page_View extends CRM_Core_Page
         // return true
 		require_once 'CRM/Core/Permission.php';
         if ( $this->_mailing->visibility == 'Public Pages' 
-		) {
+		&& CRM_Core_Permission::check( 'view CiviMail content' )) {
             return true;
         }
 		
