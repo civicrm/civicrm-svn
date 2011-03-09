@@ -243,7 +243,7 @@ SELECT  count( id ) as statusCount
                 //give special call when particular sql tpl is missing.
                 if ( !in_array( $latestVer, $upgradedVersions ) ) {
                     $revisions[] = $latestVer;
-                    $upgrade->processUpgradeFor4_0( $latestVer, $upgradedVersions, $revisions );
+                    $upgrade->processUpgradeFor4_0( $latestVer, $upgradedVersions, $revisions, true );
                 }
                 
                 $upgrade->setVersion( $latestVer );

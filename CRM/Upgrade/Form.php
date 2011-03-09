@@ -301,7 +301,7 @@ SET    version = '$version'
      * Function to process respective 3.4 version function/sql file for 4.0
      * version series.
      */
-    function processUpgradeFor4_0( $currentRev, &$upgradedVersions, $allRevisions ) 
+    function processUpgradeFor4_0( $currentRev, &$upgradedVersions, $allRevisions, $process40 = false ) 
     {   
         //we are only interested in rev from 4.0.alpha1 onward.
         if ( version_compare( $currentRev, '4.0.alpha1' ) < 0 ) {
@@ -358,23 +358,27 @@ SET    version = '$version'
                     } else {
                         $this->processSQL( $rev34 );
                     }
+                    $upgradedVersions[] = $rev34;
                 }
             }
             
             //run 4.0 rev related stuff here.
-            $versionObject   = $this->incrementalPhpObject( $rev40 );
-            $phpFunctionName = 'upgrade_' . str_replace( '.', '_', $rev40 );
-            if ( is_callable( array( $versionObject, $phpFunctionName ) ) ) {
-                $versionObject->$phpFunctionName( $rev40 );
-            } else {
-                //make sure file is exists.
-                $sqlFile = implode( DIRECTORY_SEPARATOR, 
-                                    array(dirname(__FILE__), 'Incremental', 
-                                          'sql', $rev40 . '.mysql') );
-                $tplFile = "$sqlFile.tpl";
-                if ( file_exists( $sqlFile ) ) {
-                    $this->processSQL( $rev40 );
+            if ( $process40 ) {
+                $versionObject   = $this->incrementalPhpObject( $rev40 );
+                $phpFunctionName = 'upgrade_' . str_replace( '.', '_', $rev40 );
+                if ( is_callable( array( $versionObject, $phpFunctionName ) ) ) {
+                    $versionObject->$phpFunctionName( $rev40 );
+                } else {
+                    //make sure file is exists.
+                    $sqlFile = implode( DIRECTORY_SEPARATOR, 
+                                        array(dirname(__FILE__), 'Incremental', 
+                                              'sql', $rev40 . '.mysql') );
+                    $tplFile = "$sqlFile.tpl";
+                    if ( file_exists( $sqlFile ) ) {
+                        $this->processSQL( $rev40 );
+                    }
                 }
+                $upgradedVersions[] = $rev40;
             }
         }
     }
