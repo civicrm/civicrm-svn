@@ -116,11 +116,14 @@ function civicrm_api_get_function_name($entity, $action,$version = NULL) {
             }
         }
     }
-    $function = strtolower(str_replace('U_F',
+    if ($entity == strtolower ($entity) ) {
+      $function = '_'.$entity;
+    } else {
+      $function = strtolower(str_replace('U_F',
                                        'uf', 
                                        // That's CamelCase, beside an odd UFCamel that is expected as uf_camel
                                        preg_replace('/(?=[A-Z])/','_$0', $entity)));
-
+    }
     if ( $version === 2 ) {
         return 'civicrm'. $function .'_'. $action;
     } else {
