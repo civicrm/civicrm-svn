@@ -100,6 +100,9 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
                 // CRM-7590, reuse same mailing ID if we are continuing
                 $this->set('mailing_id', $mailingID);
             }
+            
+            $defaults['visibility'] = $mailing->visibility;
+            
             $defaults['campaign_id'] = $mailing->campaign_id;
         
             require_once 'CRM/Mailing/DAO/Group.php';
@@ -165,6 +168,9 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
         $this->add( 'text', 'name', ts('Name Your Mailing'),
                     CRM_Core_DAO::getAttribute( 'CRM_Mailing_DAO_Mailing', 'name' ),
                     true );
+                    
+		$this->add( 'select', 'visibility', ts('Mailing Visibility'),
+                CRM_Core_SelectValues::ufVisibility( true ), true );
         
         //CRM-7362 --add campaigns.
         $mailingId = CRM_Utils_Request::retrieve('mid', 'Integer', $this, false, null );
@@ -313,7 +319,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
             $values['includeGroups'][] = $smartGroupId;
         }
         
-        foreach ( array( 'name', 'group_id', 'search_id', 'search_args', 'campaign_id' ) as $n ) {
+        foreach ( array( 'name', 'visibility', 'group_id', 'search_id', 'search_args', 'campaign_id' ) as $n ) {
             if ( CRM_Utils_Array::value( $n, $values ) ) {
                 $params[$n] = $values[$n];
             }
