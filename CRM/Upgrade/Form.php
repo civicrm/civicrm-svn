@@ -252,9 +252,12 @@ SET    version = '$version'
                            array(dirname(__FILE__), 'Incremental', 'sql') );
         $sqlFiles = scandir($sqlDir);
 
-        $sqlFilePattern = '/^(\d{1,2}\.\d{1,2}\.(\d{1,2}|\w{4,7}))\.(my)?sql(\.tpl)?$/i';
+        $sqlFilePattern = '/^((\d{1,2}\.\d{1,2})\.(\d{1,2}|\w{4,7}))\.(my)?sql(\.tpl)?$/i';
         foreach ($sqlFiles as $file) {
             if ( preg_match($sqlFilePattern, $file, $matches) ) {
+                if ( $matches[2] == '4.0' ) {
+                    CRM_Core_Error::fatal( ts( "4.0.x upgrade files shouldn't exist. Contact Lobo to discuss this. This is related to the issue CRM-7731." ) );
+                }
                 if ( ! in_array($matches[1], $revList) ) {
                     $revList[] = $matches[1];
                 }
@@ -267,6 +270,13 @@ SET    version = '$version'
 
         usort($revList, 'version_compare');
         return $revList;
+    }
+
+    static function getRevisionPart( $rev, $index = 1 ) {
+        $revPattern = '/^((\d{1,2})\.\d{1,2})\.(\d{1,2}|\w{4,7})?$/i';
+        preg_match( $revPattern, $rev, $matches );
+
+        return array_key_exists( $index, $matches ) ? $matches[$index] : null;
     }
 
     function processLocales($tplFile, $rev) {

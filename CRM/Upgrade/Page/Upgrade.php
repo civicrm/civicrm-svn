@@ -174,6 +174,12 @@ SELECT  count( id ) as statusCount
                                                     array( 1=> $currentVer, 2=> $latestVer ) ) );
             $template->assign( 'upgraded', false );
 
+            // hack to make 4.0.x (d6, J1.5) codebase go through 3.4.x (D7,J1.6) upgrade files, 
+            // since schema wise they are same
+            if ( CRM_Upgrade_Form::getRevisionPart( $currentVer ) == '4.0' ) {
+                $currentVer = str_replace( '4.0', '3.4', $currentVer );
+            }
+
             if ( CRM_Utils_Array::value('upgrade', $_POST) ) {
                 $revisions = $upgrade->getRevisionSequence();
                 foreach ( $revisions as $rev ) {
