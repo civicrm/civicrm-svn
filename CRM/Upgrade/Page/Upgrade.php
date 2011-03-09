@@ -60,7 +60,7 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
         if ( ! $latestVer ) {
             CRM_Core_Error::fatal( ts('Version information missing in civicrm codebase.') );
         }
-        
+
         // hack to make past ver compatible /w new incremental upgrade process
         $convertVer = array( '2.1'      => '2.1.0',
                              '2.2'      => '2.2.alpha1',
@@ -175,27 +175,14 @@ SELECT  count( id ) as statusCount
             $template->assign( 'upgraded', false );
 
             if ( CRM_Utils_Array::value('upgrade', $_POST) ) {
-                
                 $revisions = $upgrade->getRevisionSequence();
-                
-                //CRM-7731 -reassemble the upgrade revisions.
-                $this->_reassembleRevisionsFor40( $revisions, $currentVer, $latestVer );
-                
                 foreach ( $revisions as $rev ) {
-                    
-                    $versionCompare = true;
-                    if ( is_array( $rev ) && !empty( $rev ) ) {
-                        $versionCompare = current( $rev );
-                        $rev = key( $rev );
-                    }
-                    
                     // proceed only if $currentVer < $rev
-                    if ( ! $versionCompare || 
-                         version_compare($currentVer, $rev) < 0 ) {
+                    if ( version_compare($currentVer, $rev) < 0 ) {
                         // as soon as we start doing anything we append ".upgrade" to version.
                         // this also helps detect any partial upgrade issues
                         $upgrade->setVersion( $rev . '.upgrade' );
-                        
+
                         $phpFunctionName = 'upgrade_' . str_replace( '.', '_', $rev );
 
                         // follow old upgrade process for all version
@@ -232,12 +219,11 @@ SELECT  count( id ) as statusCount
                                 $upgrade->processSQL( $rev );
                             }
                         }
-                        
+
                         // after an successful intermediate upgrade, set the complete version
                         $upgrade->setVersion( $rev );
                     }
                 }
-                
                 $upgrade->setVersion( $latestVer );
                 $template->assign( 'upgraded', true );
                 
@@ -514,68 +500,5 @@ SELECT  count( id ) as statusCount
         $upgrade = new CRM_Upgrade_Form( );
         $upgrade->processSQL( $rev );
     }
-    
-    /**
-     * When user is upgrading from v4.0.alpha1 onward we need to
-     * consider db changes from 3.4.alpha1 onward up to equivalent 3.4 version.
-     * 
-     * We'd like to have upgrade scequece like
-     * 4.0.alpha1 -> 3.4.alpah2 -> 4.0.alpha2 -> 3.4.alpha3 -> 4.0.alpha3 -> 3.4.beta1 -> 4.0.beta1
-     *
-     **/
-    private function _reassembleRevisionsFor40( &$revisions, $upgradeFrom, $upgradeTo ) 
-    {
-        //we are only interested in a window of 4.0.alpha1 - 4.1.alpha1.
-        if ( version_compare( $upgradeFrom, '4.0.alpha1' ) < 0 ||
-             version_compare( $upgradeFrom, '4.1.alpha1' ) >= 0 ) {
-            return;
-        }
-        
-        $allRevisions = $revisions;
-        $doNotIncludeRev = null;
-        if ( !in_array( $upgradeTo, $allRevisions ) ) {
-            $allRevisions[] = $doNotIncludeRev = $upgradeTo;
-        }
-        
-        //pickup all 34 upgrade versions.
-        $upgrade34Series = array( );
-        foreach ( $allRevisions as $rev ) {
-            if ( version_compare( '3.4.alpha1', $rev ) <= 0 && 
-                 version_compare( $rev, '4.0.alpha1' ) < 0 ) {
-                $upgrade34Series[] = $rev;
-            }
-        }
-        
-        //consider db changes up to this 3.4 version. 
-        $rev34MirrorTo   = str_replace( '4.0', '3.4', $upgradeTo   );
-        $rev34MirrorFrom = str_replace( '4.0', '3.4', $upgradeFrom );
-        
-        foreach ( $allRevisions as $rev ) {
-            //pickup the proper 34 revisions and fill here.
-            if ( version_compare( '4.0.alpha1', $rev ) <= 0 ) {
-                $rev34Mirror = str_replace( '4.0', '3.4', $rev );
-                foreach ( $upgrade34Series as $rev34 ) {
-                    if ( version_compare( $rev34, $rev34Mirror )   <= 0  && 
-                         version_compare( $rev34, $rev34MirrorTo )  <= 0 &&
-                         version_compare( $rev34MirrorFrom, $rev34 ) < 0 ) {
-                        $formattedRevisions[] = array( $rev34 => false );
-                    }
-                }
-            }
-            
-            //please don't include in revisions, 
-            //since this was originally not present
-            if ( $rev == $doNotIncludeRev ) {
-                continue;
-            }
-            
-            //put the 40 revision in.
-            $formattedRevisions[] = array( $rev => true );
-        }
-        
-        //finally assign formatted revisions to main.
-        $revisions = $formattedRevisions;
-    }
-    
 }
 
