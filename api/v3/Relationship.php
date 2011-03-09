@@ -218,10 +218,10 @@ function civicrm_api3_relationship_get($params)
     civicrm_api3_verify_mandatory($params);
    
     if ( !isset( $params['contact_id_a'] ) ) {
-        return civicrm_api3_create_error(  'Could not find contact_id in input parameters.'  );
+        return civicrm_api3_create_error(  'Could not find contact_id_a in input parameters.'  );
     }
     require_once 'CRM/Contact/BAO/Relationship.php';
-    $contactID     = $params['contact_id'];
+    $contactID     = $params['contact_id_a'];
     $relationships = CRM_Contact_BAO_Relationship::getRelationship($contactID);
     
     if ( !empty( $relationshipTypes ) ) {
