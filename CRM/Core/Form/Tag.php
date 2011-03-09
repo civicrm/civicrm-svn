@@ -148,7 +148,7 @@ class CRM_Core_Form_Tag
             if ( !empty( $tagsIDs ) ) {
                 foreach( $tagsIDs as $tagId ) {
                     if ( is_numeric( $tagId ) ) {
-                        if ( $form->_action == CRM_Core_Action::ADD ) {
+                        if ( $form->_action != CRM_Core_Action::UPDATE ) {
                             $insertValues[] = "( {$tagId}, {$entityId}, '{$entityTable}' ) ";
                         } else if ( !array_key_exists( $tagId, $form->_entityTagValues ) ) {
                             $insertValues[] = "( {$tagId}, {$entityId}, '{$entityTable}' ) ";
