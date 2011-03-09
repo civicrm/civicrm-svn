@@ -115,6 +115,7 @@ function civicrm_api3_event_get( $params )
     // don't check if empty, more meaningful error for API user instead of silent defaults
     $offset   = array_key_exists( 'return.offset', $params ) ? $params['return.offset'] : 0;
     $rowCount = array_key_exists( 'return.max_results', $params ) ? $params['return.max_results'] : 25;
+    $isCurrent = array_key_exists( 'isCurrent', $params ) ? $params['isCurrent'] : 0;
     
 
     foreach ( $params as $n => $v ) {

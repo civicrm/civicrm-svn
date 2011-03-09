@@ -1057,16 +1057,20 @@ SELECT $select
                     break;
 
                 case 'Autocomplete-Select':
+                    $hiddenEleName = $elementName . '_id';
+                    if ( substr( $elementName, -1 ) == ']' ) { 
+                        $hiddenEleName = substr( $elementName, 0, $elementName.length - 1 ).'_id]';
+                    }
                     if ($field['data_type'] == "ContactReference") {
                         require_once 'CRM/Contact/BAO/Contact.php';
                         if ( is_numeric( $value ) ) {
-                            $defaults[$elementName.'_id'] = $value; 
-                            $defaults[$elementName] = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $value, 'sort_name' );
+                            $defaults[$hiddenEleName] = $value; 
+                            $defaults[$elementName]   = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $value, 'sort_name' );
                         }
                     } else {
                         $label = CRM_Core_BAO_CustomOption::getOptionLabel( $field['id'], $value );
-                        $defaults[$elementName.'_id'] = $value;
-                        $defaults[$elementName] = $label;
+                        $defaults[$hiddenEleName] = $value;
+                        $defaults[$elementName]   = $label;
                     }
                     break;
                     
