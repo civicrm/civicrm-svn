@@ -61,10 +61,6 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
             CRM_Core_Error::fatal( ts('Version information missing in civicrm codebase.') );
         }
         
-        // hack to reuse current civicrm version in later process.
-        $config = CRM_Core_Config::singleton( );
-        $config->currentCivicrmVersion = $currentVer;
-        
         // hack to make past ver compatible /w new incremental upgrade process
         $convertVer = array( '2.1'      => '2.1.0',
                              '2.2'      => '2.2.alpha1',
@@ -180,9 +176,6 @@ SELECT  count( id ) as statusCount
 
             if ( CRM_Utils_Array::value('upgrade', $_POST) ) {
                 
-                //hold all upgrade versions those we are going to run.
-                $upgradedVersions = array( );
-                
                 $revisions = $upgrade->getRevisionSequence();
                 foreach ( $revisions as $rev ) {
                     // proceed only if $currentVer < $rev
@@ -221,10 +214,6 @@ SELECT  count( id ) as statusCount
                                 }
                             }
                             
-                            // process respective 3.4 sql files and functions,
-                            // effective from 4.0.aplha1 to 4.1.aplha1
-                            $upgrade->processUpgradeFor4_0( $rev, $upgradedVersions, $revisions );
-
                             if ( is_callable(array($versionObject, $phpFunctionName)) ) {
                                 $versionObject->$phpFunctionName( $rev );
                             } else {
@@ -234,16 +223,7 @@ SELECT  count( id ) as statusCount
                         
                         // after an successful intermediate upgrade, set the complete version
                         $upgrade->setVersion( $rev );
-                        
-                        //store all processed upgrade versions.
-                        $upgradedVersions[] = $rev;
                     }
-                }
-                
-                //give special call when particular sql tpl is missing.
-                if ( !in_array( $latestVer, $upgradedVersions ) ) {
-                    $revisions[] = $latestVer;
-                    $upgrade->processUpgradeFor4_0( $latestVer, $upgradedVersions, $revisions, true );
                 }
                 
                 $upgrade->setVersion( $latestVer );
