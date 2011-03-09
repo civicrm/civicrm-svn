@@ -99,7 +99,7 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
      */
     function testCreateWithCustomData( )
     {
-        $this->markTestSkipped( 'Throws fatal' );
+        $this->markTestSkipped( 'Throws fatal in the suite' );
         $contactId = Contact::createIndividual( );
         $ids = array ('contribution' => null );
         
