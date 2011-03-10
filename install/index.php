@@ -148,20 +148,19 @@ if ($alreadyInstalled ) {
     errorDisplayPage( $errorTitle, $errorMsg );
 }
 
-$versionFile = $crmPath . CIVICRM_DIRECTORY_SEPARATOR . 'civicrm-version.txt';
+$versionFile = $crmPath . CIVICRM_DIRECTORY_SEPARATOR . 'civicrm-version.php';
 if(file_exists($versionFile)) {
-    $civicrm_version = file_get_contents($versionFile);
+    require_once( $versionFile );
+    $civicrm_version = civicrmVersion( );
 } else {
     $civicrm_version = 'unknown';
 }
 
 if ( $installType == 'drupal' ) {
     // Ensure that they have downloaded the correct version of CiviCRM
-    if ( ( strpos( $civicrm_version, 'PHP5'   ) === false) ||
-        ( ( strpos( $civicrm_version, 'Drupal' ) === false ) &&
-          ( strpos( $civicrm_version, 'Standalone' === false ) ) ) ) {
+    if ( $civicrm_version['cms'] != 'Drupal' ) {
         $errorTitle = "Oops! Incorrect CiviCRM Version";
-        $errorMsg = "This installer can only be used for the Drupal or Standalone PHP5 version of CiviCRM. Refer to the online " . $docLink . " for information about installing CiviCRM on PHP4 servers OR installing CiviCRM for Joomla!";
+        $errorMsg = "This installer can only be used for the Drupal version of CiviCRM. Refer to the online " . $docLink . " for information about installing CiviCRM on PHP4 servers OR installing CiviCRM for Joomla!";
         errorDisplayPage( $errorTitle, $errorMsg );
     }
 

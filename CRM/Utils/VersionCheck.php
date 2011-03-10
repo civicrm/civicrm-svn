@@ -82,9 +82,13 @@ class CRM_Utils_VersionCheck
         $localfile = $civicrm_root . DIRECTORY_SEPARATOR . self::LOCALFILE_NAME;
         $cachefile = $config->uploadDir . self::CACHEFILE_NAME;
 
-        if ($config->versionCheck and file_exists($localfile)) {
-            $localParts         = explode(' ', trim(file_get_contents($localfile)));
-            $this->localVersion = $localParts[0];
+        if ( $config->versionCheck &&
+             file_exists( $localfile ) ) {
+            require_once( $localfile );
+            if ( function_exists( 'civicrmVersion' ) ) {
+                $info = civicrmVersion( );
+                $this->localVersion = $info['version'];
+            }
             $expiryTime         = time() - self::CACHEFILE_EXPIRE;
 
             // if there's a cachefile and it's not stale use it to

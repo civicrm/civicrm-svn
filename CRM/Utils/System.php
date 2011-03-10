@@ -804,11 +804,13 @@ class CRM_Utils_System {
         
         if ( ! $version ) {
             $verFile = implode( DIRECTORY_SEPARATOR, 
-                                array(dirname(__FILE__), '..', '..', 'civicrm-version.txt') );
+                                array(dirname(__FILE__), '..', '..', 'civicrm-version.php') );
             if ( file_exists( $verFile ) ) {
-                $str     = file_get_contents( $verFile );
-                $parts   = explode( ' ', $str );
-                $version = trim( $parts[0] );
+                require_once( $verFile );
+                if ( function_exists( 'civicrmVersion' ) ) {
+                    $info = civicrmVersion( );
+                    $version = $info['version'];
+                }
             } else {
                 // svn installs don't have version.txt by default. In that case version.xml should help - 
                 $verFile = implode( DIRECTORY_SEPARATOR,
