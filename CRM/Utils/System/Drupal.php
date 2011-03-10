@@ -357,7 +357,8 @@ class CRM_Utils_System_Drupal {
         
         $path = $_SERVER['SCRIPT_FILENAME'];
         if ( function_exists( 'drush_get_context' ) ) {
-            $path = drush_get_context('DRUSH_DRUPAL_ROOT');
+            // drush anyway takes care of multisite install etc
+            return drush_get_context('DRUSH_DRUPAL_ROOT');
         }
         // CRM-7582
         $pathVars = explode( '/', 

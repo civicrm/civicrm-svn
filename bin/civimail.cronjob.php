@@ -46,7 +46,10 @@ function processQueue($batch_size) {
 function run( ) {
     session_start( );                               
                                             
-    require_once '../civicrm.config.php'; 
+    if (! function_exists( 'drush_get_context' ) ) {
+        require_once '../civicrm.config.php'; 
+    }
+
     require_once 'CRM/Core/Config.php'; 
     
     $config =& CRM_Core_Config::singleton(); 

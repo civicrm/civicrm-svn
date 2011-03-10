@@ -103,7 +103,11 @@ class civicrm_CLI {
         // so the configuration works with php-cli
         $_SERVER['PHP_SELF' ] ="/index.php";
         $_SERVER['HTTP_HOST']= $this->site;
-        require_once ("./civicrm.config.php");
+
+        if (! function_exists( 'drush_get_context' ) ) {
+            require_once ("./civicrm.config.php");
+        }
+
         require_once ("CRM/Core/Error.php");
         $this->key= defined( 'CIVICRM_SITE_KEY' ) ? CIVICRM_SITE_KEY : null;
         $_REQUEST['key']= $this->key;
