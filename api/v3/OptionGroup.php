@@ -1,4 +1,5 @@
 <?
+require_once 'api/v3/utils.php';
 
 function civicrm_api3_option_group_get( $params ) {
     _civicrm_api3_initialize(true);
