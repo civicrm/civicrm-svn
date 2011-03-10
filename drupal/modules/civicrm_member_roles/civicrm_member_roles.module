@@ -423,9 +423,9 @@ function _civicrm_member_roles_sync( $ext_uid = NULL, $cid = NULL )
     if ( ! civicrm_initialize( ) ) {
         return;
     }  
+
     //Bring in CRM_Core_BAO_UFMatch class so we can find Drupal UIDs
-    global $civicrm_root;
-    require_once $civicrm_root . '/CRM/Core/BAO/UFMatch.php';
+    require_once 'CRM/Core/BAO/UFMatch.php';
     $rules = db_query('SELECT * FROM {civicrm_member_roles_rules}');
     //Error check
     if ($rules === FALSE) {
