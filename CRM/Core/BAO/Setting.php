@@ -98,7 +98,28 @@ class CRM_Core_BAO_Setting
                 unset( $params[$name] );
             }
         }
-
+        
+        //keep user preferred language upto date, CRM-7746
+        $session = CRM_Core_Session::singleton( );
+        $lcMessages = CRM_Utils_Array::value( 'lcMessages', $params );
+        if ( $lcMessages && $session->get('userID') ) {
+            $languageLimit = CRM_Utils_Array::value( 'languageLimit', $params );
+            if ( is_array( $languageLimit ) &&
+                 !in_array( $lcMessages, array_keys( $languageLimit ) ) ) {
+                $lcMessages = $session->get( 'lcMessages' );
+            }
+            
+            require_once 'CRM/Core/DAO/UFMatch.php';
+            $ufm = new CRM_Core_DAO_UFMatch();
+            $ufm->contact_id = $session->get('userID');
+            if ( $lcMessages && $ufm->find( true ) ) {
+                $ufm->language = $lcMessages;
+                $ufm->save( );
+                $session->set( 'lcMessages', $lcMessages );
+                $params['lcMessages'] = $lcMessages;
+            }
+        }
+        
         $domain->config_backend = serialize($params);
         $domain->save();
     }
