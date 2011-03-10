@@ -257,7 +257,7 @@ FROM civicrm_navigation WHERE domain_id = $domainID {$whereClause} ORDER BY pare
      * @return array $navigationTree nested array of menus
      * @static
      */
-    static function buildNavigationTree( &$navigationTree, $parentID, $navigationMenu = true, $cleanNavUrl = false ) 
+    static function buildNavigationTree( &$navigationTree, $parentID, $navigationMenu = true ) 
     {
 
         $whereClause = " parent_id IS NULL";
@@ -287,14 +287,14 @@ ORDER BY parent_id, weight";
             // for each menu get their children
             $navigationTree[$navigation->id] = array( 'attributes' => array( 'label'      => $label,
                                                                              'name'       => $navigation->name,
-                                                                             'url'        => $cleanNavUrl ? CRM_Utils_System::cleanUrl($navigation->url) : $navigation->url,
+                                                                             'url'        => $navigation->url,
                                                                              'permission' => $navigation->permission,
                                                                              'operator'   => $navigation->permission_operator,
                                                                              'separator'  => $navigation->has_separator,
                                                                              'parentID'   => $navigation->parent_id,
                                                                              'navID'      => $navigation->id,
                                                                              'active'     => $navigation->is_active ));
-            self::buildNavigationTree( $navigationTree[$navigation->id]['child'], $navigation->id, $navigationMenu, $cleanNavUrl );
+            self::buildNavigationTree( $navigationTree[$navigation->id]['child'], $navigation->id, $navigationMenu );
         }
 
         return $navigationTree;
@@ -311,16 +311,8 @@ ORDER BY parent_id, weight";
      */
     static function buildNavigation( $json = false, $navigationMenu = true ) 
     {
-        $cleanNavUrl = false;
-        $config   = CRM_Core_Config::singleton();
-        if ( $config->userFramework == 'Drupal' && 
-             function_exists('variable_get') &&
-             variable_get('clean_url', 0 ) )  {
-            $cleanNavUrl = true;
-        }
-        
         $navigations = array( );
-        self::buildNavigationTree( $navigations, $parent = NULL, $navigationMenu, $cleanNavUrl );
+        self::buildNavigationTree( $navigations, $parent = NULL, $navigationMenu );
         $navigationString = null;
 
         // run the Navigation  through a hook so users can modify it
