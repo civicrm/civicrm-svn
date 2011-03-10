@@ -171,9 +171,8 @@ function civicrm_api3_case_get( $params )
   _civicrm_api3_initialize(true );
   try{
 
-
-
-    //get mode
+    civicrm_api3_verify_mandatory($params);
+   //get mode
     if( $caseId = $params['case_id'] ) {
       //validate param
       if( !is_numeric( $caseId ) ) {
@@ -540,11 +539,8 @@ SELECT  ov.name
  */
 function _civicrm_api3_case_check_params( $params, $mode = NULL ) {
 
-  // return error if we do not get any params
-  if( is_null( $params ) || !is_array( $params ) || empty( $params ) ) {
-    return civicrm_api3_create_error(  'Invalid or missing input parameters. Must provide an associative array.' );
-  }
 
+  civicrm_api3_verify_mandatory($params);
   switch( $mode ) {
 
     case 'create':

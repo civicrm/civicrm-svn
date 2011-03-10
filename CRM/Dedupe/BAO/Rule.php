@@ -78,6 +78,15 @@ class CRM_Dedupe_BAO_Rule extends CRM_Dedupe_DAO_Rule
         switch ($this->rule_table) {
         case 'civicrm_contact':
             $id = 'id';
+            //we should restrict by contact type in the first step
+            $sql = "SELECT contact_type FROM civicrm_dedupe_rule_group WHERE id = {$this->dedupe_rule_group_id};";
+            $ct  = CRM_Core_DAO::singleValueQuery( $sql );
+            if ($this->params) {
+                $where[] = "t1.contact_type = '{$ct}'";
+            } else {
+                $where[] = "t1.contact_type = '{$ct}'";
+                $where[] = "t2.contact_type = '{$ct}'";
+            }
             break;
         case 'civicrm_address':
             $id = 'contact_id';
