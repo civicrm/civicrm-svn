@@ -1342,8 +1342,9 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                         if ( CRM_Utils_Array::value('statistics', $field) ) {
                             foreach ( $field['statistics'] as $stat => $label ) {
                                 switch (strtolower($stat)) {
+                                case 'max':
                                 case 'sum':
-                                    $select[] = "SUM({$field['dbAlias']}) as {$tableName}_{$fieldName}_{$stat}";
+                                    $select[] = "$stat({$field['dbAlias']}) as {$tableName}_{$fieldName}_{$stat}";
                                     $this->_columnHeaders["{$tableName}_{$fieldName}_{$stat}"]['title'] = $label;
                                     $this->_columnHeaders["{$tableName}_{$fieldName}_{$stat}"]['type']  = 
                                         $field['type'];
@@ -1571,7 +1572,6 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
             $this->limit( );
         }
         $sql = "{$this->_select} {$this->_from} {$this->_where} {$this->_groupBy} {$this->_having} {$this->_orderBy} {$this->_limit}";
-
         return $sql;
     }
 
