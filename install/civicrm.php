@@ -201,11 +201,6 @@ function civicrm_cms_base( ) {
     // for drupal
     $numPrevious = 6;
 
-    // for standalone
-    if ( $installType == 'standalone' ) {
-        $numPrevious = 2;
-    }
-
     if ( ! isset( $_SERVER['HTTPS'] ) ||
          strtolower( $_SERVER['HTTPS'] )  == 'off' ) {
         $url = 'http://' . $_SERVER['HTTP_HOST'];

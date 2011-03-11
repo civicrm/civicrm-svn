@@ -25,7 +25,7 @@ if ( stristr( PHP_OS, 'WIN' ) ) {
     define( 'CIVICRM_DIRECTORY_SEPARATOR', DIRECTORY_SEPARATOR );
 }
 
-// set installation type - drupal / standalone
+// set installation type - drupal
 session_start();
 
 // unset civicrm session if any
@@ -44,7 +44,7 @@ if ( isset($_GET['mode']) ) {
 global $installType;
 $installType = strtolower($_SESSION['install_type']);
 
-if ( ! in_array($installType, array('drupal', 'standalone')) ) {
+if ( ! in_array($installType, array('drupal')) ) {
     $errorTitle = "Oops! Unsupported installation mode";
     $errorMsg   = "";
     errorDisplayPage( $errorTitle, $errorMsg );
@@ -71,7 +71,7 @@ if ( $installType == 'drupal' ) {
     if ( ! preg_match( $pattern,
                        str_replace( "\\","/",$_SERVER['SCRIPT_FILENAME'] ) ) ) {
         $errorTitle = "Oops! Please Correct Your Install Location";
-        $errorMsg = "Please untar (uncompress) your downloaded copy of CiviCRM in the <strong>" . implode(CIVICRM_DIRECTORY_SEPARATOR, array('sites', 'all', 'modules')) . "</strong> directory below your Drupal root directory. Refer to the online " . $docLink . " for more information.<p>If you want to setup / install a <strong>Standalone CiviCRM</strong> version (i.e. not a Drupal or Joomla module), <a href=\"?mode=standalone\">click here</a>.</p>";
+        $errorMsg = "Please untar (uncompress) your downloaded copy of CiviCRM in the <strong>" . implode(CIVICRM_DIRECTORY_SEPARATOR, array('sites', 'all', 'modules')) . "</strong> directory below your Drupal root directory. Refer to the online " . $docLink . " for more information.";
         errorDisplayPage( $errorTitle, $errorMsg );
     }
 }
@@ -130,10 +130,6 @@ if ( $installType == 'drupal' ) {
                                      'sites'   . CIVICRM_DIRECTORY_SEPARATOR .
                                      $siteDir  . CIVICRM_DIRECTORY_SEPARATOR .
                                      'civicrm.settings.php' );
-} elseif ( $installType == 'standalone' ) {
-    $alreadyInstalled = file_exists( $crmPath     . CIVICRM_DIRECTORY_SEPARATOR .
-                                     'standalone' . CIVICRM_DIRECTORY_SEPARATOR .
-                                     'civicrm.settings.php' );
 }
 
 // Exit with error if CiviCRM has already been installed.
@@ -142,8 +138,6 @@ if ($alreadyInstalled ) {
     if ( $installType == 'drupal' ) {
 
         $errorMsg = "CiviCRM has already been installed in this Drupal site. <ul><li>To <strong>start over</strong>, you must delete or rename the existing CiviCRM settings file - <strong>civicrm.settings.php</strong> - from <strong>" . implode(CIVICRM_DIRECTORY_SEPARATOR, array('[your Drupal root directory]', 'sites', $siteDir)) . "</strong>.</li><li>To <strong>upgrade an existing installation</strong>, refer to the online " . $docLink . ".</li></ul>";
-    } elseif ( $installType == 'standalone' ) {
-        $errorMsg = "Standalone CiviCRM has already been installed. <ul><li>To <strong>start over</strong>, you must delete or rename the existing CiviCRM settings file - <strong>civicrm.settings.php</strong> - from <strong>[your CiviCRM root directory]" . CIVICRM_DIRECTORY_SEPARATOR . "standalone</strong>.</li><li>To <strong>upgrade an existing installation</strong>, refer to the online " . $docLink . ".</li></ul>";
     }
     errorDisplayPage( $errorTitle, $errorMsg );
 }
@@ -302,18 +296,6 @@ class InstallRequirements {
         }
 
         $configIDSiniDir = null;
-        if ( $installType == 'standalone' ) {
-            // make sure that we can write to standalone and standalone/files
-            $writableDirectories = array( 'standalone' );
-            foreach ( $writableDirectories as $dir ) {
-                $this->requireWriteable( $crmPath . CIVICRM_DIRECTORY_SEPARATOR . $dir,
-                    array("File permissions", "Is the $dir folder writeable?", null ),
-                    true );
-            }
-            //check for Config.IDS.ini, file may exist in re-install
-            $configIDSiniDir  = array( $crmPath ,'standalone', 'files', 'civicrm', 'upload' ,'Config.IDS.ini' );
-        }
-
         if ( $installType == 'drupal' ) {
             global $cmsPath;
             $siteDir = getSiteDir( $cmsPath, $_SERVER['SCRIPT_FILENAME'] );
@@ -824,25 +806,27 @@ class Installer extends InstallRequirements {
                 // automatically enable CiviCRM module once it is installed successfully.
                 // so we need to Bootstrap Drupal, so that we can call drupal hooks.
                 global $cmsPath, $crmPath;
+
                 // relative / abosolute paths are not working for drupal, hence using chdir()
                 chdir( $cmsPath ); 
+
                 include_once "./includes/bootstrap.inc";
                 drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
+
                 // rebuild modules, so that civicrm is added
                 module_rebuild_cache( );
+
                 // now enable civicrm module.
                 module_enable( array('civicrm') );
+
                 // clear block and page cache, to make sure civicrm link is present in navigation block
                 cache_clear_all();
                 
                 //add basic drupal permissions
                 db_query( 'UPDATE {permission} SET perm = CONCAT( perm, \', access CiviMail subscribe/unsubscribe pages, access all custom data, access uploaded files, make online contributions, profile create, profile edit, profile view, register for events, view event info\') WHERE rid IN (1, 2)' );
                 
-            } elseif ( $installType == 'standalone' ) {
-                $standaloneURL = civicrm_cms_base( ) . 'standalone/index.php';
-                $checkListURL  = $standaloneURL . "?q=civicrm/admin/configtask&reset=1";
-                echo "<li>Click <a target=\"_blank\" href=\"$standaloneURL\">here</a> to go to your CiviCRM Standalone home page.</li>";
             }
+
             echo '</ul>';
             echo '</div>';
             echo '</body>';
