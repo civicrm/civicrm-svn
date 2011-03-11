@@ -255,7 +255,7 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
      */
     function import( $onDuplicate, &$values) 
     {
-        civicrm_api_include('membership', false, 3);
+        civicrm_api_include('membership', false, 2);
     
         // first make sure this is a valid line
         $response = $this->summary( $values );
