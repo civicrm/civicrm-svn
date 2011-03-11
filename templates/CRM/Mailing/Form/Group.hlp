@@ -32,12 +32,6 @@
 <p></p>
 {/htxt}
 
-{htxt id="mailing-visibility"}
-<p></p>
-{ts}Choose <strong>public pages</strong> if you want the content of this mailing to be viewable by everyone, <strong>user and user admin only</strong> means that only users that received the mailing or administrators can view the content of this email{/ts}
-<p></p>
-{/htxt}
-
 {htxt id="include-groups"}
 <p>{ts}Determine the contacts in your database who should receive this mailing by first selecting one or more <strong>Included Groups</strong>. (Groups must be assigned the <strong>Mailing List</strong> type to be available on this screen - you can update this for an existing group from <strong>Manage Groups &raquo; Settings</strong>.){/ts}</p>
 

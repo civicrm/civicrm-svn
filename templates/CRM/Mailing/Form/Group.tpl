@@ -33,10 +33,7 @@
 {include file="CRM/common/WizardHeader.tpl"}
 
   <table class="form-layout">
-   <tr class="crm-mailing-group-form-block-name"><td class="label">{$form.name.label}</td><td>{$form.name.html} {help id="mailing-name"}</td></tr>
-<tr class="crm-mailing-group-form-block-visibility">
-   	<td class="label">{$form.visibility.label}</td><td>{$form.visibility.html} {help id="mailing-visibility"}</td></tr>
-   
+   <tr class="crm-mailing-group-form-block-name"><td class="label">{$form.name.label}</td><td>{$form.name.html} {help id="mailing-name"}</td></tr>   
      {* CRM-7362 --add campaign *}
      {include file="CRM/Campaign/Form/addCampaignToComponent.tpl"
      campaignTrClass="crm-mailing-group-form-block-campaign_id"}
