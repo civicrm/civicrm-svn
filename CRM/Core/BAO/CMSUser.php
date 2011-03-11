@@ -485,14 +485,14 @@ SELECT username, email
      */
     static function createDrupalUser( &$params, $mail )
     {
-        $values['values']  = array (
+        $form_state['values']  = array (
                                     'name' => $params['cms_name'],
                                     'mail' => $params[$mail],
                                     'op'   => 'Create new account'
                                     );
         if ( !variable_get('user_email_verification', TRUE )) {
-            $values['values']['pass']['pass1'] = $params['cms_pass'];
-            $values['values']['pass']['pass2'] = $params['cms_pass'];
+            $form_state['values']['pass']['pass1'] = $params['cms_pass'];
+            $form_state['values']['pass']['pass2'] = $params['cms_pass'];
         }
 
         $config = CRM_Core_Config::singleton( );
@@ -500,7 +500,14 @@ SELECT username, email
         // we also need to redirect b
         $config->inCiviCRM = true;
 
-        $res = drupal_execute( 'user_register', $values );
+        $form = drupal_retrieve_form('user_register', $form_state);
+        $form['#post'] = $form_state['values'];
+        drupal_prepare_form('user_register', $form, $form_state);
+
+        // remove the captcha element from the form prior to processing
+        unset($form['captcha']);
+        
+        drupal_process_form('user_register', $form, $form_state);
         
         $config->inCiviCRM = false;
         
