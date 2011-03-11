@@ -24,7 +24,8 @@
 * +--------------------------------------------------------------------+
 */ 
 (function($){ $.fn.crmaccordions = function(){
-	if ($('.crm-accordion-processed').length == 0){
+	if ($('.crm-accordion-processed').length == 0 ||
+	    $('.crm-accordion-processed').length < $('.crm-accordion-wrapper').length ){
 	  var crmAccordionWrapper = $('.crm-accordion-wrapper');  
 	  crmAccordionWrapper.delegate('div.crm-accordion-header', 'mouseover', function() {$(this).addClass('crm-accordion-header-hover')});
 	  crmAccordionWrapper.delegate('div.crm-accordion-header', 'mouseout', function() {$(this).removeClass('crm-accordion-header-hover')});
