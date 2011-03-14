@@ -576,6 +576,7 @@ ORDER BY parent_id, weight";
             if ( $homeNav ) {
                 $homeURL     = CRM_Utils_System::url( $homeNav['url'] );
                 $homeLabel   = $homeNav['label'];
+                if ($homeLabel == 'Home') $homeLabel = ts('Home');   // CRM-6804 (we need to special-case this as we don’t ts()-tag variables)
             } else {
                 $homeURL     = CRM_Utils_System::url( 'civicrm/dashboard', 'reset=1');
                 $homeLabel   = ts('Home');
