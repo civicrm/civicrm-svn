@@ -191,7 +191,31 @@ class api_v3_NoteTest extends CiviUnitTestCase
                       'version' => $this->_apiversion );
         $this->noteDelete( $note );
     }
+   
+    
+    function testCreateWithApostropheInString()
+    {
+        $params = array(
+                               'entity_table'  => 'civicrm_contact',
+                               'entity_id'     => $this->_contactID,
+                               'note'          => "Hello!!! ' testing Note",
+                               'contact_id'    => $this->_contactID,
+                               'modified_date' => '2011-01-31',
+                               'subject'       => "With a '",
+                               'sequential' 	 => 1,
+                               'version'			 => $this->_apiversion, 
+                               );
+          $result = civicrm_api('Note','Create', $params );
+          $this->assertEquals( $result['is_error'], 0,'in line ' . __LINE__ );
+          $this->assertEquals( $result['values'][0]['note'],"Hello!!! ' testing Note",'in line ' . __LINE__);
+          $this->assertEquals( $result['values'][0]['subject'],"With a '",'in line ' . __LINE__);
+          $this->assertArrayHasKey( 'id', $result,'in line ' . __LINE__ ); 
 
+          //CleanUP
+          $note = array('id' => $result['id'],
+                      'version' => $this->_apiversion );
+          $this->noteDelete( $note );
+    }
 ///////////////// civicrm_note_update methods
 
 
