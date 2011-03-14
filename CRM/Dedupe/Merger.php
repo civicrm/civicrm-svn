@@ -491,7 +491,9 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
             $mainParams["return.$field"] = $otherParams["return.$field"] = 1;
         }
         $main  =& civicrm_api('contact', 'get', $mainParams);
+        $main  =& $main['values'];
         $other =& civicrm_api('contact', 'get', $otherParams);
+        $other =& $other['values'];
         
         //CRM-4524
         $main  = reset( $main );

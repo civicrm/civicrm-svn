@@ -184,7 +184,9 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         foreach (CRM_Dedupe_Merger::$validFields as $field) {
             $mainParams["return.$field"] = $otherParams["return.$field"] = 1;
         }
-        $main  =& civicrm_api('contact', 'get', $mainParams);
+
+        $main =& civicrm_api('contact', 'get', $mainParams);
+        $main =& $main['values'];
         //CRM-4524
         $main  = reset( $main );
         if ( $main['contact_id'] != $cid ) {
@@ -192,6 +194,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         }
 
         $other =& civicrm_api('contact', 'get', $otherParams);
+        $other =& $other['values'];
         //CRM-4524
         $other = reset( $other );
         if ( $other['contact_id'] != $oid ) {
