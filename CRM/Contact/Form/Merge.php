@@ -178,25 +178,21 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         
         $diffs = CRM_Dedupe_Merger::findDifferences($cid, $oid);
         
-        $mainParams  = array('contact_id' => $cid, 'return.display_name' => 1, 'return.contact_sub_type' => 1, 'version' => 3);
-        $otherParams = array('contact_id' => $oid, 'return.display_name' => 1, 'return.contact_sub_type' => 1, 'version' => 3);
+        $mainParams  = array('contact_id' => $cid, 'return.display_name' => 1, 'return.contact_sub_type' => 1, 'version' => 2);
+        $otherParams = array('contact_id' => $oid, 'return.display_name' => 1, 'return.contact_sub_type' => 1, 'version' => 2);
         // API 2 has to have the requested fields spelt-out for it
         foreach (CRM_Dedupe_Merger::$validFields as $field) {
             $mainParams["return.$field"] = $otherParams["return.$field"] = 1;
         }
 
-        $mainParams['version'] = 2;
         $main =& civicrm_api('contact', 'get', $mainParams);
-
         //CRM-4524
         $main  = reset( $main );
         if ( $main['contact_id'] != $cid ) {
             CRM_Core_Error::fatal( ts( 'The main contact record does not exist' ) );
         }
 
-        $otherParams['version'] = 2;
         $other =& civicrm_api('contact', 'get', $otherParams);
-
         //CRM-4524
         $other = reset( $other );
         if ( $other['contact_id'] != $oid ) {

@@ -484,15 +484,13 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
      */
     function findDifferences($mainId, $otherId)
     {
-        $mainParams  = array('contact_id' => (int) $mainId,  'version' => 3);
-        $otherParams = array('contact_id' => (int) $otherId, 'version' => 3);
+        $mainParams  = array('contact_id' => (int) $mainId,  'version' => 2);
+        $otherParams = array('contact_id' => (int) $otherId, 'version' => 2);
         // API 2 has to have the requested fields spelt-out for it
         foreach (self::$validFields as $field) {
             $mainParams["return.$field"] = $otherParams["return.$field"] = 1;
         }
-        $mainParams['version'] = 2;
         $main  =& civicrm_api('contact', 'get', $mainParams);
-        $otherParams['version'] = 2;
         $other =& civicrm_api('contact', 'get', $otherParams);
         
         //CRM-4524
