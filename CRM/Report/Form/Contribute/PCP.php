@@ -47,39 +47,47 @@ class CRM_Report_Form_Contribute_PCP extends CRM_Report_Form {
                   array( 'dao'      => 'CRM_Contact_DAO_Contact',
                          'fields'   =>
                          array( 'sort_name' => 
-                                array( 'title' => ts( 'Supporter' ), 
+                                array( 'title'   => ts( 'Supporter' ), 
                                        'required'=> true ,
                                        'default' => true ), 
                                 'id' => 
-                                array( 'required'=> true ,
+                                array( 'required'   => true ,
                                        'no_display' => true ) ),
                          'filters' =>             
-                         array('sort_name'    => 
-                               array( 'title'      => ts( 'Contact Name' ),
-                                      'operator'   => 'like' ),
-                               'id'    => 
-                               array( 'title'      => ts( 'Contact ID' ),
-                                      'no_display' => true ), ),
+                         array( 'sort_name' => 
+                                array( 'title'      => ts( 'Contact Name' ),
+                                       'operator'   => 'like' ),
+                                'id'        => 
+                                array( 'title'      => ts( 'Contact ID' ),
+                                       'no_display' => true ), ),
                          'grouping' => 'pcp-fields',
                          ),
                   'civicrm_contribution_page' =>
                   array( 'dao'          => 'CRM_Contribute_DAO_ContributionPage',
                          'fields'       =>
                          array( 'page_title' => 
-                                array( 'title' => ts( 'Page Title' ), 
-                                       'name'  => 'title', ),
-                                ),
+                                array( 'title'   => ts( 'Page Title' ), 
+                                       'name'    => 'title', 
+                                       'default' => true ), ),
+                         'filters'      => 
+                         array( 'page_title'  => 
+                                array( 'title' => ts( 'Page Title' ) ) ),
                          'grouping'     => 'pcp-fields',
                          ),
                   
                   'civicrm_pcp' =>
                   array( 'dao'    => 'CRM_Contribute_DAO_PCP',
                          'fields' =>
-                         array( 'title'  => 
-                                array( 'title' => ts( 'Campaign Title' ), ), 
+                         array( 'title'        => 
+                                array( 'title'   => ts( 'Campaign Title' ),  
+                                       'default' => true ), 
                                 'goal_amount'  => 
-                                array( 'title' => ts( 'Goal Amount' ), 
-                                       'type'  => CRM_Utils_Type::T_MONEY ), ),
+                                array( 'title'   => ts( 'Goal Amount' ), 
+                                       'type'    => CRM_Utils_Type::T_MONEY,
+                                       'default' => true ), ),
+                         'filters' =>
+                          array( 'title' =>
+                                 array( 'title' => ts( 'Campaign Title' ), ), ),
                          'grouping'      => 'pcp-fields',
                          ),
                   
@@ -87,91 +95,57 @@ class CRM_Report_Form_Contribute_PCP extends CRM_Report_Form {
                    array( 'dao'    => 'CRM_Contribute_DAO_ContributionSoft',
                           'fields' =>
                           array( 'amount_1' => 
-                                 array( 'title'      => ts('Committed Amount'),
+                                 array( 'title'      => ts( 'Committed Amount' ),
                                         'name'       => 'amount',
                                         'type'       => CRM_Utils_Type::T_MONEY,
+                                        'default'    => true,
                                         'statistics' => 
-                                        array('sum'  => ts( 'Committed Amount' ), ), ),
+                                        array( 'sum'  => ts( 'Committed Amount' ), ), ),
                                  'amount_2' =>
-                                 array( 'title'      => ts('Amount Received'),
+                                 array( 'title'      => ts( 'Amount Received' ),
                                         'name'       => 'amount',
                                         'type'       => CRM_Utils_Type::T_MONEY,
+                                        'default'    => true,
                                         // nice trick with dbAlias
                                         'dbAlias'    => 'SUM(IF( contribution_civireport.contribution_status_id > 1, 0, contribution_soft_civireport.amount))',
                                         ),
-                                 'soft_id' => 
-                                 array( 'title'      => ts('Number of Donors'),
+                                 'soft_id'  => 
+                                 array( 'title'      => ts( 'Number of Donors' ),
                                         'name'       => 'id',
+                                        'default'    => true,
                                         'statistics' => 
-                                        array('count'  => ts( 'Number of Donors' ), ), ),
-                                 ),
+                                        array( 'count'  => ts( 'Number of Donors' ), ), ), ),
+                          'filters' =>
+                          array( 'amount_2' =>
+                                 array( 'title' => ts( 'Amount Received' ),
+                                        'type'  => CRM_Utils_Type::T_MONEY ) ),
                           'grouping'  => 'pcp-fields',
                           ),
-                  'civicrm_address' =>
-                  array( 'dao' => 'CRM_Core_DAO_Address',
-                         'filters' =>             
-                         array( 'country_id' => 
-                                array( 'title'        => ts( 'Country' ), 
-                                       'type'         => CRM_Utils_Type::T_INT,
-                                       'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-                                       'options'      => CRM_Core_PseudoConstant::country( ),), 
-                                'state_province_id' => 
-                                array( 'title'        => ts( 'State/Province' ), 
-                                       'type'         => CRM_Utils_Type::T_INT,
-                                       'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-                                       'options'      => CRM_Core_PseudoConstant::stateProvince( ),), ),
-                         ),
-                  
                   
                   'civicrm_contribution' =>
                   array( 'dao'    => 'CRM_Contribute_DAO_Contribution',
                          'fields' =>
                          array(
-                               'contribution_id' => array( 
-                                                          'name' => 'id',
-                                                          'no_display' => true,
-                                                          'required'   => true,
-                                                           ),
-                               'contribution_status_id' => 
-                               array( 'title'      => ts( 'Contribution Status' ), 
-                                      'no_display' => true ),
+                               'contribution_id' => 
+                               array( 'name'       => 'id',
+                                      'no_display' => true,
+                                      'required'   => true,
+                                      ),
+                               
                                'receive_date' => 
                                array( 'title'      => ts( 'Most Recent Donation' ), 
+                                      'default'    => true,
                                       'statistics' => 
-                                      array('max'  => ts( 'Most Recent Donation' ), ), ),
+                                      array( 'max'  => ts( 'Most Recent Donation' ), ), ),
                                ),
                          'filters' =>             
-                         array( 'receive_date'           => 
+                         array( 'receive_date' => 
                                 array( 'operatorType' => CRM_Report_Form::OP_DATE ),
-                                'contribution_type_id'   =>
-                                array( 'title'        => ts( 'Contribution Type' ), 
-                                       'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-                                       'options'      => CRM_Contribute_PseudoConstant::contributionType( )
-                                       ),
-                                'contribution_status_id' => 
-                                array( 'title'        => ts( 'Contribution Status' ), 
-                                       'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-                                       'options'      => CRM_Contribute_PseudoConstant::contributionStatus( ),
-                                       'default'      => array( 1 ),
-                                       ),
-                                'total_amount'           => 
-                                array( 'title'        => ts( 'Contribution Amount' ) ),
-                                ),
+                                'total_amount' => 
+                                array( 'title'        => ts( 'Contribution Amount' ) ), ),
                          'grouping' => 'pcp-fields',
                          ),
-                  'civicrm_group' => 
-                  array( 'dao'    => 'CRM_Contact_DAO_GroupContact',
-                         'alias'  => 'cgroup',
-                         'filters' =>             
-                         array( 'gid' => 
-                                array( 'name'         => 'group_id',
-                                       'title'        => ts( 'Group' ),
-                                       'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-                                       'group'        => true,
-                                       'options'      => CRM_Core_PseudoConstant::group( ) ), ), ),                  
                    );
-        
-        $this->_tagFilter = true;
         
         parent::__construct( );
     }
@@ -195,16 +169,6 @@ LEFT JOIN civicrm_contact {$this->_aliases['civicrm_contact']}
 LEFT JOIN civicrm_contribution_page {$this->_aliases['civicrm_contribution_page']}
           ON {$this->_aliases['civicrm_pcp']}.contribution_page_id = 
              {$this->_aliases['civicrm_contribution_page']}.id";
-        
-        if ( $this->_addressField || 
-             ( !empty( $this->_params['state_province_id_value'] ) || 
-               !empty( $this->_params['country_id_value'] ) ) ) { 
-            
-            $this->_from .= "
-            LEFT JOIN civicrm_address {$this->_aliases['civicrm_address']} 
-                   ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_address']}.contact_id AND 
-                      {$this->_aliases['civicrm_address']}.is_primary = 1\n";        
-        }
     }
     
     function groupBy( ) {
@@ -252,5 +216,5 @@ LEFT JOIN civicrm_contribution_page {$this->_aliases['civicrm_contribution_page'
                 break;
             }
         }
-      }
+    }
 }
