@@ -24,7 +24,9 @@ class api_v3_OptionGroupTest extends CiviUnitTestCase
     }
 
     public function testGetOptionGroupByName () {
-        $result = civicrm_api3_option_group_get(array('name'=> 'preferred_communication_method', 'version' => 3));
+        $params = array('name'=> 'preferred_communication_method', 'version' => 3);
+        $result = civicrm_api3_option_group_get($params);
+        $this->documentMe($params,$result ,__FUNCTION__,__FILE__);
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['count'], 'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['id'], 'In line ' . __LINE__ );
