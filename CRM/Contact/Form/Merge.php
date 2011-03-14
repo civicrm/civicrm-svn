@@ -185,16 +185,18 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
             $mainParams["return.$field"] = $otherParams["return.$field"] = 1;
         }
 
+        $mainParams['version'] = 2;
         $main =& civicrm_api('contact', 'get', $mainParams);
-        $main =& $main['values'];
+
         //CRM-4524
         $main  = reset( $main );
         if ( $main['contact_id'] != $cid ) {
             CRM_Core_Error::fatal( ts( 'The main contact record does not exist' ) );
         }
 
+        $otherParams['version'] = 2;
         $other =& civicrm_api('contact', 'get', $otherParams);
-        $other =& $other['values'];
+
         //CRM-4524
         $other = reset( $other );
         if ( $other['contact_id'] != $oid ) {
