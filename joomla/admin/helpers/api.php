@@ -2,7 +2,7 @@
 /**
  * @version		
  * @package		
- * @copyright   @copyright CiviCRM LLC (c) 2004-2010	
+ * @copyright   @copyright CiviCRM LLC (c) 2004-2011	
  * @license		GNU/GPL v2 or later
  */
 
