@@ -370,7 +370,7 @@ class CRM_Report_Form_ActivitySummary extends CRM_Report_Form {
         }
     }
 
-    function formRule ( &$fields, &$files, $self ) {
+    function formRule ( $fields, $files, $self ) {
         $errors = array();
         $contactFields = array( 'sort_name', 'email', 'phone' );
         if ( CRM_Utils_Array::value( 'group_bys', $fields ) ) {
