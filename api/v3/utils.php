@@ -203,7 +203,9 @@ function civicrm_api3_create_success( $values = 1,$params=null,&$dao = null )
       if(is_object ($dao)){
         $allFields = array_keys($dao->fields());
         $paramFields = array_keys($params);
-        $result['undefined_fields'] = array_diff ($paramFields, $allFields,array_keys($_COOKIE),array ('action','entity','debug','version','skip_acl','return'));
+        $undefined = array_diff ($paramFields, $allFields,array_keys($_COOKIE),array ('action','entity','debug','version','skip_acl','return'));
+        if ($undefined) 
+          $result['undefined_fields'] = array_merge ($undefined);
       }
     }
     if(is_object ($dao)){
