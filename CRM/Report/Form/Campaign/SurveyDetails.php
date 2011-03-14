@@ -623,8 +623,12 @@ INNER JOIN  civicrm_survey survey ON ( survey.result_id = grp.id )
         $statusId = CRM_Utils_Array::value( 'status_id_value', $this->_params );
         $respondentStatus = CRM_Utils_Array::value( $statusId, self::$_surveyRespondentStatus );
         
+        $surveyId = CRM_Utils_Array::value( 0, $surveyIds );
         foreach ( $rows as &$row ) {
-            $result      = CRM_Utils_Array::value( $row['civicrm_activity_survey_id'], $resultSet, array( ) );
+            if ( CRM_Utils_Array::value( 'civicrm_activity_survey_id', $row ) ) {
+                $surveyId = $row['civicrm_activity_survey_id'];
+            }
+            $result      = CRM_Utils_Array::value( $surveyId, $resultSet, array( ) );
             $resultLabel = CRM_Utils_Array::value( 'civicrm_activity_result', $row );
             if ( $respondentStatus == 'Reserved' ) {
                 $row['civicrm_activity_result'] = implode( ' | ', array_keys( $result ) ); 
