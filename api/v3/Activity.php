@@ -125,7 +125,7 @@ function civicrm_api3_activity_get( $params ) {
   _civicrm_api3_initialize( true );
   try{
 
-    civicrm_api3_verify_one_mandatory($params,'',array('contact_id','activity_id'));
+    civicrm_api3_verify_one_mandatory($params,'',array('contact_id','activity_id','id'));
     if (!empty($params['contact_id'])){
      $activities = _civicrm_api3_activities_get_by_contact($params['contact_id']);
      return civicrm_api3_create_success($activities,$params);
