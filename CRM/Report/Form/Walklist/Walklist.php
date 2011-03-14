@@ -56,7 +56,7 @@ class CRM_Report_Form_Walklist_Walklist extends CRM_Report_Form {
                                  array( 'title' => ts( 'Contact ID' ),
                                         'no_display'  => true, 
                                         'required'    => true),  
-                                'display_name' => 
+                                'sort_name' => 
                                  array( 'title' => ts( 'Contact Name' ),
                                         'required'  => true,
                                         'no_repeat' => true ),
@@ -67,8 +67,8 @@ class CRM_Report_Form_Walklist_Walklist extends CRM_Report_Form {
                                        'operator'   => 'like' ) ),
                           'grouping'=> 'contact-fields',
                           'order_bys'=>             
-                          array( 'display_name' => array( 'title' => ts( 'Contact Name' ),
-                                                          'required'  => true ) ),
+                          array( 'sort_name' => array( 'title' => ts( 'Contact Name' ),
+                                                       'required'  => true ) ),
                           ),
                    
                    'civicrm_address' =>
@@ -247,12 +247,12 @@ FROM       civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom
             }
 
             // convert display name to links
-            if ( array_key_exists('civicrm_contact_display_name', $row) && 
+            if ( array_key_exists('civicrm_contact_sort_name', $row) && 
                  array_key_exists('civicrm_contact_id', $row) ) {
                  $url = CRM_Report_Utils_Report::getNextUrl( 'contact/detail', 
                                                              'reset=1&force=1&id_op=eq&id_value=' . $row['civicrm_contact_id'],
                                                              $this->_absoluteUrl, $this->_id );
-                 $rows[$rowNum]['civicrm_contact_display_name_link' ] = $url;
+                 $rows[$rowNum]['civicrm_contact_sort_name_link' ] = $url;
                  $entryFound = true;
             }
 

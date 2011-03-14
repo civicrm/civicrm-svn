@@ -102,14 +102,14 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
                   array( 'dao'       => 'CRM_Contact_DAO_Contact',
                          'fields'    =>
                          array( 
-                               'display_name' => array( 'title'      => ts('Client Name'),
+                               'sort_name' => array( 'title'      => ts('Client Name'),
                                                         'required'   => true, ),
                                'id'           => array( 'no_display' => true,
                                                         'required'   => true, ),
                                 ),
                          'filters'   =>  
                          array( 
-                               'display_name' => array( 'title' => ts( 'Client Name' ) ),
+                               'sort_name' => array( 'title' => ts( 'Client Name' ) ),
                                 ),
                          ),
                   
@@ -232,7 +232,7 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
                         }elseif ( $tableName == 'civicrm_relationship' ) {
                             $this->_relField = true;
                         }
-                        if( $fieldName == 'display_name' ) {
+                        if( $fieldName == 'sort_name' ) {
                             $select[] = "GROUP_CONCAT({$field['dbAlias']}  ORDER BY {$field['dbAlias']} ) 
                                          as {$tableName}_{$fieldName}";
                         } else {

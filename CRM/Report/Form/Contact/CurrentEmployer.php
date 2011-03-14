@@ -65,7 +65,7 @@ class CRM_Report_Form_Contact_CurrentEmployer extends CRM_Report_Form {
                   'civicrm_contact' =>
                   array( 'dao'       => 'CRM_Contact_DAO_Contact',
                          'fields'    =>
-                         array( 'display_name' => 
+                         array( 'sort_name' => 
                                 array( 'title'    => ts( 'Employee Name' ),
                                        'required' => true,),
                                 
@@ -243,11 +243,13 @@ FROM civicrm_contact {$this->_aliases['civicrm_contact']}
     }
     
     function groupBy( ) {
-        
         $this->_groupBy = "GROUP BY {$this->_aliases['civicrm_employer']}.id,{$this->_aliases['civicrm_contact']}.id";
-        
     }
     
+    function orderBy( ) {
+        $this->_orderBy = "ORDER BY {$this->_aliases['civicrm_employer']}.organization_name, {$this->_aliases['civicrm_contact']}.display_name";
+    }
+
     function postProcess( ) {
         // get the acl clauses built before we assemble the query
         $this->buildACLClause( array( $this->_aliases['civicrm_contact'], $this->_aliases['civicrm_employer'] ) );

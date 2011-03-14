@@ -53,7 +53,7 @@ class CRM_Report_Form_Membership_Summary extends CRM_Report_Form {
             array( 'civicrm_contact'  =>
                    array( 'dao'       => 'CRM_Contact_DAO_Contact',
                           'fields'    =>
-                          array( 'display_name'  => 
+                          array( 'sort_name'  => 
                                  array( 'title'      => ts( 'Member Name' ),
                                         'no_repeat'  => true, 
                                         'required'   => true),
@@ -385,12 +385,12 @@ LEFT  JOIN civicrm_contribution  {$this->_aliases['civicrm_contribution']}
             }
             
             // convert display name to links
-            if ( array_key_exists('civicrm_contact_display_name', $row) && 
+            if ( array_key_exists('civicrm_contact_sort_name', $row) && 
                  array_key_exists('civicrm_contact_id', $row) ) {
                 $url = CRM_Utils_System::url( 'civicrm/report/member/detail', 
                                               'reset=1&force=1&id_op=eq&id_value=' . $row['civicrm_contact_id'] );
-                $rows[$rowNum]['civicrm_contact_display_name'] = "<a href='$url'>" . 
-                    $row["civicrm_contact_display_name"] . '</a>';
+                $rows[$rowNum]['civicrm_contact_sort_name'] = "<a href='$url'>" . 
+                    $row["civicrm_contact_sort_name"] . '</a>';
                 $entryFound = true;
             }
 

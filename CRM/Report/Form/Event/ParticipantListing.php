@@ -47,12 +47,18 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
     protected $_customGroupExtends = array( 'Participant' );
     
     function __construct( ) {
+
+        static $_events;
+        if ( !isset($_events['all']) ) {
+            CRM_Core_PseudoConstant::populate( $_events['all'], 'CRM_Event_DAO_Event', false, 'title', 'is_active', "is_template IS NULL OR is_template = 0", 'end_date DESC' );
+        }
+
         $this->_columns = 
             array( 
                   'civicrm_contact' =>
                   array( 'dao'     => 'CRM_Contact_DAO_Contact',
                          'fields'  =>
-                         array( 'display_name' => 
+                         array( 'sort_name' => 
                                 array( 'title'     => ts( 'Participant Name' ),
                                        'required'  => true,
                                        'no_repeat' => true ),
@@ -122,7 +128,7 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
                          array( 'event_id'                  => array( 'name'         => 'event_id',
                                                                       'title'        => ts( 'Event' ),
                                                                       'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-                                                                      'options'      => CRM_Event_PseudoConstant::event( null, null, "is_template IS NULL OR is_template = 0" ), ),
+                                                                      'options'      => $_events['all'] ),
                                 
                                 'sid'                       => array( 'name'         => 'status_id',
                                                                       'title'        => ts( 'Participant Status' ),
@@ -402,7 +408,7 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
             }
 
             // Convert display name to link 
-            if ( ( $displayName = CRM_Utils_Array::value( 'civicrm_contact_display_name', $row ) ) && 
+            if ( ( $displayName = CRM_Utils_Array::value( 'civicrm_contact_sort_name', $row ) ) && 
                  ( $cid         = CRM_Utils_Array::value( 'civicrm_contact_id', $row ) ) && 
                  ( $id          = CRM_Utils_Array::value( 'civicrm_participant_participant_record', $row ) ) ) {
                 $url     = CRM_Report_Utils_Report::getNextUrl( 'contact/detail', 
@@ -415,8 +421,8 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
                 $contactTitle     = ts('View Contact Details');
                 $participantTitle = ts('View Participant Record');
                 
-                $rows[$rowNum]['civicrm_contact_display_name' ]  = "<a title='$contactTitle' href=$url>$displayName</a>";
-                $rows[$rowNum]['civicrm_contact_display_name' ] .= 
+                $rows[$rowNum]['civicrm_contact_sort_name' ]  = "<a title='$contactTitle' href=$url>$displayName</a>";
+                $rows[$rowNum]['civicrm_contact_sort_name' ] .= 
                     "<span style='float: right;'><a title='$participantTitle' href=$viewUrl>" 
                     . ts('View') . "</a></span>";
                 $entryFound = true;

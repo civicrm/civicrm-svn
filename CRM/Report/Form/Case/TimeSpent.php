@@ -54,8 +54,8 @@ class CRM_Report_Form_Case_TimeSpent extends CRM_Report_Form {
                                                     'no_display' => true, 
                                                     'required'   => true, 
                                                     ),
-                                             'display_name'    =>
-                                              array( 'title'     => ts('Display Name') ,
+                                             'sort_name'    =>
+                                              array( 'title'     => ts('Contact Name') ,
                                                      'required'  => true,
                                                      'no_repeat' => true ),
                                               ),
@@ -268,7 +268,11 @@ $this->_groupBy .= "civicrm_activity_activity_date_time
 ";
         }
     }
-    
+
+    function orderBy( ) {
+        $this->_orderBy = "ORDER BY {$this->_aliases['civicrm_contact']}.sort_name, {$this->_aliases['civicrm_contact']}.id";
+    }
+
     function postProcess( ) {
         parent::postProcess();
     }
