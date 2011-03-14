@@ -191,7 +191,7 @@ function civicrm_api3_create_success( $values = 1,$params=null,&$dao = null )
     $result['is_error'] = 0;
 
     //if ( array_key_exists ('debug',$params) && is_object ($dao)) {
-    if ( array_key_exists ('debug',$params)) {
+    if ( is_array($params) && array_key_exists ('debug',$params)) {
       if(!is_object ($dao)){
         $d = civicrm_api3_get_DAO ($params['entity']);
         if (!empty($d)) {

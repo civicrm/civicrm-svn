@@ -1290,6 +1290,9 @@ function documentMe($params,$result,$function,$filename){
         }elseif(strstr($function, 'Delete')){
           $action = 'delete';
           $entityAction = 'Delete';
+        } elseif(strstr($function, 'Update')){
+          $action = 'update';
+          $entityAction = 'Update';
         }
         if (strstr($entity,'UF')){// a cleverer person than me would do it in a single regex
          $fnPrefix = strtolower(preg_replace('/(?<! )(?<!^)(?<=UF)[A-Z]/','_$0', $entity));          
