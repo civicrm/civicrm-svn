@@ -55,17 +55,17 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                                                     'no_display' => true, 
                                                     ),
                                              'contact_source'    =>
-                                              array( 'name'      => 'display_name' ,
+                                              array( 'name'      => 'sort_name' ,
                                                      'title'     => ts( 'Source Contact Name' ),
                                                      'alias'     => 'contact_civireport',
                                                      'no_repeat' => true ),
-                                              'contact_assignee' =>
-                                              array( 'name'      => 'display_name' ,
+                                             'contact_assignee' =>
+                                             array( 'name'      => 'sort_name' ,
                                                      'title'     => ts( 'Assignee Contact Name' ),
                                                      'alias'     => 'civicrm_contact_assignee',
                                                      'default'   => true ),
                                               'contact_target'   =>
-                                              array( 'name'      => 'display_name' ,
+                                              array( 'name'      => 'sort_name' ,
                                                      'title'     => ts( 'Target Contact Name' ),
                                                      'alias'     => 'civicrm_contact_target',
                                                      'default'   => true ),
@@ -216,7 +216,8 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
     }
 
     function select( ) {
-        $select = array( );
+        $select    = array( );
+        $seperator =  CRM_CORE_DAO::VALUE_SEPARATOR;
         $this->_columnHeaders = array( );
         foreach ( $this->_columns as $tableName => $table ) {
             if ( array_key_exists('fields', $table) ) {
@@ -229,7 +230,7 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                         if ( !CRM_Utils_Array::value( 'activity_type_id', $this->_params['group_bys'] ) &&
                              ( in_array( $fieldName, array('contact_assignee', 'assignee_contact_id' ) ) || 
                                in_array( $fieldName, array( 'contact_target', 'target_contact_id' ) ) ) ) { 
-                            $select[] = "GROUP_CONCAT(DISTINCT {$field['dbAlias']}  ORDER BY {$field['dbAlias']} ) as {$tableName}_{$fieldName}";
+                            $select[] = "GROUP_CONCAT(DISTINCT {$field['dbAlias']}  ORDER BY {$field['dbAlias']} SEPARATOR '{$seperator}') as {$tableName}_{$fieldName} ";
                         } else {
                             $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
                         }
@@ -369,6 +370,10 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
         $this->_groupBy   = "GROUP BY " . implode( ', ', $this->_groupBy ) . " ";
     }
 
+    function orderBy( ) {
+        $this->_orderBy = "ORDER BY contact_civireport.sort_name, {$this->_aliases['civicrm_activity']}.id";
+    }
+
     function buildACLClause( $tableAlias ) {
         //override for ACL( Since Cotact may be source
         //contact/assignee or target also it may be null )
@@ -409,6 +414,7 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
         $activityType   = CRM_Core_PseudoConstant::activityType( true, true, false, 'label', true );
         $activityStatus = CRM_Core_PseudoConstant::activityStatus();
         $viewLinks      = false;
+        $seperator      =  CRM_CORE_DAO::VALUE_SEPARATOR;
 
         require_once 'CRM/Core/Permission.php';
         if ( CRM_Core_Permission::check( 'access CiviCRM' ) ) {
@@ -432,9 +438,9 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
             }
             
             if ( array_key_exists('civicrm_contact_contact_assignee', $row ) ) {
-                $assigneeNames = explode( ',', $row['civicrm_contact_contact_assignee'] );
+                $assigneeNames = explode( $seperator, $row['civicrm_contact_contact_assignee'] );
                 if ( $value = $row['civicrm_activity_assignment_assignee_contact_id'] ) {
-                    $assigneeContactIds = explode( ',', $value );
+                    $assigneeContactIds = explode( $seperator, $value );
                     $link = array( );
                     if ( $viewLinks ) {
                         foreach ( $assigneeContactIds as $id => $value ) {
@@ -449,9 +455,9 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
             }
             
             if ( array_key_exists('civicrm_contact_contact_target', $row ) ) {
-                $targetNames = explode( ',', $row['civicrm_contact_contact_target'] );
+                $targetNames = explode( $seperator, $row['civicrm_contact_contact_target'] );
                 if ( $value = $row['civicrm_activity_target_target_contact_id'] ) {
-                    $targetContactIds = explode( ',', $value );
+                    $targetContactIds = explode( $seperator, $value );
                     $link = array( );
                     if ( $viewLinks ) {
                         foreach ( $targetContactIds as $id => $value ) {

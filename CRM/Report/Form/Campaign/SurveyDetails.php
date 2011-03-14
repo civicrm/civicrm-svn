@@ -797,6 +797,7 @@ INNER  JOIN  civicrm_custom_field cf ON ( cg.id = cf.custom_group_id )
             }
             if ( array_key_exists( $fieldName, $this->_columns[$resTable]['fields'] ) ) {
                 $this->_columns[$resTable]['fields'][$fieldName]['required'] = true;
+                $this->_columns[$resTable]['fields'][$fieldName]['isSurveyResponseField'] = true;
                 continue;
             }
             

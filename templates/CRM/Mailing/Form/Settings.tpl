@@ -102,6 +102,14 @@ cj( function($) {
     </tr>
    </table>
   </fieldset>
+  <fieldset><legend>Online Publication</legend>
+  	<table class="form-layout">
+		<tr class="crm-mailing-group-form-block-visibility">
+   		<td class="label">{$form.visibility.label}</td><td>{$form.visibility.html} {help id="mailing-visibility"}
+   		</td>
+   		</tr>
+  	</table>
+  </fieldset>
   <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
 </div>
 

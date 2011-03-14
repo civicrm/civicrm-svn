@@ -54,9 +54,10 @@ class CRM_Report_Form_Member_Detail extends CRM_Report_Form {
             array( 'civicrm_contact' =>
                    array( 'dao'     => 'CRM_Contact_DAO_Contact',
                           'fields'  =>
-                          array( 'display_name' => 
+                          array( 'sort_name' => 
                                  array( 'title'      => ts( 'Contact Name' ),
                                         'required'   => true,
+                                        'default'    => true,
                                         'no_repeat'  => true ),
                                  'id'           => 
                                  array( 'no_display' => true, 
@@ -296,7 +297,11 @@ class CRM_Report_Form_Member_Detail extends CRM_Report_Form {
     function groupBy( ) {
         $this->_groupBy = " GROUP BY {$this->_aliases['civicrm_contact']}.id, {$this->_aliases['civicrm_membership']}.membership_type_id";
     }
-    
+     
+    function orderBy( ) {
+        $this->_orderBy = " ORDER BY {$this->_aliases['civicrm_contact']}.sort_name, {$this->_aliases['civicrm_contact']}.id, {$this->_aliases['civicrm_membership']}.membership_type_id";
+    }
+
     function postProcess( ) {
         
         $this->beginPostProcess( );
@@ -361,14 +366,14 @@ class CRM_Report_Form_Member_Detail extends CRM_Report_Form {
                 $entryFound = true;
             }
             
-            if ( array_key_exists('civicrm_contact_display_name', $row) && 
-                 $rows[$rowNum]['civicrm_contact_display_name'] && 
+            if ( array_key_exists('civicrm_contact_sort_name', $row) && 
+                 $rows[$rowNum]['civicrm_contact_sort_name'] && 
                  array_key_exists('civicrm_contact_id', $row) ) {
                 $url = CRM_Utils_System::url( "civicrm/contact/view"  , 
                                               'reset=1&cid=' . $row['civicrm_contact_id'],
                                               $this->_absoluteUrl );
-                $rows[$rowNum]['civicrm_contact_display_name_link'] = $url;
-                $rows[$rowNum]['civicrm_contact_display_name_hover'] =
+                $rows[$rowNum]['civicrm_contact_sort_name_link'] = $url;
+                $rows[$rowNum]['civicrm_contact_sort_name_hover'] =
                     ts("View Contact Summary for this Contact.");
                 $entryFound = true;
             }

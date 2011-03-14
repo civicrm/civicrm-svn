@@ -1,6 +1,4 @@
-<?php
-
-/*
+{*
  +--------------------------------------------------------------------+
  | CiviCRM version 3.3                                                |
  +--------------------------------------------------------------------+
@@ -24,55 +22,9 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*/
-
-/**
- * A PHP cron script to run the outstanding and scheduled CiviMail jobs
- * initiated by Owen Barton from a mailing sent by Lobo to crm-mail
- *
- * The structure of the file is set to mimiic soap.php which is a stand-alone
- * script and hence does not have any UF issues. You should be able to run
- * this script using a web url or from the command line
- */
-
-function processQueue($batch_size) {
-    require_once 'CRM/Mailing/BAO/Job.php';
-	// Split up the parent jobs into multiple child jobs
-	CRM_Mailing_BAO_Job::runJobs_pre($batch_size);
-	CRM_Mailing_BAO_Job::runJobs();
-	CRM_Mailing_BAO_Job::runJobs_post();
-}
-
-function run( ) {
-    session_start( );                               
-                                            
-    if (! function_exists( 'drush_get_context' ) ) {
-        require_once '../civicrm.config.php'; 
-    }
-
-    require_once 'CRM/Core/Config.php'; 
-    
-    $config =& CRM_Core_Config::singleton(); 
-
-    // this does not return on failure
-    CRM_Utils_System::authenticateScript( true );
-
-    //log the execution of script
-    CRM_Core_Error::debug_log_message( 'civimail.cronjob.php');
-    
-    // we now use DB locks on a per job basis
-    processQueue($config->mailerJobSize);
-}
-
-// you can run this program either from an apache command, or from the cli
-if (isset($argv)) {
-  require_once ("bin/cli.php");
-  $cli=new civicrm_cli ();
-  //if it doesn't die, it's authenticated 
-  require_once 'CRM/Core/Config.php';
-  $config =& CRM_Core_Config::singleton();
-  processQueue( $config->mailerJobSize);
-} else  { //from the webserver
-  run( );
-}
-
+*}
+{htxt id="mailing-visibility"}
+<p></p>
+{ts}Choose <strong>public pages</strong> if you want the content of this mailing to be viewable by everyone who has the permission of <strong>"view public CiviMail content"</strong>, <strong>user and user admin only</strong> means that only users that received the mailing or administrators can view the content of this email{/ts}
+<p></p>
+{/htxt}

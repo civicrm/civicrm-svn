@@ -53,7 +53,7 @@ class CRM_Report_Form_Member_Lapse extends CRM_Report_Form {
             array( 'civicrm_contact'  =>
                    array( 'dao'       => 'CRM_Contact_DAO_Contact',
                           'fields'    =>
-                          array( 'display_name'  => 
+                          array( 'sort_name'  => 
                                  array( 'title'      => ts( 'Member Name' ),
                                         'no_repeat'  => true, 
                                         'required'   => true),
@@ -292,6 +292,10 @@ class CRM_Report_Form_Member_Lapse extends CRM_Report_Form {
         }     
     }
     
+    function orderBy( ) {
+        $this->_orderBy = " ORDER BY {$this->_aliases['civicrm_contact']}.sort_name, {$this->_aliases['civicrm_contact']}.id, {$this->_aliases['civicrm_membership']}.membership_type_id";
+    }
+
     function postProcess( ) {
         $this->beginPostProcess( );
 
@@ -371,13 +375,13 @@ class CRM_Report_Form_Member_Lapse extends CRM_Report_Form {
             }
             
             // convert display name to links
-            if ( array_key_exists('civicrm_contact_display_name', $row) && 
+            if ( array_key_exists('civicrm_contact_sort_name', $row) && 
                  array_key_exists('civicrm_contact_id', $row) ) {
                 $url = CRM_Report_Utils_Report::getNextUrl( 'member/detail', 
                                               'reset=1&force=1&id_op=eq&id_value=' . $row['civicrm_contact_id'],
                                                             $this->_absoluteUrl, $this->_id);
-                $rows[$rowNum]['civicrm_contact_display_name_link' ] = $url;
-                $rows[$rowNum]['civicrm_contact_display_name_hover'] =
+                $rows[$rowNum]['civicrm_contact_sort_name_link' ] = $url;
+                $rows[$rowNum]['civicrm_contact_sort_name_hover'] =
                     ts("View Membership Detail for this Contact.");
             }
             

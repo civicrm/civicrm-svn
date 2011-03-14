@@ -75,7 +75,7 @@ class CRM_Mailing_Info extends CRM_Core_Component_Info
         $permissions = array( 'access CiviMail', 
                               'access CiviMail subscribe/unsubscribe pages',
                               'delete in CiviMail',
-                              'view CiviMail content');
+                              'view public CiviMail content');
 
         if ( self::workflowEnabled( ) ) {
             $permissions[] = 'create mailings';

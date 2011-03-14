@@ -55,7 +55,7 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
                           'fields'    =>
                           array( 'display_name_creditor'      => 
                                  array( 'title'      => ts( 'Soft Credit Name' ),
-                                        'name'       => 'display_name',
+                                        'name'       => 'sort_name',
                                         'alias'      => 'contact_civireport',
                                         'required'   => true,
                                         'no_repeat'  => true,
@@ -69,7 +69,7 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
                                         ),
                                  'display_name_constituent'   => 
                                  array( 'title'      => ts( 'Contributor Name' ),
-                                        'name'       => 'display_name',
+                                        'name'       => 'sort_name',
                                         'alias'      => 'constituentname',
                                         'required'   => true,
                                         ),
@@ -330,6 +330,13 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
         $this->_groupBy    = "GROUP BY {$this->_aliases['civicrm_contribution_soft']}.contact_id,
                                        {$alias_constituent}.id, 
                                        {$alias_creditor}.display_name";
+    }
+
+    function orderBy( ) {
+        $alias_constituent = 'constituentname';
+        $alias_creditor    = 'contact_civireport';
+        $this->_orderBy    = "ORDER BY {$alias_constituent}.sort_name, {$this->_aliases['civicrm_contribution_soft']}.contact_id,
+                                       {$alias_creditor}.sort_name, {$alias_creditor}.id ";
     }
 
     function where( ) {

@@ -115,7 +115,9 @@ class CRM_Core_Payment_PayPalIPN extends CRM_Core_Payment_BaseIPN {
             break;
             
         case 'subscr_eot':
-            $recur->contribution_status_id = 1;
+            if ( $recur->contribution_status_id != 3 ) {
+                $recur->contribution_status_id = 1;
+            }
             $recur->end_date               = $now;
             $sendNotification              = true;
             $subscriptionPaymentStatus     = CRM_Core_Payment::RECURRING_PAYMENT_END;
@@ -128,7 +130,7 @@ class CRM_Core_Payment_PayPalIPN extends CRM_Core_Payment_BaseIPN {
 
         case 'subscr_failed':
             $recur->contribution_status_id = 4;
-            $recur->cancel_date            = $now;
+            $recur->modified_date          = $now;
             break;
 
         case 'subscr_modify':

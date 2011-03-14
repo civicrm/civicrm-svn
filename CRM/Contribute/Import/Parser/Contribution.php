@@ -442,7 +442,8 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
                 } else {
                     $cid = $matchedIDs[0];
                     $formatted['contact_id'] = $cid;
-                    
+                    $formatted['version'] = 2;
+
                     $newContribution = civicrm_api('contribution', 'format_create', $formatted);
                     if ( civicrm_error( $newContribution ) ) { 
                         if ( is_array( $newContribution['error_message'] ) ) {
@@ -510,6 +511,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
                     return CRM_Contribute_Import_Parser::ERROR;
                 }
             }
+            $formatted['version'] = 2;
             $newContribution = civicrm_api('contribution', 'format_create', $formatted);
             if ( civicrm_error( $newContribution ) ) { 
                 if ( is_array( $newContribution['error_message'] ) ) {

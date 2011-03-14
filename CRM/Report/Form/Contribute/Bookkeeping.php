@@ -51,7 +51,7 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
             array( 'civicrm_contact'      =>
                    array( 'dao'     => 'CRM_Contact_DAO_Contact',
                           'fields'  =>
-                          array( 'display_name' => 
+                          array( 'sort_name' => 
                                  array( 'title' => ts( 'Contact Name' ),
                                         'required'  => true,
                                         'no_repeat' => true ),
@@ -179,7 +179,7 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
     }
 
     function orderBy( ) {
-        $this->_orderBy = " ORDER BY {$this->_aliases['civicrm_contribution']}.id ";
+        $this->_orderBy = " ORDER BY {$this->_aliases['civicrm_contact']}.sort_name, {$this->_aliases['civicrm_contribution']}.id ";
     }
 
     function postProcess( ) {
@@ -224,14 +224,14 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
         foreach ( $rows as $rowNum => $row ) {
 
         	// convert display name to links
-        	if ( array_key_exists('civicrm_contact_display_name', $row) && 
-        	     CRM_Utils_Array::value( 'civicrm_contact_display_name', $rows[$rowNum] ) && 
+        	if ( array_key_exists('civicrm_contact_sort_name', $row) && 
+        	     CRM_Utils_Array::value( 'civicrm_contact_sort_name', $rows[$rowNum] ) && 
     	         array_key_exists('civicrm_contact_id', $row) ) {
 	            $url = CRM_Utils_System::url( "civicrm/contact/view"  , 
                     	                      'reset=1&cid=' . $row['civicrm_contact_id'],
                 	                          $this->_absoluteUrl );
-            	$rows[$rowNum]['civicrm_contact_display_name_link' ] = $url;
-        	    $rows[$rowNum]['civicrm_contact_display_name_hover'] =  
+            	$rows[$rowNum]['civicrm_contact_sort_name_link' ] = $url;
+        	    $rows[$rowNum]['civicrm_contact_sort_name_hover'] =  
     	            ts("View Contact Summary for this Contact.");
 	        }
         	

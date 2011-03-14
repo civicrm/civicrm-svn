@@ -42,7 +42,7 @@ class CRM_Utils_VersionCheck
     const
         LATEST_VERSION_AT = 'http://latest.civicrm.org/stable.php',
         CHECK_TIMEOUT     = 5,                          // timeout for when the connection or the server is slow
-        LOCALFILE_NAME    = 'civicrm-version.txt',      // relative to $civicrm_root
+        LOCALFILE_NAME    = 'civicrm-version.php',      // relative to $civicrm_root
         CACHEFILE_NAME    = 'latest-version-cache.txt', // relative to $config->uploadDir
         CACHEFILE_EXPIRE  = 604800;                     // cachefile expiry time (in seconds) - a week
 
@@ -82,9 +82,13 @@ class CRM_Utils_VersionCheck
         $localfile = $civicrm_root . DIRECTORY_SEPARATOR . self::LOCALFILE_NAME;
         $cachefile = $config->uploadDir . self::CACHEFILE_NAME;
 
-        if ($config->versionCheck and file_exists($localfile)) {
-            $localParts         = explode(' ', trim(file_get_contents($localfile)));
-            $this->localVersion = $localParts[0];
+        if ( $config->versionCheck &&
+             file_exists( $localfile ) ) {
+            require_once( $localfile );
+            if ( function_exists( 'civicrmVersion' ) ) {
+                $info = civicrmVersion( );
+                $this->localVersion = $info['version'];
+            }
             $expiryTime         = time() - self::CACHEFILE_EXPIRE;
 
             // if there's a cachefile and it's not stale use it to

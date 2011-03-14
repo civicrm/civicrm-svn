@@ -29,7 +29,6 @@
             {include file="CRM/common/pager.tpl" location="top" noForm=0}
         </div>
     {/if}
-    {include file="CRM/common/jsortable.tpl"}
     <table class="report-layout display">
         <thead class="sticky">
         <tr> 
