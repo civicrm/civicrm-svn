@@ -485,7 +485,8 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
         }
         
         //now pickup all options.
-        $query = '
+        if ( !empty( $fieldIds ) ) {
+            $query = '
     SELECT  field.id as id,
             val.label as label,
             val.value as value
@@ -493,11 +494,12 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
 INNER JOIN  civicrm_option_value val ON ( val.option_group_id = field.option_group_id )
      WHERE  field.id IN (' . implode( ' , ', $fieldIds ) . ' )
   Order By  val.weight';
-        $field = CRM_Core_DAO::executeQuery( $query );
-        $options = array( );
-        while ( $field->fetch( ) ) {
-            $name =  "custom_{$field->id}";
-            $surveyResponseFields[$name]['options'][$field->value] = $field->label;
+            $field = CRM_Core_DAO::executeQuery( $query );
+            $options = array( );
+            while ( $field->fetch( ) ) {
+                $name =  "custom_{$field->id}";
+                $surveyResponseFields[$name]['options'][$field->value] = $field->label;
+            }
         }
         
         //get the result values.
