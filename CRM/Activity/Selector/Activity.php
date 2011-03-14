@@ -118,7 +118,7 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
         $showUpdate = $showDelete = false;
         $qsDelete = $qsView = $qsUpdate = null;
         
-        $activeActTypes = CRM_Core_PseudoConstant::activityType( true, true, false, 'name' );
+        $activeActTypes = CRM_Core_PseudoConstant::activityType( true, true, false, 'name', true );
         $activityTypeName = CRM_Utils_Array::value( $activityTypeId, $activeActTypes );
         
         //CRM-7607
