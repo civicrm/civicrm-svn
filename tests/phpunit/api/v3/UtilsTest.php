@@ -37,7 +37,7 @@ require_once 'api/v3/utils.php';
  */
 class api_v3_UtilsTest extends CiviUnitTestCase
 {
-
+    protected $_apiversion; 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
@@ -48,6 +48,7 @@ class api_v3_UtilsTest extends CiviUnitTestCase
     {
         parent::setUp();
         CRM_Core_Permission_UnitTests::$permissions = null; // reset check() stub
+        $this->_apiversion =3;
     }
 
     /**
@@ -107,4 +108,77 @@ class api_v3_UtilsTest extends CiviUnitTestCase
         $this->assertFalse(civicrm_api3_api_check_permission('civicrm_contact_create', array('check_permissions' => true)),  'lacking permissions should not be enough');
         $this->assertTrue(civicrm_api3_api_check_permission('civicrm_contact_create',  array('check_permissions' => false)), 'permission check should be skippable');
     }
+    
+    /*
+     * Test verify mandatory - includes DAO & passed as well as empty & NULL fields
+     */
+    function testVerifyMandatory(){
+      _civicrm_api3_initialize(true);
+      $params = array(
+                               'entity_table'  => 'civicrm_contact',
+                               'note'          => '',
+                               'contact_id'    => $this->_contactID,
+                               'modified_date' => '2011-01-31',
+                               'subject'       => NULL,
+                               'version'			 => $this->_apiversion, 
+                               );
+      $result = civicrm_api3_verify_mandatory ($params, 'CRM_Core_BAO_Note', array('note','subject') );
+      $this->setExpectedException('Mandatory key(s) missing from params array: entity_id, note, subject');
+    }
+    
+     /*
+     * Test verify one mandatory - includes DAO & passed as well as empty & NULL fields
+     */ 
+    function testVerifyOneMandatory(){
+
+
+        $params = array(
+                               'entity_table'  => 'civicrm_contact',
+                               'note'          => '',
+                               'contact_id'    => $this->_contactID,
+                               'modified_date' => '2011-01-31',
+                               'subject'       => NULL,
+                               'version'			 => $this->_apiversion, 
+                               );
+
+        try {
+          $result = civicrm_api3_verify_one_mandatory ($params, 'CRM_Core_BAO_Note', array('note','subject') );        
+        }
+ 
+        catch (Exception $expected) {
+          $this->setExpectedException(Exception);        
+          $this->assertEquals('Mandatory key(s) missing from params array: entity_id, one of (note, subject)', $expected->getMessage());
+          return;
+        }
+ 
+        $this->fail('An expected exception has not been raised.');
+    }             
+    
+    
+     /*
+     * Test verify one mandatory - includes DAO & passed as well as empty & NULL fields
+     */ 
+    function testVerifyOneMandatoryOneSet(){
+      _civicrm_api3_initialize(true);
+      $params = array(
+                               'entity_table'  => 'civicrm_contact',
+                               'note'          => 'note',
+                               'contact_id'    => $this->_contactID,
+                               'modified_date' => '2011-01-31',
+                               'subject'       => NULL,
+                               'version'			 => $this->_apiversion, 
+                               );
+                               
+      try {
+         civicrm_api3_verify_one_mandatory ($params, NULL, array('note','subject') );
+          }
+ 
+        catch (Exception $expected) {
+          $this->fail('Exception raised when it shouldn\'t have been  in line ' . __LINE__);
+        }
+ 
+
+
+    }
+    
 }

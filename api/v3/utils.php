@@ -112,7 +112,7 @@ function civicrm_api3_verify_mandatory ($params, $daoName = null, $keys = array(
             $match = 0;
             $optionset = array();
             foreach($key as $subkey){
-                if ( !array_key_exists ($subkey, $params)) {
+                if ( !array_key_exists ($subkey, $params)|| empty($params[$subkey])) {
                     $optionset[] = $subkey;
                 }else{
                     $match = 1;//as long as there is one match then we don't need to rtn anything
@@ -122,7 +122,7 @@ function civicrm_api3_verify_mandatory ($params, $daoName = null, $keys = array(
                 $unmatched[] = "one of (". implode(", ",$optionset) . ")";
             }
         }else{
-            if ( !array_key_exists ($key, $params))
+            if ( !array_key_exists ($key, $params) || empty($params[$key]))
                 $unmatched[] = $key;
         }
 
@@ -891,7 +891,7 @@ function _civicrm_api3_check_required_fields( $params, $daoName, $return = FALSE
         }
 
         if ( isset( $v['required'] ) ) {
-            if ($v['required'] && !(isset($params[$k]))) {
+            if ($v['required'] && (empty($params[$k]))) {
                 $missing[] = $k;
             }
         }
