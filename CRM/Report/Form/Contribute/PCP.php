@@ -131,7 +131,6 @@ class CRM_Report_Form_Contribute_PCP extends CRM_Report_Form {
                                       'no_display' => true,
                                       'required'   => true,
                                       ),
-                               
                                'receive_date' => 
                                array( 'title'      => ts( 'Most Recent Donation' ), 
                                       'default'    => true,
