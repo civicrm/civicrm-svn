@@ -36,6 +36,7 @@
 
 require_once 'CRM/Core/Form.php';
 require_once "CRM/Activity/BAO/Activity.php";
+require_once 'CRM/Campaign/BAO/Campaign.php';
 
 /**
  * This class handle activity view mode

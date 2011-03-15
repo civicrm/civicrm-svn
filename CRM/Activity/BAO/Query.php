@@ -133,6 +133,12 @@ class CRM_Activity_BAO_Query
             $query->_element['activity_campaign_id'] = 1;
             $query->_tables['civicrm_activity'] = $query->_whereTables['civicrm_activity'] = 1;
         }
+        
+        if ( CRM_Utils_Array::value( 'activity_engagement_level', $query->_returnProperties ) ) {
+            $query->_select['activity_engagement_level'] = 'civicrm_activity.engagement_level as activity_engagement_level';
+            $query->_element['activity_engagement_level'] = 1;
+            $query->_tables['civicrm_activity'] = $query->_whereTables['civicrm_activity'] = 1;
+        }
     }
 
      /** 
@@ -497,9 +503,10 @@ class CRM_Activity_BAO_Query
                                 'source_contact_id'   => 1,
                                 'source_record_id'    => 1,
                                 'activity_is_test'    => 1,
-                                'activity_campaign_id' => 1
-                                );
-
+                                'activity_campaign_id' => 1,
+                                'activity_engagement_level' => 1,
+                                  );
+            
             // also get all the custom activity properties
             require_once "CRM/Core/BAO/CustomField.php";
             $fields = CRM_Core_BAO_CustomField::getFieldsForImport('Activity');

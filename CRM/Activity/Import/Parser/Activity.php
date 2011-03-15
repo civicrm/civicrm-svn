@@ -201,6 +201,9 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
                         CRM_Import_Parser_Contact::addToErrorMsg( 'Activity date', $errorMessage );  
                     }
                 }
+            } else if ( $key == 'activity_engagement_level' && $val &&
+                        !CRM_Utils_Rule::positiveInteger( $val ) ) {
+                CRM_Import_Parser_Contact::addToErrorMsg( 'Activity Engagement Level', $errorMessage ); 
             }
         }
         //date-Format part ends
