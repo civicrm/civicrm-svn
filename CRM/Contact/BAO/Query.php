@@ -896,7 +896,12 @@ class CRM_Contact_BAO_Query
                                 $this->_tables[$tName] = "\nLEFT JOIN $tableName `$tName` ON contact_a.id = `$tName`.contact_id AND `$tName`.$lCond";
                                 // this special case to add phone type
                                 if ( $cond ) {
-                                    $this->_tables[$tName] .= " AND `$tName`.$cond ";
+                                    $phoneTypeCondition = " AND `$tName`.$cond ";
+                                    //gross hack to pickup corrupted data also, CRM-7603
+                                    if ( strpos( $cond, 'phone_type_id' ) !== false ) {
+                                        $phoneTypeCondition = " AND ( `$tName`.$cond OR `$tName`.phone_type_id IS NULL ) ";
+                                    }
+                                    $this->_tables[$tName] .= $phoneTypeCondition;
                                 }
 
                                 //build locationType join
