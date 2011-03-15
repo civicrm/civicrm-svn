@@ -1689,14 +1689,14 @@ function civicrm_api3_check_contact_dedupe( $params ) {
  */
 function civicrm_api3_api_check_permission($api, $params, $throw = false)
 {
-    // return early if we’re to skip the permission check or if it’s unset
-    if (!isset($params['check_permissions']) or !$params['check_permissions']) return true;
+    // return early if we're to skip the permission check or if it’s unset
+    if (empty($params['check_permissions']) ) return true;
 
     require_once 'CRM/Core/Permission.php';
     $requirements = array(
-        'civicrm_apiv3_contact_create' => array('access CiviCRM', 'add contacts'),
-        'civicrm_apiv3_contact_update' => array('access CiviCRM', 'add contacts'),
-        'civicrm_apiv3_event_create'   => array('access CiviEvent'),
+        'civicrm_api3_contact_create' => array('access CiviCRM', 'add contacts'),
+        'civicrm_api3_contact_update' => array('access CiviCRM', 'add contacts'),
+        'civicrm_api3_event_create'   => array('access CiviEvent'),
     );
     foreach ($requirements[$api] as $perm) {
         if (!CRM_Core_Permission::check($perm)) {
