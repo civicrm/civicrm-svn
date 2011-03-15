@@ -22,7 +22,7 @@ class Custom extends CiviUnitTestCase
                            'style'       => 'Inline',
                            'is_multiple' => $isMultiple,
                            'is_active'   => 1,
-                           'version'		 => 3,
+                           'version'     => 2
                            );
             
         } else {
