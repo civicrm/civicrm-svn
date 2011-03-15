@@ -58,8 +58,6 @@ require_once 'CRM/Core/DAO/OptionGroup.php';
  *
  * @return CRM_Activity|CRM_Error Newly created Activity object
  *
- * @todo Erik Hommel 16 dec 2010 check if create function processes update correctly when activity_id is passed
- * @todo Erik Hommel 16 dec 2010 check for mandatory fields with utils function civicrm_verify_mandatory
  * @todo Erik Hommel 16 dec 2010 check permissions with utils function civicrm_api_permission_check
  * @todo Eileen 2 Feb - custom data fields per test are non std
  * 
@@ -115,7 +113,6 @@ function civicrm_api3_activity_create( $params )
  *
  * @todo Erik Hommel 16 dec 2010 check permissions with utils function civicrm_api_permission_check
  * @todo Erik Hommel 16 dec 2010 check if all DB fields are returned
- * @todo Erik Hommel 16 dec 2010 check if civicrm_create_success is handled correctly with REST (should be fixed in utils function civicrm_create_success)
  * @todo - this is a very limited GET not a search
  * 
  * {@example ActivityGet.php 0}
@@ -131,6 +128,9 @@ function civicrm_api3_activity_get( $params ) {
      return civicrm_api3_create_success($activities,$params);
     }
     $activityId = CRM_Utils_Array::value( 'activity_id', $params );
+    if(empty($activityId)){
+      $activityId = CRM_Utils_Array::value( 'id', $params );  
+    }
     $activity = _civicrm_api3_activity_get( $activityId );
 
     if ( $activity ) {
@@ -333,10 +333,9 @@ SELECT  count(*)
     }
   }
 
-  if ( isset( $params['priority_id'] ) && is_numeric( $params['priority_id'] ) ) {
+  if ( !empty( $params['priority_id'] ) && is_numeric( $params['priority_id'] ) ) {
     require_once "CRM/Core/PseudoConstant.php";
     $activityPriority = CRM_Core_PseudoConstant::priority( );
-
     if ( !array_key_exists( $params['priority_id'], $activityStatus ) ) {
       return civicrm_api3_create_error( 'Invalid Priority' );
     }
