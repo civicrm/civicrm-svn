@@ -97,7 +97,32 @@ class WebTest_Contribute_OnlineRecurContributionTest extends CiviSeleniumTestCas
       $text = 'I pledge to contribute this amount every month for 12 installments.';
       $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
       $text = '$ 10.00';
-      $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );      
+      $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
+      
+      // Log back in and verify that test contribution has been recorded
+      $this->open( $this->sboxPath );
+      $this->webtestLogin();
+      $this->open($this->sboxPath . "civicrm/contribute/search&reset=1");
+      $this->waitForElementPresent("contribution_currency_type");
+
+      $this->type("sort_name", "{$lastName}, {$firstName}" );
+      $this->click("contribution_test");
+      $this->click("_qf_Search_refresh");
+
+      $this->waitForElementPresent('css=#contributionSearch table tbody tr td span a.action-item-first');
+      $this->click('css=#contributionSearch table tbody tr td span a.action-item-first');
+      $this->waitForElementPresent( "_qf_ContributionView_cancel-bottom" );
+
+      // View Recurring Contribution Record
+      $this->webtestVerifyTabularData( array(
+                                             'From'                 => "$contactName",
+                                             'Contribution Type'    => 'Donation (test)',
+                                             'Total Amount'         => 'Installments: 12, Interval: 1 month(s)',
+                                             'Contribution Status'  => 'Pending : Incomplete Transaction',
+                                             'Paid By'              => 'Credit Card',
+                                             )
+                                       );
+        
   }
 
 }

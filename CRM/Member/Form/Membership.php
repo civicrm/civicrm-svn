@@ -519,7 +519,10 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                        ts('Payment Status'), $allowStatuses );
             $this->add( 'text', 'check_number', ts('Check Number'), 
                         CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_Contribution', 'check_number' ) );
-        }
+        }else{
+                //add field for amount to allow an amount to be entered that differs from minimum
+                $this->add('text', 'total_amount', ts('Amount'));
+         }
         $this->addElement( 'checkbox', 
                            'send_receipt', 
                            ts('Send Confirmation and Receipt?'), null, 
@@ -830,6 +833,9 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                                                                    $this->_id,
                                                                    'Membership' );
 
+        $membershipType = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType',
+                                                       $formValues['membership_type_id'][1] );
+
         // Retrieve the name and email of the current user - this will be the FROM for the receipt email
         list( $userName, $userEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $ids['userId'] );
 
@@ -841,10 +847,9 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                 $params[$f] = CRM_Utils_Array::value( $f, $formValues );
             }
             
-            $membershipType = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType',
-                                                           $formValues['membership_type_id'][1] );
             if ( !$this->_onlinePendingContributionId ) {
-                $params['contribution_source'] = "{$membershipType} Membership: Offline membership signup (by {$userName})";
+                $params['contribution_source'] = ts('%1 Membership: Offline signup (by %2)',
+                                                    array( 1 => $membershipType, 2 => $userName ));
             }
             
             if ( CRM_Utils_Array::value( 'send_receipt', $formValues ) ) {
@@ -857,9 +862,14 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         }
 
         if ( $this->_mode ) {
-            $params['total_amount'] = $formValues['total_amount']  = 
+            if(empty($formValues['total_amount'])){
+            // if total amount not provided minium for membership type is used
+                $params['total_amount'] = $formValues['total_amount']  = 
                 CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
                                              $params['membership_type_id'],'minimum_fee' );
+            }else{
+              $params['total_amount'] = $formValues['total_amount']  ;
+            }
             $params['contribution_type_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
                                                                            $params['membership_type_id'],
                                                                            'contribution_type_id' );
@@ -995,11 +1005,14 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             
             if ( $result ) {
                 $this->_params = array_merge( $this->_params, $result );
+                //assign amount to template if payment was successful
+	              $this->assign( 'amount', $params['total_amount'] );			
             }
             $params['contribution_status_id'] = CRM_Utils_Array::value( 'is_recur', $paymentParams ) ? 2 : 1;
             $params['receive_date']           = $now;
             $params['invoice_id']             = $this->_params['invoiceID'];
-            $params['contribution_source']    = ts( 'Online Membership: Admin Interface' );
+            $params['contribution_source']    = ts('%1 Membership Signup: Credit card or direct debit (by %2)',
+                                                                     array( 1 => $membershipType, 2 => $userName));
             $params['source']                 = $formValues['source'] ? $formValues['source'] :$params['contribution_source'];
             $params['trxn_id']                = $result['trxn_id'];
             $params['payment_instrument_id']  = 1;
@@ -1156,7 +1169,8 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             $this->assign( 'module', 'Membership' );
             $this->assign( 'contactID', $this->_contactID );
             $this->assign( 'membershipID', $params['membership_id'] );
-            $this->assign('receiptType', 'membership signup');
+            $this->assign( 'contributionID', $contribution->id );
+		        $this->assign('receiptType', 'membership signup');
             $this->assign( 'receive_date', $params['receive_date'] );            
             $this->assign( 'formValues', $formValues );
             $this->assign( 'mem_start_date', CRM_Utils_Date::customFormat($calcDates['start_date']) );
