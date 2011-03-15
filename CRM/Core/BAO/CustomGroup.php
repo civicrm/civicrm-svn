@@ -127,7 +127,7 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
         $group->max_multiple =  isset( $params['is_multiple'] )  ? ( isset( $params['max_multiple'] ) &&
                                                                      $params['max_multiple'] >= '0' ) ? $params['max_multiple'] : 'null' : 'null' ;
         
-        $tableName = null;
+        $tableName = $oldTableName = null;
         if ( isset( $params['id'] ) ) {
             $group->id = $params['id'] ;
             //check whether custom group was changed from single-valued to multiple-valued
@@ -135,7 +135,8 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
                                                        $params['id'],
                                                        'is_multiple' );
             
-            if ( ($params['is_multiple'] != $isMultiple) && (CRM_Utils_Array::value('is_multiple', $params) || $isMultiple) ) {
+            if ( ( CRM_Utils_Array::value('is_multiple', $params) || $isMultiple ) &&
+                 ( $params['is_multiple'] != $isMultiple ) ) {
                 $oldTableName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomGroup',
                                                              $params['id'],
                                                              'table_name' );
@@ -175,6 +176,7 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
             require_once 'CRM/Core/BAO/SchemaHandler.php';
             CRM_Core_BAO_SchemaHandler::changeUniqueToIndex( $oldTableName, CRM_Utils_Array::value('is_multiple', $params) );
         }
+
         if ( CRM_Utils_Array::value( 'overrideFKConstraint', $params ) == 1 ) {
             $table = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomGroup',
                                                   $params['id'],
