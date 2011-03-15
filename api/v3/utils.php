@@ -185,7 +185,7 @@ function &civicrm_api3_create_error( $msg, $data = null,&$dao = null )
  * @dao object DAO object to be freed here
  * @return array $result
  */
-function civicrm_api3_create_success( $values = 1,$params=null,&$dao = null )
+function civicrm_api3_create_success( $values = 1,$params=array(),&$dao = null )
 {
     $result = array();
     $result['is_error'] = 0;
@@ -203,7 +203,7 @@ function civicrm_api3_create_success( $values = 1,$params=null,&$dao = null )
       if(is_object ($dao)){
         $allFields = array_keys($dao->fields());
         $paramFields = array_keys($params);
-        $undefined = array_diff ($paramFields, $allFields,array_keys($_COOKIE),array ('action','entity','debug','version','skip_acl','return'));
+        $undefined = array_diff ($paramFields, $allFields,array_keys($_COOKIE),array ('action','entity','debug','version','skip_acl','return','sequential'));
         if ($undefined) 
           $result['undefined_fields'] = array_merge ($undefined);
       }
