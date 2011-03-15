@@ -44,8 +44,6 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
     function setUp( ) 
     {
         parent::setUp();
-        require_once 'CRM/Core/Config.php';
-        $config =& CRM_Core_Config::singleton( );
     }
     
     /**
@@ -53,7 +51,6 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
      */
     function testGetTree()
     {
-        $this->markTestSkipped( "Fatals in the suite!" );
         $params      = array( );
         $contactId   = Contact::createIndividual();
         $customGrouptitle = 'My Custom Group';
