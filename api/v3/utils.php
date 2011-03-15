@@ -1694,9 +1694,9 @@ function civicrm_api3_api_check_permission($api, $params, $throw = false)
 
     require_once 'CRM/Core/Permission.php';
     $requirements = array(
-        'civicrm_contact_create' => array('access CiviCRM', 'add contacts'),
-        'civicrm_contact_update' => array('access CiviCRM', 'add contacts'),
-        'civicrm_event_create'   => array('access CiviEvent'),
+        'civicrm_apiv3_contact_create' => array('access CiviCRM', 'add contacts'),
+        'civicrm_apiv3_contact_update' => array('access CiviCRM', 'add contacts'),
+        'civicrm_apiv3_event_create'   => array('access CiviEvent'),
     );
     foreach ($requirements[$api] as $perm) {
         if (!CRM_Core_Permission::check($perm)) {
