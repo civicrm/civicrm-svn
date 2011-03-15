@@ -121,13 +121,9 @@ class CRM_Utils_Rule
         return true;
     }
 
-    static function url( $url, $checkDomain = false) 
+    static function url($url)
     {
-        $options = array( 'domain_check'    => $checkDomain,
-                          'allowed_schemes' => array( 'http', 'https', 'mailto', 'ftp' ) );
-
-        require_once 'Validate.php';
-        return Validate::uri( $url, $options );
+        return (bool) filter_var($url, FILTER_VALIDATE_URL);
     }
 
     static function wikiURL( $string )
