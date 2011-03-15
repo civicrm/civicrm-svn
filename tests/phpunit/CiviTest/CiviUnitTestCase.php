@@ -195,20 +195,6 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      *  Common setup functions for all unit tests
      */
     protected function setUp() {
-
-        // "initialize" CiviCRM to avoid problems when running single tests
-        // FIXME: look at it closer in second stage
-        if (isset( $config ) ) {
-            unset( $config );
-        }
-        require_once 'CRM/Core/Config.php';
-        $config =& CRM_Core_Config::singleton();
-
-        // when running unit tests, use mockup user framework
-        $config->setUserFramework( 'UnitTests' );
-        // enable backtrace to get meaningful errors
-        $config->backtrace = 1;
-        
         //  Use a temporary file for STDIN
         $GLOBALS['stdin'] = tmpfile( );
         if ( $GLOBALS['stdin'] === false ) {
@@ -221,8 +207,22 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
         // reload database before each test
         $this->_populateDB();
-    }
 
+        // "initialize" CiviCRM to avoid problems when running single tests
+        // FIXME: look at it closer in second stage
+        if (isset( $config ) ) {
+            unset( $config );
+        }
+
+        // initialize the object once db is loaded
+        require_once 'CRM/Core/Config.php';
+        $config =& CRM_Core_Config::singleton();
+
+        // when running unit tests, use mockup user framework
+        $config->setUserFramework( 'UnitTests' );
+        // enable backtrace to get meaningful errors
+        $config->backtrace = 1;
+    }
 
     public function cleanDB() {
         self::$populateOnce = null;
