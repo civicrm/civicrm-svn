@@ -34,6 +34,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
 
   protected $_apiversion;
   protected $_contactID;
+  protected $_contactID2;
   protected $_createdParticipants;
   protected $_participantID;
   protected $_eventID;
@@ -233,7 +234,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
     // Should get 2 participant records for this contact.
     $params = array(
                         'contact_id'      => $this->_contactID2,
-                        'version'							=> $this->_apiversion,
+                        'version'					=> $this->_apiversion,
     );
     $participant = & civicrm_api3_participant_get($params);
 
@@ -353,13 +354,8 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
     $this->_participantID = $participant['id'];
 
     if ( ! $participant['is_error'] ) {
-      $this->_createdParticipants[] = CRM_Utils_Array::value('result', $participant);
-      // Create $match array with DAO Field Names and expected values
-      $match = array(
-                           'id' => CRM_Utils_Array::value('values', $participant)
-      );
       // assertDBState compares expected values in $match to actual values in the DB
-      $this->assertDBState( 'CRM_Event_DAO_Participant', $participant['result'], $match );
+      $this->assertDBState( 'CRM_Event_DAO_Participant', $participant['id'], $participant['values'][$participant['id']] );
     }
   }
 
@@ -384,14 +380,8 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
     $this->assertNotEquals( $participant['is_error'],1 ,'in line ' . __LINE__);
     $this->_participantID = $participant['id'];
     if ( ! $participant['is_error'] ) {
-      $this->_createdParticipants[] = CRM_Utils_Array::value('values', $participant);
-
-      // Create $match array with DAO Field Names and expected values
-      $match = array(
-                           'id'         => CRM_Utils_Array::value('id', $participant)
-      );
       // assertDBState compares expected values in $match to actual values in the DB
-      $this->assertDBState( 'CRM_Event_DAO_Participant', $participant['values'][$this->_participantID], $match );
+      $this->assertDBState( 'CRM_Event_DAO_Participant', $participant['id'], $participant['values'][$participant['id']] );
     }
   }
 
@@ -453,9 +443,9 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'register_date' => '2006-01-21',
                         'source'        => 'US Open',
                         'event_level'   => 'Donation',
-                             'version'							=> $this->_apiversion,                        
+                        'version'							=> $this->_apiversion,                        
     );
-    $participant = & civicrm_api3_participant_create($params);
+    $participant =  civicrm_api('Participant','update',$params);
     $this->assertEquals( $participant['is_error'], 1 );
     $this->assertEquals( $participant['error_message'],'Participant  id is not valid' );
 
@@ -595,6 +585,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
     $params = array(
                         'contact_id'    => $participantContact,
                         'event_id'      => $this->_eventID,
+                        'version'			=> 3,
     );
     require_once 'CRM/Event/Import/Parser.php';
     $onDuplicate = CRM_Event_Import_Parser::DUPLICATE_NOCHECK;
@@ -611,6 +602,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
     $params = array(
                         'contact_id'    => $participantContact,
                         'event_id'      => $this->_eventID,
+                        'version'			=> 3,
     );
     $onDuplicate =11;
     $participant = & civicrm_api3_create_participant_formatted($params,$onDuplicate );
