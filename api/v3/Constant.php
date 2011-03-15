@@ -32,7 +32,6 @@
  * @subpackage API_Constant
  * @copyright CiviCRM LLC (c) 2004-2011
  * @version $Id: Constant.php 30171 2010-10-14 09:11:27Z mover $
- * @todo - fix input to just array
  *
  */
 
@@ -90,20 +89,22 @@ require_once 'api/v3/utils.php';
  *    <li>wysiwygEditor</li>
  *  </ul>
  */
-function civicrm_api3_constant_get($name, $params = array())
+function civicrm_api3_constant_get($params = array())
 {
   _civicrm_api3_initialize(true);
   try{
-
+    civicrm_api3_verify_mandatory ($params,null,array ('name'));
+    $name= $params ['name'];
     require_once 'CRM/Core/PseudoConstant.php';
     $className = 'CRM_Core_PseudoConstant';
     $callable  = "$className::$name";
-     
     if (is_callable($callable)) {
       if (empty($params)) {
         $values = call_user_func( array( $className, $name ) );
       } else {
-        $values = call_user_func_array( array( $className, $name ), $params );
+        $values = call_user_func( array( $className, $name ) );
+        //@TODO XAV take out the param the COOKIE, Entity, Action and so there are only the "real param" in it
+        //$values = call_user_func_array( array( $className, $name ), $params );
       }
       return civicrm_api3_create_success($values,$params);
     }
