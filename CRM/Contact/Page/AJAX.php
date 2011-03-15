@@ -95,15 +95,18 @@ class CRM_Contact_Page_AJAX
             $where .= " AND contact_type = \"Organization\"";
             //set default for current_employer
             if ( $orgId = CRM_Utils_Array::value( 'id', $_GET) ) {
-                 $where .= " AND cc.id = {$orgId}";
+                $orgId = CRM_Utils_Type::escape( CRM_Utils_Array::value( 'id', $_GET) );
+                $where .= " AND cc.id = {$orgId}";
              }
 
             // CRM-7157, hack: get current employer details when
             // employee_id is present.
             $currEmpDetails  = array( );
             if ( CRM_Utils_Array::value( 'employee_id', $_GET) ) {
-                if ( $currentEmployer = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', CRM_Utils_Type::escape( $_GET['employee_id'], 'Positive' ), 'employer_id' ) ) {
-
+                if ( $currentEmployer = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
+                                                                     CRM_Utils_Type::escape( $_GET['employee_id'],
+                                                                                             'Positive' ),
+                                                                     'employer_id' ) ) {
                     if ( $config->includeWildCardInName ) {
                         $strSearch = "%$name%";
                     } else {
