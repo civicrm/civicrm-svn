@@ -991,7 +991,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                         );
 
         require_once 'CRM/Core/DAO/LocationType.php';
-        $locationType =& new CRM_Core_DAO_LocationType( );
+        $locationType = new CRM_Core_DAO_LocationType( );
         $locationType->copyValues( $params );
         $locationType->save();
         return $locationType;

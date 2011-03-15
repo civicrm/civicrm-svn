@@ -187,11 +187,29 @@ function &civicrm_api3_create_error( $msg, $data = null,&$dao = null )
  */
 function civicrm_api3_create_success( $values = 1,$params=null,&$dao = null )
 {
+    $result = array();
+    $result['is_error'] = 0;
+
+    //if ( array_key_exists ('debug',$params) && is_object ($dao)) {
+    if ( array_key_exists ('debug',$params)) {
+      if(!is_object ($dao)){
+        $d = civicrm_api3_get_DAO ($params['entity']);
+        if (!empty($d)) {
+          $file = str_replace ('_','/',$d).".php";
+          require_once ($file);
+          $dao = new $d(); 
+        }
+      }
+      if(is_object ($dao)){
+        $allFields = array_keys($dao->fields());
+        $paramFields = array_keys($params);
+        $result['undefined_fields'] = array_diff ($paramFields, $allFields,array_keys($_COOKIE),array ('action','entity','debug','version','skip_acl','return'));
+      }
+    }
     if(is_object ($dao)){
         $dao->free(); 
     }
-    $result = array();
-    $result['is_error'] = 0;
+
     $result['version'] =3;
     if (is_array( $values)) {
         $result['count'] = count( $values);
