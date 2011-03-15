@@ -351,6 +351,10 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
             // (i.e. the relationship is bi-directional)
             $relationshipType = array_unique( $relationshipType );
         }
+        
+        // sort the relationshipType in ascending order CRM-7736
+        asort( $relationshipType ); 
+
         return $relationshipType;
     }
 

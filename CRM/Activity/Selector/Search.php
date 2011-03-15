@@ -283,7 +283,7 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
                 CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_sub_type ?
                                                          $result->contact_sub_type : $result->contact_type ,false,$result->contact_id);
             $accessMailingReport = false;
-            $activityType = CRM_Core_PseudoConstant::activityType( true, true );
+            $activityType = CRM_Core_PseudoConstant::activityType( true, true, false, 'name', true );
             $activityTypeId = CRM_Utils_Array::key( $row['activity_type'], $activityType );
             if ( $row['activity_is_test'] ) {
                 $row['activity_type'] = $row['activity_type'] . " (test)";

@@ -3,7 +3,8 @@
 function pledge_payment_delete_example(){
     $params = array(
     
-                  '0' 		=> 'Array',
+                  'id' 		=> '1',
+                  'version' 		=> '3',
 
   );
   require_once 'api/api.php';
@@ -22,7 +23,8 @@ function pledge_payment_delete_expectedresult(){
            'is_error' 		=> '0',
            'version' 		=> '3',
            'count' 		=> '1',
-           'values' 		=> '1',
+           'id' 		=> 'id',
+           'values' 		=> array(           'id' => '1',           ),
       );
 
   return $expectedResult  ;

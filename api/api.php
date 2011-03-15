@@ -78,7 +78,7 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
                 return $errorFnName( "No $entity with id ".$params[$key_id] );
        
             $existing= array_pop($existing['values'] ); 
-            $p = array_merge ($params, $existing );
+            $p = array_merge ( $existing,$params );
             return civicrm_api ($entity, 'create',$p);
 
         }

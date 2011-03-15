@@ -71,8 +71,11 @@ function civicrm_api3_pledge_payment_create( $params ) {
     require_once 'CRM/Pledge/BAO/Payment.php';
     if (empty($params['id'])){
       $paymentDetails = CRM_Pledge_BAO_Payment::getOldestPledgePayment($params['pledge_id']);
-    } 
-    $paymentParams = array_merge($params,$paymentDetails);
+      $paymentParams = array_merge($params,$paymentDetails);
+    } else{
+      $paymentParams =$params;
+    }
+   
     $dao = CRM_Pledge_BAO_Payment::add( $paymentParams );
      _civicrm_api3_object_to_array($dao, $result[$dao->id]);
     
@@ -128,7 +131,7 @@ function civicrm_api3_pledge_payment_create( $params ) {
  }
  */
 /**
- * Delete a pledge
+ * Delete a pledge Payment - Note this deletes the contribution not just the link
  *
  * @param  array   $params           (reference ) input parameters
  *
@@ -139,17 +142,13 @@ function civicrm_api3_pledge_payment_create( $params ) {
 function civicrm_api3_pledge_payment_delete( $params ) {
   _civicrm_api3_initialize(true );
   try{
-
-    $pledgeID = CRM_Utils_Array::value( 'pledge_id', $params );
-    if ( ! $pledgeID ) {
-      return civicrm_api3_create_error( ts( 'Could not find pledge_id in input parameters' ) );
-    }
-
+    civicrm_verify_mandatory($params,null,array('id'));
+    $id = CRM_Utils_Array::value( 'id', $params );
     require_once 'CRM/Pledge/BAO/Pledge.php';
-    if ( CRM_Pledge_BAO_Pledge::deletePledge( $pledgeID ) ) {
-      return civicrm_api3_create_success( );
+    if ( CRM_Pledge_BAO_Payment::deletePayments( $id ) ) {
+      return civicrm_api3_create_success( array('id' => $id),$params);
     } else {
-      return civicrm_api3_create_error( ts( 'Could not delete pledge' ) );
+      return civicrm_api3_create_error(  'Could not delete payment'  );
     }
 
   } catch (PEAR_Exception $e) {
@@ -179,7 +178,6 @@ try {
     civicrm_api3_verify_mandatory($params);
     require_once 'CRM/Pledge/BAO/Payment.php';
     $bao = new CRM_Pledge_BAO_Payment();
-    print_r($fields);
     $fields = array_keys($bao->fields());
     foreach ( $fields as $name) {
         if (array_key_exists($name, $params)) {

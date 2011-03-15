@@ -112,7 +112,7 @@ function civicrm_api3_verify_mandatory ($params, $daoName = null, $keys = array(
             $match = 0;
             $optionset = array();
             foreach($key as $subkey){
-                if ( !array_key_exists ($subkey, $params)) {
+                if ( !array_key_exists ($subkey, $params)|| empty($params[$subkey])) {
                     $optionset[] = $subkey;
                 }else{
                     $match = 1;//as long as there is one match then we don't need to rtn anything
@@ -122,7 +122,7 @@ function civicrm_api3_verify_mandatory ($params, $daoName = null, $keys = array(
                 $unmatched[] = "one of (". implode(", ",$optionset) . ")";
             }
         }else{
-            if ( !array_key_exists ($key, $params))
+            if ( !array_key_exists ($key, $params) || empty($params[$key]))
                 $unmatched[] = $key;
         }
 
@@ -191,7 +191,7 @@ function civicrm_api3_create_success( $values = 1,$params=null,&$dao = null )
     $result['is_error'] = 0;
 
     //if ( array_key_exists ('debug',$params) && is_object ($dao)) {
-    if ( array_key_exists ('debug',$params)) {
+    if ( is_array($params) && array_key_exists ('debug',$params)) {
       if(!is_object ($dao)){
         $d = civicrm_api3_get_DAO ($params['entity']);
         if (!empty($d)) {
@@ -891,7 +891,7 @@ function _civicrm_api3_check_required_fields( $params, $daoName, $return = FALSE
         }
 
         if ( isset( $v['required'] ) ) {
-            if ($v['required'] && !(isset($params[$k]))) {
+            if ($v['required'] && (empty($params[$k]))) {
                 $missing[] = $k;
             }
         }
@@ -1689,14 +1689,14 @@ function civicrm_api3_check_contact_dedupe( $params ) {
  */
 function civicrm_api3_api_check_permission($api, $params, $throw = false)
 {
-    // return early if we’re to skip the permission check or if it’s unset
-    if (!isset($params['check_permissions']) or !$params['check_permissions']) return true;
+    // return early if we're to skip the permission check or if it’s unset
+    if (empty($params['check_permissions']) ) return true;
 
     require_once 'CRM/Core/Permission.php';
     $requirements = array(
-        'civicrm_contact_create' => array('access CiviCRM', 'add contacts'),
-        'civicrm_contact_update' => array('access CiviCRM', 'add contacts'),
-        'civicrm_event_create'   => array('access CiviEvent'),
+        'civicrm_api3_contact_create' => array('access CiviCRM', 'add contacts'),
+        'civicrm_api3_contact_update' => array('access CiviCRM', 'add contacts'),
+        'civicrm_api3_event_create'   => array('access CiviEvent'),
     );
     foreach ($requirements[$api] as $perm) {
         if (!CRM_Core_Permission::check($perm)) {

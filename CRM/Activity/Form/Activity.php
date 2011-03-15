@@ -650,6 +650,17 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         require_once 'CRM/Campaign/BAO/Campaign.php';
         CRM_Campaign_BAO_Campaign::addCampaign( $this, CRM_Utils_Array::value( 'campaign_id', $this->_values ) );
         
+        //add engagement level CRM-7775
+        $buildEngagementLevel = false;
+        if ( CRM_Campaign_BAO_Campaign::isCampaignEnable( ) ) {
+            $buildEngagementLevel = true;
+            $this->add( 'text', 'engagement_level', ts( 'Engagement Level' ), $attributes['engagement_level'] );
+            $this->addRule( 'engagement_level', 
+                            ts('Please enter the engagement level as a number (integers only).'), 
+                            'positiveInteger');
+        }
+        $this->assign( 'buildEngagementLevel', $buildEngagementLevel );
+        
         $this->addRule('duration', 
                        ts('Please enter the duration as number of minutes (integers only).'), 'positiveInteger');  
         

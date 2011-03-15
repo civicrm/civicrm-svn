@@ -1,4 +1,4 @@
-<?
+<?php
 require_once 'api/v3/utils.php';
 
 function civicrm_api3_option_value_get( $params ) {

@@ -155,9 +155,8 @@ function civicrm_api3_membership_create($params)
 /**
  * Get contact membership record.
  *
- * This api is used for finding an existing membership record.
- * This api will also return the mebership records for the contacts
- * having mebership based on the relationship with the direct members.
+ * This api will return the membership records for the contacts
+ * having membership based on the relationship with the direct members.
  *
  * @param  Array $params key/value pairs for contact_id and some
  *          options affecting the desired results; has legacy support
@@ -165,14 +164,15 @@ function civicrm_api3_membership_create($params)
  *
  * @return  Array of all found membership property values.
  * @access public
+ * @todo needs some love - basically only a get for a given contact right now
  */
 function civicrm_api3_membership_get($params)
 {
   _civicrm_api3_initialize(true);
   try{
-
+    civicrm_api3_verify_mandatory($params,null,array('contact_id'));
     $contactID = $activeOnly = $membershipTypeId = $membershipType = null;
-    if ( is_array( $params ) ) {
+   
       $contactID        = CRM_Utils_Array::value( 'contact_id', $params );
       $activeOnly       = CRM_Utils_Array::value( 'active_only', $params, false );
       $membershipTypeId = CRM_Utils_Array::value( 'membership_type_id', $params );
@@ -185,15 +185,7 @@ function civicrm_api3_membership_get($params)
           $membershipType, 'id', 'name' );
         }
       }
-    } elseif( CRM_Utils_Rule::integer($params) ) {
-      $contactID = $params;
-    } else {
-      return civicrm_api3_create_error( 'Parameters can be only of type array or integer' );
-    }
 
-    if ( empty($contactID) ) {
-      return civicrm_api3_create_error( 'Invalid value for ContactID.' );
-    }
 
     // get the membership for the given contact ID
     require_once 'CRM/Member/BAO/Membership.php';

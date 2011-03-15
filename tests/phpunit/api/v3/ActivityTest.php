@@ -346,7 +346,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'version'							=> $this->_apiversion,
                         );
         
-        $result = & civicrm_api3_activity_create( $params );
+        $result =  civicrm_api3_activity_create( $params );
         $this->assertEquals( $result['is_error'], 0,
                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
         /*
@@ -410,7 +410,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         CRM_Core_BAO_CustomGroup::createTable( $group );
 
         //  Add column activity_custom_11 to the custom table
-        $customField =& new CRM_Core_DAO_CustomField();
+        $customField = new CRM_Core_DAO_CustomField();
         $customField->column_name = 'activity_custom_11';
         $customField->custom_group_id = 9;
         $customField->is_required = 0;
@@ -649,7 +649,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         CRM_Core_BAO_CustomGroup::createTable( $group );
 
         //  Add column activity_custom_11 to the custom table
-        $customField =& new CRM_Core_DAO_CustomField();
+        $customField = new CRM_Core_DAO_CustomField();
         $customField->column_name = 'activity_custom_11';
         $customField->custom_group_id = 9;
         $customField->is_required = 0;
@@ -1021,7 +1021,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         CRM_Core_BAO_CustomGroup::createTable( $group );
 
         //  Add column activity_custom_11 to the custom table
-        $customField =& new CRM_Core_DAO_CustomField();
+        $customField = new CRM_Core_DAO_CustomField();
         $customField->column_name = 'activity_custom_11';
         $customField->custom_group_id = 9;
         $customField->is_required = 0;
@@ -1073,7 +1073,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                  'version'						 => $this->_apiversion,
                          );
          $result = civicrm_api('Activity','Update', $params );
-
+         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
          //  Retrieve and check the activity created
          $params = array( 'activity_id' => $activityId,
                           'activity_type_id' => 1 ,
@@ -1084,7 +1084,9 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                               "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
          $this->assertEquals( 'Make-it-Happen', $result['values'][$activityId]['subject'],
                               'In line ' . __LINE__ );
-         
+
+   //      $this->assertEquals( 'Updated my test data', $result['values'][$activityId]['custom_11'],
+  //                            'In line ' . __LINE__ );         
          // Check that the custom field value is update
          $params = array( 'entityID'   => $activityId,
                           'custom_11' => 1

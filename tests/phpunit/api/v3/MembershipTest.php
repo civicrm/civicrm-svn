@@ -111,8 +111,8 @@ class api_v3_MembershipTest extends CiviUnitTestCase
          $this->assertTrue( function_exists(civicrm_api3_membership_get) );
          $params = array('version' => $this->_apiversion);
          $result = civicrm_api3_membership_get( $params );
-         $this->assertEquals( 0, $result['is_error'],
-                              "In line " . __LINE__ );
+         $this->assertEquals( 1, $result['is_error'],  "In line " . __LINE__ );
+         $this->assertEquals('Mandatory key(s) missing from params array: contact_id'  ,$result['error_message']   );
      }
      
      function testContactMembershipCreate()

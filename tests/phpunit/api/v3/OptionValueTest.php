@@ -31,7 +31,9 @@ class api_v3_OptionValueTest extends CiviUnitTestCase
     }
 
     public function testGetOptionGroup () {
-        $result = civicrm_api3_option_value_get(array('option_group_id'=> 1, 'version' => 3));
+        $params = array('option_group_id'=> 1, 'version' => 3);
+        $result = civicrm_api3_option_value_get($params);
+        $this->documentMe($params,$result ,__FUNCTION__,__FILE__);
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
         $this->assertGreaterThan( 1, $result['count'], 'In line ' . __LINE__ );
     }

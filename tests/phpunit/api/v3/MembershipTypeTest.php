@@ -315,6 +315,7 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase
 			'organization_name' => 'New membership organisation',
 			'contact_type'      => 'Organization',
       'visibility'				=> 1,
+      'version' 					=> $this->_apiversion,
 
     );
     $newMembOrgID = $this->organizationCreate($newMembOrgParams); // create a new contact to update this membership type to
@@ -327,10 +328,10 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase
       									'duration_interval'         => '10',
       									'period_type'               => 'fixed',
                         'sequential'								=>1 ,
-        								'domain_id'					=>1,
-                        'version'						=>$this->_apiversion,
+        								'domain_id'									=>1,
+                        'version'										=>$this->_apiversion,
     );
-    $membershiptype = & civicrm_api3_membership_type_create($params);
+    $membershiptype = civicrm_api('membership_type','update',$params);
 
     $this->assertEquals($membershiptype['values'][0]['name'],'Updated General', "in line " . __LINE__);
     $this->assertEquals($membershiptype['values'][0]['member_of_contact_id'],'2', "in line " . __LINE__);

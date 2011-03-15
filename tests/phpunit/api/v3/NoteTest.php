@@ -156,13 +156,13 @@ class api_v3_NoteTest extends CiviUnitTestCase
      * Check create with empty parameter array
      * Error Expected
      */    
-    function testCreateWithEmptyParams( )
+    function testCreateWithEmptyNoteField( )
     {
-        $params = array( );
-        $result = civicrm_api3_note_create( $params );     
+        $this->_params['note']= "";
+        $result = civicrm_api3_note_create( $this->_params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: entity_id, note, version' );
-    }
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: note' );
+         }
 
     /**
      * Check create with partial params
@@ -175,7 +175,17 @@ class api_v3_NoteTest extends CiviUnitTestCase
         $this->assertEquals( $result['is_error'], 1 );
         $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: entity_id' );
     }
-
+    /**
+     * Check create with partially empty params
+     * Error expected
+     */    
+    function testCreateWithEmptyEntityId( )
+    {
+        $this->_params['entity_id']= "";
+        $result = civicrm_api3_note_create( $this->_params );
+        $this->assertEquals( $result['is_error'], 1 );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: entity_id' );
+    }
     /**
      * Check civicrm_note_create
      */
@@ -318,7 +328,7 @@ class api_v3_NoteTest extends CiviUnitTestCase
                              'version' => $this->_apiversion, );        
         $deleteNote = & civicrm_api3_note_delete( $params ); 
         $this->assertEquals( $deleteNote['is_error'], 1 );
-        $this->assertEquals( $deleteNote['error_message'], 'Error while deleting Note');
+        $this->assertEquals( $deleteNote['error_message'], 'Mandatory key(s) missing from params array: id');
     }
 
     /**
