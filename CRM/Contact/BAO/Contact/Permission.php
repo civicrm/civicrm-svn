@@ -159,6 +159,42 @@ ORDER BY contact_a.id
         return;
     }
 
+    /**
+     * Function to check if there are any contacts in cache table
+     *
+     * @param int     $id     contact id
+     * @param string  $type   the type of operation (view|edit)
+     *
+     * @return boolean
+     * @access public
+     * @static
+     */
+    static function hasContactsInCache( $type = CRM_Core_Permission::VIEW )
+    {
+        $session   = CRM_Core_Session::singleton( );
+        $contactID = $session->get( 'userID' );
+
+        if ( $type = CRM_Core_Permission::VIEW ) {
+            $operationClause = " operation IN ( 'Edit', 'View' ) ";
+            $operation       = 'View';
+        } else {
+            $operationClause = " operation = 'Edit' ";
+            $operation       = 'Edit';
+        }
+
+        // fill cache
+        self::cache( $contactID );
+                
+        $sql = "
+SELECT id
+FROM   civicrm_acl_contact_cache
+WHERE  user_id = %1
+AND    $operationClause LIMIT 1";
+
+        $params = array( 1 => array( $contactID, 'Integer' ) );
+        return (bool) CRM_Core_DAO::singleValueQuery( $sql, $params );
+    }
+
     static function cacheClause( $contactAlias = 'contact_a', $contactID = null ) {
         if ( CRM_Core_Permission::check( 'view all contacts' ) ||
              CRM_Core_Permission::check( 'edit all contacts' ) ) {
