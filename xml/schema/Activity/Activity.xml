@@ -351,7 +351,16 @@
        <import>true</import> 
        <comment>The campaign for which this activity has been triggered.</comment> 
        <add>3.4</add> 
-  </field> 
+  </field>
+  <field> 
+       <name>engagement_level</name>
+       <uniqueName>activity_engagement_level</uniqueName>
+       <type>int unsigned</type>
+       <title>engagement_level</title>
+       <import>true</import>
+       <comment>Assign a specific level of engagement to this activity. Used for tracking constituents in ladder of engagement.</comment> 
+       <add>3.4</add> 
+  </field>
   <foreignKey> 
        <name>campaign_id</name> 
        <table>civicrm_campaign</table> 
