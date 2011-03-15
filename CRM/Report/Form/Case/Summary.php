@@ -55,8 +55,9 @@ class CRM_Report_Form_Case_Summary extends CRM_Report_Form {
             array( 'civicrm_c2' =>
                    array( 'dao'       => 'CRM_Contact_DAO_Contact',
                           'fields'    =>
-                          array( 'sort_name'           => 
-                                 array( 'title' => ts('Client'),
+                          array( 'client_name'           => 
+                                 array( 'name'      => 'sort_name',
+                                        'title'     => ts('Client'),
                                         'required'  => true, ),
                                 ),
                         ),
