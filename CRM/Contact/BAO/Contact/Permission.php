@@ -160,8 +160,9 @@ ORDER BY contact_a.id
     }
 
     static function cacheClause( $contactAlias = 'contact_a', $contactID = null ) {
-        if ( CRM_Core_Permission::check( 'view all contacts' ) ) {
-            if (is_array($contactAlias)) {
+        if ( CRM_Core_Permission::check( 'view all contacts' ) ||
+             CRM_Core_Permission::check( 'edit all contacts' ) ) {
+            if ( is_array( $contactAlias ) ) {
                 $wheres = array();
                 foreach ($contactAlias as $alias) {
                     // CRM-6181
