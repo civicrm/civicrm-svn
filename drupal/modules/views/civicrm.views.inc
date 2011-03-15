@@ -1264,6 +1264,7 @@ function civicrm_views_data() {
                                             'sort' => array(
                                                             'handler' => 'views_handler_sort',
                                                             ),
+
                                             'relationship' => array(
                                                                       'base' => 'civicrm_contact',
                                                                       'base field' => 'id',

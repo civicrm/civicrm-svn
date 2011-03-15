@@ -485,7 +485,8 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
         }
         
         //now pickup all options.
-        $query = '
+        if ( !empty( $fieldIds ) ) {
+            $query = '
     SELECT  field.id as id,
             val.label as label,
             val.value as value
@@ -493,11 +494,12 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
 INNER JOIN  civicrm_option_value val ON ( val.option_group_id = field.option_group_id )
      WHERE  field.id IN (' . implode( ' , ', $fieldIds ) . ' )
   Order By  val.weight';
-        $field = CRM_Core_DAO::executeQuery( $query );
-        $options = array( );
-        while ( $field->fetch( ) ) {
-            $name =  "custom_{$field->id}";
-            $surveyResponseFields[$name]['options'][$field->value] = $field->label;
+            $field = CRM_Core_DAO::executeQuery( $query );
+            $options = array( );
+            while ( $field->fetch( ) ) {
+                $name =  "custom_{$field->id}";
+                $surveyResponseFields[$name]['options'][$field->value] = $field->label;
+            }
         }
         
         //get the result values.
@@ -621,8 +623,12 @@ INNER JOIN  civicrm_survey survey ON ( survey.result_id = grp.id )
         $statusId = CRM_Utils_Array::value( 'status_id_value', $this->_params );
         $respondentStatus = CRM_Utils_Array::value( $statusId, self::$_surveyRespondentStatus );
         
+        $surveyId = CRM_Utils_Array::value( 0, $surveyIds );
         foreach ( $rows as &$row ) {
-            $result      = CRM_Utils_Array::value( $row['civicrm_activity_survey_id'], $resultSet, array( ) );
+            if ( CRM_Utils_Array::value( 'civicrm_activity_survey_id', $row ) ) {
+                $surveyId = $row['civicrm_activity_survey_id'];
+            }
+            $result      = CRM_Utils_Array::value( $surveyId, $resultSet, array( ) );
             $resultLabel = CRM_Utils_Array::value( 'civicrm_activity_result', $row );
             if ( $respondentStatus == 'Reserved' ) {
                 $row['civicrm_activity_result'] = implode( ' | ', array_keys( $result ) ); 

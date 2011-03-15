@@ -341,38 +341,51 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
     static function sendTemplate($params)
     {
         $defaults = array(
-            'groupName'   => null,    // option group name of the template
-            'valueName'   => null,    // option value name of the template
-            'contactId'   => null,    // contact id if contact tokens are to be replaced
-            'tplParams'   => array(), // additional template params (other than the ones already set in the template singleton)
-            'from'        => null,    // the From: header
-            'toName'      => null,    // the recipient’s name
-            'toEmail'     => null,    // the recipient’s email - mail is sent only if set
-            'cc'          => null,    // the Cc: header
-            'bcc'         => null,    // the Bcc: header
-            'replyTo'     => null,    // the Reply-To: header
-            'attachments' => null,    // email attachments
-            'isTest'      => false,   // whether this is a test email (and hence should include the test banner)
-            'PDFFilename' => null,    // filename of optional PDF version to add as attachment (do not include path)
+            'groupName'         => null,    // option group name of the template
+            'valueName'         => null,    // option value name of the template
+            'messageTemplateID' => null,    // ID of the template
+            'contactId'         => null,    // contact id if contact tokens are to be replaced
+            'tplParams'         => array(), // additional template params (other than the ones already set in the template singleton)
+            'from'              => null,    // the From: header
+            'toName'            => null,    // the recipient’s name
+            'toEmail'           => null,    // the recipient’s email - mail is sent only if set
+            'cc'                => null,    // the Cc: header
+            'bcc'               => null,    // the Bcc: header
+            'replyTo'           => null,    // the Reply-To: header
+            'attachments'       => null,    // email attachments
+            'isTest'            => false,   // whether this is a test email (and hence should include the test banner)
+            'PDFFilename'       => null,    // filename of optional PDF version to add as attachment (do not include path)
         );
         $params = array_merge($defaults, $params);
                 
-        if (!$params['groupName'] or !$params['valueName']) {
-            CRM_Core_Error::fatal(ts("Message template's option group and/or option value missing."));
+        if ((!$params['groupName'] or !$params['valueName']) and !$params['messageTemplateID']) {
+            CRM_Core_Error::fatal(ts("Message template's option group and/or option value or ID missing."));
         }
 
-        // fetch the three elements from the db based on option_group and option_value names
-        $query = 'SELECT msg_subject subject, msg_text text, msg_html html
-                  FROM civicrm_msg_template mt
-                  JOIN civicrm_option_value ov ON workflow_id = ov.id
-                  JOIN civicrm_option_group og ON ov.option_group_id = og.id
-                  WHERE og.name = %1 AND ov.name = %2 AND mt.is_default = 1';
-        $sqlParams = array(1 => array($params['groupName'], 'String'), 2 => array($params['valueName'], 'String'));
+        if ($params['messageTemplateID']) {
+            // fetch the three elements from the db based on id
+            $query = 'SELECT msg_subject subject, msg_text text, msg_html html
+                      FROM civicrm_msg_template mt
+                      WHERE mt.id = %1 AND mt.is_default = 1';
+            $sqlParams = array(1 => array($params['messageTemplateID'], 'String'));
+        } else {
+            // fetch the three elements from the db based on option_group and option_value names
+            $query = 'SELECT msg_subject subject, msg_text text, msg_html html
+                      FROM civicrm_msg_template mt
+                      JOIN civicrm_option_value ov ON workflow_id = ov.id
+                      JOIN civicrm_option_group og ON ov.option_group_id = og.id
+                      WHERE og.name = %1 AND ov.name = %2 AND mt.is_default = 1';
+            $sqlParams = array(1 => array($params['groupName'], 'String'), 2 => array($params['valueName'], 'String'));
+        }
         $dao = CRM_Core_DAO::executeQuery($query, $sqlParams);
         $dao->fetch();
 
         if (!$dao->N) {
-            CRM_Core_Error::fatal(ts('No such message template: option group %1, option value %2.', array(1 => $params['groupName'], 2 => $params['valueName'])));
+            if ($params['messageTemplateID']) {
+                CRM_Core_Error::fatal(ts('No such message template: id=%1.', array(1 => $params['messageTemplateID'])));
+            } else {
+                CRM_Core_Error::fatal(ts('No such message template: option group %1, option value %2.', array(1 => $params['groupName'], 2 => $params['valueName'])));
+            }
         }
 
         $subject = $dao->subject;
