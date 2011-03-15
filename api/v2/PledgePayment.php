@@ -154,30 +154,7 @@ function &civicrm_pledge_payment_get( &$params ) {
     $payments = array_values( $pledges );
     return $pledges[0];
 }
- */
-/**
- * Delete a pledge
- *
- * @param  array   $params           (reference ) input parameters
- *
- * @return boolean        true if success, else false
- * @static void
- * @access public
- */
-function civicrm_pledge_payment_delete( &$params ) {
 
-    $pledgeID = CRM_Utils_Array::value( 'pledge_id', $params );
-    if ( ! $pledgeID ) {
-        return civicrm_create_error( ts( 'Could not find pledge_id in input parameters' ) );
-    }
-
-    require_once 'CRM/Pledge/BAO/Pledge.php';
-    if ( CRM_Pledge_BAO_Pledge::deletePledge( $pledgeID ) ) {
-        return civicrm_create_success( );
-    } else {
-        return civicrm_create_error( ts( 'Could not delete pledge' ) );
-    }
-}
 
 /**
  * Retrieve a set of pledges, given a set of input params
