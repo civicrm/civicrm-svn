@@ -2601,8 +2601,8 @@ WHERE id IN ('. implode( ',', $copiedActivityIds ) . ')';
             //get the activity type name.
             $actTypeName = CRM_Utils_Array::value( $actTypeId, $activityTypes );
             
-            //do not allow multiple copy.
-            $singletonNames = array( 'Open Case', 'Reassigned Case', 'Merge Case', 'Link Cases', 'Assign Case Role' );
+            //do not allow multiple copy / edit action.
+            $singletonNames = array( 'Open Case', 'Reassigned Case', 'Merge Case', 'Link Cases', 'Assign Case Role', 'Email', 'Inbound Email' );
             
             //do not allow to delete these activities, CRM-4543
             $doNotDeleteNames = array( 'Open Case', 'Change Case Type', 'Change Case Status', 'Change Case Start Date' );
