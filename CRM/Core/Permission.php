@@ -436,7 +436,7 @@ class CRM_Core_Permission {
         }
         
         //check for acl.
-        if ( !$hasPermission ) { 
+        if ( ! $hasPermission ) { 
             $aclPermission = self::getPermission( );
             if ( in_array( $aclPermission, array( CRM_Core_Permission::EDIT, 
                                                   CRM_Core_Permission::VIEW ) ) ) {
