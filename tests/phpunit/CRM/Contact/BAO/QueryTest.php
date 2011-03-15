@@ -12,6 +12,15 @@ require_once 'tests/phpunit/CRM/Contact/BAO/QueryTestDataProvider.php';
 
 class CRM_Contact_BAO_QueryTest extends CiviUnitTestCase 
 {
+
+    function get_info( ) 
+    {
+        return array(
+                     'name'        => 'Contact BAO Query',
+                     'description' => 'Test all Contact_BAO_Query methods.',
+                     'group'       => 'CiviCRM BAO Query Tests',
+                     );
+    }
     
     public function dataProvider()
     {
