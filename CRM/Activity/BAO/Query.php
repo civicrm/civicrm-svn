@@ -237,13 +237,13 @@ class CRM_Activity_BAO_Query
                 $name = strtolower( CRM_Core_DAO::escapeString( $name ) );
             }
             
-            $query->_where[$grouping][] = " contact_b.is_deleted = 0 AND contact_b.sort_name LIKE '%{$name}%'";
+            $query->_where[$grouping][] = " contact_activity_source.is_deleted = 0 AND contact_activity_source.sort_name LIKE '%{$name}%'";
             if ( $values[2] == 1 ) {
-                $query->_where[$grouping][] = " civicrm_activity.source_contact_id = contact_b.id";
+                $query->_where[$grouping][] = " civicrm_activity.source_contact_id = contact_activity_source.id";
                 $query->_qill[$grouping][]  = ts( 'Activity created by').  " '$name'";
                 $query->_tables['civicrm_activity_contact']   = $query->_whereTables['civicrm_activity_contact'] = 1;                
             } else if ( $values[2] == 2 ) {
-                $query->_where[$grouping][] = " civicrm_activity_assignment.activity_id = civicrm_activity.id AND civicrm_activity_assignment.assignee_contact_id = contact_b.id";
+                $query->_where[$grouping][] = " civicrm_activity_assignment.activity_id = civicrm_activity.id AND civicrm_activity_assignment.assignee_contact_id = contact_activity_source.id";
                 $query->_tables['civicrm_activity_assignment']   = $query->_whereTables['civicrm_activity_assignment'] = 1;
                 $query->_tables['civicrm_activity_contact']   = $query->_whereTables['civicrm_activity_contact'] = 1;                
                 $query->_qill[$grouping][]  = ts( 'Activity assigned to').  " '$name'";
