@@ -71,7 +71,7 @@ class api_v3_APIStandardsTest extends CiviUnitTestCase
     $this->_apiDir = "../api/v3/";
     $this->_functionFiles = array('Entity.php', 'utils.php');
     //should possibly insert variable rather than '3' in below
-    $this->_regexForGettingAPIStdFunctions = '/^civicrm_api3.*_(create|get|delete)$/';
+    $this->_regexForGettingAPIStdFunctions = '/^civicrm_api3.*_*$/';
    }
   
      /*
