@@ -95,7 +95,7 @@ function civicrm_api3_relationship_type_create( $params ) {
  * {@example RelationshipType.php 0}
  * @example RelationshipType.php
  */
-function civicrm_api3_relationship_type_get( $params = null )
+function civicrm_api3_relationship_type_get( $params  )
 {
   _civicrm_api3_initialize(true);
   try{
