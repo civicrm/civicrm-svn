@@ -26,12 +26,11 @@
 */
 
 
-require_once 'api/v3/Contact.php';
-require_once 'api/v3/Location.php';
-require_once 'CiviTest/CiviUnitTestCase.php';
+
 
 class api_v3_LocationTest extends CiviUnitTestCase 
 {
+  /*
     protected $_contactID;
     protected $_apiversion;
     function get_info( )
