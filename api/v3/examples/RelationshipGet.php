@@ -21,7 +21,7 @@ function relationship_get_expectedresult(){
   $expectedResult = 
      array(
            'is_error' 		=> '1',
-           'error_message' 		=> 'Could not find contact_id in input parameters.',
+           'error_message' 		=> 'Could not find contact_id_a in input parameters.',
       );
 
   return $expectedResult  ;

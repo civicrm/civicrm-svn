@@ -20,8 +20,17 @@ function option_group_get_expectedresult(){
 
   $expectedResult = 
      array(
-           'is_error' 		=> '1',
-           'error_message' 		=> 'array_key_exists() expects parameter 2 to be array, null given',
+           'is_error' 		=> '0',
+           'version' 		=> '3',
+           'count' 		=> '1',
+           'id' 		=> '1',
+           'values' 		=> array(           '1' =>  array(
+                      'id' => '1',
+                      'name' => 'preferred_communication_method',
+                      'description' => 'Preferred Communication Method',
+                      'is_reserved' => '0',
+                      'is_active' => '1',
+           ),           ),
       );
 
   return $expectedResult  ;
