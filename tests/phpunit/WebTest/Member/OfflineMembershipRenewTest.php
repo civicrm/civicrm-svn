@@ -43,6 +43,20 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
       $this->open( $this->sboxPath );
       $this->webtestLogin();
 
+      // make sure period is correct for the membership type we testing for,
+      // since it might have been modified by other tests
+      $this->open($this->sboxPath . "civicrm/admin/member/membershipType&action=update&id=1&reset=1");
+
+      $this->waitForElementPresent("CIVICRM_QFID_1_10");
+      $this->click("CIVICRM_QFID_0_8");
+
+      $this->type("duration_interval", "2");
+      $this->select("duration_unit", "label=year");
+
+      $this->click("_qf_MembershipType_upload-bottom");
+      $this->waitForPageToLoad("30000");
+
+      // quick create a contact
       $firstName = substr(sha1(rand()), 0, 7);
       $this->webtestAddContact($firstName, "Memberson", "{$firstName}@memberson.com");
       $contactName = "$firstName Memberson";
@@ -113,11 +127,11 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
                                          'End date'        => $endDate,
                                          );
       foreach ( $verifyMembershipRenewData as $label => $value ) {
-          $this->verifyText( "xpath=//form[@id='MembershipView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", preg_quote( $value ) );   
+          $this->verifyText( "xpath=//form[@id='MembershipView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", preg_quote( $value ) );
       }
   }
 
-  function testOfflineMemberRenewOverride( ) 
+  function testOfflineMemberRenewOverride( )
   {
       $this->open( $this->sboxPath );
       $this->webtestLogin();
@@ -220,7 +234,7 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
                                                   'End date'        => $endDate,
                                                   );
       foreach ( $verifyMembershipRenewOverrideData as $label => $value ) {
-          $this->verifyText( "xpath=//form[@id='MembershipView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", preg_quote( $value ) );   
+          $this->verifyText( "xpath=//form[@id='MembershipView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", preg_quote( $value ) );
       }
   }
   
@@ -229,6 +243,19 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
       $this->open( $this->sboxPath );
       $this->webtestLogin( );
       
+      // make sure period is correct for the membership type we testing for, 
+      // since it might have been modified by other tests 
+      $this->open($this->sboxPath . "civicrm/admin/member/membershipType&action=update&id=2&reset=1");
+
+      $this->waitForElementPresent("CIVICRM_QFID_1_10");
+      $this->click("CIVICRM_QFID_0_8");
+
+      $this->type("duration_interval", "1");
+      $this->select("duration_unit", "label=year");
+
+      $this->click("_qf_MembershipType_upload-bottom");
+      $this->waitForPageToLoad("30000");
+
       $firstName = substr( sha1( rand( ) ), 0, 7 );
       $this->webtestAddContact( $firstName, "Memberson", "{$firstName}@memberson.com" );
       $contactName = "$firstName Memberson";
@@ -302,7 +329,7 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
                                        'End date'        => $endDate,
                                        );
         foreach ( $verifyMembershipData as $label => $value ) {
-            $this->verifyText( "xpath=//form[@id='MembershipView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", preg_quote( $value ) );   
+            $this->verifyText( "xpath=//form[@id='MembershipView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", preg_quote( $value ) );
         }
   }
 }
