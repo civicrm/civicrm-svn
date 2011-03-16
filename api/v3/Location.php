@@ -51,8 +51,9 @@ require_once 'api/v3/utils.php';
  * @access public
  */
 function civicrm_api3_location_create( $params ) {
-    _civicrm_api3_initialize(true );
-    
+  _civicrm_api3_initialize(true );
+  try {
+    civicrm_api3_verify_mandatory($params);
     $error = _civicrm_api3_location_check_params( $params );
     
     if ( civicrm_api3_error( $error ) ) {
@@ -63,6 +64,11 @@ function civicrm_api3_location_create( $params ) {
     
     $location =& _civicrm_api3_location_add( $params, $locationTypeId );
     return $location;
+  	} catch ( PEAR_Exception $e ) {
+		return civicrm_create_error ( $e->getMessage () );
+	} catch ( Exception $e ) {
+		return civicrm_create_error ( $e->getMessage () );
+	}
 }
 
 /**
@@ -163,7 +169,9 @@ function civicrm_api3_location_update( $params ) {
  *
  */
 function civicrm_api3_location_delete( &$contact ) {     
-    _civicrm_api3_initialize( );
+  _civicrm_api3_initialize(true );
+  try {
+    civicrm_api3_verify_mandatory($params);
 
     if ( !is_array( $contact ) ) {
         return civicrm_api3_create_error( 'Params need to be of type array!' );
@@ -183,6 +191,11 @@ function civicrm_api3_location_delete( &$contact ) {
     $result =& _civicrm_api3_location_delete( $contact );
 
     return $result;
+  	} catch ( PEAR_Exception $e ) {
+		return civicrm_create_error ( $e->getMessage () );
+	} catch ( Exception $e ) {
+		return civicrm_create_error ( $e->getMessage () );
+	}
 }
 
 /**
@@ -195,7 +208,9 @@ function civicrm_api3_location_delete( &$contact ) {
  * @access public
  */
 function civicrm_api3_location_get( $contact ) {
-    _civicrm_api3_initialize( );
+  _civicrm_api3_initialize(true );
+  try {
+    civicrm_api3_verify_mandatory($params);
 
     if ( !is_array( $contact ) ) {
         return civicrm_api3_create_error( 'Params need to be of type array!' );
@@ -214,6 +229,11 @@ function civicrm_api3_location_get( $contact ) {
     $location=& _civicrm_api3_location_get( $contact, $locationTypes );
     
     return $location;
+  	} catch ( PEAR_Exception $e ) {
+		return civicrm_create_error ( $e->getMessage () );
+	} catch ( Exception $e ) {
+		return civicrm_create_error ( $e->getMessage () );
+	}
 }
 
 /**

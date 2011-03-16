@@ -91,6 +91,7 @@ function civicrm_api3_activity_create( $params )
       $params['custom'] = $values['custom'];
     }
     // create activity
+    
     $activityBAO = CRM_Activity_BAO_Activity::create( $params );
 
     if ( isset( $activityBAO->id ) ) {

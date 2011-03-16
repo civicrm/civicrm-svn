@@ -4,8 +4,8 @@ require_once 'api/v3/utils.php';
 function civicrm_api3_option_group_get( $params ) {
     _civicrm_api3_initialize(true);
     try{
-//      civicrm_api3_verify_mandatory($params,null,array('activity_type_id'));
-//do we need anything mandatory ?
+    civicrm_api3_verify_mandatory($params);
+
 
       require_once 'CRM/Core/BAO/OptionGroup.php';
       $bao = new CRM_Core_BAO_OptionGroup( );
