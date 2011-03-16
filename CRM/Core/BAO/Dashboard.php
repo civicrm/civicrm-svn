@@ -241,7 +241,9 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
             // -make sure relative url should not be htmlize.
             if ( substr( $dao->url, 0, 4 ) != 'http' ) {
                 if ( $config->userFramework == 'Joomla' ) {
-                    $url = CRM_Utils_System::url( $dao->url, null, false, null, false );
+                    $urlVars = explode( '&', $url, 2 );
+                    $url = CRM_Utils_System::url( $urlVars[0], CRM_Utils_Array::value( 1, $urlVars ), null, false, null, 
+                                                  false );
                 } else if ( $config->userFramework == 'Drupal' )  {
                     if ( variable_get('clean_url', 0 ) ) {
                         require_once 'CRM/Core/BAO/Navigation.php';
