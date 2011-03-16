@@ -37,7 +37,7 @@
        </td>
     </tr>
     <tr class="crm-contribution-contributionpage-thankyou-form-block-thankyou_text">
-       <td class="label">{$form.thankyou_text.label}</td>
+       <td class="label">{$form.thankyou_text.label}{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='thankyou_text' id=$contributionPageID}{/if}</td>
        <td class="html-adjust">{$form.thankyou_text.html}<br />
        	   <span class="description">{ts}Enter text (and optional HTML layout tags) for the thank-you message that will appear at the top of the confirmation page.{/ts}</span>
        </td>
