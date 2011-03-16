@@ -3,7 +3,7 @@
 function contact_get_example(){
     $params = array(
     
-                  'email' 		=> 'man2',
+                  'email' 		=> 'man2@yahoo.com',
                   'version' 		=> '3',
 
   );
