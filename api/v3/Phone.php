@@ -122,7 +122,7 @@ function civicrm_api3_phone_delete( &$params )
  * {@example PhoneDelete.php 0}
  * @param  array $params  an associative array of name/value pairs.
  *
- * @return  array details of found emails else error
+ * @return  array details of found phones else error
  * @access public
  */
 
