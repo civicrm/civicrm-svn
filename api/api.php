@@ -154,7 +154,7 @@ function civicrm_get_api_version($desired_version = NULL) {
     }
     else {
         // we will set the default to version 3 as soon as we find that it works.
-        $_version = 2;
+        $_version = 3;
         // echo "\n".'version: '. $_version ." (default)\n";
     }
     return $_version;
