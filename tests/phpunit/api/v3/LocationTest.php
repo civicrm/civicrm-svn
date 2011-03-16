@@ -56,25 +56,7 @@ class api_v3_LocationTest extends CiviUnitTestCase
     {
     }    
 
-///////////////// civicrm_location_add methods
-
-    function testAddWrongParamsType()
-    {
-        $params = 1; 
-        $location = & civicrm_location_create($params);
-
-        $this->assertEquals( $location['is_error'], 1 );
-        $this->assertEquals( 'Params need to be of type array!', $location['error_message'] );
-    }
-   
-    function testAddWithEmptyParams()
-    {
-        $params = array();        
-        $location = & civicrm_location_create($params);
-
-        $this->assertEquals( $location['is_error'], 1 );                    
-        $this->assertEquals( $location['error_message'], 'Input Parameters empty' );
-    }
+/*}
 
 
     function testAddWithoutContactid()
@@ -480,6 +462,6 @@ class api_v3_LocationTest extends CiviUnitTestCase
         }
         
     }
-    
+ */   
 }
  
