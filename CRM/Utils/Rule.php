@@ -374,21 +374,17 @@ class CRM_Utils_Rule
             true : false;
     }
 
-    static function email($value, $checkDomain = false) 
+    static function email($value)
     {
-        static $qfRule = null;
-        if ( ! isset( $qfRule ) ) {
-            $qfRule = new HTML_QuickForm_Rule_Email();
-        }
-        return $qfRule->validate( $value, $checkDomain );
+        return (bool) filter_var($value, FILTER_VALIDATE_EMAIL);
     }
 
-    static function emailList( $list, $checkDomain = false ) 
+    static function emailList($list)
     {
         $emails = explode( ',', $list );
         foreach ( $emails as $email ) {
             $email = trim( $email );
-            if ( ! self::email( $email, $checkDomain ) ) {
+            if (!self::email($email)) {
                 return false;
             }
         }
