@@ -53,18 +53,35 @@ class CRM_Activity_Page_Tab extends CRM_Core_Page
     {
         require_once 'CRM/Core/Selector/Controller.php';
 
+        $activityTypeIDs = array( );
+
+        $aTypes = CRM_Utils_Request::retrieve('atype', 'String', $this );
+
+        if ( ! empty( $aTypes ) ) {
+            $aTypeArray = explode( ',', trim( $aTypes ) );
+            foreach ( $aTypeArray as $aID ) {
+                if ( is_numeric( $aID ) ) {
+                    $activityTypeIDs[] = $aID;
+                }
+            }
+        }
+
         $output = CRM_Core_Selector_Controller::SESSION;
         require_once 'CRM/Activity/Selector/Activity.php';
-        $selector   = new CRM_Activity_Selector_Activity($this->_contactId, $this->_permission );
+        $selector   = new CRM_Activity_Selector_Activity( $this->_contactId,
+                                                          $this->_permission,
+                                                          false,
+                                                          'activity',
+                                                          $activityTypeIDs );
         $sortID     = null;
         if ( $this->get( CRM_Utils_Sort::SORT_ID  ) ) {
             $sortID = CRM_Utils_Sort::sortIDValue( $this->get( CRM_Utils_Sort::SORT_ID  ),
                                                    $this->get( CRM_Utils_Sort::SORT_DIRECTION ) );
         }
         $controller = new CRM_Core_Selector_Controller($selector,
-                                                        $this->get(CRM_Utils_Pager::PAGE_ID),
-                                                        $sortID,
-                                                        CRM_Core_Action::VIEW, $this, $output);
+                                                       $this->get(CRM_Utils_Pager::PAGE_ID),
+                                                       $sortID,
+                                                       CRM_Core_Action::VIEW, $this, $output);
         $controller->setEmbedded(true);
         $controller->run();
         $controller->moveFromSessionToTemplate( );

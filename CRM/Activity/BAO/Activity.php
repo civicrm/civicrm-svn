@@ -635,8 +635,14 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
      * @access public
      * @static
      */
-    static function &getActivities( &$data, $offset = null, $rowCount = null, $sort = null,
-                                    $admin = false, $caseId = null, $context = null ) 
+    static function &getActivities( &$data,
+                                    $offset = null,
+                                    $rowCount = null,
+                                    $sort = null,
+                                    $admin = false,
+                                    $caseId = null,
+                                    $context = null,
+                                    $activityTypeIDs = null ) 
     {
         //step 1: Get the basic activity data
         require_once 'CRM/Core/OptionGroup.php';
@@ -701,7 +707,12 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
             $limit = " LIMIT $offset, $rowCount ";
         }
 
-        list( $sqlClause, $params ) = self::getActivitySQLClause( $data['contact_id'], $admin, $caseId, $context );
+        list( $sqlClause, $params ) = self::getActivitySQLClause( $data['contact_id'],
+                                                                  $admin,
+                                                                  $caseId,
+                                                                  $context,
+                                                                  false,
+                                                                  $activityTypeIDs );
         $query = "{$insertSQL}
        SELECT DISTINCT *  from ( {$sqlClause} )
 as tbl ";
@@ -894,11 +905,18 @@ LEFT JOIN  civicrm_case_activity ON ( civicrm_case_activity.activity_id = {$acti
      * @access public
      * @static
      */
-    static function &getActivitiesCount( $contactID, $admin = false, $caseId = null, $context = null ) 
+    static function &getActivitiesCount( $contactID,
+                                         $admin = false,
+                                         $caseId = null,
+                                         $context = null,
+                                         $activityTypeIDs = null ) 
     {
-        list( $sqlClause, $params ) = self::getActivitySQLClause( $contactID, $admin, $caseId, $context, true );
-        
-        $query = "SELECT COUNT(DISTINCT(activity_id)) as count  from ( {$sqlClause} ) as tbl";
+        list( $sqlClause, $params ) = self::getActivitySQLClause( $contactID,
+                                                                  $admin,
+                                                                  $caseId,
+                                                                  $context,
+                                                                  true,
+                                                                  $activityTypeIDs );
         
         //filter case activities - CRM-5761
         $components = self::activityComponents( );
@@ -908,12 +926,19 @@ LEFT JOIN  civicrm_case_activity ON ( civicrm_case_activity.activity_id = {$acti
      FROM   ( {$sqlClause} ) as tbl
 LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.activity_id )
     WHERE   civicrm_case_activity.id IS NULL";
+        } else {
+            $query = "SELECT COUNT(DISTINCT(activity_id)) as count  from ( {$sqlClause} ) as tbl";
         }
         
         return CRM_Core_DAO::singleValueQuery( $query, $params );
     }
 
-    static function getActivitySQLClause( $contactID, $admin = false, $caseId = null, $context = null, $count = false )
+    static function getActivitySQLClause( $contactID,
+                                          $admin   = false,
+                                          $caseId  = null,
+                                          $context = null,
+                                          $count   = false,
+                                          $activityTypeIDs = null )
     {
         $params = array( );
         $sourceWhere = $targetWhere = $assigneeWhere = $caseWhere = 1;
@@ -927,19 +952,39 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
 
             $params = array( 1 => array( $contactID, 'Integer' ) );
         }
-        
-        $statusClause = 1 ;
+
+        $commonClauses = array( "civicrm_option_group.name = 'activity_type'",
+                                "civicrm_activity.is_deleted = 0",
+                                "civicrm_activity.is_current_revision =  1",
+                                "civicrm_activity.is_test = 0" );
+
         if ( $context == 'home' ) {
-            $statusClause = " civicrm_activity.status_id = 1 "; 
+            $commonClauses[] = "civicrm_activity.status_id = 1"; 
         }
         
         //Filter on component IDs.
         $components = self::activityComponents( );
-        $componentClause = 'civicrm_option_value.component_id IS NULL';
         if ( !empty( $components ) ) {
             $componentsIn = implode( ',',  array_keys( $components ) );
-            $componentClause  = "( $componentClause OR civicrm_option_value.component_id IN ( $componentsIn ) )";
+            $commonClauses[] = "( civicrm_option_value.component_id IS NULL OR civicrm_option_value.component_id IN ( $componentsIn ) )";
+        } else {
+            $commonClauses[] = "civicrm_option_value.component_id IS NULL";
         }
+
+        // activity type ID clause
+        if ( $activityTypeIDs ) {
+            if ( is_array( $activityTypeIDs ) ) {
+                foreach ( $activityTypeIDs as $idx => $value ) {
+                    $activityTypeIDs[$idx] = CRM_Utils_Type::escape( $value, 'Positive' );
+                }
+                $commonClauses[] = "civicrm_activity.activity_type_id IN ( " . implode( ",", $activityTypeIDs ) . " ) ";
+            } else {
+                $activityTypeID = CRM_Utils_Type::escape( $activityTypeIDs, 'Positive' );
+                $commonClauses[] = "civicrm_activity.activity_type_id == $activityTypeID";
+            }
+        }
+        $commonClause = implode( ' AND ', $commonClauses );
+
         $includeCaseActivities = false;
         if ( in_array( 'CiviCase', $components ) ) {
             $includeCaseActivities = true;
@@ -978,13 +1023,9 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
             left join civicrm_option_group on                              
                 civicrm_option_group.id = civicrm_option_value.option_group_id
             {$sourceJoin}                      
-            where   {$sourceWhere}
-                and civicrm_option_group.name = 'activity_type'                 
-                and {$componentClause}                 
-                and civicrm_activity.is_deleted = 0
-                and civicrm_activity.is_current_revision = 1                 
-                and is_test = 0
-                and {$statusClause}
+            where   
+                    {$sourceWhere}
+                AND $commonClause
         ";
 
         // build target activity table select clause
@@ -1016,13 +1057,9 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
             left join civicrm_option_group on                              
                 civicrm_option_group.id = civicrm_option_value.option_group_id
             {$sourceJoin}                      
-            where   {$targetWhere}
-                and civicrm_option_group.name = 'activity_type'                 
-                and {$componentClause}                 
-                and civicrm_activity.is_deleted = 0
-                and civicrm_activity.is_current_revision = 1                 
-                and is_test = 0
-                and {$statusClause}
+            where   
+                    {$targetWhere}
+                AND $commonClause
         ";
    
         // build assignee activity table select clause       
@@ -1037,13 +1074,10 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
             left join civicrm_option_group on                              
                 civicrm_option_group.id = civicrm_option_value.option_group_id                      
             {$sourceJoin}
-            where   {$assigneeWhere}
-                and civicrm_option_group.name = 'activity_type'                 
-                and {$componentClause}                 
-                and civicrm_activity.is_deleted = 0
-                and civicrm_activity.is_current_revision = 1                 
-                and is_test = 0
-                and {$statusClause}
+            where   
+                    {$assigneeWhere}
+                AND $commonClause
+
         ";
 
         // Build case clause
@@ -1083,17 +1117,13 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
                 left join civicrm_option_group on                              
                     civicrm_option_group.id = civicrm_option_value.option_group_id
                 {$sourceJoin}                                      
-                where   {$caseWhere}
-                    and civicrm_option_group.name = 'activity_type'                 
-                    and {$componentClause}                 
-                    and civicrm_activity.is_deleted = 0
-                    and civicrm_activity.is_current_revision = 1                 
-                    and is_test = 0
-                    and {$statusClause}
-                    and  ( ( civicrm_case_activity.case_id Is Null ) OR
+                where   
+                        {$caseWhere}
+                    AND $commonClause
+                        and  ( ( civicrm_case_activity.case_id IS NULL ) OR
                            ( civicrm_option_value.name <> 'Inbound Email' AND
                              civicrm_option_value.name <> 'Email' AND civicrm_case_activity.case_id
-                             Is Not Null ) 
+                             IS NOT NULL ) 
                          )             
             ";
         }
