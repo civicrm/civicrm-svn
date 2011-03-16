@@ -5,6 +5,7 @@ function entity_tag_create_example(){
     
                   'contact_id' 		=> '1',
                   'tag_id' 		=> '1',
+                  'version' 		=> '3',
 
   );
   require_once 'api/api.php';

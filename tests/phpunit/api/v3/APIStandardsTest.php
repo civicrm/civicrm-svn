@@ -71,7 +71,7 @@ class api_v3_APIStandardsTest extends CiviUnitTestCase
     $this->_apiDir = "../api/v3/";
     $this->_functionFiles = array('Entity.php', 'utils.php');
     //should possibly insert variable rather than '3' in below
-    $this->_regexForGettingAPIStdFunctions = '/^civicrm_api3.*_(create|get|delete)$/';
+    $this->_regexForGettingAPIStdFunctions = '/^civicrm_api3.*_*$/';
    }
   
      /*
@@ -88,7 +88,7 @@ class api_v3_APIStandardsTest extends CiviUnitTestCase
         $params = 'string';
         foreach($apiStdFunctions as $key => $function){
           $result = $function($params);
-          $this->assertEquals(1, $result['is_error']); 
+          $this->assertEquals(1, $result['is_error'], $function . "does not return error in line " . __LINE__); 
           $this->assertEquals('Input variable `params` is not an array', $result['error_message'],"$function does not return correct error when a non-array is submitted in line " . __LINE__ );      
         }
     }

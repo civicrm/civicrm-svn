@@ -135,10 +135,10 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
    */
   function testAddCustomDataEmptyToIndividual() {
 
-    $params = array( );
+    $params = array('version' => 3, );
     $contact =& civicrm_api3_contact_create( $params );
     $this->assertEquals( $contact['is_error'], 1 );
-    $this->assertEquals( $contact['error_message'], 'Input Parameters empty' );
+    $this->assertEquals( $contact['error_message'], 'Mandatory key(s) missing from params array: contact_type' );
   }
 
 
@@ -212,6 +212,7 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
                         'contact_id'           => $this->individual ,
                         'contact_type' => 'Individual',
                         "custom_{$this->IndiStudentField[id]}" => 'Test String',
+                        'version'  =>  $this->_apiversion,
     );
 
     $contact =& civicrm_api3_contact_create( $params );
@@ -227,7 +228,7 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
                         'contact_id'           => $this->individualParent ,
                         'contact_type' => 'Individual',
                         "custom_{$this->IndiStudentField[id]}" => 'Test String',
-                        'version'		=>$this->_apiversion, 
+                        'version'		    =>$this->_apiversion, 
     );
 
     $contact =& civicrm_api3_contact_create( $params );
@@ -247,7 +248,7 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
                         'contact_id'           => $this->individual,
                         'contact_type' => 'Individual',
                         "custom_". $this->IndividualField['id'] => 'Test String',  
-                'version'		=>$this->_apiversion, 
+                        'version'		=>$this->_apiversion, 
     );
     $contact =& civicrm_api3_contact_create( $params );
     $params = array(

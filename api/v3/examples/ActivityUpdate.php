@@ -35,7 +35,7 @@ function activity_update_expectedresult(){
                       'source_record_id' => '',
                       'activity_type_id' => '1',
                       'subject' => 'Make-it-Happen',
-                      'activity_date_time' => '2011-03-15 00:00:00',
+                      'activity_date_time' => '2011-03-16 00:00:00',
                       'duration' => '120',
                       'location' => 'Pensulvania',
                       'phone_id' => '',

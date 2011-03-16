@@ -81,7 +81,7 @@ function civicrm_api3_file_create( $params )
     $file = array();
     _civicrm_api3_object_to_array($fileDAO, $file);
 
-    return $file;
+    return civicrm_create_success($file,$params,$fileDAO);
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {
@@ -106,13 +106,7 @@ function civicrm_api3_file_get($params)
   try{
      
 
-    if ( ! is_array($params) ) {
-      return civicrm_api3_create_error('params is not an array.');
-    }
-
-    if ( ! isset($params['id']) && ! isset($params['file_type_id']) ) {
-      return civicrm_api3_create_error('Required parameters missing.');
-    }
+    civicrm_api3_verify_one_mandatory($params, null,array('file_type_id','id'));
 
     require_once 'CRM/Core/DAO/File.php';
     $fileDAO = new CRM_Core_DAO_File();
@@ -189,25 +183,23 @@ function &civicrm_api3_file_update( $params ) {
  * @access public
  * @todo doesn't take array
  */
-function &civicrm_api3_file_delete( $fileId ) {
+function civicrm_api3_file_delete( $params ) {
   _civicrm_api3_initialize(true);
   try{
-    if ( empty($fileId) ) {
-      return civicrm_api3_create_error( 'Required parameter missing' );
-    }
+    civicrm_api3_verify_mandatory($params,null,array('id'));
 
     $check = false;
 
     require_once 'CRM/Core/DAO/EntityFile.php';
     $entityFileDAO =& new CRM_Core_DAO_EntityFile( );
-    $entityFileDAO->file_id = $fileId;
+    $entityFileDAO->file_id = $params['id'];
     if ($entityFileDAO->find()) {
       $check = $entityFileDAO->delete();
     }
 
     require_once 'CRM/Core/DAO/File.php';
     $fileDAO =& new CRM_Core_DAO_File( );
-    $fileDAO->id = $fileId;
+    $fileDAO->id = $params['id'];
     if ($fileDAO->find(true)) {
       $check = $fileDAO->delete();
     }
@@ -230,18 +222,16 @@ function &civicrm_api3_file_delete( $fileId ) {
  * @return array of newly created entity-file object properties
  * @access public
  */
-function civicrm_api3_entity_file_create( &$fileID, &$entityID, $entity_table = 'civicrm_contact' )
+function civicrm_api3_entity_file_create( $params )
 {
+ _civicrm_api3_initialize(true);
+  try{
   require_once 'CRM/Core/DAO/EntityFile.php';
+  civicrm_api3_verify_one_mandatory($params,null,array('file_id','entity_id'));
 
-  if ( ! $fileID || ! $entityID ) {
-    return civicrm_api3_create_error('Required parameters missing');
+  if (empty($params['entity_table'])){
+    $params['entity_table'] = 'civicrm_contact';
   }
-
-  $params = array('entity_id'    => $entityID,
-                    'file_id'      => $fileID,
-                    'entity_table' => $entity_table
-  );
 
   $entityFileDAO =& new CRM_Core_DAO_EntityFile( );
   $entityFileDAO->copyValues( $params );
@@ -250,7 +240,12 @@ function civicrm_api3_entity_file_create( &$fileID, &$entityID, $entity_table = 
   $entityFile = array();
   _civicrm_api3_object_to_array( $entityFileDAO, $entityFile );
 
-  return $entityFile;
+  return civicrm_create_success($entityFile,$params,$entityFileDAO);
+  } catch (PEAR_Exception $e) {
+    return civicrm_api3_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_api3_create_error( $e->getMessage() );
+  }
 }
 
 /**
@@ -277,45 +272,50 @@ function civicrm_api3_file_by_entity_add( $name, $entityID, $entityTable = 'civi
  * @return array   nested array of entity-file property values.
  * @access public
  */
-function civicrm_api3_files_by_entity_get( $entityID, $entityTable = 'civicrm_contact', $fileID = null )
-{
-  if ( ! $entityID ) {
-    return civicrm_api3_create_error('Required parameters missing');
-  }
-
-  require_once 'CRM/Core/DAO/EntityFile.php';
-  require_once 'CRM/Core/DAO/File.php';
-
-  $entityFileDAO =& new CRM_Core_DAO_EntityFile();
-  $entityFileDAO->entity_table = $entityTable;
-  $entityFileDAO->entity_id = $entityID;
-  if ( $fileID ) {
-    $entityFileDAO->file_id   = $fileID;
-  }
-  if ( $entityFileDAO->find() ) {
-    $entityFile = array();
-    while ($entityFileDAO->fetch()) {
-      _civicrm_api3_object_to_array( $entityFileDAO, $entityFile );
-      $files[$entityFileDAO->file_id] = $entityFile;
-
-      if ( array_key_exists( 'file_id', $files[$entityFileDAO->file_id] ) ) {
-        $fileDAO =& new CRM_Core_DAO_File();
-        $fileDAO->id = $entityFile['file_id'];
-        $fileDAO->find(true);
-        _civicrm_api3_object_to_array( $fileDAO, $files[$entityFileDAO->file_id] );
-      }
-
-      if ( CRM_Utils_Array::value( 'file_type_id', $files[$entityFileDAO->file_id] ) ) {
-        $files[$entityFileDAO->file_id]['file_type'] =
-        CRM_Core_OptionGroup::getLabel( 'file_type',
-        $files[$entityFileDAO->file_id]['file_type_id'] );
-      }
-    }
-  } else {
-    return civicrm_api3_create_error('Exact match not found');
-  }
-
-  return $files;
+function civicrm_api3_files_by_entity_get($params) {
+	_civicrm_api3_initialize ( true );
+	try {
+		civicrm_api3_verify_mandatory ( $params, null, array ('entity_id' ) );
+		if (empty ( $entityTable )) {
+			$entityTable = 'civicrm_contact';
+		}
+		
+		require_once 'CRM/Core/DAO/EntityFile.php';
+		require_once 'CRM/Core/DAO/File.php';
+		
+		$entityFileDAO = & new CRM_Core_DAO_EntityFile ();
+		$entityFileDAO->entity_table = $entityTable;
+		$entityFileDAO->entity_id = $params ['entity_id'];
+		if ($fileID) {
+			$entityFileDAO->file_id = $params ['file_id'];
+		}
+		if ($entityFileDAO->find ()) {
+			$entityFile = array ();
+			while ( $entityFileDAO->fetch () ) {
+				_civicrm_api3_object_to_array ( $entityFileDAO, $entityFile );
+				$files [$entityFileDAO->file_id] = $entityFile;
+				
+				if (array_key_exists ( 'file_id', $files [$entityFileDAO->file_id] )) {
+					$fileDAO = & new CRM_Core_DAO_File ();
+					$fileDAO->id = $entityFile ['file_id'];
+					$fileDAO->find ( true );
+					_civicrm_api3_object_to_array ( $fileDAO, $files [$entityFileDAO->file_id] );
+				}
+				
+				if (CRM_Utils_Array::value ( 'file_type_id', $files [$entityFileDAO->file_id] )) {
+					$files [$entityFileDAO->file_id] ['file_type'] = CRM_Core_OptionGroup::getLabel ( 'file_type', $files [$entityFileDAO->file_id] ['file_type_id'] );
+				}
+			}
+		} else {
+			return civicrm_api3_create_error ( 'Exact match not found' );
+		}
+		
+		return civicrm_api3_create_success ( $files, $params, $entityFileDAO );
+	} catch ( PEAR_Exception $e ) {
+		return civicrm_create_error ( $e->getMessage () );
+	} catch ( Exception $e ) {
+		return civicrm_create_error ( $e->getMessage () );
+	}
 }
 
 /**
@@ -328,24 +328,31 @@ function civicrm_api3_files_by_entity_get( $entityID, $entityTable = 'civicrm_co
  * @return  null if successfull, object of CRM_Core_Error otherwise
  * @access public
  */
-function civicrm_api3_entity_file_delete( $params )
-{
-  require_once 'CRM/Core/DAO/EntityFile.php';
-
-  //if ( ! isset($params['id']) && ( !isset($params['entity_id']) || !isset($params['entity_file']) ) ) {
-  if ( ! isset($params['id']) && ( !isset($params['entity_id']) || !isset($params['entity_table']) ) ) {
-    return civicrm_api3_create_error('Required parameters missing');
-  }
-
-  $entityFileDAO =& new CRM_Core_DAO_EntityFile( );
-
-  $properties = array( 'id', 'entity_id', 'entity_table', 'file_id' );
-  foreach ( $properties as $name) {
-    if ( array_key_exists($name, $params) ) {
-      $entityFileDAO->$name = $params[$name];
-    }
-  }
-
-  return $entityFileDAO->delete() ? null : civicrm_api3_create_error('Error while deleting');
+function civicrm_api3_entity_file_delete($params) {
+	_civicrm_api3_initialize ( true );
+	try {
+		civicrm_api3_verify_mandatory ( $params );
+		require_once 'CRM/Core/DAO/EntityFile.php';
+		
+		//if ( ! isset($params['id']) && ( !isset($params['entity_id']) || !isset($params['entity_file']) ) ) {
+		if (! isset ( $params ['id'] ) && (! isset ( $params ['entity_id'] ) || ! isset ( $params ['entity_table'] ))) {
+			return civicrm_api3_create_error ( 'Required parameters missing' );
+		}
+		
+		$entityFileDAO = & new CRM_Core_DAO_EntityFile ();
+		
+		$properties = array ('id', 'entity_id', 'entity_table', 'file_id' );
+		foreach ( $properties as $name ) {
+			if (array_key_exists ( $name, $params )) {
+				$entityFileDAO->$name = $params [$name];
+			}
+		}
+		
+		return $entityFileDAO->delete () ? null : civicrm_api3_create_error ( 'Error while deleting' );
+	} catch ( PEAR_Exception $e ) {
+		return civicrm_create_error ( $e->getMessage () );
+	} catch ( Exception $e ) {
+		return civicrm_create_error ( $e->getMessage () );
+	}
 }
 

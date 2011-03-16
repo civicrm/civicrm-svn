@@ -443,11 +443,18 @@ class CRM_Core_Permission {
         }
         
         //check for acl.
-        if ( !$hasPermission ) { 
+        if ( ! $hasPermission ) { 
             $aclPermission = self::getPermission( );
             if ( in_array( $aclPermission, array( CRM_Core_Permission::EDIT, 
                                                   CRM_Core_Permission::VIEW ) ) ) {
                 $hasPermission = true;
+            } else if ( defined( 'CIVICRM_MULTISITE' ) && CIVICRM_MULTISITE ) {
+                // For multisite just check if there are contacts in acl_contact_cache table for now.
+                // FixMe: so even if a user in multisite has very limited permission could still 
+                // see search / contact navigation options for example.
+
+                require_once 'CRM/Contact/BAO/Contact/Permission.php';
+                $hasPermission = CRM_Contact_BAO_Contact_Permission::hasContactsInCache( );
             }
         }
         

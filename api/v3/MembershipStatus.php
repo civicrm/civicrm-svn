@@ -51,43 +51,41 @@ require_once 'api/v3/utils.php';
  * @return array of newly created membership status property values.
  * @access public
  */
-function civicrm_api3_membership_status_create($params)
-{
-  _civicrm_api3_initialize(true);
-  try{
-
-    civicrm_api3_verify_one_mandatory($params,'CRM_Member_DAO_MembershipStatus',array('name','label'));
-    //move before verifiy? DAO check requires?
-    if ( empty($params['name']) ){
-      $params['name'] = CRM_Utils_Array::value( 'label', $params );
-    }
-
-    //don't allow duplicate names.
-    require_once 'CRM/Member/DAO/MembershipStatus.php';
-    $status = new CRM_Member_DAO_MembershipStatus( );
-    $status->name = $params['name'];
-    if ( $status->find( true ) ) {
-      return civicrm_api3_create_error( ts( 'A membership status with this name already exists.' ) );
-    }
-
-    require_once 'CRM/Member/BAO/MembershipStatus.php';
-    $ids = array();
-    $membershipStatusBAO = CRM_Member_BAO_MembershipStatus::add($params, $ids);
-    if ( is_a( $membershipStatusBAO, 'CRM_Core_Error' ) ) {
-      return civicrm_api3_create_error( "Membership is not created" );
-    } else {
-      $values             = array( );
-      $values['id']       = $membershipStatusBAO->id;
-      $values['is_error'] = 0;
-      return civicrm_api3_create_success($values,$params);
-    }
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+function civicrm_api3_membership_status_create($params) {
+	_civicrm_api3_initialize ( true );
+	try {
+		
+		civicrm_api3_verify_one_mandatory ( $params, 'CRM_Member_DAO_MembershipStatus', array ('name', 'label' ) );
+		//move before verifiy? DAO check requires?
+		if (empty ( $params ['name'] )) {
+			$params ['name'] = CRM_Utils_Array::value ( 'label', $params );
+		}
+		
+		//don't allow duplicate names.
+		require_once 'CRM/Member/DAO/MembershipStatus.php';
+		$status = new CRM_Member_DAO_MembershipStatus ();
+		$status->name = $params ['name'];
+		if ($status->find ( true )) {
+			return civicrm_api3_create_error ( ts ( 'A membership status with this name already exists.' ) );
+		}
+		
+		require_once 'CRM/Member/BAO/MembershipStatus.php';
+		$ids = array ();
+		$membershipStatusBAO = CRM_Member_BAO_MembershipStatus::add ( $params, $ids );
+		if (is_a ( $membershipStatusBAO, 'CRM_Core_Error' )) {
+			return civicrm_api3_create_error ( "Membership is not created" );
+		} else {
+			$values = array ();
+			$values ['id'] = $membershipStatusBAO->id;
+			$values ['is_error'] = 0;
+			return civicrm_api3_create_success ( $values, $params );
+		}
+	} catch ( PEAR_Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	} catch ( Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	}
 }
-
 
 /**
  * Get a membership status.
@@ -99,41 +97,37 @@ function civicrm_api3_membership_status_create($params)
  * @return  Array of all found membership status property values.
  * @access public
  */
-function civicrm_api3_membership_status_get($params)
-{
-  _civicrm_api3_initialize(true);
-  try{
-
-    if ( ! is_array($params) ) {
-      return civicrm_api3_create_error('Params is not an array.');
-    }
-
-    require_once 'CRM/Member/BAO/MembershipStatus.php';
-    $membershipStatusBAO = new CRM_Member_BAO_MembershipStatus();
-
-    $properties = array_keys($membershipStatusBAO->fields());
-
-    foreach ($properties as $name) {
-      if (array_key_exists($name, $params)) {
-        $membershipStatusBAO->$name = $params[$name];
-      }
-    }
-
-    if ( $membershipStatusBAO->find() ) {
-      $membershipStatus = array();
-      while ( $membershipStatusBAO->fetch() ) {
-        _civicrm_api3_object_to_array( clone($membershipStatusBAO), $membershipStatus );
-        $membershipStatuses[$membershipStatusBAO->id] = $membershipStatus;
-      }
-    } else {
-      return civicrm_api3_create_error('Exact match not found');
-    }
-    return $membershipStatuses;
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+function civicrm_api3_membership_status_get($params) {
+	_civicrm_api3_initialize ( true );
+	try {
+		civicrm_api3_verify_mandatory ( $params );
+		
+		require_once 'CRM/Member/BAO/MembershipStatus.php';
+		$membershipStatusBAO = new CRM_Member_BAO_MembershipStatus ();
+		
+		$properties = array_keys ( $membershipStatusBAO->fields () );
+		
+		foreach ( $properties as $name ) {
+			if (array_key_exists ( $name, $params )) {
+				$membershipStatusBAO->$name = $params [$name];
+			}
+		}
+		
+		if ($membershipStatusBAO->find ()) {
+			$membershipStatus = array ();
+			while ( $membershipStatusBAO->fetch () ) {
+				_civicrm_api3_object_to_array ( clone ($membershipStatusBAO), $membershipStatus );
+				$membershipStatuses [$membershipStatusBAO->id] = $membershipStatus;
+			}
+		} else {
+			return civicrm_api3_create_error ( 'Exact match not found' );
+		}
+		return $membershipStatuses;
+	} catch ( PEAR_Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	} catch ( Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	}
 }
 
 /**
@@ -147,44 +141,43 @@ function civicrm_api3_membership_status_get($params)
  * @return array of updated membership status property values
  * @access public
  */
-function &civicrm_api3_membership_status_update( $params )
-{
-  _civicrm_api3_initialize();
-  if ( !is_array( $params ) ) {
-    return civicrm_api3_create_error( 'Params is not an array' );
-  }
-
-  if ( !isset($params['id']) ) {
-    return civicrm_api3_create_error( 'Required parameter missing' );
-  }
-
-  //don't allow duplicate names.
-  $name = CRM_Utils_Array::value( 'name', $params );
-  if ( $name ) {
-    require_once 'CRM/Member/DAO/MembershipStatus.php';
-    $status = new CRM_Member_DAO_MembershipStatus( );
-    $status->name = $params['name'];
-    if ( $status->find( true ) && $status->id != $params['id'] ) {
-      return civicrm_api3_create_error( ts( 'A membership status with this name already exists.' ) );
-    }
-  }
-
-  require_once 'CRM/Member/BAO/MembershipStatus.php';
-  $membershipStatusBAO = new CRM_Member_BAO_MembershipStatus( );
-  $membershipStatusBAO->id = $params['id'];
-  if ($membershipStatusBAO->find(true)) {
-    $fields = $membershipStatusBAO->fields( );
-    foreach ( $fields as $name => $field) {
-      if (array_key_exists($name, $params)) {
-        $membershipStatusBAO->$name = $params[$name];
-      }
-    }
-    $membershipStatusBAO->save();
-  }
-  $membershipStatus = array();
-  _civicrm_api3_object_to_array( clone($membershipStatusBAO), $membershipStatus );
-  $membershipStatus['is_error'] = 0;
-  return $membershipStatus;
+function &civicrm_api3_membership_status_update($params) {
+	_civicrm_api3_initialize ();
+	if (! is_array ( $params )) {
+		return civicrm_api3_create_error ( 'Params is not an array' );
+	}
+	
+	if (! isset ( $params ['id'] )) {
+		return civicrm_api3_create_error ( 'Required parameter missing' );
+	}
+	
+	//don't allow duplicate names.
+	$name = CRM_Utils_Array::value ( 'name', $params );
+	if ($name) {
+		require_once 'CRM/Member/DAO/MembershipStatus.php';
+		$status = new CRM_Member_DAO_MembershipStatus ();
+		$status->name = $params ['name'];
+		if ($status->find ( true ) && $status->id != $params ['id']) {
+			return civicrm_api3_create_error ( ts ( 'A membership status with this name already exists.' ) );
+		}
+	}
+	
+	require_once 'CRM/Member/BAO/MembershipStatus.php';
+	$membershipStatusBAO = new CRM_Member_BAO_MembershipStatus ();
+	$membershipStatusBAO->id = $params ['id'];
+	if ($membershipStatusBAO->find ( true )) {
+		$fields = $membershipStatusBAO->fields ();
+		foreach ( $fields as $name => $field ) {
+			if (array_key_exists ( $name, $params )) {
+				$membershipStatusBAO->$name = $params [$name];
+			}
+		}
+		$membershipStatusBAO->save ();
+	}
+	$membershipStatus = array ();
+	_civicrm_api3_object_to_array ( clone ($membershipStatusBAO), $membershipStatus );
+	$membershipStatus ['is_error'] = 0;
+	return $membershipStatus;
 }
 
 /**
@@ -197,20 +190,18 @@ function &civicrm_api3_membership_status_update( $params )
  * @return null if successfull, object of CRM_Core_Error otherwise
  * @access public
  */
-function civicrm_api3_membership_status_delete( $params ) {
-  if ( ! is_array( $params ) ) {
-    return civicrm_api3_create_error( 'Params is not an array' );
-  }
-
-  if ( ! CRM_Utils_Array::value( 'id', $params ) ) {
-    return civicrm_api3_create_error( 'Invalid or no value for membershipStatusID' );
-  }
-
-  require_once 'CRM/Member/BAO/MembershipStatus.php';
-  $memberStatusDelete = CRM_Member_BAO_MembershipStatus::del( $params['id'] );
-  return $memberStatusDelete ?
-  civicrm_api3_create_error('Error while deleting membership type Status') :
-  civicrm_api3_create_success( );
+function civicrm_api3_membership_status_delete($params) {
+	_civicrm_api3_initialize ( true );
+	try {
+		civicrm_api3_verify_mandatory ( $params, null, array ('id' ) );
+		require_once 'CRM/Member/BAO/MembershipStatus.php';
+		$memberStatusDelete = CRM_Member_BAO_MembershipStatus::del ( $params ['id'] );
+		return $memberStatusDelete ? civicrm_api3_create_error ( 'Error while deleting membership type Status' ) : civicrm_api3_create_success ();
+	} catch ( PEAR_Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	} catch ( Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	}
 }
 
 /**
@@ -225,37 +216,34 @@ function civicrm_api3_membership_status_delete( $params ) {
  * @return Array  Array of status id and status name
  * @public
  */
-function civicrm_api3_membership_status_calc( $membershipParams )
-{
-  if ( ! is_array( $membershipParams ) ) {
-    return civicrm_api3_create_error( ts( 'membershipParams is not an array' ) );
-  }
-
-  if ( ! ( $membershipID = CRM_Utils_Array::value( 'membership_id', $membershipParams ) ) ) {
-    return civicrm_api3_create_error( 'membershipParams do not contain membership_id' );
-  }
-
-  $query = "
+function civicrm_api3_membership_status_calc($membershipParams) {
+	if (! is_array ( $membershipParams )) {
+		return civicrm_api3_create_error ( ts ( 'membershipParams is not an array' ) );
+	}
+	
+	if (! ($membershipID = CRM_Utils_Array::value ( 'membership_id', $membershipParams ))) {
+		return civicrm_api3_create_error ( 'membershipParams do not contain membership_id' );
+	}
+	
+	$query = "
 SELECT start_date, end_date, join_date
   FROM civicrm_membership
  WHERE id = %1
 ";
-  $params = array( 1 => array( $membershipID, 'Integer' ) );
-  $dao =& CRM_Core_DAO::executeQuery( $query, $params );
-  if ( $dao->fetch( ) ) {
-    require_once 'CRM/Member/BAO/MembershipStatus.php';
-    $result =&
-    CRM_Member_BAO_MembershipStatus::getMembershipStatusByDate( $dao->start_date,
-    $dao->end_date,
-    $dao->join_date );
-
-    //make is error zero only when valid status found.
-    if ( CRM_Utils_Array::value( 'id', $result ) ) {
-      $result['is_error'] = 0;
-    }
-  } else {
-    $result = civicrm_api3_create_error( 'did not find a membership record' );
-  }
-  $dao->free( );
-  return $result;
+	$params = array (1 => array ($membershipID, 'Integer' ) );
+	$dao = & CRM_Core_DAO::executeQuery ( $query, $params );
+	if ($dao->fetch ()) {
+		require_once 'CRM/Member/BAO/MembershipStatus.php';
+		$result = &
+    CRM_Member_BAO_MembershipStatus::getMembershipStatusByDate ( $dao->start_date, $dao->end_date, $dao->join_date );
+		
+		//make is error zero only when valid status found.
+		if (CRM_Utils_Array::value ( 'id', $result )) {
+			$result ['is_error'] = 0;
+		}
+	} else {
+		$result = civicrm_api3_create_error ( 'did not find a membership record' );
+	}
+	$dao->free ();
+	return $result;
 }

@@ -142,7 +142,7 @@ function civicrm_api3_pledge_payment_create( $params ) {
 function civicrm_api3_pledge_payment_delete( $params ) {
   _civicrm_api3_initialize(true );
   try{
-    civicrm_verify_mandatory($params,null,array('id'));
+    civicrm_api3_verify_mandatory($params,null,array('id'));
     $id = CRM_Utils_Array::value( 'id', $params );
     require_once 'CRM/Pledge/BAO/Pledge.php';
     if ( CRM_Pledge_BAO_Payment::deletePayments( $id ) ) {

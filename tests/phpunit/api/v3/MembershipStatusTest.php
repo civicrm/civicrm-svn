@@ -73,7 +73,7 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
         $result =& civicrm_api3_membership_status_get($params);
 
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Params is not an array.', 'In line ' . __LINE__ );
+        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array', 'In line ' . __LINE__ );
     }
 
     /**
@@ -81,7 +81,7 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
      */
      function testGetEmptyParams()
      {
-        $params = array();
+        $params = array('version' =>3);
         $result =& civicrm_api3_membership_status_get($params);
 
         // It should be 8 statuses, 7 default from mysql_data 

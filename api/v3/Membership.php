@@ -265,7 +265,7 @@ function civicrm_api3_membership_get($params)
       }
     }
     $members['record_count'] = $recordCount;
-    return $members;
+    return civicrm_api3_create_success($members);
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
   } catch (Exception $e) {

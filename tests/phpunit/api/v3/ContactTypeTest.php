@@ -91,9 +91,10 @@ class api_v3_ContactTypeTest extends CiviUnitTestCase
         $contactParams = array( 
                                'organization_name' => 'Compumentor' ,     
                                'contact_type'      => 'Organization',
-                               'contact_sub_type'  => $this->subTypeOrganization 
+                               'contact_sub_type'  => $this->subTypeOrganization ,
+                               'version'					 => $this->_apiversion,
                                 );
-        $contact =& civicrm_api3_contact_create( $contactParams );
+        $contact = civicrm_api3_contact_create( $contactParams );
         $this->assertEquals( $contact['is_error'], 0, "In line " . __LINE__ );
         
         $params      = array( 'contact_id' => $contact['id'],

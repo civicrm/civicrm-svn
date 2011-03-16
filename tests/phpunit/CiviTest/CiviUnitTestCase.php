@@ -458,7 +458,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     function contactDelete( $contactID ) 
     {
 
-        $params['contact_id'] = $contactID;
+        $params['id'] = $contactID;
         $params['version'] = API_LATEST_VERSION;
         $result = civicrm_api('Contact','delete',$params );
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {

@@ -107,8 +107,7 @@ class CRM_Report_Form_Contribute_PCP extends CRM_Report_Form {
                                         'type'       => CRM_Utils_Type::T_MONEY,
                                         'default'    => true,
                                         // nice trick with dbAlias
-                                        'dbAlias'    => 'SUM(IF( contribution_civireport.contribution_status_id > 1, 0, contribution_soft_civireport.amount))',
-                                        ),
+                                        'dbAlias'    => 'SUM(IF( contribution_civireport.contribution_status_id > 1, 0, contribution_soft_civireport.amount))', ),
                                  'soft_id'  => 
                                  array( 'title'      => ts( 'Number of Donors' ),
                                         'name'       => 'id',
@@ -118,7 +117,8 @@ class CRM_Report_Form_Contribute_PCP extends CRM_Report_Form {
                           'filters' =>
                           array( 'amount_2' =>
                                  array( 'title' => ts( 'Amount Received' ),
-                                        'type'  => CRM_Utils_Type::T_MONEY ) ),
+                                        'type'  => CRM_Utils_Type::T_MONEY,
+                                        'dbAlias' => 'SUM(IF( contribution_civireport.contribution_status_id > 1, 0, contribution_soft_civireport.amount))', ), ),
                           'grouping'  => 'pcp-fields',
                           ),
                   
@@ -137,11 +137,6 @@ class CRM_Report_Form_Contribute_PCP extends CRM_Report_Form {
                                       'statistics' => 
                                       array( 'max'  => ts( 'Most Recent Donation' ), ), ),
                                ),
-                         'filters' =>             
-                         array( 'receive_date' => 
-                                array( 'operatorType' => CRM_Report_Form::OP_DATE ),
-                                'total_amount' => 
-                                array( 'title'        => ts( 'Contribution Amount' ) ), ),
                          'grouping' => 'pcp-fields',
                          ),
                    );
@@ -176,6 +171,58 @@ LEFT JOIN civicrm_contribution_page {$this->_aliases['civicrm_contribution_page'
     
     function orderBy( ) {
         $this->_orderBy = " ORDER BY {$this->_aliases['civicrm_contact']}.sort_name ";
+    }
+    
+    function where( ) {
+        $whereClauses = $havingClauses = array( );
+        
+        foreach ( $this->_columns as $tableName => $table ) {
+            if ( array_key_exists('filters', $table) ) {
+                foreach ( $table['filters'] as $fieldName => $field ) {
+                    $clause = null;
+                    
+                    if ( CRM_Utils_Array::value( 'type', $field ) & CRM_Utils_Type::T_DATE ) {
+                        $relative = CRM_Utils_Array::value( "{$fieldName}_relative", $this->_params );
+                        $from     = CRM_Utils_Array::value( "{$fieldName}_from"    , $this->_params );
+                        $to       = CRM_Utils_Array::value( "{$fieldName}_to"      , $this->_params );
+                        $clause   = $this->dateClause( $field['name'], $relative, $from, $to, $field['type'] );
+                    } else {
+                        $op = CRM_Utils_Array::value( "{$fieldName}_op", $this->_params );
+                        
+                        if ( $op ) {
+                            $clause = $this->whereClause( $field,
+                                                          $op,
+                                                          CRM_Utils_Array::value( "{$fieldName}_value", $this->_params ),
+                                                          CRM_Utils_Array::value( "{$fieldName}_min", $this->_params ),
+                                                          CRM_Utils_Array::value( "{$fieldName}_max", $this->_params ) );
+                        }
+                    }
+                    
+                    if ( ! empty( $clause ) ) {
+                        if ( $tableName == 'civicrm_contribution_soft' &&
+                             $fieldName == 'amount_2' ) {
+                            $havingClauses[] =$clause;
+                        } else {
+                            $whereClauses[] = $clause;
+                        }
+                    }
+                }
+            }
+        }
+        if ( empty( $whereClauses ) ) {
+            $this->_where = "WHERE ( 1 ) ";
+           
+        } else {
+            $this->_where = "WHERE " . implode( ' AND ', $whereClauses );
+        }
+        if ( $this->_aclWhere ) {
+            $this->_where .= " AND {$this->_aclWhere} ";
+        }   
+        $this->_having = "";
+        if ( !empty( $havingClauses ) ) {
+            // use this clause to construct group by clause.
+            $this->_having = "HAVING " . implode( ' AND ', $havingClauses );
+        }
     }
     function alterDisplay( &$rows ) {
         // custom code to alter rows

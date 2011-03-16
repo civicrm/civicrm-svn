@@ -5,7 +5,6 @@ function civicrm_api3_option_value_get( $params ) {
     _civicrm_api3_initialize(true);
     try{
      civicrm_api3_verify_mandatory($params);
-     //do we need anything mandatory eg. name or group ?
 
       require_once 'CRM/Core/BAO/OptionValue.php';
       $bao = new CRM_Core_BAO_OptionValue( );

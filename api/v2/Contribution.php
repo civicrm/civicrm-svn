@@ -228,6 +228,7 @@ function &civicrm_contribution_search( &$params ) {
  *
  * @param <type> $params
  * @return <type> 
+ * @deprecated
  */
 function &civicrm_contribution_format_create( &$params ) {
     _civicrm_initialize( );

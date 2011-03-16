@@ -709,6 +709,7 @@ function _civicrm_contact_update( &$params, $contactID = null )
 
 /**
  * @todo Move this to ContactFormat.php 
+ * @deprecated
  */
 function civicrm_contact_format_create( &$params )
 {

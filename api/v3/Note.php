@@ -43,12 +43,11 @@
 require_once 'api/v3/utils.php';
 require_once 'CRM/Core/BAO/Note.php';
 
-function civicrm_api3_note_getfields( $params ) {
-    $bao = new CRM_Core_BAO_Note();
-    //function &exportableFields( $contactType = 'Individual', $status = false, $export = false, $search = false )
-    return ($bao->fields());
+function civicrm_api3_note_getfields($params) {
+	$bao = new CRM_Core_BAO_Note ();
+	//function &exportableFields( $contactType = 'Individual', $status = false, $export = false, $search = false )
+	return ($bao->fields ());
 }
-
 
 /**
  * Create Note
@@ -63,44 +62,42 @@ function civicrm_api3_note_getfields( $params ) {
  * @example NoteCreate.php
  * {@example NoteCreate.php
  */
-function civicrm_api3_note_create($params)
-{
-  _civicrm_api3_initialize(true);
-  try{
-    
-    if(!isset($params['entity_table'])){
-    	$params['entity_table'] = "civicrm_contact";
-    }
-    	
-    civicrm_api3_verify_mandatory($params,'CRM_Core_BAO_Note', array('note'));
-
-    $contactID = CRM_Utils_Array::value( 'contact_id', $params );
-
-    if ( !isset($params['modified_date']) ) {
-      $params['modified_date']  = date("Ymd");
-    }
-
-    $ids = array( );
-    $ids = array( 'id' => CRM_Utils_Array::value( 'id', $params ) );
-    $noteBAO = CRM_Core_BAO_Note::add( $params, $ids );
-    
-    if ( is_a( $noteBAO, 'CRM_Core_Error' ) ) {
-      $error = civicrm_api3_create_error( "Note could not be created" );
-      return $error;
-    } else {
-      $note = array( );
-      _civicrm_api3_object_to_array( $noteBAO, $note[$noteBAO->id] );
-
-    }
-    $result = civicrm_api3_create_success($note,$params);
-    return civicrm_api3_create_success($note,$params);
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+function civicrm_api3_note_create($params) {
+	_civicrm_api3_initialize ( true );
+	try {
+		
+		if (! isset ( $params ['entity_table'] )) {
+			$params ['entity_table'] = "civicrm_contact";
+		}
+		
+		civicrm_api3_verify_mandatory ( $params, 'CRM_Core_BAO_Note', array ('note' ) );
+		
+		$contactID = CRM_Utils_Array::value ( 'contact_id', $params );
+		
+		if (! isset ( $params ['modified_date'] )) {
+			$params ['modified_date'] = date ( "Ymd" );
+		}
+		
+		$ids = array ();
+		$ids = array ('id' => CRM_Utils_Array::value ( 'id', $params ) );
+		$noteBAO = CRM_Core_BAO_Note::add ( $params, $ids );
+		
+		if (is_a ( $noteBAO, 'CRM_Core_Error' )) {
+			$error = civicrm_api3_create_error ( "Note could not be created" );
+			return $error;
+		} else {
+			$note = array ();
+			_civicrm_api3_object_to_array ( $noteBAO, $note [$noteBAO->id] );
+		
+		}
+		$result = civicrm_api3_create_success ( $note, $params );
+		return civicrm_api3_create_success ( $note, $params );
+	} catch ( PEAR_Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	} catch ( Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	}
 }
-
 
 /**
  * Deletes an existing note
@@ -112,20 +109,18 @@ function civicrm_api3_note_create($params)
  * @return null
  * @access public
  */
-function civicrm_api3_note_delete( $params )
-{
-  _civicrm_api3_initialize(true);
-  try{
-    civicrm_api3_verify_mandatory($params,null,array('id'));
-
-    
-    $result = new CRM_Core_BAO_Note();
-    return $result->del( $params['id'] ) ? civicrm_api3_create_success( ) : civicrm_api3_create_error('Error while deleting Note');
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+function civicrm_api3_note_delete($params) {
+	_civicrm_api3_initialize ( true );
+	try {
+		civicrm_api3_verify_mandatory ( $params, null, array ('id' ) );
+		
+		$result = new CRM_Core_BAO_Note ();
+		return $result->del ( $params ['id'] ) ? civicrm_api3_create_success () : civicrm_api3_create_error ( 'Error while deleting Note' );
+	} catch ( PEAR_Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	} catch ( Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	}
 }
 
 /**
@@ -140,41 +135,41 @@ function civicrm_api3_note_delete( $params )
  * @access public
  */
 
-function civicrm_api3_note_get( $params ) {
-  _civicrm_api3_initialize( true);
-  try{
-    
-     if(!isset($params['entity_table'])){
-    	$params['entity_table'] = "civicrm_contact";
-    }
-    
-    civicrm_api3_verify_mandatory($params,'CRM_Core_BAO_Note');
-
-    $entity_id = (int)$params['entity_id'];
-    $noteBAO = new CRM_Core_BAO_Note();
-    $fields = array_keys($noteBAO->fields());
-
-    foreach ( $fields as $name) {
-        if (array_key_exists($name, $params)) {
-            $noteBAO->$name = $params[$name];
-        }
-    }
-
-    if ( ! $noteBAO->find(true) ) {
-        return civicrm_api3_create_success(array());
-    }
-    $note = array();
-    _civicrm_api3_object_to_array($noteBAO, $note[$noteBAO->id]);  
-    while ($noteBAO->fetch()) {
-      _civicrm_api3_object_to_array($noteBAO, $note[$noteBAO->id]);
-    }
-    return civicrm_api3_create_success($note,$params,$noteBAO);
-
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+function civicrm_api3_note_get($params) {
+	_civicrm_api3_initialize ( true );
+	try {
+		
+		if (! isset ( $params ['entity_table'] )) {
+			$params ['entity_table'] = "civicrm_contact";
+		}
+		
+		civicrm_api3_verify_mandatory ( $params, 'CRM_Core_BAO_Note' );
+		
+		$entity_id = ( int ) $params ['entity_id'];
+		$noteBAO = new CRM_Core_BAO_Note ();
+		$fields = array_keys ( $noteBAO->fields () );
+		
+		foreach ( $fields as $name ) {
+			if (array_key_exists ( $name, $params )) {
+				$noteBAO->$name = $params [$name];
+			}
+		}
+		
+		if (! $noteBAO->find ( true )) {
+			return civicrm_api3_create_success ( array () );
+		}
+		$note = array ();
+		_civicrm_api3_object_to_array ( $noteBAO, $note [$noteBAO->id] );
+		while ( $noteBAO->fetch () ) {
+			_civicrm_api3_object_to_array ( $noteBAO, $note [$noteBAO->id] );
+		}
+		return civicrm_api3_create_success ( $note, $params, $noteBAO );
+	
+	} catch ( PEAR_Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	} catch ( Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	}
 }
 
 /**
@@ -182,25 +177,23 @@ function civicrm_api3_note_get( $params ) {
  * @param array $params Associative array; only required 'id' parameter is used
  * @return array Nested associative array beginning with direct children of given note.
  */
-function &civicrm_api3_note_tree_get( $params ) {
-
-  if ( empty( $params ) ) {
-    return civicrm_api3_create_error( ts( 'No input parameters present' ) );
-  }
-
-  if ( ! is_array( $params ) ) {
-    return civicrm_api3_create_error( ts( 'Input parameters is not an array' ) );
-  }
-
-  if ( ! isset( $params['id'] ) ) {
-    return civicrm_api3_create_error( 'Required parameter ("id") missing.' );
-  }
-
-  if ( !is_numeric( $params['id'] ) ) {
-    return civicrm_api3_create_error( ts ( "Invalid note ID" ) );
-  }
-  if ( !isset( $params['max_depth'] ) ) $params['max_depth'] = 0;
-  if ( !isset( $params['snippet'] ) ) $params['snippet'] = FALSE;
-  $noteTree = CRM_Core_BAO_Note::getNoteTree( $params['id'], $params['max_depth'], $params['snippet'] );
-  return $noteTree;
+function &civicrm_api3_note_tree_get($params) {
+	_civicrm_api3_initialize ( true );
+	try {
+		civicrm_api3_verify_mandatory ( $params, null, array ('id' ) );
+		
+		if (! is_numeric ( $params ['id'] )) {
+			return civicrm_api3_create_error ( ts ( "Invalid note ID" ) );
+		}
+		if (! isset ( $params ['max_depth'] ))
+			$params ['max_depth'] = 0;
+		if (! isset ( $params ['snippet'] ))
+			$params ['snippet'] = FALSE;
+		$noteTree = CRM_Core_BAO_Note::getNoteTree ( $params ['id'], $params ['max_depth'], $params ['snippet'] );
+		return civicrm_api3_create_success ( $noteTree, $params );
+	} catch ( PEAR_Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	} catch ( Exception $e ) {
+		return civicrm_api3_create_error ( $e->getMessage () );
+	}
 }

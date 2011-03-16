@@ -43,9 +43,8 @@
 require_once 'api/v3/utils.php';
 require_once 'CRM/Contact/BAO/Contact.php';
 /**
- * @todo Write sth
  * @todo - make sure it doesn't create new if contact_id is set
- * @todo Erik Hommel 16 dec 2010 introduce version as param
+ * @todo - get rid of update & merge into this - wrapper handles update
  *
  * @param  array   $params           (reference ) input parameters
  *
@@ -65,11 +64,100 @@ function civicrm_api3_contact_create( $params )
     // call update and tell it to create a new contact
   _civicrm_api3_initialize( true );
   try {
+    civicrm_api3_verify_mandatory($params,null,array('contact_type'));
     civicrm_api3_api_check_permission(__FUNCTION__, $params, true);
 
-    if(empty($params['contact_id'])){
-      $create_new = true;
+    require_once 'CRM/Utils/Array.php';
+    $contactID = CRM_Utils_Array::value( 'contact_id', $params );
+    if (empty($contactID )){
+        $contactID = CRM_Utils_Array::value( 'id', $params );
     }
+
+    $dupeCheck = CRM_Utils_Array::value( 'dupe_check', $params, false );
+    $values    = _civicrm_api3_contact_check_params( $params, $dupeCheck );
+    if ( $values ) {
+        return $values;
+    }
+    
+    if ( empty($contactID ) ) {
+
+        
+        // If we get here, we're ready to create a new contact
+        if ( ($email = CRM_Utils_Array::value( 'email', $params ) ) && !is_array( $params['email'] ) ) {
+            require_once 'CRM/Core/BAO/LocationType.php';
+            $defLocType = CRM_Core_BAO_LocationType::getDefault( );
+            $params['email'] = array( 1 => array( 'email'            => $email,
+                                                  'is_primary'       => 1, 
+                                                  'location_type_id' => ($defLocType->id)?$defLocType->id:1
+                                                  ),
+                                      );
+        }
+    }
+
+    if ( $homeUrl = CRM_Utils_Array::value( 'home_url', $params ) ) {  
+        require_once 'CRM/Core/PseudoConstant.php';
+        $websiteTypes = CRM_Core_PseudoConstant::websiteType( );
+        $params['website'] = array( 1 => array( 'website_type_id' => key( $websiteTypes ),
+                                                'url'             => $homeUrl 
+                                                )
+                                    );  
+    }
+
+    if ( isset( $params['suffix_id'] ) &&
+         ! ( is_numeric( $params['suffix_id'] ) ) ) {
+        $params['suffix_id'] = array_search( $params['suffix_id'] , CRM_Core_PseudoConstant::individualSuffix() );
+    }
+
+    if ( isset( $params['prefix_id'] ) &&
+         ! ( is_numeric( $params['prefix_id'] ) ) ) {
+        $params['prefix_id'] = array_search( $params['prefix_id'] , CRM_Core_PseudoConstant::individualPrefix() );
+    }
+
+         if ( isset( $params['gender_id'] )
+              && ! ( is_numeric( $params['gender_id'] ) ) ) {
+        $params['gender_id'] = array_search( $params['gender_id'] , CRM_Core_PseudoConstant::gender() );
+    }
+    
+    $error = _civicrm_api3_greeting_format_params( $params );
+    if ( civicrm_api3_error( $error ) ) {
+        return $error;
+    }
+    
+    $values   = array( );
+    $entityId = $contactID;
+
+    if ( ! CRM_Utils_Array::value('contact_type', $params) &&
+         $entityId ) {
+        $params['contact_type'] = CRM_Contact_BAO_Contact::getContactType( $entityId );
+    }
+    
+    if ( ! ( $csType = CRM_Utils_Array::value('contact_sub_type', $params) ) &&
+         $entityId ) {
+        require_once 'CRM/Contact/BAO/Contact.php';
+        $csType = CRM_Contact_BAO_Contact::getContactSubType( $entityId );
+    }
+    
+    $customValue = _civicrm_api3_contact_check_custom_params( $params, $csType ); 
+
+    if ( $customValue ) {
+        return $customValue;
+    }
+    _civicrm_api3_custom_format_params( $params, $values, $params['contact_type'], $entityId );
+
+    $params = array_merge( $params, $values );
+
+    $contact =& _civicrm_api3_contact_update( $params, $contactID );
+
+    if ( is_a( $contact, 'CRM_Core_Error' ) ) {
+        return civicrm_api3_create_error( $contact->_errors[0]['message'] );
+    } else {
+        $values = array( );
+        _civicrm_api3_object_to_array_unique_fields($contact, $values[$contact->id]);
+     
+    }
+
+    return civicrm_api3_create_success($values,$params);
+    
     return civicrm_api3_contact_update( $params, $create_new );
   } catch (Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
@@ -104,6 +192,7 @@ function civicrm_api3_contact_get( $params )
 {
   _civicrm_api3_initialize(true );
   try {
+
     civicrm_api3_verify_mandatory($params);
         // fix for CRM-7384 cater for soft deleted contacts
     $params['contact_is_deleted'] = 0;
@@ -182,11 +271,9 @@ function civicrm_api3_contact_delete( $params )
   try{
 
     require_once 'CRM/Contact/BAO/Contact.php';
+    civicrm_api3_verify_mandatory($params,null,array('id'));
+    $contactID = CRM_Utils_Array::value( 'id', $params );
 
-    $contactID = CRM_Utils_Array::value( 'contact_id', $params );
-    if ( ! $contactID ) {
-      return civicrm_api3_create_error(  'Could not find contact_id in input parameters'  );
-    }
 
     $session =& CRM_Core_Session::singleton( );
     if ( $contactID ==  $session->get( 'userID' ) ) {
@@ -207,124 +294,7 @@ function civicrm_api3_contact_delete( $params )
 }
 
 
-/**
- * Ensure that we have the right input parameters
- *
- * @todo We also need to make sure we run all the form rules on the params list
- *       to ensure that the params are valid
- * @todo Eileen McNaughton 7 Jan 11 update isn't part of our standard - my preference is to rename to _ & copy the small amount of code in existing _ function into this one
- * @todo Eileen McNaughton 7 Jan 11 Would be good to have some clarity on what is done on e-mails when create_new is set & why not for updates
- *
- * @param array   $params          Associative array of property name/value
- *                                 pairs to insert in new contact.
- *
- * @return null on success, error message otherwise
- * @access public
- *
- * @todo Erik Hommel 16 dec 2010 required check should be incorporated in utils function civicrm_verify_mandatory
- */
-function civicrm_api3_contact_update( $params, $create_new = false )
-{
-    _civicrm_api3_initialize();
-    try {
-        civicrm_api3_api_check_permission(__FUNCTION__, $params, true);
-    } catch (Exception $e) {
-        return civicrm_api3_create_error($e->getMessage());
-    }
-    require_once 'CRM/Utils/Array.php';
-    $contactID = CRM_Utils_Array::value( 'contact_id', $params );
 
-    $dupeCheck = CRM_Utils_Array::value( 'dupe_check', $params, false );
-    $values    = _civicrm_api3_contact_check_params( $params, $dupeCheck );
-    if ( $values ) {
-        return $values;
-    }
-    
-    if ( $create_new ) {
-        // Make sure nothing is screwed up before we create a new contact
-        if ( !empty( $contactID ) ) {
-            return civicrm_api3_create_error( 'Cannot create new contact when contact_id is present' );
-        }
-        if ( empty( $params[ 'contact_type' ] ) ) {
-            return civicrm_api3_create_error( 'Contact Type not specified' );
-        }
-        
-        // If we get here, we're ready to create a new contact
-        if ( ($email = CRM_Utils_Array::value( 'email', $params ) ) && !is_array( $params['email'] ) ) {
-            require_once 'CRM/Core/BAO/LocationType.php';
-            $defLocType = CRM_Core_BAO_LocationType::getDefault( );
-            $params['email'] = array( 1 => array( 'email'            => $email,
-                                                  'is_primary'       => 1, 
-                                                  'location_type_id' => ($defLocType->id)?$defLocType->id:1
-                                                  ),
-                                      );
-        }
-    }
-
-    if ( $homeUrl = CRM_Utils_Array::value( 'home_url', $params ) ) {  
-        require_once 'CRM/Core/PseudoConstant.php';
-        $websiteTypes = CRM_Core_PseudoConstant::websiteType( );
-        $params['website'] = array( 1 => array( 'website_type_id' => key( $websiteTypes ),
-                                                'url'             => $homeUrl 
-                                                )
-                                    );  
-    }
-
-    if ( isset( $params['suffix_id'] ) &&
-         ! ( is_numeric( $params['suffix_id'] ) ) ) {
-        $params['suffix_id'] = array_search( $params['suffix_id'] , CRM_Core_PseudoConstant::individualSuffix() );
-    }
-
-    if ( isset( $params['prefix_id'] ) &&
-         ! ( is_numeric( $params['prefix_id'] ) ) ) {
-        $params['prefix_id'] = array_search( $params['prefix_id'] , CRM_Core_PseudoConstant::individualPrefix() );
-    }
-
-         if ( isset( $params['gender_id'] )
-              && ! ( is_numeric( $params['gender_id'] ) ) ) {
-        $params['gender_id'] = array_search( $params['gender_id'] , CRM_Core_PseudoConstant::gender() );
-    }
-    
-    $error = _civicrm_api3_greeting_format_params( $params );
-    if ( civicrm_api3_error( $error ) ) {
-        return $error;
-    }
-    
-    $values   = array( );
-    $entityId = CRM_Utils_Array::value( 'contact_id', $params, null );
-
-    if ( ! CRM_Utils_Array::value('contact_type', $params) &&
-         $entityId ) {
-        $params['contact_type'] = CRM_Contact_BAO_Contact::getContactType( $entityId );
-    }
-    
-    if ( ! ( $csType = CRM_Utils_Array::value('contact_sub_type', $params) ) &&
-         $entityId ) {
-        require_once 'CRM/Contact/BAO/Contact.php';
-        $csType = CRM_Contact_BAO_Contact::getContactSubType( $entityId );
-    }
-    
-    $customValue = _civicrm_api3_contact_check_custom_params( $params, $csType ); 
-
-    if ( $customValue ) {
-        return $customValue;
-    }
-    _civicrm_api3_custom_format_params( $params, $values, $params['contact_type'], $entityId );
-
-    $params = array_merge( $params, $values );
-
-    $contact =& _civicrm_api3_contact_update( $params, $contactID );
-
-    if ( is_a( $contact, 'CRM_Core_Error' ) ) {
-        return civicrm_api3_create_error( $contact->_errors[0]['message'] );
-    } else {
-        $values = array( );
-        _civicrm_api3_object_to_array_unique_fields($contact, $values[$contact->id]);
-     
-    }
-
-    return civicrm_api3_create_success($values,$params);
-}
 function _civicrm_api3_contact_check_params( $params, $dupeCheck = true, $dupeErrorArray = false, $requiredCheck = true )
 {
     if ( $requiredCheck ) {
@@ -362,7 +332,7 @@ function _civicrm_api3_contact_check_params( $params, $dupeCheck = true, $dupeEr
             }
         }
 
-        if ( !CRM_Utils_Array::value( 'contact_id', $params ) ) { 
+        if ( !CRM_Utils_Array::value( 'contact_id', $params )&& CRM_Utils_Array::value( 'id', $params ) ) { 
             $valid = false;
             $error = '';
             foreach ( $fields as $field ) {
@@ -474,50 +444,6 @@ function _civicrm_api3_contact_update( $params, $contactID = null )
     return $contact;
 }
 
-/**
- * @todo Move this to ContactFormat.php 
- * @todo Eileen McNaughton 7/01/11 What does this do? I think it should go & we can revive a corrected version from v2 if need be
- */
-function civicrm_api3_contact_format_create( $params )
-{
-    _civicrm_api3_initialize( );
-
-    CRM_Core_DAO::freeResult( );
-
-    // return error if we have no params
-    if ( empty( $params ) ) {
-        return civicrm_api3_create_error( 'Input Parameters empty' );
-    }
-
-    $error = _civicrm_api3_required_formatted_contact($params);
-    if ( civicrm_api3_error( $error ) ) {
-        return $error;
-    }
-    
-    $error = _civicrm_api3_validate_formatted_contact($params);
-    if ( civicrm_api3_error( $error ) ) {
-        return $error;
-    }
-
-    //get the prefix id etc if exists
-    require_once 'CRM/Contact/BAO/Contact.php';
-    CRM_Contact_BAO_Contact::resolveDefaults($params, true);
-
-    require_once 'CRM/Import/Parser.php';
-    if ( CRM_Utils_Array::value('onDuplicate', $params) != CRM_Import_Parser::DUPLICATE_NOCHECK) {
-        CRM_Core_Error::reset( );
-        $error = _civicrm_api3_duplicate_formatted_contact($params);
-        if ( civicrm_api3_error( $error ) ) {
-            return $error;
-        }
-    }
-    
-    $contact = CRM_Contact_BAO_Contact::create( $params, 
-                                                CRM_Utils_Array::value( 'fixAddress',  $params ) );
-    
-    _civicrm_api3_object_to_array($contact, $contactArray);
-    return $contactArray;
-}
 
 /**
  * Ensure that we have the right input parameters for custom data

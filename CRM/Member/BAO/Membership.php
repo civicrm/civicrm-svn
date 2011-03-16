@@ -141,6 +141,17 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
         require_once 'CRM/Contact/BAO/GroupContactCache.php';
         CRM_Contact_BAO_GroupContactCache::remove( );
 
+
+        if ( empty( $membership->contact_id ) ) {
+            // this means we are in renewal mode and are just updating the membership
+            // record and all fields are not present in the update record
+            // however the hooks dont care and want all data CRM-7784
+            $tempMembership = new CRM_Member_DAO_Membership();
+            $tempMembership->id = $membership->id;
+            $tempMembership->find( true );
+            $membership = $tempMembership;
+        }
+
         if ( CRM_Utils_Array::value( 'membership', $ids ) ) {
             CRM_Utils_Hook::post( 'edit', 'Membership', $membership->id, $membership );
         } else {

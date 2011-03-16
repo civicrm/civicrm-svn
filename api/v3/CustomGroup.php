@@ -111,7 +111,7 @@ function civicrm_api3_custom_group_create( $params )
                         'label'           => 'api created field');// should put something cleverer here but this will do for now
         require_once 'api/v3/CustomField.php';
         $fieldValues = civicrm_api3_custom_field_create( $fparams );
-        $values      = array_merge( $values[$customGroup->id] , $fieldValues['values'][$fieldValues['id']] );
+        $values[$fieldValues['id']]      = array_merge( $values[$customGroup->id] , $fieldValues['values'][$fieldValues['id']] );
     }
     return civicrm_api3_create_success($values,$params);
     } catch (PEAR_Exception $e) {

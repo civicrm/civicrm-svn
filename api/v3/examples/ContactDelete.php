@@ -3,7 +3,7 @@
 function contact_delete_example(){
     $params = array(
     
-                  'contact_id' 		=> '17',
+                  'id' 		=> '17',
                   'version' 		=> '3',
 
   );

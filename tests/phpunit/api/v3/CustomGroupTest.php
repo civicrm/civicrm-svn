@@ -90,7 +90,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
                          );
         
         $customGroup =& civicrm_api3_custom_group_create($params);
-        $this->assertEquals($customGroup['error_message'], 'First item in params[\'extends\'] must be a class name (e.g. \'Contact\').');
+        $this->assertEquals($customGroup['error_message'], 'Mandatory key(s) missing from params array: one of (extends, class_name)');
         $this->assertEquals($customGroup['is_error'], 1);
     }
 
@@ -121,7 +121,6 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
         
         $customGroup =& civicrm_api3_custom_group_create($params);
         $this->assertEquals($customGroup['is_error'], 0);
-
         $this->assertNotNull($customGroup['id'], 'in line ' . __LINE__);
         $this->assertNotNull($customGroup['values'][$customGroup['id']]['id'], 'in line ' . __LINE__);
         $this->assertEquals($customGroup['values'][$customGroup['id']]['extends'], 'Individual', 'in line ' . __LINE__);

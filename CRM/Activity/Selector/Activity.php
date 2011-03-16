@@ -66,7 +66,9 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
     protected $_admin;
 
     protected $_context;
-    
+
+    protected $_activityTypeIDs;
+
     protected $_viewOptions;
 
     /**
@@ -78,12 +80,17 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
      * @return CRM_Contact_Selector_Activity
      * @access public
      */
-    function __construct($contactId, $permission, $admin = false, $context = 'activity' ) 
+    function __construct($contactId,
+                         $permission,
+                         $admin = false,
+                         $context = 'activity',
+                         $activityTypeIDs = null ) 
     {
-        $this->_contactId  = $contactId;
-        $this->_permission = $permission;
-        $this->_admin      = $admin;
-        $this->_context    = $context;
+        $this->_contactId       = $contactId;
+        $this->_permission      = $permission;
+        $this->_admin           = $admin;
+        $this->_context         = $context;
+        $this->_activityTypeIDs = $activityTypeIDs;
 
         // get all enabled view componentc (check if case is enabled)
         require_once 'CRM/Core/BAO/Preferences.php';
@@ -109,6 +116,8 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
                           $key = null,
                           $compContext = null ) 
     {
+        static $activityActTypes   = null;
+
         $extraParams = ( $key ) ? "&key={$key}" : null;
         if ( $compContext ) {
             $extraParams .= "&compContext={$compContext}";
@@ -117,8 +126,10 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
         $showView   = true;
         $showUpdate = $showDelete = false;
         $qsDelete = $qsView = $qsUpdate = null;
-        
-        $activeActTypes = CRM_Core_PseudoConstant::activityType( true, true, false, 'name', true );
+
+        if ( ! $activityActTypes ) {
+            $activeActTypes = CRM_Core_PseudoConstant::activityType( true, true, false, 'name', true );
+        }
         $activityTypeName = CRM_Utils_Array::value( $activityTypeId, $activeActTypes );
         
         //CRM-7607
@@ -307,7 +318,11 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
      */
     function getTotalCount($action, $case = null ) { 
         require_once 'CRM/Activity/BAO/Activity.php';
-        return CRM_Activity_BAO_Activity::getActivitiesCount( $this->_contactId, $this->_admin, $case, $this->_context );
+        return CRM_Activity_BAO_Activity::getActivitiesCount( $this->_contactId, 
+                                                              $this->_admin,
+                                                              $case, 
+                                                              $this->_context,
+                                                              $this->_activityTypeIDs );
     }
 
 
@@ -326,8 +341,14 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
     {
         $params['contact_id'] = $this->_contactId;
         $config = CRM_Core_Config::singleton();
-        $rows =& CRM_Activity_BAO_Activity::getActivities( $params, $offset, $rowCount, $sort, 
-                                                           $this->_admin, $case, $this->_context );
+        $rows =& CRM_Activity_BAO_Activity::getActivities( $params,
+                                                           $offset,
+                                                           $rowCount,
+                                                           $sort, 
+                                                           $this->_admin,
+                                                           $case,
+                                                           $this->_context,
+                                                           $this->_activityTypeIDs);
         
         if ( empty( $rows ) ) {
             return $rows;
