@@ -425,7 +425,7 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
         foreach ( $rows as $rowNum => $row ) {
             
             if ( array_key_exists('civicrm_contact_contact_source', $row ) ) {
-                if ( $value = $row['civicrm_contact_source_contact_id'] ) {
+                if ( $value = $row['civicrm_activity_source_contact_id'] ) {
                     if ( $viewLinks ) {
                         $url = CRM_Utils_System::url( "civicrm/contact/view"  , 
                                                       'reset=1&cid=' . $value ,
@@ -479,12 +479,12 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                         // case activities get a special view link
                         if ( $rows[$rowNum]['civicrm_case_activity_case_id'] ) {
                             $url = CRM_Utils_System::url( "civicrm/case/activity/view"  , 
-                                                          'reset=1&cid=' . $rows[$rowNum]['civicrm_contact_source_contact_id'] .
+                                                          'reset=1&cid=' . $rows[$rowNum]['civicrm_activity_source_contact_id'] .
                                                           '&aid=' . $rows[$rowNum]['civicrm_activity_id'] . '&caseID=' . $rows[$rowNum]['civicrm_case_activity_case_id'],
                                                           $this->_absoluteUrl );
                         } else {
                             $url = CRM_Utils_System::url( "civicrm/contact/view/activity"  , 
-                                                          'action=view&reset=1&cid=' . $rows[$rowNum]['civicrm_contact_source_contact_id'] .
+                                                          'action=view&reset=1&cid=' . $rows[$rowNum]['civicrm_activity_source_contact_id'] .
                                                           '&id=' . $rows[$rowNum]['civicrm_activity_id'] . '&atype=' . $value ,
                                                           $this->_absoluteUrl );
                         }
