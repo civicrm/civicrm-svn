@@ -123,7 +123,7 @@ class api_v3_MailerGroupTest extends CiviUnitTestCase
                         'contact_id'   => $contactID,
                          'version'					=>$this->_apiversion
                         );
-        $result =& civicrm_api3_mailer_event_subscribe($params);
+        $result =& civicrm_api3_mailer_group_event_subscribe($params);
         $this->assertEquals($result['is_error'], 0);
         $this->assertEquals($result['contact_id'], $contactID);
 
@@ -251,7 +251,6 @@ class api_v3_MailerGroupTest extends CiviUnitTestCase
      */
     public function testMailerProcess( )
     {   
-      $this->markTestSkipped(' CRM_Mailing_Event_BAO_Subscribe = conflict');
         $params = array(
                         'email'        => $this->_email,
                         'group_id'     => $this->_groupID,
