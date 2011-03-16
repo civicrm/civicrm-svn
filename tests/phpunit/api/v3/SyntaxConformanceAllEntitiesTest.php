@@ -1,0 +1,89 @@
+<?php
+require_once 'api/api.php';
+require_once 'CiviTest/CiviUnitTestCase.php';
+
+class api_v3_SyntaxConformanceAllEntities extends CiviUnitTestCase
+{
+    protected $_apiversion;
+
+    function setUp()    {
+        parent::setUp();
+    }
+
+    function tearDown()    {
+    }
+
+    public static function entities() {
+//        return array(array ('Tag'), array ('Group')  );
+
+        $tmp = civicrm_api ('Entity','Get', array ('version' => 3 ));
+        $entities = array ();
+        $i=0;
+        foreach ($tmp['values'] as $e) {
+          if ($e == "Entity") continue;//Entity is a fake Entity, so we skip it
+
+          echo "entity #$i is $e\n";
+          $i = $i+1;
+          $entities [] = array ($e);
+          
+        }
+        return $entities;
+        return array(array ('Tag'), array ('Group')  );
+    }
+
+/** testing the _get **/ 
+    /**
+     * @dataProvider entities
+     */
+    public function testEmptyParam_get ($Entity) {
+        $result = civicrm_api ($Entity,'Get',array());
+        $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
+//@TODO need to test that [error_message] starts by "Mandatory key(s) missing from params array"
+    }
+
+
+/*
+    public function testGetWrongTypeParamTag_get () {
+        $result = civicrm_api ($this->EntityName,'Get','aaaaaaaaaaaaaaa');
+print_r ($result);
+        $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
+    }
+
+
+    public function testWithoutVersionTag_get () {
+        $result = civicrm_api ($this->EntityName,'Get',array());
+print_r ($result);
+        $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
+    }
+
+    public function testSimpleTag_get () {
+        $result = civicrm_api ($this->EntityName,'Get',array('version' => 3));
+print_r ($result);
+        if ($result['is_error']) {
+          // that's an Entity that needs at least one filter
+          // and civicrm_verify_mandatory shout an error message
+        } else { // it returns the list of all the entities
+// test if count is set and an >=0
+// test if value is set and an array
+        }
+    }
+
+    public function testFetchByIDTag_get () {
+        $result = civicrm_api ($this->EntityName,'Get',array('version' => 3, 'debug' => true, 'id' => 0 ));
+print_r ($result);
+        if ($result['is_error']) {
+          // that's an Entity that needs at least one filter
+          // and civicrm_verify_mandatory shout an error message
+        } else { // it returns the list of all the entities
+// test if count is set and an >=0
+// test if value is set and an array
+        }
+    }
+*/
+
+
+/** testing the _create **/ 
+/** testing the _getFields **/ 
+/** testing the _delete **/ 
+
+}
