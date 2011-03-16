@@ -283,7 +283,7 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase
                          'version' => $this->_apiversion, );        
     $deletePayment = & civicrm_api3_participant_payment_delete( $params );
     $this->assertEquals( $deletePayment['is_error'], 1 );
-    $this->assertEquals( $deletePayment['error_message'], 'Error while deleting participantPayment' );
+    $this->assertEquals( $deletePayment['error_message'], 'Mandatory key(s) missing from params array: id' );
   }
 
   /**
