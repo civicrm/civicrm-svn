@@ -306,6 +306,7 @@ UNION
             // set current employer
             self::setCurrentEmployer( array( $contactID => $organizationId ) );
             
+            $relationshipParams['relationship_ids'] = $relationshipIds;
             // handle related meberships. CRM-3792
             self::currentEmployerRelatedMembership( $contactID, $organizationId, $relationshipParams, $duplicate );
         }
@@ -343,7 +344,7 @@ UNION
             }
             $relationship->free( );
         }
-        
+
         //need to handle related meberships. CRM-3792
         CRM_Contact_BAO_Relationship::relatedMemberships( $contactID, $relationshipParams, $ids, $action );
     }

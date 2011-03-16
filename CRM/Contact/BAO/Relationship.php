@@ -1200,10 +1200,39 @@ SELECT relationship_type_id, relationship_direction
                     // membership=>relationship then we need to
                     // delete the membership record created for
                     // previous relationship.
-                    CRM_Member_BAO_Membership::deleteRelatedMemberships( $membershipId, $mainRelatedContactId );
+
+                    if ( self::isDeleteRelatedMembership( $membershipType, $contactId, $mainRelatedContactId, $relTypeId, CRM_Utils_Array::value('relationship_ids', $params) ) ) {
+                        CRM_Member_BAO_Membership::deleteRelatedMemberships( $membershipId, $mainRelatedContactId );
+                    }
                 }
             }
         }
+    }
+
+    /**
+     * Helper function to check whether to delete the membership or
+     * not.
+     *
+     */
+    function isDeleteRelatedMembership( $membershipType, $contactId, $mainRelatedContactId, $relTypeId, $relIds ) {
+        if ( $membershipType['relationship_type_id'] == $relTypeId ||
+             empty($relIds) ) {
+            return true;
+        }
+        if ( $contactId == $mainRelatedContactId ) {
+            return false;
+        }
+        
+        $relParamas = array( 1 => array( $membershipType['relationship_type_id'], 'Integer'), 
+                             2 => array( $contactId, 'Integer' ),
+                             3 => array( $mainRelatedContactId, 'Integer' )
+                            );
+        
+        $recordsFound = (int)CRM_Core_DAO::singleValueQuery( "SELECT COUNT(*) FROM civicrm_relationship WHERE relationship_type_id = %1 AND contact_id_a IN ( %2, %3 ) AND contact_id_b IN ( %3, %2 ) AND id NOT IN (". implode( ',', $relIds ) . ")", $relParamas );
+
+        if ( $recordsFound ) return false;
+        
+        return true;
     }
 
     /**

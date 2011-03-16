@@ -583,7 +583,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
                             );
         CRM_Core_BAO_Note::add( $noteParams , $noteIds );
         
-        
+        $params['relationship_ids'] = $relationshipIds;
         // Membership for related contacts CRM-1657
         if ( CRM_Core_Permission::access( 'CiviMember' ) && ( !$duplicate ) ) {
             CRM_Contact_BAO_Relationship::relatedMemberships( $this->_contactId, 
