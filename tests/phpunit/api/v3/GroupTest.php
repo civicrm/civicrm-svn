@@ -69,7 +69,8 @@ class api_v3_GroupTest extends CiviUnitTestCase
         $params = array('version' => $this->_apiversion );
         
         $group = civicrm_api3_group_get( $params );
-        
+       
+        $group = $group["values"]; 
         $this->assertNotNull( count( $group ) );
         $this->assertEquals( $group[$this->_groupID]['name'], 'Test Group 1' );
         $this->assertEquals( $group[$this->_groupID]['is_active'], 1 );
@@ -83,7 +84,7 @@ class api_v3_GroupTest extends CiviUnitTestCase
         $params['id'] = $this->_groupID;
         $group =&civicrm_api3_group_get( $params );
         
-        foreach( $group as $v){
+        foreach( $group['values'] as $v){
             $this->assertEquals( $v['name'],'Test Group 1' );
             $this->assertEquals( $v['title'],'New Test Group Created' );
             $this->assertEquals( $v['description'], 'New Test Group Created');
@@ -97,6 +98,7 @@ class api_v3_GroupTest extends CiviUnitTestCase
         $params         = array('version' => $this->_apiversion  );
         $params['name'] = 'Test Group 1'; 
         $group =&civicrm_api3_group_get( $params );
+        $group = $group['values'];
         $this->documentMe($params,$group,__FUNCTION__,__FILE__);         
         foreach( $group as $v){
             $this->assertEquals( $v['id'], $this->_groupID );
@@ -113,7 +115,7 @@ class api_v3_GroupTest extends CiviUnitTestCase
         $params['id'] = $this->_groupID; 
         $params['return.name'] = 1;
         $group =&civicrm_api3_group_get( $params );
-        $this->assertEquals( $group[$this->_groupID]['name'],'Test Group 1' );
+        $this->assertEquals( $group['values'][$this->_groupID]['name'],'Test Group 1' );
     }
     
     function testGetGroupParamsWithGroupTitle( ) 
@@ -122,7 +124,7 @@ class api_v3_GroupTest extends CiviUnitTestCase
         $params['title'] = 'New Test Group Created'; 
         $group =&civicrm_api3_group_get( $params );
         
-        foreach( $group as $v){
+        foreach( $group['values'] as $v){
             $this->assertEquals( $v['id'], $this->_groupID );
             $this->assertEquals( $v['name'],'Test Group 1' );
             $this->assertEquals( $v['description'], 'New Test Group Created' );

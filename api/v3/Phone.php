@@ -27,13 +27,13 @@
 */
 
 /**
- * File for the CiviCRM APIv3 email functions
+ * File for the CiviCRM APIv3 phone functions
  *
  * @package CiviCRM_APIv3
- * @subpackage API_Email
+ * @subpackage API_Phone
  * 
  * @copyright CiviCRM LLC (c) 2004-2010
- * @version $Id: Email.php 2011-02-16 ErikHommel $
+ * @version $Id: Phone.php 2011-03-16 ErikHommel $
  */
 
 /**
@@ -42,15 +42,15 @@
 require_once 'api/v3/utils.php';
 
 /**
- *  Add an Email for a contact
+ *  Add an Phone for a contact
  * 
  * Allowed @params array keys are:
- * {@schema Core/Email.xml}
- * {@example EmailCreate.php}
- * @return array of newly created email property values.
+ * {@schema Core/Phone.xml}
+ * {@example PhoneCreate.php}
+ * @return array of newly created phone property values.
  * @access public
  */
-function civicrm_api3_email_create( &$params ) 
+function civicrm_api3_phone_create( &$params ) 
 {
   _civicrm_api3_initialize( true );
   try {
@@ -62,14 +62,14 @@ function civicrm_api3_email_create( &$params )
 		$params['is_primary'] = 0; 
 	}	
 	
-    require_once 'CRM/Core/BAO/Email.php';
-    $emailBAO = CRM_Core_BAO_Email::add($params);
+    require_once 'CRM/Core/BAO/Phone.php';
+    $phoneBAO = CRM_Core_BAO_Phone::add($params);
     
-	 if ( is_a( $emailBAO, 'CRM_Core_Error' )) {
-		 return civicrm_api3_create_error( "Email is not created or updated ");
+	 if ( is_a( $phoneBAO, 'CRM_Core_Error' )) {
+		 return civicrm_api3_create_error( "Phone is not created or updated ");
 	 } else {
 		 $values = array( );
-		 _civicrm_api3_object_to_array($emailBAO, $values);
+		 _civicrm_api3_object_to_array($phoneBAO, $values);
 		 return civicrm_api3_create_success($values, $params);
 	 }
   } catch (PEAR_Exception $e) {
@@ -79,32 +79,32 @@ function civicrm_api3_email_create( &$params )
   }
 }
 /**
- * Deletes an existing Email
+ * Deletes an existing Phone
  *
  * @param  array  $params
  *
- * {@schema Core/Email.xml}
- * {@example EmailDelete.php 0}
+ * {@schema Core/Phone.xml}
+ * {@example PhoneDelete.php 0}
  * @return boolean | error  true if successfull, error otherwise
  * @access public
  */
-function civicrm_api3_email_delete( &$params ) 
+function civicrm_api3_phone_delete( &$params ) 
 {
   _civicrm_api3_initialize( true );
   try {
     civicrm_api3_verify_mandatory ($params,null,array ('id'));
-    $emailID = CRM_Utils_Array::value( 'id', $params );
+    $phoneID = CRM_Utils_Array::value( 'id', $params );
 
-    require_once 'CRM/Core/DAO/Email.php';
-    $emailDAO = new CRM_Core_DAO_Email();
-    $emailDAO->id = $emailID;
-    if ( $emailDAO->find( ) ) {
-		while ( $emailDAO->fetch() ) {
-			$emailDAO->delete();
+    require_once 'CRM/Core/DAO/Phone.php';
+    $phoneDAO = new CRM_Core_DAO_Phone();
+    $phoneDAO->id = $phoneID;
+    if ( $phoneDAO->find( ) ) {
+		while ( $phoneDAO->fetch() ) {
+			$phoneDAO->delete();
 			return civicrm_api3_create_success();
 		}
 	} else {
-		return civicrm_api3_create_error( 'Could not delete email with id '.$emailID);
+		return civicrm_api3_create_error( 'Could not delete phone with id '.$phoneID);
 	}
     
   } catch (Exception $e) {
@@ -114,44 +114,44 @@ function civicrm_api3_email_delete( &$params )
 }
 
 /**
- * Retrieve one or more emails 
+ * Retrieve one or more phones 
  *
  * @param  mixed[]  (reference ) input parameters
  * 
- * {@schema Core/Email.xml}
- * {@example EmailDelete.php 0}
+ * {@schema Core/Phone.xml}
+ * {@example PhoneDelete.php 0}
  * @param  array $params  an associative array of name/value pairs.
  *
- * @return  array details of found emails else error
+ * @return  array details of found phones else error
  * @access public
  */
 
-function civicrm_api3_email_get(&$params) 
+function civicrm_api3_phone_get(&$params) 
 {   
   _civicrm_api3_initialize(true );
   try {
     civicrm_api3_verify_one_mandatory($params, null, 
-		array('id', 'contact_id', 'location_type_id'));
+		array('id', 'contact_id', 'location_type_id', 'phone_type_id'));
 	
-    require_once 'CRM/Core/BAO/Email.php';
-    $emailBAO = new CRM_Core_BAO_Email();
-    $fields = array_keys($emailBAO->fields());
+    require_once 'CRM/Core/BAO/Phone.php';
+    $phoneBAO = new CRM_Core_BAO_Phone();
+    $fields = array_keys($phoneBAO->fields());
 
     foreach ( $fields as $name) {
         if (array_key_exists($name, $params)) {
-            $emailBAO->$name = $params[$name];
+            $phoneBAO->$name = $params[$name];
         }
     }
     
-    if ( $emailBAO->find() ) {
-      $emails = array();
-      while ( $emailBAO->fetch() ) {
-        CRM_Core_DAO::storeValues( $emailBAO, $email );
-        $emails[$emailBAO->id] = $email;
+    if ( $phoneBAO->find() ) {
+      $phones = array();
+      while ( $phoneBAO->fetch() ) {
+        CRM_Core_DAO::storeValues( $phoneBAO, $phone );
+        $phones[$phoneBAO->id] = $phone;
       }
-      return civicrm_api3_create_success($emails,$params,$emailBAO);
+      return civicrm_api3_create_success($phones,$params,$phoneBAO);
     } else {
-      return civicrm_api3_create_success(array(),$params,$emailBAO);
+      return civicrm_api3_create_success(array(),$params,$phoneBAO);
     }
 				
   } catch (PEAR_Exception $e) {
