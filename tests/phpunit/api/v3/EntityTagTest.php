@@ -357,7 +357,7 @@ class api_v3_EntityTagTest extends CiviUnitTestCase
         
         $result = civicrm_api3_entity_tag_display( $params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( 'entity_id is a required field.',$result['error_message'],'in line ' . __LINE__ );
+        $this->assertEquals( 'Mandatory key(s) missing from params array: one of (entity_id, contact_id)',$result['error_message'],'in line ' . __LINE__ );
     }
 
     function testEntityTagDisplayWithContactId( )
