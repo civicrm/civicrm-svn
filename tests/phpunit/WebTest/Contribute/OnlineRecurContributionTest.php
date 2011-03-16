@@ -38,23 +38,35 @@ class WebTest_Contribute_OnlineRecurContributionTest extends CiviSeleniumTestCas
       parent::setUp( );
   }
 
-  function testOnlineRecurContributino()
+  function testOnlineRecurContribution()
   {
-      $this->open( $this->sboxPath );
+      require_once 'ContributionPageAddTest.php';
+      
+      // a random 7-char string and an even number to make this pass unique
+      $hash = substr(sha1(rand()), 0, 7);
+      $rand = $contributionAmount = 2 * rand(2, 50);
+      $pageTitle = 'Donate Online Recurring ' . $hash;
+      $processorType = 'AuthNet';
+      $processorName = "Webtest AuthNet " . substr(sha1(rand()), 0, 7);
+      $payLater =  false;
+      $onBehalf = false;
+      $pledges = false;
+      $recurring = true;
+      $memberships = false;
+      $friend = true;
+      $profiles = false;
+      $premiums = false;
+      $widget = false;
+      $pcp = false;
+
+      // open browser, login
+      $this->open($this->sboxPath);
       $this->webtestLogin();
-      
-      //add payment processor.
-      $processorName = "Webtest Auto Renew AuthNet" . substr(sha1(rand()), 0, 7);
-      $this->webtestAddPaymentProcessor( $processorName, 'AuthNet' );      
-      
-      //now configure the sample online contribution page to use our test processor.
-      $this->open($this->sboxPath . 'civicrm/admin/contribute/amount?reset=1&action=update&id=1');          
-      $this->waitForElementPresent('_qf_Amount_next-bottom');
-      $this->select("payment_processor_id",  "label={$processorName}");
-      $this->click('_qf_Amount_upload_done-top');
-      $this->waitForPageToLoad("30000");
-      $text = "information has been saved.";
-      $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
+
+      // create a new online contribution page with recurring enabled (using a newly created AuthNet processor)
+      // create contribution page with randomized title and default params
+      $pageId = $this->webtestAddContributionPage( $hash, $rand, $pageTitle, $processorType, $processorName, $payLater, $onBehalf,
+                                                   $pledges, $recurring, $memberships, $friend, $profiles, $premiums, $widget, $pcp );        
       
       //now do the test online recurring contribution as an anonymous user.
       $anonymous = true;
@@ -69,14 +81,18 @@ class WebTest_Contribute_OnlineRecurContributionTest extends CiviSeleniumTestCas
       // Wait for Login button to indicate we've logged out.
       $this->waitForElementPresent( "edit-submit" );
 
-      $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&action=preview&id=1");
+      $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&action=preview&id=" . $pageId);
       $this->waitForElementPresent( "_qf_Main_upload-bottom" );
 
+      // helper AddContributionPage sets Minimum Other Amout = $rand / 2 so must contribute more than that
       $this->click("amount_other");
-      $this->type("amount_other", "10");
-      $this->click("CIVICRM_QFID_1_14");
-      $this->select("pledge_frequency_unit", "label=month");
-      $this->type("pledge_installments", "12");
+      $this->type("amount_other", $contributionAmount);
+      
+      // recurring contribution - each month for 12 months
+      $this->click("CIVICRM_QFID_1_8");
+      $this->type("frequency_interval", "1");
+      $this->type("installments", "12");
+
       $this->type("email-5", $email);
 
       $this->webtestAddCreditCardDetails( );
@@ -85,19 +101,18 @@ class WebTest_Contribute_OnlineRecurContributionTest extends CiviSeleniumTestCas
       
       // Confirmation page
       $this->waitForElementPresent( "_qf_Confirm_next-bottom" );      
-      $text = 'I pledge to contribute this amount every month for 12 installments.';
-      $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
-      $text = '$ 10.00';
-      $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );      
+      $text = 'I want to contribute this amount every 1 month(s) for 12 installments.';
+      $this->assertTrue( $this->isTextPresent( $text ), 'Missing recurring contribution text (confirmation): ' . $text );
+      $text = $rand;
+      $this->assertTrue( $this->isTextPresent( $contributionAmount ), 'Missing contribution amount (confirmation): ' . $contributionAmount );
       $this->click("_qf_Confirm_next-bottom");
 
       // Thank-you page
       $this->waitForElementPresent( "thankyou_footer" );
       $this->assertTrue( $this->isElementPresent( 'tell-a-friend' ), 'Missing tell-a-friend div' );      
-      $text = 'I pledge to contribute this amount every month for 12 installments.';
-      $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
-      $text = '$ 10.00';
-      $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
+      $text = 'This recurring contribution will be automatically processed every 1 month(s) for a total 12 installments';
+      $this->assertTrue( $this->isTextPresent( $text ), 'Missing recurring contribution text (thank-you): ' . $text );
+      $this->assertTrue( $this->isTextPresent( $contributionAmount ), 'Missing contribution amount (thank-you): ' . $contributionAmount );
       
       // Log back in and verify that test contribution has been recorded
       $this->open( $this->sboxPath );
@@ -115,11 +130,12 @@ class WebTest_Contribute_OnlineRecurContributionTest extends CiviSeleniumTestCas
 
       // View Recurring Contribution Record
       $this->webtestVerifyTabularData( array(
-                                             'From'                 => "$contactName",
-                                             'Contribution Type'    => 'Donation (test)',
-                                             'Total Amount'         => 'Installments: 12, Interval: 1 month(s)',
-                                             'Contribution Status'  => 'Pending : Incomplete Transaction',
-                                             'Paid By'              => 'Credit Card',
+                                             'From'                     => "$contactName",
+                                             'Contribution Type'        => 'Donation (test)',
+                                             'Total Amount'             => 'Installments: 12, Interval: 1 month(s)',
+                                             'Contribution Status'      => 'Pending : Incomplete Transaction',
+                                             'Paid By'                  => 'Credit Card',
+                                             'Online Contribution Page' => $pageTitle,
                                              )
                                        );
         
