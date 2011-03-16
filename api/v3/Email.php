@@ -42,15 +42,6 @@
 require_once 'api/v3/utils.php';
 
 /**
- *  returns all the fields on this entity.
- */
-function civicrm_api3_email_getfields( &$params ) {
-    require_once 'CRM/Core/DAO/Email.php';
-    $emailDao = new CRM_Core_DAO_Email();
-    return ($emailDao->export());
-}
-
-/**
  *  Add an Email for a contact
  * 
  * Allowed @params array keys are:
