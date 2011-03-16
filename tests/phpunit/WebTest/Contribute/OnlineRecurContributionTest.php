@@ -48,13 +48,15 @@ class WebTest_Contribute_OnlineRecurContributionTest extends CiviSeleniumTestCas
       $pageTitle = 'Donate Online Recurring ' . $hash;
       $processorType = 'AuthNet';
       $processorName = "Webtest AuthNet " . substr(sha1(rand()), 0, 7);
+      $amountSection = true;
       $payLater =  false;
       $onBehalf = false;
       $pledges = false;
       $recurring = true;
       $memberships = false;
       $friend = true;
-      $profiles = false;
+      $profilePreId  = null;
+      $profilePostId = null;
       $premiums = false;
       $widget = false;
       $pcp = false;
@@ -65,8 +67,23 @@ class WebTest_Contribute_OnlineRecurContributionTest extends CiviSeleniumTestCas
 
       // create a new online contribution page with recurring enabled (using a newly created AuthNet processor)
       // create contribution page with randomized title and default params
-      $pageId = $this->webtestAddContributionPage( $hash, $rand, $pageTitle, $processorType, $processorName, $payLater, $onBehalf,
-                                                   $pledges, $recurring, $memberships, $friend, $profiles, $premiums, $widget, $pcp );        
+      $pageId = $this->webtestAddContributionPage( $hash, 
+                                                   $rand, 
+                                                   $pageTitle, 
+                                                   $processorType, 
+                                                   $processorName, 
+                                                   $amountSection, 
+                                                   $payLater, 
+                                                   $onBehalf,
+                                                   $pledges, 
+                                                   $recurring, 
+                                                   $memberships, 
+                                                   $friend, 
+                                                   $profilePreId,
+                                                   $profilePostId,
+                                                   $premiums, 
+                                                   $widget, 
+                                                   $pcp );        
       
       //now do the test online recurring contribution as an anonymous user.
       $anonymous = true;

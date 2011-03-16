@@ -47,8 +47,8 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
       // since it might have been modified by other tests
       $this->open($this->sboxPath . "civicrm/admin/member/membershipType&action=update&id=1&reset=1");
 
-      $this->waitForElementPresent("CIVICRM_QFID_1_10");
-      $this->click("CIVICRM_QFID_0_8");
+      $this->waitForElementPresent("//input[@name='auto_renew'][1]");
+      $this->click("//input[@name='auto_renew'][1]");
 
       $this->type("duration_interval", "2");
       $this->select("duration_unit", "label=year");
@@ -247,8 +247,8 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
       // since it might have been modified by other tests 
       $this->open($this->sboxPath . "civicrm/admin/member/membershipType&action=update&id=2&reset=1");
 
-      $this->waitForElementPresent("CIVICRM_QFID_1_10");
-      $this->click("CIVICRM_QFID_0_8");
+      $this->waitForElementPresent("//input[@name='auto_renew'][1]");
+      $this->click("//input[@name='auto_renew'][1]");
 
       $this->type("duration_interval", "1");
       $this->select("duration_unit", "label=year");
