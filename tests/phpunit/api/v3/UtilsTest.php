@@ -33,152 +33,129 @@ require_once 'api/v3/utils.php';
 /**
  * Test class for API utils
  *
- *  @package   CiviCRM
+ * @package   CiviCRM
  */
-class api_v3_UtilsTest extends CiviUnitTestCase
-{
-    protected $_apiversion; 
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     *
-     * @access protected
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-        CRM_Core_Permission_UnitTests::$permissions = null; // reset check() stub
-        $this->_apiversion =3;
-    }
-
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     *
-     * @access protected
-     */
-    protected function tearDown()
-    {
-    }
-
-    function testAddFormattedParam() {
-      $values = array( 'contact_type' => 'Individual' );
-      $params = array( 'something' => 1 );
-      $result = _civicrm_api3_add_formatted_param( $values, $params );
-      $this->assertTrue( $result );
-    }
-
-    function testCheckPermissionReturn()
-    {
-        $check = array('check_permissions' => true);
-
-        CRM_Core_Permission_UnitTests::$permissions = array();
-        $this->assertFalse(civicrm_api3_api_check_permission('civicrm_contact_create', $check), 'empty permissions should not be enough');
-        CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM');
-        $this->assertFalse(civicrm_api3_api_check_permission('civicrm_contact_create', $check), 'lacking permissions should not be enough');
-        CRM_Core_Permission_UnitTests::$permissions = array('add contacts');
-        $this->assertFalse(civicrm_api3_api_check_permission('civicrm_contact_create', $check), 'lacking permissions should not be enough');
-
-        CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM', 'add contacts');
-        $this->assertTrue(civicrm_api3_api_check_permission('civicrm_contact_create', $check), 'exact permissions should be enough');
-
-        CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM', 'add contacts', 'import contacts');
-        $this->assertTrue(civicrm_api3_api_check_permission('civicrm_contact_create', $check), 'overfluous permissions should be enough');
-    }
-
-    function testCheckPermissionThrow()
-    {
-        $check = array('check_permissions' => true);
-
-        try {
-            CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM');
-            civicrm_api3_api_check_permission('civicrm_contact_create', $check, true);
-        } catch (Exception $e) {
-            $message = $e->getMessage();
-        }
-        $this->assertEquals($message, 'API permission check failed for civicrm_contact_create call; missing permission: add contacts.', 'lacking permissions should throw an exception');
-
-        CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM', 'add contacts', 'import contacts');
-        $this->assertTrue(civicrm_api3_api_check_permission('civicrm_contact_create', $check, true), 'overfluous permissions should return true');
-    }
-
-    function testCheckPermissionSkip()
-    {
-        CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM');
-        $this->assertFalse(civicrm_api3_api_check_permission('civicrm_contact_create', array('check_permissions' => true)),  'lacking permissions should not be enough');
-        $this->assertTrue(civicrm_api3_api_check_permission('civicrm_contact_create',  array('check_permissions' => false)), 'permission check should be skippable');
-    }
-    
-    /*
+class api_v3_UtilsTest extends CiviUnitTestCase {
+	protected $_apiversion;
+	/**
+	 * Sets up the fixture, for example, opens a network connection.
+	 * This method is called before a test is executed.
+	 *
+	 * @access protected
+	 */
+	protected function setUp() {
+		parent::setUp ();
+		CRM_Core_Permission_UnitTests::$permissions = null; // reset check() stub
+		$this->_apiversion = 3;
+	}
+	
+	/**
+	 * Tears down the fixture, for example, closes a network connection.
+	 * This method is called after a test is executed.
+	 *
+	 * @access protected
+	 */
+	protected function tearDown() {
+	}
+	
+	function testAddFormattedParam() {
+		$values = array ('contact_type' => 'Individual' );
+		$params = array ('something' => 1 );
+		$result = _civicrm_api3_add_formatted_param ( $values, $params );
+		$this->assertTrue ( $result );
+	}
+	
+	function testCheckPermissionReturn() {
+		$check = array ('check_permissions' => true );
+		
+		CRM_Core_Permission_UnitTests::$permissions = array ();
+		$this->assertFalse ( civicrm_api3_api_check_permission ( 'civicrm_api3_contact_create', $check ), 'empty permissions should not be enough' );
+		CRM_Core_Permission_UnitTests::$permissions = array ('access CiviCRM' );
+		$this->assertFalse ( civicrm_api3_api_check_permission ( 'civicrm_api3_contact_create', $check ), 'lacking permissions should not be enough' );
+		CRM_Core_Permission_UnitTests::$permissions = array ('add contacts' );
+		$this->assertFalse ( civicrm_api3_api_check_permission ( 'civicrm_api3_contact_create', $check ), 'lacking permissions should not be enough' );
+		
+		CRM_Core_Permission_UnitTests::$permissions = array ('access CiviCRM', 'add contacts' );
+		$this->assertTrue ( civicrm_api3_api_check_permission ( 'civicrm_api3_contact_create', $check ), 'exact permissions should be enough' );
+		
+		CRM_Core_Permission_UnitTests::$permissions = array ('access CiviCRM', 'add contacts', 'import contacts' );
+		$this->assertTrue ( civicrm_api3_api_check_permission ( 'civicrm_api3_contact_create', $check ), 'overfluous permissions should be enough' );
+	}
+	
+	function testCheckPermissionThrow() {
+		$check = array ('check_permissions' => true );
+		
+		try {
+			CRM_Core_Permission_UnitTests::$permissions = array ('access CiviCRM' );
+			civicrm_api3_api_check_permission ( 'civicrm_api3_contact_create', $check, true );
+		} catch ( Exception $e ) {
+			$message = $e->getMessage ();
+		}
+		$this->assertEquals ( $message, 'API permission check failed for civicrm_api3_contact_create call; missing permission: add contacts.', 'lacking permissions should throw an exception' );
+		
+		CRM_Core_Permission_UnitTests::$permissions = array ('access CiviCRM', 'add contacts', 'import contacts' );
+		$this->assertTrue ( civicrm_api3_api_check_permission ( 'civicrm_api3_contact_create', $check, true ), 'overfluous permissions should return true' );
+	}
+	
+	function testCheckPermissionSkip() {
+		CRM_Core_Permission_UnitTests::$permissions = array ('access CiviCRM' );
+		$this->assertFalse ( civicrm_api3_api_check_permission ( 'civicrm_api3_contact_create', array ('check_permissions' => true ) ), 'lacking permissions should not be enough' );
+		$this->assertTrue ( civicrm_api3_api_check_permission ( 'civicrm_api3_contact_create', array ('check_permissions' => false ) ), 'permission check should be skippable' );
+	}
+	
+	/*
      * Test verify mandatory - includes DAO & passed as well as empty & NULL fields
      */
-    function testVerifyMandatory(){
-      _civicrm_api3_initialize(true);
-      $params = array(
-                               'entity_table'  => 'civicrm_contact',
-                               'note'          => '',
-                               'contact_id'    => $this->_contactID,
-                               'modified_date' => '2011-01-31',
-                               'subject'       => NULL,
-                               'version'			 => $this->_apiversion, 
-                               );
-      $result = civicrm_api3_verify_mandatory ($params, 'CRM_Core_BAO_Note', array('note','subject') );
-      $this->setExpectedException('Mandatory key(s) missing from params array: entity_id, note, subject');
-    }
-    
-     /*
+	function testVerifyMandatory() {
+		_civicrm_api3_initialize ( true );
+		$params = array ('entity_table' => 'civicrm_contact', 'note' => '', 'contact_id' => $this->_contactID, 'modified_date' => '2011-01-31', 'subject' => NULL, 'version' => $this->_apiversion );
+		try {
+			$result = civicrm_api3_verify_mandatory ( $params, 'CRM_Core_BAO_Note', array ('note', 'subject' ) );
+		} 
+
+		catch ( Exception $expected ) {
+			$this->setExpectedException ( Exception );
+			$this->assertEquals ( 'Mandatory key(s) missing from params array: entity_id, one of (note, subject)', $expected->getMessage () );
+			return;
+		}
+		$this->setExpectedException ( Exception, 'Mandatory key(s) missing from params array: entity_id, note, subject' );
+	}
+	
+	/*
      * Test verify one mandatory - includes DAO & passed as well as empty & NULL fields
-     */ 
-    function testVerifyOneMandatory(){
+     */
+	function testVerifyOneMandatory() {
+		
+		$params = array ('entity_table' => 'civicrm_contact', 'note' => '', 'contact_id' => $this->_contactID, 'modified_date' => '2011-01-31', 'subject' => NULL, 'version' => $this->_apiversion );
+		
+		try {
+			$result = civicrm_api3_verify_one_mandatory ( $params, 'CRM_Core_BAO_Note', array ('note', 'subject' ) );
+		} 
 
-
-        $params = array(
-                               'entity_table'  => 'civicrm_contact',
-                               'note'          => '',
-                               'contact_id'    => $this->_contactID,
-                               'modified_date' => '2011-01-31',
-                               'subject'       => NULL,
-                               'version'			 => $this->_apiversion, 
-                               );
-
-        try {
-          $result = civicrm_api3_verify_one_mandatory ($params, 'CRM_Core_BAO_Note', array('note','subject') );        
-        }
- 
-        catch (Exception $expected) {
-          $this->setExpectedException(Exception);        
-          $this->assertEquals('Mandatory key(s) missing from params array: entity_id, one of (note, subject)', $expected->getMessage());
-          return;
-        }
- 
-        $this->fail('An expected exception has not been raised.');
-    }             
-    
-    
-     /*
+		catch ( Exception $expected ) {
+			$this->setExpectedException ( Exception );
+			$this->assertEquals ( 'Mandatory key(s) missing from params array: entity_id, one of (note, subject)', $expected->getMessage () );
+			return;
+		}
+		$this->setExpectedException ( Exception, 'Mandatory key(s) missing from params array: entity_id, note, subject' );		
+		$this->fail ( 'An expected exception has not been raised.' );
+	}
+	
+	/*
      * Test verify one mandatory - includes DAO & passed as well as empty & NULL fields
-     */ 
-    function testVerifyOneMandatoryOneSet(){
-      _civicrm_api3_initialize(true);
-      $params = array(
-                               'entity_table'  => 'civicrm_contact',
-                               'note'          => 'note',
-                               'contact_id'    => $this->_contactID,
-                               'modified_date' => '2011-01-31',
-                               'subject'       => NULL,
-                               'version'			 => $this->_apiversion, 
-                               );
-                               
-      try {
-         civicrm_api3_verify_one_mandatory ($params, NULL, array('note','subject') );
-          }
- 
-        catch (Exception $expected) {
-          $this->fail('Exception raised when it shouldn\'t have been  in line ' . __LINE__);
-        }
- 
+     */
+	function testVerifyOneMandatoryOneSet() {
+		_civicrm_api3_initialize ( true );
+		$params = array ('entity_table' => 'civicrm_contact', 'note' => 'note', 'contact_id' => $this->_contactID, 'modified_date' => '2011-01-31', 'subject' => NULL, 'version' => $this->_apiversion );
+		
+		try {
+			civicrm_api3_verify_one_mandatory ( $params, NULL, array ('note', 'subject' ) );
+		} 
 
+		catch ( Exception $expected ) {
+			$this->fail ( 'Exception raised when it shouldn\'t have been  in line ' . __LINE__ );
+		}
+	
+	}
 
-    }
-    
 }
