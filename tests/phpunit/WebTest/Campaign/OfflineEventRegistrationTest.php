@@ -31,276 +31,276 @@ require_once 'CiviTest/CiviSeleniumTestCase.php';
  
 class WebTest_Campaign_OfflineEventRegistrationTest extends CiviSeleniumTestCase {
 
-  protected function setUp()
-  {
-      parent::setUp();
-  }
+    protected function setUp()
+    {
+        parent::setUp();
+    }
 
-  function testCreateCampaign()
-  {
-      // This is the path where our testing install resides. 
-      // The rest of URL is defined in CiviSeleniumTestCase base class, in
-      // class attributes.
-      $this->open( $this->sboxPath );
+    function testCreateCampaign()
+    {
+        // This is the path where our testing install resides. 
+        // The rest of URL is defined in CiviSeleniumTestCase base class, in
+        // class attributes.
+        $this->open( $this->sboxPath );
+        
+        // Logging in. Remember to wait for page to load. In most cases,
+        // you can rely on 30000 as the value that allows your test to pass, however,
+        // sometimes your test might fail because of this. In such cases, it's better to pick one element
+        // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
+        // page contents loaded and you can continue your test execution.
+        $this->webtestLogin();
+        
+        // Create new group
+        $title = substr(sha1(rand()), 0, 7);
+        $groupName = "group_$title";
+        $this->addGroup( $groupName );
+        
+        // Adding contact
+        // We're using Quick Add block on the main page for this.
+        $firstName1 = substr(sha1(rand()), 0, 7);
+        $this->webtestAddContact( $firstName1, "Smith", "$firstName1.smith@example.org" );
+        
+        // add contact to group
+        // visit group tab
+        $this->click("css=li#tab_group a");
+        $this->waitForElementPresent("group_id");
+        
+        // add to group
+        $this->select("group_id", "label=$groupName");
+        $this->click("_qf_GroupContact_next");
+        $this->waitForPageToLoad("30000");
+        
+        $firstName2 = substr(sha1(rand()), 0, 7);
+        $this->webtestAddContact( $firstName2, "John", "$firstName2.john@example.org" );
+        
+        // add contact to group
+        // visit group tab
+        $this->click("css=li#tab_group a");
+        $this->waitForElementPresent("group_id");
+        
+        // add to group
+        $this->select("group_id", "label=$groupName");
+        $this->click("_qf_GroupContact_next");
+        $this->waitForPageToLoad("30000");
+        
+        // Enable CiviCampaign module if necessary
+        $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
+        $this->waitForPageToLoad('30000');
+        $this->waitForElementPresent("_qf_Component_next-bottom");
+        $enabledComponents = $this->getSelectOptions("enableComponents-t");
+        if (! array_search( "CiviCampaign", $enabledComponents ) ) {
+            $this->addSelection("enableComponents-f", "label=CiviCampaign");
+            $this->click("//option[@value='CiviCampaign']");
+            $this->click("add");
+            $this->click("_qf_Component_next-bottom");
+            $this->waitForPageToLoad("30000");          
+            $this->assertTrue($this->isTextPresent("Your changes have been saved."));    
+        }
+        
+        // add the required Drupal permission
+        $this->open("{$this->sboxPath}admin/user/permissions");
+        $this->waitForElementPresent('edit-submit');
+        $this->check('edit-2-administer-CiviCampaign');
+        $this->click('edit-submit');
+        $this->waitForPageToLoad();
+        $this->assertTrue($this->isTextPresent('The changes have been saved.'));
+        
+        $this->open( $this->sboxPath . 'civicrm/campaign?reset=1' );
+        $this->waitForElementPresent("link=Add Campaign");
+        if ( $this->isTextPresent('No campaigns found.') ) {
+            // Go directly to the URL of the screen that you will be testing (Register Participant for Event-standalone).
+            $this->open($this->sboxPath . "civicrm/participant/add?reset=1&action=add&context=standalone");
+            $this->waitForElementPresent("_qf_Participant_upload-bottom");
+            $this->assertTrue($this->isTextPresent('There are currently no active Campaigns.'));
+        }
+        
+        // Go directly to the URL of the screen that you will be testing
+        $this->open($this->sboxPath . "civicrm/campaign/add&reset=1");
+        
+        // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
+        // button at the end of this page to show up, to make sure it's fully loaded.
+        $this->waitForElementPresent("_qf_Campaign_next-bottom");
+        
+        // Let's start filling the form with values.
+        $campaignTitle = "Campaign $title";
+        $this->type( "title", $campaignTitle );
+        
+        // select the campaign type
+        $this->select("campaign_type_id", "value=2");
 
-      // Logging in. Remember to wait for page to load. In most cases,
-      // you can rely on 30000 as the value that allows your test to pass, however,
-      // sometimes your test might fail because of this. In such cases, it's better to pick one element
-      // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
-      // page contents loaded and you can continue your test execution.
-      $this->webtestLogin();
-
-      // Create new group
-      $title = substr(sha1(rand()), 0, 7);
-      $groupName = "group_$title";
-      $this->addGroup( $groupName );
-
-      // Adding contact
-      // We're using Quick Add block on the main page for this.
-      $firstName1 = substr(sha1(rand()), 0, 7);
-      $this->webtestAddContact( $firstName1, "Smith", "$firstName1.smith@example.org" );
-
-      // add contact to group
-      // visit group tab
-      $this->click("css=li#tab_group a");
-      $this->waitForElementPresent("group_id");
-
-      // add to group
-      $this->select("group_id", "label=$groupName");
-      $this->click("_qf_GroupContact_next");
-      $this->waitForPageToLoad("30000");
-
-      $firstName2 = substr(sha1(rand()), 0, 7);
-      $this->webtestAddContact( $firstName2, "John", "$firstName2.john@example.org" );
-     
-      // add contact to group
-      // visit group tab
-      $this->click("css=li#tab_group a");
-      $this->waitForElementPresent("group_id");
-
-      // add to group
-      $this->select("group_id", "label=$groupName");
-      $this->click("_qf_GroupContact_next");
-      $this->waitForPageToLoad("30000");
-
-      // Enable CiviCampaign module if necessary
-      $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
-      $this->waitForPageToLoad('30000');
-      $this->waitForElementPresent("_qf_Component_next-bottom");
-      $enabledComponents = $this->getSelectOptions("enableComponents-t");
-      if (! array_search( "CiviCampaign", $enabledComponents ) ) {
-          $this->addSelection("enableComponents-f", "label=CiviCampaign");
-          $this->click("//option[@value='CiviCampaign']");
-          $this->click("add");
-          $this->click("_qf_Component_next-bottom");
-          $this->waitForPageToLoad("30000");          
-          $this->assertTrue($this->isTextPresent("Your changes have been saved."));    
-      }
-
-      // add the required Drupal permission
-      $this->open("{$this->sboxPath}admin/user/permissions");
-      $this->waitForElementPresent('edit-submit');
-      $this->check('edit-2-administer-CiviCampaign');
-      $this->click('edit-submit');
-      $this->waitForPageToLoad();
-      $this->assertTrue($this->isTextPresent('The changes have been saved.'));
-
-      $this->open( $this->sboxPath . 'civicrm/campaign?reset=1' );
-      $this->waitForElementPresent("link=Add Campaign");
-      if ( $this->isTextPresent('No campaigns found.') ) {
-          // Go directly to the URL of the screen that you will be testing (Register Participant for Event-standalone).
-          $this->open($this->sboxPath . "civicrm/participant/add?reset=1&action=add&context=standalone");
-          $this->waitForElementPresent("_qf_Participant_upload-bottom");
-          $this->assertTrue($this->isTextPresent('There are currently no active Campaigns.'));
-      }
-      
-      // Go directly to the URL of the screen that you will be testing
-      $this->open($this->sboxPath . "civicrm/campaign/add&reset=1");
-
-      // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
-      // button at the end of this page to show up, to make sure it's fully loaded.
-      $this->waitForElementPresent("_qf_Campaign_next-bottom");
-
-      // Let's start filling the form with values.
-      $campaignTitle = "Campaign $title";
-      $this->type( "title", $campaignTitle );
-
-      // select the campaign type
-      $this->select("campaign_type_id", "value=2");
-
-      // fill in the description
-      $this->type("description", "This is a test campaign");
-
-      // include groups for the campaign
-      $this->addSelection("includeGroups-f", "label=$groupName");
-      $this->click("//option[@value=4]");
-      $this->click("add");
-
-      // fill the end date for campaign
-      $this->webtestFillDate("end_date", "+1 year");
-      
-      // select campaign status
-      $this->select("status_id", "value=2");
-
-      // click save
-      $this->click("_qf_Campaign_next-bottom");
-      $this->waitForPageToLoad("30000");
-      
-      $this->assertTrue($this->isTextPresent("Campaign Campaign $title has been saved."), 
-                        "Status message didn't show up after saving campaign!");
-      
-      $this->waitForElementPresent("//div[@id='Campaigns']/div/div[5]/a/span[text()='Add Campaign']");
-      $id = explode( '_', $this->getAttribute("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[7]@id"));
-      $id = $id[1];
-
-      $this->offlineParticipantAddTest( $campaignTitle, $id );
-  }
-  
-   function offlineParticipantAddTest( $campaignTitle, $id )
-   {
-       // connect campaign with event
-       $this->open($this->sboxPath . "civicrm/event/manage&reset=1");
-       $eventId = $this->registerUrl( );
+        // fill in the description
+        $this->type("description", "This is a test campaign");
+        
+        // include groups for the campaign
+        $this->addSelection("includeGroups-f", "label=$groupName");
+        $this->click("//option[@value=4]");
+        $this->click("add");
+        
+        // fill the end date for campaign
+        $this->webtestFillDate("end_date", "+1 year");
+        
+        // select campaign status
+        $this->select("status_id", "value=2");
+        
+        // click save
+        $this->click("_qf_Campaign_next-bottom");
+        $this->waitForPageToLoad("30000");
+        
+        $this->assertTrue($this->isTextPresent("Campaign Campaign $title has been saved."), 
+                          "Status message didn't show up after saving campaign!");
+        
+        $this->waitForElementPresent("//div[@id='Campaigns']/div/div[5]/a/span[text()='Add Campaign']");
+        $id = explode( '_', $this->getAttribute("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[7]@id"));
+        $id = $id[1];
+        
+        $this->offlineParticipantAddTest( $campaignTitle, $id );
+    }
+    
+    function offlineParticipantAddTest( $campaignTitle, $id )
+    {
+        // connect campaign with event
+        $this->open($this->sboxPath . "civicrm/event/manage&reset=1");
+        $eventId = $this->registerUrl( );
+        
+        $this->open($this->sboxPath . "civicrm/event/manage/eventInfo?reset=1&action=update&id=$eventId" );
+        $this->waitForElementPresent("_qf_EventInfo_cancel-bottom");
+        
+        // select campaign
+        $this->click("campaign_id");
+        $this->select("campaign_id", "value=$id" );
+        $this->click("_qf_EventInfo_upload_done-bottom");
+        $this->waitForPageToLoad("30000");
+        
+        // Adding contact with randomized first name (so we can then select that contact when creating event registration)
+        // We're using Quick Add block on the main page for this.
+        $firstName = substr(sha1(rand()), 0, 7);
+        $this->webtestAddContact( $firstName, "Anderson", true );
+        $contactName = "Anderson, $firstName";
+        $displayName = "$firstName Anderson";
+        
+        // Go directly to the URL of the screen that you will be testing (Register Participant for Event-standalone).
+        $this->open($this->sboxPath . "civicrm/participant/add?reset=1&action=add&context=standalone");
+        
+        // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
+        // button at the end of this page to show up, to make sure it's fully loaded.
+        $this->waitForElementPresent("_qf_Participant_upload-bottom");
+        
+        // Let's start filling the form with values.
+        // Type contact last name in contact auto-complete, wait for dropdown and click first result
+        $this->webtestFillAutocomplete( $firstName );
+        
+        // Select event. Based on label for now.
+        $this->select("event_id", "value=$eventId");
+        
+        // Select role
+        $this->click("role_id[2]");
+        
+        // Choose Registration Date.
+        // Using helper webtestFillDate function.
+        $this->webtestFillDate('register_date', 'now');
+        $today = date('F jS, Y', strtotime('now'));
+        // May 5th, 2010
+        
+        // Select participant status
+        $this->select("status_id", "value=1");
+        
+        // Setting registration source
+        $this->type("source", "Event StandaloneAddTest Webtest");
+        
+        // Since we're here, let's check of screen help is being displayed properly
+        $this->assertTrue($this->isTextPresent("Source for this registration (if applicable)."));
+        
+        // Select an event fee
+        $feeHelp = "Event Fee Level (if applicable).";
+        $this->waitForTextPresent($feeHelp);
+        
+        $this->click("xpath=id('feeBlock')/table/tbody/tr[1]/td/table/tbody/tr/td[2]/label[1]");
+        
+        // Select 'Record Payment'
+        $this->click("record_contribution");
+        
+        // Enter amount to be paid (note: this should default to selected fee level amount, s/b fixed during 3.2 cycle)
+        $this->type("total_amount", "800");
+        
+        // Select payment method = Check and enter chk number
+        $this->select("payment_instrument_id", "value=4");
+        $this->waitForElementPresent("check_number");
+        $this->type("check_number", "1044");
        
-       $this->open($this->sboxPath . "civicrm/event/manage/eventInfo?reset=1&action=update&id=$eventId" );
-       $this->waitForElementPresent("_qf_EventInfo_cancel-bottom");
-
-       // select campaign
-       $this->click("campaign_id");
-       $this->select("campaign_id", "value=$id" );
-       $this->click("_qf_EventInfo_upload_done-bottom");
-       $this->waitForPageToLoad("30000");
-
-       // Adding contact with randomized first name (so we can then select that contact when creating event registration)
-       // We're using Quick Add block on the main page for this.
-       $firstName = substr(sha1(rand()), 0, 7);
-       $this->webtestAddContact( $firstName, "Anderson", true );
-       $contactName = "Anderson, $firstName";
-       $displayName = "$firstName Anderson";
-       
-       // Go directly to the URL of the screen that you will be testing (Register Participant for Event-standalone).
-       $this->open($this->sboxPath . "civicrm/participant/add?reset=1&action=add&context=standalone");
-       
-       // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
-       // button at the end of this page to show up, to make sure it's fully loaded.
-       $this->waitForElementPresent("_qf_Participant_upload-bottom");
-       
-       // Let's start filling the form with values.
-       // Type contact last name in contact auto-complete, wait for dropdown and click first result
-       $this->webtestFillAutocomplete( $firstName );
-       
-       // Select event. Based on label for now.
-       $this->select("event_id", "value=$eventId");
-       
-       // Select role
-       $this->click("role_id[2]");
-       
-       // Choose Registration Date.
-       // Using helper webtestFillDate function.
-       $this->webtestFillDate('register_date', 'now');
-       $today = date('F jS, Y', strtotime('now'));
-       // May 5th, 2010
-       
-       // Select participant status
-       $this->select("status_id", "value=1");
-       
-       // Setting registration source
-       $this->type("source", "Event StandaloneAddTest Webtest");
-       
-       // Since we're here, let's check of screen help is being displayed properly
-       $this->assertTrue($this->isTextPresent("Source for this registration (if applicable)."));
-       
-       // Select an event fee
-       $feeHelp = "Event Fee Level (if applicable).";
-       $this->waitForTextPresent($feeHelp);
-       
-       $this->click("xpath=id('feeBlock')/table/tbody/tr[1]/td/table/tbody/tr/td[2]/label[1]");
-       
-       // Select 'Record Payment'
-       $this->click("record_contribution");
-       
-       // Enter amount to be paid (note: this should default to selected fee level amount, s/b fixed during 3.2 cycle)
-       $this->type("total_amount", "800");
-       
-       // Select payment method = Check and enter chk number
-       $this->select("payment_instrument_id", "value=4");
-       $this->waitForElementPresent("check_number");
-       $this->type("check_number", "1044");
-       
-       // go for the chicken combo (obviously)
-       //      $this->click("CIVICRM_QFID_chicken_Chicken");
-       
-       // Clicking save.
-       $this->click("_qf_Participant_upload-bottom");
-       $this->waitForPageToLoad("30000");
-       
-       // Is status message correct?
-       $this->assertTrue($this->isTextPresent("Event registration for $displayName has been added"), "Status message didn't show up after saving!");
-       
-       $this->waitForElementPresent( "xpath=//div[@id='Events']//table//tbody/tr[1]/td[8]/span/a[text()='View']" );
-       //click through to the participant view screen
-       $this->click( "xpath=//div[@id='Events']//table//tbody/tr[1]/td[8]/span/a[text()='View']" );
-       $this->waitForElementPresent( "_qf_ParticipantView_cancel-bottom" );
-       
-       // verify participant record
-       $this->webtestVerifyTabularData( array( 'Campaign' => $campaignTitle ) );
-
-       $this->open( $this->sboxPath . 'civicrm/admin/setting/component?reset=1' );
-       $this->waitForElementPresent("_qf_Component_next-bottom");
-       $this->addSelection("enableComponents-t", "label=CiviCampaign");
-       $this->click("//option[@value='CiviCampaign']");
-       $this->click("remove");
-       $this->click("_qf_Component_next-bottom");
-       $this->waitForPageToLoad("30000");          
-       $this->assertTrue($this->isTextPresent("Your changes have been saved."));
-
-       $this->open( $this->sboxPath . 'civicrm/event/search?reset=1' );
-       $this->waitForElementPresent( "_qf_Search_refresh" );
-       
-       $this->type( 'sort_name', $firstName );
-       $this->click( "_qf_Search_refresh" );
-       $this->waitForElementPresent( "_qf_Search_next_print" );
-       $this->click( "xpath=//div[@id='participantSearch']/table/tbody/tr/td[11]/span/a[text()='Edit']" );
-       $this->waitForElementPresent( "_qf_Participant_cancel-bottom" );
-       $this->assertTrue($this->isTextPresent("$campaignTitle"));
-   }
-
-   function registerUrl( )
-   {
-       $this->open( $this->sboxPath . 'civicrm/event/manage?reset=1' );
-       $this->waitForPageToLoad("30000");
-       $eventId = explode( '_', $this->getAttribute("//div[@id='event_status_id']/div[@class='dataTables_wrapper']/table/tbody/tr@id") );
-       return $eventId[1];
-   }
-
-   function addGroup( $groupName = 'New Group' ) 
-   {
-       $this->open($this->sboxPath . "civicrm/group/add&reset=1");
-      
-       // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
-       // button at the end of this page to show up, to make sure it's fully loaded.
-       $this->waitForElementPresent("_qf_Edit_upload");
-      
-       // fill group name
-       $this->type("title", $groupName);
-      
-       // fill description
-       $this->type("description", "Adding new group.");
-
-       // check Access Control
-       $this->click("group_type[1]");
-
-       // check Mailing List
-       $this->click("group_type[2]");
-
-       // select Visibility as Public Pages
-       $this->select("visibility", "value=Public Pages");
-      
-       // Clicking save.
-       $this->click("_qf_Edit_upload");
-       $this->waitForPageToLoad("30000");
-
-       // Is status message correct?
-       $this->assertTrue($this->isTextPresent("The Group '$groupName' has been saved."));
-   }
+        // go for the chicken combo (obviously)
+        //      $this->click("CIVICRM_QFID_chicken_Chicken");
+        
+        // Clicking save.
+        $this->click("_qf_Participant_upload-bottom");
+        $this->waitForPageToLoad("30000");
+        
+        // Is status message correct?
+        $this->assertTrue($this->isTextPresent("Event registration for $displayName has been added"), "Status message didn't show up after saving!");
+        
+        $this->waitForElementPresent( "xpath=//div[@id='Events']//table//tbody/tr[1]/td[8]/span/a[text()='View']" );
+        //click through to the participant view screen
+        $this->click( "xpath=//div[@id='Events']//table//tbody/tr[1]/td[8]/span/a[text()='View']" );
+        $this->waitForElementPresent( "_qf_ParticipantView_cancel-bottom" );
+        
+        // verify participant record
+        $this->webtestVerifyTabularData( array( 'Campaign' => $campaignTitle ) );
+        
+        $this->open( $this->sboxPath . 'civicrm/admin/setting/component?reset=1' );
+        $this->waitForElementPresent("_qf_Component_next-bottom");
+        $this->addSelection("enableComponents-t", "label=CiviCampaign");
+        $this->click("//option[@value='CiviCampaign']");
+        $this->click("remove");
+        $this->click("_qf_Component_next-bottom");
+        $this->waitForPageToLoad("30000");          
+        $this->assertTrue($this->isTextPresent("Your changes have been saved."));
+        
+        $this->open( $this->sboxPath . 'civicrm/event/search?reset=1' );
+        $this->waitForElementPresent( "_qf_Search_refresh" );
+        
+        $this->type( 'sort_name', $firstName );
+        $this->click( "_qf_Search_refresh" );
+        $this->waitForElementPresent( "_qf_Search_next_print" );
+        $this->click( "xpath=//div[@id='participantSearch']/table/tbody/tr/td[11]/span/a[text()='Edit']" );
+        $this->waitForElementPresent( "_qf_Participant_cancel-bottom" );
+        $this->assertTrue($this->isTextPresent("$campaignTitle"));
+    }
+    
+    function registerUrl( )
+    {
+        $this->open( $this->sboxPath . 'civicrm/event/manage?reset=1' );
+        $this->waitForPageToLoad("30000");
+        $eventId = explode( '_', $this->getAttribute("//div[@id='event_status_id']/div[@class='dataTables_wrapper']/table/tbody/tr@id") );
+        return $eventId[1];
+    }
+    
+    function addGroup( $groupName = 'New Group' ) 
+    {
+        $this->open($this->sboxPath . "civicrm/group/add&reset=1");
+        
+        // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
+        // button at the end of this page to show up, to make sure it's fully loaded.
+        $this->waitForElementPresent("_qf_Edit_upload");
+        
+        // fill group name
+        $this->type("title", $groupName);
+        
+        // fill description
+        $this->type("description", "Adding new group.");
+        
+        // check Access Control
+        $this->click("group_type[1]");
+        
+        // check Mailing List
+        $this->click("group_type[2]");
+        
+        // select Visibility as Public Pages
+        $this->select("visibility", "value=Public Pages");
+        
+        // Clicking save.
+        $this->click("_qf_Edit_upload");
+        $this->waitForPageToLoad("30000");
+        
+        // Is status message correct?
+        $this->assertTrue($this->isTextPresent("The Group '$groupName' has been saved."));
+    }
 }
