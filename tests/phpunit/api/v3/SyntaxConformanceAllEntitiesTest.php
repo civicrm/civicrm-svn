@@ -18,12 +18,8 @@ class api_v3_SyntaxConformanceAllEntities extends CiviUnitTestCase
 
         $tmp = civicrm_api ('Entity','Get', array ('version' => 3 ));
         $entities = array ();
-        $i=0;
         foreach ($tmp['values'] as $e) {
           if ($e == "Entity") continue;//Entity is a fake Entity, so we skip it
-
-          echo "entity #$i is $e\n";
-          $i = $i+1;
           $entities [] = array ($e);
           
         }
@@ -38,7 +34,7 @@ class api_v3_SyntaxConformanceAllEntities extends CiviUnitTestCase
     public function testEmptyParam_get ($Entity) {
         $result = civicrm_api ($Entity,'Get',array());
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
-//@TODO need to test that [error_message] starts by "Mandatory key(s) missing from params array"
+        $this->assertContains ("Mandatory key(s) missing from params array", $result['error_message']);
     }
 
 
@@ -64,6 +60,7 @@ print_r ($result);
           // and civicrm_verify_mandatory shout an error message
         } else { // it returns the list of all the entities
 // test if count is set and an >=0
+assertGreaterThanOrEqual
 // test if value is set and an array
         }
     }
