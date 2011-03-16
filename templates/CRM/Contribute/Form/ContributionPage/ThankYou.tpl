@@ -43,7 +43,7 @@
        </td>
     </tr>
     <tr class="crm-contribution-contributionpage-thankyou-form-block-thankyou_footer">
-       <td class="label">{$form.thankyou_footer.label}</td>
+       <td class="label">{$form.thankyou_footer.label}{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='thankyou_footer' id=$contributionPageID}{/if}</td>
        <td class="html-adjust">{$form.thankyou_footer.html}<br />
        	   <span class="description">{ts}Enter link(s) and/or text that you want to appear at the bottom of the thank-you page. You can use this content area to encourage contributors to visit a tell-a-friend page or take some other action.{/ts}</span>
        </td>
