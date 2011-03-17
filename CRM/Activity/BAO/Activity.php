@@ -621,7 +621,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
     /**
      * function to get the list Actvities
      *
-     * @param array reference $params  array of parameters 
+     * @param array   $data            array of parameters 
      * @param int     $offset          which row to start from ?
      * @param int     $rowCount        how many rows to fetch
      * @param object|array  $sort      object or array describing sort order for sql query.
@@ -688,10 +688,15 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
         
         $order = $limit = $groupBy = '';
         $groupBy = " GROUP BY activity_id";
-        if ($sort) {
-            $orderBy = $sort->orderBy();
-            if ( ! empty( $orderBy ) ) {
-                $order = " ORDER BY $orderBy";
+
+        if ( $sort ) {
+            if ( is_a( $sort, 'CRM_Utils_Sort' ) ) {
+                $orderBy = $sort->orderBy();
+                if ( ! empty( $orderBy ) ) {
+                    $order = " ORDER BY $orderBy";
+                }               
+            } elseif( trim( $sort ) ) {
+                $order = " ORDER BY {$sort}";
             }
         }
         
@@ -2203,5 +2208,107 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.n
         
         return $allow;
     }
-    
+
+    /**
+     * This function is a wrapper for ajax activity selector
+     *
+     * @param  array   $params associated array for params record id.
+     *
+     * @return array   $contactActivities associated array of contact activities
+     * @access public
+    */
+    public function getContactActivitySelector( &$params ) {
+        // format the params
+        $offset   = $params['offset'];
+        $rowCount = $params['rowcount'];
+        $isAdmin  = $params['is_admin'];
+        $context  = $params['context'];
+        $sort     = $params['sortBy'];
+        
+        // get contact activities
+        $activities =& CRM_Activity_BAO_Activity::getActivities( $params,
+                                                                 $offset,
+                                                                 $rowCount,
+                                                                 $sort, 
+                                                                 $isAdmin,
+                                                                 null,
+                                                                 $context );
+        
+        // add total
+        $params['total'] = CRM_Activity_BAO_Activity::getActivitiesCount( 
+                                                      $params['contact_id'], 
+                                                      $isAdmin,
+                                                      null, 
+                                                      $context );
+        
+        // format params and add links
+        $contactActivities = array( );
+
+        if ( !empty( $activities ) ) {
+            $activityStatus = CRM_Core_PseudoConstant::activityStatus( );
+            
+            // check logged in url permission
+            // FIX Me:
+            /*
+            require_once 'CRM/Contact/Page/View.php';
+            CRM_Contact_Page_View::checkUserPermission( $this );
+            $permissions = array( $this->_permission );
+            */
+            $permissions = array( );
+            /*
+            if ( CRM_Core_Permission::check( 'delete activities' ) ) {
+                $permissions[] = CRM_Core_Permission::DELETE;
+            }*/
+            
+            $mask = CRM_Core_Action::mask( $permissions );
+            
+            foreach( $activities as $activityId => $values ) {
+                $contactActivities[$activityId]['activity_type'   ] = $values['activity_type'];
+                $contactActivities[$activityId]['subject'         ] = $values['subject'];
+                $contactActivities[$activityId]['source_contact'  ] = CRM_Utils_System::href( $values['source_contact_name'], 'civicrm/contact/view', "reset=1&cid={$values['source_contact_id']}" );
+                                              
+                $contactActivities[$activityId]['target_contact'  ] = implode( ',', $values['target_contact_name'] );
+                $contactActivities[$activityId]['assignee_contact'] = implode( ',', $values['assignee_contact_name'] );
+                $contactActivities[$activityId]['activity_date'   ] = CRM_Utils_Date::customFormat( $values['activity_date_time'] );
+                $contactActivities[$activityId]['status'          ] = $activityStatus[ $values['status_id'] ];
+                
+                // add class to this row if overdue
+                $contactActivities[$activityId]['class'] = '';
+                if ( CRM_Utils_Date::overdue( CRM_Utils_Array::value( 'activity_date_time', $values ) ) 
+                     && CRM_Utils_Array::value( 'status_id', $values ) == 1 ) {
+                    $contactActivities[$activityId]['class'] = 'status-overdue';
+                } else {
+                    $contactActivities[$activityId]['class'] = 'status-ontime';
+                }
+                
+                // build links
+                $contactActivities[$activityId]['links'] = '';
+                $accessMailingReport = false;
+                if ( CRM_Utils_Array::value( 'mailingId', $values ) ) {
+                    $accessMailingReport = true; 
+                }
+                
+                require_once 'CRM/Activity/Selector/Activity.php';
+                $actionLinks = CRM_Activity_Selector_Activity::actionLinks( 
+                                                   CRM_Utils_Array::value( 'activity_type_id', $values ),
+                                                   CRM_Utils_Array::value( 'source_record_id', $values ),
+                                                   $accessMailingReport,
+                                                   CRM_Utils_Array::value( 'activity_id', $values ) );
+
+                $actionMask  = array_sum(array_keys($actionLinks)) & $mask;
+               
+                $contactActivities[$activityId]['links'] = CRM_Core_Action::formLink( $actionLinks,
+                                                            $actionMask,
+                                                            array('id'     => $values['activity_id'],
+                                                                  'cid'    => $params['contact_id'],
+                                                                  'cxt'    => $context,
+                                                                  'caseid' => CRM_Utils_Array::value( 'case_id', $values ) 
+                                                                  ));
+               
+                
+            }
+        }
+         
+        return $contactActivities;
+    }  
 }

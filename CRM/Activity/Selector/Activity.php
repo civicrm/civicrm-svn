@@ -109,12 +109,12 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
      * @access public
      *
      */
-    function actionLinks( $activityTypeId, 
-                          $sourceRecordId = null, 
-                          $accessMailingReport = false, 
-                          $activityId = null, 
-                          $key = null,
-                          $compContext = null ) 
+    public function actionLinks( $activityTypeId, 
+                                 $sourceRecordId = null, 
+                                 $accessMailingReport = false, 
+                                 $activityId = null, 
+                                 $key = null,
+                                 $compContext = null ) 
     {
         static $activityActTypes   = null;
 
@@ -197,14 +197,15 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
         }
         
         $qsDelete  = "atype={$activityTypeId}&action=delete&reset=1&id=%%id%%&cid=%%cid%%&context=%%cxt%%{$extraParams}";
-        
+        /*
+        // Not sure if we need this code
         if ( $this->_context == 'case' ) {
             $qsView   .= "&caseid=%%caseid%%";
             $qsDelete .= "&caseid=%%caseid%%";
             if ( $showUpdate ) {
                 $qsUpdate .= "&caseid=%%caseid%%";
             }
-        }
+        }*/
         
         $actionLinks = array( );
         
@@ -247,6 +248,8 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
                                                                       'title'    => ts('Delete Activity') ) );
         }
         
+        /*
+        // Not sure if we need this code
         if ( $this->_context == 'case' ) {
             $qsDetach = "atype={$activityTypeId}&action=detach&reset=1&id=%%id%%&cid=%%cid%%&context=%%cxt%%&caseid=%%caseid%%{$extraParams}";
             $actionLinks += array ( CRM_Core_Action::DETACH => array( 'name'     => ts('Detach'),
@@ -254,6 +257,7 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
                                                                       'qs'       => $qsDetach,
                                                                       'title'    => ts('Detach Activity') ) );
         }
+        */
         
         if ( $accessMailingReport ) {
             $actionLinks += array ( CRM_Core_Action::BROWSE => array( 'name'     => ts('Mailing Report'),

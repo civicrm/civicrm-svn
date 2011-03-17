@@ -168,6 +168,8 @@ class CRM_Activity_Page_Tab extends CRM_Core_Page
     {
         $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
         $this->assign( 'contactId', $this->_contactId );
+        //FIX ME: need to fix this conflict
+        $this->assign( 'contactID', $this->_contactId );
 
         // check logged in url permission
         require_once 'CRM/Contact/Page/View.php';
