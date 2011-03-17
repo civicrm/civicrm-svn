@@ -398,10 +398,42 @@ class CRM_Core_I18n_Schema
             $individualNamesTrigger[] = "IF NEW.sort_name_{$loc}    = '' THEN SET NEW.sort_name_{$loc}    = @email; END IF;";
         }
         
-        $beforeUpdateNamesTrigger = implode(' ', $namesTrigger) . implode(' ', $individualNamesTrigger );
-        // ...for UPDATE it's a separate trigger, for INSERT it has to be merged into the below, general one
-        $queries[] = "DROP TRIGGER IF EXISTS civicrm_contact_before_update";
-        $queries[] = "CREATE TRIGGER civicrm_contact_before_update BEFORE UPDATE ON civicrm_contact FOR EACH ROW BEGIN " . $beforeUpdateNamesTrigger . ' END';
+        // CRM-7786: there are cases where the INSERT happens early, so UPDATEs need to cater for NULL *_xx_YY fields
+        // FIXME: merge this and the below foreach loops
+        foreach ($columns as $table => $hash) {
+            $queries[] = "DROP TRIGGER IF EXISTS {$table}_before_update";
+
+            $trigger = array();
+            $trigger[] = "CREATE TRIGGER {$table}_before_update BEFORE UPDATE ON {$table} FOR EACH ROW BEGIN";
+
+            if ($locales) {
+                foreach ($hash as $column => $_) {
+                    if ($table == 'civicrm_contact' and ($column == 'display_name' or $column == 'sort_name')) {
+                        // {display,sort}_name are handled by $individualNamesTrigger and shouldn't be copied between languages
+                        continue;
+                    }
+                    $trigger[] = "IF NEW.{$column}_{$locale} IS NOT NULL THEN";
+                    foreach ($locales as $old) {
+                        $trigger[] = "IF NEW.{$column}_{$old} IS NULL THEN SET NEW.{$column}_{$old} = NEW.{$column}_{$locale}; END IF;";
+                    }
+                    foreach ($locales as $old) {
+                        $trigger[] = "ELSEIF NEW.{$column}_{$old} IS NOT NULL THEN";
+                        foreach (array_merge($locales, array($locale)) as $loc) {
+                            if ($loc == $old) continue;
+                            $trigger[] = "IF NEW.{$column}_{$loc} IS NULL THEN SET NEW.{$column}_{$loc} = NEW.{$column}_{$old}; END IF;";
+                        }
+                    }
+                    $trigger[] = 'END IF;';
+                }
+            }
+
+            if ($table == 'civicrm_contact') {
+                $trigger = array_merge($trigger, $namesTrigger, $individualNamesTrigger);
+            }
+            $trigger[] = 'END';
+
+            $queries[] = implode(' ', $trigger);
+        }
         
         // take care of the ON INSERT triggers
         foreach ($columns as $table => $hash) {
