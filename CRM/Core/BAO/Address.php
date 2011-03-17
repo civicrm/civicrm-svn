@@ -926,7 +926,7 @@ SELECT is_primary,
         if ( !$masterAddressId ) {
             return;
         }
-        
+        require_once 'CRM/Contact/BAO/Contact.php';
         // get the contact type of contact being edited / created
         $currentContactType = CRM_Contact_BAO_Contact::getContactType( $params['contact_id'] );      
         $currentContactId   = $params['contact_id'];

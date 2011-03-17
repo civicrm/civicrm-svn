@@ -89,7 +89,7 @@ require_once 'api/v3/utils.php';
  *    <li>wysiwygEditor</li>
  *  </ul>
  */
-function civicrm_api3_constant_get($params = array())
+function civicrm_api3_constant_get($params)
 {
   _civicrm_api3_initialize(true);
   try{

@@ -27,13 +27,13 @@
 */
 
 /**
- * File for the CiviCRM APIv3 phone functions
+ * File for the CiviCRM APIv3 website functions
  *
  * @package CiviCRM_APIv3
- * @subpackage API_Phone
+ * @subpackage API_Website
  * 
  * @copyright CiviCRM LLC (c) 2004-2010
- * @version $Id: Phone.php 2011-03-16 ErikHommel $
+ * @version $Id: Website.php 2011-03-16 ErikHommel $
  */
 
 /**
@@ -42,36 +42,30 @@
 require_once 'api/v3/utils.php';
 
 /**
- *  Add an Phone for a contact
+ *  Add an Website for a contact
  * 
  * Allowed @params array keys are:
- * {@schema Core/Phone.xml}
- * {@example PhoneCreate.php}
- * @return array of newly created phone property values.
+ * {@schema Core/Website.xml}
+ * {@example WebsiteCreate.php}
+ * @return array of newly created website property values.
  * @access public
  */
-function civicrm_api3_phone_create( $params ) 
+function civicrm_api3_website_create( &$params ) 
 {
   _civicrm_api3_initialize( true );
   try {
     civicrm_api3_verify_one_mandatory ($params, null, array ('contact_id', 'id'));
-	/*
-	 * if is_primary is not set in params, set default = 0
-	 */
-	if ( !array_key_exists('is_primary', $params )) {
-		$params['is_primary'] = 0; 
-	}	
-	
-    require_once 'CRM/Core/BAO/Phone.php';
-    $phoneBAO = CRM_Core_BAO_Phone::add($params);
     
-	 if ( is_a( $phoneBAO, 'CRM_Core_Error' )) {
-		 return civicrm_api3_create_error( "Phone is not created or updated ");
+    require_once 'CRM/Core/BAO/Website.php';
+
+    $websiteBAO = CRM_Core_BAO_Website::add($params);
+    
+	 if ( is_a( $websiteBAO, 'CRM_Core_Error' )) {
+		 return civicrm_api3_create_error( "Website is not created or updated ");
 	 } else {
 		 $values = array( );
-		 unset($phoneBAO->location_type_id);
-		 _civicrm_api3_object_to_array($phoneBAO, $values[$phoneBAO->id]);
-		 return civicrm_api3_create_success($values, $params,$phoneBAO);
+		 _civicrm_api3_object_to_array($websiteBAO, $values);
+		 return civicrm_api3_create_success($values, $params);
 	 }
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
@@ -80,33 +74,32 @@ function civicrm_api3_phone_create( $params )
   }
 }
 /**
- * Deletes an existing Phone
+ * Deletes an existing Website
  *
  * @param  array  $params
  *
- * {@schema Core/Phone.xml}
- * {@example PhoneDelete.php 0}
+ * {@schema Core/Website.xml}
+ * {@example WebsiteDelete.php 0}
  * @return boolean | error  true if successfull, error otherwise
  * @access public
  */
-function civicrm_api3_phone_delete( $params ) 
+function civicrm_api3_website_delete( &$params ) 
 {
   _civicrm_api3_initialize( true );
   try {
     civicrm_api3_verify_mandatory ($params,null,array ('id'));
-    $phoneID = CRM_Utils_Array::value( 'id', $params );
+    $websiteID = CRM_Utils_Array::value( 'id', $params );
 
-    require_once 'CRM/Core/DAO/Phone.php';
-    $phoneDAO = new CRM_Core_DAO_Phone();
-    $phoneDAO->id = $phoneID;
-    if ( $phoneDAO->find( ) ) {
-		while ( $phoneDAO->fetch() ) {
-			$phoneDAO->delete();
-			return civicrm_api3_create_success($phoneDAO->id,$params,$phoneDAO);
+    require_once 'CRM/Core/DAO/Website.php';
+    $websiteDAO = new CRM_Core_DAO_Website();
+    $websiteDAO->id = $websiteID;
+    if ( $websiteDAO->find( ) ) {
+		while ( $websiteDAO->fetch() ) {
+			$websiteDAO->delete();
+			return civicrm_api3_create_success();
 		}
 	} else {
-		return civicrm_api3_create_error( 'Could not delete phone with id '.$phoneID);
-		//recoverable fatal error: Object of class stdClass could not be converted to string in /home/www-home/apps/civicrm-3.3.5/civicrm/api/v3/Phone.php on line 107.
+		return civicrm_api3_create_error( 'Could not delete website with id '.$websiteID);
 	}
     
   } catch (Exception $e) {
@@ -116,44 +109,44 @@ function civicrm_api3_phone_delete( $params )
 }
 
 /**
- * Retrieve one or more phones 
+ * Retrieve one or more websites 
  *
  * @param  mixed[]  (reference ) input parameters
  * 
- * {@schema Core/Phone.xml}
- * {@example PhoneDelete.php 0}
+ * {@schema Core/Website.xml}
+ * {@example WebsiteDelete.php 0}
  * @param  array $params  an associative array of name/value pairs.
  *
- * @return  array details of found phones else error
+ * @return  array details of found websites else error
  * @access public
  */
 
-function civicrm_api3_phone_get($params) 
+function civicrm_api3_website_get(&$params) 
 {   
   _civicrm_api3_initialize(true );
   try {
     civicrm_api3_verify_one_mandatory($params, null, 
-		array('id', 'contact_id', 'location_type_id', 'phone_type_id'));
+		array('id', 'contact_id', 'website_type_id'));
 	
-    require_once 'CRM/Core/BAO/Phone.php';
-    $phoneBAO = new CRM_Core_BAO_Phone();
-    $fields = array_keys($phoneBAO->fields());
+    require_once 'CRM/Core/BAO/Website.php';
+    $websiteBAO = new CRM_Core_BAO_Website();
+    $fields = array_keys($websiteBAO->fields());
 
     foreach ( $fields as $name) {
         if (array_key_exists($name, $params)) {
-            $phoneBAO->$name = $params[$name];
+            $websiteBAO->$name = $params[$name];
         }
     }
     
-    if ( $phoneBAO->find() ) {
-      $phones = array();
-      while ( $phoneBAO->fetch() ) {
-        CRM_Core_DAO::storeValues( $phoneBAO, $phone );
-        $phones[$phoneBAO->id] = $phone;
+    if ( $websiteBAO->find() ) {
+      $websites = array();
+      while ( $websiteBAO->fetch() ) {
+        CRM_Core_DAO::storeValues( $websiteBAO, $website );
+        $websites[$websiteBAO->id] = $website;
       }
-      return civicrm_api3_create_success($phones,$params,$phoneBAO);
+      return civicrm_api3_create_success($websites,$params,$websiteBAO);
     } else {
-      return civicrm_api3_create_success(array(),$params,$phoneBAO);
+      return civicrm_api3_create_success(array(),$params,$websiteBAO);
     }
 				
   } catch (PEAR_Exception $e) {

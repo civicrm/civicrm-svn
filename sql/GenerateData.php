@@ -262,7 +262,14 @@ class CRM_GCD {
 
     private function _getRandomElement(&$array1)
     {
-        return $array1[mt_rand(1, count($array1))-1];
+        if ( empty($array1) ) {
+            return;
+        }
+        $count = count($array1);
+        if ( $count > 1 ) {
+            $count--;
+        }
+        return $array1[mt_rand(1, $count)];
     }
     
     private function _getRandomIndex(&$array1)

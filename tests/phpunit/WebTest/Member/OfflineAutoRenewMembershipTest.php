@@ -88,6 +88,8 @@ class WebTest_Member_OfflineAutoRenewMembershipTest extends CiviSeleniumTestCase
       $this->waitForElementPresent('payment_processor_id');
       $this->select("payment_processor_id",  "label={$processorName}");
       $this->select("membership_type_id[1]", "label=General");
+      $this->click("source");
+      $this->type("source", "Online Membership: Admin Interface");
 
       $this->click("auto_renew");
 

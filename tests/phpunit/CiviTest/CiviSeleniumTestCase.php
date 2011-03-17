@@ -461,5 +461,240 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       
       return $params;
   }
-  
+
+  /**
+   * Create new online contribution page w/ user specified params or defaults. 
+   *
+   * @param User can define pageTitle, hash and rand values for later data verification
+   *
+   * @return $pageId of newly created online contribution page.
+   */
+  function webtestAddContributionPage( $hash, $rand, $pageTitle, $processorType = '', $processorName = '', $payLater = true, $onBehalf = true,
+                                       $pledges = true, $recurring = false, $memberships = true, $friend = true, $profiles = true, $premiums = true,
+                                       $widget = true, $pcp = true ) 
+  {
+      if ( !$pageTitle ) {
+          $pageTitle = 'Donate Online ' . $hash;
+      }
+      if ( !$hash ) {
+          $hash = substr(sha1(rand()), 0, 7);
+      }
+      if ( !$rand ) {
+          $rand = 2 * rand(2, 50);
+      }
+
+      // Create a new payment processor if requested
+      if ( $processorType && $processorName) {
+          $this->webtestAddPaymentProcessor( $processorName, $processorType );                  
+      }
+
+      // go to the New Contribution Page page
+      $this->open($this->sboxPath . 'civicrm/admin/contribute?action=add&reset=1');        
+      $this->waitForPageToLoad();
+
+      // fill in step 1 (Title and Settings)
+      $this->type('title', $pageTitle );
+      $this->select('contribution_type_id', 'value=1');
+
+      if ( $onBehalf ) {
+          $this->click('is_organization');
+          $this->type('for_organization', "On behalf $hash");
+          $this->click('CIVICRM_QFID_2_4');          
+      }
+
+      $this->fillRichTextField( "intro_text", 'This is introductory message for ' . $pageTitle,'CKEditor' );
+      $this->fillRichTextField( "footer_text", 'This is footer message for ' . $pageTitle,'CKEditor' );
+      
+      $this->type('goal_amount', 10 * $rand);
+
+      // FIXME: handle Start/End Date/Time
+
+      $this->click('honor_block_is_active');
+      $this->type('honor_block_title', "Honoree Section Title $hash");
+      $this->type('honor_block_text',  "Honoree Introductory Message $hash");
+
+      // go to step 2
+      $this->click('_qf_Settings_next');
+      $this->waitForElementPresent("_qf_Amount_next-bottom"); 
+
+      // fill in step 2 (Processor, Pay Later, Amounts)
+      if ( $processorType && $processorName) {
+          // select newly created processor if required
+          $this->select("payment_processor_id",  "label={$processorName}");
+      }
+
+      if ( $payLater ) {
+          $this->click('is_pay_later');
+          $this->type('pay_later_text',    "Pay later label $hash");
+          $this->type('pay_later_receipt', "Pay later instructions $hash");            
+      }
+
+      if ( $pledges ) {
+          $this->click('is_pledge_active');
+          $this->click('pledge_frequency_unit[week]');
+          $this->click('is_pledge_interval');
+          $this->type('initial_reminder_day',    3);
+          $this->type('max_reminders',           2);
+          $this->type('additional_reminder_day', 1);            
+      } else if ( $recurring ) {
+          $this->click("is_recur");
+          // only monthly frequency unit enabled
+          $this->click("recur_frequency_unit[day]");
+          $this->click("recur_frequency_unit[week]");
+          $this->click("recur_frequency_unit[year]");
+      }
+
+      $this->click('is_allow_other_amount');
+      $this->type('min_amount', $rand / 2);
+      $this->type('max_amount', $rand * 2);
+
+      $this->type('label_1', "Label $hash");
+      $this->type('value_1', "$rand");
+
+      $this->click('_qf_Amount_next');
+      $this->waitForElementPresent("_qf_Amount_next-bottom"); 
+      $this->waitForPageToLoad("30000");
+      $text = "'Amount' information has been saved.";
+      $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
+
+      if ( $memberships ) {
+          // go to step 3 (memberships)
+          $this->click("link=Memberships");        
+          $this->waitForElementPresent("_qf_MembershipBlock_next-bottom");            
+          // fill in step 3 (Memberships)
+          $this->click('is_active');
+          $this->type('new_title',     "Title - New Membership $hash");
+          $this->type('renewal_title', "Title - Renewals $hash");
+
+          // FIXME: handle Introductory Message - New Memberships/Renewals
+          $this->click('membership_type[2]');
+
+          $this->click('is_required');
+
+          $this->click('_qf_MembershipBlock_next');
+          $this->waitForPageToLoad("30000");
+          $this->waitForElementPresent("_qf_MembershipBlock_next-bottom");
+          $text = "'MembershipBlock' information has been saved.";
+          $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
+      }
+
+      // go to step 4 (thank-you and receipting)
+      $this->click("link=Receipt");
+      $this->waitForElementPresent("_qf_ThankYou_next-bottom");
+
+      // fill in step 4
+      $this->type('thankyou_title',     "Thank-you Page Title $hash");
+      // FIXME: handle Thank-you Message/Page Footer
+      $this->type('receipt_from_name',  "Receipt From Name $hash");
+      $this->type('receipt_from_email', "$hash@example.org");
+      $this->type('receipt_text',       "Receipt Message $hash");
+      $this->type('cc_receipt',         "$hash@example.net");
+      $this->type('bcc_receipt',        "$hash@example.com");
+
+      $this->click('_qf_ThankYou_next');
+      $this->waitForElementPresent("_qf_ThankYou_next-bottom");
+      $this->waitForPageToLoad("30000");
+      $text = "'ThankYou' information has been saved.";
+      $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
+
+      if ( $friend ) {
+          // fill in step 5 (Tell a Friend)
+          $this->click("link=Tell a Friend");
+          $this->waitForElementPresent("_qf_Contribute_next-bottom"); 
+          $this->click('tf_is_active');
+          $this->type('tf_title',          "TaF Title $hash");
+          $this->type('intro',             "TaF Introduction $hash");
+          $this->type('suggested_message', "TaF Suggested Message $hash");
+          $this->type('general_link',      "TaF Info Page Link $hash");
+          $this->type('thankyou_title',    "TaF Thank-you Title $hash");
+          $this->type('thankyou_text',     "TaF Thank-you Message $hash");
+
+          $this->click('_qf_Contribute_next');
+          $this->waitForElementPresent("_qf_Contribute_next-bottom"); 
+          $this->waitForPageToLoad("30000");
+          $text = "'Friend' information has been saved.";
+          $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
+      }
+
+      if ( $profiles ) {
+          // fill in step 6 (Include Profiles)
+          $this->click("link=Profiles");
+          $this->waitForElementPresent("_qf_Custom_next-bottom");
+          $this->select('custom_pre_id',  'value=1');
+          $this->select('custom_post_id', 'value=7');
+
+          $this->click('_qf_Custom_next');
+          $this->waitForElementPresent("_qf_Custom_next-bottom");
+
+          $this->waitForPageToLoad("30000");
+          $text = "'Custom' information has been saved.";
+          $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
+
+      }
+
+      if ( $premiums ) {
+          // fill in step 7 (Premiums)
+          $this->click("link=Premiums");
+          $this->waitForElementPresent("_qf_Premium_next-bottom");
+          $this->click('premiums_active');
+          $this->type('premiums_intro_title',   "Prem Title $hash");
+          $this->type('premiums_intro_text',    "Prem Introductory Message $hash");
+          $this->type('premiums_contact_email', "$hash@example.info");
+          $this->type('premiums_contact_phone', rand(100000000, 999999999));
+          $this->click('premiums_display_min_contribution');
+
+          $this->click('_qf_Premium_next');
+          $this->waitForElementPresent("_qf_Premium_next-bottom");
+
+          $this->waitForPageToLoad("30000");
+          $text = "'Premium' information has been saved.";
+          $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
+      }
+
+
+      if ( $widget ) {
+          // fill in step 8 (Widget Settings)
+          $this->click("link=Widgets");        
+          $this->waitForElementPresent("_qf_Widget_next-bottom");
+
+          $this->click('is_active');
+          $this->type('url_logo',     "URL to Logo Image $hash");
+          $this->type('button_title', "Button Title $hash");
+          // Type About text in ckEditor (fieldname, text to type, editor)
+          $this->fillRichTextField( "about", 'This is for ' . $pageTitle,'CKEditor' );
+
+          $this->click('_qf_Widget_next');
+          $this->waitForElementPresent("_qf_Widget_next-bottom");
+
+          $this->waitForPageToLoad("30000");            
+          $text = "'Widget' information has been saved.";
+          $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
+      }
+
+      if ( $pcp ) {
+          // fill in step 9 (Enable Personal Campaign Pages)
+          $this->click("link=Personal Campaigns");
+          $this->waitForElementPresent("_qf_PCP_next-bottom");
+
+          $this->click('pcp_active');
+          $this->click('is_approval_needed');
+          $this->type('notify_email', "$hash@example.name");
+          $this->select('supporter_profile_id', 'value=2');
+          $this->type('tellfriend_limit', 7);
+          $this->type('link_text', "'Create Personal Campaign Page' link text $hash");
+
+          $this->click('_qf_PCP_next');
+          $this->waitForElementPresent("_qf_PCP_next-bottom");
+          $this->waitForPageToLoad("30000");
+          $text = "'PCP' information has been saved.";
+          $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
+      }
+
+      // parse URL to grab the contribution page id
+      $elements = $this->parseURL( );
+      $pageId = $elements['queryString']['id'];
+
+      // pass $pageId back to any other tests that call this class
+      return $pageId;      
+  }  
 }

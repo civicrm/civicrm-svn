@@ -55,7 +55,8 @@ class CRM_Report_Form_Contribute_PCP extends CRM_Report_Form {
                                        'no_display' => true ) ),
                          'filters' =>             
                          array( 'sort_name' => 
-                                array( 'title'      => ts( 'Contact Name' ),
+                                array( 'title'      => ts( 'Supporter Name' ),
+                                       'type'       => CRM_Utils_Type::T_STRING,
                                        'operator'   => 'like' ),
                                 'id'        => 
                                 array( 'title'      => ts( 'Contact ID' ),
@@ -71,7 +72,9 @@ class CRM_Report_Form_Contribute_PCP extends CRM_Report_Form {
                                        'default' => true ), ),
                          'filters'      => 
                          array( 'page_title'  => 
-                                array( 'title' => ts( 'Page Title' ) ) ),
+                                array( 'title' => ts( 'Page Title' ),
+                                       'name'  => 'title',
+                                       'type'  => CRM_Utils_Type::T_STRING ) ),
                          'grouping'     => 'pcp-fields',
                          ),
                   
@@ -87,7 +90,8 @@ class CRM_Report_Form_Contribute_PCP extends CRM_Report_Form {
                                        'default' => true ), ),
                          'filters' =>
                           array( 'title' =>
-                                 array( 'title' => ts( 'Campaign Title' ), ), ),
+                                 array( 'title' => ts( 'Campaign Title' ),
+                                        'type'  => CRM_Utils_Type::T_STRING ), ),
                          'grouping'      => 'pcp-fields',
                          ),
                   

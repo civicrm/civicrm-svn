@@ -34,4 +34,5 @@
     {include file="CRM/Activity/Form/Activity.tpl"}
 {else}
     {include file="CRM/Activity/Selector/Activity.tpl"}
+    {*include file="CRM/Activity/Selector/Selector.tpl"*}
 {/if}
