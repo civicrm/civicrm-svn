@@ -18,26 +18,16 @@ class api_v3_SyntaxConformanceAllEntities extends CiviUnitTestCase
        parent::setUp();
        
        $this->toBeImplemented['get'] = array ('UFGroup','UFField','CustomGroup','ParticipantPayment');
-       $this->toBeImplemented['create'] = array ('Constant','SurveyRespondant','OptionValue','OptionGroup','UFMatch','MailerGroup','Mailer','');
-       $this->toBeImplemented['delete'] = array ();
+       $this->toBeImplemented['create'] = array ('SurveyRespondant','OptionValue','OptionGroup','UFMatch');
+       $this->toBeImplemented['delete'] = array ('MembershipPayment','OptionValue','OptionGroup','SurveyRespondant','UFJoin','UFMatch');
     }
 
     function tearDown()    {
     }
 
 
-    public static function entities_get () {
-      // all the entities, beside the ones flagged
-      return api_v3_SyntaxConformanceAllEntities::entities (api_v3_SyntaxConformanceAllEntities::toBeSkipped_get (true));
-    }
-
-    public static function entities_create () {
-      // all the entities, beside the ones flagged
-      return api_v3_SyntaxConformanceAllEntities::entities (api_v3_SyntaxConformanceAllEntities::toBeSkipped_create (true));
-    }
-
     public static function entities($skip = NULL ) {
-//        return array(array ('Constant'), array ('Group')  ); // uncomment to make a quicker run when adding a test
+        //return array(array ('Tag'), array ('Group')  ); // uncomment to make a quicker run when adding a test
         $tmp = civicrm_api ('Entity','Get', array ('version' => 3 ));
         if (!is_array ($skip)) {
           $skip = array();
@@ -49,6 +39,19 @@ class api_v3_SyntaxConformanceAllEntities extends CiviUnitTestCase
           
         }
         return $entities;
+    }
+
+    public static function entities_get () {
+      // all the entities, beside the ones flagged
+      return api_v3_SyntaxConformanceAllEntities::entities (api_v3_SyntaxConformanceAllEntities::toBeSkipped_get (true));
+    }
+
+    public static function entities_create () {
+      return api_v3_SyntaxConformanceAllEntities::entities (api_v3_SyntaxConformanceAllEntities::toBeSkipped_create (true));
+    }
+
+    public static function entities_delete () {
+      return api_v3_SyntaxConformanceAllEntities::entities (api_v3_SyntaxConformanceAllEntities::toBeSkipped_delete (true));
     }
 
     public static function toBeSkipped_get ($sequential = false) {
@@ -71,6 +74,18 @@ class api_v3_SyntaxConformanceAllEntities extends CiviUnitTestCase
       }
       $entities = array ();
       foreach ($entitiesWithoutCreate as $e) {
+        $entities [] = array ($e);
+      }
+      return $entities;
+    }
+
+    public static function toBeSkipped_delete ($sequential = false) {
+      $entitiesWithout = array ('Mailer','MailerGroup','Constant','Entity','Location','Domain');
+      if ($sequential === true) {
+        return $entitiesWithout;
+      }
+      $entities = array ();
+      foreach ($entitiesWithout as $e) {
         $entities [] = array ($e);
       }
       return $entities;
@@ -199,5 +214,49 @@ print_r ($result);
 
 /** testing the _getFields **/ 
 /** testing the _delete **/ 
+    /**
+     * @dataProvider toBeSkipped_delete
+       entities that don't need a delete action
+     */
+    public function testNotImplemented_delete ($Entity) {
+        $result = civicrm_api ($Entity,'Delete',array('version' => 3));
+        $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
+         $this->assertContains ("API ($Entity,Delete) does not exist",$result['error_message']);
+    }
+
+    /**
+     * @dataProvider entities
+     * @expectedException PHPUnit_Framework_Error
+     */
+    public function testWithoutParam_delete ($Entity) {
+        // should delete php complaining that a param is missing
+        $result = civicrm_api ($Entity,'Delete');
+    }
+
+
+    /**
+     * @dataProvider entities_delete
+     */
+    public function testEmptyParam_delete ($Entity) {
+
+        if (in_array ($Entity,$this->toBeImplemented['delete'])) {
+          //$this->markTestSkipped("civicrm_api3_{$Entity}_delete to be implemented");
+          $this->markTestIncomplete("civicrm_api3_{$Entity}_delete to be implemented");
+          return;
+        }
+        $result = civicrm_api ($Entity,'Delete',array());
+        $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
+        $this->assertContains ("Mandatory key(s) missing from params array", $result['error_message']);
+    }
+
+    /**
+     * @dataProvider entities
+     */
+    public function testDeleteWrongTypeParamTag_delete () {
+        $result = civicrm_api ("Tag",'Delete','this is not a string');
+        $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
+        $this->assertEquals ("Input variable `params` is not an array",$result['error_message']);
+    }
+
 
 }
