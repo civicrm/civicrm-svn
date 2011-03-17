@@ -280,13 +280,13 @@ class WebTest_Campaign_MailingTest extends CiviSeleniumTestCase {
         $this->assertTrue($this->isTextPresent("Members of $groupName"));
         
         // check for 100% delivery
-        $this->assertTrue($this->isTextPresent("1 (100.00%)"));
+        $this->assertTrue($this->isTextPresent("2 (100.00%)"));
         
         // verify intended recipients
-        $this->verifyText("xpath=//table//tr[td/a[text()='Intended Recipients']]/descendant::td[2]", preg_quote("1"));
+        $this->verifyText("xpath=//table//tr[td/a[text()='Intended Recipients']]/descendant::td[2]", preg_quote("2"));
         
         // verify successful deliveries
-        $this->verifyText("xpath=//table//tr[td/a[text()='Successful Deliveries']]/descendant::td[2]", preg_quote("1 (100.00%)"));
+        $this->verifyText("xpath=//table//tr[td/a[text()='Successful Deliveries']]/descendant::td[2]", preg_quote("2 (100.00%)"));
         
         // verify status
         $this->verifyText("xpath=//table//tr[td[1]/text()='Status']/descendant::td[2]", preg_quote("Complete"));
@@ -297,6 +297,8 @@ class WebTest_Campaign_MailingTest extends CiviSeleniumTestCase {
         // verify mailing subject
         $this->verifyText("xpath=//table//tr[td[1]/text()='Subject']/descendant::td[2]", preg_quote("Test subject $mailingName for Webtest"));
         
+        $this->verifyText( "xpath=//table//tr[td[1]/text()='Campaign']/descendant::td[2]", preg_quote("$campaignTitle") );
+
         //---- check for delivery detail--
         
         $this->click("link=Successful Deliveries");
@@ -307,8 +309,6 @@ class WebTest_Campaign_MailingTest extends CiviSeleniumTestCase {
         
         // verify email
         $this->assertTrue($this->isTextPresent("mailino$firstName@mailson.co.in"));
-        
-        $this->assertTrue( $this->isTextPresent( "$campaignTitle" ) );
         //------end delivery verification---------
     }
     
