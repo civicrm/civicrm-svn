@@ -7,29 +7,58 @@ class api_v3_SyntaxConformanceAllEntities extends CiviUnitTestCase
     protected $_apiversion;
 
     function setUp()    {
-        parent::setUp();
+       parent::setUp();
     }
 
     function tearDown()    {
     }
 
-    public static function entities() {
-//        return array(array ('Tag'), array ('Group')  );
 
+    public static function entities_get () {
+      // all the entities, beside the ones flagged
+      return api_v3_SyntaxConformanceAllEntities::entities (api_v3_SyntaxConformanceAllEntities::not_implemented_get_apis (true));
+    }
+
+    public static function entities($skip = array () ) {
+//        return array(array ('Tag'), array ('Group')  );
         $tmp = civicrm_api ('Entity','Get', array ('version' => 3 ));
+        $tmp = array_diff ($tmp['values'],$skip);
         $entities = array ();
-        foreach ($tmp['values'] as $e) {
-          if ($e == "Entity") continue;//Entity is a fake Entity, so we skip it
+        foreach ($tmp as $e) {
+//          if ($e == "Entity") continue;//Entity is a fake Entity, so we skip it
           $entities [] = array ($e);
           
         }
         return $entities;
-        return array(array ('Tag'), array ('Group')  );
     }
+
+    public static function not_implemented_get_apis ($sequential = false) {
+      $entitiesWithoutGet = array ('Mailer','MailerGroup','Location');
+      if ($sequential === true) {
+        return $entitiesWithoutGet;
+      }
+      $entities = array ();
+      foreach ($entitiesWithoutGet as $e) {
+        $entities [] = array ($e);
+      }
+      return $entities;
+    }
+
+
+
 
 /** testing the _get **/ 
     /**
-     * @dataProvider entities
+     * @dataProvider not_implemented_get_apis
+     */
+    public function testNotImplemented_get ($Entity) {
+        $result = civicrm_api ($Entity,'Get',array('version' => 3));
+        $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
+         $this->assertContains ("API ($Entity,Get) does not exist",$result['error_message']);
+    }
+
+    /**
+     * @dataProvider entities_get
      */
     public function testEmptyParam_get ($Entity) {
         $result = civicrm_api ($Entity,'Get',array());
