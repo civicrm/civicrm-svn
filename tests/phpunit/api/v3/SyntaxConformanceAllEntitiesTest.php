@@ -158,33 +158,43 @@ class api_v3_SyntaxConformanceAllEntities extends CiviUnitTestCase
         }
     }
 
-/*
-
-    public function testSimpleTag_get () {
-        $result = civicrm_api ($this->EntityName,'Get',array('version' => 3));
-print_r ($result);
-        if ($result['is_error']) {
-          // that's an Entity that needs at least one filter
-          // and civicrm_verify_mandatory shout an error message
-        } else { // it returns the list of all the entities
-// test if count is set and an >=0
-assertGreaterThanOrEqual
-// test if value is set and an array
+    /**
+     * @dataProvider entities_get
+     */
+    public function testAcceptsOnlyID_get ($Entity) {
+        $nonExistantID = 30867307034; // big random number. fun fact: if you multiply it by pi^e, the result is another random number, but bigger ;)
+        if (in_array ($Entity,$this->toBeImplemented['get'])) {
+          return;
         }
+
+        $result = civicrm_api ($Entity,'Get',array('version' => 3, 'id' => $nonExistantID ));
+        if ($result['is_error']) {
+          $this->assertEquals("only id should be enough", $result['error_message']);//just to get a clearer message in the log
+        }
+        $this->assertEquals(0, $result['count']);
     }
 
-    public function testFetchByIDTag_get () {
-        $result = civicrm_api ($this->EntityName,'Get',array('version' => 3, 'debug' => true, 'id' => 0 ));
-print_r ($result);
-        if ($result['is_error']) {
-          // that's an Entity that needs at least one filter
-          // and civicrm_verify_mandatory shout an error message
-        } else { // it returns the list of all the entities
-// test if count is set and an >=0
-// test if value is set and an array
+
+    /**
+     * @dataProvider entities_get
+     */
+    public function testNonExistantID_get ($Entity) {
+        $nonExistantID = 30867307034; // cf testAcceptsOnlyID_get
+        if (in_array ($Entity,$this->toBeImplemented['get'])) {
+          return;
         }
+
+        $result = civicrm_api ($Entity,'Get',array('version' => 3, 'id' => $nonExistantID ));
+
+        if ($result['is_error']) { // redondant with testAcceptsOnlyID_get
+          return;
+        }
+
+
+        $this->assertArrayHasKey('version', $result);
+        $this->assertEquals(3, $result['version']);
+        $this->assertEquals(0, $result['count']);
     }
-*/
 
 
 /** testing the _create **/ 
