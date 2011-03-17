@@ -7,18 +7,24 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_api3_entity_get ($params) {
   _civicrm_api3_initialize( true );
-   civicrm_api3_verify_mandatory ($params);
-   $entities = array ();
-   $iterator = new DirectoryIterator(dirname(__FILE__));
-   foreach ($iterator as $fileinfo) {
-     $file = $fileinfo->getFilename();
-     $parts = explode(".", $file);  
-     if (end($parts) == "php" &&  $file != "utils.php" ) {
-       $entities [] = substr ($file, 0, -4); // without the ".php"
-     }
+   try {
+     civicrm_api3_verify_mandatory ($params);
+     $entities = array ();
+     $iterator = new DirectoryIterator(dirname(__FILE__));
+     foreach ($iterator as $fileinfo) {
+       $file = $fileinfo->getFilename();
+       $parts = explode(".", $file);  
+       if (end($parts) == "php" &&  $file != "utils.php" ) {
+         $entities [] = substr ($file, 0, -4); // without the ".php"
+       }
+    }
+    sort($entities);
+    return civicrm_api3_create_success ($entities);
+  } catch (PEAR_Exception $e) {
+    return civicrm_api3_create_error( $e->getMessage() );
+  } catch (Exception $e) {
+    return civicrm_api3_create_error( $e->getMessage() );
   }
-  sort($entities);
-  return civicrm_api3_create_success ($entities);
 }
 
 /**
