@@ -119,3 +119,7 @@ UPDATE civicrm_report_instance
 ALTER TABLE `civicrm_activity`
 ADD `engagement_level` int(10) unsigned default NULL COMMENT 'Assign a specific level of engagement to this activity. Used for tracking constituents in ladder of engagement.';
 
+
+{if $renameColumnVisibility}
+ ALTER TABLE `civicrm_mailing` CHANGE `visibilty` `visibility` ENUM( 'User and User Admin Only', 'Public Pages' ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT 'User and User Admin Only' COMMENT 'In what context(s) is the mailing contents visible (online viewing)';
+{/if}
