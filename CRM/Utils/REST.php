@@ -58,7 +58,6 @@ class CRM_Utils_REST
         // creating and attaching the session
         $args = func_get_args( );
         $this->ufClass = array_shift( $args );
-	
     }
 
     /**
@@ -186,6 +185,7 @@ class CRM_Utils_REST
       $tabcount = 0;
       $result = '';
       $inquote = false;
+      $inarray = false;
       $ignorenext = false;
      
       $tab = "\t";
@@ -200,19 +200,28 @@ class CRM_Utils_REST
           } else {
               switch($char) {
                   case '{':
-                      $tabcount++;
-                      $result .= $char . $newline . str_repeat($tab, $tabcount);
+                      if ($inquote) {
+                        $result .= $char;
+                      } else {
+                        $inarray = false;
+                        $tabcount++;
+                        $result .= $char . $newline . str_repeat($tab, $tabcount);
+                      }
                       break;
 
                   case '}':
-                      $tabcount--;
-                      $result = trim($result) . $newline . str_repeat($tab, $tabcount) . $char;
+                      if ($inquote) {
+                        $result .= $char;
+                      } else {
+                        $tabcount--;
+                        $result = trim($result) . $newline . str_repeat($tab, $tabcount) . $char;
+                      }
                       break;
                   case ',':
-                      if (!$inquote) 
-                          $result .= $char . $newline . str_repeat($tab, $tabcount);
-                      else 
+                      if ($inquote || $inarray) 
                           $result .= $char;
+                      else 
+                          $result .= $char . $newline . str_repeat($tab, $tabcount);
                       break;
                   case '"':
                       $inquote = !$inquote;
@@ -220,6 +229,14 @@ class CRM_Utils_REST
                       break;
                   case '\\':
                       if ($inquote) $ignorenext = true;
+                      $result .= $char;
+                      break;
+                  case '[':
+                      $inarray = true;
+                      $result .= $char;
+                      break;
+                  case ']':
+                      $inarray = false;
                       $result .= $char;
                       break;
                   default:
@@ -340,9 +357,10 @@ class CRM_Utils_REST
 
             return call_user_func( array( $params['className'], $params['fnName'] ), $params );
         }
-        
-        $version = civicrm_get_api_version($params);
-        $params ['version'] = $version; 
+       
+        if (!array_key_exists ('version',$params)) {  
+          $params ['version'] = (array_key_exists ('entity',$params )) ? 3 : 2; 
+        } 
         
         // trap all fatal errors
         CRM_Core_Error::setCallback( array( 'CRM_Utils_REST', 'fatal' ) );

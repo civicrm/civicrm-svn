@@ -83,8 +83,6 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
 
         }
 
-
-
         return $errorFnName( "API ($entity,$action) does not exist (join the API team and implement $function" );
     }
     $result = isset($extra) ? $function($params, $extra) : $function($params);
@@ -148,7 +146,7 @@ function civicrm_get_api_version($desired_version = NULL) {
         $params = $desired_version;
         $desired_version = empty($params['version']) ? NULL : (int) $params['version'];
     }
-    if (isset($desired_version)) {
+    if (isset($desired_version) && is_integer ($desired_version)) {
         $_version = $desired_version;
         // echo "\n".'version: '. $_version ." (parameter)\n";
     }

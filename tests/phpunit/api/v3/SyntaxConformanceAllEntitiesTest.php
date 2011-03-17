@@ -18,21 +18,16 @@ class api_v3_SyntaxConformanceAllEntities extends CiviUnitTestCase
        parent::setUp();
        
        $this->toBeImplemented['get'] = array ('UFGroup','UFField','CustomGroup','ParticipantPayment');
-       $this->toBeImplemented['create'] = array ();
-       $this->toBeImplemented['delete'] = array ();
+       $this->toBeImplemented['create'] = array ('SurveyRespondant','OptionValue','OptionGroup','UFMatch');
+       $this->toBeImplemented['delete'] = array ('MembershipPayment','OptionValue','OptionGroup','SurveyRespondant','UFJoin','UFMatch');
     }
 
     function tearDown()    {
     }
 
 
-    public static function entities_get () {
-      // all the entities, beside the ones flagged
-      return api_v3_SyntaxConformanceAllEntities::entities (api_v3_SyntaxConformanceAllEntities::toBeSkipped_get (true));
-    }
-
     public static function entities($skip = NULL ) {
-//        return array(array ('Tag'), array ('Group')  ); // uncomment to make a quicker run when adding a test
+        //return array(array ('Tag'), array ('Activity')  ); // uncomment to make a quicker run when adding a test
         $tmp = civicrm_api ('Entity','Get', array ('version' => 3 ));
         if (!is_array ($skip)) {
           $skip = array();
@@ -44,6 +39,19 @@ class api_v3_SyntaxConformanceAllEntities extends CiviUnitTestCase
           
         }
         return $entities;
+    }
+
+    public static function entities_get () {
+      // all the entities, beside the ones flagged
+      return api_v3_SyntaxConformanceAllEntities::entities (api_v3_SyntaxConformanceAllEntities::toBeSkipped_get (true));
+    }
+
+    public static function entities_create () {
+      return api_v3_SyntaxConformanceAllEntities::entities (api_v3_SyntaxConformanceAllEntities::toBeSkipped_create (true));
+    }
+
+    public static function entities_delete () {
+      return api_v3_SyntaxConformanceAllEntities::entities (api_v3_SyntaxConformanceAllEntities::toBeSkipped_delete (true));
     }
 
     public static function toBeSkipped_get ($sequential = false) {
@@ -58,6 +66,30 @@ class api_v3_SyntaxConformanceAllEntities extends CiviUnitTestCase
       return $entities;
     }
 
+
+    public static function toBeSkipped_create ($sequential = false) {
+      $entitiesWithoutCreate = array ('Mailer','MailerGroup','Constant','Entity','Location');
+      if ($sequential === true) {
+        return $entitiesWithoutCreate;
+      }
+      $entities = array ();
+      foreach ($entitiesWithoutCreate as $e) {
+        $entities [] = array ($e);
+      }
+      return $entities;
+    }
+
+    public static function toBeSkipped_delete ($sequential = false) {
+      $entitiesWithout = array ('Mailer','MailerGroup','Constant','Entity','Location','Domain');
+      if ($sequential === true) {
+        return $entitiesWithout;
+      }
+      $entities = array ();
+      foreach ($entitiesWithout as $e) {
+        $entities [] = array ($e);
+      }
+      return $entities;
+    }
 
 
 
@@ -106,37 +138,155 @@ class api_v3_SyntaxConformanceAllEntities extends CiviUnitTestCase
         $this->assertEquals ("Input variable `params` is not an array",$result['error_message']);
     }
 
-/*
+    /**
+     * @dataProvider entities_get
+     * @Xdepends testEmptyParam_get // no need to test the simple if the empty doesn't work/is skipped. doesn't seem to work
+     */
+    public function testSimple_get ($Entity) {
+        if (in_array ($Entity,$this->toBeImplemented['get'])) {
+          return;
+        }
 
-    public function testSimpleTag_get () {
-        $result = civicrm_api ($this->EntityName,'Get',array('version' => 3));
-print_r ($result);
-        if ($result['is_error']) {
-          // that's an Entity that needs at least one filter
-          // and civicrm_verify_mandatory shout an error message
-        } else { // it returns the list of all the entities
-// test if count is set and an >=0
-assertGreaterThanOrEqual
-// test if value is set and an array
+        $result = civicrm_api ($Entity,'Get',array('version' => 3));
+        if ($result['is_error']) { // @TODO: list the get that have mandatory params
+          $this->assertContains ("Mandatory key(s) missing from params array", $result['error_message']);
+          $this->assertContains ("id", $result['error_message']); // either id or contact_id or entity_id is one of the field missing
+        } else {
+           $this->assertEquals(3, $result['version']);
+           $this->assertArrayHasKey('count', $result);
+           $this->assertArrayHasKey('values', $result);
         }
     }
 
-    public function testFetchByIDTag_get () {
-        $result = civicrm_api ($this->EntityName,'Get',array('version' => 3, 'debug' => true, 'id' => 0 ));
-print_r ($result);
-        if ($result['is_error']) {
-          // that's an Entity that needs at least one filter
-          // and civicrm_verify_mandatory shout an error message
-        } else { // it returns the list of all the entities
-// test if count is set and an >=0
-// test if value is set and an array
+    /**
+     * @dataProvider entities_get
+     */
+    public function testAcceptsOnlyID_get ($Entity) {
+        $nonExistantID = 30867307034; // big random number. fun fact: if you multiply it by pi^e, the result is another random number, but bigger ;)
+        if (in_array ($Entity,$this->toBeImplemented['get'])) {
+          return;
         }
+
+        $result = civicrm_api ($Entity,'Get',array('version' => 3, 'id' => $nonExistantID ));
+        if ($result['is_error']) {
+          $this->assertEquals("only id should be enough", $result['error_message']);//just to get a clearer message in the log
+        }
+        $this->assertEquals(0, $result['count']);
     }
-*/
+
+
+    /**
+     * @dataProvider entities_get
+     */
+    public function testNonExistantID_get ($Entity) {
+        $nonExistantID = 30867307034; // cf testAcceptsOnlyID_get
+        if (in_array ($Entity,$this->toBeImplemented['get'])) {
+          return;
+        }
+
+        $result = civicrm_api ($Entity,'Get',array('version' => 3, 'id' => $nonExistantID ));
+
+        if ($result['is_error']) { // redondant with testAcceptsOnlyID_get
+          return;
+        }
+
+
+        $this->assertArrayHasKey('version', $result);
+        $this->assertEquals(3, $result['version']);
+        $this->assertEquals(0, $result['count']);
+    }
 
 
 /** testing the _create **/ 
+    /**
+     * @dataProvider toBeSkipped_create
+       entities that don't need a create action
+     */
+    public function testNotImplemented_create ($Entity) {
+        $result = civicrm_api ($Entity,'Create',array('version' => 3));
+        $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
+         $this->assertContains ("API ($Entity,Create) does not exist",$result['error_message']);
+    }
+
+    /**
+     * @dataProvider entities
+     * @expectedException PHPUnit_Framework_Error
+     */
+    public function testWithoutParam_create ($Entity) {
+        // should create php complaining that a param is missing
+        $result = civicrm_api ($Entity,'Create');
+    }
+
+
+    /**
+     * @dataProvider entities_create
+     */
+    public function testEmptyParam_create ($Entity) {
+
+        if (in_array ($Entity,$this->toBeImplemented['create'])) {
+          //$this->markTestSkipped("civicrm_api3_{$Entity}_create to be implemented");
+          $this->markTestIncomplete("civicrm_api3_{$Entity}_create to be implemented");
+          return;
+        }
+        $result = civicrm_api ($Entity,'Create',array());
+        $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
+        $this->assertContains ("Mandatory key(s) missing from params array", $result['error_message']);
+    }
+
+    /**
+     * @dataProvider entities
+     */
+    public function testCreateWrongTypeParamTag_create () {
+        $result = civicrm_api ("Tag",'Create','this is not a string');
+        $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
+        $this->assertEquals ("Input variable `params` is not an array",$result['error_message']);
+    }
+
 /** testing the _getFields **/ 
 /** testing the _delete **/ 
+    /**
+     * @dataProvider toBeSkipped_delete
+       entities that don't need a delete action
+     */
+    public function testNotImplemented_delete ($Entity) {
+        $result = civicrm_api ($Entity,'Delete',array('version' => 3));
+        $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
+         $this->assertContains ("API ($Entity,Delete) does not exist",$result['error_message']);
+    }
+
+    /**
+     * @dataProvider entities
+     * @expectedException PHPUnit_Framework_Error
+     */
+    public function testWithoutParam_delete ($Entity) {
+        // should delete php complaining that a param is missing
+        $result = civicrm_api ($Entity,'Delete');
+    }
+
+
+    /**
+     * @dataProvider entities_delete
+     */
+    public function testEmptyParam_delete ($Entity) {
+
+        if (in_array ($Entity,$this->toBeImplemented['delete'])) {
+          //$this->markTestSkipped("civicrm_api3_{$Entity}_delete to be implemented");
+          $this->markTestIncomplete("civicrm_api3_{$Entity}_delete to be implemented");
+          return;
+        }
+        $result = civicrm_api ($Entity,'Delete',array());
+        $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
+        $this->assertContains ("Mandatory key(s) missing from params array", $result['error_message']);
+    }
+
+    /**
+     * @dataProvider entities
+     */
+    public function testDeleteWrongTypeParamTag_delete () {
+        $result = civicrm_api ("Tag",'Delete','this is not a string');
+        $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
+        $this->assertEquals ("Input variable `params` is not an array",$result['error_message']);
+    }
+
 
 }
