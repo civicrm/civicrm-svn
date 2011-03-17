@@ -28,10 +28,10 @@
 
 /**
  *
- * APIv3 functions for registering/processing mailer events.
+ * APIv3 functions for registering/processing mailing events.
  *
  * @package CiviCRM_APIv3
- * @subpackage API_Mailer
+ * @subpackage API_Mailing
  * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
@@ -62,10 +62,10 @@ require_once 'CRM/Mailing/Event/BAO/TrackableURLOpen.php';
  * @param array $params
  * @return array
  */
-function civicrm_api3_mailer_event_bounce($params)
+function civicrm_api3_mailing_event_bounce($params)
 {   
     _civicrm_api3_initialize();
-    $errors = _civicrm_api3_mailer_check_params( $params, array('job_id', 'event_queue_id', 'hash', 'body') ) ;
+    $errors = _civicrm_api3_mailing_check_params( $params, array('job_id', 'event_queue_id', 'hash', 'body') ) ;
   
     if ( !empty( $errors ) ) {
         return $errors;
@@ -89,9 +89,9 @@ function civicrm_api3_mailer_event_bounce($params)
  * @param array $params
  * @return array
  */
-function civicrm_api3_mailer_event_confirm($params) 
+function civicrm_api3_mailing_event_confirm($params) 
 {
-    $errors = _civicrm_api3_mailer_check_params( $params, array('contact_id', 'subscribe_id', 'hash') ) ;
+    $errors = _civicrm_api3_mailing_check_params( $params, array('contact_id', 'subscribe_id', 'hash') ) ;
   
     if ( !empty( $errors ) ) {
         return $errors;
@@ -116,9 +116,9 @@ function civicrm_api3_mailer_event_confirm($params)
  * @param array $params
  * @return array
  */
-function civicrm_api3_mailer_event_reply($params)
+function civicrm_api3_mailing_event_reply($params)
 {
-    $errors = _civicrm_api3_mailer_check_params( $params, array('job_id', 'event_queue_id', 'hash', 'bodyTxt', 'replyTo') ) ;
+    $errors = _civicrm_api3_mailing_check_params( $params, array('job_id', 'event_queue_id', 'hash', 'bodyTxt', 'replyTo') ) ;
   
     if ( !empty( $errors ) ) {
         return $errors;
@@ -149,9 +149,9 @@ function civicrm_api3_mailer_event_reply($params)
  * @param array $params
  * @return array
  */
-function civicrm_api3_mailer_event_forward($params) 
+function civicrm_api3_mailing_event_forward($params) 
 {
-    $errors = _civicrm_api3_mailer_check_params( $params, array('job_id', 'event_queue_id', 'hash', 'email') ) ;
+    $errors = _civicrm_api3_mailing_check_params( $params, array('job_id', 'event_queue_id', 'hash', 'email') ) ;
   
     if ( !empty( $errors ) ) {
         return $errors;
@@ -180,9 +180,9 @@ function civicrm_api3_mailer_event_forward($params)
  * @param array $params
  * @return array
  */
-function civicrm_api3_mailer_event_click($params) 
+function civicrm_api3_mailing_event_click($params) 
 {
-    $errors = _civicrm_api3_mailer_check_params( $params, array('event_queue_id', 'url_id') ) ;
+    $errors = _civicrm_api3_mailing_check_params( $params, array('event_queue_id', 'url_id') ) ;
   
     if ( !empty( $errors ) ) {
         return $errors;
@@ -206,9 +206,9 @@ function civicrm_api3_mailer_event_click($params)
  * @param array $params
  * @return array
  */
-function civicrm_api3_mailer_event_open($params) 
+function civicrm_api3_mailing_event_open($params) 
 {
-    $errors = _civicrm_api3_mailer_check_params( $params, array('event_queue_id') ) ;
+    $errors = _civicrm_api3_mailing_check_params( $params, array('event_queue_id') ) ;
   
     if ( !empty( $errors ) ) {
         return $errors;
@@ -219,7 +219,7 @@ function civicrm_api3_mailer_event_open($params)
     $success = CRM_Mailing_Event_BAO_Opened::open( $queue );
 
     if ( !$success ) {
-        return civicrm_api3_create_error( 'mailer open event failed'  );
+        return civicrm_api3_create_error( 'mailing open event failed'  );
     }
 
     return civicrm_api3_create_success( );
@@ -234,7 +234,7 @@ function civicrm_api3_mailer_event_open($params)
  *
  * @return array  $error        array with errors, null if none
  */
-function _civicrm_api3_mailer_check_params ( $params, $required  ) 
+function _civicrm_api3_mailing_check_params ( $params, $required  ) 
 {
     // return error if we do not get any params
     if ( empty( $params ) ) {

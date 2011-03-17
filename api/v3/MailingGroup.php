@@ -28,7 +28,7 @@
 
 /**
  *
- * APIv3 functions for registering/processing mailer group events.
+ * APIv3 functions for registering/processing mailing group events.
  *
  * @package CiviCRM_APIv3
  * @subpackage API_MailerGroup
@@ -56,9 +56,9 @@ require_once 'CRM/Mailing/Event/BAO/TrackableURLOpen.php';
  * @param array $params
  * @return array
  */
-function civicrm_api3_mailer_group_event_unsubscribe($params) 
+function civicrm_api3_mailing_group_event_unsubscribe($params) 
 {
-    $errors = _civicrm_api3_mailer_group_check_params( $params, array('job_id', 'event_queue_id', 'hash') ) ;
+    $errors = _civicrm_api3_mailing_group_check_params( $params, array('job_id', 'event_queue_id', 'hash') ) ;
   
     if ( !empty( $errors ) ) {
         return $errors;
@@ -84,9 +84,9 @@ function civicrm_api3_mailer_group_event_unsubscribe($params)
  * @param array $params
  * @return array
  */
-function civicrm_api3_mailer_group_event_domain_unsubscribe($params) 
+function civicrm_api3_mailing_group_event_domain_unsubscribe($params) 
 {
-    $errors = _civicrm_api3_mailer_group_check_params( $params, array('job_id', 'event_queue_id', 'hash') ) ;
+    $errors = _civicrm_api3_mailing_group_check_params( $params, array('job_id', 'event_queue_id', 'hash') ) ;
   
     if ( !empty( $errors ) ) {
         return $errors;
@@ -112,9 +112,9 @@ function civicrm_api3_mailer_group_event_domain_unsubscribe($params)
  * @param array $params
  * @return array
  */
-function civicrm_api3_mailer_group_event_resubscribe($params) 
+function civicrm_api3_mailing_group_event_resubscribe($params) 
 {
-    $errors = _civicrm_api3_mailer_group_check_params( $params, array('job_id', 'event_queue_id', 'hash') ) ;
+    $errors = _civicrm_api3_mailing_group_check_params( $params, array('job_id', 'event_queue_id', 'hash') ) ;
   
     if ( !empty( $errors ) ) {
         return $errors;
@@ -140,9 +140,9 @@ function civicrm_api3_mailer_group_event_resubscribe($params)
  * @param array $params
  * @return array
  */
-function civicrm_api3_mailer_group_event_subscribe($params) 
+function civicrm_api3_mailing_group_event_subscribe($params) 
 {
-    $errors = _civicrm_api3_mailer_group_check_params( $params, array('email', 'group_id') ) ;
+    $errors = _civicrm_api3_mailing_group_check_params( $params, array('email', 'group_id') ) ;
     
     if ( !empty( $errors ) ) {
         return $errors;
@@ -185,7 +185,7 @@ function civicrm_api3_mailer_group_event_subscribe($params)
  *
  * @return array  $error        array with errors, null if none
  */
-function _civicrm_api3_mailer_group_check_params ( $params, $required  ) 
+function _civicrm_api3_mailing_group_check_params ( $params, $required  ) 
 {
     // return error if we do not get any params
     if ( empty( $params ) ) {
