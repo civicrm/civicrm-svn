@@ -382,16 +382,25 @@ function loadPanes( id ) {
 
 
 {if $action neq 8}  
-    {if $email and $outBound_option != 2}
-    {include file="CRM/common/showHideByFieldValue.tpl" 
-        trigger_field_id    ="is_email_receipt"
-        trigger_value       =""
-        target_element_id   ="receiptDate" 
-        target_element_type ="table-row"
-        field_type          ="radio"
-        invert              = 1
+{literal}
+<script type="text/javascript">
+    cj( function( ) {
+        checkEmailDependancies( );
+        cj('#is_email_receipt').click( function( ) {
+            checkEmailDependancies( );
+        });
+    });
+    function checkEmailDependancies( ) {
+        if ( cj('#is_email_receipt').attr( 'checked' ) ) {
+            cj('#fromEmail').show( );
+            cj('#receiptDate').hide( );
+        } else {
+            cj('#fromEmail').hide( );
+            cj('#receiptDate').show( );
+        }
     }
-    {/if}
+</script>
+{/literal}
     {if !$contributionMode} 
         {include file="CRM/common/showHideByFieldValue.tpl" 
             trigger_field_id    ="contribution_status_id"
@@ -473,7 +482,6 @@ cj(function() {
 
 {literal}
 function buildAmount( priceSetId ) {
-
   if ( !priceSetId ) priceSetId = cj("#price_set_id").val( );
 
   var fname = '#priceset';
@@ -487,7 +495,6 @@ function buildAmount( priceSetId ) {
 
       //we might want to build recur block.
       if ( cj( "#is_recur" ) ) buildRecurBlock( null );
-
       return;
   }
 
@@ -497,7 +504,6 @@ function buildAmount( priceSetId ) {
       cj("#installments").val('');
       cj("#frequency_interval").val('');
       cj( 'input:radio[name="is_recur"]')[0].checked = true;
-
       cj( "#recurringPaymentBlock" ).hide( );
   }
       
@@ -505,20 +511,21 @@ function buildAmount( priceSetId ) {
   
   var response = cj.ajax({
 		         url: dataUrl,
-			 async: false
-			}).responseText;
+                 async: false
+                 }).responseText;
+  
   cj( fname ).show( ).html( response );
   // freeze total amount text field.
   cj( "#total_amount").val( '' );
 
   cj( "#totalAmountORPriceSet" ).hide( );
   cj( "#totalAmount").hide( );
-  
 }
+
 function adjustPayment( ) {
-cj('#adjust-option-type').show();		    	    
-cj("#total_amount").removeAttr("READONLY");
-cj("#total_amount").css('background-color', '#ffffff');
+    cj('#adjust-option-type').show();		    	    
+    cj("#total_amount").removeAttr("READONLY");
+    cj("#total_amount").css('background-color', '#ffffff');
 }
 
 </script>
