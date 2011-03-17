@@ -469,9 +469,23 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
    *
    * @return $pageId of newly created online contribution page.
    */
-  function webtestAddContributionPage( $hash, $rand, $pageTitle, $processorType = '', $processorName = '', $payLater = true, $onBehalf = true,
-                                       $pledges = true, $recurring = false, $memberships = true, $friend = true, $profiles = true, $premiums = true,
-                                       $widget = true, $pcp = true ) 
+  function webtestAddContributionPage( $hash, 
+                                       $rand, 
+                                       $pageTitle, 
+                                       $processorType = 'Dummy', 
+                                       $processorName = null,
+                                       $amountSection = true,
+                                       $payLater      = true, 
+                                       $onBehalf      = true,
+                                       $pledges       = true, 
+                                       $recurring     = false, 
+                                       $memberships   = true, 
+                                       $friend        = true, 
+                                       $profilePreId  = 1, 
+                                       $profilePostId = 7, 
+                                       $premiums      = true,
+                                       $widget        = true, 
+                                       $pcp           = true ) 
   {
       if ( !$pageTitle ) {
           $pageTitle = 'Donate Online ' . $hash;
@@ -483,8 +497,10 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
           $rand = 2 * rand(2, 50);
       }
 
+      $amountBlock = !$memberships;
+
       // Create a new payment processor if requested
-      if ( $processorType && $processorName) {
+      if ( $processorName ) {
           $this->webtestAddPaymentProcessor( $processorName, $processorType );                  
       }
 
@@ -518,38 +534,43 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $this->waitForElementPresent("_qf_Amount_next-bottom"); 
 
       // fill in step 2 (Processor, Pay Later, Amounts)
-      if ( $processorType && $processorName) {
+      if ( $processorName ) {
           // select newly created processor if required
           $this->select("payment_processor_id",  "label={$processorName}");
       }
 
-      if ( $payLater ) {
-          $this->click('is_pay_later');
-          $this->type('pay_later_text',    "Pay later label $hash");
-          $this->type('pay_later_receipt', "Pay later instructions $hash");            
+      if ( $amountSection ) {
+          if ( $payLater ) {
+              $this->click('is_pay_later');
+              $this->type('pay_later_text',    "Pay later label $hash");
+              $this->type('pay_later_receipt', "Pay later instructions $hash");            
+          }
+
+          if ( $pledges ) {
+              $this->click('is_pledge_active');
+              $this->click('pledge_frequency_unit[week]');
+              $this->click('is_pledge_interval');
+              $this->type('initial_reminder_day',    3);
+              $this->type('max_reminders',           2);
+              $this->type('additional_reminder_day', 1);            
+          } else if ( $recurring ) {
+              $this->click("is_recur");
+              // only monthly frequency unit enabled
+              $this->click("recur_frequency_unit[day]");
+              $this->click("recur_frequency_unit[week]");
+              $this->click("recur_frequency_unit[year]");
+          }
+
+          $this->click('is_allow_other_amount');
+          $this->type('min_amount', $rand / 2);
+          $this->type('max_amount', $rand * 10);
+
+          $this->type('label_1', "Label $hash");
+          $this->type('value_1', "$rand");
+      
+      } else {
+          $this->click("amount_block_is_active");
       }
-
-      if ( $pledges ) {
-          $this->click('is_pledge_active');
-          $this->click('pledge_frequency_unit[week]');
-          $this->click('is_pledge_interval');
-          $this->type('initial_reminder_day',    3);
-          $this->type('max_reminders',           2);
-          $this->type('additional_reminder_day', 1);            
-      } else if ( $recurring ) {
-          $this->click("is_recur");
-          // only monthly frequency unit enabled
-          $this->click("recur_frequency_unit[day]");
-          $this->click("recur_frequency_unit[week]");
-          $this->click("recur_frequency_unit[year]");
-      }
-
-      $this->click('is_allow_other_amount');
-      $this->type('min_amount', $rand / 2);
-      $this->type('max_amount', $rand * 2);
-
-      $this->type('label_1', "Label $hash");
-      $this->type('value_1', "$rand");
 
       $this->click('_qf_Amount_next');
       $this->waitForElementPresent("_qf_Amount_next-bottom"); 
@@ -616,12 +637,16 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
           $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
       }
 
-      if ( $profiles ) {
+      if ( $profilePreId || $profilePostId ) {
           // fill in step 6 (Include Profiles)
           $this->click("link=Profiles");
           $this->waitForElementPresent("_qf_Custom_next-bottom");
-          $this->select('custom_pre_id',  'value=1');
-          $this->select('custom_post_id', 'value=7');
+          
+          if ( $profilePreId )
+              $this->select('custom_pre_id',  "value=$profilePreId");
+
+          if ( $profilePostId )
+              $this->select('custom_post_id', "value=$profilePostId");
 
           $this->click('_qf_Custom_next');
           $this->waitForElementPresent("_qf_Custom_next-bottom");
@@ -629,7 +654,6 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
           $this->waitForPageToLoad("30000");
           $text = "'Custom' information has been saved.";
           $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
-
       }
 
       if ( $premiums ) {
