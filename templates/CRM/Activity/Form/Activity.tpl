@@ -178,17 +178,17 @@
                 <td class="label">{$form.subject.label}</td><td class="view-value">{$form.subject.html|crmReplace:class:huge}</td>
              </tr>
 	     
-	     {* CRM-7362 --add campaign to activities *}
-	     {include file="CRM/Campaign/Form/addCampaignToComponent.tpl" 
-	     campaignTrClass="crm-activity-form-block-campaign_id"}
+    	     {* CRM-7362 --add campaign to activities *}
+    	     {include file="CRM/Campaign/Form/addCampaignToComponent.tpl" 
+    	     campaignTrClass="crm-activity-form-block-campaign_id"}
 
-	     {* build engagement level CRM-7775 *}
-	     {if $buildEngagementLevel}
-	     <tr class="crm-activity-form-block-engagement_level">
-                 <td class="label">{$form.engagement_level.label}</td>
-		 <td class="view-value">{$form.engagement_level.html}</td>
-             </tr>
-	     {/if}
+    	     {* build engagement level CRM-7775 *}
+    	     {if $buildEngagementLevel}
+        	     <tr class="crm-activity-form-block-engagement_level">
+                    <td class="label">{$form.engagement_level.label}</td>
+        		    <td class="view-value">{$form.engagement_level.html|crmReplace:class:four}</td>
+                 </tr>
+    	     {/if}
 	     
              <tr class="crm-activity-form-block-location">
                 <td class="label">{$form.location.label}</td><td class="view-value">{$form.location.html|crmReplace:class:huge}</td>
