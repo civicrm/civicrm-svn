@@ -27,13 +27,18 @@ class api_v3_PhoneTest extends CiviUnitTestCase
                         'version'          =>$this->_apiversion,
         //TODO phone_type_id
          );
-        
+         
+         //check there are no phones to start with
+        $get = civicrm_api3_phone_get(array('version' => 3,
+                                      'location_type_id' => $this->_locationType->id,));
+        $this->assertEquals( 0, $get['is_error'], 'In line ' . __LINE__ );       
+        $this->assertEquals( 0, $get['count'], 'Contact not successfully deleted In line ' . __LINE__ );        
         $result = civicrm_api3_phone_create($params);
 
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['count'], 'In line ' . __LINE__ );
-        $this->assertEquals( 1, $result['id'], 'In line ' . __LINE__ );
+ //       $this->assertEquals( 1, $result['id'], 'In line ' . __LINE__ );
 
         $delresult = civicrm_api3_phone_delete(array('id'=> $result['id'], 'version' => 3));
         $this->assertEquals( 0, $delresult['is_error'], 'In line ' . __LINE__ );
@@ -47,12 +52,18 @@ class api_v3_PhoneTest extends CiviUnitTestCase
                         'version'          =>$this->_apiversion,
         //TODO phone_type_id
          );
-        
-        $result = civicrm_api3_phone_create($params);
+         //check there are no phones to start with
+        $get = civicrm_api3_phone_get(array('version' => 3,
+                                      'location_type_id' => $this->_locationType->id,));
+        $this->assertEquals( 0, $get['is_error'], 'In line ' . __LINE__ );       
+        $this->assertEquals( 0, $get['count'], 'Contact already exists ' . __LINE__ );        
+         
+        //create one
+        $create = civicrm_api3_phone_create($params);
        
-        $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
-        $result = array();
-        $result = civicrm_api3_phone_delete(array('id'=> 1, 'version' => 3));
+        $this->assertEquals( 0, $create['is_error'], 'In line ' . __LINE__ );
+        
+        $result = civicrm_api3_phone_delete(array('id'=> $create['id'], 'version' => 3));
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['count'], 'In line ' . __LINE__ );
