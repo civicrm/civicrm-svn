@@ -123,3 +123,8 @@ ADD `engagement_level` int(10) unsigned default NULL COMMENT 'Assign a specific 
 {if $renameColumnVisibility}
  ALTER TABLE `civicrm_mailing` CHANGE `visibilty` `visibility` ENUM( 'User and User Admin Only', 'Public Pages' ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT 'User and User Admin Only' COMMENT 'In what context(s) is the mailing contents visible (online viewing)';
 {/if}
+
+-- CRM-7453
+ UPDATE `civicrm_navigation` 
+    SET `url` = 'civicrm/activity/email/add&atype=3&action=add&reset=1&context=standalone' WHERE `name` = 'New Email';
+

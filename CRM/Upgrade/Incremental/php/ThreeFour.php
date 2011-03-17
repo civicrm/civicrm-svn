@@ -43,14 +43,7 @@ class CRM_Upgrade_Incremental_php_ThreeFour {
     {
         // Handled for typo in 3.3.2.mysql.tpl, rename column visibilty to
         // visibility in table civicrm_mailing
-        $mailingColumns =  CRM_Core_DAO::executeQuery("DESCRIBE civicrm_mailing");
-        $renameColumnVisibility = false; 
-        while ( $mailingColumns->fetch( ) ) {
-            if ( $mailingColumns->Field == 'visibilty' ) {
-                $renameColumnVisibility = true; 
-                break;
-            }
-        }
+        $renameColumnVisibility = CRM_Core_DAO::checkFieldExists( 'civicrm_mailing', 'visibilty' ); 
         
         $upgrade =& new CRM_Upgrade_Form( );
         $upgrade->assign( 'renameColumnVisibility', $renameColumnVisibility);
