@@ -7,6 +7,7 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_api3_entity_get ($params) {
   _civicrm_api3_initialize( true );
+   civicrm_api3_verify_mandatory ($params);
    $entities = array ();
    $iterator = new DirectoryIterator(dirname(__FILE__));
    foreach ($iterator as $fileinfo) {
