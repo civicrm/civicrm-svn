@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{* this template is used for adding/editing/deleting contribution *}
+{* this template is used for adding/editing/deleting contributions and pledge payments *}
 
 {if $cdType}
   {include file="CRM/Custom/Form/CustomData.tpl"}
@@ -105,7 +105,7 @@
 	            <br /><span class="description">{ts}Actual amount given by contributor.{/ts}</span>
 	    </td>
         </tr>
-	    {if $buildRecurBlock}
+	    {if $buildRecurBlock && !$ppID}
 	    <tr id='recurringPaymentBlock' class='hiddenElement'>
 	       <td></td>		
 	       <td>
@@ -137,8 +137,12 @@
 
         {if $contributionMode}
             {if $email and $outBound_option != 2}
-                <tr class="crm-contribution-form-block-is_email_receipt"><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html}</td></tr>
-                <tr><td class="label">&nbsp;</td><td class="description">{ts 1=$email}Automatically email a receipt for this contribution to %1?{/ts}</td></tr>
+                <tr class="crm-contribution-form-block-is_email_receipt">
+                    <td class="label">
+                        {$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html}&nbsp;
+                        <span class="description">{ts 1=$email}Automatically email a receipt for this contribution to %1?{/ts}</span>
+                    </td>
+                </tr>
             {elseif $context eq 'standalone' and $outBound_option != 2 }
                 <tr id="email-receipt" style="display:none;" class="crm-contribution-form-block-is_email_receipt"><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html} <span class="description">{ts}Automatically email a receipt for this contribution to {/ts}<span id="email-address"></span>?</span></td></tr>
             {/if}
