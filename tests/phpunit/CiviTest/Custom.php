@@ -69,7 +69,7 @@ class Custom extends CiviUnitTestCase
                             'is_required'     => 1,
                             'is_searchable'   => 0,
                             'is_active'       => 1,
-                            'version'		  => 2
+                            'version'		      => 3
                             );
         }
         
@@ -82,7 +82,7 @@ class Custom extends CiviUnitTestCase
         // this is done for backward compatibility
         // with tests older than 3.2.3
         $customField = new CRM_Core_DAO_CustomField();
-        $customField->id = $result['result']['customFieldId'];
+        $customField->id = $result['id'];
         $customField->find( true );
 
         return $customField;
