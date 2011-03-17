@@ -497,8 +497,6 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
           $rand = 2 * rand(2, 50);
       }
 
-      $amountBlock = !$memberships;
-
       // Create a new payment processor if requested
       if ( $processorName ) {
           $this->webtestAddPaymentProcessor( $processorName, $processorType );                  
