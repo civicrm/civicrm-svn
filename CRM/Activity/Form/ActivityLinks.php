@@ -82,6 +82,13 @@ class CRM_Activity_Form_ActivityLinks extends CRM_Core_Form
             }
         }
 
+
+        // add activity search filter
+        $activityOptions = CRM_Core_PseudoConstant::activityType( true, true, false, 'label', true );
+        asort( $activityOptions );
+        
+        $this->add('select', 'activity_type_filter_id',  ts( 'Activity Type' ), array( '' => ts( '- select activity type -' ) ) +  $activityOptions );
+
         $this->assign( 'activityTypes', $activityTypes );
         $this->assign( 'urls', $urls );
 

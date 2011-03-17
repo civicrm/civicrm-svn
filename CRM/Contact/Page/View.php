@@ -295,26 +295,30 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         return CRM_Utils_System::url( $urlString, $urlParams );
     }
     
-    static function checkUserPermission( $page ) {
+    static function checkUserPermission( $page, $contactID = null ) {
         // check for permissions
         $page->_permission = null;
+
+        if ( !$contactID) {
+            $contactID = $page->_contactId;
+        }
 
         // automatically grant permissin for users on their own record. makes 
         // things easier in dashboard
         $session = CRM_Core_Session::singleton( );
         
         require_once 'CRM/Contact/BAO/Contact/Permission.php';
-        if ( $session->get( 'userID' ) == $page->_contactId ) {
+        if ( $session->get( 'userID' ) == $contactID ) {
             $page->assign( 'permission', 'edit' );
             $page->_permission = CRM_Core_Permission::EDIT;
         // deleted contacts’ stuff should be (at best) only viewable
-        } elseif (CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $page->_contactId, 'is_deleted') and CRM_Core_Permission::check('access deleted contacts')) {
+        } elseif (CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $contactID, 'is_deleted') and CRM_Core_Permission::check('access deleted contacts')) {
             $page->assign('permission', 'view');
             $page->_permission = CRM_Core_Permission::VIEW;
-        } else if ( CRM_Contact_BAO_Contact_Permission::allow( $page->_contactId, CRM_Core_Permission::EDIT ) ) {
+        } else if ( CRM_Contact_BAO_Contact_Permission::allow( $contactID, CRM_Core_Permission::EDIT ) ) {
             $page->assign( 'permission', 'edit' );
             $page->_permission = CRM_Core_Permission::EDIT;            
-        } else if ( CRM_Contact_BAO_Contact_Permission::allow( $page->_contactId, CRM_Core_Permission::VIEW ) ) {
+        } else if ( CRM_Contact_BAO_Contact_Permission::allow( $contactID, CRM_Core_Permission::VIEW ) ) {
             $page->assign( 'permission', 'view' );
             $page->_permission = CRM_Core_Permission::VIEW;
         } else {

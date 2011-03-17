@@ -725,7 +725,7 @@ as tbl ";
         $query = $query . $groupBy. $order. $limit;
 
         $dao = CRM_Core_DAO::executeQuery( $query, $params );
-
+        
         // step 2: Get target and assignee contacts for above activities
         // create temp table for target contacts
         $activityTargetContactTempTable = "civicrm_temp_target_contact_{$randomNum}";
@@ -2219,27 +2219,33 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.n
     */
     public function getContactActivitySelector( &$params ) {
         // format the params
-        $offset   = $params['offset'];
-        $rowCount = $params['rowcount'];
-        $isAdmin  = $params['is_admin'];
+        $offset   = ( $params['page'] - 1) * $params['rp'] ;
+        $rowCount = $params['rp'];
         $context  = $params['context'];
         $sort     = $params['sortBy'];
+        
+        $activityTypeIDs = array( );
+        if ( $params['activity_type_id'] ) {
+            $activityTypeIDs = array( $params['activity_type_id'] ); 
+        }
         
         // get contact activities
         $activities =& CRM_Activity_BAO_Activity::getActivities( $params,
                                                                  $offset,
                                                                  $rowCount,
                                                                  $sort, 
-                                                                 $isAdmin,
+                                                                 false,
                                                                  null,
-                                                                 $context );
+                                                                 $context,
+                                                                 $activityTypeIDs );
         
         // add total
         $params['total'] = CRM_Activity_BAO_Activity::getActivitiesCount( 
                                                       $params['contact_id'], 
-                                                      $isAdmin,
+                                                      false,
                                                       null, 
-                                                      $context );
+                                                      $context,
+                                                      $activityTypeIDs );
         
         // format params and add links
         $contactActivities = array( );
@@ -2247,30 +2253,64 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.n
         if ( !empty( $activities ) ) {
             $activityStatus = CRM_Core_PseudoConstant::activityStatus( );
             
-            // check logged in url permission
-            // FIX Me:
-            /*
+            // check logged in user for permission
             require_once 'CRM/Contact/Page/View.php';
-            CRM_Contact_Page_View::checkUserPermission( $this );
-            $permissions = array( $this->_permission );
-            */
-            $permissions = array( );
-            /*
+            $page = new CRM_Core_Page();
+            CRM_Contact_Page_View::checkUserPermission( $page, $params['contact_id'] );
+            $permissions = array( $page->_permission );
             if ( CRM_Core_Permission::check( 'delete activities' ) ) {
                 $permissions[] = CRM_Core_Permission::DELETE;
-            }*/
+            }
             
             $mask = CRM_Core_Action::mask( $permissions );
             
             foreach( $activities as $activityId => $values ) {
                 $contactActivities[$activityId]['activity_type'   ] = $values['activity_type'];
                 $contactActivities[$activityId]['subject'         ] = $values['subject'];
-                $contactActivities[$activityId]['source_contact'  ] = CRM_Utils_System::href( $values['source_contact_name'], 'civicrm/contact/view', "reset=1&cid={$values['source_contact_id']}" );
-                                              
-                $contactActivities[$activityId]['target_contact'  ] = implode( ',', $values['target_contact_name'] );
-                $contactActivities[$activityId]['assignee_contact'] = implode( ',', $values['assignee_contact_name'] );
-                $contactActivities[$activityId]['activity_date'   ] = CRM_Utils_Date::customFormat( $values['activity_date_time'] );
-                $contactActivities[$activityId]['status'          ] = $activityStatus[ $values['status_id'] ];
+                if ( $params['contact_id'] == $values['source_contact_id'] ) {
+                    $contactActivities[$activityId]['source_contact'] = $values['source_contact_name'];
+                } elseif( $values['source_contact_id']  ) {
+                    $contactActivities[$activityId]['source_contact'] = CRM_Utils_System::href( $values['source_contact_name'], 'civicrm/contact/view', "reset=1&cid={$values['source_contact_id']}" );
+                } else {
+                    $contactActivities[$activityId]['source_contact'] = '<em>n/a</em>';
+                }
+
+                if ( isset( $values['mailingId'] ) ) {
+                    $contactActivities[$activityId]['target_contact'  ] = CRM_Utils_System::href( $values['recipients'], 'civicrm/mailing/report',  "mid={$values['source_record_id']}&reset=1&cid={$values['source_contact_id']}&context=activitySelector" );
+                } elseif( $values['recipients'] ) {
+                    $contactActivities[$activityId]['target_contact'  ] = $values['recipients'];
+                } elseif ( !$values['target_contact_name'] )  {
+                    $contactActivities[$activityId]['target_contact'] = '<em>n/a</em>';
+                } elseif ( !empty( $values['target_contact_name'] ) ) {                              
+                    $count = 0;
+                    foreach ( $values['target_contact_name'] as $tcID => $tcName ) {
+                        if ( $tcID && $count < 5 ) {
+                            $contactActivities[$activityId]['target_contact'  ] .= CRM_Utils_System::href( $tcName, 'civicrm/contact/view', "reset=1&cid={$tcID}" );
+                            $count++;
+                            if ( $count ) {
+                                $contactActivities[$activityId]['target_contact'  ] .= ";&nbsp;";
+                            }
+                        }
+                    }
+                }
+
+                if ( !$values['assignee_contact_name'] )  {
+                    $contactActivities[$activityId]['assignee_contact'] = '<em>n/a</em>';
+                } elseif ( !empty( $values['assignee_contact_name'] ) ) {                              
+                    $count = 0;
+                    foreach ( $values['assignee_contact_name'] as $acID => $acName ) {
+                        if ( $acID && $count < 5 ) {
+                            $contactActivities[$activityId]['assignee_contact'  ] .= CRM_Utils_System::href( $acName, 'civicrm/contact/view', "reset=1&cid={$acID}" );
+                            $count++;
+                            if ( $count ) {
+                                $contactActivities[$activityId]['assignee_contact'  ] .= ";&nbsp;";
+                            }
+                        }
+                    }
+                }
+
+                $contactActivities[$activityId]['activity_date'] = CRM_Utils_Date::customFormat( $values['activity_date_time'] );
+                $contactActivities[$activityId]['status'       ] = $activityStatus[ $values['status_id'] ];
                 
                 // add class to this row if overdue
                 $contactActivities[$activityId]['class'] = '';

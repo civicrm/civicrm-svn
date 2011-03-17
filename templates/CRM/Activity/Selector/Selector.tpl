@@ -1,49 +1,24 @@
 <span id='fileOnCaseStatusMsg' style="display:none;"></span>
-<div class="crm-accordion-wrapper crm-accordion-inner crm-search_filters-accordion crm-accordion-closed">
+<div class="crm-accordion-wrapper crm-search_filters-accordion crm-accordion-closed">
  <div class="crm-accordion-header">
   <div class="icon crm-accordion-pointer"></div> 
-	{ts}Search Filters{/ts}</a>
+	{ts}Filter by Activity Type{/ts}</a>
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">
 
   <table class="no-border form-layout-compressed" id="searchOptions">
     <tr>
-       <!--td class="crm-case-caseview-form-block-status_id"><label for="status_id">{$form.status_id.label}</label><br />
-            {$form.status_id.html}
-        </td-->
         <td class="crm-contact-form-block-activity_type_filter_id">
-            {$form.activity_type_filter_id.label}<br />
             {$form.activity_type_filter_id.html}
         </td>
         <td style="vertical-align: bottom;">
-		<span class="crm-button"><input class="form-submit default" name="_qf_Basic_refresh" value="Search" type="button" onclick="buildCaseActivities( true )"; /></span>
+		<span class="crm-button"><input class="form-submit default" name="_qf_Basic_refresh" value="Search" type="button" onclick="buildContactActivities( true )"; /></span>
 	</td>
     </tr>
-    <!--tr>
-        <td class="crm-case-caseview-form-block-activity_date_low">
-	    {$form.activity_date_low.label}<br />
-            {include file="CRM/common/jcalendar.tpl" elementName=activity_date_low}
-        </td>
-        <td class="crm-case-caseview-form-block-activity_date_high"> 
-            {$form.activity_date_high.label}<br /> 
-            {include file="CRM/common/jcalendar.tpl" elementName=activity_date_high}
-        </td>
-        <td class="crm-case-caseview-form-block-activity_type_filter_id">
-            {$form.activity_type_filter_id.label}<br />
-            {$form.activity_type_filter_id.html}
-        </td>
-    </tr-->
-    {*if $form.activity_deleted}    
-    	<tr class="crm-case-caseview-form-block-activity_deleted">
-	     <td>
-		 {$form.activity_deleted.html}{$form.activity_deleted.label}
-	     </td>
-	</tr>
-	{/if*}
   </table>
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
- 
+
 <table id="contact-activity-selector" class="nestedActivitySelector">
     <thead>
         <tr>
