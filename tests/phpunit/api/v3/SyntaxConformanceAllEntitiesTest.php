@@ -27,7 +27,7 @@ class api_v3_SyntaxConformanceAllEntities extends CiviUnitTestCase
 
 
     public static function entities($skip = NULL ) {
-        //return array(array ('Tag'), array ('Group')  ); // uncomment to make a quicker run when adding a test
+        //return array(array ('Tag'), array ('Activity')  ); // uncomment to make a quicker run when adding a test
         $tmp = civicrm_api ('Entity','Get', array ('version' => 3 ));
         if (!is_array ($skip)) {
           $skip = array();
@@ -136,6 +136,26 @@ class api_v3_SyntaxConformanceAllEntities extends CiviUnitTestCase
         $result = civicrm_api ("Tag",'Get','this is not a string');
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
         $this->assertEquals ("Input variable `params` is not an array",$result['error_message']);
+    }
+
+    /**
+     * @dataProvider entities_get
+     * @Xdepends testEmptyParam_get // no need to test the simple if the empty doesn't work/is skipped. doesn't seem to work
+     */
+    public function testSimple_get ($Entity) {
+        if (in_array ($Entity,$this->toBeImplemented['get'])) {
+          return;
+        }
+
+        $result = civicrm_api ($Entity,'Get',array('version' => 3));
+        if ($result['is_error']) { // @TODO: list the get that have mandatory params
+          $this->assertContains ("Mandatory key(s) missing from params array", $result['error_message']);
+          $this->assertContains ("id", $result['error_message']); // either id or contact_id or entity_id is one of the field missing
+        } else {
+           $this->assertEquals(3, $result['version']);
+           $this->assertArrayHasKey('count', $result);
+           $this->assertArrayHasKey('values', $result);
+        }
     }
 
 /*
