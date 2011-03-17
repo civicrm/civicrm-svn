@@ -157,9 +157,11 @@ class WebTest_Campaign_OfflineContributionTest extends CiviSeleniumTestCase {
         $id = explode( '_', $this->getAttribute("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[7]@id"));
         $id = $id[1];
         $this->offlineContributionTest( $campaignTitle, $id );
+
+        $this->pastCampaignsTest( $groupName );
     }
     
-    function offlineContributionTest( $campaignTitle, $id ) 
+    function offlineContributionTest( $campaignTitle, $id, $past = false ) 
     {
         // Create a contact to be used as soft creditor
         $softCreditFname = substr(sha1(rand()), 0, 7);
@@ -188,7 +190,11 @@ class WebTest_Campaign_OfflineContributionTest extends CiviSeleniumTestCase {
         // source
         $this->type("source", "Mailer 1");
         
-        // select campaign
+        if ( $past ) {
+            $this->click("css=tr.crm-contribution-form-block-campaign_id td.view-value a");
+            sleep(2);
+        }
+        
         $this->click("campaign_id");
         $this->select("campaign_id", "value=$id" );
         
@@ -255,25 +261,27 @@ class WebTest_Campaign_OfflineContributionTest extends CiviSeleniumTestCase {
         // verify Contribution created
         $this->webtestVerifyTabularData( array( 'Campaign' => $campaignTitle ) );
 
-        // when campaign component is disabled
-        $this->open( $this->sboxPath . 'civicrm/admin/setting/component?reset=1' );
-        $this->waitForElementPresent("_qf_Component_next-bottom");
-        $this->addSelection("enableComponents-t", "label=CiviCampaign");
-        $this->click("//option[@value='CiviCampaign']");
-        $this->click("remove");
-        $this->click("_qf_Component_next-bottom");
-        $this->waitForPageToLoad("30000");          
-        $this->assertTrue($this->isTextPresent("Your changes have been saved."));
-
-        $this->open( $this->sboxPath . 'civicrm/contribute/search?reset=1' );
-        $this->waitForElementPresent( "_qf_Search_refresh" );
-        
-        $this->type( 'sort_name', $firstName );
-        $this->click( "_qf_Search_refresh" );
-        $this->waitForElementPresent( "_qf_Search_next_print" );
-        $this->click( "xpath=//div[@id='contributionSearch']/table/tbody/tr/td[11]/span/a[text()='Edit']" );
-        $this->waitForElementPresent( "_qf_Contribution_cancel-bottom" );
-        $this->assertTrue($this->isTextPresent("$campaignTitle"));
+        if ( $past ) {
+            // when campaign component is disabled
+            $this->open( $this->sboxPath . 'civicrm/admin/setting/component?reset=1' );
+            $this->waitForElementPresent("_qf_Component_next-bottom");
+            $this->addSelection("enableComponents-t", "label=CiviCampaign");
+            $this->click("//option[@value='CiviCampaign']");
+            $this->click("remove");
+            $this->click("_qf_Component_next-bottom");
+            $this->waitForPageToLoad("30000");          
+            $this->assertTrue($this->isTextPresent("Your changes have been saved."));
+            
+            $this->open( $this->sboxPath . 'civicrm/contribute/search?reset=1' );
+            $this->waitForElementPresent( "_qf_Search_refresh" );
+            
+            $this->type( 'sort_name', $firstName );
+            $this->click( "_qf_Search_refresh" );
+            $this->waitForElementPresent( "_qf_Search_next_print" );
+            $this->click( "xpath=//div[@id='contributionSearch']/table/tbody/tr/td[11]/span/a[text()='Edit']" );
+            $this->waitForElementPresent( "_qf_Contribution_cancel-bottom" );
+            $this->assertTrue($this->isTextPresent("$campaignTitle"));
+        }
     }
     
     function addGroup( $groupName = 'New Group' ) 
@@ -305,5 +313,53 @@ class WebTest_Campaign_OfflineContributionTest extends CiviSeleniumTestCase {
         
         // Is status message correct?
         $this->assertTrue($this->isTextPresent("The Group '$groupName' has been saved."));
+    }
+
+    function pastCampaignsTest( $groupName )
+    {
+        // Go directly to the URL of the screen that you will be testing
+        $this->open($this->sboxPath . "civicrm/campaign/add&reset=1");
+        
+        // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
+        // button at the end of this page to show up, to make sure it's fully loaded.
+        $this->waitForElementPresent("_qf_Campaign_next-bottom");
+        
+        // Let's start filling the form with values.
+        $title = substr(sha1(rand()), 0, 7);
+        $campaignTitle = "Past Campaign $title";
+        $this->type( "title", $campaignTitle );
+        
+        // select the campaign type
+        $this->select("campaign_type_id", "value=2");
+
+        // fill in the description
+        $this->type("description", "This is a test for past campaign");
+        
+        // include groups for the campaign
+        $this->addSelection("includeGroups-f", "label=$groupName");
+        $this->click("//option[@value=4]");
+        $this->click("add");
+        
+        // fill the start date for campaign 
+        $this->webtestFillDate("start_date", "1 January 2011");
+        
+        // fill the end date for campaign
+        $this->webtestFillDate("end_date", "31 January 2011");
+        
+        // select campaign status
+        $this->select("status_id", "value=3");
+        
+        // click save
+        $this->click("_qf_Campaign_next-bottom");
+        $this->waitForPageToLoad("30000");
+        
+        $this->assertTrue($this->isTextPresent("Campaign Past Campaign $title has been saved."), 
+                          "Status message didn't show up after saving campaign!");
+        
+        $this->waitForElementPresent("//div[@id='Campaigns']/div/div[5]/a/span[text()='Add Campaign']");
+        $id = explode( '_', $this->getAttribute("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[7]@id"));
+        $id = $id[1];
+
+        $this->offlineContributionTest( $campaignTitle, $id, true );
     }
 }
