@@ -50,7 +50,7 @@ require_once 'api/v3/utils.php';
  * @return array of newly created phone property values.
  * @access public
  */
-function civicrm_api3_phone_create( &$params ) 
+function civicrm_api3_phone_create( $params ) 
 {
   _civicrm_api3_initialize( true );
   try {
@@ -69,8 +69,9 @@ function civicrm_api3_phone_create( &$params )
 		 return civicrm_api3_create_error( "Phone is not created or updated ");
 	 } else {
 		 $values = array( );
-		 _civicrm_api3_object_to_array($phoneBAO, $values);
-		 return civicrm_api3_create_success($values, $params);
+		 unset($phoneBAO->location_type_id);
+		 _civicrm_api3_object_to_array($phoneBAO, $values[$phoneBAO->id]);
+		 return civicrm_api3_create_success($values, $params,$phoneBAO);
 	 }
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
@@ -88,7 +89,7 @@ function civicrm_api3_phone_create( &$params )
  * @return boolean | error  true if successfull, error otherwise
  * @access public
  */
-function civicrm_api3_phone_delete( &$params ) 
+function civicrm_api3_phone_delete( $params ) 
 {
   _civicrm_api3_initialize( true );
   try {
@@ -101,10 +102,11 @@ function civicrm_api3_phone_delete( &$params )
     if ( $phoneDAO->find( ) ) {
 		while ( $phoneDAO->fetch() ) {
 			$phoneDAO->delete();
-			return civicrm_api3_create_success();
+			return civicrm_api3_create_success($phoneDAO->id,$params,$phoneDAO);
 		}
 	} else {
 		return civicrm_api3_create_error( 'Could not delete phone with id '.$phoneID);
+		//recoverable fatal error: Object of class stdClass could not be converted to string in /home/www-home/apps/civicrm-3.3.5/civicrm/api/v3/Phone.php on line 107.
 	}
     
   } catch (Exception $e) {
@@ -126,7 +128,7 @@ function civicrm_api3_phone_delete( &$params )
  * @access public
  */
 
-function civicrm_api3_phone_get(&$params) 
+function civicrm_api3_phone_get($params) 
 {   
   _civicrm_api3_initialize(true );
   try {
