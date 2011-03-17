@@ -95,7 +95,7 @@ class CRM_Contact_Page_AJAX
             $where .= " AND contact_type = \"Organization\"";
             //set default for current_employer
             if ( $orgId = CRM_Utils_Array::value( 'id', $_GET) ) {
-                $orgId = CRM_Utils_Type::escape( CRM_Utils_Array::value( 'id', $_GET) );
+                $orgId = CRM_Utils_Type::escape( CRM_Utils_Array::value( 'id', $_GET ), 'Positive' );
                 $where .= " AND cc.id = {$orgId}";
              }
 
