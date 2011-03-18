@@ -2,7 +2,7 @@
 require_once 'api/api.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 
-class api_v3_SyntaxConformanceAllEntities extends CiviUnitTestCase
+class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
 {
     protected $_apiversion;
 
@@ -43,15 +43,15 @@ class api_v3_SyntaxConformanceAllEntities extends CiviUnitTestCase
 
     public static function entities_get () {
       // all the entities, beside the ones flagged
-      return api_v3_SyntaxConformanceAllEntities::entities (api_v3_SyntaxConformanceAllEntities::toBeSkipped_get (true));
+      return api_v3_SyntaxConformanceAllEntitiesTest::entities (api_v3_SyntaxConformanceAllEntitiesTest::toBeSkipped_get (true));
     }
 
     public static function entities_create () {
-      return api_v3_SyntaxConformanceAllEntities::entities (api_v3_SyntaxConformanceAllEntities::toBeSkipped_create (true));
+      return api_v3_SyntaxConformanceAllEntitiesTest::entities (api_v3_SyntaxConformanceAllEntitiesTest::toBeSkipped_create (true));
     }
 
     public static function entities_delete () {
-      return api_v3_SyntaxConformanceAllEntities::entities (api_v3_SyntaxConformanceAllEntities::toBeSkipped_delete (true));
+      return api_v3_SyntaxConformanceAllEntitiesTest::entities (api_v3_SyntaxConformanceAllEntitiesTest::toBeSkipped_delete (true));
     }
 
     public static function toBeSkipped_get ($sequential = false) {
