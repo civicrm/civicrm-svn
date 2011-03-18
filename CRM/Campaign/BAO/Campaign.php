@@ -326,23 +326,32 @@ Order By  camp.title";
             $queryParams[3] = array( '%'.trim($params['title']).'%', 'String' );
         }
         if ( CRM_Utils_Array::value( 'start_date', $params ) ) {
+            $startDate = CRM_Utils_Date::processDate( $params['start_date'] );
             $where[] = "( campaign.start_date >= %4 OR campaign.start_date IS NULL )";
-            $queryParams[4] = array( $params['start_date'], 'String' );
+            $queryParams[4] = array( $startDate, 'String' );
         }
         if ( CRM_Utils_Array::value( 'end_date', $params ) ) {
+            $endDate = CRM_Utils_Date::processDate( $params['end_date'], '235959' );
             $where[] = "( campaign.end_date <= %5 OR campaign.end_date IS NULL )";
-            $queryParams[5] = array( $params['end_date'], 'String' );
+            $queryParams[5] = array( $endDate, 'String' );
         }
         if ( CRM_Utils_Array::value( 'description', $params ) ) {
             $where[] = "( campaign.description LIKE %6 )";
-            $queryParams[3] = array( '%'.trim($params['description']).'%', 'String' );
+            $queryParams[6] = array( '%'.trim($params['description']).'%', 'String' );
         }
         if ( CRM_Utils_Array::value( 'campaign_type_id', $params ) ) {
             $typeId = $params['campaign_type_id'];
-            if ( is_array( $params ) ) {
+            if ( is_array( $params['campaign_type_id'] ) ) {
                 $typeId = implode( ' , ', $params['campaign_type_id'] );
             }
             $where[] = "( campaign.campaign_type_id IN ( {$typeId} ) )";
+        }
+        if ( CRM_Utils_Array::value( 'status_id', $params ) ) {
+            $statusId = $params['status_id'];
+            if ( is_array( $params['status_id'] ) ) {
+                $statusId = implode( ' , ', $params['status_id'] );
+            }
+            $where[] = "( campaign.status_id IN ( {$statusId} ) )";
         }
         if ( array_key_exists( 'is_active', $params ) ) {
             $active = "( campaign.is_active = 1 )";
@@ -353,7 +362,7 @@ Order By  camp.title";
         }
         $whereClause = null;
         if ( !empty( $where ) ) {
-            $whereClause = ' WHERE '. implode( ' AND ', $where ); 
+            $whereClause = ' WHERE '. implode( " \nAND ", $where ); 
         }
         
         $properties = array( 'id',  
