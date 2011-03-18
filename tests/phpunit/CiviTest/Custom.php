@@ -22,7 +22,7 @@ class Custom extends CiviUnitTestCase
                            'style'       => 'Inline',
                            'is_multiple' => $isMultiple,
                            'is_active'   => 1,
-                           'version'     => 2
+                           'version'     => 3
                            );
             
         } else {
@@ -46,9 +46,6 @@ class Custom extends CiviUnitTestCase
         $group = new CRM_Core_BAO_CustomGroup( );
         $group->id = $result['id'];
         $group->find( true );
-
-
-
 
         return $group;
     }
