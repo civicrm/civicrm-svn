@@ -6,9 +6,8 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
 {
     protected $_apiversion;
 
-    function requireDBReset () {
-      return false; // because our tests behave
-    }
+    /* This test case doesn't require DB reset */
+    public $DBResetRequired = false;
 
     /* they are two types of missing APIs:
        - Those that are to be implemented 
@@ -147,10 +146,10 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
      * @Xdepends testEmptyParam_get // no need to test the simple if the empty doesn't work/is skipped. doesn't seem to work
      */
     public function testSimple_get ($Entity) {
+
         if (in_array ($Entity,$this->toBeImplemented['get'])) {
           return;
         }
-
         $result = civicrm_api ($Entity,'Get',array('version' => 3));
         if ($result['is_error']) { // @TODO: list the get that have mandatory params
           $this->assertContains ("Mandatory key(s) missing from params array", $result['error_message']);
