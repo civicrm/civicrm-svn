@@ -68,16 +68,32 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     protected $_dbconn;
 
     /**
-     *  @var Don't reset database if set to true in TestCase
-     */
-    protected $noreset = FALSE;  // see http://forum.civicrm.org/index.php/topic,18065.0.html
-
-    /**
      *  @var Utils instance
      */
     public static $utils;
 
-    public static $populateOnce = FALSE;  // see http://forum.civicrm.org/index.php/topic,18065.0.html
+    /**
+     *  @var boolean populateOnce allows to skip db resets in setUp
+     *
+     *  WARNING! USE WITH CAUTION - IT'LL RENDER DATA DEPENDENCIES
+     *  BETWEEN TESTS WHEN RUN IN SUITE. SUITABLE FOR LOCAL, LIMITED
+     *  "CHECK RUNS" ONLY!
+     *
+     *  IF POSSIBLE, USE $this->DBResetRequired = FALSE IN YOUR TEST CASE!
+     *
+     *  see also: http://forum.civicrm.org/index.php/topic,18065.0.html
+     */ 
+    public static $populateOnce = FALSE;  
+
+    /**
+     *  @var boolean DBResetRequired allows skipping DB reset
+     *               in specific test case. If you still need
+     *               to reset single test (method) of such case, call 
+     *               $this->cleanDB() in the first line of this
+     *               test (method).
+     */
+    public $DBResetRequired = TRUE;
+
 
     /**
      *  Constructor
@@ -107,7 +123,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     }
 
     function requireDBReset () {
-      return true; // by default, we assume that the tests in the inherited class have messed up the db
+      return $this->DBResetRequired; 
     }
 
 
@@ -230,6 +246,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
     public function cleanDB() {
         self::$populateOnce = null;
+        $this->DBResetRequired = true;
 
         $this->_dbconn = $this->getConnection();
         $this->_populateDB();
