@@ -337,7 +337,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
                         ( e.is_template IS NULL OR e.is_template = 0) AND
                         e.start_date >= DATE_SUB( NOW(), INTERVAL 7 day );";
         
-        $dao =& CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
+        $dao =& CRM_Core_DAO::executeQuery( $query );
         
         if ( $dao->fetch( ) ) {
             $eventSummary['total_events'] = $dao->total_events;

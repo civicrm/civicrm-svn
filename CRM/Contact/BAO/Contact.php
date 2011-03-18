@@ -1738,21 +1738,23 @@ ORDER BY civicrm_email.is_primary DESC";
         $privacy = CRM_Core_SelectValues::privacy( );
         foreach ($privacy as $key => $value) {
             if (array_key_exists($key, $fields)) {
-                if ( CRM_Utils_Array::value( $key, $params ) ) {
+                if ( array_key_exists( $key, $params ) ) {
                     $data[$key] = $params[$key];
-                } else {
+                } else if ( ! $contactID ) { // dont reset it for existing contacts
                     $data[$key] = 0;
                 }
             }
         }
         
         // manage is_opt_out
-        if (array_key_exists('is_opt_out', $fields)) {
+        if (array_key_exists('is_opt_out', $fields) &&
+            array_key_exists('is_opt_out', $params) ) {
             $wasOptOut = CRM_Utils_Array::value( 'is_opt_out', $contactDetails, false );
             $isOptOut  = CRM_Utils_Array::value( 'is_opt_out', $params, false );
             $data['is_opt_out'] = $isOptOut;
             // on change, create new civicrm_subscription_history entry
-            if (($wasOptOut != $isOptOut) && CRM_Utils_Array::value('contact_id', $contactDetails ) ) {
+            if (($wasOptOut != $isOptOut) && 
+                CRM_Utils_Array::value('contact_id', $contactDetails ) ) {
                 $shParams = array(
                                   'contact_id' => $contactDetails['contact_id'],
                                   'status'     => $isOptOut ? 'Removed' : 'Added',
