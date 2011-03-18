@@ -35,7 +35,7 @@ require_once 'api/v3/Mailing.php';
  */
 
 
-class api_v3_MailerTest extends CiviUnitTestCase 
+class api_v3_MailingTest extends CiviUnitTestCase 
 {
     protected $_groupID;
     protected $_email;
@@ -61,49 +61,8 @@ class api_v3_MailerTest extends CiviUnitTestCase
     
     function tearDown( ) 
     {
-
         $this-> groupDelete( $this->_groupID );
     }
-    
-    //----------- civicrm_mailing_event_confirm methods -----------
-    
-    /**
-     * Test civicrm_mailing_event_confirm with wrong params type.
-     */
-    public function testMailerConfirmWrongParamsType( )
-    {
-        $params ='is_string';
-        $result =& civicrm_api3_mailing_event_confirm($params);
-        $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Input parameter is not an array', 'In line ' . __LINE__ );       
-    }
-    
-    /**
-     * Test civicrm_mailing_event_confirm with empty params.
-     */
-    public function testMailerConfirmEmptyParams( )
-    {
-        $params = array( );
-        $result =& civicrm_api3_mailing_event_confirm($params);
-        $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Input Parameters empty', 'In line ' . __LINE__ );
-    }
-    
-    /**
-     * Test civicrm_mailing_event_confirm with wrong params.
-     */
-    public function testMailerConfirmWrongParams( )
-    {
-        $params = array(
-                        'contact_id'    => 'Wrong ID',
-                        'subscribe_id'  => 'Wrong ID',
-                        'hash'          => 'Wrong Hash',
-                        );
-        $result =& civicrm_api3_mailing_event_confirm($params);
-        $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Confirmation failed', 'In line ' . __LINE__ );
-    }
-    
     
     //------------ civicrm_mailing_event_bounce methods------------
     
@@ -115,18 +74,18 @@ class api_v3_MailerTest extends CiviUnitTestCase
         $params ='is_string';
         $result =& civicrm_api3_mailing_event_bounce($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Input parameter is not an array', 'In line ' . __LINE__ );       
+        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array', 'In line ' . __LINE__ );       
     }
     
     /**
      * Test civicrm_mailing_event_bounce with empty params.
      */
-    public function testMailerBounceEmptyParams()
+    public function testMailerBounceEmptyParams( )
     {
         $params = array( );
         $result =& civicrm_api3_mailing_event_bounce($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Input Parameters empty', 'In line ' . __LINE__ );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: event_queue_id, time_stamp, job_id, event_queue_id, hash, body, version', 'In line ' . __LINE__ );
     }
     
     /**
@@ -139,11 +98,56 @@ class api_v3_MailerTest extends CiviUnitTestCase
                         'event_queue_id'  => 'Wrong ID',
                         'hash'            => 'Wrong Hash',
                         'body'            => 'Body...',
+                        'version'         =>  '3',
+                        'time_stamp'      =>  '20111109212100'                    
                         );
         $result =& civicrm_api3_mailing_event_bounce($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Queue event could not be found', 'In line ' . __LINE__ );
     }
+
+    //----------- civicrm_mailing_event_confirm methods -----------
+    
+    /**
+     * Test civicrm_mailing_event_confirm with wrong params type.
+     */
+    public function testMailerConfirmWrongParamsType( )
+    {
+        $params ='is_string';
+        $result =& civicrm_api3_mailing_event_confirm($params);
+        $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
+        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array', 'In line ' . __LINE__ );       
+    }
+    
+    /**
+     * Test civicrm_mailing_event_confirm with empty params.
+     */
+    public function testMailerConfirmEmptyParams( )
+    {
+        $params = array( );
+        $result =& civicrm_api3_mailing_event_confirm($params);
+        $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: event_subscribe_id, time_stamp, contact_id, subscribe_id, hash, version', 'In line ' . __LINE__ );
+    }
+    
+    /**
+     * Test civicrm_mailing_event_confirm with wrong params.
+     */
+    public function testMailerConfirmWrongParams( )
+    {
+        $params = array(
+                        'contact_id'         => 'Wrong ID',
+                        'subscribe_id'       => 'Wrong ID',
+                        'hash'               => 'Wrong Hash',
+                        'event_subscribe_id' => '123',
+                        'time_stamp'         =>  '20111111010101',
+                        'version'            => 3
+                        
+                        );
+        $result =& civicrm_api3_mailing_event_confirm($params);
+        $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
+        $this->assertEquals( $result['error_message'], 'Confirmation failed', 'In line ' . __LINE__ );
+    } 
     
     //---------- civicrm_mailing_event_reply methods -----------
     
@@ -155,7 +159,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
         $params ='is_string';
         $result =& civicrm_api3_mailing_event_reply($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Input parameter is not an array', 'In line ' . __LINE__ );       
+        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array', 'In line ' . __LINE__ );       
     }
     
     /**
@@ -166,7 +170,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
         $params = array( );
         $result =& civicrm_api3_mailing_event_reply($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Input Parameters empty', 'In line ' . __LINE__ );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: event_queue_id, time_stamp, job_id, event_queue_id, hash, bodyTxt, replyTo, version', 'In line ' . __LINE__ );
     }
     
     /**
@@ -180,6 +184,8 @@ class api_v3_MailerTest extends CiviUnitTestCase
                         'hash'            => 'Wrong Hash',
                         'bodyTxt'         => 'Body...',
                         'replyTo'         => $this->_email,
+                        'time_stamp'      => '20111111010101',
+                        'version'         => 3
                         );
         $result =& civicrm_api3_mailing_event_reply($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
@@ -197,7 +203,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
         $params ='is_string';
         $result =& civicrm_api3_mailing_event_forward($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Input parameter is not an array', 'In line ' . __LINE__ );       
+        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array', 'In line ' . __LINE__ );       
     }
     
     /**
@@ -208,7 +214,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
         $params = array( );
         $result =& civicrm_api3_mailing_event_forward($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Input Parameters empty', 'In line ' . __LINE__ );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: event_queue_id, time_stamp, job_id, event_queue_id, hash, email, version', 'In line ' . __LINE__ );
     }
     
     /**
@@ -221,6 +227,8 @@ class api_v3_MailerTest extends CiviUnitTestCase
                         'event_queue_id'  => 'Wrong ID',
                         'hash'            => 'Wrong Hash',
                         'email'           => $this->_email,
+                        'time_stamp'      => '20111111010101',
+                        'version'         => 3
                         );
         $result =& civicrm_api3_mailing_event_forward($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
@@ -238,7 +246,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
         $params ='is_string';
         $result =& civicrm_api3_mailing_event_click($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Input parameter is not an array', 'In line ' . __LINE__ );       
+        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array', 'In line ' . __LINE__ );       
     }
     
     /**
@@ -249,7 +257,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
         $params = array( );
         $result =& civicrm_api3_mailing_event_click($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Input Parameters empty', 'In line ' . __LINE__ );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: event_queue_id, trackable_url_id, time_stamp, event_queue_id, url_id, version', 'In line ' . __LINE__ );
     }
     
     
@@ -263,7 +271,7 @@ class api_v3_MailerTest extends CiviUnitTestCase
         $params ='is_string';
         $result =& civicrm_api3_mailing_event_open($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Input parameter is not an array', 'In line ' . __LINE__ );       
+        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array', 'In line ' . __LINE__ );       
     }
     
     /**
@@ -274,6 +282,6 @@ class api_v3_MailerTest extends CiviUnitTestCase
         $params = array( );
         $result =& civicrm_api3_mailing_event_open($params);
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Input Parameters empty', 'In line ' . __LINE__ );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: event_queue_id, time_stamp, event_queue_id, version', 'In line ' . __LINE__ );
     }
 }

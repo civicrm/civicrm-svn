@@ -35,7 +35,7 @@ require_once 'api/v3/MailingGroup.php';
  */
 
 
-class api_v3_MailerGroupTest extends CiviUnitTestCase 
+class api_v3_MailingGroupTest extends CiviUnitTestCase 
 {
     protected $_groupID;
     protected $_email;
