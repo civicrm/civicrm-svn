@@ -306,6 +306,45 @@ class api_v3_ContactTest extends CiviUnitTestCase
    *  Verify that attempt to create individual contact with first
    *  and last names and email succeeds
    */
+  function testCreateIndividualWithContribution()
+  {
+    $params = array(
+                        'first_name'   => 'abc3',
+                        'last_name'    => 'xyz3',
+                        'contact_type' => 'Individual',
+                        'email'        => 'man3@yahoo.com',
+                        'version'			=>  $this->_apiversion,
+                        'entities'    => array(
+                           'Contribution' => array(                         
+                             'receive_date'           => '2010-01-01',
+                             'total_amount'           => 100.00,
+                             'contribution_type_id'   => 1,
+                             'payment_instrument_id'  => 1,
+                             'non_deductible_amount'  => 10.00,
+                             'fee_amount'             => 50.00,
+                             'net_amount'             => 90.00,
+                             'trxn_id'                => 12345,
+                             'invoice_id'             => 67890,
+                             'source'                 => 'SSF',
+                             'contribution_status_id' => 1,
+                             'version' =>$this->_apiversion,
+                        ),
+                          'website' => array('url' => "http://civicrm.org")),
+    );
+
+    $result =civicrm_api('Contact','create',$params);
+    $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+    $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
+    . " error message: " . CRM_Utils_Array::value('error_message', $result) );
+    $this->assertEquals( 1, $result['id'], "In line " . __LINE__ );
+    $this->assertEquals(0,$result['values'][$result['id']]['entities']['website']['is_error']);
+    // delete the contact
+    civicrm_api3_contact_delete( $result );
+  }
+  /**
+   *  Verify that attempt to create individual contact with first
+   *  and last names and email succeeds
+   */
   function testCreateIndividualWithNameEmail()
   {
     $params = array(
@@ -324,7 +363,6 @@ class api_v3_ContactTest extends CiviUnitTestCase
     // delete the contact
     civicrm_api3_contact_delete( $contact );
   }
-
   /**
    *  Verify that attempt to create individual contact with first
    *  and last names, email and location type succeeds
@@ -340,7 +378,7 @@ class api_v3_ContactTest extends CiviUnitTestCase
                         'version'			=>  $this->_apiversion,
     );
     $result =& civicrm_api3_contact_create($params);
-    $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+
     $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
     . " error message: " . CRM_Utils_Array::value('error_message', $result) );
     $this->assertEquals( 1, $result['id'], "In line " . __LINE__ );
