@@ -90,14 +90,32 @@
     {strip} 
         <table class="form-layout">
 	  <tr>
-              <td class="font-size12pt">
-                  {$form.title.label}
+              <td>{$form.title.label}<br />
+		  {$form.title.html}
               </td>
-              <td>
-	          {$form.title.html}
+	      <td>
+                  {$form.description.label}<br />
+		  {$form.description.html}
               </td>
 	  </tr>
 
+	  <tr>
+              <td>{$form.start_date.label}<br />
+	          {include file="CRM/common/jcalendar.tpl" elementName=start_date}
+              </td>
+	      <td>{$form.end_date.label}<br />
+	          {include file="CRM/common/jcalendar.tpl" elementName=end_date}
+              </td>
+	  </tr>
+
+	  <tr>
+              <td>{$form.campaign_type_id.label}<br />
+	          {$form.campaign_type_id.html}
+              </td>
+	      <td>{$form.status_id.label}<br />
+	          {$form.status_id.html}
+              </td>
+	  </tr>
 
           <tr>
              <td colspan="2">
