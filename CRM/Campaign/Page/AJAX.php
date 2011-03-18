@@ -546,16 +546,19 @@ class CRM_Campaign_Page_AJAX
                                                         'default' => 25               ),
                                   'sort'      => array( 'name'    => 'iSortCol_0',
                                                         'type'    => 'Integer',
-                                                        'default' => 'sort_name'      ),
+                                                        'default' => 'start_date'      ),
                                   'sortOrder' => array( 'name'    => 'sSortDir_0',
                                                         'type'    => 'String', 
-                                                        'default' => 'asc'            ) );
+                                                        'default' => 'desc'            ) );
         foreach ( $dataTableParams as $pName => $pValues ) {
             $$pName = $pValues['default'];
             if ( CRM_Utils_Array::value( $pValues['name'], $_POST ) ) {
                 $$pName = CRM_Utils_Type::escape( $_POST[$pValues['name']], $pValues['type'] );
                 if ( $pName == 'sort' ) $$pName = $sortCols[$$pName];   
             }
+        }
+        foreach ( array( 'sort', 'offset', 'rowCount', 'sortOrder' ) as $sortParam ) {
+            $params[$sortParam] = $$sortParam;
         }
         
         require_once 'CRM/Campaign/Page/DashBoard.php';
