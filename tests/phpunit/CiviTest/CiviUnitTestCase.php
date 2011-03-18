@@ -77,8 +77,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     public static $utils;
 
-    public static $populateOnce = TRUE;  // see http://forum.civicrm.org/index.php/topic,18065.0.html
-    //public static $populateOnce = FALSE;  // see http://forum.civicrm.org/index.php/topic,18065.0.html
+    public static $populateOnce = FALSE;  // see http://forum.civicrm.org/index.php/topic,18065.0.html
 
     /**
      *  Constructor
@@ -107,7 +106,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         
     }
 
-    function needDBReset () {
+    function requireDBReset () {
       return true; // by default, we assume that the tests in the inherited class have messed up the db
     }
 
@@ -143,10 +142,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
     private function _populateDB() {
 
-        if ( self::$populateOnce ) {
+        if ( self::$populateOnce || !$this->requireDBReset() ) {
             return;
         }
-
         self::$populateOnce = null;
        
         $queries = array( "DROP DATABASE IF EXISTS civicrm_tests_dev;", 

@@ -6,7 +6,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
 {
     protected $_apiversion;
 
-    function needDBReset () {
+    function requireDBReset () {
       return false; // because our tests behave
     }
 
