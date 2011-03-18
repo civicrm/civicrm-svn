@@ -69,6 +69,10 @@ function civicrm_api3_custom_group_create( $params )
 {
     _civicrm_api3_initialize(true );
     try{
+    if ( ! isset( $params['style'] ) || ! trim( $params['style'] ) ) {
+        $params['style'] = 'Inline';
+    }
+    
     civicrm_api3_verify_mandatory($params,null,array('extends','title'));  
     
     // If passing extends array - set class_name (e.g. 'Contact', 'Participant'...) as extends[0]. You may optionally
@@ -81,13 +85,7 @@ function civicrm_api3_custom_group_create( $params )
    if ( ! isset( $params['extends'][0] ) || ! trim( $params['extends'][0] ) ) {
           return civicrm_api3_create_error( "First item in params['extends'] must be a class name (e.g. 'Contact')." );
    }
-      
-    
-
-    if ( ! isset( $params['style'] ) || ! trim( $params['style'] ) ) {
-        $params['style'] = 'Inline';
-    }
-        
+           
     
     require_once 'CRM/Core/BAO/CustomGroup.php';
     $customGroup = CRM_Core_BAO_CustomGroup::create($params);                             
