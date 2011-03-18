@@ -6,6 +6,10 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
 {
     protected $_apiversion;
 
+    function needDBReset () {
+      return false; // because our tests behave
+    }
+
     /* they are two types of missing APIs:
        - Those that are to be implemented 
          (in some future version when someone steps in -hint hint-). List the entities in toBeImplemented[ {$action} ]
