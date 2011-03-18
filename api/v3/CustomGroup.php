@@ -69,31 +69,20 @@ function civicrm_api3_custom_group_create( $params )
 {
     _civicrm_api3_initialize(true );
     try{
-    civicrm_api3_verify_one_mandatory($params,null,array('extends','class_name'));  
+    civicrm_api3_verify_mandatory($params,null,array('extends','title'));  
     
-    // Require either param['class_name'] (string) - for backwards compatibility - OR parm['extends'] (array)
     // If passing extends array - set class_name (e.g. 'Contact', 'Participant'...) as extends[0]. You may optionally
     // pass an extends_entity_column_value as extends[1] (e.g. an Activity Type ID).
-
-    if( isset( $params['class_name'] ) && is_string($params['class_name'] ) && trim( $params['class_name'] ) ) {
-        $params['extends'][0] = trim( $params['class_name'] );
-    } else {
-        if ( ! isset( $params['extends'] ) || ! is_array( $params['extends'] ) ) { 
-            return civicrm_api3_create_error( "Params must include either 'class_name' (string) or 'extends' (array)." );
-        } else {
-            if ( ! isset( $params['extends'][0] ) || ! trim( $params['extends'][0] ) ) {
-                return civicrm_api3_create_error( "First item in params['extends'] must be a class name (e.g. 'Contact')." );
-            }
-        }
-    }
-
-    $error = _civicrm_api3_check_required_fields($params, 'CRM_Core_DAO_CustomGroup');
+   if (is_string($params['extends'])){
+     $extends = implode(",",$params['extends']);
+     unset ($params['extends']);
+     $params['extends'] =  $extends;
+   }
+   if ( ! isset( $params['extends'][0] ) || ! trim( $params['extends'][0] ) ) {
+          return civicrm_api3_create_error( "First item in params['extends'] must be a class name (e.g. 'Contact')." );
+   }
+      
     
-    require_once 'CRM/Utils/String.php';
-    if (! isset( $params['title'] ) ||
-        ! trim($params['title'] ) ) {
-        return civicrm_api3_create_error( "Title parameter is required." );
-    } 
 
     if ( ! isset( $params['style'] ) || ! trim( $params['style'] ) ) {
         $params['style'] = 'Inline';
