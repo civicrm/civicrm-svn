@@ -35,6 +35,7 @@
  */
 
 require_once 'CRM/Core/Form.php';
+require_once 'CRM/Core/BAO/CustomField.php';
 require_once 'CRM/Campaign/BAO/Campaign.php';
 require_once 'CRM/Custom/Form/CustomData.php';
 require_once 'CRM/Campaign/PseudoConstant.php';

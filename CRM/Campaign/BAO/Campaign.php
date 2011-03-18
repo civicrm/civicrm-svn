@@ -293,11 +293,88 @@ Order By  camp.title";
      *
      * @static
      */
-    static function getCampaignSummary( ) 
+    static function getCampaignSummary( $params ) 
     {
         $campaigns = array( );
         
-        $query = '
+        //build the limit and order clause.
+        $sortParams = array( 'sort'      => 'start_date', 
+                             'offset'    => 0, 
+                             'rowCount'  => 10, 
+                             'sortOrder' => 'desc'  ); 
+        foreach ( $sortParams as $name => $default ) {
+            if ( CRM_Utils_Array::value( $name, $params ) ) {
+                $sortParams[$name] = $params[$name];
+            }
+        }
+        $limitClause   = "{$sortParams['offset']}, {$sortParams['rowCount']}";
+        $orderByClause = "campaign.{$sortParams['sort']} {$sortParams['sortOrder']}";
+        
+        //build the where clause.
+        $queryParams = $where = array( );
+        if ( CRM_Utils_Array::value( 'id', $params ) ) {
+            $where[] = "( campaign.id = %1 )";
+            $queryParams[1] = array( $params['id'], 'Positive' );
+        }
+        if ( CRM_Utils_Array::value( 'name', $params ) ) {
+            $where[] = "( campaign.name LIKE %2 )";
+            $queryParams[2] = array( '%'.trim($params['name']).'%', 'String' );
+        }
+        if ( CRM_Utils_Array::value( 'title', $params ) ) {
+            $where[] = "( campaign.title LIKE %3 )";
+            $queryParams[3] = array( '%'.trim($params['title']).'%', 'String' );
+        }
+        if ( CRM_Utils_Array::value( 'start_date', $params ) ) {
+            $startDate = CRM_Utils_Date::processDate( $params['start_date'] );
+            $where[] = "( campaign.start_date >= %4 OR campaign.start_date IS NULL )";
+            $queryParams[4] = array( $startDate, 'String' );
+        }
+        if ( CRM_Utils_Array::value( 'end_date', $params ) ) {
+            $endDate = CRM_Utils_Date::processDate( $params['end_date'], '235959' );
+            $where[] = "( campaign.end_date <= %5 OR campaign.end_date IS NULL )";
+            $queryParams[5] = array( $endDate, 'String' );
+        }
+        if ( CRM_Utils_Array::value( 'description', $params ) ) {
+            $where[] = "( campaign.description LIKE %6 )";
+            $queryParams[6] = array( '%'.trim($params['description']).'%', 'String' );
+        }
+        if ( CRM_Utils_Array::value( 'campaign_type_id', $params ) ) {
+            $typeId = $params['campaign_type_id'];
+            if ( is_array( $params['campaign_type_id'] ) ) {
+                $typeId = implode( ' , ', $params['campaign_type_id'] );
+            }
+            $where[] = "( campaign.campaign_type_id IN ( {$typeId} ) )";
+        }
+        if ( CRM_Utils_Array::value( 'status_id', $params ) ) {
+            $statusId = $params['status_id'];
+            if ( is_array( $params['status_id'] ) ) {
+                $statusId = implode( ' , ', $params['status_id'] );
+            }
+            $where[] = "( campaign.status_id IN ( {$statusId} ) )";
+        }
+        if ( array_key_exists( 'is_active', $params ) ) {
+            $active = "( campaign.is_active = 1 )";
+            if ( CRM_Utils_Array::value( 'is_active', $params ) ) {
+                $active = "( campaign.is_active = 0 OR campaign.is_active IS NULL )";
+            }
+            $where[] = $active;
+        }
+        $whereClause = null;
+        if ( !empty( $where ) ) {
+            $whereClause = ' WHERE '. implode( " \nAND ", $where ); 
+        }
+        
+        $properties = array( 'id',  
+                             'name',
+                             'title',
+                             'start_date',
+                             'end_date',
+                             'status_id',
+                             'is_active',
+                             'description',
+                             'campaign_type_id' );
+        
+        $query = "
   SELECT  campaign.id               as id,
           campaign.name             as name,
           campaign.title            as title,
@@ -308,12 +385,11 @@ Order By  camp.title";
           campaign.description      as description,
           campaign.campaign_type_id as campaign_type_id
     FROM  civicrm_campaign campaign
-ORDER BY  campaign.start_date desc';
+          {$whereClause}
+ORDER BY  {$orderByClause}
+   LIMIT  {$limitClause}"; 
         
-        $properties = array( 'id', 'name', 'title', 'status_id', 'description', 
-                             'campaign_type_id', 'is_active', 'start_date', 'end_date' );
-        
-        $campaign = CRM_Core_DAO::executeQuery( $query );
+        $campaign = CRM_Core_DAO::executeQuery( $query, $queryParams );
         while ( $campaign->fetch( ) ) {
             foreach ( $properties as $property ) {
                 $campaigns[$campaign->id][$property] = $campaign->$property;

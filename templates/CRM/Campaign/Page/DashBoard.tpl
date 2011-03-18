@@ -27,53 +27,9 @@
 
 {* build the campaign selector *}
 {if $subPageType eq 'campaign'}
-
-<div id="campaign-dialog" class='hiddenElement'></div>
-{if $campaigns} 
-  <div class="action-link">
-      <a href="{crmURL p='civicrm/campaign/add' q='reset=1' h=0 }" class="button"><span><div class="icon add-icon"></div>{ts}Add Campaign{/ts}</span></a>
-  </div>
-
-  {include file="CRM/common/enableDisable.tpl"}
-  {include file="CRM/common/jsortable.tpl"}
-  <div id="campaignList">
-    <table id="options" class="display">
-      <thead>
-        <tr class="columnheader">      
-          <th>{ts}Title{/ts}</th>
-          <th>{ts}Description{/ts}</th>
-          <th>{ts}Start Date{/ts}</th> 
-          <th>{ts}End Date{/ts}</th>
-          <th>{ts}Type{/ts}</th>
-          <th>{ts}Status{/ts}</th>
-          <th>{ts}Active?{/ts}</th>
-          <th id="nosort"></th>
-	</tr>
-      </thead>
-      {foreach from=$campaigns item=campaign}
-        <tr class="{cycle values="odd-row,even-row"} crm-campaign{if $campaign.is_active neq 1} disabled{/if}" id="row_{$campaign.campaign_id}">
-          <td class="crm-campaign-title">{$campaign.title}</td>
-          <td class="crm-campaign-description">{$campaign.description}</td>
-          <td class="crm-campaign-start_date">{$campaign.start_date|crmDate}</td>
-          <td class="crm-campaign-end_date">{$campaign.end_date|crmDate}</td>
-          <td class="crm-campaign-campaign_type">{$campaign.campaign_type}</td>
-          <td class="crm-campaign-campaign_status">{$campaign.status}</td>
-          <td class="crm-campaign-campaign-is_active" id="row_{$campaign.id}_status">{if $campaign.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-          <td class="crm-campaign-action">{$campaign.action}</td>
-	</tr>
-      {/foreach}
-    </table>
-  </div>
-
-{else} 
-    <div class="messages status">
-        <div class="icon inform-icon"></div> &nbsp;
-        {ts}No campaigns found.{/ts}
-    </div>
-{/if}
-<div class="action-link">
-   <a href="{crmURL p='civicrm/campaign/add' q='reset=1' h=0 }" class="button"><span><div class="icon add-icon"></div>{ts}Add Campaign{/ts}</span></a>
-</div>
+ 
+{* load the campaign search and selector here *}
+{include file="CRM/Campaign/Form/Search/Campaign.tpl"}
 
 {* build the survey selector *}
 {elseif $subPageType eq 'survey'}

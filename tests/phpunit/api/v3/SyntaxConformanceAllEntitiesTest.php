@@ -2,9 +2,13 @@
 require_once 'api/api.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 
-class api_v3_SyntaxConformanceAllEntities extends CiviUnitTestCase
+class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
 {
     protected $_apiversion;
+
+    function needDBReset () {
+      return false; // because our tests behave
+    }
 
     /* they are two types of missing APIs:
        - Those that are to be implemented 
@@ -43,19 +47,19 @@ class api_v3_SyntaxConformanceAllEntities extends CiviUnitTestCase
 
     public static function entities_get () {
       // all the entities, beside the ones flagged
-      return api_v3_SyntaxConformanceAllEntities::entities (api_v3_SyntaxConformanceAllEntities::toBeSkipped_get (true));
+      return api_v3_SyntaxConformanceAllEntitiesTest::entities (api_v3_SyntaxConformanceAllEntitiesTest::toBeSkipped_get (true));
     }
 
     public static function entities_create () {
-      return api_v3_SyntaxConformanceAllEntities::entities (api_v3_SyntaxConformanceAllEntities::toBeSkipped_create (true));
+      return api_v3_SyntaxConformanceAllEntitiesTest::entities (api_v3_SyntaxConformanceAllEntitiesTest::toBeSkipped_create (true));
     }
 
     public static function entities_delete () {
-      return api_v3_SyntaxConformanceAllEntities::entities (api_v3_SyntaxConformanceAllEntities::toBeSkipped_delete (true));
+      return api_v3_SyntaxConformanceAllEntitiesTest::entities (api_v3_SyntaxConformanceAllEntitiesTest::toBeSkipped_delete (true));
     }
 
     public static function toBeSkipped_get ($sequential = false) {
-      $entitiesWithoutGet = array ('Mailer','MailerGroup','Location');
+      $entitiesWithoutGet = array ('Mailing','MailingGroup','Location');
       if ($sequential === true) {
         return $entitiesWithoutGet;
       }
@@ -68,7 +72,7 @@ class api_v3_SyntaxConformanceAllEntities extends CiviUnitTestCase
 
 
     public static function toBeSkipped_create ($sequential = false) {
-      $entitiesWithoutCreate = array ('Mailer','MailerGroup','Constant','Entity','Location');
+      $entitiesWithoutCreate = array ('Mailing','MailingGroup','Constant','Entity','Location');
       if ($sequential === true) {
         return $entitiesWithoutCreate;
       }
@@ -80,7 +84,7 @@ class api_v3_SyntaxConformanceAllEntities extends CiviUnitTestCase
     }
 
     public static function toBeSkipped_delete ($sequential = false) {
-      $entitiesWithout = array ('Mailer','MailerGroup','Constant','Entity','Location','Domain');
+      $entitiesWithout = array ('Mailing','MailingGroup','Constant','Entity','Location','Domain');
       if ($sequential === true) {
         return $entitiesWithout;
       }

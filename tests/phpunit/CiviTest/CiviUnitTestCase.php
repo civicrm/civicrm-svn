@@ -77,7 +77,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     public static $utils;
 
-    public static $populateOnce = FALSE;  // see http://forum.civicrm.org/index.php/topic,18065.0.html
+    public static $populateOnce = TRUE;  // see http://forum.civicrm.org/index.php/topic,18065.0.html
+    //public static $populateOnce = FALSE;  // see http://forum.civicrm.org/index.php/topic,18065.0.html
 
     /**
      *  Constructor
@@ -105,6 +106,11 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                                 $GLOBALS['mysql_pass'] );        
         
     }
+
+    function needDBReset () {
+      return true; // by default, we assume that the tests in the inherited class have messed up the db
+    }
+
 
     /**
      *  Create database connection for this instance

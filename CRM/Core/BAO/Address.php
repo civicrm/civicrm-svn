@@ -760,7 +760,7 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
         $streetUnitPreg = '/('. implode( '|\s', $streetUnitFormats ) . ')(.+)?/i';
         $matches = array( );
         if ( preg_match( $streetUnitPreg, $streetAddress, $matches ) ) {
-            $parseFields['street_unit'] = $matches[0];
+            $parseFields['street_unit'] = trim($matches[0]);
             $streetAddress = str_replace( $matches[0], '', $streetAddress );
             $streetAddress = trim( $streetAddress );
         }

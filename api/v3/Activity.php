@@ -69,12 +69,8 @@ function civicrm_api3_activity_create( $params )
 {
   _civicrm_api3_initialize( true );
   try{
-    civicrm_api3_verify_mandatory($params);
+    civicrm_api3_verify_mandatory($params,null,array('subject','activity_subject'));
     $errors = array( );
-    $addmode = True;
-    if (!empty($params['id']) || !empty($params['activity_id'])){
-      $addmode = False;
-    }
 
     // check for various error and required conditions
     $errors = _civicrm_api3_activity_check_params( $params, $addmode ) ;
@@ -258,8 +254,8 @@ SELECT  count(*)
   }
 
   $activityIds = array( 'activity' => CRM_Utils_Array::value( 'id', $params ),
-                          'parent'   => CRM_Utils_Array::value( 'parent_id', $params ),
-                          'original' => CRM_Utils_Array::value( 'original_id', $params )
+                        'parent'   => CRM_Utils_Array::value( 'parent_id', $params ),
+                        'original' => CRM_Utils_Array::value( 'original_id', $params )
   );
 
   foreach ( $activityIds as $id => $value ) {
@@ -268,24 +264,7 @@ SELECT  count(*)
       return civicrm_api3_create_error(  'Invalid ' . ucfirst( $id ) . ' Id' );
     }
   }
-  /*
-   * @todo unique name for subject is activity subject - subject won't be supported in v4
-   */
-  // check for activity subject if add mode
-  if ( $addMode && ! isset( $params['subject']) && ! isset( $params['activity_subject'] ) ) {
-    return civicrm_api3_create_error( 'Missing Subject'  );
-  }
-  /*
-   * @todo unique name for id is activity id - id won't be supported in v4
-   */
 
-  if ( ! $addMode && ! isset( $params['id'] )&& ! isset( $params['activity_id'] )) {
-    return civicrm_api3_create_error(  'Required parameter "id" not found'  );
-  }
-
-  if ( ! $addMode && isset($params['id']) && (! is_numeric ( $params['id'] )) || (isset($params['id']) && ! is_numeric ( $params['id'] ) )) {
-    return civicrm_api3_create_error(  'Invalid activity "id"'  );
-  }
 
   require_once 'CRM/Core/PseudoConstant.php';
   $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, true, 'name' );
@@ -312,6 +291,7 @@ SELECT  count(*)
       return civicrm_api3_create_error( 'Invalid Activity Type ID' );
     }
   }
+
   /*
    * @todo unique name for status_id is activity status id - status id won't be supported in v4
    */

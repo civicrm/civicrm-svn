@@ -75,9 +75,11 @@ function civicrm_api3_relationship_type_create( $params ) {
     }
 
     require_once 'CRM/Contact/BAO/RelationshipType.php';
+    $relationType = new CRM_Contact_BAO_RelationshipType();
     $relationType = CRM_Contact_BAO_RelationshipType::add( $params, $ids );
 
     $relType = array( );
+
     _civicrm_api3_object_to_array( $relationType, $relType[$relationType->id] );
 
     return civicrm_api3_create_success($relType,$params, $relationType);
@@ -114,10 +116,10 @@ function civicrm_api3_relationship_type_get( $params  )
     }
     $relationType->find();
     while( $relationType->fetch() ) {
-      _civicrm_api3_object_to_array( clone($relationType), $relationshipType );
-      $relationshipTypes[] = $relationshipType;
+      _civicrm_api3_object_to_array( $relationType, $relationshipType[$relationType->id] );
+   //   $relationshipTypes[] = $relationshipType;
     }
-    return civicrm_api3_create_success($relationshipTypes,$params);
+    return civicrm_api3_create_success($relationshipType,$params,$relationType);
 
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );

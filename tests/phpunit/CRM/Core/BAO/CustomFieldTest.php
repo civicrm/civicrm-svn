@@ -115,7 +115,9 @@ class CRM_Core_BAO_CustomFieldTest extends CiviUnitTestCase
                               'dataType' => 'Memo',
                               'htmlType' => 'TextArea'
                               );
+                              
         $customField = Custom::createField( array(), $fields );
+        $this->assertNotNull( $customField );
         CRM_Core_BAO_CustomField::deleteField($customField );
         $this->assertDBNull( 'CRM_Core_DAO_CustomField', $customGroup->id, 'id', 
                                              'custom_group_id', 'Database check for deleted Custom Field.' );

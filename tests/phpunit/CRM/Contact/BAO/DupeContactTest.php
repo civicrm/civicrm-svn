@@ -30,11 +30,12 @@ class CRM_Contact_BAO_DupeContactTest extends CiviUnitTestCase
                          'domain_id'   => 1,
                          'is_active'   => 1,
                          'visibility'  => 'Public Pages',
+                         'version'     => 3,
                          );
         // TODO: This is not an API test!!
         $result  = &civicrm_api('group', 'create', $params );
-        $group   = $result['result'];
-        $groupId = $group->id;
+        $groupId = $result['id'];
+
         // contact data set
         // FIXME: move create params to separate function
         $params = array(
@@ -77,12 +78,14 @@ class CRM_Contact_BAO_DupeContactTest extends CiviUnitTestCase
         $count = 1;
         // TODO: This is not an API test!!
         foreach ( $params as $param ) {
+            $param['version'] = 3;
             $contact =& civicrm_api('contact', 'create', $param );
-            $contactIds[$count++] = $contact['contact_id'];
+            $contactIds[$count++] = $contact['id'];
 
-            $grpParams = array( 'contact_id.1' => $contact['contact_id'],
-                                'group_id'     => $groupId );
-            civicrm_api('group_contact', 'create', $grpParams );
+            $grpParams = array( 'contact_id' => $contact['id'],
+                                'group_id'   => $groupId,
+                                'version'    => 3 );
+            $res = civicrm_api('group_contact', 'create', $grpParams );
         }
 
         // verify that all contacts have been created separately
@@ -171,7 +174,7 @@ class CRM_Contact_BAO_DupeContactTest extends CiviUnitTestCase
             Contact::delete( $contactId );
         }
         // delete dupe group
-        $params = array( 'id' => $groupId );
+        $params = array( 'id' => $groupId, 'version' => 3 );
         civicrm_api('group', 'delete', $params );
     }
 
@@ -230,8 +233,9 @@ class CRM_Contact_BAO_DupeContactTest extends CiviUnitTestCase
         $count = 1;
         // TODO: This is not an API test!!
         foreach ( $params as $param ) {
+            $param['version'] = 3;
             $contact =& civicrm_api('contact', 'create', $param );
-            $contactIds[$count++] = $contact['contact_id'];
+            $contactIds[$count++] = $contact['id'];
         }
 
         // verify that all contacts have been created separately

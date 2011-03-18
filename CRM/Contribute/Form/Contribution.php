@@ -837,8 +837,7 @@ WHERE  contribution_id = {$this->_id}
                             array( 'CRM_Contribute_DAO_Contribution', $this->_id, 'trxn_id' ) );
         }
         //add receipt for offline contribution
-        $this->addElement( 'checkbox','is_email_receipt', ts('Send Receipt?'), null,
-                           array( 'onclick' => "showHideByValue( 'is_email_receipt', '', 'receiptDate', 'table-row', 'radio', true); showHideByValue( 'is_email_receipt', '', 'fromEmail', 'table-row', 'radio', false );" ) );
+        $this->addElement( 'checkbox','is_email_receipt', ts('Send Receipt?') );
 
         $this->add( 'select', 'from_email_address', ts('Receipt From'), $this->_fromEmails );
 
