@@ -515,6 +515,10 @@ class CRM_Campaign_Page_AJAX
         CRM_Utils_System::civiExit( );
     }
     
+    /**
+     * Retrieve campaigns as for campaign dashboard.
+     *
+     **/
     function campaignList( ) 
     {
         //get the search criteria params.
@@ -527,12 +531,19 @@ class CRM_Campaign_Page_AJAX
             }
         }
         
-        $sortCols = array( 'title', 
-                           'description', 
-                           'start_date', 
-                           'end_date', 
-                           'campaign_type_id',
-                           'status_id');
+        //this is sequence columns on datatable.
+        $selectorCols = array( 'id', 
+                               'name', 
+                               'title', 
+                               'description', 
+                               'start_date', 
+                               'end_date', 
+                               'campaign_type_id', 
+                               'campaign_type', 
+                               'status_id', 
+                               'status', 
+                               'is_active', 
+                               'action' );
         
         // get the data table params.
         $dataTableParams = array( 'sEcho'     => array( 'name'    => 'sEcho',
@@ -554,7 +565,11 @@ class CRM_Campaign_Page_AJAX
             $$pName = $pValues['default'];
             if ( CRM_Utils_Array::value( $pValues['name'], $_POST ) ) {
                 $$pName = CRM_Utils_Type::escape( $_POST[$pValues['name']], $pValues['type'] );
-                if ( $pName == 'sort' ) $$pName = $sortCols[$$pName];   
+                if ( $pName == 'sort' ) {
+                    $$pName = $selectorCols[$$pName];
+                    if ( $$pName == 'status' )        $$pName = 'status_id';
+                    if ( $$pName == 'campaign_type' ) $$pName = 'campaign_type_id';
+                }
             }
         }
         foreach ( array( 'sort', 'offset', 'rowCount', 'sortOrder' ) as $sortParam ) {
@@ -566,9 +581,6 @@ class CRM_Campaign_Page_AJAX
         
         $searchCount  = count( $campaigns );
         $iTotal       = $searchCount;
-        
-        $selectorCols = array( 'id', 'name', 'title', 'description', 'start_date', 'end_date', 
-                               'campaign_type_id', 'campaign_type', 'status_id', 'status', 'is_active', 'action' );
         
         if ( $searchCount > 0 ) {
             if ( $searchCount < $offset ) $offset = 0;

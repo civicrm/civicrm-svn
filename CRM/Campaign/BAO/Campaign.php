@@ -303,9 +303,9 @@ Order By  camp.title";
                              'offset'    => 0, 
                              'rowCount'  => 10, 
                              'sortOrder' => 'desc'  ); 
-        foreach ( $sortParams as $sort ) {
-            if ( CRM_Utils_Array::value( $sort, $params ) ) {
-                $sortParams[$sort] = $params[$sort];
+        foreach ( $sortParams as $name => $default ) {
+            if ( CRM_Utils_Array::value( $name, $params ) ) {
+                $sortParams[$name] = $params[$name];
             }
         }
         $limitClause   = "{$sortParams['offset']}, {$sortParams['rowCount']}";
