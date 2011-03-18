@@ -515,4 +515,74 @@ class CRM_Campaign_Page_AJAX
         CRM_Utils_System::civiExit( );
     }
     
+    function campaignList( ) 
+    {
+        //get the search criteria params.
+        $searchParams = explode( ',', CRM_Utils_Array::value( 'searchCriteria', $_POST ) );
+        
+        $params = $searchRows = array( );
+        foreach ( $searchParams as $param ) {
+            if ( CRM_Utils_Array::value( $param, $_POST ) ) {
+                $params[$param] = $_POST[$param];
+            }
+        }
+        
+        $sortCols = array( 'title', 
+                           'description', 
+                           'start_date', 
+                           'end_date', 
+                           'campaign_type_id',
+                           'status_id');
+        
+        // get the data table params.
+        $dataTableParams = array( 'sEcho'     => array( 'name'    => 'sEcho',
+                                                        'type'    => 'Integer',
+                                                        'default' => 0                ), 
+                                  'offset'    => array( 'name'    => 'iDisplayStart',
+                                                        'type'    => 'Integer',
+                                                        'default' => 0                ),
+                                  'rowCount'  => array( 'name'    => 'iDisplayLength',
+                                                        'type'    => 'Integer',
+                                                        'default' => 25               ),
+                                  'sort'      => array( 'name'    => 'iSortCol_0',
+                                                        'type'    => 'Integer',
+                                                        'default' => 'sort_name'      ),
+                                  'sortOrder' => array( 'name'    => 'sSortDir_0',
+                                                        'type'    => 'String', 
+                                                        'default' => 'asc'            ) );
+        foreach ( $dataTableParams as $pName => $pValues ) {
+            $$pName = $pValues['default'];
+            if ( CRM_Utils_Array::value( $pValues['name'], $_POST ) ) {
+                $$pName = CRM_Utils_Type::escape( $_POST[$pValues['name']], $pValues['type'] );
+                if ( $pName == 'sort' ) $$pName = $sortCols[$$pName];   
+            }
+        }
+        
+        require_once 'CRM/Campaign/Page/DashBoard.php';
+        $campaigns = CRM_Campaign_Page_DashBoard::getCampaignSummary( $params );
+        
+        $searchCount  = count( $campaigns );
+        $iTotal       = $searchCount;
+        
+        $selectorCols = array( 'id', 'name', 'title', 'description', 'start_date', 'end_date', 
+                               'campaign_type_id', 'campaign_type', 'status_id', 'status', 'is_active', 'action' );
+        
+        if ( $searchCount > 0 ) {
+            if ( $searchCount < $offset ) $offset = 0;
+            foreach ( $campaigns as $campaignID => $values ) {
+                foreach ( $selectorCols as $col ) {
+                    $searchRows[$campaignID][$col] = CRM_Utils_Array::value( $col, $values );
+                }
+            }
+        }
+        
+        require_once "CRM/Utils/JSON.php";
+        $selectorElements = $selectorCols;
+        
+        $iFilteredTotal = $iTotal;
+        
+        echo CRM_Utils_JSON::encodeDataTableSelector( $searchRows, $sEcho, $iTotal, $iFilteredTotal, $selectorElements );
+        CRM_Utils_System::civiExit( );
+    }
+    
 }

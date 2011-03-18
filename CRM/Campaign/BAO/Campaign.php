@@ -294,7 +294,7 @@ Order By  camp.title";
      *
      * @static
      */
-    static function getCampaignSummary( ) 
+    static function getCampaignSummary( $params ) 
     {
         $campaigns = array( );
         

@@ -175,12 +175,14 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
         }
         return self::$_surveyActionLinks;
     }
-    
-    function browseCampaign( ) 
+
+
+    public static function getCampaignSummary( $params ) 
     {
         $campaignsData = array( );
+        
         //get the campaigns.
-        $campaigns = CRM_Campaign_BAO_Campaign::getCampaignSummary( );
+        $campaigns = CRM_Campaign_BAO_Campaign::getCampaignSummary( $params );
         if ( !empty( $campaigns ) ) {
             $campaignType    = CRM_Campaign_PseudoConstant::campaignType( );
             $campaignStatus  = CRM_Campaign_PseudoConstant::campaignStatus( );
@@ -195,11 +197,24 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
                 $campaignsData[$cmpid]['campaign_id'  ] = $campaign['id'];
                 $campaignsData[$cmpid]['campaign_type'] = $campaignType[$campaign['campaign_type_id']];
                 
-                $action = array_sum( array_keys( $this->campaignActionLinks( ) ) );
+                $action = array_sum( array_keys( self::campaignActionLinks( ) ) );
                 if ( $campaign['is_active'] ) {
                     $action -= CRM_Core_Action::ENABLE;
                 } else {
                     $action -= CRM_Core_Action::DISABLE;
+                }
+                
+                $isActive = ts( 'No' );
+                if ( $campaignsData[$cmpid]['is_active'] ) $isActive = ts( 'Yes' );
+                $campaignsData[$cmpid]['is_active'] = $isActive;
+                
+                if ( CRM_Utils_Array::value( 'start_date', $campaignsData[$cmpid] ) ) {
+                    $campaignsData[$cmpid]['start_date']=CRM_Utils_Date::customFormat($campaignsData[$cmpid]['start_date'],
+                                                                                      $config->dateformatFull );
+                }
+                if ( CRM_Utils_Array::value( 'end_date', $campaignsData[$cmpid] ) ) {
+                    $campaignsData[$cmpid]['end_date'] = CRM_Utils_Date::customFormat( $campaignsData[$cmpid]['end_date'],
+                                                                                       $config->dateformatFull );
                 }
                 $campaignsData[$cmpid]['action'] = CRM_Core_Action::formLink( self::campaignActionLinks( ), 
                                                                               $action, 
@@ -207,8 +222,22 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
             }
         }
         
+        return $campaignsData;
+    }
+    
+    function browseCampaign( ) 
+    {
+
+        $campaignsData = array( );
         $this->assign( 'campaigns',      $campaignsData );
         $this->assign( 'addCampaignUrl', CRM_Utils_System::url( 'civicrm/campaign/add', 'reset=1&action=add' ) );
+        
+        //build ajax campaign search and selector.
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Campaign_Form_Search_Campaign', ts( 'Search Campaigns' ) );
+        $controller->set( 'searchTab', 'campaign');
+        $controller->setEmbedded( true );
+        $controller->process( );
+        return $controller->run( );
     }
    
     function browsePetition( ) {
@@ -301,7 +330,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
             $this->buildTabs( );
         }
         $this->assign( 'subPageType', $subPageType );
-        
+                
         //give focus to proper tab.
         $selectedTabIndex = array_search( strtolower( CRM_Utils_Array::value( 'subPage', $_GET, 'campaign' ) ), 
                                           array_keys( $this->_tabs ) );
