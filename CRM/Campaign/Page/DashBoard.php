@@ -227,9 +227,6 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
     
     function browseCampaign( ) 
     {
-
-        $campaignsData = array( );
-        $this->assign( 'campaigns',      $campaignsData );
         $this->assign( 'addCampaignUrl', CRM_Utils_System::url( 'civicrm/campaign/add', 'reset=1&action=add' ) );
         
         //build ajax campaign search and selector.

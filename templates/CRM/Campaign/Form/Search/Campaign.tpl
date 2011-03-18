@@ -73,16 +73,14 @@
       <a href="{crmURL p='civicrm/campaign/add' q='reset=1' h=0 }" class="button"><span><div class="icon add-icon"></div>{ts}Add Campaign{/ts}</span></a>
    </div>
 
-   {* build search form here *}
+    {* build search form here *}
     
-   {* Search form and results for campaigns *}
-   <div class="crm-block crm-form-block crm-search-form-block">
+    {* Search form and results for campaigns *}
+    <div class="crm-block crm-form-block crm-search-form-block">
   
-   {assign var='searchForm' value='searchForm'}
-   {assign var='searchForm' value="search_form_$searchFor"}
-
-
-    <div id="{$searchForm}" class="crm-accordion-wrapper crm-campaign_search_form-accordion {if $campaigns}crm-accordion-closed{else}crm-accordion-open{/if}">
+    {assign var='searchForm' value="search_form_$searchFor"}
+   
+    <div id="{$searchForm}" class="crm-accordion-wrapper crm-campaign_search_form-accordion crm-accordion-open">
     <div class="crm-accordion-header">
     <div class="icon crm-accordion-pointer"></div> 
         {ts}Search Campaigns{/ts}
@@ -195,7 +193,7 @@ function loadCampaignList( )
 			var dataLength = aoData.length;
 
 			var count = 1;
-			var searchCriteria = new Array( 'campaign_search_voter_for' ); 
+			var searchCriteria = new Array( ); 
 		       		
 			//get the search criteria.
                         var searchParams = {/literal}{$searchParams}{literal};
@@ -207,7 +205,7 @@ function loadCampaignList( )
                         } 
 
 			//do search to reserve voters.			
-			aoData[dataLength++] = {name: 'campaign_search_voter_for', value: searchVoterFor};
+			aoData[dataLength++] = {name: 'search_for', value: 'campaign'};
 			
 			//lets transfer search criteria.
 			aoData[dataLength++] = {name: 'searchCriteria', value:searchCriteria.join(',')};

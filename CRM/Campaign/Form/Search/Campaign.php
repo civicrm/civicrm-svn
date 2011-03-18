@@ -58,19 +58,15 @@ class CRM_Campaign_Form_Search_Campaign extends CRM_Core_Form
      */ 
     function preProcess( ) 
     {
-        $this->_search = CRM_Utils_Array::value( 'search', $_GET );
-        $this->_searchTab = CRM_Utils_Array::value( 'type', $_GET );
-        
-        $this->_force  = CRM_Utils_Request::retrieve( 'force', 'Boolean', $this, false );
+        $this->_search    = CRM_Utils_Array::value( 'search', $_GET );
+        $this->_force     = CRM_Utils_Request::retrieve( 'force', 'Boolean', $this, false,  false );
+        $this->_searchTab = CRM_Utils_Request::retrieve( 'type',  'String',  $this, false, 'campaign' );
         
         //when we do load tab, lets load the default objects.
         $this->assign( 'force',          ($this->_force||$this->_searchTab) ? true : false );
-        
-        $this->assign( 'votingTab',      $this->_votingTab );
         $this->assign( 'searchParams',   json_encode( $this->get( 'searchParams' ) ) );
         $this->assign( 'buildSelector',  $this->_search );
-        $this->assign( 'searchTab',      $this->_searchTab );
-        $this->assign( 'searchFor',      'campaign' );
+        $this->assign( 'searchFor',      $this->_searchTab );
         
         //set the form title.
         CRM_Utils_System::setTitle( ts( 'Find Campaigns' ) );
