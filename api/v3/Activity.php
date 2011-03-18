@@ -71,10 +71,6 @@ function civicrm_api3_activity_create( $params )
   try{
     civicrm_api3_verify_mandatory($params);
     $errors = array( );
-    $addmode = True;
-    if (!empty($params['id']) || !empty($params['activity_id'])){
-      $addmode = False;
-    }
 
     // check for various error and required conditions
     $errors = _civicrm_api3_activity_check_params( $params, $addmode ) ;
