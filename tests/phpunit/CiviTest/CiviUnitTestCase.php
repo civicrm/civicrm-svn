@@ -1184,26 +1184,27 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      * @param string $className
      * @param string $title  name of custom group
      */
-    function customGroupCreate( $className,$title) {
+    function customGroupCreate( $extends,$title) {
 
         
          $params = array(
                         'title'      => $title,
-                        'class_name' => $className,
+                        'extends' => $extends,
                         'domain_id'  => 1,                       
                         'style'      => 'Inline',
                         'is_active'  => 1,
                         'version'		 => API_LATEST_VERSION,
                         );
-        if(is_array($className)){
-          $params = $className;
+             //handle some api passing through array           
+        if(is_array($extends)){
+          $params = $extends;
         }
 
         $result = civicrm_api( 'custom_group','create',$params );
 
         if ( CRM_Utils_Array::value( 'is_error', $result ) ||
              ! CRM_Utils_Array::value( 'id', $result) ) {
-            throw new Exception( 'Could not create Custom Group' . $result['error_message']);
+            throw new Exception( 'Could not create Custom Group ' . $result['error_message']);
         }
         return $result;    
     }

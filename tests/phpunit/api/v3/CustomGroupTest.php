@@ -46,7 +46,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
         $params = array( 'version'					=> $this->_apiversion, );
         $customGroup =& civicrm_api3_custom_group_create($params);
         $this->assertEquals($customGroup['is_error'], 1); 
-        $this->assertEquals($customGroup['error_message'],'Mandatory key(s) missing from params array: extends');
+        $this->assertEquals($customGroup['error_message'],'Mandatory key(s) missing from params array: extends, title');
     }
 
     /**
@@ -68,7 +68,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
                          );
         
         $customGroup =& civicrm_api3_custom_group_create($params);
-        $this->assertEquals($customGroup['error_message'],'Mandatory key(s) missing from params array: one of (extends, class_name), version');
+        $this->assertEquals($customGroup['error_message'],'Mandatory key(s) missing from params array: extends');
         $this->assertEquals($customGroup['is_error'],1);
     }
 
@@ -185,7 +185,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
                         );
         
         $customGroup =& civicrm_api3_custom_group_create($params);
-        $this->assertEquals($customGroup['error_message'],'Title parameter is required.');
+        $this->assertEquals($customGroup['error_message'],'Mandatory key(s) missing from params array: title');
         $this->assertEquals($customGroup['is_error'], 1);
 	} 
 
