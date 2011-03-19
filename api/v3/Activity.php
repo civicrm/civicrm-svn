@@ -69,7 +69,7 @@ function civicrm_api3_activity_create( $params )
 {
   _civicrm_api3_initialize( true );
   try{
-    civicrm_api3_verify_one_mandatory($params,null,array('subject','activity_subject'));
+    civicrm_api3_verify_mandatory($params,null,array('source_contact_id',array('subject','activity_subject')));
     $errors = array( );
 
     // check for various error and required conditions
