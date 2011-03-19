@@ -1186,20 +1186,19 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     function customGroupCreate( $extends,$title) {
 
-        
+        if (CRM_Utils_Array::value('title',$extends)){
+          $params = $extends;
+        }else{
          $params = array(
                         'title'      => $title,
-                        'extends' => $extends,
+                        'extends'    => $extends,
                         'domain_id'  => 1,                       
                         'style'      => 'Inline',
                         'is_active'  => 1,
                         'version'		 => API_LATEST_VERSION,
                         );
-             //handle some api passing through array           
-        if(is_array($extends)){
-          $params = $extends;
-        }
-
+ 
+    }
         $result = civicrm_api( 'custom_group','create',$params );
 
         if ( CRM_Utils_Array::value( 'is_error', $result ) ||
