@@ -339,6 +339,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     // Request a record from the DB by seachColumn+searchValue. Success if a record is found. 
     function assertDBNotNull(  $daoName, $searchValue, $returnColumn, $searchColumn, $message  ) 
     {
+        if(empty($searchValue)){
+           $this->fail("empty value passed to assertDBNotNull");
+        }
         $value = CRM_Core_DAO::getFieldValue( $daoName, $searchValue, $returnColumn, $searchColumn );
         $this->assertNotNull( $value, $message );
         

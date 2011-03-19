@@ -43,10 +43,10 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
      */    
     function testCustomGroupCreateNoParam()
     {
-        $params = array( );
+        $params = array( 'version'					=> $this->_apiversion, );
         $customGroup =& civicrm_api3_custom_group_create($params);
         $this->assertEquals($customGroup['is_error'], 1); 
-        $this->assertEquals($customGroup['error_message'],'Mandatory key(s) missing from params array: one of (extends, class_name), version');
+        $this->assertEquals($customGroup['error_message'],'Mandatory key(s) missing from params array: extends');
     }
 
     /**
@@ -63,6 +63,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
                          'help_pre'         => 'This is Pre Help For Test Group 1',
                          'help_post'        => 'This is Post Help For Test Group 1',
                          'is_active'        => 1,
+                         'version'					=> $this->_apiversion,
         
                          );
         
@@ -90,7 +91,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase
                          );
         
         $customGroup =& civicrm_api3_custom_group_create($params);
-        $this->assertEquals($customGroup['error_message'], 'Mandatory key(s) missing from params array: one of (extends, class_name)');
+        $this->assertEquals($customGroup['error_message'], 'Mandatory key(s) missing from params array: extends');
         $this->assertEquals($customGroup['is_error'], 1);
     }
 
