@@ -209,7 +209,12 @@ function custom_option_html_type( ) {
         </tr>
         <tr class="crm-custom-field-form-block-is_required">
             <td class="label">{$form.is_required.label}</td>
-            <td class="html-adjust">{$form.is_required.html}</td>
+            <td class="html-adjust">{$form.is_required.html}
+            {if $action neq 4}
+                <br /><span class="description">{ts}Do not make custom fields required unless you want to force all users to enter a value anytime they add or edit this type of record.
+                You can always make the field required when used in a specific Profile form.{/ts}</span>
+            {/if}
+            </td>
         </tr>
         <tr id ="searchable" class="crm-custom-field-form-block-is_searchable">
             <td class="label">{$form.is_searchable.label}</td>
