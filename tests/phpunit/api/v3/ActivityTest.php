@@ -176,7 +176,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'details'             => 'a test activity',
                         'status_id'           => 1,
                         'activity_name'       => 'Test activity type',
-                        'version' => $this->_apiversion
+                        'version'             => $this->_apiversion
                         );
 
         $result = & civicrm_api3_activity_create($params);
@@ -324,7 +324,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
     /**
      *  Test civicrm_activity_create() with valid parameters for unique fields - 
      *  set up to see if unique fields work but activity_subject doesn't
-     */
+
     function testActivityCreateUniqueName( )
     {
       $this->markTestSkipped('test to see if api will take unique names but it doesn\'t yet');
@@ -333,7 +333,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
        * activity_location, activity_status_id
        * activity_is_test
        * activity_medium_id
-       */
+       
         $params = array(
                         'source_contact_id'   => 17,
                         'activity_subject'             => 'Make-it-Happen Meeting',
@@ -349,9 +349,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         $result =  civicrm_api3_activity_create( $params );
         $this->assertEquals( $result['is_error'], 0,
                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
-        /*
-         * @todo - get doesn't return in unique name format so test only tests input of unique format
-         */
+ 
         $this->assertEquals( $result['values'][$result['id']]['source_contact_id'], 17 );
         $this->assertEquals( $result['values'][$result['id']]['duration'], 120 );
         $this->assertEquals( $result['values'][$result['id']]['subject'], 'Make-it-Happen Meeting' ); //This field gets lost
@@ -361,6 +359,8 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         $this->assertEquals( $result['values'][$result['id']]['status_id'], 1 );
 
     }
+         */
+    
     /**
      *  Test civicrm_activity_create() with valid parameters
      *  and some custom data
@@ -927,6 +927,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'subject'             => 'this case should fail',
                         'scheduled_date_time' => date('Ymd'),
                         'version'							=> $this->_apiversion,
+                        'source_contact_id'   => 17,
                         );
 
         $result =& civicrm_api3_activity_create($params);

@@ -248,7 +248,7 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
         unset( $fieldParams['is_active'] );
         unset( $fieldParams['custom_group_id'] );
         unset( $fieldParams['version'] );
-        $this->assertAttributesEquals( $fieldParams, $groupTree[$customGroupId]['fields'][$customFieldId] ); 
+        $this->assertAttributesEquals( $fieldParams, $groupTree[$customGroupId]['fields'][$customFieldId] , " in line " . __LINE__); 
         
         //cleanup DB by deleting customGroup
         Custom::deleteField( $customField ); 
@@ -405,9 +405,9 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
                              'is_active'       => 1,
                              'version'         => 3
                              );
-        
-        $customField = Custom::createField( $fieldParams );
-       $this->assertNotNull($customFieldId->id,'pre-requisite group not created successfully');
+       
+       $customField = Custom::createField( $fieldParams );
+       $this->assertNotNull($customFieldId->id,'pre-requisite field not created successfully');
         
         $customFieldId = $customField->id;
          

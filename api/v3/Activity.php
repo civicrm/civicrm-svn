@@ -69,11 +69,11 @@ function civicrm_api3_activity_create( $params )
 {
   _civicrm_api3_initialize( true );
   try{
-    civicrm_api3_verify_mandatory($params,null,array('source_contact_id',array('subject','activity_subject')));
+    civicrm_api3_verify_mandatory($params,null,array('source_contact_id',array('subject','activity_subject'),array('activity_name','activity_type_id')));
     $errors = array( );
 
     // check for various error and required conditions
-    $errors = _civicrm_api3_activity_check_params( $params, $addmode ) ;
+    $errors = _civicrm_api3_activity_check_params( $params ) ;
 
     if ( !empty( $errors ) ) {
       return $errors;
@@ -220,13 +220,13 @@ function _civicrm_api3_activity_get( $activityId, $returnCustom = true ) {
  *
  * @return array $error array with errors
  */
-function _civicrm_api3_activity_check_params ( $params, $addMode = false )
+function _civicrm_api3_activity_check_params ( $params)
 {
 
 
   $contactIds = array( 'source'   => CRM_Utils_Array::value( 'source_contact_id', $params ),
-                         'assignee' => CRM_Utils_Array::value( 'assignee_contact_id', $params ),
-                         'target'   => CRM_Utils_Array::value( 'target_contact_id', $params )
+                       'assignee' => CRM_Utils_Array::value( 'assignee_contact_id', $params ),
+                       'target'   => CRM_Utils_Array::value( 'target_contact_id', $params )
   );
 
   foreach ( $contactIds as $key => $value ) {
@@ -269,13 +269,8 @@ SELECT  count(*)
   require_once 'CRM/Core/PseudoConstant.php';
   $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, true, 'name' );
 
-  // check if activity type_id is passed in
-  if ( $addMode && !isset( $params['activity_name'] )  && !isset( $params['activity_type_id'] ) ) {
-    //when name AND id are both absent
-    return civicrm_api3_create_error(  'Missing Activity Type'  );
-  } else {
-    $activityName   = CRM_Utils_Array::value( 'activity_name', $params );
-    $activityTypeId = CRM_Utils_Array::value( 'activity_type_id', $params );
+  $activityName   = CRM_Utils_Array::value( 'activity_name', $params );
+  $activityTypeId = CRM_Utils_Array::value( 'activity_type_id', $params );
 
     if ( $activityName ) {
       $activityNameId = array_search( ucfirst( $activityName ), $activityTypes );
@@ -290,7 +285,7 @@ SELECT  count(*)
     !array_key_exists( $activityTypeId, $activityTypes ) ) {
       return civicrm_api3_create_error( 'Invalid Activity Type ID' );
     }
-  }
+  
 
   /*
    * @todo unique name for status_id is activity status id - status id won't be supported in v4
