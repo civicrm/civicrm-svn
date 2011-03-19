@@ -266,7 +266,7 @@ class api_v2_CustomValueContactTypeTest  extends CiviUnitTestCase
                         'contact_id'           => $this->individualStudent ,
                         'contact_type'         => 'Individual',
                         'contact_sub_type'     => 'Student',
-                        "return.custom_{$this->IndiStudentField[id]}"  => 1
+
                           ); 
         $getContact = civicrm_contact_get( $params, false );
         $this->assertEquals( $getContact[$this->individualStudent][ "custom_{$this->IndiStudentField[id]}"], 'Test String', 'In line ' . __LINE__ );
