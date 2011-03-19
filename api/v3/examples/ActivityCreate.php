@@ -56,6 +56,7 @@ function activity_create_expectedresult(){
                       'result' => '',
                       'is_deleted' => '',
                       'campaign_id' => '',
+                      'engagement_level' => '',
            ),           ),
       );
 
