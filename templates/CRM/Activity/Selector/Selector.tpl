@@ -19,7 +19,7 @@
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
 
-<table id="contact-activity-selector" class="nestedActivitySelector">
+<table id="contact-activity-selector">
     <thead>
         <tr>
             <th class='crm-contact-activity-activity_type'>{ts}Type{/ts}</th>
