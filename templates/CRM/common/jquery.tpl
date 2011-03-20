@@ -67,8 +67,8 @@
 
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.toolTip.js"></script>
 
-<script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/DataTables-1.7.2/media/js/jquery.dataTables.min.js"></script>
-<style type="text/css">@import url("{$config->resourceBase}packages/jquery/plugins/DataTables-1.7.2/media/css/demo_table_jui.css");</style>
+<script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/DataTables-1.7.6/media/js/jquery.dataTables.min.js"></script>
+<style type="text/css">@import url("{$config->resourceBase}packages/jquery/plugins/DataTables-1.7.6/media/css/demo_table_jui.css");</style>
 
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.FormNavigate.js"></script>
 
