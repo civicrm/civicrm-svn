@@ -108,36 +108,43 @@ class api_v3_UtilsTest extends CiviUnitTestCase {
      */
 	function testVerifyMandatory() {
 		_civicrm_api3_initialize ( true );
-		$params = array ('entity_table' => 'civicrm_contact', 'note' => '', 'contact_id' => $this->_contactID, 'modified_date' => '2011-01-31', 'subject' => NULL, 'version' => $this->_apiversion );
+		$params = array ('entity_table' => 'civicrm_contact',
+                         'note' => '',
+                         'contact_id' => $this->_contactID,
+                         'modified_date' => '2011-01-31',
+                         'subject' => NULL,
+                         'version' => $this->_apiversion );
 		try {
 			$result = civicrm_api3_verify_mandatory ( $params, 'CRM_Core_BAO_Note', array ('note', 'subject' ) );
 		} 
-
 		catch ( Exception $expected ) {
-			$this->setExpectedException ( Exception );
-			$this->assertEquals ( 'Mandatory key(s) missing from params array: entity_id, one of (note, subject)', $expected->getMessage () );
+			$this->assertEquals ( 'Mandatory key(s) missing from params array: entity_id, note, subject', $expected->getMessage () );
 			return;
 		}
-		$this->setExpectedException ( Exception, 'Mandatory key(s) missing from params array: entity_id, note, subject' );
+
+		$this->fail ( 'An expected exception has not been raised.' );
 	}
 	
 	/*
      * Test verify one mandatory - includes DAO & passed as well as empty & NULL fields
      */
 	function testVerifyOneMandatory() {
-		
-		$params = array ('entity_table' => 'civicrm_contact', 'note' => '', 'contact_id' => $this->_contactID, 'modified_date' => '2011-01-31', 'subject' => NULL, 'version' => $this->_apiversion );
+		_civicrm_api3_initialize ( true );
+		$params = array ('entity_table' => 'civicrm_contact',
+                         'note' => '',
+                         'contact_id' => $this->_contactID,
+                         'modified_date' => '2011-01-31',
+                         'subject' => NULL,
+                         'version' => $this->_apiversion );
 		
 		try {
 			$result = civicrm_api3_verify_one_mandatory ( $params, 'CRM_Core_BAO_Note', array ('note', 'subject' ) );
 		} 
-
 		catch ( Exception $expected ) {
-			$this->setExpectedException ( Exception );
 			$this->assertEquals ( 'Mandatory key(s) missing from params array: entity_id, one of (note, subject)', $expected->getMessage () );
 			return;
 		}
-		$this->setExpectedException ( Exception, 'Mandatory key(s) missing from params array: entity_id, note, subject' );		
+
 		$this->fail ( 'An expected exception has not been raised.' );
 	}
 	
