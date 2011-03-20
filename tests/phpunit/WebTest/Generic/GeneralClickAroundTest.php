@@ -56,11 +56,11 @@ class WebTest_Generic_GeneralClickAroundTest extends CiviSeleniumTestCase {
 
       $this->click("contact_type");
       $this->select("contact_type", "label=Individual");
-      $this->select("group", "label=Newsletter Subscribers");
       $this->select("tag", "label=Major Donor");
       $this->click("_qf_Basic_refresh");
       $this->waitForElementPresent("search-status");
-      $this->assertText("search-status","Contacts IN Newsletter Subscribers ...AND...");
+      $this->assertText("search-status","Contact Type - 'Individual' ...AND...");
+      $this->assertText("search-status","Tagged IN Major Donor");
       
       // Advanced Search by Tag
       $this->click("//ul[@id='civicrm-menu']/li[3]");
@@ -188,7 +188,7 @@ class WebTest_Generic_GeneralClickAroundTest extends CiviSeleniumTestCase {
       $this->assertTextPresent("Currency");
   }
 
-  function testNewMailing( ) 
+  function testNewMailing( )
   {
       $this->login();
       
@@ -203,7 +203,7 @@ class WebTest_Generic_GeneralClickAroundTest extends CiviSeleniumTestCase {
       $this->assertElementPresent("excludeGroups-t");
   }
 
-  function testConstituentReportSummary( ) 
+  function testConstituentReportSummary( )
   {
       $this->login();
 
