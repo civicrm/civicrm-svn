@@ -26,24 +26,3 @@ function civicrm_api3_entity_get ($params) {
     return civicrm_api3_create_error( $e->getMessage() );
   }
 }
-
-/**
- *  Placeholder function. This should never be called, as it doesn't have any meaning
- */
-function civicrm_api3_entity_create ($params) {
-  return civicrm_api3_create_error ("Creating a new entity means modifying the source code of civiCRM.");
-}
-
-/**
- *  Placeholder function. This should never be called, as it doesn't have any meaning
- */
-function civicrm_api3_entity_delete ($params) {
-  return civicrm_api3_create_error ("Deleting an entity means modifying the source code of civiCRM.");
-}
-
-/**
- *  Placeholder function. This should never be called, as it doesn't have any meaning
- */
-function civicrm_api3_entity_getfields ($params) {
-  return civicrm_api3_create_error ("entity_get only returns the list of entities you can access from the API, no fields");
-}

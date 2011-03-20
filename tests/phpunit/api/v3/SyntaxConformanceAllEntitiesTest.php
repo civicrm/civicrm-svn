@@ -23,6 +23,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
        $this->toBeImplemented['get'] = array ('UFGroup','UFField','CustomGroup','ParticipantPayment');
        $this->toBeImplemented['create'] = array ('SurveyRespondant','OptionValue','OptionGroup','UFMatch');
        $this->toBeImplemented['delete'] = array ('MembershipPayment','OptionValue','OptionGroup','SurveyRespondant','UFJoin','UFMatch');
+       $this->emptyParamsNonZeroCount['get'] = array( 'ActivityType', 'Entity', 'Domain' );
     }
 
     function tearDown()    {
@@ -120,7 +121,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
     /**
      * @dataProvider entities_get
      */
-    public function testEmptyParam_get ($Entity) {
+    public function testEmptyParam_get ( $Entity ) {
 
         if (in_array ($Entity,$this->toBeImplemented['get'])) {
           //$this->markTestSkipped("civicrm_api3_{$Entity}_get to be implemented");
@@ -146,7 +147,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
      * @Xdepends testEmptyParam_get // no need to test the simple if the empty doesn't work/is skipped. doesn't seem to work
      */
     public function testSimple_get ($Entity) {
-$this->markTestSkipped("test gives core error on test server (but not on our locals). Skip until we can get server to pass");
+        $this->markTestSkipped("test gives core error on test server (but not on our locals). Skip until we can get server to pass");
         if (in_array ($Entity,$this->toBeImplemented['get'])) {
           return;
         }
@@ -171,6 +172,7 @@ $this->markTestSkipped("test gives core error on test server (but not on our loc
         }
 
         $result = civicrm_api ($Entity,'Get',array('version' => 3, 'id' => $nonExistantID ));
+
         if ($result['is_error']) {
           $this->assertEquals("only id should be enough", $result['error_message']);//just to get a clearer message in the log
         }
@@ -196,7 +198,9 @@ $this->markTestSkipped("test gives core error on test server (but not on our loc
 
         $this->assertArrayHasKey('version', $result);
         $this->assertEquals(3, $result['version']);
-        $this->assertEquals(0, $result['count']);
+        if ( ! in_array( $Entity, $this->emptyParamsNonZeroCount['get'] ) ) {
+            $this->assertEquals(0, $result['count'], "{$result['count']} from $Entity" );
+        }
     }
 
 
@@ -208,7 +212,7 @@ $this->markTestSkipped("test gives core error on test server (but not on our loc
     public function testNotImplemented_create ($Entity) {
         $result = civicrm_api ($Entity,'Create',array('version' => 3));
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
-         $this->assertContains ("API ($Entity,Create) does not exist",$result['error_message']);
+        $this->assertContains ("API ($Entity,Create) does not exist",$result['error_message']);
     }
 
     /**

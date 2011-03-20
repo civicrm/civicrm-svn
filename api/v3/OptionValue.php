@@ -10,7 +10,7 @@ function civicrm_api3_option_value_get( $params ) {
       $bao = new CRM_Core_BAO_OptionValue( );
 //      $bao = civicrm_api3_get_DAO ('OptionValue');
 
-      _civicrm_api3_dao_set_filter (&$bao,$params );
+      _civicrm_api3_dao_set_filter ( $bao, $params );
 
       return civicrm_api3_create_success(_civicrm_api3_dao_to_array ($bao,$params));
     } catch (PEAR_Exception $e) {

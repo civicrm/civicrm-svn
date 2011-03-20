@@ -215,23 +215,19 @@ function civicrm_api3_create_success( $values = 1,$params=array(),&$dao = null )
     $result['version'] =3;
     if (is_array( $values)) {
         $result['count'] = count( $values);
-        if ($result['count']==1){
-            list($result['id']) = (array_keys($values));
-        }elseif(!empty($values['id'])){
+        if ( $result['count'] == 1 ) {
+            list($result['id']) = array_keys($values);
+        } elseif ( ! empty($values['id'] ) ) {
             $result['id']= $values['id'];
         }
-
     } else {
-        if (!empty( $values)) {
-            $result['count'] = 1;
-        } else {
-            $result['count'] = 0;
-        }
+        $result['count'] = ! empty( $values ) ? 1 : 0;
     }
 
-    if(isset($params['sequential']) && $params['sequential'] ==1){
+    if ( isset( $params['sequential'] ) && 
+         $params['sequential'] ==1 ) {
         $result['values'] =  array_merge($values);
-    }else{
+    } else {
         $result['values'] =  $values;
     }
 
