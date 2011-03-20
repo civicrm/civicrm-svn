@@ -73,7 +73,7 @@ function civicrm_api3_mailing_group_event_unsubscribe($params)
             return civicrm_api3_create_success( $params );
         }
         
-        return civicrm_api3_create_error( ts( 'Queue event could not be found' ) );
+        return civicrm_api3_create_error('Queue event could not be found'  );
     } catch (Exception $e) {
         return civicrm_api3_create_error( $e->getMessage() );
     }
@@ -98,7 +98,7 @@ function civicrm_api3_mailing_group_event_domain_unsubscribe($params)
         $unsubs = CRM_Mailing_Event_BAO_Unsubscribe::unsub_from_domain($job,$queue,$hash);
 
         if ( !$unsubs ) {
-            return civicrm_api3_create_error( ts('Queue event could not be found') );
+            return civicrm_api3_create_error( 'Queue event could not be found' );
         }
 
         CRM_Mailing_Event_BAO_Unsubscribe::send_unsub_response($queue, null, true, $job);
@@ -130,7 +130,7 @@ function civicrm_api3_mailing_group_event_resubscribe($params)
             CRM_Mailing_Event_BAO_Resubscribe::send_resub_response($queue, $groups, false, $job);
             return civicrm_api3_create_success( $params );
         }
-        return civicrm_api3_create_error( ts('Queue event could not be found') ) ;
+        return civicrm_api3_create_error( 'Queue event could not be found' ) ;
     } catch (Exception $e) {
         return civicrm_api3_create_error( $e->getMessage() );
     }
@@ -173,7 +173,7 @@ function civicrm_api3_mailing_group_event_subscribe($params)
         
             return civicrm_api3_create_success( $values );
         }
-        return civicrm_api3_create_error( ts('Subscription failed') );
+        return civicrm_api3_create_error( 'Subscription failed');
     } catch (Exception $e) {
         return civicrm_api3_create_error( $e->getMessage() );
     }
