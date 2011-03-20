@@ -1306,6 +1306,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     }
 function documentMe($params,$result,$function,$filename){
         $entity = substr ( basename($filename) ,0, strlen(basename($filename))-8 );
+//todo - this is a bit cludgey
         if (strstr($function, 'Create')){
           $action = 'create';
           $entityAction = 'Create';
@@ -1318,6 +1319,9 @@ function documentMe($params,$result,$function,$filename){
         } elseif(strstr($function, 'Update')){
           $action = 'update';
           $entityAction = 'Update';
+        } elseif(strstr($function, 'Subscribe')){
+          $action = 'subscribe';
+          $entityAction = 'Subscribe';
         }
         if (strstr($entity,'UF')){// a cleverer person than me would do it in a single regex
          $fnPrefix = strtolower(preg_replace('/(?<! )(?<!^)(?<=UF)[A-Z]/','_$0', $entity));          
