@@ -11,9 +11,9 @@
         <td class="crm-contact-form-block-activity_type_filter_id">
             {$form.activity_type_filter_id.html}
         </td>
-        <td style="vertical-align: bottom;">
+        <!--td style="vertical-align: bottom;">
 		<span class="crm-button"><input class="form-submit default" name="_qf_Basic_refresh" value="Search" type="button" onclick="buildContactActivities( true )"; /></span>
-	</td>
+	</td-->
     </tr>
   </table>
  </div><!-- /.crm-accordion-body -->
@@ -42,6 +42,9 @@ var oTable;
 cj( function ( ) {
    cj().crmaccordions(); 
    buildContactActivities( false );
+   cj('#activity_type_filter_id').change( function( ) {
+       buildContactActivities( true );
+   });
 });
 
 function buildContactActivities( filterSearch ) {
@@ -74,22 +77,14 @@ function buildContactActivities( filterSearch ) {
         "iDisplayLength": 50,
         "fnDrawCallback": function() { setSelectorClass(); },
         "fnServerData": function ( sSource, aoData, fnCallback ) {
-
+            aoData.push( {name:'contact_id', value: {/literal}{$contactId}{literal}},
+                         {name:'admin',   value: {/literal}'{$admin}'{literal}}
+            );
             if ( filterSearch ) {
-                /*
-                var activity_deleted = 0;
-                if ( cj("#activity_deleted:checked").val() == 1 ) {
-                    activity_deleted = 1;
-                }
-                */
                 aoData.push(	     
-                    // {name:'status_id', value: cj("select#status_id").val()},
                     {name:'activity_type_id', value: cj("select#activity_type_filter_id").val()}
-                    //{name:'activity_date_low', value: cj("#activity_date_low").val()},
-                    //{name:'activity_date_high', value: cj("#activity_date_high").val() },
-                );
-                	
-            }		
+                );               	
+            }	
             cj.ajax( {
                 "dataType": 'json', 
                 "type": "POST", 

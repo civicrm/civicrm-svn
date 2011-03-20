@@ -51,6 +51,7 @@ class CRM_Activity_Page_Tab extends CRM_Core_Page
      */
     function browse( )
     {
+        $this->assign( 'admin', false );
         $this->assign( 'context'   , 'activity');        
     }
 

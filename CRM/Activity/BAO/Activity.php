@@ -2220,7 +2220,6 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.n
         $params['offset']   = ( $params['page'] - 1) * $params['rp'] ;
         $params['rowCount'] = $params['rp'];
         $params['sort']     = $params['sortBy'];
-        $params['admin']    = false;
         $params['caseId']   = null;
 
         // get contact activities
