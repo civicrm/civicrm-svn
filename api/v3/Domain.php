@@ -77,7 +77,7 @@ function civicrm_api3_domain_get($params ) {
                     foreach ( $address_array as $value ) {
                       $domain[$dao->id]['domain_address'][$value] = CRM_Utils_Array::value( $value, $values['location']['address'][1] );
                     }
-                    list( $domain[$dao->id]['from_name'], $domain[$dao->id]['from_email'] ) = CRM_Core_BAO_Domain::getNameAndEmail();
+                    list( $domain[$dao->id]['from_name'], $domain[$dao->id]['from_email'] ) = CRM_Core_BAO_Domain::getNameAndEmail( true );
                     return $domain;
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
