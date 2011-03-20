@@ -34,48 +34,20 @@
  *
  */
 
-require_once 'CRM/Core/Page.php';
+require_once 'CRM/Core/Form.php';
 
 /**
- * Main page for activity dashlet
- *
+ * This class generates form components for Activity Filter
+ * 
  */
-class CRM_Dashlet_Page_Activity extends CRM_Core_Page 
+class CRM_Activity_Form_ActivityFilter extends CRM_Core_Form
 {
-    /**
-     * List activities as dashlet
-     *
-     * @return none
-     *
-     * @access public
-     */
-    function run( ) {
-        $session   = CRM_Core_Session::singleton( );
-        $contactID = $session->get('userID');
-        $this->assign( 'contactID', $contactID );
-        $this->assign( 'contactId', $contactID );
+    public function buildQuickForm( ) {
+        // add activity search filter
+        $activityOptions = CRM_Core_PseudoConstant::activityType( true, true, false, 'label', true );
+        asort( $activityOptions );
         
-        // a user can always view their own activity
-        // if they have access CiviCRM permission
-        $permission = CRM_Core_Permission::VIEW;
-        
-        // make the permission edit if the user has edit permission on the contact
-        require_once 'CRM/Contact/BAO/Contact/Permission.php';
-        if ( CRM_Contact_BAO_Contact_Permission::allow( $contactID, CRM_Core_Permission::EDIT ) ) {
-            $permission = CRM_Core_Permission::EDIT;
-        }
-        
-        $admin = CRM_Core_Permission::check( 'view all activities' ) ||
-                 CRM_Core_Permission::check( 'administer CiviCRM' );
-                                 
-        $this->assign( 'admin', $admin );
-        
-        // also create the form element for the activity filter box
-        $controller = new CRM_Core_Controller_Simple( 'CRM_Activity_Form_ActivityFilter',
-                                                       ts('Activity Filter'), null );
-        $controller->setEmbedded( true );
-        $controller->run( );
-        
-        return parent::run( );
+        $this->add('select', 'activity_type_filter_id',  ts( 'Activity Type' ), array( '' => ts( '- all activity type(s) -' ) ) +  $activityOptions );
+        $this->assign( 'suppressForm', true );
     }
 }

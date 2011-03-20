@@ -52,7 +52,13 @@ class CRM_Activity_Page_Tab extends CRM_Core_Page
     function browse( )
     {
         $this->assign( 'admin', false );
-        $this->assign( 'context'   , 'activity');        
+        $this->assign( 'context'   , 'activity');
+        
+        // also create the form element for the activity filter box
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Activity_Form_ActivityFilter',
+                                                       ts('Activity Filter'), null );
+        $controller->setEmbedded( true );
+        $controller->run( );        
     }
 
     function edit( )
