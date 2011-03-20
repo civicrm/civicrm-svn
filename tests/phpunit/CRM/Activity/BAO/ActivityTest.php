@@ -284,7 +284,17 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
                             . '/activities_for_dashboard_count.xml') );
 
         require_once 'CRM/Activity/BAO/Activity.php';
-        $activityCount = CRM_Activity_BAO_Activity::getActivitiesCount( null, true, null, 'home' );
+        $params = array(
+                        'contact_id'       => null,
+                        'admin'            => true,
+                        'caseId'           => null,
+                        'context'          => 'home',
+                        'activity_type_id' => null,
+                        'offset'           => 0,
+                        'rowCount'         => 0,
+                        'sort'             => null,
+                        );
+        $activityCount = CRM_Activity_BAO_Activity::getActivitiesCount( $params );
 
         //since we are loading activities from dataset, we know total number of activities
         // 8 schedule activities that should be shown on dashboard
@@ -302,9 +312,19 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
                             dirname(__FILE__)
                             . '/activities_for_dashboard_count.xml') );
 
-        $contactID = 9;
+        $params = array(
+                        'contact_id'       => 9,
+                        'admin'            => false,
+                        'caseId'           => null,
+                        'context'          => 'home',
+                        'activity_type_id' => null,
+                        'offset'           => 0,
+                        'rowCount'         => 0,
+                        'sort'             => null,
+                        );
+
         require_once 'CRM/Activity/BAO/Activity.php';
-        $activityCount = CRM_Activity_BAO_Activity::getActivitiesCount( $contactID, false, null, 'home' );
+        $activityCount = CRM_Activity_BAO_Activity::getActivitiesCount( $params );
 
         //since we are loading activities from dataset, we know total number of activities for this contact
         // 5 activities ( 2 scheduled, 3 Completed ), note that dashboard shows only scheduled activities
@@ -322,9 +342,18 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
             dirname(__FILE__)
             . '/activities_for_dashboard_count.xml') );
 
-        $contactID = 9;
+        $params = array(
+                        'contact_id'       => 9,
+                        'admin'            => false,
+                        'caseId'           => null,
+                        'context'          => null,
+                        'activity_type_id' => null,
+                        'offset'           => 0,
+                        'rowCount'         => 0,
+                        'sort'             => null,
+                        );
         require_once 'CRM/Activity/BAO/Activity.php';
-        $activityCount = CRM_Activity_BAO_Activity::getActivitiesCount( $contactID );
+        $activityCount = CRM_Activity_BAO_Activity::getActivitiesCount( $params );
 
         //since we are loading activities from dataset, we know total number of activities for this contact
         // 5 activities, Contact Summary should show all activities
@@ -342,9 +371,18 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
             dirname(__FILE__)
             . '/activities_for_dashboard_count.xml') );
 
-        $contactID = 17;
+        $params = array(
+                        'contact_id'       => 17,
+                        'admin'            => false,
+                        'caseId'           => null,
+                        'context'          => 'home',
+                        'activity_type_id' => null,
+                        'offset'           => 0,
+                        'rowCount'         => 0,
+                        'sort'             => null,
+                        );
         require_once 'CRM/Activity/BAO/Activity.php';
-        $activityCount = CRM_Activity_BAO_Activity::getActivitiesCount( $contactID );
+        $activityCount = CRM_Activity_BAO_Activity::getActivitiesCount( $params );
 
         //since we are loading activities from dataset, we know total number of activities for this contact
         // this contact does not have any activity
@@ -361,10 +399,18 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
                             dirname(__FILE__)
                             . '/activities_for_dashboard_count.xml') );
 
+        $params = array(
+                        'contact_id'       => 5,
+                        'admin'            => true,
+                        'caseId'           => null,
+                        'context'          => 'home',
+                        'activity_type_id' => null,
+                        'offset'           => 0,
+                        'rowCount'         => 0,
+                        'sort'             => null,
+                        );
         require_once 'CRM/Activity/BAO/Activity.php';
-        $contactID = 5;
-        $data = array( 'contact_id' => $contactID );
-        $activities = CRM_Activity_BAO_Activity::getActivities( $data, null, null, null, true, null, 'home' );
+        $activities = CRM_Activity_BAO_Activity::getActivities( $params );
 
         //since we are loading activities from dataset, we know total number of activities
         // 8 schedule activities that should be shown on dashboard
@@ -388,10 +434,19 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
                             dirname(__FILE__)
                             . '/activities_for_dashboard_count.xml') );
 
-        require_once 'CRM/Activity/BAO/Activity.php';
         $contactID = 9;
-        $data = array( 'contact_id' => $contactID );
-        $activities = CRM_Activity_BAO_Activity::getActivities( $data, null, null, null, false, null, 'home' );
+        $params = array(
+                        'contact_id'       => $contactID,
+                        'admin'            => false,
+                        'caseId'           => null,
+                        'context'          => 'home',
+                        'activity_type_id' => null,
+                        'offset'           => 0,
+                        'rowCount'         => 0,
+                        'sort'             => null,
+                        );
+        require_once 'CRM/Activity/BAO/Activity.php';
+        $activities = CRM_Activity_BAO_Activity::getActivities( $params );
 
         //since we are loading activities from dataset, we know total number of activities for this contact
         // 5 activities ( 2 scheduled, 3 Completed ), note that dashboard shows only scheduled activities
@@ -421,10 +476,19 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
             dirname(__FILE__)
             . '/activities_for_dashboard_count.xml') );
 
-        require_once 'CRM/Activity/BAO/Activity.php';
         $contactID = 9;
-        $data = array( 'contact_id' => $contactID );
-        $activities = CRM_Activity_BAO_Activity::getActivities( $data );
+        $params = array(
+                        'contact_id'       => $contactID,
+                        'admin'            => false,
+                        'caseId'           => null,
+                        'context'          => null,
+                        'activity_type_id' => null,
+                        'offset'           => 0,
+                        'rowCount'         => 0,
+                        'sort'             => null,
+                        );
+        require_once 'CRM/Activity/BAO/Activity.php';
+        $activities = CRM_Activity_BAO_Activity::getActivities( $params );
 
         //since we are loading activities from dataset, we know total number of activities for this contact
         // 5 activities, Contact Summary should show all activities
@@ -464,10 +528,18 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
             dirname(__FILE__)
             . '/activities_for_dashboard_count.xml') );
 
+        $params = array(
+                        'contact_id'       => 17,
+                        'admin'            => false,
+                        'caseId'           => null,
+                        'context'          => 'home',
+                        'activity_type_id' => null,
+                        'offset'           => 0,
+                        'rowCount'         => 0,
+                        'sort'             => null,
+                        );
         require_once 'CRM/Activity/BAO/Activity.php';
-        $contactID = 17;
-        $data = array( 'contact_id' => $contactID );
-        $activities = CRM_Activity_BAO_Activity::getActivities( $data );
+        $activities = CRM_Activity_BAO_Activity::getActivities( $params );
 
         //since we are loading activities from dataset, we know total number of activities for this contact
         // This contact does not have any activities

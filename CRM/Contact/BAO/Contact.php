@@ -2187,7 +2187,11 @@ UNION
             
         case 'activity' :
             require_once 'CRM/Activity/BAO/Activity.php';
-            return CRM_Activity_BAO_Activity::getActivitiesCount( $contactId, false, null, null );
+            $input = array( 'contactID' => $contactID,
+                            'admin'     => false,
+                            'caseId'    => null,
+                            'context'   => null );
+            return CRM_Activity_BAO_Activity::getActivitiesCount( $input );
         
 		default :
 			$custom = explode( '_', $component );

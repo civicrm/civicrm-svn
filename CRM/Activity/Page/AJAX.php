@@ -185,7 +185,9 @@ class CRM_Activity_Page_AJAX
 
         require_once "CRM/Utils/JSON.php";
         $iFilteredTotal = $iTotal =  $params['total'];
-        $selectorElements = array( 'activity_type', 'subject', 'source_contact', 'target_contact', 'assignee_contact', 'activity_date', 'status', 'links', 'class' );
+        $selectorElements = array( 'activity_type', 'subject', 'source_contact',
+                                   'target_contact', 'assignee_contact',
+                                   'activity_date', 'status', 'links', 'class' );
 
         echo CRM_Utils_JSON::encodeDataTableSelector( $activities, $sEcho, $iTotal, $iFilteredTotal, $selectorElements );
         CRM_Utils_System::civiExit( );

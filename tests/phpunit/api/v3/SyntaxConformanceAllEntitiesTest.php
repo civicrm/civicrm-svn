@@ -104,7 +104,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
     public function testNotImplemented_get ($Entity) {
         $result = civicrm_api ($Entity,'Get',array('version' => 3));
         $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
-         $this->assertContains ("API ($Entity,Get) does not exist",$result['error_message']);
+        $this->assertContains ("API ($Entity,Get) does not exist",$result['error_message']);
     }
 
     /**
