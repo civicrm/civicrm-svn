@@ -121,7 +121,7 @@ function civicrm_api3_website_delete( &$params )
  * @access public
  */
 
-function civicrm_api3_website_get(&$params) 
+function civicrm_api3_website_get( &$params ) 
 {   
   _civicrm_api3_initialize(true );
   try {
@@ -139,14 +139,14 @@ function civicrm_api3_website_get(&$params)
     }
     
     if ( $websiteBAO->find() ) {
-      $websites = array();
-      while ( $websiteBAO->fetch() ) {
-        CRM_Core_DAO::storeValues( $websiteBAO, $website );
-        $websites[$websiteBAO->id] = $website;
-      }
-      return civicrm_api3_create_success($websites,$params,$websiteBAO);
+        $websites = array();
+        while ( $websiteBAO->fetch() ) {
+            CRM_Core_DAO::storeValues( $websiteBAO, $website );
+            $websites[$websiteBAO->id] = $website;
+        }
+        return civicrm_api3_create_success($websites,$params,$websiteBAO);
     } else {
-      return civicrm_api3_create_success(array(),$params,$websiteBAO);
+        return civicrm_api3_create_success(array(),$params,$websiteBAO);
     }
 				
   } catch (PEAR_Exception $e) {

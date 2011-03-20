@@ -23,7 +23,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
        $this->toBeImplemented['get'] = array ('UFGroup','UFField','CustomGroup','ParticipantPayment');
        $this->toBeImplemented['create'] = array ('SurveyRespondant','OptionValue','OptionGroup','UFMatch');
        $this->toBeImplemented['delete'] = array ('MembershipPayment','OptionValue','OptionGroup','SurveyRespondant','UFJoin','UFMatch');
-       $this->emptyParamsNonZeroCount['get'] = array( 'ActivityType', 'Entity', 'Domain' );
+       $this->onlyIDNonZeroCount['get'] = array( 'ActivityType', 'Entity', 'Domain' );
     }
 
     function tearDown()    {
@@ -171,12 +171,14 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
           return;
         }
 
-        $result = civicrm_api ($Entity,'Get',array('version' => 3, 'id' => $nonExistantID ));
+        $result = civicrm_api ($Entity,'Get', array('version' => 3, 'id' => $nonExistantID ));
 
         if ($result['is_error']) {
           $this->assertEquals("only id should be enough", $result['error_message']);//just to get a clearer message in the log
         }
-        $this->assertEquals(0, $result['count']);
+        if ( ! in_array( $Entity, $this->onlyIDNonZeroCount['get'] ) ) {
+            $this->assertEquals(0, $result['count']);
+        }
     }
 
 
@@ -191,15 +193,15 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
 
         $result = civicrm_api ($Entity,'Get',array('version' => 3, 'id' => $nonExistantID ));
 
-        if ($result['is_error']) { // redondant with testAcceptsOnlyID_get
+        if ($result['is_error']) { // redundant with testAcceptsOnlyID_get
           return;
         }
 
 
         $this->assertArrayHasKey('version', $result);
         $this->assertEquals(3, $result['version']);
-        if ( ! in_array( $Entity, $this->emptyParamsNonZeroCount['get'] ) ) {
-            $this->assertEquals(0, $result['count'], "{$result['count']} from $Entity" );
+        if ( ! in_array( $Entity, $this->onlyIDNonZeroCount['get'] ) ) {
+            $this->assertEquals(0, $result['count']);
         }
     }
 
