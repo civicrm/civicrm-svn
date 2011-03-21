@@ -51,10 +51,10 @@ class CRM_Member_BAO_MembershipLogTest extends CiviUnitTestCase
     {
         parent::setUp();
         
-        $params = array( 'contact_types_a' => 'Individual',
-                         'contact_types_b' => 'Organization',
-                         'name_a_b'        => 'Test Employee of',
-                         'name_b_a'        => 'Test Employer of'
+        $params = array( 'contact_type_a' => 'Individual',
+                         'contact_type_b' => 'Organization',
+                         'name_a_b'       => 'Test Employee of',
+                         'name_b_a'       => 'Test Employer of'
                          );
         $this->_relationshipTypeId  = $this->relationshipTypeCreate( $params ); 
         $this->_orgContactID        = $this->organizationCreate( ) ;
