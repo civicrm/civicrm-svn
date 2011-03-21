@@ -75,6 +75,7 @@ function buildContactActivities( filterSearch ) {
         "bServerSide": true,
         "sAjaxSource": sourceUrl,
         "iDisplayLength": 50,
+        "oLanguage": { "sZeroRecords": {/literal}{ts}'No matches found.'{/ts}{literal} },
         "fnDrawCallback": function() { setSelectorClass(); },
         "fnServerData": function ( sSource, aoData, fnCallback ) {
             aoData.push( {name:'contact_id', value: {/literal}{$contactId}{literal}},
@@ -83,7 +84,7 @@ function buildContactActivities( filterSearch ) {
             if ( filterSearch ) {
                 aoData.push(	     
                     {name:'activity_type_id', value: cj("select#activity_type_filter_id").val()}
-                );               	
+                );                
             }	
             cj.ajax( {
                 "dataType": 'json', 
