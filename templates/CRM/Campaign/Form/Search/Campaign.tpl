@@ -24,16 +24,15 @@
  +--------------------------------------------------------------------+
 *}
 
-{if $errorMessages}
-  <div class='messages status'>
-     <div class="icon inform-icon"></div>
-        <ul>
-	   {foreach from=$errorMessages item=errorMsg}	
-             <li>{ts}{$errorMsg}{/ts}</li>
-           {/foreach}
-       </ul>
-     </div>
-  </div>
+{if !$hasCampaigns}
+    <div class="messages status">
+        <div class="icon inform-icon"></div> &nbsp;
+        {ts}No campaigns found.{/ts}
+    </div>  
+
+    <div class="action-link">
+         <a href="{crmURL p='civicrm/campaign/add' q='reset=1' h=0 }" class="button"><span><div class="icon add-icon"></div>{ts}Add Campaign{/ts}</span></a>
+    </div>
 
 {elseif $buildSelector}
   
@@ -182,7 +181,25 @@ function loadCampaignList( )
 {
      var sourceUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='snippet=4&className=CRM_Campaign_Page_AJAX&fnName=campaignList' }"{literal};
 
-     var searchVoterFor = {/literal}'{$searchFor}'{literal};
+     //build the search qill.    
+     //get the search criteria.
+     var searchParams   = {/literal}{$searchParams}{literal};
+     var campaignTypes  = {/literal}{$campaignTypes}{literal};
+     var campaignStatus = {/literal}{$campaignStatus}{literal};
+     var noRecordFoundMsg  = "<div class='messages status'><div class='icon inform-icon'></div>No matches found for:";
+         noRecordFoundMsg += '<div class="qill">';
+     
+     var count = 0;
+     var searchQill = new Array( );
+     for ( param in searchParams ) {
+        if ( val = cj( '#' + param ).val( ) ) {
+	    if ( param == 'status_id' ) val = campaignStatus[val];   
+	    if ( param == 'campaign_type_id' ) val = campaignTypes[val];
+	    searchQill[count++] = searchParams[param] + ' : ' + val;
+	}
+     }
+     noRecordFoundMsg += searchQill.join( '<span class="font-italic"> ...AND... </span></div><div class="qill">' );
+     noRecordFoundMsg += '</div>';
      
      cj( '#campaigns' ).dataTable({
      	        "bFilter"    : false,
@@ -207,7 +224,15 @@ function loadCampaignList( )
 		"sDom"       : 'rt<"crm-datatable-pager-bottom"ip>',
 	   	"bServerSide": true,
 	   	"sAjaxSource": sourceUrl,
+		"oLanguage":{"sEmptyTable"  : noRecordFoundMsg,
+		             "sZeroRecords" : noRecordFoundMsg },
 		"fnDrawCallback": function() { cj().crmtooltip(); },
+		"fnRowCallback": function( nRow, aData, iDisplayIndex ) { 
+				 //insert the id for each row for enable/disable.
+				 var rowId = 'row_' + aData[0];
+				 cj(nRow).attr( 'id', rowId );
+				 return nRow;
+		},
 	
 		"fnServerData": function ( sSource, aoData, fnCallback ) {
 			var dataLength = aoData.length;

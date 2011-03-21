@@ -322,11 +322,17 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
      */
     function getTotalCount($action, $case = null ) { 
         require_once 'CRM/Activity/BAO/Activity.php';
-        return CRM_Activity_BAO_Activity::getActivitiesCount( $this->_contactId, 
-                                                              $this->_admin,
-                                                              $case, 
-                                                              $this->_context,
-                                                              $this->_activityTypeIDs );
+        $params = array(
+                        'contact_id'       => $this->_contactId,
+                        'admin'            => $this->_admin,
+                        'caseId'           => $case,
+                        'context'          => $this->_context,
+                        'activity_type_id' => $this->_activityTypeIDs,
+                        'offset'           => 0,
+                        'rowCount'         => 0,
+                        'sort'             => null,
+                        );
+        return CRM_Activity_BAO_Activity::getActivitiesCount( $params );
     }
 
 
@@ -343,16 +349,18 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
      */
     function &getRows($action, $offset, $rowCount, $sort, $output = null, $case = null) 
     {
-        $params['contact_id'] = $this->_contactId;
+        $params = array(
+                        'contact_id'       => $this->_contactId,
+                        'admin'            => $this->_admin,
+                        'caseId'           => $case,
+                        'context'          => $this->_context,
+                        'activity_type_id' => $this->_activityTypeIDs,
+                        'offset'           => $offset,
+                        'rowCount'         => $rowCount,
+                        'sort'             => $sort,
+                        );
         $config = CRM_Core_Config::singleton();
-        $rows =& CRM_Activity_BAO_Activity::getActivities( $params,
-                                                           $offset,
-                                                           $rowCount,
-                                                           $sort, 
-                                                           $this->_admin,
-                                                           $case,
-                                                           $this->_context,
-                                                           $this->_activityTypeIDs);
+        $rows =& CRM_Activity_BAO_Activity::getActivities( $params );
         
         if ( empty( $rows ) ) {
             return $rows;

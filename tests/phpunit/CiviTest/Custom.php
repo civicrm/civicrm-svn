@@ -73,6 +73,7 @@ class Custom extends CiviUnitTestCase
         $result = civicrm_api('custom_field', 'create', $params );
 
         if ( $result['is_error'] ) {
+          print_r($result);
             return null;
         }
         

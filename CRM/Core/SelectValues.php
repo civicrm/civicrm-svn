@@ -512,7 +512,8 @@ class CRM_Core_SelectValues
                              '{domain.phone}'          => ts('Domain (organization) phone'),
                              '{domain.email}'          => ts('Domain (organization) email'),
                              '{mailing.name}'          => ts('Mailing name'),
-                             '{mailing.group}'         => ts('Mailing group')    
+                             '{mailing.group}'         => ts('Mailing group'),
+                             '{mailing.viewUrl}'	   => ts('Mailing permalink'),
                           );
         }
         return $tokens;

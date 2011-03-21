@@ -54,7 +54,9 @@ require_once 'api/v3/utils.php';
  */
 
 /**
- * Use this API to create a new group. See the CRM Data Model for custom_group property definitions
+ * Use this API to create a new group.  The 'extends' value accepts an array or a comma separated string.
+ * e.g array('Individual','Contact') or 'Individual,Contact' 
+ * See the CRM Data Model for custom_group property definitions
  * $params['class_name'] is a required field, class being extended.
  *
  * @param $params     array   Associative array of property name/value pairs to insert in group.
@@ -69,16 +71,15 @@ function civicrm_api3_custom_group_create( $params )
 {
     _civicrm_api3_initialize(true );
     try{
-    if ( ! isset( $params['style'] ) || ! trim( $params['style'] ) ) {
-        $params['style'] = 'Inline';
-    }
     
     civicrm_api3_verify_mandatory($params,null,array('extends','title'));  
+    if ( ! CRM_Utils_Array::value('style', $params)  ) {
+        $params['style'] = 'Inline';
+    }    
+      
     
-    // If passing extends array - set class_name (e.g. 'Contact', 'Participant'...) as extends[0]. You may optionally
-    // pass an extends_entity_column_value as extends[1] (e.g. an Activity Type ID).
-   if (is_string($params['extends'])){
-     $extends = implode(",",$params['extends']);
+    if (is_string($params['extends'])){
+     $extends = explode(",",$params['extends']);
      unset ($params['extends']);
      $params['extends'] =  $extends;
    }

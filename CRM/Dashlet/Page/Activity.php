@@ -52,6 +52,9 @@ class CRM_Dashlet_Page_Activity extends CRM_Core_Page
     function run( ) {
         $session   = CRM_Core_Session::singleton( );
         $contactID = $session->get('userID');
+        $this->assign( 'contactID', $contactID );
+        $this->assign( 'contactId', $contactID );
+        $this->assign( 'context'   , 'activityDashlet');
         
         // a user can always view their own activity
         // if they have access CiviCRM permission
@@ -66,25 +69,14 @@ class CRM_Dashlet_Page_Activity extends CRM_Core_Page
         $admin = CRM_Core_Permission::check( 'view all activities' ) ||
                  CRM_Core_Permission::check( 'administer CiviCRM' );
                                  
-        require_once 'CRM/Core/Selector/Controller.php';
-        $output = CRM_Core_Selector_Controller::SESSION;
-        require_once 'CRM/Activity/Selector/Activity.php';
-        $selector   = new CRM_Activity_Selector_Activity($contactID, $permission, $admin, 'home' );
-        $sortID     = null;
+        $this->assign( 'admin', $admin );
         
-        if ( $this->get( CRM_Utils_Sort::SORT_ID  ) ) {
-            $sortID = CRM_Utils_Sort::sortIDValue( $this->get( CRM_Utils_Sort::SORT_ID  ),
-                                                   $this->get( CRM_Utils_Sort::SORT_DIRECTION ) );
-        }
+        // also create the form element for the activity filter box
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Activity_Form_ActivityFilter',
+                                                       ts('Activity Filter'), null );
+        $controller->setEmbedded( true );
+        $controller->run( );
         
-        $controller = new CRM_Core_Selector_Controller( $selector,
-                                                        $this->get(CRM_Utils_Pager::PAGE_ID),
-                                                        $sortID,
-                                                        CRM_Core_Action::VIEW, $this, $output);
-        $controller->setEmbedded(true);
-        $controller->run();
-        $controller->moveFromSessionToTemplate( );
-
         return parent::run( );
     }
 }

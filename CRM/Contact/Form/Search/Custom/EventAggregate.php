@@ -121,7 +121,7 @@ implements CRM_Contact_Form_Search_Interface {
         if ( $onLine ) {
             $from .= "         
         inner join civicrm_entity_financial_trxn
-        on (civicrm_entity_financial_trxn.entity_id = civicrm_participant_payment.contribution_id and civicrm_entity_financial_trxn.entity_type='contribution')";
+        on (civicrm_entity_financial_trxn.entity_id = civicrm_participant_payment.contribution_id and civicrm_entity_financial_trxn.entity_table='civicrm_contribution')";
         }
 
         $showPayees = CRM_Utils_Array::value( 'show_payees',
@@ -250,7 +250,7 @@ implements CRM_Contact_Form_Search_Interface {
         if ( $onLine ) {
             $from .= "         
         inner join civicrm_entity_financial_trxn
-        on (civicrm_entity_financial_trxn.entity_id = civicrm_participant_payment.contribution_id and civicrm_entity_financial_trxn.entity_type='contribution')";
+        on (civicrm_entity_financial_trxn.entity_id = civicrm_participant_payment.contribution_id and civicrm_entity_financial_trxn.entity_table='civicrm_contribution')";
         }
 
         

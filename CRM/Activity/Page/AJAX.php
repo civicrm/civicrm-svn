@@ -156,7 +156,7 @@ class CRM_Activity_Page_AJAX
     
     static function getContactActivity( ) 
     {
-        $contactID = CRM_Utils_Type::escape( $_GET['cid'], 'Integer' );
+        $contactID = CRM_Utils_Type::escape( $_POST['contact_id'], 'Integer' );
         $context   = CRM_Utils_Type::escape( CRM_Utils_Array::value( 'context', $_GET ), 'String' );
     
         $sortMapper  = array( 0 => 'activity_type', 1 => 'subject', 2 => 'source_contact_name', 
@@ -185,7 +185,9 @@ class CRM_Activity_Page_AJAX
 
         require_once "CRM/Utils/JSON.php";
         $iFilteredTotal = $iTotal =  $params['total'];
-        $selectorElements = array( 'activity_type', 'subject', 'source_contact', 'target_contact', 'assignee_contact', 'activity_date', 'status', 'links', 'class' );
+        $selectorElements = array( 'activity_type', 'subject', 'source_contact',
+                                   'target_contact', 'assignee_contact',
+                                   'activity_date', 'status', 'links', 'class' );
 
         echo CRM_Utils_JSON::encodeDataTableSelector( $activities, $sEcho, $iTotal, $iFilteredTotal, $selectorElements );
         CRM_Utils_System::civiExit( );

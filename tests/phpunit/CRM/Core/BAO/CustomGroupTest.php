@@ -248,7 +248,7 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
         unset( $fieldParams['is_active'] );
         unset( $fieldParams['custom_group_id'] );
         unset( $fieldParams['version'] );
-        $this->assertAttributesEquals( $fieldParams, $groupTree[$customGroupId]['fields'][$customFieldId] ); 
+        $this->assertAttributesEquals( $fieldParams, $groupTree[$customGroupId]['fields'][$customFieldId] , " in line " . __LINE__); 
         
         //cleanup DB by deleting customGroup
         Custom::deleteField( $customField ); 
@@ -391,8 +391,9 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
                              );
         
         $customGroup = Custom::createGroup( $groupParams );
+        $this->assertNotNull($customGroup->id,'pre-requisite group not created successfully');
         $customGroupId = $customGroup->id;
-        
+
         $customFieldLabel = 'Test Custom Field';
         $fieldParams = array(
                              'custom_group_id' => $customGroupId,
@@ -404,10 +405,12 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
                              'is_active'       => 1,
                              'version'         => 3
                              );
-        
+       
         $customField = Custom::createField( $fieldParams );
-        $customFieldId = $customField->id;
+        $this->assertNotNull($customField->id,'pre-requisite field not created successfully');
         
+        $customFieldId = $customField->id;
+         
         //check db for custom group
         $dbCustomGroupTitle = $this->assertDBNotNull( 'CRM_Core_DAO_CustomGroup', $customGroupId, 'title', 'id',
                                                       'Database check for custom group record.' );

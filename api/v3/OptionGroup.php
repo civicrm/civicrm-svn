@@ -9,7 +9,7 @@ function civicrm_api3_option_group_get( $params ) {
 
       require_once 'CRM/Core/BAO/OptionGroup.php';
       $bao = new CRM_Core_BAO_OptionGroup( );
-      _civicrm_api3_dao_set_filter (&$bao,$params );
+      _civicrm_api3_dao_set_filter ( $bao, $params );
 
       return civicrm_api3_create_success(_civicrm_api3_dao_to_array ($bao,$params));
     } catch (PEAR_Exception $e) {

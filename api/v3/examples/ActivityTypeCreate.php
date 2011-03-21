@@ -28,7 +28,7 @@ function activity_type_create_expectedresult(){
            'is_error' 		=> '0',
            'version' 		=> '3',
            'count' 		=> '1',
-           'id' 		=> '562',
+           'id' 		=> '564',
            'values' 		=> array(           '562' =>  array(
                       'id' => '562',
                       'option_group_id' => '2',

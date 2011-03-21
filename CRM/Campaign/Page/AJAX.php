@@ -577,10 +577,9 @@ class CRM_Campaign_Page_AJAX
         }
         
         require_once 'CRM/Campaign/Page/DashBoard.php';
-        $campaigns = CRM_Campaign_Page_DashBoard::getCampaignSummary( $params );
-        
-        $searchCount  = count( $campaigns );
-        $iTotal       = $searchCount;
+        $searchCount = CRM_Campaign_BAO_Campaign::getCampaignSummary( $params, true );
+        $campaigns   = CRM_Campaign_Page_DashBoard::getCampaignSummary( $params );
+        $iTotal      = $searchCount;
         
         if ( $searchCount > 0 ) {
             if ( $searchCount < $offset ) $offset = 0;

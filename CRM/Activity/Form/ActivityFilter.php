@@ -1,6 +1,8 @@
-{*
+<?php
+
+/*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.0                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -22,6 +24,30 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*}
-{* include activity selector*}
-{include file="CRM/Activity/Selector/Selector.tpl"}
+*/
+
+/**
+ *
+ * @package CRM
+ * @copyright CiviCRM LLC (c) 2004-2011
+ * $Id$
+ *
+ */
+
+require_once 'CRM/Core/Form.php';
+
+/**
+ * This class generates form components for Activity Filter
+ * 
+ */
+class CRM_Activity_Form_ActivityFilter extends CRM_Core_Form
+{
+    public function buildQuickForm( ) {
+        // add activity search filter
+        $activityOptions = CRM_Core_PseudoConstant::activityType( true, true, false, 'label', true );
+        asort( $activityOptions );
+        
+        $this->add('select', 'activity_type_filter_id',  ts( 'Activity Type' ), array( '' => ts( '- all activity type(s) -' ) ) +  $activityOptions );
+        $this->assign( 'suppressForm', true );
+    }
+}

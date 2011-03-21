@@ -293,22 +293,25 @@ Order By  camp.title";
      *
      * @static
      */
-    static function getCampaignSummary( $params ) 
+    static function getCampaignSummary( $params, $onlyCount = false ) 
     {
         $campaigns = array( );
         
         //build the limit and order clause.
-        $sortParams = array( 'sort'      => 'start_date', 
-                             'offset'    => 0, 
-                             'rowCount'  => 10, 
-                             'sortOrder' => 'desc'  ); 
-        foreach ( $sortParams as $name => $default ) {
-            if ( CRM_Utils_Array::value( $name, $params ) ) {
-                $sortParams[$name] = $params[$name];
+        $limitClause = $orderByClause = null;
+        if ( !$onlyCount ) {
+            $sortParams = array( 'sort'      => 'start_date', 
+                                 'offset'    => 0, 
+                                 'rowCount'  => 10, 
+                                 'sortOrder' => 'desc'  ); 
+            foreach ( $sortParams as $name => $default ) {
+                if ( CRM_Utils_Array::value( $name, $params ) ) {
+                    $sortParams[$name] = $params[$name];
+                }
             }
+            $limitClause   = "LIMIT {$sortParams['offset']}, {$sortParams['rowCount']}";
+            $orderByClause = "ORDER BY campaign.{$sortParams['sort']} {$sortParams['sortOrder']}";
         }
-        $limitClause   = "{$sortParams['offset']}, {$sortParams['rowCount']}";
-        $orderByClause = "campaign.{$sortParams['sort']} {$sortParams['sortOrder']}";
         
         //build the where clause.
         $queryParams = $where = array( );
@@ -374,20 +377,27 @@ Order By  camp.title";
                              'description',
                              'campaign_type_id' );
         
-        $query = "
-  SELECT  campaign.id               as id,
-          campaign.name             as name,
-          campaign.title            as title,
-          campaign.is_active        as is_active,
-          campaign.status_id        as status_id,
-          campaign.end_date         as end_date,
-          campaign.start_date       as start_date,
-          campaign.description      as description,
-          campaign.campaign_type_id as campaign_type_id
-    FROM  civicrm_campaign campaign
-          {$whereClause}
-ORDER BY  {$orderByClause}
-   LIMIT  {$limitClause}"; 
+        $selectClause =  '
+SELECT  campaign.id               as id,
+        campaign.name             as name,
+        campaign.title            as title,
+        campaign.is_active        as is_active,
+        campaign.status_id        as status_id,
+        campaign.end_date         as end_date,
+        campaign.start_date       as start_date,
+        campaign.description      as description,
+        campaign.campaign_type_id as campaign_type_id';
+        if ( $onlyCount ) {
+            $selectClause = 'SELECT COUNT(*)';
+        }
+        $fromClause = 'FROM  civicrm_campaign campaign';
+        
+        $query = "{$selectClause} {$fromClause} {$whereClause} {$orderByClause} {$limitClause}";
+        
+        //in case of only count.
+        if ( $onlyCount ) {
+            return (int)CRM_Core_DAO::singleValueQuery( $query, $queryParams );   
+        }
         
         $campaign = CRM_Core_DAO::executeQuery( $query, $queryParams );
         while ( $campaign->fetch( ) ) {
@@ -399,6 +409,15 @@ ORDER BY  {$orderByClause}
         return $campaigns;
     }
     
+    /**
+     * Get the campaign count.
+     *
+     * @static
+     */
+    static function getCampaignCount( ) 
+    {
+        return (int)CRM_Core_DAO::singleValueQuery( 'SELECT COUNT(*) FROM civicrm_campaign' );
+    }
     
     /**
      * Function to get Campaigns groups

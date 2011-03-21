@@ -252,10 +252,10 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
     );
     $contact =& civicrm_api3_contact_create( $params );
     $params = array(
-                        'contact_id'           => $this->individual ,
+                        'contact_id'   => $this->individual ,
                         'contact_type' => 'Individual',
                         "return.custom_{$this->IndividualField[id]}"  => 1,
-                				'version'		=>$this->_apiversion, 
+                        'version'	   => $this->_apiversion, 
     );
     $getContact = civicrm_api3_contact_get( $params );
     $this->assertEquals( $getContact['values'][$this->individual][ "custom_".$this->IndividualField[id]], 'Test String', 'In line ' . __LINE__ );
@@ -267,23 +267,23 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
   function testRetrieveValidCustomDataToIndividualStudent() {
 
     $params = array(
-                    'contact_id'           => $this->individualStudent ,
-                        'contact_type' => 'Individual',
-                        'contact_sub_type'     => 'Student',
-                        "custom_{$this->IndiStudentField[id]}" => 'Test String',  
-                				'version'		=>$this->_apiversion, 
-    );
+                    'contact_id'       => $this->individualStudent ,
+                    'contact_type'     => 'Individual',
+                    'contact_sub_type' => 'Student',
+                    "custom_{$this->IndiStudentField[id]}" => 'Test String',  
+                    'version'		   => $this->_apiversion, 
+                    );
 
     $contact = civicrm_api3_contact_create( $params );
 
     $params = array(
-                        'contact_id'           => $this->individualStudent ,
-                        'contact_type'         => 'Individual',
-                        'contact_sub_type'     => 'Student',
-                     
-                        'version'		=>        $this->_apiversion, 
- 
-    );
+                    'contact_id'       => $this->individualStudent ,
+                    'contact_type'     => 'Individual',
+                    'contact_sub_type' => 'Student',
+                    'version'		   => $this->_apiversion, 
+                    "return.custom_{$this->IndiStudentField[id]}" => 1,
+                    );
+
     $getContact = civicrm_api3_contact_get( $params);
 
 

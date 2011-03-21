@@ -68,17 +68,32 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     protected $_dbconn;
 
     /**
-     *  @var Don't reset database if set to true in TestCase
-     */
-    protected $noreset = FALSE;  // see http://forum.civicrm.org/index.php/topic,18065.0.html
-
-    /**
      *  @var Utils instance
      */
     public static $utils;
 
-    public static $populateOnce = TRUE;  // see http://forum.civicrm.org/index.php/topic,18065.0.html
-    //public static $populateOnce = FALSE;  // see http://forum.civicrm.org/index.php/topic,18065.0.html
+    /**
+     *  @var boolean populateOnce allows to skip db resets in setUp
+     *
+     *  WARNING! USE WITH CAUTION - IT'LL RENDER DATA DEPENDENCIES
+     *  BETWEEN TESTS WHEN RUN IN SUITE. SUITABLE FOR LOCAL, LIMITED
+     *  "CHECK RUNS" ONLY!
+     *
+     *  IF POSSIBLE, USE $this->DBResetRequired = FALSE IN YOUR TEST CASE!
+     *
+     *  see also: http://forum.civicrm.org/index.php/topic,18065.0.html
+     */ 
+    public static $populateOnce = FALSE;  
+
+    /**
+     *  @var boolean DBResetRequired allows skipping DB reset
+     *               in specific test case. If you still need
+     *               to reset single test (method) of such case, call 
+     *               $this->cleanDB() in the first line of this
+     *               test (method).
+     */
+    public $DBResetRequired = TRUE;
+
 
     /**
      *  Constructor
@@ -97,6 +112,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     function __construct($name = NULL, array $data = array(), $dataName = '' ) {
         parent::__construct($name, $data, $dataName);
 
+
         // we need full error reporting
         error_reporting (E_ALL & ~E_NOTICE);
 
@@ -107,8 +123,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         
     }
 
-    function needDBReset () {
-      return true; // by default, we assume that the tests in the inherited class have messed up the db
+    function requireDBReset () {
+      return $this->DBResetRequired; 
     }
 
 
@@ -143,10 +159,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
     private function _populateDB() {
 
-        if ( self::$populateOnce ) {
+        if ( self::$populateOnce || !$this->requireDBReset() ) {
             return;
         }
-
         self::$populateOnce = null;
        
         $queries = array( "DROP DATABASE IF EXISTS civicrm_tests_dev;", 
@@ -232,6 +247,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
     public function cleanDB() {
         self::$populateOnce = null;
+        $this->DBResetRequired = true;
 
         $this->_dbconn = $this->getConnection();
         $this->_populateDB();
@@ -324,6 +340,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     // Request a record from the DB by seachColumn+searchValue. Success if a record is found. 
     function assertDBNotNull(  $daoName, $searchValue, $returnColumn, $searchColumn, $message  ) 
     {
+        if(empty($searchValue)){
+           $this->fail("empty value passed to assertDBNotNull");
+        }
         $value = CRM_Core_DAO::getFieldValue( $daoName, $searchValue, $returnColumn, $searchColumn );
         $this->assertNotNull( $value, $message );
         
@@ -1165,26 +1184,26 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      * @param string $className
      * @param string $title  name of custom group
      */
-    function customGroupCreate( $className,$title) {
+    function customGroupCreate( $extends,$title) {
 
-        
+        if (CRM_Utils_Array::value('title',$extends)){
+          $params = $extends;
+        }else{
          $params = array(
                         'title'      => $title,
-                        'class_name' => $className,
+                        'extends'    => $extends,
                         'domain_id'  => 1,                       
                         'style'      => 'Inline',
                         'is_active'  => 1,
                         'version'		 => API_LATEST_VERSION,
                         );
-        if(is_array($className)){
-          $params = $className;
-        }
-
+ 
+    }
         $result = civicrm_api( 'custom_group','create',$params );
 
         if ( CRM_Utils_Array::value( 'is_error', $result ) ||
              ! CRM_Utils_Array::value( 'id', $result) ) {
-            throw new Exception( 'Could not create Custom Group' . $result['error_message']);
+            throw new Exception( 'Could not create Custom Group ' . $result['error_message']);
         }
         return $result;    
     }
@@ -1287,6 +1306,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     }
 function documentMe($params,$result,$function,$filename){
         $entity = substr ( basename($filename) ,0, strlen(basename($filename))-8 );
+//todo - this is a bit cludgey
         if (strstr($function, 'Create')){
           $action = 'create';
           $entityAction = 'Create';
@@ -1299,6 +1319,9 @@ function documentMe($params,$result,$function,$filename){
         } elseif(strstr($function, 'Update')){
           $action = 'update';
           $entityAction = 'Update';
+        } elseif(strstr($function, 'Subscribe')){
+          $action = 'subscribe';
+          $entityAction = 'Subscribe';
         }
         if (strstr($entity,'UF')){// a cleverer person than me would do it in a single regex
          $fnPrefix = strtolower(preg_replace('/(?<! )(?<!^)(?<=UF)[A-Z]/','_$0', $entity));          

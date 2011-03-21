@@ -228,6 +228,13 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
     function browseCampaign( ) 
     {
         $this->assign( 'addCampaignUrl', CRM_Utils_System::url( 'civicrm/campaign/add', 'reset=1&action=add' ) );
+        $campaignCount = CRM_Campaign_BAO_Campaign::getCampaignCount( );
+        //don't load find interface when no campaigns in db.
+        if ( !$campaignCount ) {
+            $this->assign( 'hasCampaigns', false );
+            return;
+        }
+        $this->assign( 'hasCampaigns', true );
         
         //build ajax campaign search and selector.
         $controller = new CRM_Core_Controller_Simple( 'CRM_Campaign_Form_Search_Campaign', ts( 'Search Campaigns' ) );

@@ -72,7 +72,7 @@ function civicrm_api3_custom_field_create( $params )
 {
   _civicrm_api3_initialize(true );
   try{
-    civicrm_api3_verify_mandatory($params,'CRM_Core_DAO_CustomField',array('custom_group_id','label'));
+    civicrm_api3_verify_mandatory($params,null,array('custom_group_id','label'));
 
     if ( !( CRM_Utils_Array::value('option_type', $params ) ) ) {
       if( CRM_Utils_Array::value('id', $params ) ){
