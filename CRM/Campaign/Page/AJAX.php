@@ -644,10 +644,10 @@ class CRM_Campaign_Page_AJAX
                                                         'default' => 25               ),
                                   'sort'      => array( 'name'    => 'iSortCol_0',
                                                         'type'    => 'Integer',
-                                                        'default' => 'start_date'      ),
+                                                        'default' => 'created_date'   ),
                                   'sortOrder' => array( 'name'    => 'sSortDir_0',
                                                         'type'    => 'String', 
-                                                        'default' => 'desc'            ) );
+                                                        'default' => 'desc'           ) );
         foreach ( $dataTableParams as $pName => $pValues ) {
             $$pName = $pValues['default'];
             if ( CRM_Utils_Array::value( $pValues['name'], $_POST ) ) {

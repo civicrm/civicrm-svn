@@ -36,6 +36,9 @@
 
 {elseif $buildSelector}
   
+       {* use to display result set of survey *}	
+       <div id="survey-result-set-dialog" class="hiddenElement"></div>
+
        {* load survey selector *}
        
        {include file="CRM/common/enableDisable.tpl"}	  
@@ -73,7 +76,7 @@
 {else}
 
    <div class="action-link">
-      <a href="{crmURL p='civicrm/campaign/add' q='reset=1' h=0 }" class="button"><span><div class="icon add-icon"></div>{ts}Add Survey{/ts}</span></a>
+      <a href="{crmURL p='civicrm/survey/add' q='reset=1' h=0 }" class="button"><span><div class="icon add-icon"></div>{ts}Add Survey{/ts}</span></a>
    </div>
 
     {* build search form here *}
@@ -252,6 +255,43 @@ function loadSurveyList( )
 			} ); }
      		}); 					
 } 
+
+function displayResultSet( surveyId, surveyTitle, OptionGroupId ) {
+  var data                = new Object;
+  data['option_group_id'] = OptionGroupId;
+  data['survey_id']       = surveyId;
+
+  var dataUrl  = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Campaign_Page_AJAX&fnName=loadOptionGroupDetails' }"{literal};
+  var content  = '<tr><th>{/literal}{ts}Label{/ts}{literal}</th><th>{/literal}{ts}Value{/ts}{literal}</th><th>{/literal}{ts}Recontact Interval{/ts}{literal}</th><th>{/literal}{ts}Weight{/ts}{literal}</th></tr>';
+  var setTitle = '{/literal}{ts}Result Set for{/ts} {literal}' + surveyTitle;
+	 
+  cj.post( dataUrl, data, function( opGroup ) {
+    if ( opGroup.status == 'success' ) {
+      var result = opGroup.result; 
+      for( key in result ) {
+        var interval = '';
+	if ( result[key].interval && result[key].interval != 'undefined' ) {
+	  interval = result[key].interval;
+	}
+        content += '<tr><td>'+  result[key].label +'</td><td>'+ result[key].value +'</td><td>'+ interval +'</td><td>'+ result[key].weight +'</td></tr>';
+      }
+
+      cj("#survey-result-set-dialog").show( ).html('<table>'+content+'</table>').dialog({
+        title: setTitle,
+        modal: true,
+        width: 480, 
+        overlay: { 
+          opacity: 0.5, 
+          background: "black" 
+        },
+        beforeclose: function(event, ui) {
+          cj(this).dialog("destroy");
+        }
+      });
+    }
+  }, "json" );	  
+
+}
 
 </script>
 {/literal}

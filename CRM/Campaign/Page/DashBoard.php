@@ -175,8 +175,27 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
         }
         return self::$_surveyActionLinks;
     }
-
-
+    
+    
+    function browseCampaign( ) 
+    {
+        $this->assign( 'addCampaignUrl', CRM_Utils_System::url( 'civicrm/campaign/add', 'reset=1&action=add' ) );
+        $campaignCount = CRM_Campaign_BAO_Campaign::getCampaignCount( );
+        //don't load find interface when no campaigns in db.
+        if ( !$campaignCount ) {
+            $this->assign( 'hasCampaigns', false );
+            return;
+        }
+        $this->assign( 'hasCampaigns', true );
+        
+        //build ajax campaign search and selector.
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Campaign_Form_Search_Campaign', ts( 'Search Campaigns' ) );
+        $controller->set( 'searchTab', 'campaign');
+        $controller->setEmbedded( true );
+        $controller->process( );
+        return $controller->run( );
+    }
+    
     public static function getCampaignSummary( $params = array( ) ) 
     {
         $campaignsData = array( );
@@ -225,25 +244,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
         return $campaignsData;
     }
     
-    function browseCampaign( ) 
-    {
-        $this->assign( 'addCampaignUrl', CRM_Utils_System::url( 'civicrm/campaign/add', 'reset=1&action=add' ) );
-        $campaignCount = CRM_Campaign_BAO_Campaign::getCampaignCount( );
-        //don't load find interface when no campaigns in db.
-        if ( !$campaignCount ) {
-            $this->assign( 'hasCampaigns', false );
-            return;
-        }
-        $this->assign( 'hasCampaigns', true );
-        
-        //build ajax campaign search and selector.
-        $controller = new CRM_Core_Controller_Simple( 'CRM_Campaign_Form_Search_Campaign', ts( 'Search Campaigns' ) );
-        $controller->set( 'searchTab', 'campaign');
-        $controller->setEmbedded( true );
-        $controller->process( );
-        return $controller->run( );
-    }
-   
+    
     function browseSurvey( ) 
     {
         $this->assign( 'addSurveyUrl', CRM_Utils_System::url( 'civicrm/survey/add', 'reset=1&action=add' ) );
@@ -263,6 +264,64 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
         $controller->process( );
         return $controller->run( );
     }
+
+    
+    function getSurveySummary( $params = array( ) ) 
+    {
+        $surveysData = array( );
+        
+        //get the survey.
+        $config = CRM_Core_Config::singleton( );
+        $surveys = CRM_Campaign_BAO_Survey::getSurveySummary( $params );
+        if ( !empty( $surveys ) ) {
+            $campaigns     = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, false, true );
+            $surveyType    = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
+            foreach( $surveys as $sid => $survey ) {
+                $surveysData[$sid] = $survey;
+                $campaignId = CRM_Utils_Array::value( 'campaign_id', $survey );
+                $surveysData[$sid]['campaign']      = CRM_Utils_Array::value( $campaignId, $campaigns );
+                $surveysData[$sid]['activity_type'] = $surveyType[$survey['activity_type_id']];
+                if ( CRM_Utils_Array::value( 'release_frequency', $survey ) ) {
+                    $surveysData[$sid]['release_frequency'] = $survey['release_frequency'].' Day(s)';
+                }
+                
+                $action = array_sum( array_keys( self::surveyActionLinks($surveysData[$sid]['activity_type']  ) ) );
+                if ( $survey['is_active'] ) {
+                    $action -= CRM_Core_Action::ENABLE;
+                } else {
+                    $action -= CRM_Core_Action::DISABLE;
+                }
+                
+                $isActive = ts( 'No' );
+                if ( $surveysData[$sid]['is_active'] ) $isActive = ts( 'Yes' );
+                $surveysData[$sid]['is_active'] = $isActive;
+                
+                $isDefault = null;
+                if ( $surveysData[$sid]['is_default'] ) {
+                    $isDefault = '<img src="'. $config->resourceBase. '/i/check.gif" alt="'. ts( 'Default' ). '" />';
+                }
+                $surveysData[$sid]['is_default'] = $isDefault;
+                    
+                if ( $surveysData[$sid]['result_id'] ) {
+                    $resultSet = '<a href= "javascript:displayResultSet( ' .$sid . ','. "'". $surveysData[$sid]['title'] ."'" . ', '. $surveysData[$sid]['result_id']. ' )">' . ts( 'Result Set' ) . '</a>';
+                    $surveysData[$sid]['result_id'] = $resultSet; 
+                    
+                }
+                $surveysData[$sid]['action'] = CRM_Core_Action::formLink( self::surveyActionLinks($surveysData[$sid]['activity_type'] ), 
+                                                                          $action, 
+                                                                          array('id' => $sid ) );
+                
+                if ( CRM_Utils_Array::value('activity_type', $surveysData[$sid] ) != 'Petition' ) {
+                    $surveysData[$sid]['voterLinks'] =  CRM_Campaign_BAO_Survey::buildPermissionLinks( $sid,
+                                                                                                       true,
+                                                                                                       ts( 'more' ) );
+                }
+            }
+        }
+        
+        return $surveysData; 
+    }
+    
     
     function browsePetition( ) {
         $surveysData = array( );
@@ -296,50 +355,11 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
                 }
             }
         }
-      
+        
         $this->assign( 'surveys',      $surveysData );
         $this->assign( 'addSurveyUrl', CRM_Utils_System::url( 'civicrm/petition/add', 'reset=1&action=add' ) );
     }
- 
-    function getSurveySummary( $params = array( ) ) 
-    {
-        $surveysData = array( );
-        //get the survey.
-        $surveys = CRM_Campaign_BAO_Survey::getSurveySummary( $params );
-        if ( !empty( $surveys ) ) {
-            $campaigns     = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, false, true );
-            $surveyType    = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
-            foreach( $surveys as $sid => $survey ) {
-                $surveysData[$sid] = $survey;
-                $campaignId = CRM_Utils_Array::value( 'campaign_id', $survey );
-                $surveysData[$sid]['campaign_id']       = CRM_Utils_Array::value( $campaignId, $campaigns );
-                $surveysData[$sid]['activity_type']     = $surveyType[$survey['activity_type_id']];
-                if ( CRM_Utils_Array::value( 'release_frequency', $survey ) ) {
-                    $surveysData[$sid]['release_frequency'] = $survey['release_frequency'].' Day(s)';
-                }
-                
-                $action = array_sum( array_keys( self::surveyActionLinks($surveysData[$sid]['activity_type']  ) ) );
-                if ( $survey['is_active'] ) {
-                    $action -= CRM_Core_Action::ENABLE;
-                } else {
-                    $action -= CRM_Core_Action::DISABLE;
-                }
-                $surveysData[$sid]['action'] = CRM_Core_Action::formLink( self::surveyActionLinks($surveysData[$sid]['activity_type'] ), 
-                                                                          $action, 
-                                                                          array('id' => $sid ) );
-                
-                
-                $surveysData[$sid]['voterLinks'] = '';
-                
-                //FIXME:
-                if ( CRM_Utils_Array::value('activity_type', $surveysData[$sid] ) != 'Petition' ) {
-                    //$surveysData[$sid]['voterLinks'] =  CRM_Campaign_BAO_Survey::buildPermissionLinks( $sid );
-                }
-            }
-        }
-        
-        return $surveysData; 
-    }
+    
     
     function browse( ) 
     {   
