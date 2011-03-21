@@ -208,6 +208,12 @@ function loadCampaignList( )
 	   	"bServerSide": true,
 	   	"sAjaxSource": sourceUrl,
 		"fnDrawCallback": function() { cj().crmtooltip(); },
+		"fnRowCallback": function( nRow, aData, iDisplayIndex ) { 
+				 //insert the id for each row for enable/disable.
+				 var rowId = 'row_' + aData[0];
+				 cj(nRow).attr( 'id', rowId );
+				 return nRow;
+		},
 	
 		"fnServerData": function ( sSource, aoData, fnCallback ) {
 			var dataLength = aoData.length;
