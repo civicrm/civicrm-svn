@@ -159,25 +159,21 @@
 
         <tr class="crm-price-field-form-block-active_on">
            <td class="label">{$form.active_on.label}</td>
-           <td>{include file="CRM/common/jcalendar.tpl" elementName=active_on}</td>
+           <td>{include file="CRM/common/jcalendar.tpl" elementName=active_on}
+           {if $action neq 4}
+               <br /><span class="description">{ts}Date this field becomes effective (optional).  Used for price set fields that are made available starting on a specific date.{/ts}</span>
+           {/if}
+           </td>
         </tr>
-        {if $action neq 4}
-        <tr>
-           <td>&nbsp;</td>
-           <td class="description">{ts}Date this field becomes effective (optional){/ts}</td>
-        </tr>
-        {/if}
 
         <tr class="crm-price-field-form-block-expire_on">
-           <td class="label">{$form.expire_on.label}</td>
-           <td>{include file="CRM/common/jcalendar.tpl" elementName=expire_on}</td>
+            <td class="label">{$form.expire_on.label}</td>
+            <td>{include file="CRM/common/jcalendar.tpl" elementName=expire_on}
+            {if $action neq 4}
+                <br /><span class="description">{ts}Date this field expires (optional).  Used for price set fields that are no longer available after a specific date (e.g. early-bird pricing).{/ts}</span>
+            {/if}
+            </td>
         </tr>
-        {if $action neq 4}
-        <tr>
-           <td>&nbsp;</td>
-           <td class="description">{ts}Date this field expires (optional){/ts}</td>
-        </td>
-        {/if}
 
         <tr class="crm-price-field-form-block-is_required">
            <td class="label">{$form.is_required.label}</td>
