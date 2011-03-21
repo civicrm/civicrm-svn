@@ -182,20 +182,24 @@ function loadCampaignList( )
      var sourceUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='snippet=4&className=CRM_Campaign_Page_AJAX&fnName=campaignList' }"{literal};
 
      //build the search qill.    
-     var count = 1;
-     var searchQill = new Array( ); 
      //get the search criteria.
      var searchParams   = {/literal}{$searchParams}{literal};
      var campaignTypes  = {/literal}{$campaignTypes}{literal};
      var campaignStatus = {/literal}{$campaignStatus}{literal};
+     var noRecordFoundMsg  = "<div class='messages status'><div class='icon inform-icon'></div>No matches found for:";
+         noRecordFoundMsg += '<div class="qill">';
+     
+     var count = 0;
+     var searchQill = new Array( );
      for ( param in searchParams ) {
         if ( val = cj( '#' + param ).val( ) ) {
 	    if ( param == 'status_id' ) val = campaignStatus[val];   
 	    if ( param == 'campaign_type_id' ) val = campaignTypes[val];
-            searchQill[count++] = searchParams[param] + ' : ' + val;
+	    searchQill[count++] = searchParams[param] + ' : ' + val;
 	}
      }
-     var NoRecordFoundMsg = 'No matches found for:' + searchQill.join( '<br />' ); 
+     noRecordFoundMsg += searchQill.join( '<span class="font-italic"> ...AND... </span></div><div class="qill">' );
+     noRecordFoundMsg += '</div>';
      
      cj( '#campaigns' ).dataTable({
      	        "bFilter"    : false,
@@ -220,8 +224,8 @@ function loadCampaignList( )
 		"sDom"       : 'rt<"crm-datatable-pager-bottom"ip>',
 	   	"bServerSide": true,
 	   	"sAjaxSource": sourceUrl,
-		"oLanguage":{"sEmptyTable"  : NoRecordFoundMsg,
-		             "sZeroRecords" : NoRecordFoundMsg },
+		"oLanguage":{"sEmptyTable"  : noRecordFoundMsg,
+		             "sZeroRecords" : noRecordFoundMsg },
 		"fnDrawCallback": function() { cj().crmtooltip(); },
 		"fnRowCallback": function( nRow, aData, iDisplayIndex ) { 
 				 //insert the id for each row for enable/disable.
