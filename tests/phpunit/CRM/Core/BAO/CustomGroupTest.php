@@ -406,8 +406,8 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
                              'version'         => 3
                              );
        
-       $customField = Custom::createField( $fieldParams );
-       $this->assertNotNull($customFieldId->id,'pre-requisite field not created successfully');
+        $customField = Custom::createField( $fieldParams );
+        $this->assertNotNull($customField->id,'pre-requisite field not created successfully');
         
         $customFieldId = $customField->id;
          
