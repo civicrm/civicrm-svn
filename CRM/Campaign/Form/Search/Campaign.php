@@ -68,6 +68,8 @@ class CRM_Campaign_Form_Search_Campaign extends CRM_Core_Form
         $this->assign( 'searchParams',   json_encode( $this->get( 'searchParams' ) ) );
         $this->assign( 'buildSelector',  $this->_search );
         $this->assign( 'searchFor',      $this->_searchTab );
+        $this->assign( 'campaignTypes',  json_encode( $this->get( 'campaignTypes' ) ) );
+        $this->assign( 'campaignStatus', json_encode( $this->get( 'campaignStatus' ) ) );
         
         //set the form title.
         CRM_Utils_System::setTitle( ts( 'Find Campaigns' ) );
@@ -100,17 +102,23 @@ class CRM_Campaign_Form_Search_Campaign extends CRM_Core_Form
         $this->add('select', 'campaign_type_id', ts('Campaign Type'), 
                    array( '' => ts( '- select -' ) ) + $campaignTypes );
         
+        $this->set( 'campaignTypes', $campaignTypes );
+        $this->assign( 'campaignTypes', json_encode( $campaignTypes ) );
+        
         //campaign status
         $campaignStatus = CRM_Campaign_PseudoConstant::campaignStatus();
         $this->addElement('select', 'status_id', ts('Campaign Status'), 
                           array('' => ts( '- select -' )) + $campaignStatus );
+        $this->set( 'campaignStatus',    $campaignStatus );
+        $this->assign( 'campaignStatus', json_encode( $campaignStatus ) );
         
         //build the array of all search params.
         $this->_searchParams = array( );
         foreach  ( $this->_elements as $element ) {
-            $name = $element->_attributes['name'];
+            $name  = $element->_attributes['name'];
+            $label = $element->_label;
             if ( $name == 'qfKey' ) continue;
-            $this->_searchParams[$name] = $name;
+            $this->_searchParams[$name] = ($label)?$label:$name;
         }
         $this->set( 'searchParams',    $this->_searchParams );
         $this->assign( 'searchParams', json_encode( $this->_searchParams ) );
