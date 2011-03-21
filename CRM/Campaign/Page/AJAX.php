@@ -576,6 +576,7 @@ class CRM_Campaign_Page_AJAX
             $params[$sortParam] = $$sortParam;
         }
         
+        require_once 'CRM/Campaign/BAO/Campaign.php';
         require_once 'CRM/Campaign/Page/DashBoard.php';
         $searchCount = CRM_Campaign_BAO_Campaign::getCampaignSummary( $params, true );
         $campaigns   = CRM_Campaign_Page_DashBoard::getCampaignSummary( $params );
@@ -586,6 +587,93 @@ class CRM_Campaign_Page_AJAX
             foreach ( $campaigns as $campaignID => $values ) {
                 foreach ( $selectorCols as $col ) {
                     $searchRows[$campaignID][$col] = CRM_Utils_Array::value( $col, $values );
+                }
+            }
+        }
+        
+        require_once "CRM/Utils/JSON.php";
+        $selectorElements = $selectorCols;
+        
+        $iFilteredTotal = $iTotal;
+        
+        echo CRM_Utils_JSON::encodeDataTableSelector( $searchRows, $sEcho, $iTotal, $iFilteredTotal, $selectorElements );
+        CRM_Utils_System::civiExit( );
+    }
+    
+    /**
+     * Retrieve survey for survey dashboard.
+     *
+     **/
+    function surveyList( ) 
+    {
+        //get the search criteria params.
+        $searchParams = explode( ',', CRM_Utils_Array::value( 'searchCriteria', $_POST ) );
+        
+        $params = $searchRows = array( );
+        foreach ( $searchParams as $param ) {
+            if ( CRM_Utils_Array::value( $param, $_POST ) ) {
+                $params[$param] = $_POST[$param];
+            }
+        }
+        
+        //this is sequence columns on datatable.
+        $selectorCols = array( 'id',
+                               'title', 
+                               'campaign_id',
+                               'campaign',
+                               'activity_type_id',
+                               'activity_type',
+                               'release_frequency',
+                               'default_number_of_contacts',
+                               'max_number_of_contacts',
+                               'is_default',
+                               'is_active',
+                               'result_id',
+                               'action',
+                               'voterLinks' );
+        
+        // get the data table params.
+        $dataTableParams = array( 'sEcho'     => array( 'name'    => 'sEcho',
+                                                        'type'    => 'Integer',
+                                                        'default' => 0                ), 
+                                  'offset'    => array( 'name'    => 'iDisplayStart',
+                                                        'type'    => 'Integer',
+                                                        'default' => 0                ),
+                                  'rowCount'  => array( 'name'    => 'iDisplayLength',
+                                                        'type'    => 'Integer',
+                                                        'default' => 25               ),
+                                  'sort'      => array( 'name'    => 'iSortCol_0',
+                                                        'type'    => 'Integer',
+                                                        'default' => 'start_date'      ),
+                                  'sortOrder' => array( 'name'    => 'sSortDir_0',
+                                                        'type'    => 'String', 
+                                                        'default' => 'desc'            ) );
+        foreach ( $dataTableParams as $pName => $pValues ) {
+            $$pName = $pValues['default'];
+            if ( CRM_Utils_Array::value( $pValues['name'], $_POST ) ) {
+                $$pName = CRM_Utils_Type::escape( $_POST[$pValues['name']], $pValues['type'] );
+                if ( $pName == 'sort' ) {
+                    $$pName = $selectorCols[$$pName];
+                    if ( $$pName == 'campaign' )      $$pName = 'campaign_id';
+                    if ( $$pName == 'activity_type' ) $$pName = 'activity_type_id';
+                }
+            }
+        }
+        foreach ( array( 'sort', 'offset', 'rowCount', 'sortOrder' ) as $sortParam ) {
+            $params[$sortParam] = $$sortParam;
+        }
+        
+        require_once 'CRM/Campaign/BAO/Survey.php';
+        require_once 'CRM/Campaign/Page/DashBoard.php';
+        $surveys     = CRM_Campaign_Page_DashBoard::getSurveySummary( $params );
+        $searchCount = CRM_Campaign_BAO_Survey::getSurveySummary( $params, true );
+        $iTotal      = $searchCount;
+        
+        if ( $searchCount > 0 ) {
+            if ( $searchCount < $offset ) $offset = 0;
+            foreach ( $surveys as $surveyID => $values ) {
+                foreach ( $selectorCols as $col ) {
+                    $searchRows[$surveyID][$col] = CRM_Utils_Array::value( $col, $values );
                 }
             }
         }

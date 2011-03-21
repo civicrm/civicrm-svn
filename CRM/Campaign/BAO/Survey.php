@@ -113,18 +113,18 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
      * 
      * @static
      */
-    static function getSurveySummary( ) 
+    static function getSurveySummary( $params = array( ), $onlyCount = false ) 
     {
         //we only have activity type as a 
         //difference between survey and petition.
         require_once 'CRM/Core/OptionGroup.php';
         $petitionTypeID = CRM_Core_OptionGroup::getValue( 'activity_type', 'petition',  'name' );
-        $whereClause    = '( 1 )';
+        $whereClause    = 'WHERE ( 1 )';
         if ( $petitionTypeID ) {
-            $whereClause = "( survey.activity_type_id != $petitionTypeID )";
+            $whereClause = "WHERE ( survey.activity_type_id != $petitionTypeID )";
         }
         
-        $query = "
+        $selectClause ='
 SELECT  survey.id                         as id,
         survey.title                      as title,
         survey.is_active                  as is_active,
@@ -134,9 +134,18 @@ SELECT  survey.id                         as id,
         survey.activity_type_id           as activity_type_id,
         survey.release_frequency          as release_frequency,
         survey.max_number_of_contacts     as max_number_of_contacts,
-        survey.default_number_of_contacts as default_number_of_contacts
-  FROM  civicrm_survey survey
- WHERE  {$whereClause}";
+        survey.default_number_of_contacts as default_number_of_contacts'; 
+        if ( $onlyCount ) {
+            $selectClause = 'SELECT COUNT(*)';
+        }
+        $fromClause = 'FROM  civicrm_survey survey';
+        
+        $query = "{$selectClause} {$fromClause} {$whereClause}";
+        
+        //return only count.
+        if ( $onlyCount ) {
+            return (int)CRM_Core_DAO::singleValueQuery( $query );
+        }
         
         $surveys    = array( );
         $properties = array( 'id', 'title', 'campaign_id', 'is_active', 'is_default', 'result_id', 'activity_type_id',
@@ -151,6 +160,18 @@ SELECT  survey.id                         as id,
         
         return $surveys;
     }
+    
+    
+    /**
+     * Get the survey count.
+     *
+     * @static
+     */
+    static function getSurveyCount( ) 
+    {
+        return (int)CRM_Core_DAO::singleValueQuery( 'SELECT COUNT(*) FROM civicrm_survey' );
+    }
+    
     
     /**
      * Function to get Surveys
