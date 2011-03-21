@@ -27,8 +27,6 @@
 
 require_once 'CiviTest/CiviSeleniumTestCase.php';
 
-
- 
 class WebTest_Campaign_OfflineContributionTest extends CiviSeleniumTestCase {
 
     protected $captureScreenshotOnFailure = TRUE;
@@ -42,7 +40,7 @@ class WebTest_Campaign_OfflineContributionTest extends CiviSeleniumTestCase {
   
     function testCreateCampaign()
     {
-        // This is the path where our testing install resides. 
+        // This is the path where our testing install resides.
         // The rest of URL is defined in CiviSeleniumTestCase base class, in
         // class attributes.
         $this->open( $this->sboxPath );
@@ -97,8 +95,8 @@ class WebTest_Campaign_OfflineContributionTest extends CiviSeleniumTestCase {
             $this->click("//option[@value='CiviCampaign']");
             $this->click("add");
             $this->click("_qf_Component_next-bottom");
-            $this->waitForPageToLoad("30000");          
-            $this->assertTrue($this->isTextPresent("Your changes have been saved."));    
+            $this->waitForPageToLoad("30000");
+            $this->assertTrue($this->isTextPresent("Your changes have been saved."));
         }
         
         // add the required Drupal permission
@@ -150,18 +148,18 @@ class WebTest_Campaign_OfflineContributionTest extends CiviSeleniumTestCase {
         $this->click("_qf_Campaign_next-bottom");
         $this->waitForPageToLoad("30000");
         
-        $this->assertTrue($this->isTextPresent("Campaign Campaign $title has been saved."), 
+        $this->assertTrue($this->isTextPresent("Campaign Campaign $title has been saved."),
                           "Status message didn't show up after saving campaign!");
         
-        $this->waitForElementPresent("//div[@id='Campaigns']/div/div[5]/a/span[text()='Add Campaign']");
-        $id = explode( '_', $this->getAttribute("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[7]@id"));
-        $id = $id[1];
+        $this->waitForElementPresent("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[1]");
+        $id = (int) $this->getText("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[1]");
+
         $this->offlineContributionTest( $campaignTitle, $id );
 
         $this->pastCampaignsTest( $groupName );
     }
     
-    function offlineContributionTest( $campaignTitle, $id, $past = false ) 
+    function offlineContributionTest( $campaignTitle, $id, $past = false )
     {
         // Create a contact to be used as soft creditor
         $softCreditFname = substr(sha1(rand()), 0, 7);
@@ -269,7 +267,7 @@ class WebTest_Campaign_OfflineContributionTest extends CiviSeleniumTestCase {
             $this->click("//option[@value='CiviCampaign']");
             $this->click("remove");
             $this->click("_qf_Component_next-bottom");
-            $this->waitForPageToLoad("30000");          
+            $this->waitForPageToLoad("30000");
             $this->assertTrue($this->isTextPresent("Your changes have been saved."));
             
             $this->open( $this->sboxPath . 'civicrm/contribute/search?reset=1' );
@@ -284,7 +282,7 @@ class WebTest_Campaign_OfflineContributionTest extends CiviSeleniumTestCase {
         }
     }
     
-    function addGroup( $groupName = 'New Group' ) 
+    function addGroup( $groupName = 'New Group' )
     {
         $this->open($this->sboxPath . "civicrm/group/add&reset=1");
         
@@ -355,10 +353,17 @@ class WebTest_Campaign_OfflineContributionTest extends CiviSeleniumTestCase {
         
         $this->assertTrue($this->isTextPresent("Campaign Past Campaign $title has been saved."), 
                           "Status message didn't show up after saving campaign!");
-        
-        $this->waitForElementPresent("//div[@id='Campaigns']/div/div[5]/a/span[text()='Add Campaign']");
-        $id = explode( '_', $this->getAttribute("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[7]@id"));
-        $id = $id[1];
+
+        // since campaign dates are in past, the default search may not find it. 
+        // So we 'll do a quick search
+        $this->waitForElementPresent("//div[@id='search_form_campaign']/div[1]");
+        $this->click("//div[@id='search_form_campaign']/div[1]");
+        $this->click("//table[@id='campaigns']/tbody/tr[1]/td[3]");
+        $this->type("title", $campaignTitle);
+        $this->click("link=Search");
+
+        $this->waitForElementPresent("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[1]");
+        $id = (int) $this->getText("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[1]");
 
         $this->offlineContributionTest( $campaignTitle, $id, true );
     }
