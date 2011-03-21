@@ -1362,7 +1362,7 @@ class CRM_Utils_Date
         require_once 'CRM/Core/SelectValues.php';
         // get actual format
         $actualPHPFormats = CRM_Core_SelectValues::datePluginToPHPFormats( );
-        $dateFormat       = $actualPHPFormats[$format];
+        $dateFormat       = CRM_Utils_Array::value( $format, $actualPHPFormats );
         
         $date = date( $dateFormat, strtotime( $mysqlDate) );
         

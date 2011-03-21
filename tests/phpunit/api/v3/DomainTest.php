@@ -69,10 +69,14 @@ class api_v3_DomainTest extends CiviUnitTestCase
         $params = array('version' => 3);
         $result = civicrm_api3_domain_get($params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);     
- 
+
         $this->assertType( 'array', $result, 'In line' . __LINE__ );
 
         foreach( $result as $domain ) {
+            if ( $domain == 'version' ) {
+                continue;
+            }
+
             $this->assertEquals( 'info@FIXME.ORG', $domain['from_email'], 'In line' . __LINE__ );
             $this->assertEquals( 'FIXME', $domain['from_name'], 'In line' . __LINE__);
             
