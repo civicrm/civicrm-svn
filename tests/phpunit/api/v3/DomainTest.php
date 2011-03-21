@@ -72,13 +72,13 @@ class api_v3_DomainTest extends CiviUnitTestCase
 
         $this->assertType( 'array', $result, 'In line' . __LINE__ );
 
-        foreach( $result as $domain ) {
-            if ( $domain == 'version' ) {
+        foreach( $result as $key => $domain ) {
+            if ( $key == 'version' ) {
                 continue;
             }
 
-            $this->assertEquals( 'info@FIXME.ORG', $domain['from_email'], 'In line' . __LINE__ );
-            $this->assertEquals( 'FIXME', $domain['from_name'], 'In line' . __LINE__);
+            $this->assertEquals( "info@FIXME.ORG", $domain['from_email'], 'In line ' . __LINE__ );
+            $this->assertEquals( "FIXME", $domain['from_name'], 'In line' . __LINE__);
             
             // checking other important parts of domain information
             // test will fail if backward incompatible changes happen
