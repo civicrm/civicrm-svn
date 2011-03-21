@@ -145,14 +145,15 @@ class CRM_Contact_BAO_GroupContactTest extends CiviUnitTestCase
         
         // Check if searching by parent group  returns both parent and child group contacts
         $searchParams   = array( 
-                                'group' => array (
-                                                  $parentGroup->id => 1 
-                                                  ) 
-                                 );
+				'group' => array (
+						   $parentGroup->id => 1 
+                                                 ),
+				'version' => 3 
+			       );
         $result = civicrm_api('contact', 'get', $searchParams );
-        $validContactIds = array( $parentContact, $childContact );
+	$validContactIds = array( $parentContact, $childContact );
         $resultContactIds = array( );
-        foreach ( $result as $k => $v ) {
+        foreach ( $result['values'] as $k => $v ) {
             $resultContactIds[] =  $v['contact_id'];
         }
         $this->assertEquals( 2, count( $resultContactIds ), 'Check the count of returned values' );
@@ -163,12 +164,13 @@ class CRM_Contact_BAO_GroupContactTest extends CiviUnitTestCase
         $searchParams   = array( 
                                 'group' => array (
                                                   $childGroup->id => 1 
-                                                  ) 
+                                                  ),
+				'version' => 3 
                                  );
         $result = civicrm_api('contact', 'get', $searchParams );
         $validChildContactIds = array( $childContact );
         $resultChildContactIds = array( );
-        foreach ( $result as $k => $v ) {
+        foreach ( $result['values'] as $k => $v ) {
             $resultChildContactIds[] =  $v['contact_id'];
         }
         $this->assertEquals( 1, count( $resultChildContactIds ), 'Check the count of returned values' );
