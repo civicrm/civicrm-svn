@@ -400,6 +400,15 @@ ORDER BY  {$orderByClause}
         return $campaigns;
     }
     
+    /**
+     * Get the campaign count.
+     *
+     * @static
+     */
+    static function getCampaignCount( ) 
+    {
+        return (int)CRM_Core_DAO::singleValueQuery( 'SELECT COUNT(*) FROM civicrm_campaign' );
+    }
     
     /**
      * Function to get Campaigns groups

@@ -24,16 +24,15 @@
  +--------------------------------------------------------------------+
 *}
 
-{if $errorMessages}
-  <div class='messages status'>
-     <div class="icon inform-icon"></div>
-        <ul>
-	   {foreach from=$errorMessages item=errorMsg}	
-             <li>{ts}{$errorMsg}{/ts}</li>
-           {/foreach}
-       </ul>
-     </div>
-  </div>
+{if !$hasCampaigns}
+    <div class="messages status">
+        <div class="icon inform-icon"></div> &nbsp;
+        {ts}No campaigns found.{/ts}
+    </div>  
+
+    <div class="action-link">
+         <a href="{crmURL p='civicrm/campaign/add' q='reset=1' h=0 }" class="button"><span><div class="icon add-icon"></div>{ts}Add Campaign{/ts}</span></a>
+    </div>
 
 {elseif $buildSelector}
   
