@@ -50,9 +50,10 @@ cj( function ( ) {
 function buildContactActivities( filterSearch ) {
     if ( filterSearch ) {
         oTable.fnDestroy();
- 	}
-	var columns = '';
-	var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/contactactivity" h=0 q="snippet=4&context=$context&cid=$contactId"}'{literal};
+    }
+    
+    var columns = '';
+    var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/contactactivity" h=0 q="snippet=4&context=$context&cid=$contactId"}'{literal};
 
     cj('#contact-activity-selector th').each( function( ) {
         if ( !cj(this).hasClass('nosort') ) {
@@ -61,9 +62,16 @@ function buildContactActivities( filterSearch ) {
             columns += '{ "bSortable": false },';
         }
     });
+    
+    var ZeroRecordText = {/literal}{ts}'No matches found'{/ts}{literal};
+    if ( cj("select#activity_type_filter_id").val( ) ) {
+      ZeroRecordText += {/literal}{ts}' for Activity Type = "'{/ts}{literal} +  cj("select#activity_type_filter_id :selected").text( ) + '"';
+    } else {
+      ZeroRecordText += '.';
+    }
 
-	columns    = columns.substring(0, columns.length - 1 );
-	eval('columns =[' + columns + ']');
+    columns    = columns.substring(0, columns.length - 1 );
+    eval('columns =[' + columns + ']');
     oTable = cj('#contact-activity-selector').dataTable({
         "bFilter"    : false,
         "bAutoWidth" : false,
@@ -75,7 +83,7 @@ function buildContactActivities( filterSearch ) {
         "bServerSide": true,
         "sAjaxSource": sourceUrl,
         "iDisplayLength": 50,
-        "oLanguage": { "sZeroRecords": {/literal}{ts}'No matches found.'{/ts}{literal} },
+	"oLanguage": { "sZeroRecords":  ZeroRecordText },
         "fnDrawCallback": function() { setSelectorClass(); },
         "fnServerData": function ( sSource, aoData, fnCallback ) {
             aoData.push( {name:'contact_id', value: {/literal}{$contactId}{literal}},
