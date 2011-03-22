@@ -522,10 +522,12 @@ WHERE  id = %1";
                 $form->_priceSet['optionsCountTotal'] = self::getPricesetCount( $priceSetId );
                 if ( $form->_priceSet['optionsCountTotal'] ) {
                     $optionsCountDeails = array( );
-                    foreach ( $form->_priceSet['fields'] as $field ) {
-                        foreach ( $field['options'] as $option ){
-                            $count = CRM_Utils_Array::value( 'count', $option, 0 );
-                            $optionsCountDeails['fields'][$field['id']]['options'][$option['id']] = $count;
+                    if ( !empty( $form->_priceSet['fields'] ) ) {
+                        foreach ( $form->_priceSet['fields'] as $field ) {
+                            foreach ( $field['options'] as $option ){
+                                $count = CRM_Utils_Array::value( 'count', $option, 0 );
+                                $optionsCountDeails['fields'][$field['id']]['options'][$option['id']] = $count;
+                            }
                         }
                     }
                     $form->_priceSet['optionsCountDetails'] = $optionsCountDeails;
