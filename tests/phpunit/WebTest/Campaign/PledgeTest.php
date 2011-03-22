@@ -138,9 +138,8 @@ class WebTest_Campaign_PledgeTest extends CiviSeleniumTestCase {
         $this->assertTrue($this->isTextPresent("Campaign Campaign $title has been saved."), 
                           "Status message didn't show up after saving campaign!");
         
-        $this->waitForElementPresent("//div[@id='Campaigns']/div/div[5]/a/span[text()='Add Campaign']");
-        $id = explode( '_', $this->getAttribute("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[7]@id"));
-        $id = $id[1];
+        $this->waitForElementPresent("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[1]");
+        $id = (int) $this->getText("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[1]");
         $this->pledgeAddTest( $campaignTitle, $id );
     }
     
@@ -217,7 +216,7 @@ class WebTest_Campaign_PledgeTest extends CiviSeleniumTestCase {
         $pledgeDate = date('F jS, Y', strtotime('now'));
         
         // verify Activity created
-        $this->webtestVerifyTabularData( array( 'Campaign' => $campaignTitle ) );
+        $this->verifyText("xpath=//form[@id='PledgeView']//table/tbody/tr[8]/td[2]", preg_quote( $campaignTitle ) ); 
     }
 
     function addGroup( $groupName = 'New Group' )

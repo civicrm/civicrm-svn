@@ -297,7 +297,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         if ( empty( $id ) ) {
             // adding this here since developers forget to check for an id
             // and hence we get the first value in the db
-            $this->fail( 'ID not populated. Please fix your asserDBState usage!!!' );
+            $this->fail( 'ID not populated. Please fix your assertDBState usage!!!' );
         }
         
         require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
@@ -636,7 +636,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     function relationshipTypeDelete( $relationshipTypeID )
     {
         $params['id'] = $relationshipTypeID;
-        $result = civicrm_relationship_type_delete( $params );
+        $result = civicrm_api( 'relationship_type', 'delete', $params );
         
         if (civicrm_error( $params ) ) {
             throw new Exception( 'Could not delete relationship type' );
@@ -753,7 +753,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     function entityTagAdd( $params )
     {
-        $params['version'] =API_LATEST_VERSION;
+        $params['version'] = API_LATEST_VERSION;
         $result = civicrm_api( 'entity_tag','create',$params );
         
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {

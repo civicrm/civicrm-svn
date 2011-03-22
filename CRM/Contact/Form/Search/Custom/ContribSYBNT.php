@@ -100,7 +100,8 @@ implements CRM_Contact_Form_Search_Interface {
                         $name,
                         $title );
         }
-
+        
+        $this->setTitle('Contributions made in Year X and not Year Y');
         // @TODO: Decide on better names for "Exclusion"
         // @TODO: Add rule to ensure that exclusion dates are not in the inclusion range
     }
@@ -304,7 +305,14 @@ AND      c.receive_date < {$this->start_date_1}
     function summary( ) {
         return null;
     }
-        
+    
+    function setTitle( $title ) {
+        if ( $title ) {
+            CRM_Utils_System::setTitle( $title );
+        } else {
+            CRM_Utils_System::setTitle(ts('Search'));
+        }
+    } 
 }
     
 

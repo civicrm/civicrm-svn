@@ -275,15 +275,19 @@ function _civicrm_activity_check_params ( &$params, $addMode = false )
     foreach ( $contactIds as $key => $value ) {
         if ( empty( $value ) ) {
             continue;
-        }
+	}
         $valueIds = array( $value );
         if ( is_array( $value ) ) {
             $valueIds = array( );
             foreach ( $value as $id ) {
-                if ( $id ) $valueIds[$id] = $id;
+                if ( is_numeric($id) ) $valueIds[$id] = $id;
             }
-        }
-        if ( empty( $valueIds ) ) {
+        } elseif( !is_numeric( $value ) ) {
+	    return civicrm_create_error( ts( 'Invalid %1 Contact Id', array( 1 => ucfirst( 
+$key ) ) ) );
+	}
+        
+	if ( empty( $valueIds ) ) {
             continue;
         }
         

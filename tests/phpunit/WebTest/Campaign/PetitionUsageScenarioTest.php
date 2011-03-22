@@ -51,7 +51,7 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
       // sometimes your test might fail because of this. In such cases, it's better to pick one element
       // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
       // page contents loaded and you can continue your test execution.
-      $this->webtestLogin(true);
+      $this->webtestLogin();
 
 
       // Enable CiviCampaign module if necessary
@@ -155,10 +155,15 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
       $this->click("_qf_Petition_next-bottom");
       $this->waitForPageToLoad("30000");
 
-
       $this->assertTrue($this->isTextPresent("Petition has been saved."));
-      $this->waitForElementPresent("xpath=//table/tbody//tr//td[1][text()='$title Petition']/../td[5]/span[2][text()='more ']/ul/li/a[text()='Sign']");
-      $url = $this->getAttribute( "xpath=//table/tbody//tr//td[1][text()='$title Petition']/../td[5]/span[2][text()='more ']/ul/li/a[text()='Sign']/@href" );
+       
+      $this->waitForElementPresent( "link=Add Petition" );
+
+      $this->click( "petitionSearch" );
+      $this->type( "title", $title );
+      $this->click( "xpath=//div[@class='crm-accordion-body']/table/tbody/tr[2]/td/a[text()='Search']" );
+
+      $url = $this->getAttribute( "xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[9]/span[2][text()='more ']/ul/li/a[text()='Sign']/@href" );
       
       ////////////// Retrieve Sign Petition Url /////////////////////////
       
@@ -196,8 +201,11 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("link=Add Petition");
 
       // check for unconfirmed petition signature
-      $this->waitForElementPresent("xpath=//table/tbody//tr//td[1][text()='$title Petition']/../td[5]/span[2][text()='more ']/ul/li/a[text()='Signatures']");
-      $this->click("xpath=//table/tbody//tr//td[1][text()='$title Petition']/../td[5]/span[2][text()='more ']/ul/li/a[text()='Signatures']");
+      $this->click( "petitionSearch" );
+      $this->type( "title", $title );
+      $this->click( "xpath=//div[@class='crm-accordion-body']/table/tbody/tr[2]/td/a[text()='Search']" );
+
+      $this->click("xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[9]/span[2][text()='more ']/ul/li/a[text()='Signatures']");
       $this->waitForPageToLoad("30000");
 
       // verify tabular data

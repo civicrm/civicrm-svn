@@ -176,8 +176,6 @@ UPDATE civicrm_membership_type
         $relationshipType = new CRM_Contact_DAO_RelationshipType();
         $relationshipType->id = $relationshipTypeId;
         return $relationshipType->delete();
-
-
     }
 }
 

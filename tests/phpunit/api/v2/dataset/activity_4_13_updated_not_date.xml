@@ -25,6 +25,7 @@
     <column>result</column>    
     <column>is_deleted</column>
     <column>campaign_id</column>
+    <column>engagement_level</column>
     <row>
       <value>4</value>                      <!--  id  -->
       <value>17</value>                      <!--  source_contact_id  -->
@@ -49,6 +50,7 @@
       <null />   <!--  result  -->      
       <null />   <!--  is_deleted  -->
       <null />   <!--  campaign_id  -->
+      <null />   <!--  engagement_level  -->
     </row>
     <row>
       <value>13</value>                      <!--  id  -->
@@ -74,6 +76,7 @@
       <null />   <!--  result  -->      
       <null />   <!--  is_deleted  -->
       <null />   <!--  campaign_id  -->
+      <null />   <!--  engagement_level  -->
     </row>
   </table>
 </dataset>

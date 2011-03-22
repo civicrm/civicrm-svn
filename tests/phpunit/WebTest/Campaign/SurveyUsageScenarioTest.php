@@ -360,7 +360,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
 
       $this->click("_qf_Search_refresh");
       $this->waitForPageToLoad("30000");
-      $this->assertTrue($this->isTextPresent(" Results"), "Result didn't show up after saving!");
+      $this->assertTrue($this->isTextPresent("1 Result"), "Result didn't show up after saving!");
   }
 
   function addGroup( $groupName = 'New Group' ) {

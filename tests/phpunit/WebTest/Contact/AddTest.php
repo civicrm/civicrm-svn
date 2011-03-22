@@ -83,7 +83,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->type("im_1_name", "testYahoo");
       
       //fill in openID
-      $this->type("openid_1_openid", "http://www.john-" . substr(sha1(rand()), 0, 7) . "-openid.com");
+      $this->type("openid_1_openid", "http://www.john" . substr(sha1(rand()), 0, 7) . "openid.com");
       
       //fill in website
       $this->type("website_1_url", "http://www.john.com");
@@ -316,7 +316,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       
       //fill in openID
       $this->select("openid_1_location_type_id", "value=5");
-      $this->type("openid_1_openid", "http://www.syntel-" . substr(sha1(rand()), 0, 7) . "-Openid.com");
+      $this->type("openid_1_openid", "http://www.syntel" . substr(sha1(rand()), 0, 7) . "Openid.com");
       
       //fill in website url
       $this->type("website_1_url", "http://syntelglobal.com");

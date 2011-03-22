@@ -1504,13 +1504,13 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             $form->addDate( $name, $title, $required, array( 'formatType' => 'birth') );
         } else if ( in_array($fieldName, array( 'membership_start_date','membership_end_date','join_date')) ) {  
             $form->addDate( $name, $title, $required, array( 'formatType' => 'custom') );
-        }  else if ($field['name'] == 'membership_type_id' ) { 
+        }  else if ($field['name'] == 'membership_type' ) { 
             require_once 'CRM/Member/PseudoConstant.php';
-            $form->add('select', 'membership_type_id', $title,
+            $form->add('select', $name, $title,
                        array(''=>ts( '- select -' )) + CRM_Member_PseudoConstant::membershipType( ), $required );            
-        } else if ($field['name'] == 'status_id'  && ( $mode && CRM_Contact_BAO_Query::MODE_MEMBER ) ) { 
+        } else if ($field['name'] == 'membership_status'  ) { 
             require_once 'CRM/Member/PseudoConstant.php';
-            $form->add('select', 'status_id', $title,
+            $form->add('select', $name, $title,
                        array('' => ts('- select -')) + CRM_Member_PseudoConstant::membershipStatus(null, null, 'label'), $required);
         } else if ( $fieldName === 'gender' ) {  
             $genderOptions = array( );   
@@ -1649,11 +1649,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             require_once 'CRM/Contribute/PseudoConstant.php';
             $form->add('select', $name, $title,
                        array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::contributionType( ), $required);
-        } else if ($fieldName == 'contribution_status_id' ) {
-            require_once 'CRM/Contribute/PseudoConstant.php';
-            $form->add('select', $name, $title,
-                       array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::contributionStatus( ), $required);
-       } else if ($fieldName == 'contribution_page_id' ) {
+        } else if ($fieldName == 'contribution_page_id' ) {
            require_once 'CRM/Contribute/PseudoConstant.php';
            $form->add('select', $name, $title,
                       array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::contributionPage( ), $required, 'class="big"');

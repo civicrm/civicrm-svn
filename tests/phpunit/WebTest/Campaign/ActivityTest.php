@@ -140,9 +140,8 @@ class WebTest_Campaign_ActivityTest extends CiviSeleniumTestCase {
       $this->assertTrue($this->isTextPresent("Campaign Campaign $title has been saved."), 
                         "Status message didn't show up after saving campaign!");
       
-      $this->waitForElementPresent("//div[@id='Campaigns']/div/div[5]/a/span[text()='Add Campaign']");
-      $id = explode( '_', $this->getAttribute("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[7]@id"));
-      $id = $id[1];
+      $this->waitForElementPresent("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[1]");
+      $id = (int) $this->getText("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[1]");
       $this->activityAddTest( $campaignTitle, $id );
   }
 
@@ -238,10 +237,10 @@ class WebTest_Campaign_ActivityTest extends CiviSeleniumTestCase {
       // Is status message correct?
       $this->assertTrue($this->isTextPresent("Activity '$subject' has been saved."), "Status message didn't show up after saving!");
 
-      $this->waitForElementPresent("xpath=//div[@id='Activities']//table/tbody/tr[3]/td[8]/span/a[text()='View']");
+      $this->waitForElementPresent("xpath=//div[@id='Activities']//table/tbody/tr[2]/td[8]/span/a[text()='View']");
       
       // click through to the Activity view screen
-      $this->click("xpath=//div[@id='Activities']//table/tbody/tr[3]/td[8]/span/a[text()='View']");
+      $this->click("xpath=//div[@id='Activities']//table/tbody/tr[2]/td[8]/span/a[text()='View']");
       $this->waitForElementPresent('_qf_Activity_cancel-bottom');
 
       // verify Activity created

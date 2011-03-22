@@ -64,7 +64,7 @@ class WebTest_Contact_AddViaProfileTest extends CiviSeleniumTestCase {
       $this->type("street_address-1", "902C El Camino Way SW");
       $this->type("city-1", "Dumfries");
       $this->type("postal_code-1", "1234");
-      $this->assertTrue($this->isTextPresent("- select - United States"));
+      $this->assertTrue($this->isTextPresent("United States"));
       $this->select("state_province-1", "value=1019");
 
       // Clicking save.
