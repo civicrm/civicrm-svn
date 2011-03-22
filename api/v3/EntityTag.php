@@ -87,35 +87,35 @@ function civicrm_api3_entity_tag_get( $params ) {
 function civicrm_api3_entity_tag_display( $params ) {
     _civicrm_api3_initialize(true);
 
-  try{
-    civicrm_api3_verify_one_mandatory($params,null,array('entity_id','contact_id'));
+    try{
+        civicrm_api3_verify_one_mandatory($params,null,array('entity_id','contact_id'));
     
-    $entityID    = null;
-    $entityTable = 'civicrm_contact';
+        $entityID    = null;
+        $entityTable = 'civicrm_contact';
    
-    if ( !( $entityID = CRM_Utils_Array::value( 'entity_id', $params ) ) ) {
-        $entityID = CRM_Utils_Array::value( 'contact_id', $params );
-    }
+        if ( !( $entityID = CRM_Utils_Array::value( 'entity_id', $params ) ) ) {
+            $entityID = CRM_Utils_Array::value( 'contact_id', $params );
+        }
     
 
-    if ( CRM_Utils_Array::value( 'entity_table', $params ) ) {
-        $entityTable = $params['entity_table'];
-    }
+        if ( CRM_Utils_Array::value( 'entity_table', $params ) ) {
+            $entityTable = $params['entity_table'];
+        }
 
-    require_once 'CRM/Core/BAO/EntityTag.php';
-    $values =& CRM_Core_BAO_EntityTag::getTag( $entityID, $entityTable );
-    $result = array( );
-    $tags   = CRM_Core_PseudoConstant::tag( );
-    foreach ( $values as $v ) {
-        $result[] = $tags[$v];
-    }
-    return implode( ',', $result );
+        require_once 'CRM/Core/BAO/EntityTag.php';
+        $values =& CRM_Core_BAO_EntityTag::getTag( $entityID, $entityTable );
+        $result = array( );
+        $tags   = CRM_Core_PseudoConstant::tag( );
+        foreach ( $values as $v ) {
+            $result[] = $tags[$v];
+        }
+        return implode( ',', $result );
   
-      } catch (PEAR_Exception $e) {
+    } catch (PEAR_Exception $e) {
         return civicrm_api3_create_error( $e->getMessage() );
-      } catch (Exception $e) {
+    } catch (Exception $e) {
         return civicrm_api3_create_error( $e->getMessage() );
-      }
+    }
 }
 
 /**

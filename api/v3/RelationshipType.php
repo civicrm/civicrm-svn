@@ -53,7 +53,6 @@ require_once 'api/v3/utils.php';
  * {@schema Contact/RelationshipType.xml}
  */
 function civicrm_api3_relationship_type_create( $params ) {
-
     _civicrm_api3_initialize(true);
     try{
 
@@ -63,6 +62,8 @@ function civicrm_api3_relationship_type_create( $params ) {
             civicrm_api3_verify_mandatory($params,
                                           null,
                                           array('contact_type_a','contact_type_b','name_a_b','name_b_a'));
+        } else if ( ! is_array( $params ) ) {
+            throw new Exception ('Input variable `params` is not an array');
         }
 
         if (! isset( $params['label_a_b']) )
