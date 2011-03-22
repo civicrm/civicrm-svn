@@ -74,10 +74,33 @@ class api_v3_APIStandardsTest extends CiviUnitTestCase
         //should possibly insert variable rather than '3' in below
         $this->_regexForGettingAPIStdFunctions = '/^civicrm_api3.*_*$/';
 
-        // functions to skip from utils.php mainlu since they get sucked in via
+        // functions to skip from utils.php mainly since they get sucked in via
         // a require chain in the include files
         $this->_skipFunctionList = array( 'civicrm_api3_activity_processemail',
+
+                                          // location api is deprecated
+
+                                          'civicrm_api3_location_create',
+                                          'civicrm_api3_location_get',
+                                          'civicrm_api3_location_delete',
+
+                                          // most of these seem to be internal functions
+                                          'civicrm_api3_participant_check_params',
+                                          'civicrm_api3_entity_tag_common',
+                                          'civicrm_api3_file_by_entity_add',
+                                          'civicrm_api3_group_contact_common',
+                                          'civicrm_api3_create_participant_formatted',
+                                          'civicrm_api3_survey_respondant_count',
+                                          'civicrm_api3_uf_field_update',
+                                          
+                                          // should getfields be internal? if not, we should make it
+                                          // follow the standard
                                           'civicrm_api3_contact_getfields',
+                                          'civicrm_api3_note_getfields',
+                                          'civicrm_api3_relationship_getfields',
+                                          'civicrm_api3_tag_getfields',
+
+                                          // functions from utils.php
                                           'civicrm_api3_verify_one_mandatory',
                                           'civicrm_api3_verify_mandatory',
                                           'civicrm_api3_get_dao', 
@@ -110,7 +133,7 @@ class api_v3_APIStandardsTest extends CiviUnitTestCase
             try {
                 $result = $function($params);
             } catch ( Exception $e ) {
-                echo "$function\n";
+                echo "PLEASE ADD TO SKIP: $function\n";
                 continue;
             }
 

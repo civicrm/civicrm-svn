@@ -75,7 +75,8 @@ function &civicrm_api3_survey_respondant_count( $params ) {
   try{
 
     $petition = new CRM_Campaign_BAO_Petition();
-    if (array_key_exists ('groupby',$params) && $params['groupby'] == 'country' ) {
+    if (array_key_exists ('groupby',$params) &&
+        $params['groupby'] == 'country' ) {
       $signaturesCount = $petition->getPetitionSignatureTotalbyCountry($params['survey_id']);
     } else {
       $signaturesCount = $petition->getPetitionSignatureTotal($params['survey_id']);
