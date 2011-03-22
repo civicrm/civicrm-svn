@@ -375,7 +375,6 @@ class api_v3_EntityTagTest extends CiviUnitTestCase
                         );
         
         $result = civicrm_api3_entity_tag_display( $params );
-        
         $this->assertEquals( $this->_tag['values'][$this->_tag['id']]['name'], $result );
     }
 

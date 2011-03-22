@@ -1,28 +1,28 @@
 <?php
 /*
- +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
- +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
- +--------------------------------------------------------------------+
- | This file is a part of CiviCRM.                                    |
- |                                                                    |
- | CiviCRM is free software; you can copy, modify, and distribute it  |
- | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
- |                                                                    |
- | CiviCRM is distributed in the hope that it will be useful, but     |
- | WITHOUT ANY WARRANTY; without even the implied warranty of         |
- | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
- | See the GNU Affero General Public License for more details.        |
- |                                                                    |
- | You should have received a copy of the GNU Affero General Public   |
- | License and the CiviCRM Licensing Exception along                  |
- | with this program; if not, contact CiviCRM LLC                     |
- | at info[AT]civicrm[DOT]org. If you have questions about the        |
- | GNU Affero General Public License or the licensing of CiviCRM,     |
- | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
- +--------------------------------------------------------------------+
+  +--------------------------------------------------------------------+
+  | CiviCRM version 3.4                                                |
+  +--------------------------------------------------------------------+
+  | Copyright CiviCRM LLC (c) 2004-2011                                |
+  +--------------------------------------------------------------------+
+  | This file is a part of CiviCRM.                                    |
+  |                                                                    |
+  | CiviCRM is free software; you can copy, modify, and distribute it  |
+  | under the terms of the GNU Affero General Public License           |
+  | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+  |                                                                    |
+  | CiviCRM is distributed in the hope that it will be useful, but     |
+  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+  | See the GNU Affero General Public License for more details.        |
+  |                                                                    |
+  | You should have received a copy of the GNU Affero General Public   |
+  | License and the CiviCRM Licensing Exception along                  |
+  | with this program; if not, contact CiviCRM LLC                     |
+  | at info[AT]civicrm[DOT]org. If you have questions about the        |
+  | GNU Affero General Public License or the licensing of CiviCRM,     |
+  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+  +--------------------------------------------------------------------+
 */
 
 /**
@@ -62,55 +62,55 @@ function civicrm_api3_relationship_getfields( $params ) {
  * @todo create should handle update.
  */
 function civicrm_api3_relationship_create( $params ) {
-  _civicrm_api3_initialize(true );
-  try{
+    _civicrm_api3_initialize(true );
+    try{
         
-    // check params for required fields (add/update)
-    static $required = array( 'contact_id_a', 
-                              'contact_id_b',
-                              array('relationship_type_id' , 'relationship_type'));
-    civicrm_api3_verify_mandatory($params,'CRM_Contact_DAO_Relationship',$required);
-    // check entities exist
-    _civicrm_api3_relationship_check_params( $params );
-    $values = array( );
-    require_once 'CRM/Contact/BAO/Relationship.php';
-    $error = _civicrm_api3_relationship_format_params( $params, $values );
+        // check params for required fields (add/update)
+        static $required = array( 'contact_id_a', 
+                                  'contact_id_b',
+                                  array('relationship_type_id' , 'relationship_type'));
+        civicrm_api3_verify_mandatory($params,'CRM_Contact_DAO_Relationship',$required);
+        // check entities exist
+        _civicrm_api3_relationship_check_params( $params );
+        $values = array( );
+        require_once 'CRM/Contact/BAO/Relationship.php';
+        $error = _civicrm_api3_relationship_format_params( $params, $values );
 
-    if ( civicrm_api3_error( $error ) ) {
-        return $error;
+        if ( civicrm_api3_error( $error ) ) {
+            return $error;
+        }
+
+        $ids = array( );
+        $action = CRM_Core_Action::ADD;
+        require_once 'CRM/Utils/Array.php';
+
+        if( CRM_Utils_Array::value( 'id', $params ) ) {
+            $ids['relationship']  = $params['id'];
+            $ids['contactTarget'] = $params['contact_id_b'];
+            $action               = CRM_Core_Action::UPDATE;
+        }
+
+        $values['relationship_type_id'] = $params['relationship_type_id'].'_a_b';
+        $values['contact_check']        = array ( $params['contact_id_b'] => $params['contact_id_b'] );
+        $ids   ['contact'      ]        = $params['contact_id_a'];
+
+        $relationshipBAO = CRM_Contact_BAO_Relationship::create( $values, $ids );
+
+        if ( is_a( $relationshipBAO, 'CRM_Core_Error' ) ) {
+            return civicrm_api3_create_error( 'Relationship can not be created' );
+        } else if ( $relationshipBAO[1] ) {
+            return civicrm_api3_create_error( 'Relationship is not valid' );
+        } else if ( $relationshipBAO[2] ) {
+            return civicrm_api3_create_error( 'Relationship already exists' );
+        }
+        CRM_Contact_BAO_Relationship::relatedMemberships( $params['contact_id_a'], $values, $ids, $action );
+        $relationships = array($relationshipBAO[4] => array('id' => $relationshipBAO[4]));
+        return civicrm_api3_create_success( array( 'id' => implode( ',', $relationshipBAO[4] ) ) );
+    } catch (PEAR_Exception $e) {
+        return civicrm_api3_create_error( $e->getMessage() );
+    } catch (Exception $e) {
+        return civicrm_api3_create_error( $e->getMessage() );
     }
-
-    $ids = array( );
-    $action = CRM_Core_Action::ADD;
-    require_once 'CRM/Utils/Array.php';
-
-    if( CRM_Utils_Array::value( 'id', $params ) ) {
-        $ids['relationship']  = $params['id'];
-        $ids['contactTarget'] = $params['contact_id_b'];
-        $action               = CRM_Core_Action::UPDATE;
-    }
-
-    $values['relationship_type_id'] = $params['relationship_type_id'].'_a_b';
-    $values['contact_check']        = array ( $params['contact_id_b'] => $params['contact_id_b'] );
-    $ids   ['contact'      ]        = $params['contact_id_a'];
-
-    $relationshipBAO = CRM_Contact_BAO_Relationship::create( $values, $ids );
-
-    if ( is_a( $relationshipBAO, 'CRM_Core_Error' ) ) {
-        return civicrm_api3_create_error( 'Relationship can not be created' );
-    } else if ( $relationshipBAO[1] ) {
-        return civicrm_api3_create_error( 'Relationship is not valid' );
-    } else if ( $relationshipBAO[2] ) {
-        return civicrm_api3_create_error( 'Relationship already exists' );
-    }
-    CRM_Contact_BAO_Relationship::relatedMemberships( $params['contact_id_a'], $values, $ids, $action );
-    $relationships = array($relationshipBAO[4] => array('id' => $relationshipBAO[4]));
-    return civicrm_api3_create_success( array( 'id' => implode( ',', $relationshipBAO[4] ) ) );
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
 }
 
 /**
@@ -125,27 +125,27 @@ function civicrm_api3_relationship_create( $params ) {
 
 function civicrm_api3_relationship_delete( $params ) {
     _civicrm_api3_initialize(true );
-  try{   
-    civicrm_api3_verify_mandatory($params,null,array('id'));
+    try{   
+        civicrm_api3_verify_mandatory($params,null,array('id'));
 
-    require_once 'CRM/Utils/Rule.php';
-    if( $params['id'] != null && ! CRM_Utils_Rule::integer( $params['id'] ) ) {
-        return civicrm_api3_create_error( 'Invalid value for relationship ID' );
-    }
+        require_once 'CRM/Utils/Rule.php';
+        if( $params['id'] != null && ! CRM_Utils_Rule::integer( $params['id'] ) ) {
+            return civicrm_api3_create_error( 'Invalid value for relationship ID' );
+        }
     
-    $relationBAO = new CRM_Contact_BAO_Relationship( );
-    $relationBAO->id = $params['id'];
-    if ( !$relationBAO->find( true ) ) {
-        return civicrm_api3_create_error(  'Relationship id is not valid' );
-    } else {
-        $relationBAO->del( $params['id'] );
-        return civicrm_api3_create_success(  'Deleted relationship successfully'  );
-    }
+        $relationBAO = new CRM_Contact_BAO_Relationship( );
+        $relationBAO->id = $params['id'];
+        if ( !$relationBAO->find( true ) ) {
+            return civicrm_api3_create_error(  'Relationship id is not valid' );
+        } else {
+            $relationBAO->del( $params['id'] );
+            return civicrm_api3_create_success(  'Deleted relationship successfully'  );
+        }
     } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+        return civicrm_api3_create_error( $e->getMessage() );
+    } catch (Exception $e) {
+        return civicrm_api3_create_error( $e->getMessage() );
+    }
 }
 
 /**
@@ -160,40 +160,40 @@ function civicrm_api3_relationship_delete( $params ) {
  */
 function civicrm_api3_relationship_update( $params ) {
     try {
-       _civicrm_api3_initialize(true);
+        _civicrm_api3_initialize(true);
 
-       /*
-        * Erik Hommel, 5 Oct 2010 : fix for CRM-6895
-        * check if required field relationship_id is in the parms. As the
-        * CRM_Contact_BAO_Relationship::getRelatonship throws up some issues
-        * (CRM-6905) the relationship is retrieved with a direct query
-        */
-       civicrm_api3_verify_mandatory($params, 'CRM_Contact_DAO_Relationship', array('relationship_id'));
+        /*
+         * Erik Hommel, 5 Oct 2010 : fix for CRM-6895
+         * check if required field relationship_id is in the parms. As the
+         * CRM_Contact_BAO_Relationship::getRelatonship throws up some issues
+         * (CRM-6905) the relationship is retrieved with a direct query
+         */
+        civicrm_api3_verify_mandatory($params, 'CRM_Contact_DAO_Relationship', array('relationship_id'));
 
-       $names = array('id', 'contact_id_a', 'contact_id_b',
-                      'relationship_type_id', 'start_date', 'end_date', 'is_active',
-                      'description', 'is_permission_a_b', 'is_permission_b_a', 'case_id');
+        $names = array('id', 'contact_id_a', 'contact_id_b',
+                       'relationship_type_id', 'start_date', 'end_date', 'is_active',
+                       'description', 'is_permission_a_b', 'is_permission_b_a', 'case_id');
        
-       $relationship_id = (int) $params['relationship_id'];
-       $query = "SELECT * FROM civicrm_relationship WHERE id = $relationship_id";
-       $daoRelations = & CRM_Core_DAO::executeQuery( $query );
-       while ($daoRelations->fetch()) {
-           foreach ($names as $name) {
-               $current_values[$name] = $daoRelations->$name;
-           }
-       }
-       $params = array_merge($current_values, $params);
+        $relationship_id = (int) $params['relationship_id'];
+        $query = "SELECT * FROM civicrm_relationship WHERE id = $relationship_id";
+        $daoRelations = & CRM_Core_DAO::executeQuery( $query );
+        while ($daoRelations->fetch()) {
+            foreach ($names as $name) {
+                $current_values[$name] = $daoRelations->$name;
+            }
+        }
+        $params = array_merge($current_values, $params);
 
-       $params['start_date'] = date("Ymd", strtotime($params['start_date']));
-       $params['end_date'] = date("Ymd", strtotime($params['end_date']));
+        $params['start_date'] = date("Ymd", strtotime($params['start_date']));
+        $params['end_date'] = date("Ymd", strtotime($params['end_date']));
        
-       return civicrm_api3_relationship_create( $params );
+        return civicrm_api3_relationship_create( $params );
 
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+    } catch (PEAR_Exception $e) {
+        return civicrm_api3_create_error( $e->getMessage() );
+    } catch (Exception $e) {
+        return civicrm_api3_create_error( $e->getMessage() );
+    }
 
 
 }
@@ -214,78 +214,78 @@ function civicrm_api3_relationship_update( $params ) {
 function civicrm_api3_relationship_get($params) 
 {
     _civicrm_api3_initialize(true );
-  try{
-    civicrm_api3_verify_mandatory($params);
+    try{
+        civicrm_api3_verify_mandatory($params);
    
-    if ( !isset( $params['contact_id_a'] ) ) {
-        return civicrm_api3_create_error(  'Could not find contact_id_a in input parameters.'  );
-    }
-    require_once 'CRM/Contact/BAO/Relationship.php';
-    $contactID     = $params['contact_id_a'];
-    $relationships = CRM_Contact_BAO_Relationship::getRelationship($contactID);
+        if ( !isset( $params['contact_id_a'] ) ) {
+            return civicrm_api3_create_error(  'Could not find contact_id_a in input parameters.'  );
+        }
+        require_once 'CRM/Contact/BAO/Relationship.php';
+        $contactID     = $params['contact_id_a'];
+        $relationships = CRM_Contact_BAO_Relationship::getRelationship($contactID);
     
-    if ( !empty( $relationshipTypes ) ) {
-        $result = array();
-        foreach ( $relationshipTypes as $relationshipName ) {
-            foreach( $relationships as $key => $relationship ) {
-                if ( $relationship['relation'] ==  $relationshipName ) {
+        if ( !empty( $relationshipTypes ) ) {
+            $result = array();
+            foreach ( $relationshipTypes as $relationshipName ) {
+                foreach( $relationships as $key => $relationship ) {
+                    if ( $relationship['relation'] ==  $relationshipName ) {
+                        $result[$key] = $relationship;
+                    }
+                }
+            }
+            $relationships = $result;
+        }
+    
+        if( isset( $params['contact_id_b']) ) {
+            $cid = $params['contact_id_b'];
+            $result = array( );
+        
+            foreach($relationships as $key => $relationship) {
+                if ($relationship['cid'] == $cid ) {
                     $result[$key] = $relationship;
                 }
             }
+            $relationships = $result;
         }
-        $relationships = $result;
-    }
     
-    if( isset( $params['contact_id_b']) ) {
-        $cid = $params['contact_id_b'];
-        $result = array( );
-        
-        foreach($relationships as $key => $relationship) {
-            if ($relationship['cid'] == $cid ) {
-                $result[$key] = $relationship;
+        //sort by relationship id
+        if ( $sort ) {
+            if ( strtolower( $sort ) == 'asc' ) {
+                ksort( $relationships );
+            } 
+            else if ( strtolower( $sort ) == 'desc' ) {
+                krsort( $relationships );
             }
         }
-        $relationships = $result;
-    }
     
-    //sort by relationship id
-    if ( $sort ) {
-        if ( strtolower( $sort ) == 'asc' ) {
-            ksort( $relationships );
-        } 
-        else if ( strtolower( $sort ) == 'desc' ) {
-            krsort( $relationships );
-        }
-    }
-    
-    //handle custom data.
-    require_once 'CRM/Core/BAO/CustomGroup.php';
+        //handle custom data.
+        require_once 'CRM/Core/BAO/CustomGroup.php';
 
-    foreach ( $relationships as $relationshipId => $values ) {
-        $groupTree =& CRM_Core_BAO_CustomGroup::getTree( 'Relationship', CRM_Core_DAO::$_nullObject, $relationshipId, false,
-                                                         $values['civicrm_relationship_type_id'] );
-        $formatTree = CRM_Core_BAO_CustomGroup::formatGroupTree( $groupTree, 1, CRM_Core_DAO::$_nullObject );
+        foreach ( $relationships as $relationshipId => $values ) {
+            $groupTree =& CRM_Core_BAO_CustomGroup::getTree( 'Relationship', CRM_Core_DAO::$_nullObject, $relationshipId, false,
+                                                             $values['civicrm_relationship_type_id'] );
+            $formatTree = CRM_Core_BAO_CustomGroup::formatGroupTree( $groupTree, 1, CRM_Core_DAO::$_nullObject );
         
-        $defaults = array( );
-        CRM_Core_BAO_CustomGroup::setDefaults( $formatTree, $defaults );
+            $defaults = array( );
+            CRM_Core_BAO_CustomGroup::setDefaults( $formatTree, $defaults );
         
-        if ( !empty( $defaults ) ) {
-            foreach ( $defaults as $key => $val ) {
-                $relationships[$relationshipId][$key] = $val;
+            if ( !empty( $defaults ) ) {
+                foreach ( $defaults as $key => $val ) {
+                    $relationships[$relationshipId][$key] = $val;
+                }
             }
         }
-    }
     
-    if ( $relationships ) {
-        return civicrm_api3_create_success( $relationships ,$params);
-    } else {
-        return civicrm_api3_create_error(  'Invalid Data'  );
-    }
+        if ( $relationships ) {
+            return civicrm_api3_create_success( $relationships ,$params);
+        } else {
+            return civicrm_api3_create_error(  'Invalid Data'  );
+        }
     } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+        return civicrm_api3_create_error( $e->getMessage() );
+    } catch (Exception $e) {
+        return civicrm_api3_create_error( $e->getMessage() );
+    }
 }
 
 /**
@@ -387,10 +387,10 @@ function _civicrm_api3_relationship_format_params( $params, &$values ) {
 }
 function _civicrm_api3_relationship_check_params( $params ) {
     if(is_array($params['end_date'])){
-     $params['end_date'] = date("Ymd", strtotime($params['end_date']));
+        $params['end_date'] = date("Ymd", strtotime($params['end_date']));
     }  
     if(is_array($params['start_date'])){ 
-     $params['start_date'] = date("Ymd", strtotime($params['start_date']));
+        $params['start_date'] = date("Ymd", strtotime($params['start_date']));
     }
     // check params for validity of Relationship id
     if ( CRM_Utils_Array::value( 'id', $params ) ) {
@@ -406,8 +406,6 @@ function _civicrm_api3_relationship_check_params( $params ) {
             }
         }
     }
-    
- 
-    
+
     return array();
 }
