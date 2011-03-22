@@ -297,7 +297,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         if ( empty( $id ) ) {
             // adding this here since developers forget to check for an id
             // and hence we get the first value in the db
-            $this->fail( 'ID not populated. Please fix your asserDBState usage!!!' );
+            $this->fail( 'ID not populated. Please fix your assertDBState usage!!!' );
         }
         
         require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
