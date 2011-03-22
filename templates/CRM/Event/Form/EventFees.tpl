@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{assign var=isRocordPayment value=1 }
+{assign var=isRecordPayment value=1 }
 {if $paid} {* We retrieve this tpl when event is selected - keep it empty if event is not paid *} 
     <table class="form-layout">
     {if $priceSet}
@@ -47,7 +47,7 @@
 	    <td class="view-value"><table class="form-layout">{include file="CRM/Price/Form/PriceSet.tpl"}</td>
      	</fieldset>
         {else}
-	    {assign var=isRocordPayment value=0 }
+	    {assign var=isRecordPayment value=0 }
             <div class='messages status'>{ts}No any active price fields found for this event!{/ts}</div>   
         {/if}
     </table>
