@@ -153,22 +153,28 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         $this->waitForElementPresent( "_qf_MembershipView_cancel-bottom" );
         
         //View Membership Record
-        $this->webtestVerifyTabularData( array(
-                                               'Member' => $firstName.' '.$lastName,
-                                               'Membership Type'=> 'Student',
-                                               'Source' => 'Online Contribution:'.' '.$contributionTitle,
-                                               )
-                                         );
+        $verifyData = array(
+                            'Member' => $firstName.' '.$lastName,
+                            'Membership Type'=> 'Student',
+                            'Source' => 'Online Contribution:'.' '.$contributionTitle,
+                            );
+        foreach ( $verifyData as $label => $value ) {
+            $this->verifyText( "xpath=//form[@id='MembershipView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", 
+                               preg_quote( $value ) );   
+        }
         $this->waitForElementPresent( "_qf_MembershipView_cancel-bottom" );
         $this->waitForElementPresent( "xpath=id('MembershipView')/div[2]/div/table[2]/tbody/tr[1]/td[8]/span/a[text()='View']" );
         $this->click("xpath=id('MembershipView')/div[2]/div/table[2]/tbody/tr[1]/td[8]/span/a[text()='View']");
         $this->waitForElementPresent( "_qf_ContributionView_cancel-bottom" ); 
         //View Contribution Record
-        $this->webtestVerifyTabularData( array(
-                                               'From'=> $firstName.' '.$lastName,
-                                               'Contribution Type' => 'Donation',
-                                               'Total Amount'=> '$ 50.00',
-                                               )
-                                         );
+        $verifyData = array(
+                            'From'=> $firstName.' '.$lastName,
+                            'Contribution Type' => 'Donation',
+                            'Total Amount'=> '$ 50.00',
+                            );
+        foreach ( $verifyData as $label => $value ) {
+            $this->verifyText( "xpath=//form[@id='ContributionView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", 
+                               preg_quote( $value ) );   
+        }
     }  
 }
