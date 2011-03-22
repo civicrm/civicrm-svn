@@ -27,7 +27,7 @@
 {if !$hasPetitions}
     <div class="messages status">
         <div class="icon inform-icon"></div> &nbsp;
-        {ts}No petition found.{/ts}
+        {ts}No petitions found.{/ts}
     </div>  
 
     <div class="action-link">

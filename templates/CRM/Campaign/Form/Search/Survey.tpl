@@ -27,7 +27,7 @@
 {if !$hasSurveys}
     <div class="messages status">
         <div class="icon inform-icon"></div> &nbsp;
-        {ts}No survey found.{/ts}
+        {ts}No surveys found.{/ts}
     </div>  
 
     <div class="action-link">
