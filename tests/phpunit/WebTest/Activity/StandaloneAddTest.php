@@ -57,8 +57,10 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
 
       // Adding Anderson, Anthony and Summerson, Samuel for testStandaloneActivityAdd test
       // We're using Quick Add block on the main page for this.
-      $this->webtestAddContact( "Anthony", "Anderson" );
-      $this->webtestAddContact( "Samuel", "Summerson" );
+      $firstName1 = substr(sha1(rand()), 0, 7);
+      $this->webtestAddContact( "$firstName1", "Anderson", $firstName1 . "@anderson.com" );
+      $firstName2 = substr(sha1(rand()), 0, 7);
+      $this->webtestAddContact( "$firstName2", "Summerson", $firstName2 . "@summerson.com" );
 
       // Go directly to the URL of the screen that you will be testing (New Activity-standalone).
       $this->open($this->sboxPath . "civicrm/activity&reset=1&action=add&context=standalone");
@@ -75,7 +77,7 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
       // We're filling in ajaxiefied  "With Contact" field:
       // We can not use id as selector for these input widgets. Use css selector, starting with the table row containing this field (which will have a unique class)
       // Typing contact's name into the field (using typeKeys(), not type()!)...
-      $this->typeKeys("css=tr.crm-activity-form-block-target_contact_id input.token-input-box", 'Anthon');
+      $this->typeKeys("css=tr.crm-activity-form-block-target_contact_id input.token-input-box", "$firstName1");
       
       // ...waiting for drop down with results to show up...
       $this->waitForElementPresent("css=tr.crm-activity-form-block-target_contact_id td div ul li");
@@ -88,11 +90,11 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("css=tr.crm-activity-form-block-target_contact_id td ul li span.token-input-delete-token-facebook");
       
       // ...and verifying if the page contains properly formatted display name for chosen contact.
-      $this->assertTrue($this->isTextPresent("Anderson, Anthony"), "Contact not found in line " . __LINE__ );
+      $this->assertTrue($this->isTextPresent("Anderson, $firstName1"), "Contact not found in line " . __LINE__ );
 
       // Now we're doing the same for "Assigned To" field.
       // Typing contact's name into the field (using typeKeys(), not type()!)...
-      $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input.token-input-box", 'Summerson');
+      $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input.token-input-box", "$firstName2");
       
       // ...waiting for drop down with results to show up...
       $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td div ul li");
@@ -104,7 +106,7 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td ul li span.token-input-delete-token-facebook");
       
       // ...and verifying if the page contains properly formatted display name for chosen contact.
-      $this->assertTrue($this->isTextPresent("Summerson, Samuel"), "Contact not found in line " . __LINE__ );
+      $this->assertTrue($this->isTextPresent("Summerson, $firstName2"), "Contact not found in line " . __LINE__ );
       
       // Since we're here, let's check of screen help is being displayed properly
       $this->assertTrue($this->isTextPresent("A copy of this activity will be emailed to each Assignee"));
@@ -113,7 +115,9 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
       $subject = "This is subject of test activity being added through standalone screen.";
       // For simple input fields we can use field id as selector
       $this->type("subject", $subject);
-      $this->type("location", "Some location needs to be put in this field.");
+
+      $location = 'Some location needs to be put in this field.';
+      $this->type("location", $location);
 
       // Choosing the Date.
       // Please note that we don't want to put in fixed date, since
@@ -150,22 +154,35 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
       // Is status message correct?
       $this->assertTrue($this->isTextPresent("Activity '$subject' has been saved."), "Status message didn't show up after saving!");
 
-      $this->click("css=#recently-viewed .crm-recently-viewed a");
-      $this->waitForPageToLoad("30000");
+      $this->open( $this->sboxPath . "civicrm/activity/search?reset=1" );
+      $this->waitForElementPresent("_qf_Search_refresh");
 
-      $expected =  array(
-                         'Subject'               => $subject,
-                         'Location'              => 'Some location needs to be put in this field.',
-                         'Status'                => 'Scheduled',
-                         'Duration'              => '30',
-                         // Tough luck filling in WYSIWYG editor, so skipping verification for now.
-                         //'Details'               => 'Really brief details information.',
-                         'Priority'              => 'Urgent',
-                         );
-      foreach ($expected as $label => $value) {
-          $this->verifyText("xpath=//table//tr/td/label[text()=\"$label\"]/../../td[2]", preg_quote($value));
-      }
+      $this->type( "sort_name", $firstName1 );
+      $this->click( "_qf_Search_refresh" );
+      $this->waitForElementPresent("_qf_Search_next_print");
+
+      $this->click( "xpath=id('Search')/div[3]/div/div[2]/table/tbody/tr[3]/td[9]/span/a[text()='View']" );
+      $this->waitForElementPresent("_qf_Activity_cancel-bottom");
+
+      $this->webtestVerifyTabularData( 
+                                      array( 
+                                            'Subject'      => $subject,
+                                            'Location'     => $location,
+                                            'Status'       => 'Scheduled',
+                                            'Duration'     => '30',
+                                            // Tough luck filling in WYSIWYG editor, so skipping verification for now.
+                                            //'Details'    => 'Really brief details information.',
+                                            'Priority'     => 'Urgent',
+                                             ),
+                                      "/label"
+                                       );
+      
+      $this->webtestVerifyTabularData( 
+                                      array( 
+                                            'With Contact' => "Anderson, {$firstName1}",
+                                            'Assigned To'  => "Summerson, {$firstName2}",
+                                             )
+                                       );
   }
-
 }
-?>
+
