@@ -712,8 +712,7 @@ class CRM_Campaign_Page_AJAX
                                'activity_type',
                                'is_default',
                                'is_active',
-                               'action',
-                               'petitionActions' );
+                               'action' );
         
         // get the data table params.
         $dataTableParams = array( 'sEcho'     => array( 'name'    => 'sEcho',

@@ -96,7 +96,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
     }
    
 
-    function &surveyActionLinks( $activityType= null )
+    function &surveyActionLinks(  )
     {
         // check if variable _actionsLinks is populated
         if ( !isset( self::$_surveyActionLinks ) ) {
@@ -129,51 +129,55 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
                                                                                 'title' => ts('Delete Survey'),
                                                                                 ) 
                                               );
-             self::$_petitionActionLinks = self::$_surveyActionLinks;
-             self::$_petitionActionLinks [CRM_Core_Action::UPDATE]  = array(
-                                                                                'name'  => ts('Edit'),
-                                                                                'url'   => 'civicrm/petition/add',
-                                                                                'qs'    => 'action=update&id=%%id%%&reset=1',
-                                                                                'title' => ts('Update Petition')
-                                                                                );
-             self::$_petitionActionLinks [CRM_Core_Action::DISABLE] = array(
-                                                                                'name'  => ts('Disable'),
-                                                                                'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Campaign_BAO_Survey' . '\',\'' . 'enable-disable' . '\' );"',
-                                                                                'ref'   => 'disable-action',
-                                                                                'title' => ts('Disable Petition')
-                                                                                );     
-			self::$_petitionActionLinks [CRM_Core_Action::ENABLE]  = array(
-                                                                                'name'  => ts('Enable'),
-                                                                                'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Campaign_BAO_Survey' . '\',\'' . 'disable-enable' . '\' );"',
-                                                                                'ref'   => 'enable-action',
-                                                                                'title' => ts('Enable Petition')
-                                                                                );                                              
-			self::$_petitionActionLinks [CRM_Core_Action::DELETE]  = array(
-                                                                                'name'  => ts('Delete'),
-                                                                                'url'   => 'civicrm/petition/add',
-                                                                                'qs'    => 'action=delete&id=%%id%%&reset=1',
-                                                                                'title' => ts('Delete Petition'),
-                                                                                );                                                                             
-             self::$_petitionActionLinks [CRM_Core_Action::PROFILE]  = array(
-                                                                                'name'  => ts('Sign'),
-                                                                                'url'   => 'civicrm/petition/sign',
-                                                                                'qs'    => 'sid=%%id%%&reset=1',
-                                                                                'title' => ts('Sign Petition'),
-                                                                                'fe'    => true,
-                                                                                );//CRM_Core_Action::PROFILE is used because there isn't a specific action for sign
-             self::$_petitionActionLinks [CRM_Core_Action::BROWSE]  = array(
-                                                                                'name'  => ts('Signatures'),
-                                                                                'url'   => 'civicrm/activity/search',
-                                                                                'qs'    => 'survey=%%id%%&force=1',
-                                                                                'title' => ts('List the signatures')
-                                                                                );//CRM_Core_Action::PROFILE is used because there isn't a specific action for sign
         }
-       
- 
-        if ($activityType == "Petition") {
-          return self::$_petitionActionLinks;
-        }
+        
         return self::$_surveyActionLinks;
+    }
+    
+    function &petitionActionLinks(  )
+    {
+        if ( !isset( self::$_petitionActionLinks ) ) {
+            self::$_petitionActionLinks = self::surveyActionLinks( );
+            self::$_petitionActionLinks[CRM_Core_Action::UPDATE]  = array(
+                                                                          'name'  => ts('Edit'),
+                                                                          'url'   => 'civicrm/petition/add',
+                                                                          'qs'    => 'action=update&id=%%id%%&reset=1',
+                                                                          'title' => ts('Update Petition')
+                                                                          );
+            self::$_petitionActionLinks[CRM_Core_Action::DISABLE] = array(
+                                                                          'name'  => ts('Disable'),
+                                                                          'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Campaign_BAO_Survey' . '\',\'' . 'enable-disable' . '\' );"',
+                                                                          'ref'   => 'disable-action',
+                                                                          'title' => ts('Disable Petition')
+                                                                          );     
+            self::$_petitionActionLinks[CRM_Core_Action::ENABLE]  = array(
+                                                                          'name'  => ts('Enable'),
+                                                                          'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Campaign_BAO_Survey' . '\',\'' . 'disable-enable' . '\' );"',
+                                                                          'ref'   => 'enable-action',
+                                                                          'title' => ts('Enable Petition')
+                                                                          );                                              
+			self::$_petitionActionLinks[CRM_Core_Action::DELETE]  = array(
+                                                                          'name'  => ts('Delete'),
+                                                                          'url'   => 'civicrm/petition/add',
+                                                                          'qs'    => 'action=delete&id=%%id%%&reset=1',
+                                                                          'title' => ts('Delete Petition'),
+                                                                          );                                                                             
+            self::$_petitionActionLinks[CRM_Core_Action::PROFILE]  = array(
+                                                                           'name'  => ts('Sign'),
+                                                                           'url'   => 'civicrm/petition/sign',
+                                                                           'qs'    => 'sid=%%id%%&reset=1',
+                                                                           'title' => ts('Sign Petition'),
+                                                                           'fe'    => true,
+                                                                           );//CRM_Core_Action::PROFILE is used because there isn't a specific action for sign
+            self::$_petitionActionLinks[CRM_Core_Action::BROWSE]  = array(
+                                                                          'name'  => ts('Signatures'),
+                                                                          'url'   => 'civicrm/activity/search',
+                                                                          'qs'    => 'survey=%%id%%&force=1',
+                                                                          'title' => ts('List the signatures')
+                                                                          );//CRM_Core_Action::PROFILE is used because there isn't a specific action for sign
+        }
+        
+        return self::$_petitionActionLinks;
     }
     
     
@@ -343,25 +347,22 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
     }
     
     function getPetitionSummary( $params = array( ) ) {
+        $config = CRM_Core_Config::singleton( );
         $petitionsData = array( );
         
         //get the petitions.
         $petitions = CRM_Campaign_BAO_Petition::getPetitionSummary( $params );
-        
         if ( !empty( $petitions ) ) {
             $campaigns     = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, false, true );
             $petitionType  = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
             foreach( $petitions as $pid => $petition ) {
                 $petitionsData[$pid] = $petition;
                 $camapignId = CRM_Utils_Array::value( 'campaign_id', $petition );
-                $petitionsData[$pid]['campaign_id']       = CRM_Utils_Array::value( $camapignId, $campaigns );
-                $petitionsData[$pid]['activity_type']     = $petitionType[$petition['activity_type_id']];
-                $petitionsData[$pid]['result_id']         = CRM_Utils_Array::value( 'result_id', $petition );
-                if ( CRM_Utils_Array::value( 'release_frequency', $petition ) ) {
-                    $petitionsData[$pid]['release_frequency'] = $petition['release_frequency'].' Day(s)';
-                }
+                $petitionsData[$pid]['campaign']       = CRM_Utils_Array::value( $camapignId, $campaigns );
+                $petitionsData[$pid]['activity_type']  = $petitionType[$petition['activity_type_id']];
                 
-                $action = array_sum( array_keys( self::surveyActionLinks( $petitionsData[$pid]['activity_type'] ) ) );
+                $action = array_sum( array_keys( self::petitionActionLinks( ) ) );
+                
                 if ( $petition['is_active'] ) {
                     $action -= CRM_Core_Action::ENABLE;
                 } else {
@@ -371,11 +372,15 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
                 $isActive = ts( 'No' );
                 if ( $petitionsData[$pid]['is_active'] ) $isActive = ts( 'Yes' );
                 $petitionsData[$pid]['is_active'] = $isActive;
+                $isDefault = null;
+                if ( $petitionsData[$pid]['is_default'] ) {
+                    $isDefault = '<img src="'. $config->resourceBase. '/i/check.gif" alt="'. ts( 'Default' ). '" />';
+                }
+                $petitionsData[$pid]['is_default'] = $isDefault;
                 
-                $petitionsData[$pid]['action'] = 
-                    CRM_Core_Action::formLink( self::surveyActionLinks( $petitionData[$pid]['activity_type'] ), 
-                                               $action,
-                                               array('id' => $pid ) );
+                $petitionsData[$pid]['action'] = CRM_Core_Action::formLink( self::petitionActionLinks( ), 
+                                                                            $action,
+                                                                            array('id' => $pid ) );
             }
         }
         

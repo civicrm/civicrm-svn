@@ -62,14 +62,13 @@ class CRM_Campaign_Form_Search_Petition extends CRM_Core_Form
     {
         $this->_search    = CRM_Utils_Array::value( 'search', $_GET );
         $this->_force     = CRM_Utils_Request::retrieve( 'force', 'Boolean', $this, false,  false );
-        $this->_searchTab = CRM_Utils_Request::retrieve( 'type',  'String',  $this, false, 'survey' );
+        $this->_searchTab = CRM_Utils_Request::retrieve( 'type',  'String',  $this, false, 'petition' );
         
         //when we do load tab, lets load the default objects.
         $this->assign( 'force',             ($this->_force||$this->_searchTab) ? true : false );
         $this->assign( 'searchParams',      json_encode( $this->get( 'searchParams' ) ) );
         $this->assign( 'buildSelector',     $this->_search );
         $this->assign( 'searchFor',         $this->_searchTab );
-        $this->assign( 'petitionTypes',     json_encode( $this->get( 'petitionTypes' ) ) );
         $this->assign( 'petitionCampaigns', json_encode( $this->get( 'petitionCampaigns' ) ) );
         
         //set the form title.
@@ -88,13 +87,6 @@ class CRM_Campaign_Form_Search_Petition extends CRM_Core_Form
         
         $attributes = CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey');
         $this->add( 'text', 'title', ts( 'Title' ), $attributes['title'] );
-        
-        //activity Type id
-        $petitionTypes = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
-        $this->add( 'select', 'activity_type_id', 
-                    ts('Activity Type'), array( '' => ts('- select -') ) + $petitionTypes );
-        $this->set( 'petitionTypes', $petitionTypes );
-        $this->assign( 'surveyTypes', json_encode( $petitionTypes ) );
         
         //campaigns
         require_once 'CRM/Campaign/BAO/Campaign.php';

@@ -176,6 +176,8 @@ function loadSurveyList( )
      //build the search qill.    
      //get the search criteria.
      var searchParams   = {/literal}{$searchParams}{literal};
+     var surveyTypes    = {/literal}{$surveyTypes}{literal};
+     var surveyCampaigns = {/literal}{$surveyCampaigns}{literal};
 
      var noRecordFoundMsg  = "<div class='messages status'><div class='icon inform-icon'></div>No matches found for:";
          noRecordFoundMsg += '<div class="qill">';
@@ -184,6 +186,8 @@ function loadSurveyList( )
      var searchQill = new Array( );
      for ( param in searchParams ) {
         if ( val = cj( '#' + param ).val( ) ) {
+	    if ( param == 'campaign_id' ) val = surveyCampaigns[val];  
+	    if ( param == 'activity_type_id' ) val = surveyTypes[val];
 	    searchQill[count++] = searchParams[param] + ' : ' + val;
 	}
      }

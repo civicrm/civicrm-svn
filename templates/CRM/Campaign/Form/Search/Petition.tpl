@@ -63,7 +63,6 @@
 		  <th>{ts}Default?{/ts}</th>
 		  <th>{ts}Active?{/ts}</th>
 		  <th></th>
-	          <th></th>
               </tr>
            </thead>
            <tbody></tbody>
@@ -94,12 +93,6 @@
 	  <tr>
               <td>{$form.title.label}<br />
 		  {$form.title.html}
-              </td>
-	  </tr>
-
-	  <tr>
-              <td>{$form.activity_type_id.label}<br />
-	          {$form.activity_type_id.html}
               </td>
 	      <td>{$form.campaign_id.label}<br />
 	          {$form.campaign_id.html}
@@ -172,6 +165,7 @@ function loadPetitionList( )
      //build the search qill.    
      //get the search criteria.
      var searchParams   = {/literal}{$searchParams}{literal};
+     var campaigns      = {/literal}{$petitionCampaigns}{literal};
 
      var noRecordFoundMsg  = "<div class='messages status'><div class='icon inform-icon'></div>No matches found for:";
          noRecordFoundMsg += '<div class="qill">';
@@ -180,6 +174,7 @@ function loadPetitionList( )
      var searchQill = new Array( );
      for ( param in searchParams ) {
         if ( val = cj( '#' + param ).val( ) ) {
+	    if ( param == 'campaign_id' ) val = campaigns[val];  
 	    searchQill[count++] = searchParams[param] + ' : ' + val;
 	}
      }
@@ -200,8 +195,7 @@ function loadPetitionList( )
 			     {sClass:'crm-petition-activity_type               hiddenElement' },
 			     {sClass:'crm-petition-is_default'                                },
 			     {sClass:'crm-petition-is_active'                                 },
-			     {sClass:'crm-petition-action',                    bSortable:false},
-			     {sClass:'crm-petition-petitionActions',           bSortable:false}
+			     {sClass:'crm-petition-action',                    bSortable:false}
 			     ],
 		"sPaginationType": "full_numbers",
 		"sDom"       : 'rt<"crm-datatable-pager-bottom"ip>',

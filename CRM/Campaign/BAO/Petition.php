@@ -86,13 +86,6 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
             $where[] = '( petition.campaign_id = %3 )';
             $queryParams[3] = array( $params['campaign_id'], 'Positive' );
         }
-        if ( CRM_Utils_Array::value( 'activity_type_id', $params ) ) {
-            $typeId = $params['activity_type_id'];
-            if ( is_array( $params['activity_type_id'] ) ) {
-                $typeId = implode( ' , ', $params['activity_type_id'] );
-            }
-            $where[] = "( petition.activity_type_id IN ( {$typeId} ) )";
-        }
         $whereClause = null;
         if ( !empty( $where ) ) {
             $whereClause = ' WHERE '. implode( " \nAND ", $where ); 
