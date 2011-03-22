@@ -242,8 +242,8 @@ class WebTest_Campaign_OfflineEventRegistrationTest extends CiviSeleniumTestCase
         $this->waitForElementPresent( "_qf_ParticipantView_cancel-bottom" );
         
         // verify participant record
-        $this->webtestVerifyTabularData( array( 'Campaign' => $campaignTitle ) );
-        
+        $this->verifyText("xpath=id('ParticipantView')/div[2]/table[1]/tbody/tr[3]/td[2]", preg_quote($campaignTitle));
+                
         $this->open( $this->sboxPath . 'civicrm/admin/setting/component?reset=1' );
         $this->waitForElementPresent("_qf_Component_next-bottom");
         $this->addSelection("enableComponents-t", "label=CiviCampaign");

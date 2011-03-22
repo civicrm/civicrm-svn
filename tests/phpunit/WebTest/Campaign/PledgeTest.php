@@ -216,7 +216,7 @@ class WebTest_Campaign_PledgeTest extends CiviSeleniumTestCase {
         $pledgeDate = date('F jS, Y', strtotime('now'));
         
         // verify Activity created
-        $this->webtestVerifyTabularData( array( 'Campaign' => $campaignTitle ) );
+        $this->verifyText("xpath=//form[@id='PledgeView']//table/tbody/tr[8]/td[2]", preg_quote( $campaignTitle ) ); 
     }
 
     function addGroup( $groupName = 'New Group' )
