@@ -43,38 +43,55 @@ require_once 'api/api.php';
 class api_v3_APIStandardsTest extends CiviUnitTestCase
 {
 
-  protected $_apiversion;
-  protected $_apiDir;
-  protected $_functionFiles;
-  protected $_regexForGettingAPIStdFunctions;
+    protected $_apiversion;
+    protected $_apiDir;
+    protected $_functionFiles;
+    protected $_regexForGettingAPIStdFunctions;
   
-  /**
-   *  Constructor
-   *
-   *  Initialize configuration
-   */
-  function __construct( ) {
-    parent::__construct( );
-  }
+    /**
+     *  Constructor
+     *
+     *  Initialize configuration
+     */
+    function __construct( ) {
+        parent::__construct( );
+    }
 
-  /**
-   *  Test setup for every test
-   *
-   *  Connect to the database, truncate the tables that will be used
-   *  and redirect stdin to a temporary file
-   */
-  public function setUp()
-  {
-    //  Connect to the database
-    parent::setUp();
-    $this->_apiversion = 3;
-    $this->_apiDir = "../api/v3/";
-    $this->_functionFiles = array('Entity.php', 'utils.php');
-    //should possibly insert variable rather than '3' in below
-    $this->_regexForGettingAPIStdFunctions = '/^civicrm_api3.*_*$/';
-   }
+    /**
+     *  Test setup for every test
+     *
+     *  Connect to the database, truncate the tables that will be used
+     *  and redirect stdin to a temporary file
+     */
+    public function setUp()
+    {
+        //  Connect to the database
+        parent::setUp();
+        $this->_apiversion = 3;
+        $this->_apiDir = "../api/v3/";
+        $this->_functionFiles = array('Entity.php', 'utils.php');
+
+        //should possibly insert variable rather than '3' in below
+        $this->_regexForGettingAPIStdFunctions = '/^civicrm_api3.*_*$/';
+
+        // functions to skip from utils.php mainlu since they get sucked in via
+        // a require chain in the include files
+        $this->_skipFunctionList = array( 'civicrm_api3_activity_processemail',
+                                          'civicrm_api3_contact_getfields',
+                                          'civicrm_api3_verify_one_mandatory',
+                                          'civicrm_api3_verify_mandatory',
+                                          'civicrm_api3_get_dao', 
+                                          'civicrm_api3_verify_type',
+                                          'civicrm_api3_create_success',
+                                          'civicrm_api3_create_error',
+                                          'civicrm_api3_duplicate',
+                                          'civicrm_api3_error',
+                                          'civicrm_api3_check_contact_dedupe',
+                                          'civicrm_api3_api_check_permission',
+                                          'civicrm_api3_update_get_existing', );
+    }
   
-     /*
+    /*
      * test checks that all v3 API return a standardised error message when 
      * the $params passed in is not an array.
      */
@@ -87,9 +104,22 @@ class api_v3_APIStandardsTest extends CiviUnitTestCase
         $this->assertGreaterThan(1, count($apiStdFunctions),"something has gone wrong getting the std functions in line " . __LINE__);
         $params = 'string';
         foreach($apiStdFunctions as $key => $function){
-          $result = $function($params);
-          $this->assertEquals(1, $result['is_error'], $function . "does not return error in line " . __LINE__); 
-          $this->assertEquals('Input variable `params` is not an array', $result['error_message'],"$function does not return correct error when a non-array is submitted in line " . __LINE__ );      
+            if ( in_array( $function, $this->_skipFunctionList ) ) {
+                continue;
+            }
+            try {
+                $result = $function($params);
+            } catch ( Exception $e ) {
+                echo "$function\n";
+                continue;
+            }
+
+            $this->assertEquals(1,
+                                $result['is_error'],
+                                $function . " does not return error in line " . __LINE__); 
+            $this->assertEquals('Input variable `params` is not an array',
+                                $result['error_message'],
+                                "$function does not return correct error when a non-array is submitted in line " . __LINE__ );      
         }
     }
     
@@ -98,17 +128,19 @@ class api_v3_APIStandardsTest extends CiviUnitTestCase
      * @return array $files array of php files in the directory excluding helper files
      */
     function getAllFilesinAPIDir(){
-      $files =array();
-      $handle=opendir($this->_apiDir);
+        $files =array();
+        $handle=opendir($this->_apiDir);
 
-      while (($file = readdir($handle))!==false) {
-         if (strstr($file,".php") && $file != 'Entity.php' && $file !='utils.php'){
-           $files[]=$file;
-         } 
-       }
+        while (($file = readdir($handle))!==false) {
+            if ( strstr($file,".php")  &&
+                 $file != 'Entity.php' &&
+                 $file !='utils.php' ){
+                $files[]=$file;
+            } 
+        }
    
-      closedir($handle);
-      return $files;
+        closedir($handle);
+        return $files;
     }
     
     /*
@@ -118,7 +150,7 @@ class api_v3_APIStandardsTest extends CiviUnitTestCase
     
     function requireOnceFilesArray($files){
         foreach ($files as $key=>$file){
-          require_once $this->_apiDir.$file;  
+            require_once $this->_apiDir.$file;  
         }
     }
     
@@ -127,9 +159,8 @@ class api_v3_APIStandardsTest extends CiviUnitTestCase
      * @return array $functionlist
      */
     function getAllAPIStdFunctions(){
-      $functionlist = get_defined_functions();
-      $apiStFunctions = preg_grep($this->_regexForGettingAPIStdFunctions, $functionlist['user']);
-      return $apiStFunctions; 
+        $functionlist = get_defined_functions();
+        return preg_grep($this->_regexForGettingAPIStdFunctions, $functionlist['user']);
     }
     
 }
