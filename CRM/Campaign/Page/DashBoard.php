@@ -188,7 +188,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
         }
         $this->assign( 'hasCampaigns', true );
         
-        //build ajax campaign search and selector.
+        //build the ajaxify campaign search and selector.
         $controller = new CRM_Core_Controller_Simple( 'CRM_Campaign_Form_Search_Campaign', ts( 'Search Campaigns' ) );
         $controller->set( 'searchTab', 'campaign');
         $controller->setEmbedded( true );
@@ -257,7 +257,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
         }
         $this->assign( 'hasSurveys', true );
         
-        //build ajax campaign search and selector.
+        //build the ajaxify survey search and selector.
         $controller = new CRM_Core_Controller_Simple( 'CRM_Campaign_Form_Search_Survey', ts( 'Search Survey' ) );
         $controller->set( 'searchTab', 'survey');
         $controller->setEmbedded( true );
@@ -322,51 +322,72 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
         return $surveysData; 
     }
     
+    function browsePetition( ) 
+    {
+        $this->assign( 'addPetitionUrl', CRM_Utils_System::url( 'civicrm/petition/add', 'reset=1&action=add' ) );
+        
+        $petitionCount = CRM_Campaign_BAO_Petition::getPetitionCount( );
+        //don't load find interface when no petition in db.
+        if ( !$petitionCount ) {
+            $this->assign( 'hasPetitions', false );
+            return;
+        }
+        $this->assign( 'hasPetitions', true );
+        
+        //build the ajaxify petition search and selector.
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Campaign_Form_Search_Petition', ts( 'Search Petition' ) );
+        $controller->set( 'searchTab', 'petition');
+        $controller->setEmbedded( true );
+        $controller->process( );
+        return $controller->run( );
+    }
     
-    function browsePetition( ) {
-        $surveysData = array( );
-        //get the survey.
-        $surveys = CRM_Campaign_BAO_Petition::getPetitionSummary( );
-        if ( !empty( $surveys ) ) {
+    function getPetitionSummary( $params = array( ) ) {
+        $petitionsData = array( );
+        
+        //get the petitions.
+        $petitions = CRM_Campaign_BAO_Petition::getPetitionSummary( $params );
+        
+        if ( !empty( $petitions ) ) {
             $campaigns     = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, false, true );
-            $surveyType    = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
-            foreach( $surveys as $sid => $survey ) {
-                $surveysData[$sid] = $survey;
-                $camapignId = CRM_Utils_Array::value( 'campaign_id', $survey );
-                $surveysData[$sid]['campaign_id']       = CRM_Utils_Array::value( $camapignId, $campaigns );
-                $surveysData[$sid]['activity_type']     = $surveyType[$survey['activity_type_id']];
-                $surveysData[$sid]['result_id']         = CRM_Utils_Array::value( 'result_id', $survey );
-                if ( CRM_Utils_Array::value( 'release_frequency', $survey ) ) {
-                    $surveysData[$sid]['release_frequency'] = $survey['release_frequency'].' Day(s)';
+            $petitionType  = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
+            foreach( $petitions as $pid => $petition ) {
+                $petitionsData[$pid] = $petition;
+                $camapignId = CRM_Utils_Array::value( 'campaign_id', $petition );
+                $petitionsData[$pid]['campaign_id']       = CRM_Utils_Array::value( $camapignId, $campaigns );
+                $petitionsData[$pid]['activity_type']     = $petitionType[$petition['activity_type_id']];
+                $petitionsData[$pid]['result_id']         = CRM_Utils_Array::value( 'result_id', $petition );
+                if ( CRM_Utils_Array::value( 'release_frequency', $petition ) ) {
+                    $petitionsData[$pid]['release_frequency'] = $petition['release_frequency'].' Day(s)';
                 }
                 
-                $action = array_sum( array_keys( $this->surveyActionLinks($surveysData[$sid]['activity_type']  ) ) );
-                if ( $survey['is_active'] ) {
+                $action = array_sum( array_keys( self::surveyActionLinks( $petitionsData[$pid]['activity_type'] ) ) );
+                if ( $petition['is_active'] ) {
                     $action -= CRM_Core_Action::ENABLE;
                 } else {
                     $action -= CRM_Core_Action::DISABLE;
                 }
-                $surveysData[$sid]['action'] = CRM_Core_Action::formLink( $this->surveyActionLinks($surveysData[$sid]['activity_type'] ), 
-                                                                          $action, 
-                                                                          array('id' => $sid ) );
                 
-                if ( CRM_Utils_Array::value('activity_type', $surveysData[$sid] ) != 'Petition' ) {
-                    $surveysData[$sid]['voterLinks'] =  ''; //CRM_Campaign_BAO_Survey::buildPermissionLinks( $sid );
-                }
+                $isActive = ts( 'No' );
+                if ( $petitionsData[$pid]['is_active'] ) $isActive = ts( 'Yes' );
+                $petitionsData[$pid]['is_active'] = $isActive;
+                
+                $petitionsData[$pid]['action'] = 
+                    CRM_Core_Action::formLink( self::surveyActionLinks( $petitionData[$pid]['activity_type'] ), 
+                                               $action,
+                                               array('id' => $pid ) );
             }
         }
         
-        $this->assign( 'surveys',      $surveysData );
-        $this->assign( 'addSurveyUrl', CRM_Utils_System::url( 'civicrm/petition/add', 'reset=1&action=add' ) );
+        return $petitionsData;
     }
     
     
     function browse( ) 
     {   
         $this->_tabs = array( 'campaign' => ts( 'Campaigns' ), 
-                              'survey'   => ts( 'Surveys' ),
-                              'petition' => ts ('Petitions')
-                       );
+                              'survey'   => ts( 'Surveys'   ),
+                              'petition' => ts( 'Petitions' ) );
         
         $subPageType = CRM_Utils_Request::retrieve( 'type', 'String', $this );
         if ( $subPageType ) {

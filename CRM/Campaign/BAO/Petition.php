@@ -43,51 +43,121 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
         parent::__construct();
         $this->cookieExpire = (1 * 60 * 60 * 24); // expire cookie in one day
     }
-
+    
     /**
      * Function to get Petition Details for dashboard.
      *
      * @static
      */
-    static function getPetitionSummary( )
+    static function getPetitionSummary( $params = array( ), $onlyCount = false )
     {
-        //we only have activity type as a
+        //build the limit and order clause.
+        $limitClause = $orderByClause = null;
+        if ( !$onlyCount ) {
+            $sortParams = array( 'sort'      => 'created_date', 
+                                 'offset'    => 0, 
+                                 'rowCount'  => 10, 
+                                 'sortOrder' => 'desc'  ); 
+            foreach ( $sortParams as $name => $default ) {
+                if ( CRM_Utils_Array::value( $name, $params ) ) {
+                    $sortParams[$name] = $params[$name];
+                }
+            }
+            $limitClause   = "LIMIT {$sortParams['offset']}, {$sortParams['rowCount']}";
+            $orderByClause = "ORDER BY petition.{$sortParams['sort']} {$sortParams['sortOrder']}";
+        }
+        
+        //build the where clause.
+        $queryParams = $where = array( );
+        
+        //we only have activity type as a 
         //difference between survey and petition.
         require_once 'CRM/Core/OptionGroup.php';
         $petitionTypeID = CRM_Core_OptionGroup::getValue( 'activity_type', 'petition',  'name' );
-        $whereClause    = '( 1 )';
         if ( $petitionTypeID ) {
-            $whereClause = "( petition.activity_type_id = {$petitionTypeID} )";
+            $where[] = "( petition.activity_type_id = %1 )";
+            $queryParams[1] = array( $petitionTypeID, 'Positive' );
         }
-
-        $query = "
-            SELECT  petition.id                         as id,
-            petition.title                      as title,
-            petition.is_active                  as is_active,
-            petition.result_id                  as result_id,
-            petition.is_default                 as is_default,
-            petition.campaign_id                as campaign_id,
-            petition.activity_type_id           as activity_type_id,
-            petition.release_frequency          as release_frequency,
-            petition.max_number_of_contacts     as max_number_of_contacts,
-            petition.default_number_of_contacts as default_number_of_contacts
-            FROM  civicrm_survey petition
-            WHERE  {$whereClause}";
-
+        if ( CRM_Utils_Array::value( 'title', $params ) ) {
+            $where[] = "( petition.title LIKE %2 )";
+            $queryParams[2] = array( '%'.trim($params['title']).'%', 'String' );
+        }
+        if ( CRM_Utils_Array::value( 'campaign_id', $params ) ) {
+            $where[] = '( petition.campaign_id = %3 )';
+            $queryParams[3] = array( $params['campaign_id'], 'Positive' );
+        }
+        if ( CRM_Utils_Array::value( 'activity_type_id', $params ) ) {
+            $typeId = $params['activity_type_id'];
+            if ( is_array( $params['activity_type_id'] ) ) {
+                $typeId = implode( ' , ', $params['activity_type_id'] );
+            }
+            $where[] = "( petition.activity_type_id IN ( {$typeId} ) )";
+        }
+        $whereClause = null;
+        if ( !empty( $where ) ) {
+            $whereClause = ' WHERE '. implode( " \nAND ", $where ); 
+        }
+        
+        $selectClause = '
+SELECT  petition.id                         as id,
+        petition.title                      as title,
+        petition.is_active                  as is_active,
+        petition.result_id                  as result_id,
+        petition.is_default                 as is_default,
+        petition.campaign_id                as campaign_id,
+        petition.activity_type_id           as activity_type_id';
+        
+        if ( $onlyCount ) {
+            $selectClause = 'SELECT COUNT(*)';
+        }
+        $fromClause = 'FROM  civicrm_survey petition';
+        
+        $query = "{$selectClause} {$fromClause} {$whereClause} {$orderByClause} {$limitClause}";
+        
+        if ( $onlyCount ) {
+            return (int)CRM_Core_DAO::singleValueQuery( $query, $queryParams );
+        }
+        
         $petitions  = array( );
-        $properties = array( 'id', 'title', 'campaign_id', 'is_active', 'is_default', 'result_id', 'activity_type_id',
-            'release_frequency', 'max_number_of_contacts', 'default_number_of_contacts' );
-
-        $petition = CRM_Core_DAO::executeQuery( $query );
+        $properties = array( 'id', 
+                             'title', 
+                             'campaign_id', 
+                             'is_active', 
+                             'is_default', 
+                             'result_id', 
+                             'activity_type_id' );
+        
+        $petition = CRM_Core_DAO::executeQuery( $query, $queryParams );
         while ( $petition->fetch( ) ) {
             foreach ( $properties as $property ) {
                 $petitions[$petition->id][$property] = $petition->$property;
             }
         }
-
+        
         return $petitions;
     }
-
+    
+    
+    /**
+     * Get the petition count.
+     *
+     * @static
+     */
+    static function getPetitionCount( ) 
+    {
+        $whereClause = 'WHERE ( 1 )';
+        $queryParams = array( );
+        require_once 'CRM/Core/OptionGroup.php';
+        $petitionTypeID = CRM_Core_OptionGroup::getValue( 'activity_type', 'petition',  'name' );
+        if ( $petitionTypeID ) {
+            $whereClause = "WHERE ( petition.activity_type_id = %1 )";
+            $queryParams[1] = array( $petitionTypeID, 'Positive' ) ;
+        }
+        $query = "SELECT COUNT(*) FROM civicrm_survey petition {$whereClause}";
+        
+        return (int)CRM_Core_DAO::singleValueQuery( $query, $queryParams );
+    }
+    
     /**
      * takes an associative array and creates a petition signature activity
      *

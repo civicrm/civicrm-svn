@@ -687,4 +687,87 @@ class CRM_Campaign_Page_AJAX
         CRM_Utils_System::civiExit( );
     }
     
+    /**
+     * Retrieve petitions for petition dashboard.
+     *
+     **/
+    function petitionList( ) 
+    {
+        //get the search criteria params.
+        $searchParams = explode( ',', CRM_Utils_Array::value( 'searchCriteria', $_POST ) );
+        
+        $params = $searchRows = array( );
+        foreach ( $searchParams as $param ) {
+            if ( CRM_Utils_Array::value( $param, $_POST ) ) {
+                $params[$param] = $_POST[$param];
+            }
+        }
+        
+        //this is sequence columns on datatable.
+        $selectorCols = array( 'id',
+                               'title', 
+                               'campaign_id',
+                               'campaign',
+                               'activity_type_id',
+                               'activity_type',
+                               'is_default',
+                               'is_active',
+                               'action',
+                               'petitionActions' );
+        
+        // get the data table params.
+        $dataTableParams = array( 'sEcho'     => array( 'name'    => 'sEcho',
+                                                        'type'    => 'Integer',
+                                                        'default' => 0                ), 
+                                  'offset'    => array( 'name'    => 'iDisplayStart',
+                                                        'type'    => 'Integer',
+                                                        'default' => 0                ),
+                                  'rowCount'  => array( 'name'    => 'iDisplayLength',
+                                                        'type'    => 'Integer',
+                                                        'default' => 25               ),
+                                  'sort'      => array( 'name'    => 'iSortCol_0',
+                                                        'type'    => 'Integer',
+                                                        'default' => 'created_date'   ),
+                                  'sortOrder' => array( 'name'    => 'sSortDir_0',
+                                                        'type'    => 'String', 
+                                                        'default' => 'desc'           ) );
+        foreach ( $dataTableParams as $pName => $pValues ) {
+            $$pName = $pValues['default'];
+            if ( CRM_Utils_Array::value( $pValues['name'], $_POST ) ) {
+                $$pName = CRM_Utils_Type::escape( $_POST[$pValues['name']], $pValues['type'] );
+                if ( $pName == 'sort' ) {
+                    $$pName = $selectorCols[$$pName];
+                    if ( $$pName == 'campaign' )      $$pName = 'campaign_id';
+                    if ( $$pName == 'activity_type' ) $$pName = 'activity_type_id';
+                }
+            }
+        }
+        foreach ( array( 'sort', 'offset', 'rowCount', 'sortOrder' ) as $sortParam ) {
+            $params[$sortParam] = $$sortParam;
+        }
+        
+        require_once 'CRM/Campaign/BAO/Petition.php';
+        require_once 'CRM/Campaign/Page/DashBoard.php';
+        $petitions   = CRM_Campaign_Page_DashBoard::getPetitionSummary( $params );
+        $searchCount = CRM_Campaign_BAO_Petition::getPetitionSummary( $params, true );
+        $iTotal      = $searchCount;
+        
+        if ( $searchCount > 0 ) {
+            if ( $searchCount < $offset ) $offset = 0;
+            foreach ( $petitions as $petitionID => $values ) {
+                foreach ( $selectorCols as $col ) {
+                    $searchRows[$petitionID][$col] = CRM_Utils_Array::value( $col, $values );
+                }
+            }
+        }
+        
+        require_once "CRM/Utils/JSON.php";
+        $selectorElements = $selectorCols;
+        
+        $iFilteredTotal = $iTotal;
+        
+        echo CRM_Utils_JSON::encodeDataTableSelector( $searchRows, $sEcho, $iTotal, $iFilteredTotal, $selectorElements );
+        CRM_Utils_System::civiExit( );
+    }
+    
 }
