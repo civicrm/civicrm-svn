@@ -117,8 +117,12 @@ class CRM_Core_Extensions
             $tmp = $this->_extDir . DIRECTORY_SEPARATOR . 'tmp';
             $cache = $this->_extDir . DIRECTORY_SEPARATOR . 'cache';
             require_once 'CRM/Utils/File.php';
-            if( !file_exists( $tmp ) ) { CRM_Utils_File::createDir( $tmp ); }
-            if( !file_exists( $cache ) ) { CRM_Utils_File::createDir( $cache ); }
+            if( is_writable( $this->_extDir ) ) {
+                if( !file_exists( $tmp ) ) { CRM_Utils_File::createDir( $tmp ); }
+                if( !file_exists( $cache ) ) { CRM_Utils_File::createDir( $cache ); }
+            } else {
+                CRM_Core_Error::fatal( 'Your extensions directory is not web server writable.' );
+            }
         }
     }
 
