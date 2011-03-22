@@ -83,7 +83,7 @@
    
     <div id="{$searchForm}" class="crm-accordion-wrapper crm-petition_search_form-accordion crm-accordion-open">
     <div class="crm-accordion-header">
-    <div class="icon crm-accordion-pointer"></div> 
+    <div id="petitionSearch" class="icon crm-accordion-pointer"></div> 
         {ts}Search Petition{/ts}
     </div><!-- /.crm-accordion-header -->
 
