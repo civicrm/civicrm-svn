@@ -44,57 +44,57 @@ class WebTest_Pledge_StandaloneAddTest extends CiviSeleniumTestCase {
         $this->webtestLogin();
         
         // Go directly to the URL of the screen that you will be testing (New Pledge-standalone).
-        $this->open($this->sboxPath . "civicrm/pledge/add&reset=1&context=standalone");
+        $this->open($this->sboxPath . 'civicrm/pledge/add&reset=1&context=standalone');
         
         // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
         // button at the end of this page to show up, to make sure it's fully loaded.
-        $this->waitForElementPresent( "_qf_Pledge_upload" );
+        $this->waitForElementPresent( '_qf_Pledge_upload' );
             
         // create new contact using dialog
         $firstName = 'Ma'.substr( sha1( rand( ) ), 0, 4 );
         $lastName  = 'An'.substr( sha1( rand( ) ), 0, 7 );
-        $this->webtestNewDialogContact( $firstName, $lastName ,$firstName . "@example.com" );
+        $this->webtestNewDialogContact( $firstName, $lastName ,$firstName . '@example.com' );
         
-        $this->type( "amount", "100" );
-        $this->type( "installments", "10" );
-        $this->select( "frequency_unit", "value=week" );
-        $this->type( "frequency_day", "2" );
+        $this->type( 'amount', '100' );
+        $this->type( 'installments', '10' );
+        $this->select( 'frequency_unit', 'value=week' );
+        $this->type( 'frequency_day', '2' );
         
-        $this->webtestFillDate( 'acknowledge_date',now );
+        $this->webtestFillDate( 'acknowledge_date', 'now' );
         
-        $this->select( "contribution_page_id", "value=3" );
+        $this->select( 'contribution_page_id', 'value=3' );
         
         //Honoree section
-        $this->click( "Honoree" );
-        $this->waitForElementPresent( "honor_email" );
+        $this->click( 'Honoree' );
+        $this->waitForElementPresent( 'honor_email' );
         
-        $this->click( "CIVICRM_QFID_1_2" );
-        $this->select( "honor_prefix_id", "value=3" );
+        $this->click( 'CIVICRM_QFID_1_2' );
+        $this->select( 'honor_prefix_id', 'value=3' );
         
         $honorFirstName = 'Fo'.substr( sha1( rand( ) ), 0, 4 );
         $honorLastName  = 'Ba'.substr( sha1( rand( ) ), 0, 7 );
-        $this->type( "honor_first_name", $honorFirstName );
-        $this->type( "honor_last_name", $honorLastName );
-        $this->type( "honor_email", $honorFirstName."@example.com" );
+        $this->type( 'honor_first_name', $honorFirstName );
+        $this->type( 'honor_last_name', $honorLastName );
+        $this->type( 'honor_email', $honorFirstName.'@example.com' );
         
         //PaymentReminders
-        $this->click( "PaymentReminders" );
-        $this->waitForElementPresent( "additional_reminder_day" );
-        $this->type( "initial_reminder_day", "4" );
-        $this->type( "max_reminders", "2" );
-        $this->type( "additional_reminder_day", "4" );
+        $this->click( 'PaymentReminders' );
+        $this->waitForElementPresent( 'additional_reminder_day' );
+        $this->type( 'initial_reminder_day', '4' );
+        $this->type( 'max_reminders', '2' );
+        $this->type( 'additional_reminder_day', '4' );
         
-        $this->click( "_qf_Pledge_upload-bottom" );
-        $this->waitForPageToLoad( "30000" );
+        $this->click( '_qf_Pledge_upload-bottom' );
+        $this->waitForPageToLoad( '30000' );
         
-        $this->assertTrue( $this->isTextPresent( "Pledge has been recorded and the payment schedule has been created." ) );
+        $this->assertTrue( $this->isTextPresent( 'Pledge has been recorded and the payment schedule has been created.' ) );
         
         // verify if Pledge is created
         $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[10]/span/a[text()='View']" );
         
         //click through to the Pledge view screen
         $this->click( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[10]/span/a[text()='View']" );
-        $this->waitForElementPresent( "_qf_PledgeView_next-bottom" );
+        $this->waitForElementPresent( '_qf_PledgeView_next-bottom' );
         $pledgeDate = date('F jS, Y', strtotime('now'));
 
         $this->webtestVerifyTabularData( array(
@@ -111,8 +111,8 @@ class WebTest_Pledge_StandaloneAddTest extends CiviSeleniumTestCase {
                                                'Send additional reminders'=> '4 days after the last one sent',
                                                )
                                          );
-        $this->click( "_qf_PledgeView_next-bottom" );
-        $this->waitForPageToLoad( "30000" );
+        $this->click( '_qf_PledgeView_next-bottom' );
+        $this->waitForPageToLoad( '30000' );
         
         $this->waitForElementPresent( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[10]/span/a[text()='View']" );
         $this->click( "xpath=//div[@id='Pledges']//table//tbody/tr[1]/td[1]/span/a" );
