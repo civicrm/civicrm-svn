@@ -104,8 +104,9 @@ function civicrm_api3_relationship_create( $params ) {
             return civicrm_api3_create_error( 'Relationship already exists' );
         }
         CRM_Contact_BAO_Relationship::relatedMemberships( $params['contact_id_a'], $values, $ids, $action );
-        $relationships = array($relationshipBAO[4] => array('id' => $relationshipBAO[4]));
-        return civicrm_api3_create_success( array( 'id' => implode( ',', $relationshipBAO[4] ) ) );
+        $relationID = $relationshipBAO[4][0];
+        return civicrm_api3_create_success( array( $relationID => array( 'id' => $relationID,
+                                                                         'moreIDs' => implode( ',', $relationshipBAO[4] ) ) ) );
     } catch (PEAR_Exception $e) {
         return civicrm_api3_create_error( $e->getMessage() );
     } catch (Exception $e) {
@@ -223,7 +224,7 @@ function civicrm_api3_relationship_get($params)
         require_once 'CRM/Contact/BAO/Relationship.php';
         $contactID     = $params['contact_id_a'];
         $relationships = CRM_Contact_BAO_Relationship::getRelationship($contactID);
-    
+
         if ( !empty( $relationshipTypes ) ) {
             $result = array();
             foreach ( $relationshipTypes as $relationshipName ) {

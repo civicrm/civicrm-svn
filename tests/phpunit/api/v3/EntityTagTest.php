@@ -371,7 +371,7 @@ class api_v3_EntityTagTest extends CiviUnitTestCase
         
         $params = array(
                         'contact_id' => $this->_individualID,
-                        'version'		=> $this->_apiversion,
+                        'version'	 => $this->_apiversion,
                         );
         
         $result = civicrm_api3_entity_tag_display( $params );
