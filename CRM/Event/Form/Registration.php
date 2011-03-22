@@ -721,7 +721,9 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
             $isPaidEvent = CRM_Utils_Array::value( 'is_monetary', $form->_values['event'] );    
         }
         if ( $isPaidEvent && empty( $form->_values['fee'] ) ) {
-            CRM_Core_Error::fatal( ts('No Fee Level(s) or Price Set is configured for this event.<br />Click <a href=\'%1\'>CiviEvent >> Manage Event >> Configure >> Event Fees</a> to configure the Fee Level(s) or Price Set for this event.', array( 1 => CRM_Utils_System::url('civicrm/event/manage/fee', 'reset=1&action=update&id='.$form->_eventId ))));  
+            if ( CRM_Utils_System::getClassName($form) != 'CRM_Event_Form_Participant' ) {
+                CRM_Core_Error::fatal( ts('No Fee Level(s) or Price Set is configured for this event.<br />Click <a href=\'%1\'>CiviEvent >> Manage Event >> Configure >> Event Fees</a> to configure the Fee Level(s) or Price Set for this event.', array( 1 => CRM_Utils_System::url('civicrm/event/manage/fee', 'reset=1&action=update&id='.$form->_eventId ))));
+            }
         }
     }
 
