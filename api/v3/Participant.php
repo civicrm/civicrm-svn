@@ -1,30 +1,30 @@
 <?php
 
 /*
- +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
- +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
- +--------------------------------------------------------------------+
- | This file is a part of CiviCRM.                                    |
- |                                                                    |
- | CiviCRM is free software; you can copy, modify, and distribute it  |
- | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
- |                                                                    |
- | CiviCRM is distributed in the hope that it will be useful, but     |
- | WITHOUT ANY WARRANTY; without even the implied warranty of         |
- | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
- | See the GNU Affero General Public License for more details.        |
- |                                                                    |
- | You should have received a copy of the GNU Affero General Public   |
- | License and the CiviCRM Licensing Exception along                  |
- | with this program; if not, contact CiviCRM LLC                     |
- | at info[AT]civicrm[DOT]org. If you have questions about the        |
- | GNU Affero General Public License or the licensing of CiviCRM,     |
- | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
- +--------------------------------------------------------------------+
- */
+  +--------------------------------------------------------------------+
+  | CiviCRM version 3.4                                                |
+  +--------------------------------------------------------------------+
+  | Copyright CiviCRM LLC (c) 2004-2011                                |
+  +--------------------------------------------------------------------+
+  | This file is a part of CiviCRM.                                    |
+  |                                                                    |
+  | CiviCRM is free software; you can copy, modify, and distribute it  |
+  | under the terms of the GNU Affero General Public License           |
+  | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+  |                                                                    |
+  | CiviCRM is distributed in the hope that it will be useful, but     |
+  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+  | See the GNU Affero General Public License for more details.        |
+  |                                                                    |
+  | You should have received a copy of the GNU Affero General Public   |
+  | License and the CiviCRM Licensing Exception along                  |
+  | with this program; if not, contact CiviCRM LLC                     |
+  | at info[AT]civicrm[DOT]org. If you have questions about the        |
+  | GNU Affero General Public License or the licensing of CiviCRM,     |
+  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+  +--------------------------------------------------------------------+
+*/
 
 /**
  * File for the CiviCRM APIv3 participant functions
@@ -55,34 +55,34 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_api3_participant_create($params)
 {
-  _civicrm_api3_initialize(true);
-  try{
-    if ( isset($params['status_id'] )) {
-      $params['participant_status_id']= $params['status_id'] = 1;
-    }
+    _civicrm_api3_initialize(true);
+    try{
+        if ( isset($params['status_id'] )) {
+            $params['participant_status_id']= $params['status_id'] = 1;
+        }
 
-    if ( !isset($params['register_date'] )) {
-      $params['register_date']= date( 'YmdHis' );
-    }
-    civicrm_api3_verify_mandatory($params,null,array('event_id','contact_id')) ;
+        if ( !isset($params['register_date'] )) {
+            $params['register_date']= date( 'YmdHis' );
+        }
+        civicrm_api3_verify_mandatory($params,null,array('event_id','contact_id')) ;
 
 
 
-    $errors= civicrm_api3_participant_check_params( $params );
-    if ( civicrm_api3_error( $errors ) ) {
-      return $errors;
-    }
+        $errors= civicrm_api3_participant_check_params( $params );
+        if ( civicrm_api3_error( $errors ) ) {
+            return $errors;
+        }
      
-    require_once 'CRM/Event/BAO/Participant.php';
-    $participantBAO = CRM_Event_BAO_Participant::create($params);
-     _civicrm_api3_object_to_array($participantBAO , $participant[$participantBAO->id]);
-     return civicrm_api3_create_success( $participant );
+        require_once 'CRM/Event/BAO/Participant.php';
+        $participantBAO = CRM_Event_BAO_Participant::create($params);
+        _civicrm_api3_object_to_array($participantBAO , $participant[$participantBAO->id]);
+        return civicrm_api3_create_success( $participant );
     
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+    } catch (PEAR_Exception $e) {
+        return civicrm_api3_create_error( $e->getMessage() );
+    } catch (Exception $e) {
+        return civicrm_api3_create_error( $e->getMessage() );
+    }
 }
 
 /**
@@ -97,24 +97,24 @@ function civicrm_api3_participant_create($params)
  * @access public
  */
 function civicrm_api3_participant_get( $params ) {
-  _civicrm_api3_initialize(true );
-  try{
-    $values = array( );
-    civicrm_api3_verify_mandatory($params);
+    _civicrm_api3_initialize(true );
+    try{
+        $values = array( );
+        civicrm_api3_verify_mandatory($params);
 
-    if ( isset ( $params['id'] ) ) {
-      $params['participant_id' ] = $params['id'];
-      unset( $params['id'] );
+        if ( isset ( $params['id'] ) ) {
+            $params['participant_id' ] = $params['id'];
+            unset( $params['id'] );
+        }
+
+        $participant  =& _civicrm_api3_participant_search( $params );
+
+        return civicrm_api3_create_success($participant,$params);
+    } catch (PEAR_Exception $e) {
+        return civicrm_api3_create_error( $e->getMessage() );
+    } catch (Exception $e) {
+        return civicrm_api3_create_error( $e->getMessage() );
     }
-
-    $participant  =& _civicrm_api3_participant_search( $params );
-
-    return civicrm_api3_create_success($participant,$params);
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
 }
 
 /**
@@ -130,53 +130,53 @@ function civicrm_api3_participant_get( $params ) {
 
 function &_civicrm_api3_participant_search( $params ) {
 
-  $inputParams      = array( );
-  $returnProperties = array( );
-  $otherVars = array( 'sort', 'offset', 'rowCount' );
+    $inputParams      = array( );
+    $returnProperties = array( );
+    $otherVars = array( 'sort', 'offset', 'rowCount' );
 
-  $sort     = null;
-  $offset   = 0;
-  $rowCount = 25;
-  foreach ( $params as $n => $v ) {
-    if ( substr( $n, 0, 7 ) == 'return.' ) {
-      $returnProperties[ substr( $n, 7 ) ] = $v;
-    } elseif ( in_array ( $n, $otherVars ) ) {
-      $$n = $v;
-    } else {
-      $inputParams[$n] = $v;
+    $sort     = null;
+    $offset   = 0;
+    $rowCount = 25;
+    foreach ( $params as $n => $v ) {
+        if ( substr( $n, 0, 7 ) == 'return.' ) {
+            $returnProperties[ substr( $n, 7 ) ] = $v;
+        } elseif ( in_array ( $n, $otherVars ) ) {
+            $$n = $v;
+        } else {
+            $inputParams[$n] = $v;
+        }
     }
-  }
 
-  // add is_test to the clause if not present
-  if ( ! array_key_exists( 'participant_test', $inputParams ) ) {
-    $inputParams['participant_test'] = 0;
-  }
+    // add is_test to the clause if not present
+    if ( ! array_key_exists( 'participant_test', $inputParams ) ) {
+        $inputParams['participant_test'] = 0;
+    }
 
-  require_once 'CRM/Contact/BAO/Query.php';
-  require_once 'CRM/Event/BAO/Query.php';
-  if ( empty( $returnProperties ) ) {
-    $returnProperties = CRM_Event_BAO_Query::defaultReturnProperties( CRM_Contact_BAO_Query::MODE_EVENT );
-  }
+    require_once 'CRM/Contact/BAO/Query.php';
+    require_once 'CRM/Event/BAO/Query.php';
+    if ( empty( $returnProperties ) ) {
+        $returnProperties = CRM_Event_BAO_Query::defaultReturnProperties( CRM_Contact_BAO_Query::MODE_EVENT );
+    }
 
-  $newParams =& CRM_Contact_BAO_Query::convertFormValues( $params);
-  $query = new CRM_Contact_BAO_Query( $newParams, $returnProperties, null );
-  list( $select, $from, $where , $having) = $query->query( );
+    $newParams =& CRM_Contact_BAO_Query::convertFormValues( $params);
+    $query = new CRM_Contact_BAO_Query( $newParams, $returnProperties, null );
+    list( $select, $from, $where , $having) = $query->query( );
 
-  $sql = "$select $from $where $having";
+    $sql = "$select $from $where $having";
 
-  if ( ! empty( $sort ) ) {
-    $sql .= " ORDER BY $sort ";
-  }
-  $sql .= " LIMIT $offset, $rowCount ";
-  $dao =& CRM_Core_DAO::executeQuery( $sql, CRM_Core_DAO::$_nullArray );
+    if ( ! empty( $sort ) ) {
+        $sql .= " ORDER BY $sort ";
+    }
+    $sql .= " LIMIT $offset, $rowCount ";
+    $dao =& CRM_Core_DAO::executeQuery( $sql, CRM_Core_DAO::$_nullArray );
 
-  $participant = array( );
-  while ( $dao->fetch( ) ) {
-    $participant[$dao->participant_id] = $query->store( $dao );
-  }
-  $dao->free( );
+    $participant = array( );
+    while ( $dao->fetch( ) ) {
+        $participant[$dao->participant_id] = $query->store( $dao );
+    }
+    $dao->free( );
 
-  return $participant;
+    return $participant;
 
 }
 
@@ -193,25 +193,25 @@ function &_civicrm_api3_participant_search( $params ) {
  */
 function &civicrm_api3_participant_update($params)
 {
-  _civicrm_api3_initialize();
-  if ( !is_array( $params ) ) {
-    return civicrm_api3_create_error( 'Parameters is not an array' );
-  }
+    _civicrm_api3_initialize();
+    if ( !is_array( $params ) ) {
+        return civicrm_api3_create_error( 'Parameters is not an array' );
+    }
 
-  if ( !isset($params['id']) ) {
-    $error = civicrm_api3_create_error( 'Required parameter missing' );
-    return $error;
-  }
-  $errors= civicrm_api3_participant_check_params( $params );
-  if ( civicrm_api3_error( $errors ) ) {
-    return $errors;
-  }
-  require_once 'CRM/Event/BAO/Participant.php';
-  $participantBAO = CRM_Event_BAO_Participant::create( $params );
+    if ( !isset($params['id']) ) {
+        $error = civicrm_api3_create_error( 'Required parameter missing' );
+        return $error;
+    }
+    $errors= civicrm_api3_participant_check_params( $params );
+    if ( civicrm_api3_error( $errors ) ) {
+        return $errors;
+    }
+    require_once 'CRM/Event/BAO/Participant.php';
+    $participantBAO = CRM_Event_BAO_Participant::create( $params );
 
-  $participant = array();
-  _civicrm_api3_object_to_array( $participantBAO, $participant );
-  return $participant;
+    $participant = array();
+    _civicrm_api3_object_to_array( $participantBAO, $participant );
+    return $participant;
 }
 
 
@@ -228,25 +228,25 @@ function &civicrm_api3_participant_update($params)
  */
 function &civicrm_api3_participant_delete( $params )
 {
-  _civicrm_api3_initialize(true);
-  try{
-    civicrm_api3_verify_mandatory($params,null,array('id'));
+    _civicrm_api3_initialize(true);
+    try{
+        civicrm_api3_verify_mandatory($params,null,array('id'));
 
-    require_once 'CRM/Event/BAO/Participant.php';
-    $participant = new CRM_Event_BAO_Participant();
-    $result = $participant->deleteParticipant( $params['id'] );
+        require_once 'CRM/Event/BAO/Participant.php';
+        $participant = new CRM_Event_BAO_Participant();
+        $result = $participant->deleteParticipant( $params['id'] );
 
-    if ( $result ) {
-      $values = civicrm_api3_create_success( );
-    } else {
-      $values = civicrm_api3_create_error('Error while deleting participant');
+        if ( $result ) {
+            $values = civicrm_api3_create_success( );
+        } else {
+            $values = civicrm_api3_create_error('Error while deleting participant');
+        }
+        return $values;
+    } catch (PEAR_Exception $e) {
+        return civicrm_api3_create_error( $e->getMessage() );
+    } catch (Exception $e) {
+        return civicrm_api3_create_error( $e->getMessage() );
     }
-    return $values;
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
 }
 
 
@@ -260,23 +260,23 @@ function &civicrm_api3_participant_delete( $params )
  */
 function civicrm_api3_create_participant_formatted( $params , $onDuplicate )
 {
-  _civicrm_api3_initialize( );
+    _civicrm_api3_initialize( );
 
-  // return error if we have no params
-  if ( empty( $params ) ) {
-    return civicrm_api3_create_error( 'Input Parameters empty' );
-  }
-
-  require_once 'CRM/Event/Import/Parser.php';
-  if ( $onDuplicate != CRM_Event_Import_Parser::DUPLICATE_NOCHECK) {
-    CRM_Core_Error::reset( );
-    $error = civicrm_api3_participant_check_params( $params ,true );
-    if ( civicrm_api3_error( $error ) ) {
-      return $error;
+    // return error if we have no params
+    if ( empty( $params ) ) {
+        return civicrm_api3_create_error( 'Input Parameters empty' );
     }
-  }
 
-  return civicrm_api3_participant_create( $params );
+    require_once 'CRM/Event/Import/Parser.php';
+    if ( $onDuplicate != CRM_Event_Import_Parser::DUPLICATE_NOCHECK) {
+        CRM_Core_Error::reset( );
+        $error = civicrm_api3_participant_check_params( $params ,true );
+        if ( civicrm_api3_error( $error ) ) {
+            return $error;
+        }
+    }
+
+    return civicrm_api3_participant_create( $params );
 }
 
 /**
@@ -286,49 +286,46 @@ function civicrm_api3_create_participant_formatted( $params , $onDuplicate )
  */
 function civicrm_api3_participant_check_params( $params ,$checkDuplicate = false )
 {
-  require_once 'CRM/Event/BAO/Participant.php';
-  //check if participant id is valid or not
-  if( CRM_Utils_Array::value( 'id', $params ) ) {
-    $participant = new CRM_Event_BAO_Participant();
-    $participant->id = $params['id'];
-    if ( !$participant->find( true )) {
-      return civicrm_api3_create_error( ts( 'Participant  id is not valid' ));
+    require_once 'CRM/Event/BAO/Participant.php';
+    //check if participant id is valid or not
+    if( CRM_Utils_Array::value( 'id', $params ) ) {
+        $participant = new CRM_Event_BAO_Participant();
+        $participant->id = $params['id'];
+        if ( !$participant->find( true )) {
+            return civicrm_api3_create_error( ts( 'Participant  id is not valid' ));
+        }
     }
-  }
-  require_once 'CRM/Contact/BAO/Contact.php';
-  //check if contact id is valid or not
-  if( CRM_Utils_Array::value( 'contact_id', $params ) ) {
-    $contact = new CRM_Contact_BAO_Contact();
-    $contact->id = $params['contact_id'];
-    if ( !$contact->find( true )) {
-      return civicrm_api3_create_error( ts( 'Contact id is not valid' ));
+    require_once 'CRM/Contact/BAO/Contact.php';
+    //check if contact id is valid or not
+    if( CRM_Utils_Array::value( 'contact_id', $params ) ) {
+        $contact = new CRM_Contact_BAO_Contact();
+        $contact->id = $params['contact_id'];
+        if ( !$contact->find( true )) {
+            return civicrm_api3_create_error( ts( 'Contact id is not valid' ));
+        }
     }
-  }
 
-  //check that event id is not an template
-  if( CRM_Utils_Array::value( 'event_id', $params ) ) {
-    $isTemplate = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $params['event_id'], 'is_template' );
-    if ( !empty( $isTemplate ) ) {
-      return civicrm_api3_create_error( ts( 'Event templates are not meant to be registered' ));
+    //check that event id is not an template
+    if( CRM_Utils_Array::value( 'event_id', $params ) ) {
+        $isTemplate = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $params['event_id'], 'is_template' );
+        if ( !empty( $isTemplate ) ) {
+            return civicrm_api3_create_error( ts( 'Event templates are not meant to be registered' ));
+        }
     }
-  }
 
-  $result = array( );
-  if( $checkDuplicate ) {
-    if( CRM_Event_BAO_Participant::checkDuplicate( $params, $result ) ) {
-      $participantID = array_pop( $result );
+    $result = array( );
+    if( $checkDuplicate ) {
+        if( CRM_Event_BAO_Participant::checkDuplicate( $params, $result ) ) {
+            $participantID = array_pop( $result );
 
-      $error = CRM_Core_Error::createError( "Found matching participant record.",
-      CRM_Core_Error::DUPLICATE_PARTICIPANT,
+            $error = CRM_Core_Error::createError( "Found matching participant record.",
+                                                  CRM_Core_Error::DUPLICATE_PARTICIPANT,
                                                   'Fatal', $participantID );
 
-      return civicrm_api3_create_error( $error->pop( ),
-      array( 'contactID'     => $params['contact_id'],
-                                                'participantID' => $participantID ) );
+            return civicrm_api3_create_error( $error->pop( ),
+                                              array( 'contactID'     => $params['contact_id'],
+                                                     'participantID' => $participantID ) );
+        }
     }
-  }
-  return true;
+    return true;
 }
-
-
-
