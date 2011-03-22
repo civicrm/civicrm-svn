@@ -132,18 +132,20 @@ class WebTest_Contribute_ContactContextAddTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent('_qf_ContributionView_cancel-bottom');
       
       // verify Contribution created
-      $this->webtestVerifyTabularData(
-                                      array(
-                                            'From'                            => $firstName . " Anderson",
-                                            'Contribution Type'               => 'Donation',
-                                            'Contribution Status'             => 'Completed',
-                                            'Paid By'                         => 'Check',
-                                            'How long have you been a donor?' => 'Less than 1 year',
-                                            'Total Amount'                    => '$ 100.00',
-                                            'Check Number'                    => 'check #1041'
-                                            )
-                                      );
-
+      $verifyData = array(
+                          'From'                            => $firstName . " Anderson",
+                          'Contribution Type'               => 'Donation',
+                          'Contribution Status'             => 'Completed',
+                          'Paid By'                         => 'Check',
+                          'How long have you been a donor?' => 'Less than 1 year',
+                          'Total Amount'                    => '$ 100.00',
+                          'Check Number'                    => 'check #1041'
+                          );
+      foreach ( $verifyData as $label => $value ) {
+          $this->verifyText( "xpath=//form[@id='ContributionView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", 
+                             preg_quote( $value ) );   
+      }                          
+      
       // go to soft creditor contact view page
       $this->click( "xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[16]/td[2]/a[text()='{$softCreditFname} {$softCreditLname}']" );
 
