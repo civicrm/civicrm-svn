@@ -190,7 +190,7 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
         //for date-Formats
         $session = CRM_Core_Session::singleton();
         $dateType = $session->get("dateTypes");
-        $params['source_contact_id'] = $session->get( 'userID' );
+        if(!isset($params['source_contact_id'])) $params['source_contact_id'] = $session->get( 'userID' );
         foreach ($params as $key => $val) {
             if ( $key == 'activity_date_time' ) {
                 if ( $val ) {
@@ -247,7 +247,7 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
         //for date-Formats
         $session = CRM_Core_Session::singleton();
         $dateType = $session->get("dateTypes");
-        $params['source_contact_id'] = $session->get( 'userID' );
+        if(!isset($params['source_contact_id'])) $params['source_contact_id'] = $session->get( 'userID' );
         $formatted = array();
         $customFields = CRM_Core_BAO_CustomField::getFields( CRM_Utils_Array::value( 'contact_type',$params ) );
         
