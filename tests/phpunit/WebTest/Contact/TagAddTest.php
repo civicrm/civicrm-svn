@@ -82,14 +82,13 @@ class WebTest_Contact_TagAddTest extends CiviSeleniumTestCase {
       // sort by ID desc
       $this->click("xpath=//table//tr/th[text()=\"ID\"]");
       $this->waitForElementPresent("css=table.display tbody tr td");
-      $this->click("xpath=//table//tr/th[text()=\"ID\"]");
-      $this->waitForElementPresent("css=table.display tbody tr td");
 
-      // verify text in first row.
-      $this->verifyText("xpath=//table//tbody/tr/td[1]", $tagName);
-      $this->verifyText("xpath=//table//tbody/tr/td[3]", "Adding new tag.");
-      $this->verifyText("xpath=//table//tbody/tr/td[5]", "Contacts");
-
+      // verify text       
+      $this->waitForElementPresent("xpath=//table//tbody/tr/td[1][text()= '$tagName']");
+      $this->waitForElementPresent("xpath=//table//tbody/tr/td[1][text()= '$tagName']/following-sibling::td[2][text()='Adding new tag. ']");
+      $this->waitForElementPresent("xpath=//table//tbody/tr/td[1][text()= '$tagName']/following-sibling::td[4][text()= 'Contacts']");
+      $this->waitForElementPresent("xpath=//table//tbody/tr/td[1][text()= '$tagName']/following-sibling::td[7]/span/a[text()= 'Edit']");
+      
   }  
 
 }
