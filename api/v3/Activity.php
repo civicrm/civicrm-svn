@@ -83,6 +83,7 @@ function civicrm_api3_activity_create( $params )
             return $errors;
         }
 
+
         // processing for custom data
         $values = array();
         _civicrm_api3_custom_format_params( $params, $values, 'Activity' );
@@ -90,8 +91,8 @@ function civicrm_api3_activity_create( $params )
         if ( ! empty($values['custom']) ) {
             $params['custom'] = $values['custom'];
         }
+
         // create activity
-    
         $activityBAO = CRM_Activity_BAO_Activity::create( $params );
 
         if ( isset( $activityBAO->id ) ) {
@@ -383,6 +384,7 @@ function _civicrm_api3_activity_buildmailparams( $result, $activityTypeID ) {
 
     $params['activity_type_id']   = $activityTypeID;
     $params['status_id']          = 2;
+    $params['priority_id']        = 0;
     $params['source_contact_id']  = $params['assignee_contact_id'] = $result['from']['id'];
     $params['target_contact_id']  = array( );
     $keys = array( 'to', 'cc', 'bcc' );

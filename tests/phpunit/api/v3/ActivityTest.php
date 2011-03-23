@@ -1042,7 +1042,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                 'details'             => 'a test activity to check the update api',
                 'status_id'           => 1,
                 'activity_name'       => 'Test activity type',
-                'version'							=> $this->_apiversion,
+                'version'		      => $this->_apiversion,
                 'custom_11'           => 'bite my test data', 
          );
         $result = civicrm_api3_activity_create( $params );
@@ -1065,16 +1065,17 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         
          //  Update the activity with custom data
          $params = array(
-                 'id'                  => $activityId,
-                 'source_contact_id'   => 17,
-                 'subject'             => 'Make-it-Happen',
-                 'status_id'           => 1,
-                 'activity_name'       => 'Test activity type',
-                 'custom_11'           => 'Updated my test data',
-                 'version'						 => $this->_apiversion,
+                         'id'                  => $activityId,
+                         'source_contact_id'   => 17,
+                         'subject'             => 'Make-it-Happen Meeting',
+                         'status_id'           => 1,
+                         'activity_name'       => 'Test activity type',
+                         'custom_11'           => 'Updated my test data',
+                         'version'		       => $this->_apiversion,
                          );
          $result = civicrm_api('Activity','Update', $params );
          $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+
          //  Retrieve and check the activity created
          $params = array( 'activity_id' => $activityId,
                           'activity_type_id' => 1 ,
@@ -1083,16 +1084,15 @@ class api_v3_ActivityTest extends CiviUnitTestCase
          
          $this->assertEquals( 0, $result['is_error'],
                               "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
-         $this->assertEquals( 'Make-it-Happen', $result['values'][$activityId]['subject'],
+         $this->assertEquals( 'Make-it-Happen Meeting', $result['values'][$activityId]['subject'],
                               'In line ' . __LINE__ );
 
-   //      $this->assertEquals( 'Updated my test data', $result['values'][$activityId]['custom_11'],
-  //                            'In line ' . __LINE__ );         
          // Check that the custom field value is update
          $params = array( 'entityID'   => $activityId,
                           'custom_11' => 1
                           );
          $values = CRM_Core_BAO_CustomValueTable::getValues( $params );
+
          // check for updated custom value
          $this->assertEquals( 'Updated my test data',
                               $values['custom_11'],

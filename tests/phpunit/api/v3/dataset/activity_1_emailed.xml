@@ -26,7 +26,6 @@
     <column>is_deleted</column>
     <column>campaign_id</column>
     <column>engagement_level</column>
-    <column>engagement_level</column>
     <row>
       <value>1</value>                      <!--  id  -->
       <value>17</value>                      <!--  source_contact_id  -->
