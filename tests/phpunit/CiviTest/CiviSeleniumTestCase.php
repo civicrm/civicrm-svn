@@ -479,7 +479,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
                                        $onBehalf      = true,
                                        $pledges       = true, 
                                        $recurring     = false, 
-                                       $memberships   = true, 
+                                       $membershipTypes = true, 
                                        $friend        = true, 
                                        $profilePreId  = 1, 
                                        $profilePostId = 7, 
@@ -576,7 +576,10 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $text = "'Amount' information has been saved.";
       $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
 
-      if ( $memberships ) {
+      if ( $membershipTypes === true ) {
+          $membershipTypes = array( array( 'id' => 2 ) );
+      }
+      if ( is_array($membershipTypes) && !empty($membershipTypes) ) {
           // go to step 3 (memberships)
           $this->click("link=Memberships");        
           $this->waitForElementPresent("_qf_MembershipBlock_next-bottom");            
@@ -586,10 +589,18 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
           $this->type('renewal_title', "Title - Renewals $hash");
 
           // FIXME: handle Introductory Message - New Memberships/Renewals
-          $this->click('membership_type[2]');
+          foreach ( $membershipTypes as $mType ) {
+              $this->click("membership_type[{$mType['id']}]");
+              if ( array_key_exists('default', $mType) ) {
+                  // FIXME:
+              }
+              if ( array_key_exists('auto_renew', $mType) ) {
+                  $this->select("auto_renew_{$mType['id']}", "label=Give option");
+              }
+          }
 
           $this->click('is_required');
-
+          
           $this->click('_qf_MembershipBlock_next');
           $this->waitForPageToLoad("30000");
           $this->waitForElementPresent("_qf_MembershipBlock_next-bottom");

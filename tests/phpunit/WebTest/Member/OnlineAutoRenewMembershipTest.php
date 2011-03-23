@@ -41,10 +41,10 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
   function testOnlineAutoRenewMembershipAnonymous()
   {
       //configure membership signup page.
-      $this->_configureMembershipPage( );
+      $pageId = $this->_configureMembershipPage( );
 
       //now do the test membership signup.
-      $this->open($this->sboxPath . 'civicrm/contribute/transact?reset=1&action=preview&id=2' );        
+      $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&action=preview&id={$pageId}" );        
       $this->waitForPageToLoad( "3000" );
       $this->waitForElementPresent("_qf_Main_upload-bottom");
       
@@ -75,14 +75,14 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
   function testOnlineAutoRenewMembershipAuthenticated( )
   {
       //configure membership signup page.
-      $this->_configureMembershipPage( );
+      $pageId = $this->_configureMembershipPage( );
       
       $this->open( $this->sboxPath );
       $this->webtestLogin( );
       $this->waitForPageToLoad("30000");
       
       //now do the test membership signup.
-      $this->open($this->sboxPath . 'civicrm/contribute/transact?reset=1&action=preview&id=2' );        
+      $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&action=preview&id={$pageId}" );
       $this->waitForPageToLoad( "3000" );
       $this->waitForElementPresent("_qf_Main_upload-bottom");
       
@@ -113,10 +113,10 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
   function testOnlinePendingAutoRenewMembershipAnonymous( )
   {
       //configure membership signup page.
-      $this->_configureMembershipPage( );
+      $pageId = $this->_configureMembershipPage( );
       
       //now do the test membership signup.
-      $this->open($this->sboxPath . 'civicrm/contribute/transact?reset=1&action=preview&id=2' );        
+      $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&action=preview&id={$pageId}" );
       $this->waitForPageToLoad( "3000" );
       $this->waitForElementPresent("_qf_Main_upload-bottom");
       
@@ -124,10 +124,8 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
       
       $this->click("auto_renew");
       
-      $this->click("is_pay_later");
-
-      $lastName = 'Smith_' . substr(sha1(rand()), 0, 7);
-      
+      $this->webtestAddCreditCardDetails( );
+      list( $firstName, $middleName, $lastName ) = $this->webtestAddBillingDetails( );
       $this->type( 'email-5', "{$lastName}@example.com" );
       
       $this->click("_qf_Main_upload-bottom");
@@ -137,71 +135,102 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
       $text = 'I want this membership to be renewed automatically every 1 year(s).';
       $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
       
-      $PayLaterInstructions = 'Pay later instructions.';
-      $this->assertTrue( $this->isTextPresent( $PayLaterInstructions ), 'Missing text: ' . $PayLaterInstructions );
-      
       $this->click("_qf_Confirm_next-bottom");
       $this->waitForPageToLoad("30000");
       
       $text = 'This membership will be renewed automatically every 1 year(s).';
       $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
-      $this->assertTrue( $this->isTextPresent( $PayLaterInstructions ), 'Missing text: ' . $PayLaterInstructions );
   }
   
   function _configureMembershipPage( ) {
-      $this->open( $this->sboxPath );
-      $this->webtestLogin( );
+      static $pageId = null;
+
+      if ( !$pageId ) {
+          $this->open( $this->sboxPath );
+          $this->webtestLogin( );
       
-      //add payment processor.
-      $processorName = "Webtest Auto Renew AuthNet" . substr(sha1(rand()), 0, 7);
-      $this->webtestAddPaymentProcessor( $processorName, 'AuthNet' );
-      
-      // -- start updating membership types 
-      $this->open($this->sboxPath . "civicrm/admin/member/membershipType&action=update&id=2&reset=1");
-      $this->waitForPageToLoad("30000");
-      
-      $this->waitForElementPresent("CIVICRM_QFID_1_10");
-      $this->click("CIVICRM_QFID_1_10");
-      
-      $this->type("duration_interval", "1");
-      $this->select("duration_unit", "label=year");
-      
-      $this->click("_qf_MembershipType_upload-bottom");
-      $this->waitForPageToLoad("30000");
-      
-      //now configure the membership signup page.
-      $this->open($this->sboxPath . 'civicrm/admin/contribute/amount?reset=1&action=update&id=2');        
-      $this->waitForPageToLoad( );
-      
-      //configure paymentr processor.
-      $this->waitForElementPresent('payment_processor_id');
-      $this->select("payment_processor_id",  "label={$processorName}");
-      $this->click("is_pay_later");
-      $this->type("pay_later_receipt", "Pay later instructions.");
-      $this->click('_qf_Amount_next');
-      
-      $this->waitForElementPresent("_qf_Amount_next-bottom"); 
-      $this->waitForPageToLoad("30000");
-      $this->click("link=Memberships");
-      $this->waitForElementPresent("_qf_MembershipBlock_next-bottom");
-      
-      $this->click("auto_renew_2");
-      $this->select("auto_renew_2", "label=Give option");
-      $this->click("_qf_MembershipBlock_next");
-      $this->waitForPageToLoad("30000");
-      
-      //make sure we do have required permissions.
-      $this->open( $this->sboxPath ."admin/user/permissions");
-      $this->waitForElementPresent("edit-submit");
-      if ( !$this->isChecked("edit-1-make-online-contributions") ) {
-          $this->click("edit-1-make-online-contributions");
-          $this->click("edit-submit");
+          // -- start updating membership types 
+          $this->open($this->sboxPath . "civicrm/admin/member/membershipType&action=update&id=1&reset=1");
           $this->waitForPageToLoad("30000");
+          
+          $this->waitForElementPresent("CIVICRM_QFID_1_10");
+          $this->click("CIVICRM_QFID_1_10");
+          
+          $this->type("duration_interval", "1");
+          $this->select("duration_unit", "label=year");
+          
+          $this->click("_qf_MembershipType_upload-bottom");
+          $this->waitForPageToLoad("30000");
+          
+          $this->open($this->sboxPath . "civicrm/admin/member/membershipType&action=update&id=2&reset=1");
+          $this->waitForPageToLoad("30000");
+          
+          $this->waitForElementPresent("CIVICRM_QFID_1_10");
+          $this->click("CIVICRM_QFID_1_10");
+          
+          $this->type("duration_interval", "1");
+          $this->select("duration_unit", "label=year");
+          
+          $this->click("_qf_MembershipType_upload-bottom");
+          $this->waitForPageToLoad("30000");
+          
+          $hash = substr(sha1(rand()), 0, 7);
+          $rand = 2 * rand(2, 50);
+          
+          //add payment processor.
+          $processorName = "Webtest Auto Renew AuthNet" . $hash;
+          //$this->webtestAddPaymentProcessor( $processorName, 'AuthNet' );
+          
+          // create contribution page with randomized title and default params
+          $amountSection = false;
+          $payLater      = true; 
+          $onBehalf      = false;
+          $pledges       = false; 
+          $recurring     = true;
+          $membershipTypes = array( array( 'id' => 1, 'auto_renew' => 1 ),
+                                    array( 'id' => 2, 'auto_renew' => 1 ) );
+          $friend        = true; 
+          $profilePreId  = null;
+          $profilePostId = null;
+          $premiums      = true;
+          $widget        = true;
+          $pcp           = true;
+          
+          $contributionTitle = "Title $hash";
+          $pageId = $this->webtestAddContributionPage( $hash, 
+                                                       $rand, 
+                                                       $contributionTitle, 
+                                                       'AuthNet', 
+                                                       $processorName, 
+                                                       $amountSection,
+                                                       $payLater     , 
+                                                       $onBehalf     ,
+                                                       $pledges      , 
+                                                       $recurring    ,
+                                                       $membershipTypes,
+                                                       $friend       , 
+                                                       $profilePreId ,
+                                                       $profilePostId,
+                                                       $premiums     ,
+                                                       $widget       ,
+                                                       $pcp          
+                                                       );
+          
+          //make sure we do have required permissions.
+          $this->open( $this->sboxPath ."admin/user/permissions");
+          $this->waitForElementPresent("edit-submit");
+          if ( !$this->isChecked("edit-1-make-online-contributions") ) {
+              $this->click("edit-1-make-online-contributions");
+              $this->click("edit-submit");
+              $this->waitForPageToLoad("30000");
+          }
+
+          // now logout and do membership test that way
+          $this->open($this->sboxPath . "civicrm/logout&reset=1");
+          $this->waitForPageToLoad('30000'); 
       }
 
-      // now logout and do membership test that way
-      $this->open($this->sboxPath . "civicrm/logout&reset=1");
-      $this->waitForPageToLoad('30000'); 
+      return $pageId;
   }
   
 }
