@@ -74,13 +74,13 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
                                                 CRM_Core_Action::DISABLE => array(
                                                                                   'name'  => ts('Disable'),
                                                                                   'title' => ts('Disable Campaign'),
-                                                                                  'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Campaign_BAO_Campaign' . '\',\'' . 'enable-disable' . '\' );"',
+                                                                                  'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Campaign_BAO_Campaign' . '\',\'' . 'enable-disable' . '\',\'' . null . '\',\'' . 'campaign_row' . '\' );"',
                                                                                   'ref'   => 'disable-action'
                                                                                   ),
                                                 CRM_Core_Action::ENABLE  => array(
                                                                                   'name'  => ts('Enable'),
                                                                                   'title' => ts('Enable Campaign'),
-                                                                                  'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Campaign_BAO_Campaign' . '\',\'' . 'disable-enable' . '\' );"',
+                                                                                  'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Campaign_BAO_Campaign' . '\',\'' . 'disable-enable' . '\',\'' . null . '\',\'' . 'campaign_row' . '\' );"',
                                                                                   'ref'   => 'enable-action',
                                                                                   ),
                                                 CRM_Core_Action::DELETE  => array(
@@ -110,14 +110,14 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
                                               
                                               CRM_Core_Action::DISABLE => array(
                                                                                 'name'  => ts('Disable'),
-                                                                                'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Campaign_BAO_Survey' . '\',\'' . 'enable-disable' . '\' );"',
+                                                                                'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Campaign_BAO_Survey' . '\',\'' . 'enable-disable' . '\',\'' . null . '\',\'' . 'survey_row' .'\' );"',
                                                                                 'ref'   => 'disable-action',
                                                                                 'title' => ts('Disable Survey')
                                                                                 ),
                                               
                                               CRM_Core_Action::ENABLE  => array(
                                                                                 'name'  => ts('Enable'),
-                                                                                'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Campaign_BAO_Survey' . '\',\'' . 'disable-enable' . '\' );"',
+                                                                                'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Campaign_BAO_Survey' . '\',\'' . 'disable-enable' . '\',\'' . null . '\',\'' . 'survey_row' . '\' );"',
                                                                                 'ref'   => 'enable-action',
                                                                                 'title' => ts('Enable Survey')
                                                                                 ),
@@ -146,13 +146,13 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
                                                                           );
             self::$_petitionActionLinks[CRM_Core_Action::DISABLE] = array(
                                                                           'name'  => ts('Disable'),
-                                                                          'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Campaign_BAO_Survey' . '\',\'' . 'enable-disable' . '\' );"',
+                                                                          'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Campaign_BAO_Survey' . '\',\'' . 'enable-disable' . '\',\'' . null . '\',\'' . 'petition_row' . '\' );"',
                                                                           'ref'   => 'disable-action',
                                                                           'title' => ts('Disable Petition')
                                                                           );     
             self::$_petitionActionLinks[CRM_Core_Action::ENABLE]  = array(
                                                                           'name'  => ts('Enable'),
-                                                                          'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Campaign_BAO_Survey' . '\',\'' . 'disable-enable' . '\' );"',
+                                                                          'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Campaign_BAO_Survey' . '\',\'' . 'disable-enable' . '\',\'' . null . '\',\'' . 'petition_row' . '\' );"',
                                                                           'ref'   => 'enable-action',
                                                                           'title' => ts('Enable Petition')
                                                                           );                                              
@@ -229,7 +229,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
                 
                 $isActive = ts( 'No' );
                 if ( $campaignsData[$cmpid]['is_active'] ) $isActive = ts( 'Yes' );
-                $campaignsData[$cmpid]['is_active'] = $isActive;
+                $campaignsData[$cmpid]['isActive'] = $isActive;
                 
                 if ( CRM_Utils_Array::value( 'start_date', $campaignsData[$cmpid] ) ) {
                     $campaignsData[$cmpid]['start_date']=CRM_Utils_Date::customFormat($campaignsData[$cmpid]['start_date'],
@@ -298,7 +298,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
                 
                 $isActive = ts( 'No' );
                 if ( $surveysData[$sid]['is_active'] ) $isActive = ts( 'Yes' );
-                $surveysData[$sid]['is_active'] = $isActive;
+                $surveysData[$sid]['isActive'] = $isActive;
                 
                 $isDefault = null;
                 if ( $surveysData[$sid]['is_default'] ) {
@@ -371,7 +371,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
                 
                 $isActive = ts( 'No' );
                 if ( $petitionsData[$pid]['is_active'] ) $isActive = ts( 'Yes' );
-                $petitionsData[$pid]['is_active'] = $isActive;
+                $petitionsData[$pid]['isActive'] = $isActive;
                 $isDefault = null;
                 if ( $petitionsData[$pid]['is_default'] ) {
                     $isDefault = '<img src="'. $config->resourceBase. '/i/check.gif" alt="'. ts( 'Default' ). '" />';

@@ -27,7 +27,7 @@
 {if !$hasSurveys}
     <div class="messages status">
         <div class="icon inform-icon"></div> &nbsp;
-        {ts}No survey found.{/ts}
+        {ts}No surveys found.{/ts}
     </div>  
 
     <div class="action-link">
@@ -64,6 +64,7 @@
   		  <th>{ts}Reserve Each Time{/ts}</th>
 		  <th>{ts}Total Reserve{/ts}</th>
 		  <th>{ts}Default?{/ts}</th>
+		  <th class="hiddenElement">{ts}Is Active?{/ts}</th>
 		  <th>{ts}Active?{/ts}</th>
 		  <th></th>
 	          <th></th>
@@ -210,7 +211,8 @@ function loadSurveyList( )
 			     {sClass:'crm-survey-default_number_of_contacts'                },
 			     {sClass:'crm-survey-max_number_of_contacts'                    },
 			     {sClass:'crm-survey-is_default'                                },
-			     {sClass:'crm-survey-is_active'                                 },
+			     {sClass:'crm-survey-is_active                   hiddenElement' },
+			     {sClass:'crm-survey-isActive'                                  },
 			     {sClass:'crm-survey-result_id',                 bSortable:false},
 			     {sClass:'crm-survey-action',                    bSortable:false},
 			     {sClass:'crm-campaign-voterLinks',              bSortable:false}
@@ -224,8 +226,15 @@ function loadSurveyList( )
 		"fnDrawCallback": function() { cj().crmtooltip(); },
 		"fnRowCallback": function( nRow, aData, iDisplayIndex ) { 
 				 //insert the id for each row for enable/disable.
-				 var rowId = 'row_' + aData[0];
+				 var rowId = 'survey_row_' + aData[0];
 				 cj(nRow).attr( 'id', rowId );
+				 //handled disabled rows.
+				 var isActive = Boolean(Number(aData[10]));
+				 if ( !isActive ) cj(nRow).addClass( 'disabled' );  
+				 
+				 //add id for yes/no column.
+				 cj(nRow).children().eq(11).attr( 'id', rowId + '_status' );
+
 				 return nRow;
 		},
 	

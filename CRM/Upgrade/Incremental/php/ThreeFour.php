@@ -41,6 +41,61 @@ class CRM_Upgrade_Incremental_php_ThreeFour {
     
     function upgrade_3_4_alpha3( $rev ) 
     {
+        // CRM-7681, update report instance criteria.
+        require_once 'CRM/Report/DAO/Instance.php';
+        $modifiedReportIds = 
+            array( 'contact/summary', 'contact/detail',  'event/participantListing', 'member/summary', 'pledge/summary', 'pledge/pbnp', 'member/detail',  'member/lapse', 'grant/detail', 'contribute/bookkeeping', 'contribute/lybunt', 'contribute/summary', 'contribute/repeat', 'contribute/detail', 'contribute/organizationSummary', 'contribute/sybunt', 'contribute/householdSummary', 'contact/relationship', 'contact/currentEmployer', 'case/demographics', 'walklist', 'case/detail', 'contact/log', 'activitySummary', 'case/timespent', 'case/summary' );
+        
+        $instances = CRM_Core_DAO::executeQuery("SELECT id, form_values, report_id FROM civicrm_report_instance WHERE report_id IN ('". implode("','", $modifiedReportIds )."')");
+        
+        while( $instances->fetch( ) ) {
+            $formValues = unserialize( $instances->form_values );
+            
+            // replace display_name fields by sort_name
+            if ( CRM_Utils_Array::value('fields', $formValues) && isset($formValues['fields']['display_name']) ) {
+                $formValues['fields']['sort_name'] = $formValues['fields']['display_name'];
+                unset($formValues['fields']['display_name']);
+            }
+            
+            // replace display_name filters by sort_name
+            if ( isset($formValues['display_name_op']) ) {
+                $formValues['sort_name_op'] = $formValues['display_name_op'];
+                unset($formValues['display_name_op']);
+            }
+            if ( isset($formValues['display_name_value']) ) {
+                $formValues['sort_name_value'] = $formValues['display_name_value'];
+                unset($formValues['display_name_value']);
+            }
+            
+            // for report id 'contact/log' replace field
+            // display_name_touched by sort_name_touched
+            if ( $instances->report_id == 'contact/log' && isset($formValues['fields']['display_name_touched']) ) {
+                $formValues['fields']['sort_name_touched'] = $formValues['fields']['display_name_touched'];
+                unset($formValues['fields']['display_name_touched']);
+            }
+            
+            // for report id 'contact/relationship' replace field
+            // display_name_a by sort_name_a and display_name_b by sort_name_b
+            if ( $instances->report_id == 'contact/relationship' ) {
+                if ( isset($formValues['fields']['display_name_a']) ) {
+                    $formValues['fields']['sort_name_a'] =  $formValues['fields']['display_name_a'];
+                    unset( $formValues['fields']['display_name_a'] );
+                }
+
+                if (  isset($formValues['fields']['display_name_b'] ) ) {
+                    $formValues['fields']['sort_name_b'] =  $formValues['fields']['display_name_b'];
+                    unset( $formValues['fields']['display_name_b'] );
+                }
+            }
+            
+            // save updated instance criteria
+            $dao = new CRM_Report_DAO_Instance( );
+            $dao->id = $instances->id;
+            $dao->form_values = serialize( $formValues );
+            $dao->save( );
+            $dao->free( );
+        }
+
         // Handled for typo in 3.3.2.mysql.tpl, rename column visibilty to
         // visibility in table civicrm_mailing
         $renameColumnVisibility = CRM_Core_DAO::checkFieldExists( 'civicrm_mailing', 'visibilty' ); 

@@ -144,7 +144,7 @@ function civicrm_api3_membership_status_get($params) {
 function &civicrm_api3_membership_status_update($params) {
 	_civicrm_api3_initialize ();
 	if (! is_array ( $params )) {
-		return civicrm_api3_create_error ( 'Params is not an array' );
+		return civicrm_api3_create_error ( 'Input variable `params` is not an array' );
 	}
 	
 	if (! isset ( $params ['id'] )) {
@@ -218,7 +218,7 @@ function civicrm_api3_membership_status_delete($params) {
  */
 function civicrm_api3_membership_status_calc($membershipParams) {
 	if (! is_array ( $membershipParams )) {
-		return civicrm_api3_create_error ( ts ( 'membershipParams is not an array' ) );
+		return civicrm_api3_create_error ( ts ( 'Input variable `params` is not an array' ) );
 	}
 	
 	if (! ($membershipID = CRM_Utils_Array::value ( 'membership_id', $membershipParams ))) {

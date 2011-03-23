@@ -45,7 +45,6 @@ require_once 'CRM/Core/BAO/Note.php';
 
 function civicrm_api3_note_getfields($params) {
 	$bao = new CRM_Core_BAO_Note ();
-	//function &exportableFields( $contactType = 'Individual', $status = false, $export = false, $search = false )
 	return ($bao->fields ());
 }
 

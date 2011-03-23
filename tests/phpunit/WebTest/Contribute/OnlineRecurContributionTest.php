@@ -146,15 +146,18 @@ class WebTest_Contribute_OnlineRecurContributionTest extends CiviSeleniumTestCas
       $this->waitForElementPresent( "_qf_ContributionView_cancel-bottom" );
 
       // View Recurring Contribution Record
-      $this->webtestVerifyTabularData( array(
-                                             'From'                     => "$contactName",
-                                             'Contribution Type'        => 'Donation (test)',
-                                             'Total Amount'             => 'Installments: 12, Interval: 1 month(s)',
-                                             'Contribution Status'      => 'Pending : Incomplete Transaction',
-                                             'Paid By'                  => 'Credit Card',
-                                             'Online Contribution Page' => $pageTitle,
-                                             )
-                                       );
+      $verifyData = array(
+                          'From'                     => "$contactName",
+                          'Contribution Type'        => 'Donation (test)',
+                          'Total Amount'             => 'Installments: 12, Interval: 1 month(s)',
+                          'Contribution Status'      => 'Pending : Incomplete Transaction',
+                          'Paid By'                  => 'Credit Card',
+                          'Online Contribution Page' => $pageTitle,
+                          );
+         foreach ( $verifyData as $label => $value ) {
+            $this->verifyText( "xpath=//form[@id='ContributionView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", 
+                               preg_quote( $value ) );   
+        }
         
   }
 

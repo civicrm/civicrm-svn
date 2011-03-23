@@ -48,7 +48,6 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         
         // We need a payment processor
         $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
-        //$this->webtestAddPaymentProcessor($processorName);
         
         // create contribution page with randomized title and default params
         $amountSection = false;

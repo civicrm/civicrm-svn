@@ -195,7 +195,7 @@ function &civicrm_api3_participant_update($params)
 {
     _civicrm_api3_initialize();
     if ( !is_array( $params ) ) {
-        return civicrm_api3_create_error( 'Parameters is not an array' );
+        return civicrm_api3_create_error( 'Input variable `params` is not an array' );
     }
 
     if ( !isset($params['id']) ) {

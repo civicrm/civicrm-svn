@@ -71,12 +71,12 @@ class WebTest_Contact_GroupAddTest extends CiviSeleniumTestCase {
       $this->type("description", "Adding new group.");
 
       // check Access Control
-      if ( $params['type1'] !== FALSE ) {
+      if ( isset ( $params['type1'] ) && $params['type1'] !== FALSE ) {
           $this->click("group_type[1]");
       }
 
       // check Mailing List
-      if ( $params['type2'] !== FALSE ) {
+      if ( isset ( $params['type2'] ) && $params['type2'] !== FALSE ) {
           $this->click("group_type[2]");
       }
 

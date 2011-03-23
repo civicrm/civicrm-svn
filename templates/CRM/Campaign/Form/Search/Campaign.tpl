@@ -61,6 +61,7 @@
 		  <th>{ts}Type{/ts}</th>
 		  <th class="hiddenElement">{ts}Status ID{/ts}</th>
           	  <th>{ts}Status{/ts}</th>
+		  <th class="hiddenElement">{ts}Is Active?{/ts}</th>
           	  <th>{ts}Active?{/ts}</th>
 		  <th></th>
               </tr>
@@ -217,7 +218,8 @@ function loadCampaignList( )
 			     {sClass:'crm-campaign-campaign-type'                      },
 			     {sClass:'crm-campaign-campaign-status_id   hiddenElement' },
 			     {sClass:'crm-campaign-campaign-status'                    },
-			     {sClass:'crm-campaign-campaign-is_active'                 },
+			     {sClass:'crm-campaign-campaign-is_active   hiddenElement' },
+			     {sClass:'crm-campaign-campaign-isAactive'                 },
 			     {sClass:'crm-campaign-action',             bSortable:false}
 			     ],
 		"sPaginationType": "full_numbers",
@@ -229,8 +231,15 @@ function loadCampaignList( )
 		"fnDrawCallback": function() { cj().crmtooltip(); },
 		"fnRowCallback": function( nRow, aData, iDisplayIndex ) { 
 				 //insert the id for each row for enable/disable.
-				 var rowId = 'row_' + aData[0];
+				 var rowId = 'campaign_row_' + aData[0];
 				 cj(nRow).attr( 'id', rowId );
+				 //handled disabled rows.
+				 var isActive = Boolean(Number(aData[10]));
+				 if ( !isActive ) cj(nRow).addClass( 'disabled' );  
+
+				 //add id for yes/no column.
+				 cj(nRow).children().eq(11).attr( 'id', rowId + '_status' );
+
 				 return nRow;
 		},
 	

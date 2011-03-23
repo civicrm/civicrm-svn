@@ -103,12 +103,12 @@ function civicrm_api3_uf_field_update( $params , $fieldId ) {
 
   _civicrm_api3_initialize( );
 
-  if(! isset( $fieldId ) ) {
-    return civicrm_api3_create_error("parameter fieldId is not set");
+  if(! is_array( $params ) ) {
+    return civicrm_api3_create_error("Input variable `params` is not an array");
   }
 
-  if(! is_array( $params ) ) {
-    return civicrm_api3_create_error("params is not an array ");
+  if(! isset( $fieldId ) ) {
+    return civicrm_api3_create_error("parameter fieldId is not set");
   }
 
   $field_type       = CRM_Utils_Array::value ( 'field_type'       , $params );

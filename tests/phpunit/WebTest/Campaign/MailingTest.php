@@ -199,10 +199,10 @@ class WebTest_Campaign_MailingTest extends CiviSeleniumTestCase {
         $this->type("text_message", "this is test content for Mailing $mailingName Webtest");
         
         // add attachment?
-        
-        // check for default header and footer ( with label ) 
-        $this->assertSelectedLabel("header_id", "Mailing Header");
-        $this->assertSelectedLabel("footer_id", "Mailing Footer");
+
+        // default header and footer ( with label ) 
+        $this->select("header_id", "label=Mailing Header");
+        $this->select("footer_id", "label=Mailing Footer");
         
         // do check count for Recipient
         $this->assertTrue($this->isTextPresent("Total Recipients: 2"));
