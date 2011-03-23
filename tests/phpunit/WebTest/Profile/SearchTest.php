@@ -123,7 +123,7 @@ class WebTest_Profile_SearchTest extends CiviSeleniumTestCase {
         // Fill Last Name
         $this->type('last_name', $lastName);
         // Fill Email
-        $this->type('email-Primary', 'jhon@$lastName.com');
+        $this->type('email-Primary', "jhon@$lastName.com");
         // Select Custom option
         $this->click('CIVICRM_QFID_Edu_2');
         $this->click('_qf_Edit_next');
@@ -137,11 +137,11 @@ class WebTest_Profile_SearchTest extends CiviSeleniumTestCase {
         // Fill Last Name
         $this->type('last_name', $lastName);
         // Fill Email
-        $this->type('email-Primary', 'jhon@$lastName.com');
+        $this->type('email-Primary', "jhon@$lastName.com");
         // Select Custom option
         $this->click('CIVICRM_QFID_Edu_2');
         $this->click('_qf_Search_refresh');
-
+        
         // Verify Data.
         $this->waitForElementPresent("xpath=//table/tbody/tr[2]/td[2][text()='$lastName']");
         $this->waitForElementPresent("xpath=//table/tbody/tr[2]/td[3][text()='$lastName']");
