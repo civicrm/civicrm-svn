@@ -485,7 +485,9 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
                                        $profilePostId = 7, 
                                        $premiums      = true,
                                        $widget        = true, 
-                                       $pcp           = true ) 
+                                       $pcp           = true ,
+                                       $isAddPaymentProcessor = true
+                                       ) 
   {
       if ( !$pageTitle ) {
           $pageTitle = 'Donate Online ' . $hash;
@@ -498,7 +500,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       }
 
       // Create a new payment processor if requested
-      if ( $processorName ) {
+      if ( $processorName  && $isAddPaymentProcessor ) {
           $this->webtestAddPaymentProcessor( $processorName, $processorType );                  
       }
 
