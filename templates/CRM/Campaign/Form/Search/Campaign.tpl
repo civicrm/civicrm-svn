@@ -231,7 +231,7 @@ function loadCampaignList( )
 		"fnDrawCallback": function() { cj().crmtooltip(); },
 		"fnRowCallback": function( nRow, aData, iDisplayIndex ) { 
 				 //insert the id for each row for enable/disable.
-				 var rowId = 'row_' + aData[0];
+				 var rowId = 'campaign_row_' + aData[0];
 				 cj(nRow).attr( 'id', rowId );
 				 //handled disabled rows.
 				 var isActive = Boolean(Number(aData[10]));
