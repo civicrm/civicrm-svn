@@ -46,6 +46,9 @@
 {* build normal page *}
 {else}
 
+ {* enclosed all tabs and its content in a block *}	
+ <div class="crm-block crm-content-block crm-campaign-page">
+
  <div id="mainTabContainer" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
      <ul class="crm-campaign-tabs-list">
            {foreach from=$allTabs key=tabName item=tabValue}
@@ -56,7 +59,6 @@
      </ul>
  </div>
 
- <div class="spacer"></div>
 
 {literal}
 <script type="text/javascript">
@@ -86,3 +88,8 @@ cj(document).ready( function( ) {
 </script>
 {/literal}
 {/if}
+
+
+<div class="clear"></div>
+</div> {* crm-content-block ends here *}
+
