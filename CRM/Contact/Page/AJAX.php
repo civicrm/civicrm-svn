@@ -345,11 +345,12 @@ class CRM_Contact_Page_AJAX
     static function customField( ) 
     {
         $fieldId = CRM_Utils_Type::escape( $_POST['id'], 'Integer' );
-
-        $helpPost = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomField',
-                                                 $fieldId,
-                                                 'help_post' );
-        echo $helpPost;
+        $params = array( 'id' => $fieldId );
+        $returnProperties = array( 'help_pre', 'help_post');
+        $values = array();
+        
+        CRM_Core_DAO::commonRetrieve('CRM_Core_DAO_CustomField', $params, $values, $returnProperties );
+        echo json_encode( $values );
         CRM_Utils_System::civiExit( );
     }
 
