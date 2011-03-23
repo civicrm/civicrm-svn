@@ -219,12 +219,12 @@ function onReady( ) {
     document.getElementById('crm_cpid_'+cpid+'_btn_txt').innerHTML      = jsonvar.button_title;
     document.getElementById('crm_cpid_'+cpid+'_campaign').innerHTML     = jsonvar.campaign_start;
     if ( jsonvar.money_raised_percentage ) {
-        var monenyRaised = jsonvar.money_raised_percentage;
-        var percentWidth = monenyRaised.split('%');
+        var moneyRaised = jsonvar.money_raised_percentage;
+        var percentWidth = moneyRaised.split('%');
         if ( percentWidth[0] > 100 ) {
-            monenyRaised = '100%';
+            moneyRaised = '100%';
         }
-        document.getElementById('crm_cpid_'+cpid+'_amt_fill').style.width = monenyRaised;
+        document.getElementById('crm_cpid_'+cpid+'_amt_fill').style.width = moneyRaised;
         document.getElementById('crm_cpid_'+cpid+'_percentage').innerHTML = jsonvar.money_raised_percentage;
     }
 
