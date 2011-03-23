@@ -542,7 +542,8 @@ class CRM_Campaign_Page_AJAX
                                'campaign_type', 
                                'status_id', 
                                'status', 
-                               'is_active', 
+                               'is_active',
+                               'isActive',
                                'action' );
         
         // get the data table params.
@@ -568,6 +569,7 @@ class CRM_Campaign_Page_AJAX
                 if ( $pName == 'sort' ) {
                     $$pName = $selectorCols[$$pName];
                     if ( $$pName == 'status' )        $$pName = 'status_id';
+                    if ( $$pName == 'isActive' )      $$pName = 'is_active';
                     if ( $$pName == 'campaign_type' ) $$pName = 'campaign_type_id';
                 }
             }
@@ -628,6 +630,7 @@ class CRM_Campaign_Page_AJAX
                                'max_number_of_contacts',
                                'is_default',
                                'is_active',
+                               'isActive',
                                'result_id',
                                'action',
                                'voterLinks' );
@@ -655,6 +658,7 @@ class CRM_Campaign_Page_AJAX
                 if ( $pName == 'sort' ) {
                     $$pName = $selectorCols[$$pName];
                     if ( $$pName == 'campaign' )      $$pName = 'campaign_id';
+                    if ( $$pName == 'isActive' )      $$pName = 'is_active';
                     if ( $$pName == 'activity_type' ) $$pName = 'activity_type_id';
                 }
             }
@@ -712,6 +716,7 @@ class CRM_Campaign_Page_AJAX
                                'activity_type',
                                'is_default',
                                'is_active',
+                               'isActive',
                                'action' );
         
         // get the data table params.
@@ -737,6 +742,7 @@ class CRM_Campaign_Page_AJAX
                 if ( $pName == 'sort' ) {
                     $$pName = $selectorCols[$$pName];
                     if ( $$pName == 'campaign' )      $$pName = 'campaign_id';
+                    if ( $$pName == 'isActive' )      $$pName = 'is_active';
                     if ( $$pName == 'activity_type' ) $$pName = 'activity_type_id';
                 }
             }

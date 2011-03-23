@@ -61,6 +61,7 @@
 		  <th class="hiddenElement">{ts}Petition Type ID{/ts}</th>			
 		  <th class="hiddenElement">{ts}Petition Type{/ts}</th>
 		  <th>{ts}Default?{/ts}</th>
+		  <th class="hiddenElement">{ts}Is Active?{/ts}</th>
 		  <th>{ts}Active?{/ts}</th>
 		  <th></th>
               </tr>
@@ -194,7 +195,8 @@ function loadPetitionList( )
 			     {sClass:'crm-petition-activity_type_id            hiddenElement' },
 			     {sClass:'crm-petition-activity_type               hiddenElement' },
 			     {sClass:'crm-petition-is_default'                                },
-			     {sClass:'crm-petition-is_active'                                 },
+			     {sClass:'crm-petition-is_active                   hiddenElement' },
+			     {sClass:'crm-petition-isActive'                                  },
 			     {sClass:'crm-petition-action',                    bSortable:false}
 			     ],
 		"sPaginationType": "full_numbers",
@@ -208,6 +210,9 @@ function loadPetitionList( )
 				 //insert the id for each row for enable/disable.
 				 var rowId = 'row_' + aData[0];
 				 cj(nRow).attr( 'id', rowId );
+				 //handled disabled rows.
+				 var isActive = Boolean(Number(aData[7]));
+				 if ( !isActive ) cj(nRow).addClass( 'disabled' );  
 				 return nRow;
 		},
 	

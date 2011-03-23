@@ -229,7 +229,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
                 
                 $isActive = ts( 'No' );
                 if ( $campaignsData[$cmpid]['is_active'] ) $isActive = ts( 'Yes' );
-                $campaignsData[$cmpid]['is_active'] = $isActive;
+                $campaignsData[$cmpid]['isActive'] = $isActive;
                 
                 if ( CRM_Utils_Array::value( 'start_date', $campaignsData[$cmpid] ) ) {
                     $campaignsData[$cmpid]['start_date']=CRM_Utils_Date::customFormat($campaignsData[$cmpid]['start_date'],
@@ -298,7 +298,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
                 
                 $isActive = ts( 'No' );
                 if ( $surveysData[$sid]['is_active'] ) $isActive = ts( 'Yes' );
-                $surveysData[$sid]['is_active'] = $isActive;
+                $surveysData[$sid]['isActive'] = $isActive;
                 
                 $isDefault = null;
                 if ( $surveysData[$sid]['is_default'] ) {
@@ -371,7 +371,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
                 
                 $isActive = ts( 'No' );
                 if ( $petitionsData[$pid]['is_active'] ) $isActive = ts( 'Yes' );
-                $petitionsData[$pid]['is_active'] = $isActive;
+                $petitionsData[$pid]['isActive'] = $isActive;
                 $isDefault = null;
                 if ( $petitionsData[$pid]['is_default'] ) {
                     $isDefault = '<img src="'. $config->resourceBase. '/i/check.gif" alt="'. ts( 'Default' ). '" />';
