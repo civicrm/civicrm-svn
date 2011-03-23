@@ -130,8 +130,20 @@ class WebTest_Profile_ProfileAddTest extends CiviSeleniumTestCase {
 
         // delete the profile
         $this->open($this->sboxPath . 'civicrm/admin/uf/group?reset=1');
-        //$this->_testdeleteProfile( $profileTitle );
+        $this->_testdeleteProfile( $profileTitle );
     }
-   
+    
+    function _testdeleteProfile( $profileTitle )
+    {
+        //$this->waitForPageToLoad('30000');
+        $this->waitForElementPresent( "//div[@id='uf_profile']/table/tbody//tr/td[text() = '$profileTitle']/following-sibling::td[6]/span[2]/ul/li[4]/a[text()='Delete']" );
+        $this->click( "//div[@id='uf_profile']/table/tbody//tr/td[text() = '$profileTitle']/following-sibling::td[6]/span[2]/ul/li[4]/a[text()='Delete']" );
+        
+        $this->waitForElementPresent( '_qf_Group_next-bottom' );
+        $this->click( '_qf_Group_next-bottom' );
+        $this->waitForElementPresent( 'newCiviCRMProfile-bottom' );
+        $this->assertTrue( $this->isTextPresent( "Your CiviCRM Profile '$profileTitle' has been deleted." ) );
+        
+    }
 }
 ?>
