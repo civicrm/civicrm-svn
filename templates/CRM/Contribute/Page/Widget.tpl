@@ -220,7 +220,7 @@ function onReady( ) {
     document.getElementById('crm_cpid_'+cpid+'_campaign').innerHTML     = jsonvar.campaign_start;
     if ( jsonvar.money_raised_percentage ) {
         var monenyRaised = jsonvar.money_raised_percentage;
-        var percentWidth = moneyRaised.split('%');
+        var percentWidth = monenyRaised.split('%');
         if ( percentWidth[0] > 100 ) {
             monenyRaised = '100%';
         }
