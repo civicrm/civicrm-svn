@@ -156,13 +156,16 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
       $this->waitForPageToLoad("30000");
 
       $this->assertTrue($this->isTextPresent("Petition has been saved."));
-       
+      
       $this->waitForElementPresent( "link=Add Petition" );
 
+      $this->waitForElementPresent( "petitions" );
       $this->click( "petitionSearch" );
       $this->type( "title", $title );
+
       $this->click( "xpath=//div[@class='crm-accordion-body']/table/tbody/tr[2]/td/a[text()='Search']" );
 
+      $this->waitForElementPresent( "xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[9]/span[2][text()='more ']/ul/li/a[text()='Sign']" );
       $url = $this->getAttribute( "xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[9]/span[2][text()='more ']/ul/li/a[text()='Sign']/@href" );
       
       ////////////// Retrieve Sign Petition Url /////////////////////////
@@ -201,10 +204,12 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("link=Add Petition");
 
       // check for unconfirmed petition signature
+      $this->waitForElementPresent( "petitions" );
       $this->click( "petitionSearch" );
       $this->type( "title", $title );
       $this->click( "xpath=//div[@class='crm-accordion-body']/table/tbody/tr[2]/td/a[text()='Search']" );
 
+      $this->waitForElementPresent( "xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[9]/span[2][text()='more ']" );
       $this->click("xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[9]/span[2][text()='more ']/ul/li/a[text()='Signatures']");
       $this->waitForPageToLoad("30000");
 
