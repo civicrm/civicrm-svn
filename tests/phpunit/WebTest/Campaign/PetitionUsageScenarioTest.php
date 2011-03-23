@@ -171,8 +171,8 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
       ////////////// Retrieve Sign Petition Url /////////////////////////
       
       // logout and sign as anonymous.
-      $this->open( $this->sboxPath ."logout" );
-      $this->waitForElementPresent("op");
+      $this->open( $this->sboxPath ."civicrm/logout?reset=1" );
+      $this->waitForElementPresent("edit-submit");
       
       // go to the link that you will be sign as anonymous
       $this->open($url);
