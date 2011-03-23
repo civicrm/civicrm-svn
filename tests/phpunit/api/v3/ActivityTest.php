@@ -1070,10 +1070,14 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                          'subject'             => 'Make-it-Happen Meeting',
                          'status_id'           => 1,
                          'activity_name'       => 'Test activity type',
+                         'activity_date_time'  => date('Ymd'), // add this since dates are messed up
                          'custom_11'           => 'Updated my test data',
                          'version'		       => $this->_apiversion,
                          );
          $result = civicrm_api('Activity','Update', $params );
+         $this->assertEquals( 0, $result['is_error'],
+                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
+
          $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
 
          //  Retrieve and check the activity created
