@@ -33,7 +33,8 @@ class WebTest_Profile_ProfileAddTest extends CiviSeleniumTestCase {
         parent::setUp();
     }
     
-    function testAddNewProfile( ) {
+    function testAddNewProfile( )
+    {
         // This is the path where our testing install resides. 
         // The rest of URL is defined in CiviSeleniumTestCase base class, in
         // class attributes.
@@ -48,96 +49,89 @@ class WebTest_Profile_ProfileAddTest extends CiviSeleniumTestCase {
         
         // Go directly to the URL of the screen that you will be
         // testing (Add new profile ).
-        $this->open($this->sboxPath . "civicrm/admin/uf/group?reset=1");
+        $this->open($this->sboxPath . 'civicrm/admin/uf/group?reset=1');
         
-        $this->waitForPageToLoad("30000");
+        $this->waitForPageToLoad('30000');
         
-        $this->click("newCiviCRMProfile-top");
+        $this->click('newCiviCRMProfile-top');
         
-        $this->waitForElementPresent("_qf_Group_next");
+        $this->waitForElementPresent('_qf_Group_next');
         
         //Name of profile
         $profileTitle = 'profile_'.substr(sha1(rand()), 0, 7);
-        $this->type("title" , $profileTitle );
+        $this->type('title' , $profileTitle );
         
         //profile Used for
-        $this->click("uf_group_type[User Registration]");
-        $this->click("uf_group_type[User Account]");
+        $this->click('uf_group_type[User Registration]');
+        $this->click('uf_group_type[User Account]');
         
         //Profile Advance Settings
         $this->click("//form[@id='Group']/div[2]/div[2]/div[1]");
         
         //Select a group if you are using this profile for search and listings.
-        $this->select("group", "value=1");
+        $this->select('group', 'value=1');
         
         //Select a group if you are using this profile for adding new contacts.
-        $this->select("add_contact_to_group", "value=2");
+        $this->select('add_contact_to_group', 'value=1');
         
         //If you want member(s) of your organization to receive a
         //notification email whenever this Profile 
         //form is used to enter or update contact information, enter one or more email addresses here.
-        $this->type("notify", "This is notify email");
+        $this->type('notify', 'This is notify email');
         
         //If you are using this profile as a contact signup or edit
         //form, and want to redirec the user to a static URL after
         //they've submitted the form - enter the complete URL here.
-        $this->type("post_URL", "This is Post Url");
+        $this->type('post_URL', 'This is Post Url');
         
         // If you are using this profile as a contact signup or edit
         // form, and want to redirect the user to a 
         //static URL if they click the Cancel button - enter the complete URL here.
-        $this->type("cancel_URL", "This is cancle Url");
+        $this->type('cancel_URL', 'This is cancle Url');
         
         //reCaptcha settings
-        $this->click("add_captcha");
+        $this->click('add_captcha');
         
         //Drupal user account registration option
-        $this->click("CIVICRM_QFID_0_8");
+        $this->click('CIVICRM_QFID_0_8');
         
         //What to do upon duplicate match
-        $this->click("CIVICRM_QFID_0_2");
+        $this->click('CIVICRM_QFID_0_2');
         
         //Proximity search options
-        $this->click("CIVICRM_QFID_0_14");
+        $this->click('CIVICRM_QFID_0_14');
         
         // enable maping for contact
-        $this->click("is_map");
+        $this->click('is_map');
         
         // include a link in the listings to Edit profile fields
-        $this->click("is_edit_link");
+        $this->click('is_edit_link');
         
         //to view contacts' Drupal user account information
-        $this->click("is_uf_link");
+        $this->click('is_uf_link');
         
         //click on save
-        $this->click("_qf_Group_next");
-        $this->waitForPageToLoad("30000");
+        $this->click('_qf_Group_next');
+        $this->waitForPageToLoad('30000');
         
         //check for  profile create     
         $this->assertTrue($this->isTextPresent("Your CiviCRM Profile '$profileTitle' has been added. You can add fields to this profile now"));
         
         //Add field to profile
-        $this->click("field_name[0]");
-        $this->select("field_name[0]", "value=Contact");
+        $this->click('field_name[0]');
+        $this->select('field_name[0]', 'value=Contact');
         $this->click("//option[@value='Contact']");
-        $this->click("is_required");
-        $this->type("help_post", "This is help for profile field");
+        $this->click('is_required');
+        $this->type('help_post', 'This is help for profile field');
         
         //click on save
-        $this->click("_qf_Field_next");
-        $this->waitForPageToLoad("30000");
+        $this->click('_qf_Field_next');
+        $this->waitForPageToLoad('30000');
 
         // delete the profile
-        $this->open($this->sboxPath . "civicrm/admin/uf/group?reset=1");
-        $this->_testdeleteProfile( $profileTitle );
+        $this->open($this->sboxPath . 'civicrm/admin/uf/group?reset=1');
+        //$this->_testdeleteProfile( $profileTitle );
     }
-
-    function _testdeleteProfile( $profileTitle ) {
-        $this->click( "//div[@id='uf_profile']/div/table/tbody//tr/td[text() = '$profileTitle']/following-sibling::td[6]/span[2]/ul/li[4]/a[text()='Delete']" );
-        $this->waitForElementPresent( "_qf_Group_next-bottom" );
-        $this->click( "_qf_Group_next-bottom" );
-        $this->waitForElementPresent( "newCiviCRMProfile-bottom" );
-        $this->assertTrue( $this->isTextPresent( "Your CiviCRM Profile '$profileTitle' has been deleted." ) );
-    }
+   
 }
 ?>
