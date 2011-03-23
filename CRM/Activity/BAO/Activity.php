@@ -333,11 +333,12 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
         }
         
         //set priority to Normal for Auto-populated activities (for Cases)
-        if ( ! CRM_Utils_Array::value( 'priority_id', $params ) ) {
+        if ( CRM_Utils_Array::value( 'priority_id', $params ) === null ) { // if not set and not 0
             require_once 'CRM/Core/PseudoConstant.php';
             $priority = CRM_Core_PseudoConstant::priority( );
             $params['priority_id'] = array_search( 'Normal', $priority );
         }
+
         if ( empty( $params['id'] ) ) {
             unset( $params['id'] );
         }
