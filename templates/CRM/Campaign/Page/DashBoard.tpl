@@ -77,10 +77,7 @@ cj(document).ready( function( ) {
      cj("#mainTabContainer").tabs( { 
                                     selected: selectedTabIndex, 
                                     spinner: spinnerImage,
-				    
-				    //FIXME:first fix the template cache and then enable.  
-				    //cache: true, 
-				    
+				    cache: true, 
 				    load: stopSpinner 
 				    });
 });

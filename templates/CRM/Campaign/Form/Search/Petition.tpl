@@ -92,11 +92,11 @@
     {strip} 
         <table class="form-layout">
 	  <tr>
-              <td>{$form.title.label}<br />
-		  {$form.title.html}
+              <td>{$form.petition_title.label}<br />
+		  {$form.petition_title.html}
               </td>
-	      <td>{$form.campaign_id.label}<br />
-	          {$form.campaign_id.html}
+	      <td>{$form.petition_campaign_id.label}<br />
+	          {$form.petition_campaign_id.html}
               </td>
 	  </tr>
 
@@ -145,7 +145,7 @@
 
 function searchPetitions( qfKey ) 
 {
-      var dataUrl =  {/literal}"{crmURL h=0 q='search=1&snippet=4'}"{literal};
+      var dataUrl =  {/literal}"{crmURL h=0 q='search=1&snippet=4&type=petition'}"{literal};
 
       //lets carry qfKey to retain form session.
       if ( qfKey ) dataUrl = dataUrl + '&qfKey=' + qfKey;
@@ -175,7 +175,7 @@ function loadPetitionList( )
      var searchQill = new Array( );
      for ( param in searchParams ) {
         if ( val = cj( '#' + param ).val( ) ) {
-	    if ( param == 'campaign_id' ) val = campaigns[val];  
+	    if ( param == 'petition_campaign_id' ) val = campaigns[val];  
 	    searchQill[count++] = searchParams[param] + ' : ' + val;
 	}
      }
@@ -229,13 +229,16 @@ function loadPetitionList( )
 			//get the search criteria.
                         var searchParams = {/literal}{$searchParams}{literal};
                         for ( param in searchParams ) {
+			    fldName = param;
+			    if ( param == 'petition_title' ) fldName = 'title';
+			    if ( param == 'petition_campaign_id' ) fldName = 'campaign_id';
                             if ( val = cj( '#' + param ).val( ) ) {
-			      aoData[dataLength++] = {name: param , value: val };
+			      aoData[dataLength++] = {name: fldName, value: val};
 			    } 
-			    searchCriteria[count++] = param;
+			    searchCriteria[count++] = fldName;
                         } 
 
-			//do search to reserve voters.			
+			//do search for petitions.
 			aoData[dataLength++] = {name: 'search_for', value: 'petition'};
 			
 			//lets transfer search criteria.

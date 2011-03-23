@@ -86,7 +86,7 @@ class CRM_Campaign_Form_Search_Campaign extends CRM_Core_Form
         if ( $this->_search ) return;
         
         $attributes = CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Campaign');
-        $this->add( 'text', 'title', ts( 'Title' ), $attributes['title'] );
+        $this->add( 'text', 'campaign_title', ts( 'Title' ), $attributes['title'] );
         
         //campaign description.
         $this->add('text', 'description', ts('Description'), $attributes['description'] );

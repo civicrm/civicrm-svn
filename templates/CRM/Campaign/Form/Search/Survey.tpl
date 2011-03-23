@@ -97,8 +97,8 @@
     {strip} 
         <table class="form-layout">
 	  <tr>
-              <td>{$form.title.label}<br />
-		  {$form.title.html}
+              <td>{$form.survey_title.label}<br />
+		  {$form.survey_title.html}
               </td>
 	  </tr>
 
@@ -106,8 +106,8 @@
               <td>{$form.activity_type_id.label}<br />
 	          {$form.activity_type_id.html}
               </td>
-	      <td>{$form.campaign_id.label}<br />
-	          {$form.campaign_id.html}
+	      <td>{$form.survey_campaign_id.label}<br />
+	          {$form.survey_campaign_id.html}
               </td>
 	  </tr>
 
@@ -156,7 +156,7 @@
 
 function searchSurveys( qfKey ) 
 {
-      var dataUrl =  {/literal}"{crmURL h=0 q='search=1&snippet=4'}"{literal};
+      var dataUrl =  {/literal}"{crmURL h=0 q='search=1&snippet=4&type=survey'}"{literal};
 
       //lets carry qfKey to retain form session.
       if ( qfKey ) dataUrl = dataUrl + '&qfKey=' + qfKey;
@@ -187,8 +187,8 @@ function loadSurveyList( )
      var searchQill = new Array( );
      for ( param in searchParams ) {
         if ( val = cj( '#' + param ).val( ) ) {
-	    if ( param == 'campaign_id' ) val = surveyCampaigns[val];  
 	    if ( param == 'activity_type_id' ) val = surveyTypes[val];
+	    if ( param == 'survey_campaign_id' ) val = surveyCampaigns[val];  
 	    searchQill[count++] = searchParams[param] + ' : ' + val;
 	}
      }
@@ -247,13 +247,16 @@ function loadSurveyList( )
 			//get the search criteria.
                         var searchParams = {/literal}{$searchParams}{literal};
                         for ( param in searchParams ) {
+			    fldName = param;
+			    if ( param == 'survey_title' ) fldName = 'title'; 
+			    if ( param == 'survey_campaign_id' ) fldName = 'campaign_id';
                             if ( val = cj( '#' + param ).val( ) ) {
-			      aoData[dataLength++] = {name: param , value: val };
+			      aoData[dataLength++] = {name: fldName, value: val};
 			    } 
-			    searchCriteria[count++] = param;
+			    searchCriteria[count++] = fldName;
                         } 
 
-			//do search to reserve voters.			
+			//do search for surveys.
 			aoData[dataLength++] = {name: 'search_for', value: 'survey'};
 			
 			//lets transfer search criteria.

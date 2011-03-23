@@ -86,12 +86,12 @@ class CRM_Campaign_Form_Search_Petition extends CRM_Core_Form
         if ( $this->_search ) return;
         
         $attributes = CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey');
-        $this->add( 'text', 'title', ts( 'Title' ), $attributes['title'] );
+        $this->add( 'text', 'petition_title', ts( 'Title' ), $attributes['title'] );
         
         //campaigns
         require_once 'CRM/Campaign/BAO/Campaign.php';
         $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, false, true );
-        $this->add('select', 'campaign_id', ts('Campaign'), array( '' => ts('- select -') ) + $campaigns );
+        $this->add('select', 'petition_campaign_id', ts('Campaign'), array( '' => ts('- select -') ) + $campaigns );
         $this->set( 'petitionCampaigns', $campaigns );
         $this->assign( 'petitionCampaigns', json_encode( $campaigns ) );
         
