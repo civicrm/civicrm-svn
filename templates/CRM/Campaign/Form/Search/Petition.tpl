@@ -213,6 +213,10 @@ function loadPetitionList( )
 				 //handled disabled rows.
 				 var isActive = Boolean(Number(aData[7]));
 				 if ( !isActive ) cj(nRow).addClass( 'disabled' );  
+				 
+				 //add id for yes/no column.
+				 cj(nRow).children().eq(8).attr( 'id', rowId + '_status' );
+
 				 return nRow;
 		},
 	

@@ -236,6 +236,10 @@ function loadCampaignList( )
 				 //handled disabled rows.
 				 var isActive = Boolean(Number(aData[10]));
 				 if ( !isActive ) cj(nRow).addClass( 'disabled' );  
+
+				 //add id for yes/no column.
+				 cj(nRow).children().eq(11).attr( 'id', rowId + '_status' );
+
 				 return nRow;
 		},
 	
