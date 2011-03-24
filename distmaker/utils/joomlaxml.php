@@ -73,7 +73,7 @@ function generateJoomlaConfig( $version ) {
     require_once 'CRM/Utils/String.php';
     $permissions =& CRM_Core_Permission::getCorePermissions( );
 
-    $crmFolderDir = $sourceCheckoutDir . 'CRM';
+    $crmFolderDir = $sourceCheckoutDir . DIRECTORY_SEPARATOR . 'CRM';
     
     require_once 'CRM/Core/Component.php';
     $components = CRM_Core_Component::getComponentsFromFile( $crmFolderDir );
