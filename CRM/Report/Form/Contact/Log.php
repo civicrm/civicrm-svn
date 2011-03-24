@@ -57,7 +57,8 @@ class CRM_Report_Form_Contact_Log extends CRM_Report_Form {
                                         'required'  => true, ), ),
                           'filters'   =>             
                           array( 'sort_name'    => 
-                                 array( 'title'      => ts( 'Modified By' )  ),
+                                 array( 'title'      => ts( 'Modified By' ),
+                                        'type'       => CRM_Utils_Type::T_STRING ),
                           ),
                           'grouping'  => 'contact-fields',
                         ),
@@ -76,6 +77,7 @@ class CRM_Report_Form_Contact_Log extends CRM_Report_Form {
                           array( 'sort_name_touched'    => 
                                  array( 'title'      => ts( 'Touched Contact' ),
                                         'name'       => 'sort_name',
+                                        'type'       => CRM_Utils_Type::T_STRING
                                       ),
                                 ),
                           'grouping'  => 'contact-fields',
