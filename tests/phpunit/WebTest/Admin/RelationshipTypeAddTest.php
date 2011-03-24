@@ -101,6 +101,7 @@ class WebTest_Admin_RelationshipTypeAddTest extends CiviSeleniumTestCase
         
         $this->select('contact_types_a', 'value=Individual');
         $this->select('contact_types_b', 'value=Individual');
+        $description = 'Test Relationship Type Description';
         $this->type('description', $description );
         
         $this->click('_qf_RelationshipType_next-bottom');
