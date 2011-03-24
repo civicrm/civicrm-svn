@@ -81,9 +81,10 @@ function buildContactActivities( filterSearch ) {
         "sPaginationType": "full_numbers",
         "sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',	
         "bServerSide": true,
+        "bJQueryUI": true,
         "sAjaxSource": sourceUrl,
         "iDisplayLength": 50,
-	"oLanguage": { "sZeroRecords":  ZeroRecordText },
+        "oLanguage": { "sZeroRecords":  ZeroRecordText },
         "fnDrawCallback": function() { setSelectorClass(); },
         "fnServerData": function ( sSource, aoData, fnCallback ) {
             aoData.push( {name:'contact_id', value: {/literal}{$contactId}{literal}},

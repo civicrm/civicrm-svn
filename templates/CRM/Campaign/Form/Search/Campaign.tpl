@@ -92,8 +92,8 @@
     {strip} 
         <table class="form-layout">
 	  <tr>
-              <td>{$form.title.label}<br />
-		  {$form.title.html}
+              <td>{$form.campaign_title.label}<br />
+		  {$form.campaign_title.html}
               </td>
 	      <td>
                   {$form.description.label}<br />
@@ -164,7 +164,7 @@
 
 function searchCampaigns( qfKey ) 
 {
-      var dataUrl =  {/literal}"{crmURL h=0 q='search=1&snippet=4'}"{literal};
+      var dataUrl =  {/literal}"{crmURL h=0 q='search=1&snippet=4&type=campaign'}"{literal};
 
       //lets carry qfKey to retain form session.
       if ( qfKey ) dataUrl = dataUrl + '&qfKey=' + qfKey;
@@ -187,8 +187,8 @@ function loadCampaignList( )
      var searchParams   = {/literal}{$searchParams}{literal};
      var campaignTypes  = {/literal}{$campaignTypes}{literal};
      var campaignStatus = {/literal}{$campaignStatus}{literal};
-     var noRecordFoundMsg  = "<div class='messages status'><div class='icon inform-icon'></div>No matches found for:";
-         noRecordFoundMsg += '<div class="qill">';
+     var noRecordFoundMsg  = {/literal}{ts}'No matches found for:'{/ts}{literal};
+     noRecordFoundMsg     += '<div class="qill">';
      
      var count = 0;
      var searchQill = new Array( );
@@ -225,6 +225,7 @@ function loadCampaignList( )
 		"sPaginationType": "full_numbers",
 		"sDom"       : 'rt<"crm-datatable-pager-bottom"ip>',
 	   	"bServerSide": true,
+        "bJQueryUI": true,
 	   	"sAjaxSource": sourceUrl,
 		"oLanguage":{"sEmptyTable"  : noRecordFoundMsg,
 		             "sZeroRecords" : noRecordFoundMsg },
@@ -252,13 +253,15 @@ function loadCampaignList( )
 			//get the search criteria.
                         var searchParams = {/literal}{$searchParams}{literal};
                         for ( param in searchParams ) {
+			    fldName = param;
+			    if ( param == 'campaign_title' ) fldName = 'title';  
                             if ( val = cj( '#' + param ).val( ) ) {
-			      aoData[dataLength++] = {name: param , value: val };
+			      aoData[dataLength++] = {name: fldName, value: val};
 			    } 
-			    searchCriteria[count++] = param;
+			    searchCriteria[count++] = fldName;
                         } 
 
-			//do search to reserve voters.			
+			//do search for campaigns.
 			aoData[dataLength++] = {name: 'search_for', value: 'campaign'};
 			
 			//lets transfer search criteria.

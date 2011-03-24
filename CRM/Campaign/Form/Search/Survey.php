@@ -87,7 +87,7 @@ class CRM_Campaign_Form_Search_Survey extends CRM_Core_Form
         if ( $this->_search ) return;
         
         $attributes = CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey');
-        $this->add( 'text', 'title', ts( 'Title' ), $attributes['title'] );
+        $this->add( 'text', 'survey_title', ts( 'Title' ), $attributes['title'] );
         
         //activity Type id
         $surveyTypes = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
@@ -99,7 +99,7 @@ class CRM_Campaign_Form_Search_Survey extends CRM_Core_Form
         //campaigns
         require_once 'CRM/Campaign/BAO/Campaign.php';
         $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, false, true );
-        $this->add('select', 'campaign_id', ts('Campaign'), array( '' => ts('- select -') ) + $campaigns );
+        $this->add('select', 'survey_campaign_id', ts('Campaign'), array( '' => ts('- select -') ) + $campaigns );
         $this->set( 'surveyCampaigns', $campaigns );
         $this->assign( 'surveyCampaigns', json_encode( $campaigns ) );
         

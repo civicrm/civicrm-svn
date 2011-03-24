@@ -121,8 +121,7 @@ class WebTest_Campaign_OfflineContributionTest extends CiviSeleniumTestCase {
 
         // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
         // button at the end of this page to show up, to make sure it's fully loaded.
-        $this->waitForElementPresent("_qf_Campaign_next-bottom");
-        
+                
         // Let's start filling the form with values.
         $campaignTitle = "Campaign $title";
         $this->type( "title", $campaignTitle );
@@ -148,13 +147,21 @@ class WebTest_Campaign_OfflineContributionTest extends CiviSeleniumTestCase {
         $this->click("_qf_Campaign_next-bottom");
         $this->waitForPageToLoad("30000");
         
-        $this->assertTrue($this->isTextPresent("Campaign Campaign $title has been saved."),
+        $this->assertTrue($this->isTextPresent("Campaign $campaignTitle has been saved."),
                           "Status message didn't show up after saving campaign!");
-        
-        $this->waitForElementPresent("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[1]");
-        $id = (int) $this->getText("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[1]");
+        $this->open($this->sboxPath . "civicrm/campaign?reset=1&subPage=campaign");
+        $this->waitForElementPresent("//div[@id='search_form_campaign']/div[1]");
+        $this->click("//div[@id='search_form_campaign']/div[1]");
+        $this->type("campaign_title", $title);
+        $this->click( "xpath=//div[@class='crm-accordion-body']/table/tbody/tr[4]/td/a[text()='Search']" );
 
-        $this->offlineContributionTest( $campaignTitle, $id );
+        $this->waitForElementPresent("xpath=//div[@id='campaignList']/div[@id='campaigns_wrapper']/table[@id='campaigns']/tbody/tr");
+        $this->click("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr[1]/td[13]/span/a[text()='Edit']");
+        $this->waitForElementPresent("_qf_Campaign_cancel-bottom");
+        $url = explode( 'id=', $this->getLocation( ) );
+        $campaignId = $url[1];
+
+        $this->offlineContributionTest( $campaignTitle, $campaignId );
 
         $this->pastCampaignsTest( $groupName );
     }
@@ -323,9 +330,9 @@ class WebTest_Campaign_OfflineContributionTest extends CiviSeleniumTestCase {
         $this->waitForElementPresent("_qf_Campaign_next-bottom");
         
         // Let's start filling the form with values.
-        $title = substr(sha1(rand()), 0, 7);
-        $campaignTitle = "Past Campaign $title";
-        $this->type( "title", $campaignTitle );
+        $pastTitle = substr(sha1(rand()), 0, 7);
+        $pastCampaignTitle = "Past Campaign $pastTitle";
+        $this->type( "title", $pastCampaignTitle );
         
         // select the campaign type
         $this->select("campaign_type_id", "value=2");
@@ -351,20 +358,22 @@ class WebTest_Campaign_OfflineContributionTest extends CiviSeleniumTestCase {
         $this->click("_qf_Campaign_next-bottom");
         $this->waitForPageToLoad("30000");
         
-        $this->assertTrue($this->isTextPresent("Campaign Past Campaign $title has been saved."), 
+        $this->assertTrue($this->isTextPresent("Campaign $pastCampaignTitle has been saved."), 
                           "Status message didn't show up after saving campaign!");
 
         // since campaign dates are in past, the default search may not find it. 
         // So we 'll do a quick search
         $this->waitForElementPresent("//div[@id='search_form_campaign']/div[1]");
         $this->click("//div[@id='search_form_campaign']/div[1]");
-        $this->click("//table[@id='campaigns']/tbody/tr[1]/td[3]");
-        $this->type("title", $campaignTitle);
-        $this->click("link=Search");
+        $this->type("campaign_title", $pastTitle);
+        $this->click( "xpath=//div[@class='crm-accordion-body']/table/tbody/tr[4]/td/a[text()='Search']" );
 
-        $this->waitForElementPresent("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[1]");
-        $id = (int) $this->getText("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[1]");
-
-        $this->offlineContributionTest( $campaignTitle, $id, true );
+        $this->waitForElementPresent("xpath=//div[@id='campaignList']/div[@id='campaigns_wrapper']/table[@id='campaigns']/tbody/tr");
+        $this->click("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr[1]/td[13]/span/a[text()='Edit']");
+        $this->waitForElementPresent("_qf_Campaign_cancel-bottom");
+        $pastCampaignUrl = explode( 'id=', $this->getLocation( ) );
+        $pastCampaignId = $pastCampaignUrl[1];
+        
+        $this->offlineContributionTest( $pastCampaignTitle, $pastCampaignId, true );
     }
 }

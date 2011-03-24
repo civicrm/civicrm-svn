@@ -148,7 +148,13 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
       if ( !$pageId ) {
           $this->open( $this->sboxPath );
           $this->webtestLogin( );
-      
+          
+          //add payment processor.
+          $hash = substr(sha1(rand()), 0, 7);
+          $rand = 2 * rand(2, 50);
+          $processorName = "Webtest Auto Renew AuthNet" . $hash;
+          $this->webtestAddPaymentProcessor( $processorName, 'AuthNet' );
+          
           // -- start updating membership types 
           $this->open($this->sboxPath . "civicrm/admin/member/membershipType&action=update&id=1&reset=1");
           $this->waitForPageToLoad("30000");
@@ -174,12 +180,6 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
           $this->click("_qf_MembershipType_upload-bottom");
           $this->waitForPageToLoad("30000");
           
-          $hash = substr(sha1(rand()), 0, 7);
-          $rand = 2 * rand(2, 50);
-          
-          //add payment processor.
-          $processorName = "Webtest Auto Renew AuthNet" . $hash;
-          //$this->webtestAddPaymentProcessor( $processorName, 'AuthNet' );
           
           // create contribution page with randomized title and default params
           $amountSection = false;
@@ -213,7 +213,8 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
                                                        $profilePostId,
                                                        $premiums     ,
                                                        $widget       ,
-                                                       $pcp          
+                                                       $pcp          ,
+                                                       false 
                                                        );
           
           //make sure we do have required permissions.

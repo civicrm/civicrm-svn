@@ -203,7 +203,7 @@ function custom_option_html_type( ) {
             <td class="label">{$form.help_post.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_custom_field' field='help_post' id=$id}{/if}</td>
             <td class="html-adjust">{$form.help_post.html|crmReplace:class:huge}
                 {if $action neq 4}
-                    <span class="description">{ts}Explanatory text displayed for this field. Pre help is displayed inline on the form (above the field). Post help is displayed in a pop-up - users click the help balloon to view help text.{/ts}</span>
+                    <span class="description">{ts}Explanatory text displayed on back-end forms. Pre help is displayed inline on the form (above the field). Post help is displayed in a pop-up - users click the help balloon to view help text.{/ts}</span>
                 {/if}
             </td>
         </tr>
@@ -253,11 +253,11 @@ function custom_option_html_type( ) {
 
     function showSearchRange(chkbox) {
         var html_type = document.getElementsByName("data_type[1]")[0].value;
-	var data_type = document.getElementsByName("data_type[0]")[0].value;
+	    var data_type = document.getElementsByName("data_type[0]")[0].value;
 
         if ( ((data_type == 1 || data_type == 2 || data_type == 3) && (html_type == "Text")) || data_type == 5) {
             if (chkbox.checked) {
-		document.getElementsByName("is_search_range")[0].checked = true;
+		        document.getElementsByName("is_search_range")[0].checked = true;
                 cj("#searchByRange").show();
             } else {
                 clearSearchBoxes( );
@@ -268,7 +268,7 @@ function custom_option_html_type( ) {
     //should not clear search boxes for update mode. 
     function clearSearchBoxes( ) {
     	document.getElementsByName("is_searchable")[0].checked   = false; 
-	document.getElementsByName("is_search_range")[1].checked = true;
+	    document.getElementsByName("is_search_range")[1].checked = true;
         cj("#searchByRange").hide();
     }
 </script>

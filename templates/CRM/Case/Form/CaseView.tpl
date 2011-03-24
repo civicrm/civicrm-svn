@@ -118,7 +118,7 @@
             <td>{$form.activity_type_id.label}<br />{$form.activity_type_id.html}&nbsp;<input type="button" accesskey="N" value="Go" name="new_activity" onclick="checkSelection( this );"/></td>
 	    {if $hasAccessToAllCases}	
             <td>
-                <span class="crm-button"><div class="icon print-icon"></div><input type="button"  value="Print Case Report" name="case_report_all" onclick="printCaseReport( );"/></span>
+                <span class="crm-button"><div class="icon print-icon"></div><input type="button"  value="{ts}Print Case Report{/ts}" name="case_report_all" onclick="printCaseReport( );"/></span>
             </td> 
         </tr>
         <tr>
@@ -192,11 +192,11 @@
             </td>
           {if $relId neq 'client' and $hasAccessToAllCases}
             <td id ="edit_{$rowNumber}">
-            	<a href="#" title="edit case role" onclick="createRelationship( {$row.relation_type}, {$row.cid}, {$relId}, {$rowNumber}, '{$row.relation}' );return false;">
+            	<a href="#" title="{ts}edit case role{/ts}" onclick="createRelationship( {$row.relation_type}, {$row.cid}, {$relId}, {$rowNumber}, '{$row.relation}' );return false;">
             	<div class="icon edit-icon" ></div>
             	</a> &nbsp;&nbsp;
             	<a href="{crmURL p='civicrm/contact/view/rel' q="action=delete&reset=1&cid=`$contactID`&id=`$relId`&caseID=`$caseID`"}" onclick = "if (confirm('{ts}Are you sure you want to remove this person from their case role{/ts}?') ) this.href+='&confirmed=1'; else return false;">
-            	<div class="icon delete-icon" title="remove contact from case role"></div>
+            	<div class="icon delete-icon" title="{ts}remove contact from case role{/ts}"></div>
             	</a>
             	
             </td>
@@ -214,7 +214,7 @@
                <td class="crm-case-caseview-role-email" id="email_{$rowNumber}"></td>
 	       {if $hasAccessToAllCases}               
 	       <td id ="edit_{$rowNumber}">
-	       <a href="#" title="edit case role" onclick="createRelationship( {$relTypeID}, null, null, {$rowNumber}, '{$relName}' );return false;">
+	       <a href="#" title="{ts}edit case role{/ts}" onclick="createRelationship( {$relTypeID}, null, null, {$rowNumber}, '{$relName}' );return false;">
 	       	<div class="icon edit-icon"></div>
 	       </a> 
 	       </td>
@@ -855,7 +855,7 @@ function addTags() {
 </div><!-- /.crm-accordion-wrapper -->
  
   <table id="activities-selector"  class="nestedActivitySelector">
-  <thead><tr class="columnheader">
+  <thead><tr>
   <th class='crm-case-activities-date'>{ts}Date{/ts}</th>
   <th class='crm-case-activities-subject'>{ts}Subject{/ts}</th>
   <th class='crm-case-activities-type'>{ts}Type{/ts}</th>
@@ -959,18 +959,19 @@ function buildCaseActivities( filterSearch ) {
 	eval('columns =[' + columns + ']');
 
  	oTable = cj('#activities-selector').dataTable({
-    	        "bFilter"    : false,
-		"bAutoWidth" : false,
-                "aaSorting"  : [],
-		"aoColumns"  : columns,
+            "bFilter"    : false,
+            "bAutoWidth" : false,
+            "aaSorting"  : [],
+            "aoColumns"  : columns,
 	    	"bProcessing": true,
-		"sPaginationType": "full_numbers",
-		"sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',	
-	   	"bServerSide": true,
-	   	"sAjaxSource": sourceUrl,
-                "iDisplayLength": 50,
-		"fnDrawCallback": function() { setSelectorClass(); },
-		"fnServerData": function ( sSource, aoData, fnCallback ) {
+            "bJQueryUI": true,
+            "sPaginationType": "full_numbers",
+            "sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',	
+            "bServerSide": true,
+            "sAjaxSource": sourceUrl,
+            "iDisplayLength": 50,
+            "fnDrawCallback": function() { setSelectorClass(); },
+            "fnServerData": function ( sSource, aoData, fnCallback ) {
 
 				if ( filterSearch ) {
 				var activity_deleted = 0;

@@ -53,7 +53,7 @@ class CRM_Contact_Form_Task_Merge extends CRM_Contact_Form_Task {
         $contactIds = array( );
         if ( is_array( $this->_contactIds ) ) $contactIds = array_unique( $this->_contactIds );
         if ( count( $contactIds ) < 2 ) {
-            $statusMsg = ts( 'Minimum two contact records are required to perform merge operation.' );
+            $statusMsg = ts( 'Minimum of two contact records must be selected for Merge or Find Duplicates operations.' );
         }
         
         // do check for same contact type.
@@ -65,7 +65,7 @@ class CRM_Contact_Form_Task_Merge extends CRM_Contact_Form_Task {
                 $contactTypes[$contact->contact_type] = true;
                 if ( count( $contactTypes ) > 1 ) break;
             }
-            if ( count( $contactTypes ) > 1 ) $statusMsg = ts( 'Please select same contact type records.' ); 
+            if ( count( $contactTypes ) > 1 ) $statusMsg = ts( 'Selected records must all be the same contact type (i.e. all Individuals).' ); 
         }
         if ( $statusMsg ) CRM_Core_Error::statusBounce( $statusMsg );
         

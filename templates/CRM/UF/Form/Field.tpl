@@ -151,13 +151,15 @@ function showLabel( ) {
         fieldId = custom.substring( custom.length, 7);
     } else {
         cj('#help_post').val(" ");
+        cj('#help_pre').val(" ");
         return;
     }
 
     var dataUrl = {/literal}"{crmURL p='civicrm/ajax/custom' h=0 }"{literal};
     cj.post( dataUrl, { id: fieldId }, function(data) {
-       cj('#help_post').val( data );
-    });
+        cj('#help_post').val( data.help_post );
+        cj('#help_pre').val( data.help_pre );
+    }, 'json');
 } 
 
 {/literal}{if $action neq 8}{literal}

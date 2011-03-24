@@ -204,29 +204,36 @@ if ( document.addEventListener ) {
 }
 
 function onReady( ) {
-    var crmCurrency = jsondata.currencySymbol;
-    var cpid        = {/literal}{$cpageId}{literal};
-    document.getElementById('crm_cpid_'+cpid+'_title').innerHTML        = jsondata.title;
-    if ( jsondata.money_target > 0 ) {
-        document.getElementById('crm_cpid_'+cpid+'_amt_hi').innerHTML       = jsondata.money_target_display;
-        document.getElementById('crm_cpid_'+cpid+'_amt_low').innerHTML      = crmCurrency+jsondata.money_low;
+    var cpid    = {/literal}{$cpageId}{literal};
+    var jsonvar = eval('jsondata' + cpid);
+    
+    var crmCurrency = jsonvar.currencySymbol;
+    document.getElementById('crm_cpid_'+cpid+'_title').innerHTML        = jsonvar.title;
+    if ( jsonvar.money_target > 0 ) {
+        document.getElementById('crm_cpid_'+cpid+'_amt_hi').innerHTML   = jsonvar.money_target_display;
+        document.getElementById('crm_cpid_'+cpid+'_amt_low').innerHTML  = crmCurrency+jsonvar.money_low;
     }
-    document.getElementById('crm_cpid_'+cpid+'_amt_raised').innerHTML   = jsondata.money_raised;
-    document.getElementById('crm_cpid_'+cpid+'_comments').innerHTML     = jsondata.about;
-    document.getElementById('crm_cpid_'+cpid+'_donors').innerHTML       = jsondata.num_donors;
-    document.getElementById('crm_cpid_'+cpid+'_btn_txt').innerHTML      = jsondata.button_title;
-    document.getElementById('crm_cpid_'+cpid+'_campaign').innerHTML     = jsondata.campaign_start;
-    if ( jsondata.money_raised_percentage ) {
-        document.getElementById('crm_cpid_'+cpid+'_amt_fill').style.width   = jsondata.money_raised_percentage;
-        document.getElementById('crm_cpid_'+cpid+'_percentage').innerHTML   = jsondata.money_raised_percentage;
+    document.getElementById('crm_cpid_'+cpid+'_amt_raised').innerHTML   = jsonvar.money_raised;
+    document.getElementById('crm_cpid_'+cpid+'_comments').innerHTML     = jsonvar.about;
+    document.getElementById('crm_cpid_'+cpid+'_donors').innerHTML       = jsonvar.num_donors;
+    document.getElementById('crm_cpid_'+cpid+'_btn_txt').innerHTML      = jsonvar.button_title;
+    document.getElementById('crm_cpid_'+cpid+'_campaign').innerHTML     = jsonvar.campaign_start;
+    if ( jsonvar.money_raised_percentage ) {
+        var moneyRaised = jsonvar.money_raised_percentage;
+        var percentWidth = moneyRaised.split('%');
+        if ( percentWidth[0] > 100 ) {
+            moneyRaised = '100%';
+        }
+        document.getElementById('crm_cpid_'+cpid+'_amt_fill').style.width = moneyRaised;
+        document.getElementById('crm_cpid_'+cpid+'_percentage').innerHTML = jsonvar.money_raised_percentage;
     }
 
-    if ( !jsondata.is_active ) {
-        document.getElementById('crm_cpid_'+cpid+'_button').innerHTML   = jsondata.home_url;
+    if ( !jsonvar.is_active ) {
+        document.getElementById('crm_cpid_'+cpid+'_button').innerHTML   = jsonvar.home_url;
         document.getElementById('crm_cpid_'+cpid+'_button').style.color = 'red';
     }
 }
 
 </script>
 {/literal}
-<script type="text/javascript" src="{$config->userFrameworkResourceURL}/extern/widget.php?cpageId={$cpageId}&widgetId={$widget_id}"></script>
+<script type="text/javascript" src="{$config->userFrameworkResourceURL}/extern/widget.php?cpageId={$cpageId}&widgetId={$widget_id}&format=3"></script>
