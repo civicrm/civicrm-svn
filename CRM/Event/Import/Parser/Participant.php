@@ -322,14 +322,6 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
             }
         } 
 
-        // CRM-7785: if unset, set participant_status_id based on participant_status
-        if (empty($params['participant_status_id']) and !empty($params['participant_status'])) {
-            $params['participant_status_id'] = CRM_Core_DAO::singleValueQuery(
-                'SELECT id FROM civicrm_participant_status_type WHERE label = %1',
-                array(1 => array($params['participant_status'], 'String'))
-            );
-        }
-
         //date-Format part ends
         static $indieFields = null;
         if ($indieFields == null) {
