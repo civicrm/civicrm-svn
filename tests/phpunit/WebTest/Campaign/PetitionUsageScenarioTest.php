@@ -161,7 +161,7 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
 
       $this->waitForElementPresent( "petitions" );
       $this->click( "petitionSearch" );
-      $this->type( "title", $title );
+      $this->type( "petition_title", $title );
 
       $this->click( "xpath=//div[@class='crm-accordion-body']/table/tbody/tr[2]/td/a[text()='Search']" );
 
@@ -206,7 +206,7 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
       // check for unconfirmed petition signature
       $this->waitForElementPresent( "petitions" );
       $this->click( "petitionSearch" );
-      $this->type( "title", $title );
+      $this->type( "petition_title", $title );
       $this->click( "xpath=//div[@class='crm-accordion-body']/table/tbody/tr[2]/td/a[text()='Search']" );
 
       $this->waitForElementPresent( "xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[10]/span[2][text()='more ']" );
