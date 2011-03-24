@@ -753,6 +753,9 @@ function _civicrm_participant_formatted_param( &$params, &$values, $create=false
                 return civicrm_create_error("Invalid Event ID: There is no event record with event_id = $value.");
             } 
             break;
+        case 'participant_status':
+            $values['participnat_status_id'] = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_ParticipantStatusType', $value, 'id', 'label');
+            break;
         case 'participant_status_id':
             $id = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_ParticipantStatusType', $value, 'id', 'label');
             $values[$key] = $id;
