@@ -233,17 +233,17 @@ class CRM_Event_Form_Task_Batch extends CRM_Event_Form_Task
             CRM_Core_BAO_UFGroup::setProfileDefaults( null, $this->_fields, $defaults, false, $participantId, 'Event');
 
             //get the from status ids, CRM-4323
-            if ( array_key_exists( 'participant_status_id', $this->_fields ) ) {
+            if ( array_key_exists( 'participant_status', $this->_fields ) ) {
                 $this->_fromStatusIds[$participantId] = 
-                    CRM_Utils_Array::value( "field[$participantId][participant_status_id]", $defaults );
+                    CRM_Utils_Array::value( "field[$participantId][participant_status]", $defaults );
             }
-            if ( array_key_exists( 'participant_role_id', $this->_fields ) ) {
-                if ( $defaults["field[{$participantId}][participant_role_id]"] ) {
-                    $roles = $defaults["field[{$participantId}][participant_role_id]"];
+            if ( array_key_exists( 'participant_role', $this->_fields ) ) {
+                if ( $defaults["field[{$participantId}][participant_role]"] ) {
+                    $roles = $defaults["field[{$participantId}][participant_role]"];
                     foreach ( explode( CRM_Core_DAO::VALUE_SEPARATOR, $roles ) as $k => $v ) {
-                        $defaults["field[$participantId][participant_role_id][{$v}]"] = 1;
+                        $defaults["field[$participantId][participant_role][{$v}]"] = 1;
                     }
-                    unset( $defaults["field[{$participantId}][participant_role_id]"] );
+                    unset( $defaults["field[{$participantId}][participant_role]"] );
                 }
             }
         }
@@ -276,19 +276,19 @@ class CRM_Event_Form_Task_Batch extends CRM_Event_Form_Task
                     $value['register_date'] = CRM_Utils_Date::processDate( $value['participant_register_date'], $value['participant_register_date_time'] );
                 } 
                 
-                if ( $value['participant_role_id'] ) {
+                if ( $value['participant_role'] ) {
                     $participantRoles = CRM_Event_PseudoConstant::participantRole( );
-                    if ( is_array( $value['participant_role_id'] ) ) {
-                        $value['role_id'] = implode( CRM_Core_DAO::VALUE_SEPARATOR, array_keys( $value['participant_role_id'] ) );   
+                    if ( is_array( $value['participant_role'] ) ) {
+                        $value['role_id'] = implode( CRM_Core_DAO::VALUE_SEPARATOR, array_keys( $value['participant_role'] ) );   
                     } else {
-                        $value['role_id'] = $value['participant_role_id'];
+                        $value['role_id'] = $value['participant_role'];
                     }
                 } 
 
                 //need to send mail when status change
                 $statusChange = false;
-                if ( $value['participant_status_id'] ) {
-                    $value['status_id'] = $value['participant_status_id'];
+                if ( $value['participant_status'] ) {
+                    $value['status_id'] = $value['participant_status'];
                     $fromStatusId = CRM_Utils_Array::value( $key, $this->_fromStatusIds );
                     if ( !$fromStatusId ) {
                         $fromStatusId = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Participant', $key, 'status_id');
@@ -303,7 +303,7 @@ class CRM_Event_Form_Task_Batch extends CRM_Event_Form_Task
                     $value['source'] = $value['participant_source'];
                 }            
                 unset($value['participant_register_date']);
-                unset($value['participant_status_id']);
+                unset($value['participant_status']);
                 unset($value['participant_source']);
                 
                 CRM_Event_BAO_Participant::create( $value );
