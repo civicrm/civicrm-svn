@@ -116,7 +116,7 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
     static function getSurveySummary( $params = array( ), $onlyCount = false ) 
     {
         //build the limit and order clause.
-        $limitClause = $orderByClause = null;
+        $limitClause = $orderByClause = $lookupTableJoins = null;
         if ( !$onlyCount ) {
             $sortParams = array( 'sort'      => 'created_date', 
                                  'offset'    => 0, 
@@ -127,8 +127,29 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
                     $sortParams[$name] = $params[$name];
                 }
             }
-            $limitClause   = "LIMIT {$sortParams['offset']}, {$sortParams['rowCount']}";
-            $orderByClause = "ORDER BY survey.{$sortParams['sort']} {$sortParams['sortOrder']}";
+
+
+            //need to lookup tables.
+            $orderOnSurveyTable = true;
+            if ( $sortParams['sort'] == 'campaign' ) {
+                $orderOnSurveyTable = false;
+                $lookupTableJoins = '
+ LEFT JOIN civicrm_campaign campaign ON ( campaign.id = survey.campaign_id )';
+                $orderByClause = "ORDER BY campaign.title {$sortParams['sortOrder']}";
+            } else if ( $sortParams['sort'] == 'activity_type' ) {
+                $orderOnSurveyTable = false;
+                $lookupTableJoins = "
+ LEFT JOIN civicrm_option_value activity_type ON ( activity_type.value = survey.activity_type_id 
+                                                   OR survey.activity_type_id IS NULL )
+INNER JOIN civicrm_option_group grp ON ( activity_type.option_group_id = grp.id AND grp.name = 'activity_type' )"; 
+                $orderByClause = "ORDER BY activity_type.label {$sortParams['sortOrder']}";
+            } else if ( $sortParams['sort'] == 'isActive' ) {
+                $sortParams['sort'] = 'is_active';
+            }
+            if ( $orderOnSurveyTable ) {
+                $orderByClause = "ORDER BY survey.{$sortParams['sort']} {$sortParams['sortOrder']}";
+            }
+            $limitClause   = "LIMIT {$sortParams['offset']}, {$sortParams['rowCount']}";            
         }
         
         //build the where clause.
@@ -179,7 +200,7 @@ SELECT  survey.id                         as id,
         }
         $fromClause = 'FROM  civicrm_survey survey';
         
-        $query = "{$selectClause} {$fromClause} {$whereClause} {$orderByClause} {$limitClause}";
+        $query = "{$selectClause} {$fromClause} {$lookupTableJoins} {$whereClause} {$orderByClause} {$limitClause}";
         
         //return only count.
         if ( $onlyCount ) {

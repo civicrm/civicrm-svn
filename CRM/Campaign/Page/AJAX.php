@@ -654,9 +654,6 @@ class CRM_Campaign_Page_AJAX
                 $$pName = CRM_Utils_Type::escape( $_POST[$pValues['name']], $pValues['type'] );
                 if ( $pName == 'sort' ) {
                     $$pName = $selectorCols[$$pName];
-                    if ( $$pName == 'campaign' )      $$pName = 'campaign_id';
-                    if ( $$pName == 'isActive' )      $$pName = 'is_active';
-                    if ( $$pName == 'activity_type' ) $$pName = 'activity_type_id';
                 }
             }
         }
