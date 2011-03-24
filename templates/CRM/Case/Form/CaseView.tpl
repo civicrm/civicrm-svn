@@ -118,7 +118,7 @@
             <td>{$form.activity_type_id.label}<br />{$form.activity_type_id.html}&nbsp;<input type="button" accesskey="N" value="Go" name="new_activity" onclick="checkSelection( this );"/></td>
 	    {if $hasAccessToAllCases}	
             <td>
-                <span class="crm-button"><div class="icon print-icon"></div><input type="button"  value="Print Case Report" name="case_report_all" onclick="printCaseReport( );"/></span>
+                <span class="crm-button"><div class="icon print-icon"></div><input type="button"  value="{ts}Print Case Report{/ts}" name="case_report_all" onclick="printCaseReport( );"/></span>
             </td> 
         </tr>
         <tr>
