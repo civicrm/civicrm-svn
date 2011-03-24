@@ -231,8 +231,7 @@ file_put_contents($sqlCodePath . 'civicrm_sample.mysql', $sample);
 // CRM-7161: generate install/langs.php from the languages template
 // grep it for enabled languages and create a 'xx_YY' => 'Language name' $langs mapping
 $matches = array();
-$langPreg = '/, 1, \'([a-z][a-z]_[A-Z][A-Z])\', \'..\', \{localize\}\'\{ts escape="sql"\}([A-Z][a-z]+)/';
-preg_match_all( $langPreg, file_get_contents('templates/languages.tpl'), $matches);
+preg_match_all('/, 1, \'([a-z][a-z]_[A-Z][A-Z])\', \'..\', \{localize\}\'\{ts escape="sql"\}(.+)\{\/ts\}\'\{\/localize\}, /', file_get_contents('templates/languages.tpl'), $matches);
 $langs = array();
 for ($i = 0; $i < count($matches[0]); $i++) {
     $langs[$matches[1][$i]] = $matches[2][$i];
