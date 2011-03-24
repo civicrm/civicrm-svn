@@ -187,8 +187,8 @@ function loadCampaignList( )
      var searchParams   = {/literal}{$searchParams}{literal};
      var campaignTypes  = {/literal}{$campaignTypes}{literal};
      var campaignStatus = {/literal}{$campaignStatus}{literal};
-     var noRecordFoundMsg  = "<div class='messages status'><div class='icon inform-icon'></div>No matches found for:";
-         noRecordFoundMsg += '<div class="qill">';
+     var noRecordFoundMsg  = {/literal}{ts}'No matches found for:'{/ts}{literal};
+     noRecordFoundMsg     += '<div class="qill">';
      
      var count = 0;
      var searchQill = new Array( );
