@@ -855,7 +855,7 @@ function addTags() {
 </div><!-- /.crm-accordion-wrapper -->
  
   <table id="activities-selector"  class="nestedActivitySelector">
-  <thead><tr class="columnheader">
+  <thead><tr>
   <th class='crm-case-activities-date'>{ts}Date{/ts}</th>
   <th class='crm-case-activities-subject'>{ts}Subject{/ts}</th>
   <th class='crm-case-activities-type'>{ts}Type{/ts}</th>
@@ -959,18 +959,19 @@ function buildCaseActivities( filterSearch ) {
 	eval('columns =[' + columns + ']');
 
  	oTable = cj('#activities-selector').dataTable({
-    	        "bFilter"    : false,
-		"bAutoWidth" : false,
-                "aaSorting"  : [],
-		"aoColumns"  : columns,
+            "bFilter"    : false,
+            "bAutoWidth" : false,
+            "aaSorting"  : [],
+            "aoColumns"  : columns,
 	    	"bProcessing": true,
-		"sPaginationType": "full_numbers",
-		"sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',	
-	   	"bServerSide": true,
-	   	"sAjaxSource": sourceUrl,
-                "iDisplayLength": 50,
-		"fnDrawCallback": function() { setSelectorClass(); },
-		"fnServerData": function ( sSource, aoData, fnCallback ) {
+            "bJQueryUI": true,
+            "sPaginationType": "full_numbers",
+            "sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',	
+            "bServerSide": true,
+            "sAjaxSource": sourceUrl,
+            "iDisplayLength": 50,
+            "fnDrawCallback": function() { setSelectorClass(); },
+            "fnServerData": function ( sSource, aoData, fnCallback ) {
 
 				if ( filterSearch ) {
 				var activity_deleted = 0;

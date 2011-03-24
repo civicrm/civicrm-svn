@@ -2718,6 +2718,7 @@ color: #f5f6f1;
 #crm-container .crm-datatable-pager-top { padding-top:5px; padding-bottom:25px; }
 #crm-container .crm-datatable-pager-bottom { padding-top:10px; padding-bottom:25px; }
 #crm-container .crm-datatable-pager-top .dataTables_length { float:left; }
+#crm-container .css_right{ float:right}
 
 /* Date plugin */
 #crm-container input.dateplugin {
@@ -2785,11 +2786,11 @@ color: #f5f6f1;
     border-color:#efefef;
     border-right: 1px solid #efefef;
 }
-#crm-container .odd-row, 
+#crm-container .odd-row, #crm-container .odd,
 tbody.scrollContent {
     background-color: #FAFAFA;
 }
-#crm-container .even-row, 
+#crm-container .even-row, #crm-container .even, 
 tbody.scrollContent tr.alternateRow {
     background-color: #EFEFEF;
 }

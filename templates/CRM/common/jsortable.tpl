@@ -119,15 +119,16 @@ eval('tableId =[' + tableId + ']');
     oTable = null;
     if ( useAjax ) {
       oTable = cj(tabId).dataTable({
-    	        "bFilter"    : false,
-		"bAutoWidth" : false,
-                "aaSorting"  : sortColumn,
-		"aoColumns"  : columns,
-	    	"bProcessing": true,
-		"sPaginationType": "full_numbers",
-		"sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',
-	   	"bServerSide": true,
-	   	"sAjaxSource": sourceUrl,
+              "bFilter"    : false,
+              "bAutoWidth" : false,
+              "aaSorting"  : sortColumn,
+              "aoColumns"  : columns,
+              "bProcessing": true,
+              "bJQueryUI": true,
+              "sPaginationType": "full_numbers",
+              "sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',
+              "bServerSide": true,
+              "sAjaxSource": sourceUrl,
 
 		{/literal}{if !empty($callBack)}{literal}
 		"fnDrawCallback": function() { checkSelected(); },

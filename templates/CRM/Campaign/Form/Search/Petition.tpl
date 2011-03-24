@@ -183,12 +183,12 @@ function loadPetitionList( )
      noRecordFoundMsg += '</div>';
      
      cj( '#petitions' ).dataTable({
-     	        "bFilter"    : false,
-		"bAutoWidth" : false,
-	    	"bProcessing": false,
-		"bLengthChange": false,
-                "aaSorting": [],
-		"aoColumns":[{sClass:'crm-petition-id                          hiddenElement' },
+             "bFilter"    : false,
+             "bAutoWidth" : false,
+             "bProcessing": false,
+             "bLengthChange": false,
+             "aaSorting": [],
+             "aoColumns":[{sClass:'crm-petition-id                          hiddenElement' },
 		             {sClass:'crm-petition-title'                                     },
 			     {sClass:'crm-petition-campaign_id                 hiddenElement' },
 			     {sClass:'crm-petition-campaign'                                  },
@@ -202,6 +202,7 @@ function loadPetitionList( )
 		"sPaginationType": "full_numbers",
 		"sDom"       : 'rt<"crm-datatable-pager-bottom"ip>',
 	   	"bServerSide": true,
+        "bJQueryUI": true,
 	   	"sAjaxSource": sourceUrl,
 		"oLanguage":{"sEmptyTable"  : noRecordFoundMsg,
 		             "sZeroRecords" : noRecordFoundMsg },
