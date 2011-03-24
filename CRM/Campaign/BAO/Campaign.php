@@ -299,7 +299,7 @@ Order By  camp.title";
         $campaigns = array( );
         
         //build the limit and order clause.
-        $limitClause = $orderByClause = null;
+        $limitClause = $orderByClause = $lookupTableJoins = null;
         if ( !$onlyCount ) {
             $sortParams = array( 'sort'      => 'start_date', 
                                  'offset'    => 0, 
@@ -310,8 +310,30 @@ Order By  camp.title";
                     $sortParams[$name] = $params[$name];
                 }
             }
+
+            
+            //need to lookup tables.
+            $orderOnCampaignTable = true;
+            if ( $sortParams['sort'] == 'status' ) {
+                $orderOnCampaignTable = false;
+                $lookupTableJoins = "
+ LEFT JOIN civicrm_option_value status ON ( status.value = campaign.status_id OR campaign.status_id IS NULL )
+INNER JOIN civicrm_option_group grp ON ( status.option_group_id = grp.id AND grp.name = 'campaign_status' )"; 
+                $orderByClause = "ORDER BY status.label {$sortParams['sortOrder']}";
+            } else if ( $sortParams['sort'] == 'campaign_type' ) {
+                $orderOnCampaignTable = false;
+                $lookupTableJoins = "
+ LEFT JOIN civicrm_option_value campaign_type ON ( campaign_type.value = campaign.campaign_type_id 
+                                                   OR campaign.campaign_type_id IS NULL )
+INNER JOIN civicrm_option_group grp ON ( campaign_type.option_group_id = grp.id AND grp.name = 'campaign_type' )"; 
+                $orderByClause = "ORDER BY campaign_type.label {$sortParams['sortOrder']}";
+            } else if ( $sortParams['sort'] == 'isActive' ) {
+                $sortParams['sort'] = 'is_active';
+            }
+            if ( $orderOnCampaignTable ) {
+                $orderByClause = "ORDER BY campaign.{$sortParams['sort']} {$sortParams['sortOrder']}";
+            }
             $limitClause   = "LIMIT {$sortParams['offset']}, {$sortParams['rowCount']}";
-            $orderByClause = "ORDER BY campaign.{$sortParams['sort']} {$sortParams['sortOrder']}";
         }
         
         //build the where clause.
@@ -393,7 +415,7 @@ SELECT  campaign.id               as id,
         }
         $fromClause = 'FROM  civicrm_campaign campaign';
         
-        $query = "{$selectClause} {$fromClause} {$whereClause} {$orderByClause} {$limitClause}";
+        $query = "{$selectClause} {$fromClause} {$lookupTableJoins} {$whereClause} {$orderByClause} {$limitClause}";
         
         //in case of only count.
         if ( $onlyCount ) {
