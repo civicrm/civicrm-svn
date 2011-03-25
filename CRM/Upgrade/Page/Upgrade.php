@@ -515,7 +515,7 @@ SELECT  id
  WHERE  status NOT IN ( 'Complete', 'Canceled' ) AND is_test = 0 LIMIT 1";
             $mjId  = CRM_Core_DAO::singleValueQuery( $query );
             if ( $mjId ) {
-                $preUpgradeMessage = ts("There are one or more Scheduled or In Progress mailings in your install. Schedule mailings will not be sent and In Progress mailings will not finish if you continue with this upgrade now. We strongly recommend that you cancel the upgrade and try again after all Scheduled and In Progress mailings are completed.");
+                $preUpgradeMessage = ts("There are one or more Scheduled or In Progress mailings in your install. Scheduled mailings will not be sent and In Progress mailings will not finish if you continue with the upgrade. We strongly recommend that all Scheduled and In Progress mailings be completed or cancelled and then upgrade your CiviCRM install.");
             }
         }
     }
