@@ -104,5 +104,13 @@ class CRM_Upgrade_Incremental_php_ThreeFour {
         $upgrade->assign( 'renameColumnVisibility', $renameColumnVisibility);
         $upgrade->processSQL( $rev );
     }   
-
+    
+    function upgrade_3_4_beta2( $rev )
+    {
+        require_once 'CRM/Core/DAO.php';
+        $addPetitionOptionGroup = !(boolean) CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', 'msg_tpl_workflow_petition', 'id', 'name' );
+        $upgrade =& new CRM_Upgrade_Form( );
+        $upgrade->assign( 'addPetitionOptionGroup', $addPetitionOptionGroup );
+        $upgrade->processSQL( $rev );
+    }
   }
