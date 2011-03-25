@@ -68,4 +68,28 @@ function civicrm_api3_option_value_create( $params )
 }
 
 
+/**
+ * Deletes an existing OptionValue
+ *
+ * @param  array  $params
+ * 
+ * {@example OptionValueDelete.php 0}
+ * @return boolean | error  true if successfull, error otherwise
+ * @access public
+ */
+function civicrm_api3_option_value_delete( $params ) 
+{
+  _civicrm_api3_initialize( true );
+  try {
+    civicrm_api3_verify_mandatory ($params,null,array ('id'));
+    $id = (int) $params["id"];
+
+    require_once 'CRM/Core/BAO/OptionValue.php';
+    return CRM_Core_BAO_OptionValue::del( $id ) ? civicrm_api3_create_success( ) : civicrm_api3_create_error(  'Could not delete OptionValue '. $id  );
+  } catch (Exception $e) {
+    if (CRM_Core_Error::$modeException) throw $e;
+    return civicrm_api3_create_error( $e->getMessage() );
+  }
+}
+
 ?>
