@@ -21,8 +21,8 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
        parent::setUp();
        
        $this->toBeImplemented['get'] = array ('UFGroup','UFField','CustomGroup','ParticipantPayment');
-       $this->toBeImplemented['create'] = array ('SurveyRespondant','OptionValue','OptionGroup','UFMatch');
-       $this->toBeImplemented['delete'] = array ('MembershipPayment','OptionValue','OptionGroup','SurveyRespondant','UFJoin','UFMatch');
+       $this->toBeImplemented['create'] = array ('SurveyRespondant','OptionGroup','UFMatch');
+       $this->toBeImplemented['delete'] = array ('MembershipPayment','OptionGroup','SurveyRespondant','UFJoin','UFMatch');
        $this->onlyIDNonZeroCount['get'] = array( 'ActivityType', 'Entity', 'Domain' );
     }
 
@@ -174,7 +174,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
         // FIXME
         // the below function returns different values and hence an early return
         // we'll fix this once beta1 is released
-        return;
+//        return;
 
         $result = civicrm_api ($Entity,'Get', array('version' => 3, 'id' => $nonExistantID ));
 
