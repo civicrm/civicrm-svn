@@ -45,9 +45,7 @@ class JFormFieldCiviEventsOnline extends JFormField {
 				$options[] = JHTML::_('select.option', $event['id'], $event['event_title']);
 			}
 		}
-		
-		return JHTML::_( 'select.genericlist', $options, ''.$control_name.'['.$name.']', null, 'value', 'text', $value, $control_name.$name );
-        
+        return JHTML::_( 'select.genericlist', $options, $name, null, 'value', 'text', $value );
 	}
 }
 ?>
