@@ -620,7 +620,22 @@ function _civicrm_location_check_params( &$params ) {
          !CRM_Utils_Array::value( 'location_type', $params ) ) {
         $errorField = 'location_type';
     }
-    
+
+    if ( !$errorField ) {
+        $blocks = array( 'address', 'email', 'phone', 'im', 'website' );
+        $emptyAddressBlock = true;
+        foreach( $blocks as $block ) {
+            if ( isset( $params[$block] ) && !empty( $params[$block]  ) ) {
+                $emptyAddressBlock = false;
+                break;
+            }
+        }
+
+        if ( $emptyAddressBlock ) {
+            return civicrm_create_error( 'Please set atleast one location block. ( address or email or phone or im or website)' );
+        }
+    }
+
     if ( $errorField ) {
         return civicrm_create_error( "Required fields not found for location $errorField" ); 
     }

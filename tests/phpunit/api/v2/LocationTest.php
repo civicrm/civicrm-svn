@@ -99,66 +99,35 @@ class api_v2_LocationTest extends CiviUnitTestCase
         $location = & civicrm_location_add($params);
 
         $this->assertEquals( $location['is_error'], 1 );        
-        $this->assertEquals( $location['error_message'], 'Required fields not found for location location_type' );
+        $this->assertEquals( $location['error_message'], 'Please set atleast one location block. ( address or email or phone or im or website)' );
     }
 
 
     function testAddOrganizationWithAddress()
     {
-        $params = array('contact_id'             => $this->_contactID,
-                        'location_type'          => 'New Location Type',
-                        'is_primary'             => 1,
-                        'name'                   => 'Saint Helier St',
-                        'county'                 => 'Marin',
-                        'country'                => 'India', 
-                        'state_province'         => 'Michigan',
-                        'street_address'         => 'B 103, Ram Maruti Road',
-                        'supplemental_address_1' => 'Hallmark Ct', 
-                        'supplemental_address_2' => 'Jersey Village'
-                        );
+        $address = array( 1 => 
+                            array( 'name'                   => 'Saint Helier St',
+                                   'location_type'          => 'New Location Type',
+                                   'is_primary'             => 1,
+                                   'county'                 => 'Marin',
+                                   'country'                => 'India', 
+                                   'state_province'         => 'Michigan',
+                                   'street_address'         => 'B 103, Ram Maruti Road',
+                                   'supplemental_address_1' => 'Hallmark Ct', 
+                                   'supplemental_address_2' => 'Jersey Village'
+                               ) );
+
+        $params = array('contact_id' => $this->_contactID,
+                        'address'    => $address 
+                       );
         
-        $location = & civicrm_location_add($params);
-              
-        $match    = array( );
-        $match['address'][0] = array( 'contact_id'             => $this->_contactID,
-                                      'location_type_id'       => $this->_locationType->id,
-                                      'country_id'             => 1101,
-                                      'state_province_id'      => 1021,
-                                      'street_address'         => 'B 103, Ram Maruti Road',
-                                      'supplemental_address_1' => 'Hallmark Ct',
-                                      'supplemental_address_2' => 'Jersey Village' );
+        $location = civicrm_location_add($params);
         
-        $this->_checkResult( $location['result'], $match );
+        $this->assertEquals( $location['is_error'], 0 );
+        $this->assertTrue( !empty( $location['result']['address'] ) ); 
     }
 
-    function testAddWithoutStreetAddress()
-    {
-        $params = array('contact_id'             => $this->_contactID,
-                        'location_type'          => 'New Location Type',
-                        'is_primary'             => 1,
-                        'name'                   => 'Saint Helier St',
-                        'county'                 => 'Saginaw County',
-                        'country'                => 'United States', 
-                        'state_province'         => 'Michigan',
-                        'supplemental_address_1' => 'Hallmark Ct', 
-                        'supplemental_address_2' => 'Jersey Village'
-                        );
-        
-        $location = & civicrm_location_add($params);
-        
-        $match    = array( );
-        $match['address'][0] = array( 'contact_id'             => $this->_contactID,
-                                      'location_type_id'       => $this->_locationType->id,
-                                      'is_primary'             => 1,
-                                      'country_id'             => 1228,
-                                      'state_province_id'      => 1021,
-                                      'supplemental_address_1' => 'Hallmark Ct',
-                                      'supplemental_address_2' => 'Jersey Village' );
-        
-        $this->_checkResult( $location['result'], $match );
-    }
-    
-    function testAddWithAddressEmail()
+    function testAddWithAddressEmailPhoneIM()
     {
         $workPhone = array( 'phone'         => '91-20-276048',
                             'phone_type_id' => 1,
@@ -196,65 +165,32 @@ class api_v2_LocationTest extends CiviUnitTestCase
         $workEmailThird  = array( 'email'      => 'yashi@yahoo.com');
         
         $email = array($workEmailFirst, $workEmailSecond, $workEmailThird);
-        
+
+        $address = array( 1 => array(  
+                                'city'                   => 'San Francisco',
+                                'state_province'         => 'California',
+                                'country_id'             => 1228,
+                                'street_address'         => '123, FC Road', 
+                                'supplemental_address_1' => 'Near Wenna Lake',
+                                'is_primary'             => 1,
+                                'location_type'          => 'New Location Type'
+                            ) );
+
         $params = array('contact_id'             => $this->_contactID,
-                        'location_type'          => 'New Location Type',
+                        'address'                => $address,
                         'phone'                  => $phone,
-                        'city'                   => 'San Francisco',
-                        'state_province'         => 'California',
-                        'country_id'             => 1228,
-                        'street_address'         => '123, FC Road', 
-                        'supplemental_address_1' => 'Near Wenna Lake',
-                        'is_primary'             => 1,
                         'im'                     => $im,
                         'email'                  => $email
                         );
         
-        $location = & civicrm_location_add($params); 
-        
-        $match    = array( );
-        $match['address'][0] = array( 'contact_id'             => $this->_contactID,
-                                      'location_type_id'       => $this->_locationType->id,
-                                      'city'                   => 'San Francisco',
-                                      'state_province_id'      => 1004,
-                                      'country_id'             => 1228,
-                                      'street_address'         => '123, FC Road', 
-                                      'supplemental_address_1' => 'Near Wenna Lake',
-                                      'is_primary'             => 1
-                                      );
-        
-        $match['email'][0] = array( 'is_primary' => 1,
-                                    'email'      => 'abc@def.com',
-                                    'on_hold'    => 1
-                                    );
-        $match['email'][1] = array( 'is_primary' => 0,
-                                    'email'      => 'yash@hotmail.com',
-                                    'is_primary' => 0);
-        $match['email'][2] = array( 'contact_id' => $this->_contactID,
-                                    'is_primary' => 0,
-                                    'email'      => 'yashi@yahoo.com' );
-        
-        $match['phone'][0] = array( 'is_primary'       => 1,
-                                    'phone'            => '91-20-276048',
-                                    'phone_type_id'    => 1,
-                                    'location_type_id' => $this->_locationType->id,
-                                    'contact_id'       => $this->_contactID );
-        $match['phone'][1] = array( 'is_primary'       => 0,                               
-                                    'phone_type_id'    => 3,
-                                    'phone'            => '91-20-234-657686' );
-        $match['im'][0] = array( 'name'             => 'Hi',
-                                 'is_primary'       => 0,
-                                 'provider_id'      => 1,
-                                 'location_type_id' => $this->_locationType->id);
-        $match['im'][1] = array( 'name'             => 'Hola',
-                                 'is_primary'       => 0,
-                                 'provider_id'      => 3);
-        $match['im'][2] = array( 'name'             => 'Welcome',
-                                 'is_primary'       => 1,
-                                 'provider_id'      => 5,
-                                 'contact_id'       => $this->_contactID );
-        $this->_checkResult( $location['result'], $match );
-    }
+        $location =& civicrm_location_add($params); 
+
+        $this->assertEquals( $location['is_error'], 0 );
+        $this->assertEquals( count($location['result']['phone']), 2 );
+        $this->assertEquals( count($location['result']['email']), 3 );
+        $this->assertEquals( count($location['result']['im']), 3 );
+        $this->assertTrue( !empty( $location['result']['address'] ) ); 
+   }
     
 ///////////////// civicrm_location_delete methods
 
@@ -303,16 +239,15 @@ class api_v2_LocationTest extends CiviUnitTestCase
         $this->assertEquals( $locationDelete['is_error'], 1 );
         $this->assertEquals( $locationDelete['error_message'], 'invalid location type' );                
     }
-    
 
     function testDelete( )
     {
-        $location  = $this->locationAdd(  $this->_contactID );
+        $location  = $this->locationAdd( $this->_contactID );
+        $locationTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_LocationType', 'New Location Type', 'id', 'name' );
         
         $params = array( 'contact_id'    => $this->_contactID,
-                         'location_type' => $location['result']['location_type_id'] );
+                         'location_type' => $locationTypeId );
         $locationDelete =& civicrm_location_delete( $params );
-        
         $this->assertNull( $locationDelete );
         $this->assertDBNull( 'CRM_Core_DAO_Address', $location['result']['address'][0],'contact_id','id', 'Check DB for deleted Location.');
     }
@@ -439,22 +374,26 @@ class api_v2_LocationTest extends CiviUnitTestCase
         $location  = $this->locationAdd( $this->_contactID ); 
        
         $workPhone =array('phone' => '02327276048',
-                          'phone_type' => 'Phone');
+                          'phone_type' => 'Phone',
+                          'location_type'         => 'New Location Type'  
+                      );
         
         $phones = array ($workPhone);
         
-        $workEmailFirst = array('email' => 'xyz@indiatimes.com');
+        $workEmailFirst = array('email' => 'xyz@indiatimes.com',
+                                'location_type'         => 'New Location Type' 
+                               );
         
-        $workEmailSecond = array('email' => 'abcdef@hotmail.com');
+        $workEmailSecond = array('email' => 'abcdef@hotmail.com',
+                                 'location_type'         => 'New Location Type'
+                                );
         
         $emails = array($workEmailFirst,$workEmailSecond);
         
         $params = array(
                         'phone'                 => $phones,
-                        'city'                  => 'Mumbai',
                         'email'                 => $emails,
                         'contact_id'            => $this->_contactID,
-                        'location_type_id'      => $location['result']['location_type_id']
                         );
         
         $locationUpdate =& civicrm_location_update( $params );
