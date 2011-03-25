@@ -52,7 +52,8 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     $function = civicrm_api_get_function_name($entity, $action,$version);
     civicrm_api_include($entity,null,$version);
     if ( !function_exists ($function )) {
-        if ( strtolower($action) == "getfields" && $version ==3) {
+        if ( strtolower($action) == "getfields") { 
+            $version = 3;
             $dao = civicrm_api3_get_DAO ($entity);
             if (empty($dao)) {
                 return $errorFnName("API for $entity does not exist (join the API team and implement $function" );
@@ -60,7 +61,7 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
             $file = str_replace ('_','/',$dao).".php";
             require_once ($file); 
             $d = new $dao();
-            return $d->fields();
+            return civicrm_api3_create_success($d->fields());
         }
         if ( strtolower($action) == "update") {
             //$key_id = strtolower ($entity)."_id";
