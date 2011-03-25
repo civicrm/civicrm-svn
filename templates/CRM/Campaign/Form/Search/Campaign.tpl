@@ -90,44 +90,44 @@
 
     <div class="crm-accordion-body">
     {strip} 
-        <table class="form-layout">
-	  <tr>
-              <td>{$form.campaign_title.label}<br />
-		  {$form.campaign_title.html}
-              </td>
-	      <td>
-                  {$form.description.label}<br />
-		  {$form.description.html}
-              </td>
-	  </tr>
+        <table class="form-layout-compressed">
+	    <tr>
+            <td>{$form.campaign_title.label}<br />
+		        {$form.campaign_title.html} &nbsp;
+            </td>
+	        <td>
+                {$form.description.label}<br />
+		        {$form.description.html|crmReplace:class:huge}
+            </td>
+	    </tr>
 
-	  <tr>
-              <td>{$form.start_date.label}<br />
-	          {include file="CRM/common/jcalendar.tpl" elementName=start_date}
-              </td>
-	      <td>{$form.end_date.label}<br />
-	          {include file="CRM/common/jcalendar.tpl" elementName=end_date}
-              </td>
-	  </tr>
+	    <tr>
+            <td>{$form.start_date.label}<br />
+	            {include file="CRM/common/jcalendar.tpl" elementName=start_date}
+            </td>
+	        <td>{$form.end_date.label}<br />
+	            {include file="CRM/common/jcalendar.tpl" elementName=end_date}
+            </td>
+	    </tr>
 
-	  <tr>
-              <td>{$form.campaign_type_id.label}<br />
-	          {$form.campaign_type_id.html}
-              </td>
-	      <td>{$form.status_id.label}<br />
-	          {$form.status_id.html}
-              </td>
-	  </tr>
+	    <tr>
+            <td>{$form.campaign_type_id.label}<br />
+	            {$form.campaign_type_id.html}
+            </td>
+	        <td>{$form.status_id.label}<br />
+	            {$form.status_id.html}
+            </td>
+	    </tr>
 
-          <tr>
-             <td colspan="2">
-             {if $context eq 'search'}    
-	         {$form.buttons.html}
-	     {else}
-	         <a class="searchCampaign button" style="float:left;" href="#" title={ts}Search{/ts} onClick="searchCampaigns( '{$qfKey}' );return false;">{ts}Search{/ts}</a>
-	     {/if}
-	     </td>
-          </tr>
+        <tr>
+            <td colspan="2">
+            {if $context eq 'search'}    
+	            {$form.buttons.html}
+	        {else}
+	            <a class="searchCampaign button" style="float:left;" href="#" title={ts}Search{/ts} onClick="searchCampaigns( '{$qfKey}' );return false;">{ts}Search{/ts}</a>
+	        {/if}
+	        </td>
+        </tr>
         </table>
     {/strip}
     </div>
@@ -200,7 +200,6 @@ function loadCampaignList( )
 	}
      }
      noRecordFoundMsg += searchQill.join( '<span class="font-italic"> ...AND... </span></div><div class="qill">' );
-     noRecordFoundMsg += '</div>';
      
      cj( '#campaigns' ).dataTable({
      	        "bFilter"    : false,
