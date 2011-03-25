@@ -59,6 +59,7 @@ function smarty_function_crmAPI( $params, &$smarty ) {
     unset ($params ['method']);
     unset ($params ['assign']);
     $params['version'] = 3;
+    require_once 'api/api.php';
     $result = civicrm_api ($entity, $action,$params); 
     CRM_Core_Error::setCallback( );
     if ( $result === false ) {
