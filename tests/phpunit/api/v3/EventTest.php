@@ -173,6 +173,20 @@ class api_v3_EventTest extends CiviUnitTestCase
         $this->assertArrayHasKey( 'id', $result['values'][$result['id']], 'In line ' . __LINE__  );
     }
 
+    
+    function testUpdateEvent( )
+    {
+        $result = civicrm_api3_event_create( $this->_params );
+
+        $this->assertEquals( $result['is_error'], 0 );
+        $params =array('id' => $result['id'], 'version'=>3, 'max_participants'        => 150,);
+        $updated = civicrm_api('Event','Update',$params);
+        $this->documentMe($this->_params,$updated,__FUNCTION__,__FILE__); 
+        $this->assertEquals(  $updated['is_error'], 0 );
+        $this->assertEquals( 150, $updated['values'][$updated['id']]['max_participants'] );
+ 
+    }
+    
 ///////////////// civicrm_event_delete methods
 
     function testDeleteWrongParamsType()

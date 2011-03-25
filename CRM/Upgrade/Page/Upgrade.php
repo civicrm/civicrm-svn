@@ -167,6 +167,9 @@ SELECT  count( id ) as statusCount
                                             'UpdatePledgeRecord.php ' );
                 $message .= '<br />' . ts( 'The following files have been renamed to have a ".php" extension instead of a ".php.txt" extension' ) . ': ' . implode( ', ', $renamedBinScripts );
             }
+
+            // set pre-upgrade warnings if any -
+            self::setPreUpgradeMessage( $preUpgradeMessage, $currentVer, $latestVer );
             
             $template->assign( 'currentVersion',  $currentVer);
             $template->assign( 'newVersion',      $latestVer );
@@ -252,6 +255,7 @@ SELECT  count( id ) as statusCount
             }
         }
         
+        $template->assign( 'preUpgradeMessage', $preUpgradeMessage );
         $template->assign( 'message', $message );
         $content = $template->fetch( 'CRM/common/success.tpl' );
         echo CRM_Utils_System::theme( 'page', $content, true, $this->_print, false, true );
@@ -506,5 +510,19 @@ SELECT  count( id ) as statusCount
         $upgrade = new CRM_Upgrade_Form( );
         $upgrade->processSQL( $rev );
     }
-}
 
+    function setPreUpgradeMessage ( &$preUpgradeMessage, $currentVer, $latestVer ) 
+    {
+        if ( version_compare($currentVer, '3.3.alpha1') <  0  &&
+             version_compare($latestVer,  '3.3.alpha1') >= 0  ) {
+            $query = "
+SELECT  id 
+  FROM  civicrm_mailing_job 
+ WHERE  status NOT IN ( 'Complete', 'Canceled' ) AND is_test = 0 LIMIT 1";
+            $mjId  = CRM_Core_DAO::singleValueQuery( $query );
+            if ( $mjId ) {
+                $preUpgradeMessage = ts("There are one or more Scheduled or In Progress mailings in your install. Scheduled mailings will not be sent and In Progress mailings will not finish if you continue with the upgrade. We strongly recommend that all Scheduled and In Progress mailings be completed or cancelled and then upgrade your CiviCRM install.");
+            }
+        }
+    }
+}
