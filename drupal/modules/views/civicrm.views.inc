@@ -3425,7 +3425,7 @@ function civicrm_views_data() {
                                                         );
     $data['civicrm_activity']['engagement_level'] = array(
                                                 'title' => t('Engagement level'),
-                                                'help' => t('The Engagement Level of this Activity for this contact,
+                                                'help' => t('The Engagement Level of this Activity for this contact'),
                                                 'field' => array(
                                                                  'handler' => 'views_handler_field_numeric',
                                                                  'click sortable' => TRUE,
