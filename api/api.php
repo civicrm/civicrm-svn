@@ -87,8 +87,9 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
         return $errorFnName( "API ($entity,$action) does not exist (join the API team and implement $function" );
     }
     $result = isset($extra) ? $function($params, $extra) : $function($params);
-    if ($result['is_error'] == 0 && is_array($params['entities']) && strtolower($action == 'create')){
-      foreach ($params['entities'] as $subentity => $subParams) {
+
+    if ($result['is_error'] == 0 && is_array($params['entities']) && strtolower($action) == 'create'){
+      foreach ($params['entities'] as $subentity => $subParams) {      
         $subParams[strtolower($entity) . "_id"] = $result['id'];
         $subParams['version'] = $version;
         $result['values'][$result['id']]['entities'][$subentity] = civicrm_api($subentity,$action,$subParams);

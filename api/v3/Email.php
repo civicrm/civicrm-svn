@@ -50,8 +50,9 @@ require_once 'api/v3/utils.php';
  * @return array of newly created email property values.
  * @access public
  */
-function civicrm_api3_email_create( &$params ) 
+function civicrm_api3_email_create( $params ) 
 {
+
   _civicrm_api3_initialize( true );
   try {
     civicrm_api3_verify_one_mandatory ($params, null, array ('contact_id', 'id'));
@@ -69,8 +70,8 @@ function civicrm_api3_email_create( &$params )
 		 return civicrm_api3_create_error( "Email is not created or updated ");
 	 } else {
 		 $values = array( );
-		 _civicrm_api3_object_to_array($emailBAO, $values);
-		 return civicrm_api3_create_success($values, $params);
+		 _civicrm_api3_object_to_array($emailBAO, $values[$emailBAO->id]);
+		 return civicrm_api3_create_success($values, $params,$emailBAO );
 	 }
   } catch (PEAR_Exception $e) {
     return civicrm_api3_create_error( $e->getMessage() );
@@ -88,7 +89,7 @@ function civicrm_api3_email_create( &$params )
  * @return boolean | error  true if successfull, error otherwise
  * @access public
  */
-function civicrm_api3_email_delete( &$params ) 
+function civicrm_api3_email_delete( $params ) 
 {
   _civicrm_api3_initialize( true );
   try {
@@ -126,7 +127,7 @@ function civicrm_api3_email_delete( &$params )
  * @access public
  */
 
-function civicrm_api3_email_get(&$params) 
+function civicrm_api3_email_get($params) 
 {   
   _civicrm_api3_initialize(true );
   try {

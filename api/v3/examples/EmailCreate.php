@@ -1,17 +1,17 @@
 <?php 
 
-function phone_create_example(){
+function email_create_example(){
     $params = array(
     
                   'contact_id' 		=> '1',
                   'location_type_id' 		=> '6',
-                  'phone' 		=> '021 512 755',
+                  'email' 		=> 'api@a-team.com',
                   'is_primary' 		=> '1',
                   'version' 		=> '3',
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'phone','create',$params );
+  $result = civicrm_api( 'email','create',$params );
 
   return $result;
 }
@@ -19,7 +19,7 @@ function phone_create_example(){
 /*
  * Function returns array of result expected from previous function
  */
-function phone_create_expectedresult(){
+function email_create_expectedresult(){
 
   $expectedResult = 
      array(
@@ -30,11 +30,16 @@ function phone_create_expectedresult(){
            'values' 		=> array(           '2' =>  array(
                       'id' => '2',
                       'contact_id' => '1',
+                      'location_type_id' => '6',
+                      'email' => 'api@a-team.com',
                       'is_primary' => '1',
                       'is_billing' => '',
-                      'mobile_provider_id' => '',
-                      'phone' => '021 512 755',
-                      'phone_type_id' => '',
+                      'on_hold' => '',
+                      'is_bulkmail' => '',
+                      'hold_date' => '',
+                      'reset_date' => '',
+                      'signature_text' => '',
+                      'signature_html' => '',
            ),           ),
       );
 

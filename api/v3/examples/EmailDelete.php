@@ -1,17 +1,17 @@
 <?php 
 
-function phone_delete_example(){
+function email_delete_example(){
     $params = array(
     
                   'contact_id' 		=> '1',
                   'location_type_id' 		=> '6',
-                  'phone' 		=> '021 512 755',
+                  'email' 		=> 'api@a-team.com',
                   'is_primary' 		=> '1',
                   'version' 		=> '3',
 
   );
   require_once 'api/api.php';
-  $result = civicrm_api( 'phone','delete',$params );
+  $result = civicrm_api( 'email','delete',$params );
 
   return $result;
 }
@@ -19,14 +19,14 @@ function phone_delete_example(){
 /*
  * Function returns array of result expected from previous function
  */
-function phone_delete_expectedresult(){
+function email_delete_expectedresult(){
 
   $expectedResult = 
      array(
            'is_error' 		=> '0',
            'version' 		=> '3',
            'count' 		=> '1',
-           'values' 		=> '2',
+           'values' 		=> '1',
       );
 
   return $expectedResult  ;
