@@ -38,6 +38,8 @@ class api_v3_PhoneTest extends CiviUnitTestCase
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( 0, $result['is_error'], 'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['count'], 'In line ' . __LINE__ );
+        $this->assertNotNull( $result['values'][$result['id']]['id'], 'In line ' . __LINE__ );
+ 
  //       $this->assertEquals( 1, $result['id'], 'In line ' . __LINE__ );
 
         $delresult = civicrm_api3_phone_delete(array('id'=> $result['id'], 'version' => 3));
