@@ -44,7 +44,13 @@ class api_v3_EmailTest extends CiviUnitTestCase
         $this->assertEquals( 0, $delresult['is_error'], 'In line ' . __LINE__ );
 
     }
-    
+   public function testCreateEmailWithoutEmail(){
+      $result = civicrm_api('Email','Create',array('contact_id' => 4, 'version' => 3));
+      $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
+      $this->assertContains( 'missing', $result['error_message'], 'In line ' . __LINE__ );
+      $this->assertContains( 'email', $result['error_message'], 'In line ' . __LINE__ );
+  
+   }    
     
     public function testDeleteEmail () {
         $params = array('contact_id' => $this->_contactID,

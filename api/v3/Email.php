@@ -55,7 +55,7 @@ function civicrm_api3_email_create( $params )
 
   _civicrm_api3_initialize( true );
   try {
-    civicrm_api3_verify_one_mandatory ($params, null, array ('contact_id', 'id'));
+    civicrm_api3_verify_mandatory ($params, null,array('email', 'contact_id') );
 	/*
 	 * if is_primary is not set in params, set default = 0
 	 */
