@@ -3423,6 +3423,28 @@ function civicrm_views_data() {
                                                                           'label' => t('Activity -> Campaign'),
                                                           ),
                                                         );
+    $data['civicrm_activity']['engagement_level'] = array(
+                                                'title' => t('Engagement level'),
+                                                'help' => t('The Engagement Level of this Activity for this contact,
+                                                'field' => array(
+                                                                 'handler' => 'views_handler_field_numeric',
+                                                                 'click sortable' => TRUE,
+                                                                 ),
+
+                                                'argument' => array(
+                                                                    'handler' => 'views_handler_argument',
+                                                                    ),
+
+                                                'filter' => array(
+                                                                  'handler' => 'views_handler_filter_numeric',
+                                                                  'allow empty' => TRUE,
+                                                                  ),
+
+                                                'sort' => array(
+                                                                'handler' => 'views_handler_sort',
+                                                                ),
+                                                );
+
 
 
     // CHILLING OUT AT THE CIVICRM_ACTIVTY_ASSIGNMENT TABLE
