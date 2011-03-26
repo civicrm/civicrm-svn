@@ -41,8 +41,8 @@ class civicrm_handler_filter_campaign_status extends views_handler_filter_in_ope
             if ( ! civicrm_initialize( ) ) {
                 return;
             }
-            require_once 'CRM/Contribute/PseudoConstant.php';
-            self::$_campaignStatus = CRM_Contribute_PseudoConstant::campaignStatus( );
+            require_once 'CRM/Campaign/PseudoConstant.php';
+            self::$_campaignStatus = CRM_Campaign_PseudoConstant::campaignStatus( );
         }
     }
 

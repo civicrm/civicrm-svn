@@ -42,7 +42,7 @@ class civicrm_handler_filter_campaign_type extends views_handler_filter_in_opera
                 return;
             }
             require_once 'CRM/Campaign/PseudoConstant.php';
-            self::$_campaignType = CRM_Contribute_PseudoConstant::campaignType( );
+            self::$_campaignType = CRM_Campaign_PseudoConstant::campaignType( );
         }
     }
 
