@@ -5261,7 +5261,7 @@ function civicrm_views_data() {
                                                                                    ),
 
                                                                'filter' => array(
-                                                                                 'handler' => 'civicrm_handler_filter_contribution_type',
+                                                                                 'handler' => 'civicrm_handler_filter_campaign_type',
                                                                                  'allow empty' => TRUE,
                                                                                  ),
 
@@ -5284,7 +5284,7 @@ function civicrm_views_data() {
                                                                                    ),
 
                                                                'filter' => array(
-                                                                                 'handler' => 'civicrm_handler_filter_contribution_type',
+                                                                                 'handler' => 'civicrm_handler_filter_campaign_status',
                                                                                  'allow empty' => TRUE,
                                                                                  ),
 
@@ -6004,6 +6004,12 @@ function civicrm_views_handlers() {
                                                                       'parent' => 'views_handler_filter_in_operator',
                                                                       ),
                        'civicrm_handler_filter_custom_option' => array(
+                                                                       'parent' => 'views_handler_filter_in_operator',
+                                                                       ),
+                       'civicrm_handler_filter_campaign_status' => array(
+                                                                       'parent' => 'views_handler_filter_in_operator',
+                                                                       ),
+                       'civicrm_handler_filter_campaign_type' => array(
                                                                        'parent' => 'views_handler_filter_in_operator',
                                                                        ),
                        
