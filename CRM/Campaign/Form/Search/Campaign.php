@@ -70,6 +70,7 @@ class CRM_Campaign_Form_Search_Campaign extends CRM_Core_Form
         $this->assign( 'searchFor',      $this->_searchTab );
         $this->assign( 'campaignTypes',  json_encode( $this->get( 'campaignTypes' ) ) );
         $this->assign( 'campaignStatus', json_encode( $this->get( 'campaignStatus' ) ) );
+        $this->assign( 'suppressForm',   true );
         
         //set the form title.
         CRM_Utils_System::setTitle( ts( 'Find Campaigns' ) );
